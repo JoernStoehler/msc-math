@@ -53,6 +53,9 @@ struct Cli {
     audit_step_policies: Vec<AuditStepPolicy>,
     audit_direction_limit: Option<usize>,
     audit_policy_proposal_limit: Option<usize>,
+    iterative_ablation_policies: Vec<AuditStepPolicy>,
+    iterative_exact_evaluation_budget: Option<usize>,
+    iterative_proposal_limit: usize,
     steps: Vec<f64>,
     endpoint_steps: Option<Vec<f64>>,
     max_fixtures_per_label: usize,
@@ -198,6 +201,9 @@ struct RunParameters {
     audit_step_policies: Vec<String>,
     audit_direction_limit: Option<usize>,
     audit_policy_proposal_limit: Option<usize>,
+    iterative_ablation_policies: Vec<String>,
+    iterative_exact_evaluation_budget: Option<usize>,
+    iterative_proposal_limit: usize,
     min_observed_delta: f64,
     min_observed_relative_delta: f64,
 }
@@ -318,6 +324,46 @@ struct StepRankingAuditRow {
 }
 
 #[derive(Serialize)]
+struct IterativeAblationProposalRow {
+    poly_id: String,
+    degeneracy_label: String,
+    selection_rank_within_label: usize,
+    step_policy: String,
+    iteration: usize,
+    exact_evaluation_order: usize,
+    iteration_proposal_order: usize,
+    direction_rank: usize,
+    direction_label: String,
+    step: f64,
+    boundary_t_max: Option<f64>,
+    boundary_event: Option<String>,
+    status: String,
+    base_sys: f64,
+    candidate_window_predicted_delta_sys: Option<f64>,
+    observed_delta_sys: Option<f64>,
+    target_sys: Option<f64>,
+    target_orbit_iterations: Option<u64>,
+    selected_move: bool,
+}
+
+#[derive(Serialize)]
+struct IterativeAblationOutcomeRow {
+    poly_id: String,
+    degeneracy_label: String,
+    selection_rank_within_label: usize,
+    step_policy: String,
+    initial_sys: f64,
+    final_sys: f64,
+    observed_gain_sys: f64,
+    accepted_moves: usize,
+    exact_evaluations: usize,
+    exact_evaluation_budget: usize,
+    base_orbit_iterations: u64,
+    target_orbit_iterations: u64,
+    stop_reason: String,
+}
+
+#[derive(Serialize)]
 struct EndpointDiagnosticRow {
     poly_id: String,
     degeneracy_label: String,
@@ -357,6 +403,11 @@ struct ComputeBudgetReport {
     audit_step_policies: Vec<String>,
     audit_direction_limit: Option<usize>,
     audit_policy_proposal_limit: Option<usize>,
+    iterative_ablation_policies: Vec<String>,
+    iterative_exact_evaluation_budget: Option<usize>,
+    iterative_proposal_limit: usize,
+    iterative_ablation_proposal_rows: usize,
+    iterative_ablation_outcome_rows: usize,
     max_fixtures_per_label: usize,
     skip_fixtures_per_label: usize,
     degeneracy_labels: Vec<String>,
@@ -392,6 +443,11 @@ struct Summary {
     audit_step_policies: Vec<String>,
     audit_direction_limit: Option<usize>,
     audit_policy_proposal_limit: Option<usize>,
+    iterative_ablation_policies: Vec<String>,
+    iterative_exact_evaluation_budget: Option<usize>,
+    iterative_proposal_limit: usize,
+    iterative_ablation_proposal_rows: usize,
+    iterative_ablation_outcome_rows: usize,
     selection_threshold_relative: f64,
     max_fixtures_per_label: usize,
     skip_fixtures_per_label: usize,
@@ -487,11 +543,12 @@ fn main() {
     );
 
     let fixture_rows: Vec<FixtureRow> = fixtures.iter().map(fixture_row).collect();
+    let iterative_mode = !cli.iterative_ablation_policies.is_empty();
     let mut probe_rows = Vec::new();
     let mut base_orbit_iterations = 0u64;
     let mut target_orbit_iterations = 0u64;
 
-    if cli.audit_iterations.is_none() {
+    if cli.audit_iterations.is_none() && !iterative_mode {
         for fixture in &fixtures {
             match compute_base_state_from_row(
                 &fixture.polytope,
@@ -553,30 +610,60 @@ fn main() {
 
     write_jsonl(cli.out_dir.join("fixture-selection.jsonl"), &fixture_rows)
         .expect("failed to write fixture-selection.jsonl");
-    if cli.audit_iterations.is_none() {
+    if cli.audit_iterations.is_none() && !iterative_mode {
         write_jsonl(cli.out_dir.join("local-geometry-probe.jsonl"), &probe_rows)
             .expect("failed to write local-geometry-probe.jsonl");
     }
-    let trace_artifacts = run_trace_and_endpoint_rows(
-        &fixtures,
-        &probe_rows,
-        cli.selection_threshold_relative,
-        cli.action_window_relative,
-        cli.direction_model,
-        cli.include_candidate_window_directions,
-        cli.write_step_ranking_audit,
-        &cli.steps,
-        cli.endpoint_steps.as_deref().unwrap_or(&cli.steps),
-        cli.trace_iterations,
-        cli.audit_iterations.as_ref(),
-        &cli.audit_step_policies,
-        cli.audit_direction_limit,
-        cli.audit_policy_proposal_limit,
-        StopThreshold {
-            absolute_delta: cli.min_observed_delta,
-            relative_delta: cli.min_observed_relative_delta,
-        },
-    );
+    let (iterative_proposal_rows, iterative_outcome_rows) = if iterative_mode {
+        run_iterative_policy_ablation(
+            &fixtures,
+            &cli.iterative_ablation_policies,
+            &cli.steps,
+            cli.iterative_exact_evaluation_budget
+                .expect("iterative mode requires an exact-evaluation budget"),
+            cli.iterative_proposal_limit,
+            cli.trace_iterations,
+            cli.action_window_relative,
+            cli.selection_threshold_relative,
+            StopThreshold {
+                absolute_delta: cli.min_observed_delta,
+                relative_delta: cli.min_observed_relative_delta,
+            },
+        )
+    } else {
+        (Vec::new(), Vec::new())
+    };
+    let trace_artifacts = if iterative_mode {
+        TraceArtifacts {
+            trace_rows: Vec::new(),
+            endpoint_rows: Vec::new(),
+            endpoint_direction_scan_rows: Vec::new(),
+            step_ranking_audit_rows: Vec::new(),
+            audited_state_rows: Vec::new(),
+            audit_state_status_rows: Vec::new(),
+        }
+    } else {
+        run_trace_and_endpoint_rows(
+            &fixtures,
+            &probe_rows,
+            cli.selection_threshold_relative,
+            cli.action_window_relative,
+            cli.direction_model,
+            cli.include_candidate_window_directions,
+            cli.write_step_ranking_audit,
+            &cli.steps,
+            cli.endpoint_steps.as_deref().unwrap_or(&cli.steps),
+            cli.trace_iterations,
+            cli.audit_iterations.as_ref(),
+            &cli.audit_step_policies,
+            cli.audit_direction_limit,
+            cli.audit_policy_proposal_limit,
+            StopThreshold {
+                absolute_delta: cli.min_observed_delta,
+                relative_delta: cli.min_observed_relative_delta,
+            },
+        )
+    };
     let trace_rows = trace_artifacts.trace_rows;
     let endpoint_rows = trace_artifacts.endpoint_rows;
     let endpoint_direction_scan_rows = trace_artifacts.endpoint_direction_scan_rows;
@@ -585,7 +672,18 @@ fn main() {
     let audit_state_status_rows = trace_artifacts.audit_state_status_rows;
     write_jsonl(cli.out_dir.join("run-trace.jsonl"), &trace_rows)
         .expect("failed to write run-trace.jsonl");
-    if cli.audit_iterations.is_none() {
+    if iterative_mode {
+        write_jsonl(
+            cli.out_dir.join("iterative-policy-proposals.jsonl"),
+            &iterative_proposal_rows,
+        )
+        .expect("failed to write iterative-policy-proposals.jsonl");
+        write_jsonl(
+            cli.out_dir.join("iterative-policy-outcomes.jsonl"),
+            &iterative_outcome_rows,
+        )
+        .expect("failed to write iterative-policy-outcomes.jsonl");
+    } else if cli.audit_iterations.is_none() {
         write_jsonl(
             cli.out_dir.join("endpoint-diagnostic.jsonl"),
             &endpoint_rows,
@@ -666,6 +764,15 @@ fn main() {
             .collect(),
         audit_direction_limit: cli.audit_direction_limit,
         audit_policy_proposal_limit: cli.audit_policy_proposal_limit,
+        iterative_ablation_policies: cli
+            .iterative_ablation_policies
+            .iter()
+            .map(|policy| iterative_policy_label(*policy).to_string())
+            .collect(),
+        iterative_exact_evaluation_budget: cli.iterative_exact_evaluation_budget,
+        iterative_proposal_limit: cli.iterative_proposal_limit,
+        iterative_ablation_proposal_rows: iterative_proposal_rows.len(),
+        iterative_ablation_outcome_rows: iterative_outcome_rows.len(),
         max_fixtures_per_label: cli.max_fixtures_per_label,
         skip_fixtures_per_label: cli.skip_fixtures_per_label,
         degeneracy_labels: cli.degeneracy_labels.clone(),
@@ -712,6 +819,15 @@ fn main() {
             .collect(),
         audit_direction_limit: cli.audit_direction_limit,
         audit_policy_proposal_limit: cli.audit_policy_proposal_limit,
+        iterative_ablation_policies: cli
+            .iterative_ablation_policies
+            .iter()
+            .map(|policy| iterative_policy_label(*policy).to_string())
+            .collect(),
+        iterative_exact_evaluation_budget: cli.iterative_exact_evaluation_budget,
+        iterative_proposal_limit: cli.iterative_proposal_limit,
+        iterative_ablation_proposal_rows: iterative_proposal_rows.len(),
+        iterative_ablation_outcome_rows: iterative_outcome_rows.len(),
         selection_threshold_relative: cli.selection_threshold_relative,
         max_fixtures_per_label: cli.max_fixtures_per_label,
         skip_fixtures_per_label: cli.skip_fixtures_per_label,
@@ -816,6 +932,358 @@ struct TraceArtifacts {
     step_ranking_audit_rows: Vec<StepRankingAuditRow>,
     audited_state_rows: Vec<AuditedStateRow>,
     audit_state_status_rows: Vec<AuditStateStatusRow>,
+}
+
+fn iterative_policy_label(policy: AuditStepPolicy) -> &'static str {
+    match policy {
+        AuditStepPolicy::Fixed => "fixed",
+        AuditStepPolicy::Geometric => "dyadic_expand_backtrack",
+        AuditStepPolicy::BoundaryScaled => "boundary_scaled",
+    }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn run_iterative_policy_ablation(
+    fixtures: &[Fixture],
+    policies: &[AuditStepPolicy],
+    steps: &[f64],
+    exact_evaluation_budget: usize,
+    iteration_proposal_limit: usize,
+    trace_iterations: usize,
+    action_window_relative: f64,
+    branch_threshold_relative: f64,
+    stop_threshold: StopThreshold,
+) -> (
+    Vec<IterativeAblationProposalRow>,
+    Vec<IterativeAblationOutcomeRow>,
+) {
+    let mut proposal_rows = Vec::new();
+    let mut outcome_rows = Vec::new();
+    for fixture in fixtures {
+        for &policy in policies {
+            let initial = match polytope_from_row(&fixture.polytope) {
+                Ok(polytope) => polytope,
+                Err(error) => {
+                    outcome_rows.push(IterativeAblationOutcomeRow {
+                        poly_id: fixture.polytope.poly_id.clone(),
+                        degeneracy_label: fixture.diagnostic.degeneracy_label.clone(),
+                        selection_rank_within_label: fixture.selection_rank_within_label,
+                        step_policy: iterative_policy_label(policy).to_string(),
+                        initial_sys: fixture.polytope.sys,
+                        final_sys: fixture.polytope.sys,
+                        observed_gain_sys: 0.0,
+                        accepted_moves: 0,
+                        exact_evaluations: 0,
+                        exact_evaluation_budget,
+                        base_orbit_iterations: 0,
+                        target_orbit_iterations: 0,
+                        stop_reason: format!("initial_polytope_failed:{error}"),
+                    });
+                    continue;
+                }
+            };
+            let mut current = initial;
+            let initial_sys = fixture.polytope.sys;
+            let mut current_sys = initial_sys;
+            let mut exact_evaluations = 0usize;
+            let mut accepted_moves = 0usize;
+            let mut base_orbit_iterations = 0u64;
+            let mut target_orbit_iterations = 0u64;
+            let mut stop_reason = "trace_iteration_limit".to_string();
+
+            for iteration in 0..trace_iterations {
+                if exact_evaluations >= exact_evaluation_budget {
+                    stop_reason = "exact_evaluation_budget".to_string();
+                    break;
+                }
+                let Some(active) = compute_active_sys_state(&current) else {
+                    stop_reason = "current_sys_failed".to_string();
+                    break;
+                };
+                let action_gap = active.capacity.min_action * action_window_relative;
+                let base = match compute_base_state_from_polytope(
+                    current.clone(),
+                    action_gap,
+                    branch_threshold_relative,
+                ) {
+                    Ok(base) => base,
+                    Err(error) => {
+                        stop_reason = format!("base_state_failed:{error}");
+                        break;
+                    }
+                };
+                current_sys = base.sys;
+                base_orbit_iterations += base.capacity.iterations;
+                let effective_threshold = stop_threshold.effective_delta(base.sys);
+                let directions =
+                    audit_ordered_directions(&base, steps, DirectionModel::CandidateWindow, false);
+                let mut iteration_proposals = 0usize;
+                let mut selected: Option<(usize, ProbeDirection, f64)> = None;
+
+                for (direction_index, direction) in directions.into_iter().enumerate() {
+                    if iteration_proposals >= iteration_proposal_limit
+                        || exact_evaluations >= exact_evaluation_budget
+                    {
+                        break;
+                    }
+                    let boundary = compute_step_bound_detailed(&base.polytope, &direction.vector);
+                    let mut best_for_direction: Option<(usize, f64, f64)> = None;
+                    let mut scheduled_steps = Vec::new();
+                    match policy {
+                        AuditStepPolicy::Fixed => scheduled_steps.extend_from_slice(steps),
+                        AuditStepPolicy::BoundaryScaled => {
+                            if boundary.t_max.is_finite() && boundary.t_max > 0.0 {
+                                scheduled_steps.extend(
+                                    [0.1, 0.25, 0.5, 0.75, 0.95, 1.5, 2.0, 3.0]
+                                        .into_iter()
+                                        .map(|factor| factor * boundary.t_max),
+                                );
+                            }
+                        }
+                        AuditStepPolicy::Geometric => {}
+                    }
+
+                    if policy == AuditStepPolicy::Geometric {
+                        let Some(&initial_step) = steps.first() else {
+                            break;
+                        };
+                        let mut step = initial_step;
+                        let mut previous_delta = None;
+                        let mut expanding = true;
+                        loop {
+                            if iteration_proposals >= iteration_proposal_limit
+                                || exact_evaluations >= exact_evaluation_budget
+                                || !direction.allows_step(step)
+                                || !step.is_finite()
+                                || step <= 0.0
+                            {
+                                break;
+                            }
+                            let row_index = push_iterative_ablation_proposal(
+                                &mut proposal_rows,
+                                fixture,
+                                policy,
+                                iteration,
+                                exact_evaluations + 1,
+                                iteration_proposals + 1,
+                                direction_index + 1,
+                                &base,
+                                &direction,
+                                step,
+                                &boundary,
+                                action_window_relative,
+                                branch_threshold_relative,
+                            );
+                            exact_evaluations += 1;
+                            iteration_proposals += 1;
+                            if let Some(iterations) =
+                                proposal_rows[row_index].target_orbit_iterations
+                            {
+                                target_orbit_iterations += iterations;
+                            }
+                            let delta = proposal_rows[row_index].observed_delta_sys;
+                            if let Some(delta) = delta.filter(|delta| *delta > effective_threshold)
+                            {
+                                if best_for_direction
+                                    .as_ref()
+                                    .is_none_or(|(_, _, best)| delta > *best)
+                                {
+                                    best_for_direction = Some((row_index, step, delta));
+                                }
+                            }
+                            match previous_delta {
+                                None => {
+                                    expanding =
+                                        delta.is_some_and(|delta| delta > effective_threshold);
+                                    previous_delta = delta;
+                                    step = if expanding {
+                                        step * GEOMETRIC_STEP_FACTOR
+                                    } else {
+                                        step / GEOMETRIC_STEP_FACTOR
+                                    };
+                                }
+                                Some(previous) if expanding => {
+                                    let Some(delta) = delta else { break };
+                                    if delta <= effective_threshold || delta <= previous {
+                                        break;
+                                    }
+                                    previous_delta = Some(delta);
+                                    step *= GEOMETRIC_STEP_FACTOR;
+                                }
+                                Some(_) => {
+                                    if delta.is_some_and(|delta| delta > effective_threshold) {
+                                        break;
+                                    }
+                                    previous_delta = delta;
+                                    step /= GEOMETRIC_STEP_FACTOR;
+                                }
+                            }
+                        }
+                    } else {
+                        for step in scheduled_steps {
+                            if iteration_proposals >= iteration_proposal_limit
+                                || exact_evaluations >= exact_evaluation_budget
+                            {
+                                break;
+                            }
+                            if !step.is_finite() || step <= 0.0 || !direction.allows_step(step) {
+                                continue;
+                            }
+                            let row_index = push_iterative_ablation_proposal(
+                                &mut proposal_rows,
+                                fixture,
+                                policy,
+                                iteration,
+                                exact_evaluations + 1,
+                                iteration_proposals + 1,
+                                direction_index + 1,
+                                &base,
+                                &direction,
+                                step,
+                                &boundary,
+                                action_window_relative,
+                                branch_threshold_relative,
+                            );
+                            exact_evaluations += 1;
+                            iteration_proposals += 1;
+                            if let Some(iterations) =
+                                proposal_rows[row_index].target_orbit_iterations
+                            {
+                                target_orbit_iterations += iterations;
+                            }
+                            if let Some(delta) = proposal_rows[row_index]
+                                .observed_delta_sys
+                                .filter(|delta| *delta > effective_threshold)
+                            {
+                                if best_for_direction
+                                    .as_ref()
+                                    .is_none_or(|(_, _, best)| delta > *best)
+                                {
+                                    best_for_direction = Some((row_index, step, delta));
+                                }
+                                if policy == AuditStepPolicy::Fixed {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if let Some((row_index, step, _)) = best_for_direction {
+                        selected = Some((row_index, direction, step));
+                        break;
+                    }
+                }
+
+                let Some((row_index, direction, step)) = selected else {
+                    stop_reason = if exact_evaluations >= exact_evaluation_budget {
+                        "exact_evaluation_budget_no_selected_move"
+                    } else {
+                        "no_observed_improving_move"
+                    }
+                    .to_string();
+                    break;
+                };
+                proposal_rows[row_index].selected_move = true;
+                let Some(target) = target_polytope_for_step(&base, &direction, step) else {
+                    stop_reason = "selected_target_reconstruction_failed".to_string();
+                    break;
+                };
+                current_sys = proposal_rows[row_index]
+                    .target_sys
+                    .expect("selected exact move has target sys");
+                current = target;
+                accepted_moves += 1;
+                if exact_evaluations >= exact_evaluation_budget {
+                    stop_reason = "exact_evaluation_budget".to_string();
+                    break;
+                }
+            }
+
+            outcome_rows.push(IterativeAblationOutcomeRow {
+                poly_id: fixture.polytope.poly_id.clone(),
+                degeneracy_label: fixture.diagnostic.degeneracy_label.clone(),
+                selection_rank_within_label: fixture.selection_rank_within_label,
+                step_policy: iterative_policy_label(policy).to_string(),
+                initial_sys,
+                final_sys: current_sys,
+                observed_gain_sys: current_sys - initial_sys,
+                accepted_moves,
+                exact_evaluations,
+                exact_evaluation_budget,
+                base_orbit_iterations,
+                target_orbit_iterations,
+                stop_reason,
+            });
+        }
+    }
+    (proposal_rows, outcome_rows)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn push_iterative_ablation_proposal(
+    rows: &mut Vec<IterativeAblationProposalRow>,
+    fixture: &Fixture,
+    policy: AuditStepPolicy,
+    iteration: usize,
+    exact_evaluation_order: usize,
+    iteration_proposal_order: usize,
+    direction_rank: usize,
+    base: &BaseState,
+    direction: &ProbeDirection,
+    step: f64,
+    boundary: &exp_sys_landscape::BoundaryEvent,
+    action_window_relative: f64,
+    branch_threshold_relative: f64,
+) -> usize {
+    let exact = evaluate_exact_step(
+        base,
+        direction,
+        step,
+        action_window_relative,
+        branch_threshold_relative,
+    );
+    let index = rows.len();
+    rows.push(IterativeAblationProposalRow {
+        poly_id: fixture.polytope.poly_id.clone(),
+        degeneracy_label: fixture.diagnostic.degeneracy_label.clone(),
+        selection_rank_within_label: fixture.selection_rank_within_label,
+        step_policy: iterative_policy_label(policy).to_string(),
+        iteration,
+        exact_evaluation_order,
+        iteration_proposal_order,
+        direction_rank,
+        direction_label: direction.label.clone(),
+        step,
+        boundary_t_max: boundary.t_max.is_finite().then_some(boundary.t_max),
+        boundary_event: Some(boundary_event_label(&boundary.event)),
+        status: exact.status,
+        base_sys: base.sys,
+        candidate_window_predicted_delta_sys: candidate_window_prediction_witness(
+            base,
+            &direction.vector,
+            step,
+        )
+        .map(|witness| witness.predicted_delta),
+        observed_delta_sys: exact.observed_delta_sys,
+        target_sys: exact.target_sys,
+        target_orbit_iterations: exact.target_orbit_iterations,
+        selected_move: false,
+    });
+    index
+}
+
+fn target_polytope_for_step(
+    base: &BaseState,
+    direction: &ProbeDirection,
+    step: f64,
+) -> Option<SysLandscapePolytopeCache> {
+    let target_duals: Vec<Vector4<f64>> = base
+        .polytope
+        .dual_vertices_f64
+        .iter()
+        .zip(&direction.vector)
+        .map(|(dual, delta)| dual + step * delta)
+        .collect();
+    SysLandscapePolytopeCache::from_f64_dual_vertices(target_duals)
 }
 
 fn run_trace_and_endpoint_rows(
@@ -2836,6 +3304,9 @@ fn parse_args() -> Cli {
         audit_step_policies: vec![AuditStepPolicy::Fixed],
         audit_direction_limit: None,
         audit_policy_proposal_limit: None,
+        iterative_ablation_policies: Vec::new(),
+        iterative_exact_evaluation_budget: None,
+        iterative_proposal_limit: 4,
         steps: DEFAULT_STEPS.to_vec(),
         endpoint_steps: None,
         max_fixtures_per_label: DEFAULT_MAX_FIXTURES_PER_LABEL,
@@ -2922,6 +3393,34 @@ fn parse_args() -> Cli {
                 assert!(limit > 0, "--audit-policy-proposal-limit must be positive");
                 cli.audit_policy_proposal_limit = Some(limit);
             }
+            "--iterative-ablation-policies" => {
+                cli.iterative_ablation_policies = parse_audit_step_policies(
+                    &args
+                        .next()
+                        .expect("--iterative-ablation-policies requires comma-separated policies"),
+                );
+            }
+            "--iterative-exact-evaluation-budget" => {
+                let budget: usize = args
+                    .next()
+                    .expect("--iterative-exact-evaluation-budget requires a positive integer")
+                    .parse()
+                    .expect("--iterative-exact-evaluation-budget must be a positive integer");
+                assert!(
+                    budget > 0,
+                    "iterative exact-evaluation budget must be positive"
+                );
+                cli.iterative_exact_evaluation_budget = Some(budget);
+            }
+            "--iterative-proposal-limit" => {
+                let limit: usize = args
+                    .next()
+                    .expect("--iterative-proposal-limit requires a positive integer")
+                    .parse()
+                    .expect("--iterative-proposal-limit must be a positive integer");
+                assert!(limit > 0, "iterative proposal limit must be positive");
+                cli.iterative_proposal_limit = limit;
+            }
             "--steps" => {
                 cli.steps = args
                     .next()
@@ -2995,6 +3494,25 @@ fn parse_args() -> Cli {
         print_usage();
         panic!("--diagnostic-dir is required");
     }
+    if !cli.iterative_ablation_policies.is_empty() {
+        assert!(
+            cli.audit_iterations.is_none(),
+            "iterative ablation and selective audit modes are mutually exclusive"
+        );
+        assert!(
+            cli.iterative_exact_evaluation_budget.is_some(),
+            "--iterative-ablation-policies requires --iterative-exact-evaluation-budget"
+        );
+        assert_eq!(
+            cli.direction_model,
+            DirectionModel::CandidateWindow,
+            "iterative ablation requires guarded candidate-window direction ordering"
+        );
+        assert!(
+            !cli.include_candidate_window_directions,
+            "iterative ablation freezes the established direction set"
+        );
+    }
     cli
 }
 
@@ -3010,6 +3528,9 @@ fn print_usage() {
          [--audit-step-policies fixed,geometric,boundary-scaled] \
          [--audit-direction-limit N] \
          [--audit-policy-proposal-limit N] \
+         [--iterative-ablation-policies fixed,geometric,boundary-scaled] \
+         [--iterative-exact-evaluation-budget N] \
+         [--iterative-proposal-limit N] \
          [--steps CSV] [--endpoint-steps CSV] \
          [--max-fixtures-per-label N] [--skip-fixtures-per-label N] \
          [--trace-iterations N] \
@@ -3104,6 +3625,13 @@ fn build_run_provenance(cli: &Cli) -> RunProvenance {
                 .collect(),
             audit_direction_limit: cli.audit_direction_limit,
             audit_policy_proposal_limit: cli.audit_policy_proposal_limit,
+            iterative_ablation_policies: cli
+                .iterative_ablation_policies
+                .iter()
+                .map(|policy| iterative_policy_label(*policy).to_string())
+                .collect(),
+            iterative_exact_evaluation_budget: cli.iterative_exact_evaluation_budget,
+            iterative_proposal_limit: cli.iterative_proposal_limit,
             min_observed_delta: cli.min_observed_delta,
             min_observed_relative_delta: cli.min_observed_relative_delta,
         },
@@ -3226,6 +3754,8 @@ fn reset_owned_output_files(out_dir: &Path) {
         "endpoint-diagnostic.jsonl",
         "endpoint-direction-scan.jsonl",
         "step-ranking-audit.jsonl",
+        "iterative-policy-proposals.jsonl",
+        "iterative-policy-outcomes.jsonl",
         "states.jsonl",
         "audit-state-status.jsonl",
         "run-provenance.json",

@@ -359,6 +359,23 @@ return additional interval-overlap candidates; those are not differentiated
 as if they belonged to the nominal analytic window. Audit witness indices are
 indices in this filtered analytic candidate list.
 
+### Iterative step-policy ablation
+
+The retained bounded comparison in
+[`iterative-policy-ablation/`](iterative-policy-ablation/) runs fixed-step,
+exact dyadic expand/backtrack, and boundary-scaled trajectories from the same
+deterministic starts. All variants use guarded candidate-window ordering of the
+established direction set and receive the same cap on exact target-capacity
+evaluations. `iterative-policy-proposals.jsonl` records every charged proposal;
+`iterative-policy-outcomes.jsonl` records the bounded trajectory result. This
+mode is selected with `--iterative-ablation-policies` and requires
+`--direction-model candidate-window` plus an
+`--iterative-exact-evaluation-budget`.
+
+The comparison is an optimizer-development ablation. It does not certify an
+endpoint, compare broad random-start performance, or select a general default
+policy.
+
 Regenerate this probe before quoting fixture counts, prediction/observation
 pairs, trace stop reasons, endpoint statuses, or compute cost. The artifact
 surface can compare single-branch and near-active maximin directions, record a
