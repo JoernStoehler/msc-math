@@ -15,6 +15,10 @@ name = "sys-gradient-ascent-products"
 path = "gradient-ascent-products/main.rs"
 
 [[bin]]
+name = "sys-gradient-ascent-observed-general"
+path = "gradient-ascent-observed-general/main.rs"
+
+[[bin]]
 name = "sys-random-sample"
 path = "random-sample/main.rs"
 
