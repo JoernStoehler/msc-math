@@ -15,13 +15,26 @@ endpoint `sys(pi/6)=1`, this is strong path-level evidence that the observed
 capacity minimum follows the secant branch over the sampled remainder of the
 fundamental interval.
 
-This does not prove global branch minimality between sample points or exclude
-an arbitrarily narrow overshoot above one. Finite densification cannot remove
-that logical possibility without a derivative bound or an all-branch theorem.
-The useful continuation is therefore a mathematical handoff: prove that no
-other two- or three-bounce branch lies below the secant branch on the regular
-triangle--hexagon interval. Park empirical ridge sampling unless that proof
-exposes a specific unresolved branch or interval.
+The explicit orbit in `MATHEMATICAL-HANDOFF.md` changes the interval-level
+conclusion. For every `0 <= delta <= pi/6`, it is an admissible three-bounce
+capacity competitor of action `3sqrt(3)sec(delta)`. Since capacity is the
+minimum action,
+
+```text
+sys(delta) <= (3/4)sec(delta)^2 <= 1.
+```
+
+This proves Viterbo's inequality on the entire path and excludes an arbitrarily
+narrow overshoot above one. A branch switch below the displayed competitor can
+only lower capacity. No continuity, derivative bound, densification, or
+all-branch comparison is needed for that result.
+
+What remains unproved on the unsampled interior is the stronger equality
+`sys(delta)=(3/4)sec(delta)^2`. The retained numerical rows validate equality
+at their sampled angles. Proving that no other two- or three-bounce branch lies
+below the displayed branch would establish the exact profile, but is optional
+for the Viterbo-on-path conclusion. Park empirical ridge sampling unless an
+exact-profile use justifies that proof work.
 
 No `sys>=1` numerical candidate was produced, and the result does not trigger
 counterexample or proposer escalation. These are two further pre-target
