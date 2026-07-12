@@ -1,0 +1,32 @@
+{
+  "schema": "ridge-symmetry-completion.target.v1",
+  "candidate_id": "ridge-symmetry-3x6-delta2",
+  "bucket": "3x6",
+  "path_label": "delta2",
+  "relative_rotation_rad": 0.5082886534505863,
+  "poly_id": "44d7f29ef6d885d4fef2a1199fdf18898ce8435008878fdc9bddb3bb01f67a0b",
+  "volume": 18.000000000000007,
+  "capacity": 5.9481219071174145,
+  "sys": 0.9827820617202804,
+  "branch_h_predicted_sys": 0.98278206172028,
+  "branch_h_absolute_error": 3.3306690738754696e-16,
+  "bounces": 3,
+  "best_sigma": [
+    0,
+    7,
+    2,
+    5,
+    1,
+    3
+  ],
+  "iterations": 468,
+  "min_action_lower": 0.03264562624382232,
+  "min_action_upper": 5.9481219071174145,
+  "best_orbit_admissibility": "AdmissibleF64",
+  "best_orbit_beta_margin": 0.1666666666666663,
+  "time_capacity_ms": 594.868053,
+  "candidates_sha256": "8c61a68c9262c736afc7b869d7046ae20c90309a10aabf3dadda03ef4c36642d",
+  "preflight_sha256": "e362d637e6a9429ab188cc45f0f8e0cbb44a15870bc8c67c6d99afa17d3052ad",
+  "evaluator_source_sha256": "b5dba28ef03e9eacfc4948f72d7281bf555c6c5696c136c0e4edb6cbd668e7dd",
+  "capacity_implementation_manifest_sha256": "827bc8a18dbca1c809f5534dd9c8ae9972bf665e99f8e91f13fd0ec043ca2997"
+}

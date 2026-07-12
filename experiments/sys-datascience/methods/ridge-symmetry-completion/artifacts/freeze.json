@@ -1,0 +1,12 @@
+{
+  "schema": "ridge-symmetry-completion.freeze.v1",
+  "status": "target-free",
+  "candidate_count": 2,
+  "ordered_candidate_ids": [
+    "ridge-symmetry-3x6-delta1",
+    "ridge-symmetry-3x6-delta2"
+  ],
+  "candidates_sha256": "8c61a68c9262c736afc7b869d7046ae20c90309a10aabf3dadda03ef4c36642d",
+  "decision_rule": "evaluate delta1; stop if sys>1, otherwise evaluate delta2",
+  "endpoint_fact": "sys(pi/6)=1 is theorem-level and is not a target call"
+}
