@@ -1,0 +1,318 @@
+{
+  "boundary": "Same-generator prospective selection evidence only. The reader does not authorize a direction flip, a subset rule, a capacity theorem, or transfer beyond the frozen random-product height law.",
+  "criteria_frozen_before_sys": {
+    "both_seed_aggregates_positive": true,
+    "meaningful_negative_if_rho_minus_control_upper_one_sided_95_lt": 0.08,
+    "minimum_positive_seed_pooled_bucket_effects": 7,
+    "rho_better_after_primary_success_if_rho_minus_ridge_two_sided_95_lower_gt": 0.0,
+    "rho_competitive_after_primary_success_if_rho_minus_ridge_two_sided_95_lower_gt": -0.05,
+    "rho_minus_control_estimate_at_least": 0.08,
+    "rho_minus_control_two_sided_95_excludes_zero_upward": true,
+    "sys_gt_1_escalation": "each unique row with sys > 1 requires independent geometry and capacity verification before interpretation"
+  },
+  "input_sha256": {
+    "frozen_manifest": "0f3dcb1a518f864d9e4ba76e7471a87e2ce4c070bcff103247c7732da688438a",
+    "sys_evaluation_caches": {
+      "/tmp/joern/covariance-line/capacity-evaluation-frozen-20260712/seed-2026071201/sys-evaluation-cache.jsonl": "16a007c92b3afd3b5b475f30196b236ed7ab87aaf91453ae485e5a3b0362ef5a",
+      "/tmp/joern/covariance-line/capacity-evaluation-frozen-20260712/seed-2026071202/sys-evaluation-cache.jsonl": "36faf6a2d71a13d2821f2841b967998a6dc102f41c739f45bfab88f7c0beb800"
+    }
+  },
+  "observed": {
+    "arms": {
+      "control": {
+        "count_sys_gt_0p9": 0,
+        "count_sys_gt_1": 0,
+        "count_sys_gt_previous_generated_maximum": 0,
+        "maximum_sys": 0.7710941731305073,
+        "memberships": 500
+      },
+      "rho": {
+        "count_sys_gt_0p9": 1,
+        "count_sys_gt_1": 0,
+        "count_sys_gt_previous_generated_maximum": 0,
+        "maximum_sys": 0.9000949658871089,
+        "memberships": 500
+      },
+      "ridge": {
+        "count_sys_gt_0p9": 1,
+        "count_sys_gt_1": 0,
+        "count_sys_gt_previous_generated_maximum": 0,
+        "maximum_sys": 0.9002763913390446,
+        "memberships": 500
+      }
+    },
+    "control_disjoint": true,
+    "leave_one_bucket_out_rho_minus_control": {
+      "random-product:3x3:h0p8_1p2": 0.3308844309222625,
+      "random-product:3x4:h0p8_1p2": 0.33290997506986636,
+      "random-product:3x5:h0p8_1p2": 0.32967554884900063,
+      "random-product:3x6:h0p8_1p2": 0.3284518776057906,
+      "random-product:4x4:h0p8_1p2": 0.33368432770301504,
+      "random-product:4x5:h0p8_1p2": 0.3294018728159214,
+      "random-product:4x6:h0p8_1p2": 0.3315970546207887,
+      "random-product:5x5:h0p8_1p2": 0.3355876708957781,
+      "random-product:5x6:h0p8_1p2": 0.3377823947910307,
+      "random-product:6x6:h0p8_1p2": 0.34125632173940434
+    },
+    "positive_seed_pooled_bucket_effects": 10,
+    "previous_generated_maximum": 0.9509718381,
+    "rho_minus_control": {
+      "estimate": 0.33312314750128585,
+      "standard_error": 0.011168113761687611,
+      "two_sided_95": [
+        0.30974801675570574,
+        0.356498278246866
+      ],
+      "upper_one_sided_95": 0.3524342994494232
+    },
+    "rho_minus_ridge": {
+      "estimate": 0.014487995580657193,
+      "standard_error": 0.014053136113507912,
+      "two_sided_95": [
+        -0.014925556344788319,
+        0.0439015475061027
+      ],
+      "upper_one_sided_95": 0.038787734339299586
+    },
+    "rho_ridge_jaccard": 0.06837606837606838,
+    "rho_ridge_overlap": 64,
+    "ridge_minus_control_replication": {
+      "estimate": 0.31863515192062863,
+      "standard_error": 0.018822278337856883,
+      "two_sided_95": [
+        0.27923967060072663,
+        0.35803063324053064
+      ],
+      "upper_one_sided_95": 0.3511813709822048
+    },
+    "seed_aggregates_rho_minus_control": {
+      "2026071201": 0.3265899253321042,
+      "2026071202": 0.33965636967046753
+    },
+    "seed_pooled_bucket_effects_rho_minus_control": {
+      "random-product:3x3:h0p8_1p2": 0.35327159671249586,
+      "random-product:3x4:h0p8_1p2": 0.335041699384061,
+      "random-product:3x5:h0p8_1p2": 0.36415153537185274,
+      "random-product:3x6:h0p8_1p2": 0.3751645765607433,
+      "random-product:4x4:h0p8_1p2": 0.32807252568572287,
+      "random-product:4x5:h0p8_1p2": 0.36661461966956566,
+      "random-product:4x6:h0p8_1p2": 0.34685798342576035,
+      "random-product:5x5:h0p8_1p2": 0.3109424369508556,
+      "random-product:5x6:h0p8_1p2": 0.2911899218935817,
+      "random-product:6x6:h0p8_1p2": 0.25992457935821944
+    },
+    "unique_evaluated_rows": 1436,
+    "unique_sys_gt_1": 0
+  },
+  "question": "Does the frozen low canonical-vertex covariance rho arm enrich sys over a deterministic disjoint control on fresh random-product geometry?",
+  "schema": "sys-datascience.covariance-rho-frozen-validation-verdict.v1",
+  "strata": [
+    {
+      "bucket": "random-product:3x3:h0p8_1p2",
+      "control_mean_sys": 0.1924624789974796,
+      "rho_mean_sys": 0.5448259782197826,
+      "rho_minus_control_mean_sys": 0.35236349922230303,
+      "rho_minus_ridge_mean_sys": 0.04261602662273056,
+      "ridge_mean_sys": 0.5022099515970521,
+      "ridge_minus_control_mean_sys": 0.30974747259957247,
+      "seed": 2026071201
+    },
+    {
+      "bucket": "random-product:3x4:h0p8_1p2",
+      "control_mean_sys": 0.2923401888055607,
+      "rho_mean_sys": 0.582644869321276,
+      "rho_minus_control_mean_sys": 0.29030468051571534,
+      "rho_minus_ridge_mean_sys": -0.08798234498012603,
+      "ridge_mean_sys": 0.670627214301402,
+      "ridge_minus_control_mean_sys": 0.37828702549584137,
+      "seed": 2026071201
+    },
+    {
+      "bucket": "random-product:3x5:h0p8_1p2",
+      "control_mean_sys": 0.22656772566339925,
+      "rho_mean_sys": 0.6665965899134169,
+      "rho_minus_control_mean_sys": 0.44002886425001764,
+      "rho_minus_ridge_mean_sys": -0.06751438901342965,
+      "ridge_mean_sys": 0.7341109789268465,
+      "ridge_minus_control_mean_sys": 0.5075432532634473,
+      "seed": 2026071201
+    },
+    {
+      "bucket": "random-product:3x6:h0p8_1p2",
+      "control_mean_sys": 0.35723050772727766,
+      "rho_mean_sys": 0.6899920959913763,
+      "rho_minus_control_mean_sys": 0.3327615882640987,
+      "rho_minus_ridge_mean_sys": -0.04596441147014074,
+      "ridge_mean_sys": 0.7359565074615171,
+      "ridge_minus_control_mean_sys": 0.3787259997342394,
+      "seed": 2026071201
+    },
+    {
+      "bucket": "random-product:4x4:h0p8_1p2",
+      "control_mean_sys": 0.3598677152571427,
+      "rho_mean_sys": 0.6531221728165063,
+      "rho_minus_control_mean_sys": 0.29325445755936363,
+      "rho_minus_ridge_mean_sys": -0.004341841295395943,
+      "ridge_mean_sys": 0.6574640141119023,
+      "ridge_minus_control_mean_sys": 0.2975962988547596,
+      "seed": 2026071201
+    },
+    {
+      "bucket": "random-product:4x5:h0p8_1p2",
+      "control_mean_sys": 0.32674560690181764,
+      "rho_mean_sys": 0.6880052971355027,
+      "rho_minus_control_mean_sys": 0.3612596902336851,
+      "rho_minus_ridge_mean_sys": 0.04088837490879782,
+      "ridge_mean_sys": 0.6471169222267049,
+      "ridge_minus_control_mean_sys": 0.3203713153248873,
+      "seed": 2026071201
+    },
+    {
+      "bucket": "random-product:4x6:h0p8_1p2",
+      "control_mean_sys": 0.39167148026761744,
+      "rho_mean_sys": 0.7120360774450352,
+      "rho_minus_control_mean_sys": 0.3203645971774177,
+      "rho_minus_ridge_mean_sys": 0.1138166584453204,
+      "ridge_mean_sys": 0.5982194189997148,
+      "ridge_minus_control_mean_sys": 0.2065479387320973,
+      "seed": 2026071201
+    },
+    {
+      "bucket": "random-product:5x5:h0p8_1p2",
+      "control_mean_sys": 0.3913537403861483,
+      "rho_mean_sys": 0.7125128718654992,
+      "rho_minus_control_mean_sys": 0.3211591314793509,
+      "rho_minus_ridge_mean_sys": 0.0729825258374206,
+      "ridge_mean_sys": 0.6395303460280786,
+      "ridge_minus_control_mean_sys": 0.24817660564193028,
+      "seed": 2026071201
+    },
+    {
+      "bucket": "random-product:5x6:h0p8_1p2",
+      "control_mean_sys": 0.44010839668870205,
+      "rho_mean_sys": 0.734300978368398,
+      "rho_minus_control_mean_sys": 0.294192581679696,
+      "rho_minus_ridge_mean_sys": 0.07719180689362182,
+      "ridge_mean_sys": 0.6571091714747762,
+      "ridge_minus_control_mean_sys": 0.21700077478607416,
+      "seed": 2026071201
+    },
+    {
+      "bucket": "random-product:6x6:h0p8_1p2",
+      "control_mean_sys": 0.4443542782341734,
+      "rho_mean_sys": 0.7045644411735671,
+      "rho_minus_control_mean_sys": 0.2602101629393937,
+      "rho_minus_ridge_mean_sys": 0.004576326390909546,
+      "ridge_mean_sys": 0.6999881147826575,
+      "ridge_minus_control_mean_sys": 0.25563383654848415,
+      "seed": 2026071201
+    },
+    {
+      "bucket": "random-product:3x3:h0p8_1p2",
+      "control_mean_sys": 0.1883035224627198,
+      "rho_mean_sys": 0.5424832166654086,
+      "rho_minus_control_mean_sys": 0.35417969420268874,
+      "rho_minus_ridge_mean_sys": 0.042340138895097024,
+      "ridge_mean_sys": 0.5001430777703115,
+      "ridge_minus_control_mean_sys": 0.3118395553075917,
+      "seed": 2026071202
+    },
+    {
+      "bucket": "random-product:3x4:h0p8_1p2",
+      "control_mean_sys": 0.23179605751735635,
+      "rho_mean_sys": 0.6115747757697629,
+      "rho_minus_control_mean_sys": 0.3797787182524066,
+      "rho_minus_ridge_mean_sys": -0.07897999114173426,
+      "ridge_mean_sys": 0.6905547669114972,
+      "ridge_minus_control_mean_sys": 0.4587587093941409,
+      "seed": 2026071202
+    },
+    {
+      "bucket": "random-product:3x5:h0p8_1p2",
+      "control_mean_sys": 0.3553955024077478,
+      "rho_mean_sys": 0.6436697089014356,
+      "rho_minus_control_mean_sys": 0.2882742064936878,
+      "rho_minus_ridge_mean_sys": -0.0999594693252257,
+      "ridge_mean_sys": 0.7436291782266613,
+      "ridge_minus_control_mean_sys": 0.3882336758189135,
+      "seed": 2026071202
+    },
+    {
+      "bucket": "random-product:3x6:h0p8_1p2",
+      "control_mean_sys": 0.2824266006157611,
+      "rho_mean_sys": 0.6999941654731491,
+      "rho_minus_control_mean_sys": 0.417567564857388,
+      "rho_minus_ridge_mean_sys": -0.016818690482610643,
+      "ridge_mean_sys": 0.7168128559557597,
+      "ridge_minus_control_mean_sys": 0.43438625533999864,
+      "seed": 2026071202
+    },
+    {
+      "bucket": "random-product:4x4:h0p8_1p2",
+      "control_mean_sys": 0.3200017900868405,
+      "rho_mean_sys": 0.6828923838989226,
+      "rho_minus_control_mean_sys": 0.3628905938120821,
+      "rho_minus_ridge_mean_sys": 0.023364944378052033,
+      "ridge_mean_sys": 0.6595274395208706,
+      "ridge_minus_control_mean_sys": 0.3395256494340301,
+      "seed": 2026071202
+    },
+    {
+      "bucket": "random-product:4x5:h0p8_1p2",
+      "control_mean_sys": 0.3330384115840202,
+      "rho_mean_sys": 0.7050079606894664,
+      "rho_minus_control_mean_sys": 0.37196954910544616,
+      "rho_minus_ridge_mean_sys": 0.0615527825893637,
+      "ridge_mean_sys": 0.6434551781001027,
+      "ridge_minus_control_mean_sys": 0.31041676651608247,
+      "seed": 2026071202
+    },
+    {
+      "bucket": "random-product:4x6:h0p8_1p2",
+      "control_mean_sys": 0.3466774511606587,
+      "rho_mean_sys": 0.7200288208347616,
+      "rho_minus_control_mean_sys": 0.37335136967410293,
+      "rho_minus_ridge_mean_sys": 0.09404359021391262,
+      "ridge_mean_sys": 0.625985230620849,
+      "ridge_minus_control_mean_sys": 0.2793077794601903,
+      "seed": 2026071202
+    },
+    {
+      "bucket": "random-product:5x5:h0p8_1p2",
+      "control_mean_sys": 0.4062076609822452,
+      "rho_mean_sys": 0.7069334034046055,
+      "rho_minus_control_mean_sys": 0.30072574242236033,
+      "rho_minus_ridge_mean_sys": 0.04805969534415877,
+      "ridge_mean_sys": 0.6588737080604468,
+      "ridge_minus_control_mean_sys": 0.25266604707820156,
+      "seed": 2026071202
+    },
+    {
+      "bucket": "random-product:5x6:h0p8_1p2",
+      "control_mean_sys": 0.3994951303090607,
+      "rho_mean_sys": 0.6876823924165282,
+      "rho_minus_control_mean_sys": 0.2881872621074675,
+      "rho_minus_ridge_mean_sys": 0.01457784745825541,
+      "ridge_mean_sys": 0.6731045449582728,
+      "ridge_minus_control_mean_sys": 0.27360941464921207,
+      "seed": 2026071202
+    },
+    {
+      "bucket": "random-product:6x6:h0p8_1p2",
+      "control_mean_sys": 0.46720401995328564,
+      "rho_mean_sys": 0.7268430157303308,
+      "rho_minus_control_mean_sys": 0.2596389957770452,
+      "rho_minus_ridge_mean_sys": 0.05531033134416652,
+      "ridge_mean_sys": 0.6715326843861643,
+      "ridge_minus_control_mean_sys": 0.20432866443287867,
+      "seed": 2026071202
+    }
+  ],
+  "verdict": {
+    "meaningful_negative": false,
+    "primary_success": true,
+    "requires_sys_gt_1_escalation": false,
+    "rho_better_than_ridge": false,
+    "rho_competitive_with_ridge": true
+  }
+}

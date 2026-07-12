@@ -1,0 +1,210 @@
+{
+  "schema": "sys-datascience.extreme-scalar-rejection-proposer.selection-plan.v4",
+  "metadata": {
+    "geometry_generator": {
+      "schema": "sys-datascience.extreme-scalar-rejection-proposer.candidate-geometry.v2",
+      "generator": "random_lagrangian_product_from_2d_h_representations",
+      "h_min": 0.8,
+      "h_max": 1.2,
+      "product_pairs": [
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          5,
+          5
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          6,
+          6
+        ]
+      ],
+      "candidate_id_key": "random-product:seed{seed}:{k}x{m}:h0p8_1p2:sample{sample_index}"
+    },
+    "feature_schema": {
+      "schema": "sys-datascience.extreme-scalar-rejection-proposer.candidate-feature.v3",
+      "available_scalar_features": [
+        "vertex_covariance_rho",
+        "facet_count",
+        "vertex_count",
+        "edge_count",
+        "ridge_count",
+        "volume",
+        "simple_vertex_fraction",
+        "edge_density",
+        "vertex_incident_facets_mean",
+        "vertex_incident_facets_std",
+        "vertex_incident_facets_min",
+        "vertex_incident_facets_max",
+        "vertex_degree_mean",
+        "vertex_degree_std",
+        "vertex_degree_min",
+        "vertex_degree_max",
+        "ridge_size_mean",
+        "ridge_size_std",
+        "ridge_size_min",
+        "ridge_size_max",
+        "facet_vertex_count_mean",
+        "facet_vertex_count_std",
+        "facet_vertex_count_min",
+        "facet_vertex_count_max",
+        "facet_neighbor_count_mean",
+        "facet_neighbor_count_std",
+        "facet_neighbor_count_min",
+        "facet_neighbor_count_max",
+        "ridge_symp_area_ordered_fraction",
+        "ridge_symp_area_mean_over_volume_sqrt",
+        "ridge_symp_area_std_over_volume_sqrt",
+        "ridge_symp_area_min_over_volume_sqrt",
+        "ridge_symp_area_max_over_volume_sqrt",
+        "ridge_symp_area_q25_over_volume_sqrt",
+        "ridge_symp_area_median_over_volume_sqrt",
+        "ridge_symp_area_q75_over_volume_sqrt",
+        "ridge_symp_area_q90_over_volume_sqrt",
+        "ridge_symp_area_q95_over_volume_sqrt",
+        "ridge_symp_area_sum_over_volume_sqrt",
+        "ridge_symp_area_max_share",
+        "ridge_symp_area_top3_share",
+        "ridge_symp_area_le_1em3_over_volume_sqrt_fraction",
+        "ridge_symp_area_le_1em2_over_volume_sqrt_fraction",
+        "ridge_symp_area_le_1em1_over_volume_sqrt_fraction",
+        "ridge_symp_area_entropy",
+        "ridge_symp_area_effective_face_count",
+        "ridge_symp_area_normalized_entropy"
+      ],
+      "source_cache_fields": [
+        "vertices",
+        "vertex_facet_incidence",
+        "volume"
+      ]
+    },
+    "selection_semantics": "selection reads the frozen candidate-feature-table.jsonl and writes selected-candidates-before-sys.jsonl plus selection-plan.json",
+    "baseline_policy": "per_selection_matched",
+    "sys_cache": {
+      "schema": "sys-datascience.extreme-scalar-rejection-proposer.evaluated-target.v2",
+      "reuse_key": "candidate_id; poly_id is recorded for human compatibility checks",
+      "reuse_contract": "sys-evaluation-cache.jsonl is append/resume by candidate_id and is intentionally reusable across selection configs that name the same candidate ids"
+    },
+    "cache_lifecycle": "artifact-producing stages overwrite their own files except sys, which appends missing candidate ids; cleanup is manual with rm -rf <out-dir>",
+    "report_semantics": "reports read frozen selection-plan.json and selected-candidates-before-sys.jsonl instead of recomputing selection semantics from current CLI/config arguments"
+  },
+  "seed": 2026071201,
+  "candidates_per_bucket": 5000,
+  "limit_total": null,
+  "feature_rows": 50000,
+  "baseline_policy": "per_selection_matched",
+  "baseline_replicates": 0,
+  "rule_set": "frozen-covariance-validation",
+  "rules": [
+    {
+      "selection_feature": "vertex_covariance_rho",
+      "selection_direction": "low",
+      "global_top": [],
+      "per_bucket_top": [],
+      "percentile_cutoffs": []
+    },
+    {
+      "selection_feature": "ridge_symp_area_sum_over_volume_sqrt",
+      "selection_direction": "low",
+      "global_top": [],
+      "per_bucket_top": [],
+      "percentile_cutoffs": []
+    },
+    {
+      "selection_feature": "ridge_symp_area_max_share",
+      "selection_direction": "low",
+      "global_top": [],
+      "per_bucket_top": [],
+      "percentile_cutoffs": []
+    }
+  ],
+  "per_bucket_cascade": null,
+  "frozen_covariance_validation": {
+    "scope": "actual_bucket_id_within_one_producer_seed",
+    "rounding": "ceil_min_one",
+    "rho_feature": "vertex_covariance_rho",
+    "rho_direction": "low",
+    "rho_fraction": 0.005,
+    "ridge_primary_feature": "ridge_symp_area_sum_over_volume_sqrt",
+    "ridge_primary_direction": "low",
+    "ridge_primary_fraction": 0.01,
+    "ridge_secondary_feature": "ridge_symp_area_max_share",
+    "ridge_secondary_direction": "low",
+    "ridge_secondary_fraction": 0.5,
+    "control_count_per_bucket": 25,
+    "control_seed": 2026071299,
+    "control_exclusion": "rho_ridge_union"
+  },
+  "selection_feature": "vertex_covariance_rho",
+  "selection_direction": "low",
+  "global_top": [
+    1,
+    5
+  ],
+  "per_bucket_top": [
+    1
+  ],
+  "percentile_cutoffs": [
+    0.1
+  ],
+  "selection_sets": 3,
+  "selected_rows_sum_over_sets": 750,
+  "unique_selected_rows": 719,
+  "unique_baseline_rows": 0,
+  "unique_selected_or_baseline_rows": 719,
+  "selections": [
+    {
+      "selection_id": "frozen_low_vertex_covariance_rho_bottom_0p005",
+      "selection_kind": "frozen_covariance_rho_arm",
+      "selection_feature": "vertex_covariance_rho",
+      "selection_direction": "low",
+      "requested_budget": "per_bucket_fraction=0.005000;rounding=ceil_min_one",
+      "selected_rows": 250
+    },
+    {
+      "selection_id": "frozen_ridge_bottom_0p01_then_bottom_0p5",
+      "selection_kind": "frozen_ridge_comparator_arm",
+      "selection_feature": "ridge_symp_area_sum_over_volume_sqrt",
+      "selection_direction": "low",
+      "requested_budget": "primary_per_bucket_fraction=0.010000;secondary_within_primary_fraction=0.500000;rounding=ceil_min_one",
+      "selected_rows": 250
+    },
+    {
+      "selection_id": "frozen_shared_disjoint_control_25_per_bucket",
+      "selection_kind": "frozen_shared_disjoint_control",
+      "selection_feature": "vertex_covariance_rho",
+      "selection_direction": "low",
+      "requested_budget": "count_per_bucket=25;control_seed=2026071299",
+      "selected_rows": 250
+    }
+  ]
+}

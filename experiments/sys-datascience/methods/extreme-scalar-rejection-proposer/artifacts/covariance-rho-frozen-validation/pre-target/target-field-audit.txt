@@ -1,0 +1,12 @@
+Command (2026-07-12, target-free, before capacity/sys):
+python3 experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/check_no_target_fields.py \
+  /tmp/joern/covariance-line/frozen-packet/seed-2026071201/candidate-feature-table.jsonl \
+  /tmp/joern/covariance-line/frozen-packet/seed-2026071202/candidate-feature-table.jsonl \
+  /tmp/joern/covariance-line/frozen-packet/frozen-selected-candidates-before-sys.jsonl
+
+Scope: both geometry-only feature tables are the direct selection inputs; the
+combined frozen selected manifest is the target-stage input.  The audit rejects
+JSON key paths containing sys, capacity, bounce, target, or min_action.
+
+Result:
+checked 3 pre-target JSONL artifact(s): no forbidden keys

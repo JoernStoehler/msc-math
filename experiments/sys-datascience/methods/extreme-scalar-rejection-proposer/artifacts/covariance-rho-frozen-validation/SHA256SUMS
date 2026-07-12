@@ -1,0 +1,20 @@
+# Compact packet artifacts
+a5bfea53e0c5ff90f9e4fa00b96563a64f1ef98053f2c4f3c472fb1821cfafbf  evaluation/TECHNICAL_REVIEW.md
+aa4337006552a0628a5096e5ae0b11a1b4de8c385610bb0e68609c9f37026acb  evaluation/covariance-rho-validation-verdict.json
+16a007c92b3afd3b5b475f30196b236ed7ab87aaf91453ae485e5a3b0362ef5a  evaluation/seed-2026071201-sys-evaluation-cache.jsonl
+36faf6a2d71a13d2821f2841b967998a6dc102f41c739f45bfab88f7c0beb800  evaluation/seed-2026071202-sys-evaluation-cache.jsonl
+bc5bbf48ae8cecfb2c4bb250c09450e269d6b4df18da6da5009256fd42a23bff  pre-target/frozen-manifest-summary.json
+0f3dcb1a518f864d9e4ba76e7471a87e2ce4c070bcff103247c7732da688438a  pre-target/frozen-selected-candidates-before-sys.jsonl
+9eb64ed8123e07ba2db8f8ad2a345cccf0a455a9c3bc0a80400d27c0da4a926e  pre-target/seed-2026071201/selected-candidates-before-sys.jsonl
+8a94b17d579d5e593f29704d62f5f4228a5cce58c9932d55ed56931db6ee518f  pre-target/seed-2026071201/selection-plan.json
+8efc6df875404ab822b92c3d4450eb052acd7caa449024f30c66ce5d05c0e39a  pre-target/seed-2026071202/selected-candidates-before-sys.jsonl
+8cfb1d6b31f3190b4ff120b26609583966b9ad28da6ea4f3f558183092f7220b  pre-target/seed-2026071202/selection-plan.json
+cd507fbceba59b1afa968e12a80ce80743e9b2e98d0d1fb36ecef29267cc87fb  pre-target/target-field-audit.txt
+
+# Frozen producer and reader identities, relative to this method owner
+c1e611d6aa3b8b3030d392114eba65c6f614f2eeca4daa634b1f0f1a232e73db  ../../src/main.rs
+ac9f9d8b4154e2d73634bf64726fc5039f3598796bcff311cf06a9dcf31093ea  ../../configs/covariance-rho-frozen-seed-2026071201.json
+47eb649d959198c88f7a03bfeb46f3ea77ceb4a0b6facb23ef71b659bb7deefa  ../../configs/covariance-rho-frozen-seed-2026071202.json
+e8570c5fd78cd4ab7eac48c8bd25fa1ab704fd50c43fc0a65703351a780cd63c  ../../assemble_covariance_rho_frozen_manifest.py
+b469c814f8abf73e675b1c579307fb97da68e5b13a46b4ee9b359f42ff87f2f9  ../../check_no_target_fields.py
+0d978c51aa62e4e9d6fbf0072bc0abd85616828629d5025d246c99d260900d2d  ../../analyze_covariance_rho_validation.py

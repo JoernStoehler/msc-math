@@ -1,0 +1,19 @@
+{
+  "stage": "geometry",
+  "out_dir": "/tmp/joern/covariance-line/frozen-packet/seed-2026071202",
+  "seed": 2026071202,
+  "candidates_per_bucket": 5000,
+  "baseline_policy": "per_selection_matched",
+  "baseline_replicates": 1,
+  "selection": {
+    "frozen_covariance_validation": {
+      "rho_fraction": 0.005,
+      "ridge_primary_fraction": 0.01,
+      "ridge_secondary_fraction": 0.5,
+      "control_count_per_bucket": 25,
+      "control_seed": 2026071299
+    }
+  },
+  "jobs": 12,
+  "chunk_rows": 5000
+}

@@ -1,0 +1,45 @@
+{
+  "arm_memberships": {
+    "control": 500,
+    "rho": 500,
+    "ridge": 500
+  },
+  "control_disjoint": true,
+  "control_seed": 2026071299,
+  "feature_rows": 100000,
+  "invalid_status_counts": {
+    "seed-2026071201": {
+      "eligible": 49998,
+      "ordinary_condition_exceeds_limit": 2
+    },
+    "seed-2026071202": {
+      "eligible": 49999,
+      "ordinary_condition_exceeds_limit": 1
+    }
+  },
+  "per_seed_bucket_arm_count": 25,
+  "producer_seeds": [
+    2026071201,
+    2026071202
+  ],
+  "rho_ridge_jaccard": 0.06837606837606838,
+  "rho_ridge_overlap": 64,
+  "schema": "sys-datascience.extreme-scalar-rejection-proposer.covariance-rho-frozen-manifest.v1",
+  "sha256": {
+    "/tmp/joern/covariance-line/frozen-packet/frozen-selected-candidates-before-sys.jsonl": "0f3dcb1a518f864d9e4ba76e7471a87e2ce4c070bcff103247c7732da688438a",
+    "/tmp/joern/covariance-line/frozen-packet/seed-2026071201/candidate-feature-table.jsonl": "e3fcefe0b38fcb3b3f029204d7436219eb1f4c937016d85660efcf2c5bfb0aa5",
+    "/tmp/joern/covariance-line/frozen-packet/seed-2026071201/candidate-geometry-cache.jsonl": "215772f4699d632031a97a09e15092fa02315843fc67bd3846103ade0948f0a7",
+    "/tmp/joern/covariance-line/frozen-packet/seed-2026071201/resolved-run-config.json": "971a50314add3864c83e55ade958790078f0ce693f4688f065a7758000b38c64",
+    "/tmp/joern/covariance-line/frozen-packet/seed-2026071201/selected-candidates-before-sys.jsonl": "9eb64ed8123e07ba2db8f8ad2a345cccf0a455a9c3bc0a80400d27c0da4a926e",
+    "/tmp/joern/covariance-line/frozen-packet/seed-2026071201/selection-plan.json": "8a94b17d579d5e593f29704d62f5f4228a5cce58c9932d55ed56931db6ee518f",
+    "/tmp/joern/covariance-line/frozen-packet/seed-2026071202/candidate-feature-table.jsonl": "8343b1d071e6e08565befb86bfbe0893ba0a98a4e389d7337252bf1085e2cb50",
+    "/tmp/joern/covariance-line/frozen-packet/seed-2026071202/candidate-geometry-cache.jsonl": "069a07a70263dbf7d1ee3a29d1a71af856f777b6488502aaadab9acaac68b367",
+    "/tmp/joern/covariance-line/frozen-packet/seed-2026071202/resolved-run-config.json": "7908cf9350ceadf0ac8aada262bc8cbf942d06adbb1c11fe52cc8eed72525238",
+    "/tmp/joern/covariance-line/frozen-packet/seed-2026071202/selected-candidates-before-sys.jsonl": "8efc6df875404ab822b92c3d4450eb052acd7caa449024f30c66ce5d05c0e39a",
+    "/tmp/joern/covariance-line/frozen-packet/seed-2026071202/selection-plan.json": "8cfb1d6b31f3190b4ff120b26609583966b9ad28da6ea4f3f558183092f7220b",
+    "configs/covariance-rho-frozen-seed-2026071201.json": "ac9f9d8b4154e2d73634bf64726fc5039f3598796bcff311cf06a9dcf31093ea",
+    "configs/covariance-rho-frozen-seed-2026071202.json": "47eb649d959198c88f7a03bfeb46f3ea77ceb4a0b6facb23ef71b659bb7deefa",
+    "src/main.rs": "c1e611d6aa3b8b3030d392114eba65c6f614f2eeca4daa634b1f0f1a232e73db"
+  },
+  "unique_rows": 1436
+}

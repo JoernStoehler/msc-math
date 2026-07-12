@@ -58,6 +58,33 @@ curated `promising-scalars` rule set used by the tracked 100k packet. Scalar
 rules are allowlisted accessors over `CandidateFeatureRow` fields, not JSON
 reflection.
 
+### Frozen canonical-vertex covariance packet
+
+The candidate-feature v3 schema adds the geometry-only feature
+`vertex_covariance_rho = nu2 / nu1`, where `nu1 <= nu2` are the Williamson
+eigenvalues of the population covariance of the canonical distinct primal
+vertices in `(q1,q2,p1,p2)` order. The row also records both Williamson
+eigenvalues, ordinary-eigenvalue conditioning, distinct/expected vertex counts,
+and an explicit eligibility status. The frozen selector excludes ineligible
+rows before forming every arm.
+
+The two `configs/covariance-rho-frozen-seed-*.json` files freeze two 50,000-row
+product populations. Run only `geometry`, `features`, and `selection` before
+portfolio review; do not use `all`, because `all` continues into capacity
+evaluation. `assemble_covariance_rho_frozen_manifest.py` verifies and combines
+the two per-seed selection artifacts, including exact per-stratum arm counts and
+the shared control's disjointness. The large caches and combined manifest live
+under `/tmp/joern/covariance-line/frozen-packet`, not in Git.
+
+After a separately authorized capacity run has written fresh evaluation cache
+files, `analyze_covariance_rho_validation.py` is the only reader for the frozen
+three-arm decision. It accepts the combined manifest plus those fresh cache
+files, rejects row-identity/membership mismatches and missing rows, and writes
+the predeclared rho-control/rho-ridge intervals and verdict. Its `--self-test`
+uses synthetic rows only; it does not read or evaluate the frozen population.
+The completed compact packet is
+`artifacts/covariance-rho-frozen-validation/`.
+
 ## Compact Artifact
 
 Tracked artifact:

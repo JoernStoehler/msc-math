@@ -12,7 +12,7 @@ use euclidean_polytopes::{
     two_faces_from_vertex_facet_incidence, vertex_facets_from_vertex_facet_incidence,
 };
 use exp_sys_landscape::{capacity_billiard, poly_id_from_dual_vertices, SysLandscapePolytopeCache};
-use nalgebra::{DMatrix, Vector2, Vector4};
+use nalgebra::{DMatrix, Matrix4, SymmetricEigen, Vector2, Vector4};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rayon::prelude::*;
@@ -91,6 +91,7 @@ impl SelectionDirection {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 enum ScalarFeature {
+    VertexCovarianceRho,
     FacetCount,
     VertexCount,
     EdgeCount,
@@ -140,6 +141,7 @@ enum ScalarFeature {
 }
 
 const SCALAR_FEATURES: &[ScalarFeature] = &[
+    ScalarFeature::VertexCovarianceRho,
     ScalarFeature::FacetCount,
     ScalarFeature::VertexCount,
     ScalarFeature::EdgeCount,
@@ -203,6 +205,7 @@ impl ScalarFeature {
 
     fn name(self) -> &'static str {
         match self {
+            Self::VertexCovarianceRho => "vertex_covariance_rho",
             Self::FacetCount => "facet_count",
             Self::VertexCount => "vertex_count",
             Self::EdgeCount => "edge_count",
@@ -260,6 +263,7 @@ impl ScalarFeature {
 
     fn value(self, row: &CandidateFeatureRow) -> f64 {
         match self {
+            Self::VertexCovarianceRho => row.vertex_covariance_rho.unwrap_or(f64::NAN),
             Self::FacetCount => row.facet_count as f64,
             Self::VertexCount => row.vertex_count as f64,
             Self::EdgeCount => row.edge_count as f64,
@@ -356,7 +360,7 @@ fn run_metadata(baseline_policy: &str) -> RunMetadata {
                 "random-product:seed{seed}:{k}x{m}:h0p8_1p2:sample{sample_index}".to_string(),
         },
         feature_schema: FeatureSchemaMetadata {
-            schema: "sys-datascience.extreme-scalar-rejection-proposer.candidate-feature.v2"
+            schema: "sys-datascience.extreme-scalar-rejection-proposer.candidate-feature.v3"
                 .to_string(),
             available_scalar_features: available_scalar_feature_names(),
             source_cache_fields: vec![
@@ -512,6 +516,7 @@ struct Args {
     baseline_policy: String,
     selection_rules: Vec<SelectionRule>,
     per_bucket_cascade: Option<PerBucketCascade>,
+    frozen_covariance_validation: Option<FrozenCovarianceValidation>,
     use_legacy_default_rule_alias: bool,
     jobs: usize,
     chunk_rows: usize,
@@ -543,6 +548,91 @@ struct SelectionConfigFile {
     per_bucket_top: Option<Vec<usize>>,
     percentile_cutoffs: Option<Vec<f64>>,
     per_bucket_cascade: Option<PerBucketCascadeConfigFile>,
+    frozen_covariance_validation: Option<FrozenCovarianceValidationConfigFile>,
+}
+
+#[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct FrozenCovarianceValidationConfigFile {
+    rho_fraction: f64,
+    ridge_primary_fraction: f64,
+    ridge_secondary_fraction: f64,
+    control_count_per_bucket: usize,
+    control_seed: u64,
+}
+
+#[derive(Clone, Debug)]
+struct FrozenCovarianceValidation {
+    rho_fraction: f64,
+    ridge_primary_fraction: f64,
+    ridge_secondary_fraction: f64,
+    control_count_per_bucket: usize,
+    control_seed: u64,
+}
+
+#[derive(Clone, PartialEq, Serialize, Deserialize)]
+struct FrozenCovarianceValidationReport {
+    scope: String,
+    rounding: String,
+    rho_feature: String,
+    rho_direction: String,
+    rho_fraction: f64,
+    ridge_primary_feature: String,
+    ridge_primary_direction: String,
+    ridge_primary_fraction: f64,
+    ridge_secondary_feature: String,
+    ridge_secondary_direction: String,
+    ridge_secondary_fraction: f64,
+    control_count_per_bucket: usize,
+    control_seed: u64,
+    control_exclusion: String,
+}
+
+impl FrozenCovarianceValidation {
+    fn report(&self) -> FrozenCovarianceValidationReport {
+        FrozenCovarianceValidationReport {
+            scope: "actual_bucket_id_within_one_producer_seed".to_string(),
+            rounding: "ceil_min_one".to_string(),
+            rho_feature: "vertex_covariance_rho".to_string(),
+            rho_direction: "low".to_string(),
+            rho_fraction: self.rho_fraction,
+            ridge_primary_feature: "ridge_symp_area_sum_over_volume_sqrt".to_string(),
+            ridge_primary_direction: "low".to_string(),
+            ridge_primary_fraction: self.ridge_primary_fraction,
+            ridge_secondary_feature: "ridge_symp_area_max_share".to_string(),
+            ridge_secondary_direction: "low".to_string(),
+            ridge_secondary_fraction: self.ridge_secondary_fraction,
+            control_count_per_bucket: self.control_count_per_bucket,
+            control_seed: self.control_seed,
+            control_exclusion: "rho_ridge_union".to_string(),
+        }
+    }
+
+    fn rules(&self) -> Vec<SelectionRule> {
+        vec![
+            SelectionRule::single(
+                ScalarFeature::VertexCovarianceRho,
+                SelectionDirection::Low,
+                &[],
+                &[],
+                &[],
+            ),
+            SelectionRule::single(
+                ScalarFeature::RidgeSympAreaSumOverVolumeSqrt,
+                SelectionDirection::Low,
+                &[],
+                &[],
+                &[],
+            ),
+            SelectionRule::single(
+                ScalarFeature::RidgeSympAreaMaxShare,
+                SelectionDirection::Low,
+                &[],
+                &[],
+                &[],
+            ),
+        ]
+    }
 }
 
 #[derive(Clone, Deserialize)]
@@ -615,6 +705,8 @@ struct ResolvedSelectionConfig {
     rules: Vec<SelectionRuleReport>,
     #[serde(skip_serializing_if = "Option::is_none")]
     per_bucket_cascade: Option<PerBucketCascadeReport>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    frozen_covariance_validation: Option<FrozenCovarianceValidationReport>,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -718,6 +810,24 @@ struct CandidateFeatureRow {
     ridge_count: usize,
     is_simple: bool,
     simple_vertex_fraction: f64,
+    #[serde(default)]
+    vertex_covariance_rho: Option<f64>,
+    #[serde(default)]
+    vertex_covariance_nu1: Option<f64>,
+    #[serde(default)]
+    vertex_covariance_nu2: Option<f64>,
+    #[serde(default)]
+    vertex_covariance_condition: Option<f64>,
+    #[serde(default)]
+    vertex_covariance_ordinary_eigenvalue_min: Option<f64>,
+    #[serde(default)]
+    vertex_covariance_ordinary_eigenvalue_max: Option<f64>,
+    #[serde(default)]
+    vertex_covariance_distinct_vertex_count: usize,
+    #[serde(default)]
+    vertex_covariance_expected_vertex_count: usize,
+    #[serde(default)]
+    vertex_covariance_status: String,
     edge_density: f64,
     vertex_incident_facets_mean: f64,
     vertex_incident_facets_std: f64,
@@ -838,6 +948,8 @@ struct SelectionPlanReport {
     rules: Vec<SelectionRuleReport>,
     #[serde(default)]
     per_bucket_cascade: Option<PerBucketCascadeReport>,
+    #[serde(default)]
+    frozen_covariance_validation: Option<FrozenCovarianceValidationReport>,
     selection_feature: String,
     selection_direction: String,
     global_top: Vec<usize>,
@@ -1075,8 +1187,11 @@ fn validate_fraction(value: f64, field: &str) -> f64 {
 }
 
 fn validate_cascade_conflicts(selection: &SelectionConfigFile) {
-    if selection.per_bucket_cascade.is_some() {
+    if selection.per_bucket_cascade.is_some() || selection.frozen_covariance_validation.is_some() {
         assert!(
+            !(selection.per_bucket_cascade.is_some()
+                && selection.frozen_covariance_validation.is_some())
+                &&
             selection.rule_set.is_none()
                 && selection.selection_feature.is_none()
                 && selection.selection_direction.is_none()
@@ -1084,8 +1199,32 @@ fn validate_cascade_conflicts(selection: &SelectionConfigFile) {
                 && selection.global_top.is_none()
                 && selection.per_bucket_top.is_none()
                 && selection.percentile_cutoffs.is_none(),
-            "selection.per_bucket_cascade cannot be combined with ordinary scalar-rule selection fields"
+            "special multi-stage selection cannot be combined with another special mode or ordinary scalar-rule selection fields"
         );
+    }
+}
+
+fn parse_frozen_covariance_validation(
+    config: FrozenCovarianceValidationConfigFile,
+) -> FrozenCovarianceValidation {
+    FrozenCovarianceValidation {
+        rho_fraction: validate_fraction(
+            config.rho_fraction,
+            "selection.frozen_covariance_validation.rho_fraction",
+        ),
+        ridge_primary_fraction: validate_fraction(
+            config.ridge_primary_fraction,
+            "selection.frozen_covariance_validation.ridge_primary_fraction",
+        ),
+        ridge_secondary_fraction: validate_fraction(
+            config.ridge_secondary_fraction,
+            "selection.frozen_covariance_validation.ridge_secondary_fraction",
+        ),
+        control_count_per_bucket: validate_positive_usize(
+            config.control_count_per_bucket,
+            "selection.frozen_covariance_validation.control_count_per_bucket",
+        ),
+        control_seed: config.control_seed,
     }
 }
 
@@ -1151,6 +1290,7 @@ fn parse_args() -> Args {
     let mut rule_set = "single".to_string();
     let mut explicit_selection_rules = None::<Vec<(ScalarFeature, SelectionDirection)>>;
     let mut per_bucket_cascade = None::<PerBucketCascade>;
+    let mut frozen_covariance_validation = None::<FrozenCovarianceValidation>;
     let mut jobs = std::thread::available_parallelism().map_or(1, usize::from);
     let mut chunk_rows = DEFAULT_CHUNK_ROWS;
 
@@ -1184,6 +1324,12 @@ fn parse_args() -> Args {
                 let cascade = per_bucket_cascade.as_ref().expect("cascade was set");
                 selection_feature = cascade.primary_feature;
                 selection_direction = cascade.primary_direction;
+            }
+            if let Some(value) = selection.frozen_covariance_validation {
+                frozen_covariance_validation = Some(parse_frozen_covariance_validation(value));
+                rule_set = "frozen-covariance-validation".to_string();
+                selection_feature = ScalarFeature::VertexCovarianceRho;
+                selection_direction = SelectionDirection::Low;
             }
             if let Some(value) = selection.rule_set {
                 rule_set = value;
@@ -1268,10 +1414,13 @@ fn parse_args() -> Args {
         "only baseline_policy=per_selection_matched is implemented"
     );
     assert!(
-        per_bucket_cascade.is_none() || !cli_has_scalar_selection_override,
-        "selection.per_bucket_cascade cannot be combined with ordinary scalar-rule CLI overrides"
+        (per_bucket_cascade.is_none() && frozen_covariance_validation.is_none())
+            || !cli_has_scalar_selection_override,
+        "special multi-stage selection cannot be combined with ordinary scalar-rule CLI overrides"
     );
-    let selection_rules = if let Some(cascade) = &per_bucket_cascade {
+    let selection_rules = if let Some(frozen) = &frozen_covariance_validation {
+        frozen.rules()
+    } else if let Some(cascade) = &per_bucket_cascade {
         cascade.rules()
     } else {
         build_selection_rules(
@@ -1305,6 +1454,7 @@ fn parse_args() -> Args {
         baseline_policy,
         selection_rules,
         per_bucket_cascade,
+        frozen_covariance_validation,
         use_legacy_default_rule_alias,
         jobs,
         chunk_rows,
@@ -1828,6 +1978,155 @@ fn build_geometry_row(seed: u64, k: usize, m: usize, sample_index: usize) -> Can
     }
 }
 
+const VERTEX_COVARIANCE_CONDITION_LIMIT: f64 = 1.0e10;
+
+#[derive(Clone, Debug)]
+struct VertexCovarianceDiagnostics {
+    rho: Option<f64>,
+    nu1: Option<f64>,
+    nu2: Option<f64>,
+    condition: Option<f64>,
+    ordinary_eigenvalue_min: Option<f64>,
+    ordinary_eigenvalue_max: Option<f64>,
+    distinct_vertex_count: usize,
+    expected_vertex_count: usize,
+    status: String,
+}
+
+fn canonical_distinct_vertices(vertices: &[Vector4<f64>]) -> Vec<Vector4<f64>> {
+    let mut keyed = BTreeMap::<[u64; 4], Vector4<f64>>::new();
+    for vertex in vertices {
+        let key = std::array::from_fn(|index| {
+            if vertex[index] == 0.0 {
+                0.0_f64.to_bits()
+            } else {
+                vertex[index].to_bits()
+            }
+        });
+        keyed.entry(key).or_insert_with(|| *vertex);
+    }
+    keyed.into_values().collect()
+}
+
+/// Computes the population covariance of the canonical distinct primal vertices
+/// and its two four-dimensional Williamson eigenvalues.  For positive definite
+/// `C`, the squared Williamson eigenvalues are the roots of
+/// `t^2 - s t + det(C)`, where `s = -tr((J C)^2)/2`, in project coordinate
+/// order `(q1,q2,p1,p2)`.  The result is explicitly ineligible when ordinary
+/// eigenvalue conditioning or the invariant calculation is numerically unsafe.
+fn vertex_covariance_diagnostics(
+    vertices: &[Vector4<f64>],
+    expected_vertex_count: usize,
+) -> VertexCovarianceDiagnostics {
+    let vertices = canonical_distinct_vertices(vertices);
+    let count = vertices.len();
+    let mut result = VertexCovarianceDiagnostics {
+        rho: None,
+        nu1: None,
+        nu2: None,
+        condition: None,
+        ordinary_eigenvalue_min: None,
+        ordinary_eigenvalue_max: None,
+        distinct_vertex_count: count,
+        expected_vertex_count,
+        status: String::new(),
+    };
+    if count != expected_vertex_count {
+        result.status = "unexpected_distinct_vertex_count".to_string();
+        return result;
+    }
+    if count < 2
+        || vertices
+            .iter()
+            .any(|vertex| !vertex.iter().all(|x| x.is_finite()))
+    {
+        result.status = "insufficient_or_nonfinite_vertices".to_string();
+        return result;
+    }
+    let mean = vertices
+        .iter()
+        .fold(Vector4::zeros(), |sum, vertex| sum + vertex)
+        / count as f64;
+    let covariance = vertices.iter().fold(Matrix4::zeros(), |sum, vertex| {
+        let centered = vertex - mean;
+        sum + centered * centered.transpose()
+    }) / count as f64;
+    if !covariance.iter().all(|x| x.is_finite()) {
+        result.status = "nonfinite_covariance".to_string();
+        return result;
+    }
+    let ordinary = SymmetricEigen::new(covariance);
+    let lambda_min = ordinary
+        .eigenvalues
+        .iter()
+        .copied()
+        .reduce(f64::min)
+        .unwrap();
+    let lambda_max = ordinary
+        .eigenvalues
+        .iter()
+        .copied()
+        .reduce(f64::max)
+        .unwrap();
+    result.ordinary_eigenvalue_min = Some(lambda_min);
+    result.ordinary_eigenvalue_max = Some(lambda_max);
+    if !(lambda_min.is_finite() && lambda_max.is_finite() && lambda_min > 0.0) {
+        result.status = "covariance_not_positive_definite".to_string();
+        return result;
+    }
+    let condition = lambda_max / lambda_min;
+    result.condition = Some(condition);
+    if !condition.is_finite() || condition > VERTEX_COVARIANCE_CONDITION_LIMIT {
+        result.status = "ordinary_condition_exceeds_limit".to_string();
+        return result;
+    }
+    let j = Matrix4::new(
+        0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, -1.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0,
+    );
+    let jc = j * covariance;
+    let sum_nu_squared = -0.5 * (jc * jc).trace();
+    let product_nu_squared = covariance.determinant();
+    let raw_discriminant = sum_nu_squared * sum_nu_squared - 4.0 * product_nu_squared;
+    let discriminant_scale = (sum_nu_squared * sum_nu_squared)
+        .abs()
+        .max((4.0 * product_nu_squared).abs())
+        .max(1.0);
+    if !sum_nu_squared.is_finite()
+        || !product_nu_squared.is_finite()
+        || sum_nu_squared <= 0.0
+        || product_nu_squared <= 0.0
+        || raw_discriminant < -1.0e-12 * discriminant_scale
+    {
+        result.status = "unstable_williamson_invariants".to_string();
+        return result;
+    }
+    let discriminant = raw_discriminant.max(0.0).sqrt();
+    let nu2_squared = 0.5 * (sum_nu_squared + discriminant);
+    // Recover the smaller root from the product to avoid cancellation when the
+    // two Williamson eigenvalues are far apart.
+    let nu1_squared = product_nu_squared / nu2_squared;
+    if !(nu1_squared.is_finite()
+        && nu2_squared.is_finite()
+        && nu1_squared > 0.0
+        && nu2_squared >= nu1_squared)
+    {
+        result.status = "unstable_williamson_roots".to_string();
+        return result;
+    }
+    let nu1 = nu1_squared.sqrt();
+    let nu2 = nu2_squared.sqrt();
+    let rho = nu2 / nu1;
+    if !rho.is_finite() {
+        result.status = "nonfinite_rho".to_string();
+        return result;
+    }
+    result.rho = Some(rho);
+    result.nu1 = Some(nu1);
+    result.nu2 = Some(nu2);
+    result.status = "eligible".to_string();
+    result
+}
+
 fn feature_row_from_geometry(row: &CandidateGeometryRow) -> CandidateFeatureRow {
     let start = std::time::Instant::now();
     let incidence = rows_to_incidence(&row.vertex_facet_incidence);
@@ -1849,8 +2148,10 @@ fn feature_row_from_geometry(row: &CandidateGeometryRow) -> CandidateFeatureRow 
         &incidence,
         row.volume.sqrt(),
     );
+    let covariance =
+        vertex_covariance_diagnostics(&vertices, row.product_k.saturating_mul(row.product_m));
     CandidateFeatureRow {
-        schema: "sys-datascience.extreme-scalar-rejection-proposer.candidate-feature.v2"
+        schema: "sys-datascience.extreme-scalar-rejection-proposer.candidate-feature.v3"
             .to_string(),
         candidate_id: row.candidate_id.clone(),
         name: row.name.clone(),
@@ -1872,6 +2173,15 @@ fn feature_row_from_geometry(row: &CandidateGeometryRow) -> CandidateFeatureRow 
         ridge_count: skeleton.ridge_count,
         is_simple: skeleton.is_simple,
         simple_vertex_fraction: skeleton.simple_vertex_fraction,
+        vertex_covariance_rho: covariance.rho,
+        vertex_covariance_nu1: covariance.nu1,
+        vertex_covariance_nu2: covariance.nu2,
+        vertex_covariance_condition: covariance.condition,
+        vertex_covariance_ordinary_eigenvalue_min: covariance.ordinary_eigenvalue_min,
+        vertex_covariance_ordinary_eigenvalue_max: covariance.ordinary_eigenvalue_max,
+        vertex_covariance_distinct_vertex_count: covariance.distinct_vertex_count,
+        vertex_covariance_expected_vertex_count: covariance.expected_vertex_count,
+        vertex_covariance_status: covariance.status,
         edge_density: skeleton.edge_density,
         vertex_incident_facets_mean: skeleton.vertex_incident_facets_mean,
         vertex_incident_facets_std: skeleton.vertex_incident_facets_std,
@@ -2038,7 +2348,150 @@ fn per_bucket_cascade_selection_sets(
     sets
 }
 
+fn frozen_control_hash(control_seed: u64, candidate_id: &str) -> [u8; 32] {
+    let mut hasher = blake3::Hasher::new();
+    hasher.update(b"frozen-canonical-vertex-covariance-control-v1");
+    hasher.update(&control_seed.to_le_bytes());
+    hasher.update(candidate_id.as_bytes());
+    *hasher.finalize().as_bytes()
+}
+
+fn frozen_covariance_validation_selection_sets(
+    features: &[CandidateFeatureRow],
+    design: &FrozenCovarianceValidation,
+) -> Vec<SelectionSet> {
+    let rho_rule = SelectionRule::single(
+        ScalarFeature::VertexCovarianceRho,
+        SelectionDirection::Low,
+        &[],
+        &[],
+        &[],
+    );
+    let ridge_primary_rule = SelectionRule::single(
+        ScalarFeature::RidgeSympAreaSumOverVolumeSqrt,
+        SelectionDirection::Low,
+        &[],
+        &[],
+        &[],
+    );
+    let ridge_secondary_rule = SelectionRule::single(
+        ScalarFeature::RidgeSympAreaMaxShare,
+        SelectionDirection::Low,
+        &[],
+        &[],
+        &[],
+    );
+    let mut buckets = BTreeMap::<String, Vec<usize>>::new();
+    for (index, row) in features.iter().enumerate() {
+        if row.vertex_covariance_status == "eligible" && row.vertex_covariance_rho.is_some() {
+            buckets
+                .entry(row.bucket_id.clone())
+                .or_default()
+                .push(index);
+        }
+    }
+    assert_eq!(
+        buckets.len(),
+        PRODUCT_PAIRS.len(),
+        "all product buckets must have eligible rows"
+    );
+
+    let mut rho_indices = Vec::new();
+    let mut ridge_indices = Vec::new();
+    let mut by_bucket = Vec::new();
+    for (bucket_id, mut eligible) in buckets {
+        let mut rho_bucket = eligible.clone();
+        sort_selection_indices(&mut rho_bucket, features, &rho_rule);
+        rho_bucket.truncate(fraction_count(rho_bucket.len(), design.rho_fraction));
+
+        sort_selection_indices(&mut eligible, features, &ridge_primary_rule);
+        eligible.truncate(fraction_count(
+            eligible.len(),
+            design.ridge_primary_fraction,
+        ));
+        sort_selection_indices(&mut eligible, features, &ridge_secondary_rule);
+        eligible.truncate(fraction_count(
+            eligible.len(),
+            design.ridge_secondary_fraction,
+        ));
+
+        rho_indices.extend(rho_bucket.iter().copied());
+        ridge_indices.extend(eligible.iter().copied());
+        by_bucket.push((bucket_id, rho_bucket, eligible));
+    }
+    let arm_union = rho_indices
+        .iter()
+        .chain(&ridge_indices)
+        .copied()
+        .collect::<BTreeSet<_>>();
+    let mut control_indices = Vec::new();
+    for (bucket_id, _, _) in &by_bucket {
+        let mut pool = (0..features.len())
+            .filter(|index| {
+                features[*index].bucket_id == *bucket_id
+                    && features[*index].vertex_covariance_status == "eligible"
+                    && !arm_union.contains(index)
+            })
+            .collect::<Vec<_>>();
+        pool.sort_by(|&left, &right| {
+            frozen_control_hash(design.control_seed, &features[left].candidate_id)
+                .cmp(&frozen_control_hash(
+                    design.control_seed,
+                    &features[right].candidate_id,
+                ))
+                .then_with(|| {
+                    features[left]
+                        .candidate_id
+                        .cmp(&features[right].candidate_id)
+                })
+        });
+        assert!(
+            pool.len() >= design.control_count_per_bucket,
+            "bucket {bucket_id} has insufficient disjoint control rows"
+        );
+        control_indices.extend(pool.into_iter().take(design.control_count_per_bucket));
+    }
+    assert!(control_indices
+        .iter()
+        .all(|index| !arm_union.contains(index)));
+    vec![
+        SelectionSet {
+            id: "frozen_low_vertex_covariance_rho_bottom_0p005".to_string(),
+            kind: "frozen_covariance_rho_arm".to_string(),
+            feature: ScalarFeature::VertexCovarianceRho,
+            direction: SelectionDirection::Low,
+            requested_budget: format!("per_bucket_fraction={:.6};rounding=ceil_min_one", design.rho_fraction),
+            indices: rho_indices,
+            require_disjoint_baseline: true,
+        },
+        SelectionSet {
+            id: "frozen_ridge_bottom_0p01_then_bottom_0p5".to_string(),
+            kind: "frozen_ridge_comparator_arm".to_string(),
+            feature: ScalarFeature::RidgeSympAreaSumOverVolumeSqrt,
+            direction: SelectionDirection::Low,
+            requested_budget: format!(
+                "primary_per_bucket_fraction={:.6};secondary_within_primary_fraction={:.6};rounding=ceil_min_one",
+                design.ridge_primary_fraction, design.ridge_secondary_fraction
+            ),
+            indices: ridge_indices,
+            require_disjoint_baseline: true,
+        },
+        SelectionSet {
+            id: "frozen_shared_disjoint_control_25_per_bucket".to_string(),
+            kind: "frozen_shared_disjoint_control".to_string(),
+            feature: ScalarFeature::VertexCovarianceRho,
+            direction: SelectionDirection::Low,
+            requested_budget: format!("count_per_bucket={};control_seed={}", design.control_count_per_bucket, design.control_seed),
+            indices: control_indices,
+            require_disjoint_baseline: true,
+        },
+    ]
+}
+
 fn selection_sets(features: &[CandidateFeatureRow], args: &Args) -> Vec<SelectionSet> {
+    if let Some(design) = &args.frozen_covariance_validation {
+        return frozen_covariance_validation_selection_sets(features, design);
+    }
     if let Some(cascade) = &args.per_bucket_cascade {
         return per_bucket_cascade_selection_sets(features, cascade);
     }
@@ -2595,6 +3048,10 @@ fn resolved_run_config(args: &Args) -> ResolvedRunConfig {
                 .per_bucket_cascade
                 .as_ref()
                 .map(PerBucketCascade::report),
+            frozen_covariance_validation: args
+                .frozen_covariance_validation
+                .as_ref()
+                .map(FrozenCovarianceValidation::report),
         },
         jobs: args.jobs,
         chunk_rows: args.chunk_rows,
@@ -2809,11 +3266,16 @@ fn run_selection_stage(args: &Args) {
     let started = std::time::Instant::now();
     let features = read_jsonl::<CandidateFeatureRow>(&feature_path(&args.out_dir));
     let selections = selection_sets(&features, args);
+    let baseline_replicates = if args.frozen_covariance_validation.is_some() {
+        0
+    } else {
+        args.baseline_replicates
+    };
     let selection_rows =
-        pre_target_selection_rows(&features, &selections, args, args.baseline_replicates);
+        pre_target_selection_rows(&features, &selections, args, baseline_replicates);
     write_jsonl(&selection_path(&args.out_dir), &selection_rows);
     let unique_selected = unique_selected_indices(&selections);
-    let unique_baseline = unique_baseline_indices(&features, &selections, args.baseline_replicates);
+    let unique_baseline = unique_baseline_indices(&features, &selections, baseline_replicates);
     let unique_selected_or_baseline = unique_selected
         .union(&unique_baseline)
         .copied()
@@ -2823,7 +3285,9 @@ fn run_selection_stage(args: &Args) {
         .map(|selection| selection.indices.len())
         .sum::<usize>();
     let plan = SelectionPlanReport {
-        schema: if args.per_bucket_cascade.is_some() {
+        schema: if args.frozen_covariance_validation.is_some() {
+            "sys-datascience.extreme-scalar-rejection-proposer.selection-plan.v4"
+        } else if args.per_bucket_cascade.is_some() {
             "sys-datascience.extreme-scalar-rejection-proposer.selection-plan.v3"
         } else {
             "sys-datascience.extreme-scalar-rejection-proposer.selection-plan.v2"
@@ -2835,13 +3299,17 @@ fn run_selection_stage(args: &Args) {
         limit_total: args.limit_total,
         feature_rows: features.len(),
         baseline_policy: args.baseline_policy.clone(),
-        baseline_replicates: args.baseline_replicates,
+        baseline_replicates,
         rule_set: args.rule_set.clone(),
         rules: selection_rule_reports(&args.selection_rules),
         per_bucket_cascade: args
             .per_bucket_cascade
             .as_ref()
             .map(PerBucketCascade::report),
+        frozen_covariance_validation: args
+            .frozen_covariance_validation
+            .as_ref()
+            .map(FrozenCovarianceValidation::report),
         selection_feature: args.selection_feature.name().to_string(),
         selection_direction: args.selection_direction.as_str().to_string(),
         global_top: args.global_top.clone(),
@@ -3134,6 +3602,25 @@ fn main() {
 mod tests {
     use super::*;
 
+    fn axis_vertices_for_diagonal_covariance(diagonal: [f64; 4]) -> Vec<Vector4<f64>> {
+        let mut vertices = Vec::new();
+        for coordinate in 0..4 {
+            let mut vertex = Vector4::zeros();
+            vertex[coordinate] = (4.0 * diagonal[coordinate]).sqrt();
+            vertices.push(vertex);
+            vertices.push(-vertex);
+        }
+        vertices
+    }
+
+    fn assert_close(left: f64, right: f64, relative_tolerance: f64) {
+        let scale = left.abs().max(right.abs()).max(1.0);
+        assert!(
+            (left - right).abs() <= relative_tolerance * scale,
+            "left={left:.17e} right={right:.17e} tolerance={relative_tolerance:.3e}"
+        );
+    }
+
     fn feature_row(
         bucket: &str,
         candidate: &str,
@@ -3147,8 +3634,129 @@ mod tests {
             bucket_id: bucket.to_string(),
             ridge_symp_area_sum_over_volume_sqrt: primary,
             ridge_symp_area_max_share: secondary,
+            vertex_covariance_rho: Some(primary),
+            vertex_covariance_status: "eligible".to_string(),
             ..CandidateFeatureRow::default()
         }
+    }
+
+    #[test]
+    fn vertex_covariance_matches_analytic_diagonal_fixture() {
+        let vertices = axis_vertices_for_diagonal_covariance([1.0, 4.0, 9.0, 16.0]);
+        let diagnostics = vertex_covariance_diagnostics(&vertices, 8);
+        assert_eq!(diagnostics.status, "eligible");
+        assert_close(diagnostics.nu1.unwrap(), 3.0, 1.0e-13);
+        assert_close(diagnostics.nu2.unwrap(), 8.0, 1.0e-13);
+        assert_close(diagnostics.rho.unwrap(), 8.0 / 3.0, 1.0e-13);
+        assert_close(diagnostics.condition.unwrap(), 16.0, 1.0e-13);
+    }
+
+    #[test]
+    fn vertex_covariance_is_translation_scale_order_and_symplectic_invariant() {
+        let vertices = axis_vertices_for_diagonal_covariance([1.0, 4.0, 9.0, 16.0]);
+        let reference = vertex_covariance_diagnostics(&vertices, 8);
+        let translation = Vector4::new(11.0, -7.0, 3.5, 2.25);
+        let mut transformed = vertices
+            .iter()
+            .map(|vertex| 2.75 * vertex + translation)
+            .collect::<Vec<_>>();
+        transformed.reverse();
+        let translated_scaled = vertex_covariance_diagnostics(&transformed, 8);
+        assert_close(
+            translated_scaled.rho.unwrap(),
+            reference.rho.unwrap(),
+            1.0e-12,
+        );
+
+        // q -> q + Bp with symmetric B is symplectic in (q1,q2,p1,p2).
+        let shear = Matrix4::new(
+            1.0, 0.0, 0.3, -0.2, 0.0, 1.0, -0.2, 0.4, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+        );
+        let sheared = vertices
+            .iter()
+            .map(|vertex| shear * vertex)
+            .collect::<Vec<_>>();
+        let symplectic = vertex_covariance_diagnostics(&sheared, 8);
+        assert_close(symplectic.nu1.unwrap(), reference.nu1.unwrap(), 2.0e-12);
+        assert_close(symplectic.nu2.unwrap(), reference.nu2.unwrap(), 2.0e-12);
+        assert_close(symplectic.rho.unwrap(), reference.rho.unwrap(), 2.0e-12);
+
+        // Swap the two canonical pairs simultaneously.
+        let pair_swap = Matrix4::new(
+            0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+        );
+        let permuted = vertices
+            .iter()
+            .map(|vertex| pair_swap * vertex)
+            .collect::<Vec<_>>();
+        let permutation = vertex_covariance_diagnostics(&permuted, 8);
+        assert_close(permutation.rho.unwrap(), reference.rho.unwrap(), 1.0e-13);
+    }
+
+    #[test]
+    fn vertex_covariance_agrees_with_independent_python_reference_fixture() {
+        // Reference values were computed from numpy.linalg.eigvals(1j * J @ C)
+        // for C=diag(2,3,5,7), independently of the invariant implementation.
+        let vertices = axis_vertices_for_diagonal_covariance([2.0, 3.0, 5.0, 7.0]);
+        let diagnostics = vertex_covariance_diagnostics(&vertices, 8);
+        assert_close(diagnostics.nu1.unwrap(), 3.162_277_660_168_379_5, 1.0e-13);
+        assert_close(diagnostics.nu2.unwrap(), 4.582_575_694_955_84, 1.0e-13);
+        assert_close(diagnostics.rho.unwrap(), 1.449_137_674_618_944, 1.0e-13);
+    }
+
+    #[test]
+    fn cached_product_vertices_match_reconstructed_product_geometry() {
+        let geometry_row = build_geometry_row(90210, 4, 5, 3);
+        let cached = vertex_covariance_diagnostics(
+            &arrays_to_vectors(&geometry_row.vertices),
+            geometry_row.product_k * geometry_row.product_m,
+        );
+        let reconstructed = generate_product_geometry(90210, 4, 5, 3).unwrap();
+        let direct = vertex_covariance_diagnostics(&reconstructed.vertices, 4 * 5);
+        assert_eq!(cached.status, "eligible");
+        assert_eq!(direct.status, "eligible");
+        assert_close(cached.nu1.unwrap(), direct.nu1.unwrap(), 1.0e-14);
+        assert_close(cached.nu2.unwrap(), direct.nu2.unwrap(), 1.0e-14);
+        assert_close(cached.rho.unwrap(), direct.rho.unwrap(), 1.0e-14);
+    }
+
+    #[test]
+    fn frozen_multi_arm_selection_has_exact_counts_and_shared_disjoint_control() {
+        let mut features = Vec::with_capacity(PRODUCT_PAIRS.len() * 5000);
+        for (k, m) in PRODUCT_PAIRS {
+            let bucket = bucket_id(*k, *m);
+            for sample in 0..5000 {
+                let mut row = feature_row(
+                    &bucket,
+                    &format!("seed7-{k}x{m}-{sample:04}"),
+                    sample as f64,
+                    sample as f64,
+                );
+                row.product_k = *k;
+                row.product_m = *m;
+                features.push(row);
+            }
+        }
+        let design = FrozenCovarianceValidation {
+            rho_fraction: 0.005,
+            ridge_primary_fraction: 0.01,
+            ridge_secondary_fraction: 0.5,
+            control_count_per_bucket: 25,
+            control_seed: 2026071299,
+        };
+        let sets = frozen_covariance_validation_selection_sets(&features, &design);
+        assert_eq!(sets.len(), 3);
+        assert_eq!(sets[0].indices.len(), 250);
+        assert_eq!(sets[1].indices.len(), 250);
+        assert_eq!(sets[2].indices.len(), 250);
+        let rho = sets[0].indices.iter().copied().collect::<BTreeSet<_>>();
+        let ridge = sets[1].indices.iter().copied().collect::<BTreeSet<_>>();
+        let control = sets[2].indices.iter().copied().collect::<BTreeSet<_>>();
+        assert_eq!(rho.intersection(&ridge).count(), 250);
+        assert!(rho.is_disjoint(&control));
+        assert!(ridge.is_disjoint(&control));
+        let repeated = frozen_covariance_validation_selection_sets(&features, &design);
+        assert_eq!(sets[2].indices, repeated[2].indices);
     }
 
     fn cascade(primary_fraction: f64, secondary_fraction: f64) -> PerBucketCascade {
