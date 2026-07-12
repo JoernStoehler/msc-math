@@ -16,7 +16,10 @@ Keep route-changing code local here before promoting stable contracts into
   candidate set; candidate-filter safety remains a separate audit question.
 - `src/exact_route/`: local exact-all-visited-sigma reference route. It
   enumerates the transition-pruned sigma stream and exact-solves each visited
-  sigma, so it does not depend on f64 candidate retention.
+  sigma, so it does not depend on f64 candidate retention. Under a
+  source-backed complete HK candidate-family contract, its least action can
+  certify the scalar capacity without a per-word second-order test; its
+  one-sigma outputs remain KKT witnesses, not automatically physical orbits.
 - `src/validation.rs` and `src/geometry.rs`: f64 input validation and
   combinatorics diagnostics used by the f64 route.
 - `src/product/`: product detection, rounding, and near-redundant product
@@ -73,7 +76,7 @@ The remaining route work is split as follows:
 | heuristic f64 capacity | local route in `src/f64_route/` | scan/analyze/performance packets exist | keep labels explicitly heuristic; do not promote as certified |
 | retained-candidate f64 predicate/fallback | local fallback aggregation in `src/fallback_route/`; retained-candidate audit in `tools/kkt_error_audit/` | verified-inverse predicate has useful survivor-level evidence but not a production proof | compare exact-resolving more retained capacity-window candidates against proving stronger f64 predicates |
 | candidate-filter safety | no production route; diagnostic audit in `tools/candidate_filter_audit/` | complete small/edge cases measured; HKO only first-500 diagnostic | build targeted/exhaustive/parallel audits before claiming retained-candidate exact certification is complete |
-| exact-all-visited-sigma rational capacity | local transition-pruned reference route in `src/exact_route/` | small audit measurements exist; cost is case-dependent | use as comparison/reference on small or targeted cases before promoting any retained-candidate route as globally certified |
+| exact-all-visited-sigma rational capacity | local transition-pruned exact route in `src/exact_route/`; scalar capacity depends on complete-stream and input-provenance assumptions | small audit measurements exist; cost is case-dependent | preserve the complete-stream contract; use exact witness/action language for generic caller-supplied streams and do not treat returned witness lists as complete physical-orbit sets |
 | algebraic/Sage route | not local Rust code | Sage/theorem packets own this when needed | keep separate unless a Rust/thesis surface confuses binary64 rational exactness with algebraic-object exactness |
 
 Keep crate imports for outside-domain utilities such as retained input loading,

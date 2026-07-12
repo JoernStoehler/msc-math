@@ -147,9 +147,12 @@ pub(crate) struct EigenInfo {
 /// See `.agents/skills/rust/SKILL.md` error handling convention.
 #[derive(Clone, Debug)]
 pub enum KktOutcome {
-    /// The orbit has a feasible solution with β > 0 and Q > 0.
+    /// The word has a feasible positive KKT candidate with Q > 0.
+    /// This is not by itself a fixed-word maximum or a physical orbit
+    /// certificate.
     Feasible(KktResult),
-    /// The orbit is infeasible: β has a non-positive component, or Q ≤ 0.
+    /// The KKT candidate is infeasible: β has a non-positive component, or
+    /// Q ≤ 0.
     Infeasible,
     /// The KKT matrix is singular (all eigenvalues ≈ 0).
     SingularMatrix,
@@ -196,7 +199,7 @@ impl KktOutcome {
 /// See [lem:q-error-bound]: |Q(beta_0) - q_corrected| <= q_error_bound.
 #[derive(Clone, Debug)]
 pub struct KktResult {
-    /// Optimal beta vector (all components > -EPS_BETA_POSITIVE).
+    /// KKT candidate beta vector (all components > -EPS_BETA_POSITIVE).
     pub beta: Vec<f64>,
     /// Lagrange multiplier for closure constraints A^T β = 0 (4 components).
     /// From symmetric convention: Hβ + Aμ + 1ξ = 0.
@@ -237,7 +240,10 @@ pub struct KktResult {
 /// Returns `KktOutcome::Feasible(result)` with beta, corrected Q, error bound,
 /// and inertia, or a non-feasible variant explaining why no solution was found.
 ///
-/// [lem:kkt]: KKT conditions characterize the EHZ capacity optimum as a saddle point.
+/// [lem:kkt]: KKT conditions give the stationarity equations used to generate
+/// candidates for the finite EHZ capacity optimization. A global capacity
+/// claim additionally needs the relevant candidate-family completeness
+/// contract.
 pub fn solve_saddle_point(kkt_matrix: &DMatrix<f64>, rhs: &DVector<f64>) -> KktOutcome {
     let m = rhs.len() - 5;
     let size = rhs.len();

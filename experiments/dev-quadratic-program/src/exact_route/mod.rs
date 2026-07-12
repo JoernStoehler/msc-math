@@ -91,7 +91,11 @@ fn exact_binary64_transition_matrix_inner(
 /// This route is intentionally separate from retained-candidate exact
 /// certification. It does not call the f64 single-sigma solver and therefore
 /// does not depend on f64 candidate retention. It is meant for small inputs,
-/// route comparison, and false-certification audits.
+/// route comparison, and false-certification audits. When the supplied stream
+/// is a source-backed complete HK candidate family for the exact input, the
+/// least action certifies the scalar capacity; the individual records remain
+/// exact KKT witnesses and are not automatically a complete physical-orbit
+/// or minimizer set.
 pub fn solve_exact_capacity_for_transition_pruned_sigmas(
     dual_vertices_exact: &[[BigRational; 4]],
     transition_is_allowed: &DMatrix<bool>,

@@ -52,8 +52,8 @@ Current route contracts to keep separate:
 | Heuristic f64 capacity | scalar f64 capacity/sys plus diagnostics | Empirical route only; caller must treat labels as heuristic | reject/skip/diagnostic uncertainty | Exists in dev-f64/f64-route surfaces; not thesis-facing by itself |
 | Route demonstrations | executable failure examples for simpler approaches | No route contract; code is for reading, tests, and copy-editing | intended wrong answers or safe refusals, depending on the demo | Lives in `src/route_demonstrations/`; nobody currently plans to import it |
 | f64 plus exact fallback capacity | scalar/list output after resolving selected f64-uncertain candidates exactly | Only as strong as the f64 candidate filter plus the fallback policy | exact fallback failure or unresolved candidate if policy cannot resolve | Existing `OrbitGuaranteeMode` route, but current `AdmissibleF64` depends on static f64 margins |
-| Retained-candidate exact minimizer/gap-window capacity | exact rational capacity and exact orbits over the retained f64 candidate set | Proof-level for the retained candidate set; global only if candidate filtering is separately safe for the claim | exact solve failure or no admissible retained orbit | Existing `CertifiedOrbitSearchResult` aggregation surface |
-| Exact-all-visited-sigma rational capacity | exact rational capacity and exact orbits over every visited sigma in the chosen enumeration stream | Proof-level over the visited sigma stream and exact binary64-as-rational input | exact solve failure or no admissible orbit; high runtime on broad cases | Local `src/exact_route/` reference route for small/targeted cases |
+| Retained-candidate exact aggregation | exact action minimum and exact KKT witnesses over the retained f64 candidate set | Exact over that set; global scalar capacity only if candidate filtering is separately safe; returned witnesses are not automatically all physical minimizers | exact solve failure or no admissible retained witness | Existing `CertifiedOrbitSearchResult` aggregation surface |
+| Exact-all-visited-sigma rational capacity | exact action minimum and KKT witnesses over every visited sigma; scalar capacity under a complete HK candidate-family and input-provenance contract | Exact over the visited stream; no per-word second-order test is needed for the scalar HK maximum, but orbit/minimizer-set claims need extra coverage/geometric arguments | exact solve failure, incomplete/unsupported stream, or no positive witness; high runtime on broad cases | Local `src/exact_route/` route for small/targeted cases |
 | Algebraic/Sage route | exact results for selected algebraic inputs | Proof-level for the algebraic object being claimed | CAS/proof failure | Required for selected theorem-facing algebraic examples; not a high-throughput route |
 
 Important current gap: the crate's ordinary `OrbitSearchResult` path resolves
@@ -109,11 +109,12 @@ These are inspection findings, not final design decisions.
 - `OrbitGuaranteeMode::{BoundSafe, MinimaSafe, AllSafe}` resolves
   `IndeterminateF64` candidates exactly. It does not resolve candidates already
   labeled `AdmissibleF64`, so it assumes that label is sound.
-- `CertifiedOrbitSearchResult` stores exact rational capacity, exact
-  minimizers, optional gap-window exact orbits, and exact resolution count.
-  However, it is still fed by f64 candidate enumeration; if a f64 filter can
-  discard an exact capacity candidate before certification, that must be
-  addressed by the route contract or by using complete exact enumeration.
+- `CertifiedOrbitSearchResult` stores an exact action minimum and exact
+  candidate witnesses among the candidates resolved by its policy. It is still
+  fed by f64 candidate enumeration; if a f64 filter can discard an exact
+  capacity candidate before certification, the result is not a global capacity
+  certificate. Its candidate list is not automatically a complete physical
+  orbit or minimizer set.
 - `ComputedPolytopePayloadRow` stores scalar `capacity`, `sys`, `backend`,
   `sigmas`, and `orbit_scalars`, but not a full output-contract field.
 - `OrbitScalars` records some best-orbit status, including whether the best

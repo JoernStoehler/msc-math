@@ -148,7 +148,9 @@ pub fn solve_projected_critical_point_for_dual_vertices(
 /// See module doc for the 5-step algorithm. Returns a Solution with verdict,
 /// Q value, beta vector, and margin.
 ///
-/// [lem:kkt]: KKT conditions characterize the EHZ capacity optimum; this solver applies them via constraint projection.
+/// [lem:kkt]: this solver applies the KKT stationarity equations via
+/// constraint projection. Its one-word result is a candidate for the finite
+/// EHZ optimization; a global capacity claim needs candidate-family coverage.
 pub fn solve_projected(qp: &QP) -> Solution {
     let m = qp.c.ncols();
     let parts = match solve_projected_critical_point_parts(qp) {

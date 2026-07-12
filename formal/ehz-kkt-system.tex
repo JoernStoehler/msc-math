@@ -62,7 +62,6 @@ $\sum_{j < i} \beta_i \beta_j H_{ij}
 \end{proof}
 \end{notationupdated}
 
-
 \begin{notationupdated}
 \begin{lemma}[KKT conditions and the algorithm's linear system]%
 \label{lem:kkt}
@@ -97,6 +96,28 @@ $\mathbf{1}^\top \beta = 1$, is exactly
 the linear system.
 \end{proof}
 \end{notationupdated}
+
+% Review target: distinguish the one-word KKT contract from the outer scalar
+% capacity argument. The candidate argument follows the proof in
+% thesis/legacy/general-case-algorithm-proof.tex.
+\begin{remark}[KKT witnesses and the finite capacity algorithm]
+\label{rem:kkt-witness-versus-capacity}
+For a fixed support and ordered word, the KKT system characterizes stationary
+points of the equality-constrained quadratic objective on the relative
+interior of that support face.  A solution with $\beta_i>0$ and
+$Q_\sigma(\beta)>0$ is therefore an exact feasible KKT witness.  It need not
+be the maximum of $Q_\sigma$ on that face.
+
+The scalar finite Haim--Kislev algorithm uses these witnesses as candidates.
+Every positive witness is feasible and hence has value at most the global
+quantity $Q_{\max}$.  Conversely, a global maximizer becomes an interior KKT
+point after deleting its zero coordinates.  Consequently, exact KKT solves
+over a complete candidate family suffice for the scalar capacity value,
+without requiring every stationary candidate to satisfy a second-order
+maximum condition.  Such a condition, or another soundness argument, is
+required when a fixed-word maximum, a physical orbit, or a complete minimizer
+set is claimed.
+\end{remark}
 
 
 \begin{notationupdated}
