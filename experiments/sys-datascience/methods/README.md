@@ -37,6 +37,8 @@ Read first:
 - `ridge-mechanism-discriminator/`: compact diagnostic table combining retained
   tail-rule diagnostics and generated ridge/proposer summaries to distinguish
   ridge-magnitude, concentration, proxy, small-area, and Goodhart explanations.
+- `product-bounce-distribution/`: exact-`(k,m)` descriptive distribution and
+  ridge-adjustment packet for 2- versus 3-bounce retained random products.
 
 Exploratory fixed-bucket distribution-shape packets:
 
