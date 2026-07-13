@@ -83,11 +83,12 @@ All four agents repaired the production sign.  However, the minimal
 \mbox{GPT-5.6-sol} run merely strengthened an existing symmetric test; that test still passed
 when the bad sign was restored.  Its output therefore looked more thoroughly
 tested without supplying evidence for the repair at issue.  Both verifier-first
-runs produced a check that failed before and passed after the repair, as did the
-minimal GPT-5.5 run.  With one run per cell, no randomization, and no exact
-prompt record, this does not establish a model or prompting effect.  It does
-show concretely why fail-before/pass-after mutation evidence is stronger than
-an ordinary passing suite.
+runs demonstrated fail-before/pass-after behavior.  Independent replay later
+showed that the minimal GPT-5.5 regression also failed under mutation.  With one
+run per cell, no randomization, and no exact prompt record, this does not
+establish a model or prompting effect.  It does show concretely why
+fail-before/pass-after mutation evidence is stronger than an ordinary passing
+suite.
 
 In practice, I obtained more reliable results by separating two roles.  One
 role maximizes a stated goal: implement the algorithm, find an example, or
