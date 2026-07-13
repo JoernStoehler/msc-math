@@ -80,6 +80,8 @@ After reading the page, the reader should understand:
   this approval orally.
 - Jörn clarification, 2026-07-13: he proofread the thesis and put in the work to
   verify its claims and overall message.
+- Jörn publication review, 2026-07-13: the resulting disclosure prose was
+  accepted as accurate and suitable in its current form.
 
 ## Boundaries
 
