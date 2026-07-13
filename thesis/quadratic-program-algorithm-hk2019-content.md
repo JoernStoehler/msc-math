@@ -89,7 +89,12 @@ Update rule: add or change a claim only with a source pointer or an explicit
 - Do not strengthen this into "every feasible QP point is already an actual
   Reeb orbit." Arbitrary finite feasible points are part of HK's dual finite
   formula; base-point recovery and later feasibility/pruning are separate
-  computational questions.
+  computational questions for such non-global candidates. A certified global
+  QP maximizer is different: HK's construction makes it a global dual
+  minimizer, and Clarke's correspondence realizes it, after translation and
+  positive rescaling, as a minimum-action simple generalized Reeb orbit.
+  Base-point recovery is then an explicit reconstruction method rather than an
+  extra existence hypothesis.
 - For the Lagrangian-product enumeration, state only a capacity-search result:
   the restricted alternating \(q/p\)-block family contains a capacity
   minimizer. Do not claim it classifies all minimum-action simple Reeb orbits;

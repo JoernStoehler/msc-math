@@ -113,8 +113,15 @@ witness is feasible and hence has value at most~$Q_{\max}$, while a global
 maximizer becomes a positive KKT solution after its zero coordinates are
 deleted.  Thus exact KKT solutions suffice when the complete candidate family
 is enumerated.  A claim about a particular maximizing word, a physical orbit,
-or a complete minimizer set requires the corresponding additional coverage
-and geometric argument.
+or a complete minimizer set cannot be inferred from an arbitrary KKT witness.
+There is, however, no further gap for a \emph{global} QP maximizer: the
+construction in the proof of Haim--Kislev's formula turns it into a global
+minimizer of the dual problem, and the Clarke correspondence of
+Theorem~\ref{thm:preliminaries-clarke-dual-action} supplies a translation and
+positive rescaling that realize it as a minimum-action generalized Reeb orbit.
+After deleting zero-weight entries, its pure facet directions occur in the
+active order~$\sigma$, so the realized orbit is simple.  Feasibility or KKT
+stationarity without global optimality does not provide this conclusion.
 
 The normalization is compatible with our Reeb-orbit convention. Suppose a
 simple orbit is traversed in the active order
@@ -190,7 +197,10 @@ directed transition. Passing such tests is only a necessary condition for a
 physical transition; it is not itself a proof that the whole word has a valid
 base point. The fixed active-word solve and, when needed, the base-point
 recovery check from Lemma~\ref{lem:generalized-reeb-base-point-recovery}
-provide that later validation.
+provide that later validation for a non-global candidate.  For a certified
+global QP maximizer, orbit existence and primal placement instead follow
+globally from the dual-minimizer/Clarke argument above; base-point recovery is
+then a finite reconstruction method, not an additional existence hypothesis.
 
 For Lagrangian products we use a different enumeration route, described in
 Theorem~\ref{thm:lagrangian-product-finite-enumeration}. It feeds the same

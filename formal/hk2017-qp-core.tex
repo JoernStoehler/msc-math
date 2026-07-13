@@ -101,15 +101,50 @@ This is HK2017 Theorem~1.1 after translating normals/heights to dual vertices
 and reversing the ordered word used in HK2017's displayed objective.
 \end{definition}
 
-\begin{fact}[HK2017]\label{fact:hk2017}
+\begin{fact}[Consequence of HK2017]\label{fact:hk2017}
 % Citation: HK2017 Theorems 1.1 (formula_theorem: capacity = max of QP),
 %   1.5 (simple_loop_theorem: minimizer is simple), and Lemma 2.1 (dual correspondence).
 %   Note: HK2017 1.4 is a Remark, not a Theorem.
 Any global maximizer $(\sigma^*, \beta^*)$
 of~\eqref{eq:hk2017-problem}
 corresponds to a minimum-action simple closed Reeb orbit on
-$\partial K$, with $\sigma^*$ in active traversal order.
+$\partial K$, with the word obtained from $\sigma^*$ by deleting its
+zero-weight entries in active traversal order.
 \end{fact}
+
+\begin{proof}
+Delete the zero coordinates of~$\beta^*$ and the corresponding entries of
+$\sigma^*$; this does not change feasibility or the objective.  The remaining
+coordinates are positive.  Reading the proof of
+\cite[Theorem~1.1]{HK2017} in the dual-vertex convention of
+Definition~\ref{def:hk2017-problem}, construct a loop~$u$ on $[0,1]$ whose
+velocity is $R_{\sigma^*(k)}=2J_0a_{\sigma^*(k)}$ on an interval of length
+$\beta_k^*$.  Closure is precisely
+$\sum_k\beta_k^*a_{\sigma^*(k)}=0$.  The shoelace formula gives
+\[
+  2A(u)=4Q_{\sigma^*}(\beta^*).
+\]
+Writing $Q=Q_{\sigma^*}(\beta^*)=Q_{\max}>0$ and
+$w=u/(2\sqrt{Q})$, we obtain $2A(w)=1$.  Moreover
+$h_K(-J_0R_i)=2$ for every facet direction, so
+\[
+  I_K(w)
+  =\frac14\int_0^1h_K^2(-J_0\dot w)\,dt
+  =\frac{1}{4Q}.
+\]
+Thus $2I_K(w)=1/(2Q)=c_{\mathrm{EHZ}}(K)$.
+
+Because $(\sigma^*,\beta^*)$ attains the global value~$Q_{\max}$, the capacity
+formula shows that this dual loop is a global minimizer, not merely a feasible
+or stationary dual curve.  It is therefore weak dual critical.  Clarke's dual
+action correspondence, in the nonsmooth form used in
+\cite[Lemma~2.1]{HK2017}, supplies the translation and positive rescaling that
+put the loop on~$\partial K$ as a minimum-action generalized closed
+characteristic.  These affine changes preserve the ordered pure-velocity
+pieces.  Thus, after the zero-duration pieces have been deleted, the resulting
+orbit is simple and has the reduced word obtained from~$\sigma^*$ in active
+traversal order.
+\end{proof}
 
 
 % ── 2. Structure from Reeb orbits ────────────────────────────────────

@@ -115,8 +115,14 @@ point after deleting its zero coordinates.  Consequently, exact KKT solves
 over a complete candidate family suffice for the scalar capacity value,
 without requiring every stationary candidate to satisfy a second-order
 maximum condition.  Such a condition, or another soundness argument, is
-required when a fixed-word maximum, a physical orbit, or a complete minimizer
-set is claimed.
+required when a fixed-word maximum or a complete minimizer set is claimed.
+An arbitrary KKT witness does not determine a physical orbit.  In contrast, a
+\emph{global} HK2017 maximizer already gives a global dual minimizer; Clarke's
+dual action correspondence then realizes it as a minimum-action simple
+generalized closed Reeb orbit (Fact~\ref{fact:hk2017}).  The translating
+constant in that correspondence supplies the primal placement on~$\partial K$;
+it is not provided by feasibility or stationarity of the finite KKT system
+alone.
 \end{remark}
 
 
