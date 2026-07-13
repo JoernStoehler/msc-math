@@ -34,15 +34,24 @@ next-session board govern current routing.
   boundary/facet changes, and structured families.
 - Tail extrapolation is model-sensitive. No calibrated hit rate, impossibility,
   arbitrary-generator, or mechanism claim is supported.
+- On the 9,455 retained random products with both exact bounce-class minima,
+  equal A2/A3 six-facet support is enriched among small class gaps. On the
+  3,559 equal-support rows, every retained minimizer pair admits a symmetric
+  cyclic representation whose exact class difference is one q/p order term.
+  This is a reviewed generator-local algebraic description, not a physical or
+  causal degeneration mechanism; see
+  `../methods/product-bounce-class-degeneration/interpretation.md`.
 - The reviewed 2026-07-10 source-to-table/P2 rebuild establishes current
   identity; rerunning it is not selected.
 
 ## Current Prioritization
 
-The corrected broad-first exploration is feature-complete. Current supported
-claims, prohibited claims, path-bound status, and reopen conditions are in
-`final-research-account-2026-07-12.md`. No experiment packet is selected merely
-from the open questions below; they are future research opportunities.
+`final-research-account-2026-07-12.md` is a reviewed checkpoint and source
+index, not authority that empirical exploration is complete. Current work
+should compare whole research lines against the intended thesis consumer and
+Jörn's research taste rather than automatically resuming old packets or routing
+to demonstration. No experiment packet is selected merely from the open
+questions below.
 
 ## Future Discriminators
 
@@ -55,6 +64,9 @@ from the open questions below; they are future research opportunities.
 - Which generator contrast is mathematically meaningful and decision-changing?
 - Would an all-branch proof add enough exact interior-profile value to repay
   its cost beyond the settled triangle--hexagon Viterbo bound?
+- Would a symbolic six-facet common-support order theorem, an independently
+  frozen generator test, or a predeclared physical contact study add enough
+  value beyond the reviewed one-swap identity? Generic beta diagnostics do not.
 
 ## Update Rule
 

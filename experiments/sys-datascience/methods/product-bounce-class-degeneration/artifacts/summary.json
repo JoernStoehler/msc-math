@@ -1,0 +1,375 @@
+{
+  "alignment_convention": "symmetric_both_words",
+  "associations": {
+    "beta_product": [
+      {
+        "bucket": "3x3",
+        "n": 2058,
+        "spearman": 0.6390179069614201
+      },
+      {
+        "bucket": "3x4",
+        "n": 1499,
+        "spearman": 0.6435169566088299
+      },
+      {
+        "bucket": "3x5",
+        "n": 1195,
+        "spearman": 0.6615044173578001
+      },
+      {
+        "bucket": "3x6",
+        "n": 969,
+        "spearman": 0.7028583007063872
+      },
+      {
+        "bucket": "4x4",
+        "n": 1129,
+        "spearman": 0.665021728688109
+      },
+      {
+        "bucket": "4x5",
+        "n": 907,
+        "spearman": 0.7622517299459337
+      },
+      {
+        "bucket": "4x6",
+        "n": 781,
+        "spearman": 0.6624760052286138
+      },
+      {
+        "bucket": "5x5",
+        "n": 724,
+        "spearman": 0.6896014083149574
+      },
+      {
+        "bucket": "5x6",
+        "n": 675,
+        "spearman": 0.7012536873156342
+      },
+      {
+        "bucket": "6x6",
+        "n": 534,
+        "spearman": 0.6757372099381974
+      }
+    ],
+    "cancellation_ratio": [
+      {
+        "bucket": "3x3",
+        "n": 2058,
+        "spearman": null
+      },
+      {
+        "bucket": "3x4",
+        "n": 1499,
+        "spearman": null
+      },
+      {
+        "bucket": "3x5",
+        "n": 1195,
+        "spearman": null
+      },
+      {
+        "bucket": "3x6",
+        "n": 969,
+        "spearman": null
+      },
+      {
+        "bucket": "4x4",
+        "n": 1129,
+        "spearman": null
+      },
+      {
+        "bucket": "4x5",
+        "n": 907,
+        "spearman": null
+      },
+      {
+        "bucket": "4x6",
+        "n": 781,
+        "spearman": null
+      },
+      {
+        "bucket": "5x5",
+        "n": 724,
+        "spearman": null
+      },
+      {
+        "bucket": "5x6",
+        "n": 675,
+        "spearman": null
+      },
+      {
+        "bucket": "6x6",
+        "n": 534,
+        "spearman": null
+      }
+    ],
+    "pairing_factor": [
+      {
+        "bucket": "3x3",
+        "n": 2058,
+        "spearman": 0.41475470346913274
+      },
+      {
+        "bucket": "3x4",
+        "n": 1499,
+        "spearman": 0.40866359065911706
+      },
+      {
+        "bucket": "3x5",
+        "n": 1195,
+        "spearman": 0.4332587130352551
+      },
+      {
+        "bucket": "3x6",
+        "n": 969,
+        "spearman": 0.44581770536198106
+      },
+      {
+        "bucket": "4x4",
+        "n": 1129,
+        "spearman": 0.4582481957969155
+      },
+      {
+        "bucket": "4x5",
+        "n": 907,
+        "spearman": 0.4131717978655835
+      },
+      {
+        "bucket": "4x6",
+        "n": 781,
+        "spearman": 0.3889883474641649
+      },
+      {
+        "bucket": "5x5",
+        "n": 724,
+        "spearman": 0.4708655349115237
+      },
+      {
+        "bucket": "5x6",
+        "n": 675,
+        "spearman": 0.4581573957016435
+      },
+      {
+        "bucket": "6x6",
+        "n": 534,
+        "spearman": 0.5136483713131523
+      }
+    ]
+  },
+  "buckets": {
+    "3x3": {
+      "complete": 718,
+      "gap_abs_median": 0.06895529119953853,
+      "gap_signed_median": -0.06895529119953853,
+      "pair_count": 2058,
+      "primary_pair_count": 2058,
+      "rows": 1024,
+      "same_support_rows": 718,
+      "support_equality_rate": 1.0,
+      "threshold_support_rates": {
+        "0.001": 1.0,
+        "0.01": 1.0,
+        "0.05": 1.0
+      }
+    },
+    "3x4": {
+      "complete": 814,
+      "gap_abs_median": 0.06485735328429532,
+      "gap_signed_median": -0.04338379731833708,
+      "pair_count": 1499,
+      "primary_pair_count": 1499,
+      "rows": 1024,
+      "same_support_rows": 513,
+      "support_equality_rate": 0.6302211302211302,
+      "threshold_support_rates": {
+        "0.001": 0.6818181818181818,
+        "0.01": 0.7560975609756098,
+        "0.05": 0.7397660818713451
+      }
+    },
+    "3x5": {
+      "complete": 890,
+      "gap_abs_median": 0.059269951125745526,
+      "gap_signed_median": -0.029079299045854087,
+      "pair_count": 1195,
+      "primary_pair_count": 1195,
+      "rows": 1024,
+      "same_support_rows": 407,
+      "support_equality_rate": 0.45730337078651684,
+      "threshold_support_rates": {
+        "0.001": 0.6,
+        "0.01": 0.5693430656934306,
+        "0.05": 0.5319693094629157
+      }
+    },
+    "3x6": {
+      "complete": 928,
+      "gap_abs_median": 0.04978342084660797,
+      "gap_signed_median": -0.015482785475382517,
+      "pair_count": 969,
+      "primary_pair_count": 969,
+      "rows": 1024,
+      "same_support_rows": 326,
+      "support_equality_rate": 0.35129310344827586,
+      "threshold_support_rates": {
+        "0.001": 0.6666666666666666,
+        "0.01": 0.5833333333333334,
+        "0.05": 0.47096774193548385
+      }
+    },
+    "4x4": {
+      "complete": 996,
+      "gap_abs_median": 0.06222319193844186,
+      "gap_signed_median": -0.014171502516632389,
+      "pair_count": 1129,
+      "primary_pair_count": 1129,
+      "rows": 1024,
+      "same_support_rows": 383,
+      "support_equality_rate": 0.3845381526104418,
+      "threshold_support_rates": {
+        "0.001": 0.6666666666666666,
+        "0.01": 0.5477707006369427,
+        "0.05": 0.4853273137697517
+      }
+    },
+    "4x5": {
+      "complete": 1015,
+      "gap_abs_median": 0.05132660395978651,
+      "gap_signed_median": -0.010220055120384397,
+      "pair_count": 907,
+      "primary_pair_count": 907,
+      "rows": 1024,
+      "same_support_rows": 306,
+      "support_equality_rate": 0.30147783251231525,
+      "threshold_support_rates": {
+        "0.001": 0.4411764705882353,
+        "0.01": 0.4946236559139785,
+        "0.05": 0.4164989939637827
+      }
+    },
+    "4x6": {
+      "complete": 1022,
+      "gap_abs_median": 0.03782268594549505,
+      "gap_signed_median": -0.0055535551488202235,
+      "pair_count": 781,
+      "primary_pair_count": 781,
+      "rows": 1024,
+      "same_support_rows": 261,
+      "support_equality_rate": 0.2553816046966732,
+      "threshold_support_rates": {
+        "0.001": 0.6086956521739131,
+        "0.01": 0.3964757709251101,
+        "0.05": 0.3373287671232877
+      }
+    },
+    "5x5": {
+      "complete": 1024,
+      "gap_abs_median": 0.03975292369128233,
+      "gap_signed_median": -0.0035529956409379843,
+      "pair_count": 724,
+      "primary_pair_count": 724,
+      "rows": 1024,
+      "same_support_rows": 242,
+      "support_equality_rate": 0.236328125,
+      "threshold_support_rates": {
+        "0.001": 0.4418604651162791,
+        "0.01": 0.4470046082949309,
+        "0.05": 0.32869565217391306
+      }
+    },
+    "5x6": {
+      "complete": 1024,
+      "gap_abs_median": 0.030399819007155382,
+      "gap_signed_median": -0.002984076526272259,
+      "pair_count": 675,
+      "primary_pair_count": 675,
+      "rows": 1024,
+      "same_support_rows": 225,
+      "support_equality_rate": 0.2197265625,
+      "threshold_support_rates": {
+        "0.001": 0.42,
+        "0.01": 0.36,
+        "0.05": 0.28549618320610687
+      }
+    },
+    "6x6": {
+      "complete": 1024,
+      "gap_abs_median": 0.02331881014208908,
+      "gap_signed_median": 0.0010849780967723448,
+      "pair_count": 534,
+      "primary_pair_count": 534,
+      "rows": 1024,
+      "same_support_rows": 178,
+      "support_equality_rate": 0.173828125,
+      "threshold_support_rates": {
+        "0.001": 0.425531914893617,
+        "0.01": 0.3234323432343234,
+        "0.05": 0.21659634317862167
+      }
+    }
+  },
+  "complete_rows": 9455,
+  "controls": {
+    "cyclic_invariance": "asserted by producer for every rotation of both words",
+    "factor_swap": "omitted: no cheap standalone factor relabeling fixture was available without duplicating geometry construction",
+    "symmetric_alignment_fixture": {
+      "a2_rotations_per_pair": [
+        6
+      ],
+      "a3_rotations_per_pair": [
+        6
+      ],
+      "joint_rotation_candidates_per_pair": [
+        36
+      ],
+      "pair_records": 10471,
+      "purpose": "distinguishes independent two-word cyclic alignment from a one-sided fixed-cut recount"
+    },
+    "within_word_rotation_beta_q_invariance": "asserted by producer for every cyclic rotation of each word"
+  },
+  "input_artifacts": {
+    "pairs_sha256": "65591335a4c961bb9890ace67cb585d7738483e2dad71fccd626d3cab58cb575",
+    "rows_sha256": "e5022ad34c91b05830251d6f3f23b059c1d026518e382db323bb5125a4a2b7cd"
+  },
+  "pairs": 10471,
+  "primary": {
+    "beta_product_median": 0.00574552256997815,
+    "cancellation_ratio_median_two_term": null,
+    "closure_error_max": 2.52438447943028e-15,
+    "flip_count": {
+      "1": 10471
+    },
+    "normalized_gap_median": 0.0319970355471207,
+    "pairing_factor_median": 6.950994576923592,
+    "pairs": 10471,
+    "recovery_pass": 10471,
+    "recovery_total": 10471,
+    "row_tie_summary": {
+      "max_gap_range": 0.0,
+      "median_gap_range": 0.0,
+      "rows_with_nonzero_gap_range": 0,
+      "rows_with_pairs": 3559
+    },
+    "symmetric_alignment_pair_count": 10471
+  },
+  "rows": 10240,
+  "same_support_rows": 3559,
+  "schema": "product-bounce-class-degeneration/v2",
+  "shuffle_control": {
+    "observed_rate": 0.37641459545214173,
+    "permutations": 100,
+    "population": "complete_rows_only",
+    "population_rows": 9455,
+    "seed": 20260713,
+    "shuffle_mean": 0.12645055526176627,
+    "shuffle_q95": 0.12998413537810682
+  },
+  "support_equality_rate": 0.37641459545214173,
+  "threshold_support_rates": {
+    "0.001": 0.5508982035928144,
+    "0.01": 0.4934175882043181,
+    "0.05": 0.42782152230971127
+  }
+}

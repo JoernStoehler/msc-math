@@ -1,0 +1,34 @@
+{
+  "schema": "product-bounce-class-degeneration/provenance-v2",
+  "source_revision": "90b34911c0c6e2aca00b6b01717cf2cbe9ec9a7e",
+  "source_status": "owner packet is untracked at source_revision; Git revision alone does not identify producer sources",
+  "producer_source_sha256": "481fc27aa7cb03e13cd8ea8731271b18a25eeaa3c978f4d6a20dcf6d49d6b275",
+  "summarizer_source_sha256": "8b22f74834b072b7d9150684ed286b3ad2693e4fa31fac923fb0617c9f3f97b0",
+  "manifest_sha256": "7c27537ea6441ed62463fb60c02fbc43a11949fdf899976d3961a5c54f0ca4ae",
+  "command": "cargo build --release --manifest-path experiments/sys-datascience/methods/product-bounce-class-degeneration/Cargo.toml && timeout 600 experiments/sys-datascience/methods/product-bounce-class-degeneration/target/release/product-bounce-class-degeneration --raw experiments/sys-datascience/produce/random-product.jsonl --class experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl --out experiments/sys-datascience/methods/product-bounce-class-degeneration/artifacts",
+  "full_runtime_seconds": 587.52,
+  "identity_checks": {
+    "raw_rows": 10240,
+    "class_rows": 10240,
+    "complete_rows": 9455,
+    "a3_null_rows": 785,
+    "raw_sha256": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+    "class_sha256": "187089804bd17fdac76bdaf51a8d8202e67fb2b14779fe9a418cc8da47c7b4c4"
+  },
+  "outputs": {
+    "degeneration_rows": {"rows": 10240, "sha256": "e5022ad34c91b05830251d6f3f23b059c1d026518e382db323bb5125a4a2b7cd"},
+    "degeneration_pairs": {"rows": 10471, "sha256": "65591335a4c961bb9890ace67cb585d7738483e2dad71fccd626d3cab58cb575"},
+    "summary": {"sha256": "c90627f224a09e7875646d9fc301a41627ca637bdef5b71aef85e9074a286167"}
+  },
+  "controls": {
+    "shuffle_permutations": 100,
+    "shuffle_seed": 20260713,
+    "shuffle_population": "9455 complete rows only",
+    "smoke_rows": 128,
+    "alignment_convention": "symmetric_both_words",
+    "cyclic_invariance": "producer assertion for every rotation of both words",
+    "within_word_rotation_beta_q_invariance": "producer assertion for every cyclic rotation of each word",
+    "factor_swap": "omitted; no cheap standalone factor relabeling fixture without duplicating geometry construction"
+  },
+  "notes": "Full fixed-sigma run completed below the ten-minute stop rule. The optional physical measurement was omitted from producer and artifacts. Eight-facet KKT kernel dimensions are all zero (690 entries), so the anticipated rank-deficiency rival is falsified for stored words."
+}
