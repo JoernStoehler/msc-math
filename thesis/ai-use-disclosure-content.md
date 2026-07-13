@@ -22,6 +22,8 @@ research process and lessons for future work.
 
 - The disclosure is qualitative. It makes no labor-share, log-coverage, token,
   cost, or model-performance claim.
+- Its labor categories are non-exhaustive examples, not a whitelist of the only
+  ways AI contributed.
 - It does not attribute advisor review or judgment.
 - It does not infer idea origin from requests, agent output, or Git history.
 - It distinguishes task-specific checking from correctness and formal
