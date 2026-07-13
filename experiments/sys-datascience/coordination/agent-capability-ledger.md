@@ -12,6 +12,12 @@ episode only when it changes a routing decision, informs a contemplated prompt
 or workflow change, records a surprising/costly failure, or gives an
 informative comparison likely to recur.
 
+`experiments/ai-use/` owns project-level interaction provenance and aggregate
+token/model/lineage accounting when maintained. This file owns only the
+sys-datascience task-level interpretation needed for future routing; link the
+aggregate source rather than copying its accounting rows. Do not require one
+ledger row per packet.
+
 ## Object Of Inference
 
 Treat an episode as evidence about a configured system, not a model alone:
@@ -144,8 +150,9 @@ Use compact prose or structured fields; omit fields irrelevant to the decision.
 ### <stable episode name>
 
 Decision informed:
-Configuration: task shape; decomposition; model/effort; fresh/forked;
-  planner/executor/reviewer roles; resource envelope
+Configuration: task shape; decomposition; selected model/effort and rationale;
+  fresh/forked; planner/executor/reviewer roles; planned delegation/resource
+  envelope; observed lineage and fan-out
 Sources: thread id; rollout path; focused timestamp/event/query;
   artifact/commit/review or explicit `none`; encrypted/unreadable fields
 Parent evaluation: already-observed usefulness, defect, repair, or surprise
@@ -153,6 +160,8 @@ Observed behavior: source-backed actions and omissions, without mental cause
 Outcome: independently usable / cheap repair / useful substrate / obvious
   failure / plausible hidden failure / discarded
 Downstream cost and salvage: only quantities or comparisons actually known
+Value surface and remaining gate: concrete downstream use and what still blocks
+  acceptance, promotion, or reuse
 Live explanations: context / elicitation / budget / planning / execution /
   monitoring / calibration / orchestration / model-capability, or task-specific
   alternatives
