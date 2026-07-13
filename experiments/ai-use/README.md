@@ -102,7 +102,9 @@ excerpts, and accidental bulk disclosure.
 | Path | Role |
 | --- | --- |
 | `reports/ai-provenance-log-backed-summary.md` | Current provenance synthesis for thesis/PaperOrchestra use. |
+| `reports/ai-research-workflow-case-matrix.md` | Selected, stage-separated cases supporting section 13; not a prevalence or productivity estimate. |
 | `reports/session-log-import-report-2026-07-01.md` | Import/coverage report referenced by the synthesis. |
+| `sign-replay/` | Reproducible mutation replay for one controlled production-versus-verification comparison. |
 | `prompts/ai-provenance-investigation-prompt.md` | Prompt used to rerun the provenance investigation in a fresh session. |
 | `scripts/collect_log_inventory.py` | Deterministically inventories visible Codex/Claude session logs. |
 | `scripts/collect_process_events.py` | Extracts private keyed-pseudonymous structural process events from local Codex/Claude JSONL. |
