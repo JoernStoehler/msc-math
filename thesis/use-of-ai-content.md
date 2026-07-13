@@ -13,7 +13,7 @@ be committed.
 
 ## Evidence design
 
-The section uses selected complete episodes plus one controlled replay. It does
+The section uses selected complete episodes plus one structured four-run replay. It does
 not estimate net productivity or reconstruct an exhaustive research timeline.
 Recorded sessions establish observed requests, actions, reviews, and handoffs;
 Git establishes retained artifact states and branch integration; surviving
@@ -23,7 +23,9 @@ Episode output, later artifact evidence, and final integration are assessed
 separately and are not attributed to the same agent episode unless recorded
 lineage establishes that link.
 
-The investigation stopped when the four reader-facing questions below had
+Cases were selected after observing project history for explanatory and outcome
+diversity; they are neither prospective nor representative. The investigation
+stopped when the four reader-facing questions below had
 enough evidence to decide whether they belonged in the section. Broader event
 aggregation would not presently change a thesis-facing conclusion enough to
 justify its cost.
@@ -54,23 +56,27 @@ Claim: tests and reviews help only when they discriminate the relevant error;
 separating verifier construction from production remained useful in the tested
 GPT-5.5/GPT-5.6 comparison.
 
-Source: controlled four-run replay from base `f3d36cc9`, before the historical
+Source: structured four-run replay from base `f3d36cc9`, before the historical
 projection reduced-gradient sign repair. All runs received the same known issue
-without the historical fixture or answer. The independent audit restored the
-bad sign and ran each proposed regression:
+without the historical fixture or answer. The exact prompts are encrypted and
+unrecoverable; the task contracts are a contemporaneous reconstruction. The
+independent audit restored the bad sign and ran a semantically faithful
+reconstruction of each proposed regression:
 
 | Model | Prompt | Repair | Discriminating regression |
 |---|---|---:|---:|
 | GPT-5.5 | minimal | yes | yes |
 | GPT-5.5 | verifier first | yes | yes |
-| GPT-5.6 | minimal | yes | no |
-| GPT-5.6 | verifier first | yes | yes |
+| GPT-5.6-sol | minimal | yes | no |
+| GPT-5.6-sol | verifier first | yes | yes |
 
 The two verifier-first agents demonstrated fail-before/pass-after themselves.
 The GPT-5.5 minimal test was independently shown to fail at its predicted
-mirrored point under mutation. The GPT-5.6 minimal change still passed under
-mutation. This single benchmark does not rank the generations or estimate a
-general success rate.
+mirrored point under mutation. The GPT-5.6-sol minimal change still passed under
+mutation. There was one run per cell, no randomization, and no within-condition
+replication. This case study therefore identifies neither a causal prompting
+effect nor a model-generation effect, and it does not estimate a general
+success rate.
 
 Run costs, retained only to avoid flattening unlike quantities:
 
@@ -101,6 +107,16 @@ Sources:
   hypotheses. Corrections merged in `fcd8545a`. The formal theorem remained
   explicitly unverified, so this is a durable review result rather than proof
   completion.
+- Triangle--hexagon interval proof: an agent derived an explicit generalized
+  three-bounce billiard establishing
+  `sys <= (3/4) sec(delta)^2 <= 1` on the fundamental rotation interval,
+  conditional on the cited capacity--billiard interface, and a separate
+  range-norm lower bound for endpoint equality. A fresh agent independently
+  checked the geometry, normal-cone signs and indexing, action and volume,
+  endpoint nonsmoothness, lower bound, and theorem boundary. Commits `a0d4414e`
+  and `dc966b07` were reconciled into Main by `43ac70b4`. The artifact explicitly
+  remains unreviewed and unapproved by Jörn; interior equality with the secant
+  branch is not proved.
 - Local-systolic-behavior episode: an attempted proof route produced a
   transition diagnostic showing how a target sigma absent at the base point
   could appear after perturbation. It did not establish finite-distance

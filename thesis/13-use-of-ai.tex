@@ -23,10 +23,11 @@ In retrospect, an important benefit was that a sufficiently explicit
 mathematical or computational specification could be turned into an
 inspectable artifact earlier than I had expected to implement it myself.  Early
 in the project, an agent translated a public MATLAB implementation of the
-algorithm of Haim-Kislev~\cite{HK2017} into Rust.  I reconstruct that within a
-few days this yielded a program that ran roughly two orders of magnitude faster
-than the MATLAB code and made experiments possible while I was still learning
-the algorithm in detail.  It was not a trustworthy implementation: it returned
+algorithm of Haim-Kislev~\cite{HK2017} into Rust.  According to my
+reconstruction, this yielded, within a few days, a program that ran roughly two
+orders of magnitude faster than the MATLAB code and made experiments possible
+while I was still learning the algorithm in detail.  It was not a trustworthy
+implementation: it returned
 wrong results in some cases, had poor code quality, and omitted important
 pruning.  Considerable later work was needed to obtain the implementation used
 in this thesis.
@@ -50,19 +51,21 @@ or speed with which it was produced.
 A recurring failure mode in the observed episodes was plausible work that
 satisfied an incomplete proxy for the intended mathematical goal.  Tests and reviews helped
 only when they were capable of distinguishing the relevant error from a correct
-implementation.  This distinction was examined in a small controlled replay
-of a historical bug in the reduced gradient of a projection routine.  Four
-fresh agents received the same pre-fix code and the same description of the
-mathematical discrepancy, without being given the historical fix or regression
-test.  The prompts varied the model generation and whether the agent was told
-explicitly to design a discriminating verifier before repairing the code.
+implementation.  This distinction was examined in a structured four-run case
+study of a historical bug in the reduced gradient of a projection routine.
+Four fresh agents received the same pre-fix code and reconstructed task
+contracts for the same mathematical discrepancy, without being given the
+historical fixture or answer.  The conditions crossed model generation
+with a minimal or verifier-first contract.  The exact original prompt text is
+not recoverable, so this design cannot identify a causal effect of either
+factor.
 
 \begin{table}[htbp]
   \centering
-  \caption{Controlled replay of a sign error.  A regression was counted as
+  \caption{Four-run replay of a sign error.  A regression was counted as
   discriminating only if an independent mutation restoring the erroneous sign
   made it fail.  ``Verifier first'' separated construction of that check from
-  repair of the implementation.  This is a test of one workflow on one bug,
+  repair of the implementation.  These are four observations on one bug,
   not a ranking of model generations.}
   \label{tab:ai-sign-replay}
   \begin{tabular}{@{}lll@{}}
@@ -71,20 +74,22 @@ explicitly to design a discriminating verifier before repairing the code.
     \midrule
     GPT-5.5 & minimal        & yes \\
     GPT-5.5 & verifier first & yes \\
-    GPT-5.6 & minimal        & no  \\
-    GPT-5.6 & verifier first & yes \\
+    GPT-5.6-sol & minimal        & no  \\
+    GPT-5.6-sol & verifier first & yes \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-All four agents repaired the production sign.  However, the minimal GPT-5.6
+All four agents repaired the production sign.  However, the minimal
+\mbox{GPT-5.6-sol}
 run merely strengthened an existing symmetric test; that test still passed
 when the bad sign was restored.  Its output therefore looked more thoroughly
 tested without supplying evidence for the repair at issue.  Both verifier-first
 runs produced a check that failed before and passed after the repair, as did the
-minimal GPT-5.5 run.  The result does not establish that one model generation
-is generally better than another.  It does show why the verification contract
-remains necessary even when a newer agent can readily produce a plausible fix.
+minimal GPT-5.5 run.  With one run per cell, no randomization, and no exact
+prompt record, this does not establish a model or prompting effect.  It does
+show concretely why fail-before/pass-after mutation evidence is stronger than
+an ordinary passing suite.
 
 In practice, I obtained more reliable results by separating two roles.  One
 role maximizes a stated goal: implement the algorithm, find an example, or
@@ -105,22 +110,37 @@ same episode did not prove the theorem, which remained explicitly unverified.
 This is evidence that review found valuable defects in that case, not that
 review is generally more reliable than proof generation.
 
-The selected difficult proof-development episodes had a different outcome.  An
+One later episode reached a stronger mathematical endpoint.  An agent derived
+an explicit generalized three-bounce billiard for the regular
+triangle--hexagon rotation path.  Conditional on the cited
+capacity--billiard interface, its argument bounds the systolic ratio by
+\(\frac34\sec^2(\delta)\leq 1\) on the fundamental interval, with a separate
+range-norm argument for equality at the endpoint.  A fresh agent then checked
+the coordinates, normal-cone conditions, action, endpoint argument, and theorem
+boundary against the source material.  The argument and review were retained
+as research state; they have not yet been reviewed or approved by me, and the
+stronger claim of equality with this branch at every interior angle remains
+unproved.  This is nevertheless a substantive agent-derived proof artifact,
+not merely a proof plan or numerical observation.
+
+Other selected difficult proof-development episodes had a different outcome.  An
 attempt to understand local behavior of the systolic ratio produced an
 executable transition diagnostic for one failure mechanism, but not the sought
 finite-neighborhood theorem.  A convergence-validity investigation showed that
 computed endpoints could remain improvable, undermining their interpretation
 as converged local maxima; it did not produce a replacement theorem or proof.
-Thus agents helped turn informal concerns into obligations, counterchecks, and
-empirical falsifications.  These selected cases do not estimate how often an
-agent can prove a theorem, but they separate useful diagnostic progress from
-proof completion.
+Thus agents also helped turn informal concerns into obligations, counterchecks,
+and empirical falsifications.  The cases were selected retrospectively for
+explanatory and outcome diversity; they do not estimate how often an agent can
+prove a theorem or rank kinds of mathematical labor.  Their heterogeneity is
+the result: similar proof-facing work ranged from bounded diagnostics to a
+retained proof artifact.
 
 Candidate generation showed a similar distinction.  A data-science proposer
 exported actual polytope candidates and enriched the upper tail of the observed
 systolic ratios after a control bug was corrected.  It produced neither a new
-ratio above one nor a new mathematical conjecture, and the development branch
-was later replaced by a maintained proposer with the same bounded status.
+ratio above one nor a new mathematical conjecture.  The development branch was
+abandoned; a separate maintained proposer remained sub-threshold.
 Generating candidates under an executable proxy was useful; deciding whether
 the proxy answered the research question and whether the result deserved
 integration remained a separate step.
@@ -183,9 +203,11 @@ The project led me to the following working principles.
   performed here.
 \end{enumerate}
 
-AI therefore affected this project less by supplying a single mathematical
-idea than by changing the feasible research loop: more proposals could be made
-executable, criticized, and abandoned.  That loop was productive when the
-verification target and selection decision remained separate from the agent's
-task of producing a persuasive result.  The responsibility for those targets,
-and for every claim retained in the thesis, remained mine.
+AI therefore affected both the mathematical artifacts produced and the
+feasible research loop: more proposals could be made executable, criticized,
+and abandoned, and one bounded source-rich episode produced substantive new
+proof reasoning.  The record does not reduce this heterogeneous work to one
+capability or productivity score.  It instead shows why production,
+verification, interpretation, and integration must remain distinct.  The
+responsibility for those boundaries, and for every claim retained in the
+thesis, remained mine.
