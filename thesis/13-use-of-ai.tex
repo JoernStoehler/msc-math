@@ -21,18 +21,21 @@ them against what actually happened.
 
 \subsection{Moving sooner from a specification to an artifact}
 
-In retrospect, an important benefit was that a sufficiently explicit
-mathematical or computational specification could be turned into an
-inspectable artifact earlier than I had expected to implement it myself.  Early
-in the project, an agent translated a public MATLAB implementation of the
+In retrospect, an important benefit was a change in the order of work.  An
+agent could implement from reference code or a sufficiently explicit contract
+while I was still learning the underlying method.  I could then test, criticize,
+and learn from an executable artifact before I was ready to write that
+implementation myself.  This is not a measured comparison with a human-only
+completion time.
+
+Early in the project, an agent translated a public MATLAB implementation of the
 algorithm of Haim-Kislev~\cite{HK2017} into Rust.  According to my
 reconstruction, this yielded, within a few days, a program that ran roughly two
 orders of magnitude faster than the MATLAB code and made experiments possible
 while I was still learning the algorithm in detail.  It was not a trustworthy
 implementation: it returned wrong results in some cases, had poor code quality,
-and omitted important
-pruning.  Considerable later work was needed to obtain the implementation used
-in this thesis.
+and omitted important pruning.  Considerable later work was needed to obtain
+the implementation used in this thesis.
 
 A smaller example shows the same change in the order of work more cleanly.  In
 a search involving crosspolytopes, an agent produced a running program and a
@@ -42,11 +45,12 @@ symmetry reduction, checkpointing, and verification.  The early artifact was
 valuable because it converted an abstract proposal into something that could
 be tested and criticized; it was not evidence that the task was complete.
 
-These examples suggest a conditional advantage rather than a general speedup:
-when the contract is explicit and relevant infrastructure already exists,
-delegation can move experimentation earlier.  The resulting artifact should be
-treated as a question made executable, not as an answer certified by the cost
-or speed with which it was produced.
+These examples suggest a conditional change in workflow rather than a general
+speedup: when a reference or explicit contract and relevant infrastructure
+exist, implementation and testing need not wait for me to master every detail
+needed to write the artifact myself.  The resulting artifact should be treated
+as a question made executable, not as an answer certified by the cost or speed
+with which it was produced.
 
 \subsection{Production and verification are different tasks}
 
