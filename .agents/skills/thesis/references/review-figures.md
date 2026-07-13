@@ -1,5 +1,8 @@
 # Figure Review
 
+Use this reference before accepting a new or materially changed figure or when
+assigning figure review. Also use `model-figure-reader-effects.md`.
+
 ## Review Inputs
 
 Use the exact rendered thesis pages at normal reading scale. Include the figure
@@ -67,3 +70,17 @@ improves confidence. For an evidence-bearing plot, include an experiment or
 quantitative-claim review. Reuse the same reviewer to confirm repairs to its
 findings; use a fresh reviewer when an unprimed interpretation is the evidence
 needed.
+
+## Readiness Judgment
+
+Treat a figure as ready only when the required information is perceptible at
+normal final-PDF size; actual interpretation substantially matches the
+intended inference; the named reader task is easier than from prose alone;
+encodings support valid comparisons without an undisclosed material false
+inference; mathematics, data, caption, and epistemic role agree; and producer,
+regeneration, thesis copy, and build state are sound. Remaining defects must be
+independent polish rather than blocked understanding.
+
+This is a contextual judgment, not a sufficient checklist. Report the reader
+use, reviewed output, producer route, rendered-page review, and intentionally
+deferred polish.

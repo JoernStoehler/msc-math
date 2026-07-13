@@ -1,0 +1,4 @@
+interface:
+  display_name: "Thesis"
+  short_description: "Develop and review the thesis"
+  default_prompt: "Use $thesis to develop or review a reader-centered, mathematically sound thesis artifact."

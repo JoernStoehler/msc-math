@@ -83,6 +83,9 @@ transfer, not presentation or narration.
 
 - Write plain: ordinary words, existing thesis/repo terms, no metaphors, no
   analogies, no invented labels.
+- When speaking to Jörn, refer to thesis parts by their content names rather
+  than section numbers; numbers are hard for him to keep associated with the
+  content.
 - Usually, Jörn has multiple Codex sessions open. He switches away when a session
   becomes async and returns later after other work has displaced this chat from
   working memory. Communication should make it cheap for Jörn to resume without

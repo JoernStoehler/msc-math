@@ -14,7 +14,8 @@ Read only the task-specific references that apply:
 - both when interpretation is part of a packet handoff;
 - `references/workflow-learning.md` only during explicitly authorized
   experiment-workflow refinement;
-- the relevant language, thesis-asset, or LICCA skill for those surfaces.
+- the relevant language skill, `$thesis` for reader-facing figure/table/asset
+  design, or `$licca` for LICCA commands.
 
 ## Purpose And Ownership
 

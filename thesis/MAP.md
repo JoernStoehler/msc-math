@@ -83,9 +83,8 @@ Status: navigation cache for the active thesis surface.
 
 ## Thesis Development Notes
 
-- `DEVELOPMENT.md`: maintainer-facing notes about the thesis surface
-  convention, scaffold conversion history, and process discussion that produced
-  it.
+- `DEVELOPMENT.md`: maintainer-facing pointers to current process, state,
+  navigation, and source owners.
 - Section-local `*-content.md` files are writeup-gathering companions for
   nearby `.tex` files. They are not source truth.
 

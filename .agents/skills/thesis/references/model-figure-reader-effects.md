@@ -1,5 +1,10 @@
 # Reader Effects
 
+Use this reference for every nontrivial figure. A figure succeeds when its
+rendered form helps the intended thesis reader understand, compare, remember,
+or assess something more effectively than prose alone without inviting a
+material false inference.
+
 ## Quality Through Downstream Use
 
 Classify the figure's main use from the actual thesis context; these are common

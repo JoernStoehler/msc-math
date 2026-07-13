@@ -1,4 +1,0 @@
-interface:
-  display_name: "Thesis Figures"
-  short_description: "Design and review effective thesis figures"
-  default_prompt: "Use $thesis-figures to create or review a figure around its downstream use for the thesis reader."
