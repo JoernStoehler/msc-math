@@ -26,8 +26,6 @@ research process and lessons for future work.
   ways AI contributed.
 - It does not attribute advisor review or judgment.
 - It does not infer idea origin from requests, agent output, or Git history.
-- It distinguishes task-specific checking from correctness and formal
-  acceptance.
 - Raw interaction logs remain non-public and are not quoted in thesis prose.
 - Research impact and future methodological lessons belong in section 13, not
   on the disclosure page.
