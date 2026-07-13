@@ -62,6 +62,37 @@ python3 experiments/sys-datascience/methods/product-bounce-distribution/write_cl
   --out experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-provenance.json
 ```
 
+The bounded availability audit is retained in
+`artifacts/class-minima-null-availability.jsonl`, with aggregate counts in
+`artifacts/class-minima-availability-audit.json`. It selects the 785 rows
+whose main artifact has a null A3, re-runs the existing transition-filtered
+stream, and exactly certifies every f64-rejected three-bounce sigma. The audit
+found 470 rows with no transition-feasible three-bounce sigma and 315 rows
+whose generated three-bounce sigmas were all f64-inadmissible; no numerical
+failures and no exact-admissible f64 rejections occurred. The audit is a
+stream-contract check, not a proof of global mathematical infeasibility. The
+bounded solver command and input/artifact hashes are recorded in the
+provenance note; the retained checker above validates the result without a
+routine rerun.
+
+To reproduce the bounded audit itself (785 rows only):
+
+```bash
+cargo run -p exp-sys-landscape --release --bin sys-datascience-product-bounce-null-audit -- \
+  --input experiments/sys-datascience/produce/random-product.jsonl \
+  --class-minima experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl \
+  --output experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-null-availability.jsonl
+```
+
+Validate the retained audit without rerunning the expensive solver:
+
+```bash
+python3 experiments/sys-datascience/methods/product-bounce-distribution/check_class_minima_availability.py \
+  --audit experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-availability-audit.json \
+  --rows experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-null-availability.jsonl \
+  --class-minima experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl
+```
+
 The runner parses the stored exact dual/vertex coordinates, reconstructs the
 facet relations, runs the existing f64 solved billiard candidate stream, then
 uses `CertifiedOrbitSetMode::MinimizersOnly` to exactly certify its admissible

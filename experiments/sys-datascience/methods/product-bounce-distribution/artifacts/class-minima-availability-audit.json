@@ -1,0 +1,35 @@
+{
+  "audit_producer": {
+    "command": "cargo run -p exp-sys-landscape --release --bin sys-datascience-product-bounce-null-audit -- --input experiments/sys-datascience/produce/random-product.jsonl --class-minima experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl --output experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-null-availability.jsonl",
+    "scope": "selects exactly the rows with class_minima[\"3\"] null; does not regenerate the full 10,240-row class-minima artifact",
+    "source": "experiments/sys-datascience/methods/product-bounce-distribution/audit-null-availability.rs",
+    "source_sha256": "33d9fd6447377cb63240c43e7ca42507a6cfec22b19c728c978388f68b13abb3"
+  },
+  "audited_rows": 785,
+  "audited_rows_definition": "Rows whose main class-minima artifact has class_minima[\"3\"] null.",
+  "cause_counts": {
+    "3x3:no_transition_feasible_three_bounce_sigma": 306,
+    "3x4:all_three_bounce_sigmas_f64_inadmissible": 110,
+    "3x4:no_transition_feasible_three_bounce_sigma": 100,
+    "3x5:all_three_bounce_sigmas_f64_inadmissible": 103,
+    "3x5:no_transition_feasible_three_bounce_sigma": 31,
+    "3x6:all_three_bounce_sigmas_f64_inadmissible": 89,
+    "3x6:no_transition_feasible_three_bounce_sigma": 7,
+    "4x4:all_three_bounce_sigmas_f64_inadmissible": 7,
+    "4x4:no_transition_feasible_three_bounce_sigma": 21,
+    "4x5:all_three_bounce_sigmas_f64_inadmissible": 5,
+    "4x5:no_transition_feasible_three_bounce_sigma": 4,
+    "4x6:all_three_bounce_sigmas_f64_inadmissible": 1,
+    "4x6:no_transition_feasible_three_bounce_sigma": 1
+  },
+  "cause_total": {
+    "all_three_bounce_sigmas_f64_inadmissible": 315,
+    "no_transition_feasible_three_bounce_sigma": 470
+  },
+  "contract": "The audit re-enumerates the existing transition-filtered billiard stream and exactly certifies every f64-rejected sigma in the three-bounce class. It does not prove global mathematical infeasibility beyond that stream contract.",
+  "exact_admissible_f64_rejected_candidates": 0,
+  "exact_admissible_f64_rejected_rows": 0,
+  "f64_numerical_failure_rows": 0,
+  "input_artifact": "experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl",
+  "input_artifact_sha256": "187089804bd17fdac76bdaf51a8d8202e67fb2b14779fe9a418cc8da47c7b4c4"
+}

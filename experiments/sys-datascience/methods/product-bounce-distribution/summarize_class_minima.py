@@ -130,6 +130,11 @@ def main():
         },
         "inference_boundary": "This is a re-evaluation of retained rows, not generated-candidate validation, a causal mechanism result, or an exhaustive global enumeration theorem about generic product polytopes. Null class minima report absence of an admissible candidate in the existing f64 solved stream for that class and must not be treated as a numerical value.",
     }
+    availability_audit = Path(args.input).with_name("class-minima-availability-audit.json")
+    if availability_audit.exists():
+        result["observations"]["availability_audit"] = json.loads(
+            availability_audit.read_text(encoding="utf-8")
+        )
     Path(args.out).write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
 
 

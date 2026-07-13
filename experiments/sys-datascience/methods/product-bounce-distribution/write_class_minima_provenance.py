@@ -36,12 +36,17 @@ def main():
     ap.add_argument("--class-minima", required=True)
     ap.add_argument("--summary", required=True)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--availability-audit", default=None)
+    ap.add_argument("--null-availability", default=None)
     args = ap.parse_args()
     input_path, minima_path, summary_path, out_path = map(
         checked_relative, (args.input, args.class_minima, args.summary, args.out)
     )
+    audit_path = checked_relative(args.availability_audit) if args.availability_audit else None
+    null_path = checked_relative(args.null_availability) if args.null_availability else None
     sources = [
         Path("experiments/sys-datascience/methods/product-bounce-distribution/class-minima.rs"),
+        Path("experiments/sys-datascience/methods/product-bounce-distribution/audit-null-availability.rs"),
         Path("experiments/sys-datascience/methods/product-bounce-distribution/summarize_class_minima.py"),
         Path("experiments/sys-datascience/methods/product-bounce-distribution/write_class_minima_provenance.py"),
         Path("experiments/sys-landscape/Cargo.toml"),
@@ -67,6 +72,19 @@ def main():
             },
         },
     }
+    if audit_path is not None:
+        result["paths"]["availability_audit"] = str(audit_path)
+        result["sha256"]["availability_audit"] = sha256(ROOT / audit_path)
+        result["producer"]["availability_audit_command"] = (
+            "cargo run -p exp-sys-landscape --release --bin "
+            "sys-datascience-product-bounce-null-audit -- "
+            "--input experiments/sys-datascience/produce/random-product.jsonl "
+            "--class-minima experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl "
+            "--output experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-null-availability.jsonl"
+        )
+    if null_path is not None:
+        result["paths"]["null_availability"] = str(null_path)
+        result["sha256"]["null_availability"] = sha256(ROOT / null_path)
     (ROOT / out_path).write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
 
 

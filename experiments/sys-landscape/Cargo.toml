@@ -70,6 +70,10 @@ path = "../sys-datascience/methods/hko-ridge-source-smoke/main.rs"
 name = "sys-datascience-product-bounce-class-minima"
 path = "../sys-datascience/methods/product-bounce-distribution/class-minima.rs"
 
+[[bin]]
+name = "sys-datascience-product-bounce-null-audit"
+path = "../sys-datascience/methods/product-bounce-distribution/audit-null-availability.rs"
+
 [lints]
 workspace = true
 

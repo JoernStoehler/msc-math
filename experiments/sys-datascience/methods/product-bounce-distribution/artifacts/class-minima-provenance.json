@@ -1,30 +1,36 @@
 {
   "artifact": "product-bounce class minima",
   "paths": {
+    "availability_audit": "experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-availability-audit.json",
     "class_minima": "experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl",
     "input": "experiments/sys-datascience/produce/random-product.jsonl",
+    "null_availability": "experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-null-availability.jsonl",
     "summary": "experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-summary.json"
   },
   "producer": {
+    "availability_audit_command": "cargo run -p exp-sys-landscape --release --bin sys-datascience-product-bounce-null-audit -- --input experiments/sys-datascience/produce/random-product.jsonl --class-minima experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl --output experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-null-availability.jsonl",
     "command": "cargo run -p exp-sys-landscape --release --bin sys-datascience-product-bounce-class-minima -- --input experiments/sys-datascience/produce/random-product.jsonl --output experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl",
     "environment": {
       "cargo": "cargo 1.94.0 (85eff7c80 2026-01-15)",
       "rayon_num_threads": "unset",
       "rustc": "rustc 1.94.0 (4a4ef493e 2026-03-02)"
     },
-    "source_revision": "8eb3c66d2a38830f7b6e44f08e9c0b984eb9474d",
-    "source_status": "M experiments/sys-landscape/Cargo.toml\n?? experiments/sys-datascience/methods/product-bounce-distribution/class-minima.rs\n?? experiments/sys-datascience/methods/product-bounce-distribution/summarize_class_minima.py\n?? experiments/sys-datascience/methods/product-bounce-distribution/write_class_minima_provenance.py",
+    "source_revision": "6c4ef4e8aadded71fbe94a516c6de290e68c7713",
+    "source_status": "M experiments/sys-datascience/methods/product-bounce-distribution/summarize_class_minima.py\n M experiments/sys-datascience/methods/product-bounce-distribution/write_class_minima_provenance.py\n M experiments/sys-landscape/Cargo.toml\n?? experiments/sys-datascience/methods/product-bounce-distribution/audit-null-availability.rs",
     "summary_command": "python3 experiments/sys-datascience/methods/product-bounce-distribution/summarize_class_minima.py --input experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl --out experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-summary.json"
   },
   "sha256": {
+    "availability_audit": "cf94f80ae963943484bef4d8a24942443631d01b0060a2ccd9c93e3bf3395a8f",
     "class_minima": "187089804bd17fdac76bdaf51a8d8202e67fb2b14779fe9a418cc8da47c7b4c4",
     "input": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+    "null_availability": "8f50fe3ec73a2e6b2cf5649c4c0faa918f21827397b2cd8ab56770ddbdc39c9c",
     "source_files": {
+      "experiments/sys-datascience/methods/product-bounce-distribution/audit-null-availability.rs": "33d9fd6447377cb63240c43e7ca42507a6cfec22b19c728c978388f68b13abb3",
       "experiments/sys-datascience/methods/product-bounce-distribution/class-minima.rs": "950087cbcff2cb52d2ac6718ba7408073f504a0cdb4f57fd18377fca97c64dcf",
-      "experiments/sys-datascience/methods/product-bounce-distribution/summarize_class_minima.py": "f67fcedb2f187791a8fafdddca3c5ba223aaf2c6158d002092e538d316dad04f",
-      "experiments/sys-datascience/methods/product-bounce-distribution/write_class_minima_provenance.py": "1aee2f4070b29328035fe9bf2d911cb70c472bfc491e20ecd8cf4f8241bb3ad5",
-      "experiments/sys-landscape/Cargo.toml": "902894e029e46163734404a54bcdc69b184ecbb0b00248c2c5a38f48410098f1"
+      "experiments/sys-datascience/methods/product-bounce-distribution/summarize_class_minima.py": "c56ed6d6aaef6ab2027dad6b9b7c26cfbcda2190bc3950646ed4d4e493ff4a37",
+      "experiments/sys-datascience/methods/product-bounce-distribution/write_class_minima_provenance.py": "5af2a2c84d1ab918848290bc3168fa06ca3a75fbe1290b99de726d1818c88230",
+      "experiments/sys-landscape/Cargo.toml": "7d421935829951fc40a22482b0df0dd37ee82f8adb9b5205280360b67443a93f"
     },
-    "summary": "9889acd6c7369dc57226b2146ec2cd0d26e35cf72b304c751dcf76607faf29dc"
+    "summary": "02bc33fd635f872e392f071299fa7cdb35ee9a590a4b3b2bc1957771a1a27008"
   }
 }
