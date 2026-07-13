@@ -30,6 +30,11 @@ enough evidence to decide whether they belonged in the section. Broader event
 aggregation would not presently change a thesis-facing conclusion enough to
 justify its cost.
 
+The working principles use Jörn's 2026-07-12 account of delegation, verifier
+design, failure ledgers, selective salvage versus restart, human-attention cost,
+breadth-first search, and model-version non-transfer. The record checks these
+against selected episodes; it does not turn them into universal prescriptions.
+
 ## Retained claims and sources
 
 ### Earlier inspectable artifacts
@@ -137,6 +142,10 @@ Sources:
 Selection boundary: these are deliberately informative complete cases. They
 are not a random or exchangeable sample and cannot establish a ranked capability
 frontier or proof-success frequency.
+
+Narrative boundary: the section does not need one privileged conclusion. Its
+case-backed findings concern different stages and labor types and may remain
+separately useful without being compressed into a global verdict on AI's value.
 
 ### Breadth, selection, and integration
 
