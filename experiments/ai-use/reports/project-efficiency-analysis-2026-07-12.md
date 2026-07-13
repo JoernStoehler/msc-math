@@ -259,6 +259,27 @@ This is the defensible meaning of “value went up” for this interval: six
 material support transitions, not six percent completion. No final thesis,
 advisor, or submission gate can be claimed as closed from this accounting.
 
+## Session-level case studies
+
+The monthly ledger is too coarse to judge efficiency, so two completed or
+closed July sessions provide a more useful scale. Costs below are baseline API
+equivalents, not subscription charges; they are allocated to the parent tree
+from the raw session lineage. Git attribution is approximate because concurrent
+branches can commit to the shared `main` history.
+
+| Session | Baseline shadow cost | Before → after | Value assessment |
+|---|---:|---|---|
+| GPT-5.6 migration/harness (`019f4adc…`) | $682.84 | 5.5-oriented harness and skills → GPT-5.6 harness migration (`ddb7699f`), revised post-mortem skill (`cd5e87db`), and figure-workflow split (`e4ffcad7`). | Real durable infrastructure gain, but no direct thesis-surface closure. The root prompt explicitly prioritized correctness over token efficiency, and the session itself warned that a straightforward migration had become prolonged. This is the clearest case of high cost with weak immediate value evidence. |
+| QP/numerics trust closure (`019f5306…`) | $863.33 | Unsettled numerical trust/acceptance story → exact finite-minimum and beta-radius bounds, failure/rounding contracts, and maturity tracking (`db951978`, `4adc9af1`, `acfe4ed3`, `488db9b4`, `722b54b8`, `19000aa2`). | Stronger thesis-relevant value evidence: several concrete formal/code contracts and reader-facing trust boundaries were added. The work still did not close every thesis or advisor gate, so this is substantial support value, not completion. |
+
+These cases show why the answer cannot be “all 5.6 work was waste”: the
+numerics tree produced identifiable mathematical infrastructure, while the
+migration tree consumed comparable resources for a less direct payoff. They
+also show the missing measurement: neither case has a scalar accepted-value
+score or a matched 5.5 control. Future sessions should record one sentence for
+the accepted output and one for the remaining gate, so these comparisons can
+become value-per-cost estimates rather than retrospective judgement alone.
+
 ## Interpretation boundary
 
 The resource series supports monthly comparisons of tokens, cache, model mix,
