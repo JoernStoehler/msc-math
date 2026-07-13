@@ -29,6 +29,30 @@ uv run --script experiments/ai-use/scripts/summarize_project_efficiency_monthly.
 The generated machine-readable table is
 `/tmp/codex-project-efficiency-monthly/monthly.csv`.
 
+Regenerate the parent-lineage tables used for the case studies and the
+model-conditioned fan-out comparison:
+
+```bash
+uv run --script experiments/ai-use/scripts/analyze_rollout_lineage.py \
+  --rollout-csv /tmp/codex-token-usage-lifetime-refresh/rollout-daily.csv \
+  --start 2026-06-01 --end 2026-07-12 \
+  --out-dir /tmp/codex-rollout-lineage \
+  --min-root-tokens 1000000 \
+  --root-id 019f4adc-3f83-7b70-ba07-44b83889610e \
+  --root-id 019f5306-c889-7602-bd52-88188abb8f18
+```
+
+The lineage producer is a resource-accounting projection: it joins each
+rollout row to the `parent_thread_id` in its `session_meta` record and sums
+tokens and baseline shadow cost. It does not read or preserve transcript text,
+and it does not infer value.
+
+This report is a dated interpretation snapshot. The local rollout archives are
+mutable: later events, imported archives, or a different cutoff can change the
+numbers. The scripts reproduce the transformations, but exact reproduction of
+the committed figures additionally requires the same raw-log inventory and
+cutoff recorded in the token packet's `summary.json`.
+
 The month-end Git/resource/value records are in
 [`reports/project-efficiency-checkpoints/`](project-efficiency-checkpoints/).
 
