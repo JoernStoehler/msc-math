@@ -11,6 +11,72 @@ Overruled by: project artifacts, accepted Jörn/Kai decisions, and final thesis
 review. Raw session text and row-level derived data remain private and must not
 be committed.
 
+## Publication status and known shortcomings
+
+As of Jörn's 2026-07-13 review, this section is **provisional and not accepted
+as final publication prose**. The separate disclosure page has been accepted.
+Jörn found the proposed Section 13 conclusions too abstract, banal, and close to
+surface observations. In particular, generic advice such as “use tests,”
+“prioritize,” or “review agent output” is not a thesis-worthy finding merely
+because a project episode illustrates it.
+
+Known missing or incomplete work:
+
+1. **Observed agent cost versus observed result.** The case matrix records
+   outcomes but does not join most episodes to rollout-tree resources. Existing
+   infrastructure can recover model mixture, lineage size, elapsed span,
+   uncached input, cached input, output, and API-equivalent shadow cost for many
+   Codex cases. Those unlike token categories must remain separate. Human active
+   time is mostly unavailable and must not be inferred from wall-clock session
+   duration. The sign replay is currently the only section case with complete
+   per-run telemetry.
+2. **A result/value ladder.** “Produced,” “committed,” and “integrated” do not
+   mean mathematically correct or thesis-valued. A future comparison should
+   distinguish at least: candidate produced, executable, checked by a relevant
+   discriminator, interpreted correctly, integrated as bounded state, retained
+   as thesis evidence, and accepted by Jörn/Kai where required.
+3. **The ragged frontier across mathematical labor.** The selected cases do not
+   compare proof search, conjecturing, formalizing intuitions, explanation,
+   coding, code/data interpretation, mathematical review, experiment design,
+   or research taste systematically. They establish examples, not relative
+   effectiveness, efficiency, or failure profiles.
+4. **Comparable repeated work.** Apart from the one-bug four-run replay, the
+   packet does not select repeated or continued tasks across GPT-5.5 and GPT-5.6
+   using skills, keywords, lineage, or shared artifacts. It therefore cannot
+   distinguish task effects from model, prompt, review topology, or project-era
+   effects.
+5. **Review independence.** A fresh agent or additional review count is not an
+   external oracle. Shared prompts, sources, models, and proxies can produce
+   correlated blind spots. The current packet has examples of source-anchored,
+   mutation-based, and alternative-route checks but no general analysis of
+   which review structures caught which errors.
+6. **Naturalistic productivity analysis.** The absence of a randomized
+   human-only counterfactual does not make observed cost--result analysis
+   impossible. A future model may compare the observed task distributions for
+   Jörn and agents, fit or falsify workflow hypotheses, and use those estimates
+   cautiously for counterfactual reasoning. The current section instead
+   retreats too often from causal overclaiming to non-quantitative description.
+7. **Coverage and selection.** Cases were chosen retrospectively for explanatory
+   and outcome diversity, not sampled prospectively or representatively.
+   Session coverage, offline work, external tools, lineage gaps, semantic
+   acceptance, and first-origin uncertainty remain limitations. The exact sign
+   replay prompts were encrypted; its reconstructed contracts, one run per
+   cell, and lack of randomization preclude model/prompt effect estimates.
+8. **Thesis narrative.** The current section overweights defensibility and
+   generic workflow recommendations. It has not yet earned a strong central
+   interpretation of what the project reveals about current agents on a
+   mathematician's daily work. Its length and case detail should be reconsidered
+   after, not before, the missing cost--result and labor-frontier analysis.
+
+Useful existing inputs for a future session are
+`experiments/ai-use/reports/ai-research-workflow-case-matrix.md`,
+`experiments/ai-use/reports/project-efficiency-analysis-2026-07-12.md`, the
+token/lineage scripts documented in `experiments/ai-use/README.md`, and the
+private complete-case artifacts named by the case matrix. Do not restart by
+collecting a large transcript dataset; first join the existing selected cases
+to resource accounting and test whether that changes a thesis-relevant
+conclusion.
+
 ## Evidence design
 
 The section uses selected complete episodes plus one structured four-run replay.
@@ -24,11 +90,11 @@ separately and are not attributed to the same agent episode unless recorded
 lineage establishes that link.
 
 Cases were selected after observing project history for explanatory and outcome
-diversity; they are neither prospective nor representative. The investigation
-stopped when the four reader-facing questions below had
-enough evidence to decide whether they belonged in the section. Broader event
-aggregation would not presently change a thesis-facing conclusion enough to
-justify its cost.
+diversity; they are neither prospective nor representative. The bounded pilot
+was enough to reconstruct episodes but not enough to establish that broader or
+more systematic comparison lacks thesis value. Jörn's later review identified
+cost--result accounting and the mathematical-labor frontier as material missing
+questions.
 
 The working principles use Jörn's 2026-07-12 account of delegation, verifier
 design, failure ledgers, selective salvage versus restart, human-attention cost,
@@ -167,15 +233,21 @@ Sources:
   factual rewrite, fresh audit, and a provenance decision preceded retained
   commits `054c689b` and `95aa3506`.
 
-## Deliberately omitted claims
+## Claims still forbidden by current evidence
 
-- A global coefficient for AI productivity or net benefit.
-- A human-only counterfactual inferred from session duration.
-- Exhaustive session, token, commit, or changed-line statistics.
-- General superiority of GPT-5.5 or GPT-5.6-sol.
+- A global coefficient for AI productivity or net benefit without an explicit
+  value model.
+- A human-only counterfactual inferred directly from session duration.
+- General superiority of GPT-5.5 or GPT-5.6-sol from the one-bug replay.
 - Git history as evidence of idea origin or semantic acceptance.
 - The aggregate log report as evidence of mathematical correctness or causal
   impact.
+
+These restrictions do not forbid per-episode resource accounting, comparison of
+observed result stages, naturalistic workflow models, or matched future trials.
+Exhaustive token/commit/line statistics are not a required output, but targeted
+cost accounting for the cases used in thesis prose is missing evidence rather
+than a forbidden analysis.
 
 ## Maintenance
 
