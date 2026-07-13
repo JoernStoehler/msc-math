@@ -107,8 +107,8 @@ Sources:
   hypotheses. Corrections merged in `fcd8545a`. The formal theorem remained
   explicitly unverified, so this is a durable review result rather than proof
   completion.
-- Triangle--hexagon interval proof: an agent derived an explicit generalized
-  three-bounce billiard establishing
+- Triangle--hexagon interval proof candidate: an agent derived an explicit
+  generalized three-bounce-billiard argument for
   `sys <= (3/4) sec(delta)^2 <= 1` on the fundamental rotation interval,
   conditional on the cited capacity--billiard interface, and a separate
   range-norm lower bound for endpoint equality. A fresh agent independently
@@ -116,7 +116,8 @@ Sources:
   endpoint nonsmoothness, lower bound, and theorem boundary. Commits `a0d4414e`
   and `dc966b07` were reconciled into Main by `43ac70b4`. The artifact explicitly
   remains unreviewed and unapproved by Jörn; interior equality with the secant
-  branch is not proved.
+  branch is not proved. Section 13 therefore presents this as a substantive
+  proof candidate rather than an accepted thesis result.
 - Local-systolic-behavior episode: an attempted proof route produced a
   transition diagnostic showing how a target sigma absent at the base point
   could appear after perturbation. It did not establish finite-distance
