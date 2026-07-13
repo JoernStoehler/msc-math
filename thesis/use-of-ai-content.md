@@ -13,8 +13,8 @@ be committed.
 
 ## Evidence design
 
-The section uses selected complete episodes plus one structured four-run replay. It does
-not estimate net productivity or reconstruct an exhaustive research timeline.
+The section uses selected complete episodes plus one structured four-run replay.
+It does not estimate net productivity or reconstruct an exhaustive research timeline.
 Recorded sessions establish observed requests, actions, reviews, and handoffs;
 Git establishes retained artifact states and branch integration; surviving
 tests and code establish only what they directly check. Jörn's retrospective
@@ -54,7 +54,7 @@ Sources:
 
 Claim: tests and reviews help only when they discriminate the relevant error;
 separating verifier construction from production remained useful in the tested
-GPT-5.5/GPT-5.6 comparison.
+GPT-5.5/GPT-5.6-sol comparison.
 
 Source: structured four-run replay from base `f3d36cc9`, before the historical
 projection reduced-gradient sign repair. All runs received the same known issue
@@ -84,9 +84,9 @@ Run costs, retained only to avoid flattening unlike quantities:
   output tokens.
 - GPT-5.5 verifier first: 219 s; 38,608 uncached input, 540,416 cached input,
   4,376 output tokens.
-- GPT-5.6 minimal: 126 s; 46,311 uncached input, 603,648 cached input, 3,106
+- GPT-5.6-sol minimal: 126 s; 46,311 uncached input, 603,648 cached input, 3,106
   output tokens.
-- GPT-5.6 verifier first: 155 s; 45,420 uncached input, 708,096 cached input,
+- GPT-5.6-sol verifier first: 155 s; 45,420 uncached input, 708,096 cached input,
   3,846 output tokens.
 
 Do not sum these token categories or translate them into monetary cost without
@@ -162,7 +162,7 @@ Sources:
 - A global coefficient for AI productivity or net benefit.
 - A human-only counterfactual inferred from session duration.
 - Exhaustive session, token, commit, or changed-line statistics.
-- General superiority of GPT-5.5 or GPT-5.6.
+- General superiority of GPT-5.5 or GPT-5.6-sol.
 - Git history as evidence of idea origin or semantic acceptance.
 - The aggregate log report as evidence of mathematical correctness or causal
   impact.
