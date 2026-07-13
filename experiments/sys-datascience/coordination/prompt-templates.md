@@ -144,3 +144,41 @@ Report:
 - which hypotheses/topics are updated, not updated, or tainted
 - source paths and recomputation path
 ```
+
+## Agent-Capability Intake
+
+```text
+You are maintaining the sys-datascience agent capability ledger. Read
+`agent-capability-ledger.md` and use `$codex-session-log-parsing`. This intake
+is read-only: do not edit repository files. Return proposed entries or a patch
+for the parent to review.
+
+Decision target: <routing, decomposition, prompt, review, or workflow choice>
+Episodes supplied: <task handles/thread ids/parent-child list>
+Parent feedback: <existing brief judgments plus message/event or durable-note
+pointer when available; mark recollection/untraceable feedback; treat as
+evaluation, not raw truth>
+
+For each episode, inspect only the focused rollout events and product/review
+evidence needed for the decision. Resolve subagent and subsubagent lineage.
+Prefer supplied thread ids; if a prompt field is encrypted or an episode has no
+artifact/review, mark that explicitly rather than reconstructing or rejecting
+the episode.
+Separate:
+- configured task and labor requirements;
+- source-backed observable behavior;
+- parent evaluation and downstream repair/salvage;
+- competing diagnoses;
+- the cheapest worthwhile discriminator;
+- a narrow conditional routing update.
+
+Do not infer internal reasoning from read/tool events, trust agent summaries as
+product evidence, dump transcripts, benchmark adjacent models without a live
+decision, or propose a harness edit merely because a reminder fixed one case.
+
+Return:
+1. proposed compact episode entries with exact source pointers;
+2. routing beliefs that should change, remain unchanged, or stay unresolved;
+3. any focused discriminator worth its cost;
+4. exact ledger diff, or `no durable update`.
+```

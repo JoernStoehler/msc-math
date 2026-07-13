@@ -175,6 +175,10 @@ useful scout pass records:
   beliefs, thesis wording, or global prioritization.
 - Update `process-learnings.md` when a workflow failure or success changes
   future agent behavior.
+- Update `agent-capability-ledger.md` only for source-linked episodes that
+  change a recurring agent-routing, decomposition, prompting, or review choice.
+  If later intake is likely, preserve spawned child/subchild thread ids in the
+  lead's handoff or scratch state rather than making intake rediscover handles.
 - Update `prompt-templates.md` when a recurring prompt shape becomes useful.
 
 ## Packet Lifecycle

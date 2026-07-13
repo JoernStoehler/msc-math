@@ -22,3 +22,8 @@ workflow-evaluations/ contains historical GPT-5.5 process evidence, not current
 execution authority. Other coordination files may be useful as evidence or
 planning inputs, but their old launch recommendations are not current unless
 explicitly readopted.
+
+For repeated decisions about model/effort, context mode, decomposition, or
+review configuration, use `agent-capability-ledger.md`. It indexes selected
+source-linked behavioral episodes; it is not a model leaderboard or a task
+queue.
