@@ -18,6 +18,13 @@ Status: navigation cache for the active thesis surface.
   opening, and inputs the
   `02-preliminaries-*` semantic subfiles.
 - `preliminaries-content.md`: section-local preliminaries content notes.
+- `theory-authoring-map.md`: cross-chapter reader-question, dependency, source,
+  and explanatory-ownership map for the preliminaries, generalized Reeb
+  orbits, and finite algorithms. Not mathematical source truth.
+- `theory-source-reorganization-plan.md`: dependency-safe implementation plan
+  for splitting and moving the active early-theory TeX after explanatory
+  ownership has been chosen. Not publication prose or mathematical source
+  truth.
 - `03-generalized-reeb-orbits-polytopes.tex`: contains the generalized Reeb
   orbit `\section`, the section opening, and inputs the
   `03-generalized-reeb-orbits-*` semantic subfiles.

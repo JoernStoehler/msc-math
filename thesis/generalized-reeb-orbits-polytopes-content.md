@@ -6,6 +6,9 @@ Status: section-local content companion for
 Purpose: gather the writing inventory for explaining why finite polytope
 computations compute the relevant symplectic quantity.
 
+Use `theory-authoring-map.md` for the cross-chapter reader questions and
+ownership decisions that determine what enters this section.
+
 Overruled by: `formal/`, source papers, revalidated legacy thesis material,
 active algorithm sections, and Jörn/Kai review.
 
@@ -20,15 +23,48 @@ Update rule: add or change a claim only with a source pointer or an explicit
 
 - In scope: generalized Reeb orbits as the polytope object that connects
   EHZ/minimum action to the finite HK quadratic-program statement.
-- In scope: literature-level limit or smoothing statements needed to explain
-  why polytope orbits are the correct nonsmooth analogues of smooth Reeb
-  orbits.
-- Out of scope: the flow-graph algorithm based on CH2021. CH2021 may still be
-  used here as a source for definitions, smoothing limits, and combinatorial
-  Reeb-orbit statements if those claims are the right source truth.
+- In scope: the general AAO/HK nonsmooth duality and generalized-orbit route
+  needed to explain why polytopes carry the capacity-minimizing object used by
+  both finite methods.
+- Out of scope: CH2021's narrower four-dimensional symplectic-polytope
+  smoothing/combinatorial model and the project flow-graph algorithm. Move the
+  existing CH2021 comparison material to the flow-graph story rather than use
+  it to justify the general definition here.
 - Out of scope: project-original algorithmic improvements on top of HK or
   CH2021, except for small notation choices needed to state the literature in
   thesis notation.
+
+## Reader Role And Proposed Boundary
+
+This section should answer why a nonsmooth polytope has the right dynamical
+object and why the capacity problem contains a finite pure-facet minimizer. It
+should begin from the common action/capacity and normalized-facet language in
+the preliminaries, then own:
+
+- the generalized Reeb inclusion and contact-normalized facet directions;
+- active words, dwell times, closure, cyclic redundancy, and base-point
+  recovery;
+- the specialization of the preliminary Clarke correspondence to the polytope
+  inclusion;
+- the piecewise-affine action identity and the simple-minimizer proof.
+
+Keep the detailed Clarke principle in the preliminaries as general convex
+theory. This material should invoke it rather than restate it, after showing
+that the abstract nonsmooth Hamiltonian inclusion becomes the convex hull of
+the pure facet directions. Move only the shoelace identity here, near its first
+substantive use in the simple-minimizer argument.
+
+Preserve the settled proof boundary and status recorded in
+`PROJECT_COMPLETION.md`: cite dual-minimizer existence and the nonsmooth
+multiplier/Euler--Lagrange input; derive the free-period uncentered equation,
+its coefficient, translation/rescaling correspondence, and \(I_K=T=A\) in the
+thesis convention. This candidate has passed source and internal mathematical
+review; the remaining gate is integrated reader review, not a new decision
+about whether to replace the derivation by citations.
+
+The section should leave the reader ready for either finite method. It should
+not explain the Haim--Kislev objective, KKT machinery, flow tubes, or CH2021 as
+if they were part of the same proof.
 
 ## Definition
 
@@ -62,6 +98,10 @@ Update rule: add or change a claim only with a source pointer or an explicit
   symplectic polytopes and smoothing/combinatorial limits. It is not used as a
   replacement for the HK quadratic program and does not import our flow-graph
   implementation into this checkpoint.
+- Proposed ownership change: move this CH2021 subsection to the flow-graph
+  story, where its narrower symplectic-polytope hypotheses and its relation to
+  the project theorem can be explained together. It is not on the dependency
+  path from generalized orbits to the Haim--Kislev formula.
 - Review risk: check theorem numbering against the compiled/published CH2021
   version if the bibliography or source numbering changes. The current source
   has Theorem 1.8, Theorem 1.9, Corollary 1.13, and Proposition 2.2.
@@ -85,8 +125,8 @@ Update rule: add or change a claim only with a source pointer or an explicit
   mentions padded all-facet permutations only as an alternate encoding.
 - This supports the finite `(sigma, tau, b)` representation while preserving
   the caveat that closure is only the closedness equation for the broken path;
-  base-point recovery is a finite linear construction, not a separate
-  conceptual condition.
+  base-point recovery is a separate finite linear-feasibility condition, even
+  though it is not part of the velocity/action data.
 - The full proof may later move to an appendix if it interrupts the reading
   path, but it should not be deleted or replaced by a bare HK citation.
 - 2026-06-20 HK source comparison fixed two active-statement qualifications:
