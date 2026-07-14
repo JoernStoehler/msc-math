@@ -46,3 +46,7 @@ Jörn created the Zenodo account successfully through `Sign up with GitHub` on
 later actions. Agents own the local rights/exclusion inventory, metadata
 candidate, payload manifest, package construction, and verification before
 asking Jörn to operate the draft record.
+
+Prepared local audit: `archive-rights-and-exclusions.md` records the current
+license gap, recommended two-part license, alternatives, preliminary archive
+boundary, and remaining checks. It does not authorize publication.
