@@ -74,3 +74,20 @@ obviously redundant or pathological settings, not as population estimates.
 The target path, when explicitly enabled, is `capacity_auto` on each accepted
 smoke row. A local runtime-cap classification is not a claim about large-sample
 cost or distributional separation.
+
+## Target pilot
+
+The separate checked-in `artifacts/target-pilot/` run uses the same seed and
+attempt budget, one row per arm, and `--target`. It produced 68 rows: 42 target
+evaluations below the two-second post-hoc threshold, 25 rows skipped above the
+ten-facet predeclared cap, and one exhausted `Dirichlet(alpha=.5)` row. Summed
+target time was about seven seconds; the slowest evaluated row was the regular
+`4x6` product at about 1.7 seconds. Thus local target evaluation is cheap enough
+for a reviewed follow-up at these smaller buckets.
+
+The pilot is deliberately too small for transfer claims. Its paired witnesses
+do show that the intervention plumbing is live: the sampled factorial `3x3`
+arms agree to numerical precision, while the sampled `4x6` arms change from
+`sys=0.713` at baseline to `0.682`, `0.663`, and `0.635`; the sampled broken and
+symmetric-control `4x6` rows differ by about `0.0054`. These are semantic
+witnesses, not estimated effects.
