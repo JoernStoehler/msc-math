@@ -1,0 +1,109 @@
+{
+  "schema": "qp-population-coverage-v1",
+  "populations": [
+    {
+      "case_id": "simplex_f5",
+      "source_pointer": "symplectic::geom::known_polytopes::simplex",
+      "selection": "canonical directed cycles, producer cap 256",
+      "target_oracle": "original rational dual and exact rational KKT",
+      "completeness": "transition_complete_small_capped",
+      "intended_question": "small exact baseline",
+      "status": "covered"
+    },
+    {
+      "case_id": "hypercube_f8",
+      "source_pointer": "symplectic::geom::known_polytopes::hypercube",
+      "selection": "canonical directed cycles, producer cap 256",
+      "target_oracle": "original rational dual and exact rational KKT",
+      "completeness": "transition_complete_small_capped",
+      "intended_question": "small symmetry and roundoff baseline",
+      "status": "covered"
+    },
+    {
+      "case_id": "random_F5_s0_0",
+      "source_pointer": "experiments/sys-datascience/produce/random.jsonl#random_F5_s0_0",
+      "selection": "all canonical cycles from embedded source transition",
+      "target_oracle": "embedded original rational dual and exact rational KKT",
+      "completeness": "source_transition_complete",
+      "intended_question": "ordinary seeded pre-retention population without runtime LFS dependency",
+      "status": "covered"
+    },
+    {
+      "case_id": "seed99540836_q4_p5_attempt405000000000",
+      "source_pointer": "generated_f64_cases_with_source_filter(seed=99540836, source id seed99540836:q4:p5:attempt405000000000)",
+      "selection": "all canonical cycles from exact binary64 transition",
+      "target_oracle": "stored binary64 dyadic dual and exact rational KKT",
+      "completeness": "transition_complete_1294 (1294 rows)",
+      "intended_question": "high-information pinned transition population",
+      "status": "covered"
+    },
+    {
+      "case_id": "hko_beta_boundary",
+      "source_pointer": "symplectic::geom::known_polytopes::hko_pentagon, sigma=[0,1,6,7,3,4,5,9]",
+      "selection": "named regression sigma",
+      "target_oracle": "stored binary64 dyadic only; intended algebraic unavailable",
+      "completeness": "matched_named_context_only",
+      "intended_question": "beta-boundary behavior",
+      "status": "covered"
+    },
+    {
+      "case_id": "hko_near_singular_false_acceptance",
+      "source_pointer": "symplectic::geom::known_polytopes::hko_pentagon, sigma=[1,8,7,3,4,5,9]",
+      "selection": "named regression sigma",
+      "target_oracle": "stored binary64 dyadic only; intended algebraic unavailable",
+      "completeness": "matched_named_context_only",
+      "intended_question": "near-singular false acceptance",
+      "status": "covered"
+    },
+    {
+      "case_id": "hko_residual_q_failure",
+      "source_pointer": "symplectic::geom::known_polytopes::hko_pentagon, sigma=[0,1,7,3,9,5]",
+      "selection": "named regression sigma",
+      "target_oracle": "stored binary64 dyadic only; intended algebraic unavailable",
+      "completeness": "matched_named_context_only",
+      "intended_question": "residual-Q failure",
+      "status": "covered"
+    },
+    {
+      "case_id": "hko_rank_deficient",
+      "source_pointer": "symplectic::geom::known_polytopes::hko_pentagon, sigma=[1,7,2,8,4,6,5]",
+      "selection": "named regression sigma",
+      "target_oracle": "stored binary64 dyadic plus exact raw linear diagnostics; intended algebraic unavailable",
+      "completeness": "matched_named_context_only",
+      "intended_question": "rank deficiency without manufactured beta error",
+      "status": "covered"
+    },
+    {
+      "case_id": "hypercube_exact_zero_beta_boundary",
+      "source_pointer": "symplectic::geom::known_polytopes::hypercube, sigma=[0,2,1,5,6]",
+      "selection": "named exact-zero boundary sigma",
+      "target_oracle": "original rational dual and exact raw linear diagnostics",
+      "completeness": "matched_named_context_only",
+      "intended_question": "exact-zero beta boundary",
+      "status": "covered"
+    },
+    {
+      "case_id": "random_3x5_s0_0",
+      "source_pointer": "experiments/sys-datascience/produce/random-product.jsonl#random_3x5_s0_0",
+      "selection": "four named exact within-stream minimizing sigmas",
+      "target_oracle": "embedded rational dual and exact rational KKT",
+      "completeness": "exact_within_declared_stream_tie; not globally complete",
+      "intended_question": "product tie and minimum-window behavior",
+      "status": "covered"
+    },
+    {
+      "case_id": "pruning_roundoff",
+      "source_pointer": "route_demonstrations::pruning_roundoff_fixture",
+      "selection": "all canonical cycles from embedded fixture transition, producer cap 256",
+      "target_oracle": "stored binary64 dyadic dual and exact rational KKT",
+      "completeness": "stored_dyadic_transition_complete_small_capped",
+      "intended_question": "pruning-roundoff regression",
+      "status": "covered"
+    }
+  ],
+  "source_audit_gaps": [
+    "No checked-in exact raw-sysext beta-invalid/high-Q predictor population.",
+    "No intended-algebraic HKO integration in this row schema; adding it requires exp-hko-local-maximum::exact_bank and a generic exact algebraic solver, and must remain separate from stored dyadic rows.",
+    "No square×square geometric near-zero-Q selector at 0.125 degrees: a cheap reproducible post-selected prevalence-controlled implementation was not available for this packet."
+  ]
+}

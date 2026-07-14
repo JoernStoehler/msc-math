@@ -1,0 +1,2452 @@
+{
+  "schema": "qp-formula-inventory-v1",
+  "source_revision": "ff3de9f9^",
+  "formula_count": 101,
+  "formulas": [
+    {
+      "id": "enumeration.hk_transition_pruned_cycles",
+      "family": "enumeration",
+      "formula_type": "finite_set_generator",
+      "expression": "sigma in SimpleDirectedCyclesCanonical(T); |sigma| >= 2; T[sigma[-1],sigma[0]] and T[sigma[i],sigma[i+1]]",
+      "source": [
+        "crates/symplectic/src/algorithms/hk2017/enumeration.rs",
+        "crates/symplectic/src/algorithms/facet_adjacency.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/aggregation_route.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "sigma",
+        "universe_contract"
+      ],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "enumeration",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "enumeration.hk_unpruned_cycles",
+      "family": "enumeration",
+      "formula_type": "finite_set_generator",
+      "expression": "union_{m=2..n} { cyclic_permutation(S) : S subset {0..n-1}, |S|=m }",
+      "source": [
+        "crates/symplectic/src/algorithms/hk2017/enumeration.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/aggregation_route.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "sigma",
+        "universe_contract"
+      ],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "enumeration",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "enumeration.product_billiard_sigma",
+      "family": "enumeration",
+      "formula_type": "finite_set_generator",
+      "expression": "sigma = q_block concatenated p_block, emitted by for_each_product_billiard_sigma",
+      "source": [
+        "crates/symplectic/src/algorithms/billiard/block_enumeration.rs",
+        "experiments/dev-quadratic-program/src/f64_route/enumeration.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/aggregation_route.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "sigma",
+        "universe_contract"
+      ],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "enumeration",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "candidate.f64_action_sort_and_partition",
+      "family": "candidate_lifecycle",
+      "formula_type": "partition_and_order",
+      "expression": "admissible := {o: o.admissibility=Admissible}; indeterminate := {o: ...=Indeterminate}; sort(admissible, action); sort(indeterminate, action_lower)",
+      "source": [
+        "experiments/dev-quadratic-program/src/f64_route/candidates.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/aggregation_route.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "action_f64",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "lifecycle_events",
+        "q_corrected_f64",
+        "q_error_bound",
+        "q_exact",
+        "route_count_scope"
+      ],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "candidate_lifecycle",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "candidate.indeterminate_interval_overlap",
+      "family": "candidate_lifecycle",
+      "formula_type": "predicate",
+      "expression": "exists c: c.action_lower <= best.action_upper and best.action_lower <= c.action_upper",
+      "source": [
+        "experiments/dev-quadratic-program/src/f64_route/candidates.rs",
+        "crates/symplectic/src/algorithms/orbit_search.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/aggregation_route.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "lifecycle_events",
+        "route_count_scope"
+      ],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "candidate_lifecycle",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "safety.action_interval_from_q_error",
+      "family": "interval_safety",
+      "formula_type": "monotone_transform",
+      "expression": "A_lower=0.5/q_upper; A_upper=0.5/q_lower if q_lower>EPS_Q_POSITIVE else +infinity",
+      "source": [
+        "crates/symplectic/src/algorithms/orbit_search.rs",
+        "experiments/dev-quadratic-program/src/f64_route/orbit.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/aggregation_route.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "q_corrected_f64",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "q_corrected_f64",
+        "q_error_bound",
+        "q_exact"
+      ],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "interval_safety",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "aggregation.guarantee_mode_scope",
+      "family": "aggregation",
+      "formula_type": "policy_branch",
+      "expression": "mode in {BoundSafe, MinimaSafe, AllSafe} selects resolve_boundsafe/resolve_minimasafe/resolve_allsafe",
+      "source": [
+        "crates/symplectic/src/algorithms/orbit_search.rs",
+        "experiments/dev-quadratic-program/src/fallback_route/mod.rs",
+        "experiments/dev-quadratic-program/src/route_demonstrations/fallback_guarantee_modes_have_different_scopes.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/aggregation_route.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "lifecycle_events",
+        "route_count_scope"
+      ],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "aggregation",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "aggregation.low_action_window",
+      "family": "aggregation",
+      "formula_type": "interval_filter",
+      "expression": "cutoff=min_i(action_upper_i)+gap; retain o iff o.action_lower <= cutoff",
+      "source": [
+        "crates/symplectic/src/algorithms/orbit_search.rs",
+        "experiments/dev-quadratic-program/src/fallback_route/mod.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/aggregation_route.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "action_f64",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "lifecycle_events",
+        "q_corrected_f64",
+        "q_error_bound",
+        "q_exact",
+        "route_count_scope"
+      ],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "aggregation",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "aggregation.minimizer_set_from_action_intervals",
+      "family": "aggregation",
+      "formula_type": "argmin_interval",
+      "expression": "lower=min_i A_lower(i); upper=min_i A_upper(i); possible_i := A_lower(i)<=upper and lower<=A_upper(i)",
+      "source": [
+        "crates/symplectic/src/algorithms/orbit_search.rs",
+        "experiments/dev-quadratic-program/src/fallback_route/mod.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/aggregation_route.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "action_f64",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "lifecycle_events",
+        "q_corrected_f64",
+        "q_error_bound",
+        "q_exact",
+        "route_count_scope"
+      ],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "aggregation",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "fallback.exact_retained_candidate_resolution",
+      "family": "exact_fallback",
+      "formula_type": "thresholded_exact_search",
+      "expression": "threshold_exact=C_exact+gap; resolve c iff c.action_lower <= conservative_f64_upper_bound(threshold_exact)",
+      "source": [
+        "crates/symplectic/src/algorithms/orbit_search.rs",
+        "experiments/dev-quadratic-program/src/fallback_route/mod.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/aggregation_route.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "lifecycle_events",
+        "route_count_scope"
+      ],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "exact_fallback",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "fallback.exact_gap_threshold",
+      "family": "exact_fallback",
+      "formula_type": "threshold",
+      "expression": "window_cutoff = capacity_exact + action_gap_exact; include orbit iff action_exact <= window_cutoff",
+      "source": [
+        "experiments/dev-quadratic-program/src/fallback_route/mod.rs",
+        "crates/symplectic/src/algorithms/orbit_search.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/aggregation_route.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "lifecycle_events",
+        "route_count_scope"
+      ],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "exact_fallback",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "performance.route_counts_and_fallback_resolutions",
+      "family": "performance",
+      "formula_type": "instrumented_counts",
+      "expression": "counts={sigma_count,inadmissible_count,numerical_failure_count,exact_resolutions}; timing=kkt_solve_ms",
+      "source": [
+        "experiments/dev-quadratic-program/src/f64_route/candidates.rs",
+        "experiments/dev-quadratic-program/src/fallback_route/mod.rs",
+        "crates/symplectic/src/algorithms/hk2017/enumeration.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/aggregation_route.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "lifecycle_events",
+        "route_count_scope"
+      ],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "performance",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "bound.beta_verified_inverse",
+      "family": "bound",
+      "formula_type": "componentwise_error_bound",
+      "expression": "eta_i = E_delta_beta0 + sum_j |(V w_j)_i| (|e_j|+|f_j|)/|gamma_j|",
+      "source": [
+        "formal/hk2017-qp-precision.tex"
+      ],
+      "implementation_status": "not_implemented",
+      "registry": "registry/bounds_formal.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "beta_f64",
+      "required_atoms": [
+        "beta_error_linf",
+        "beta_exact",
+        "beta_f64",
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "exact target oracle exists; retained atoms satisfy the source lemma hypotheses",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "predicate/error safety and Q/action ranking",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "bound.beta0_pseudoinverse_perturbation",
+      "family": "bound",
+      "formula_type": "norm_bound",
+      "expression": "||delta beta0|| <= c6 ||delta C|| ||d|| / sigma_min(C)^2 + O(delta C^2)",
+      "source": [
+        "formal/hk2017-qp-precision.tex"
+      ],
+      "implementation_status": "not_implemented",
+      "registry": "registry/bounds_formal.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "beta_f64",
+      "required_atoms": [
+        "beta_error_linf",
+        "beta_exact",
+        "beta_f64",
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "exact target oracle exists; retained atoms satisfy the source lemma hypotheses",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "predicate/error safety and Q/action ranking",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "bound.nullspace_davis_kahan",
+      "family": "bound",
+      "formula_type": "subspace_angle_bound",
+      "expression": "||sin Theta(V_tilde,V)|| <= ||delta C_total|| / sigma_min(C)",
+      "source": [
+        "formal/hk2017-qp-precision.tex"
+      ],
+      "implementation_status": "not_implemented",
+      "registry": "registry/bounds_formal.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "reduced_hessian/reference exact center (unavailable unless explicit proposal/reference atoms are retained)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "exact target oracle exists; retained atoms satisfy the source lemma hypotheses",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "predicate/error safety and Q/action ranking",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "bound.reduced_hessian_eigenvalue",
+      "family": "bound",
+      "formula_type": "eigenvalue_error_bound",
+      "expression": "|gamma_tilde_j-gamma_j| <= E_delta_Hprime",
+      "source": [
+        "formal/hk2017-qp-precision.tex"
+      ],
+      "implementation_status": "not_implemented",
+      "registry": "registry/bounds_formal.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "reduced_hessian/reference exact center (unavailable unless explicit proposal/reference atoms are retained)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "exact target oracle exists; retained atoms satisfy the source lemma hypotheses",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "predicate/error safety and Q/action ranking",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "bound.q_first_order",
+      "family": "bound",
+      "formula_type": "scalar_error_bound",
+      "expression": "|delta Q| <= ||H|| ||beta|| ||delta beta|| + 0.5 ||H|| ||delta beta||^2 + 0.5 ||delta H|| ||beta||^2",
+      "source": [
+        "formal/hk2017-qp-precision.tex"
+      ],
+      "implementation_status": "not_implemented",
+      "registry": "registry/bounds_formal.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "q_corrected_f64",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "beta_f64",
+        "kkt_matrix_f64",
+        "kkt_residual_vector_f64",
+        "kkt_rhs_f64",
+        "proposal_beta_f64",
+        "proposal_q_f64",
+        "proposal_residual_norm",
+        "q_corrected_f64",
+        "q_error_bound",
+        "q_exact",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "exact target oracle exists; retained atoms satisfy the source lemma hypotheses",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "predicate/error safety and Q/action ranking",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "bound.q_correction_second_order",
+      "family": "bound",
+      "formula_type": "quadratic_correction_bound",
+      "expression": "Q_corrected = Q_raw + 0.5 r^T H^+ r; correction is bounded by ||r||^2/(2 lambda_gap)",
+      "source": [
+        "formal/hk2017-qp-precision.tex"
+      ],
+      "implementation_status": "partial",
+      "registry": "registry/bounds_formal.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "q_correction_f64",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "beta_f64",
+        "kkt_matrix_f64",
+        "kkt_residual_norm",
+        "kkt_residual_vector_f64",
+        "kkt_rhs_f64",
+        "mu_f64",
+        "q_corrected_f64",
+        "q_error_bound",
+        "q_exact",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64",
+        "xi_f64"
+      ],
+      "hypotheses": "exact target oracle exists; retained atoms satisfy the source lemma hypotheses",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "predicate/error safety and Q/action ranking",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "bound.beta_perturbation_eta",
+      "family": "bound",
+      "formula_type": "predicate_tolerance",
+      "expression": "beta_tilde_i-eta_i>0 => exact beta_i>0; beta_tilde_i+eta_i<0 => exact beta_i<0; otherwise Indeterminate",
+      "source": [
+        "formal/hk2017-qp-precision.tex"
+      ],
+      "implementation_status": "not_implemented",
+      "registry": "registry/bounds_formal.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "beta_f64",
+      "required_atoms": [
+        "beta_error_linf",
+        "beta_exact",
+        "beta_f64",
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "exact target oracle exists; retained atoms satisfy the source lemma hypotheses",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "predicate/error safety and Q/action ranking",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "bound.beta_margin_heuristic",
+      "family": "bound",
+      "formula_type": "heuristic_tolerance",
+      "expression": "abs(beta_tilde_i) > tau_beta implies a proposed sign; tau_beta is varied empirically",
+      "source": [
+        "formal/hk2017-qp-precision.tex"
+      ],
+      "implementation_status": "partial",
+      "registry": "registry/bounds_formal.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "beta_f64",
+      "required_atoms": [
+        "beta_error_linf",
+        "beta_exact",
+        "beta_f64",
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "exact target oracle exists; retained atoms satisfy the source lemma hypotheses",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "predicate/error safety and Q/action ranking",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "bound.prefilter_condition_tolerance",
+      "family": "bound",
+      "formula_type": "scalar_predicate_tolerance",
+      "expression": "delta = C kappa_hat u ||v_hat|| ||y_hat||; compare s_hat with 1 +/- delta",
+      "source": [
+        "formal/f64-prefilter-bound.tex"
+      ],
+      "implementation_status": "not_implemented",
+      "registry": "registry/bounds_formal.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "exact target oracle exists; retained atoms satisfy the source lemma hypotheses",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "predicate/error safety and Q/action ranking",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "bound.orientation_det_error",
+      "family": "bound",
+      "formula_type": "determinant_error_bound",
+      "expression": "|det(M)-det_hat| <= gamma_26 P(M); implementation uses E_hat=max(nextUp(fl(fl(16 gamma_26) P_hat)), minNormal)",
+      "source": [
+        "formal/f64-orientation-sign-filters.tex",
+        "crates/euclidean-polytopes/src/polar.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/bounds_formal.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "exact target oracle exists; retained atoms satisfy the source lemma hypotheses",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "predicate/error safety and Q/action ranking",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "bound.orientation_product_error",
+      "family": "bound",
+      "formula_type": "product_rounding_bound",
+      "expression": "p_hat = p(1+theta_3), |theta_3| <= gamma_3",
+      "source": [
+        "formal/f64-orientation-sign-filters.tex"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/bounds_formal.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "exact target oracle exists; retained atoms satisfy the source lemma hypotheses",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "predicate/error safety and Q/action ranking",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "bound.near_singular_residual_exclusion",
+      "family": "bound",
+      "formula_type": "bounded_vertex_exclusion",
+      "expression": "r(A)>epsilon B => no solution ||x||<=B for any ||E||<=epsilon with (A+E)x=1",
+      "source": [
+        "formal/f64-near-singular-vertices.tex"
+      ],
+      "implementation_status": "partial",
+      "registry": "registry/bounds_formal.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_residual_norm",
+        "kkt_residual_vector_f64",
+        "kkt_rhs_f64",
+        "mu_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64",
+        "xi_f64"
+      ],
+      "hypotheses": "exact target oracle exists; retained atoms satisfy the source lemma hypotheses",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "predicate/error safety and Q/action ranking",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "bound.near_singular_solution_scale",
+      "family": "bound",
+      "formula_type": "singular_system_exclusion",
+      "expression": "r(A)=0 and m(A)>B => no bounded solution of A x=1",
+      "source": [
+        "formal/f64-near-singular-vertices.tex"
+      ],
+      "implementation_status": "packet_local",
+      "registry": "registry/bounds_formal.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "exact target oracle exists; retained atoms satisfy the source lemma hypotheses",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "predicate/error safety and Q/action ranking",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "bound.near_redundant_delta_containment",
+      "family": "bound",
+      "formula_type": "facet_removal_containment",
+      "expression": "<a_j,x> <= 1 + delta_bound for x in the reduced polytope",
+      "source": [
+        "formal/near-redundant-facet-removal-bounds.tex"
+      ],
+      "implementation_status": "packet_local",
+      "registry": "registry/bounds_formal.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "exact target oracle exists; retained atoms satisfy the source lemma hypotheses",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "predicate/error safety and Q/action ranking",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "bound.near_redundant_capacity_ratio",
+      "family": "bound",
+      "formula_type": "multiplicative_distortion_bound",
+      "expression": "1 <= c(K)/c(K_reduced) <= lambda^2",
+      "source": [
+        "formal/near-redundant-facet-removal-bounds.tex"
+      ],
+      "implementation_status": "packet_local",
+      "registry": "registry/bounds_formal.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "exact target oracle exists; retained atoms satisfy the source lemma hypotheses",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "predicate/error safety and Q/action ranking",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "bound.near_redundant_volume_ratio",
+      "family": "bound",
+      "formula_type": "multiplicative_distortion_bound",
+      "expression": "1 <= vol(K)/vol(K_reduced) <= lambda^4",
+      "source": [
+        "formal/near-redundant-facet-removal-bounds.tex"
+      ],
+      "implementation_status": "packet_local",
+      "registry": "registry/bounds_formal.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "volume_f64",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "exact target oracle exists; retained atoms satisfy the source lemma hypotheses",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "predicate/error safety and Q/action ranking",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "bound.near_redundant_sys_ratio",
+      "family": "bound",
+      "formula_type": "multiplicative_distortion_bound",
+      "expression": "lambda^-4 <= sys(K_reduced)/sys(K) = r_c^2/r_v <= lambda^4, with 1<=r_c<=lambda^2 and 1<=r_v<=lambda^4",
+      "source": [
+        "formal/near-redundant-facet-removal-bounds.tex"
+      ],
+      "implementation_status": "packet_local",
+      "registry": "registry/bounds_formal.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "exact target oracle exists; retained atoms satisfy the source lemma hypotheses",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "predicate/error safety and Q/action ranking",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "bound.svd_condition_short_circuit",
+      "family": "bound",
+      "formula_type": "guard",
+      "expression": "sigma_min(C) <= epsilon_C => Indeterminate (fast guard; epsilon_C is not derived)",
+      "source": [
+        "formal/hk2017-qp-precision.tex"
+      ],
+      "implementation_status": "not_implemented",
+      "registry": "registry/bounds_formal.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "exact target oracle exists; retained atoms satisfy the source lemma hypotheses",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "predicate/error safety and Q/action ranking",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "bound.prefilter_kappa_guard",
+      "family": "bound",
+      "formula_type": "guard",
+      "expression": "u*kappa_hat > 1/4 => Indeterminate",
+      "source": [
+        "formal/f64-prefilter-bound.tex"
+      ],
+      "implementation_status": "not_implemented",
+      "registry": "registry/bounds_formal.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "exact target oracle exists; retained atoms satisfy the source lemma hypotheses",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "predicate/error safety and Q/action ranking",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "geometry.facet_intersection",
+      "family": "geometry",
+      "formula_type": "predicate",
+      "expression": "I[i,k] = any_v(VI[v,i] && VI[v,k]), with I[i,i] = false",
+      "source": [
+        "crates/euclidean-polytopes/src/faces.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/geometry_volume.json",
+      "target_semantics": "case target_id; geometry target is the retained dual object",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "geometry_facet_intersection",
+        "geometry_transition_matrix",
+        "geometry_vertex_facet_incidence",
+        "omega_matrix_f64"
+      ],
+      "hypotheses": "incidence/omega orientation uses the packet coordinate convention",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "incidence and symplectic transition construction",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "geometry.edges_from_incidence",
+      "family": "geometry",
+      "formula_type": "combinatorial_rule",
+      "expression": "edge(u,v) iff |F(u) intersect F(v)| >= 3",
+      "source": [
+        "crates/euclidean-polytopes/src/faces.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/geometry_volume.json",
+      "target_semantics": "case target_id; geometry target is the retained dual object",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "geometry_facet_intersection",
+        "geometry_transition_matrix",
+        "geometry_vertex_facet_incidence",
+        "omega_matrix_f64"
+      ],
+      "hypotheses": "incidence/omega orientation uses the packet coordinate convention",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "incidence and symplectic transition construction",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "geometry.two_face_incidence",
+      "family": "geometry",
+      "formula_type": "combinatorial_rule",
+      "expression": "F(i,j) = {v: I[v,i] && I[v,j]}; retain iff |F(i,j)| >= 3",
+      "source": [
+        "crates/euclidean-polytopes/src/faces.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/geometry_volume.json",
+      "target_semantics": "case target_id; geometry target is the retained dual object",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "geometry_facet_intersection",
+        "geometry_transition_matrix",
+        "geometry_vertex_facet_incidence",
+        "omega_matrix_f64"
+      ],
+      "hypotheses": "incidence/omega orientation uses the packet coordinate convention",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "incidence and symplectic transition construction",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "geometry.omega0",
+      "family": "geometry",
+      "formula_type": "bilinear_form",
+      "expression": "omega0(u,v) = (j4() u) dot v",
+      "source": [
+        "crates/symplectic/src/geom/symplectic_form.rs",
+        "formal/symplectic-polytope-geometry.tex"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/geometry_volume.json",
+      "target_semantics": "case target_id; geometry target is the retained dual object",
+      "center_semantics": "omega_matrix_f64",
+      "required_atoms": [
+        "geometry_facet_intersection",
+        "geometry_transition_matrix",
+        "geometry_vertex_facet_incidence",
+        "omega_matrix_f64"
+      ],
+      "hypotheses": "incidence/omega orientation uses the packet coordinate convention",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "incidence and symplectic transition construction",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "geometry.transition_sign",
+      "family": "geometry",
+      "formula_type": "predicate",
+      "expression": "T[i,j] = I[i,j] && (omega0(a_i,a_j) >= 0)",
+      "source": [
+        "formal/combinatorial-boundary-regularity.tex",
+        "formal/capacity-algorithms.tex",
+        "crates/symplectic/src/geom/symplectic_form.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/geometry_volume.json",
+      "target_semantics": "case target_id; geometry target is the retained dual object",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "geometry_facet_intersection",
+        "geometry_transition_matrix",
+        "geometry_vertex_facet_incidence",
+        "omega_matrix_f64"
+      ],
+      "hypotheses": "incidence/omega orientation uses the packet coordinate convention",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "incidence and symplectic transition construction",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "volume.four_volume_origin_star",
+      "family": "volume",
+      "formula_type": "exact_sum",
+      "expression": "Vol4(K) = sum_{facet,2-face triangulation} |det(v1-v0,...,v4-v0)| / 24",
+      "source": [
+        "crates/euclidean-polytopes/src/volume.rs",
+        "formal/symplectic-polytope-geometry.tex"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/geometry_volume.json",
+      "target_semantics": "case target_id; geometry target is the retained dual object",
+      "center_semantics": "volume_f64",
+      "required_atoms": [
+        "sys_f64",
+        "volume_exact",
+        "volume_f64"
+      ],
+      "hypotheses": "exact volume is available for an exact comparison",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "volume and systolic consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "volume.facet_volume_centroid",
+      "family": "volume",
+      "formula_type": "decomposition",
+      "expression": "S_k = sum_t ||cross4(a-apex,b-apex,c-apex)||/6; xbar_k = sum_t S_t xbar_t / S_k",
+      "source": [
+        "crates/euclidean-polytopes/src/volume.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/geometry_volume.json",
+      "target_semantics": "case target_id; geometry target is the retained dual object",
+      "center_semantics": "volume_f64",
+      "required_atoms": [
+        "sys_f64",
+        "volume_exact",
+        "volume_f64"
+      ],
+      "hypotheses": "exact volume is available for an exact comparison",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "volume and systolic consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "volume.systolic_ratio",
+      "family": "volume",
+      "formula_type": "quotient",
+      "expression": "sys(K) = c_EHZ(K)^2 / (2 Vol4(K))",
+      "source": [
+        "crates/symplectic/src/lib.rs",
+        "formal/symplectic-polytope-geometry.tex"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/geometry_volume.json",
+      "target_semantics": "case target_id; geometry target is the retained dual object",
+      "center_semantics": "sys_f64",
+      "required_atoms": [
+        "sys_f64",
+        "volume_exact",
+        "volume_f64"
+      ],
+      "hypotheses": "exact volume is available for an exact comparison",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "volume and systolic consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "derivative.capacity_gradient",
+      "family": "derivative",
+      "formula_type": "envelope_derivative",
+      "expression": "dQ/da_k = beta_i[J(2P_i+beta_i a_k)+mu]; dc/da_k = -dQ/da_k/(2Q^2)",
+      "source": [
+        "crates/symplectic/src/derivatives.rs",
+        "formal/capacity-derivatives.tex"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/geometry_volume.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "derivative_f64",
+        "derivative_linf"
+      ],
+      "hypotheses": "the production derivative route returned a finite value",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "capacity/sys sensitivity consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "derivative.volume_gradient",
+      "family": "derivative",
+      "formula_type": "chain_rule",
+      "expression": "dV/da_k = S_k(-a_k/|a_k|^3) + [-S_k(xbar_k-h_kn_k)]/|a_k|",
+      "source": [
+        "crates/symplectic/src/derivatives.rs",
+        "formal/capacity-derivatives.tex"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/geometry_volume.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "volume_f64",
+      "required_atoms": [
+        "derivative_f64",
+        "derivative_linf"
+      ],
+      "hypotheses": "the production derivative route returned a finite value",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "capacity/sys sensitivity consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "derivative.systolic_ratio_gradient",
+      "family": "derivative",
+      "formula_type": "quotient_rule",
+      "expression": "d sys/da_k = (c/V) dc/da_k - (sys/V) dV/da_k",
+      "source": [
+        "crates/symplectic/src/derivatives.rs",
+        "formal/capacity-derivatives.tex"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/geometry_volume.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "sys_f64",
+      "required_atoms": [
+        "derivative_f64",
+        "derivative_linf"
+      ],
+      "hypotheses": "the production derivative route returned a finite value",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "capacity/sys sensitivity consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "derivative.clarke_directional",
+      "family": "derivative",
+      "formula_type": "nonsmooth_derivative",
+      "expression": "D_sys(d) = min_g sum_k <g_k,d_k>",
+      "source": [
+        "crates/symplectic/src/derivatives.rs",
+        "formal/capacity-derivatives.tex"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/geometry_volume.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "derivative_f64",
+        "derivative_linf"
+      ],
+      "hypotheses": "the production derivative route returned a finite value",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "capacity/sys sensitivity consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "boundary.omega_flip_quadratic",
+      "family": "boundary",
+      "formula_type": "polynomial_root",
+      "expression": "omega(a_i+td_i,a_j+td_j)=c+bt+at^2",
+      "source": [
+        "formal/combinatorial-boundary-regularity.tex"
+      ],
+      "implementation_status": "not_implemented",
+      "registry": "registry/geometry_volume.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "boundary",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "boundary.incidence_flip_linear",
+      "family": "boundary",
+      "formula_type": "linear_root",
+      "expression": "s_j(t)=s_j(0)+t dot(d_j,v); t_flip=s_j(0)/(-dot(d_j,v)) when derivative is negative",
+      "source": [
+        "formal/combinatorial-boundary-regularity.tex"
+      ],
+      "implementation_status": "not_implemented",
+      "registry": "registry/geometry_volume.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "boundary",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "boundary.dual_normal_degeneracy",
+      "family": "boundary",
+      "formula_type": "predicate",
+      "expression": "degenerate(a_k) iff |a_k| = 0 (or numerically below the chosen guard)",
+      "source": [
+        "crates/symplectic/src/derivatives.rs",
+        "formal/combinatorial-boundary-regularity.tex"
+      ],
+      "implementation_status": "partial",
+      "registry": "registry/geometry_volume.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "boundary",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "preprocessing.polar_vertices",
+      "family": "preprocessing",
+      "formula_type": "linear_system",
+      "expression": "x = solve(A_S x = 1); retain iff a_j dot x <= 1 for every j",
+      "source": [
+        "crates/euclidean-polytopes/src/polar.rs",
+        "crates/symplectic/src/exact/polytope.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/geometry_volume.json",
+      "target_semantics": "case target_id; geometry target is the retained dual object",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "preprocessing",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "preprocessing.origin_interior",
+      "family": "preprocessing",
+      "formula_type": "predicate",
+      "expression": "0 in int conv(P)",
+      "source": [
+        "crates/euclidean-polytopes/src/predicates.rs",
+        "formal/random-polytope-boundedness.tex"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/geometry_volume.json",
+      "target_semantics": "case target_id; geometry target is the retained dual object",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "preprocessing",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "preprocessing.extreme_points",
+      "family": "preprocessing",
+      "formula_type": "predicate",
+      "expression": "forall p in P: p notin conv(P\\{p})",
+      "source": [
+        "crates/euclidean-polytopes/src/predicates.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/geometry_volume.json",
+      "target_semantics": "case target_id; geometry target is the retained dual object",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "preprocessing",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "predictor.candidate_window_delta",
+      "family": "prediction",
+      "formula_type": "lower_envelope_linearization",
+      "expression": "min_{sigma in W(a0)} [sys_sigma(a0) - sys(a0) + <grad sys_sigma(a0), d>]",
+      "source": [
+        "experiments/dev-sys-prediction/README.md",
+        "experiments/dev-sys-prediction/src/prediction_cloud.rs",
+        "experiments/dev-sys-prediction/OPTIMIZER-GUIDANCE.md"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/prediction_local.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "prediction-window consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "predictor.candidate_window_branch_gap",
+      "family": "prediction",
+      "formula_type": "branch_gap",
+      "expression": "g_sigma = sys_sigma(a0) - sys(a0) (equivalently capacity/action and common-volume representation)",
+      "source": [
+        "experiments/dev-sys-prediction/src/prediction_cloud.rs",
+        "experiments/dev-sys-prediction/README.md"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/prediction_local.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "prediction-window consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "predictor.candidate_window_directional_derivative",
+      "family": "prediction",
+      "formula_type": "directional_linear_term",
+      "expression": "D_sigma(d) = <grad sys_sigma(a0), d>",
+      "source": [
+        "experiments/dev-sys-prediction/src/prediction_cloud.rs",
+        "crates/symplectic/src/derivatives.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/prediction_local.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "prediction-window consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "predictor.candidate_window_second_gap",
+      "family": "prediction",
+      "formula_type": "selection_margin",
+      "expression": "m = p_(2)(d) - p_(1)(d), where p_(1) <= p_(2) are the two lower-envelope branch predictions",
+      "source": [
+        "experiments/dev-sys-prediction/src/prediction_cloud.rs",
+        "experiments/dev-sys-prediction/OPTIMIZER-GUIDANCE.md"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/prediction_local.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "prediction-window consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "predictor.fixed_sigma_action_linearization",
+      "family": "prediction",
+      "formula_type": "first_order_action",
+      "expression": "A_sigma(a0) + t D A_sigma(a0)[u]",
+      "source": [
+        "experiments/dev-sys-prediction/sysext-sigma-line-probe/main.rs",
+        "experiments/dev-sys-prediction/OPTIMIZER-GUIDANCE.md"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/prediction_local.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "action_f64",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "q_corrected_f64",
+        "q_error_bound",
+        "q_exact"
+      ],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "prediction-window consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "predictor.fixed_sigma_sys_linearization",
+      "family": "prediction",
+      "formula_type": "first_order_systolic_ratio",
+      "expression": "sys_sigma(a0) + t <grad sys_sigma(a0),u>",
+      "source": [
+        "experiments/dev-sys-prediction/src/prediction_cloud.rs",
+        "crates/symplectic/src/derivatives.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/prediction_local.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "prediction-window consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "predictor.prediction_error_decomposition",
+      "family": "prediction",
+      "formula_type": "error_decomposition",
+      "expression": "E_total = E_fixed_sigma + E_inside_window_selection + E_window_miss + E_capacity + E_volume + E_capacity_volume_interaction + E_residual",
+      "source": [
+        "experiments/dev-sys-prediction/src/prediction_cloud.rs",
+        "experiments/dev-sys-prediction/OPTIMIZER-GUIDANCE.md",
+        "experiments/dev-sys-prediction/analyze_prediction_error_model.py"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/prediction_local.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "prediction-window consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "predictor.window_miss_error",
+      "family": "prediction",
+      "formula_type": "error_component",
+      "expression": "E_window_miss = min_{sigma in W(a0)} sys_sigma(a0+t u) - sys(a0+t u)",
+      "source": [
+        "experiments/dev-sys-prediction/README.md",
+        "experiments/dev-sys-prediction/src/prediction_cloud.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/prediction_local.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "prediction-window consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "predictor.sysext_invalid_branch_raw_q",
+      "family": "prediction",
+      "formula_type": "raw_kkt_branch_value",
+      "expression": "q_corrected = q_raw + r^T x0 (implemented as residual/multiplier correction); action = 1/(2 q_corrected)",
+      "source": [
+        "experiments/dev-sys-prediction/sysext-sigma-line-probe/main.rs",
+        "experiments/dev-sys-prediction/sysext-beta-boundary-scan/main.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/prediction_local.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "prediction-window consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "predictor.sysext_invalid_branch_beta_margin",
+      "family": "prediction",
+      "formula_type": "admissibility_margin",
+      "expression": "beta_margin(sigma) = min_i beta_i(sigma)",
+      "source": [
+        "experiments/dev-sys-prediction/sysext-sigma-line-probe/main.rs",
+        "experiments/dev-sys-prediction/sysext-beta-boundary-scan/main.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/prediction_local.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "beta_f64",
+      "required_atoms": [
+        "beta_error_linf",
+        "beta_exact",
+        "beta_f64"
+      ],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "prediction-window consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "predictor.sysext_invalid_branch_bucket",
+      "family": "prediction",
+      "formula_type": "sampling_policy",
+      "expression": "bucket by action <= A_min(1+0.05), beta_margin > 0 near zero, and beta_margin <= 0 near zero; retain up to 3 per bucket",
+      "source": [
+        "experiments/dev-sys-prediction/sysext-sigma-line-probe/main.rs",
+        "experiments/dev-sys-prediction/README.md"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/prediction_local.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "prediction-window consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "predictor.sysext_beta_margin_sweep",
+      "family": "prediction",
+      "formula_type": "policy_sweep",
+      "expression": "beta_margin >= 0, -1e-4, -1e-3, -1e-2, -1e-1, and all raw branches",
+      "source": [
+        "experiments/dev-sys-prediction/README.md",
+        "experiments/dev-sys-prediction/OPTIMIZER-GUIDANCE.md"
+      ],
+      "implementation_status": "partial",
+      "registry": "registry/prediction_local.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "beta_f64",
+      "required_atoms": [
+        "beta_error_linf",
+        "beta_exact",
+        "beta_f64"
+      ],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "prediction-window consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "predictor.candidate_window_visibility",
+      "family": "prediction",
+      "formula_type": "predicate",
+      "expression": "visible = (sigma_target in W(a0))",
+      "source": [
+        "experiments/dev-sys-prediction/src/prediction_cloud.rs",
+        "experiments/dev-sys-prediction/README.md"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/prediction_local.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "prediction-window consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "predictor.branch_crossing_distance",
+      "family": "prediction",
+      "formula_type": "heuristic_threshold",
+      "expression": "t_cross = -g_sigma / <grad sys_sigma(a0),u> when the denominator has the closing sign",
+      "source": [
+        "experiments/dev-sys-prediction/README.md",
+        "experiments/dev-sys-prediction/src/prediction_cloud.rs"
+      ],
+      "implementation_status": "partial",
+      "registry": "registry/prediction_local.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "prediction-window consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "predictor.candidate_window_size_hypothesis",
+      "family": "prediction",
+      "formula_type": "empirical_predicate",
+      "expression": "W_tau(a) = {sigma: action_sigma(a) <= min_action(a)(1+tau)}; measure |W_tau(a)|",
+      "source": [
+        "experiments/dev-sys-prediction/README.md",
+        "experiments/dev-sys-prediction/src/prediction_cloud.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/prediction_local.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "prediction-window consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "qp.assembly_C",
+      "family": "qp_solver",
+      "formula_type": "matrix",
+      "expression": "C[:,i] = (a_{sigma(i),0}, a_{sigma(i),1}, a_{sigma(i),2}, a_{sigma(i),3}, 1)^T",
+      "source": [
+        "crates/symplectic/src/kkt/qp_assembly.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "qp.assembly_d",
+      "family": "qp_solver",
+      "formula_type": "vector",
+      "expression": "d=(0,0,0,0,1)^T",
+      "source": [
+        "crates/symplectic/src/kkt/qp_assembly.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "qp.assembly_H",
+      "family": "qp_solver",
+      "formula_type": "matrix",
+      "expression": "H_ii=0; H_ij=H_ji=omega0(a_{sigma(i)},a_{sigma(j)}) for i<j",
+      "source": [
+        "crates/symplectic/src/kkt/qp_assembly.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "qp.kkt_augmented_system",
+      "family": "qp_solver",
+      "formula_type": "linear_system",
+      "expression": "M=[H A 1; A^T 0 0; 1^T 0 0], M(beta,mu,xi)^T=(0,0,1)^T",
+      "source": [
+        "crates/symplectic/src/kkt/qp_assembly.rs",
+        "crates/symplectic/src/kkt/saddle_point_solver.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "kkt.eigen_rank_tiers",
+      "family": "qp_solver",
+      "formula_type": "predicate",
+      "expression": "retain |lambda_i|>threshold; permissive floor EPS_EIGEN_FLOOR then strict threshold=max|lambda|*1e-3",
+      "source": [
+        "crates/symplectic/src/kkt/saddle_point_solver.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "proposal_beta_f64",
+        "proposal_eigenvalues_f64",
+        "proposal_nullity",
+        "proposal_rank",
+        "proposal_singular_values_f64",
+        "proposal_status",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "kkt.pseudoinverse_solution",
+      "family": "qp_solver",
+      "formula_type": "linear_algebra",
+      "expression": "x_hat=sum_{|lambda_i|>tau} ((v_i dot b)/lambda_i) v_i",
+      "source": [
+        "crates/symplectic/src/kkt/saddle_point_solver.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "proposal_beta_f64",
+        "proposal_eigenvalues_f64",
+        "proposal_nullity",
+        "proposal_rank",
+        "proposal_singular_values_f64",
+        "proposal_status",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "kkt.residual_norm",
+      "family": "qp_solver",
+      "formula_type": "error_diagnostic",
+      "expression": "r=M x_hat-b; residual_norm=||r||_2; reject tier if residual_norm>1e-6",
+      "source": [
+        "crates/symplectic/src/kkt/saddle_point_solver.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_residual_norm",
+        "kkt_residual_vector_f64",
+        "kkt_rhs_f64",
+        "mu_f64",
+        "proposal_beta_f64",
+        "proposal_q_f64",
+        "proposal_residual_norm",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64",
+        "xi_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "kkt.q_raw",
+      "family": "qp_solver",
+      "formula_type": "scalar",
+      "expression": "q_raw=1/2 beta^T H beta=sum_{i>j} beta_i beta_j omega0(a_sigma(j),a_sigma(i))",
+      "source": [
+        "crates/symplectic/src/kkt/saddle_point_solver.rs",
+        "crates/symplectic/src/kkt/qp_assembly.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "q_raw_f64",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "q_corrected_f64",
+        "q_error_bound",
+        "q_exact",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "kkt.q_correction",
+      "family": "qp_solver",
+      "formula_type": "scalar",
+      "expression": "q_correction=r2^T mu_hat+r3 xi_hat; r2=residual closure rows, r3=residual normalization row",
+      "source": [
+        "crates/symplectic/src/kkt/saddle_point_solver.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "q_correction_f64",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "kkt_matrix_f64",
+        "kkt_residual_norm",
+        "kkt_residual_vector_f64",
+        "kkt_rhs_f64",
+        "mu_f64",
+        "q_corrected_f64",
+        "q_error_bound",
+        "q_exact",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64",
+        "xi_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "kkt.q_corrected",
+      "family": "qp_solver",
+      "formula_type": "scalar",
+      "expression": "q_corrected=q_raw+q_correction",
+      "source": [
+        "crates/symplectic/src/kkt/saddle_point_solver.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "q_corrected_f64",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "q_corrected_f64",
+        "q_error_bound",
+        "q_exact",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "kkt.q_error_bound",
+      "family": "qp_solver",
+      "formula_type": "error_bound",
+      "expression": "E_Q=(9/2)*||r||_2^2/min_i |lambda_i(M)|",
+      "source": [
+        "crates/symplectic/src/kkt/saddle_point_solver.rs",
+        "formal/hk2017-qp-precision.tex"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "q_corrected_f64",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "proposal_beta_f64",
+        "proposal_q_f64",
+        "proposal_residual_norm",
+        "q_corrected_f64",
+        "q_error_bound",
+        "q_exact",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "kkt.beta_margin",
+      "family": "qp_solver",
+      "formula_type": "scalar",
+      "expression": "beta_margin=min_i beta_i",
+      "source": [
+        "crates/symplectic/src/kkt/saddle_point_solver.rs",
+        "crates/symplectic/src/algorithms/orbit_search.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "beta_f64",
+      "required_atoms": [
+        "beta_error_linf",
+        "beta_exact",
+        "beta_f64",
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "kkt.beta_epsilon_predicate",
+      "family": "qp_solver",
+      "formula_type": "ternary_predicate",
+      "expression": "True if beta_margin>EPS_MARGIN_TRUE; False if beta_margin<EPS_MARGIN_FALSE; otherwise Indeterminate",
+      "source": [
+        "crates/symplectic/src/kkt/mod.rs",
+        "crates/symplectic/src/algorithms/orbit_search.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "beta_f64",
+      "required_atoms": [
+        "beta_error_linf",
+        "beta_exact",
+        "beta_f64",
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "kkt.beta_exact_predicate",
+      "family": "qp_solver",
+      "formula_type": "binary_predicate",
+      "expression": "exact_true iff every beta_i in solve_kkt_exact is strictly greater than zero",
+      "source": [
+        "crates/symplectic/src/exact/orbit.rs",
+        "crates/symplectic/src/algorithms/orbit_search.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "beta_exact",
+      "required_atoms": [
+        "beta_error_linf",
+        "beta_exact",
+        "beta_f64",
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "kkt.constraint_svd_solution",
+      "family": "qp_solver",
+      "formula_type": "linear_algebra",
+      "expression": "beta=beta0+V alpha, C beta0=d, C V=0; rank from singular values",
+      "source": [
+        "crates/symplectic/src/kkt/constraint_solver.rs",
+        "crates/symplectic/src/kkt/projection_solver.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "proposal_beta_f64",
+        "proposal_eigenvalues_f64",
+        "proposal_nullity",
+        "proposal_rank",
+        "proposal_singular_values_f64",
+        "proposal_status",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "kkt.projected_hessian",
+      "family": "qp_solver",
+      "formula_type": "matrix",
+      "expression": "H'=V^T H V; b'=-V^T H beta0; solve H' alpha=b'",
+      "source": [
+        "crates/symplectic/src/kkt/projection_solver.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "kkt.projected_q_error_bound",
+      "family": "qp_solver",
+      "formula_type": "error_bound",
+      "expression": "E_proj=0 if residual=0; else residual^2/(2*lambda_min_retained); None if flat_direction_count>0",
+      "source": [
+        "crates/symplectic/src/kkt/projection_solver.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "q_corrected_f64",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "q_corrected_f64",
+        "q_error_bound",
+        "q_exact",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "kkt.beta_nullspace_max_margin",
+      "family": "qp_solver",
+      "formula_type": "optimization",
+      "expression": "maximize_gamma min_i (beta0+V_flat gamma)_i",
+      "source": [
+        "crates/symplectic/src/kkt/saddle_point_solver.rs",
+        "crates/symplectic/src/kkt/projection_solver.rs",
+        "crates/symplectic/src/kkt/beta_feasibility.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "beta_f64",
+      "required_atoms": [
+        "beta_error_linf",
+        "beta_exact",
+        "beta_f64",
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "kkt.action_from_q",
+      "family": "qp_solver",
+      "formula_type": "scalar",
+      "expression": "A=1/(2Q)",
+      "source": [
+        "crates/symplectic/src/algorithms/orbit_search.rs",
+        "crates/symplectic/src/exact/orbit.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "action_f64",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "q_corrected_f64",
+        "q_error_bound",
+        "q_exact",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "kkt.action_interval_from_q_bound",
+      "family": "qp_solver",
+      "formula_type": "interval_bound",
+      "expression": "A_lower=1/(2(Q+E)); A_upper=1/(2(Q-E)) if Q-E>EPS_Q_POSITIVE, else +infinity",
+      "source": [
+        "crates/symplectic/src/algorithms/orbit_search.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "q_corrected_f64",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "q_corrected_f64",
+        "q_error_bound",
+        "q_exact",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "kkt.q_positive_guard",
+      "family": "qp_solver",
+      "formula_type": "predicate",
+      "expression": "admissible_Q iff q_corrected>EPS_Q_POSITIVE=1e-15",
+      "source": [
+        "crates/symplectic/src/kkt/saddle_point_solver.rs",
+        "crates/symplectic/src/algorithms/orbit_search.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "q_corrected_f64",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "q_corrected_f64",
+        "q_error_bound",
+        "q_exact",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "kkt.exact_kkt_oracle",
+      "family": "qp_solver",
+      "formula_type": "oracle",
+      "expression": "solve M_exact x=b_exact; require beta_i>0 and q_exact>0; A_exact=1/(2q_exact)",
+      "source": [
+        "crates/symplectic/src/exact/orbit.rs",
+        "crates/symplectic/src/kkt/rational_solver.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/qp_solver.json",
+      "target_semantics": "target_id (original_rational or stored_dyadic)",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "kkt_matrix_f64",
+        "kkt_rhs_f64",
+        "qp_c_f64",
+        "qp_d_f64",
+        "qp_h_f64"
+      ],
+      "hypotheses": "assembled matrices have the stated dimensions and finite binary64 entries",
+      "arithmetic_model": "mixed binary64 center with exact rational oracle where available",
+      "consumer": "QP assembly/solver diagnostics",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "recovery.beta_to_dwell_times",
+      "family": "recovery",
+      "formula_type": "vector_transform",
+      "expression": "tau_k = action * beta_k",
+      "source": [
+        "crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/recovery_consumers.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "beta_f64",
+      "required_atoms": [
+        "beta_error_linf",
+        "beta_exact",
+        "beta_f64",
+        "recovery_closure_error",
+        "recovery_dwell_times",
+        "recovery_max_violation",
+        "recovery_valid"
+      ],
+      "hypotheses": "a recovery witness was returned and verification atoms are finite",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "orbit/recovery consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "recovery.reeb_direction",
+      "family": "recovery",
+      "formula_type": "vector_transform",
+      "expression": "R_i = 2 J_0 a_i = 2*(-a_i[p1], -a_i[p2], a_i[q1], a_i[q2])",
+      "source": [
+        "crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs",
+        "crates/symplectic/src/geom/reeb_trajectory.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/recovery_consumers.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "recovery_closure_error",
+        "recovery_dwell_times",
+        "recovery_max_violation",
+        "recovery_valid"
+      ],
+      "hypotheses": "a recovery witness was returned and verification atoms are finite",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "orbit/recovery consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "recovery.displacement_accumulation",
+      "family": "recovery",
+      "formula_type": "recurrence",
+      "expression": "v_0=0; v_{k+1}=v_k+tau_k R_{sigma(k)}",
+      "source": [
+        "crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/recovery_consumers.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "recovery_closure_error",
+        "recovery_dwell_times",
+        "recovery_max_violation",
+        "recovery_valid"
+      ],
+      "hypotheses": "a recovery witness was returned and verification atoms are finite",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "orbit/recovery consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "recovery.basepoint_linear_system",
+      "family": "recovery",
+      "formula_type": "linear_system",
+      "expression": "a_{sigma(k)} dot b = 1 - a_{sigma(k)} dot v_k for tau_k > 0",
+      "source": [
+        "crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/recovery_consumers.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "recovery_closure_error",
+        "recovery_dwell_times",
+        "recovery_max_violation",
+        "recovery_valid"
+      ],
+      "hypotheses": "a recovery witness was returned and verification atoms are finite",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "orbit/recovery consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "recovery.svd_rank",
+      "family": "recovery",
+      "formula_type": "predicate_and_dimension",
+      "expression": "tol = 1e-10 max(sigma_max,1); rank = #{s_i > tol}; solution_dim = 4-rank",
+      "source": [
+        "crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs",
+        "crates/symplectic/API_SURFACE_TARGET.md"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/recovery_consumers.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "recovery_closure_error",
+        "recovery_dwell_times",
+        "recovery_max_violation",
+        "recovery_valid"
+      ],
+      "hypotheses": "a recovery witness was returned and verification atoms are finite",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "orbit/recovery consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "recovery.null_optimizer",
+      "family": "recovery",
+      "formula_type": "optimization_heuristic",
+      "expression": "min_alpha max_{j,k}(a_j dot (b0 + sum_i alpha_i d_i + v_k) - 1), alpha_i in [-100,100]",
+      "source": [
+        "crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/recovery_consumers.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "recovery_closure_error",
+        "recovery_dwell_times",
+        "recovery_max_violation",
+        "recovery_valid"
+      ],
+      "hypotheses": "a recovery witness was returned and verification atoms are finite",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "orbit/recovery consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "recovery.breakpoints",
+      "family": "recovery",
+      "formula_type": "vector_transform",
+      "expression": "p_k = b + v_k, k=0,...,m",
+      "source": [
+        "crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/recovery_consumers.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "recovery_closure_error",
+        "recovery_dwell_times",
+        "recovery_max_violation",
+        "recovery_valid"
+      ],
+      "hypotheses": "a recovery witness was returned and verification atoms are finite",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "orbit/recovery consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "recovery.max_violation",
+      "family": "recovery",
+      "formula_type": "diagnostic_scalar",
+      "expression": "max_{j,k}(a_j dot p_k - 1)",
+      "source": [
+        "crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs",
+        "experiments/verification/orbit-recovery/main.rs",
+        "experiments/visualization/main/trajectories.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/recovery_consumers.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "recovery_closure_error",
+        "recovery_dwell_times",
+        "recovery_max_violation",
+        "recovery_valid"
+      ],
+      "hypotheses": "a recovery witness was returned and verification atoms are finite",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "orbit/recovery consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "recovery.closure_error",
+      "family": "recovery",
+      "formula_type": "diagnostic_scalar",
+      "expression": "||p_m - p_0||_2",
+      "source": [
+        "crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs",
+        "experiments/verification/orbit-recovery/main.rs",
+        "experiments/visualization/main/trajectories.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/recovery_consumers.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [
+        "recovery_closure_error",
+        "recovery_dwell_times",
+        "recovery_max_violation",
+        "recovery_valid"
+      ],
+      "hypotheses": "a recovery witness was returned and verification atoms are finite",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "orbit/recovery consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "recovery.shoelace_action",
+      "family": "recovery",
+      "formula_type": "quadratic_scalar",
+      "expression": "A_rec = (1/2) sum_{i>j} tau_j tau_i omega_0(R_{sigma(j)},R_{sigma(i)})",
+      "source": [
+        "crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs",
+        "crates/symplectic/src/geom/symplectic_form.rs",
+        "experiments/verification/orbit-recovery/main.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/recovery_consumers.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "action_f64",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "q_corrected_f64",
+        "q_error_bound",
+        "q_exact",
+        "recovery_closure_error",
+        "recovery_dwell_times",
+        "recovery_max_violation",
+        "recovery_valid"
+      ],
+      "hypotheses": "a recovery witness was returned and verification atoms are finite",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "orbit/recovery consumers",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "consumer.orbit_recovery_acceptance",
+      "family": "consumer",
+      "formula_type": "predicate",
+      "expression": "closure_error < 1e-6 && on_facet_error < 1e-6 && max_violation < 1e-6 && |A_rec-A_trusted| < 1e-5",
+      "source": [
+        "experiments/verification/orbit-recovery/main.rs",
+        "experiments/verification/README.md"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/recovery_consumers.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "consumer",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "consumer.visualization_export_gate",
+      "family": "consumer",
+      "formula_type": "predicate",
+      "expression": "recovery exists && closure_error <= 1e-6 && max_violation <= 1e-4",
+      "source": [
+        "experiments/visualization/main/trajectories.rs",
+        "experiments/visualization/README.md"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/recovery_consumers.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "consumer",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "consumer.sys_capacity_ratio",
+      "family": "consumer",
+      "formula_type": "ratio_scalar",
+      "expression": "sys = capacity^2 / (2 * volume)",
+      "source": [
+        "experiments/sys-landscape/src/lib.rs",
+        "crates/symplectic/src/database.rs",
+        "experiments/sys-landscape/gradient-ascent-general/main.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/recovery_consumers.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "sys_f64",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "consumer",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "consumer.capacity_cache_fields",
+      "family": "consumer",
+      "formula_type": "persisted_record",
+      "expression": "PolytopeRecord.capacity, capacity_err, orbit_scalars, SigmaAction(action, perm)",
+      "source": [
+        "crates/symplectic/src/database.rs",
+        "experiments/sys-landscape/gradient-ascent-general/main.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/recovery_consumers.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "none (structural/predicate/aggregate value)",
+      "required_atoms": [],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "consumer",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    },
+    {
+      "id": "consumer.best_sigma_action_ranking",
+      "family": "consumer",
+      "formula_type": "argmin_and_ranking",
+      "expression": "sigma* = argmin_sigma action_sigma; capacity = action_sigma*",
+      "source": [
+        "experiments/sys-landscape/gradient-ascent-general/main.rs",
+        "crates/symplectic/src/database.rs",
+        "experiments/performance/src/capacity_route_support.rs"
+      ],
+      "implementation_status": "implemented",
+      "registry": "registry/recovery_consumers.json",
+      "target_semantics": "case target_id; aggregate formulas join rows in the same case",
+      "center_semantics": "action_f64",
+      "required_atoms": [
+        "action_exact",
+        "action_f64",
+        "q_corrected_f64",
+        "q_error_bound",
+        "q_exact"
+      ],
+      "hypotheses": "source route and universe contract are applicable",
+      "arithmetic_model": "binary64 retained atoms (exact rational only for observed-error comparison)",
+      "consumer": "consumer",
+      "mathematical_status": "source-backed; unavailable is reported when required atoms are absent"
+    }
+  ],
+  "metadata_contract": "target_semantics, center_semantics, required_atoms, hypotheses, arithmetic_model, consumer, mathematical_status"
+}

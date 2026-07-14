@@ -1,0 +1,33 @@
+{
+  "aggregates": 11,
+  "command": "bash experiments/numerics/qp-error-bounds/run.sh",
+  "elapsed_seconds": 40.591523441,
+  "expected_case_ids": [
+    "simplex_f5",
+    "hypercube_f8",
+    "hko_beta_boundary",
+    "hko_near_singular_false_acceptance",
+    "hko_residual_q_failure",
+    "hko_rank_deficient",
+    "hypercube_exact_zero_beta_boundary",
+    "random_F5_s0_0",
+    "random_3x5_s0_0",
+    "seed99540836_q4_p5_attempt405000000000",
+    "pruning_roundoff"
+  ],
+  "formula_scope": "production KKT/Q/action/beta/derivative/recovery/volume/sys atoms; offline bounds/categories",
+  "observation_boundary": "one unconditional RawRow for every declared (case,sigma)",
+  "population_contract": "all rows retained; maximum-Q/minimum-action/visited/retained/minimizer/low-window are annotated projections",
+  "producer_elapsed_seconds": 40.591523441,
+  "producer_version": "wide-row-rust-v1",
+  "rows": 1606,
+  "run_id": "wide-3904b4da9963d8e7d052850a770c9c86951b5d9b",
+  "schema_version": "qp-wide-row-v1",
+  "serialization_elapsed_seconds": 0.154324901,
+  "source_content_id": "a7c6d5235295523f5f5d6e65ccff0d298ec70a3830dd924526e9764146bacc3b",
+  "source_revision": "3904b4da9963d8e7d052850a770c9c86951b5d9b",
+  "target_coordinate_kinds": [
+    "original_rational_coordinates",
+    "exact_binary64_dyadic_coordinates"
+  ]
+}
