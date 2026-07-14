@@ -67,7 +67,7 @@ iteration count, and generation/validation/target timings.
 `batch-report.json` lists all 21 wishlist dispositions and the interpretation
 boundary. Regenerate both; do not hand-edit generated JSONL or JSON.
 
-The checked-in report's per-law totals and coarse metric means are the source
+The checked-in report's per-arm totals and coarse metric means are the source
 for acceptance, cost, and first distribution-separation comparisons. These
 means pool factors across the tiny named buckets; use them only to reject
 obviously redundant or pathological settings, not as population estimates.

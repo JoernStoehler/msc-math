@@ -99,7 +99,7 @@ struct Report {
     command: String,
     source_revision: String,
     status_counts: BTreeMap<String, usize>,
-    per_law: Vec<LawSummary>,
+    per_arm: Vec<LawSummary>,
     dispositions: Vec<Disposition>,
     interpretation_boundary: &'static str,
 }
@@ -107,6 +107,7 @@ struct Report {
 #[derive(Serialize)]
 struct LawSummary {
     law: String,
+    parameter: String,
     rows: usize,
     accepted_rows: usize,
     survived_rows: usize,
@@ -1099,15 +1100,16 @@ fn main() {
     }
     rows_out.flush().expect("flush rows");
     let mut status_counts = BTreeMap::new();
-    let mut law_map: BTreeMap<String, LawSummary> = BTreeMap::new();
+    let mut law_map: BTreeMap<(String, String), LawSummary> = BTreeMap::new();
     for row in &all_rows {
         *status_counts
             .entry(row.validation_status.clone())
             .or_insert(0) += 1;
         let summary = law_map
-            .entry(row.law.clone())
+            .entry((row.law.clone(), row.parameter.clone()))
             .or_insert_with(|| LawSummary {
                 law: row.law.clone(),
+                parameter: row.parameter.clone(),
                 rows: 0,
                 accepted_rows: 0,
                 survived_rows: 0,
@@ -1176,7 +1178,7 @@ fn main() {
         command: std::env::args().collect::<Vec<_>>().join(" "),
         source_revision,
         status_counts,
-        per_law: law_map.into_values().collect(),
+        per_arm: law_map.into_values().collect(),
         dispositions: dispositions(),
         interpretation_boundary: "Tiny geometry smoke is plumbing, feasibility, and coarse separation evidence only; it does not establish a target transfer conclusion.",
     };
