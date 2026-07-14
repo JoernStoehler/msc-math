@@ -1,0 +1,42 @@
+{
+  "command": [
+    "target/release/dev-gradient-ascent-optimizer-suite",
+    "--out-dir",
+    "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/suite-invalidity",
+    "--policies",
+    "invalidity_only",
+    "--facet-count",
+    "6",
+    "--start-count",
+    "6",
+    "--exclude-start-ids",
+    "random_F6_s0_1",
+    "--etas",
+    "1e-5,1e-4,1e-3,1e-2,1e-1,1",
+    "--updates",
+    "100"
+  ],
+  "source_head": "e1fbe217ed6a6b181eb80c3bc9afe97b7052632e",
+  "source_input": "experiments/sys-datascience/produce/random.jsonl",
+  "source_input_blake3": "536d5a79597bdf21771e900377e8c1dc249ab8c0520a4680c8036c8909b3d7c8",
+  "implementation": "/workspaces/msc-math/.worktrees/optimizer-suite-executor/experiments/dev-gradient-ascent/literal-naive-gradient/optimizer_suite.rs",
+  "implementation_blake3": "77172a6c0c4c2f2027df26398baa3d360de7234a4ac64522c0466c5a9138366e",
+  "policies": [
+    "invalidity_only"
+  ],
+  "nominal_etas": [
+    1e-05,
+    0.0001,
+    0.001,
+    0.01,
+    0.1,
+    1.0
+  ],
+  "updates": 100,
+  "panel_starts": 2,
+  "panel_updates": 15,
+  "max_backtrack_halvings": 20,
+  "near_active_window_relative": 0.001,
+  "poll_slice": "first dual vertex, four coordinate axes, +/- deterministic positive-spanning poll",
+  "evaluator_accounting": "initial state excluded; every target proposal, invalidity retry, rejection, and poll candidate increments target_evaluations; safeguard trajectories stop at 100 target evaluations"
+}
