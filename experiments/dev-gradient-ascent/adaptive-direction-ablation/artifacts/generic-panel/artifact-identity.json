@@ -1,0 +1,12 @@
+{
+  "producing_implementation_commit": "287ce302",
+  "implementation_path": "experiments/dev-gradient-ascent/adaptive-direction-ablation/main.rs",
+  "implementation_blake3": "896dddb77e747497fda7be90f277d6fd5cd4f968a3d3614a306231751dc8345b",
+  "raw_source_head": "3eee82370f29ac3ecd8c2d91c34c299914b42d9a",
+  "raw_implementation_path": "/workspaces/msc-math/.worktrees/optimizer-adaptive-direction/experiments/dev-gradient-ascent/adaptive-direction-ablation/main.rs",
+  "raw_implementation_blake3": "896dddb77e747497fda7be90f277d6fd5cd4f968a3d3614a306231751dc8345b",
+  "source_input": "experiments/sys-datascience/produce/random.jsonl",
+  "source_input_blake3": "536d5a79597bdf21771e900377e8c1dc249ab8c0520a4680c8036c8909b3d7c8",
+  "command": ["target/release/dev-gradient-ascent-adaptive-direction-ablation", "--budget", "6", "--policies", "inf_normalized_branch_gradient,near_active_box_lp_maximin,candidate_window_box_lp_maximin,single_branch_box_steepest", "--facet-count", "6", "--start-count", "6", "--exclude-start-ids", "random_F6_s0_1", "--polytope-table", "experiments/sys-datascience/produce/random.jsonl", "--out-dir", "experiments/dev-gradient-ascent/adaptive-direction-ablation/artifacts/generic-panel"],
+  "reproduction_compatibility": "Raw trajectories were produced from the dirty worktree source; the committed producer identity is 287ce302. No exact rerun was needed because the committed blob hash matches the recorded implementation content."
+}

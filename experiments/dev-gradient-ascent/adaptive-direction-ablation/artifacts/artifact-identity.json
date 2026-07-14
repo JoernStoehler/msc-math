@@ -1,0 +1,12 @@
+{
+  "producing_implementation_commit": "287ce302",
+  "implementation_path": "experiments/dev-gradient-ascent/adaptive-direction-ablation/main.rs",
+  "implementation_blake3": "896dddb77e747497fda7be90f277d6fd5cd4f968a3d3614a306231751dc8345b",
+  "raw_source_head": "3eee82370f29ac3ecd8c2d91c34c299914b42d9a",
+  "raw_implementation_path": "/workspaces/msc-math/.worktrees/optimizer-adaptive-direction/experiments/dev-gradient-ascent/adaptive-direction-ablation/main.rs",
+  "raw_implementation_blake3": "896dddb77e747497fda7be90f277d6fd5cd4f968a3d3614a306231751dc8345b",
+  "source_input": "experiments/dev-gradient-ascent/adaptive-direction-ablation/inputs/selected-fixtures.jsonl",
+  "source_input_blake3": "5e9e0d314658e477ae98066c321b8f46b138582d1777355c1076b37bfa99b6a3",
+  "command": ["target/release/dev-gradient-ascent-adaptive-direction-ablation", "--budget", "6", "--policies", "inf_normalized_branch_gradient,near_active_box_lp_maximin,candidate_window_box_lp_maximin,single_branch_box_steepest", "--facet-count", "0", "--start-count", "2", "--exclude-start-ids", "never", "--polytope-table", "experiments/dev-gradient-ascent/adaptive-direction-ablation/inputs/selected-fixtures.jsonl", "--out-dir", "experiments/dev-gradient-ascent/adaptive-direction-ablation/artifacts"],
+  "reproduction_compatibility": "Raw trajectories were produced from the dirty worktree source; the committed producer identity is 287ce302. No exact rerun was needed because the committed blob hash matches the recorded implementation content."
+}

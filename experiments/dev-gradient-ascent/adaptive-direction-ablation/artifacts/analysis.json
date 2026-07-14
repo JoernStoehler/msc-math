@@ -5,7 +5,8 @@
   "multi_branch_rows": 114,
   "multi_branch_fraction": 0.7916666666666666,
   "near_active_multi_rows": 87,
-  "near_active_multi_distinct_base_states": 56,
+  "near_active_multi_distinct_base_states": 37,
+  "near_active_multi_occupancy": 25,
   "near_active_multi_rows_by_policy": {
     "candidate_window_box_lp_maximin": 24,
     "inf_normalized_branch_gradient": 20,
@@ -13,7 +14,8 @@
     "single_branch_box_steepest": 21
   },
   "candidate_window_multi_rows": 114,
-  "candidate_window_multi_distinct_base_states": 83,
+  "candidate_window_multi_distinct_base_states": 58,
+  "candidate_window_multi_occupancy": 31,
   "candidate_window_multi_rows_by_policy": {
     "candidate_window_box_lp_maximin": 29,
     "inf_normalized_branch_gradient": 27,

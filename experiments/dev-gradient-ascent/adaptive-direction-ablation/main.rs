@@ -466,21 +466,7 @@ fn direction_for(
             ))
         }
         Policy::CandidateWindowMaximin => {
-            let (d, p, w, values) = if state.candidate_gradients.len() == 1 {
-                let d = box_steepest_direction(state.candidate_gradients.first()?)?;
-                let values = vec![
-                    state.candidate_gaps[0]
-                        + radius * gradient_dot(state.candidate_gradients.first()?, &d)?,
-                ];
-                (
-                    d,
-                    values[0],
-                    state.candidate_sigmas.first()?.clone(),
-                    values,
-                )
-            } else {
-                candidate_window_direction(state, radius)?
-            };
+            let (d, p, w, values) = candidate_window_direction(state, radius)?;
             Some((
                 "candidate_window_box_lp_maximin".into(),
                 d,
@@ -678,7 +664,25 @@ fn candidate_window_direction(
     state: &State,
     radius: f64,
 ) -> Option<(Vec<Vector4<f64>>, f64, Vec<usize>, Vec<f64>)> {
-    let first = state.candidate_gradients.first()?;
+    candidate_window_box_lp_direction(
+        &state.candidate_gradients,
+        &state.candidate_gaps,
+        &state.candidate_sigmas,
+        radius,
+    )
+}
+fn candidate_window_box_lp_direction(
+    candidate_gradients: &[Vec<Vector4<f64>>],
+    candidate_gaps: &[f64],
+    candidate_sigmas: &[Vec<usize>],
+    radius: f64,
+) -> Option<(Vec<Vector4<f64>>, f64, Vec<usize>, Vec<f64>)> {
+    let first = candidate_gradients.first()?;
+    if candidate_gradients.len() == 1 {
+        let d = box_steepest_direction(first)?;
+        let values = vec![candidate_gaps.first()? + radius * gradient_dot(first, &d)?];
+        return Some((d, values[0], candidate_sigmas.first()?.clone(), values));
+    }
     let dim = first.len() * 4;
     let mut vars = variables!();
     let xs: Vec<_> = (0..dim)
@@ -686,7 +690,7 @@ fn candidate_window_direction(
         .collect::<Vec<_>>();
     let t = vars.add(variable().min(f64::NEG_INFINITY));
     let mut model = vars.maximise(Expression::from(t)).using(default_solver);
-    for (g, gap) in state.candidate_gradients.iter().zip(&state.candidate_gaps) {
+    for (g, gap) in candidate_gradients.iter().zip(candidate_gaps) {
         let mut lhs = Expression::from(*gap);
         for (c, x) in flatten(g).iter().zip(&xs) {
             lhs += radius * (*c) * (*x);
@@ -699,17 +703,16 @@ fn candidate_window_direction(
     if !raw.iter().all(|x| x.is_finite()) || !raw.iter().any(|x| x.abs() > 1e-14) {
         return None;
     }
-    let values: Vec<f64> = state
-        .candidate_gradients
+    let values: Vec<f64> = candidate_gradients
         .iter()
-        .zip(&state.candidate_gaps)
+        .zip(candidate_gaps)
         .map(|(g, gap)| *gap + radius * gradient_dot(g, &d).unwrap_or(f64::INFINITY))
         .collect();
     let (i, p) = values
         .iter()
         .enumerate()
         .min_by(|a, b| a.1.total_cmp(b.1))?;
-    Some((d, *p, state.candidate_sigmas[i].clone(), values))
+    Some((d, *p, candidate_sigmas.get(i)?.clone(), values))
 }
 fn normalize_inf(v: &[Vector4<f64>]) -> Option<Vec<Vector4<f64>>> {
     let n = v
@@ -903,37 +906,41 @@ fn git_output(a: &[&str]) -> Option<String> {
 mod tests {
     use nalgebra::Vector4;
 
-    fn objective(gaps: &[f64], gradients: &[Vec<f64>], radius: f64, direction: &[f64]) -> f64 {
-        gaps.iter()
-            .zip(gradients)
-            .map(|(gap, grad)| {
-                gap + radius * grad.iter().zip(direction).map(|(a, b)| a * b).sum::<f64>()
-            })
-            .fold(f64::INFINITY, f64::min)
-    }
-
     #[test]
     fn inf_branch_normalization_has_common_radius_semantics() {
-        let gradient: [f64; 3] = [2.0, -1.0, 0.5];
-        let scale = gradient.iter().map(|x| (*x).abs()).fold(0.0, f64::max);
-        let direction: Vec<_> = gradient.iter().map(|x| x / scale).collect();
-        assert!((direction.iter().map(|x| (*x).abs()).fold(0.0, f64::max) - 1.0).abs() < 1e-12);
+        let gradient = vec![Vector4::new(2.0, -1.0, 0.5, 0.0)];
+        let direction = super::normalize_inf(&gradient).unwrap();
+        assert!(
+            (direction
+                .iter()
+                .flat_map(|x| x.iter())
+                .map(|x| x.abs())
+                .fold(0.0, f64::max)
+                - 1.0)
+                .abs()
+                < 1e-12
+        );
     }
 
     #[test]
     fn candidate_prediction_uses_executed_box_solution_not_euclidean_rescale() {
-        let gaps = [0.0, 0.25];
-        let gradients = vec![vec![-1.0, -1.0], vec![1.0, -1.0]];
-        let box_solution = [1.0, 1.0];
-        let executed = objective(&gaps, &gradients, 1.0, &box_solution);
-        let old_post_normalized = objective(
-            &gaps,
-            &gradients,
-            1.0,
-            &[2f64.sqrt().recip(), 2f64.sqrt().recip()],
-        );
-        assert!((executed - (-2.0)).abs() < 1e-12);
-        assert!((old_post_normalized - executed).abs() > 0.5);
+        let gaps = vec![0.0, 0.25];
+        let gradients = vec![
+            vec![Vector4::new(-1.0, -1.0, 0.0, 0.0)],
+            vec![Vector4::new(1.0, -1.0, 0.0, 0.0)],
+        ];
+        let sigmas = vec![vec![0], vec![1]];
+        let (direction, executed, _, values) =
+            super::candidate_window_box_lp_direction(&gradients, &gaps, &sigmas, 1.0).unwrap();
+        assert!(direction
+            .iter()
+            .flat_map(|x| x.iter())
+            .all(|x| x.abs() <= 1.0 + 1e-8));
+        assert!(direction
+            .iter()
+            .flat_map(|x| x.iter())
+            .any(|x| x.abs() > 1e-8));
+        assert!((executed - values.iter().copied().fold(f64::INFINITY, f64::min)).abs() < 1e-12);
     }
 
     #[test]
@@ -949,6 +956,16 @@ mod tests {
         let g = vec![Vector4::new(2.0, -3.0, 0.0, 4.0)];
         let sign = super::box_steepest_direction(&g).unwrap();
         let maximin = super::maximin_direction(std::slice::from_ref(&g)).unwrap();
+        let (candidate, objective, _, values) = super::candidate_window_box_lp_direction(
+            std::slice::from_ref(&g),
+            &[0.25],
+            &[vec![7]],
+            0.5,
+        )
+        .unwrap();
         assert_eq!(sign, maximin);
+        assert_eq!(sign, candidate);
+        assert!((objective - (0.25 + 0.5 * 9.0)).abs() < 1e-12);
+        assert_eq!(values.len(), 1);
     }
 }

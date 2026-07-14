@@ -6,6 +6,7 @@
   "multi_branch_fraction": 0.3726851851851852,
   "near_active_multi_rows": 3,
   "near_active_multi_distinct_base_states": 1,
+  "near_active_multi_occupancy": 1,
   "near_active_multi_rows_by_policy": {
     "candidate_window_box_lp_maximin": 1,
     "inf_normalized_branch_gradient": 0,
@@ -13,7 +14,8 @@
     "single_branch_box_steepest": 1
   },
   "candidate_window_multi_rows": 161,
-  "candidate_window_multi_distinct_base_states": 101,
+  "candidate_window_multi_distinct_base_states": 95,
+  "candidate_window_multi_occupancy": 43,
   "candidate_window_multi_rows_by_policy": {
     "candidate_window_box_lp_maximin": 41,
     "inf_normalized_branch_gradient": 38,

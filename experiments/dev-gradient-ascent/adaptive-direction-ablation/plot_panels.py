@@ -99,7 +99,11 @@ def render(root: Path) -> None:
 
     out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out.with_suffix(".png"), dpi=180)
-    fig.savefig(out.with_suffix(".svg"), metadata={"Date": None})
+    svg = out.with_suffix(".svg")
+    fig.savefig(svg, metadata={"Date": None})
+    # Matplotlib's XML serializer can leave platform-dependent trailing spaces;
+    # normalize the owned SVG so repeated renders are byte-identical.
+    svg.write_text("\n".join(line.rstrip() for line in svg.read_text().splitlines()) + "\n")
     plt.close(fig)
 
 
