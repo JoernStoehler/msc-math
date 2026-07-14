@@ -675,7 +675,7 @@ fn evaluate_pair(
     let poly = SysLandscapePolytopeCache::from_lagrangian_product(
         &q.normals, &q.heights, &p.normals, &p.heights,
     );
-    let validation_ms = validation_ms_offset + tv.elapsed().as_secs_f64() * 1000.0;
+    let mut validation_ms = validation_ms_offset + tv.elapsed().as_secs_f64() * 1000.0;
     let bucket_name = format!("{}x{}", bucket.0, bucket.1);
     let Some(poly) = poly else {
         return SmokeRow {
@@ -713,6 +713,9 @@ fn evaluate_pair(
             target_ms: 0.0,
         };
     };
+    let volume_start = Instant::now();
+    let volume = exact_volume_from_incidence_as_f64(&poly.vertices, &poly.vertex_facet_incidence);
+    validation_ms += volume_start.elapsed().as_secs_f64() * 1000.0;
     // Retain geometry/validation evidence when target evaluation is disabled.
     // Above ten facets the current in-process backend has no cancellable time
     // limit, so target mode records the predeclared cap rather than entering it.
@@ -752,10 +755,7 @@ fn evaluate_pair(
             factor_q_isoperimetric_ratio: q_metrics.map(|x| x.isoperimetric_ratio),
             factor_p_isoperimetric_ratio: p_metrics.map(|x| x.isoperimetric_ratio),
             pairing_id: paired.clone(),
-            volume: Some(exact_volume_from_incidence_as_f64(
-                &poly.vertices,
-                &poly.vertex_facet_incidence,
-            )),
+            volume: Some(volume),
             capacity: None,
             sys: None,
             iterations: None,
@@ -765,7 +765,6 @@ fn evaluate_pair(
         };
     }
     let tt = Instant::now();
-    let volume = exact_volume_from_incidence_as_f64(&poly.vertices, &poly.vertex_facet_incidence);
     let target = capacity_auto(
         &poly.dual_vertices_f64,
         &poly.dual_vertices,
