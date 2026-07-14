@@ -1,0 +1,61 @@
+{
+  "schema": "sys-datascience.generic-ridge-tail-stage1.full-validation.v1",
+  "valid": true,
+  "frozen_commit": "4f7adddec513f4abc95dcc905d1299611ff28f28",
+  "replay_candidate_count": 10000,
+  "replay_selected_count": 100,
+  "replay_baseline_count": 100,
+  "checks": {
+    "baseline_hash": true,
+    "candidate_count_and_uniqueness": true,
+    "candidate_population_hash": true,
+    "committed_artifact_bytes_unchanged": true,
+    "deterministic_baseline_min_hash": true,
+    "forbidden_target_fields_absent": true,
+    "manifest_contract": true,
+    "panel_cross_artifact_fields_and_exact_geometry": true,
+    "panel_disjoint_unique_and_band_counts": true,
+    "panel_hash": true,
+    "panel_roles_bands_and_identity": true,
+    "panel_row_count": true,
+    "production_source_closure_frozen_commit": true,
+    "proxy_order_and_bottom_100": true,
+    "selected_hash": true,
+    "selection_exact_rows_and_order": true,
+    "selection_identity_set": true,
+    "selection_row_count": true,
+    "target_calls_not_exposed": true,
+    "target_free_manifest": true
+  },
+  "artifact_sha256": {
+    "manifest.json": "b57fdba2afde97a2bec8644d4dc02a00104ec2bc088fdae66d52539a4ceea936",
+    "panel-geometries.jsonl": "a08c846d412ab77a7974b23b13cac6be0d7eb0418617cc551a8ecbb0a0f6a379",
+    "selection.jsonl": "f155c6868c3414af1e33c78aff6dc4eaf0156d92577f915db4a29ca6ebfbc23f"
+  },
+  "artifact_blake3": {
+    "manifest.json": "d73f1cccb16d1b27698056e17f4074a635c3e3e0e27aba0b10345582a95d0333",
+    "panel-geometries.jsonl": "44379770363800c8cec0bcd946ef203888de448cf7838128699d2ea5be7b3900",
+    "selection.jsonl": "3c6c475ecd77a2138e6281670126e149f0696bf95df79b7349833b0bac0ebd13"
+  },
+  "artifact_bytes": {
+    "manifest.json": 4056,
+    "panel-geometries.jsonl": 3303896,
+    "selection.jsonl": 35449
+  },
+  "candidate_population_hash": "447bc752a968a9d37e219cc820bb433b72ec1d6379cf9b10d24230c5c65ebeea",
+  "selected_hash": "7536b8e6d12691a12878f3f17bf8ce0bcdab910697ad581459713242a310b68b",
+  "baseline_hash": "69ec2feb35faa19c8ed9fc31b4dd4a674dac30ea63b78431f47677dcda11f763",
+  "panel_hash": "af5492cea21899774b47cbb578c316972fdee8285fbd7bd61d608adb5ac3c708",
+  "selection_boundary": {
+    "selected_count": 100,
+    "last_selected_candidate_id": "6864c072d37f145e42cc47eb4453bda9069c131ef15aa7216a5647bcf5bee18e",
+    "last_selected_f64_rank": 100,
+    "last_selected_f64_proxy": 0.35512886601071875,
+    "first_excluded_candidate_id": "6bab487160b7c6b87e1c6982e2b45a93994ce88ea879e62f738aac3a3dd04cb1",
+    "first_excluded_f64_rank": 101,
+    "first_excluded_f64_proxy": 0.35544104710520524,
+    "f64_proxy_gap": 0.00031218109448649667
+  },
+  "source_closure_paths": 117,
+  "target_free": true
+}

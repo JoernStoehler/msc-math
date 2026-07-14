@@ -1,0 +1,63 @@
+{
+  "command": "experiments/sys-datascience/methods/ridge-tail-anatomy/produce.py --generic-geometry experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/stage1/panel-geometries.jsonl --generic-target experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/stage1/target-rows.jsonl --product-pre experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/covariance-rho-frozen-validation/pre-target/seed-2026071201/selected-candidates-before-sys.jsonl --product-pre experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/covariance-rho-frozen-validation/pre-target/seed-2026071202/selected-candidates-before-sys.jsonl --product-eval experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/covariance-rho-frozen-validation/evaluation/seed-2026071201-sys-evaluation-cache.jsonl --product-eval experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/covariance-rho-frozen-validation/evaluation/seed-2026071202-sys-evaluation-cache.jsonl --product-geometry /tmp/joern/covariance-line/frozen-packet/seed-2026071201/candidate-geometry-cache.jsonl --product-geometry /tmp/joern/covariance-line/frozen-packet/seed-2026071202/candidate-geometry-cache.jsonl --product-features /tmp/joern/covariance-line/frozen-packet/seed-2026071201/candidate-feature-table.jsonl --product-features /tmp/joern/covariance-line/frozen-packet/seed-2026071202/candidate-feature-table.jsonl --out-dir experiments/sys-datascience/methods/ridge-tail-anatomy/artifacts/input",
+  "inputs": [
+    {
+      "bytes": 3303896,
+      "path": "experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/stage1/panel-geometries.jsonl",
+      "sha256": "a08c846d412ab77a7974b23b13cac6be0d7eb0418617cc551a8ecbb0a0f6a379"
+    },
+    {
+      "bytes": 144179,
+      "path": "experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/stage1/target-rows.jsonl",
+      "sha256": "24b9aa0baf2293996dc539815a2f353a21e8b13f94a844714d5a970f439b649f"
+    },
+    {
+      "bytes": 831150,
+      "path": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/covariance-rho-frozen-validation/pre-target/seed-2026071201/selected-candidates-before-sys.jsonl",
+      "sha256": "9eb64ed8123e07ba2db8f8ad2a345cccf0a455a9c3bc0a80400d27c0da4a926e"
+    },
+    {
+      "bytes": 828802,
+      "path": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/covariance-rho-frozen-validation/pre-target/seed-2026071202/selected-candidates-before-sys.jsonl",
+      "sha256": "8efc6df875404ab822b92c3d4450eb052acd7caa449024f30c66ce5d05c0e39a"
+    },
+    {
+      "bytes": 795345,
+      "path": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/covariance-rho-frozen-validation/evaluation/seed-2026071201-sys-evaluation-cache.jsonl",
+      "sha256": "16a007c92b3afd3b5b475f30196b236ed7ab87aaf91453ae485e5a3b0362ef5a"
+    },
+    {
+      "bytes": 793054,
+      "path": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/covariance-rho-frozen-validation/evaluation/seed-2026071202-sys-evaluation-cache.jsonl",
+      "sha256": "36faf6a2d71a13d2821f2841b967998a6dc102f41c739f45bfab88f7c0beb800"
+    },
+    {
+      "bytes": 213371546,
+      "path": "/tmp/joern/covariance-line/frozen-packet/seed-2026071201/candidate-geometry-cache.jsonl",
+      "sha256": "215772f4699d632031a97a09e15092fa02315843fc67bd3846103ade0948f0a7"
+    },
+    {
+      "bytes": 213374739,
+      "path": "/tmp/joern/covariance-line/frozen-packet/seed-2026071202/candidate-geometry-cache.jsonl",
+      "sha256": "069a07a70263dbf7d1ee3a29d1a71af856f777b6488502aaadab9acaac68b367"
+    },
+    {
+      "bytes": 148182142,
+      "path": "/tmp/joern/covariance-line/frozen-packet/seed-2026071201/candidate-feature-table.jsonl",
+      "sha256": "e3fcefe0b38fcb3b3f029204d7436219eb1f4c937016d85660efcf2c5bfb0aa5"
+    },
+    {
+      "bytes": 148179436,
+      "path": "/tmp/joern/covariance-line/frozen-packet/seed-2026071202/candidate-feature-table.jsonl",
+      "sha256": "8343b1d071e6e08565befb86bfbe0893ba0a98a4e389d7337252bf1085e2cb50"
+    }
+  ],
+  "producer": "produce.py",
+  "product_selection_contract": "two frozen covariance validation seeds; 25 rho, 25 ridge, and 25 disjoint-control memberships per bucket; 5x5 rows only",
+  "rows": {
+    "generic": 200,
+    "product_5x5": 142
+  },
+  "schema": "sys-datascience.ridge-tail-anatomy.input-provenance.v1",
+  "target_timing": "generic and product sys values were evaluated before this retained-data anatomy analysis; no new target call"
+}

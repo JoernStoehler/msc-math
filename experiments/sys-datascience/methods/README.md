@@ -39,6 +39,8 @@ Read first:
 - `ridge-mechanism-discriminator/`: compact diagnostic table combining retained
   tail-rule diagnostics and generated ridge/proposer summaries to distinguish
   ridge-magnitude, concentration, proxy, small-area, and Goodhart explanations.
+- `ridge-tail-anatomy/`: retained-data Euclidean-area/Kähler-angle decomposition
+  for the generic ridge panel and frozen product `5x5` rho/ridge/control arms.
 - `residual-exemplar-seeds/`: target-free matched-pair construction plus
   post-target model-consistent residual inspection candidates for bounded
   geometry/HK-branch hypothesis formation; exploratory (`G`) only.
