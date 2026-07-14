@@ -1,7 +1,9 @@
 //! f64 tube construction and search for the flow-graph algorithm.
 //!
-//! These routines are development evidence and production-path candidates; they
-//! are not exact certificates for `c_EHZ` without the exact fallback wrapper.
+//! These routines are development evidence and production-path candidates.
+//! Neither the direct f64 search nor the current mixed f64/exact fallback
+//! wrapper is an exact certificate for `c_EHZ`: the wrapper resolves f64 error
+//! words exactly, but it does not exact-resolve directly accepted f64 words.
 
 use crate::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
 use crate::algorithms::flow_graph::exact_tube::{
@@ -530,6 +532,8 @@ pub struct CapacityF64Result {
 #[derive(Clone, Debug, PartialEq)]
 pub enum CapacityF64Error {
     Numerical(F64TubeError),
+    /// The f64 and exact arguments do not encode the same ordered facet data.
+    MismatchedExactInput,
     ExactClosedWord {
         sigma: Vec<usize>,
         error: ExactClosedTubeError,
@@ -988,6 +992,9 @@ pub fn capacity_f64(
     if !action_threshold.is_finite() || action_threshold < 0.0 {
         return Err(CapacityF64Error::Numerical(F64TubeError::InvalidCutoff));
     }
+    if !f64_and_exact_inputs_match(input, exact_input) {
+        return Err(CapacityF64Error::MismatchedExactInput);
+    }
     let diagnostic =
         diagnose_f64_closed_words(input, action_threshold).map_err(CapacityF64Error::Numerical)?;
     let mut orbits: Vec<ResolvedClosedOrbit> = diagnostic
@@ -1067,6 +1074,37 @@ pub fn capacity_f64(
         orbits,
         diagnostic,
     })
+}
+
+/// Check the cross-input invariant required by the mixed fallback path.
+///
+/// The exact argument is not an independent second polytope: it must be the
+/// rational owner of the same ordered facet presentation and caller-supplied
+/// matrices used by the f64 search. Exact coordinates are compared after the
+/// same `BigRational`-to-f64 conversion used by fixture construction.
+fn f64_and_exact_inputs_match(
+    input: &FlatTubeInput<'_>,
+    exact_input: &ExactFlatTubeInput<'_>,
+) -> bool {
+    if input.facet_intersection_is_nonempty != exact_input.facet_intersection_is_nonempty
+        || input.omega_signs != exact_input.omega_signs
+        || input.facet_count() != exact_input.facet_count()
+    {
+        return false;
+    }
+
+    input
+        .dual_vertices
+        .iter()
+        .zip(exact_input.dual_vertices)
+        .all(|(approx, exact)| {
+            (0..4).all(|coordinate| {
+                exact[coordinate]
+                    .to_f64()
+                    .map(|value| value.to_bits() == approx[coordinate].to_bits())
+                    .unwrap_or(false)
+            })
+        })
 }
 
 pub fn solve_closed_tube_f64(

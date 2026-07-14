@@ -1,7 +1,10 @@
 % formal/flow-graph-proof-risk.tex -- FG proof-risk and falsifier ledger
 %
-% Status: unverified developer-facing truth surface.  Mined from the stale
-% flow-graph-formal-axioms worktree on 2026-06-22.
+% Status: historical proof-risk ledger with a live implementation boundary.
+% The idealized primitive/tube/completeness chain was subsequently proved in
+% formal/flow-graph-real-algorithm.tex and written into the active thesis.
+% Rust correspondence, singular runtime outcomes, cutoffs, and f64 behavior
+% remain governed by the module README, code, tests, and verification packet.
 %
 % Purpose:
 %   Track the flow-graph/tube claims that must become true, assumed, or omitted
@@ -34,13 +37,15 @@
 \subsection{Flow-Graph Proof-Risk Ledger}
 \label{sec:flow-graph-proof-risk}
 
-The abstract theorem in
-Theorem~\ref{thm:abstract-flow-graph-capacity} is useful only after the
-closed-word/tube claims below are either proved, explicitly assumed as part of a
-supported input contract, or removed from the thesis-facing route.  This ledger
-records the current proof-risk state.  A verification suite is not a proof; its
-role is to quickly falsify wrong formulations before we write polished proof
-prose.
+This ledger records the route by which the flow-graph proof obligations were
+isolated and the remaining implementation risks are tested.  The idealized
+mathematical claims FG-PR-1 through FG-PR-4, together with direct exhaustive
+search in FG-PR-5, are superseded by the active real-algorithm proof.  Their old status prose below is
+retained only to identify code-correspondence and falsifier obligations; it is
+not the current mathematical status of the active thesis theorem.  Cutoff
+optimization, singular runtime branches, arbitrary-input validation, and f64
+accepted-output semantics remain separate.  A verification suite is evidence
+for those implementation boundaries, not a proof of the idealized theorem.
 
 \begin{remark}[Milestone success criterion]\label{rem:flow-graph-truth-surface-success}
 For the next FG milestone, every correctness claim needed by the thesis chapter
@@ -106,7 +111,10 @@ $c_{\mathrm{EHZ}}(K)$.  It does not by itself prove that the current
 no-repeated-facet enumeration domain contains such a realization.
 \end{remark}
 
-\begin{remark}[Next FG chapter restart order]\label{rem:fg-chapter-restart-order}
+\begin{remark}[Historical FG restart order]\label{rem:fg-chapter-restart-order}
+The ordered tasks below predate that proof.  The first three are closed for the
+idealized exact algorithm but remain useful questions when auditing the Rust
+wrapper; the f64 boundary remains live.
 The next session that restarts the FG chapter should not begin by polishing
 prose.  The current ordered blocking tasks are:
 \begin{description}
@@ -185,7 +193,9 @@ The status tags used below have the following meaning.
 \begin{unverified}
 \begin{remark}[Claim FG-PR-1: primitive tube soundness]%
 \label{rem:fg-pr-primitive-tube-soundness}
-\textbf{Status:} high-belief-unproved.
+\textbf{Status:} proved for the idealized algorithm in
+Lemma~\ref{lem:fg-primitive-tubes-affine}; Rust correspondence remains tested
+rather than formally verified.
 
 \textbf{Claim.}  For supported triples $(i,j,k)$ with nonzero transition
 $\omega_0(a_i,a_j)$ and $\omega_0(a_j,a_k)$ as required by the affine tube
@@ -209,7 +219,9 @@ the primitive-segment semantics test in \texttt{exact\_tube.rs}.
 \begin{unverified}
 \begin{remark}[Claim FG-PR-2: tube intersection is concatenation]%
 \label{rem:fg-pr-tube-intersection-concatenation}
-\textbf{Status:} high-belief-unproved.
+\textbf{Status:} proved for the idealized algorithm in
+Lemma~\ref{lem:fg-tube-gluing}; Rust correspondence remains tested rather than
+formally verified.
 
 \textbf{Claim.}  For two exact nonempty tubes produced from the same flat
 polytope input, if the first tube's end two-face chart equals the second tube's
@@ -239,7 +251,9 @@ this claim checks the nonempty exact F6 capacity word case in
 \begin{unverified}
 \begin{remark}[Claim FG-PR-3: closed fixed points are closed Reeb orbits]%
 \label{rem:fg-pr-closed-fixed-point-soundness}
-\textbf{Status:} risky-unproved.
+\textbf{Status:} proved for the idealized algorithm in
+Lemma~\ref{lem:fg-closed-tube-fixed-points}; the broader Rust singular-outcome
+boundary remains an implementation contract.
 
 \textbf{Claim.}  For a closed raw word
 $(s_0,s_1,\ldots,s_{m-1},s_0,s_1)$, every accepted positive-action fixed point
@@ -250,8 +264,10 @@ zero-action no-orbits, zero-time records outside the accepted boundary, and
 positive-action singular fixed sets are not silently converted into capacity
 values.  The current exact search boundary accepts the structural
 length-three zero-time case from Lemma~\ref{lem:fg-length-three-zero-time} as a
-no-orbit outcome, but treats other singular no-orbit statuses as unsupported
-unless a separate lemma covers them.
+no-orbit outcome.  It also returns an exact empty-tube outcome when a singular
+fixed equation is inconsistent or its fixed set misses the searched tube.  An
+intersecting singular fixed set outside the structural length-three case
+remains unsupported unless a separate lemma covers it.
 
 \textbf{Why it matters.}  This is the most direct route to minimum-action
 soundness in the abstract axioms.
@@ -278,7 +294,8 @@ reconstructions.
 \begin{unverified}
 \begin{lemma}[Length-three closed words have only zero-time fixed points]%
 \label{lem:fg-length-three-zero-time}
-\textbf{Status:} high-belief-unproved.
+\textbf{Status:} proved here for the displayed length-three case and subsumed
+by the short-word exclusion used in the idealized theorem.
 
 Let \(K\subset \mathbb{R}^4\) be described by facet covectors
 \(a_r\) with facets \(H_r=\{x\mid \langle a_r,x\rangle=1\}\).
@@ -327,7 +344,9 @@ fixed set.
 \begin{unverified}
 \begin{remark}[Claim FG-PR-4: resolver completeness for supported minimizers]%
 \label{rem:fg-pr-resolver-completeness}
-\textbf{Status:} risky-unproved.
+\textbf{Status:} proved for the idealized regular class in
+Theorem~\ref{thm:fg-real-capacity-correctness}; Rust correspondence and input
+validation remain separate.
 
 \textbf{Claim.}  On the supported input class, the closed-word/tube resolver
 returns the action of at least one HK2017 capacity-achieving simple minimizer
@@ -361,9 +380,9 @@ wrong resolver claim, wrong supported-scope hypothesis, or implementation bug.
 \begin{unverified}
 \begin{remark}[Claim FG-PR-5: concrete searches satisfy the abstract axioms]%
 \label{rem:fg-pr-concrete-search-axioms}
-\textbf{Status:} risky-unproved until the semantic meaning of a resolved
-closed word is proved; high-belief-unproved for direct enumeration after that;
-risky-unproved for cached and cutoff searches.
+\textbf{Status:} proved for idealized direct exhaustive search in
+Proposition~\ref{prop:fg-real-search-correctness}; cached and cutoff Rust
+searches retain the implementation-evidence boundary below.
 
 \textbf{Claim.}  Direct enumeration satisfies the abstract axioms when the
 resolver is sound and complete.  Cached construction and action-cutoff search

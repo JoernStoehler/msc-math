@@ -1,6 +1,6 @@
 # Quadratic Program Content Notes
 
-Status: section-local content companion for
+Status: maintenance companion for the integrated chapter candidate in
 `thesis/04-haim-kislev-quadratic-program.tex`. Not source truth.
 
 Purpose: gather the writing inventory for the Haim--Kislev quadratic-program
@@ -9,8 +9,45 @@ section.
 Overruled by: source papers, `formal/`, `crates/symplectic/`, revalidated
 legacy thesis material, experiment artifacts, and Jörn/Kai review.
 
-Lifecycle: keep while the section is being assembled. After the section is
-stable, delete this file or reduce it to a short maintenance index.
+Lifecycle: retain through Jörn/Kai review because the product-enumeration gate,
+source hierarchy, and implementation boundaries are not recoverable cheaply
+from the chapter alone. Reduce it after those gates close.
+
+## Integrated Audit, 2026-07-14
+
+The chapter was audited from Main commit `3dcc1efd` against HK2017 Theorems
+1.1 and 1.5, the active Clarke/simple-minimizer foundation, the current formal
+QP notes, Rudolf's published Theorem 1, the rotated-pentagon dependency, and
+the current Rust QP surfaces. The HK convention translation, factor
+`c_EHZ = 1/(2 Q_max)`, and global-maximizer realization are supported.
+
+Accepted chapter boundary:
+
+- a feasible or positive KKT point is not a fixed-word maximum or a global
+  capacity maximizer;
+- complete exact support/word coverage makes KKT candidates sufficient for the
+  scalar maximum, but one KKT solve does not solve a nonconcave fixed-word QP;
+- the restricted Lagrangian-product family is existential and exhaustive for
+  the capacity value, not a classification of every minimizing orbit;
+- the general Rust search is an f64-first candidate path with exact rational
+  fallback/certification surfaces; an exact KKT witness is global only when
+  the candidate family and resolution policy establish coverage;
+- the HKO and rotated-pentagon theorem packets own their exact Sage
+  certificates. Numerical discovery and crate tests remain supporting evidence.
+
+The product finite-enumeration proof was reconstructed independently from
+Rudolf's short strong billiard, the thesis splitting/merging argument, dual
+minimality, and Clarke realization. No contradiction was found. Its current
+remaining gate is Jörn/Kai mathematical acceptance because it is a
+project-derived, theorem-critical reduction. Reopen the chapter if that review
+changes the block family, convention lift, or use of the simple-minimizer
+theorem.
+
+Corrections made during this audit: the fixed-word KKT wording now preserves
+support-face/global distinctions; the reversed-lift action sign is explicit;
+the merging invariant is block count rather than block length; and stale
+contradictory statements in `formal/ehz-kkt-system.tex` and
+`formal/hk2017-qp-core.tex` were repaired.
 
 Update rule: add or change a claim only with a source pointer or an explicit
 `needs source` marker.

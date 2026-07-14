@@ -4,12 +4,16 @@
 This section develops a second finite algorithm for
 \(c_{\mathrm{EHZ}}\) in dimension four.  Its geometric starting point is the
 symplectic flow graph of Chaidez--Hutchings \cite{CH2021}.  Facet-pair
-intersections provide two-dimensional local sections.  Reeb passages through
+hyperplane intersections provide two-dimensional ambient charts; the closed
+section polygons may be empty or lower-dimensional.  Reeb passages through
 facets give affine maps between sections, and a closed trajectory is a fixed
-point of a composed return map.  The correctness proof here is different from the
-smooth--combinatorial route in \cite{CH2021}.  It uses the simple-minimizer
+point of a composed return map.  The construction borrows this local flow-map
+idea, but it is not the Chaidez--Hutchings capacity algorithm.  Its correctness
+proof uses the simple-minimizer
 Theorem~\ref{thm:generalized-reeb-simple-minimizer} and proves directly that an
 exhaustive tube search contains such a minimizer.
+The search regards a distinct-facet QP word up to cyclic choice of its starting
+segment and enumerates each resulting simple cyclic word once.
 
 We first prove correctness for an idealized exact-arithmetic search under
 explicit regularity hypotheses, then prove that these hypotheses hold on an
@@ -118,43 +122,31 @@ gives the strict-time condition.  Since
 action.
 \end{proof}
 
-Figures~\ref{fig:flow-graph-projected-orbit}
-and~\ref{fig:flow-graph-tube-sequence} show the two complementary views used
-by the construction.  The first places one closed orbit on the projected
-polytope boundary.  The second follows the same word through the
+Figure~\ref{fig:flow-graph-tube-sequence} follows one word through the
 two-dimensional polygons \(P_{ij}\).  Within each panel, the coordinate axes
 are orthonormal for the Euclidean metric induced from \(\mathbb R^4\).  Their
-affine origins and orientations are chosen independently, and the panels are
-autoscaled separately.  The blue polygon is the full section \(P_{ij}\), the
-coloured polygon is the cross-section of the surviving tube, and the black
-cross is the breakpoint of the closed orbit.  The start and return panels use
-the same facet pair.  Thus the
+affine origins and orientations are chosen independently for distinct
+sections.  Each main panel is cropped to the surviving tube cross-section; its
+inset shows that crop inside the full section \(P_{ij}\).  The black cross is
+the breakpoint of the closed orbit.  The start and return panels use the same
+facet pair, frame, and plot limits.  Thus the
 return-map fixed-point equation is visible as the return of the black cross to
 its initial local coordinates.
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=\linewidth]{figures/flow-graph/flow-graph-f6-projection.pdf}
-  \caption{Two camera views of the same radial and stereographic projection of
-    an example polytope with six facets.  The translucent surfaces are
-    projected two-faces, the grey curves are the projected one-skeleton, and
-    the purple curve is the closed Reeb orbit with facet word
-    \(\sigma=(1,2,4,5,3)\).  Projection distorts the geometry; the figure is
-    explanatory, not proof input.}
-  \label{fig:flow-graph-projected-orbit}
-\end{figure}
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\linewidth]{figures/flow-graph/flow-graph-f6-tube-sequence.pdf}
   \caption{The same word in successive local sections.  Each panel uses a
     Euclidean-orthonormal basis for the corresponding affine two-plane.  The
-    affine origins and orientations are chosen independently, and panels are
-    autoscaled separately.  The arrows show the affine passages, and the black
-    cross returns to its initial coordinates.}
+    affine origins and orientations are chosen independently for distinct
+    sections.  Main panels are tube-focused; each inset locates the colored
+    tube cross-section inside the full blue section.  The start and return
+    panels share a frame and plot limits.  The arrows show the affine passages,
+    and the black cross returns to its initial coordinates.}
   \label{fig:flow-graph-tube-sequence}
 \end{figure}
 
+\FloatBarrier
 \subsection{Exhaustive search and correctness}
 \label{subsec:flow-graph-algorithm-ch2021-correctness}
 
@@ -177,15 +169,21 @@ The facet presentation above is \emph{flow-graph regular} if:
 The last condition is called \emph{finite-orbit regularity}.
 \end{definition}
 
-The exhaustive algorithm enumerates every simple cyclic word once.  It skips
-a word if an adjacent facet intersection is empty or an adjacent transition
-sign is not positive.  Words of length at most four are skipped.  For every
-remaining word it constructs the closed tube, solves
-\(\Phi_w(u)=u\), and records the fixed point only if it lies in \(P_w\) and
-all reconstructed segment times are positive.  A singular fixed-point
-equation for a word of length at least five is a typed rejection outside this
-algorithm's regular case.  Otherwise the algorithm returns the minimum
-positive action.
+\begin{algorithm}[Idealized exhaustive flow-graph search]
+\label{alg:idealized-exhaustive-flow-graph-search}
+Enumerate every simple cyclic facet word once.  For each word:
+\begin{enumerate}
+  \item discard it if an adjacent facet intersection is empty or an adjacent
+    transition sign is not positive;
+  \item discard it if its length is at most four;
+  \item construct its closed tube \((P_w,\Phi_w,A_w)\) and solve
+    \(\Phi_w(u)=u\);
+  \item reject a singular fixed-point equation as outside the regular case,
+    and otherwise record the unique solution only if it lies in \(P_w\) and
+    every reconstructed segment time is positive.
+\end{enumerate}
+Return the least positive recorded action.
+\end{algorithm}
 
 We justify both pruning steps.  If a strict trajectory changes from \(R_i\) to
 \(R_j\) at \(x\in F_i\cap F_j\), then the inequalities
@@ -239,8 +237,10 @@ smaller.
 \label{subsec:flow-graph-algorithm-ch2021-genericity}
 
 The regularity assumptions are explicit algebraic nonvanishing conditions.
-The only non-immediate point is that the long-word determinant is not the zero
-rational function.
+For fixed facet count there are only finitely many of them.  Pairwise
+symplectic degeneracy and short-word dependence are ordinary polynomial
+conditions.  The only non-immediate point is that the long-word determinant is
+not the zero rational function.
 
 When all cyclic primitive denominators of a word are nonzero, let
 \(M_w^{\mathrm{alg}}\) denote the composition of the primitive linear maps,
@@ -331,18 +331,21 @@ It assumes that the caller supplies a bounded irredundant presentation in
 dimension four, together with matching exact matrices for facet intersections
 and symplectic signs.  It rejects a caller-marked nonempty distinct facet pair
 with zero symplectic pairing, failure of the short-word independence
-hypothesis, and unsupported singular outcomes.  Thus the Rust wrapper is
+hypothesis, and unsupported singular fixed sets.  An inconsistent singular
+fixed equation, or one whose fixed set misses the tube, is instead an exact
+no-orbit outcome.  Thus the Rust wrapper is
 intended to implement the mathematical search on rational inputs satisfying
 both this caller contract and the regularity hypotheses; correspondence is
 tested, not formally verified.
 
 A separate floating-point path is useful for larger searches, but it remains
-approximate.  Exact fallback classifies the error words recorded by its
-dynamic-cutoff run, while directly accepted floating-point words remain
+approximate.  Its mixed wrapper checks that the exact and floating-point inputs
+encode the same ordered facet data.  Exact fallback then classifies the error
+words recorded by the floating-point run, while directly accepted words remain
 floating-point outputs.  This path is not an exact capacity certificate.
 
-On three deterministic rational examples, its returned capacity agrees with
-a separately computed Haim--Kislev quadratic-program value.
+On three deterministic rational reconstructions, exact flow-graph search
+agrees with the current certified Haim--Kislev/QP aggregate.
 Targeted tests also exercise tube construction, fixed-point reconstruction,
 and typed rejection.  These checks are falsification and correspondence
 evidence on selected examples; they do not prove tube semantics or broad input

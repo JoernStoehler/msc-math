@@ -234,6 +234,42 @@ fn capacity_f64_rejects_when_no_positive_orbit_is_found() {
 }
 
 #[test]
+fn capacity_f64_rejects_mismatched_exact_input() {
+    let dual_vertices_f64 = vec![nalgebra::Vector4::x(), nalgebra::Vector4::y()];
+    let dual_vertices_exact = vec![
+        [
+            BigRational::from_integer(1.into()),
+            BigRational::from_integer(0.into()),
+            BigRational::from_integer(0.into()),
+            BigRational::from_integer(0.into()),
+        ],
+        [
+            BigRational::from_integer(0.into()),
+            BigRational::from_integer(2.into()),
+            BigRational::from_integer(0.into()),
+            BigRational::from_integer(0.into()),
+        ],
+    ];
+    let facet_intersection_is_nonempty = DMatrix::from_element(2, 2, false);
+    let omega_signs = DMatrix::from_element(2, 2, 1);
+    let input = FlatTubeInput::new(
+        &dual_vertices_f64,
+        &facet_intersection_is_nonempty,
+        &omega_signs,
+    );
+    let exact_input = ExactFlatTubeInput {
+        dual_vertices: &dual_vertices_exact,
+        facet_intersection_is_nonempty: &facet_intersection_is_nonempty,
+        omega_signs: &omega_signs,
+    };
+
+    assert_eq!(
+        capacity_f64(&input, &exact_input, 0.0),
+        Err(CapacityF64Error::MismatchedExactInput)
+    );
+}
+
+#[test]
 fn primitive_tube_f64_has_consistent_redundant_maps_on_known_fixture() {
     let fixture = known_polytopes::hko_pentagon();
     let input = FlatTubeInput::new(

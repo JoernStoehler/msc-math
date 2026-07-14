@@ -4,7 +4,7 @@
 % Part I — Problem, structure, exact algorithm:
 %   def:hk2017-problem — full HK2017 capacity problem
 %   fact:hk2017 — maximizer = minimum-action simple Reeb orbit
-%   rem:min-support — minimum-support maximizers have beta > 0
+%   rem:min-support — minimum-length maximizing words have beta > 0
 %   rem:adjacency-pruning — directed transition prefilter
 %   rem:qp-setup — per-sigma notation (A, F, V, beta_0, H', g, gamma_j)
 %   prop:basic-properties — A may be empty, F is compact
@@ -53,7 +53,7 @@
 % ══════════════════════════════════════════════════════════════════════
 %
 % (1) HK2017 full problem
-% (2) Simple Reeb orbit structure: minimum-support maximizers, pruning
+% (2) Simple Reeb orbit structure: minimum-length maximizing words, pruning
 % (3) General facts: quadratic forms on affine planes
 % (4) Exact per-sigma solver
 % (5) Continuity issues for f64
@@ -159,15 +159,14 @@ A global maximizer $(\sigma^*, \beta^*)$
 of~\eqref{eq:hk2017-problem}
 may have $\beta^*_k = 0$ for some indices~$k$
 (the orbit does not dwell on those facets).
-Among all global maximizers achieving~$Q_{\max}$,
-take one with minimum $|\operatorname{supp}(\beta^*)|$
-(fewest nonzero components).
-This minimum-support maximizer has $\beta^* > 0$:
+Among all word descriptions of global maximizers achieving~$Q_{\max}$,
+take one with minimum word length.
+This minimum-length description has $\beta^* > 0$:
 if $\beta^*_k = 0$ for some~$k$, removing $\sigma(k)$
 from the permutation gives a shorter $\sigma'$ with the same
 $Q$ value (the $k$-th row/column of~$H$ contributes nothing,
 and the constraints are satisfied by the remaining components).
-This contradicts minimality of the support.
+This contradicts minimality of the word length.
 
 \textbf{Consequence:} the HK2017 algorithm can skip any
 $(\sigma, \beta)$ where the maximum of~$Q$ over

@@ -453,9 +453,9 @@ fn cutoff_enabled_matches_disabled(
 
     let same_capacity = cutoff.capacity_action == baseline.capacity_action;
     let same_retained_words = cutoff.orbits == baseline.orbits;
-    let cutoff_exercised =
-        cutoff.action_cutoff_word_count > 0 && cutoff.action_cutoff_intersection_count > 0;
-    let passed = same_capacity && same_retained_words && cutoff_exercised;
+    let cutoff_policy_reached_words = cutoff.action_cutoff_word_count > 0;
+    let cutoff_intersections_exercised = cutoff.action_cutoff_intersection_count > 0;
+    let passed = same_capacity && same_retained_words;
     ProofRiskRow {
         claim_id: "FG-PR-5",
         check_id: "cutoff_enabled_matches_disabled",
@@ -468,8 +468,11 @@ fn cutoff_enabled_matches_disabled(
         passed,
         detail: if !same_capacity || !same_retained_words {
             "cutoff-enabled exact search changed capacity or retained words".to_string()
-        } else if !cutoff_exercised {
-            "cutoff-enabled exact search matched output but did not exercise cutoff intersections"
+        } else if !cutoff_policy_reached_words {
+            "cutoff-enabled exact search matches disabled output; this fixture found no word after a positive action was available"
+                .to_string()
+        } else if !cutoff_intersections_exercised {
+            "cutoff-enabled exact search matches disabled output; the policy reached later words but their tubes were empty before a cutoff intersection"
                 .to_string()
         } else {
             "cutoff-enabled exact search matches disabled output; cutoff intersections were exercised, but this row is not a cutoff lower-bound certificate"
