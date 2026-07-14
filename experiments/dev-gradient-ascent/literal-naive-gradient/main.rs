@@ -123,15 +123,21 @@ fn main() {
     let row = rows
         .into_iter()
         .find(|row| row.poly_id == cli.poly_id)
-        .unwrap_or_else(|| panic!("poly_id {} not found in {}", cli.poly_id, cli.polytope_table.display()));
+        .unwrap_or_else(|| {
+            panic!(
+                "poly_id {} not found in {}",
+                cli.poly_id,
+                cli.polytope_table.display()
+            )
+        });
     let initial_duals: Vec<Vector4<f64>> = row
         .dual_vertices_f64
         .iter()
         .map(|v| Vector4::new(v[0], v[1], v[2], v[3]))
         .collect();
 
-    let implementation_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("literal-naive-gradient/main.rs");
+    let implementation_path =
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("literal-naive-gradient/main.rs");
     let provenance = RunProvenance {
         command: std::env::args().collect(),
         source_repo_head: git_output(&["rev-parse", "HEAD"]),
@@ -150,12 +156,7 @@ fn main() {
 
     let mut summaries = Vec::new();
     for &eta in &cli.etas {
-        let summary = run_trajectory(
-            &initial_duals,
-            eta,
-            cli.updates,
-            &cli.out_dir,
-        );
+        let summary = run_trajectory(&initial_duals, eta, cli.updates, &cli.out_dir);
         summaries.push(summary);
     }
     let run_summary = RunSummary {
@@ -178,7 +179,8 @@ fn run_trajectory(
     let path = out_dir.join(filename);
     let file = File::create(&path).expect("create trajectory");
     let mut writer = BufWriter::new(file);
-    let initial = compute_state(initial_duals).unwrap_or_else(|err| panic!("initial state failed: {err}"));
+    let initial =
+        compute_state(initial_duals).unwrap_or_else(|err| panic!("initial state failed: {err}"));
     let initial_sys = initial.sys;
     let mut best_sys = initial.sys;
     let mut best_iteration = 0;
@@ -190,7 +192,18 @@ fn run_trajectory(
     let mut branch_switches = 0;
     write_row(
         &mut writer,
-        &make_row(eta, 0, "initial", &current, None, best_sys, best_iteration, vec![Vector4::zeros(); current.polytope.facet_count()], true, None),
+        &make_row(
+            eta,
+            0,
+            "initial",
+            &current,
+            None,
+            best_sys,
+            best_iteration,
+            vec![Vector4::zeros(); current.polytope.facet_count()],
+            true,
+            None,
+        ),
     );
 
     let mut failure = None;
@@ -199,11 +212,8 @@ fn run_trajectory(
         let gradient = current.gradient.clone();
         let da: Vec<Vector4<f64>> = gradient.iter().map(|g| eta * g).collect();
         let before_duals = current.polytope.dual_vertices_f64.clone();
-        let after_duals: Vec<Vector4<f64>> = before_duals
-            .iter()
-            .zip(&da)
-            .map(|(a, d)| a + d)
-            .collect();
+        let after_duals: Vec<Vector4<f64>> =
+            before_duals.iter().zip(&da).map(|(a, d)| a + d).collect();
         match compute_state(&after_duals) {
             Ok(next) => {
                 let delta = next.sys - current.sys;
@@ -297,10 +307,8 @@ fn run_trajectory(
 fn compute_state(duals: &[Vector4<f64>]) -> Result<State, String> {
     let polytope = SysLandscapePolytopeCache::from_f64_dual_vertices(duals.to_vec())
         .ok_or_else(|| "updated_state_invalid_geometry".to_string())?;
-    let volume = exact_volume_from_incidence_as_f64(
-        &polytope.vertices,
-        &polytope.vertex_facet_incidence,
-    );
+    let volume =
+        exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if !volume.is_finite() || volume <= 0.0 {
         return Err("exact_volume_failed".to_string());
     }
@@ -501,8 +509,12 @@ fn load_jsonl<T: for<'de> Deserialize<'de>>(path: &Path) -> Vec<T> {
         .lines()
         .enumerate()
         .map(|(line, text)| {
-            serde_json::from_str(&text.unwrap_or_else(|err| panic!("read {} line {}: {err}", path.display(), line + 1)))
-                .unwrap_or_else(|err| panic!("parse {} line {}: {err}", path.display(), line + 1))
+            serde_json::from_str(
+                &text.unwrap_or_else(|err| {
+                    panic!("read {} line {}: {err}", path.display(), line + 1)
+                }),
+            )
+            .unwrap_or_else(|err| panic!("parse {} line {}: {err}", path.display(), line + 1))
         })
         .collect()
 }
@@ -519,7 +531,10 @@ fn hash_file(path: &Path) -> String {
 
 fn git_output(args: &[&str]) -> Option<String> {
     let output = Command::new("git").args(args).output().ok()?;
-    output.status.success().then(|| String::from_utf8_lossy(&output.stdout).trim().to_string())
+    output
+        .status
+        .success()
+        .then(|| String::from_utf8_lossy(&output.stdout).trim().to_string())
 }
 
 fn git_diff_hash() -> String {
@@ -543,21 +558,38 @@ fn eta_label(eta: f64) -> String {
 }
 
 fn parse_args(args: impl Iterator<Item = String>) -> Cli {
-    let mut polytope_table = PathBuf::from("experiments/dev-sys-prediction/facet-scale-baseline-error/polytope-panel.jsonl");
-    let mut poly_id = "3daddfde522cb04777d651814d7f88a31f6ec20c1b7ac8fc960efc3e4534104e".to_string();
-    let mut out_dir = PathBuf::from("/tmp/sys-ds-research-lines/optimizer/literal-naive-gradient-luna-high");
+    let mut polytope_table = PathBuf::from(
+        "experiments/dev-sys-prediction/facet-scale-baseline-error/polytope-panel.jsonl",
+    );
+    let mut poly_id =
+        "3daddfde522cb04777d651814d7f88a31f6ec20c1b7ac8fc960efc3e4534104e".to_string();
+    let mut out_dir =
+        PathBuf::from("/tmp/sys-ds-research-lines/optimizer/literal-naive-gradient-luna-high");
     let mut etas = DEFAULT_ETAS.to_vec();
     let mut updates = DEFAULT_UPDATES;
     let mut args = args.peekable();
     while let Some(arg) = args.next() {
         match arg.as_str() {
-            "--polytope-table" => polytope_table = PathBuf::from(args.next().expect("--polytope-table requires path")),
+            "--polytope-table" => {
+                polytope_table = PathBuf::from(args.next().expect("--polytope-table requires path"))
+            }
             "--poly-id" => poly_id = args.next().expect("--poly-id requires value"),
             "--out-dir" => out_dir = PathBuf::from(args.next().expect("--out-dir requires path")),
             "--etas" => {
-                etas = args.next().expect("--etas requires csv").split(',').map(|x| x.parse().expect("invalid eta")).collect();
+                etas = args
+                    .next()
+                    .expect("--etas requires csv")
+                    .split(',')
+                    .map(|x| x.parse().expect("invalid eta"))
+                    .collect();
             }
-            "--updates" => updates = args.next().expect("--updates requires integer").parse().expect("invalid updates"),
+            "--updates" => {
+                updates = args
+                    .next()
+                    .expect("--updates requires integer")
+                    .parse()
+                    .expect("invalid updates")
+            }
             "--help" => {
                 println!("Usage: dev-gradient-ascent-literal-naive-gradient [--polytope-table PATH] [--poly-id ID] [--out-dir PATH] [--etas CSV] [--updates N]");
                 std::process::exit(0);
@@ -566,6 +598,15 @@ fn parse_args(args: impl Iterator<Item = String>) -> Cli {
         }
     }
     assert!(!etas.is_empty(), "at least one eta is required");
-    assert!(etas.iter().all(|eta| eta.is_finite() && *eta > 0.0), "etas must be positive finite");
-    Cli { polytope_table, poly_id, out_dir, etas, updates }
+    assert!(
+        etas.iter().all(|eta| eta.is_finite() && *eta > 0.0),
+        "etas must be positive finite"
+    );
+    Cli {
+        polytope_table,
+        poly_id,
+        out_dir,
+        etas,
+        updates,
+    }
 }
