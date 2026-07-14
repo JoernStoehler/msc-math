@@ -27,6 +27,10 @@ found a new best after iteration 20; `eta=1` made the first updated geometry
 invalid. The viable trajectories include frequent decreases and branch
 switches, so final-state and best-so-far behavior must not be conflated.
 
+[`figures/iteration-vs-sys.png`](figures/iteration-vs-sys.png) plots both raw
+full-`sys` and best-so-far trajectories. Regenerate it with
+`uv run --script experiments/dev-gradient-ascent/literal-naive-gradient/plot.py`.
+
 This establishes that eight-step prefixes cannot evaluate the literal baseline
 on this start. It does not select a general learning rate, establish population
 behavior, or support a local-maximality claim.
