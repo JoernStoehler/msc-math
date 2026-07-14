@@ -1,5 +1,11 @@
 # Routing report
 
+For `sys>1` search, the line-level decision is to retain ridge as a coarse
+screen, not an optimization objective. The generic 1% filter substantially
+raises typical `sys`, but harder ridge conditioning does not improve the
+selected region. Any second stage must contribute information beyond lower
+ridge; the evidence does not require that information to be non-scalar.
+
 The decomposition is numerically checked on all 200 generic rows and 142
 retained product `5x5` rows. `sum(E*kappa)=sum(A_symp)` has maximum relative
 error below `2e-16`; the computed normalized means/sums agree with the source

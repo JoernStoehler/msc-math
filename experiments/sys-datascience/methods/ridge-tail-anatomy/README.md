@@ -1,5 +1,20 @@
 # Ridge-tail anatomy (step 2)
 
+## Decision for `sys > 1` search
+
+Low ridge is a useful coarse filter: on generic `F=10`, the selected 1% has
+mean `sys=0.62571` versus `0.33857` for a disjoint baseline. But pushing ridge
+lower inside that 1% slightly worsens the result: ranks 1--10 have mean
+`sys=0.59712` versus `0.62888` for ranks 11--100. Generating another candidate
+decade merely to take more extreme ridge minima is therefore not a supported
+route to `sys>1`.
+
+Ridge may still save target evaluations by rejecting poor starting points. A
+second-stage coordinate must add information not contained in “make ridge
+smaller.” It may be another prospectively validated scalar, several
+coordinates, or a local/non-scalar search; this packet does not choose among
+those portfolio alternatives.
+
 This packet is a retained-data anatomy analysis for the completed generic
 `F=10` ridge panel and the frozen product covariance validation. It makes no
 capacity/`sys` call and does not alter either frozen manifest. The scientific

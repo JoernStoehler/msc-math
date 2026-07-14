@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Reconstruct the frozen ridge-tail source comparison.
 
-This analyzer only reads retained rows and already evaluated product panels.  It
-does not generate geometry or evaluate capacity/sys.  The optional generic
-stage-one manifest is checked for the future 10k contract; target rows are
-deliberately not consumed until a later, explicit target-evaluation packet.
+This analyzer only reads retained rows and already evaluated product panels. It
+does not generate geometry or evaluate capacity/sys. The completed target-free
+generic stage-one manifest is checked against the formerly future 10k contract;
+generic target rows remain owned by the separate target-evaluation packet.
 """
 
 from __future__ import annotations
@@ -409,7 +409,7 @@ def contract(threshold: float) -> dict[str, Any]:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--generic-manifest", type=Path, default=None)
+    parser.add_argument("--generic-manifest", type=Path, default=DEFAULT_GENERIC_MANIFEST)
     args = parser.parse_args()
     if args.generic_manifest is not None and not args.generic_manifest.exists():
         raise SystemExit(f"generic manifest does not exist: {args.generic_manifest}")

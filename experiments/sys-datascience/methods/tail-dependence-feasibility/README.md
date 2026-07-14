@@ -1,8 +1,11 @@
 # Ridge/sys tail-dependence feasibility
 
-Status: first-gate feasibility and conjecture packet. It uses existing artifacts
-only and is ready to inform a new-data decision, not thesis prose or an
-asymptotic claim.
+Status: completed first-gate feasibility and conjecture packet. It selected the
+generic `F=10` 10,000-candidate experiment and its stopping rule; that experiment
+is now complete in the sibling `generic-ridge-tail-stage1/` and
+`generic-ridge-tail-stage1-target/` packets. This packet remains the source for
+the earlier identifiability, censoring, and compute-scale reasoning, not for the
+later generic target result or an asymptotic claim.
 
 ## Question and decision
 
@@ -185,6 +188,12 @@ per step and its wall/resource cost. Current artifacts contain neither an
 optimizer trajectory nor such a calibration.
 
 ## Adaptive new-data design
+
+This section records the design frozen before the generic experiment. It is an
+executed historical contract, not a current execution queue. The observed
+hardening contrast was negative with uncertainty below the predeclared `+0.04`
+continuation effect, so the rule stopped at 10,000 and neither the 100,000 nor
+one-million continuation was opened.
 
 The first new scientific stage is 10,000 accepted generic `F=10` candidates,
 not a million-row target. Freeze the mean-proxy ranking before target exposure,

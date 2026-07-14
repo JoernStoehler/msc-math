@@ -1,8 +1,10 @@
 # Generic F=10 ridge-tail stage one
 
-Status: frozen target-free stage-one packet pending independent pre-target
-review. It is not target evidence and must not be used to infer generic `sys`
-behavior before the frozen panel is evaluated.
+Status: completed and independently reviewed target-free stage-one packet. Its
+full 10,000-candidate replay passed before target exposure; the sibling
+`generic-ridge-tail-stage1-target/` packet later evaluated exactly the frozen
+200 rows. The target-free artifacts remain the source for selection, geometry,
+numerical, and pre-exposure provenance, not for the resulting `sys` claims.
 
 ## Scientific object
 
@@ -14,9 +16,12 @@ because generic `F=10` ridge counts vary. Production uses
 frozen 100-row future target panel; a deterministic disjoint 100-row baseline
 is matched to the same single `F=10` population.
 
-The new population has no capacity or `sys` values. The future selected panel
-has disjoint `0-.1%` (10 rows) and `.1-1%` (90 rows) bands. A singleton `.01%`
-row has no evidential role.
+The target-free population artifacts contain no capacity or `sys` values. The
+frozen selected panel has disjoint `0-.1%` (10 rows) and `.1-1%` (90 rows)
+bands. A singleton `.01%` row has no evidential role. The later target rows and
+analysis are stored alongside this packet only because the target evaluator is
+their owning sibling; they do not retroactively change the target-free
+selection contract.
 
 ## Numerical gate and production
 
@@ -90,9 +95,9 @@ Do not hand-edit generated JSON or JSONL.
   closure, complete population/selection/baseline/panel hashes, all row and
   geometry fields, and the target-free boundary.
 
-Allowed use before target exposure: independent review of the generator,
-proxy, retained numerical audit, f64 cutoff, baseline, provenance, and
-absence of target fields. Target evaluation means the later joint computation
-of capacity and `sys`. Prohibited use: computing or reading new capacity/`sys`, claiming
-enrichment or saturation, treating the panel as an independent proposer result,
-or scaling to 100k/1M.
+Historical allowed use before target exposure was independent review of the
+generator, proxy, retained numerical audit, f64 cutoff, baseline, provenance,
+and absence of target fields. Target evaluation meant the later joint
+computation of capacity and `sys`. Current readers should use the sibling
+target packet for enrichment and stopping claims. The target-free packet alone
+must not be treated as target evidence or authority to scale to 100k/1M.

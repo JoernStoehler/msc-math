@@ -1,14 +1,25 @@
 {
   "future_manifest": {
-    "message": "10k generic stage-one manifest is not present; future target evaluation is intentionally not consumed",
+    "counts": {
+      "accepted_candidates": 10000,
+      "baseline": 100,
+      "future_band_point_one_to_one_percent": 90,
+      "future_band_zero_to_point_one_percent": 10,
+      "panel_union": 200,
+      "production_rational_volume_evaluations": 0,
+      "selected": 100
+    },
     "path": "experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/stage1/manifest.json",
-    "status": "pending_manifest",
+    "proxy": "ridge_symp_area_mean_over_volume_sqrt",
+    "seed": 20260714,
+    "sha256": "b57fdba2afde97a2bec8644d4dc02a00104ec2bc088fdae66d52539a4ceea936",
+    "status": "validated_target_free_manifest",
     "target_visible_rows": 0
   },
   "generated_summary_rows": 4,
   "product_sensitivity_observation": "5x5 versus 4x6 means differ by less than the provisional 0.04 contrast at both generated cutoffs; 4x6 does not materially change the qualitative operational conclusion",
   "product_sensitivity_rows": 4,
-  "ready_to_consume_future_200": false,
+  "ready_to_consume_future_200": true,
   "retained_summary_rows": 11,
   "schema": "sys-datascience.ridge-tail-source-comparison.summary.v1",
   "source_inventory": {
