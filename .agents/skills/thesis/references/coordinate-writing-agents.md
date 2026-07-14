@@ -8,6 +8,11 @@ order, source-status decisions, and final synthesis. Delegate bounded work
 whose output main can evaluate without adopting the worker's hidden model of
 the chapter.
 
+After the desired result, reason for delegation, and fresh-recipient choice are
+established, use `$subagent-prompting` to construct or review the bounded
+assignment. This file supplies writing-specific task inputs; it does not
+duplicate the general prompt and return contract.
+
 Parallel preparation is useful when tasks have distinct questions or source
 surfaces: source location, citation checks, proof review, experiment-packet
 assessment, or cold-reader review. Avoid parallel full prose drafts across

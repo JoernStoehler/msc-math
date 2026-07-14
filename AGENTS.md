@@ -71,6 +71,10 @@ requests.
   target choice, dependency order, final synthesis, merge-readiness, and
   value/cost tradeoffs. Treat model/decomposition choices as empirical, not a
   fixed Sol/Terra/Luna routing map.
+- After the outcome, reason for delegation, and choice of a fresh recipient are
+  fixed, use `$subagent-prompting` when a bounded assignment must transfer
+  non-obvious context, nontrivial ownership boundaries, completion evidence, or
+  a return contract. Keep direct one-sentence assignments direct.
 - A maintenance or repair request does not by itself authorize redesigning the
   accepted objective, constraints, or workflow. Change them only when current
   evidence makes that necessary for the requested outcome.

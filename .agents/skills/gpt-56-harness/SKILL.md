@@ -1,6 +1,6 @@
 ---
 name: gpt-56-harness
-description: Use when designing, editing, reviewing, diagnosing, or evaluating agent-facing instructions for GPT-5.6, including AGENTS.md, repo-local skills, Codex configuration ownership, custom agents, reusable subagent/reviewer prompts, cold-start prompts intended to replace missing session context for a new autonomous session, and model-family migrations. Do not use for ordinary task prompts, ordinary delegation, or domain work merely because Codex performs it.
+description: Use when designing, editing, reviewing, diagnosing, or evaluating durable agent-facing instructions for GPT-5.6, including AGENTS.md, repo-local skills, Codex configuration ownership, custom agents, reusable instruction systems, cold-start prompts intended to replace missing session context for a new autonomous session, and model-family migrations. For a durable bounded-subagent prompt, also use subagent-prompting. Do not use for ordinary one-off task prompts, ordinary delegation, or domain work merely because Codex performs it.
 ---
 
 # GPT-5.6 Harness
@@ -34,11 +34,12 @@ would receive and do not reveal the intended answer. Compare final decisions
 and artifacts, not instruction recitation. One successful probe establishes
 only that case.
 
-When writing a reusable review or evaluation prompt, name the target and source
-material, downstream use or reader, and priority lenses. Priorities are not a
-closed finding whitelist unless explicitly stated. When unprimed interpretation
-matters, ask what the reviewer actually understood, inferred, missed, or found
-ambiguous. Preserve the exact prompt, raw output, evaluation verdict, and
+For a reusable bounded-subagent prompt, use both skills:
+`$gpt-56-harness` owns durable placement, discovery, integration, and behavior
+evaluation; `$subagent-prompting` owns the assignment model, fresh-recipient
+contract, prompt artifact, and return contract. When a harness evaluation merely
+delegates bounded review or production work, use `$subagent-prompting` for that
+assignment. Preserve the exact prompt, raw output, evaluation verdict, and
 designer interpretation as separate layers when they guide a durable harness
 change.
 

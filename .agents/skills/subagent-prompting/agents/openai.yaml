@@ -1,0 +1,4 @@
+interface:
+  display_name: "Subagent Prompting"
+  short_description: "Design and evaluate bounded subagent assignments"
+  default_prompt: "Use $subagent-prompting to design or review this subagent prompt."
