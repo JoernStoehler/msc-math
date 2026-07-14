@@ -3364,11 +3364,11 @@
     }
   },
   "phase_timings": {
-    "analysis_elapsed_seconds": 12.25669311600359,
-    "exact_solver_seconds": 34.963596959,
-    "f64_solver_seconds": 0.117698092,
-    "producer_elapsed_seconds": 40.591523441,
-    "serialization_elapsed_seconds": 0.154324901
+    "analysis_elapsed_seconds": 12.012177251002868,
+    "exact_solver_seconds": 36.581515929,
+    "f64_solver_seconds": 0.117380777,
+    "producer_elapsed_seconds": 42.266299029,
+    "serialization_elapsed_seconds": 0.150614022
   },
   "predicate_category_counts": {
     "exact_unavailable": 107,
@@ -3390,7 +3390,7 @@
     "true|true_sound": 86
   },
   "row_count": 1606,
-  "run_id": "wide-3904b4da9963d8e7d052850a770c9c86951b5d9b",
+  "run_id": "wide-05f54a0a345609d2c9d68271e66f6bc973a17801",
   "six_predicate_categories": {
     "beta": {
       "exact_unavailable": 107,
@@ -3407,7 +3407,7 @@
       "true|true_sound": 86
     }
   },
-  "source_revision": "3904b4da9963d8e7d052850a770c9c86951b5d9b",
+  "source_revision": "05f54a0a345609d2c9d68271e66f6bc973a17801",
   "strata_reports": {
     "all_computable_rows": {
       "computable_evaluation_count": 54626,
