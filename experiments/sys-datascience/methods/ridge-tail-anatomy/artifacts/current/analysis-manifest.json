@@ -1,18 +1,19 @@
 {
   "input_files": {
     "generic-input.jsonl": "2bfab636cc2d43df4f54fa8eda0513d2518975c97bbe9b41335fa5b7aff1366e",
-    "product-5x5-input.jsonl": "2b280155a1e403d65bc121e9d102ff25f635eddfe314b3bfc35ec0130add1350"
+    "product-5x5-input.jsonl": "2b280155a1e403d65bc121e9d102ff25f635eddfe314b3bfc35ec0130add1350",
+    "provenance.json": "f12991f4568e7472060b7146e94fbbc259d9902fb9bf560f0e423cfa42c07a21"
   },
   "output_files": {
-    "group-summary.json": "da0a50e6eb10a92209ef1055b6fd684f657a088abf4058f9700dd208f5a93ce5",
+    "group-summary.json": "78478bdd83a7b21946c2276da0508e2b938e5633d0c51cbae5f14b32690f0c15",
     "per_face.jsonl": "31fe8198bc94aab12f533c4610bcf878f8df4738cdd2adfcca86d82231b1f394",
-    "per_polytope.jsonl": "77d6c66120da603b2948b30b697c944395ce39c54aa181d89639c2707a4a2ff5",
-    "validation.json": "021adc7706c54e8f20e02b326cb7299262693f43890830cb3b2beea91a8fde14"
+    "per_polytope.jsonl": "46f4796bc85c36d105820f0277632fa9e7c1a0a8cdaa8e04f12e572f8c741b31",
+    "validation.json": "0cb1eeacac6e932567cb033ac3d4e519f62c7f7f6059952817d5b814b524d97a"
   },
   "rows": {
     "generic": 200,
     "product_5x5": 142
   },
-  "schema": "sys-datascience.ridge-tail-anatomy.analysis-manifest.v1",
+  "schema": "sys-datascience.ridge-tail-anatomy.analysis-manifest.v2",
   "valid": true
 }

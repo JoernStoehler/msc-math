@@ -7,22 +7,79 @@
     "product_rho_only_minus_ridge_only_sys": 0.07204894117951155,
     "product_ridge_only_minus_control_sys": 0.24768948236712546
   },
+  "descriptive_post_target": {
+    "groups": [
+      {
+        "euclidean_area_mean_over_volume_sqrt_mean": 0.91666843604775,
+        "euclidean_area_sum_over_volume_sqrt_mean": 33.74599642555624,
+        "euclidean_weighted_kappa_mean": 0.37687888325010926,
+        "n": 100,
+        "name": "generic_selected",
+        "symplectic_area_mean_over_volume_sqrt_mean": 0.3403019790778918,
+        "symplectic_area_sum_over_volume_sqrt_mean": 12.53783523102079
+      },
+      {
+        "euclidean_area_mean_over_volume_sqrt_mean": 1.3652951766072485,
+        "euclidean_area_sum_over_volume_sqrt_mean": 48.42327275634771,
+        "euclidean_weighted_kappa_mean": 0.5028879387937354,
+        "n": 100,
+        "name": "generic_baseline",
+        "symplectic_area_mean_over_volume_sqrt_mean": 0.6205293731026408,
+        "symplectic_area_sum_over_volume_sqrt_mean": 22.096990108832063
+      },
+      {
+        "euclidean_area_mean_over_volume_sqrt_mean": 0.941859294816976,
+        "euclidean_area_sum_over_volume_sqrt_mean": 34.883359760507844,
+        "euclidean_weighted_kappa_mean": 0.34001643295022027,
+        "n": 10,
+        "name": "generic_ranks_1_10",
+        "symplectic_area_mean_over_volume_sqrt_mean": 0.3147383262133122,
+        "symplectic_area_sum_over_volume_sqrt_mean": 11.677808161202972
+      },
+      {
+        "euclidean_area_mean_over_volume_sqrt_mean": 0.9138694517400582,
+        "euclidean_area_sum_over_volume_sqrt_mean": 33.619622721672734,
+        "euclidean_weighted_kappa_mean": 0.380974711061208,
+        "n": 90,
+        "name": "generic_ranks_11_100",
+        "symplectic_area_mean_over_volume_sqrt_mean": 0.343142384951734,
+        "symplectic_area_sum_over_volume_sqrt_mean": 12.63339379433388
+      }
+    ],
+    "post_target": true,
+    "selected_100_spearman_vs_sys": {
+      "euclidean_area_mean_over_volume_sqrt": -0.2629102910291029,
+      "euclidean_area_sum_over_volume_sqrt": -0.3058985898589859,
+      "euclidean_weighted_kappa": 0.2904530453045305,
+      "symplectic_area_mean_over_volume_sqrt": 0.14927092709270928,
+      "symplectic_area_sum_over_volume_sqrt": 0.038763876387638764
+    }
+  },
   "groups": [
     {
       "decomposition_identity_rel_error_mean": 3.1104206638527737e-18,
-      "euclidean_area_sum_mean": 192.2667389055594,
+      "euclidean_area_mean_over_volume_sqrt_mean": 0.91666843604775,
+      "euclidean_area_sum_over_volume_sqrt_mean": 33.74599642555624,
       "euclidean_kappa_covariance_mean": -0.5201871363190641,
       "euclidean_weighted_kappa_mean": 0.37687888325010926,
       "kappa_max_mean": 0.9777887505862671,
       "kappa_mean_mean": 0.4662592337282654,
       "kappa_q90_mean": 0.881551644932978,
+      "mixed_euclidean_area_mean_over_volume_sqrt_mean": 0.0,
+      "mixed_euclidean_area_sum_over_volume_sqrt_mean": 0.0,
+      "mixed_euclidean_weighted_kappa_mean": 0.0,
       "mixed_face_count_mean": 0.0,
+      "mixed_kappa_mean_mean": 0.0,
+      "mixed_kappa_q90_mean": 0.0,
+      "mixed_symplectic_area_mean_over_volume_sqrt_mean": 0.0,
+      "mixed_symplectic_area_sum_over_volume_sqrt_mean": 0.0,
       "n": 100,
       "name": "generic_selected",
       "structural_zero_face_count_mean": 0.0,
       "symplectic_area_effective_face_count_mean": 23.392774356306912,
       "symplectic_area_max_share_mean": 0.1082113729719125,
-      "symplectic_area_sum_mean": 69.60953954671602,
+      "symplectic_area_mean_over_volume_sqrt_mean": 0.3403019790778918,
+      "symplectic_area_sum_over_volume_sqrt_mean": 12.53783523102079,
       "sys_max": 0.8057654113522604,
       "sys_mean": 0.6257067667475406,
       "sys_median": 0.6267432744636223,
@@ -42,19 +99,28 @@
     },
     {
       "decomposition_identity_rel_error_mean": 2.4850795916600327e-18,
-      "euclidean_area_sum_mean": 3956.107790243672,
+      "euclidean_area_mean_over_volume_sqrt_mean": 1.3652951766072485,
+      "euclidean_area_sum_over_volume_sqrt_mean": 48.42327275634771,
       "euclidean_kappa_covariance_mean": -29.542568038990616,
       "euclidean_weighted_kappa_mean": 0.5028879387937354,
       "kappa_max_mean": 0.969470493352432,
       "kappa_mean_mean": 0.49903171930700446,
       "kappa_q90_mean": 0.8764970529152905,
+      "mixed_euclidean_area_mean_over_volume_sqrt_mean": 0.0,
+      "mixed_euclidean_area_sum_over_volume_sqrt_mean": 0.0,
+      "mixed_euclidean_weighted_kappa_mean": 0.0,
       "mixed_face_count_mean": 0.0,
+      "mixed_kappa_mean_mean": 0.0,
+      "mixed_kappa_q90_mean": 0.0,
+      "mixed_symplectic_area_mean_over_volume_sqrt_mean": 0.0,
+      "mixed_symplectic_area_sum_over_volume_sqrt_mean": 0.0,
       "n": 100,
       "name": "generic_baseline",
       "structural_zero_face_count_mean": 0.0,
       "symplectic_area_effective_face_count_mean": 18.278341615890916,
       "symplectic_area_max_share_mean": 0.15436533418969214,
-      "symplectic_area_sum_mean": 781.297384403186,
+      "symplectic_area_mean_over_volume_sqrt_mean": 0.6205293731026408,
+      "symplectic_area_sum_over_volume_sqrt_mean": 22.096990108832063,
       "sys_max": 0.7258312082086045,
       "sys_mean": 0.3385699646305358,
       "sys_median": 0.3387305500388208,
@@ -72,19 +138,28 @@
     },
     {
       "decomposition_identity_rel_error_mean": 0.0,
-      "euclidean_area_sum_mean": 205.85127025191323,
+      "euclidean_area_mean_over_volume_sqrt_mean": 0.941859294816976,
+      "euclidean_area_sum_over_volume_sqrt_mean": 34.883359760507844,
       "euclidean_kappa_covariance_mean": -0.6549989307154342,
       "euclidean_weighted_kappa_mean": 0.34001643295022027,
       "kappa_max_mean": 0.9733561400846591,
       "kappa_mean_mean": 0.4483351083141806,
       "kappa_q90_mean": 0.8790355321655701,
+      "mixed_euclidean_area_mean_over_volume_sqrt_mean": 0.0,
+      "mixed_euclidean_area_sum_over_volume_sqrt_mean": 0.0,
+      "mixed_euclidean_weighted_kappa_mean": 0.0,
       "mixed_face_count_mean": 0.0,
+      "mixed_kappa_mean_mean": 0.0,
+      "mixed_kappa_q90_mean": 0.0,
+      "mixed_symplectic_area_mean_over_volume_sqrt_mean": 0.0,
+      "mixed_symplectic_area_sum_over_volume_sqrt_mean": 0.0,
       "n": 10,
       "name": "generic_ranks_1_10",
       "structural_zero_face_count_mean": 0.0,
       "symplectic_area_effective_face_count_mean": 23.431821653535184,
       "symplectic_area_max_share_mean": 0.10404466824903573,
-      "symplectic_area_sum_mean": 67.15534516180654,
+      "symplectic_area_mean_over_volume_sqrt_mean": 0.3147383262133122,
+      "symplectic_area_sum_over_volume_sqrt_mean": 11.677808161202972,
       "sys_max": 0.7720055342120571,
       "sys_mean": 0.5971220996665288,
       "sys_median": 0.6051174819285801,
@@ -98,19 +173,28 @@
     },
     {
       "decomposition_identity_rel_error_mean": 3.4560229598364153e-18,
-      "euclidean_area_sum_mean": 190.7573465337423,
+      "euclidean_area_mean_over_volume_sqrt_mean": 0.9138694517400582,
+      "euclidean_area_sum_over_volume_sqrt_mean": 33.619622721672734,
       "euclidean_kappa_covariance_mean": -0.5052080480528007,
       "euclidean_weighted_kappa_mean": 0.380974711061208,
       "kappa_max_mean": 0.9782812628642235,
       "kappa_mean_mean": 0.4682508032187193,
       "kappa_q90_mean": 0.8818312130182455,
+      "mixed_euclidean_area_mean_over_volume_sqrt_mean": 0.0,
+      "mixed_euclidean_area_sum_over_volume_sqrt_mean": 0.0,
+      "mixed_euclidean_weighted_kappa_mean": 0.0,
       "mixed_face_count_mean": 0.0,
+      "mixed_kappa_mean_mean": 0.0,
+      "mixed_kappa_q90_mean": 0.0,
+      "mixed_symplectic_area_mean_over_volume_sqrt_mean": 0.0,
+      "mixed_symplectic_area_sum_over_volume_sqrt_mean": 0.0,
       "n": 90,
       "name": "generic_ranks_11_100",
       "structural_zero_face_count_mean": 0.0,
       "symplectic_area_effective_face_count_mean": 23.388435767725994,
       "symplectic_area_max_share_mean": 0.10867434016334325,
-      "symplectic_area_sum_mean": 69.88222781170597,
+      "symplectic_area_mean_over_volume_sqrt_mean": 0.343142384951734,
+      "symplectic_area_sum_over_volume_sqrt_mean": 12.63339379433388,
       "sys_max": 0.8057654113522604,
       "sys_mean": 0.628882840867653,
       "sys_median": 0.6281003791153916,
@@ -130,19 +214,28 @@
     },
     {
       "decomposition_identity_rel_error_mean": 0.0,
-      "euclidean_area_sum_mean": 119.58386081652732,
+      "euclidean_area_mean_over_volume_sqrt_mean": 0.7881357412416365,
+      "euclidean_area_sum_over_volume_sqrt_mean": 27.584750943457276,
       "euclidean_kappa_covariance_mean": -0.20010788358777015,
       "euclidean_weighted_kappa_mean": 0.3836804949583432,
       "kappa_max_mean": 0.9979152223298888,
       "kappa_mean_mean": 0.44167555144472376,
       "kappa_q90_mean": 0.9584113348911701,
+      "mixed_euclidean_area_mean_over_volume_sqrt_mean": 0.7015007789082972,
+      "mixed_euclidean_area_sum_over_volume_sqrt_mean": 17.53751947270743,
+      "mixed_euclidean_weighted_kappa_mean": 0.6051934441304884,
       "mixed_face_count_mean": 25.0,
+      "mixed_kappa_mean_mean": 0.6183457720226132,
+      "mixed_kappa_q90_mean": 0.9753250400845003,
+      "mixed_symplectic_area_mean_over_volume_sqrt_mean": 0.4230677193640335,
+      "mixed_symplectic_area_sum_over_volume_sqrt_mean": 10.576692984100836,
       "n": 42,
       "name": "product_5x5_rho_only",
       "structural_zero_face_count_mean": 10.0,
       "symplectic_area_effective_face_count_mean": 17.646935513979706,
       "symplectic_area_max_share_mean": 0.1252538562635372,
-      "symplectic_area_sum_mean": 45.80700569095282,
+      "symplectic_area_mean_over_volume_sqrt_mean": 0.30219122811716675,
+      "symplectic_area_sum_over_volume_sqrt_mean": 10.576692984100836,
       "sys_max": 0.8397033560494539,
       "sys_mean": 0.7185191242308338,
       "sys_median": 0.7151850029917174,
@@ -153,19 +246,28 @@
     },
     {
       "decomposition_identity_rel_error_mean": 0.0,
-      "euclidean_area_sum_mean": 98.27223938394638,
+      "euclidean_area_mean_over_volume_sqrt_mean": 0.7357022373244133,
+      "euclidean_area_sum_over_volume_sqrt_mean": 25.749578306354465,
       "euclidean_kappa_covariance_mean": -0.18767889103799704,
       "euclidean_weighted_kappa_mean": 0.3706342085529397,
       "kappa_max_mean": 0.996498754332905,
       "kappa_mean_mean": 0.43790391689927366,
       "kappa_q90_mean": 0.9664495923605643,
+      "mixed_euclidean_area_mean_over_volume_sqrt_mean": 0.6284902821282587,
+      "mixed_euclidean_area_sum_over_volume_sqrt_mean": 15.712257053206466,
+      "mixed_euclidean_weighted_kappa_mean": 0.6079744633422982,
       "mixed_face_count_mean": 25.0,
+      "mixed_kappa_mean_mean": 0.6130654836589831,
+      "mixed_kappa_q90_mean": 0.9782416620025387,
+      "mixed_symplectic_area_mean_over_volume_sqrt_mean": 0.3815483737189604,
+      "mixed_symplectic_area_sum_over_volume_sqrt_mean": 9.538709342974009,
       "n": 42,
       "name": "product_5x5_ridge_only",
       "structural_zero_face_count_mean": 10.0,
       "symplectic_area_effective_face_count_mean": 19.060148795013298,
       "symplectic_area_max_share_mean": 0.10233114312747657,
-      "symplectic_area_sum_mean": 36.373171211602376,
+      "symplectic_area_mean_over_volume_sqrt_mean": 0.2725345526564003,
+      "symplectic_area_sum_over_volume_sqrt_mean": 9.538709342974009,
       "sys_max": 0.8482524821383624,
       "sys_mean": 0.6464701830513222,
       "sys_median": 0.6351892255772089,
@@ -176,19 +278,28 @@
     },
     {
       "decomposition_identity_rel_error_mean": 0.0,
-      "euclidean_area_sum_mean": 103.95214588116914,
+      "euclidean_area_mean_over_volume_sqrt_mean": 0.7443260420212167,
+      "euclidean_area_sum_over_volume_sqrt_mean": 26.051411470742583,
       "euclidean_kappa_covariance_mean": -0.17450498961318575,
       "euclidean_weighted_kappa_mean": 0.3616648521319212,
       "kappa_max_mean": 0.997992850592168,
       "kappa_mean_mean": 0.42150103511866255,
       "kappa_q90_mean": 0.9760355181176402,
+      "mixed_euclidean_area_mean_over_volume_sqrt_mean": 0.6391679527101093,
+      "mixed_euclidean_area_sum_over_volume_sqrt_mean": 15.979198817752732,
+      "mixed_euclidean_weighted_kappa_mean": 0.5898587942588011,
       "mixed_face_count_mean": 25.0,
+      "mixed_kappa_mean_mean": 0.5901014491661275,
+      "mixed_kappa_q90_mean": 0.9873683324394333,
+      "mixed_symplectic_area_mean_over_volume_sqrt_mean": 0.37680399271076737,
+      "mixed_symplectic_area_sum_over_volume_sqrt_mean": 9.420099817769184,
       "n": 8,
       "name": "product_5x5_overlap",
       "structural_zero_face_count_mean": 10.0,
       "symplectic_area_effective_face_count_mean": 18.14235742828563,
       "symplectic_area_max_share_mean": 0.10750208664474498,
-      "symplectic_area_sum_mean": 37.57943657901134,
+      "symplectic_area_mean_over_volume_sqrt_mean": 0.26914570907911955,
+      "symplectic_area_sum_over_volume_sqrt_mean": 9.420099817769184,
       "sys_max": 0.7689503925715149,
       "sys_mean": 0.6635442080071995,
       "sys_median": 0.6682045760424555,
@@ -199,19 +310,28 @@
     },
     {
       "decomposition_identity_rel_error_mean": 8.552124502637625e-18,
-      "euclidean_area_sum_mean": 289.60768277621344,
+      "euclidean_area_mean_over_volume_sqrt_mean": 1.058059156317457,
+      "euclidean_area_sum_over_volume_sqrt_mean": 37.032070471111,
       "euclidean_kappa_covariance_mean": 0.6258102401073845,
       "euclidean_weighted_kappa_mean": 0.4569565592666484,
       "kappa_max_mean": 0.9910507258614167,
       "kappa_mean_mean": 0.45284162772384834,
       "kappa_q90_mean": 0.9532756934516954,
+      "mixed_euclidean_area_mean_over_volume_sqrt_mean": 1.055598787961423,
+      "mixed_euclidean_area_sum_over_volume_sqrt_mean": 26.38996969903558,
+      "mixed_euclidean_weighted_kappa_mean": 0.6585630828148331,
       "mixed_face_count_mean": 25.0,
+      "mixed_kappa_mean_mean": 0.6339782788133876,
+      "mixed_kappa_q90_mean": 0.9677640063831849,
+      "mixed_symplectic_area_mean_over_volume_sqrt_mean": 0.7071184315062996,
+      "mixed_symplectic_area_sum_over_volume_sqrt_mean": 17.67796078765749,
       "n": 50,
       "name": "product_5x5_matched_control",
       "structural_zero_face_count_mean": 10.0,
       "symplectic_area_effective_face_count_mean": 14.253160826645699,
       "symplectic_area_max_share_mean": 0.16248352038372346,
-      "symplectic_area_sum_mean": 148.5241007085417,
+      "symplectic_area_mean_over_volume_sqrt_mean": 0.5050845939330713,
+      "symplectic_area_sum_over_volume_sqrt_mean": 17.67796078765749,
       "sys_max": 0.7269794628051304,
       "sys_mean": 0.39878070068419674,
       "sys_median": 0.3865732906993138,
@@ -221,5 +341,481 @@
       }
     }
   ],
-  "schema": "sys-datascience.ridge-tail-anatomy.group-summary.v1"
+  "per_seed_arm_contrasts": [
+    {
+      "contrast": "rho_only_minus_matched_control",
+      "estimate": 0.322952163961531,
+      "left_n": 23,
+      "normal_95": [
+        0.23506212448844804,
+        0.4108422034346139
+      ],
+      "right_n": 25,
+      "seed": 2026071201,
+      "standard_error": 0.04484268086880594
+    },
+    {
+      "contrast": "ridge_only_minus_matched_control",
+      "estimate": 0.24362333152955212,
+      "left_n": 23,
+      "normal_95": [
+        0.15519374857606044,
+        0.3320529144830438
+      ],
+      "right_n": 25,
+      "seed": 2026071201,
+      "standard_error": 0.04511796321310643
+    },
+    {
+      "contrast": "overlap_minus_matched_control",
+      "estimate": 0.30053925793428,
+      "left_n": 2,
+      "normal_95": [
+        0.21307037031474046,
+        0.3880081455538195
+      ],
+      "right_n": 25,
+      "seed": 2026071201,
+      "standard_error": 0.04462780352571933
+    },
+    {
+      "contrast": "rho_only_minus_ridge_only",
+      "estimate": 0.07932883243197886,
+      "left_n": 23,
+      "normal_95": [
+        0.04291997630548521,
+        0.1157376885584725
+      ],
+      "right_n": 23,
+      "seed": 2026071201,
+      "standard_error": 0.018576288346970688
+    },
+    {
+      "contrast": "overlap_minus_rho_only",
+      "estimate": -0.02241290602725099,
+      "left_n": 2,
+      "normal_95": [
+        -0.056422021930356836,
+        0.011596209875854857
+      ],
+      "right_n": 23,
+      "seed": 2026071201,
+      "standard_error": 0.017351908591874857
+    },
+    {
+      "contrast": "overlap_minus_ridge_only",
+      "estimate": 0.05691592640472787,
+      "left_n": 2,
+      "normal_95": [
+        0.021535818049053322,
+        0.0922960347604024
+      ],
+      "right_n": 23,
+      "seed": 2026071201,
+      "standard_error": 0.018051407390517544
+    },
+    {
+      "contrast": "rho_only_minus_matched_control",
+      "estimate": 0.3174116767913547,
+      "left_n": 19,
+      "normal_95": [
+        0.22911470193195904,
+        0.4057086516507503
+      ],
+      "right_n": 25,
+      "seed": 2026071202,
+      "standard_error": 0.045050304779001515
+    },
+    {
+      "contrast": "ridge_only_minus_matched_control",
+      "estimate": 0.2541752355490405,
+      "left_n": 19,
+      "normal_95": [
+        0.16115016571000867,
+        0.3472003053880723
+      ],
+      "right_n": 25,
+      "seed": 2026071202,
+      "standard_error": 0.04746264246322977
+    },
+    {
+      "contrast": "overlap_minus_matched_control",
+      "estimate": 0.24788695025387814,
+      "left_n": 6,
+      "normal_95": [
+        0.14327357940995622,
+        0.35250032109780005
+      ],
+      "right_n": 25,
+      "seed": 2026071202,
+      "standard_error": 0.053375149578818205
+    },
+    {
+      "contrast": "rho_only_minus_ridge_only",
+      "estimate": 0.0632364412423142,
+      "left_n": 19,
+      "normal_95": [
+        0.007576805266473426,
+        0.11889607721815498
+      ],
+      "right_n": 19,
+      "seed": 2026071202,
+      "standard_error": 0.028398295282401557
+    },
+    {
+      "contrast": "overlap_minus_rho_only",
+      "estimate": -0.06952472653747654,
+      "left_n": 6,
+      "normal_95": [
+        -0.14292969106804695,
+        0.0038802379930938657
+      ],
+      "right_n": 19,
+      "seed": 2026071202,
+      "standard_error": 0.03745220070857394
+    },
+    {
+      "contrast": "overlap_minus_ridge_only",
+      "estimate": -0.006288285295162344,
+      "left_n": 6,
+      "normal_95": [
+        -0.08531737276914432,
+        0.07274080217881963
+      ],
+      "right_n": 19,
+      "seed": 2026071202,
+      "standard_error": 0.040321703917701214
+    }
+  ],
+  "per_seed_arm_summaries": [
+    {
+      "arms": {
+        "matched_control": {
+          "decomposition_identity_rel_error_mean": 1.258595909133938e-17,
+          "euclidean_area_mean_over_volume_sqrt_mean": 1.1144671930309236,
+          "euclidean_area_sum_over_volume_sqrt_mean": 39.006351756082324,
+          "euclidean_kappa_covariance_mean": 0.8447367646556999,
+          "euclidean_weighted_kappa_mean": 0.4451256773925899,
+          "kappa_max_mean": 0.9863743004844685,
+          "kappa_mean_mean": 0.4485423210399111,
+          "kappa_q90_mean": 0.9390365208335276,
+          "mixed_euclidean_area_mean_over_volume_sqrt_mean": 1.1274488206809075,
+          "mixed_euclidean_area_sum_over_volume_sqrt_mean": 28.18622051702269,
+          "mixed_euclidean_weighted_kappa_mean": 0.6401896828236311,
+          "mixed_face_count_mean": 25.0,
+          "mixed_kappa_mean_mean": 0.6279592494558756,
+          "mixed_kappa_q90_mean": 0.9570212418864843,
+          "mixed_symplectic_area_mean_over_volume_sqrt_mean": 0.7294566102209535,
+          "mixed_symplectic_area_sum_over_volume_sqrt_mean": 18.236415255523838,
+          "n": 25,
+          "name": "seed_2026071201_matched_control",
+          "structural_zero_face_count_mean": 10.0,
+          "symplectic_area_effective_face_count_mean": 14.018474517434534,
+          "symplectic_area_max_share_mean": 0.16236301265341588,
+          "symplectic_area_mean_over_volume_sqrt_mean": 0.5210404358721096,
+          "symplectic_area_sum_over_volume_sqrt_mean": 18.236415255523838,
+          "sys_max": 0.7269794628051304,
+          "sys_mean": 0.3913537403861483,
+          "sys_median": 0.3943017302411295,
+          "sys_min": 0.023208574874640026,
+          "vertex_count_distribution": {
+            "25": 25
+          }
+        },
+        "overlap": {
+          "decomposition_identity_rel_error_mean": 0.0,
+          "euclidean_area_mean_over_volume_sqrt_mean": 0.746839710866507,
+          "euclidean_area_sum_over_volume_sqrt_mean": 26.139389880327744,
+          "euclidean_kappa_covariance_mean": -0.21133122425092682,
+          "euclidean_weighted_kappa_mean": 0.36530296589154776,
+          "kappa_max_mean": 0.9949500608605178,
+          "kappa_mean_mean": 0.43440916473091445,
+          "kappa_q90_mean": 0.9689034452517205,
+          "mixed_euclidean_area_mean_over_volume_sqrt_mean": 0.6427204660596569,
+          "mixed_euclidean_area_sum_over_volume_sqrt_mean": 16.068011651491425,
+          "mixed_euclidean_weighted_kappa_mean": 0.594488798672952,
+          "mixed_face_count_mean": 25.0,
+          "mixed_kappa_mean_mean": 0.6081728306232802,
+          "mixed_kappa_q90_mean": 0.9760986346399119,
+          "mixed_symplectic_area_mean_over_volume_sqrt_mean": 0.3818337025206824,
+          "mixed_symplectic_area_sum_over_volume_sqrt_mean": 9.54584256301706,
+          "n": 2,
+          "name": "seed_2026071201_overlap",
+          "structural_zero_face_count_mean": 10.0,
+          "symplectic_area_effective_face_count_mean": 19.01758992162005,
+          "symplectic_area_max_share_mean": 0.11074510617164483,
+          "symplectic_area_mean_over_volume_sqrt_mean": 0.2727383589433445,
+          "symplectic_area_sum_over_volume_sqrt_mean": 9.54584256301706,
+          "sys_max": 0.7037644673072346,
+          "sys_mean": 0.6918929983204283,
+          "sys_median": 0.6918929983204283,
+          "sys_min": 0.6800215293336218,
+          "vertex_count_distribution": {
+            "25": 2
+          }
+        },
+        "rho_only": {
+          "decomposition_identity_rel_error_mean": 0.0,
+          "euclidean_area_mean_over_volume_sqrt_mean": 0.7921707398283592,
+          "euclidean_area_sum_over_volume_sqrt_mean": 27.72597589399257,
+          "euclidean_kappa_covariance_mean": -0.1909983908256141,
+          "euclidean_weighted_kappa_mean": 0.38435440144710353,
+          "kappa_max_mean": 0.9971577290240827,
+          "kappa_mean_mean": 0.4392749846628535,
+          "kappa_q90_mean": 0.9519612414107556,
+          "mixed_euclidean_area_mean_over_volume_sqrt_mean": 0.7070396627508749,
+          "mixed_euclidean_area_sum_over_volume_sqrt_mean": 17.675991568771874,
+          "mixed_euclidean_weighted_kappa_mean": 0.6042759758157478,
+          "mixed_face_count_mean": 25.0,
+          "mixed_kappa_mean_mean": 0.6149849785279949,
+          "mixed_kappa_q90_mean": 0.9707347776510286,
+          "mixed_symplectic_area_mean_over_volume_sqrt_mean": 0.42605996761342796,
+          "mixed_symplectic_area_sum_over_volume_sqrt_mean": 10.651499190335697,
+          "n": 23,
+          "name": "seed_2026071201_rho_only",
+          "structural_zero_face_count_mean": 10.0,
+          "symplectic_area_effective_face_count_mean": 17.562926427965035,
+          "symplectic_area_max_share_mean": 0.1256770223198743,
+          "symplectic_area_mean_over_volume_sqrt_mean": 0.30432854829530565,
+          "symplectic_area_sum_over_volume_sqrt_mean": 10.651499190335697,
+          "sys_max": 0.8090630545925773,
+          "sys_mean": 0.7143059043476793,
+          "sys_median": 0.7134286667363178,
+          "sys_min": 0.5476739970915581,
+          "vertex_count_distribution": {
+            "25": 23
+          }
+        },
+        "ridge_only": {
+          "decomposition_identity_rel_error_mean": 0.0,
+          "euclidean_area_mean_over_volume_sqrt_mean": 0.7358832453904804,
+          "euclidean_area_sum_over_volume_sqrt_mean": 25.75591358866681,
+          "euclidean_kappa_covariance_mean": -0.1843515977166808,
+          "euclidean_weighted_kappa_mean": 0.37044935484798613,
+          "kappa_max_mean": 0.9954384976324456,
+          "kappa_mean_mean": 0.43672687221855927,
+          "kappa_q90_mean": 0.9666342905623829,
+          "mixed_euclidean_area_mean_over_volume_sqrt_mean": 0.6290041016308155,
+          "mixed_euclidean_area_sum_over_volume_sqrt_mean": 15.72510254077039,
+          "mixed_euclidean_weighted_kappa_mean": 0.6074736131325891,
+          "mixed_face_count_mean": 25.0,
+          "mixed_kappa_mean_mean": 0.611417621105983,
+          "mixed_kappa_q90_mean": 0.9785662241847773,
+          "mixed_symplectic_area_mean_over_volume_sqrt_mean": 0.3814203049110887,
+          "mixed_symplectic_area_sum_over_volume_sqrt_mean": 9.535507622777217,
+          "n": 23,
+          "name": "seed_2026071201_ridge_only",
+          "structural_zero_face_count_mean": 10.0,
+          "symplectic_area_effective_face_count_mean": 18.947301192022376,
+          "symplectic_area_max_share_mean": 0.10227874706380054,
+          "symplectic_area_mean_over_volume_sqrt_mean": 0.2724430749364919,
+          "symplectic_area_sum_over_volume_sqrt_mean": 9.535507622777217,
+          "sys_max": 0.7649519727614995,
+          "sys_mean": 0.6349770719157004,
+          "sys_median": 0.6222085539859407,
+          "sys_min": 0.5243204653476341,
+          "vertex_count_distribution": {
+            "25": 23
+          }
+        }
+      },
+      "seed": 2026071201
+    },
+    {
+      "arms": {
+        "matched_control": {
+          "decomposition_identity_rel_error_mean": 4.5182899139358695e-18,
+          "euclidean_area_mean_over_volume_sqrt_mean": 1.0016511196039906,
+          "euclidean_area_sum_over_volume_sqrt_mean": 35.057789186139665,
+          "euclidean_kappa_covariance_mean": 0.406883715559069,
+          "euclidean_weighted_kappa_mean": 0.46878744114070686,
+          "kappa_max_mean": 0.9957271512383649,
+          "kappa_mean_mean": 0.45714093440778564,
+          "kappa_q90_mean": 0.967514866069863,
+          "mixed_euclidean_area_mean_over_volume_sqrt_mean": 0.9837487552419388,
+          "mixed_euclidean_area_sum_over_volume_sqrt_mean": 24.59371888104847,
+          "mixed_euclidean_weighted_kappa_mean": 0.6769364828060351,
+          "mixed_face_count_mean": 25.0,
+          "mixed_kappa_mean_mean": 0.6399973081708998,
+          "mixed_kappa_q90_mean": 0.9785067708798857,
+          "mixed_symplectic_area_mean_over_volume_sqrt_mean": 0.6847802527916458,
+          "mixed_symplectic_area_sum_over_volume_sqrt_mean": 17.119506319791146,
+          "n": 25,
+          "name": "seed_2026071202_matched_control",
+          "structural_zero_face_count_mean": 10.0,
+          "symplectic_area_effective_face_count_mean": 14.487847135856866,
+          "symplectic_area_max_share_mean": 0.16260402811403105,
+          "symplectic_area_mean_over_volume_sqrt_mean": 0.4891287519940327,
+          "symplectic_area_sum_over_volume_sqrt_mean": 17.119506319791146,
+          "sys_max": 0.7219272257815857,
+          "sys_mean": 0.4062076609822452,
+          "sys_median": 0.37884485115749805,
+          "sys_min": 0.04023208467339516,
+          "vertex_count_distribution": {
+            "25": 25
+          }
+        },
+        "overlap": {
+          "decomposition_identity_rel_error_mean": 0.0,
+          "euclidean_area_mean_over_volume_sqrt_mean": 0.7434881524061199,
+          "euclidean_area_sum_over_volume_sqrt_mean": 26.022085334214196,
+          "euclidean_kappa_covariance_mean": -0.16222957806727206,
+          "euclidean_weighted_kappa_mean": 0.360452147545379,
+          "kappa_max_mean": 0.9990071138360515,
+          "kappa_mean_mean": 0.4171983252479119,
+          "kappa_q90_mean": 0.9784128757396134,
+          "mixed_euclidean_area_mean_over_volume_sqrt_mean": 0.6379837815935935,
+          "mixed_euclidean_area_sum_over_volume_sqrt_mean": 15.949594539839836,
+          "mixed_euclidean_weighted_kappa_mean": 0.588315459454084,
+          "mixed_face_count_mean": 25.0,
+          "mixed_kappa_mean_mean": 0.5840776553470767,
+          "mixed_kappa_q90_mean": 0.9911248983726072,
+          "mixed_symplectic_area_mean_over_volume_sqrt_mean": 0.3751274227741291,
+          "mixed_symplectic_area_sum_over_volume_sqrt_mean": 9.378185569353226,
+          "n": 6,
+          "name": "seed_2026071202_overlap",
+          "structural_zero_face_count_mean": 10.0,
+          "symplectic_area_effective_face_count_mean": 17.850613263840824,
+          "symplectic_area_max_share_mean": 0.10642108013577838,
+          "symplectic_area_mean_over_volume_sqrt_mean": 0.2679481591243779,
+          "symplectic_area_sum_over_volume_sqrt_mean": 9.378185569353226,
+          "sys_max": 0.7689503925715149,
+          "sys_mean": 0.6540946112361233,
+          "sys_median": 0.6503553952439007,
+          "sys_min": 0.5304339412614988,
+          "vertex_count_distribution": {
+            "25": 6
+          }
+        },
+        "rho_only": {
+          "decomposition_identity_rel_error_mean": 0.0,
+          "euclidean_area_mean_over_volume_sqrt_mean": 0.7832512692682354,
+          "euclidean_area_sum_over_volume_sqrt_mean": 27.413794424388243,
+          "euclidean_kappa_covariance_mean": -0.21113516429985382,
+          "euclidean_weighted_kappa_mean": 0.38286471341931755,
+          "kappa_max_mean": 0.9988321879106016,
+          "kappa_mean_mean": 0.44458150070698776,
+          "kappa_q90_mean": 0.9662193427885142,
+          "mixed_euclidean_area_mean_over_volume_sqrt_mean": 0.6947958142567557,
+          "mixed_euclidean_area_sum_over_volume_sqrt_mean": 17.369895356418894,
+          "mixed_euclidean_weighted_kappa_mean": 0.606304063669385,
+          "mixed_face_count_mean": 25.0,
+          "mixed_kappa_mean_mean": 0.6224141009897828,
+          "mixed_kappa_q90_mean": 0.9808816735565976,
+          "mixed_symplectic_area_mean_over_volume_sqrt_mean": 0.4194455241147665,
+          "mixed_symplectic_area_sum_over_volume_sqrt_mean": 10.486138102869162,
+          "n": 19,
+          "name": "seed_2026071202_rho_only",
+          "structural_zero_face_count_mean": 10.0,
+          "symplectic_area_effective_face_count_mean": 17.748630723365885,
+          "symplectic_area_max_share_mean": 0.12474160261639232,
+          "symplectic_area_mean_over_volume_sqrt_mean": 0.2996039457962618,
+          "symplectic_area_sum_over_volume_sqrt_mean": 10.486138102869162,
+          "sys_max": 0.8397033560494539,
+          "sys_mean": 0.7236193377735999,
+          "sys_median": 0.7235861069957622,
+          "sys_min": 0.5811558519190069,
+          "vertex_count_distribution": {
+            "25": 19
+          }
+        },
+        "ridge_only": {
+          "decomposition_identity_rel_error_mean": 0.0,
+          "euclidean_area_mean_over_volume_sqrt_mean": 0.7354831222970689,
+          "euclidean_area_sum_over_volume_sqrt_mean": 25.74190928039741,
+          "euclidean_kappa_covariance_mean": -0.19170666716380086,
+          "euclidean_weighted_kappa_mean": 0.3708579788273572,
+          "kappa_max_mean": 0.9977822229703031,
+          "kappa_mean_mean": 0.43932876046013836,
+          "kappa_q90_mean": 0.9662260103267836,
+          "mixed_euclidean_area_mean_over_volume_sqrt_mean": 0.6278682900988478,
+          "mixed_euclidean_area_sum_over_volume_sqrt_mean": 15.696707252471194,
+          "mixed_euclidean_weighted_kappa_mean": 0.6085807557014199,
+          "mixed_face_count_mean": 25.0,
+          "mixed_kappa_mean_mean": 0.6150602646441937,
+          "mixed_kappa_q90_mean": 0.9778487709398288,
+          "mixed_symplectic_area_mean_over_volume_sqrt_mean": 0.38170340438112094,
+          "mixed_symplectic_area_sum_over_volume_sqrt_mean": 9.542585109528021,
+          "n": 19,
+          "name": "seed_2026071202_ridge_only",
+          "structural_zero_face_count_mean": 10.0,
+          "symplectic_area_effective_face_count_mean": 19.19675378810757,
+          "symplectic_area_max_share_mean": 0.10239456994140018,
+          "symplectic_area_mean_over_volume_sqrt_mean": 0.2726452888436578,
+          "symplectic_area_sum_over_volume_sqrt_mean": 9.542585109528023,
+          "sys_max": 0.8482524821383624,
+          "sys_mean": 0.6603828965312857,
+          "sys_median": 0.6668693001753074,
+          "sys_min": 0.4864696853785351,
+          "vertex_count_distribution": {
+            "25": 19
+          }
+        }
+      },
+      "seed": 2026071202
+    }
+  ],
+  "pooled_contrasts_with_uncertainty": {
+    "overlap_minus_control": {
+      "estimate": 0.26476350732300274,
+      "left_n": 8,
+      "normal_95": [
+        0.1883888174330051,
+        0.3411381972130004
+      ],
+      "right_n": 50,
+      "standard_error": 0.03896739455032412
+    },
+    "overlap_minus_rho_only": {
+      "estimate": -0.05497491622363426,
+      "left_n": 8,
+      "normal_95": [
+        -0.10843563418763269,
+        -0.001514198259635828
+      ],
+      "right_n": 42,
+      "standard_error": 0.02727637772208559
+    },
+    "overlap_minus_ridge_only": {
+      "estimate": 0.017074024955877287,
+      "left_n": 8,
+      "normal_95": [
+        -0.03832667456585795,
+        0.07247472447761252
+      ],
+      "right_n": 42,
+      "standard_error": 0.02826618241902856
+    },
+    "rho_only_minus_control": {
+      "estimate": 0.319738423546637,
+      "left_n": 42,
+      "normal_95": [
+        0.25821075856728926,
+        0.38126608852598476
+      ],
+      "right_n": 50,
+      "standard_error": 0.03139224264561497
+    },
+    "rho_only_minus_ridge_only": {
+      "estimate": 0.07204894117951155,
+      "left_n": 42,
+      "normal_95": [
+        0.040083368925676675,
+        0.10401451343334642
+      ],
+      "right_n": 42,
+      "standard_error": 0.016309265122203893
+    },
+    "ridge_only_minus_control": {
+      "estimate": 0.24768948236712546,
+      "left_n": 42,
+      "normal_95": [
+        0.18446889473870914,
+        0.31091006999554177
+      ],
+      "right_n": 50,
+      "standard_error": 0.03225599456270229
+    }
+  },
+  "schema": "sys-datascience.ridge-tail-anatomy.group-summary.v2"
 }

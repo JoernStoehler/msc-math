@@ -1,6 +1,7 @@
 {
   "all_finite": true,
   "control_disjoint_from_screen_arms": true,
+  "degenerate_face_count": 0,
   "generic_group_sizes": {
     "generic_baseline": 100,
     "generic_ranks_11_100": 90,
@@ -8,6 +9,7 @@
     "generic_selected": 100
   },
   "generic_identity_max_rel_error": 1.7646237954272157e-16,
+  "generic_normalized_identity_max_rel_error": 2.219352191530097e-16,
   "generic_proxy_max_abs_error": 1.1102230246251565e-15,
   "generic_rows": 200,
   "generic_unique_ids": true,
@@ -40,6 +42,7 @@
   "product_feature_mean_max_abs_error": 2.220446049250313e-16,
   "product_feature_sum_max_abs_error": 7.105427357601002e-15,
   "product_identity_max_rel_error": 1.6204465468550262e-16,
+  "product_normalized_identity_max_rel_error": 1.987151769676834e-16,
   "product_per_seed_arm_sizes": {
     "2026071201": {
       "matched_control": 25,
@@ -55,9 +58,12 @@
     }
   },
   "product_unique_ids": true,
+  "provenance_rows_match": true,
+  "provenance_sha256": "f12991f4568e7472060b7146e94fbbc259d9902fb9bf560f0e423cfa42c07a21",
   "proxy_tolerance": 2e-09,
   "ridge_count_source_matches": true,
   "schema": "sys-datascience.ridge-tail-anatomy.validation.v1",
   "translation_invariance_max_abs_error": 4.3655745685100555e-11,
+  "unordered_face_count": 0,
   "valid": true
 }

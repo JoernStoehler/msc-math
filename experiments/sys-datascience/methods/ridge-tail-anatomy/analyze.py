@@ -139,6 +139,57 @@ def classify_factor(normal: list[float]) -> str:
     return "unknown"
 
 
+def face_stats(faces: list[dict], volume: float) -> dict:
+    """Summaries for one face population, with volume-normalized quantities."""
+    scale = math.sqrt(volume)
+    e = [f["euclidean_area"] for f in faces]
+    a = [f["symplectic_area"] for f in faces]
+    k = [f["kappa"] for f in faces]
+    e_norm = [x / scale for x in e]
+    a_norm = [x / scale for x in a]
+    e_sum, a_sum = sum(e), sum(a)
+    e_norm_sum, a_norm_sum = sum(e_norm), sum(a_norm)
+    mean_e = e_sum / len(e) if e else 0.0
+    mean_a = a_sum / len(a) if a else 0.0
+    mean_e_norm = e_norm_sum / len(e_norm) if e_norm else 0.0
+    mean_a_norm = a_norm_sum / len(a_norm) if a_norm else 0.0
+    k_mean = sum(k) / len(k) if k else 0.0
+    weighted_kappa = sum(ei * ki for ei, ki in zip(e, k)) / e_sum if e_sum > 0 else 0.0
+    cov = (sum((ei - mean_e) * (ki - k_mean) for ei, ki in zip(e, k)) / len(e)) if e else 0.0
+    entropy, effective = concentration(a)
+    k_sorted, k_top = sorted(k), sorted(k, reverse=True)
+    a_sorted, a_total = sorted(a), a_sum
+    k_total = sum(k)
+    return {
+        "face_count": len(faces),
+        "euclidean_area_sum": e_sum,
+        "euclidean_area_mean": mean_e,
+        "euclidean_area_sum_over_volume_sqrt": e_norm_sum,
+        "euclidean_area_mean_over_volume_sqrt": mean_e_norm,
+        "symplectic_area_sum": a_sum,
+        "symplectic_area_mean": mean_a,
+        "symplectic_area_sum_over_volume_sqrt": a_norm_sum,
+        "symplectic_area_mean_over_volume_sqrt": mean_a_norm,
+        "kappa_mean": k_mean,
+        "kappa_median": quantile(k_sorted, 0.5),
+        "kappa_q90": quantile(k_sorted, 0.9),
+        "kappa_q95": quantile(k_sorted, 0.95),
+        "kappa_max": max(k, default=0.0),
+        "kappa_max_share": max(k, default=0.0) / k_total if k_total > 0 else 0.0,
+        "kappa_top3_share": sum(k_top[:3]) / k_total if k_total > 0 else 0.0,
+        "euclidean_weighted_kappa": weighted_kappa,
+        "euclidean_kappa_covariance": cov,
+        "symplectic_area_max_share": max(a, default=0.0) / a_total if a_total > 0 else 0.0,
+        "symplectic_area_top3_share": sum(sorted(a, reverse=True)[:3]) / a_total if a_total > 0 else 0.0,
+        "symplectic_area_entropy": entropy,
+        "symplectic_area_effective_face_count": effective,
+        "decomposition_identity_abs_error": abs(sum(ei * ki for ei, ki in zip(e, k)) - a_sum),
+        "decomposition_identity_rel_error": abs(sum(ei * ki for ei, ki in zip(e, k)) - a_sum) / max(1.0, a_sum),
+        "decomposition_identity_normalized_abs_error": abs(sum(ei * ki for ei, ki in zip(e_norm, k)) - a_norm_sum),
+        "decomposition_identity_normalized_rel_error": abs(sum(ei * ki for ei, ki in zip(e_norm, k)) - a_norm_sum) / max(1.0, a_norm_sum),
+    }
+
+
 def geometry_summary(row: dict, product: bool) -> tuple[dict, list[dict]]:
     if product:
         vertices = [[float(x) for x in v] for v in row["vertices"]]
@@ -176,20 +227,9 @@ def geometry_summary(row: dict, product: bool) -> tuple[dict, list[dict]]:
             kind = "structural_zero" if fi == fj and fi != "unknown" else "mixed" if {fi, fj} == {"q_factor", "p_factor"} else "unknown"
         faces.append({"facets": list(facets), "vertices": order, "ordered": True, "degenerate": degenerate, "euclidean_area": euclidean, "symplectic_area": symp, "kappa": kappa, "kind": kind, "translation_invariance_abs_error": translation_error, "positive_scaling_invariance_abs_error": scale_error})
     eligible = [f for f in faces if f["ordered"] and not f["degenerate"]]
-    e = [f["euclidean_area"] for f in eligible]
-    a = [f["symplectic_area"] for f in eligible]
-    k = [f["kappa"] for f in eligible]
-    e_sum, a_sum = sum(e), sum(a)
-    mean_e = e_sum / len(e) if e else 0.0
-    mean_a = a_sum / len(a) if a else 0.0
-    weighted_kappa = sum(ei * ki for ei, ki in zip(e, k)) / e_sum if e_sum > 0 else 0.0
-    cov = (sum((ei - mean_e) * (ki - sum(k) / len(k)) for ei, ki in zip(e, k)) / len(e)) if e else 0.0
-    entropy, effective = concentration(a)
-    k_sorted = sorted(k)
-    k_top = sorted(k, reverse=True)
-    k_total = sum(k)
-    a_sorted = sorted(a, reverse=True)
-    a_total = sum(a)
+    all_stats = face_stats(eligible, volume)
+    mixed_stats = face_stats([f for f in eligible if f["kind"] == "mixed"], volume)
+    structural_stats = face_stats([f for f in eligible if f["kind"] == "structural_zero"], volume)
     summary = {
         "candidate_id": row["candidate_id"], "poly_id": row["poly_id"], "product": product,
         "seed": row.get("seed"), "role": row.get("role"), "future_band": row.get("future_band"),
@@ -199,25 +239,22 @@ def geometry_summary(row: dict, product: bool) -> tuple[dict, list[dict]]:
         "degenerate_face_count": sum(f["degenerate"] for f in faces), "ordered_face_count": sum(f["ordered"] for f in faces),
         "mixed_face_count": sum(f["kind"] == "mixed" for f in eligible), "structural_zero_face_count": sum(f["kind"] == "structural_zero" for f in eligible),
         "unknown_kind_face_count": sum(f["kind"] == "unknown" for f in eligible),
-        "euclidean_area_sum": e_sum, "euclidean_area_mean": mean_e, "symplectic_area_sum": a_sum, "symplectic_area_mean": mean_a,
-        "kappa_mean": sum(k) / len(k) if k else 0.0, "kappa_median": quantile(k_sorted, 0.5), "kappa_q90": quantile(k_sorted, 0.9), "kappa_q95": quantile(k_sorted, 0.95),
-        "kappa_max": max(k, default=0.0), "kappa_max_share": max(k, default=0.0) / k_total if k_total > 0 else 0.0,
-        "kappa_top3_share": sum(k_top[:3]) / k_total if k_total > 0 else 0.0, "euclidean_weighted_kappa": weighted_kappa, "euclidean_kappa_covariance": cov,
-        "symplectic_area_max_share": max(a, default=0.0) / a_total if a_total > 0 else 0.0, "symplectic_area_top3_share": sum(a_sorted[:3]) / a_total if a_total > 0 else 0.0,
-        "symplectic_area_entropy": entropy, "symplectic_area_effective_face_count": effective,
-        "decomposition_identity_abs_error": abs(sum(ei * ki for ei, ki in zip(e, k)) - a_sum),
-        "decomposition_identity_rel_error": abs(sum(ei * ki for ei, ki in zip(e, k)) - a_sum) / max(1.0, a_sum),
+        "unordered_face_count": sum(not f["ordered"] for f in faces),
+        "degenerate_face_count": sum(f["degenerate"] for f in faces),
         "translation_invariance_max_abs_error": max((f.get("translation_invariance_abs_error", 0.0) for f in faces), default=0.0),
         "positive_scaling_invariance_max_abs_error": max((f.get("positive_scaling_invariance_abs_error", 0.0) for f in faces), default=0.0),
         "ridge_count_matches_source": row.get("ridge_count_source") is None or int(row["ridge_count_source"]) == len(faces),
     }
+    summary.update(all_stats)
+    summary.update({f"mixed_{key}": value for key, value in mixed_stats.items()})
+    summary.update({f"structural_zero_{key}": value for key, value in structural_stats.items()})
     return summary, faces
 
 
 def aggregate(name: str, rows: list[dict]) -> dict:
     if not rows:
         return {"name": name, "n": 0}
-    keys = ["sys", "euclidean_area_sum", "symplectic_area_sum", "euclidean_weighted_kappa", "euclidean_kappa_covariance", "kappa_mean", "kappa_q90", "kappa_max", "symplectic_area_max_share", "symplectic_area_effective_face_count", "mixed_face_count", "structural_zero_face_count", "decomposition_identity_rel_error"]
+    keys = ["sys", "euclidean_area_sum_over_volume_sqrt", "euclidean_area_mean_over_volume_sqrt", "symplectic_area_sum_over_volume_sqrt", "symplectic_area_mean_over_volume_sqrt", "euclidean_weighted_kappa", "euclidean_kappa_covariance", "kappa_mean", "kappa_q90", "kappa_max", "symplectic_area_max_share", "symplectic_area_effective_face_count", "mixed_face_count", "structural_zero_face_count", "mixed_euclidean_area_sum_over_volume_sqrt", "mixed_euclidean_area_mean_over_volume_sqrt", "mixed_symplectic_area_sum_over_volume_sqrt", "mixed_symplectic_area_mean_over_volume_sqrt", "mixed_euclidean_weighted_kappa", "mixed_kappa_mean", "mixed_kappa_q90", "decomposition_identity_rel_error"]
     out = {"name": name, "n": len(rows), "sys_mean": sum(r["sys"] for r in rows) / len(rows)}
     for key in keys[1:]:
         out[key + "_mean"] = sum(r[key] for r in rows) / len(rows)
@@ -226,6 +263,51 @@ def aggregate(name: str, rows: list[dict]) -> dict:
     out["sys_max"] = max(r["sys"] for r in rows)
     out["vertex_count_distribution"] = {str(n): sum(r["vertex_count"] == n for r in rows) for n in sorted({r["vertex_count"] for r in rows})}
     return out
+
+
+def rankdata(values: list[float]) -> list[float]:
+    order = sorted(range(len(values)), key=lambda i: values[i])
+    ranks = [0.0] * len(values)
+    i = 0
+    while i < len(order):
+        j = i + 1
+        while j < len(order) and values[order[j]] == values[order[i]]:
+            j += 1
+        rank = 0.5 * (i + j - 1) + 1.0
+        for position in order[i:j]:
+            ranks[position] = rank
+        i = j
+    return ranks
+
+
+def spearman(xs: list[float], ys: list[float]) -> float | None:
+    if len(xs) != len(ys) or len(xs) < 2:
+        return None
+    rx, ry = rankdata(xs), rankdata(ys)
+    mx, my = sum(rx) / len(rx), sum(ry) / len(ry)
+    num = sum((x - mx) * (y - my) for x, y in zip(rx, ry))
+    den = math.sqrt(sum((x - mx) ** 2 for x in rx) * sum((y - my) ** 2 for y in ry))
+    return num / den if den > 0 else None
+
+
+def sample_variance(values: list[float]) -> float:
+    if len(values) < 2:
+        return 0.0
+    mean_value = sum(values) / len(values)
+    return sum((value - mean_value) ** 2 for value in values) / (len(values) - 1)
+
+
+def mean_contrast(left: list[dict], right: list[dict], key: str = "sys") -> dict:
+    lv = [float(row[key]) for row in left]
+    rv = [float(row[key]) for row in right]
+    estimate = sum(lv) / len(lv) - sum(rv) / len(rv)
+    se = math.sqrt(sample_variance(lv) / len(lv) + sample_variance(rv) / len(rv))
+    return {"left_n": len(lv), "right_n": len(rv), "estimate": estimate, "standard_error": se, "normal_95": [estimate - 1.959963984540054 * se, estimate + 1.959963984540054 * se]}
+
+
+def descriptive_group(name: str, rows: list[dict]) -> dict:
+    keys = ["euclidean_area_mean_over_volume_sqrt", "euclidean_area_sum_over_volume_sqrt", "symplectic_area_mean_over_volume_sqrt", "symplectic_area_sum_over_volume_sqrt", "euclidean_weighted_kappa"]
+    return {"name": name, "n": len(rows), **{key + "_mean": sum(float(row[key]) for row in rows) / len(rows) for key in keys}}
 
 
 def main() -> None:
@@ -280,6 +362,30 @@ def main() -> None:
         "product_overlap_minus_control_sys": aggregate("x", arm_groups["overlap"])["sys_mean"] - aggregate("x", arm_groups["matched_control"])["sys_mean"],
         "product_rho_only_minus_ridge_only_sys": aggregate("x", arm_groups["rho_only"])["sys_mean"] - aggregate("x", arm_groups["ridge_only"])["sys_mean"],
     }
+    selected = [r for r in generic if r["role"] == "selected"]
+    descriptive = {
+        "post_target": True,
+        "groups": [
+            descriptive_group("generic_selected", selected),
+            descriptive_group("generic_baseline", [r for r in generic if r["role"] == "baseline"]),
+            descriptive_group("generic_ranks_1_10", [r for r in selected if r["f64_rank"] <= 10]),
+            descriptive_group("generic_ranks_11_100", [r for r in selected if 11 <= r["f64_rank"] <= 100]),
+        ],
+        "selected_100_spearman_vs_sys": {
+            key: spearman([float(r[key]) for r in selected], [float(r["sys"]) for r in selected])
+            for key in ("euclidean_area_mean_over_volume_sqrt", "euclidean_area_sum_over_volume_sqrt", "symplectic_area_mean_over_volume_sqrt", "symplectic_area_sum_over_volume_sqrt", "euclidean_weighted_kappa")
+        },
+    }
+    seed_summaries = []
+    seed_contrasts = []
+    for seed in sorted({r["seed"] for r in product}):
+        by_arm = {name: [r for r in rows if r["seed"] == seed] for name, rows in arm_groups.items()}
+        seed_summaries.append({"seed": seed, "arms": {name: aggregate(f"seed_{seed}_{name}", rows) for name, rows in by_arm.items()}})
+        for left_name, right_name in (("rho_only", "matched_control"), ("ridge_only", "matched_control"), ("overlap", "matched_control"), ("rho_only", "ridge_only"), ("overlap", "rho_only"), ("overlap", "ridge_only")):
+            seed_contrasts.append({"seed": seed, "contrast": f"{left_name}_minus_{right_name}", **mean_contrast(by_arm[left_name], by_arm[right_name])})
+    pooled_contrasts = {name: mean_contrast(left, right) for name, left, right in (("rho_only_minus_control", arm_groups["rho_only"], arm_groups["matched_control"]), ("ridge_only_minus_control", arm_groups["ridge_only"], arm_groups["matched_control"]), ("overlap_minus_control", arm_groups["overlap"], arm_groups["matched_control"]), ("rho_only_minus_ridge_only", arm_groups["rho_only"], arm_groups["ridge_only"]), ("overlap_minus_rho_only", arm_groups["overlap"], arm_groups["rho_only"]), ("overlap_minus_ridge_only", arm_groups["overlap"], arm_groups["ridge_only"]))}
+    provenance_path = args.input_dir / "provenance.json"
+    provenance = json.loads(provenance_path.read_text())
     validation = {
         "schema": "sys-datascience.ridge-tail-anatomy.validation.v1",
         "generic_rows": len(generic), "product_5x5_rows": len(product),
@@ -290,28 +396,34 @@ def main() -> None:
         "product_arm_memberships": {k: sum(len(set(r["arm_memberships"])) for r in v) for k, v in arm_groups.items()},
         "generic_identity_max_rel_error": max(r["decomposition_identity_rel_error"] for r in generic),
         "product_identity_max_rel_error": max(r["decomposition_identity_rel_error"] for r in product),
+        "generic_normalized_identity_max_rel_error": max(r["decomposition_identity_normalized_rel_error"] for r in generic),
+        "product_normalized_identity_max_rel_error": max(r["decomposition_identity_normalized_rel_error"] for r in product),
         "generic_proxy_max_abs_error": max(abs(r["computed_proxy"] - r["feature_proxy"]) for r in summaries if not r["product"]),
         "product_feature_mean_max_abs_error": max(abs(r["computed_mean_over_volume_sqrt"] - r["ridge_mean_feature"]) for r in product),
         "product_feature_sum_max_abs_error": max(abs(r["computed_sum_over_volume_sqrt"] - r["ridge_sum_feature"]) for r in product),
         "product_5x5_face_composition": {"mixed": sorted({r["mixed_face_count"] for r in product}), "structural_zero": sorted({r["structural_zero_face_count"] for r in product}), "unknown": sorted({r["unknown_kind_face_count"] for r in product})},
+        "unordered_face_count": sum(r["unordered_face_count"] for r in summaries),
+        "degenerate_face_count": sum(r["degenerate_face_count"] for r in summaries),
+        "provenance_rows_match": provenance.get("rows") == {"generic": len(generic), "product_5x5": len(product)},
+        "provenance_sha256": sha256(provenance_path),
         "ridge_count_source_matches": all(r["ridge_count_matches_source"] for r in summaries),
         "translation_invariance_max_abs_error": max(r["translation_invariance_max_abs_error"] for r in summaries),
         "positive_scaling_invariance_max_abs_error": max(r["positive_scaling_invariance_max_abs_error"] for r in summaries),
-        "all_finite": all(math.isfinite(r[k]) for r in summaries for k in ("sys", "euclidean_area_sum", "symplectic_area_sum", "euclidean_weighted_kappa", "decomposition_identity_rel_error")),
+        "all_finite": all(math.isfinite(r[k]) for r in summaries for k in ("sys", "euclidean_area_sum", "symplectic_area_sum", "euclidean_area_sum_over_volume_sqrt", "symplectic_area_sum_over_volume_sqrt", "mixed_euclidean_area_sum_over_volume_sqrt", "mixed_symplectic_area_sum_over_volume_sqrt", "euclidean_weighted_kappa", "mixed_euclidean_weighted_kappa", "decomposition_identity_rel_error", "decomposition_identity_normalized_rel_error")),
         "identity_tolerance": IDENTITY_TOL,
         "proxy_tolerance": 2e-9,
     }
     validation["product_per_seed_arm_sizes"] = {str(seed): {name: sum(r["seed"] == seed for r in rows) for name, rows in arm_groups.items()} for seed in sorted({r["seed"] for r in product})}
     validation["control_disjoint_from_screen_arms"] = all(not (CONTROL_ID in set(r["arm_memberships"]) and (RHO_ID in set(r["arm_memberships"]) or RIDGE_ID in set(r["arm_memberships"]))) for r in product)
-    validation["valid"] = all([validation["generic_unique_ids"], validation["product_unique_ids"], validation["generic_group_sizes"] == {"generic_selected": 100, "generic_baseline": 100, "generic_ranks_1_10": 10, "generic_ranks_11_100": 90}, validation["product_arm_sizes"] == {"rho_only": 42, "ridge_only": 42, "overlap": 8, "matched_control": 50}, validation["product_per_seed_arm_sizes"] == {"2026071201": {"rho_only": 23, "ridge_only": 23, "overlap": 2, "matched_control": 25}, "2026071202": {"rho_only": 19, "ridge_only": 19, "overlap": 6, "matched_control": 25}}, validation["control_disjoint_from_screen_arms"], validation["generic_identity_max_rel_error"] <= IDENTITY_TOL, validation["product_identity_max_rel_error"] <= IDENTITY_TOL, validation["generic_proxy_max_abs_error"] <= 2e-9, validation["product_feature_mean_max_abs_error"] <= 2e-9, validation["product_feature_sum_max_abs_error"] <= 2e-9, validation["product_5x5_face_composition"] == {"mixed": [25], "structural_zero": [10], "unknown": [0]}, validation["ridge_count_source_matches"], validation["translation_invariance_max_abs_error"] <= 1e-9, validation["positive_scaling_invariance_max_abs_error"] <= 1e-9, validation["all_finite"]])
-    (out / "group-summary.json").write_text(json.dumps({"schema": "sys-datascience.ridge-tail-anatomy.group-summary.v1", "groups": groups, "contrasts": contrasts}, indent=2, sort_keys=True) + "\n")
+    validation["valid"] = all([validation["generic_unique_ids"], validation["product_unique_ids"], validation["generic_group_sizes"] == {"generic_selected": 100, "generic_baseline": 100, "generic_ranks_1_10": 10, "generic_ranks_11_100": 90}, validation["product_arm_sizes"] == {"rho_only": 42, "ridge_only": 42, "overlap": 8, "matched_control": 50}, validation["product_per_seed_arm_sizes"] == {"2026071201": {"rho_only": 23, "ridge_only": 23, "overlap": 2, "matched_control": 25}, "2026071202": {"rho_only": 19, "ridge_only": 19, "overlap": 6, "matched_control": 25}}, validation["control_disjoint_from_screen_arms"], validation["generic_identity_max_rel_error"] <= IDENTITY_TOL, validation["product_identity_max_rel_error"] <= IDENTITY_TOL, validation["generic_normalized_identity_max_rel_error"] <= IDENTITY_TOL, validation["product_normalized_identity_max_rel_error"] <= IDENTITY_TOL, validation["generic_proxy_max_abs_error"] <= 2e-9, validation["product_feature_mean_max_abs_error"] <= 2e-9, validation["product_feature_sum_max_abs_error"] <= 2e-9, validation["product_5x5_face_composition"] == {"mixed": [25], "structural_zero": [10], "unknown": [0]}, validation["unordered_face_count"] == 0, validation["degenerate_face_count"] == 0, validation["provenance_rows_match"], validation["ridge_count_source_matches"], validation["translation_invariance_max_abs_error"] <= 1e-9, validation["positive_scaling_invariance_max_abs_error"] <= 1e-9, validation["all_finite"]])
+    (out / "group-summary.json").write_text(json.dumps({"schema": "sys-datascience.ridge-tail-anatomy.group-summary.v2", "groups": groups, "contrasts": contrasts, "pooled_contrasts_with_uncertainty": pooled_contrasts, "per_seed_arm_summaries": seed_summaries, "per_seed_arm_contrasts": seed_contrasts, "descriptive_post_target": descriptive}, indent=2, sort_keys=True) + "\n")
     (out / "validation.json").write_text(json.dumps(validation, indent=2, sort_keys=True) + "\n")
     if not validation["valid"]:
         raise SystemExit("validation failed; inspect validation.json")
     output_paths = [out / name for name in ("per_face.jsonl", "per_polytope.jsonl", "group-summary.json", "validation.json")]
     manifest = {
-        "schema": "sys-datascience.ridge-tail-anatomy.analysis-manifest.v1",
-        "input_files": {name: sha256(args.input_dir / name) for name in ("generic-input.jsonl", "product-5x5-input.jsonl")},
+        "schema": "sys-datascience.ridge-tail-anatomy.analysis-manifest.v2",
+        "input_files": {name: sha256(args.input_dir / name) for name in ("generic-input.jsonl", "product-5x5-input.jsonl", "provenance.json")},
         "output_files": {path.name: sha256(path) for path in output_paths},
         "rows": {"generic": len(generic), "product_5x5": len(product)},
         "valid": validation["valid"],
