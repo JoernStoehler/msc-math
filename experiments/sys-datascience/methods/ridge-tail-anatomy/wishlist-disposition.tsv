@@ -1,0 +1,16 @@
+item	status	revised_labor_hours	revised_compute	reason
+source/provenance inventory and deterministic joins	done	1.0	negligible	All generic 200 and product 5x5 joins are frozen and hashed; product geometry is snapshotted.
+Euclidean/symplectic/kappa decomposition substrate	done	1.2	negligible	Incidence ordering, degeneracy handling, source-count checks, and identities validated.
+deterministic analyzer/artifact schema/verifier/README	done	0.9	negligible	Producer, analyzer, machine-readable outputs, provenance, and validation committed.
+complete per-polytope face-summary family	done	0.6	negligible	Counts, sums/means, kappa quantiles/shares, concentration, weighted kappa, and covariance share one pass.
+product 5x5 discordant rho/ridge/control arms	done	0.6	negligible	Frozen two-seed memberships yield rho-only, ridge-only, overlap, and disjoint controls.
+generic 200 selected/baseline and rank bands	done	0.3	negligible	Fixed selected-vs-baseline and ranks 1--10 vs 11--100 are reported.
+negative controls and sensitivities	done	0.4	negligible	Decomposition identity, source ridge counts, face composition, translation, and scaling checks pass.
+routing report across mechanism branches	done	0.3	negligible	Ordinary morphology, Kähler alignment, discordant arms, bounce, and stop branches are bounded.
+retained generic/product source/facet/vertex strata	done	0.3	negligible	Vertex-count distributions and product factor-face composition are included; all facets are fixed at 10.
+existing product two-/three-bounce action join	postponed	1.0	negligible	Available action artifacts lack an unambiguous join to these random 5x5 polytope IDs.
+target-free generic 10k rho map	postponed	0.75	~27 min wall; 2.4 CPU-h	Target-free but no longer prospective; lower value than retained anatomy and consumes the compute allowance.
+pre-target matched contrasts/exemplars	postponed	0.75	negligible	Frozen arm contrasts are sufficient; no new contrast rule or exemplar was needed.
+compact investigation displays	postponed	0.5	negligible	Tables expose the decision-relevant pattern; no display adds information now.
+candidate inequalities/conjectures	postponed	0.4	negligible	Would be post-target and premature before a controlled intervention.
+generator-transfer interface requirements	postponed	0.25	none	Handoff is named in routing-report.md; owner artifact remains read-only.
