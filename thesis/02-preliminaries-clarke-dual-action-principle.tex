@@ -1,341 +1,301 @@
-\subsection{Clarke dual action principle}\label{subsec:preliminaries-clarke-dual-action-principle}
+\subsection{Clarke dual action principle}
+\label{subsec:preliminaries-clarke-dual-action-principle}
 
-The finite Haim--Kislev formula used in
-Section~\ref{sec:quadratic-program-algorithm-hk2019} rests on a dual
-variational viewpoint. The literature often states this connection in a fixed
-\([0,1]\)-period normalization. We use a free-period normalization instead:
-the dual curves below have period \(T\), satisfy \(A(z)=T\), and are not
-centered by a condition such as \(\int z=0\). Translation is handled as a
-symmetry, not as a constraint. This is equivalent to the normalized formulation
-used by Haim--Kislev, but the numerical equalities below are written in the
-free-period convention used throughout this thesis.
+The later finite arguments alter and rearrange velocities.  It is therefore
+more useful to optimize over curves whose position is unconstrained than to
+work directly with curves on \(\partial K\).  Clarke's dual action principle
+makes this change of viewpoint precise.  Three facts are needed below: the
+dual minimum is attained, a dual minimizer satisfies a weak Euler--Lagrange
+inclusion, and this inclusion reconstructs a generalized characteristic.  We
+cite the nonsmooth variational input and derive the convention changes and
+reconstruction in the normalization used in this thesis.
 
-\begin{lemma}[Fenchel duality for the gauge]\label{lem:preliminaries-fenchel-duality}
-The Legendre--Fenchel conjugate of \(g_K^2\) is
-\(\frac{1}{4}h_K^2\). Equivalently,
+The dual integrand comes from convex conjugacy.  Recall that
+\(H_K=g_K^2\), and write \(H_K^*\) for its Legendre--Fenchel conjugate.
+
+\begin{lemma}[Fenchel duality for the gauge]
+\label{lem:preliminaries-fenchel-duality}
+For every \(y\in\mathbb R^4\),
 \[
-  g_K^2(x) + \frac{1}{4}h_K^2(y) \geq \langle x,y\rangle
+  H_K^*(y)=\frac14h_K(y)^2.
 \]
-for all \(x,y\in\mathbb{R}^4\), with equality if and only if
+Consequently
 \[
-  y\in \partial g_K^2(x)
+  H_K(x)+H_K^*(y)\geq\langle x,y\rangle,
+\]
+with equality if and only if
+\[
+  y\in\partial H_K(x)
   \quad\Longleftrightarrow\quad
-  x\in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(y).
+  x\in\partial H_K^*(y).
 \]
 \end{lemma}
 
 \begin{proof}
-For fixed \(y\), write \(x=\lambda u\) with \(\lambda\geq0\) and
-\(g_K(u)=1\). Since \(g_K(\lambda u)^2=\lambda^2\),
+For fixed \(y\), write \(x=\lambda u\), where \(\lambda\geq0\) and
+\(g_K(u)=1\).  Since \(H_K(\lambda u)=\lambda^2\),
 \[
-  (g_K^2)^*(y)
-  = \sup_{\lambda\geq0}
-      \sup_{g_K(u)=1}\{\lambda\langle u,y\rangle-\lambda^2\}
-  = \sup_{\lambda\geq0}\{\lambda h_K(y)-\lambda^2\}
-  = \frac{1}{4}h_K(y)^2.
+  H_K^*(y)
+  =\sup_{\lambda\geq0}\sup_{g_K(u)=1}
+    \{\lambda\langle u,y\rangle-\lambda^2\}
+  =\sup_{\lambda\geq0}\{\lambda h_K(y)-\lambda^2\}
+  =\frac14h_K(y)^2.
 \]
-The Fenchel inequality and the equality/subdifferential condition are the
-standard equality cases for a convex function and its conjugate.
+The remaining statements are the Fenchel inequality and its equality case.
 \end{proof}
 
-Define the dual functional on absolutely continuous closed curves
-\[
-  z\colon[0,T]\to\mathbb{R}^4
-\]
-by
+For a closed curve \(z\colon[0,T]\to\mathbb R^4\), define
 \begin{equation}\label{eq:preliminaries-dual-functional}
-  I_K(z) \coloneqq
-  \frac{1}{4}\int_0^T h_K^2(-J_0\dot{z}(t))\,dt.
+  I_K(z)
+  \coloneqq
+  \int_0^T H_K^*(-J_0\dot z(t))\,dt
+  =\frac14\int_0^T h_K^2(-J_0\dot z(t))\,dt.
 \end{equation}
-The dual problem is
+The free-period dual problem is
 \begin{equation}\label{eq:preliminaries-dual-problem}
-  \min\{I_K(z):
-    z\in W^{1,2}([0,T],\mathbb{R}^4),\;
-    z(0)=z(T),\; T>0,\; A(z)=T\}.
+  d(K)\coloneqq
+  \inf\left\{I_K(z):
+    \begin{array}{l}
+      z\in W^{1,2}([0,T],\mathbb R^4),\ z(0)=z(T),\\[-2pt]
+      T>0,\ A(z)=T
+    \end{array}
+  \right\}.
 \end{equation}
+The constraint \(A(z)=T\) normalizes action relative to the chosen period; it
+does not fix the period or a translation of the curve.
 
-\begin{definition}[Weak dual critical curve]\label{def:preliminaries-weak-dual-critical}
-A closed curve
+In Haim--Kislev's fixed-period normalization, the curves \(w\) have domain
+\([0,1]\) and satisfy \(A(w)=\frac12\) \cite[Lemma~2.1]{HK2017}.  The two
+normalizations have exactly the same minimization content.  If \(z\) is feasible in
+\eqref{eq:preliminaries-dual-problem}, then
 \[
-  z\in W^{1,2}([0,T],\mathbb{R}^4),
-  \qquad A(z)=T,
+  w(s)=\frac{1}{\sqrt{2T}}z(Ts)
 \]
-is \emph{weak dual critical} if there are
-\(\nu\in\mathbb{R}\) and \(b\in\mathbb{R}^4\) such that
+has \(A(w)=\frac12\) and \(I_K(w)=I_K(z)/2\).  Conversely, for such a
+fixed-period curve \(w\), put \(c=2I_K(w)>0\) and
+\[
+  z(t)=\sqrt{2c}\,w(t/c),
+  \qquad 0\leq t\leq c.
+\]
+Then \(A(z)=c\) and \(I_K(z)=c=2I_K(w)\).  Thus the free-period infimum is
+twice the fixed-period minimum, and it is attained because the fixed-period
+minimum is attained \cite[Proposition~2.5]{AAO2014}.  This rescaling is also
+how one chooses an attained representative with \(I_K(z)=T\).  Other
+free-period minimizers in its scaling family generally have a different
+period.  The centering condition in the cited fixed-period formulation merely
+chooses a translation representative and changes neither \(A\) nor \(I_K\).
+
+The variational equation is most conveniently stated before restricting to
+minimizers.
+
+\begin{definition}[Weak dual critical curve]
+\label{def:preliminaries-weak-dual-critical}
+A feasible curve \(z\) of period \(T\) is \emph{weak dual critical} if there
+are \(\nu\in\mathbb R\) and \(b\in\mathbb R^4\) such that
 \begin{equation}\label{eq:preliminaries-dual-euler-lagrange}
   \nu z(t)+b
-  \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z}(t))
-  \quad\text{for a.e. }t.
+  \in\partial H_K^*(-J_0\dot z(t))
+  \quad\text{for almost every }t.
 \end{equation}
 Equivalently,
 \[
-  -J_0\dot{z}(t)\in\partial g_K^2(\nu z(t)+b)
-  \quad\text{for a.e. }t.
+  -J_0\dot z(t)\in\partial H_K(\nu z(t)+b)
+  \quad\text{for almost every }t.
 \]
 \end{definition}
 
-We use two results from Clarke's nonsmooth variational theory: the fixed-period
-dual minimum is attained, and every minimizer satisfies the weak
-Euler--Lagrange inclusion. For nonsmooth convex bodies, these are recorded in
-Artstein--Avidan--Ostrover \cite[Proposition~2.5 and Lemma~5.2]{AAO2014}. Their
-Lemma~5.1 gives the correspondence between weak critical curves and generalized
-closed characteristics, from which Proposition~2.7 identifies the dual and
-generalized-characteristic minima. Haim--Kislev state the same input in the
-normalization used below \cite[Lemma~2.1]{HK2017}. The underlying nonsmooth
-multiplier theory is due to Clarke \cite[Ch.~5]{Clarke1983}.
-
-Haim--Kislev state the dual problem on \([0,1]\), with closed loops \(w\)
-satisfying \(A(w)=\frac12\). Artstein--Avidan--Ostrover use the equivalent
-\([0,2\pi]\), action-one normalization. The passage from the Haim--Kislev
-convention to the free-period normalization above is by explicit rescaling. If
-\(z\) is defined on \([0,T]\) and satisfies \(A(z)=T\), then
-\[
-  w(s)=\frac{1}{\sqrt{2T}}\,z(Ts)
-\]
-satisfies \(A(w)=\frac12\) and \(I_K(w)=I_K(z)/2\). Conversely, if \(w\) is a
-fixed-period dual curve and \(c=2I_K(w)\), then
-\[
-  z(t)=\sqrt{2c}\,w(t/c),
-  \qquad 0\leq t\leq c,
-\]
-satisfies \(A(z)=c\) and \(I_K(z)=c\). Under the same rescaling, the fixed-period
-weak-critical equation used by Haim--Kislev becomes
-\eqref{eq:preliminaries-dual-euler-lagrange}. More explicitly, Haim--Kislev
-write
+In Haim--Kislev's fixed-period convention the same equation is
 \[
   8I_K(w)w+a\in\partial h_K^2(-J_0\dot w).
 \]
-After dividing by \(4\) and rescaling from \(w\) to \(z\), this has
-\eqref{eq:preliminaries-dual-euler-lagrange} with
-\(\nu=I_K(z)/T\); the constant vector is rescaled as well. If a cited version
-fixes the translation freedom by imposing a centering condition on \(w\), this
-is only a choice of representative: \(A\), \(I_K\), and the weak-critical
-equation are translation-invariant after adjusting the constant \(b\). Thus
-the cited analytic input is the fixed-period existence and weak-criticality
-theorem; the rest of this subsection writes out the convention translation and
-Reeb correspondence in the free-period, uncentered notation used here.
+Dividing by four and applying the preceding rescaling gives
+\eqref{eq:preliminaries-dual-euler-lagrange}.  More generally, pairing that
+inclusion with \(-J_0\dot z\) shows that its multiplier must be
+\begin{equation}\label{eq:preliminaries-dual-multiplier-value}
+  \nu=\frac{I_K(z)}{T}.
+\end{equation}
+The next lemma derives this equation for a minimizer and records the signs and
+factors in the thesis convention.
 
 \begin{lemma}[Euler--Lagrange equation in thesis convention]
 \label{lem:preliminaries-dual-euler-lagrange}
-Every minimizer of the dual problem is weak dual critical in the sense of
-Definition~\ref{def:preliminaries-weak-dual-critical}.
+Every minimizer of the free-period dual problem is weak dual critical.
 \end{lemma}
 
 \begin{proof}
-Let \(z\) be a minimizer of the free-period dual problem, with period \(T\).
-In particular, \(z\) minimizes \(I_K\) among the closed curves of this fixed
-period satisfying \(A(z)=T\). On the space of periodic \(W^{1,2}\)-curves the
-action constraint is regular at \(z\): its derivative in the radial direction
-is
+Let \(z\) be a minimizer of period \(T\).  It also minimizes \(I_K\) among
+closed curves of this fixed period satisfying \(A(z)=T\).  The action
+constraint is regular at \(z\), since
 \[
   DA(z)[z]=2A(z)=2T\neq0.
 \]
-Clarke's nonsmooth Lagrange multiplier rule and Euler--Lagrange inclusion,
-in the form used in the proof of
-\cite[Lemma~5.2]{AAO2014}, therefore apply with a scalar multiplier
-\(\alpha\). Regularity of the constraint lets us normalize the coefficient of
-the objective to one.
-Absorbing the harmless factor \(1/2\) from the definition of \(A\) into
-\(\alpha\), consider the integrand
+The nonsmooth Lagrange-multiplier and Euler--Lagrange argument used in
+\cite[Lemma~5.2]{AAO2014}, based on Clarke's nonsmooth multiplier theory
+\cite[Ch.~5]{Clarke1983}, therefore gives a scalar \(\alpha\) and a measurable
+selection
 \[
-  L(z,\dot z)
-  =\frac14h_K^2(-J_0\dot z)
-   +\alpha\langle-J_0\dot z,z\rangle.
+  p(t)\in\partial H_K^*(-J_0\dot z(t))
 \]
-The cited nonsmooth argument yields a measurable selection
-\[
-  p(t)\in
-  \partial\bigl(\tfrac14h_K^2\bigr)(-J_0\dot z(t))
-\]
-for which the weak Euler--Lagrange identity is, in distributional form,
+such that, in the distributional sense,
 \[
   \frac{d}{dt}\bigl(J_0p(t)+\alpha J_0z(t)\bigr)
-  =-\alpha J_0\dot z(t)
-  \quad\text{for a.e. }t.
+  =-\alpha J_0\dot z(t).
 \]
-The quadratic growth of \(h_K^2\) gives \(p\in L^2\). The right-hand side also
-lies in \(L^2\), so the expression in parentheses, and hence \(p\), has an
-absolutely continuous representative.
-Here we used \((-J_0)^\mathsf{T}=J_0\) in the subdifferential chain rule.
-Since \(J_0\) is invertible, the last display is equivalent to
+Here the coefficient of the objective has been normalized to one using the
+regularity of the constraint; \(\alpha\) includes the factor two between
+\(\int\langle-J_0\dot z,z\rangle\) and \(A(z)\).  The quadratic growth of
+\(H_K^*\) gives \(p\in L^2\), so the displayed identity gives it an absolutely
+continuous representative.  Since \(J_0\) is invertible,
 \[
-  \dot p(t)=-2\alpha\dot z(t).
+  \dot p(t)=-2\alpha\dot z(t),
 \]
-Integration gives \(p(t)=b-2\alpha z(t)\) for a constant
-\(b\in\mathbb{R}^4\). Thus \eqref{eq:preliminaries-dual-euler-lagrange}
-holds with \(\nu=-2\alpha\).
+and hence \(p(t)=b-2\alpha z(t)\) for a constant \(b\).  This is
+\eqref{eq:preliminaries-dual-euler-lagrange} with \(\nu=-2\alpha\).
 
-The value of this multiplier is fixed by the normalization rather than left
-implicit. The function \(\frac14h_K^2\) is convex and \(2\)-homogeneous, so
-every
-\(p\in\partial(\frac14h_K^2)(y)\) satisfies
-\(\langle p,y\rangle=\frac12h_K^2(y)\). Pairing the inclusion with
-\(-J_0\dot z\), integrating, and using that \(z\) is closed gives
+It remains to identify the multiplier.  Since \(H_K^*\) is
+two-homogeneous, every \(p\in\partial H_K^*(y)\) satisfies
+\(\langle p,y\rangle=2H_K^*(y)\).  Pairing the inclusion with
+\(-J_0\dot z\), integrating, and using closedness gives
 \[
   2I_K(z)
   =\int_0^T\langle\nu z(t)+b,-J_0\dot z(t)\rangle\,dt
   =2\nu A(z)
   =2\nu T.
 \]
-Consequently \(\nu=I_K(z)/T\), in agreement with the explicit rescaling of
-Haim--Kislev's fixed-period equation above. The equivalent formulation follows
-from Lemma~\ref{lem:preliminaries-fenchel-duality}.
+This proves \eqref{eq:preliminaries-dual-multiplier-value}.
 \end{proof}
 
-\begin{lemma}[Scaling and translation]\label{lem:preliminaries-dual-symmetry}
-Let \(z\) be weak dual critical on \([0,T]\). For every
-\(\alpha>0\) and every \(b\in\mathbb{R}^4\), the curve
+Weak criticality is preserved by the symmetry that changes the period.
+
+\begin{lemma}[Scaling and translation]
+\label{lem:preliminaries-dual-symmetry}
+Let \(z\) be weak dual critical on \([0,T]\).  For every \(\alpha>0\) and
+\(q\in\mathbb R^4\),
 \[
-  z'(t)=\alpha z(t/\alpha^2)+b,
-  \qquad 0\leq t\leq \alpha^2T,
+  z_{\alpha,q}(t)=\alpha z(t/\alpha^2)+q,
+  \qquad 0\leq t\leq\alpha^2T,
 \]
-is again weak dual critical. Moreover
+is weak dual critical and satisfies
 \[
-  A(z')=\alpha^2A(z)=\alpha^2T,
-  \qquad
-  I_K(z')=I_K(z).
+  A(z_{\alpha,q})=\alpha^2T,
+  \qquad I_K(z_{\alpha,q})=I_K(z).
 \]
 \end{lemma}
 
 \begin{proof}
-Closure is immediate. The action identity follows by substituting
-\(s=t/\alpha^2\); the term containing the constant vector \(b\) integrates to
-zero because \(z\) is closed. For the dual functional,
+Closure is immediate, and the translation term in the action integrates to
+zero.  Substitution of \(s=t/\alpha^2\) gives the two displayed identities,
+using the two-homogeneity of \(H_K^*\).  Finally,
+\(\partial H_K^*(\lambda y)=\lambda\partial H_K^*(y)\) for \(\lambda>0\).
+If \(\nu z+B\) realizes \eqref{eq:preliminaries-dual-euler-lagrange} for
+\(z\), then
 \[
-  I_K(z')
-  =\frac{1}{4}\int_0^{\alpha^2T}
-    h_K^2\!\left(-\frac{1}{\alpha}J_0\dot{z}(t/\alpha^2)\right)\,dt
-  =I_K(z),
-\]
-using the \(1\)-homogeneity of \(h_K\). The Euler--Lagrange inclusion is
-preserved because
-\(\partial(\frac14 h_K^2)(\lambda y)=\lambda
-\partial(\frac14 h_K^2)(y)\) for \(\lambda>0\). More precisely, if
-\(\nu z+B\) realizes the inclusion for \(z\), then
-\[
-  \frac{\nu}{\alpha^2}z'
-  +\left(\frac{B}{\alpha}-\frac{\nu b}{\alpha^2}\right)
-  \in
-  \partial\bigl(\tfrac14h_K^2\bigr)(-J_0\dot z').
+  \frac{\nu}{\alpha^2}z_{\alpha,q}
+  +\left(\frac{B}{\alpha}-\frac{\nu q}{\alpha^2}\right)
+  \in\partial H_K^*(-J_0\dot z_{\alpha,q}).
 \]
 \end{proof}
 
-\begin{theorem}[Clarke dual action principle in free-period form]\label{thm:preliminaries-clarke-dual-action}
-For a smooth convex body \(K\), and for a polytope with closed characteristics
-understood in the generalized sense of
-Definition~\ref{def:preliminaries-generalized-characteristic}, the primal
-minimum and the dual minimum \eqref{eq:preliminaries-dual-problem} agree:
+We can now state the dual action principle in the form used later.
+
+\begin{theorem}[Clarke dual action principle in free-period form]
+\label{thm:preliminaries-clarke-dual-action}
+Let \(K\subset\mathbb R^4\) be a convex body with
+\(0\in\operatorname{int}(K)\).  The dual infimum \(d(K)\) is attained and
 \[
   c_{\mathrm{EHZ}}(K)
-  = \min_\gamma A(\gamma)
-  = \min_z I_K(z).
+  =\min_\gamma A(\gamma)
+  =d(K),
 \]
-More precisely, every contact-normalized generalized characteristic is weak
-dual critical, and every weak dual critical curve has a translate/rescale in
-the sense of Lemma~\ref{lem:preliminaries-dual-symmetry} that is a
-contact-normalized generalized characteristic.
+where the middle minimum is over contact-normalized generalized
+characteristics on \(\partial K\).
+
+More precisely, every such characteristic is a weak dual critical curve and
+satisfies \(I_K(\gamma)=A(\gamma)\).  Conversely, the scaling-and-translation
+family of every weak dual critical curve contains a contact-normalized
+generalized characteristic with the same value of \(I_K\).
 \end{theorem}
 
 \begin{proof}
+Attainment was established by the fixed-period comparison above.
 Let \(\gamma\) be a contact-normalized generalized characteristic of period
-\(T\).
-Then \(g_K^2(\gamma)=1\),
-\(-J_0\dot{\gamma}\in\partial g_K^2(\gamma)\), and \(A(\gamma)=T\). By
-Lemma~\ref{lem:preliminaries-fenchel-duality},
+\(T\).  Then
 \[
-  \gamma(t)\in
-  \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{\gamma}(t))
-  \quad\text{for a.e. }t.
+  -J_0\dot\gamma(t)\in\partial H_K(\gamma(t)),
+  \qquad H_K(\gamma(t))=1.
 \]
-This is the dual Euler--Lagrange condition with \(\nu=1\) and \(b=0\).
-Thus \(\gamma\) is weak dual critical, and
-Lemma~\ref{lem:preliminaries-dual-symmetry} gives the whole
-translate/rescale family.
+Fenchel duality gives
+\(\gamma(t)\in\partial H_K^*(-J_0\dot\gamma(t))\), so \(\gamma\) is weak
+dual critical with \(\nu=1\) and \(b=0\).  Moreover, two-homogeneity and the
+Fenchel equality give
+\[
+  H_K^*(-J_0\dot\gamma(t))=H_K(\gamma(t))=1
+\]
+almost everywhere.  Hence \(I_K(\gamma)=T=A(\gamma)\).
 
-Conversely, let \(z\) be weak dual critical of period \(T\). Choose
-\(\nu,b\) as in Definition~\ref{def:preliminaries-weak-dual-critical}. The
-equivalent inclusion in that definition gives
+Conversely, let \(z\) be weak dual critical of period \(T\), and choose
+\(\nu,b\) as in Definition~\ref{def:preliminaries-weak-dual-critical}.  Put
 \[
-  -J_0\dot{z}(t)\in\partial g_K^2(\nu z(t)+b).
+  y(t)=-J_0\dot z(t),
+  \qquad x(t)=\nu z(t)+b.
 \]
-The multiplier \(\nu\) is nonzero. If \(\nu=0\), then closedness of \(z\) and
-the inclusion give
+The multiplier calculation \eqref{eq:preliminaries-dual-multiplier-value}
+applies to every weak dual critical curve.  Since \(A(z)=T>0\), the curve is
+not constant; since \(H_K^*\) is positive away from the origin, this gives
 \[
-  -J_0\dot z(t)\in\partial g_K^2(b),
-  \qquad
-  \frac1T\int_0^T-J_0\dot z(t)\,dt=0.
+  \nu=\frac{I_K(z)}{T}>0.
 \]
-The set \(\partial g_K^2(b)\) is closed and convex, so it contains the average
-zero. Hence \(b\) minimizes \(g_K^2\), which forces \(b=0\). Since
-\(\partial g_K^2(0)=\{0\}\), the inclusion would then force \(\dot z=0\),
-contradicting \(A(z)=T>0\).
+Fenchel duality gives \(y(t)\in\partial H_K(x(t))\).  The chain rule for a
+convex function along an absolutely continuous curve yields
+\[
+  \frac{d}{dt}H_K(x(t))
+  =\langle y(t),\dot x(t)\rangle
+  =\nu\langle-J_0\dot z(t),\dot z(t)\rangle
+  =0
+\]
+almost everywhere.  Thus \(H_K(x(t))=c^2\) for some \(c\geq0\).  On the
+Fenchel equality set, two-homogeneity gives
+\[
+  H_K^*(y(t))=H_K(x(t))=c^2.
+\]
+After integration, \(I_K(z)=c^2T\), so \(c^2=\nu>0\).
 
-Set \(x(t)=\nu z(t)+b\). For almost every \(t\), the chain rule for the convex
-function \(g_K^2\) gives
+Define, on \([0,c^2T]\),
 \[
-  \frac{d}{dt}g_K^2(x(t))
-  = \langle -J_0\dot{z}(t),\nu\dot{z}(t)\rangle
-  =0.
+  \gamma(t)
+  =c\,z(t/c^2)+\frac{b}{c}.
 \]
-Since \(z\) is closed, \(g_K^2(x(t))\) is constant; write
-\(g_K(x(t))=c>0\). Integrating the Fenchel equality gives
+Then \(H_K(\gamma)=1\).  Since
+\(\partial H_K(x/c)=c^{-1}\partial H_K(x)\),
 \[
-  c^2T+I_K(z)
-  =\int_0^T\langle x(t),-J_0\dot{z}(t)\rangle\,dt
-  =2\nu A(z)=2\nu T.
+  -J_0\dot\gamma(t)
+  =-\frac1cJ_0\dot z(t/c^2)
+  \in\partial H_K(\gamma(t)).
 \]
-The left-hand side is positive, so \(\nu>0\).
+Thus \(\gamma\) is a contact-normalized generalized characteristic.  It is
+the member \(z_{c,b/c}\) of the family in
+Lemma~\ref{lem:preliminaries-dual-symmetry}, and hence
+\(I_K(\gamma)=I_K(z)\).
 
-Define
+For every generalized characteristic \(\gamma\), the first part gives a
+feasible dual curve with \(I_K(\gamma)=A(\gamma)\); therefore
+\(d(K)\leq\min_\gamma A(\gamma)\).  Conversely, let \(z\) attain \(d(K)\).
+Lemma~\ref{lem:preliminaries-dual-euler-lagrange} makes it weak dual critical,
+and the reconstruction above gives a generalized characteristic \(\gamma\)
+with
 \[
-  \gamma(t)=\frac{\nu z(t/\nu)+b}{c},
-  \qquad 0\leq t\leq \nu T.
+  A(\gamma)=I_K(\gamma)=I_K(z)=d(K).
 \]
-Then \(g_K(\gamma)=1\). Using the \(2\)-homogeneity of \(g_K^2\),
-\(\partial g_K^2(x/c)=c^{-1}\partial g_K^2(x)\), so
-\[
-  -J_0\dot{\gamma}(t)
-  =-\frac{1}{c}J_0\dot{z}(t/\nu)
-  \in \partial g_K^2(\gamma(t)).
-\]
-Thus \(\gamma\) is a contact-normalized generalized characteristic. A direct
-action computation gives
-\[
-  A(\gamma)=\frac{\nu^2}{c^2}A(z)=\frac{\nu^2}{c^2}T.
-\]
-Since \(\gamma\) is contact-normalized, \(A(\gamma)=\nu T\). Hence
-\(\nu=c^2\), and
-\[
-  \gamma(t)=c\,z(t/c^2)+\frac{b}{c},
-\]
-so \(\gamma\) lies in the translate/rescale family of \(z\).
-
-It remains to compare the values. For any contact-normalized generalized
-characteristic \(\gamma\), Fenchel equality gives
-\[
-  g_K^2(\gamma)+\frac{1}{4}h_K^2(-J_0\dot{\gamma})
-  =\langle \gamma,-J_0\dot{\gamma}\rangle.
-\]
-After integration,
-\[
-  T+I_K(\gamma)=2A(\gamma)=2T.
-\]
-Thus \(I_K(\gamma)=T=A(\gamma)\). The value \(I_K\) is constant on the
-translate/rescale family by Lemma~\ref{lem:preliminaries-dual-symmetry}.
-Conversely, the argument above sends every weak dual critical curve to a
-contact-normalized generalized characteristic in its translate/rescale family.
-Therefore the infima over contact-normalized generalized characteristics and
-over weak dual critical curves agree. The nonsmooth existence part of Clarke's
-principle gives a minimizer of the dual problem, and
-Lemma~\ref{lem:preliminaries-dual-euler-lagrange} shows that such a minimizer
-is weak dual critical. Hence the dual minimum is attained among the curves just
-considered, and the primal and dual minima agree.
+This proves the reverse inequality and the equality of the minima.  The
+identification of the minimum action with \(c_{\mathrm{EHZ}}(K)\) is the
+nonsmooth least-action characterization recalled above; see also
+\cite[Proposition~2.7 and Lemma~5.1]{AAO2014} and
+\cite[Lemma~2.1]{HK2017}.
 \end{proof}
 
-The point of the theorem is not just the equality of two numbers. The primal
-formulation constrains a curve to lie on \(\partial K\) and to satisfy a
-differential inclusion. The dual formulation removes the position constraint
-and makes the functional depend only on \(\dot{z}\). In their equivalent
-fixed-period normalization, Haim--Kislev exploit this freedom to choose a
-capacity minimizer on a polytope with a finite, simple facet-word description
-\cite{HK2017}.
+The primal and dual problems therefore have the same minimum and corresponding
+minimizing curves, but expose different operations.  The primal curve lies on
+\(\partial K\) and satisfies a differential inclusion.  The dual curve has no
+position constraint, and its functional depends only on its velocity.  For a
+polytope, this is the freedom used in the next section to replace a capacity
+minimizer by one with a finite, simple facet word.

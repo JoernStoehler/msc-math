@@ -160,15 +160,21 @@ had deliberately left for later disposition:
 
 ## Source And Statement Risks
 
-- Check published AAO2014 numbering and hypotheses for the analytic inputs to
-  the Clarke derivation. The current repo has citation metadata but no cached
-  source.
+- The AAO2014 route was checked against the source of arXiv:1111.2353,
+  corresponding to the published paper: dual attainment is Proposition 2.5,
+  the nonsmooth least-action statement is Proposition 2.7, reconstruction is
+  Lemma 5.1, and weak criticality of minimizers is Lemma 5.2. The paper source
+  remains external rather than being duplicated in the repository.
 - Preserve the settled Clarke proof boundary recorded in
   `PROJECT_COMPLETION.md`: cite existence and the nonsmooth multiplier input;
   derive the free-period uncentered multiplier equation, its coefficient, the
-  Reeb reconstruction, and \(I_K=T=A\) locally. The candidate is internally
-  reviewed; only integrated reader review remains. Moving the material must not
-  reopen that citation-versus-proof decision or compress the derivation.
+  Reeb reconstruction, and the characteristic identity \(I_K=T=A\) locally.
+  A general free-period minimizer need not have period \(I_K\), because its
+  scaling family changes the period while preserving \(I_K\); the
+  fixed-period comparison merely selects a representative with that
+  normalization. The unit-ball orbit and its full scaling family provide a
+  quick check of these factors. Moving the material must not reopen that
+  citation-versus-proof decision or compress the derivation.
 - Place authoritative citations where the thesis first claims that EHZ is the
   least characteristic action and that the nonsmooth generalized-orbit minimum
   gives the same capacity; the present Rabinowitz citation supports only part

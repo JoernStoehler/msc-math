@@ -216,6 +216,19 @@ one optional source-precision observation was incorporated.
 This packet does not change the simple-minimizer theorem strength used by the
 QP, flow-graph, HKO, rotated-polygon, or first-order chapters.
 
+The subsequent `theory-clarke-seam` candidate rewrites the reader-facing
+Clarke passage without changing that proof boundary. It separates attainment,
+weak Euler--Lagrange criticality, and reconstruction; uses
+\(H_K^*=h_K^2/4\) throughout; and derives the reconstruction scale directly as
+\(c^2=\nu=I_K(z)/T\). This also corrects an expository overstatement: the
+fixed-period conversion selects a free-period minimizer with \(I_K=T\), but
+other members of its scaling family have the same \(I_K\) and a different
+period. The source numbering was rechecked against arXiv:1111.2353, the
+downstream simple-minimizer reconstruction was updated, and the candidate
+passed mathematical self-review, a unit-ball scaling check, a clean thesis
+build, and rendered review. No subagent review was used for this rewrite; it
+still requires Jörn's integrated review before merge.
+
 ## Dependency And Ownership Shape
 
 1. Data-science broad-first exploration closed under the corrected value/cost

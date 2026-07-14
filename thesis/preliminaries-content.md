@@ -56,7 +56,10 @@ later proofs depend on their exact signs, factors, and quantifiers.
   nonsmooth AAO/HK route.
 - Clarke duality: retain `02-preliminaries-clarke-dual-action-principle.tex`.
   `PROJECT_COMPLETION.md` owns its settled proof boundary and review status;
-  AAO2014 and HK2017 own the external analytic inputs and correspondence.
+  AAO2014 and HK2017 own the external analytic inputs and correspondence. The
+  active proof uses the conjugate Hamiltonian notation \(H_K^*\) to keep the
+  Fenchel and reconstruction steps visible without repeatedly expanding
+  \(h_K^2/4\).
 - Lagrangian products: `02-preliminaries-lagrangian-products.tex`, HKO2024 for
   the central example, and the later QP/polygon owners for specialized
   enumeration or symmetry.
@@ -93,10 +96,13 @@ characteristic/Hamiltonian-inclusion notion before Clarke and specializes it to
 polytope facets in the generalized-Reeb material. The mixed finite-geometry
 source has been replaced by semantic convex-Hamiltonian, polytope-input, and
 Lagrangian-product units; consumer-specific enumeration, incidence, chart, and
-volume material is no longer part of the preliminary reading burden. This
-pilot has passed a clean build and local rendered review. Its remaining gate is
-integrated mathematical and reader review, especially across the Clarke proof
-and the simple-minimizer argument.
+volume material is no longer part of the preliminary reading burden. The
+Clarke proof now separates attainment, weak Euler--Lagrange criticality, and
+reconstruction; the converse obtains
+\(\nu=I_K(z)/T=c^2\) directly from homogeneity. The downstream
+simple-minimizer proof uses that identity rather than repeating the older
+reconstruction algebra. This pilot has passed a clean build, local
+mathematical review, and rendered review. It is not yet Jörn-reviewed.
 
 After the active Clarke passage has passed Jörn's integrated review and all
 useful source decisions have been absorbed, delete
