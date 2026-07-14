@@ -3,7 +3,7 @@
 [package]
 name = "extreme-scalar-rejection-proposer"
 version = "0.1.0"
-license = "Apache-2.0"
+publish = false
 edition = "2021"
 
 [dependencies]

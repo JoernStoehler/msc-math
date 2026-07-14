@@ -6,7 +6,7 @@ rights, this repository uses two licenses according to material type.
 | Material | License |
 | --- | --- |
 | Project software: Rust, Python, SageMath, shell, and other executable source | Apache License 2.0 (`Apache-2.0`) |
-| Thesis text and source, project documentation, original project figures, and project-generated datasets | Creative Commons Attribution 4.0 International (`CC-BY-4.0`) |
+| Thesis text and source, public project documentation selected for distribution, original project figures, and project-generated datasets | Creative Commons Attribution 4.0 International (`CC-BY-4.0`) |
 
 The complete license texts are in `LICENSES/Apache-2.0.txt` and
 `LICENSES/CC-BY-4.0.txt`.
@@ -22,10 +22,15 @@ cited in this repository. In particular:
 - files that carry their own license or rights notice are governed by that
   notice.
 
+The license grant also does not cover `JOERN.md`, raw session logs, private
+communications, credentials, user configuration, private or submission-
+administration state, or other material identified as excluded from public
+distribution. Their presence in a working repository does not select them for
+CC BY 4.0 licensing.
+
 The Zenodo continuation bundle excludes cached papers, downloaded submission
 forms, and other third-party material without clear redistribution rights. See
 `submit/archive-rights-and-exclusions.md` for the current archive-boundary
 audit.
 
 Copyright 2026 Jörn Stöhler.
-

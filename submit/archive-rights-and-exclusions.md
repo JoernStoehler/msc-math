@@ -7,10 +7,12 @@ advice, and does not authorize publication.
 
 ## Current findings
 
-- The repository has no root license, `COPYING`, `NOTICE`, or `CITATION.cff`.
-  The Rust package manifests also have no `license` metadata. Public access on
-  GitHub therefore does not currently give future researchers a clear grant to
-  modify or redistribute this project.
+- The branch implements a root material-type scope notice and official copies
+  of Apache-2.0 and CC BY 4.0. Rust packages are marked `publish = false` and
+  deliberately omit Cargo's package-level `license` field because their source
+  trees contain both Apache-licensed software and CC-licensed documentation or
+  research material. A future crates.io release needs a narrower package
+  boundary and matching package metadata.
 - The tracked tree contains Jörn's thesis/research work, generated experiment
   data and figures, agent harness material, downloaded paper sources and
   figures under `papers/`, and downloaded official forms under `submit/`.
@@ -44,10 +46,11 @@ Commons itself recommends a software-specific license for code rather than a
 CC license.
 
 Use a root `LICENSES/` arrangement and short scope table, not per-file
-boilerplate throughout the repository. Cargo package metadata should identify
-Apache-2.0. The Zenodo record should describe both licenses and point to the
-scope file; its landing-page license selector must not imply that excluded or
-third-party material is relicensed.
+boilerplate throughout the repository. The Zenodo record should describe both
+licenses and point to the scope file; its landing-page license selector must
+not imply that excluded or third-party material is relicensed. Cargo packages
+remain unpublished until package contents can state their mixed or narrowed
+license boundary honestly.
 
 Official references:
 
@@ -130,7 +133,7 @@ downloaded forms.
 1. Produce a path-level include/exclude manifest and automated checker.
 2. Classify all retained non-code assets by producer and rights status.
 3. Review the current Git history before asking Software Heritage to ingest it.
-4. Check the implemented license files and scope notice, add Cargo metadata,
-   and prepare `CITATION.cff` once final citation metadata is stable.
+4. Check the implemented license files and scope notice, and prepare
+   `CITATION.cff` once final citation metadata is stable.
 5. Build an unlicensed dry-run closure bundle and verify extraction, LFS object
    identity, privacy exclusions, and a cold agent start.
