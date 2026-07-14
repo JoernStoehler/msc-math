@@ -15,7 +15,37 @@ records full exact `sys` after every update and tracks best-so-far only for
 analysis. A trajectory stops early only if the raw updated dual vertices do not
 define a valid state or the exact state/branch-gradient computation fails.
 
-## Retained run
+## Discussion entry point
+
+Start with
+[`artifacts/evaluation/DISCUSSION.md`](artifacts/evaluation/DISCUSSION.md), then
+use the generated
+[`artifacts/evaluation/analysis.json`](artifacts/evaluation/analysis.json) for
+exact denominators and per-trajectory values. The discussion report is
+generated from validated raw trajectories by `analyze_multistart.py`; it is not
+a second hand-maintained metric table.
+
+The evaluation sample is the first six `F=6` rows in canonical
+`experiments/sys-datascience/produce/random.jsonl` source order after excluding
+the already-observed `random_F6_s0_1`. The generator uses seed `42` and height
+interval `[0.8,1.2]`. Selection uses neither initial `sys` nor optimizer
+outcomes. Every selected start receives every retained learning rate. This is a
+small descriptive sample, not a population-wide estimate.
+
+The human-facing investigation figures are:
+
+- [`figures/evaluation-paired-outcomes.png`](figures/evaluation-paired-outcomes.png):
+  paired start-by-rate best gain, final regret, and invalidity;
+- [`figures/evaluation-prefix-retention.png`](figures/evaluation-prefix-retention.png):
+  8/20-iteration class disagreement, invalidity, and best-state retention;
+- [`figures/evaluation-selected-trajectories.png`](figures/evaluation-selected-trajectories.png):
+  the motivating diagnostic and post-hoc labeled evaluation examples exposing
+  late recovery, final regret, and invalidity.
+
+PDF versions sit beside each PNG. The motivating `random_F6_s0_1` start is
+shown only as a diagnostic; it is not counted as new evaluation evidence.
+
+## Motivating single-start diagnostic
 
 The retained packet runs 100 updates from the ordinary six-facet
 `3daddfde...104e` start at learning rates
@@ -33,7 +63,9 @@ full-`sys` and best-so-far trajectories. Regenerate it with
 
 This establishes that eight-step prefixes cannot evaluate the literal baseline
 on this start. It does not select a general learning rate, establish population
-behavior, or support a local-maximality claim.
+behavior, or support a local-maximality claim. The multi-start evaluation above
+tests whether its qualitative behavior transfers to an unselected source
+prefix.
 
 ## Regeneration
 
@@ -52,3 +84,41 @@ Expected complete trajectories contain 101 rows: the initial state plus 100
 updates. The `eta=1` failure trajectory contains the initial row and its first
 failed update. `run-provenance.json` records source, input, implementation, and
 command identity.
+
+Regenerate the paired evaluation from the repository root after checking out
+the canonical LFS source:
+
+```bash
+git lfs pull --include='experiments/sys-datascience/produce/random.jsonl,experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/trajectory-*.jsonl'
+
+cargo run --release -p exp-dev-gradient-ascent \
+  --bin dev-gradient-ascent-literal-naive-gradient -- \
+  --polytope-table experiments/sys-datascience/produce/random.jsonl \
+  --facet-count 6 \
+  --start-count 6 \
+  --exclude-start-ids random_F6_s0_1 \
+  --out-dir experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation \
+  --etas 1e-5,1e-4,1e-3,1e-2,1e-1,1 \
+  --updates 100 \
+  --parallelism 8
+
+uv run --script \
+  experiments/dev-gradient-ascent/literal-naive-gradient/analyze_multistart.py
+```
+
+Parallelism schedules independent start/rate trajectories only. Each trajectory
+remains deterministic and applies the same literal update. The analyzer fails
+if paired coverage, raw row counts, source identity, update identity, summary
+agreement, or the fixed six-rate/100-update contract disagrees.
+
+The 8/20-prefix practical classification uses a fixed operational threshold: a
+best-so-far gain of at least `1%` of initial `sys`. It was chosen before the full
+producer execution but was not independently preregistered; the resulting
+counts are descriptive. `analysis.json` separately records whether any later
+improvement occurred, so the threshold does not hide small late gains. Invalid
+trajectories are censored from final-regret
+denominators and remain visible in the raw artifacts and figures. For an
+invalid trajectory, the producer's legacy `summary.json` field `final_sys`
+means the last valid pre-failure state, not a valid 100-update endpoint. The
+generated `analysis.json` therefore sets evaluative `final_sys` to null and
+preserves the producer value as `last_valid_sys`.

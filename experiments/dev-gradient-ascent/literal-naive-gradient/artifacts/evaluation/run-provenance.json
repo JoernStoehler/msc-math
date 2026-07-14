@@ -1,0 +1,51 @@
+{
+  "command": [
+    "/workspaces/msc-math/target/release/dev-gradient-ascent-literal-naive-gradient",
+    "--polytope-table",
+    "experiments/sys-datascience/produce/random.jsonl",
+    "--facet-count",
+    "6",
+    "--start-count",
+    "6",
+    "--exclude-start-ids",
+    "random_F6_s0_1",
+    "--out-dir",
+    "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation",
+    "--etas",
+    "1e-5,1e-4,1e-3,1e-2,1e-1,1",
+    "--updates",
+    "100",
+    "--parallelism",
+    "8"
+  ],
+  "source_repo_head": "2fb14ac316832402ea9a64a949e3ef5dfece25b2",
+  "source_worktree_diff_blake3": "c968a94f10d905f52941d655f814cda9e70f9e83ebdfc1ac2f2412de5e19af7a",
+  "implementation_path": "/workspaces/msc-math/.worktrees/literal-gradient-multistart-polish/experiments/dev-gradient-ascent/literal-naive-gradient/main.rs",
+  "implementation_blake3": "5eae467f9b4280d30892d7500b07ba1aa07856c85a96abe681dfd97b2937a8d5",
+  "input_path": "experiments/sys-datascience/produce/random.jsonl",
+  "input_blake3": "536d5a79597bdf21771e900377e8c1dc249ab8c0520a4680c8036c8909b3d7c8",
+  "selection_rule": "first 6 input rows with facet_count=6, preserving source order, excluding [random_F6_s0_1]; no target or optimizer-outcome selection",
+  "selected_start_ids": [
+    "random_F6_s0_0",
+    "random_F6_s0_2",
+    "random_F6_s0_3",
+    "random_F6_s0_4",
+    "random_F6_s0_5",
+    "random_F6_s0_6"
+  ],
+  "excluded_start_ids": [
+    "random_F6_s0_1"
+  ],
+  "etas": [
+    0.00001,
+    0.0001,
+    0.001,
+    0.01,
+    0.1,
+    1.0
+  ],
+  "updates": 100,
+  "parallelism": 8,
+  "update_rule": "da = eta * grad_a sys_sigma(a); a = a + da",
+  "state_validity_rule": "Stop only when constructing the updated exact-state polytope or its exact full sys/branch gradient fails; no projection, gauge normalization, acceptance, or line search"
+}
