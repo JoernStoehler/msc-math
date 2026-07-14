@@ -7,9 +7,16 @@ prov = json.loads((root / "run-provenance.json").read_text())
 def blake3_file(path):
     code = "import blake3,sys; print(blake3.blake3(open(sys.argv[1],'rb').read()).hexdigest())"
     return subprocess.check_output(["uv", "run", "--with", "blake3", "--no-project", "python3", "-c", code, str(path)], text=True).strip()
-assert pathlib.Path(prov["implementation"]).exists()
-assert blake3_file(prov["implementation"]) == prov["implementation_blake3"], "implementation BLAKE3 mismatch"
+implementation_path = pathlib.Path(prov["implementation"])
+# Runs made in an ignored worktree record an absolute source path.  Resolve it
+# against this packet when that worktree has since been removed.
+if not implementation_path.exists():
+    implementation_path = pathlib.Path(__file__).with_name("main.rs")
+assert implementation_path.exists()
+assert blake3_file(implementation_path) == prov["implementation_blake3"], "implementation BLAKE3 mismatch"
 source_path = pathlib.Path(prov["source_input"])
+if not source_path.exists():
+    source_path = pathlib.Path(__file__).resolve().parents[3] / source_path
 assert source_path.exists() and blake3_file(source_path) == prov["source_input_blake3"], "source-input BLAKE3 mismatch"
 expected_policies = {"inf_normalized_branch_gradient", "near_active_box_lp_maximin", "candidate_window_box_lp_maximin"}
 expected_radii = {float(x) for x in prov["initial_radii"]}

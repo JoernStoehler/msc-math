@@ -5,8 +5,12 @@ assert prov["requested_target_budget"] == 1
 def blake3(path):
     out = subprocess.run(["uv", "run", "--with", "blake3", "--no-project", "python3", "-c", "import blake3,sys; print(blake3.blake3(open(sys.argv[1], 'rb').read()).hexdigest())", str(path)], check=True, capture_output=True, text=True).stdout.strip().splitlines()[-1]
     return out
-assert blake3(prov["source_input"]) == prov["source_input_blake3"]
-assert blake3(prov["implementation"]) == prov["implementation_blake3"]
+implementation = pathlib.Path(prov["implementation"])
+if not implementation.exists(): implementation = pathlib.Path(__file__).with_name("main.rs")
+source_input = pathlib.Path(prov["source_input"])
+if not source_input.exists(): source_input = pathlib.Path(__file__).resolve().parents[3] / source_input
+assert blake3(source_input) == prov["source_input_blake3"]
+assert blake3(implementation) == prov["implementation_blake3"]
 rows=[]
 for f in files:
     rs=[json.loads(x) for x in f.read_text().splitlines() if x.strip()]; assert len(rs)==2
