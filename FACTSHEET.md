@@ -34,11 +34,23 @@ maintenance low. The numbers are stable and can be out of order.
    official rule makes it mandatory. Jörn said this decision costs him about
    30 seconds.
 
-5. Agents may prepare archive options and an artifact checklist, but the final
-   archive target and artifact set need Jörn acceptance near finalization.
+5. Jörn accepted the thesis-support plus continuation archive outcome on
+   2026-07-14. Preserve the closure-time live repository state as the main
+   continuation surface, including the agent harness, thesis sources and
+   companions, formal notes, crates, experiments, retained data/artifacts, and
+   provenance needed to continue the work. Exclude raw session logs,
+   credentials, user configuration, private communications, submission
+   administration, downloaded papers, and third-party material without clear
+   redistribution rights. The final payload still needs a closure-time rights,
+   privacy, and claim audit.
 
-6. Zenodo is the leading non-GitHub preservation candidate because Kai named
-   it. arXiv/outreach are post-Kai-review unless promoted.
+6. Jörn accepted Zenodo as the primary frozen, citable archive on 2026-07-14.
+   GitHub remains the living agent-oriented repository; one manually curated
+   Zenodo record will hold the thesis-support plus continuation bundle; and
+   Software Heritage is a complementary source-history archive. Do not split
+   software and data into separate Zenodo records unless the final artifacts
+   acquire a clear independent citation use. Jörn does not yet have a Zenodo
+   account and accepted GitHub sign-up as the sensible account route.
 
 7. Stale deadline/admin notes should be removed or corrected when found. The
    repo should not keep old deadline notes as live planning context.

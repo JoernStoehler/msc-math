@@ -25,3 +25,24 @@ Preservation/reference links checked in the migrated submission state:
   <https://help.zenodo.org/docs/github/>
 - OpenDOAR, "OPUS Augsburg":
   <https://opendoar.ac.uk/repository/3341>
+
+## Accepted archive direction
+
+Jörn accepted the archive direction on 2026-07-14:
+
+- GitHub remains the living, agent-oriented repository.
+- One manually curated Zenodo record is the frozen, citable thesis-support and
+  continuation archive.
+- Software Heritage complements Zenodo by preserving the public Git source
+  history; it does not replace the mixed Zenodo bundle.
+- Preserve the closure-time repository state, including the repo-local agent
+  harness and research continuation material. Exclude private/session/admin
+  material and anything without clear redistribution rights.
+- Use one Zenodo record unless a final software or data object has a concrete
+  independent citation use.
+
+Jörn does not yet have a Zenodo account and accepted `Sign up with GitHub` as
+the account route. Record creation, DOI reservation, upload, and publication
+remain later actions. Agents own the local rights/exclusion inventory,
+metadata candidate, payload manifest, package construction, and verification
+before asking Jörn to operate the draft record.

@@ -24,8 +24,10 @@ Update rule: add or change a claim only with a source pointer or an explicit
 - State the repository structure at a high level.
 - State the live GitHub repository, with the caveat that it may retire in a few
   years, and the permanent uploads on chosen archive sites once known.
-- Settled default, 2026-06-11: archive the GitHub repository and also upload to
-  Zenodo or an equivalent permanent archive. Fill exact URLs near submission.
+- Accepted archive direction, 2026-07-14: GitHub remains the living repository;
+  one manually curated Zenodo record holds the frozen thesis-support plus
+  continuation bundle; Software Heritage complements it for public Git source
+  history. Fill exact URLs and identifiers near submission.
 - State which experiment artifacts support thesis claims.
 - State that data is committed, the git history is not pruned and covers
   roughly half the thesis lifetime, the thesis PDF is rebuildable, and
@@ -52,5 +54,5 @@ Update rule: add or change a claim only with a source pointer or an explicit
 
 ## Open Decisions
 
-- Fill archive-site names and exact reproducibility promise when
-  submission/archive mechanics are known.
+- Fill exact GitHub, Zenodo, and Software Heritage identifiers and the exact
+  reproducibility promise when the closure payload and mechanics are known.
