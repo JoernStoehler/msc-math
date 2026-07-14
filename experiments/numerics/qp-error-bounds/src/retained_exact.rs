@@ -534,7 +534,7 @@ fn main() {
             agreement_rules: "current scalar vs retained uses abs(f64_min - f64_exact) <= 1e-12; current minimizer/window comparisons use canonical sigma-set equality; retained vs exact-all scalar/minimizer/window comparisons use exact rational equality and canonical sigma-set equality".into(),
             scalar_agreement_retained_vs_all: ref_min.as_ref().map(|m| *m == retained_min),
             minimizer_agreement_retained_vs_all: reference.as_ref().map(|_| ref_mins == retained_mins),
-            window_agreement_retained_vs_all: reference.as_ref().map(|r| r.4 == retained_window),
+            window_agreement_retained_vs_all: reference.as_ref().map(|_| ref_window == retained_window),
             candidates: candidates_rows,
         };
         serde_json::to_writer(&mut writer, &row).expect("serialize row");
