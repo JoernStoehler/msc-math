@@ -6,11 +6,13 @@
 
 use exp_sys_landscape::{exact_volume_from_incidence_as_f64, SysLandscapePolytopeCache};
 use nalgebra::Vector4;
+use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::process::Command;
+use std::time::Instant;
 use symplectic::derivatives::{
     capacity_derivatives_a_from_orbit, systolic_ratio_gradient_a, volume_derivatives_a,
 };
@@ -26,18 +28,29 @@ const DEFAULT_UPDATES: usize = 100;
 #[derive(Debug)]
 struct Cli {
     polytope_table: PathBuf,
-    poly_id: String,
+    poly_id: Option<String>,
+    facet_count: Option<usize>,
+    start_count: Option<usize>,
+    exclude_start_ids: Vec<String>,
     out_dir: PathBuf,
     etas: Vec<f64>,
     updates: usize,
+    parallelism: usize,
 }
 
 #[derive(Debug, Deserialize)]
 struct PanelRow {
+    #[serde(alias = "name")]
     poly_id: String,
-    #[allow(dead_code)]
     facet_count: Option<usize>,
+    #[serde(alias = "dual_vertices")]
     dual_vertices_f64: Vec<[f64; 4]>,
+}
+
+#[derive(Debug, Clone)]
+struct Start {
+    id: String,
+    dual_vertices: Vec<Vector4<f64>>,
 }
 
 #[derive(Debug)]
@@ -74,6 +87,7 @@ struct TrajectoryRow {
 
 #[derive(Debug, Serialize)]
 struct TrajectorySummary {
+    start_id: String,
     eta: f64,
     requested_updates: usize,
     iterations_completed: usize,
@@ -100,19 +114,25 @@ struct RunProvenance {
     implementation_blake3: String,
     input_path: String,
     input_blake3: String,
-    poly_id: String,
+    selection_rule: String,
+    selected_start_ids: Vec<String>,
+    excluded_start_ids: Vec<String>,
     etas: Vec<f64>,
     updates: usize,
+    parallelism: usize,
     update_rule: String,
     state_validity_rule: String,
 }
 
 #[derive(Debug, Serialize)]
 struct RunSummary {
-    poly_id: String,
+    selection_rule: String,
+    selected_start_ids: Vec<String>,
     source_repo_head: Option<String>,
     etas: Vec<f64>,
     updates: usize,
+    parallelism: usize,
+    wall_seconds: f64,
     trajectories: Vec<TrajectorySummary>,
 }
 
@@ -120,21 +140,8 @@ fn main() {
     let cli = parse_args(std::env::args().skip(1));
     fs::create_dir_all(&cli.out_dir).expect("create output directory");
     let rows: Vec<PanelRow> = load_jsonl(&cli.polytope_table);
-    let row = rows
-        .into_iter()
-        .find(|row| row.poly_id == cli.poly_id)
-        .unwrap_or_else(|| {
-            panic!(
-                "poly_id {} not found in {}",
-                cli.poly_id,
-                cli.polytope_table.display()
-            )
-        });
-    let initial_duals: Vec<Vector4<f64>> = row
-        .dual_vertices_f64
-        .iter()
-        .map(|v| Vector4::new(v[0], v[1], v[2], v[3]))
-        .collect();
+    let (selection_rule, starts) = select_starts(&cli, rows);
+    let selected_start_ids: Vec<String> = starts.iter().map(|start| start.id.clone()).collect();
 
     let implementation_path =
         PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("literal-naive-gradient/main.rs");
@@ -146,38 +153,73 @@ fn main() {
         implementation_blake3: hash_file(&implementation_path),
         input_path: cli.polytope_table.display().to_string(),
         input_blake3: hash_file(&cli.polytope_table),
-        poly_id: cli.poly_id.clone(),
+        selection_rule: selection_rule.clone(),
+        selected_start_ids: selected_start_ids.clone(),
+        excluded_start_ids: cli.exclude_start_ids.clone(),
         etas: cli.etas.clone(),
         updates: cli.updates,
+        parallelism: cli.parallelism,
         update_rule: "da = eta * grad_a sys_sigma(a); a = a + da".to_string(),
         state_validity_rule: "Stop only when constructing the updated exact-state polytope or its exact full sys/branch gradient fails; no projection, gauge normalization, acceptance, or line search".to_string(),
     };
     write_json(cli.out_dir.join("run-provenance.json"), &provenance);
 
-    let mut summaries = Vec::new();
-    for &eta in &cli.etas {
-        let summary = run_trajectory(&initial_duals, eta, cli.updates, &cli.out_dir);
-        summaries.push(summary);
-    }
+    let multi_start = starts.len() > 1 || cli.facet_count.is_some();
+    let jobs: Vec<(usize, usize, &Start, f64)> = starts
+        .iter()
+        .enumerate()
+        .flat_map(|(start_index, start)| {
+            cli.etas
+                .iter()
+                .copied()
+                .enumerate()
+                .map(move |(eta_index, eta)| (start_index, eta_index, start, eta))
+        })
+        .collect();
+    let began = Instant::now();
+    let pool = rayon::ThreadPoolBuilder::new()
+        .num_threads(cli.parallelism)
+        .build()
+        .expect("build trajectory thread pool");
+    let mut summaries: Vec<(usize, usize, TrajectorySummary)> = pool.install(|| {
+        jobs.into_par_iter()
+            .map(|(start_index, eta_index, start, eta)| {
+                let path = trajectory_path(&cli.out_dir, &start.id, eta, multi_start);
+                let summary =
+                    run_trajectory(&start.id, &start.dual_vertices, eta, cli.updates, &path);
+                (start_index, eta_index, summary)
+            })
+            .collect()
+    });
+    summaries.sort_by_key(|(start_index, eta_index, _)| (*start_index, *eta_index));
+    let summaries: Vec<TrajectorySummary> = summaries
+        .into_iter()
+        .map(|(_, _, summary)| summary)
+        .collect();
     let run_summary = RunSummary {
-        poly_id: cli.poly_id,
+        selection_rule,
+        selected_start_ids,
         source_repo_head: provenance.source_repo_head,
         etas: cli.etas,
         updates: cli.updates,
+        parallelism: cli.parallelism,
+        wall_seconds: began.elapsed().as_secs_f64(),
         trajectories: summaries,
     };
     write_json(cli.out_dir.join("summary.json"), &run_summary);
 }
 
 fn run_trajectory(
+    start_id: &str,
     initial_duals: &[Vector4<f64>],
     eta: f64,
     updates: usize,
-    out_dir: &Path,
+    path: &Path,
 ) -> TrajectorySummary {
-    let filename = format!("trajectory-eta-{}.jsonl", eta_label(eta));
-    let path = out_dir.join(filename);
-    let file = File::create(&path).expect("create trajectory");
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent).expect("create trajectory directory");
+    }
+    let file = File::create(path).expect("create trajectory");
     let mut writer = BufWriter::new(file);
     let initial =
         compute_state(initial_duals).unwrap_or_else(|err| panic!("initial state failed: {err}"));
@@ -278,6 +320,7 @@ fn run_trajectory(
     }
     writer.flush().expect("flush trajectory");
     TrajectorySummary {
+        start_id: start_id.to_string(),
         eta,
         requested_updates: updates,
         iterations_completed: completed,
@@ -286,12 +329,12 @@ fn run_trajectory(
         best_sys,
         best_iteration,
         gain_through_iteration_20: if completed >= 20 {
-            Some(best_sys_through(&path, 20).unwrap_or(initial_sys) - initial_sys)
+            Some(best_sys_through(path, 20).unwrap_or(initial_sys) - initial_sys)
         } else {
             None
         },
         additional_best_gain_iterations_21_100: if completed >= 20 {
-            best_sys - best_sys_through(&path, 20).unwrap_or(initial_sys)
+            best_sys - best_sys_through(path, 20).unwrap_or(initial_sys)
         } else {
             0.0
         },
@@ -302,6 +345,81 @@ fn run_trajectory(
         failure,
         trajectory_path: path.display().to_string(),
     }
+}
+
+fn select_starts(cli: &Cli, rows: Vec<PanelRow>) -> (String, Vec<Start>) {
+    let selected: Vec<PanelRow> = if let Some(facet_count) = cli.facet_count {
+        let count = cli
+            .start_count
+            .expect("--facet-count requires --start-count");
+        rows.into_iter()
+            .filter(|row| row.facet_count == Some(facet_count))
+            .filter(|row| !cli.exclude_start_ids.contains(&row.poly_id))
+            .take(count)
+            .collect()
+    } else {
+        let poly_id = cli
+            .poly_id
+            .as_ref()
+            .expect("exact selection requires --poly-id");
+        rows.into_iter()
+            .filter(|row| row.poly_id == *poly_id)
+            .collect()
+    };
+    let expected = cli.start_count.unwrap_or(1);
+    assert_eq!(
+        selected.len(),
+        expected,
+        "selection found {} starts, expected {expected}",
+        selected.len()
+    );
+    let rule = if let Some(facet_count) = cli.facet_count {
+        format!(
+            "first {} input rows with facet_count={}, preserving source order, excluding [{}]; no target or optimizer-outcome selection",
+            expected,
+            facet_count,
+            cli.exclude_start_ids.join(",")
+        )
+    } else {
+        format!("exact poly_id={}", cli.poly_id.as_deref().unwrap())
+    };
+    let starts = selected
+        .into_iter()
+        .map(|row| Start {
+            id: row.poly_id,
+            dual_vertices: row
+                .dual_vertices_f64
+                .iter()
+                .map(|v| Vector4::new(v[0], v[1], v[2], v[3]))
+                .collect(),
+        })
+        .collect();
+    (rule, starts)
+}
+
+fn trajectory_path(out_dir: &Path, start_id: &str, eta: f64, multi_start: bool) -> PathBuf {
+    let filename = format!("trajectory-eta-{}.jsonl", eta_label(eta));
+    if multi_start {
+        out_dir
+            .join("trajectories")
+            .join(safe_id(start_id))
+            .join(filename)
+    } else {
+        out_dir.join(filename)
+    }
+}
+
+fn safe_id(value: &str) -> String {
+    value
+        .chars()
+        .map(|c| {
+            if c.is_ascii_alphanumeric() || c == '-' || c == '_' {
+                c
+            } else {
+                '_'
+            }
+        })
+        .collect()
 }
 
 fn compute_state(duals: &[Vector4<f64>]) -> Result<State, String> {
@@ -562,18 +680,48 @@ fn parse_args(args: impl Iterator<Item = String>) -> Cli {
         "experiments/dev-sys-prediction/facet-scale-baseline-error/polytope-panel.jsonl",
     );
     let mut poly_id =
-        "3daddfde522cb04777d651814d7f88a31f6ec20c1b7ac8fc960efc3e4534104e".to_string();
+        Some("3daddfde522cb04777d651814d7f88a31f6ec20c1b7ac8fc960efc3e4534104e".to_string());
+    let mut facet_count = None;
+    let mut start_count = None;
+    let mut exclude_start_ids = Vec::new();
     let mut out_dir =
         PathBuf::from("/tmp/sys-ds-research-lines/optimizer/literal-naive-gradient-luna-high");
     let mut etas = DEFAULT_ETAS.to_vec();
     let mut updates = DEFAULT_UPDATES;
+    let mut parallelism = 1usize;
     let mut args = args.peekable();
     while let Some(arg) = args.next() {
         match arg.as_str() {
             "--polytope-table" => {
                 polytope_table = PathBuf::from(args.next().expect("--polytope-table requires path"))
             }
-            "--poly-id" => poly_id = args.next().expect("--poly-id requires value"),
+            "--poly-id" => poly_id = Some(args.next().expect("--poly-id requires value")),
+            "--facet-count" => {
+                facet_count = Some(
+                    args.next()
+                        .expect("--facet-count requires integer")
+                        .parse()
+                        .expect("invalid facet count"),
+                );
+                poly_id = None;
+            }
+            "--start-count" => {
+                start_count = Some(
+                    args.next()
+                        .expect("--start-count requires integer")
+                        .parse()
+                        .expect("invalid start count"),
+                )
+            }
+            "--exclude-start-ids" => {
+                exclude_start_ids = args
+                    .next()
+                    .expect("--exclude-start-ids requires csv")
+                    .split(',')
+                    .filter(|value| !value.is_empty())
+                    .map(str::to_string)
+                    .collect()
+            }
             "--out-dir" => out_dir = PathBuf::from(args.next().expect("--out-dir requires path")),
             "--etas" => {
                 etas = args
@@ -590,14 +738,23 @@ fn parse_args(args: impl Iterator<Item = String>) -> Cli {
                     .parse()
                     .expect("invalid updates")
             }
+            "--parallelism" => {
+                parallelism = args
+                    .next()
+                    .expect("--parallelism requires integer")
+                    .parse()
+                    .expect("invalid parallelism")
+            }
             "--help" => {
-                println!("Usage: dev-gradient-ascent-literal-naive-gradient [--polytope-table PATH] [--poly-id ID] [--out-dir PATH] [--etas CSV] [--updates N]");
+                println!("Usage: dev-gradient-ascent-literal-naive-gradient [--polytope-table PATH] [--poly-id ID | --facet-count F --start-count N [--exclude-start-ids CSV]] [--out-dir PATH] [--etas CSV] [--updates N] [--parallelism N]");
                 std::process::exit(0);
             }
             other => panic!("unsupported argument {other}"),
         }
     }
     assert!(!etas.is_empty(), "at least one eta is required");
+    assert!(parallelism > 0, "parallelism must be positive");
+    assert!(start_count.unwrap_or(1) > 0, "start count must be positive");
     assert!(
         etas.iter().all(|eta| eta.is_finite() && *eta > 0.0),
         "etas must be positive finite"
@@ -605,8 +762,12 @@ fn parse_args(args: impl Iterator<Item = String>) -> Cli {
     Cli {
         polytope_table,
         poly_id,
+        facet_count,
+        start_count,
+        exclude_start_ids,
         out_dir,
         etas,
         updates,
+        parallelism,
     }
 }
