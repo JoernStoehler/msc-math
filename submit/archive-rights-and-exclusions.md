@@ -1,8 +1,9 @@
 # Archive Rights And Exclusions
 
-Status: preliminary archive-boundary audit, 2026-07-14. This prepares the
-accepted Zenodo thesis-support plus continuation record. It is not legal advice
-and does not authorize publication.
+Status: active archive-boundary audit, 2026-07-14. Jörn accepted the recommended
+Apache-2.0 plus CC BY 4.0 outcome on 2026-07-14 while noting that he is not a
+licensing expert. This records an informed project-outcome choice, not legal
+advice, and does not authorize publication.
 
 ## Current findings
 
@@ -22,7 +23,7 @@ and does not authorize publication.
   figures, but its ignored artifacts and source session logs are not tracked.
   The retained reports still need focused privacy and quotation review.
 
-## Recommended licensing outcome
+## Accepted licensing outcome
 
 Use a clear two-part permissive scheme:
 
@@ -129,8 +130,7 @@ downloaded forms.
 1. Produce a path-level include/exclude manifest and automated checker.
 2. Classify all retained non-code assets by producer and rights status.
 3. Review the current Git history before asking Software Heritage to ingest it.
-4. Implement the chosen license files, scope notice, Cargo metadata, and
-   `CITATION.cff` on a review branch.
+4. Check the implemented license files and scope notice, add Cargo metadata,
+   and prepare `CITATION.cff` once final citation metadata is stable.
 5. Build an unlicensed dry-run closure bundle and verify extraction, LFS object
    identity, privacy exclusions, and a cold agent start.
-

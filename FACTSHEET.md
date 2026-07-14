@@ -52,6 +52,12 @@ maintenance low. The numbers are stable and can be out of order.
    acquire a clear independent citation use. Jörn created the Zenodo account
    successfully through GitHub sign-up on 2026-07-14.
 
+6.1. Jörn accepted permissive reuse on 2026-07-14: Apache License 2.0 for
+     project software and Creative Commons Attribution 4.0 International for
+     Jörn-owned thesis/research text, documentation, original figures, and
+     project-generated data. Third-party material is not relicensed and must
+     be excluded or carry its own rights terms.
+
 7. Stale deadline/admin notes should be removed or corrected when found. The
    repo should not keep old deadline notes as live planning context.
 
