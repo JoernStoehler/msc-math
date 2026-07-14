@@ -58,14 +58,16 @@ def validate(rows, require_complete=True):
         cov=r.get("vertex_covariance",{}); status=cov.get("status")
         if status != "eligible": raise AnalysisError("reviewed feature covariance must be eligible")
         if cov.get("expected_vertex_count") != cov.get("distinct_vertex_count") or cov.get("expected_vertex_count") != r.get("vertex_count"): raise AnalysisError("covariance vertex counts are incomplete")
-        for key in COV: _finite(cov.get(key),f"covariance.{key}")
+        for key in COV:
+            if cov.get(key) is None: raise AnalysisError(f"required covariance feature {key} is null")
+            _finite(cov.get(key),f"covariance.{key}")
         if cov.get("condition",math.inf)>1e10: raise AnalysisError("eligible covariance exceeds condition limit")
         strict_allowed=_strict_scope(r)
         if strict_allowed and r.get("strict_cycle") is None: raise AnalysisError("allowed row lacks strict-cycle metadata")
         if not strict_allowed and r.get("strict_cycle") is not None: raise AnalysisError("forbidden row has strict-cycle metadata")
         if r.get("strict_cycle") is not None:
             cyc=r["strict_cycle"]; signs=cyc.get("strict_signs")
-            if not isinstance(cyc.get("strict_sign_cell"),bool) or not isinstance(cyc.get("strict_cycle_feasible"),bool) or not isinstance(cyc.get("strict_cycle_count"),int) or cyc.get("strict_cycle_count")<0: raise AnalysisError("strict-cycle metadata malformed")
+            if not isinstance(cyc.get("strict_sign_cell"),bool) or not isinstance(cyc.get("strict_cycle_feasible"),bool) or type(cyc.get("strict_cycle_count")) is not int or cyc.get("strict_cycle_count")<0: raise AnalysisError("strict-cycle metadata malformed")
             if not isinstance(signs,list) or len(signs)!=3 or any(not isinstance(row,list) or len(row)!=3 or any(type(x) is not int or x not in {-1,0,1} for x in row) for row in signs): raise AnalysisError("strict-cycle signs malformed")
             if cyc["strict_cycle_feasible"] != (cyc["strict_cycle_count"]>0) or cyc["strict_sign_cell"] != all(x != 0 for row in signs for x in row): raise AnalysisError("strict-cycle metadata inconsistent")
     if not require_complete: return

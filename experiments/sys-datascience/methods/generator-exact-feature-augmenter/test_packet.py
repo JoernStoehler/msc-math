@@ -154,6 +154,17 @@ class ExactFeaturePacketTests(unittest.TestCase):
         with self.assertRaisesRegex(augment.AnalysisError, "required feature"):
             analyzer.validate(rows, require_complete=False)
 
+        rows = copy.deepcopy(self.features)
+        rows[0]["vertex_covariance"]["nu1"] = None
+        with self.assertRaisesRegex(augment.AnalysisError, "required covariance feature nu1"):
+            analyzer.validate(rows, require_complete=False)
+
+        rows = copy.deepcopy(self.features)
+        allowed = next(row for row in rows if row["strict_cycle"] is not None)
+        allowed["strict_cycle"]["strict_cycle_count"] = True
+        with self.assertRaisesRegex(augment.AnalysisError, "strict-cycle metadata malformed"):
+            analyzer.validate(rows, require_complete=False)
+
     def test_altered_feature_manifest_and_revision_hash_guards(self):
         with tempfile.TemporaryDirectory() as directory:
             directory=Path(directory); feature_path=directory/"features.jsonl"; manifest_path=directory/"augment-report.json"
