@@ -53,8 +53,3 @@ python3 experiments/dev-gradient-ascent/adaptive-direction-ablation/analyze_scre
 
 The producer's default 100-evaluation budget is not the retained command; use
 the explicit bounded `--budget 6` above when regenerating this packet.
-
-The retained hard-state packet was produced with `--budget 6`,
-`--facet-count 12`, `--start-count 1`, and the three default radii against
-`inputs/narrow-gap-hard-state.jsonl`; the canonical six-start smoke used
-`--smoke --budget 1` against the random source.
