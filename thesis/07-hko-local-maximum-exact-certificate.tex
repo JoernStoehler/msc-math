@@ -2,8 +2,8 @@
 \label{subsec:hko-local-maximum-computation-with-sagemath}
 
 The role of the exact certificate is to prove the strict transverse-slice
-statement left by the chart and quotient reduction. It does this by upper
-branches. As in the finite-capacity computation from
+statement left by the chart and quotient reduction. It does this with feasible
+upper functions. As in the finite-capacity computation from
 Section~\ref{sec:quadratic-program-algorithm-hk2019}, a word \(\sigma\) fixes
 a cyclic facet sequence, and the coefficients \(\beta\) are the feasible
 weights that produce an admissible action for that sequence. A feasible action
@@ -27,7 +27,7 @@ and satisfies
   \operatorname{sys}(K_{\mathrm{HKO}}).
 \]
 These feasible sections are not required to be optimizing branches for nearby
-parameters. They are used only as upper branches touching the systolic ratio
+parameters. They are used only as upper functions touching the systolic ratio
 at HKO.
 
 This point is essential for the HKO certificate. The 26-row certificate uses
@@ -36,7 +36,7 @@ nonsingular active rows alone do not span the \(25\)-dimensional quotient
 slice. The proof therefore does not differentiate nearby KKT-critical
 optimizers. Instead, for each selected word it fixes enough beta coordinates
 so that the closure and normalization equations have an invertible minor. This
-gives a smooth feasible beta section and hence a differentiable upper branch
+gives a smooth feasible beta section and hence a differentiable upper function
 even when the KKT system for an optimizing branch is singular.
 
 The finite first-order criterion is the following. Let
@@ -48,11 +48,11 @@ coefficients \(\lambda_\sigma\) with
   \qquad
   \sum_\sigma\lambda_\sigma r_\sigma=0,
 \]
-then every nonzero transverse direction has some upper branch with strictly
+then every nonzero transverse direction has some upper function with strictly
 negative first derivative. Indeed, the ambient coordinate space has dimension
 \(40\), and the symmetry tangent space has dimension \(15\), so rank \(25\)
 rows that vanish on the symmetry tangent space span the cotangent space of any
-transverse slice. Since the selected set is finite and the upper branches are
+transverse slice. Since the selected set is finite and the upper functions are
 smooth, the first-order decrease has a uniform negative margin on the compact
 unit sphere in the slice. Hence \(\operatorname{sys}\) decreases for every
 sufficiently small nonzero transverse perturbation.
@@ -68,7 +68,7 @@ It records the following proof-facing facts:
 \text{ambient dimension} & 40\\
 \text{selected feasible sections} & 26\\
 \text{symmetry tangent rank} & 15\\
-\text{upper-branch row rank} & 25\\
+\text{upper-function row rank} & 25\\
 \text{convex certificate} &
   \lambda_\sigma>0,\quad
   \sum_\sigma\lambda_\sigma=1,\quad
@@ -94,7 +94,7 @@ the proof-facing equations.
 The full verifier packet is stored in
 \path{experiments/hko-local-maximum/theorem/}. The mathematical implication
 from these checked equations to
-Theorem~\ref{thm:hko-ten-facet-local-maximum} is the finite upper-branch and
+Theorem~\ref{thm:hko-ten-facet-local-maximum} is the finite upper-function and
 slice argument above; it does not depend on the search procedure that found the
 certificate.
 
@@ -107,7 +107,7 @@ inverse-function-theorem slice \(a_{\mathrm{HKO}}+S\), so it is enough to prove
 strict local maximality on that slice.
 
 The finite certificate gives the required strict slice maximum. Its selected
-feasible upper branches touch \(\operatorname{sys}\) at \(a_{\mathrm{HKO}}\).
+feasible upper functions touch \(\operatorname{sys}\) at \(a_{\mathrm{HKO}}\).
 Their derivative rows annihilate \(T_{\mathrm{orb}}\), span the cotangent space
 of the slice, and admit a strictly positive convex relation summing to zero.
 The finite first-order criterion above therefore makes every sufficiently small

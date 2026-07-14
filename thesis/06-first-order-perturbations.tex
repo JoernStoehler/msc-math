@@ -1,4 +1,430 @@
-\section{Algorithm For First-Order Perturbations}\label{sec:first-order-perturbations}
-\subsection{Definition}\label{subsec:first-order-perturbations-definition}
-\subsection{Correctness}\label{subsec:first-order-perturbations-correctness}
-\subsection{Empirical tests}\label{subsec:first-order-perturbations-empirical-tests}
+\section{First-Order Variation in Facet Coordinates}
+\label{sec:first-order-perturbations}
+
+The two preceding algorithms answer a scalar question: what is
+\(c_{\mathrm{EHZ}}(K)\) for one fixed polytope?  Local search and local
+maximality ask a different question: how does the systolic ratio change when
+the facets move?  The Haim--Kislev formula makes this question finite, but not
+automatically smooth.  A fixed facet word may give a smooth branch, several
+branches may exchange the optimum, or a branch may appear through a zero
+dwell time or a singular constraint system.
+
+This section develops the first-order calculation where the relevant
+Haim--Kislev constrained maxima are nondegenerate.  This condition is
+unrelated to the flow-graph regularity in the preceding section.  The chapter
+also isolates a weaker object that remains useful at degenerate branch data:
+a smooth feasible choice of Haim--Kislev
+weights gives an upper function for the systolic ratio, whether or not those
+weights remain optimal.  The distinction is important.  The search methods use
+nondegenerate branch gradients as local models, whereas the HKO proof in the next
+section uses selected feasible upper functions and does not differentiate a
+complete family of optimizing branches.
+
+\subsection{Row coordinates and the volume variation}
+\label{subsec:first-order-row-chart}
+
+Fix a labelled presentation
+\begin{equation}\label{eq:first-order-row-chart}
+  K(a)=\{x\in\mathbb R^4:
+    \langle a_i,x\rangle\leq 1,\ i=1,\ldots,F\},
+  \qquad
+  a=(a_1,\ldots,a_F).
+\end{equation}
+The vectors \(a_i\) are the dual vertices used in
+Section~\ref{sec:quadratic-program-algorithm-hk2019}.  A row perturbation is a
+tuple \(h=(h_1,\ldots,h_F)\in(\mathbb R^4)^F\), and we write
+\(a(t)=a+th\).  Throughout this section we work in a neighborhood in which
+\(K(a)\) remains a bounded full-dimensional polytope, the listed rows remain
+irredundant, and the same simple face combinatorics persists.  In particular,
+\(V(a)>0\), and the Haim--Kislev formula applies.  These are open conditions at
+a simple labelled polytope.  They are local-chart hypotheses, not assertions
+about every halfspace presentation.
+
+For the facet \(F_i\), let \(S_i\) be its three-dimensional Euclidean volume
+and let \(\bar x_i\) be its centroid.  The volume derivative has a particularly
+simple expression in row coordinates.
+
+\begin{proposition}[Volume first variation]
+\label{prop:first-order-volume-variation}
+In the stable simple chart above, with
+\(V(a)=\operatorname{vol}_4(K(a))\),
+\begin{equation}\label{eq:first-order-volume-variation}
+  DV(a)[h]
+  =-
+  \sum_{i=1}^F
+    \frac{S_i}{\lVert a_i\rVert}
+    \langle \bar x_i,h_i\rangle.
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+At a point \(x\in F_i\), differentiating the moving hyperplane equation
+\(\langle a_i(t),x(t)\rangle=1\) gives
+\[
+  \langle a_i,\dot x\rangle=-\langle h_i,x\rangle.
+\]
+Thus the outward normal velocity of this facet is
+\(-\langle h_i,x\rangle/\lVert a_i\rVert\).  The first variation of volume is
+the integral of the outward normal velocity over the boundary.  Integrating on
+each facet and using
+\(\int_{F_i}x\,dS=S_i\bar x_i\) gives
+\eqref{eq:first-order-volume-variation}.  Intersections of facets have
+three-dimensional measure zero and do not contribute to the boundary
+integral.
+\end{proof}
+
+The formula displays both parts of a row perturbation at once: changing
+\(\lVert a_i\rVert\) moves the supporting hyperplane, while changing its
+direction tilts that hyperplane.  It is also convenient computationally,
+because it needs only facet volumes and centroids once the incidence data are
+known.
+
+\subsection{Feasible sections and smooth maxima}
+\label{subsec:first-order-hk-branches}
+
+Fix an ordered word
+\(\sigma=(\sigma_1,\ldots,\sigma_m)\) with distinct facets.  Write
+\[
+  C_\sigma(a)\beta
+  =
+  \left(
+    \sum_{k=1}^m\beta_k a_{\sigma_k},
+    \sum_{k=1}^m\beta_k
+  \right),
+  \qquad e=(0,0,0,0,1),
+\]
+so that the Haim--Kislev feasibility equations are
+\(C_\sigma(a)\beta=e\) and \(\beta\geq0\).  We use the quadratic objective
+from \eqref{eq:quadratic-program-algorithm-hk2019-q}:
+\begin{equation}\label{eq:first-order-fixed-word-q}
+  Q_\sigma(a,\beta)
+  =
+  \sum_{1\leq j<k\leq m}
+    \beta_j\beta_k\,
+    \omega_0(a_{\sigma_j},a_{\sigma_k}).
+\end{equation}
+For later differentiation, its explicit row variation at fixed \(\beta\) is
+\begin{equation}\label{eq:first-order-explicit-q-variation}
+\begin{split}
+  D_aQ_\sigma(a,\beta)[h]
+  ={}&\sum_{1\leq j<k\leq m}\beta_j\beta_k
+  \bigl(
+    \omega_0(h_{\sigma_j},a_{\sigma_k})
+    +\omega_0(a_{\sigma_j},h_{\sigma_k})
+  \bigr).
+\end{split}
+\end{equation}
+
+First consider any smooth feasible choice, without imposing stationarity.
+
+\begin{lemma}[Feasible-section upper function]
+\label{lem:first-order-feasible-section-upper-function}
+Suppose that \(\beta(a)\) is smooth near \(a_0\),
+\[
+  C_\sigma(a)\beta(a)=e,
+  \qquad \beta(a)>0,
+  \qquad Q_\sigma(a,\beta(a))>0.
+\]
+Define
+\[
+  A_\sigma(a)=\frac{1}{2Q_\sigma(a,\beta(a))},
+  \qquad
+  U_\sigma(a)=\frac{A_\sigma(a)^2}{2V(a)}.
+\]
+Then
+\begin{equation}\label{eq:first-order-upper-function}
+  \operatorname{sys}(K(a))\leq U_\sigma(a)
+\end{equation}
+throughout this neighborhood.  If the chosen weights attain the global
+Haim--Kislev maximum at \(a_0\), then equality holds in
+\eqref{eq:first-order-upper-function} at \(a_0\).
+\end{lemma}
+
+\begin{proof}
+The chosen \(\beta(a)\) is feasible for the global maximum defining
+\(Q_{\max}(a)\).  Hence
+\(Q_{\max}(a)\geq Q_\sigma(a,\beta(a))\).  The Haim--Kislev formula gives
+\[
+  c_{\mathrm{EHZ}}(K(a))
+  =\frac{1}{2Q_{\max}(a)}
+  \leq A_\sigma(a).
+\]
+Squaring and dividing by the positive number \(2V(a)\) proves the upper
+bound.  A globally maximizing choice gives equality at the base point.
+\end{proof}
+
+The lemma requires no KKT system.  For example, if
+\(C_\sigma(a_0)\) has rank five and \(\beta_0>0\) is feasible, choose an
+invertible five-column minor and hold the other \(m-5\) coordinates of
+\(\beta\) fixed.  Solving the five feasibility equations gives a smooth local
+section through \(\beta_0\); positivity persists after shrinking the
+neighborhood.  This elementary construction is the one used for the singular
+seven-facet data in the HKO certificate.
+
+At a nondegenerate constrained maximum, the KKT equations instead choose a canonical
+optimizing branch and remove the derivative of \(\beta\) from the value
+derivative.  Let \(H_\sigma(a)\) denote the Hessian of
+\(Q_\sigma(a,\cdot)\) with respect to \(\beta\).
+
+\begin{definition}[Nondegenerate Haim--Kislev branch]
+\label{def:first-order-regular-hk-branch}
+A feasible pair \((\sigma,\beta_0)\) at \(a_0\) is a \emph{nondegenerate branch}
+if
+\begin{enumerate}
+\item \(C_\sigma(a_0)\) has rank five;
+\item \(\beta_0>0\) and \(Q_\sigma(a_0,\beta_0)>0\);
+\item \(\beta_0\) is a constrained critical point of
+  \(Q_\sigma(a_0,\cdot)\); and
+\item \(H_\sigma(a_0)\) is negative definite on
+  \(\ker C_\sigma(a_0)\).
+\end{enumerate}
+For \(m=5\), the kernel is zero and the last condition is vacuous.
+\end{definition}
+
+\begin{proposition}[Derivative of a nondegenerate branch]
+\label{prop:first-order-regular-branch}
+Let \((\sigma,\beta_0)\) be a nondegenerate branch at \(a_0\).  Then, after
+shrinking the row chart, there is a unique smooth constrained maximizer
+\(\beta_\sigma(a)>0\) near \(\beta_0\).  Put
+\[
+  q_\sigma(a)=Q_\sigma(a,\beta_\sigma(a)),
+  \qquad
+  U_\sigma(a)=
+  \frac{1}{2V(a)}\left(\frac{1}{2q_\sigma(a)}\right)^2.
+\]
+If \(\lambda_\sigma\in\mathbb R^5\) is chosen so that the KKT equation is
+\[
+  D_\beta Q_\sigma(a_0,\beta_0)
+  =C_\sigma(a_0)^{\mathsf T}\lambda_\sigma,
+\]
+then
+\begin{equation}\label{eq:first-order-regular-q-derivative}
+  Dq_\sigma(a_0)[h]
+  =D_aQ_\sigma(a_0,\beta_0)[h]
+   -\left\langle
+      \lambda_\sigma,
+      D_aC_\sigma(a_0)[h]\,\beta_0
+    \right\rangle.
+\end{equation}
+Consequently,
+\begin{equation}\label{eq:first-order-regular-sys-derivative}
+  \frac{DU_\sigma(a_0)[h]}{U_\sigma(a_0)}
+  =-2\frac{Dq_\sigma(a_0)[h]}{q_\sigma(a_0)}
+   -\frac{DV(a_0)[h]}{V(a_0)}.
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Full rank and negative definiteness make the saddle-point KKT matrix
+nonsingular.  The implicit function theorem therefore gives a unique smooth
+critical point near \(\beta_0\).  Negative definiteness and positivity are
+open conditions, so this point remains the positive constrained maximum.
+
+Differentiate
+\(q_\sigma(a)=Q_\sigma(a,\beta_\sigma(a))\).  The term containing
+\(D\beta_\sigma\) is
+\[
+  D_\beta Q_\sigma\,D\beta_\sigma
+  =\lambda_\sigma^{\mathsf T}
+    C_\sigma D\beta_\sigma.
+\]
+Differentiating
+\(C_\sigma(a)\beta_\sigma(a)=e\) gives
+\(C_\sigma D\beta_\sigma=-(D_aC_\sigma)\beta_\sigma\), which proves
+\eqref{eq:first-order-regular-q-derivative}.  The logarithmic derivative of
+\(U_\sigma=(2V)^{-1}(2q_\sigma)^{-2}\) is
+\eqref{eq:first-order-regular-sys-derivative}.
+\end{proof}
+
+Equations~\eqref{eq:first-order-explicit-q-variation},
+\eqref{eq:first-order-volume-variation}, and
+\eqref{eq:first-order-regular-q-derivative} are the practical first-order
+calculation.  They use the current rows, the word, its positive KKT weights and
+multipliers, and facet volumes and centroids.  They do not require finite
+differences of the full capacity computation.
+
+\subsection{From branches to the systolic ratio}
+\label{subsec:first-order-branch-envelope}
+
+A nondegenerate branch always gives the upper function \(U_\sigma\), but it gives the
+actual systolic ratio only while it realizes the global Haim--Kislev maximum.
+This global step must not be inferred from KKT nondegeneracy alone.
+
+Suppose that finitely many nondegenerate branches have fixed-word maxima
+\(q_1,\ldots,q_r\) on a neighborhood of \(a_0\), and that they cover the
+global finite problem there in the explicit sense
+\[
+  Q_{\max}(a)=\max_{1\leq j\leq r}q_j(a).
+\]
+For example, this identity follows from a complete retained word list and a
+persistent value gap for every discarded word.  Then
+\begin{equation}\label{eq:first-order-regular-envelope}
+  \operatorname{sys}(K(a))=\min_{1\leq j\leq r}U_j(a).
+\end{equation}
+If \(I(a_0)=\{j:U_j(a_0)=\operatorname{sys}(K(a_0))\}\), the one-sided
+directional derivative is
+\begin{equation}\label{eq:first-order-envelope-derivative}
+  D^+\operatorname{sys}(a_0;h)
+  =\min_{j\in I(a_0)}DU_j(a_0)[h].
+\end{equation}
+Indeed, this is the first-order expansion of a finite minimum of smooth
+functions.  In particular, a unique active nondegenerate branch gives an ordinary
+gradient.  At a tie of nondegenerate branches, the directional derivative is generally only the
+lower envelope of the tied branch slopes.  We use this direct envelope
+description rather than calling it a Clarke derivative.
+
+The hypothesis preceding \eqref{eq:first-order-regular-envelope} contains real
+mathematical work.  A list returned by one numerical solve, or a tolerance
+window around its smallest actions, is not by itself a certificate of the
+displayed identity.
+
+\subsection{What the first-order model contributes to search}
+\label{subsec:first-order-search-model}
+
+On a nondegenerate branch patch with active branch rows
+\(r_j=DU_j(a_0)\), a common first-order ascent direction in a chosen linear
+slice \(S\) can be sought through the maximin problem
+\begin{equation}\label{eq:first-order-maximin-direction}
+  \max_{h\in S,\ \lVert h\rVert\leq1}
+  \min_{j\in I(a_0)} r_j(h).
+\end{equation}
+The slice removes directions generated by the systolic-ratio symmetries from
+Definition~\ref{def:preliminaries-systolic-ratio-symmetries}.  The true ratio
+is constant on the corresponding group orbits, so its derivative vanishes on
+their tangent space; \(S\) is chosen as a complementary linear slice.  A
+positive value in
+\eqref{eq:first-order-maximin-direction} predicts improvement of every active
+nondegenerate branch.  The prediction still has to be checked by recomputing the
+capacity after a finite step.
+
+At finite distance, currently inactive branches can matter before they are
+active.  A useful semi-local model therefore retains their base gaps:
+\begin{equation}\label{eq:first-order-finite-gap-model}
+  \min_{j\in W}
+  \bigl(
+    U_j(a_0)-\operatorname{sys}(K(a_0))+DU_j(a_0)[h]
+  \bigr),
+\end{equation}
+where \(W\) is a chosen branch window.  Formula
+\eqref{eq:first-order-finite-gap-model} explains why a single active gradient
+can miss a nearby branch switch, but it is a prediction model rather than an
+infinitesimal theorem.  Its reliability depends on the window containing the
+branches that become relevant, on the branches remaining feasible, and on the
+linearization error at the proposed step.
+
+The retained search evidence uses this distinction conservatively.  On a
+fixed panel of twelve random ten-facet starts, the current multi-direction
+method accepted a positive move at each of eight configured trace iterations,
+but all runs
+stopped at their iteration cap and every endpoint scan still found another
+tested improvement.  Thus the evidence supports finite-step progress and a
+measured computation cost on that panel, not endpoint local maximality.  The
+newer branch-window prediction work remains a development surface; it is not
+used as thesis evidence here.  It should be reconsidered for this chapter only
+after a reproducible result packet fixes the base-point panel, window policy,
+finite radii, prediction error, and branch-miss rate.
+
+\subsection{The non-generic boundary}
+\label{subsec:first-order-nongeneric-boundary}
+
+The nondegenerate calculation is deliberately not presented as a complete local
+theory for arbitrary polytopes.  Four failures delimit its present scope.
+
+\begin{itemize}
+\item If a maximizing weight is zero, deleting that coordinate is valid for
+  the capacity value at the base point.  It need not preserve the nearby
+  slope: the longer word may acquire a positive weight on one side of the
+  perturbation and define a different branch there.
+\item If the constraint rank drops or the KKT matrix is singular, the implicit
+  function theorem does not provide a unique smooth optimizing branch.  A
+  continuum of optimizers may nevertheless have a well-defined value.
+\item A tie is described by \eqref{eq:first-order-envelope-derivative} only
+  when all relevant tied branches extend smoothly and the stated coverage
+  and gap hypotheses hold.  Base-point branch enumeration alone does not prove
+  this.
+\item When facet labels become redundant or the face combinatorics changes,
+  both the branch family and the smooth volume formula require a new local
+  chart.  Hausdorff continuity of capacity and volume across that boundary
+  does not imply differentiability there.
+\end{itemize}
+
+All constraints and objectives are semialgebraic.  A possible route to a fully
+general one-sided theory would organize germs of feasible optimizing branches
+by a finite decomposition of direction space.  Such a construction
+would have to record support appearances, singular optimizer sets, and
+dominance of every discarded germ.  This thesis does not prove that heavier
+catalogue theorem.  The unresolved question is therefore not whether nondegenerate
+branch gradients can be computed, but how to obtain a complete and economical
+first-order object at an arbitrary non-generic polytope.
+
+\subsection{Why the HKO certificate uses upper functions}
+\label{subsec:first-order-hko-upper-functions}
+
+The feasible-section lemma supplies a different first-order argument that does
+not require the complete non-generic catalogue.  The following elementary
+criterion is the logical bridge.
+
+\begin{lemma}[Finite upper-function criterion]
+\label{lem:first-order-finite-upper-function-criterion}
+Let \(f\) be a function on a finite-dimensional linear space \(S\), and let
+\(U_1,\ldots,U_N\) be smooth near \(0\) such that
+\[
+  f(s)\leq U_j(s),
+  \qquad U_j(0)=f(0)
+  \quad(j=1,\ldots,N).
+\]
+Put \(r_j=DU_j(0)\in S^*\).  Suppose that the rows \(r_j\) span \(S^*\) and
+that there are numbers \(\lambda_j>0\) with
+\[
+  \sum_{j=1}^N\lambda_j=1,
+  \qquad
+  \sum_{j=1}^N\lambda_jr_j=0.
+\]
+Then \(f(s)<f(0)\) for every sufficiently small nonzero \(s\in S\).
+\end{lemma}
+
+\begin{proof}
+For every nonzero \(v\in S\), some \(r_j(v)\) is negative.  Otherwise all
+rows would be nonnegative on \(v\), and their strictly positive convex
+combination could vanish only if every \(r_j(v)=0\), contradicting that the
+rows span \(S^*\).  By compactness of the unit sphere and finiteness of the
+row set, there is a uniform \(\delta>0\) such that
+\(\min_j r_j(v)\leq-\delta\) for every unit vector \(v\).  The smooth Taylor
+remainders are uniformly \(O(\lVert s\rVert^2)\).  For sufficiently small
+nonzero \(s\), choose a row with
+\(r_j(s/\lVert s\rVert)\leq-\delta\); then
+\[
+  f(s)\leq U_j(s)
+  \leq f(0)-\delta\lVert s\rVert+O(\lVert s\rVert^2)
+  <f(0).
+\]
+\end{proof}
+
+For HKO, \(S\) is a \(25\)-dimensional slice transverse to translations,
+scaling, and linear symplectic transformations.  The exact certificate in the
+next section constructs \(26\) positive feasible Haim--Kislev sections.  Their
+upper functions touch the true systolic ratio at the HKO point.  The verifier
+checks that their derivative rows span \(S^*\) and satisfy the positive convex
+relation in Lemma~\ref{lem:first-order-finite-upper-function-criterion}.
+This proves strict decrease in every transverse direction even though some of
+the selected data have singular KKT systems.  No assertion that these
+feasible sections remain optimizing branches nearby is needed.
+
+\subsection{Implementation and validation status}
+\label{subsec:first-order-validation}
+
+The implementation evaluates the branch and volume formulas in dual-vertex
+coordinates.  Regression tests compare the volume derivative with central
+finite differences and compare a fixed-word capacity derivative with central
+finite differences on known fixtures.  An exact rational implementation of
+the capacity-gradient formula is also compared with the floating-point formula
+on a rational simplex fixture.  These checks test the correspondence between
+the formulas and their implementations; they do not certify branch coverage,
+finite-step prediction, or local maximality.
+
+For the HKO theorem, the evidence standard is stronger and different.  The
+SageMath verifier checks the selected feasible sections and their derivative
+rows exactly in the relevant algebraic number field.  The mathematical use of
+those rows is Lemma~\ref{lem:first-order-finite-upper-function-criterion} and
+the transverse-slice argument in the next section, not a numerical gradient
+experiment.
