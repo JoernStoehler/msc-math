@@ -79,10 +79,12 @@ Do not hand-edit generated JSON or JSONL.
 
 The `produce` and `full-validate` commands above document the completed run;
 they are not a current execution queue. An exact full replay belongs in a
-disposable worktree at frozen commit
-`4f7adddec513f4abc95dcc905d1299611ff28f28`, with that worktree's LFS inputs
-hydrated. The integrated history retains this commit. Do not regenerate the
-committed panel or expose a new target arm without a new portfolio decision.
+disposable worktree at executable replay commit
+`310ec8bbb6123a34df8bbdb151717d6cee0fccf7`, with that worktree's LFS inputs
+hydrated. That replay validates against the frozen production/dependency
+snapshot `4f7adddec513f4abc95dcc905d1299611ff28f28`. The integrated history
+retains both commits. Do not regenerate the committed panel or expose a new
+target arm without a new portfolio decision.
 
 The committed `full-validation.json` is historical output from original line
 commit `4f7adddec513f4abc95dcc905d1299611ff28f28`. Its absolute
