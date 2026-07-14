@@ -78,6 +78,10 @@ path = "../sys-datascience/methods/product-bounce-distribution/audit-null-availa
 name = "sys-datascience-alternative-generator-smoke"
 path = "../sys-datascience/methods/alternative-generator-smoke/main.rs"
 
+[[bin]]
+name = "sys-datascience-generator-zoo-smoke"
+path = "../sys-datascience/methods/generator-zoo-smoke/main.rs"
+
 [lints]
 workspace = true
 
