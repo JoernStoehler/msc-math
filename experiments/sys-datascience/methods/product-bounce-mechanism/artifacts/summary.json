@@ -1,0 +1,513 @@
+{
+  "active_support": {
+    "a3_eight_facet_rows_by_producer_label": {
+      "2": 321,
+      "3": 0
+    },
+    "rows_by_inactive_winner_facet_count": {
+      "2": {
+        "0": 306,
+        "1": 341,
+        "2": 736,
+        "3": 775,
+        "4": 849,
+        "5": 443,
+        "6": 529
+      },
+      "3": {
+        "0": 718,
+        "1": 683,
+        "2": 1312,
+        "3": 1273,
+        "4": 1199,
+        "5": 581,
+        "6": 495
+      }
+    },
+    "rows_by_winner_active_factor_counts": {
+      "2": {
+        "3q+3p": 3979
+      },
+      "3": {
+        "3q+3p": 6261
+      }
+    },
+    "winner_minimizer_word_lengths": {
+      "2": {
+        "6": 15914
+      },
+      "3": {
+        "6": 6261
+      }
+    }
+  },
+  "analysis_contract": {
+    "class_balance": "absolute log(A3/A2) is non-tautological with sys=min(s2,s3); A3-null rows are excluded rather than assigned a numeric gap",
+    "complete_overlap": "rows with both class minima, restricted to buckets containing both producer labels; this removes 3x3, whose complete rows are all label 3",
+    "component_identity": "log(sys) = 2 log(capacity) - log(2 volume)",
+    "model": "OLS with exact (k,m) fixed effects; every listed control is standardized within (k,m); reported values are bounce3 coefficients"
+  },
+  "class_balance": {
+    "by_bucket": {
+      "3x3": {
+        "remainder_median_abs_log_action_ratio": 0.059432794188648774,
+        "rows": 718,
+        "spearman_abs_log_action_ratio_vs_sys": 0.8357672707064066,
+        "top_decile_median_abs_log_action_ratio": 0.28157285829709344
+      },
+      "3x4": {
+        "remainder_median_abs_log_action_ratio": 0.055916374745423006,
+        "rows": 814,
+        "spearman_abs_log_action_ratio_vs_sys": 0.625803971218591,
+        "top_decile_median_abs_log_action_ratio": 0.19178333550660476
+      },
+      "3x5": {
+        "remainder_median_abs_log_action_ratio": 0.054218137001542724,
+        "rows": 890,
+        "spearman_abs_log_action_ratio_vs_sys": 0.38868427963358515,
+        "top_decile_median_abs_log_action_ratio": 0.1271667420523717
+      },
+      "3x6": {
+        "remainder_median_abs_log_action_ratio": 0.045871199319115166,
+        "rows": 928,
+        "spearman_abs_log_action_ratio_vs_sys": 0.32633217810608317,
+        "top_decile_median_abs_log_action_ratio": 0.11907384347841783
+      },
+      "4x4": {
+        "remainder_median_abs_log_action_ratio": 0.055859835491604184,
+        "rows": 996,
+        "spearman_abs_log_action_ratio_vs_sys": 0.24561567489900835,
+        "top_decile_median_abs_log_action_ratio": 0.10101451430963992
+      },
+      "4x5": {
+        "remainder_median_abs_log_action_ratio": 0.05043959317270526,
+        "rows": 1015,
+        "spearman_abs_log_action_ratio_vs_sys": 0.15249889315763707,
+        "top_decile_median_abs_log_action_ratio": 0.08470087744983405
+      },
+      "4x6": {
+        "remainder_median_abs_log_action_ratio": 0.03589922449872435,
+        "rows": 1022,
+        "spearman_abs_log_action_ratio_vs_sys": 0.13751244862079942,
+        "top_decile_median_abs_log_action_ratio": 0.06332210027079135
+      },
+      "5x5": {
+        "remainder_median_abs_log_action_ratio": 0.03838938029055222,
+        "rows": 1024,
+        "spearman_abs_log_action_ratio_vs_sys": 0.047430374257921466,
+        "top_decile_median_abs_log_action_ratio": 0.04754538737853713
+      },
+      "5x6": {
+        "remainder_median_abs_log_action_ratio": 0.029274036855836603,
+        "rows": 1024,
+        "spearman_abs_log_action_ratio_vs_sys": 0.07620798986124025,
+        "top_decile_median_abs_log_action_ratio": 0.03935257144623214
+      },
+      "6x6": {
+        "remainder_median_abs_log_action_ratio": 0.023421977286948108,
+        "rows": 1024,
+        "spearman_abs_log_action_ratio_vs_sys": -0.0704237223732208,
+        "top_decile_median_abs_log_action_ratio": 0.02357396048809523
+      }
+    },
+    "complete_rows": 9455,
+    "pooled_remainder": {
+      "median_abs_log_action_ratio": 0.04280731601589402,
+      "near_tie_rate_abs_log_ratio_le_0_01": 0.21069958847736625,
+      "rows": 8505
+    },
+    "pooled_within_bucket_top_decile": {
+      "median_abs_log_action_ratio": 0.08125384209964939,
+      "near_tie_rate_abs_log_ratio_le_0_01": 0.11263157894736842,
+      "rows": 950
+    }
+  },
+  "component_models_all_rows": {
+    "bucket_only": {
+      "additivity_residual": -3.608224830031759e-14,
+      "bounce3_coefficients": {
+        "capacity_term": 0.2086326913439063,
+        "log_sys": 0.8451965310751965,
+        "volume_term": 0.6365638397313264
+      },
+      "capacity_fraction_of_log_sys_coefficient": 0.24684518176914336,
+      "controls": [],
+      "rows": 10240,
+      "volume_fraction_of_log_sys_coefficient": 0.7531548182308994
+    },
+    "generator_coordinates": {
+      "additivity_residual": -3.68594044175552e-14,
+      "bounce3_coefficients": {
+        "capacity_term": 0.2362815847833406,
+        "log_sys": 0.7426246593330926,
+        "volume_term": 0.5063430745497889
+      },
+      "capacity_fraction_of_log_sys_coefficient": 0.3181709384597209,
+      "controls": [
+        "q_mean_log_support",
+        "p_mean_log_support",
+        "q_sd_log_support",
+        "p_sd_log_support",
+        "q_min_angle_gap",
+        "p_min_angle_gap"
+      ],
+      "rows": 10240,
+      "volume_fraction_of_log_sys_coefficient": 0.6818290615403287
+    },
+    "generator_plus_ridge_distribution": {
+      "additivity_residual": -3.7470027081099033e-14,
+      "bounce3_coefficients": {
+        "capacity_term": 0.24832006826170613,
+        "log_sys": 0.5705446850495997,
+        "volume_term": 0.32222461678793096
+      },
+      "capacity_fraction_of_log_sys_coefficient": 0.4352333388928489,
+      "controls": [
+        "q_mean_log_support",
+        "p_mean_log_support",
+        "q_sd_log_support",
+        "p_sd_log_support",
+        "q_min_angle_gap",
+        "p_min_angle_gap",
+        "ridge_symp_area_normalized_entropy",
+        "ridge_symp_area_max_share"
+      ],
+      "rows": 10240,
+      "volume_fraction_of_log_sys_coefficient": 0.5647666611072167
+    },
+    "prior_ridge_triplet_sensitivity": {
+      "additivity_residual": -3.708144902248023e-14,
+      "bounce3_coefficients": {
+        "capacity_term": 0.22922134635364746,
+        "log_sys": 0.622604677395749,
+        "volume_term": 0.39338333104213863
+      },
+      "capacity_fraction_of_log_sys_coefficient": 0.3681651530670183,
+      "controls": [
+        "ridge_symp_area_normalized_entropy",
+        "ridge_symp_area_max_share",
+        "ridge_symp_area_le_1em2_over_volume_sqrt_fraction"
+      ],
+      "rows": 10240,
+      "volume_fraction_of_log_sys_coefficient": 0.6318348469330414
+    },
+    "ridge_distribution": {
+      "additivity_residual": -3.6914915568786455e-14,
+      "bounce3_coefficients": {
+        "capacity_term": 0.2351856236307971,
+        "log_sys": 0.6234883331618101,
+        "volume_term": 0.3883027095310499
+      },
+      "capacity_fraction_of_log_sys_coefficient": 0.377209341573615,
+      "controls": [
+        "ridge_symp_area_normalized_entropy",
+        "ridge_symp_area_max_share"
+      ],
+      "rows": 10240,
+      "volume_fraction_of_log_sys_coefficient": 0.6227906584264442
+    },
+    "ridge_magnitude_sensitivity": {
+      "additivity_residual": -3.502753642692369e-14,
+      "bounce3_coefficients": {
+        "capacity_term": 0.22706965697988846,
+        "log_sys": 0.4867595785078259,
+        "volume_term": 0.2596899215279725
+      },
+      "capacity_fraction_of_log_sys_coefficient": 0.46649242666364443,
+      "controls": [
+        "ridge_symp_area_normalized_entropy",
+        "ridge_symp_area_max_share",
+        "ridge_symp_area_sum_over_volume_sqrt"
+      ],
+      "rows": 10240,
+      "volume_fraction_of_log_sys_coefficient": 0.5335075733364275
+    }
+  },
+  "component_models_complete_rows": {
+    "bucket_only": {
+      "additivity_residual": -5.184741524999481e-14,
+      "bounce3_coefficients": {
+        "capacity_term": 0.19695847668202476,
+        "log_sys": 0.7226276647602194,
+        "volume_term": 0.5256691880782466
+      },
+      "capacity_fraction_of_log_sys_coefficient": 0.27255872738747006,
+      "controls": [],
+      "rows": 8737,
+      "volume_fraction_of_log_sys_coefficient": 0.7274412726126017
+    },
+    "generator_coordinates": {
+      "additivity_residual": -5.256906021600116e-14,
+      "bounce3_coefficients": {
+        "capacity_term": 0.20404623208214054,
+        "log_sys": 0.6839191769738583,
+        "volume_term": 0.4798729448917703
+      },
+      "capacity_fraction_of_log_sys_coefficient": 0.2983484583441354,
+      "controls": [
+        "q_mean_log_support",
+        "p_mean_log_support",
+        "q_sd_log_support",
+        "p_sd_log_support",
+        "q_min_angle_gap",
+        "p_min_angle_gap"
+      ],
+      "rows": 8737,
+      "volume_fraction_of_log_sys_coefficient": 0.7016515416559415
+    },
+    "generator_plus_ridge_distribution": {
+      "additivity_residual": -5.639932965095795e-14,
+      "bounce3_coefficients": {
+        "capacity_term": 0.22423750985926594,
+        "log_sys": 0.4508223035876768,
+        "volume_term": 0.22658479372846724
+      },
+      "capacity_fraction_of_log_sys_coefficient": 0.49739666399547555,
+      "controls": [
+        "q_mean_log_support",
+        "p_mean_log_support",
+        "q_sd_log_support",
+        "p_sd_log_support",
+        "q_min_angle_gap",
+        "p_min_angle_gap",
+        "ridge_symp_area_normalized_entropy",
+        "ridge_symp_area_max_share"
+      ],
+      "rows": 8737,
+      "volume_fraction_of_log_sys_coefficient": 0.5026033360046496
+    },
+    "prior_ridge_triplet_sensitivity": {
+      "additivity_residual": -5.598299601672352e-14,
+      "bounce3_coefficients": {
+        "capacity_term": 0.22366358098116979,
+        "log_sys": 0.46758754387991236,
+        "volume_term": 0.24392396289879856
+      },
+      "capacity_fraction_of_log_sys_coefficient": 0.478335199276848,
+      "controls": [
+        "ridge_symp_area_normalized_entropy",
+        "ridge_symp_area_max_share",
+        "ridge_symp_area_le_1em2_over_volume_sqrt_fraction"
+      ],
+      "rows": 8737,
+      "volume_fraction_of_log_sys_coefficient": 0.5216648007232717
+    },
+    "ridge_distribution": {
+      "additivity_residual": -5.551115123125783e-14,
+      "bounce3_coefficients": {
+        "capacity_term": 0.2302337889116483,
+        "log_sys": 0.469293145823938,
+        "volume_term": 0.2390593569123452
+      },
+      "capacity_fraction_of_log_sys_coefficient": 0.49059695621044463,
+      "controls": [
+        "ridge_symp_area_normalized_entropy",
+        "ridge_symp_area_max_share"
+      ],
+      "rows": 8737,
+      "volume_fraction_of_log_sys_coefficient": 0.5094030437896737
+    },
+    "ridge_magnitude_sensitivity": {
+      "additivity_residual": -5.490052856771399e-14,
+      "bounce3_coefficients": {
+        "capacity_term": 0.2215633806632948,
+        "log_sys": 0.3627261436939111,
+        "volume_term": 0.14116276303067118
+      },
+      "capacity_fraction_of_log_sys_coefficient": 0.6108282640091764,
+      "controls": [
+        "ridge_symp_area_normalized_entropy",
+        "ridge_symp_area_max_share",
+        "ridge_symp_area_sum_over_volume_sqrt"
+      ],
+      "rows": 8737,
+      "volume_fraction_of_log_sys_coefficient": 0.3891717359909749
+    }
+  },
+  "inputs": {
+    "classes": {
+      "path": "experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl",
+      "sha256": "187089804bd17fdac76bdaf51a8d8202e67fb2b14779fe9a418cc8da47c7b4c4"
+    },
+    "provenance": {
+      "path": "/tmp/sys-ds-p2-normalization-full/polytope-provenance-table.jsonl",
+      "sha256": "6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2"
+    },
+    "raw": {
+      "path": "experiments/sys-datascience/produce/random-product.jsonl",
+      "sha256": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736"
+    },
+    "table": {
+      "path": "/tmp/sys-ds-p2-normalization-full/polytope-table.jsonl",
+      "sha256": "49825d7636246f71f4ebd419cf0ccbc86e39e6b7f43d4b03e889bb85e4887aea"
+    }
+  },
+  "interpretation_boundary": "Existing retained rows and target-derived bounce/class fields only. Component regressions are exact algebraic decompositions of a descriptive bounce-label coefficient, not causal mediation. Complete-support checks exclude A3-null availability states. Ridge-magnitude controls contain volume normalization.",
+  "question": "How much of the retained within-(k,m) association between the producer's two-/three-bounce winner label and sys is carried by unscaled capacity versus volume, how sensitive is it to existing generator/shape controls, and do active-support counts or class balance support the proposed mechanisms?",
+  "raw_bucket_decomposition_all_rows": {
+    "3x3": {
+      "capacity_term": 0.29033453084156235,
+      "log_sys": 1.2600109502510666,
+      "rows": 1024,
+      "three_rows": 718,
+      "two_rows": 306,
+      "volume_term": 0.9696764194095033
+    },
+    "3x4": {
+      "capacity_term": 0.18657161147046164,
+      "log_sys": 0.979989530371302,
+      "rows": 1024,
+      "three_rows": 683,
+      "two_rows": 341,
+      "volume_term": 0.7934179189008406
+    },
+    "3x5": {
+      "capacity_term": 0.22094413615101338,
+      "log_sys": 1.1040452471782995,
+      "rows": 1024,
+      "three_rows": 663,
+      "two_rows": 361,
+      "volume_term": 0.8831011110272851
+    },
+    "3x6": {
+      "capacity_term": 0.1993917810760295,
+      "log_sys": 0.9807807366652261,
+      "rows": 1024,
+      "three_rows": 633,
+      "two_rows": 391,
+      "volume_term": 0.781388955589196
+    },
+    "4x4": {
+      "capacity_term": 0.25672599479089486,
+      "log_sys": 0.8710547667923947,
+      "rows": 1024,
+      "three_rows": 649,
+      "two_rows": 375,
+      "volume_term": 0.6143287720015005
+    },
+    "4x5": {
+      "capacity_term": 0.25709158074283645,
+      "log_sys": 0.9045205068857383,
+      "rows": 1024,
+      "three_rows": 640,
+      "two_rows": 384,
+      "volume_term": 0.6474289261429016
+    },
+    "4x6": {
+      "capacity_term": 0.1859795637341488,
+      "log_sys": 0.7082028853750766,
+      "rows": 1024,
+      "three_rows": 610,
+      "two_rows": 414,
+      "volume_term": 0.5222233216409276
+    },
+    "5x5": {
+      "capacity_term": 0.19461763165764667,
+      "log_sys": 0.7174084054041115,
+      "rows": 1024,
+      "three_rows": 589,
+      "two_rows": 435,
+      "volume_term": 0.5227907737464657
+    },
+    "5x6": {
+      "capacity_term": 0.14992652225442482,
+      "log_sys": 0.5537517798599143,
+      "rows": 1024,
+      "three_rows": 581,
+      "two_rows": 443,
+      "volume_term": 0.40382525760549104
+    },
+    "6x6": {
+      "capacity_term": 0.16026903096203915,
+      "log_sys": 0.4764235829753669,
+      "rows": 1024,
+      "three_rows": 495,
+      "two_rows": 529,
+      "volume_term": 0.3161545520133271
+    }
+  },
+  "raw_bucket_decomposition_complete_rows": {
+    "3x4": {
+      "capacity_term": 0.07070146971744773,
+      "log_sys": 0.8307981174368126,
+      "rows": 814,
+      "three_rows": 683,
+      "two_rows": 131,
+      "volume_term": 0.7600966477193651
+    },
+    "3x5": {
+      "capacity_term": 0.25233464181685994,
+      "log_sys": 0.896080538747621,
+      "rows": 890,
+      "three_rows": 663,
+      "two_rows": 227,
+      "volume_term": 0.6437458969307599
+    },
+    "3x6": {
+      "capacity_term": 0.18208779383350437,
+      "log_sys": 0.813350442352921,
+      "rows": 928,
+      "three_rows": 633,
+      "two_rows": 295,
+      "volume_term": 0.6312626485194164
+    },
+    "4x4": {
+      "capacity_term": 0.27449435120536814,
+      "log_sys": 0.8011381545686966,
+      "rows": 996,
+      "three_rows": 649,
+      "two_rows": 347,
+      "volume_term": 0.5266438033633287
+    },
+    "4x5": {
+      "capacity_term": 0.25962410794454227,
+      "log_sys": 0.8656475088645725,
+      "rows": 1015,
+      "three_rows": 640,
+      "two_rows": 375,
+      "volume_term": 0.6060234009200309
+    },
+    "4x6": {
+      "capacity_term": 0.18454091601799139,
+      "log_sys": 0.7050024578436811,
+      "rows": 1022,
+      "three_rows": 610,
+      "two_rows": 412,
+      "volume_term": 0.5204615418256902
+    },
+    "5x5": {
+      "capacity_term": 0.19461763165764667,
+      "log_sys": 0.7174084054041115,
+      "rows": 1024,
+      "three_rows": 589,
+      "two_rows": 435,
+      "volume_term": 0.5227907737464657
+    },
+    "5x6": {
+      "capacity_term": 0.14992652225442482,
+      "log_sys": 0.5537517798599143,
+      "rows": 1024,
+      "three_rows": 581,
+      "two_rows": 443,
+      "volume_term": 0.40382525760549104
+    },
+    "6x6": {
+      "capacity_term": 0.16026903096203915,
+      "log_sys": 0.4764235829753669,
+      "rows": 1024,
+      "three_rows": 495,
+      "two_rows": 529,
+      "volume_term": 0.3161545520133271
+    }
+  },
+  "row_counts": {
+    "all": 10240,
+    "complete_class_support": 9455,
+    "complete_class_support_within_overlap_buckets": 8737
+  },
+  "schema": "product-bounce-mechanism/v1",
+  "threshold_check": {
+    "max_stored_sys": 0.86258589584944,
+    "stored_sys_gt_1_rows": 0
+  }
+}
