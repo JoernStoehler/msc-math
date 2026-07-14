@@ -1,0 +1,87 @@
+{
+  "trajectory_files": 9,
+  "proposal_rows": 54,
+  "multi_branch_rows": 9,
+  "multi_branch_fraction": 0.16666666666666666,
+  "distinct_direction_start_radius_pairs": 3,
+  "pair_count": 3,
+  "policies": [
+    "candidate_window_gap_aware_maximin",
+    "near_active_zero_gap_maximin",
+    "normalized_branch_gradient"
+  ],
+  "observed": [
+    {
+      "policy": "candidate_window_gap_aware_maximin",
+      "start": "43d2432913e3f665557c74ae146711b03fbbdb4182479852672cf1db98dec8cc",
+      "radius": 0.0001,
+      "proposals": 6,
+      "accepted": 6,
+      "best_gain": 0.000960878756439687
+    },
+    {
+      "policy": "candidate_window_gap_aware_maximin",
+      "start": "43d2432913e3f665557c74ae146711b03fbbdb4182479852672cf1db98dec8cc",
+      "radius": 0.001,
+      "proposals": 6,
+      "accepted": 6,
+      "best_gain": 0.009667820760631662
+    },
+    {
+      "policy": "candidate_window_gap_aware_maximin",
+      "start": "43d2432913e3f665557c74ae146711b03fbbdb4182479852672cf1db98dec8cc",
+      "radius": 0.01,
+      "proposals": 6,
+      "accepted": 5,
+      "best_gain": 0.01024715411190269
+    },
+    {
+      "policy": "near_active_zero_gap_maximin",
+      "start": "43d2432913e3f665557c74ae146711b03fbbdb4182479852672cf1db98dec8cc",
+      "radius": 0.0001,
+      "proposals": 6,
+      "accepted": 6,
+      "best_gain": 0.0009604435746954909
+    },
+    {
+      "policy": "near_active_zero_gap_maximin",
+      "start": "43d2432913e3f665557c74ae146711b03fbbdb4182479852672cf1db98dec8cc",
+      "radius": 0.001,
+      "proposals": 6,
+      "accepted": 6,
+      "best_gain": 0.009667813074868636
+    },
+    {
+      "policy": "near_active_zero_gap_maximin",
+      "start": "43d2432913e3f665557c74ae146711b03fbbdb4182479852672cf1db98dec8cc",
+      "radius": 0.01,
+      "proposals": 6,
+      "accepted": 5,
+      "best_gain": 0.01024715060253989
+    },
+    {
+      "policy": "normalized_branch_gradient",
+      "start": "43d2432913e3f665557c74ae146711b03fbbdb4182479852672cf1db98dec8cc",
+      "radius": 0.0001,
+      "proposals": 6,
+      "accepted": 6,
+      "best_gain": 0.0014646636788090417
+    },
+    {
+      "policy": "normalized_branch_gradient",
+      "start": "43d2432913e3f665557c74ae146711b03fbbdb4182479852672cf1db98dec8cc",
+      "radius": 0.001,
+      "proposals": 6,
+      "accepted": 6,
+      "best_gain": 0.014786790044670317
+    },
+    {
+      "policy": "normalized_branch_gradient",
+      "start": "43d2432913e3f665557c74ae146711b03fbbdb4182479852672cf1db98dec8cc",
+      "radius": 0.01,
+      "proposals": 6,
+      "accepted": 5,
+      "best_gain": 0.008915896503173815
+    }
+  ]
+}

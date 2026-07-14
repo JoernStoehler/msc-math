@@ -1,0 +1,10 @@
+{
+  "trajectory_files": 9,
+  "total_target_evaluations": 54,
+  "proposals": 54,
+  "policies": [
+    "candidate_window_gap_aware_maximin",
+    "near_active_zero_gap_maximin",
+    "normalized_branch_gradient"
+  ]
+}

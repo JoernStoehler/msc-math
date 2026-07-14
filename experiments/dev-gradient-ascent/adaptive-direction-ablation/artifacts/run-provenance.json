@@ -1,0 +1,36 @@
+{
+  "command": [
+    "target/release/dev-gradient-ascent-adaptive-direction-ablation",
+    "--budget",
+    "6",
+    "--polytope-table",
+    "/tmp/adaptive-hard.jsonl",
+    "--out-dir",
+    "experiments/dev-gradient-ascent/adaptive-direction-ablation/artifacts",
+    "--facet-count",
+    "12",
+    "--start-count",
+    "1",
+    "--exclude-start-ids",
+    "never"
+  ],
+  "source_head": "1177c760b0b36bd7571a5245e623a711f3d649e8",
+  "source_input": "experiments/dev-gradient-ascent/adaptive-direction-ablation/inputs/narrow-gap-hard-state.jsonl",
+  "source_input_blake3": "8dba17150f029e34a8b333890dff381eea8bec63c4fcd27f8309cce88a5b2120",
+  "implementation": "/workspaces/msc-math/.worktrees/optimizer-adaptive-direction/experiments/dev-gradient-ascent/adaptive-direction-ablation/main.rs",
+  "implementation_blake3": "33e183353b15f5f97e0826990aff2e5bf56cc661a68d0b1b3a292f3439a4293a",
+  "policies": [
+    "normalized_branch_gradient",
+    "near_active_zero_gap_maximin",
+    "candidate_window_gap_aware_maximin"
+  ],
+  "initial_radii": [
+    0.0001,
+    0.001,
+    0.01
+  ],
+  "post_initial_target_budget": 100,
+  "near_active_window_relative": 0.001,
+  "direction_contract": "all output directions normalized in flattened dual-vertex Euclidean norm; candidate objective min_sigma(base_gap_sigma + <grad sys_sigma, radius*direction>)",
+  "evaluator_accounting": "initial state excluded; every target proposal increments target_evaluations; accepted iff valid and target full sys strictly increases; accepted radius expands 1.25, invalid/non-improving shrinks 0.5; retained hard-state diagnostic uses 6 proposals per cell (budget override), not the full 100-evaluation contract"
+}
