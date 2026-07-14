@@ -1,0 +1,113 @@
+{
+  "future_manifest": {
+    "message": "10k generic stage-one manifest is not present; future target evaluation is intentionally not consumed",
+    "path": "experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/stage1/manifest.json",
+    "status": "pending_manifest",
+    "target_visible_rows": 0
+  },
+  "generated_summary_rows": 4,
+  "product_sensitivity_observation": "5x5 versus 4x6 means differ by less than the provisional 0.04 contrast at both generated cutoffs; 4x6 does not materially change the qualitative operational conclusion",
+  "product_sensitivity_rows": 4,
+  "ready_to_consume_future_200": false,
+  "retained_summary_rows": 11,
+  "schema": "sys-datascience.ridge-tail-source-comparison.summary.v1",
+  "source_inventory": {
+    "generated_panels": {
+      "cascade_1pct": {
+        "candidate_denominator_per_bucket": 10000,
+        "censoring": "only selected rows have targets; non-selected candidate targets are unavailable",
+        "dependence": "independent candidate seed from the other generated panel; not independent of alternate selectors in the same cache",
+        "directory": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation",
+        "population_rows": {
+          "product_4x6": {
+            "row_hash": "e5950d89854d9a80f30285ac79c93dbbcebb53c41be117bd66f837dddf3686ec",
+            "target_visible_rows": 100
+          },
+          "product_5x5": {
+            "row_hash": "c9e02ef4cc89da810fe960c18c4d109f3a0a266dc698435dbe686f535572d88d",
+            "target_visible_rows": 100
+          }
+        },
+        "row_hash": "5deb3ab30be85950a96058c8a3ddc204ae32f83d8a9880e195a75798b7468b52",
+        "seed": 1618033,
+        "selected_source_sha256": "58ba9b40889335271d7002a11de2eabada7f5b9a93f6be40ab25fed0e8ebaec7",
+        "selection_cutoff": "lowest 1% by sum proxy; mean-rank equivalent because product ridge count is fixed",
+        "selection_id": "per_bucket_low_ridge_symp_area_sum_over_volume_sqrt_fraction_0p010000",
+        "target_source_sha256": "a938349e24603710a61964875e276417f418cfdd4f95e042a58dcb4b69f6f413",
+        "target_visible_rows_per_bucket": 100,
+        "target_visible_rows_total": 1000
+      },
+      "promising_0p1pct": {
+        "candidate_denominator_per_bucket": 10000,
+        "censoring": "only selected rows have targets; non-selected candidate targets are unavailable",
+        "dependence": "independent candidate seed from the other generated panel; not independent of alternate selectors in the same cache",
+        "directory": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-promising-scalars",
+        "population_rows": {
+          "product_4x6": {
+            "row_hash": "bffa36b9d238a2a601ab472c8a4c967bb4a85445ce487a6d8e0bbf94091f727e",
+            "target_visible_rows": 10
+          },
+          "product_5x5": {
+            "row_hash": "492218afc67f723a1b8875fd52c1f2268ba63e0a88ce05e8e58bf4aa184ea178",
+            "target_visible_rows": 10
+          }
+        },
+        "row_hash": "449ec452dfb7b12ac6e8a9662751c3af4728f49e95d62f0d9ba0a4e89b1c4346",
+        "seed": 271828,
+        "selected_source_sha256": "1b9873eb8609882b08cf96407b62d36c519c6508822bd8f81d9c421a54019895",
+        "selection_cutoff": "lowest 0.1% by mean proxy (top 10 of 10,000)",
+        "selection_id": "per_bucket_low_ridge_symp_area_mean_over_volume_sqrt_top_10",
+        "target_source_sha256": "ae7d3a3b3842fde25b7190ca97dd9e79d5d26ecf81abbdd3399a1ec54cd3b962",
+        "target_visible_rows_per_bucket": 10,
+        "target_visible_rows_total": 100
+      }
+    },
+    "high_sys_threshold": {
+      "definition": "retained generic F=10 nearest-rank 90th percentile",
+      "source_row_hash": "7bb286868fe1868739ea385c95cf68e9795538c20dc6546c4f14ed35d79ed3b9",
+      "value": 0.5949424195457518
+    },
+    "populations": {
+      "generic_f10": {
+        "candidate_denominator": 512,
+        "censoring": "none within retained rows; this is a finite retained table, not a full future candidate population",
+        "row_hash": "7bb286868fe1868739ea385c95cf68e9795538c20dc6546c4f14ed35d79ed3b9",
+        "rows": 512,
+        "seed": "retained producer seed is not encoded as a per-row seed; provenance source is random/random_product",
+        "selection_cutoff": "retained random table; within-population proxy rank only",
+        "target_visible_rows": 512
+      },
+      "product_4x6": {
+        "candidate_denominator": 1024,
+        "censoring": "none within retained rows; this is a finite retained table, not a full future candidate population",
+        "row_hash": "b9508f7c58cd70237e9acd5d2c495d3d77106fcc7fccdd14cc82c3ed8969c7ca",
+        "rows": 1024,
+        "seed": "retained producer seed is not encoded as a per-row seed; provenance source is random/random_product",
+        "selection_cutoff": "retained random table; within-population proxy rank only",
+        "target_visible_rows": 1024
+      },
+      "product_5x5": {
+        "candidate_denominator": 1024,
+        "censoring": "none within retained rows; this is a finite retained table, not a full future candidate population",
+        "row_hash": "691047984c30ace786b68870a753c018a969bde54225f49d7eb30b9da5d2dbc6",
+        "rows": 1024,
+        "seed": "retained producer seed is not encoded as a per-row seed; provenance source is random/random_product",
+        "selection_cutoff": "retained random table; within-population proxy rank only",
+        "target_visible_rows": 1024
+      }
+    },
+    "source_files": {
+      "retained_provenance": {
+        "path": "experiments/sys-datascience/prepare/polytope-provenance-table.jsonl",
+        "rows": 14336,
+        "sha256": "6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2"
+      },
+      "retained_table": {
+        "path": "experiments/sys-datascience/prepare/polytope-table.jsonl",
+        "rows": 14336,
+        "sha256": "607c8731fa03d190d497edc3e8f1b4cca88f7d238260cce527680f568bc33d59"
+      }
+    }
+  },
+  "target_producing_code_path": false
+}

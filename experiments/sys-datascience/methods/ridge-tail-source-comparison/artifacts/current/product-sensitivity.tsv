@@ -1,0 +1,5 @@
+panel	comparison	n_left	n_right	mean_difference	difference_ci95	decision_effect	qualitative
+generated_seed1618033_low_1pct	product_5x5_minus_product_4x6	100	100	-0.0066798863636556849	[-0.027899898969576231,0.015072337584772666]	0.04	not material at 0.04 unless interval/evidence changes the operational decision
+generated_seed1618033_low_1pct	product_4x6_minus_product_5x5	100	100	0.0066798863636556849	[-0.014965797608579634,0.028257072132173433]	0.04	not material at 0.04 unless interval/evidence changes the operational decision
+generated_seed271828_low_0p1pct	product_5x5_minus_product_4x6	10	10	0.013823412172679794	[-0.02795399780073593,0.050255004543266923]	0.04	not material at 0.04 unless interval/evidence changes the operational decision
+generated_seed271828_low_0p1pct	product_4x6_minus_product_5x5	10	10	-0.013823412172679794	[-0.051423955681567657,0.028264015129983333]	0.04	not material at 0.04 unless interval/evidence changes the operational decision

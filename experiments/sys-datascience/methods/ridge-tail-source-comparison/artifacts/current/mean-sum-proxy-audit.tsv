@@ -1,0 +1,13 @@
+population	fraction	n	mean_sum_overlap	mean_sum_jaccard	mean_sum_disagreement_rows	interpretation
+generic_f10	0.01	6	3	0.33333333333333331	3	rank equivalence audit only; not tail evidence
+generic_f10	0.05	26	20	0.625	6	rank equivalence audit only; not tail evidence
+generic_f10	0.1	52	44	0.73333333333333328	8	rank equivalence audit only; not tail evidence
+generic_f10	0.2	103	93	0.82300884955752207	10	rank equivalence audit only; not tail evidence
+product_5x5	0.01	11	11	1	0	rank equivalence audit only; not tail evidence
+product_5x5	0.05	52	52	1	0	rank equivalence audit only; not tail evidence
+product_5x5	0.1	103	103	1	0	rank equivalence audit only; not tail evidence
+product_5x5	0.2	205	205	1	0	rank equivalence audit only; not tail evidence
+product_4x6	0.01	11	11	1	0	rank equivalence audit only; not tail evidence
+product_4x6	0.05	52	52	1	0	rank equivalence audit only; not tail evidence
+product_4x6	0.1	103	103	1	0	rank equivalence audit only; not tail evidence
+product_4x6	0.2	205	205	1	0	rank equivalence audit only; not tail evidence
