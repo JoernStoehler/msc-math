@@ -22,6 +22,9 @@ with these required fields:
 - `schema`: exactly `factor-shape-row-v1`;
 - `sample_id`: unique nonempty string;
 - `law`: nonempty generator-law/version label;
+- `population`: optional nonempty label identifying the actual distribution
+  compared by the atlas. Use a stable `law + knob setting` label whenever one
+  law has multiple parameters; otherwise the analyzer falls back to `law`;
 - `side_count`: integer at least three;
 - `vertices_ccw`: exactly `side_count` finite `[x,y]` pairs, in strict convex
   CCW cyclic order. The analyzer also accepts the fixture-only legacy alias
@@ -115,6 +118,19 @@ The retained table should make one regression decision easy: the broad control
 must show materially greater within-law diversity and baseline displacement
 than the narrow control, while the baseline transformation copies remain
 duplicates. It must not be read as generator evidence.
+
+The retained generator-zoo smoke is reproduced separately after its producer:
+
+```bash
+uv run --script analyze.py \
+  --input ../generator-zoo-smoke/artifacts/factor-shapes.jsonl \
+  --baseline-law 'current-baseline[delta=0.2]' \
+  --out-dir artifacts/generator-zoo
+```
+
+This real report is intentionally underpowered: it checks the pipeline and
+suggests which populations merit a larger geometry-only sample. It is not a
+law-ranking result.
 
 ## Interpretation and reopen boundary
 

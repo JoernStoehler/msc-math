@@ -8,7 +8,7 @@ partial file is not an analysis input.
 Run:
 
 ```text
-uv run --script experiments/sys-datascience/methods/generator-sys-effects/analyze.py -- \
+uv run --script experiments/sys-datascience/methods/generator-sys-effects/analyze.py \
   --input experiments/sys-datascience/methods/alternative-generator-smoke/artifacts/target-pilot/smoke-rows.jsonl \
   --out-dir experiments/sys-datascience/methods/generator-sys-effects/artifacts
 ```

@@ -44,6 +44,7 @@ struct FactorShapeRow {
     schema: &'static str,
     sample_id: String,
     law: String,
+    population: String,
     law_version: &'static str,
     parameter: String,
     seed: u64,
@@ -489,7 +490,7 @@ fn factor_shape_row(
     FactorShapeRow {
         schema: "factor-shape-row-v1",
         sample_id: format!("generator-zoo-v1/{law}/param={parameter}/seed={seed}/row={row}/attempt={attempt}/{}x{}/factor={role}", bucket.0, bucket.1),
-        law: law.to_string(), law_version: LAW_VERSION, parameter: parameter.to_string(), seed,
+        law: law.to_string(), population: format!("{law}[{parameter}]"), law_version: LAW_VERSION, parameter: parameter.to_string(), seed,
         row_index: row, attempt, pair_bucket: format!("{}x{}", bucket.0, bucket.1), factor_role: role,
         side_count: factor.vertices.len(), area_normalized: (shoelace(&factor.vertices).abs() - 1.0).abs() < 1e-8,
         vertices_ccw: factor.vertices.iter().map(|v| [v[0], v[1]]).collect(),

@@ -120,12 +120,12 @@ def standardize_row(
             f"{context}: expected schema={SCHEMA!r}, got {row.get('schema')!r}"
         )
     sample_id = row.get("sample_id")
-    law = row.get("law")
+    law = row.get("population", row.get("law"))
     side_count = row.get("side_count")
     if not isinstance(sample_id, str) or not sample_id:
         raise ValueError(f"{context}: sample_id must be a nonempty string")
     if not isinstance(law, str) or not law:
-        raise ValueError(f"{context}: law must be a nonempty string")
+        raise ValueError(f"{context}: population/law must be a nonempty string")
     if not isinstance(side_count, int) or isinstance(side_count, bool):
         raise ValueError(f"{context}: side_count must be an integer")
     raw_vertices = row.get("vertices_ccw", row.get("vertices"))

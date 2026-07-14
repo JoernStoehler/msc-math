@@ -48,7 +48,8 @@ cargo run -p exp-sys-landscape --release --bin sys-datascience-generator-zoo-smo
 
 `factor-shapes.jsonl` is copy-local analyzer input. Every accepted factor row
 has schema `factor-shape-row-v1`, `side_count`, `area_normalized`, and a CCW
-`vertices_ccw` list. `product-smoke.jsonl` records exact product acceptance,
+`vertices_ccw` list. Its `population` field combines the law and knob setting,
+so the atlas never pools distinct distributions. `product-smoke.jsonl` records exact product acceptance,
 area, the exact incidence-volume witness in this compact smoke, attempts, and
 timings. `batch-report.json` contains per-law acceptance and timing totals,
 dispositions, and the producing source revision/dirty flag.

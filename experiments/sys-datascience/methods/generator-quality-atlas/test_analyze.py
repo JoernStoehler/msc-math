@@ -37,6 +37,11 @@ def standardized(payload, support_grid=256, steiner_grid=4096):
 
 
 class GeometryTests(unittest.TestCase):
+    def test_population_label_separates_knob_settings(self):
+        payload = row("one", "family", ANALYZE.regular_polygon(5))
+        payload["population"] = "family[knob=2]"
+        self.assertEqual(standardized(payload).law, "family[knob=2]")
+
     def test_rotation_scale_translation_are_quotiented(self):
         polygon = ANALYZE.transform_polygon(
             ANALYZE.regular_polygon(5),
