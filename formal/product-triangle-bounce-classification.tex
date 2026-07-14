@@ -334,8 +334,10 @@ For two triangles,
 \label{eq:product-triangle-global-finite-classification}
  \min\{A_2(P,Q),A_3^{\mathrm{dir}}(P,Q)\}<A_2(P,Q)
 \end{equation}
-if and only if the cross-pairing graph has a strict directed Hamiltonian
-six-cycle.  If no strict cycle exists, the left-hand minimum equals \(A_2\):
+if and only if there is an oriented Hamiltonian word which satisfies all six
+strict directed inequalities in
+\eqref{eq:product-triangle-directed-signs}.  If no such strict word exists,
+the left-hand minimum equals \(A_2\):
 every weakly directed three-block word either is absent or has an incident
 zero and therefore has action exactly \(A_2\).
 
@@ -422,13 +424,15 @@ Suppose the active word
 satisfies the six strict directed signs in
 \eqref{eq:product-triangle-directed-signs}.  Then there is a proper
 strong three-bounce \((P,Q)\)-billiard
-\((q_r;p_r)_{r\in\mathbb Z/3}\) with
+\((q_r;p_r)_{r\in\mathbb Z/3}\), where \emph{proper} here means that
+\(q_0,q_1,q_2\) are pairwise distinct and \(p_0,p_1,p_2\) are pairwise
+distinct, with
 \begin{align}
  q_r&\in\operatorname{relint}F_P(a_{-r}),
  &p_r&\in\operatorname{relint}F_Q(b_{-r-1}),
  \label{eq:product-triangle-contact-order}\\
- q_{r+1}-q_r&\in\mathbb R_{>0}b_{-r-1}=N_Q(p_r),
- &p_{r+1}-p_r&\in-\mathbb R_{>0}a_{-r-1}=-N_P(q_{r+1}).
+ q_{r+1}-q_r&\in\mathbb R_{>0}b_{-r-1}\subseteq N_Q(p_r),
+ &p_{r+1}-p_r&\in-\mathbb R_{>0}a_{-r-1}\subseteq -N_P(q_{r+1}).
  \label{eq:product-triangle-strong-inclusions}
 \end{align}
 Its \(Q\)-length is
@@ -501,9 +505,19 @@ Thus \(u=1/S=t\).  Set \(p_r=p'_{-r-1}\).  Equation
 \]
 
 Relative-interior side contacts have one-dimensional outer normal cones, so
-the two last displays prove both inclusions in
-\eqref{eq:product-triangle-strong-inclusions}.  All coefficients are positive,
-and the template triangles are nondegenerate, so the billiard is proper.
+explicitly
+\[
+ N_Q(p_r)=\mathbb R_{\geq0}b_{-r-1},
+ \qquad
+ N_P(q_{r+1})=\mathbb R_{\geq0}a_{-r-1}.
+\]
+The two positive-multiple displays therefore prove the memberships and subset
+relations in \eqref{eq:product-triangle-strong-inclusions}; the open rays are
+not identified with these closed normal cones.  The \(A_i\) span
+\(\mathbb R^2\), as do the \(B_j\), so neither template triangle is
+degenerate.  Since \(t,u>0\), their homothetic images
+\(q'_0,q'_1,q'_2\) and \(p'_0,p'_1,p'_2\) are pairwise distinct.
+Reindexing preserves this property, proving the asserted properness.
 Finally, \(h_Q(b_j)=1\) for every normalized facet vector.  Hence
 \[
  \ell_Q(q)=\sum_r h_Q\left(\frac{\gamma_{-r-1}}S b_{-r-1}\right)
@@ -528,6 +542,88 @@ the outgoing side functional decrease strictly and the incoming side
 functional increase strictly, so all six transition signs are strict.  Thus
 absence of a strict cycle excludes this proper side-contact type, but the
 present packet makes no completeness claim about vertex-contact degeneracies.
+
+\subsection{Capacity-level classification}
+\label{subsec:product-triangle-capacity-classification}
+
+The next corollary uses three existing project results in addition to this
+packet.  The Haim--Kislev formula identifies capacity with
+\(1/(2Q_{\max})\).  The finite-enumeration theorem and global-maximizer
+realization proposition in
+\path{thesis/04-haim-kislev-quadratic-program.tex} respectively supply an
+active capacity word with \(k\in\{2,3\}\) and place an active global maximizer
+as a physical generalized Reeb orbit.  These global results, rather than
+local transition sufficiency, are the completeness input below.
+
+\begin{unverified}
+\begin{corollary}[Capacity classification for a product of triangles]
+\label{cor:product-triangle-capacity-classification}
+Let \(K=P\times_LQ\).  Then
+\[
+ c_{\mathrm{EHZ}}(K)<A_2(P,Q)
+\]
+if and only if there is an oriented Hamiltonian word satisfying all six
+strict directed inequalities in
+\eqref{eq:product-triangle-directed-signs}.  If no such word exists, then
+\[
+ c_{\mathrm{EHZ}}(K)=A_2(P,Q),
+\]
+and the strong two-bounce class realizes the capacity.  If such a word does
+exist, Proposition~\ref{prop:product-triangle-strict-physical-realization}
+gives an explicit proper strong three-bounce billiard shorter than every
+strong two-bounce billiard, and every capacity-realizing word supplied by the
+at-most-three-block finite enumeration has \(k=3\).
+\end{corollary}
+
+\begin{proof}
+First suppose that a strict oriented Hamiltonian word \(\sigma\) exists.
+Theorem~\ref{thm:product-triangle-wordwise-comparison} gives
+\[
+ \max Q_\sigma=\frac S2>\frac M2=Q_{2,\max}(P,Q).
+\]
+This word belongs to the full Haim--Kislev candidate family.  Therefore the
+capacity formula gives
+\[
+ c_{\mathrm{EHZ}}(K)
+ \leq\frac1{2\max Q_\sigma}
+ =A_{3,\sigma}(P,Q)<A_2(P,Q).
+\]
+The explicit billiard in
+Proposition~\ref{prop:product-triangle-strict-physical-realization} has this
+same action.  Theorem~\ref{thm:product-strong-two-bounce} says that every
+strong two-bounce billiard has length at least \(A_2(P,Q)\), so this explicit
+three-bounce billiard is shorter than every one of them.  Moreover, the
+complete \(k=2\) theorem excludes a capacity word with action below \(A_2\).
+Hence no capacity-realizing word in the at-most-three-block enumeration can
+have \(k=2\); all such words have \(k=3\).
+
+Conversely, suppose \(c_{\mathrm{EHZ}}(K)<A_2(P,Q)\).  The finite-enumeration
+theorem supplies an active capacity-maximizing word with positive weights and
+\(k\in\{2,3\}\).  It cannot have \(k=2\), because
+Theorem~\ref{thm:product-two-bounce-complete-qp} bounds every mathematical
+\(k=2\) action below by \(A_2(P,Q)\).  Thus \(k=3\).  For triangles, the
+block-count argument in
+Subsection~\ref{subsec:product-triangle-finite-classification} makes this an
+all-singleton Hamiltonian word.
+
+Because this word is a global maximizer, the global-maximizer realization
+proposition places it as a physical generalized Reeb orbit with the same
+active word.  Necessity of the directed transition condition then gives the
+six weak signs in \eqref{eq:product-triangle-directed-signs}, after cyclic
+relabelling.  This step uses physical necessity after global reconstruction;
+it does not infer physical placement from local signs.  The wordwise equality
+criterion in Theorem~\ref{thm:product-triangle-wordwise-comparison} says that
+an incident zero would make this word's action exactly \(A_2(P,Q)\), contrary
+to the capacity hypothesis.  Hence all six signs are strict.
+
+Finally, the complete \(k=2\) equality word belongs to the full Haim--Kislev
+family, so the capacity formula always gives
+\(c_{\mathrm{EHZ}}(K)\leq A_2(P,Q)\).  If there is no strict word, the
+equivalence just proved excludes strict inequality, and therefore capacity
+equals \(A_2(P,Q)\).  The strong two-bounce realization theorem then supplies
+a strong two-bounce billiard of that length.
+\end{proof}
+\end{unverified}
 
 \subsection{Exact finite evidence and its boundary}
 \label{subsec:product-triangle-evidence}
