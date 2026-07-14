@@ -255,6 +255,25 @@ class ExactFeaturePacketTests(unittest.TestCase):
             self.assertEqual(audit["producer_revision"],revision)
             self.assertEqual(set(audit["retained_inputs"]),{"orientation","tangential-source","tangential-replay"})
 
+    def test_retained_producer_survives_a_descendant_test_commit(self):
+        feature_path=HERE / "artifacts/full-panels/features.jsonl"
+        paths=(
+            ("orientation",Path(__file__).parents[2] / "methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl"),
+            ("tangential-source",Path(__file__).parents[2] / "methods/generator-tangential-matchability/artifacts/full-64/smoke-rows.jsonl"),
+            ("tangential-replay",HERE / "artifacts/full-panels/tangential-replay/smoke-rows.jsonl"),
+        )
+        producer=subprocess.check_output(["git","rev-parse","HEAD~1"],text=True).strip()
+        current=subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip()
+        inputs=[]
+        for role,path in paths:
+            payload=path.read_bytes(); schema="generator-orientation-smoke-row-v2" if role=="orientation" else "alternative-generator-smoke-row-v2"
+            inputs.append({"role":role,"path":str(path),"sha256":hashlib.sha256(payload).hexdigest(),"rows":len(payload.splitlines()),"schema":schema})
+        feature_payload=feature_path.read_bytes(); manifest={"schema":"generator-exact-feature-augmenter-report-v2","feature_output":{"path":str(feature_path),"sha256":hashlib.sha256(feature_payload).hexdigest(),"rows":len(feature_payload.splitlines()),"schema":analyzer.FEATURE_SCHEMA},"provenance":{"source_revision":producer,"source_dirty":False,"inputs":inputs}}
+        with tempfile.TemporaryDirectory(dir=analyzer.REPO_ROOT) as directory:
+            report_path=Path(directory) / "augment-report.json"; report_path.write_text(json.dumps(manifest))
+            _,_,_,audit=analyzer.verify_manifest(feature_path,report_path,expected_revision=current,design="retained")
+            self.assertEqual(audit["producer_revision"],producer)
+
     def test_retained_producer_code_change_is_rejected(self):
         history=subprocess.check_output(["git","log","--format=%H","--",str(HERE / "augment.py")],text=True).splitlines()
         self.assertGreaterEqual(len(history),2)
