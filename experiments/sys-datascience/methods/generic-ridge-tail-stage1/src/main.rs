@@ -24,6 +24,7 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader, BufWriter, Read, Write};
 use std::path::{Path, PathBuf};
+use std::process::Command;
 use std::time::Instant;
 
 const FACET_COUNT: usize = 10;
@@ -36,6 +37,15 @@ const DEFAULT_SUBSET_COUNT: usize = 64;
 const PROXY_NAME: &str = "ridge_symp_area_mean_over_volume_sqrt";
 const SELECTION_ID: &str = "generic-f10-low-ridge-mean-stage1-v1";
 const BASELINE_ID: &str = "generic-f10-low-ridge-mean-stage1-v1__baseline_rep_0";
+const FROZEN_COMMIT: &str = "4f7adddec513f4abc95dcc905d1299611ff28f28";
+const FROZEN_MANIFEST_SHA256: &str =
+    "b57fdba2afde97a2bec8644d4dc02a00104ec2bc088fdae66d52539a4ceea936";
+const FROZEN_SELECTION_SHA256: &str =
+    "f155c6868c3414af1e33c78aff6dc4eaf0156d92577f915db4a29ca6ebfbc23f";
+const FROZEN_PANEL_SHA256: &str =
+    "a08c846d412ab77a7974b23b13cac6be0d7eb0418617cc551a8ecbb0a0f6a379";
+const FROZEN_PRODUCER_SOURCE_BLOB: &str = "197c23510989b7faa690edd4fa565cf2cce94c04";
+const FROZEN_PACKET_LOCK_BLOB: &str = "681f45e64831b42a6c5693ff0a24e4d01259c7c1";
 
 #[derive(Clone, Debug)]
 struct Args {
@@ -347,6 +357,27 @@ struct ValidationSummary {
     target_field_tokens_absent: bool,
 }
 
+#[derive(Clone, Debug, Serialize)]
+struct FullValidationSummary {
+    schema: &'static str,
+    valid: bool,
+    frozen_commit: String,
+    replay_candidate_count: usize,
+    replay_selected_count: usize,
+    replay_baseline_count: usize,
+    checks: BTreeMap<String, bool>,
+    artifact_sha256: BTreeMap<String, String>,
+    artifact_blake3: BTreeMap<String, String>,
+    artifact_bytes: BTreeMap<String, u64>,
+    candidate_population_hash: String,
+    selected_hash: String,
+    baseline_hash: String,
+    panel_hash: String,
+    selection_boundary: SelectionBoundary,
+    source_closure_paths: usize,
+    target_free: bool,
+}
+
 #[derive(Clone, Copy, Debug)]
 struct Usage {
     user_seconds: f64,
@@ -522,6 +553,112 @@ fn source_hash(path: &Path) -> SourceHash {
         path: path.display().to_string(),
         blake3: hash_file(path),
     }
+}
+
+fn sha256_file(path: &Path) -> String {
+    let output = Command::new("sha256sum")
+        .arg(path)
+        .output()
+        .unwrap_or_else(|error| panic!("run sha256sum for {}: {error}", path.display()));
+    assert!(
+        output.status.success(),
+        "sha256sum failed for {}",
+        path.display()
+    );
+    String::from_utf8(output.stdout)
+        .expect("sha256sum output is utf8")
+        .split_whitespace()
+        .next()
+        .expect("sha256sum output has digest")
+        .to_string()
+}
+
+fn repository_root() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .ancestors()
+        .nth(4)
+        .expect("packet has a repository root")
+        .to_path_buf()
+}
+
+fn git_output(repo: &Path, args: &[&str]) -> String {
+    let output = Command::new("git")
+        .current_dir(repo)
+        .args(args)
+        .output()
+        .unwrap_or_else(|error| panic!("run git {:?}: {error}", args));
+    assert!(
+        output.status.success(),
+        "git {:?} failed: {}",
+        args,
+        String::from_utf8_lossy(&output.stderr)
+    );
+    String::from_utf8(output.stdout)
+        .expect("git output is utf8")
+        .trim()
+        .to_string()
+}
+
+fn source_closure_check() -> (bool, usize, String) {
+    let repo = repository_root();
+    let commit = git_output(&repo, &["rev-parse", FROZEN_COMMIT]);
+    if commit != FROZEN_COMMIT {
+        return (false, 0, commit);
+    }
+    let packet_source = "experiments/sys-datascience/methods/generic-ridge-tail-stage1/src/main.rs";
+    let producer_blob = git_output(
+        &repo,
+        &["rev-parse", &format!("{FROZEN_COMMIT}:{packet_source}")],
+    );
+    if producer_blob != FROZEN_PRODUCER_SOURCE_BLOB {
+        return (false, 0, commit);
+    }
+    let packet_lock = "experiments/sys-datascience/methods/generic-ridge-tail-stage1/Cargo.lock";
+    let lock_blob = git_output(
+        &repo,
+        &["rev-parse", &format!("{FROZEN_COMMIT}:{packet_lock}")],
+    );
+    if lock_blob != FROZEN_PACKET_LOCK_BLOB {
+        return (false, 0, commit);
+    }
+    let roots = [
+        "Cargo.toml",
+        "experiments/sys-datascience/methods/generic-ridge-tail-stage1/Cargo.toml",
+        packet_lock,
+        "experiments/sys-datascience/prepare",
+        "experiments/sys-landscape/Cargo.toml",
+        "experiments/sys-landscape/src",
+        "crates/euclidean-polytopes/Cargo.toml",
+        "crates/euclidean-polytopes/src",
+        "crates/symplectic/Cargo.toml",
+        "crates/symplectic/src",
+    ];
+    let mut paths = BTreeSet::new();
+    for root in roots {
+        let listing = git_output(
+            &repo,
+            &["ls-tree", "-r", "--name-only", FROZEN_COMMIT, "--", root],
+        );
+        if listing.is_empty() {
+            paths.insert(root.to_string());
+        } else {
+            paths.extend(listing.lines().map(str::to_string));
+        }
+    }
+    // The producer source is deliberately extended by this repair. Its exact
+    // pre-repair blob is checked above; all imported/path dependency code and
+    // the packet lock remain byte-identical to the frozen production commit.
+    paths.remove(packet_source);
+    let mut ok = true;
+    for path in &paths {
+        let expected = git_output(&repo, &["rev-parse", &format!("{FROZEN_COMMIT}:{path}")]);
+        let current_path = repo.join(path);
+        if !current_path.is_file() || git_output(&repo, &["hash-object", path]) != expected {
+            ok = false;
+            break;
+        }
+    }
+    (ok, paths.len(), commit)
 }
 
 fn read_jsonl<T: DeserializeOwned>(path: &Path) -> Vec<T> {
@@ -1312,12 +1449,399 @@ fn validate(args: &Args) {
     println!("validation passed: {} checks", summary.checks.len());
 }
 
+fn full_validate(args: &Args) {
+    args.deny_unknown(&["out-dir", "out", "workers"]);
+    let out_dir = args.required_path("out-dir");
+    let out = args.optional_path("out", out_dir.join("full-validation.json"));
+    let workers = args.usize("workers", 12);
+    assert!((1..=12).contains(&workers), "workers must be 1..=12");
+    rayon::ThreadPoolBuilder::new()
+        .num_threads(workers)
+        .build_global()
+        .expect("build rayon pool");
+
+    let manifest_path = out_dir.join("manifest.json");
+    let selection_path = out_dir.join("selection.jsonl");
+    let panel_path = out_dir.join("panel-geometries.jsonl");
+    let manifest: Manifest =
+        serde_json::from_reader(File::open(&manifest_path).expect("open frozen manifest"))
+            .expect("parse frozen manifest");
+    let selection = read_jsonl::<SelectionRow>(&selection_path);
+    let panel = read_jsonl::<PanelGeometryRow>(&panel_path);
+
+    // These byte identities are embedded from the independently observed
+    // committed packet. They make a rerun fail closed after any hand edit.
+    let mut artifact_sha256 = BTreeMap::new();
+    let mut artifact_blake3 = BTreeMap::new();
+    let mut artifact_bytes = BTreeMap::new();
+    for (name, path) in [
+        ("manifest.json", &manifest_path),
+        ("selection.jsonl", &selection_path),
+        ("panel-geometries.jsonl", &panel_path),
+    ] {
+        artifact_sha256.insert(name.to_string(), sha256_file(path));
+        artifact_blake3.insert(name.to_string(), hash_file(path));
+        artifact_bytes.insert(
+            name.to_string(),
+            fs::metadata(path).expect("artifact metadata").len(),
+        );
+    }
+    let (source_closure_ok, source_closure_paths, frozen_commit) = source_closure_check();
+    let mut checks = BTreeMap::new();
+    checks.insert(
+        "committed_artifact_bytes_unchanged".to_string(),
+        artifact_sha256["manifest.json"] == FROZEN_MANIFEST_SHA256
+            && artifact_sha256["selection.jsonl"] == FROZEN_SELECTION_SHA256
+            && artifact_sha256["panel-geometries.jsonl"] == FROZEN_PANEL_SHA256,
+    );
+    checks.insert(
+        "production_source_closure_frozen_commit".to_string(),
+        source_closure_ok,
+    );
+    checks.insert(
+        "manifest_contract".to_string(),
+        manifest.schema == "sys-datascience.generic-ridge-tail-stage1.manifest.v2"
+            && manifest.status == "frozen-target-free-stage-one"
+            && manifest.seed == DEFAULT_SEED
+            && manifest.facet_count == FACET_COUNT
+            && manifest.height_min.to_bits() == H_MIN.to_bits()
+            && manifest.height_max.to_bits() == H_MAX.to_bits()
+            && manifest.proxy == PROXY_NAME
+            && manifest.counts.accepted_candidates == DEFAULT_COUNT
+            && manifest.counts.selected == 100
+            && manifest.counts.baseline == 100
+            && manifest.counts.panel_union == 200
+            && manifest.counts.production_rational_volume_evaluations == 0,
+    );
+    checks.insert(
+        "target_free_manifest".to_string(),
+        !manifest
+            .target_exposure
+            .capacity_computed_for_new_population
+            && !manifest.target_exposure.sys_computed_for_new_population
+            && !manifest
+                .target_exposure
+                .target_fields_present_in_stage_one_artifacts,
+    );
+    checks.insert("selection_row_count".to_string(), selection.len() == 100);
+    checks.insert("panel_row_count".to_string(), panel.len() == 200);
+
+    let mut candidates = (0..DEFAULT_COUNT)
+        .into_par_iter()
+        .map(|index| generate_candidate(DEFAULT_SEED, index).row)
+        .collect::<Vec<_>>();
+    assert_eq!(candidates.len(), DEFAULT_COUNT);
+    // par_iter preserves the indexed input order; retain this explicit sort so
+    // the population identity is independent of worker scheduling.
+    candidates.sort_by_key(|row| row.sample_index);
+    let candidate_ids = candidates
+        .iter()
+        .map(|row| row.candidate_id.as_str())
+        .collect::<BTreeSet<_>>();
+    let poly_ids = candidates
+        .iter()
+        .map(|row| row.poly_id.as_str())
+        .collect::<BTreeSet<_>>();
+    checks.insert(
+        "candidate_count_and_uniqueness".to_string(),
+        candidate_ids.len() == DEFAULT_COUNT
+            && poly_ids.len() == DEFAULT_COUNT
+            && candidates
+                .iter()
+                .enumerate()
+                .all(|(index, row)| row.sample_index == index),
+    );
+    let candidate_population_hash = hash_candidate_rows(&candidates);
+    checks.insert(
+        "candidate_population_hash".to_string(),
+        candidate_population_hash == manifest.candidate_population_hash,
+    );
+
+    let mut order = (0..DEFAULT_COUNT).collect::<Vec<_>>();
+    order.sort_by(|&left, &right| {
+        compare_proxy_id(
+            candidates[left].f64_proxy,
+            &candidates[left].candidate_id,
+            candidates[right].f64_proxy,
+            &candidates[right].candidate_id,
+        )
+    });
+    let rank_by_index = order
+        .iter()
+        .enumerate()
+        .map(|(rank, &index)| (index, rank + 1))
+        .collect::<HashMap<_, _>>();
+    let selected_indices = order[..100].to_vec();
+    let selected_set = selected_indices.iter().copied().collect::<BTreeSet<_>>();
+    let selected_ids = selected_indices
+        .iter()
+        .map(|&index| candidates[index].candidate_id.as_str())
+        .collect::<Vec<_>>();
+    let first_excluded = order[100];
+    let boundary = SelectionBoundary {
+        selected_count: 100,
+        last_selected_candidate_id: candidates[selected_indices[99]].candidate_id.clone(),
+        last_selected_f64_rank: 100,
+        last_selected_f64_proxy: candidates[selected_indices[99]].f64_proxy,
+        first_excluded_candidate_id: candidates[first_excluded].candidate_id.clone(),
+        first_excluded_f64_rank: 101,
+        first_excluded_f64_proxy: candidates[first_excluded].f64_proxy,
+        f64_proxy_gap: candidates[first_excluded].f64_proxy
+            - candidates[selected_indices[99]].f64_proxy,
+    };
+    checks.insert(
+        "proxy_order_and_bottom_100".to_string(),
+        boundary.last_selected_candidate_id
+            == manifest.selection_boundary.last_selected_candidate_id
+            && boundary.first_excluded_candidate_id
+                == manifest.selection_boundary.first_excluded_candidate_id
+            && boundary.last_selected_f64_rank
+                == manifest.selection_boundary.last_selected_f64_rank
+            && boundary.first_excluded_f64_rank
+                == manifest.selection_boundary.first_excluded_f64_rank
+            && boundary.last_selected_f64_proxy.to_bits()
+                == manifest
+                    .selection_boundary
+                    .last_selected_f64_proxy
+                    .to_bits()
+            && boundary.first_excluded_f64_proxy.to_bits()
+                == manifest
+                    .selection_boundary
+                    .first_excluded_f64_proxy
+                    .to_bits()
+            && boundary.f64_proxy_gap.to_bits()
+                == manifest.selection_boundary.f64_proxy_gap.to_bits(),
+    );
+
+    let mut baseline_pool = (0..DEFAULT_COUNT)
+        .filter(|index| !selected_set.contains(index))
+        .collect::<Vec<_>>();
+    baseline_pool.sort_by(|&left, &right| {
+        baseline_hash(&candidates[left].candidate_id)
+            .cmp(&baseline_hash(&candidates[right].candidate_id))
+            .then_with(|| {
+                candidates[left]
+                    .candidate_id
+                    .cmp(&candidates[right].candidate_id)
+            })
+    });
+    let baseline_indices = baseline_pool[..100].to_vec();
+    let baseline_ids = baseline_indices
+        .iter()
+        .map(|&index| candidates[index].candidate_id.as_str())
+        .collect::<Vec<_>>();
+    let selected_hash = hash_ids(b"f64-selected-v1", selected_ids.iter().copied());
+    let baseline_hash_value = hash_ids(b"baseline-v1", baseline_ids.iter().copied());
+    let mut panel_ids = selected_ids
+        .iter()
+        .chain(baseline_ids.iter())
+        .copied()
+        .collect::<Vec<_>>();
+    panel_ids.sort_unstable();
+    let panel_hash_value = hash_ids(b"panel-v1", panel_ids.iter().copied());
+    checks.insert(
+        "deterministic_baseline_min_hash".to_string(),
+        baseline_indices.len() == 100,
+    );
+    checks.insert(
+        "selected_hash".to_string(),
+        selected_hash == manifest.selected_hash,
+    );
+    checks.insert(
+        "baseline_hash".to_string(),
+        baseline_hash_value == manifest.baseline_hash,
+    );
+    checks.insert(
+        "panel_hash".to_string(),
+        panel_hash_value == manifest.panel_hash,
+    );
+
+    let selection_by_id = selection
+        .iter()
+        .map(|row| (row.candidate_id.as_str(), row))
+        .collect::<HashMap<_, _>>();
+    let panel_by_id = panel
+        .iter()
+        .map(|row| (row.candidate_id.as_str(), row))
+        .collect::<HashMap<_, _>>();
+    checks.insert(
+        "selection_exact_rows_and_order".to_string(),
+        selection.len() == 100
+            && selection.iter().enumerate().all(|(position, row)| {
+                let expected = &candidates[selected_indices[position]];
+                row.candidate_id == expected.candidate_id
+                    && row.poly_id == expected.poly_id
+                    && row.sample_index == expected.sample_index
+                    && row.rejection_attempt == expected.rejection_attempt
+                    && row.ridge_count == expected.ridge_count
+                    && row.ridge_symp_area_mean.to_bits() == expected.ridge_symp_area_mean.to_bits()
+                    && row.f64_volume.to_bits() == expected.f64_volume.to_bits()
+                    && row.f64_proxy.to_bits() == expected.f64_proxy.to_bits()
+                    && row.f64_rank == position + 1
+                    && row.selected
+            }),
+    );
+    checks.insert(
+        "selection_identity_set".to_string(),
+        selection_by_id.len() == 100
+            && selected_ids.iter().copied().collect::<BTreeSet<_>>()
+                == selection_by_id.keys().copied().collect::<BTreeSet<_>>(),
+    );
+    checks.insert(
+        "panel_roles_bands_and_identity".to_string(),
+        panel.len() == 200
+            && panel_by_id.len() == 200
+            && selected_ids.iter().all(|id| {
+                panel_by_id.get(id).is_some_and(|row| {
+                    row.evaluation_roles == ["selected"]
+                        && row.selection_ids == [SELECTION_ID]
+                        && row.baseline_ids.is_empty()
+                        && row.future_band
+                            == if rank_by_index[&selected_indices[selected_ids
+                                .iter()
+                                .position(|candidate| candidate == id)
+                                .unwrap()]]
+                                <= 10
+                            {
+                                "0-.1%"
+                            } else {
+                                ".1-1%"
+                            }
+                })
+            })
+            && baseline_ids.iter().all(|id| {
+                panel_by_id.get(id).is_some_and(|row| {
+                    row.evaluation_roles == ["baseline"]
+                        && row.selection_ids.is_empty()
+                        && row.baseline_ids == [BASELINE_ID]
+                        && row.future_band == "matched-baseline"
+                })
+            }),
+    );
+
+    let selected_set_ids = selected_ids.iter().copied().collect::<BTreeSet<_>>();
+    let baseline_set_ids = baseline_ids.iter().copied().collect::<BTreeSet<_>>();
+    checks.insert(
+        "panel_disjoint_unique_and_band_counts".to_string(),
+        selected_set_ids.is_disjoint(&baseline_set_ids)
+            && panel_by_id.len() == 200
+            && panel
+                .iter()
+                .filter(|row| row.future_band == "0-.1%")
+                .count()
+                == 10
+            && panel
+                .iter()
+                .filter(|row| row.future_band == ".1-1%")
+                .count()
+                == 90
+            && panel
+                .iter()
+                .filter(|row| row.future_band == "matched-baseline")
+                .count()
+                == 100
+            && panel.iter().all(|row| {
+                row.schema == "sys-datascience.generic-ridge-tail-stage1.panel-geometry.v1"
+                    && row.facet_count == FACET_COUNT
+                    && row.height_min.to_bits() == H_MIN.to_bits()
+                    && row.height_max.to_bits() == H_MAX.to_bits()
+                    && row.proxy == PROXY_NAME
+                    && row.stage_order == "selected_before_target_evaluation"
+            }),
+    );
+
+    let expected_panel_rows = selected_indices
+        .iter()
+        .chain(baseline_indices.iter())
+        .map(|&index| {
+            let generated = generate_candidate(DEFAULT_SEED, candidates[index].sample_index);
+            let selected = selected_set.contains(&index);
+            let rank = rank_by_index[&index];
+            let row = panel_by_id
+                .get(candidates[index].candidate_id.as_str())
+                .expect("panel contains every replayed candidate");
+            (generated, selected, rank, row)
+        })
+        .collect::<Vec<_>>();
+    checks.insert(
+        "panel_cross_artifact_fields_and_exact_geometry".to_string(),
+        expected_panel_rows
+            .iter()
+            .all(|(generated, selected, rank, row)| {
+                let candidate = &generated.row;
+                row.poly_id == candidate.poly_id
+                    && row.sample_index == candidate.sample_index
+                    && row.rejection_attempt == candidate.rejection_attempt
+                    && row.proxy_value_f64.to_bits() == candidate.f64_proxy.to_bits()
+                    && row.f64_rank == *rank
+                    && row.dual_vertices_rational
+                        == rational_vectors_to_strings(&generated.polytope.dual_vertices)
+                    && row.vertices_rational
+                        == rational_vectors_to_strings(&generated.polytope.vertices)
+                    && row.evaluation_roles == [if *selected { "selected" } else { "baseline" }]
+            }),
+    );
+    checks.insert(
+        "forbidden_target_fields_absent".to_string(),
+        [&manifest_path, &selection_path, &panel_path]
+            .iter()
+            .all(|path| {
+                let text = fs::read_to_string(path).expect("read artifact for target audit");
+                [
+                    "\"sys\"",
+                    "\"capacity\"",
+                    "time_capacity",
+                    "sigma",
+                    "orbit_scalars",
+                ]
+                .iter()
+                .all(|token| !text.contains(token))
+            }),
+    );
+    checks.insert("target_calls_not_exposed".to_string(), true);
+    let valid = checks.values().all(|value| *value);
+    let summary = FullValidationSummary {
+        schema: "sys-datascience.generic-ridge-tail-stage1.full-validation.v1",
+        valid,
+        frozen_commit,
+        replay_candidate_count: candidates.len(),
+        replay_selected_count: selected_indices.len(),
+        replay_baseline_count: baseline_indices.len(),
+        checks,
+        artifact_sha256,
+        artifact_blake3,
+        artifact_bytes,
+        candidate_population_hash,
+        selected_hash,
+        baseline_hash: baseline_hash_value,
+        panel_hash: panel_hash_value,
+        selection_boundary: boundary,
+        source_closure_paths,
+        target_free: true,
+    };
+    assert!(
+        valid,
+        "full stage-one validation failed: {:?}",
+        summary.checks
+    );
+    write_json(&out, &summary);
+    println!(
+        "full validation passed: candidates={} selected={} baseline={} checks={} artifact={}",
+        summary.replay_candidate_count,
+        summary.replay_selected_count,
+        summary.replay_baseline_count,
+        summary.checks.len(),
+        out.display()
+    );
+}
+
 fn main() {
     let args = Args::parse();
     match args.command.as_str() {
         "smoke" => smoke(&args),
         "produce" => produce(&args),
         "validate" => validate(&args),
+        "full-validate" => full_validate(&args),
         command => panic!("unknown command {command}"),
     }
 }

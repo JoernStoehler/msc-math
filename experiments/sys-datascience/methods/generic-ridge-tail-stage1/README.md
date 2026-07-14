@@ -58,6 +58,15 @@ cargo run --release --manifest-path experiments/sys-datascience/methods/generic-
 cargo run --release --manifest-path experiments/sys-datascience/methods/generic-ridge-tail-stage1/Cargo.toml -- \
   validate \
   --out-dir experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/stage1
+
+# Irreversible exposure gate: replay all 10,000 candidates and regenerate the
+# frozen selection, baseline, and 200 rational geometries. This is distinct
+# from the cheap 64-row `validate` check above and must pass immediately before
+# any target evaluator is run.
+cargo run --release --manifest-path experiments/sys-datascience/methods/generic-ridge-tail-stage1/Cargo.toml -- \
+  full-validate \
+  --out-dir experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/stage1 \
+  --workers 12
 ```
 
 The smoke inputs are LFS files and must be hydrated before the first command.
@@ -76,6 +85,10 @@ Do not hand-edit generated JSON or JSONL.
   selected and baseline panel, without targets;
 - `artifacts/stage1/validation.json`: count, ordering, disjointness,
   deterministic-subset, artifact-hash, and forbidden-target-field checks.
+- `artifacts/stage1/full-validation.json`: the promoted full 10,000-row
+  target-free replay gate. It binds the committed artifact bytes, source
+  closure, complete population/selection/baseline/panel hashes, all row and
+  geometry fields, and the target-free boundary.
 
 Allowed use before target exposure: independent review of the generator,
 proxy, retained numerical audit, f64 cutoff, baseline, provenance, and
