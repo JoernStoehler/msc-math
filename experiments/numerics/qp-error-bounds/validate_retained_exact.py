@@ -174,7 +174,7 @@ def main() -> None:
         if cutoff != min_action * Fraction(21, 20):
             fail(f"{case}: retained cutoff is not exact 21/20 minimum")
         retained_window = unique_sigmas(row["retained_exact_window_sigmas"], f"{case}.retained_window")
-        if retained_window != sorted(key for key, action in accepted.items() if action <= cutoff):
+        if sorted(retained_window) != sorted(key for key, action in accepted.items() if action <= cutoff):
             fail(f"{case}: retained window disagrees with exact actions")
         current_mins = unique_sigmas(row["current_minimizer_sigmas"], f"{case}.current_mins")
         current_window = unique_sigmas(row["current_window_sigmas"], f"{case}.current_window")
