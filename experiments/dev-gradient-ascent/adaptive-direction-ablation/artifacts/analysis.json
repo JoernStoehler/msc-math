@@ -37,17 +37,17 @@
       },
       {
         "start": "43d2432913e3f665557c74ae146711b03fbbdb4182479852672cf1db98dec8cc",
-        "radius": 0.01,
-        "near_gain": 0.03297499428125039,
-        "single_gain": 0.030247307351416786,
-        "difference_single_minus_near": -0.002727686929833606
-      },
-      {
-        "start": "43d2432913e3f665557c74ae146711b03fbbdb4182479852672cf1db98dec8cc",
         "radius": 0.001,
         "near_gain": 0.01919917191142928,
         "single_gain": 0.018625399658617203,
         "difference_single_minus_near": -0.000573772252812077
+      },
+      {
+        "start": "43d2432913e3f665557c74ae146711b03fbbdb4182479852672cf1db98dec8cc",
+        "radius": 0.01,
+        "near_gain": 0.03297499428125039,
+        "single_gain": 0.030247307351416786,
+        "difference_single_minus_near": -0.002727686929833606
       },
       {
         "start": "f6be75d99a357735276fc4b6eb36b0549c823dd75faeedb4fc7506903da2f1b8",
@@ -58,17 +58,17 @@
       },
       {
         "start": "f6be75d99a357735276fc4b6eb36b0549c823dd75faeedb4fc7506903da2f1b8",
-        "radius": 0.01,
-        "near_gain": 0.000769210566814782,
-        "single_gain": 0.0007692105444715436,
-        "difference_single_minus_near": -2.2343238370581275e-11
-      },
-      {
-        "start": "f6be75d99a357735276fc4b6eb36b0549c823dd75faeedb4fc7506903da2f1b8",
         "radius": 0.001,
         "near_gain": 0.006600226879658222,
         "single_gain": 0.0029100827797677864,
         "difference_single_minus_near": -0.0036901440998904356
+      },
+      {
+        "start": "f6be75d99a357735276fc4b6eb36b0549c823dd75faeedb4fc7506903da2f1b8",
+        "radius": 0.01,
+        "near_gain": 0.000769210566814782,
+        "single_gain": 0.0007692105444715436,
+        "difference_single_minus_near": -2.2343238370581275e-11
       }
     ],
     "tie_tolerance": 1e-08,

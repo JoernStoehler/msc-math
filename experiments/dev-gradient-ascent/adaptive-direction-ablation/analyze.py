@@ -125,14 +125,14 @@ observed = []
 for (p, s, radius), rs in sorted(by_cell.items()):
     observed.append({"policy": p, "start": s, "radius": radius, "proposals": len(rs)-1, "accepted": sum(x["accepted"] for x in rs[1:]), "initial_sys": rs[0]["target_sys"], "best_sys": rs[-1]["best_sys"], "best_gain": rs[-1]["best_sys"] - rs[0]["target_sys"], "mean_abs_prediction_error": sum(abs(x["predicted_observed_error"]) for x in rs[1:] if x["predicted_observed_error"] is not None) / max(1, sum(x["predicted_observed_error"] is not None for x in rs[1:]))})
 tol = 1.0e-8
-matched = {(s, r, i): {p: by_cell[(p, s, r)][i] for p in ("near_active_box_lp_maximin", "single_branch_box_steepest") if i < len(by_cell[(p, s, r)])} for s in expected_starts for r in expected_radii for i in range(1, max(len(by_cell[("near_active_box_lp_maximin", s, r)]), len(by_cell[("single_branch_box_steepest", s, r)])))}
+matched = {(s, r, i): {p: by_cell[(p, s, r)][i] for p in ("near_active_box_lp_maximin", "single_branch_box_steepest") if i < len(by_cell[(p, s, r)])} for s in sorted(expected_starts) for r in sorted(expected_radii) for i in range(1, max(len(by_cell[("near_active_box_lp_maximin", s, r)]), len(by_cell[("single_branch_box_steepest", s, r)])))}
 matched = {k: v for k, v in matched.items() if len(v) == 2}
 same_base = [v for v in matched.values() if v["near_active_box_lp_maximin"]["base_dual_flat"] == v["single_branch_box_steepest"]["base_dual_flat"]]
 singleton_same_direction = [v for v in same_base if v["near_active_box_lp_maximin"]["near_active_count"] == 1 and max(abs(a-b) for a,b in zip(v["near_active_box_lp_maximin"]["direction_flat"], v["single_branch_box_steepest"]["direction_flat"])) <= tol]
 direction_divergences = [v for v in same_base if max(abs(a-b) for a,b in zip(v["near_active_box_lp_maximin"]["direction_flat"], v["single_branch_box_steepest"]["direction_flat"])) > tol]
 gain_pairs = []
-for s in expected_starts:
-    for r in expected_radii:
+for s in sorted(expected_starts):
+    for r in sorted(expected_radii):
         n = by_cell[("near_active_box_lp_maximin", s, r)][-1]["best_sys"] - by_cell[("near_active_box_lp_maximin", s, r)][0]["target_sys"]
         b = by_cell[("single_branch_box_steepest", s, r)][-1]["best_sys"] - by_cell[("single_branch_box_steepest", s, r)][0]["target_sys"]
         gain_pairs.append((s, r, n, b))
