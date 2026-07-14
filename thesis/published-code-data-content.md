@@ -15,44 +15,60 @@ stable, delete this file or reduce it to a short maintenance note.
 Update rule: add or change a claim only with a source pointer or an explicit
 `needs source` marker.
 
-## Content Inventory
+## Accepted chapter boundary
 
-- Current text records the two exact SageMath packet locations, the differing
-  explicit-check/Python-assertion boundaries, their owner-local rerun READMEs,
-  and the lack of embedded source/environment identity in retained generated
-  records.  This material was moved from the rejected standalone Sage appendix.
-- State the repository structure at a high level.
-- State the live GitHub repository, with the caveat that it may retire in a few
-  years, and the permanent uploads on chosen archive sites once known.
-- Accepted archive direction, 2026-07-14: GitHub remains the living repository;
-  one manually curated Zenodo record holds the frozen thesis-support plus
-  continuation bundle; Software Heritage complements it for public Git source
-  history. Fill exact URLs and identifiers near submission.
-- State which experiment artifacts support thesis claims.
-- State that data is committed, the git history is not pruned and covers
-  roughly half the thesis lifetime, the thesis PDF is rebuildable, and
-  documentation explains how to read and run the repo.
-- State which commands or archived outputs are promised.
-- Do not turn the thesis into the run manual. "How to read this" and "how to
-  run this" live in the repo.
-- The repo promises reproducibility via the devcontainer/Docker definition.
-  Open TODO: pin versions if needed before submission.
-- The repo root `README.md` should be the detailed reproducibility surface. The
-  thesis can copy final numbers or summaries from it.
-- Include rough total core-hour estimates for reproducing different parts.
-  These estimates help readers distinguish cheap sanity checks from expensive
-  full reproduction and are evidence that the reproducibility promise has been
-  thought through.
-- Caveat: the repo documentation is optimized mostly for capable current
-  GPT-5.6 agents as readers/operators, not primarily for human readers.
-- Maintenance philosophy: code clarity wins by default; optimize only when
-  tracing, profiling, benchmarking, or final consumers show that performance is
-  material for a retained thesis computation.
-- Maintenance after writeup should repair thesis/code mismatches, missing
-  tests, reproducibility gaps, and profiling evidence that matters for final
-  experiments.
+- Explain what published code and retained data support the thesis; do not turn
+  the chapter into a repository run manual. Detailed commands live in owner
+  READMEs and the root `REPRODUCIBILITY.md`.
+- GitHub (`https://github.com/JoernStoehler/msc-math`) is the living,
+  agent-oriented repository. One Zenodo record is the frozen thesis-support
+  plus continuation archive. Software Heritage is not a
+  promised publication surface; mention it only if a clean origin is actually
+  published.
+- The final archive is a useful near-mirror of the closure-time repository plus
+  the checked thesis PDF. It excludes raw sessions, credentials, genuinely
+  private correspondence, disposable state, and third-party material without
+  clear redistribution rights. Ordinary coordination or administrative context
+  is not presumed sensitive.
+- Retained data are selected for immediate interpretation, validation, or
+  continuation, especially when regeneration is expensive. Small data use Git;
+  large or poorly diffing data use Git LFS and enter Zenodo as hydrated bytes.
+- Do not promise that every repository executable is rerun by one command.
+  Reproduction routes stay with their owning experiments.
 
-## Open Decisions
+## Sources the writer should use
 
-- Fill exact GitHub, Zenodo, and Software Heritage identifiers and the exact
-  reproducibility promise when the closure payload and mechanics are known.
+- `REPRODUCIBILITY.md`: concise cross-project publication and data policy.
+- `submit/archive-closure-checklist.md`: final cleanup/publication gates; it is
+  not thesis prose.
+- `LICENSE.md`: Apache-2.0/CC BY 4.0 material boundary.
+- `experiments/hko-local-maximum/theorem/README.md`: HKO exact certificate.
+- `experiments/regular-products/pentagon-rotation-formula-proof/README.md`:
+  rotated-pentagon exact certificate.
+- `experiments/sys-datascience/README.md`: retained 14,336-row bounded negative
+  search result and frozen generated-candidate evidence.
+- `experiments/sys-landscape/gradient-ascent-observed-general/README.md`:
+  twelve-start finite first-order experiment.
+
+The current TeX already records the two certificate packets and their checking
+boundaries. The writer should add a compact repository/archive account and the
+retained empirical-data routes above, calibrated to the claims in their owning
+chapters.
+
+## Final local placeholders
+
+The chapter may be drafted completely while leaving conspicuous local TODOs
+only for values that genuinely arise at closure:
+
+- Zenodo DOI and URL;
+- final archive filename and byte size;
+- final release commit SHA and archive SHA-256;
+- publication/upload date;
+- exact final environment versions, but only if the prose chooses to name them.
+
+The GitHub URL is already known. Do not leave policy placeholders for archive
+contents, Software Heritage, licensing, or what “reproducible” means.
+
+Omit repository-wide core-hour estimates, history-age claims, maintenance
+philosophy, and a global rerun promise unless a later source-backed reader need
+appears. They are not required to write this chapter.

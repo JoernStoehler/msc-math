@@ -22,11 +22,12 @@ cited in this repository. In particular:
 - files that carry their own license or rights notice are governed by that
   notice.
 
-The license grant also does not cover `JOERN.md`, raw session logs, private
-communications, credentials, user configuration, private or submission-
-administration state, or other material identified as excluded from public
-distribution. Their presence in a working repository does not select them for
-CC BY 4.0 licensing.
+The license grant does not cover raw session logs, credentials/authentication
+state, genuinely private correspondence, or other material identified as
+excluded from public distribution. Jörn-owned ordinary project context selected
+for the final public repository/archive may be distributed under the applicable
+license above; a personal filename, username, local path, coordination record,
+or administrative purpose does not by itself exclude it.
 
 The Zenodo continuation bundle excludes cached papers, downloaded submission
 forms, and other third-party material without clear redistribution rights. See

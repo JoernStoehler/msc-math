@@ -38,16 +38,21 @@ maintenance low. The numbers are stable and can be out of order.
    2026-07-14. Preserve the closure-time live repository state as the main
    continuation surface, including the agent harness, thesis sources and
    companions, formal notes, crates, experiments, retained data/artifacts, and
-   provenance needed to continue the work. Exclude raw session logs,
-   credentials, user configuration, private communications, submission
-   administration, downloaded papers, and third-party material without clear
-   redistribution rights. The final payload still needs a closure-time rights,
-   privacy, and claim audit.
+   provenance needed to continue the work. Ordinary public project context is
+   not presumed sensitive merely because it identifies Jörn, records
+   coordination or administration, or contains local paths. Exclude raw session
+   logs, credentials/authentication state, genuinely private correspondence,
+   downloaded third-party material without clear redistribution rights, and
+   disposable state with no continuation value. The final payload still needs a
+   closure-time rights, data-disposition, and claim audit.
 
 6. Jörn accepted Zenodo as the primary frozen, citable archive on 2026-07-14.
    GitHub remains the living agent-oriented repository; one manually curated
-   Zenodo record will hold the thesis-support plus continuation bundle; and
-   Software Heritage is a complementary source-history archive. Do not split
+   Zenodo record will hold the thesis-support plus continuation bundle.
+   Software Heritage is optional: omit it unless a separately audited clean
+   origin has a concrete preservation benefit, because inherited history
+   contains cached/copied third-party material with unclear redistribution
+   terms. Do not split
    software and data into separate Zenodo records unless the final artifacts
    acquire a clear independent citation use. Jörn created the Zenodo account
    successfully through GitHub sign-up on 2026-07-14.

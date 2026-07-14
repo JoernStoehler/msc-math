@@ -33,11 +33,16 @@ Jörn accepted the archive direction on 2026-07-14:
 - GitHub remains the living, agent-oriented repository.
 - One manually curated Zenodo record is the frozen, citable thesis-support and
   continuation archive.
-- Software Heritage complements Zenodo by preserving the public Git source
-  history; it does not replace the mixed Zenodo bundle.
-- Preserve the closure-time repository state, including the repo-local agent
-  harness and research continuation material. Exclude private/session/admin
-  material and anything without clear redistribution rights.
+- Software Heritage is optional and does not replace the mixed Zenodo bundle.
+  Omit it unless a separately audited clean origin has a concrete preservation
+  benefit; inherited history contains cached/copied third-party material with
+  unclear redistribution terms.
+- Preserve the useful closure-time repository state, including the repo-local
+  agent harness, ordinary project context, and research continuation material.
+  Exclude raw sessions, credentials/authentication state, genuinely private
+  correspondence, disposable state, and third-party material without clear
+  redistribution rights. Project administration, usernames, and local paths
+  are not presumed sensitive.
 - Use one Zenodo record unless a final software or data object has a concrete
   independent citation use.
 
