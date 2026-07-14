@@ -89,6 +89,31 @@ with bucket mixture. They weaken a pooled persistent-dependence story over the
 observed range, but sparse extreme panels and target censoring prevent an
 asymptotic conclusion.
 
+## Post-gate source simplification
+
+The ten product buckets are useful exploratory strata, but they are not ten
+prior hypotheses that deserve equal new compute. In particular, the observed
+`3xm` versus `k>=4` split was discovered after inspecting sparse product tails.
+It does not justify a 5M-row replication by itself.
+
+The smallest comparison that addresses the live source question is instead:
+
+- generic/non-product `F=10`, ranked within that population by
+  `ridge_symp_area_mean_over_volume_sqrt`; and
+- product `5x5`, reusing its existing generated panels.
+
+Both have ten facets. Product `5x5` has fixed ridge count 35, so ridge-area sum
+and mean give the same ranking there. Generic `F=10` has ridge counts 33--41,
+so the mean is required to avoid ranking partly by ridge count. Existing
+product `4x6` data are a zero-new-compute sensitivity check; another product
+population becomes warranted only if `4x6` and `5x5` disagree materially or a
+causal claim about product factorization becomes necessary.
+
+This two-population comparison does not isolate a causal "product effect": the
+generators, combinatorics, and capacity backends also differ. It can answer the
+operational question of whether ridge screening persists or saturates in each
+named population. Mechanistic transfer would require a different design.
+
 ## Competing conjectures and discriminating observations
 
 ### Persistent within-bucket tail dependence
@@ -159,34 +184,53 @@ attained within-bucket empirical `R` quantile on an independent ridge marginal
 per step and its wall/resource cost. Current artifacts contain neither an
 optimizer trajectory nor such a calibration.
 
-## Cheapest discriminating new-data design
+## Adaptive new-data design
 
-Do not launch this before the first Jörn gate.
+The first new scientific stage is 10,000 accepted generic `F=10` candidates,
+not a million-row target. Freeze the mean-proxy ranking before target exposure,
+then evaluate the lowest 1% (100 rows) and a preselected matched 100-row
+baseline. The disjoint `0-.1%` and `.1-1%` bands contain 10 and 90 rows. This
+stage tests whether the product enrichment transfers to a generated generic
+population and whether coarse hardening continues. Its singleton `.01%` row
+has no inferential role.
 
-If the bucket-sensitive saturation question is worth resolving, generate an
-independent 500,000-row feature population per bucket (5M total), freeze `R`,
-and evaluate 50 rows per bucket in each disjoint band
+Use a mean-`sys` contrast of 0.04 as the provisional smallest
+decision-relevant effect, together with a retained-table fixed high-`sys`
+threshold exceedance contrast. Stop after 10k if the low 1% fails to enrich
+over baseline and the adjacent-band evidence rules out improvement of that
+size, or if generic and reused product evidence both give a practically flat
+or reversed result. Continue to 100k only if generic hardening or the
+generic-minus-product interaction is material, or if sampling uncertainty
+still includes both plateau and a decision-changing effect.
 
-`0-.01%, .01-.1%, .1-.5%, .5-1%, 1-5%, 5-20%, 20-100%`.
+At 100k, the generic 1%, .1%, and .01% tails contain 1,000, 100, and 10 rows.
+This is the first scale that exposes the `.01%` band at all, though ten extreme
+rows remain sparse. Stop there if the `0-.01%` versus `.01-.1%` contrast is
+practically equivalent, reversed, or already settles the line decision.
 
-This is 3,500 target evaluations. Fix retained-table bucket-specific `sys`
-thresholds before the run, and use both threshold exceedance and the conditional
-`sys` distribution; do not try to estimate a new `.01%` target quantile from 50
-rows. Predeclare the `k=3,m>3` versus `k>=4` interaction, retain `3x3` as a
-control, and escalate any `sys>1` row immediately.
+One million generic candidates would give 100 rows at `.01%` and 10 at
+`.001%`. Run it only if sampling uncertainty in the ten-row 100k extreme band
+is the remaining decision-changing crux, or if improvement persists through
+`.01%` and another decade has become substantively important. Do not use 1M to
+repair generator confounding, proxy uncertainty, or merely to strengthen a
+zero-hit `sys>1` panel.
 
-At the observed 100k throughput, naive linear scaling is roughly 451 seconds
-of 12-worker pre-target wall time and 93 seconds of target wall time, before
-overhead. The 1M cache occupies about 6.4 GB, so the current cache architecture
-would imply roughly 32 GB at 5M. These are feasibility anchors, not a resource
-promise. A streaming selector that retains only selected geometry may reduce
-storage but requires implementation and review.
+Retained generic `F=10` timing gives 1.118 seconds of exact-volume work per row
+on average: approximately 3.1, 31, and 311 serial CPU-hours for 10k, 100k, and
+1M. These are linear CPU-time anchors, not wall-time or core-hour forecasts.
+The codebase also has an f64 incidence-volume path. Before the 10k stage,
+benchmark its ranking against exact retained generic volumes and test recall of
+the exact low-proxy tail under an oversampled f64 screen. If adequate, stream
+candidate selection and compute exact volumes only near the cutoff and for
+target-evaluated rows. Availability of the cheaper path is verified; its tail
+fidelity is not.
 
-Stop after 50 rows per band. Expand toward 100 only if uncertainty around the
-predeclared interaction or a material `sys` contrast of about 0.04 could still
-change the line decision. A pre-target manifest review must check exact
-within-bucket ranks, disjoint bands, seed independence, target-field absence,
-and that no same-seed prefix is mislabeled as replication.
+The hard first-stage ceiling is therefore 10k generic candidates and 200 target
+evaluations. A pre-target manifest review must check proxy definition, exact
+cutoff ranks, target-field absence, deterministic baseline selection, and seed
+independence. Any trusted `sys>1` row is escalated immediately. The stage must
+return measured marginal cost and a 100k continue/stop recommendation; unused
+compute is not a reason to continue.
 
 ## Command and artifacts
 
