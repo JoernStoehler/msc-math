@@ -6,11 +6,14 @@
     "--threads",
     "8"
   ],
-  "source_repo_head": "e1fbe217ed6a6b181eb80c3bc9afe97b7052632e",
+  "source_repo_head": "048a08c8c1e5901b7ee61c46e461791464931532",
   "required_base_commit": "e1fbe217ed6a6b181eb80c3bc9afe97b7052632e",
-  "source_worktree_diff_blake3": "e9b891455ebfec858487118c19df8ec0eec69a226456418f016899f2d6f3bdcd",
   "implementation_path": "experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/main.rs",
-  "implementation_blake3": "dbbc3efb7de67db3704b9838a21ad7cb8cce6453a4a87d8e9443d63774672e68",
+  "implementation_blake3": "acefb883cd0f8bdc1c11b9db14f2a34d8c442d38e0d07d6130090000d528b034",
+  "analyzer_path": "experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/analyze.py",
+  "analyzer_blake3": "408539eed9e6e8d5c63417dcd0beb7403cc14701ce946c52d54360b17522965a",
+  "manifest_path": "experiments/dev-gradient-ascent/Cargo.toml",
+  "manifest_blake3": "0a35fe10e12591f25ce5d6df1e362768a4396a6e1a0e0b172fa4333019bceec1",
   "input_identities": [
     {
       "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_0/trajectory-eta-1.jsonl",

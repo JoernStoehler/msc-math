@@ -8,7 +8,7 @@ At each relative radius `r` in `1e-3, 1e-4, 1e-5`, the producer polls both signs
 
 ## Direct control outcomes
 
-The two retained negative controls were selected because their next literal-gradient update has positive full-`sys` change. Both show positive quotient-basis directions at all three radii, so the diagnostic does not confuse ordinary improvable states with endpoints. HKO2024, the exact-theorem positive control, has no positive direction among all `50` directions at any radius. Its least-negative margin is `-7.44336e-06`. This agreement calibrates the central scalar route; it is not evidence for the HKO theorem, whose exact certificate remains authoritative.
+The two retained negative controls were selected because their next literal-gradient update has positive full-`sys` change. Both show positive quotient-basis directions at all three radii, so the diagnostic does not confuse these two ordinary improvable states with endpoints. HKO2024, the exact-theorem positive control, has no positive nominal-scalar direction among all `50` directions at any radius. Its least-negative margin is `-7.44336e-06`. This is an operational nominal-scalar consistency check, not a successful capacity-sign discriminator and not evidence for the HKO theorem, whose exact certificate remains authoritative.
 
 | State role | Relative radius | Directions | Improving | Max Δsys | Max Δsys / step |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -28,7 +28,7 @@ The two retained negative controls were selected because their next literal-grad
 | Positive: HKO2024 | 1e-04 | 50 | 0 | -7.44312e-05 | -0.19042 |
 | Positive: HKO2024 | 1e-05 | 50 | 0 | -7.44336e-06 | -0.190426 |
 
-Across the packet, `366/366` probes were valid, every listed dual point stayed extreme, and no probe changed the base incidence signature. All trajectory targets recomputed exactly; the HKO recomputation differs from its known-capacity target by `1.33e-15`. Direction norms, orbit projections, target differences, denominators, and all compact summaries were independently recomputed by `analyze.py`.
+Across the packet, `366/366` probes were valid, every listed dual point stayed extreme, and no probe changed the base incidence signature. All trajectory targets agree exactly under the current scalar route; the HKO recomputation differs from its known-capacity target by `1.33e-15`. `analyze.py` independently reconstructs unknown selection, negative-control witnesses, raw direction norms, signed pairs, slice Gram matrices, cross-radius direction identity, row denominators, target-difference arithmetic, and compact summaries. It range-checks the producer's orbit-projection and geometry/capacity diagnostics rather than independently recomputing them.
 
 ## Unknown-state outcomes
 
@@ -47,7 +47,7 @@ The Euclidean slice and its coordinate-ordered Gram-Schmidt basis are one local 
 
 ## Evidence thresholds
 
-Calling a future state a **heuristic local maximum** should require at least: successful negative and HKO controls; valid fixed-facet geometry; a complete signed quotient-basis poll with no improvement at several shrinking radii; a materially richer deterministic or seeded quotient-direction cover (or branch-aware gradient sampling) that also finds no improvement; exact raw margins and direction coverage; and repetition after the polisher's stopping state is frozen. A finite no-improvement scan remains heuristic.
+Calling a future state a **heuristic local maximum** should require at least: successful negative controls; nominal consistency with HKO plus explicit disposition of its capacity intervals; valid fixed-facet geometry; a complete signed quotient-basis poll with no improvement at several shrinking radii; a materially richer deterministic or seeded quotient-direction cover (or branch-aware gradient sampling) that also finds no improvement; exact raw margins and direction coverage; and repetition after the polisher's stopping state is frozen. A finite no-improvement scan remains heuristic.
 
 **Theorem-grade local maximality** requires a local chart and an exact certificate controlling every transverse direction, such as HKO's feasible upper branches with exact rank and positive convex relation. No amount of finite polling alone supplies that implication.
 
@@ -69,4 +69,4 @@ uv run --script \
   experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/analyze.py
 ```
 
-`run-provenance.json` hashes all `36` selection inputs and the producer. `poll-directions.jsonl` is the raw evidence; `states.jsonl` and `radius-summaries.jsonl` are compact generated views. The figures are generated directly from the validated rows.
+`run-provenance.json` hashes all `36` selection inputs, the producer, analyzer, and Cargo manifest. `poll-directions.jsonl` is the raw evidence; `states.jsonl` and `radius-summaries.jsonl` are compact generated views. The figures are generated directly from the validated rows.

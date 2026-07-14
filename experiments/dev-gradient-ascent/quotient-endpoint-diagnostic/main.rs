@@ -178,9 +178,12 @@ struct RunProvenance {
     command: Vec<String>,
     source_repo_head: Option<String>,
     required_base_commit: String,
-    source_worktree_diff_blake3: String,
     implementation_path: String,
     implementation_blake3: String,
+    analyzer_path: String,
+    analyzer_blake3: String,
+    manifest_path: String,
+    manifest_blake3: String,
     input_identities: Vec<InputIdentity>,
     selection_contract: Vec<String>,
     quotient_contract: String,
@@ -781,13 +784,19 @@ fn trajectory_input_paths(rows: &[LocatedRow]) -> Vec<PathBuf> {
 fn write_provenance(cli: &Cli, input_paths: &[PathBuf]) {
     let implementation_path =
         PathBuf::from("experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/main.rs");
+    let analyzer_path =
+        PathBuf::from("experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/analyze.py");
+    let manifest_path = PathBuf::from("experiments/dev-gradient-ascent/Cargo.toml");
     let provenance = RunProvenance {
         command: std::env::args().collect(),
         source_repo_head: git_output(&["rev-parse", "HEAD"]),
         required_base_commit: BASE_COMMIT.to_string(),
-        source_worktree_diff_blake3: git_diff_hash(),
         implementation_path: implementation_path.display().to_string(),
         implementation_blake3: hash_file(&implementation_path),
+        analyzer_path: analyzer_path.display().to_string(),
+        analyzer_blake3: hash_file(&analyzer_path),
+        manifest_path: manifest_path.display().to_string(),
+        manifest_blake3: hash_file(&manifest_path),
         input_identities: input_paths
             .iter()
             .map(|path| InputIdentity {
@@ -927,14 +936,6 @@ fn git_output(args: &[&str]) -> Option<String> {
         .status
         .success()
         .then(|| String::from_utf8_lossy(&output.stdout).trim().to_string())
-}
-
-fn git_diff_hash() -> String {
-    let output = Command::new("git")
-        .args(["diff", "--binary", "HEAD", "--", "."])
-        .output()
-        .expect("run git diff for provenance");
-    blake3::hash(&output.stdout).to_hex().to_string()
 }
 
 fn parse_args(args: impl Iterator<Item = String>) -> Cli {

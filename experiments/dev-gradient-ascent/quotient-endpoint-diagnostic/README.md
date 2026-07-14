@@ -5,6 +5,8 @@ direction after translations, scaling, and the identity-component linear
 symplectic action are removed. Start with the generated
 [`artifacts/DISCUSSION.md`](artifacts/DISCUSSION.md); it owns the interpretation,
 direct control outcomes, limitations, evidence thresholds, and next decision.
+The fresh readiness review and repair disposition are in
+[`INDEPENDENT_REVIEW.md`](INDEPENDENT_REVIEW.md).
 
 The producer uses a derivative-free signed-basis poll on the Euclidean
 orthogonal complement of the 15 `sys`-symmetry tangent generators. This choice

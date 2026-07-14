@@ -3,20 +3,23 @@
     "trajectory_input_count": 36,
     "trajectory_hashes_recomputed": true,
     "producer_hash_recomputed": true,
+    "analyzer_hash_recomputed": true,
+    "manifest_hash_recomputed": true,
     "poll_row_count": 366,
     "state_count": 5
   },
   "validation": {
-    "source_target_agreement": "all four trajectory targets reproduce exactly; HKO differs from its known-capacity target by 1.33e-15",
-    "quotient": "all five states have orbit rank 15 and orthonormal/cross residuals below 2e-10",
-    "directions": "every signed basis pair is present; direction norm, orbit projection, absolute step, and delta arithmetic were recomputed",
+    "source_target_agreement": "all four trajectory targets agree exactly under the current scalar route; HKO differs from its known-capacity target by 1.33e-15",
+    "selection": "the 3,142-row global-best and terminal-best rules and both positive-update witnesses were independently reconstructed",
+    "quotient": "producer reports orbit rank 15 and residuals below 2e-10; analyzer independently verifies each raw slice basis Gram matrix",
+    "directions": "raw direction norms, exact signed opposites, cross-radius identity, denominators, absolute steps, and delta arithmetic were independently recomputed; producer-reported orbit projections were range-checked",
     "geometry": "366/366 probes valid, all listed facets defining, 0 incidence-signature changes",
     "capacity_bounds": "all 216 generic probe minimum-action intervals collapse; 136/150 HKO intervals do not, with maximum width 3.44094",
     "summary": "all retained radius summaries recomputed from raw poll rows"
   },
   "direct_findings": {
     "negative_controls_discriminated": "2/2 controls have at least one positive quotient-basis direction at 3/3 radii",
-    "hko_control_discriminated": "HKO has no positive direction among 50/50 directions at each of 3/3 radii",
+    "hko_nominal_scalar_consistency": "HKO has no positive nominal-scalar direction among 50/50 directions at each of 3/3 radii; broad action intervals prohibit a capacity-sign certificate",
     "unknown_global_best": "fails finite stationarity at 3/3 radii",
     "unknown_terminal_best": "fails finite stationarity at 3/3 radii"
   },
@@ -188,7 +191,7 @@
     }
   ],
   "figure_paths": [
-    "/workspaces/msc-math/.worktrees/stationarity-endpoint/experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/figures/max-margin-by-radius.png",
-    "/workspaces/msc-math/.worktrees/stationarity-endpoint/experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/figures/directional-spread.png"
+    "experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/figures/max-margin-by-radius.png",
+    "experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/figures/directional-spread.png"
   ]
 }

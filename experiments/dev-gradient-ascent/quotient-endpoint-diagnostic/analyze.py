@@ -57,6 +57,14 @@ def close(left: float, right: float, *, atol: float = 2e-14, rtol: float = 2e-11
     return abs(left - right) <= atol + rtol * max(abs(left), abs(right))
 
 
+def flatten_direction(row):
+    return [coordinate for facet in row["direction"] for coordinate in facet]
+
+
+def dot(left, right):
+    return sum(a * b for a, b in zip(left, right))
+
+
 def validate():
     summary = read_json(ARTIFACTS / "summary.json")
     provenance = read_json(ARTIFACTS / "run-provenance.json")
@@ -71,12 +79,17 @@ def validate():
     assert summary["poll_row_count"] == len(polls) == 366
     assert len(radius_rows) == 15
     assert len(provenance["input_identities"]) == 36
-    implementation_path = Path(provenance["implementation_path"])
-    assert implementation_path.is_file()
-    assert (
-        blake3.blake3(implementation_path.read_bytes()).hexdigest()
-        == provenance["implementation_blake3"]
-    )
+    for path_key, hash_key in (
+        ("implementation_path", "implementation_blake3"),
+        ("analyzer_path", "analyzer_blake3"),
+        ("manifest_path", "manifest_blake3"),
+    ):
+        support_path = Path(provenance[path_key])
+        assert support_path.is_file()
+        assert (
+            blake3.blake3(support_path.read_bytes()).hexdigest()
+            == provenance[hash_key]
+        )
 
     for identity in provenance["input_identities"]:
         path = Path(identity["path"])
@@ -95,6 +108,61 @@ def validate():
         assert state["facet_count"] in (6, 10)
         if state["recorded_sys"] is not None:
             assert close(state["recorded_sys"], state["recomputed_sys"])
+            assert close(
+                state["recomputed_minus_recorded"],
+                state["recomputed_sys"] - state["recorded_sys"],
+            )
+
+    located_rows = []
+    for identity in provenance["input_identities"]:
+        path = Path(identity["path"])
+        located_rows.extend((path, row) for row in read_jsonl(path))
+    assert len(located_rows) == 3142
+    global_best_path, global_best = max(
+        (
+            located
+            for located in located_rows
+            if located[1]["state_valid"] and located[1]["sys"] is not None
+        ),
+        key=lambda located: located[1]["sys"],
+    )
+    terminal_best_path, terminal_best = max(
+        (
+            located
+            for located in located_rows
+            if located[1]["state_valid"]
+            and located[1]["iteration"] == 100
+            and located[1]["best_iteration"] == 100
+            and located[1]["sys"] is not None
+        ),
+        key=lambda located: located[1]["sys"],
+    )
+    for state_id, path, row in (
+        ("unknown_global_best_so_far", global_best_path, global_best),
+        ("unknown_terminal_best_so_far", terminal_best_path, terminal_best),
+    ):
+        state = state_by_id[state_id]
+        assert state["source_path"] == str(path)
+        assert state["source_iteration"] == row["iteration"]
+        assert close(state["source_eta"], row["eta"])
+        assert close(state["recorded_sys"], row["sys"])
+
+    for state_id in STATE_ORDER[:2]:
+        state = state_by_id[state_id]
+        source_rows = read_jsonl(Path(state["source_path"]))
+        base = next(
+            row for row in source_rows if row["iteration"] == state["source_iteration"]
+        )
+        next_row = next(
+            row
+            for row in source_rows
+            if row["iteration"] == state["source_iteration"] + 1
+        )
+        assert next_row["state_valid"] and next_row["full_sys_delta"] > 0
+        assert close(
+            state["recorded_next_full_sys_delta"], next_row["full_sys_delta"]
+        )
+        assert close(next_row["full_sys_delta"], next_row["sys"] - base["sys"])
 
     grouped = defaultdict(list)
     for row in polls:
@@ -105,7 +173,10 @@ def validate():
         assert row["all_facets_defining"]
         assert row["same_incidence_signature"]
         assert row["facet_count"] == state["facet_count"]
-        assert close(row["direction_norm"], 1.0, atol=2e-13, rtol=0.0)
+        raw_direction = flatten_direction(row)
+        raw_direction_norm = math.sqrt(dot(raw_direction, raw_direction))
+        assert close(raw_direction_norm, row["direction_norm"], atol=2e-13, rtol=0.0)
+        assert close(raw_direction_norm, 1.0, atol=2e-13, rtol=0.0)
         assert row["orbit_projection_norm"] <= 2e-10
         assert close(row["step_norm"], row["absolute_radius"])
         assert close(
@@ -130,6 +201,36 @@ def validate():
                 for index in range(state["quotient_dimension"])
                 for sign in (-1, 1)
             }
+            by_direction = {
+                (row["basis_index"], row["sign"]): flatten_direction(row)
+                for row in rows
+            }
+            positive_basis = [
+                by_direction[(index, 1)]
+                for index in range(state["quotient_dimension"])
+            ]
+            for index in range(state["quotient_dimension"]):
+                assert all(
+                    close(a, -b, atol=2e-13, rtol=0.0)
+                    for a, b in zip(
+                        by_direction[(index, 1)], by_direction[(index, -1)]
+                    )
+                )
+            for left_index, left in enumerate(positive_basis):
+                for right_index, right in enumerate(positive_basis):
+                    expected_inner_product = 1.0 if left_index == right_index else 0.0
+                    assert close(
+                        dot(left, right),
+                        expected_inner_product,
+                        atol=2e-13,
+                        rtol=0.0,
+                    )
+            if radius != EXPECTED_RADII[0]:
+                reference = {
+                    (row["basis_index"], row["sign"]): flatten_direction(row)
+                    for row in grouped[(state_id, EXPECTED_RADII[0])]
+                }
+                assert all(by_direction[key] == reference[key] for key in by_direction)
             best = max(rows, key=lambda row: row["delta_sys"])
             regenerated.append(
                 {
@@ -199,27 +300,30 @@ def validate():
             "trajectory_input_count": 36,
             "trajectory_hashes_recomputed": True,
             "producer_hash_recomputed": True,
+            "analyzer_hash_recomputed": True,
+            "manifest_hash_recomputed": True,
             "poll_row_count": len(polls),
             "state_count": len(states),
         },
         "validation": {
-            "source_target_agreement": "all four trajectory targets reproduce exactly; HKO differs from its known-capacity target by 1.33e-15",
-            "quotient": "all five states have orbit rank 15 and orthonormal/cross residuals below 2e-10",
-            "directions": "every signed basis pair is present; direction norm, orbit projection, absolute step, and delta arithmetic were recomputed",
+            "source_target_agreement": "all four trajectory targets agree exactly under the current scalar route; HKO differs from its known-capacity target by 1.33e-15",
+            "selection": "the 3,142-row global-best and terminal-best rules and both positive-update witnesses were independently reconstructed",
+            "quotient": "producer reports orbit rank 15 and residuals below 2e-10; analyzer independently verifies each raw slice basis Gram matrix",
+            "directions": "raw direction norms, exact signed opposites, cross-radius identity, denominators, absolute steps, and delta arithmetic were independently recomputed; producer-reported orbit projections were range-checked",
             "geometry": "366/366 probes valid, all listed facets defining, 0 incidence-signature changes",
             "capacity_bounds": f"all {len(generic_polls)} generic probe minimum-action intervals collapse; {hko_noncollapsed_bounds}/{len(hko_polls)} HKO intervals do not, with maximum width {hko_max_bound_width:.6g}",
             "summary": "all retained radius summaries recomputed from raw poll rows",
         },
         "direct_findings": {
             "negative_controls_discriminated": "2/2 controls have at least one positive quotient-basis direction at 3/3 radii",
-            "hko_control_discriminated": "HKO has no positive direction among 50/50 directions at each of 3/3 radii",
+            "hko_nominal_scalar_consistency": "HKO has no positive nominal-scalar direction among 50/50 directions at each of 3/3 radii; broad action intervals prohibit a capacity-sign certificate",
             "unknown_global_best": "fails finite stationarity at 3/3 radii",
             "unknown_terminal_best": "fails finite stationarity at 3/3 radii",
         },
         "radius_rows": regenerated,
         "figure_paths": [
-            str(FIGURES / "max-margin-by-radius.png"),
-            str(FIGURES / "directional-spread.png"),
+            "experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/figures/max-margin-by-radius.png",
+            "experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/figures/directional-spread.png",
         ],
     }
     return summary, states, polls, radius_rows, analysis
@@ -349,11 +453,11 @@ At each relative radius `r` in `1e-3, 1e-4, 1e-5`, the producer polls both signs
 
 ## Direct control outcomes
 
-The two retained negative controls were selected because their next literal-gradient update has positive full-`sys` change. Both show positive quotient-basis directions at all three radii, so the diagnostic does not confuse ordinary improvable states with endpoints. HKO2024, the exact-theorem positive control, has no positive direction among all `50` directions at any radius. Its least-negative margin is `{fmt(max(row['max_delta_sys'] for row in rows_by_state['positive_control_hko2024']))}`. This agreement calibrates the central scalar route; it is not evidence for the HKO theorem, whose exact certificate remains authoritative.
+The two retained negative controls were selected because their next literal-gradient update has positive full-`sys` change. Both show positive quotient-basis directions at all three radii, so the diagnostic does not confuse these two ordinary improvable states with endpoints. HKO2024, the exact-theorem positive control, has no positive nominal-scalar direction among all `50` directions at any radius. Its least-negative margin is `{fmt(max(row['max_delta_sys'] for row in rows_by_state['positive_control_hko2024']))}`. This is an operational nominal-scalar consistency check, not a successful capacity-sign discriminator and not evidence for the HKO theorem, whose exact certificate remains authoritative.
 
 {chr(10).join(table_lines)}
 
-Across the packet, `366/366` probes were valid, every listed dual point stayed extreme, and no probe changed the base incidence signature. All trajectory targets recomputed exactly; the HKO recomputation differs from its known-capacity target by `1.33e-15`. Direction norms, orbit projections, target differences, denominators, and all compact summaries were independently recomputed by `analyze.py`.
+Across the packet, `366/366` probes were valid, every listed dual point stayed extreme, and no probe changed the base incidence signature. All trajectory targets agree exactly under the current scalar route; the HKO recomputation differs from its known-capacity target by `1.33e-15`. `analyze.py` independently reconstructs unknown selection, negative-control witnesses, raw direction norms, signed pairs, slice Gram matrices, cross-radius direction identity, row denominators, target-difference arithmetic, and compact summaries. It range-checks the producer's orbit-projection and geometry/capacity diagnostics rather than independently recomputing them.
 
 ## Unknown-state outcomes
 
@@ -372,7 +476,7 @@ The Euclidean slice and its coordinate-ordered Gram-Schmidt basis are one local 
 
 ## Evidence thresholds
 
-Calling a future state a **heuristic local maximum** should require at least: successful negative and HKO controls; valid fixed-facet geometry; a complete signed quotient-basis poll with no improvement at several shrinking radii; a materially richer deterministic or seeded quotient-direction cover (or branch-aware gradient sampling) that also finds no improvement; exact raw margins and direction coverage; and repetition after the polisher's stopping state is frozen. A finite no-improvement scan remains heuristic.
+Calling a future state a **heuristic local maximum** should require at least: successful negative controls; nominal consistency with HKO plus explicit disposition of its capacity intervals; valid fixed-facet geometry; a complete signed quotient-basis poll with no improvement at several shrinking radii; a materially richer deterministic or seeded quotient-direction cover (or branch-aware gradient sampling) that also finds no improvement; exact raw margins and direction coverage; and repetition after the polisher's stopping state is frozen. A finite no-improvement scan remains heuristic.
 
 **Theorem-grade local maximality** requires a local chart and an exact certificate controlling every transverse direction, such as HKO's feasible upper branches with exact rank and positive convex relation. No amount of finite polling alone supplies that implication.
 
@@ -394,7 +498,7 @@ uv run --script \\
   experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/analyze.py
 ```
 
-`run-provenance.json` hashes all `36` selection inputs and the producer. `poll-directions.jsonl` is the raw evidence; `states.jsonl` and `radius-summaries.jsonl` are compact generated views. The figures are generated directly from the validated rows.
+`run-provenance.json` hashes all `36` selection inputs, the producer, analyzer, and Cargo manifest. `poll-directions.jsonl` is the raw evidence; `states.jsonl` and `radius-summaries.jsonl` are compact generated views. The figures are generated directly from the validated rows.
 """
     (ARTIFACTS / "DISCUSSION.md").write_text(text)
 
