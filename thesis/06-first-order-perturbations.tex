@@ -312,17 +312,15 @@ infinitesimal theorem.  Its reliability depends on the window containing the
 branches that become relevant, on the branches remaining feasible, and on the
 linearization error at the proposed step.
 
-The retained search evidence uses this distinction conservatively.  On a
-fixed panel of twelve random ten-facet starts, the current multi-direction
+One retained finite experiment illustrates this distinction.  On a fixed
+panel of twelve random ten-facet starts, the tested multi-direction
 method accepted a positive move at each of eight configured trace iterations,
-but all runs
-stopped at their iteration cap and every endpoint scan still found another
-tested improvement.  Thus the evidence supports finite-step progress and a
-measured computation cost on that panel, not endpoint local maximality.  The
-newer branch-window prediction work remains a development surface; it is not
-used as thesis evidence here.  It should be reconsidered for this chapter only
-after a reproducible result packet fixes the base-point panel, window policy,
-finite radii, prediction error, and branch-miss rate.
+but all runs stopped at their iteration cap and every endpoint scan still
+found a further above-threshold move.  Thus the evidence supports finite-step
+progress and a measured computation cost on that panel, not endpoint local
+maximality.  The branch-window model has not yet received a corresponding
+reproducible
+finite-distance validation and is not used as thesis evidence here.
 
 \subsection{The non-generic boundary}
 \label{subsec:first-order-nongeneric-boundary}
