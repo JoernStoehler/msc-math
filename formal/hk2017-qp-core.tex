@@ -115,35 +115,40 @@ zero-weight entries in active traversal order.
 \begin{proof}
 Delete the zero coordinates of~$\beta^*$ and the corresponding entries of
 $\sigma^*$; this does not change feasibility or the objective.  The remaining
-coordinates are positive.  Reading the proof of
-\cite[Theorem~1.1]{HK2017} in the dual-vertex convention of
-Definition~\ref{def:hk2017-problem}, construct a loop~$u$ on $[0,1]$ whose
-velocity is $R_{\sigma^*(k)}=2J_0a_{\sigma^*(k)}$ on an interval of length
-$\beta_k^*$.  Closure is precisely
-$\sum_k\beta_k^*a_{\sigma^*(k)}=0$.  The shoelace formula gives
+coordinates are positive. In the dual-vertex convention of
+Definition~\ref{def:hk2017-problem}, put
 \[
-  2A(u)=4Q_{\sigma^*}(\beta^*).
+  Q=Q_{\sigma^*}(\beta^*)=Q_{\max}>0,
+  \qquad
+  T=\frac{1}{2Q}=c_{\mathrm{EHZ}}(K),
+  \qquad
+  \tau_k=T\beta_k^*.
 \]
-Writing $Q=Q_{\sigma^*}(\beta^*)=Q_{\max}>0$ and
-$w=u/(2\sqrt{Q})$, we obtain $2A(w)=1$.  Moreover
-$h_K(-J_0R_i)=2$ for every facet direction, so
+Construct a loop~$z$ of period~$T$ whose velocity is
+$R_{\sigma^*(k)}=2J_0a_{\sigma^*(k)}$ for time~$\tau_k$. Closure is precisely
+$\sum_k\beta_k^*a_{\sigma^*(k)}=0$. The shoelace formula gives
 \[
-  I_K(w)
-  =\frac14\int_0^1h_K^2(-J_0\dot w)\,dt
-  =\frac{1}{4Q}.
+  2A(z)=4T^2Q=2T.
 \]
-Thus $2I_K(w)=1/(2Q)=c_{\mathrm{EHZ}}(K)$.
+Moreover $h_K(-J_0R_i)=h_K(2a_i)=2$ for every facet direction, so
+$I_K(z)=T$. Thus $A(z)=I_K(z)=T=c_{\mathrm{EHZ}}(K)$: $z$ is a global
+minimizer of the free-period dual problem, not merely a feasible or stationary
+dual curve.
 
-Because $(\sigma^*,\beta^*)$ attains the global value~$Q_{\max}$, the capacity
-formula shows that this dual loop is a global minimizer, not merely a feasible
-or stationary dual curve.  It is therefore weak dual critical.  Clarke's dual
-action correspondence, in the nonsmooth form used in
-\cite[Lemma~2.1]{HK2017}, supplies the translation and positive rescaling that
-put the loop on~$\partial K$ as a minimum-action generalized closed
-characteristic.  These affine changes preserve the ordered pure-velocity
-pieces.  Thus, after the zero-duration pieces have been deleted, the resulting
-orbit is simple and has the reduced word obtained from~$\sigma^*$ in active
-traversal order.
+It is therefore weak dual critical. In the free-period Euler--Lagrange
+equation, its multiplier is $I_K(z)/T=1$. Clarke's dual action correspondence,
+in the nonsmooth form used in \cite[Lemma~2.1]{HK2017}, consequently puts the
+loop on~$\partial K$ by translation alone, as a minimum-action generalized
+closed characteristic. Translation preserves the ordered pure-velocity
+pieces. On a piece with velocity $R_i$, the reconstructed inclusion is
+\[
+  2a_i=-J_0R_i\in\partial H_K(\gamma)
+  =2\operatorname{conv}\{a_j:F_j\text{ is active at }\gamma\}.
+\]
+Since the normalized presentation is irredundant, $a_i$ is an extreme vertex
+of $K^\circ$; hence facet $F_i$ is itself active. Thus, after the zero-duration
+pieces have been deleted, the resulting orbit is simple and has the reduced
+word obtained from~$\sigma^*$ in active traversal order.
 \end{proof}
 
 

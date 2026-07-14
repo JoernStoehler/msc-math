@@ -326,7 +326,7 @@ Use this table to keep the proof sources separated while writing.
 | Formula target on `0 <= theta <= pi/5` | active thesis prose present; theorem-strength wording still needs Jörn/Kai acceptance | `thesis/09-rotated-regular-polygons.tex`; `executable_proof.sage.py`; `executable_proof.full.stdout.txt` |
 | Reduction to `0 <= theta <= pi/5` | active thesis prose present | `thesis/09-rotated-regular-polygons.tex`; `formal/lagrangian-product-rotation-symmetry.tex`, label `lem:rotation-fundamental-domain` |
 | Further reduction to `0 <= theta <= pi/10` | active thesis prose present | `thesis/09-rotated-regular-polygons.tex`; `formal/lagrangian-product-rotation-symmetry.tex`, label `lem:odd-regular-factor-swap-mirror` |
-| Finite reduction to 2- and 3-bounce raw sigmas | active thesis-facing theorem present; theorem-strength route still needs Jörn/Kai mathematical acceptance | `thesis/04-haim-kislev-quadratic-program.tex`, label `thm:lagrangian-product-finite-enumeration`; source material in `formal/billiard-capacity-algorithm.tex` and `thesis/legacy/lagrangian-product-algorithm-proof.tex` |
+| Finite reduction to 2- and 3-bounce raw sigmas | active thesis-facing theorem repaired after integrated QP review; theorem-strength route still needs later Jörn/Kai mathematical acceptance | `thesis/04-haim-kislev-quadratic-program.tex`, label `thm:lagrangian-product-finite-enumeration`; Rudolf Theorem 1; proof-status note in `formal/billiard-capacity-algorithm.tex` |
 | Pentagon normalization | ready | `formal/pentagon-rotation-capacity.tex`, definition of `P_5`; `executable_proof.sage.py`, functions `pentagon_normals` and `dual_vertices` |
 | Volume invariance and volume value | ready as a simple mathematical argument | `formal/pentagon-rotation-capacity.tex`, active-branch calculation; `executable_proof.sage.py`, function `systolic_ratio_prefactor` |
 | Capacity-to-systolic-ratio conversion | ready, checked by Sage preflight | `sys = c_EHZ^2/(2 vol)`; `executable_proof.sage.py`, function `systolic_ratio_prefactor` |
@@ -672,7 +672,11 @@ Recommended body-level order:
    The active thesis now states the compact finite-candidate theorem in
    `thesis/04-haim-kislev-quadratic-program.tex`, label
    `thm:lagrangian-product-finite-enumeration`. The theorem-strength use of
-   that compact import still needs Jörn/Kai mathematical acceptance. The
+   that compact import still needs later Jörn/Kai mathematical acceptance. Its
+   current proof starts with Rudolf's short strong billiard and uses dual
+   splitting, merging, and minimality to obtain a distinct-facet maximizing
+   word without losing the bounce bound; it no longer assumes that two
+   separate existence theorems select the same minimizer. The
    enumeration code proves only that the script checked the listed candidates;
    the mathematical reduction explains why those candidates suffice.
    Code component: `blocks`, `enumerate_k_bounce_sigmas`,

@@ -25,8 +25,14 @@ contact-normalized convention above. Hence
 \]
 \end{theorem}
 
-The proof uses five elementary operations on dual curves. The first operation
-replaces a \(W^{1,2}\)-curve by a piecewise affine one.
+The proof uses five elementary operations on dual curves: approximate the
+minimizer, split mixed velocities into pure facet velocities, merge repeated
+facet velocities, rescale to restore the dual constraint, and take a limit.
+The middle two operations may increase the action while keeping the period
+fixed. After rescaling, dual minimality forces this increase to vanish in the
+limit; compactness then preserves the resulting simple word. We record the
+operations separately because the same normalization and rearrangement ideas
+also explain the quadratic program below.
 
 \begin{lemma}[Piecewise affine approximation]\label{lem:generalized-reeb-pw-affine-approx}
 Let \(z\in W^{1,2}([0,T],\mathbb{R}^4)\) be closed and satisfy
@@ -59,8 +65,9 @@ by \(z'(0)=z(0)\) and \(\dot z'=w_k\) on \([t_k,t_{k+1}]\). Then
 \]
 so \(z'\) is closed. Since \(\dot z'\to\dot z\) in \(L^2\), integration gives
 \(z'\to z\) uniformly, hence in \(W^{1,2}\). The convergence of \(A\) follows
-from bilinearity in \((z,\dot z)\), and the convergence of \(I_K\) follows
-from continuity of \(h_K^2\) on the bounded velocity set.
+from bilinearity in \((z,\dot z)\). Both \(\dot z'\) and \(\dot z\) take values
+in the compact set \(C\), on which \(h_K^2\) is Lipschitz; hence the
+\(L^2\)-convergence also gives \(I_K(z')\to I_K(z)\).
 \end{proof}
 
 \begin{lemma}[Splitting mixed velocities]\label{lem:generalized-reeb-splitting}
@@ -167,15 +174,15 @@ Let \(z_n\) be closed simple piecewise-Reeb curves whose periods satisfy
 \begin{proof}
 Choose the initial point of each periodic curve at a breakpoint, and insert
 zero dwell times for unused facet directions. Each curve is then determined up
-to translation by a permutation of the finitely many facet directions, dwell
-times in the simplex of total mass \(T_n\), and its period. Since
-the periods eventually lie in a compact interval \([T/2,2T]\), a subsequence of
-these finite-dimensional data converges. Translating the starting points gives
-uniform convergence after identifying each domain with \([0,1]\) by linear
-time rescaling. Closure passes to the limit because
-\(\sum_i\tau_iR_{\sigma(i)}=0\) for every curve. Some limiting dwell times may be zero; deleting
-those zero-duration entries recovers the active word of the limiting simple
-curve. The action is continuous in the dwell-time data by
+to translation by a permutation of the finitely many facet directions and a
+nonnegative dwell-time vector of total mass \(T_n\). Pass first to a
+subsequence with a fixed permutation. Since \(T_n\to T\), the dwell-time
+vectors lie in a common compact set and have a convergent subsequence whose
+entries sum to \(T\). Translating the starting points gives uniform convergence
+after identifying each domain with \([0,1]\) by linear time rescaling. Closure
+passes to the limit because \(\sum_i\tau_iR_{\sigma(i)}=0\) for every curve.
+Some limiting dwell times may be zero; deleting those zero-duration entries
+recovers the active word of the limiting simple curve. The action is continuous in the dwell-time data by
 Lemma~\ref{lem:preliminaries-shoelace}. Since the remaining positive-duration
 segments still have pure Reeb velocities, the same computation as in
 Lemma~\ref{lem:generalized-reeb-splitting} gives \(I_K(z_*)=T\).
@@ -191,36 +198,39 @@ minimizer in the thesis convention, with
 Moreover \(\dot\gamma(t)\in\operatorname{conv}\{R_1,\ldots,R_F\}\) for almost
 every \(t\).
 
-Apply Lemma~\ref{lem:generalized-reeb-pw-affine-approx} to approximate
-\(\gamma\) by closed piecewise affine dual curves \(z_1\) with velocities in
-the convex hull of the \(R_i\). Then apply
-Lemma~\ref{lem:generalized-reeb-splitting} to obtain a closed pure-velocity
-curve \(z_2\) with \(A(z_2)\geq A(z_1)\) and \(I_K(z_2)=T\). Apply
-Lemma~\ref{lem:generalized-reeb-merging} to obtain a closed pure-velocity curve
-\(z_3\) in which each \(R_i\) occurs at most once, still with
+Choose, by Lemma~\ref{lem:generalized-reeb-pw-affine-approx}, a sequence of
+closed piecewise affine curves \(z_{1,n}\to\gamma\) in \(W^{1,2}\), with
+velocities in the convex hull of the \(R_i\). Apply
+Lemma~\ref{lem:generalized-reeb-splitting} to obtain closed pure-velocity
+curves \(z_{2,n}\), and then Lemma~\ref{lem:generalized-reeb-merging} to obtain
+closed simple pure-velocity curves \(z_{3,n}\), such that
 \[
-  A(z_3)\geq A(z_2),
+  A(z_{3,n})\geq A(z_{2,n})\geq A(z_{1,n}),
   \qquad
-  I_K(z_3)=T.
+  I_K(z_{3,n})=T.
 \]
-We take the initial approximation close enough that \(A(z_1)>T/2\); then
-\(A(z_3)>0\). Now rescale all durations by
+Since \(A(z_{1,n})\to A(\gamma)=T\), discard finitely many terms so that
+\(A(z_{3,n})>0\). Rescale all durations of \(z_{3,n}\) by
 \[
-  \beta=\frac{T}{A(z_3)}.
+  \beta_n=\frac{T}{A(z_{3,n})},
 \]
-The rescaled curve \(z_4\) satisfies
+and denote the resulting curve by \(z_{4,n}\). It satisfies
 \[
-  A(z_4)=\frac{T^2}{A(z_3)},
+  A(z_{4,n})=\frac{T^2}{A(z_{3,n})},
   \qquad
-  I_K(z_4)=\frac{T^2}{A(z_3)}.
+  I_K(z_{4,n})=\frac{T^2}{A(z_{3,n})}.
 \]
-Thus \(z_4\) is feasible for the dual problem with period \(T^2/A(z_3)\).
-Since \(\gamma\) was a dual minimizer, \(I_K(z_4)\geq T\), and therefore
-\(A(z_3)\leq T\). On the other hand \(A(z_3)\geq A(z_1)\), and
-\(A(z_1)\to T\). Hence \(A(z_3)\to T\), the rescaling factors tend to \(1\),
-and the periods of \(z_4\) tend to \(T\).
+Thus \(z_{4,n}\) is feasible for the dual problem, with period
+\(T^2/A(z_{3,n})\). Since \(\gamma\) is a dual minimizer,
+\(I_K(z_{4,n})\geq T\), and therefore \(A(z_{3,n})\leq T\). Together with
+\(A(z_{3,n})\geq A(z_{1,n})\to T\), this gives
+\[
+  A(z_{3,n})\to T,
+  \qquad \beta_n\to1,
+  \qquad \operatorname{period}(z_{4,n})\to T.
+\]
 
-By Lemma~\ref{lem:generalized-reeb-compactness}, a subsequence of the \(z_4\)
+By Lemma~\ref{lem:generalized-reeb-compactness}, a subsequence of the \(z_{4,n}\)
 converges up to translation to a closed simple piecewise-Reeb curve \(z_*\)
 with \(A(z_*)=T\) and \(I_K(z_*)=T\). This curve is a dual minimizer. Applying
 Theorem~\ref{thm:preliminaries-clarke-dual-action} again gives a

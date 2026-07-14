@@ -1,6 +1,11 @@
 % formal/billiard-capacity-algorithm.tex — Lagrangian-product reduction
-% Sources: thesis/lagrangian-product-algorithm.tex,
-%   thesis/lagrangian-product-algorithm-proof.tex
+% Historical source: thesis/legacy/lagrangian-product-algorithm-proof.tex
+% Current proof owner: thesis/04-haim-kislev-quadratic-program.tex,
+%   Theorem thm:lagrangian-product-finite-enumeration.
+% The current proof does not identify the simple minimizer supplied by HK2017
+% with the short minimizer supplied by the billiard theorem. It starts from the
+% short strong billiard and uses dual splitting, merging, and minimality to
+% obtain a distinct-facet maximizing word without increasing the block count.
 
 \begin{unverified}
 \begin{lemma}[Facet structure of Lagrangian products]\label{lem:lagrangian-facets}
@@ -105,11 +110,17 @@ vertex in the 2D polygon.
 For a Lagrangian product $K = K_q \times K_p$:
 \[
   c_{\mathrm{EHZ}}(K_q \times K_p)
-  = \min\bigl\{ \ell_{K_p^\circ}(\eta) :
-  \eta \text{ is a closed $K_p$-billiard trajectory in } K_q \bigr\},
+  = \min\bigl\{ \ell_{K_p}(\eta) :
+  \eta \text{ is a closed strong $(K_q,K_p)$-Minkowski billiard trajectory}
+  \bigr\},
 \]
-where $\ell_{K_p^\circ}(\eta) = \sum_i h_{K_p}(\Delta_i)$ is the
-$K_p^\circ$-length and $\Delta_i = x_{i+1} - x_i$ are the edge vectors.
+where
+\[
+  \ell_{K_p}(\eta)
+  = \sum_i \mu_{K_p^\circ}(\Delta_i)
+  = \sum_i h_{K_p}(\Delta_i)
+\]
+and $\Delta_i=x_{i+1}-x_i$ are the edge vectors.
 \end{theorem}
 % Proof: Artstein-Avidan \& Ostrover (2014), Theorem~2.13; Rudolf (2022), Theorem~1.
 % See also HKO2024, Theorem~2.2.
@@ -130,10 +141,10 @@ is achieved by a billiard trajectory with at most $3$ bounce points.
 
 
 \begin{unverified}
-\begin{algorithm}[Billiard capacity]\label{alg:billiard}
+\begin{algorithm}[Mathematical Lagrangian-product enumeration]\label{alg:billiard}
 % Source: thesis/lagrangian-product-algorithm.tex
-Computes $c_{\mathrm{EHZ}}(K_q \times K_p)$
-via Theorem~\ref{thm:billiard-characterization}.
+This is the exact optimization specification implied by the restricted word
+theorem, not a claim that one KKT solve per word certifies the maximum.
 
 \emph{Input:} Lagrangian product $K = K_q \times K_p$ in
 $H$-representation.
@@ -147,10 +158,8 @@ $H$-representation.
   For each polygon ($K_q$ and $K_p$), enumerate all
   \emph{single-facet blocks} (one edge) and
   \emph{pair blocks} (two adjacent edges, both orderings).
-% [TODO: JÖRN - k=1 is excluded here. The thesis proves this via
-%   lem:k1-infeasible (closure condition forces antiparallel normals
-%   on adjacent edges, impossible for convex polygons). Add citation or
-%   copy the lemma.]
+  The case $k=1$ is impossible by the positive closure equation: one normal,
+  or a positive combination of two adjacent polygon normals, cannot vanish.
 \item \textbf{Enumerate.}
   For $k = 2, 3$: for each selection of $k$ non-overlapping
   $q$-blocks and $k$ non-overlapping $p$-blocks, and each
@@ -158,10 +167,12 @@ $H$-representation.
   $\bigl([Q \mid QQ]\,[P \mid PP]\bigr)^k$,
   flatten the blocks into a facet sequence~$\sigma$.
 \item \textbf{Solve and filter.}
-  For each $\sigma$: solve the KKT system,
-  filter by $\beta_i > 0$ and $Q(\beta) > 0$, compute
-  $A(S, \sigma) = \tfrac{1}{2}\, Q(\beta)^{-1}$.
-\item \textbf{Return} $\min A(S, \sigma)$.
+  For each $\sigma$, maximize $Q_\sigma$ over its compact feasible polytope.
+  Equivalently, cover all active supports and compare every feasible KKT
+  candidate; a positive feasible stationary point alone is not a maximum
+  certificate.
+\item \textbf{Return} $1/(2Q_{\max})$, where $Q_{\max}$ is the largest
+  certified global value among the enumerated words.
 \end{enumerate}
 \end{algorithm}
 \end{unverified}

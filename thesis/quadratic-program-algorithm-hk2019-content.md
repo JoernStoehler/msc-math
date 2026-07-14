@@ -91,15 +91,34 @@ Update rule: add or change a claim only with a source pointer or an explicit
   formula; base-point recovery and later feasibility/pruning are separate
   computational questions for such non-global candidates. A certified global
   QP maximizer is different: HK's construction makes it a global dual
-  minimizer, and Clarke's correspondence realizes it, after translation and
-  positive rescaling, as a minimum-action simple generalized Reeb orbit.
-  Base-point recovery is then an explicit reconstruction method rather than an
-  extra existence hypothesis.
+  minimizer. In the active free-period normalization, assigning dwell times
+  \(T\beta_k\), with \(T=1/(2Q_{\max})\), gives
+  \(A=I_K=T\) and multiplier \(\nu=1\). Clarke's correspondence therefore
+  realizes it by translation alone as a minimum-action simple generalized
+  Reeb orbit. The active word is preserved because
+  \(-J_0R_i=2a_i\) belongs to the reconstructed polytope subdifferential and
+  irredundancy makes \(a_i\) an extreme polar vertex, forcing facet \(F_i\) to
+  be active on that piece. Base-point recovery is then an explicit
+  reconstruction method rather than an extra existence hypothesis.
 - For the Lagrangian-product enumeration, state only a capacity-search result:
   the restricted alternating \(q/p\)-block family contains a capacity
   minimizer. Do not claim it classifies all minimum-action simple Reeb orbits;
   the billiard bounce bound gives existence of one minimizer with at most three
   bounces, not nonexistence of longer minimizers.
+- The former proof incorrectly combined the existence of a simple capacity
+  minimizer with the existence of a capacity-minimizing billiard having at
+  most three bounces; those statements need not initially select the same
+  minimizer. The repaired proof starts with Rudolf's short strong billiard,
+  reverses its polygonal lift to the thesis symplectic convention, and applies
+  the already proved dual splitting and merging operations. Merging repeated
+  facet directions cannot increase the number of alternating blocks. Rescaling
+  would produce a dual-feasible value below the capacity unless every action
+  increase was zero, so the resulting distinct-facet word is itself globally
+  maximizing. Clarke reconstruction then makes this same word physical; only
+  at that point does the planar incidence argument force every maximal block
+  to have one or two adjacent facets. Source: Rudolf, Theorem 1, arXiv
+  2203.01718 / published DOI `10.1007/s10884-022-10228-0`; local proof details
+  are in the active thesis theorem.
 - 2026-06-20 legacy/PDF comparison found the old KKT linear system,
   well-definedness, non-maximizer warning, and unpruned solver correctness as
   substantial old material not represented here. This is deliberate for this

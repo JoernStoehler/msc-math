@@ -78,6 +78,7 @@ segment.
 \label{thm:quadratic-program-algorithm-hk2019-hk-formula}
 For a full-dimensional convex polytope \(K\subset\mathbb{R}^4\) with
 \(0\in\operatorname{int}(K)\), written in the facet normalization above,
+\(Q_{\max}>0\) and
 \[
   c_{\mathrm{EHZ}}(K)=\frac{1}{2Q_{\max}}.
 \]
@@ -103,37 +104,73 @@ reversal is a bijection on the words in the maximum, their formula reads
 \]
 \end{proof}
 
-For a fixed active word, the KKT system is a stationarity condition on the
-relative interior of the corresponding support face.  A solution with
-positive coordinates is therefore an exact feasible stationary witness; it is
-not, by itself, a certificate that this fixed word maximizes~$Q_\sigma$, nor
-that it represents a Reeb orbit.  This distinction does not prevent the finite
-Haim--Kislev algorithm from computing the scalar capacity.  Every positive
-witness is feasible and hence has value at most~$Q_{\max}$, while a global
-maximizer becomes a positive KKT solution after its zero coordinates are
-deleted.  Thus exact KKT solutions suffice when the complete candidate family
-is enumerated.  A claim about a particular maximizing word, a physical orbit,
-or a complete minimizer set cannot be inferred from an arbitrary KKT witness.
-There is, however, no further gap for a \emph{global} QP maximizer: the
-construction in the proof of Haim--Kislev's formula turns it into a global
-minimizer of the dual problem, and the Clarke correspondence of
-Theorem~\ref{thm:preliminaries-clarke-dual-action} supplies a translation and
-positive rescaling that realize it as a minimum-action generalized Reeb orbit.
-After deleting zero-weight entries, its pure facet directions occur in the
-active order~$\sigma$, so the realized orbit is simple.  Feasibility or KKT
-stationarity without global optimality does not provide this conclusion.
+The following construction explains what the finite variables represent and
+where global optimality enters.
 
-The normalization is compatible with our Reeb-orbit convention. Suppose a
-simple orbit is traversed in the active order
-\(\sigma=(\sigma_1,\ldots,\sigma_m)\), with dwell times \(\tau_k>0\) and period
-\(T=\sum_k\tau_k\). Set
+\begin{proposition}[From finite weights to a dual curve]
+\label{prop:quadratic-program-global-maximizer-realization}
+Let \(\beta\in M_\sigma\) and put \(q=Q_\sigma(\beta)\).  If \(q>0\), define
 \[
-  \beta_k=\frac{\tau_k}{T}.
+  T=\frac{1}{2q},
+  \qquad \tau_k=T\beta_k.
 \]
-Then \(\beta\in M_\sigma\), because the closure equation
-\(\sum_k\tau_kR_{\sigma_k}=0\) and \(R_i=2J_0a_i\) imply
-\(\sum_k\beta_k a_{\sigma_k}=0\). Lemma~\ref{lem:preliminaries-shoelace}
-gives
+Traversing the velocities \(R_{\sigma_k}\) for the durations \(\tau_k\), and
+deleting zero-duration pieces, gives a closed simple dual curve \(z\) with
+\[
+  A(z)=I_K(z)=T.
+\]
+If \((\sigma,\beta)\) attains \(Q_{\max}\) across all words, then
+\(T=c_{\mathrm{EHZ}}(K)\),
+and a translation of \(z\) is a minimum-action simple generalized Reeb orbit
+on \(\partial K\), with the active word obtained from \(\sigma\) by deleting
+its zero-weight entries.
+
+Conversely, if a simple generalized Reeb orbit has period \(T\), active word
+\(\sigma\), and positive dwell times \(\tau_k\), then
+\(\beta_k=\tau_k/T\) lies in \(M_\sigma\) and
+\(Q_\sigma(\beta)=1/(2T)\).
+\end{proposition}
+
+\begin{proof}
+The closure constraint gives
+\[
+  \sum_k\tau_kR_{\sigma_k}
+  =2T J_0\sum_k\beta_k a_{\sigma_k}
+  =0,
+\]
+while \(\sum_k\tau_k=T\).  The shoelace formula gives
+\[
+  2A(z)
+  =4T^2Q_\sigma(\beta)
+  =2T.
+\]
+Every positive-duration piece has velocity \(R_i\), for which
+\[
+  H_K^*(-J_0R_i)=\frac14h_K^2(2a_i)=1.
+\]
+Hence \(I_K(z)=T\), and \(z\) is feasible for the free-period dual problem.
+
+If \((\sigma,\beta)\) attains \(Q_{\max}\), the Haim--Kislev formula gives
+\(T=1/(2Q_{\max})=c_{\mathrm{EHZ}}(K)\).  Thus \(z\) is a dual minimizer.
+Its multiplier in \eqref{eq:preliminaries-dual-multiplier-value} is
+\(\nu=I_K(z)/T=1\).  The reconstruction in
+Theorem~\ref{thm:preliminaries-clarke-dual-action} therefore has scale one:
+it only translates \(z\) onto \(\partial K\).  Translation preserves the
+ordered pure-velocity pieces. On a piece with velocity \(R_i\), the
+reconstructed inclusion is
+\[
+  2a_i=-J_0R_i\in\partial H_K(\gamma)
+  =2\operatorname{conv}\{a_j:F_j\text{ is active at }\gamma\}.
+\]
+The irredundant rows \(a_i\) are extreme points of \(K^\circ\), so this convex
+combination forces \(F_i\) to be active there. Thus, after zero durations are
+deleted, the resulting minimum-action orbit is simple and has the reduced
+active word.
+
+For the converse, closure of the orbit gives
+\(\sum_k\beta_k a_{\sigma_k}=0\), and positivity and
+\(\sum_k\beta_k=1\) are immediate.  Since \(A(\gamma)=T\), the shoelace
+formula yields
 \[
   2T
   =
@@ -146,10 +183,20 @@ gives
   \qquad\text{so}\qquad
   Q_\sigma(\beta)=\frac{1}{2T}.
 \]
-Thus maximizing \(Q_\sigma\) is the same normalization as minimizing the
-free-period action \(T=A(\gamma)\). The Haim--Kislev theorem is the part that
-rules out a larger value coming from the finite optimization and proves the
-global equality with the capacity.
+\end{proof}
+
+For a fixed active word, the KKT system is a stationarity condition on the
+relative interior of the corresponding support face.  A solution with
+positive coordinates is therefore an exact feasible stationary witness; it is
+not, by itself, a certificate that this fixed word maximizes \(Q_\sigma\), nor
+that its dual curve can be translated onto \(\partial K\).  A global maximizer
+is different: Proposition~\ref{prop:quadratic-program-global-maximizer-realization}
+shows that it is a dual minimizer and hence reconstructs a simple
+minimum-action orbit.  Every global maximizer becomes a positive KKT solution
+after its zero coordinates are deleted, so exact KKT candidates suffice when
+the complete word family and all support faces are covered.  Feasibility or
+KKT stationarity without global optimality does not provide the same
+conclusion.
 
 For a fixed active word, it is often convenient to write the objective as a
 quadratic program
@@ -250,55 +297,74 @@ minimum-action simple Reeb orbits.
 \end{theorem}
 
 \begin{proof}
-The Haim--Kislev quadratic program,
-Theorem~\ref{thm:quadratic-program-algorithm-hk2019-hk-formula}, reduces
-\(c_{\mathrm{EHZ}}(K)\) to a finite optimization over simple ordered facet
-words. Thus it remains to find a finite subfamily that contains at least one
-capacity-realizing word for a Lagrangian product.
+Put \(T=c_{\mathrm{EHZ}}(K)\). Rudolf's nonsmooth billiard theorem gives a
+strong minimizing Minkowski billiard in \(K_q\), together with its polygonal
+dual in \(K_p\), having at most three bounce points and length \(T\)
+\cite[Theorem~1]{Rudolf2022}. Write its vertices as \(q_j\) and its dual
+vertices as \(p_j\). The strong billiard normal-cone relations say precisely
+that the alternating broken line through
+\[
+  (q_j,p_j),\ (q_{j+1},p_j),\ (q_{j+1},p_{j+1})
+\]
+is a generalized characteristic for Rudolf's complex-structure convention.
+That convention is opposite to ours, so reverse the loop. Since \(\lambda_0\)
+differs from \(-p\,dq\) by an exact form, its action in our convention is
+\[
+  -\oint p\,dq
+  =\sum_j\langle p_j,q_{j+1}-q_j\rangle
+  =\ell_{K_p}(q)=T.
+\]
+Thus the reversed lift is a capacity-realizing generalized characteristic on
+\(\partial(K_q\times_L K_p)\) whose legs alternately move only one factor.
+Parametrize it in the contact normalization. Its period is then \(T\), and, as
+a dual curve \(z\), it satisfies
+\[
+  A(z)=I_K(z)=T.
+\]
 
-On a \(q\)-facet of \(K_q\times_L K_p\), the Reeb vector is tangent to the
-\(p\)-factor; on a \(p\)-facet, it is tangent to the \(q\)-factor. Hence a
-simple orbit cannot contain three consecutive facets of the same type. If
-three consecutive facets were \(q\)-facets, for example, the \(q\)-coordinate
-would be constant through the two intermediate Reeb segments. The first
-breakpoint would force this fixed point of \(K_q\) to lie in the intersection
-of the first two \(K_q\)-edges, while the second breakpoint would force the
-same point to lie in the intersection of the second and third \(K_q\)-edges.
-For three distinct consecutive edges of a nondegenerate polygon these are the
-two different endpoints of the middle edge, which is impossible for one fixed
-point. The same argument applies to \(p\)-facets.
+Apply the splitting--merging--rescaling part of the proof of
+Theorem~\ref{thm:generalized-reeb-simple-minimizer} to \(z\). Approximation and
+compactness are unnecessary here because the billiard lift is already a finite
+broken line. The only extra point to retain from the billiard is its block
+bound. On each leg, the polygonal normal cone is generated by one facet normal
+or by the two adjacent normals at a vertex, so splitting replaces that leg by
+one or two pure directions inside the same block. When a repeated direction is
+merged, it is removed from one same-type block and absorbed into another block
+that already contains it. This cannot create a new maximal block; if the source
+block disappears, its two neighboring opposite-type blocks coalesce.
 
-Therefore every same-type run in a cyclic facet word has length one or two,
-and the maximal same-type runs alternate between \(q\)- and \(p\)-runs. A
-two-facet run must use adjacent polygon edges, because consecutive facets in a
-simple orbit share the breakpoint between the corresponding Reeb segments.
-Since active Haim--Kislev words have distinct facet entries, distinct same-type
-blocks use disjoint facets; otherwise the flattened cyclic word would repeat a
-facet. A word with one \(q\)-block and one \(p\)-block cannot satisfy the
-positive closure equation: the \(q\)-part would require a positive combination
-of one normal, or of two adjacent edge normals, to vanish, and the same
-obstruction holds in the \(p\)-part. Adjacent outward normals of a convex
-polygon are not antiparallel. Thus \(k=1\) is excluded.
+The rescaling argument in the cited proof uses dual minimality to show that the
+resulting distinct-facet curve is again a dual minimizer. Indeed, write
+\(A'\geq T\) for its action before rescaling; its dual value is still \(T\).
+Multiplying every duration by \(T/A'\) gives a dual-feasible curve with
+\[
+  A=I_K=\frac{T^2}{A'}.
+\]
+The dual minimum is \(T\), so \(T^2/A'\geq T\), hence \(A'\leq T\). Therefore
+\(A'=T\): no rescaling is needed, and the distinct-facet curve \(z'\) is a
+dual minimizer with \(A(z')=I_K(z')=T\). By the preceding observations, its
+cyclic word still has at most three blocks of each type.
 
-The EHZ capacity of a Lagrangian product is also the length of the shortest
-closed \(K_p\)-billiard trajectory in \(K_q\), measured with the support
-function of \(K_p\): Artstein--Avidan--Ostrover prove this for Lagrangian
-products \cite[Theorem~2.13]{AAO2014}, and Rudolf records the nonsmooth
-Minkowski-billiard form used here \cite[Theorem~1]{Rudolf2022}. The planar
-billiard reduction of Bezdek and Bezdek
-\cite[Theorem~1.1 and Lemma~2.4]{BezdekBezdek2009}, in the form used for
-Minkowski billiards by Rudolf \cite[Theorem~1]{Rudolf2022}, implies that one
-minimizing trajectory may be chosen with at most three bounce points. Under the
-Reeb-orbit--billiard correspondence, a bounce point is exactly a maximal
-interval of the Reeb orbit on which the \(q\)-coordinate is fixed and lies on
-the active \(K_q\)-edge or adjacent edge pair; in the facet word this is one
-\(q\)-block. The blocks alternate cyclically, so the number of \(p\)-blocks is
-the same as the number of \(q\)-blocks. Hence \(k\leq 3\). Combining this with
-\(k\neq 1\) gives \(k\in\{2,3\}\). Applying the Haim--Kislev quadratic program
-to this alternating-block candidate family therefore gives the same minimum as
-the full Lagrangian-product problem. This argument only proves that the
-restricted family contains a capacity minimizer; it does not exclude additional
-minimum-action simple Reeb orbits with more blocks.
+Normalize its positive dwell times by their sum. The resulting finite weights
+have QP value \(1/(2T)=Q_{\max}\), so
+Proposition~\ref{prop:quadratic-program-global-maximizer-realization} translates
+\(z'\) to a simple generalized Reeb orbit with the same active word. A simple
+orbit cannot contain three consecutive facets of the same type. Indeed, along
+three consecutive \(q\)-facet segments the \(q\)-coordinate is fixed; the two
+breakpoints would place it at both endpoints of the middle edge of \(K_q\), a
+contradiction. The same holds for \(p\)-facets. Hence every maximal block in
+the final word has length one or two, and a two-facet block uses adjacent
+edges.
+
+If only one factor type occurred, the whole word would be a single block of
+length at most two, whose positive closure equation would require one outward
+normal, or a positive combination of two adjacent outward normals, to vanish.
+This is impossible. Thus both types occur. Likewise, one \(q\)-block and one
+\(p\)-block cannot close, by the same argument in each factor. Hence the common
+number of alternating blocks is not one.
+It is at most three by the construction, so it lies in \(\{2,3\}\). This proves
+that the restricted family contains a capacity maximizer. It does not exclude
+other minimum-action orbits with more blocks.
 \end{proof}
 
 \begin{algorithm}[Lagrangian-product capacity enumeration]
