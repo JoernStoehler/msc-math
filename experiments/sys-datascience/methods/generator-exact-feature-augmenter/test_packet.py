@@ -192,7 +192,7 @@ class ExactFeaturePacketTests(unittest.TestCase):
                 payload_input=path.read_bytes()
                 schema="generator-orientation-smoke-row-v2" if role=="orientation" else "alternative-generator-smoke-row-v2"
                 inputs.append({"role":role,"path":str(path),"sha256":hashlib.sha256(payload_input).hexdigest(),"rows":len(payload_input.splitlines()),"schema":schema})
-            manifest={"schema":"generator-exact-feature-augmenter-report-v2","feature_output":{"path":str(feature_path),"sha256":hashlib.sha256(payload).hexdigest(),"rows":1,"schema":analyzer.FEATURE_SCHEMA},"provenance":{"source_revision":revision,"source_dirty":False,"inputs":inputs}}
+            manifest={"schema":"generator-exact-feature-augmenter-report-v2","rows":1,"feature_output":{"path":str(feature_path),"sha256":hashlib.sha256(payload).hexdigest(),"rows":1,"schema":analyzer.FEATURE_SCHEMA},"provenance":{"source_revision":revision,"source_dirty":False,"inputs":inputs}}
             manifest_path.write_text(json.dumps(manifest))
             analyzer.verify_manifest(feature_path,manifest_path,expected_revision=revision,allow_external_disposable=True)
             feature_path.write_text(json.dumps(self.features[1])+"\n")
@@ -248,7 +248,7 @@ class ExactFeaturePacketTests(unittest.TestCase):
         for role,path in (("orientation",orientation_path),("tangential-source",source_path),("tangential-replay",replay_path)):
             payload=path.read_bytes(); schema="generator-orientation-smoke-row-v2" if role=="orientation" else "alternative-generator-smoke-row-v2"
             inputs.append({"role":role,"path":str(path),"sha256":hashlib.sha256(payload).hexdigest(),"rows":len(payload.splitlines()),"schema":schema})
-        feature_payload=feature_path.read_bytes(); manifest={"schema":"generator-exact-feature-augmenter-report-v2","feature_output":{"path":str(feature_path),"sha256":hashlib.sha256(feature_payload).hexdigest(),"rows":len(feature_payload.splitlines()),"schema":analyzer.FEATURE_SCHEMA},"provenance":{"source_revision":revision,"source_dirty":False,"inputs":inputs}}
+        feature_payload=feature_path.read_bytes(); manifest={"schema":"generator-exact-feature-augmenter-report-v2","rows":len(feature_payload.splitlines()),"feature_output":{"path":str(feature_path),"sha256":hashlib.sha256(feature_payload).hexdigest(),"rows":len(feature_payload.splitlines()),"schema":analyzer.FEATURE_SCHEMA},"provenance":{"source_revision":revision,"source_dirty":False,"inputs":inputs}}
         with tempfile.TemporaryDirectory(dir=analyzer.REPO_ROOT) as directory:
             report_path=Path(directory) / "augment-report.json"; report_path.write_text(json.dumps(manifest))
             _,_,_,audit=analyzer.verify_manifest(feature_path,report_path,expected_revision=revision,design="retained")
@@ -268,7 +268,7 @@ class ExactFeaturePacketTests(unittest.TestCase):
         for role,path in paths:
             payload=path.read_bytes(); schema="generator-orientation-smoke-row-v2" if role=="orientation" else "alternative-generator-smoke-row-v2"
             inputs.append({"role":role,"path":str(path),"sha256":hashlib.sha256(payload).hexdigest(),"rows":len(payload.splitlines()),"schema":schema})
-        feature_payload=feature_path.read_bytes(); manifest={"schema":"generator-exact-feature-augmenter-report-v2","feature_output":{"path":str(feature_path),"sha256":hashlib.sha256(feature_payload).hexdigest(),"rows":len(feature_payload.splitlines()),"schema":analyzer.FEATURE_SCHEMA},"provenance":{"source_revision":producer,"source_dirty":False,"inputs":inputs}}
+        feature_payload=feature_path.read_bytes(); manifest={"schema":"generator-exact-feature-augmenter-report-v2","rows":len(feature_payload.splitlines()),"feature_output":{"path":str(feature_path),"sha256":hashlib.sha256(feature_payload).hexdigest(),"rows":len(feature_payload.splitlines()),"schema":analyzer.FEATURE_SCHEMA},"provenance":{"source_revision":producer,"source_dirty":False,"inputs":inputs}}
         with tempfile.TemporaryDirectory(dir=analyzer.REPO_ROOT) as directory:
             report_path=Path(directory) / "augment-report.json"; report_path.write_text(json.dumps(manifest))
             _,_,_,audit=analyzer.verify_manifest(feature_path,report_path,expected_revision=current,design="retained")
