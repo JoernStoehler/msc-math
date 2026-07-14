@@ -20,6 +20,7 @@ COV = ("ordinary_eigenvalue_min", "ordinary_eigenvalue_max", "condition", "nu1",
 CONTROL_ATOL = 1e-9
 CONTROL_RTOL = 1e-9
 DESIGNS = {"disposable": ({"3x3"}, {"3x3", "4x6", "6x6"}, 1, 1), "retained": ({"3x3", "4x4", "4x6", "6x6"}, {"3x3", "4x6", "6x6"}, 2, 64)}
+REPO_ROOT = Path(subprocess.check_output(["git", "rev-parse", "--show-toplevel"], text=True).strip())
 EXPECTED_ORIENTATION_BUCKETS = {"3x3", "4x4", "4x6", "6x6"}
 EXPECTED_TANGENTIAL_BUCKETS = {"3x3", "4x6", "6x6"}
 
@@ -221,26 +222,76 @@ def _metadata_behavior(rows):
     for key in ("strict_cycle_metadata_rows",): a.pop(key,None); b.pop(key,None)
     return a==b
 
-def verify_manifest(input_path, augment_report_path, expected_revision=None, require_clean=False):
-    rows,h=load_rows(input_path); manifest=json.loads(Path(augment_report_path).read_text())
+def _repo_relative(path: Path) -> str:
+    resolved=path.resolve()
+    try: relative=resolved.relative_to(REPO_ROOT)
+    except ValueError: raise AnalysisError(f"path is outside repository: {path}")
+    if str(relative)=="": raise AnalysisError("repository root is not a retained path")
+    return relative.as_posix()
+
+def _git_diff_clean(revision: str, paths: list[str]) -> bool:
+    return subprocess.run(["git","diff","--quiet",revision,"HEAD","--","experiments/sys-datascience/methods/generator-exact-feature-augmenter/augment.py",*paths], check=False).returncode==0
+
+def _classify_inputs(evidence, design):
+    if not isinstance(evidence,list) or len(evidence)!=3: raise AnalysisError("augment manifest must contain exactly three input evidences")
+    expected_rows=40 if design=="retained" else 5
+    expected_tangential=768 if design=="retained" else 12
+    expected_roles={"orientation","tangential-source","tangential-replay"}
+    classified={}
+    for item in evidence:
+        if not isinstance(item,dict) or not isinstance(item.get("path"),str) or not item.get("path").strip(): raise AnalysisError("manifest input evidence is missing a path")
+        role=item.get("role")
+        if role not in expected_roles: raise AnalysisError(f"manifest input has an invalid role: {role}")
+        if role in classified: raise AnalysisError(f"duplicate manifest input role: {role}")
+        path=Path(item["path"])
+        try: rows,_=load_rows(path)
+        except (OSError, AnalysisError) as exc: raise AnalysisError(f"cannot load manifest input {path}: {exc}") from exc
+        if not rows: raise AnalysisError("manifest input evidence is empty")
+        schema={r.get("schema") for r in rows}
+        expected_schema="generator-orientation-smoke-row-v2" if role=="orientation" else "alternative-generator-smoke-row-v2"
+        if schema != {expected_schema}: raise AnalysisError(f"manifest input schema does not match role {role}: {path}")
+        if role=="tangential-replay" and not all(r.get("geometry_dual_vertices_rational") is not None for r in rows): raise AnalysisError("tangential replay evidence lacks geometry payload")
+        if role=="tangential-source" and any(r.get("geometry_dual_vertices_rational") is not None for r in rows): raise AnalysisError("tangential source evidence contains replay geometry")
+        expected=expected_rows if role=="orientation" else expected_tangential
+        if len(rows)!=expected: raise AnalysisError(f"manifest {role} expected {expected} rows, found {len(rows)}")
+        if item.get("rows") != len(rows): raise AnalysisError(f"manifest {role} row count evidence mismatch")
+        if item.get("schema") != expected_schema: raise AnalysisError(f"manifest {role} schema evidence mismatch")
+        declared=item.get("sha256")
+        payload=path.read_bytes()
+        if not isinstance(declared,str) or hashlib.sha256(payload).hexdigest()!=declared: raise AnalysisError(f"manifest input hash mismatch: {path}")
+        classified[role]=(path, len(rows), declared)
+    if set(classified)!={"orientation","tangential-source","tangential-replay"}: raise AnalysisError("manifest input roles are incomplete")
+    return classified
+
+def verify_manifest(input_path, augment_report_path, expected_revision=None, require_clean=False, design="disposable", allow_external_disposable=False):
+    rows,h=load_rows(input_path); report_path=Path(augment_report_path)
+    report_relative=None
+    try: report_relative=_repo_relative(report_path)
+    except AnalysisError:
+        if not (design=="disposable" and allow_external_disposable): raise
+    manifest=json.loads(report_path.read_text())
     if manifest.get("schema") != "generator-exact-feature-augmenter-report-v2": raise AnalysisError("unexpected augment report schema")
     output=manifest.get("feature_output",{})
     if output.get("schema") != FEATURE_SCHEMA or output.get("rows") != len(rows) or output.get("sha256") != h: raise AnalysisError("feature output does not match augment report")
     provenance=manifest.get("provenance",{}); revision=subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip(); dirty=bool(subprocess.check_output(["git","status","--porcelain"],text=True).strip())
     if expected_revision and expected_revision != revision: raise AnalysisError("revision mismatch")
     if require_clean and dirty: raise AnalysisError("repository is dirty")
-    if provenance.get("source_revision") != revision or provenance.get("source_dirty") is not False: raise AnalysisError("augment provenance revision/clean evidence mismatch")
-    for evidence in provenance.get("inputs",[]):
-        path=Path(evidence.get("path",""))
-        if not path.exists(): raise AnalysisError(f"provenance input missing: {path}")
-        payload=path.read_bytes()
-        if hashlib.sha256(payload).hexdigest() != evidence.get("sha256"): raise AnalysisError(f"provenance input hash mismatch: {path}")
-        if evidence.get("rows") != len(payload.splitlines()): raise AnalysisError(f"provenance input row count mismatch: {path}")
-    return rows,h,manifest
+    producer_revision=provenance.get("source_revision")
+    if not isinstance(producer_revision,str) or len(producer_revision)!=40: raise AnalysisError("augmentation producer revision is missing")
+    if provenance.get("source_dirty") is not False: raise AnalysisError("augmentation producer was dirty")
+    if subprocess.run(["git","merge-base","--is-ancestor",producer_revision,revision],check=False).returncode!=0: raise AnalysisError("augmentation producer revision is not an ancestor")
+    classified=_classify_inputs(provenance.get("inputs"),design)
+    retained_paths=[]
+    for role,(path,_,_) in classified.items():
+        try: retained_paths.append(_repo_relative(path))
+        except AnalysisError:
+            if design=="retained" or not allow_external_disposable: raise
+    if design=="retained" and not _git_diff_clean(producer_revision,retained_paths): raise AnalysisError("producer code or retained input path changed since augmentation")
+    return rows,h,manifest,{"report_path":report_relative,"report_sha256":hashlib.sha256(report_path.read_bytes()).hexdigest(),"producer_revision":producer_revision,"retained_inputs":{role:{"path":str(path),"rows":n,"sha256":sha} for role,(path,n,sha) in classified.items()}}
 
 def main():
-    p=argparse.ArgumentParser(); p.add_argument("--input",type=Path,required=True); p.add_argument("--augment-report",type=Path,required=True); p.add_argument("--out-dir",type=Path,required=True); p.add_argument("--design",choices=sorted(DESIGNS),default="disposable"); p.add_argument("--require-clean",action="store_true"); p.add_argument("--expected-revision"); a=p.parse_args()
-    rows,h,manifest=verify_manifest(a.input,a.augment_report,a.expected_revision,a.require_clean)
-    validate_design(rows,a.design); orientation_buckets,tangential_buckets,bases_per_bucket,pairs_per_bucket=DESIGNS[a.design]; expected_rows=5*len(orientation_buckets)*bases_per_bucket+4*len(tangential_buckets)*pairs_per_bucket; a.out_dir.mkdir(parents=True,exist_ok=True); rep=report(rows); rep["design_count_audit"]={"design":a.design,"orientation_buckets":sorted(orientation_buckets),"tangential_buckets":sorted(tangential_buckets),"bases_per_orientation_bucket":bases_per_bucket,"pairs_per_tangential_bucket":pairs_per_bucket,"expected_rows":expected_rows,"observed_rows":len(rows),"pass":expected_rows==len(rows)}; rep["metadata_behavioral_audit"]=_metadata_behavior(rows); rep["input"]={"path":str(a.input),"sha256":h,"rows":len(rows),"augment_report":str(a.augment_report),"design":a.design,"provenance_verified":True}; (a.out_dir/"report.json").write_text(json.dumps(rep,indent=2)+"\n")
+    p=argparse.ArgumentParser(); p.add_argument("--input",type=Path,required=True); p.add_argument("--augment-report",type=Path,required=True); p.add_argument("--out-dir",type=Path,required=True); p.add_argument("--design",choices=sorted(DESIGNS),default="disposable"); p.add_argument("--require-clean",action="store_true"); p.add_argument("--expected-revision"); p.add_argument("--allow-external-disposable",action="store_true",help="allow /tmp augmentation reports and inputs for disposable smoke only"); a=p.parse_args()
+    rows,h,manifest,provenance_audit=verify_manifest(a.input,a.augment_report,a.expected_revision,a.require_clean,a.design,a.allow_external_disposable)
+    validate_design(rows,a.design); orientation_buckets,tangential_buckets,bases_per_bucket,pairs_per_bucket=DESIGNS[a.design]; expected_rows=5*len(orientation_buckets)*bases_per_bucket+4*len(tangential_buckets)*pairs_per_bucket; a.out_dir.mkdir(parents=True,exist_ok=True); rep=report(rows); rep["design_count_audit"]={"design":a.design,"orientation_buckets":sorted(orientation_buckets),"tangential_buckets":sorted(tangential_buckets),"bases_per_orientation_bucket":bases_per_bucket,"pairs_per_tangential_bucket":pairs_per_bucket,"expected_rows":expected_rows,"observed_rows":len(rows),"pass":expected_rows==len(rows)}; rep["metadata_behavioral_audit"]=_metadata_behavior(rows); rep["input"]={"path":str(a.input),"sha256":h,"rows":len(rows),"augment_report":str(a.augment_report),"augment_report_sha256":provenance_audit["report_sha256"],"augment_report_repo_relative_path":provenance_audit["report_path"],"producer_revision":provenance_audit["producer_revision"],"retained_inputs":provenance_audit["retained_inputs"],"design":a.design,"provenance_verified":True}; (a.out_dir/"report.json").write_text(json.dumps(rep,indent=2)+"\n")
 
 if __name__=="__main__": main()

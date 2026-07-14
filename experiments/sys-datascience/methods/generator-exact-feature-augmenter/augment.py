@@ -271,8 +271,8 @@ def _git_state():
     except Exception: revision="unknown"; dirty=None
     return revision, dirty
 
-def _provenance(paths, hashes, rows, revision, dirty):
-    return {"inputs":[{"path":str(p),"sha256":h,"rows":len(r)} for p,h,r in zip(paths,hashes,rows)],"source_revision":revision,"source_dirty":dirty,"schemas":{"orientation":ORIENTATION_SCHEMA,"tangential":TANGENTIAL_SCHEMA,"feature":ROW_SCHEMA},"target_fields_rejected":["capacity","sys","iterations","iteration","bounce_label","target","target_ms"],"tolerances":{"decomposition_abs":1e-10,"replay_volume_abs":1e-12,"covariance_condition_max":1e10}}
+def _provenance(paths, hashes, rows, roles, revision, dirty):
+    return {"inputs":[{"role":role,"path":str(p),"sha256":h,"rows":len(r),"schema":ORIENTATION_SCHEMA if role=="orientation" else TANGENTIAL_SCHEMA} for role,p,h,r in zip(roles,paths,hashes,rows)],"source_revision":revision,"source_dirty":dirty,"schemas":{"orientation":ORIENTATION_SCHEMA,"tangential":TANGENTIAL_SCHEMA,"feature":ROW_SCHEMA},"target_fields_rejected":["capacity","sys","iterations","iteration","bounce_label","target","target_ms"],"tolerances":{"decomposition_abs":1e-10,"replay_volume_abs":1e-12,"covariance_condition_max":1e10}}
 
 
 def main() -> None:
@@ -282,19 +282,19 @@ def main() -> None:
     if a.expected_revision and a.expected_revision != revision: p.error("revision mismatch")
     if not a.orientation and not (a.tangential_source and a.tangential_replay): p.error("provide orientation or both tangential source/replay")
     if bool(a.tangential_source) != bool(a.tangential_replay): p.error("tangential source and replay must be supplied together")
-    out=a.out_dir; out.mkdir(parents=True,exist_ok=True); feature=[]; paths=[]; hashes=[]; loaded=[]
+    out=a.out_dir; out.mkdir(parents=True,exist_ok=True); feature=[]; paths=[]; hashes=[]; loaded=[]; roles=[]
     if a.orientation:
         rows,h=load_rows(a.orientation);
         if a.expected_orientation_sha256 and a.expected_orientation_sha256 != h: p.error("orientation SHA256 mismatch")
-        feature.extend(feature_row(r,"orientation") for r in rows); paths.append(a.orientation); hashes.append(h); loaded.append(rows)
+        feature.extend(feature_row(r,"orientation") for r in rows); paths.append(a.orientation); hashes.append(h); loaded.append(rows); roles.append("orientation")
     if a.tangential_source:
         src,hs=load_rows(a.tangential_source); rep,hr=load_rows(a.tangential_replay)
         if a.expected_tangential_source_sha256 and a.expected_tangential_source_sha256 != hs: p.error("tangential source SHA256 mismatch")
         if a.expected_tangential_replay_sha256 and a.expected_tangential_replay_sha256 != hr: p.error("tangential replay SHA256 mismatch")
-        pairs=_join_tangential(src,rep); feature.extend(feature_row(s,"tangential",g) for s,g in pairs); paths += [a.tangential_source,a.tangential_replay]; hashes += [hs,hr]; loaded += [src,rep]
+        pairs=_join_tangential(src,rep); feature.extend(feature_row(s,"tangential",g) for s,g in pairs); paths += [a.tangential_source,a.tangential_replay]; hashes += [hs,hr]; loaded += [src,rep]; roles += ["tangential-source","tangential-replay"]
     with (out/"features.jsonl").open("w") as f:
         for r in feature: f.write(json.dumps(r,sort_keys=True,allow_nan=False)+"\n")
-    feature_bytes=(out/"features.jsonl").read_bytes(); report={"schema":"generator-exact-feature-augmenter-report-v2","rows":len(feature),"source_kinds":dict(Counter(r["source_kind"] for r in feature)),"provenance":_provenance(paths,hashes,loaded,revision,dirty),"feature_output":{"path":str(out/"features.jsonl"),"sha256":hashlib.sha256(feature_bytes).hexdigest(),"rows":len(feature),"schema":ROW_SCHEMA},"command":" ".join(__import__("sys").argv)}
+    feature_bytes=(out/"features.jsonl").read_bytes(); report={"schema":"generator-exact-feature-augmenter-report-v2","rows":len(feature),"source_kinds":dict(Counter(r["source_kind"] for r in feature)),"provenance":_provenance(paths,hashes,loaded,roles,revision,dirty),"feature_output":{"path":str(out/"features.jsonl"),"sha256":hashlib.sha256(feature_bytes).hexdigest(),"rows":len(feature),"schema":ROW_SCHEMA},"command":" ".join(__import__("sys").argv)}
     (out/"augment-report.json").write_text(json.dumps(report,indent=2)+"\n")
 
 

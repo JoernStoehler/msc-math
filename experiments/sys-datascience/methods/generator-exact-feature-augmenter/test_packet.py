@@ -33,13 +33,22 @@ class ExactFeaturePacketTests(unittest.TestCase):
         root = Path(cls.smoke_dir.name)
         binary = Path(__file__).parents[4] / "target/release/sys-datascience-alternative-generator-smoke"
         if binary.exists():
+            orientation_path=root / "orientation" / "rows.jsonl"
+            orientation_path.parent.mkdir()
+            orientation_path.write_text("".join(json.dumps(row, sort_keys=True) + "\n" for row in cls.rows[:5]))
             for mode in ("source", "replay"):
                 command=[str(binary), "--out-dir", str(root/mode), "--rows-per-law", "1", "--only-family", "factorial", "--identity-scope", "test-disposable"]
                 if mode == "replay": command.append("--geometry-sidecar")
                 subprocess.run(command, check=True, stdout=subprocess.DEVNULL)
             src,_=augment.load_rows(root/"source"/"smoke-rows.jsonl"); replay,_=augment.load_rows(root/"replay"/"smoke-rows.jsonl")
+            cls.input_evidence = {
+                "orientation": orientation_path,
+                "tangential-source": root / "source" / "smoke-rows.jsonl",
+                "tangential-replay": root / "replay" / "smoke-rows.jsonl",
+            }
             cls.disposable_features = cls.features[:5] + [augment.feature_row(s,"tangential",g) for s,g in augment._join_tangential(src,replay)]
         else:
+            cls.input_evidence = None
             cls.disposable_features = None
 
     @classmethod
@@ -172,23 +181,84 @@ class ExactFeaturePacketTests(unittest.TestCase):
             analyzer.validate(rows, require_complete=False)
 
     def test_altered_feature_manifest_and_revision_hash_guards(self):
+        if self.input_evidence is None:
+            self.skipTest("release producer binary is unavailable")
         with tempfile.TemporaryDirectory() as directory:
             directory=Path(directory); feature_path=directory/"features.jsonl"; manifest_path=directory/"augment-report.json"
             payload=(json.dumps(self.features[0])+"\n").encode(); feature_path.write_bytes(payload)
             revision=subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip()
-            manifest={"schema":"generator-exact-feature-augmenter-report-v2","feature_output":{"path":str(feature_path),"sha256":hashlib.sha256(payload).hexdigest(),"rows":1,"schema":analyzer.FEATURE_SCHEMA},"provenance":{"source_revision":revision,"source_dirty":False,"inputs":[]}}
+            inputs=[]
+            for role,path in self.input_evidence.items():
+                payload_input=path.read_bytes()
+                schema="generator-orientation-smoke-row-v2" if role=="orientation" else "alternative-generator-smoke-row-v2"
+                inputs.append({"role":role,"path":str(path),"sha256":hashlib.sha256(payload_input).hexdigest(),"rows":len(payload_input.splitlines()),"schema":schema})
+            manifest={"schema":"generator-exact-feature-augmenter-report-v2","feature_output":{"path":str(feature_path),"sha256":hashlib.sha256(payload).hexdigest(),"rows":1,"schema":analyzer.FEATURE_SCHEMA},"provenance":{"source_revision":revision,"source_dirty":False,"inputs":inputs}}
             manifest_path.write_text(json.dumps(manifest))
-            analyzer.verify_manifest(feature_path,manifest_path,expected_revision=revision)
+            analyzer.verify_manifest(feature_path,manifest_path,expected_revision=revision,allow_external_disposable=True)
             feature_path.write_text(json.dumps(self.features[1])+"\n")
             with self.assertRaisesRegex(augment.AnalysisError,"feature output"):
-                analyzer.verify_manifest(feature_path,manifest_path,expected_revision=revision)
+                analyzer.verify_manifest(feature_path,manifest_path,expected_revision=revision,allow_external_disposable=True)
             feature_path.write_bytes(payload)
             with self.assertRaisesRegex(augment.AnalysisError,"revision mismatch"):
-                analyzer.verify_manifest(feature_path,manifest_path,expected_revision="0"*40)
+                analyzer.verify_manifest(feature_path,manifest_path,expected_revision="0"*40,allow_external_disposable=True)
         rows = copy.deepcopy(self.features)
         rows[0]["vertex_covariance"]["status"] = "mystery"
         with self.assertRaisesRegex(augment.AnalysisError, "must be eligible"):
             analyzer.validate(rows, require_complete=False)
+
+    def test_manifest_input_evidence_is_explicit_and_fail_closed(self):
+        if self.input_evidence is None:
+            self.skipTest("release producer binary is unavailable")
+        def records():
+            out=[]
+            for role,path in self.input_evidence.items():
+                payload=path.read_bytes()
+                schema="generator-orientation-smoke-row-v2" if role=="orientation" else "alternative-generator-smoke-row-v2"
+                out.append({"role":role,"path":str(path),"sha256":hashlib.sha256(payload).hexdigest(),"rows":len(payload.splitlines()),"schema":schema})
+            return out
+        with self.assertRaisesRegex(augment.AnalysisError, "exactly three"):
+            analyzer._classify_inputs([], "disposable")
+        valid=records()
+        missing_role=copy.deepcopy(valid); missing_role[0].pop("role")
+        with self.assertRaisesRegex(augment.AnalysisError, "invalid role"):
+            analyzer._classify_inputs(missing_role, "disposable")
+        duplicate_role=copy.deepcopy(valid); duplicate_role[1]["role"]="orientation"
+        with self.assertRaisesRegex(augment.AnalysisError, "duplicate manifest input role"):
+            analyzer._classify_inputs(duplicate_role, "disposable")
+        wrong_role=copy.deepcopy(valid); wrong_role[0]["role"]="tangential-source"
+        with self.assertRaisesRegex(augment.AnalysisError, "schema does not match role"):
+            analyzer._classify_inputs(wrong_role, "disposable")
+        wrong_path=copy.deepcopy(valid); wrong_path[0]["path"]=str(Path(self.smoke_dir.name) / "does-not-exist.jsonl")
+        with self.assertRaisesRegex(augment.AnalysisError, "cannot load manifest input"):
+            analyzer._classify_inputs(wrong_path, "disposable")
+        with tempfile.TemporaryDirectory() as directory:
+            short=Path(directory) / "orientation.jsonl"
+            short.write_text("".join(json.dumps(row, sort_keys=True) + "\n" for row in self.rows[:4]))
+            wrong_count=copy.deepcopy(valid); wrong_count[0]["path"]=str(short); wrong_count[0]["sha256"]=hashlib.sha256(short.read_bytes()).hexdigest(); wrong_count[0]["rows"]=4
+            with self.assertRaisesRegex(augment.AnalysisError, "expected 5 rows"):
+                analyzer._classify_inputs(wrong_count, "disposable")
+
+    def test_retained_producer_at_head_is_a_valid_ancestor(self):
+        feature_path=HERE / "artifacts/full-panels/features.jsonl"
+        orientation_path=Path(__file__).parents[2] / "methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl"
+        source_path=Path(__file__).parents[2] / "methods/generator-tangential-matchability/artifacts/full-64/smoke-rows.jsonl"
+        replay_path=HERE / "artifacts/full-panels/tangential-replay/smoke-rows.jsonl"
+        revision=subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip()
+        inputs=[]
+        for role,path in (("orientation",orientation_path),("tangential-source",source_path),("tangential-replay",replay_path)):
+            payload=path.read_bytes(); schema="generator-orientation-smoke-row-v2" if role=="orientation" else "alternative-generator-smoke-row-v2"
+            inputs.append({"role":role,"path":str(path),"sha256":hashlib.sha256(payload).hexdigest(),"rows":len(payload.splitlines()),"schema":schema})
+        feature_payload=feature_path.read_bytes(); manifest={"schema":"generator-exact-feature-augmenter-report-v2","feature_output":{"path":str(feature_path),"sha256":hashlib.sha256(feature_payload).hexdigest(),"rows":len(feature_payload.splitlines()),"schema":analyzer.FEATURE_SCHEMA},"provenance":{"source_revision":revision,"source_dirty":False,"inputs":inputs}}
+        with tempfile.TemporaryDirectory(dir=analyzer.REPO_ROOT) as directory:
+            report_path=Path(directory) / "augment-report.json"; report_path.write_text(json.dumps(manifest))
+            _,_,_,audit=analyzer.verify_manifest(feature_path,report_path,expected_revision=revision,design="retained")
+            self.assertEqual(audit["producer_revision"],revision)
+            self.assertEqual(set(audit["retained_inputs"]),{"orientation","tangential-source","tangential-replay"})
+
+    def test_retained_producer_code_change_is_rejected(self):
+        history=subprocess.check_output(["git","log","--format=%H","--",str(HERE / "augment.py")],text=True).splitlines()
+        self.assertGreaterEqual(len(history),2)
+        self.assertFalse(analyzer._git_diff_clean(history[-1], []))
 
     def test_duplicate_and_truncated_inputs(self):
         duplicate = [copy.deepcopy(self.features[0]), copy.deepcopy(self.features[0])]
