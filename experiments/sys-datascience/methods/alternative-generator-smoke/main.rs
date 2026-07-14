@@ -6,7 +6,7 @@
 
 use exp_sys_landscape::{
     capacity_auto, compute_sys_from_capacity, exact_volume_from_incidence_as_f64,
-    SysLandscapePolytopeCache,
+    rational_vec4_to_strings, SysLandscapePolytopeCache,
 };
 use nalgebra::Vector2;
 use rand::{Rng, SeedableRng};
@@ -37,6 +37,7 @@ struct Args {
     only_law: Option<String>,
     only_family: Option<String>,
     identity_scope: Option<String>,
+    geometry_sidecar: bool,
 }
 
 #[derive(Clone, Debug)]
@@ -80,6 +81,20 @@ struct SmokeRow {
     generation_ms: f64,
     validation_ms: f64,
     target_ms: f64,
+    /// Populated only by `--geometry-sidecar`; absent in the reviewed source
+    /// panel so adding this field cannot alter retained inputs.
+    #[serde(default)]
+    geometry_dual_vertices_rational: Option<Vec<[String; 4]>>,
+    #[serde(default)]
+    geometry_primal_vertices_rational: Option<Vec<[String; 4]>>,
+    #[serde(default)]
+    geometry_vertex_facet_incidence: Option<Vec<Vec<bool>>>,
+    #[serde(default)]
+    geometry_volume: Option<f64>,
+    #[serde(default)]
+    geometry_source_sample_id: Option<String>,
+    #[serde(default)]
+    geometry_source_pairing_id: Option<String>,
 }
 
 #[derive(Clone, Serialize)]
@@ -153,6 +168,7 @@ fn parse_args() -> Args {
         only_law: None,
         only_family: None,
         identity_scope: None,
+        geometry_sidecar: false,
     };
     let mut i = 1;
     while i < argv.len() {
@@ -203,9 +219,13 @@ fn parse_args() -> Args {
                 args.identity_scope = Some(value("--identity-scope").to_string());
                 i += 2;
             }
+            "--geometry-sidecar" => {
+                args.geometry_sidecar = true;
+                i += 1;
+            }
             "--help" | "-h" => {
                 println!(
-                    "--out-dir DIR --seed N --attempts N --runtime-cap-ms MS --rows-per-law N [--only-law LAW | --only-family factorial --identity-scope ID] [--target]"
+                    "--out-dir DIR --seed N --attempts N --runtime-cap-ms MS --rows-per-law N [--only-law LAW | --only-family factorial --identity-scope ID] [--geometry-sidecar] [--target]"
                 );
                 std::process::exit(0);
             }
@@ -774,11 +794,35 @@ fn evaluate_pair(
             generation_ms,
             validation_ms,
             target_ms: 0.0,
+            geometry_dual_vertices_rational: None,
+            geometry_primal_vertices_rational: None,
+            geometry_vertex_facet_incidence: None,
+            geometry_volume: None,
+            geometry_source_sample_id: None,
+            geometry_source_pairing_id: None,
         };
     };
     let volume_start = Instant::now();
     let volume = exact_volume_from_incidence_as_f64(&poly.vertices, &poly.vertex_facet_incidence);
     validation_ms += volume_start.elapsed().as_secs_f64() * 1000.0;
+    let geometry_dual_vertices_rational = args
+        .geometry_sidecar
+        .then(|| rational_vec4_to_strings(&poly.dual_vertices));
+    let geometry_primal_vertices_rational = args
+        .geometry_sidecar
+        .then(|| rational_vec4_to_strings(&poly.vertices));
+    let geometry_vertex_facet_incidence = args.geometry_sidecar.then(|| {
+        (0..poly.vertex_facet_incidence.nrows())
+            .map(|vertex| {
+                (0..poly.vertex_facet_incidence.ncols())
+                    .map(|facet| poly.vertex_facet_incidence[(vertex, facet)])
+                    .collect()
+            })
+            .collect()
+    });
+    let geometry_volume = args.geometry_sidecar.then_some(volume);
+    let geometry_source_sample_id = args.geometry_sidecar.then(|| sample_id.clone());
+    let geometry_source_pairing_id = args.geometry_sidecar.then(|| paired.clone()).flatten();
     // Retain geometry/validation evidence when target evaluation is disabled.
     // Above ten facets the current in-process backend has no cancellable time
     // limit, so target mode records the predeclared cap rather than entering it.
@@ -826,6 +870,12 @@ fn evaluate_pair(
             generation_ms,
             validation_ms,
             target_ms: 0.0,
+            geometry_dual_vertices_rational,
+            geometry_primal_vertices_rational,
+            geometry_vertex_facet_incidence,
+            geometry_volume,
+            geometry_source_sample_id,
+            geometry_source_pairing_id,
         };
     }
     let tt = Instant::now();
@@ -892,6 +942,12 @@ fn evaluate_pair(
         generation_ms,
         validation_ms,
         target_ms,
+        geometry_dual_vertices_rational,
+        geometry_primal_vertices_rational,
+        geometry_vertex_facet_incidence,
+        geometry_volume,
+        geometry_source_sample_id,
+        geometry_source_pairing_id,
     }
 }
 
@@ -1163,6 +1219,12 @@ fn main() {
                         generation_ms,
                         validation_ms,
                         target_ms: 0.0,
+                        geometry_dual_vertices_rational: None,
+                        geometry_primal_vertices_rational: None,
+                        geometry_vertex_facet_incidence: None,
+                        geometry_volume: None,
+                        geometry_source_sample_id: None,
+                        geometry_source_pairing_id: None,
                     });
                     serde_json::to_writer(&mut rows_out, &row).expect("write row");
                     rows_out.write_all(b"\n").expect("newline");
