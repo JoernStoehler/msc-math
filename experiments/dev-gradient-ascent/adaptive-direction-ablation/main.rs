@@ -25,7 +25,7 @@ use symplectic::{
 
 const MAX_TARGET_EVALUATIONS: usize = 100;
 const NEAR_ACTIVE_RELATIVE_WINDOW: f64 = 1.0e-3;
-const CANDIDATE_WINDOW_RELATIVE_GAP: f64 = 1.0e-3;
+const CANDIDATE_WINDOW_RELATIVE_GAP: f64 = 1.0e-2;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Policy {
@@ -105,6 +105,7 @@ struct AttemptRow {
     target_evaluations: usize,
     target_valid: bool,
     target_sys: Option<f64>,
+    base_sys: f64,
     delta: Option<f64>,
     accepted: bool,
     reason: String,
@@ -114,6 +115,8 @@ struct AttemptRow {
     direction_label: String,
     direction_norm: f64,
     direction_flat: Vec<f64>,
+    base_dual_flat: Vec<f64>,
+    target_dual_flat: Vec<f64>,
     base_sigma: Vec<usize>,
     near_active_count: usize,
     near_active_sigmas: Vec<Vec<usize>>,
@@ -157,8 +160,10 @@ struct Provenance {
     implementation_blake3: String,
     policies: Vec<String>,
     initial_radii: Vec<f64>,
+    requested_target_budget: usize,
     post_initial_target_budget: usize,
     near_active_window_relative: f64,
+    candidate_window_relative_gap: f64,
     direction_contract: String,
     evaluator_accounting: String,
 }
@@ -176,7 +181,7 @@ fn main() {
     let rows: Vec<PanelRow> = load_jsonl(&cli.polytope_table);
     let starts: Vec<Start> = rows
         .into_iter()
-        .filter(|r| r.facet_count == Some(cli.facet_count))
+        .filter(|r| cli.facet_count == 0 || r.facet_count == Some(cli.facet_count))
         .filter(|r| !cli.exclude.contains(&r.poly_id))
         .take(cli.start_count)
         .map(|r| Start {
@@ -195,12 +200,16 @@ fn main() {
     );
     let implementation =
         PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("adaptive-direction-ablation/main.rs");
-    let provenance = Provenance { command: std::env::args().collect(), source_head: git_output(&["rev-parse","HEAD"]), source_input: cli.polytope_table.display().to_string(), source_input_blake3: hash_file(&cli.polytope_table), implementation: implementation.display().to_string(), implementation_blake3: hash_file(&implementation), policies: cli.policies.iter().map(|p|p.as_str().to_string()).collect(), initial_radii: cli.radii.clone(), post_initial_target_budget: MAX_TARGET_EVALUATIONS, near_active_window_relative: NEAR_ACTIVE_RELATIVE_WINDOW, direction_contract: "all output directions normalized in flattened dual-vertex Euclidean norm; candidate objective min_sigma(base_gap_sigma + <grad sys_sigma, radius*direction>)".to_string(), evaluator_accounting: "initial state excluded; every target proposal increments target_evaluations; accepted iff valid and target full sys strictly increases; accepted radius expands 1.25, invalid/non-improving shrinks 0.5".to_string() };
+    let provenance = Provenance { command: std::env::args().collect(), source_head: git_output(&["rev-parse","HEAD"]), source_input: cli.polytope_table.display().to_string(), source_input_blake3: hash_file(&cli.polytope_table), implementation: implementation.display().to_string(), implementation_blake3: hash_file(&implementation), policies: cli.policies.iter().map(|p|p.as_str().to_string()).collect(), initial_radii: cli.radii.clone(), requested_target_budget: cli.budget, post_initial_target_budget: MAX_TARGET_EVALUATIONS, near_active_window_relative: NEAR_ACTIVE_RELATIVE_WINDOW, candidate_window_relative_gap: CANDIDATE_WINDOW_RELATIVE_GAP, direction_contract: "all output directions normalized in flattened dual-vertex Euclidean norm; candidate objective min_sigma(base_gap_sigma + <grad sys_sigma, radius*direction>)".to_string(), evaluator_accounting: "initial state excluded; every target proposal increments target_evaluations; accepted iff valid and target full sys strictly increases; accepted radius expands 1.25, invalid/non-improving shrinks 0.5".to_string() };
     write_json(cli.out_dir.join("run-provenance.json"), &provenance);
     let began = Instant::now();
     let mut trajectories = Vec::new();
     let starts_to_run = &starts[..];
-    let radii = cli.radii.clone();
+    let radii = if cli.smoke {
+        vec![1e-3]
+    } else {
+        cli.radii.clone()
+    };
     for policy in &cli.policies {
         for start in starts_to_run {
             for &radius in &radii {
@@ -275,7 +284,9 @@ fn run_trajectory(
         let flat = flatten(&direction);
         let norm = direction.iter().map(|v| v.dot(v)).sum::<f64>().sqrt();
         let before = current.polytope.dual_vertices_f64.clone();
-        let after = add_step(&before, &direction, radius);
+        let base_sys = current.sys;
+        let proposal_radius = radius;
+        let after = add_step(&before, &direction, proposal_radius);
         target_evals += 1;
         let target = compute_state(&after);
         let valid = target.is_ok();
@@ -322,6 +333,7 @@ fn run_trajectory(
             target_evaluations: target_evals,
             target_valid: valid,
             target_sys,
+            base_sys,
             delta,
             accepted: accept,
             reason: if accept {
@@ -333,11 +345,13 @@ fn run_trajectory(
             },
             best_sys: best,
             best_iteration,
-            proposal_radius: if accept { radius / 1.25 } else { radius * 2.0 },
+            proposal_radius,
             current_radius: radius,
             direction_label: label,
             direction_norm: norm,
             direction_flat: flat,
+            base_dual_flat: flatten(&before),
+            target_dual_flat: flatten(&after),
             base_sigma: base_sigma.clone(),
             near_active_count: base_near_sigmas.len(),
             near_active_sigmas: base_near_sigmas.clone(),
@@ -447,6 +461,7 @@ impl AttemptRow {
             target_evaluations: 0,
             target_valid: true,
             target_sys: Some(sys),
+            base_sys: sys,
             delta: None,
             accepted: true,
             reason: "initial".into(),
@@ -457,6 +472,8 @@ impl AttemptRow {
             direction_label: "initial".into(),
             direction_norm: 0.0,
             direction_flat: Vec::new(),
+            base_dual_flat: flatten(&state.polytope.dual_vertices_f64),
+            target_dual_flat: flatten(&state.polytope.dual_vertices_f64),
             base_sigma: state.sigma.clone(),
             near_active_count: state.near_sigmas.len(),
             near_active_sigmas: state.near_sigmas.clone(),
@@ -638,17 +655,6 @@ fn unflatten(v: &[f64]) -> Vec<Vector4<f64>> {
     v.chunks_exact(4)
         .map(|x| Vector4::new(x[0], x[1], x[2], x[3]))
         .collect()
-}
-fn poll_directions(facets: usize) -> Vec<(String, Vec<Vector4<f64>>)> {
-    let mut out = Vec::new();
-    for k in 0..4 {
-        let mut p = vec![Vector4::zeros(); facets];
-        p[0][k] = 1.;
-        out.push((format!("slice+e{k}"), p.clone()));
-        p[0][k] = -1.;
-        out.push((format!("slice-e{k}"), p));
-    }
-    out
 }
 fn capacity_all_safe(
     polytope: &SysLandscapePolytopeCache,

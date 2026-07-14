@@ -1,0 +1,16 @@
+{
+  "fixtures": [
+    {
+      "id": "f6be75d99a357735276fc4b6eb36b0549c823dd75faeedb4fc7506903da2f1b8",
+      "role": "mechanism_disagreement",
+      "facet_count": 10,
+      "source_packet": "inputs/mechanism_disagreement.jsonl"
+    },
+    {
+      "id": "43d2432913e3f665557c74ae146711b03fbbdb4182479852672cf1db98dec8cc",
+      "role": "equality_easy_control",
+      "facet_count": 12,
+      "source_packet": "inputs/equality_easy_control.jsonl"
+    }
+  ]
+}
