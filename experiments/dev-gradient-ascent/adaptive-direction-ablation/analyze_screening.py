@@ -35,6 +35,7 @@ assert producer_summary["total_target_evaluations"] == len(files)
 summary_keys={(ts["policy"],ts["start_id"],float(ts["initial_radius"])) for ts in producer_summary["trajectories"]}
 row_keys={(r["policy"],r["start_id"],float(r["initial_radius"])) for r in rows}
 assert summary_keys == row_keys
+assert len(producer_summary["trajectories"]) == len(row_keys), "duplicate producer summary trajectory"
 for ts in producer_summary["trajectories"]:
     key=(ts["policy"],ts["start_id"],float(ts["initial_radius"]))
     row=next(r for r in rows if (r["policy"],r["start_id"],float(r["initial_radius"])) == key)

@@ -188,6 +188,7 @@ producer_summary = json.loads((root / "summary.json").read_text())
 assert producer_summary["total_target_evaluations"] == summary["total_target_evaluations"]
 summary_keys = {(ts["policy"], ts["start_id"], float(ts["initial_radius"])) for ts in producer_summary["trajectories"]}
 assert summary_keys == set(by_cell), "producer summary trajectory coverage mismatch"
+assert len(producer_summary["trajectories"]) == len(by_cell), "duplicate producer summary trajectory"
 for ts in producer_summary["trajectories"]:
     key = (ts["policy"], ts["start_id"], float(ts["initial_radius"]))
     assert_summary_matches(ts, recompute_summary(by_cell[key]))
