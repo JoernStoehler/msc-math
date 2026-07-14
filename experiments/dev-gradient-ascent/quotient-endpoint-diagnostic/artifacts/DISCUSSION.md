@@ -69,4 +69,10 @@ uv run --script \
   experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/analyze.py
 ```
 
-`run-provenance.json` hashes all `36` selection inputs, the producer, analyzer, and Cargo manifest. `poll-directions.jsonl` is the raw evidence; `states.jsonl` and `radius-summaries.jsonl` are compact generated views. The figures are generated directly from the validated rows.
+`run-provenance.json` hashes all `36` selection inputs, the producer, analyzer,
+and the generation-time Cargo manifest. The analyzer verifies the exact
+manifest hash when unchanged; after unrelated binaries are integrated, it
+instead verifies the endpoint binary and dependency contract so those additions
+do not invalidate retained evidence. `poll-directions.jsonl` is the raw
+evidence; `states.jsonl` and `radius-summaries.jsonl` are compact generated
+views. The figures are generated directly from the validated rows.

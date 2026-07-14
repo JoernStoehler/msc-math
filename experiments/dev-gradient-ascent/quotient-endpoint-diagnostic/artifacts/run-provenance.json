@@ -11,7 +11,7 @@
   "implementation_path": "experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/main.rs",
   "implementation_blake3": "acefb883cd0f8bdc1c11b9db14f2a34d8c442d38e0d07d6130090000d528b034",
   "analyzer_path": "experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/analyze.py",
-  "analyzer_blake3": "408539eed9e6e8d5c63417dcd0beb7403cc14701ce946c52d54360b17522965a",
+  "analyzer_blake3": "ad98dff13356aabdd099a5e86c32dc8ac6c481f1e9295676c2cdb25ee8ea3fcc",
   "manifest_path": "experiments/dev-gradient-ascent/Cargo.toml",
   "manifest_blake3": "0a35fe10e12591f25ce5d6df1e362768a4396a6e1a0e0b172fa4333019bceec1",
   "input_identities": [

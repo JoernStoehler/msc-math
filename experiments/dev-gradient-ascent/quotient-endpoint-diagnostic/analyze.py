@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import math
+import tomllib
 from collections import defaultdict
 from pathlib import Path
 
@@ -65,6 +66,30 @@ def dot(left, right):
     return sum(a * b for a, b in zip(left, right))
 
 
+def validate_manifest_contract(path: Path):
+    """Check the endpoint-relevant contract while permitting unrelated bins."""
+    manifest = tomllib.loads(path.read_text())
+    package = manifest["package"]
+    assert package["name"] == "exp-dev-gradient-ascent"
+    assert package["edition"] == "2021"
+    bins = {entry["name"]: entry["path"] for entry in manifest.get("bin", [])}
+    assert bins["dev-gradient-ascent-quotient-endpoint-diagnostic"] == (
+        "quotient-endpoint-diagnostic/main.rs"
+    )
+    dependencies = manifest["dependencies"]
+    for name in (
+        "blake3",
+        "exp-sys-landscape",
+        "nalgebra",
+        "rayon",
+        "serde",
+        "serde_json",
+        "symplectic",
+    ):
+        assert name in dependencies
+    assert dependencies["exp-sys-landscape"]["path"] == "../sys-landscape"
+
+
 def validate():
     summary = read_json(ARTIFACTS / "summary.json")
     provenance = read_json(ARTIFACTS / "run-provenance.json")
@@ -82,7 +107,6 @@ def validate():
     for path_key, hash_key in (
         ("implementation_path", "implementation_blake3"),
         ("analyzer_path", "analyzer_blake3"),
-        ("manifest_path", "manifest_blake3"),
     ):
         support_path = Path(provenance[path_key])
         assert support_path.is_file()
@@ -90,6 +114,11 @@ def validate():
             blake3.blake3(support_path.read_bytes()).hexdigest()
             == provenance[hash_key]
         )
+    manifest_path = Path(provenance["manifest_path"])
+    assert manifest_path.is_file()
+    current_manifest_blake3 = blake3.blake3(manifest_path.read_bytes()).hexdigest()
+    manifest_exact_match = current_manifest_blake3 == provenance["manifest_blake3"]
+    validate_manifest_contract(manifest_path)
 
     for identity in provenance["input_identities"]:
         path = Path(identity["path"])
@@ -301,7 +330,8 @@ def validate():
             "trajectory_hashes_recomputed": True,
             "producer_hash_recomputed": True,
             "analyzer_hash_recomputed": True,
-            "manifest_hash_recomputed": True,
+            "generation_manifest_hash_matches_current": manifest_exact_match,
+            "current_manifest_endpoint_contract_verified": True,
             "poll_row_count": len(polls),
             "state_count": len(states),
         },
@@ -498,7 +528,13 @@ uv run --script \\
   experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/analyze.py
 ```
 
-`run-provenance.json` hashes all `36` selection inputs, the producer, analyzer, and Cargo manifest. `poll-directions.jsonl` is the raw evidence; `states.jsonl` and `radius-summaries.jsonl` are compact generated views. The figures are generated directly from the validated rows.
+`run-provenance.json` hashes all `36` selection inputs, the producer, analyzer,
+and the generation-time Cargo manifest. The analyzer verifies the exact
+manifest hash when unchanged; after unrelated binaries are integrated, it
+instead verifies the endpoint binary and dependency contract so those additions
+do not invalidate retained evidence. `poll-directions.jsonl` is the raw
+evidence; `states.jsonl` and `radius-summaries.jsonl` are compact generated
+views. The figures are generated directly from the validated rows.
 """
     (ARTIFACTS / "DISCUSSION.md").write_text(text)
 

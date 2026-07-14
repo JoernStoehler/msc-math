@@ -4,7 +4,8 @@
     "trajectory_hashes_recomputed": true,
     "producer_hash_recomputed": true,
     "analyzer_hash_recomputed": true,
-    "manifest_hash_recomputed": true,
+    "generation_manifest_hash_matches_current": false,
+    "current_manifest_endpoint_contract_verified": true,
     "poll_row_count": 366,
     "state_count": 5
   },
