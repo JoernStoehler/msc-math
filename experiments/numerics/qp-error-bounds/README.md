@@ -56,3 +56,26 @@ oriented antisymmetric form (separate from the symmetric QP `H`), and the KKT
 correction is the solver's direct residual term. Interval, product-route, and
 fallback/timing formulas remain unavailable when their endpoint or route atoms
 are not retained; a center plus an error scalar is not treated as an interval.
+
+## Retained-exact route evaluation
+
+Run the focused route packet with:
+
+```bash
+bash experiments/numerics/qp-error-bounds/run_retained_exact.sh
+```
+
+It writes `artifacts/retained-exact/raw_rows.jsonl` (source evidence),
+`analysis.json` (derived strata/cost report), and `summary.md`. The Rust
+producer evaluates ordinary generated F5, pinned q4:p5, triangle×square tie,
+and pruning-roundoff. Each row records the supplied transition/product-block
+stream, f64 True/Indeterminate/rejected strata, current `MinimaSafe`, exact
+rechecking of every retained candidate, and an exact-all reference where
+available. The fixed action window is exact `[minimum, 21/20 · minimum]`.
+
+Exact values use the rational target represented by stored binary64 bits. No
+algebraic HKO oracle is available. Exactness is over the f64-retained set;
+exact-all is completeness only relative to the named supplied stream. Active
+words are candidate words, not proven distinct physical orbits. This packet
+does not provide exact multipliers, derivatives, recovery data, global HK
+candidate recall, or a production-consumer migration.

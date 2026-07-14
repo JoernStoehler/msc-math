@@ -125,6 +125,38 @@ and no prevalence-controlled square-times-square near-zero-Q selector.  The
 packet also lacks per-sigma production visited/retained state and complete
 transformed-target comparisons.
 
+## Retained-exact route evidence
+
+The focused artifact under `artifacts/retained-exact/` evaluates whether
+exact-solving every sigma retained by the current f64 route is usable for
+scalar minima, active-word minimizers, and a fixed exact 5% action window.
+Regenerate it with `bash experiments/numerics/qp-error-bounds/run_retained_exact.sh`;
+the producer and mutation validator are `src/retained_exact.rs`,
+`validate_retained_exact.py`, and `test_retained_exact.py`.
+
+The four deterministic rows preserve the direct observations. All four
+exact-all references are available over the same supplied stream. Retained
+exact and exact-all agree on scalar minimum, exact active-word minimizer set,
+and exact 5% window in each row. In pinned q4:p5, ordinary f64 minimization
+omits tied word `[0,4,1,2,7,6]`, while retained exact includes it. In
+triangle×square, 26 of 30 retained candidates are f64-indeterminate and
+exact-rejected; the four f64-true candidates are exact-accepted. These are
+regression observations, not prevalence estimates.
+
+Timings in `analysis.json` separate candidate generation, ordinary
+`MinimaSafe`, retained exact recheck, and exact-all reference. Exact-all is a
+reference over the supplied transition/product-block stream, not global HK
+recall. Exact rechecking is exact over the retained set and cannot recover
+candidates rejected before retention. The target is stored-binary64-rational
+(the intended trigonometric/algebraic triangle×square target remains
+unavailable). The result bears on scalar/minimizer/window consumers only; it
+says nothing about exact multipliers, derivatives, recovery, or production
+consumer replacement.
+
+Remaining high-value unknowns are scaling on larger candidate streams,
+indeterminate prevalence outside these fixtures, and whether an intended
+algebraic HKO oracle changes any decision. This packet does not claim them.
+
 ## Promotion path
 
 Empirical 100% is a falsification-screen result.  Promotion requires (i) a

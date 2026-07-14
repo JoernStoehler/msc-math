@@ -7,6 +7,10 @@ edition = "2021"
 name = "qp-error-observe"
 path = "src/main.rs"
 
+[[bin]]
+name = "qp-retained-exact"
+path = "src/retained_exact.rs"
+
 [lints]
 workspace = true
 

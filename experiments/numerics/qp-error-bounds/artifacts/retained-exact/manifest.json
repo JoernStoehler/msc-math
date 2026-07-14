@@ -1,0 +1,10 @@
+{
+  "command": "bash experiments/numerics/qp-error-bounds/run_retained_exact.sh",
+  "producer": "qp-retained-exact",
+  "producer_version": "retained-exact-v1",
+  "schema_version": "qp-retained-exact-v1",
+  "source_revision": "7706b8598460cf6444ea0aed0c025d18bd9efa81",
+  "source_content_id": "0023a5af4f028346a3cf0b2f657e02ef77852b2ff810a06d7c17a1676332b1a9",
+  "target_input_kind": "stored_binary64_rational; intended algebraic target unavailable",
+  "window_definition": "exact [minimum, 21/20 * minimum]"
+}
