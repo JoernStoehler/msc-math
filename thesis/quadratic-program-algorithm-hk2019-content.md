@@ -37,8 +37,18 @@ Accepted chapter boundary:
 
 The product finite-enumeration proof was reconstructed independently from
 Rudolf's short strong billiard, the thesis splitting/merging argument, dual
-minimality, and Clarke realization. No contradiction was found. Its current
-remaining gate is Jörn/Kai mathematical acceptance because it is a
+minimality, and Clarke realization. No contradiction was found. On 2026-07-14
+Jörn accepted the conceptual reduction and specifically confirmed that the
+splitting/merging step produces a distinct-facet dual minimizer without
+increasing the inherited three-block bound. He emphasized that this surgery is
+in the dual problem: containment in the factor polygons follows only after
+Clarke reconstruction returns the dual minimizer to a primal orbit on the
+product boundary. Blocks may disappear under merging, but this only decreases
+the paired block counts; primal simplicity then bounds every surviving block
+by two adjacent facets, while closure excludes a single block of each type.
+Thus the retained cases have two or three blocks of each type and at most
+twelve distinct facets. Jörn did not personally line-check the convention
+calculation. Kai/expert line review remains appropriate because this is a
 project-derived, theorem-critical reduction. Reopen the chapter if that review
 changes the block family, convention lift, or use of the simple-minimizer
 theorem.

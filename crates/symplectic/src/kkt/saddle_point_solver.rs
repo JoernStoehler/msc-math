@@ -210,6 +210,12 @@ pub struct KktResult {
     /// Residual-corrected Q value: Q_tilde = Q(beta_hat) + (r2^T mu_hat + r3 * xi_hat).
     /// See [lem:q-error-bound].
     pub q_corrected: f64,
+    /// Direct residual correction term used in `q_corrected`.
+    ///
+    /// This is retained separately so downstream evidence can distinguish the
+    /// solver's correction atom from a difference reconstructed from unrelated
+    /// stored Q values.
+    pub q_correction: f64,
     /// Error bound E on Q_tilde: |Q(beta_0) - Q_tilde| <= E.
     /// See [lem:q-error-bound].
     #[allow(dead_code)]
@@ -630,6 +636,7 @@ fn finalize_result(
         mu,
         xi,
         q_corrected,
+        q_correction,
         q_error_bound,
         n_positive: eigen_info.n_positive,
         n_negative: eigen_info.n_negative,

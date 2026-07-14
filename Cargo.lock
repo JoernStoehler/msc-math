@@ -594,6 +594,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "exp-qp-error-evidence"
+version = "0.1.0"
+dependencies = [
+ "algebraic-numbers",
+ "blake3",
+ "euclidean-polytopes",
+ "exp-dev-quadratic-program",
+ "exp-sys-landscape",
+ "nalgebra",
+ "num-rational",
+ "num-traits",
+ "serde",
+ "serde_json",
+ "symplectic",
+]
+
+[[package]]
 name = "exp-regular-products"
 version = "0.1.0"
 dependencies = [

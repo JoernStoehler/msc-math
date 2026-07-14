@@ -12,6 +12,7 @@ members = [
     "experiments/dev-quadratic-program",
     "experiments/verification",
     "experiments/dev-quadratic-program/numerics-audit",
+    "experiments/numerics/qp-error-bounds",
     "experiments/performance",
     "experiments/crosspolytope",
     "experiments/dev-sys-prediction",
