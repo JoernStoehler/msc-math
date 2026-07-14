@@ -15,16 +15,19 @@ POLICIES = [
     "inf_normalized_branch_gradient",
     "near_active_box_lp_maximin",
     "candidate_window_box_lp_maximin",
+    "single_branch_box_steepest",
 ]
 COLORS = {
     POLICIES[0]: "#1f77b4",
     POLICIES[1]: "#d62728",
     POLICIES[2]: "#2ca02c",
+    POLICIES[3]: "#9467bd",
 }
 LABELS = {
     POLICIES[0]: "branch gradient (L∞)",
     POLICIES[1]: "near-active box LP",
     POLICIES[2]: "candidate-window box LP",
+    POLICIES[3]: "single-branch sign box",
 }
 
 

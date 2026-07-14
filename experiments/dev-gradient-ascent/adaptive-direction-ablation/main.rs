@@ -32,6 +32,7 @@ enum Policy {
     BranchGradient,
     NearActiveMaximin,
     CandidateWindowMaximin,
+    SingleBranchBoxSteepest,
 }
 impl Policy {
     fn as_str(self) -> &'static str {
@@ -39,6 +40,7 @@ impl Policy {
             Self::BranchGradient => "inf_normalized_branch_gradient",
             Self::NearActiveMaximin => "near_active_box_lp_maximin",
             Self::CandidateWindowMaximin => "candidate_window_box_lp_maximin",
+            Self::SingleBranchBoxSteepest => "single_branch_box_steepest",
         }
     }
     fn parse(s: &str) -> Option<Self> {
@@ -52,6 +54,9 @@ impl Policy {
             "candidate_window_maximin"
             | "candidate_window_gap_aware_maximin"
             | "candidate_window_box_lp_maximin" => Self::CandidateWindowMaximin,
+            "single_branch_box_steepest" | "single_branch_sign_box" => {
+                Self::SingleBranchBoxSteepest
+            }
             _ => return None,
         })
     }
@@ -119,6 +124,7 @@ struct AttemptRow {
     direction_label: String,
     direction_norm_inf: f64,
     direction_flat: Vec<f64>,
+    primary_gradient_flat: Vec<f64>,
     base_dual_flat: Vec<f64>,
     target_dual_flat: Vec<f64>,
     base_sigma: Vec<usize>,
@@ -288,6 +294,7 @@ fn run_trajectory(
         let base_near_sigmas = current.near_sigmas.clone();
         let base_candidate_sigmas = current.candidate_sigmas.clone();
         let flat = flatten(&direction);
+        let primary_gradient_flat = flatten(&current.gradient);
         let norm = direction
             .iter()
             .flat_map(|v| v.iter())
@@ -360,6 +367,7 @@ fn run_trajectory(
             direction_label: label,
             direction_norm_inf: norm,
             direction_flat: flat,
+            primary_gradient_flat,
             base_dual_flat: flatten(&before),
             target_dual_flat: flatten(&after),
             base_sigma: base_sigma.clone(),
@@ -435,7 +443,11 @@ fn direction_for(
             ))
         }
         Policy::NearActiveMaximin => {
-            let d = maximin_direction(&state.near_gradients)?;
+            let d = if state.near_gradients.len() == 1 {
+                box_steepest_direction(state.near_gradients.first()?)?
+            } else {
+                maximin_direction(&state.near_gradients)?
+            };
             let values: Vec<f64> = state
                 .near_gradients
                 .iter()
@@ -454,12 +466,37 @@ fn direction_for(
             ))
         }
         Policy::CandidateWindowMaximin => {
-            let (d, p, w, values) = candidate_window_direction(state, radius)?;
+            let (d, p, w, values) = if state.candidate_gradients.len() == 1 {
+                let d = box_steepest_direction(state.candidate_gradients.first()?)?;
+                let values = vec![
+                    state.candidate_gaps[0]
+                        + radius * gradient_dot(state.candidate_gradients.first()?, &d)?,
+                ];
+                (
+                    d,
+                    values[0],
+                    state.candidate_sigmas.first()?.clone(),
+                    values,
+                )
+            } else {
+                candidate_window_direction(state, radius)?
+            };
             Some((
                 "candidate_window_box_lp_maximin".into(),
                 d,
                 Some(p),
                 Some(w),
+                values,
+            ))
+        }
+        Policy::SingleBranchBoxSteepest => {
+            let d = box_steepest_direction(&state.gradient)?;
+            let values = vec![radius * gradient_dot(&state.gradient, &d)?];
+            Some((
+                "single_branch_box_steepest".into(),
+                d,
+                Some(values[0]),
+                Some(state.sigma.clone()),
                 values,
             ))
         }
@@ -495,6 +532,7 @@ impl AttemptRow {
             direction_label: "initial".into(),
             direction_norm_inf: 0.0,
             direction_flat: Vec::new(),
+            primary_gradient_flat: flatten(&state.gradient),
             base_dual_flat: flatten(&state.polytope.dual_vertices_f64),
             target_dual_flat: flatten(&state.polytope.dual_vertices_f64),
             base_sigma: state.sigma.clone(),
@@ -612,6 +650,9 @@ fn compute_state(duals: &[Vector4<f64>]) -> Result<State, String> {
     })
 }
 fn maximin_direction(grads: &[Vec<Vector4<f64>>]) -> Option<Vec<Vector4<f64>>> {
+    if grads.len() == 1 {
+        return box_steepest_direction(grads.first()?);
+    }
     let f = grads.first()?.len();
     let dim = f * 4;
     let mut vars = variables!();
@@ -678,6 +719,45 @@ fn normalize_inf(v: &[Vector4<f64>]) -> Option<Vec<Vector4<f64>>> {
         .fold(0.0, f64::max);
     (n.is_finite() && n > 1e-14).then(|| v.iter().map(|x| *x / n).collect())
 }
+fn box_steepest_direction(v: &[Vector4<f64>]) -> Option<Vec<Vector4<f64>>> {
+    let out: Vec<_> = v
+        .iter()
+        .map(|x| {
+            Vector4::new(
+                if x[0] > 0.0 {
+                    1.0
+                } else if x[0] < 0.0 {
+                    -1.0
+                } else {
+                    0.0
+                },
+                if x[1] > 0.0 {
+                    1.0
+                } else if x[1] < 0.0 {
+                    -1.0
+                } else {
+                    0.0
+                },
+                if x[2] > 0.0 {
+                    1.0
+                } else if x[2] < 0.0 {
+                    -1.0
+                } else {
+                    0.0
+                },
+                if x[3] > 0.0 {
+                    1.0
+                } else if x[3] < 0.0 {
+                    -1.0
+                } else {
+                    0.0
+                },
+            )
+        })
+        .collect();
+    let flat = flatten(&out);
+    (flatten(v).iter().all(|x| x.is_finite()) && flat.iter().any(|x| x.abs() > 0.0)).then_some(out)
+}
 fn flatten(v: &[Vector4<f64>]) -> Vec<f64> {
     v.iter().flat_map(|x| [x[0], x[1], x[2], x[3]]).collect()
 }
@@ -730,6 +810,7 @@ fn parse_args() -> Cli {
         Policy::BranchGradient,
         Policy::NearActiveMaximin,
         Policy::CandidateWindowMaximin,
+        Policy::SingleBranchBoxSteepest,
     ];
     let mut radii = vec![1e-4, 1e-3, 1e-2];
     let mut budget = MAX_TARGET_EVALUATIONS;
@@ -820,6 +901,8 @@ fn git_output(a: &[&str]) -> Option<String> {
 
 #[cfg(test)]
 mod tests {
+    use nalgebra::Vector4;
+
     fn objective(gaps: &[f64], gradients: &[Vec<f64>], radius: f64, direction: &[f64]) -> f64 {
         gaps.iter()
             .zip(gradients)
@@ -851,5 +934,21 @@ mod tests {
         );
         assert!((executed - (-2.0)).abs() < 1e-12);
         assert!((old_post_normalized - executed).abs() > 0.5);
+    }
+
+    #[test]
+    fn single_branch_box_steepest_is_coordinatewise_sign_with_zero_handling() {
+        let g = vec![Vector4::new(2.0, -3.0, 0.0, 4.0)];
+        let d = super::box_steepest_direction(&g).unwrap();
+        assert_eq!(d[0], Vector4::new(1.0, -1.0, 0.0, 1.0));
+        assert!((super::gradient_dot(&g, &d).unwrap() - 9.0).abs() < 1e-12);
+    }
+
+    #[test]
+    fn singleton_maximin_and_candidate_use_the_same_sign_control() {
+        let g = vec![Vector4::new(2.0, -3.0, 0.0, 4.0)];
+        let sign = super::box_steepest_direction(&g).unwrap();
+        let maximin = super::maximin_direction(std::slice::from_ref(&g)).unwrap();
+        assert_eq!(sign, maximin);
     }
 }

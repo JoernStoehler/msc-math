@@ -1,17 +1,17 @@
 # Adaptive direction-model ablation
 
-This packet compares three adaptive branch-gradient directions: an
-L-infinity-scaled deterministic current-minimizer branch, zero-gap
-near-active box-LP maximin, and finite-radius gap-aware candidate-window
-box-LP maximin. Every proposal is an exact full-`sys`
+This packet compares four adaptive directions: an L-infinity-scaled raw
+current-minimizer gradient ray, the direct single-branch L-infinity
+box-steepest sign control, zero-gap near-active box-LP maximin, and
+finite-radius gap-aware candidate-window box-LP maximin. Every proposal is an exact full-`sys`
 evaluation and is retained in raw JSONL with branch-set and prediction
 telemetry.  The generated `analysis.json`, `DISCUSSION.md`, and figures are
 the claim-bearing outputs; `run-provenance.json` records source and parameter
 identity.
 
 The retained comparison is descriptive: two role-labelled fixtures (one
-mechanism-disagreement case and one equality/easy control), three policies,
-three initial radii, and six proposals per cell (108 exact target proposals).
+mechanism-disagreement case and one equality/easy control), four policies,
+three initial radii, and six proposals per cell (144 exact target proposals).
 It is not a convergence or stationarity claim. The canonical six-start
 generic-random screening is retained separately under `artifacts/screening`.
 
@@ -19,7 +19,13 @@ The canonical six-start generic-random smoke is retained separately. The
 claim-bearing slice uses `inputs/mechanism_disagreement.jsonl` (f6be75…f1b8)
 and `inputs/equality_easy_control.jsonl` (43d243…dec8cc), with six proposals
 per policy/radius cell to exercise the mechanism within the bounded packet
-cost; this is not a replacement for a 100-evaluation census.
+cost; this is not a replacement for a 100-evaluation census. The generic
+panel has 432 proposals and the screening smoke has 24 proposals. Near-active
+versus single-branch comparisons use an operational descriptive tie tolerance
+of `1e-8`; it is not a statistical significance threshold. Singleton
+near-active and candidate windows are canonicalized to the same coordinatewise
+sign direction as the direct control, avoiding arbitrary LP values on zero
+gradient coordinates.
 
 The primary branch windows are the established near-active relative threshold
 `1e-3` and candidate action window `1e-2`; both are recorded in
