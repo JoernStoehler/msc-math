@@ -1,0 +1,130 @@
+{
+  "cross_scale_bucket_pattern": {
+    "bucket_count": 10,
+    "buckets_with_nonzero_retained_1pct_same_q_overlap": 4,
+    "same_seed_buckets_improving_from_q_0p1pct_to_q_0p01pct": 3
+  },
+  "frozen_100k_within_tail_trend": {
+    "bucket_count": 10,
+    "pooled_within_bucket_rank_spearman": 0.03196999699969997,
+    "positive_more_extreme_half_deltas": 4,
+    "positive_most_extreme_tenth_deltas": 2
+  },
+  "identifiability": {
+    "identified_now": [
+      "Within the retained 1024-row-per-bucket table, empirical same-q ridge/sys overlap down to about 1%.",
+      "Within a frozen independent population, the conditional sys distribution across disjoint ridge bands from 0.1% through 1%.",
+      "Aggregate conditional sys summaries for 10 rows per bucket at the 0.01% ridge tail.",
+      "Bucket heterogeneity and coarse saturation/reversal diagnostics for these observed panels."
+    ],
+    "not_identified_now": [
+      "Same-q ridge/sys tail dependence below about 1%, because the generated populations are target-censored by ridge selection.",
+      "A calibrated probability of sys > 1 in any ridge band, because all observed selected panels have zero hits.",
+      "An asymptotic limit as q tends to zero from finitely many sparse, partly nested panels.",
+      "Core-hours or optimizer-versus-filter compute equivalence, because current artifacts lack hardware/utilization and direct proxy-optimizer measurements."
+    ]
+  },
+  "interpretation_boundary": "All generated panels use the random Lagrangian-product generator on h in [0.8,1.2]. Subdivisions of the frozen lowest 1% are exploratory target analyses of a pre-target selection, not independently frozen validation. Same-seed 100k and 1M panels are dependent nested populations.",
+  "observed": {
+    "frozen_100k_lowest_1pct_target_rows": 1000,
+    "frozen_100k_rows_per_bucket_within_lowest_1pct": 100,
+    "new_target_evaluations": 0,
+    "one_million_q_0p01pct_target_rows": 100,
+    "promising_100k_q_0p1pct_target_rows": 100,
+    "retained_product_rows": 10240,
+    "retained_rows_per_bucket": 1024,
+    "trusted_new_sys_gt_1": 0
+  },
+  "proxy": "ridge_symp_area_sum_over_volume_sqrt",
+  "question": "Which ridge/sys tail questions are identifiable from existing target-evaluated designs, and what new nested-band design would discriminate the live asymptotic conjectures?",
+  "retained_tail_overlap": {
+    "0.01": {
+      "bucket": "all_equal_count_buckets",
+      "effective_q": 0.0107421875,
+      "enrichment_over_effective_q": 12.694214876033056,
+      "intersection": 15,
+      "n": 10240,
+      "p_high_sys_given_low_ridge": 0.13636363636363635,
+      "requested_q": 0.01,
+      "tail_count": 110
+    },
+    "0.05": {
+      "bucket": "all_equal_count_buckets",
+      "effective_q": 0.05078125,
+      "enrichment_over_effective_q": 8.331360946745562,
+      "intersection": 220,
+      "n": 10240,
+      "p_high_sys_given_low_ridge": 0.4230769230769231,
+      "requested_q": 0.05,
+      "tail_count": 520
+    },
+    "0.1": {
+      "bucket": "all_equal_count_buckets",
+      "effective_q": 0.1005859375,
+      "enrichment_over_effective_q": 6.148440003770384,
+      "intersection": 637,
+      "n": 10240,
+      "p_high_sys_given_low_ridge": 0.6184466019417476,
+      "requested_q": 0.1,
+      "tail_count": 1030
+    },
+    "0.2": {
+      "bucket": "all_equal_count_buckets",
+      "effective_q": 0.2001953125,
+      "enrichment_over_effective_q": 3.8084759071980963,
+      "intersection": 1563,
+      "n": 10240,
+      "p_high_sys_given_low_ridge": 0.7624390243902439,
+      "requested_q": 0.2,
+      "tail_count": 2050
+    }
+  },
+  "runtime_calibration": {
+    "boundary": "Observed local 12-worker wall throughput only. Hardware identity, CPU utilization, storage scaling, and core-hours were not recorded, so this is not a core-hour model.",
+    "pre_target_wall_seconds_per_raw_candidate": 9.025999999999999e-05,
+    "raw_candidates": 100000,
+    "source": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/command-output.txt",
+    "stage_wall_seconds": {
+      "feature_table": 3.125,
+      "geometry_cache": 1.751,
+      "pre_sys_selection": 4.15,
+      "sys_evaluation": 65.818
+    },
+    "target_evaluations": 2490,
+    "target_wall_seconds_per_evaluation": 0.02643293172690763,
+    "workers": 12
+  },
+  "schema": "sys-datascience.tail-dependence-feasibility.v1",
+  "source_sha256": {
+    "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-promising-scalars/selected-candidates-before-sys.jsonl": "1b9873eb8609882b08cf96407b62d36c519c6508822bd8f81d9c421a54019895",
+    "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-promising-scalars/selection-plan.json": "e082bbded9352708ada02966f1d6fd0f42c1cf6c335712b376062086e9d2a36e",
+    "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-promising-scalars/sys-evaluation-cache.jsonl": "ae7d3a3b3842fde25b7190ca97dd9e79d5d26ecf81abbdd3399a1ec54cd3b962",
+    "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/selected-candidates-before-sys.jsonl": "58ba9b40889335271d7002a11de2eabada7f5b9a93f6be40ab25fed0e8ebaec7",
+    "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/selection-plan.json": "3f87a89b8d0e54a4580c20a1df04a5f2ddc9a786041b671bce57cbb417bb7c8a",
+    "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/sys-evaluation-cache.jsonl": "a938349e24603710a61964875e276417f418cfdd4f95e042a58dcb4b69f6f413",
+    "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/ridge-tail-1m-summary/role-summary.tsv": "3f4f81579f557434bc23623bc434e23f7efd438dd55910f468945e09a2ec8868",
+    "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/ridge-tail-1m-summary/source-evaluation-report.json": "5e4ff716820299f018c654efced32bf6d89f8715ea33ca502b48d60a251509d0",
+    "experiments/sys-datascience/prepare/polytope-provenance-table.jsonl": "6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2",
+    "experiments/sys-datascience/prepare/polytope-table.jsonl": "607c8731fa03d190d497edc3e8f1b4cca88f7d238260cce527680f568bc33d59"
+  },
+  "zero_hit_bounds": [
+    {
+      "one_sided_95pct_upper_conditional_hit_probability": 0.0029912495450953314,
+      "proxy_quantile_upper": 0.01,
+      "source": "frozen-100k-stage1",
+      "zero_hit_target_rows": 1000
+    },
+    {
+      "one_sided_95pct_upper_conditional_hit_probability": 0.014867039231272083,
+      "proxy_quantile_upper": 0.001,
+      "source": "two q=0.1% seed panels",
+      "zero_hit_target_rows": 200
+    },
+    {
+      "one_sided_95pct_upper_conditional_hit_probability": 0.029513049607039932,
+      "proxy_quantile_upper": 0.0001,
+      "source": "ridge-tail-1m",
+      "zero_hit_target_rows": 100
+    }
+  ]
+}
