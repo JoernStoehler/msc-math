@@ -362,11 +362,11 @@ def main():
     out={"analysis_provenance":provenance, "baseline_source":"artifacts/evaluation/analysis.json", "suite_sources":list(runs), "baseline_cells":baseline["analysis"]["cell_count"], "trajectories":rows, "paired_denominators":dict(Counter(r["policy"] for r in rows)), "validation":"passed strict raw trajectory, coverage, counter, retry, acceptance, accounting, panel, and source-identity checks", "caveat":"descriptive frozen comparison; no local-maximality or population claim"}
     (OUT/"analysis.json").write_text(json.dumps(out, indent=2)+"\n")
     (OUT/"DISCUSSION.md").write_text(discussion(rows, provenance))
-    methods=sorted({r["policy"] for r in rows}); vals=[[r["best_sys"]-r["initial_sys"] for r in rows if r["policy"]==m] for m in methods]; labels=[m.replace("_","\n") for m in methods]
+    methods=sorted({r["policy"] for r in rows}); vals=[[r["best_sys"]-r["initial_sys"] for r in rows if r["policy"]==m] for m in methods]; labels=[m.replace("_", "\n") + f"\n(n={len(values)})" for m, values in zip(methods, vals)]
     fig,ax=plt.subplots(figsize=(8,4.5)); ax.boxplot(vals,tick_labels=labels,showfliers=True); ax.axhline(0,color="black",lw=.6); ax.set_ylabel("best gain in sys"); ax.set_title("Optimizer suite: retained best gain"); fig.tight_layout(); savefig(fig, FIG/"suite-best-gain")
     fig,ax=plt.subplots(figsize=(8,4.5));
     for m in methods:
-        rs=[r for r in rows if r["policy"]==m]; ax.scatter([r["target_evaluations"] for r in rs],[r["best_sys"]-r["initial_sys"] for r in rs],label=m,s=24)
+        rs=[r for r in rows if r["policy"]==m]; ax.scatter([r["target_evaluations"] for r in rs],[r["best_sys"]-r["initial_sys"] for r in rs],label=f"{m} (n={len(rs)})",s=24)
     ax.set_xlabel("exact target evaluations (initial excluded)"); ax.set_ylabel("best gain in sys"); ax.legend(fontsize=7); ax.set_title("Gain per exact evaluation; failed/stalled runs retained"); fig.tight_layout(); savefig(fig, FIG/"suite-gain-per-evaluation")
     print(OUT/"analysis.json")
 
