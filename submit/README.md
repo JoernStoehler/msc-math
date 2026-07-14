@@ -50,3 +50,6 @@ asking Jörn to operate the draft record.
 Prepared local audit: `archive-rights-and-exclusions.md` records the current
 license gap, recommended two-part license, alternatives, preliminary archive
 boundary, and remaining checks. It does not authorize publication.
+
+`archive-closure-checklist.md` records the final cleanup, data-disposition, and
+publication gates agreed after that preliminary audit.
