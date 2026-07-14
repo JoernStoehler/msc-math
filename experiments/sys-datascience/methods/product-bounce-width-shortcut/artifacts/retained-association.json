@@ -1,0 +1,246 @@
+{
+  "analytic_fixtures": [
+    {
+      "actual": "4",
+      "expected": "4",
+      "name": "unit_halfwidth_square_pair",
+      "witness_count": 4
+    },
+    {
+      "actual": "20",
+      "expected": "20",
+      "name": "rectangle_pair_min_axis_product",
+      "witness_count": 2
+    },
+    {
+      "actual": "2",
+      "expected": "2",
+      "name": "triangle_rotated_difference_body",
+      "witness_count": 12
+    }
+  ],
+  "associations": {
+    "3x3": {
+      "auc_s2_for_three_label": 0.8083820343364829,
+      "auc_width_for_three_label": 0.731812223496641,
+      "mean_capacity_over_width_three_label": 0.8973316211887764,
+      "mean_capacity_over_width_two_label": 0.9999999999999998,
+      "rows": 1024,
+      "spearman_s2_vs_stored_sys": 0.9943104369322652,
+      "three_label_rows": 718,
+      "two_label_rows": 306
+    },
+    "3x4": {
+      "auc_s2_for_three_label": 0.8041416383644693,
+      "auc_width_for_three_label": 0.7082905759049904,
+      "mean_capacity_over_width_three_label": 0.907444746028072,
+      "mean_capacity_over_width_two_label": 0.9999999999999997,
+      "rows": 1024,
+      "spearman_s2_vs_stored_sys": 0.9903960173628495,
+      "three_label_rows": 683,
+      "two_label_rows": 341
+    },
+    "3x5": {
+      "auc_s2_for_three_label": 0.8360135871949461,
+      "auc_width_for_three_label": 0.7337795548647756,
+      "mean_capacity_over_width_three_label": 0.9201660184797197,
+      "mean_capacity_over_width_two_label": 0.9999999999999999,
+      "rows": 1024,
+      "spearman_s2_vs_stored_sys": 0.9890512123596309,
+      "three_label_rows": 663,
+      "two_label_rows": 361
+    },
+    "3x6": {
+      "auc_s2_for_three_label": 0.8089033264243262,
+      "auc_width_for_three_label": 0.7350819990060726,
+      "mean_capacity_over_width_three_label": 0.9302034622509727,
+      "mean_capacity_over_width_two_label": 0.9999999999999997,
+      "rows": 1024,
+      "spearman_s2_vs_stored_sys": 0.9901283102961161,
+      "three_label_rows": 633,
+      "two_label_rows": 391
+    },
+    "4x4": {
+      "auc_s2_for_three_label": 0.8126142783769903,
+      "auc_width_for_three_label": 0.741477144324602,
+      "mean_capacity_over_width_three_label": 0.9236131484815724,
+      "mean_capacity_over_width_two_label": 0.9999999999999997,
+      "rows": 1024,
+      "spearman_s2_vs_stored_sys": 0.9838002691152278,
+      "three_label_rows": 649,
+      "two_label_rows": 375
+    },
+    "4x5": {
+      "auc_s2_for_three_label": 0.8190470377604167,
+      "auc_width_for_three_label": 0.7514729817708333,
+      "mean_capacity_over_width_three_label": 0.931274513140982,
+      "mean_capacity_over_width_two_label": 0.9999999999999997,
+      "rows": 1024,
+      "spearman_s2_vs_stored_sys": 0.9795355527143981,
+      "three_label_rows": 640,
+      "two_label_rows": 384
+    },
+    "4x6": {
+      "auc_s2_for_three_label": 0.801552229349806,
+      "auc_width_for_three_label": 0.7315633167023046,
+      "mean_capacity_over_width_three_label": 0.9467817211383006,
+      "mean_capacity_over_width_two_label": 0.9999999999999998,
+      "rows": 1024,
+      "spearman_s2_vs_stored_sys": 0.9838106962127172,
+      "three_label_rows": 610,
+      "two_label_rows": 414
+    },
+    "5x5": {
+      "auc_s2_for_three_label": 0.815346486349355,
+      "auc_width_for_three_label": 0.7265889975216127,
+      "mean_capacity_over_width_three_label": 0.946573042373955,
+      "mean_capacity_over_width_two_label": 0.9999999999999998,
+      "rows": 1024,
+      "spearman_s2_vs_stored_sys": 0.9775720956119018,
+      "three_label_rows": 589,
+      "two_label_rows": 435
+    },
+    "5x6": {
+      "auc_s2_for_three_label": 0.787845351091564,
+      "auc_width_for_three_label": 0.6986747376477856,
+      "mean_capacity_over_width_three_label": 0.9531044453940428,
+      "mean_capacity_over_width_two_label": 0.9999999999999998,
+      "rows": 1024,
+      "spearman_s2_vs_stored_sys": 0.9711999655782848,
+      "three_label_rows": 581,
+      "two_label_rows": 443
+    },
+    "6x6": {
+      "auc_s2_for_three_label": 0.7807336121135743,
+      "auc_width_for_three_label": 0.7124019018158905,
+      "mean_capacity_over_width_three_label": 0.9639087445469003,
+      "mean_capacity_over_width_two_label": 0.9999999999999998,
+      "rows": 1024,
+      "spearman_s2_vs_stored_sys": 0.9770464380230313,
+      "three_label_rows": 495,
+      "two_label_rows": 529
+    }
+  },
+  "capacity_component_decomposition": {
+    "bucket_only": {
+      "additivity_residual": 1.1463052729254741e-14,
+      "bounce3_coefficients": {
+        "capacity_term": 0.2086326913439063,
+        "selection_term": -0.1456959447706409,
+        "width_term": 0.35432863611453574
+      },
+      "controls": [],
+      "rows": 10240,
+      "selection_fraction_of_capacity_coefficient": -0.6983370814618807,
+      "width_fraction_of_capacity_coefficient": 1.6983370814618257
+    },
+    "generator_coordinates": {
+      "additivity_residual": 1.1823875212257917e-14,
+      "bounce3_coefficients": {
+        "capacity_term": 0.2362815847833406,
+        "selection_term": -0.14224630412302275,
+        "width_term": 0.37852788890635153
+      },
+      "controls": [
+        "q_mean_log_support",
+        "p_mean_log_support",
+        "q_sd_log_support",
+        "p_sd_log_support",
+        "q_min_angle_gap",
+        "p_min_angle_gap"
+      ],
+      "rows": 10240,
+      "selection_fraction_of_capacity_coefficient": -0.6020202727751979,
+      "width_fraction_of_capacity_coefficient": 1.6020202727751478
+    },
+    "generator_plus_ridge_distribution": {
+      "additivity_residual": 1.2240208846492351e-14,
+      "bounce3_coefficients": {
+        "capacity_term": 0.24832006826170613,
+        "selection_term": -0.12764600228182005,
+        "width_term": 0.37596607054351394
+      },
+      "controls": [
+        "q_mean_log_support",
+        "p_mean_log_support",
+        "q_sd_log_support",
+        "p_sd_log_support",
+        "q_min_angle_gap",
+        "p_min_angle_gap",
+        "ridge_symp_area_normalized_entropy",
+        "ridge_symp_area_max_share"
+      ],
+      "rows": 10240,
+      "selection_fraction_of_capacity_coefficient": -0.5140382055118199,
+      "width_fraction_of_capacity_coefficient": 1.5140382055117707
+    },
+    "ridge_distribution": {
+      "additivity_residual": 1.201816424156732e-14,
+      "bounce3_coefficients": {
+        "capacity_term": 0.2351856236307971,
+        "selection_term": -0.1293988192543488,
+        "width_term": 0.36458444288513386
+      },
+      "controls": [
+        "ridge_symp_area_normalized_entropy",
+        "ridge_symp_area_max_share"
+      ],
+      "rows": 10240,
+      "selection_fraction_of_capacity_coefficient": -0.5501986782044286,
+      "width_fraction_of_capacity_coefficient": 1.5501986782043775
+    }
+  },
+  "exact_validation": {
+    "by_bucket": {},
+    "exact_matches": 0,
+    "exact_mismatches": 0,
+    "first_mismatches": [],
+    "phenotypes_by_bucket": {},
+    "rows": 0
+  },
+  "formula": "min_{d in boundary(P-P)} h_{Q-Q}(d)",
+  "formula_status": "agent-derived exact proposition conditional on the repository's cited shortest-billiard/non-translatable-polygon interface",
+  "inputs": {
+    "classes": {
+      "path": "experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl",
+      "sha256": "187089804bd17fdac76bdaf51a8d8202e67fb2b14779fe9a418cc8da47c7b4c4"
+    },
+    "provenance": {
+      "path": "/tmp/sys-ds-p2-normalization-full/polytope-provenance-table.jsonl",
+      "sha256": "6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2"
+    },
+    "raw": {
+      "path": "experiments/sys-datascience/produce/random-product.jsonl",
+      "sha256": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736"
+    },
+    "table": {
+      "path": "/tmp/sys-ds-p2-normalization-full/polytope-table.jsonl",
+      "sha256": "49825d7636246f71f4ebd419cf0ccbc86e39e6b7f43d4b03e889bb85e4887aea"
+    }
+  },
+  "interpretation_boundary": {
+    "association_numeric_source": "target-derived retained A2; association results are structural bookkeeping, not an independent width-feature validation or proposer test",
+    "independent": "W2 is computed from factor vertices without capacity targets or orbit words",
+    "post_target": "producer bounce label and stored sys/capacity are target-derived outcomes",
+    "selection_term": "capacity/W2 equals one for a two-bounce winner and A3/A2 for a three-bounce winner",
+    "tautological": "s2 is defined from W2 and volume; its identity is not validation"
+  },
+  "numeric_width_source": "target-derived retained A2, used only for post-target association bookkeeping",
+  "schema": "product-bounce-width-shortcut/v1",
+  "selection": {
+    "per_bucket_limit": null,
+    "rows": 10240,
+    "rows_by_bucket": {
+      "3x3": 1024,
+      "3x4": 1024,
+      "3x5": 1024,
+      "3x6": 1024,
+      "4x4": 1024,
+      "4x5": 1024,
+      "4x6": 1024,
+      "5x5": 1024,
+      "5x6": 1024,
+      "6x6": 1024
+    }
+  }
+}

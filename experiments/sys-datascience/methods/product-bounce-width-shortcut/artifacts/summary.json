@@ -1,0 +1,282 @@
+{
+  "analytic_fixtures": [
+    {
+      "actual": "4",
+      "expected": "4",
+      "name": "unit_halfwidth_square_pair",
+      "witness_count": 4
+    },
+    {
+      "actual": "20",
+      "expected": "20",
+      "name": "rectangle_pair_min_axis_product",
+      "witness_count": 2
+    },
+    {
+      "actual": "2",
+      "expected": "2",
+      "name": "triangle_rotated_difference_body",
+      "witness_count": 12
+    }
+  ],
+  "associations": {
+    "3x3": {
+      "auc_s2_for_three_label": 1.0,
+      "auc_width_for_three_label": 1.0,
+      "mean_capacity_over_width_three_label": 0.9319042711018467,
+      "mean_capacity_over_width_two_label": 0.9999999999999999,
+      "rows": 2,
+      "spearman_s2_vs_stored_sys": 1.0,
+      "three_label_rows": 1,
+      "two_label_rows": 1
+    },
+    "3x4": {
+      "auc_s2_for_three_label": null,
+      "auc_width_for_three_label": null,
+      "mean_capacity_over_width_three_label": null,
+      "mean_capacity_over_width_two_label": 0.9999999999999998,
+      "rows": 2,
+      "spearman_s2_vs_stored_sys": 1.0,
+      "three_label_rows": 0,
+      "two_label_rows": 2
+    },
+    "3x5": {
+      "auc_s2_for_three_label": 1.0,
+      "auc_width_for_three_label": 1.0,
+      "mean_capacity_over_width_three_label": 0.9672358701142477,
+      "mean_capacity_over_width_two_label": 0.9999999999999999,
+      "rows": 2,
+      "spearman_s2_vs_stored_sys": 1.0,
+      "three_label_rows": 1,
+      "two_label_rows": 1
+    },
+    "3x6": {
+      "auc_s2_for_three_label": null,
+      "auc_width_for_three_label": null,
+      "mean_capacity_over_width_three_label": 0.9526649987120508,
+      "mean_capacity_over_width_two_label": null,
+      "rows": 2,
+      "spearman_s2_vs_stored_sys": 1.0,
+      "three_label_rows": 2,
+      "two_label_rows": 0
+    },
+    "4x4": {
+      "auc_s2_for_three_label": 0.0,
+      "auc_width_for_three_label": 1.0,
+      "mean_capacity_over_width_three_label": 0.9986849944377557,
+      "mean_capacity_over_width_two_label": 0.9999999999999997,
+      "rows": 2,
+      "spearman_s2_vs_stored_sys": 1.0,
+      "three_label_rows": 1,
+      "two_label_rows": 1
+    },
+    "4x5": {
+      "auc_s2_for_three_label": null,
+      "auc_width_for_three_label": null,
+      "mean_capacity_over_width_three_label": 0.8982048850395302,
+      "mean_capacity_over_width_two_label": null,
+      "rows": 2,
+      "spearman_s2_vs_stored_sys": 1.0,
+      "three_label_rows": 2,
+      "two_label_rows": 0
+    },
+    "4x6": {
+      "auc_s2_for_three_label": 1.0,
+      "auc_width_for_three_label": 0.0,
+      "mean_capacity_over_width_three_label": 0.9829878359811882,
+      "mean_capacity_over_width_two_label": 1.0,
+      "rows": 2,
+      "spearman_s2_vs_stored_sys": 1.0,
+      "three_label_rows": 1,
+      "two_label_rows": 1
+    },
+    "5x5": {
+      "auc_s2_for_three_label": null,
+      "auc_width_for_three_label": null,
+      "mean_capacity_over_width_three_label": 0.9018211354594541,
+      "mean_capacity_over_width_two_label": null,
+      "rows": 2,
+      "spearman_s2_vs_stored_sys": 1.0,
+      "three_label_rows": 2,
+      "two_label_rows": 0
+    },
+    "5x6": {
+      "auc_s2_for_three_label": 1.0,
+      "auc_width_for_three_label": 0.0,
+      "mean_capacity_over_width_three_label": 0.9846828504445125,
+      "mean_capacity_over_width_two_label": 0.9999999999999997,
+      "rows": 2,
+      "spearman_s2_vs_stored_sys": 1.0,
+      "three_label_rows": 1,
+      "two_label_rows": 1
+    },
+    "6x6": {
+      "auc_s2_for_three_label": null,
+      "auc_width_for_three_label": null,
+      "mean_capacity_over_width_three_label": null,
+      "mean_capacity_over_width_two_label": 0.9999999999999996,
+      "rows": 2,
+      "spearman_s2_vs_stored_sys": 1.0,
+      "three_label_rows": 0,
+      "two_label_rows": 2
+    }
+  },
+  "capacity_component_decomposition": {
+    "bucket_only": {
+      "additivity_residual": 2.1649348980190553e-15,
+      "bounce3_coefficients": {
+        "capacity_term": 0.05959967528294392,
+        "selection_term": -0.055099259973726014,
+        "width_term": 0.11469893525666777
+      },
+      "controls": [],
+      "rows": 20,
+      "selection_fraction_of_capacity_coefficient": -0.9244892646167516,
+      "width_fraction_of_capacity_coefficient": 1.9244892646167153
+    },
+    "generator_coordinates": {
+      "additivity_residual": 5.662137425588298e-15,
+      "bounce3_coefficients": {
+        "capacity_term": 0.48796701758836114,
+        "selection_term": -0.11853752108196236,
+        "width_term": 0.6065045386703178
+      },
+      "controls": [
+        "q_mean_log_support",
+        "p_mean_log_support",
+        "q_sd_log_support",
+        "p_sd_log_support",
+        "q_min_angle_gap",
+        "p_min_angle_gap"
+      ],
+      "rows": 20,
+      "selection_fraction_of_capacity_coefficient": -0.2429211746068423,
+      "width_fraction_of_capacity_coefficient": 1.2429211746068307
+    }
+  },
+  "exact_validation": {
+    "by_bucket": {
+      "3x3": {
+        "matches": 2,
+        "max_float_relative_error": 0.0,
+        "rows": 2
+      },
+      "3x4": {
+        "matches": 2,
+        "max_float_relative_error": 0.0,
+        "rows": 2
+      },
+      "3x5": {
+        "matches": 2,
+        "max_float_relative_error": 0.0,
+        "rows": 2
+      },
+      "3x6": {
+        "matches": 2,
+        "max_float_relative_error": 0.0,
+        "rows": 2
+      },
+      "4x4": {
+        "matches": 2,
+        "max_float_relative_error": 0.0,
+        "rows": 2
+      },
+      "4x5": {
+        "matches": 2,
+        "max_float_relative_error": 0.0,
+        "rows": 2
+      },
+      "4x6": {
+        "matches": 2,
+        "max_float_relative_error": 0.0,
+        "rows": 2
+      },
+      "5x5": {
+        "matches": 2,
+        "max_float_relative_error": 0.0,
+        "rows": 2
+      },
+      "5x6": {
+        "matches": 2,
+        "max_float_relative_error": 0.0,
+        "rows": 2
+      },
+      "6x6": {
+        "matches": 2,
+        "max_float_relative_error": 0.0,
+        "rows": 2
+      }
+    },
+    "exact_matches": 20,
+    "exact_mismatches": 0,
+    "first_mismatches": [],
+    "phenotypes_by_bucket": {
+      "3x3": {
+        "edge_interior_present+support_tie_present": 2
+      },
+      "3x4": {
+        "edge_interior_present+support_tie_present": 2
+      },
+      "3x5": {
+        "edge_interior_present+support_tie_present": 2
+      },
+      "3x6": {
+        "edge_interior_present+support_tie_present": 2
+      },
+      "4x4": {
+        "edge_interior_present+support_tie_present": 2
+      },
+      "4x5": {
+        "edge_interior_present+support_tie_present": 2
+      },
+      "4x6": {
+        "edge_interior_present+support_tie_present": 2
+      },
+      "5x5": {
+        "edge_interior_present+support_tie_present": 2
+      },
+      "5x6": {
+        "edge_interior_present+support_tie_present": 2
+      },
+      "6x6": {
+        "edge_interior_present+support_tie_present": 2
+      }
+    },
+    "rows": 20
+  },
+  "formula": "min_{d in boundary(P-P)} h_{Q-Q}(d)",
+  "formula_status": "agent-derived exact proposition conditional on the repository's cited shortest-billiard/non-translatable-polygon interface",
+  "inputs": {
+    "classes": {
+      "path": "experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl",
+      "sha256": "187089804bd17fdac76bdaf51a8d8202e67fb2b14779fe9a418cc8da47c7b4c4"
+    },
+    "raw": {
+      "path": "experiments/sys-datascience/produce/random-product.jsonl",
+      "sha256": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736"
+    }
+  },
+  "interpretation_boundary": {
+    "independent": "W2 is computed from factor vertices without capacity targets or orbit words",
+    "post_target": "producer bounce label and stored sys/capacity are target-derived outcomes",
+    "selection_term": "capacity/W2 equals one for a two-bounce winner and A3/A2 for a three-bounce winner",
+    "tautological": "s2 is defined from W2 and volume; its identity is not validation"
+  },
+  "schema": "product-bounce-width-shortcut/v1",
+  "selection": {
+    "per_bucket_limit": 2,
+    "rows": 20,
+    "rows_by_bucket": {
+      "3x3": 2,
+      "3x4": 2,
+      "3x5": 2,
+      "3x6": 2,
+      "4x4": 2,
+      "4x5": 2,
+      "4x6": 2,
+      "5x5": 2,
+      "5x6": 2,
+      "6x6": 2
+    }
+  }
+}

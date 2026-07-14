@@ -1,0 +1,26 @@
+{
+  "artifacts": {
+    "retained_association": {
+      "path": "experiments/sys-datascience/methods/product-bounce-width-shortcut/artifacts/retained-association.json",
+      "sha256": "ec069f80cbb91951e074b707690470b398ce11f9b592c41c66e9a9b2ab4518b5",
+      "status": "10240-row post-target bookkeeping from retained certified A2; not independent formula validation"
+    },
+    "summary": {
+      "path": "experiments/sys-datascience/methods/product-bounce-width-shortcut/artifacts/summary.json",
+      "sha256": "5a4cbef54052cde67ef163d06542b97407e24d6041df9ab9d8ef748bf47bf2dc",
+      "status": "20-row independent exact geometry smoke; generated before association-only output metadata were added"
+    }
+  },
+  "current_analyzer": {
+    "path": "experiments/sys-datascience/methods/product-bounce-width-shortcut/analyze.py",
+    "sha256": "8fb6f83fcddab29ac31b3a91ba3599d059fb355b8dc1264ace8e64735f4f0825",
+    "summary_compatibility": "The exact geometry routine and smoke selection are unchanged. Current regeneration adds numeric-source metadata, so byte identity was not claimed or rerun after aggregate compute approached the cap."
+  },
+  "fixed_input_sha256": {
+    "class_minima": "187089804bd17fdac76bdaf51a8d8202e67fb2b14779fe9a418cc8da47c7b4c4",
+    "polytope_provenance_table": "6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2",
+    "polytope_table": "49825d7636246f71f4ebd419cf0ccbc86e39e6b7f43d4b03e889bb85e4887aea",
+    "random_product": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736"
+  },
+  "reproduction": "README.md owns commands, selection, rebuild route, compute stop, and interpretation boundaries. Ephemeral /tmp paths in retained-association.json are execution records, not source identity."
+}
