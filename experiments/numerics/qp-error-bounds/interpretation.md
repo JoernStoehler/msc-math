@@ -153,6 +153,27 @@ unavailable). The result bears on scalar/minimizer/window consumers only; it
 says nothing about exact multipliers, derivatives, recovery, or production
 consumer replacement.
 
+The ordinary current-vs-retained comparison is a diagnostic, not an API claim:
+the current scalar is the production `MinimaSafe` f64 `min_action`; its
+diagnostic minimizer grouping uses absolute action tolerance `1e-12`; and its
+5% window is independently formed from the current f64 minimum as
+`action <= (21/20)·min_action` over the `MinimaSafe` returned list. Current
+scalar agreement uses absolute f64 tolerance `1e-12`; current minimizer/window
+agreement uses ordered sigma-vector equality. Retained-vs-exact-all agreement
+uses exact rational equality and is explicitly conditioned on the supplied
+stream reference.
+
+For exact rejection, the API exposes only “no admissible positive-Q witness”.
+The packet records that narrow unavailable reason without guessing whether the
+cause was a singular/inconsistent system or nonpositive beta/Q.
+
+The runner requires a clean producing tree and records a reachable source
+commit plus full git tree identity. The artifact can be committed afterward as
+a separate child commit; provenance refers to the producing source snapshot,
+not recursively to generated outputs. Row timers exclude compilation,
+fixture/exact-geometry setup, and Python analysis/validation; exact-all timing
+includes complete-stream enumeration, exact solves, and sorting.
+
 Remaining high-value unknowns are scaling on larger candidate streams,
 indeterminate prevalence outside these fixtures, and whether an intended
 algebraic HKO oracle changes any decision. This packet does not claim them.

@@ -79,3 +79,16 @@ exact-all is completeness only relative to the named supplied stream. Active
 words are candidate words, not proven distinct physical orbits. This packet
 does not provide exact multipliers, derivatives, recovery data, global HK
 candidate recall, or a production-consumer migration.
+
+The runner requires a clean git tree before deleting/regenerating outputs. It
+records the reachable source commit and full git tree object in `manifest.json`;
+the generated artifact may then be committed as a separate child commit. The
+source tree snapshot is the producer provenance and does not recursively hash
+the generated artifact.
+
+Timing fields are scoped: candidate generation includes route enumeration and
+f64 solves but excludes fixture/exact-geometry setup and compilation;
+`MinimaSafe` includes ordinary aggregation/fallback only; retained exact
+includes exact resolution of every retained candidate; exact-all includes
+complete-stream exact enumeration, solving, and sorting. Fixture construction,
+Python analysis/validation, and compilation are excluded from all row timers.

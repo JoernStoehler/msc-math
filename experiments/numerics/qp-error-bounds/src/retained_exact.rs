@@ -55,6 +55,7 @@ struct CandidateRow {
     f64_status: String,
     current_minimasafe_status: String,
     retained_exact_status: String,
+    exact_resolution_reason: String,
     f64_action: f64,
     f64_action_lower: f64,
     f64_action_upper: f64,
@@ -82,8 +83,11 @@ struct CaseRow {
     retained_exact_ms: f64,
     exact_all_reference_ms: Option<f64>,
     current_min_action_f64: Option<f64>,
+    current_scalar_rule: String,
+    current_minimizer_rule: String,
+    current_window_rule: String,
     current_minimizer_sigmas: Vec<Vec<usize>>,
-    current_window_cutoff_exact: Option<String>,
+    current_window_cutoff_f64: Option<f64>,
     current_window_sigmas: Vec<Vec<usize>>,
     retained_exact_resolution_count: usize,
     retained_exact_accept_count: usize,
@@ -101,6 +105,7 @@ struct CaseRow {
     scalar_agreement_current_vs_retained: bool,
     minimizer_agreement_current_vs_retained: bool,
     window_agreement_current_vs_retained: bool,
+    agreement_rules: String,
     scalar_agreement_retained_vs_all: Option<bool>,
     minimizer_agreement_retained_vs_all: Option<bool>,
     window_agreement_retained_vs_all: Option<bool>,
@@ -389,11 +394,11 @@ fn main() {
             .filter(|o| o.action_exact <= retained_cutoff)
             .map(|o| o.sigma.clone())
             .collect::<Vec<_>>();
-        let current_cutoff = retained_cutoff.clone();
+        let current_cutoff = current_min * (FIVE_PERCENT_NUM as f64) / (FIVE_PERCENT_DEN as f64);
         let current_window = current
             .orbits
             .iter()
-            .filter(|o| BigRational::from_float(o.action).is_some_and(|a| a <= current_cutoff))
+            .filter(|o| o.action <= current_cutoff)
             .map(|o| o.sigma.clone())
             .collect::<Vec<_>>();
         let current_status: BTreeMap<Vec<usize>, String> = current
@@ -427,6 +432,11 @@ fn main() {
                     .cloned()
                     .unwrap_or_else(|| "rejected_by_minimasafe".into()),
                 retained_exact_status: e.0.clone(),
+                exact_resolution_reason: if e.0 == "accepted" {
+                    "exact solver returned an admissible positive-Q witness".into()
+                } else {
+                    "unavailable: exact solver returned no admissible positive-Q witness; this conflates singular/inconsistent systems and nonpositive beta or Q".into()
+                },
                 f64_action: o.action,
                 f64_action_lower: o.action_lower,
                 f64_action_upper: o.action_upper,
@@ -476,8 +486,11 @@ fn main() {
             retained_exact_ms: retained_ms,
             exact_all_reference_ms: reference.as_ref().map(|_| ref_ms),
             current_min_action_f64: Some(current_min),
+            current_scalar_rule: "MinimaSafe returned f64 min_action (production scalar; no tolerance)".into(),
+            current_minimizer_rule: "diagnostic grouping of MinimaSafe returned actions with abs(action - min_action) <= 1e-12; not an API minimizer set".into(),
+            current_window_rule: "MinimaSafe returned actions with f64 action <= (21/20) * MinimaSafe f64 min_action; independent of retained/exact reference".into(),
             current_minimizer_sigmas: current_mins.clone(),
-            current_window_cutoff_exact: Some(rat(&current_cutoff)),
+            current_window_cutoff_f64: Some(current_cutoff),
             current_window_sigmas: current_window.clone(),
             retained_exact_resolution_count: retained.exact_resolutions,
             retained_exact_accept_count: retained_set.len(),
@@ -509,6 +522,7 @@ fn main() {
                     .map(|o| o.sigma.clone())
                     .collect::<Vec<_>>(),
             window_agreement_current_vs_retained: current_window == retained_window,
+            agreement_rules: "current scalar vs retained uses abs(f64_min - f64_exact) <= 1e-12; current minimizer/window comparisons use ordered sigma-vector equality; retained vs exact-all scalar/minimizer/window comparisons use exact rational/vector equality".into(),
             scalar_agreement_retained_vs_all: ref_min.as_ref().map(|m| *m == retained_min),
             minimizer_agreement_retained_vs_all: reference.as_ref().map(|r| {
                 r.3 == retained

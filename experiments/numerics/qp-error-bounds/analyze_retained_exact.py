@@ -56,8 +56,9 @@ def main() -> None:
     for row in rows:
         current_agree = "/".join("yes" if row[key] else "no" for key in ("scalar_agreement_current_vs_retained", "minimizer_agreement_current_vs_retained", "window_agreement_current_vs_retained"))
         agree = "/".join("yes" if row[key] else "no" for key in ("scalar_agreement_retained_vs_all", "minimizer_agreement_retained_vs_all", "window_agreement_retained_vs_all"))
+        exact_ms = "unavailable" if row["exact_all_reference_ms"] is None else f"{row['exact_all_reference_ms']:.1f}"
         lines.append(
-            f"| {row['case_id']} | {row['sigma_stream_count']} | {row['f64_true_count']}/{row['f64_indeterminate_count']}/{row['f64_rejected_count']} | {row['retained_exact_accept_count']}/{row['retained_exact_reject_count']} | {current_agree} | {agree} | {row['exact_all_reference_ms']:.1f} / {row['retained_exact_ms']:.1f} |"
+            f"| {row['case_id']} | {row['sigma_stream_count']} | {row['f64_true_count']}/{row['f64_indeterminate_count']}/{row['f64_rejected_count']} | {row['retained_exact_accept_count']}/{row['retained_exact_reject_count']} | {current_agree} | {agree} | {exact_ms} / {row['retained_exact_ms']:.1f} |"
         )
     lines += [
         "",
