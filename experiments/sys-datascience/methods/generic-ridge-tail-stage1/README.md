@@ -64,10 +64,10 @@ cargo run --release --manifest-path experiments/sys-datascience/methods/generic-
   validate \
   --out-dir experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/stage1
 
-# Irreversible exposure gate: replay all 10,000 candidates and regenerate the
-# frozen selection, baseline, and 200 rational geometries. This is distinct
-# from the cheap 64-row `validate` check above and must pass immediately before
-# any target evaluator is run.
+# Historical irreversible exposure gate used before the completed target run:
+# replay all 10,000 candidates and regenerate the frozen selection, baseline,
+# and 200 rational geometries. Do not run this against the committed artifacts
+# from current Main.
 cargo run --release --manifest-path experiments/sys-datascience/methods/generic-ridge-tail-stage1/Cargo.toml -- \
   full-validate \
   --out-dir experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/stage1 \
@@ -76,6 +76,13 @@ cargo run --release --manifest-path experiments/sys-datascience/methods/generic-
 
 The smoke inputs are LFS files and must be hydrated before the first command.
 Do not hand-edit generated JSON or JSONL.
+
+The `produce` and `full-validate` commands above document the completed run;
+they are not a current execution queue. An exact full replay belongs in a
+disposable worktree at frozen commit
+`4f7adddec513f4abc95dcc905d1299611ff28f28`, with that worktree's LFS inputs
+hydrated. The integrated history retains this commit. Do not regenerate the
+committed panel or expose a new target arm without a new portfolio decision.
 
 The committed `full-validation.json` is historical output from original line
 commit `4f7adddec513f4abc95dcc905d1299611ff28f28`. Its absolute
