@@ -33,6 +33,7 @@ LABELS = {
 
 def render(root: Path) -> None:
     import matplotlib.pyplot as plt
+    plt.rcParams["svg.hashsalt"] = "adaptive-direction-ablation"
 
     observed = json.loads((root / "analysis.json").read_text())["observed"]
     starts = sorted({row["start"] for row in observed})
@@ -98,7 +99,7 @@ def render(root: Path) -> None:
 
     out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out.with_suffix(".png"), dpi=180)
-    fig.savefig(out.with_suffix(".svg"))
+    fig.savefig(out.with_suffix(".svg"), metadata={"Date": None})
     plt.close(fig)
 
 

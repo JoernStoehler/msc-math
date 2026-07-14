@@ -147,23 +147,6 @@ for ts in producer_summary["trajectories"]:
     key = (ts["policy"], ts["start_id"], float(ts["initial_radius"]))
     assert key in by_cell and ts["target_evaluations"] == len(by_cell[key]) - 1
 (root / "analysis.json").write_text(json.dumps(summary, indent=2) + "\n")
-fig = root / "figures"; fig.mkdir(exist_ok=True)
-colors = {"inf_normalized_branch_gradient": "#3366cc", "near_active_box_lp_maximin": "#dc3912", "candidate_window_box_lp_maximin": "#109618", "single_branch_box_steepest": "#9467bd"}
-svg = ['<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="620"><rect width="100%" height="100%" fill="white"/><text x="55" y="25" font-size="18">Best-so-far sys gain from initial state (validated trajectories)</text><text x="430" y="610">exact target evaluations</text><text x="10" y="320" transform="rotate(-90 10,320)">gain in sys</text>']
-max_x = max(len(rs)-1 for rs in by_cell.values()); max_y = max(rs[-1]["best_sys"] - rs[0]["target_sys"] for rs in by_cell.values())
-for p in sorted(expected_policies):
-    for (pp, s, radius), rs in sorted(by_cell.items()):
-        if pp != p: continue
-        pts = " ".join(f'{60+880*x/max_x:.1f},{570-500*(r["best_sys"]-rs[0]["target_sys"])/max_y:.1f}' for x,r in enumerate(rs[1:],1))
-        svg.append(f'<polyline fill="none" stroke="{colors[p]}" stroke-width="2" points="{pts}"/>')
-svg.extend([f'<text x="760" y="{45+22*i}" fill="{colors[p]}">{p} (n={len(expected_starts)*len(expected_radii)})</text>' for i,p in enumerate(sorted(expected_policies))]); (fig / "combined-gain-vs-evaluations.svg").write_text("".join(svg) + "</svg>")
-mechanism = ['<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="620"><rect width="100%" height="100%" fill="white"/><text x="55" y="25" font-size="18">First-step mechanism comparison (role-labelled fixtures)</text><text x="430" y="610">initial radius</text><text x="10" y="320" transform="rotate(-90 10,320)">observed delta sys</text>']
-first_by = {(r["policy"], r["start_id"], r["initial_radius"]): r for r in first}; mx=max(r["delta"] for r in first); roles={x["id"]:x["role"] for x in manifest["fixtures"]}
-for j,p in enumerate(sorted(expected_policies)):
-    for i,s in enumerate(sorted(expected_starts)):
-        pts=" ".join(f'{100+700*k/2:.1f},{570-500*first_by[p,s,rad]["delta"]/mx:.1f}' for k,rad in enumerate(sorted(expected_radii)))
-        mechanism.append(f'<polyline fill="none" stroke="{colors[p]}" points="{pts}"/><text x="760" y="{45+22*(j*len(expected_starts)+i)}" fill="{colors[p]}">{roles[s]} / {p}</text>')
-(fig / "mechanism-first-step.svg").write_text("".join(mechanism) + "</svg>")
 target_rows = [r for r in all_rows if r["target_sigma"] is not None]
 near_misses = sum(not r["target_visible_near"] for r in target_rows)
 candidate_misses = sum(not r["target_visible_candidate"] for r in target_rows)
@@ -198,19 +181,4 @@ if generic_mode:
         f"Near-active multiplicity is {len(near_multi)}/{len(all_rows)} raw rows and {len(near_multi_states)} exact base states (by policy: {near_multi_by_policy}); candidate-window multiplicity is {len(candidate_multi)}/{len(all_rows)} raw rows and {len(candidate_multi_states)} exact base states (by policy: {candidate_multi_by_policy}). The near-active/sign matched comparison has {near_vs_single['same_base_state_rows']} exact-base matches, {near_vs_single['singleton_same_direction_rows']}/{near_vs_single['singleton_checked_rows']} singleton direction matches within the 1e-8 tolerance, and {near_vs_single['direction_divergence_rows']} direction divergences. Best-gain comparison is sign {near_vs_single['gain_wins_single']}, near-active {near_vs_single['gain_wins_near']}, ties {near_vs_single['gain_ties']} under that operational tolerance.\n\n"
         f"These six starts do not establish population prevalence, convergence, stationarity, or endpoint quality. The singleton invariant means near-active maximin adds no tested direction beyond the single-branch box-steepest control on those matched states. The sign control wins {near_vs_single['gain_wins_single']} near-vs-sign gain cells (near wins {near_vs_single['gain_wins_near']}; {near_vs_single['gain_ties']} are ties), so it is retained as the direct baseline rather than promoted as a generic winner. The incremental multi-branch near-active effect remains unsupported here and must be reopened on a mechanism-stratified sample with near_active_count>1.\n")
     (root / "DISCUSSION.md").write_text(generic_disc)
-    # Readable paired display: one small panel per start, with shared policy colors.
-    W, H = 1200, 900; pw, ph = 360, 260
-    grid = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}"><rect width="100%" height="100%" fill="white"/><text x="30" y="25" font-size="18">Generic six-start best gain from initial sys (n=6 starts; 6 proposals/cell)</text>']
-    for j, s in enumerate(sorted(expected_starts)):
-        ox, oy = 30 + (j % 3) * 390, 55 + (j // 3) * 390
-        local = [r for r in all_rows if r["start_id"] == s]
-        init = min(by_cell[(p,s,rad)][0]["target_sys"] for p in expected_policies for rad in expected_radii)
-        ymax = max(1e-9, max(r["best_sys"] - init for r in local))
-        grid.append(f'<rect x="{ox}" y="{oy}" width="{pw}" height="{ph}" fill="none" stroke="#777"/><text x="{ox+5}" y="{oy+18}">{s}</text><text x="{ox+135}" y="{oy+ph+22}">evaluations (0–6)</text>')
-        for p in sorted(expected_policies):
-            for rad in sorted(expected_radii):
-                rs = by_cell[(p,s,rad)]; pts=" ".join(f'{ox+35+285*k/6:.1f},{oy+ph-35-180*(r["best_sys"]-init)/ymax:.1f}' for k,r in enumerate(rs[1:],1))
-                grid.append(f'<polyline fill="none" stroke="{colors[p]}" points="{pts}"/>')
-        grid.extend([f'<text x="{ox+5}" y="{oy+ph+5}">0</text>', f'<text x="{ox+145}" y="{oy+ph+5}">3</text>', f'<text x="{ox+320}" y="{oy+ph+5}">6</text>'])
-    grid.extend([f'<text x="850" y="{55+22*i}" fill="{colors[p]}">{p}</text>' for i,p in enumerate(sorted(expected_policies))]); (root / "figures" / "generic-gain-grid.svg").write_text("".join(grid)+"</svg>")
 print(json.dumps(summary, indent=2))
