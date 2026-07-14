@@ -4,7 +4,7 @@
 # ///
 """Enforce the target-free feature packet contract and emit paired summaries."""
 from __future__ import annotations
-import argparse, copy, hashlib, json, math, subprocess
+import argparse, copy, hashlib, itertools, json, math, subprocess
 from collections import defaultdict
 from pathlib import Path
 from augment import AnalysisError, load_rows
@@ -32,6 +32,20 @@ def _close(a,b,atol=CONTROL_ATOL,rtol=CONTROL_RTOL):
 
 def _strict_scope(row):
     return (row.get("source_kind")=="orientation" and row.get("bucket")=="3x3" and row.get("map_variant")=="identity") or (row.get("source_kind")=="tangential" and row.get("bucket")=="3x3" and row.get("law")=="factorial-baseline")
+
+def _strict_cycle_count(signs):
+    count=0
+    for qrest in itertools.permutations((1,2)):
+        q=(0,)+qrest
+        for p in itertools.permutations((0,1,2)):
+            word=tuple(x for pair in zip(q,p) for x in (pair[0],pair[1]+3)); good=True
+            for k in range(6):
+                left,right=word[k],word[(k+1)%6]
+                if left < 3 <= right: good &= signs[left][right-3] > 0
+                elif right < 3 <= left: good &= signs[right][left-3] < 0
+                else: good=False
+            count += int(good)
+    return count
 
 def validate(rows, require_complete=True):
     if not rows: raise AnalysisError("empty feature packet")
@@ -69,7 +83,8 @@ def validate(rows, require_complete=True):
             cyc=r["strict_cycle"]; signs=cyc.get("strict_signs")
             if not isinstance(cyc.get("strict_sign_cell"),bool) or not isinstance(cyc.get("strict_cycle_feasible"),bool) or type(cyc.get("strict_cycle_count")) is not int or cyc.get("strict_cycle_count")<0: raise AnalysisError("strict-cycle metadata malformed")
             if not isinstance(signs,list) or len(signs)!=3 or any(not isinstance(row,list) or len(row)!=3 or any(type(x) is not int or x not in {-1,0,1} for x in row) for row in signs): raise AnalysisError("strict-cycle signs malformed")
-            if cyc["strict_cycle_feasible"] != (cyc["strict_cycle_count"]>0) or cyc["strict_sign_cell"] != all(x != 0 for row in signs for x in row): raise AnalysisError("strict-cycle metadata inconsistent")
+            exact_count=_strict_cycle_count(signs)
+            if cyc["strict_cycle_count"] != exact_count or cyc["strict_cycle_feasible"] != (exact_count>0) or cyc["strict_sign_cell"] != all(x != 0 for row in signs for x in row): raise AnalysisError("strict-cycle metadata inconsistent")
     if not require_complete: return
     og=defaultdict(list)
     for r in rows:

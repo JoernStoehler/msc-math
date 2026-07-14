@@ -284,7 +284,7 @@ def main() -> None:
     if bool(a.tangential_source) != bool(a.tangential_replay): p.error("tangential source and replay must be supplied together")
     out=a.out_dir; out.mkdir(parents=True,exist_ok=True); feature=[]; paths=[]; hashes=[]; loaded=[]
     if a.orientation:
-        rows,h=load_rows(a.orientation); 
+        rows,h=load_rows(a.orientation);
         if a.expected_orientation_sha256 and a.expected_orientation_sha256 != h: p.error("orientation SHA256 mismatch")
         feature.extend(feature_row(r,"orientation") for r in rows); paths.append(a.orientation); hashes.append(h); loaded.append(rows)
     if a.tangential_source:

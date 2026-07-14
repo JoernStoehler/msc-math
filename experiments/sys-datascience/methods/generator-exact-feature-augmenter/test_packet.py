@@ -165,6 +165,12 @@ class ExactFeaturePacketTests(unittest.TestCase):
         with self.assertRaisesRegex(augment.AnalysisError, "strict-cycle metadata malformed"):
             analyzer.validate(rows, require_complete=False)
 
+        rows = copy.deepcopy(self.features)
+        allowed = next(row for row in rows if row["strict_cycle"] is not None)
+        allowed["strict_cycle"]["strict_cycle_count"] += 1
+        with self.assertRaisesRegex(augment.AnalysisError, "strict-cycle metadata inconsistent"):
+            analyzer.validate(rows, require_complete=False)
+
     def test_altered_feature_manifest_and_revision_hash_guards(self):
         with tempfile.TemporaryDirectory() as directory:
             directory=Path(directory); feature_path=directory/"features.jsonl"; manifest_path=directory/"augment-report.json"
