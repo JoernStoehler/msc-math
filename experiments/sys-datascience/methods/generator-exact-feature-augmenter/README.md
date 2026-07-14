@@ -102,3 +102,57 @@ symplectic max-share, weighted kappa, rho, and condition; Euclidean arm ranges
 include an explicit overlap interval, tolerance-aware boolean, and
 union-normalized overlap.
 No bucket is pooled into a ranking.
+
+## Retained target-free audit
+
+The retained audit was produced from clean revision
+`93056377359ce16fa61e34201d7efdf58bd14405`. The augmenter was run with
+`--require-clean`, that expected revision, and expected SHA256 hashes for all
+three inputs:
+
+- orientation panel: `b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367`;
+- authoritative tangential panel: `0752d44113fe2b1e6bbf0c5af56e1e74e594d7986d48b50a065ed1966bced5ab`;
+- exact tangential replay: `0dc72ef98fb860ad838026e5354c36f254985aca9b90a060aee2f58f231832d2`.
+
+The retained artifacts are under `artifacts/full-panels/`: the replay, the
+808-row `features.jsonl`, `augment-report.json`, and the analyzer `report.json`.
+Their feature, augmentation-report, and analyzer-report SHA256 hashes are,
+respectively,
+`e7cc585b2e774bc6ee5dcd658e49b02cefd7cdd914fb1ffaba759ccb64d6b624`,
+`67d58ec4a9fedd3a62cd79167e3970b20176e60bbc962dd74a76de9bedc6a63a`, and
+`3f094ffd96caa19be7c59f8e6fb701326cef0e4d806cbd0ed470fdeb180ce496`.
+The exact design audit passed: 40 orientation rows and 768 tangential rows.
+Both U(2) and orthogonal controls passed, with maximum scaled controlled error
+`1.93e-13`. The 66 strict-cycle-bearing rows are exactly the two orientation
+`3x3` identity bases and 64 tangential `3x3` factorial-baseline rows; the
+behavioral audit confirms that this metadata affected no grouping or selection.
+
+The orientation panel gives the clearest intervention. Haar-random SO(4)
+rotation preserves volume and Euclidean/covariance controls while changing the
+symplectic ridge profile on every retained base: mean absolute changes across
+the eight bases are about `15.32` in normalized symplectic-area sum, `0.816` in
+normalized symplectic-area mean, `0.206` in Euclidean-weighted kappa, and
+`23.83` in Williamson rho. Symplectic max-share decreased for all eight bases
+(mean delta `-0.0627`, range `[-0.1449,-0.00605]`). U(2) controls are unchanged
+to numerical tolerance. The deterministic SO(4) transform also happens to
+preserve the unsigned symplectic features on these bases, so the evidence for
+an orientation intervention comes specifically from the Haar SO(4) arm.
+
+Tangential perturbations are much more closely matched in these aggregate
+geometry features. The `3x3` bucket is an exact/numerical negative control.
+For the both-versus-baseline arm, normalized Euclidean ridge-area sum changes
+by about `-0.63%` in `4x6` and `-1.01%` in `6x6`; normalized symplectic sum by
+about `-0.29%` and `-1.24%`; and symplectic max-share by about `-2.24%` and
+`-3.19%`. Arm-range overlap is high for Euclidean mean/sum, including about
+`0.99` union-normalized overlap in `6x6`, but some distribution-shape features
+are less closely matched: the minimum reported `6x6` Euclidean feature overlap
+is about `0.506`. Williamson-rho and covariance-condition summaries are
+heavy-tailed in the smaller buckets, so their paired means are descriptive,
+not stable effect estimates.
+
+These are target-free geometry results, not evidence about `sys` or population
+frequency. There are only eight orientation bases. The retained audit therefore
+selects a small Haar-SO(4) orientation target pilot as the first downstream
+experiment; the tangential panel is a secondary matched-control pilot, with
+bucket- and feature-specific matching diagnostics retained rather than a claim
+of exact distributional matching.

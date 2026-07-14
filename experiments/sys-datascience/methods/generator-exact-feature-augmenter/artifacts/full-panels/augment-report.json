@@ -1,0 +1,55 @@
+{
+  "schema": "generator-exact-feature-augmenter-report-v2",
+  "rows": 808,
+  "source_kinds": {
+    "orientation": 40,
+    "tangential": 768
+  },
+  "provenance": {
+    "inputs": [
+      {
+        "path": "experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl",
+        "sha256": "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367",
+        "rows": 40
+      },
+      {
+        "path": "experiments/sys-datascience/methods/generator-tangential-matchability/artifacts/full-64/smoke-rows.jsonl",
+        "sha256": "0752d44113fe2b1e6bbf0c5af56e1e74e594d7986d48b50a065ed1966bced5ab",
+        "rows": 768
+      },
+      {
+        "path": "experiments/sys-datascience/methods/generator-exact-feature-augmenter/artifacts/full-panels/tangential-replay/smoke-rows.jsonl",
+        "sha256": "0dc72ef98fb860ad838026e5354c36f254985aca9b90a060aee2f58f231832d2",
+        "rows": 768
+      }
+    ],
+    "source_revision": "93056377359ce16fa61e34201d7efdf58bd14405",
+    "source_dirty": false,
+    "schemas": {
+      "orientation": "generator-orientation-smoke-row-v2",
+      "tangential": "alternative-generator-smoke-row-v2",
+      "feature": "generator-exact-feature-augmenter-row-v2"
+    },
+    "target_fields_rejected": [
+      "capacity",
+      "sys",
+      "iterations",
+      "iteration",
+      "bounce_label",
+      "target",
+      "target_ms"
+    ],
+    "tolerances": {
+      "decomposition_abs": 1e-10,
+      "replay_volume_abs": 1e-12,
+      "covariance_condition_max": 10000000000.0
+    }
+  },
+  "feature_output": {
+    "path": "/tmp/generator-exact-feature-retained/final-features/features.jsonl",
+    "sha256": "e7cc585b2e774bc6ee5dcd658e49b02cefd7cdd914fb1ffaba759ccb64d6b624",
+    "rows": 808,
+    "schema": "generator-exact-feature-augmenter-row-v2"
+  },
+  "command": "experiments/sys-datascience/methods/generator-exact-feature-augmenter/augment.py --orientation experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl --tangential-source experiments/sys-datascience/methods/generator-tangential-matchability/artifacts/full-64/smoke-rows.jsonl --tangential-replay experiments/sys-datascience/methods/generator-exact-feature-augmenter/artifacts/full-panels/tangential-replay/smoke-rows.jsonl --out-dir /tmp/generator-exact-feature-retained/final-features --require-clean --expected-revision 93056377359ce16fa61e34201d7efdf58bd14405 --expected-orientation-sha256 b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367 --expected-tangential-source-sha256 0752d44113fe2b1e6bbf0c5af56e1e74e594d7986d48b50a065ed1966bced5ab --expected-tangential-replay-sha256 0dc72ef98fb860ad838026e5354c36f254985aca9b90a060aee2f58f231832d2"
+}
