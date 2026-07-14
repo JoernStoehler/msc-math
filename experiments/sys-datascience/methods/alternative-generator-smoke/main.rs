@@ -35,6 +35,8 @@ struct Args {
     rows_per_law: usize,
     target_backend: bool,
     only_law: Option<String>,
+    only_family: Option<String>,
+    identity_scope: Option<String>,
 }
 
 #[derive(Clone, Debug)]
@@ -50,6 +52,7 @@ struct SmokeRow {
     law: String,
     wishlist_item: u8,
     law_version: &'static str,
+    identity_scope: Option<String>,
     seed: u64,
     row_index: usize,
     attempt: usize,
@@ -91,6 +94,7 @@ struct Disposition {
 struct Report {
     schema: &'static str,
     law_version: &'static str,
+    identity_scope: Option<String>,
     seed: u64,
     max_attempts_per_row: usize,
     runtime_cap_ms: f64,
@@ -147,6 +151,8 @@ fn parse_args() -> Args {
         rows_per_law: 1,
         target_backend: false,
         only_law: None,
+        only_family: None,
+        identity_scope: None,
     };
     let mut i = 1;
     while i < argv.len() {
@@ -189,9 +195,17 @@ fn parse_args() -> Args {
                 args.only_law = Some(value("--only-law").to_string());
                 i += 2;
             }
+            "--only-family" => {
+                args.only_family = Some(value("--only-family").to_string());
+                i += 2;
+            }
+            "--identity-scope" => {
+                args.identity_scope = Some(value("--identity-scope").to_string());
+                i += 2;
+            }
             "--help" | "-h" => {
                 println!(
-                    "--out-dir DIR --seed N --attempts N --runtime-cap-ms MS --rows-per-law N [--only-law LAW] [--target]"
+                    "--out-dir DIR --seed N --attempts N --runtime-cap-ms MS --rows-per-law N [--only-law LAW | --only-family factorial --identity-scope ID] [--target]"
                 );
                 std::process::exit(0);
             }
@@ -199,6 +213,30 @@ fn parse_args() -> Args {
         }
     }
     assert!(args.attempts > 0 && args.runtime_cap_ms.is_finite() && args.runtime_cap_ms > 0.0);
+    assert!(
+        args.only_law.is_none() || args.only_family.is_none(),
+        "--only-law and --only-family are mutually exclusive"
+    );
+    if let Some(family) = &args.only_family {
+        assert_eq!(family, "factorial", "only the factorial family is reviewed");
+        assert!(
+            !args.target_backend,
+            "--only-family is geometry-only and cannot be combined with --target"
+        );
+        assert!(
+            args.identity_scope.is_some(),
+            "--only-family requires --identity-scope to prevent artifact aliasing"
+        );
+    }
+    if let Some(scope) = &args.identity_scope {
+        assert!(
+            !scope.is_empty()
+                && scope
+                    .bytes()
+                    .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_' | b'.')),
+            "--identity-scope must use nonempty ASCII letters, digits, '.', '-', or '_'"
+        );
+    }
     args
 }
 
@@ -236,8 +274,20 @@ fn latent_identity<'a>(law: &'a str, parameter: &'a str) -> (&'a str, &'a str) {
     }
 }
 
+fn law_family(law: &str) -> Option<&'static str> {
+    law.starts_with("factorial-").then_some("factorial")
+}
+
+fn scoped_identity_prefix(identity_scope: Option<&str>) -> String {
+    identity_scope.map_or_else(
+        || "altgen-v2".to_string(),
+        |scope| format!("altgen-v2/scope={scope}"),
+    )
+}
+
 fn pairing_id(
     law: &str,
+    identity_scope: Option<&str>,
     seed: u64,
     row_index: usize,
     attempt: usize,
@@ -251,8 +301,10 @@ fn pairing_id(
         return None;
     };
     Some(format!(
-        "altgen-v2/{family}/seed={seed}/row={row_index}/attempt={attempt}/{}x{}",
-        bucket.0, bucket.1
+        "{}/{family}/seed={seed}/row={row_index}/attempt={attempt}/{}x{}",
+        scoped_identity_prefix(identity_scope),
+        bucket.0,
+        bucket.1
     ))
 }
 
@@ -666,12 +718,21 @@ fn evaluate_pair(
     validation_ms_offset: f64,
 ) -> SmokeRow {
     let sample_id = format!(
-        "altgen-v2/{law}/param={parameter}/seed={seed}/row={row_index}/attempt={attempt}/{}x{}",
-        bucket.0, bucket.1
+        "{}/{law}/param={parameter}/seed={seed}/row={row_index}/attempt={attempt}/{}x{}",
+        scoped_identity_prefix(args.identity_scope.as_deref()),
+        bucket.0,
+        bucket.1
     );
     let q_metrics = factor_metrics(&q);
     let p_metrics = factor_metrics(&p);
-    let paired = pairing_id(law, seed, row_index, attempt, bucket);
+    let paired = pairing_id(
+        law,
+        args.identity_scope.as_deref(),
+        seed,
+        row_index,
+        attempt,
+        bucket,
+    );
     let tv = Instant::now();
     let poly = SysLandscapePolytopeCache::from_lagrangian_product(
         &q.normals, &q.heights, &p.normals, &p.heights,
@@ -685,6 +746,7 @@ fn evaluate_pair(
             law: law.to_string(),
             wishlist_item: item,
             law_version: "wishlist-2026-07-14-v2",
+            identity_scope: args.identity_scope.clone(),
             seed,
             row_index,
             attempt,
@@ -727,6 +789,7 @@ fn evaluate_pair(
             law: law.to_string(),
             wishlist_item: item,
             law_version: "wishlist-2026-07-14-v2",
+            identity_scope: args.identity_scope.clone(),
             seed,
             row_index,
             attempt,
@@ -801,6 +864,7 @@ fn evaluate_pair(
         law: law.to_string(),
         wishlist_item: item,
         law_version: "wishlist-2026-07-14-v2",
+        identity_scope: args.identity_scope.clone(),
         seed,
         row_index,
         attempt,
@@ -993,6 +1057,13 @@ fn main() {
         if args.only_law.as_deref().is_some_and(|wanted| wanted != law) {
             continue;
         }
+        if args
+            .only_family
+            .as_deref()
+            .is_some_and(|wanted| law_family(law) != Some(wanted))
+        {
+            continue;
+        }
         for &parameter in params {
             for &bucket in PAIRS {
                 if (law.starts_with("symmetric-strips")
@@ -1047,12 +1118,14 @@ fn main() {
                     let row = accepted.unwrap_or_else(|| SmokeRow {
                         schema: "alternative-generator-smoke-row-v2",
                         sample_id: format!(
-                            "altgen-v2/{law}/param={parameter}/seed={}/row={row_index}/outcome=exhausted/{}x{}",
+                            "{}/{law}/param={parameter}/seed={}/row={row_index}/outcome=exhausted/{}x{}",
+                            scoped_identity_prefix(args.identity_scope.as_deref()),
                             args.seed, bucket.0, bucket.1
                         ),
                         law: law.to_string(),
                         wishlist_item: item,
                         law_version: "wishlist-2026-07-14-v2",
+                        identity_scope: args.identity_scope.clone(),
                         seed: args.seed,
                         row_index,
                         attempt: args.attempts - 1,
@@ -1077,6 +1150,7 @@ fn main() {
                         factor_p_isoperimetric_ratio: None,
                         pairing_id: pairing_id(
                             law,
+                            args.identity_scope.as_deref(),
                             args.seed,
                             row_index,
                             args.attempts - 1,
@@ -1170,6 +1244,7 @@ fn main() {
     let report = Report {
         schema: "alternative-generator-smoke-report-v2",
         law_version: "wishlist-2026-07-14-v2",
+        identity_scope: args.identity_scope.clone(),
         seed: args.seed,
         max_attempts_per_row: args.attempts,
         runtime_cap_ms: args.runtime_cap_ms,
@@ -1319,5 +1394,34 @@ mod tests {
         let c = law_seed(12, "baseline", "0.2", (4, 6), 0, 0);
         assert_ne!(a, b);
         assert_ne!(a, c);
+    }
+
+    #[test]
+    fn factorial_family_filter_is_exact() {
+        for law in [
+            "factorial-baseline",
+            "factorial-q",
+            "factorial-p",
+            "factorial-both",
+        ] {
+            assert_eq!(law_family(law), Some("factorial"));
+        }
+        assert_eq!(law_family("baseline"), None);
+        assert_eq!(law_family("broken-antipodal"), None);
+    }
+
+    #[test]
+    fn scoped_factorial_pairing_identity_is_complete_and_nonaliasing() {
+        let prior = pairing_id("factorial-baseline", None, 17, 3, 5, (4, 6)).unwrap();
+        let scoped = [
+            "factorial-baseline",
+            "factorial-q",
+            "factorial-p",
+            "factorial-both",
+        ]
+        .map(|law| pairing_id(law, Some("tangential-matchability-v1"), 17, 3, 5, (4, 6)).unwrap());
+        assert!(scoped.iter().all(|identity| identity == &scoped[0]));
+        assert_ne!(prior, scoped[0]);
+        assert!(scoped[0].contains("scope=tangential-matchability-v1"));
     }
 }
