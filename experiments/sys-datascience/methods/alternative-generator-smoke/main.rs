@@ -34,6 +34,7 @@ struct Args {
     runtime_cap_ms: f64,
     rows_per_law: usize,
     target_backend: bool,
+    only_law: Option<String>,
 }
 
 #[derive(Clone, Debug)]
@@ -50,6 +51,7 @@ struct SmokeRow {
     wishlist_item: u8,
     law_version: &'static str,
     seed: u64,
+    row_index: usize,
     attempt: usize,
     attempts: usize,
     rejections: usize,
@@ -61,6 +63,13 @@ struct SmokeRow {
     rejection_reason: Option<String>,
     factor_q_area: Option<f64>,
     factor_p_area: Option<f64>,
+    factor_q_support_cv: Option<f64>,
+    factor_p_support_cv: Option<f64>,
+    factor_q_gap_cv: Option<f64>,
+    factor_p_gap_cv: Option<f64>,
+    factor_q_isoperimetric_ratio: Option<f64>,
+    factor_p_isoperimetric_ratio: Option<f64>,
+    pairing_id: Option<String>,
     volume: Option<f64>,
     capacity: Option<f64>,
     sys: Option<f64>,
@@ -105,6 +114,24 @@ struct LawSummary {
     total_validation_ms: f64,
     total_target_ms: f64,
     max_attempts_observed: usize,
+    factor_metric_count: usize,
+    mean_support_cv: Option<f64>,
+    mean_gap_cv: Option<f64>,
+    mean_isoperimetric_ratio: Option<f64>,
+    #[serde(skip)]
+    total_support_cv: f64,
+    #[serde(skip)]
+    total_gap_cv: f64,
+    #[serde(skip)]
+    total_isoperimetric_ratio: f64,
+}
+
+#[derive(Clone, Copy)]
+struct FactorMetrics {
+    area: f64,
+    support_cv: f64,
+    gap_cv: f64,
+    isoperimetric_ratio: f64,
 }
 
 fn parse_args() -> Args {
@@ -118,6 +145,7 @@ fn parse_args() -> Args {
         runtime_cap_ms: DEFAULT_RUNTIME_CAP_MS,
         rows_per_law: 1,
         target_backend: false,
+        only_law: None,
     };
     let mut i = 1;
     while i < argv.len() {
@@ -156,9 +184,13 @@ fn parse_args() -> Args {
                 args.target_backend = true;
                 i += 1;
             }
+            "--only-law" => {
+                args.only_law = Some(value("--only-law").to_string());
+                i += 2;
+            }
             "--help" | "-h" => {
                 println!(
-                    "--out-dir DIR --seed N --attempts N --runtime-cap-ms MS --rows-per-law N"
+                    "--out-dir DIR --seed N --attempts N --runtime-cap-ms MS --rows-per-law N [--only-law LAW] [--target]"
                 );
                 std::process::exit(0);
             }
@@ -169,15 +201,58 @@ fn parse_args() -> Args {
     args
 }
 
-fn law_seed(seed: u64, law: &str, parameter: &str, attempt: usize) -> [u8; 32] {
+fn law_seed(
+    seed: u64,
+    law: &str,
+    parameter: &str,
+    bucket: (usize, usize),
+    row_index: usize,
+    attempt: usize,
+) -> [u8; 32] {
     let mut key = Vec::new();
     key.extend_from_slice(&seed.to_le_bytes());
     key.extend_from_slice(law.as_bytes());
     key.push(0);
     key.extend_from_slice(parameter.as_bytes());
     key.push(0);
+    key.extend_from_slice(&(bucket.0 as u64).to_le_bytes());
+    key.extend_from_slice(&(bucket.1 as u64).to_le_bytes());
+    key.extend_from_slice(&(row_index as u64).to_le_bytes());
     key.extend_from_slice(&(attempt as u64).to_le_bytes());
     *blake3::hash(&key).as_bytes()
+}
+
+fn latent_identity<'a>(law: &'a str, parameter: &'a str) -> (&'a str, &'a str) {
+    if matches!(
+        law,
+        "factorial-baseline" | "factorial-q" | "factorial-p" | "factorial-both"
+    ) {
+        ("factorial-base", "paired-current")
+    } else if matches!(law, "broken-antipodal" | "broken-symmetric-control") {
+        ("antipodal-pair", "paired-opposite-supports")
+    } else {
+        (law, parameter)
+    }
+}
+
+fn pairing_id(
+    law: &str,
+    seed: u64,
+    row_index: usize,
+    attempt: usize,
+    bucket: (usize, usize),
+) -> Option<String> {
+    let family = if law.starts_with("factorial-") {
+        "factorial"
+    } else if matches!(law, "broken-antipodal" | "broken-symmetric-control") {
+        "antipodal"
+    } else {
+        return None;
+    };
+    Some(format!(
+        "altgen-v2/{family}/seed={seed}/row={row_index}/attempt={attempt}/{}x{}",
+        bucket.0, bucket.1
+    ))
 }
 
 fn area_normalize(mut f: Factor) -> Option<Factor> {
@@ -222,6 +297,75 @@ fn all_facets_active(f: &Factor) -> bool {
     true
 }
 
+fn coefficient_of_variation(values: &[f64]) -> Option<f64> {
+    if values.is_empty() {
+        return None;
+    }
+    let mean = values.iter().sum::<f64>() / values.len() as f64;
+    if !mean.is_finite() || mean <= 0.0 {
+        return None;
+    }
+    let variance = values
+        .iter()
+        .map(|x| {
+            let d = *x - mean;
+            d * d
+        })
+        .sum::<f64>()
+        / values.len() as f64;
+    Some(variance.sqrt() / mean)
+}
+
+fn factor_metrics(f: &Factor) -> Option<FactorMetrics> {
+    let area = polygon_area(&f.normals, &f.heights)?;
+    let support_cv = coefficient_of_variation(&f.heights)?;
+    let mut angles: Vec<f64> = f
+        .normals
+        .iter()
+        .map(|n| n[1].atan2(n[0]).rem_euclid(TAU))
+        .collect();
+    angles.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    let gaps: Vec<f64> = (0..angles.len())
+        .map(|i| {
+            let next = if i + 1 == angles.len() {
+                angles[0] + TAU
+            } else {
+                angles[i + 1]
+            };
+            next - angles[i]
+        })
+        .collect();
+    let gap_cv = coefficient_of_variation(&gaps)?;
+
+    let mut vertices = Vec::with_capacity(f.normals.len());
+    for i in 0..f.normals.len() {
+        let j = (i + 1) % f.normals.len();
+        let a = f.normals[i];
+        let b = f.normals[j];
+        let det = a[0] * b[1] - a[1] * b[0];
+        if det.abs() < 1e-12 {
+            return None;
+        }
+        vertices.push(Vector2::new(
+            (f.heights[i] * b[1] - f.heights[j] * a[1]) / det,
+            (a[0] * f.heights[j] - b[0] * f.heights[i]) / det,
+        ));
+    }
+    let perimeter = (0..vertices.len())
+        .map(|i| (vertices[(i + 1) % vertices.len()] - vertices[i]).norm())
+        .sum::<f64>();
+    let isoperimetric_ratio = 4.0 * PI * area / (perimeter * perimeter);
+    if !isoperimetric_ratio.is_finite() {
+        return None;
+    }
+    Some(FactorMetrics {
+        area,
+        support_cv,
+        gap_cv,
+        isoperimetric_ratio,
+    })
+}
+
 fn random_angles<R: Rng>(n: usize, rng: &mut R, period: f64) -> Vec<f64> {
     let mut a: Vec<f64> = (0..n).map(|_| rng.gen::<f64>() * period).collect();
     a.sort_by(|x, y| x.partial_cmp(y).unwrap());
@@ -248,6 +392,13 @@ fn equal_support(n: usize, rng: &mut ChaCha8Rng) -> Factor {
     from_angles(&angles, vec![1.0; n])
 }
 
+fn tangentialize(f: &Factor) -> Factor {
+    Factor {
+        normals: f.normals.clone(),
+        heights: vec![1.0; f.heights.len()],
+    }
+}
+
 fn log_support(n: usize, sigma: f64, rng: &mut ChaCha8Rng) -> Option<Factor> {
     let normal = Normal::new(0.0, 1.0).ok()?;
     let mut z: Vec<f64> = (0..n)
@@ -259,6 +410,39 @@ fn log_support(n: usize, sigma: f64, rng: &mut ChaCha8Rng) -> Option<Factor> {
     }
     let angles = random_angles(n, rng, TAU);
     Some(from_angles(&angles, z.into_iter().map(f64::exp).collect()))
+}
+
+fn smooth_support(n: usize, modes: usize, amplitude: f64, rng: &mut ChaCha8Rng) -> Option<Factor> {
+    let normal = Normal::new(0.0, 1.0).ok()?;
+    let coefficients: Vec<(f64, f64)> = (0..modes)
+        .map(|_| (normal.sample(rng), normal.sample(rng)))
+        .collect();
+    let angles = random_angles(n, rng, TAU);
+    let mut g: Vec<f64> = angles
+        .iter()
+        .map(|theta| {
+            coefficients
+                .iter()
+                .enumerate()
+                .map(|(index, (a, b))| {
+                    let r = (index + 1) as f64;
+                    (a * (r * theta).cos() + b * (r * theta).sin()) / r
+                })
+                .sum::<f64>()
+        })
+        .collect();
+    let mean = g.iter().sum::<f64>() / g.len() as f64;
+    for value in &mut g {
+        *value -= mean;
+    }
+    let sd = (g.iter().map(|x| x * x).sum::<f64>() / g.len() as f64).sqrt();
+    if !sd.is_finite() || sd < 1e-12 {
+        return None;
+    }
+    for value in &mut g {
+        *value *= amplitude / sd;
+    }
+    Some(from_angles(&angles, g.into_iter().map(f64::exp).collect()))
 }
 
 fn dirichlet(n: usize, alpha: f64, rng: &mut ChaCha8Rng) -> Option<Factor> {
@@ -291,7 +475,20 @@ fn jittered_regular(n: usize, jitter: f64, rng: &mut ChaCha8Rng) -> Factor {
     from_angles(&angles, vec![1.0; n])
 }
 
-fn strips(n: usize, broken: bool, rng: &mut ChaCha8Rng) -> Option<Factor> {
+fn sort_factor_by_normal_angle(normals: Vec<Vector2<f64>>, heights: Vec<f64>) -> Factor {
+    let mut ix: Vec<usize> = (0..normals.len()).collect();
+    ix.sort_by(|i, j| {
+        let ai = normals[*i][1].atan2(normals[*i][0]);
+        let aj = normals[*j][1].atan2(normals[*j][0]);
+        ai.partial_cmp(&aj).unwrap()
+    });
+    Factor {
+        normals: ix.iter().map(|i| normals[*i]).collect(),
+        heights: ix.iter().map(|i| heights[*i]).collect(),
+    }
+}
+
+fn symmetric_strips(n: usize, iid_widths: bool, rng: &mut ChaCha8Rng) -> Option<Factor> {
     if n % 2 != 0 {
         return None;
     }
@@ -301,31 +498,43 @@ fn strips(n: usize, broken: bool, rng: &mut ChaCha8Rng) -> Option<Factor> {
     let mut heights = Vec::with_capacity(n);
     for a in lines {
         let u = Vector2::new(a.cos(), a.sin());
-        let (plus, minus) = if broken {
-            (0.8 + 0.4 * rng.gen::<f64>(), 0.8 + 0.4 * rng.gen::<f64>())
+        let width = if iid_widths {
+            0.8 + 0.4 * rng.gen::<f64>()
         } else {
-            let w = 0.8 + 0.4 * rng.gen::<f64>();
-            (w / 2.0, w / 2.0)
+            1.0
         };
         normals.push(u);
-        heights.push(plus);
+        heights.push(width / 2.0);
         normals.push(-u);
-        heights.push(minus);
+        heights.push(width / 2.0);
     }
-    // Antipodal normals are not cyclic; sorting by angle is required by the
-    // polygon kernel and preserves the support paired with each normal.
-    let mut ix: Vec<usize> = (0..n).collect();
-    ix.sort_by(|i, j| {
-        let ai = normals[*i][1].atan2(normals[*i][0]);
-        let aj = normals[*j][1].atan2(normals[*j][0]);
-        ai.partial_cmp(&aj).unwrap()
-    });
-    let ns = ix.iter().map(|i| normals[*i]).collect();
-    let hs = ix.iter().map(|i| heights[*i]).collect();
-    Some(Factor {
-        normals: ns,
-        heights: hs,
-    })
+    Some(sort_factor_by_normal_angle(normals, heights))
+}
+
+fn antipodal_broken_and_control(n: usize, rng: &mut ChaCha8Rng) -> Option<(Factor, Factor)> {
+    if n % 2 != 0 {
+        return None;
+    }
+    let lines = random_angles(n / 2, rng, PI);
+    let mut normals = Vec::with_capacity(n);
+    let mut broken_heights = Vec::with_capacity(n);
+    let mut control_heights = Vec::with_capacity(n);
+    for a in lines {
+        let u = Vector2::new(a.cos(), a.sin());
+        let plus = 0.8 + 0.4 * rng.gen::<f64>();
+        let minus = 0.8 + 0.4 * rng.gen::<f64>();
+        let control = (plus + minus) / 2.0;
+        normals.push(u);
+        broken_heights.push(plus);
+        control_heights.push(control);
+        normals.push(-u);
+        broken_heights.push(minus);
+        control_heights.push(control);
+    }
+    Some((
+        sort_factor_by_normal_angle(normals.clone(), broken_heights),
+        sort_factor_by_normal_angle(normals, control_heights),
+    ))
 }
 
 fn congruent(n: usize, phi: f64, rng: &mut ChaCha8Rng) -> (Factor, Factor) {
@@ -371,26 +580,54 @@ fn make_pair(
     m: usize,
     rng: &mut ChaCha8Rng,
 ) -> Option<(Factor, Factor)> {
-    if matches!(law, "factorial-q" | "factorial-p" | "factorial-both") {
-        let mut q = baseline(k, rng);
-        let mut p = baseline(m, rng);
+    if matches!(
+        law,
+        "factorial-baseline" | "factorial-q" | "factorial-p" | "factorial-both"
+    ) {
+        let base_q = baseline(k, rng);
+        let base_p = baseline(m, rng);
+        // Reject the latent baseline jointly so all four factorial arms use the
+        // same accepted normal fans rather than drifting to different attempts.
+        area_normalize(base_q.clone())?;
+        area_normalize(base_p.clone())?;
+        area_normalize(tangentialize(&base_q))?;
+        area_normalize(tangentialize(&base_p))?;
+        let mut q = base_q.clone();
+        let mut p = base_p.clone();
         if matches!(law, "factorial-q" | "factorial-both") {
-            q = equal_support(k, rng);
+            q = tangentialize(&base_q);
         }
         if matches!(law, "factorial-p" | "factorial-both") {
-            p = equal_support(m, rng);
+            p = tangentialize(&base_p);
         }
         return Some((q, p));
+    }
+    if matches!(law, "broken-antipodal" | "broken-symmetric-control") {
+        let (q_broken, q_control) = antipodal_broken_and_control(k, rng)?;
+        let (p_broken, p_control) = antipodal_broken_and_control(m, rng)?;
+        // The broken/control comparison is paired only on latent draws for
+        // which both arms have all prescribed facets active.
+        area_normalize(q_broken.clone())?;
+        area_normalize(q_control.clone())?;
+        area_normalize(p_broken.clone())?;
+        area_normalize(p_control.clone())?;
+        return if law == "broken-antipodal" {
+            Some((q_broken, p_broken))
+        } else {
+            Some((q_control, p_control))
+        };
     }
     let f = |n: usize, rng: &mut ChaCha8Rng| -> Option<Factor> {
         match law {
             "baseline" => Some(baseline(n, rng)),
             "equal-support" => Some(equal_support(n, rng)),
             "log-support" => log_support(n, parameter.parse().ok()?, rng),
+            "smooth-support-r2" => smooth_support(n, 2, parameter.parse().ok()?, rng),
+            "smooth-support-r3" => smooth_support(n, 3, parameter.parse().ok()?, rng),
             "dirichlet-gap" => dirichlet(n, parameter.parse().ok()?, rng),
             "jittered-regular" => Some(jittered_regular(n, parameter.parse().ok()?, rng)),
-            "symmetric-strips" => strips(n, false, rng),
-            "broken-antipodal" => strips(n, true, rng),
+            "symmetric-strips-constant" => symmetric_strips(n, false, rng),
+            "symmetric-strips-iid" => symmetric_strips(n, true, rng),
             "inscribed" => inscribed(n, rng),
             _ => None,
         }
@@ -399,7 +636,12 @@ fn make_pair(
         if k != m {
             return None;
         }
-        let phi: f64 = parameter.parse().ok()?;
+        let phi = match parameter {
+            "zero" => 0.0,
+            "half-step" => PI / (2.0 * k as f64),
+            "full-step" => PI / k as f64,
+            _ => return None,
+        };
         let (q, p) = congruent(k, phi, rng);
         return Some((q, p));
     }
@@ -417,30 +659,33 @@ fn evaluate_pair(
     parameter: &str,
     bucket: (usize, usize),
     seed: u64,
+    row_index: usize,
     attempt: usize,
+    generation_ms: f64,
+    validation_ms_offset: f64,
 ) -> SmokeRow {
     let sample_id = format!(
-        "altgen-v1/{law}/param={parameter}/seed={seed}/attempt={attempt}/{}x{}",
+        "altgen-v2/{law}/param={parameter}/seed={seed}/row={row_index}/attempt={attempt}/{}x{}",
         bucket.0, bucket.1
     );
-    let t0 = Instant::now();
-    let q_area = polygon_area(&q.normals, &q.heights);
-    let p_area = polygon_area(&p.normals, &p.heights);
-    let generation_ms = t0.elapsed().as_secs_f64() * 1000.0;
+    let q_metrics = factor_metrics(&q);
+    let p_metrics = factor_metrics(&p);
+    let paired = pairing_id(law, seed, row_index, attempt, bucket);
     let tv = Instant::now();
     let poly = SysLandscapePolytopeCache::from_lagrangian_product(
         &q.normals, &q.heights, &p.normals, &p.heights,
     );
-    let validation_ms = tv.elapsed().as_secs_f64() * 1000.0;
+    let validation_ms = validation_ms_offset + tv.elapsed().as_secs_f64() * 1000.0;
     let bucket_name = format!("{}x{}", bucket.0, bucket.1);
     let Some(poly) = poly else {
         return SmokeRow {
-            schema: "alternative-generator-smoke-row-v1",
+            schema: "alternative-generator-smoke-row-v2",
             sample_id: sample_id.clone(),
             law: law.to_string(),
             wishlist_item: item,
-            law_version: "wishlist-2026-07-14-v1",
+            law_version: "wishlist-2026-07-14-v2",
             seed,
+            row_index,
             attempt,
             attempts: attempt + 1,
             rejections: attempt,
@@ -450,8 +695,15 @@ fn evaluate_pair(
             accepted: false,
             validation_status: "invalid".into(),
             rejection_reason: Some("exact product validation rejected geometry".into()),
-            factor_q_area: q_area,
-            factor_p_area: p_area,
+            factor_q_area: q_metrics.map(|x| x.area),
+            factor_p_area: p_metrics.map(|x| x.area),
+            factor_q_support_cv: q_metrics.map(|x| x.support_cv),
+            factor_p_support_cv: p_metrics.map(|x| x.support_cv),
+            factor_q_gap_cv: q_metrics.map(|x| x.gap_cv),
+            factor_p_gap_cv: p_metrics.map(|x| x.gap_cv),
+            factor_q_isoperimetric_ratio: q_metrics.map(|x| x.isoperimetric_ratio),
+            factor_p_isoperimetric_ratio: p_metrics.map(|x| x.isoperimetric_ratio),
+            pairing_id: paired.clone(),
             volume: None,
             capacity: None,
             sys: None,
@@ -461,17 +713,18 @@ fn evaluate_pair(
             target_ms: 0.0,
         };
     };
-    // Six-by-six and larger target searches can exceed the executor envelope;
-    // retain geometry/validation evidence but classify those rows before
-    // entering the backend.  Smaller rows use the existing product backend.
+    // Retain geometry/validation evidence when target evaluation is disabled.
+    // Above ten facets the current in-process backend has no cancellable time
+    // limit, so target mode records the predeclared cap rather than entering it.
     if !args.target_backend || poly.facet_count() > 10 {
         return SmokeRow {
-            schema: "alternative-generator-smoke-row-v1",
+            schema: "alternative-generator-smoke-row-v2",
             sample_id: sample_id.clone(),
             law: law.to_string(),
             wishlist_item: item,
-            law_version: "wishlist-2026-07-14-v1",
+            law_version: "wishlist-2026-07-14-v2",
             seed,
+            row_index,
             attempt,
             attempts: attempt + 1,
             rejections: attempt,
@@ -486,12 +739,19 @@ fn evaluate_pair(
             }
             .into(),
             rejection_reason: Some(if args.target_backend {
-                "target backend skipped above facet-count cap 10".into()
+                "target backend skipped above predeclared facet-count cap 10".into()
             } else {
-                "target backend disabled for breadth-first generation-only smoke; measured product target path exceeded short cap".into()
+                "target backend disabled for breadth-first geometry smoke".into()
             }),
-            factor_q_area: q_area,
-            factor_p_area: p_area,
+            factor_q_area: q_metrics.map(|x| x.area),
+            factor_p_area: p_metrics.map(|x| x.area),
+            factor_q_support_cv: q_metrics.map(|x| x.support_cv),
+            factor_p_support_cv: p_metrics.map(|x| x.support_cv),
+            factor_q_gap_cv: q_metrics.map(|x| x.gap_cv),
+            factor_p_gap_cv: p_metrics.map(|x| x.gap_cv),
+            factor_q_isoperimetric_ratio: q_metrics.map(|x| x.isoperimetric_ratio),
+            factor_p_isoperimetric_ratio: p_metrics.map(|x| x.isoperimetric_ratio),
+            pairing_id: paired.clone(),
             volume: Some(exact_volume_from_incidence_as_f64(
                 &poly.vertices,
                 &poly.vertex_facet_incidence,
@@ -524,6 +784,8 @@ fn evaluate_pair(
         })
         .unwrap_or((None, None, None));
     let target_ms = tt.elapsed().as_secs_f64() * 1000.0;
+    // `runtime_cap_ms` is a post-hoc classification threshold.  The existing
+    // target API is synchronous and cannot enforce a wall-clock kill safely.
     let status = if target.is_some() {
         if generation_ms + validation_ms + target_ms > args.runtime_cap_ms {
             "runtime_cap"
@@ -534,12 +796,13 @@ fn evaluate_pair(
         "target_failed"
     };
     SmokeRow {
-        schema: "alternative-generator-smoke-row-v1",
+        schema: "alternative-generator-smoke-row-v2",
         sample_id,
         law: law.to_string(),
         wishlist_item: item,
-        law_version: "wishlist-2026-07-14-v1",
+        law_version: "wishlist-2026-07-14-v2",
         seed,
+        row_index,
         attempt,
         attempts: attempt + 1,
         rejections: attempt,
@@ -549,8 +812,15 @@ fn evaluate_pair(
         accepted: true,
         validation_status: status.into(),
         rejection_reason: None,
-        factor_q_area: q_area,
-        factor_p_area: p_area,
+        factor_q_area: q_metrics.map(|x| x.area),
+        factor_p_area: p_metrics.map(|x| x.area),
+        factor_q_support_cv: q_metrics.map(|x| x.support_cv),
+        factor_p_support_cv: p_metrics.map(|x| x.support_cv),
+        factor_q_gap_cv: q_metrics.map(|x| x.gap_cv),
+        factor_p_gap_cv: p_metrics.map(|x| x.gap_cv),
+        factor_q_isoperimetric_ratio: q_metrics.map(|x| x.isoperimetric_ratio),
+        factor_p_isoperimetric_ratio: p_metrics.map(|x| x.isoperimetric_ratio),
+        pairing_id: paired,
         volume: Some(volume),
         capacity,
         sys,
@@ -584,9 +854,8 @@ fn dispositions() -> Vec<Disposition> {
         Disposition {
             wishlist_item: 4,
             law: "smooth support field",
-            disposition: "compile_or_api_block",
-            evidence:
-                "Fourier support convexity/active-facet conditioning needs a separate law owner",
+            disposition: "survived",
+            evidence: "R=2,3 inverse-frequency Fourier fields with empirical log-support SD 0.1 use the local active-facet boundary",
         },
         Disposition {
             wishlist_item: 5,
@@ -598,7 +867,7 @@ fn dispositions() -> Vec<Disposition> {
             wishlist_item: 6,
             law: "one-factor factorial",
             disposition: "survived",
-            evidence: "three intervention arms share the product constructor",
+            evidence: "all four arms share each baseline product's exact normal fans through a pairing identity",
         },
         Disposition {
             wishlist_item: 7,
@@ -616,19 +885,19 @@ fn dispositions() -> Vec<Disposition> {
             wishlist_item: 9,
             law: "symmetric strips",
             disposition: "survived",
-            evidence: "paired antipodal lines, even side counts",
+            evidence: "constant-width and IID-width antipodal strip laws, even side counts",
         },
         Disposition {
             wishlist_item: 10,
             law: "broken antipodal",
             disposition: "survived",
-            evidence: "independent opposite supports on the same line law",
+            evidence: "broken and symmetric-control arms share lines and preserve each sampled strip width",
         },
         Disposition {
             wishlist_item: 11,
             law: "zonogon",
-            disposition: "invalid_or_low_acceptance",
-            evidence: "Minkowski-sum-to-H-representation conversion is outside this owner",
+            disposition: "backend_or_schema_expansion",
+            evidence: "not attempted after the direct H-representation laws filled the pass; faithful Minkowski-sum conversion needs a new local geometry path",
         },
         Disposition {
             wishlist_item: 12,
@@ -651,7 +920,7 @@ fn dispositions() -> Vec<Disposition> {
         Disposition {
             wishlist_item: 15,
             law: "IID point hull",
-            disposition: "invalid_or_low_acceptance",
+            disposition: "backend_or_schema_expansion",
             evidence: "hull-side-count conditioning not available in current narrow API",
         },
         Disposition {
@@ -663,8 +932,8 @@ fn dispositions() -> Vec<Disposition> {
         Disposition {
             wishlist_item: 17,
             law: "Poisson line cell",
-            disposition: "runtime_cap",
-            evidence: "faithful conditional stationary-line simulation exceeds tiny owner envelope",
+            disposition: "backend_or_schema_expansion",
+            evidence: "not runtime-tested: faithful stationary-line windowing and side-count conditioning need a new sampler",
         },
         Disposition {
             wishlist_item: 18,
@@ -705,20 +974,29 @@ fn main() {
         ("baseline", 1, &["0.2"]),
         ("equal-support", 2, &["area=1"]),
         ("log-support", 3, &["0.0", "0.1", "0.2"]),
+        ("smooth-support-r2", 4, &["0.1"]),
+        ("smooth-support-r3", 4, &["0.1"]),
+        ("factorial-baseline", 6, &["current"]),
         ("factorial-q", 6, &["q=tangential"]),
         ("factorial-p", 6, &["p=tangential"]),
         ("factorial-both", 6, &["q,p=tangential"]),
         ("dirichlet-gap", 7, &["0.5", "1.0", "2.0", "10.0"]),
         ("jittered-regular", 8, &["0.0", "0.1"]),
-        ("symmetric-strips", 9, &["equal-width"]),
+        ("symmetric-strips-constant", 9, &["constant-width"]),
+        ("symmetric-strips-iid", 9, &["iid-width"]),
+        ("broken-symmetric-control", 10, &["paired-width-control"]),
         ("broken-antipodal", 10, &["independent-supports"]),
-        ("congruent", 12, &["0.0", "0.2617993877991494"]),
+        ("congruent", 12, &["zero", "half-step", "full-step"]),
         ("inscribed", 16, &["circle-radius=1"]),
     ];
     for &(law, item, params) in jobs {
+        if args.only_law.as_deref().is_some_and(|wanted| wanted != law) {
+            continue;
+        }
         for &parameter in params {
             for &bucket in PAIRS {
-                if (law == "symmetric-strips" || law == "broken-antipodal")
+                if (law.starts_with("symmetric-strips")
+                    || matches!(law, "broken-antipodal" | "broken-symmetric-control"))
                     && (bucket.0 % 2 != 0 || bucket.1 % 2 != 0)
                 {
                     continue;
@@ -728,36 +1006,56 @@ fn main() {
                 }
                 for row_index in 0..args.rows_per_law {
                     let mut accepted = None;
+                    let mut generation_ms = 0.0;
+                    let mut validation_ms = 0.0;
                     for attempt in 0..args.attempts {
+                        let generation_start = Instant::now();
+                        let (latent_law, latent_parameter) = latent_identity(law, parameter);
                         let mut rng = ChaCha8Rng::from_seed(law_seed(
-                            args.seed ^ row_index as u64,
-                            law,
-                            parameter,
+                            args.seed,
+                            latent_law,
+                            latent_parameter,
+                            bucket,
+                            row_index,
                             attempt,
                         ));
                         let generated = make_pair(law, parameter, bucket.0, bucket.1, &mut rng)
                             .and_then(|(q, p)| Some((area_normalize(q)?, area_normalize(p)?)));
+                        generation_ms += generation_start.elapsed().as_secs_f64() * 1000.0;
                         if let Some((q, p)) = generated {
                             let row = evaluate_pair(
-                                q, p, &args, law, item, parameter, bucket, args.seed, attempt,
+                                q,
+                                p,
+                                &args,
+                                law,
+                                item,
+                                parameter,
+                                bucket,
+                                args.seed,
+                                row_index,
+                                attempt,
+                                generation_ms,
+                                validation_ms,
                             );
                             if row.validation_status != "invalid" {
                                 accepted = Some(row);
                                 break;
                             }
+                            validation_ms = row.validation_ms;
                         }
                     }
                     let row = accepted.unwrap_or_else(|| SmokeRow {
-                        schema: "alternative-generator-smoke-row-v1",
+                        schema: "alternative-generator-smoke-row-v2",
                         sample_id: format!(
-                            "altgen-v1/{law}/param={parameter}/seed={}/attempt={}/{}x{}",
-                            args.seed, args.attempts, bucket.0, bucket.1
+                            "altgen-v2/{law}/param={parameter}/seed={}/row={row_index}/outcome=exhausted/{}x{}",
+                            args.seed, bucket.0, bucket.1
                         ),
                         law: law.to_string(),
                         wishlist_item: item,
-                        law_version: "wishlist-2026-07-14-v1",
+                        law_version: "wishlist-2026-07-14-v2",
                         seed: args.seed,
-                        attempt: args.attempts,
+                        row_index,
+                        attempt: args.attempts - 1,
                         attempts: args.attempts,
                         rejections: args.attempts,
                         parameter: parameter.to_string(),
@@ -771,12 +1069,25 @@ fn main() {
                         )),
                         factor_q_area: None,
                         factor_p_area: None,
+                        factor_q_support_cv: None,
+                        factor_p_support_cv: None,
+                        factor_q_gap_cv: None,
+                        factor_p_gap_cv: None,
+                        factor_q_isoperimetric_ratio: None,
+                        factor_p_isoperimetric_ratio: None,
+                        pairing_id: pairing_id(
+                            law,
+                            args.seed,
+                            row_index,
+                            args.attempts - 1,
+                            bucket,
+                        ),
                         volume: None,
                         capacity: None,
                         sys: None,
                         iterations: None,
-                        generation_ms: 0.0,
-                        validation_ms: 0.0,
+                        generation_ms,
+                        validation_ms,
                         target_ms: 0.0,
                     });
                     serde_json::to_writer(&mut rows_out, &row).expect("write row");
@@ -805,6 +1116,13 @@ fn main() {
                 total_validation_ms: 0.0,
                 total_target_ms: 0.0,
                 max_attempts_observed: 0,
+                factor_metric_count: 0,
+                mean_support_cv: None,
+                mean_gap_cv: None,
+                mean_isoperimetric_ratio: None,
+                total_support_cv: 0.0,
+                total_gap_cv: 0.0,
+                total_isoperimetric_ratio: 0.0,
             });
         summary.rows += 1;
         summary.accepted_rows += usize::from(row.accepted);
@@ -813,6 +1131,33 @@ fn main() {
         summary.total_validation_ms += row.validation_ms;
         summary.total_target_ms += row.target_ms;
         summary.max_attempts_observed = summary.max_attempts_observed.max(row.attempts);
+        for metrics in [
+            (
+                row.factor_q_support_cv,
+                row.factor_q_gap_cv,
+                row.factor_q_isoperimetric_ratio,
+            ),
+            (
+                row.factor_p_support_cv,
+                row.factor_p_gap_cv,
+                row.factor_p_isoperimetric_ratio,
+            ),
+        ] {
+            if let (Some(support_cv), Some(gap_cv), Some(isoperimetric_ratio)) = metrics {
+                summary.factor_metric_count += 1;
+                summary.total_support_cv += support_cv;
+                summary.total_gap_cv += gap_cv;
+                summary.total_isoperimetric_ratio += isoperimetric_ratio;
+            }
+        }
+    }
+    for summary in law_map.values_mut() {
+        if summary.factor_metric_count > 0 {
+            let count = summary.factor_metric_count as f64;
+            summary.mean_support_cv = Some(summary.total_support_cv / count);
+            summary.mean_gap_cv = Some(summary.total_gap_cv / count);
+            summary.mean_isoperimetric_ratio = Some(summary.total_isoperimetric_ratio / count);
+        }
     }
     let source_revision = std::process::Command::new("git")
         .args(["rev-parse", "HEAD"])
@@ -821,7 +1166,21 @@ fn main() {
         .and_then(|o| String::from_utf8(o.stdout).ok())
         .map(|s| s.trim().to_string())
         .unwrap_or_else(|| "unknown".into());
-    let report = Report { schema: "alternative-generator-smoke-report-v1", law_version: "wishlist-2026-07-14-v1", seed: args.seed, max_attempts_per_row: args.attempts, runtime_cap_ms: args.runtime_cap_ms, pairs: PAIRS.iter().map(|(k,m)| format!("{k}x{m}")).collect(), rows: rows_count, command: std::env::args().collect::<Vec<_>>().join(" "), source_revision, status_counts, per_law: law_map.into_values().collect(), dispositions: dispositions(), interpretation_boundary: "Tiny target-evaluated smoke is plumbing and feasibility evidence only; it does not establish population separation or a transfer conclusion." };
+    let report = Report {
+        schema: "alternative-generator-smoke-report-v2",
+        law_version: "wishlist-2026-07-14-v2",
+        seed: args.seed,
+        max_attempts_per_row: args.attempts,
+        runtime_cap_ms: args.runtime_cap_ms,
+        pairs: PAIRS.iter().map(|(k, m)| format!("{k}x{m}")).collect(),
+        rows: rows_count,
+        command: std::env::args().collect::<Vec<_>>().join(" "),
+        source_revision,
+        status_counts,
+        per_law: law_map.into_values().collect(),
+        dispositions: dispositions(),
+        interpretation_boundary: "Tiny geometry smoke is plumbing, feasibility, and coarse separation evidence only; it does not establish a target transfer conclusion.",
+    };
     serde_json::to_writer_pretty(File::create(&report_path).expect("create report"), &report)
         .expect("write report");
     println!(
@@ -835,46 +1194,129 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn test_seed(seed: u64, law: &str, parameter: &str) -> [u8; 32] {
+        law_seed(seed, law, parameter, (4, 6), 0, 0)
+    }
+
     #[test]
     fn equal_support_has_equal_heights_and_positive_area() {
-        let mut rng = ChaCha8Rng::from_seed(law_seed(7, "equal-support", "area=1", 0));
+        let mut rng = ChaCha8Rng::from_seed(test_seed(7, "equal-support", "area=1"));
         let f = area_normalize(equal_support(5, &mut rng)).unwrap();
         assert!(f.heights.iter().all(|h| (*h - f.heights[0]).abs() < 1e-12));
         assert!((polygon_area(&f.normals, &f.heights).unwrap() - 1.0).abs() < 1e-12);
     }
+
+    #[test]
+    fn log_support_has_unit_geometric_mean_before_area_normalization() {
+        let mut rng = ChaCha8Rng::from_seed(test_seed(7, "log-support", "0.2"));
+        let f = log_support(6, 0.2, &mut rng).unwrap();
+        assert!(f.heights.iter().product::<f64>().ln().abs() < 1e-12);
+    }
+
     #[test]
     fn dirichlet_and_inscribed_have_distinct_support_laws() {
-        let mut a = ChaCha8Rng::from_seed(law_seed(8, "dirichlet-gap", "1.0", 0));
-        let mut b = ChaCha8Rng::from_seed(law_seed(8, "inscribed", "circle-radius=1", 0));
-        let da = area_normalize(dirichlet(5, 1.0, &mut a).unwrap()).unwrap();
-        let ib = area_normalize(inscribed(5, &mut b).unwrap()).unwrap();
+        let da = (0..128)
+            .find_map(|attempt| {
+                let mut rng =
+                    ChaCha8Rng::from_seed(law_seed(8, "dirichlet-gap", "1.0", (4, 6), 0, attempt));
+                area_normalize(dirichlet(5, 1.0, &mut rng)?)
+            })
+            .unwrap();
+        let ib = (0..128)
+            .find_map(|attempt| {
+                let mut rng = ChaCha8Rng::from_seed(law_seed(
+                    8,
+                    "inscribed",
+                    "circle-radius=1",
+                    (4, 6),
+                    0,
+                    attempt,
+                ));
+                area_normalize(inscribed(5, &mut rng)?)
+            })
+            .unwrap();
         assert!(da
             .heights
             .iter()
             .zip(ib.heights.iter())
             .any(|(x, y)| (x - y).abs() > 1e-4));
     }
+
     #[test]
     fn symmetric_strip_supports_are_antipodal_pairs() {
-        let mut rng = ChaCha8Rng::from_seed(law_seed(9, "symmetric-strips", "equal-width", 0));
-        let f = strips(6, false, &mut rng).unwrap();
+        let mut rng =
+            ChaCha8Rng::from_seed(test_seed(9, "symmetric-strips-constant", "constant-width"));
+        let f = symmetric_strips(6, false, &mut rng).unwrap();
         for i in 0..f.normals.len() {
-            let has_opposite = f.normals.iter().any(|n| (n + f.normals[i]).norm() < 1e-12);
+            let has_opposite = f.normals.iter().zip(&f.heights).any(|(n, h)| {
+                (n + f.normals[i]).norm() < 1e-12 && (*h - f.heights[i]).abs() < 1e-12
+            });
             assert!(has_opposite);
         }
     }
+
+    #[test]
+    fn broken_control_preserves_each_strip_width() {
+        let mut rng =
+            ChaCha8Rng::from_seed(test_seed(9, "antipodal-pair", "paired-opposite-supports"));
+        let (broken, control) = antipodal_broken_and_control(6, &mut rng).unwrap();
+        for i in 0..broken.normals.len() {
+            let j = broken
+                .normals
+                .iter()
+                .position(|n| (n + broken.normals[i]).norm() < 1e-12)
+                .unwrap();
+            assert!((control.heights[i] - control.heights[j]).abs() < 1e-12);
+            assert!(
+                (2.0 * control.heights[i] - broken.heights[i] - broken.heights[j]).abs() < 1e-12
+            );
+        }
+    }
+
+    #[test]
+    fn factorial_arms_keep_the_exact_baseline_normal_fans() {
+        let seed = (0..128)
+            .find_map(|attempt| {
+                let seed = law_seed(10, "factorial-base", "paired-current", (4, 6), 0, attempt);
+                let mut rng = ChaCha8Rng::from_seed(seed);
+                make_pair("factorial-baseline", "current", 4, 6, &mut rng).map(|_| seed)
+            })
+            .unwrap();
+        let mut baseline_rng = ChaCha8Rng::from_seed(seed);
+        let mut both_rng = ChaCha8Rng::from_seed(seed);
+        let (base_q, base_p) =
+            make_pair("factorial-baseline", "current", 4, 6, &mut baseline_rng).unwrap();
+        let (tan_q, tan_p) =
+            make_pair("factorial-both", "q,p=tangential", 4, 6, &mut both_rng).unwrap();
+        assert_eq!(base_q.normals, tan_q.normals);
+        assert_eq!(base_p.normals, tan_p.normals);
+        assert!(tan_q.heights.iter().all(|h| (*h - 1.0).abs() < 1e-12));
+        assert!(tan_p.heights.iter().all(|h| (*h - 1.0).abs() < 1e-12));
+    }
+
     #[test]
     fn congruent_rotation_preserves_factor_area() {
-        let mut rng = ChaCha8Rng::from_seed(law_seed(10, "congruent", "0.2", 0));
+        let mut rng = ChaCha8Rng::from_seed(test_seed(10, "congruent", "half-step"));
         let (q, p) = congruent(5, 0.2, &mut rng);
         let aq = polygon_area(&q.normals, &q.heights).unwrap();
         let ap = polygon_area(&p.normals, &p.heights).unwrap();
         assert!((aq - ap).abs() < 1e-10);
     }
+
     #[test]
     fn inscribed_support_formula_is_positive() {
-        let mut rng = ChaCha8Rng::from_seed(law_seed(11, "inscribed", "circle-radius=1", 0));
+        let mut rng = ChaCha8Rng::from_seed(test_seed(11, "inscribed", "circle-radius=1"));
         let f = inscribed(6, &mut rng).unwrap();
         assert!(f.heights.iter().all(|h| *h > 0.0 && *h <= 1.0));
+    }
+
+    #[test]
+    fn row_and_bucket_change_the_seed_identity() {
+        let a = law_seed(12, "baseline", "0.2", (3, 3), 0, 0);
+        let b = law_seed(12, "baseline", "0.2", (3, 3), 1, 0);
+        let c = law_seed(12, "baseline", "0.2", (4, 6), 0, 0);
+        assert_ne!(a, b);
+        assert_ne!(a, c);
     }
 }
