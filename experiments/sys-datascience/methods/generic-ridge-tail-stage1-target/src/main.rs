@@ -34,6 +34,8 @@ const FROZEN_SELECTED_HASH: &str =
 const FROZEN_BASELINE_HASH: &str =
     "69ec2feb35faa19c8ed9fc31b4dd4a674dac30ea63b78431f47677dcda11f763";
 const FROZEN_PANEL_HASH: &str = "af5492cea21899774b47cbb578c316972fdee8285fbd7bd61d608adb5ac3c708";
+const TARGET_RUN_SOURCE_SHA256: &str =
+    "c2441988497351f719a6b59bccc37133912eb0b95d07a0b942c58b74b2645ede";
 const THRESHOLD: f64 = 0.5949424195457518;
 const MAX_ROWS: usize = 200;
 
@@ -146,6 +148,10 @@ struct EvaluationManifest {
     capacity_route: String,
     preflight_sha256: String,
     evaluator_source_sha256: String,
+    #[serde(default)]
+    target_evaluator_source_sha256: String,
+    #[serde(default)]
+    manifest_repair_source_sha256: String,
     target_free_full_validation_sha256: String,
     target_calls_for_new_population: bool,
     rows_sha256: String,
@@ -385,7 +391,12 @@ fn evaluate(args: &Args) {
     let output = args.out_dir.join("target-rows.jsonl");
     write_jsonl(&output, &rows);
     let u1 = usage();
-    let manifest = EvaluationManifest { schema: "sys-datascience.generic-ridge-tail-stage1-target.evaluation.v1".to_string(), status: "evaluated-frozen-200-target-free-panel".to_string(), row_count: rows.len(), selected_count: selected, baseline_count: baseline, threshold: THRESHOLD, volume_definition: "euclidean_polytopes::volume_from_incidence_f64 on exact-derived incidence".to_string(), capacity_route: "exp_sys_landscape::capacity_auto (billiard when Lagrangian-product classification succeeds; otherwise pruned HK2017)".to_string(), preflight_sha256: sha256(&preflight_path), evaluator_source_sha256: sha256(Path::new(env!("CARGO_MANIFEST_DIR")).join("src/main.rs").as_path()), target_free_full_validation_sha256: FROZEN_VALIDATION_SHA256.to_string(), target_calls_for_new_population: true, rows_sha256: sha256(&output), rows_blake3: blake3_file(&output), wall_ms: started.elapsed().as_secs_f64()*1000.0, process_user_cpu_seconds: u1.user-u0.user, process_system_cpu_seconds: u1.system-u0.system, max_rss_kib: u1.rss };
+    let source_hash = sha256(
+        Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("src/main.rs")
+            .as_path(),
+    );
+    let manifest = EvaluationManifest { schema: "sys-datascience.generic-ridge-tail-stage1-target.evaluation.v1".to_string(), status: "evaluated-frozen-200-target-free-panel".to_string(), row_count: rows.len(), selected_count: selected, baseline_count: baseline, threshold: THRESHOLD, volume_definition: "euclidean_polytopes::volume_from_incidence_f64 on exact-derived incidence".to_string(), capacity_route: "exp_sys_landscape::capacity_auto (billiard when Lagrangian-product classification succeeds; otherwise pruned HK2017)".to_string(), preflight_sha256: sha256(&preflight_path), evaluator_source_sha256: source_hash.clone(), target_evaluator_source_sha256: source_hash, manifest_repair_source_sha256: String::new(), target_free_full_validation_sha256: FROZEN_VALIDATION_SHA256.to_string(), target_calls_for_new_population: true, rows_sha256: sha256(&output), rows_blake3: blake3_file(&output), wall_ms: started.elapsed().as_secs_f64()*1000.0, process_user_cpu_seconds: u1.user-u0.user, process_system_cpu_seconds: u1.system-u0.system, max_rss_kib: u1.rss };
     write_json(&args.out_dir.join("evaluation-manifest.json"), &manifest);
     println!(
         "evaluated exactly 200 frozen rows; target rows at {}",
@@ -402,7 +413,9 @@ fn finalize_manifest(args: &Args) {
     let mut manifest: EvaluationManifest = read_json(&path);
     manifest.rows_sha256 = sha256(&output);
     manifest.rows_blake3 = blake3_file(&output);
-    manifest.evaluator_source_sha256 = sha256(
+    manifest.evaluator_source_sha256 = TARGET_RUN_SOURCE_SHA256.to_string();
+    manifest.target_evaluator_source_sha256 = TARGET_RUN_SOURCE_SHA256.to_string();
+    manifest.manifest_repair_source_sha256 = sha256(
         Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("src/main.rs")
             .as_path(),
