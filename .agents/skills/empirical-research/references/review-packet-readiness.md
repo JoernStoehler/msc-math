@@ -1,9 +1,15 @@
-# Experiment Packet Readiness
+# Review Experiment Packet Readiness
 
 Judge readiness for a named downstream use, not completeness in the abstract.
 A packet can be useful to further research and unusable for thesis writing. A
 clean implementation can still have weak evidence; polished prose does not
 strengthen evidence.
+
+Contents: [start from the transition](#start-from-the-transition),
+[review the packet](#review-the-packet),
+[recurring contexts](#recurring-contexts-and-criteria),
+[cross-cutting failure checks](#cross-cutting-failure-checks), and
+[recording the assessment](#recording-the-assessment).
 
 ## Start From The Transition
 

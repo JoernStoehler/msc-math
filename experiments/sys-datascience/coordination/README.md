@@ -19,11 +19,13 @@ FACTSHEET 34.1; demonstration/integration must choose it for the actual consumer
 
 recovery-audit-2026-07-10.md records the completed checkpoint audit.
 workflow-evaluations/ contains historical GPT-5.5 process evidence, not current
-execution authority. Other coordination files may be useful as evidence or
-planning inputs, but their old launch recommendations are not current unless
+execution authority. Other coordination files are scientific working state or
+planning inputs; their old launch recommendations are not current unless
 explicitly readopted.
 
-For repeated decisions about model/effort, context mode, decomposition, or
-review configuration, use `agent-capability-ledger.md`. It indexes selected
-source-linked behavioral episodes; it is not a model leaderboard or a task
-queue.
+Reusable experiment and research-line process belongs to
+`$empirical-research`, not this scientific coordination directory.
+Temporary hypotheses, experiment ideas, value estimates, and active line state
+may live in an isolated `/tmp/` working directory; material prepared for Jörn
+belongs under `/tmp/joern/`. Promote durable scientific observations, code,
+data, proofs, provenance, and interpretation to their owning repository paths.

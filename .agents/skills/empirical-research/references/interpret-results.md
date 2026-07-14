@@ -1,8 +1,23 @@
-# Experiment Interpretation
+# Interpret Empirical Results
 
 Use this reference when the task is not merely to report that an experiment ran,
 but to help Jörn understand what the result says and whether it matters to the
 thesis. Do not give an interpretation more strength than the current evidence.
+
+Keep distinct where relevant:
+
+- direct observations and their measurement conditions;
+- hypotheses or mechanisms that could explain them;
+- inferences linking multiple observations or assumptions;
+- predicted outcomes under competing hypotheses;
+- proposed experiments and their possible outcome branches;
+- beliefs about plausibility, uncertainty, and expected information value;
+- judgments about thesis value, future option value, and execution cost.
+
+These objects can form an argument or decision graph without sharing one
+schema. State enough source and reasoning detail that another researcher can
+locate disagreement in an observation, assumption, inference, prediction, or
+value estimate rather than having to accept a compressed conclusion.
 
 ## Source Truth
 

@@ -39,7 +39,7 @@ current completion state remain with their repo owners.
   prose, preparing authoring coverage, checking source-to-thesis omissions, or
   reconstructing disputed provenance.
 
-Use `$paper-conventions` for source papers, `$research-experiments-data` when
+Use `$paper-conventions` for source papers, `$empirical-research` when
 work interprets or changes empirical evidence, and
 `$codex-session-log-parsing` only for focused provenance reconstruction that
 cannot be resolved from current owners and Git history.

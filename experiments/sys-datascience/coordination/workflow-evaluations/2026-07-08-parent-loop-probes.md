@@ -34,7 +34,8 @@ The probes were read-only and ran no experiments.
 
 Subagent id: `019f4248-7a1c-73f0-ac0e-3173081d2f50`.
 
-Prompt shape: `Fresh-Agent Workflow Probe` from `../prompt-templates.md`, with
+Prompt shape: `Fresh-Agent Workflow Probe` from
+`bb0e538e:experiments/sys-datascience/coordination/prompt-templates.md`, with
 the controlled workspace above.
 
 Observed read:
@@ -49,11 +50,11 @@ Observed read:
 
 Material weaknesses found:
 
-- Some relative paths in `../autonomous-parent-loop.md` were misleading from
-  the coordination folder.
+- Some relative paths in the checkpoint's `autonomous-parent-loop.md` were
+  misleading from the coordination folder.
 - The first 30 minutes of parent behavior were underspecified.
-- Stop-state vocabulary differed between `../autonomous-parent-loop.md` and
-  `../../agent-memory-and-expansion-plan.md`.
+- Stop-state vocabulary differed between the checkpoint's parent-loop and
+  agent-memory files.
 - Workflow-test preservation had no explicit storage location.
 - Minimal topic-read requirements for the current milestone were not explicit.
 
@@ -62,7 +63,8 @@ Material weaknesses found:
 Subagent id: `019f4248-931d-7182-9963-d86bb1f448e5`.
 
 Prompt shape: `Adversarial Workflow Bypass Review` from
-`../prompt-templates.md`, with the controlled workspace above.
+`bb0e538e:experiments/sys-datascience/coordination/prompt-templates.md`, with
+the controlled workspace above.
 
 Bypass risks found:
 
@@ -160,7 +162,7 @@ Findings and edits:
 
 - Stale continuation wording remained in the autonomous parent kickoff prompt
   and in historical P5/P4 synthesis sections. Edited
-  `../autonomous-parent-loop.md`, `../prompt-templates.md`,
+  the checkpoint's `autonomous-parent-loop.md`, `prompt-templates.md`,
   `../p5-mechanism-tail-thesis-use-audit-2026-07-08.md`, and
   `../p4-generated-candidate-closure-2026-07-08.md` so current readers see the
   branch point: bounded thesis prose versus LICCA execution/review of the
@@ -176,8 +178,8 @@ Findings and edits:
   `../topics/method-surface-expansion.md`.
 - The session itself exhibited the known premature-stop failure: reporting a
   useful intermediate state without a concrete blocker or request. Added
-  `../process-learnings.md` entry "Intermediate Artifacts Are Not Turn
-  Boundaries."
+  the checkpoint's `process-learnings.md` entry "Intermediate Artifacts Are
+  Not Turn Boundaries."
 - The first high-complexity compute packet commands copied
   `produce/shared-cache.jsonl` into `--base-cache`. A local actual smoke test
   caught that this schema is wrong for `sys-datascience-produce`, which expects

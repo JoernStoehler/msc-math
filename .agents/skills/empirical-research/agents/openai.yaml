@@ -1,0 +1,4 @@
+interface:
+  display_name: "Empirical Research"
+  short_description: "Design and interpret empirical research"
+  default_prompt: "Use $empirical-research to investigate this question and load only the references needed for the live decision."
