@@ -17,6 +17,15 @@ Status: navigation cache for the active thesis surface.
 - `02-preliminaries.tex`: contains `\section{Preliminaries}`, the section
   opening, and inputs the
   `02-preliminaries-*` semantic subfiles.
+- `02-preliminaries-convex-hamiltonian-language.tex`: owns support/gauge
+  Hamiltonian language and the general contact-normalized nonsmooth
+  characteristic used by Clarke and the polytope specialization.
+- `02-preliminaries-polytope-input-language.tex`: owns normalized halfspaces,
+  polarity, boundedness, irredundancy, and labelled input language shared by
+  later finite methods.
+- `02-preliminaries-lagrangian-products.tex`: owns only the geometric
+  Lagrangian-product definition; product-specific facet enumeration belongs
+  with its finite consumer.
 - `preliminaries-content.md`: section-local preliminaries content notes.
 - `theory-authoring-map.md`: cross-chapter reader-question, dependency, source,
   and explanatory-ownership map for the preliminaries, generalized Reeb
@@ -36,6 +45,9 @@ Status: navigation cache for the active thesis surface.
   quadratic-program content notes.
 - `05-flow-graph-algorithm-ch2021.tex`: CH2021 flow-graph algorithm thesis
   surface.
+- `05-flow-graph-ch2021-background-comparison.tex`: CH2021 Type 1/2/3,
+  smoothing, and capacity background together with the boundary between the
+  published flow graph and the project's exact simple-word algorithm.
 - `flow-graph-algorithm-ch2021-content.md`: section-local content companion
   for the flow-graph algorithm section. Not source truth; use
   `crates/symplectic/src/algorithms/flow_graph/README.md` before relying on

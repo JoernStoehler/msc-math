@@ -315,22 +315,7 @@ This is chamber-relative genericity for ordered normalized irredundant
 presentations.  It is not the conjectural CH2021 claim that generic polytopes
 have no Type~2 orbit below an action bound.
 
-\subsection{Relation to CH2021}
-\label{subsec:flow-graph-algorithm-ch2021-relation-to-ch2021}
-
-For a symplectic four-polytope, the flow graph in \cite{CH2021} has open
-two-faces as vertices; an edge is a Reeb passage through a facet, and graph
-periodic orbits correspond to Type~1 combinatorial Reeb orbits with the same
-action.  Their capacity formula must also account for Type~2 orbits and uses a
-rotation-derived segment bound.  In particular, an action cutoff alone does
-not bound arbitrarily long helical combinatorial words.
-
-The present algorithm instead uses closed facet-pair sections, exhaustive
-simple facet words, and the simple-minimizer theorem.  It does not implement
-the CH2021 rotation pruning or import their Type~1/Type~2/Type~3 classification
-as a correctness argument.  The shared flow-graph geometry supplies the
-construction and terminology, not a proof that this implementation computes
-the capacity.
+\input{05-flow-graph-ch2021-background-comparison}
 
 \subsection{Rational implementation and evidence}
 \label{subsec:flow-graph-algorithm-ch2021-implementation}

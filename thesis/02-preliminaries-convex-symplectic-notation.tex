@@ -70,37 +70,3 @@ object as a closed characteristic, with the parametrization fixed by
 \]
 This is the sense in which the action of a contact-normalized Reeb orbit is
 also its period.
-
-\begin{lemma}[Symplectic shoelace formula]\label{lem:preliminaries-shoelace}
-Let \(z\colon[0,T]\to\mathbb{R}^4\) be a closed piecewise affine curve. Suppose
-that \(z\) has constant velocity \(w_k\) on consecutive intervals of length
-\(\ell_k\), for \(k=1,\ldots,m\). Then
-\begin{equation}\label{eq:preliminaries-shoelace}
-  2A(z)
-  =
-  \sum_{1\leq j<k\leq m}
-    \ell_j\ell_k\,\omega_0(w_j,w_k).
-\end{equation}
-In particular, the action of a closed pure-word Reeb orbit depends only on the
-cyclic velocity word and the dwell times, not on the base point.
-\end{lemma}
-
-\begin{proof}
-Write \(t_k=\sum_{j<k}\ell_j\). On the \(k\)-th interval,
-\[
-  z(t)=z(0)+\sum_{j<k}\ell_jw_j+(t-t_k)w_k.
-\]
-The contribution of \(z(0)\) to
-\(\int_0^T\langle -J_0\dot z,z\rangle\,dt\) vanishes because \(z\) is closed,
-so \(\sum_k\ell_kw_k=0\). The self-term
-\(\langle -J_0w_k,w_k\rangle\) vanishes by skew-symmetry. Hence
-\[
-  2A(z)
-  =
-  \sum_k
-    \ell_k\left\langle -J_0w_k,\sum_{j<k}\ell_jw_j\right\rangle
-  =
-  \sum_{j<k}\ell_j\ell_k\,\omega_0(w_j,w_k),
-\]
-using \(\omega_0(u,v)=\langle J_0u,v\rangle\).
-\end{proof}

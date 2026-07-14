@@ -49,10 +49,10 @@ the preliminaries, then own:
 - the piecewise-affine action identity and the simple-minimizer proof.
 
 Keep the detailed Clarke principle in the preliminaries as general convex
-theory. This material should invoke it rather than restate it, after showing
-that the abstract nonsmooth Hamiltonian inclusion becomes the convex hull of
-the pure facet directions. Move only the shoelace identity here, near its first
-substantive use in the simple-minimizer argument.
+theory. The active definition now derives the polytope subdifferential and
+shows that the abstract nonsmooth Hamiltonian inclusion becomes the convex
+hull of the pure facet directions. The shoelace identity now lives with the
+finite word data, before its use in the simple-minimizer argument.
 
 Preserve the settled proof boundary and status recorded in
 `PROJECT_COMPLETION.md`: cite dual-minimizer existence and the nonsmooth
@@ -86,30 +86,13 @@ if they were part of the same proof.
   positive dwell times; the legacy proof also uses a padded all-facet
   permutation with zero-duration unused facets.
 
-## Limit Of Smooth Bodies
+## CH2021 Boundary
 
-- Active draft now includes a compact CH2021 background subsection:
-  `subsec:generalized-reeb-orbits-polytopes-ch2021`.
-- Source: `papers/ch2021/s1_introduction_and_main_results.tex`, especially
-  the definitions of combinatorial Reeb orbits and Types 1/2/3, Theorems 1.8
-  and 1.9, Corollary 1.13, and `papers/ch2021/s2_type_1_reeb_orbits.tex`,
-  Proposition 2.2 for the Type 1 flow-graph correspondence.
-- Claim strength in active prose: CH2021 is background for four-dimensional
-  symplectic polytopes and smoothing/combinatorial limits. It is not used as a
-  replacement for the HK quadratic program and does not import our flow-graph
-  implementation into this checkpoint.
-- Proposed ownership change: move this CH2021 subsection to the flow-graph
-  story, where its narrower symplectic-polytope hypotheses and its relation to
-  the project theorem can be explained together. It is not on the dependency
-  path from generalized orbits to the Haim--Kislev formula.
-- Review risk: check theorem numbering against the compiled/published CH2021
-  version if the bibliography or source numbering changes. The current source
-  has Theorem 1.8, Theorem 1.9, Corollary 1.13, and Proposition 2.2.
-- 2026-06-20 source-paper comparison fixed three CH2021 summary hazards in
-  active prose: Theorem 1.9 needs a sequence \(\varepsilon_i\to0\), Theorem 1.8
-  gives eventual equality of rotation/CZ rather than mere convergence, and the
-  Corollary 1.13 rotation bound applies to Type 1 orbits only; Type 2 has no
-  defined combinatorial rotation number in CH2021.
+CH2021's Type 1/2/3 and smoothing material now lives in
+`05-flow-graph-ch2021-background-comparison.tex`. It is not on the dependency
+path from generalized characteristics and simple minimizers to the
+Haim--Kislev formula. The source and statement hazards remain owned by the
+flow-graph companion.
 
 ## Simple Minimizers
 

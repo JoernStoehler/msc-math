@@ -10,7 +10,20 @@ that this \(H\)-representation is irredundant, so the facet corresponding to
 \[
   F_i=\{x\in K:\langle a_i,x\rangle=1\}.
 \]
-In this normalization the contact-normalized Reeb direction on \(F_i\) is
+The normalized halfspace description gives
+\[
+  g_K(x)=\max_{1\leq i\leq F}\langle a_i,x\rangle.
+\]
+If \(x\in\partial K\), let
+\(I(x)=\{i:x\in F_i\}\) be its active facets.  The subdifferential rules for a
+finite maximum and for the square on the level set \(g_K=1\) give
+\begin{equation}\label{eq:generalized-reeb-polytope-subdifferential}
+  \partial H_K(x)
+  =2\operatorname{conv}\{a_i:i\in I(x)\}.
+\end{equation}
+Thus Definition~\ref{def:preliminaries-generalized-characteristic} becomes a
+finite differential inclusion.  In this normalization the pure
+contact-normalized Reeb direction on \(F_i\) is
 \begin{equation}\label{eq:generalized-reeb-facet-vector}
   R_i=2J_0a_i.
 \end{equation}
@@ -23,19 +36,18 @@ Indeed \(R_i\) is tangent to \(F_i\), because
   =1.
 \]
 
-A \emph{generalized Reeb orbit} on \(K\) is a curve
-\(\gamma\in W^{1,2}([0,T],\mathbb{R}^4)\) with \(T>0\),
-\(\gamma(0)=\gamma(T)\), image contained in \(\partial K\), and
+A \emph{generalized Reeb orbit} on \(K\) is a contact-normalized generalized
+characteristic in the sense of
+Definition~\ref{def:preliminaries-generalized-characteristic}.  By
+\eqref{eq:generalized-reeb-polytope-subdifferential}, this means precisely that
+\(\gamma\in W^{1,2}([0,T],\mathbb{R}^4)\) is closed, has image in
+\(\partial K\), and satisfies
 \begin{equation}\label{eq:generalized-reeb-inclusion}
   \dot{\gamma}(t)
   \in \operatorname{conv}\{R_i:\gamma(t)\in F_i\}
   \quad\text{for a.e. }t\in[0,T].
 \end{equation}
-This is the polytope form of the Hamiltonian inclusion
-\(-J_0\dot{\gamma}\in\partial g_K^2(\gamma)\), translated into the
-contact-normalized Reeb directions. Since every \(R_i\) in the active convex
-hull satisfies \(\lambda_0(R_i)=1\) at \(\gamma(t)\), a generalized Reeb orbit
-has
+The general normalization already shows that such an orbit has
 \[
   A(\gamma)=T.
 \]
@@ -48,4 +60,3 @@ facet direction occurs in one connected time interval, possibly not at all.
 Thus a simple orbit uses pure facet directions rather than nontrivial convex
 combinations, and it does not return to the same facet direction in separated
 time intervals.
-

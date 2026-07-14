@@ -44,9 +44,12 @@ later proofs depend on their exact signs, factors, and quantifiers.
 - Coordinate/action conventions and smooth Reeb normalization:
   `02-preliminaries-convex-symplectic-notation.tex`, with
   `thesis/legacy/basic-definitions.tex` only as fallible explanatory source.
-- Polytope input language: the conceptual parts of
-  `02-preliminaries-polytope-representations-finite-geometry.tex`, standard
-  convex duality, and the accepted boundedness material in
+- General convex Hamiltonian language and generalized characteristics:
+  `02-preliminaries-convex-hamiltonian-language.tex`, with the Clarke passage
+  owning the dual correspondence rather than the definition of the primal
+  object.
+- Polytope input language: `02-preliminaries-polytope-input-language.tex`,
+  standard convex duality, and the accepted boundedness material in
   `formal/random-polytope-boundedness.tex` where needed.
 - Capacity and systolic ratio: `02-preliminaries-ehz-capacity.tex`, with final
   citation placement checked against authoritative capacity sources and the
@@ -54,15 +57,16 @@ later proofs depend on their exact signs, factors, and quantifiers.
 - Clarke duality: retain `02-preliminaries-clarke-dual-action-principle.tex`.
   `PROJECT_COMPLETION.md` owns its settled proof boundary and review status;
   AAO2014 and HK2017 own the external analytic inputs and correspondence.
-- Lagrangian products: the active definition, HKO2024 for the central example,
-  and the later QP/polygon owners for specialized enumeration or symmetry.
+- Lagrangian products: `02-preliminaries-lagrangian-products.tex`, HKO2024 for
+  the central example, and the later QP/polygon owners for specialized
+  enumeration or symmetry.
 
 ## Material With A Later Owner
 
 Move rather than delete material whose reader purpose is narrow:
 
-- The symplectic shoelace identity moves to the generalized-orbit proof spine
-  near its first substantive use.
+- The symplectic shoelace identity now lives with finite generalized-orbit word
+  data near its first substantive use.
 - Generalized facet directions, words, dwell times, closure, base-point
   recovery, and simple minimizers remain with generalized orbits.
 - Exact vertex enumeration, incidence extraction/rules, boundedness kernels,
@@ -70,8 +74,8 @@ Move rather than delete material whose reader purpose is narrow:
   algorithms or results that consume them.
 - Systolic continuity and product-volume constancy move to the limiting or
   polygon arguments that use them unless another common use emerges.
-- The unused symplectic-product capacity formula should be cut unless a
-  retained reader-facing argument creates a use.
+- The unused symplectic-product capacity formula has been cut. Recover it from
+  Git only if a later reader-facing argument creates a use.
 
 The three recovered legacy candidates are dispositioned in
 `theory-authoring-map.md`: retain compact orbit existence, use the longer
@@ -84,15 +88,15 @@ contract, a general face-lattice statement, or no publication claim at all.
 
 ## Writing And Review Boundary
 
-This companion and `theory-authoring-map.md` prepare an author; they do not yet
-authorize mechanical movement of TeX. Before drafting, test the proposed
-reader-state boundary against the introduction and the opening of generalized
-orbits. Repair Clarke's current forward reference by introducing the general
-nonsmooth characteristic/Hamiltonian-inclusion notion before the dual theorem;
-the later generalized-Reeb material then specializes it to polytope facets.
-After moving material, review the full transition and rebuild the PDF;
-the current local coherence of each source file is not evidence that the new
-cross-file reading path works.
+The active TeX now introduces the general nonsmooth
+characteristic/Hamiltonian-inclusion notion before Clarke and specializes it to
+polytope facets in the generalized-Reeb material. The mixed finite-geometry
+source has been replaced by semantic convex-Hamiltonian, polytope-input, and
+Lagrangian-product units; consumer-specific enumeration, incidence, chart, and
+volume material is no longer part of the preliminary reading burden. This
+pilot has passed a clean build and local rendered review. Its remaining gate is
+integrated mathematical and reader review, especially across the Clarke proof
+and the simple-minimizer argument.
 
 After the active Clarke passage has passed Jörn's integrated review and all
 useful source decisions have been absorbed, delete

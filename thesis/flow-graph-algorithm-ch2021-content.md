@@ -30,9 +30,12 @@ not use the CH2021 Type 1/2/3 capacity theorem as a black box.
   idealized exact-search correctness theorem.
 - `formal/flow-graph-ch2021-comparison.tex`: exact boundary between the
   project theorem and CH2021.
+- `thesis/05-flow-graph-ch2021-background-comparison.tex`: active
+  reader-facing account of CH2021's Type 1/2/3 model, smoothing results, and
+  its relation to the project algorithm.
 - `thesis/03-generalized-reeb-orbits-simple-minimizers.tex`: the
   simple-minimizer theorem used for completeness.
-- `papers/CH2021/`: source cache for the cited flow-graph terminology and
+- `papers/ch2021/`: source cache for the cited flow-graph terminology and
   comparison. Check published numbering before hardcoding any numbered
   reference.
 
@@ -45,6 +48,12 @@ facet presentation. Its regularity hypotheses are stated in the thesis.
 The genericity proposition is chamber-relative genericity of presentations.
 It is not the CH2021 conjecture that generic polytopes have no Type 2 orbit
 below a prescribed action bound.
+
+The active CH2021 comparison preserves three source qualifications: Theorem
+1.9 uses a sequence \(\varepsilon_i\to0\); Theorem 1.8 gives eventual equality
+of rotation and Conley--Zehnder data rather than only convergence; and the
+rotation bound in Corollary 1.13 applies to Type 1 orbits, while CH2021 does
+not define a combinatorial rotation number for Type 2.
 
 The Rust exact implementation uses rational inputs and caller-supplied
 incidence and symplectic-sign matrices. Tests provide implementation

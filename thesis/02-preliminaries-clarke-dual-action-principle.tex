@@ -221,23 +221,24 @@ preserved because
 \end{proof}
 
 \begin{theorem}[Clarke dual action principle in free-period form]\label{thm:preliminaries-clarke-dual-action}
-For a smooth convex body \(K\), and for polytopes after interpreting closed
-characteristics as generalized Reeb orbits in the sense of
-Section~\ref{sec:generalized-reeb-orbits-polytopes}, the primal minimum and the
-dual minimum \eqref{eq:preliminaries-dual-problem} agree:
+For a smooth convex body \(K\), and for a polytope with closed characteristics
+understood in the generalized sense of
+Definition~\ref{def:preliminaries-generalized-characteristic}, the primal
+minimum and the dual minimum \eqref{eq:preliminaries-dual-problem} agree:
 \[
   c_{\mathrm{EHZ}}(K)
   = \min_\gamma A(\gamma)
   = \min_z I_K(z).
 \]
-More precisely, every contact-normalized closed characteristic is weak dual
-critical, and every weak dual critical curve has a translate/rescale in the
-sense of Lemma~\ref{lem:preliminaries-dual-symmetry} that is a
-contact-normalized closed characteristic.
+More precisely, every contact-normalized generalized characteristic is weak
+dual critical, and every weak dual critical curve has a translate/rescale in
+the sense of Lemma~\ref{lem:preliminaries-dual-symmetry} that is a
+contact-normalized generalized characteristic.
 \end{theorem}
 
 \begin{proof}
-Let \(\gamma\) be a contact-normalized closed characteristic of period \(T\).
+Let \(\gamma\) be a contact-normalized generalized characteristic of period
+\(T\).
 Then \(g_K^2(\gamma)=1\),
 \(-J_0\dot{\gamma}\in\partial g_K^2(\gamma)\), and \(A(\gamma)=T\). By
 Lemma~\ref{lem:preliminaries-fenchel-duality},
@@ -297,8 +298,8 @@ Then \(g_K(\gamma)=1\). Using the \(2\)-homogeneity of \(g_K^2\),
   =-\frac{1}{c}J_0\dot{z}(t/\nu)
   \in \partial g_K^2(\gamma(t)).
 \]
-Thus \(\gamma\) is a contact-normalized closed characteristic. A direct action
-computation gives
+Thus \(\gamma\) is a contact-normalized generalized characteristic. A direct
+action computation gives
 \[
   A(\gamma)=\frac{\nu^2}{c^2}A(z)=\frac{\nu^2}{c^2}T.
 \]
@@ -309,7 +310,7 @@ Since \(\gamma\) is contact-normalized, \(A(\gamma)=\nu T\). Hence
 \]
 so \(\gamma\) lies in the translate/rescale family of \(z\).
 
-It remains to compare the values. For any contact-normalized closed
+It remains to compare the values. For any contact-normalized generalized
 characteristic \(\gamma\), Fenchel equality gives
 \[
   g_K^2(\gamma)+\frac{1}{4}h_K^2(-J_0\dot{\gamma})
@@ -322,9 +323,9 @@ After integration,
 Thus \(I_K(\gamma)=T=A(\gamma)\). The value \(I_K\) is constant on the
 translate/rescale family by Lemma~\ref{lem:preliminaries-dual-symmetry}.
 Conversely, the argument above sends every weak dual critical curve to a
-contact-normalized closed characteristic in its translate/rescale family.
-Therefore the infima over contact-normalized closed characteristics and over
-weak dual critical curves agree. The nonsmooth existence part of Clarke's
+contact-normalized generalized characteristic in its translate/rescale family.
+Therefore the infima over contact-normalized generalized characteristics and
+over weak dual critical curves agree. The nonsmooth existence part of Clarke's
 principle gives a minimizer of the dual problem, and
 Lemma~\ref{lem:preliminaries-dual-euler-lagrange} shows that such a minimizer
 is weak dual critical. Hence the dual minimum is attained among the curves just

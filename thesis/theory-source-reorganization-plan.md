@@ -134,6 +134,13 @@ The relevant current source owners to inspect at that point include
 
 ## Implementation Order And Gates
 
+Status of this sequence: the convex-Hamiltonian seam, mixed preliminary source
+split, shoelace relocation, removal of the unused symplectic-product
+digression, and CH2021 move to the flow-graph comparison are implemented in the
+active source. They have passed a clean build and local rendered inspection
+but not Jörn's integrated review. The remaining numbered items continue to
+describe the intended order.
+
 1. Establish the convex-Hamiltonian seam before Clarke, then read Clarke and
    the generalized-orbit opening continuously. This is the first pilot because
    it tests the hardest conceptual dependency.
