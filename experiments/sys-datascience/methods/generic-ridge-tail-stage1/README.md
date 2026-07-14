@@ -77,6 +77,14 @@ cargo run --release --manifest-path experiments/sys-datascience/methods/generic-
 The smoke inputs are LFS files and must be hydrated before the first command.
 Do not hand-edit generated JSON or JSONL.
 
+The committed `full-validation.json` is historical output from original line
+commit `4f7adddec513f4abc95dcc905d1299611ff28f28`. Its absolute
+`source_hashes.path` strings identify the production worktree used at the time;
+they are historical aliases, not checkout requirements. The validation code
+resolves the frozen commit and its source closure through Git objects. The
+ridge-tail integration deliberately retains that original history so the
+closure remains available from a clean checkout of merged Main.
+
 ## Artifacts and use boundary
 
 - `artifacts/smoke-summary.json`: numerical gate and frozen retained-table

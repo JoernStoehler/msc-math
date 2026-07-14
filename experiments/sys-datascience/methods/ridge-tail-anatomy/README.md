@@ -37,6 +37,10 @@ hashes, row identities, and the pre-target/evaluation boundary. Re-run the
 analysis without any external cache:
 
 ```bash
+git lfs checkout -- \
+  experiments/sys-datascience/methods/ridge-tail-anatomy/artifacts/input/generic-input.jsonl \
+  experiments/sys-datascience/methods/ridge-tail-anatomy/artifacts/input/product-5x5-input.jsonl
+
 python3 experiments/sys-datascience/methods/ridge-tail-anatomy/analyze.py \
   --input-dir experiments/sys-datascience/methods/ridge-tail-anatomy/artifacts/input \
   --out-dir /tmp/ridge-tail-anatomy-current
@@ -83,7 +87,7 @@ selected 100, post-target Spearman associations with `sys` are `-0.263`
 (weighted `kappa`). These are descriptive, selected-after-target associations,
 not mechanism or prediction evidence. The fixed within-selected evidence
 therefore changes the conclusion from “ordinary morphology versus kappa” to
-“both factors contribute to the coarse gate, while neither is yet a supported
+“both factors move with the coarse gate, while neither is yet a supported
 causal mechanism or proven interior `sys` coordinate.”
 
 For product `5x5`, the frozen two-seed arms contain 42 rho-only, 42 ridge-only,

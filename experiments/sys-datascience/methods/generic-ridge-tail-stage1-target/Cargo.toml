@@ -2,6 +2,7 @@
 name = "generic-ridge-tail-stage1-target"
 version = "0.1.0"
 edition = "2021"
+publish = false
 
 [workspace]
 

@@ -51,7 +51,7 @@ Read first:
   conditioning does not improve `sys`, so the packet stops at 10,000.
 - `ridge-tail-anatomy/`: retained-data Euclidean-area/Kähler-angle decomposition
   for the generic ridge panel and frozen product `5x5` rho/ridge/control arms.
-  Both components contribute to the coarse filter, but neither supplies a
+  Both components move with the coarse filter, but neither supplies a
   supported scalar ordering inside the favorable region.
 - `residual-exemplar-seeds/`: target-free matched-pair construction plus
   post-target model-consistent residual inspection candidates for bounded
