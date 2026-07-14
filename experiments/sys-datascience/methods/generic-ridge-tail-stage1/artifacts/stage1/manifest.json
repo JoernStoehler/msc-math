@@ -1,0 +1,71 @@
+{
+  "schema": "sys-datascience.generic-ridge-tail-stage1.manifest.v2",
+  "status": "frozen-target-free-stage-one",
+  "generator": "SysLandscapePolytopeCache::sample_random with current datascience-random-generic per-sample ChaCha8 seed derivation",
+  "seed": 20260714,
+  "facet_count": 10,
+  "height_min": 0.8,
+  "height_max": 1.2,
+  "workers": 8,
+  "proxy": "ridge_symp_area_mean_over_volume_sqrt",
+  "selection_rule": "lowest 1% by f64 ridge-area mean divided by sqrt(volume_from_incidence_f64); ascending proxy, candidate_id tie-break",
+  "production_volume_definition": "euclidean_polytopes::volume_from_incidence_f64 on exact-derived incidence; no rational-arithmetic production volume",
+  "future_sys_volume_definition": "target evaluation computes capacity and sys together; sys uses this same f64 incidence volume",
+  "baseline_rule": "100 disjoint candidates with smallest BLAKE3 hashes under generic-ridge-tail-stage1-baseline-v1 and selection id; single F=10 population is exactly bucket matched",
+  "counts": {
+    "accepted_candidates": 10000,
+    "production_rational_volume_evaluations": 0,
+    "selected": 100,
+    "baseline": 100,
+    "panel_union": 200,
+    "future_band_zero_to_point_one_percent": 10,
+    "future_band_point_one_to_one_percent": 90
+  },
+  "selection_boundary": {
+    "selected_count": 100,
+    "last_selected_candidate_id": "6864c072d37f145e42cc47eb4453bda9069c131ef15aa7216a5647bcf5bee18e",
+    "last_selected_f64_rank": 100,
+    "last_selected_f64_proxy": 0.35512886601071875,
+    "first_excluded_candidate_id": "6bab487160b7c6b87e1c6982e2b45a93994ce88ea879e62f738aac3a3dd04cb1",
+    "first_excluded_f64_rank": 101,
+    "first_excluded_f64_proxy": 0.35544104710520524,
+    "f64_proxy_gap": 0.00031218109448649667
+  },
+  "candidate_population_hash": "447bc752a968a9d37e219cc820bb433b72ec1d6379cf9b10d24230c5c65ebeea",
+  "deterministic_subset_count": 64,
+  "deterministic_subset_hash": "0d4be4428ab66140a9c3e774cc47fb308907275630006b2fe0dd1a446f6d3cda",
+  "selected_hash": "7536b8e6d12691a12878f3f17bf8ce0bcdab910697ad581459713242a310b68b",
+  "baseline_hash": "69ec2feb35faa19c8ed9fc31b4dd4a674dac30ea63b78431f47677dcda11f763",
+  "panel_hash": "af5492cea21899774b47cbb578c316972fdee8285fbd7bd61d608adb5ac3c708",
+  "smoke_contract": "one-time retained generic F=10 audit measured rational-volume versus f64 relative error, sys impact, rank agreement, and cutoff membership; production and future sys use f64 incidence volume",
+  "frozen_high_sys_threshold": 0.5949424195457518,
+  "frozen_high_sys_threshold_definition": "retained generic F=10 nearest-rank empirical 90th percentile; future exceedance is sys >= threshold",
+  "source_hashes": [
+    {
+      "path": "/workspaces/msc-math/.worktrees/ridge-tail-feasibility/experiments/sys-datascience/methods/generic-ridge-tail-stage1/Cargo.toml",
+      "blake3": "14e36399ca59b9beb5f8628090ccb391627b1301524b7020d02f94c79b0e077d"
+    },
+    {
+      "path": "/workspaces/msc-math/.worktrees/ridge-tail-feasibility/experiments/sys-datascience/methods/generic-ridge-tail-stage1/src/main.rs",
+      "blake3": "dc7f71f6242fa721d65aa1b06156d31c61789c35f4c26a2e186ad487b54b8b47"
+    },
+    {
+      "path": "experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/smoke-summary.json",
+      "blake3": "01c3bd5c0d63f403af0541a77155c252658a10ebcd075a7e9e26fc175fced319"
+    }
+  ],
+  "timing": {
+    "generation_and_f64_ranking_wall_ms": 1487347.57678,
+    "panel_geometry_wall_ms": 19029.796592,
+    "total_wall_ms": 1506497.738284,
+    "process_user_cpu_seconds": 7892.008919,
+    "process_system_cpu_seconds": 17.237193,
+    "max_rss_kib": 15360
+  },
+  "target_exposure": {
+    "capacity_computed_for_new_population": false,
+    "sys_computed_for_new_population": false,
+    "target_fields_present_in_stage_one_artifacts": false,
+    "statement": "The producer computed geometry, ridge features, and f64 incidence volume only. It did not read or compute capacity or sys for any new candidate; target evaluation remains the later joint capacity-plus-sys step."
+  }
+}

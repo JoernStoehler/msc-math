@@ -1,0 +1,39 @@
+{
+  "schema": "sys-datascience.generic-ridge-tail-stage1.validation.v2",
+  "valid": true,
+  "checks": {
+    "baseline_count": true,
+    "candidate_count_exactly_10000": true,
+    "deterministic_subset": true,
+    "future_bands_disjoint_and_complete": true,
+    "panel_disjoint": true,
+    "production_no_rational_volume": true,
+    "selection_count": true,
+    "selection_matches_panel": true,
+    "selection_proxy_ordered": true,
+    "selection_rank_contiguous": true,
+    "target_field_tokens_absent": true,
+    "target_flags_false": true
+  },
+  "artifact_hashes": [
+    {
+      "path": "experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/stage1/manifest.json",
+      "blake3": "d73f1cccb16d1b27698056e17f4074a635c3e3e0e27aba0b10345582a95d0333"
+    },
+    {
+      "path": "experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/stage1/selection.jsonl",
+      "blake3": "3c6c475ecd77a2138e6281670126e149f0696bf95df79b7349833b0bac0ebd13"
+    },
+    {
+      "path": "experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/stage1/panel-geometries.jsonl",
+      "blake3": "44379770363800c8cec0bcd946ef203888de448cf7838128699d2ea5be7b3900"
+    }
+  ],
+  "artifact_bytes": {
+    "manifest.json": 4056,
+    "panel-geometries.jsonl": 3303896,
+    "selection.jsonl": 35449
+  },
+  "deterministic_subset_hash": "0d4be4428ab66140a9c3e774cc47fb308907275630006b2fe0dd1a446f6d3cda",
+  "target_field_tokens_absent": true
+}
