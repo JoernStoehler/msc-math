@@ -11,12 +11,12 @@ Validated observations:
 * Invalidity-only: 31 invalid attempts,
   762 accepted decreases,
   5 budget stops, median best gain
-  0.486187.
+  0.46211.
 * Monotone backtracking: 81 invalid
   attempts, 1311 rejected
   non-increases, 0 accepted
   decreases, 19 stops, median
-  best gain 0.372121.
+  best gain 0.370154.
 * The maximin panel covers two starts and 15 requested updates with a
   30 target-evaluation cost. Its 1e-3 near-active
   window is a branch-selection window, not an acceptance or stopping
