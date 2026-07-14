@@ -1,0 +1,31 @@
+{
+  "command": [
+    "target/release/dev-gradient-ascent-literal-naive-gradient",
+    "--polytope-table",
+    "experiments/dev-sys-prediction/facet-scale-baseline-error/polytope-panel.jsonl",
+    "--out-dir",
+    "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts",
+    "--etas",
+    "1e-5,1e-4,1e-3,1e-2,1e-1,1",
+    "--updates",
+    "100"
+  ],
+  "source_repo_head": "1f60144d165267a1fcc01749577058f2e193384f",
+  "source_worktree_diff_blake3": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+  "implementation_path": "/workspaces/msc-math/.worktrees/optimizer-first-wave/experiments/dev-gradient-ascent/literal-naive-gradient/main.rs",
+  "implementation_blake3": "c57cc98a7a20ad3a5d7648d4d9134f5c71379bd3918eb7334d22a761f76fa886",
+  "input_path": "experiments/dev-sys-prediction/facet-scale-baseline-error/polytope-panel.jsonl",
+  "input_blake3": "ccf1a5544bdea7e10dca340e948244fe820686cfc04da75e4987f8ac67aaaac0",
+  "poly_id": "3daddfde522cb04777d651814d7f88a31f6ec20c1b7ac8fc960efc3e4534104e",
+  "etas": [
+    0.00001,
+    0.0001,
+    0.001,
+    0.01,
+    0.1,
+    1.0
+  ],
+  "updates": 100,
+  "update_rule": "da = eta * grad_a sys_sigma(a); a = a + da",
+  "state_validity_rule": "Stop only when constructing the updated exact-state polytope or its exact full sys/branch gradient fails; no projection, gauge normalization, acceptance, or line search"
+}
