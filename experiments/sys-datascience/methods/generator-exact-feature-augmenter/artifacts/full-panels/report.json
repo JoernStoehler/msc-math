@@ -12158,10 +12158,30 @@
   },
   "metadata_behavioral_audit": true,
   "input": {
-    "path": "/tmp/generator-exact-feature-retained/final-features/features.jsonl",
+    "path": "experiments/sys-datascience/methods/generator-exact-feature-augmenter/artifacts/full-panels/features.jsonl",
     "sha256": "e7cc585b2e774bc6ee5dcd658e49b02cefd7cdd914fb1ffaba759ccb64d6b624",
     "rows": 808,
-    "augment_report": "/tmp/generator-exact-feature-retained/final-features/augment-report.json",
+    "augment_report": "experiments/sys-datascience/methods/generator-exact-feature-augmenter/artifacts/full-panels/augment-report.json",
+    "augment_report_sha256": "9bb3f7c9ccb1d1c57df4bf9eefd16cff030aca70375c4cc3381946044a267d3c",
+    "augment_report_repo_relative_path": "experiments/sys-datascience/methods/generator-exact-feature-augmenter/artifacts/full-panels/augment-report.json",
+    "producer_revision": "875c5f6f8aff45013140e109d016ee34a61ff7cd",
+    "retained_inputs": {
+      "orientation": {
+        "path": "experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl",
+        "rows": 40,
+        "sha256": "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367"
+      },
+      "tangential-source": {
+        "path": "experiments/sys-datascience/methods/generator-tangential-matchability/artifacts/full-64/smoke-rows.jsonl",
+        "rows": 768,
+        "sha256": "0752d44113fe2b1e6bbf0c5af56e1e74e594d7986d48b50a065ed1966bced5ab"
+      },
+      "tangential-replay": {
+        "path": "experiments/sys-datascience/methods/generator-exact-feature-augmenter/artifacts/full-panels/tangential-replay/smoke-rows.jsonl",
+        "rows": 768,
+        "sha256": "0dc72ef98fb860ad838026e5354c36f254985aca9b90a060aee2f58f231832d2"
+      }
+    },
     "design": "retained",
     "provenance_verified": true
   }
