@@ -93,6 +93,9 @@ length, prior review, or writing cost.
 
 - Read `references/coordinate-writing-agents.md` before distributing
   substantial thesis preparation, drafting, or review work.
+- Read `references/delegate-chapter-ownership.md` when a new autonomous
+  session may own a whole chapter or thesis slice through preparation,
+  production, review, and return.
 - Read `references/allocate-model-effort.md` when choosing model or reasoning
   effort for thesis-writing work.
 - Read `references/learn-from-writing-trials.md` when a writing trial may
