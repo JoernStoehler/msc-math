@@ -1150,6 +1150,9 @@ fn packet_passes(rows: &[SmokeRow], expected_row_count: usize) -> bool {
 }
 
 fn run(args: Args) -> Result<bool, String> {
+    // Capture repository state before creating or overwriting the packet's own
+    // outputs, so generated evidence cannot mark its producing source dirty.
+    let (source_revision, source_dirty) = source_provenance();
     create_dir_all(&args.out_dir).map_err(|error| format!("create out-dir: {error}"))?;
     let rows_path = args.out_dir.join("rows.jsonl");
     let report_path = args.out_dir.join("report.json");
@@ -1243,7 +1246,6 @@ fn run(args: Args) -> Result<bool, String> {
         .count();
     let expected_row_count = args.buckets.len() * args.rows_per_bucket * Variant::ALL.len();
     let all_requested_rows_passed = packet_passes(&rows, expected_row_count);
-    let (source_revision, source_dirty) = source_provenance();
     let report = Report {
         schema: SCHEMA_REPORT,
         command: std::env::args().collect::<Vec<_>>().join(" "),
