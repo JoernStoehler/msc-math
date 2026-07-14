@@ -82,6 +82,10 @@ path = "../sys-datascience/methods/alternative-generator-smoke/main.rs"
 name = "sys-datascience-generator-zoo-smoke"
 path = "../sys-datascience/methods/generator-zoo-smoke/main.rs"
 
+[[bin]]
+name = "sys-datascience-generator-orientation-smoke"
+path = "../sys-datascience/methods/generator-orientation-smoke/main.rs"
+
 [lints]
 workspace = true
 
