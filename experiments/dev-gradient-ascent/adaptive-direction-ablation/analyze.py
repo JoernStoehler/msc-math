@@ -2,12 +2,17 @@
 import json, pathlib, sys
 
 root = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else "artifacts")
+generic_mode = len(sys.argv) > 2 and sys.argv[2] == "generic"
 prov = json.loads((root / "run-provenance.json").read_text())
 expected_policies = {"normalized_branch_gradient", "near_active_zero_gap_maximin", "candidate_window_gap_aware_maximin"}
 expected_radii = {float(x) for x in prov["initial_radii"]}
 assert abs(prov["candidate_window_relative_gap"] - 1.0e-2) < 1e-15
 assert prov["requested_target_budget"] == 6
-manifest = json.loads((root.parent / "inputs" / "fixture-manifest.json").read_text())
+manifest = json.loads((root.parent.parent / "inputs" / "generic-start-manifest.json").read_text()) if generic_mode else json.loads((root.parent / "inputs" / "fixture-manifest.json").read_text())
+if generic_mode:
+    assert prov["source_input"].endswith("experiments/sys-datascience/produce/random.jsonl")
+    screening = json.loads((root.parent / "screening" / "screening-report.json").read_text())
+    assert {x["id"] for x in manifest["fixtures"]} == set(screening["starts"])
 expected_starts = {x["id"] for x in manifest["fixtures"]}
 files = sorted((root / "trajectories").glob("*/*/*.jsonl"))
 assert files, "no trajectory files"
@@ -72,9 +77,6 @@ observed = []
 for (p, s, radius), rs in sorted(by_cell.items()):
     observed.append({"policy": p, "start": s, "radius": radius, "proposals": len(rs)-1, "accepted": sum(x["accepted"] for x in rs[1:]), "initial_sys": rs[0]["target_sys"], "best_sys": rs[-1]["best_sys"], "best_gain": rs[-1]["best_sys"] - rs[0]["target_sys"], "mean_abs_prediction_error": sum(abs(x["predicted_observed_error"]) for x in rs[1:] if x["predicted_observed_error"] is not None) / max(1, sum(x["predicted_observed_error"] is not None for x in rs[1:]))})
 summary = {"trajectory_files": len(files), "proposal_rows": len(all_rows), "total_target_evaluations": sum(len(rs)-1 for rs in by_cell.values()), "multi_branch_rows": len(multi), "multi_branch_fraction": len(multi)/len(all_rows), "distinct_direction_rows": distinct_cells, "expected_policy_count": len(expected_policies), "expected_start_count": len(expected_starts), "expected_radius_count": len(expected_radii), "observed": observed}
-prov["policies"] = sorted(expected_policies)
-prov["command"] = ["cargo", "run", "--release", "-p", "exp-dev-gradient-ascent", "--bin", "dev-gradient-ascent-adaptive-direction-ablation", "--", "--budget", "6", "--facet-count", "0", "--start-count", "2", "--polytope-table", "experiments/dev-gradient-ascent/adaptive-direction-ablation/inputs/selected-fixtures.jsonl", "--out-dir", "experiments/dev-gradient-ascent/adaptive-direction-ablation/artifacts", "(three policy shards)"]
-(root / "run-provenance.json").write_text(json.dumps(prov, indent=2) + "\n")
 (root / "analysis.json").write_text(json.dumps(summary, indent=2) + "\n")
 (root / "summary.json").write_text(json.dumps({"provenance": "run-provenance.json", "trajectories": observed, "total_target_evaluations": summary["total_target_evaluations"]}, indent=2) + "\n")
 fig = root / "figures"; fig.mkdir(exist_ok=True)
@@ -110,4 +112,37 @@ discussion = (f"# Adaptive direction ablation\n\nThe retained panel has {len(exp
     "The mechanism fixture is f6be75…f1b8; the equality/easy control is 43d243…dec8cc. First-step candidate-minus-near effects: " + "; ".join(effects) + f". Target branch visibility misses are {near_misses}/{len(target_rows)} near-active and {candidate_misses}/{len(target_rows)} candidate-window. Mean absolute prediction errors by policy are " + ", ".join(f"{p}={mean_errors[p]:.6g}" for p in sorted(expected_policies)) + ".\n\n" +
     "Every proposal is a strict exact full-sys evaluation; six proposals per cell identify mechanism differences but cannot estimate endpoint behavior or prevalence. The evidence supports retaining normalized branch-gradient ascent as the observed search baseline and treating maximin models as diagnostic candidates requiring a larger mechanism-stratified follow-up.\n")
 (root / "DISCUSSION.md").write_text(discussion)
+if generic_mode:
+    gains = {}
+    for o in observed: gains.setdefault((o["start"], o["radius"]), {})[o["policy"]] = o["best_gain"]
+    wins = {p: 0 for p in expected_policies}; ties = 0
+    for vals in gains.values():
+        m = max(vals.values()); top = [p for p,v in vals.items() if abs(v-m) <= 1e-12]
+        if len(top) == 1: wins[top[0]] += 1
+        else: ties += 1
+    start_best = {}
+    for (s, rad), vals in gains.items():
+        for p,v in vals.items(): start_best.setdefault(s, {}).setdefault(p, []).append(v)
+    unique_multi = len({(r["start_id"], r["initial_radius"], r["iteration"]) for r in all_rows if r["genuinely_multi_branch"]})
+    generic_disc = (f"# Generic six-start adaptive direction panel\n\n"
+        f"The unselected canonical panel has {len(expected_starts)} deterministic starts, three policies, three radii, and {len(all_rows)} exact proposals (six proposals per cell). This is descriptive paired evidence, not six stochastic replicates.\n\n"
+        f"Best-gain wins over the 18 start×radius cells: " + ", ".join(f"{p}={wins[p]}" for p in sorted(wins)) + f"; ties={ties}. After allowing all three radii, per-start best policies are: " + "; ".join(f"{s}: " + ", ".join(f"{p}={max(v):.9g}" for p,v in sorted(ps.items())) for s,ps in sorted(start_best.items())) + ".\n\n"
+        f"Nominal multi-branch rows are {len(multi)}/{len(all_rows)} ({len(multi)/len(all_rows):.1%}), corresponding to {unique_multi} unique start×radius×iteration cells after removing policy triplication. First-step directions differ in {distinct_cells}/{len(first)} policy rows ({distinct_cells//3}/{len(first)//3} unique start×radius cells). Target-window visibility, prediction errors, and all state-transition/acceptance identities were validated from raw rows.\n\n"
+        "These six starts do not establish population prevalence, convergence, stationarity, or endpoint quality. They are sufficient to decide whether the candidate-window treatment merits a stationarity-gated follow-up.\n")
+    (root / "DISCUSSION.md").write_text(generic_disc)
+    # Readable paired display: one small panel per start, with shared policy colors.
+    W, H = 1200, 900; pw, ph = 360, 260
+    grid = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}"><rect width="100%" height="100%" fill="white"/><text x="30" y="25" font-size="18">Generic six-start best gain from initial sys (n=6 starts; 6 proposals/cell)</text>']
+    for j, s in enumerate(sorted(expected_starts)):
+        ox, oy = 30 + (j % 3) * 390, 55 + (j // 3) * 390
+        local = [r for r in all_rows if r["start_id"] == s]
+        init = min(by_cell[(p,s,rad)][0]["target_sys"] for p in expected_policies for rad in expected_radii)
+        ymax = max(1e-9, max(r["best_sys"] - init for r in local))
+        grid.append(f'<rect x="{ox}" y="{oy}" width="{pw}" height="{ph}" fill="none" stroke="#777"/><text x="{ox+5}" y="{oy+18}">{s}</text><text x="{ox+135}" y="{oy+ph+22}">evaluations (0–6)</text>')
+        for p in sorted(expected_policies):
+            for rad in sorted(expected_radii):
+                rs = by_cell[(p,s,rad)]; pts=" ".join(f'{ox+35+285*k/6:.1f},{oy+ph-35-180*(r["best_sys"]-init)/ymax:.1f}' for k,r in enumerate(rs[1:],1))
+                grid.append(f'<polyline fill="none" stroke="{colors[p]}" points="{pts}"/>')
+        grid.extend([f'<text x="{ox+5}" y="{oy+ph+5}">0</text>', f'<text x="{ox+145}" y="{oy+ph+5}">3</text>', f'<text x="{ox+320}" y="{oy+ph+5}">6</text>'])
+    grid.extend([f'<text x="850" y="{55+22*i}" fill="{colors[p]}">{p}</text>' for i,p in enumerate(sorted(expected_policies))]); (root / "figures" / "generic-gain-grid.svg").write_text("".join(grid)+"</svg>")
 print(json.dumps(summary, indent=2))

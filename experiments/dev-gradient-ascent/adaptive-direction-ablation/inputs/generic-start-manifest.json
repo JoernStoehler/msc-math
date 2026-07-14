@@ -1,0 +1,34 @@
+{
+  "fixtures": [
+    {
+      "id": "random_F6_s0_0",
+      "role": "generic_screen_start",
+      "facet_count": 6
+    },
+    {
+      "id": "random_F6_s0_2",
+      "role": "generic_screen_start",
+      "facet_count": 6
+    },
+    {
+      "id": "random_F6_s0_3",
+      "role": "generic_screen_start",
+      "facet_count": 6
+    },
+    {
+      "id": "random_F6_s0_4",
+      "role": "generic_screen_start",
+      "facet_count": 6
+    },
+    {
+      "id": "random_F6_s0_5",
+      "role": "generic_screen_start",
+      "facet_count": 6
+    },
+    {
+      "id": "random_F6_s0_6",
+      "role": "generic_screen_start",
+      "facet_count": 6
+    }
+  ]
+}

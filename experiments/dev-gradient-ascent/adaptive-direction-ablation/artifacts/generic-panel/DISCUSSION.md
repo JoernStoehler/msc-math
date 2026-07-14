@@ -1,0 +1,9 @@
+# Generic six-start adaptive direction panel
+
+The unselected canonical panel has 6 deterministic starts, three policies, three radii, and 324 exact proposals (six proposals per cell). This is descriptive paired evidence, not six stochastic replicates.
+
+Best-gain wins over the 18 start×radius cells: candidate_window_gap_aware_maximin=1, near_active_zero_gap_maximin=0, normalized_branch_gradient=17; ties=0. After allowing all three radii, per-start best policies are: random_F6_s0_0: candidate_window_gap_aware_maximin=0.0469919638, near_active_zero_gap_maximin=0.0469919596, normalized_branch_gradient=0.0624957954; random_F6_s0_2: candidate_window_gap_aware_maximin=0.180332125, near_active_zero_gap_maximin=0.180332081, normalized_branch_gradient=0.257152638; random_F6_s0_3: candidate_window_gap_aware_maximin=0.0820354838, near_active_zero_gap_maximin=0.082035478, normalized_branch_gradient=0.133174644; random_F6_s0_4: candidate_window_gap_aware_maximin=0.0681324152, near_active_zero_gap_maximin=0.0681324149, normalized_branch_gradient=0.0875491887; random_F6_s0_5: candidate_window_gap_aware_maximin=0.106315372, near_active_zero_gap_maximin=0.106315363, normalized_branch_gradient=0.136251127; random_F6_s0_6: candidate_window_gap_aware_maximin=0.231226548, near_active_zero_gap_maximin=0.231226545, normalized_branch_gradient=0.19565996.
+
+Nominal multi-branch rows are 130/324 (40.1%), corresponding to 45 unique start×radius×iteration cells after removing policy triplication. First-step directions differ in 54/54 policy rows (18/18 unique start×radius cells). Target-window visibility, prediction errors, and all state-transition/acceptance identities were validated from raw rows.
+
+These six starts do not establish population prevalence, convergence, stationarity, or endpoint quality. They are sufficient to decide whether the candidate-window treatment merits a stationarity-gated follow-up.

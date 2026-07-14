@@ -53,3 +53,10 @@ python3 experiments/dev-gradient-ascent/adaptive-direction-ablation/analyze_scre
 
 The producer's default 100-evaluation budget is not the retained command; use
 the explicit bounded `--budget 6` above when regenerating this packet.
+
+The separate generic panel uses the same command with `--facet-count 6
+--start-count 6 --exclude-start-ids random_F6_s0_1`, source
+`experiments/sys-datascience/produce/random.jsonl`, and output directory
+`artifacts/generic-panel`; validate it with
+`python3 .../analyze.py artifacts/generic-panel generic`. Its six starts are
+the exact screening IDs recorded in `inputs/generic-start-manifest.json`.
