@@ -106,6 +106,8 @@ transfer, not presentation or narration.
   review, state the relevant current state, uncertainty, and what kind of
   answer helps. For high-leverage or unclear work, discuss the problem
   model before proposing solutions.
+- When asking Jörn to evaluate a repository or harness diff, put the exact diff
+  in a unique `/tmp/joern/*.diff`, link it, and name its base and candidate.
 - Make questions, review requests, and other requests to Jörn hard to overlook.
   Usually put them on their own line or at the end of a short list. Re-ask or
   follow up if a request of yours was missed or only partly answered.
