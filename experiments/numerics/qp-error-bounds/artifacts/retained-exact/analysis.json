@@ -18,12 +18,12 @@
         "minimizer": true,
         "window": true
       },
-      "candidate_generation_ms": 0.06112499999999999,
-      "current_minimasafe_ms": 0.0018729999999999999,
-      "retained_exact_ms": 71.658333,
-      "exact_all_reference_ms": 114.75728000000001,
-      "retained_exact_over_generation": 1172.3244662576687,
-      "exact_all_over_retained_exact": 1.6014505947270643
+      "candidate_generation_ms": 0.061846000000000005,
+      "current_minimasafe_ms": 0.001813,
+      "retained_exact_ms": 72.179039,
+      "exact_all_reference_ms": 116.02174,
+      "retained_exact_over_generation": 1167.076916858002,
+      "exact_all_over_retained_exact": 1.607415970168292
     },
     {
       "case_id": "pinned_q4_p5",
@@ -42,12 +42,12 @@
         "minimizer": false,
         "window": false
       },
-      "candidate_generation_ms": 11.318976,
-      "current_minimasafe_ms": 0.006503,
-      "retained_exact_ms": 431.471182,
-      "exact_all_reference_ms": 6691.645856,
-      "retained_exact_over_generation": 38.119277044142514,
-      "exact_all_over_retained_exact": 15.508905658501197
+      "candidate_generation_ms": 11.297879,
+      "current_minimasafe_ms": 0.006132,
+      "retained_exact_ms": 440.851722,
+      "exact_all_reference_ms": 6774.361595,
+      "retained_exact_over_generation": 39.020750886073394,
+      "exact_all_over_retained_exact": 15.366530869533499
     },
     {
       "case_id": "triangle_square_tie",
@@ -67,12 +67,12 @@
         "minimizer": true,
         "window": true
       },
-      "candidate_generation_ms": 1.4642789999999999,
-      "current_minimasafe_ms": 32.595211,
-      "retained_exact_ms": 96.889402,
-      "exact_all_reference_ms": 323.900873,
-      "retained_exact_over_generation": 66.16867550514623,
-      "exact_all_over_retained_exact": 3.342995893400188
+      "candidate_generation_ms": 1.454251,
+      "current_minimasafe_ms": 32.780705,
+      "retained_exact_ms": 99.023374,
+      "exact_all_reference_ms": 331.017799,
+      "retained_exact_over_generation": 68.09235407092724,
+      "exact_all_over_retained_exact": 3.3428248869807247
     },
     {
       "case_id": "pruning_roundoff",
@@ -91,12 +91,12 @@
         "minimizer": true,
         "window": true
       },
-      "candidate_generation_ms": 0.062808,
-      "current_minimasafe_ms": 0.001753,
-      "retained_exact_ms": 71.937107,
-      "exact_all_reference_ms": 126.03658200000001,
-      "retained_exact_over_generation": 1145.349430008916,
-      "exact_all_over_retained_exact": 1.7520385133085767
+      "candidate_generation_ms": 0.06200700000000001,
+      "current_minimasafe_ms": 0.0013319999999999999,
+      "retained_exact_ms": 72.230384,
+      "exact_all_reference_ms": 116.59236,
+      "retained_exact_over_generation": 1164.8746754398696,
+      "exact_all_over_retained_exact": 1.6141733373589706
     }
   ]
 }
