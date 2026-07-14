@@ -35,3 +35,31 @@ symplectic-form check. This smoke is semantic/plumbing evidence, not population
 evidence and not a `sys` result. Base exhaustion, map-generation rejection,
 reconstruction rejection, or any semantic failure is retained in the rows and
 report and makes the command exit nonzero after writing those artifacts.
+
+## Retained target-free panel
+
+The reviewed panel uses two independent bases in each of the `3x3`, `4x4`,
+`4x6`, and `6x6` buckets, with all five map variants:
+
+```bash
+cargo run -p exp-sys-landscape --release \
+  --bin sys-datascience-generator-orientation-smoke -- \
+  --out-dir experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket \
+  --seed 20260714 --attempts 128 --rows-per-bucket 2 \
+  --buckets 3x3,4x4,4x6,6x6
+```
+
+All eight bases and all 40 transformed rows reconstructed and passed the
+declared checks. Every labeled-incidence signature and exact volume was
+preserved within tolerance. The eight Haar `U(2)` maps have symplectic
+residual at most `1.52e-15`; rationalization changes exact omega signs at
+structural zeros as expected. The eight unconditioned Haar `SO(4)` maps have
+symplectic residual between `1.02` and `3.72`, and their omega signatures
+change while Euclidean/combinatorial checks remain fixed. Maximum relative
+volume change is `1.23e-15`.
+
+These are semantic controls and feasibility evidence. The panel does not yet
+show that orientation changes `sys`, does not estimate a population effect,
+and does not make the observed ridge association causal. Its next use is as a
+reviewed source for a small paired feature/target pilot, not as a result by
+itself.
