@@ -1,0 +1,194 @@
+{
+  "artifact_identity": {
+    "trajectory_input_count": 36,
+    "trajectory_hashes_recomputed": true,
+    "producer_hash_recomputed": true,
+    "poll_row_count": 366,
+    "state_count": 5
+  },
+  "validation": {
+    "source_target_agreement": "all four trajectory targets reproduce exactly; HKO differs from its known-capacity target by 1.33e-15",
+    "quotient": "all five states have orbit rank 15 and orthonormal/cross residuals below 2e-10",
+    "directions": "every signed basis pair is present; direction norm, orbit projection, absolute step, and delta arithmetic were recomputed",
+    "geometry": "366/366 probes valid, all listed facets defining, 0 incidence-signature changes",
+    "capacity_bounds": "all 216 generic probe minimum-action intervals collapse; 136/150 HKO intervals do not, with maximum width 3.44094",
+    "summary": "all retained radius summaries recomputed from raw poll rows"
+  },
+  "direct_findings": {
+    "negative_controls_discriminated": "2/2 controls have at least one positive quotient-basis direction at 3/3 radii",
+    "hko_control_discriminated": "HKO has no positive direction among 50/50 directions at each of 3/3 radii",
+    "unknown_global_best": "fails finite stationarity at 3/3 radii",
+    "unknown_terminal_best": "fails finite stationarity at 3/3 radii"
+  },
+  "radius_rows": [
+    {
+      "state_id": "negative_control_initial",
+      "relative_radius": 0.001,
+      "expected_direction_count": 18,
+      "improving_direction_count": 9,
+      "max_delta_sys": 0.001039173776855834,
+      "min_delta_sys": -0.0010463431859637495,
+      "max_delta_sys_per_step": 0.42801225890601513,
+      "best_basis_index": 8,
+      "best_sign": 1
+    },
+    {
+      "state_id": "negative_control_initial",
+      "relative_radius": 0.0001,
+      "expected_direction_count": 18,
+      "improving_direction_count": 9,
+      "max_delta_sys": 0.00010423810206119932,
+      "min_delta_sys": -0.00010430979346942593,
+      "max_delta_sys_per_step": 0.42933325032776687,
+      "best_basis_index": 8,
+      "best_sign": 1
+    },
+    {
+      "state_id": "negative_control_initial",
+      "relative_radius": 1e-05,
+      "expected_direction_count": 18,
+      "improving_direction_count": 9,
+      "max_delta_sys": 1.0427034419308034e-05,
+      "min_delta_sys": -1.0427751333114132e-05,
+      "max_delta_sys_per_step": 0.4294660484025999,
+      "best_basis_index": 8,
+      "best_sign": 1
+    },
+    {
+      "state_id": "negative_control_midtrajectory",
+      "relative_radius": 0.001,
+      "expected_direction_count": 18,
+      "improving_direction_count": 9,
+      "max_delta_sys": 0.0038147682342254685,
+      "min_delta_sys": -0.0038159861250269267,
+      "max_delta_sys_per_step": 1.522781582244624,
+      "best_basis_index": 1,
+      "best_sign": 1
+    },
+    {
+      "state_id": "negative_control_midtrajectory",
+      "relative_radius": 0.0001,
+      "expected_direction_count": 18,
+      "improving_direction_count": 9,
+      "max_delta_sys": 0.00038153587716671655,
+      "min_delta_sys": -0.0003815480596240095,
+      "max_delta_sys_per_step": 1.5230173133518967,
+      "best_basis_index": 1,
+      "best_sign": 1
+    },
+    {
+      "state_id": "negative_control_midtrajectory",
+      "relative_radius": 1e-05,
+      "expected_direction_count": 18,
+      "improving_direction_count": 9,
+      "max_delta_sys": 3.8154140177021345e-05,
+      "min_delta_sys": -3.815426200204364e-05,
+      "max_delta_sys_per_step": 1.5230393664988708,
+      "best_basis_index": 1,
+      "best_sign": 1
+    },
+    {
+      "state_id": "unknown_global_best_so_far",
+      "relative_radius": 0.001,
+      "expected_direction_count": 18,
+      "improving_direction_count": 5,
+      "max_delta_sys": 0.0028192413480436773,
+      "min_delta_sys": -0.0043385662109183265,
+      "max_delta_sys_per_step": 1.0178306222084859,
+      "best_basis_index": 1,
+      "best_sign": 1
+    },
+    {
+      "state_id": "unknown_global_best_so_far",
+      "relative_radius": 0.0001,
+      "expected_direction_count": 18,
+      "improving_direction_count": 9,
+      "max_delta_sys": 0.0003920079086026096,
+      "min_delta_sys": -0.0004350039169166431,
+      "max_delta_sys_per_step": 1.415266038860111,
+      "best_basis_index": 3,
+      "best_sign": 1
+    },
+    {
+      "state_id": "unknown_global_best_so_far",
+      "relative_radius": 1e-05,
+      "expected_direction_count": 18,
+      "improving_direction_count": 9,
+      "max_delta_sys": 4.351446114714275e-05,
+      "min_delta_sys": -4.351190230178492e-05,
+      "max_delta_sys_per_step": 1.571002464730349,
+      "best_basis_index": 3,
+      "best_sign": 1
+    },
+    {
+      "state_id": "unknown_terminal_best_so_far",
+      "relative_radius": 0.001,
+      "expected_direction_count": 18,
+      "improving_direction_count": 8,
+      "max_delta_sys": 0.0021967021221281913,
+      "min_delta_sys": -0.0045337552883017995,
+      "max_delta_sys_per_step": 0.8726623927434514,
+      "best_basis_index": 8,
+      "best_sign": 1
+    },
+    {
+      "state_id": "unknown_terminal_best_so_far",
+      "relative_radius": 0.0001,
+      "expected_direction_count": 18,
+      "improving_direction_count": 9,
+      "max_delta_sys": 0.00045138620036255794,
+      "min_delta_sys": -0.0004517487837235601,
+      "max_delta_sys_per_step": 1.7931778628143822,
+      "best_basis_index": 8,
+      "best_sign": 1
+    },
+    {
+      "state_id": "unknown_terminal_best_so_far",
+      "relative_radius": 1e-05,
+      "expected_direction_count": 18,
+      "improving_direction_count": 9,
+      "max_delta_sys": 4.515494118528807e-05,
+      "min_delta_sys": -4.515856701825527e-05,
+      "max_delta_sys_per_step": 1.793826237158056,
+      "best_basis_index": 8,
+      "best_sign": 1
+    },
+    {
+      "state_id": "positive_control_hko2024",
+      "relative_radius": 0.001,
+      "expected_direction_count": 50,
+      "improving_direction_count": 0,
+      "max_delta_sys": -0.0007440657849822063,
+      "min_delta_sys": -0.003824442924955207,
+      "max_delta_sys_per_step": -0.1903570557910744,
+      "best_basis_index": 18,
+      "best_sign": -1
+    },
+    {
+      "state_id": "positive_control_hko2024",
+      "relative_radius": 0.0001,
+      "expected_direction_count": 50,
+      "improving_direction_count": 0,
+      "max_delta_sys": -7.443116199157274e-05,
+      "min_delta_sys": -0.00038351505456613033,
+      "max_delta_sys_per_step": -0.1904199486361698,
+      "best_basis_index": 18,
+      "best_sign": -1
+    },
+    {
+      "state_id": "positive_control_hko2024",
+      "relative_radius": 1e-05,
+      "expected_direction_count": 50,
+      "improving_direction_count": 0,
+      "max_delta_sys": -7.443362123327191e-06,
+      "min_delta_sys": -3.836224312725456e-05,
+      "max_delta_sys_per_step": -0.19042624020364649,
+      "best_basis_index": 18,
+      "best_sign": -1
+    }
+  ],
+  "figure_paths": [
+    "/workspaces/msc-math/.worktrees/stationarity-endpoint/experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/figures/max-margin-by-radius.png",
+    "/workspaces/msc-math/.worktrees/stationarity-endpoint/experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/figures/directional-spread.png"
+  ]
+}

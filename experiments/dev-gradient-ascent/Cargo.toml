@@ -42,6 +42,10 @@ path = "run-trace-report/main.rs"
 name = "dev-gradient-ascent-literal-naive-gradient"
 path = "literal-naive-gradient/main.rs"
 
+[[bin]]
+name = "dev-gradient-ascent-quotient-endpoint-diagnostic"
+path = "quotient-endpoint-diagnostic/main.rs"
+
 [lints]
 workspace = true
 

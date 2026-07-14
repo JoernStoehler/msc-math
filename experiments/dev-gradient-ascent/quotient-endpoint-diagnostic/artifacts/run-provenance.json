@@ -1,0 +1,171 @@
+{
+  "command": [
+    "target/release/dev-gradient-ascent-quotient-endpoint-diagnostic",
+    "--out-dir",
+    "experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/artifacts",
+    "--threads",
+    "8"
+  ],
+  "source_repo_head": "e1fbe217ed6a6b181eb80c3bc9afe97b7052632e",
+  "required_base_commit": "e1fbe217ed6a6b181eb80c3bc9afe97b7052632e",
+  "source_worktree_diff_blake3": "e9b891455ebfec858487118c19df8ec0eec69a226456418f016899f2d6f3bdcd",
+  "implementation_path": "experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/main.rs",
+  "implementation_blake3": "dbbc3efb7de67db3704b9838a21ad7cb8cce6453a4a87d8e9443d63774672e68",
+  "input_identities": [
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_0/trajectory-eta-1.jsonl",
+      "blake3": "700e675347e5da2862e2662daedacf45e5ea479da9ef96781c7a78c2eeeec94a"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_0/trajectory-eta-1e-1.jsonl",
+      "blake3": "ee95d6c4172b744247281536133ffcc426cd0545f751b954a1168183f270a0f7"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_0/trajectory-eta-1e-2.jsonl",
+      "blake3": "1382de087cdcd4467662555e60d71e5cf2f3ac3ffad8339285de1584eec4c766"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_0/trajectory-eta-1e-3.jsonl",
+      "blake3": "37b06b6ff85adaa5a422b26d35f2009afb2c08027effab345dc052a90c206cb3"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_0/trajectory-eta-1e-4.jsonl",
+      "blake3": "90cf3cd337db9d15caeecbf2a56fab379e05b48f36754ea22e737b9bd6a503f8"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_0/trajectory-eta-1e-5.jsonl",
+      "blake3": "567bfb4be67c4f7eb2451cf3a203b7d9dabeb8e8a86356a175613b21da65b000"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_2/trajectory-eta-1.jsonl",
+      "blake3": "8b49cc9066c864e46334b4b456856ac63c2d4e912c1ee86d45bd8df35caac79f"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_2/trajectory-eta-1e-1.jsonl",
+      "blake3": "ca576d48f231dd43a0705458e4252a26d5457e796f0a20726b5424a0c9020308"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_2/trajectory-eta-1e-2.jsonl",
+      "blake3": "3b6dc32d5f9ef096eabc8333fabed501a6e7cf4174c8c55d4a94241aaa7a8186"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_2/trajectory-eta-1e-3.jsonl",
+      "blake3": "2794827b2f8ca6d9b385a317da6c116cc7613e09bb81114310b028f03fe504e2"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_2/trajectory-eta-1e-4.jsonl",
+      "blake3": "5540336a64b0b38617e7673ccd4845fc3d42bc55a68f0a2ea8707e2d1fc61e18"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_2/trajectory-eta-1e-5.jsonl",
+      "blake3": "37582f8c098b5c695cd3cf5f347b85156cb071a7e700464efa464d88bd1761f9"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_3/trajectory-eta-1.jsonl",
+      "blake3": "1f915361223ffbb569906ad90d6d747c5b575fa4b69e21b30d3a87d69ded83a4"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_3/trajectory-eta-1e-1.jsonl",
+      "blake3": "737f6705da39cf79ac6cf4d2472ebd38bf1d89514eb1cd6ff69e727061c80d69"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_3/trajectory-eta-1e-2.jsonl",
+      "blake3": "a3c15de300f56b89f360a284f5791eda3efcb5405911ec5e22aa373d44d37478"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_3/trajectory-eta-1e-3.jsonl",
+      "blake3": "06e067d9c871c8318726b6c1d277eea5ed88969dd300c1c65c077eb751c1880c"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_3/trajectory-eta-1e-4.jsonl",
+      "blake3": "49c07f88614ef67d7c709d94fbb4630d8945dc15c0dda443c96ebd2f685effc6"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_3/trajectory-eta-1e-5.jsonl",
+      "blake3": "6b500bc22d7fb39b9bef973f0a484bc28c49c78571e837b14dd5c670b769f763"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_4/trajectory-eta-1.jsonl",
+      "blake3": "4b2af139e1bb4bdf972d3f9e54cf929065c1332f2f67d6cd539603f61f8aa0f4"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_4/trajectory-eta-1e-1.jsonl",
+      "blake3": "a130aaa28f85c477820abb59fb85628303704a1c476a92296a658d7bb251dee9"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_4/trajectory-eta-1e-2.jsonl",
+      "blake3": "ccd8cb546fc6725d6435648f30fc69ab049f541e0e5a31e04f1c89ee84a8c499"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_4/trajectory-eta-1e-3.jsonl",
+      "blake3": "74b1eff96bc09da8dd0158598373dc2095ba3f64ab27986a7df8ca92bd624141"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_4/trajectory-eta-1e-4.jsonl",
+      "blake3": "a401050a91bcafe7b2fb74a8f45da4d8cabda25419d04f5df2ccec1c6726f974"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_4/trajectory-eta-1e-5.jsonl",
+      "blake3": "94af0ef2b307ac78066847768911371d27a5fa9f90c35237415a75e27425e3fd"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_5/trajectory-eta-1.jsonl",
+      "blake3": "15f7b41b2ecd7f5523c3c5bf1f579c19ffedb8e1254b7b04f3c672e933956117"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_5/trajectory-eta-1e-1.jsonl",
+      "blake3": "fb1ea419fbe51658eb833ce01239de428fa35cb35089faba5e32b935a97bfd44"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_5/trajectory-eta-1e-2.jsonl",
+      "blake3": "d6843ad7855c0f456019b2c39d7fc15801d48d3a88cd977384f6b2a9f4472890"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_5/trajectory-eta-1e-3.jsonl",
+      "blake3": "183af77997eb9f74479dd561c7272455e3924c5c740661f483857b5973b06747"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_5/trajectory-eta-1e-4.jsonl",
+      "blake3": "74ebddefec4b79cb6a19674ea60ca0838952e57b6a10f4fc5176bfd29296402e"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_5/trajectory-eta-1e-5.jsonl",
+      "blake3": "7caec45102205a24a8406aff302b418a26ad6322b01954e8cd65704057e4a8cc"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_6/trajectory-eta-1.jsonl",
+      "blake3": "055331bb746bb2202876a0df957690401c788ffa41d68aebc7ed09d1b5347bf1"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_6/trajectory-eta-1e-1.jsonl",
+      "blake3": "2508593bec2485e1b9df743eeafa67f9362024432b973fb5d7e56c1fc5f99708"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_6/trajectory-eta-1e-2.jsonl",
+      "blake3": "147a5c4f5dfb5e3243f8c18a1f89630c739c82e03bd4aede5a208fd4e8f5d85a"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_6/trajectory-eta-1e-3.jsonl",
+      "blake3": "00f9e5fc9a254b0dc018ee5e83cd7d16701bbd9724ad4751f82f108d0b322c03"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_6/trajectory-eta-1e-4.jsonl",
+      "blake3": "6b8fe25a402abfd0d4ad7405938e2bc850add31ff45f43e1757c81021c2b0716"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories/random_F6_s0_6/trajectory-eta-1e-5.jsonl",
+      "blake3": "329eb87861c7a973addcdaf47f9a94b63f6417c42f54077ab952f6c574907811"
+    }
+  ],
+  "selection_contract": [
+    "negative controls are two fixed retained states with a verified positive next literal update",
+    "unknown_global_best_so_far is the highest valid sys row among all 3142 frozen trajectory rows",
+    "unknown_terminal_best_so_far is the highest valid iteration-100 row whose best_iteration is 100",
+    "HKO2024 is a fixed theorem-authorized positive control and is not selected from generic outcomes"
+  ],
+  "quotient_contract": "at each base a, use the Euclidean orthogonal complement of the rank-15 tangent span of translations, positive scaling, and sp(4,R); poll every signed orthonormal basis vector",
+  "radius_contract": "full: relative radii 1e-3,1e-4,1e-5; absolute step norm = relative radius * ||a||_2",
+  "sys_contract": "reconstruct every f64 state as exact rationals, require all dual points extreme, recompute exact incidence/volume, and use the current minimum-safe full capacity route; compare incidence signatures to the base",
+  "threads": 8,
+  "smoke": false
+}
