@@ -72,7 +72,7 @@ def validate_provenance(out: Path, manifest: dict[str, object]) -> None:
         fail("manifest lacks source commit/tree")
     if manifest.get("source_content_id") != tree or manifest.get("source_content_id_kind") != "git_tree_oid":
         fail("manifest content identity is not the non-recursive source git tree")
-    if git("cat-file", "-e", f"{commit}^{{commit}}", cwd=repo) == "":
+    if subprocess.run(["git", "cat-file", "-e", f"{commit}^{{commit}}"], cwd=repo).returncode != 0:
         fail("source commit is not reachable")
     if git("rev-parse", f"{commit}^{{tree}}", cwd=repo) != tree:
         fail("manifest source tree does not match source commit")
