@@ -549,7 +549,7 @@ def build_atlas(
         for side_count, group in sorted(by_side.items())
         if set(global_laws) - {shape.law for shape in group}
     }
-    side_count_breadth = {}
+    accepted_row_side_count_allocation = {}
     baseline_counts = {
         side_count: sum(
             shape.law == baseline_law and shape.side_count == side_count for shape in shapes
@@ -570,9 +570,11 @@ def build_atlas(
             )
         else:
             tv = None
-        side_count_breadth[law] = {
-            "counts": {str(key): value for key, value in counts.items()},
-            "side_count_distribution_tv_from_baseline": tv,
+        accepted_row_side_count_allocation[law] = {
+            "accepted_shape_row_counts_by_side_count": {
+                str(key): value for key, value in counts.items()
+            },
+            "accepted_row_side_count_allocation_tv_from_baseline": tv,
         }
     return {
         "schema": "generator-quality-atlas-report-v1",
@@ -582,7 +584,14 @@ def build_atlas(
         "laws": global_laws,
         "side_counts": sorted(by_side),
         "missing_laws_by_side_count": missing_laws,
-        "combinatorial_side_count_breadth": side_count_breadth,
+        "accepted_row_side_count_allocation": {
+            "interpretation": (
+                "Describes the analyzed accepted-shape rows only; imposed allocation, "
+                "side-count applicability, and bounded rejection all affect these counts. "
+                "It is not an estimate of a natural generator-law side-count distribution."
+            ),
+            "by_population": accepted_row_side_count_allocation,
+        },
         "steiner_grid_approximation_diagnostic": {
             "comparison": "Euclidean error between the declared-grid support integral and the exact polygon Steiner formula",
             "median": float(np.median([shape.steiner_grid_error for shape in shapes])),

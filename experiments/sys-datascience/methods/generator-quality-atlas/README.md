@@ -92,9 +92,13 @@ side-count stratum, and degenerate support grids remain visible.
 
 Every fixed-`n` convex planar polygon has the same combinatorial type. Optional
 combinatorial fields are counted, but they cannot establish within-`n`
-combinatorial breadth. Breadth across side counts is reported separately.
-Naturalness is not inferred from geometric distance; provenance remains
-descriptive.
+combinatorial breadth. The report separately records the side-count allocation
+among analyzed accepted-shape rows and its total-variation difference from the
+baseline accepted-row allocation. This is a pipeline/allocation diagnostic:
+imposed sampling budgets, which side counts a population supports, and bounded
+rejection all affect it. It is not an estimate of a natural generator-law
+side-count distribution or combinatorial breadth. Naturalness is not inferred
+from geometric distance; provenance remains descriptive.
 
 ## Reproduce the retained control
 

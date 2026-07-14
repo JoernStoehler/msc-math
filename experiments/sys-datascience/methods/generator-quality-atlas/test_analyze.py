@@ -114,6 +114,36 @@ class GeometryTests(unittest.TestCase):
 
 
 class AtlasTests(unittest.TestCase):
+    def test_side_count_tv_is_explicitly_an_accepted_row_allocation_diagnostic(self):
+        payloads = []
+        allocations = {
+            "baseline": [4, 4, 5, 5],
+            "candidate": [4, 4, 4, 5],
+        }
+        for population, side_counts in allocations.items():
+            for index, side_count in enumerate(side_counts):
+                payload = row(
+                    f"{population}-{index}", "shared-law", ANALYZE.regular_polygon(side_count)
+                )
+                payload["population"] = population
+                payloads.append(payload)
+        report = ANALYZE.build_atlas(
+            [standardized(payload, 32, 64) for payload in payloads],
+            "baseline",
+            0.9,
+            1e-9,
+        )
+        diagnostic = report["accepted_row_side_count_allocation"]
+        self.assertIn("not an estimate", diagnostic["interpretation"])
+        candidate = diagnostic["by_population"]["candidate"]
+        self.assertEqual(
+            candidate["accepted_shape_row_counts_by_side_count"], {"4": 3, "5": 1}
+        )
+        self.assertAlmostEqual(
+            candidate["accepted_row_side_count_allocation_tv_from_baseline"], 0.25
+        )
+        self.assertNotIn("combinatorial_side_count_breadth", report)
+
     def test_synthetic_narrow_and_broad_laws_are_discriminated(self):
         shapes = [standardized(payload) for payload in ANALYZE.synthetic_rows()]
         report = ANALYZE.build_atlas(shapes, "baseline", 0.9, 1e-9)

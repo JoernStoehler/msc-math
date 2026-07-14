@@ -12,8 +12,8 @@ import argparse
 import hashlib
 import json
 import math
-import os
 from pathlib import Path
+import re
 import sys
 from typing import Any, Iterable
 
@@ -77,6 +77,13 @@ EXPECTED_GEOMETRY_FIELDS = {
     "factor_p_isoperimetric_ratio",
     "volume",
 }
+SAMPLE_ID_RE = re.compile(
+    r"^altgen-v2/(?P<law>[^/]+)/param=(?P<parameter>[^/]+)/"
+    r"seed=(?P<seed>[0-9]+)/row=(?P<row_index>[0-9]+)/"
+    r"(?:(?:attempt=(?P<attempt>[0-9]+))|(?P<exhausted>outcome=exhausted))/"
+    r"(?P<pair_bucket>[0-9]+x[0-9]+)$"
+)
+PAIR_BUCKET_RE = re.compile(r"^(?P<q>[1-9][0-9]*)x(?P<p>[1-9][0-9]*)$")
 
 
 class BridgeError(ValueError):
@@ -126,6 +133,72 @@ def _validate_nested_numbers(value: Any, field: str, source: str) -> None:
             _validate_nested_numbers(nested, f"{field}[{index}]", source)
 
 
+def _canonical_identity(row: dict[str, Any], location: str) -> re.Match[str]:
+    match = SAMPLE_ID_RE.fullmatch(row["sample_id"])
+    if match is None:
+        raise BridgeError(f"{location}: sample_id is not a canonical alternative-generator ID")
+    groups = match.groupdict()
+    for field in ("law", "parameter", "pair_bucket"):
+        if groups[field] != row[field]:
+            raise BridgeError(
+                f"{location}: sample_id {row['sample_id']!r} disagrees with {field}={row[field]!r}"
+            )
+    for field in ("seed", "row_index"):
+        if int(groups[field]) != row[field]:
+            raise BridgeError(
+                f"{location}: sample_id {row['sample_id']!r} disagrees with {field}={row[field]}"
+            )
+    attempt_token = groups["attempt"]
+    if row["accepted"]:
+        if attempt_token is None or int(attempt_token) != row["attempt"]:
+            raise BridgeError(f"{location}: accepted sample_id must encode its attempt")
+    else:
+        if groups["exhausted"] is None:
+            raise BridgeError(f"{location}: rejected sample_id must encode outcome=exhausted")
+        if row["attempts"] != row["attempt"] + 1 or row["rejections"] != row["attempts"]:
+            raise BridgeError(f"{location}: exhausted row must have attempts=rejections=attempt+1")
+    return match
+
+
+def _validate_geometry_and_target(row: dict[str, Any], location: str) -> None:
+    geometry_values = [row.get(field) for field in EXPECTED_GEOMETRY_FIELDS]
+    if row["accepted"] and any(value is None for value in geometry_values):
+        raise BridgeError(f"{location}: accepted geometry must provide every expected geometry field")
+    if not row["accepted"] and any(value is not None for value in geometry_values):
+        raise BridgeError(f"{location}: rejected geometry must be null for every expected geometry field")
+
+    target_values = {field: row.get(field) for field in TARGET_FIELDS}
+    nonnull_target = [field for field, value in target_values.items() if value is not None]
+    # The smoke producer writes target_ms=0.0 as a non-evaluated sentinel when
+    # the target backend is disabled or facet-capped. It is normalized to null
+    # in the prepared sidecar; any other partial target quartet is malformed.
+    sentinel_only = nonnull_target == ["target_ms"] and target_values["target_ms"] == 0.0
+    evaluated = all(target_values[field] is not None for field in TARGET_FIELDS)
+    if evaluated:
+        if row["validation_status"] != "survived":
+            raise BridgeError(f"{location}: evaluated target quartet requires validation_status=survived")
+        volume = row.get("volume")
+        if volume is None or volume <= 0:
+            raise BridgeError(f"{location}: evaluated target requires positive volume")
+        if row["capacity"] <= 0:
+            raise BridgeError(f"{location}: evaluated capacity must be positive")
+        if row["sys"] < 0:
+            raise BridgeError(f"{location}: evaluated sys must be non-negative")
+        if row["iterations"] <= 0:
+            raise BridgeError(f"{location}: evaluated iterations must be positive")
+        if row["target_ms"] < 0:
+            raise BridgeError(f"{location}: evaluated target_ms must be non-negative")
+        expected_sys = row["capacity"] ** 2 / (2.0 * volume)
+        if not math.isclose(row["sys"], expected_sys, rel_tol=1e-9, abs_tol=1e-12):
+            raise BridgeError(f"{location}: sys disagrees with capacity^2/(2*volume)")
+    elif nonnull_target and not sentinel_only:
+        raise BridgeError(f"{location}: non-evaluated target fields must all be null (except target_ms=0 sentinel)")
+    elif row["accepted"] and row["validation_status"] == "survived":
+        reason = (row.get("rejection_reason") or "").lower()
+        if "target backend disabled" not in reason:
+            raise BridgeError(f"{location}: survived non-evaluated row must explain target omission")
+
+
 def _validate_row(row: dict[str, Any], source: str, line_number: int) -> None:
     location = f"{source}:{line_number}"
     missing = sorted(REQUIRED_FIELDS - row.keys())
@@ -148,12 +221,13 @@ def _validate_row(row: dict[str, Any], source: str, line_number: int) -> None:
             raise BridgeError(f"{location}: field {field!r} must be a non-empty string")
     if not isinstance(row["accepted"], bool):
         raise BridgeError(f"{location}: field 'accepted' must be boolean")
+    _canonical_identity(row, location)
     if row["attempt"] >= row["attempts"]:
         raise BridgeError(f"{location}: attempt must be less than attempts")
     # Accepted rows report the number of prior rejected attempts.  An
     # exhausted row has no accepted attempt and reports the full cap instead.
-    if row["accepted"] and row["rejections"] != row["attempt"]:
-        raise BridgeError(f"{location}: rejections must equal attempt")
+    if row["accepted"] and (row["attempts"] != row["attempt"] + 1 or row["rejections"] != row["attempt"]):
+        raise BridgeError(f"{location}: accepted row must have attempts=attempt+1 and rejections=attempt")
     if not row["accepted"] and row["rejections"] < row["attempt"]:
         raise BridgeError(f"{location}: rejected row cannot report fewer rejections than attempt")
     if row["facet_count"] <= 0:
@@ -162,6 +236,12 @@ def _validate_row(row: dict[str, Any], source: str, line_number: int) -> None:
         raise BridgeError(f"{location}: pairing_id must be a string or null")
     if row.get("rejection_reason") is not None and not isinstance(row["rejection_reason"], str):
         raise BridgeError(f"{location}: rejection_reason must be a string or null")
+    bucket = PAIR_BUCKET_RE.fullmatch(row["pair_bucket"])
+    if bucket is None:
+        raise BridgeError(f"{location}: pair_bucket must have the form kxm with positive integers")
+    if row["facet_count"] != int(bucket["q"]) + int(bucket["p"]):
+        raise BridgeError(f"{location}: facet_count must equal the pair_bucket side-count sum")
+    _validate_geometry_and_target(row, location)
 
 
 def _target_status(row: dict[str, Any]) -> str:
@@ -264,7 +344,7 @@ def build_sidecars(inputs: list[tuple[str, Path]]) -> tuple[list[dict[str, Any]]
             }
             missing_geometry = sorted(field for field in EXPECTED_GEOMETRY_FIELDS if geometry.get(field) is None)
             capability = {
-                "target_free_geometry": bool(geometry),
+                "target_free_geometry": row["accepted"] and bool(geometry),
                 "factor_metrics": all(geometry.get(field) is not None for field in EXPECTED_GEOMETRY_FIELDS - {"volume"}),
                 "volume": geometry.get("volume") is not None,
                 "sys": target_evaluated,
@@ -303,7 +383,7 @@ def build_sidecars(inputs: list[tuple[str, Path]]) -> tuple[list[dict[str, Any]]
                 {
                     "schema": PREPARED_SCHEMA,
                     "join_key": sample_id,
-                    "provenance_join": provenance_id,
+                    "provenance_id": provenance_id,
                     "source_name": source_name,
                     "law_version": row["law_version"],
                     "law": row["law"],

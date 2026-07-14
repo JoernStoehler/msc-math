@@ -24,6 +24,9 @@ The bridge rejects duplicate sample IDs, repeated generator identities,
 conflicting pairing identities, malformed/non-finite numeric values, and
 incompatible row schema versions. Source paths and SHA-256 fingerprints are
 recorded in every provenance row and in `integration-report.json`.
+Canonical `altgen-v2/...` IDs are checked against the row law, resolved
+parameter, seed, row/attempt, and `kxm` bucket; the bucket side counts must sum
+to `facet_count`.
 
 Outputs are:
 
@@ -36,7 +39,8 @@ Outputs are:
   `sys`, `capacity`, `iterations`, and `target_ms` are present only when the
   target was actually evaluated. `missing_geometry_fields` and
   `censored_fields` make absent and target-censored values explicit. Use
-  `join_key` to join to the provenance sidecar.
+  the exact shared `provenance_id` field to join to the provenance sidecar;
+  `join_key` is the generator sample identity within that source.
 - `integration-report.json`: deterministic counts, fingerprints, and the
   blocked feature families.
 

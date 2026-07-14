@@ -428,8 +428,14 @@ fn repulsive_gap(n: usize, parameter: &str, rng: &mut ChaCha8Rng) -> Option<Fact
     angle_factor(&angles, heights)
 }
 
-/// Controlled mutation chain: start regular, then make bounded angular and
-/// support mutations at each named step, rejecting order/active-facet failure.
+/// Controlled four-step mutation chain from a randomly rotated regular fan.
+/// At each step, each angle receives `delta ~ N(0, scale^2)` clipped to
+/// `[-0.2 * (2*pi/n), 0.2 * (2*pi/n)]`, while each support is multiplied by
+/// `exp(0.5 * Z)` with an independent `Z ~ N(0, scale^2)` (the log-support
+/// increment is intentionally unbounded). After every step we sort the angles
+/// and reject cyclic gaps below `0.2 * (2*pi/n)` or at least `pi`; the final
+/// `from_vertices` conversion additionally conditions on every facet being
+/// active.
 fn regular_mutation(n: usize, steps: usize, scale: f64, rng: &mut ChaCha8Rng) -> Option<Factor> {
     let step = TAU / n as f64;
     let normal = Normal::new(0.0, scale).ok()?;
@@ -513,7 +519,7 @@ fn dispositions() -> Vec<Disposition> {
         Disposition { law: "zonogon", status: "implemented", formula: "sum_j [-ell_j v_j, ell_j v_j]", note: "even side counts only; distinct unoriented directions and positive uniform lengths" },
         Disposition { law: "primal-hull-uniform-disk", status: "implemented", formula: "conv{X_1,...,X_N}, X_i iid uniform disk", note: "accept exactly n hull vertices with strict origin/interior; area-normalize" },
         Disposition { law: "repulsive-gap", status: "implemented", formula: "g/(sum g) with g_i iid Gamma(alpha,1), theta cumulative", note: "named Dirichlet repulsive-gap approximation; alpha=1 IID control and regular control, not circular beta" },
-        Disposition { law: "regular-mutation", status: "implemented", formula: "bounded mutation chain from regular fan", note: "each step clips angular perturbations and checks cyclic gaps/active facets" },
+        Disposition { law: "regular-mutation", status: "implemented", formula: "four steps: theta_i <- theta_i + clip(N(0,scale^2), +/-0.2*(2*pi/n)); h_i <- h_i exp(0.5 N(0,scale^2))", note: "supports use unbounded log increments; after each step reject cyclic gaps <0.2*(2*pi/n) or >=pi, then final from_vertices all-active-facet conditioning" },
         Disposition { law: "surface-area closure", status: "abandoned", formula: "sum ell_i u_i=0", note: "not attempted: a faithful edge-measure sampler and closure conditioning would exceed this local owner" },
     ]
 }

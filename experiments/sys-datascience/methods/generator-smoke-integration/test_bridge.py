@@ -15,7 +15,7 @@ SPEC.loader.exec_module(bridge)
 def row(**changes):
     value = {
         "schema": bridge.SCHEMA,
-        "sample_id": "sample/a",
+        "sample_id": "altgen-v2/law/param=p/seed=1/row=0/attempt=0/3x3",
         "law": "law",
         "law_version": "v1",
         "seed": 1,
@@ -60,12 +60,13 @@ class BridgeTests(unittest.TestCase):
 
     def test_target_status_and_join(self):
         with tempfile.TemporaryDirectory() as directory:
-            path = self.write(directory, "rows.jsonl", [row(), row(sample_id="sample/b", row_index=1, validation_status="runtime_cap", rejection_reason="above predeclared facet-count cap", facet_count=12)])
+            path = self.write(directory, "rows.jsonl", [row(), row(sample_id="altgen-v2/law/param=p/seed=1/row=1/attempt=0/3x3", row_index=1, validation_status="runtime_cap", rejection_reason="above predeclared facet-count cap", facet_count=6)])
             provenance, prepared, report = bridge.build_sidecars([("pilot", path)])
         self.assertEqual(report["evaluated_sys_rows"], 0)
         self.assertEqual(prepared[0]["target_status"], "not_requested")
         self.assertEqual(prepared[1]["target_status"], "skipped_runtime_cap")
-        self.assertEqual(prepared[0]["provenance_join"], "pilot:sample/a")
+        self.assertEqual(prepared[0]["provenance_id"], "pilot:altgen-v2/law/param=p/seed=1/row=0/attempt=0/3x3")
+        self.assertEqual(prepared[0]["provenance_id"], provenance[0]["provenance_id"])
         self.assertEqual(provenance[0]["source_sha256"], report["source_files"][0]["sha256"])
 
     def test_evaluated_target_is_retained(self):
@@ -98,6 +99,50 @@ class BridgeTests(unittest.TestCase):
             path = self.write(directory, "rows.jsonl", [row(volume=float("nan"))])
             with self.assertRaises(bridge.BridgeError):
                 bridge.build_sidecars([("a", path)])
+
+    def test_rejected_geometry_is_null_and_canonical_exhaustion_id(self):
+        rejected = row(
+            sample_id="altgen-v2/law/param=p/seed=1/row=0/outcome=exhausted/3x3",
+            accepted=False,
+            validation_status="invalid_or_low_acceptance",
+            rejection_reason="no accepted geometry",
+            attempt=0,
+            attempts=1,
+            rejections=1,
+            **{field: None for field in bridge.EXPECTED_GEOMETRY_FIELDS},
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            path = self.write(directory, "rows.jsonl", [rejected])
+            _, prepared, report = bridge.build_sidecars([("geometry", path)])
+        self.assertFalse(prepared[0]["capabilities"]["target_free_geometry"])
+        self.assertEqual(report["accepted_rows"], 0)
+
+    def test_identity_bucket_and_target_quartet_guards(self):
+        cases = [
+            row(sample_id="wrong-id"),
+            row(pair_bucket="3x4", facet_count=6),
+            row(sys=0.5),
+            row(sys=0.6, capacity=1.0, iterations=3, target_ms=4.0, rejection_reason=None),
+            row(rejection_reason=None),
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            for index, candidate in enumerate(cases):
+                path = self.write(directory, f"bad-{index}.jsonl", [candidate])
+                with self.assertRaises(bridge.BridgeError):
+                    bridge.build_sidecars([(f"bad-{index}", path)])
+
+    def test_evaluated_target_ranges_are_valid(self):
+        cases = [
+            row(capacity=0.0, sys=0.0, iterations=3, target_ms=4.0, rejection_reason=None),
+            row(capacity=1.0, sys=-0.1, iterations=3, target_ms=4.0, rejection_reason=None),
+            row(capacity=1.0, sys=0.5, iterations=0, target_ms=4.0, rejection_reason=None),
+            row(capacity=1.0, sys=0.5, iterations=3, target_ms=-1.0, rejection_reason=None),
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            for index, candidate in enumerate(cases):
+                path = self.write(directory, f"bad-range-{index}.jsonl", [candidate])
+                with self.assertRaises(bridge.BridgeError):
+                    bridge.build_sidecars([(f"bad-range-{index}", path)])
 
 
 if __name__ == "__main__":

@@ -67,6 +67,20 @@ current README summaries describe scratch runs; they are not part of the
 current invariant-feature method rerun gate until compact artifacts are
 promoted into the packet directories.
 
+Exploratory generator packets:
+
+- `generator-zoo-smoke/`: breadth-first geometry smoke for explicit planar
+  factor laws and copy-local factor-shape JSONL; construction evidence only.
+- `generator-quality-atlas/`: shape-schema quality, similarity, and coverage
+  diagnostics; its fixture is not evidence about a retained generator law.
+- `generator-smoke-integration/`: provenance sidecar bridge for named generator
+  smokes; it does not write or extend the retained method table.
+- `generator-sys-effects/`: semantic one-row target-pilot summaries for smoke
+  arms, for hypothesis generation only.
+
+These four packets are exploratory/smoke support, not active retained-table
+methods and not transfer results.
+
 - `distribution-sensitivity/` and `random-axis-diagnostic/`: exploratory
   variant-comparison scripts. They are not active method-table rows until two
   or more prepared random/product variants exist and are reviewed.

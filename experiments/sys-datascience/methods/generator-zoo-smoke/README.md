@@ -29,9 +29,14 @@ selection.
   supports. `alpha=1` is an IID angular control; `alpha=4,16` are repulsive
   gaps; `regular` is the exact regular limiting control. This is explicitly a
   Dirichlet repulsive-gap approximation, not a circular-beta/CUE sample.
-- **Regular mutation**: start from a randomly rotated regular fan, apply four
-  bounded angular/support mutations, and reject if cyclic gaps or active facets
-  fail. The parameter records the chain length and scale.
+- **Regular mutation**: start from a randomly rotated regular fan and apply
+  exactly four steps. At each step, angle increments are independent
+  `N(0,scale^2)` values clipped to `+/-0.2*(2*pi/n)`, while supports are
+  multiplied by `exp(0.5*Z)` with independent `Z~N(0,scale^2)`; the log-support
+  increment is therefore unbounded. After each step, sort angles and reject
+  cyclic gaps below `0.2*(2*pi/n)` or at least `pi`; the final vertex/H
+  conversion conditions on every facet being active. The parameter records the
+  chain length and scale (`steps=4,scale=0.03` in this smoke).
 
 The attempted surface-area/edge-measure closure law was abandoned: faithfully
 sampling positive edge measures subject to `sum ell_i u_i=0`, while retaining a
@@ -43,17 +48,20 @@ silently approximate the closure.
 ```text
 cargo run -p exp-sys-landscape --release --bin sys-datascience-generator-zoo-smoke -- \
   --out-dir experiments/sys-datascience/methods/generator-zoo-smoke/artifacts \
-  --seed 20260714 --attempts 64 --rows-per-law 1
+  --seed 20260714 --attempts 64 --rows-per-law 5
 ```
 
 `factor-shapes.jsonl` is copy-local analyzer input. Every accepted factor row
 has schema `factor-shape-row-v1`, `side_count`, `area_normalized`, and a CCW
 `vertices_ccw` list. Its `population` field combines the law and knob setting,
-so the atlas never pools distinct distributions. `product-smoke.jsonl` records exact product acceptance,
-area, the exact incidence-volume witness in this compact smoke, attempts, and
-timings. `batch-report.json` contains per-law acceptance and timing totals,
+so the atlas never pools distinct distributions. The retained reviewed smoke
+has 115 product rows: 110 accepted and 5 exhausted; all five exhaustions are
+the primal-hull `3x3` bucket. The accepted products emit 220 factor rows.
+`product-smoke.jsonl` records exact product acceptance, area, the exact
+incidence-volume witness in this compact smoke, attempts, and timings.
+`batch-report.json` contains per-law acceptance and timing totals,
 dispositions, and the producing source revision/dirty flag.
 
-This is construction/provenance evidence only. The tiny rows do not estimate
-the natural populations, validate conditioning probabilities at production
-scale, or establish transfer/persistence of any `sys` relation.
+These counts are descriptive evidence for this bounded smoke only. They do not
+estimate the natural populations, validate conditioning probabilities at
+production scale, or establish transfer/persistence of any `sys` relation.
