@@ -136,7 +136,7 @@ def recompute_summary(rs):
     return {
         "policy": initial["policy"], "start_id": initial["start_id"],
         "initial_radius": float(initial["initial_radius"]),
-        "requested_updates": len(rs) - 1, "committed_updates": committed,
+        "requested_updates": prov["requested_target_budget"], "committed_updates": committed,
         "initial_sys": initial["target_sys"], "final_sys": current_sys,
         "best_sys": best_sys, "best_iteration": best_iteration,
         "target_evaluations": len(rs) - 1, "invalid_attempts": invalid,
