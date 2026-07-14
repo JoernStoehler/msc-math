@@ -197,6 +197,8 @@ class AtlasTests(unittest.TestCase):
             out = root / "out"
             ANALYZE.write_outputs(report, out, config)
             first = {path.name: path.read_bytes() for path in out.iterdir()}
+            self.assertNotIn(b"\r\n", first["atlas.tsv"])
+            self.assertTrue(first["atlas.tsv"].endswith(b"\n"))
             ANALYZE.write_outputs(report, out, config)
             second = {path.name: path.read_bytes() for path in out.iterdir()}
             self.assertEqual(first, second)

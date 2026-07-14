@@ -637,7 +637,9 @@ def write_table(report: dict[str, Any], path: Path) -> None:
         "accepted_fraction",
     ]
     with path.open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fields, delimiter="\t")
+        writer = csv.DictWriter(
+            handle, fieldnames=fields, delimiter="\t", lineterminator="\n"
+        )
         writer.writeheader()
         for stratum in report["strata"]:
             for law in stratum["laws"]:

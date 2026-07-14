@@ -1,0 +1,137 @@
+{
+  "schema": "generator-zoo-report-v1",
+  "law_version": "generator-zoo-v1",
+  "seed": 20260714,
+  "max_attempts_per_row": 64,
+  "rows_per_law": 5,
+  "product_rows": 115,
+  "factor_rows": 220,
+  "status_counts": {
+    "accepted": 110,
+    "exhausted": 5
+  },
+  "per_law": [
+    {
+      "law": "current-baseline",
+      "parameter": "delta=0.2",
+      "rows": 15,
+      "accepted": 15,
+      "exhausted": 0,
+      "total_generation_ms": 0.254799,
+      "total_validation_ms": 11998.702991,
+      "max_attempts_observed": 45
+    },
+    {
+      "law": "primal-hull-uniform-disk",
+      "parameter": "points=n+4,origin=interior",
+      "rows": 15,
+      "accepted": 10,
+      "exhausted": 5,
+      "total_generation_ms": 0.650151,
+      "total_validation_ms": 10647.202684,
+      "max_attempts_observed": 64
+    },
+    {
+      "law": "regular-mutation",
+      "parameter": "steps=4,scale=0.03",
+      "rows": 15,
+      "accepted": 15,
+      "exhausted": 0,
+      "total_generation_ms": 0.19142,
+      "total_validation_ms": 5408.704992999999,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=1",
+      "rows": 15,
+      "accepted": 15,
+      "exhausted": 0,
+      "total_generation_ms": 0.199336,
+      "total_validation_ms": 9267.432659999999,
+      "max_attempts_observed": 33
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=16",
+      "rows": 15,
+      "accepted": 15,
+      "exhausted": 0,
+      "total_generation_ms": 0.135032,
+      "total_validation_ms": 6931.05464,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=4",
+      "rows": 15,
+      "accepted": 15,
+      "exhausted": 0,
+      "total_generation_ms": 0.15452100000000002,
+      "total_validation_ms": 8023.970249999999,
+      "max_attempts_observed": 3
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "regular",
+      "rows": 15,
+      "accepted": 15,
+      "exhausted": 0,
+      "total_generation_ms": 0.09069200000000001,
+      "total_validation_ms": 5791.591817,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "zonogon",
+      "parameter": "lengths=uniform(0.5,1.5)",
+      "rows": 10,
+      "accepted": 10,
+      "exhausted": 0,
+      "total_generation_ms": 0.056023,
+      "total_validation_ms": 13666.869408999999,
+      "max_attempts_observed": 1
+    }
+  ],
+  "dispositions": [
+    {
+      "law": "current-baseline",
+      "status": "implemented-control",
+      "formula": "theta_i iid U(0,2pi), h_i iid U(1-delta,1+delta)",
+      "note": "condition on the resulting n-gon retaining all prescribed facets; delta=0.2 matches the current random-factor law"
+    },
+    {
+      "law": "zonogon",
+      "status": "implemented",
+      "formula": "sum_j [-ell_j v_j, ell_j v_j]",
+      "note": "even side counts only; distinct unoriented directions and positive uniform lengths"
+    },
+    {
+      "law": "primal-hull-uniform-disk",
+      "status": "implemented",
+      "formula": "conv{X_1,...,X_N}, X_i iid uniform disk",
+      "note": "accept exactly n hull vertices with strict origin/interior; area-normalize"
+    },
+    {
+      "law": "repulsive-gap",
+      "status": "implemented",
+      "formula": "g/(sum g) with g_i iid Gamma(alpha,1), theta cumulative",
+      "note": "named Dirichlet repulsive-gap approximation; alpha=1 IID control and regular control, not circular beta"
+    },
+    {
+      "law": "regular-mutation",
+      "status": "implemented",
+      "formula": "four steps: theta_i <- theta_i + clip(N(0,scale^2), +/-0.2*(2*pi/n)); h_i <- h_i exp(0.5 N(0,scale^2))",
+      "note": "supports use unbounded log increments; after each step reject cyclic gaps <0.2*(2*pi/n) or >=pi, then final from_vertices all-active-facet conditioning"
+    },
+    {
+      "law": "surface-area closure",
+      "status": "abandoned",
+      "formula": "sum ell_i u_i=0",
+      "note": "not attempted: a faithful edge-measure sampler and closure conditioning would exceed this local owner"
+    }
+  ],
+  "command": "target/release/sys-datascience-generator-zoo-smoke --out-dir experiments/sys-datascience/methods/generator-zoo-smoke/artifacts --seed 20260714 --attempts 64 --rows-per-law 5",
+  "source_revision": "6b55461dafe7997662e9659380e18be9c58b5f72",
+  "source_dirty": false,
+  "interpretation_boundary": "Tiny product smoke validates construction and provenance only; it does not estimate law distributions or establish transfer."
+}

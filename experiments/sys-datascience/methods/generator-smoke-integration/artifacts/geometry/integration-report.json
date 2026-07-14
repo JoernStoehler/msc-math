@@ -1,0 +1,33 @@
+{
+  "accepted_rows": 270,
+  "blocked_standard_features": [
+    "face_lattice_combinatorial_features",
+    "two_face_symplectic_area_features",
+    "exact_dual_vertex_volume_features",
+    "cached_exact_capacity_features"
+  ],
+  "evaluated_sys_rows": 0,
+  "input_count": 1,
+  "interpretation_boundary": "Named small generator smoke only; sidecar plumbing and target censoring, not retained-population or transfer evidence.",
+  "prepared_count": 272,
+  "provenance_count": 272,
+  "row_count": 272,
+  "schema": "generator-smoke-integration-report-v1",
+  "source_files": [
+    {
+      "name": "geometry",
+      "path": "experiments/sys-datascience/methods/alternative-generator-smoke/artifacts/smoke-rows.jsonl",
+      "rows": 272,
+      "sha256": "3c2f8932a1bcc475c43780583b19c9876e073da40c93e52bad79b09e2b47653a"
+    }
+  ],
+  "target_status_counts": {
+    "not_attempted_rejected": 2,
+    "not_requested": 270
+  },
+  "unique_sample_ids": 272,
+  "validation_status_counts": {
+    "invalid_or_low_acceptance": 2,
+    "survived": 270
+  }
+}

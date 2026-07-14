@@ -1,0 +1,1589 @@
+{
+  "accepted_row_side_count_allocation": {
+    "by_population": {
+      "current-baseline[delta=0.2]": {
+        "accepted_row_side_count_allocation_tv_from_baseline": 0.0,
+        "accepted_shape_row_counts_by_side_count": {
+          "3": 10,
+          "4": 5,
+          "6": 15
+        }
+      },
+      "primal-hull-uniform-disk[points=n+4,origin=interior]": {
+        "accepted_row_side_count_allocation_tv_from_baseline": 0.3333333333333333,
+        "accepted_shape_row_counts_by_side_count": {
+          "3": 0,
+          "4": 5,
+          "6": 15
+        }
+      },
+      "regular-mutation[steps=4,scale=0.03]": {
+        "accepted_row_side_count_allocation_tv_from_baseline": 0.0,
+        "accepted_shape_row_counts_by_side_count": {
+          "3": 10,
+          "4": 5,
+          "6": 15
+        }
+      },
+      "repulsive-gap[alpha=16]": {
+        "accepted_row_side_count_allocation_tv_from_baseline": 0.0,
+        "accepted_shape_row_counts_by_side_count": {
+          "3": 10,
+          "4": 5,
+          "6": 15
+        }
+      },
+      "repulsive-gap[alpha=1]": {
+        "accepted_row_side_count_allocation_tv_from_baseline": 0.0,
+        "accepted_shape_row_counts_by_side_count": {
+          "3": 10,
+          "4": 5,
+          "6": 15
+        }
+      },
+      "repulsive-gap[alpha=4]": {
+        "accepted_row_side_count_allocation_tv_from_baseline": 0.0,
+        "accepted_shape_row_counts_by_side_count": {
+          "3": 10,
+          "4": 5,
+          "6": 15
+        }
+      },
+      "repulsive-gap[regular]": {
+        "accepted_row_side_count_allocation_tv_from_baseline": 0.0,
+        "accepted_shape_row_counts_by_side_count": {
+          "3": 10,
+          "4": 5,
+          "6": 15
+        }
+      },
+      "zonogon[lengths=uniform(0.5,1.5)]": {
+        "accepted_row_side_count_allocation_tv_from_baseline": 0.3333333333333333,
+        "accepted_shape_row_counts_by_side_count": {
+          "3": 0,
+          "4": 5,
+          "6": 15
+        }
+      }
+    },
+    "interpretation": "Describes the analyzed accepted-shape rows only; imposed allocation, side-count applicability, and bounded rejection all affect these counts. It is not an estimate of a natural generator-law side-count distribution."
+  },
+  "baseline_law": "current-baseline[delta=0.2]",
+  "configuration": {
+    "baseline_law": "current-baseline[delta=0.2]",
+    "central_fraction": 0.9,
+    "duplicate_tolerance": 1e-09,
+    "input": "../generator-zoo-smoke/artifacts/factor-shapes.jsonl",
+    "input_sha256": "4622400be1220f11f742a4bde29273fe45dcd4c8d27044d716059c429630d7a8",
+    "steiner_grid": 4096,
+    "support_grid": 256
+  },
+  "issues": [],
+  "laws": [
+    "current-baseline[delta=0.2]",
+    "primal-hull-uniform-disk[points=n+4,origin=interior]",
+    "regular-mutation[steps=4,scale=0.03]",
+    "repulsive-gap[alpha=16]",
+    "repulsive-gap[alpha=1]",
+    "repulsive-gap[alpha=4]",
+    "repulsive-gap[regular]",
+    "zonogon[lengths=uniform(0.5,1.5)]"
+  ],
+  "metric_contract": {
+    "angular_approximation": "The exact polygon Steiner point is used; its declared-grid support-integral error is reported diagnostically. Support integrals use a uniform angular grid and rotation minimization uses grid-seeded local refinement. L2 and L-infinity values are numerical approximations, not certified bounds.",
+    "l2": "sqrt(mean squared support difference) at its best grid rotation",
+    "linf": "maximum support difference at its independently best grid rotation",
+    "reflection": "not quotiented",
+    "rotation": "global grid scan followed by continuous local refinement; support integrals remain sampled on the declared grid",
+    "scale": "quotiented by division of vertices by sqrt(polygon area)",
+    "small_sample_boundary": 5,
+    "stratification": "all shape distances and law comparisons are within side_count",
+    "translation": "quotiented by the exact polygon Steiner formula derived from the actual support function"
+  },
+  "missing_laws_by_side_count": {
+    "3": [
+      "primal-hull-uniform-disk[points=n+4,origin=interior]",
+      "zonogon[lengths=uniform(0.5,1.5)]"
+    ]
+  },
+  "no_combined_quality_score": true,
+  "quality_dimensions": [
+    "controlled-transfer similarity",
+    "coverage expansion",
+    "within-law diversity",
+    "combinatorial breadth",
+    "compute/acceptance",
+    "naturalness/provenance"
+  ],
+  "row_schema": "factor-shape-row-v1",
+  "rows": 220,
+  "schema": "generator-quality-atlas-report-v1",
+  "side_counts": [
+    3,
+    4,
+    6
+  ],
+  "steiner_grid_approximation_diagnostic": {
+    "comparison": "Euclidean error between the declared-grid support integral and the exact polygon Steiner formula",
+    "maximum": 4.079942854028342e-07,
+    "median": 4.4616588775235056e-08
+  },
+  "strata": [
+    {
+      "baseline_count": 10,
+      "baseline_law": "current-baseline[delta=0.2]",
+      "baseline_medoid_sample_id": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=4/attempt=44/3x3/factor=p",
+      "central_body_rule": {
+        "center": "baseline empirical L2 medoid",
+        "central_fraction": 0.9,
+        "outside_rule": "distance to baseline medoid > radius",
+        "radius": 1.1931925552061515,
+        "radius_order_statistic": "sorted baseline medoid distances at index ceil(q*m)-1"
+      },
+      "count": 60,
+      "laws": [
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 0,
+            "centroid_distance_baseline_medoid_gauge": 0.0,
+            "energy_like_l2_v_statistic": 0.0,
+            "outside_baseline_central_body_count": 1,
+            "outside_baseline_central_body_fraction": 0.1
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 10,
+                "unique": 1
+              }
+            },
+            "planar_fixed_side_count_type": "convex-3-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 10,
+          "issues": [],
+          "law": "current-baseline[delta=0.2]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.0002218675483719141,
+              "participation_ratio": 1.016861590638865,
+              "positive_eigenvalues": 8
+            },
+            "nearest_neighbor_mean": 0.2972041955046454,
+            "pair_count": 45,
+            "pairwise_mean": 0.9737335453022834,
+            "pairwise_median": 0.6487697054930909
+          },
+          "within_linf": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.002568549925197932,
+              "participation_ratio": 1.0362657254213339,
+              "positive_eigenvalues": 6
+            },
+            "nearest_neighbor_mean": 0.4718235664371543,
+            "pair_count": 45,
+            "pairwise_mean": 1.4435134048620983,
+            "pairwise_median": 1.0116148596640908
+          }
+        },
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 0,
+            "centroid_distance_baseline_medoid_gauge": 0.8399078445149022,
+            "energy_like_l2_v_statistic": 0.8126431016775524,
+            "outside_baseline_central_body_count": 0,
+            "outside_baseline_central_body_fraction": 0.0
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 10,
+                "unique": 1
+              }
+            },
+            "planar_fixed_side_count_type": "convex-3-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 10,
+          "issues": [],
+          "law": "regular-mutation[steps=4,scale=0.03]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.04250892671487592,
+              "participation_ratio": 1.645450992135003,
+              "positive_eigenvalues": 6
+            },
+            "nearest_neighbor_mean": 0.008123472950006937,
+            "pair_count": 45,
+            "pairwise_mean": 0.024967630708385747,
+            "pairwise_median": 0.026256118605681826
+          },
+          "within_linf": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.05630891161377445,
+              "participation_ratio": 1.7943016329443073,
+              "positive_eigenvalues": 5
+            },
+            "nearest_neighbor_mean": 0.014708017032872922,
+            "pair_count": 45,
+            "pairwise_mean": 0.04506313498933246,
+            "pairwise_median": 0.04754851429394197
+          }
+        },
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 0,
+            "centroid_distance_baseline_medoid_gauge": 0.7045230983493633,
+            "energy_like_l2_v_statistic": 0.5214889860917763,
+            "outside_baseline_central_body_count": 0,
+            "outside_baseline_central_body_fraction": 0.0
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 10,
+                "unique": 1
+              }
+            },
+            "planar_fixed_side_count_type": "convex-3-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 10,
+          "issues": [],
+          "law": "repulsive-gap[alpha=16]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.0019076969981707621,
+              "participation_ratio": 1.578054377989724,
+              "positive_eigenvalues": 7
+            },
+            "nearest_neighbor_mean": 0.05771424269207529,
+            "pair_count": 45,
+            "pairwise_mean": 0.13283483746978125,
+            "pairwise_median": 0.12523539514789853
+          },
+          "within_linf": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.04926268244629631,
+              "participation_ratio": 2.100071116072143,
+              "positive_eigenvalues": 6
+            },
+            "nearest_neighbor_mean": 0.10633388530040215,
+            "pair_count": 45,
+            "pairwise_mean": 0.2564909371949895,
+            "pairwise_median": 0.2576072998376773
+          }
+        },
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 0,
+            "centroid_distance_baseline_medoid_gauge": 0.5437934493982227,
+            "energy_like_l2_v_statistic": 0.2635467336390181,
+            "outside_baseline_central_body_count": 0,
+            "outside_baseline_central_body_fraction": 0.0
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 10,
+                "unique": 1
+              }
+            },
+            "planar_fixed_side_count_type": "convex-3-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 10,
+          "issues": [],
+          "law": "repulsive-gap[alpha=1]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.003947337446086518,
+              "participation_ratio": 1.10337777508166,
+              "positive_eigenvalues": 7
+            },
+            "nearest_neighbor_mean": 0.08102456638916257,
+            "pair_count": 45,
+            "pairwise_mean": 0.30408470675828053,
+            "pairwise_median": 0.29064476102276837
+          },
+          "within_linf": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.024401033369229427,
+              "participation_ratio": 1.215452738318079,
+              "positive_eigenvalues": 5
+            },
+            "nearest_neighbor_mean": 0.14963693808562234,
+            "pair_count": 45,
+            "pairwise_mean": 0.48706401943008804,
+            "pairwise_median": 0.414458814134784
+          }
+        },
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 0,
+            "centroid_distance_baseline_medoid_gauge": 0.5352103670082534,
+            "energy_like_l2_v_statistic": 0.26179003725638955,
+            "outside_baseline_central_body_count": 0,
+            "outside_baseline_central_body_fraction": 0.0
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 10,
+                "unique": 1
+              }
+            },
+            "planar_fixed_side_count_type": "convex-3-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 10,
+          "issues": [],
+          "law": "repulsive-gap[alpha=4]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.004268493609978287,
+              "participation_ratio": 1.0910150788337618,
+              "positive_eigenvalues": 6
+            },
+            "nearest_neighbor_mean": 0.1583624127920841,
+            "pair_count": 45,
+            "pairwise_mean": 0.37269741957953967,
+            "pairwise_median": 0.2312840041555935
+          },
+          "within_linf": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.024226522838994916,
+              "participation_ratio": 1.2723507835452244,
+              "positive_eigenvalues": 5
+            },
+            "nearest_neighbor_mean": 0.2868533389025951,
+            "pair_count": 45,
+            "pairwise_mean": 0.6093041468352631,
+            "pairwise_median": 0.4005397063932121
+          }
+        },
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 0,
+            "centroid_distance_baseline_medoid_gauge": 0.8615162973172776,
+            "energy_like_l2_v_statistic": 0.877512476784416,
+            "outside_baseline_central_body_count": 0,
+            "outside_baseline_central_body_fraction": 0.0
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 10,
+                "unique": 1
+              }
+            },
+            "planar_fixed_side_count_type": "convex-3-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 10,
+          "issues": [],
+          "law": "repulsive-gap[regular]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 45,
+            "duplicate_pair_fraction": 1.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.0,
+              "participation_ratio": null,
+              "positive_eigenvalues": 0
+            },
+            "nearest_neighbor_mean": 1.3547461636272477e-12,
+            "pair_count": 45,
+            "pairwise_mean": 4.3883291385393145e-12,
+            "pairwise_median": 4.015843395846831e-12
+          },
+          "within_linf": {
+            "duplicate_pair_count": 45,
+            "duplicate_pair_fraction": 1.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.0,
+              "participation_ratio": null,
+              "positive_eigenvalues": 0
+            },
+            "nearest_neighbor_mean": 2.1658286275538784e-12,
+            "pair_count": 45,
+            "pairwise_mean": 7.013775979755918e-12,
+            "pairwise_median": 6.419142994928961e-12
+          }
+        }
+      ],
+      "side_count": 3
+    },
+    {
+      "baseline_count": 5,
+      "baseline_law": "current-baseline[delta=0.2]",
+      "baseline_medoid_sample_id": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=1/attempt=5/4x6/factor=q",
+      "central_body_rule": {
+        "center": "baseline empirical L2 medoid",
+        "central_fraction": 0.9,
+        "outside_rule": "distance to baseline medoid > radius",
+        "radius": 0.4147084038134733,
+        "radius_order_statistic": "sorted baseline medoid distances at index ceil(q*m)-1"
+      },
+      "count": 40,
+      "laws": [
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 0,
+            "centroid_distance_baseline_medoid_gauge": 0.0,
+            "energy_like_l2_v_statistic": 0.0,
+            "outside_baseline_central_body_count": 0,
+            "outside_baseline_central_body_fraction": 0.0
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 5,
+                "unique": 1
+              }
+            },
+            "planar_fixed_side_count_type": "convex-4-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 5,
+          "issues": [],
+          "law": "current-baseline[delta=0.2]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.0,
+              "participation_ratio": 1.174033902603835,
+              "positive_eigenvalues": 4
+            },
+            "nearest_neighbor_mean": 0.12157541982652101,
+            "pair_count": 10,
+            "pairwise_mean": 0.261648511406549,
+            "pairwise_median": 0.2689103625285649
+          },
+          "within_linf": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.0,
+              "participation_ratio": 1.3220096186726875,
+              "positive_eigenvalues": 4
+            },
+            "nearest_neighbor_mean": 0.23502354554917884,
+            "pair_count": 10,
+            "pairwise_mean": 0.4270558175678117,
+            "pairwise_median": 0.41603128265132905
+          }
+        },
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 0,
+            "centroid_distance_baseline_medoid_gauge": 0.1474859638648848,
+            "energy_like_l2_v_statistic": 0.11198503921331862,
+            "outside_baseline_central_body_count": 0,
+            "outside_baseline_central_body_fraction": 0.0
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 5,
+                "unique": 1
+              }
+            },
+            "planar_fixed_side_count_type": "convex-4-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 5,
+          "issues": [],
+          "law": "primal-hull-uniform-disk[points=n+4,origin=interior]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.0,
+              "participation_ratio": 1.54157780848955,
+              "positive_eigenvalues": 4
+            },
+            "nearest_neighbor_mean": 0.06922951941627518,
+            "pair_count": 10,
+            "pairwise_mean": 0.11941221746456923,
+            "pairwise_median": 0.12009678760805054
+          },
+          "within_linf": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.0,
+              "participation_ratio": 1.8984937052983966,
+              "positive_eigenvalues": 4
+            },
+            "nearest_neighbor_mean": 0.15160821041459485,
+            "pair_count": 10,
+            "pairwise_mean": 0.2445091786349871,
+            "pairwise_median": 0.2458593566056129
+          }
+        },
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 0,
+            "centroid_distance_baseline_medoid_gauge": 0.2518370183546769,
+            "energy_like_l2_v_statistic": 0.3007489126888244,
+            "outside_baseline_central_body_count": 0,
+            "outside_baseline_central_body_fraction": 0.0
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 5,
+                "unique": 1
+              }
+            },
+            "planar_fixed_side_count_type": "convex-4-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 5,
+          "issues": [],
+          "law": "regular-mutation[steps=4,scale=0.03]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.0,
+              "participation_ratio": 2.47459890385405,
+              "positive_eigenvalues": 4
+            },
+            "nearest_neighbor_mean": 0.011604320801140168,
+            "pair_count": 10,
+            "pairwise_mean": 0.016631489415363486,
+            "pairwise_median": 0.01753730847133872
+          },
+          "within_linf": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.0,
+              "participation_ratio": 1.8721475129585663,
+              "positive_eigenvalues": 4
+            },
+            "nearest_neighbor_mean": 0.020213436140099406,
+            "pair_count": 10,
+            "pairwise_mean": 0.03176826431535553,
+            "pairwise_median": 0.03265102345746268
+          }
+        },
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 0,
+            "centroid_distance_baseline_medoid_gauge": 0.15488673891951749,
+            "energy_like_l2_v_statistic": 0.10798772798826446,
+            "outside_baseline_central_body_count": 0,
+            "outside_baseline_central_body_fraction": 0.0
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 5,
+                "unique": 1
+              }
+            },
+            "planar_fixed_side_count_type": "convex-4-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 5,
+          "issues": [],
+          "law": "repulsive-gap[alpha=16]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.0,
+              "participation_ratio": 1.8247274128152025,
+              "positive_eigenvalues": 4
+            },
+            "nearest_neighbor_mean": 0.04989489423877773,
+            "pair_count": 10,
+            "pairwise_mean": 0.08772519075859891,
+            "pairwise_median": 0.09071091262618615
+          },
+          "within_linf": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.01203824001426955,
+              "participation_ratio": 2.240148976712242,
+              "positive_eigenvalues": 3
+            },
+            "nearest_neighbor_mean": 0.11903445822018896,
+            "pair_count": 10,
+            "pairwise_mean": 0.18876550349468027,
+            "pairwise_median": 0.1911494345218671
+          }
+        },
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 0,
+            "centroid_distance_baseline_medoid_gauge": 0.044103398550865994,
+            "energy_like_l2_v_statistic": 0.0557126991441011,
+            "outside_baseline_central_body_count": 0,
+            "outside_baseline_central_body_fraction": 0.0
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 5,
+                "unique": 1
+              }
+            },
+            "planar_fixed_side_count_type": "convex-4-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 5,
+          "issues": [],
+          "law": "repulsive-gap[alpha=1]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.0,
+              "participation_ratio": 1.4927858131182816,
+              "positive_eigenvalues": 4
+            },
+            "nearest_neighbor_mean": 0.09097556007609447,
+            "pair_count": 10,
+            "pairwise_mean": 0.1573269090314337,
+            "pairwise_median": 0.1579300116379978
+          },
+          "within_linf": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.024384920568776933,
+              "participation_ratio": 2.2841440861741273,
+              "positive_eigenvalues": 3
+            },
+            "nearest_neighbor_mean": 0.2009862460666743,
+            "pair_count": 10,
+            "pairwise_mean": 0.2967172246400267,
+            "pairwise_median": 0.29675199881682607
+          }
+        },
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 0,
+            "centroid_distance_baseline_medoid_gauge": 0.03996631256306406,
+            "energy_like_l2_v_statistic": 0.03720065204602008,
+            "outside_baseline_central_body_count": 0,
+            "outside_baseline_central_body_fraction": 0.0
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 5,
+                "unique": 1
+              }
+            },
+            "planar_fixed_side_count_type": "convex-4-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 5,
+          "issues": [],
+          "law": "repulsive-gap[alpha=4]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.0,
+              "participation_ratio": 1.1880493427361418,
+              "positive_eigenvalues": 4
+            },
+            "nearest_neighbor_mean": 0.13446525590352867,
+            "pair_count": 10,
+            "pairwise_mean": 0.27699297380980115,
+            "pairwise_median": 0.2650727945056459
+          },
+          "within_linf": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.004771144891167073,
+              "participation_ratio": 1.4203225631268743,
+              "positive_eigenvalues": 3
+            },
+            "nearest_neighbor_mean": 0.24669442971863478,
+            "pair_count": 10,
+            "pairwise_mean": 0.42991800417794596,
+            "pairwise_median": 0.4428356301915857
+          }
+        },
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 5,
+            "centroid_distance_baseline_medoid_gauge": 0.25803301036400694,
+            "energy_like_l2_v_statistic": 0.33308671986678656,
+            "outside_baseline_central_body_count": 0,
+            "outside_baseline_central_body_fraction": 0.0
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 5,
+                "unique": 1
+              }
+            },
+            "planar_fixed_side_count_type": "convex-4-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 5,
+          "issues": [],
+          "law": "repulsive-gap[regular]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 10,
+            "duplicate_pair_fraction": 1.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.0,
+              "participation_ratio": null,
+              "positive_eigenvalues": 0
+            },
+            "nearest_neighbor_mean": 1.0515655652153128e-12,
+            "pair_count": 10,
+            "pairwise_mean": 4.1879732544241345e-12,
+            "pairwise_median": 3.778166938915992e-12
+          },
+          "within_linf": {
+            "duplicate_pair_count": 10,
+            "duplicate_pair_fraction": 1.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.0,
+              "participation_ratio": null,
+              "positive_eigenvalues": 0
+            },
+            "nearest_neighbor_mean": 1.7430501486614958e-12,
+            "pair_count": 10,
+            "pairwise_mean": 6.9337646735334605e-12,
+            "pairwise_median": 6.252443007781494e-12
+          }
+        },
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 5,
+            "centroid_distance_baseline_medoid_gauge": 0.34495796723501365,
+            "energy_like_l2_v_statistic": 0.24693951698148486,
+            "outside_baseline_central_body_count": 2,
+            "outside_baseline_central_body_fraction": 0.4
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 5,
+                "unique": 1
+              }
+            },
+            "planar_fixed_side_count_type": "convex-4-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 5,
+          "issues": [],
+          "law": "zonogon[lengths=uniform(0.5,1.5)]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.0,
+              "participation_ratio": 1.0118340738641398,
+              "positive_eigenvalues": 4
+            },
+            "nearest_neighbor_mean": 0.19271128338136748,
+            "pair_count": 10,
+            "pairwise_mean": 0.6948343595148305,
+            "pairwise_median": 0.8122106918211482
+          },
+          "within_linf": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 5.964447270853959e-06,
+              "participation_ratio": 1.0000042284884254,
+              "positive_eigenvalues": 3
+            },
+            "nearest_neighbor_mean": 0.26663579277261085,
+            "pair_count": 10,
+            "pairwise_mean": 0.9892016483404925,
+            "pairwise_median": 1.1553562970422964
+          }
+        }
+      ],
+      "side_count": 4
+    },
+    {
+      "baseline_count": 15,
+      "baseline_law": "current-baseline[delta=0.2]",
+      "baseline_medoid_sample_id": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=2/attempt=9/6x6/factor=q",
+      "central_body_rule": {
+        "center": "baseline empirical L2 medoid",
+        "central_fraction": 0.9,
+        "outside_rule": "distance to baseline medoid > radius",
+        "radius": 0.6526488223687889,
+        "radius_order_statistic": "sorted baseline medoid distances at index ceil(q*m)-1"
+      },
+      "count": 120,
+      "laws": [
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 0,
+            "centroid_distance_baseline_medoid_gauge": 0.0,
+            "energy_like_l2_v_statistic": 0.0,
+            "outside_baseline_central_body_count": 1,
+            "outside_baseline_central_body_fraction": 0.06666666666666667
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 15,
+                "unique": 2
+              }
+            },
+            "planar_fixed_side_count_type": "convex-6-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 15,
+          "issues": [],
+          "law": "current-baseline[delta=0.2]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.0017772538356895635,
+              "participation_ratio": 1.0697514767505993,
+              "positive_eigenvalues": 11
+            },
+            "nearest_neighbor_mean": 0.07197358568276366,
+            "pair_count": 105,
+            "pairwise_mean": 0.28035913848696103,
+            "pairwise_median": 0.14305939523913738
+          },
+          "within_linf": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.03166097614559288,
+              "participation_ratio": 1.2333869633192605,
+              "positive_eigenvalues": 10
+            },
+            "nearest_neighbor_mean": 0.15279931836198127,
+            "pair_count": 105,
+            "pairwise_mean": 0.4498483054673299,
+            "pairwise_median": 0.25537649288439346
+          }
+        },
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 0,
+            "centroid_distance_baseline_medoid_gauge": 0.15476676097149195,
+            "energy_like_l2_v_statistic": 0.07225120994993256,
+            "outside_baseline_central_body_count": 0,
+            "outside_baseline_central_body_fraction": 0.0
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 15,
+                "unique": 2
+              }
+            },
+            "planar_fixed_side_count_type": "convex-6-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 15,
+          "issues": [],
+          "law": "primal-hull-uniform-disk[points=n+4,origin=interior]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.034526308836163734,
+              "participation_ratio": 3.921972920521662,
+              "positive_eigenvalues": 11
+            },
+            "nearest_neighbor_mean": 0.04600150454276563,
+            "pair_count": 105,
+            "pairwise_mean": 0.0780927984700884,
+            "pairwise_median": 0.07626207141752595
+          },
+          "within_linf": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.06474846329812496,
+              "participation_ratio": 5.916392269775316,
+              "positive_eigenvalues": 10
+            },
+            "nearest_neighbor_mean": 0.10305181199461551,
+            "pair_count": 105,
+            "pairwise_mean": 0.16632703453019634,
+            "pairwise_median": 0.16742700132763688
+          }
+        },
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 0,
+            "centroid_distance_baseline_medoid_gauge": 0.23991663327734145,
+            "energy_like_l2_v_statistic": 0.23740477936993318,
+            "outside_baseline_central_body_count": 0,
+            "outside_baseline_central_body_fraction": 0.0
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 15,
+                "unique": 2
+              }
+            },
+            "planar_fixed_side_count_type": "convex-6-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 15,
+          "issues": [],
+          "law": "regular-mutation[steps=4,scale=0.03]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.016583530689283154,
+              "participation_ratio": 4.780386591929128,
+              "positive_eigenvalues": 12
+            },
+            "nearest_neighbor_mean": 0.01033160443280923,
+            "pair_count": 105,
+            "pairwise_mean": 0.01670276975085973,
+            "pairwise_median": 0.01659747359954888
+          },
+          "within_linf": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.061663933006565676,
+              "participation_ratio": 6.195500865882555,
+              "positive_eigenvalues": 11
+            },
+            "nearest_neighbor_mean": 0.022464683228964593,
+            "pair_count": 105,
+            "pairwise_mean": 0.03365280740980502,
+            "pairwise_median": 0.03374906956882073
+          }
+        },
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 0,
+            "centroid_distance_baseline_medoid_gauge": 0.2325235036202302,
+            "energy_like_l2_v_statistic": 0.21110638522095007,
+            "outside_baseline_central_body_count": 0,
+            "outside_baseline_central_body_fraction": 0.0
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 15,
+                "unique": 2
+              }
+            },
+            "planar_fixed_side_count_type": "convex-6-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 15,
+          "issues": [],
+          "law": "repulsive-gap[alpha=16]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.043179457042694866,
+              "participation_ratio": 5.400089649734314,
+              "positive_eigenvalues": 11
+            },
+            "nearest_neighbor_mean": 0.019750537281611455,
+            "pair_count": 105,
+            "pairwise_mean": 0.031207970859025085,
+            "pairwise_median": 0.03121912244295494
+          },
+          "within_linf": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.06939964226603981,
+              "participation_ratio": 5.83935836985889,
+              "positive_eigenvalues": 10
+            },
+            "nearest_neighbor_mean": 0.03980351665297876,
+            "pair_count": 105,
+            "pairwise_mean": 0.0624746768476171,
+            "pairwise_median": 0.06330676757696418
+          }
+        },
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 0,
+            "centroid_distance_baseline_medoid_gauge": 0.051227900811987775,
+            "energy_like_l2_v_statistic": 0.028938235184889527,
+            "outside_baseline_central_body_count": 1,
+            "outside_baseline_central_body_fraction": 0.06666666666666667
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 15,
+                "unique": 2
+              }
+            },
+            "planar_fixed_side_count_type": "convex-6-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 15,
+          "issues": [],
+          "law": "repulsive-gap[alpha=1]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.001383618411331424,
+              "participation_ratio": 1.0740319436299308,
+              "positive_eigenvalues": 12
+            },
+            "nearest_neighbor_mean": 0.09111915105087104,
+            "pair_count": 105,
+            "pairwise_mean": 0.2785995817346677,
+            "pairwise_median": 0.21081567885635685
+          },
+          "within_linf": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.028069176154128628,
+              "participation_ratio": 1.1886123728533011,
+              "positive_eigenvalues": 9
+            },
+            "nearest_neighbor_mean": 0.16143934822343523,
+            "pair_count": 105,
+            "pairwise_mean": 0.4471494308445957,
+            "pairwise_median": 0.3509789532976135
+          }
+        },
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 0,
+            "centroid_distance_baseline_medoid_gauge": 0.15862680552469993,
+            "energy_like_l2_v_statistic": 0.08347267573770274,
+            "outside_baseline_central_body_count": 0,
+            "outside_baseline_central_body_fraction": 0.0
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 15,
+                "unique": 2
+              }
+            },
+            "planar_fixed_side_count_type": "convex-6-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 15,
+          "issues": [],
+          "law": "repulsive-gap[alpha=4]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.002425440335282161,
+              "participation_ratio": 1.19988945661139,
+              "positive_eigenvalues": 12
+            },
+            "nearest_neighbor_mean": 0.049439106331010715,
+            "pair_count": 105,
+            "pairwise_mean": 0.11689648273467108,
+            "pairwise_median": 0.062375074881773004
+          },
+          "within_linf": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.014951609284902412,
+              "participation_ratio": 1.389099708486513,
+              "positive_eigenvalues": 9
+            },
+            "nearest_neighbor_mean": 0.09063548747712043,
+            "pair_count": 105,
+            "pairwise_mean": 0.2014584148861682,
+            "pairwise_median": 0.13127893076072317
+          }
+        },
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 15,
+            "centroid_distance_baseline_medoid_gauge": 0.2500072498527058,
+            "energy_like_l2_v_statistic": 0.26985032943853204,
+            "outside_baseline_central_body_count": 0,
+            "outside_baseline_central_body_fraction": 0.0
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 15,
+                "unique": 2
+              }
+            },
+            "planar_fixed_side_count_type": "convex-6-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 15,
+          "issues": [],
+          "law": "repulsive-gap[regular]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 105,
+            "duplicate_pair_fraction": 1.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.0,
+              "participation_ratio": null,
+              "positive_eigenvalues": 0
+            },
+            "nearest_neighbor_mean": 3.7556918306341726e-13,
+            "pair_count": 105,
+            "pairwise_mean": 2.853047411777501e-12,
+            "pairwise_median": 2.428660815836811e-12
+          },
+          "within_linf": {
+            "duplicate_pair_count": 105,
+            "duplicate_pair_fraction": 1.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.0,
+              "participation_ratio": null,
+              "positive_eigenvalues": 0
+            },
+            "nearest_neighbor_mean": 6.368979417932982e-13,
+            "pair_count": 105,
+            "pairwise_mean": 4.837181449041899e-12,
+            "pairwise_median": 4.126365915624319e-12
+          }
+        },
+        {
+          "baseline_comparison": {
+            "baseline_available": true,
+            "centroid_alignment_ambiguous_count": 15,
+            "centroid_distance_baseline_medoid_gauge": 0.1705703758395317,
+            "energy_like_l2_v_statistic": 0.08218879994724293,
+            "outside_baseline_central_body_count": 2,
+            "outside_baseline_central_body_fraction": 0.13333333333333333
+          },
+          "combinatorial_breadth": {
+            "optional_fields": {
+              "pair_bucket": {
+                "observed": 15,
+                "unique": 2
+              }
+            },
+            "planar_fixed_side_count_type": "convex-6-gon",
+            "type_count_within_stratum": 1
+          },
+          "compute_acceptance": {
+            "accepted_fraction": null,
+            "accepted_observed": 0,
+            "attempts": null,
+            "generation_ms": null,
+            "rejections": null,
+            "target_ms": null,
+            "validation_ms": null
+          },
+          "count": 15,
+          "issues": [],
+          "law": "zonogon[lengths=uniform(0.5,1.5)]",
+          "naturalness_provenance": {
+            "distinct_descriptions": [],
+            "naturalness_is_measured": false,
+            "observed": 0
+          },
+          "sample_status": "descriptive",
+          "within_l2": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.00016063301403712433,
+              "participation_ratio": 1.0351778570865116,
+              "positive_eigenvalues": 11
+            },
+            "nearest_neighbor_mean": 0.12276290723970823,
+            "pair_count": 105,
+            "pairwise_mean": 0.43518420502417415,
+            "pairwise_median": 0.26412533057221194
+          },
+          "within_linf": {
+            "duplicate_pair_count": 0,
+            "duplicate_pair_fraction": 0.0,
+            "effective_dimension": {
+              "negative_eigenmass_fraction": 0.006961740608375484,
+              "participation_ratio": 1.0309776756852966,
+              "positive_eigenvalues": 9
+            },
+            "nearest_neighbor_mean": 0.1832101869109556,
+            "pair_count": 105,
+            "pairwise_mean": 0.6421727589331444,
+            "pairwise_median": 0.39122654016084646
+          }
+        }
+      ],
+      "side_count": 6
+    }
+  ]
+}

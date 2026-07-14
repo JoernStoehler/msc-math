@@ -1,0 +1,7 @@
+side_count	law	count	sample_status	pairwise_l2_mean	nearest_neighbor_l2_mean	effective_dimension	duplicate_pair_fraction	baseline_centroid_distance	energy_like_l2_v_statistic	outside_baseline_count	outside_baseline_fraction	central_body_radius	accepted_fraction
+5	baseline	8	descriptive	9.675641509e-12	9.675536502e-12	NA	1	0	0	0	0	9.67570953e-12	1
+5	broad	8	descriptive	0.1630443928	0.05415388252	1.093224272	0	0.1768588367	0.2214505338	8	1	9.67570953e-12	1
+5	narrow	8	descriptive	0.01032905155	0.00307247863	1.0036466	0	0.0006264299591	0.004978340792	8	1	9.67570953e-12	1
+6	baseline	8	descriptive	8.030373613e-12	8.03028962e-12	NA	1	0	0	0	0	8.03040855e-12	1
+6	broad	8	descriptive	0.1620074137	0.07188584223	1.102815621	0	0.1703858294	0.2142269129	8	1	8.03040855e-12	1
+6	narrow	8	descriptive	0.0102084258	0.00303453324	1.003245974	0	0.0005682937853	0.004914711065	8	1	8.03040855e-12	1
