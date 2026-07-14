@@ -1,0 +1,1282 @@
+{
+  "accepted_complete_pair_count": 192,
+  "accepted_rows": 768,
+  "by_bucket_arm": [
+    {
+      "accepted_rows": 64,
+      "attempts": {
+        "max": 117,
+        "mean": 15.9375,
+        "min": 1,
+        "n": 64
+      },
+      "factor_geometry": {
+        "p": {
+          "gap_cv": {
+            "max": 0.6478898097955361,
+            "mean": 0.3175704103130091,
+            "min": 0.010875544925059233,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.6042842240386138,
+            "mean": 0.33428791444735195,
+            "min": 0.010393730094527587,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 0.1665957532311523,
+            "mean": 0.09502537549094266,
+            "min": 0.0042377731972177285,
+            "n": 64
+          }
+        },
+        "q": {
+          "gap_cv": {
+            "max": 0.6602458162885133,
+            "mean": 0.3305543914778518,
+            "min": 0.08118681221062699,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.5849281968574906,
+            "mean": 0.30606717936765065,
+            "min": 0.010428958809308157,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 0.16793932208734041,
+            "mean": 0.09090296187352558,
+            "min": 0.02073124614126735,
+            "n": 64
+          }
+        }
+      },
+      "generation_ms": {
+        "max": 0.10402599999999997,
+        "mean": 0.023964484374999998,
+        "min": 0.007314,
+        "n": 64
+      },
+      "law": "factorial-baseline",
+      "pair_bucket": "3x3",
+      "rows": 64,
+      "validation_ms": {
+        "max": 54.320074,
+        "mean": 39.863969328125,
+        "min": 35.899833,
+        "n": 64
+      }
+    },
+    {
+      "accepted_rows": 64,
+      "attempts": {
+        "max": 117,
+        "mean": 15.9375,
+        "min": 1,
+        "n": 64
+      },
+      "factor_geometry": {
+        "p": {
+          "gap_cv": {
+            "max": 0.6478898097955361,
+            "mean": 0.3175704103130091,
+            "min": 0.010875544925059233,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.6042842240386138,
+            "mean": 0.33428791444735195,
+            "min": 0.010393730094527587,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 0.1665957532311523,
+            "mean": 0.09502537549094266,
+            "min": 0.0042377731972177285,
+            "n": 64
+          }
+        },
+        "q": {
+          "gap_cv": {
+            "max": 0.6602458162885133,
+            "mean": 0.3305543914778518,
+            "min": 0.08118681221062699,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.5849281968574902,
+            "mean": 0.30606717936765065,
+            "min": 0.010428958809308156,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 1.660469071496882e-16,
+            "mean": 3.877743508143257e-17,
+            "min": 0.0,
+            "n": 64
+          }
+        }
+      },
+      "generation_ms": {
+        "max": 0.10313699999999998,
+        "mean": 0.0199674375,
+        "min": 0.003627,
+        "n": 64
+      },
+      "law": "factorial-q",
+      "pair_bucket": "3x3",
+      "rows": 64,
+      "validation_ms": {
+        "max": 49.140675,
+        "mean": 37.350929984375,
+        "min": 34.634099,
+        "n": 64
+      }
+    },
+    {
+      "accepted_rows": 64,
+      "attempts": {
+        "max": 117,
+        "mean": 15.9375,
+        "min": 1,
+        "n": 64
+      },
+      "factor_geometry": {
+        "p": {
+          "gap_cv": {
+            "max": 0.6478898097955361,
+            "mean": 0.3175704103130091,
+            "min": 0.010875544925059233,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.6042842240386138,
+            "mean": 0.33428791444735195,
+            "min": 0.010393730094527591,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 1.6368403207705685e-16,
+            "mean": 1.976558830255164e-17,
+            "min": 0.0,
+            "n": 64
+          }
+        },
+        "q": {
+          "gap_cv": {
+            "max": 0.6602458162885133,
+            "mean": 0.3305543914778518,
+            "min": 0.08118681221062699,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.5849281968574906,
+            "mean": 0.30606717936765065,
+            "min": 0.010428958809308157,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 0.16793932208734041,
+            "mean": 0.09090296187352558,
+            "min": 0.02073124614126735,
+            "n": 64
+          }
+        }
+      },
+      "generation_ms": {
+        "max": 0.105039,
+        "mean": 0.021584812499999998,
+        "min": 0.006613,
+        "n": 64
+      },
+      "law": "factorial-p",
+      "pair_bucket": "3x3",
+      "rows": 64,
+      "validation_ms": {
+        "max": 40.408588,
+        "mean": 37.918846703125,
+        "min": 35.971435,
+        "n": 64
+      }
+    },
+    {
+      "accepted_rows": 64,
+      "attempts": {
+        "max": 117,
+        "mean": 15.9375,
+        "min": 1,
+        "n": 64
+      },
+      "factor_geometry": {
+        "p": {
+          "gap_cv": {
+            "max": 0.6478898097955361,
+            "mean": 0.3175704103130091,
+            "min": 0.010875544925059233,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.6042842240386138,
+            "mean": 0.33428791444735195,
+            "min": 0.010393730094527591,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 1.6368403207705685e-16,
+            "mean": 1.976558830255164e-17,
+            "min": 0.0,
+            "n": 64
+          }
+        },
+        "q": {
+          "gap_cv": {
+            "max": 0.6602458162885133,
+            "mean": 0.3305543914778518,
+            "min": 0.08118681221062699,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.5849281968574902,
+            "mean": 0.30606717936765065,
+            "min": 0.010428958809308156,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 1.660469071496882e-16,
+            "mean": 3.877743508143257e-17,
+            "min": 0.0,
+            "n": 64
+          }
+        }
+      },
+      "generation_ms": {
+        "max": 0.17262300000000005,
+        "mean": 0.023996203125,
+        "min": 0.007464,
+        "n": 64
+      },
+      "law": "factorial-both",
+      "pair_bucket": "3x3",
+      "rows": 64,
+      "validation_ms": {
+        "max": 72.59732799999999,
+        "mean": 41.86903353125,
+        "min": 36.937233,
+        "n": 64
+      }
+    },
+    {
+      "accepted_rows": 64,
+      "attempts": {
+        "max": 23,
+        "mean": 7.453125,
+        "min": 1,
+        "n": 64
+      },
+      "factor_geometry": {
+        "p": {
+          "gap_cv": {
+            "max": 1.0164282948487382,
+            "mean": 0.634365563476476,
+            "min": 0.13483206095638395,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.8888765649902527,
+            "mean": 0.6682904093076165,
+            "min": 0.005989346478040046,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 0.1418114266305932,
+            "mean": 0.09672615794732328,
+            "min": 0.0333675024123828,
+            "n": 64
+          }
+        },
+        "q": {
+          "gap_cv": {
+            "max": 0.8541925974494644,
+            "mean": 0.5167595241573896,
+            "min": 0.20660981890152683,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.7370515502786649,
+            "mean": 0.42995763695204753,
+            "min": 0.004563932304079427,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 0.16170360637693396,
+            "mean": 0.0923030128108069,
+            "min": 0.026425139381124296,
+            "n": 64
+          }
+        }
+      },
+      "generation_ms": {
+        "max": 0.041116,
+        "mean": 0.017825328125,
+        "min": 0.007384,
+        "n": 64
+      },
+      "law": "factorial-baseline",
+      "pair_bucket": "4x6",
+      "rows": 64,
+      "validation_ms": {
+        "max": 339.912557,
+        "mean": 249.955352671875,
+        "min": 203.890132,
+        "n": 64
+      }
+    },
+    {
+      "accepted_rows": 64,
+      "attempts": {
+        "max": 23,
+        "mean": 7.453125,
+        "min": 1,
+        "n": 64
+      },
+      "factor_geometry": {
+        "p": {
+          "gap_cv": {
+            "max": 1.0164282948487382,
+            "mean": 0.634365563476476,
+            "min": 0.13483206095638395,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.8888765649902527,
+            "mean": 0.6682904093076165,
+            "min": 0.005989346478040046,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 0.1418114266305932,
+            "mean": 0.09672615794732328,
+            "min": 0.0333675024123828,
+            "n": 64
+          }
+        },
+        "q": {
+          "gap_cv": {
+            "max": 0.8541925974494644,
+            "mean": 0.5167595241573896,
+            "min": 0.20660981890152683,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.7382508820516526,
+            "mean": 0.4319571139051933,
+            "min": 0.004563999264368202,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "n": 64
+          }
+        }
+      },
+      "generation_ms": {
+        "max": 0.034265000000000004,
+        "mean": 0.016250984375,
+        "min": 0.007173,
+        "n": 64
+      },
+      "law": "factorial-q",
+      "pair_bucket": "4x6",
+      "rows": 64,
+      "validation_ms": {
+        "max": 309.80223,
+        "mean": 238.510255140625,
+        "min": 201.66304000000002,
+        "n": 64
+      }
+    },
+    {
+      "accepted_rows": 64,
+      "attempts": {
+        "max": 23,
+        "mean": 7.453125,
+        "min": 1,
+        "n": 64
+      },
+      "factor_geometry": {
+        "p": {
+          "gap_cv": {
+            "max": 1.0164282948487382,
+            "mean": 0.634365563476476,
+            "min": 0.13483206095638395,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.9004193872634517,
+            "mean": 0.6798795906714956,
+            "min": 0.005990851018049771,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 2.218827320647746e-16,
+            "mean": 5.490792351779119e-17,
+            "min": 0.0,
+            "n": 64
+          }
+        },
+        "q": {
+          "gap_cv": {
+            "max": 0.8541925974494644,
+            "mean": 0.5167595241573896,
+            "min": 0.20660981890152683,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.7370515502786649,
+            "mean": 0.42995763695204753,
+            "min": 0.004563932304079427,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 0.16170360637693396,
+            "mean": 0.0923030128108069,
+            "min": 0.026425139381124296,
+            "n": 64
+          }
+        }
+      },
+      "generation_ms": {
+        "max": 0.039509999999999997,
+        "mean": 0.01693053125,
+        "min": 0.007154,
+        "n": 64
+      },
+      "law": "factorial-p",
+      "pair_bucket": "4x6",
+      "rows": 64,
+      "validation_ms": {
+        "max": 310.19593100000003,
+        "mean": 240.034927875,
+        "min": 204.164507,
+        "n": 64
+      }
+    },
+    {
+      "accepted_rows": 64,
+      "attempts": {
+        "max": 23,
+        "mean": 7.453125,
+        "min": 1,
+        "n": 64
+      },
+      "factor_geometry": {
+        "p": {
+          "gap_cv": {
+            "max": 1.0164282948487382,
+            "mean": 0.634365563476476,
+            "min": 0.13483206095638395,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.9004193872634517,
+            "mean": 0.6798795906714956,
+            "min": 0.005990851018049771,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 2.218827320647746e-16,
+            "mean": 5.490792351779119e-17,
+            "min": 0.0,
+            "n": 64
+          }
+        },
+        "q": {
+          "gap_cv": {
+            "max": 0.8541925974494644,
+            "mean": 0.5167595241573896,
+            "min": 0.20660981890152683,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.7382508820516526,
+            "mean": 0.4319571139051933,
+            "min": 0.004563999264368202,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "n": 64
+          }
+        }
+      },
+      "generation_ms": {
+        "max": 0.05791900000000001,
+        "mean": 0.0171948125,
+        "min": 0.007274,
+        "n": 64
+      },
+      "law": "factorial-both",
+      "pair_bucket": "4x6",
+      "rows": 64,
+      "validation_ms": {
+        "max": 281.431944,
+        "mean": 235.47422046875,
+        "min": 201.63616,
+        "n": 64
+      }
+    },
+    {
+      "accepted_rows": 64,
+      "attempts": {
+        "max": 34,
+        "mean": 7.375,
+        "min": 1,
+        "n": 64
+      },
+      "factor_geometry": {
+        "p": {
+          "gap_cv": {
+            "max": 0.944517344851503,
+            "mean": 0.628343179005564,
+            "min": 0.2761427615057123,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.8567089804838953,
+            "mean": 0.6821801571115034,
+            "min": 0.09050203505935327,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 0.14146586273620107,
+            "mean": 0.09780515158019618,
+            "min": 0.028797832965054605,
+            "n": 64
+          }
+        },
+        "q": {
+          "gap_cv": {
+            "max": 1.0359811323015393,
+            "mean": 0.6578010995412537,
+            "min": 0.3035261029345664,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.8698198417512804,
+            "mean": 0.6389334721723221,
+            "min": 0.07414301063232037,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 0.15186935886093345,
+            "mean": 0.09462464078854725,
+            "min": 0.01666764342556923,
+            "n": 64
+          }
+        }
+      },
+      "generation_ms": {
+        "max": 0.048162,
+        "mean": 0.0172678125,
+        "min": 0.007594,
+        "n": 64
+      },
+      "law": "factorial-baseline",
+      "pair_bucket": "6x6",
+      "rows": 64,
+      "validation_ms": {
+        "max": 857.9998250000001,
+        "mean": 577.520004421875,
+        "min": 478.15789,
+        "n": 64
+      }
+    },
+    {
+      "accepted_rows": 64,
+      "attempts": {
+        "max": 34,
+        "mean": 7.375,
+        "min": 1,
+        "n": 64
+      },
+      "factor_geometry": {
+        "p": {
+          "gap_cv": {
+            "max": 0.944517344851503,
+            "mean": 0.628343179005564,
+            "min": 0.2761427615057123,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.8567089804838953,
+            "mean": 0.6821801571115034,
+            "min": 0.09050203505935327,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 0.14146586273620107,
+            "mean": 0.09780515158019618,
+            "min": 0.028797832965054605,
+            "n": 64
+          }
+        },
+        "q": {
+          "gap_cv": {
+            "max": 1.0359811323015393,
+            "mean": 0.6578010995412537,
+            "min": 0.3035261029345664,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.8737495760271888,
+            "mean": 0.6504448823734763,
+            "min": 0.0742348692039295,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 2.2073155979593485e-16,
+            "mean": 6.097252376449241e-17,
+            "min": 0.0,
+            "n": 64
+          }
+        }
+      },
+      "generation_ms": {
+        "max": 0.047938999999999996,
+        "mean": 0.01743546875,
+        "min": 0.007143,
+        "n": 64
+      },
+      "law": "factorial-q",
+      "pair_bucket": "6x6",
+      "rows": 64,
+      "validation_ms": {
+        "max": 807.43322,
+        "mean": 551.370070390625,
+        "min": 448.835057,
+        "n": 64
+      }
+    },
+    {
+      "accepted_rows": 64,
+      "attempts": {
+        "max": 34,
+        "mean": 7.375,
+        "min": 1,
+        "n": 64
+      },
+      "factor_geometry": {
+        "p": {
+          "gap_cv": {
+            "max": 0.944517344851503,
+            "mean": 0.628343179005564,
+            "min": 0.2761427615057123,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.8825684614556931,
+            "mean": 0.6936827690666648,
+            "min": 0.09077298470179919,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 2.2036819217283e-16,
+            "mean": 5.464680644958593e-17,
+            "min": 0.0,
+            "n": 64
+          }
+        },
+        "q": {
+          "gap_cv": {
+            "max": 1.0359811323015393,
+            "mean": 0.6578010995412537,
+            "min": 0.3035261029345664,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.8698198417512804,
+            "mean": 0.6389334721723221,
+            "min": 0.07414301063232037,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 0.15186935886093345,
+            "mean": 0.09462464078854725,
+            "min": 0.01666764342556923,
+            "n": 64
+          }
+        }
+      },
+      "generation_ms": {
+        "max": 0.04872200000000001,
+        "mean": 0.0172036875,
+        "min": 0.007585000000000001,
+        "n": 64
+      },
+      "law": "factorial-p",
+      "pair_bucket": "6x6",
+      "rows": 64,
+      "validation_ms": {
+        "max": 723.225241,
+        "mean": 557.57638190625,
+        "min": 480.971429,
+        "n": 64
+      }
+    },
+    {
+      "accepted_rows": 64,
+      "attempts": {
+        "max": 34,
+        "mean": 7.375,
+        "min": 1,
+        "n": 64
+      },
+      "factor_geometry": {
+        "p": {
+          "gap_cv": {
+            "max": 0.944517344851503,
+            "mean": 0.628343179005564,
+            "min": 0.2761427615057123,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.8825684614556931,
+            "mean": 0.6936827690666648,
+            "min": 0.09077298470179919,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 2.2036819217283e-16,
+            "mean": 5.464680644958593e-17,
+            "min": 0.0,
+            "n": 64
+          }
+        },
+        "q": {
+          "gap_cv": {
+            "max": 1.0359811323015393,
+            "mean": 0.6578010995412537,
+            "min": 0.3035261029345664,
+            "n": 64
+          },
+          "isoperimetric_ratio": {
+            "max": 0.8737495760271888,
+            "mean": 0.6504448823734763,
+            "min": 0.0742348692039295,
+            "n": 64
+          },
+          "support_cv": {
+            "max": 2.2073155979593485e-16,
+            "mean": 6.097252376449241e-17,
+            "min": 0.0,
+            "n": 64
+          }
+        }
+      },
+      "generation_ms": {
+        "max": 0.061274999999999996,
+        "mean": 0.0177924375,
+        "min": 0.0076950000000000005,
+        "n": 64
+      },
+      "law": "factorial-both",
+      "pair_bucket": "6x6",
+      "rows": 64,
+      "validation_ms": {
+        "max": 665.651892,
+        "mean": 543.824211984375,
+        "min": 458.646689,
+        "n": 64
+      }
+    }
+  ],
+  "expected_rows_per_bucket": 64,
+  "identity_scope": "tangential-matchability-v1",
+  "input_sha256": "0752d44113fe2b1e6bbf0c5af56e1e74e594d7986d48b50a065ed1966bced5ab",
+  "interpretation_boundary": "Target-free generator matchability evidence only: audits paired construction, acceptance, normalization, exact product volume, and coarse factor-geometry overlap. It contains no capacity or sys and cannot support transfer, target-effect, population, or mechanism claims.",
+  "law_version": "wishlist-2026-07-14-v2",
+  "manifest_sha256": "ff3cc09b4b05e970d97c14c8e4e6e69100ff95b1c07cf18d88a946e9c4e4a0aa",
+  "normalization_agreement": {
+    "max_factor_area_abs_error_from_one": 1.3322676295501878e-15,
+    "max_product_volume_abs_error": 1.3100631690576847e-14,
+    "tolerance": 1e-09
+  },
+  "pair_acceptance_by_bucket": [
+    {
+      "accepted_complete_pair_count": 64,
+      "pair_bucket": "3x3",
+      "pairs_with_rejected_rows": 0,
+      "structurally_complete_pair_count": 64
+    },
+    {
+      "accepted_complete_pair_count": 64,
+      "pair_bucket": "4x6",
+      "pairs_with_rejected_rows": 0,
+      "structurally_complete_pair_count": 64
+    },
+    {
+      "accepted_complete_pair_count": 64,
+      "pair_bucket": "6x6",
+      "pairs_with_rejected_rows": 0,
+      "structurally_complete_pair_count": 64
+    }
+  ],
+  "paired_expected_geometry_equalities": [
+    {
+      "factor": "q",
+      "left": "factorial-baseline",
+      "max_abs_delta": 0.0,
+      "metric": "support_cv",
+      "n": 64,
+      "pair_bucket": "3x3",
+      "right": "factorial-p"
+    },
+    {
+      "factor": "q",
+      "left": "factorial-q",
+      "max_abs_delta": 0.0,
+      "metric": "support_cv",
+      "n": 64,
+      "pair_bucket": "3x3",
+      "right": "factorial-both"
+    },
+    {
+      "factor": "q",
+      "left": "factorial-baseline",
+      "max_abs_delta": 0.0,
+      "metric": "gap_cv",
+      "n": 64,
+      "pair_bucket": "3x3",
+      "right": "factorial-p"
+    },
+    {
+      "factor": "q",
+      "left": "factorial-q",
+      "max_abs_delta": 0.0,
+      "metric": "gap_cv",
+      "n": 64,
+      "pair_bucket": "3x3",
+      "right": "factorial-both"
+    },
+    {
+      "factor": "q",
+      "left": "factorial-baseline",
+      "max_abs_delta": 0.0,
+      "metric": "isoperimetric_ratio",
+      "n": 64,
+      "pair_bucket": "3x3",
+      "right": "factorial-p"
+    },
+    {
+      "factor": "q",
+      "left": "factorial-q",
+      "max_abs_delta": 0.0,
+      "metric": "isoperimetric_ratio",
+      "n": 64,
+      "pair_bucket": "3x3",
+      "right": "factorial-both"
+    },
+    {
+      "factor": "p",
+      "left": "factorial-baseline",
+      "max_abs_delta": 0.0,
+      "metric": "support_cv",
+      "n": 64,
+      "pair_bucket": "3x3",
+      "right": "factorial-q"
+    },
+    {
+      "factor": "p",
+      "left": "factorial-p",
+      "max_abs_delta": 0.0,
+      "metric": "support_cv",
+      "n": 64,
+      "pair_bucket": "3x3",
+      "right": "factorial-both"
+    },
+    {
+      "factor": "p",
+      "left": "factorial-baseline",
+      "max_abs_delta": 0.0,
+      "metric": "gap_cv",
+      "n": 64,
+      "pair_bucket": "3x3",
+      "right": "factorial-q"
+    },
+    {
+      "factor": "p",
+      "left": "factorial-p",
+      "max_abs_delta": 0.0,
+      "metric": "gap_cv",
+      "n": 64,
+      "pair_bucket": "3x3",
+      "right": "factorial-both"
+    },
+    {
+      "factor": "p",
+      "left": "factorial-baseline",
+      "max_abs_delta": 0.0,
+      "metric": "isoperimetric_ratio",
+      "n": 64,
+      "pair_bucket": "3x3",
+      "right": "factorial-q"
+    },
+    {
+      "factor": "p",
+      "left": "factorial-p",
+      "max_abs_delta": 0.0,
+      "metric": "isoperimetric_ratio",
+      "n": 64,
+      "pair_bucket": "3x3",
+      "right": "factorial-both"
+    },
+    {
+      "factor": "q",
+      "left": "factorial-baseline",
+      "max_abs_delta": 0.0,
+      "metric": "support_cv",
+      "n": 64,
+      "pair_bucket": "4x6",
+      "right": "factorial-p"
+    },
+    {
+      "factor": "q",
+      "left": "factorial-q",
+      "max_abs_delta": 0.0,
+      "metric": "support_cv",
+      "n": 64,
+      "pair_bucket": "4x6",
+      "right": "factorial-both"
+    },
+    {
+      "factor": "q",
+      "left": "factorial-baseline",
+      "max_abs_delta": 0.0,
+      "metric": "gap_cv",
+      "n": 64,
+      "pair_bucket": "4x6",
+      "right": "factorial-p"
+    },
+    {
+      "factor": "q",
+      "left": "factorial-q",
+      "max_abs_delta": 0.0,
+      "metric": "gap_cv",
+      "n": 64,
+      "pair_bucket": "4x6",
+      "right": "factorial-both"
+    },
+    {
+      "factor": "q",
+      "left": "factorial-baseline",
+      "max_abs_delta": 0.0,
+      "metric": "isoperimetric_ratio",
+      "n": 64,
+      "pair_bucket": "4x6",
+      "right": "factorial-p"
+    },
+    {
+      "factor": "q",
+      "left": "factorial-q",
+      "max_abs_delta": 0.0,
+      "metric": "isoperimetric_ratio",
+      "n": 64,
+      "pair_bucket": "4x6",
+      "right": "factorial-both"
+    },
+    {
+      "factor": "p",
+      "left": "factorial-baseline",
+      "max_abs_delta": 0.0,
+      "metric": "support_cv",
+      "n": 64,
+      "pair_bucket": "4x6",
+      "right": "factorial-q"
+    },
+    {
+      "factor": "p",
+      "left": "factorial-p",
+      "max_abs_delta": 0.0,
+      "metric": "support_cv",
+      "n": 64,
+      "pair_bucket": "4x6",
+      "right": "factorial-both"
+    },
+    {
+      "factor": "p",
+      "left": "factorial-baseline",
+      "max_abs_delta": 0.0,
+      "metric": "gap_cv",
+      "n": 64,
+      "pair_bucket": "4x6",
+      "right": "factorial-q"
+    },
+    {
+      "factor": "p",
+      "left": "factorial-p",
+      "max_abs_delta": 0.0,
+      "metric": "gap_cv",
+      "n": 64,
+      "pair_bucket": "4x6",
+      "right": "factorial-both"
+    },
+    {
+      "factor": "p",
+      "left": "factorial-baseline",
+      "max_abs_delta": 0.0,
+      "metric": "isoperimetric_ratio",
+      "n": 64,
+      "pair_bucket": "4x6",
+      "right": "factorial-q"
+    },
+    {
+      "factor": "p",
+      "left": "factorial-p",
+      "max_abs_delta": 0.0,
+      "metric": "isoperimetric_ratio",
+      "n": 64,
+      "pair_bucket": "4x6",
+      "right": "factorial-both"
+    },
+    {
+      "factor": "q",
+      "left": "factorial-baseline",
+      "max_abs_delta": 0.0,
+      "metric": "support_cv",
+      "n": 64,
+      "pair_bucket": "6x6",
+      "right": "factorial-p"
+    },
+    {
+      "factor": "q",
+      "left": "factorial-q",
+      "max_abs_delta": 0.0,
+      "metric": "support_cv",
+      "n": 64,
+      "pair_bucket": "6x6",
+      "right": "factorial-both"
+    },
+    {
+      "factor": "q",
+      "left": "factorial-baseline",
+      "max_abs_delta": 0.0,
+      "metric": "gap_cv",
+      "n": 64,
+      "pair_bucket": "6x6",
+      "right": "factorial-p"
+    },
+    {
+      "factor": "q",
+      "left": "factorial-q",
+      "max_abs_delta": 0.0,
+      "metric": "gap_cv",
+      "n": 64,
+      "pair_bucket": "6x6",
+      "right": "factorial-both"
+    },
+    {
+      "factor": "q",
+      "left": "factorial-baseline",
+      "max_abs_delta": 0.0,
+      "metric": "isoperimetric_ratio",
+      "n": 64,
+      "pair_bucket": "6x6",
+      "right": "factorial-p"
+    },
+    {
+      "factor": "q",
+      "left": "factorial-q",
+      "max_abs_delta": 0.0,
+      "metric": "isoperimetric_ratio",
+      "n": 64,
+      "pair_bucket": "6x6",
+      "right": "factorial-both"
+    },
+    {
+      "factor": "p",
+      "left": "factorial-baseline",
+      "max_abs_delta": 0.0,
+      "metric": "support_cv",
+      "n": 64,
+      "pair_bucket": "6x6",
+      "right": "factorial-q"
+    },
+    {
+      "factor": "p",
+      "left": "factorial-p",
+      "max_abs_delta": 0.0,
+      "metric": "support_cv",
+      "n": 64,
+      "pair_bucket": "6x6",
+      "right": "factorial-both"
+    },
+    {
+      "factor": "p",
+      "left": "factorial-baseline",
+      "max_abs_delta": 0.0,
+      "metric": "gap_cv",
+      "n": 64,
+      "pair_bucket": "6x6",
+      "right": "factorial-q"
+    },
+    {
+      "factor": "p",
+      "left": "factorial-p",
+      "max_abs_delta": 0.0,
+      "metric": "gap_cv",
+      "n": 64,
+      "pair_bucket": "6x6",
+      "right": "factorial-both"
+    },
+    {
+      "factor": "p",
+      "left": "factorial-baseline",
+      "max_abs_delta": 0.0,
+      "metric": "isoperimetric_ratio",
+      "n": 64,
+      "pair_bucket": "6x6",
+      "right": "factorial-q"
+    },
+    {
+      "factor": "p",
+      "left": "factorial-p",
+      "max_abs_delta": 0.0,
+      "metric": "isoperimetric_ratio",
+      "n": 64,
+      "pair_bucket": "6x6",
+      "right": "factorial-both"
+    }
+  ],
+  "pairs_with_rejected_rows": 0,
+  "rejected_rows": 0,
+  "ridge_covariance_eligibility": {
+    "blocked_payload_api": [
+      "normalized ridge fields require prepare-private features_face_symplectic plus two-face payload assembly; SysLandscapePolytopeCache exposes the parts but no shared feature API",
+      "vertex covariance eligibility is private vertex_covariance_diagnostics in extreme-scalar-rejection-proposer and has no exported cache-to-diagnostics API"
+    ],
+    "status": "not_computed"
+  },
+  "row_count": 768,
+  "scale_free_range_overlap": [
+    {
+      "all_arm_range_intersection_over_union": 0.0,
+      "factor": "q",
+      "metric": "support_cv",
+      "pair_bucket": "3x3"
+    },
+    {
+      "all_arm_range_intersection_over_union": 1.0,
+      "factor": "q",
+      "metric": "gap_cv",
+      "pair_bucket": "3x3"
+    },
+    {
+      "all_arm_range_intersection_over_union": 0.9999999999999992,
+      "factor": "q",
+      "metric": "isoperimetric_ratio",
+      "pair_bucket": "3x3"
+    },
+    {
+      "all_arm_range_intersection_over_union": 0.0,
+      "factor": "p",
+      "metric": "support_cv",
+      "pair_bucket": "3x3"
+    },
+    {
+      "all_arm_range_intersection_over_union": 1.0,
+      "factor": "p",
+      "metric": "gap_cv",
+      "pair_bucket": "3x3"
+    },
+    {
+      "all_arm_range_intersection_over_union": 1.0,
+      "factor": "p",
+      "metric": "isoperimetric_ratio",
+      "pair_bucket": "3x3"
+    },
+    {
+      "all_arm_range_intersection_over_union": 0.0,
+      "factor": "q",
+      "metric": "support_cv",
+      "pair_bucket": "4x6"
+    },
+    {
+      "all_arm_range_intersection_over_union": 1.0,
+      "factor": "q",
+      "metric": "gap_cv",
+      "pair_bucket": "4x6"
+    },
+    {
+      "all_arm_range_intersection_over_union": 0.9983652445587466,
+      "factor": "q",
+      "metric": "isoperimetric_ratio",
+      "pair_bucket": "4x6"
+    },
+    {
+      "all_arm_range_intersection_over_union": 0.0,
+      "factor": "p",
+      "metric": "support_cv",
+      "pair_bucket": "4x6"
+    },
+    {
+      "all_arm_range_intersection_over_union": 1.0,
+      "factor": "p",
+      "metric": "gap_cv",
+      "pair_bucket": "4x6"
+    },
+    {
+      "all_arm_range_intersection_over_union": 0.9870930913690338,
+      "factor": "p",
+      "metric": "isoperimetric_ratio",
+      "pair_bucket": "4x6"
+    },
+    {
+      "all_arm_range_intersection_over_union": 0.0,
+      "factor": "q",
+      "metric": "support_cv",
+      "pair_bucket": "6x6"
+    },
+    {
+      "all_arm_range_intersection_over_union": 1.0,
+      "factor": "q",
+      "metric": "gap_cv",
+      "pair_bucket": "6x6"
+    },
+    {
+      "all_arm_range_intersection_over_union": 0.9949705354838705,
+      "factor": "q",
+      "metric": "isoperimetric_ratio",
+      "pair_bucket": "6x6"
+    },
+    {
+      "all_arm_range_intersection_over_union": 0.0,
+      "factor": "p",
+      "metric": "support_cv",
+      "pair_bucket": "6x6"
+    },
+    {
+      "all_arm_range_intersection_over_union": 1.0,
+      "factor": "p",
+      "metric": "gap_cv",
+      "pair_bucket": "6x6"
+    },
+    {
+      "all_arm_range_intersection_over_union": 0.967009798997378,
+      "factor": "p",
+      "metric": "isoperimetric_ratio",
+      "pair_bucket": "6x6"
+    }
+  ],
+  "schema": "generator-tangential-matchability-report-v2",
+  "seed": 20260714,
+  "source_revision": "0a3694135cf831cae1da18c1754a90af5e6a9915",
+  "status_counts": {
+    "survived": 768
+  },
+  "structurally_complete_pair_count": 192
+}

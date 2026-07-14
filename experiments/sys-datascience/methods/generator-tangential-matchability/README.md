@@ -89,3 +89,23 @@ fixed generator panel. The packet prohibits capacity/`sys` effects, transfer,
 population frequencies, stable arm rankings, causal mechanism, and
 all-polytopes claims. Even the retained 64-row panel would remain exploratory
 generator evidence, not target evidence.
+
+## Retained panel result
+
+The reviewed `full-64` run retained all 768 requested rows and all 192
+four-arm pairings. Every row passed exact product reconstruction; no pair
+contained a bounded failure. The largest attempt count was 117 of 128, in the
+`3x3` bucket. Factor areas and product volume agree within `1.32e-14`.
+
+Tangentialization sends the modified factor's support CV to numerical zero and
+leaves its angular-gap CV unchanged because the normal fan is paired exactly.
+The isoperimetric-ratio ranges remain strongly overlapping: the all-arm range
+intersection over union is between `0.967` and `1.000` across factors and
+buckets. Thus this panel is well matched in latent fan and coarse compactness
+while deliberately separated in support variability.
+
+This clears generator feasibility and coarse matchability only. Normalized
+ridge and covariance fields are still absent from the row payload, and the
+packet contains no capacity or `sys`. The next decision is whether adding the
+exact feature payload to a small paired pilot is worth its implementation cost;
+the retained geometry panel itself does not authorize target exposure.
