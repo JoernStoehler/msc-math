@@ -129,6 +129,11 @@ fn sigma_key(s: &[usize]) -> Vec<usize> {
 fn exact_target(xs: &[[BigRational; 4]]) -> Vec<Vec<String>> {
     xs.iter().map(|x| x.iter().map(rat).collect()).collect()
 }
+fn canonical_sigmas(mut sigmas: Vec<Vec<usize>>) -> Vec<Vec<usize>> {
+    sigmas.sort();
+    sigmas.dedup();
+    sigmas
+}
 
 fn fixture_generated(
     case_id: &'static str,
@@ -363,12 +368,14 @@ fn main() {
         .expect("MinimaSafe aggregation");
         let current_ms = cur_start.elapsed().as_secs_f64() * 1000.0;
         let current_min = current.min_action;
-        let current_mins = current
-            .orbits
-            .iter()
-            .filter(|o| (o.action - current_min).abs() <= 1e-12)
-            .map(|o| o.sigma.clone())
-            .collect::<Vec<_>>();
+        let current_mins = canonical_sigmas(
+            current
+                .orbits
+                .iter()
+                .filter(|o| (o.action - current_min).abs() <= 1e-12)
+                .map(|o| o.sigma.clone())
+                .collect::<Vec<_>>(),
+        );
         let retained_start = Instant::now();
         let retained = aggregate_certified_orbits_with_dual_vertices_exact(
             &f.dual_exact,
@@ -388,19 +395,30 @@ fn main() {
         let retained_cutoff = retained_min.clone()
             * BigRational::from_integer(FIVE_PERCENT_NUM.into())
             / BigRational::from_integer(FIVE_PERCENT_DEN.into());
-        let retained_window = retained
-            .orbits
-            .iter()
-            .filter(|o| o.action_exact <= retained_cutoff)
-            .map(|o| o.sigma.clone())
-            .collect::<Vec<_>>();
+        let retained_mins = canonical_sigmas(
+            retained
+                .minimizers
+                .iter()
+                .map(|o| o.sigma.clone())
+                .collect::<Vec<_>>(),
+        );
+        let retained_window = canonical_sigmas(
+            retained
+                .orbits
+                .iter()
+                .filter(|o| o.action_exact <= retained_cutoff)
+                .map(|o| o.sigma.clone())
+                .collect::<Vec<_>>(),
+        );
         let current_cutoff = current_min * (FIVE_PERCENT_NUM as f64) / (FIVE_PERCENT_DEN as f64);
-        let current_window = current
-            .orbits
-            .iter()
-            .filter(|o| o.action <= current_cutoff)
-            .map(|o| o.sigma.clone())
-            .collect::<Vec<_>>();
+        let current_window = canonical_sigmas(
+            current
+                .orbits
+                .iter()
+                .filter(|o| o.action <= current_cutoff)
+                .map(|o| o.sigma.clone())
+                .collect::<Vec<_>>(),
+        );
         let current_status: BTreeMap<Vec<usize>, String> = current
             .orbits
             .iter()
@@ -460,8 +478,8 @@ fn main() {
                     Some(r.0),
                     Some(r.1),
                     Some(r.2.clone()),
-                    r.3.clone(),
-                    r.4.clone(),
+                    canonical_sigmas(r.3.clone()),
+                    canonical_sigmas(r.4.clone()),
                 )
             })
             .unwrap_or((None, None, None, Vec::new(), Vec::new()));
@@ -496,11 +514,7 @@ fn main() {
             retained_exact_accept_count: retained_set.len(),
             retained_exact_reject_count: candidates.len() - retained_set.len(),
             retained_exact_min_action: Some(rat(&retained_min)),
-            retained_exact_minimizer_sigmas: retained
-                .minimizers
-                .iter()
-                .map(|o| o.sigma.clone())
-                .collect(),
+            retained_exact_minimizer_sigmas: retained_mins.clone(),
             retained_exact_window_cutoff: Some(rat(&retained_cutoff)),
             retained_exact_window_sigmas: retained_window.clone(),
             exact_all_stream_count: ref_stream,
@@ -515,22 +529,11 @@ fn main() {
             }),
             exact_all_window_sigmas: ref_window.clone(),
             scalar_agreement_current_vs_retained: (current_min - retained.capacity).abs() <= 1e-12,
-            minimizer_agreement_current_vs_retained: current_mins
-                == retained
-                    .minimizers
-                    .iter()
-                    .map(|o| o.sigma.clone())
-                    .collect::<Vec<_>>(),
+            minimizer_agreement_current_vs_retained: current_mins == retained_mins,
             window_agreement_current_vs_retained: current_window == retained_window,
-            agreement_rules: "current scalar vs retained uses abs(f64_min - f64_exact) <= 1e-12; current minimizer/window comparisons use ordered sigma-vector equality; retained vs exact-all scalar/minimizer/window comparisons use exact rational/vector equality".into(),
+            agreement_rules: "current scalar vs retained uses abs(f64_min - f64_exact) <= 1e-12; current minimizer/window comparisons use canonical sigma-set equality; retained vs exact-all scalar/minimizer/window comparisons use exact rational equality and canonical sigma-set equality".into(),
             scalar_agreement_retained_vs_all: ref_min.as_ref().map(|m| *m == retained_min),
-            minimizer_agreement_retained_vs_all: reference.as_ref().map(|r| {
-                r.3 == retained
-                    .minimizers
-                    .iter()
-                    .map(|o| o.sigma.clone())
-                    .collect::<Vec<_>>()
-            }),
+            minimizer_agreement_retained_vs_all: reference.as_ref().map(|_| ref_mins == retained_mins),
             window_agreement_retained_vs_all: reference.as_ref().map(|r| r.4 == retained_window),
             candidates: candidates_rows,
         };

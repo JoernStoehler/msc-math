@@ -56,6 +56,10 @@ def unique_sigmas(values: object, label: str) -> list[tuple[int, ...]]:
     return result
 
 
+def sigma_set(values: object, label: str) -> set[tuple[int, ...]]:
+    return set(unique_sigmas(values, label))
+
+
 def git(*args: str, cwd: Path) -> str:
     try:
         return subprocess.check_output(["git", *args], cwd=cwd, text=True).strip()
@@ -167,17 +171,17 @@ def main() -> None:
         min_action = rational(row["retained_exact_min_action"], f"{case}.retained_min")
         if min(accepted.values()) != min_action:
             fail(f"{case}: retained minimum disagrees with accepted exact actions")
-        retained_mins = unique_sigmas(row["retained_exact_minimizer_sigmas"], f"{case}.retained_mins")
-        if retained_mins != sorted(key for key, action in accepted.items() if action == min_action):
+        retained_mins = sigma_set(row["retained_exact_minimizer_sigmas"], f"{case}.retained_mins")
+        if retained_mins != {key for key, action in accepted.items() if action == min_action}:
             fail(f"{case}: retained minimizer set disagrees with exact actions")
         cutoff = rational(row["retained_exact_window_cutoff"], f"{case}.retained_cutoff")
         if cutoff != min_action * Fraction(21, 20):
             fail(f"{case}: retained cutoff is not exact 21/20 minimum")
-        retained_window = unique_sigmas(row["retained_exact_window_sigmas"], f"{case}.retained_window")
-        if sorted(retained_window) != sorted(key for key, action in accepted.items() if action <= cutoff):
+        retained_window = sigma_set(row["retained_exact_window_sigmas"], f"{case}.retained_window")
+        if retained_window != {key for key, action in accepted.items() if action <= cutoff}:
             fail(f"{case}: retained window disagrees with exact actions")
-        current_mins = unique_sigmas(row["current_minimizer_sigmas"], f"{case}.current_mins")
-        current_window = unique_sigmas(row["current_window_sigmas"], f"{case}.current_window")
+        current_mins = sigma_set(row["current_minimizer_sigmas"], f"{case}.current_mins")
+        current_window = sigma_set(row["current_window_sigmas"], f"{case}.current_window")
         current_min = row["current_min_action_f64"]
         current_cutoff = row["current_window_cutoff_f64"]
         if not isinstance(current_min, (int, float)) or not isinstance(current_cutoff, (int, float)) or not math.isclose(current_cutoff, current_min * 21 / 20, rel_tol=0, abs_tol=1e-14):
@@ -196,8 +200,8 @@ def main() -> None:
         all_cutoff = rational(row["exact_all_window_cutoff"], f"{case}.exact_all_cutoff")
         if all_cutoff != all_min_fraction * Fraction(21, 20):
             fail(f"{case}: exact-all cutoff is inconsistent")
-        all_mins = unique_sigmas(row["exact_all_minimizer_sigmas"], f"{case}.exact_all_mins")
-        all_window = unique_sigmas(row["exact_all_window_sigmas"], f"{case}.exact_all_window")
+        all_mins = sigma_set(row["exact_all_minimizer_sigmas"], f"{case}.exact_all_mins")
+        all_window = sigma_set(row["exact_all_window_sigmas"], f"{case}.exact_all_window")
         if row["scalar_agreement_retained_vs_all"] != (min_action == all_min_fraction) or row["minimizer_agreement_retained_vs_all"] != (retained_mins == all_mins) or row["window_agreement_retained_vs_all"] != (retained_window == all_window):
             fail(f"{case}: retained-vs-exact-all agreement field is stale or corrupted")
         if row["exact_all_stream_count"] != row["sigma_stream_count"] or row["exact_all_accept_count"] < row["retained_exact_accept_count"]:

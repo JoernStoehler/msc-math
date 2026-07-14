@@ -56,7 +56,20 @@ def main() -> None:
         mutated[1]["window_agreement_current_vs_retained"] = True
         write_case(bad_agreement, mutated)
         must_fail(validator, bad_agreement, "corrupted semantic agreement")
-    print("truncation and semantic mutation regressions passed")
+
+        reordered = root / "reordered"
+        reordered.mkdir()
+        (reordered / "manifest.json").write_text((source / "manifest.json").read_text())
+        mutated = copy.deepcopy(rows)
+        q4 = next(row for row in mutated if row["case_id"] == "pinned_q4_p5")
+        q4["retained_exact_window_sigmas"].reverse()
+        q4["exact_all_window_sigmas"].reverse()
+        write_case(reordered, mutated)
+        subprocess.run([sys.executable, str(Path(__file__).with_name("analyze_retained_exact.py")), str(reordered)], check=True)
+        accepted = subprocess.run([sys.executable, str(validator), str(reordered)], capture_output=True, text=True)
+        if accepted.returncode != 0:
+            raise SystemExit(f"order mutation regression failed: set-equivalent reordering rejected: {accepted.stderr}")
+    print("truncation, semantic, and order mutation regressions passed")
 
 
 if __name__ == "__main__":

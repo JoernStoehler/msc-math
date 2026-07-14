@@ -159,8 +159,9 @@ diagnostic minimizer grouping uses absolute action tolerance `1e-12`; and its
 5% window is independently formed from the current f64 minimum as
 `action <= (21/20)·min_action` over the `MinimaSafe` returned list. Current
 scalar agreement uses absolute f64 tolerance `1e-12`; current minimizer/window
-agreement uses ordered sigma-vector equality. Retained-vs-exact-all agreement
-uses exact rational equality and is explicitly conditioned on the supplied
+agreement uses canonical sigma-set equality (serialization order is not
+semantic). Retained-vs-exact-all agreement uses exact rational equality and
+canonical sigma-set equality, and is explicitly conditioned on the supplied
 stream reference.
 
 For exact rejection, the API exposes only “no admissible positive-Q witness”.
