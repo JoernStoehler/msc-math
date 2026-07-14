@@ -30,14 +30,19 @@ target/release/sys-datascience-generator-orientation-smoke \
   --out-dir /tmp/generator-transfer-smoke/orientation \
   --rows-per-bucket 1 --buckets 3x3
 target/release/sys-datascience-alternative-generator-smoke \
-  --out-dir /tmp/generator-transfer-smoke/tangential --seed 20260714 \
+  --out-dir /tmp/generator-transfer-smoke/tangential-source --seed 20260714 \
+  --attempts 128 --runtime-cap-ms 2000 --rows-per-law 1 \
+  --only-family factorial --identity-scope generator-transfer-smoke-v1
+target/release/sys-datascience-alternative-generator-smoke \
+  --out-dir /tmp/generator-transfer-smoke/tangential-replay --seed 20260714 \
   --attempts 128 --runtime-cap-ms 2000 --rows-per-law 1 \
   --only-family factorial --identity-scope generator-transfer-smoke-v1 \
   --geometry-sidecar
-python3 augment.py --orientation /tmp/generator-transfer-smoke/orientation/rows.jsonl \
-  --tangential /tmp/generator-transfer-smoke/tangential/smoke-rows.jsonl \
+uv run --script augment.py --orientation /tmp/generator-transfer-smoke/orientation/rows.jsonl \
+  --tangential-source /tmp/generator-transfer-smoke/tangential-source/smoke-rows.jsonl \
+  --tangential-replay /tmp/generator-transfer-smoke/tangential-replay/smoke-rows.jsonl \
   --out-dir /tmp/generator-transfer-smoke/features
-PYTHONPATH=. python3 analyze.py --input /tmp/generator-transfer-smoke/features/features.jsonl \
+uv run --script analyze.py --input /tmp/generator-transfer-smoke/features/features.jsonl \
   --out-dir /tmp/generator-transfer-smoke/report
 ```
 
@@ -48,8 +53,10 @@ strict signs use `Fraction` arithmetic. For an ordered two-face polygon,
 Euclidean area is the norm of its 4D bivector integral divided by two; unsigned
 symplectic area is `abs(sum omega(v_i,v_{i+1}))/2`. Both are normalized by
 `sqrt(volume)`. The decomposition is `symplectic_area = euclidean_area*kappa`;
-the packet reports kappa summaries, Euclidean-weighted kappa, covariance, and
-maximum identity error.
+the packet reports kappa summaries, Euclidean-weighted kappa, covariance,
+symplectic max/top-three concentration, entropy/effective-face count, and
+absolute and relative identity error. Structural-zero symplectic faces remain
+in the face population and summaries.
 
 Centered distinct-primal-vertex covariance uses population normalization.
 Ordinary eigenvalues use a symmetric numerical eigensolver. Williamson values
@@ -66,7 +73,20 @@ flag is retained separately. Cycle metadata is never used for acceptance,
 grouping, ranking, or selection; the analyzer report contains an explicit
 `strict_cycle_used_for_grouping_or_selection: false` audit.
 
+The authoritative tangential JSONL and separately regenerated replay are
+joined one-to-one by `sample_id`; every non-timing row contract field and null
+target is compared before replay geometry is consumed. Augment/report outputs
+record input paths, SHA256 hashes, row counts, schema/command/tolerances, and
+the local Git revision/dirty state.
+
 The analyzer keeps orientation buckets and tangential buckets/arms explicit,
 requires complete five-variant orientation grids and four-arm tangential grids,
 rejects duplicate/truncated/wrongly joined rows, and rejects any target field
-in the input path.
+in the input path. It enforces the orthogonal and U(2) controls (with
+scale-aware `1e-9` absolute/relative tolerance), reports scaled maxima by
+controlled field, and emits bucket-stratified tangential distributions for
+every Euclidean, symplectic, kappa, rho, condition, and covariance-status
+field. Tangential paired deltas include Euclidean/symplectic sums and means,
+symplectic max-share, weighted kappa, rho, and condition; Euclidean arm ranges
+include an explicit overlap interval, boolean, and union-normalized overlap.
+No bucket is pooled into a ranking.

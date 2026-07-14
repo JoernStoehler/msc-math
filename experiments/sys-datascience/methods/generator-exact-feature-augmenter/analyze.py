@@ -2,149 +2,172 @@
 # /// script
 # dependencies = ["numpy"]
 # ///
-"""Validation/reporting for the target-free exact feature packet."""
-
+"""Enforce the target-free feature packet contract and emit paired summaries."""
 from __future__ import annotations
-
-import argparse
-import json
-import math
+import argparse, copy, json, math
 from collections import defaultdict
 from pathlib import Path
-from typing import Any
-
 from augment import AnalysisError, load_rows
 
+FEATURE_SCHEMA = "generator-exact-feature-augmenter-row-v2"
+VARIANTS = {"identity", "u2-deterministic", "u2-haar", "so4-deterministic", "so4-haar"}
+ARMS = {"factorial-baseline", "factorial-q", "factorial-p", "factorial-both"}
+FACE_FEATURES = ("mean", "std", "min", "q25", "median", "q75", "q90", "q95", "max", "sum")
+EUCL = tuple(f"euclidean_ridge_area_{x}" for x in FACE_FEATURES)
+SYMP = tuple(f"symplectic_ridge_area_{x}" for x in FACE_FEATURES) + ("symplectic_ridge_area_max_share", "symplectic_ridge_area_top3_share", "symplectic_ridge_area_entropy", "symplectic_ridge_area_effective_face_count", "symplectic_ridge_area_normalized_entropy")
+KAPPA = tuple(f"kappa_{x}" for x in FACE_FEATURES) + ("kappa_euclidean_weighted_mean", "kappa_euclidean_covariance")
+COV = ("ordinary_eigenvalue_min", "ordinary_eigenvalue_max", "condition", "nu1", "nu2", "rho")
+CONTROL_ATOL = 1e-9
+CONTROL_RTOL = 1e-9
 
-def validate(rows: list[dict[str, Any]], require_complete: bool = True) -> None:
-    if not rows:
-        raise AnalysisError("empty feature packet")
-    ids = set()
-    for row in rows:
-        if row.get("schema") != "generator-exact-feature-augmenter-row-v1":
-            raise AnalysisError("unexpected feature schema")
-        sid = row.get("source_id")
-        if not isinstance(sid, str) or sid in ids:
-            raise AnalysisError("duplicate or missing source_id")
-        ids.add(sid)
-        if row.get("geometry_validation_status") != "validated":
-            raise AnalysisError("unvalidated geometry row")
-        for key in ("capacity", "sys", "iterations", "bounce_label", "target"):
-            if row.get(key) is not None:
-                raise AnalysisError(f"target field {key} present in feature input")
-        if row.get("coordinate_order") != "q1,q2,p1,p2":
-            raise AnalysisError("wrong coordinate order")
-        if row.get("ordering_failure_count", 0) != 0:
-            raise AnalysisError("face ordering failure present")
-        if not row.get("decomposition_identity_ok") or row.get("decomposition_max_abs_error", math.inf) > 1e-10:
-            raise AnalysisError("ridge-area decomposition audit failed")
-        if row.get("strict_cycle") is not None:
-            allowed = row.get("source_kind") == "orientation" and row.get("bucket") == "3x3" and row.get("map_variant") == "identity"
-            allowed |= row.get("source_kind") == "tangential" and row.get("bucket") == "3x3" and row.get("law") == "factorial-baseline"
-            if not allowed:
-                raise AnalysisError("forbidden row has non-null strict-cycle metadata")
-            cycle = row["strict_cycle"]
-            if not isinstance(cycle.get("strict_sign_cell"), bool) or not isinstance(cycle.get("strict_cycle_feasible"), bool):
-                raise AnalysisError("strict-cycle metadata is incomplete")
-        cov = row.get("vertex_covariance", {})
-        if cov.get("status") == "eligible" and any(not math.isfinite(float(cov[k])) for k in ("nu1", "nu2", "rho", "condition")):
-            raise AnalysisError("nonfinite covariance diagnostic")
-    if not require_complete:
-        return
-    orientations = [r for r in rows if r.get("source_kind") == "orientation"]
-    for base in {(r.get("source_id", "").split("/map=")[0], r.get("bucket")) for r in orientations}:
-        cells = [r for r in orientations if (r.get("source_id", "").split("/map=")[0], r.get("bucket")) == base]
-        if len(cells) != 5 or {r.get("source_id", "").split("/map=")[-1] for r in cells} != {"identity", "u2-deterministic", "u2-haar", "so4-deterministic", "so4-haar"}:
-            raise AnalysisError(f"incomplete orientation five-variant grid for {base}")
-    tang = [r for r in rows if r.get("source_kind") == "tangential"]
-    for key in {(r.get("source_pairing_id"), r.get("bucket")) for r in tang}:
-        cells = [r for r in tang if (r.get("source_pairing_id"), r.get("bucket")) == key]
-        if len(cells) != 4 or {next((arm for arm in ("factorial-baseline", "factorial-q", "factorial-p", "factorial-both") if arm in r.get("source_id", "")), "") for r in cells} != {"factorial-baseline", "factorial-q", "factorial-p", "factorial-both"}:
-            raise AnalysisError(f"incomplete tangential four-arm grid for {key}")
+def _finite(value, label):
+    if value is None: return
+    if isinstance(value, bool) or not isinstance(value, (int,float)) or not math.isfinite(float(value)): raise AnalysisError(f"{label} is not finite")
 
+def _close(a,b,atol=CONTROL_ATOL,rtol=CONTROL_RTOL):
+    return a is None and b is None or a is not None and b is not None and abs(float(a)-float(b)) <= atol + rtol*max(abs(float(a)),abs(float(b)),1.0)
 
-def report(rows: list[dict[str, Any]]) -> dict[str, Any]:
-    by_group: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
-    for row in rows:
-        by_group[(row["source_kind"], row["bucket"])].append(row)
-    groups = []
-    for (kind, bucket), values in sorted(by_group.items()):
-        item = {
-            "source_kind": kind, "bucket": bucket, "rows": len(values),
-            "euclidean_mean_range": [min(r["euclidean_ridge_area_x_mean"] for r in values), max(r["euclidean_ridge_area_x_mean"] for r in values)],
-            "symplectic_mean_range": [min(r["symplectic_ridge_area_x_mean"] for r in values), max(r["symplectic_ridge_area_x_mean"] for r in values)],
-            "kappa_weighted_range": [min(r["kappa_euclidean_weighted_mean"] for r in values), max(r["kappa_euclidean_weighted_mean"] for r in values)],
-            "covariance_eligible": sum(r["vertex_covariance"].get("status") == "eligible" for r in values),
-        }
-        if kind == "tangential":
-            arm_values: dict[str, list[float]] = defaultdict(list)
-            for value in values:
-                arm_values[value["law"]].append(value["euclidean_ridge_area_x_mean"])
-            ranges = {arm: [min(v), max(v)] for arm, v in sorted(arm_values.items())}
-            item["euclidean_mean_range_by_arm"] = ranges
-            item["euclidean_mean_all_arm_overlap"] = [max(v[0] for v in ranges.values()), min(v[1] for v in ranges.values())] if ranges else [None, None]
-        groups.append(item)
-    def orientation_variant(row: dict[str, Any]) -> str:
-        return row["map_variant"]
+def _strict_scope(row):
+    return (row.get("source_kind")=="orientation" and row.get("bucket")=="3x3" and row.get("map_variant")=="identity") or (row.get("source_kind")=="tangential" and row.get("bucket")=="3x3" and row.get("law")=="factorial-baseline")
 
-    orientation_pairs = []
-    orient_groups: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
-    for row in rows:
-        if row["source_kind"] == "orientation":
-            orient_groups[(row["source_id"].split("/map=", 1)[0], row["bucket"])].append(row)
-    for (base, bucket), values in sorted(orient_groups.items()):
-        by_variant = {orientation_variant(r): r for r in values}
-        identity = by_variant.get("identity")
-        if identity is None:
-            continue
-        for variant, row in sorted(by_variant.items()):
-            if variant == "identity":
-                continue
-            d_e = row["euclidean_ridge_area_x_mean"] - identity["euclidean_ridge_area_x_mean"]
-            d_s = row["symplectic_ridge_area_x_mean"] - identity["symplectic_ridge_area_x_mean"]
-            d_k = row["kappa_euclidean_weighted_mean"] - identity["kappa_euclidean_weighted_mean"]
-            cov_a, cov_b = row["vertex_covariance"], identity["vertex_covariance"]
-            d_cov = None if cov_a.get("ordinary_eigenvalue_max") is None or cov_b.get("ordinary_eigenvalue_max") is None else cov_a["ordinary_eigenvalue_max"] - cov_b["ordinary_eigenvalue_max"]
-            d_cov_min = None if cov_a.get("ordinary_eigenvalue_min") is None or cov_b.get("ordinary_eigenvalue_min") is None else cov_a["ordinary_eigenvalue_min"] - cov_b["ordinary_eigenvalue_min"]
-            def cov_delta(name: str) -> float | None:
-                a, b = cov_a.get(name), cov_b.get(name)
-                return None if a is None or b is None else float(a) - float(b)
-            d_volume = row["volume"] - identity["volume"]
-            d_condition = cov_delta("condition")
-            d_nu1, d_nu2, d_rho = (cov_delta(name) for name in ("nu1", "nu2", "rho"))
-            orientation_pairs.append({"base": base, "bucket": bucket, "variant": variant, "delta_volume": d_volume, "delta_euclidean_mean": d_e, "delta_symplectic_mean": d_s, "delta_kappa_weighted": d_k, "delta_covariance_ordinary_max": d_cov, "delta_covariance_ordinary_min": d_cov_min, "delta_covariance_condition": d_condition, "delta_williamson_nu1": d_nu1, "delta_williamson_nu2": d_nu2, "delta_williamson_rho": d_rho, "orthogonal_volume_within_tolerance": abs(d_volume) <= 1e-10 * max(1.0, abs(identity["volume"])), "orthogonal_euclidean_within_tolerance": abs(d_e) <= 1e-9, "orthogonal_covariance_within_tolerance": (d_cov is None or abs(d_cov) <= 1e-8) and (d_cov_min is None or abs(d_cov_min) <= 1e-8), "u2_symplectic_observed": variant.startswith("u2-"), "u2_kappa_observed": variant.startswith("u2-")})
+def validate(rows, require_complete=True):
+    if not rows: raise AnalysisError("empty feature packet")
+    ids=set()
+    for r in rows:
+        if r.get("schema") != FEATURE_SCHEMA: raise AnalysisError("unexpected feature schema")
+        if not isinstance(r.get("source_id"),str) or r["source_id"] in ids: raise AnalysisError("duplicate or missing source_id")
+        ids.add(r["source_id"])
+        if r.get("geometry_validation_status") != "validated" or r.get("coordinate_order") != "q1,q2,p1,p2": raise AnalysisError("geometry validation/coordinate contract failed")
+        if r.get("ordering_failure_count") != 0: raise AnalysisError("face ordering failure present")
+        if r.get("two_face_count") != r.get("ordered_two_face_count", -1) + r.get("ordering_failure_count", -1): raise AnalysisError("two-face population/order accounting mismatch")
+        if not r.get("decomposition_identity_ok") or r.get("decomposition_max_abs_error",math.inf)>1e-10: raise AnalysisError("decomposition audit failed")
+        for key in ("capacity","sys","iterations","iteration","bounce_label","target"):
+            if r.get(key) is not None: raise AnalysisError(f"target field {key} present")
+        for key in EUCL+SYMP+KAPPA+tuple(f"decomposition_{x}" for x in ("max_abs_error","relative_error"))+("volume","volume_sqrt"):
+            _finite(r.get(key),key)
+        cov=r.get("vertex_covariance",{}); status=cov.get("status")
+        if status=="eligible":
+            for key in COV: _finite(cov.get(key),f"covariance.{key}")
+            if cov.get("condition",math.inf)>1e10: raise AnalysisError("eligible covariance exceeds condition limit")
+        if r.get("strict_cycle") is not None:
+            if not _strict_scope(r): raise AnalysisError("forbidden row has strict-cycle metadata")
+            if not isinstance(r["strict_cycle"].get("strict_sign_cell"),bool): raise AnalysisError("strict-cycle metadata incomplete")
+    if not require_complete: return
+    og=defaultdict(list)
+    for r in rows:
+        if r.get("source_kind")=="orientation": og[(r.get("base_id"),r.get("bucket"),r.get("map_variant"))].append(r)
+    bases={(b,k) for b,k,_ in og}
+    for b,k in bases:
+        if {v for bb,kk,v in og if bb==b and kk==k} != VARIANTS: raise AnalysisError(f"incomplete orientation five-variant grid for {b}/{k}")
+    tg=defaultdict(list)
+    for r in rows:
+        if r.get("source_kind")=="tangential": tg[(r.get("source_pairing_id"),r.get("bucket"),r.get("law"))].append(r)
+    pairs={(p,k) for p,k,_ in tg}
+    for p,k in pairs:
+        if {law for pp,kk,law in tg if pp==p and kk==k} != ARMS: raise AnalysisError(f"incomplete tangential four-arm grid for {p}/{k}")
+    _enforce_orientation(rows)
 
-    def tangential_arm(row: dict[str, Any]) -> str:
-        return row["law"]
+def _enforce_orientation(rows):
+    groups=defaultdict(dict)
+    for r in rows:
+        if r.get("source_kind")=="orientation": groups[(r["base_id"],r["bucket"])][r["map_variant"]]=r
+    for key,g in groups.items():
+        identity=g["identity"]
+        for variant,r in g.items():
+            if variant=="identity": continue
+            orth=variant.startswith("so4-")
+            required=list(EUCL)+["volume"]+list(COV[:3])
+            if variant.startswith("u2-"): required += list(SYMP)+list(KAPPA)+list(COV[3:])
+            for field in required:
+                a,b=r.get(field),identity.get(field)
+                if field in COV:
+                    a=r.get("vertex_covariance",{}).get(field); b=identity.get("vertex_covariance",{}).get(field)
+                if field.endswith("status"): continue
+                if not _close(a,b): raise AnalysisError(f"orientation {variant} control failed for {key}: {field}")
+            if variant.startswith("u2-") and r.get("vertex_covariance",{}).get("status") != identity.get("vertex_covariance",{}).get("status"): raise AnalysisError("U2 Williamson eligibility status changed")
 
-    tangential_pairs = []
-    tang_groups: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
-    for row in rows:
-        if row["source_kind"] == "tangential":
-            tang_groups[(row["source_pairing_id"], row["bucket"])].append(row)
-    for (pairing, bucket), values in sorted(tang_groups.items()):
-        by_arm = {tangential_arm(r): r for r in values}
-        baseline = by_arm.get("factorial-baseline")
-        if baseline is None:
-            continue
-        for arm, row in sorted(by_arm.items()):
-            if arm == "factorial-baseline":
-                continue
-            tangential_pairs.append({"pairing_id": pairing, "bucket": bucket, "arm": arm, "delta_euclidean_mean": row["euclidean_ridge_area_x_mean"] - baseline["euclidean_ridge_area_x_mean"], "delta_symplectic_mean": row["symplectic_ridge_area_x_mean"] - baseline["symplectic_ridge_area_x_mean"], "delta_kappa_weighted": row["kappa_euclidean_weighted_mean"] - baseline["kappa_euclidean_weighted_mean"]})
+def _core_report(rows):
+    groups=defaultdict(list)
+    for r in rows: groups[(r["source_kind"],r["bucket"])].append(r)
+    out=[]
+    for (kind,bucket), values in sorted(groups.items()):
+        item={"source_kind":kind,"bucket":bucket,"rows":len(values),"euclidean_mean_range":[min(r["euclidean_ridge_area_mean"] for r in values),max(r["euclidean_ridge_area_mean"] for r in values)],"symplectic_mean_range":[min(r["symplectic_ridge_area_mean"] for r in values),max(r["symplectic_ridge_area_mean"] for r in values)],"kappa_weighted_range":[min(r["kappa_euclidean_weighted_mean"] for r in values),max(r["kappa_euclidean_weighted_mean"] for r in values)]}
+        if kind=="tangential":
+            arm={}
+            for r in values: arm.setdefault(r["law"],[]).append(r["euclidean_ridge_area_mean"])
+            item["euclidean_mean_range_by_arm"]={k:[min(v),max(v)] for k,v in sorted(arm.items())}; item["euclidean_mean_all_arm_overlap"]=[max(v[0] for v in item["euclidean_mean_range_by_arm"].values()),min(v[1] for v in item["euclidean_mean_range_by_arm"].values())]
+        out.append(item)
+    return out
 
-    return {"schema": "generator-exact-feature-augmenter-report-v1", "target_free": True, "row_count": len(rows), "groups": groups, "orientation_tolerances": {"volume_relative": 1e-10, "euclidean_mean_abs": 1e-9, "covariance_ordinary_max_abs": 1e-8}, "orientation_paired_deltas": orientation_pairs, "tangential_paired_deltas": tangential_pairs, "strict_cycle_metadata_rows": sum(r.get("strict_cycle") is not None for r in rows), "strict_cycle_used_for_grouping_or_selection": False}
+def report(rows):
+    core=_core_report(rows); orient=[]; og=defaultdict(dict)
+    for r in rows:
+        if r["source_kind"]=="orientation": og[(r["base_id"],r["bucket"])][r["map_variant"]]=r
+    for (base,bucket), g in sorted(og.items()):
+        i=g["identity"]
+        for v,r in sorted(g.items()):
+            if v=="identity": continue
+            def control(field):
+                if field in COV: return _close(r.get("vertex_covariance",{}).get(field), i.get("vertex_covariance",{}).get(field))
+                return _close(r.get(field), i.get(field))
+            orient.append({"base_id":base,"bucket":bucket,"variant":v,"delta_volume":r["volume"]-i["volume"],"delta_euclidean_mean":r["euclidean_ridge_area_mean"]-i["euclidean_ridge_area_mean"],"orthogonal_controls_pass":all(control(f) for f in EUCL+("volume",)+COV[:3]) if v.startswith("so4-") else None,"u2_controls_pass":all(control(f) for f in EUCL+SYMP+KAPPA+("volume",)+COV) if v.startswith("u2-") else None})
+    scaled = defaultdict(float); scaled_family = {"orthogonal": defaultdict(float), "u2": defaultdict(float)}
+    for (base,bucket), g in og.items():
+        i=g["identity"]
+        for v,r in g.items():
+            if v == "identity": continue
+            fields = EUCL + SYMP + KAPPA + ("volume",) + COV
+            for field in fields:
+                if field in COV:
+                    a,b=r.get("vertex_covariance",{}).get(field),i.get("vertex_covariance",{}).get(field)
+                else: a,b=r.get(field),i.get(field)
+                if a is not None and b is not None:
+                    error=abs(float(a)-float(b))/max(abs(float(b)),1.0); scaled[field]=max(scaled[field],error)
+                    family="u2" if v.startswith("u2-") else "orthogonal"
+                    if family == "orthogonal" and field not in EUCL+("volume",)+COV[:3]: continue
+                    if family == "u2" and field not in EUCL+SYMP+KAPPA+("volume",)+COV: continue
+                    scaled_family[family][field]=max(scaled_family[family][field],error)
+    tang=[]; tg=defaultdict(dict); tangential_distributions=[]; tangential_overlap=[]
+    for r in rows:
+        if r["source_kind"]=="tangential": tg[(r["source_pairing_id"],r["bucket"])][r["law"]]=r
+    for (p,b),g in sorted(tg.items()):
+        i=g["factorial-baseline"]
+        for law,r in sorted(g.items()):
+            if law!="factorial-baseline":
+                tang.append({"pairing_id":p,"bucket":b,"law":law,"delta_euclidean_sum":r["euclidean_ridge_area_sum"]-i["euclidean_ridge_area_sum"],"delta_euclidean_mean":r["euclidean_ridge_area_mean"]-i["euclidean_ridge_area_mean"],"delta_symplectic_sum":r["symplectic_ridge_area_sum"]-i["symplectic_ridge_area_sum"],"delta_symplectic_mean":r["symplectic_ridge_area_mean"]-i["symplectic_ridge_area_mean"],"delta_symplectic_max_share":r["symplectic_ridge_area_max_share"]-i["symplectic_ridge_area_max_share"],"delta_kappa_weighted":r["kappa_euclidean_weighted_mean"]-i["kappa_euclidean_weighted_mean"],"delta_rho":r["vertex_covariance"].get("rho")-i["vertex_covariance"].get("rho") if r["vertex_covariance"].get("rho") is not None and i["vertex_covariance"].get("rho") is not None else None,"delta_condition":r["vertex_covariance"].get("condition")-i["vertex_covariance"].get("condition") if r["vertex_covariance"].get("condition") is not None and i["vertex_covariance"].get("condition") is not None else None})
+    dist_groups=defaultdict(list)
+    for r in rows:
+        if r["source_kind"] == "tangential": dist_groups[(r["bucket"],r["law"])].append(r)
+    for (b,law), values in sorted(dist_groups.items()):
+        distributions={}
+        for field in EUCL+SYMP+KAPPA:
+            xs=[r[field] for r in values if r.get(field) is not None]
+            distributions[field]={"count":len(xs),"min":min(xs) if xs else None,"max":max(xs) if xs else None,"mean":sum(xs)/len(xs) if xs else None}
+        for name in ("rho","condition"):
+            xs=[r["vertex_covariance"].get(name) for r in values if r["vertex_covariance"].get(name) is not None]
+            statuses=defaultdict(int)
+            for r in values: statuses[r["vertex_covariance"].get("status")]+=1
+            distributions[name]={"count":len(xs),"min":min(xs) if xs else None,"max":max(xs) if xs else None,"mean":sum(xs)/len(xs) if xs else None,"status_counts":dict(statuses)}
+        tangential_distributions.append({"bucket":b,"law":law,"rows":len(values),"features":distributions})
+    for b in sorted({r["bucket"] for r in rows if r["source_kind"]=="tangential"}):
+        bucket_rows=[r for r in rows if r["source_kind"]=="tangential" and r["bucket"]==b]; ranges={}
+        for field in EUCL:
+            by_arm=defaultdict(list)
+            for r in bucket_rows: by_arm[r["law"]].append(r[field])
+            arm_ranges={a:[min(v),max(v)] for a,v in by_arm.items()}; lo=max(v[0] for v in arm_ranges.values()); hi=min(v[1] for v in arm_ranges.values()); union=max(v[1] for v in arm_ranges.values())-min(v[0] for v in arm_ranges.values()); overlap=max(0.0,hi-lo)
+            ranges[field]={"arm_ranges":arm_ranges,"overlap_interval":[lo,hi],"overlap":overlap>0,"union_normalized_overlap":overlap/union if union>0 else 1.0}
+        tangential_overlap.append({"bucket":b,"euclidean_feature_overlap":ranges})
+    return {"schema":"generator-exact-feature-augmenter-report-v2","rows":len(rows),"groups":core,"orientation_paired_deltas":orient,"orientation_max_scaled_error_by_field":dict(sorted(scaled.items())),"orientation_max_scaled_error_by_family":{k:dict(sorted(v.items())) for k,v in scaled_family.items()},"orientation_max_scaled_error":max(scaled.values(),default=0.0),"orientation_orthogonal_controls_pass":all(x["orthogonal_controls_pass"] for x in orient if x["variant"].startswith("so4-")),"orientation_u2_controls_pass":all(x["u2_controls_pass"] for x in orient if x["variant"].startswith("u2-")),"tangential_paired_deltas":tang,"tangential_distributions":tangential_distributions,"tangential_euclidean_overlap":tangential_overlap,"strict_cycle_metadata_rows":sum(r.get("strict_cycle") is not None for r in rows),"strict_cycle_used_for_grouping_or_selection":False,"tolerances":{"absolute":CONTROL_ATOL,"relative":CONTROL_RTOL,"decomposition_abs":1e-10}}
 
+def _metadata_behavior(rows):
+    altered=copy.deepcopy(rows)
+    for r in altered:
+        if r.get("strict_cycle") is not None: r["strict_cycle"]=None
+    a=report(rows); b=report(altered)
+    for key in ("strict_cycle_metadata_rows",): a.pop(key,None); b.pop(key,None)
+    return a==b
 
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--input", type=Path, required=True)
-    parser.add_argument("--out-dir", type=Path, required=True)
-    args = parser.parse_args()
-    rows = load_rows(args.input)
-    validate(rows)
-    args.out_dir.mkdir(parents=True, exist_ok=True)
-    (args.out_dir / "report.json").write_text(json.dumps(report(rows), indent=2) + "\n")
+def main():
+    p=argparse.ArgumentParser(); p.add_argument("--input",type=Path,required=True); p.add_argument("--out-dir",type=Path,required=True); a=p.parse_args(); rows,h=load_rows(a.input); validate(rows); a.out_dir.mkdir(parents=True,exist_ok=True); rep=report(rows); rep["metadata_behavioral_audit"]=_metadata_behavior(rows); rep["input"]={"path":str(a.input),"sha256":h,"rows":len(rows)}; (a.out_dir/"report.json").write_text(json.dumps(rep,indent=2)+"\n")
 
-
-if __name__ == "__main__":
-    main()
+if __name__=="__main__": main()

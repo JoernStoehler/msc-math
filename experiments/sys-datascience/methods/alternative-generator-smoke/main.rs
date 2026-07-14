@@ -83,17 +83,17 @@ struct SmokeRow {
     target_ms: f64,
     /// Populated only by `--geometry-sidecar`; absent in the reviewed source
     /// panel so adding this field cannot alter retained inputs.
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     geometry_dual_vertices_rational: Option<Vec<[String; 4]>>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     geometry_primal_vertices_rational: Option<Vec<[String; 4]>>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     geometry_vertex_facet_incidence: Option<Vec<Vec<bool>>>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     geometry_volume: Option<f64>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     geometry_source_sample_id: Option<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     geometry_source_pairing_id: Option<String>,
 }
 
@@ -248,6 +248,10 @@ fn parse_args() -> Args {
             "--only-family requires --identity-scope to prevent artifact aliasing"
         );
     }
+    assert!(
+        !args.geometry_sidecar || !args.target_backend,
+        "--geometry-sidecar is incompatible with --target"
+    );
     if let Some(scope) = &args.identity_scope {
         assert!(
             !scope.is_empty()
