@@ -1,0 +1,556 @@
+% formal/product-triangle-bounce-classification.tex
+%
+% Developer-facing proof packet for the two- versus three-bounce comparison
+% for a Lagrangian product of two triangles.  The new mathematics is
+% agent-derived and awaits Jörn's review.
+
+\subsection{Status, scope, and conventions}
+\label{subsec:product-triangle-bounce-status}
+
+This packet compares the complete mathematical two-bounce value with the
+transition-admissible all-singleton three-block words for a product of two
+triangles.  It also proves, by an explicit placement construction, that every
+strict directed Hamiltonian word in this setting is realized by a proper
+strong three-bounce billiard.  It does not infer global placement for general
+words merely from local transition tests.
+
+\begin{unverified}
+Every new lemma, proposition, theorem, and corollary in this packet is an
+agent-derived proof at agent-review status.  None has yet been accepted by
+Jörn.  The exact computation cited at the end is supporting falsifier evidence,
+not part of any proof.
+\end{unverified}
+
+Let
+\[
+ P=\{q\in\mathbb R^2:\langle a_i,q\rangle\leq1,
+                         \ i\in\mathbb Z/3\},\qquad
+ Q=\{p\in\mathbb R^2:\langle b_j,p\rangle\leq1,
+                         \ j\in\mathbb Z/3\}
+\]
+be full-dimensional triangles containing the origin in their interiors, with
+irredundant displayed inequalities.  Their unique normalized positive
+dependencies are
+\begin{equation}
+\label{eq:product-triangle-positive-dependencies}
+ \alpha_i>0,\quad \sum_i\alpha_i=1,\quad
+ \sum_i\alpha_i a_i=0,
+ \qquad
+ \gamma_j>0,\quad \sum_j\gamma_j=1,\quad
+ \sum_j\gamma_j b_j=0.
+\end{equation}
+Put
+\[
+ A_i=\alpha_i a_i,\qquad B_j=\gamma_j b_j,
+ \qquad c_{ij}=\langle A_i,B_j\rangle,
+ \qquad M=\max_{i,j}|c_{ij}|.
+\]
+Thus every row and every column of \(C=(c_{ij})\) sums to zero.
+
+The product coordinates and symplectic convention are
+\[
+ (q_1,q_2,p_1,p_2),\qquad
+ \omega_0((a,0),(0,b))=\langle a,b\rangle,
+ \qquad
+ \omega_0((0,b),(a,0))=-\langle a,b\rangle.
+\]
+For an active Reeb-traversal word
+\(
+ \sigma=(a_0,b_0,a_1,b_1,a_2,b_2)
+\), the project objective is
+\begin{equation}
+\label{eq:product-triangle-active-word-objective}
+ Q_\sigma(\beta)=
+ \sum_{1\leq j<k\leq6}\beta_j\beta_k
+ \omega_0(\widehat a_{\sigma_j},\widehat a_{\sigma_k}),
+\end{equation}
+where \(\widehat a_i=(a_i,0)\) and
+\(\widehat b_j=(0,b_j)\).  The action convention is
+\begin{equation}
+\label{eq:product-triangle-action-convention}
+ \mathcal A_\sigma=\frac1{2\max Q_\sigma}.
+\end{equation}
+This is the active-word convention audited in
+Subsection~\ref{subsec:hk2017-active-word-qp-convention}; the fixed word in
+Haim--Kislev's displayed orientation is its reverse.
+
+The complete mathematical two-bounce action is the value
+\(A_2(P,Q)\) of Definition~\ref{def:product-two-bounce-a2}, equivalently
+\(1/(2Q_{2,\max})\) by
+Theorem~\ref{thm:product-two-bounce-complete-qp}.  We do not use the
+algorithmic pruning labels \(A2\) and \(A3\) for these actions.
+
+\subsection{The triangle difference-body polar}
+\label{subsec:product-triangle-difference-polar}
+
+\begin{unverified}
+\begin{lemma}[Difference-body polar of a triangle]
+\label{lem:product-triangle-difference-polar}
+With the notation above,
+\[
+ (P-P)^\circ=\operatorname{conv}\{\pm A_0,\pm A_1,\pm A_2\},
+ \qquad
+ (Q-Q)^\circ=\operatorname{conv}\{\pm B_0,\pm B_1,\pm B_2\}.
+\]
+Consequently,
+\begin{equation}
+\label{eq:product-triangle-a2-m}
+ Q_{2,\max}(P,Q)=\frac M2,
+ \qquad A_2(P,Q)=\frac1M.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Define the slack coordinates
+\[
+ \lambda_i(q)=\alpha_i(1-\langle a_i,q\rangle).
+\]
+Equation~\eqref{eq:product-triangle-positive-dependencies} gives
+\(\sum_i\lambda_i(q)=1\).  The map
+\(q\mapsto(\lambda_0(q),\lambda_1(q),\lambda_2(q))\) has rank two and
+is therefore an affine bijection from \(\mathbb R^2\) to the affine plane
+\(\sum_i\lambda_i=1\).  Nonnegativity of its coordinates is exactly the
+three inequalities defining \(P\), so it restricts to an affine bijection
+from \(P\) to the standard two-simplex \(\Delta_2\).
+
+The difference set of that simplex is
+\[
+ \Delta_2-\Delta_2
+ =\{\delta\in\mathbb R^3:\sum_i\delta_i=0,
+                              \ |\delta_i|\leq1\text{ for every }i\}.
+\]
+Indeed, the stated conditions imply that the sum of the positive coordinates
+is at most one: if two are positive, their sum is the absolute value of the
+sole negative coordinate; if one is positive, the assertion is immediate.
+The positive and negative parts of \(\delta\), supplemented by the same
+unused simplex mass, then exhibit \(\delta\) as a difference of two points of
+\(\Delta_2\).  The reverse inclusion is immediate.
+
+For \(d=q-q'\),
+\[
+ \lambda_i(q)-\lambda_i(q')=-\langle A_i,d\rangle.
+\]
+Since \(\sum_i A_i=0\), the preceding characterization yields
+\[
+ d\in P-P
+ \quad\Longleftrightarrow\quad
+ |\langle A_i,d\rangle|\leq1\quad(i=0,1,2).
+\]
+The right-hand side is the polar of
+\(\operatorname{conv}\{\pm A_i\}\).  Taking polars proves the identity for
+\(P\); the proof for \(Q\) is identical.
+
+A bilinear functional on the product of two polytopes attains its maximum on
+generating vertices.  Hence
+\[
+ \max_{x\in(P-P)^\circ,\ y\in(Q-Q)^\circ}\langle x,y\rangle
+ =\max_{i,j}|\langle A_i,B_j\rangle|=M.
+\]
+The complete two-bounce formula
+\eqref{eq:product-two-bounce-complete-qp} now gives
+\eqref{eq:product-triangle-a2-m}.
+\end{proof}
+\end{unverified}
+
+\subsection{One directed Hamiltonian word}
+\label{subsec:product-triangle-one-word}
+
+The directed transition conditions for the explicitly oriented word
+\[
+ \sigma=(a_0,b_0,a_1,b_1,a_2,b_2)
+\]
+are
+\begin{equation}
+\label{eq:product-triangle-directed-signs}
+ \langle a_r,b_r\rangle\geq0,
+ \qquad
+ \langle a_{r+1},b_r\rangle\leq0
+ \qquad(r\in\mathbb Z/3).
+\end{equation}
+Indeed, these are respectively
+\(\omega_0((a_r,0),(0,b_r))\geq0\) and
+\(\omega_0((0,b_r),(a_{r+1},0))\geq0\).
+Cross-factor product facets always meet, so
+Corollary~\ref{cor:ridge-sufficiency} leaves precisely these signs as the
+local transition conditions.  Call the word \emph{strict} when all six
+inequalities are strict.
+
+Set
+\begin{equation}
+\label{eq:product-triangle-pn}
+ p_r=c_{rr},\qquad n_r=-c_{r+1,r}.
+\end{equation}
+Under \eqref{eq:product-triangle-directed-signs}, all \(p_r,n_r\) are
+nonnegative; under strict signs they are positive.
+
+\begin{unverified}
+\begin{lemma}[Hamiltonian sign-cell algebra]
+\label{lem:product-triangle-sign-cell-algebra}
+Under the weak signs \eqref{eq:product-triangle-directed-signs}, there is a
+common scalar \(S>0\) such that
+\begin{equation}
+\label{eq:product-triangle-common-s}
+ S=p_0+n_1=p_1+n_2=p_2+n_0.
+\end{equation}
+Every positive feasible weight vector for \(\sigma\) is uniquely of the form
+\begin{equation}
+\label{eq:product-triangle-word-weights}
+ \beta_{a_r}=s\alpha_r,\qquad
+ \beta_{b_r}=(1-s)\gamma_r,\qquad 0<s<1,
+\end{equation}
+and its objective is
+\begin{equation}
+\label{eq:product-triangle-q-s}
+ Q_\sigma(s)=2s(1-s)S.
+\end{equation}
+Thus
+\begin{equation}
+\label{eq:product-triangle-a3-s}
+ \max Q_\sigma=\frac S2,\qquad
+ A_{3,\sigma}(P,Q):=\frac1{2\max Q_\sigma}=\frac1S.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+The zero sum of column \(r\) gives its unused entry as
+\[
+ c_{r-1,r}=n_r-p_r.
+\]
+Substitution in the three row-sum equations gives, cyclically,
+\[
+ p_0+n_1=p_1+n_2,\qquad
+ p_1+n_2=p_2+n_0,\qquad
+ p_2+n_0=p_0+n_1,
+\]
+which proves \eqref{eq:product-triangle-common-s}.  If \(S=0\),
+nonnegativity would make all six \(p_r,n_r\) zero, and then the column formula
+would make \(C=0\).  Since the \(A_i\) span \(\mathbb R^2\), this would force
+every \(B_j=0\), contrary to the facet normalization.  Hence \(S>0\).
+
+Factorwise closure and uniqueness of each positive dependence in
+\eqref{eq:product-triangle-positive-dependencies} force the \(a\)-weights to
+be a positive multiple of \((\alpha_r)_r\), and independently the
+\(b\)-weights to be a positive multiple of \((\gamma_r)_r\).  Normalization
+of the total weight gives exactly \eqref{eq:product-triangle-word-weights}.
+
+In the active order \(A_0,B_0,A_1,B_1,A_2,B_2\), the pair \(A_r,B_j\)
+contributes with sign \(+\) when \(r\leq j\), and with sign \(-\) when
+\(j<r\).  Therefore
+\[
+ \begin{aligned}
+ Q_\sigma(s)
+ &=s(1-s)\left(\sum_{r\leq j}c_{rj}
+                         -\sum_{j<r}c_{rj}\right)\\
+ &=2s(1-s)\sum_{r\leq j}c_{rj}.
+ \end{aligned}
+\]
+The second equality uses \(\sum_{r,j}c_{rj}=0\).  In the upper-triangular
+sum, row zero contributes its full row sum, row one contributes
+\(c_{11}+c_{12}=-c_{10}=n_0\), and row two contributes \(c_{22}=p_2\).
+Thus the sum is \(n_0+p_2=S\), proving
+\eqref{eq:product-triangle-q-s}.  Finally,
+\(s(1-s)\leq1/4\), with equality uniquely at \(s=1/2\).  Combining this
+with the action convention \eqref{eq:product-triangle-action-convention}
+proves \eqref{eq:product-triangle-a3-s}.
+\end{proof}
+\end{unverified}
+
+\subsection{Strict comparison and the complete weak boundary}
+\label{subsec:product-triangle-comparison}
+
+\begin{unverified}
+\begin{theorem}[Wordwise two- versus three-bounce comparison]
+\label{thm:product-triangle-wordwise-comparison}
+Let \(\sigma\) satisfy the six weak directed signs
+\eqref{eq:product-triangle-directed-signs}.  Then
+\[
+ A_{3,\sigma}(P,Q)\leq A_2(P,Q).
+\]
+More precisely,
+\begin{enumerate}
+  \item if all six traversed pairings are nonzero, then
+  \(A_{3,\sigma}(P,Q)<A_2(P,Q)\);
+  \item equality holds if and only if at least one of the six traversed
+  pairings is zero.
+\end{enumerate}
+A zero in one of the three unused chord pairings \(c_{r-1,r}\) does not
+remove strictness when all six traversed pairings are nonzero.
+\end{theorem}
+
+\begin{proof}
+Equation~\eqref{eq:product-triangle-common-s} can be written cyclically as
+\[
+ S=p_r+n_{r+1}=p_{r-1}+n_r.
+\]
+Thus \(0\leq p_r,n_r\leq S\), and the unused column entry obeys
+\[
+ |c_{r-1,r}|=|n_r-p_r|\leq S.
+\]
+It follows that \(M\leq S\).  Lemma~\ref{lem:product-triangle-difference-polar}
+and Lemma~\ref{lem:product-triangle-sign-cell-algebra} give
+\[
+ A_{3,\sigma}=\frac1S\leq\frac1M=A_2.
+\]
+
+If all six traversed pairings are nonzero, then every \(p_r,n_r\) is
+positive.  The two expressions for \(S\) show \(p_r,n_r<S\), and hence
+\(|n_r-p_r|<S\).  Therefore every entry of \(C\) has absolute value
+strictly below \(S\), so \(M<S\) and the action inequality is strict.
+
+Conversely, if \(p_r=0\), then \(n_{r+1}=S\); if \(n_r=0\), then
+\(p_{r-1}=S\).  In either case \(M=S\) and the actions are equal.  The
+previous paragraph proves the converse implication.  In particular, an
+unused chord equality \(c_{r-1,r}=n_r-p_r=0\) has no effect on strictness
+when all \(p_r,n_r\) remain positive.
+\end{proof}
+\end{unverified}
+
+\subsection{Finite triangle classification}
+\label{subsec:product-triangle-finite-classification}
+
+For each factor, a \(k=3\) choice in the complete alternating block family
+consists of three pairwise disjoint nonempty blocks drawn from only three
+facets.  Therefore every block is a singleton and all three facets occur.
+Consequently every \(k=3\) word is an alternating Hamiltonian six-cycle; no
+two-facet block can occur in this class.
+
+Let \(\mathcal H(P,Q)\) be the finite set of these oriented Hamiltonian words
+which satisfy all six weak directed transition signs.  Relabelling each word
+cyclically puts it in the form used above.  Define unambiguously
+\[
+ A_3^{\mathrm{dir}}(P,Q)
+ =\min_{\sigma\in\mathcal H(P,Q)}A_{3,\sigma}(P,Q),
+\]
+with value \(+\infty\) if \(\mathcal H(P,Q)=\varnothing\).  This is the
+complete transition-admissible all-singleton three-block value; it is not a
+claim that arbitrary local transition cycles for arbitrary products have a
+global physical placement.
+
+\begin{unverified}
+\begin{corollary}[Finite two- versus three-block classification]
+\label{cor:product-triangle-finite-classification}
+For two triangles,
+\begin{equation}
+\label{eq:product-triangle-global-finite-classification}
+ \min\{A_2(P,Q),A_3^{\mathrm{dir}}(P,Q)\}<A_2(P,Q)
+\end{equation}
+if and only if the cross-pairing graph has a strict directed Hamiltonian
+six-cycle.  If no strict cycle exists, the left-hand minimum equals \(A_2\):
+every weakly directed three-block word either is absent or has an incident
+zero and therefore has action exactly \(A_2\).
+
+On the generic stratum where all nine cross pairings are nonzero, every weak
+directed Hamiltonian cycle is strict.  Hence on that stratum absence of a
+strict cycle is equivalent to absence of any transition-admissible
+three-block word.
+\end{corollary}
+
+\begin{proof}
+The block-count argument above exhausts the \(k=3\) choices.  Apply
+Theorem~\ref{thm:product-triangle-wordwise-comparison} to each member of the
+finite set \(\mathcal H(P,Q)\).  A member has action below \(A_2\) exactly
+when all six of its traversed pairings are nonzero, which under its weak signs
+is exactly strictness.  If no member is strict, every member has an incident
+zero and action \(A_2\); the explicit \(A_2\) term still supplies the
+two-bounce value when the set is empty.  The final assertion is immediate
+when none of the nine pairings vanishes.
+\end{proof}
+\end{unverified}
+
+This corollary is a complete classification of the stated finite QP
+comparison, including its zero boundary.  By itself it does not classify
+degenerate strong billiards with vertex contacts, nor does it prove that local
+transition feasibility gives global physical placement.  The next proposition
+supplies the latter implication precisely for the strict triangle cycles used
+in the strict half of the corollary.
+
+\subsection{Strict cycles are genuine strong three-bounce billiards}
+\label{subsec:product-triangle-physical-realization}
+
+Write \(F_P(a_i)=\{q\in P:\langle a_i,q\rangle=1\}\), and similarly for
+\(F_Q(b_j)\).  We first isolate the placement step used in both factors.
+
+\begin{unverified}
+\begin{lemma}[Homothetic side placement]
+\label{lem:product-triangle-homothetic-placement}
+Let \(H=\{x:\langle u_i,x\rangle\leq1,\ i\in\mathbb Z/3\}\) be a
+full-dimensional triangle, with normalized positive dependence
+\(\sum_i\lambda_i u_i=0\), \(\sum_i\lambda_i=1\).  Let \(x_0,x_1,x_2\)
+be the vertices of a nondegenerate triangle \(T\), and suppose \(u_i\) is
+strictly maximized on \(T\) at \(x_i\).  Then there are unique \(z\in\mathbb
+R^2\) and \(t>0\) such that
+\[
+ z+t x_i\in\operatorname{relint}F_H(u_i)
+ \qquad(i\in\mathbb Z/3).
+\]
+Moreover,
+\begin{equation}
+\label{eq:product-triangle-placement-scale}
+ t=\left(\sum_i\lambda_i\langle u_i,x_i\rangle\right)^{-1}.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+The denominator in \eqref{eq:product-triangle-placement-scale} is invariant
+under translating all \(x_i\), because \(\sum_i\lambda_i u_i=0\).  Translate
+\(T\) so that the origin is in its interior.  Every strict supporting value
+\(\langle u_i,x_i\rangle=h_T(u_i)\) is then positive, so the denominator is
+positive.
+
+We seek \(z,t\) satisfying
+\(\langle u_i,z+t x_i\rangle=1\) for all \(i\).  The image of
+\(z\mapsto(\langle u_i,z\rangle)_i\) is exactly the two-plane
+\(\sum_i\lambda_i y_i=0\).  Thus the three equations are compatible exactly
+when
+\[
+ 0=\sum_i\lambda_i(1-t\langle u_i,x_i\rangle),
+\]
+which gives the displayed positive and unique \(t\); the spanning property of
+the \(u_i\) then gives a unique \(z\).  Finally, if \(k\neq i\), strict support
+gives \(\langle u_k,x_i\rangle<\langle u_k,x_k\rangle\).  Comparing the
+two placed points shows
+\(\langle u_k,z+t x_i\rangle<1\).  Hence the point indexed by \(i\) is in
+the relative interior of its asserted side.
+\end{proof}
+
+\begin{proposition}[Physical realization of a strict triangle cycle]
+\label{prop:product-triangle-strict-physical-realization}
+Suppose the active word
+\[
+ \sigma=(a_0,b_0,a_1,b_1,a_2,b_2)
+\]
+satisfies the six strict directed signs in
+\eqref{eq:product-triangle-directed-signs}.  Then there is a proper
+strong three-bounce \((P,Q)\)-billiard
+\((q_r;p_r)_{r\in\mathbb Z/3}\) with
+\begin{align}
+ q_r&\in\operatorname{relint}F_P(a_{-r}),
+ &p_r&\in\operatorname{relint}F_Q(b_{-r-1}),
+ \label{eq:product-triangle-contact-order}\\
+ q_{r+1}-q_r&\in\mathbb R_{>0}b_{-r-1}=N_Q(p_r),
+ &p_{r+1}-p_r&\in-\mathbb R_{>0}a_{-r-1}=-N_P(q_{r+1}).
+ \label{eq:product-triangle-strong-inclusions}
+\end{align}
+Its \(Q\)-length is
+\begin{equation}
+\label{eq:product-triangle-physical-length}
+ \ell_Q(q)=\sum_r h_Q(q_{r+1}-q_r)
+ =\frac1S=A_{3,\sigma}(P,Q)<A_2(P,Q).
+\end{equation}
+Thus the reversal from the repository active word to billiard traversal is
+explicit: the billiard visits \(a_0,a_2,a_1\), and its outgoing \(Q\)-side
+normals are respectively \(b_2,b_1,b_0\).
+\end{proposition}
+
+\begin{proof}
+Construct a closed triangle \(T\), up to translation, with vertices \(s_i\)
+labelled by the \(P\)-side contacts and edges
+\begin{equation}
+\label{eq:product-triangle-position-template}
+ s_i-s_{i+1}=B_i
+ \qquad(i\in\mathbb Z/3).
+\end{equation}
+Closure is \(\sum_iB_i=0\).  At \(s_i\), the incoming edge is \(B_i\),
+and the outgoing edge is \(B_{i-1}\).  The strict cycle signs give
+\[
+ \langle a_i,B_i\rangle>0,
+ \qquad \langle a_i,B_{i-1}\rangle<0.
+\]
+Therefore \(a_i\) is strictly maximized on \(T\) at \(s_i\).  Apply
+Lemma~\ref{lem:product-triangle-homothetic-placement} to obtain
+\(q_i'=z+t s_i\in\operatorname{relint}F_P(a_i)\).
+
+Choose the harmless translation \(s_0=0\).  Then
+\(s_2=B_2\) and \(s_1=-B_0\), so the reciprocal scale denominator is
+\begin{equation}
+\label{eq:product-triangle-position-denominator}
+ \sum_i\langle A_i,s_i\rangle
+ =-c_{10}+c_{22}=n_0+p_2=S.
+\end{equation}
+Thus \(t=1/S\).  Set \(q_r=q'_{-r}\).  From
+\eqref{eq:product-triangle-position-template},
+\[
+ q_{r+1}-q_r=tB_{-r-1}
+ =\frac{\gamma_{-r-1}}S b_{-r-1}.
+\]
+
+Construct independently a closed triangle \(R\), with a vertex \(v_j\)
+labelled by each \(Q\)-side contact, by
+\begin{equation}
+\label{eq:product-triangle-momentum-template}
+ v_{j-1}-v_j=-A_j.
+\end{equation}
+At \(v_j\), the incoming edge is \(-A_{j+1}\) and the outgoing edge is
+\(-A_j\).  Hence
+\[
+ \langle b_j,-A_{j+1}\rangle>0,
+ \qquad \langle b_j,-A_j\rangle<0,
+\]
+so \(b_j\) is strictly maximized there.  The homothetic placement lemma gives
+\(p'_j=w+u v_j\in\operatorname{relint}F_Q(b_j)\).  Taking \(v_0=0\)
+gives \(v_2=-A_0\), \(v_1=A_1\), and therefore
+\begin{equation}
+\label{eq:product-triangle-momentum-denominator}
+ \sum_j\langle B_j,v_j\rangle
+ =c_{11}-c_{02}=p_1+n_2=S.
+\end{equation}
+Thus \(u=1/S=t\).  Set \(p_r=p'_{-r-1}\).  Equation
+\eqref{eq:product-triangle-momentum-template} yields
+\[
+ p_{r+1}-p_r=-\frac{\alpha_{-r-1}}S a_{-r-1}.
+\]
+
+Relative-interior side contacts have one-dimensional outer normal cones, so
+the two last displays prove both inclusions in
+\eqref{eq:product-triangle-strong-inclusions}.  All coefficients are positive,
+and the template triangles are nondegenerate, so the billiard is proper.
+Finally, \(h_Q(b_j)=1\) for every normalized facet vector.  Hence
+\[
+ \ell_Q(q)=\sum_r h_Q\left(\frac{\gamma_{-r-1}}S b_{-r-1}\right)
+ =\frac1S\sum_j\gamma_j=\frac1S.
+\]
+Lemma~\ref{lem:product-triangle-sign-cell-algebra} identifies this with the
+fixed-word QP action, and
+Theorem~\ref{thm:product-triangle-wordwise-comparison} makes the comparison
+strict.  The index definitions show directly that this billiard traversal is
+the reverse of the displayed active Reeb word.
+\end{proof}
+\end{unverified}
+
+The proposition proves global placement only for a strict Hamiltonian cycle
+of two triangles.  It does not assert that the weak incident-zero construction
+has relative-interior contacts or that every degenerate local cycle produces a
+strong billiard.  Conversely, any proper strong three-bounce billiard whose
+six contacts lie in relative interiors of triangle sides induces, after the
+same reversal, a Hamiltonian word: closure by positive side-normal multiples
+forces all three side normals of each triangle to occur.  Convexity then makes
+the outgoing side functional decrease strictly and the incoming side
+functional increase strictly, so all six transition signs are strict.  Thus
+absence of a strict cycle excludes this proper side-contact type, but the
+present packet makes no completeness claim about vertex-contact degeneracies.
+
+\subsection{Exact finite evidence and its boundary}
+\label{subsec:product-triangle-evidence}
+
+The exact packet at
+\begin{center}
+\path{experiments/sys-datascience/methods/product-triangle-bounce-classification/}
+\end{center}
+is a finite falsifier and orientation check only.  On the 1,024 retained
+triangle--triangle rows it found 814 \(q_0\)-fixed feasible word identities;
+718 rows had at least one such word, and all 718 had every computed feasible
+all-singleton action strictly below exact \(A_2\).  All 1,024 independently
+compared stored two-bounce values matched the exact formula.
+
+Its preregistered rational stress screen used seed \(20260714\) on 20,000
+pairs: 19,968 were in the strict-sign stratum, 32 had a zero pairing, and
+11,101 feasible all-singleton words were found.  It recorded zero strict
+counterexamples and 27 exact boundary equality witnesses.  These counts
+support the orientation and boundary split in the proof, but computation is
+not a theorem.  In particular, the packet does not prove universal word
+coverage, physical trajectory completeness, or any claim about degenerate
+vertex-contact billiards.
+
+The exact mathematical proof above depends on the triangle slack-coordinate
+identity, row and column sums, the project QP convention, and the explicit
+homothetic placement.  It does not use the finite packet as a proof premise.
