@@ -10,7 +10,7 @@ use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, Gamma, Normal};
 use serde::Serialize;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::f64::consts::{PI, TAU};
 use std::fs::{create_dir_all, File};
 use std::io::{BufWriter, Write};
@@ -22,14 +22,24 @@ const LAW_VERSION: &str = "generator-zoo-v1";
 const DEFAULT_SEED: u64 = 20260714;
 const DEFAULT_ATTEMPTS: usize = 64;
 const PAIRS: &[(usize, usize)] = &[(3, 3), (4, 6), (6, 6)];
+const FACTOR_SOURCE_DEPENDENCIES: &[&str] = &[
+    "experiments/sys-datascience/methods/generator-zoo-smoke/main.rs",
+    "experiments/sys-landscape/Cargo.toml",
+];
+const FACTOR_SOURCE_DIRTY_SCOPE: &str = "git status --porcelain -- experiments/sys-datascience/methods/generator-zoo-smoke/main.rs experiments/sys-landscape/Cargo.toml";
 
 #[derive(Clone, Debug)]
 struct Args {
     out_dir: PathBuf,
+    factor_out_dir: PathBuf,
     seed: u64,
     attempts: usize,
     rows_per_law: usize,
     only_law: Option<String>,
+    factor_only: bool,
+    factor_populations: Vec<(String, String)>,
+    factor_side_counts: Vec<usize>,
+    factor_rows_per_population: usize,
 }
 
 #[derive(Clone, Debug)]
@@ -117,14 +127,54 @@ struct Report {
     interpretation_boundary: &'static str,
 }
 
+#[derive(Serialize)]
+struct FactorOnlySummary {
+    law: String,
+    parameter: String,
+    side_count: usize,
+    requested: usize,
+    accepted: usize,
+    exhausted: usize,
+    total_generation_ms: f64,
+    max_attempts_observed: usize,
+}
+
+#[derive(Serialize)]
+struct FactorOnlyReport {
+    schema: &'static str,
+    mode: &'static str,
+    law_version: &'static str,
+    seed: u64,
+    max_attempts_per_row: usize,
+    rows_per_population_side_count: usize,
+    selected_populations: Vec<String>,
+    side_counts: Vec<usize>,
+    factor_rows: usize,
+    status_counts: BTreeMap<String, usize>,
+    per_population: Vec<FactorOnlySummary>,
+    command: String,
+    source_revision: String,
+    source_dirty: bool,
+    source_dirty_scope: &'static str,
+    validation_boundary: &'static str,
+    interpretation_boundary: &'static str,
+}
+
 fn parse_args() -> Args {
     let argv: Vec<String> = std::env::args().collect();
     let mut args = Args {
         out_dir: PathBuf::from("experiments/sys-datascience/methods/generator-zoo-smoke/artifacts"),
+        factor_out_dir: PathBuf::from(
+            "experiments/sys-datascience/methods/generator-zoo-smoke/artifacts/factor-only",
+        ),
         seed: DEFAULT_SEED,
         attempts: DEFAULT_ATTEMPTS,
         rows_per_law: 1,
         only_law: None,
+        factor_only: false,
+        factor_populations: Vec::new(),
+        factor_side_counts: Vec::new(),
+        factor_rows_per_population: 20,
     };
     let mut i = 1;
     while i < argv.len() {
@@ -153,15 +203,122 @@ fn parse_args() -> Args {
                 args.only_law = Some(next("--only-law").to_string());
                 i += 2;
             }
+            "--factor-only" => {
+                args.factor_only = true;
+                i += 1;
+            }
+            "--factor-out-dir" => {
+                args.factor_out_dir = PathBuf::from(next("--factor-out-dir"));
+                i += 2;
+            }
+            "--factor-population" => {
+                let spec = next("--factor-population");
+                let (law, parameter) = parse_population_spec(spec)
+                    .unwrap_or_else(|| panic!("--factor-population must be LAW|PARAMETER: {spec}"));
+                args.factor_populations.push((law, parameter));
+                i += 2;
+            }
+            "--factor-side-counts" => {
+                args.factor_side_counts = parse_side_counts(next("--factor-side-counts"))
+                    .unwrap_or_else(|| {
+                        panic!("--factor-side-counts must be a comma-separated list of side counts")
+                    });
+                i += 2;
+            }
+            "--factor-rows-per-population" => {
+                args.factor_rows_per_population = next("--factor-rows-per-population")
+                    .parse()
+                    .expect("factor rows must be usize");
+                i += 2;
+            }
             "--help" | "-h" => {
-                println!("--out-dir DIR --seed N --attempts N --rows-per-law N [--only-law LAW]");
+                println!("product mode: --out-dir DIR --seed N --attempts N --rows-per-law N [--only-law LAW]");
+                println!("factor-only mode: --factor-only --factor-population LAW|PARAMETER ... --factor-side-counts N[,N...] [--factor-rows-per-population N] [--factor-out-dir DIR]");
                 std::process::exit(0);
             }
             other => panic!("unknown argument: {other}"),
         }
     }
-    assert!(args.attempts > 0 && args.rows_per_law > 0);
+    assert!(args.attempts > 0 && args.rows_per_law > 0 && args.factor_rows_per_population > 0);
+    if args.factor_only {
+        assert!(
+            !args.factor_populations.is_empty(),
+            "factor-only mode needs --factor-population LAW|PARAMETER"
+        );
+        assert!(
+            !args.factor_side_counts.is_empty(),
+            "factor-only mode needs --factor-side-counts N[,N...]"
+        );
+        validate_factor_selections(&args.factor_populations, &args.factor_side_counts);
+    }
     args
+}
+
+fn parse_population_spec(spec: &str) -> Option<(String, String)> {
+    let (law, parameter) = spec.split_once('|')?;
+    if law.is_empty() || parameter.is_empty() || parameter.contains('|') {
+        return None;
+    }
+    Some((law.to_string(), parameter.to_string()))
+}
+
+fn parse_side_counts(spec: &str) -> Option<Vec<usize>> {
+    let mut counts = Vec::new();
+    for value in spec.split(',') {
+        let side_count: usize = value.parse().ok()?;
+        if side_count < 3 || counts.contains(&side_count) {
+            return None;
+        }
+        counts.push(side_count);
+    }
+    if counts.is_empty() {
+        None
+    } else {
+        Some(counts)
+    }
+}
+
+fn validate_factor_selections(populations: &[(String, String)], side_counts: &[usize]) {
+    let mut seen = BTreeSet::new();
+    for (law, parameter) in populations {
+        assert!(
+            seen.insert((law, parameter)),
+            "duplicate factor population selection {law}|{parameter}"
+        );
+        let valid = match law.as_str() {
+            "current-baseline" => parameter
+                .strip_prefix("delta=")
+                .and_then(|value| value.parse::<f64>().ok())
+                .is_some_and(|delta| (0.0..1.0).contains(&delta)),
+            "repulsive-gap" => {
+                parameter == "regular"
+                    || parameter
+                        .strip_prefix("alpha=")
+                        .and_then(|value| value.parse::<f64>().ok())
+                        .is_some_and(|alpha| alpha > 0.0)
+            }
+            "zonogon" => parameter == "lengths=uniform(0.5,1.5)",
+            "primal-hull-uniform-disk" => parameter == "points=n+4,origin=interior",
+            "regular-mutation" => parameter
+                .strip_prefix("steps=")
+                .and_then(|value| value.split_once(",scale="))
+                .and_then(|(steps, scale)| {
+                    Some((steps.parse::<usize>().ok()?, scale.parse::<f64>().ok()?))
+                })
+                .is_some_and(|(steps, scale)| steps > 0 && scale > 0.0),
+            _ => false,
+        };
+        assert!(
+            valid,
+            "unsupported or ambiguous factor population {law}|{parameter}"
+        );
+        if law == "zonogon" {
+            assert!(
+                side_counts.iter().all(|side_count| side_count % 2 == 0),
+                "zonogon factor-only selection needs even side counts"
+            );
+        }
+    }
 }
 
 fn law_seed(
@@ -180,6 +337,27 @@ fn law_seed(
     }
     bytes.extend_from_slice(&(bucket.0 as u64).to_le_bytes());
     bytes.extend_from_slice(&(bucket.1 as u64).to_le_bytes());
+    bytes.extend_from_slice(&(row as u64).to_le_bytes());
+    bytes.extend_from_slice(&(attempt as u64).to_le_bytes());
+    *blake3::hash(&bytes).as_bytes()
+}
+
+fn factor_only_seed(
+    seed: u64,
+    law: &str,
+    parameter: &str,
+    side_count: usize,
+    row: usize,
+    attempt: usize,
+) -> [u8; 32] {
+    let mut bytes = Vec::new();
+    bytes.extend_from_slice(b"generator-zoo-factor-only\0");
+    bytes.extend_from_slice(&seed.to_le_bytes());
+    for text in [law, parameter] {
+        bytes.extend_from_slice(text.as_bytes());
+        bytes.push(0);
+    }
+    bytes.extend_from_slice(&(side_count as u64).to_le_bytes());
     bytes.extend_from_slice(&(row as u64).to_le_bytes());
     bytes.extend_from_slice(&(attempt as u64).to_le_bytes());
     *blake3::hash(&bytes).as_bytes()
@@ -503,6 +681,54 @@ fn factor_shape_row(
     }
 }
 
+fn factor_only_shape_row(
+    law: &str,
+    parameter: &str,
+    seed: u64,
+    row: usize,
+    attempt: usize,
+    side_count: usize,
+    factor: &Factor,
+) -> FactorShapeRow {
+    FactorShapeRow {
+        schema: "factor-shape-row-v1",
+        sample_id: format!(
+            "generator-zoo-v1/factor-only/{law}|{parameter}/seed={seed}/side={side_count}/row={row}/attempt={attempt}/factor=single"
+        ),
+        law: law.to_string(),
+        population: format!("{law}[{parameter}]"),
+        law_version: LAW_VERSION,
+        parameter: parameter.to_string(),
+        seed,
+        row_index: row,
+        attempt,
+        pair_bucket: format!("factor-{side_count}"),
+        factor_role: "single",
+        side_count: factor.vertices.len(),
+        area_normalized: (shoelace(&factor.vertices).abs() - 1.0).abs() < 1e-8,
+        vertices_ccw: factor.vertices.iter().map(|v| [v[0], v[1]]).collect(),
+    }
+}
+
+fn source_provenance() -> (String, bool) {
+    let source_revision = Command::new("git")
+        .args(["rev-parse", "HEAD"])
+        .output()
+        .ok()
+        .filter(|output| output.status.success())
+        .map(|output| String::from_utf8_lossy(&output.stdout).trim().to_string())
+        .unwrap_or_else(|| "unknown".to_string());
+    let source_dirty = match Command::new("git")
+        .args(["status", "--porcelain", "--"])
+        .args(FACTOR_SOURCE_DEPENDENCIES)
+        .output()
+    {
+        Ok(output) if output.status.success() => !output.stdout.is_empty(),
+        _ => true,
+    };
+    (source_revision, source_dirty)
+}
+
 fn validate_product(q: &Factor, p: &Factor) -> Option<f64> {
     let poly = SysLandscapePolytopeCache::from_lagrangian_product(
         &q.normals, &q.heights, &p.normals, &p.heights,
@@ -524,8 +750,112 @@ fn dispositions() -> Vec<Disposition> {
     ]
 }
 
+fn run_factor_only(args: &Args) {
+    create_dir_all(&args.factor_out_dir).expect("create factor-only output directory");
+    let shape_path = args.factor_out_dir.join("factor-shapes.jsonl");
+    let report_path = args.factor_out_dir.join("factor-only-report.json");
+    let mut shapes = BufWriter::new(File::create(&shape_path).expect("create factor-only shapes"));
+    let mut summaries = Vec::new();
+    let mut status_counts = BTreeMap::new();
+    let mut factor_rows = 0usize;
+
+    for (law, parameter) in &args.factor_populations {
+        for &side_count in &args.factor_side_counts {
+            let mut accepted = 0usize;
+            let mut exhausted = 0usize;
+            let mut total_generation_ms = 0.0;
+            let mut max_attempts_observed = 0usize;
+            for row in 0..args.factor_rows_per_population {
+                let mut accepted_attempt = None;
+                let mut generation_ms = 0.0;
+                for attempt in 0..args.attempts {
+                    let seed =
+                        factor_only_seed(args.seed, law, parameter, side_count, row, attempt);
+                    let mut rng = ChaCha8Rng::from_seed(seed);
+                    let started = Instant::now();
+                    let generated =
+                        generate(law, parameter, side_count, &mut rng).and_then(normalize);
+                    generation_ms += started.elapsed().as_secs_f64() * 1000.0;
+                    let Some(factor) = generated else {
+                        continue;
+                    };
+                    serde_json::to_writer(
+                        &mut shapes,
+                        &factor_only_shape_row(
+                            law, parameter, args.seed, row, attempt, side_count, &factor,
+                        ),
+                    )
+                    .expect("write factor-only shape");
+                    shapes.write_all(b"\n").expect("write factor-only newline");
+                    factor_rows += 1;
+                    accepted_attempt = Some(attempt);
+                    break;
+                }
+                total_generation_ms += generation_ms;
+                if let Some(attempt) = accepted_attempt {
+                    accepted += 1;
+                    max_attempts_observed = max_attempts_observed.max(attempt + 1);
+                    *status_counts.entry("accepted".to_string()).or_insert(0) += 1;
+                } else {
+                    exhausted += 1;
+                    max_attempts_observed = max_attempts_observed.max(args.attempts);
+                    *status_counts.entry("exhausted".to_string()).or_insert(0) += 1;
+                }
+            }
+            summaries.push(FactorOnlySummary {
+                law: law.clone(),
+                parameter: parameter.clone(),
+                side_count,
+                requested: args.factor_rows_per_population,
+                accepted,
+                exhausted,
+                total_generation_ms,
+                max_attempts_observed,
+            });
+        }
+    }
+    shapes.flush().expect("flush factor-only shapes");
+    let (source_revision, source_dirty) = source_provenance();
+    let report = FactorOnlyReport {
+        schema: "generator-zoo-factor-only-report-v1",
+        mode: "factor-only",
+        law_version: LAW_VERSION,
+        seed: args.seed,
+        max_attempts_per_row: args.attempts,
+        rows_per_population_side_count: args.factor_rows_per_population,
+        selected_populations: args
+            .factor_populations
+            .iter()
+            .map(|(law, parameter)| format!("{law}|{parameter}"))
+            .collect(),
+        side_counts: args.factor_side_counts.clone(),
+        factor_rows,
+        status_counts,
+        per_population: summaries,
+        command: std::env::args().collect::<Vec<_>>().join(" "),
+        source_revision,
+        source_dirty,
+        source_dirty_scope: FACTOR_SOURCE_DIRTY_SCOPE,
+        validation_boundary: "Factor-only mode validates the local polygon construction, active-facet conditioning, and area normalization; it deliberately does not call the exact 4D product boundary.",
+        interpretation_boundary: "Factor-only rows are named-population shape evidence for the bounded smoke only; they do not estimate population laws or establish product validity, sys transfer, or persistence.",
+    };
+    serde_json::to_writer_pretty(
+        File::create(report_path).expect("create factor-only report"),
+        &report,
+    )
+    .expect("write factor-only report");
+    println!(
+        "wrote {factor_rows} factor-only rows to {}",
+        shape_path.display()
+    );
+}
+
 fn main() {
     let args = parse_args();
+    if args.factor_only {
+        run_factor_only(&args);
+        return;
+    }
     create_dir_all(&args.out_dir).expect("create output directory");
     let shape_path = args.out_dir.join("factor-shapes.jsonl");
     let product_path = args.out_dir.join("product-smoke.jsonl");
@@ -788,5 +1118,54 @@ mod tests {
         let f = regular_mutation(6, 4, 0.03, &mut rng).unwrap();
         assert_eq!(f.normals.len(), 6);
         assert!(f.heights.iter().all(|height| *height > 0.0));
+    }
+
+    #[test]
+    fn factor_population_selection_is_explicit_and_unambiguous() {
+        assert_eq!(
+            parse_population_spec("repulsive-gap|alpha=4"),
+            Some(("repulsive-gap".to_string(), "alpha=4".to_string()))
+        );
+        assert!(parse_population_spec("repulsive-gap").is_none());
+        assert!(parse_population_spec("repulsive-gap|alpha=4|extra").is_none());
+        assert_eq!(parse_side_counts("4,6"), Some(vec![4, 6]));
+        assert!(parse_side_counts("4,4").is_none());
+    }
+
+    #[test]
+    #[should_panic(expected = "duplicate factor population")]
+    fn duplicate_factor_populations_are_rejected() {
+        validate_factor_selections(
+            &[
+                ("repulsive-gap".to_string(), "alpha=1".to_string()),
+                ("repulsive-gap".to_string(), "alpha=1".to_string()),
+            ],
+            &[4, 6],
+        );
+    }
+
+    #[test]
+    fn factor_source_dirty_scope_excludes_generated_artifacts() {
+        assert!(FACTOR_SOURCE_DEPENDENCIES
+            .contains(&"experiments/sys-datascience/methods/generator-zoo-smoke/main.rs"));
+        assert!(FACTOR_SOURCE_DEPENDENCIES.contains(&"experiments/sys-landscape/Cargo.toml"));
+        assert!(!FACTOR_SOURCE_DEPENDENCIES
+            .iter()
+            .any(|path| path.contains("artifacts") || path.ends_with(".jsonl")));
+        assert!(FACTOR_SOURCE_DIRTY_SCOPE.contains("experiments/sys-landscape/Cargo.toml"));
+    }
+
+    #[test]
+    fn factor_only_shape_ids_cannot_collide_with_product_ids() {
+        let factor = (0..128)
+            .find_map(|seed| {
+                let mut rng = ChaCha8Rng::seed_from_u64(seed);
+                normalize(current_baseline(4, 0.2, &mut rng)?)
+            })
+            .unwrap();
+        let row = factor_only_shape_row("current-baseline", "delta=0.2", 13, 0, 0, 4, &factor);
+        assert!(row.sample_id.contains("/factor-only/"));
+        assert_eq!(row.factor_role, "single");
+        assert_eq!(row.pair_bucket, "factor-4");
     }
 }

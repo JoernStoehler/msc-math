@@ -65,3 +65,36 @@ dispositions, and the producing source revision/dirty flag.
 These counts are descriptive evidence for this bounded smoke only. They do not
 estimate the natural populations, validate conditioning probabilities at
 production scale, or establish transfer/persistence of any `sys` relation.
+
+## Factor-only mode
+
+Use `--factor-only` for shape coverage without exact 4D product validation. It
+uses the same law formulas, local all-active-facet conditioning, and area
+normalization as product mode, but samples one factor directly and writes to a
+separate `--factor-out-dir` (defaulting below `artifacts/factor-only`) so the
+product-mode artifacts are not overwritten. Population selection is explicit
+and unambiguous: repeat `--factor-population 'LAW|PARAMETER'`; side counts are
+an explicit comma-separated list. For example, the disposable planned panel
+uses 20 accepted shapes per population and side-count stratum:
+
+```text
+cargo run -p exp-sys-landscape --release --bin sys-datascience-generator-zoo-smoke -- \
+  --factor-only --factor-out-dir /tmp/generator-zoo-factor-only \
+  --seed 20260714 --attempts 64 --factor-rows-per-population 20 \
+  --factor-side-counts 4,6 \
+  --factor-population 'current-baseline|delta=0.2' \
+  --factor-population 'repulsive-gap|alpha=1' \
+  --factor-population 'repulsive-gap|alpha=4' \
+  --factor-population 'zonogon|lengths=uniform(0.5,1.5)'
+```
+
+The factor-only output has the same `factor-shape-row-v1` schema, with
+non-colliding `generator-zoo-v1/factor-only/...` IDs and `factor_role=single`.
+`factor-only-report.json` records the selected populations and side counts,
+bounded attempts/exhaustions, generation cost, source revision/dirty state,
+and the fact that exact 4D validation was intentionally not requested. Its
+`source_dirty` predicate is exactly `git status --porcelain --` restricted to
+`generator-zoo-smoke/main.rs` and `experiments/sys-landscape/Cargo.toml`; output
+artifacts and timing files are excluded. The report is the authoritative
+count/cost artifact for this mode; these rows are shape evidence only and do
+not establish product validity, `sys` transfer, or persistence.

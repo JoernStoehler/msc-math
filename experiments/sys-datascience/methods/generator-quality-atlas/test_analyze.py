@@ -114,6 +114,77 @@ class GeometryTests(unittest.TestCase):
 
 
 class AtlasTests(unittest.TestCase):
+    def test_bounded_selection_is_hash_ranked_order_invariant_and_prefix_stable(self):
+        payloads = []
+        for population in ("baseline", "candidate"):
+            for index in range(7):
+                vertices = ANALYZE.transform_polygon(
+                    ANALYZE.regular_polygon(5),
+                    stretch=0.03 * (index + (population == "candidate")),
+                    shear=0.01 * index,
+                    rotation=0.07 * index,
+                    scale=1.0,
+                    translation=(0.0, 0.0),
+                )
+                payload = row(f"{population}/sample-{index}", "shared-law", vertices)
+                payload["population"] = population
+                payload["provenance"] = f"mutable note {index}"
+                payloads.append(payload)
+        shapes = [standardized(payload, 32, 64) for payload in payloads]
+
+        selected_forward, summary_forward = ANALYZE.select_bounded_shapes(shapes, 3)
+        selected_reverse, summary_reverse = ANALYZE.select_bounded_shapes(
+            list(reversed(shapes)), 3
+        )
+        self.assertEqual(
+            [shape.sample_id for shape in selected_forward],
+            [shape.sample_id for shape in selected_reverse],
+        )
+        self.assertEqual(summary_forward, summary_reverse)
+
+        selected_four, _ = ANALYZE.select_bounded_shapes(shapes, 4)
+        for population in ("baseline", "candidate"):
+            ids_three = {
+                shape.sample_id for shape in selected_forward if shape.law == population
+            }
+            ids_four = {
+                shape.sample_id for shape in selected_four if shape.law == population
+            }
+            self.assertEqual(len(ids_three), 3)
+            self.assertTrue(ids_three < ids_four)
+            observed = [shape for shape in shapes if shape.law == population]
+            expected = {
+                shape.sample_id
+                for shape in sorted(observed, key=ANALYZE.bounded_selection_key)[:3]
+            }
+            self.assertEqual(ids_three, expected)
+
+        report_forward = ANALYZE.build_atlas(shapes, "baseline", 0.9, 1e-9, 3)
+        report_reverse = ANALYZE.build_atlas(
+            list(reversed(shapes)), "baseline", 0.9, 1e-9, 3
+        )
+        self.assertEqual(report_forward, report_reverse)
+        self.assertEqual(report_forward["rows_observed"], 14)
+        self.assertEqual(report_forward["rows_used_for_geometry"], 6)
+        self.assertEqual(report_forward["rows_excluded_from_geometry"], 8)
+        self.assertIn("not a random", report_forward["bounded_analysis"]["interpretation"])
+        laws = {law["law"]: law for law in report_forward["strata"][0]["laws"]}
+        self.assertEqual(laws["candidate"]["observed_count"], 7)
+        self.assertEqual(laws["candidate"]["used_count"], 3)
+        self.assertEqual(laws["candidate"]["excluded_count"], 4)
+        self.assertEqual(laws["candidate"]["sample_status"], "small-sample")
+        self.assertEqual(
+            report_forward["accepted_row_side_count_allocation"]["by_population"]
+            ["candidate"]["accepted_shape_row_counts_by_side_count"]["5"],
+            7,
+        )
+
+    def test_bounded_selection_rejects_nonpositive_cap(self):
+        shape = standardized(row("one", "baseline", ANALYZE.regular_polygon(5)), 32, 64)
+        for cap in (0, -1):
+            with self.subTest(cap=cap), self.assertRaisesRegex(ValueError, "positive"):
+                ANALYZE.select_bounded_shapes([shape], cap)
+
     def test_side_count_tv_is_explicitly_an_accepted_row_allocation_diagnostic(self):
         payloads = []
         allocations = {
@@ -148,6 +219,8 @@ class AtlasTests(unittest.TestCase):
         shapes = [standardized(payload) for payload in ANALYZE.synthetic_rows()]
         report = ANALYZE.build_atlas(shapes, "baseline", 0.9, 1e-9)
         self.assertEqual(report["side_counts"], [5, 6])
+        self.assertFalse(report["bounded_analysis"]["enabled"])
+        self.assertEqual(report["rows_observed"], report["rows_used_for_geometry"])
         for stratum in report["strata"]:
             laws = {law["law"]: law for law in stratum["laws"]}
             self.assertEqual(laws["baseline"]["within_l2"]["duplicate_pair_fraction"], 1.0)

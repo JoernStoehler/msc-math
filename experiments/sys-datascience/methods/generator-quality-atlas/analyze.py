@@ -24,6 +24,7 @@ import numpy as np
 HERE = Path(__file__).resolve().parent
 SCHEMA = "factor-shape-row-v1"
 SMALL_SAMPLE = 5
+SELECTION_CONTRACT_VERSION = "generator-quality-atlas-stable-hash-cap-v1"
 
 
 @dataclass(frozen=True)
@@ -180,6 +181,61 @@ def load_shapes(path: Path, support_grid: int, steiner_grid: int) -> list[Shape]
     if not shapes:
         raise ValueError(f"{path}: no nonempty rows")
     return shapes
+
+
+def bounded_selection_key(shape: Shape) -> tuple[bytes, bytes]:
+    canonical = json.dumps(
+        [
+            SELECTION_CONTRACT_VERSION,
+            shape.law,
+            shape.side_count,
+            shape.sample_id,
+        ],
+        ensure_ascii=False,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(canonical).digest(), shape.sample_id.encode("utf-8")
+
+
+def select_bounded_shapes(
+    shapes: list[Shape], max_shapes_per_population_side_count: int | None
+) -> tuple[list[Shape], list[dict[str, Any]]]:
+    if (
+        max_shapes_per_population_side_count is not None
+        and max_shapes_per_population_side_count <= 0
+    ):
+        raise ValueError("max shapes per population/side-count must be positive")
+    grouped: dict[tuple[int, str], list[Shape]] = defaultdict(list)
+    for shape in shapes:
+        grouped[(shape.side_count, shape.law)].append(shape)
+
+    used: list[Shape] = []
+    summaries = []
+    for (side_count, population), observed in sorted(grouped.items()):
+        ranked = sorted(observed, key=bounded_selection_key)
+        selected = (
+            ranked
+            if max_shapes_per_population_side_count is None
+            else ranked[:max_shapes_per_population_side_count]
+        )
+        used.extend(selected)
+        selected_ids = [shape.sample_id for shape in selected]
+        selected_digest = hashlib.sha256(
+            json.dumps(
+                selected_ids, ensure_ascii=False, separators=(",", ":")
+            ).encode("utf-8")
+        ).hexdigest()
+        summaries.append(
+            {
+                "population": population,
+                "side_count": side_count,
+                "observed_count": len(observed),
+                "used_count": len(selected),
+                "excluded_count": len(observed) - len(selected),
+                "used_sample_ids_sha256": selected_digest,
+            }
+        )
+    return used, summaries
 
 
 def rotation_metrics(left: np.ndarray, right: np.ndarray) -> tuple[float, float, int]:
@@ -433,17 +489,32 @@ def provenance_summary(shapes: list[Shape]) -> dict[str, Any]:
 
 
 def build_atlas(
-    shapes: list[Shape], baseline_law: str, central_fraction: float, duplicate_tolerance: float
+    shapes: list[Shape],
+    baseline_law: str,
+    central_fraction: float,
+    duplicate_tolerance: float,
+    max_shapes_per_population_side_count: int | None = None,
 ) -> dict[str, Any]:
+    used_shapes, selection_strata = select_bounded_shapes(
+        shapes, max_shapes_per_population_side_count
+    )
     by_side: dict[int, list[Shape]] = defaultdict(list)
-    for shape in shapes:
+    observed_by_side: dict[int, list[Shape]] = defaultdict(list)
+    for shape in used_shapes:
         by_side[shape.side_count].append(shape)
+    for shape in shapes:
+        observed_by_side[shape.side_count].append(shape)
+    selection_by_stratum = {
+        (item["side_count"], item["population"]): item
+        for item in selection_strata
+    }
     strata = []
     global_laws = sorted({shape.law for shape in shapes})
     issues: list[str] = []
 
     for side_count in sorted(by_side):
         group = sorted(by_side[side_count], key=lambda shape: shape.sample_id)
+        observed_group = observed_by_side[side_count]
         l2, linf = distance_matrices(group)
         indices_by_law = {
             law: [i for i, shape in enumerate(group) if shape.law == law]
@@ -472,10 +543,22 @@ def build_atlas(
 
         laws = []
         for law, indices in sorted(indices_by_law.items()):
-            law_shapes = [group[i] for i in indices]
+            observed_law_shapes = [
+                shape for shape in observed_group if shape.law == law
+            ]
+            selection = selection_by_stratum[(side_count, law)]
             law_l2 = l2[np.ix_(indices, indices)]
             law_linf = linf[np.ix_(indices, indices)]
             law_issues = []
+            if selection["excluded_count"]:
+                message = (
+                    f"side_count={side_count}, population={law!r}: deterministic "
+                    f"bounded-analysis cap used {selection['used_count']} of "
+                    f"{selection['observed_count']} observed rows; geometry metrics "
+                    "describe the selected subset, not the full rows or a random sample"
+                )
+                law_issues.append(message)
+                issues.append(message)
             if len(indices) < SMALL_SAMPLE:
                 message = (
                     f"side_count={side_count}, law={law!r}: n={len(indices)} is below "
@@ -514,22 +597,39 @@ def build_atlas(
                 {
                     "law": law,
                     "count": len(indices),
+                    "observed_count": selection["observed_count"],
+                    "used_count": selection["used_count"],
+                    "excluded_count": selection["excluded_count"],
+                    "used_sample_ids_sha256": selection["used_sample_ids_sha256"],
                     "sample_status": "small-sample" if len(indices) < SMALL_SAMPLE else "descriptive",
                     "within_l2": within_metrics(law_l2, duplicate_tolerance),
                     "within_linf": within_metrics(law_linf, duplicate_tolerance),
                     "baseline_comparison": comparison,
-                    "compute_acceptance": compute_acceptance(law_shapes),
-                    "combinatorial_breadth": combinatorial_summary(law_shapes),
-                    "naturalness_provenance": provenance_summary(law_shapes),
+                    "compute_acceptance": compute_acceptance(observed_law_shapes),
+                    "combinatorial_breadth": combinatorial_summary(observed_law_shapes),
+                    "naturalness_provenance": provenance_summary(observed_law_shapes),
+                    "cheap_descriptive_summary_scope": "all observed valid input rows before bounded selection",
                     "issues": law_issues,
                 }
             )
+        observed_count = len(observed_group)
         strata.append(
             {
                 "side_count": side_count,
                 "count": len(group),
+                "observed_count": observed_count,
+                "used_count": len(group),
+                "excluded_count": observed_count - len(group),
                 "baseline_law": baseline_law,
                 "baseline_count": len(baseline_indices),
+                "baseline_observed_count": sum(
+                    shape.law == baseline_law for shape in observed_group
+                ),
+                "baseline_used_count": len(baseline_indices),
+                "baseline_excluded_count": sum(
+                    shape.law == baseline_law for shape in observed_group
+                )
+                - len(baseline_indices),
                 "baseline_medoid_sample_id": (
                     group[baseline_medoid].sample_id if baseline_medoid is not None else None
                 ),
@@ -580,22 +680,58 @@ def build_atlas(
         "schema": "generator-quality-atlas-report-v1",
         "row_schema": SCHEMA,
         "baseline_law": baseline_law,
-        "rows": len(shapes),
+        "rows": len(used_shapes),
+        "rows_observed": len(shapes),
+        "rows_used_for_geometry": len(used_shapes),
+        "rows_excluded_from_geometry": len(shapes) - len(used_shapes),
         "laws": global_laws,
         "side_counts": sorted(by_side),
         "missing_laws_by_side_count": missing_laws,
+        "bounded_analysis": {
+            "enabled": max_shapes_per_population_side_count is not None,
+            "max_shapes_per_population_side_count": max_shapes_per_population_side_count,
+            "selection_stage": (
+                "after schema/geometry validation and support standardization; "
+                "before pairwise distance matrices and every metric derived from them"
+            ),
+            "selection_key_contract": {
+                "version": SELECTION_CONTRACT_VERSION,
+                "grouping": "normalized population label (population, else law) and side_count",
+                "canonical_hash_input": (
+                    "UTF-8 canonical compact JSON array "
+                    "[version,population,side_count,sample_id] with ensure_ascii=false"
+                ),
+                "ranking": (
+                    "ascending SHA-256 digest bytes, then UTF-8 sample_id bytes as "
+                    "the collision tie-break; keep the lowest K in each group"
+                ),
+                "used_sample_ids_sha256": (
+                    "SHA-256 of the compact ensure_ascii=false JSON array of selected "
+                    "sample_id strings in selection-rank order"
+                ),
+            },
+            "interpretation": (
+                "The cap creates a reproducible bounded subset. It is not a random "
+                "or representative population sample unless an external source "
+                "contract independently justifies that interpretation."
+            ),
+            "strata": selection_strata,
+        },
         "accepted_row_side_count_allocation": {
             "interpretation": (
                 "Describes the analyzed accepted-shape rows only; imposed allocation, "
                 "side-count applicability, and bounded rejection all affect these counts. "
-                "It is not an estimate of a natural generator-law side-count distribution."
+                "Counts are computed from all observed valid rows before the optional "
+                "bounded-analysis cap. It is not an estimate of a natural generator-law "
+                "side-count distribution."
             ),
             "by_population": accepted_row_side_count_allocation,
         },
         "steiner_grid_approximation_diagnostic": {
             "comparison": "Euclidean error between the declared-grid support integral and the exact polygon Steiner formula",
-            "median": float(np.median([shape.steiner_grid_error for shape in shapes])),
-            "maximum": float(max(shape.steiner_grid_error for shape in shapes)),
+            "scope": "rows used for geometry after bounded selection",
+            "median": float(np.median([shape.steiner_grid_error for shape in used_shapes])),
+            "maximum": float(max(shape.steiner_grid_error for shape in used_shapes)),
         },
         "quality_dimensions": [
             "controlled-transfer similarity",
@@ -624,6 +760,9 @@ def write_table(report: dict[str, Any], path: Path) -> None:
         "side_count",
         "law",
         "count",
+        "observed_count",
+        "used_count",
+        "excluded_count",
         "sample_status",
         "pairwise_l2_mean",
         "nearest_neighbor_l2_mean",
@@ -649,6 +788,9 @@ def write_table(report: dict[str, Any], path: Path) -> None:
                     "side_count": stratum["side_count"],
                     "law": law["law"],
                     "count": law["count"],
+                    "observed_count": law["observed_count"],
+                    "used_count": law["used_count"],
+                    "excluded_count": law["excluded_count"],
                     "sample_status": law["sample_status"],
                     "pairwise_l2_mean": within["pairwise_mean"],
                     "nearest_neighbor_l2_mean": within["nearest_neighbor_mean"],
@@ -763,6 +905,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--steiner-grid", type=int, default=4096)
     parser.add_argument("--central-fraction", type=float, default=0.9)
     parser.add_argument("--duplicate-tolerance", type=float, default=1e-9)
+    parser.add_argument(
+        "--max-shapes-per-population-side-count",
+        type=int,
+        help=(
+            "Optional deterministic cap applied independently within each normalized "
+            "population and side-count stratum before pairwise distances"
+        ),
+    )
     parser.add_argument("--write-synthetic-fixture", type=Path)
     return parser.parse_args()
 
@@ -777,6 +927,11 @@ def main() -> None:
         raise SystemExit("--central-fraction must be in (0, 1]")
     if args.duplicate_tolerance < 0.0:
         raise SystemExit("--duplicate-tolerance must be nonnegative")
+    if (
+        args.max_shapes_per_population_side_count is not None
+        and args.max_shapes_per_population_side_count <= 0
+    ):
+        raise SystemExit("--max-shapes-per-population-side-count must be positive")
     if args.write_synthetic_fixture is not None:
         write_jsonl(synthetic_rows(), args.write_synthetic_fixture)
     if args.input is None:
@@ -785,7 +940,11 @@ def main() -> None:
         return
     shapes = load_shapes(args.input, args.support_grid, args.steiner_grid)
     report = build_atlas(
-        shapes, args.baseline_law, args.central_fraction, args.duplicate_tolerance
+        shapes,
+        args.baseline_law,
+        args.central_fraction,
+        args.duplicate_tolerance,
+        args.max_shapes_per_population_side_count,
     )
     config = {
         "input": str(args.input),
@@ -795,6 +954,7 @@ def main() -> None:
         "steiner_grid": args.steiner_grid,
         "central_fraction": args.central_fraction,
         "duplicate_tolerance": args.duplicate_tolerance,
+        "max_shapes_per_population_side_count": args.max_shapes_per_population_side_count,
     }
     write_outputs(report, args.out_dir, config)
 

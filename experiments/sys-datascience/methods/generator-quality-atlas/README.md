@@ -100,6 +100,46 @@ rejection all affect it. It is not an estimate of a natural generator-law
 side-count distribution or combinatorial breadth. Naturalness is not inferred
 from geometric distance; provenance remains descriptive.
 
+## Deterministic bounded analysis
+
+Pairwise distances are quadratic in the number of shapes in a side-count
+stratum. `--max-shapes-per-population-side-count K` bounds that cost by keeping
+at most `K` shapes independently for every normalized `population` (falling
+back to `law`) and `side_count`. Omitting the option preserves the default of
+using every valid row. `K` must be positive.
+
+Selection happens only after every input row has passed schema and geometry
+validation and global `sample_id` uniqueness. For each population/side-count
+group, the analyzer forms the UTF-8 compact canonical JSON array
+
+`["generator-quality-atlas-stable-hash-cap-v1", population, side_count, sample_id]`
+
+with `ensure_ascii=false`, ranks rows by ascending SHA-256 digest bytes and then
+UTF-8 `sample_id` bytes, and keeps the lowest `K`. This makes selection
+independent of JSONL input order, filesystem path, Python hash randomization,
+and mutable descriptive fields. Increasing `K` preserves the smaller selected
+set. The report records the contract version, observed/used/excluded counts per
+group, and a digest of selected identifiers in selection-rank order.
+
+This hash-ranked subset is deterministic, not automatically random or
+representative. Population claims require an independent source contract that
+justifies them. Pairwise diversity, nearest neighbors, effective dimension,
+medoids, centroid displacement, energy-like comparison, and central-body
+fractions describe only the selected rows. Their denominators and the existing
+small-sample warnings use `used_count`. Cheap acceptance, combinatorial-field,
+provenance, and accepted-row side-count-allocation summaries continue to use
+all observed valid rows before the cap and are labeled accordingly.
+
+For a disposable bounded smoke without changing retained artifacts:
+
+```bash
+uv run --script analyze.py \
+  --input fixtures/synthetic.jsonl \
+  --max-shapes-per-population-side-count 3 \
+  --support-grid 64 --steiner-grid 1024 \
+  --out-dir /tmp/generator-quality-atlas-capped
+```
+
 ## Reproduce the retained control
 
 From this directory:
