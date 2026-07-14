@@ -28,6 +28,7 @@ EXPECTED = {
     ),
 }
 EPS = 2.0e-12
+ALLOWED_WITNESS_ADMISSIBILITY = {"AdmissibleF64", "AdmissibleExact"}
 
 
 def rows(path: Path):
@@ -95,8 +96,10 @@ def analyze_shard(role: str, shard: Path):
             "candidate_window_witness_beta_margin",
         ):
             assert finite(row.get(key)), (role, "missing witness", key)
+        assert row["candidate_window_witness_admissibility"] in ALLOWED_WITNESS_ADMISSIBILITY
         assert row["candidate_window_witness_action_lower"] - EPS <= row["candidate_window_witness_action"]
         assert row["candidate_window_witness_action"] <= row["candidate_window_witness_action_upper"] + EPS
+        assert row["candidate_window_witness_relative_action_gap"] >= -EPS
         assert row["candidate_window_witness_relative_action_gap"] <= 0.01 + EPS
         assert row["candidate_window_witness_q_error_bound"] >= 0.0
         assert row["candidate_window_witness_beta_margin"] >= -EPS

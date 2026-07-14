@@ -43,6 +43,7 @@ run_shard() {
     --audit-iterations 0 \
     --audit-step-policies fixed \
     --audit-policy-proposal-limit 6
+  printf '\n'
   "$BIN" \
     --diagnostic-dir "$DIAGNOSTIC" \
     --polytope-table "$PANEL" \
