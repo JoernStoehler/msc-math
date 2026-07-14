@@ -259,7 +259,12 @@ def plot_max_margin(radius_rows):
     axes[1].set_xlabel("relative radius (step norm / dual-state norm)")
     fig.tight_layout()
     for suffix in ("png", "pdf"):
-        fig.savefig(FIGURES / f"max-margin-by-radius.{suffix}", dpi=220)
+        metadata = {"CreationDate": None, "ModDate": None} if suffix == "pdf" else None
+        fig.savefig(
+            FIGURES / f"max-margin-by-radius.{suffix}",
+            dpi=220,
+            metadata=metadata,
+        )
     plt.close(fig)
 
 
@@ -305,7 +310,12 @@ def plot_directional_spread(polls):
     fig.suptitle("Directional spread; black segment marks the best observed direction")
     fig.tight_layout()
     for suffix in ("png", "pdf"):
-        fig.savefig(FIGURES / f"directional-spread.{suffix}", dpi=220)
+        metadata = {"CreationDate": None, "ModDate": None} if suffix == "pdf" else None
+        fig.savefig(
+            FIGURES / f"directional-spread.{suffix}",
+            dpi=220,
+            metadata=metadata,
+        )
     plt.close(fig)
 
 
