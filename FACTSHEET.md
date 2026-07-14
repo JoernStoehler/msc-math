@@ -49,8 +49,8 @@ maintenance low. The numbers are stable and can be out of order.
    Zenodo record will hold the thesis-support plus continuation bundle; and
    Software Heritage is a complementary source-history archive. Do not split
    software and data into separate Zenodo records unless the final artifacts
-   acquire a clear independent citation use. Jörn does not yet have a Zenodo
-   account and accepted GitHub sign-up as the sensible account route.
+   acquire a clear independent citation use. Jörn created the Zenodo account
+   successfully through GitHub sign-up on 2026-07-14.
 
 7. Stale deadline/admin notes should be removed or corrected when found. The
    repo should not keep old deadline notes as live planning context.

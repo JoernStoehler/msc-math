@@ -41,8 +41,8 @@ Jörn accepted the archive direction on 2026-07-14:
 - Use one Zenodo record unless a final software or data object has a concrete
   independent citation use.
 
-Jörn does not yet have a Zenodo account and accepted `Sign up with GitHub` as
-the account route. Record creation, DOI reservation, upload, and publication
-remain later actions. Agents own the local rights/exclusion inventory,
-metadata candidate, payload manifest, package construction, and verification
-before asking Jörn to operate the draft record.
+Jörn created the Zenodo account successfully through `Sign up with GitHub` on
+2026-07-14. Record creation, DOI reservation, upload, and publication remain
+later actions. Agents own the local rights/exclusion inventory, metadata
+candidate, payload manifest, package construction, and verification before
+asking Jörn to operate the draft record.
