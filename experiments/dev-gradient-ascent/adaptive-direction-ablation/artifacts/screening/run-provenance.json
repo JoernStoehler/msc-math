@@ -4,6 +4,8 @@
     "--smoke",
     "--budget",
     "1",
+    "--policies",
+    "inf_normalized_branch_gradient,near_active_box_lp_maximin,candidate_window_box_lp_maximin",
     "--facet-count",
     "6",
     "--start-count",
@@ -15,15 +17,15 @@
     "--out-dir",
     "experiments/dev-gradient-ascent/adaptive-direction-ablation/artifacts/screening"
   ],
-  "source_head": "c206e3a9b7db1951b3e029e5e08e388d25f4e313",
+  "source_head": "3581be2d670bc5e5872e79160f1737955005910c",
   "source_input": "experiments/sys-datascience/produce/random.jsonl",
   "source_input_blake3": "536d5a79597bdf21771e900377e8c1dc249ab8c0520a4680c8036c8909b3d7c8",
   "implementation": "/workspaces/msc-math/.worktrees/optimizer-adaptive-direction/experiments/dev-gradient-ascent/adaptive-direction-ablation/main.rs",
-  "implementation_blake3": "87309f3a6408ea4c55a435c62848bcb431eee15e51ac6c6fdec863ad4dac9936",
+  "implementation_blake3": "8f6a1fe82c9f5613e355ce773c4229fee051d2164f45af38ed5307028a7b56b6",
   "policies": [
-    "normalized_branch_gradient",
-    "near_active_zero_gap_maximin",
-    "candidate_window_gap_aware_maximin"
+    "inf_normalized_branch_gradient",
+    "near_active_box_lp_maximin",
+    "candidate_window_box_lp_maximin"
   ],
   "initial_radii": [
     0.0001,
@@ -34,6 +36,6 @@
   "post_initial_target_budget": 100,
   "near_active_window_relative": 0.001,
   "candidate_window_relative_gap": 0.01,
-  "direction_contract": "all output directions normalized in flattened dual-vertex Euclidean norm; candidate objective min_sigma(base_gap_sigma + <grad sys_sigma, radius*direction>)",
+  "direction_contract": "common L-infinity radius semantics: deterministic branch ray scaled to max_abs=1; near-active and candidate-window use box-LP x_j in [-1,1] directly without post-normalization; candidate objective min_sigma(base_gap_sigma + <grad sys_sigma, radius*direction>)",
   "evaluator_accounting": "initial state excluded; every target proposal increments target_evaluations; accepted iff valid and target full sys strictly increases; accepted radius expands 1.25, invalid/non-improving shrinks 0.5"
 }

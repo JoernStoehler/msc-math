@@ -1,10 +1,17 @@
 """Strict analyzer and combined displays for the adaptive-direction packet."""
-import json, pathlib, sys
+import json, pathlib, sys, subprocess
 
 root = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else "artifacts")
 generic_mode = len(sys.argv) > 2 and sys.argv[2] == "generic"
 prov = json.loads((root / "run-provenance.json").read_text())
-expected_policies = {"normalized_branch_gradient", "near_active_zero_gap_maximin", "candidate_window_gap_aware_maximin"}
+def blake3_file(path):
+    code = "import blake3,sys; print(blake3.blake3(open(sys.argv[1],'rb').read()).hexdigest())"
+    return subprocess.check_output(["uv", "run", "--with", "blake3", "--no-project", "python3", "-c", code, str(path)], text=True).strip()
+assert pathlib.Path(prov["implementation"]).exists()
+assert blake3_file(prov["implementation"]) == prov["implementation_blake3"], "implementation BLAKE3 mismatch"
+source_path = pathlib.Path(prov["source_input"])
+assert source_path.exists() and blake3_file(source_path) == prov["source_input_blake3"], "source-input BLAKE3 mismatch"
+expected_policies = {"inf_normalized_branch_gradient", "near_active_box_lp_maximin", "candidate_window_box_lp_maximin"}
 expected_radii = {float(x) for x in prov["initial_radii"]}
 assert abs(prov["candidate_window_relative_gap"] - 1.0e-2) < 1e-15
 assert prov["requested_target_budget"] == 6
@@ -33,11 +40,16 @@ for path in files:
     prev_eval = 0
     prev_best = initial["best_sys"]
     prev_radius = initial["current_radius"]
+    expected_dual = initial["base_dual_flat"]
+    expected_sys = initial["base_sys"]
     for i, row in enumerate(rs[1:], 1):
         assert row["policy"] == initial["policy"] and row["start_id"] == initial["start_id"]
         assert float(row["initial_radius"]) == float(initial["initial_radius"])
         assert row["iteration"] == i and row["target_evaluations"] == i and row["target_evaluations"] == prev_eval + 1
-        assert row["direction_label"] and abs(row["direction_norm"] - 1.0) < 2e-8
+        assert row["direction_label"] and row["direction_norm_inf"] <= 1.0 + 2e-8 and row["direction_norm_inf"] > 0.0
+        expected_label = {"inf_normalized_branch_gradient": "inf_normalized_branch_gradient", "near_active_box_lp_maximin": "near_active_box_lp_maximin", "candidate_window_box_lp_maximin": "candidate_window_box_lp_maximin"}[row["policy"]]
+        assert row["direction_label"] == expected_label
+        assert row["base_dual_flat"] == expected_dual and abs(row["base_sys"] - expected_sys) < 2e-12
         assert len(row["direction_flat"]) > 0 and len(row["direction_flat"]) % 4 == 0
         assert len(row["base_dual_flat"]) == len(row["target_dual_flat"]) == len(row["direction_flat"])
         assert max(abs(t - (b + row["proposal_radius"] * d)) for b, t, d in zip(row["base_dual_flat"], row["target_dual_flat"], row["direction_flat"])) < 2e-12
@@ -56,16 +68,21 @@ for path in files:
         else:
             assert row["reason"] in ("invalid_radius_shrink", "non_improving_radius_shrink")
             assert abs(row["current_radius"] - 0.5 * row["proposal_radius"]) < 1e-14
-        assert row["best_sys"] >= prev_best - 1e-12
-        if row["target_valid"] and row["target_sys"] > prev_best: assert row["best_sys"] == row["target_sys"]
+        expected_best = max(prev_best, row["target_sys"] if row["target_valid"] else float("-inf"))
+        assert abs(row["best_sys"] - expected_best) < 2e-10
         if row["predicted_delta"] is not None:
+            assert row["predicted_branch_values"] and abs(row["predicted_delta"] - min(row["predicted_branch_values"])) < 2e-10
+            expected_count = row["near_active_count"] if row["policy"] == "near_active_box_lp_maximin" else row["candidate_window_count"] if row["policy"] == "candidate_window_box_lp_maximin" else 1
+            assert len(row["predicted_branch_values"]) == expected_count
             assert row["predicted_observed_error"] is not None and row["target_valid"]
             assert abs(row["predicted_observed_error"] - (row["delta"] - row["predicted_delta"])) < 2e-10
             assert row["predicted_winning_sigma"] is not None
-            assert row["predicted_winning_sigma"] in row["near_active_sigmas"] or row["predicted_winning_sigma"] in row["candidate_window_sigmas"] or row["policy"] == "normalized_branch_gradient"
+            assert row["predicted_winning_sigma"] in row["near_active_sigmas"] or row["predicted_winning_sigma"] in row["candidate_window_sigmas"] or row["policy"] == "inf_normalized_branch_gradient"
         if row["target_sigma"] is not None:
             assert row["target_visible_near"] == (row["target_sigma"] in row["near_active_sigmas"])
             assert row["target_visible_candidate"] == (row["target_sigma"] in row["candidate_window_sigmas"])
+        if row["accepted"]:
+            expected_dual, expected_sys = row["target_dual_flat"], row["target_sys"]
         prev_eval, prev_best, prev_radius = i, row["best_sys"], row["current_radius"]
     by_cell[key] = rs
     all_rows.extend(rs[1:])
@@ -77,10 +94,14 @@ observed = []
 for (p, s, radius), rs in sorted(by_cell.items()):
     observed.append({"policy": p, "start": s, "radius": radius, "proposals": len(rs)-1, "accepted": sum(x["accepted"] for x in rs[1:]), "initial_sys": rs[0]["target_sys"], "best_sys": rs[-1]["best_sys"], "best_gain": rs[-1]["best_sys"] - rs[0]["target_sys"], "mean_abs_prediction_error": sum(abs(x["predicted_observed_error"]) for x in rs[1:] if x["predicted_observed_error"] is not None) / max(1, sum(x["predicted_observed_error"] is not None for x in rs[1:]))})
 summary = {"trajectory_files": len(files), "proposal_rows": len(all_rows), "total_target_evaluations": sum(len(rs)-1 for rs in by_cell.values()), "multi_branch_rows": len(multi), "multi_branch_fraction": len(multi)/len(all_rows), "distinct_direction_rows": distinct_cells, "expected_policy_count": len(expected_policies), "expected_start_count": len(expected_starts), "expected_radius_count": len(expected_radii), "observed": observed}
+producer_summary = json.loads((root / "summary.json").read_text())
+assert producer_summary["total_target_evaluations"] == summary["total_target_evaluations"]
+for ts in producer_summary["trajectories"]:
+    key = (ts["policy"], ts["start_id"], float(ts["initial_radius"]))
+    assert key in by_cell and ts["target_evaluations"] == len(by_cell[key]) - 1
 (root / "analysis.json").write_text(json.dumps(summary, indent=2) + "\n")
-(root / "summary.json").write_text(json.dumps({"provenance": "run-provenance.json", "trajectories": observed, "total_target_evaluations": summary["total_target_evaluations"]}, indent=2) + "\n")
 fig = root / "figures"; fig.mkdir(exist_ok=True)
-colors = {"normalized_branch_gradient": "#3366cc", "near_active_zero_gap_maximin": "#dc3912", "candidate_window_gap_aware_maximin": "#109618"}
+colors = {"inf_normalized_branch_gradient": "#3366cc", "near_active_box_lp_maximin": "#dc3912", "candidate_window_box_lp_maximin": "#109618"}
 svg = ['<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="620"><rect width="100%" height="100%" fill="white"/><text x="55" y="25" font-size="18">Best-so-far sys gain from initial state (validated trajectories)</text><text x="430" y="610">exact target evaluations</text><text x="10" y="320" transform="rotate(-90 10,320)">gain in sys</text>']
 max_x = max(len(rs)-1 for rs in by_cell.values()); max_y = max(rs[-1]["best_sys"] - rs[0]["target_sys"] for rs in by_cell.values())
 for p in sorted(expected_policies):
@@ -105,12 +126,12 @@ roles = {x["id"]: x["role"] for x in manifest["fixtures"]}
 effects = []
 for s in sorted(expected_starts):
     for rad in sorted(expected_radii):
-        c = first_by["candidate_window_gap_aware_maximin", s, rad]["delta"]
-        n = first_by["near_active_zero_gap_maximin", s, rad]["delta"]
+        c = first_by["candidate_window_box_lp_maximin", s, rad]["delta"]
+        n = first_by["near_active_box_lp_maximin", s, rad]["delta"]
         effects.append(f"{roles[s]} r={rad:g}: candidate-near Δsys={c-n:+.12g}")
 discussion = (f"# Adaptive direction ablation\n\nThe retained panel has {len(expected_starts)} role-labelled fixtures, {len(expected_policies)} policies, {len(expected_radii)} radii, and {len(all_rows)} validated proposals. Nominal multi-branch rows are {len(multi)}/{len(all_rows)} ({len(multi)/len(all_rows):.1%}); first-step policy directions differ in {distinct_cells} policy/start/radius rows. The canonical six-start generic-random screening is separate: 18/18 screening rows are valid and improving, near-active sets are singleton in 18/18, and candidate-window sets are multi-branch in 9/18.\n\n" +
     "The mechanism fixture is f6be75…f1b8; the equality/easy control is 43d243…dec8cc. First-step candidate-minus-near effects: " + "; ".join(effects) + f". Target branch visibility misses are {near_misses}/{len(target_rows)} near-active and {candidate_misses}/{len(target_rows)} candidate-window. Mean absolute prediction errors by policy are " + ", ".join(f"{p}={mean_errors[p]:.6g}" for p in sorted(expected_policies)) + ".\n\n" +
-    "Every proposal is a strict exact full-sys evaluation; six proposals per cell identify mechanism differences but cannot estimate endpoint behavior or prevalence. The evidence supports retaining normalized branch-gradient ascent as the observed search baseline and treating maximin models as diagnostic candidates requiring a larger mechanism-stratified follow-up.\n")
+    "Every proposal is a strict exact full-sys evaluation; six proposals per cell identify mechanism differences but cannot estimate endpoint behavior or prevalence. Selected fixtures favor candidate-window at radius 1e-2, but the generic panel favors near-active box-LP (15/18 wins, candidate 3/18, branch 0/18). Disposition: retain inf-normalized branch-gradient as baseline, advance near-active box-LP maximin to a later stationarity-gated follow-up, and keep candidate-window as mechanism-stratified diagnostic only.\n")
 (root / "DISCUSSION.md").write_text(discussion)
 if generic_mode:
     gains = {}
@@ -128,7 +149,7 @@ if generic_mode:
         f"The unselected canonical panel has {len(expected_starts)} deterministic starts, three policies, three radii, and {len(all_rows)} exact proposals (six proposals per cell). This is descriptive paired evidence, not six stochastic replicates.\n\n"
         f"Best-gain wins over the 18 start×radius cells: " + ", ".join(f"{p}={wins[p]}" for p in sorted(wins)) + f"; ties={ties}. After allowing all three radii, per-start best policies are: " + "; ".join(f"{s}: " + ", ".join(f"{p}={max(v):.9g}" for p,v in sorted(ps.items())) for s,ps in sorted(start_best.items())) + ".\n\n"
         f"Nominal multi-branch rows are {len(multi)}/{len(all_rows)} ({len(multi)/len(all_rows):.1%}), corresponding to {unique_multi} unique start×radius×iteration cells after removing policy triplication. First-step directions differ in {distinct_cells}/{len(first)} policy rows ({distinct_cells//3}/{len(first)//3} unique start×radius cells). Target-window visibility, prediction errors, and all state-transition/acceptance identities were validated from raw rows.\n\n"
-        "These six starts do not establish population prevalence, convergence, stationarity, or endpoint quality. They are sufficient to decide whether the candidate-window treatment merits a stationarity-gated follow-up.\n")
+        "These six starts do not establish population prevalence, convergence, stationarity, or endpoint quality. The generic panel supports near-active box-LP maximin—not candidate-window—as the only maximin policy for a later stationarity-gated follow-up.\n")
     (root / "DISCUSSION.md").write_text(generic_disc)
     # Readable paired display: one small panel per start, with shared policy colors.
     W, H = 1200, 900; pw, ph = 360, 260

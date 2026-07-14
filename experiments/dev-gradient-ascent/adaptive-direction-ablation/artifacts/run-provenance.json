@@ -4,7 +4,7 @@
     "--budget",
     "6",
     "--policies",
-    "normalized_branch_gradient,near_active_maximin,candidate_window_maximin",
+    "inf_normalized_branch_gradient,near_active_box_lp_maximin,candidate_window_box_lp_maximin",
     "--facet-count",
     "0",
     "--start-count",
@@ -16,15 +16,15 @@
     "--out-dir",
     "experiments/dev-gradient-ascent/adaptive-direction-ablation/artifacts"
   ],
-  "source_head": "a94bf0e7f5c50b8aeac43471868c8903ca00bf37",
+  "source_head": "3581be2d670bc5e5872e79160f1737955005910c",
   "source_input": "experiments/dev-gradient-ascent/adaptive-direction-ablation/inputs/selected-fixtures.jsonl",
   "source_input_blake3": "5e9e0d314658e477ae98066c321b8f46b138582d1777355c1076b37bfa99b6a3",
   "implementation": "/workspaces/msc-math/.worktrees/optimizer-adaptive-direction/experiments/dev-gradient-ascent/adaptive-direction-ablation/main.rs",
-  "implementation_blake3": "e1874861dcd7e993897be3da96abbadadcd8b5688aea0e5c7310f2a3a7ef5714",
+  "implementation_blake3": "8f6a1fe82c9f5613e355ce773c4229fee051d2164f45af38ed5307028a7b56b6",
   "policies": [
-    "normalized_branch_gradient",
-    "near_active_zero_gap_maximin",
-    "candidate_window_gap_aware_maximin"
+    "inf_normalized_branch_gradient",
+    "near_active_box_lp_maximin",
+    "candidate_window_box_lp_maximin"
   ],
   "initial_radii": [
     0.0001,
@@ -35,6 +35,6 @@
   "post_initial_target_budget": 100,
   "near_active_window_relative": 0.001,
   "candidate_window_relative_gap": 0.01,
-  "direction_contract": "all output directions normalized in flattened dual-vertex Euclidean norm; candidate objective min_sigma(base_gap_sigma + <grad sys_sigma, radius*direction>)",
+  "direction_contract": "common L-infinity radius semantics: deterministic branch ray scaled to max_abs=1; near-active and candidate-window use box-LP x_j in [-1,1] directly without post-normalization; candidate objective min_sigma(base_gap_sigma + <grad sys_sigma, radius*direction>)",
   "evaluator_accounting": "initial state excluded; every target proposal increments target_evaluations; accepted iff valid and target full sys strictly increases; accepted radius expands 1.25, invalid/non-improving shrinks 0.5"
 }

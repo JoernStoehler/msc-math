@@ -36,18 +36,22 @@ enum Policy {
 impl Policy {
     fn as_str(self) -> &'static str {
         match self {
-            Self::BranchGradient => "normalized_branch_gradient",
-            Self::NearActiveMaximin => "near_active_zero_gap_maximin",
-            Self::CandidateWindowMaximin => "candidate_window_gap_aware_maximin",
+            Self::BranchGradient => "inf_normalized_branch_gradient",
+            Self::NearActiveMaximin => "near_active_box_lp_maximin",
+            Self::CandidateWindowMaximin => "candidate_window_box_lp_maximin",
         }
     }
     fn parse(s: &str) -> Option<Self> {
         Some(match s {
-            "branch_gradient" | "normalized_branch_gradient" => Self::BranchGradient,
-            "near_active_maximin" | "near_active_zero_gap_maximin" => Self::NearActiveMaximin,
-            "candidate_window_maximin" | "candidate_window_gap_aware_maximin" => {
-                Self::CandidateWindowMaximin
+            "branch_gradient" | "normalized_branch_gradient" | "inf_normalized_branch_gradient" => {
+                Self::BranchGradient
             }
+            "near_active_maximin"
+            | "near_active_zero_gap_maximin"
+            | "near_active_box_lp_maximin" => Self::NearActiveMaximin,
+            "candidate_window_maximin"
+            | "candidate_window_gap_aware_maximin"
+            | "candidate_window_box_lp_maximin" => Self::CandidateWindowMaximin,
             _ => return None,
         })
     }
@@ -113,7 +117,7 @@ struct AttemptRow {
     best_iteration: usize,
     current_radius: f64,
     direction_label: String,
-    direction_norm: f64,
+    direction_norm_inf: f64,
     direction_flat: Vec<f64>,
     base_dual_flat: Vec<f64>,
     target_dual_flat: Vec<f64>,
@@ -124,6 +128,7 @@ struct AttemptRow {
     candidate_window_sigmas: Vec<Vec<usize>>,
     genuinely_multi_branch: bool,
     predicted_delta: Option<f64>,
+    predicted_branch_values: Vec<f64>,
     predicted_winning_sigma: Option<Vec<usize>>,
     predicted_observed_error: Option<f64>,
     target_sigma: Option<Vec<usize>>,
@@ -200,7 +205,7 @@ fn main() {
     );
     let implementation =
         PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("adaptive-direction-ablation/main.rs");
-    let provenance = Provenance { command: std::env::args().collect(), source_head: git_output(&["rev-parse","HEAD"]), source_input: cli.polytope_table.display().to_string(), source_input_blake3: hash_file(&cli.polytope_table), implementation: implementation.display().to_string(), implementation_blake3: hash_file(&implementation), policies: cli.policies.iter().map(|p|p.as_str().to_string()).collect(), initial_radii: cli.radii.clone(), requested_target_budget: cli.budget, post_initial_target_budget: MAX_TARGET_EVALUATIONS, near_active_window_relative: NEAR_ACTIVE_RELATIVE_WINDOW, candidate_window_relative_gap: CANDIDATE_WINDOW_RELATIVE_GAP, direction_contract: "all output directions normalized in flattened dual-vertex Euclidean norm; candidate objective min_sigma(base_gap_sigma + <grad sys_sigma, radius*direction>)".to_string(), evaluator_accounting: "initial state excluded; every target proposal increments target_evaluations; accepted iff valid and target full sys strictly increases; accepted radius expands 1.25, invalid/non-improving shrinks 0.5".to_string() };
+    let provenance = Provenance { command: std::env::args().collect(), source_head: git_output(&["rev-parse","HEAD"]), source_input: cli.polytope_table.display().to_string(), source_input_blake3: hash_file(&cli.polytope_table), implementation: implementation.display().to_string(), implementation_blake3: hash_file(&implementation), policies: cli.policies.iter().map(|p|p.as_str().to_string()).collect(), initial_radii: cli.radii.clone(), requested_target_budget: cli.budget, post_initial_target_budget: MAX_TARGET_EVALUATIONS, near_active_window_relative: NEAR_ACTIVE_RELATIVE_WINDOW, candidate_window_relative_gap: CANDIDATE_WINDOW_RELATIVE_GAP, direction_contract: "common L-infinity radius semantics: deterministic branch ray scaled to max_abs=1; near-active and candidate-window use box-LP x_j in [-1,1] directly without post-normalization; candidate objective min_sigma(base_gap_sigma + <grad sys_sigma, radius*direction>)".to_string(), evaluator_accounting: "initial state excluded; every target proposal increments target_evaluations; accepted iff valid and target full sys strictly increases; accepted radius expands 1.25, invalid/non-improving shrinks 0.5".to_string() };
     write_json(cli.out_dir.join("run-provenance.json"), &provenance);
     let began = Instant::now();
     let mut trajectories = Vec::new();
@@ -271,18 +276,23 @@ fn run_trajectory(
             stop_reason = "target_evaluation_budget".into();
             break;
         }
-        let (label, direction, predicted, winner) = match direction_for(policy, &current, radius) {
-            Some(x) => x,
-            None => {
-                stop_reason = "direction_construction_failed".into();
-                break;
-            }
-        };
+        let (label, direction, predicted, winner, predicted_values) =
+            match direction_for(policy, &current, radius) {
+                Some(x) => x,
+                None => {
+                    stop_reason = "direction_construction_failed".into();
+                    break;
+                }
+            };
         let base_sigma = current.sigma.clone();
         let base_near_sigmas = current.near_sigmas.clone();
         let base_candidate_sigmas = current.candidate_sigmas.clone();
         let flat = flatten(&direction);
-        let norm = direction.iter().map(|v| v.dot(v)).sum::<f64>().sqrt();
+        let norm = direction
+            .iter()
+            .flat_map(|v| v.iter())
+            .map(|x| x.abs())
+            .fold(0.0, f64::max);
         let before = current.polytope.dual_vertices_f64.clone();
         let base_sys = current.sys;
         let proposal_radius = radius;
@@ -348,7 +358,7 @@ fn run_trajectory(
             proposal_radius,
             current_radius: radius,
             direction_label: label,
-            direction_norm: norm,
+            direction_norm_inf: norm,
             direction_flat: flat,
             base_dual_flat: flatten(&before),
             target_dual_flat: flatten(&after),
@@ -359,6 +369,7 @@ fn run_trajectory(
             candidate_window_sigmas: base_candidate_sigmas.clone(),
             genuinely_multi_branch: base_near_sigmas.len() > 1 || base_candidate_sigmas.len() > 1,
             predicted_delta: predicted,
+            predicted_branch_values: predicted_values,
             predicted_winning_sigma: winner,
             predicted_observed_error: observed_error,
             target_sigma: target_sigma_ref.clone(),
@@ -404,40 +415,52 @@ fn direction_for(
     policy: Policy,
     state: &State,
     radius: f64,
-) -> Option<(String, Vec<Vector4<f64>>, Option<f64>, Option<Vec<usize>>)> {
+) -> Option<(
+    String,
+    Vec<Vector4<f64>>,
+    Option<f64>,
+    Option<Vec<usize>>,
+    Vec<f64>,
+)> {
     match policy {
         Policy::BranchGradient => {
-            let d = normalize(&state.gradient)?;
-            let pred = gradient_dot(&state.gradient, &d).map(|x| radius * x);
+            let d = normalize_inf(&state.gradient)?;
+            let values = vec![radius * gradient_dot(&state.gradient, &d)?];
             Some((
-                "normalized_branch_gradient".into(),
+                "inf_normalized_branch_gradient".into(),
                 d,
-                pred,
+                Some(values[0]),
                 Some(state.sigma.clone()),
+                values,
             ))
         }
         Policy::NearActiveMaximin => {
             let d = maximin_direction(&state.near_gradients)?;
-            let (i, pred) = state
+            let values: Vec<f64> = state
                 .near_gradients
                 .iter()
+                .map(|g| gradient_dot(g, &d).unwrap_or(f64::INFINITY) * radius)
+                .collect();
+            let (i, pred) = values
+                .iter()
                 .enumerate()
-                .map(|(i, g)| (i, gradient_dot(g, &d).unwrap_or(f64::INFINITY) * radius))
-                .min_by(|a, b| a.1.total_cmp(&b.1))?;
+                .min_by(|a, b| a.1.total_cmp(b.1))?;
             Some((
-                "near_active_zero_gap_maximin".into(),
+                "near_active_box_lp_maximin".into(),
                 d,
-                Some(pred),
+                Some(*pred),
                 Some(state.near_sigmas.get(i)?.clone()),
+                values,
             ))
         }
         Policy::CandidateWindowMaximin => {
-            let (d, p, w) = candidate_window_direction(state, radius)?;
+            let (d, p, w, values) = candidate_window_direction(state, radius)?;
             Some((
-                "candidate_window_gap_aware_maximin".into(),
+                "candidate_window_box_lp_maximin".into(),
                 d,
                 Some(p),
                 Some(w),
+                values,
             ))
         }
     }
@@ -470,7 +493,7 @@ impl AttemptRow {
             proposal_radius: radius,
             current_radius: radius,
             direction_label: "initial".into(),
-            direction_norm: 0.0,
+            direction_norm_inf: 0.0,
             direction_flat: Vec::new(),
             base_dual_flat: flatten(&state.polytope.dual_vertices_f64),
             target_dual_flat: flatten(&state.polytope.dual_vertices_f64),
@@ -481,6 +504,7 @@ impl AttemptRow {
             candidate_window_sigmas: state.candidate_sigmas.clone(),
             genuinely_multi_branch: state.near_sigmas.len() > 1 || state.candidate_sigmas.len() > 1,
             predicted_delta: None,
+            predicted_branch_values: Vec::new(),
             predicted_winning_sigma: None,
             predicted_observed_error: None,
             target_sigma: Some(state.sigma.clone()),
@@ -606,12 +630,13 @@ fn maximin_direction(grads: &[Vec<Vector4<f64>>]) -> Option<Vec<Vector4<f64>>> {
     }
     let sol = model.solve().ok()?;
     let d: Vec<f64> = xs.iter().map(|x| sol.value(*x)).collect();
-    normalize(&unflatten(&d))
+    let out = unflatten(&d);
+    (d.iter().all(|x| x.is_finite()) && d.iter().any(|x| x.abs() > 1e-14)).then_some(out)
 }
 fn candidate_window_direction(
     state: &State,
     radius: f64,
-) -> Option<(Vec<Vector4<f64>>, f64, Vec<usize>)> {
+) -> Option<(Vec<Vector4<f64>>, f64, Vec<usize>, Vec<f64>)> {
     let first = state.candidate_gradients.first()?;
     let dim = first.len() * 4;
     let mut vars = variables!();
@@ -629,23 +654,28 @@ fn candidate_window_direction(
     }
     let sol = model.solve().ok()?;
     let raw: Vec<f64> = xs.iter().map(|x| sol.value(*x)).collect();
-    let d = normalize(&unflatten(&raw))?;
-    let (i, p) = state
+    let d = unflatten(&raw);
+    if !raw.iter().all(|x| x.is_finite()) || !raw.iter().any(|x| x.abs() > 1e-14) {
+        return None;
+    }
+    let values: Vec<f64> = state
         .candidate_gradients
         .iter()
         .zip(&state.candidate_gaps)
+        .map(|(g, gap)| *gap + radius * gradient_dot(g, &d).unwrap_or(f64::INFINITY))
+        .collect();
+    let (i, p) = values
+        .iter()
         .enumerate()
-        .map(|(i, (g, gap))| {
-            (
-                i,
-                *gap + radius * gradient_dot(g, &d).unwrap_or(f64::INFINITY),
-            )
-        })
-        .min_by(|a, b| a.1.total_cmp(&b.1))?;
-    Some((d, p, state.candidate_sigmas[i].clone()))
+        .min_by(|a, b| a.1.total_cmp(b.1))?;
+    Some((d, *p, state.candidate_sigmas[i].clone(), values))
 }
-fn normalize(v: &[Vector4<f64>]) -> Option<Vec<Vector4<f64>>> {
-    let n = v.iter().map(|x| x.dot(x)).sum::<f64>().sqrt();
+fn normalize_inf(v: &[Vector4<f64>]) -> Option<Vec<Vector4<f64>>> {
+    let n = v
+        .iter()
+        .flat_map(|x| x.iter())
+        .map(|x| x.abs())
+        .fold(0.0, f64::max);
     (n.is_finite() && n > 1e-14).then(|| v.iter().map(|x| *x / n).collect())
 }
 fn flatten(v: &[Vector4<f64>]) -> Vec<f64> {
@@ -786,4 +816,40 @@ fn git_output(a: &[&str]) -> Option<String> {
     o.status
         .success()
         .then(|| String::from_utf8_lossy(&o.stdout).trim().to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    fn objective(gaps: &[f64], gradients: &[Vec<f64>], radius: f64, direction: &[f64]) -> f64 {
+        gaps.iter()
+            .zip(gradients)
+            .map(|(gap, grad)| {
+                gap + radius * grad.iter().zip(direction).map(|(a, b)| a * b).sum::<f64>()
+            })
+            .fold(f64::INFINITY, f64::min)
+    }
+
+    #[test]
+    fn inf_branch_normalization_has_common_radius_semantics() {
+        let gradient: [f64; 3] = [2.0, -1.0, 0.5];
+        let scale = gradient.iter().map(|x| (*x).abs()).fold(0.0, f64::max);
+        let direction: Vec<_> = gradient.iter().map(|x| x / scale).collect();
+        assert!((direction.iter().map(|x| (*x).abs()).fold(0.0, f64::max) - 1.0).abs() < 1e-12);
+    }
+
+    #[test]
+    fn candidate_prediction_uses_executed_box_solution_not_euclidean_rescale() {
+        let gaps = [0.0, 0.25];
+        let gradients = vec![vec![-1.0, -1.0], vec![1.0, -1.0]];
+        let box_solution = [1.0, 1.0];
+        let executed = objective(&gaps, &gradients, 1.0, &box_solution);
+        let old_post_normalized = objective(
+            &gaps,
+            &gradients,
+            1.0,
+            &[2f64.sqrt().recip(), 2f64.sqrt().recip()],
+        );
+        assert!((executed - (-2.0)).abs() < 1e-12);
+        assert!((old_post_normalized - executed).abs() > 0.5);
+    }
 }

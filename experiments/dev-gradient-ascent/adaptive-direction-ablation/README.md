@@ -1,9 +1,9 @@
 # Adaptive direction-model ablation
 
-This packet compares three normalized adaptive branch-gradient directions on
-the frozen six-start generic-random `F=6` panel: the deterministic current
-minimizer branch, zero-gap near-active maximin, and the finite-radius
-gap-aware candidate-window maximin.  Every proposal is an exact full-`sys`
+This packet compares three adaptive branch-gradient directions: an
+L-infinity-scaled deterministic current-minimizer branch, zero-gap
+near-active box-LP maximin, and finite-radius gap-aware candidate-window
+box-LP maximin. Every proposal is an exact full-`sys`
 evaluation and is retained in raw JSONL with branch-set and prediction
 telemetry.  The generated `analysis.json`, `DISCUSSION.md`, and figures are
 the claim-bearing outputs; `run-provenance.json` records source and parameter
@@ -36,6 +36,11 @@ cargo run --release -p exp-dev-gradient-ascent \
 
 uv run --script experiments/dev-gradient-ascent/adaptive-direction-ablation/analyze.py \
   experiments/dev-gradient-ascent/adaptive-direction-ablation/artifacts
+
+# Optional readable PNG/SVG comparison figures (requires matplotlib).
+uv run --with matplotlib --no-project python3 \
+  experiments/dev-gradient-ascent/adaptive-direction-ablation/plot_panels.py \
+  experiments/dev-gradient-ascent/adaptive-direction-ablation/artifacts
 ```
 
 The screening command was:
@@ -60,3 +65,14 @@ The separate generic panel uses the same command with `--facet-count 6
 `artifacts/generic-panel`; validate it with
 `python3 .../analyze.py artifacts/generic-panel generic`. Its six starts are
 the exact screening IDs recorded in `inputs/generic-start-manifest.json`.
+
+The retained JSONL inputs are Git-LFS material. Materialize them before
+reproduction with:
+
+```bash
+git lfs pull --include='experiments/dev-gradient-ascent/adaptive-direction-ablation/inputs/*.jsonl'
+git lfs pull --include='experiments/sys-datascience/produce/random.jsonl'
+```
+
+The generated trajectory JSONL is also LFS-backed in the working tree; the
+producer writes it under `artifacts/` and the analyzers consume it directly.
