@@ -1,22 +1,27 @@
-\section{Side Result: Products Of Rotated Regular Polygons}
+\section{The Rotated-Pentagon Profile}
 \label{sec:rotated-regular-polygons}
 
-This section studies Lagrangian products of rotated regular polygons. The
-theorem-strength result is for the one-parameter pentagon family
+We now isolate one structured Lagrangian-product family for which the capacity
+can be determined exactly.  Let \(P_5\subset\mathbb R^2\) be a centered regular
+pentagon of circumradius \(1\), let \(R(\theta)\) denote counterclockwise planar
+rotation, and set
 \[
-  K_\theta = P_5 \times_L R(\theta)P_5 \subset \mathbb{R}^2_q \oplus \mathbb{R}^2_p,
+  K_\theta=P_5\times_L R(\theta)P_5
+  \subset \mathbb R^2_q\oplus\mathbb R^2_p.
 \]
-where \(P_5\) is the regular pentagon with circumradius \(1\), and
-\(R(\theta)\) is the counterclockwise rotation in the second Lagrangian factor.
-The Haim--Kislev--Ostrover counterexample is a member of this family
-\cite{HaimKislevOstrover2024}: in their convention the first pentagon has
-vertex angles \(2\pi k/5\), and the second has vertex angles
-\(-\pi/2+2\pi k/5\). Thus their relative rotation is \(-\pi/2\), which
-satisfies \(d(-\pi/2)=\pi/10\). The result below identifies the entire
-one-dimensional profile of the systolic ratio in this family. In particular,
-it identifies the HKO example, within this one-parameter family, as a global
-maximizer of the rotated-pentagon profile.
+Only the relative rotation of the factors matters.
+
+This family contains the Haim--Kislev--Ostrover counterexample.  Their paper
+uses the symplectic form \(\sum_i dp_i\wedge dq_i=-\omega_0\), and writes the
+second pentagon as \(R(-\pi/2)P_5\).  The convention-changing map
+\((q,p)\mapsto(q,-p)\) carries this to \(K_{\pi/2}\) in our convention.  The
+simultaneous-reflection symmetry used below also identifies \(K_{\pi/2}\) with
+\(K_{-\pi/2}\).  Thus the result below recovers their value
+\((3+\sqrt5)/5>1\) \cite[Proposition~1.4]{HaimKislevOstrover2024}, and shows
+that their relative angle maximizes the systolic ratio within the entire
+one-parameter family.
 
 \input{09-rotated-regular-polygons-empirical-curves}
 \input{09-rotated-regular-polygons-pentagon-profile-theorem}
 \input{09-rotated-regular-polygons-exact-certificate}
+\input{09-rotated-regular-polygons-sage-source}

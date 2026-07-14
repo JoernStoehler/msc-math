@@ -1,8 +1,14 @@
+sage_version = 10.7
+python_assertions_enabled = True
+certificate_source_sha256 = 5cb004f3df24a27cb5bf6a6bd4b2f281e17edf834bbbb25895f88c31f239aed4
+command_arguments = ['--progress-every', '500']
 minimum_action = ((1 + cos(pi/5))^2) / cos(theta)
 systolic_ratio_half_domain = ((5 + 2*sqrt(5)) / 10) * sec(theta)^2
 theta_domain = 0 <= theta <= pi/10; open proof uses 0 < theta < pi/10
 minimum_action(t) = ((-5/4*zeta200^2 + 5/4)*t^2 - 5/4*zeta200^2 + 5/4)/(t^2 - 1)
 sys_prefactor = 2/5*zeta200^2 - 1/2
+unpruned_raw_sigma_counts = {2: 7200, 3: 43200}
+unique_open_domain_raw_sigma_count = 3340
 preflight_statuses = {'strict_gap_positive_on_feasible_open_domain': 1, 'zero_gap_identity': 1, 'zero_q_identity': 1, 'no_kkt_solution': 1, 'singular_kkt_forced_zero_beta': 1}
 0000/3340 no_kkt_solution (0, 9, 1, 7)
 0500/3340 not_feasible_on_open_domain (3, 8, 0, 4, 9, 5)
@@ -14,4 +20,4 @@ preflight_statuses = {'strict_gap_positive_on_feasible_open_domain': 1, 'zero_ga
 open_domain_raw_sigma_count = 3340
 classified_raw_sigma_count = 3340
 classification_statuses = {'no_kkt_solution': 25, 'zero_q_identity': 1680, 'singular_kkt_forced_zero_beta': 470, 'not_feasible_on_open_domain': 735, 'zero_gap_identity': 20, 'strict_gap_positive_on_feasible_open_domain': 410}
-CERTIFICATE PASSED in 2126.34s
+CERTIFICATE PASSED in 2613.87s

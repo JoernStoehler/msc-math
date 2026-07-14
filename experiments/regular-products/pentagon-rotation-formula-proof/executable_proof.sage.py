@@ -21,11 +21,15 @@ default output is a compact summary and formulas of interest.
 """
 
 import argparse
+import hashlib
+import sys
 import time
 from dataclasses import dataclass
 from itertools import combinations, permutations
+from pathlib import Path
 
 from sage.all import AA, CyclotomicField, FractionField, Matrix, PolynomialRing, vector
+from sage.env import SAGE_VERSION
 
 
 # ---------------------------------------------------------------------------
@@ -49,6 +53,7 @@ HALF_DOMAIN_ENDPOINT = AA((z40 - z40**-1) / (I40 * (z40 + z40**-1)))
 Q_FACETS = tuple(range(5))
 P_FACETS = tuple(range(5, 10))
 EXPECTED_OPEN_SIGMA_COUNT = 3340
+EXPECTED_UNPRUNED_SIGMA_COUNTS = {2: 7200, 3: 43200}
 DEFAULT_PROGRESS_EVERY = 500
 ACCEPTED_STATUSES = {
     "no_kkt_solution",
@@ -515,6 +520,14 @@ def run_preflight():
     assert_formula_checks()
     sigmas = transition_pruned_sigmas_open()
     assert len(sigmas) == EXPECTED_OPEN_SIGMA_COUNT
+    assert len(set(sigmas)) == EXPECTED_OPEN_SIGMA_COUNT
+
+    unpruned_counts = {
+        k: sum(1 for _sigma in enumerate_k_bounce_sigmas(k)) for k in (2, 3)
+    }
+    assert unpruned_counts == EXPECTED_UNPRUNED_SIGMA_COUNTS
+    print(f"unpruned_raw_sigma_counts = {unpruned_counts}")
+    print(f"unique_open_domain_raw_sigma_count = {len(set(sigmas))}")
 
     statuses = {}
     assert_status(statuses, (0, 5, 3, 8, 1, 7), "strict_gap_positive_on_feasible_open_domain")
@@ -551,6 +564,12 @@ def run_certificate(progress_every, limit=None):
 
 
 def main():
+    if not __debug__:
+        raise RuntimeError(
+            "proof-facing assertions are disabled; rerun without -O and with "
+            "PYTHONOPTIMIZE=0"
+        )
+
     parser = argparse.ArgumentParser(
         description=(
             "Exact SageMath executable proof for the pentagon-rotation formula. "
@@ -571,6 +590,13 @@ def main():
         help="Print one progress line per N sigmas.",
     )
     args = parser.parse_args()
+
+    source_path = Path(__file__).resolve()
+    source_sha256 = hashlib.sha256(source_path.read_bytes()).hexdigest()
+    print(f"sage_version = {SAGE_VERSION}")
+    print(f"python_assertions_enabled = {__debug__}")
+    print(f"certificate_source_sha256 = {source_sha256}")
+    print(f"command_arguments = {sys.argv[1:]}")
 
     for key, value in formula_summary().items():
         print(f"{key} = {value}")

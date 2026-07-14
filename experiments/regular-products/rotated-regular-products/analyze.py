@@ -59,19 +59,46 @@ def plot_sweep(data: list[dict], output: Path):
     rows = sorted(data, key=lambda d: d["angle_deg"])
     angles = np.array([d["angle_deg"] for d in rows])
     sys_vals = np.array([d["sys"] for d in rows])
+    exact_angles = np.linspace(0.0, 36.0, 721)
+    exact_radians = np.deg2rad(exact_angles)
+    folded = np.minimum(exact_radians, np.pi / 5.0 - exact_radians)
+    prefactor = (5.0 + 2.0 * np.sqrt(5.0)) / 10.0
+    exact_sys = prefactor / np.cos(folded) ** 2
 
     fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
-    ax.plot(angles, sys_vals, color="#2f5aa6", linewidth=2.0, label=r"$\mathrm{sys}(\theta)$")
+    ax.plot(
+        exact_angles,
+        exact_sys,
+        color="#202020",
+        linewidth=1.6,
+        label="exact profile",
+    )
+    ax.scatter(
+        angles,
+        sys_vals,
+        facecolors="white",
+        edgecolors="#2f5aa6",
+        linewidths=0.9,
+        s=20,
+        zorder=3,
+        label="finite-QP samples",
+    )
     ax.axhline(y=1.0, color="#c0392b", linestyle="--", alpha=0.7, label=r"$\mathrm{sys} = 1$")
 
     ax.set_xlabel(r"Rotation angle $\theta$ (degrees)")
     ax.set_ylabel(r"$\mathrm{sys} = c^2 / (2\,\mathrm{vol})$")
-    ax.set_title(r"Pentagon $\times_L$ $R(\theta)$ Pentagon ($0$–$36$ degrees)")
 
     ax.axvline(x=18.0, color="#7f8c8d", linestyle=":", alpha=0.7)
-    ax.text(18.2, ax.get_ylim()[0], r"$18^\circ$", fontsize=8, color="#7f8c8d", va="bottom")
+    ax.text(
+        18.3,
+        ax.get_ylim()[0],
+        r"$\pi/10$",
+        fontsize=8,
+        color="#7f8c8d",
+        va="bottom",
+    )
 
-    ax.legend(loc="best")
+    ax.legend(loc="upper left")
     fig.tight_layout()
     fig.savefig(output)
     plt.close(fig)

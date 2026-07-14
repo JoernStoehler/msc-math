@@ -1,98 +1,109 @@
-\subsection{Formula for the pentagon product}
+\subsection{Exact profile}
 \label{subsec:rotated-regular-polygons-formula-for-the-pentagon-product}
 
-For a real number \(\theta\), define
+For \(\theta\in\mathbb R\), define its distance from the nearest multiple of
+\(\pi/5\) by
 \[
-  d(\theta)
-  :=
-  \min_{k\in\mathbb{Z}}\left|\theta-\frac{k\pi}{5}\right|.
+  d(\theta)=\min_{k\in\mathbb Z}
+    \left|\theta-\frac{k\pi}{5}\right|.
 \]
-Then \(0\le d(\theta)\le\pi/10\).
+Thus \(0\le d(\theta)\le\pi/10\).
 
-\begin{theorem}[Pentagon product]
+\begin{theorem}[Rotated-pentagon profile]
 \label{thm:rotated-pentagon-product-formula}
-Let \(P_5\subset\mathbb{R}^2\) be the regular pentagon with circumradius \(1\),
-and let \(K_\theta=P_5\times_L R(\theta)P_5\). Then, for all
-\(\theta\in\mathbb{R}\),
+For every \(\theta\in\mathbb R\),
 \[
   \operatorname{sys}(K_\theta)
   =
-  \frac{5+2\sqrt{5}}{10}\sec^2(d(\theta)).
+  \frac{5+2\sqrt5}{10}\sec^2\!\bigl(d(\theta)\bigr).
 \]
-In particular, the maximum in this one-parameter family is attained exactly at
-the angles with \(d(\theta)=\pi/10\), where
+Consequently, the maximum within this family is attained exactly when
+\(d(\theta)=\pi/10\), and its value is
 \[
-  \operatorname{sys}(K_\theta)=\frac{3+\sqrt{5}}{5}>1.
+  \max_{\theta\in\mathbb R}\operatorname{sys}(K_\theta)
+  =\frac{3+\sqrt5}{5}>1.
 \]
-These maximizing angles include the Haim--Kislev--Ostrover pentagon product,
-up to simultaneous rotations and the rotational symmetries of the pentagon.
 \end{theorem}
 
 \begin{proof}
-The proof has three parts. First, symmetries reduce the theorem to the
-half-domain \(0\le\theta\le\pi/10\). Second, an explicit branch gives the
-required upper bound for the capacity, and hence for the systolic ratio. Third,
-we reduce the corresponding lower bound on the open half-domain to finitely
-many exact algebraic checks, and verify those checks by an executable SageMath
-certificate. Continuity fills the remaining cut points and the endpoints. At
-the end, we apply the initial symmetry reduction to return from the half-domain
-to all real \(\theta\).
+\noindent\textbf{Symmetry reduction.}
+The profile has period \(2\pi/5\), because
+\(R(\theta+2\pi/5)P_5=R(\theta)P_5\).
+Simultaneous reflection of both factors gives invariance under
+\(\theta\mapsto-\theta\), hence a first reduction to \(0\le\theta\le\pi/5\).
 
-The family is periodic with period \(2\pi/5\): simultaneous rotation of both
-factors is symplectic, and the two pentagons are invariant under rotation by
-\(2\pi/5\). Reflection gives the usual reduction to
-\([0,\pi/5]\). There is one further symmetry because the two factors are the
-same odd regular polygon: the symplectic map \(-J_0\) swaps the factors and
-sends
+There is a further symmetry because the factors are equal and the pentagon is
+odd-sided.  The symplectic map \(-J_0\) sends
 \[
   P_5\times_L R(\theta)P_5
   \quad\text{to}\quad
   R(\theta)P_5\times_L(-P_5).
 \]
-After a simultaneous rotation by \(-\theta\), and using
-\(-P_5=R(\pi)P_5=R(\pi/5)P_5\) modulo the \(2\pi/5\)-symmetry of the pentagon,
-this becomes \(P_5\times_L R(\pi/5-\theta)P_5\). Thus it is enough to prove
-\[
+After rotating both factors by \(-\theta\), and using
+\(-P_5=R(\pi)P_5=R(\pi/5)P_5\) modulo the pentagon's \(2\pi/5\)-symmetry, we
+obtain \(K_{\pi/5-\theta}\).  It is therefore enough to prove
+\begin{equation}
+\label{eq:rotated-pentagon-half-profile}
   \operatorname{sys}(K_\theta)
-  =
-  \frac{5+2\sqrt{5}}{10}\sec^2\theta
-  \qquad
-  \text{for }0\le\theta\le\frac{\pi}{10}.
-\]
+  =\frac{5+2\sqrt5}{10}\sec^2\theta,
+  \qquad 0\le\theta\le\frac{\pi}{10}.
+\end{equation}
 
-We now compute the candidate branch on this half-domain. In the raw-sigma
-notation used below, this is the branch
+\par\medskip\noindent\textbf{The candidate branch.}
+We use the facet convention of the executable certificate.  Put
 \[
-  (3,8,1,0,5,6).
+  h=\cos\frac{\pi}{5},\qquad
+  n_i=
+  \left(
+    \cos\left(\frac{\pi}{2}+\frac{2\pi i}{5}\right),
+    \sin\left(\frac{\pi}{2}+\frac{2\pi i}{5}\right)
+  \right).
 \]
-With the facet labels introduced below, this is the two-bounce word with
-\(q\)-blocks \((3)\) and \((1,0)\), and \(p\)-blocks \((8)\) and \((5,6)\).
-Solving the KKT equations for this branch gives the action
+In the coordinate order \((q_1,q_2,p_1,p_2)\), the dual vertices of the ten
+facets are
 \[
-  c_{\mathrm{act}}(\theta)
-  =
-  \left(1+\cos\left(\frac{\pi}{5}\right)\right)^2\sec\theta .
+  a_i=\frac1h(n_i,0),\qquad
+  a_{i+5}=\frac1h(0,R(\theta)n_i),\qquad 0\le i<5.
 \]
-The four-volume is independent of \(\theta\), since rotation preserves area in
-the second factor:
+Consider the alternating two-bounce word with \(q\)-blocks \((3)\), \((1,0)\)
+and \(p\)-blocks \((8)\), \((5,6)\); its flattened word is
 \[
-  \operatorname{vol}_4(K_\theta)
-  =
-  \operatorname{area}(P_5)^2,
+  \sigma_{\mathrm{act}}=(3,8,1,0,5,6).
+\]
+In this order, set
+\[
+  \beta_{\mathrm{act}}
+  =\left(
+    \frac{\sqrt5}{10},\frac{\sqrt5}{10},
+    \frac{5-\sqrt5}{20},\frac{5-\sqrt5}{20},
+    \frac{5-\sqrt5}{20},\frac{5-\sqrt5}{20}
+  \right).
+\]
+Direct substitution gives
+\[
+  \beta_{\mathrm{act}}\in M_{\sigma_{\mathrm{act}}},
   \qquad
-  \operatorname{area}(P_5)
-  =
-  \frac{5}{2}\sin\left(\frac{2\pi}{5}\right).
+  Q_{\sigma_{\mathrm{act}}}(\beta_{\mathrm{act}})
+  =\frac{\cos\theta}
+  {2\left(1+\cos(\pi/5)\right)^2}.
 \]
-Therefore the active branch gives
+All weights are positive.  Since the capacity is \(1/(2Q_{\max})\), this
+single feasible word gives
 \[
-  \frac{c_{\mathrm{act}}(\theta)^2}{2\operatorname{vol}_4(K_\theta)}
-  =
-  \frac{\left(1+\cos\left(\frac{\pi}{5}\right)\right)^4}
-       {2\operatorname{area}(P_5)^2}\sec^2\theta
-  =
-  \frac{5+2\sqrt{5}}{10}\sec^2\theta .
+  c_{\mathrm{EHZ}}(K_\theta)
+  \le c_{\mathrm{act}}(\theta)
+  :=\left(1+\cos\frac{\pi}{5}\right)^2\sec\theta.
 \]
-This proves the required upper bound for \(\operatorname{sys}(K_\theta)\) on
-the half-domain, since the EHZ capacity is the minimum action.
-
+Rotation preserves the second factor's area, so
+\[
+  \operatorname{vol}_4(K_\theta)=\operatorname{area}(P_5)^2,
+  \qquad
+  \operatorname{area}(P_5)=\frac52\sin\frac{2\pi}{5}.
+\]
+It follows that
+\[
+  \frac{c_{\mathrm{act}}(\theta)^2}
+       {2\operatorname{vol}_4(K_\theta)}
+  =\frac{5+2\sqrt5}{10}\sec^2\theta.
+\]
+This is the required upper bound in \eqref{eq:rotated-pentagon-half-profile}.

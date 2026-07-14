@@ -1,192 +1,117 @@
-It remains to prove the lower bound on the open half-domain. By
-Theorem~\ref{thm:lagrangian-product-finite-enumeration}, the lower-bound
-problem for this Lagrangian-product family is exhausted by the two- and
-three-bounce candidates described below. The remaining task is to verify a
-finite collection of exact algebraic statements. The successful SageMath run is
-not an independent proof of the theorem; it is the executable certificate that
-the finite checks required after this reduction all pass.
+\par\medskip\noindent\textbf{Why the competitor list is exhaustive.}
+It remains to prove that no branch has smaller action.  By
+Theorem~\ref{thm:lagrangian-product-finite-enumeration}, for every \(\theta\)
+there is an active word realizing the maximum in the capacity formula, with
+two or three blocks of each type, alternating between \(q\) and \(p\).  Each
+block contains either one facet or an ordered pair of adjacent facets, and
+distinct blocks of one type use disjoint facets.  This is an existence
+statement for the capacity value; it does not claim that all minimizing orbits
+have two or three bounces.
 
-The source and full transcript are in
-\path{experiments/regular-products/pentagon-rotation-formula-proof/}:
-\begin{itemize}
-  \item \path{executable_proof.sage.py},
-  \item \path{executable_proof.full.stdout.txt}.
-\end{itemize}
-The active branch is checked in the same exact framework. The check named
-\texttt{assert\_formula\_checks} solves the KKT branch for the intended sigma,
-checks the displayed capacity formula for that branch, and checks the constant
-used to convert it to the systolic-ratio formula.
+The certificate generates a raw superset of this family.  For \(k=2,3\), it
+chooses \(k\) disjoint \(q\)-blocks and \(k\) disjoint \(p\)-blocks, fixes one
+selected \(q\)-block as the cyclic starting block, and enumerates all relative
+orders of the others.  Fixing the start loses nothing: cyclic shift preserves
+the closure constraints and \(Q_\sigma\).  The generator does not quotient by
+word reversal or by pentagon dihedral symmetry, so those duplicates remain as
+separate checks.  It produces \(7200\) two-bounce and \(43200\) three-bounce
+cyclic representatives before pruning.
 
-\begin{certificatecheck}
-\noindent\textbf{Certificate check: active branch.}
-The preflight stage reconstructs the branch
-\((3,8,1,0,5,6)\) over the same exact field as the lower-bound certificate. It
-checks the KKT equations, positivity of the multipliers, positivity of the
-quadratic value, the displayed action formula, and the constant converting the
-action to the displayed systolic-ratio formula.
-\end{certificatecheck}
+Consecutive same-factor facets of an active word must intersect.  A mixed
+transition must also have the positive directed symplectic sign.  On
+\(0<\theta<\pi/10\), the certificate proves exactly that every such mixed sign
+is either strictly positive throughout or strictly negative throughout.
+Removing the negative transitions therefore removes only impossible active
+words.  Exactly \(3340\) distinct raw words survive.
 
-The certificate uses the parameter
+\par\medskip\noindent\textbf{Exact classification of a fixed word.}
+The computation uses
 \[
-  t=\tan(\theta/2).
+  t=\tan(\theta/2),\qquad 0<t<\tan(\pi/20).
 \]
-The unrotated pentagon already has coefficients in the real subfield of
-\(\mathbb{Q}(\zeta_{20})\), and the identities
+All pentagon constants lie in the maximal real subfield \(K\) of
+\(\mathbb Q(\zeta_{20})\), and
 \[
-  \sin\theta=\frac{2t}{1+t^2},
-  \qquad
-  \cos\theta=\frac{1-t^2}{1+t^2}
+  \cos\theta=\frac{1-t^2}{1+t^2},\qquad
+  \sin\theta=\frac{2t}{1+t^2}.
 \]
-make all branch expressions rational functions of \(t\) over that coefficient
-field. Exact algebraic root isolation is used to compare interior roots and
-the boundary values \(0\) and \(\tan(\pi/20)\) when constructing the open
-cell decomposition of \(0<t<\tan(\pi/20)\).
+Thus every KKT matrix entry, multiplier, quadratic value, and action gap is a
+rational function in \(K(t)\).
 
-\begin{certificatecheck}
-\noindent\textbf{Certificate check: exact sign decisions.}
-Every sign assertion used below is reduced to a rational function over this
-ordered algebraic coefficient field. Sage cuts the interval
-\((0,\tan(\pi/20))\) at the exact roots and poles of the relevant numerator and
-denominator polynomials, then checks one exact algebraic sample point in each
-cell. No floating-point sign test is used for the proof predicate.
-\end{certificatecheck}
-
-The finite-enumeration theorem says that the two- and three-block family
-contains a capacity minimizer; it does not classify all minimizing orbits.
-It therefore suffices to check a raw superset of that family. Extra or
-duplicate words enlarge the certificate but cannot invalidate the lower bound.
-In the Lagrangian product
-\(P_5{}_q\times_L R(\theta)P_5{}_p\), the relevant facet sequence alternates
-between \(q\)-blocks and \(p\)-blocks. We label the \(q\)-facets
-\(0,\ldots,4\) and the \(p\)-facets \(5,\ldots,9\), in counterclockwise order
-in each factor.
-
-A block is the local facet data for one bounce. It is either one facet or an
-ordered adjacent pair of facets inside one factor. For a \(k\)-bounce
-candidate, where \(k=2\) or \(k=3\), the executable enumeration chooses \(k\)
-non-overlapping \(q\)-blocks and \(k\) non-overlapping \(p\)-blocks. It fixes
-one \(q\)-block as the first block, orders the remaining \(q\)-blocks and all
-\(p\)-blocks, and then alternates \(q\)- and \(p\)-blocks cyclically. The final
-raw sigma is obtained by concatenating the facets inside those blocks. Thus the
-alternation is block-by-block, not necessarily facet-by-facet. This
-representative convention keeps raw ordered representatives instead of
-quotienting by reversals or symmetries, so it overcounts rather than
-undercounts.
-
-Before solving KKT systems, Sage applies exact transition pruning on
-the open half-domain. Same-factor transitions must have nonempty facet
-intersection. Mixed \(q/p\)-transitions must also have the positive symplectic
-transition sign, and Sage checks that this sign has no interior cut point on
-the open half-domain. Thus a pruned-out raw sigma fails a necessary transition
-condition throughout the open half-domain. The remaining exact classification
-then covers every raw representative that survives this pruning.
-
-\begin{certificatecheck}
-\noindent\textbf{Certificate check: finite raw list.}
-Using Theorem~\ref{thm:lagrangian-product-finite-enumeration}, the enumeration
-stage constructs a raw superset of all two- and three-bounce words needed for
-the open half-domain. The transition-pruning stage removes only words that fail
-an exact necessary condition throughout \(0<\theta<\pi/10\). The remaining list
-is not sampled and not quotiented by symmetry.
-\end{certificatecheck}
-
-For each raw sigma that passes the open-domain transition pruning, Sage solves
-the KKT system exactly. When a branch exists, this gives rational functions for
-the multipliers \(\beta_i\), the quadratic value \(Q_\sigma\), and the action
-gap
-\[
-  \frac{1}{2Q_\sigma} - c_{\mathrm{act}}(\theta).
-\]
-The open interval is then cut at all roots and poles of these functions. On
-each resulting cell, signs are constant, so one exact algebraic sample point per
-cell decides the relevant sign. Thus the strict inequalities
+For each surviving word \(\sigma\), SageMath solves the equality-constrained
+KKT system over \(K(t)\).  An active word realizing that maximum has positive
+weights, and hence must occur among these stationary branches.  For a returned
+branch the proof predicates are
 \[
   \beta_i>0,\qquad Q_\sigma>0,\qquad
-  \frac{1}{2Q_\sigma}-c_{\mathrm{act}}(\theta)>0
+  \frac{1}{2Q_\sigma}-c_{\mathrm{act}}(\theta)\ge0.
 \]
-are decided by exact algebraic computation, not by numerical sampling.
+The roots and poles of the finitely many rational functions divide the open
+half-domain into cells.  SageMath isolates these algebraic numbers exactly in
+its real algebraic field and checks one exact sample in each cell, where every
+sign is constant.  No floating-point sign decision enters the certificate.
 
-This fixed-word test is sufficient for an existential reason. The
-finite-enumeration theorem supplies at least one capacity-minimizing active
-word in the enumerated family, and all weights of an active word are positive.
-Such an interior maximizer satisfies the KKT equations. If the displayed
-branch were not capacity-minimizing, a strictly positive KKT branch in the
-enumerated family would therefore have smaller action and would be detected by
-the classification. Boundary maximizers of padded words need not be trusted
-separately: deleting their zero weights gives a shorter active word.
+The classifier is fail-closed.  Each word must reach one of the six conclusions
+in Table~\ref{tab:rotated-pentagon-certificate-outcomes}; every other case is
+labelled for manual review, and that label is not accepted by the full run.
 
-The classifier is an ordered chain of proof exits. For each raw sigma, one of
-the following accepted cases must occur.
-\begin{enumerate}
-  \item The KKT system is inconsistent.
-  \item \(Q_\sigma\) is identically zero.
-  \item The KKT system is singular, but every solution has some multiplier
-    forced to be identically zero, so no strictly feasible branch exists.
-  \item The action gap is identically zero; this is a tie with the active
-    branch, not a lower competitor.
-  \item No open cell has all \(\beta_i>0\) and \(Q_\sigma>0\), so the branch is
-    nowhere strictly feasible on the open half-domain.
-  \item On every feasible open cell, the action gap is strictly positive.
-\end{enumerate}
-The classifier also has a manual-review fallback for unrecognized cases. That
-fallback is not accepted by the certificate; every classified raw sigma must
-land in one of the accepted exits.
+The source and retained full transcript are in
+\begin{center}
+  \small\path{experiments/regular-products/}\\[-0.2em]
+  \path{pentagon-rotation-formula-proof/}
+\end{center}
+The unlimited run checks that all \(3340\) generated words are distinct and
+classified, then prints its final success marker.  Its header
+records the SageMath version, assertion state, source digest, and arguments;
+the executable aborts if Python assertions are disabled.  The Haim--Kislev
+formula, finite-enumeration theorem, symmetries, and continuity close are
+mathematical results proved above or imported by citation.  The
+theorem-specific implementation obligation is instead to check that the Sage
+source encodes the displayed facets, KKT system, enumeration, pruning, and
+classification predicates.  Section~\ref{subsec:rotated-pentagon-sage-source}
+shows cleaned excerpts for that audit.  After this correspondence is checked,
+the remaining software-level reliance is the ordinary use of SageMath's
+standard exact number-field arithmetic, linear algebra, and real-root
+isolation; the thesis does not attempt to verify SageMath itself.  The
+empirical sweep and the Rust search code are not proof inputs.
 
-\begin{certificatecheck}
-\noindent\textbf{Certificate check: fail-closed classification.}
-For each surviving raw word, the certificate must either prove that no strictly
-feasible branch exists on the open half-domain, prove that the branch ties the
-active branch, or prove that its action is strictly larger wherever it is
-strictly feasible. The manual-review exit is deliberately not an accepted
-status, so an unrecognized case makes the run fail instead of contributing to
-the theorem.
-\end{certificatecheck}
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{@{}lrp{0.56\linewidth}@{}}
+\toprule
+certificate outcome & count & implication for a positive capacity competitor\\
+\midrule
+inconsistent KKT system & \(25\) & no stationary branch exists generically\\
+zero quadratic value & \(1680\) & the generic stationary value cannot give positive finite action\\
+forced zero weight & \(470\) & every solution of a singular system has a zero active weight\\
+no feasible cell & \(735\) & the generic branch is nowhere strictly positive\\
+identical zero gap & \(20\) & the branch ties the displayed branch wherever feasible\\
+strictly positive gap & \(410\) & the branch has larger action on every feasible cell\\
+\bottomrule
+\end{tabular}
+\caption{Exhaustive outcomes of the exact classification.  The counts sum to
+\(3340\); they record the run rather than provide an additional mathematical
+assumption.}
+\label{tab:rotated-pentagon-certificate-outcomes}
+\end{table}
+\FloatBarrier
 
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.78\linewidth]{working/rotated-regular-polygons/three-bounce-branch-actions.png}
-  \caption{Sampled actions of several three-bounce branches that motivated the
-  exact finite classification. The figure is diagnostic and empirical; the
-  lower bound in the theorem uses the exact finite classification.}
-  \label{fig:rotated-pentagons-three-bounce-actions}
-\end{figure}
+\par\medskip\noindent\textbf{Exceptional parameters and endpoints.}
+The rational-function computation proves the comparison away from a finite
+set: besides the roots and poles used in the sign-cell decomposition, the
+coefficient and augmented KKT matrices can drop below their generic ranks only
+at zeros of finitely many nonzero minors.  Taking the union of these
+exceptional sets over the finite word list leaves a dense open subset of
+\(0<\theta<\pi/10\).  On that subset no feasible branch lies below
+\(c_{\mathrm{act}}(\theta)\), while the active word attains this value.  Hence
+\eqref{eq:rotated-pentagon-half-profile} holds there.
 
-The full run reports
-\[
-\begin{aligned}
-  \texttt{open\_domain\_raw\_sigma\_count} &= 3340,\\
-  \texttt{classified\_raw\_sigma\_count} &= 3340,
-\end{aligned}
-\]
-Here \(3340\) is the full raw list after open-domain transition pruning, not a
-sampled subset. The same number of raw sigmas is then classified by the
-certificate. The run then terminates with
-\[
-  \texttt{CERTIFICATE PASSED}.
-\]
-The status counts in that run were
-\[
-\begin{array}{rcl}
-  \texttt{no\_kkt\_solution} &=& 25,\\
-  \texttt{zero\_q\_identity} &=& 1680,\\
-  \texttt{singular\_kkt\_forced\_zero\_beta} &=& 470,\\
-  \texttt{not\_feasible\_on\_open\_domain} &=& 735,\\
-  \texttt{zero\_gap\_identity} &=& 20,\\
-  \texttt{strict\_gap\_positive\_on\_feasible\_open\_domain} &=& 410.
-\end{array}
-\]
-These counts are not separate mathematical input; they are the transcript of
-the exact finite certificate. The mathematical conclusion is that, on every
-open cell of the exact cell decomposition of \(0<\theta<\pi/10\), no feasible
-HK/KKT branch has action below the active branch.
-
-Together with the active branch, equality holds on every open cell. The path
-\(\theta\mapsto K_\theta\) is continuous in the Hausdorff topology, and the
-volume is constant. By
-Proposition~\ref{prop:preliminaries-sys-hausdorff-continuity},
-\(\operatorname{sys}(K_\theta)\) is continuous in \(\theta\). Since the
-displayed formula is continuous as well, equality on the open cells extends to
-the cut points and to the endpoints \(0\) and \(\pi/10\). This proves the
-formula on the half-domain. The symmetry reduction at the beginning of the
-proof then gives the theorem for all real \(\theta\).
+The path \(\theta\mapsto K_\theta\) is Hausdorff-continuous and its volume is
+constant.  Proposition~\ref{prop:preliminaries-sys-hausdorff-continuity}
+therefore makes \(\operatorname{sys}(K_\theta)\) continuous.  Equality extends
+from the dense open subset to every exceptional interior parameter and to the
+endpoints \(0\) and \(\pi/10\).  This proves
+\eqref{eq:rotated-pentagon-half-profile}; the initial symmetries prove the
+theorem for all real \(\theta\).
 \end{proof}

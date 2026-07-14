@@ -1,0 +1,301 @@
+\clearpage
+\subsection{How Sage implements the finite predicates}
+\label{subsec:rotated-pentagon-sage-source}
+
+The preceding proof has already reduced the theorem to exact finite
+predicates.  This subsection makes the correspondence between those
+predicates and the Sage source directly inspectable.  The excerpts are copied
+in cleaned form from the executable named above: diagnostics, return-value
+bookkeeping, and repeated type conversions are omitted, short local names are
+used, and long expressions are line-broken.  Named utility constructors and
+diagnostics are not repeated.  The source identified by the digest in the
+retained transcript remains the runnable owner.
+
+\subsubsection*{Facet duals and the fixed-word quadratic program}
+The first excerpt constructs the ten dual vertices in the coordinate order
+\((q_1,q_2,p_1,p_2)\), implements \(\omega_0\), and forms the KKT system.
+The last four rows impose
+\(\sum_i\beta_i a_i=0\), while the final row imposes
+\(\sum_i\beta_i=1\).  The function \texttt{q\_value} is exactly the ordered
+quadratic form \(Q_\sigma\) used above.
+
+{\small
+\begin{verbatim}
+def cos_theta():
+    return lift(1 - t**2) / lift(1 + t**2)
+
+def sin_theta():
+    return lift(2 * t) / lift(1 + t**2)
+
+def rotate(point):
+    x, y = point
+    c, s = cos_theta(), sin_theta()
+    return (c * x - s * y, s * x + c * y)
+
+def pentagon_normals():
+    return [(lift(cos_units(5 + 4*k)),
+             lift(sin_units(5 + 4*k))) for k in range(5)]
+
+def dual_vertices():
+    height = lift(cos_units(2))  # cos(pi/5)
+    normals = pentagon_normals()
+    vertices = []
+    for x, y in normals:
+        vertices.append((x / height, y / height, 0, 0))
+    for normal in normals:
+        x, y = rotate(normal)
+        vertices.append((0, 0, x / height, y / height))
+    return vertices
+
+def omega(u, v):
+    return (u[0] * v[2] - u[2] * v[0]
+            + u[1] * v[3] - u[3] * v[1])
+
+def kkt_matrix(sigma):
+    m = len(sigma)
+    mat = Matrix(F, m + 5, m + 5, 0)
+    rhs = vector(F, [0] * (m + 5))
+    for i in range(m):
+        for j in range(i + 1, m):
+            value = omega(DUALS[sigma[i]], DUALS[sigma[j]])
+            mat[i, j] = value
+            mat[j, i] = value
+    for i in range(m):
+        for d in range(4):
+            value = DUALS[sigma[i]][d]
+            mat[i, m + d] = value
+            mat[m + d, i] = value
+        mat[i, m + 4] = 1
+        mat[m + 4, i] = 1
+    rhs[m + 4] = 1
+    return mat, rhs
+
+def q_value(sigma, beta):
+    q = 0
+    for i in range(1, len(sigma)):
+        for j in range(i):
+            q += (beta[i] * beta[j]
+                  * omega(DUALS[sigma[j]], DUALS[sigma[i]]))
+    return reduced(q)
+\end{verbatim}
+}
+
+\subsubsection*{The finite block family}
+The next excerpt is the implementation of
+\(\bigl([Q\mid QQ][P\mid PP]\bigr)^k\), \(k=2,3\).  A block is a singleton
+or an ordered adjacent pair.  The selections are disjoint.  The first selected
+\(q\)-block fixes the cyclic start, while the remaining relative orders are
+all enumerated.
+
+{\small
+\begin{verbatim}
+def adjacent_same_factor(a, b):
+    return (a - b) % 5 in {1, 4}
+
+def blocks(facets):
+    result = [(i,) for i in facets]
+    for i, j in combinations(facets, 2):
+        if adjacent_same_factor(i % 5, j % 5):
+            result.append((i, j))
+            result.append((j, i))
+    return result
+
+def non_overlapping(selection):
+    used = set()
+    for block in selection:
+        if used & set(block):
+            return False
+        used.update(block)
+    return True
+
+def non_overlapping_selections(block_list, k):
+    for selection in combinations(block_list, k):
+        if non_overlapping(selection):
+            yield selection
+
+def enumerate_k_bounce_sigmas(k):
+    q_blocks = blocks(Q_FACETS)
+    p_blocks = blocks(P_FACETS)
+    for qs in non_overlapping_selections(q_blocks, k):
+        for ps in non_overlapping_selections(p_blocks, k):
+            for q_order in permutations(range(k - 1)):
+                for p_order in permutations(range(k)):
+                    sigma = list(qs[0]) + list(ps[p_order[0]])
+                    for r in range(1, k):
+                        sigma.extend(qs[1 + q_order[r - 1]])
+                        sigma.extend(ps[p_order[r]])
+                    yield tuple(sigma)
+\end{verbatim}
+}
+
+\subsubsection*{Exact sign cells and transition pruning}
+For a rational function in \(K(t)\), Sage isolates every numerator and
+denominator root in the open half-domain.  The resulting cells have constant
+sign, so one exact algebraic midpoint decides each cell.  The endpoint label
+retained in each certificate is diagnostic only; endpoints are handled by the
+continuity argument above.  Transition pruning uses the open-cell status and
+checks that every mixed transition has no interior sign cut.
+
+{\small
+\begin{verbatim}
+def real_roots_in_open_half_domain(poly):
+    roots = []
+    for root, multiplicity in poly.change_ring(AA).roots():
+        root = AA(root)
+        if AA(0) < root < HALF_DOMAIN_ENDPOINT:
+            roots.append(root)
+    return sorted(set(roots))
+
+def sign_certificate(expr):
+    expr = reduced(expr)
+    numerator = expr.numerator()
+    denominator = expr.denominator()
+    if numerator == 0:
+        return SignCertificate("zero", 0, "zero")
+    cuts = sorted(set(
+        real_roots_in_open_half_domain(numerator)
+        + real_roots_in_open_half_domain(denominator)))
+    points = [AA(0)] + cuts + [HALF_DOMAIN_ENDPOINT]
+    num_aa = aa_polynomial(numerator)
+    den_aa = aa_polynomial(denominator)
+    signs = []
+    for left, right in zip(points, points[1:]):
+        sample = (left + right) / 2
+        signs.append((num_aa(sample) / den_aa(sample)).sign())
+    endpoint = endpoint_label(num_aa, den_aa)
+    if all(sign > 0 for sign in signs):
+        return SignCertificate("positive_open", len(cuts), endpoint)
+    if all(sign < 0 for sign in signs):
+        return SignCertificate("negative_open", len(cuts), endpoint)
+    return SignCertificate("mixed_open", len(cuts), endpoint)
+
+def open_domain_cells(expressions):
+    cuts = []
+    for expr in expressions:
+        expr = reduced(expr)
+        cuts += real_roots_in_open_half_domain(expr.numerator())
+        cuts += real_roots_in_open_half_domain(expr.denominator())
+    points = [AA(0)] + sorted(set(cuts))
+    points += [HALF_DOMAIN_ENDPOINT]
+    return [(a + b) / 2 for a, b in zip(points, points[1:])]
+
+def facet_intersection_nonempty(i, j):
+    if i == j:
+        return True
+    if (i < 5) != (j < 5):
+        return True
+    return adjacent_same_factor(i % 5, j % 5)
+
+def transition_table_open():
+    table = {}
+    for i in range(10):
+        for j in range(10):
+            cert = sign_certificate(omega(DUALS[i], DUALS[j]))
+            if (i < 5) == (j < 5):
+                assert cert.status == "zero"
+                table[i, j] = facet_intersection_nonempty(i, j)
+            else:
+                assert cert.status in {
+                    "positive_open", "negative_open"
+                }
+                assert cert.interior_cut_count == 0
+                table[i, j] = (facet_intersection_nonempty(i, j)
+                               and cert.status == "positive_open")
+    return table
+
+def transition_pruned_sigmas_open():
+    table = transition_table_open()
+    sigmas = []
+    for k in (2, 3):
+        for sigma in enumerate_k_bounce_sigmas(k):
+            edges = zip(sigma, sigma[1:] + sigma[:1])
+            if all(table[i, j] for i, j in edges):
+                sigmas.append(sigma)
+    return sigmas
+\end{verbatim}
+}
+
+\subsubsection*{Fail-closed branch classification}
+The classifier solves the displayed KKT equations over \(K(t)\).  It accepts
+an identically zero action gap as a tie; otherwise, on every cell where all
+weights and \(Q_\sigma\) are positive, it requires a strictly positive action
+gap.  A singular or nonpositive-gap case not covered by a proved exit is sent
+to manual review.  The full loop rejects that status.
+For readability, \texttt{status(...)} below abbreviates the executable's
+result constructor.
+
+{\small
+\begin{verbatim}
+ACCEPTED_STATUSES = {
+    "no_kkt_solution", "singular_kkt_forced_zero_beta",
+    "zero_q_identity", "zero_gap_identity",
+    "not_feasible_on_open_domain",
+    "strict_gap_positive_on_feasible_open_domain",
+}
+
+def forced_zero_weight(beta, kernel):
+    for i in range(len(beta)):
+        if beta[i] == 0 and all(reduced(v[i]) == 0 for v in kernel):
+            return True
+    return False
+
+def classify_sigma(sigma, min_action):
+    mat, rhs = kkt_matrix(sigma)
+    try:
+        solution = mat.solve_right(rhs)
+    except ValueError:
+        augmented = mat.augment(rhs.column())
+        if augmented.rank() > mat.rank():
+            return status("no_kkt_solution")
+        return status("requires_manual_review")
+
+    beta = [reduced(solution[i]) for i in range(len(sigma))]
+    q = q_value(sigma, beta)
+    kernel = None
+    if q == 0:
+        kernel = mat.right_kernel().basis()
+        if kernel:
+            if forced_zero_weight(beta, kernel):
+                return status("singular_kkt_forced_zero_beta")
+            return status("requires_manual_review")
+        return status("zero_q_identity")
+
+    gap = reduced(1 / (2 * q) - min_action)
+    if gap == 0:
+        return status("zero_gap_identity")
+
+    feasible_cells = 0
+    for sample in open_domain_cells(tuple(beta) + (q, gap)):
+        feasible = all(sign_at(b, sample) > 0 for b in beta)
+        feasible = feasible and sign_at(q, sample) > 0
+        if feasible:
+            feasible_cells += 1
+            if sign_at(gap, sample) <= 0:
+                return status("requires_manual_review")
+
+    if feasible_cells == 0:
+        if kernel is None:
+            kernel = mat.right_kernel().basis()
+        if kernel:
+            if forced_zero_weight(beta, kernel):
+                return status("singular_kkt_forced_zero_beta")
+            return status("requires_manual_review")
+        return status("not_feasible_on_open_domain")
+    return status("strict_gap_positive_on_feasible_open_domain")
+
+for sigma in transition_pruned_sigmas_open():
+    classification = classify_sigma(sigma, minimum_action())
+    assert classification.status in ACCEPTED_STATUSES
+\end{verbatim}
+}
+
+In the runnable source every unresolved singular case becomes manual review.
+Hence the last assertion passes only when every word reaches one of the six
+exits in Table~\ref{tab:rotated-pentagon-certificate-outcomes}.
+
+This comparison of formulas and source is the theorem-specific implementation
+audit.  At the software-foundation level, the calculation relies on SageMath
+to perform its standard exact number-field arithmetic, linear algebra, and
+real-root isolation correctly.  SageMath~\cite{SageMath107} is routinely used
+for such exact computer-algebra calculations; verifying SageMath itself is
+outside the scope of this thesis.
