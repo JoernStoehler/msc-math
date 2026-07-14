@@ -337,7 +337,12 @@ def eta_label(eta: float) -> str:
 def save(fig: plt.Figure, figures: Path, stem: str) -> None:
     figures.mkdir(parents=True, exist_ok=True)
     for extension in ("png", "pdf"):
-        fig.savefig(figures / f"{stem}.{extension}", bbox_inches="tight")
+        metadata = {"CreationDate": None, "ModDate": None} if extension == "pdf" else None
+        fig.savefig(
+            figures / f"{stem}.{extension}",
+            bbox_inches="tight",
+            metadata=metadata,
+        )
     plt.close(fig)
 
 
