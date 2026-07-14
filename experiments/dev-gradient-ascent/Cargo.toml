@@ -38,6 +38,10 @@ path = "endpoint-scan-report/main.rs"
 name = "dev-gradient-ascent-run-trace-report"
 path = "run-trace-report/main.rs"
 
+[[bin]]
+name = "dev-gradient-ascent-literal-naive-gradient"
+path = "literal-naive-gradient/main.rs"
+
 [lints]
 workspace = true
 
