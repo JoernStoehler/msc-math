@@ -215,18 +215,18 @@ is the remaining decision-changing crux, or if improvement persists through
 repair generator confounding, proxy uncertainty, or merely to strengthen a
 zero-hit `sys>1` panel.
 
-Retained generic `F=10` timing gives 1.118 seconds of exact-volume work per row
-on average: approximately 3.1, 31, and 311 serial CPU-hours for 10k, 100k, and
-1M. These are linear CPU-time anchors, not wall-time or core-hour forecasts.
-The codebase also has an f64 incidence-volume path. Before the 10k stage,
-benchmark its ranking against exact retained generic volumes and test recall of
-the exact low-proxy tail under an oversampled f64 screen. If adequate, stream
-candidate selection and compute exact volumes only near the cutoff and for
-target-evaluated rows. Availability of the cheaper path is verified; its tail
-fidelity is not.
+The historical generic producer spent 1.118 seconds per row on rational-volume
+computation, but that is not the proposed production path. Capacity and `sys`
+are already floating-point computations, and the codebase has an f64
+incidence-volume routine. Use f64 volume for the 10k proxy, for its cutoff, and
+later for `sys`. Before production, compare it on retained generic `F=10` rows
+with the stored values derived from rational arithmetic, checking relative
+error, proxy-rank stability, and bottom-tail membership. The rational path is a
+one-time numerical audit, not a per-candidate requirement. Measure actual f64
+throughput before forecasting 100k or 1M cost.
 
 The hard first-stage ceiling is therefore 10k generic candidates and 200 target
-evaluations. A pre-target manifest review must check proxy definition, exact
+evaluations. A pre-target manifest review must check proxy definition, f64
 cutoff ranks, target-field absence, deterministic baseline selection, and seed
 independence. Any trusted `sys>1` row is escalated immediately. The stage must
 return measured marginal cost and a 100k continue/stop recommendation; unused
