@@ -42,6 +42,10 @@ path = "run-trace-report/main.rs"
 name = "dev-gradient-ascent-literal-naive-gradient"
 path = "literal-naive-gradient/main.rs"
 
+[[bin]]
+name = "dev-gradient-ascent-optimizer-suite"
+path = "literal-naive-gradient/optimizer_suite.rs"
+
 [lints]
 workspace = true
 

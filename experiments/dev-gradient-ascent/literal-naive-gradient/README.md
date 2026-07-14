@@ -122,3 +122,34 @@ invalid trajectory, the producer's legacy `summary.json` field `final_sys`
 means the last valid pre-failure state, not a valid 100-update endpoint. The
 generated `analysis.json` therefore sets evaluative `final_sys` to null and
 preserves the producer value as `last_valid_sys`.
+
+## Near-term optimizer suite
+
+`optimizer_suite.rs` is the shared exact-state harness for the retained
+literal proposal and four small controls: invalidity-only dyadic safeguarding,
+strict monotone dyadic backtracking, near-active maximin ascent, and a
+derivative-free positive-spanning poll on the arbitrary first-dual-vertex
+four-coordinate slice (not the full ambient or quotient space). Every target proposal is logged and counted, including invalid,
+rejected, and poll candidates. Safeguarding retries begin at the nominal rate
+on every update; monotone backtracking has a declared twenty-halving safety
+bound and reports a method stall when it is exhausted. Maximin and polling use
+an explicit adaptive radius and stop on a shrunken radius, never a local
+maximum claim. The maximin `1e-3` near-active window selects branches only; it
+is not an acceptance or stopping threshold, and its sensitivity is untested.
+
+The cheap common smoke is regenerated with:
+
+```bash
+cargo run --release -p exp-dev-gradient-ascent --bin dev-gradient-ascent-optimizer-suite -- \
+  --smoke --out-dir experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/smoke \
+  --policies invalidity_only,monotone,maximin,poll \
+  --facet-count 6 --start-count 1 --exclude-start-ids random_F6_s0_1
+```
+
+The frozen six-start/six-rate safeguard runs and the smaller maximin/poll
+panel are stored under `artifacts/suite-*`. Generate the compact comparison
+and investigation figures with `uv run --script analyze_suite.py`. These are
+descriptive paired evidence only: no policy run establishes convergence,
+local maximality, or population-wide behavior. A basic nearby-gradient bundle
+is intentionally omitted; the shared state/target interface is sufficient for
+adding one later, but this packet does not pay for an unvalidated fifth policy.
