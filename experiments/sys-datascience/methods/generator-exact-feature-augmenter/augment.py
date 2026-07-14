@@ -26,6 +26,7 @@ VARIANTS = {"identity", "u2-deterministic", "u2-haar", "so4-deterministic", "so4
 ARMS = {"factorial-baseline", "factorial-q", "factorial-p", "factorial-both"}
 ORIENTATION_BUCKETS = {"3x3", "4x4", "4x6", "6x6"}
 TANGENTIAL_BUCKETS = {"3x3", "4x6", "6x6"}
+ALLOWED_COVARIANCE_STATUSES = {"eligible", "unexpected_distinct_vertex_count", "insufficient_or_nonfinite_vertices", "covariance_not_positive_definite", "ordinary_condition_exceeds_limit", "unstable_williamson_invariants", "unstable_williamson_roots", "nonfinite_rho"}
 FACE_FEATURES = ("mean", "std", "min", "q25", "median", "q75", "q90", "q95", "max", "sum")
 SYMP_EXTRA = ("max_share", "top3_share", "entropy", "effective_face_count", "normalized_entropy")
 TIMING_KEYS = {"generation_ms", "validation_ms", "target_ms", "geometry_generation_ms", "geometry_validation_ms"}
@@ -198,7 +199,9 @@ def feature_row(source: dict[str, Any], source_kind: str, geometry: dict[str, An
         _target_guard(geometry)
         if source.get("schema") != TANGENTIAL_SCHEMA or source.get("accepted") is not True or source.get("validation_status") != "survived": raise AnalysisError("tangential authoritative row is not accepted")
         duals = _matrix(geometry.get("geometry_dual_vertices_rational"), "tangential sidecar dual vertices"); vertices = _matrix(geometry.get("geometry_primal_vertices_rational"), "tangential sidecar primal vertices")
-        incidence = geometry.get("geometry_vertex_facet_incidence"); incidence = [[bool(x) for x in r] for r in incidence] if isinstance(incidence, list) else None
+        raw_incidence = geometry.get("geometry_vertex_facet_incidence")
+        if not isinstance(raw_incidence, list) or any(not isinstance(r,list) or any(type(x) is not bool for x in r) for r in raw_incidence): raise AnalysisError("tangential replay incidence entries must be literal bool")
+        incidence = raw_incidence
         if incidence is None: raise AnalysisError("tangential replay lacks incidence")
         if geometry.get("geometry_source_sample_id") != source.get("sample_id") or geometry.get("geometry_source_pairing_id") != source.get("pairing_id"): raise AnalysisError("tangential replay identity does not join authoritative row")
         if geometry.get("geometry_volume") is None or abs(float(geometry["geometry_volume"]) - float(source["volume"])) > 1e-12: raise AnalysisError("tangential replay volume mismatch")
@@ -206,15 +209,21 @@ def feature_row(source: dict[str, Any], source_kind: str, geometry: dict[str, An
         try: expected = int(str(bucket).split("x", 1)[0]) * int(str(bucket).split("x", 1)[1])
         except (ValueError, IndexError): raise AnalysisError("tangential bucket is not kxm")
     _check_geometry(duals, vertices, incidence, source)
+    if len(vertices) != expected: raise AnalysisError("primal vertex count does not equal product k*m")
+    if source_kind == "orientation" and source.get("vertex_count") != len(vertices): raise AnalysisError("orientation source vertex_count disagrees with geometry")
+    if any(sum(row) != 4 for row in incidence) or any(sum(row[j] for row in incidence) == 0 for j in range(len(duals))): raise AnalysisError("geometry is not a simple product incidence")
     volume = float(source.get("exact_volume_as_f64", source.get("volume")))
     if not math.isfinite(volume) or volume <= 0: raise AnalysisError("volume must be positive finite")
-    faces = _two_faces(incidence); eucl=[]; symp=[]; kappas=[]; failures=0
+    faces = _two_faces(incidence)
+    expected_faces = expected + len(duals) if source_kind == "orientation" else expected + len(duals)
+    if len(faces) != expected_faces: raise AnalysisError(f"expected product two-face count {expected_faces}, found {len(faces)}")
+    eucl=[]; symp=[]; kappas=[]; failures=0
     for face in faces:
         order = _ordered_face(face, incidence)
         if order is None: failures += 1; continue
         points=[vertices[i] for i in order]; e=_euclidean_area(points); s=abs(float(sum(omega(points[i],points[(i+1)%len(points)]) for i in range(len(points)))/2)); eucl.append(e); symp.append(s); kappas.append(s/e if e > 0 else None)
     paired=[(e,k) for e,k in zip(eucl,kappas) if k is not None]; sqrt_v=math.sqrt(volume); row={
-        "schema": ROW_SCHEMA, "source_kind": source_kind, "source_id": source_id, "source_sample_id": source.get("sample_id"), "source_pairing_id": source.get("pairing_id"), "base_id": base_id, "bucket": bucket, "map_variant": source.get("map_variant") if source_kind == "orientation" else None, "law": source.get("law") if source_kind == "tangential" else None,
+        "schema": ROW_SCHEMA, "source_kind": source_kind, "source_id": source_id, "source_sample_id": source.get("sample_id"), "source_pairing_id": source.get("pairing_id") or (source.get("base_id") if source_kind == "orientation" else None), "base_id": base_id, "bucket": bucket, "map_variant": source.get("map_variant") if source_kind == "orientation" else None, "law": source.get("law") if source_kind == "tangential" else None,
         "facet_count":len(duals), "vertex_count":len(vertices), "two_face_count":len(faces), "ordered_two_face_count":len(eucl), "ordering_failure_count":failures, "geometry_validation_status":"validated", "coordinate_order":"q1,q2,p1,p2", "volume":volume, "volume_sqrt":sqrt_v, "strict_cycle":_strict_cycles(duals) if strict else None,
     }
     for prefix, values in (("euclidean_ridge_area", [x/sqrt_v for x in eucl]), ("symplectic_ridge_area", [x/sqrt_v for x in symp]), ("kappa", [x for x in kappas if x is not None])):
@@ -223,7 +232,10 @@ def feature_row(source: dict[str, Any], source_kind: str, geometry: dict[str, An
     row.update({"symplectic_ridge_area_max_share": max(symp)/total if total>0 else 0.0, "symplectic_ridge_area_top3_share": sum(sorted(symp,reverse=True)[:3])/total if total>0 else 0.0, "symplectic_ridge_area_entropy":entropy, "symplectic_ridge_area_effective_face_count":math.exp(entropy), "symplectic_ridge_area_normalized_entropy":entropy/math.log(len(symp)) if len(symp)>1 else 0.0})
     weighted=float(sum(e*k for e,k in paired)/sum(e for e,_ in paired)) if paired else None; covariance=float(np.cov([e for e,_ in paired],[k for _,k in paired],bias=True)[0,1]) if len(paired)>1 else None; err=max((abs(s-e*k) for e,s,k in zip(eucl,symp,kappas) if k is not None),default=0.0)
     row.update({"kappa_euclidean_weighted_mean":weighted,"kappa_euclidean_covariance":covariance,"decomposition_max_abs_error":err,"decomposition_relative_error":err/max((abs(s) for s in symp),default=1.0),"decomposition_identity_ok":err <= 1e-10})
-    row["vertex_covariance"]=_covariance(vertices, expected); return row
+    row["vertex_covariance"]=_covariance(vertices, expected)
+    cov=row["vertex_covariance"]
+    if cov.get("status") not in ALLOWED_COVARIANCE_STATUSES: raise AnalysisError("unknown covariance status")
+    return row
 
 
 def load_rows(path: Path) -> tuple[list[dict[str, Any]], str]:
@@ -253,25 +265,36 @@ def _join_tangential(source_rows, replay_rows):
     return [(source[ident], replay[ident]) for ident in sorted(source)]
 
 
-def _provenance(paths, hashes, rows):
+def _git_state():
     try:
         revision=subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip(); dirty=bool(subprocess.check_output(["git","status","--porcelain"],text=True).strip())
     except Exception: revision="unknown"; dirty=None
+    return revision, dirty
+
+def _provenance(paths, hashes, rows, revision, dirty):
     return {"inputs":[{"path":str(p),"sha256":h,"rows":len(r)} for p,h,r in zip(paths,hashes,rows)],"source_revision":revision,"source_dirty":dirty,"schemas":{"orientation":ORIENTATION_SCHEMA,"tangential":TANGENTIAL_SCHEMA,"feature":ROW_SCHEMA},"target_fields_rejected":["capacity","sys","iterations","iteration","bounce_label","target","target_ms"],"tolerances":{"decomposition_abs":1e-10,"replay_volume_abs":1e-12,"covariance_condition_max":1e10}}
 
 
 def main() -> None:
-    p=argparse.ArgumentParser(); p.add_argument("--orientation",type=Path); p.add_argument("--tangential-source",type=Path); p.add_argument("--tangential-replay",type=Path); p.add_argument("--out-dir",type=Path,required=True); a=p.parse_args()
+    p=argparse.ArgumentParser(); p.add_argument("--orientation",type=Path); p.add_argument("--tangential-source",type=Path); p.add_argument("--tangential-replay",type=Path); p.add_argument("--out-dir",type=Path,required=True); p.add_argument("--require-clean",action="store_true"); p.add_argument("--expected-revision"); p.add_argument("--expected-orientation-sha256"); p.add_argument("--expected-tangential-source-sha256"); p.add_argument("--expected-tangential-replay-sha256"); a=p.parse_args()
+    revision,dirty=_git_state()
+    if a.require_clean and dirty: p.error("repository is dirty")
+    if a.expected_revision and a.expected_revision != revision: p.error("revision mismatch")
     if not a.orientation and not (a.tangential_source and a.tangential_replay): p.error("provide orientation or both tangential source/replay")
     if bool(a.tangential_source) != bool(a.tangential_replay): p.error("tangential source and replay must be supplied together")
     out=a.out_dir; out.mkdir(parents=True,exist_ok=True); feature=[]; paths=[]; hashes=[]; loaded=[]
     if a.orientation:
-        rows,h=load_rows(a.orientation); feature.extend(feature_row(r,"orientation") for r in rows); paths.append(a.orientation); hashes.append(h); loaded.append(rows)
+        rows,h=load_rows(a.orientation); 
+        if a.expected_orientation_sha256 and a.expected_orientation_sha256 != h: p.error("orientation SHA256 mismatch")
+        feature.extend(feature_row(r,"orientation") for r in rows); paths.append(a.orientation); hashes.append(h); loaded.append(rows)
     if a.tangential_source:
-        src,hs=load_rows(a.tangential_source); rep,hr=load_rows(a.tangential_replay); pairs=_join_tangential(src,rep); feature.extend(feature_row(s,"tangential",g) for s,g in pairs); paths += [a.tangential_source,a.tangential_replay]; hashes += [hs,hr]; loaded += [src,rep]
+        src,hs=load_rows(a.tangential_source); rep,hr=load_rows(a.tangential_replay)
+        if a.expected_tangential_source_sha256 and a.expected_tangential_source_sha256 != hs: p.error("tangential source SHA256 mismatch")
+        if a.expected_tangential_replay_sha256 and a.expected_tangential_replay_sha256 != hr: p.error("tangential replay SHA256 mismatch")
+        pairs=_join_tangential(src,rep); feature.extend(feature_row(s,"tangential",g) for s,g in pairs); paths += [a.tangential_source,a.tangential_replay]; hashes += [hs,hr]; loaded += [src,rep]
     with (out/"features.jsonl").open("w") as f:
         for r in feature: f.write(json.dumps(r,sort_keys=True,allow_nan=False)+"\n")
-    report={"schema":"generator-exact-feature-augmenter-report-v2","rows":len(feature),"source_kinds":dict(Counter(r["source_kind"] for r in feature)),"provenance":_provenance(paths,hashes,loaded),"command":" ".join(__import__("sys").argv)}
+    feature_bytes=(out/"features.jsonl").read_bytes(); report={"schema":"generator-exact-feature-augmenter-report-v2","rows":len(feature),"source_kinds":dict(Counter(r["source_kind"] for r in feature)),"provenance":_provenance(paths,hashes,loaded,revision,dirty),"feature_output":{"path":str(out/"features.jsonl"),"sha256":hashlib.sha256(feature_bytes).hexdigest(),"rows":len(feature),"schema":ROW_SCHEMA},"command":" ".join(__import__("sys").argv)}
     (out/"augment-report.json").write_text(json.dumps(report,indent=2)+"\n")
 
 

@@ -43,8 +43,19 @@ uv run --script augment.py --orientation /tmp/generator-transfer-smoke/orientati
   --tangential-replay /tmp/generator-transfer-smoke/tangential-replay/smoke-rows.jsonl \
   --out-dir /tmp/generator-transfer-smoke/features
 uv run --script analyze.py --input /tmp/generator-transfer-smoke/features/features.jsonl \
-  --out-dir /tmp/generator-transfer-smoke/report
+  --augment-report /tmp/generator-transfer-smoke/features/augment-report.json \
+  --out-dir /tmp/generator-transfer-smoke/report --design disposable
 ```
+
+The disposable design is exactly one orientation base in `3x3` and one
+tangential pairing in each of `3x3`, `4x6`, and `6x6` (17 rows). The retained
+design is selected with `--design retained`: two orientation bases in each of
+`3x3`, `4x4`, `4x6`, and `6x6`, and 64 tangential pairings in each of
+`3x3`, `4x6`, and `6x6` (808 rows). Use `--require-clean`,
+`--expected-revision`, and the three expected SHA256 flags on augmentation;
+pass the resulting `augment-report.json` to the analyzer, which verifies the
+feature hash/count, source hashes, revision, and clean-state evidence before
+enforcing the declared design.
 
 ## Features and numerical boundary
 
@@ -88,5 +99,6 @@ controlled field, and emits bucket-stratified tangential distributions for
 every Euclidean, symplectic, kappa, rho, condition, and covariance-status
 field. Tangential paired deltas include Euclidean/symplectic sums and means,
 symplectic max-share, weighted kappa, rho, and condition; Euclidean arm ranges
-include an explicit overlap interval, boolean, and union-normalized overlap.
+include an explicit overlap interval, tolerance-aware boolean, and
+union-normalized overlap.
 No bucket is pooled into a ranking.

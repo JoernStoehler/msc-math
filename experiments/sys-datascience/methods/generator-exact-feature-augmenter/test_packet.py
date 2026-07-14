@@ -4,6 +4,7 @@ import importlib.util
 import json
 import sys
 import subprocess
+import hashlib
 import tempfile
 import unittest
 from fractions import Fraction
@@ -28,6 +29,22 @@ class ExactFeaturePacketTests(unittest.TestCase):
     def setUpClass(cls):
         cls.rows, _ = augment.load_rows(ORIENTATION)
         cls.features = [augment.feature_row(row, "orientation") for row in cls.rows]
+        cls.smoke_dir = tempfile.TemporaryDirectory()
+        root = Path(cls.smoke_dir.name)
+        binary = Path(__file__).parents[4] / "target/release/sys-datascience-alternative-generator-smoke"
+        if binary.exists():
+            for mode in ("source", "replay"):
+                command=[str(binary), "--out-dir", str(root/mode), "--rows-per-law", "1", "--only-family", "factorial", "--identity-scope", "test-disposable"]
+                if mode == "replay": command.append("--geometry-sidecar")
+                subprocess.run(command, check=True, stdout=subprocess.DEVNULL)
+            src,_=augment.load_rows(root/"source"/"smoke-rows.jsonl"); replay,_=augment.load_rows(root/"replay"/"smoke-rows.jsonl")
+            cls.disposable_features = cls.features[:5] + [augment.feature_row(s,"tangential",g) for s,g in augment._join_tangential(src,replay)]
+        else:
+            cls.disposable_features = None
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.smoke_dir.cleanup()
 
     def test_exact_join_and_strict_cycle_scope(self):
         self.assertEqual(len(self.features), 40)
@@ -94,12 +111,67 @@ class ExactFeaturePacketTests(unittest.TestCase):
         with self.assertRaisesRegex(augment.AnalysisError, "orientation u2-haar"):
             analyzer.validate(rows)
 
+        rows = copy.deepcopy(self.features)
+        allowed = next(row for row in rows if row["map_variant"] == "identity" and row["bucket"] == "3x3")
+        allowed["strict_cycle"]["strict_cycle_count"] = -1
+        with self.assertRaisesRegex(augment.AnalysisError, "strict-cycle"):
+            analyzer.validate(rows, require_complete=False)
+
+        rows = copy.deepcopy(self.features)
+        allowed = next(row for row in rows if row["map_variant"] == "identity" and row["bucket"] == "3x3")
+        allowed["strict_cycle"]["strict_signs"][0][0] = 2
+        with self.assertRaisesRegex(augment.AnalysisError, "strict-cycle"):
+            analyzer.validate(rows, require_complete=False)
+
+        rows = copy.deepcopy(self.features)
+        so4 = next(row for row in rows if row["map_variant"] == "so4-haar")
+        so4["vertex_covariance"]["status"] = "ordinary_condition_exceeds_limit"
+        with self.assertRaisesRegex(augment.AnalysisError, "covariance"):
+            analyzer.validate(rows)
+
     def test_grid_and_target_guards(self):
         with self.assertRaisesRegex(augment.AnalysisError, "incomplete orientation"):
             analyzer.validate(self.features[:-1])
         row = copy.deepcopy(self.rows[0]); row["iteration"] = 2
         with self.assertRaisesRegex(augment.AnalysisError, "target field"):
             augment.feature_row(row, "orientation")
+        with self.assertRaisesRegex(augment.AnalysisError, "orientation bucket set"):
+            analyzer.validate_design(self.features, "disposable")
+
+        if self.disposable_features is not None:
+            with self.assertRaisesRegex(augment.AnalysisError, "tangential bucket set"):
+                analyzer.validate_design(self.disposable_features[:5], "disposable")
+            missing_pair=self.disposable_features[:-4]
+            with self.assertRaisesRegex(augment.AnalysisError, "incomplete tangential|expected 1 tangential pairs"):
+                analyzer.validate_design(missing_pair, "disposable")
+            duplicate=copy.deepcopy(self.disposable_features); duplicate.append(copy.deepcopy(duplicate[0])); duplicate[-1]["source_id"]="new-source-id"
+            with self.assertRaisesRegex(augment.AnalysisError, "exactly 17|duplicate orientation"):
+                analyzer.validate_design(duplicate, "disposable")
+
+    def test_required_feature_and_covariance_fail_closed(self):
+        rows = copy.deepcopy(self.features)
+        rows[0]["euclidean_ridge_area_mean"] = None
+        with self.assertRaisesRegex(augment.AnalysisError, "required feature"):
+            analyzer.validate(rows, require_complete=False)
+
+    def test_altered_feature_manifest_and_revision_hash_guards(self):
+        with tempfile.TemporaryDirectory() as directory:
+            directory=Path(directory); feature_path=directory/"features.jsonl"; manifest_path=directory/"augment-report.json"
+            payload=(json.dumps(self.features[0])+"\n").encode(); feature_path.write_bytes(payload)
+            revision=subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip()
+            manifest={"schema":"generator-exact-feature-augmenter-report-v2","feature_output":{"path":str(feature_path),"sha256":hashlib.sha256(payload).hexdigest(),"rows":1,"schema":analyzer.FEATURE_SCHEMA},"provenance":{"source_revision":revision,"source_dirty":False,"inputs":[]}}
+            manifest_path.write_text(json.dumps(manifest))
+            analyzer.verify_manifest(feature_path,manifest_path,expected_revision=revision)
+            feature_path.write_text(json.dumps(self.features[1])+"\n")
+            with self.assertRaisesRegex(augment.AnalysisError,"feature output"):
+                analyzer.verify_manifest(feature_path,manifest_path,expected_revision=revision)
+            feature_path.write_bytes(payload)
+            with self.assertRaisesRegex(augment.AnalysisError,"revision mismatch"):
+                analyzer.verify_manifest(feature_path,manifest_path,expected_revision="0"*40)
+        rows = copy.deepcopy(self.features)
+        rows[0]["vertex_covariance"]["status"] = "mystery"
+        with self.assertRaisesRegex(augment.AnalysisError, "must be eligible"):
+            analyzer.validate(rows, require_complete=False)
 
     def test_duplicate_and_truncated_inputs(self):
         duplicate = [copy.deepcopy(self.features[0]), copy.deepcopy(self.features[0])]
@@ -119,6 +191,19 @@ class ExactFeaturePacketTests(unittest.TestCase):
         replay["geometry_dual_vertices_rational"] = source["transformed_dual_vertices_rational"]
         with self.assertRaisesRegex(augment.AnalysisError, "contract mismatch"):
             augment._join_tangential([source], [replay])
+
+    def test_replay_incidence_and_simplex_substitution_are_rejected(self):
+        source = copy.deepcopy(self.rows[0])
+        source.update({"schema": augment.TANGENTIAL_SCHEMA, "accepted": True, "validation_status": "survived", "law": "factorial-baseline", "pair_bucket": "3x3", "sample_id": "sample", "pairing_id": "pair", "volume": source["exact_volume_as_f64"]})
+        incidence = [[i in facets for i in range(len(source["transformed_dual_vertices_rational"]))] for facets in source["labeled_incidence_signature"]]
+        geometry = {"schema": augment.TANGENTIAL_SCHEMA, "geometry_dual_vertices_rational": source["transformed_dual_vertices_rational"], "geometry_primal_vertices_rational": source["reconstructed_primal_vertices_rational"], "geometry_vertex_facet_incidence": incidence, "geometry_source_sample_id": "sample", "geometry_source_pairing_id": "pair", "geometry_volume": source["volume"]}
+        geometry["geometry_vertex_facet_incidence"][0][0] = 1
+        with self.assertRaisesRegex(augment.AnalysisError, "literal bool"):
+            augment.feature_row(source, "tangential", geometry)
+        geometry["geometry_vertex_facet_incidence"][0][0] = True
+        geometry["geometry_primal_vertices_rational"] = geometry["geometry_primal_vertices_rational"][:5]
+        with self.assertRaisesRegex(augment.AnalysisError, "incidence dimensions|vertex count"):
+            augment.feature_row(source, "tangential", geometry)
 
     def test_producer_ordinary_rows_omit_geometry_keys(self):
         binary = Path(__file__).parents[4] / "target/release/sys-datascience-alternative-generator-smoke"
