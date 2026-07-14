@@ -1,0 +1,23 @@
+	Command being timed: "sh -c cargo build --release --manifest-path experiments/sys-datascience/methods/product-bounce-active-resampling/Cargo.toml --bin product-bounce-active-resampling && experiments/sys-datascience/methods/product-bounce-active-resampling/target/release/product-bounce-active-resampling --raw experiments/sys-datascience/produce/random-product.jsonl --classes experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl --bases experiments/sys-datascience/methods/product-bounce-active-resampling/artifacts/bases.json --out experiments/sys-datascience/methods/product-bounce-active-resampling/artifacts/proposals.jsonl --accepted-per-base 16 --max-attempts-per-base-law 160"
+	User time (seconds): 261.85
+	System time (seconds): 18.25
+	Percent of CPU this job got: 138%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:21.77
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 576612
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 211
+	Minor (reclaiming a frame) page faults: 3150114
+	Voluntary context switches: 20355
+	Involuntary context switches: 85771
+	Swaps: 0
+	File system inputs: 23128
+	File system outputs: 971496
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
