@@ -2,9 +2,9 @@
 
 This target-free exact smoke separates movement inside one fixed-normal
 realization chamber from its first locally predicted incidence boundary. It
-also records coordinate, Lagrangian, affine, and combinatorial productness as
-separate properties instead of treating coordinate recognition as an intrinsic
-classifier.
+also records coordinate, affine, and combinatorial productness separately from
+whether the two factor planes in the recorded affine decomposition are
+Lagrangian. It does not treat coordinate recognition as an intrinsic classifier.
 
 The boundary component uses exact rational `3x3` and `4x6` products. For every
 declared simple vertex `I` and nonincident facet `j`, it evaluates
@@ -25,12 +25,17 @@ is a complete global characterization of a type-cone chamber.
 The preservation matrix checks an exact coordinate product, a non-coordinate
 `U(2)` image, a dense exact non-symplectic `SO(4)` image, an `SL(4)` image, and a
 same-incidence fixed-normal perturbation. Each row records the explicit
-invertible affine construction, complementary factor planes, their exact
-Kähler residuals, and the full exact facet-labeled incidence multiset.
+invertible affine construction, its source-labeled complementary factor planes,
+their exact Kähler residuals, and the full exact facet-labeled incidence
+multiset.
 Combinatorial evidence is used only after explicit simplicity checks; no graph
 Cartesian-factorization theorem is invoked. A failed ambient coordinate-product check therefore does
 not mean loss of affine or combinatorial productness. The `SO(4)` control is a
 fixed product of rational Givens rotations, not a Haar draw or a generator law.
+When the recorded factor planes have nonzero Kähler residuals, the packet says
+only that this known decomposition is not Lagrangian. Existence of a different
+Lagrangian affine product decomposition is unknown and explicitly deferred;
+the packet has no decomposition-uniqueness theorem or exhaustive recovery.
 
 ## Reproduce
 
@@ -65,3 +70,5 @@ A projective/Hilbert slack-ratio distance is deliberately deferred: this packet
 does not need it, so it does not introduce an unreviewed domain or finite-value
 contract. Unknown-realization affine recovery and graph Cartesian factorization
 are also deferred to a separate classifier/recovery packet if later needed.
+That deferral includes existence or exclusion of alternative Lagrangian affine
+product decompositions when the recorded factor planes are non-Lagrangian.

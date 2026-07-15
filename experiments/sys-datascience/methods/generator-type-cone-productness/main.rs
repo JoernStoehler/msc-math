@@ -565,14 +565,14 @@ struct PlaneWitness {
     complementary_four_volume_determinant: String,
     q_plane_kahler_residual: String,
     p_plane_kahler_residual: String,
-    both_planes_lagrangian: bool,
+    recorded_factor_planes_both_lagrangian: bool,
     verification: &'static str,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 struct ProductnessFlags {
     coordinate_product: bool,
-    lagrangian_product: bool,
+    recorded_affine_factor_planes_lagrangian: bool,
     affine_product: bool,
     combinatorial_product: bool,
 }
@@ -602,6 +602,7 @@ struct PreservationRow {
     exact_facet_labeled_incidence_multiset_preserved: bool,
     exact_reconstruction_simple: bool,
     factor_planes: PlaneWitness,
+    alternative_lagrangian_affine_decomposition_status: &'static str,
     classifier_failure_interpretation: &'static str,
 }
 
@@ -635,7 +636,7 @@ fn preservation_row(
     );
     let productness = ProductnessFlags {
         coordinate_product: coordinate,
-        lagrangian_product: lagrangian,
+        recorded_affine_factor_planes_lagrangian: lagrangian,
         affine_product: true,
         combinatorial_product: incidence_ok && simple,
     };
@@ -648,8 +649,8 @@ fn preservation_row(
         && is_orthogonal == expected_orthogonal
         && is_symplectic == expected_symplectic;
     PreservationRow {
-        schema: "generator-productness-preservation-row-v1",
-        id: format!("generator-productness-v1/{id}/seed={seed}"),
+        schema: "generator-productness-preservation-row-v2",
+        id: format!("generator-productness-v2/{id}/seed={seed}"),
         terminal_status: if pass { "passed" } else { "failed" },
         seed,
         coordinate_order: COORDINATE_ORDER,
@@ -680,8 +681,13 @@ fn preservation_row(
             complementary_four_volume_determinant: qs(&det.abs()),
             q_plane_kahler_residual: qs(&q_residual),
             p_plane_kahler_residual: qs(&p_residual),
-            both_planes_lagrangian: lagrangian,
-            verification: "exact construction witness; Kähler residual is the absolute restriction coefficient |omega(u,v)| in the recorded factor basis (zero iff that two-plane is Lagrangian)",
+            recorded_factor_planes_both_lagrangian: lagrangian,
+            verification: "exact construction witness only; Kähler residual is the absolute restriction coefficient |omega(u,v)| in the recorded factor basis (zero iff that recorded two-plane is Lagrangian); no uniqueness of affine product decomposition is claimed",
+        },
+        alternative_lagrangian_affine_decomposition_status: if lagrangian {
+            "exists-recorded-decomposition"
+        } else {
+            "unknown-not-excluded"
         },
         classifier_failure_interpretation: if coordinate {
             "coordinate recognition succeeds; this is stronger than the separately recorded intrinsic witnesses"
@@ -730,7 +736,7 @@ fn preservation_rows(base: &Fixture, seed: u64) -> Vec<PreservationRow> {
             None,
             ProductnessFlags {
                 coordinate_product: true,
-                lagrangian_product: true,
+                recorded_affine_factor_planes_lagrangian: true,
                 affine_product: true,
                 combinatorial_product: true,
             },
@@ -745,7 +751,7 @@ fn preservation_rows(base: &Fixture, seed: u64) -> Vec<PreservationRow> {
             None,
             ProductnessFlags {
                 coordinate_product: false,
-                lagrangian_product: true,
+                recorded_affine_factor_planes_lagrangian: true,
                 affine_product: true,
                 combinatorial_product: true,
             },
@@ -760,7 +766,7 @@ fn preservation_rows(base: &Fixture, seed: u64) -> Vec<PreservationRow> {
             None,
             ProductnessFlags {
                 coordinate_product: false,
-                lagrangian_product: false,
+                recorded_affine_factor_planes_lagrangian: false,
                 affine_product: true,
                 combinatorial_product: true,
             },
@@ -775,7 +781,7 @@ fn preservation_rows(base: &Fixture, seed: u64) -> Vec<PreservationRow> {
             None,
             ProductnessFlags {
                 coordinate_product: false,
-                lagrangian_product: false,
+                recorded_affine_factor_planes_lagrangian: false,
                 affine_product: true,
                 combinatorial_product: true,
             },
@@ -790,7 +796,7 @@ fn preservation_rows(base: &Fixture, seed: u64) -> Vec<PreservationRow> {
             Some(perturbed),
             ProductnessFlags {
                 coordinate_product: true,
-                lagrangian_product: true,
+                recorded_affine_factor_planes_lagrangian: true,
                 affine_product: true,
                 combinatorial_product: true,
             },
@@ -967,7 +973,7 @@ fn run(args: &Args, command: String) -> Result<Report, String> {
     let boundary_hash = sha256_path(&boundary_temp)?;
     let preservation_hash = sha256_path(&preservation_temp)?;
     let report = Report {
-        schema: "generator-type-cone-productness-report-v1",
+        schema: "generator-type-cone-productness-report-v2",
         terminal_status: "passed",
         command,
         seed: args.seed,
@@ -994,6 +1000,7 @@ fn run(args: &Args, command: String) -> Result<Report, String> {
             "complete characterization of a type-cone chamber",
             "population frequency, generator-law ranking, target transfer, mechanism, or intrinsic dimension",
             "loss of productness from failure of the ambient coordinate-product classifier",
+            "nonexistence of a Lagrangian affine product decomposition when the recorded factor planes have nonzero Kähler residuals",
             "any sys or capacity conclusion",
         ],
         deferrals: vec![
@@ -1006,6 +1013,11 @@ fn run(args: &Args, command: String) -> Result<Report, String> {
                 item: "graph Cartesian factorization and affine-factor recovery from an unknown realization",
                 status: "deferred",
                 reason: "the exact construction witnesses and full incidence controls answer this smoke without expanding into a separate recovery/classification packet",
+            },
+            Deferral {
+                item: "existence or exclusion of alternative Lagrangian affine product decompositions",
+                status: "deferred",
+                reason: "nonzero Kähler residuals rule out only the recorded source-labeled affine factor planes; no uniqueness theorem or exhaustive alternative-decomposition recovery is implemented",
             },
         ],
     };
@@ -1081,18 +1093,22 @@ mod tests {
     }
 
     #[test]
-    fn productness_hierarchy_separates_coordinate_from_intrinsic() {
+    fn productness_hierarchy_separates_coordinate_from_recorded_factor_planes() {
         let rows = preservation_rows(&fixture("exact-3x3-product", 3, 3), 20260715);
         assert_eq!(rows.len(), 5);
         assert!(rows.iter().all(|x| x.terminal_status == "passed"));
         assert!(rows[0].productness.coordinate_product);
         assert!(rows[0].transform_is_orthogonal);
         assert!(rows[0].transform_is_symplectic);
-        assert!(rows[1].productness.lagrangian_product);
+        assert!(rows[1].productness.recorded_affine_factor_planes_lagrangian);
         assert!(!rows[1].productness.coordinate_product);
         assert!(rows[1].transform_is_orthogonal);
         assert!(rows[1].transform_is_symplectic);
-        assert!(!rows[2].productness.lagrangian_product);
+        assert!(!rows[2].productness.recorded_affine_factor_planes_lagrangian);
+        assert_eq!(
+            rows[2].alternative_lagrangian_affine_decomposition_status,
+            "unknown-not-excluded"
+        );
         assert!(rows[2].productness.affine_product);
         assert!(rows[2].transform_is_orthogonal);
         assert!(!rows[2].transform_is_symplectic);
@@ -1101,6 +1117,30 @@ mod tests {
         assert_eq!(rows[3].transform_determinant, "1");
         assert!(!rows[3].transform_is_orthogonal);
         assert!(rows[4].productness.coordinate_product);
+    }
+
+    fn json_has_key(value: &serde_json::Value, forbidden: &str) -> bool {
+        match value {
+            serde_json::Value::Object(object) => {
+                object.contains_key(forbidden)
+                    || object.values().any(|child| json_has_key(child, forbidden))
+            }
+            serde_json::Value::Array(array) => {
+                array.iter().any(|child| json_has_key(child, forbidden))
+            }
+            _ => false,
+        }
+    }
+
+    #[test]
+    fn schema_does_not_claim_unproved_existential_lagrangian_product() {
+        let rows = preservation_rows(&fixture("exact-3x3-product", 3, 3), 20260715);
+        let payload = serde_json::to_value(&rows).unwrap();
+        assert!(!json_has_key(&payload, "lagrangian_product"));
+        assert!(rows.iter().all(|row| {
+            row.productness.recorded_affine_factor_planes_lagrangian
+                || row.alternative_lagrangian_affine_decomposition_status == "unknown-not-excluded"
+        }));
     }
 
     #[test]
