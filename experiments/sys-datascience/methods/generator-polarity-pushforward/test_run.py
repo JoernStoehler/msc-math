@@ -33,6 +33,7 @@ class PolarityPacketTests(unittest.TestCase):
             self.assertTrue(all(r["bounded"] and r["irredundant"] for r in rows))
             self.assertTrue(all(r["preserved_double_residual"] == 0.0 for r in rows))
             self.assertTrue(all(r["centroid_double_residual"] == 0.0 for r in rows))
+            self.assertTrue(all("all fields below are exact" not in r["rationalization"] for r in rows))
             fixtures = {r["fixture"]: r for r in json.loads((a / "fixtures.json").read_text())}
             self.assertEqual(fixtures["marked-double-polar"]["residual"], 0.0)
             self.assertEqual(fixtures["centroid-translation-covariance"]["residual"], 0.0)
@@ -80,6 +81,10 @@ class PolarityPacketTests(unittest.TestCase):
             manifest = json.loads((out / "manifest.json").read_text())
             self.assertEqual(manifest["seeds"], [20260715, 20260716, 20260717])
             self.assertTrue(all(all(value == 8 for value in counts.values()) for counts in manifest["seed_stratum_counts"].values()))
+            exact_boundary = manifest["exact_boundary"]
+            self.assertIn("rational vertices/facets/incidence/areas/centroids/polars/Mahler", exact_boundary)
+            self.assertIn("stored residual numbers are f64 diagnostics", exact_boundary)
+            self.assertIn("/tmp/polarity-artifacts/", (out / "REPORT.md").read_text())
 
     def test_fail_closed_minimum_panel(self):
         proc = subprocess.run(["python3", str(HERE / "run.py"), "--per-stratum", "23"], cwd=HERE.parents[4], text=True, capture_output=True)
