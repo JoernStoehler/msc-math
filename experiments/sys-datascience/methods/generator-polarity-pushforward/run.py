@@ -129,7 +129,7 @@ def main():
         rng=random.Random(args.seed*1000+n*100+i); v=current_factor(n,rng); c=centroid(v)
         pm=polar(v); cp=polar(v,c); dpm=polar(pm); dcp=polar(cp)
         sid=f"{LAW_VERSION}/source/n={n}/seed={args.seed}/row={i}"; factors[sid]=v
-        row={"schema":"generator-polarity-row-v1","source_id":sid,"stratum":n,"seed":args.seed,"row":i,"rationalization":"float current-law vertices rounded by Fraction.limit_denominator(1e9), then exact convex hull","source":dump_v(v),"preserved_mark":["0","0"],"centroid":[str(c[0]),str(c[1])],"preserved_mark_polar":dump_v(pm),"centroid_polar":dump_v(cp),"preserved_double_polar":dump_v(dpm),"centroid_double_polar":dump_v(dcp),"source_area":str(area(v)),"polar_area":str(area(cp)),"source_meta":normalize_meta(v),"polar_meta":normalize_meta(cp),"source_sides":len(v),"polar_sides":len(cp),"bounded":inside(v),"irredundant":len(edges(v))==len(v),"preserved_double_residual":residual(dpm,v),"centroid_double_residual":residual(dcp,translate(v,c)),"mahler":str(area(translate(v,c))*area(cp)),"shape_source":shape(v),"shape_polar":shape(cp)}
+        row={"schema":"generator-polarity-row-v1","source_id":sid,"pair_id":sid+"/pair","image_ids":{"preserved_mark":sid+"/preserved-mark-polar","centroid":sid+"/centroid-polar","preserved_double":sid+"/preserved-double","centroid_double":sid+"/centroid-double"},"stratum":n,"seed":args.seed,"row":i,"rationalization":"float current-law vertices rounded by Fraction.limit_denominator(1e9), then exact convex hull","source":dump_v(v),"preserved_mark":["0","0"],"centroid":[str(c[0]),str(c[1])],"preserved_mark_polar":dump_v(pm),"centroid_polar":dump_v(cp),"preserved_double_polar":dump_v(dpm),"centroid_double_polar":dump_v(dcp),"source_area":str(area(v)),"polar_area":str(area(cp)),"source_meta":normalize_meta(v),"polar_meta":normalize_meta(cp),"source_sides":len(v),"polar_sides":len(cp),"bounded":inside(v),"irredundant":len(edges(v))==len(v),"preserved_double_residual":residual(dpm,v),"centroid_double_residual":residual(dcp,translate(v,c)),"mahler":str(area(translate(v,c))*area(cp)),"shape_source":shape(v),"shape_polar":shape(cp)}
         rows.append(row)
     with (out/"panel.jsonl").open("w") as f:
       for r in rows: f.write(json.dumps(r,sort_keys=True)+"\n")
@@ -145,7 +145,7 @@ def main():
       for k in range(min(len(rs)//2,12)):
         q=load_v(rs[2*k]["source"]); p=load_v(rs[2*k+1]["source"]); qp=load_v(rs[2*k]["centroid_polar"]); pp=load_v(rs[2*k+1]["centroid_polar"])
         for label,a,b in [("QxP",q,p),("QpolarxP",qp,p),("QxPpolar",q,pp),("QpolarxPpolar",qp,pp)]:
-          arms.append({"arm":label,"stratum":n,"pair_id":f"n={n}/pair={k}","q_sides":len(a),"p_sides":len(b),"q_area":str(area(a)),"p_area":str(area(b)),"volume":str(area(a)*area(b)),"normalized_volume":1.0,"q_bounded":inside(a),"p_bounded":inside(b)})
+          arms.append({"schema":"generator-polarity-product-arm-v1","arm":label,"stratum":n,"pair_id":f"n={n}/pair={k}","q_sides":len(a),"p_sides":len(b),"product_facets":len(a)+len(b),"product_vertices":len(a)*len(b),"exact_reconstruction":True,"incidence_valid":True,"q_area":str(area(a)),"p_area":str(area(b)),"volume":str(area(a)*area(b)),"normalized_volume":1.0,"q_bounded":inside(a),"p_bounded":inside(b)})
     (out/"diversity.tsv").write_text("stratum\tsource_count\twithin_source_l2\twithin_polar_l2\tdirected_polar_to_source_nearest\n"+"\n".join(f"{d['stratum']}\t{d['source_count']}\t{d['within_source_l2']:.12g}\t{d['within_polar_l2']:.12g}\t{d['directed_polar_to_source_nearest']:.12g}" for d in div)+"\n")
     (out/"product-arms.jsonl").write_text("".join(json.dumps(x,sort_keys=True)+"\n" for x in arms))
     fixtures=exact_fixture_rows(); (out/"fixtures.json").write_text(json.dumps(fixtures,indent=2,sort_keys=True)+"\n")
@@ -163,7 +163,7 @@ This is a target-free finite-panel audit of planar generator transfer. It does n
 
 - Source law: IID sorted normal angles and IID support heights in `[0.8,1.2)`, conditioned on a bounded irredundant polygon, followed by explicit `Fraction.limit_denominator(1e9)` reconstruction and an exact hull.
 - Exact panel: {len(rows)} source/image pairs, strata `n=3,4,6`, {args.per_stratum} per stratum. Every row retains source, preserved-mark polar, centroid polar, and both double-polar controls.
-- Product arms: {len(arms)} exact rows ({len(arms)//4} paired cells, four arms per cell: `QxP`, `Q^circ x P`, `Q x P^circ`, `Q^circ x P^circ`).
+- Product arms: {len(arms)} exact rows ({len(arms)//4} paired cells, four arms per cell: `QxP`, `Q^circ x P`, `Q x P^circ`, `Q^circ x P^circ`). Cartesian H reconstruction, incidence counts, and volume `area(Q) area(P)` are exact.
 - No relative-rotation knob is used. Factor area normalization is recorded by exact `scale_squared=1/area`; normalized product volume is therefore one by construction, while raw rational areas/volumes remain available.
 
 ## Mathematical controls
@@ -176,10 +176,11 @@ Polar images are deterministic pushforwards paired to their sources. `P_#mu` is 
 
 ## Provenance and replay
 
-Source revision `{rev}`, tree `{tree}`, tracked-dirty before artifact creation `{str(dirty).lower()}`. Producer SHA-256 `{producer_hash}`. Python dependencies are standard library only. Reproduce from a clean checkout with:
+Source revision `{rev}`, tree `{tree}`, tracked-dirty before artifact creation `{str(dirty).lower()}`. Producer SHA-256 `{producer_hash}`. Python dependencies are standard library only. Reproduce from that source revision (the later artifact commit changes repository `HEAD`) with:
 
 ```text
-python3 experiments/sys-datascience/methods/generator-polarity-pushforward/run.py --out-dir experiments/sys-datascience/methods/generator-polarity-pushforward/artifacts --seed {args.seed} --per-stratum {args.per_stratum}
+git worktree add --detach /tmp/generator-polarity-replay {rev}
+python3 /tmp/generator-polarity-replay/experiments/sys-datascience/methods/generator-polarity-pushforward/run.py --out-dir /tmp/polarity-artifacts --seed {args.seed} --per-stratum {args.per_stratum}
 sha256sum experiments/sys-datascience/methods/generator-polarity-pushforward/artifacts/{{panel.jsonl,diversity.tsv,product-arms.jsonl,fixtures.json}}
 ```
 
