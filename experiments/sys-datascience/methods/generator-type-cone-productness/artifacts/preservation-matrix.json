@@ -1,0 +1,697 @@
+[
+  {
+    "schema": "generator-productness-preservation-row-v1",
+    "id": "generator-productness-v1/exact-coordinate-product/seed=20260715",
+    "terminal_status": "passed",
+    "seed": 20260715,
+    "coordinate_order": "q1,q2,p1,p2",
+    "transform_row_major": [
+      [
+        "1",
+        "0",
+        "0",
+        "0"
+      ],
+      [
+        "0",
+        "1",
+        "0",
+        "0"
+      ],
+      [
+        "0",
+        "0",
+        "1",
+        "0"
+      ],
+      [
+        "0",
+        "0",
+        "0",
+        "1"
+      ]
+    ],
+    "transform_determinant": "1",
+    "exact_orthogonality_residual_max": "0",
+    "exact_symplectic_residual_max": "0",
+    "transform_is_orthogonal": true,
+    "transform_is_symplectic": true,
+    "expected_transform_is_orthogonal": true,
+    "expected_transform_is_symplectic": true,
+    "expected_productness": {
+      "coordinate_product": true,
+      "lagrangian_product": true,
+      "affine_product": true,
+      "combinatorial_product": true
+    },
+    "transformed_facet_normals": [
+      [
+        "1",
+        "0",
+        "0",
+        "0"
+      ],
+      [
+        "0",
+        "1",
+        "0",
+        "0"
+      ],
+      [
+        "-1",
+        "-1",
+        "0",
+        "0"
+      ],
+      [
+        "0",
+        "0",
+        "1",
+        "0"
+      ],
+      [
+        "0",
+        "0",
+        "0",
+        "1"
+      ],
+      [
+        "0",
+        "0",
+        "-1",
+        "-1"
+      ]
+    ],
+    "transformed_facet_supports": [
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1"
+    ],
+    "productness": {
+      "coordinate_product": true,
+      "lagrangian_product": true,
+      "affine_product": true,
+      "combinatorial_product": true
+    },
+    "coordinate_product_recognition": "recognized exactly from the labeled q-only and p-only normal blocks",
+    "intrinsic_affine_product_witness": "the recorded invertible linear transform maps the exact source product and its two factor planes to this realization",
+    "combinatorial_evidence": "full exact vertex enumeration preserves the labeled source incidence; simplicity (four active facets per vertex) is checked explicitly; no graph-factorization theorem is invoked",
+    "exact_facet_labeled_incidence_multiset_preserved": true,
+    "exact_reconstruction_simple": true,
+    "factor_planes": {
+      "factor_q_basis_columns": [
+        [
+          "1",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "1",
+          "0",
+          "0"
+        ]
+      ],
+      "factor_p_basis_columns": [
+        [
+          "0",
+          "0",
+          "1",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0",
+          "1"
+        ]
+      ],
+      "complementary_four_volume_determinant": "1",
+      "q_plane_kahler_residual": "0",
+      "p_plane_kahler_residual": "0",
+      "both_planes_lagrangian": true,
+      "verification": "exact construction witness; Kähler residual is the absolute restriction coefficient |omega(u,v)| in the recorded factor basis (zero iff that two-plane is Lagrangian)"
+    },
+    "classifier_failure_interpretation": "coordinate recognition succeeds; this is stronger than the separately recorded intrinsic witnesses"
+  },
+  {
+    "schema": "generator-productness-preservation-row-v1",
+    "id": "generator-productness-v1/exact-u2-image/seed=20260715",
+    "terminal_status": "passed",
+    "seed": 20260715,
+    "coordinate_order": "q1,q2,p1,p2",
+    "transform_row_major": [
+      [
+        "3/5",
+        "0",
+        "-4/5",
+        "0"
+      ],
+      [
+        "0",
+        "3/5",
+        "0",
+        "-4/5"
+      ],
+      [
+        "4/5",
+        "0",
+        "3/5",
+        "0"
+      ],
+      [
+        "0",
+        "4/5",
+        "0",
+        "3/5"
+      ]
+    ],
+    "transform_determinant": "1",
+    "exact_orthogonality_residual_max": "0",
+    "exact_symplectic_residual_max": "0",
+    "transform_is_orthogonal": true,
+    "transform_is_symplectic": true,
+    "expected_transform_is_orthogonal": true,
+    "expected_transform_is_symplectic": true,
+    "expected_productness": {
+      "coordinate_product": false,
+      "lagrangian_product": true,
+      "affine_product": true,
+      "combinatorial_product": true
+    },
+    "transformed_facet_normals": [
+      [
+        "3/5",
+        "0",
+        "4/5",
+        "0"
+      ],
+      [
+        "0",
+        "3/5",
+        "0",
+        "4/5"
+      ],
+      [
+        "-3/5",
+        "-3/5",
+        "-4/5",
+        "-4/5"
+      ],
+      [
+        "-4/5",
+        "0",
+        "3/5",
+        "0"
+      ],
+      [
+        "0",
+        "-4/5",
+        "0",
+        "3/5"
+      ],
+      [
+        "4/5",
+        "4/5",
+        "-3/5",
+        "-3/5"
+      ]
+    ],
+    "transformed_facet_supports": [
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1"
+    ],
+    "productness": {
+      "coordinate_product": false,
+      "lagrangian_product": true,
+      "affine_product": true,
+      "combinatorial_product": true
+    },
+    "coordinate_product_recognition": "not recognized in the ambient coordinate q/p split",
+    "intrinsic_affine_product_witness": "the recorded invertible linear transform maps the exact source product and its two factor planes to this realization",
+    "combinatorial_evidence": "full exact vertex enumeration preserves the labeled source incidence; simplicity (four active facets per vertex) is checked explicitly; no graph-factorization theorem is invoked",
+    "exact_facet_labeled_incidence_multiset_preserved": true,
+    "exact_reconstruction_simple": true,
+    "factor_planes": {
+      "factor_q_basis_columns": [
+        [
+          "3/5",
+          "0",
+          "4/5",
+          "0"
+        ],
+        [
+          "0",
+          "3/5",
+          "0",
+          "4/5"
+        ]
+      ],
+      "factor_p_basis_columns": [
+        [
+          "-4/5",
+          "0",
+          "3/5",
+          "0"
+        ],
+        [
+          "0",
+          "-4/5",
+          "0",
+          "3/5"
+        ]
+      ],
+      "complementary_four_volume_determinant": "1",
+      "q_plane_kahler_residual": "0",
+      "p_plane_kahler_residual": "0",
+      "both_planes_lagrangian": true,
+      "verification": "exact construction witness; Kähler residual is the absolute restriction coefficient |omega(u,v)| in the recorded factor basis (zero iff that two-plane is Lagrangian)"
+    },
+    "classifier_failure_interpretation": "coordinate recognition failure is not loss of affine or combinatorial productness"
+  },
+  {
+    "schema": "generator-productness-preservation-row-v1",
+    "id": "generator-productness-v1/exact-generic-so4-image/seed=20260715",
+    "terminal_status": "passed",
+    "seed": 20260715,
+    "coordinate_order": "q1,q2,p1,p2",
+    "transform_row_major": [
+      [
+        "-12639/27625",
+        "-19148/27625",
+        "-72/221",
+        "-192/425"
+      ],
+      [
+        "4/13",
+        "3/13",
+        "-12/13",
+        "0"
+      ],
+      [
+        "384/1105",
+        "288/1105",
+        "40/221",
+        "-15/17"
+      ],
+      [
+        "20952/27625",
+        "-17436/27625",
+        "21/221",
+        "56/425"
+      ]
+    ],
+    "transform_determinant": "1",
+    "exact_orthogonality_residual_max": "0",
+    "exact_symplectic_residual_max": "977/1625",
+    "transform_is_orthogonal": true,
+    "transform_is_symplectic": false,
+    "expected_transform_is_orthogonal": true,
+    "expected_transform_is_symplectic": false,
+    "expected_productness": {
+      "coordinate_product": false,
+      "lagrangian_product": false,
+      "affine_product": true,
+      "combinatorial_product": true
+    },
+    "transformed_facet_normals": [
+      [
+        "-12639/27625",
+        "4/13",
+        "384/1105",
+        "20952/27625"
+      ],
+      [
+        "-19148/27625",
+        "3/13",
+        "288/1105",
+        "-17436/27625"
+      ],
+      [
+        "31787/27625",
+        "-7/13",
+        "-672/1105",
+        "-3516/27625"
+      ],
+      [
+        "-72/221",
+        "-12/13",
+        "40/221",
+        "21/221"
+      ],
+      [
+        "-192/425",
+        "0",
+        "-15/17",
+        "56/425"
+      ],
+      [
+        "4296/5525",
+        "12/13",
+        "155/221",
+        "-1253/5525"
+      ]
+    ],
+    "transformed_facet_supports": [
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1"
+    ],
+    "productness": {
+      "coordinate_product": false,
+      "lagrangian_product": false,
+      "affine_product": true,
+      "combinatorial_product": true
+    },
+    "coordinate_product_recognition": "not recognized in the ambient coordinate q/p split",
+    "intrinsic_affine_product_witness": "the recorded invertible linear transform maps the exact source product and its two factor planes to this realization",
+    "combinatorial_evidence": "full exact vertex enumeration preserves the labeled source incidence; simplicity (four active facets per vertex) is checked explicitly; no graph-factorization theorem is invoked",
+    "exact_facet_labeled_incidence_multiset_preserved": true,
+    "exact_reconstruction_simple": true,
+    "factor_planes": {
+      "factor_q_basis_columns": [
+        [
+          "-12639/27625",
+          "4/13",
+          "384/1105",
+          "20952/27625"
+        ],
+        [
+          "-19148/27625",
+          "3/13",
+          "288/1105",
+          "-17436/27625"
+        ]
+      ],
+      "factor_p_basis_columns": [
+        [
+          "-72/221",
+          "-12/13",
+          "40/221",
+          "21/221"
+        ],
+        [
+          "-192/425",
+          "0",
+          "-15/17",
+          "56/425"
+        ]
+      ],
+      "complementary_four_volume_determinant": "1",
+      "q_plane_kahler_residual": "1368/5525",
+      "p_plane_kahler_residual": "1368/5525",
+      "both_planes_lagrangian": false,
+      "verification": "exact construction witness; Kähler residual is the absolute restriction coefficient |omega(u,v)| in the recorded factor basis (zero iff that two-plane is Lagrangian)"
+    },
+    "classifier_failure_interpretation": "coordinate recognition failure is not loss of affine or combinatorial productness"
+  },
+  {
+    "schema": "generator-productness-preservation-row-v1",
+    "id": "generator-productness-v1/exact-sl4-image/seed=20260715",
+    "terminal_status": "passed",
+    "seed": 20260715,
+    "coordinate_order": "q1,q2,p1,p2",
+    "transform_row_major": [
+      [
+        "1",
+        "0",
+        "1",
+        "1"
+      ],
+      [
+        "0",
+        "1",
+        "0",
+        "0"
+      ],
+      [
+        "0",
+        "1",
+        "1",
+        "0"
+      ],
+      [
+        "0",
+        "0",
+        "0",
+        "1"
+      ]
+    ],
+    "transform_determinant": "1",
+    "exact_orthogonality_residual_max": "1",
+    "exact_symplectic_residual_max": "1",
+    "transform_is_orthogonal": false,
+    "transform_is_symplectic": false,
+    "expected_transform_is_orthogonal": false,
+    "expected_transform_is_symplectic": false,
+    "expected_productness": {
+      "coordinate_product": false,
+      "lagrangian_product": false,
+      "affine_product": true,
+      "combinatorial_product": true
+    },
+    "transformed_facet_normals": [
+      [
+        "1",
+        "1",
+        "-1",
+        "-1"
+      ],
+      [
+        "0",
+        "1",
+        "0",
+        "0"
+      ],
+      [
+        "-1",
+        "-2",
+        "1",
+        "1"
+      ],
+      [
+        "0",
+        "-1",
+        "1",
+        "0"
+      ],
+      [
+        "0",
+        "0",
+        "0",
+        "1"
+      ],
+      [
+        "0",
+        "1",
+        "-1",
+        "-1"
+      ]
+    ],
+    "transformed_facet_supports": [
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1"
+    ],
+    "productness": {
+      "coordinate_product": false,
+      "lagrangian_product": false,
+      "affine_product": true,
+      "combinatorial_product": true
+    },
+    "coordinate_product_recognition": "not recognized in the ambient coordinate q/p split",
+    "intrinsic_affine_product_witness": "the recorded invertible linear transform maps the exact source product and its two factor planes to this realization",
+    "combinatorial_evidence": "full exact vertex enumeration preserves the labeled source incidence; simplicity (four active facets per vertex) is checked explicitly; no graph-factorization theorem is invoked",
+    "exact_facet_labeled_incidence_multiset_preserved": true,
+    "exact_reconstruction_simple": true,
+    "factor_planes": {
+      "factor_q_basis_columns": [
+        [
+          "1",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "1",
+          "1",
+          "0"
+        ]
+      ],
+      "factor_p_basis_columns": [
+        [
+          "1",
+          "0",
+          "1",
+          "0"
+        ],
+        [
+          "1",
+          "0",
+          "0",
+          "1"
+        ]
+      ],
+      "complementary_four_volume_determinant": "1",
+      "q_plane_kahler_residual": "1",
+      "p_plane_kahler_residual": "1",
+      "both_planes_lagrangian": false,
+      "verification": "exact construction witness; Kähler residual is the absolute restriction coefficient |omega(u,v)| in the recorded factor basis (zero iff that two-plane is Lagrangian)"
+    },
+    "classifier_failure_interpretation": "coordinate recognition failure is not loss of affine or combinatorial productness"
+  },
+  {
+    "schema": "generator-productness-preservation-row-v1",
+    "id": "generator-productness-v1/same-incidence-fixed-normal-half-boundary-perturbation/seed=20260715",
+    "terminal_status": "passed",
+    "seed": 20260715,
+    "coordinate_order": "q1,q2,p1,p2",
+    "transform_row_major": [
+      [
+        "1",
+        "0",
+        "0",
+        "0"
+      ],
+      [
+        "0",
+        "1",
+        "0",
+        "0"
+      ],
+      [
+        "0",
+        "0",
+        "1",
+        "0"
+      ],
+      [
+        "0",
+        "0",
+        "0",
+        "1"
+      ]
+    ],
+    "transform_determinant": "1",
+    "exact_orthogonality_residual_max": "0",
+    "exact_symplectic_residual_max": "0",
+    "transform_is_orthogonal": true,
+    "transform_is_symplectic": true,
+    "expected_transform_is_orthogonal": true,
+    "expected_transform_is_symplectic": true,
+    "expected_productness": {
+      "coordinate_product": true,
+      "lagrangian_product": true,
+      "affine_product": true,
+      "combinatorial_product": true
+    },
+    "transformed_facet_normals": [
+      [
+        "1",
+        "0",
+        "0",
+        "0"
+      ],
+      [
+        "0",
+        "1",
+        "0",
+        "0"
+      ],
+      [
+        "-1",
+        "-1",
+        "0",
+        "0"
+      ],
+      [
+        "0",
+        "0",
+        "1",
+        "0"
+      ],
+      [
+        "0",
+        "0",
+        "0",
+        "1"
+      ],
+      [
+        "0",
+        "0",
+        "-1",
+        "-1"
+      ]
+    ],
+    "transformed_facet_supports": [
+      "3/10",
+      "7/10",
+      "1/2",
+      "8/5",
+      "11/10",
+      "8/5"
+    ],
+    "productness": {
+      "coordinate_product": true,
+      "lagrangian_product": true,
+      "affine_product": true,
+      "combinatorial_product": true
+    },
+    "coordinate_product_recognition": "recognized exactly from the labeled q-only and p-only normal blocks",
+    "intrinsic_affine_product_witness": "the recorded invertible linear transform maps the exact source product and its two factor planes to this realization",
+    "combinatorial_evidence": "full exact vertex enumeration preserves the labeled source incidence; simplicity (four active facets per vertex) is checked explicitly; no graph-factorization theorem is invoked",
+    "exact_facet_labeled_incidence_multiset_preserved": true,
+    "exact_reconstruction_simple": true,
+    "factor_planes": {
+      "factor_q_basis_columns": [
+        [
+          "1",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "1",
+          "0",
+          "0"
+        ]
+      ],
+      "factor_p_basis_columns": [
+        [
+          "0",
+          "0",
+          "1",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0",
+          "1"
+        ]
+      ],
+      "complementary_four_volume_determinant": "1",
+      "q_plane_kahler_residual": "0",
+      "p_plane_kahler_residual": "0",
+      "both_planes_lagrangian": true,
+      "verification": "exact construction witness; Kähler residual is the absolute restriction coefficient |omega(u,v)| in the recorded factor basis (zero iff that two-plane is Lagrangian)"
+    },
+    "classifier_failure_interpretation": "coordinate recognition succeeds; this is stronger than the separately recorded intrinsic witnesses"
+  }
+]

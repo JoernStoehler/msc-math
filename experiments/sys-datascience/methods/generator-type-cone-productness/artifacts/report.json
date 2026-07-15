@@ -1,0 +1,43 @@
+{
+  "schema": "generator-type-cone-productness-report-v1",
+  "terminal_status": "passed",
+  "command": "cargo run -p exp-sys-landscape --bin sys-datascience-generator-type-cone-productness -- --out-dir experiments/sys-datascience/methods/generator-type-cone-productness/artifacts --seed 20260715",
+  "seed": 20260715,
+  "boundary_rows": 6,
+  "boundary_passed": 6,
+  "preservation_rows": 5,
+  "preservation_passed": 5,
+  "source_revision": "9b119a9c206260384cee68f8a06e9ead0cbb5ae4",
+  "source_repository_tree": "c65e273cb41cd667478b156bae51617a39df00cb",
+  "source_tracked_clean": true,
+  "producer_source_sha256": "9ce3eb6c59cb6178b048bae9030b45337e263652efdcdaabd22baf4c528abd51",
+  "cargo_lock_sha256": "9e59bc0ed96aeccce2decc178beff2f224702174122ccf55d158fb009ef96d1e",
+  "boundary_artifact_sha256": "1c9151f37d5120ed3f23c2254ea07f4398a636592eb6b1e8f183ed93b4d8c979",
+  "preservation_artifact_sha256": "0f94efd65f630bb43b459ebf54f4feaec2ea654f6ac8c190944dcc1228db2d9c",
+  "build_source_closure": "The full repository revision/tree plus repo-wide tracked-clean predicate bind tracked transitive inputs; file hashes are convenient local checks, not the closure definition.",
+  "independence_unit": "This deterministic smoke has two constructed boundary fixtures and five constructed preservation controls. Rows sharing a fixture/direction are paired diagnostic views, not independent samples.",
+  "local_slack_system_boundary": "Only inactive slacks of the declared intended simple vertices are used for first-boundary timing. Full exact vertex enumeration independently checks each pre-boundary sample, but this packet does not claim a complete global type-cone chamber characterization.",
+  "allowed_claims": [
+    "the exact implementation realizes paired 0.1, 0.5, and 0.9 fractions before the first local inactive-slack boundary for the two named fixtures",
+    "the named translation, positive-scale, exact reconstruction, labeled-incidence, and boundary-witness controls pass for this deterministic smoke",
+    "the explicit image constructions preserve affine/combinatorial productness even where ambient coordinate-product recognition fails"
+  ],
+  "prohibited_claims": [
+    "complete characterization of a type-cone chamber",
+    "population frequency, generator-law ranking, target transfer, mechanism, or intrinsic dimension",
+    "loss of productness from failure of the ambient coordinate-product classifier",
+    "any sys or capacity conclusion"
+  ],
+  "deferrals": [
+    {
+      "item": "projective/Hilbert-type slack-ratio distance",
+      "status": "deferred",
+      "reason": "not needed for the boundary-fraction decision; no domain/finite-value contract was introduced"
+    },
+    {
+      "item": "graph Cartesian factorization and affine-factor recovery from an unknown realization",
+      "status": "deferred",
+      "reason": "the exact construction witnesses and full incidence controls answer this smoke without expanding into a separate recovery/classification packet"
+    }
+  ]
+}
