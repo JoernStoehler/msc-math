@@ -1,0 +1,196 @@
+{
+  "allowed_interpretation": "Target-free descriptive geometry and conditioning-aware generator calibration on the declared finite panel.",
+  "artifacts": {
+    "attempts": "attempts.jsonl",
+    "complete_fans": "complete-fans.jsonl",
+    "cv_matching": "cv-matching.jsonl",
+    "directed_overlap": "directed-overlap.jsonl",
+    "fans": "fans.jsonl",
+    "metric_summaries": "metric-summaries.jsonl",
+    "paired_distances": "paired-distances.jsonl",
+    "sigma_monotonicity": "sigma-monotonicity.jsonl",
+    "within_diversity": "within-diversity.jsonl"
+  },
+  "calibration_results": {
+    "cv_match_evaluable": 30,
+    "cv_match_failed": 4,
+    "cv_match_not_evaluable": 6,
+    "cv_match_passed": 26,
+    "cv_match_total_predeclared": 36,
+    "sigma_monotonic_evaluable": 60,
+    "sigma_monotonic_failed": 16,
+    "sigma_monotonic_not_evaluable": 12,
+    "sigma_monotonic_passed": 44,
+    "sigma_monotonic_total_predeclared": 72
+  },
+  "command": "experiments/sys-datascience/methods/generator-support-process-atlas/run.py",
+  "counts": {
+    "accepted_arm_attempts": 1295,
+    "complete_fans": 74,
+    "complete_fans_by_side_count_seed": [
+      {
+        "complete_fans": 18,
+        "seed": 1201,
+        "side_count": 4
+      },
+      {
+        "complete_fans": 16,
+        "seed": 2203,
+        "side_count": 4
+      },
+      {
+        "complete_fans": 19,
+        "seed": 3209,
+        "side_count": 4
+      },
+      {
+        "complete_fans": 3,
+        "seed": 1201,
+        "side_count": 6
+      },
+      {
+        "complete_fans": 9,
+        "seed": 2203,
+        "side_count": 6
+      },
+      {
+        "complete_fans": 9,
+        "seed": 3209,
+        "side_count": 6
+      },
+      {
+        "complete_fans": 0,
+        "seed": 1201,
+        "side_count": 8
+      },
+      {
+        "complete_fans": 0,
+        "seed": 2203,
+        "side_count": 8
+      },
+      {
+        "complete_fans": 0,
+        "seed": 3209,
+        "side_count": 8
+      }
+    ],
+    "complete_subset_empty_strata": [
+      {
+        "complete_fans": 0,
+        "seed": 1201,
+        "side_count": 8
+      },
+      {
+        "complete_fans": 0,
+        "seed": 2203,
+        "side_count": 8
+      },
+      {
+        "complete_fans": 0,
+        "seed": 3209,
+        "side_count": 8
+      }
+    ],
+    "expected_arm_attempts": 2592,
+    "expected_fans": 432,
+    "failed_arm_attempts": 1297,
+    "failures_by_arm": {
+      "current_uniform_0.8_1.2": {
+        "inactive_facet_or_infeasible_intersection": 187,
+        "unbounded_normal_fan": 119
+      },
+      "equal": {
+        "unbounded_normal_fan": 119
+      },
+      "iid_log_sigma_0.1": {
+        "inactive_facet_or_infeasible_intersection": 172,
+        "unbounded_normal_fan": 119
+      },
+      "iid_log_sigma_0.2": {
+        "inactive_facet_or_infeasible_intersection": 219,
+        "unbounded_normal_fan": 119
+      },
+      "smooth_log_r2_sd_0.1": {
+        "unbounded_normal_fan": 119
+      },
+      "smooth_log_r3_sd_0.1": {
+        "inactive_facet_or_infeasible_intersection": 5,
+        "unbounded_normal_fan": 119
+      }
+    },
+    "observed_arm_attempts": 2592,
+    "observed_fans": 432
+  },
+  "design": {
+    "area_and_translation_normalization": "accepted polygons scaled to area one and translated by their area centroid",
+    "arms": [
+      "equal",
+      "current_uniform_0.8_1.2",
+      "iid_log_sigma_0.1",
+      "iid_log_sigma_0.2",
+      "smooth_log_r2_sd_0.1",
+      "smooth_log_r3_sd_0.1"
+    ],
+    "complete_boundary": "subset of fan_ids on which every requested arm accepted; not the original marginal laws",
+    "fans_per_seed_side_count": 48,
+    "marginal_boundary": "all arm attempts on all requested frozen fans",
+    "normal_fan_policy": "one deterministic IID-uniform sorted fan per fan_id; never redrawn after any arm failure",
+    "seeds": [
+      1201,
+      2203,
+      3209
+    ],
+    "side_counts": [
+      4,
+      6,
+      8
+    ],
+    "support_grid_size": 64,
+    "support_latent_policy": "one deterministic independent latent per fan_id/arm; never redrawn after failure"
+  },
+  "law_version": "generator-support-process-atlas-v1",
+  "predeclared_questions": {
+    "cv_absolute_match_tolerance": 0.02,
+    "post_hoc_tuning_performed": false,
+    "sigma_ladder": [
+      "equal",
+      "iid_log_sigma_0.1",
+      "iid_log_sigma_0.2"
+    ],
+    "sigma_metrics": [
+      "support_cv",
+      "log_support_roughness",
+      "source_support_l2",
+      "width_anisotropy"
+    ],
+    "smooth_vs_iid_cv_pairs": [
+      [
+        "iid_log_sigma_0.1",
+        "smooth_log_r2_sd_0.1"
+      ],
+      [
+        "iid_log_sigma_0.1",
+        "smooth_log_r3_sd_0.1"
+      ]
+    ]
+  },
+  "prohibited_interpretation": "No sys/capacity, population support or density, natural-law ranking, causal mechanism, or thesis theorem claim.",
+  "provenance": {
+    "python_implementation": "CPython",
+    "python_version": "3.12.3",
+    "snapshot_timing": "captured before artifact directory creation",
+    "source_hashes": {
+      "experiments/sys-datascience/methods/generator-support-process-atlas/README.md": "c25bd726692caff390fb6f318c3a41955666d0727ec73c81b3575de36f10a996",
+      "experiments/sys-datascience/methods/generator-support-process-atlas/run.py": "6f9ab27e9bc08c4e7b7459d925ad386f243c330a36e3858d948859df3c26b8ae",
+      "experiments/sys-datascience/methods/generator-support-process-atlas/test_run.py": "3150d0dca946ca9487f7ba32704c4cb97f0fd3ef1a7b7d926a6ab0b2f16aac95"
+    },
+    "source_revision": "97b989383172cff95cb15f55a0b40931978dcbb6",
+    "source_tree": "b2fb8eb8276b81bd3fd7e3311d547f1aff93b115",
+    "stdlib_only": true,
+    "tracked_clean_command": "git status --porcelain=v1 --untracked-files=no",
+    "tracked_source_dirty": false,
+    "tracked_status": ""
+  },
+  "question": "On identical frozen normal fans, how do facetwise IID and low-frequency correlated support processes change factor geometry, acceptance, diversity, and tails?",
+  "schema": "generator-support-process-atlas-report-v1"
+}
