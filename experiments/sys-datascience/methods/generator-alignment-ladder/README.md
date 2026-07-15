@@ -28,10 +28,10 @@ contract bit-for-bit, including area-normalization operation order (seed
 Its report binds the source orientation report revision
 `8174467dbd171281eb5746480b06629aa41ebfa7` and raw-row LFS object
 `sha256:b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367`.
-Those raw rows are not present in this checkout, so the generated geometry IDs
-are currently an **unverified deterministic regeneration**, not a claim of
-established identity with the old panel. Fetching that object and comparing the
-eight IDs is the explicit reopen step before any cross-panel reuse claim.
+The retained analysis hydrates that pinned object and verifies all eight base
+IDs and exact geometry IDs. In a checkout without the object, the analyzer
+fails closed if asked to make this comparison; do not reuse the old panel's
+identity until it has passed again.
 
 Run the full compact panel from the repository root after committing source:
 
@@ -42,6 +42,7 @@ CARGO_TARGET_DIR=/workspaces/msc-math/target cargo run -p exp-sys-landscape --re
 uv run --script experiments/sys-datascience/methods/generator-alignment-ladder/analyze.py \
   --rows experiments/sys-datascience/methods/generator-alignment-ladder/artifacts/panel/rows.jsonl \
   --report experiments/sys-datascience/methods/generator-alignment-ladder/artifacts/panel/report.json \
+  --orientation-rows experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl \
   --out-dir experiments/sys-datascience/methods/generator-alignment-ladder/artifacts/panel
 ```
 

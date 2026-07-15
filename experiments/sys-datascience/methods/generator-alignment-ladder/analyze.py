@@ -80,6 +80,11 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--rows", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True)
+    parser.add_argument(
+        "--orientation-rows",
+        type=Path,
+        help="hydrated generator-orientation-smoke rows.jsonl for exact base-ID comparison",
+    )
     parser.add_argument("--out-dir", type=Path, required=True)
     args = parser.parse_args()
     rows = load_rows(args.rows)
@@ -88,6 +93,11 @@ def main() -> None:
         raise ValueError("producer report is not a passing formula/reconstruction packet")
     if report.get("source_dirty"):
         raise ValueError("producer report was made from tracked-dirty source")
+    comparison = {
+        "status": "not_run_external_orientation_rows_unavailable",
+        "orientation_source_revision": report.get("orientation_source_revision"),
+        "orientation_rows_lfs_oid": report.get("orientation_rows_lfs_oid"),
+    }
     if len(rows) != 40 or report.get("observed_rows") != 40:
         raise ValueError("expected exactly 40 rows: eight bases times five angles")
     groups: dict[str, list[dict]] = defaultdict(list)
@@ -120,6 +130,33 @@ def main() -> None:
     for base_id, group in groups.items():
         if len({(row["left_u2_seed"], row["right_u2_seed"]) for row in group}) != 1:
             raise ValueError(f"U(2) pair varied within base {base_id}")
+    if args.orientation_rows:
+        expected_oid = report["orientation_rows_lfs_oid"].removeprefix("sha256:")
+        observed_oid = sha256(args.orientation_rows)
+        if observed_oid != expected_oid:
+            raise ValueError("orientation rows do not match report's pinned LFS object")
+        orientation_rows = load_rows(args.orientation_rows)
+        orientation_bases = {
+            row["base_id"]: row["base_geometry_id"]
+            for row in orientation_rows
+            if row.get("base_geometry_id") is not None
+        }
+        alignment_bases = {
+            row["base_id"]: row["base_geometry_id"]
+            for row in rows
+            if row.get("base_geometry_id") is not None
+        }
+        if len(orientation_bases) != 8 or len(alignment_bases) != 8:
+            raise ValueError("expected eight unique hydrated orientation and alignment bases")
+        if orientation_bases != alignment_bases:
+            raise ValueError("orientation base IDs or exact geometry IDs do not match")
+        comparison = {
+            "status": "verified_exact_base_id_and_geometry_id_match",
+            "orientation_source_revision": report["orientation_source_revision"],
+            "orientation_rows_lfs_oid": report["orientation_rows_lfs_oid"],
+            "orientation_rows_sha256": observed_oid,
+            "bases": len(alignment_bases),
+        }
     labels = {row["theta_label"]: row for row in rows if row["base_id"] == next(iter(groups))}
     if labels["0"]["symplectic_residual"] > EPS or labels["pi"]["anti_symplectic_residual"] > EPS:
         raise ValueError("endpoint semantic controls failed")
@@ -163,6 +200,7 @@ def main() -> None:
             key: sum(bool(item[key]) for item in classifications)
             for key in ["monotone_non_decreasing_l2", "reverse_theta_symmetric_l2", "endpoint_controlled_l2", "genuinely_multi_directional_signature_response"]
         },
+        "orientation_base_comparison": comparison,
         "per_base": classifications,
         "interpretation": "Finite-panel, target-free direct symplectic-signature responses after exact reconstruction. These labels do not show a capacity dose-response, population law, quotient parameterization, or target transfer.",
     }

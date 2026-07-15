@@ -32,7 +32,7 @@ const VOLUME_TOL: f64 = 1e-9;
 const ORIENTATION_SOURCE_REVISION: &str = "8174467dbd171281eb5746480b06629aa41ebfa7";
 const ORIENTATION_ROWS_LFS_OID: &str =
     "sha256:b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367";
-const SOURCE_BASE_CONTRACT: &str = "bit-for-bit copied generator-orientation-smoke v1 base law (including area-normalization operation order); original geometry-ID comparison is unverified until the recorded LFS rows are available";
+const SOURCE_BASE_CONTRACT: &str = "bit-for-bit copied generator-orientation-smoke v1 base law (including area-normalization operation order and geometry-ID byte layout); identity is established only by the analyzer's recorded comparison against the pinned orientation LFS rows";
 
 #[derive(Clone)]
 struct Factor {
@@ -322,6 +322,7 @@ fn geometry_id(p: &SysLandscapePolytopeCache) -> String {
             h.update(x.denom().to_string().as_bytes());
             h.update(b";");
         }
+        h.update(b"|");
     }
     h.finalize().to_hex().to_string()
 }
@@ -547,7 +548,9 @@ fn evaluate(
     Row {
         schema: "alignment-ladder-row-v1",
         id,
-        base_id: format!("generator-orientation-v1/base/seed={SEED}/bucket={name}/row={row}"),
+        base_id: format!(
+            "generator-orientation-v1/base/seed={SEED}/bucket={name}/row={row}/attempt={attempt}"
+        ),
         source_base_contract: SOURCE_BASE_CONTRACT,
         bucket: name,
         row_index: row,
@@ -655,7 +658,7 @@ fn main() {
         && all
             .iter()
             .all(|r| r.exact_reconstruction_status == "reconstructed" && r.failures.is_empty());
-    let report=Report{schema:"alignment-ladder-report-v1",command:a.join(" "),source_revision:revision,source_repository_tree:tree,source_dirty:dirty,producer_source_sha256:sha("experiments/sys-datascience/methods/generator-alignment-ladder/main.rs"),analyzer_source_sha256:sha("experiments/sys-datascience/methods/generator-alignment-ladder/analyze.py"),cargo_lock_sha256:sha("Cargo.lock"),source_base_contract:SOURCE_BASE_CONTRACT,orientation_source_revision:ORIENTATION_SOURCE_REVISION,orientation_rows_lfs_oid:ORIENTATION_ROWS_LFS_OID,orientation_geometry_id_comparison_status:"unverified_lfs_rows_unavailable",expected_bases:8,expected_rows:40,observed_rows:all.len(),passed_rows:all.iter().filter(|r|r.failures.is_empty()).count(),all_requested_rows_passed:pass,formula_controls_passed:formula_controls(),coordinate_order:"q1,q2,p1,p2",a_theta_convention:"A_theta=diag(Q(theta),I_2), Q(theta) rotates q1,q2; A_pi=diag(-1,-1,1,1)",kahler_departure_coordinate:"sin^2(theta/2)",proof_review_cruxes:vec!["Do not promote this representative family to an exhaustion or unique parameterization of U(2)\\SO(4)/U(2) without proof review.","Do not assume anti-symplectic capacity invariance; review the capacity definition and proof separately before later target interpretation."],interpretation_boundary:"Target-free finite-panel geometry only: no sys, capacity, target-derived field, capacity dose claim, population claim, or quotient-natural-law claim."};
+    let report=Report{schema:"alignment-ladder-report-v1",command:a.join(" "),source_revision:revision,source_repository_tree:tree,source_dirty:dirty,producer_source_sha256:sha("experiments/sys-datascience/methods/generator-alignment-ladder/main.rs"),analyzer_source_sha256:sha("experiments/sys-datascience/methods/generator-alignment-ladder/analyze.py"),cargo_lock_sha256:sha("Cargo.lock"),source_base_contract:SOURCE_BASE_CONTRACT,orientation_source_revision:ORIENTATION_SOURCE_REVISION,orientation_rows_lfs_oid:ORIENTATION_ROWS_LFS_OID,orientation_geometry_id_comparison_status:"pending_external_analyzer_comparison",expected_bases:8,expected_rows:40,observed_rows:all.len(),passed_rows:all.iter().filter(|r|r.failures.is_empty()).count(),all_requested_rows_passed:pass,formula_controls_passed:formula_controls(),coordinate_order:"q1,q2,p1,p2",a_theta_convention:"A_theta=diag(Q(theta),I_2), Q(theta) rotates q1,q2; A_pi=diag(-1,-1,1,1)",kahler_departure_coordinate:"sin^2(theta/2)",proof_review_cruxes:vec!["Do not promote this representative family to an exhaustion or unique parameterization of U(2)\\SO(4)/U(2) without proof review.","Do not assume anti-symplectic capacity invariance; review the capacity definition and proof separately before later target interpretation."],interpretation_boundary:"Target-free finite-panel geometry only: no sys, capacity, target-derived field, capacity dose claim, population claim, or quotient-natural-law claim."};
     serde_json::to_writer_pretty(File::create(out.join("report.json")).unwrap(), &report).unwrap();
     if !pass {
         std::process::exit(1)
