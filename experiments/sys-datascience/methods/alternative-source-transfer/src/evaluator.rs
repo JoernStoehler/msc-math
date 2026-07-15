@@ -149,11 +149,11 @@ fn evaluator_identity() -> Result<(String, String, String, String, bool), String
     if commit.is_empty() {
         return Err("cannot determine evaluator source commit".into());
     }
-    let clean = Command::new("git")
-        .args(["diff", "--quiet", "HEAD", "--"])
-        .status()
-        .map_err(|e| e.to_string())?
-        .success();
+    let status = Command::new("git")
+        .args(["status", "--porcelain", "--untracked-files=all"])
+        .output()
+        .map_err(|e| e.to_string())?;
+    let clean = status.status.success() && status.stdout.is_empty() && status.stderr.is_empty();
     Ok((
         digest_bytes(EVALUATOR_SOURCE_BYTES),
         digest_bytes(EVALUATOR_LOCK_BYTES),
