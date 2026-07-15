@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["numpy==2.5.1"]
+# ///
+
 """Focused executable checks for the variable-facet body-distance packet."""
 import importlib.util
 import json
@@ -39,6 +44,9 @@ def test_packet_controls_and_cross_f() -> None:
         values=objective_fixture[group]
         assert values["linf_winning_index"]!=values["l2_winning_index"]
         assert values["linf_min"] < .615 and values["l2_min"] > 0
+    runtime=report["provenance"]["runtime"]
+    assert runtime==mod.runtime_provenance()
+    assert runtime["numpy_requirement"]=="numpy==2.5.1" and runtime["resolved_numpy"]=="2.5.1"
 
 def test_staged_dependency_rejects_clean_guard() -> None:
     with tempfile.TemporaryDirectory() as directory:
