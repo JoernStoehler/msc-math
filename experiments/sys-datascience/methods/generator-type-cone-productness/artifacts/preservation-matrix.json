@@ -1,7 +1,7 @@
 [
   {
-    "schema": "generator-productness-preservation-row-v1",
-    "id": "generator-productness-v1/exact-coordinate-product/seed=20260715",
+    "schema": "generator-productness-preservation-row-v2",
+    "id": "generator-productness-v2/exact-coordinate-product/seed=20260715",
     "terminal_status": "passed",
     "seed": 20260715,
     "coordinate_order": "q1,q2,p1,p2",
@@ -40,7 +40,7 @@
     "expected_transform_is_symplectic": true,
     "expected_productness": {
       "coordinate_product": true,
-      "lagrangian_product": true,
+      "recorded_affine_factor_planes_lagrangian": true,
       "affine_product": true,
       "combinatorial_product": true
     },
@@ -92,7 +92,7 @@
     ],
     "productness": {
       "coordinate_product": true,
-      "lagrangian_product": true,
+      "recorded_affine_factor_planes_lagrangian": true,
       "affine_product": true,
       "combinatorial_product": true
     },
@@ -133,14 +133,15 @@
       "complementary_four_volume_determinant": "1",
       "q_plane_kahler_residual": "0",
       "p_plane_kahler_residual": "0",
-      "both_planes_lagrangian": true,
-      "verification": "exact construction witness; Kähler residual is the absolute restriction coefficient |omega(u,v)| in the recorded factor basis (zero iff that two-plane is Lagrangian)"
+      "recorded_factor_planes_both_lagrangian": true,
+      "verification": "exact construction witness only; Kähler residual is the absolute restriction coefficient |omega(u,v)| in the recorded factor basis (zero iff that recorded two-plane is Lagrangian); no uniqueness of affine product decomposition is claimed"
     },
+    "alternative_lagrangian_affine_decomposition_status": "exists-recorded-decomposition",
     "classifier_failure_interpretation": "coordinate recognition succeeds; this is stronger than the separately recorded intrinsic witnesses"
   },
   {
-    "schema": "generator-productness-preservation-row-v1",
-    "id": "generator-productness-v1/exact-u2-image/seed=20260715",
+    "schema": "generator-productness-preservation-row-v2",
+    "id": "generator-productness-v2/exact-u2-image/seed=20260715",
     "terminal_status": "passed",
     "seed": 20260715,
     "coordinate_order": "q1,q2,p1,p2",
@@ -179,7 +180,7 @@
     "expected_transform_is_symplectic": true,
     "expected_productness": {
       "coordinate_product": false,
-      "lagrangian_product": true,
+      "recorded_affine_factor_planes_lagrangian": true,
       "affine_product": true,
       "combinatorial_product": true
     },
@@ -231,7 +232,7 @@
     ],
     "productness": {
       "coordinate_product": false,
-      "lagrangian_product": true,
+      "recorded_affine_factor_planes_lagrangian": true,
       "affine_product": true,
       "combinatorial_product": true
     },
@@ -272,14 +273,15 @@
       "complementary_four_volume_determinant": "1",
       "q_plane_kahler_residual": "0",
       "p_plane_kahler_residual": "0",
-      "both_planes_lagrangian": true,
-      "verification": "exact construction witness; Kähler residual is the absolute restriction coefficient |omega(u,v)| in the recorded factor basis (zero iff that two-plane is Lagrangian)"
+      "recorded_factor_planes_both_lagrangian": true,
+      "verification": "exact construction witness only; Kähler residual is the absolute restriction coefficient |omega(u,v)| in the recorded factor basis (zero iff that recorded two-plane is Lagrangian); no uniqueness of affine product decomposition is claimed"
     },
+    "alternative_lagrangian_affine_decomposition_status": "exists-recorded-decomposition",
     "classifier_failure_interpretation": "coordinate recognition failure is not loss of affine or combinatorial productness"
   },
   {
-    "schema": "generator-productness-preservation-row-v1",
-    "id": "generator-productness-v1/exact-generic-so4-image/seed=20260715",
+    "schema": "generator-productness-preservation-row-v2",
+    "id": "generator-productness-v2/exact-generic-so4-image/seed=20260715",
     "terminal_status": "passed",
     "seed": 20260715,
     "coordinate_order": "q1,q2,p1,p2",
@@ -318,7 +320,7 @@
     "expected_transform_is_symplectic": false,
     "expected_productness": {
       "coordinate_product": false,
-      "lagrangian_product": false,
+      "recorded_affine_factor_planes_lagrangian": false,
       "affine_product": true,
       "combinatorial_product": true
     },
@@ -370,7 +372,7 @@
     ],
     "productness": {
       "coordinate_product": false,
-      "lagrangian_product": false,
+      "recorded_affine_factor_planes_lagrangian": false,
       "affine_product": true,
       "combinatorial_product": true
     },
@@ -411,14 +413,15 @@
       "complementary_four_volume_determinant": "1",
       "q_plane_kahler_residual": "1368/5525",
       "p_plane_kahler_residual": "1368/5525",
-      "both_planes_lagrangian": false,
-      "verification": "exact construction witness; Kähler residual is the absolute restriction coefficient |omega(u,v)| in the recorded factor basis (zero iff that two-plane is Lagrangian)"
+      "recorded_factor_planes_both_lagrangian": false,
+      "verification": "exact construction witness only; Kähler residual is the absolute restriction coefficient |omega(u,v)| in the recorded factor basis (zero iff that recorded two-plane is Lagrangian); no uniqueness of affine product decomposition is claimed"
     },
+    "alternative_lagrangian_affine_decomposition_status": "unknown-not-excluded",
     "classifier_failure_interpretation": "coordinate recognition failure is not loss of affine or combinatorial productness"
   },
   {
-    "schema": "generator-productness-preservation-row-v1",
-    "id": "generator-productness-v1/exact-sl4-image/seed=20260715",
+    "schema": "generator-productness-preservation-row-v2",
+    "id": "generator-productness-v2/exact-sl4-image/seed=20260715",
     "terminal_status": "passed",
     "seed": 20260715,
     "coordinate_order": "q1,q2,p1,p2",
@@ -457,7 +460,7 @@
     "expected_transform_is_symplectic": false,
     "expected_productness": {
       "coordinate_product": false,
-      "lagrangian_product": false,
+      "recorded_affine_factor_planes_lagrangian": false,
       "affine_product": true,
       "combinatorial_product": true
     },
@@ -509,7 +512,7 @@
     ],
     "productness": {
       "coordinate_product": false,
-      "lagrangian_product": false,
+      "recorded_affine_factor_planes_lagrangian": false,
       "affine_product": true,
       "combinatorial_product": true
     },
@@ -550,14 +553,15 @@
       "complementary_four_volume_determinant": "1",
       "q_plane_kahler_residual": "1",
       "p_plane_kahler_residual": "1",
-      "both_planes_lagrangian": false,
-      "verification": "exact construction witness; Kähler residual is the absolute restriction coefficient |omega(u,v)| in the recorded factor basis (zero iff that two-plane is Lagrangian)"
+      "recorded_factor_planes_both_lagrangian": false,
+      "verification": "exact construction witness only; Kähler residual is the absolute restriction coefficient |omega(u,v)| in the recorded factor basis (zero iff that recorded two-plane is Lagrangian); no uniqueness of affine product decomposition is claimed"
     },
+    "alternative_lagrangian_affine_decomposition_status": "unknown-not-excluded",
     "classifier_failure_interpretation": "coordinate recognition failure is not loss of affine or combinatorial productness"
   },
   {
-    "schema": "generator-productness-preservation-row-v1",
-    "id": "generator-productness-v1/same-incidence-fixed-normal-half-boundary-perturbation/seed=20260715",
+    "schema": "generator-productness-preservation-row-v2",
+    "id": "generator-productness-v2/same-incidence-fixed-normal-half-boundary-perturbation/seed=20260715",
     "terminal_status": "passed",
     "seed": 20260715,
     "coordinate_order": "q1,q2,p1,p2",
@@ -596,7 +600,7 @@
     "expected_transform_is_symplectic": true,
     "expected_productness": {
       "coordinate_product": true,
-      "lagrangian_product": true,
+      "recorded_affine_factor_planes_lagrangian": true,
       "affine_product": true,
       "combinatorial_product": true
     },
@@ -648,7 +652,7 @@
     ],
     "productness": {
       "coordinate_product": true,
-      "lagrangian_product": true,
+      "recorded_affine_factor_planes_lagrangian": true,
       "affine_product": true,
       "combinatorial_product": true
     },
@@ -689,9 +693,10 @@
       "complementary_four_volume_determinant": "1",
       "q_plane_kahler_residual": "0",
       "p_plane_kahler_residual": "0",
-      "both_planes_lagrangian": true,
-      "verification": "exact construction witness; Kähler residual is the absolute restriction coefficient |omega(u,v)| in the recorded factor basis (zero iff that two-plane is Lagrangian)"
+      "recorded_factor_planes_both_lagrangian": true,
+      "verification": "exact construction witness only; Kähler residual is the absolute restriction coefficient |omega(u,v)| in the recorded factor basis (zero iff that recorded two-plane is Lagrangian); no uniqueness of affine product decomposition is claimed"
     },
+    "alternative_lagrangian_affine_decomposition_status": "exists-recorded-decomposition",
     "classifier_failure_interpretation": "coordinate recognition succeeds; this is stronger than the separately recorded intrinsic witnesses"
   }
 ]
