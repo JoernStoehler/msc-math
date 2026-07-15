@@ -1,18 +1,58 @@
 {
   "algorithm": {
     "arithmetic": "fractions.Fraction; exact squared distances and symbolic square roots",
+    "incomplete_search_minimizer_fields": "null/unknown",
     "max_facets": 8,
+    "max_facets_argument": "may only tighten the hard certified bound",
     "near_symmetry_relative_gap": "1/1000000",
     "permutations_at_bound": 40320,
     "search": "exhaustive simultaneous facet permutations"
   },
   "allowed_claim": "For validated normalized spanning configurations with one fixed F<=8, the packet computes the stated permutation quotient distance exactly unless it reports timeout.",
+  "contract_controls": {
+    "f9_max_facets_override": {
+      "error": "max_facets must lie in [0, 8]",
+      "status": "rejected"
+    },
+    "infinite_near_symmetry_gap": {
+      "error": "near_symmetry_relative_gap must be finite and nonnegative",
+      "status": "rejected"
+    },
+    "nan_timeout": {
+      "error": "timeout_seconds must be finite and nonnegative",
+      "status": "rejected"
+    },
+    "negative_timeout": {
+      "error": "timeout_seconds must be finite and nonnegative",
+      "status": "rejected"
+    },
+    "unknown_normalization": {
+      "error": "right configuration has unrecognized center_convention: 'centroid'",
+      "status": "rejected"
+    }
+  },
   "coordinate_order": "q1,q2,p1,p2",
   "distance_controls": {
     "base": {
       "distance_approx": 0.0,
       "distance_radical": "0",
-      "elapsed_seconds": 6.477725899007055,
+      "elapsed_seconds": 6.454583366998122,
+      "evaluated_permutations": 40320,
+      "exact": true,
+      "facet_count": 8,
+      "minimizing_permutations": 32,
+      "multiple_minimizers": true,
+      "near_symmetry": false,
+      "second_distinct_squared_frobenius": "256",
+      "squared_distance": "0",
+      "squared_frobenius": "0",
+      "status": "exact",
+      "total_permutations": 40320
+    },
+    "caller_certified_equivalent": {
+      "distance_approx": 0.0,
+      "distance_radical": "0",
+      "elapsed_seconds": 6.422589360008715,
       "evaluated_permutations": 40320,
       "exact": true,
       "facet_count": 8,
@@ -28,7 +68,7 @@
     "near_symmetry_self_match": {
       "distance_approx": 0.0,
       "distance_radical": "0",
-      "elapsed_seconds": 7.826146874009282,
+      "elapsed_seconds": 7.724978197002201,
       "evaluated_permutations": 40320,
       "exact": true,
       "facet_count": 8,
@@ -44,7 +84,7 @@
     "nonorthogonal_symplectic": {
       "distance_approx": 0.0,
       "distance_radical": "0",
-      "elapsed_seconds": 6.611234355994384,
+      "elapsed_seconds": 6.478024737996748,
       "evaluated_permutations": 40320,
       "exact": true,
       "facet_count": 8,
@@ -60,7 +100,7 @@
     "nonsymplectic_gl": {
       "distance_approx": 1.5811388300841898,
       "distance_radical": "sqrt(5/2)",
-      "elapsed_seconds": 6.701922580992687,
+      "elapsed_seconds": 6.466104901002836,
       "evaluated_permutations": 40320,
       "exact": true,
       "facet_count": 8,
@@ -76,7 +116,7 @@
     "permuted": {
       "distance_approx": 0.0,
       "distance_radical": "0",
-      "elapsed_seconds": 6.4815036059881095,
+      "elapsed_seconds": 6.487599087995477,
       "evaluated_permutations": 40320,
       "exact": true,
       "facet_count": 8,
@@ -92,7 +132,7 @@
     "so4_outside_u2": {
       "distance_approx": 1.2803845576172088,
       "distance_radical": "sqrt(2664/1625)",
-      "elapsed_seconds": 7.656434778997209,
+      "elapsed_seconds": 7.63115065000602,
       "evaluated_permutations": 40320,
       "exact": true,
       "facet_count": 8,
@@ -108,7 +148,7 @@
     "translated_scaled": {
       "distance_approx": 0.0,
       "distance_radical": "0",
-      "elapsed_seconds": 6.595279925008072,
+      "elapsed_seconds": 6.342891101012356,
       "evaluated_permutations": 40320,
       "exact": true,
       "facet_count": 8,
@@ -130,8 +170,27 @@
     "so4_is_symplectic": false
   },
   "normalization": {
+    "accepted_center_declarations": [
+      "caller-certified analytic center",
+      "exact symmetry center = analytic center"
+    ],
+    "accepted_declaration_pairs": [
+      {
+        "center": "caller-certified analytic center",
+        "scale": "caller-certified ordinary Euclidean volume one"
+      },
+      {
+        "center": "exact symmetry center = analytic center",
+        "scale": "ordinary Euclidean volume one"
+      }
+    ],
+    "accepted_scale_declarations": [
+      "caller-certified ordinary Euclidean volume one",
+      "ordinary Euclidean volume one"
+    ],
     "base_exact_volume": "1",
     "center": "analytic center; certified here by exact central symmetry",
+    "comparison_requires_compatible_canonical_conventions": true,
     "scale": "ordinary Euclidean volume one"
   },
   "prohibited_claims": [
@@ -144,22 +203,22 @@
     "command": "uv run --script quotient_distance.py --out artifacts/smoke-report.json",
     "git": {
       "dirty": false,
-      "revision": "2fd94c11b558112253be3dfbad41848e9fb7443b"
+      "revision": "0b32b9265a96a97585f0b841613df22e6a918b32"
     },
     "producer": "experiments/sys-datascience/methods/generator-target-quotient-distance/quotient_distance.py",
-    "producer_sha256": "90ac0133f2aafbf85f710d06d54aca99c3de61fbe83a3b5331c58c2eea6f4ad6"
+    "producer_sha256": "dff22657ea87d284e8b4a453b810a96180dc04f85f800ef250057099c6aeb789"
   },
-  "schema": "generator-target-quotient-distance-smoke-v1",
+  "schema": "generator-target-quotient-distance-smoke-v2",
   "scientific_question": "Does the full symplectic Gram matrix give an exact fixed-F target-quotient metric at smoke size?",
   "timeout_control": {
     "distance_approx": null,
     "distance_radical": null,
-    "elapsed_seconds": 3.81701102014631e-06,
+    "elapsed_seconds": 3.94799280911684e-06,
     "evaluated_permutations": 0,
     "exact": false,
     "facet_count": 8,
-    "minimizing_permutations": 0,
-    "multiple_minimizers": false,
+    "minimizing_permutations": null,
+    "multiple_minimizers": null,
     "near_symmetry": null,
     "second_distinct_squared_frobenius": null,
     "squared_distance": null,
