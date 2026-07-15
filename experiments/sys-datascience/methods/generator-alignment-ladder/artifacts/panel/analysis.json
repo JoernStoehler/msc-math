@@ -1,5 +1,5 @@
 {
-  "analyzer_sha256": "451dcc7f92e3340f08d931402d5930e7d2c86ce32a993277a1ecbed529457505",
+  "analyzer_sha256": "6c0b16f68f05d0615307021374c44c9f43d39db8ab8f35a11e77ea2da829c959",
   "bases": 8,
   "classification_counts": {
     "endpoint_controlled_l2": 6,
@@ -121,8 +121,8 @@
       ]
     }
   ],
-  "report_sha256": "81407be25587ac1e2a04c194938ed23b487be8f9d40b0d7e182b92ee8b1e5121",
+  "report_sha256": "c725c53d02e489a7313293cb275b5b3b629f45e21dc45d85a16348506312188f",
   "rows": 40,
-  "rows_sha256": "e64c62fe0600b0d06deef37fb18bf269ed5e3b387b6c5e9fa5096e4e15422969",
+  "rows_sha256": "c2772e281a4c1e47e588bbe37955198e0bfcf34b19cc1afd3418605bc14ee9d6",
   "schema": "alignment-ladder-analysis-v1"
 }
