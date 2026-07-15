@@ -635,7 +635,7 @@ def source_provenance() -> dict[str, Any]:
         "source_revision": repo_revision,
         "source_tree": repo_tree,
         "source_dirty": False,
-        "tracked_clean_predicate": "git status --porcelain --untracked-files=no",
+        "tracked_clean_predicate": "git status --porcelain --untracked-files=no -- <declared source files>",
         "source_file_hashes": {name: sha256(path) for name, path in source_files.items()},
         "source_files": {name: str(path.relative_to(repo_root)) for name, path in source_files.items()},
         "input_schema": ROW_SCHEMA,
