@@ -51,7 +51,8 @@ def main() -> None:
     for row in rows:
         exact_status[row["exact_positive_witness_status"]] += 1
         target_q = rat(row["exact_positive_witness_q"]) if row["exact_positive_witness_status"] == "exists" else None
-        target_beta = [float(rat(x)) for x in row["exact_positive_witness_beta"]] if row["exact_positive_witness_status"] == "exists" else None
+        unique_exact = row["exact_row_reduction_system_status"] == "consistent_unique"
+        target_beta = [float(rat(x)) for x in row["exact_positive_witness_beta"]] if row["exact_positive_witness_status"] == "exists" and unique_exact else None
         singular = [x for x in row["kkt_augmented_singular_values_f64"] if x > 0.0]
         eigen = [abs(x) for x in row["kkt_augmented_eigenvalues_f64"] if abs(x) > 0.0]
         sigma_min = min(singular) if singular else None
@@ -60,6 +61,7 @@ def main() -> None:
         for c in row["centers"]:
             name = c["center_id"]
             center_counts[name] += c["center_availability"] == "available"
+            numeric_full_rank = c["center_rank_f64"] == row["sigma_length"] + 5
             raw_id = f"error_q_abs__{name}_q_raw__to_exact_positive_witness_q"
             q_raw = c["center_q_raw_f64"]
             if q_raw is not None and target_q is not None:
@@ -69,7 +71,7 @@ def main() -> None:
             residual = c["center_full_kkt_residual_norm_f64"]
             qbound_id = f"bound_q_abs__{name}__eigen_residual_9over2"
             qbound = None
-            if residual is not None and eigen_min is not None:
+            if residual is not None and eigen_min is not None and numeric_full_rank:
                 qbound = 4.5 * residual * residual / eigen_min
                 eligibility[qbound_id] += 1
                 observed = None if target_q is None or c["center_q_corrected_f64"] is None else abs(c["center_q_corrected_f64"] - float(target_q))
@@ -78,7 +80,7 @@ def main() -> None:
                 add(evals, qbound_id, row, name, candidate_bound_abs=qbound, observed_error_abs=observed, sound=None if observed is None else observed <= qbound, status="conjectured_candidate_bound")
             radius_id = f"bound_beta_l2__{name}__inverse_singular_residual"
             radius = None
-            if residual is not None and sigma_min is not None:
+            if residual is not None and sigma_min is not None and numeric_full_rank:
                 radius = residual / sigma_min
                 eligibility[radius_id] += 1
                 observed = None if target_beta is None or c["center_beta_f64"] is None else norm([a - b for a, b in zip(c["center_beta_f64"], target_beta, strict=True)])
@@ -112,9 +114,9 @@ def main() -> None:
                 eligibility[predicate_id] += 1
                 predicate = "true" if margin > radius else "false" if margin < -radius else "indeterminate"
                 exact = row["exact_positive_witness_status"]
-                if exact == "exists":
+                if exact == "exists" and unique_exact:
                     exact_coverage[predicate_id] += 1
-                add(evals, predicate_id, row, name, f64_predicate=predicate, exact_predicate=exact, sound=None if exact != "exists" else predicate != "true" or exact == "exists", status="heuristic_ternary_predicate")
+                add(evals, predicate_id, row, name, f64_predicate=predicate, exact_predicate=exact, sound=None if exact != "exists" or not unique_exact else predicate != "false", status="heuristic_ternary_predicate")
     emitted = {x["formula_id"] for x in evals}
     unknown = emitted - registry_ids
     if unknown:

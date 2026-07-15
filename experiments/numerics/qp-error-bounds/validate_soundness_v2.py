@@ -122,6 +122,16 @@ def main() -> None:
             fail(f"policy supplied-stream count mismatch {policy['target_polytope_id']}")
         if policy["policy_candidate_count"] < policy["policy_exact_accept_count"]:
             fail("policy accepted count exceeds policy candidate count")
+        if policy["policy_id"] == "minimasafe_heuristic":
+            if policy["policy_exact_resolution_count"] != 0 or policy["policy_min_action"] is not None or policy["policy_window_cutoff"] is not None:
+                fail("MinimaSafe heuristic incorrectly carries exact aggregation output")
+            if policy["policy_f64_min_action"] is not None and policy["policy_f64_window_cutoff"] is None:
+                fail("MinimaSafe f64 minimum lacks its declared window cutoff")
+        else:
+            if policy["policy_exact_resolution_count"] != policy["policy_candidate_count"]:
+                fail("exact policy did not record every attempted resolution")
+            if any(policy[key] is not None for key in ("policy_f64_min_action", "policy_f64_window_cutoff")) and policy["policy_id"] != "selective_fallback_f64_anchored_window":
+                fail("exact-only policy carries an undeclared f64 aggregate")
         cutoff = policy["policy_window_cutoff"]
         if cutoff is not None:
             c = rational(cutoff, "policy cutoff")

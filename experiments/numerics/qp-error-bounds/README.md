@@ -108,7 +108,10 @@ compares only against the same-word stored-rational exact positive witness.
 The formula registry, derived formula observations, and policy rows are
 separate artifacts.  Policies distinguish the unchecked current f64 heuristic,
 exact retained candidates, one-shot f64-anchored selective windows, and exact
-supplied-stream replay.  A policy's active words are not physical-orbit sets.
+supplied-stream replay.  The heuristic policy reports only its own f64 scalar,
+minimizers, and window; its exact fields are unavailable. Exact policies record
+every attempted resolution separately from positive-Q accepts. A policy's
+active words are not physical-orbit sets.
 
 The packet includes ordinary F5/F8 controls, a product tie, the pinned q4:p5
 stream, the four named HKO stress words, and the hypercube boundary word. HKO

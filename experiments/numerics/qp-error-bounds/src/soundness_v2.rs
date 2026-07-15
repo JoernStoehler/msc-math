@@ -141,6 +141,10 @@ struct PolicyRow {
     policy_minimizer_active_words: Vec<Vec<usize>>,
     policy_window_active_words: Vec<Vec<usize>>,
     policy_window_cutoff: Option<String>,
+    policy_f64_min_action: Option<f64>,
+    policy_f64_minimizer_active_words: Vec<Vec<usize>>,
+    policy_f64_window_active_words: Vec<Vec<usize>>,
+    policy_f64_window_cutoff: Option<f64>,
     policy_fallback_trigger: String,
     policy_fallback_result: String,
     policy_stage_timing_us: f64,
@@ -919,27 +923,67 @@ fn policy_rows(rows: &[RawRow]) -> Vec<PolicyRow> {
     }
     let mut out = Vec::new();
     for (case, rs) in by {
-        let all: Vec<&RawRow> = rs
-            .iter()
-            .copied()
-            .filter(|r| exact_action(r).is_some())
-            .collect();
         let retained: Vec<&RawRow> = rs
             .iter()
             .copied()
-            .filter(|r| r.f64_retained_by_saddle && exact_action(r).is_some())
+            .filter(|r| r.f64_retained_by_saddle)
             .collect();
+        let f64_true: Vec<&RawRow> = rs
+            .iter()
+            .copied()
+            .filter(|r| r.saddle_eig_beta_predicate == "true" && saddle_action(r).is_some())
+            .collect();
+        for gap in RELATIVE_WINDOWS {
+            let start = Instant::now();
+            let f64_min = f64_true
+                .iter()
+                .filter_map(|r| saddle_action(r))
+                .min_by(|a, b| a.total_cmp(b));
+            let f64_cutoff = f64_min.map(|m| m * (1.0 + gap));
+            out.push(PolicyRow {
+                schema_version: POLICY_SCHEMA.into(),
+                target_polytope_id: case.into(),
+                policy_id: "minimasafe_heuristic".into(),
+                policy_description:
+                    "current f64-True saddle scalar only; unchecked f64-True is heuristic".into(),
+                exactness_scope: "unknown; no exact fallback was run by this policy".into(),
+                requested_window_kind: "relative_to_f64_policy_minimum".into(),
+                requested_relative_gap: gap,
+                supplied_stream_count: rs.len(),
+                policy_candidate_count: f64_true.len(),
+                policy_exact_resolution_count: 0,
+                policy_exact_accept_count: 0,
+                policy_min_action: None,
+                policy_minimizer_active_words: vec![],
+                policy_window_active_words: vec![],
+                policy_window_cutoff: None,
+                policy_f64_min_action: f64_min,
+                policy_f64_minimizer_active_words: f64_min
+                    .map(|m| {
+                        f64_true
+                            .iter()
+                            .filter(|r| saddle_action(r).is_some_and(|a| a == m))
+                            .map(|r| r.sigma_active_reeb_word.clone())
+                            .collect()
+                    })
+                    .unwrap_or_default(),
+                policy_f64_window_active_words: f64_cutoff
+                    .map(|c| {
+                        f64_true
+                            .iter()
+                            .filter(|r| saddle_action(r).is_some_and(|a| a <= c))
+                            .map(|r| r.sigma_active_reeb_word.clone())
+                            .collect()
+                    })
+                    .unwrap_or_default(),
+                policy_f64_window_cutoff: f64_cutoff,
+                policy_fallback_trigger: "no exact fallback".into(),
+                policy_fallback_result:
+                    "f64-only heuristic result; exact fields intentionally unavailable".into(),
+                policy_stage_timing_us: start.elapsed().as_secs_f64() * 1e6,
+            });
+        }
         for (id, desc, scope, set, trigger) in [
-            (
-                "minimasafe_heuristic",
-                "current f64-True saddle scalar only; unchecked f64-True is heuristic",
-                "unknown",
-                rs.iter()
-                    .copied()
-                    .filter(|r| r.saddle_eig_beta_predicate == "true" && saddle_action(r).is_some())
-                    .collect(),
-                "no exact fallback",
-            ),
             (
                 "exact_every_f64_retained",
                 "exactly resolve every f64-retained saddle candidate",
@@ -951,34 +995,21 @@ fn policy_rows(rows: &[RawRow]) -> Vec<PolicyRow> {
                 "exact_every_supplied_sigma",
                 "exactly resolve every supplied stream word",
                 "supplied stream",
-                all.clone(),
+                rs.clone(),
                 "every supplied sigma",
             ),
         ] {
             for gap in RELATIVE_WINDOWS {
                 let start = Instant::now();
-                let min = set.iter().filter_map(|r| exact_action(r)).min();
+                let accepted: Vec<&RawRow> = set
+                    .iter()
+                    .copied()
+                    .filter(|r| exact_action(r).is_some())
+                    .collect();
+                let min = accepted.iter().filter_map(|r| exact_action(r)).min();
                 let cutoff = min.as_ref().map(|m| {
                     m.clone() * (BigRational::one() + BigRational::from_float(gap).unwrap())
                 });
-                let mins = min
-                    .as_ref()
-                    .map(|m| {
-                        set.iter()
-                            .filter(|r| exact_action(r).as_ref() == Some(m))
-                            .map(|r| r.sigma_active_reeb_word.clone())
-                            .collect()
-                    })
-                    .unwrap_or_default();
-                let window = cutoff
-                    .as_ref()
-                    .map(|c| {
-                        set.iter()
-                            .filter(|r| exact_action(r).as_ref().is_some_and(|a| a <= c))
-                            .map(|r| r.sigma_active_reeb_word.clone())
-                            .collect()
-                    })
-                    .unwrap_or_default();
                 out.push(PolicyRow {
                     schema_version: POLICY_SCHEMA.into(),
                     target_polytope_id: case.into(),
@@ -989,22 +1020,40 @@ fn policy_rows(rows: &[RawRow]) -> Vec<PolicyRow> {
                     requested_relative_gap: gap,
                     supplied_stream_count: rs.len(),
                     policy_candidate_count: set.len(),
-                    policy_exact_resolution_count: if id == "minimasafe_heuristic" {
-                        0
-                    } else {
-                        set.len()
-                    },
-                    policy_exact_accept_count: set.len(),
+                    policy_exact_resolution_count: set.len(),
+                    policy_exact_accept_count: accepted.len(),
                     policy_min_action: min.as_ref().map(rat),
-                    policy_minimizer_active_words: mins,
-                    policy_window_active_words: window,
+                    policy_minimizer_active_words: min
+                        .as_ref()
+                        .map(|m| {
+                            accepted
+                                .iter()
+                                .filter(|r| exact_action(r).as_ref() == Some(m))
+                                .map(|r| r.sigma_active_reeb_word.clone())
+                                .collect()
+                        })
+                        .unwrap_or_default(),
+                    policy_window_active_words: cutoff
+                        .as_ref()
+                        .map(|c| {
+                            accepted
+                                .iter()
+                                .filter(|r| exact_action(r).as_ref().is_some_and(|a| a <= c))
+                                .map(|r| r.sigma_active_reeb_word.clone())
+                                .collect()
+                        })
+                        .unwrap_or_default(),
                     policy_window_cutoff: cutoff.as_ref().map(rat),
+                    policy_f64_min_action: None,
+                    policy_f64_minimizer_active_words: vec![],
+                    policy_f64_window_active_words: vec![],
+                    policy_f64_window_cutoff: None,
                     policy_fallback_trigger: trigger.into(),
-                    policy_fallback_result: if min.is_some() {
-                        "policy set had an exact positive-Q action".into()
-                    } else {
-                        "no exact positive-Q action in policy set".into()
-                    },
+                    policy_fallback_result: format!(
+                        "{} exact positive-Q accepts; {} exact rejects or nonpositive-Q outcomes",
+                        accepted.len(),
+                        set.len() - accepted.len()
+                    ),
                     policy_stage_timing_us: start.elapsed().as_secs_f64() * 1e6,
                 });
             }
@@ -1037,7 +1086,7 @@ fn policy_rows(rows: &[RawRow]) -> Vec<PolicyRow> {
             let cutoff = min
                 .as_ref()
                 .map(|m| m.clone() * (BigRational::one() + BigRational::from_float(gap).unwrap()));
-            out.push(PolicyRow{schema_version:POLICY_SCHEMA.into(),target_polytope_id:case.into(),policy_id:"selective_fallback_f64_anchored_window".into(),policy_description:"one-shot anchored rule: retain saddle candidates whose f64 action is at most f64 minimum times (1+relative gap), then exact-resolve that selected set; no iterative expansion".into(),exactness_scope:"selected f64-anchored window only".into(),requested_window_kind:"relative_f64_anchor_then_exact_report".into(),requested_relative_gap:gap,supplied_stream_count:rs.len(),policy_candidate_count:selected.len(),policy_exact_resolution_count:selected.len(),policy_exact_accept_count:accepted.len(),policy_min_action:min.as_ref().map(rat),policy_minimizer_active_words:min.as_ref().map(|m|accepted.iter().filter(|r|exact_action(r).as_ref()==Some(m)).map(|r|r.sigma_active_reeb_word.clone()).collect()).unwrap_or_default(),policy_window_active_words:cutoff.as_ref().map(|c|accepted.iter().filter(|r|exact_action(r).as_ref().is_some_and(|a|a<=c)).map(|r|r.sigma_active_reeb_word.clone()).collect()).unwrap_or_default(),policy_window_cutoff:cutoff.as_ref().map(rat),policy_fallback_trigger:"f64 saddle action overlaps one-shot anchored relative window".into(),policy_fallback_result:"exactly evaluated selected candidates".into(),policy_stage_timing_us:start.elapsed().as_secs_f64()*1e6});
+            out.push(PolicyRow{schema_version:POLICY_SCHEMA.into(),target_polytope_id:case.into(),policy_id:"selective_fallback_f64_anchored_window".into(),policy_description:"one-shot anchored rule: retain saddle candidates whose f64 action is at most f64 minimum times (1+relative gap), then exact-resolve that selected set; no iterative expansion".into(),exactness_scope:"selected f64-anchored window only".into(),requested_window_kind:"relative_f64_anchor_then_exact_report".into(),requested_relative_gap:gap,supplied_stream_count:rs.len(),policy_candidate_count:selected.len(),policy_exact_resolution_count:selected.len(),policy_exact_accept_count:accepted.len(),policy_min_action:min.as_ref().map(rat),policy_minimizer_active_words:min.as_ref().map(|m|accepted.iter().filter(|r|exact_action(r).as_ref()==Some(m)).map(|r|r.sigma_active_reeb_word.clone()).collect()).unwrap_or_default(),policy_window_active_words:cutoff.as_ref().map(|c|accepted.iter().filter(|r|exact_action(r).as_ref().is_some_and(|a|a<=c)).map(|r|r.sigma_active_reeb_word.clone()).collect()).unwrap_or_default(),policy_window_cutoff:cutoff.as_ref().map(rat),policy_f64_min_action:f64_anchor,policy_f64_minimizer_active_words:f64_anchor.map(|m|f64_retained.iter().filter(|r|saddle_action(r).is_some_and(|a|a==m)).map(|r|r.sigma_active_reeb_word.clone()).collect()).unwrap_or_default(),policy_f64_window_active_words:selected.iter().map(|r|r.sigma_active_reeb_word.clone()).collect(),policy_f64_window_cutoff:f64_anchor.map(|a|a*(1.0+gap)),policy_fallback_trigger:"f64 saddle action overlaps one-shot anchored relative window".into(),policy_fallback_result:format!("{} exact positive-Q accepts; {} exact rejects or nonpositive-Q outcomes",accepted.len(),selected.len()-accepted.len()),policy_stage_timing_us:start.elapsed().as_secs_f64()*1e6});
         }
     }
     out
