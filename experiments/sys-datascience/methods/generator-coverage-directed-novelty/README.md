@@ -19,11 +19,16 @@ rows are retained in `view-disagreement.tsv` rather than collapsed into a law
 score.  Holdout nearest-cover max, mean, and q90 are measured at matched
 retained-witness budgets. Full-pool producer generation counts/costs are copied
 from the producer reports into `generation-cost.tsv`; offline selection cost is
-measured separately. No per-generated-row or online sample-efficiency claim is
-made.
+measured separately in the nondeterministic `selection-cost-observation.json`
+artifact. The deterministic report and TSVs contain no wall-clock timing; no
+per-generated-row or online sample-efficiency claim is made. The analyzer pins
+`numpy==1.26.4` via its PEP-723 metadata and records Python/NumPy versions.
 
 The frozen reference set is the lowest four deterministic witness IDs from the
-current-baseline population. Train/holdout master seeds and sample IDs must be
+current-baseline population. The report's arm fields are explicitly qualified
+to the fixed train panel, `offline_greedy_max` order, retained budget 24,
+independent holdout panel, mean nearest-cover metric, and each view; they are
+not intrinsic properties of a law or population. Train/holdout master seeds and sample IDs must be
 disjoint, and all population/side-count strata must remain balanced; the
 analyzer fails closed otherwise. A selected witness is authorized only for later
 target-free geometry follow-up. No `sys`, target, density, support, law-quality,
@@ -50,13 +55,18 @@ COMMON=(--factor-only --attempts 256 --factor-rows-per-population 12 --factor-si
   --factor-population 'zonogon|lengths=uniform(0.5,1.5)')
 "$PRODUCER" "${COMMON[@]}" --seed 20260716 --factor-out-dir "$PACKET/artifacts/train"
 "$PRODUCER" "${COMMON[@]}" --seed 20260717 --factor-out-dir "$PACKET/artifacts/holdout"
-python3 "$PACKET/analyze.py" --train "$PACKET/artifacts/train/factor-shapes.jsonl" \
+uv run --script "$PACKET/analyze.py" --train "$PACKET/artifacts/train/factor-shapes.jsonl" \
   --holdout "$PACKET/artifacts/holdout/factor-shapes.jsonl" \
   --producer-report "$PACKET/artifacts/train/factor-only-report.json" \
   --producer-report "$PACKET/artifacts/holdout/factor-only-report.json" \
   --out-dir "$PACKET/artifacts/analysis"
-uv run --with pytest --with numpy python -m pytest -q "$PACKET/test_packet.py"
+uv run --with pytest --with numpy==1.26.4 python -m pytest -q "$PACKET/test_packet.py"
 ```
+
+The test suite runs the analyzer twice under the pinned environment and
+compares `report.json` plus all deterministic TSVs byte-for-byte. It excludes
+`selection-cost-observation.json`, whose wall-clock value is intentionally
+nondeterministic.
 
 The checked-in artifacts are a bounded finite-panel result.  Rebuild the
 producer from source rather than relying on a disposable absolute binary path;

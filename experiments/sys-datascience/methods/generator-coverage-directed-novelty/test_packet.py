@@ -1,5 +1,7 @@
 import json
 from pathlib import Path
+import subprocess
+import sys
 
 import numpy as np
 import pytest
@@ -36,6 +38,34 @@ def test_report_contract_after_run():
     assert set(report["policies"]) == {"passive_coreset", "offline_greedy_max", "offline_greedy_frame", "offline_greedy_chord"}
     assert report["rows"]["side_count"] == 6
     assert len(report["input_hashes"]) >= 4
+    assert report["environment"]["numpy_requirement"] == "numpy==1.26.4"
+    assert report["environment"]["numpy_version"] == "1.26.4"
+    assert "selection_cost_ms" not in report
+    assert report["selection_cost_artifact"] == "selection-cost-observation.json"
+    for arm in report["arms"]:
+        assert arm["offline_greedy_max_fixed_train_panel_selected_witnesses"]["not_intrinsic_arm_property"]
+        assert arm["offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views"]["not_intrinsic_arm_property"]
+
+
+def test_byte_replay_under_pinned_environment(tmp_path: Path):
+    assert np.__version__ == "1.26.4", "run tests with: uv run --with pytest --with numpy==1.26.4 python -m pytest"
+    packet = Path(__file__).parent
+    inputs = [
+        "--train", str((packet / "artifacts/train/factor-shapes.jsonl").resolve()),
+        "--holdout", str((packet / "artifacts/holdout/factor-shapes.jsonl").resolve()),
+        "--producer-report", str((packet / "artifacts/train/factor-only-report.json").resolve()),
+        "--producer-report", str((packet / "artifacts/holdout/factor-only-report.json").resolve()),
+    ]
+    runs = []
+    for index in (1, 2):
+        output = tmp_path / f"run{index}"
+        subprocess.run([sys.executable, str((packet / "analyze.py").resolve()), *inputs, "--out-dir", str(output)], check=True)
+        runs.append(output)
+    deterministic = ("coreset-yield.tsv", "view-disagreement.tsv", "policy-summary.tsv", "generation-cost.tsv", "synthetic-calibrations.tsv", "report.json")
+    for name in deterministic:
+        assert (runs[0] / name).read_bytes() == (runs[1] / name).read_bytes(), name
+    observation = json.loads((runs[0] / "selection-cost-observation.json").read_text())
+    assert observation["nondeterministic"] and observation["excluded_from_byte_replay"]
 
 
 def test_pool_contract_after_run():
