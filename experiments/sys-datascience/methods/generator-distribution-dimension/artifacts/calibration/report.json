@@ -1,0 +1,2369 @@
+{
+  "analyzer_sha256": "675296eb520da1dd8b15338f5ee5626f5c2d71e1b7e3f158956771c46e190393",
+  "calibration": {
+    "anisotropic_noisy_line": {
+      "assessment": {
+        "calibrated_mass_region": {
+          "alpha": 0.1,
+          "law_mass_coverage": {
+            "holdout_fraction": 0.9111111111111111,
+            "meaning": "independent holdout frequency only; split-conformal marginal coverage requires exchangeable IID rows from the declared law, not a selected/mixed stratum",
+            "wilson_95_interval": [
+              0.8342928001780631,
+              0.9542700546752215
+            ]
+          },
+          "radius": 0.06813443874734763,
+          "reference_chart_coverage_Q": {
+            "fraction": 0.00634765625,
+            "meaning": "coverage of this arbitrary bounded chart measure Q only; neither support coverage nor probability mass under the generator law",
+            "measure": "uniform on the coordinatewise training bounding box expanded by 10% of each observed range",
+            "probe_count": 2048,
+            "wilson_95_monte_carlo_interval": [
+              0.0037133503088369302,
+              0.010830462429924189
+            ]
+          },
+          "split": {
+            "calibration": 90,
+            "holdout": 90,
+            "seed": 20260720,
+            "train": 180
+          },
+          "status": "ok"
+        },
+        "correlation_dimension": {
+          "local_log_slopes": [
+            1.5614811438086467,
+            1.3099896245541303,
+            1.1793565823132535,
+            1.2444662335420773,
+            1.1421241689048411,
+            1.0485931711079228,
+            1.038359101756433,
+            0.995543845717377,
+            0.9717705060992506,
+            0.9464557564850312,
+            0.9319888915638165,
+            0.8986385753086165,
+            0.8806818640687325,
+            0.8995941960221121,
+            0.8893171331347918,
+            0.8689071429248724,
+            0.8701760666124256
+          ],
+          "pair_mass": [
+            0.03000619003404519,
+            0.03879603837821108,
+            0.04812751470133086,
+            0.058433921386567625,
+            0.07171154441349427,
+            0.08653667595171774,
+            0.10283194057567317,
+            0.1219900959455277,
+            0.14370164035902197,
+            0.16861652739090066,
+            0.1970287836583101,
+            0.22968121324667284,
+            0.26627978953884246,
+            0.30779944289693595,
+            0.3569018879603838,
+            0.4131383472609099,
+            0.47663262147941815,
+            0.55
+          ],
+          "radii": [
+            0.06397170321551145,
+            0.07541252521954107,
+            0.08889944575696337,
+            0.1047983930108125,
+            0.12354073846167317,
+            0.14563500089243595,
+            0.1716806435596934,
+            0.202384338877711,
+            0.23857914190965016,
+            0.28124709288270777,
+            0.3315458619803804,
+            0.3908401593404414,
+            0.46073876247715356,
+            0.5431381657586325,
+            0.6402740362403949,
+            0.7547818719587941,
+            0.8897685084699041,
+            1.048896413754858
+          ],
+          "stable_window": {
+            "intervals": 12,
+            "radius_range": [
+              0.14563500089243595,
+              1.048896413754858
+            ],
+            "slope": 0.9309667728251638
+          },
+          "warning": "window selection is exploratory and can be manufactured by finite range/noise; no stable window means no correlation-dimension estimate"
+        },
+        "global_pca": {
+          "ambient_dimension": 8,
+          "eigenvalues": [
+            0.9347066025140406,
+            0.0009104628786283717,
+            7.962898664759539e-06,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "explained_variance": [
+            0.9990183826324415,
+            0.0009731065876797738,
+            8.510779878667442e-06,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "numerical_rank": 3,
+          "participation_ratio": 1.0019651785056656
+        },
+        "knn_connectivity": [
+          {
+            "component_count": 1,
+            "component_sizes": [
+              360
+            ],
+            "k": 8,
+            "largest_component_fraction": 1.0
+          },
+          {
+            "component_count": 1,
+            "component_sizes": [
+              360
+            ],
+            "k": 12,
+            "largest_component_fraction": 1.0
+          },
+          {
+            "component_count": 1,
+            "component_sizes": [
+              360
+            ],
+            "k": 20,
+            "largest_component_fraction": 1.0
+          }
+        ],
+        "knn_mle": [
+          {
+            "duplicate_rows_seen": 0,
+            "estimate": 2.267304884035602,
+            "k": 8,
+            "local_estimate": {
+              "max": 9.470981046667013,
+              "mean": 2.267304884035602,
+              "median": 2.0979285546119533,
+              "min": 0.9115921341075943,
+              "q25": 1.600836519242082,
+              "q75": 2.654125896301458
+            },
+            "valid_rows": 360
+          },
+          {
+            "duplicate_rows_seen": 0,
+            "estimate": 2.052415609029421,
+            "k": 12,
+            "local_estimate": {
+              "max": 9.143581203181478,
+              "mean": 2.052415609029421,
+              "median": 1.926258605673811,
+              "min": 0.9152171726587212,
+              "q25": 1.549630819893463,
+              "q75": 2.4117518344812696
+            },
+            "valid_rows": 360
+          },
+          {
+            "duplicate_rows_seen": 0,
+            "estimate": 1.7105684769766956,
+            "k": 20,
+            "local_estimate": {
+              "max": 5.862704739803719,
+              "mean": 1.7105684769766956,
+              "median": 1.5907546557629042,
+              "min": 0.9493539584219348,
+              "q25": 1.2981065930665805,
+              "q75": 1.9195439457245964
+            },
+            "valid_rows": 360
+          }
+        ],
+        "local_pca": [
+          {
+            "first_pc_fraction": {
+              "max": 0.9926821949854224,
+              "mean": 0.7557966317264775,
+              "median": 0.7536265798348945,
+              "min": 0.5142813948628769,
+              "q25": 0.6649894034108439,
+              "q75": 0.8450664249496949
+            },
+            "local_participation_ratio": {
+              "max": 2.066696384127541,
+              "mean": 1.5795633549780825,
+              "median": 1.5998615132804122,
+              "min": 1.01474341924246,
+              "q25": 1.355521486165839,
+              "q75": 1.8161557270754614
+            },
+            "neighbors": 8
+          },
+          {
+            "first_pc_fraction": {
+              "max": 0.99268332559222,
+              "mean": 0.7640169743167242,
+              "median": 0.7620075575383833,
+              "min": 0.5331685219881973,
+              "q25": 0.6588644054908086,
+              "q75": 0.8683013718176162
+            },
+            "local_participation_ratio": {
+              "max": 2.0468903605725552,
+              "mean": 1.5586792353170833,
+              "median": 1.5721035571486448,
+              "min": 1.014742546342117,
+              "q25": 1.2978909223225523,
+              "q75": 1.8363072692577525
+            },
+            "neighbors": 12
+          },
+          {
+            "first_pc_fraction": {
+              "max": 0.9949645679944216,
+              "mean": 0.8275351608625925,
+              "median": 0.8220058995899953,
+              "min": 0.5587709779367253,
+              "q25": 0.7654028828257398,
+              "q75": 0.8944331050731386
+            },
+            "local_participation_ratio": {
+              "max": 1.9931205321876315,
+              "mean": 1.405590417777551,
+              "median": 1.4154340431903742,
+              "min": 1.0101227176576433,
+              "q25": 1.2340872245417547,
+              "q75": 1.563922765231376
+            },
+            "neighbors": 20
+          }
+        ],
+        "mass_radius": {
+          "empirical_medoid_index": 281,
+          "meaning": "finite-sample concentration summaries, not a density level set or confidence body",
+          "medoid_mass_radius": [
+            {
+              "mass": 0.1,
+              "radius": 0.08984719021508202
+            },
+            {
+              "mass": 0.25,
+              "radius": 0.23813270933333147
+            },
+            {
+              "mass": 0.5,
+              "radius": 0.6869484200003986
+            },
+            {
+              "mass": 0.9,
+              "radius": 1.6289425755935212
+            }
+          ],
+          "per_point_mass_radii": [
+            {
+              "mass": 0.05,
+              "radius": {
+                "max": 1.342400252351535,
+                "mean": 0.139723139523557,
+                "median": 0.10386173127048176,
+                "min": 0.04085461623655439,
+                "q25": 0.06798729570105672,
+                "q75": 0.12560376636003281
+              }
+            },
+            {
+              "mass": 0.1,
+              "radius": {
+                "max": 1.7864875568651033,
+                "mean": 0.24118346943641925,
+                "median": 0.17827697090252032,
+                "min": 0.07805575995951612,
+                "q25": 0.12322955173809552,
+                "q75": 0.2269926370858774
+              }
+            },
+            {
+              "mass": 0.2,
+              "radius": {
+                "max": 2.2622876697236385,
+                "mean": 0.42167739067621424,
+                "median": 0.32694853378346517,
+                "min": 0.1627492102639456,
+                "q25": 0.24554814641082748,
+                "q75": 0.4543629276838249
+              }
+            },
+            {
+              "mass": 0.4,
+              "radius": {
+                "max": 2.8278011887902235,
+                "mean": 0.8068495739761671,
+                "median": 0.6425292633186199,
+                "min": 0.4740337566576871,
+                "q25": 0.4981206528318882,
+                "q75": 0.9522041480991933
+              }
+            }
+          ]
+        },
+        "n": 360,
+        "status": "ok",
+        "twonn": {
+          "assumption": "locally homogeneous Poisson sampling; boundary, mixtures, curvature, and noise violate it",
+          "duplicate_or_tied_rows": 0,
+          "estimate": 2.294040996988505,
+          "valid_rows": 360
+        }
+      },
+      "known_structure": {
+        "known": "1-dimensional dominant line with two noise scales"
+      }
+    },
+    "bounded_square": {
+      "assessment": {
+        "calibrated_mass_region": {
+          "alpha": 0.1,
+          "law_mass_coverage": {
+            "holdout_fraction": 0.9222222222222223,
+            "meaning": "independent holdout frequency only; split-conformal marginal coverage requires exchangeable IID rows from the declared law, not a selected/mixed stratum",
+            "wilson_95_interval": [
+              0.8480596940416417,
+              0.9618156704022723
+            ]
+          },
+          "radius": 0.06683502373863076,
+          "reference_chart_coverage_Q": {
+            "fraction": 0.00439453125,
+            "meaning": "coverage of this arbitrary bounded chart measure Q only; neither support coverage nor probability mass under the generator law",
+            "measure": "uniform on the coordinatewise training bounding box expanded by 10% of each observed range",
+            "probe_count": 2048,
+            "wilson_95_monte_carlo_interval": [
+              0.0023136842521134507,
+              0.008331192038531984
+            ]
+          },
+          "split": {
+            "calibration": 90,
+            "holdout": 90,
+            "seed": 20260721,
+            "train": 180
+          },
+          "status": "ok"
+        },
+        "correlation_dimension": {
+          "local_log_slopes": [
+            1.889139656436233,
+            1.9259918943682899,
+            1.9235644713679998,
+            1.7530517935881016,
+            1.8204639255902875,
+            1.780974219177138,
+            1.712278418259784,
+            1.7135275111546187,
+            1.7640188663686773,
+            1.7374837528490865,
+            1.7077760137277065,
+            1.6672009647566255,
+            1.5791283857586818,
+            1.5195707640971148,
+            1.4951380580449913,
+            1.413396416224992,
+            1.4343280235942255
+          ],
+          "pair_mass": [
+            0.03000619003404519,
+            0.03630454967502321,
+            0.044088517486846175,
+            0.05352831940575673,
+            0.0638811513463324,
+            0.07675642216032189,
+            0.09186010523057876,
+            0.1091767254719901,
+            0.12977406375735068,
+            0.1550448777468276,
+            0.18474156607861345,
+            0.2194676570721139,
+            0.2596564531104921,
+            0.3044877746827608,
+            0.35492107706592385,
+            0.4126895697926339,
+            0.4759207675642216,
+            0.55
+          ],
+          "radii": [
+            0.09857985101204228,
+            0.1090413628572206,
+            0.120613073479971,
+            0.13341279963029698,
+            0.14757086103231978,
+            0.16323140722754773,
+            0.18055388522568866,
+            0.19971466290581286,
+            0.22090882469643813,
+            0.24435215781715763,
+            0.27028334930462294,
+            0.29896641619178405,
+            0.33069339358312533,
+            0.3657873079943925,
+            0.4046054662297074,
+            0.4475430932815977,
+            0.49503735629302414,
+            0.5475718155511597
+          ],
+          "stable_window": {
+            "intervals": 17,
+            "radius_range": [
+              0.0985798510120423,
+              0.5475718155511597
+            ],
+            "slope": 1.704871607423705
+          },
+          "warning": "window selection is exploratory and can be manufactured by finite range/noise; no stable window means no correlation-dimension estimate"
+        },
+        "global_pca": {
+          "ambient_dimension": 8,
+          "eigenvalues": [
+            0.08680269844813818,
+            0.07747157349389834,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "explained_variance": [
+            0.5284010540540769,
+            0.471598945945923,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "numerical_rank": 2,
+          "participation_ratio": 1.9935677944083277
+        },
+        "knn_connectivity": [
+          {
+            "component_count": 1,
+            "component_sizes": [
+              360
+            ],
+            "k": 8,
+            "largest_component_fraction": 1.0
+          },
+          {
+            "component_count": 1,
+            "component_sizes": [
+              360
+            ],
+            "k": 12,
+            "largest_component_fraction": 1.0
+          },
+          {
+            "component_count": 1,
+            "component_sizes": [
+              360
+            ],
+            "k": 20,
+            "largest_component_fraction": 1.0
+          }
+        ],
+        "knn_mle": [
+          {
+            "duplicate_rows_seen": 0,
+            "estimate": 2.2787652084785766,
+            "k": 8,
+            "local_estimate": {
+              "max": 6.73314172401933,
+              "mean": 2.2787652084785766,
+              "median": 2.0866086881546533,
+              "min": 0.9372225248975611,
+              "q25": 1.6294155908797034,
+              "q75": 2.632142205152493
+            },
+            "valid_rows": 360
+          },
+          {
+            "duplicate_rows_seen": 0,
+            "estimate": 2.1632819571570607,
+            "k": 12,
+            "local_estimate": {
+              "max": 6.992590536563257,
+              "mean": 2.1632819571570607,
+              "median": 1.9958139669755641,
+              "min": 0.9692170933544861,
+              "q25": 1.6641720704522645,
+              "q75": 2.5513420485834812
+            },
+            "valid_rows": 360
+          },
+          {
+            "duplicate_rows_seen": 0,
+            "estimate": 2.054735732149122,
+            "k": 20,
+            "local_estimate": {
+              "max": 6.182139361336589,
+              "mean": 2.054735732149122,
+              "median": 1.9424054946215228,
+              "min": 0.9860943838954899,
+              "q25": 1.69130428016267,
+              "q75": 2.3220734113056962
+            },
+            "valid_rows": 360
+          }
+        ],
+        "local_pca": [
+          {
+            "first_pc_fraction": {
+              "max": 0.9443667296988251,
+              "mean": 0.7105422969120309,
+              "median": 0.7073178282164814,
+              "min": 0.5195562718368785,
+              "q25": 0.6448778831521005,
+              "q75": 0.7770965057362256
+            },
+            "local_participation_ratio": {
+              "max": 1.9969450912269058,
+              "mean": 1.6798776723569278,
+              "median": 1.706597055793503,
+              "min": 1.1174138455093157,
+              "q25": 1.5300696912715859,
+              "q75": 1.8450892284326783
+            },
+            "neighbors": 8
+          },
+          {
+            "first_pc_fraction": {
+              "max": 0.9281272209403872,
+              "mean": 0.6702108496037266,
+              "median": 0.6586769473394396,
+              "min": 0.5121284089357668,
+              "q25": 0.5974223080757627,
+              "q75": 0.7214687075542006
+            },
+            "local_participation_ratio": {
+              "max": 1.9988239055794692,
+              "mean": 1.765972182179995,
+              "median": 1.8170026551844702,
+              "min": 1.1539537805140576,
+              "q25": 1.671968459156436,
+              "q75": 1.926848308171619
+            },
+            "neighbors": 12
+          },
+          {
+            "first_pc_fraction": {
+              "max": 0.8737610072618507,
+              "mean": 0.6550916087136954,
+              "median": 0.6425841359238855,
+              "min": 0.5121230864090988,
+              "q25": 0.5917189335662068,
+              "q75": 0.7125494878128165
+            },
+            "local_participation_ratio": {
+              "max": 1.99882493699973,
+              "mean": 1.7988172911520381,
+              "median": 1.8495895797184165,
+              "min": 1.2830471551267462,
+              "q25": 1.693897014514593,
+              "q75": 1.934891758116563
+            },
+            "neighbors": 20
+          }
+        ],
+        "mass_radius": {
+          "empirical_medoid_index": 113,
+          "meaning": "finite-sample concentration summaries, not a density level set or confidence body",
+          "medoid_mass_radius": [
+            {
+              "mass": 0.1,
+              "radius": 0.19636479588121036
+            },
+            {
+              "mass": 0.25,
+              "radius": 0.2777014462002914
+            },
+            {
+              "mass": 0.5,
+              "radius": 0.39679948340293303
+            },
+            {
+              "mass": 0.9,
+              "radius": 0.5458476885329393
+            }
+          ],
+          "per_point_mass_radii": [
+            {
+              "mass": 0.05,
+              "radius": {
+                "max": 0.2504886072081939,
+                "mean": 0.1313807813214414,
+                "median": 0.12490197706230889,
+                "min": 0.08379519048539512,
+                "q25": 0.11328612923170457,
+                "q75": 0.14463992497946782
+              }
+            },
+            {
+              "mass": 0.1,
+              "radius": {
+                "max": 0.3611631825345701,
+                "mean": 0.19764425768601335,
+                "median": 0.1877555948531731,
+                "min": 0.14386967456627253,
+                "q25": 0.17044769374951332,
+                "q75": 0.21273005613449947
+              }
+            },
+            {
+              "mass": 0.2,
+              "radius": {
+                "max": 0.4874020982366629,
+                "mean": 0.29373115001138334,
+                "median": 0.2736977218187033,
+                "min": 0.19264741516041303,
+                "q25": 0.25211325973322174,
+                "q75": 0.32853646139354453
+              }
+            },
+            {
+              "mass": 0.4,
+              "radius": {
+                "max": 0.7146565069344814,
+                "mean": 0.45887413949315126,
+                "median": 0.44358553960695535,
+                "min": 0.3399958967694825,
+                "q25": 0.38127628489053633,
+                "q75": 0.5168572390691732
+              }
+            }
+          ]
+        },
+        "n": 360,
+        "status": "ok",
+        "twonn": {
+          "assumption": "locally homogeneous Poisson sampling; boundary, mixtures, curvature, and noise violate it",
+          "duplicate_or_tied_rows": 0,
+          "estimate": 2.1253158276858994,
+          "valid_rows": 360
+        }
+      },
+      "known_structure": {
+        "known": "2-dimensional manifold with boundary"
+      }
+    },
+    "circle_1d_with_noise": {
+      "assessment": {
+        "calibrated_mass_region": {
+          "alpha": 0.1,
+          "law_mass_coverage": {
+            "holdout_fraction": 0.9222222222222223,
+            "meaning": "independent holdout frequency only; split-conformal marginal coverage requires exchangeable IID rows from the declared law, not a selected/mixed stratum",
+            "wilson_95_interval": [
+              0.8480596940416417,
+              0.9618156704022723
+            ]
+          },
+          "radius": 0.10122240641984545,
+          "reference_chart_coverage_Q": {
+            "fraction": 0.0791015625,
+            "meaning": "coverage of this arbitrary bounded chart measure Q only; neither support coverage nor probability mass under the generator law",
+            "measure": "uniform on the coordinatewise training bounding box expanded by 10% of each observed range",
+            "probe_count": 2048,
+            "wilson_95_monte_carlo_interval": [
+              0.0681846616121859,
+              0.09159453381888437
+            ]
+          },
+          "split": {
+            "calibration": 90,
+            "holdout": 90,
+            "seed": 20260716,
+            "train": 180
+          },
+          "status": "ok"
+        },
+        "correlation_dimension": {
+          "local_log_slopes": [
+            1.8113984281093178,
+            1.5464070212617829,
+            1.242717738875101,
+            1.2592622601246921,
+            1.1655424534288128,
+            1.1881879538775326,
+            1.1006219614469763,
+            1.0642260902418577,
+            1.0213616374750691,
+            1.0717752012972788,
+            1.0726908757675289,
+            1.0330424800898177,
+            1.0619506445724685,
+            1.0897980199778068,
+            1.1101606983006171,
+            1.1718706742013003,
+            1.27555991890409
+          ],
+          "pair_mass": [
+            0.03000619003404519,
+            0.038904363974001856,
+            0.04856081708449397,
+            0.058031569173630455,
+            0.0695140823274528,
+            0.08215722686474776,
+            0.09741566078613433,
+            0.11406685236768803,
+            0.13286908077994428,
+            0.15382234602290312,
+            0.1793717115444135,
+            0.20919220055710305,
+            0.24258743423088827,
+            0.28248220365212007,
+            0.3302537913958527,
+            0.3872330547818013,
+            0.45807799442896935,
+            0.55
+          ],
+          "radii": [
+            0.1336302760606654,
+            0.15423050292112145,
+            0.17800642737955,
+            0.20544760983264387,
+            0.23711908051470376,
+            0.2736729738055332,
+            0.31586195606439055,
+            0.3645547234770679,
+            0.420753889025967,
+            0.48561662688650353,
+            0.5604784993302145,
+            0.6468809567446462,
+            0.7466030770117544,
+            0.8616981977774588,
+            0.99453619589252,
+            1.1478522845835282,
+            1.324803333116711,
+            1.529032868609872
+          ],
+          "stable_window": {
+            "intervals": 15,
+            "radius_range": [
+              0.17800642737955003,
+              1.529032868609872
+            ],
+            "slope": 1.1018208315567637
+          },
+          "warning": "window selection is exploratory and can be manufactured by finite range/noise; no stable window means no correlation-dimension estimate"
+        },
+        "global_pca": {
+          "ambient_dimension": 6,
+          "eigenvalues": [
+            0.5407956632595238,
+            0.46159717749499285,
+            0.001085434888714202,
+            0.000944693594574024,
+            0.0008827252308814514,
+            0.0008042137609177806
+          ],
+          "explained_variance": [
+            0.5375115172169728,
+            0.45879398833000246,
+            0.001078843255429401,
+            0.0009389566555768734,
+            0.000877364613608402,
+            0.0007993299284100194
+          ],
+          "numerical_rank": 6,
+          "participation_ratio": 2.00234671387386
+        },
+        "knn_connectivity": [
+          {
+            "component_count": 1,
+            "component_sizes": [
+              360
+            ],
+            "k": 8,
+            "largest_component_fraction": 1.0
+          },
+          {
+            "component_count": 1,
+            "component_sizes": [
+              360
+            ],
+            "k": 12,
+            "largest_component_fraction": 1.0
+          },
+          {
+            "component_count": 1,
+            "component_sizes": [
+              360
+            ],
+            "k": 20,
+            "largest_component_fraction": 1.0
+          }
+        ],
+        "knn_mle": [
+          {
+            "duplicate_rows_seen": 0,
+            "estimate": 3.8175056563641583,
+            "k": 8,
+            "local_estimate": {
+              "max": 13.92955933942424,
+              "mean": 3.8175056563641583,
+              "median": 3.3763876270128774,
+              "min": 1.4915400073714995,
+              "q25": 2.653241756890122,
+              "q75": 4.591553506037017
+            },
+            "valid_rows": 360
+          },
+          {
+            "duplicate_rows_seen": 0,
+            "estimate": 2.9480456458227873,
+            "k": 12,
+            "local_estimate": {
+              "max": 8.425868161743631,
+              "mean": 2.9480456458227873,
+              "median": 2.7269803803175234,
+              "min": 1.2427362770357644,
+              "q25": 2.220451508075758,
+              "q75": 3.418151924308855
+            },
+            "valid_rows": 360
+          },
+          {
+            "duplicate_rows_seen": 0,
+            "estimate": 2.127749350821155,
+            "k": 20,
+            "local_estimate": {
+              "max": 4.5527814260614745,
+              "mean": 2.127749350821155,
+              "median": 2.0415851518204766,
+              "min": 1.0531340229549775,
+              "q25": 1.7509707023578853,
+              "q75": 2.4206084896766256
+            },
+            "valid_rows": 360
+          }
+        ],
+        "local_pca": [
+          {
+            "first_pc_fraction": {
+              "max": 0.814124176073949,
+              "mean": 0.5794958719907418,
+              "median": 0.5831487882474036,
+              "min": 0.32849322542867243,
+              "q25": 0.51539532358411,
+              "q75": 0.6485714497379323
+            },
+            "local_participation_ratio": {
+              "max": 3.7289630710963557,
+              "mean": 2.4640210777908136,
+              "median": 2.4097696093984124,
+              "min": 1.4633717351249904,
+              "q25": 2.1066777958797305,
+              "q75": 2.773636080321441
+            },
+            "neighbors": 8
+          },
+          {
+            "first_pc_fraction": {
+              "max": 0.8617763927899177,
+              "mean": 0.6283332550907704,
+              "median": 0.6349093865356602,
+              "min": 0.35603707096977344,
+              "q25": 0.5637067682744417,
+              "q75": 0.704324815749725
+            },
+            "local_participation_ratio": {
+              "max": 3.77660525451618,
+              "mean": 2.3014636643028967,
+              "median": 2.223781467477952,
+              "min": 1.3364067990060962,
+              "q25": 1.903455444472653,
+              "q75": 2.6168389192738726
+            },
+            "neighbors": 12
+          },
+          {
+            "first_pc_fraction": {
+              "max": 0.8982922069238536,
+              "mean": 0.7613300185005967,
+              "median": 0.7545734703557092,
+              "min": 0.5957626448533614,
+              "q25": 0.7084526722568257,
+              "q75": 0.8225391943032825
+            },
+            "local_participation_ratio": {
+              "max": 2.4720045571606533,
+              "mean": 1.7055284510911428,
+              "median": 1.7005627105799679,
+              "min": 1.2343012149551242,
+              "q25": 1.4563493565089058,
+              "q75": 1.9012527629919533
+            },
+            "neighbors": 20
+          }
+        ],
+        "mass_radius": {
+          "empirical_medoid_index": 264,
+          "meaning": "finite-sample concentration summaries, not a density level set or confidence body",
+          "medoid_mass_radius": [
+            {
+              "mass": 0.1,
+              "radius": 0.2766496129794378
+            },
+            {
+              "mass": 0.25,
+              "radius": 0.7147662426621026
+            },
+            {
+              "mass": 0.5,
+              "radius": 1.406010615752092
+            },
+            {
+              "mass": 0.9,
+              "radius": 1.9872654182593152
+            }
+          ],
+          "per_point_mass_radii": [
+            {
+              "mass": 0.05,
+              "radius": {
+                "max": 0.28144244486873676,
+                "mean": 0.18387197531056018,
+                "median": 0.1788802328486211,
+                "min": 0.12201954195913663,
+                "q25": 0.1599816269914014,
+                "q75": 0.2059819876347516
+              }
+            },
+            {
+              "mass": 0.1,
+              "radius": {
+                "max": 0.45072865485294855,
+                "mean": 0.3240228049984235,
+                "median": 0.3133876062283375,
+                "min": 0.23774426391121475,
+                "q25": 0.288869581252315,
+                "q75": 0.34636111574034695
+              }
+            },
+            {
+              "mass": 0.2,
+              "radius": {
+                "max": 0.7616497819040546,
+                "mean": 0.6205976233976441,
+                "median": 0.6150475421474951,
+                "min": 0.5044004040965158,
+                "q25": 0.5772956481076403,
+                "q75": 0.6696812832918271
+              }
+            },
+            {
+              "mass": 0.4,
+              "radius": {
+                "max": 1.2809369264936405,
+                "mean": 1.1809878134913279,
+                "median": 1.191865344226152,
+                "min": 1.0665898555037971,
+                "q25": 1.1565612093577191,
+                "q75": 1.2081468105323485
+              }
+            }
+          ]
+        },
+        "n": 360,
+        "status": "ok",
+        "twonn": {
+          "assumption": "locally homogeneous Poisson sampling; boundary, mixtures, curvature, and noise violate it",
+          "duplicate_or_tied_rows": 0,
+          "estimate": 4.579424290020008,
+          "valid_rows": 360
+        }
+      },
+      "known_structure": {
+        "known": "1-dimensional curved manifold plus noise"
+      }
+    },
+    "curve_1d": {
+      "assessment": {
+        "calibrated_mass_region": {
+          "alpha": 0.1,
+          "law_mass_coverage": {
+            "holdout_fraction": 0.9444444444444444,
+            "meaning": "independent holdout frequency only; split-conformal marginal coverage requires exchangeable IID rows from the declared law, not a selected/mixed stratum",
+            "wilson_95_interval": [
+              0.8764610019095158,
+              0.9760393817156567
+            ]
+          },
+          "radius": 0.03587008797263778,
+          "reference_chart_coverage_Q": {
+            "fraction": 0.0,
+            "meaning": "coverage of this arbitrary bounded chart measure Q only; neither support coverage nor probability mass under the generator law",
+            "measure": "uniform on the coordinatewise training bounding box expanded by 10% of each observed range",
+            "probe_count": 2048,
+            "wilson_95_monte_carlo_interval": [
+              0.0,
+              0.0018722692823851506
+            ]
+          },
+          "split": {
+            "calibration": 90,
+            "holdout": 90,
+            "seed": 20260717,
+            "train": 180
+          },
+          "status": "ok"
+        },
+        "correlation_dimension": {
+          "local_log_slopes": [
+            0.9697399192843298,
+            1.009070425183042,
+            1.0401766841058264,
+            0.9202025401487695,
+            1.040433323368077,
+            0.9933014240025697,
+            1.0210138000114373,
+            1.0289037059333939,
+            1.0400247012423967,
+            1.0283459666256536,
+            0.9805147470132834,
+            1.0457715549616193,
+            0.986389316766817,
+            0.9764029233189109,
+            0.9678917216761339,
+            0.9810929632112,
+            1.0124500005645358
+          ],
+          "pair_mass": [
+            0.03000619003404519,
+            0.03540699473847106,
+            0.042061281337047354,
+            0.05023212627669452,
+            0.05877437325905292,
+            0.0701949860724234,
+            0.08316310739709068,
+            0.09899411946765707,
+            0.11799752398638193,
+            0.14091612503868772,
+            0.16795109873104302,
+            0.198545341999381,
+            0.2373413803775921,
+            0.28085731971525846,
+            0.3317858248220365,
+            0.3913803775920768,
+            0.4627205199628598,
+            0.55
+          ],
+          "radii": [
+            0.07021298672401496,
+            0.0832795883227289,
+            0.09877787792256175,
+            0.1171603914403788,
+            0.13896388150010575,
+            0.1648249901196557,
+            0.19549883807702895,
+            0.23188107374811595,
+            0.27503402522215303,
+            0.32621771931274113,
+            0.38692667319125124,
+            0.4589335329247458,
+            0.5443408331239104,
+            0.645642389035495,
+            0.7657961136723531,
+            0.908310386174844,
+            1.0773464932809569,
+            1.2778401351026192
+          ],
+          "stable_window": {
+            "intervals": 17,
+            "radius_range": [
+              0.07021298672401495,
+              1.2778401351026192
+            ],
+            "slope": 1.006658245718139
+          },
+          "warning": "window selection is exploratory and can be manufactured by finite range/noise; no stable window means no correlation-dimension estimate"
+        },
+        "global_pca": {
+          "ambient_dimension": 6,
+          "eigenvalues": [
+            0.8100635945508157,
+            0.08911052348780017,
+            0.06698365616706843,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "explained_variance": [
+            0.8384382097600988,
+            0.09223185474138672,
+            0.0693299354985145,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "numerical_rank": 3,
+          "participation_ratio": 1.3960787203374652
+        },
+        "knn_connectivity": [
+          {
+            "component_count": 1,
+            "component_sizes": [
+              360
+            ],
+            "k": 8,
+            "largest_component_fraction": 1.0
+          },
+          {
+            "component_count": 1,
+            "component_sizes": [
+              360
+            ],
+            "k": 12,
+            "largest_component_fraction": 1.0
+          },
+          {
+            "component_count": 1,
+            "component_sizes": [
+              360
+            ],
+            "k": 20,
+            "largest_component_fraction": 1.0
+          }
+        ],
+        "knn_mle": [
+          {
+            "duplicate_rows_seen": 0,
+            "estimate": 1.1261925464514384,
+            "k": 8,
+            "local_estimate": {
+              "max": 2.695779313452781,
+              "mean": 1.1261925464514384,
+              "median": 1.0439502482036644,
+              "min": 0.4742082399038675,
+              "q25": 0.8338964983417865,
+              "q75": 1.3328012271574656
+            },
+            "valid_rows": 360
+          },
+          {
+            "duplicate_rows_seen": 0,
+            "estimate": 1.0932382381875638,
+            "k": 12,
+            "local_estimate": {
+              "max": 2.3651292808722024,
+              "mean": 1.0932382381875638,
+              "median": 1.0479969769249315,
+              "min": 0.5457805993325333,
+              "q25": 0.8601683897075855,
+              "q75": 1.286038156858398
+            },
+            "valid_rows": 360
+          },
+          {
+            "duplicate_rows_seen": 0,
+            "estimate": 1.0517409246279736,
+            "k": 20,
+            "local_estimate": {
+              "max": 1.7786637631500672,
+              "mean": 1.0517409246279736,
+              "median": 1.0454219771219493,
+              "min": 0.5957429112419977,
+              "q25": 0.8613733867429577,
+              "q75": 1.1970132263621571
+            },
+            "valid_rows": 360
+          }
+        ],
+        "local_pca": [
+          {
+            "first_pc_fraction": {
+              "max": 0.999999729003076,
+              "mean": 0.9996213792691582,
+              "median": 0.9999500357490789,
+              "min": 0.9946082609609062,
+              "q25": 0.9997062508264452,
+              "q75": 0.9999848449191476
+            },
+            "local_participation_ratio": {
+              "max": 1.010841616377924,
+              "mean": 1.0007589191749064,
+              "median": 1.0000999334947585,
+              "min": 1.000000541993995,
+              "q25": 1.0000303106211859,
+              "q75": 1.000587670931131
+            },
+            "neighbors": 8
+          },
+          {
+            "first_pc_fraction": {
+              "max": 0.9999983871500165,
+              "mean": 0.9992231688557003,
+              "median": 0.9998648537049233,
+              "min": 0.9916833528834669,
+              "q25": 0.9992625876038235,
+              "q75": 0.9999647108148783
+            },
+            "local_participation_ratio": {
+              "max": 1.0167716081383336,
+              "mean": 1.0015590895536268,
+              "median": 1.0002703291270363,
+              "min": 1.0000032257051763,
+              "q25": 1.000070580861915,
+              "q75": 1.001475912532991
+            },
+            "neighbors": 12
+          },
+          {
+            "first_pc_fraction": {
+              "max": 0.9999932144985505,
+              "mean": 0.997906579874156,
+              "median": 0.9994768816959568,
+              "min": 0.9815940696862341,
+              "q25": 0.9967359896818418,
+              "q75": 0.9998810116073382
+            },
+            "local_participation_ratio": {
+              "max": 1.0374889418422886,
+              "mean": 1.004219071399683,
+              "median": 1.0010467839923063,
+              "min": 1.00001357109519,
+              "q25": 1.0002380051125295,
+              "q75": 1.0065493277391908
+            },
+            "neighbors": 20
+          }
+        ],
+        "mass_radius": {
+          "empirical_medoid_index": 102,
+          "meaning": "finite-sample concentration summaries, not a density level set or confidence body",
+          "medoid_mass_radius": [
+            {
+              "mass": 0.1,
+              "radius": 0.3393309516938335
+            },
+            {
+              "mass": 0.25,
+              "radius": 0.7693551502597623
+            },
+            {
+              "mass": 0.5,
+              "radius": 1.1775592473051055
+            },
+            {
+              "mass": 0.9,
+              "radius": 1.2839889830691102
+            }
+          ],
+          "per_point_mass_radii": [
+            {
+              "mass": 0.05,
+              "radius": {
+                "max": 0.38290777200062825,
+                "mean": 0.12722047537232,
+                "median": 0.11711335656048277,
+                "min": 0.04918988433377614,
+                "q25": 0.09217581960992417,
+                "q75": 0.15055003435145844
+              }
+            },
+            {
+              "mass": 0.1,
+              "radius": {
+                "max": 0.7015488871593493,
+                "mean": 0.25704229396131006,
+                "median": 0.22272112206375133,
+                "min": 0.13963316238427284,
+                "q25": 0.19470336178468112,
+                "q75": 0.3118190904515232
+              }
+            },
+            {
+              "mass": 0.2,
+              "radius": {
+                "max": 1.1122913655398616,
+                "mean": 0.49419044364884096,
+                "median": 0.437234062244623,
+                "min": 0.290651284514922,
+                "q25": 0.3733359095761297,
+                "q75": 0.591887395440407
+              }
+            },
+            {
+              "mass": 0.4,
+              "radius": {
+                "max": 1.2989126110637221,
+                "mean": 0.8891357765313334,
+                "median": 0.8448780171927439,
+                "min": 0.7382594922589051,
+                "q25": 0.8073696018060839,
+                "q75": 0.9313032344121469
+              }
+            }
+          ]
+        },
+        "n": 360,
+        "status": "ok",
+        "twonn": {
+          "assumption": "locally homogeneous Poisson sampling; boundary, mixtures, curvature, and noise violate it",
+          "duplicate_or_tied_rows": 0,
+          "estimate": 0.9882138495524105,
+          "valid_rows": 360
+        }
+      },
+      "known_structure": {
+        "known": "1-dimensional curved embedding"
+      }
+    },
+    "duplicate_contaminated_plane": {
+      "assessment": {
+        "calibrated_mass_region": {
+          "alpha": 0.1,
+          "law_mass_coverage": {
+            "holdout_fraction": 0.8888888888888888,
+            "meaning": "independent holdout frequency only; split-conformal marginal coverage requires exchangeable IID rows from the declared law, not a selected/mixed stratum",
+            "wilson_95_interval": [
+              0.8074203653741283,
+              0.9385174702978976
+            ]
+          },
+          "radius": 0.34590180987178065,
+          "reference_chart_coverage_Q": {
+            "fraction": 0.42822265625,
+            "meaning": "coverage of this arbitrary bounded chart measure Q only; neither support coverage nor probability mass under the generator law",
+            "measure": "uniform on the coordinatewise training bounding box expanded by 10% of each observed range",
+            "probe_count": 2048,
+            "wilson_95_monte_carlo_interval": [
+              0.40694584305201753,
+              0.449768242479731
+            ]
+          },
+          "split": {
+            "calibration": 90,
+            "holdout": 90,
+            "seed": 20260719,
+            "train": 180
+          },
+          "status": "ok"
+        },
+        "correlation_dimension": {
+          "local_log_slopes": [
+            0.5239205265250221,
+            0.6192489817622001,
+            0.6439752732682679,
+            1.2972492776301252,
+            0.803818217589603,
+            1.0621339019409626,
+            1.3306553901523508,
+            1.4456274869034917,
+            1.4744409173765705,
+            1.072108423695996,
+            1.5207945433643573,
+            1.3152041506532626,
+            1.5316884019115489,
+            1.366907868904247,
+            1.4311854932548553,
+            1.3559541757923987,
+            1.3479423724991193
+          ],
+          "pair_mass": [
+            0.06881770349736924,
+            0.07270194986072423,
+            0.0775766016713092,
+            0.08299288146084803,
+            0.09507892293407613,
+            0.10343546889507892,
+            0.11561436087898483,
+            0.13291550603528318,
+            0.1546580006190034,
+            0.18050139275766017,
+            0.20196533580934695,
+            0.23686165273909007,
+            0.27186629526462397,
+            0.3192045806251934,
+            0.36836892602909316,
+            0.42797895388424634,
+            0.49333023831631073,
+            0.5681832250077375
+          ],
+          "radii": [
+            0.2876474943333688,
+            0.31942941682126197,
+            0.3547228963952594,
+            0.3939159219560848,
+            0.4374393509620262,
+            0.4857716459387276,
+            0.5394441343218463,
+            0.5990468494551683,
+            0.6652350169555454,
+            0.738736257750678,
+            0.8203585869743008,
+            0.9109992966523697,
+            1.011654819829552,
+            1.1234316845745078,
+            1.247558678283726,
+            1.3854003560087533,
+            1.538472041306803,
+            1.7084564845223456
+          ],
+          "stable_window": {
+            "intervals": 7,
+            "radius_range": [
+              0.8203585869743008,
+              1.7084564845223456
+            ],
+            "slope": 1.4101034840280495
+          },
+          "warning": "window selection is exploratory and can be manufactured by finite range/noise; no stable window means no correlation-dimension estimate"
+        },
+        "global_pca": {
+          "ambient_dimension": 8,
+          "eigenvalues": [
+            0.9374425517805746,
+            0.8697240095187052,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "explained_variance": [
+            0.5187361098063873,
+            0.4812638901936127,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "numerical_rank": 2,
+          "participation_ratio": 1.9971956033564864
+        },
+        "knn_connectivity": [
+          {
+            "component_count": 1,
+            "component_sizes": [
+              360
+            ],
+            "k": 8,
+            "largest_component_fraction": 1.0
+          },
+          {
+            "component_count": 1,
+            "component_sizes": [
+              360
+            ],
+            "k": 12,
+            "largest_component_fraction": 1.0
+          },
+          {
+            "component_count": 1,
+            "component_sizes": [
+              360
+            ],
+            "k": 20,
+            "largest_component_fraction": 1.0
+          }
+        ],
+        "knn_mle": [
+          {
+            "duplicate_rows_seen": 72,
+            "estimate": 2.8611009719101843,
+            "k": 8,
+            "local_estimate": {
+              "max": 78.994331992226,
+              "mean": 2.8611009719101843,
+              "median": 2.0714418099495657,
+              "min": 0.9479674716245008,
+              "q25": 1.7187091684751141,
+              "q75": 3.024231543228694
+            },
+            "valid_rows": 287
+          },
+          {
+            "duplicate_rows_seen": 72,
+            "estimate": 2.983041411077908,
+            "k": 12,
+            "local_estimate": {
+              "max": 124.133950273498,
+              "mean": 2.983041411077908,
+              "median": 2.1529638467939867,
+              "min": 1.1346885455415037,
+              "q25": 1.6923171872744789,
+              "q75": 2.713301124755195
+            },
+            "valid_rows": 287
+          },
+          {
+            "duplicate_rows_seen": 72,
+            "estimate": 3.537423925786473,
+            "k": 20,
+            "local_estimate": {
+              "max": 214.413186836042,
+              "mean": 3.537423925786473,
+              "median": 2.1081660197133902,
+              "min": 1.2219451759257651,
+              "q25": 1.7785907477573832,
+              "q75": 2.5797564391706658
+            },
+            "valid_rows": 287
+          }
+        ],
+        "local_pca": [
+          {
+            "first_pc_fraction": {
+              "max": 1.0000000000000002,
+              "mean": 0.5734567846882214,
+              "median": 0.6695303554278367,
+              "min": 0.0,
+              "q25": 0.5733807945249638,
+              "q75": 0.7669672851235325
+            },
+            "local_participation_ratio": {
+              "max": 1.9986248307164267,
+              "mean": 1.3211207464639732,
+              "median": 1.6110661295813435,
+              "min": 0.0,
+              "q25": 1.2049567407943758,
+              "q75": 1.818784459245086
+            },
+            "neighbors": 8
+          },
+          {
+            "first_pc_fraction": {
+              "max": 1.0000000000000009,
+              "mean": 0.541362629958665,
+              "median": 0.6464940197534712,
+              "min": 0.0,
+              "q25": 0.5559664309479816,
+              "q75": 0.7151724716131025
+            },
+            "local_participation_ratio": {
+              "max": 1.9997391297725167,
+              "mean": 1.395324629208858,
+              "median": 1.7410432842467984,
+              "min": 0.0,
+              "q25": 1.416617621076246,
+              "q75": 1.8663752527774755
+            },
+            "neighbors": 12
+          },
+          {
+            "first_pc_fraction": {
+              "max": 1.0,
+              "mean": 0.5137805255892953,
+              "median": 0.6023900522687129,
+              "min": 0.0,
+              "q25": 0.5364263848840491,
+              "q75": 0.6751816247447945
+            },
+            "local_participation_ratio": {
+              "max": 1.9966694599016355,
+              "mean": 1.4506192020531457,
+              "median": 1.8022700228955664,
+              "min": 0.0,
+              "q25": 1.526294175946302,
+              "q75": 1.9324583688472639
+            },
+            "neighbors": 20
+          }
+        ],
+        "mass_radius": {
+          "empirical_medoid_index": 117,
+          "meaning": "finite-sample concentration summaries, not a density level set or confidence body",
+          "medoid_mass_radius": [
+            {
+              "mass": 0.1,
+              "radius": 0.23277360615209564
+            },
+            {
+              "mass": 0.25,
+              "radius": 0.3943646500260564
+            },
+            {
+              "mass": 0.5,
+              "radius": 1.066363091439886
+            },
+            {
+              "mass": 0.9,
+              "radius": 2.2697110013988153
+            }
+          ],
+          "per_point_mass_radii": [
+            {
+              "mass": 0.05,
+              "radius": {
+                "max": 1.857180700514229,
+                "mean": 0.49763446447583576,
+                "median": 0.46772032842524514,
+                "min": 0.0,
+                "q25": 0.3212134444520463,
+                "q75": 0.6601039662506694
+              }
+            },
+            {
+              "mass": 0.1,
+              "radius": {
+                "max": 2.2920524340371453,
+                "mean": 0.6779593791017539,
+                "median": 0.6398121165465418,
+                "min": 0.0,
+                "q25": 0.40006215275092244,
+                "q75": 0.9327314715744042
+              }
+            },
+            {
+              "mass": 0.2,
+              "radius": {
+                "max": 2.6721758039092425,
+                "mean": 0.8986902992941304,
+                "median": 0.8847156660037738,
+                "min": 0.07675100878640265,
+                "q25": 0.40006215275092244,
+                "q75": 1.286895634327462
+              }
+            },
+            {
+              "mass": 0.4,
+              "radius": {
+                "max": 3.241621789737069,
+                "mean": 1.376484208190015,
+                "median": 1.24250650248708,
+                "min": 0.7330047701052907,
+                "q25": 0.8805363067147627,
+                "q75": 1.6747276012885504
+              }
+            }
+          ]
+        },
+        "n": 360,
+        "status": "ok",
+        "twonn": {
+          "assumption": "locally homogeneous Poisson sampling; boundary, mixtures, curvature, and noise violate it",
+          "duplicate_or_tied_rows": 73,
+          "estimate": 1.9306019799125698,
+          "valid_rows": 287
+        }
+      },
+      "known_structure": {
+        "known": "2-dimensional plane with exact duplicates"
+      }
+    },
+    "plane_2d": {
+      "assessment": {
+        "calibrated_mass_region": {
+          "alpha": 0.1,
+          "law_mass_coverage": {
+            "holdout_fraction": 0.9333333333333333,
+            "meaning": "independent holdout frequency only; split-conformal marginal coverage requires exchangeable IID rows from the declared law, not a selected/mixed stratum",
+            "wilson_95_interval": [
+              0.8620973805849326,
+              0.9690904934496107
+            ]
+          },
+          "radius": 0.432938130826595,
+          "reference_chart_coverage_Q": {
+            "fraction": 0.572265625,
+            "meaning": "coverage of this arbitrary bounded chart measure Q only; neither support coverage nor probability mass under the generator law",
+            "measure": "uniform on the coordinatewise training bounding box expanded by 10% of each observed range",
+            "probe_count": 2048,
+            "wilson_95_monte_carlo_interval": [
+              0.5507221941401852,
+              0.593538454440095
+            ]
+          },
+          "split": {
+            "calibration": 90,
+            "holdout": 90,
+            "seed": 20260715,
+            "train": 180
+          },
+          "status": "ok"
+        },
+        "correlation_dimension": {
+          "local_log_slopes": [
+            1.9458091820561256,
+            2.0282665482817612,
+            1.9468172084021136,
+            1.9179395202029377,
+            1.813337994657865,
+            1.9535073260915532,
+            1.8410455068453575,
+            1.8578311671687175,
+            1.7645038386464986,
+            1.786632688533142,
+            1.7728401474242248,
+            1.7215126525940883,
+            1.6622313700665603,
+            1.6156633545812267,
+            1.6016973955899942,
+            1.4478373030244194,
+            1.360954564866739
+          ],
+          "pair_mass": [
+            0.03000619003404519,
+            0.03622717424945837,
+            0.044088517486846175,
+            0.05323429278861034,
+            0.06409780253791396,
+            0.07640049520272361,
+            0.09230888269885484,
+            0.11032188177034974,
+            0.13206437635406995,
+            0.15666976168368926,
+            0.1862581244196843,
+            0.22113896626431445,
+            0.2612503868771278,
+            0.30687093779015784,
+            0.3588362735995048,
+            0.4190343546889508,
+            0.4820953265242959,
+            0.55
+          ],
+          "radii": [
+            0.3558300148945686,
+            0.39200695782546285,
+            0.43186198058392017,
+            0.475769030499978,
+            0.5241400738190314,
+            0.5774289610534714,
+            0.6361356853214242,
+            0.7008110736272625,
+            0.772061955100722,
+            0.8505568546866078,
+            0.9370322657072199,
+            1.032299560151003,
+            1.1372526015245232,
+            1.2528761316967998,
+            1.3802550104271518,
+            1.5205843942681947,
+            1.675180950349469,
+            1.845495210257168
+          ],
+          "stable_window": {
+            "intervals": 16,
+            "radius_range": [
+              0.3558300148945686,
+              1.675180950349469
+            ],
+            "slope": 1.8036346791655695
+          },
+          "warning": "window selection is exploratory and can be manufactured by finite range/noise; no stable window means no correlation-dimension estimate"
+        },
+        "global_pca": {
+          "ambient_dimension": 8,
+          "eigenvalues": [
+            1.1491293954540172,
+            1.014990265879814,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "explained_variance": [
+            0.5309916156603669,
+            0.46900838433963304,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "numerical_rank": 2,
+          "participation_ratio": 1.9923455658013036
+        },
+        "knn_connectivity": [
+          {
+            "component_count": 1,
+            "component_sizes": [
+              360
+            ],
+            "k": 8,
+            "largest_component_fraction": 1.0
+          },
+          {
+            "component_count": 1,
+            "component_sizes": [
+              360
+            ],
+            "k": 12,
+            "largest_component_fraction": 1.0
+          },
+          {
+            "component_count": 1,
+            "component_sizes": [
+              360
+            ],
+            "k": 20,
+            "largest_component_fraction": 1.0
+          }
+        ],
+        "knn_mle": [
+          {
+            "duplicate_rows_seen": 0,
+            "estimate": 2.3375949172139885,
+            "k": 8,
+            "local_estimate": {
+              "max": 8.070178979382742,
+              "mean": 2.3375949172139885,
+              "median": 2.0339952159091066,
+              "min": 0.8030008372136392,
+              "q25": 1.6845091740938758,
+              "q75": 2.6573581819964582
+            },
+            "valid_rows": 360
+          },
+          {
+            "duplicate_rows_seen": 0,
+            "estimate": 2.2306419173284384,
+            "k": 12,
+            "local_estimate": {
+              "max": 6.926842349512676,
+              "mean": 2.2306419173284384,
+              "median": 2.048706565986428,
+              "min": 1.0660955857918888,
+              "q25": 1.7086725328773846,
+              "q75": 2.5410667452672557
+            },
+            "valid_rows": 360
+          },
+          {
+            "duplicate_rows_seen": 0,
+            "estimate": 2.1607307472357564,
+            "k": 20,
+            "local_estimate": {
+              "max": 4.374615620385902,
+              "mean": 2.1607307472357564,
+              "median": 2.0815452040754385,
+              "min": 1.2553729621380956,
+              "q25": 1.7468626487290733,
+              "q75": 2.4588056611110813
+            },
+            "valid_rows": 360
+          }
+        ],
+        "local_pca": [
+          {
+            "first_pc_fraction": {
+              "max": 0.9515342811929641,
+              "mean": 0.7070112921960924,
+              "median": 0.7015793670573001,
+              "min": 0.5168561385797181,
+              "q25": 0.6300329826486734,
+              "q75": 0.7748222739146491
+            },
+            "local_participation_ratio": {
+              "max": 1.9977295451494193,
+              "mean": 1.684050129412707,
+              "median": 1.7203754032599123,
+              "min": 1.1016049771988154,
+              "q25": 1.5359693147518074,
+              "q75": 1.8733000530340322
+            },
+            "neighbors": 8
+          },
+          {
+            "first_pc_fraction": {
+              "max": 0.8769205020779027,
+              "mean": 0.6694489578857146,
+              "median": 0.6673482728660166,
+              "min": 0.5125516332110001,
+              "q25": 0.6074961599750562,
+              "q75": 0.7256978398920078
+            },
+            "local_participation_ratio": {
+              "max": 1.9987404457682014,
+              "mean": 1.7708587033929992,
+              "median": 1.7985259216560547,
+              "min": 1.2752855167100294,
+              "q25": 1.6614634056095658,
+              "q75": 1.9116402265360772
+            },
+            "neighbors": 12
+          },
+          {
+            "first_pc_fraction": {
+              "max": 0.8041242204100952,
+              "mean": 0.6317279786316877,
+              "median": 0.6243194186132475,
+              "min": 0.5058742595810377,
+              "q25": 0.5824976087861278,
+              "q75": 0.6815069144477353
+            },
+            "local_participation_ratio": {
+              "max": 1.9997239826930309,
+              "mean": 1.84937071350996,
+              "median": 1.8835558123297043,
+              "min": 1.4598900688107157,
+              "q25": 1.767129020223203,
+              "q75": 1.9469858929833312
+            },
+            "neighbors": 20
+          }
+        ],
+        "mass_radius": {
+          "empirical_medoid_index": 306,
+          "meaning": "finite-sample concentration summaries, not a density level set or confidence body",
+          "medoid_mass_radius": [
+            {
+              "mass": 0.1,
+              "radius": 0.46963951139352905
+            },
+            {
+              "mass": 0.25,
+              "radius": 0.7578746756208243
+            },
+            {
+              "mass": 0.5,
+              "radius": 1.2141930732937167
+            },
+            {
+              "mass": 0.9,
+              "radius": 2.333750032402181
+            }
+          ],
+          "per_point_mass_radii": [
+            {
+              "mass": 0.05,
+              "radius": {
+                "max": 1.707034295274973,
+                "mean": 0.5708819240041723,
+                "median": 0.45772744673585997,
+                "min": 0.23840839297235175,
+                "q25": 0.3682750944936447,
+                "q75": 0.6880632148998502
+              }
+            },
+            {
+              "mass": 0.1,
+              "radius": {
+                "max": 2.1677064341074064,
+                "mean": 0.7880756614182897,
+                "median": 0.6533017432371029,
+                "min": 0.42609596516011644,
+                "q25": 0.533147119669695,
+                "q75": 0.9573950575061586
+              }
+            },
+            {
+              "mass": 0.2,
+              "radius": {
+                "max": 2.6292083180868824,
+                "mean": 1.0964493330139884,
+                "median": 0.9519944921750021,
+                "min": 0.6409833967219716,
+                "q25": 0.7818686415720548,
+                "q75": 1.292244978001154
+              }
+            },
+            {
+              "mass": 0.4,
+              "radius": {
+                "max": 3.136498845674713,
+                "mean": 1.5601760333467782,
+                "median": 1.396973776527978,
+                "min": 0.9841340997421458,
+                "q25": 1.1954365127677684,
+                "q75": 1.800163467668832
+              }
+            }
+          ]
+        },
+        "n": 360,
+        "status": "ok",
+        "twonn": {
+          "assumption": "locally homogeneous Poisson sampling; boundary, mixtures, curvature, and noise violate it",
+          "duplicate_or_tied_rows": 0,
+          "estimate": 1.969231299843976,
+          "valid_rows": 360
+        }
+      },
+      "known_structure": {
+        "known": "2-dimensional linear plane"
+      }
+    },
+    "two_component_plane_mixture": {
+      "assessment": {
+        "calibrated_mass_region": {
+          "alpha": 0.1,
+          "law_mass_coverage": {
+            "holdout_fraction": 0.9,
+            "meaning": "independent holdout frequency only; split-conformal marginal coverage requires exchangeable IID rows from the declared law, not a selected/mixed stratum",
+            "wilson_95_interval": [
+              0.8207564910060137,
+              0.9464938542566417
+            ]
+          },
+          "radius": 0.19922264671442316,
+          "reference_chart_coverage_Q": {
+            "fraction": 0.09326171875,
+            "meaning": "coverage of this arbitrary bounded chart measure Q only; neither support coverage nor probability mass under the generator law",
+            "measure": "uniform on the coordinatewise training bounding box expanded by 10% of each observed range",
+            "probe_count": 2048,
+            "wilson_95_monte_carlo_interval": [
+              0.08141743246256387,
+              0.1066290522173451
+            ]
+          },
+          "split": {
+            "calibration": 90,
+            "holdout": 90,
+            "seed": 20260718,
+            "train": 180
+          },
+          "status": "ok"
+        },
+        "correlation_dimension": {
+          "local_log_slopes": [
+            1.928979734109932,
+            1.8763153087497801,
+            1.8063255171569175,
+            1.8102526749303016,
+            1.6791482916295288,
+            1.5102963036329884,
+            1.2812410899207662,
+            1.0180930090474851,
+            0.6992710058460342,
+            0.3780544448575586,
+            0.1354483836694786,
+            0.027596231341541575,
+            0.00218867554876244,
+            0.0,
+            0.0,
+            0.002031490208549186,
+            0.49199663320490694
+          ],
+          "pair_mass": [
+            0.03000619003404519,
+            0.04401114206128134,
+            0.0638811513463324,
+            0.09144227793252863,
+            0.13099659548127515,
+            0.18283813060971835,
+            0.24678118229650264,
+            0.31827607551841536,
+            0.38958526771897245,
+            0.4476168368926029,
+            0.482513153822346,
+            0.4956669761683689,
+            0.4983905911482513,
+            0.4986072423398329,
+            0.4986072423398329,
+            0.4986072423398329,
+            0.49880841844630147,
+            0.55
+          ],
+          "radii": [
+            0.1759604276429596,
+            0.2146116190946076,
+            0.2617528706162574,
+            0.31924909548186126,
+            0.38937485088905194,
+            0.4749043197006821,
+            0.5792210574345265,
+            0.7064518461045473,
+            0.8616299501869142,
+            1.0508942331353697,
+            1.2817320115179407,
+            1.563275254112282,
+            1.9066618436295593,
+            2.325476192621776,
+            2.836286644387974,
+            3.4593009185202974,
+            4.219165530590303,
+            5.145940811109258
+          ],
+          "stable_window": {
+            "intervals": 6,
+            "radius_range": [
+              0.1759604276429596,
+              0.5792210574345265
+            ],
+            "slope": 1.7783791167017349
+          },
+          "warning": "window selection is exploratory and can be manufactured by finite range/noise; no stable window means no correlation-dimension estimate"
+        },
+        "global_pca": {
+          "ambient_dimension": 6,
+          "eigenvalues": [
+            8.33615828055613,
+            0.1300249603317769,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "explained_variance": [
+            0.984641844307856,
+            0.015358155692144018,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "numerical_rank": 2,
+          "participation_ratio": 1.0311878277919595
+        },
+        "knn_connectivity": [
+          {
+            "component_count": 2,
+            "component_sizes": [
+              180,
+              180
+            ],
+            "k": 8,
+            "largest_component_fraction": 0.5
+          },
+          {
+            "component_count": 2,
+            "component_sizes": [
+              180,
+              180
+            ],
+            "k": 12,
+            "largest_component_fraction": 0.5
+          },
+          {
+            "component_count": 2,
+            "component_sizes": [
+              180,
+              180
+            ],
+            "k": 20,
+            "largest_component_fraction": 0.5
+          }
+        ],
+        "knn_mle": [
+          {
+            "duplicate_rows_seen": 0,
+            "estimate": 2.4105174290370246,
+            "k": 8,
+            "local_estimate": {
+              "max": 8.834724462091192,
+              "mean": 2.4105174290370246,
+              "median": 2.1203681679256534,
+              "min": 0.8755057857767949,
+              "q25": 1.6346370924526914,
+              "q75": 2.780621320615892
+            },
+            "valid_rows": 360
+          },
+          {
+            "duplicate_rows_seen": 0,
+            "estimate": 2.294380000239625,
+            "k": 12,
+            "local_estimate": {
+              "max": 7.564954351580914,
+              "mean": 2.294380000239625,
+              "median": 2.1403350115378386,
+              "min": 0.9350433411988808,
+              "q25": 1.7356014034017115,
+              "q75": 2.6109908927618237
+            },
+            "valid_rows": 360
+          },
+          {
+            "duplicate_rows_seen": 0,
+            "estimate": 2.195429053423272,
+            "k": 20,
+            "local_estimate": {
+              "max": 7.144506255350536,
+              "mean": 2.195429053423272,
+              "median": 2.0338703340452247,
+              "min": 1.1945602236345798,
+              "q25": 1.727128329249507,
+              "q75": 2.4825435327250616
+            },
+            "valid_rows": 360
+          }
+        ],
+        "local_pca": [
+          {
+            "first_pc_fraction": {
+              "max": 0.9665439250515458,
+              "mean": 0.718769137274987,
+              "median": 0.7124439897950559,
+              "min": 0.5038814710312072,
+              "q25": 0.6385333250932937,
+              "q75": 0.7988057530866833
+            },
+            "local_participation_ratio": {
+              "max": 1.9998794807239575,
+              "mean": 1.6573691897071137,
+              "median": 1.6941534274336965,
+              "min": 1.0691454098727045,
+              "q25": 1.4736878429507976,
+              "q75": 1.8574132637214302
+            },
+            "neighbors": 8
+          },
+          {
+            "first_pc_fraction": {
+              "max": 0.9023247853724459,
+              "mean": 0.669057459255583,
+              "median": 0.6612836399406568,
+              "min": 0.5136482667369454,
+              "q25": 0.6104333136620022,
+              "q75": 0.7264497212606829
+            },
+            "local_participation_ratio": {
+              "max": 1.998510908044135,
+              "mean": 1.77086686115044,
+              "median": 1.8115127329230516,
+              "min": 1.2139893344458814,
+              "q25": 1.6595883560476246,
+              "q75": 1.9069698273350584
+            },
+            "neighbors": 12
+          },
+          {
+            "first_pc_fraction": {
+              "max": 0.8346968061595741,
+              "mean": 0.6364890430681381,
+              "median": 0.6311383317769179,
+              "min": 0.5088654420943143,
+              "q25": 0.5855201345006038,
+              "q75": 0.6787930668285818
+            },
+            "local_participation_ratio": {
+              "max": 1.999371429104571,
+              "mean": 1.8399308288315763,
+              "median": 1.8712766540974997,
+              "min": 1.381131716361279,
+              "q25": 1.7732572495723946,
+              "q75": 1.9431534371387393
+            },
+            "neighbors": 20
+          }
+        ],
+        "mass_radius": {
+          "empirical_medoid_index": 76,
+          "meaning": "finite-sample concentration summaries, not a density level set or confidence body",
+          "medoid_mass_radius": [
+            {
+              "mass": 0.1,
+              "radius": 0.6062813696114121
+            },
+            {
+              "mass": 0.25,
+              "radius": 0.8573398865546594
+            },
+            {
+              "mass": 0.5,
+              "radius": 4.020187621237299
+            },
+            {
+              "mass": 0.9,
+              "radius": 5.306043914793583
+            }
+          ],
+          "per_point_mass_radii": [
+            {
+              "mass": 0.05,
+              "radius": {
+                "max": 0.7683477426912415,
+                "mean": 0.26069496695914796,
+                "median": 0.22181840797305763,
+                "min": 0.13462384875390057,
+                "q25": 0.18513342255406967,
+                "q75": 0.30247037897750795
+              }
+            },
+            {
+              "mass": 0.1,
+              "radius": {
+                "max": 0.9140514072194864,
+                "mean": 0.3667000242002953,
+                "median": 0.3240542878309289,
+                "min": 0.2202253742530123,
+                "q25": 0.27662467917152045,
+                "q75": 0.4225819557342992
+              }
+            },
+            {
+              "mass": 0.2,
+              "radius": {
+                "max": 1.1663123925884316,
+                "mean": 0.5288977836287548,
+                "median": 0.4913447301591575,
+                "min": 0.33393487425102514,
+                "q25": 0.41483025751471075,
+                "q75": 0.603779685288403
+              }
+            },
+            {
+              "mass": 0.4,
+              "radius": {
+                "max": 1.575817295404634,
+                "mean": 0.8571123545455638,
+                "median": 0.8198257306634253,
+                "min": 0.585298036167379,
+                "q25": 0.7281421887258233,
+                "q75": 0.954938365999093
+              }
+            }
+          ]
+        },
+        "n": 360,
+        "status": "ok",
+        "twonn": {
+          "assumption": "locally homogeneous Poisson sampling; boundary, mixtures, curvature, and noise violate it",
+          "duplicate_or_tied_rows": 0,
+          "estimate": 1.920169440254767,
+          "valid_rows": 360
+        }
+      },
+      "known_structure": {
+        "known": "two 2-dimensional separated components"
+      }
+    }
+  },
+  "interpretation": {
+    "prohibited": "No estimator value proves an intrinsic dimension, a manifold population, a quotient dimension, a topology, a density body, or support coverage. Do not pool F, call mass-radius a confidence body, or compare views as though they implemented the same quotient.",
+    "supported": "Within a declared fixed-F/view stratum, agreement of estimators across calibration-relevant knobs is descriptive evidence against a gross ambient-filling interpretation. Split-calibrated radii can describe held-out empirical law mass only under the stated exchangeability contract, separately from declared-Q chart coverage."
+  },
+  "larger_n_resolves": [
+    "separate local neighborhoods from boundary/mixture effects and make k-range stability checkable",
+    "permits held-out or bootstrap stability of estimator ranges and split-calibrated law-mass coverage within each F/view/population stratum",
+    "reduces Monte Carlo/holdout uncertainty for declared-Q chart coverage and improves graph-component persistence checks across k; it cannot resolve an unchosen quotient or a missing topology contract"
+  ],
+  "revision": "fd9c3e7df08d8c9d04491b8ebbb7b2628d2df32e",
+  "runtime_seconds": 2.057380615000511,
+  "schema": "generator-distribution-dimension-report-v1",
+  "secondary_dispositions": {
+    "density_cluster_tree": "deferred: stable cluster trees require a selected density estimator, density level/noise calibration, and a population-scale per-law sample, none of which this smoke provides.",
+    "generator_map_local_rank": "deferred: the reviewed generator maps and their conditioning/rejection semantics are not yet a common differentiable contract; finite-difference rank would otherwise silently measure implementation choices."
+  },
+  "target_free": true,
+  "topology_disposition": {
+    "persistent_homology": "deferred",
+    "reason": "This copy-local packet declares only numpy. No lightweight persistent-homology dependency with a calibrated coefficient/filtration/noise contract is available here. Graph connectivity is retained as a non-topological neighborhood diagnostic; UMAP/t-SNE are intentionally absent as they cannot establish dimension or topology."
+  }
+}
