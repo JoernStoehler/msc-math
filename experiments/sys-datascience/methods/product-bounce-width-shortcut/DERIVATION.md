@@ -1,9 +1,12 @@
-# Two-bounce difference-body formula
+# Historical local two-bounce difference-body derivation
 
-Status: agent-derived proposition, conditional only on the repository's cited
-shortest-billiard/non-translatable-polygon interface.  The finite reduction and
-retained-table equality are independently checkable; neither makes the
-proposition Jörn-reviewed.
+Status: historical pre-merge derivation only; it is not current mathematical
+authority.  The stronger merged proof is
+`formal/product-two-bounce-class.tex`, at agent-reviewed, not Jörn-reviewed,
+status.  This file remains as the local provenance for the frozen formula and
+the exact implementation's finite reduction.  Its retained-table equality is
+bounded implementation validation, not an exhaustive check or a substitute for
+the formal proof.
 
 Let `P` be the full-dimensional convex polygon in the `q`-plane and `Q` the
 full-dimensional convex polygon in the `p`-plane.  Coordinates in the product

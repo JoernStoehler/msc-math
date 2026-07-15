@@ -1,4 +1,11 @@
-# Independent packet review
+# Historical independent packet review
+
+This review records the packet's pre-merge assessment and is retained as an
+independent review record.  Its derivation verdict has been superseded as
+current mathematical authority by `formal/product-two-bounce-class.tex`, which
+contains the stronger merged proof at agent-reviewed, not Jörn-reviewed,
+status.  The review remains relevant to the method-local exact implementation,
+its artifacts, and its bounded 20-row cross-bucket validation.
 
 Verdict: pass after provenance/status repairs; ready for research reuse as a
 conditional theorem target and bounded implementation smoke.
@@ -30,10 +37,9 @@ regenerate the smoke from the then-current analyzer only when another consumer
 already justifies execution; completion of all 10,240 independent exact checks
 is not required to establish the formula.
 
-Strongest supported statement: conditional on the repository's cited
-shortest-billiard/non-translatable-polygon correspondence, the two-bounce class
-action is exactly the difference-body inradius in `DERIVATION.md`.  The proof
-is exact and the implementation has 20/20 exact retained checks; Jörn has not
-reviewed or accepted the theorem.  Route the interface through source-level or
-Jörn review before thesis use.  The full-table decomposition is descriptive
-post-target bookkeeping and does not independently predict the bounce label.
+Current strongest statement: `formal/product-two-bounce-class.tex` proves the
+two-bounce class formula at agent-reviewed, not Jörn-reviewed, status.  This
+packet's exact implementation has 20/20 retained checks across its bounded
+two-rows-per-bucket surface; that smoke is not exhaustive.  The full-table
+decomposition is descriptive post-target bookkeeping and does not independently
+predict the bounce label.

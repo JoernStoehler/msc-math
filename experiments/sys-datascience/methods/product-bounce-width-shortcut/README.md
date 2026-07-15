@@ -12,10 +12,13 @@ The frozen candidate, derived before inspecting the full retained table, is
 W2(P,Q) = min_{d in boundary(P-P)} h_{Q-Q}(d).
 ```
 
-`DERIVATION.md` states the hypotheses, proof, epistemic status, and source
-route.  `analyze.py` is the method-local exact polygon implementation.  The
-retained `A2` artifact is used only after the formula is frozen, as a finite
-validation surface.
+The current mathematical authority is the stronger merged proof in
+`formal/product-two-bounce-class.tex`: it proves the formula at
+agent-reviewed, not Jörn-reviewed, status.  `DERIVATION.md` is retained only
+as the historical local pre-merge derivation; it is not current proof
+authority.  `analyze.py` is the method-local exact polygon implementation.
+The retained `A2` artifact is used only after the formula is frozen, as a
+bounded finite validation surface.
 
 ## Inputs and execution contract
 
@@ -134,19 +137,22 @@ cap.
 ## Decision
 
 This is the exact-formula branch of the decision tree, not a proxy or a
-target-equivalent rewrite.  Promote the conditional proposition to a theorem
-target through source-level/Jörn review of the cited billiard interface.  Do
-not launch full active-facet resampling to explain the capacity component: the
-two-bounce component already has the difference-body inradius formula.  A
-separate lower-envelope or structured-family study is needed only if the thesis
+target-equivalent rewrite.  The merged formal proof now establishes the
+formula at agent-reviewed status; Jörn review remains required before thesis
+use.  Retain this packet for its method-local exact implementation and bounded
+cross-bucket validation, not as the current proof source.  Do not launch full
+active-facet resampling to explain the capacity component: the two-bounce
+component already has the difference-body inradius formula.  A separate
+lower-envelope or structured-family study is needed only if the thesis
 requires an explanation of why `A3<A2`, not to establish `A2` itself.
 
 ## Allowed and prohibited interpretations
 
-Allowed: treat `W2` as an independent geometry-only computation of the
-two-bounce class action under the proposition's hypotheses; use its retained
-20-row equality as finite implementation validation; decompose the descriptive
-capacity coefficient into two-bounce geometry and lower-envelope selection.
+Allowed: use the formal proof for the current agent-reviewed mathematical
+status of the geometry-only two-bounce formula; use this packet's retained
+20-row equality as bounded finite implementation validation, not exhaustive
+validation; decompose the descriptive capacity coefficient into two-bounce
+geometry and lower-envelope selection.
 
 Prohibited: call the producer label or `s2` an independently validated target;
 claim that `W2` alone predicts whether the three-bounce class wins; treat
