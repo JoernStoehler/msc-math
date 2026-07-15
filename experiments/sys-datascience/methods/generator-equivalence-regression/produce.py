@@ -493,7 +493,15 @@ def witness_results():
 
     arbitrary_sl = ((2, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, F(1, 2)))
     assert determinant(arbitrary_sl) == 1 and arbitrary_sl != I4
-    out.append(("gl4-sl4-dirac-law-negative-control", {"normalized_dirac_at_2I": I4, "named_sl_dirac": arbitrary_sl, "induced_laws_differ": True, "general_equivalence_condition": "induced radial-quotient laws must match"}))
+    sl_points = tuple(matvec(arbitrary_sl, p) for p in points)
+    euclidean_gram_identity = gram(points, dot)
+    euclidean_gram_sl = gram(sl_points, dot)
+    omega_gram_identity = gram(points, omega)
+    omega_gram_sl = gram(sl_points, omega)
+    assert euclidean_gram_identity != euclidean_gram_sl
+    assert omega_gram_identity != omega_gram_sl
+    assert abs(omega_gram_identity[0][1]) == 5 and abs(omega_gram_sl[0][1]) == 19
+    out.append(("gl4-sl4-dirac-law-negative-control", {"normalized_dirac_at_2I": I4, "named_sl_dirac": arbitrary_sl, "both_determinants_after_radial_quotient": (F(1), F(1)), "euclidean_gram_identity": euclidean_gram_identity, "euclidean_gram_named_sl": euclidean_gram_sl, "omega_gram_identity": omega_gram_identity, "omega_gram_named_sl": omega_gram_sl, "induced_laws_and_normalized_features_differ": True, "general_equivalence_condition": "induced radial-quotient laws must match"}))
 
     u2 = ((0, 0, -1, 0), (0, 1, 0, 0), (1, 0, 0, 0), (0, 0, 0, 1))
     u2_points = tuple(matvec(u2, p) for p in points)
