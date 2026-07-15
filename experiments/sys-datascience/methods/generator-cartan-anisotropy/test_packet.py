@@ -25,6 +25,8 @@ def main() -> None:
     assert sha256(ROOT / "paired.tsv") == report["output_paired_tsv_sha256"]
     assert "exact rational" in report["regeneration_note"]
     by_pair = {}
+    for pair in pairs:
+        assert pair["singular_spectrum_exact_equal"] is True
     for row in rows:
         assert row["exact_matrix_action_matches"] is True
         assert row["reconstruction_passed"] is True

@@ -166,6 +166,7 @@ struct PairedRow {
     s_row_id: String,
     n_row_id: String,
     singular_spectrum_max_abs_delta: f64,
+    singular_spectrum_exact_equal: bool,
     symplectic_residual_s: f64,
     symplectic_residual_n: f64,
     symplectic_feature_l1_delta: f64,
@@ -799,6 +800,8 @@ fn run(args: &Args, _argv: &[String]) -> Result<(), String> {
                     &s.singular_values,
                     &n.singular_values,
                 ),
+                singular_spectrum_exact_equal: s.squared_singular_values_exact
+                    == n.squared_singular_values_exact,
                 symplectic_residual_s: s.symplectic_residual_f64,
                 symplectic_residual_n: n.symplectic_residual_f64,
                 symplectic_feature_l1_delta: (s.response_exact_features.symplectic_gram_l1
@@ -811,6 +814,12 @@ fn run(args: &Args, _argv: &[String]) -> Result<(), String> {
                 negative_control_equal_at_t1: level.num == level.den
                     && s.matrix_exact_row_major == n.matrix_exact_row_major,
             };
+            if !p.singular_spectrum_exact_equal {
+                return Err(format!(
+                    "matched singular spectrum failed for {} {}",
+                    base.base_id, level.name
+                ));
+            }
             pairs.push(p);
             rows.push(s);
             rows.push(n);
@@ -832,11 +841,11 @@ fn run(args: &Args, _argv: &[String]) -> Result<(), String> {
     pw.flush().map_err(|e| e.to_string())?;
     let paired_tsv_path = args.out_dir.join("paired.tsv");
     let mut tw = BufWriter::new(File::create(&paired_tsv_path).map_err(|e| e.to_string())?);
-    writeln!(tw, "base_id\tbase_geometry_id\tbucket\tt\ts_row_id\tn_row_id\tsingular_spectrum_max_abs_delta\tsymplectic_residual_s\tsymplectic_residual_n\tsymplectic_feature_l1_delta\tresponse_difference_l1\tnegative_control_equal_at_t1").map_err(|e| e.to_string())?;
+    writeln!(tw, "base_id\tbase_geometry_id\tbucket\tt\ts_row_id\tn_row_id\tsingular_spectrum_max_abs_delta\tsingular_spectrum_exact_equal\tsymplectic_residual_s\tsymplectic_residual_n\tsymplectic_feature_l1_delta\tresponse_difference_l1\tnegative_control_equal_at_t1").map_err(|e| e.to_string())?;
     for p in &pairs {
         writeln!(
             tw,
-            "{}\t{}\t{}\t{}\t{}\t{}\t{:.17e}\t{:.17e}\t{:.17e}\t{:.17e}\t{:.17e}\t{}",
+            "{}\t{}\t{}\t{}\t{}\t{}\t{:.17e}\t{}\t{:.17e}\t{:.17e}\t{:.17e}\t{:.17e}\t{}",
             p.base_id,
             p.base_geometry_id,
             p.bucket,
@@ -844,6 +853,7 @@ fn run(args: &Args, _argv: &[String]) -> Result<(), String> {
             p.s_row_id,
             p.n_row_id,
             p.singular_spectrum_max_abs_delta,
+            p.singular_spectrum_exact_equal,
             p.symplectic_residual_s,
             p.symplectic_residual_n,
             p.symplectic_feature_l1_delta,
