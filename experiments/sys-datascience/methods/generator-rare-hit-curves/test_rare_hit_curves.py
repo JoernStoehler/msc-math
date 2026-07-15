@@ -60,6 +60,10 @@ class RareHitCurveTests(unittest.TestCase):
         low, high = curves.wilson(0, 2)
         self.assertEqual(low, 0.0)
         self.assertGreater(high, 0.5)  # two-stream censoring interval remains intentionally wide
+        pilot = [{"seed": 20260716, "population": "p", "side_count": 3}]
+        confirmation = [{"seed": 20260717, "population": "p", "side_count": 3}]
+        with self.assertRaises(ValueError):
+            curves.validate_completeness(pilot, confirmation, {})
 
     def test_artifact_provenance_and_stratum_findings(self):
         report = json.loads((HERE / "artifacts/analysis/report.json").read_text())
