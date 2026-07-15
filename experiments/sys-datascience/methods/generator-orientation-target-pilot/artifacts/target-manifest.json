@@ -1,0 +1,28 @@
+{
+  "backend": "auto",
+  "completed_rows": 24,
+  "design_path": "experiments/sys-datascience/methods/generator-orientation-target-pilot/design.json",
+  "design_sha256": "35253ac47127a5358378cb386028eaaf24eb91466c40227cd7522c2fc27cd3df",
+  "evaluator_source_sha256": "ec92a3b1e76e201fb8e3cb843a437a1b336865bf3adfefce0b6628398c8ca91b",
+  "expected_rows": 24,
+  "method_local_cache": true,
+  "pre_target_commit": "a59441c0ecde29ac667745e02aac4bedb8ca7d14",
+  "provenance": {
+    "implementation_files": [
+      "experiments/sys-landscape/src/datascience_cache.rs",
+      "experiments/sys-landscape/src/sys_landscape_cache.rs",
+      "experiments/sys-landscape/src/lib.rs",
+      "experiments/sys-landscape/Cargo.toml",
+      "Cargo.lock"
+    ]
+  },
+  "schema": "generator-orientation-target-pilot-manifest-v1",
+  "source_path": "experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl",
+  "source_report_path": "experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/report.json",
+  "source_report_sha256": "02b7084141c0f2422aaabf1516fa62af501963ce638b9df3ef756c762722d61c",
+  "source_sha256": "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367",
+  "status": "complete",
+  "target_path": "experiments/sys-datascience/methods/generator-orientation-target-pilot/artifacts/target-rows.jsonl",
+  "target_schema": "generator-orientation-target-pilot-row-v1",
+  "target_sha256": "2d0f91e1aeb99350b345d5e5a36d44a0a68f83d35ac79d3865c457bbbe187a88"
+}

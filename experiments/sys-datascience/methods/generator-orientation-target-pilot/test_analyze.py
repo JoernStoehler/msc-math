@@ -1,5 +1,5 @@
 import unittest
-from analyze import rank_average, spearman
+from analyze import primary_disposition, rank_average, spearman
 
 class FrozenAnalyzerCalibration(unittest.TestCase):
     def test_positive_negative_and_ties(self):
@@ -15,5 +15,10 @@ class FrozenAnalyzerCalibration(unittest.TestCase):
 
     def test_incomplete_fixture_is_not_a_complete_grid(self):
         self.assertNotEqual(len({"identity", "u2-haar"}), 3)
+
+    def test_primary_positive_negative_and_u2_failure(self):
+        self.assertEqual(primary_disposition(0.0, [0.02] * 6 + [0.0, 0.0]), "supports_material_alignment_role")
+        self.assertEqual(primary_disposition(0.0, [0.001] * 8), "contradicts_material_role_on_frozen_maps")
+        self.assertEqual(primary_disposition(2e-8, [0.2] * 8), "ambiguous_numerical_control_failure")
 
 if __name__ == "__main__": unittest.main()

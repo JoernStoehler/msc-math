@@ -41,6 +41,12 @@ def spearman(xs, ys):
     a = sum((x-mx)*(y-my) for x,y in zip(rx,ry)); bx = math.sqrt(sum((x-mx)**2 for x in rx)); by = math.sqrt(sum((y-my)**2 for y in ry))
     return a/(bx*by) if bx and by else None
 
+def primary_disposition(u2_max_abs_delta, abs_so4):
+    if u2_max_abs_delta > 1e-8: return "ambiguous_numerical_control_failure"
+    if sum(v >= 0.01 for v in abs_so4) >= 6: return "supports_material_alignment_role"
+    if max(abs_so4, default=0.0) < 0.005: return "contradicts_material_role_on_frozen_maps"
+    return "ambiguous"
+
 def validate_source(rows):
     if len(rows) != 40: raise AnalysisError("source row count is not 40")
     selected = {}
@@ -80,7 +86,11 @@ def validate_inputs(target_path: Path, manifest_path: Path):
     if digest(selection_manifest) != design.get("selection", {}).get("manifest_sha256"): raise AnalysisError("selection manifest binding")
     target = jsonl(target_path); manifest = json.loads(manifest_path.read_text())
     if manifest.get("status") != "complete" or manifest.get("completed_rows") != 24 or manifest.get("expected_rows") != 24: raise AnalysisError("incomplete target manifest")
-    if manifest.get("target_path") and Path(manifest["target_path"]).resolve() != target_path.resolve(): raise AnalysisError("manifest target path")
+    if not isinstance(manifest.get("pre_target_commit"), str) or len(manifest["pre_target_commit"]) != 40: raise AnalysisError("missing pre-target commit")
+    if manifest.get("target_path"):
+        declared = Path(manifest["target_path"])
+        candidates = {declared.resolve(), (Path(__file__).resolve().parents[4] / declared).resolve()}
+        if target_path.resolve() not in candidates: raise AnalysisError("manifest target path")
     if manifest.get("source_sha256") != SOURCE_SHA or manifest.get("source_report_sha256") != SOURCE_REPORT_SHA or manifest.get("design_sha256") != design_hash: raise AnalysisError("manifest provenance")
     if len(target) != 24 or any(r.get("schema") != "generator-orientation-target-pilot-row-v1" or r.get("target_status") != "complete" for r in target): raise AnalysisError("target schema/status")
     source = validate_source(jsonl(SOURCE))
@@ -113,10 +123,7 @@ def analyze(target_path: Path, manifest_path: Path):
     nonzero = [(x["delta_so4"], x["delta_ridge"]) for x in pairs if x["delta_so4"] != 0 and x["delta_ridge"] != 0]
     opposite = sum(a*b < 0 for a,b in nonzero); rho = spearman([a for a,b in nonzero], [b for a,b in nonzero])
     material = sum(v >= 0.01 for v in abs_so4); maximum = max(abs_so4); median = sorted(abs_so4)[len(abs_so4)//2-1:len(abs_so4)//2+1]; median = sum(median)/2
-    if u2_max > 1e-8: disposition = "ambiguous_numerical_control_failure"
-    elif material >= 6: disposition = "supports_material_alignment_role"
-    elif maximum < 0.005: disposition = "contradicts_material_role_on_frozen_maps"
-    else: disposition = "ambiguous"
+    disposition = primary_disposition(u2_max, abs_so4)
     by_bucket = {}
     for b in BUCKETS:
         xs = [x["delta_so4"] for x in pairs if x["bucket"] == b]
@@ -126,7 +133,12 @@ def analyze(target_path: Path, manifest_path: Path):
         xs = [x["delta_so4"] for x in pairs if x["bucket"] != b]; loo.append({"excluded_bucket": b, "signed_mean": sum(xs)/len(xs), "median_abs_delta": sum(sorted(abs(v) for v in xs)[len(xs)//2-1:len(xs)//2+1])/2})
     bucket_abs = {b: sum(abs(x["delta_so4"]) for x in pairs if x["bucket"] == b) for b in BUCKETS}; total = sum(bucket_abs.values()); largest = max(bucket_abs.values())/total if total else 0.0
     signs = sum(v > 0 for v in signed), sum(v < 0 for v in signed), sum(v == 0 for v in signed)
-    result = {"schema": "generator-orientation-target-pilot-report-v1", "source_sha256": SOURCE_SHA, "source_report_sha256": SOURCE_REPORT_SHA, "feature_sha256": FEATURE_SHA, "feature_report_sha256": FEATURE_REPORT_SHA, "design_sha256": design_hash, "pair_rows": pairs, "u2_max_abs_delta": u2_max, "u2_control_pass": u2_max <= 1e-8, "primary": {"median_abs_delta": median, "max_abs_delta": maximum, "count_abs_delta_ge_0_01": material, "signed_mean": sum(signed)/len(signed), "signed_median": sum(sorted(signed)[3:5])/2, "sign_counts": {"positive": signs[0], "negative": signs[1], "zero": signs[2]}}, "disposition": disposition, "ridge_linked": {"nonzero_pairs": len(nonzero), "opposite_sign_count": opposite, "spearman_rho": rho, "pattern": "directionally_consistent" if opposite >= 6 and rho is not None and rho <= -0.5 else "not_directionally_consistent_or_ambiguous"}, "heterogeneity": {"by_bucket": by_bucket, "leave_one_bucket_out": loo, "common_nonzero_sign": max(signs[:2]) >= 7, "sign_heterogeneous": max(signs[:2]) < 7, "largest_bucket_absolute_share": largest, "bucket_concentrated": largest > 0.5, "prohibit_common_signed_effect_claim": max(signs[:2]) < 7 or largest > 0.5}, "n": 8, "interpretation_boundary": "frozen witnesses only; no population, p-value, bootstrap, causal, or law-ranking claim"}
+    target_rows = [target[src["transformed_id"]] for src in source.values()]
+    costs = {}
+    for row in target_rows:
+        key = f'{row["map_variant"]}/F={row["facet_count"]}'; item = costs.setdefault(key, {"variant": row["map_variant"], "facet_count": row["facet_count"], "rows": 0, "total_compute_ms": 0.0, "total_volume_ms": 0.0, "total_capacity_ms": 0.0})
+        item["rows"] += 1; item["total_volume_ms"] += row["time_volume_ms"]; item["total_capacity_ms"] += row["time_capacity_ms"]; item["total_compute_ms"] += row["time_volume_ms"] + row["time_capacity_ms"]
+    result = {"schema": "generator-orientation-target-pilot-report-v1", "source_sha256": SOURCE_SHA, "source_report_sha256": SOURCE_REPORT_SHA, "feature_sha256": FEATURE_SHA, "feature_report_sha256": FEATURE_REPORT_SHA, "design_sha256": design_hash, "target_sha256": digest(target_path), "manifest_sha256": digest(manifest_path), "pair_rows": pairs, "u2_max_abs_delta": u2_max, "u2_control_pass": u2_max <= 1e-8, "primary": {"median_abs_delta": median, "max_abs_delta": maximum, "count_abs_delta_ge_0_01": material, "signed_mean": sum(signed)/len(signed), "signed_median": sum(sorted(signed)[3:5])/2, "sign_counts": {"positive": signs[0], "negative": signs[1], "zero": signs[2]}}, "disposition": disposition, "ridge_linked": {"nonzero_pairs": len(nonzero), "opposite_sign_count": opposite, "spearman_rho": rho, "pattern": "directionally_consistent" if opposite >= 6 and rho is not None and rho <= -0.5 else "not_directionally_consistent_or_ambiguous"}, "heterogeneity": {"by_bucket": by_bucket, "leave_one_bucket_out": loo, "common_nonzero_sign": max(signs[:2]) >= 7, "sign_heterogeneous": max(signs[:2]) < 7, "largest_bucket_absolute_share": largest, "bucket_concentrated": largest > 0.5, "prohibit_common_signed_effect_claim": max(signs[:2]) < 7 or largest > 0.5}, "cost_by_variant_facet": sorted(costs.values(), key=lambda x: (x["variant"], x["facet_count"])), "n": 8, "interpretation_boundary": "frozen witnesses only; no population, p-value, bootstrap, causal, or law-ranking claim"}
     return result
 
 def self_test():
