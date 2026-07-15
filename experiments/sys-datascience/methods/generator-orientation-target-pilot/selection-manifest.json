@@ -1,8 +1,8 @@
 {
   "schema": "generator-orientation-target-pilot-selection-v1",
-  "source_path": "/workspaces/msc-math/.worktrees/generator-orientation-target-pilot/experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl",
+  "source_path": "experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl",
   "source_sha256": "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367",
-  "source_report_path": "/workspaces/msc-math/.worktrees/generator-orientation-target-pilot/experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/report.json",
+  "source_report_path": "experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/report.json",
   "source_report_sha256": "02b7084141c0f2422aaabf1516fa62af501963ce638b9df3ef756c762722d61c",
   "required_source_sha256": "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367",
   "required_source_report_sha256": "02b7084141c0f2422aaabf1516fa62af501963ce638b9df3ef756c762722d61c",

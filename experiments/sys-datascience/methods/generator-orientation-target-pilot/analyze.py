@@ -13,19 +13,22 @@ ROOT = Path(__file__).resolve().parent
 REPO = Path(__file__).resolve().parents[4]
 SOURCE = ROOT.parent / "generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl"
 SOURCE_REPORT = SOURCE.with_name("report.json")
-FEATURES = ROOT.parent / "generator-exact-feature-augmenter/artifacts/full-panels/features.jsonl"
-FEATURE_REPORT = FEATURES.with_name("report.json")
+FEATURES = ROOT / "artifacts/orientation-features.jsonl"
+FEATURE_REPORT = ROOT / "artifacts/orientation-feature-manifest.json"
 DESIGN = ROOT / "design.json"
 SELECTION = ROOT / "selection-manifest.json"
 PROTOCOL_HISTORY = ROOT / "protocol-history.json"
 EVALUATOR = ROOT / "main.rs"
 SOURCE_SHA = "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367"
 SOURCE_REPORT_SHA = "02b7084141c0f2422aaabf1516fa62af501963ce638b9df3ef756c762722d61c"
-FEATURE_SHA = "e7cc585b2e774bc6ee5dcd658e49b02cefd7cdd914fb1ffaba759ccb64d6b624"
-FEATURE_REPORT_SHA = "4982846e2a8828ba2e217b7b017605180927b2e040f96818d9eac9a405477e43"
+FEATURE_SHA = "050859880b55a7063d8b982f3bae7ce0962350862767965e9e4ab7c7c8c10eda"
+FEATURE_REPORT_SHA = "cd7587d31037a462303fc105c2b72d849fc53166d783ffacb169c0615077a439"
+FULL_FEATURE_SHA = "e7cc585b2e774bc6ee5dcd658e49b02cefd7cdd914fb1ffaba759ccb64d6b624"
+FULL_FEATURE_REPORT_SHA = "4982846e2a8828ba2e217b7b017605180927b2e040f96818d9eac9a405477e43"
 TARGET_SHA = "2d0f91e1aeb99350b345d5e5a36d44a0a68f83d35ac79d3865c457bbbe187a88"
 RETAINED_DESIGN_SHA = "35253ac47127a5358378cb386028eaaf24eb91466c40227cd7522c2fc27cd3df"
 RETAINED_EVALUATOR_SHA = "ec92a3b1e76e201fb8e3cb843a437a1b336865bf3adfefce0b6628398c8ca91b"
+RETAINED_SELECTION_SHA = "6752940d5cf1f80598bff8676570c25d0215e83b1e105c94075d665b4efae030"
 RETAINED_COMMIT = "a59441c0ecde29ac667745e02aac4bedb8ca7d14"
 VARIANTS = ("identity", "u2-haar", "so4-haar")
 BUCKETS = ("3x3", "4x4", "4x6", "6x6")
@@ -36,6 +39,13 @@ IMPLEMENTATION_PATHS = (
     "experiments/sys-landscape/Cargo.toml",
     "Cargo.lock",
 )
+RETAINED_IMPLEMENTATION_SHA = {
+    "experiments/sys-landscape/src/datascience_cache.rs": "ce15a5a29b6b11053072336421f004c028cb04ffdc40001d291e70298e731569",
+    "experiments/sys-landscape/src/sys_landscape_cache.rs": "de69e5e50fec9f5f036941fcdd4d013ec16b4171cc9eba91f610eff815e9d240",
+    "experiments/sys-landscape/src/lib.rs": "1b504f7674a756431eba1f2a01fce6660184c801d4733d9b2da463d1a1bfc75a",
+    "experiments/sys-landscape/Cargo.toml": "b659df44f0101f5dc85f3913a0131eb2aad08c6a728f6ab4ea3ac60087ce48b5",
+    "Cargo.lock": "9e59bc0ed96aeccce2decc178beff2f224702174122ccf55d158fb009ef96d1e",
+}
 
 
 class AnalysisError(Exception):
@@ -176,6 +186,9 @@ def validate_design() -> tuple[dict, str, str]:
         raise AnalysisError("design source binding")
     if design.get("evaluator", {}).get("source_sha256") != digest(EVALUATOR):
         raise AnalysisError("design evaluator/current source binding")
+    snapshot = design.get("feature_snapshot", {})
+    if snapshot.get("sha256") != FEATURE_SHA or snapshot.get("manifest_sha256") != FEATURE_REPORT_SHA:
+        raise AnalysisError("design feature snapshot binding")
     if digest(SELECTION) != design.get("selection", {}).get("manifest_sha256"):
         raise AnalysisError("selection manifest binding")
     if digest(PROTOCOL_HISTORY) != design.get("protocol_history_sha256"):
@@ -199,11 +212,11 @@ def validate_retained_commit(design: dict) -> None:
     if hashlib.sha256(git_blob(RETAINED_COMMIT, "experiments/sys-datascience/methods/generator-orientation-target-pilot/main.rs")).hexdigest() != RETAINED_EVALUATOR_SHA:
         raise AnalysisError("retained evaluator hash mismatch")
     retained_selection = hashlib.sha256(git_blob(RETAINED_COMMIT, "experiments/sys-datascience/methods/generator-orientation-target-pilot/selection-manifest.json")).hexdigest()
-    if retained_selection != design.get("selection", {}).get("manifest_sha256"):
+    if retained_selection != RETAINED_SELECTION_SHA:
         raise AnalysisError("retained selection manifest hash mismatch")
     for item in design.get("evaluator", {}).get("implementation_files", []):
         actual = hashlib.sha256(git_blob(RETAINED_COMMIT, item["path"])).hexdigest()
-        if actual != item.get("sha256"):
+        if actual != RETAINED_IMPLEMENTATION_SHA.get(item["path"]):
             raise AnalysisError(f"retained implementation closure mismatch: {item.get('path')}")
 
 
@@ -246,6 +259,19 @@ def validate_inputs(target_path: Path, manifest_path: Path):
         raise AnalysisError("source hash mismatch")
     if digest(FEATURES) != FEATURE_SHA or digest(FEATURE_REPORT) != FEATURE_REPORT_SHA:
         raise AnalysisError("feature hash mismatch")
+    feature_manifest = json.loads(FEATURE_REPORT.read_text())
+    if (
+        feature_manifest.get("schema") != "generator-orientation-feature-snapshot-v1"
+        or feature_manifest.get("snapshot_sha256") != FEATURE_SHA
+        or feature_manifest.get("snapshot_rows") != 40
+        or feature_manifest.get("full_feature_sha256") != FULL_FEATURE_SHA
+        or feature_manifest.get("full_feature_report_sha256") != FULL_FEATURE_REPORT_SHA
+        or feature_manifest.get("orientation_source_sha256") != SOURCE_SHA
+        or feature_manifest.get("orientation_source_report_sha256") != SOURCE_REPORT_SHA
+        or feature_manifest.get("target_fields_present") is not False
+        or feature_manifest.get("target_calls") != 0
+    ):
+        raise AnalysisError("feature snapshot provenance")
     design, design_hash, protocol_hash = validate_design()
     source = validate_source(jsonl(SOURCE))
     manifest = json.loads(manifest_path.read_text())
@@ -289,6 +315,11 @@ def validate_inputs(target_path: Path, manifest_path: Path):
         if row.get("source_transformed_dual_vertices_f64") != src.get("transformed_dual_vertices_f64"):
             raise AnalysisError("target/source payload mismatch")
     feature_rows = jsonl(FEATURES)
+    if len(feature_rows) != 40:
+        raise AnalysisError("feature snapshot row count")
+    forbidden = ("capacity", "sys", "iterations", "iteration", "bounce_label", "target", "target_ms")
+    if any(any(key in row for key in forbidden) for row in feature_rows):
+        raise AnalysisError("feature target field present")
     features = {}
     for row in feature_rows:
         if row.get("source_kind") == "orientation" and row.get("map_variant") in VARIANTS:
@@ -346,7 +377,7 @@ def analyze(target_path: Path, manifest_path: Path):
     bucket_abs = {bucket: sum(abs(row["delta_so4"]) for row in pairs if row["bucket"] == bucket) for bucket in BUCKETS}
     total_abs = sum(bucket_abs.values())
     largest_share = max(bucket_abs.values()) / total_abs if total_abs else 0.0
-    result = {"schema": "generator-orientation-target-pilot-report-v1", "source_sha256": SOURCE_SHA, "source_report_sha256": SOURCE_REPORT_SHA, "feature_sha256": FEATURE_SHA, "feature_report_sha256": FEATURE_REPORT_SHA, "design_sha256": design_hash, "target_sha256": digest(target_path), "manifest_sha256": digest(manifest_path), "protocol_history_sha256": extra["protocol_history_sha256"], "protocol_history_account": {"design_evaluator_first_commit": "dfbcc400b8cc39c60f8e8c22f8e9ed95acc229be", "source_variant_validation_repaired": "f5f38f351576e7eccb5a51242ff95211ed7b8761", "earlier_exposure_rejected_deleted": True, "earlier_exposure_reasons": ["mistyped experiments/sys-landscape/src/lib.rs SHA-256 nibble", "wrong analyzer repository-parent depth"], "valid_pre_retained_rerun_commit": RETAINED_COMMIT, "only_retained_target_sha256": TARGET_SHA}, "retained_run_commit": RETAINED_COMMIT, "pair_rows": pairs, "u2_max_abs_delta": u2_max, "u2_control_pass": u2_max <= 1e-8, "primary": {"median_abs_delta": sum(sorted(abs_so4)[3:5]) / 2, "max_abs_delta": max(abs_so4), "count_abs_delta_ge_0_01": sum(value >= 0.01 for value in abs_so4), "signed_mean": sum(signed) / len(signed), "signed_median": sum(sorted(signed)[3:5]) / 2, "sign_counts": {"positive": signs[0], "negative": signs[1], "zero": signs[2]}}, "disposition": primary_disposition(u2_max, abs_so4), "ridge_linked": {"nonzero_pairs": len(nonzero), "opposite_sign_count": opposite, "spearman_rho": rho, "pattern": "directionally_consistent" if opposite >= 6 and rho is not None and rho <= -0.5 else "not_directionally_consistent_or_ambiguous"}, "heterogeneity": {"by_bucket": by_bucket, "leave_one_bucket_out": loo, "common_nonzero_sign": max(signs[:2]) >= 7, "sign_heterogeneous": max(signs[:2]) < 7, "largest_bucket_absolute_share": largest_share, "bucket_concentrated": largest_share > 0.5, "prohibit_common_signed_effect_claim": max(signs[:2]) < 7 or largest_share > 0.5}, "cost_by_variant_facet": sorted(costs.values(), key=lambda item: (item["variant"], item["facet_count"])), "n": 8, "interpretation_boundary": "frozen witnesses only; no population, p-value, bootstrap, causal, or law-ranking claim"}
+    result = {"schema": "generator-orientation-target-pilot-transplant-report-v1", "accepted_report_schema": "generator-orientation-target-pilot-report-v1", "source_sha256": SOURCE_SHA, "source_report_sha256": SOURCE_REPORT_SHA, "feature_sha256": FEATURE_SHA, "feature_report_sha256": FEATURE_REPORT_SHA, "feature_full_sha256": FULL_FEATURE_SHA, "feature_full_report_sha256": FULL_FEATURE_REPORT_SHA, "design_sha256": design_hash, "target_sha256": digest(target_path), "manifest_sha256": digest(manifest_path), "protocol_history_sha256": extra["protocol_history_sha256"], "protocol_history_account": {"design_evaluator_first_commit": "dfbcc400b8cc39c60f8e8c22f8e9ed95acc229be", "source_variant_validation_repaired": "f5f38f351576e7eccb5a51242ff95211ed7b8761", "earlier_exposure_rejected_deleted": True, "earlier_exposure_reasons": ["mistyped experiments/sys-landscape/src/lib.rs SHA-256 nibble", "wrong analyzer repository-parent depth"], "valid_pre_retained_rerun_commit": RETAINED_COMMIT, "only_retained_target_sha256": TARGET_SHA}, "retained_run_commit": RETAINED_COMMIT, "pair_rows": pairs, "u2_max_abs_delta": u2_max, "u2_control_pass": u2_max <= 1e-8, "primary": {"median_abs_delta": sum(sorted(abs_so4)[3:5]) / 2, "max_abs_delta": max(abs_so4), "count_abs_delta_ge_0_01": sum(value >= 0.01 for value in abs_so4), "signed_mean": sum(signed) / len(signed), "signed_median": sum(sorted(signed)[3:5]) / 2, "sign_counts": {"positive": signs[0], "negative": signs[1], "zero": signs[2]}}, "disposition": primary_disposition(u2_max, abs_so4), "ridge_linked": {"nonzero_pairs": len(nonzero), "opposite_sign_count": opposite, "spearman_rho": rho, "pattern": "directionally_consistent" if opposite >= 6 and rho is not None and rho <= -0.5 else "not_directionally_consistent_or_ambiguous"}, "heterogeneity": {"by_bucket": by_bucket, "leave_one_bucket_out": loo, "common_nonzero_sign": max(signs[:2]) >= 7, "sign_heterogeneous": max(signs[:2]) < 7, "largest_bucket_absolute_share": largest_share, "bucket_concentrated": largest_share > 0.5, "prohibit_common_signed_effect_claim": max(signs[:2]) < 7 or largest_share > 0.5}, "cost_by_variant_facet": sorted(costs.values(), key=lambda item: (item["variant"], item["facet_count"])), "n": 8, "interpretation_boundary": "frozen witnesses only; no population, p-value, bootstrap, causal, or law-ranking claim"}
     return result
 
 

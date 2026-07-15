@@ -103,6 +103,24 @@ class FrozenAnalyzerCalibration(unittest.TestCase):
             with self.assertRaises(analyze.AnalysisError):
                 analyze.analyze(target, manifest)
 
+    def test_feature_snapshot_manifest_rejects_wrong_full_artifact_binding(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target, manifest = self._copy_artifacts(directory)
+            snapshot_manifest = Path(directory) / "orientation-feature-manifest.json"
+            data = json.loads(analyze.FEATURE_REPORT.read_text())
+            data["full_feature_sha256"] = "0" * 64
+            snapshot_manifest.write_text(json.dumps(data, indent=2) + "\n")
+            original_report = analyze.FEATURE_REPORT
+            original_report_sha = analyze.FEATURE_REPORT_SHA
+            analyze.FEATURE_REPORT = snapshot_manifest
+            analyze.FEATURE_REPORT_SHA = hashlib.sha256(snapshot_manifest.read_bytes()).hexdigest()
+            try:
+                with self.assertRaisesRegex(analyze.AnalysisError, "feature snapshot provenance"):
+                    analyze.validate_inputs(target, manifest)
+            finally:
+                analyze.FEATURE_REPORT = original_report
+                analyze.FEATURE_REPORT_SHA = original_report_sha
+
             target, manifest = self._copy_artifacts(directory)
             target.write_text(target.read_text().splitlines()[0] + "\n")
             with self.assertRaises(analyze.AnalysisError):

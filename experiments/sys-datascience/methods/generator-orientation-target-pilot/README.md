@@ -1,5 +1,13 @@
 # Frozen orientation target pilot
 
+This is a narrow salvage from the stopped breadth wave. It retains only the
+orientation smoke, this target pilot, and a 40-row orientation-only feature
+snapshot. The 808-row `generator-exact-feature-augmenter` owner, its tangential
+inputs/replay, and all other generator breadth folders are deliberately not
+copied. `extract_orientation_features.py` records the original full-feature
+and report hashes and copies the reviewed orientation lines without
+re-serializing or recomputing them.
+
 This packet tests one mechanism question: on the eight reviewed Euclidean
 product witnesses, does a Haar `SO(4)` orientation change `sys` through
 symplectic alignment? The same source bodies are evaluated under exactly one
@@ -20,7 +28,8 @@ than treated as results.
 ## Freeze and provenance
 
 `design.json` binds the source/report hashes, selection grid, evaluator source
-and implementation closure, backend, formulas, gates, and no-enlargement rule.
+and implementation closure, the narrowed feature snapshot and its original
+full-artifact hashes, backend, formulas, gates, and no-enlargement rule.
 Run target-free checks and commit this implementation/design cleanly before
 the target command. The target artifact is post-freeze and must record that
 pre-target commit. No shared target cache is used.
@@ -52,10 +61,14 @@ scalars, timing, transformed f64 payload, and source/design/evaluator hashes.
 
 ## Analysis
 
-`analyze.py` verifies source, source-report, exact-feature, design, target, and
-pre-target commit hashes before reading `sys`. It computes for each base
+`analyze.py` verifies source, source-report, orientation-feature snapshot,
+design, target, and pre-target commit hashes before reading `sys`. It computes for each base
 `delta_so4 = sys(so4-haar)-sys(identity)`, `delta_u2`, and the retained exact
 feature `delta_ridge` from `symplectic_ridge_area_mean`. It reports every pair.
+The generated `generator-orientation-target-pilot-transplant-report-v1` keeps
+all decision-relevant pair values and disposition byte/field-equivalent to the
+accepted `a92ca3e6` report; only provenance fields and the report schema are
+versioned for the narrowed closure.
 
 The U(2) control passes only when `max |delta_u2| <= 1e-8`. The primary frozen
 disposition supports a material alignment role when all 24 targets are complete,
@@ -73,6 +86,12 @@ No p-value, bootstrap interval, population effect, causal mediation, or law
 ranking is warranted at eight frozen witnesses. This packet does not establish
 an invariant theorem, a population transfer, or a general mechanism.
 
+The result is witness-level evidence only: Haar `U(2)` preserves `sys` to the
+numerical control tolerance, Haar `SO(4)` changes it materially on 7/8
+witnesses, and the selected ridge mediator fails its predeclared directional
+gate (5/8 opposite signs). It supports no population, common-sign, causal,
+proposer-transfer, or general-generator claim.
+
 `--validate-only` performs the complete target-free producer freeze check,
 including implementation-closure hashes and absence of every forbidden target
 key (even a JSON `null`); it never reconstructs or calls capacity. The analyzer
@@ -80,6 +99,16 @@ rejects every failed/partial/incomplete manifest and raises on corrupt partial
 or complete artifacts.
 
 ## Commands
+
+To rebuild only the retained orientation feature closure (the stopped
+breadth-wave full artifact must be supplied by its owner; it is not a packet
+input), run from this directory:
+
+```bash
+python3 extract_orientation_features.py \
+  --full-features /path/to/generator-exact-feature-augmenter/artifacts/full-panels/features.jsonl \
+  --full-report /path/to/generator-exact-feature-augmenter/artifacts/full-panels/report.json
+```
 
 Target-free, before the freeze commit:
 

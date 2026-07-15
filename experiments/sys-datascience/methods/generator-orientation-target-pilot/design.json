@@ -12,9 +12,19 @@
     "source_sha256": "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367",
   "source_report": "experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/report.json",
   "source_report_sha256": "02b7084141c0f2422aaabf1516fa62af501963ce638b9df3ef756c762722d61c",
+  "feature_snapshot": {
+    "path": "experiments/sys-datascience/methods/generator-orientation-target-pilot/artifacts/orientation-features.jsonl",
+    "sha256": "050859880b55a7063d8b982f3bae7ce0962350862767965e9e4ab7c7c8c10eda",
+    "manifest": "experiments/sys-datascience/methods/generator-orientation-target-pilot/artifacts/orientation-feature-manifest.json",
+    "manifest_sha256": "cd7587d31037a462303fc105c2b72d849fc53166d783ffacb169c0615077a439",
+    "rows": 40,
+    "source_kind": "orientation",
+    "full_artifact_sha256": "e7cc585b2e774bc6ee5dcd658e49b02cefd7cdd914fb1ffaba759ccb64d6b624",
+    "full_artifact_report_sha256": "4982846e2a8828ba2e217b7b017605180927b2e040f96818d9eac9a405477e43"
+  },
   "selection": {
     "manifest": "experiments/sys-datascience/methods/generator-orientation-target-pilot/selection-manifest.json",
-    "manifest_sha256": "6752940d5cf1f80598bff8676570c25d0215e83b1e105c94075d665b4efae030",
+    "manifest_sha256": "9715c19dd745413beb63a1d2677af3f264bb66d97436623a8ba052fe9818e715",
     "buckets": ["3x3", "4x4", "4x6", "6x6"],
     "bases_per_bucket": 2,
     "variants": ["identity", "u2-haar", "so4-haar"],
@@ -31,8 +41,8 @@
       {"path": "experiments/sys-landscape/src/datascience_cache.rs", "sha256": "ce15a5a29b6b11053072336421f004c028cb04ffdc40001d291e70298e731569"},
       {"path": "experiments/sys-landscape/src/sys_landscape_cache.rs", "sha256": "de69e5e50fec9f5f036941fcdd4d013ec16b4171cc9eba91f610eff815e9d240"},
       {"path": "experiments/sys-landscape/src/lib.rs", "sha256": "1b504f7674a756431eba1f2a01fce6660184c801d4733d9b2da463d1a1bfc75a"},
-      {"path": "experiments/sys-landscape/Cargo.toml", "sha256": "b659df44f0101f5dc85f3913a0131eb2aad08c6a728f6ab4ea3ac60087ce48b5"},
-      {"path": "Cargo.lock", "sha256": "9e59bc0ed96aeccce2decc178beff2f224702174122ccf55d158fb009ef96d1e"}
+      {"path": "experiments/sys-landscape/Cargo.toml", "sha256": "14032d0fdadae1a49583f6f214c1e2a318fff61c89549965322ec9bb8e560abb"},
+      {"path": "Cargo.lock", "sha256": "740441674806a1baaea966d5f8f12a66d8e2ef1229b66ca9dcf9225a02f6c45f"}
     ],
     "target_backend": "CapacityBackend::Auto",
     "cache": "ComputedPolytopeCache::load(&[]) method-local empty cache",

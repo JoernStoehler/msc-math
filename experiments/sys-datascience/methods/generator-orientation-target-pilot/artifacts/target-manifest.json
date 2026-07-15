@@ -2,7 +2,7 @@
   "backend": "auto",
   "completed_rows": 24,
   "design_path": "experiments/sys-datascience/methods/generator-orientation-target-pilot/design.json",
-  "design_sha256": "f2b232a9f666794c6cd4ac39fcebfc7244dccc099fec8fca361efe8f2a448c59",
+  "design_sha256": "c72d58d786fc972f200260f6c61604b50373a976845566461fb2c3dfd99130e6",
   "evaluator_source_sha256": "3b0a67fe379c71a102ef44c9e39d491a509ebc5ee7ef09c8853b33a44b5e5f20",
   "expected_rows": 24,
   "method_local_cache": true,
@@ -15,8 +15,8 @@
       {"path": "experiments/sys-landscape/src/datascience_cache.rs", "sha256": "ce15a5a29b6b11053072336421f004c028cb04ffdc40001d291e70298e731569"},
       {"path": "experiments/sys-landscape/src/sys_landscape_cache.rs", "sha256": "de69e5e50fec9f5f036941fcdd4d013ec16b4171cc9eba91f610eff815e9d240"},
       {"path": "experiments/sys-landscape/src/lib.rs", "sha256": "1b504f7674a756431eba1f2a01fce6660184c801d4733d9b2da463d1a1bfc75a"},
-      {"path": "experiments/sys-landscape/Cargo.toml", "sha256": "b659df44f0101f5dc85f3913a0131eb2aad08c6a728f6ab4ea3ac60087ce48b5"},
-      {"path": "Cargo.lock", "sha256": "9e59bc0ed96aeccce2decc178beff2f224702174122ccf55d158fb009ef96d1e"}
+      {"path": "experiments/sys-landscape/Cargo.toml", "sha256": "14032d0fdadae1a49583f6f214c1e2a318fff61c89549965322ec9bb8e560abb"},
+      {"path": "Cargo.lock", "sha256": "740441674806a1baaea966d5f8f12a66d8e2ef1229b66ca9dcf9225a02f6c45f"}
     ]
   },
   "schema": "generator-orientation-target-pilot-manifest-v1",

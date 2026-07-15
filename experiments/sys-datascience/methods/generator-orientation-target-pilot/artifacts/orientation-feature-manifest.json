@@ -1,0 +1,18 @@
+{
+  "schema": "generator-orientation-feature-snapshot-v1",
+  "snapshot_path": "artifacts/orientation-features.jsonl",
+  "snapshot_sha256": "050859880b55a7063d8b982f3bae7ce0962350862767965e9e4ab7c7c8c10eda",
+  "snapshot_rows": 40,
+  "snapshot_schema": "generator-exact-feature-augmenter-row-v2",
+  "source_kind": "orientation",
+  "source_ids_sha256": "f5a747204e3896cbd021b0bdfda428b0f5214e49ad36922a31163815ab17093b",
+  "source_ids_count": 40,
+  "orientation_source_sha256": "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367",
+  "orientation_source_report_sha256": "02b7084141c0f2422aaabf1516fa62af501963ce638b9df3ef756c762722d61c",
+  "full_feature_sha256": "e7cc585b2e774bc6ee5dcd658e49b02cefd7cdd914fb1ffaba759ccb64d6b624",
+  "full_feature_report_sha256": "4982846e2a8828ba2e217b7b017605180927b2e040f96818d9eac9a405477e43",
+  "full_feature_source_revision": "875c5f6f8aff45013140e109d016ee34a61ff7cd",
+  "selection_rule": "retain original JSONL lines with source_kind=orientation; require exact 40-ID set from orientation source transformed_id",
+  "target_fields_present": false,
+  "target_calls": 0
+}

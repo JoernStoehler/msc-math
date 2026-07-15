@@ -72,8 +72,11 @@ Read first:
   support, not proof premises.
 - `generator-orientation-smoke/` and
   `generator-orientation-target-pilot/`: frozen fixed-shape orientation witness
-  with Haar-`U(2)` invariance control and Haar-`SO(4)` alignment-changing arm.
-  Retain the witness-level boundary and failed directional ridge-mediator gate.
+  with a retained 40-row orientation-only exact-feature snapshot, Haar-`U(2)`
+  invariance control, and Haar-`SO(4)` alignment-changing arm. Retain the
+  witness-level boundary and failed directional ridge-mediator gate; it
+  supports no population, causal, proposer-transfer, or general-generator
+  claim.
 - `alternative-source-transfer/`: prospectively frozen `factorial-both`
   source, exact-feature selection, and one target exposure establishing bounded
   operational sub-threshold ridge/rho proposer transfer. It does not support a
