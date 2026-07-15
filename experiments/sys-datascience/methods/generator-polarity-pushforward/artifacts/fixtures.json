@@ -1,0 +1,110 @@
+[
+  {
+    "area_polar": "16/15",
+    "area_source": "8",
+    "fixture": "non-self-polar",
+    "mahler": "128/15",
+    "polar": [
+      [
+        "-3/5",
+        "1/5"
+      ],
+      [
+        "0",
+        "-1"
+      ],
+      [
+        "2/3",
+        "-1/3"
+      ],
+      [
+        "1/5",
+        "3/5"
+      ]
+    ],
+    "source": [
+      [
+        "-2",
+        "-1"
+      ],
+      [
+        "1",
+        "-1"
+      ],
+      [
+        "2",
+        "1"
+      ],
+      [
+        "-1",
+        "2"
+      ]
+    ]
+  },
+  {
+    "double": [
+      [
+        "-2",
+        "-1"
+      ],
+      [
+        "1",
+        "-1"
+      ],
+      [
+        "2",
+        "1"
+      ],
+      [
+        "-1",
+        "2"
+      ]
+    ],
+    "fixture": "marked-double-polar",
+    "residual": 0.0,
+    "source": [
+      [
+        "-2",
+        "-1"
+      ],
+      [
+        "1",
+        "-1"
+      ],
+      [
+        "2",
+        "1"
+      ],
+      [
+        "-1",
+        "2"
+      ]
+    ]
+  },
+  {
+    "fixture": "centroid-translation-covariance",
+    "residual": 0.0
+  },
+  {
+    "error": "mark is not interior",
+    "fixture": "raw-origin-translation-failure",
+    "status": "undefined: translated origin is outside"
+  },
+  {
+    "fixture": "area-normalization-correction",
+    "normalized_product": 1.0,
+    "polar_area": "16/15",
+    "source_area": "8"
+  },
+  {
+    "fixture": "recenter-every-step-non-involution",
+    "residual": 0.04592980271273779,
+    "status": "fails"
+  },
+  {
+    "fixture": "symmetric-double-polar-negative-control",
+    "mahler": "8",
+    "residual": 0.0,
+    "single_polar_shape_residual": 2.0
+  }
+]

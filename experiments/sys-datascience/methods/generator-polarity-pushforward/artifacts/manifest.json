@@ -1,0 +1,37 @@
+{
+  "capacity_claim": false,
+  "dependencies": "Python stdlib only",
+  "exact_boundary": "All panel vertices are Fraction values after current-law f64 generation and explicit denominator reconstruction; all polarity, incidence, area, centroid, and residual fields are exact thereafter. Shape views and nearest summaries are f64 diagnostics.",
+  "fixtures": 7,
+  "input_files": [],
+  "law_version": "generator-polarity-pushforward-v1",
+  "output_files": {
+    "diversity": "diversity.tsv",
+    "fixtures": "fixtures.json",
+    "panel": "panel.jsonl",
+    "product_arms": "product-arms.jsonl"
+  },
+  "output_sha256": {
+    "diversity": "52261d5be7eaed350f3c640b4f09ad9ff991e171bf3bc70fa215163b641ca4b7",
+    "fixtures": "70f28cfddf300d6dfe19b1b8380425aef57eec7b6084c795fc73e7cb5bbf079e",
+    "panel": "3150ce93efb9479e3484aebf215715cfa6d5684af602fd32b3ce6cbdfc69fbc5",
+    "product_arms": "9d7d9e21453ed5948e2b94b7c0b4bd03dd405f71fb16b0c62451dc26417d7dce"
+  },
+  "panel_rows": 72,
+  "producer_sha256": "8e3784826679c5aac0fbbae54001f9515b9966c74db05f11279a0253dc63884f",
+  "product_arm_rows": 144,
+  "rows_per_stratum": 24,
+  "schema": "generator-polarity-manifest-v1",
+  "seed": 20260715,
+  "source_dirty_tracked": false,
+  "source_revision": "c9cb85034fa9da95cd89e5e3b41599c208e7f7f6",
+  "source_tree": "a467932f88678b1f08d44ce5e5f11ee7416653ca",
+  "strata": [
+    3,
+    4,
+    6
+  ],
+  "sys_evaluation": false,
+  "target_evaluation": false,
+  "volatile_timings_excluded": true
+}
