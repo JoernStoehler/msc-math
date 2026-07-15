@@ -49,15 +49,7 @@ def test_discrete_state_changes_fail_closed() -> None:
 
 def test_mutation_open_saturated_stratum_has_lower_rank() -> None:
     for n in (4, 6, 8):
-        ordinary = module.mutation_base(n, 11)
-        latent = ordinary.latent.copy()
-        spacing = module.TAU / n
-        offset = 1
-        for _ in range(4):
-            latent[offset : offset + n] = .2 * spacing + .05
-            offset += 2 * n
-        saturated = module.Base(ordinary.law, "all-angle-increments-positive-saturated", n, ordinary.seed, latent, n - 3, n - 3, ordinary.evaluator)
-        result = module.finite_difference_base(saturated)
+        result = module.saturated_mutation_control(n)
         assert result["status"] == "ok"
         assert result["expected_rank_matched_all_steps"], (n, result["primary_ranks"])
         assert result["base_discrete_state_summary"]["clipped_angle_increment_count"] == 4 * n

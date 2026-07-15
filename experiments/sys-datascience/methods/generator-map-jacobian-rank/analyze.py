@@ -391,6 +391,20 @@ def synthetic_calibrations() -> dict[str, Any]:
     return output
 
 
+def saturated_mutation_control(n: int, seed: int = 11) -> dict[str, Any]:
+    ordinary = mutation_base(n, seed)
+    latent = ordinary.latent.copy()
+    spacing = TAU / n
+    offset = 1
+    for _ in range(4):
+        latent[offset : offset + n] = .2 * spacing + .05
+        offset += 2 * n
+    saturated = Base(ordinary.law, "all-angle-increments-positive-saturated", n, seed, latent, n - 3, n - 3, ordinary.evaluator)
+    result = {"side_count": n, "seed": seed, "analytic_rank_reason": f"all angle increments lie in an open saturated clipping region, so only n support coordinates remain; translation and scale remove three directions: n-3={n-3}"}
+    result.update(finite_difference_base(saturated))
+    return result
+
+
 def build_base(law: str, parameter: str, n: int, seed: int) -> Base:
     if law == "current-baseline": return baseline_base(n, seed)
     if law == "equal-support-dirichlet" and parameter == "regular": return regular_base(n, seed)
@@ -450,7 +464,7 @@ def main() -> None:
     seeds = [int(value) for value in args.seeds.split(",")]
     sides = [int(value) for value in args.side_counts.split(",")]
     started = time.monotonic()
-    report = {"schema": "generator-map-jacobian-rank-report-v1", "target_free": True, "source_contract": source_contract(), "configuration": {"seeds": seeds, "side_counts": sides, "step_ladder": list(STEPS), "relative_rank_thresholds": list(RELATIVE_THRESHOLDS), "primary_relative_rank_threshold": PRIMARY_RELATIVE_THRESHOLD, "absolute_rank_threshold": ABSOLUTE_THRESHOLD, "rng_boundary": "NumPy PCG64 deterministically samples the copied laws; it does not replay Rust ChaCha bytes."}, "analytic_calibrations": synthetic_calibrations(), "generator_results": run_packet(seeds, sides), "method_dispositions": {"requested_generators": "all implemented, including fixed-active-set primal hull", "abandoned_generators": [], "optional_low_frequency_support_fields": "not attempted; separately active support-process work made this optional extension unnecessary"}, "analytic_status": "Expected ranks are agent-derived local dimension counts, not Jörn-reviewed theorems.", "supported_interpretation": "A stable matched rank shows that this copy-local generator map has the stated local image rank at the retained base and within the declared similarity/body chart. Mutation full-rank observations apply to the retained all-unclipped stratum only; clipping has open saturated lower-rank strata.", "prohibited_interpretation": "Local rank does not establish one law-wide generic rank, global support, law density, topology, rare-mode mass, chart coverage, generator naturalness, or any target/sys value. Failure at a discrete boundary is not a low-rank observation, while a stable saturated clipping stratum may be genuinely lower-rank."}
+    report = {"schema": "generator-map-jacobian-rank-report-v1", "target_free": True, "source_contract": source_contract(), "configuration": {"seeds": seeds, "side_counts": sides, "step_ladder": list(STEPS), "relative_rank_thresholds": list(RELATIVE_THRESHOLDS), "primary_relative_rank_threshold": PRIMARY_RELATIVE_THRESHOLD, "absolute_rank_threshold": ABSOLUTE_THRESHOLD, "rng_boundary": "NumPy PCG64 deterministically samples the copied laws; it does not replay Rust ChaCha bytes."}, "analytic_calibrations": synthetic_calibrations(), "mutation_saturation_controls": [saturated_mutation_control(n) for n in sides], "generator_results": run_packet(seeds, sides), "method_dispositions": {"requested_generators": "all implemented, including fixed-active-set primal hull", "abandoned_generators": [], "optional_low_frequency_support_fields": "not attempted; separately active support-process work made this optional extension unnecessary"}, "analytic_status": "Expected ranks are agent-derived local dimension counts, not Jörn-reviewed theorems.", "supported_interpretation": "A stable matched rank shows that this copy-local generator map has the stated local image rank at the retained base and within the declared similarity/body chart. Mutation full-rank observations apply to the retained all-unclipped stratum only; clipping has open saturated lower-rank strata.", "prohibited_interpretation": "Local rank does not establish one law-wide generic rank, global support, law density, topology, rare-mode mass, chart coverage, generator naturalness, or any target/sys value. Failure at a discrete boundary is not a low-rank observation, while a stable saturated clipping stratum may be genuinely lower-rank."}
     args.out_dir.mkdir(parents=True, exist_ok=True)
     (args.out_dir / "report.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
     print(json.dumps({"out": str(args.out_dir / "report.json"), "runtime_seconds_observed_not_retained": time.monotonic() - started}, sort_keys=True))
