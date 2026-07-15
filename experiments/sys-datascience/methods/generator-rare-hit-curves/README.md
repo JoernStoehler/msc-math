@@ -40,13 +40,16 @@ python3 -m unittest -v test_rare_hit_curves.py
 ```
 
 The analyzer uses Python 3.12 and `numpy==1.26.4`. `report.json` records input
-hashes, repository revision/tree, analyzer hash, seed roles, target-field scan,
-and the measured parse/view validation time. `pilot-regions.json` is the frozen
-selection boundary. `hit-curves.tsv` contains accepted-prefix survival and
-first-hit indicators with Wilson finite-sample intervals; `stream-summary.tsv`
-keeps accepted rows, attempts, rejections, exhaustion censoring, and generator
-versus validation cost; `stratum-findings.tsv` labels each law/side region as
-replicating on both confirmation seeds, partial, or a pilot artifact.
+hashes, source revision/tree and dirty state, analyzer/test/README hashes,
+seed roles, target-field scan, and transitive provenance for all six data shards
+and six producer reports. Runtime is deliberately not serialized.
+`pilot-regions.json` is the frozen selection boundary. `hit-curves.tsv`
+contains aggregate accepted-prefix survival over exactly the two confirmation
+seed streams per law/side, with very wide Wilson finite-sample intervals;
+`stream-summary.tsv` keeps per-stream first-hit/censoring, accepted rows,
+attempts, rejections, and exhaustion; and `stratum-findings.tsv` labels each
+law/side region as replicating on both confirmation seeds, partial, or not
+reobserved under right censoring.
 
 ## Measured packet
 
@@ -54,17 +57,17 @@ Each seed contributes 545 accepted rows from 552 requests. Seven primal-hull
 triangle requests exhaust the 128-attempt cap. Accepted-row attempts plus the
 seven charged exhaustions total 1,441 attempts per seed (896 rejections); the
 producer reports measure 2.104945 ms, 2.601498 ms, and 2.570837 ms generation
-time for the three seeds. The analyzer's final run measured 961.60 ms for
-parsing and view construction. The confirmation panel has 1,090 rows, 27
+time for the three seeds. The confirmation panel has 1,090 rows, 27
 frozen regions, and 414 region/stream pairs: 174 have a first hit and 240 are
 right-censored at 24 accepted rows.
 
 At stratum level, 80 regions replicate on both confirmation seeds, 14 hit only
-one confirmation seed, and 113 have no confirmation hit and are therefore
-pilot-view artifacts under this bounded protocol. These labels are in the
-generated TSV, not a single aggregate law ranking. All scalar strata met the
-declared finite-support-overlap eligibility threshold; generator knobs and side
-counts remain separate.
+one confirmation seed, and 113 pilot-defined regions are not reobserved on both
+confirmation seeds under right censoring. They are not zero-probability or
+universal-artifact conclusions. These labels are in the generated TSV, not a
+single aggregate law ranking. All scalar strata met the declared
+finite-support-overlap eligibility threshold; generator knobs and side counts
+remain separate.
 
 The synthetic controls recover known Bernoulli hit rates (`p=0.10` mean
 0.10092 over five streams and `p=0.01` mean 0.01032), preserve duplicate-stream
@@ -80,5 +83,5 @@ These are descriptive factor-stream results. They do not estimate natural-law
 probabilities, establish universal geometric extremes, pool facets or side
 counts, rank laws by one score, transfer to `sys`/capacity/targets, infer a
 mechanism, or authorize an online sampler. A censored stream is not evidence of
-zero hit probability; a region with no confirmation event is a pilot artifact
-for this view and sample, not a universal negative.
+zero hit probability; a region with no confirmation event is not reobserved in
+the two right-censored confirmation streams, not a universal negative.

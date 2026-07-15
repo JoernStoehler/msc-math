@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import csv
-import hashlib
 import json
 import tempfile
 import unittest
@@ -51,6 +50,17 @@ class RareHitCurveTests(unittest.TestCase):
         regions = curves.make_regions([dict(row, _views=curves.row_views(row)) for row in pilot])
         self.assertTrue(regions)
 
+    def test_missing_duplicate_and_order_controls_fail_closed(self):
+        base = [{"seed": 20260717, "population": "p", "side_count": 3, "row_index": index} for index in range(2)]
+        self.assertEqual([row["row_index"] for row in curves.grouped_streams(base)[(20260717, "p", 3)]], [0, 1])
+        with self.assertRaises(ValueError):
+            curves.grouped_streams(base + [{"seed": 20260717, "population": "p", "side_count": 3, "row_index": 1}])
+        with self.assertRaises(ValueError):
+            curves.grouped_streams(list(reversed(base)))
+        low, high = curves.wilson(0, 2)
+        self.assertEqual(low, 0.0)
+        self.assertGreater(high, 0.5)  # two-stream censoring interval remains intentionally wide
+
     def test_artifact_provenance_and_stratum_findings(self):
         report = json.loads((HERE / "artifacts/analysis/report.json").read_text())
         self.assertEqual(report["schema"], curves.SCHEMA)
@@ -58,12 +68,22 @@ class RareHitCurveTests(unittest.TestCase):
         self.assertEqual(report["rows"]["confirmation"], 1090)
         self.assertEqual(report["protocol"]["pilot_seed"], 20260716)
         self.assertEqual(report["protocol"]["confirmation_seeds"], [20260717, 20260718])
-        self.assertEqual(report["provenance"]["analyzer_sha256"], hashlib.sha256(Path(__file__).with_name("rare_hit_curves.py").read_bytes()).hexdigest())
+        self.assertFalse(report["provenance"]["source_dirty"])
+        self.assertEqual(set(report["provenance"]["source_file_hashes"]), {"analyzer", "tests", "readme"})
+        self.assertNotIn("validation_ms", report["provenance"])
+        self.assertEqual(len(report["producer_reports"]), 6)
+        self.assertEqual(len(report["rows"]["pilot_inputs"] + report["rows"]["confirmation_inputs"]), 6)
         with (HERE / "artifacts/analysis/stratum-findings.tsv").open() as handle:
             findings = list(csv.DictReader(handle, delimiter="\t"))
         self.assertEqual(len(findings), 207)
-        self.assertTrue(any(row["classification"] == "pilot-artifact-no-confirmation-hit" for row in findings))
+        self.assertTrue(any(row["classification"] == "not-reobserved-both-confirmation-seeds-right-censored" for row in findings))
         self.assertTrue(any(row["classification"] == "replicates-both-confirmation-seeds" for row in findings))
+        with (HERE / "artifacts/analysis/hit-curves.tsv").open() as handle:
+            curve_fields = next(csv.reader(handle, delimiter="\t"))
+            curve_rows = list(csv.DictReader(handle, fieldnames=curve_fields, delimiter="\t"))
+        self.assertNotIn("seed", curve_fields)
+        self.assertEqual(set(curve_fields) & {"wilson_low", "wilson_high"}, {"wilson_low", "wilson_high"})
+        self.assertTrue(all(row["stream_count"] == "2" for row in curve_rows))
 
 
 if __name__ == "__main__":

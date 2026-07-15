@@ -18,8 +18,8 @@ import hashlib
 import json
 import math
 import random
+import re
 import subprocess
-import time
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, Iterable
@@ -37,6 +37,7 @@ VIEW_NAMES = (
 )
 PREFIXES = (1, 2, 4, 8, 16, 24)
 TARGET_KEYS = {"sys", "capacity", "target", "bounce", "ehz"}
+EXPECTED_CONFIRMATION_SEEDS = (20260717, 20260718)
 
 
 def sha256(path: Path) -> str:
@@ -81,6 +82,34 @@ def support_vector(vertices: np.ndarray, grid: int = 64) -> np.ndarray:
     if not np.all(np.isfinite(support)) or float(np.min(support)) <= 0.0:
         raise ValueError("invalid support vector")
     return support
+
+
+def validate_geometry(row: dict[str, Any], path: Path, line_number: int) -> None:
+    context = f"{path}:{line_number}"
+    side = row.get("side_count")
+    if not isinstance(side, int) or isinstance(side, bool) or side < 3:
+        raise ValueError(f"{context}: side_count must be an integer >= 3")
+    vertices = np.asarray(row.get("vertices_ccw"), dtype=float)
+    if vertices.shape != (side, 2) or not np.all(np.isfinite(vertices)):
+        raise ValueError(f"{context}: vertices_ccw shape/finite contract failed")
+    area = polygon_area(vertices)
+    scale = max(float(np.max(np.linalg.norm(vertices - vertices.mean(axis=0), axis=1))), 1.0)
+    if area <= 1e-12 * scale * scale:
+        raise ValueError(f"{context}: polygon area is non-positive or degenerate")
+    edges = np.roll(vertices, -1, axis=0) - vertices
+    turns = edges[:, 0] * np.roll(edges, -1, axis=0)[:, 1] - edges[:, 1] * np.roll(edges, -1, axis=0)[:, 0]
+    if np.any(turns <= 1e-12 * scale * scale):
+        raise ValueError(f"{context}: vertices_ccw must be strictly convex and CCW")
+    if row.get("area_normalized") is not True or row.get("factor_role") != "single":
+        raise ValueError(f"{context}: factor-only area/factor-role contract failed")
+
+
+def contains_target_key(value: Any) -> bool:
+    if isinstance(value, dict):
+        return any(key in TARGET_KEYS or contains_target_key(nested) for key, nested in value.items())
+    if isinstance(value, list):
+        return any(contains_target_key(nested) for nested in value)
+    return False
 
 
 def rotation_distance(left: np.ndarray, right: np.ndarray) -> float:
@@ -141,7 +170,8 @@ def load_rows(paths: Iterable[Path]) -> tuple[list[dict[str, Any]], list[dict[st
     inputs: list[dict[str, Any]] = []
     seen: set[str] = set()
     for path in paths:
-        inputs.append({"path": str(path), "sha256": sha256(path), "bytes": path.stat().st_size})
+        input_record = {"path": str(path), "sha256": sha256(path), "bytes": path.stat().st_size, "rows": 0, "schema": ROW_SCHEMA}
+        inputs.append(input_record)
         with path.open() as handle:
             for line_number, line in enumerate(handle, 1):
                 if not line.strip():
@@ -152,15 +182,25 @@ def load_rows(paths: Iterable[Path]) -> tuple[list[dict[str, Any]], list[dict[st
                 sample_id = row.get("sample_id")
                 if not isinstance(sample_id, str) or sample_id in seen:
                     raise ValueError(f"{path}:{line_number}: duplicate or invalid sample_id")
-                if any(key in row for key in TARGET_KEYS):
+                if contains_target_key(row):
                     raise ValueError(f"{path}:{line_number}: target-bearing key present")
                 if not isinstance(row.get("attempt"), int) or row["attempt"] < 0:
                     raise ValueError(f"{path}:{line_number}: attempt must be a non-negative integer")
+                if not isinstance(row.get("seed"), int) or not isinstance(row.get("row_index"), int) or row["row_index"] < 0:
+                    raise ValueError(f"{path}:{line_number}: seed/row_index contract failed")
+                if not isinstance(row.get("population"), str) or not row["population"] or not isinstance(row.get("parameter"), str):
+                    raise ValueError(f"{path}:{line_number}: population/parameter contract failed")
+                expected_id = re.search(r"seed=(\d+)/side=(\d+)/row=(\d+)/attempt=(\d+)/", sample_id)
+                if expected_id is None or tuple(map(int, expected_id.groups())) != (row["seed"], row["side_count"], row["row_index"], row["attempt"]):
+                    raise ValueError(f"{path}:{line_number}: sample_id linkage contract failed")
+                validate_geometry(row, path, line_number)
                 # Compute views now, while preserving the producer's row order.
                 row = dict(row)
+                row["_source_path"] = str(path)
                 row["_views"] = row_views(row)
                 seen.add(sample_id)
                 rows.append(row)
+                input_record["rows"] += 1
     if not rows:
         raise ValueError("no rows")
     return rows, inputs
@@ -174,6 +214,12 @@ def grouped_streams(rows: list[dict[str, Any]]) -> dict[tuple[int, str, int], li
     result: dict[tuple[int, str, int], list[dict[str, Any]]] = defaultdict(list)
     for row in rows:
         result[stream_key(row)].append(row)
+    for key, stream in result.items():
+        row_indices = [int(row["row_index"]) for row in stream]
+        if len(row_indices) != len(set(row_indices)):
+            raise ValueError(f"duplicate row_index in confirmation stream {key}")
+        if row_indices != sorted(row_indices):
+            raise ValueError(f"confirmation stream {key} is not in original row order")
     # Never sort rows: producer order is the time axis.  Stable group ordering is
     # used only for deterministic output.
     return {key: result[key] for key in sorted(result)}
@@ -283,6 +329,9 @@ def producer_costs(report_paths: Iterable[Path]) -> dict[tuple[int, str, int], d
                 "generator_ms": float(item["total_generation_ms"]),
                 "report": str(path),
                 "report_sha256": sha256(path),
+                "report_schema": report.get("schema"),
+                "report_source_revision": report.get("source_revision"),
+                "report_source_dirty": report.get("source_dirty"),
             }
     return costs
 
@@ -292,7 +341,6 @@ def analyze_curves(
     confirmation_rows: list[dict[str, Any]],
     regions: list[dict[str, Any]],
     costs: dict[tuple[int, str, int], dict[str, Any]],
-    validation_ms: float,
     roles: dict[int, str],
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
     streams = grouped_streams(confirmation_rows)
@@ -300,6 +348,9 @@ def analyze_curves(
     stream_rows: list[dict[str, Any]] = []
     summaries: list[dict[str, Any]] = []
     stratum_findings: list[dict[str, Any]] = []
+    confirmation_seeds = tuple(sorted({key[0] for key in streams}))
+    if confirmation_seeds != EXPECTED_CONFIRMATION_SEEDS:
+        raise ValueError(f"expected exactly confirmation seeds {EXPECTED_CONFIRMATION_SEEDS}, got {confirmation_seeds}")
     for region in regions:
         pilot_values = [
             float(row["_views"][region["view"]])
@@ -309,8 +360,7 @@ def analyze_curves(
         ]
         pilot_min = min(pilot_values) if pilot_values else 0.0
         pilot_max = max(pilot_values) if pilot_values else 0.0
-        by_stratum: dict[tuple[str, int], dict[int, bool]] = defaultdict(dict)
-        region_streams = []
+        by_stratum: dict[tuple[str, int], dict[int, tuple[list[bool], list[int], int | None, bool]]] = defaultdict(dict)
         for key, stream in streams.items():
             seed, population, side = key
             if side != int(region["side_count"]):
@@ -350,75 +400,76 @@ def analyze_curves(
                     "first_hit_attempt": first_attempt,
                     "censored": first is None,
                     "generator_ms": cost.get("generator_ms"),
-                    "validation_ms_estimate": validation_ms * len(stream) / max(len(confirmation_rows), 1),
                     "support_overlap": support_overlap,
                     "comparison_eligible": eligible,
                 }
             )
             if eligible:
-                by_stratum[(population, side)][seed] = first is not None
-            region_streams.append((seed, population, side, events, stream))
-            for prefix in PREFIXES:
-                if prefix > len(stream):
-                    continue
-                hits = int(any(events[:prefix]))
-                attempted = sum(attempts[:prefix])
-                low, high = wilson(hits, 1)
-                curve_rows.append(
-                    {
-                        "region": region["name"],
-                        "seed_role": roles.get(seed, "unknown"),
-                        "seed": seed,
-                        "population": population,
-                        "side_count": side,
-                        "accepted_prefix": prefix,
-                        "hit_count": hits,
-                        "survival_count": 1 - hits,
-                        "stream_count": 1,
-                        "hit_rate": float(hits),
-                        "survival_rate": float(1 - hits),
-                        "wilson_low": low,
-                        "wilson_high": high,
-                        "attempts_prefix": attempted,
-                        "first_hit_censored": first is None,
-                    }
-                )
+                if seed in by_stratum[(population, side)]:
+                    raise ValueError(f"duplicate confirmation stream for {seed}/{population}/{side}")
+                by_stratum[(population, side)][seed] = (events, attempts, first, eligible)
         pairs = list(by_stratum.values())
         for (population, side), flags in sorted(by_stratum.items()):
-            seed_set = {seed for seed, _, s, _, _ in region_streams if s == side}
-            ordered = [flags.get(seed, False) for seed in sorted(seed_set)]
+            if tuple(sorted(flags)) != EXPECTED_CONFIRMATION_SEEDS:
+                raise ValueError(f"missing or duplicate confirmation stream for {population}/{side}: {sorted(flags)}")
+            ordered = [flags[seed][2] is not None for seed in EXPECTED_CONFIRMATION_SEEDS]
             if ordered and all(ordered):
                 stratum_classification = "replicates-both-confirmation-seeds"
             elif any(ordered):
                 stratum_classification = "partial-one-confirmation-seed"
             else:
-                stratum_classification = "pilot-artifact-no-confirmation-hit"
+                stratum_classification = "not-reobserved-both-confirmation-seeds-right-censored"
             stratum_findings.append(
                 {
                     "region": region["name"],
                     "population": population,
                     "side_count": side,
-                    "confirmation_seed_flags": json.dumps(flags, sort_keys=True),
-                    "confirmation_seeds_with_hit": sum(bool(value) for value in flags.values()),
-                    "confirmation_seed_count": len(flags),
+                    "confirmation_seed_flags": json.dumps({seed: flags[seed][2] is not None for seed in EXPECTED_CONFIRMATION_SEEDS}, sort_keys=True),
+                    "confirmation_seeds_with_hit": sum(flags[seed][2] is not None for seed in EXPECTED_CONFIRMATION_SEEDS),
+                    "confirmation_seed_count": len(EXPECTED_CONFIRMATION_SEEDS),
                     "classification": stratum_classification,
-                    "interpretation": "stratum-level pilot region replication label; no-hit is right-censored at 24 accepted rows",
+                    "interpretation": "stratum-level pilot-region re-observation label; no-hit is right-censored at 24 accepted rows and is not a zero-probability claim",
                 }
             )
-        both = sum(bool(flags.get(min(flags), False)) and bool(flags.get(max(flags), False)) for flags in pairs if len(flags) >= 2)
-        any_hit = sum(any(flags.values()) for flags in pairs)
+            # Aggregate over exactly the two independent confirmation streams.
+            for prefix in PREFIXES:
+                if any(prefix > len(flags[seed][0]) for seed in EXPECTED_CONFIRMATION_SEEDS):
+                    continue
+                successes = sum(any(flags[seed][0][:prefix]) for seed in EXPECTED_CONFIRMATION_SEEDS)
+                trials = len(EXPECTED_CONFIRMATION_SEEDS)
+                low, high = wilson(successes, trials)
+                curve_rows.append(
+                    {
+                        "region": region["name"],
+                        "population": population,
+                        "side_count": side,
+                        "accepted_prefix": prefix,
+                        "hit_count": successes,
+                        "survival_count": trials - successes,
+                        "stream_count": trials,
+                        "hit_rate": successes / trials,
+                        "survival_rate": (trials - successes) / trials,
+                        "wilson_low": low,
+                        "wilson_high": high,
+                        "attempts_prefix_total": sum(sum(flags[seed][1][:prefix]) for seed in EXPECTED_CONFIRMATION_SEEDS),
+                        "first_hit_censored_streams": sum(flags[seed][2] is None for seed in EXPECTED_CONFIRMATION_SEEDS),
+                        "interval_contract": "Wilson 95% over exactly two independent confirmation seed streams; descriptive only",
+                    }
+                )
+        both = sum(all(flags[seed][2] is not None for seed in EXPECTED_CONFIRMATION_SEEDS) for flags in pairs)
+        any_hit = sum(any(flags[seed][2] is not None for seed in EXPECTED_CONFIRMATION_SEEDS) for flags in pairs)
         if both:
             classification = "replicates-both-confirmation-seeds"
         elif any_hit:
             classification = "partial-one-confirmation-seed"
         else:
-            classification = "pilot-artifact-no-confirmation-hit"
+            classification = "not-reobserved-both-confirmation-seeds-right-censored"
         summary = dict(region)
         overlaps = [float(row["support_overlap"]) for row in stream_rows if row["region"] == region["name"]]
         summary.update(
             {
-                "confirmation_streams": len(region_streams),
-                "confirmation_streams_with_hit": sum(1 for _, _, _, events, _ in region_streams if any(events)),
+                "confirmation_streams": 2 * len(by_stratum),
+                "confirmation_streams_with_hit": sum(flags[seed][2] is not None for flags in pairs for seed in EXPECTED_CONFIRMATION_SEEDS),
                 "comparison_eligible_streams": sum(1 for row in stream_rows if row["region"] == region["name"] and row["comparison_eligible"]),
                 "support_overlap_min": min(overlaps) if overlaps else None,
                 "support_overlap_mean": float(np.mean(overlaps)) if overlaps else None,
@@ -542,6 +593,79 @@ def write_tsv(path: Path, rows: list[dict[str, Any]]) -> None:
             writer.writerow({field: "NA" if row.get(field) is None else row[field] for field in fields})
 
 
+def validate_completeness(
+    pilot_rows: list[dict[str, Any]],
+    confirmation_rows: list[dict[str, Any]],
+    costs: dict[tuple[int, str, int], dict[str, Any]],
+) -> None:
+    pilot_seeds = sorted({int(row["seed"]) for row in pilot_rows})
+    confirmation_seeds = tuple(sorted({int(row["seed"]) for row in confirmation_rows}))
+    if len(pilot_seeds) != 1 or confirmation_seeds != EXPECTED_CONFIRMATION_SEEDS or pilot_seeds[0] in confirmation_seeds:
+        raise ValueError(f"incomplete seed roles: pilot={pilot_seeds}, confirmation={confirmation_seeds}")
+    streams = grouped_streams(confirmation_rows)
+    strata_by_seed = {seed: {(population, side) for (stream_seed, population, side) in streams if stream_seed == seed} for seed in EXPECTED_CONFIRMATION_SEEDS}
+    if strata_by_seed[EXPECTED_CONFIRMATION_SEEDS[0]] != strata_by_seed[EXPECTED_CONFIRMATION_SEEDS[1]]:
+        raise ValueError("confirmation seed strata/linkage mismatch")
+    for key, stream in streams.items():
+        expected = costs.get(key)
+        if expected is None:
+            raise ValueError(f"missing producer report for confirmation stream {key}")
+        if len(stream) != expected["accepted"]:
+            raise ValueError(f"accepted-row count mismatch for {key}: rows={len(stream)} report={expected['accepted']}")
+    expected_cost_keys = {(int(row["seed"]), str(row["population"]), int(row["side_count"])) for row in [*pilot_rows, *confirmation_rows]}
+    if expected_cost_keys != set(costs):
+        raise ValueError("producer-cost completeness check failed")
+
+
+def source_provenance() -> dict[str, Any]:
+    repo_revision = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+    repo_tree = subprocess.check_output(["git", "rev-parse", "HEAD^{tree}"], text=True).strip()
+    dirty = subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], text=True)
+    if dirty:
+        raise SystemExit("source checkout is dirty; commit source before artifact generation")
+    packet = Path(__file__).resolve().parent
+    repo_root = Path(subprocess.check_output(["git", "rev-parse", "--show-toplevel"], text=True).strip()).resolve()
+    source_files = {
+        "analyzer": packet / "rare_hit_curves.py",
+        "tests": packet / "test_rare_hit_curves.py",
+        "readme": packet / "README.md",
+    }
+
+
+def producer_report_records(paths: Iterable[Path]) -> list[dict[str, Any]]:
+    records = []
+    for path in paths:
+        report = json.loads(path.read_text())
+        if report.get("schema") != "generator-zoo-factor-only-report-v1":
+            raise ValueError(f"unexpected producer report schema in {path}")
+        records.append(
+            {
+                "path": str(path),
+                "sha256": sha256(path),
+                "schema": report["schema"],
+                "seed": report["seed"],
+                "accepted": report["factor_rows"],
+                "requested": sum(item["requested"] for item in report["per_population"]),
+                "exhausted": sum(item["exhausted"] for item in report["per_population"]),
+                "source_revision": report.get("source_revision"),
+                "source_dirty": report.get("source_dirty"),
+            }
+        )
+    if len(records) != 6 or len({record["path"] for record in records}) != 6:
+        raise ValueError("producer report completeness requires six distinct reports")
+    return records
+    return {
+        "source_revision": repo_revision,
+        "source_tree": repo_tree,
+        "source_dirty": False,
+        "tracked_clean_predicate": "git status --porcelain --untracked-files=no",
+        "source_file_hashes": {name: sha256(path) for name, path in source_files.items()},
+        "source_files": {name: str(path.relative_to(repo_root)) for name, path in source_files.items()},
+        "input_schema": ROW_SCHEMA,
+        "analyzer_schema": SCHEMA,
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--pilot-input", type=Path, action="append", required=True)
@@ -549,20 +673,21 @@ def main() -> None:
     parser.add_argument("--producer-report", type=Path, action="append", required=True)
     parser.add_argument("--out-dir", type=Path, required=True)
     args = parser.parse_args()
+    if len(args.pilot_input) != 2 or len(args.confirmation_input) != 4 or len(args.producer_report) != 6:
+        raise SystemExit("protocol requires exactly 2 pilot data shards, 4 confirmation data shards, and 6 producer reports")
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    start = time.perf_counter()
     pilot_rows, pilot_inputs = load_rows(args.pilot_input)
     confirmation_rows, confirmation_inputs = load_rows(args.confirmation_input)
-    validation_ms = 1000.0 * (time.perf_counter() - start)
     pilot_seeds = sorted({int(row["seed"]) for row in pilot_rows})
     confirmation_seeds = sorted({int(row["seed"]) for row in confirmation_rows})
-    if len(pilot_seeds) != 1 or len(confirmation_seeds) < 2 or set(pilot_seeds) & set(confirmation_seeds):
-        raise SystemExit("pilot must be one independent seed and confirmation must have at least two other seeds")
-    roles = {pilot_seeds[0]: "pilot", **{seed: f"confirmation-{index + 1}" for index, seed in enumerate(confirmation_seeds)}}
+    costs = producer_costs(args.producer_report)
+    validate_completeness(pilot_rows, confirmation_rows, costs)
+    source = source_provenance()
+    producer_reports = producer_report_records(args.producer_report)
+    roles = {pilot_seeds[0]: "pilot", **{seed: f"confirmation-{index + 1}" for index, seed in enumerate(EXPECTED_CONFIRMATION_SEEDS)}}
     regions = make_regions(pilot_rows)
     attach_novelty_distances(confirmation_rows, pilot_rows)
-    costs = producer_costs(args.producer_report)
-    curves, streams, summaries, stratum_findings = analyze_curves(pilot_rows, confirmation_rows, regions, costs, validation_ms, roles)
+    curves, streams, summaries, stratum_findings = analyze_curves(pilot_rows, confirmation_rows, regions, costs, roles)
     synthetic = synthetic_controls()
     write_tsv(args.out_dir / "hit-curves.tsv", curves)
     write_tsv(args.out_dir / "stream-summary.tsv", streams)
@@ -584,9 +709,9 @@ def main() -> None:
                 "support_novelty_distance": "minimum circular-shift L2 distance of mean-normalized supports to pooled pilot support set",
             },
             "quantile_regions": "fixed pooled-pilot lower/upper 0.10 cells, with ties included",
-            "uncertainty": "Wilson 95% intervals for finite stream event indicators; rows are not IID claims",
+            "uncertainty": "Wilson 95% intervals aggregate exactly two independent confirmation seed streams per law/side/prefix; intervals are intentionally wide and descriptive, with no per-row CI",
             "censoring": "first_hit_index is right-censored at accepted-prefix exhaustion when no event appears",
-            "cost_contract": "generator_ms comes from producer reports; validation_ms_estimate is Python parse/view cost and is kept separate",
+            "cost_contract": "generator_ms comes from producer reports; analyzer runtime is intentionally not serialized because it is volatile",
         },
         "rows": {
             "pilot": len(pilot_rows),
@@ -596,6 +721,7 @@ def main() -> None:
         },
         "regions": summaries,
         "producer_costs": [dict({"seed": key[0], "population": key[1], "side_count": key[2]}, **value) for key, value in sorted(costs.items())],
+        "producer_reports": producer_reports,
         "synthetic_controls": {
             "known_rare_probabilities": [0.1, 0.01],
             "duplicate_stream": "64 identical values; no IID or hit-rate inference",
@@ -603,14 +729,11 @@ def main() -> None:
             "order_permutation": "one event in 100 rows, event-last original and 32 seeded permutations",
         },
         "provenance": {
-            "base_commit": "3f09eeebbcaae731d493317b63fc6ece127e804d",
-            "repository_revision": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
-            "repository_tree": subprocess.check_output(["git", "rev-parse", "HEAD^{tree}"], text=True).strip(),
-            "tracked_clean_predicate": "git status --porcelain --untracked-files=no",
             "source_root": "repository checkout containing this packet (resolved with git rev-parse --show-toplevel)",
-            "analyzer_sha256": sha256(Path(__file__).resolve()),
-            "validation_ms": validation_ms,
-            "input_target_field_scan": "passed; keys sys/capacity/target/bounce/ehz absent",
+            **source,
+            "accepted_base_commit": "3f09eeebbcaae731d493317b63fc6ece127e804d",
+            "input_target_field_scan": "passed recursively; keys sys/capacity/target/bounce/ehz absent",
+            "transitive_hash_contract": "all six factor data shards and all six producer reports are listed with SHA-256, schema, seed, row/acceptance counts, and producer source provenance",
         },
         "interpretation": {
             "allowed": [
@@ -628,13 +751,13 @@ def main() -> None:
             ],
             "failed_or_deferred": [
                 "no-hit streams remain right-censored rather than zero-probability claims",
-                "pilot-only regions with no confirmation event are pilot-view artifacts",
+                "pilot-defined regions with no confirmation event are not reobserved under two right-censored confirmation streams; this is not a zero-probability or universal-artifact conclusion",
                 "small stratum counts are descriptive and not asymptotic inference",
             ],
         },
     }
     (args.out_dir / "report.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
-    print(json.dumps({"pilot_rows": len(pilot_rows), "confirmation_rows": len(confirmation_rows), "regions": len(regions), "validation_ms": validation_ms}))
+    print(json.dumps({"pilot_rows": len(pilot_rows), "confirmation_rows": len(confirmation_rows), "regions": len(regions)}))
 
 
 if __name__ == "__main__":
