@@ -1,5 +1,4 @@
 {
-  "analyzer_sha256": "675296eb520da1dd8b15338f5ee5626f5c2d71e1b7e3f158956771c46e190393",
   "calibration": {
     "anisotropic_noisy_line": {
       "assessment": {
@@ -2354,12 +2353,17 @@
     "permits held-out or bootstrap stability of estimator ranges and split-calibrated law-mass coverage within each F/view/population stratum",
     "reduces Monte Carlo/holdout uncertainty for declared-Q chart coverage and improves graph-component persistence checks across k; it cannot resolve an unchosen quotient or a missing topology contract"
   ],
-  "revision": "fd9c3e7df08d8c9d04491b8ebbb7b2628d2df32e",
-  "runtime_seconds": 2.057380615000511,
   "schema": "generator-distribution-dimension-report-v1",
   "secondary_dispositions": {
     "density_cluster_tree": "deferred: stable cluster trees require a selected density estimator, density level/noise calibration, and a population-scale per-law sample, none of which this smoke provides.",
     "generator_map_local_rank": "deferred: the reviewed generator maps and their conditioning/rejection semantics are not yet a common differentiable contract; finite-difference rank would otherwise silently measure implementation choices."
+  },
+  "source_contract": {
+    "analyzer_sha256": "8c65142514f1add2e24f8b6704a797b541192fabaac803f0db13da82af192fe2",
+    "contract": "generator-distribution-dimension-source-v1",
+    "declared_source_revision": "c36c9bab0b37b28e2ca85a1ba568273a0c11656b",
+    "numpy_version": "2.5.1",
+    "source_dirty": false
   },
   "target_free": true,
   "topology_disposition": {

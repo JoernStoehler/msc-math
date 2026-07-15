@@ -1,5 +1,4 @@
 {
-  "analyzer_sha256": "675296eb520da1dd8b15338f5ee5626f5c2d71e1b7e3f158956771c46e190393",
   "calibration": {
     "anisotropic_noisy_line": {
       "assessment": {
@@ -6022,12 +6021,17 @@
       "sha256": "4622400be1220f11f742a4bde29273fe45dcd4c8d27044d716059c429630d7a8"
     }
   },
-  "revision": "fd9c3e7df08d8c9d04491b8ebbb7b2628d2df32e",
-  "runtime_seconds": 2.5816907869993884,
   "schema": "generator-distribution-dimension-report-v1",
   "secondary_dispositions": {
     "density_cluster_tree": "deferred: stable cluster trees require a selected density estimator, density level/noise calibration, and a population-scale per-law sample, none of which this smoke provides.",
     "generator_map_local_rank": "deferred: the reviewed generator maps and their conditioning/rejection semantics are not yet a common differentiable contract; finite-difference rank would otherwise silently measure implementation choices."
+  },
+  "source_contract": {
+    "analyzer_sha256": "8c65142514f1add2e24f8b6704a797b541192fabaac803f0db13da82af192fe2",
+    "contract": "generator-distribution-dimension-source-v1",
+    "declared_source_revision": "c36c9bab0b37b28e2ca85a1ba568273a0c11656b",
+    "numpy_version": "2.5.1",
+    "source_dirty": false
   },
   "target_free": true,
   "topology_disposition": {
