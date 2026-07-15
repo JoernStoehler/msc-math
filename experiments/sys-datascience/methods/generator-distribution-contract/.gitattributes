@@ -1,0 +1,3 @@
+# These tiny contract fixtures and normalized records are intentionally
+# inspectable in a plain checkout; unlike production JSONL they are <100 rows.
+*.jsonl -filter diff -merge text

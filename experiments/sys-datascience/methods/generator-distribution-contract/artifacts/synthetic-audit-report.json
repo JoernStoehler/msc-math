@@ -1,0 +1,1063 @@
+{
+  "laws": [
+    {
+      "acceptance_rate": null,
+      "accepted": 3,
+      "attempt_count": 6,
+      "attempt_count_status": "identifiable_complete_iid_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 2.625,
+      "cost_ms_per_recorded_event_status": "incomplete_missing_cost",
+      "diagnostics": [
+        "unknown/censored sampling events prevent an unconditional acceptance rate",
+        "cost missing for some sampling events",
+        "incidence signatures missing for some independent units"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 0,
+      "exact_duplicate_groups": 1,
+      "exact_duplicate_multiplicities": [
+        3
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 3,
+      "heldout_units_with_signature": 2,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 3,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 4,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 5,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 6,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 3,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 4,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 5,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 6,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "iid_draw": 6
+      },
+      "independent_units": 6,
+      "law_id": "censored-law",
+      "law_run_id": "run/censored-law/default",
+      "mean_processing_cost_ms_per_accepted_exact_event": null,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "unidentifiable_missing_cost_or_exact_geometry",
+      "recorded_event_rows": 6,
+      "rejected": 2,
+      "singleton_signature_count": 0,
+      "stratum": "facet=3",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 1,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-unknown-censor"
+    },
+    {
+      "acceptance_rate": 1.0,
+      "accepted": 8,
+      "attempt_count": 8,
+      "attempt_count_status": "identifiable_complete_iid_log",
+      "cost_ms_per_attempt": 2.0,
+      "cost_ms_per_attempt_status": "identifiable_complete_iid_log_and_cost",
+      "cost_ms_per_recorded_event": 2.0,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 0,
+      "exact_duplicate_groups": 1,
+      "exact_duplicate_multiplicities": [
+        8
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 4,
+      "heldout_units_with_signature": 4,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 3,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 4,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 5,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 6,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 7,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 8,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 3,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 4,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 5,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 6,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 7,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 8,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "iid_draw": 8
+      },
+      "independent_units": 8,
+      "law_id": "collapsed-law",
+      "law_run_id": "run/collapsed-law/default",
+      "mean_processing_cost_ms_per_accepted_exact_event": 2.0,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 8,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "facet=3",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": 2.0,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "identifiable_complete_uncensored_iid_log_and_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": 0.0,
+      "unseen_signature_mass_status": "available_complete_iid_one-signature-per-unit"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 1,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": null,
+      "cost_ms_per_recorded_event_status": "incomplete_missing_cost",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "cost missing for some sampling events",
+        "exact geometry identity missing for some accepted events",
+        "incidence signatures missing for some independent units",
+        "held-out split unavailable at this unit count"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 0,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [],
+      "heldout_new_signature_rate": null,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 0,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 0
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 0
+        }
+      ],
+      "independent_unit_kinds": {
+        "iid_draw": 1
+      },
+      "independent_units": 1,
+      "law_id": "missing-provenance",
+      "law_run_id": "run/missing-provenance/default",
+      "mean_processing_cost_ms_per_accepted_exact_event": null,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "unidentifiable_missing_cost_or_exact_geometry",
+      "recorded_event_rows": 1,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "facet=3",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    },
+    {
+      "acceptance_rate": 1.0,
+      "accepted": 12,
+      "attempt_count": 12,
+      "attempt_count_status": "identifiable_complete_iid_log",
+      "cost_ms_per_attempt": 1.055,
+      "cost_ms_per_attempt_status": "identifiable_complete_iid_log_and_cost",
+      "cost_ms_per_recorded_event": 1.055,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 0,
+      "exact_duplicate_groups": 1,
+      "exact_duplicate_multiplicities": [
+        12
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 6,
+      "heldout_units_with_signature": 6,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 3,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 4,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 5,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 6,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 7,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 8,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 9,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 10,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 11,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 12,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 3,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 4,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 5,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 6,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 7,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 8,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 9,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 10,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 11,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 12,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "iid_draw": 12
+      },
+      "independent_units": 12,
+      "law_id": "null-law",
+      "law_run_id": "run/null-law/default",
+      "mean_processing_cost_ms_per_accepted_exact_event": 1.055,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 12,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "facet=3",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": 1.055,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "identifiable_complete_uncensored_iid_log_and_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": 0.0,
+      "unseen_signature_mass_status": "available_complete_iid_one-signature-per-unit"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 8,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 4.0,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "dependent block/paired rows counted as one declared independent unit",
+        "complete event log still cannot identify attempted-draw counts across dependent rows"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 0,
+      "exact_duplicate_groups": 2,
+      "exact_duplicate_multiplicities": [
+        4,
+        4
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 2,
+      "heldout_units_with_signature": 2,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 3,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 4,
+          "unique_incidence_signatures": 2
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 3,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 4,
+          "unique_incidence_signatures": 2
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 4
+      },
+      "independent_units": 4,
+      "law_id": "paired-law",
+      "law_run_id": "run/paired-law/default",
+      "mean_processing_cost_ms_per_accepted_exact_event": 4.0,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 8,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "facet=3",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-dependent-units"
+    },
+    {
+      "acceptance_rate": 1.0,
+      "accepted": 20,
+      "attempt_count": 20,
+      "attempt_count_status": "identifiable_complete_iid_log",
+      "cost_ms_per_attempt": 1.5,
+      "cost_ms_per_attempt_status": "identifiable_complete_iid_log_and_cost",
+      "cost_ms_per_recorded_event": 1.5,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 0,
+      "exact_duplicate_groups": 1,
+      "exact_duplicate_multiplicities": [
+        20
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 10,
+      "heldout_units_with_signature": 10,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 3,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 4,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 5,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 6,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 7,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 8,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 9,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 10,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 11,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 12,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 13,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 14,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 15,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 16,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 17,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 18,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 19,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 20,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 3,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 4,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 5,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 6,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 7,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 8,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 9,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 10,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 11,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 12,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 13,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 14,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 15,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 16,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 17,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 18,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 19,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 20,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "iid_draw": 20
+      },
+      "independent_units": 20,
+      "law_id": "rare-deleted",
+      "law_run_id": "run/rare-deleted/default",
+      "mean_processing_cost_ms_per_accepted_exact_event": 1.5,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 20,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "facet=3",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": 1.5,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "identifiable_complete_uncensored_iid_log_and_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": 0.0,
+      "unseen_signature_mass_status": "available_complete_iid_one-signature-per-unit"
+    },
+    {
+      "acceptance_rate": 1.0,
+      "accepted": 20,
+      "attempt_count": 20,
+      "attempt_count_status": "identifiable_complete_iid_log",
+      "cost_ms_per_attempt": 1.5,
+      "cost_ms_per_attempt_status": "identifiable_complete_iid_log_and_cost",
+      "cost_ms_per_recorded_event": 1.5,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 2,
+      "exact_duplicate_multiplicities": [
+        18,
+        2
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 10,
+      "heldout_units_with_signature": 10,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 3,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 4,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 5,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 6,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 7,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 8,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 9,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 10,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 11,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 12,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 13,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 14,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 15,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 16,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 17,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 18,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 19,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 20,
+          "unique_incidence_signatures": 2
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 3,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 4,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 5,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 6,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 7,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 8,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 9,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 10,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 11,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 12,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 13,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 14,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 15,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 16,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 17,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 18,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 19,
+          "unique_incidence_signatures": 2
+        },
+        {
+          "independent_units": 20,
+          "unique_incidence_signatures": 2
+        }
+      ],
+      "independent_unit_kinds": {
+        "iid_draw": 20
+      },
+      "independent_units": 20,
+      "law_id": "rare-mixture",
+      "law_run_id": "run/rare-mixture/default",
+      "mean_processing_cost_ms_per_accepted_exact_event": 1.5,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 20,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "facet=3",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": 1.5,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "identifiable_complete_uncensored_iid_log_and_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": 0.0,
+      "unseen_signature_mass_status": "available_complete_iid_one-signature-per-unit"
+    },
+    {
+      "acceptance_rate": 0.5,
+      "accepted": 1,
+      "attempt_count": 2,
+      "attempt_count_status": "identifiable_complete_iid_log",
+      "cost_ms_per_attempt": 50.5,
+      "cost_ms_per_attempt_status": "identifiable_complete_iid_log_and_cost",
+      "cost_ms_per_recorded_event": 50.5,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "incidence signatures missing for some independent units"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 0,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1
+      ],
+      "heldout_new_signature_rate": null,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 0,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "iid_draw": 2
+      },
+      "independent_units": 2,
+      "law_id": "rejection-cost-law",
+      "law_run_id": "run/rejection-cost-law/default",
+      "mean_processing_cost_ms_per_accepted_exact_event": 1.0,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 1,
+      "singleton_signature_count": 1,
+      "stratum": "facet=3",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": 101.0,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "identifiable_complete_uncensored_iid_log_and_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-missing-or-multiple-signatures"
+    },
+    {
+      "acceptance_rate": 1.0,
+      "accepted": 3,
+      "attempt_count": 3,
+      "attempt_count_status": "identifiable_complete_iid_log",
+      "cost_ms_per_attempt": 5.0,
+      "cost_ms_per_attempt_status": "identifiable_complete_iid_log_and_cost",
+      "cost_ms_per_recorded_event": 5.0,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 0,
+      "exact_duplicate_groups": 1,
+      "exact_duplicate_multiplicities": [
+        3
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 2,
+      "heldout_units_with_signature": 2,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 3,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 3,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "iid_draw": 3
+      },
+      "independent_units": 3,
+      "law_id": "stratified-law",
+      "law_run_id": "run/stratified-law/a",
+      "mean_processing_cost_ms_per_accepted_exact_event": 5.0,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 3,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "facet=3",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": 5.0,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "identifiable_complete_uncensored_iid_log_and_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": 0.0,
+      "unseen_signature_mass_status": "available_complete_iid_one-signature-per-unit"
+    },
+    {
+      "acceptance_rate": 1.0,
+      "accepted": 3,
+      "attempt_count": 3,
+      "attempt_count_status": "identifiable_complete_iid_log",
+      "cost_ms_per_attempt": 5.0,
+      "cost_ms_per_attempt_status": "identifiable_complete_iid_log_and_cost",
+      "cost_ms_per_recorded_event": 5.0,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 0,
+      "exact_duplicate_groups": 1,
+      "exact_duplicate_multiplicities": [
+        3
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 2,
+      "heldout_units_with_signature": 2,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 3,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 3,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "iid_draw": 3
+      },
+      "independent_units": 3,
+      "law_id": "stratified-law",
+      "law_run_id": "run/stratified-law/b",
+      "mean_processing_cost_ms_per_accepted_exact_event": 5.0,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 3,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "facet=4",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": 5.0,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "identifiable_complete_uncensored_iid_log_and_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": 0.0,
+      "unseen_signature_mass_status": "available_complete_iid_one-signature-per-unit"
+    }
+  ],
+  "schema": "generator-distribution-audit-report-v1",
+  "statistical_unit": "primary report is one law_run_id/stratum; within it declared independent_unit_id is the statistical unit, with paired/block rows grouped and never treated as IID events"
+}

@@ -1,0 +1,1226 @@
+{
+  "laws": [
+    {
+      "acceptance_rate": null,
+      "accepted": 2,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 6.2026745000000005,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "dependent block/paired rows counted as one declared independent unit"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1,
+        1
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 1,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 2
+      },
+      "independent_units": 2,
+      "law_id": "generator-orientation/identity",
+      "law_run_id": "generator-orientation/identity/bucket=3x3",
+      "mean_processing_cost_ms_per_accepted_exact_event": 6.2026745000000005,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "3x3",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 2,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 40.69023850000001,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "dependent block/paired rows counted as one declared independent unit"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1,
+        1
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 1,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 2
+      },
+      "independent_units": 2,
+      "law_id": "generator-orientation/identity",
+      "law_run_id": "generator-orientation/identity/bucket=4x4",
+      "mean_processing_cost_ms_per_accepted_exact_event": 40.69023850000001,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "4x4",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 2,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 182.615975,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "dependent block/paired rows counted as one declared independent unit"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1,
+        1
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 1,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 2
+      },
+      "independent_units": 2,
+      "law_id": "generator-orientation/identity",
+      "law_run_id": "generator-orientation/identity/bucket=4x6",
+      "mean_processing_cost_ms_per_accepted_exact_event": 182.615975,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "4x6",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 2,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 678.1713665,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "dependent block/paired rows counted as one declared independent unit"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1,
+        1
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 1,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 2
+      },
+      "independent_units": 2,
+      "law_id": "generator-orientation/identity",
+      "law_run_id": "generator-orientation/identity/bucket=6x6",
+      "mean_processing_cost_ms_per_accepted_exact_event": 678.1713665,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "6x6",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 2,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 6.227435,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "dependent block/paired rows counted as one declared independent unit"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1,
+        1
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 1,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 2
+      },
+      "independent_units": 2,
+      "law_id": "generator-orientation/so4-deterministic",
+      "law_run_id": "generator-orientation/so4-deterministic/bucket=3x3",
+      "mean_processing_cost_ms_per_accepted_exact_event": 6.227435,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "3x3",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 2,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 40.854847,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "dependent block/paired rows counted as one declared independent unit"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1,
+        1
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 1,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 2
+      },
+      "independent_units": 2,
+      "law_id": "generator-orientation/so4-deterministic",
+      "law_run_id": "generator-orientation/so4-deterministic/bucket=4x4",
+      "mean_processing_cost_ms_per_accepted_exact_event": 40.854847,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "4x4",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 2,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 165.3201245,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "dependent block/paired rows counted as one declared independent unit"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1,
+        1
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 1,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 2
+      },
+      "independent_units": 2,
+      "law_id": "generator-orientation/so4-deterministic",
+      "law_run_id": "generator-orientation/so4-deterministic/bucket=4x6",
+      "mean_processing_cost_ms_per_accepted_exact_event": 165.3201245,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "4x6",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 2,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 636.051436,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "dependent block/paired rows counted as one declared independent unit"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1,
+        1
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 1,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 2
+      },
+      "independent_units": 2,
+      "law_id": "generator-orientation/so4-deterministic",
+      "law_run_id": "generator-orientation/so4-deterministic/bucket=6x6",
+      "mean_processing_cost_ms_per_accepted_exact_event": 636.051436,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "6x6",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 2,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 12.519697,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "dependent block/paired rows counted as one declared independent unit"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1,
+        1
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 1,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 2
+      },
+      "independent_units": 2,
+      "law_id": "generator-orientation/so4-haar",
+      "law_run_id": "generator-orientation/so4-haar/bucket=3x3",
+      "mean_processing_cost_ms_per_accepted_exact_event": 12.519697,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "3x3",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 2,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 102.464668,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "dependent block/paired rows counted as one declared independent unit"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1,
+        1
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 1,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 2
+      },
+      "independent_units": 2,
+      "law_id": "generator-orientation/so4-haar",
+      "law_run_id": "generator-orientation/so4-haar/bucket=4x4",
+      "mean_processing_cost_ms_per_accepted_exact_event": 102.464668,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "4x4",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 2,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 531.169354,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "dependent block/paired rows counted as one declared independent unit"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1,
+        1
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 1,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 2
+      },
+      "independent_units": 2,
+      "law_id": "generator-orientation/so4-haar",
+      "law_run_id": "generator-orientation/so4-haar/bucket=4x6",
+      "mean_processing_cost_ms_per_accepted_exact_event": 531.169354,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "4x6",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 2,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 2458.9737295,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "dependent block/paired rows counted as one declared independent unit"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1,
+        1
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 1,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 2
+      },
+      "independent_units": 2,
+      "law_id": "generator-orientation/so4-haar",
+      "law_run_id": "generator-orientation/so4-haar/bucket=6x6",
+      "mean_processing_cost_ms_per_accepted_exact_event": 2458.9737295,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "6x6",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 2,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 6.310051,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "dependent block/paired rows counted as one declared independent unit"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1,
+        1
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 1,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 2
+      },
+      "independent_units": 2,
+      "law_id": "generator-orientation/u2-deterministic",
+      "law_run_id": "generator-orientation/u2-deterministic/bucket=3x3",
+      "mean_processing_cost_ms_per_accepted_exact_event": 6.310051,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "3x3",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 2,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 40.697487,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "dependent block/paired rows counted as one declared independent unit"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1,
+        1
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 1,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 2
+      },
+      "independent_units": 2,
+      "law_id": "generator-orientation/u2-deterministic",
+      "law_run_id": "generator-orientation/u2-deterministic/bucket=4x4",
+      "mean_processing_cost_ms_per_accepted_exact_event": 40.697487,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "4x4",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 2,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 166.19593099999997,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "dependent block/paired rows counted as one declared independent unit"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1,
+        1
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 1,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 2
+      },
+      "independent_units": 2,
+      "law_id": "generator-orientation/u2-deterministic",
+      "law_run_id": "generator-orientation/u2-deterministic/bucket=4x6",
+      "mean_processing_cost_ms_per_accepted_exact_event": 166.19593099999997,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "4x6",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 2,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 647.186709,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "dependent block/paired rows counted as one declared independent unit"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1,
+        1
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 1,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 2
+      },
+      "independent_units": 2,
+      "law_id": "generator-orientation/u2-deterministic",
+      "law_run_id": "generator-orientation/u2-deterministic/bucket=6x6",
+      "mean_processing_cost_ms_per_accepted_exact_event": 647.186709,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "6x6",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 2,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 31.4258175,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "dependent block/paired rows counted as one declared independent unit"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1,
+        1
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 1,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 2
+      },
+      "independent_units": 2,
+      "law_id": "generator-orientation/u2-haar",
+      "law_run_id": "generator-orientation/u2-haar/bucket=3x3",
+      "mean_processing_cost_ms_per_accepted_exact_event": 31.4258175,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "3x3",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 2,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 140.0644345,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "dependent block/paired rows counted as one declared independent unit"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1,
+        1
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 1,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 2
+      },
+      "independent_units": 2,
+      "law_id": "generator-orientation/u2-haar",
+      "law_run_id": "generator-orientation/u2-haar/bucket=4x4",
+      "mean_processing_cost_ms_per_accepted_exact_event": 140.0644345,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "4x4",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 2,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 761.103362,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "dependent block/paired rows counted as one declared independent unit"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1,
+        1
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 1,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 2
+      },
+      "independent_units": 2,
+      "law_id": "generator-orientation/u2-haar",
+      "law_run_id": "generator-orientation/u2-haar/bucket=4x6",
+      "mean_processing_cost_ms_per_accepted_exact_event": 761.103362,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "4x6",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    },
+    {
+      "acceptance_rate": null,
+      "accepted": 2,
+      "attempt_count": null,
+      "attempt_count_status": "unidentifiable_dependent_rows_or_incomplete_log",
+      "cost_ms_per_attempt": null,
+      "cost_ms_per_attempt_status": "unidentifiable_dependent_rows_incomplete_log_or_cost",
+      "cost_ms_per_recorded_event": 2950.2172665000003,
+      "cost_ms_per_recorded_event_status": "complete",
+      "diagnostics": [
+        "attempt log incomplete or absent: acceptance rate may be unidentifiable",
+        "dependent block/paired rows counted as one declared independent unit"
+      ],
+      "discovery_split_semantics": "cumulative deterministic SHA-256-ranked independent units; dependent rows grouped",
+      "doubleton_signature_count": 1,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_multiplicities": [
+        1,
+        1
+      ],
+      "heldout_new_signature_rate": 0.0,
+      "heldout_units": 1,
+      "heldout_units_with_signature": 1,
+      "incidence_discovery_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "incidence_rarefaction_curve": [
+        {
+          "independent_units": 1,
+          "unique_incidence_signatures": 1
+        },
+        {
+          "independent_units": 2,
+          "unique_incidence_signatures": 1
+        }
+      ],
+      "independent_unit_kinds": {
+        "paired_block": 2
+      },
+      "independent_units": 2,
+      "law_id": "generator-orientation/u2-haar",
+      "law_run_id": "generator-orientation/u2-haar/bucket=6x6",
+      "mean_processing_cost_ms_per_accepted_exact_event": 2950.2172665000003,
+      "mean_processing_cost_ms_per_accepted_exact_event_status": "complete",
+      "recorded_event_rows": 2,
+      "rejected": 0,
+      "singleton_signature_count": 0,
+      "stratum": "6x6",
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result": null,
+      "total_recorded_sampling_cost_ms_per_accepted_exact_result_status": "unidentifiable_incomplete_or_dependent_log_censor_or_cost",
+      "unknown_censor": 0,
+      "unseen_signature_mass_good_turing": null,
+      "unseen_signature_mass_status": "not-identifiable-attempt-provenance"
+    }
+  ],
+  "schema": "generator-distribution-audit-report-v1",
+  "statistical_unit": "primary report is one law_run_id/stratum; within it declared independent_unit_id is the statistical unit, with paired/block rows grouped and never treated as IID events"
+}

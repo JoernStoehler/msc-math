@@ -1,0 +1,20 @@
+{
+  "attempt_log_status": "accepted_only",
+  "geometry_views": 40,
+  "identifiable": {
+    "acceptance_rate": false,
+    "attempts_and_rejections": false,
+    "cost": true,
+    "exact_geometry_identity": true,
+    "incidence_signature": true
+  },
+  "independent_units": 8,
+  "law_runs": 20,
+  "sampling_events": 40,
+  "schema": "generator-distribution-orientation-adapter-report-v1",
+  "source_path": "experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl",
+  "source_revision": "0a3694135cf831cae1da18c1754a90af5e6a9915",
+  "source_rows": 40,
+  "source_sha256": "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367",
+  "target_exposure_state": "absent"
+}
