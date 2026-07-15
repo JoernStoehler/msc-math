@@ -2,7 +2,7 @@
   "comparisons": [
     {
       "case": "identity_permuted_presentation",
-      "cost_observation_seconds": 0.03960219399959897,
+      "cost_observation_seconds": 0.04534250699907716,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0,
@@ -50,7 +50,7 @@
     },
     {
       "case": "translation_positive_scale",
-      "cost_observation_seconds": 0.0428136220016313,
+      "cost_observation_seconds": 0.042419133000294096,
       "direct_sampled": {
         "axis_only": {
           "l2": 3.925231146709438e-17,
@@ -98,7 +98,7 @@
     },
     {
       "case": "facet_birth_truncated_cube",
-      "cost_observation_seconds": 0.041882604999045725,
+      "cost_observation_seconds": 0.053646132999347174,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0693455916073286,
@@ -146,7 +146,7 @@
     },
     {
       "case": "adversarial_narrow_feature",
-      "cost_observation_seconds": 0.0423528270002862,
+      "cost_observation_seconds": 0.0542575109993777,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.07977971304969055,
@@ -194,7 +194,7 @@
     },
     {
       "case": "ball_approximant_identity",
-      "cost_observation_seconds": 0.12956974600092508,
+      "cost_observation_seconds": 0.13413958799901593,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0,
@@ -242,7 +242,7 @@
     },
     {
       "case": "ball_vs_ellipsoid_approximant",
-      "cost_observation_seconds": 0.12778074800007744,
+      "cost_observation_seconds": 0.1328373759988608,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.22173262424283688,
@@ -290,7 +290,7 @@
     },
     {
       "case": "retained_orientation_u2",
-      "cost_observation_seconds": 0.041898684999978286,
+      "cost_observation_seconds": 0.04495824599871412,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0682635396392401,
@@ -338,7 +338,7 @@
     },
     {
       "case": "retained_orientation_so4",
-      "cost_observation_seconds": 0.039288495001528645,
+      "cost_observation_seconds": 0.04410638800072775,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.07301114308952454,
@@ -386,7 +386,7 @@
     },
     {
       "case": "retained_exact_feature_witness",
-      "cost_observation_seconds": 0.06024320199867361,
+      "cost_observation_seconds": 0.0708340759993007,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.20067121144363229,
@@ -446,9 +446,9 @@
   },
   "coordinate_order": "q1,q2,p1,p2",
   "cost_observations_seconds": {
-    "exact_feature_reconstruction": 0.043790346000605496,
-    "orientation_reconstruction": 2.6926393730009295,
-    "synthetic_reconstruction": 0.49144937900018704
+    "exact_feature_reconstruction": 0.04671985999993922,
+    "orientation_reconstruction": 2.9898749019994284,
+    "synthetic_reconstruction": 0.5571812170001067
   },
   "direction_designs": {
     "axis_only": 8,
@@ -512,6 +512,12 @@
       "rows": 40,
       "sha256": "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367"
     },
+    "runtime": {
+      "numpy_requirement": "numpy==2.5.1",
+      "requires_python": ">=3.12",
+      "resolved_numpy": "2.5.1",
+      "resolved_python": "3.12.3"
+    },
     "synthetic_definitions": "exact rational normalized inequalities embedded in body_distance.py"
   },
   "reconstruction": {
@@ -553,13 +559,13 @@
   },
   "run": {
     "producer_path": "experiments/sys-datascience/methods/generator-variable-f-body-distance/body_distance.py",
-    "producer_sha256": "c70fb6950d80e8ae4fdae2611acbd067eb36a50a2b1bb5c2ff710e1de1ffe1ac",
-    "revision": "8974f4a0f762670463f4e14ddb94652de5b61121",
+    "producer_sha256": "2873a5ed098c511e2a7779517efadf9c643bcd10312a2ab717f602e6d7b6f1f8",
+    "revision": "40d642cbbbbe2d6238480871ab560650ec5648ed",
     "status_command": "git status --porcelain --untracked-files=no (cwd=repository root)",
     "terminal_status": "complete",
     "tracked_clean_before_generation": true,
     "tracked_status_porcelain": [],
-    "tree": "2e91f6112b745874e735d1a6b6b80bf626b2b87a"
+    "tree": "2db2db506eb523193332ca3622f6c46b3051a584"
   },
   "schema": "generator-variable-f-body-distance-report-v1",
   "target_free": true
