@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import csv
+import hashlib
 import json
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -74,6 +76,16 @@ class RareHitCurveTests(unittest.TestCase):
         self.assertEqual(report["protocol"]["confirmation_seeds"], [20260717, 20260718])
         self.assertFalse(report["provenance"]["source_dirty"])
         self.assertEqual(set(report["provenance"]["source_file_hashes"]), {"analyzer", "tests", "readme"})
+        repo = Path(subprocess.check_output(["git", "rev-parse", "--show-toplevel"], cwd=HERE, text=True).strip())
+        source_paths = [
+            "experiments/sys-datascience/methods/generator-rare-hit-curves/rare_hit_curves.py",
+            "experiments/sys-datascience/methods/generator-rare-hit-curves/test_rare_hit_curves.py",
+            "experiments/sys-datascience/methods/generator-rare-hit-curves/README.md",
+        ]
+        latest_source = subprocess.check_output(["git", "log", "-1", "--format=%H", "--", *source_paths], cwd=repo, text=True).strip()
+        self.assertEqual(report["provenance"]["source_revision"], latest_source)
+        for name, relative in {"analyzer": source_paths[0], "tests": source_paths[1], "readme": source_paths[2]}.items():
+            self.assertEqual(report["provenance"]["source_file_hashes"][name], hashlib.sha256((repo / relative).read_bytes()).hexdigest())
         self.assertNotIn("validation_ms", report["provenance"])
         self.assertEqual(len(report["producer_reports"]), 6)
         self.assertEqual(len(report["rows"]["pilot_inputs"] + report["rows"]["confirmation_inputs"]), 6)
