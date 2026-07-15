@@ -3,10 +3,10 @@
   "command": "cargo run -p exp-sys-landscape --release --bin sys-datascience-generator-cartan-anisotropy -- --out-dir experiments/sys-datascience/methods/generator-cartan-anisotropy/artifacts/panel-2-per-bucket",
   "source_path": "experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl",
   "source_input_sha256": "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367",
-  "source_revision": "715d4f41a068704ca275fe60741906772ba33373",
-  "source_repository_tree": "fa07a4fe0b45880e2d2bd1a755c3b49455bf3956",
+  "source_revision": "a6555a231269da4abd42fb2fe6bfbe869cfffa1e",
+  "source_repository_tree": "86ff803f80e54a033a8507ee944a2c3bc1bd0898",
   "source_dirty_tracked": false,
-  "producer_source_sha256": "24d6d1957b2ce396bf003bc0f59630ff6e8227c2d31c7ed288eee304ccb02634",
+  "producer_source_sha256": "f4fad1ce2146b564f4b0d5d1491fc6393f9e4ebac29b0c76dcb5f6f2da878194",
   "cargo_lock_sha256": "61cbc0cec713df9c7b6ec79c19d4abbc34fcbc4b30ed9911df02502e0c444c1f",
   "coordinate_order": "q1,q2,p1,p2",
   "requested_buckets": [
@@ -27,6 +27,7 @@
   "output_paired_sha256": "1b43e902518185dce008f298f4275764987b25b73a02c4b3ed750342bbd21714",
   "output_paired_count": 32,
   "output_paired_tsv_sha256": "130f54d7986fbe1a3e3242335ab4e0ec9dc54e3c28dcd2f873130dfab262c9fa",
+  "regeneration_note": "Rows were regenerated after cold review found that the prior packet applied inverse diagonals in f64 and rationalized afterward. The retained rows now apply exact rational M^{-T} to the retained rational source payload and reconstruct through the exact polar API; changed hashes are intentional.",
   "diagonal_quotient_control": {
     "input_d_exact": [
       "1/1",
