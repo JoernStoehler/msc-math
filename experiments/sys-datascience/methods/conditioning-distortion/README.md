@@ -42,7 +42,7 @@ From a clean committed checkout (the clean-source guard is fail-closed):
 python3 conditioning_audit.py \
   --out-dir artifacts/smoke --seed 20260715 \
   --attempts 32 --rows-per-stratum 12 --sides 3,4,6
-python3 -m pytest -q test_conditioning_audit.py
+python3 test_conditioning_audit.py
 ```
 
 The smoke emits `artifacts/smoke/attempts.jsonl` and
