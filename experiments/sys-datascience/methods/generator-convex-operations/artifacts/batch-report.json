@@ -146,15 +146,15 @@
     }
   ],
   "command": "cargo run -p exp-sys-landscape --release --bin sys-datascience-generator-convex-operations -- --attempts 32 --rows-per-bucket 2",
-  "producer_revision": "0692891fee827742a19d5f031e67f55a21a0beac",
-  "producer_tree": "32a9a5cc1563e7ff3ef8aed6e91897f416513be3",
+  "producer_revision": "b9c98f670d9dadb9f38e9ff7239f592e78120a2a",
+  "producer_tree": "b3da65c7ec5f8bce6e88c71694c956d47dd85064",
   "producer_paths": [
     "experiments/sys-datascience/methods/generator-convex-operations/main.rs",
     "experiments/sys-landscape/Cargo.toml"
   ],
   "cargo_lock_blake3": "9a6b7c795334e51dfa98c8a82ed4d33ef7633dfdf8e5142fc6aae6a3e4f09a5e",
   "input_hashes": {},
-  "output_rows_blake3": "aff8674bc8260040f698bea7e4a3defb6340f7dc77fe3f72d7ace47ca625a3e3",
+  "output_rows_blake3": "5ca403a60a1b75975d5890e5836d3436bb161b693c59b2d0c84f0f96b37039cb",
   "output_rows_count": 108,
   "source_dirty": false,
   "interpretation_boundary": "Target-free geometry smoke only. Rows expose operation lineage, side counts, active subsets, common shape views, and source-coordinate directed overlaps; no population ranking, sys/capacity, transfer, quotient-distance, or independence claim is supported.",
