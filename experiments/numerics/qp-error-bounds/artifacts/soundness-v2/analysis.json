@@ -9,18 +9,19 @@
     "svd_lstsq_proposal": 1593
   },
   "emitted_formula_entry_count": 32,
-  "exact_positive_witness_status": {
-    "exists": 64,
-    "exists_q_nonpositive": 87,
-    "none_or_q_nonpositive_conflated": 1442
+  "exact_lifecycle_status": {
+    "consistent_no_strict_positive_beta": 1333,
+    "inconsistent": 109,
+    "positive_beta_q_nonpositive": 87,
+    "positive_beta_q_positive_action": 64
   },
   "formula_coverage": {
     "bound_beta_l2__lu_partial_pivot_proposal__inverse_singular_residual": {
       "eligible_rows": 832,
       "evaluated_rows": 832,
       "exact_target_covered_rows": 60,
-      "sharpness_max_slack": 2.4362157899421648e-14,
-      "sharpness_min_slack": 0.0,
+      "sharpness_max_slack": null,
+      "sharpness_min_slack": null,
       "sound_rows": 60,
       "undercoverage_rows": 772,
       "unsound_rows": 0
@@ -49,8 +50,8 @@
       "eligible_rows": 832,
       "evaluated_rows": 832,
       "exact_target_covered_rows": 60,
-      "sharpness_max_slack": 3.0840172055384446e-14,
-      "sharpness_min_slack": 2.2552174680107944e-16,
+      "sharpness_max_slack": null,
+      "sharpness_min_slack": null,
       "sound_rows": 60,
       "undercoverage_rows": 772,
       "unsound_rows": 0
@@ -59,8 +60,8 @@
       "eligible_rows": 832,
       "evaluated_rows": 832,
       "exact_target_covered_rows": 60,
-      "sharpness_max_slack": 1.4123547076282417e-14,
-      "sharpness_min_slack": 2.5734795302709398e-17,
+      "sharpness_max_slack": null,
+      "sharpness_min_slack": null,
       "sound_rows": 60,
       "undercoverage_rows": 772,
       "unsound_rows": 0
@@ -69,8 +70,8 @@
       "eligible_rows": 84,
       "evaluated_rows": 84,
       "exact_target_covered_rows": 60,
-      "sharpness_max_slack": 1.6317292004649905e-12,
-      "sharpness_min_slack": 6.244837998156923e-16,
+      "sharpness_max_slack": null,
+      "sharpness_min_slack": null,
       "sound_rows": 60,
       "undercoverage_rows": 24,
       "unsound_rows": 0
@@ -79,8 +80,8 @@
       "eligible_rows": 832,
       "evaluated_rows": 832,
       "exact_target_covered_rows": 60,
-      "sharpness_max_slack": 1.214814407992688e-13,
-      "sharpness_min_slack": 4.670814102253582e-16,
+      "sharpness_max_slack": null,
+      "sharpness_min_slack": null,
       "sound_rows": 60,
       "undercoverage_rows": 772,
       "unsound_rows": 0
@@ -226,9 +227,9 @@
       "unsound_rows": 47
     },
     "error_q_abs__lu_partial_pivot_proposal_q_raw__to_exact_positive_witness_q": {
-      "eligible_rows": 60,
-      "evaluated_rows": 60,
-      "exact_target_covered_rows": 60,
+      "eligible_rows": 115,
+      "evaluated_rows": 115,
+      "exact_target_covered_rows": 115,
       "sharpness_max_slack": null,
       "sharpness_min_slack": null,
       "sound_rows": 0,
@@ -236,9 +237,9 @@
       "unsound_rows": 0
     },
     "error_q_abs__projected_critical_proposal_q_raw__to_exact_positive_witness_q": {
-      "eligible_rows": 64,
-      "evaluated_rows": 64,
-      "exact_target_covered_rows": 64,
+      "eligible_rows": 151,
+      "evaluated_rows": 151,
+      "exact_target_covered_rows": 151,
       "sharpness_max_slack": null,
       "sharpness_min_slack": null,
       "sound_rows": 0,
@@ -246,9 +247,9 @@
       "unsound_rows": 0
     },
     "error_q_abs__projected_max_margin_proposal_q_raw__to_exact_positive_witness_q": {
-      "eligible_rows": 64,
-      "evaluated_rows": 64,
-      "exact_target_covered_rows": 64,
+      "eligible_rows": 151,
+      "evaluated_rows": 151,
+      "exact_target_covered_rows": 151,
       "sharpness_max_slack": null,
       "sharpness_min_slack": null,
       "sound_rows": 0,
@@ -256,9 +257,9 @@
       "unsound_rows": 0
     },
     "error_q_abs__qr_proposal_q_raw__to_exact_positive_witness_q": {
-      "eligible_rows": 60,
-      "evaluated_rows": 60,
-      "exact_target_covered_rows": 60,
+      "eligible_rows": 140,
+      "evaluated_rows": 140,
+      "exact_target_covered_rows": 140,
       "sharpness_max_slack": null,
       "sharpness_min_slack": null,
       "sound_rows": 0,
@@ -266,9 +267,9 @@
       "unsound_rows": 0
     },
     "error_q_abs__refined_svd_lstsq_proposal_qr_correction_q_raw__to_exact_positive_witness_q": {
-      "eligible_rows": 60,
-      "evaluated_rows": 60,
-      "exact_target_covered_rows": 60,
+      "eligible_rows": 140,
+      "evaluated_rows": 140,
+      "exact_target_covered_rows": 140,
       "sharpness_max_slack": null,
       "sharpness_min_slack": null,
       "sound_rows": 0,
@@ -286,9 +287,9 @@
       "unsound_rows": 0
     },
     "error_q_abs__svd_lstsq_proposal_q_raw__to_exact_positive_witness_q": {
-      "eligible_rows": 64,
-      "evaluated_rows": 64,
-      "exact_target_covered_rows": 64,
+      "eligible_rows": 151,
+      "evaluated_rows": 151,
+      "exact_target_covered_rows": 151,
       "sharpness_max_slack": null,
       "sharpness_min_slack": null,
       "sound_rows": 0,
@@ -368,11 +369,11 @@
     "predicate_beta_positive__lu_partial_pivot_proposal__from_radius": {
       "eligible_rows": 832,
       "evaluated_rows": 832,
-      "exact_target_covered_rows": 60,
+      "exact_target_covered_rows": 832,
       "sharpness_max_slack": null,
       "sharpness_min_slack": null,
-      "sound_rows": 60,
-      "undercoverage_rows": 772,
+      "sound_rows": 832,
+      "undercoverage_rows": 0,
       "unsound_rows": 0
     },
     "predicate_beta_positive__projected_critical_proposal__from_radius": {
@@ -398,46 +399,47 @@
     "predicate_beta_positive__qr_proposal__from_radius": {
       "eligible_rows": 832,
       "evaluated_rows": 832,
-      "exact_target_covered_rows": 60,
+      "exact_target_covered_rows": 832,
       "sharpness_max_slack": null,
       "sharpness_min_slack": null,
-      "sound_rows": 60,
-      "undercoverage_rows": 772,
+      "sound_rows": 832,
+      "undercoverage_rows": 0,
       "unsound_rows": 0
     },
     "predicate_beta_positive__refined_svd_lstsq_proposal_qr_correction__from_radius": {
       "eligible_rows": 832,
       "evaluated_rows": 832,
-      "exact_target_covered_rows": 60,
+      "exact_target_covered_rows": 832,
       "sharpness_max_slack": null,
       "sharpness_min_slack": null,
-      "sound_rows": 60,
-      "undercoverage_rows": 772,
+      "sound_rows": 832,
+      "undercoverage_rows": 0,
       "unsound_rows": 0
     },
     "predicate_beta_positive__saddle_eig_accepted__from_radius": {
       "eligible_rows": 84,
       "evaluated_rows": 84,
-      "exact_target_covered_rows": 60,
+      "exact_target_covered_rows": 84,
       "sharpness_max_slack": null,
       "sharpness_min_slack": null,
-      "sound_rows": 60,
-      "undercoverage_rows": 24,
+      "sound_rows": 84,
+      "undercoverage_rows": 0,
       "unsound_rows": 0
     },
     "predicate_beta_positive__svd_lstsq_proposal__from_radius": {
       "eligible_rows": 832,
       "evaluated_rows": 832,
-      "exact_target_covered_rows": 60,
+      "exact_target_covered_rows": 832,
       "sharpness_max_slack": null,
       "sharpness_min_slack": null,
-      "sound_rows": 60,
-      "undercoverage_rows": 772,
+      "sound_rows": 832,
+      "undercoverage_rows": 0,
       "unsound_rows": 0
     }
   },
+  "formula_evaluation_value_schema": "long-form-value-v1",
   "formula_registry_entry_count": 42,
-  "interpretation_boundary": "Candidate bounds are empirical diagnostics, not verified enclosures. Each comparison is same-sigma and stored-rational-target only; it does not establish algebraic HKO behavior, candidate recall beyond the declared stream, or physical-orbit identity.",
+  "interpretation_boundary": "Candidate bounds are empirical diagnostics, not verified enclosures. Exact Q comparisons use either positive-beta Q sign; beta-vector errors remain unique-exact only. HKO remains stored-binary64 rational only.",
   "raw_row_count": 1593,
   "schema_version": "qp-soundness-analysis-v2"
 }

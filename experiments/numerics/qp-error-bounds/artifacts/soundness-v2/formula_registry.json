@@ -127,7 +127,7 @@
       ]
     ],
     "center": "saddle_eig_accepted",
-    "exact_target": "exact_positive_witness_status",
+    "exact_target": "exact_lifecycle_status",
     "hypothesis_status": "heuristic ternary predicate from f64 margin minus heuristic radius",
     "status": "available_when_margin_and_radius_exist",
     "consumers": [
@@ -263,7 +263,7 @@
       ]
     ],
     "center": "svd_lstsq_proposal",
-    "exact_target": "exact_positive_witness_status",
+    "exact_target": "exact_lifecycle_status",
     "hypothesis_status": "heuristic ternary predicate from f64 margin minus heuristic radius",
     "status": "available_when_margin_and_radius_exist",
     "consumers": [
@@ -399,7 +399,7 @@
       ]
     ],
     "center": "projected_critical_proposal",
-    "exact_target": "exact_positive_witness_status",
+    "exact_target": "exact_lifecycle_status",
     "hypothesis_status": "heuristic ternary predicate from f64 margin minus heuristic radius",
     "status": "available_when_margin_and_radius_exist",
     "consumers": [
@@ -535,7 +535,7 @@
       ]
     ],
     "center": "projected_max_margin_proposal",
-    "exact_target": "exact_positive_witness_status",
+    "exact_target": "exact_lifecycle_status",
     "hypothesis_status": "heuristic ternary predicate from f64 margin minus heuristic radius",
     "status": "available_when_margin_and_radius_exist",
     "consumers": [
@@ -671,7 +671,7 @@
       ]
     ],
     "center": "lu_partial_pivot_proposal",
-    "exact_target": "exact_positive_witness_status",
+    "exact_target": "exact_lifecycle_status",
     "hypothesis_status": "heuristic ternary predicate from f64 margin minus heuristic radius",
     "status": "available_when_margin_and_radius_exist",
     "consumers": [
@@ -807,7 +807,7 @@
       ]
     ],
     "center": "qr_proposal",
-    "exact_target": "exact_positive_witness_status",
+    "exact_target": "exact_lifecycle_status",
     "hypothesis_status": "heuristic ternary predicate from f64 margin minus heuristic radius",
     "status": "available_when_margin_and_radius_exist",
     "consumers": [
@@ -943,7 +943,7 @@
       ]
     ],
     "center": "refined_svd_lstsq_proposal_qr_correction",
-    "exact_target": "exact_positive_witness_status",
+    "exact_target": "exact_lifecycle_status",
     "hypothesis_status": "heuristic ternary predicate from f64 margin minus heuristic radius",
     "status": "available_when_margin_and_radius_exist",
     "consumers": [

@@ -1,3 +1,3 @@
 # QP soundness v2 interpretation boundary
 
-Candidate-bound rows distinguish eligible, exact-covered, and undercovered observations. Ordinary f64 arithmetic is never labelled a verified enclosure. HKO rows use only their stored binary64 rational target; active words are candidate words, not physical-orbit sets.
+Formula evaluations use the stable `long-form-value-v1` schema. Exact lifecycle separates inconsistent, no strict-positive beta, positive-beta/nonpositive-Q, and positive-beta/positive-Q-action outcomes. Only unique exact systems support vector beta-error comparisons.
