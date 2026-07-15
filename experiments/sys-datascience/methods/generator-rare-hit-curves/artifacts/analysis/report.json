@@ -8,7 +8,7 @@
     ],
     "failed_or_deferred": [
       "no-hit streams remain right-censored rather than zero-probability claims",
-      "pilot-only regions with no confirmation event are pilot-view artifacts",
+      "pilot-defined regions with no confirmation event are not reobserved under two right-censored confirmation streams; this is not a zero-probability or universal-artifact conclusion",
       "small stratum counts are descriptive and not asymptotic inference"
     ],
     "prohibited": [
@@ -29,7 +29,10 @@
       "population": "current-baseline[delta=0.2]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 3
@@ -43,7 +46,10 @@
       "population": "current-baseline[delta=0.2]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 4
@@ -57,7 +63,10 @@
       "population": "current-baseline[delta=0.2]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 6
@@ -71,7 +80,10 @@
       "population": "primal-hull-uniform-disk[points=n+4,origin=interior]",
       "rejections": 896,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 3
@@ -85,7 +97,10 @@
       "population": "primal-hull-uniform-disk[points=n+4,origin=interior]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 4
@@ -99,7 +114,10 @@
       "population": "primal-hull-uniform-disk[points=n+4,origin=interior]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 6
@@ -113,7 +131,10 @@
       "population": "regular-mutation[steps=4,scale=0.03]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 3
@@ -127,7 +148,10 @@
       "population": "regular-mutation[steps=4,scale=0.03]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 4
@@ -141,7 +165,10 @@
       "population": "regular-mutation[steps=4,scale=0.03]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 6
@@ -155,7 +182,10 @@
       "population": "repulsive-gap[alpha=16]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 3
@@ -169,7 +199,10 @@
       "population": "repulsive-gap[alpha=16]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 4
@@ -183,7 +216,10 @@
       "population": "repulsive-gap[alpha=16]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 6
@@ -197,7 +233,10 @@
       "population": "repulsive-gap[alpha=1]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 3
@@ -211,7 +250,10 @@
       "population": "repulsive-gap[alpha=1]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 4
@@ -225,7 +267,10 @@
       "population": "repulsive-gap[alpha=1]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 6
@@ -239,7 +284,10 @@
       "population": "repulsive-gap[alpha=4]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 3
@@ -253,7 +301,10 @@
       "population": "repulsive-gap[alpha=4]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 4
@@ -267,7 +318,10 @@
       "population": "repulsive-gap[alpha=4]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 6
@@ -281,7 +335,10 @@
       "population": "repulsive-gap[regular]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 3
@@ -295,7 +352,10 @@
       "population": "repulsive-gap[regular]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 4
@@ -309,7 +369,10 @@
       "population": "repulsive-gap[regular]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 6
@@ -323,7 +386,10 @@
       "population": "zonogon[lengths=uniform(0.5,1.5)]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/zonogon/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "ffb2a1c99149a72e75653a142a8c455f5d05df5c0f91ff7ecacbdbbcfcbc3c12",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 4
@@ -337,7 +403,10 @@
       "population": "zonogon[lengths=uniform(0.5,1.5)]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/zonogon/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "ffb2a1c99149a72e75653a142a8c455f5d05df5c0f91ff7ecacbdbbcfcbc3c12",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260716,
       "side_count": 6
@@ -351,7 +420,10 @@
       "population": "current-baseline[delta=0.2]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 3
@@ -365,7 +437,10 @@
       "population": "current-baseline[delta=0.2]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 4
@@ -379,7 +454,10 @@
       "population": "current-baseline[delta=0.2]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 6
@@ -393,7 +471,10 @@
       "population": "primal-hull-uniform-disk[points=n+4,origin=interior]",
       "rejections": 896,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 3
@@ -407,7 +488,10 @@
       "population": "primal-hull-uniform-disk[points=n+4,origin=interior]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 4
@@ -421,7 +505,10 @@
       "population": "primal-hull-uniform-disk[points=n+4,origin=interior]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 6
@@ -435,7 +522,10 @@
       "population": "regular-mutation[steps=4,scale=0.03]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 3
@@ -449,7 +539,10 @@
       "population": "regular-mutation[steps=4,scale=0.03]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 4
@@ -463,7 +556,10 @@
       "population": "regular-mutation[steps=4,scale=0.03]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 6
@@ -477,7 +573,10 @@
       "population": "repulsive-gap[alpha=16]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 3
@@ -491,7 +590,10 @@
       "population": "repulsive-gap[alpha=16]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 4
@@ -505,7 +607,10 @@
       "population": "repulsive-gap[alpha=16]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 6
@@ -519,7 +624,10 @@
       "population": "repulsive-gap[alpha=1]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 3
@@ -533,7 +641,10 @@
       "population": "repulsive-gap[alpha=1]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 4
@@ -547,7 +658,10 @@
       "population": "repulsive-gap[alpha=1]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 6
@@ -561,7 +675,10 @@
       "population": "repulsive-gap[alpha=4]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 3
@@ -575,7 +692,10 @@
       "population": "repulsive-gap[alpha=4]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 4
@@ -589,7 +709,10 @@
       "population": "repulsive-gap[alpha=4]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 6
@@ -603,7 +726,10 @@
       "population": "repulsive-gap[regular]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 3
@@ -617,7 +743,10 @@
       "population": "repulsive-gap[regular]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 4
@@ -631,7 +760,10 @@
       "population": "repulsive-gap[regular]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 6
@@ -645,7 +777,10 @@
       "population": "zonogon[lengths=uniform(0.5,1.5)]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/zonogon/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "4977d6456d4c3dd42156f804f14107f612fffaf704a2d6fae82445466906f8ba",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 4
@@ -659,7 +794,10 @@
       "population": "zonogon[lengths=uniform(0.5,1.5)]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/zonogon/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "4977d6456d4c3dd42156f804f14107f612fffaf704a2d6fae82445466906f8ba",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260717,
       "side_count": 6
@@ -673,7 +811,10 @@
       "population": "current-baseline[delta=0.2]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 3
@@ -687,7 +828,10 @@
       "population": "current-baseline[delta=0.2]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 4
@@ -701,7 +845,10 @@
       "population": "current-baseline[delta=0.2]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 6
@@ -715,7 +862,10 @@
       "population": "primal-hull-uniform-disk[points=n+4,origin=interior]",
       "rejections": 896,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 3
@@ -729,7 +879,10 @@
       "population": "primal-hull-uniform-disk[points=n+4,origin=interior]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 4
@@ -743,7 +896,10 @@
       "population": "primal-hull-uniform-disk[points=n+4,origin=interior]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 6
@@ -757,7 +913,10 @@
       "population": "regular-mutation[steps=4,scale=0.03]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 3
@@ -771,7 +930,10 @@
       "population": "regular-mutation[steps=4,scale=0.03]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 4
@@ -785,7 +947,10 @@
       "population": "regular-mutation[steps=4,scale=0.03]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 6
@@ -799,7 +964,10 @@
       "population": "repulsive-gap[alpha=16]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 3
@@ -813,7 +981,10 @@
       "population": "repulsive-gap[alpha=16]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 4
@@ -827,7 +998,10 @@
       "population": "repulsive-gap[alpha=16]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 6
@@ -841,7 +1015,10 @@
       "population": "repulsive-gap[alpha=1]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 3
@@ -855,7 +1032,10 @@
       "population": "repulsive-gap[alpha=1]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 4
@@ -869,7 +1049,10 @@
       "population": "repulsive-gap[alpha=1]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 6
@@ -883,7 +1066,10 @@
       "population": "repulsive-gap[alpha=4]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 3
@@ -897,7 +1083,10 @@
       "population": "repulsive-gap[alpha=4]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 4
@@ -911,7 +1100,10 @@
       "population": "repulsive-gap[alpha=4]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 6
@@ -925,7 +1117,10 @@
       "population": "repulsive-gap[regular]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 3
@@ -939,7 +1134,10 @@
       "population": "repulsive-gap[regular]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 4
@@ -953,7 +1151,10 @@
       "population": "repulsive-gap[regular]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 6
@@ -967,7 +1168,10 @@
       "population": "zonogon[lengths=uniform(0.5,1.5)]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/zonogon/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "1dcc4386cc3e989a16fba6a446ac6b319e4bcf10959409d8b31bc56e41a5abde",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 4
@@ -981,10 +1185,81 @@
       "population": "zonogon[lengths=uniform(0.5,1.5)]",
       "rejections": 0,
       "report": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/zonogon/factor-only-report.json",
+      "report_schema": "generator-zoo-factor-only-report-v1",
       "report_sha256": "1dcc4386cc3e989a16fba6a446ac6b319e4bcf10959409d8b31bc56e41a5abde",
+      "report_source_dirty": false,
+      "report_source_revision": "a50e1e930e21541506df6228aaed16355d830372",
       "requested": 24,
       "seed": 20260718,
       "side_count": 6
+    }
+  ],
+  "producer_reports": [
+    {
+      "accepted": 497,
+      "exhausted": 7,
+      "path": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "requested": 504,
+      "schema": "generator-zoo-factor-only-report-v1",
+      "seed": 20260716,
+      "sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+      "source_dirty": false,
+      "source_revision": "a50e1e930e21541506df6228aaed16355d830372"
+    },
+    {
+      "accepted": 48,
+      "exhausted": 0,
+      "path": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/zonogon/factor-only-report.json",
+      "requested": 48,
+      "schema": "generator-zoo-factor-only-report-v1",
+      "seed": 20260716,
+      "sha256": "ffb2a1c99149a72e75653a142a8c455f5d05df5c0f91ff7ecacbdbbcfcbc3c12",
+      "source_dirty": false,
+      "source_revision": "a50e1e930e21541506df6228aaed16355d830372"
+    },
+    {
+      "accepted": 497,
+      "exhausted": 7,
+      "path": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "requested": 504,
+      "schema": "generator-zoo-factor-only-report-v1",
+      "seed": 20260717,
+      "sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+      "source_dirty": false,
+      "source_revision": "a50e1e930e21541506df6228aaed16355d830372"
+    },
+    {
+      "accepted": 48,
+      "exhausted": 0,
+      "path": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/zonogon/factor-only-report.json",
+      "requested": 48,
+      "schema": "generator-zoo-factor-only-report-v1",
+      "seed": 20260717,
+      "sha256": "4977d6456d4c3dd42156f804f14107f612fffaf704a2d6fae82445466906f8ba",
+      "source_dirty": false,
+      "source_revision": "a50e1e930e21541506df6228aaed16355d830372"
+    },
+    {
+      "accepted": 497,
+      "exhausted": 7,
+      "path": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "requested": 504,
+      "schema": "generator-zoo-factor-only-report-v1",
+      "seed": 20260718,
+      "sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+      "source_dirty": false,
+      "source_revision": "a50e1e930e21541506df6228aaed16355d830372"
+    },
+    {
+      "accepted": 48,
+      "exhausted": 0,
+      "path": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/zonogon/factor-only-report.json",
+      "requested": 48,
+      "schema": "generator-zoo-factor-only-report-v1",
+      "seed": 20260718,
+      "sha256": "1dcc4386cc3e989a16fba6a446ac6b319e4bcf10959409d8b31bc56e41a5abde",
+      "source_dirty": false,
+      "source_revision": "a50e1e930e21541506df6228aaed16355d830372"
     }
   ],
   "protocol": {
@@ -993,7 +1268,7 @@
       20260717,
       20260718
     ],
-    "cost_contract": "generator_ms comes from producer reports; validation_ms_estimate is Python parse/view cost and is kept separate",
+    "cost_contract": "generator_ms comes from producer reports; analyzer runtime is intentionally not serialized because it is volatile",
     "pilot_seed": 20260716,
     "quantile_regions": "fixed pooled-pilot lower/upper 0.10 cells, with ties included",
     "seed_roles": {
@@ -1002,7 +1277,7 @@
       "20260718": "confirmation-2"
     },
     "selection_boundary": "all region thresholds and support-frontier distances are computed from pilot rows only; confirmation rows are consumed in original producer file order",
-    "uncertainty": "Wilson 95% intervals for finite stream event indicators; rows are not IID claims",
+    "uncertainty": "Wilson 95% intervals aggregate exactly two independent confirmation seed streams per law/side/prefix; intervals are intentionally wide and descriptive, with no per-row CI",
     "views": {
       "central_symmetry_residual": "mean absolute half-period support mismatch divided by mean support",
       "covariance_anisotropy": "largest/smallest centered vertex covariance eigenvalue",
@@ -1012,14 +1287,26 @@
     }
   },
   "provenance": {
-    "analyzer_sha256": "a483fd71f54084db08a8201502deb5300880b9e5a61414cc35ba4da9e7c290dc",
-    "base_commit": "3f09eeebbcaae731d493317b63fc6ece127e804d",
-    "input_target_field_scan": "passed; keys sys/capacity/target/bounce/ehz absent",
-    "repository_revision": "3f09eeebbcaae731d493317b63fc6ece127e804d",
-    "repository_tree": "d23e5b0de2c8a0df2edcbcd377c0a89bc3cae8cf",
+    "accepted_base_commit": "3f09eeebbcaae731d493317b63fc6ece127e804d",
+    "analyzer_schema": "generator-rare-hit-curves-v1",
+    "input_schema": "factor-shape-row-v1",
+    "input_target_field_scan": "passed recursively; keys sys/capacity/target/bounce/ehz absent",
+    "source_dirty": false,
+    "source_file_hashes": {
+      "analyzer": "f978b7fc10df758aa401006c813adb53ab78f8c5dda98fe745b2ae95b5a61881",
+      "readme": "fbe24b03019fa5d231350b07b3f55bcb63b3ba971ccee393208c227abaa55054",
+      "tests": "06bcf44f5940f1d362e99a7ddfa8345d8d3191ec4b4d7924bcd43de11f799939"
+    },
+    "source_files": {
+      "analyzer": "experiments/sys-datascience/methods/generator-rare-hit-curves/rare_hit_curves.py",
+      "readme": "experiments/sys-datascience/methods/generator-rare-hit-curves/README.md",
+      "tests": "experiments/sys-datascience/methods/generator-rare-hit-curves/test_rare_hit_curves.py"
+    },
+    "source_revision": "b5f3f5dcca52e6a896279ed554ca8a0096f05333",
     "source_root": "repository checkout containing this packet (resolved with git rev-parse --show-toplevel)",
+    "source_tree": "90b86488e0b579cd040a2b59cc8cfb5bfb2350d7",
     "tracked_clean_predicate": "git status --porcelain --untracked-files=no",
-    "validation_ms": 961.5952149997611
+    "transitive_hash_contract": "all six factor data shards and all six producer reports are listed with SHA-256, schema, seed, row/acceptance counts, and producer source provenance"
   },
   "regions": [
     {
@@ -1542,21 +1829,29 @@
       {
         "bytes": 304115,
         "path": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-shapes.jsonl",
+        "rows": 497,
+        "schema": "factor-shape-row-v1",
         "sha256": "2e22a87988c975b05f77eb20dd4cb6c466f088f8bee21fecb1561670e34b2ab0"
       },
       {
         "bytes": 31245,
         "path": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/zonogon/factor-shapes.jsonl",
+        "rows": 48,
+        "schema": "factor-shape-row-v1",
         "sha256": "a78c71cd338e8bf4c7144935f25f40d538f8831cc2cdbfe82d2efb63214164d2"
       },
       {
         "bytes": 304035,
         "path": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-shapes.jsonl",
+        "rows": 497,
+        "schema": "factor-shape-row-v1",
         "sha256": "5aaf6b0a28abccac81df7a7a22cb74338555ba824209eef97f340fb181a36c72"
       },
       {
         "bytes": 31259,
         "path": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/zonogon/factor-shapes.jsonl",
+        "rows": 48,
+        "schema": "factor-shape-row-v1",
         "sha256": "b653cd7a2776e130547f5e0d621b00857b6eef69306a8a5a468e31b871b65934"
       }
     ],
@@ -1565,11 +1860,15 @@
       {
         "bytes": 304041,
         "path": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-shapes.jsonl",
+        "rows": 497,
+        "schema": "factor-shape-row-v1",
         "sha256": "442a640629381cffdd215598521d05cc4ccc86c96d96be530a842572fe2d5cd1"
       },
       {
         "bytes": 31244,
         "path": "../generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/zonogon/factor-shapes.jsonl",
+        "rows": 48,
+        "schema": "factor-shape-row-v1",
         "sha256": "6403831626b4a05781ee9e3d24320e72a9433b2b1fabf26eb1f1f986675a2c15"
       }
     ]
