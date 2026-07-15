@@ -32,12 +32,16 @@ CARGO_TARGET_DIR=/workspaces/msc-math/target cargo run -p exp-sys-landscape \
   --out-dir /tmp/orbit-perturbation-zoo --seed 20260715
 ```
 
-`rows.jsonl` is the row-level producer artifact; `report.json` freezes the
-source revision, a scoped-clean predicate, SHA-256 hashes of this producer and
-`Cargo.lock`, and the declared source closure. This avoids treating a local
-`target/` executable path as durable identity. Timing fields are explicitly
-one-run observations, not byte-reproducible freeze data; all non-timing rows
-are deterministic under the recorded seed and source closure.
+`rows.jsonl` is the row-level producer artifact. Before writing either retained
+file, `report.json` records the full repository `HEAD` revision and tree plus a
+repo-wide tracked-clean predicate (untracked outputs ignored); these bind every
+tracked path dependency rather than a short hand-maintained list. The freeze
+therefore identifies the producer source commit before the generated artifact
+is committed, avoiding self-reference. Producer and lockfile SHA-256 values
+are convenient local checks, not the source-closure definition, and no
+deletable `target/` binary is the executable identity. Timing fields are
+one-run observations, not byte-reproducible freeze data; non-timing rows are
+deterministic under the recorded seed and pinned source closure.
 No capacity backend or `sys` value is called. Passing rows show only the
 specific geometry/reconstruction contracts checked in that run; they do not
 establish invariance of `sys`, a population effect, or a natural quotient law.

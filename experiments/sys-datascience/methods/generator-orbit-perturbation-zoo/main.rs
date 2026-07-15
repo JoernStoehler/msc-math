@@ -112,6 +112,7 @@ struct Report {
     rows: usize,
     passed: usize,
     source_revision: String,
+    source_repository_tree: String,
     source_dirty: bool,
     producer_source_sha256: String,
     cargo_lock_sha256: String,
@@ -768,7 +769,19 @@ fn sha256(path: &str) -> String {
         .and_then(|line| line.split_whitespace().next().map(str::to_owned))
         .unwrap_or_else(|| "unavailable".into())
 }
-fn source_provenance() -> (String, bool, String, String) {
+fn tracked_status_is_clean(status: &str) -> bool {
+    status.trim().is_empty()
+}
+fn tracked_repository_clean() -> bool {
+    Command::new("git")
+        .args(["status", "--porcelain", "--untracked-files=no"])
+        .output()
+        .map_or(false, |output| {
+            output.status.success()
+                && tracked_status_is_clean(&String::from_utf8_lossy(&output.stdout))
+        })
+}
+fn source_provenance() -> (String, String, bool, String, String) {
     let revision = Command::new("git")
         .args(["rev-parse", "HEAD"])
         .output()
@@ -776,43 +789,69 @@ fn source_provenance() -> (String, bool, String, String) {
         .filter(|output| output.status.success())
         .map(|output| String::from_utf8_lossy(&output.stdout).trim().to_owned())
         .unwrap_or_else(|| "unknown".into());
-    let dirty = Command::new("git")
-        .args([
-            "status",
-            "--porcelain",
-            "--",
-            "experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/main.rs",
-            "experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/README.md",
-            "experiments/sys-landscape/Cargo.toml",
-            "Cargo.lock",
-        ])
+    let tree = Command::new("git")
+        .args(["rev-parse", "HEAD^{tree}"])
         .output()
-        .map_or(true, |output| {
-            !output.status.success() || !output.stdout.is_empty()
-        });
+        .ok()
+        .filter(|output| output.status.success())
+        .map(|output| String::from_utf8_lossy(&output.stdout).trim().to_owned())
+        .unwrap_or_else(|| "unknown".into());
     (
         revision,
-        dirty,
+        tree,
+        !tracked_repository_clean(),
         sha256("experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/main.rs"),
         sha256("Cargo.lock"),
     )
 }
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct Args {
+    out_dir: PathBuf,
+    seed: u64,
+}
+fn parse_args(argv: &[String]) -> Result<Args, String> {
+    let mut args = Args {
+        out_dir: PathBuf::from(
+            "experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/artifacts/smoke",
+        ),
+        seed: 20260715,
+    };
+    let mut index = 1;
+    while index < argv.len() {
+        match argv[index].as_str() {
+            "--out-dir" => {
+                let value = argv.get(index + 1).ok_or("--out-dir requires a value")?;
+                if value.starts_with('-') {
+                    return Err("--out-dir requires a path value".into());
+                }
+                args.out_dir = PathBuf::from(value);
+                index += 2;
+            }
+            "--seed" => {
+                let value = argv.get(index + 1).ok_or("--seed requires a value")?;
+                args.seed = value.parse().map_err(|_| "--seed must be a u64")?;
+                index += 2;
+            }
+            "--help" | "-h" => return Err("usage: --out-dir DIR --seed U64".into()),
+            other => return Err(format!("unknown argument {other}")),
+        }
+    }
+    Ok(args)
+}
 fn main() {
     let a: Vec<String> = std::env::args().collect();
-    let out=a.windows(2).find(|x|x[0]=="--out-dir").map(|x|PathBuf::from(&x[1])).unwrap_or_else(||PathBuf::from("experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/artifacts/smoke"));
-    let seed = a
-        .windows(2)
-        .find(|x| x[0] == "--seed")
-        .and_then(|x| x[1].parse().ok())
-        .unwrap_or(20260715u64);
-    let (revision, dirty, source_sha256, lock_sha256) = source_provenance();
-    create_dir_all(&out).unwrap();
-    let mut w = BufWriter::new(File::create(out.join("rows.jsonl")).unwrap());
+    let args = parse_args(&a).unwrap_or_else(|error| {
+        eprintln!("{error}");
+        std::process::exit(2)
+    });
+    let (revision, tree, dirty, source_sha256, lock_sha256) = source_provenance();
+    create_dir_all(&args.out_dir).unwrap();
+    let mut w = BufWriter::new(File::create(args.out_dir.join("rows.jsonl")).unwrap());
     let mut rows = Vec::new();
     for &b in BUCKETS {
-        let (p, n, t) = base(hash_seed(seed, "base", b, 0), b);
+        let (p, n, t) = base(hash_seed(args.seed, "base", b, 0), b);
         for arm in ARMS {
-            let x = evaluate(arm, seed, b, 0, p.as_ref(), n, t);
+            let x = evaluate(arm, args.seed, b, 0, p.as_ref(), n, t);
             serde_json::to_writer(&mut w, &x).unwrap();
             writeln!(&mut w).unwrap();
             rows.push(x)
@@ -823,8 +862,12 @@ fn main() {
     for arm in ARMS {
         arms.insert((*arm).into(), law(arm));
     }
-    let report=Report{schema:"orbit-zoo-report-v3",command:a.join(" "),seed,rows:rows.len(),passed:rows.iter().filter(|x|x.failures.is_empty()).count(),source_revision:revision,source_dirty:dirty,producer_source_sha256:source_sha256,cargo_lock_sha256:lock_sha256,build_source_closure:"Cargo.lock plus experiments/sys-landscape/Cargo.toml and this producer source; hashes above identify mutable source inputs without relying on a deletable target binary.",timing_fields:"generation_ms, intervention_ms, and reconstruction_ms are one-run observations only; timing values are not byte-reproducible freeze data.",arms,interpretation_boundary:"Target-free geometry/reconstruction smoke only: it neither evaluates sys nor establishes a canonical metric, quotient-natural law, invariance of sys, or population effect."};
-    serde_json::to_writer_pretty(File::create(out.join("report.json")).unwrap(), &report).unwrap();
+    let report=Report{schema:"orbit-zoo-report-v4",command:a.join(" "),seed:args.seed,rows:rows.len(),passed:rows.iter().filter(|x|x.failures.is_empty()).count(),source_revision:revision,source_repository_tree:tree,source_dirty:dirty,producer_source_sha256:source_sha256,cargo_lock_sha256:lock_sha256,build_source_closure:"The pinned full-repository revision/tree and repo-wide tracked-clean predicate bind all tracked transitive path dependencies. The two SHA-256 values are convenient local file checks, not the closure definition.",timing_fields:"generation_ms, intervention_ms, and reconstruction_ms are one-run observations only; timing values are not byte-reproducible freeze data.",arms,interpretation_boundary:"Target-free geometry/reconstruction smoke only: it neither evaluates sys nor establishes a canonical metric, quotient-natural law, invariance of sys, or population effect."};
+    serde_json::to_writer_pretty(
+        File::create(args.out_dir.join("report.json")).unwrap(),
+        &report,
+    )
+    .unwrap();
     if rows.iter().any(|x| !x.failures.is_empty()) {
         std::process::exit(1)
     }
@@ -936,5 +979,39 @@ mod tests {
                 .unwrap()
                 .raw_ordered_dual_coordinates
         );
+    }
+
+    #[test]
+    fn cli_parsing_is_fail_closed() {
+        let binary = "orbit-zoo".to_string();
+        assert!(parse_args(&vec![binary.clone(), "--unknown".into()]).is_err());
+        assert!(parse_args(&vec![binary.clone(), "--seed".into()]).is_err());
+        assert!(parse_args(&vec![binary.clone(), "--seed".into(), "not-a-u64".into()]).is_err());
+        assert!(parse_args(&vec![binary.clone(), "--out-dir".into()]).is_err());
+        assert_eq!(
+            parse_args(&vec![
+                binary,
+                "--out-dir".into(),
+                "/tmp/orbit-zoo-args".into(),
+                "--seed".into(),
+                "17".into(),
+            ])
+            .unwrap(),
+            Args {
+                out_dir: PathBuf::from("/tmp/orbit-zoo-args"),
+                seed: 17
+            }
+        );
+    }
+
+    #[test]
+    fn tracked_dependency_change_invalidates_repository_clean_predicate() {
+        assert!(tracked_status_is_clean(""));
+        assert!(!tracked_status_is_clean(
+            " M crates/symplectic/src/lib.rs\n"
+        ));
+        assert!(!tracked_status_is_clean(
+            "M  experiments/sys-landscape/src/lib.rs\n"
+        ));
     }
 }
