@@ -13,6 +13,9 @@ control status, and allocation-time collapse rule.
 while metric and symplectic feature views compare the two nominal arms
 directly. This is why a polar pair has zero transformed-geometry residual but
 generally nonzero Euclidean-feature difference.
+The producer rejects optimized Python because its exact witness and schema
+guards deliberately use assertions; `python3 -O` is not an authorized replay
+mode.
 
 The crucial law boundary is narrow. Sorted IID uniform angles and
 Dirichlet-(1,...,1) cyclic gaps agree as an angle proposal after accounting for

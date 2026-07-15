@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import importlib.util
+import subprocess
+import sys
 import unittest
 from pathlib import Path
 
@@ -43,6 +45,15 @@ class EquivalenceMatrixTests(unittest.TestCase):
 
     def test_every_view_has_an_explicit_comparison_semantics(self):
         self.assertEqual(set(produce.VIEWS), set(produce.VIEW_DEFINITIONS))
+
+    def test_optimized_python_is_rejected_fail_closed(self):
+        result = subprocess.run(
+            [sys.executable, "-O", str(MODULE_PATH), "--check"],
+            text=True,
+            capture_output=True,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("optimized Python disables required equivalence checks", result.stderr)
 
 
 if __name__ == "__main__":

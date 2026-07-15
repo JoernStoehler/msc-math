@@ -19,6 +19,10 @@ from fractions import Fraction as F
 from pathlib import Path
 
 
+if not __debug__:
+    raise SystemExit("optimized Python disables required equivalence checks; run without -O")
+
+
 PACKET = Path(__file__).resolve().parent
 REPO = next(parent for parent in PACKET.parents if (parent / ".git").exists())
 SCHEMA = "generator-equivalence-regression-v1"
@@ -225,7 +229,7 @@ def rows():
             "level": "paired_pushforward",
             "hypotheses_conditioning": "same hypotheses as tangential polar row; A_T,A_I>0; each factor normalized to area one independently",
             "transformation": "I_norm=(A_T A_I)^(-1/2) (T_norm)^circ; the uncorrected normalized bodies are generally not literal polars",
-            "expected": expected(law_parameters=ZERO, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=NONZERO, signed_symplectic_features=NA, absolute_symplectic_features=NA, normalized_product_features=ZERO, matrix_identity=NA),
+            "expected": expected(law_parameters=ZERO, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=NONZERO, signed_symplectic_features=NA, absolute_symplectic_features=NA, normalized_product_features=NONZERO, matrix_identity=NA),
             "proof_status": "proved_by_polar_scaling_identity",
             "proof_source": [f"{alt}/main.rs: area_normalize, tangentialize, inscribed", "thesis/02-preliminaries-polytope-input-language.tex"],
             "arithmetic": "exact symbolic square of the homothety factor from rational areas",
@@ -277,11 +281,11 @@ def rows():
             "level": "not_equivalent",
             "hypotheses_conditioning": "generic factors; R is a quarter turn; do not confuse common and relative rotation",
             "transformation": "diag(R,I2), which is orthogonal but not symplectic in (q1,q2,p1,p2) order",
-            "expected": expected(law_parameters=NA, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, signed_symplectic_features=NONZERO, absolute_symplectic_features=NONZERO, normalized_product_features=NONZERO, matrix_identity=NONZERO),
+            "expected": expected(law_parameters=NA, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, signed_symplectic_features=NONZERO, absolute_symplectic_features=NONZERO, normalized_product_features=ZERO, matrix_identity=NONZERO),
             "proof_status": "proved_matrix_counterexample",
             "proof_source": [f"{alt}/README.md: relative factor rotation remains explicit", f"{orient}/README.md: Euclidean versus symplectic semantics"],
             "arithmetic": "exact rational",
-            "executable_control": "negative_control_pass: A^T J A differs from J and a cross-factor omega entry changes",
+            "executable_control": "negative_control_pass: A^T J A differs from J; a cross-factor omega entry and its absolute value change, while Euclidean/area/volume normalization controls stay fixed",
             "collapse_scope": "never collapse relative-rotation arms as common gauge",
         },
         {
@@ -324,17 +328,17 @@ def rows():
             "collapse_scope": "collapse a GL+ arm only with its own induced SL representative",
         },
         {
-            "row_id": "random-gl4-law-vs-arbitrary-sl4-law",
-            "objects_laws": "a random GL+(4) matrix law normalized radially versus an independently specified random SL(4) law",
+            "row_id": "gl4-sl4-dirac-law-negative-control",
+            "objects_laws": "the Dirac GL+(4) law at 2I, normalized radially, versus the Dirac SL(4) law at diag(2,1,1,1/2)",
             "level": "not_equivalent",
-            "hypotheses_conditioning": "both laws may have positive/unit determinant, but their induced laws on S=(det A)^(-1/4)A must be compared",
+            "hypotheses_conditioning": "specific negative-control laws; generally two random matrix laws are equivalent here only if their induced laws on S=(det A)^(-1/4)A match",
             "transformation": "radial quotient map GL+(4)->SL(4)",
             "expected": expected(law_parameters=NONZERO, raw_geometry_after_transform=NONZERO, combinatorics=ZERO, euclidean_features=NONZERO, signed_symplectic_features=NONZERO, absolute_symplectic_features=NONZERO, normalized_product_features=NONZERO, matrix_identity=NONZERO),
             "proof_status": "proved_law_counterexample",
             "proof_source": [f"{zoo}/README.md and main.rs: explicit coordinate-dependent bounded SL4 law"],
             "arithmetic": "exact rational Dirac-law counterexample",
             "executable_control": "negative_control_pass: normalized 2I gives I while chosen determinant-one diagonal map is nonidentity",
-            "collapse_scope": "do not collapse random laws unless their induced radial-quotient laws match",
+            "collapse_scope": "do not collapse random GL+/SL laws unless their induced radial-quotient laws match",
         },
         {
             "row_id": "u2-subgroup-sp4-pointwise-orbit",
@@ -406,7 +410,9 @@ def witness_results():
 
     supports = (F(4, 5), F(6, 5), F(9, 10), F(11, 10))
     assert any(h != 1 for h in supports)
-    out.append(("iid-support-baseline-vs-equal-support-dirichlet1", {"baseline_supports": supports, "equal_supports": (F(1),) * 4, "marks_differ": True}))
+    width_ratio = (supports[0] + supports[2]) / (supports[1] + supports[3])
+    assert width_ratio == F(17, 23) and width_ratio != 1
+    out.append(("iid-support-baseline-vs-equal-support-dirichlet1", {"baseline_supports": supports, "equal_supports": (F(1),) * 4, "marks_differ": True, "translation_and_area_scale_invariant_width_ratio": width_ratio, "equal_support_width_ratio": F(1)}))
 
     normals = ((F(1), F(0)), (F(3, 5), F(4, 5)), (F(-3, 5), F(4, 5)), (F(-1), F(0)), (F(0), F(-1)))
     heights = (F(1),) * len(normals)
@@ -425,8 +431,13 @@ def witness_results():
     at = polygon_area_ordered(tangential_vertices)
     ai = polygon_area_ordered(normals)
     correction_squared = F(1) / (at * ai)
+    tangential_normalized_max_radius_squared = max(dot(x, x) for x in tangential_vertices) / at
+    inscribed_normalized_max_radius_squared = max(dot(x, x) for x in normals) / ai
     assert correction_squared * at * ai == 1
-    out.append(("area-normalized-polar-scale-correction", {"tangential_area": at, "inscribed_area": ai, "polar_homothety_correction_squared": correction_squared, "symbolic_identity": True}))
+    assert tangential_normalized_max_radius_squared == F(8, 15)
+    assert inscribed_normalized_max_radius_squared == F(25, 57)
+    assert tangential_normalized_max_radius_squared - inscribed_normalized_max_radius_squared == F(9, 95)
+    out.append(("area-normalized-polar-scale-correction", {"tangential_area": at, "inscribed_area": ai, "polar_homothety_correction_squared": correction_squared, "tangential_normalized_max_radius_squared": tangential_normalized_max_radius_squared, "inscribed_normalized_max_radius_squared": inscribed_normalized_max_radius_squared, "normalized_feature_difference": F(9, 95), "symbolic_identity": True}))
     recovered_double_polar = vertices_from_halfspaces(normals, heights)
     assert set(recovered_double_polar) == set(tangential_vertices)
     out.append(("double-polarity-marked-origin", {"original_vertices": tangential_vertices, "recovered_double_polar_vertices": recovered_double_polar, "roundtrip": True}))
@@ -435,7 +446,12 @@ def witness_results():
     scale = ((a, 0, 0, 0), (0, a, 0, 0), (0, 0, b, 0), (0, 0, 0, b))
     assert matmul(transpose(scale), matmul(J, scale)) == tuple(tuple(a * b * x for x in row) for row in J)
     assert determinant(scale) == a * a * b * b
-    out.append(("independent-positive-factor-scalings", {"a": a, "b": b, "determinant": determinant(scale), "conformal_symplectic_multiplier": a * b, "normalized_ratios_fixed": True}))
+    q_area, p_area = F(5), F(7)
+    scaled_q_area, scaled_p_area = a * a * q_area, b * b * p_area
+    product_volume, scaled_product_volume = q_area * p_area, scaled_q_area * scaled_p_area
+    assert scaled_product_volume / product_volume == determinant(scale)
+    assert scaled_q_area / (a * a * q_area) == 1 and scaled_p_area / (b * b * p_area) == 1
+    out.append(("independent-positive-factor-scalings", {"a": a, "b": b, "determinant": determinant(scale), "conformal_symplectic_multiplier": a * b, "q_area_before_after": (q_area, scaled_q_area), "p_area_before_after": (p_area, scaled_p_area), "product_volume_before_after": (product_volume, scaled_product_volume), "volume_ratio_equals_determinant": True, "independently_area_normalized_factor_areas": (F(1), F(1))}))
 
     r = ((F(0), F(-1)), (F(1), F(0)))
     common = ((0, -1, 0, 0), (1, 0, 0, 0), (0, 0, 0, -1), (0, 0, 1, 0))
@@ -448,8 +464,11 @@ def witness_results():
     one = ((0, -1, 0, 0), (1, 0, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1))
     one_form = matmul(transpose(one), matmul(J, one))
     assert one_form != J and matmul(transpose(one), one) == I4
-    assert omega(points[0], points[1]) != omega(matvec(one, points[0]), matvec(one, points[1]))
-    out.append(("one-factor-only-rotation-negative-control", {"matrix": one, "orthogonal": True, "symplectic": False, "signed_omega_changed": True}))
+    omega_before = omega(points[0], points[1])
+    omega_after = omega(matvec(one, points[0]), matvec(one, points[1]))
+    assert omega_before == 5 and omega_after == 0 and abs(omega_before) != abs(omega_after)
+    assert gram(points, dot) == gram(tuple(matvec(one, p) for p in points), dot)
+    out.append(("one-factor-only-rotation-negative-control", {"matrix": one, "orthogonal": True, "symplectic": False, "omega_before_after": (omega_before, omega_after), "absolute_omega_before_after": (abs(omega_before), abs(omega_after)), "euclidean_gram_fixed": True, "factor_areas_and_product_volume_fixed": True}))
 
     normals4 = ((F(1), F(0)), (F(0), F(1)), (F(-1), F(0)), (F(0), F(-1)))
     broken4 = (F(3), F(4), F(1), F(2))
@@ -474,7 +493,7 @@ def witness_results():
 
     arbitrary_sl = ((2, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, F(1, 2)))
     assert determinant(arbitrary_sl) == 1 and arbitrary_sl != I4
-    out.append(("random-gl4-law-vs-arbitrary-sl4-law", {"normalized_dirac_at_2I": I4, "arbitrary_sl_dirac": arbitrary_sl, "induced_laws_differ": True}))
+    out.append(("gl4-sl4-dirac-law-negative-control", {"normalized_dirac_at_2I": I4, "named_sl_dirac": arbitrary_sl, "induced_laws_differ": True, "general_equivalence_condition": "induced radial-quotient laws must match"}))
 
     u2 = ((0, 0, -1, 0), (0, 1, 0, 0), (1, 0, 0, 0), (0, 0, 0, 1))
     u2_points = tuple(matvec(u2, p) for p in points)
