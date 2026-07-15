@@ -19,7 +19,7 @@ Polar images are deterministic pushforwards paired to their sources. `P_#mu` is 
 
 ## Provenance and replay
 
-Source revision `c9cb85034fa9da95cd89e5e3b41599c208e7f7f6`, tree `a467932f88678b1f08d44ce5e5f11ee7416653ca`, tracked-dirty before artifact creation `false`. Producer SHA-256 `8e3784826679c5aac0fbbae54001f9515b9966c74db05f11279a0253dc63884f`. Python dependencies are standard library only. Reproduce from a clean checkout with:
+Source revision `e353a97c28f4e581506b00e37d286004b22611b4`, tree `03ff11fa5cef0bb3b7fd9ede9fa4f4a3b33f6771`, tracked-dirty before artifact creation `false`. Producer SHA-256 `53d064c61a3ae7682a39bb8315295758aeb9d3a36d7db3a6cd98727d1727e333`. Python dependencies are standard library only. Reproduce from a clean checkout with:
 
 ```text
 python3 experiments/sys-datascience/methods/generator-polarity-pushforward/run.py --out-dir experiments/sys-datascience/methods/generator-polarity-pushforward/artifacts --seed 20260715 --per-stratum 24
