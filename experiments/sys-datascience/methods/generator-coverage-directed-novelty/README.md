@@ -7,21 +7,27 @@ independent master seeds.  The first seed is the training candidate pool; the
 second is an independent holdout pool.  Every retained row keeps its producer
 `sample_id`, law/parameter, seed, row, attempt, and deterministic witness ID.
 
-`analyze.py` runs deterministic passive-random hash-ranked allocation and three greedy frontiers:
-`adaptive_max` (max-normalized gain across two views), and view-specific
-`adaptive_frame`/`adaptive_chord` frontiers.  The frame view quotients cyclic
+`analyze.py` generates the complete balanced train and holdout pools first,
+then runs a deterministic passive hash-ranked retained-witness coreset and
+three offline greedy coresets: `offline_greedy_max` (max-normalized gain across
+two views), and view-specific `offline_greedy_frame`/`offline_greedy_chord`.
+These are offline coresets, not online adaptive generator allocation. The frame view quotients cyclic
 starting point, reversal, translation, positive scale, and a local frame
 rotation.  The lossy chord view sorts all pairwise chord lengths, removing
 vertex order.  The views remain separate in `frontier-yield.tsv`; disagreement
 rows are retained in `view-disagreement.tsv` rather than collapsed into a law
-score.  Cover-radius yield is measured on the independent holdout at matched
-budgets, while producer generation cost is copied from the producer reports
-into `generation-cost.tsv` and selection cost is measured separately.
+score.  Holdout nearest-cover max, mean, and q90 are measured at matched
+retained-witness budgets. Full-pool producer generation counts/costs are copied
+from the producer reports into `generation-cost.tsv`; offline selection cost is
+measured separately. No per-generated-row or online sample-efficiency claim is
+made.
 
 The frozen reference set is the lowest four deterministic witness IDs from the
-current-baseline population.  A selected witness is authorized only for later
-target-free geometry follow-up.  No `sys`, target, density, support, law-quality,
-or post-selection inferential claim is permitted.  Geometry alone cannot
+current-baseline population. Train/holdout master seeds and sample IDs must be
+disjoint, and all population/side-count strata must remain balanced; the
+analyzer fails closed otherwise. A selected witness is authorized only for later
+target-free geometry follow-up. No `sys`, target, density, support, law-quality,
+or post-selection inferential claim is permitted. Geometry alone cannot
 distinguish a tiny remote population mode from a contaminated outlier; the
 synthetic calibration retains that limitation explicitly.
 
@@ -55,6 +61,6 @@ uv run --with pytest --with numpy python -m pytest -q "$PACKET/test_packet.py"
 The checked-in artifacts are a bounded finite-panel result.  Rebuild the
 producer from source rather than relying on a disposable absolute binary path;
 the analysis report binds exact input/report/analyzer hashes and the repository
-revision.  A future packet should first check whether the holdout cover-radius
-gain survives another pair of seeds and side-count strata; do not select a
-target from this packet.
+revision. A future packet should first check whether the bulk (mean/q90)
+holdout cover reductions survive another pair of seeds and side-count strata;
+do not select a target from this packet.
