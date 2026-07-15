@@ -1479,9 +1479,10 @@ def plot_branch_series(
             float(angles[left_index] + fraction * (angles[left_index + 1] - angles[left_index]))
         )
     if continuation_crossings:
+        marker_y = cutoff - 0.018 * (cutoff - display_floor)
         ax.scatter(
             continuation_crossings,
-            [cutoff] * len(continuation_crossings),
+            [marker_y] * len(continuation_crossings),
             s=34,
             marker="^",
             facecolors="white",
@@ -1489,44 +1490,7 @@ def plot_branch_series(
             linewidths=0.9,
             alpha=max(alpha, 0.85),
             zorder=7.0,
-            clip_on=False,
-            rasterized=rasterized,
-        )
-
-    indeterminate = [
-        (angle, sample.get("action"))
-        for angle, sample in zip(angles, branch["samples"])
-        if sample["status"] == "indeterminate" and sample.get("action") is not None
-    ]
-    if indeterminate:
-        ax.scatter(
-            [point[0] for point in indeterminate],
-            [min(cutoff, max(display_floor, point[1])) for point in indeterminate],
-            s=25,
-            marker="D",
-            facecolors="white",
-            edgecolors="#d97706",
-            linewidths=0.9,
-            alpha=max(alpha, 0.9),
-            zorder=8.0,
-            clip_on=False,
-            rasterized=rasterized,
-        )
-    failures = [
-        angle
-        for angle, sample in zip(angles, branch["samples"])
-        if sample["status"] == "solve_failure"
-    ]
-    if failures:
-        ax.scatter(
-            failures,
-            [cutoff * 0.995] * len(failures),
-            s=20,
-            marker="x",
-            color="#b91c1c",
-            linewidths=0.9,
-            zorder=8.0,
-            clip_on=False,
+            clip_on=True,
             rasterized=rasterized,
         )
 
@@ -1556,17 +1520,15 @@ def plot_landscape(
     y_min = min(finite_actions)
     y_min -= 0.035 * (cutoff - y_min)
 
-    fig = plt.figure(figsize=(TEXT_WIDTH, 6.15))
-    grid = fig.add_gridspec(3, 1, height_ratios=[2.2, 2.2, 0.95], hspace=0.08)
+    fig = plt.figure(figsize=(TEXT_WIDTH, 5.7))
+    grid = fig.add_gridspec(2, 1, hspace=0.24)
     action_axes = [fig.add_subplot(grid[index, 0]) for index in range(2)]
-    multiplicity_ax = fig.add_subplot(grid[2, 0], sharex=action_axes[0])
 
     if grouped:
         for group in groups:
             representative = group["representative"]
-            if representative["raw_sigma_id"] in highlighted_ids:
+            if highlighted_ids.intersection(group["member_raw_sigma_ids"]):
                 continue
-            multiplicity = group["raw_multiplicity"]
             plot_branch_series(
                 action_axes[group["block_count"] - 2],
                 angles,
@@ -1574,8 +1536,8 @@ def plot_landscape(
                 y_min,
                 cutoff,
                 color="#858585",
-                linewidth=0.32 + 0.11 * math.log2(multiplicity + 1),
-                alpha=min(0.72, 0.14 + 0.09 * math.log2(multiplicity + 1)),
+                linewidth=0.72,
+                alpha=0.52,
                 zorder=0.5,
                 rasterized=False,
             )
@@ -1627,91 +1589,25 @@ def plot_landscape(
         ax.set_ylim(y_min, cutoff)
         ax.axhline(cutoff, color="#555555", linewidth=0.7, linestyle=(0, (3, 2)))
         ax.set_ylabel("action")
-        ax.text(
-            0.012,
-            0.96,
+        ax.set_title(
             (
-                f"{block_count}-block — {group_counts[block_count]:,} sampled-profile groups"
-                f" / {raw_counts[block_count]:,} raw words"
+                f"{block_count}-block words: {group_counts[block_count]:,} distinct sampled profiles"
+                f" from {raw_counts[block_count]:,} raw words"
                 if grouped
                 else f"{block_count}-block — {raw_counts[block_count]:,} raw curves / raw words"
             ),
-            transform=ax.transAxes,
-            ha="left",
-            va="top",
-            fontsize=8.7,
-            bbox={"facecolor": "white", "edgecolor": "none", "pad": 1.0, "alpha": 0.88},
+            loc="left",
+            fontsize=8.8,
+            pad=5.0,
         )
         ax.tick_params(labelbottom=False)
         ax.grid(axis="x", visible=False)
-    action_axes[0].text(
-        0.985,
-        0.96,
-        f"cutoff {cutoff:g}",
-        transform=action_axes[0].transAxes,
-        ha="right",
-        va="top",
-        fontsize=7.2,
-        color="#555555",
-        bbox={"facecolor": "white", "edgecolor": "none", "pad": 0.8, "alpha": 0.88},
-    )
-
-    status_by_block = {
-        block: {
-            status: np.array(
-                [
-                    sum(
-                        branch["block_count"] == block
-                        and branch["samples"][index]["status"] == status
-                        for branch in branches
-                    )
-                    for index in range(len(angles))
-                ],
-                dtype=int,
-            )
-            for status in LANDSCAPE_STATUSES
-        }
-        for block in (2, 3)
-    }
-    multiplicity_ax.plot(
-        angles,
-        status_by_block[2]["admissible"],
-        color="#111111",
-        linewidth=1.5,
-        label="2-block admissible",
-    )
-    multiplicity_ax.plot(
-        angles,
-        status_by_block[3]["admissible"],
-        color="#1769aa",
-        linewidth=1.5,
-        label="3-block admissible",
-    )
-    multiplicity_ax.plot(
-        angles,
-        status_by_block[2]["indeterminate"],
-        color="#111111",
-        linewidth=0.9,
-        linestyle=(0, (3, 2)),
-        alpha=0.75,
-        label="2-block indeterminate",
-    )
-    multiplicity_ax.plot(
-        angles,
-        status_by_block[3]["indeterminate"],
-        color="#1769aa",
-        linewidth=0.9,
-        linestyle=(0, (3, 2)),
-        alpha=0.75,
-        label="3-block indeterminate",
-    )
-    multiplicity_ax.set_ylabel("raw\nwords")
-    multiplicity_ax.set_xlabel(r"rotation angle $\theta$")
-    multiplicity_ax.set_xticks([0.0, 4.5, 9.0, 13.5, 18.0])
-    multiplicity_ax.set_xticklabels(
+    action_axes[1].set_xlabel(r"rotation angle $\theta$")
+    action_axes[1].set_xticks([0.0, 4.5, 9.0, 13.5, 18.0])
+    action_axes[1].set_xticklabels(
         [r"$0$", r"$\pi/40$", r"$\pi/20$", r"$3\pi/40$", r"$\pi/10$"]
     )
-    multiplicity_ax.legend(loc="upper center", ncols=2, frameon=False, fontsize=7.0)
+    action_axes[1].tick_params(labelbottom=True)
 
     legend_handles = [
         Line2D([0], [0], color="#111111", linewidth=2.0, label="active branch"),
@@ -1726,8 +1622,8 @@ def plot_landscape(
             [0],
             [0],
             color="#858585",
-            linewidth=1.0,
-            label="fixed reps. (width: raw multiplicity)"
+            linewidth=0.72,
+            label="other distinct sampled profiles"
             if grouped
             else "other raw branches",
         ),
@@ -1741,33 +1637,14 @@ def plot_landscape(
             markersize=5.8,
             label="continues above cutoff",
         ),
-        Line2D(
-            [0],
-            [0],
-            marker="D",
-            color="none",
-            markeredgecolor="#d97706",
-            markerfacecolor="white",
-            markersize=4.8,
-            label="indeterminate sample",
-        ),
-        Line2D(
-            [0],
-            [0],
-            marker="x",
-            color="#b91c1c",
-            linewidth=0,
-            markersize=4,
-            label="solve failure",
-        ),
     ]
     fig.legend(
         handles=legend_handles,
         loc="upper center",
-        bbox_to_anchor=(0.5, 0.952),
-        ncols=3,
+        bbox_to_anchor=(0.5, 0.948),
+        ncols=2,
         frameon=False,
-        fontsize=6.8,
+        fontsize=7.5,
     )
     fig.suptitle("Sampled enumerated KKT-branch landscape", y=0.995, fontsize=11.0)
     fig.subplots_adjust(left=0.13, right=0.98, bottom=0.075, top=0.855)
@@ -1915,9 +1792,9 @@ def write_landscape_analysis(
         },
         "classification": classification,
         "grouping": {
-            "semantics": f"branches are grouped only when block count and the entire sampled sequence of four-way statuses plus actions rounded to {GROUP_ACTION_DECIMALS} decimal places agree; each plotted group uses the lexicographically smallest raw sigma as one fixed representative for the whole domain, never a pointwise minimum or splice",
+            "semantics": f"raw words are grouped only when their block count, all 73 sampled statuses, and all sampled actions rounded to {GROUP_ACTION_DECIMALS} decimal places agree; the plotted profile follows the lexicographically smallest member across all 73 angles, never a pointwise minimum or splice",
             "curve_semantics": "each gray curve in the grouped landscape is one fixed raw representative across all sampled angles; curves are never pointwise aggregated, minimized, or spliced",
-            "multiplicity_encoding": "gray-curve width and opacity increase monotonically with the represented group's raw-word multiplicity; exact multiplicities remain in this report",
+            "multiplicity_encoding": "the publication plot uses a uniform gray line for each distinct sampled profile; raw-word multiplicities are reported by the panel totals and remain available in this report",
             "raw_word_count": len(branches),
             "whole_profile_group_count": len(groups),
             "group_count_by_block": {str(key): value for key, value in group_counts.items()},
@@ -1942,7 +1819,7 @@ def write_landscape_analysis(
             "path": relative(LANDSCAPE_SELECTED_FIGURE_PATH),
             "vector_path": relative(LANDSCAPE_SELECTED_PDF_PATH),
             "kind": "whole-profile grouped landscape",
-            "reason": "it preserves one complete raw representative per group and reports raw multiplicity while reducing exact-overplotting; the raw-line render is retained for comparison",
+            "reason": "it draws each distinct whole-grid sampled profile once, reports both profile and raw-word totals, and leaves sampled feasibility classification to the adjacent table; the raw-line render is retained for comparison",
             "panel_counts": {
                 str(block): {
                     "sampled_profile_groups": group_counts[block],
@@ -1952,9 +1829,9 @@ def write_landscape_analysis(
                 }
                 for block in (2, 3)
             },
-            "curve_semantics": "one fixed representative raw word per whole sampled-profile group; gray width and opacity encode raw multiplicity, with no pointwise aggregation or splicing",
-            "cutoff_encoding": "an upward hollow triangle marks an interpolated crossing where adjacent admissible samples continue above the action-6 display window; a line break without that glyph comes from a non-admissible sampled status, while a hollow orange diamond marks an indeterminate sample",
-            "indeterminate_marker_placement": "diamonds retain nominal vertical position inside the display window and are clamped to its nearest vertical boundary outside the window so endpoint statuses remain visible",
+            "curve_semantics": f"raw words are collapsed only when all 73 sampled statuses agree and all sampled actions agree after rounding to {GROUP_ACTION_DECIMALS} decimal places; one member's whole 73-angle sequence is drawn for each such group, with no pointwise aggregation or splicing",
+            "cutoff_encoding": "an upward hollow triangle just inside the action-6 boundary marks an interpolated crossing where adjacent admissible samples continue above the display window; a line break means the raw word was not numerically admissible at the missing samples",
+            "status_marker_placement": "indeterminate and failure statuses are classified in the adjacent table rather than overplotted on the action curves",
             "publication_formats": {
                 "png_dpi": 300,
                 "pdf_is_vector": True,

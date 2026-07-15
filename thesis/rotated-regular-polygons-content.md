@@ -100,7 +100,9 @@ artifact freezes 3340 raw words at 9 degrees and solves them on a 73-angle
 grid. The Rust and Sage families agree by count, not by an independently
 retained set comparison. Every word/angle pair records one of admissible,
 numerically inadmissible, indeterminate, or solve failure. Whole-profile
-grouping uses one fixed raw representative and never an angle-wise minimum.
+grouping collapses words only when all 73 sampled statuses and all actions
+rounded to ten decimal places agree. One member's whole sampled sequence is
+then drawn for each group; there is no angle-wise selection or splicing.
 The thesis copy is
 `thesis/working/rotated-regular-polygons/enumerated-kkt-branch-landscape.pdf`.
 This figure and its sampled presence table explain the finite problem but do
@@ -195,12 +197,15 @@ attention cost. Their producer artifacts remain available under
   claim and requires the exact 73-angle canonical grid; the repaired packet
   passed re-review.
 - Cold review of the integrated pages initially found that display clipping
-  could be mistaken for sampled inadmissibility and that 40 plotted profiles
-  were not visibly reconciled with 3340 raw words. The final vector figure has
-  cutoff-continuation triangles, larger indeterminate diamonds, explicit
-  7/33-group and 950/2390-word labels, and separate fixed-representative and
-  multiplicity semantics. The same reviewer found both issues resolved at
-  whole-page scale and judged the figure/table thesis-ready.
+  could be mistaken for sampled inadmissibility and that 40 profile groups were
+  not visibly reconciled with 3340 raw words. Jörn then rejected the repaired
+  draft because its "fixed representative" explanation remained opaque and
+  the crowded status-count panel had visible overlaps. The final two-page unit
+  gives the two action panels the full figure, states the 73-status/ten-decimal
+  grouping rule in prose, uses uniform lines rather than multiplicity styling,
+  and moves sampled-presence and right-endpoint statuses to a separate table.
+  Focused rereview found no remaining overlap, semantic, or pagination defect
+  at whole-page scale.
 
 Independent review used for the candidate: primary-paper/citation audit,
 finite-enumeration coverage audit, exact-verifier audit, mathematical/source

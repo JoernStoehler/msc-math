@@ -91,29 +91,27 @@ kkt_branch_sampled_classification.pdf
 sampled-presence counts, endpoint statuses, grouping facts, highlighted raw
 words, input identity, and allowed/prohibited interpretation.
 
-The raw figure draws one line per raw sigma. The grouped candidate draws one
-fixed raw representative for each whole sampled profile: block count, every
-four-way status, and every action rounded to 10 decimal places must agree.
-The representative is fixed for the full domain, so grouping never takes a
+The raw figure draws one line per raw sigma. The grouped candidate collapses
+raw words only when their block count, all 73 four-way statuses, and all
+sampled actions rounded to 10 decimal places agree. It draws one member's
+whole 73-angle sequence for each resulting group, so grouping never takes a
 pointwise minimum, aggregates curves angle by angle, or splices raw branches.
 The grouped panel labels report the 7 two-block and 33 three-block sampled-
-profile groups together with their 950 and 2390 represented raw words. Gray
-curve width and opacity increase with raw multiplicity; exact multiplicities
+profile groups together with the 950 and 2390 raw words they summarize. Every
+distinct profile has the same gray line weight; exact group multiplicities
 remain in the report. The grouped view is the selected
 `enumerated_kkt_branch_landscape.png`, with a fully vector PDF counterpart.
 The raw view and separately named grouped PNG remain available for audit and
 comparison. All generated PNGs use 300 dpi.
 
-Only admissible samples are joined. Indeterminate samples and solve failures
-have separate markers. A hollow upward triangle at the top boundary marks an
-interpolated crossing where adjacent admissible samples continue above the
-fixed action cutoff 6; a line break without that glyph comes from a non-
-admissible sampled status. Hollow orange diamonds mark indeterminate samples
-and are clamped to the nearest vertical boundary when their nominal action is
-outside the displayed window, keeping endpoint statuses visible. The cutoff
-affects only the display; the JSONL retains all numerical actions. The black
-active branch and the worked competitor `(0,5,3,8,1,7)` are fixed raw words,
-not angle-wise selected curves.
+Only admissible samples are joined. A hollow upward triangle just inside the
+top boundary marks an interpolated crossing where adjacent admissible samples
+continue above the fixed action cutoff 6; a line break without that glyph
+comes from a non-admissible sampled status. Indeterminate and failure statuses
+are kept out of the action panels and reported in the adjacent classification
+table instead. The cutoff affects only the display; the JSONL retains all
+numerical actions. The black active branch and the worked competitor
+`(0,5,3,8,1,7)` are fixed raw words, not angle-wise selected curves.
 
 The sampled-presence classification has only these four exhaustive classes:
 

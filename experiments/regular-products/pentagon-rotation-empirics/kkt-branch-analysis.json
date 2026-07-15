@@ -4,7 +4,7 @@
     "group_action_decimals": 10,
     "publication_input_is_explicit": true,
     "source": "experiments/regular-products/pentagon-rotation-empirics/analyze.py",
-    "source_sha256": "11d9e4b81ace0057be6f7b26eb899cce1bd4f9f4415c4858691fe7df61af09f7"
+    "source_sha256": "898d94b22ae40c6c1fb06971fadb83f7dfa9a6f321f35283fe4bc6d016ca52d8"
   },
   "candidate_views": {
     "raw": "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape_raw.png",
@@ -83,10 +83,10 @@
       "3": 33
     },
     "largest_raw_multiplicity": 1710,
-    "multiplicity_encoding": "gray-curve width and opacity increase monotonically with the represented group's raw-word multiplicity; exact multiplicities remain in this report",
+    "multiplicity_encoding": "the publication plot uses a uniform gray line for each distinct sampled profile; raw-word multiplicities are reported by the panel totals and remain available in this report",
     "raw_multiplicity_preserved": true,
     "raw_word_count": 3340,
-    "semantics": "branches are grouped only when block count and the entire sampled sequence of four-way statuses plus actions rounded to 10 decimal places agree; each plotted group uses the lexicographically smallest raw sigma as one fixed representative for the whole domain, never a pointwise minimum or splice",
+    "semantics": "raw words are grouped only when their block count, all 73 sampled statuses, and all sampled actions rounded to 10 decimal places agree; the plotted profile follows the lexicographically smallest member across all 73 angles, never a pointwise minimum or splice",
     "singleton_groups": 1,
     "whole_profile_group_count": 40
   },
@@ -1685,10 +1685,10 @@
     }
   },
   "output_sha256": {
-    "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape.pdf": "8fbd83ace28647a25ca1e470a1f2bdf0f83132a26651cd65c5ca04d9b6d503e1",
-    "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape.png": "29d77dff2f5abaa0db557867b20a1a4026bfa2cf92ab329414aeaadf4eb7e6c8",
-    "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape_grouped.png": "29d77dff2f5abaa0db557867b20a1a4026bfa2cf92ab329414aeaadf4eb7e6c8",
-    "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape_raw.png": "0da16c51e37dcc6f42e5d2960ea16a12dbad816fe2771954eeab31bc6d7372f0",
+    "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape.pdf": "54ecdad56e6f58b317ca57f6fdd2a46180d1ebb8d9500cb2c427aa705f318687",
+    "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape.png": "57547fafbdb6580fc219bc481df34dc7957a5bf2ef7b0b642d32363e271b33ab",
+    "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape_grouped.png": "57547fafbdb6580fc219bc481df34dc7957a5bf2ef7b0b642d32363e271b33ab",
+    "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape_raw.png": "9e38959912421236e8eef75ce7438bd9228c747ebadc5a4b293045723996c161",
     "experiments/regular-products/pentagon-rotation-empirics/kkt_branch_sampled_classification.pdf": "e6aca91e505e82764a6912fd317fd873e5f1189ffff2911c371affcc60681b70",
     "experiments/regular-products/pentagon-rotation-empirics/kkt_branch_sampled_classification.png": "9c289699532a0ecb6f483d6be730a477a38a86ae0a4744f7740ba1e2fa2974a6"
   },
@@ -1701,9 +1701,8 @@
   ],
   "schema_version": "pentagon-kkt-branch-analysis-v1",
   "selected_view": {
-    "curve_semantics": "one fixed representative raw word per whole sampled-profile group; gray width and opacity encode raw multiplicity, with no pointwise aggregation or splicing",
-    "cutoff_encoding": "an upward hollow triangle marks an interpolated crossing where adjacent admissible samples continue above the action-6 display window; a line break without that glyph comes from a non-admissible sampled status, while a hollow orange diamond marks an indeterminate sample",
-    "indeterminate_marker_placement": "diamonds retain nominal vertical position inside the display window and are clamped to its nearest vertical boundary outside the window so endpoint statuses remain visible",
+    "curve_semantics": "raw words are collapsed only when all 73 sampled statuses agree and all sampled actions agree after rounding to 10 decimal places; one member's whole 73-angle sequence is drawn for each such group, with no pointwise aggregation or splicing",
+    "cutoff_encoding": "an upward hollow triangle just inside the action-6 boundary marks an interpolated crossing where adjacent admissible samples continue above the display window; a line break means the raw word was not numerically admissible at the missing samples",
     "kind": "whole-profile grouped landscape",
     "panel_counts": {
       "2": {
@@ -1720,7 +1719,8 @@
       "pdf_is_vector": true,
       "png_dpi": 300
     },
-    "reason": "it preserves one complete raw representative per group and reports raw multiplicity while reducing exact-overplotting; the raw-line render is retained for comparison",
+    "reason": "it draws each distinct whole-grid sampled profile once, reports both profile and raw-word totals, and leaves sampled feasibility classification to the adjacent table; the raw-line render is retained for comparison",
+    "status_marker_placement": "indeterminate and failure statuses are classified in the adjacent table rather than overplotted on the action curves",
     "vector_path": "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape.pdf"
   }
 }
