@@ -14,12 +14,29 @@ use std::collections::BTreeMap;
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
+use std::process::Command;
 use std::str::FromStr;
 
 const SOURCE_SHA256: &str = "161f6361fd9c99b1b86a863c3cdb7db438fd76329392992f6212e37c83e69963";
 const FEATURE_SHA256: &str = "8a87ef1a050cd9b3a717c85a43b0577f9e72c308e635fcc93defed58ec8883a5";
 const SELECTION_SHA256: &str = "2e4953cc61fa3eb02405c2fff9844c842c7813fd05edb7a741413574b794a168";
-const EVALUATOR_SOURCE: &str = "alternative-source-transfer-evaluator-v1";
+const EVALUATOR_IDENTITY_SCHEMA: &str = "alternative-source-transfer-evaluator-identity-v1";
+const EVALUATOR_SOURCE_BYTES: &[u8] = include_bytes!(concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/../sys-datascience/methods/alternative-source-transfer/src/evaluator.rs"
+));
+const EVALUATOR_LOCK_BYTES: &[u8] =
+    include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../Cargo.lock"));
+const EVALUATOR_BACKEND_LIB_BYTES: &[u8] =
+    include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/src/lib.rs"));
+const EVALUATOR_BACKEND_CACHE_BYTES: &[u8] = include_bytes!(concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/src/sys_landscape_cache.rs"
+));
+const EVALUATOR_BACKEND_COMPUTE_BYTES: &[u8] = include_bytes!(concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/src/ascent/compute.rs"
+));
 
 #[derive(Clone, Deserialize)]
 struct SourceRow {
@@ -76,8 +93,12 @@ struct TargetRow {
     source_sha256: &'static str,
     feature_sha256: &'static str,
     selection_sha256: &'static str,
-    evaluator_source: &'static str,
-    evaluator_build: String,
+    evaluator_identity_schema: &'static str,
+    evaluator_source_sha256: String,
+    evaluator_lock_sha256: String,
+    evaluator_backend_sha256: String,
+    evaluator_git_commit: String,
+    evaluator_git_clean: bool,
     volume: f64,
     capacity: f64,
     sys: f64,
@@ -87,6 +108,59 @@ fn digest(path: &Path) -> String {
     let mut h = Sha256::new();
     h.update(fs::read(path).expect("artifact exists"));
     format!("{:x}", h.finalize())
+}
+
+fn digest_bytes(bytes: &[u8]) -> String {
+    let mut h = Sha256::new();
+    h.update(bytes);
+    format!("{:x}", h.finalize())
+}
+
+fn digest_backend() -> String {
+    let mut h = Sha256::new();
+    for (name, bytes) in [
+        ("src/lib.rs", EVALUATOR_BACKEND_LIB_BYTES),
+        ("src/sys_landscape_cache.rs", EVALUATOR_BACKEND_CACHE_BYTES),
+        ("src/ascent/compute.rs", EVALUATOR_BACKEND_COMPUTE_BYTES),
+    ] {
+        h.update(name.as_bytes());
+        h.update([0]);
+        h.update(bytes);
+        h.update([0]);
+    }
+    format!("{:x}", h.finalize())
+}
+
+fn evaluator_identity() -> Result<(String, String, String, String, bool), String> {
+    let output = Command::new("git")
+        .args([
+            "log",
+            "-1",
+            "--format=%H",
+            "--",
+            "experiments/sys-datascience/methods/alternative-source-transfer/src/evaluator.rs",
+        ])
+        .output()
+        .map_err(|e| e.to_string())?;
+    let commit = String::from_utf8(output.stdout)
+        .map_err(|e| e.to_string())?
+        .trim()
+        .to_string();
+    if commit.is_empty() {
+        return Err("cannot determine evaluator source commit".into());
+    }
+    let clean = Command::new("git")
+        .args(["diff", "--quiet", "HEAD", "--"])
+        .status()
+        .map_err(|e| e.to_string())?
+        .success();
+    Ok((
+        digest_bytes(EVALUATOR_SOURCE_BYTES),
+        digest_bytes(EVALUATOR_LOCK_BYTES),
+        digest_backend(),
+        commit,
+        clean,
+    ))
 }
 
 fn read_jsonl<T: for<'a> Deserialize<'a>>(path: &Path) -> Result<Vec<T>, String> {
@@ -205,13 +279,16 @@ fn load_inputs(out: &Path) -> Result<Vec<(SourceRow, SelectionRow)>, String> {
 fn evaluate_rows<F>(
     joined: &[(SourceRow, SelectionRow)],
     mut target: F,
-    build: String,
+    identity: &(String, String, String, String, bool),
 ) -> Result<Vec<TargetRow>, String>
 where
     F: FnMut(&SourceRow) -> Result<(f64, f64, f64), String>,
 {
     if joined.len() != 91 {
         return Err("evaluator requires exactly 91 selected rows".into());
+    }
+    if !identity.4 {
+        return Err("evaluator requires a clean Git checkout".into());
     }
     let mut output = Vec::with_capacity(joined.len());
     for (source, pick) in joined {
@@ -229,8 +306,12 @@ where
             source_sha256: SOURCE_SHA256,
             feature_sha256: FEATURE_SHA256,
             selection_sha256: SELECTION_SHA256,
-            evaluator_source: EVALUATOR_SOURCE,
-            evaluator_build: build.clone(),
+            evaluator_identity_schema: EVALUATOR_IDENTITY_SCHEMA,
+            evaluator_source_sha256: identity.0.clone(),
+            evaluator_lock_sha256: identity.1.clone(),
+            evaluator_backend_sha256: identity.2.clone(),
+            evaluator_git_commit: identity.3.clone(),
+            evaluator_git_clean: identity.4,
             volume,
             capacity,
             sys,
@@ -240,6 +321,9 @@ where
 }
 
 fn write_atomic(path: &Path, rows: &[TargetRow]) -> Result<(), String> {
+    if path.exists() {
+        return Err("refusing to overwrite existing finalized target output".into());
+    }
     let tmp = path.with_extension("jsonl.tmp");
     let result = (|| {
         let mut w = BufWriter::new(File::create(&tmp).map_err(|e| e.to_string())?);
@@ -280,12 +364,10 @@ fn main() {
     let out = PathBuf::from(args.next().expect("OUT_DIR"));
     let target = PathBuf::from(args.next().expect("TARGET_OUT"));
     let joined = load_inputs(&out).unwrap_or_else(|e| panic!("refusing target evaluation: {e}"));
-    let rows = evaluate_rows(
-        &joined,
-        real_target,
-        std::env::var("TRANSFER_EVALUATOR_BUILD").unwrap_or_else(|_| "release-unrecorded".into()),
-    )
-    .unwrap_or_else(|e| panic!("target evaluation failed: {e}"));
+    let identity =
+        evaluator_identity().unwrap_or_else(|e| panic!("cannot establish evaluator identity: {e}"));
+    let rows = evaluate_rows(&joined, real_target, &identity)
+        .unwrap_or_else(|e| panic!("target evaluation failed: {e}"));
     write_atomic(&target, &rows).unwrap_or_else(|e| panic!("target output not finalized: {e}"));
 }
 
@@ -318,7 +400,14 @@ mod tests {
                 },
             ));
         }
-        let rows = evaluate_rows(&joined, |_| Ok((1., 2., 0.5)), "fake".into()).unwrap();
+        let identity = (
+            "source".into(),
+            "lock".into(),
+            "backend".into(),
+            "commit".into(),
+            true,
+        );
+        let rows = evaluate_rows(&joined, |_| Ok((1., 2., 0.5)), &identity).unwrap();
         assert_eq!(rows.len(), 91);
         assert_eq!(
             rows.iter()
@@ -354,7 +443,67 @@ mod tests {
                 },
             ));
         }
-        let err = evaluate_rows(&joined, |_| Ok((1., 2., f64::NAN)), "fake".into()).unwrap_err();
+        let identity = (
+            "source".into(),
+            "lock".into(),
+            "backend".into(),
+            "commit".into(),
+            true,
+        );
+        let err = evaluate_rows(&joined, |_| Ok((1., 2., f64::NAN)), &identity).unwrap_err();
         assert!(err.contains("nonfinite"));
+    }
+
+    #[test]
+    fn fake_target_requires_clean_identity() {
+        let joined = (0..91)
+            .map(|i| {
+                let id = i.to_string();
+                (
+                    SourceRow {
+                        schema: "alternative-source-transfer-source-v1".into(),
+                        candidate_id: id.clone(),
+                        logical_cell: id.clone(),
+                        bucket: "4x6".into(),
+                        exact_dual_vertices: vec![],
+                        exact_primal_vertices: vec![],
+                        vertex_facet_incidence: vec![],
+                        volume: 1.,
+                        geometry_fingerprint: id.clone(),
+                    },
+                    SelectionRow {
+                        candidate_id: id.clone(),
+                        logical_cell: id.clone(),
+                        bucket: "4x6".into(),
+                        memberships: vec!["rho".into()],
+                        geometry_fingerprint: id,
+                    },
+                )
+            })
+            .collect::<Vec<_>>();
+        let identity = (
+            "source".into(),
+            "lock".into(),
+            "backend".into(),
+            "commit".into(),
+            false,
+        );
+        let err = evaluate_rows(&joined, |_| Ok((1., 2., 0.5)), &identity).unwrap_err();
+        assert!(err.contains("clean Git"));
+    }
+
+    #[test]
+    fn write_atomic_refuses_overwrite() {
+        let dir = std::env::temp_dir().join(format!(
+            "alternative-source-transfer-overwrite-test-{}",
+            std::process::id()
+        ));
+        fs::create_dir_all(&dir).unwrap();
+        let path = dir.join("target.jsonl");
+        fs::write(&path, b"existing\n").unwrap();
+        let err = write_atomic(&path, &[]).unwrap_err();
+        assert!(err.contains("overwrite"));
+        assert_eq!(fs::read_to_string(path).unwrap(), "existing\n");
+        fs::remove_dir_all(dir).unwrap();
     }
 }
