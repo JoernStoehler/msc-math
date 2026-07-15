@@ -62,7 +62,13 @@ COMMON4=(--factor-only --attempts 256 --factor-rows-per-population 12 --factor-s
   --factor-population 'repulsive-gap|alpha=16' --factor-population 'repulsive-gap|regular'
   --factor-population 'regular-mutation|steps=4,scale=0.03'
   --factor-population 'zonogon|lengths=uniform(0.5,1.5)')
-COMMON8=("${COMMON4[@]/--factor-side-counts 4/--factor-side-counts 8}")
+COMMON8=(--factor-only --attempts 256 --factor-rows-per-population 12 --factor-side-counts 8
+  --factor-population 'current-baseline|delta=0.2'
+  --factor-population 'primal-hull-uniform-disk|points=n+4,origin=interior'
+  --factor-population 'repulsive-gap|alpha=1' --factor-population 'repulsive-gap|alpha=4'
+  --factor-population 'repulsive-gap|alpha=16' --factor-population 'repulsive-gap|regular'
+  --factor-population 'regular-mutation|steps=4,scale=0.03'
+  --factor-population 'zonogon|lengths=uniform(0.5,1.5)')
 "$PRODUCER" "${COMMON4[@]}" --seed 20260718 --factor-out-dir "$PACKET/artifacts/train-side4"
 "$PRODUCER" "${COMMON4[@]}" --seed 20260719 --factor-out-dir "$PACKET/artifacts/holdout-side4"
 "$PRODUCER" "${COMMON8[@]}" --seed 20260720 --factor-out-dir "$PACKET/artifacts/train-side8"
