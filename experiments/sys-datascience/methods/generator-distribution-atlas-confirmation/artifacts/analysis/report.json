@@ -81,7 +81,7 @@
   "producer_provenance": {
     "build_contract": "cargo build --release --locked --package exp-sys-landscape --bin sys-datascience-generator-zoo-smoke at source_revision, with the source blobs and Cargo.lock above",
     "dirty_scope": "producer reports separately record source_dirty for generator-zoo-smoke/main.rs and experiments/sys-landscape/Cargo.toml",
-    "executable_path_at_capture": "../../../../target/release/sys-datascience-generator-zoo-smoke",
+    "executable_path_at_capture": "../../../../../../target/release/sys-datascience-generator-zoo-smoke",
     "executable_sha256": "d0b560c7208de4c3a97f6ddbf4925fc55267483c25c21e1707ce5942d9c9554c",
     "source_blobs": {
       "Cargo.lock": "8a51ae91187fdbc44c1539ddebf598feedd27b91",
@@ -117,10 +117,10 @@
     }
   ],
   "repository": {
-    "revision": "2bde6f996dde255cd0c6727bd0149834330e07d1",
+    "revision": "169577c492ca12ac24b1f9cf87e08f5beec62a9e",
     "tracked_clean": true,
     "tracked_clean_predicate": "git status --porcelain --untracked-files=no",
-    "tree": "2fabe6db1c0ac40c484a02fd7a331535d2dad1f0"
+    "tree": "d301109bb4e931acbe56ac80a0dbc70a805d2353"
   },
   "rows_validated": 1635,
   "schema": "generator-distribution-atlas-confirmation-v1"

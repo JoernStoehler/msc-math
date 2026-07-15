@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 import csv
+import hashlib
 import json
 from pathlib import Path
+import subprocess
 import unittest
 
 import numpy as np
@@ -37,6 +39,19 @@ class ConfirmationTests(unittest.TestCase):
         self.assertIn("not intrinsic", config["positive_gram_boundary"])
         self.assertIn("declared-grid", config["distance_contract"])
         self.assertEqual(report["producer_provenance"]["source_revision"], "fd9c3e7df08d8c9d04491b8ebbb7b2628d2df32e")
+
+    def test_lineage_and_implementation_hashes(self):
+        report = json.loads((HERE / "artifacts/analysis/report.json").read_text())
+        repo = Path(subprocess.check_output(["git", "rev-parse", "--show-toplevel"], cwd=HERE, text=True).strip())
+        source_revision = report["repository"]["revision"]
+        lineage = subprocess.run(["git", "merge-base", "--is-ancestor", source_revision, "HEAD"], cwd=repo)
+        self.assertEqual(lineage.returncode, 0)
+        expected = {
+            "analyze_py_sha256": hashlib.sha256((HERE / "analyze.py").read_bytes()).hexdigest(),
+            "atlas_py_sha256": hashlib.sha256((HERE / "atlas.py").read_bytes()).hexdigest(),
+            "shape_quality_py_sha256": hashlib.sha256((HERE / "shape_quality.py").read_bytes()).hexdigest(),
+        }
+        self.assertEqual(report["implementation_hashes"], expected)
 
     def test_local_grid_metric_and_geometry_copy(self):
         support = np.sin(2.0 * np.pi * np.arange(64) / 64.0)
