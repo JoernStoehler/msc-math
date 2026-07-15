@@ -252,6 +252,14 @@ fn read_jsonl<T: for<'a> Deserialize<'a>>(path: &Path) -> Vec<T> {
         .collect()
 }
 
+fn rational_f64(value: &str) -> f64 {
+    if let Some((numerator, denominator)) = value.split_once('/') {
+        numerator.parse::<f64>().unwrap() / denominator.parse::<f64>().unwrap()
+    } else {
+        value.parse::<f64>().unwrap()
+    }
+}
+
 fn source_row(k: usize, m: usize, row: usize) -> Option<SourceRow> {
     for attempt in 0..ATTEMPT_CAP {
         let Some((q, p)) = latent(k, m, row, attempt) else {
@@ -424,10 +432,10 @@ fn features(out: &Path) {
             .iter()
             .map(|v| {
                 Vector4::new(
-                    v[0].parse().unwrap(),
-                    v[1].parse().unwrap(),
-                    v[2].parse().unwrap(),
-                    v[3].parse().unwrap(),
+                    rational_f64(&v[0]),
+                    rational_f64(&v[1]),
+                    rational_f64(&v[2]),
+                    rational_f64(&v[3]),
                 )
             })
             .collect();
