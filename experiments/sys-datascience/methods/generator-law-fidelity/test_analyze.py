@@ -4,6 +4,7 @@
 import importlib.util
 import math
 import random
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -35,7 +36,30 @@ class CalibrationTests(unittest.TestCase):
     def test_replay_ignores_timing_only(self) -> None:
         left = [{"sample_id": "x", "generation_ms": 1.0, "validation_ms": 2.0}]
         right = [{"sample_id": "x", "generation_ms": 8.0, "validation_ms": 13.0}]
-        self.assertEqual(AUDIT.check_replay(left, right)["status"], "pass")
+        with tempfile.TemporaryDirectory() as directory:
+            left_path = Path(directory) / "left.jsonl"
+            right_path = Path(directory) / "right.jsonl"
+            left_path.write_text('{"sample_id":"x","generation_ms":1.0}\n')
+            right_path.write_text('{"sample_id":"x","generation_ms":8.0}\n')
+            self.assertEqual(AUDIT.check_replay(left, right, left_path, right_path)["status"], "pass")
+
+    def test_replay_rejects_self_comparison(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "same.jsonl"
+            path.write_text('{"sample_id":"x"}\n')
+            with self.assertRaisesRegex(ValueError, "distinct resolved row paths"):
+                AUDIT.check_replay([{"sample_id": "x"}], [{"sample_id": "x"}], path, path)
+
+    def test_replay_fails_for_changed_stable_row(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            left_path = Path(directory) / "left.jsonl"
+            right_path = Path(directory) / "right.jsonl"
+            left_path.write_text('{"sample_id":"x","value":1}\n')
+            right_path.write_text('{"sample_id":"x","value":2}\n')
+            result = AUDIT.check_replay(
+                [{"sample_id": "x", "value": 1}], [{"sample_id": "x", "value": 2}], left_path, right_path
+            )
+            self.assertEqual(result["status"], "fail")
 
     def test_wrong_correlation_arm_is_flagged(self) -> None:
         rng = random.Random(5)

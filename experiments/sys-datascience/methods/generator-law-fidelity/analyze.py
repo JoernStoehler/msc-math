@@ -227,7 +227,14 @@ def stable_row(row: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def check_replay(left: list[dict[str, Any]], right: list[dict[str, Any]]) -> dict[str, Any]:
+def check_replay(
+    left: list[dict[str, Any]], right: list[dict[str, Any]], left_path: Path, right_path: Path
+) -> dict[str, Any]:
+    """Compare two separately retained producer executions, never one file to itself."""
+    if left_path.resolve() == right_path.resolve():
+        raise ValueError("deterministic replay requires two distinct resolved row paths")
+    if sha256(left_path) == sha256(right_path):
+        raise ValueError("deterministic replay inputs have identical byte identity; retain two distinct executions")
     left_rows = [stable_row(row) for row in left]
     right_rows = [stable_row(row) for row in right]
     return {
@@ -237,6 +244,62 @@ def check_replay(left: list[dict[str, Any]], right: list[dict[str, Any]]) -> dic
         "right_rows": len(right_rows),
         "comparison": "exact JSON row order after removing wall-clock fields",
     }
+
+
+def input_identity(path: Path, row_count: int | None = None) -> dict[str, Any]:
+    return {
+        "path": str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else str(path),
+        "resolved_path": str(path.resolve()),
+        "sha256": sha256(path),
+        "bytes": path.stat().st_size,
+        **({"row_count": row_count} if row_count is not None else {}),
+    }
+
+
+def replay_evidence(args: argparse.Namespace) -> dict[str, Any] | None:
+    if args.replay_left is None:
+        return None
+    left_path, right_path = args.replay_left, args.replay_right
+    left_report_path, right_report_path = args.replay_left_report, args.replay_right_report
+    assert right_path is not None and left_report_path is not None and right_report_path is not None
+    if left_report_path.resolve() == right_report_path.resolve():
+        raise ValueError("deterministic replay requires two distinct resolved producer report paths")
+    left_rows, right_rows = read_jsonl(left_path), read_jsonl(right_path)
+    left_report = json.loads(left_report_path.read_text())
+    right_report = json.loads(right_report_path.read_text())
+    if left_report.get("command") != args.replay_left_command or right_report.get("command") != args.replay_right_command:
+        raise ValueError("replay producer command must exactly match the command retained in its producer report")
+    if args.replay_left_command == args.replay_right_command:
+        raise ValueError("deterministic replay requires distinct producer command identities")
+    result = check_replay(left_rows, right_rows, left_path, right_path)
+    result["runs"] = {
+        "left": {
+            "rows": input_identity(left_path, len(left_rows)),
+            "producer_report": input_identity(left_report_path),
+            "producer_command": args.replay_left_command,
+            "producer_provenance": {
+                key: left_report.get(key)
+                for key in ("source_revision", "source_tree", "source_dirty", "seed", "max_attempts_per_row", "all_requested_rows_terminal", "status_counts")
+            },
+        },
+        "right": {
+            "rows": input_identity(right_path, len(right_rows)),
+            "producer_report": input_identity(right_report_path),
+            "producer_command": args.replay_right_command,
+            "producer_provenance": {
+                key: right_report.get(key)
+                for key in ("source_revision", "source_tree", "source_dirty", "seed", "max_attempts_per_row", "all_requested_rows_terminal", "status_counts")
+            },
+        },
+    }
+    result["distinct_run_contract"] = {
+        "resolved_row_paths_distinct": True,
+        "resolved_producer_report_paths_distinct": True,
+        "row_byte_identities_distinct": True,
+        "recorded_commands_distinct": True,
+        "note": "The two runs deliberately share producer source revision and seed; distinct artifacts, report paths, and recorded out-dir commands establish separate sequential executions.",
+    }
+    return result
 
 
 def factor_fingerprint(row: dict[str, Any]) -> str:
@@ -505,6 +568,13 @@ def audit(args: argparse.Namespace) -> dict[str, Any]:
         inputs.append(args.natural_rows)
     if args.natural_report and args.natural_report.exists():
         inputs.append(args.natural_report)
+    replay = replay_evidence(args)
+    if replay is not None:
+        inputs.extend([
+            args.replay_left, args.replay_right,
+            args.replay_left_report, args.replay_right_report,
+        ])
+    unique_inputs = list(dict.fromkeys(path.resolve() for path in inputs))
     calibrations = synthetic_calibrations()
     return {
         "schema": "generator-law-fidelity-report-v1",
@@ -520,7 +590,7 @@ def audit(args: argparse.Namespace) -> dict[str, Any]:
                 for key in ("law_version", "source_revision", "source_tree", "source_dirty", "seed", "max_attempts_per_row", "all_requested_rows_terminal", "status_counts")
             },
         },
-        "inputs": [{"path": str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else str(path), "sha256": sha256(path), "bytes": path.stat().st_size} for path in inputs],
+        "inputs": [input_identity(path) for path in unique_inputs],
         "calibrations": calibrations,
         "calibration_status": "pass" if all(item["passed"] for item in calibrations) else "fail",
         "global_checks": lineage_checks(factors, products, zoo_report),
@@ -531,6 +601,7 @@ def audit(args: argparse.Namespace) -> dict[str, Any]:
             "interpretation": "A same-law cross-seed comparison is a consistency check only, never proof that the declared law is correct.",
             "cheapest_next_input": "At least two retained panels per law/parameter/side-count with distinct declared master seeds.",
         },
+        **({"deterministic_replay": replay} if replay is not None else {}),
         "interpretation_boundary": "Passes establish calibration of these diagnostic implementations and schema/lineage observations only. They do not prove a null law, population IID behavior after conditioning, or target transfer.",
     }
 
@@ -546,6 +617,10 @@ def main() -> None:
     parser.add_argument("--out", type=Path, default=Path(__file__).parent / "artifacts/report.json")
     parser.add_argument("--replay-left", type=Path)
     parser.add_argument("--replay-right", type=Path)
+    parser.add_argument("--replay-left-report", type=Path)
+    parser.add_argument("--replay-right-report", type=Path)
+    parser.add_argument("--replay-left-command")
+    parser.add_argument("--replay-right-command")
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
     if args.self_test:
@@ -554,11 +629,13 @@ def main() -> None:
             raise SystemExit(f"synthetic calibrations failed: {failed}")
         print("synthetic calibrations: pass")
         return
-    if (args.replay_left is None) != (args.replay_right is None):
-        parser.error("--replay-left and --replay-right must be supplied together")
+    replay_args = [
+        args.replay_left, args.replay_right, args.replay_left_report,
+        args.replay_right_report, args.replay_left_command, args.replay_right_command,
+    ]
+    if any(value is not None for value in replay_args) and any(value is None for value in replay_args):
+        parser.error("replay requires left/right rows, producer reports, and exact producer commands")
     report = audit(args)
-    if args.replay_left:
-        report["deterministic_replay"] = check_replay(read_jsonl(args.replay_left), read_jsonl(args.replay_right))
     write_json(args.out, report)
     print(json.dumps({"out": str(args.out), "calibration_status": report["calibration_status"], "law_arms": len(report["law_arms"])}, sort_keys=True))
 

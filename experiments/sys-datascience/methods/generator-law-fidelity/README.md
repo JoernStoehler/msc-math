@@ -41,10 +41,21 @@ python3 experiments/sys-datascience/methods/generator-law-fidelity/analyze.py \
   --natural-report experiments/sys-datascience/methods/generator-law-fidelity/artifacts/natural-smoke/batch-report.json
 ```
 
-To test actual deterministic replay, run the existing natural-law producer
-twice to different disposable directories with identical arguments, then add
-`--replay-left DIR1/smoke-rows.jsonl --replay-right DIR2/smoke-rows.jsonl`.
-The comparison is exact after omitting wall-clock fields.
+The retained deterministic-replay witness consists of two sequential natural
+producer executions in `artifacts/replay-left/` and `artifacts/replay-right/`.
+Each directory retains both rows and its producer report.  The analyzer
+requires distinct resolved row/report paths, distinct input byte identities,
+and exact producer-command agreement with each producer report; it rejects a
+self-comparison.  The comparison itself is exact after omitting wall-clock
+fields.  To regenerate the witness, run the producer twice with distinct
+`--out-dir` values and pass all six replay arguments:
+
+```text
+--replay-left DIR1/smoke-rows.jsonl --replay-right DIR2/smoke-rows.jsonl \
+--replay-left-report DIR1/batch-report.json --replay-right-report DIR2/batch-report.json \
+--replay-left-command 'EXACT COMMAND IN DIR1/batch-report.json' \
+--replay-right-command 'EXACT COMMAND IN DIR2/batch-report.json'
+```
 
 `artifacts/report.json` is machine-readable and binds the input bytes, analyzer
 hash, repository revision/tree, and tracked-clean predicate.  Its output is
