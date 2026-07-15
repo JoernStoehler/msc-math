@@ -73,14 +73,16 @@ Retained run, executed only from the clean source commit:
 
 ```text
 python3 experiments/sys-datascience/methods/generator-support-process-atlas/run.py
-sha256sum -c experiments/sys-datascience/methods/generator-support-process-atlas/artifacts/checksums.sha256
+cd experiments/sys-datascience/methods/generator-support-process-atlas/artifacts
+sha256sum -c checksums.sha256
 ```
 
 `fans.jsonl` owns frozen normal fans; `attempts.jsonl` owns every marginal
 attempt and failure; `complete-fans.jsonl` owns the conditioned paired IDs.
 The remaining JSONL files are generated comparison summaries. `report.json`
 contains the design, counts, calibration dispositions, and interpretation
-boundary. `manifest.json` pins source commit/tree, Python version, source
+boundary, including zero-row complete strata rather than silently omitting
+them. `manifest.json` pins source commit/tree, Python version, source
 hashes, and artifact hashes. No volatile timing is retained.
 
 The producer captures repository provenance before artifact creation and

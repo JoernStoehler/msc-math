@@ -72,6 +72,20 @@ class SupportProcessAtlasTests(unittest.TestCase):
             self.assertEqual(row["metrics"]["source_support_linf"], 0.0)
             self.assertEqual(row["metrics"]["source_vertex_rms"], 0.0)
 
+    def test_empty_complete_stratum_is_reported_not_omitted(self) -> None:
+        _, attempts = atlas.generate_rows((53,), (4,), 1)
+        for row in attempts:
+            row["complete_paired_subset"] = False
+        metric_rows = atlas.metric_summary_rows(attempts, "complete_paired")
+        self.assertEqual(len(metric_rows), len(atlas.ARMS))
+        self.assertTrue(all(row["attempted"] == 0 for row in metric_rows))
+        cv_rows = atlas.cv_matching_rows(attempts, True)
+        self.assertEqual(len(cv_rows), len(atlas.SMOOTH_IID_CV_COMPARISONS))
+        self.assertTrue(all(row["status"] == "not_evaluable_no_accepted_shapes" for row in cv_rows))
+        monotonic = atlas.sigma_monotonicity_rows(attempts, True)
+        self.assertEqual(len(monotonic), 4)
+        self.assertTrue(all(not row["evaluable"] for row in monotonic))
+
 
 if __name__ == "__main__":
     unittest.main()

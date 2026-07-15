@@ -437,10 +437,12 @@ def metric_summary_rows(attempts: Sequence[dict[str, Any]], conditioning: str) -
             continue
         grouped[(row["side_count"], row["seed"], row["arm"])].append(row)
     summaries = []
-    for (side_count, seed, arm), rows in sorted(grouped.items()):
-        accepted = [row for row in rows if row["accepted"]]
-        summaries.append(
-            {
+    strata = sorted({(row["side_count"], row["seed"]) for row in attempts})
+    for side_count, seed in strata:
+        for arm in ARMS:
+            rows = grouped.get((side_count, seed, arm), [])
+            accepted = [row for row in rows if row["accepted"]]
+            summaries.append({
                 "schema": "generator-support-process-metric-summary-v1",
                 "law_version": LAW_VERSION,
                 "conditioning": (
@@ -459,8 +461,7 @@ def metric_summary_rows(attempts: Sequence[dict[str, Any]], conditioning: str) -
                     metric: summarize_values(row.get("metrics", {}).get(metric) for row in accepted)
                     for metric in SUMMARY_METRICS
                 },
-            }
-        )
+            })
     return summaries
 
 
@@ -483,14 +484,17 @@ def group_accepted(attempts: Sequence[dict[str, Any]], complete_only: bool) -> d
 
 def within_diversity_rows(attempts: Sequence[dict[str, Any]], complete_only: bool) -> list[dict[str, Any]]:
     result = []
-    for (side_count, seed, arm), rows in sorted(group_accepted(attempts, complete_only).items()):
-        distances = [
-            vector_l2(a["support_grid_centered_area1"], b["support_grid_centered_area1"])
-            for index, a in enumerate(rows)
-            for b in rows[index + 1 :]
-        ]
-        result.append(
-            {
+    grouped = group_accepted(attempts, complete_only)
+    strata = sorted({(row["side_count"], row["seed"]) for row in attempts})
+    for side_count, seed in strata:
+        for arm in ARMS:
+            rows = grouped.get((side_count, seed, arm), [])
+            distances = [
+                vector_l2(a["support_grid_centered_area1"], b["support_grid_centered_area1"])
+                for index, a in enumerate(rows)
+                for b in rows[index + 1 :]
+            ]
+            result.append({
                 "schema": "generator-support-process-within-diversity-v1",
                 "conditioning": (
                     "complete_paired_conditioned_on_every_arm_succeeding"
@@ -503,8 +507,7 @@ def within_diversity_rows(attempts: Sequence[dict[str, Any]], complete_only: boo
                 "shape_count": len(rows),
                 "pair_count": len(distances),
                 "support_l2": summarize_values(distances),
-            }
-        )
+            })
     return result
 
 
@@ -524,8 +527,8 @@ def nearest_distances(source_rows: Sequence[dict[str, Any]], target_rows: Sequen
 def directed_overlap_rows(attempts: Sequence[dict[str, Any]], complete_only: bool) -> list[dict[str, Any]]:
     grouped = group_accepted(attempts, complete_only)
     result = []
-    for side_count in sorted({key[0] for key in grouped}):
-        for seed in sorted({key[1] for key in grouped if key[0] == side_count}):
+    strata = sorted({(row["side_count"], row["seed"]) for row in attempts})
+    for side_count, seed in strata:
             for source_arm in ARMS:
                 source = grouped.get((side_count, seed, source_arm), [])
                 within = nearest_distances(source, source)
@@ -572,9 +575,11 @@ def paired_source_distance_rows(attempts: Sequence[dict[str, Any]], complete_onl
             continue
         grouped[(row["side_count"], row["seed"], row["arm"])].append(row)
     result = []
-    for (side_count, seed, arm), rows in sorted(grouped.items()):
-        result.append(
-            {
+    strata = sorted({(row["side_count"], row["seed"]) for row in attempts})
+    for side_count, seed in strata:
+        for arm in ARMS:
+            rows = grouped.get((side_count, seed, arm), [])
+            result.append({
                 "schema": "generator-support-process-paired-distance-v1",
                 "conditioning": (
                     "complete_paired_conditioned_on_every_arm_succeeding"
@@ -588,15 +593,14 @@ def paired_source_distance_rows(attempts: Sequence[dict[str, Any]], complete_onl
                 "source_support_l2": summarize_values(row["metrics"]["source_support_l2"] for row in rows),
                 "source_support_linf": summarize_values(row["metrics"]["source_support_linf"] for row in rows),
                 "source_vertex_rms": summarize_values(row["metrics"]["source_vertex_rms"] for row in rows),
-            }
-        )
+            })
     return result
 
 
 def cv_matching_rows(attempts: Sequence[dict[str, Any]], complete_only: bool) -> list[dict[str, Any]]:
     grouped = group_accepted(attempts, complete_only)
     result = []
-    strata = sorted({(side_count, seed) for side_count, seed, _ in grouped})
+    strata = sorted({(row["side_count"], row["seed"]) for row in attempts})
     for side_count, seed in strata:
         for iid_arm, smooth_arm in SMOOTH_IID_CV_COMPARISONS:
             iid_values = [row["metrics"]["support_cv"] for row in grouped.get((side_count, seed, iid_arm), [])]
@@ -604,8 +608,8 @@ def cv_matching_rows(attempts: Sequence[dict[str, Any]], complete_only: bool) ->
             iid_mean = mean(iid_values) if iid_values else None
             smooth_mean = mean(smooth_values) if smooth_values else None
             difference = abs(iid_mean - smooth_mean) if iid_mean is not None and smooth_mean is not None else None
-            result.append(
-                {
+            matched = difference is not None and difference <= CV_MATCH_ABS_TOLERANCE
+            result.append({
                     "schema": "generator-support-process-cv-match-v1",
                     "conditioning": (
                         "complete_paired_conditioned_on_every_arm_succeeding"
@@ -620,17 +624,21 @@ def cv_matching_rows(attempts: Sequence[dict[str, Any]], complete_only: bool) ->
                     "iid_mean_support_cv": iid_mean,
                     "smooth_mean_support_cv": smooth_mean,
                     "absolute_difference": difference,
-                    "matched": difference is not None and difference <= CV_MATCH_ABS_TOLERANCE,
+                    "matched": matched,
+                    "status": (
+                        "not_evaluable_no_accepted_shapes"
+                        if difference is None
+                        else ("matched" if matched else "failed_match")
+                    ),
                     "post_hoc_tuning_performed": False,
-                }
-            )
+            })
     return result
 
 
 def sigma_monotonicity_rows(attempts: Sequence[dict[str, Any]], complete_only: bool) -> list[dict[str, Any]]:
     grouped = group_accepted(attempts, complete_only)
     result = []
-    strata = sorted({(side_count, seed) for side_count, seed, _ in grouped})
+    strata = sorted({(row["side_count"], row["seed"]) for row in attempts})
     for side_count, seed in strata:
         for metric in ("support_cv", "log_support_roughness", "source_support_l2", "width_anisotropy"):
             medians = []
@@ -681,6 +689,18 @@ def aggregate_report(
     failures_by_arm: dict[str, dict[str, int]] = {}
     for arm in ARMS:
         failures_by_arm[arm] = dict(sorted(failure_counts([row for row in attempts if row["arm"] == arm]).items()))
+    complete_counts = defaultdict(int)
+    for row in complete_fans:
+        complete_counts[(row["side_count"], row["seed"])] += 1
+    complete_by_stratum = [
+        {
+            "side_count": side_count,
+            "seed": seed,
+            "complete_fans": complete_counts[(side_count, seed)],
+        }
+        for side_count in side_counts
+        for seed in seeds
+    ]
     cv_rows = summaries["cv_matching"]
     monotonic_rows = summaries["sigma_monotonicity"]
     return {
@@ -714,13 +734,21 @@ def aggregate_report(
             "accepted_arm_attempts": accepted,
             "failed_arm_attempts": len(attempts) - accepted,
             "complete_fans": len(complete_fans),
+            "complete_fans_by_side_count_seed": complete_by_stratum,
+            "complete_subset_empty_strata": [
+                row for row in complete_by_stratum if row["complete_fans"] == 0
+            ],
             "failures_by_arm": failures_by_arm,
         },
         "calibration_results": {
+            "cv_match_total_predeclared": len(cv_rows),
             "cv_match_evaluable": sum(row["absolute_difference"] is not None for row in cv_rows),
+            "cv_match_not_evaluable": sum(row["absolute_difference"] is None for row in cv_rows),
             "cv_match_passed": sum(bool(row["matched"]) for row in cv_rows),
             "cv_match_failed": sum(row["absolute_difference"] is not None and not row["matched"] for row in cv_rows),
+            "sigma_monotonic_total_predeclared": len(monotonic_rows),
             "sigma_monotonic_evaluable": sum(bool(row["evaluable"]) for row in monotonic_rows),
+            "sigma_monotonic_not_evaluable": sum(not row["evaluable"] for row in monotonic_rows),
             "sigma_monotonic_passed": sum(bool(row["nondecreasing"]) for row in monotonic_rows),
             "sigma_monotonic_failed": sum(row["evaluable"] and not row["nondecreasing"] for row in monotonic_rows),
         },
