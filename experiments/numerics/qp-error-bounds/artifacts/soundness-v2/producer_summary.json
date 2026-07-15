@@ -1,7 +1,7 @@
 {
   "artifact_contract": "raw and policy JSONL are generated; formulas are a registry, not a theorem claim",
-  "elapsed_seconds": 32.393311305,
-  "policy_row_count": 250,
+  "elapsed_seconds": 29.544506648,
+  "policy_row_count": 300,
   "row_count": 1593,
   "run_id": "qp-soundness-v2",
   "schema_version": "qp-soundness-row-v2"
