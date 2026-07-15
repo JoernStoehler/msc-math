@@ -10,10 +10,17 @@ re-serializing or recomputing them.
 
 Transplant inventory:
 
-- retained: `generator-orientation-smoke/{README.md,main.rs,artifacts/**}`;
-  `generator-orientation-target-pilot/{README.md,analyze.py,design.json,
-  main.rs,protocol-history.json,select.py,selection-manifest.json,
-  test_analyze.py,artifacts/**}`; and the two binary registrations in
+- retained files: `generator-orientation-smoke/README.md`,
+  `generator-orientation-smoke/main.rs`,
+  `generator-orientation-smoke/artifacts/panel-2-per-bucket/report.json`,
+  `generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl`;
+  `generator-orientation-target-pilot/README.md`, `analyze.py`, `design.json`,
+  `main.rs`, `protocol-history.json`, `select.py`, `selection-manifest.json`,
+  `test_analyze.py`, `extract_orientation_features.py`,
+  `artifacts/report.json`, `artifacts/target-manifest.json`,
+  `artifacts/target-rows.jsonl`,
+  `artifacts/orientation-feature-manifest.json`, and
+  `artifacts/orientation-features.jsonl`; plus the two binary registrations in
   `experiments/sys-landscape/Cargo.toml`;
 - explicitly excluded: `generator-exact-feature-augmenter/` (apart from its
   bound 40-row snapshot), `generator-tangential-matchability/`,
