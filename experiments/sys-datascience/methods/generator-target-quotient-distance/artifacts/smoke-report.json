@@ -1,0 +1,214 @@
+{
+  "algorithm": {
+    "arithmetic": "fractions.Fraction; exact squared distances and symbolic square roots",
+    "max_facets": 8,
+    "near_symmetry_relative_gap": "1/1000000",
+    "permutations_at_bound": 40320,
+    "search": "exhaustive simultaneous facet permutations"
+  },
+  "allowed_claim": "For validated normalized spanning configurations with one fixed F<=8, the packet computes the stated permutation quotient distance exactly unless it reports timeout.",
+  "coordinate_order": "q1,q2,p1,p2",
+  "distance_controls": {
+    "base": {
+      "distance_approx": 0.0,
+      "distance_radical": "0",
+      "elapsed_seconds": 6.477725899007055,
+      "evaluated_permutations": 40320,
+      "exact": true,
+      "facet_count": 8,
+      "minimizing_permutations": 32,
+      "multiple_minimizers": true,
+      "near_symmetry": false,
+      "second_distinct_squared_frobenius": "256",
+      "squared_distance": "0",
+      "squared_frobenius": "0",
+      "status": "exact",
+      "total_permutations": 40320
+    },
+    "near_symmetry_self_match": {
+      "distance_approx": 0.0,
+      "distance_radical": "0",
+      "elapsed_seconds": 7.826146874009282,
+      "evaluated_permutations": 40320,
+      "exact": true,
+      "facet_count": 8,
+      "minimizing_permutations": 16,
+      "multiple_minimizers": true,
+      "near_symmetry": true,
+      "second_distinct_squared_frobenius": "400040001/39070312890625",
+      "squared_distance": "0",
+      "squared_frobenius": "0",
+      "status": "exact",
+      "total_permutations": 40320
+    },
+    "nonorthogonal_symplectic": {
+      "distance_approx": 0.0,
+      "distance_radical": "0",
+      "elapsed_seconds": 6.611234355994384,
+      "evaluated_permutations": 40320,
+      "exact": true,
+      "facet_count": 8,
+      "minimizing_permutations": 32,
+      "multiple_minimizers": true,
+      "near_symmetry": false,
+      "second_distinct_squared_frobenius": "256",
+      "squared_distance": "0",
+      "squared_frobenius": "0",
+      "status": "exact",
+      "total_permutations": 40320
+    },
+    "nonsymplectic_gl": {
+      "distance_approx": 1.5811388300841898,
+      "distance_radical": "sqrt(5/2)",
+      "elapsed_seconds": 6.701922580992687,
+      "evaluated_permutations": 40320,
+      "exact": true,
+      "facet_count": 8,
+      "minimizing_permutations": 32,
+      "multiple_minimizers": true,
+      "near_symmetry": false,
+      "second_distinct_squared_frobenius": "288",
+      "squared_distance": "5/2",
+      "squared_frobenius": "160",
+      "status": "exact",
+      "total_permutations": 40320
+    },
+    "permuted": {
+      "distance_approx": 0.0,
+      "distance_radical": "0",
+      "elapsed_seconds": 6.4815036059881095,
+      "evaluated_permutations": 40320,
+      "exact": true,
+      "facet_count": 8,
+      "minimizing_permutations": 32,
+      "multiple_minimizers": true,
+      "near_symmetry": false,
+      "second_distinct_squared_frobenius": "256",
+      "squared_distance": "0",
+      "squared_frobenius": "0",
+      "status": "exact",
+      "total_permutations": 40320
+    },
+    "so4_outside_u2": {
+      "distance_approx": 1.2803845576172088,
+      "distance_radical": "sqrt(2664/1625)",
+      "elapsed_seconds": 7.656434778997209,
+      "evaluated_permutations": 40320,
+      "exact": true,
+      "facet_count": 8,
+      "minimizing_permutations": 32,
+      "multiple_minimizers": true,
+      "near_symmetry": false,
+      "second_distinct_squared_frobenius": "335872/1625",
+      "squared_distance": "2664/1625",
+      "squared_frobenius": "170496/1625",
+      "status": "exact",
+      "total_permutations": 40320
+    },
+    "translated_scaled": {
+      "distance_approx": 0.0,
+      "distance_radical": "0",
+      "elapsed_seconds": 6.595279925008072,
+      "evaluated_permutations": 40320,
+      "exact": true,
+      "facet_count": 8,
+      "minimizing_permutations": 32,
+      "multiple_minimizers": true,
+      "near_symmetry": false,
+      "second_distinct_squared_frobenius": "256",
+      "squared_distance": "0",
+      "squared_frobenius": "0",
+      "status": "exact",
+      "total_permutations": 40320
+    }
+  },
+  "matrix_controls": {
+    "nonorthogonal_symplectic_is_orthogonal": false,
+    "nonorthogonal_symplectic_is_symplectic": true,
+    "so4_determinant": "1",
+    "so4_is_orthogonal": true,
+    "so4_is_symplectic": false
+  },
+  "normalization": {
+    "base_exact_volume": "1",
+    "center": "analytic center; certified here by exact central symmetry",
+    "scale": "ordinary Euclidean volume one"
+  },
+  "prohibited_claims": [
+    "cross-facet-count distance",
+    "polynomial-time or scalable permutation optimization",
+    "numerical evidence as proof of Gram completeness",
+    "equivalence with the natural topology of all polytope quotients"
+  ],
+  "provenance": {
+    "command": "uv run --script quotient_distance.py --out artifacts/smoke-report.json",
+    "git": {
+      "dirty": false,
+      "revision": "2fd94c11b558112253be3dfbad41848e9fb7443b"
+    },
+    "producer": "experiments/sys-datascience/methods/generator-target-quotient-distance/quotient_distance.py",
+    "producer_sha256": "90ac0133f2aafbf85f710d06d54aca99c3de61fbe83a3b5331c58c2eea6f4ad6"
+  },
+  "schema": "generator-target-quotient-distance-smoke-v1",
+  "scientific_question": "Does the full symplectic Gram matrix give an exact fixed-F target-quotient metric at smoke size?",
+  "timeout_control": {
+    "distance_approx": null,
+    "distance_radical": null,
+    "elapsed_seconds": 3.81701102014631e-06,
+    "evaluated_permutations": 0,
+    "exact": false,
+    "facet_count": 8,
+    "minimizing_permutations": 0,
+    "multiple_minimizers": false,
+    "near_symmetry": null,
+    "second_distinct_squared_frobenius": null,
+    "squared_distance": null,
+    "squared_frobenius": null,
+    "status": "timeout",
+    "total_permutations": 40320
+  },
+  "triangle_all_hold": true,
+  "triangle_checks": [
+    {
+      "holds_exactly": true,
+      "left": "base",
+      "middle": "so4_outside_u2",
+      "right": "nonsymplectic_gl"
+    },
+    {
+      "holds_exactly": true,
+      "left": "base",
+      "middle": "nonsymplectic_gl",
+      "right": "so4_outside_u2"
+    },
+    {
+      "holds_exactly": true,
+      "left": "so4_outside_u2",
+      "middle": "base",
+      "right": "nonsymplectic_gl"
+    },
+    {
+      "holds_exactly": true,
+      "left": "so4_outside_u2",
+      "middle": "nonsymplectic_gl",
+      "right": "base"
+    },
+    {
+      "holds_exactly": true,
+      "left": "nonsymplectic_gl",
+      "middle": "base",
+      "right": "so4_outside_u2"
+    },
+    {
+      "holds_exactly": true,
+      "left": "nonsymplectic_gl",
+      "middle": "so4_outside_u2",
+      "right": "base"
+    }
+  ],
+  "triangle_fixture_names": [
+    "base",
+    "so4_outside_u2",
+    "nonsymplectic_gl"
+  ]
+}

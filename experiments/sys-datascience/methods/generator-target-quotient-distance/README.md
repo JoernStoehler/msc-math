@@ -108,9 +108,9 @@ python3 -m compileall -q \
   experiments/sys-datascience/methods/generator-target-quotient-distance
 ```
 
-On the development container, the nine focused tests took `70.794 s`. The
-retained report took `55.26 s` wall time and `21,504 KiB` maximum RSS. Its
-individual exact $F=8$ comparisons took about `6.25-7.77 s`, each recording
+On the development container, the nine focused tests took `72.797 s`. The
+retained report took `56.82 s` wall time and `21,376 KiB` maximum RSS. Its
+individual exact $F=8$ comparisons took about `6.48-7.83 s`, each recording
 all `40,320` permutations. These are smoke measurements, not a stable
 benchmark. The supported bound is $F\le8$; the implementation deliberately
 does not imply that repeated cloud-scale pair distances at $F=8$ are cheap.
