@@ -17,6 +17,7 @@ use exp_sys_landscape::{
 use nalgebra::{DMatrix, Matrix4, SymmetricEigen, Vector2, Vector4};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
+use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
@@ -251,6 +252,65 @@ fn read_jsonl<T: for<'a> Deserialize<'a>>(path: &Path) -> Vec<T> {
         .collect()
 }
 
+fn source_row(k: usize, m: usize, row: usize) -> Option<SourceRow> {
+    for attempt in 0..ATTEMPT_CAP {
+        let Some((q, p)) = latent(k, m, row, attempt) else {
+            continue;
+        };
+        let Some(poly) = SysLandscapePolytopeCache::from_lagrangian_product(
+            &q.normals, &q.heights, &p.normals, &p.heights,
+        ) else {
+            continue;
+        };
+        let exact_dual = rational_vec4_to_strings(&poly.dual_vertices);
+        let exact_primal = rational_vec4_to_strings(&poly.vertices);
+        let incidence = (0..poly.vertex_facet_incidence.nrows())
+            .map(|i| {
+                (0..poly.vertex_facet_incidence.ncols())
+                    .map(|j| poly.vertex_facet_incidence[(i, j)])
+                    .collect()
+            })
+            .collect();
+        let exact_vertices: Vec<Vector4<_>> = poly
+            .vertices
+            .iter()
+            .map(|v| Vector4::new(v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()))
+            .collect();
+        let exact_volume =
+            volume_from_incidence_exact(&exact_vertices, &poly.vertex_facet_incidence);
+        let vol = exact_volume_from_incidence_as_f64(&poly.vertices, &poly.vertex_facet_incidence);
+        let mut sr = SourceRow {
+            schema: "alternative-source-transfer-source-v1".into(),
+            candidate_id: format!(
+                "{IDENTITY_SCOPE}/{LAW}/seed={MASTER_SEED}/row={row}/attempt={attempt}/{k}x{m}"
+            ),
+            logical_cell: format!(
+                "seed={MASTER_SEED}/bucket={k}x{m}/row={row}/attempt={attempt}/law={LAW}"
+            ),
+            identity_scope: IDENTITY_SCOPE.into(),
+            law: LAW.into(),
+            law_version: "wishlist-2026-07-14-v2".into(),
+            seed: MASTER_SEED,
+            bucket: bucket_name(k, m),
+            k,
+            m,
+            row_index: row,
+            attempt,
+            accepted: true,
+            validation_status: "eligible".into(),
+            exact_dual_vertices: exact_dual,
+            exact_primal_vertices: exact_primal,
+            vertex_facet_incidence: incidence,
+            exact_volume: exact_volume.to_string(),
+            volume: vol,
+            geometry_fingerprint: String::new(),
+        };
+        sr.geometry_fingerprint = exact_fingerprint(&sr);
+        return Some(sr);
+    }
+    None
+}
+
 fn produce(out: &Path) {
     create_dir_all(out).unwrap();
     let path = out.join("source.jsonl");
@@ -258,79 +318,21 @@ fn produce(out: &Path) {
     let mut counts = BTreeMap::new();
     let started = Instant::now();
     for (k, m) in [(4usize, 6usize), (6, 6)] {
-        let mut accepted = 0;
-        for row in 0..ROW_CAP {
-            if accepted >= ROW_TARGET {
-                break;
-            }
-            for attempt in 0..ATTEMPT_CAP {
-                let Some((q, p)) = latent(k, m, row, attempt) else {
-                    continue;
-                };
-                let Some(poly) = SysLandscapePolytopeCache::from_lagrangian_product(
-                    &q.normals, &q.heights, &p.normals, &p.heights,
-                ) else {
-                    continue;
-                };
-                let cid = format!(
-                    "{IDENTITY_SCOPE}/{LAW}/seed={MASTER_SEED}/row={row}/attempt={attempt}/{k}x{m}"
-                );
-                let logical = format!(
-                    "seed={MASTER_SEED}/bucket={k}x{m}/row={row}/attempt={attempt}/law={LAW}"
-                );
-                let exact_dual = rational_vec4_to_strings(&poly.dual_vertices);
-                let exact_primal = rational_vec4_to_strings(&poly.vertices);
-                let incidence = (0..poly.vertex_facet_incidence.nrows())
-                    .map(|i| {
-                        (0..poly.vertex_facet_incidence.ncols())
-                            .map(|j| poly.vertex_facet_incidence[(i, j)])
-                            .collect()
-                    })
-                    .collect();
-                let exact_vertices: Vec<Vector4<_>> = poly
-                    .vertices
-                    .iter()
-                    .map(|v| Vector4::new(v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()))
-                    .collect();
-                let exact_volume =
-                    volume_from_incidence_exact(&exact_vertices, &poly.vertex_facet_incidence);
-                let vol = exact_volume_from_incidence_as_f64(
-                    &poly.vertices,
-                    &poly.vertex_facet_incidence,
-                );
-                let mut sr = SourceRow {
-                    schema: "alternative-source-transfer-source-v1".into(),
-                    candidate_id: cid,
-                    logical_cell: logical,
-                    identity_scope: IDENTITY_SCOPE.into(),
-                    law: LAW.into(),
-                    law_version: "wishlist-2026-07-14-v2".into(),
-                    seed: MASTER_SEED,
-                    bucket: bucket_name(k, m),
-                    k,
-                    m,
-                    row_index: row,
-                    attempt,
-                    accepted: true,
-                    validation_status: "eligible".into(),
-                    exact_dual_vertices: exact_dual,
-                    exact_primal_vertices: exact_primal,
-                    vertex_facet_incidence: incidence,
-                    exact_volume: exact_volume.to_string(),
-                    volume: vol,
-                    geometry_fingerprint: String::new(),
-                };
-                sr.geometry_fingerprint = exact_fingerprint(&sr);
-                serde_json::to_writer(&mut w, &sr).unwrap();
-                w.write_all(b"\n").unwrap();
-                accepted += 1;
-                break;
-            }
-        }
-        counts.insert(bucket_name(k, m), accepted);
+        let mut rows: Vec<SourceRow> = (0..ROW_CAP)
+            .into_par_iter()
+            .filter_map(|row| source_row(k, m, row))
+            .collect();
+        rows.sort_by_key(|r| r.row_index);
+        rows.truncate(ROW_TARGET);
+        let accepted = rows.len();
         if accepted < ROW_TARGET {
             panic!("incomplete source bucket {k}x{m}: {accepted}/{ROW_TARGET}");
         }
+        for row in &rows {
+            serde_json::to_writer(&mut w, row).unwrap();
+            w.write_all(b"\n").unwrap();
+        }
+        counts.insert(bucket_name(k, m), accepted);
     }
     w.flush().unwrap();
     let report = serde_json::json!({"schema":"alternative-source-transfer-production-v1","counts":counts,"elapsed_seconds":started.elapsed().as_secs_f64(),"target_free":true,"source_sha256":hash_bytes(&path)});
