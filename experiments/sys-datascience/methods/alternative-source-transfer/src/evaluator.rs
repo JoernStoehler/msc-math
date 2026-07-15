@@ -133,15 +133,7 @@ fn digest_backend() -> String {
 
 fn evaluator_identity() -> Result<(String, String, String, String, bool), String> {
     let output = Command::new("git")
-        .args([
-            "-C",
-            env!("CARGO_MANIFEST_DIR"),
-            "log",
-            "-1",
-            "--format=%H",
-            "--",
-            "../sys-datascience/methods/alternative-source-transfer/src/evaluator.rs",
-        ])
+        .args(["-C", env!("CARGO_MANIFEST_DIR"), "rev-parse", "HEAD"])
         .output()
         .map_err(|e| e.to_string())?;
     let commit = String::from_utf8(output.stdout)
@@ -149,7 +141,7 @@ fn evaluator_identity() -> Result<(String, String, String, String, bool), String
         .trim()
         .to_string();
     if commit.is_empty() {
-        return Err("cannot determine evaluator source commit".into());
+        return Err("cannot determine repository HEAD".into());
     }
     let status = Command::new("git")
         .args([
