@@ -3,10 +3,10 @@
   "command": "target/release/sys-datascience-generator-cartan-anisotropy --out-dir experiments/sys-datascience/methods/generator-cartan-anisotropy/artifacts/panel-2-per-bucket",
   "source_path": "experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl",
   "source_input_sha256": "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367",
-  "source_revision": "4e3441faa12832f210436c18729112143c4ac1c6",
-  "source_repository_tree": "909e6c5610c0127582556d41c06740c9a1df2b58",
-  "source_dirty_tracked": false,
-  "producer_source_sha256": "ec93920698ca49d8978f3dff137507e21581172e195ba0014e25864163ebcaf9",
+  "source_revision": "224b33663e33ab0649b7f9f40cfcc3eb908a9ca3",
+  "source_repository_tree": "ef5e0b29d317e335ddb9428a147d3dfe080d48d2",
+  "source_dirty_tracked": true,
+  "producer_source_sha256": "3d16c78120b1727c0ef7680f068ae906b6d8f4f1324875fe75579a17363a44b2",
   "cargo_lock_sha256": "61cbc0cec713df9c7b6ec79c19d4abbc34fcbc4b30ed9911df02502e0c444c1f",
   "coordinate_order": "q1,q2,p1,p2",
   "requested_buckets": [
@@ -26,6 +26,7 @@
   "output_rows_count": 64,
   "output_paired_sha256": "73c697287e379f04641995db46864bc97d4df7eb7e6f64a29048f3cfc07aa979",
   "output_paired_count": 32,
+  "output_paired_tsv_sha256": "52d86837d8f90297fe4134e9e651b77329888cc211e50a95897212617280d79a",
   "diagonal_quotient_control": {
     "input_d_exact": [
       "2/1",
