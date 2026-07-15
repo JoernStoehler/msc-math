@@ -618,11 +618,6 @@ def validate_completeness(
 
 
 def source_provenance() -> dict[str, Any]:
-    repo_revision = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
-    repo_tree = subprocess.check_output(["git", "rev-parse", "HEAD^{tree}"], text=True).strip()
-    dirty = subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], text=True)
-    if dirty:
-        raise SystemExit("source checkout is dirty; commit source before artifact generation")
     packet = Path(__file__).resolve().parent
     repo_root = Path(subprocess.check_output(["git", "rev-parse", "--show-toplevel"], text=True).strip()).resolve()
     source_files = {
@@ -630,6 +625,12 @@ def source_provenance() -> dict[str, Any]:
         "tests": packet / "test_rare_hit_curves.py",
         "readme": packet / "README.md",
     }
+    relative_sources = [str(path.relative_to(repo_root)) for path in source_files.values()]
+    repo_revision = subprocess.check_output(["git", "log", "-1", "--format=%H", "--", *relative_sources], text=True).strip()
+    repo_tree = subprocess.check_output(["git", "rev-parse", f"{repo_revision}^{{tree}}"], text=True).strip()
+    dirty = subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no", "--", *relative_sources], text=True)
+    if dirty:
+        raise SystemExit("source files are dirty; commit source before artifact generation")
     return {
         "source_revision": repo_revision,
         "source_tree": repo_tree,
