@@ -25,7 +25,7 @@ out = Path(sys.argv[1])
   "source_snapshot_contract": "reachable clean source commit/tree captured before output deletion; generated artifact is not recursively hashed",
   "artifact_commit_contract": "commit this generated directory as a separate child of source_revision",
   "target_boundary": "exact targets are rational source coordinates or stored binary64 rationals; HKO intended algebraic transfer is unavailable",
-  "timing_scope": "per-row timings exclude compilation and fixture construction; policy timings cover aggregation only",
+  "timing_scope": "per-row timings exclude compilation and fixture construction; synthetic/exact policy timings cover aggregation only; current_production_minimasafe splits candidate-solve and production aggregation/fallback timings, whose sum is its total policy timing",
 }, indent=2) + "\n")
 PY
 python3 experiments/numerics/qp-error-bounds/analyze_soundness_v2.py "$OUT"

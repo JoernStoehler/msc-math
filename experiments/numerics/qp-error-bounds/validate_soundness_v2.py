@@ -131,10 +131,13 @@ def main() -> None:
         case_rows = raw_by_case[policy["target_polytope_id"]]
         if policy["supplied_stream_count"] != len(case_rows):
             fail(f"policy supplied-stream count mismatch {policy['target_polytope_id']}")
-        if policy["policy_candidate_count"] < policy["policy_exact_accept_count"]:
-            fail("policy accepted count exceeds policy candidate count")
+        if policy["policy_id"] != "current_production_minimasafe":
+            if not isinstance(policy["policy_exact_resolution_count"], int) or not isinstance(policy["policy_exact_accept_count"], int):
+                fail("synthetic/exact policy exact counts must be numeric")
+            if policy["policy_candidate_count"] < policy["policy_exact_accept_count"]:
+                fail("policy accepted count exceeds policy candidate count")
         if policy["policy_id"] in {"unchecked_saddle_feasible_no_fallback_diagnostic", "strict_margin_f64_simulation"}:
-            if policy["policy_exact_resolution_count"] != 0 or policy["policy_min_action"] is not None or policy["policy_window_cutoff"] is not None:
+            if policy["policy_exact_resolution_count"] != 0 or policy["policy_exact_accept_count"] != 0 or policy["policy_min_action"] is not None or policy["policy_window_cutoff"] is not None:
                 fail("f64-only policy incorrectly carries exact aggregation output")
             if policy["policy_f64_min_action"] is not None and policy["policy_f64_window_cutoff"] is None:
                 fail("f64-only policy minimum lacks its declared window cutoff")
@@ -144,6 +147,8 @@ def main() -> None:
             status = policy["policy_production_call_status"]
             if status != "ok" and not str(status).startswith("aggregate_error:"):
                 fail("production MinimaSafe direct call has an unknown terminal status")
+            if policy["policy_exact_resolution_count"] is not None or policy["policy_exact_accept_count"] is not None:
+                fail("production MinimaSafe uses a misleading generic exact count")
             if policy["policy_production_exact_resolution_count"] is not None or not str(policy["policy_production_exact_resolution_status"]).startswith("unavailable:"):
                 fail("production MinimaSafe exact-resolution exposure is mislabeled")
             returned = policy["policy_production_returned_orbits"]
@@ -154,6 +159,13 @@ def main() -> None:
                 fail("production MinimaSafe returned a word outside the declared stream")
             if any(orbit["admissibility"] not in {"admissible_f64", "admissible_exact", "indeterminate_f64"} for orbit in returned):
                 fail("production MinimaSafe returned an unknown admissibility state")
+            if policy.get("policy_timing_scope") != "production candidate solve plus production MinimaSafe aggregation/fallback; excludes fixture construction and compilation":
+                fail("production timing scope does not include solve plus aggregation/fallback")
+            solve_us = policy.get("policy_candidate_solve_timing_us")
+            aggregation_us = policy.get("policy_aggregation_timing_us")
+            total_us = policy.get("policy_stage_timing_us")
+            if not isinstance(solve_us, (int, float)) or not isinstance(aggregation_us, (int, float)) or not isinstance(total_us, (int, float)) or solve_us < 0 or aggregation_us < 0 or not math.isclose(total_us, solve_us + aggregation_us, rel_tol=0.0, abs_tol=1e-6):
+                fail("production timing payload does not split solve plus aggregation/fallback")
             if status != "ok":
                 if returned or policy["policy_f64_min_action"] is not None:
                     fail("failed production MinimaSafe aggregation carried a scalar or returned orbit")
@@ -177,6 +189,19 @@ def main() -> None:
                 fail("exact policy did not record every attempted resolution")
             if any(policy[key] is not None for key in ("policy_f64_min_action", "policy_f64_window_cutoff")) and policy["policy_id"] != "selective_fallback_f64_anchored_window":
                 fail("exact-only policy carries an undeclared f64 aggregate")
+        scope = policy.get("policy_timing_scope")
+        solve_us = policy.get("policy_candidate_solve_timing_us")
+        aggregation_us = policy.get("policy_aggregation_timing_us")
+        total_us = policy.get("policy_stage_timing_us")
+        if not isinstance(aggregation_us, (int, float)) or not isinstance(total_us, (int, float)) or aggregation_us < 0 or total_us < aggregation_us:
+            fail("policy timing payload is malformed")
+        if policy["policy_id"] == "current_production_minimasafe":
+            if scope != "production candidate solve plus production MinimaSafe aggregation/fallback; excludes fixture construction and compilation" or not isinstance(solve_us, (int, float)) or solve_us < 0:
+                fail("production timing scope does not include solve plus aggregation/fallback")
+            if not math.isclose(total_us, solve_us + aggregation_us, rel_tol=0.0, abs_tol=1e-6):
+                fail("production total timing does not equal solve plus aggregation timing")
+        elif scope != "policy aggregation only; excludes candidate solves, fixture construction, and compilation" or solve_us is not None or total_us != aggregation_us:
+            fail("synthetic policy timing scope is not aggregation-only")
         cutoff = policy["policy_window_cutoff"]
         if cutoff is not None:
             c = rational(cutoff, "policy cutoff")
@@ -193,6 +218,8 @@ def main() -> None:
         fail("production MinimaSafe comparison lacks active-word caveat")
     if manifest.get("schema_version") != "qp-soundness-row-v2" or manifest.get("artifact_commit_contract") != "commit this generated directory as a separate child of source_revision":
         fail("manifest provenance contract mismatch")
+    if manifest.get("timing_scope") != "per-row timings exclude compilation and fixture construction; synthetic/exact policy timings cover aggregation only; current_production_minimasafe splits candidate-solve and production aggregation/fallback timings, whose sum is its total policy timing":
+        fail("manifest timing contract mismatch")
     repo = Path(__file__).resolve().parents[3]
     commit = manifest.get("source_revision")
     tree = manifest.get("source_tree")

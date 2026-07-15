@@ -110,8 +110,11 @@ separate artifacts. Policies include `current_production_minimasafe`, which
 directly invokes the public production candidate solver and
 `aggregate_orbits_with_dual_vertices_exact(..., OrbitGuaranteeMode::MinimaSafe)`
 over each declared supplied stream. Its returned scalar, action intervals,
-admissibility, Q error bounds, errors, and timing are recorded directly; the
-production result does not expose its exact-resolution count. The separately
+admissibility, Q error bounds, errors, and split candidate-solve versus
+aggregation/fallback timing are recorded directly. Both generic exact-count
+fields are `null` for this policy because the production result does not expose
+either count; numeric zero is reserved for synthetic policies that actually
+performed no exact work. The separately
 named `unchecked_saddle_feasible_no_fallback_diagnostic` is only a raw-flag,
 no-fallback diagnostic, not a production policy. The remaining policies are a
 strict-margin simulation, exact retained candidates, one-shot f64-anchored
