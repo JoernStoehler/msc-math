@@ -47,6 +47,8 @@ The retained packet contains:
 
 Replay is byte-checked by running the same command into a temporary directory
 and comparing the two row/pair hashes in `report.json` (timings are not stored).
+The retained-schema check is also runnable with
+`python3 experiments/sys-datascience/methods/generator-cartan-anisotropy/test_packet.py`.
 The command fails closed on source-panel loss, duplicate identities,
 reconstruction failure, incidence/volume failure, or any missing requested row.
 
