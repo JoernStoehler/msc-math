@@ -52,6 +52,13 @@ smoke output, superseded intermediates, and cheap caches without a consumer.
 Use ordinary Git for small, inspectable data and Git LFS for large or poorly
 diffing data. The final Zenodo ZIP contains hydrated payloads, never pointers.
 
+Selection happens while curating the final reviewed commit, not through a
+second archive-only filter. After required third-party cleanup, the packager
+includes every path tracked by that commit, replaces each LFS pointer with its
+verified hydrated payload, and adds the checked thesis PDF. The Zenodo ZIP is
+therefore a near-mirror of the final tracked `HEAD`, not a separate hand-picked
+data bundle.
+
 See `submit/archive-closure-checklist.md` for cleanup and publication gates.
 
 ## Build the Zenodo ZIP
