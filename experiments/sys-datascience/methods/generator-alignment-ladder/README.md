@@ -51,7 +51,11 @@ status.  It retains matrix contracts, exact reconstruction/incidence/volume
 checks, raw/euclidean/symplectic dual-Gram signatures, and paired controls.
 `report.json` freezes the producer source closure before outputs are written.
 `analysis.json`, `paired-by-base.tsv`, and `paired-by-theta.tsv` are generated
-from those rows and classify only this finite panel's response shapes.
+from those rows and classify only this finite panel's response shapes. These
+retained artifacts deliberately contain no wall-clock fields: the rows, report,
+analysis, and paired tables are deterministic for a fixed clean producer
+revision. The report records the stable repo-root Cargo reproduction command,
+never an absolute binary path.
 
 ## Interpretation
 

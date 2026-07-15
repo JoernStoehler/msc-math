@@ -10,7 +10,6 @@ use std::{
     io::{BufWriter, Write},
     path::PathBuf,
     process::Command,
-    time::Instant,
 };
 use symplectic::{
     geom::polygon::{polygon_area, random_polygon_2d},
@@ -33,6 +32,7 @@ const ORIENTATION_SOURCE_REVISION: &str = "8174467dbd171281eb5746480b06629aa41eb
 const ORIENTATION_ROWS_LFS_OID: &str =
     "sha256:b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367";
 const SOURCE_BASE_CONTRACT: &str = "bit-for-bit copied generator-orientation-smoke v1 base law (including area-normalization operation order and geometry-ID byte layout); identity is established only by the analyzer's recorded comparison against the pinned orientation LFS rows";
+const REPRODUCTION_COMMAND: &str = "cargo run -p exp-sys-landscape --release --bin sys-datascience-generator-alignment-ladder -- --out-dir experiments/sys-datascience/methods/generator-alignment-ladder/artifacts/panel";
 
 #[derive(Clone)]
 struct Factor {
@@ -137,8 +137,6 @@ struct Row {
     symplectic_gram_l2_change: Option<f64>,
     symplectic_gram_max_abs_change: Option<f64>,
     failures: Vec<String>,
-    generation_ms: f64,
-    reconstruction_ms: f64,
 }
 #[derive(Serialize)]
 struct Report {
@@ -230,11 +228,7 @@ fn factor(sides: usize, seed: [u8; 32]) -> Option<Factor> {
         && (polygon_area(&f.normals, &f.heights)? - 1.).abs() <= 1e-10)
         .then_some(f)
 }
-fn base(
-    b: (usize, usize),
-    row: usize,
-) -> (Option<SysLandscapePolytopeCache>, Option<usize>, u64, f64) {
-    let t = Instant::now();
+fn base(b: (usize, usize), row: usize) -> (Option<SysLandscapePolytopeCache>, Option<usize>, u64) {
     let base_seed = seed_u64(derive_seed(SEED, "base", b, row, 0));
     for a in 0..ATTEMPTS {
         let q = factor(b.0, derive_seed(SEED, "base-q", b, row, a));
@@ -243,11 +237,11 @@ fn base(
             if let Some(x) = SysLandscapePolytopeCache::from_lagrangian_product(
                 &q.normals, &q.heights, &p.normals, &p.heights,
             ) {
-                return (Some(x), Some(a), base_seed, t.elapsed().as_secs_f64() * 1e3);
+                return (Some(x), Some(a), base_seed);
             }
         }
     }
-    (None, None, base_seed, t.elapsed().as_secs_f64() * 1e3)
+    (None, None, base_seed)
 }
 fn inner(a: &[C; 2], b: &[C; 2]) -> C {
     a.iter()
@@ -365,7 +359,6 @@ fn empty(
     theta: f64,
     base_seed: u64,
     attempt: Option<usize>,
-    ms: f64,
 ) -> Row {
     let name = format!("{}x{}", b.0, b.1);
     let id = format!("alignment-ladder-v1/seed={SEED}/bucket={name}/row={row}/theta={label}");
@@ -406,8 +399,6 @@ fn empty(
         symplectic_gram_l2_change: None,
         symplectic_gram_max_abs_change: None,
         failures: vec!["base_generation_exhausted".into()],
-        generation_ms: ms,
-        reconstruction_ms: 0.,
     }
 }
 fn failed_after_base(
@@ -418,19 +409,10 @@ fn failed_after_base(
     base: &SysLandscapePolytopeCache,
     attempt: usize,
     base_seed: u64,
-    generation_ms: f64,
     status: &'static str,
     failure: &'static str,
 ) -> Row {
-    let mut failed = empty(
-        b,
-        row,
-        label,
-        theta,
-        base_seed,
-        Some(attempt),
-        generation_ms,
-    );
+    let mut failed = empty(b, row, label, theta, base_seed, Some(attempt));
     failed.exact_reconstruction_status = status;
     failed.base_geometry_id = Some(geometry_id(base));
     failed.base_signature = Some(signature(base));
@@ -447,7 +429,6 @@ fn evaluate(
     base: &SysLandscapePolytopeCache,
     attempt: usize,
     base_seed: u64,
-    gen: f64,
 ) -> Row {
     let name = format!("{}x{}", b.0, b.1);
     let id = format!("alignment-ladder-v1/seed={SEED}/bucket={name}/row={row}/theta={label}");
@@ -462,7 +443,6 @@ fn evaluate(
             base,
             attempt,
             base_seed,
-            gen,
             "map_rejected",
             "left_u2_generation_rejected",
         );
@@ -476,13 +456,11 @@ fn evaluate(
             base,
             attempt,
             base_seed,
-            gen,
             "map_rejected",
             "right_u2_generation_rejected",
         );
     };
     let m = left * a_theta(theta) * right;
-    let t = Instant::now();
     let Some(inv) = m.try_inverse() else {
         return failed_after_base(
             b,
@@ -492,7 +470,6 @@ fn evaluate(
             base,
             attempt,
             base_seed,
-            gen,
             "inverse_transpose_rejected",
             "inverse_transpose_failed",
         );
@@ -511,12 +488,10 @@ fn evaluate(
             base,
             attempt,
             base_seed,
-            gen,
             "exact_reconstruction_rejected",
             "exact_reconstruction_rejected",
         );
     };
-    let rec = t.elapsed().as_secs_f64() * 1e3;
     let bv = exact_volume_from_incidence_as_f64(&base.vertices, &base.vertex_facet_incidence);
     let v = exact_volume_from_incidence_as_f64(&p.vertices, &p.vertex_facet_incidence);
     let rel = (v - bv) / bv;
@@ -584,8 +559,6 @@ fn evaluate(
         symplectic_gram_l2_change: Some(syml2),
         symplectic_gram_max_abs_change: Some(symmax),
         failures,
-        generation_ms: gen,
-        reconstruction_ms: rec,
     }
 }
 fn formula_controls() -> bool {
@@ -640,11 +613,11 @@ fn main() {
     let mut all = Vec::new();
     for &b in BUCKETS {
         for row in 0..2 {
-            let (x, attempt, seed, ms) = base(b, row);
+            let (x, attempt, seed) = base(b, row);
             for &(label, theta) in THETAS {
                 let r = match (&x, attempt) {
-                    (Some(x), Some(a)) => evaluate(b, row, label, theta, x, a, seed, ms),
-                    _ => empty(b, row, label, theta, seed, attempt, ms),
+                    (Some(x), Some(a)) => evaluate(b, row, label, theta, x, a, seed),
+                    _ => empty(b, row, label, theta, seed, attempt),
                 };
                 serde_json::to_writer(&mut w, &r).unwrap();
                 writeln!(w).unwrap();
@@ -658,7 +631,7 @@ fn main() {
         && all
             .iter()
             .all(|r| r.exact_reconstruction_status == "reconstructed" && r.failures.is_empty());
-    let report=Report{schema:"alignment-ladder-report-v1",command:a.join(" "),source_revision:revision,source_repository_tree:tree,source_dirty:dirty,producer_source_sha256:sha("experiments/sys-datascience/methods/generator-alignment-ladder/main.rs"),analyzer_source_sha256:sha("experiments/sys-datascience/methods/generator-alignment-ladder/analyze.py"),cargo_lock_sha256:sha("Cargo.lock"),source_base_contract:SOURCE_BASE_CONTRACT,orientation_source_revision:ORIENTATION_SOURCE_REVISION,orientation_rows_lfs_oid:ORIENTATION_ROWS_LFS_OID,orientation_geometry_id_comparison_status:"pending_external_analyzer_comparison",expected_bases:8,expected_rows:40,observed_rows:all.len(),passed_rows:all.iter().filter(|r|r.failures.is_empty()).count(),all_requested_rows_passed:pass,formula_controls_passed:formula_controls(),coordinate_order:"q1,q2,p1,p2",a_theta_convention:"A_theta=diag(Q(theta),I_2), Q(theta) rotates q1,q2; A_pi=diag(-1,-1,1,1)",kahler_departure_coordinate:"sin^2(theta/2)",proof_review_cruxes:vec!["Do not promote this representative family to an exhaustion or unique parameterization of U(2)\\SO(4)/U(2) without proof review.","Do not assume anti-symplectic capacity invariance; review the capacity definition and proof separately before later target interpretation."],interpretation_boundary:"Target-free finite-panel geometry only: no sys, capacity, target-derived field, capacity dose claim, population claim, or quotient-natural-law claim."};
+    let report=Report{schema:"alignment-ladder-report-v1",command:REPRODUCTION_COMMAND.into(),source_revision:revision,source_repository_tree:tree,source_dirty:dirty,producer_source_sha256:sha("experiments/sys-datascience/methods/generator-alignment-ladder/main.rs"),analyzer_source_sha256:sha("experiments/sys-datascience/methods/generator-alignment-ladder/analyze.py"),cargo_lock_sha256:sha("Cargo.lock"),source_base_contract:SOURCE_BASE_CONTRACT,orientation_source_revision:ORIENTATION_SOURCE_REVISION,orientation_rows_lfs_oid:ORIENTATION_ROWS_LFS_OID,orientation_geometry_id_comparison_status:"pending_external_analyzer_comparison",expected_bases:8,expected_rows:40,observed_rows:all.len(),passed_rows:all.iter().filter(|r|r.failures.is_empty()).count(),all_requested_rows_passed:pass,formula_controls_passed:formula_controls(),coordinate_order:"q1,q2,p1,p2",a_theta_convention:"A_theta=diag(Q(theta),I_2), Q(theta) rotates q1,q2; A_pi=diag(-1,-1,1,1)",kahler_departure_coordinate:"sin^2(theta/2)",proof_review_cruxes:vec!["Do not promote this representative family to an exhaustion or unique parameterization of U(2)\\SO(4)/U(2) without proof review.","Do not assume anti-symplectic capacity invariance; review the capacity definition and proof separately before later target interpretation."],interpretation_boundary:"Target-free finite-panel geometry only: no sys, capacity, target-derived field, capacity dose claim, population claim, or quotient-natural-law claim."};
     serde_json::to_writer_pretty(File::create(out.join("report.json")).unwrap(), &report).unwrap();
     if !pass {
         std::process::exit(1)
@@ -698,5 +671,24 @@ mod tests {
     #[test]
     fn regenerated_source_base_is_available() {
         assert!(base((3, 3), 0).0.is_some());
+    }
+    #[test]
+    fn retained_contract_excludes_timing_and_uses_repo_relative_command() {
+        let (base, attempt, base_seed) = base((3, 3), 0);
+        let row = evaluate(
+            (3, 3),
+            0,
+            "0",
+            0.0,
+            base.as_ref().expect("fixture base"),
+            attempt.expect("fixture attempt"),
+            base_seed,
+        );
+        let object = serde_json::to_value(row).expect("serializable row");
+        assert!(object.get("generation_ms").is_none());
+        assert!(object.get("reconstruction_ms").is_none());
+        assert!(!REPRODUCTION_COMMAND.starts_with('/'));
+        assert!(!REPRODUCTION_COMMAND.contains("/workspaces/"));
+        assert!(REPRODUCTION_COMMAND.starts_with("cargo run -p "));
     }
 }

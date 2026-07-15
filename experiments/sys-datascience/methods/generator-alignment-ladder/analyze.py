@@ -12,6 +12,12 @@ from pathlib import Path
 
 THETA_ORDER = ["0", "pi_over_4", "pi_over_2", "3pi_over_4", "pi"]
 EPS = 1e-9
+REPRODUCTION_COMMAND = (
+    "cargo run -p exp-sys-landscape --release "
+    "--bin sys-datascience-generator-alignment-ladder -- "
+    "--out-dir experiments/sys-datascience/methods/generator-alignment-ladder/artifacts/panel"
+)
+VOLATILE_ROW_FIELDS = {"generation_ms", "reconstruction_ms"}
 
 
 def sha256(path: Path) -> str:
@@ -93,6 +99,8 @@ def main() -> None:
         raise ValueError("producer report is not a passing formula/reconstruction packet")
     if report.get("source_dirty"):
         raise ValueError("producer report was made from tracked-dirty source")
+    if report.get("command") != REPRODUCTION_COMMAND:
+        raise ValueError("report command is not the stable repo-relative reproduction command")
     comparison = {
         "status": "not_run_external_orientation_rows_unavailable",
         "orientation_source_revision": report.get("orientation_source_revision"),
@@ -110,6 +118,8 @@ def main() -> None:
         ]
         if row["exact_reconstruction_status"] != "reconstructed" or row["failures"]:
             raise ValueError(f"nonterminal or failed row: {row['id']}")
+        if VOLATILE_ROW_FIELDS & row.keys():
+            raise ValueError(f"volatile timing field retained in deterministic row: {row['id']}")
         if any(row.get(key) is None for key in required):
             raise ValueError(f"missing required response field: {row['id']}")
         if row["coordinate_order"] != "q1,q2,p1,p2":
