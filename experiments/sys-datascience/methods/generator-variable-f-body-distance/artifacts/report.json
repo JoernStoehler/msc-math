@@ -2,7 +2,7 @@
   "comparisons": [
     {
       "case": "identity_permuted_presentation",
-      "cost_observation_seconds": 0.03953667700079677,
+      "cost_observation_seconds": 0.039036889998897095,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0,
@@ -48,7 +48,7 @@
     },
     {
       "case": "facet_birth_truncated_cube",
-      "cost_observation_seconds": 0.040726020000874996,
+      "cost_observation_seconds": 0.0413137640007335,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0693455916073286,
@@ -94,7 +94,7 @@
     },
     {
       "case": "adversarial_narrow_feature",
-      "cost_observation_seconds": 0.04262382200067805,
+      "cost_observation_seconds": 0.04592116200001328,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.07977971304969055,
@@ -140,7 +140,7 @@
     },
     {
       "case": "ball_approximant_identity",
-      "cost_observation_seconds": 0.08536855100101093,
+      "cost_observation_seconds": 0.12700374999985797,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0,
@@ -186,7 +186,7 @@
     },
     {
       "case": "ball_vs_ellipsoid_approximant",
-      "cost_observation_seconds": 0.1158399020005163,
+      "cost_observation_seconds": 0.12781886999982817,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.22173262424283688,
@@ -232,7 +232,7 @@
     },
     {
       "case": "retained_orientation_u2",
-      "cost_observation_seconds": 0.04985564799972053,
+      "cost_observation_seconds": 0.03491020299952652,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0682635396392401,
@@ -278,7 +278,7 @@
     },
     {
       "case": "retained_orientation_so4",
-      "cost_observation_seconds": 0.035992184000861016,
+      "cost_observation_seconds": 0.031753527000546455,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.07301114308952454,
@@ -324,7 +324,7 @@
     },
     {
       "case": "retained_exact_feature_witness",
-      "cost_observation_seconds": 0.06656377199942654,
+      "cost_observation_seconds": 0.07402416700097092,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.20067121144363229,
@@ -375,13 +375,13 @@
     "narrow_feature_axis_grid_understates_linf": true,
     "narrow_feature_primitive_grid_detected": true,
     "permuted_presentation_zero": true,
-    "redundant_presentation_fail_closed": true
+    "redundant_presentations_fail_closed": true
   },
   "coordinate_order": "q1,q2,p1,p2",
   "cost_observations_seconds": {
-    "exact_feature_reconstruction": 20.23271133199887,
-    "orientation_reconstruction": 1.8027424240008258,
-    "synthetic_reconstruction": 0.2257482169989089
+    "exact_feature_reconstruction": 23.76188790299966,
+    "orientation_reconstruction": 1.852023081999505,
+    "synthetic_reconstruction": 0.23416585299855797
   },
   "direction_designs": {
     "axis_only": 8,
@@ -423,7 +423,8 @@
     "normalization": "subtract arithmetic mean of reconstructed vertices and divide by RMS vertex radius: translation and positive global-scale quotient only"
   },
   "presentation_dispositions": {
-    "synthetic:cube_redundant": "fail_closed:redundant duplicate normalized inequality"
+    "synthetic:cube_duplicate": "fail_closed:redundant duplicate normalized inequality",
+    "synthetic:cube_vertex_touch": "fail_closed:redundant/nonfacet inequality indices: [8]"
   },
   "provenance": {
     "exact_feature_input": {
@@ -474,8 +475,8 @@
   },
   "run": {
     "producer_path": "experiments/sys-datascience/methods/generator-variable-f-body-distance/body_distance.py",
-    "producer_sha256": "56fdc71798ab9d03f1cd5429b150dc6dae084c5d7ed72adbb44c70e6a873633f",
-    "revision": "85ce614c5300e7f91db44b4dc2a5d93d2e5f1120",
+    "producer_sha256": "bd3e97ca79be9be55558e49452dac43ad58034d87de8e32a30478667d8316810",
+    "revision": "801596f5d03945f2831603151b1a1bc6478c671f",
     "terminal_status": "complete",
     "tracked_clean_before_generation": true
   },
