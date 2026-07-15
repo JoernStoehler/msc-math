@@ -14,7 +14,7 @@ two views), and view-specific `offline_greedy_frame`/`offline_greedy_chord`.
 These are offline coresets, not online adaptive generator allocation. The frame view quotients cyclic
 starting point, reversal, translation, positive scale, and a local frame
 rotation.  The lossy chord view sorts all pairwise chord lengths, removing
-vertex order.  The views remain separate in `frontier-yield.tsv`; disagreement
+vertex order.  The views remain separate in `coreset-yield.tsv`; disagreement
 rows are retained in `view-disagreement.tsv` rather than collapsed into a law
 score.  Holdout nearest-cover max, mean, and q90 are measured at matched
 retained-witness budgets. Full-pool producer generation counts/costs are copied

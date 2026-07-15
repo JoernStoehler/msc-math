@@ -337,7 +337,7 @@ def main() -> None:
         rows, disagreements, summary = frontier(train, holdout, mode)
         policy_rows.extend(rows); disagreement.extend(disagreements); policy_summary.extend(summary)
     selection_ms = (time.perf_counter() - start) * 1000.0
-    write_tsv(args.out_dir / "frontier-yield.tsv", policy_rows)
+    write_tsv(args.out_dir / "coreset-yield.tsv", policy_rows)
     write_tsv(args.out_dir / "view-disagreement.tsv", disagreement)
     write_tsv(args.out_dir / "policy-summary.tsv", policy_summary)
     arms = []
