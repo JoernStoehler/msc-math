@@ -1,0 +1,164 @@
+{
+  "schema": "generator-convex-operations-report-v1",
+  "law_version": "generator-convex-operations-v1",
+  "seed_panel": [
+    20260715,
+    20260716,
+    20260717
+  ],
+  "side_counts": [
+    3,
+    4,
+    6
+  ],
+  "rows_per_bucket": 2,
+  "max_attempts_per_row": 32,
+  "requested_rows": 108,
+  "rows": 108,
+  "status_counts": {
+    "survived": 108
+  },
+  "operation_summary": {
+    "baseline": {
+      "requested": 18,
+      "accepted": 18,
+      "exhausted": 0,
+      "total_attempts": 25,
+      "output_side_counts": {
+        "3": 6,
+        "4": 6,
+        "6": 6
+      }
+    },
+    "convex-hull-union": {
+      "requested": 18,
+      "accepted": 18,
+      "exhausted": 0,
+      "total_attempts": 36,
+      "output_side_counts": {
+        "4": 2,
+        "5": 6,
+        "6": 4,
+        "7": 2,
+        "8": 4
+      }
+    },
+    "difference-body": {
+      "requested": 18,
+      "accepted": 18,
+      "exhausted": 0,
+      "total_attempts": 27,
+      "output_side_counts": {
+        "12": 6,
+        "6": 6,
+        "8": 6
+      }
+    },
+    "intersection": {
+      "requested": 18,
+      "accepted": 18,
+      "exhausted": 0,
+      "total_attempts": 48,
+      "output_side_counts": {
+        "4": 4,
+        "5": 3,
+        "6": 6,
+        "8": 3,
+        "9": 2
+      }
+    },
+    "minkowski-sum": {
+      "requested": 18,
+      "accepted": 18,
+      "exhausted": 0,
+      "total_attempts": 42,
+      "output_side_counts": {
+        "12": 6,
+        "6": 6,
+        "8": 6
+      }
+    },
+    "minkowski-symmetrization": {
+      "requested": 18,
+      "accepted": 18,
+      "exhausted": 0,
+      "total_attempts": 33,
+      "output_side_counts": {
+        "12": 6,
+        "6": 6,
+        "8": 6
+      }
+    }
+  },
+  "side_count_histogram": {
+    "12": 18,
+    "3": 6,
+    "4": 12,
+    "5": 9,
+    "6": 34,
+    "7": 2,
+    "8": 25,
+    "9": 2
+  },
+  "dispositions": [
+    {
+      "operation": "baseline",
+      "law_kind": "fresh_current_law",
+      "status": "survivor",
+      "formula": "current-law random H polygon, conditioned all prescribed inequalities active",
+      "note": "fresh baseline control; not an independent target sample"
+    },
+    {
+      "operation": "minkowski-sum",
+      "law_kind": "binary_random",
+      "status": "survivor",
+      "formula": "(A+B) normalized by area",
+      "note": "support addition h_{A+B}(u)=h_A(u)+h_B(u)"
+    },
+    {
+      "operation": "intersection",
+      "law_kind": "binary_random",
+      "status": "survivor",
+      "formula": "A ∩ B from both H-representations",
+      "note": "active inequalities and output side count retained"
+    },
+    {
+      "operation": "difference-body",
+      "law_kind": "deterministic_pushforward",
+      "status": "survivor",
+      "formula": "A+(-A), normalized",
+      "note": "deterministic pushforward; not independent breadth"
+    },
+    {
+      "operation": "convex-hull-union",
+      "law_kind": "binary_random",
+      "status": "survivor",
+      "formula": "conv(A ∪ B), normalized",
+      "note": "active source subset and side count retained"
+    },
+    {
+      "operation": "minkowski-symmetrization",
+      "law_kind": "deterministic_pushforward",
+      "status": "survivor",
+      "formula": "(A + R_u A)/2, normalized",
+      "note": "classical polygonal Minkowski symmetrization in uniform direction u"
+    }
+  ],
+  "command": "./target/release/sys-datascience-generator-convex-operations --out-dir experiments/sys-datascience/methods/generator-convex-operations/artifacts --attempts 32 --rows-per-bucket 2",
+  "source_revision": "081fd2b8ce8f09aab3556e94ffd91a1cb7c5357a",
+  "source_tree": "af1f68f1a9d1b975f21e3459dadee9a074e40788",
+  "source_dirty": false,
+  "timing_ms_volatile": {
+    "generation_total_ms": 1.3897249999999988,
+    "validation_total_ms": 0.016926000000000004,
+    "note": "wall-clock diagnostics only; omitted from deterministic row identities and not evidence of population cost"
+  },
+  "interpretation_boundary": "Target-free geometry smoke only. Rows expose operation lineage, side counts, active subsets, common shape views, and directed overlaps after no target stratification; no population ranking, sys/capacity, transfer, or independence claim is supported.",
+  "abandoned": [
+    {
+      "operation": "crofton-poisson-cell",
+      "status": "abandoned",
+      "reason": "faithful stationary line process plus finite-window/side-count conditioning was not available within this bounded planar geometry owner"
+    }
+  ]
+}
