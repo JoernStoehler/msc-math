@@ -5,6 +5,11 @@ entries after merge, durable parking, discard, or handoff.
 
 ## Current Active Entries
 
+- **Generator combinatorial coverage** — branch `combinatorial-coverage`,
+  worktree `.worktrees/combinatorial-coverage`. Owns only
+  `methods/generator-combinatorial-coverage/**`; target-free exact incidence
+  occupancy, matched-panel coverage, and within-type geometry diagnostics.
+
 - **Alternative-generator and transfer line** — branch
   `research/generator-transfer`, worktree `.worktrees/generator-transfer`.
   Owns generator-law contrasts, transfer interpretation, and integration of its
