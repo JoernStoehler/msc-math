@@ -35,9 +35,12 @@ both nonsingular six-facet data and singular seven-facet data; the
 nonsingular active rows alone do not span the \(25\)-dimensional quotient
 slice. The proof therefore does not differentiate nearby KKT-critical
 optimizers. Instead, for each selected word it fixes enough beta coordinates
-so that the closure and normalization equations have an invertible minor. This
-gives a smooth feasible beta section and hence a differentiable upper function
-even when the KKT system for an optimizing branch is singular.
+so that the closure and normalization equations have an invertible minor. The
+implicit function theorem gives a smooth feasible beta section even when the
+KKT system for an optimizing branch is singular.  Feasibility then gives
+\(\operatorname{sys}\leq U_\sigma\) by
+Lemma~\ref{lem:first-order-feasible-section-upper-function}, so the section
+need not be a nearby optimizer.
 
 The finite first-order criterion is the following. Let
 \(r_\sigma=D U_\sigma(a_{\mathrm{HKO}})\). If the selected rows annihilate the
