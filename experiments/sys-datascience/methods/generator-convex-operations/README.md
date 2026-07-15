@@ -32,7 +32,9 @@ reflection residual. The embedded source geometry makes binary versus
 pushforward lineage replayable without a sidecar. Directed overlaps are
 source-coordinate intersection-area ratios (`area(output ∩ source) /
 area(source)`), not quotient shape distances; compare them only after explicit
-side-count stratification. They are descriptive and not target associations.
+side-count stratification; the JSONL fields are named
+`source_coordinate_overlap_a/b` to keep this boundary visible. They are
+descriptive and not target associations.
 Wall-clock generation/validation timings are printed to stdout only and are
 not retained in deterministic artifacts.
 
