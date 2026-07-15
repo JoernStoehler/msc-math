@@ -1,0 +1,954 @@
+[
+  {
+    "formula_id": "error_q_abs__saddle_eig_accepted_q_raw__to_exact_positive_witness_q",
+    "output_column": "error_q_abs__saddle_eig_accepted_q_raw__to_exact_positive_witness_q",
+    "dependencies": [
+      [
+        "saddle_eig_accepted.center_q_raw_f64",
+        "saddle_eig_accepted"
+      ],
+      [
+        "exact_positive_witness_q",
+        "exact_positive_witness"
+      ]
+    ],
+    "center": "saddle_eig_accepted",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "observational error only",
+    "status": "available_when_matching_exact_positive_witness_exists",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable without a same-sigma exact positive-Q witness"
+  },
+  {
+    "formula_id": "bound_q_abs__saddle_eig_accepted__eigen_residual_9over2",
+    "output_column": "bound_q_abs__saddle_eig_accepted__eigen_residual_9over2",
+    "dependencies": [
+      [
+        "saddle_eig_accepted.center_full_kkt_residual_norm_f64",
+        "saddle_eig_accepted"
+      ],
+      [
+        "kkt_augmented_eigenvalues_f64",
+        "saddle_eig_accepted"
+      ]
+    ],
+    "center": "saddle_eig_accepted",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "conjectured; ordinary f64 atoms are not verified enclosures",
+    "status": "available_when_full_residual_and_nonzero_eigenvalue_exist",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable for projected centres without a full KKT residual"
+  },
+  {
+    "formula_id": "bound_beta_l2__saddle_eig_accepted__inverse_singular_residual",
+    "output_column": "bound_beta_l2__saddle_eig_accepted__inverse_singular_residual",
+    "dependencies": [
+      [
+        "saddle_eig_accepted.center_full_kkt_residual_norm_f64",
+        "saddle_eig_accepted"
+      ],
+      [
+        "kkt_augmented_singular_values_f64",
+        "saddle_eig_accepted"
+      ]
+    ],
+    "center": "saddle_eig_accepted",
+    "exact_target": "exact_positive_witness_beta",
+    "hypothesis_status": "heuristic inverse-norm diagnostic, not a verified beta enclosure",
+    "status": "available_when_full_residual_and_positive_singular_value_exist",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable for projected centres without a full KKT residual"
+  },
+  {
+    "formula_id": "bound_q_abs__saddle_eig_accepted__beta_radius_first_plus_quadratic",
+    "output_column": "bound_q_abs__saddle_eig_accepted__beta_radius_first_plus_quadratic",
+    "dependencies": [
+      [
+        "bound_beta_l2__saddle_eig_accepted__inverse_singular_residual",
+        "saddle_eig_accepted"
+      ],
+      [
+        "qp_objective_hessian_h_f64",
+        "saddle_eig_accepted"
+      ],
+      [
+        "saddle_eig_accepted.center_beta_f64",
+        "saddle_eig_accepted"
+      ]
+    ],
+    "center": "saddle_eig_accepted",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "heuristic Q propagation from the inverse-norm radius",
+    "status": "available_when_beta-radius-is-computable",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable when the radius or centre beta is unavailable"
+  },
+  {
+    "formula_id": "interval_action__saddle_eig_accepted__positive_q_monotone",
+    "output_column": "interval_action__saddle_eig_accepted__positive_q_monotone",
+    "dependencies": [
+      [
+        "saddle_eig_accepted.center_q_corrected_f64",
+        "saddle_eig_accepted"
+      ],
+      [
+        "bound_q_abs__saddle_eig_accepted__eigen_residual_9over2",
+        "saddle_eig_accepted"
+      ]
+    ],
+    "center": "saddle_eig_accepted",
+    "exact_target": "exact_positive_witness_action",
+    "hypothesis_status": "conditionally justified only if the Q bound is justified and has positive lower endpoint",
+    "status": "candidate_interval_not_verified",
+    "consumers": [
+      "selective fallback design"
+    ],
+    "unavailable_rule": "unavailable without corrected Q, candidate Q bound, and positive lower endpoint"
+  },
+  {
+    "formula_id": "predicate_beta_positive__saddle_eig_accepted__from_radius",
+    "output_column": "predicate_beta_positive__saddle_eig_accepted__from_radius",
+    "dependencies": [
+      [
+        "saddle_eig_accepted.center_beta_margin_f64",
+        "saddle_eig_accepted"
+      ],
+      [
+        "bound_beta_l2__saddle_eig_accepted__inverse_singular_residual",
+        "saddle_eig_accepted"
+      ]
+    ],
+    "center": "saddle_eig_accepted",
+    "exact_target": "exact_positive_witness_status",
+    "hypothesis_status": "heuristic ternary predicate from f64 margin minus heuristic radius",
+    "status": "available_when_margin_and_radius_exist",
+    "consumers": [
+      "policy comparison"
+    ],
+    "unavailable_rule": "unavailable when either atom is unavailable"
+  },
+  {
+    "formula_id": "error_q_abs__svd_lstsq_proposal_q_raw__to_exact_positive_witness_q",
+    "output_column": "error_q_abs__svd_lstsq_proposal_q_raw__to_exact_positive_witness_q",
+    "dependencies": [
+      [
+        "svd_lstsq_proposal.center_q_raw_f64",
+        "svd_lstsq_proposal"
+      ],
+      [
+        "exact_positive_witness_q",
+        "exact_positive_witness"
+      ]
+    ],
+    "center": "svd_lstsq_proposal",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "observational error only",
+    "status": "available_when_matching_exact_positive_witness_exists",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable without a same-sigma exact positive-Q witness"
+  },
+  {
+    "formula_id": "bound_q_abs__svd_lstsq_proposal__eigen_residual_9over2",
+    "output_column": "bound_q_abs__svd_lstsq_proposal__eigen_residual_9over2",
+    "dependencies": [
+      [
+        "svd_lstsq_proposal.center_full_kkt_residual_norm_f64",
+        "svd_lstsq_proposal"
+      ],
+      [
+        "kkt_augmented_eigenvalues_f64",
+        "svd_lstsq_proposal"
+      ]
+    ],
+    "center": "svd_lstsq_proposal",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "conjectured; ordinary f64 atoms are not verified enclosures",
+    "status": "available_when_full_residual_and_nonzero_eigenvalue_exist",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable for projected centres without a full KKT residual"
+  },
+  {
+    "formula_id": "bound_beta_l2__svd_lstsq_proposal__inverse_singular_residual",
+    "output_column": "bound_beta_l2__svd_lstsq_proposal__inverse_singular_residual",
+    "dependencies": [
+      [
+        "svd_lstsq_proposal.center_full_kkt_residual_norm_f64",
+        "svd_lstsq_proposal"
+      ],
+      [
+        "kkt_augmented_singular_values_f64",
+        "svd_lstsq_proposal"
+      ]
+    ],
+    "center": "svd_lstsq_proposal",
+    "exact_target": "exact_positive_witness_beta",
+    "hypothesis_status": "heuristic inverse-norm diagnostic, not a verified beta enclosure",
+    "status": "available_when_full_residual_and_positive_singular_value_exist",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable for projected centres without a full KKT residual"
+  },
+  {
+    "formula_id": "bound_q_abs__svd_lstsq_proposal__beta_radius_first_plus_quadratic",
+    "output_column": "bound_q_abs__svd_lstsq_proposal__beta_radius_first_plus_quadratic",
+    "dependencies": [
+      [
+        "bound_beta_l2__svd_lstsq_proposal__inverse_singular_residual",
+        "svd_lstsq_proposal"
+      ],
+      [
+        "qp_objective_hessian_h_f64",
+        "svd_lstsq_proposal"
+      ],
+      [
+        "svd_lstsq_proposal.center_beta_f64",
+        "svd_lstsq_proposal"
+      ]
+    ],
+    "center": "svd_lstsq_proposal",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "heuristic Q propagation from the inverse-norm radius",
+    "status": "available_when_beta-radius-is-computable",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable when the radius or centre beta is unavailable"
+  },
+  {
+    "formula_id": "interval_action__svd_lstsq_proposal__positive_q_monotone",
+    "output_column": "interval_action__svd_lstsq_proposal__positive_q_monotone",
+    "dependencies": [
+      [
+        "svd_lstsq_proposal.center_q_corrected_f64",
+        "svd_lstsq_proposal"
+      ],
+      [
+        "bound_q_abs__svd_lstsq_proposal__eigen_residual_9over2",
+        "svd_lstsq_proposal"
+      ]
+    ],
+    "center": "svd_lstsq_proposal",
+    "exact_target": "exact_positive_witness_action",
+    "hypothesis_status": "conditionally justified only if the Q bound is justified and has positive lower endpoint",
+    "status": "candidate_interval_not_verified",
+    "consumers": [
+      "selective fallback design"
+    ],
+    "unavailable_rule": "unavailable without corrected Q, candidate Q bound, and positive lower endpoint"
+  },
+  {
+    "formula_id": "predicate_beta_positive__svd_lstsq_proposal__from_radius",
+    "output_column": "predicate_beta_positive__svd_lstsq_proposal__from_radius",
+    "dependencies": [
+      [
+        "svd_lstsq_proposal.center_beta_margin_f64",
+        "svd_lstsq_proposal"
+      ],
+      [
+        "bound_beta_l2__svd_lstsq_proposal__inverse_singular_residual",
+        "svd_lstsq_proposal"
+      ]
+    ],
+    "center": "svd_lstsq_proposal",
+    "exact_target": "exact_positive_witness_status",
+    "hypothesis_status": "heuristic ternary predicate from f64 margin minus heuristic radius",
+    "status": "available_when_margin_and_radius_exist",
+    "consumers": [
+      "policy comparison"
+    ],
+    "unavailable_rule": "unavailable when either atom is unavailable"
+  },
+  {
+    "formula_id": "error_q_abs__projected_critical_proposal_q_raw__to_exact_positive_witness_q",
+    "output_column": "error_q_abs__projected_critical_proposal_q_raw__to_exact_positive_witness_q",
+    "dependencies": [
+      [
+        "projected_critical_proposal.center_q_raw_f64",
+        "projected_critical_proposal"
+      ],
+      [
+        "exact_positive_witness_q",
+        "exact_positive_witness"
+      ]
+    ],
+    "center": "projected_critical_proposal",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "observational error only",
+    "status": "available_when_matching_exact_positive_witness_exists",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable without a same-sigma exact positive-Q witness"
+  },
+  {
+    "formula_id": "bound_q_abs__projected_critical_proposal__eigen_residual_9over2",
+    "output_column": "bound_q_abs__projected_critical_proposal__eigen_residual_9over2",
+    "dependencies": [
+      [
+        "projected_critical_proposal.center_full_kkt_residual_norm_f64",
+        "projected_critical_proposal"
+      ],
+      [
+        "kkt_augmented_eigenvalues_f64",
+        "projected_critical_proposal"
+      ]
+    ],
+    "center": "projected_critical_proposal",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "conjectured; ordinary f64 atoms are not verified enclosures",
+    "status": "available_when_full_residual_and_nonzero_eigenvalue_exist",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable for projected centres without a full KKT residual"
+  },
+  {
+    "formula_id": "bound_beta_l2__projected_critical_proposal__inverse_singular_residual",
+    "output_column": "bound_beta_l2__projected_critical_proposal__inverse_singular_residual",
+    "dependencies": [
+      [
+        "projected_critical_proposal.center_full_kkt_residual_norm_f64",
+        "projected_critical_proposal"
+      ],
+      [
+        "kkt_augmented_singular_values_f64",
+        "projected_critical_proposal"
+      ]
+    ],
+    "center": "projected_critical_proposal",
+    "exact_target": "exact_positive_witness_beta",
+    "hypothesis_status": "heuristic inverse-norm diagnostic, not a verified beta enclosure",
+    "status": "available_when_full_residual_and_positive_singular_value_exist",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable for projected centres without a full KKT residual"
+  },
+  {
+    "formula_id": "bound_q_abs__projected_critical_proposal__beta_radius_first_plus_quadratic",
+    "output_column": "bound_q_abs__projected_critical_proposal__beta_radius_first_plus_quadratic",
+    "dependencies": [
+      [
+        "bound_beta_l2__projected_critical_proposal__inverse_singular_residual",
+        "projected_critical_proposal"
+      ],
+      [
+        "qp_objective_hessian_h_f64",
+        "projected_critical_proposal"
+      ],
+      [
+        "projected_critical_proposal.center_beta_f64",
+        "projected_critical_proposal"
+      ]
+    ],
+    "center": "projected_critical_proposal",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "heuristic Q propagation from the inverse-norm radius",
+    "status": "available_when_beta-radius-is-computable",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable when the radius or centre beta is unavailable"
+  },
+  {
+    "formula_id": "interval_action__projected_critical_proposal__positive_q_monotone",
+    "output_column": "interval_action__projected_critical_proposal__positive_q_monotone",
+    "dependencies": [
+      [
+        "projected_critical_proposal.center_q_corrected_f64",
+        "projected_critical_proposal"
+      ],
+      [
+        "bound_q_abs__projected_critical_proposal__eigen_residual_9over2",
+        "projected_critical_proposal"
+      ]
+    ],
+    "center": "projected_critical_proposal",
+    "exact_target": "exact_positive_witness_action",
+    "hypothesis_status": "conditionally justified only if the Q bound is justified and has positive lower endpoint",
+    "status": "candidate_interval_not_verified",
+    "consumers": [
+      "selective fallback design"
+    ],
+    "unavailable_rule": "unavailable without corrected Q, candidate Q bound, and positive lower endpoint"
+  },
+  {
+    "formula_id": "predicate_beta_positive__projected_critical_proposal__from_radius",
+    "output_column": "predicate_beta_positive__projected_critical_proposal__from_radius",
+    "dependencies": [
+      [
+        "projected_critical_proposal.center_beta_margin_f64",
+        "projected_critical_proposal"
+      ],
+      [
+        "bound_beta_l2__projected_critical_proposal__inverse_singular_residual",
+        "projected_critical_proposal"
+      ]
+    ],
+    "center": "projected_critical_proposal",
+    "exact_target": "exact_positive_witness_status",
+    "hypothesis_status": "heuristic ternary predicate from f64 margin minus heuristic radius",
+    "status": "available_when_margin_and_radius_exist",
+    "consumers": [
+      "policy comparison"
+    ],
+    "unavailable_rule": "unavailable when either atom is unavailable"
+  },
+  {
+    "formula_id": "error_q_abs__projected_max_margin_proposal_q_raw__to_exact_positive_witness_q",
+    "output_column": "error_q_abs__projected_max_margin_proposal_q_raw__to_exact_positive_witness_q",
+    "dependencies": [
+      [
+        "projected_max_margin_proposal.center_q_raw_f64",
+        "projected_max_margin_proposal"
+      ],
+      [
+        "exact_positive_witness_q",
+        "exact_positive_witness"
+      ]
+    ],
+    "center": "projected_max_margin_proposal",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "observational error only",
+    "status": "available_when_matching_exact_positive_witness_exists",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable without a same-sigma exact positive-Q witness"
+  },
+  {
+    "formula_id": "bound_q_abs__projected_max_margin_proposal__eigen_residual_9over2",
+    "output_column": "bound_q_abs__projected_max_margin_proposal__eigen_residual_9over2",
+    "dependencies": [
+      [
+        "projected_max_margin_proposal.center_full_kkt_residual_norm_f64",
+        "projected_max_margin_proposal"
+      ],
+      [
+        "kkt_augmented_eigenvalues_f64",
+        "projected_max_margin_proposal"
+      ]
+    ],
+    "center": "projected_max_margin_proposal",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "conjectured; ordinary f64 atoms are not verified enclosures",
+    "status": "available_when_full_residual_and_nonzero_eigenvalue_exist",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable for projected centres without a full KKT residual"
+  },
+  {
+    "formula_id": "bound_beta_l2__projected_max_margin_proposal__inverse_singular_residual",
+    "output_column": "bound_beta_l2__projected_max_margin_proposal__inverse_singular_residual",
+    "dependencies": [
+      [
+        "projected_max_margin_proposal.center_full_kkt_residual_norm_f64",
+        "projected_max_margin_proposal"
+      ],
+      [
+        "kkt_augmented_singular_values_f64",
+        "projected_max_margin_proposal"
+      ]
+    ],
+    "center": "projected_max_margin_proposal",
+    "exact_target": "exact_positive_witness_beta",
+    "hypothesis_status": "heuristic inverse-norm diagnostic, not a verified beta enclosure",
+    "status": "available_when_full_residual_and_positive_singular_value_exist",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable for projected centres without a full KKT residual"
+  },
+  {
+    "formula_id": "bound_q_abs__projected_max_margin_proposal__beta_radius_first_plus_quadratic",
+    "output_column": "bound_q_abs__projected_max_margin_proposal__beta_radius_first_plus_quadratic",
+    "dependencies": [
+      [
+        "bound_beta_l2__projected_max_margin_proposal__inverse_singular_residual",
+        "projected_max_margin_proposal"
+      ],
+      [
+        "qp_objective_hessian_h_f64",
+        "projected_max_margin_proposal"
+      ],
+      [
+        "projected_max_margin_proposal.center_beta_f64",
+        "projected_max_margin_proposal"
+      ]
+    ],
+    "center": "projected_max_margin_proposal",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "heuristic Q propagation from the inverse-norm radius",
+    "status": "available_when_beta-radius-is-computable",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable when the radius or centre beta is unavailable"
+  },
+  {
+    "formula_id": "interval_action__projected_max_margin_proposal__positive_q_monotone",
+    "output_column": "interval_action__projected_max_margin_proposal__positive_q_monotone",
+    "dependencies": [
+      [
+        "projected_max_margin_proposal.center_q_corrected_f64",
+        "projected_max_margin_proposal"
+      ],
+      [
+        "bound_q_abs__projected_max_margin_proposal__eigen_residual_9over2",
+        "projected_max_margin_proposal"
+      ]
+    ],
+    "center": "projected_max_margin_proposal",
+    "exact_target": "exact_positive_witness_action",
+    "hypothesis_status": "conditionally justified only if the Q bound is justified and has positive lower endpoint",
+    "status": "candidate_interval_not_verified",
+    "consumers": [
+      "selective fallback design"
+    ],
+    "unavailable_rule": "unavailable without corrected Q, candidate Q bound, and positive lower endpoint"
+  },
+  {
+    "formula_id": "predicate_beta_positive__projected_max_margin_proposal__from_radius",
+    "output_column": "predicate_beta_positive__projected_max_margin_proposal__from_radius",
+    "dependencies": [
+      [
+        "projected_max_margin_proposal.center_beta_margin_f64",
+        "projected_max_margin_proposal"
+      ],
+      [
+        "bound_beta_l2__projected_max_margin_proposal__inverse_singular_residual",
+        "projected_max_margin_proposal"
+      ]
+    ],
+    "center": "projected_max_margin_proposal",
+    "exact_target": "exact_positive_witness_status",
+    "hypothesis_status": "heuristic ternary predicate from f64 margin minus heuristic radius",
+    "status": "available_when_margin_and_radius_exist",
+    "consumers": [
+      "policy comparison"
+    ],
+    "unavailable_rule": "unavailable when either atom is unavailable"
+  },
+  {
+    "formula_id": "error_q_abs__lu_partial_pivot_proposal_q_raw__to_exact_positive_witness_q",
+    "output_column": "error_q_abs__lu_partial_pivot_proposal_q_raw__to_exact_positive_witness_q",
+    "dependencies": [
+      [
+        "lu_partial_pivot_proposal.center_q_raw_f64",
+        "lu_partial_pivot_proposal"
+      ],
+      [
+        "exact_positive_witness_q",
+        "exact_positive_witness"
+      ]
+    ],
+    "center": "lu_partial_pivot_proposal",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "observational error only",
+    "status": "available_when_matching_exact_positive_witness_exists",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable without a same-sigma exact positive-Q witness"
+  },
+  {
+    "formula_id": "bound_q_abs__lu_partial_pivot_proposal__eigen_residual_9over2",
+    "output_column": "bound_q_abs__lu_partial_pivot_proposal__eigen_residual_9over2",
+    "dependencies": [
+      [
+        "lu_partial_pivot_proposal.center_full_kkt_residual_norm_f64",
+        "lu_partial_pivot_proposal"
+      ],
+      [
+        "kkt_augmented_eigenvalues_f64",
+        "lu_partial_pivot_proposal"
+      ]
+    ],
+    "center": "lu_partial_pivot_proposal",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "conjectured; ordinary f64 atoms are not verified enclosures",
+    "status": "available_when_full_residual_and_nonzero_eigenvalue_exist",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable for projected centres without a full KKT residual"
+  },
+  {
+    "formula_id": "bound_beta_l2__lu_partial_pivot_proposal__inverse_singular_residual",
+    "output_column": "bound_beta_l2__lu_partial_pivot_proposal__inverse_singular_residual",
+    "dependencies": [
+      [
+        "lu_partial_pivot_proposal.center_full_kkt_residual_norm_f64",
+        "lu_partial_pivot_proposal"
+      ],
+      [
+        "kkt_augmented_singular_values_f64",
+        "lu_partial_pivot_proposal"
+      ]
+    ],
+    "center": "lu_partial_pivot_proposal",
+    "exact_target": "exact_positive_witness_beta",
+    "hypothesis_status": "heuristic inverse-norm diagnostic, not a verified beta enclosure",
+    "status": "available_when_full_residual_and_positive_singular_value_exist",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable for projected centres without a full KKT residual"
+  },
+  {
+    "formula_id": "bound_q_abs__lu_partial_pivot_proposal__beta_radius_first_plus_quadratic",
+    "output_column": "bound_q_abs__lu_partial_pivot_proposal__beta_radius_first_plus_quadratic",
+    "dependencies": [
+      [
+        "bound_beta_l2__lu_partial_pivot_proposal__inverse_singular_residual",
+        "lu_partial_pivot_proposal"
+      ],
+      [
+        "qp_objective_hessian_h_f64",
+        "lu_partial_pivot_proposal"
+      ],
+      [
+        "lu_partial_pivot_proposal.center_beta_f64",
+        "lu_partial_pivot_proposal"
+      ]
+    ],
+    "center": "lu_partial_pivot_proposal",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "heuristic Q propagation from the inverse-norm radius",
+    "status": "available_when_beta-radius-is-computable",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable when the radius or centre beta is unavailable"
+  },
+  {
+    "formula_id": "interval_action__lu_partial_pivot_proposal__positive_q_monotone",
+    "output_column": "interval_action__lu_partial_pivot_proposal__positive_q_monotone",
+    "dependencies": [
+      [
+        "lu_partial_pivot_proposal.center_q_corrected_f64",
+        "lu_partial_pivot_proposal"
+      ],
+      [
+        "bound_q_abs__lu_partial_pivot_proposal__eigen_residual_9over2",
+        "lu_partial_pivot_proposal"
+      ]
+    ],
+    "center": "lu_partial_pivot_proposal",
+    "exact_target": "exact_positive_witness_action",
+    "hypothesis_status": "conditionally justified only if the Q bound is justified and has positive lower endpoint",
+    "status": "candidate_interval_not_verified",
+    "consumers": [
+      "selective fallback design"
+    ],
+    "unavailable_rule": "unavailable without corrected Q, candidate Q bound, and positive lower endpoint"
+  },
+  {
+    "formula_id": "predicate_beta_positive__lu_partial_pivot_proposal__from_radius",
+    "output_column": "predicate_beta_positive__lu_partial_pivot_proposal__from_radius",
+    "dependencies": [
+      [
+        "lu_partial_pivot_proposal.center_beta_margin_f64",
+        "lu_partial_pivot_proposal"
+      ],
+      [
+        "bound_beta_l2__lu_partial_pivot_proposal__inverse_singular_residual",
+        "lu_partial_pivot_proposal"
+      ]
+    ],
+    "center": "lu_partial_pivot_proposal",
+    "exact_target": "exact_positive_witness_status",
+    "hypothesis_status": "heuristic ternary predicate from f64 margin minus heuristic radius",
+    "status": "available_when_margin_and_radius_exist",
+    "consumers": [
+      "policy comparison"
+    ],
+    "unavailable_rule": "unavailable when either atom is unavailable"
+  },
+  {
+    "formula_id": "error_q_abs__qr_proposal_q_raw__to_exact_positive_witness_q",
+    "output_column": "error_q_abs__qr_proposal_q_raw__to_exact_positive_witness_q",
+    "dependencies": [
+      [
+        "qr_proposal.center_q_raw_f64",
+        "qr_proposal"
+      ],
+      [
+        "exact_positive_witness_q",
+        "exact_positive_witness"
+      ]
+    ],
+    "center": "qr_proposal",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "observational error only",
+    "status": "available_when_matching_exact_positive_witness_exists",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable without a same-sigma exact positive-Q witness"
+  },
+  {
+    "formula_id": "bound_q_abs__qr_proposal__eigen_residual_9over2",
+    "output_column": "bound_q_abs__qr_proposal__eigen_residual_9over2",
+    "dependencies": [
+      [
+        "qr_proposal.center_full_kkt_residual_norm_f64",
+        "qr_proposal"
+      ],
+      [
+        "kkt_augmented_eigenvalues_f64",
+        "qr_proposal"
+      ]
+    ],
+    "center": "qr_proposal",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "conjectured; ordinary f64 atoms are not verified enclosures",
+    "status": "available_when_full_residual_and_nonzero_eigenvalue_exist",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable for projected centres without a full KKT residual"
+  },
+  {
+    "formula_id": "bound_beta_l2__qr_proposal__inverse_singular_residual",
+    "output_column": "bound_beta_l2__qr_proposal__inverse_singular_residual",
+    "dependencies": [
+      [
+        "qr_proposal.center_full_kkt_residual_norm_f64",
+        "qr_proposal"
+      ],
+      [
+        "kkt_augmented_singular_values_f64",
+        "qr_proposal"
+      ]
+    ],
+    "center": "qr_proposal",
+    "exact_target": "exact_positive_witness_beta",
+    "hypothesis_status": "heuristic inverse-norm diagnostic, not a verified beta enclosure",
+    "status": "available_when_full_residual_and_positive_singular_value_exist",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable for projected centres without a full KKT residual"
+  },
+  {
+    "formula_id": "bound_q_abs__qr_proposal__beta_radius_first_plus_quadratic",
+    "output_column": "bound_q_abs__qr_proposal__beta_radius_first_plus_quadratic",
+    "dependencies": [
+      [
+        "bound_beta_l2__qr_proposal__inverse_singular_residual",
+        "qr_proposal"
+      ],
+      [
+        "qp_objective_hessian_h_f64",
+        "qr_proposal"
+      ],
+      [
+        "qr_proposal.center_beta_f64",
+        "qr_proposal"
+      ]
+    ],
+    "center": "qr_proposal",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "heuristic Q propagation from the inverse-norm radius",
+    "status": "available_when_beta-radius-is-computable",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable when the radius or centre beta is unavailable"
+  },
+  {
+    "formula_id": "interval_action__qr_proposal__positive_q_monotone",
+    "output_column": "interval_action__qr_proposal__positive_q_monotone",
+    "dependencies": [
+      [
+        "qr_proposal.center_q_corrected_f64",
+        "qr_proposal"
+      ],
+      [
+        "bound_q_abs__qr_proposal__eigen_residual_9over2",
+        "qr_proposal"
+      ]
+    ],
+    "center": "qr_proposal",
+    "exact_target": "exact_positive_witness_action",
+    "hypothesis_status": "conditionally justified only if the Q bound is justified and has positive lower endpoint",
+    "status": "candidate_interval_not_verified",
+    "consumers": [
+      "selective fallback design"
+    ],
+    "unavailable_rule": "unavailable without corrected Q, candidate Q bound, and positive lower endpoint"
+  },
+  {
+    "formula_id": "predicate_beta_positive__qr_proposal__from_radius",
+    "output_column": "predicate_beta_positive__qr_proposal__from_radius",
+    "dependencies": [
+      [
+        "qr_proposal.center_beta_margin_f64",
+        "qr_proposal"
+      ],
+      [
+        "bound_beta_l2__qr_proposal__inverse_singular_residual",
+        "qr_proposal"
+      ]
+    ],
+    "center": "qr_proposal",
+    "exact_target": "exact_positive_witness_status",
+    "hypothesis_status": "heuristic ternary predicate from f64 margin minus heuristic radius",
+    "status": "available_when_margin_and_radius_exist",
+    "consumers": [
+      "policy comparison"
+    ],
+    "unavailable_rule": "unavailable when either atom is unavailable"
+  },
+  {
+    "formula_id": "error_q_abs__refined_svd_lstsq_proposal_qr_correction_q_raw__to_exact_positive_witness_q",
+    "output_column": "error_q_abs__refined_svd_lstsq_proposal_qr_correction_q_raw__to_exact_positive_witness_q",
+    "dependencies": [
+      [
+        "refined_svd_lstsq_proposal_qr_correction.center_q_raw_f64",
+        "refined_svd_lstsq_proposal_qr_correction"
+      ],
+      [
+        "exact_positive_witness_q",
+        "exact_positive_witness"
+      ]
+    ],
+    "center": "refined_svd_lstsq_proposal_qr_correction",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "observational error only",
+    "status": "available_when_matching_exact_positive_witness_exists",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable without a same-sigma exact positive-Q witness"
+  },
+  {
+    "formula_id": "bound_q_abs__refined_svd_lstsq_proposal_qr_correction__eigen_residual_9over2",
+    "output_column": "bound_q_abs__refined_svd_lstsq_proposal_qr_correction__eigen_residual_9over2",
+    "dependencies": [
+      [
+        "refined_svd_lstsq_proposal_qr_correction.center_full_kkt_residual_norm_f64",
+        "refined_svd_lstsq_proposal_qr_correction"
+      ],
+      [
+        "kkt_augmented_eigenvalues_f64",
+        "refined_svd_lstsq_proposal_qr_correction"
+      ]
+    ],
+    "center": "refined_svd_lstsq_proposal_qr_correction",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "conjectured; ordinary f64 atoms are not verified enclosures",
+    "status": "available_when_full_residual_and_nonzero_eigenvalue_exist",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable for projected centres without a full KKT residual"
+  },
+  {
+    "formula_id": "bound_beta_l2__refined_svd_lstsq_proposal_qr_correction__inverse_singular_residual",
+    "output_column": "bound_beta_l2__refined_svd_lstsq_proposal_qr_correction__inverse_singular_residual",
+    "dependencies": [
+      [
+        "refined_svd_lstsq_proposal_qr_correction.center_full_kkt_residual_norm_f64",
+        "refined_svd_lstsq_proposal_qr_correction"
+      ],
+      [
+        "kkt_augmented_singular_values_f64",
+        "refined_svd_lstsq_proposal_qr_correction"
+      ]
+    ],
+    "center": "refined_svd_lstsq_proposal_qr_correction",
+    "exact_target": "exact_positive_witness_beta",
+    "hypothesis_status": "heuristic inverse-norm diagnostic, not a verified beta enclosure",
+    "status": "available_when_full_residual_and_positive_singular_value_exist",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable for projected centres without a full KKT residual"
+  },
+  {
+    "formula_id": "bound_q_abs__refined_svd_lstsq_proposal_qr_correction__beta_radius_first_plus_quadratic",
+    "output_column": "bound_q_abs__refined_svd_lstsq_proposal_qr_correction__beta_radius_first_plus_quadratic",
+    "dependencies": [
+      [
+        "bound_beta_l2__refined_svd_lstsq_proposal_qr_correction__inverse_singular_residual",
+        "refined_svd_lstsq_proposal_qr_correction"
+      ],
+      [
+        "qp_objective_hessian_h_f64",
+        "refined_svd_lstsq_proposal_qr_correction"
+      ],
+      [
+        "refined_svd_lstsq_proposal_qr_correction.center_beta_f64",
+        "refined_svd_lstsq_proposal_qr_correction"
+      ]
+    ],
+    "center": "refined_svd_lstsq_proposal_qr_correction",
+    "exact_target": "exact_positive_witness_q",
+    "hypothesis_status": "heuristic Q propagation from the inverse-norm radius",
+    "status": "available_when_beta-radius-is-computable",
+    "consumers": [
+      "soundness analyzer"
+    ],
+    "unavailable_rule": "unavailable when the radius or centre beta is unavailable"
+  },
+  {
+    "formula_id": "interval_action__refined_svd_lstsq_proposal_qr_correction__positive_q_monotone",
+    "output_column": "interval_action__refined_svd_lstsq_proposal_qr_correction__positive_q_monotone",
+    "dependencies": [
+      [
+        "refined_svd_lstsq_proposal_qr_correction.center_q_corrected_f64",
+        "refined_svd_lstsq_proposal_qr_correction"
+      ],
+      [
+        "bound_q_abs__refined_svd_lstsq_proposal_qr_correction__eigen_residual_9over2",
+        "refined_svd_lstsq_proposal_qr_correction"
+      ]
+    ],
+    "center": "refined_svd_lstsq_proposal_qr_correction",
+    "exact_target": "exact_positive_witness_action",
+    "hypothesis_status": "conditionally justified only if the Q bound is justified and has positive lower endpoint",
+    "status": "candidate_interval_not_verified",
+    "consumers": [
+      "selective fallback design"
+    ],
+    "unavailable_rule": "unavailable without corrected Q, candidate Q bound, and positive lower endpoint"
+  },
+  {
+    "formula_id": "predicate_beta_positive__refined_svd_lstsq_proposal_qr_correction__from_radius",
+    "output_column": "predicate_beta_positive__refined_svd_lstsq_proposal_qr_correction__from_radius",
+    "dependencies": [
+      [
+        "refined_svd_lstsq_proposal_qr_correction.center_beta_margin_f64",
+        "refined_svd_lstsq_proposal_qr_correction"
+      ],
+      [
+        "bound_beta_l2__refined_svd_lstsq_proposal_qr_correction__inverse_singular_residual",
+        "refined_svd_lstsq_proposal_qr_correction"
+      ]
+    ],
+    "center": "refined_svd_lstsq_proposal_qr_correction",
+    "exact_target": "exact_positive_witness_status",
+    "hypothesis_status": "heuristic ternary predicate from f64 margin minus heuristic radius",
+    "status": "available_when_margin_and_radius_exist",
+    "consumers": [
+      "policy comparison"
+    ],
+    "unavailable_rule": "unavailable when either atom is unavailable"
+  }
+]
