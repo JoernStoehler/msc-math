@@ -1,0 +1,20 @@
+{
+  "packet_version": "ams-readiness-smoke-v1",
+  "master_seed": 202607150101,
+  "replicate": 0,
+  "initial_particles": 16,
+  "levels": 2,
+  "survivors_per_level": 8,
+  "clones_per_level": 8,
+  "mutation_steps_per_clone": 2,
+  "iid_requests": 16,
+  "construction_retry_cap": 64,
+  "abort_wall_time_seconds": 600,
+  "gap_logit_scale": 0.08,
+  "centered_log_radius_scale": 0.04,
+  "phase_scale": 0.08,
+  "tie_rule": "sys_desc_candidate_id_asc",
+  "clone_assignment": "seeded_uniform_with_replacement",
+  "acceptance_rule": "successful_sys_at_least_frozen_level_threshold",
+  "factor_exchange_quotiented": false
+}
