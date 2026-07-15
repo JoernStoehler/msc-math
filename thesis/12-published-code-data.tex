@@ -1,29 +1,86 @@
-\section{Published Code And Data}\label{sec:published-code-data}
+\section{Availability of Code and Data}\label{sec:published-code-data}
 
-\subsection{Exact certificate packets}
+Several results in this thesis depend on computation, but not all in the same
+way.  For a future researcher, the important question is therefore not how the
+project repository is organized.  It is which mathematical evidence remains
+available after completion of the thesis, what can be checked or developed
+from it, and which parts of the research process are not preserved.  The
+published material is intended to support three uses: auditing the exact finite
+calculations, re-examining the empirical observations, and continuing the
+computational investigation.
 
-The theorem-facing SageMath sources and their retained generated records are
-stored with their owning computations.  The repository and archive locations
-will be added when the thesis release is fixed; the paths below are relative to
-the repository root:
-\begin{itemize}
-  \item HKO:
-    \par{\small\path{experiments/hko-local-maximum/theorem/}};
-  \item rotated pentagons:
-    \par{\small\path{experiments/regular-products/pentagon-rotation-formula-proof/}}.
-\end{itemize}
-The HKO verifier uses explicit exceptions for every proof-facing check; the
-rotated-pentagon executable uses ordinary Python assertions and must therefore
-be run without Python optimization.  The packet READMEs give the rerun entry
-points.  The retained HKO records are
-\begin{itemize}
-  \item \path{witness.json}, the Rust-generated verifier input, which is not
-    proof-facing by itself;
-  \item \path{verification-summary.json}, the SageMath verifier output.
-\end{itemize}
-The retained rotated-pentagon record is
-\path{executable_proof.full.stdout.txt}.  These records do not embed a source
-digest or a complete SageMath environment identity, so each packet must be
-checked by rerunning the current source rather than treating its records as
-self-authenticating artifacts.  The pentagon record includes elapsed time and
-is not expected to reproduce byte-for-byte.
+For the theorem-bearing calculations, the release contains the complete
+SageMath verifiers and their recorded outputs for the HKO local-maximum result
+and the rotated-pentagon formula.  The HKO material also contains the finite
+witness input.  A retained Rust program produces these finite choices, while
+the SageMath verifier reconstructs the proof-facing algebraic objects and
+checks the exact certificate.  The theorem therefore does not require trusting
+the search procedure that found those choices.  For the rotated-pentagon
+result, the retained SageMath program performs the exact finite classification
+left after the mathematical reduction in
+Section~\ref{sec:rotated-regular-polygons}.  These programs and their recorded
+outputs do not replace the arguments in the thesis: the mathematical meaning
+of the checked predicates and their implication for the theorems are given in
+the corresponding result sections.  They make the finite parts of those
+arguments available for direct re-execution and inspection.
+
+The empirical material is retained for a different reason.  The release
+contains the random/product data underlying the bounded data-science search,
+together with row provenance and the derived feature table.  It also contains
+the selected and evaluated rows from the frozen generated-candidate
+experiment, and the twelve-run panel used to assess the first-order ascent
+method.  Keeping these data allows another researcher to inspect individual
+examples, repeat the reported analyses, compare alternative methods on the
+same inputs, or use the samples as a starting point for a broader search
+without first repeating the expensive production runs.
+
+Availability does not strengthen the conclusions drawn from these data.  The
+random/product table remains a finite sample from the distributions specified
+in Section~\ref{sec:black-box-datascience}; it does not represent all random
+polytopes or all Lagrangian products.  The generated-candidate records support
+the stated experiment for one generator and frozen rule set, not a general
+candidate-selection theorem.  The first-order panel records finite-step
+improvement on twelve fixed starts, while its unfinished trajectories provide
+no endpoint or local-maximality evidence.  Where a project-owned thesis figure
+comes from an experiment, its source data and producer are retained so that the
+figure can be inspected or regenerated.  This does not make an exploratory
+figure part of a proof.
+
+The release also preserves the Rust libraries, experiment producers and
+analyzers, thesis sources, formal notes, documentation, and environment
+definitions.  These materials go beyond checking the displayed
+results: they allow later work to change an analysis, extend a sample, test a
+new search method, or rebuild the thesis from its sources.  GitHub is the
+living continuation repository and may change after submission:
+\begin{center}
+  \url{https://github.com/JoernStoehler/msc-math}.
+\end{center}
+Its frozen counterpart is a single Zenodo archive containing the reviewed
+release state together with the checked thesis PDF.  Large data stored through
+Git LFS appear in that archive as ordinary hydrated files, so access to the
+frozen data does not depend on retrieving separate LFS objects.
+
+The archive is deliberately selective rather than a complete record of every
+computation or of the research process.  It excludes private material, raw
+agent sessions, disposable outputs, and third-party material that cannot be
+redistributed.  Some large intermediate caches are also omitted when they have
+no independent interpretive value and can be regenerated from the retained
+source and inputs.  Project software is made available under Apache-2.0, while
+Jörn-owned thesis and research text, original figures, documentation, and
+project-generated data are made available under CC BY~4.0.  These licenses do
+not relicense third-party material.
+
+Finally, availability is weaker than a promise of identical execution in every
+future environment.  Exact verifier reruns are compared through the predicates
+they check.  Retained datasets have explicit identities, whereas empirical
+outputs containing timings or environment-dependent fields need not reproduce
+byte for byte.  A small smoke run can show that a computational route still
+connects, but it cannot replace either a full retained dataset or an exact
+certificate.  Detailed access, build, and rerun instructions are kept with the
+repository and the experiment that owns each result rather than repeated in
+the thesis.
+
+\begin{quote}
+\textbf{Frozen release.}  Zenodo DOI and record URL:
+\textbf{TODO at archive publication}.
+\end{quote}
