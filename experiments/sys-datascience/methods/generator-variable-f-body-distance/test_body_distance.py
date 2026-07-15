@@ -20,6 +20,9 @@ def test_reconstruction_boundary() -> None:
     try: mod.reconstruct_body("vertex_touch",mod.cube_normals()+[["1/4"]*4])
     except mod.ReconstructionError as exc: assert "nonfacet" in str(exc)
     else: raise AssertionError("vertex-touching redundant inequality accepted")
+    try: mod.reconstruct_body("unbounded",mod.unbounded_counterexample_normals())
+    except mod.ReconstructionError as exc: assert "unbounded recession witness" in str(exc)
+    else: raise AssertionError("full-dimensional irredundant unbounded presentation accepted")
 
 def test_packet_controls_and_cross_f() -> None:
     report=mod.run_packet(ROOT/"experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl",ROOT/"experiments/sys-datascience/methods/generator-exact-feature-augmenter/artifacts/full-panels/tangential-replay/smoke-rows.jsonl")
@@ -31,6 +34,11 @@ def test_packet_controls_and_cross_f() -> None:
     assert axis <= .51*fine and fine>1e-4
     translated_scaled=cases["translation_positive_scale"]["direct_sampled"]["primitive_level_3"]
     assert translated_scaled["linf"]<1e-12 and translated_scaled["l2"]<1e-12
+    objective_fixture=cases["retained_exact_feature_witness"]
+    for group in ("u2_finite_bank","so4_finite_bank"):
+        values=objective_fixture[group]
+        assert values["linf_winning_index"]!=values["l2_winning_index"]
+        assert values["linf_min"] < .615 and values["l2_min"] > 0
 
 def test_staged_dependency_rejects_clean_guard() -> None:
     with tempfile.TemporaryDirectory() as directory:

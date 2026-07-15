@@ -54,9 +54,43 @@ def exact_rank(rows: Sequence[Sequence[Fraction]])->int:
         rank+=1
         if rank==len(w):break
     return rank
+def null_vector(rows: Sequence[Sequence[Fraction]])->tuple[Fraction,...]|None:
+    """A nonzero exact null vector for any rank-deficient rational row matrix."""
+    w=[list(row) for row in rows]; pivots=[]; rank=0
+    for c in range(DIM):
+        pivot=next((r for r in range(rank,len(w)) if w[r][c]),None)
+        if pivot is None:continue
+        w[rank],w[pivot]=w[pivot],w[rank]; d=w[rank][c];w[rank]=[x/d for x in w[rank]]
+        for r in range(len(w)):
+            if r!=rank and w[r][c]:
+                f=w[r][c];w[r]=[x-f*y for x,y in zip(w[r],w[rank])]
+        pivots.append(c);rank+=1
+    if rank>=DIM:return None
+    free=next(c for c in range(DIM) if c not in pivots); out=[Fraction() for _ in range(DIM)];out[free]=Fraction(1)
+    for row,pivot in enumerate(pivots):out[pivot]=-w[row][free]
+    return tuple(out)
+def recession_witness(normals:Sequence[Sequence[Fraction]])->tuple[Fraction,...]|None:
+    """Return an exact nonzero d with a_i.d<=0, or certify the 4D cone is trivial.
+
+    If the normals do not span R^4, an exact null vector gives a recession
+    line. Otherwise a nontrivial pointed polyhedral recession cone has an
+    extreme ray, determined by three independent active inequalities.
+    """
+    if exact_rank(normals)<DIM:
+        candidate=null_vector(normals)
+        if candidate is not None:return candidate
+        raise ReconstructionError("could not construct rank-deficient recession witness")
+    for rows in itertools.combinations(normals,DIM-1):
+        candidate=null_vector(rows)
+        if candidate is None:continue
+        for signed in (candidate,tuple(-value for value in candidate)):
+            if all(dot(normal,signed)<=0 for normal in normals):return signed
+    return None
 def reconstruct_body(name: str, values: Sequence[Sequence[str|int|float|Fraction]])->Body:
     """Exact reconstruction of a_i.x<=1; reject redundant/unbounded inputs."""
     n=normals_of(values); vertices=set(); joins=0
+    witness=recession_witness(n)
+    if witness is not None:raise ReconstructionError(f"unbounded recession witness: {[str(value) for value in witness]}")
     for idx in itertools.combinations(range(len(n)),DIM):
         joins+=1; v=solve([n[i] for i in idx])
         if v is not None and all(dot(a,v)<=1 for a in n):vertices.add(v)
@@ -106,9 +140,11 @@ def u2_banks()->tuple[list[np.ndarray],list[np.ndarray]]:
     coarse=[m(p,h) for p in itertools.permutations((0,1)) for h in itertools.product((0,2),repeat=2)]
     fine=[m(p,h) for p in itertools.permutations((0,1)) for h in itertools.product((0,1,2,3),repeat=2)]
     return coarse,fine
-def finite_bank(left:Body,right:Body,directions:np.ndarray,bank:Iterable[np.ndarray])->tuple[float,float,int]:
+def finite_bank(left:Body,right:Body,directions:np.ndarray,bank:Iterable[np.ndarray])->dict[str,float|int]:
     a=canonical(left); values=[dist(a,canonical(right,m),directions) for m in bank]
-    i,v=min(enumerate(values),key=lambda q:(q[1][1],q[1][0],q[0]));return v[0],v[1],i
+    linf_index,linf_value=min(enumerate(values),key=lambda q:(q[1][0],q[1][1],q[0]))
+    l2_index,l2_value=min(enumerate(values),key=lambda q:(q[1][1],q[1][0],q[0]))
+    return {"linf_min":linf_value[0],"linf_winning_index":linf_index,"l2_min":l2_value[1],"l2_winning_index":l2_index}
 def symplectic_gram(left:Body,right:Body)->float|None:
     if len(left.normals)!=len(right.normals) or len(left.normals)>8:return None
     j=np.asarray(((0.,0.,1.,0.),(0.,0.,0.,1.),(-1.,0.,0.,0.),(0.,-1.,0.,0.)))
@@ -121,6 +157,14 @@ def cube_normals()->list[list[str]]:
         for s in (-1,1):
             r=["0"]*4;r[i]=str(s);out.append(r)
     return out
+def unbounded_counterexample_normals()->list[list[str]]:
+    """Exact irredundant full-dimensional unbounded box-with-one-cap presentation.
+
+    Before the recession-cone guard this passed vertex/facet reconstruction:
+    ``x1<=1`` together with a bounded three-dimensional box in x2,x3,x4.
+    The ray ``(-1,0,0,0)`` is a recession witness.
+    """
+    return [["1","0","0","0"],["0","1","0","0"],["0","-1","0","0"],["0","0","1","0"],["0","0","-1","0"],["0","0","0","1"],["0","0","0","-1"]]
 def ball_normals()->list[list[str]]:
     out=cube_normals()
     for i,j in ((0,1),(2,3)):
@@ -151,6 +195,9 @@ def synthetic()->tuple[dict[str,Body],dict[str,str]]:
         try:reconstruct_body(name,cube+[extra])
         except ReconstructionError as e:dispositions[name]=f"fail_closed:{e}"
         else:raise AssertionError("redundant cube presentation accepted")
+    try:reconstruct_body("synthetic:unbounded_box_with_cap",unbounded_counterexample_normals())
+    except ReconstructionError as e:dispositions["synthetic:unbounded_box_with_cap"]=f"fail_closed:{e}"
+    else:raise AssertionError("unbounded presentation accepted")
     return bodies,dispositions
 def load_jsonl(path:Path)->tuple[list[dict[str,Any]],str]:
     raw=path.read_bytes()
@@ -174,7 +221,7 @@ def compare(name:str,left:Body,right:Body,directions:dict[str,np.ndarray],u2:tup
     started=time.perf_counter();direct={k:dist(canonical(left),canonical(right),v) for k,v in directions.items()}
     uc,uf=finite_bank(left,right,directions["primitive_level_3"],u2[0]),finite_bank(left,right,directions["primitive_level_3"],u2[1])
     sc,sf=finite_bank(left,right,directions["primitive_level_3"],so4[0]),finite_bank(left,right,directions["primitive_level_3"],so4[1])
-    return {"case":name,"left":left.name,"right":right.name,"left_facets":len(left.normals),"right_facets":len(right.normals),"direct_sampled":{k:{"linf":v[0],"l2":v[1]} for k,v in direct.items()},"u2_finite_bank":{"linf":uf[0],"l2":uf[1],"bank_size":len(u2[1]),"winning_index":uf[2]},"so4_finite_bank":{"linf":sf[0],"l2":sf[1],"bank_size":len(so4[1]),"winning_index":sf[2]},"residuals":{"direct_direction_refinement_abs_linf":abs(direct["primitive_level_3"][0]-direct["primitive_level_2"][0]),"direct_direction_refinement_abs_l2":abs(direct["primitive_level_3"][1]-direct["primitive_level_2"][1]),"u2_finite_bank_search_refinement_abs_linf":abs(uf[0]-uc[0]),"u2_finite_bank_search_refinement_abs_l2":abs(uf[1]-uc[1]),"so4_finite_bank_search_refinement_abs_linf":abs(sf[0]-sc[0]),"so4_finite_bank_search_refinement_abs_l2":abs(sf[1]-sc[1])},"cost_observation_seconds":time.perf_counter()-started}
+    return {"case":name,"left":left.name,"right":right.name,"left_facets":len(left.normals),"right_facets":len(right.normals),"direct_sampled":{k:{"linf":v[0],"l2":v[1]} for k,v in direct.items()},"u2_finite_bank":{**uf,"bank_size":len(u2[1])},"so4_finite_bank":{**sf,"bank_size":len(so4[1])},"residuals":{"direct_direction_refinement_abs_linf":abs(direct["primitive_level_3"][0]-direct["primitive_level_2"][0]),"direct_direction_refinement_abs_l2":abs(direct["primitive_level_3"][1]-direct["primitive_level_2"][1]),"u2_finite_bank_search_refinement_abs_linf":abs(uf["linf_min"]-uc["linf_min"]),"u2_finite_bank_search_refinement_abs_l2":abs(uf["l2_min"]-uc["l2_min"]),"so4_finite_bank_search_refinement_abs_linf":abs(sf["linf_min"]-sc["linf_min"]),"so4_finite_bank_search_refinement_abs_l2":abs(sf["l2_min"]-sc["l2_min"])},"cost_observation_seconds":time.perf_counter()-started}
 
 def run_packet(orientation:Path,feature:Path)->dict[str,Any]:
     directions={"axis_only":AXES,"primitive_level_1":primitive_directions(1),"primitive_level_2":primitive_directions(2),"primitive_level_3":primitive_directions(3)};u2,so4=u2_banks(),so4_banks(); started=time.perf_counter();bodies,dispositions=synthetic(); synthetic_reconstruction_seconds=time.perf_counter()-started
@@ -188,13 +235,14 @@ def run_packet(orientation:Path,feature:Path)->dict[str,Any]:
     cases += [("retained_orientation_u2",base,ub),("retained_orientation_so4",base,sb),("retained_exact_feature_witness",base,fb)]
     comparisons=[compare(*case,directions,u2,so4) for case in cases];narrow=next(x for x in comparisons if x["case"]=="adversarial_narrow_feature");perm=next(x for x in comparisons if x["case"]=="identity_permuted_presentation");translated_scaled=next(x for x in comparisons if x["case"]=="translation_positive_scale")
     fixed={"source":"copy-local bounded direct symplectic-Gram permutation quotient on six normalized dual facets","orientation_identity_vs_u2":symplectic_gram(base,ub),"orientation_identity_vs_so4":symplectic_gram(base,sb),"selected_ids":{"identity":bn,"u2":un,"so4":sn,"exact_feature":fn}}
-    controls={"permuted_presentation_zero":perm["direct_sampled"]["primitive_level_3"]["linf"]<1e-12,"translation_positive_scale_zero":translated_scaled["direct_sampled"]["primitive_level_3"]["linf"]<1e-12,"redundant_presentations_fail_closed":all(value.startswith("fail_closed:") for value in dispositions.values()),"narrow_feature_axis_grid_understates_linf":narrow["direct_sampled"]["axis_only"]["linf"] <= .51*narrow["direct_sampled"]["primitive_level_3"]["linf"],"narrow_feature_primitive_grid_detected":narrow["direct_sampled"]["primitive_level_3"]["linf"]>1e-4,"fixed_f_u2_gram_zero":fixed["orientation_identity_vs_u2"]<1e-10,"fixed_f_so4_gram_positive":fixed["orientation_identity_vs_so4"]>1e-4}
-    return {"schema":SCHEMA,"target_free":True,"coordinate_order":"q1,q2,p1,p2","method_contract":{"input":"irredundant normalized dual inequalities a_i.x <= 1; exact reconstruction fails closed on invalid/redundant/unreconstructable inputs","normalization":"subtract arithmetic mean of reconstructed vertices and divide by RMS vertex radius: translation and positive global-scale quotient only","direct":"direct_sampled support L_infinity (sampled Hausdorff surrogate) and L2, neither exact Hausdorff","directions":"axis-only plus antipodally complete normalized primitive integer S^3 directions, max coordinate 1/2/3; level 3 primary","groups":"u2_finite_bank: 32 monomial-unitary maps; so4_finite_bank: 192 orientation-preserving signed permutations; neither is a compact-group infimum/Haar integration","no_sp4":"Sp(4) is noncompact and intentionally is not sampled as Haar probability"},"direction_designs":{k:len(v) for k,v in directions.items()},"finite_banks":{"u2_coarse":len(u2[0]),"u2_fine":len(u2[1]),"so4_coarse":len(so4[0]),"so4_fine":len(so4[1])},"reconstruction":{k:{"facets":len(v.normals),"vertices":v.exact_vertex_count,"four_facet_joins_checked":v.combination_count} for k,v in bodies.items()},"cost_observations_seconds":{"synthetic_reconstruction":synthetic_reconstruction_seconds,"orientation_reconstruction":orientation_reconstruction_seconds,"exact_feature_reconstruction":feature_reconstruction_seconds},"presentation_dispositions":dispositions,"comparisons":comparisons,"fixed_f_direct_view":fixed,"controls":controls,"provenance":{"input_exactness":{"synthetic":"Synthetic normals and the translation/positive-scale calibration are authored as exact rationals.","retained_orientation_and_feature":"Rational strings are parsed and reconstructed exactly in this packet. Where upstream producers rationalized f64 geometry, that rationalization remains the source approximation; exact downstream arithmetic does not upgrade it to exact originating geometry."},"orientation_input":{"path":rel(orientation),"sha256":oh,"rows":len(orows),"accepted_reconstructed_rows":len(obs)},"exact_feature_input":{"path":rel(feature),"sha256":fh,"rows":len(frows),"accepted_target_free_geometry_rows":len(fbs)},"synthetic_definitions":"exact rational normalized inequalities embedded in body_distance.py"},"interpretation":{"answerable_cross_f":"Direct normalized body-shape differences, including facet birth/death, under the stated Euclidean translation/scale convention.","invisible_distinctions":"No symplectic-equivalence, combinatorial-type, exact-Hausdorff, or continuous-U(2)/SO(4)-quotient claim; finite directions can miss features.","deferrals":["normalized surface-area-measure transport: no transport/certificate contract selected","directed symplectic containment gauge: not implemented; would remain a dissimilarity pending metric/computation facts"]}}
+    feature_case=next(x for x in comparisons if x["case"]=="retained_exact_feature_witness")
+    controls={"permuted_presentation_zero":perm["direct_sampled"]["primitive_level_3"]["linf"]<1e-12,"translation_positive_scale_zero":translated_scaled["direct_sampled"]["primitive_level_3"]["linf"]<1e-12,"redundant_presentations_fail_closed":all(value.startswith("fail_closed:") for value in dispositions.values()),"unbounded_presentation_fail_closed":dispositions["synthetic:unbounded_box_with_cap"].startswith("fail_closed:unbounded recession witness:"),"narrow_feature_axis_grid_understates_linf":narrow["direct_sampled"]["axis_only"]["linf"] <= .51*narrow["direct_sampled"]["primitive_level_3"]["linf"],"narrow_feature_primitive_grid_detected":narrow["direct_sampled"]["primitive_level_3"]["linf"]>1e-4,"finite_bank_objective_winners_differ":feature_case["u2_finite_bank"]["linf_winning_index"]!=feature_case["u2_finite_bank"]["l2_winning_index"],"fixed_f_u2_gram_zero":fixed["orientation_identity_vs_u2"]<1e-10,"fixed_f_so4_gram_positive":fixed["orientation_identity_vs_so4"]>1e-4}
+    return {"schema":SCHEMA,"target_free":True,"coordinate_order":"q1,q2,p1,p2","method_contract":{"input":"irredundant normalized dual inequalities a_i.x <= 1; exact reconstruction fails closed on invalid/redundant/unreconstructable/unbounded inputs by an exact recession-cone witness","normalization":"subtract arithmetic mean of reconstructed vertices and divide by RMS vertex radius: translation and positive global-scale quotient only","direct":"direct_sampled support L_infinity (sampled Hausdorff surrogate) and L2, neither exact Hausdorff","directions":"axis-only plus antipodally complete normalized primitive integer S^3 directions, max coordinate 1/2/3; level 3 primary","groups":"u2_finite_bank: 32 monomial-unitary maps; so4_finite_bank: 192 orientation-preserving signed permutations. Each records independently minimized linf_min and l2_min with separate winning indices; neither is a compact-group infimum/Haar integration","no_sp4":"Sp(4) is noncompact and intentionally is not sampled as Haar probability"},"direction_designs":{k:len(v) for k,v in directions.items()},"finite_banks":{"u2_coarse":len(u2[0]),"u2_fine":len(u2[1]),"so4_coarse":len(so4[0]),"so4_fine":len(so4[1])},"reconstruction":{k:{"facets":len(v.normals),"vertices":v.exact_vertex_count,"four_facet_joins_checked":v.combination_count} for k,v in bodies.items()},"cost_observations_seconds":{"synthetic_reconstruction":synthetic_reconstruction_seconds,"orientation_reconstruction":orientation_reconstruction_seconds,"exact_feature_reconstruction":feature_reconstruction_seconds},"presentation_dispositions":dispositions,"comparisons":comparisons,"fixed_f_direct_view":fixed,"controls":controls,"provenance":{"input_exactness":{"synthetic":"Synthetic normals and the translation/positive-scale calibration are authored as exact rationals.","retained_orientation_and_feature":"Rational strings are parsed and reconstructed exactly in this packet. Where upstream producers rationalized f64 geometry, that rationalization remains the source approximation; exact downstream arithmetic does not upgrade it to exact originating geometry."},"orientation_input":{"path":rel(orientation),"sha256":oh,"rows":len(orows),"accepted_reconstructed_rows":len(obs)},"exact_feature_input":{"path":rel(feature),"sha256":fh,"rows":len(frows),"accepted_target_free_geometry_rows":len(fbs)},"synthetic_definitions":"exact rational normalized inequalities embedded in body_distance.py"},"interpretation":{"answerable_cross_f":"Direct normalized body-shape differences, including facet birth/death, under the stated Euclidean translation/scale convention.","invisible_distinctions":"No symplectic-equivalence, combinatorial-type, exact-Hausdorff, or continuous-U(2)/SO(4)-quotient claim; finite directions can miss features.","deferrals":["normalized surface-area-measure transport: no transport/certificate contract selected","directed symplectic containment gauge: not implemented; would remain a dissimilarity pending metric/computation facts"]}}
 
 def table(report:dict[str,Any])->list[dict[str,Any]]:
     out=[]
     for x in report["comparisons"]:
-        d=x["direct_sampled"];r=x["residuals"];out.append({"case":x["case"],"left_facets":x["left_facets"],"right_facets":x["right_facets"],"direct_sampled_linf":d["primitive_level_3"]["linf"],"direct_sampled_l2":d["primitive_level_3"]["l2"],"u2_finite_bank_linf":x["u2_finite_bank"]["linf"],"u2_finite_bank_l2":x["u2_finite_bank"]["l2"],"so4_finite_bank_linf":x["so4_finite_bank"]["linf"],"so4_finite_bank_l2":x["so4_finite_bank"]["l2"],"direction_refinement_l2":r["direct_direction_refinement_abs_l2"],"u2_search_refinement_l2":r["u2_finite_bank_search_refinement_abs_l2"],"so4_search_refinement_l2":r["so4_finite_bank_search_refinement_abs_l2"]})
+        d=x["direct_sampled"];r=x["residuals"];out.append({"case":x["case"],"left_facets":x["left_facets"],"right_facets":x["right_facets"],"direct_sampled_linf":d["primitive_level_3"]["linf"],"direct_sampled_l2":d["primitive_level_3"]["l2"],"u2_finite_bank_linf_min":x["u2_finite_bank"]["linf_min"],"u2_finite_bank_l2_min":x["u2_finite_bank"]["l2_min"],"so4_finite_bank_linf_min":x["so4_finite_bank"]["linf_min"],"so4_finite_bank_l2_min":x["so4_finite_bank"]["l2_min"],"direction_refinement_l2":r["direct_direction_refinement_abs_l2"],"u2_search_refinement_l2":r["u2_finite_bank_search_refinement_abs_l2"],"so4_search_refinement_l2":r["so4_finite_bank_search_refinement_abs_l2"]})
     return out
 def git_state(root:Path)->dict[str,Any]:
     """Whole-worktree tracked-state witness; includes staged changes, excludes untracked outputs."""
