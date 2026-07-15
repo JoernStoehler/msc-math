@@ -1,13 +1,13 @@
 feature	interpretation	pooled_n	population_label_eta_squared	side_count
 log_perimeter	descriptive label confounding, not a mechanism claim	160	0.2946776641064859	3
-width_ratio	descriptive label confounding, not a mechanism claim	160	0.05895785190281868	3
+covariance_anisotropy	descriptive label confounding, not a mechanism claim	160	0.04665929711989749	3
 radial_rms	descriptive label confounding, not a mechanism claim	160	0.16500004994634368	3
 angle_gap_cv	descriptive label confounding, not a mechanism claim	160	0.5964827846490349	3
 log_perimeter	descriptive label confounding, not a mechanism claim	192	0.28512297779546125	4
-width_ratio	descriptive label confounding, not a mechanism claim	192	0.25646996504672726	4
+covariance_anisotropy	descriptive label confounding, not a mechanism claim	192	0.03678988776467692	4
 radial_rms	descriptive label confounding, not a mechanism claim	192	0.09380523418796204	4
 angle_gap_cv	descriptive label confounding, not a mechanism claim	192	0.6305110225202344	4
 log_perimeter	descriptive label confounding, not a mechanism claim	192	0.2651346004045703	6
-width_ratio	descriptive label confounding, not a mechanism claim	192	0.21060579672196775	6
+covariance_anisotropy	descriptive label confounding, not a mechanism claim	192	0.039091266225170125	6
 radial_rms	descriptive label confounding, not a mechanism claim	192	0.12631558806706567	6
 angle_gap_cv	descriptive label confounding, not a mechanism claim	192	0.7502919297374882	6

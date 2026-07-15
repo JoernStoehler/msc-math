@@ -1,6 +1,7 @@
 {
   "configuration": {
     "distance_approximation": "declared-grid circular correlation; focused continuous-refinement copy remains in shape_quality.py",
+    "feature_contract": "covariance_anisotropy is the ratio of eigenvalues of centered vertex covariance and is rotation/translation/scale invariant",
     "saturation_levels": [
       4,
       8,
@@ -11,15 +12,9 @@
     "steiner_grid": 1024,
     "support_grid": 64
   },
-  "exact_linkage": {
-    "contract": "Exact-product rows calibrate the geometry-only strata; their IDs do not match the larger factor-only panel.",
-    "individual_row_linkage": false,
-    "linkage_kind": "population-and-side-count stratum only",
-    "per_population_side_count": 2,
-    "retained_rows": 44,
-    "source": "/workspaces/msc-math/.worktrees/generator-transfer/experiments/sys-datascience/methods/generator-zoo-smoke/artifacts/factor-shapes.jsonl",
-    "source_sha256": "4622400be1220f11f742a4bde29273fe45dcd4c8d27044d716059c429630d7a8",
-    "target_evaluation": false
+  "implementation_hashes": {
+    "atlas_py_sha256": "e49702c2fd6dab003fe491bbcd30f8e79123659488a923e6d3bf7f5a4bc65225",
+    "shape_quality_py_sha256": "782cf59250d7ca4fc24d73e48dd26948390974d47611a0d9d8b1deafa7888195"
   },
   "input": "artifacts/panel/factor-shapes.jsonl",
   "input_schema": "factor-shape-row-v1",
@@ -32,7 +27,7 @@
     "prohibited": [
       "global quality ranking or combined score",
       "natural-law probabilities, population generalization, causal mechanism, or sys/target prediction",
-      "individual linkage between geometry-only and exact-subset rows"
+      "individual linkage between geometry-only and source exact-validation witness rows"
     ]
   },
   "populations": [
@@ -45,6 +40,18 @@
     "repulsive-gap[regular]",
     "zonogon[lengths=uniform(0.5,1.5)]"
   ],
+  "producer_provenance": {
+    "build_contract": "cargo build --release --locked --package exp-sys-landscape --bin sys-datascience-generator-zoo-smoke at source_revision, with the source blobs and Cargo.lock above",
+    "dirty_scope": "producer reports separately record source_dirty for generator-zoo-smoke/main.rs and experiments/sys-landscape/Cargo.toml",
+    "executable_path_at_capture": "/workspaces/msc-math/.worktrees/generator-transfer/target/release/sys-datascience-generator-zoo-smoke",
+    "executable_sha256": "ca960d4ed2069e3bf2060e8d76f206ed39c0b2590d533cd88641676896d657a6",
+    "source_blobs": {
+      "Cargo.lock": "8a51ae91187fdbc44c1539ddebf598feedd27b91",
+      "experiments/sys-datascience/methods/generator-zoo-smoke/main.rs": "ea59cb1b3d123e630fdc034a95f4a2a43812b0a6",
+      "experiments/sys-landscape/Cargo.toml": "a8efcf2366bcc08c5317d33926f44579727fbf31"
+    },
+    "source_revision": "fd9c3e7df08d8c9d04491b8ebbb7b2628d2df32e"
+  },
   "producer_reports": [
     {
       "path": "artifacts/panel/core-report.json",
@@ -55,6 +62,7 @@
       "sha256": "41f25de0fec6a4d6e424ecf196c155026ee0c0b89b2dcf3246181417c2f9ca13"
     }
   ],
+  "provenance_artifact": "artifacts/panel/provenance.json",
   "rank_uncertainty": {
     "cheap_calibration": "feature covariance spectrum, quantile-range overlap, label eta-squared, and deterministic saturation diagnostics are included; they are not uncertainty estimates.",
     "pilot_selection_confirmation": "deferred",
@@ -68,6 +76,16 @@
     4,
     6
   ],
+  "source_exact_validation_witness": {
+    "contract": "Source exact-validation witness rows calibrate the geometry-only strata; they are not a subset of the new panel and their IDs do not match it.",
+    "individual_row_linkage": false,
+    "linkage_kind": "population-and-side-count stratum only",
+    "per_population_side_count": 2,
+    "retained_rows": 44,
+    "source": "/workspaces/msc-math/.worktrees/generator-transfer/experiments/sys-datascience/methods/generator-zoo-smoke/artifacts/factor-shapes.jsonl",
+    "source_sha256": "4622400be1220f11f742a4bde29273fe45dcd4c8d27044d716059c429630d7a8",
+    "target_evaluation": false
+  },
   "structural_product_classification": {
     "reason": "The retained panel is planar factors; coordinate/affine/Lagrangian product classes require 4D normals and an explicit classifier. Do not infer productness from factor shape or classifier failure.",
     "status": "deferred"

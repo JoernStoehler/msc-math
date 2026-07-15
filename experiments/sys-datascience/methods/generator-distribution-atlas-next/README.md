@@ -20,11 +20,14 @@ boundary or `sys`.
 
 ## Reproduce
 
-The source binary is the reviewed producer from the line worktree. From this
-directory, with that binary available:
+Build the reviewed producer from a clean checkout at `fd9c3e7d`; do not rely on
+an existing target cache. From that checkout, run
+`cargo build --release --locked --package exp-sys-landscape --bin
+sys-datascience-generator-zoo-smoke`, verify the executable SHA-256 against
+`artifacts/panel/provenance.json`, and use the resulting binary below:
 
 ```bash
-/workspaces/msc-math/.worktrees/generator-transfer/target/release/sys-datascience-generator-zoo-smoke \
+$PRODUCER_BIN \
   --factor-only --factor-out-dir /tmp/generator-atlas-core \
   --seed 20260715 --attempts 128 --factor-rows-per-population 24 \
   --factor-side-counts 3,4,6 \
@@ -36,7 +39,7 @@ directory, with that binary available:
   --factor-population 'repulsive-gap|regular' \
   --factor-population 'regular-mutation|steps=4,scale=0.03'
 
-/workspaces/msc-math/.worktrees/generator-transfer/target/release/sys-datascience-generator-zoo-smoke \
+$PRODUCER_BIN \
   --factor-only --factor-out-dir /tmp/generator-atlas-zonogon \
   --seed 20260715 --attempts 128 --factor-rows-per-population 24 \
   --factor-side-counts 4,6 \
@@ -50,6 +53,7 @@ run:
 python3 atlas.py \
   --input artifacts/panel/factor-shapes.jsonl \
   --producer-report artifacts/panel/core-report.json \
+  --producer-executable "$PRODUCER_BIN" \
   --producer-report artifacts/panel/zonogon-report.json \
   --exact-input /workspaces/msc-math/.worktrees/generator-transfer/experiments/sys-datascience/methods/generator-zoo-smoke/artifacts/factor-shapes.jsonl \
   --out-dir artifacts/atlas
@@ -77,13 +81,24 @@ The generated `artifacts/atlas/` directory contains compact tables for:
 * acceptance, exhaustion, attempts, and generation cost;
 * deterministic sample-size saturation at 4, 8, 12, and 24 rows;
 * feature covariance spectrum, quantile-range overlap, and population-label
-  eta-squared confounding.
+  eta-squared confounding. The anisotropy feature is the eigenvalue ratio of
+  centered vertex covariance, so it is invariant under global rotation,
+  translation, and positive scale.
 
-The exact subset is a source-backed staged witness selected from the reviewed
-product factor artifact (`2` rows per population/side-count group). Its
-`linkage.json` permits only population/side-count linkage: exact-subset IDs do
-not match the larger factor-only panel, so no row-level or causal transfer is
-claimed.
+The `source-exact-validation-witness` is a source-backed staged witness
+selected from the reviewed product factor artifact (`2` rows per
+population/side-count group). Its `linkage.json` permits only
+population/side-count linkage: witness IDs do not match the larger factor-only
+panel, so no row-level or causal transfer is claimed.
+
+The retained `artifacts/panel/provenance.json` binds the panel to the exact
+producer executable SHA-256, source revision and Git blob IDs for the producer
+Rust source, package manifest, and lockfile. It also records the SHA-256 hashes
+of `atlas.py` and `shape_quality.py`. The executable path is capture metadata,
+not a reproduction dependency: rebuild it from the pinned source revision with
+`cargo build --release --locked --package exp-sys-landscape --bin
+sys-datascience-generator-zoo-smoke`, then compare the resulting executable
+hash before regeneration.
 
 The packet intentionally does not produce a quality score or global ranking.
 Pilot/confirmation separation and repeated-seed rank stability are deferred;

@@ -1,5 +1,5 @@
 {
-  "contract": "Exact-product rows calibrate the geometry-only strata; their IDs do not match the larger factor-only panel.",
+  "contract": "Source exact-validation witness rows calibrate the geometry-only strata; they are not a subset of the new panel and their IDs do not match it.",
   "individual_row_linkage": false,
   "linkage_kind": "population-and-side-count stratum only",
   "per_population_side_count": 2,

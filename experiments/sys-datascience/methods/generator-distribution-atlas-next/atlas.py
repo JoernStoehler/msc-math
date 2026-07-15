@@ -14,14 +14,16 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import subprocess
 from typing import Any
 
 import numpy as np
 
+import shape_quality
 from shape_quality import SCHEMA, SMALL_SAMPLE, Shape, bounded_selection_key, load_shapes, within_metrics
 
 ATLAS_SCHEMA = "generator-distribution-atlas-next-v1"
-FEATURES = ("log_perimeter", "width_ratio", "radial_rms", "angle_gap_cv")
+FEATURES = ("log_perimeter", "covariance_anisotropy", "radial_rms", "angle_gap_cv")
 SATURATION = (4, 8, 12, 24)
 
 
@@ -60,9 +62,11 @@ def invariant_features(shape: Shape) -> np.ndarray:
     edge = np.roll(v, -1, axis=0) - v
     lengths = np.linalg.norm(edge, axis=1)
     perimeter = float(np.sum(lengths))
-    widths = (float(np.ptp(v[:, 0])), float(np.ptp(v[:, 1])))
+    covariance = np.cov(v, rowvar=False)
+    eigenvalues = np.linalg.eigvalsh(covariance)
+    covariance_anisotropy = float(max(eigenvalues) / max(min(eigenvalues), 1e-15))
     turns = np.arctan2(np.abs(edge[:, 0] * np.roll(edge[:, 1], -1) - edge[:, 1] * np.roll(edge[:, 0], -1)), np.sum(edge * np.roll(edge, -1, axis=0), axis=1))
-    return np.array([math.log(perimeter), max(widths) / min(widths), math.sqrt(float(np.mean(np.sum(v * v, axis=1)))), float(np.std(turns) / np.mean(turns))])
+    return np.array([math.log(perimeter), covariance_anisotropy, math.sqrt(float(np.mean(np.sum(v * v, axis=1)))), float(np.std(turns) / np.mean(turns))])
 
 
 def write_tsv(path: Path, rows: list[dict[str, Any]]) -> None:
@@ -186,7 +190,7 @@ def saturation_view(shapes: list[Shape]) -> list[dict[str, Any]]:
     return result
 
 
-def exact_subset(source: Path, target: Path, per_group: int) -> dict[str, Any]:
+def source_exact_validation_witness(source: Path, target: Path, per_group: int) -> dict[str, Any]:
     grouped: dict[tuple[str, int], list[dict[str, Any]]] = defaultdict(list)
     for line in source.read_text().splitlines():
         if line.strip():
@@ -195,12 +199,38 @@ def exact_subset(source: Path, target: Path, per_group: int) -> dict[str, Any]:
     for key, values in sorted(grouped.items()):
         values.sort(key=lambda row: hashlib.sha256(json.dumps(row, sort_keys=True, separators=(",", ":")).encode()).digest()); rows.extend(values[:per_group])
     target.parent.mkdir(parents=True, exist_ok=True); target.write_text("".join(json.dumps(row, sort_keys=True, separators=(",", ":")) + "\n" for row in rows))
-    return {"source": str(source), "source_sha256": sha256(source), "retained_rows": len(rows), "per_population_side_count": per_group, "linkage_kind": "population-and-side-count stratum only", "individual_row_linkage": False, "target_evaluation": False, "contract": "Exact-product rows calibrate the geometry-only strata; their IDs do not match the larger factor-only panel."}
+    return {"source": str(source), "source_sha256": sha256(source), "retained_rows": len(rows), "per_population_side_count": per_group, "linkage_kind": "population-and-side-count stratum only", "individual_row_linkage": False, "target_evaluation": False, "contract": "Source exact-validation witness rows calibrate the geometry-only strata; they are not a subset of the new panel and their IDs do not match it."}
+
+
+def producer_provenance(executable: Path, revision: str) -> dict[str, Any]:
+    """Bind producer identity to a reproducible source/build closure."""
+    if not executable.is_file():
+        raise SystemExit(f"producer executable does not exist: {executable}")
+    repo = Path(__file__).resolve().parents[4]
+    source_paths = (
+        "experiments/sys-datascience/methods/generator-zoo-smoke/main.rs",
+        "experiments/sys-landscape/Cargo.toml",
+        "Cargo.lock",
+    )
+    blobs = {}
+    for path in source_paths:
+        result = subprocess.run(["git", "-C", str(repo), "rev-parse", f"{revision}:{path}"], capture_output=True, text=True)
+        if result.returncode:
+            raise SystemExit(f"cannot resolve producer source blob {revision}:{path}: {result.stderr.strip()}")
+        blobs[path] = result.stdout.strip()
+    return {
+        "executable_path_at_capture": str(executable),
+        "executable_sha256": sha256(executable),
+        "source_revision": revision,
+        "source_blobs": blobs,
+        "build_contract": "cargo build --release --locked --package exp-sys-landscape --bin sys-datascience-generator-zoo-smoke at source_revision, with the source blobs and Cargo.lock above",
+        "dirty_scope": "producer reports separately record source_dirty for generator-zoo-smoke/main.rs and experiments/sys-landscape/Cargo.toml",
+    }
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", type=Path, required=True); parser.add_argument("--out-dir", type=Path, required=True); parser.add_argument("--producer-report", type=Path, action="append", default=[]); parser.add_argument("--exact-input", type=Path); parser.add_argument("--exact-subset-per-group", type=int, default=2); parser.add_argument("--support-grid", type=int, default=64); parser.add_argument("--steiner-grid", type=int, default=1024); parser.add_argument("--baseline", default="current-baseline[delta=0.2]")
+    parser.add_argument("--input", type=Path, required=True); parser.add_argument("--out-dir", type=Path, required=True); parser.add_argument("--producer-report", type=Path, action="append", default=[]); parser.add_argument("--producer-executable", type=Path, required=True); parser.add_argument("--producer-revision", default="fd9c3e7df08d8c9d04491b8ebbb7b2628d2df32e"); parser.add_argument("--exact-input", type=Path); parser.add_argument("--exact-subset-per-group", type=int, default=2); parser.add_argument("--support-grid", type=int, default=64); parser.add_argument("--steiner-grid", type=int, default=1024); parser.add_argument("--baseline", default="current-baseline[delta=0.2]")
     args = parser.parse_args(); args.out_dir.mkdir(parents=True, exist_ok=True)
     if args.support_grid < 32 or args.steiner_grid < args.support_grid: raise SystemExit("require steiner-grid >= support-grid >= 32")
     shapes = load_shapes(args.input, args.support_grid, args.steiner_grid)
@@ -208,8 +238,15 @@ def main() -> None:
     views = {"within-population.tsv": within_view(shapes), "between-population.tsv": between_view(shapes), "nearest-cross-population.tsv": overlap_view(shapes), "combinatorial-occupancy.tsv": occupancy_view(shapes), "acceptance-cost.tsv": costs(args.producer_report), "sample-size-saturation.tsv": saturation_view(shapes), "feature-spectrum.tsv": spectrum, "feature-range-overlap.tsv": feature_overlap, "feature-law-confounding.tsv": confounding}
     for name, rows in views.items(): write_tsv(args.out_dir / name, rows)
     linkage = None
-    if args.exact_input: linkage = exact_subset(args.exact_input, args.out_dir / "exact-subset/factor-shapes.jsonl", args.exact_subset_per_group); (args.out_dir / "exact-subset/linkage.json").write_text(json.dumps(linkage, indent=2, sort_keys=True) + "\n")
-    report = {"schema": ATLAS_SCHEMA, "input_schema": SCHEMA, "input": str(args.input), "input_sha256": sha256(args.input), "rows_validated": len(shapes), "populations": sorted({x.law for x in shapes}), "side_counts": sorted({x.side_count for x in shapes}), "configuration": {"support_grid": args.support_grid, "steiner_grid": args.steiner_grid, "saturation_levels": SATURATION, "small_sample_boundary": SMALL_SAMPLE, "distance_approximation": "declared-grid circular correlation; focused continuous-refinement copy remains in shape_quality.py"}, "views": {name.removesuffix(".tsv").replace("-", "_"): name for name in views}, "producer_reports": [{"path": str(p), "sha256": sha256(p)} for p in args.producer_report], "exact_linkage": linkage, "structural_product_classification": {"status": "deferred", "reason": "The retained panel is planar factors; coordinate/affine/Lagrangian product classes require 4D normals and an explicit classifier. Do not infer productness from factor shape or classifier failure."}, "rank_uncertainty": {"pilot_selection_confirmation": "deferred", "repeated_seed_stability": "deferred", "reason": "One producer seed is retained and no target-derived selection occurred; a confirmation packet must freeze pilot strata and rerun independent seeds.", "cheap_calibration": "feature covariance spectrum, quantile-range overlap, label eta-squared, and deterministic saturation diagnostics are included; they are not uncertainty estimates."}, "interpretation": {"allowed": ["describe finite-panel geometry, overlap, covariance, occupancy, and measured producer cost by named population/side stratum", "identify redundant or under-sampled strata for later target-free or exact work"], "prohibited": ["global quality ranking or combined score", "natural-law probabilities, population generalization, causal mechanism, or sys/target prediction", "individual linkage between geometry-only and exact-subset rows"]}}
+    if args.exact_input: linkage = source_exact_validation_witness(args.exact_input, args.out_dir / "source-exact-validation-witness/factor-shapes.jsonl", args.exact_subset_per_group); (args.out_dir / "source-exact-validation-witness/linkage.json").write_text(json.dumps(linkage, indent=2, sort_keys=True) + "\n")
+    implementation_hashes = {"atlas_py_sha256": sha256(Path(__file__)), "shape_quality_py_sha256": sha256(Path(shape_quality.__file__).resolve())}
+    producer_identity = producer_provenance(args.producer_executable, args.producer_revision)
+    report = {"schema": ATLAS_SCHEMA, "input_schema": SCHEMA, "input": str(args.input), "input_sha256": sha256(args.input), "rows_validated": len(shapes), "populations": sorted({x.law for x in shapes}), "side_counts": sorted({x.side_count for x in shapes}), "configuration": {"support_grid": args.support_grid, "steiner_grid": args.steiner_grid, "saturation_levels": SATURATION, "small_sample_boundary": SMALL_SAMPLE, "distance_approximation": "declared-grid circular correlation; focused continuous-refinement copy remains in shape_quality.py", "feature_contract": "covariance_anisotropy is the ratio of eigenvalues of centered vertex covariance and is rotation/translation/scale invariant"}, "implementation_hashes": implementation_hashes, "views": {name.removesuffix(".tsv").replace("-", "_"): name for name in views}, "producer_reports": [{"path": str(p), "sha256": sha256(p)} for p in args.producer_report], "producer_provenance": producer_identity, "source_exact_validation_witness": linkage, "structural_product_classification": {"status": "deferred", "reason": "The retained panel is planar factors; coordinate/affine/Lagrangian product classes require 4D normals and an explicit classifier. Do not infer productness from factor shape or classifier failure."}, "rank_uncertainty": {"pilot_selection_confirmation": "deferred", "repeated_seed_stability": "deferred", "reason": "One producer seed is retained and no target-derived selection occurred; a confirmation packet must freeze pilot strata and rerun independent seeds.", "cheap_calibration": "feature covariance spectrum, quantile-range overlap, label eta-squared, and deterministic saturation diagnostics are included; they are not uncertainty estimates."}, "interpretation": {"allowed": ["describe finite-panel geometry, overlap, covariance, occupancy, and measured producer cost by named population/side stratum", "identify redundant or under-sampled strata for later target-free or exact work"], "prohibited": ["global quality ranking or combined score", "natural-law probabilities, population generalization, causal mechanism, or sys/target prediction", "individual linkage between geometry-only and source exact-validation witness rows"]}}
+    provenance = {"schema": "generator-distribution-atlas-provenance-v1", "panel_input": {"path": str(args.input), "sha256": sha256(args.input)}, "producer_reports": [{"path": str(p), "sha256": sha256(p)} for p in args.producer_report], "producer": producer_identity, "analyzer": implementation_hashes, "contract": "Panel and all derived views are target-free. Rebuild the producer from the pinned source revision and compare executable hash before regeneration."}
+    provenance_path = args.out_dir.parent / "panel/provenance.json"
+    provenance_path.parent.mkdir(parents=True, exist_ok=True)
+    provenance_path.write_text(json.dumps(provenance, indent=2, sort_keys=True) + "\n")
+    report["provenance_artifact"] = "artifacts/panel/provenance.json"
     (args.out_dir / "report.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
     print(json.dumps({"rows": len(shapes), "populations": len(report["populations"]), "out_dir": str(args.out_dir)}))
 
