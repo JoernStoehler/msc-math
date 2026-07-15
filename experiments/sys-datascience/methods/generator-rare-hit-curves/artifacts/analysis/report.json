@@ -1293,18 +1293,18 @@
     "input_target_field_scan": "passed recursively; keys sys/capacity/target/bounce/ehz absent",
     "source_dirty": false,
     "source_file_hashes": {
-      "analyzer": "f978b7fc10df758aa401006c813adb53ab78f8c5dda98fe745b2ae95b5a61881",
+      "analyzer": "cd123ee6c551919d24af19f7a90bd6ad90177f5cbbdf3c6f1c21326fa6fbbbf9",
       "readme": "fbe24b03019fa5d231350b07b3f55bcb63b3ba971ccee393208c227abaa55054",
-      "tests": "06bcf44f5940f1d362e99a7ddfa8345d8d3191ec4b4d7924bcd43de11f799939"
+      "tests": "cd2eae606b3971a70ca68359936990bc06628ad924d4f87006d99455cfe9cbbf"
     },
     "source_files": {
       "analyzer": "experiments/sys-datascience/methods/generator-rare-hit-curves/rare_hit_curves.py",
       "readme": "experiments/sys-datascience/methods/generator-rare-hit-curves/README.md",
       "tests": "experiments/sys-datascience/methods/generator-rare-hit-curves/test_rare_hit_curves.py"
     },
-    "source_revision": "b5f3f5dcca52e6a896279ed554ca8a0096f05333",
+    "source_revision": "3a9187ae3c6d4a0afcd8c6a023fca2b4814ae50b",
     "source_root": "repository checkout containing this packet (resolved with git rev-parse --show-toplevel)",
-    "source_tree": "90b86488e0b579cd040a2b59cc8cfb5bfb2350d7",
+    "source_tree": "60140d0f5c0fc4c44e856f1221829cb78a3de85a",
     "tracked_clean_predicate": "git status --porcelain --untracked-files=no",
     "transitive_hash_contract": "all six factor data shards and all six producer reports are listed with SHA-256, schema, seed, row/acceptance counts, and producer source provenance"
   },
