@@ -2,7 +2,7 @@
   "comparisons": [
     {
       "case": "identity_permuted_presentation",
-      "cost_observation_seconds": 0.039036889998897095,
+      "cost_observation_seconds": 0.03997931999947468,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0,
@@ -47,8 +47,54 @@
       }
     },
     {
+      "case": "translation_positive_scale",
+      "cost_observation_seconds": 0.048465771000337554,
+      "direct_sampled": {
+        "axis_only": {
+          "l2": 3.925231146709438e-17,
+          "linf": 5.551115123125783e-17
+        },
+        "primitive_level_1": {
+          "l2": 1.0962573991985801e-16,
+          "linf": 2.220446049250313e-16
+        },
+        "primitive_level_2": {
+          "l2": 9.044079701002927e-17,
+          "linf": 2.220446049250313e-16
+        },
+        "primitive_level_3": {
+          "l2": 8.64442489944963e-17,
+          "linf": 2.220446049250313e-16
+        }
+      },
+      "left": "synthetic:cube",
+      "left_facets": 8,
+      "residuals": {
+        "direct_direction_refinement_abs_l2": 3.996548015532973e-18,
+        "direct_direction_refinement_abs_linf": 0.0,
+        "so4_finite_bank_search_refinement_abs_l2": 2.051171516383581e-17,
+        "so4_finite_bank_search_refinement_abs_linf": 0.0,
+        "u2_finite_bank_search_refinement_abs_l2": 1.1513551367496866e-17,
+        "u2_finite_bank_search_refinement_abs_linf": 0.0
+      },
+      "right": "synthetic:cube_translated_scaled",
+      "right_facets": 8,
+      "so4_finite_bank": {
+        "bank_size": 192,
+        "l2": 6.593253383066049e-17,
+        "linf": 2.220446049250313e-16,
+        "winning_index": 144
+      },
+      "u2_finite_bank": {
+        "bank_size": 32,
+        "l2": 6.593253383066049e-17,
+        "linf": 2.220446049250313e-16,
+        "winning_index": 20
+      }
+    },
+    {
       "case": "facet_birth_truncated_cube",
-      "cost_observation_seconds": 0.0413137640007335,
+      "cost_observation_seconds": 0.04547045899926161,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0693455916073286,
@@ -94,7 +140,7 @@
     },
     {
       "case": "adversarial_narrow_feature",
-      "cost_observation_seconds": 0.04592116200001328,
+      "cost_observation_seconds": 0.042417286000272725,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.07977971304969055,
@@ -140,7 +186,7 @@
     },
     {
       "case": "ball_approximant_identity",
-      "cost_observation_seconds": 0.12700374999985797,
+      "cost_observation_seconds": 0.0968164860005345,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0,
@@ -186,7 +232,7 @@
     },
     {
       "case": "ball_vs_ellipsoid_approximant",
-      "cost_observation_seconds": 0.12781886999982817,
+      "cost_observation_seconds": 0.08084507400053553,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.22173262424283688,
@@ -232,7 +278,7 @@
     },
     {
       "case": "retained_orientation_u2",
-      "cost_observation_seconds": 0.03491020299952652,
+      "cost_observation_seconds": 0.030637744001069223,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0682635396392401,
@@ -278,7 +324,7 @@
     },
     {
       "case": "retained_orientation_so4",
-      "cost_observation_seconds": 0.031753527000546455,
+      "cost_observation_seconds": 0.029664507001143647,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.07301114308952454,
@@ -324,7 +370,7 @@
     },
     {
       "case": "retained_exact_feature_witness",
-      "cost_observation_seconds": 0.07402416700097092,
+      "cost_observation_seconds": 0.05955501800053753,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.20067121144363229,
@@ -375,13 +421,14 @@
     "narrow_feature_axis_grid_understates_linf": true,
     "narrow_feature_primitive_grid_detected": true,
     "permuted_presentation_zero": true,
-    "redundant_presentations_fail_closed": true
+    "redundant_presentations_fail_closed": true,
+    "translation_positive_scale_zero": true
   },
   "coordinate_order": "q1,q2,p1,p2",
   "cost_observations_seconds": {
-    "exact_feature_reconstruction": 23.76188790299966,
-    "orientation_reconstruction": 1.852023081999505,
-    "synthetic_reconstruction": 0.23416585299855797
+    "exact_feature_reconstruction": 23.667392748000566,
+    "orientation_reconstruction": 1.828222045000075,
+    "synthetic_reconstruction": 0.24757627500002855
   },
   "direction_designs": {
     "axis_only": 8,
@@ -433,6 +480,10 @@
       "rows": 768,
       "sha256": "0dc72ef98fb860ad838026e5354c36f254985aca9b90a060aee2f58f231832d2"
     },
+    "input_exactness": {
+      "retained_orientation_and_feature": "Rational strings are parsed and reconstructed exactly in this packet. Where upstream producers rationalized f64 geometry, that rationalization remains the source approximation; exact downstream arithmetic does not upgrade it to exact originating geometry.",
+      "synthetic": "Synthetic normals and the translation/positive-scale calibration are authored as exact rationals."
+    },
     "orientation_input": {
       "accepted_reconstructed_rows": 40,
       "path": "experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl",
@@ -457,6 +508,11 @@
       "four_facet_joins_checked": 70,
       "vertices": 16
     },
+    "synthetic:cube_translated_scaled": {
+      "facets": 8,
+      "four_facet_joins_checked": 70,
+      "vertices": 16
+    },
     "synthetic:ellipsoid_approximant": {
       "facets": 16,
       "four_facet_joins_checked": 1820,
@@ -475,10 +531,13 @@
   },
   "run": {
     "producer_path": "experiments/sys-datascience/methods/generator-variable-f-body-distance/body_distance.py",
-    "producer_sha256": "bd3e97ca79be9be55558e49452dac43ad58034d87de8e32a30478667d8316810",
-    "revision": "801596f5d03945f2831603151b1a1bc6478c671f",
+    "producer_sha256": "8fadebdbaa9b81e97baf5b55278e6e3d26e2154ea69fbfca98bc6a3e22a3a672",
+    "revision": "8d8d31b512e63af0a5a619e598a780e3c189751e",
+    "status_command": "git status --porcelain --untracked-files=no (cwd=repository root)",
     "terminal_status": "complete",
-    "tracked_clean_before_generation": true
+    "tracked_clean_before_generation": true,
+    "tracked_status_porcelain": [],
+    "tree": "5bdb9d71d55885232dce04d7473cf9b16d9b9c65"
   },
   "schema": "generator-variable-f-body-distance-report-v1",
   "target_free": true
