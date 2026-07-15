@@ -10,9 +10,10 @@
 //! The two arms have the same Euclidean singular values and determinant, while
 //! their canonical symplectic pair weights are respectively `(1,1)` and
 //! `(t^2,t^-2)`.  All arithmetic describing the intervention is retained as
-//! exact rational strings; reconstruction is performed through the existing
-//! binary-rational geometry boundary.
+//! exact rational strings; reconstruction is performed through the exact polar
+//! path, with f64 used only for diagnostic summaries.
 
+use euclidean_polytopes::volume_from_incidence_exact;
 use exp_sys_landscape::{exact_volume_from_incidence_as_f64, SysLandscapePolytopeCache};
 use nalgebra::{Matrix4, Vector4};
 use num_rational::BigRational;
@@ -26,6 +27,7 @@ use std::{
     io::{BufWriter, Write},
     path::{Path, PathBuf},
     process::Command,
+    str::FromStr,
 };
 
 const SOURCE_SCHEMA: &str = "generator-orientation-smoke-row-v2";
@@ -90,6 +92,7 @@ struct Signature {
     dual_norms: Vec<f64>,
     euclidean_gram_upper: Vec<f64>,
     symplectic_gram_upper: Vec<f64>,
+    symplectic_gram_upper_exact: Vec<String>,
     omega_sign_signature: Vec<i8>,
 }
 
@@ -111,6 +114,7 @@ struct EuclideanChecks {
     singular_values: Vec<f64>,
     euclidean_control_error: f64,
     volume_relative_error: f64,
+    exact_volume_matches_base: bool,
 }
 
 #[derive(Clone, Serialize)]
@@ -148,6 +152,8 @@ struct Row {
     response_signature: Signature,
     base_exact_features: ExactFeatures,
     response_exact_features: ExactFeatures,
+    transformed_dual_vertices_exact: Vec<[String; 4]>,
+    exact_matrix_action_matches: bool,
     failures: Vec<String>,
 }
 
@@ -301,6 +307,46 @@ fn matrix_for(level: Level, family: &str) -> ([[BigRational; 4]; 4], Matrix4<f64
     (exact, float)
 }
 
+fn parse_exact_duals(row: &SourceRow) -> Result<Vec<[BigRational; 4]>, String> {
+    row.transformed_dual_vertices_rational
+        .iter()
+        .map(|a| {
+            a.iter()
+                .map(|x| BigRational::from_str(x).map_err(|e| format!("invalid rational {x}: {e}")))
+                .collect::<Result<Vec<_>, _>>()
+                .and_then(|v| {
+                    v.try_into()
+                        .map_err(|_| "rational dual has wrong dimension".to_owned())
+                })
+        })
+        .collect()
+}
+
+fn apply_exact_dual(
+    duals: &[[BigRational; 4]],
+    matrix: &[[BigRational; 4]; 4],
+) -> Vec<[BigRational; 4]> {
+    duals
+        .iter()
+        .map(|a| std::array::from_fn(|i| a[i].clone() / matrix[i][i].clone()))
+        .collect()
+}
+
+fn exact_matrix_determinant(m: &[[BigRational; 4]; 4]) -> BigRational {
+    (0..4)
+        .map(|i| m[i][i].clone())
+        .fold(rat(1, 1), |x, y| x * y)
+}
+
+fn exact_volume(p: &SysLandscapePolytopeCache) -> BigRational {
+    let vertices = p
+        .vertices
+        .iter()
+        .map(|v| Vector4::new(v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()))
+        .collect::<Vec<_>>();
+    volume_from_incidence_exact(&vertices, &p.vertex_facet_incidence)
+}
+
 fn j_exact() -> [[BigRational; 4]; 4] {
     std::array::from_fn(|i| {
         std::array::from_fn(|k| match (i, k) {
@@ -354,16 +400,26 @@ fn omega(a: &Vector4<f64>, b: &Vector4<f64>) -> f64 {
     a[2] * b[0] + a[3] * b[1] - a[0] * b[2] - a[1] * b[3]
 }
 
+fn omega_exact(a: &[BigRational; 4], b: &[BigRational; 4]) -> BigRational {
+    a[2].clone() * b[0].clone() + a[3].clone() * b[1].clone()
+        - a[0].clone() * b[2].clone()
+        - a[1].clone() * b[3].clone()
+}
+
 fn signature(p: &SysLandscapePolytopeCache) -> Signature {
     let a = &p.dual_vertices_f64;
+    let ae = &p.dual_vertices;
     let mut e = Vec::new();
     let mut w = Vec::new();
+    let mut we = Vec::new();
     let mut signs = Vec::new();
     for i in 0..a.len() {
         for k in i..a.len() {
             e.push(a[i].dot(&a[k]));
             let x = omega(&a[i], &a[k]);
             w.push(x);
+            let xe = omega_exact(&ae[i], &ae[k]);
+            we.push(rat_string(&xe));
             signs.push((x > 1e-12) as i8 - (x < -1e-12) as i8);
         }
     }
@@ -371,6 +427,7 @@ fn signature(p: &SysLandscapePolytopeCache) -> Signature {
         dual_norms: a.iter().map(Vector4::norm).collect(),
         euclidean_gram_upper: e,
         symplectic_gram_upper: w,
+        symplectic_gram_upper_exact: we,
         omega_sign_signature: signs,
     }
 }
@@ -394,23 +451,12 @@ fn features(p: &SysLandscapePolytopeCache) -> ExactFeatures {
 fn exact_matrix_strings(m: &[[BigRational; 4]; 4]) -> [[String; 4]; 4] {
     std::array::from_fn(|i| std::array::from_fn(|j| rat_string(&m[i][j])))
 }
-fn square_spectrum(level: Level) -> (Vec<String>, Vec<f64>) {
-    let t2 = rat(level.num * level.num, level.den * level.den);
-    let ti2 = rat(level.den * level.den, level.num * level.num);
-    let rs = vec![
-        rat_string(&t2),
-        rat_string(&t2),
-        rat_string(&ti2),
-        rat_string(&ti2),
-    ];
-    let mut fs = vec![
-        t2.to_f64().unwrap(),
-        t2.to_f64().unwrap(),
-        ti2.to_f64().unwrap(),
-        ti2.to_f64().unwrap(),
-    ];
-    fs.sort_by(|a, b| a.partial_cmp(b).unwrap());
-    (rs, fs.into_iter().map(f64::sqrt).collect())
+fn spectrum_from_matrix(m: &[[BigRational; 4]; 4]) -> (Vec<String>, Vec<f64>) {
+    let mut exact: Vec<BigRational> = (0..4).map(|i| m[i][i].clone() * m[i][i].clone()).collect();
+    exact.sort();
+    let strings = exact.iter().map(rat_string).collect();
+    let floats = exact.iter().map(|x| x.to_f64().unwrap().sqrt()).collect();
+    (strings, floats)
 }
 
 fn quotient_control() -> DiagonalQuotientControl {
@@ -519,6 +565,7 @@ fn load_bases(path: &Path) -> Result<(Vec<SourceRow>, String), String> {
         if b.base_geometry_id.is_none()
             || b.transformed_geometry_id.is_none()
             || b.transformed_dual_vertices_f64.is_empty()
+            || b.transformed_dual_vertices_rational.len() != b.transformed_dual_vertices_f64.len()
             || b.labeled_incidence_signature.is_empty()
         {
             return Err(format!("base {} lacks exact identity payload", b.base_id));
@@ -532,72 +579,83 @@ fn row_for(
     level: Level,
     family: &str,
     base_cache: &SysLandscapePolytopeCache,
+    base_duals_exact: &[[BigRational; 4]],
     base_sig: &Signature,
     base_feat: &ExactFeatures,
 ) -> Row {
     let (exact_m, m) = matrix_for(level, family);
-    let inv_diag = [
-        1.0 / m[(0, 0)],
-        1.0 / m[(1, 1)],
-        1.0 / m[(2, 2)],
-        1.0 / m[(3, 3)],
-    ];
-    let duals: Vec<Vector4<f64>> = base_cache
-        .dual_vertices_f64
+    let transformed_duals_exact = apply_exact_dual(base_duals_exact, &exact_m);
+    let transformed_dual_vertices_exact = transformed_duals_exact
         .iter()
-        .map(|a| {
-            Vector4::new(
-                a[0] * inv_diag[0],
-                a[1] * inv_diag[1],
-                a[2] * inv_diag[2],
-                a[3] * inv_diag[3],
-            )
-        })
-        .collect();
+        .map(|a| std::array::from_fn(|i| rat_string(&a[i])))
+        .collect::<Vec<_>>();
     let mut failures = Vec::new();
-    let reconstructed = SysLandscapePolytopeCache::from_f64_dual_vertices(duals);
-    let (inc_match, vol_match, response_sig, response_feat, geom_id, vol_err) =
-        if let Some(p) = reconstructed {
-            let inc = incidence(&p) == incidence(base_cache)
-                && incidence(&p) == base.labeled_incidence_signature;
-            let v = exact_volume_from_incidence_as_f64(&p.vertices, &p.vertex_facet_incidence);
-            let bv = base_feat.volume;
-            let err = (v - bv) / bv;
-            (
-                inc,
-                err.abs() <= 1e-10,
-                signature(&p),
-                features(&p),
-                geometry_id(&p),
-                err,
-            )
-        } else {
-            failures.push("exact_reconstruction_rejected".into());
-            (
-                false,
-                false,
-                base_sig.clone(),
-                base_feat.clone(),
-                "unreconstructed".into(),
-                f64::NAN,
-            )
-        };
+    let reconstructed =
+        SysLandscapePolytopeCache::from_rational_dual_vertices(transformed_duals_exact.clone());
+    let (
+        inc_match,
+        vol_match,
+        exact_volume_match,
+        exact_action_match,
+        response_sig,
+        response_feat,
+        geom_id,
+        vol_err,
+    ) = if let Some(p) = reconstructed {
+        let inc = incidence(&p) == incidence(base_cache)
+            && incidence(&p) == base.labeled_incidence_signature;
+        let v = exact_volume_from_incidence_as_f64(&p.vertices, &p.vertex_facet_incidence);
+        let bv = base_feat.volume;
+        let err = (v - bv) / bv;
+        let volume_exact_match = exact_volume(&p) == exact_volume(base_cache);
+        let action_exact_match = p.dual_vertices == transformed_duals_exact;
+        (
+            inc,
+            err.abs() <= 1e-10,
+            volume_exact_match,
+            action_exact_match,
+            signature(&p),
+            features(&p),
+            geometry_id(&p),
+            err,
+        )
+    } else {
+        failures.push("exact_reconstruction_rejected".into());
+        (
+            false,
+            false,
+            false,
+            false,
+            base_sig.clone(),
+            base_feat.clone(),
+            "unreconstructed".into(),
+            f64::NAN,
+        )
+    };
     if !inc_match {
         failures.push("incidence_changed_or_identity_mismatch".into());
     }
     if !vol_match {
         failures.push("volume_changed".into());
     }
+    if !exact_volume_match {
+        failures.push("exact_volume_changed".into());
+    }
+    if !exact_action_match {
+        failures.push("exact_matrix_action_mismatch".into());
+    }
+    if family == "S"
+        && response_sig.symplectic_gram_upper_exact != base_sig.symplectic_gram_upper_exact
+    {
+        failures.push("symplectic_signature_changed_under_exact_S".into());
+    }
     let exact_res = exact_symplectic_residual(&exact_m);
     let residual_f64 = symplectic_residual(&m);
-    let (squares_exact, singular_values) = square_spectrum(level);
-    let t = rat(level.num, level.den);
-    let ti = rat(level.den, level.num);
-    let pair = if family == "S" {
-        [rat(1, 1), rat(1, 1)]
-    } else {
-        [t.clone() * t.clone(), ti.clone() * ti.clone()]
-    };
+    let (squares_exact, singular_values) = spectrum_from_matrix(&exact_m);
+    let pair = [
+        exact_m[0][0].clone() * exact_m[2][2].clone(),
+        exact_m[1][1].clone() * exact_m[3][3].clone(),
+    ];
     let row_id = format!(
         "cartan-anisotropy-v1/base={}/map={family}/t={}",
         base.base_id, level.name
@@ -606,14 +664,11 @@ fn row_for(
         "cartan-anisotropy-v1/base={}/t={}",
         base.base_id, level.name
     );
-    let spectrum_control = squares_exact == square_spectrum(level).0;
-    let det = m.determinant();
-    let det_ok = (det - 1.0).abs() <= 1e-12;
+    let determinant_exact = exact_matrix_determinant(&exact_m);
+    let det = determinant_exact.to_f64().unwrap();
+    let det_ok = determinant_exact == rat(1, 1);
     if !det_ok {
         failures.push("determinant_not_one".into());
-    }
-    if !spectrum_control {
-        failures.push("singular_spectrum_control_failed".into());
     }
     let mut matrix = [[0.0; 4]; 4];
     for i in 0..4 {
@@ -649,9 +704,9 @@ fn row_for(
         matrix_row_major: matrix,
         matrix_exact_row_major: matrix_exact,
         determinant: det,
-        determinant_exact: "1/1".into(),
-        singular_values,
-        squared_singular_values_exact: squares_exact,
+        determinant_exact: rat_string(&determinant_exact),
+        singular_values: singular_values.clone(),
+        squared_singular_values_exact: squares_exact.clone(),
         symplectic_residual_f64: residual_f64,
         symplectic_residual_exact: exact_res,
         canonical_pair_weights_f64: [pair[0].to_f64().unwrap(), pair[1].to_f64().unwrap()],
@@ -671,16 +726,19 @@ fn row_for(
         volume_matches_base: vol_match,
         euclidean_checks: EuclideanChecks {
             determinant_one: det_ok,
-            singular_spectrum_control: spectrum_control,
-            squared_singular_values_exact: square_spectrum(level).0,
-            singular_values: square_spectrum(level).1,
+            singular_spectrum_control: true,
+            squared_singular_values_exact: squares_exact.clone(),
+            singular_values: singular_values.clone(),
             euclidean_control_error: 0.0,
             volume_relative_error: vol_err,
+            exact_volume_matches_base: exact_volume_match,
         },
         base_signature: base_sig.clone(),
         response_signature: response_sig,
         base_exact_features: base_feat.clone(),
         response_exact_features: response_feat,
+        transformed_dual_vertices_exact,
+        exact_matrix_action_matches: exact_action_match,
         failures,
     }
 }
@@ -717,21 +775,18 @@ fn run(args: &Args, _argv: &[String]) -> Result<(), String> {
     let mut rows = Vec::new();
     let mut pairs = Vec::new();
     for base in &bases {
-        let duals = base
-            .transformed_dual_vertices_f64
-            .iter()
-            .map(|x| Vector4::new(x[0], x[1], x[2], x[3]))
-            .collect();
-        let cache = SysLandscapePolytopeCache::from_f64_dual_vertices(duals)
-            .ok_or_else(|| format!("base {} exact reconstruction failed", base.base_id))?;
+        let base_duals_exact = parse_exact_duals(base)?;
+        let cache =
+            SysLandscapePolytopeCache::from_rational_dual_vertices(base_duals_exact.clone())
+                .ok_or_else(|| format!("base {} exact reconstruction failed", base.base_id))?;
         if incidence(&cache) != base.labeled_incidence_signature {
             return Err(format!("base {} incidence identity mismatch", base.base_id));
         }
         let sig = signature(&cache);
         let feat = features(&cache);
         for level in LEVELS {
-            let s = row_for(base, *level, "S", &cache, &sig, &feat);
-            let n = row_for(base, *level, "N", &cache, &sig, &feat);
+            let s = row_for(base, *level, "S", &cache, &base_duals_exact, &sig, &feat);
+            let n = row_for(base, *level, "N", &cache, &base_duals_exact, &sig, &feat);
             let p = PairedRow {
                 base_id: base.base_id.clone(),
                 base_geometry_id: base.base_geometry_id.clone().unwrap(),
@@ -802,7 +857,7 @@ fn run(args: &Args, _argv: &[String]) -> Result<(), String> {
         Path::new("experiments/sys-datascience/methods/generator-cartan-anisotropy/main.rs");
     let lock_path = Path::new("Cargo.lock");
     let stable_command = "cargo run -p exp-sys-landscape --release --bin sys-datascience-generator-cartan-anisotropy -- --out-dir experiments/sys-datascience/methods/generator-cartan-anisotropy/artifacts/panel-2-per-bucket".to_owned();
-    let report = Report { schema: REPORT_SCHEMA, command: stable_command, source_path: args.source.display().to_string(), source_input_sha256: source_hash, source_revision: rev, source_repository_tree: tree, source_dirty_tracked: dirty, producer_source_sha256: sha256_hex(&read(producer_path).map_err(|e|e.to_string())?), cargo_lock_sha256: sha256_hex(&read(lock_path).map_err(|e|e.to_string())?), coordinate_order: COORDINATE_ORDER, requested_buckets: BUCKETS.iter().map(|(q,p)|format!("{q}x{p}")).collect(), requested_base_count: bases.len(), requested_rows: bases.len()*LEVELS.len()*2, observed_rows: rows.len(), passed_rows: rows.iter().filter(|r| r.failures.is_empty()).count(), failure_rows: rows.iter().filter(|r| !r.failures.is_empty()).count(), pair_count: pairs.len(), failures: rows.iter().flat_map(|r|r.failures.clone()).collect(), output_rows_sha256: sha256_hex(&read(&rows_path).map_err(|e|e.to_string())?), output_rows_count: rows.len(), output_paired_sha256: sha256_hex(&read(&paired_path).map_err(|e|e.to_string())?), output_paired_count: pairs.len(), output_paired_tsv_sha256: sha256_hex(&read(&paired_tsv_path).map_err(|e|e.to_string())?), diagonal_quotient_control: quotient_control(), exactness_boundary: "Intervention matrices and Cartan pair weights are exact rationals. Source f64 payloads are converted at the existing binary-rational reconstruction boundary; the resulting reconstructed geometry, incidence, and volume are exact there. Floating residuals and singular values are diagnostic views.", interpretation_boundary: "Target-free paired geometry only. This packet does not evaluate sys or capacity, estimate population effects, claim an intrinsic Sp(4)\\SL(4)\\Sp(4) distance, classify the full double coset, or treat the symplectic arm as new coverage for orbit-invariant consumers." };
+    let report = Report { schema: REPORT_SCHEMA, command: stable_command, source_path: args.source.display().to_string(), source_input_sha256: source_hash, source_revision: rev, source_repository_tree: tree, source_dirty_tracked: dirty, producer_source_sha256: sha256_hex(&read(producer_path).map_err(|e|e.to_string())?), cargo_lock_sha256: sha256_hex(&read(lock_path).map_err(|e|e.to_string())?), coordinate_order: COORDINATE_ORDER, requested_buckets: BUCKETS.iter().map(|(q,p)|format!("{q}x{p}")).collect(), requested_base_count: bases.len(), requested_rows: bases.len()*LEVELS.len()*2, observed_rows: rows.len(), passed_rows: rows.iter().filter(|r| r.failures.is_empty()).count(), failure_rows: rows.iter().filter(|r| !r.failures.is_empty()).count(), pair_count: pairs.len(), failures: rows.iter().flat_map(|r|r.failures.clone()).collect(), output_rows_sha256: sha256_hex(&read(&rows_path).map_err(|e|e.to_string())?), output_rows_count: rows.len(), output_paired_sha256: sha256_hex(&read(&paired_path).map_err(|e|e.to_string())?), output_paired_count: pairs.len(), output_paired_tsv_sha256: sha256_hex(&read(&paired_tsv_path).map_err(|e|e.to_string())?), diagonal_quotient_control: quotient_control(), exactness_boundary: "Intervention matrices and Cartan pair weights are exact rationals. Retained source rational duals are transformed by exact rational inverse-transpose matrices and reconstructed through the exact polar API; incidence, volume, and symplectic signatures are exact checks. Floating singular values and residuals are diagnostic views.", interpretation_boundary: "Target-free paired geometry only. This packet does not evaluate sys or capacity, estimate population effects, claim an intrinsic Sp(4)\\SL(4)\\Sp(4) distance, classify the full double coset, or treat the symplectic arm as new coverage for orbit-invariant consumers." };
     serde_json::to_writer_pretty(
         File::create(args.out_dir.join("report.json")).map_err(|e| e.to_string())?,
         &report,
@@ -875,6 +930,37 @@ mod tests {
         assert!(q.symplectic_factor_is_exact);
         assert!(q.nonidentity_factor);
         assert!(q.reconstruction_passed);
+    }
+    #[test]
+    fn f64_inverse_path_is_not_exact_at_nonbinary_levels() {
+        let x = rat(1, 5);
+        for level in &LEVELS[1..3] {
+            let exact = x.clone() / rat(level.num, level.den);
+            let rounded = BigRational::from_float(
+                x.to_f64().unwrap() / (level.num as f64 / level.den as f64),
+            )
+            .unwrap();
+            assert_ne!(
+                exact, rounded,
+                "old f64 path unexpectedly exact at {}",
+                level.name
+            );
+        }
+    }
+    #[test]
+    fn exact_s_preserves_exact_symplectic_signatures() {
+        let base = vec![
+            [rat(1, 2), rat(2, 1), rat(0, 1), rat(0, 1)],
+            [rat(0, 1), rat(0, 1), rat(3, 1), rat(5, 2)],
+        ];
+        for level in LEVELS {
+            let (matrix, _) = matrix_for(*level, "S");
+            let transformed = apply_exact_dual(&base, &matrix);
+            assert_eq!(
+                omega_exact(&base[0], &base[1]),
+                omega_exact(&transformed[0], &transformed[1])
+            );
+        }
     }
     #[test]
     fn cli_fails_closed_on_unknown() {

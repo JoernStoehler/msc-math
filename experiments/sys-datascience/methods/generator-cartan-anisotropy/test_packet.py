@@ -25,6 +25,11 @@ def main() -> None:
     assert sha256(ROOT / "paired.tsv") == report["output_paired_tsv_sha256"]
     by_pair = {}
     for row in rows:
+        assert row["exact_matrix_action_matches"] is True
+        assert row["reconstruction_passed"] is True
+        assert row["euclidean_checks"]["exact_volume_matches_base"] is True
+        if row["map_family"] == "symplectic-control":
+            assert row["base_signature"]["symplectic_gram_upper_exact"] == row["response_signature"]["symplectic_gram_upper_exact"]
         by_pair.setdefault((row["base_id"], row["t"]), {})[row["map_family"]] = row
     assert len(by_pair) == 32
     for arms in by_pair.values():

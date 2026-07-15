@@ -68,7 +68,8 @@ double coset, or treat the symplectic control as new coverage for consumers
 that are orbit-invariant.  Any later target pilot must be separately frozen and
 reviewed against these exact paired IDs.
 
-The f64 source payload is converted at the existing binary-rational
-reconstruction boundary.  Intervention formulas and diagonal controls are
-exact; floating singular values and residual norms are diagnostic views of the
-reconstructed rows.
+The retained rational source payload is transformed by exact rational
+inverse-transpose matrices and reconstructed through the exact polar API.
+Stored exact dual coordinates, incidence, volume, and symplectic signatures
+are checked before f64 diagnostic summaries are emitted.  Floating singular
+values and residual norms remain diagnostic views only.

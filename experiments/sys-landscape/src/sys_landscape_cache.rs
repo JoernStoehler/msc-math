@@ -33,6 +33,21 @@ pub struct SysLandscapePolytopeCache {
 }
 
 impl SysLandscapePolytopeCache {
+    /// Reconstruct a validated cache directly from exact rational dual
+    /// vertices. Unlike `from_f64_dual_vertices`, this path never rounds an
+    /// intervention through f64 before taking the exact polar.
+    pub fn from_rational_dual_vertices(dual_vertices: Vec<[BigRational; 4]>) -> Option<Self> {
+        let dual_vectors = vectors_from_arrays(&dual_vertices);
+        if !origin_in_interior_of_conv_exact(&dual_vectors)
+            || !all_points_are_extreme_exact(&dual_vectors)
+        {
+            return None;
+        }
+        let polar = polar_vertices_exact_rational_assuming_origin_interior(&dual_vectors);
+        let vertices = arrays_from_vectors(&polar.vertices);
+        Self::from_rational_parts(dual_vertices, vertices)
+    }
+
     pub fn from_f64_dual_vertices(dual_vertices_f64: Vec<Vector4<f64>>) -> Option<Self> {
         validate_f64_dual_vertices(&dual_vertices_f64)?;
         let dual_vertices = dual_vertices_f64
