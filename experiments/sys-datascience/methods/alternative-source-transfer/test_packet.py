@@ -145,6 +145,15 @@ class PacketTests(unittest.TestCase):
       if "rho" in row["memberships"] and "ridge" in row["memberships"]: counts[row["bucket"]]+=1
     self.assertEqual(counts,{"4x6":3,"6x6":2})
 
+  def test_reviewed_backend_identity_uses_evaluator_labels(self):
+    import hashlib
+    from analyze import EVALUATOR_IDENTITY
+    root=Path(__file__).parents[4]
+    h=hashlib.sha256()
+    for name in ("src/lib.rs", "src/sys_landscape_cache.rs", "src/ascent/compute.rs"):
+      h.update(name.encode()); h.update(b"\0"); h.update((root/"experiments"/"sys-landscape"/name).read_bytes()); h.update(b"\0")
+    self.assertEqual(EVALUATOR_IDENTITY["evaluator_backend_sha256"], h.hexdigest())
+
   def test_duplicate_target_id_and_identity_mismatch_rejected(self):
     with tempfile.TemporaryDirectory() as d:
       p=Path(d); _minimal(p); target=_target_rows(p); target[-1]=dict(target[0]); path=p/"targets.jsonl"; path.write_text("\n".join(json.dumps(x) for x in target)+"\n"); import subprocess

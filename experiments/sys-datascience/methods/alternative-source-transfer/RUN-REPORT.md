@@ -48,6 +48,6 @@ The reviewed evaluator identity is source digest
 `a810e55a82bce73b8a728d7394a576a260f80da204b689b55f7dfff89a9a451a`, lock
 digest `740441674806a1baaea966d5f8f12a66d8e2ef1229b66ca9dcf9225a02f6c45f`,
 backend digest
-`37123b129e112f01ed5f2514b7f724cde6664ab82013a5ea21ed1716a3af0902`, and
+`2fb95be2f16bbd730adfcc610fdb331bfdb692a283bdfe7092bc12cfde07721b`, and
 repository HEAD `5a5736687dcd8ad10f4a682266fa24d1fe067efc`; future evaluation
 uses a detached clean worktree at that commit.

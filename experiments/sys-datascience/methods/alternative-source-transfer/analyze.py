@@ -24,7 +24,7 @@ EVALUATOR_IDENTITY = {
     "evaluator_identity_schema": "alternative-source-transfer-evaluator-identity-v1",
     "evaluator_source_sha256": "a810e55a82bce73b8a728d7394a576a260f80da204b689b55f7dfff89a9a451a",
     "evaluator_lock_sha256": "740441674806a1baaea966d5f8f12a66d8e2ef1229b66ca9dcf9225a02f6c45f",
-    "evaluator_backend_sha256": "37123b129e112f01ed5f2514b7f724cde6664ab82013a5ea21ed1716a3af0902",
+    "evaluator_backend_sha256": "2fb95be2f16bbd730adfcc610fdb331bfdb692a283bdfe7092bc12cfde07721b",
     "evaluator_git_commit": "5a5736687dcd8ad10f4a682266fa24d1fe067efc",
     "evaluator_git_clean": True,
 }
