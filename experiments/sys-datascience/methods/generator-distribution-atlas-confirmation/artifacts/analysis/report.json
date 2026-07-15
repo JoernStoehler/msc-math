@@ -1,0 +1,127 @@
+{
+  "configuration": {
+    "declared_producer_source_revision": "fd9c3e7df08d8c9d04491b8ebbb7b2628d2df32e",
+    "distance_contract": "accepted grid-distance naming: rotation-quotient L2 by declared-grid circular correlation; arbitrary rotations are approximate, grid-aligned rotations exact",
+    "independence_unit": "master seed; factor-only producer derives law/side/row/attempt sub-seeds by BLAKE3",
+    "named_thresholds": {
+      "anisotropy_q95_tail": 10.0,
+      "early_saturation_relative_change": 0.15,
+      "strong_zonogon_diversity_ratio": 2.0,
+      "substantial_bidirectional_overlap": 0.5
+    },
+    "nominal_allocation": "24 requested accepted rows per population/side-count stratum; primal-hull triangles may exhaust under 128 attempts; zonogon only at sides 4,6",
+    "positive_gram_boundary": "positive Gram participation ratio is not intrinsic or metric dimension; negative eigenmass only diagnoses failure of Euclidean embedding",
+    "producer_build_checkout_revisions_in_reports": [
+      "a50e1e930e21541506df6228aaed16355d830372"
+    ],
+    "raw_feature_boundary": "raw unstandardized feature aggregates are scale-sensitive diagnostics; covariance_anisotropy can dominate and no aggregate is a score",
+    "steiner_grid": 1024,
+    "support_grid": 64
+  },
+  "implementation_hashes": {
+    "analyze_py_sha256": "689bdf29863fd35b8602c7a5291760f3c64b9c10c493766d3d9ceb69759a7f9a",
+    "atlas_py_sha256": "2955dccbb06f6cae0d6987b50925059b0e99cfb9db594209998ba8cfc6c03c72",
+    "shape_quality_py_sha256": "d21d4858f2e14704c1a66e06e1673a11134304ec6dd7953b21eedaf1d5d82744"
+  },
+  "input_schema": "factor-shape-row-v1",
+  "input_shards": [
+    {
+      "path": "artifacts/raw/seed-20260716/core/factor-shapes.jsonl",
+      "sha256": "442a640629381cffdd215598521d05cc4ccc86c96d96be530a842572fe2d5cd1"
+    },
+    {
+      "path": "artifacts/raw/seed-20260716/zonogon/factor-shapes.jsonl",
+      "sha256": "6403831626b4a05781ee9e3d24320e72a9433b2b1fabf26eb1f1f986675a2c15"
+    },
+    {
+      "path": "artifacts/raw/seed-20260717/core/factor-shapes.jsonl",
+      "sha256": "2e22a87988c975b05f77eb20dd4cb6c466f088f8bee21fecb1561670e34b2ab0"
+    },
+    {
+      "path": "artifacts/raw/seed-20260717/zonogon/factor-shapes.jsonl",
+      "sha256": "a78c71cd338e8bf4c7144935f25f40d538f8831cc2cdbfe82d2efb63214164d2"
+    },
+    {
+      "path": "artifacts/raw/seed-20260718/core/factor-shapes.jsonl",
+      "sha256": "5aaf6b0a28abccac81df7a7a22cb74338555ba824209eef97f340fb181a36c72"
+    },
+    {
+      "path": "artifacts/raw/seed-20260718/zonogon/factor-shapes.jsonl",
+      "sha256": "b653cd7a2776e130547f5e0d621b00857b6eef69306a8a5a468e31b871b65934"
+    }
+  ],
+  "interpretation": {
+    "allowed": [
+      "per-seed and joint named contrasts, finite-panel effect sizes, rank/order stability, between-seed variability, acceptance/exhaustion/cost, and sign/order reversals"
+    ],
+    "deferred": [
+      "4D exact reconstruction and structural product classification",
+      "target evaluation",
+      "inferential uncertainty beyond between-seed descriptive variability"
+    ],
+    "prohibited": [
+      "best-generator selection or global ranking",
+      "population support or natural-law probability",
+      "mechanism, target/sys prediction, or transfer",
+      "reusing this confirmation set to invent post-hoc criteria without labeling new exploration"
+    ]
+  },
+  "master_seeds": [
+    20260716,
+    20260717,
+    20260718
+  ],
+  "observations": {
+    "anisotropy": "q95 >=10 is a finite-panel thin-tail flag; triangle emphasis remains a side-stratified contrast",
+    "baseline_alpha1_overlap": "named bidirectional overlap event is pass only when both directions are >=0.5 in every side stratum; no global ranking",
+    "regular_controls": "regular/mutation are local negative controls; alpha16/alpha4/alpha1 order is reported per side and seed, including reversals",
+    "saturation": "first deterministic prefix n with <=0.15 relative change is a descriptive saturation estimate only",
+    "zonogon_diversity": "strong excess is predeclared as ratio >=2 at side 4 or 6; side 6 need not pass"
+  },
+  "producer_provenance": {
+    "build_contract": "cargo build --release --locked --package exp-sys-landscape --bin sys-datascience-generator-zoo-smoke at source_revision, with the source blobs and Cargo.lock above",
+    "dirty_scope": "producer reports separately record source_dirty for generator-zoo-smoke/main.rs and experiments/sys-landscape/Cargo.toml",
+    "executable_path_at_capture": "../../../../target/release/sys-datascience-generator-zoo-smoke",
+    "executable_sha256": "d0b560c7208de4c3a97f6ddbf4925fc55267483c25c21e1707ce5942d9c9554c",
+    "source_blobs": {
+      "Cargo.lock": "8a51ae91187fdbc44c1539ddebf598feedd27b91",
+      "experiments/sys-datascience/methods/generator-zoo-smoke/main.rs": "ea59cb1b3d123e630fdc034a95f4a2a43812b0a6",
+      "experiments/sys-landscape/Cargo.toml": "a8efcf2366bcc08c5317d33926f44579727fbf31"
+    },
+    "source_revision": "fd9c3e7df08d8c9d04491b8ebbb7b2628d2df32e"
+  },
+  "producer_reports": [
+    {
+      "path": "artifacts/raw/seed-20260716/core/factor-only-report.json",
+      "sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48"
+    },
+    {
+      "path": "artifacts/raw/seed-20260716/zonogon/factor-only-report.json",
+      "sha256": "ffb2a1c99149a72e75653a142a8c455f5d05df5c0f91ff7ecacbdbbcfcbc3c12"
+    },
+    {
+      "path": "artifacts/raw/seed-20260717/core/factor-only-report.json",
+      "sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36"
+    },
+    {
+      "path": "artifacts/raw/seed-20260717/zonogon/factor-only-report.json",
+      "sha256": "4977d6456d4c3dd42156f804f14107f612fffaf704a2d6fae82445466906f8ba"
+    },
+    {
+      "path": "artifacts/raw/seed-20260718/core/factor-only-report.json",
+      "sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51"
+    },
+    {
+      "path": "artifacts/raw/seed-20260718/zonogon/factor-only-report.json",
+      "sha256": "1dcc4386cc3e989a16fba6a446ac6b319e4bcf10959409d8b31bc56e41a5abde"
+    }
+  ],
+  "repository": {
+    "revision": "a50e1e930e21541506df6228aaed16355d830372",
+    "tracked_clean": true,
+    "tracked_clean_predicate": "git status --porcelain --untracked-files=no",
+    "tree": "0d7f56bc7802ebd788547a3fa800dea2b93d0289"
+  },
+  "rows_validated": 1635,
+  "schema": "generator-distribution-atlas-confirmation-v1"
+}

@@ -1,0 +1,13 @@
+contrast	master_seed	named_order	order_reversal	order_values	side_count
+regular_local_order	20260716	reversal_or_tie	True	"{""regular_to_alpha16_cross_l2_mean"": 0.2295878866532069, ""regular_to_alpha1_cross_l2_mean"": 0.4022444873743981, ""regular_to_alpha4_cross_l2_mean"": 0.4189525860616533}"	3
+regular_local_order	20260717	alpha16<alpha4<alpha1	False	"{""regular_to_alpha16_cross_l2_mean"": 0.29881567097514705, ""regular_to_alpha1_cross_l2_mean"": 1.1318851509827592, ""regular_to_alpha4_cross_l2_mean"": 0.5824676942973862}"	3
+regular_local_order	20260718	alpha16<alpha4<alpha1	False	"{""regular_to_alpha16_cross_l2_mean"": 0.23299594570770132, ""regular_to_alpha1_cross_l2_mean"": 0.7090332254311342, ""regular_to_alpha4_cross_l2_mean"": 0.4308760909329383}"	3
+regular_local_order	joint	seed-dependent/reversed	True	NA	3
+regular_local_order	20260716	alpha16<alpha4<alpha1	False	"{""regular_to_alpha16_cross_l2_mean"": 0.0806939333531895, ""regular_to_alpha1_cross_l2_mean"": 0.5410287076644503, ""regular_to_alpha4_cross_l2_mean"": 0.22394660724058368}"	4
+regular_local_order	20260717	alpha16<alpha4<alpha1	False	"{""regular_to_alpha16_cross_l2_mean"": 0.09190823463885095, ""regular_to_alpha1_cross_l2_mean"": 0.5423865948835176, ""regular_to_alpha4_cross_l2_mean"": 0.28458324289052395}"	4
+regular_local_order	20260718	alpha16<alpha4<alpha1	False	"{""regular_to_alpha16_cross_l2_mean"": 0.08239511030292607, ""regular_to_alpha1_cross_l2_mean"": 0.6906245687686522, ""regular_to_alpha4_cross_l2_mean"": 0.290467146602626}"	4
+regular_local_order	joint	stable	False	NA	4
+regular_local_order	20260716	alpha16<alpha4<alpha1	False	"{""regular_to_alpha16_cross_l2_mean"": 0.03809865577093733, ""regular_to_alpha1_cross_l2_mean"": 0.2564998736946708, ""regular_to_alpha4_cross_l2_mean"": 0.08152102682888261}"	6
+regular_local_order	20260717	alpha16<alpha4<alpha1	False	"{""regular_to_alpha16_cross_l2_mean"": 0.03935656591350564, ""regular_to_alpha1_cross_l2_mean"": 0.325743797903155, ""regular_to_alpha4_cross_l2_mean"": 0.09964440934291015}"	6
+regular_local_order	20260718	alpha16<alpha4<alpha1	False	"{""regular_to_alpha16_cross_l2_mean"": 0.03804723871066043, ""regular_to_alpha1_cross_l2_mean"": 0.2582521670244471, ""regular_to_alpha4_cross_l2_mean"": 0.07414399454232612}"	6
+regular_local_order	joint	stable	False	NA	6

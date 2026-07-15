@@ -1,0 +1,51 @@
+#!/usr/bin/env python3
+import csv
+import json
+from pathlib import Path
+import unittest
+
+import numpy as np
+
+import atlas
+import shape_quality
+
+
+HERE = Path(__file__).resolve().parent
+
+
+class ConfirmationTests(unittest.TestCase):
+    def test_rows_and_seeds(self):
+        report = json.loads((HERE / "artifacts/analysis/report.json").read_text())
+        self.assertEqual(report["rows_validated"], 1635)
+        self.assertEqual(report["master_seeds"], [20260716, 20260717, 20260718])
+        self.assertTrue(report["repository"]["tracked_clean"])
+
+    def test_named_overlap_and_reversal_are_visible(self):
+        with (HERE / "artifacts/analysis/joint-effects.tsv").open() as handle:
+            rows = list(csv.DictReader(handle, delimiter="\t"))
+        overlap = [row for row in rows if row["contrast"] == "baseline_vs_alpha1_nearest_cross_overlap" and row["effect"] == "bidirectional_substantial"]
+        self.assertEqual({row["side_count"] for row in overlap}, {"3", "4", "6"})
+        self.assertTrue(all(row["pass_rate"] == "1.0" for row in overlap))
+        with (HERE / "artifacts/analysis/rank-stability.tsv").open() as handle:
+            stability = list(csv.DictReader(handle, delimiter="\t"))
+        self.assertTrue(any(row["order_reversal"] == "True" for row in stability if row["master_seed"] != "joint"))
+
+    def test_scale_and_boundary_contracts(self):
+        report = json.loads((HERE / "artifacts/analysis/report.json").read_text())
+        config = report["configuration"]
+        self.assertIn("scale-sensitive", config["raw_feature_boundary"])
+        self.assertIn("not intrinsic", config["positive_gram_boundary"])
+        self.assertIn("declared-grid", config["distance_contract"])
+        self.assertEqual(report["producer_provenance"]["source_revision"], "fd9c3e7df08d8c9d04491b8ebbb7b2628d2df32e")
+
+    def test_local_grid_metric_and_geometry_copy(self):
+        support = np.sin(2.0 * np.pi * np.arange(64) / 64.0)
+        self.assertLess(atlas.l2(support, np.roll(support, 11)), 1e-12)
+        polygon = [[0.0, 0.0], [2.0, 0.0], [2.5, 0.8], [1.2, 1.9], [-0.2, 1.0]]
+        shape = shape_quality.standardize_row({"schema": shape_quality.SCHEMA, "sample_id": "test", "law": "test", "side_count": 5, "vertices_ccw": polygon}, 64, 1024, 1)
+        self.assertEqual(shape.side_count, 5)
+        self.assertTrue(np.all(np.isfinite(shape.support)))
+
+
+if __name__ == "__main__":
+    unittest.main()

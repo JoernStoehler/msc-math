@@ -1,0 +1,245 @@
+{
+  "schema": "generator-zoo-factor-only-report-v1",
+  "mode": "factor-only",
+  "law_version": "generator-zoo-v1",
+  "seed": 20260716,
+  "max_attempts_per_row": 128,
+  "rows_per_population_side_count": 24,
+  "selected_populations": [
+    "current-baseline|delta=0.2",
+    "primal-hull-uniform-disk|points=n+4,origin=interior",
+    "repulsive-gap|alpha=1",
+    "repulsive-gap|alpha=4",
+    "repulsive-gap|alpha=16",
+    "repulsive-gap|regular",
+    "regular-mutation|steps=4,scale=0.03"
+  ],
+  "side_counts": [
+    3,
+    4,
+    6
+  ],
+  "factor_rows": 497,
+  "status_counts": {
+    "accepted": 497,
+    "exhausted": 7
+  },
+  "per_population": [
+    {
+      "law": "current-baseline",
+      "parameter": "delta=0.2",
+      "side_count": 3,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.061955,
+      "max_attempts_observed": 14
+    },
+    {
+      "law": "current-baseline",
+      "parameter": "delta=0.2",
+      "side_count": 4,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.030919000000000002,
+      "max_attempts_observed": 6
+    },
+    {
+      "law": "current-baseline",
+      "parameter": "delta=0.2",
+      "side_count": 6,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.063558,
+      "max_attempts_observed": 14
+    },
+    {
+      "law": "primal-hull-uniform-disk",
+      "parameter": "points=n+4,origin=interior",
+      "side_count": 3,
+      "requested": 24,
+      "accepted": 17,
+      "exhausted": 7,
+      "total_generation_ms": 1.2914189999999999,
+      "max_attempts_observed": 128
+    },
+    {
+      "law": "primal-hull-uniform-disk",
+      "parameter": "points=n+4,origin=interior",
+      "side_count": 4,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.221224,
+      "max_attempts_observed": 39
+    },
+    {
+      "law": "primal-hull-uniform-disk",
+      "parameter": "points=n+4,origin=interior",
+      "side_count": 6,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.09616899999999996,
+      "max_attempts_observed": 11
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=1",
+      "side_count": 3,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.033736,
+      "max_attempts_observed": 13
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=1",
+      "side_count": 4,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.019941,
+      "max_attempts_observed": 7
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=1",
+      "side_count": 6,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.019266,
+      "max_attempts_observed": 2
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=4",
+      "side_count": 3,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.016912,
+      "max_attempts_observed": 3
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=4",
+      "side_count": 4,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.01606,
+      "max_attempts_observed": 2
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=4",
+      "side_count": 6,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.019226,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=16",
+      "side_count": 3,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.013203,
+      "max_attempts_observed": 2
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=16",
+      "side_count": 4,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.014918999999999998,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=16",
+      "side_count": 6,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.019444,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "regular",
+      "side_count": 3,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.010821999999999998,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "regular",
+      "side_count": 4,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.019164999999999998,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "regular",
+      "side_count": 6,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.014867,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "regular-mutation",
+      "parameter": "steps=4,scale=0.03",
+      "side_count": 3,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.024415000000000003,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "regular-mutation",
+      "parameter": "steps=4,scale=0.03",
+      "side_count": 4,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.027860000000000003,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "regular-mutation",
+      "parameter": "steps=4,scale=0.03",
+      "side_count": 6,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.03528,
+      "max_attempts_observed": 1
+    }
+  ],
+  "command": "target/release/sys-datascience-generator-zoo-smoke --factor-only --factor-out-dir experiments/sys-datascience/methods/generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core --seed 20260716 --attempts 128 --factor-rows-per-population 24 --factor-side-counts 3,4,6 --factor-population current-baseline|delta=0.2 --factor-population primal-hull-uniform-disk|points=n+4,origin=interior --factor-population repulsive-gap|alpha=1 --factor-population repulsive-gap|alpha=4 --factor-population repulsive-gap|alpha=16 --factor-population repulsive-gap|regular --factor-population regular-mutation|steps=4,scale=0.03",
+  "source_revision": "a50e1e930e21541506df6228aaed16355d830372",
+  "source_dirty": false,
+  "source_dirty_scope": "git status --porcelain -- experiments/sys-datascience/methods/generator-zoo-smoke/main.rs experiments/sys-landscape/Cargo.toml",
+  "validation_boundary": "Factor-only mode validates the local polygon construction, active-facet conditioning, and area normalization; it deliberately does not call the exact 4D product boundary.",
+  "interpretation_boundary": "Factor-only rows are named-population shape evidence for the bounded smoke only; they do not estimate population laws or establish product validity, sys transfer, or persistence."
+}

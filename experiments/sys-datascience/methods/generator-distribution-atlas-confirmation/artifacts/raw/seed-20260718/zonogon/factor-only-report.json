@@ -1,0 +1,47 @@
+{
+  "schema": "generator-zoo-factor-only-report-v1",
+  "mode": "factor-only",
+  "law_version": "generator-zoo-v1",
+  "seed": 20260718,
+  "max_attempts_per_row": 128,
+  "rows_per_population_side_count": 24,
+  "selected_populations": [
+    "zonogon|lengths=uniform(0.5,1.5)"
+  ],
+  "side_counts": [
+    4,
+    6
+  ],
+  "factor_rows": 48,
+  "status_counts": {
+    "accepted": 48
+  },
+  "per_population": [
+    {
+      "law": "zonogon",
+      "parameter": "lengths=uniform(0.5,1.5)",
+      "side_count": 4,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.03294000000000001,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "zonogon",
+      "parameter": "lengths=uniform(0.5,1.5)",
+      "side_count": 6,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.017783,
+      "max_attempts_observed": 1
+    }
+  ],
+  "command": "target/release/sys-datascience-generator-zoo-smoke --factor-only --factor-out-dir experiments/sys-datascience/methods/generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/zonogon --seed 20260718 --attempts 128 --factor-rows-per-population 24 --factor-side-counts 4,6 --factor-population zonogon|lengths=uniform(0.5,1.5)",
+  "source_revision": "a50e1e930e21541506df6228aaed16355d830372",
+  "source_dirty": false,
+  "source_dirty_scope": "git status --porcelain -- experiments/sys-datascience/methods/generator-zoo-smoke/main.rs experiments/sys-landscape/Cargo.toml",
+  "validation_boundary": "Factor-only mode validates the local polygon construction, active-facet conditioning, and area normalization; it deliberately does not call the exact 4D product boundary.",
+  "interpretation_boundary": "Factor-only rows are named-population shape evidence for the bounded smoke only; they do not estimate population laws or establish product validity, sys transfer, or persistence."
+}
