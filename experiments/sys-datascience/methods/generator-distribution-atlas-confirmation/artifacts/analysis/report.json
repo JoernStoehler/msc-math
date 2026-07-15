@@ -19,7 +19,7 @@
     "support_grid": 64
   },
   "implementation_hashes": {
-    "analyze_py_sha256": "689bdf29863fd35b8602c7a5291760f3c64b9c10c493766d3d9ceb69759a7f9a",
+    "analyze_py_sha256": "4e75603eb7e0f14e0642cda227e99ea7b2ae64ca9b064ed062b6e79f531080b5",
     "atlas_py_sha256": "2955dccbb06f6cae0d6987b50925059b0e99cfb9db594209998ba8cfc6c03c72",
     "shape_quality_py_sha256": "d21d4858f2e14704c1a66e06e1673a11134304ec6dd7953b21eedaf1d5d82744"
   },
@@ -75,7 +75,7 @@
     "anisotropy": "q95 >=10 is a finite-panel thin-tail flag; triangle emphasis remains a side-stratified contrast",
     "baseline_alpha1_overlap": "named bidirectional overlap event is pass only when both directions are >=0.5 in every side stratum; no global ranking",
     "regular_controls": "regular/mutation are local negative controls; alpha16/alpha4/alpha1 order is reported per side and seed, including reversals",
-    "saturation": "first deterministic prefix n with <=0.15 relative change is a descriptive saturation estimate only",
+    "saturation": "first deterministic prefix n with <=0.15 relative change is a descriptive saturation estimate only; narrow=(regular,regular-mutation,alpha16) versus broad=(alpha4,alpha1,current-baseline) is evaluated by first-stable medians, with unavailable values explicit",
     "zonogon_diversity": "strong excess is predeclared as ratio >=2 at side 4 or 6; side 6 need not pass"
   },
   "producer_provenance": {
@@ -117,10 +117,10 @@
     }
   ],
   "repository": {
-    "revision": "a50e1e930e21541506df6228aaed16355d830372",
+    "revision": "2bde6f996dde255cd0c6727bd0149834330e07d1",
     "tracked_clean": true,
     "tracked_clean_predicate": "git status --porcelain --untracked-files=no",
-    "tree": "0d7f56bc7802ebd788547a3fa800dea2b93d0289"
+    "tree": "2fabe6db1c0ac40c484a02fd7a331535d2dad1f0"
   },
   "rows_validated": 1635,
   "schema": "generator-distribution-atlas-confirmation-v1"

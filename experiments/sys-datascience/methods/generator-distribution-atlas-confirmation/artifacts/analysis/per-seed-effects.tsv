@@ -1,157 +1,184 @@
-contrast	definition	denominator	effect	master_seed	pass	side_count	strong_threshold	substantial_threshold	tail_threshold	value
-baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	baseline_to_alpha1_overlap_fraction	20260716	True	3	NA	0.5	NA	0.875
-baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	alpha1_to_baseline_overlap_fraction	20260716	True	3	NA	0.5	NA	1.0
-baseline_vs_alpha1_nearest_cross_overlap	both directed overlap fractions >= 0.5	24	bidirectional_substantial	20260716	True	3	NA	1	NA	1
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha16_cross_l2_mean	20260716	False	3	NA	NA	NA	0.2295878866532069
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha4_cross_l2_mean	20260716	False	3	NA	NA	NA	0.4189525860616533
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha1_cross_l2_mean	20260716	False	3	NA	NA	NA	0.4022444873743981
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[regular]	20260716	NA	3	NA	NA	NA	0.003956711095196436
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:regular-mutation[steps=4,scale=0.03]	20260716	NA	3	NA	NA	NA	0.030935282130854374
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=16]	20260716	NA	3	NA	NA	NA	0.20501142947549467
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=4]	20260716	NA	3	NA	NA	NA	0.44531578159350843
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=1]	20260716	NA	3	NA	NA	NA	0.2909163497936171
-narrow_negative_controls	four-step mutation remains narrower than equal-support alpha=1 in this stratum	NA	mutation_within_lt_alpha1	20260716	True	3	NA	NA	NA	1
-narrow_negative_controls	alpha=16 remains narrower than equal-support alpha=1 in this stratum	NA	alpha16_within_lt_alpha1	20260716	True	3	NA	NA	NA	1
-narrow_negative_controls	within-law diversity order alpha16 <= alpha4 <= alpha1	NA	alpha4_between_alpha16_alpha1	20260716	False	3	NA	NA	NA	0
-thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:current-baseline[delta=0.2]	20260716	True	3	NA	NA	10.0	1419.4942216976904
-thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:repulsive-gap[alpha=1]	20260716	True	3	NA	NA	10.0	86.42899940869306
-baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	baseline_to_alpha1_overlap_fraction	20260716	True	4	NA	0.5	NA	0.9166666666666666
-baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	alpha1_to_baseline_overlap_fraction	20260716	True	4	NA	0.5	NA	0.9166666666666666
-baseline_vs_alpha1_nearest_cross_overlap	both directed overlap fractions >= 0.5	24	bidirectional_substantial	20260716	True	4	NA	1	NA	1
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha16_cross_l2_mean	20260716	True	4	NA	NA	NA	0.0806939333531895
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha4_cross_l2_mean	20260716	True	4	NA	NA	NA	0.22394660724058368
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha1_cross_l2_mean	20260716	True	4	NA	NA	NA	0.5410287076644503
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[regular]	20260716	NA	4	NA	NA	NA	0.007122536821688749
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:regular-mutation[steps=4,scale=0.03]	20260716	NA	4	NA	NA	NA	0.021816995625889325
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=16]	20260716	NA	4	NA	NA	NA	0.07057255575086556
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=4]	20260716	NA	4	NA	NA	NA	0.21039971382625974
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=1]	20260716	NA	4	NA	NA	NA	0.5847929826524787
-narrow_negative_controls	four-step mutation remains narrower than equal-support alpha=1 in this stratum	NA	mutation_within_lt_alpha1	20260716	True	4	NA	NA	NA	1
-narrow_negative_controls	alpha=16 remains narrower than equal-support alpha=1 in this stratum	NA	alpha16_within_lt_alpha1	20260716	True	4	NA	NA	NA	1
-narrow_negative_controls	within-law diversity order alpha16 <= alpha4 <= alpha1	NA	alpha4_between_alpha16_alpha1	20260716	True	4	NA	NA	NA	1
-zonogon_vs_baseline_diversity	strongly exceeds means ratio >= 2; all values are finite-panel raw-grid summaries	NA	within_l2_ratio_zonogon_over_baseline	20260716	False	4	2.0	NA	NA	1.86298662198782
-thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:current-baseline[delta=0.2]	20260716	True	4	NA	NA	10.0	247.7719772536142
-thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:repulsive-gap[alpha=1]	20260716	True	4	NA	NA	10.0	105.78192667362848
-baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	baseline_to_alpha1_overlap_fraction	20260716	True	6	NA	0.5	NA	0.875
-baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	alpha1_to_baseline_overlap_fraction	20260716	True	6	NA	0.5	NA	0.9166666666666666
-baseline_vs_alpha1_nearest_cross_overlap	both directed overlap fractions >= 0.5	24	bidirectional_substantial	20260716	True	6	NA	1	NA	1
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha16_cross_l2_mean	20260716	True	6	NA	NA	NA	0.03809865577093733
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha4_cross_l2_mean	20260716	True	6	NA	NA	NA	0.08152102682888261
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha1_cross_l2_mean	20260716	True	6	NA	NA	NA	0.2564998736946708
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[regular]	20260716	NA	6	NA	NA	NA	0.0014991576964176005
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:regular-mutation[steps=4,scale=0.03]	20260716	NA	6	NA	NA	NA	0.016629202927643093
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=16]	20260716	NA	6	NA	NA	NA	0.03544725020542248
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=4]	20260716	NA	6	NA	NA	NA	0.06952867743041381
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=1]	20260716	NA	6	NA	NA	NA	0.2245683638899259
-narrow_negative_controls	four-step mutation remains narrower than equal-support alpha=1 in this stratum	NA	mutation_within_lt_alpha1	20260716	True	6	NA	NA	NA	1
-narrow_negative_controls	alpha=16 remains narrower than equal-support alpha=1 in this stratum	NA	alpha16_within_lt_alpha1	20260716	True	6	NA	NA	NA	1
-narrow_negative_controls	within-law diversity order alpha16 <= alpha4 <= alpha1	NA	alpha4_between_alpha16_alpha1	20260716	True	6	NA	NA	NA	1
-zonogon_vs_baseline_diversity	strongly exceeds means ratio >= 2; all values are finite-panel raw-grid summaries	NA	within_l2_ratio_zonogon_over_baseline	20260716	False	6	2.0	NA	NA	0.4026306716360738
-thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:current-baseline[delta=0.2]	20260716	True	6	NA	NA	10.0	193.58566852548222
-thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:repulsive-gap[alpha=1]	20260716	True	6	NA	NA	10.0	25.03796625422038
-thin_shape_anisotropy_tail	triangle q95 exceeds both available non-triangle q95 values; side-stratified tail emphasis	NA	triangle_q95_exceeds_other_sides:current-baseline[delta=0.2]	20260716	True	3	NA	NA	NA	1
-thin_shape_anisotropy_tail	triangle q95 exceeds both available non-triangle q95 values; side-stratified tail emphasis	NA	triangle_q95_exceeds_other_sides:repulsive-gap[alpha=1]	20260716	False	3	NA	NA	NA	0
-baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	baseline_to_alpha1_overlap_fraction	20260717	True	3	NA	0.5	NA	1.0
-baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	alpha1_to_baseline_overlap_fraction	20260717	True	3	NA	0.5	NA	0.875
-baseline_vs_alpha1_nearest_cross_overlap	both directed overlap fractions >= 0.5	24	bidirectional_substantial	20260717	True	3	NA	1	NA	1
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha16_cross_l2_mean	20260717	True	3	NA	NA	NA	0.29881567097514705
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha4_cross_l2_mean	20260717	True	3	NA	NA	NA	0.5824676942973862
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha1_cross_l2_mean	20260717	True	3	NA	NA	NA	1.1318851509827592
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[regular]	20260717	NA	3	NA	NA	NA	0.0039030603080969393
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:regular-mutation[steps=4,scale=0.03]	20260717	NA	3	NA	NA	NA	0.027838404324603168
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=16]	20260717	NA	3	NA	NA	NA	0.3655899557809875
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=4]	20260717	NA	3	NA	NA	NA	0.544856218024567
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=1]	20260717	NA	3	NA	NA	NA	1.5926746040574316
-narrow_negative_controls	four-step mutation remains narrower than equal-support alpha=1 in this stratum	NA	mutation_within_lt_alpha1	20260717	True	3	NA	NA	NA	1
-narrow_negative_controls	alpha=16 remains narrower than equal-support alpha=1 in this stratum	NA	alpha16_within_lt_alpha1	20260717	True	3	NA	NA	NA	1
-narrow_negative_controls	within-law diversity order alpha16 <= alpha4 <= alpha1	NA	alpha4_between_alpha16_alpha1	20260717	True	3	NA	NA	NA	1
-thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:current-baseline[delta=0.2]	20260717	True	3	NA	NA	10.0	107.6501036995041
-thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:repulsive-gap[alpha=1]	20260717	True	3	NA	NA	10.0	29201.956161191014
-baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	baseline_to_alpha1_overlap_fraction	20260717	True	4	NA	0.5	NA	0.9583333333333334
-baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	alpha1_to_baseline_overlap_fraction	20260717	True	4	NA	0.5	NA	0.9166666666666666
-baseline_vs_alpha1_nearest_cross_overlap	both directed overlap fractions >= 0.5	24	bidirectional_substantial	20260717	True	4	NA	1	NA	1
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha16_cross_l2_mean	20260717	True	4	NA	NA	NA	0.09190823463885095
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha4_cross_l2_mean	20260717	True	4	NA	NA	NA	0.28458324289052395
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha1_cross_l2_mean	20260717	True	4	NA	NA	NA	0.5423865948835176
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[regular]	20260717	NA	4	NA	NA	NA	0.00716464029428941
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:regular-mutation[steps=4,scale=0.03]	20260717	NA	4	NA	NA	NA	0.02451555355456535
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=16]	20260717	NA	4	NA	NA	NA	0.08580674286715001
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=4]	20260717	NA	4	NA	NA	NA	0.28210712995550485
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=1]	20260717	NA	4	NA	NA	NA	0.592771963011454
-narrow_negative_controls	four-step mutation remains narrower than equal-support alpha=1 in this stratum	NA	mutation_within_lt_alpha1	20260717	True	4	NA	NA	NA	1
-narrow_negative_controls	alpha=16 remains narrower than equal-support alpha=1 in this stratum	NA	alpha16_within_lt_alpha1	20260717	True	4	NA	NA	NA	1
-narrow_negative_controls	within-law diversity order alpha16 <= alpha4 <= alpha1	NA	alpha4_between_alpha16_alpha1	20260717	True	4	NA	NA	NA	1
-zonogon_vs_baseline_diversity	strongly exceeds means ratio >= 2; all values are finite-panel raw-grid summaries	NA	within_l2_ratio_zonogon_over_baseline	20260717	False	4	2.0	NA	NA	0.9832704005786351
-thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:current-baseline[delta=0.2]	20260717	True	4	NA	NA	10.0	318.2614684936508
-thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:repulsive-gap[alpha=1]	20260717	True	4	NA	NA	10.0	554.523283632046
-baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	baseline_to_alpha1_overlap_fraction	20260717	True	6	NA	0.5	NA	1.0
-baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	alpha1_to_baseline_overlap_fraction	20260717	True	6	NA	0.5	NA	0.9583333333333334
-baseline_vs_alpha1_nearest_cross_overlap	both directed overlap fractions >= 0.5	24	bidirectional_substantial	20260717	True	6	NA	1	NA	1
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha16_cross_l2_mean	20260717	True	6	NA	NA	NA	0.03935656591350564
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha4_cross_l2_mean	20260717	True	6	NA	NA	NA	0.09964440934291015
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha1_cross_l2_mean	20260717	True	6	NA	NA	NA	0.325743797903155
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[regular]	20260717	NA	6	NA	NA	NA	0.0015072945724793597
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:regular-mutation[steps=4,scale=0.03]	20260717	NA	6	NA	NA	NA	0.01567746504205561
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=16]	20260717	NA	6	NA	NA	NA	0.035205468195601025
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=4]	20260717	NA	6	NA	NA	NA	0.08675313261750903
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=1]	20260717	NA	6	NA	NA	NA	0.3645074818137235
-narrow_negative_controls	four-step mutation remains narrower than equal-support alpha=1 in this stratum	NA	mutation_within_lt_alpha1	20260717	True	6	NA	NA	NA	1
-narrow_negative_controls	alpha=16 remains narrower than equal-support alpha=1 in this stratum	NA	alpha16_within_lt_alpha1	20260717	True	6	NA	NA	NA	1
-narrow_negative_controls	within-law diversity order alpha16 <= alpha4 <= alpha1	NA	alpha4_between_alpha16_alpha1	20260717	True	6	NA	NA	NA	1
-zonogon_vs_baseline_diversity	strongly exceeds means ratio >= 2; all values are finite-panel raw-grid summaries	NA	within_l2_ratio_zonogon_over_baseline	20260717	False	6	2.0	NA	NA	0.742422744396003
-thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:current-baseline[delta=0.2]	20260717	True	6	NA	NA	10.0	31.452349120557315
-thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:repulsive-gap[alpha=1]	20260717	True	6	NA	NA	10.0	124.87686869641828
-thin_shape_anisotropy_tail	triangle q95 exceeds both available non-triangle q95 values; side-stratified tail emphasis	NA	triangle_q95_exceeds_other_sides:current-baseline[delta=0.2]	20260717	False	3	NA	NA	NA	0
-thin_shape_anisotropy_tail	triangle q95 exceeds both available non-triangle q95 values; side-stratified tail emphasis	NA	triangle_q95_exceeds_other_sides:repulsive-gap[alpha=1]	20260717	True	3	NA	NA	NA	1
-baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	baseline_to_alpha1_overlap_fraction	20260718	True	3	NA	0.5	NA	0.9583333333333334
-baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	alpha1_to_baseline_overlap_fraction	20260718	True	3	NA	0.5	NA	1.0
-baseline_vs_alpha1_nearest_cross_overlap	both directed overlap fractions >= 0.5	24	bidirectional_substantial	20260718	True	3	NA	1	NA	1
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha16_cross_l2_mean	20260718	True	3	NA	NA	NA	0.23299594570770132
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha4_cross_l2_mean	20260718	True	3	NA	NA	NA	0.4308760909329383
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha1_cross_l2_mean	20260718	True	3	NA	NA	NA	0.7090332254311342
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[regular]	20260718	NA	3	NA	NA	NA	0.0034940502372122124
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:regular-mutation[steps=4,scale=0.03]	20260718	NA	3	NA	NA	NA	0.026673985448985693
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=16]	20260718	NA	3	NA	NA	NA	0.22893163481553272
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=4]	20260718	NA	3	NA	NA	NA	0.38764290388920286
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=1]	20260718	NA	3	NA	NA	NA	0.8138461976724856
-narrow_negative_controls	four-step mutation remains narrower than equal-support alpha=1 in this stratum	NA	mutation_within_lt_alpha1	20260718	True	3	NA	NA	NA	1
-narrow_negative_controls	alpha=16 remains narrower than equal-support alpha=1 in this stratum	NA	alpha16_within_lt_alpha1	20260718	True	3	NA	NA	NA	1
-narrow_negative_controls	within-law diversity order alpha16 <= alpha4 <= alpha1	NA	alpha4_between_alpha16_alpha1	20260718	True	3	NA	NA	NA	1
-thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:current-baseline[delta=0.2]	20260718	True	3	NA	NA	10.0	3472.372951234332
-thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:repulsive-gap[alpha=1]	20260718	True	3	NA	NA	10.0	1144.0569850408917
-baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	baseline_to_alpha1_overlap_fraction	20260718	True	4	NA	0.5	NA	0.9166666666666666
-baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	alpha1_to_baseline_overlap_fraction	20260718	True	4	NA	0.5	NA	0.9166666666666666
-baseline_vs_alpha1_nearest_cross_overlap	both directed overlap fractions >= 0.5	24	bidirectional_substantial	20260718	True	4	NA	1	NA	1
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha16_cross_l2_mean	20260718	True	4	NA	NA	NA	0.08239511030292607
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha4_cross_l2_mean	20260718	True	4	NA	NA	NA	0.290467146602626
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha1_cross_l2_mean	20260718	True	4	NA	NA	NA	0.6906245687686522
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[regular]	20260718	NA	4	NA	NA	NA	0.007419500058841377
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:regular-mutation[steps=4,scale=0.03]	20260718	NA	4	NA	NA	NA	0.019891834093504483
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=16]	20260718	NA	4	NA	NA	NA	0.06879638337967994
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=4]	20260718	NA	4	NA	NA	NA	0.3193184937223382
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=1]	20260718	NA	4	NA	NA	NA	0.8922777109350812
-narrow_negative_controls	four-step mutation remains narrower than equal-support alpha=1 in this stratum	NA	mutation_within_lt_alpha1	20260718	True	4	NA	NA	NA	1
-narrow_negative_controls	alpha=16 remains narrower than equal-support alpha=1 in this stratum	NA	alpha16_within_lt_alpha1	20260718	True	4	NA	NA	NA	1
-narrow_negative_controls	within-law diversity order alpha16 <= alpha4 <= alpha1	NA	alpha4_between_alpha16_alpha1	20260718	True	4	NA	NA	NA	1
-zonogon_vs_baseline_diversity	strongly exceeds means ratio >= 2; all values are finite-panel raw-grid summaries	NA	within_l2_ratio_zonogon_over_baseline	20260718	False	4	2.0	NA	NA	1.3652089996743824
-thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:current-baseline[delta=0.2]	20260718	True	4	NA	NA	10.0	382.4203764206007
-thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:repulsive-gap[alpha=1]	20260718	True	4	NA	NA	10.0	902.6031195896962
-baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	baseline_to_alpha1_overlap_fraction	20260718	True	6	NA	0.5	NA	0.9166666666666666
-baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	alpha1_to_baseline_overlap_fraction	20260718	True	6	NA	0.5	NA	0.9166666666666666
-baseline_vs_alpha1_nearest_cross_overlap	both directed overlap fractions >= 0.5	24	bidirectional_substantial	20260718	True	6	NA	1	NA	1
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha16_cross_l2_mean	20260718	True	6	NA	NA	NA	0.03804723871066043
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha4_cross_l2_mean	20260718	True	6	NA	NA	NA	0.07414399454232612
-regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha1_cross_l2_mean	20260718	True	6	NA	NA	NA	0.2582521670244471
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[regular]	20260718	NA	6	NA	NA	NA	0.0014958558382602264
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:regular-mutation[steps=4,scale=0.03]	20260718	NA	6	NA	NA	NA	0.01711750043840854
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=16]	20260718	NA	6	NA	NA	NA	0.03181888806318461
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=4]	20260718	NA	6	NA	NA	NA	0.06554404147621441
-narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=1]	20260718	NA	6	NA	NA	NA	0.21835942602468594
-narrow_negative_controls	four-step mutation remains narrower than equal-support alpha=1 in this stratum	NA	mutation_within_lt_alpha1	20260718	True	6	NA	NA	NA	1
-narrow_negative_controls	alpha=16 remains narrower than equal-support alpha=1 in this stratum	NA	alpha16_within_lt_alpha1	20260718	True	6	NA	NA	NA	1
-narrow_negative_controls	within-law diversity order alpha16 <= alpha4 <= alpha1	NA	alpha4_between_alpha16_alpha1	20260718	True	6	NA	NA	NA	1
-zonogon_vs_baseline_diversity	strongly exceeds means ratio >= 2; all values are finite-panel raw-grid summaries	NA	within_l2_ratio_zonogon_over_baseline	20260718	False	6	2.0	NA	NA	0.7755792402316247
-thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:current-baseline[delta=0.2]	20260718	True	6	NA	NA	10.0	41.05796325210072
-thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:repulsive-gap[alpha=1]	20260718	True	6	NA	NA	10.0	16.231310109712965
-thin_shape_anisotropy_tail	triangle q95 exceeds both available non-triangle q95 values; side-stratified tail emphasis	NA	triangle_q95_exceeds_other_sides:current-baseline[delta=0.2]	20260718	True	3	NA	NA	NA	1
-thin_shape_anisotropy_tail	triangle q95 exceeds both available non-triangle q95 values; side-stratified tail emphasis	NA	triangle_q95_exceeds_other_sides:repulsive-gap[alpha=1]	20260718	True	3	NA	NA	NA	1
+availability_reason	available	contrast	definition	denominator	effect	master_seed	pass	side_count	strong_threshold	substantial_threshold	tail_threshold	value
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	baseline_to_alpha1_overlap_fraction	20260716	True	3	NA	0.5	NA	0.875
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	alpha1_to_baseline_overlap_fraction	20260716	True	3	NA	0.5	NA	1.0
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	both directed overlap fractions >= 0.5	24	bidirectional_substantial	20260716	True	3	NA	1	NA	1
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha16_cross_l2_mean	20260716	False	3	NA	NA	NA	0.2295878866532069
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha4_cross_l2_mean	20260716	False	3	NA	NA	NA	0.4189525860616533
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha1_cross_l2_mean	20260716	False	3	NA	NA	NA	0.4022444873743981
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[regular]	20260716	NA	3	NA	NA	NA	0.003956711095196436
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:regular-mutation[steps=4,scale=0.03]	20260716	NA	3	NA	NA	NA	0.030935282130854374
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=16]	20260716	NA	3	NA	NA	NA	0.20501142947549467
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=4]	20260716	NA	3	NA	NA	NA	0.44531578159350843
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=1]	20260716	NA	3	NA	NA	NA	0.2909163497936171
+NA	NA	narrow_negative_controls	four-step mutation remains narrower than equal-support alpha=1 in this stratum	NA	mutation_within_lt_alpha1	20260716	True	3	NA	NA	NA	1
+NA	NA	narrow_negative_controls	alpha=16 remains narrower than equal-support alpha=1 in this stratum	NA	alpha16_within_lt_alpha1	20260716	True	3	NA	NA	NA	1
+NA	NA	narrow_negative_controls	within-law diversity order alpha16 <= alpha4 <= alpha1	NA	alpha4_between_alpha16_alpha1	20260716	False	3	NA	NA	NA	0
+NA	NA	thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:current-baseline[delta=0.2]	20260716	True	3	NA	NA	10.0	1419.4942216976904
+NA	NA	thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:repulsive-gap[alpha=1]	20260716	True	3	NA	NA	10.0	86.42899940869306
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	baseline_to_alpha1_overlap_fraction	20260716	True	4	NA	0.5	NA	0.9166666666666666
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	alpha1_to_baseline_overlap_fraction	20260716	True	4	NA	0.5	NA	0.9166666666666666
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	both directed overlap fractions >= 0.5	24	bidirectional_substantial	20260716	True	4	NA	1	NA	1
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha16_cross_l2_mean	20260716	True	4	NA	NA	NA	0.0806939333531895
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha4_cross_l2_mean	20260716	True	4	NA	NA	NA	0.22394660724058368
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha1_cross_l2_mean	20260716	True	4	NA	NA	NA	0.5410287076644503
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[regular]	20260716	NA	4	NA	NA	NA	0.007122536821688749
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:regular-mutation[steps=4,scale=0.03]	20260716	NA	4	NA	NA	NA	0.021816995625889325
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=16]	20260716	NA	4	NA	NA	NA	0.07057255575086556
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=4]	20260716	NA	4	NA	NA	NA	0.21039971382625974
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=1]	20260716	NA	4	NA	NA	NA	0.5847929826524787
+NA	NA	narrow_negative_controls	four-step mutation remains narrower than equal-support alpha=1 in this stratum	NA	mutation_within_lt_alpha1	20260716	True	4	NA	NA	NA	1
+NA	NA	narrow_negative_controls	alpha=16 remains narrower than equal-support alpha=1 in this stratum	NA	alpha16_within_lt_alpha1	20260716	True	4	NA	NA	NA	1
+NA	NA	narrow_negative_controls	within-law diversity order alpha16 <= alpha4 <= alpha1	NA	alpha4_between_alpha16_alpha1	20260716	True	4	NA	NA	NA	1
+NA	NA	zonogon_vs_baseline_diversity	strongly exceeds means ratio >= 2; all values are finite-panel raw-grid summaries	NA	within_l2_ratio_zonogon_over_baseline	20260716	False	4	2.0	NA	NA	1.86298662198782
+NA	NA	thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:current-baseline[delta=0.2]	20260716	True	4	NA	NA	10.0	247.7719772536142
+NA	NA	thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:repulsive-gap[alpha=1]	20260716	True	4	NA	NA	10.0	105.78192667362848
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	baseline_to_alpha1_overlap_fraction	20260716	True	6	NA	0.5	NA	0.875
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	alpha1_to_baseline_overlap_fraction	20260716	True	6	NA	0.5	NA	0.9166666666666666
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	both directed overlap fractions >= 0.5	24	bidirectional_substantial	20260716	True	6	NA	1	NA	1
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha16_cross_l2_mean	20260716	True	6	NA	NA	NA	0.03809865577093733
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha4_cross_l2_mean	20260716	True	6	NA	NA	NA	0.08152102682888261
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha1_cross_l2_mean	20260716	True	6	NA	NA	NA	0.2564998736946708
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[regular]	20260716	NA	6	NA	NA	NA	0.0014991576964176005
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:regular-mutation[steps=4,scale=0.03]	20260716	NA	6	NA	NA	NA	0.016629202927643093
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=16]	20260716	NA	6	NA	NA	NA	0.03544725020542248
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=4]	20260716	NA	6	NA	NA	NA	0.06952867743041381
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=1]	20260716	NA	6	NA	NA	NA	0.2245683638899259
+NA	NA	narrow_negative_controls	four-step mutation remains narrower than equal-support alpha=1 in this stratum	NA	mutation_within_lt_alpha1	20260716	True	6	NA	NA	NA	1
+NA	NA	narrow_negative_controls	alpha=16 remains narrower than equal-support alpha=1 in this stratum	NA	alpha16_within_lt_alpha1	20260716	True	6	NA	NA	NA	1
+NA	NA	narrow_negative_controls	within-law diversity order alpha16 <= alpha4 <= alpha1	NA	alpha4_between_alpha16_alpha1	20260716	True	6	NA	NA	NA	1
+NA	NA	zonogon_vs_baseline_diversity	strongly exceeds means ratio >= 2; all values are finite-panel raw-grid summaries	NA	within_l2_ratio_zonogon_over_baseline	20260716	False	6	2.0	NA	NA	0.4026306716360738
+NA	NA	thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:current-baseline[delta=0.2]	20260716	True	6	NA	NA	10.0	193.58566852548222
+NA	NA	thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:repulsive-gap[alpha=1]	20260716	True	6	NA	NA	10.0	25.03796625422038
+NA	NA	thin_shape_anisotropy_tail	triangle q95 exceeds both available non-triangle q95 values; side-stratified tail emphasis	NA	triangle_q95_exceeds_other_sides:current-baseline[delta=0.2]	20260716	True	3	NA	NA	NA	1
+NA	NA	thin_shape_anisotropy_tail	triangle q95 exceeds both available non-triangle q95 values; side-stratified tail emphasis	NA	triangle_q95_exceeds_other_sides:repulsive-gap[alpha=1]	20260716	False	3	NA	NA	NA	0
+NA	True	saturation_narrow_vs_broad	narrow=(regular,regular-mutation,alpha16); broad=(alpha4,alpha1,current-baseline); compare medians of first stable n	NA	narrow_first_stable_median	20260716	False	3	NA	NA	NA	12.0
+NA	True	saturation_narrow_vs_broad	narrow=(regular,regular-mutation,alpha16); broad=(alpha4,alpha1,current-baseline); compare medians of first stable n	NA	broad_first_stable_median	20260716	False	3	NA	NA	NA	12.0
+all six first-stable values available	True	saturation_narrow_vs_broad	narrow median first-stable n < broad median first-stable n; unavailable if any named population lacks a first-stable n	NA	narrow_stabilizes_earlier	20260716	False	3	NA	NA	NA	0
+NA	False	saturation_narrow_vs_broad	narrow=(regular,regular-mutation,alpha16); broad=(alpha4,alpha1,current-baseline); compare medians of first stable n	NA	narrow_first_stable_median	20260716	NA	4	NA	NA	NA	8.0
+NA	False	saturation_narrow_vs_broad	narrow=(regular,regular-mutation,alpha16); broad=(alpha4,alpha1,current-baseline); compare medians of first stable n	NA	broad_first_stable_median	20260716	NA	4	NA	NA	NA	NA
+unavailable narrow=[8, 12, 8] broad=[None, 12, 24]	False	saturation_narrow_vs_broad	narrow median first-stable n < broad median first-stable n; unavailable if any named population lacks a first-stable n	NA	narrow_stabilizes_earlier	20260716	NA	4	NA	NA	NA	NA
+NA	False	saturation_narrow_vs_broad	narrow=(regular,regular-mutation,alpha16); broad=(alpha4,alpha1,current-baseline); compare medians of first stable n	NA	narrow_first_stable_median	20260716	NA	6	NA	NA	NA	8.0
+NA	False	saturation_narrow_vs_broad	narrow=(regular,regular-mutation,alpha16); broad=(alpha4,alpha1,current-baseline); compare medians of first stable n	NA	broad_first_stable_median	20260716	NA	6	NA	NA	NA	NA
+unavailable narrow=[8, 12, 8] broad=[24, 12, None]	False	saturation_narrow_vs_broad	narrow median first-stable n < broad median first-stable n; unavailable if any named population lacks a first-stable n	NA	narrow_stabilizes_earlier	20260716	NA	6	NA	NA	NA	NA
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	baseline_to_alpha1_overlap_fraction	20260717	True	3	NA	0.5	NA	1.0
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	alpha1_to_baseline_overlap_fraction	20260717	True	3	NA	0.5	NA	0.875
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	both directed overlap fractions >= 0.5	24	bidirectional_substantial	20260717	True	3	NA	1	NA	1
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha16_cross_l2_mean	20260717	True	3	NA	NA	NA	0.29881567097514705
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha4_cross_l2_mean	20260717	True	3	NA	NA	NA	0.5824676942973862
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha1_cross_l2_mean	20260717	True	3	NA	NA	NA	1.1318851509827592
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[regular]	20260717	NA	3	NA	NA	NA	0.0039030603080969393
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:regular-mutation[steps=4,scale=0.03]	20260717	NA	3	NA	NA	NA	0.027838404324603168
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=16]	20260717	NA	3	NA	NA	NA	0.3655899557809875
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=4]	20260717	NA	3	NA	NA	NA	0.544856218024567
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=1]	20260717	NA	3	NA	NA	NA	1.5926746040574316
+NA	NA	narrow_negative_controls	four-step mutation remains narrower than equal-support alpha=1 in this stratum	NA	mutation_within_lt_alpha1	20260717	True	3	NA	NA	NA	1
+NA	NA	narrow_negative_controls	alpha=16 remains narrower than equal-support alpha=1 in this stratum	NA	alpha16_within_lt_alpha1	20260717	True	3	NA	NA	NA	1
+NA	NA	narrow_negative_controls	within-law diversity order alpha16 <= alpha4 <= alpha1	NA	alpha4_between_alpha16_alpha1	20260717	True	3	NA	NA	NA	1
+NA	NA	thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:current-baseline[delta=0.2]	20260717	True	3	NA	NA	10.0	107.6501036995041
+NA	NA	thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:repulsive-gap[alpha=1]	20260717	True	3	NA	NA	10.0	29201.956161191014
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	baseline_to_alpha1_overlap_fraction	20260717	True	4	NA	0.5	NA	0.9583333333333334
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	alpha1_to_baseline_overlap_fraction	20260717	True	4	NA	0.5	NA	0.9166666666666666
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	both directed overlap fractions >= 0.5	24	bidirectional_substantial	20260717	True	4	NA	1	NA	1
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha16_cross_l2_mean	20260717	True	4	NA	NA	NA	0.09190823463885095
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha4_cross_l2_mean	20260717	True	4	NA	NA	NA	0.28458324289052395
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha1_cross_l2_mean	20260717	True	4	NA	NA	NA	0.5423865948835176
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[regular]	20260717	NA	4	NA	NA	NA	0.00716464029428941
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:regular-mutation[steps=4,scale=0.03]	20260717	NA	4	NA	NA	NA	0.02451555355456535
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=16]	20260717	NA	4	NA	NA	NA	0.08580674286715001
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=4]	20260717	NA	4	NA	NA	NA	0.28210712995550485
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=1]	20260717	NA	4	NA	NA	NA	0.592771963011454
+NA	NA	narrow_negative_controls	four-step mutation remains narrower than equal-support alpha=1 in this stratum	NA	mutation_within_lt_alpha1	20260717	True	4	NA	NA	NA	1
+NA	NA	narrow_negative_controls	alpha=16 remains narrower than equal-support alpha=1 in this stratum	NA	alpha16_within_lt_alpha1	20260717	True	4	NA	NA	NA	1
+NA	NA	narrow_negative_controls	within-law diversity order alpha16 <= alpha4 <= alpha1	NA	alpha4_between_alpha16_alpha1	20260717	True	4	NA	NA	NA	1
+NA	NA	zonogon_vs_baseline_diversity	strongly exceeds means ratio >= 2; all values are finite-panel raw-grid summaries	NA	within_l2_ratio_zonogon_over_baseline	20260717	False	4	2.0	NA	NA	0.9832704005786351
+NA	NA	thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:current-baseline[delta=0.2]	20260717	True	4	NA	NA	10.0	318.2614684936508
+NA	NA	thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:repulsive-gap[alpha=1]	20260717	True	4	NA	NA	10.0	554.523283632046
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	baseline_to_alpha1_overlap_fraction	20260717	True	6	NA	0.5	NA	1.0
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	alpha1_to_baseline_overlap_fraction	20260717	True	6	NA	0.5	NA	0.9583333333333334
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	both directed overlap fractions >= 0.5	24	bidirectional_substantial	20260717	True	6	NA	1	NA	1
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha16_cross_l2_mean	20260717	True	6	NA	NA	NA	0.03935656591350564
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha4_cross_l2_mean	20260717	True	6	NA	NA	NA	0.09964440934291015
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha1_cross_l2_mean	20260717	True	6	NA	NA	NA	0.325743797903155
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[regular]	20260717	NA	6	NA	NA	NA	0.0015072945724793597
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:regular-mutation[steps=4,scale=0.03]	20260717	NA	6	NA	NA	NA	0.01567746504205561
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=16]	20260717	NA	6	NA	NA	NA	0.035205468195601025
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=4]	20260717	NA	6	NA	NA	NA	0.08675313261750903
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=1]	20260717	NA	6	NA	NA	NA	0.3645074818137235
+NA	NA	narrow_negative_controls	four-step mutation remains narrower than equal-support alpha=1 in this stratum	NA	mutation_within_lt_alpha1	20260717	True	6	NA	NA	NA	1
+NA	NA	narrow_negative_controls	alpha=16 remains narrower than equal-support alpha=1 in this stratum	NA	alpha16_within_lt_alpha1	20260717	True	6	NA	NA	NA	1
+NA	NA	narrow_negative_controls	within-law diversity order alpha16 <= alpha4 <= alpha1	NA	alpha4_between_alpha16_alpha1	20260717	True	6	NA	NA	NA	1
+NA	NA	zonogon_vs_baseline_diversity	strongly exceeds means ratio >= 2; all values are finite-panel raw-grid summaries	NA	within_l2_ratio_zonogon_over_baseline	20260717	False	6	2.0	NA	NA	0.742422744396003
+NA	NA	thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:current-baseline[delta=0.2]	20260717	True	6	NA	NA	10.0	31.452349120557315
+NA	NA	thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:repulsive-gap[alpha=1]	20260717	True	6	NA	NA	10.0	124.87686869641828
+NA	NA	thin_shape_anisotropy_tail	triangle q95 exceeds both available non-triangle q95 values; side-stratified tail emphasis	NA	triangle_q95_exceeds_other_sides:current-baseline[delta=0.2]	20260717	False	3	NA	NA	NA	0
+NA	NA	thin_shape_anisotropy_tail	triangle q95 exceeds both available non-triangle q95 values; side-stratified tail emphasis	NA	triangle_q95_exceeds_other_sides:repulsive-gap[alpha=1]	20260717	True	3	NA	NA	NA	1
+NA	False	saturation_narrow_vs_broad	narrow=(regular,regular-mutation,alpha16); broad=(alpha4,alpha1,current-baseline); compare medians of first stable n	NA	narrow_first_stable_median	20260717	NA	3	NA	NA	NA	NA
+NA	False	saturation_narrow_vs_broad	narrow=(regular,regular-mutation,alpha16); broad=(alpha4,alpha1,current-baseline); compare medians of first stable n	NA	broad_first_stable_median	20260717	NA	3	NA	NA	NA	NA
+unavailable narrow=[12, 12, None] broad=[None, None, 12]	False	saturation_narrow_vs_broad	narrow median first-stable n < broad median first-stable n; unavailable if any named population lacks a first-stable n	NA	narrow_stabilizes_earlier	20260717	NA	3	NA	NA	NA	NA
+NA	True	saturation_narrow_vs_broad	narrow=(regular,regular-mutation,alpha16); broad=(alpha4,alpha1,current-baseline); compare medians of first stable n	NA	narrow_first_stable_median	20260717	False	4	NA	NA	NA	8.0
+NA	True	saturation_narrow_vs_broad	narrow=(regular,regular-mutation,alpha16); broad=(alpha4,alpha1,current-baseline); compare medians of first stable n	NA	broad_first_stable_median	20260717	False	4	NA	NA	NA	8.0
+all six first-stable values available	True	saturation_narrow_vs_broad	narrow median first-stable n < broad median first-stable n; unavailable if any named population lacks a first-stable n	NA	narrow_stabilizes_earlier	20260717	False	4	NA	NA	NA	0
+NA	False	saturation_narrow_vs_broad	narrow=(regular,regular-mutation,alpha16); broad=(alpha4,alpha1,current-baseline); compare medians of first stable n	NA	narrow_first_stable_median	20260717	NA	6	NA	NA	NA	8.0
+NA	False	saturation_narrow_vs_broad	narrow=(regular,regular-mutation,alpha16); broad=(alpha4,alpha1,current-baseline); compare medians of first stable n	NA	broad_first_stable_median	20260717	NA	6	NA	NA	NA	NA
+unavailable narrow=[8, 8, 12] broad=[None, 8, None]	False	saturation_narrow_vs_broad	narrow median first-stable n < broad median first-stable n; unavailable if any named population lacks a first-stable n	NA	narrow_stabilizes_earlier	20260717	NA	6	NA	NA	NA	NA
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	baseline_to_alpha1_overlap_fraction	20260718	True	3	NA	0.5	NA	0.9583333333333334
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	alpha1_to_baseline_overlap_fraction	20260718	True	3	NA	0.5	NA	1.0
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	both directed overlap fractions >= 0.5	24	bidirectional_substantial	20260718	True	3	NA	1	NA	1
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha16_cross_l2_mean	20260718	True	3	NA	NA	NA	0.23299594570770132
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha4_cross_l2_mean	20260718	True	3	NA	NA	NA	0.4308760909329383
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha1_cross_l2_mean	20260718	True	3	NA	NA	NA	0.7090332254311342
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[regular]	20260718	NA	3	NA	NA	NA	0.0034940502372122124
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:regular-mutation[steps=4,scale=0.03]	20260718	NA	3	NA	NA	NA	0.026673985448985693
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=16]	20260718	NA	3	NA	NA	NA	0.22893163481553272
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=4]	20260718	NA	3	NA	NA	NA	0.38764290388920286
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=1]	20260718	NA	3	NA	NA	NA	0.8138461976724856
+NA	NA	narrow_negative_controls	four-step mutation remains narrower than equal-support alpha=1 in this stratum	NA	mutation_within_lt_alpha1	20260718	True	3	NA	NA	NA	1
+NA	NA	narrow_negative_controls	alpha=16 remains narrower than equal-support alpha=1 in this stratum	NA	alpha16_within_lt_alpha1	20260718	True	3	NA	NA	NA	1
+NA	NA	narrow_negative_controls	within-law diversity order alpha16 <= alpha4 <= alpha1	NA	alpha4_between_alpha16_alpha1	20260718	True	3	NA	NA	NA	1
+NA	NA	thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:current-baseline[delta=0.2]	20260718	True	3	NA	NA	10.0	3472.372951234332
+NA	NA	thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:repulsive-gap[alpha=1]	20260718	True	3	NA	NA	10.0	1144.0569850408917
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	baseline_to_alpha1_overlap_fraction	20260718	True	4	NA	0.5	NA	0.9166666666666666
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	alpha1_to_baseline_overlap_fraction	20260718	True	4	NA	0.5	NA	0.9166666666666666
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	both directed overlap fractions >= 0.5	24	bidirectional_substantial	20260718	True	4	NA	1	NA	1
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha16_cross_l2_mean	20260718	True	4	NA	NA	NA	0.08239511030292607
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha4_cross_l2_mean	20260718	True	4	NA	NA	NA	0.290467146602626
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha1_cross_l2_mean	20260718	True	4	NA	NA	NA	0.6906245687686522
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[regular]	20260718	NA	4	NA	NA	NA	0.007419500058841377
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:regular-mutation[steps=4,scale=0.03]	20260718	NA	4	NA	NA	NA	0.019891834093504483
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=16]	20260718	NA	4	NA	NA	NA	0.06879638337967994
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=4]	20260718	NA	4	NA	NA	NA	0.3193184937223382
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=1]	20260718	NA	4	NA	NA	NA	0.8922777109350812
+NA	NA	narrow_negative_controls	four-step mutation remains narrower than equal-support alpha=1 in this stratum	NA	mutation_within_lt_alpha1	20260718	True	4	NA	NA	NA	1
+NA	NA	narrow_negative_controls	alpha=16 remains narrower than equal-support alpha=1 in this stratum	NA	alpha16_within_lt_alpha1	20260718	True	4	NA	NA	NA	1
+NA	NA	narrow_negative_controls	within-law diversity order alpha16 <= alpha4 <= alpha1	NA	alpha4_between_alpha16_alpha1	20260718	True	4	NA	NA	NA	1
+NA	NA	zonogon_vs_baseline_diversity	strongly exceeds means ratio >= 2; all values are finite-panel raw-grid summaries	NA	within_l2_ratio_zonogon_over_baseline	20260718	False	4	2.0	NA	NA	1.3652089996743824
+NA	NA	thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:current-baseline[delta=0.2]	20260718	True	4	NA	NA	10.0	382.4203764206007
+NA	NA	thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:repulsive-gap[alpha=1]	20260718	True	4	NA	NA	10.0	902.6031195896962
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	baseline_to_alpha1_overlap_fraction	20260718	True	6	NA	0.5	NA	0.9166666666666666
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	directed nearest cross distance <= source within-population pairwise median	24	alpha1_to_baseline_overlap_fraction	20260718	True	6	NA	0.5	NA	0.9166666666666666
+NA	NA	baseline_vs_alpha1_nearest_cross_overlap	both directed overlap fractions >= 0.5	24	bidirectional_substantial	20260718	True	6	NA	1	NA	1
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha16_cross_l2_mean	20260718	True	6	NA	NA	NA	0.03804723871066043
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha4_cross_l2_mean	20260718	True	6	NA	NA	NA	0.07414399454232612
+NA	NA	regular_local_order	predeclared local order d(regular,alpha16) < d(regular,alpha4) < d(regular,alpha1)	NA	regular_to_alpha1_cross_l2_mean	20260718	True	6	NA	NA	NA	0.2582521670244471
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[regular]	20260718	NA	6	NA	NA	NA	0.0014958558382602264
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:regular-mutation[steps=4,scale=0.03]	20260718	NA	6	NA	NA	NA	0.01711750043840854
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=16]	20260718	NA	6	NA	NA	NA	0.03181888806318461
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=4]	20260718	NA	6	NA	NA	NA	0.06554404147621441
+NA	NA	narrow_negative_controls	descriptive narrow/local control; no global score	NA	within_pairwise_l2_mean:repulsive-gap[alpha=1]	20260718	NA	6	NA	NA	NA	0.21835942602468594
+NA	NA	narrow_negative_controls	four-step mutation remains narrower than equal-support alpha=1 in this stratum	NA	mutation_within_lt_alpha1	20260718	True	6	NA	NA	NA	1
+NA	NA	narrow_negative_controls	alpha=16 remains narrower than equal-support alpha=1 in this stratum	NA	alpha16_within_lt_alpha1	20260718	True	6	NA	NA	NA	1
+NA	NA	narrow_negative_controls	within-law diversity order alpha16 <= alpha4 <= alpha1	NA	alpha4_between_alpha16_alpha1	20260718	True	6	NA	NA	NA	1
+NA	NA	zonogon_vs_baseline_diversity	strongly exceeds means ratio >= 2; all values are finite-panel raw-grid summaries	NA	within_l2_ratio_zonogon_over_baseline	20260718	False	6	2.0	NA	NA	0.7755792402316247
+NA	NA	thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:current-baseline[delta=0.2]	20260718	True	6	NA	NA	10.0	41.05796325210072
+NA	NA	thin_shape_anisotropy_tail	q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail	NA	q95_covariance_anisotropy:repulsive-gap[alpha=1]	20260718	True	6	NA	NA	10.0	16.231310109712965
+NA	NA	thin_shape_anisotropy_tail	triangle q95 exceeds both available non-triangle q95 values; side-stratified tail emphasis	NA	triangle_q95_exceeds_other_sides:current-baseline[delta=0.2]	20260718	True	3	NA	NA	NA	1
+NA	NA	thin_shape_anisotropy_tail	triangle q95 exceeds both available non-triangle q95 values; side-stratified tail emphasis	NA	triangle_q95_exceeds_other_sides:repulsive-gap[alpha=1]	20260718	True	3	NA	NA	NA	1
+NA	False	saturation_narrow_vs_broad	narrow=(regular,regular-mutation,alpha16); broad=(alpha4,alpha1,current-baseline); compare medians of first stable n	NA	narrow_first_stable_median	20260718	NA	3	NA	NA	NA	NA
+NA	False	saturation_narrow_vs_broad	narrow=(regular,regular-mutation,alpha16); broad=(alpha4,alpha1,current-baseline); compare medians of first stable n	NA	broad_first_stable_median	20260718	NA	3	NA	NA	NA	12.0
+unavailable narrow=[8, 12, None] broad=[12, 8, 12]	False	saturation_narrow_vs_broad	narrow median first-stable n < broad median first-stable n; unavailable if any named population lacks a first-stable n	NA	narrow_stabilizes_earlier	20260718	NA	3	NA	NA	NA	NA
+NA	False	saturation_narrow_vs_broad	narrow=(regular,regular-mutation,alpha16); broad=(alpha4,alpha1,current-baseline); compare medians of first stable n	NA	narrow_first_stable_median	20260718	NA	4	NA	NA	NA	8.0
+NA	False	saturation_narrow_vs_broad	narrow=(regular,regular-mutation,alpha16); broad=(alpha4,alpha1,current-baseline); compare medians of first stable n	NA	broad_first_stable_median	20260718	NA	4	NA	NA	NA	NA
+unavailable narrow=[12, 8, 8] broad=[8, None, 12]	False	saturation_narrow_vs_broad	narrow median first-stable n < broad median first-stable n; unavailable if any named population lacks a first-stable n	NA	narrow_stabilizes_earlier	20260718	NA	4	NA	NA	NA	NA
+NA	True	saturation_narrow_vs_broad	narrow=(regular,regular-mutation,alpha16); broad=(alpha4,alpha1,current-baseline); compare medians of first stable n	NA	narrow_first_stable_median	20260718	False	6	NA	NA	NA	8.0
+NA	True	saturation_narrow_vs_broad	narrow=(regular,regular-mutation,alpha16); broad=(alpha4,alpha1,current-baseline); compare medians of first stable n	NA	broad_first_stable_median	20260718	False	6	NA	NA	NA	8.0
+all six first-stable values available	True	saturation_narrow_vs_broad	narrow median first-stable n < broad median first-stable n; unavailable if any named population lacks a first-stable n	NA	narrow_stabilizes_earlier	20260718	False	6	NA	NA	NA	0
