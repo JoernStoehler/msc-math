@@ -1,35 +1,201 @@
 {
+  "asymmetric_reflection_control": {
+    "asymmetric_gap_proportions": [
+      0.1,
+      0.2,
+      0.3,
+      0.4
+    ],
+    "conclusion": "The n cyclic starts represent the same rotation-quotiented body. Reversing vertex traversal also represents the same vertex set, but reversing the positive gap sequence produces a spatially reflected, generically distinct body; reflection is not quotiented.",
+    "cyclic_start_chart_distances": [
+      0.0,
+      5.739474919964872e-16,
+      3.852158101644862e-16,
+      4.442557179350535e-16
+    ],
+    "reflected_gap_sequence_chart_distance": 3.4484148895879025,
+    "same_vertex_set_traversal_reversal_chart_distance": 0.0
+  },
   "density_dispositions": {
     "current_baseline": "abandoned: translation/scale quotient fibers carry nonconstant latent law mass and require coarea integration",
-    "equal_support_dirichlet_alpha_1_4_16": "implemented on a common gap-simplex Lebesgue measure and fixed body-chart Hausdorff measure",
+    "equal_support_dirichlet_alpha_1_4_16": "implemented on the acceptance-conditioned common gap-simplex Lebesgue measure and fixed body-chart Hausdorff measure",
     "primal_hull": "abandoned: inactive interior points and active-set conditioning contribute fiber probability mass",
     "regular_equal_support": "Dirac law; no density relative to the continuous gap measure",
     "regular_mutation": "abandoned: many-to-one step latents, clipping strata, and fibers require coarea integration",
     "zonogon": "abandoned: rotation/scale fibers and native length-coordinate choice require an explicit quotient reference measure"
   },
+  "dirichlet_acceptance_normalizers": [
+    {
+      "alpha": 1,
+      "exact_denominator": 2,
+      "exact_numerator": 1,
+      "exact_rejection_denominator": 2,
+      "exact_rejection_numerator": 1,
+      "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+      "log_value": -0.6931471805599453,
+      "n": 4,
+      "rejection_probability": 0.5,
+      "value": 0.5
+    },
+    {
+      "alpha": 4,
+      "exact_denominator": 128,
+      "exact_numerator": 119,
+      "exact_rejection_denominator": 128,
+      "exact_rejection_numerator": 9,
+      "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+      "log_value": -0.07290677080808779,
+      "n": 4,
+      "rejection_probability": 0.0703125,
+      "value": 0.9296875
+    },
+    {
+      "alpha": 16,
+      "exact_denominator": 562949953421312,
+      "exact_numerator": 562907612692815,
+      "exact_rejection_denominator": 562949953421312,
+      "exact_rejection_numerator": 42340728497,
+      "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+      "log_value": -7.521507123338757e-05,
+      "n": 4,
+      "rejection_probability": 7.521224265083504e-05,
+      "value": 0.9999247877573492
+    },
+    {
+      "alpha": 1,
+      "exact_denominator": 16,
+      "exact_numerator": 13,
+      "exact_rejection_denominator": 16,
+      "exact_rejection_numerator": 3,
+      "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+      "log_value": -0.20763936477824452,
+      "n": 6,
+      "rejection_probability": 0.1875,
+      "value": 0.8125
+    },
+    {
+      "alpha": 4,
+      "exact_denominator": 2048,
+      "exact_numerator": 2045,
+      "exact_rejection_denominator": 2048,
+      "exact_rejection_numerator": 3,
+      "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+      "log_value": -0.0014659176824962832,
+      "n": 6,
+      "rejection_probability": 0.00146484375,
+      "value": 0.99853515625
+    },
+    {
+      "alpha": 16,
+      "exact_denominator": 4835703278458516698824704,
+      "exact_numerator": 4835703278359682926274029,
+      "exact_rejection_denominator": 4835703278458516698824704,
+      "exact_rejection_numerator": 98833772550675,
+      "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+      "log_value": -2.0438345130057353e-11,
+      "n": 6,
+      "rejection_probability": 2.043834512984849e-11,
+      "value": 0.9999999999795617
+    },
+    {
+      "alpha": 1,
+      "exact_denominator": 16,
+      "exact_numerator": 15,
+      "exact_rejection_denominator": 16,
+      "exact_rejection_numerator": 1,
+      "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+      "log_value": -0.06453852113757118,
+      "n": 8,
+      "rejection_probability": 0.0625,
+      "value": 0.9375
+    },
+    {
+      "alpha": 4,
+      "exact_denominator": 2097152,
+      "exact_numerator": 2097113,
+      "exact_rejection_denominator": 2097152,
+      "exact_rejection_numerator": 39,
+      "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+      "log_value": -1.8596822089745873e-05,
+      "n": 8,
+      "rejection_probability": 1.8596649169921875e-05,
+      "value": 0.9999814033508301
+    },
+    {
+      "alpha": 16,
+      "exact_denominator": 2596148429267413814265248164610048,
+      "exact_numerator": 2596148429267413812625737313341761,
+      "exact_rejection_denominator": 2596148429267413814265248164610048,
+      "exact_rejection_numerator": 1639510851268287,
+      "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+      "log_value": -6.315166085210803e-19,
+      "n": 8,
+      "rejection_probability": 6.315166085210803e-19,
+      "value": 1.0
+    }
+  ],
   "dirichlet_common_measure_comparisons": [
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=8 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=4 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -3.7218717299999806,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -1.2841543361953276,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -3.3635958778751633
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 2,
+              "exact_numerator": 1,
+              "exact_rejection_denominator": 2,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.6931471805599453,
+              "n": 4,
+              "rejection_probability": 0.5,
+              "value": 0.5
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -3.028724549440035,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -1.2841543361953274,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.670448697315218,
+            "log_unconditioned_density_wrt_gap_coordinates": -3.7218717299999806
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -15.65029439456142,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -13.212577000756767,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -15.292018542436603
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 562949953421312,
+              "exact_numerator": 562907612692815,
+              "exact_rejection_denominator": 562949953421312,
+              "exact_rejection_numerator": 42340728497,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -7.521507123338757e-05,
+              "n": 4,
+              "rejection_probability": 7.521224265083504e-05,
+              "value": 0.9999247877573492
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -15.650219179490188,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -13.90564896624548,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -15.29194332736537,
+            "log_unconditioned_density_wrt_gap_coordinates": -15.65029439456142
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -4.691176504149634,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -2.253459110344981,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -4.332900652024817
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 128,
+              "exact_numerator": 119,
+              "exact_rejection_denominator": 128,
+              "exact_rejection_numerator": 9,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.07290677080808779,
+              "n": 4,
+              "rejection_probability": 0.0703125,
+              "value": 0.9296875
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.6182697333415454,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -2.873699520096837,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -4.259993881216728,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.691176504149634
           }
         },
         "log_body_volume_step_spread": 5.082920329080309e-08,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -0.35827590198861214,
@@ -72,26 +238,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=8 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=4 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -3.7218717299999806,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 3.9987625089012035,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 1.9193209672213678
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 2,
+              "exact_numerator": 1,
+              "exact_rejection_denominator": 2,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.6931471805599453,
+              "n": 4,
+              "rejection_probability": 0.5,
+              "value": 0.5
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -3.028724549440035,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 3.998762508901204,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 2.612468147781313,
+            "log_unconditioned_density_wrt_gap_coordinates": -3.7218717299999806
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -25.00192734873597,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -17.281293109834785,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -19.36073465151462
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 562949953421312,
+              "exact_numerator": 562907612692815,
+              "exact_rejection_denominator": 562949953421312,
+              "exact_rejection_numerator": 42340728497,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -7.521507123338757e-05,
+              "n": 4,
+              "rejection_probability": 7.521224265083504e-05,
+              "value": 0.9999247877573492
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -25.001852133664734,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -17.974365075323494,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -19.360659436443385,
+            "log_unconditioned_density_wrt_gap_coordinates": -25.00192734873597
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -6.561503094984544,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 1.1591311439166403,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -0.9203103977631955
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 128,
+              "exact_numerator": 119,
+              "exact_rejection_denominator": 128,
+              "exact_rejection_numerator": 9,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.07290677080808779,
+              "n": 4,
+              "rejection_probability": 0.0703125,
+              "value": 0.9296875
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -6.488596324176456,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 0.5388907341647833,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -0.8474036269551073,
+            "log_unconditioned_density_wrt_gap_coordinates": -6.561503094984544
           }
         },
         "log_body_volume_step_spread": 4.938417674793527e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -5.641192693004827,
@@ -134,26 +339,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=8 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=4 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -3.7218717299999806,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -1.0737440405586836,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -3.1531855822385193
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 2,
+              "exact_numerator": 1,
+              "exact_rejection_denominator": 2,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.6931471805599453,
+              "n": 4,
+              "rejection_probability": 0.5,
+              "value": 0.5
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -3.028724549440035,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -1.0737440405586833,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.460038401678574,
+            "log_unconditioned_density_wrt_gap_coordinates": -3.7218717299999806
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -8.821034882964419,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -6.1729071935231214,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -8.252348735202958
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 562949953421312,
+              "exact_numerator": 562907612692815,
+              "exact_rejection_denominator": 562949953421312,
+              "exact_rejection_numerator": 42340728497,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -7.521507123338757e-05,
+              "n": 4,
+              "rejection_probability": 7.521224265083504e-05,
+              "value": 0.9999247877573492
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -8.820959667893186,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -6.865979159011834,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -8.252273520131725,
+            "log_unconditioned_density_wrt_gap_coordinates": -8.821034882964419
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -3.3253246018302347,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -0.6771969123889376,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.7566384540687734
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 128,
+              "exact_numerator": 119,
+              "exact_rejection_denominator": 128,
+              "exact_rejection_numerator": 9,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.07290677080808779,
+              "n": 4,
+              "rejection_probability": 0.0703125,
+              "value": 0.9296875
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -3.252417831022147,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -1.2974373221407955,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.683731683260686,
+            "log_unconditioned_density_wrt_gap_coordinates": -3.3253246018302347
           }
         },
         "log_body_volume_step_spread": 3.823277250347701e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -0.5686861445012534,
@@ -196,26 +440,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=8 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=4 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -3.7218717299999806,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -1.6757754489180159,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -3.7552169905978516
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 2,
+              "exact_numerator": 1,
+              "exact_rejection_denominator": 2,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.6931471805599453,
+              "n": 4,
+              "rejection_probability": 0.5,
+              "value": 0.5
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -3.028724549440035,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -1.6757754489180157,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -3.0620698100379062,
+            "log_unconditioned_density_wrt_gap_coordinates": -3.7218717299999806
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -10.091101773030495,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -8.04500549194853,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -10.124447033628366
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 562949953421312,
+              "exact_numerator": 562907612692815,
+              "exact_rejection_denominator": 562949953421312,
+              "exact_rejection_numerator": 42340728497,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -7.521507123338757e-05,
+              "n": 4,
+              "rejection_probability": 7.521224265083504e-05,
+              "value": 0.9999247877573492
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -10.091026557959262,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -8.738077457437242,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -10.124371818557133,
+            "log_unconditioned_density_wrt_gap_coordinates": -10.091101773030495
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -3.579337979843447,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -1.5332416987614823,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -3.612683240441318
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 128,
+              "exact_numerator": 119,
+              "exact_rejection_denominator": 128,
+              "exact_rejection_numerator": 9,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.07290677080808779,
+              "n": 4,
+              "rejection_probability": 0.0703125,
+              "value": 0.9296875
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -3.5064312090353593,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -2.15348210851334,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -3.539776469633231,
+            "log_unconditioned_density_wrt_gap_coordinates": -3.579337979843447
           }
         },
         "log_body_volume_step_spread": 6.852650669131322e-10,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": 0.03334526107091418,
@@ -258,26 +541,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=12 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=6 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.401893589264679,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -0.43611177089228237,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.9210184206802827
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 13,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.20763936477824452,
+              "n": 6,
+              "rejection_probability": 0.1875,
+              "value": 0.8125
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.194254224486435,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -0.9216195866739834,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.7133790559020383,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.401893589264679
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -12.386226486994616,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -8.420444668622219,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -10.905351318410219
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 4835703278458516698824704,
+              "exact_numerator": 4835703278359682926274029,
+              "exact_rejection_denominator": 4835703278458516698824704,
+              "exact_rejection_numerator": 98833772550675,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -2.0438345130057353e-11,
+              "n": 6,
+              "rejection_probability": 2.043834512984849e-11,
+              "value": 0.9999999999795617
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -12.386226486974177,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -9.113591849161725,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -10.90535131838978,
+            "log_unconditioned_density_wrt_gap_coordinates": -12.386226486994616
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -3.6565209241909926,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 0.3092608941814041,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.1756457556065962
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2048,
+              "exact_numerator": 2045,
+              "exact_rejection_denominator": 2048,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.0014659176824962832,
+              "n": 6,
+              "rejection_probability": 0.00146484375,
+              "value": 0.99853515625
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -3.6550550065084964,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -0.38242036869604457,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.1741798379240995,
+            "log_unconditioned_density_wrt_gap_coordinates": -3.6565209241909926
           }
         },
         "log_body_volume_step_spread": 3.3863998272209983e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -1.4808751719707964,
@@ -328,26 +650,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=12 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=6 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.401893589264679,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -0.33334350074054386,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.818250150528544
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 13,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.20763936477824452,
+              "n": 6,
+              "rejection_probability": 0.1875,
+              "value": 0.8125
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.194254224486435,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -0.8188513165222449,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.6106107857503,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.401893589264679
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -38.921130549667396,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -34.85258046114326,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -37.337487110931264
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 4835703278458516698824704,
+              "exact_numerator": 4835703278359682926274029,
+              "exact_rejection_denominator": 4835703278458516698824704,
+              "exact_rejection_numerator": 98833772550675,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -2.0438345130057353e-11,
+              "n": 6,
+              "rejection_probability": 2.043834512984849e-11,
+              "value": 0.9999999999795617
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -38.92113054964696,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -35.545727641682774,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -37.33748711091083,
+            "log_unconditioned_density_wrt_gap_coordinates": -38.921130549667396
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -8.963501736725547,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -4.8949516482014115,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -7.379858297989412
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2048,
+              "exact_numerator": 2045,
+              "exact_rejection_denominator": 2048,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.0014659176824962832,
+              "n": 6,
+              "rejection_probability": 0.00146484375,
+              "value": 0.99853515625
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -8.96203581904305,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -5.58663291107886,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -7.378392380306916,
+            "log_unconditioned_density_wrt_gap_coordinates": -8.963501736725547
           }
         },
         "log_body_volume_step_spread": 6.693888998654529e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -1.5836434453952153,
@@ -398,26 +759,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=12 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=6 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.401893589264679,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -0.05927645212846233,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.5441831019164627
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 13,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.20763936477824452,
+              "n": 6,
+              "rejection_probability": 0.1875,
+              "value": 0.8125
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.194254224486435,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -0.5447842679101633,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.3365437371382183,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.401893589264679
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -22.01011722649278,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -17.66750008935656,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -20.152406739144563
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 4835703278458516698824704,
+              "exact_numerator": 4835703278359682926274029,
+              "exact_rejection_denominator": 4835703278458516698824704,
+              "exact_rejection_numerator": 98833772550675,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -2.0438345130057353e-11,
+              "n": 6,
+              "rejection_probability": 2.043834512984849e-11,
+              "value": 0.9999999999795617
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -22.010117226472342,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -18.36064726989607,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -20.152406739124125,
+            "log_unconditioned_density_wrt_gap_coordinates": -22.01011722649278
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -5.581299072090623,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -1.238681934954406,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -3.7235885847424064
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2048,
+              "exact_numerator": 2045,
+              "exact_rejection_denominator": 2048,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.0014659176824962832,
+              "n": 6,
+              "rejection_probability": 0.00146484375,
+              "value": 0.99853515625
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -5.579833154408126,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -1.9303631978318547,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -3.7221226670599097,
+            "log_unconditioned_density_wrt_gap_coordinates": -5.581299072090623
           }
         },
         "log_body_volume_step_spread": 1.4326273500842035e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -1.857710485915589,
@@ -468,26 +868,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=12 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=6 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.401893589264679,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 4.490684107344489,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 2.005777457556489
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 13,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.20763936477824452,
+              "n": 6,
+              "rejection_probability": 0.1875,
+              "value": 0.8125
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.194254224486435,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 4.005176291562789,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 2.2134168223347332,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.401893589264679
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -51.13862717083967,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -42.2460494742305,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -44.730956124018505
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 4835703278458516698824704,
+              "exact_numerator": 4835703278359682926274029,
+              "exact_rejection_denominator": 4835703278458516698824704,
+              "exact_rejection_numerator": 98833772550675,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -2.0438345130057353e-11,
+              "n": 6,
+              "rejection_probability": 2.043834512984849e-11,
+              "value": 0.9999999999795617
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -51.138627170819234,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -42.939196654770015,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -44.73095612399807,
+            "log_unconditioned_density_wrt_gap_coordinates": -51.13862717083967
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -11.407001060959999,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -2.5144233643508307,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -4.999330014138831
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2048,
+              "exact_numerator": 2045,
+              "exact_rejection_denominator": 2048,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.0014659176824962832,
+              "n": 6,
+              "rejection_probability": 0.00146484375,
+              "value": 0.99853515625
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -11.405535143277502,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -3.2061046272282794,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -4.997864096456334,
+            "log_unconditioned_density_wrt_gap_coordinates": -11.407001060959999
           }
         },
         "log_body_volume_step_spread": 5.182726692254391e-08,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -6.407671097383424,
@@ -538,26 +977,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=16 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=8 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.339978103800004,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 1.3851444347357815,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.3874442875039996
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 15,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.06453852113757118,
+              "n": 8,
+              "rejection_probability": 0.0625,
+              "value": 0.9375
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.2754395826624325,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 0.7565357753134072,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.3229057663664285,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.339978103800004
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -19.411839335982844,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -13.686716797447058,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -16.45930551968684
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 2596148429267413814265248164610048,
+              "exact_numerator": 2596148429267413812625737313341761,
+              "exact_rejection_denominator": 2596148429267413814265248164610048,
+              "exact_rejection_numerator": 1639510851268287,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -6.315166085210803e-19,
+              "n": 8,
+              "rejection_probability": 6.315166085210803e-19,
+              "value": 1.0
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -19.411839335982844,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -14.379863978007004,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -16.45930551968684,
+            "log_unconditioned_density_wrt_gap_coordinates": -19.411839335982844
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -4.088187070112216,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 1.636935468423569,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.135653253816212
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2097152,
+              "exact_numerator": 2097113,
+              "exact_rejection_denominator": 2097152,
+              "exact_rejection_numerator": 39,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -1.8596822089745873e-05,
+              "n": 8,
+              "rejection_probability": 1.8596649169921875e-05,
+              "value": 0.9999814033508301
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.088168473290127,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 0.943806884685713,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.1356346569941227,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.088187070112216
           }
         },
         "log_body_volume_step_spread": 4.234417261272938e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -2.9525338205304212,
@@ -616,26 +1094,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=16 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=8 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.339978103800004,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 1.560813314058933,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.211775408180848
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 15,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.06453852113757118,
+              "n": 8,
+              "rejection_probability": 0.0625,
+              "value": 0.9375
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.2754395826624325,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 0.9322046546365588,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.147236887043277,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.339978103800004
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -95.3235164490186,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -89.42272503115967,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -92.19531375339945
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 2596148429267413814265248164610048,
+              "exact_numerator": 2596148429267413812625737313341761,
+              "exact_rejection_denominator": 2596148429267413814265248164610048,
+              "exact_rejection_numerator": 1639510851268287,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -6.315166085210803e-19,
+              "n": 8,
+              "rejection_probability": 6.315166085210803e-19,
+              "value": 1.0
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -95.3235164490186,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -90.1158722117196,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -92.19531375339945,
+            "log_unconditioned_density_wrt_gap_coordinates": -95.3235164490186
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -19.27052249271937,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -13.369731074860432,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -16.142319797100214
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2097152,
+              "exact_numerator": 2097113,
+              "exact_rejection_denominator": 2097152,
+              "exact_rejection_numerator": 39,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -1.8596822089745873e-05,
+              "n": 8,
+              "rejection_probability": 1.8596649169921875e-05,
+              "value": 0.9999814033508301
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -19.270503895897278,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -14.062859658598287,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -16.142301200278123,
+            "log_unconditioned_density_wrt_gap_coordinates": -19.27052249271937
           }
         },
         "log_body_volume_step_spread": 9.651204280203274e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -3.1282027048250347,
@@ -694,26 +1211,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=16 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=8 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.339978103800004,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 1.3669121478509738,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.4056765743888073
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 15,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.06453852113757118,
+              "n": 8,
+              "rejection_probability": 0.0625,
+              "value": 0.9375
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.2754395826624325,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 0.7383034884285995,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.3411380532512363,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.339978103800004
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -31.61816988841377,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -25.911279636762792,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -28.683868359002574
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 2596148429267413814265248164610048,
+              "exact_numerator": 2596148429267413812625737313341761,
+              "exact_rejection_denominator": 2596148429267413814265248164610048,
+              "exact_rejection_numerator": 1639510851268287,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -6.315166085210803e-19,
+              "n": 8,
+              "rejection_probability": 6.315166085210803e-19,
+              "value": 1.0
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -31.61816988841377,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -26.60442681732274,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -28.683868359002574,
+            "log_unconditioned_density_wrt_gap_coordinates": -31.61816988841377
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -6.529453180598399,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -0.8225629289474212,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -3.5951516511872024
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2097152,
+              "exact_numerator": 2097113,
+              "exact_rejection_denominator": 2097152,
+              "exact_rejection_numerator": 39,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -1.8596822089745873e-05,
+              "n": 8,
+              "rejection_probability": 1.8596649169921875e-05,
+              "value": 0.9999814033508301
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -6.529434583776309,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -1.5156915126852772,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -3.595133054365113,
+            "log_unconditioned_density_wrt_gap_coordinates": -6.529453180598399
           }
         },
         "log_body_volume_step_spread": 4.369651307456479e-10,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -2.9343015290877252,
@@ -772,26 +1328,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=16 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=8 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.339978103800004,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 0.9992959908609933,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.7732927313787878
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 15,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.06453852113757118,
+              "n": 8,
+              "rejection_probability": 0.0625,
+              "value": 0.9375
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.2754395826624325,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 0.370687331438619,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.7087542102412168,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.339978103800004
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -60.30283143000884,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -54.963557335347836,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -57.73614605758762
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 2596148429267413814265248164610048,
+              "exact_numerator": 2596148429267413812625737313341761,
+              "exact_rejection_denominator": 2596148429267413814265248164610048,
+              "exact_rejection_numerator": 1639510851268287,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -6.315166085210803e-19,
+              "n": 8,
+              "rejection_probability": 6.315166085210803e-19,
+              "value": 1.0
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -60.30283143000884,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -55.656704515907784,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -57.73614605758762,
+            "log_unconditioned_density_wrt_gap_coordinates": -60.30283143000884
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -12.266385488917411,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -6.927111394256414,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -9.699700116496196
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2097152,
+              "exact_numerator": 2097113,
+              "exact_rejection_denominator": 2097152,
+              "exact_rejection_numerator": 39,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -1.8596822089745873e-05,
+              "n": 8,
+              "rejection_probability": 1.8596649169921875e-05,
+              "value": 0.9999814033508301
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -12.266366892095322,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -7.62023997799427,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -9.699681519674106,
+            "log_unconditioned_density_wrt_gap_coordinates": -12.266385488917411
           }
         },
         "log_body_volume_step_spread": 4.798539343653374e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -2.5666853676226764,
@@ -850,26 +1445,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=8 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=4 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -3.7218717299999806,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -1.47701445177479,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -3.556455993454626
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 2,
+              "exact_numerator": 1,
+              "exact_rejection_denominator": 2,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.6931471805599453,
+              "n": 4,
+              "rejection_probability": 0.5,
+              "value": 0.5
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -3.028724549440035,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -1.4770144517747898,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.8633088128946804,
+            "log_unconditioned_density_wrt_gap_coordinates": -3.7218717299999806
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -1.6525118335128814,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 0.5923454447123091,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.4870960969675266
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 562949953421312,
+              "exact_numerator": 562907612692815,
+              "exact_rejection_denominator": 562949953421312,
+              "exact_rejection_numerator": 42340728497,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -7.521507123338757e-05,
+              "n": 4,
+              "rejection_probability": 7.521224265083504e-05,
+              "value": 0.9999247877573492
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -1.6524366184416481,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -0.10072652077640298,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.4870208818962936,
+            "log_unconditioned_density_wrt_gap_coordinates": -1.6525118335128814
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -1.8916199919399252,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 0.3532372862852653,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.7262042553945705
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 128,
+              "exact_numerator": 119,
+              "exact_rejection_denominator": 128,
+              "exact_rejection_numerator": 9,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.07290677080808779,
+              "n": 4,
+              "rejection_probability": 0.0703125,
+              "value": 0.9296875
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -1.8187132211318375,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -0.26700312346659216,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.6532974845864827,
+            "log_unconditioned_density_wrt_gap_coordinates": -1.8916199919399252
           }
         },
         "log_body_volume_step_spread": 4.630397176796919e-10,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -0.16541573608231497,
@@ -912,26 +1546,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=8 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=4 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -3.7218717299999806,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -1.3592923930798753,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -3.438733934759711
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 2,
+              "exact_numerator": 1,
+              "exact_rejection_denominator": 2,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.6931471805599453,
+              "n": 4,
+              "rejection_probability": 0.5,
+              "value": 0.5
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -3.028724549440035,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -1.359292393079875,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.7455867541997656,
+            "log_unconditioned_density_wrt_gap_coordinates": -3.7218717299999806
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": 0.17404199785388474,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 2.53662133477399,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 0.4571797930941543
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 562949953421312,
+              "exact_numerator": 562907612692815,
+              "exact_rejection_denominator": 562949953421312,
+              "exact_rejection_numerator": 42340728497,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -7.521507123338757e-05,
+              "n": 4,
+              "rejection_probability": 7.521224265083504e-05,
+              "value": 0.9999247877573492
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": 0.17411721292511814,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 1.8435493692852782,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 0.45725500816538767,
+            "log_unconditioned_density_wrt_gap_coordinates": 0.17404199785388474
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -1.526309225666572,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 0.8362701112535333,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.2431714304263024
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 128,
+              "exact_numerator": 119,
+              "exact_rejection_denominator": 128,
+              "exact_rejection_numerator": 9,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.07290677080808779,
+              "n": 4,
+              "rejection_probability": 0.0703125,
+              "value": 0.9296875
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -1.4534024548584843,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 0.21602970150167589,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.1702646596182147,
+            "log_unconditioned_density_wrt_gap_coordinates": -1.526309225666572
           }
         },
         "log_body_volume_step_spread": 8.656969030518269e-10,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -0.28313779610596645,
@@ -974,26 +1647,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=8 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=4 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -3.7218717299999806,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -1.3986628718148149,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -3.4781044134946506
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 2,
+              "exact_numerator": 1,
+              "exact_rejection_denominator": 2,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.6931471805599453,
+              "n": 4,
+              "rejection_probability": 0.5,
+              "value": 0.5
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -3.028724549440035,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -1.3986628718148146,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.784957232934705,
+            "log_unconditioned_density_wrt_gap_coordinates": -3.7218717299999806
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -2.595331573291438,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -0.2721227151062724,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.351564256786108
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 562949953421312,
+              "exact_numerator": 562907612692815,
+              "exact_rejection_denominator": 562949953421312,
+              "exact_rejection_numerator": 42340728497,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -7.521507123338757e-05,
+              "n": 4,
+              "rejection_probability": 7.521224265083504e-05,
+              "value": 0.9999247877573492
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -2.5952563582202046,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -0.965194680594984,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.3514890417148746,
+            "log_unconditioned_density_wrt_gap_coordinates": -2.595331573291438
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -2.0801839398956394,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 0.24302491828952633,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.8364166233903094
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 128,
+              "exact_numerator": 119,
+              "exact_rejection_denominator": 128,
+              "exact_rejection_numerator": 9,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.07290677080808779,
+              "n": 4,
+              "rejection_probability": 0.0703125,
+              "value": 0.9296875
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -2.0072771690875517,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -0.37721549146233113,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.7635098525822217,
+            "log_unconditioned_density_wrt_gap_coordinates": -2.0801839398956394
           }
         },
         "log_body_volume_step_spread": 5.486792464814982e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -0.24376732156526149,
@@ -1036,26 +1748,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=8 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=4 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -3.7218717299999806,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -1.7348728547574113,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -3.814314396437247
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 2,
+              "exact_numerator": 1,
+              "exact_rejection_denominator": 2,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.6931471805599453,
+              "n": 4,
+              "rejection_probability": 0.5,
+              "value": 0.5
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -3.028724549440035,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -1.734872854757411,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -3.1211672158773016,
+            "log_unconditioned_density_wrt_gap_coordinates": -3.7218717299999806
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -4.076114301071619,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -2.0891154258290494,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -4.168556967508885
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 562949953421312,
+              "exact_numerator": 562907612692815,
+              "exact_rejection_denominator": 562949953421312,
+              "exact_rejection_numerator": 42340728497,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -7.521507123338757e-05,
+              "n": 4,
+              "rejection_probability": 7.521224265083504e-05,
+              "value": 0.9999247877573492
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.076039086000385,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -2.782187391317761,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -4.168481752437652,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.076114301071619
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -2.3763404854516734,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -0.38934161020910407,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.46878315188894
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 128,
+              "exact_numerator": 119,
+              "exact_rejection_denominator": 128,
+              "exact_rejection_numerator": 9,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.07290677080808779,
+              "n": 4,
+              "rejection_probability": 0.0703125,
+              "value": 0.9296875
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -2.3034337146435857,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -1.0095820199609615,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.395876381080852,
+            "log_unconditioned_density_wrt_gap_coordinates": -2.3763404854516734
           }
         },
         "log_body_volume_step_spread": 1.3377916996404338e-08,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": 0.0924426530593494,
@@ -1098,26 +1849,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=12 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=6 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.401893589264679,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -0.1130919819410452,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.5979986317290455
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 13,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.20763936477824452,
+              "n": 6,
+              "rejection_probability": 0.1875,
+              "value": 0.8125
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.194254224486435,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -0.5985997977227462,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.390359266950801,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.401893589264679
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -1.0788522812687518,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 3.209949326054882,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 0.7250426762668818
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 4835703278458516698824704,
+              "exact_numerator": 4835703278359682926274029,
+              "exact_rejection_denominator": 4835703278458516698824704,
+              "exact_rejection_numerator": 98833772550675,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -2.0438345130057353e-11,
+              "n": 6,
+              "rejection_probability": 2.043834512984849e-11,
+              "value": 0.9999999999795617
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -1.0788522812483134,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 2.516802145515375,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 0.7250426762873201,
+            "log_unconditioned_density_wrt_gap_coordinates": -1.0788522812687518
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -1.3950460830458127,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 2.8937555242778212,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 0.4088488744898209
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2048,
+              "exact_numerator": 2045,
+              "exact_rejection_denominator": 2048,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.0014659176824962832,
+              "n": 6,
+              "rejection_probability": 0.00146484375,
+              "value": 0.99853515625
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -1.3935801653633164,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 2.202074261400372,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 0.41031479217231714,
+            "log_unconditioned_density_wrt_gap_coordinates": -1.3950460830458127
           }
         },
         "log_body_volume_step_spread": 1.6055299312256466e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -1.8038949591411635,
@@ -1168,26 +1958,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=12 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=6 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.401893589264679,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -0.07556331208050349,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.560469961868504
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 13,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.20763936477824452,
+              "n": 6,
+              "rejection_probability": 0.1875,
+              "value": 0.8125
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.194254224486435,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -0.5610711278622045,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.3528305970902594,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.401893589264679
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": 1.492124643032497,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 5.818454920216673,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 3.3335482704286723
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 4835703278458516698824704,
+              "exact_numerator": 4835703278359682926274029,
+              "exact_rejection_denominator": 4835703278458516698824704,
+              "exact_rejection_numerator": 98833772550675,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -2.0438345130057353e-11,
+              "n": 6,
+              "rejection_probability": 2.043834512984849e-11,
+              "value": 0.9999999999795617
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": 1.4921246430529354,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 5.125307739677165,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 3.3335482704491106,
+            "log_unconditioned_density_wrt_gap_coordinates": 1.492124643032497
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -0.8808506981855615,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 3.445479578998614,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 0.9605729292106138
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2048,
+              "exact_numerator": 2045,
+              "exact_rejection_denominator": 2048,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.0014659176824962832,
+              "n": 6,
+              "rejection_probability": 0.00146484375,
+              "value": 0.99853515625
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -0.8793847805030652,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 2.753798316121165,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 0.96203884689311,
+            "log_unconditioned_density_wrt_gap_coordinates": -0.8808506981855615
           }
         },
         "log_body_volume_step_spread": 1.6142616132697185e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -1.8414236261417074,
@@ -1238,26 +2067,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=12 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=6 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.401893589264679,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -0.3271487187145641,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.8120553685025644
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 13,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.20763936477824452,
+              "n": 6,
+              "rejection_probability": 0.1875,
+              "value": 0.8125
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.194254224486435,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -0.8126565344962651,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.60441600372432,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.401893589264679
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -4.234813463680581,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -0.16006859313046595,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.6449752429184663
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 4835703278458516698824704,
+              "exact_numerator": 4835703278359682926274029,
+              "exact_rejection_denominator": 4835703278458516698824704,
+              "exact_rejection_numerator": 98833772550675,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -2.0438345130057353e-11,
+              "n": 6,
+              "rejection_probability": 2.043834512984849e-11,
+              "value": 0.9999999999795617
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.234813463660142,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -0.8532157736699726,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.6449752428980275,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.234813463680581
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -2.0262383195281757,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 2.048506551021939,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -0.43640009876606123
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2048,
+              "exact_numerator": 2045,
+              "exact_rejection_denominator": 2048,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.0014659176824962832,
+              "n": 6,
+              "rejection_probability": 0.00146484375,
+              "value": 0.99853515625
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -2.0247724018456794,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 1.35682528814449,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -0.43493418108356496,
+            "log_unconditioned_density_wrt_gap_coordinates": -2.0262383195281757
           }
         },
         "log_body_volume_step_spread": 3.797011371986514e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -1.5898382245591258,
@@ -1308,26 +2176,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=12 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=6 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.401893589264679,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -0.19411341111656766,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.679020060904568
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 13,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.20763936477824452,
+              "n": 6,
+              "rejection_probability": 0.1875,
+              "value": 0.8125
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.194254224486435,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -0.6796212268982686,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.4713806961263236,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.401893589264679
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -7.81425576617093,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -3.606475588022819,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -6.091382237810819
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 4835703278458516698824704,
+              "exact_numerator": 4835703278359682926274029,
+              "exact_rejection_denominator": 4835703278458516698824704,
+              "exact_rejection_numerator": 98833772550675,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -2.0438345130057353e-11,
+              "n": 6,
+              "rejection_probability": 2.043834512984849e-11,
+              "value": 0.9999999999795617
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -7.814255766150492,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -4.299622768562326,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -6.091382237790381,
+            "log_unconditioned_density_wrt_gap_coordinates": -7.81425576617093
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -2.742126780026254,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 1.4656533981218574,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.019253251666143
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2048,
+              "exact_numerator": 2045,
+              "exact_rejection_denominator": 2048,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.0014659176824962832,
+              "n": 6,
+              "rejection_probability": 0.00146484375,
+              "value": 0.99853515625
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -2.740660862343758,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 0.7739721352444082,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.0177873339836467,
+            "log_unconditioned_density_wrt_gap_coordinates": -2.742126780026254
           }
         },
         "log_body_volume_step_spread": 7.690981185248802e-10,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -1.7228735291292092,
@@ -1378,26 +2285,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=16 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=8 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.339978103800004,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 1.6338687090010269,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.1387200132387543
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 15,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.06453852113757118,
+              "n": 8,
+              "rejection_probability": 0.0625,
+              "value": 0.9375
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.2754395826624325,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 1.0052600495786526,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.0741814921011832,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.339978103800004
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": 0.17852828784484487,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 6.152375100645875,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 3.379786378406094
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 2596148429267413814265248164610048,
+              "exact_numerator": 2596148429267413812625737313341761,
+              "exact_rejection_denominator": 2596148429267413814265248164610048,
+              "exact_rejection_numerator": 1639510851268287,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -6.315166085210803e-19,
+              "n": 8,
+              "rejection_probability": 6.315166085210803e-19,
+              "value": 1.0
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": 0.17852828784484487,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 5.4592279200859295,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 3.379786378406094,
+            "log_unconditioned_density_wrt_gap_coordinates": 0.17852828784484487
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -0.1701135453466769,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 5.803733267454353,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 3.0311445452145724
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2097152,
+              "exact_numerator": 2097113,
+              "exact_rejection_denominator": 2097152,
+              "exact_rejection_numerator": 39,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -1.8596822089745873e-05,
+              "n": 8,
+              "rejection_probability": 1.8596649169921875e-05,
+              "value": 0.9999814033508301
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -0.17009494852458715,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 5.110604683716498,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 3.0311631420366623,
+            "log_unconditioned_density_wrt_gap_coordinates": -0.1701135453466769
           }
         },
         "log_body_volume_step_spread": 1.335827448656346e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -3.201258091838537,
@@ -1456,26 +2402,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=16 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=8 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.339978103800004,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 1.613660143763251,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.1589285784765302
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 15,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.06453852113757118,
+              "n": 8,
+              "rejection_probability": 0.0625,
+              "value": 0.9375
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.2754395826624325,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 0.9850514843408766,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.094390057338959,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.339978103800004
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -1.0554654776541348,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 4.89817276990912,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 2.1255840476693386
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 2596148429267413814265248164610048,
+              "exact_numerator": 2596148429267413812625737313341761,
+              "exact_rejection_denominator": 2596148429267413814265248164610048,
+              "exact_rejection_numerator": 1639510851268287,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -6.315166085210803e-19,
+              "n": 8,
+              "rejection_probability": 6.315166085210803e-19,
+              "value": 1.0
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -1.0554654776541348,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 4.205025589349175,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 2.1255840476693386,
+            "log_unconditioned_density_wrt_gap_coordinates": -1.0554654776541348
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -0.4169122984464799,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 5.536725949116775,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 2.7641372268769935
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2097152,
+              "exact_numerator": 2097113,
+              "exact_rejection_denominator": 2097152,
+              "exact_rejection_numerator": 39,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -1.8596822089745873e-05,
+              "n": 8,
+              "rejection_probability": 1.8596649169921875e-05,
+              "value": 0.9999814033508301
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -0.41689370162439016,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 4.843597365378919,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 2.7641558236990833,
+            "log_unconditioned_density_wrt_gap_coordinates": -0.4169122984464799
           }
         },
         "log_body_volume_step_spread": 1.4002154991032967e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -3.1810495260798533,
@@ -1534,26 +2519,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=16 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=8 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.339978103800004,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 1.1322343070380994,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.6403544152016818
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 15,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.06453852113757118,
+              "n": 8,
+              "rejection_probability": 0.0625,
+              "value": 0.9375
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.2754395826624325,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 0.503625647615725,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.5758158940641107,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.339978103800004
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -14.594987071050067,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -9.122774660211963,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -11.895363382451745
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 2596148429267413814265248164610048,
+              "exact_numerator": 2596148429267413812625737313341761,
+              "exact_rejection_denominator": 2596148429267413814265248164610048,
+              "exact_rejection_numerator": 1639510851268287,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -6.315166085210803e-19,
+              "n": 8,
+              "rejection_probability": 6.315166085210803e-19,
+              "value": 1.0
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -14.594987071050067,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -9.815921840771908,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -11.895363382451745,
+            "log_unconditioned_density_wrt_gap_coordinates": -14.594987071050067
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -3.1248166171256564,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 2.3473957937124466,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -0.4251929285273346
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2097152,
+              "exact_numerator": 2097113,
+              "exact_rejection_denominator": 2097152,
+              "exact_rejection_numerator": 39,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -1.8596822089745873e-05,
+              "n": 8,
+              "rejection_probability": 1.8596649169921875e-05,
+              "value": 0.9999814033508301
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -3.1247980203035666,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 1.654267209974591,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -0.42517433170524477,
+            "log_unconditioned_density_wrt_gap_coordinates": -3.1248166171256564
           }
         },
         "log_body_volume_step_spread": 1.4136846804291281e-08,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -2.699623702055485,
@@ -1612,26 +2636,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=16 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=8 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.339978103800004,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 1.3941602688477635,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.3784284533920177
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 15,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.06453852113757118,
+              "n": 8,
+              "rejection_probability": 0.0625,
+              "value": 0.9375
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.2754395826624325,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 0.7655516094253891,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.3138899322544466,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.339978103800004
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -9.422186538271031,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -3.688048165623264,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -6.460636887863045
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 2596148429267413814265248164610048,
+              "exact_numerator": 2596148429267413812625737313341761,
+              "exact_rejection_denominator": 2596148429267413814265248164610048,
+              "exact_rejection_numerator": 1639510851268287,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -6.315166085210803e-19,
+              "n": 8,
+              "rejection_probability": 6.315166085210803e-19,
+              "value": 1.0
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -9.422186538271031,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -4.38119534618321,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -6.460636887863045,
+            "log_unconditioned_density_wrt_gap_coordinates": -9.422186538271031
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -2.090256510569848,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 3.643881862077919,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 0.871293139838138
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2097152,
+              "exact_numerator": 2097113,
+              "exact_rejection_denominator": 2097152,
+              "exact_rejection_numerator": 39,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -1.8596822089745873e-05,
+              "n": 8,
+              "rejection_probability": 1.8596649169921875e-05,
+              "value": 0.9999814033508301
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -2.090237913747758,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 2.9507532783400636,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 0.8713117366602279,
+            "log_unconditioned_density_wrt_gap_coordinates": -2.090256510569848
           }
         },
         "log_body_volume_step_spread": 2.299656909343639e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -2.961549652707643,
@@ -1690,26 +2753,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=8 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=4 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -3.7218717299999806,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -1.382006759335202,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -3.4614483010150376
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 2,
+              "exact_numerator": 1,
+              "exact_rejection_denominator": 2,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.6931471805599453,
+              "n": 4,
+              "rejection_probability": 0.5,
+              "value": 0.5
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -3.028724549440035,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -1.3820067593352017,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.7683011204550922,
+            "log_unconditioned_density_wrt_gap_coordinates": -3.7218717299999806
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": 0.12490431677249436,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 2.4647692874372735,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 0.38532774575743756
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 562949953421312,
+              "exact_numerator": 562907612692815,
+              "exact_rejection_denominator": 562949953421312,
+              "exact_rejection_numerator": 42340728497,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -7.521507123338757e-05,
+              "n": 4,
+              "rejection_probability": 7.521224265083504e-05,
+              "value": 0.9999247877573492
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": 0.12497953184372775,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 1.7716973219485614,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 0.3854029608286709,
+            "log_unconditioned_density_wrt_gap_coordinates": 0.12490431677249436
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -1.5361367618828536,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 0.8037282087819253,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.2757133328979104
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 128,
+              "exact_numerator": 119,
+              "exact_rejection_denominator": 128,
+              "exact_rejection_numerator": 9,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.07290677080808779,
+              "n": 4,
+              "rejection_probability": 0.0703125,
+              "value": 0.9296875
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -1.463229991074766,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 0.18348779903006784,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.2028065620898227,
+            "log_unconditioned_density_wrt_gap_coordinates": -1.5361367618828536
           }
         },
         "log_body_volume_step_spread": 9.55759471565898e-10,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -0.2604234280291837,
@@ -1752,26 +2854,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=8 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=4 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -3.7218717299999806,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -1.3281633879745791,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -3.407604929654415
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 2,
+              "exact_numerator": 1,
+              "exact_rejection_denominator": 2,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.6931471805599453,
+              "n": 4,
+              "rejection_probability": 0.5,
+              "value": 0.5
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -3.028724549440035,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -1.328163387974579,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.7144577490944695,
+            "log_unconditioned_density_wrt_gap_coordinates": -3.7218717299999806
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": 0.5939364844838133,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 2.987644826509215,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 0.9082032848293792
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 562949953421312,
+              "exact_numerator": 562907612692815,
+              "exact_rejection_denominator": 562949953421312,
+              "exact_rejection_numerator": 42340728497,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -7.521507123338757e-05,
+              "n": 4,
+              "rejection_probability": 7.521224265083504e-05,
+              "value": 0.9999247877573492
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": 0.5940116995550467,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 2.2945728610205034,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 0.9082784999006126,
+            "log_unconditioned_density_wrt_gap_coordinates": 0.5939364844838133
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -1.4423303283405877,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 0.9513780136848138,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.128063527995022
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 128,
+              "exact_numerator": 119,
+              "exact_rejection_denominator": 128,
+              "exact_rejection_numerator": 9,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.07290677080808779,
+              "n": 4,
+              "rejection_probability": 0.0703125,
+              "value": 0.9296875
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -1.3694235575325,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 0.3311376039329563,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.0551567571869342,
+            "log_unconditioned_density_wrt_gap_coordinates": -1.4423303283405877
           }
         },
         "log_body_volume_step_spread": 1.2340429789148288e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -0.31426679990050777,
@@ -1814,26 +2955,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=8 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=4 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -3.7218717299999806,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -1.3567096808739656,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -3.4361512225538013
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 2,
+              "exact_numerator": 1,
+              "exact_rejection_denominator": 2,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.6931471805599453,
+              "n": 4,
+              "rejection_probability": 0.5,
+              "value": 0.5
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -3.028724549440035,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -1.3567096808739654,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.743004041993856,
+            "log_unconditioned_density_wrt_gap_coordinates": -3.7218717299999806
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": 0.11220762507252235,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 2.4773696741985374,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 0.3979281325187015
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 562949953421312,
+              "exact_numerator": 562907612692815,
+              "exact_rejection_denominator": 562949953421312,
+              "exact_rejection_numerator": 42340728497,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -7.521507123338757e-05,
+              "n": 4,
+              "rejection_probability": 7.521224265083504e-05,
+              "value": 0.9999247877573492
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": 0.11228284014375574,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 1.7842977087098255,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 0.3980033475899349,
+            "log_unconditioned_density_wrt_gap_coordinates": 0.11220762507252235
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -1.5386761002228466,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 0.8264859489031684,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.2529555927766673
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 128,
+              "exact_numerator": 119,
+              "exact_rejection_denominator": 128,
+              "exact_rejection_numerator": 9,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.07290677080808779,
+              "n": 4,
+              "rejection_probability": 0.0703125,
+              "value": 0.9296875
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -1.465769329414759,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 0.20624553915131094,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.1800488219685796,
+            "log_unconditioned_density_wrt_gap_coordinates": -1.5386761002228466
           }
         },
         "log_body_volume_step_spread": 8.528066031132653e-10,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -0.28572050829898576,
@@ -1876,26 +3056,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=8 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=4 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -3.7218717299999806,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -1.437872467399727,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -3.5173140090795627
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 2,
+              "exact_numerator": 1,
+              "exact_rejection_denominator": 2,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.6931471805599453,
+              "n": 4,
+              "rejection_probability": 0.5,
+              "value": 0.5
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -3.028724549440035,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -1.4378724673997267,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.8241668285196173,
+            "log_unconditioned_density_wrt_gap_coordinates": -3.7218717299999806
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": -0.2924386890956958,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 1.991560573504558,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -0.08788096817527769
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 562949953421312,
+              "exact_numerator": 562907612692815,
+              "exact_rejection_denominator": 562949953421312,
+              "exact_rejection_numerator": 42340728497,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -7.521507123338757e-05,
+              "n": 4,
+              "rejection_probability": 7.521224265083504e-05,
+              "value": 0.9999247877573492
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -0.29236347402446244,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 1.2984886080158462,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -0.08780575310404432,
+            "log_unconditioned_density_wrt_gap_coordinates": -0.2924386890956958
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -1.6196053630564888,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 0.664393899543765,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.4150476421360707
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 128,
+              "exact_numerator": 119,
+              "exact_rejection_denominator": 128,
+              "exact_rejection_numerator": 9,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.07290677080808779,
+              "n": 4,
+              "rejection_probability": 0.0703125,
+              "value": 0.9296875
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -1.5466985922484011,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 0.044153489791907585,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.342140871327983,
+            "log_unconditioned_density_wrt_gap_coordinates": -1.6196053630564888
           }
         },
         "log_body_volume_step_spread": 1.1186443438226945e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -0.20455772203906247,
@@ -1938,26 +3157,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=12 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=6 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.401893589264679,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -0.0009070042239360809,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.4858136540119364
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 13,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.20763936477824452,
+              "n": 6,
+              "rejection_probability": 0.1875,
+              "value": 0.8125
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.194254224486435,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -0.48641482000563707,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.278174289233692,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.401893589264679
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": 1.9119497755462476,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 6.31293636058699,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 3.8280297107989902
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 4835703278458516698824704,
+              "exact_numerator": 4835703278359682926274029,
+              "exact_rejection_denominator": 4835703278458516698824704,
+              "exact_rejection_numerator": 98833772550675,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -2.0438345130057353e-11,
+              "n": 6,
+              "rejection_probability": 2.043834512984849e-11,
+              "value": 0.9999999999795617
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": 1.9119497755666859,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 5.6197891800474835,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 3.8280297108194286,
+            "log_unconditioned_density_wrt_gap_coordinates": 1.9119497755462476
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -0.7968856716828157,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 3.6041009133579274,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 1.119194263569927
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2048,
+              "exact_numerator": 2045,
+              "exact_rejection_denominator": 2048,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.0014659176824962832,
+              "n": 6,
+              "rejection_probability": 0.00146484375,
+              "value": 0.99853515625
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -0.7954197540003194,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 2.9124196504804782,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 1.1206601812524233,
+            "log_unconditioned_density_wrt_gap_coordinates": -0.7968856716828157
           }
         },
         "log_body_volume_step_spread": 2.869930959548128e-10,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -1.9160799354745959,
@@ -2008,26 +3266,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=12 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=6 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.401893589264679,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 0.013585875638768119,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.4713207741492322
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 13,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.20763936477824452,
+              "n": 6,
+              "rejection_probability": 0.1875,
+              "value": 0.8125
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.194254224486435,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -0.47192194014293287,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.263681409370988,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.401893589264679
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": 2.624596532734472,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 7.040075997637919,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 4.555169347849919
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 4835703278458516698824704,
+              "exact_numerator": 4835703278359682926274029,
+              "exact_rejection_denominator": 4835703278458516698824704,
+              "exact_rejection_numerator": 98833772550675,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -2.0438345130057353e-11,
+              "n": 6,
+              "rejection_probability": 2.043834512984849e-11,
+              "value": 0.9999999999795617
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": 2.6245965327549103,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 6.346928817098412,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 4.555169347870358,
+            "log_unconditioned_density_wrt_gap_coordinates": 2.624596532734472
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -0.6543563202451708,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 3.7611231446582765,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 1.276216494870276
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2048,
+              "exact_numerator": 2045,
+              "exact_rejection_denominator": 2048,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.0014659176824962832,
+              "n": 6,
+              "rejection_probability": 0.00146484375,
+              "value": 0.99853515625
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -0.6528904025626745,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 3.0694418817808273,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 1.2776824125527724,
+            "log_unconditioned_density_wrt_gap_coordinates": -0.6543563202451708
           }
         },
         "log_body_volume_step_spread": 2.3369628454616986e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -1.9305728138655838,
@@ -2078,26 +3375,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=12 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=6 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.401893589264679,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": -0.07079468917292564,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.555701338960926
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 13,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.20763936477824452,
+              "n": 6,
+              "rejection_probability": 0.1875,
+              "value": 0.8125
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.194254224486435,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -0.5563025049546266,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.3480619741826816,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.401893589264679
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": 1.52831531283735,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 5.859414212929103,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 3.374507563141103
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 4835703278458516698824704,
+              "exact_numerator": 4835703278359682926274029,
+              "exact_rejection_denominator": 4835703278458516698824704,
+              "exact_rejection_numerator": 98833772550675,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -2.0438345130057353e-11,
+              "n": 6,
+              "rejection_probability": 2.043834512984849e-11,
+              "value": 0.9999999999795617
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": 1.5283153128577882,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 5.166267032389596,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 3.3745075631615413,
+            "log_unconditioned_density_wrt_gap_coordinates": 1.52831531283735
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -0.8736125642245938,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 3.4574863358671597,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 0.9725796860791593
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2048,
+              "exact_numerator": 2045,
+              "exact_rejection_denominator": 2048,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.0014659176824962832,
+              "n": 6,
+              "rejection_probability": 0.00146484375,
+              "value": 0.99853515625
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -0.8721466465420975,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 2.7658050729897106,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 0.9740456037616556,
+            "log_unconditioned_density_wrt_gap_coordinates": -0.8736125642245938
           }
         },
         "log_body_volume_step_spread": 5.017588566857967e-10,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -1.846192250805512,
@@ -2148,26 +3484,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=12 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=6 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.401893589264679,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 0.012874600046262952,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.4720320497417374
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 13,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.20763936477824452,
+              "n": 6,
+              "rejection_probability": 0.1875,
+              "value": 0.8125
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.194254224486435,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": -0.47263321573543804,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -2.264392684963493,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.401893589264679
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": 0.6543810673211965,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 5.069149256632139,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 2.584242606844138
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 4835703278458516698824704,
+              "exact_numerator": 4835703278359682926274029,
+              "exact_rejection_denominator": 4835703278458516698824704,
+              "exact_rejection_numerator": 98833772550675,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -2.0438345130057353e-11,
+              "n": 6,
+              "rejection_probability": 2.043834512984849e-11,
+              "value": 0.9999999999795617
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": 0.6543810673416348,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 4.3760020760926315,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 2.5842426068645765,
+            "log_unconditioned_density_wrt_gap_coordinates": 0.6543810673211965
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": -1.0483994133278287,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 3.3663687759831133,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 0.881462126195113
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2048,
+              "exact_numerator": 2045,
+              "exact_rejection_denominator": 2048,
+              "exact_rejection_numerator": 3,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.0014659176824962832,
+              "n": 6,
+              "rejection_probability": 0.00146484375,
+              "value": 0.99853515625
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -1.0469334956453324,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 2.674687513105664,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 0.8829280438776093,
+            "log_unconditioned_density_wrt_gap_coordinates": -1.0483994133278287
           }
         },
         "log_body_volume_step_spread": 1.3136030041493996e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -1.9298615387120939,
@@ -2218,26 +3593,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=16 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=8 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.339978103800004,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 1.7842457581259672,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -0.988342964113814
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 15,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.06453852113757118,
+              "n": 8,
+              "rejection_probability": 0.0625,
+              "value": 0.9375
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.2754395826624325,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 1.1556370987035929,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -0.9238044429762429,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.339978103800004
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": 4.476207654194727,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 10.600431516120699,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 7.827842793880917
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 2596148429267413814265248164610048,
+              "exact_numerator": 2596148429267413812625737313341761,
+              "exact_rejection_denominator": 2596148429267413814265248164610048,
+              "exact_rejection_numerator": 1639510851268287,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -6.315166085210803e-19,
+              "n": 8,
+              "rejection_probability": 6.315166085210803e-19,
+              "value": 1.0
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": 4.476207654194727,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 9.907284335560753,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 7.827842793880917,
+            "log_unconditioned_density_wrt_gap_coordinates": 4.476207654194727
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": 0.6894223279232996,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 6.813646189849271,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 4.041057467609489
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2097152,
+              "exact_numerator": 2097113,
+              "exact_rejection_denominator": 2097152,
+              "exact_rejection_numerator": 39,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -1.8596822089745873e-05,
+              "n": 8,
+              "rejection_probability": 1.8596649169921875e-05,
+              "value": 0.9999814033508301
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": 0.6894409247453893,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 6.120517606111415,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 4.041076064431579,
+            "log_unconditioned_density_wrt_gap_coordinates": 0.6894223279232996
           }
         },
         "log_body_volume_step_spread": 1.145171069083517e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -3.351635140455217,
@@ -2296,26 +3710,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=16 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=8 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.339978103800004,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 1.7698414914434188,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.0027472307963623
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 15,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.06453852113757118,
+              "n": 8,
+              "rejection_probability": 0.0625,
+              "value": 0.9375
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.2754395826624325,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 1.1412328320210445,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -0.9382087096587912,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.339978103800004
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": 4.378254925084267,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 10.48807452032769,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 7.715485798087908
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 2596148429267413814265248164610048,
+              "exact_numerator": 2596148429267413812625737313341761,
+              "exact_rejection_denominator": 2596148429267413814265248164610048,
+              "exact_rejection_numerator": 1639510851268287,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -6.315166085210803e-19,
+              "n": 8,
+              "rejection_probability": 6.315166085210803e-19,
+              "value": 1.0
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": 4.378254925084267,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 9.794927339767744,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 7.715485798087908,
+            "log_unconditioned_density_wrt_gap_coordinates": 4.378254925084267
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": 0.669831782101209,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 6.779651377344631,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 4.00706265510485
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2097152,
+              "exact_numerator": 2097113,
+              "exact_rejection_denominator": 2097152,
+              "exact_rejection_numerator": 39,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -1.8596822089745873e-05,
+              "n": 8,
+              "rejection_probability": 1.8596649169921875e-05,
+              "value": 0.9999814033508301
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": 0.6698503789232987,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 6.086522793606775,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 4.00708125192694,
+            "log_unconditioned_density_wrt_gap_coordinates": 0.669831782101209
           }
         },
         "log_body_volume_step_spread": 1.5398335939664776e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -3.3372308735195224,
@@ -2374,26 +3827,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=16 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=8 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.339978103800004,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 1.5573274446077612,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.21526127763202
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 15,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.06453852113757118,
+              "n": 8,
+              "rejection_probability": 0.0625,
+              "value": 0.9375
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.2754395826624325,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 0.9287187851853869,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.1507227564944489,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.339978103800004
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": 1.3762129271386847,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 7.2735184755464495,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 4.500929753306668
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 2596148429267413814265248164610048,
+              "exact_numerator": 2596148429267413812625737313341761,
+              "exact_rejection_denominator": 2596148429267413814265248164610048,
+              "exact_rejection_numerator": 1639510851268287,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -6.315166085210803e-19,
+              "n": 8,
+              "rejection_probability": 6.315166085210803e-19,
+              "value": 1.0
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": 1.3762129271386847,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 6.580371294986504,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 4.500929753306668,
+            "log_unconditioned_density_wrt_gap_coordinates": 1.3762129271386847
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": 0.06942338251208824,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 5.966728930919853,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 3.194140208680072
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2097152,
+              "exact_numerator": 2097113,
+              "exact_rejection_denominator": 2097152,
+              "exact_rejection_numerator": 39,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -1.8596822089745873e-05,
+              "n": 8,
+              "rejection_probability": 1.8596649169921875e-05,
+              "value": 0.9999814033508301
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": 0.06944197933417798,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 5.273600347181997,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 3.1941588055021617,
+            "log_unconditioned_density_wrt_gap_coordinates": 0.06942338251208824
           }
         },
         "log_body_volume_step_spread": 4.130326747286972e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -3.124716829208295,
@@ -2452,26 +3944,65 @@
     },
     {
       "change_of_variables": {
-        "discrete_quotient_contract": "A generic unlabeled body has 2n=16 cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.",
+        "discrete_quotient_contract": "A generic rotation-quotiented body has n=8 cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.",
         "law_densities_at_same_body_point": {
           "alpha=1": {
-            "log_density_wrt_gap_coordinates": -4.339978103800004,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 1.701111110111965,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.0714776121278162
+            "acceptance_normalizer": {
+              "alpha": 1,
+              "exact_denominator": 16,
+              "exact_numerator": 15,
+              "exact_rejection_denominator": 16,
+              "exact_rejection_numerator": 1,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -0.06453852113757118,
+              "n": 8,
+              "rejection_probability": 0.0625,
+              "value": 0.9375
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": -4.2754395826624325,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 1.0725024506895906,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": -1.0069390909902451,
+            "log_unconditioned_density_wrt_gap_coordinates": -4.339978103800004
           },
           "alpha=16": {
-            "log_density_wrt_gap_coordinates": 2.4343932122308765,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 8.475482426142845,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 5.702893703903063
+            "acceptance_normalizer": {
+              "alpha": 16,
+              "exact_denominator": 2596148429267413814265248164610048,
+              "exact_numerator": 2596148429267413812625737313341761,
+              "exact_rejection_denominator": 2596148429267413814265248164610048,
+              "exact_rejection_numerator": 1639510851268287,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -6.315166085210803e-19,
+              "n": 8,
+              "rejection_probability": 6.315166085210803e-19,
+              "value": 1.0
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": 2.4343932122308765,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 7.7823352455829,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 5.702893703903063,
+            "log_unconditioned_density_wrt_gap_coordinates": 2.4343932122308765
           },
           "alpha=4": {
-            "log_density_wrt_gap_coordinates": 0.2810594395305266,
-            "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": 6.322148653442495,
-            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 3.549559931202714
+            "acceptance_normalizer": {
+              "alpha": 4,
+              "exact_denominator": 2097152,
+              "exact_numerator": 2097113,
+              "exact_rejection_denominator": 2097152,
+              "exact_rejection_numerator": 39,
+              "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)",
+              "log_value": -1.8596822089745873e-05,
+              "n": 8,
+              "rejection_probability": 1.8596649169921875e-05,
+              "value": 0.9999814033508301
+            },
+            "log_acceptance_conditioned_density_wrt_gap_coordinates": 0.28107803635261636,
+            "log_generic_unlabeled_body_density_including_n_cyclic_preimages": 5.629020069704639,
+            "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": 3.549578528024804,
+            "log_unconditioned_density_wrt_gap_coordinates": 0.2810594395305266
           }
         },
         "log_body_volume_step_spread": 1.317149944668472e-09,
-        "reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure",
+        "reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure",
         "steps": [
           {
             "log_body_volume_jacobian": -3.268500492540964,
@@ -2533,22 +4064,22 @@
     {
       "evaluated_law_log_density": {
         "alpha=1": {
-          "max": 3.9987625089012035,
-          "mean": -0.008727829192705872,
-          "median": -1.1789491883770056,
-          "min": -1.6757754489180159
+          "max": 3.998762508901204,
+          "mean": -0.00872782919270565,
+          "median": -1.1789491883770054,
+          "min": -1.6757754489180157
         },
         "alpha=16": {
-          "max": -6.1729071935231214,
-          "mean": -11.177945699015801,
-          "median": -10.628791246352648,
-          "min": -17.281293109834785
+          "max": -6.865979159011834,
+          "mean": -11.871017664504512,
+          "median": -11.321863211841361,
+          "min": -17.974365075323494
         },
         "alpha=4": {
-          "max": 1.1591311439166403,
-          "mean": -0.8261916443946902,
-          "median": -1.10521930557521,
-          "min": -2.253459110344981
+          "max": 0.5388907341647833,
+          "mean": -1.4464320541465472,
+          "median": -1.7254597153270677,
+          "min": -2.873699520096837
         }
       },
       "reference_count": 4,
@@ -2558,22 +4089,22 @@
     {
       "evaluated_law_log_density": {
         "alpha=1": {
-          "max": -1.3592923930798753,
-          "mean": -1.4924606428567229,
-          "median": -1.4378386617948025,
-          "min": -1.7348728547574113
+          "max": -1.359292393079875,
+          "mean": -1.4924606428567226,
+          "median": -1.4378386617948022,
+          "min": -1.734872854757411
         },
         "alpha=16": {
-          "max": 2.53662133477399,
-          "mean": 0.19193215963774435,
-          "median": 0.16011136480301835,
-          "min": -2.0891154258290494
+          "max": 1.8435493692852782,
+          "mean": -0.5011398058509674,
+          "median": -0.5329606006856935,
+          "min": -2.782187391317761
         },
         "alpha=4": {
-          "max": 0.8362701112535333,
-          "mean": 0.2607976764048052,
-          "median": 0.2981311022873958,
-          "min": -0.38934161020910407
+          "max": 0.21602970150167589,
+          "mean": -0.35944273334705223,
+          "median": -0.32210930746446165,
+          "min": -1.0095820199609615
         }
       },
       "reference_count": 4,
@@ -2583,22 +4114,22 @@
     {
       "evaluated_law_log_density": {
         "alpha=1": {
-          "max": -1.3281633879745791,
-          "mean": -1.3761880738958685,
-          "median": -1.3693582201045837,
-          "min": -1.437872467399727
+          "max": -1.328163387974579,
+          "mean": -1.376188073895868,
+          "median": -1.3693582201045835,
+          "min": -1.4378724673997267
         },
         "alpha=16": {
-          "max": 2.987644826509215,
-          "mean": 2.480336090412396,
-          "median": 2.4710694808179055,
-          "min": 1.991560573504558
+          "max": 2.2945728610205034,
+          "mean": 1.7872641249236842,
+          "median": 1.7779975153291936,
+          "min": 1.2984886080158462
         },
         "alpha=4": {
-          "max": 0.9513780136848138,
-          "mean": 0.8114965177284181,
-          "median": 0.8151070788425469,
-          "min": 0.664393899543765
+          "max": 0.3311376039329563,
+          "mean": 0.19125610797656067,
+          "median": 0.1948666690906894,
+          "min": 0.044153489791907585
         }
       },
       "reference_count": 4,
@@ -2608,22 +4139,22 @@
     {
       "evaluated_law_log_density": {
         "alpha=1": {
-          "max": 4.490684107344489,
-          "mean": 0.9154880958958,
-          "median": -0.1963099764345031,
-          "min": -0.43611177089228237
+          "max": 4.005176291562789,
+          "mean": 0.4299802801140993,
+          "median": -0.6818177922162041,
+          "min": -0.9216195866739834
         },
         "alpha=16": {
-          "max": -8.420444668622219,
-          "mean": -25.796643673338135,
-          "median": -26.260040275249914,
-          "min": -42.2460494742305
+          "max": -9.113591849161725,
+          "mean": -26.489790853877643,
+          "median": -26.953187455789422,
+          "min": -42.939196654770015
         },
         "alpha=4": {
-          "max": 0.3092608941814041,
-          "mean": -2.084699013331311,
-          "median": -1.8765526496526184,
-          "min": -4.8949516482014115
+          "max": -0.38242036869604457,
+          "mean": -2.7763802762087595,
+          "median": -2.568233912530067,
+          "min": -5.58663291107886
         }
       },
       "reference_count": 4,
@@ -2633,22 +4164,22 @@
     {
       "evaluated_law_log_density": {
         "alpha=1": {
-          "max": -0.07556331208050349,
-          "mean": -0.1774793559631701,
-          "median": -0.15360269652880643,
-          "min": -0.3271487187145641
+          "max": -0.5610711278622045,
+          "mean": -0.6629871717448711,
+          "median": -0.6391105123105074,
+          "min": -0.8126565344962651
         },
         "alpha=16": {
-          "max": 5.818454920216673,
-          "mean": 1.3154650162795671,
-          "median": 1.524940366462208,
-          "min": -3.606475588022819
+          "max": 5.125307739677165,
+          "mean": 0.6223178357400605,
+          "median": 0.8317931859227012,
+          "min": -4.299622768562326
         },
         "alpha=4": {
-          "max": 3.445479578998614,
-          "mean": 2.4633487631050577,
-          "median": 2.4711310376498803,
-          "min": 1.4656533981218574
+          "max": 2.753798316121165,
+          "mean": 1.771667500227609,
+          "median": 1.7794497747724312,
+          "min": 0.7739721352444082
         }
       },
       "reference_count": 4,
@@ -2658,22 +4189,22 @@
     {
       "evaluated_law_log_density": {
         "alpha=1": {
-          "max": 0.013585875638768119,
-          "mean": -0.011310304427957663,
-          "median": 0.005983797911163435,
-          "min": -0.07079468917292564
+          "max": -0.47192194014293287,
+          "mean": -0.49681812020965865,
+          "median": -0.47952401787053756,
+          "min": -0.5563025049546266
         },
         "alpha=16": {
-          "max": 7.040075997637919,
-          "mean": 6.070393956946537,
-          "median": 6.0861752867580465,
-          "min": 5.069149256632139
+          "max": 6.346928817098412,
+          "mean": 5.377246776407031,
+          "median": 5.39302810621854,
+          "min": 4.3760020760926315
         },
         "alpha=4": {
-          "max": 3.7611231446582765,
-          "mean": 3.5472697924666194,
-          "median": 3.5307936246125435,
-          "min": 3.3663687759831133
+          "max": 3.0694418817808273,
+          "mean": 2.85558852958917,
+          "median": 2.8391123617350944,
+          "min": 2.674687513105664
         }
       },
       "reference_count": 4,
@@ -2683,22 +4214,22 @@
     {
       "evaluated_law_log_density": {
         "alpha=1": {
-          "max": 1.560813314058933,
-          "mean": 1.3280414718766704,
-          "median": 1.3760282912933777,
-          "min": 0.9992959908609933
+          "max": 0.9322046546365588,
+          "mean": 0.6994328124542961,
+          "median": 0.7474196318710034,
+          "min": 0.370687331438619
         },
         "alpha=16": {
-          "max": -13.686716797447058,
-          "mean": -45.99606970017934,
-          "median": -40.437418486055314,
-          "min": -89.42272503115967
+          "max": -14.379863978007004,
+          "mean": -46.68921688073929,
+          "median": -41.13056566661526,
+          "min": -90.1158722117196
         },
         "alpha=4": {
-          "max": 1.636935468423569,
-          "mean": -4.870617482410175,
-          "median": -3.874837161601918,
-          "min": -13.369731074860432
+          "max": 0.943806884685713,
+          "mean": -5.56374606614803,
+          "median": -4.567965745339774,
+          "min": -14.062859658598287
         }
       },
       "reference_count": 4,
@@ -2708,22 +4239,22 @@
     {
       "evaluated_law_log_density": {
         "alpha=1": {
-          "max": 1.6338687090010269,
-          "mean": 1.4434808571625353,
-          "median": 1.5039102063055072,
-          "min": 1.1322343070380994
+          "max": 1.0052600495786526,
+          "mean": 0.8148721977401608,
+          "median": 0.8753015468831329,
+          "min": 0.503625647615725
         },
         "alpha=16": {
-          "max": 6.152375100645875,
-          "mean": -0.44006873882005804,
-          "median": 0.605062302142928,
-          "min": -9.122774660211963
+          "max": 5.4592279200859295,
+          "mean": -1.1332159193800035,
+          "median": -0.08808487841701762,
+          "min": -9.815921840771908
         },
         "alpha=4": {
-          "max": 5.803733267454353,
-          "mean": 4.332934218090373,
-          "median": 4.590303905597347,
-          "min": 2.3473957937124466
+          "max": 5.110604683716498,
+          "mean": 3.639805634352518,
+          "median": 3.8971753218594913,
+          "min": 1.654267209974591
         }
       },
       "reference_count": 4,
@@ -2733,22 +4264,22 @@
     {
       "evaluated_law_log_density": {
         "alpha=1": {
-          "max": 1.7842457581259672,
-          "mean": 1.7031314510722781,
-          "median": 1.7354763007776919,
-          "min": 1.5573274446077612
+          "max": 1.1556370987035929,
+          "mean": 1.0745227916499038,
+          "median": 1.1068676413553176,
+          "min": 0.9287187851853869
         },
         "alpha=16": {
-          "max": 10.600431516120699,
-          "mean": 9.20937673453442,
-          "median": 9.481778473235266,
-          "min": 7.2735184755464495
+          "max": 9.907284335560753,
+          "mean": 8.516229553974476,
+          "median": 8.788631292675323,
+          "min": 6.580371294986504
         },
         "alpha=4": {
-          "max": 6.813646189849271,
-          "mean": 6.4705437878890635,
-          "median": 6.550900015393563,
-          "min": 5.966728930919853
+          "max": 6.120517606111415,
+          "mean": 5.777415204151206,
+          "median": 5.857771431655707,
+          "min": 5.273600347181997
         }
       },
       "reference_count": 4,
@@ -4689,11 +6220,11 @@
     }
   },
   "schema": "generator-map-distortion-report-v1",
-  "scientific_disposition": "The common-measure Dirichlet comparison is informative about alpha-dependent concentration around the finite reference bodies. For every other law, this packet stops at native-coordinate conditioning and boundary diagnostics; no cross-law density claim is supported.",
+  "scientific_disposition": "The acceptance-conditioned common-measure Dirichlet comparison is informative about alpha-dependent concentration around the finite reference bodies. For every other law, this packet stops at native-coordinate conditioning and boundary diagnostics; no cross-law density claim is supported.",
   "source_contract": {
-    "analyzer_sha256": "695dcf2663bb368c58d7affb34a188864edf6aa49356eb55b66e8eeb56504c6b",
+    "analyzer_sha256": "18c3967da2dde49a49ec6cc9516c1603d468725f50014dcbbcafca3a35c96c3e",
     "contract": "generator-map-distortion-source-v1",
-    "declared_source_revision": "c191a28333ff90f917be3ff960c5c6ae0645f1df",
+    "declared_source_revision": "227c0e27cdf7b0d2943a9c2f45bb7d8aeb7dc55b",
     "numpy_version": "2.5.1",
     "source_dirty": false
   },
@@ -5689,6 +7220,6 @@
       "side_count": 8
     }
   ],
-  "supported_interpretation": "Within a fixed native parameterization, condition numbers describe local sensitivity anisotropy and normalized rejection margins describe proximity to named implementation boundaries. Dirichlet alpha densities are comparable only under the declared common gap/body measures.",
+  "supported_interpretation": "Within a fixed native parameterization, condition numbers describe local sensitivity anisotropy and normalized rejection margins describe proximity to named implementation boundaries. Dirichlet alpha densities are comparable only under the declared acceptance-conditioned common gap/body measures.",
   "target_free": true
 }
