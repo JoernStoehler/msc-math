@@ -117,6 +117,11 @@ flow-graph companion.
   the caveat that closure is only the closedness equation for the broken path;
   base-point recovery is a separate finite linear-feasibility condition, even
   though it is not part of the velocity/action data.
+- The active text reserves "simple Reeb orbit" for a boundary orbit and calls
+  the intermediate position-free objects "simple pure-velocity dual loops".
+  The final Clarke reconstruction explicitly recovers the prescribed facet
+  labels by extremality of the irredundant polar rows and therefore supplies a
+  valid base point.
 - The full proof may later move to an appendix if it interrupts the reading
   path, but it should not be deleted or replaced by a bare HK citation.
 - 2026-06-20 HK source comparison fixed two active-statement qualifications:
@@ -128,3 +133,22 @@ flow-graph companion.
   Theorem 1.5. Its splitting and merging action inequalities are the same two
   rearrangements, while the local rescaling and compactness argument replaces
   HK's fixed-period normalization without changing the existential theorem.
+
+## Explanatory Assets
+
+`figures/foundations/generate.py` is the thesis-native producer for the two
+assets owned by this section:
+
+- `word-closure-basepoint.pdf` separates closure in displacement space from
+  translated realization on prescribed facets. It is an exact planar
+  Hamiltonian analogue, not a projection or a four-dimensional example. The
+  adjacent square counterexample in the prose shows that closure need not
+  imply realizability.
+- `simple-minimizer-pipeline.pdf` externalizes the five operations, marks all
+  intermediate objects as dual loops, and displays the dual-minimality squeeze
+  that makes the action increases vanish.
+
+Both assets explain mathematics already proved in the text; neither is source
+truth or proof evidence. Run
+`uv run --script thesis/figures/foundations/generate.py` from the repository
+root to regenerate all foundation figures.

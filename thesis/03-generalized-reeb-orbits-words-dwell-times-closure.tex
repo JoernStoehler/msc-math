@@ -24,6 +24,26 @@ path. To turn the word and dwell times into an actual simple Reeb orbit on
 its prescribed facet; this is the base-point recovery construction of
 Lemma~\ref{lem:generalized-reeb-base-point-recovery}.
 
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.94\linewidth]
+    {figures/foundations/word-closure-basepoint.pdf}
+  \caption{The two layers of finite orbit data in a two-dimensional
+  Hamiltonian analogue.  The ordered displacements first form a closed
+  velocity polygon.  A translation by a feasible base point then places every
+  segment on its prescribed facet.  This is an exact planar example, not a
+  projection of the four-dimensional orbit; it illustrates only closure and
+  facet realizability.}
+  \label{fig:generalized-reeb-word-closure-basepoint}
+\end{figure}
+
+Closure does not imply that the second layer is feasible.  For example, in the
+planar square \([-1,1]^2\), the right and left facet rows give opposite
+directions \(R_r=(0,2)\) and \(R_\ell=(0,-2)\).  Equal dwell times satisfy
+\(\tau R_r+\tau R_\ell=0\), but the breakpoint between the two segments would
+have to lie in the disjoint facets \(F_r\) and \(F_\ell\).  No translation can
+realize this closed two-segment path on the prescribed facets.
+
 The period and action of a closed pure-word orbit are
 \[
   T=\sum_{k=1}^m \tau_k,

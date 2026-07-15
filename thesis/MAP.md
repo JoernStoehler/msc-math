@@ -34,6 +34,9 @@ Status: navigation cache for the active thesis surface.
   for splitting and moving the active early-theory TeX after explanatory
   ownership has been chosen. Not publication prose or mathematical source
   truth.
+- `figures/foundations/generate.py`: thesis-native vector producer for the
+  characteristic-normalization, facet-polarity, word/base-point, and
+  simple-minimizer explanation figures used by the early theory.
 - `03-generalized-reeb-orbits-polytopes.tex`: contains the generalized Reeb
   orbit `\section`, the section opening, and inputs the
   `03-generalized-reeb-orbits-*` semantic subfiles.

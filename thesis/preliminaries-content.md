@@ -63,6 +63,12 @@ later proofs depend on their exact signs, factors, and quantifiers.
 - Lagrangian products: `02-preliminaries-lagrangian-products.tex`, HKO2024 for
   the central example, and the later QP/polygon owners for specialized
   enumeration or symmetry.
+- Explanatory figures: `figures/foundations/generate.py` is the thesis-native
+  producer for `characteristic-normalization.pdf` and `facet-polarity.pdf`.
+  The first is a dimension-reduced tangent-space schematic; the second is an
+  exact planar polarity model. They explain conventions only and are not proof
+  evidence. Run `uv run --script thesis/figures/foundations/generate.py` from
+  the repository root to regenerate all foundation figures.
 
 ## Material With A Later Owner
 
@@ -97,12 +103,16 @@ polytope facets in the generalized-Reeb material. The mixed finite-geometry
 source has been replaced by semantic convex-Hamiltonian, polytope-input, and
 Lagrangian-product units; consumer-specific enumeration, incidence, chart, and
 volume material is no longer part of the preliminary reading burden. The
-Clarke proof now separates attainment, weak Euler--Lagrange criticality, and
-reconstruction; the converse obtains
+Clarke proof now separates dual feasibility, weak Euler--Lagrange criticality,
+and reconstruction; the converse obtains
 \(\nu=I_K(z)/T=c^2\) directly from homogeneity. The downstream
 simple-minimizer proof uses that identity rather than repeating the older
-reconstruction algebra. This pilot has passed a clean build, local
-mathematical review, and rendered review. It is not yet Jörn-reviewed.
+reconstruction algebra. The AAO2014 attainment citation is connected to the
+free-period convention by the explicit centering, \(J_0\)-rotation, time
+change, action normalization, and objective factor; AAO2014 Proposition 2.7 is
+cited at the first nonsmooth least-action claim. A compact gate table blocks
+the false inference that arbitrary dual-feasible curves already reconstruct.
+This integrated candidate remains agent-reviewed and is not yet Jörn-reviewed.
 
 After the active Clarke passage has passed Jörn's integrated review and all
 useful source decisions have been absorbed, delete

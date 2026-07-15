@@ -78,12 +78,30 @@ fixed-period curve \(w\), put \(c=2I_K(w)>0\) and
   \qquad 0\leq t\leq c.
 \]
 Then \(A(z)=c\) and \(I_K(z)=c=2I_K(w)\).  Thus the free-period infimum is
-twice the fixed-period minimum, and it is attained because the fixed-period
-minimum is attained \cite[Proposition~2.5]{AAO2014}.  This rescaling is also
-how one chooses an attained representative with \(I_K(z)=T\).  Other
-free-period minimizers in its scaling family generally have a different
-period.  The centering condition in the cited fixed-period formulation merely
-chooses a translation representative and changes neither \(A\) nor \(I_K\).
+twice the Haim--Kislev fixed-period minimum.
+
+For completeness, the attainment result of Artstein--Avidan and Ostrover uses
+a different fixed-period convention.  For a feasible \(z\) of period \(T\),
+set
+\[
+  \bar z=\frac1T\int_0^Tz(t)\,dt,
+  \qquad
+  u(\tau)=-\frac1{\sqrt T}J_0
+    \left(z\!\left(\frac{T\tau}{2\pi}\right)-\bar z\right),
+  \qquad 0\leq\tau\leq2\pi.
+\]
+Then \(u\) has mean zero,
+\[
+  A(u)=1,
+  \qquad
+  \frac\pi2\int_0^{2\pi}h_K^2(\dot u(\tau))\,d\tau=I_K(z).
+\]
+The construction is invertible after choosing \(T>0\).  Thus
+\cite[Proposition~2.5]{AAO2014} gives attainment of the free-period problem
+with every rotation, centering, time change, and objective factor accounted
+for.  The earlier rescaling is also how one chooses an attained representative
+with \(I_K(z)=T\).  Other free-period minimizers in its scaling family
+generally have a different period.
 
 The variational equation is most conveniently stated before restricting to
 minimizers.
@@ -294,8 +312,27 @@ nonsmooth least-action characterization recalled above; see also
 \end{proof}
 
 The primal and dual problems therefore have the same minimum and corresponding
-minimizing curves, but expose different operations.  The primal curve lies on
-\(\partial K\) and satisfies a differential inclusion.  The dual curve has no
-position constraint, and its functional depends only on its velocity.  For a
-polytope, this is the freedom used in the next section to replace a capacity
-minimizer by one with a finite, simple facet word.
+minimizing curves, but the intermediate gates should not be conflated:
+\begin{center}
+\small
+\begin{tabular}{@{}p{0.23\linewidth}p{0.32\linewidth}p{0.36\linewidth}@{}}
+\toprule
+dual status & information available & justified conclusion \\
+\midrule
+feasible & closed and \(A(z)=T\) & candidate for minimizing \(I_K\); no
+boundary realization yet \\
+weak dual critical & additionally satisfies
+\eqref{eq:preliminaries-dual-euler-lagrange} & a scaling and translation
+reconstruct a generalized characteristic, preserving \(I_K\) \\
+dual minimizer & additionally \(I_K(z)=d(K)\) & reconstruction is a
+capacity-minimizing generalized characteristic \\
+\bottomrule
+\end{tabular}
+\end{center}
+The primal curve lies on \(\partial K\) and satisfies a differential
+inclusion.  The dual curve has no position constraint, and its functional
+depends only on its velocity.  For a polytope, this is the freedom used in the
+next section to replace a capacity minimizer by one with a finite, simple
+facet word.  For a modified curve known only to be feasible, reconstruction
+is not yet justified.  Once it is shown to minimize, the Euler--Lagrange lemma
+supplies weak criticality and reconstruction applies.

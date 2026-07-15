@@ -3,12 +3,16 @@
 
 Haim--Kislev's formula reduces the EHZ capacity of a polytope to a finite
 global optimization problem over ordered facet words \cite{HK2017}.  This
-section first identifies the variables with dwell times of a simple dual curve
-and then separates fixed-word stationarity from the global maximum which
-computes the capacity.  For Lagrangian products of planar polygons, a billiard
-argument gives a much smaller exhaustive word family; that specialization is
-needed in Section~\ref{sec:rotated-regular-polygons}.  We call the resulting
-finite optimization problem the quadratic program, or QP.
+uses the existential conclusion of
+Theorem~\ref{thm:generalized-reeb-simple-minimizer}: at least one capacity
+minimizer has the word, dwell-time, closure, and base-point description just
+developed.  The present section supplies the missing scalar objective.  It
+first identifies normalized dwell times with the QP variables and then
+separates fixed-word stationarity from the global maximum which computes the
+capacity.  For Lagrangian products of planar polygons, a billiard argument
+gives a much smaller exhaustive word family; that specialization is needed in
+Section~\ref{sec:rotated-regular-polygons}.  We call the resulting finite
+optimization problem the quadratic program, or QP.
 
 \subsection{The finite quadratic program}
 \label{subsec:quadratic-program-algorithm-hk2019-general-polytopes}
@@ -107,6 +111,7 @@ reversal is a bijection on the words in the maximum, their formula reads
 The following construction explains what the finite variables represent and
 where global optimality enters.
 
+\Needspace{15\baselineskip}
 \begin{proposition}[From finite weights to a dual curve]
 \label{prop:quadratic-program-global-maximizer-realization}
 Let \(\beta\in M_\sigma\) and put \(q=Q_\sigma(\beta)\).  If \(q>0\), define

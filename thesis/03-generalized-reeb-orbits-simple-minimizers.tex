@@ -34,6 +34,24 @@ limit; compactness then preserves the resulting simple word. We record the
 operations separately because the same normalization and rearrangement ideas
 also explain the quadratic program below.
 
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]
+    {figures/foundations/simple-minimizer-pipeline.pdf}
+  \caption{The five-operation proof spine.  Approximation, splitting, merging,
+  and rescaling are performed on position-unconstrained dual loops, not on
+  curves already placed on \(\partial K\).  The lower inequality is the
+  mechanism that makes the action increases disappear.  Only the final dual
+  minimizer is reconstructed as a boundary orbit.}
+  \label{fig:generalized-reeb-simple-minimizer-pipeline}
+\end{figure}
+
+In the proof, a \emph{simple pure-velocity dual loop} means a closed
+piecewise-affine loop whose velocities lie in \(\{R_1,\ldots,R_F\}\), with
+each \(R_i\) occurring in at most one cyclic interval.  This term asserts
+neither that the loop lies on \(\partial K\) nor that its segments are already
+realized on the facets carrying the corresponding labels.
+
 \begin{lemma}[Piecewise affine approximation]\label{lem:generalized-reeb-pw-affine-approx}
 Let \(z\in W^{1,2}([0,T],\mathbb{R}^4)\) be closed and satisfy
 \[
@@ -65,8 +83,9 @@ by \(z'(0)=z(0)\) and \(\dot z'=w_k\) on \([t_k,t_{k+1}]\). Then
 \]
 so \(z'\) is closed. Since \(\dot z'\to\dot z\) in \(L^2\), integration gives
 \(z'\to z\) uniformly, hence in \(W^{1,2}\). The convergence of \(A\) follows
-from bilinearity in \((z,\dot z)\). Both \(\dot z'\) and \(\dot z\) take values
-in the compact set \(C\), on which \(h_K^2\) is Lipschitz; hence the
+from bilinearity in \((z,\dot z)\). Both \(-J_0\dot z'\) and
+\(-J_0\dot z\) take values in the compact set \(-J_0C\), on which
+\(h_K^2\) is Lipschitz; hence the
 \(L^2\)-convergence also gives \(I_K(z')\to I_K(z)\).
 \end{proof}
 
@@ -159,10 +178,10 @@ product of two durations, so \(A\) scales by \(\beta^2\). The integrand in
 \(I_K\) scales by \(\beta\).
 \end{proof}
 
-\begin{lemma}[Compactness of simple dual curves]\label{lem:generalized-reeb-compactness}
-Let \(z_n\) be closed simple piecewise-Reeb curves whose periods satisfy
+\begin{lemma}[Compactness of simple pure-velocity dual loops]\label{lem:generalized-reeb-compactness}
+Let \(z_n\) be simple pure-velocity dual loops whose periods satisfy
 \(T_n\to T>0\). After translating the curves and passing to a subsequence,
-\(z_n\) converges to a closed simple piecewise-Reeb curve \(z_*\) with period
+\(z_n\) converges to a simple pure-velocity dual loop \(z_*\) with period
 \(T\), and
 \[
   A(z_*)=\lim_n A(z_n),
@@ -231,7 +250,7 @@ Thus \(z_{4,n}\) is feasible for the dual problem, with period
 \]
 
 By Lemma~\ref{lem:generalized-reeb-compactness}, a subsequence of the \(z_{4,n}\)
-converges up to translation to a closed simple piecewise-Reeb curve \(z_*\)
+converges up to translation to a simple pure-velocity dual loop \(z_*\)
 with \(A(z_*)=T\) and \(I_K(z_*)=T\). This curve is a dual minimizer. Applying
 Theorem~\ref{thm:preliminaries-clarke-dual-action} again gives a
 contact-normalized generalized Reeb orbit on \(\partial K\) in the same
@@ -247,7 +266,18 @@ for some \(c>0\), with
 by \eqref{eq:preliminaries-dual-multiplier-value}. Thus the reconstruction
 only translates \(z_*\). Its velocities
 remain the pure facet directions \(R_i\), each used in one connected interval,
-so the resulting orbit is simple and has minimum action.
+so the resulting orbit is simple and has minimum action.  The translation also
+recovers the prescribed facet labels.  Indeed, on an interval with
+\(\dot\gamma=R_i\), the reconstructed inclusion gives
+\[
+  2a_i=-J_0R_i
+  \in 2\operatorname{conv}\{a_j:\gamma(t)\in F_j\}.
+\]
+Because the irredundant row \(a_i\) is an extreme point of \(K^\circ\), this
+forces \(F_i\) to be active along that interval.  The reconstructed curve lies
+in \(K\), so its starting point \(\gamma(0)\) is a valid base point in
+Lemma~\ref{lem:generalized-reeb-base-point-recovery}; closure supplies the
+remaining displacement equation.
 \end{proof}
 
 The theorem proves existence of at least one simple capacity minimizer. It is
