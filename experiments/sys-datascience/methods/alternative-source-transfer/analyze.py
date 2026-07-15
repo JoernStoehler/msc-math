@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Post-target analyzer; never generates targets or calls capacity."""
 from __future__ import annotations
-import argparse, json
+import argparse, json, math
 from pathlib import Path
 from validate_packet import validate, rows
 
@@ -17,7 +17,7 @@ def main() -> None:
         raise SystemExit("failed/partial post-target artifact: empty target file")
     if {r.get("candidate_id") for r in target_rows} != selected:
         raise SystemExit("failed/partial post-target artifact: target union mismatch")
-    if any(not isinstance(r.get("sys"), (int, float)) for r in target_rows):
+    if any(not isinstance(r.get("sys"), (int, float)) or not math.isfinite(float(r["sys"])) for r in target_rows):
         raise SystemExit("post-target rows require finite sys values")
     arms = {"rho": [], "ridge": [], "control": []}
     memberships = {r["candidate_id"]: r["memberships"] for r in rows(args.out / "selection.jsonl")}
@@ -27,4 +27,3 @@ def main() -> None:
     print(json.dumps(result, sort_keys=True))
 
 if __name__ == "__main__": main()
-

@@ -82,4 +82,12 @@ class PacketTests(unittest.TestCase):
       out=subprocess.run(["python3","analyze.py",str(tmp_path),"--targets",str(p)],capture_output=True,text=True)
       self.assertNotEqual(out.returncode, 0)
 
+  def test_nonfinite_target_rejected(self):
+    with tempfile.TemporaryDirectory() as d:
+      tmp_path=Path(d); _minimal(tmp_path)
+      targets=tmp_path/"targets.jsonl"; targets.write_text("\n".join(json.dumps({"candidate_id":r["candidate_id"],"sys":float("nan")}) for r in (json.loads(x) for x in (tmp_path/"selection.jsonl").read_text().splitlines()))+"\n")
+      import subprocess
+      out=subprocess.run(["python3",str(Path(__file__).parent/"analyze.py"),str(tmp_path),"--targets",str(targets)],capture_output=True,text=True)
+      self.assertNotEqual(out.returncode,0); self.assertIn("finite",out.stderr)
+
 if __name__ == "__main__": unittest.main()
