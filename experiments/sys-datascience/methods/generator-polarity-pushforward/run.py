@@ -112,7 +112,7 @@ def exact_fixture_rows():
       {"fixture":"marked-double-polar","residual":residual(translate(pp,(F(0),F(0))),nons),"source":dump_v(nons),"double":dump_v(pp)},
       {"fixture":"centroid-translation-covariance","residual":residual(cp_shift,[(x,y) for x,y in cp])},
       {"fixture":"raw-origin-translation-failure",**raw_failure},
-      {"fixture":"area-normalization-correction","source_area":str(area(nons)),"polar_area":str(area(p)),"normalized_product":float(area(nons)*area(p)/(area(nons)*area(p)))},
+      {"fixture":"area-normalization-correction","source_area":str(area(nons)),"polar_area":str(area(p)),"source_scale_squared":str(1/area(nons)),"polar_scale_squared":str(1/area(p)),"normalized_source_area":str(area(nons)*(1/area(nons))),"normalized_polar_area":str(area(p)*(1/area(p))),"normalized_product":str((area(nons)*(1/area(nons)))*(area(p)*(1/area(p))))},
       {"fixture":"recenter-every-step-non-involution","residual":residual(rp,translate(nons,c)),"status":"fails" if residual(rp,translate(nons,c)) and residual(rp,translate(nons,c))>1e-9 else "inconclusive"},
       {"fixture":"symmetric-double-polar-negative-control","residual":residual(polar(polar(sq)),sq),"single_polar_shape_residual":residual(polar(sq),sq),"mahler":str(area(sq)*area(polar(sq)))},
     ]
