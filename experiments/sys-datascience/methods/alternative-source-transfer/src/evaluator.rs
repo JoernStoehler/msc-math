@@ -134,11 +134,13 @@ fn digest_backend() -> String {
 fn evaluator_identity() -> Result<(String, String, String, String, bool), String> {
     let output = Command::new("git")
         .args([
+            "-C",
+            env!("CARGO_MANIFEST_DIR"),
             "log",
             "-1",
             "--format=%H",
             "--",
-            "experiments/sys-datascience/methods/alternative-source-transfer/src/evaluator.rs",
+            "../sys-datascience/methods/alternative-source-transfer/src/evaluator.rs",
         ])
         .output()
         .map_err(|e| e.to_string())?;
@@ -150,7 +152,13 @@ fn evaluator_identity() -> Result<(String, String, String, String, bool), String
         return Err("cannot determine evaluator source commit".into());
     }
     let status = Command::new("git")
-        .args(["status", "--porcelain", "--untracked-files=all"])
+        .args([
+            "-C",
+            env!("CARGO_MANIFEST_DIR"),
+            "status",
+            "--porcelain",
+            "--untracked-files=all",
+        ])
         .output()
         .map_err(|e| e.to_string())?;
     let clean = status.status.success() && status.stdout.is_empty() && status.stderr.is_empty();
