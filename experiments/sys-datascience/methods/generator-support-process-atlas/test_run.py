@@ -77,6 +77,36 @@ class SupportProcessAtlasTests(unittest.TestCase):
             self.assertEqual(row["metrics"]["source_support_linf"], 0.0)
             self.assertEqual(row["metrics"]["source_vertex_rms"], 0.0)
 
+    def test_cyclic_so2_quotient_collapses_grid_rotation(self) -> None:
+        base = [
+            1.0
+            + 0.13 * math.cos(2.0 * math.pi * index / atlas.SUPPORT_GRID_SIZE)
+            + 0.07 * math.sin(6.0 * math.pi * index / atlas.SUPPORT_GRID_SIZE)
+            for index in range(atlas.SUPPORT_GRID_SIZE)
+        ]
+        shift = 17
+        rotated = base[shift:] + base[:shift]
+        self.assertAlmostEqual(
+            atlas.support_grid_l2_cyclic_so2_quotient_64(base, rotated), 0.0, places=14
+        )
+
+    def test_cyclic_so2_quotient_separates_distinct_shapes(self) -> None:
+        grid = range(atlas.SUPPORT_GRID_SIZE)
+        first = [1.0 + 0.12 * math.cos(4.0 * math.pi * index / atlas.SUPPORT_GRID_SIZE) for index in grid]
+        second = [1.0 + 0.12 * math.cos(8.0 * math.pi * index / atlas.SUPPORT_GRID_SIZE) for index in grid]
+        self.assertGreater(atlas.support_grid_l2_cyclic_so2_quotient_64(first, second), 0.05)
+
+    def test_cyclic_so2_quotient_does_not_identify_reflection(self) -> None:
+        base = [
+            1.0
+            + 0.11 * math.cos(2.0 * math.pi * index / atlas.SUPPORT_GRID_SIZE)
+            + 0.05 * math.sin(4.0 * math.pi * index / atlas.SUPPORT_GRID_SIZE)
+            + 0.03 * math.cos(6.0 * math.pi * index / atlas.SUPPORT_GRID_SIZE)
+            for index in range(atlas.SUPPORT_GRID_SIZE)
+        ]
+        reflected = [base[(-index) % atlas.SUPPORT_GRID_SIZE] for index in range(atlas.SUPPORT_GRID_SIZE)]
+        self.assertGreater(atlas.support_grid_l2_cyclic_so2_quotient_64(base, reflected), 1.0e-3)
+
     def test_empty_complete_stratum_is_reported_not_omitted(self) -> None:
         _, attempts = atlas.generate_rows((53,), (4,), 1)
         for row in attempts:

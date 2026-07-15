@@ -27,11 +27,15 @@ The six arms are exhaustive for this packet:
 `sigma=0` is tested as the equal-support identity and is not emitted as a
 separate population. Accepted polygons are area-normalized and translated by
 their area centroid before shape distances. A 64-direction centered support
-signature provides the common distance view.
+signature provides the common cross-fan distance view. Cross-fan comparisons
+minimize support-grid L2 over all 64 cyclic shifts, a discrete SO(2) quotient
+on this grid. Reflections are not quotiented.
 
-Synthetic controls check that equal and `sigma=0` collapse exactly, and that
-the adjacency/roughness metrics separate a fixed IID Gaussian log-support
-sample from a coherent Fourier mode after matching empirical log variance.
+Synthetic controls check that equal and `sigma=0` collapse exactly, cyclic
+rotations have zero SO(2)-quotient distance, a distinct shape remains at
+positive distance, reflection remains separate, and the adjacency/roughness
+metrics separate a fixed IID Gaussian log-support sample from a coherent
+Fourier mode after matching empirical log variance.
 
 Two sampling objects remain separate:
 
@@ -49,12 +53,15 @@ Each accepted attempt records actual support CV, sampled log-support SD,
 cyclic log-support adjacency correlation and roughness, angular-gap CV,
 isoperimetric ratio, sampled width anisotropy, maximum centered vertex radius,
 and centered vertices/support signatures. Same-fan equal-support distances use
-support L2, support L-infinity, and corresponding-vertex RMS views.
+support L2, support L-infinity, and corresponding-vertex RMS in the frozen
+common world frame and vertex correspondence; they do not quotient rotations
+or reflections.
 
 The analyzer reports marginal and complete-conditioned summaries separately:
-tail quantiles, source-to-arm paired distances, within-arm support-signature
-diversity, and directed nearest-cross overlap with same-fan targets excluded.
-Every summary is stratified by side count and seed.
+tail quantiles, fixed-frame source-to-arm paired distances, and cyclic
+SO(2)-quotient within-arm support-signature diversity and directed nearest-cross
+overlap with same-fan targets excluded. Reflection remains distinct in the
+cross-fan summaries. Every summary is stratified by side count and seed.
 
 Before generation, the matched-CV comparisons were fixed as IID
 `sigma=0.1` versus each of smooth `R=2` and `R=3`. Matching passes when the

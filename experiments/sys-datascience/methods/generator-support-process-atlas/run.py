@@ -19,6 +19,7 @@ import random
 import subprocess
 import sys
 from collections import defaultdict
+from functools import cache
 from pathlib import Path
 from typing import Any, Iterable, Sequence
 
@@ -28,6 +29,7 @@ DEFAULT_SEEDS = (1201, 2203, 3209)
 DEFAULT_SIDE_COUNTS = (4, 6, 8)
 DEFAULT_FANS_PER_STRATUM = 48
 SUPPORT_GRID_SIZE = 64
+SO2_DISTANCE_VIEW = "support_grid_l2_cyclic_so2_quotient_64_no_reflection"
 CLIPPED_GAUSSIAN_BOUND = 2.0
 SMOOTH_EMPIRICAL_LOG_SD = 0.1
 CV_MATCH_ABS_TOLERANCE = 0.02
@@ -323,8 +325,40 @@ def construct_polygon(angles: Sequence[float], supports: Sequence[float]) -> tup
     )
 
 
-def vector_l2(a: Sequence[float], b: Sequence[float]) -> float:
-    return math.sqrt(mean([(x - y) ** 2 for x, y in zip(a, b)]))
+@cache
+def cyclic_rotations_64(values: tuple[float, ...]) -> tuple[tuple[float, ...], ...]:
+    if len(values) != SUPPORT_GRID_SIZE:
+        raise ValueError(f"expected {SUPPORT_GRID_SIZE} support-grid values, got {len(values)}")
+    return tuple(values[shift:] + values[:shift] for shift in range(SUPPORT_GRID_SIZE))
+
+
+@cache
+def _support_grid_l2_cyclic_so2_quotient_64(
+    a: tuple[float, ...], b: tuple[float, ...]
+) -> float:
+    return min(math.dist(a, rotated_b) for rotated_b in cyclic_rotations_64(b)) / math.sqrt(
+        SUPPORT_GRID_SIZE
+    )
+
+
+def support_grid_l2_cyclic_so2_quotient_64(
+    a: Sequence[float], b: Sequence[float]
+) -> float:
+    """Discrete SO(2)-quotient L2 on the 64-direction support grid.
+
+    The minimum is over the 64 orientation-preserving cyclic shifts. Reflected
+    signatures are deliberately not included in the orbit.
+    """
+    tuple_a = tuple(a)
+    tuple_b = tuple(b)
+    if len(tuple_a) != SUPPORT_GRID_SIZE or len(tuple_b) != SUPPORT_GRID_SIZE:
+        raise ValueError(
+            f"both support grids must have length {SUPPORT_GRID_SIZE}; "
+            f"got {len(tuple_a)} and {len(tuple_b)}"
+        )
+    if tuple_b < tuple_a:
+        tuple_a, tuple_b = tuple_b, tuple_a
+    return _support_grid_l2_cyclic_so2_quotient_64(tuple_a, tuple_b)
 
 
 def paired_distances(row: dict[str, Any], source: dict[str, Any]) -> dict[str, float]:
@@ -490,12 +524,14 @@ def within_diversity_rows(attempts: Sequence[dict[str, Any]], complete_only: boo
         for arm in ARMS:
             rows = grouped.get((side_count, seed, arm), [])
             distances = [
-                vector_l2(a["support_grid_centered_area1"], b["support_grid_centered_area1"])
+                support_grid_l2_cyclic_so2_quotient_64(
+                    a["support_grid_centered_area1"], b["support_grid_centered_area1"]
+                )
                 for index, a in enumerate(rows)
                 for b in rows[index + 1 :]
             ]
             result.append({
-                "schema": "generator-support-process-within-diversity-v1",
+                "schema": "generator-support-process-within-diversity-so2-quotient-v2",
                 "conditioning": (
                     "complete_paired_conditioned_on_every_arm_succeeding"
                     if complete_only
@@ -506,7 +542,9 @@ def within_diversity_rows(attempts: Sequence[dict[str, Any]], complete_only: boo
                 "arm": arm,
                 "shape_count": len(rows),
                 "pair_count": len(distances),
-                "support_l2": summarize_values(distances),
+                "distance_view": SO2_DISTANCE_VIEW,
+                "reflection_quotiented": False,
+                "support_l2_cyclic_so2_quotient_64": summarize_values(distances),
             })
     return result
 
@@ -515,7 +553,9 @@ def nearest_distances(source_rows: Sequence[dict[str, Any]], target_rows: Sequen
     distances = []
     for source in source_rows:
         candidates = [
-            vector_l2(source["support_grid_centered_area1"], target["support_grid_centered_area1"])
+            support_grid_l2_cyclic_so2_quotient_64(
+                source["support_grid_centered_area1"], target["support_grid_centered_area1"]
+            )
             for target in target_rows
             if target["fan_id"] != source["fan_id"]
         ]
@@ -529,40 +569,42 @@ def directed_overlap_rows(attempts: Sequence[dict[str, Any]], complete_only: boo
     result = []
     strata = sorted({(row["side_count"], row["seed"]) for row in attempts})
     for side_count, seed in strata:
-            for source_arm in ARMS:
-                source = grouped.get((side_count, seed, source_arm), [])
-                within = nearest_distances(source, source)
-                within_mean = mean(within) if within else None
-                for target_arm in ARMS:
-                    if target_arm == source_arm:
-                        continue
-                    target = grouped.get((side_count, seed, target_arm), [])
-                    directed = nearest_distances(source, target)
-                    directed_mean = mean(directed) if directed else None
-                    result.append(
-                        {
-                            "schema": "generator-support-process-directed-overlap-v1",
-                            "conditioning": (
-                                "complete_paired_conditioned_on_every_arm_succeeding"
-                                if complete_only
-                                else "arm_marginal_accepted_shapes"
-                            ),
-                            "same_fan_targets_excluded": True,
-                            "side_count": side_count,
-                            "seed": seed,
-                            "source_arm": source_arm,
-                            "target_arm": target_arm,
-                            "source_shape_count": len(source),
-                            "target_shape_count": len(target),
-                            "directed_nearest_support_l2": summarize_values(directed),
-                            "source_within_nearest_mean": within_mean,
-                            "directed_to_within_mean_ratio": (
-                                directed_mean / within_mean
-                                if directed_mean is not None and within_mean is not None and within_mean > 0.0
-                                else None
-                            ),
-                        }
-                    )
+        for source_arm in ARMS:
+            source = grouped.get((side_count, seed, source_arm), [])
+            within = nearest_distances(source, source)
+            within_mean = mean(within) if within else None
+            for target_arm in ARMS:
+                if target_arm == source_arm:
+                    continue
+                target = grouped.get((side_count, seed, target_arm), [])
+                directed = nearest_distances(source, target)
+                directed_mean = mean(directed) if directed else None
+                result.append(
+                    {
+                        "schema": "generator-support-process-directed-overlap-so2-quotient-v2",
+                        "conditioning": (
+                            "complete_paired_conditioned_on_every_arm_succeeding"
+                            if complete_only
+                            else "arm_marginal_accepted_shapes"
+                        ),
+                        "distance_view": SO2_DISTANCE_VIEW,
+                        "reflection_quotiented": False,
+                        "same_fan_targets_excluded": True,
+                        "side_count": side_count,
+                        "seed": seed,
+                        "source_arm": source_arm,
+                        "target_arm": target_arm,
+                        "source_shape_count": len(source),
+                        "target_shape_count": len(target),
+                        "directed_nearest_support_l2_cyclic_so2_quotient_64": summarize_values(directed),
+                        "source_within_nearest_support_l2_cyclic_so2_quotient_64_mean": within_mean,
+                        "directed_to_within_cyclic_so2_quotient_64_mean_ratio": (
+                            directed_mean / within_mean
+                            if directed_mean is not None and within_mean is not None and within_mean > 0.0
+                            else None
+                        ),
+                    }
+                )
     return result
 
 
@@ -580,7 +622,7 @@ def paired_source_distance_rows(attempts: Sequence[dict[str, Any]], complete_onl
         for arm in ARMS:
             rows = grouped.get((side_count, seed, arm), [])
             result.append({
-                "schema": "generator-support-process-paired-distance-v1",
+                "schema": "generator-support-process-paired-distance-fixed-frame-v2",
                 "conditioning": (
                     "complete_paired_conditioned_on_every_arm_succeeding"
                     if complete_only
@@ -590,6 +632,9 @@ def paired_source_distance_rows(attempts: Sequence[dict[str, Any]], complete_onl
                 "seed": seed,
                 "arm": arm,
                 "pair_count": len(rows),
+                "distance_view": "same_fan_fixed_frame_common_orientation_and_vertex_correspondence",
+                "rotation_quotiented": False,
+                "reflection_quotiented": False,
                 "source_support_l2": summarize_values(row["metrics"]["source_support_l2"] for row in rows),
                 "source_support_linf": summarize_values(row["metrics"]["source_support_linf"] for row in rows),
                 "source_vertex_rms": summarize_values(row["metrics"]["source_vertex_rms"] for row in rows),
@@ -704,7 +749,7 @@ def aggregate_report(
     cv_rows = summaries["cv_matching"]
     monotonic_rows = summaries["sigma_monotonicity"]
     return {
-        "schema": "generator-support-process-atlas-report-v1",
+        "schema": "generator-support-process-atlas-report-v2",
         "law_version": LAW_VERSION,
         "question": "On identical frozen normal fans, how do facetwise IID and low-frequency correlated support processes change factor geometry, acceptance, diversity, and tails?",
         "design": {
@@ -718,6 +763,8 @@ def aggregate_report(
             "complete_boundary": "subset of fan_ids on which every requested arm accepted; not the original marginal laws",
             "support_grid_size": SUPPORT_GRID_SIZE,
             "area_and_translation_normalization": "accepted polygons scaled to area one and translated by their area centroid",
+            "cross_fan_distance": "support-grid L2 minimized over all 64 cyclic shifts: a discrete SO(2) quotient on the 64-direction grid; reflections are not quotiented",
+            "same_fan_source_distance": "fixed common world frame and corresponding-vertex order; rotations and reflections are not quotiented",
         },
         "predeclared_questions": {
             "smooth_vs_iid_cv_pairs": [list(pair) for pair in SMOOTH_IID_CV_COMPARISONS],
