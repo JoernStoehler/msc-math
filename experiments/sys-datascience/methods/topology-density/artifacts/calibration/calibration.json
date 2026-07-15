@@ -1,0 +1,451 @@
+{
+  "control_count": 7,
+  "controls": {
+    "anisotropic_line": {
+      "expected": {
+        "h1": false,
+        "line": true
+      },
+      "observed": {
+        "density": {
+          "base_kth_distance": 0.13974467577205285,
+          "bootstrap_sample_size": 180,
+          "bootstrap_unique_rows_mean": 113.90625,
+          "input_duplicate_fraction": 0.0,
+          "input_unique_rows": 180,
+          "k": 8,
+          "resampling": "bootstrap_with_replacement_multiplicities_retained",
+          "scales": [
+            {
+              "bootstrap_mode_components": 9,
+              "bootstrap_mode_fraction": 0.34375,
+              "bootstrap_n": 32,
+              "components": 10,
+              "eps": 0.11179574061764229,
+              "noise_fraction": 0.2111111111111111,
+              "scale_factor": 0.8
+            },
+            {
+              "bootstrap_mode_components": 8,
+              "bootstrap_mode_fraction": 0.40625,
+              "bootstrap_n": 32,
+              "components": 9,
+              "eps": 0.13974467577205285,
+              "noise_fraction": 0.08888888888888889,
+              "scale_factor": 1.0
+            },
+            {
+              "bootstrap_mode_components": 7,
+              "bootstrap_mode_fraction": 0.3125,
+              "bootstrap_n": 32,
+              "components": 4,
+              "eps": 0.16769361092646343,
+              "noise_fraction": 0.03888888888888889,
+              "scale_factor": 1.2
+            }
+          ],
+          "status": "ok"
+        },
+        "dimension": 2,
+        "n": 180,
+        "topology": {
+          "distance_scale": 1.8644466699674251,
+          "h0_bars": 180,
+          "h0_max_persistence": 0.2091723382472992,
+          "h0_significant_bars": 0,
+          "h0_threshold": 0.37288933399348506,
+          "h1_bars": 5,
+          "h1_max_persistence": 0.007416032254695892,
+          "h1_significant_bars": 0,
+          "h1_threshold": 0.6525563344885987,
+          "n": 180,
+          "status": "ok"
+        }
+      },
+      "pass": true,
+      "reason": "a thin line should have no loop and an obvious anisotropy diagnostic"
+    },
+    "boundary_heavy": {
+      "expected": {
+        "boundary": true
+      },
+      "observed": {
+        "density": {
+          "base_kth_distance": 0.3457539310542617,
+          "bootstrap_sample_size": 192,
+          "bootstrap_unique_rows_mean": 123.3125,
+          "input_duplicate_fraction": 0.0,
+          "input_unique_rows": 192,
+          "k": 8,
+          "resampling": "bootstrap_with_replacement_multiplicities_retained",
+          "scales": [
+            {
+              "bootstrap_mode_components": 8,
+              "bootstrap_mode_fraction": 0.3125,
+              "bootstrap_n": 32,
+              "components": 7,
+              "eps": 0.27660314484340937,
+              "noise_fraction": 0.3333333333333333,
+              "scale_factor": 0.8
+            },
+            {
+              "bootstrap_mode_components": 7,
+              "bootstrap_mode_fraction": 0.28125,
+              "bootstrap_n": 32,
+              "components": 7,
+              "eps": 0.3457539310542617,
+              "noise_fraction": 0.19791666666666666,
+              "scale_factor": 1.0
+            },
+            {
+              "bootstrap_mode_components": 6,
+              "bootstrap_mode_fraction": 0.28125,
+              "bootstrap_n": 32,
+              "components": 7,
+              "eps": 0.4149047172651141,
+              "noise_fraction": 0.06770833333333333,
+              "scale_factor": 1.2
+            }
+          ],
+          "status": "ok"
+        },
+        "dimension": 2,
+        "n": 192,
+        "topology": {
+          "distance_scale": 2.903893245971629,
+          "h0_bars": 192,
+          "h0_max_persistence": 1.2977535724639893,
+          "h0_significant_bars": 1,
+          "h0_threshold": 0.5807786491943258,
+          "h1_bars": 8,
+          "h1_max_persistence": 1.4728569388389587,
+          "h1_significant_bars": 1,
+          "h1_threshold": 1.0163626360900702,
+          "n": 192,
+          "status": "ok"
+        }
+      },
+      "pass": true,
+      "reason": "boundary-heavy square should expose a scale-sensitive hole"
+    },
+    "circle": {
+      "expected": {
+        "h1": true
+      },
+      "observed": {
+        "density": {
+          "base_kth_distance": 0.17013160562507096,
+          "bootstrap_sample_size": 160,
+          "bootstrap_unique_rows_mean": 100.40625,
+          "input_duplicate_fraction": 0.0,
+          "input_unique_rows": 160,
+          "k": 8,
+          "resampling": "bootstrap_with_replacement_multiplicities_retained",
+          "scales": [
+            {
+              "bootstrap_mode_components": 7,
+              "bootstrap_mode_fraction": 0.28125,
+              "bootstrap_n": 32,
+              "components": 12,
+              "eps": 0.13610528450005677,
+              "noise_fraction": 0.325,
+              "scale_factor": 0.8
+            },
+            {
+              "bootstrap_mode_components": 7,
+              "bootstrap_mode_fraction": 0.34375,
+              "bootstrap_n": 32,
+              "components": 1,
+              "eps": 0.17013160562507096,
+              "noise_fraction": 0.0,
+              "scale_factor": 1.0
+            },
+            {
+              "bootstrap_mode_components": 3,
+              "bootstrap_mode_fraction": 0.28125,
+              "bootstrap_n": 32,
+              "components": 1,
+              "eps": 0.20415792675008515,
+              "noise_fraction": 0.0,
+              "scale_factor": 1.2
+            }
+          ],
+          "status": "ok"
+        },
+        "dimension": 2,
+        "n": 160,
+        "topology": {
+          "distance_scale": 1.4223314397553732,
+          "h0_bars": 160,
+          "h0_max_persistence": 0.11580512672662735,
+          "h0_significant_bars": 0,
+          "h0_threshold": 0.28446628795107465,
+          "h1_bars": 3,
+          "h1_max_persistence": 1.5619333386421204,
+          "h1_significant_bars": 1,
+          "h1_threshold": 0.4978160039143806,
+          "n": 160,
+          "status": "ok"
+        }
+      },
+      "pass": true,
+      "reason": "H1 must retain a persistent loop"
+    },
+    "disk": {
+      "expected": {
+        "h1": false
+      },
+      "observed": {
+        "density": {
+          "base_kth_distance": 0.22067747747015692,
+          "bootstrap_sample_size": 180,
+          "bootstrap_unique_rows_mean": 114.78125,
+          "input_duplicate_fraction": 0.0,
+          "input_unique_rows": 180,
+          "k": 8,
+          "resampling": "bootstrap_with_replacement_multiplicities_retained",
+          "scales": [
+            {
+              "bootstrap_mode_components": 7,
+              "bootstrap_mode_fraction": 0.21875,
+              "bootstrap_n": 32,
+              "components": 8,
+              "eps": 0.17654198197612556,
+              "noise_fraction": 0.4,
+              "scale_factor": 0.8
+            },
+            {
+              "bootstrap_mode_components": 5,
+              "bootstrap_mode_fraction": 0.40625,
+              "bootstrap_n": 32,
+              "components": 5,
+              "eps": 0.22067747747015692,
+              "noise_fraction": 0.022222222222222223,
+              "scale_factor": 1.0
+            },
+            {
+              "bootstrap_mode_components": 1,
+              "bootstrap_mode_fraction": 0.6875,
+              "bootstrap_n": 32,
+              "components": 1,
+              "eps": 0.2648129729641883,
+              "noise_fraction": 0.011111111111111112,
+              "scale_factor": 1.2
+            }
+          ],
+          "status": "ok"
+        },
+        "dimension": 2,
+        "n": 180,
+        "topology": {
+          "distance_scale": 0.9501878791976652,
+          "h0_bars": 180,
+          "h0_max_persistence": 0.20200254023075104,
+          "h0_significant_bars": 5,
+          "h0_threshold": 0.19003757583953307,
+          "h1_bars": 38,
+          "h1_max_persistence": 0.29353195428848267,
+          "h1_significant_bars": 0,
+          "h1_threshold": 0.3325657577191828,
+          "n": 180,
+          "status": "ok"
+        }
+      },
+      "pass": true,
+      "reason": "filled disk must not retain a significant H1 loop"
+    },
+    "duplicates": {
+      "expected": {
+        "duplicates": true
+      },
+      "observed": {
+        "density": {
+          "base_kth_distance": 0.11658219412431894,
+          "bootstrap_sample_size": 144,
+          "bootstrap_unique_rows_mean": 91.59375,
+          "input_duplicate_fraction": 0.6666666666666667,
+          "input_unique_rows": 48,
+          "k": 8,
+          "resampling": "bootstrap_with_replacement_multiplicities_retained",
+          "scales": [
+            {
+              "bootstrap_mode_components": 5,
+              "bootstrap_mode_fraction": 0.34375,
+              "bootstrap_n": 32,
+              "components": 4,
+              "eps": 0.09326575529945516,
+              "noise_fraction": 0.5,
+              "scale_factor": 0.8
+            },
+            {
+              "bootstrap_mode_components": 4,
+              "bootstrap_mode_fraction": 0.40625,
+              "bootstrap_n": 32,
+              "components": 4,
+              "eps": 0.11658219412431894,
+              "noise_fraction": 0.4375,
+              "scale_factor": 1.0
+            },
+            {
+              "bootstrap_mode_components": 3,
+              "bootstrap_mode_fraction": 0.40625,
+              "bootstrap_n": 32,
+              "components": 3,
+              "eps": 0.13989863294918273,
+              "noise_fraction": 0.25,
+              "scale_factor": 1.2
+            }
+          ],
+          "status": "ok"
+        },
+        "dimension": 2,
+        "n": 144,
+        "topology": {
+          "distance_scale": 2.546059523615183,
+          "h0_bars": 50,
+          "h0_max_persistence": 2.3490896224975586,
+          "h0_significant_bars": 1,
+          "h0_threshold": 0.5092119047230366,
+          "h1_bars": 6,
+          "h1_max_persistence": 0.09953097999095917,
+          "h1_significant_bars": 0,
+          "h1_threshold": 0.8911208332653139,
+          "n": 144,
+          "status": "ok"
+        }
+      },
+      "pass": true,
+      "reason": "duplicate multiplicity must remain visible without creating extra significant H0 components"
+    },
+    "narrow_bridge_dumbbell": {
+      "expected": {
+        "scale_change": true
+      },
+      "observed": {
+        "density": {
+          "base_kth_distance": 0.1999709011496834,
+          "bootstrap_sample_size": 170,
+          "bootstrap_unique_rows_mean": 108.53125,
+          "input_duplicate_fraction": 0.0,
+          "input_unique_rows": 170,
+          "k": 8,
+          "resampling": "bootstrap_with_replacement_multiplicities_retained",
+          "scales": [
+            {
+              "bootstrap_mode_components": 4,
+              "bootstrap_mode_fraction": 0.34375,
+              "bootstrap_n": 32,
+              "components": 3,
+              "eps": 0.15997672091974674,
+              "noise_fraction": 0.4470588235294118,
+              "scale_factor": 0.8
+            },
+            {
+              "bootstrap_mode_components": 3,
+              "bootstrap_mode_fraction": 0.46875,
+              "bootstrap_n": 32,
+              "components": 3,
+              "eps": 0.1999709011496834,
+              "noise_fraction": 0.22941176470588234,
+              "scale_factor": 1.0
+            },
+            {
+              "bootstrap_mode_components": 4,
+              "bootstrap_mode_fraction": 0.375,
+              "bootstrap_n": 32,
+              "components": 4,
+              "eps": 0.23996508137962008,
+              "noise_fraction": 0.15294117647058825,
+              "scale_factor": 1.2
+            }
+          ],
+          "status": "ok"
+        },
+        "dimension": 2,
+        "n": 170,
+        "topology": {
+          "distance_scale": 1.7274177472547747,
+          "h0_bars": 170,
+          "h0_max_persistence": 0.3588700294494629,
+          "h0_significant_bars": 1,
+          "h0_threshold": 0.34548354945095494,
+          "h1_bars": 28,
+          "h1_max_persistence": 0.10558140277862549,
+          "h1_significant_bars": 0,
+          "h1_threshold": 0.6045962115391711,
+          "n": 170,
+          "status": "ok"
+        }
+      },
+      "pass": true,
+      "reason": "component count should change with the declared neighbourhood scale"
+    },
+    "separated_mixture": {
+      "expected": {
+        "components": 2
+      },
+      "observed": {
+        "density": {
+          "base_kth_distance": 0.10606707622713504,
+          "bootstrap_sample_size": 180,
+          "bootstrap_unique_rows_mean": 112.75,
+          "input_duplicate_fraction": 0.0,
+          "input_unique_rows": 180,
+          "k": 8,
+          "resampling": "bootstrap_with_replacement_multiplicities_retained",
+          "scales": [
+            {
+              "bootstrap_mode_components": 5,
+              "bootstrap_mode_fraction": 0.375,
+              "bootstrap_n": 32,
+              "components": 3,
+              "eps": 0.08485366098170805,
+              "noise_fraction": 0.40555555555555556,
+              "scale_factor": 0.8
+            },
+            {
+              "bootstrap_mode_components": 3,
+              "bootstrap_mode_fraction": 0.40625,
+              "bootstrap_n": 32,
+              "components": 2,
+              "eps": 0.10606707622713504,
+              "noise_fraction": 0.21666666666666667,
+              "scale_factor": 1.0
+            },
+            {
+              "bootstrap_mode_components": 2,
+              "bootstrap_mode_fraction": 0.84375,
+              "bootstrap_n": 32,
+              "components": 2,
+              "eps": 0.12728049147256204,
+              "noise_fraction": 0.11666666666666667,
+              "scale_factor": 1.2
+            }
+          ],
+          "status": "ok"
+        },
+        "dimension": 2,
+        "n": 180,
+        "topology": {
+          "distance_scale": 3.4549037484861937,
+          "h0_bars": 180,
+          "h0_max_persistence": 3.296440601348877,
+          "h0_significant_bars": 1,
+          "h0_threshold": 0.6909807496972388,
+          "h1_bars": 37,
+          "h1_max_persistence": 0.0611996203660965,
+          "h1_significant_bars": 0,
+          "h1_threshold": 1.2092163119701678,
+          "n": 180,
+          "status": "ok"
+        }
+      },
+      "pass": true,
+      "reason": "a stable two-component density level must be visible"
+    }
+  },
+  "method_selected": true,
+  "pass_count": 7,
+  "schema": "topology-density-calibration-v1",
+  "selection_rule": "at least 5 of 7 predeclared control signatures pass"
+}

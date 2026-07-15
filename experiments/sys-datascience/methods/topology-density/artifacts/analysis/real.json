@@ -1,0 +1,2960 @@
+{
+  "allowed": [
+    "compare observed component/loop summaries within an explicitly named law/population/side stratum",
+    "flag scale and view instability"
+  ],
+  "prohibited": [
+    "pool side counts or law knobs",
+    "infer population topology or natural-law support",
+    "use topology as a sys or capacity predictor",
+    "claim target transfer or mechanism"
+  ],
+  "schema": "topology-density-real-v1",
+  "strata": [
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "current-baseline",
+      "n": 72,
+      "population": "current-baseline[delta=0.2]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 3,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 0.385455953848831,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.3125,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 4,
+                "bootstrap_mode_fraction": 0.375,
+                "bootstrap_n": 32,
+                "components": 5,
+                "eps": 0.30836476307906485,
+                "noise_fraction": 0.25,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 3,
+                "bootstrap_mode_fraction": 0.4375,
+                "bootstrap_n": 32,
+                "components": 3,
+                "eps": 0.385455953848831,
+                "noise_fraction": 0.041666666666666664,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.59375,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.4625471446185972,
+                "noise_fraction": 0.027777777777777776,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 6,
+          "n": 72,
+          "topology": {
+            "distance_scale": 1.4773984902980841,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.5811705589294434,
+            "h0_significant_bars": 4,
+            "h0_threshold": 0.2954796980596168,
+            "h1_bars": 7,
+            "h1_max_persistence": 0.061648041009902954,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.5170894716043294,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 0.09335028466644502,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.53125,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.46875,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.07468022773315601,
+                "noise_fraction": 0.4861111111111111,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.59375,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.09335028466644502,
+                "noise_fraction": 0.2361111111111111,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.53125,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.11202034159973402,
+                "noise_fraction": 0.19444444444444445,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 3,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.26316241923445405,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.13466645777225494,
+            "h0_significant_bars": 16,
+            "h0_threshold": 0.052632483846890815,
+            "h1_bars": 11,
+            "h1_max_persistence": 0.035202138125896454,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.0921068467320589,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "current-baseline",
+      "n": 72,
+      "population": "current-baseline[delta=0.2]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 4,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 0.7315047926762123,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 46.0,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 3,
+                "bootstrap_mode_fraction": 0.46875,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.5852038341409699,
+                "noise_fraction": 0.4305555555555556,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.4375,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.7315047926762123,
+                "noise_fraction": 0.1388888888888889,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.65625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.8778057512114547,
+                "noise_fraction": 0.027777777777777776,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 8,
+          "n": 72,
+          "topology": {
+            "distance_scale": 2.1739878684463094,
+            "h0_bars": 72,
+            "h0_max_persistence": 1.5796666145324707,
+            "h0_significant_bars": 24,
+            "h0_threshold": 0.4347975736892619,
+            "h1_bars": 10,
+            "h1_max_persistence": 0.14898216724395752,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.7608957539562082,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 0.17068468282673582,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.3125,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.53125,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.13654774626138866,
+                "noise_fraction": 0.4861111111111111,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.40625,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.17068468282673582,
+                "noise_fraction": 0.2222222222222222,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.78125,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.204821619392083,
+                "noise_fraction": 0.027777777777777776,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 4,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.38133731219345823,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.31556710600852966,
+            "h0_significant_bars": 37,
+            "h0_threshold": 0.07626746243869165,
+            "h1_bars": 16,
+            "h1_max_persistence": 0.05401568114757538,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.13346805926771038,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "current-baseline",
+      "n": 72,
+      "population": "current-baseline[delta=0.2]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 6,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 1.1828746489191997,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.40625,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.46875,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.9462997191353598,
+                "noise_fraction": 0.4861111111111111,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.53125,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 1.1828746489191997,
+                "noise_fraction": 0.2361111111111111,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.59375,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 1.4194495787030397,
+                "noise_fraction": 0.06944444444444445,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 12,
+          "n": 72,
+          "topology": {
+            "distance_scale": 2.120661381516472,
+            "h0_bars": 72,
+            "h0_max_persistence": 1.4873542785644531,
+            "h0_significant_bars": 63,
+            "h0_threshold": 0.4241322763032944,
+            "h1_bars": 24,
+            "h1_max_persistence": 0.22229433059692383,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.7422314835307651,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 0.20680593210843762,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.90625,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.3125,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.1654447456867501,
+                "noise_fraction": 0.4305555555555556,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.5,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.20680593210843762,
+                "noise_fraction": 0.19444444444444445,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.6875,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.24816711853012513,
+                "noise_fraction": 0.1388888888888889,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 6,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.5087194404632099,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.5279155969619751,
+            "h0_significant_bars": 37,
+            "h0_threshold": 0.101743888092642,
+            "h1_bars": 19,
+            "h1_max_persistence": 0.04845815896987915,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.17805180416212346,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "primal-hull-uniform-disk",
+      "n": 51,
+      "population": "primal-hull-uniform-disk[points=n+4,origin=interior]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 3,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 0.20093111967857477,
+            "bootstrap_sample_size": 51,
+            "bootstrap_unique_rows_mean": 32.78125,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 51,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.46875,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.16074489574285983,
+                "noise_fraction": 0.47058823529411764,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.6875,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.20093111967857477,
+                "noise_fraction": 0.23529411764705882,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.90625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.24111734361428971,
+                "noise_fraction": 0.21568627450980393,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 6,
+          "n": 51,
+          "topology": {
+            "distance_scale": 0.5321011807876488,
+            "h0_bars": 51,
+            "h0_max_persistence": 0.369651198387146,
+            "h0_significant_bars": 16,
+            "h0_threshold": 0.10642023615752977,
+            "h1_bars": 2,
+            "h1_max_persistence": 0.036490440368652344,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.18623541327567705,
+            "n": 51,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 0.07105506463438012,
+            "bootstrap_sample_size": 51,
+            "bootstrap_unique_rows_mean": 31.90625,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 51,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.59375,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.0568440517075041,
+                "noise_fraction": 0.39215686274509803,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.875,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.07105506463438012,
+                "noise_fraction": 0.27450980392156865,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.9375,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.08526607756125613,
+                "noise_fraction": 0.21568627450980393,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 3,
+          "n": 51,
+          "topology": {
+            "distance_scale": 0.17208111394087802,
+            "h0_bars": 51,
+            "h0_max_persistence": 0.1697511225938797,
+            "h0_significant_bars": 19,
+            "h0_threshold": 0.034416222788175604,
+            "h1_bars": 10,
+            "h1_max_persistence": 0.011952310800552368,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.0602283898793073,
+            "n": 51,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "primal-hull-uniform-disk",
+      "n": 72,
+      "population": "primal-hull-uniform-disk[points=n+4,origin=interior]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 4,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 0.5182070840646263,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 46.0,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.71875,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.4145656672517011,
+                "noise_fraction": 0.4305555555555556,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.5625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.5182070840646263,
+                "noise_fraction": 0.125,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.8125,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.6218485008775516,
+                "noise_fraction": 0.06944444444444445,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 8,
+          "n": 72,
+          "topology": {
+            "distance_scale": 1.0797711252497053,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.6436663866043091,
+            "h0_significant_bars": 56,
+            "h0_threshold": 0.21595422504994108,
+            "h1_bars": 17,
+            "h1_max_persistence": 0.08708670735359192,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.3779198938373968,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 0.12098788473761488,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.625,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.5,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.0967903077900919,
+                "noise_fraction": 0.2638888888888889,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.6875,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.12098788473761488,
+                "noise_fraction": 0.16666666666666666,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.90625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.14518546168513785,
+                "noise_fraction": 0.08333333333333333,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 4,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.2527082707982504,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.18222488462924957,
+            "h0_significant_bars": 48,
+            "h0_threshold": 0.05054165415965009,
+            "h1_bars": 22,
+            "h1_max_persistence": 0.0696488618850708,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.08844789477938764,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "primal-hull-uniform-disk",
+      "n": 72,
+      "population": "primal-hull-uniform-disk[points=n+4,origin=interior]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 6,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 0.9009491658022056,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.46875,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.5,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.7207593326417645,
+                "noise_fraction": 0.625,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.65625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.9009491658022056,
+                "noise_fraction": 0.1111111111111111,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 1.0811389989626468,
+                "noise_fraction": 0.013888888888888888,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 12,
+          "n": 72,
+          "topology": {
+            "distance_scale": 1.3631448948732001,
+            "h0_bars": 72,
+            "h0_max_persistence": 1.1242982149124146,
+            "h0_significant_bars": 71,
+            "h0_threshold": 0.27262897897464006,
+            "h1_bars": 35,
+            "h1_max_persistence": 0.2247908115386963,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.47710071320562003,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 0.17090169117726023,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 46.125,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.13672135294180818,
+                "noise_fraction": 0.4444444444444444,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.78125,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.17090169117726023,
+                "noise_fraction": 0.20833333333333334,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.9375,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.20508202941271228,
+                "noise_fraction": 0.06944444444444445,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 6,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.2951768949746172,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.26153090596199036,
+            "h0_significant_bars": 66,
+            "h0_threshold": 0.05903537899492344,
+            "h1_bars": 35,
+            "h1_max_persistence": 0.05030710995197296,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.10331191324111601,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "regular-mutation",
+      "n": 72,
+      "population": "regular-mutation[steps=4,scale=0.03]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 3,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 0.035722982322993056,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.8125,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 3,
+                "bootstrap_mode_fraction": 0.40625,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.028578385858394447,
+                "noise_fraction": 0.3472222222222222,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.5625,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.035722982322993056,
+                "noise_fraction": 0.2638888888888889,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.625,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.04286757878759167,
+                "noise_fraction": 0.1527777777777778,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 6,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.10139080497386471,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.09420417249202728,
+            "h0_significant_bars": 18,
+            "h0_threshold": 0.020278160994772945,
+            "h1_bars": 14,
+            "h1_max_persistence": 0.017575949430465698,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.035486781740852645,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 0.016228261255568095,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.09375,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 3,
+                "bootstrap_mode_fraction": 0.6875,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.012982609004454478,
+                "noise_fraction": 0.4722222222222222,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 3,
+                "bootstrap_mode_fraction": 0.40625,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.016228261255568095,
+                "noise_fraction": 0.2361111111111111,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.5,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.019473913506681713,
+                "noise_fraction": 0.1388888888888889,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 3,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.04554025000494695,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.0399046391248703,
+            "h0_significant_bars": 21,
+            "h0_threshold": 0.00910805000098939,
+            "h1_bars": 14,
+            "h1_max_persistence": 0.008204142563045025,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.015939087501731432,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "regular-mutation",
+      "n": 72,
+      "population": "regular-mutation[steps=4,scale=0.03]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 4,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 0.06618062855837314,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 44.90625,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.5,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.05294450284669852,
+                "noise_fraction": 0.5555555555555556,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.06618062855837314,
+                "noise_fraction": 0.125,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.96875,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.07941675427004777,
+                "noise_fraction": 0.06944444444444445,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 8,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.12092435733242834,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.10545295476913452,
+            "h0_significant_bars": 69,
+            "h0_threshold": 0.02418487146648567,
+            "h1_bars": 23,
+            "h1_max_persistence": 0.01969458907842636,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.04232352506634992,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 0.021922745033239915,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.21875,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.5625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.017538196026591932,
+                "noise_fraction": 0.5138888888888888,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.65625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.021922745033239915,
+                "noise_fraction": 0.2777777777777778,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.875,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.026307294039887897,
+                "noise_fraction": 0.1111111111111111,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 4,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.04566346097907395,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.03966614603996277,
+            "h0_significant_bars": 47,
+            "h0_threshold": 0.009132692195814791,
+            "h1_bars": 25,
+            "h1_max_persistence": 0.008672675117850304,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.01598221134267588,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "regular-mutation",
+      "n": 72,
+      "population": "regular-mutation[steps=4,scale=0.03]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 6,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 0.12194703327875157,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 46.34375,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.8125,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.09755762662300127,
+                "noise_fraction": 0.4861111111111111,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.12194703327875157,
+                "noise_fraction": 0.18055555555555555,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.14633643993450188,
+                "noise_fraction": 0.08333333333333333,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 12,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.19718496146113973,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.1911677122116089,
+            "h0_significant_bars": 70,
+            "h0_threshold": 0.03943699229222795,
+            "h1_bars": 23,
+            "h1_max_persistence": 0.0257812961935997,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.0690147365113989,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 0.02193882846724702,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 46.25,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.017551062773797615,
+                "noise_fraction": 0.4027777777777778,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.90625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.02193882846724702,
+                "noise_fraction": 0.1527777777777778,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.026326594160696423,
+                "noise_fraction": 0.09722222222222222,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 6,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.03880462856541267,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.0482264943420887,
+            "h0_significant_bars": 66,
+            "h0_threshold": 0.007760925713082534,
+            "h1_bars": 25,
+            "h1_max_persistence": 0.005363108590245247,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.013581619997894433,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "repulsive-gap",
+      "n": 72,
+      "population": "repulsive-gap[alpha=16]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 3,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 0.21544595603206235,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.8125,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 3,
+                "bootstrap_mode_fraction": 0.5625,
+                "bootstrap_n": 32,
+                "components": 3,
+                "eps": 0.17235676482564988,
+                "noise_fraction": 0.4166666666666667,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.4375,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.21544595603206235,
+                "noise_fraction": 0.2777777777777778,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.59375,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.2585351472384748,
+                "noise_fraction": 0.2638888888888889,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 6,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.8321073422156222,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.29347625374794006,
+            "h0_significant_bars": 9,
+            "h0_threshold": 0.16642146844312444,
+            "h1_bars": 7,
+            "h1_max_persistence": 0.07572019100189209,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.2912375697754678,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 0.07311390434820925,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 46.0,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 4,
+                "bootstrap_mode_fraction": 0.5,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.0584911234785674,
+                "noise_fraction": 0.5972222222222222,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.5625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.07311390434820925,
+                "noise_fraction": 0.08333333333333333,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.90625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.0877366852178511,
+                "noise_fraction": 0.05555555555555555,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 3,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.19642255015409893,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.11040885001420975,
+            "h0_significant_bars": 22,
+            "h0_threshold": 0.039284510030819786,
+            "h1_bars": 12,
+            "h1_max_persistence": 0.028396539390087128,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.06874789255393463,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "repulsive-gap",
+      "n": 72,
+      "population": "repulsive-gap[alpha=16]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 4,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 0.21563794024088068,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 46.125,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.40625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.17251035219270455,
+                "noise_fraction": 0.5416666666666666,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.5625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.21563794024088068,
+                "noise_fraction": 0.20833333333333334,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.84375,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.2587655282890568,
+                "noise_fraction": 0.06944444444444445,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 8,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.5007463212341439,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.8733163475990295,
+            "h0_significant_bars": 38,
+            "h0_threshold": 0.10014926424682878,
+            "h1_bars": 19,
+            "h1_max_persistence": 0.040795356035232544,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.17526121243195034,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 0.08125669069372007,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.65625,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 3,
+                "bootstrap_mode_fraction": 0.40625,
+                "bootstrap_n": 32,
+                "components": 4,
+                "eps": 0.06500535255497607,
+                "noise_fraction": 0.2638888888888889,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.71875,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.08125669069372007,
+                "noise_fraction": 0.16666666666666666,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.78125,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.09750802883246408,
+                "noise_fraction": 0.1111111111111111,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 4,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.17370757255068944,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.15268926322460175,
+            "h0_significant_bars": 48,
+            "h0_threshold": 0.03474151451013789,
+            "h1_bars": 17,
+            "h1_max_persistence": 0.02634270116686821,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.0607976503927413,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "repulsive-gap",
+      "n": 72,
+      "population": "repulsive-gap[alpha=16]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 6,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 0.23530615756537976,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 46.3125,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.6875,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.1882449260523038,
+                "noise_fraction": 0.4583333333333333,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.8125,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.23530615756537976,
+                "noise_fraction": 0.1388888888888889,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.96875,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.2823673890784557,
+                "noise_fraction": 0.0,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 12,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.4149737841648555,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.2305164784193039,
+            "h0_significant_bars": 64,
+            "h0_threshold": 0.0829947568329711,
+            "h1_bars": 20,
+            "h1_max_persistence": 0.08130611479282379,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.1452408244576994,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 0.06884267611631675,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 46.28125,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.59375,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.0550741408930534,
+                "noise_fraction": 0.4027777777777778,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.90625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.06884267611631675,
+                "noise_fraction": 0.25,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.0826112113395801,
+                "noise_fraction": 0.18055555555555555,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 6,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.13645936244508727,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.09161731600761414,
+            "h0_significant_bars": 64,
+            "h0_threshold": 0.027291872489017457,
+            "h1_bars": 20,
+            "h1_max_persistence": 0.01561957597732544,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.04776077685578054,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "repulsive-gap",
+      "n": 72,
+      "population": "repulsive-gap[alpha=1]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 3,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 0.37446947815123705,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.96875,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 4,
+                "bootstrap_mode_fraction": 0.375,
+                "bootstrap_n": 32,
+                "components": 4,
+                "eps": 0.29957558252098965,
+                "noise_fraction": 0.25,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 4,
+                "bootstrap_mode_fraction": 0.5,
+                "bootstrap_n": 32,
+                "components": 4,
+                "eps": 0.37446947815123705,
+                "noise_fraction": 0.06944444444444445,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 3,
+                "bootstrap_mode_fraction": 0.40625,
+                "bootstrap_n": 32,
+                "components": 4,
+                "eps": 0.44936337378148444,
+                "noise_fraction": 0.027777777777777776,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 6,
+          "n": 72,
+          "topology": {
+            "distance_scale": 1.345252557853208,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.4538211226463318,
+            "h0_significant_bars": 7,
+            "h0_threshold": 0.2690505115706416,
+            "h1_bars": 7,
+            "h1_max_persistence": 0.11473071575164795,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.47083839524862275,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 0.09628806143502769,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.46875,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 3,
+                "bootstrap_mode_fraction": 0.375,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.07703044914802215,
+                "noise_fraction": 0.4166666666666667,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.46875,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.09628806143502769,
+                "noise_fraction": 0.2361111111111111,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.5,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.11554567372203323,
+                "noise_fraction": 0.041666666666666664,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 3,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.25920518085115635,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.11042565107345581,
+            "h0_significant_bars": 24,
+            "h0_threshold": 0.051841036170231274,
+            "h1_bars": 14,
+            "h1_max_persistence": 0.056618206202983856,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.09072181329790471,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "repulsive-gap",
+      "n": 72,
+      "population": "repulsive-gap[alpha=1]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 4,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 0.7119253018989831,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.53125,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 3,
+                "bootstrap_mode_fraction": 0.40625,
+                "bootstrap_n": 32,
+                "components": 4,
+                "eps": 0.5695402415191865,
+                "noise_fraction": 0.3888888888888889,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 3,
+                "bootstrap_mode_fraction": 0.40625,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.7119253018989831,
+                "noise_fraction": 0.05555555555555555,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.6875,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.8543103622787797,
+                "noise_fraction": 0.013888888888888888,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 8,
+          "n": 72,
+          "topology": {
+            "distance_scale": 2.0444958939897617,
+            "h0_bars": 72,
+            "h0_max_persistence": 1.073723554611206,
+            "h0_significant_bars": 16,
+            "h0_threshold": 0.40889917879795235,
+            "h1_bars": 10,
+            "h1_max_persistence": 0.26481181383132935,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.7155735628964166,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 0.17710752996558354,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.34375,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.40625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.14168602397246685,
+                "noise_fraction": 0.4305555555555556,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.5,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.17710752996558354,
+                "noise_fraction": 0.3194444444444444,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.5625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.21252903595870024,
+                "noise_fraction": 0.09722222222222222,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 4,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.4113331874809072,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.36575019359588623,
+            "h0_significant_bars": 36,
+            "h0_threshold": 0.08226663749618145,
+            "h1_bars": 18,
+            "h1_max_persistence": 0.10956768691539764,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.1439666156183175,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "repulsive-gap",
+      "n": 72,
+      "population": "repulsive-gap[alpha=1]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 6,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 1.094438291976516,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.71875,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 4,
+                "bootstrap_mode_fraction": 0.5,
+                "bootstrap_n": 32,
+                "components": 3,
+                "eps": 0.8755506335812129,
+                "noise_fraction": 0.4027777777777778,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.53125,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 1.094438291976516,
+                "noise_fraction": 0.09722222222222222,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.65625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 1.3133259503718193,
+                "noise_fraction": 0.027777777777777776,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 12,
+          "n": 72,
+          "topology": {
+            "distance_scale": 2.5406735318981974,
+            "h0_bars": 72,
+            "h0_max_persistence": 1.7911165952682495,
+            "h0_significant_bars": 36,
+            "h0_threshold": 0.5081347063796395,
+            "h1_bars": 16,
+            "h1_max_persistence": 0.24077361822128296,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.889235736164369,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 0.23733454488070008,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 44.90625,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.75,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.18986763590456007,
+                "noise_fraction": 0.3611111111111111,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.71875,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.23733454488070008,
+                "noise_fraction": 0.1388888888888889,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.6875,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.2848014538568401,
+                "noise_fraction": 0.027777777777777776,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 6,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.5629792653716277,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.31158217787742615,
+            "h0_significant_bars": 50,
+            "h0_threshold": 0.11259585307432554,
+            "h1_bars": 25,
+            "h1_max_persistence": 0.068518728017807,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.19704274288006968,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "repulsive-gap",
+      "n": 72,
+      "population": "repulsive-gap[alpha=4]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 3,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 0.3487161501293111,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.40625,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 4,
+                "bootstrap_mode_fraction": 0.375,
+                "bootstrap_n": 32,
+                "components": 4,
+                "eps": 0.27897292010344893,
+                "noise_fraction": 0.20833333333333334,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 3,
+                "bootstrap_mode_fraction": 0.59375,
+                "bootstrap_n": 32,
+                "components": 3,
+                "eps": 0.3487161501293111,
+                "noise_fraction": 0.1527777777777778,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.5625,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.4184593801551733,
+                "noise_fraction": 0.06944444444444445,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 6,
+          "n": 72,
+          "topology": {
+            "distance_scale": 1.2202708474610429,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.4062667489051819,
+            "h0_significant_bars": 12,
+            "h0_threshold": 0.2440541694922086,
+            "h1_bars": 14,
+            "h1_max_persistence": 0.10525146126747131,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.42709479661136496,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 0.08962200635788507,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.75,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 3,
+                "bootstrap_mode_fraction": 0.5,
+                "bootstrap_n": 32,
+                "components": 3,
+                "eps": 0.07169760508630806,
+                "noise_fraction": 0.4166666666666667,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.375,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.08962200635788507,
+                "noise_fraction": 0.3055555555555556,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.46875,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.10754640762946209,
+                "noise_fraction": 0.2361111111111111,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 3,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.25246186607402477,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.11383028328418732,
+            "h0_significant_bars": 21,
+            "h0_threshold": 0.05049237321480496,
+            "h1_bars": 10,
+            "h1_max_persistence": 0.03370605409145355,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.08836165312590866,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "repulsive-gap",
+      "n": 72,
+      "population": "repulsive-gap[alpha=4]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 4,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 0.4663280499025583,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.5625,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 3,
+                "bootstrap_mode_fraction": 0.34375,
+                "bootstrap_n": 32,
+                "components": 3,
+                "eps": 0.37306243992204663,
+                "noise_fraction": 0.5138888888888888,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.4375,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.4663280499025583,
+                "noise_fraction": 0.2777777777777778,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.53125,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.5595936598830699,
+                "noise_fraction": 0.2361111111111111,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 8,
+          "n": 72,
+          "topology": {
+            "distance_scale": 1.4985691302696451,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.7363173365592957,
+            "h0_significant_bars": 14,
+            "h0_threshold": 0.29971382605392904,
+            "h1_bars": 13,
+            "h1_max_persistence": 0.17671331763267517,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.5244991955943757,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 0.1598854739371629,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 46.125,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.40625,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.12790837914973033,
+                "noise_fraction": 0.4166666666666667,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.59375,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.1598854739371629,
+                "noise_fraction": 0.06944444444444445,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.6875,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.19186256872459548,
+                "noise_fraction": 0.0,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 4,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.35779087998208475,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.176291823387146,
+            "h0_significant_bars": 40,
+            "h0_threshold": 0.07155817599641695,
+            "h1_bars": 18,
+            "h1_max_persistence": 0.07250626385211945,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.12522680799372965,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "repulsive-gap",
+      "n": 72,
+      "population": "repulsive-gap[alpha=4]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 6,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 0.5419678189461192,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.71875,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.84375,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.4335742551568954,
+                "noise_fraction": 0.3472222222222222,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.96875,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.5419678189461192,
+                "noise_fraction": 0.25,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.96875,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.650361382735343,
+                "noise_fraction": 0.09722222222222222,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 12,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.9570089855030823,
+            "h0_bars": 72,
+            "h0_max_persistence": 1.4853131771087646,
+            "h0_significant_bars": 66,
+            "h0_threshold": 0.19140179710061647,
+            "h1_bars": 26,
+            "h1_max_persistence": 0.16042333841323853,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.3349531449260788,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 0.14747016209771663,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.625,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.40625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.11797612967817331,
+                "noise_fraction": 0.4583333333333333,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.5625,
+                "bootstrap_n": 32,
+                "components": 2,
+                "eps": 0.14747016209771663,
+                "noise_fraction": 0.125,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.78125,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.17696419451725995,
+                "noise_fraction": 0.05555555555555555,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 6,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.29435717099000325,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.5113090872764587,
+            "h0_significant_bars": 63,
+            "h0_threshold": 0.05887143419800065,
+            "h1_bars": 26,
+            "h1_max_persistence": 0.05338495969772339,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.10302500984650113,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "repulsive-gap",
+      "n": 72,
+      "population": "repulsive-gap[regular]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 3,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 1.0,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.25,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.8,
+                "noise_fraction": 0.0,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 1.0,
+                "noise_fraction": 0.0,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 1.2,
+                "noise_fraction": 0.0,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 6,
+          "n": 72,
+          "topology": {
+            "distance_scale": 1.0,
+            "h0_bars": 1,
+            "h0_max_persistence": 0.0,
+            "h0_significant_bars": 0,
+            "h0_threshold": 0.2,
+            "h1_bars": 0,
+            "h1_max_persistence": 0.0,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.35,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 1.0,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 44.5625,
+            "input_duplicate_fraction": 0.3194444444444444,
+            "input_unique_rows": 49,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.8,
+                "noise_fraction": 0.0,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 1.0,
+                "noise_fraction": 0.0,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 1.2,
+                "noise_fraction": 0.0,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 3,
+          "n": 72,
+          "topology": {
+            "distance_scale": 1.0,
+            "h0_bars": 1,
+            "h0_max_persistence": 0.0,
+            "h0_significant_bars": 0,
+            "h0_threshold": 0.2,
+            "h1_bars": 0,
+            "h1_max_persistence": 0.0,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.35,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "repulsive-gap",
+      "n": 72,
+      "population": "repulsive-gap[regular]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 4,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 1.0,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.0,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.8,
+                "noise_fraction": 0.0,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 1.0,
+                "noise_fraction": 0.0,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 1.2,
+                "noise_fraction": 0.0,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 8,
+          "n": 72,
+          "topology": {
+            "distance_scale": 1.0,
+            "h0_bars": 1,
+            "h0_max_persistence": 0.0,
+            "h0_significant_bars": 0,
+            "h0_threshold": 0.2,
+            "h1_bars": 0,
+            "h1_max_persistence": 0.0,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.35,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 1.0,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 46.1875,
+            "input_duplicate_fraction": 0.41666666666666663,
+            "input_unique_rows": 42,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.8,
+                "noise_fraction": 0.0,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 1.0,
+                "noise_fraction": 0.0,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 1.2,
+                "noise_fraction": 0.0,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 4,
+          "n": 72,
+          "topology": {
+            "distance_scale": 1.0,
+            "h0_bars": 1,
+            "h0_max_persistence": 0.0,
+            "h0_significant_bars": 0,
+            "h0_threshold": 0.2,
+            "h1_bars": 0,
+            "h1_max_persistence": 0.0,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.35,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "repulsive-gap",
+      "n": 72,
+      "population": "repulsive-gap[regular]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 6,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 1.0,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.65625,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.8,
+                "noise_fraction": 0.0,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 1.0,
+                "noise_fraction": 0.0,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 1.2,
+                "noise_fraction": 0.0,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 12,
+          "n": 72,
+          "topology": {
+            "distance_scale": 1.0,
+            "h0_bars": 1,
+            "h0_max_persistence": 0.0,
+            "h0_significant_bars": 0,
+            "h0_threshold": 0.2,
+            "h1_bars": 0,
+            "h1_max_persistence": 0.0,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.35,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 1.0,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.90625,
+            "input_duplicate_fraction": 0.125,
+            "input_unique_rows": 63,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.8,
+                "noise_fraction": 0.0,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 1.0,
+                "noise_fraction": 0.0,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 1.2,
+                "noise_fraction": 0.0,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 6,
+          "n": 72,
+          "topology": {
+            "distance_scale": 1.0,
+            "h0_bars": 1,
+            "h0_max_persistence": 0.0,
+            "h0_significant_bars": 0,
+            "h0_threshold": 0.2,
+            "h1_bars": 0,
+            "h1_max_persistence": 0.0,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.35,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "zonogon",
+      "n": 72,
+      "population": "zonogon[lengths=uniform(0.5,1.5)]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 4,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 0.4496294444428897,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.96875,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.3125,
+                "bootstrap_n": 32,
+                "components": 3,
+                "eps": 0.35970355555431177,
+                "noise_fraction": 0.4166666666666667,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.53125,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.4496294444428897,
+                "noise_fraction": 0.20833333333333334,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.59375,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.5395553333314677,
+                "noise_fraction": 0.1527777777777778,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 8,
+          "n": 72,
+          "topology": {
+            "distance_scale": 1.2878474258334085,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.7341311573982239,
+            "h0_significant_bars": 17,
+            "h0_threshold": 0.2575694851666817,
+            "h1_bars": 10,
+            "h1_max_persistence": 0.23282843828201294,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.45074659904169295,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 0.0725661913108759,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 45.1875,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 4,
+                "bootstrap_mode_fraction": 0.4375,
+                "bootstrap_n": 32,
+                "components": 4,
+                "eps": 0.05805295304870072,
+                "noise_fraction": 0.3333333333333333,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 4,
+                "bootstrap_mode_fraction": 0.46875,
+                "bootstrap_n": 32,
+                "components": 4,
+                "eps": 0.0725661913108759,
+                "noise_fraction": 0.09722222222222222,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 4,
+                "bootstrap_mode_fraction": 0.40625,
+                "bootstrap_n": 32,
+                "components": 3,
+                "eps": 0.08707942957305108,
+                "noise_fraction": 0.08333333333333333,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 4,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.4052344156960642,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.07295896857976913,
+            "h0_significant_bars": 0,
+            "h0_threshold": 0.08104688313921285,
+            "h1_bars": 0,
+            "h1_max_persistence": 0.0,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.14183204549362247,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    },
+    {
+      "interpretation": "finite-sample descriptive shape-cloud diagnostic; no law, support, target, or population claim",
+      "law": "zonogon",
+      "n": 72,
+      "population": "zonogon[lengths=uniform(0.5,1.5)]",
+      "seed_count": 3,
+      "seeds": [
+        20260716,
+        20260717,
+        20260718
+      ],
+      "side_count": 6,
+      "status": "descriptive",
+      "views": {
+        "canonical": {
+          "density": {
+            "base_kth_distance": 0.6094843886872325,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 46.3125,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 3,
+                "bootstrap_mode_fraction": 0.40625,
+                "bootstrap_n": 32,
+                "components": 3,
+                "eps": 0.48758751094978603,
+                "noise_fraction": 0.4444444444444444,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.8125,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.6094843886872325,
+                "noise_fraction": 0.125,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 1.0,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.731381266424679,
+                "noise_fraction": 0.027777777777777776,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 12,
+          "n": 72,
+          "topology": {
+            "distance_scale": 1.2294393687123937,
+            "h0_bars": 72,
+            "h0_max_persistence": 1.2424139976501465,
+            "h0_significant_bars": 62,
+            "h0_threshold": 0.24588787374247875,
+            "h1_bars": 27,
+            "h1_max_persistence": 0.17439371347427368,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.43030377904933775,
+            "n": 72,
+            "status": "ok"
+          }
+        },
+        "radial": {
+          "density": {
+            "base_kth_distance": 0.16210290743592504,
+            "bootstrap_sample_size": 72,
+            "bootstrap_unique_rows_mean": 46.0,
+            "input_duplicate_fraction": 0.0,
+            "input_unique_rows": 72,
+            "k": 8,
+            "resampling": "bootstrap_with_replacement_multiplicities_retained",
+            "scales": [
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.40625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.12968232594874005,
+                "noise_fraction": 0.5138888888888888,
+                "scale_factor": 0.8
+              },
+              {
+                "bootstrap_mode_components": 2,
+                "bootstrap_mode_fraction": 0.46875,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.16210290743592504,
+                "noise_fraction": 0.2361111111111111,
+                "scale_factor": 1.0
+              },
+              {
+                "bootstrap_mode_components": 1,
+                "bootstrap_mode_fraction": 0.5625,
+                "bootstrap_n": 32,
+                "components": 1,
+                "eps": 0.19452348892311003,
+                "noise_fraction": 0.125,
+                "scale_factor": 1.2
+              }
+            ],
+            "status": "ok"
+          },
+          "dimension": 6,
+          "n": 72,
+          "topology": {
+            "distance_scale": 0.4243756604383623,
+            "h0_bars": 72,
+            "h0_max_persistence": 0.26206284761428833,
+            "h0_significant_bars": 20,
+            "h0_threshold": 0.08487513208767246,
+            "h1_bars": 18,
+            "h1_max_persistence": 0.10084603726863861,
+            "h1_significant_bars": 0,
+            "h1_threshold": 0.1485314811534268,
+            "n": 72,
+            "status": "ok"
+          }
+        }
+      }
+    }
+  ],
+  "stratum_count": 23
+}

@@ -1,0 +1,162 @@
+{
+  "calibration_sha256": "ff2c021e05f3a6d53eeb771f629ea5b6325411314bd760312ab3ee3759acbbeb",
+  "command": "analyze.py --out-dir <OUTPUT> --input artifacts/input/seed-20260716/core/factor-shapes.jsonl --input artifacts/input/seed-20260716/zonogon/factor-shapes.jsonl --input artifacts/input/seed-20260717/core/factor-shapes.jsonl --input artifacts/input/seed-20260717/zonogon/factor-shapes.jsonl --input artifacts/input/seed-20260718/core/factor-shapes.jsonl --input artifacts/input/seed-20260718/zonogon/factor-shapes.jsonl",
+  "contract": {
+    "bootstrap_count": 32,
+    "law_knobs_not_pooled": true,
+    "scale_factors": [
+      0.8,
+      1.0,
+      1.2
+    ],
+    "shape_view": "centroided/RMS-scaled/cyclic-relabel-minimized/rotation-aligned; orientation retained",
+    "side_stratified": true
+  },
+  "git_revision": "f77288dc3d3f984b7b30df90883e67ff13ac46a6",
+  "git_tree": "8edce776f5a9f688ae817d7896e68b43b8b64b74",
+  "input_manifest": [
+    {
+      "expected_sha256": "442a640629381cffdd215598521d05cc4ccc86c96d96be530a842572fe2d5cd1",
+      "factor_only_report": {
+        "expected_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+        "factor_rows": 497,
+        "owner_source_available": true,
+        "owner_source_path": "/workspaces/msc-math/.worktrees/multiseed-atlas-confirmation/experiments/sys-datascience/methods/generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-only-report.json",
+        "owner_source_sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+        "relative_path": "seed-20260716/core/factor-only-report.json",
+        "schema": "generator-zoo-factor-only-report-v1",
+        "sha256": "384ba39bd1085f8cbf84a1ad1224d01efa66c728bc474ed78b98761b76638d48",
+        "source_dirty": false,
+        "source_revision": "a50e1e930e21541506df6228aaed16355d830372"
+      },
+      "owner_source_available": true,
+      "owner_source_path": "/workspaces/msc-math/.worktrees/multiseed-atlas-confirmation/experiments/sys-datascience/methods/generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/core/factor-shapes.jsonl",
+      "owner_source_sha256": "442a640629381cffdd215598521d05cc4ccc86c96d96be530a842572fe2d5cd1",
+      "relative_path": "seed-20260716/core/factor-shapes.jsonl",
+      "sha256": "442a640629381cffdd215598521d05cc4ccc86c96d96be530a842572fe2d5cd1"
+    },
+    {
+      "expected_sha256": "6403831626b4a05781ee9e3d24320e72a9433b2b1fabf26eb1f1f986675a2c15",
+      "factor_only_report": {
+        "expected_sha256": "ffb2a1c99149a72e75653a142a8c455f5d05df5c0f91ff7ecacbdbbcfcbc3c12",
+        "factor_rows": 48,
+        "owner_source_available": true,
+        "owner_source_path": "/workspaces/msc-math/.worktrees/multiseed-atlas-confirmation/experiments/sys-datascience/methods/generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/zonogon/factor-only-report.json",
+        "owner_source_sha256": "ffb2a1c99149a72e75653a142a8c455f5d05df5c0f91ff7ecacbdbbcfcbc3c12",
+        "relative_path": "seed-20260716/zonogon/factor-only-report.json",
+        "schema": "generator-zoo-factor-only-report-v1",
+        "sha256": "ffb2a1c99149a72e75653a142a8c455f5d05df5c0f91ff7ecacbdbbcfcbc3c12",
+        "source_dirty": false,
+        "source_revision": "a50e1e930e21541506df6228aaed16355d830372"
+      },
+      "owner_source_available": true,
+      "owner_source_path": "/workspaces/msc-math/.worktrees/multiseed-atlas-confirmation/experiments/sys-datascience/methods/generator-distribution-atlas-confirmation/artifacts/raw/seed-20260716/zonogon/factor-shapes.jsonl",
+      "owner_source_sha256": "6403831626b4a05781ee9e3d24320e72a9433b2b1fabf26eb1f1f986675a2c15",
+      "relative_path": "seed-20260716/zonogon/factor-shapes.jsonl",
+      "sha256": "6403831626b4a05781ee9e3d24320e72a9433b2b1fabf26eb1f1f986675a2c15"
+    },
+    {
+      "expected_sha256": "2e22a87988c975b05f77eb20dd4cb6c466f088f8bee21fecb1561670e34b2ab0",
+      "factor_only_report": {
+        "expected_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+        "factor_rows": 497,
+        "owner_source_available": true,
+        "owner_source_path": "/workspaces/msc-math/.worktrees/multiseed-atlas-confirmation/experiments/sys-datascience/methods/generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-only-report.json",
+        "owner_source_sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+        "relative_path": "seed-20260717/core/factor-only-report.json",
+        "schema": "generator-zoo-factor-only-report-v1",
+        "sha256": "b43f0bdd94785131a83940096a2b7f212bb5d689eebae6fe5d9536adc17b3b36",
+        "source_dirty": false,
+        "source_revision": "a50e1e930e21541506df6228aaed16355d830372"
+      },
+      "owner_source_available": true,
+      "owner_source_path": "/workspaces/msc-math/.worktrees/multiseed-atlas-confirmation/experiments/sys-datascience/methods/generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/core/factor-shapes.jsonl",
+      "owner_source_sha256": "2e22a87988c975b05f77eb20dd4cb6c466f088f8bee21fecb1561670e34b2ab0",
+      "relative_path": "seed-20260717/core/factor-shapes.jsonl",
+      "sha256": "2e22a87988c975b05f77eb20dd4cb6c466f088f8bee21fecb1561670e34b2ab0"
+    },
+    {
+      "expected_sha256": "a78c71cd338e8bf4c7144935f25f40d538f8831cc2cdbfe82d2efb63214164d2",
+      "factor_only_report": {
+        "expected_sha256": "4977d6456d4c3dd42156f804f14107f612fffaf704a2d6fae82445466906f8ba",
+        "factor_rows": 48,
+        "owner_source_available": true,
+        "owner_source_path": "/workspaces/msc-math/.worktrees/multiseed-atlas-confirmation/experiments/sys-datascience/methods/generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/zonogon/factor-only-report.json",
+        "owner_source_sha256": "4977d6456d4c3dd42156f804f14107f612fffaf704a2d6fae82445466906f8ba",
+        "relative_path": "seed-20260717/zonogon/factor-only-report.json",
+        "schema": "generator-zoo-factor-only-report-v1",
+        "sha256": "4977d6456d4c3dd42156f804f14107f612fffaf704a2d6fae82445466906f8ba",
+        "source_dirty": false,
+        "source_revision": "a50e1e930e21541506df6228aaed16355d830372"
+      },
+      "owner_source_available": true,
+      "owner_source_path": "/workspaces/msc-math/.worktrees/multiseed-atlas-confirmation/experiments/sys-datascience/methods/generator-distribution-atlas-confirmation/artifacts/raw/seed-20260717/zonogon/factor-shapes.jsonl",
+      "owner_source_sha256": "a78c71cd338e8bf4c7144935f25f40d538f8831cc2cdbfe82d2efb63214164d2",
+      "relative_path": "seed-20260717/zonogon/factor-shapes.jsonl",
+      "sha256": "a78c71cd338e8bf4c7144935f25f40d538f8831cc2cdbfe82d2efb63214164d2"
+    },
+    {
+      "expected_sha256": "5aaf6b0a28abccac81df7a7a22cb74338555ba824209eef97f340fb181a36c72",
+      "factor_only_report": {
+        "expected_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+        "factor_rows": 497,
+        "owner_source_available": true,
+        "owner_source_path": "/workspaces/msc-math/.worktrees/multiseed-atlas-confirmation/experiments/sys-datascience/methods/generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-only-report.json",
+        "owner_source_sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+        "relative_path": "seed-20260718/core/factor-only-report.json",
+        "schema": "generator-zoo-factor-only-report-v1",
+        "sha256": "f68777fe49a9f264d5b7142524dd366a445e35ff54c1702c1c2b9f5a22403d51",
+        "source_dirty": false,
+        "source_revision": "a50e1e930e21541506df6228aaed16355d830372"
+      },
+      "owner_source_available": true,
+      "owner_source_path": "/workspaces/msc-math/.worktrees/multiseed-atlas-confirmation/experiments/sys-datascience/methods/generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/core/factor-shapes.jsonl",
+      "owner_source_sha256": "5aaf6b0a28abccac81df7a7a22cb74338555ba824209eef97f340fb181a36c72",
+      "relative_path": "seed-20260718/core/factor-shapes.jsonl",
+      "sha256": "5aaf6b0a28abccac81df7a7a22cb74338555ba824209eef97f340fb181a36c72"
+    },
+    {
+      "expected_sha256": "b653cd7a2776e130547f5e0d621b00857b6eef69306a8a5a468e31b871b65934",
+      "factor_only_report": {
+        "expected_sha256": "1dcc4386cc3e989a16fba6a446ac6b319e4bcf10959409d8b31bc56e41a5abde",
+        "factor_rows": 48,
+        "owner_source_available": true,
+        "owner_source_path": "/workspaces/msc-math/.worktrees/multiseed-atlas-confirmation/experiments/sys-datascience/methods/generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/zonogon/factor-only-report.json",
+        "owner_source_sha256": "1dcc4386cc3e989a16fba6a446ac6b319e4bcf10959409d8b31bc56e41a5abde",
+        "relative_path": "seed-20260718/zonogon/factor-only-report.json",
+        "schema": "generator-zoo-factor-only-report-v1",
+        "sha256": "1dcc4386cc3e989a16fba6a446ac6b319e4bcf10959409d8b31bc56e41a5abde",
+        "source_dirty": false,
+        "source_revision": "a50e1e930e21541506df6228aaed16355d830372"
+      },
+      "owner_source_available": true,
+      "owner_source_path": "/workspaces/msc-math/.worktrees/multiseed-atlas-confirmation/experiments/sys-datascience/methods/generator-distribution-atlas-confirmation/artifacts/raw/seed-20260718/zonogon/factor-shapes.jsonl",
+      "owner_source_sha256": "b653cd7a2776e130547f5e0d621b00857b6eef69306a8a5a468e31b871b65934",
+      "relative_path": "seed-20260718/zonogon/factor-shapes.jsonl",
+      "sha256": "b653cd7a2776e130547f5e0d621b00857b6eef69306a8a5a468e31b871b65934"
+    }
+  ],
+  "interpretation": "Calibration is a feasibility gate. Real rows are descriptive finite-sample diagnostics only.",
+  "packages": {
+    "numpy": "2.2.6",
+    "ripser": "0.6.12",
+    "scikit-learn": "1.6.1",
+    "scipy": "1.15.3"
+  },
+  "platform": "Linux-6.8.0-134-generic-x86_64-with-glibc2.39",
+  "python": "3.12.3 (main, Mar  3 2026, 12:15:18) [GCC 13.3.0]",
+  "real_sha256": "613a768e34b99d253bd8c714c6fea357462b587efb509e5a540e9a399ec1ced4",
+  "schema": "topology-density-report-v1",
+  "source_dirty": false,
+  "source_files": {
+    "experiments/sys-datascience/methods/topology-density/README.md": "a11f07e2013a4a5751daede0652da1f8356a4ac853ac496f46876a92763641f4",
+    "experiments/sys-datascience/methods/topology-density/analyze.py": "17adcf5be7017c6c5493214056faeecd3c51feb702cac8161d2018dd15100e75",
+    "experiments/sys-datascience/methods/topology-density/test_topology_density.py": "dd0b48be5daec188ecbc6ad5baa3c838ac0eb152a53bfd8083099ec388918327"
+  },
+  "upstream": {
+    "accepted_atlas_commit": "3f09eeeb",
+    "copied_input_contract": "all six factor-shapes files and corresponding generator-zoo-factor-only-report-v1 reports must match the embedded hashes; owner bytes are checked when available",
+    "generator_source_commit": "a50e1e930e21541506df6228aaed16355d830372",
+    "owner_source_root": "/workspaces/msc-math/.worktrees/multiseed-atlas-confirmation/experiments/sys-datascience/methods/generator-distribution-atlas-confirmation/artifacts/raw"
+  }
+}
