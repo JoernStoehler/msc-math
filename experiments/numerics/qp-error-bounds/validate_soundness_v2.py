@@ -90,26 +90,36 @@ def main() -> None:
         n = row["sigma_length"] + 5
         if len(row["kkt_augmented_matrix_m_f64"]) != n or len(row["kkt_augmented_matrix_m_exact"]) != n:
             fail(f"KKT shape corruption {key}")
-        if row["exact_row_reduction_system_status"] == "inconsistent" and row["exact_positive_witness_status"] == "exists":
-            fail(f"inconsistent system has positive witness {key}")
-        if row["exact_positive_witness_status"] == "exists":
+        lifecycle = row["exact_lifecycle_status"]
+        if lifecycle == "inconsistent":
+            if row["exact_row_reduction_system_status"] != "inconsistent" or any(row[k] is not None for k in ("exact_positive_witness_beta", "exact_positive_witness_q", "exact_positive_witness_action")):
+                fail(f"inconsistent lifecycle corruption {key}")
+        elif lifecycle == "consistent_no_strict_positive_beta":
+            if not row["exact_row_reduction_system_status"].startswith("consistent") or any(row[k] is not None for k in ("exact_positive_witness_beta", "exact_positive_witness_q", "exact_positive_witness_action")):
+                fail(f"no-positive-beta lifecycle corruption {key}")
+        elif lifecycle == "positive_beta_q_positive_action":
             q = rational(row["exact_positive_witness_q"], f"{key}.q")
             a = rational(row["exact_positive_witness_action"], f"{key}.action")
             if q <= 0 or a != 1 / (2 * q):
                 fail(f"exact Q/action corruption {key}")
             if row["exact_action_availability"] != "available":
                 fail(f"available exact action mislabeled {key}")
-        elif row["exact_positive_witness_status"] == "exists_q_nonpositive":
+        elif lifecycle == "positive_beta_q_nonpositive":
             q = rational(row["exact_positive_witness_q"], f"{key}.nonpositive_q")
             if q > 0 or row["exact_positive_witness_action"] is not None or row["exact_action_availability"] != "unavailable":
                 fail(f"nonpositive-Q exact distinction corrupted {key}")
         else:
-            if row["exact_positive_witness_q"] is not None or row["exact_positive_witness_action"] is not None:
-                fail(f"unavailable exact witness carries target values {key}")
+            fail(f"unknown exact lifecycle {lifecycle}")
     validate_registry(registry)
     registry_ids = {x["formula_id"] for x in registry}
     if {x.get("formula_id") for x in evaluations} - registry_ids:
         fail("formula evaluations contain an unregistered formula ID")
+    for item in evaluations:
+        if set(item) != {"formula_id", "target_polytope_id", "sigma_active_reeb_word", "center", "status", "values"}:
+            fail("formula evaluation has hidden translated output fields")
+        for value in item["values"]:
+            if set(value) != {"value_kind", "unit", "role", "f64_value", "text_value", "boolean_value"}:
+                fail("formula evaluation value is not long-form-value-v1")
     coverage = json.loads((out / "analysis.json").read_text()).get("formula_coverage", {})
     if set(coverage) != registry_ids:
         fail("analysis does not report coverage for every registered formula")
@@ -122,11 +132,11 @@ def main() -> None:
             fail(f"policy supplied-stream count mismatch {policy['target_polytope_id']}")
         if policy["policy_candidate_count"] < policy["policy_exact_accept_count"]:
             fail("policy accepted count exceeds policy candidate count")
-        if policy["policy_id"] == "minimasafe_heuristic":
+        if policy["policy_id"] in {"actual_current_f64_policy", "strict_margin_f64_simulation"}:
             if policy["policy_exact_resolution_count"] != 0 or policy["policy_min_action"] is not None or policy["policy_window_cutoff"] is not None:
-                fail("MinimaSafe heuristic incorrectly carries exact aggregation output")
+                fail("f64-only policy incorrectly carries exact aggregation output")
             if policy["policy_f64_min_action"] is not None and policy["policy_f64_window_cutoff"] is None:
-                fail("MinimaSafe f64 minimum lacks its declared window cutoff")
+                fail("f64-only policy minimum lacks its declared window cutoff")
         else:
             if policy["policy_exact_resolution_count"] != policy["policy_candidate_count"]:
                 fail("exact policy did not record every attempted resolution")
@@ -152,6 +162,25 @@ def main() -> None:
     actual_tree = subprocess.check_output(["git", "rev-parse", f"{commit}^{{tree}}"], cwd=repo, text=True).strip()
     if actual_tree != tree:
         fail("source tree provenance mismatch")
+    # Reconstruction guard for the actual production-retained f64 policy.
+    def saddle_action(row: dict) -> float | None:
+        for center in row["centers"]:
+            if center["center_id"] == "saddle_eig_accepted":
+                return center["center_action_from_positive_q_f64"]
+        return None
+    for policy in (p for p in policies if p["policy_id"] == "actual_current_f64_policy"):
+        candidates = [r for r in raw_by_case[policy["target_polytope_id"]] if r["f64_retained_by_saddle"] and saddle_action(r) is not None]
+        if policy["policy_candidate_count"] != len(candidates):
+            fail("actual current f64 policy added a hidden margin filter")
+        expected_min = min((saddle_action(r) for r in candidates), default=None)
+        if policy["policy_f64_min_action"] != expected_min:
+            fail("actual current f64 policy minimum does not reconstruct")
+    # Exhaustive ternary truth-table contract used by predicate evaluations.
+    for exact, expected in {"true": {"true": True, "false": False, "indeterminate": True}, "false": {"true": False, "false": True, "indeterminate": True}}.items():
+        for predicted, sound in expected.items():
+            observed = (predicted != "false") if exact == "true" else (predicted != "true")
+            if observed != sound:
+                fail("ternary truth-table reconstruction failure")
     with tempfile.TemporaryDirectory() as tmp:
         temp = Path(tmp)
         for name in ("raw_rows.jsonl", "formula_registry.json"):

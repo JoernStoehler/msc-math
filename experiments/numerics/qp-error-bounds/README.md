@@ -106,10 +106,12 @@ centre explicitly (current saddle/eigen accepted centre, unconditional SVD,
 projected critical and max-margin, local LU/QR, and one QR refinement), then
 compares only against the same-word stored-rational exact positive witness.
 The formula registry, derived formula observations, and policy rows are
-separate artifacts.  Policies distinguish the unchecked current f64 heuristic,
-exact retained candidates, one-shot f64-anchored selective windows, and exact
-supplied-stream replay.  The heuristic policy reports only its own f64 scalar,
-minimizers, and window; its exact fields are unavailable. Exact policies record
+separate artifacts.  Policies distinguish the actual current production-retained
+f64 policy (positive production action and no added margin filter), a separately
+named strict-margin simulation, exact retained candidates, one-shot f64-anchored
+selective windows, and exact supplied-stream replay. F64-only policies report
+only their own f64 scalar, minimizers, and window; their exact fields are
+unavailable. Exact policies record
 every attempted resolution separately from positive-Q accepts. A policy's
 active words are not physical-orbit sets.
 

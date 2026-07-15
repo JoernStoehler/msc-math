@@ -114,7 +114,7 @@ struct RawRow {
     exact_row_reduction_rank: Option<usize>,
     exact_row_reduction_nullity: Option<usize>,
     exact_row_reduction_beta_particular: Option<Vec<String>>,
-    exact_positive_witness_status: String,
+    exact_lifecycle_status: String,
     exact_positive_witness_reason: String,
     exact_positive_witness_beta: Option<Vec<String>>,
     exact_positive_witness_q: Option<String>,
@@ -544,7 +544,12 @@ fn observe(case: &Case, sigma: &[usize]) -> RawRow {
         "exact_row_reduction_and_positive_witness_us".into(),
         exact_us,
     );
-    let (system_status, erank, enull, particular) = match linear {
+    let (system_status, erank, enull, particular): (
+        String,
+        Option<usize>,
+        Option<usize>,
+        Option<Vec<String>>,
+    ) = match linear {
         LinearSystemSolution::Inconsistent => (
             "inconsistent".into(),
             Some(exact_rank(&exact_m)),
@@ -569,28 +574,35 @@ fn observe(case: &Case, sigma: &[usize]) -> RawRow {
             )
         }
     };
-    let (pstatus, preason, pbeta, pq, paction) = match exact {
-        Some(x) if x.q_exact.is_positive() => {
+    let (pstatus, preason, pbeta, pq, paction): (String, String, Option<Vec<String>>, Option<BigRational>, Option<String>) = match (system_status.as_str(), exact) {
+        ("inconsistent", _) => (
+            "inconsistent".into(),
+            "exact row reduction found an inconsistent KKT system".into(),
+            None,
+            None,
+            None,
+        ),
+        (_, Some(x)) if x.q_exact.is_positive() => {
             let q = x.q_exact;
             let action = rat(&(BigRational::one() / (q.clone() + q.clone())));
             (
-                "exists".into(),
+                "positive_beta_q_positive_action".into(),
                 "exact rational solver found a strict-positive beta and positive-Q witness".into(),
                 Some(x.beta.iter().map(rat).collect()),
                 Some(q),
                 Some(action),
             )
         }
-        Some(x) => (
-            "exists_q_nonpositive".into(),
+        (_, Some(x)) => (
+            "positive_beta_q_nonpositive".into(),
             "exact rational solver found a strict-positive beta witness, but its Q is nonpositive so action is unavailable".into(),
             Some(x.beta.iter().map(rat).collect()),
             Some(x.q_exact),
             None,
         ),
-        None => (
-            "none_or_q_nonpositive_conflated".into(),
-            "exact API returned no positive witness; this conflates no strict-positive beta with any unexposed remaining exact distinction".into(),
+        (_, None) => (
+            "consistent_no_strict_positive_beta".into(),
+            "exact rational positive-witness search found no strict-positive beta in the consistent KKT solution set".into(),
             None,
             None,
             None,
@@ -660,7 +672,7 @@ fn observe(case: &Case, sigma: &[usize]) -> RawRow {
         exact_row_reduction_rank: erank,
         exact_row_reduction_nullity: enull,
         exact_row_reduction_beta_particular: particular,
-        exact_positive_witness_status: pstatus,
+        exact_lifecycle_status: pstatus,
         exact_positive_witness_reason: preason,
         exact_positive_witness_beta: pbeta,
         exact_positive_witness_q: pq.as_ref().map(rat),
@@ -893,7 +905,7 @@ fn formula_registry() -> Vec<FormulaRegistryEntry> {
                 ),
             ],
             center: c.clone(),
-            exact_target: "exact_positive_witness_status".into(),
+            exact_target: "exact_lifecycle_status".into(),
             hypothesis_status: "heuristic ternary predicate from f64 margin minus heuristic radius"
                 .into(),
             status: "available_when_margin_and_radius_exist".into(),
@@ -933,9 +945,26 @@ fn policy_rows(rows: &[RawRow]) -> Vec<PolicyRow> {
             .copied()
             .filter(|r| r.saddle_eig_beta_predicate == "true" && saddle_action(r).is_some())
             .collect();
+        let production_retained: Vec<&RawRow> = retained
+            .iter()
+            .copied()
+            .filter(|r| saddle_action(r).is_some())
+            .collect();
+        for (policy_id, description, f64_set) in [
+            (
+                "actual_current_f64_policy",
+                "production-retained saddle rows with a positive production action; no extra margin filter",
+                production_retained.as_slice(),
+            ),
+            (
+                "strict_margin_f64_simulation",
+                "strict-margin f64-True simulation; not the current production-retention policy",
+                f64_true.as_slice(),
+            ),
+        ] {
         for gap in RELATIVE_WINDOWS {
             let start = Instant::now();
-            let f64_min = f64_true
+            let f64_min = f64_set
                 .iter()
                 .filter_map(|r| saddle_action(r))
                 .min_by(|a, b| a.total_cmp(b));
@@ -943,14 +972,13 @@ fn policy_rows(rows: &[RawRow]) -> Vec<PolicyRow> {
             out.push(PolicyRow {
                 schema_version: POLICY_SCHEMA.into(),
                 target_polytope_id: case.into(),
-                policy_id: "minimasafe_heuristic".into(),
-                policy_description:
-                    "current f64-True saddle scalar only; unchecked f64-True is heuristic".into(),
+                policy_id: policy_id.into(),
+                policy_description: description.into(),
                 exactness_scope: "unknown; no exact fallback was run by this policy".into(),
                 requested_window_kind: "relative_to_f64_policy_minimum".into(),
                 requested_relative_gap: gap,
                 supplied_stream_count: rs.len(),
-                policy_candidate_count: f64_true.len(),
+                policy_candidate_count: f64_set.len(),
                 policy_exact_resolution_count: 0,
                 policy_exact_accept_count: 0,
                 policy_min_action: None,
@@ -960,7 +988,7 @@ fn policy_rows(rows: &[RawRow]) -> Vec<PolicyRow> {
                 policy_f64_min_action: f64_min,
                 policy_f64_minimizer_active_words: f64_min
                     .map(|m| {
-                        f64_true
+                        f64_set
                             .iter()
                             .filter(|r| saddle_action(r).is_some_and(|a| a == m))
                             .map(|r| r.sigma_active_reeb_word.clone())
@@ -969,7 +997,7 @@ fn policy_rows(rows: &[RawRow]) -> Vec<PolicyRow> {
                     .unwrap_or_default(),
                 policy_f64_window_active_words: f64_cutoff
                     .map(|c| {
-                        f64_true
+                        f64_set
                             .iter()
                             .filter(|r| saddle_action(r).is_some_and(|a| a <= c))
                             .map(|r| r.sigma_active_reeb_word.clone())
@@ -982,6 +1010,7 @@ fn policy_rows(rows: &[RawRow]) -> Vec<PolicyRow> {
                     "f64-only heuristic result; exact fields intentionally unavailable".into(),
                 policy_stage_timing_us: start.elapsed().as_secs_f64() * 1e6,
             });
+        }
         }
         for (id, desc, scope, set, trigger) in [
             (
