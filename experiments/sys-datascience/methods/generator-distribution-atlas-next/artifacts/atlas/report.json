@@ -1,7 +1,10 @@
 {
   "configuration": {
     "distance_approximation": "declared-grid circular correlation; focused continuous-refinement copy remains in shape_quality.py",
+    "distance_calibration_contract": "grid-aligned rotations are quotiented exactly on the declared grid; arbitrary rotations are only approximated and their error is checked by test_atlas.py",
     "feature_contract": "covariance_anisotropy is the ratio of eigenvalues of centered vertex covariance and is rotation/translation/scale invariant",
+    "positive_gram_spectrum_contract": "positive_gram_spectrum_participation_ratio is the participation ratio of positive eigenvalues of the centered squared-distance Gram matrix; it is not an intrinsic or metric dimension. negative_eigenmass_fraction diagnoses failure of a Euclidean embedding.",
+    "raw_feature_views": "raw_feature_centroid_separation and raw_feature_covariance_spectrum_participation_ratio use unstandardized coordinates; covariance_anisotropy dominates them, so they are neither balanced evidence nor scores",
     "saturation_levels": [
       4,
       8,
@@ -13,8 +16,8 @@
     "support_grid": 64
   },
   "implementation_hashes": {
-    "atlas_py_sha256": "e49702c2fd6dab003fe491bbcd30f8e79123659488a923e6d3bf7f5a4bc65225",
-    "shape_quality_py_sha256": "782cf59250d7ca4fc24d73e48dd26948390974d47611a0d9d8b1deafa7888195"
+    "atlas_py_sha256": "2955dccbb06f6cae0d6987b50925059b0e99cfb9db594209998ba8cfc6c03c72",
+    "shape_quality_py_sha256": "d21d4858f2e14704c1a66e06e1673a11134304ec6dd7953b21eedaf1d5d82744"
   },
   "input": "artifacts/panel/factor-shapes.jsonl",
   "input_schema": "factor-shape-row-v1",
@@ -82,7 +85,7 @@
     "linkage_kind": "population-and-side-count stratum only",
     "per_population_side_count": 2,
     "retained_rows": 44,
-    "source": "/workspaces/msc-math/.worktrees/generator-transfer/experiments/sys-datascience/methods/generator-zoo-smoke/artifacts/factor-shapes.jsonl",
+    "source": "../generator-zoo-smoke/artifacts/factor-shapes.jsonl",
     "source_sha256": "4622400be1220f11f742a4bde29273fe45dcd4c8d27044d716059c429630d7a8",
     "target_evaluation": false
   },

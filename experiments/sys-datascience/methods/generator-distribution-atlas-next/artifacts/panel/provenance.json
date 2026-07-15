@@ -1,7 +1,7 @@
 {
   "analyzer": {
-    "atlas_py_sha256": "e49702c2fd6dab003fe491bbcd30f8e79123659488a923e6d3bf7f5a4bc65225",
-    "shape_quality_py_sha256": "782cf59250d7ca4fc24d73e48dd26948390974d47611a0d9d8b1deafa7888195"
+    "atlas_py_sha256": "2955dccbb06f6cae0d6987b50925059b0e99cfb9db594209998ba8cfc6c03c72",
+    "shape_quality_py_sha256": "d21d4858f2e14704c1a66e06e1673a11134304ec6dd7953b21eedaf1d5d82744"
   },
   "contract": "Panel and all derived views are target-free. Rebuild the producer from the pinned source revision and compare executable hash before regeneration.",
   "panel_input": {

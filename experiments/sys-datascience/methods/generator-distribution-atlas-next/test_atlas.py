@@ -9,6 +9,8 @@ import unittest
 
 import numpy as np
 
+import shape_quality
+
 
 HERE = Path(__file__).resolve().parent
 SPEC = importlib.util.spec_from_file_location("atlas_adapter", HERE / "atlas.py")
@@ -55,6 +57,18 @@ class AtlasSmokeTests(unittest.TestCase):
         right = type("ShapeStub", (), {"vertices": vertices @ rotation.T})()
         self.assertAlmostEqual(ATLAS.invariant_features(left)[1], ATLAS.invariant_features(right)[1], places=12)
 
+    def test_grid_distance_calibration(self):
+        support = np.sin(2.0 * np.pi * np.arange(64) / 64.0) + 0.2 * np.cos(5.0 * 2.0 * np.pi * np.arange(64) / 64.0)
+        self.assertLess(ATLAS.l2(support, np.roll(support, 7)), 1e-12)
+        polygon = np.array([[0.0, 0.0], [2.0, 0.0], [2.6, 0.8], [1.3, 2.0], [-0.2, 1.0]])
+        theta = 0.1234
+        rotation = np.array([[math.cos(theta), -math.sin(theta)], [math.sin(theta), math.cos(theta)]])
+        left = shape_quality.standardize_row({"schema": shape_quality.SCHEMA, "sample_id": "left", "law": "calibration", "side_count": 5, "vertices_ccw": polygon.tolist()}, 64, 1024, 1)
+        right = shape_quality.standardize_row({"schema": shape_quality.SCHEMA, "sample_id": "right", "law": "calibration", "side_count": 5, "vertices_ccw": (polygon @ rotation.T).tolist()}, 64, 1024, 1)
+        continuous, _, _, _ = shape_quality.shape_rotation_metrics(left, right)
+        grid = ATLAS.l2(left.support, right.support)
+        self.assertLess(abs(grid - continuous), 0.02)
+
     def test_source_contract_binds_producer_and_analyzer(self):
         provenance = json.loads((HERE / "artifacts/panel/provenance.json").read_text())
         report = json.loads((HERE / "artifacts/atlas/report.json").read_text())
@@ -64,8 +78,17 @@ class AtlasSmokeTests(unittest.TestCase):
         self.assertEqual(set(producer["source_blobs"]), {"Cargo.lock", "experiments/sys-datascience/methods/generator-zoo-smoke/main.rs", "experiments/sys-landscape/Cargo.toml"})
         self.assertEqual(provenance["analyzer"], report["implementation_hashes"])
         self.assertEqual(report["provenance_artifact"], "artifacts/panel/provenance.json")
+        linkage = report["source_exact_validation_witness"]
+        self.assertEqual(linkage["source"], "../generator-zoo-smoke/artifacts/factor-shapes.jsonl")
         self.assertTrue((HERE / "artifacts/atlas/source-exact-validation-witness/linkage.json").is_file())
         self.assertFalse((HERE / "artifacts/atlas/exact-subset").exists())
+        within_header = (HERE / "artifacts/atlas/within-population.tsv").read_text().splitlines()[0]
+        between_header = (HERE / "artifacts/atlas/between-population.tsv").read_text().splitlines()[0]
+        spectrum_header = (HERE / "artifacts/atlas/feature-spectrum.tsv").read_text().splitlines()[0]
+        self.assertIn("positive_gram_spectrum_participation_ratio", within_header)
+        self.assertNotIn("effective_dimension", within_header)
+        self.assertIn("raw_feature_centroid_separation", between_header)
+        self.assertIn("raw_feature_covariance_spectrum_participation_ratio", spectrum_header)
 
 
 if __name__ == "__main__":

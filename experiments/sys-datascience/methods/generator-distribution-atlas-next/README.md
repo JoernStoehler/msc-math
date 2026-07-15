@@ -55,9 +55,10 @@ python3 atlas.py \
   --producer-report artifacts/panel/core-report.json \
   --producer-executable "$PRODUCER_BIN" \
   --producer-report artifacts/panel/zonogon-report.json \
-  --exact-input /workspaces/msc-math/.worktrees/generator-transfer/experiments/sys-datascience/methods/generator-zoo-smoke/artifacts/factor-shapes.jsonl \
+  --exact-input ../generator-zoo-smoke/artifacts/factor-shapes.jsonl \
   --out-dir artifacts/atlas
 python3 -m py_compile atlas.py shape_quality.py
+python3 test_atlas.py
 python3 test_shape_quality.py
 ```
 
@@ -67,7 +68,10 @@ area normalization, rotation quotient, and deterministic hash-ranked grouping.
 `atlas.py` keeps the copy-local adapter explicit and uses a declared-grid
 circular-correlation distance for the many pair views so the bounded panel is
 cheap to rerun. The focused continuous-refinement implementation remains
-available in `shape_quality.py` for a later narrow check.
+available in `shape_quality.py` for a later narrow check. Grid-aligned support
+rotations are quotiented exactly on the 64-angle grid; arbitrary rotations have
+grid discretization error, calibrated by `test_atlas.py`, and are not certified
+bounds.
 
 ## Views and interpretation
 
@@ -84,6 +88,14 @@ The generated `artifacts/atlas/` directory contains compact tables for:
   eta-squared confounding. The anisotropy feature is the eigenvalue ratio of
   centered vertex covariance, so it is invariant under global rotation,
   translation, and positive scale.
+
+The raw feature centroid and covariance-spectrum columns are intentionally
+unstandardized. `covariance_anisotropy` can dominate their scale, so these are
+diagnostic views rather than balanced evidence or scores. The positive Gram
+spectrum participation ratio is the participation ratio of positive
+eigenvalues of a centered squared-distance Gram matrix; it is not an intrinsic
+or metric dimension. Negative eigenmass only diagnoses failure of a Euclidean
+embedding.
 
 The `source-exact-validation-witness` is a source-backed staged witness
 selected from the reviewed product factor artifact (`2` rows per

@@ -103,6 +103,19 @@ def validate_vertices(raw: Any, side_count: int, context: str) -> np.ndarray:
             f"{context}: vertices must be strictly convex, cyclic, and CCW; "
             f"minimum consecutive turn={float(np.min(turns)):.6g}"
         )
+    # Local positive turns alone do not establish a simple convex cycle: a
+    # pentagram can pass that test. Every edge of a CCW convex polygon must
+    # leave every vertex on its left half-plane. This global check also rejects
+    # self-intersecting cycles while retaining the scale-aware tolerance.
+    for index, start in enumerate(vertices):
+        edge = np.roll(vertices, -1, axis=0)[index] - start
+        offsets = vertices - start
+        half_plane_cross = edge[0] * offsets[:, 1] - edge[1] * offsets[:, 0]
+        if float(np.min(half_plane_cross)) < -turn_tolerance:
+            raise ValueError(
+                f"{context}: vertices must form a globally convex, simple, CCW cycle; "
+                f"edge {index} has an exterior vertex"
+            )
     area = polygon_area(vertices)
     if area <= 1e-12 * diameter * diameter:
         raise ValueError(
@@ -340,11 +353,11 @@ def finite_or_none(value: float) -> float | None:
     return float(value) if math.isfinite(float(value)) else None
 
 
-def effective_dimension(distance: np.ndarray) -> dict[str, float | int | None]:
+def positive_gram_spectrum_participation(distance: np.ndarray) -> dict[str, float | int | None]:
     count = len(distance)
     if count < 3:
         return {
-            "participation_ratio": None,
+            "positive_gram_spectrum_participation_ratio": None,
             "positive_eigenvalues": 0,
             "negative_eigenmass_fraction": None,
         }
@@ -364,7 +377,7 @@ def effective_dimension(distance: np.ndarray) -> dict[str, float | int | None]:
         float(np.sum(np.abs(negative)) / total_mass) if total_mass > 0 else 0.0
     )
     return {
-        "participation_ratio": participation,
+        "positive_gram_spectrum_participation_ratio": participation,
         "positive_eigenvalues": int(len(positive)),
         "negative_eigenmass_fraction": negative_fraction,
     }
@@ -380,7 +393,7 @@ def within_metrics(distance: np.ndarray, duplicate_tolerance: float) -> dict[str
             "nearest_neighbor_mean": None,
             "duplicate_pair_count": 0,
             "duplicate_pair_fraction": None,
-            "effective_dimension": effective_dimension(distance),
+            "positive_gram_spectrum": positive_gram_spectrum_participation(distance),
         }
     upper = distance[np.triu_indices(count, k=1)]
     masked = distance.copy()
@@ -394,7 +407,7 @@ def within_metrics(distance: np.ndarray, duplicate_tolerance: float) -> dict[str
         "nearest_neighbor_mean": float(np.mean(nearest)),
         "duplicate_pair_count": duplicate_count,
         "duplicate_pair_fraction": float(duplicate_count / len(upper)),
-        "effective_dimension": effective_dimension(distance),
+        "positive_gram_spectrum": positive_gram_spectrum_participation(distance),
     }
 
 
@@ -766,7 +779,7 @@ def write_table(report: dict[str, Any], path: Path) -> None:
         "sample_status",
         "pairwise_l2_mean",
         "nearest_neighbor_l2_mean",
-        "effective_dimension",
+        "positive_gram_spectrum_participation_ratio",
         "duplicate_pair_fraction",
         "baseline_centroid_distance",
         "energy_like_l2_v_statistic",
@@ -794,7 +807,7 @@ def write_table(report: dict[str, Any], path: Path) -> None:
                     "sample_status": law["sample_status"],
                     "pairwise_l2_mean": within["pairwise_mean"],
                     "nearest_neighbor_l2_mean": within["nearest_neighbor_mean"],
-                    "effective_dimension": within["effective_dimension"]["participation_ratio"],
+                    "positive_gram_spectrum_participation_ratio": within["positive_gram_spectrum"]["positive_gram_spectrum_participation_ratio"],
                     "duplicate_pair_fraction": within["duplicate_pair_fraction"],
                     "baseline_centroid_distance": comparison["centroid_distance_baseline_medoid_gauge"],
                     "energy_like_l2_v_statistic": comparison["energy_like_l2_v_statistic"],

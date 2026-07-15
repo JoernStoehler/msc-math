@@ -112,6 +112,13 @@ class GeometryTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "strictly convex, cyclic, and CCW"):
             standardized(row("concave", "baseline", concave))
 
+    def test_pentagram_fails_global_convexity(self):
+        angles = 2.0 * math.pi * np.arange(5) / 5.0
+        pentagon = np.column_stack((np.cos(angles), np.sin(angles)))
+        pentagram = pentagon[[0, 2, 4, 1, 3]]
+        with self.assertRaisesRegex(ValueError, "globally convex"):
+            standardized(row("pentagram", "baseline", pentagram))
+
 
 class AtlasTests(unittest.TestCase):
     def test_bounded_selection_is_hash_ranked_order_invariant_and_prefix_stable(self):
