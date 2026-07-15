@@ -27,6 +27,7 @@ from typing import Any, Callable
 import numpy as np
 
 
+HERE = Path(__file__).resolve().parent
 SCHEMA = "generator-distribution-dimension-report-v1"
 EPS = 1e-12
 
