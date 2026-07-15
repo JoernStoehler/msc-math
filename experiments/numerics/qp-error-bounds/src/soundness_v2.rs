@@ -553,7 +553,33 @@ fn observe(case: &Case, sigma: &[usize]) -> RawRow {
             )
         }
     };
-    let (pstatus,preason,pbeta,pq,paction)=match exact { Some(x)=>{ let q=x.q_exact; let act=q.is_positive().then(||rat(&(BigRational::one()/(q.clone()+q.clone())))); ("exists".into(),"exact rational solver found a strict-positive beta witness".into(),Some(x.beta.iter().map(rat).collect()),Some(q),act) }, None=> ("none_or_q_nonpositive_conflated".into(),"exact API returned no positive witness; this conflates no strict-positive beta with any unexposed remaining exact distinction".into(),None,None,None) };
+    let (pstatus, preason, pbeta, pq, paction) = match exact {
+        Some(x) if x.q_exact.is_positive() => {
+            let q = x.q_exact;
+            let action = rat(&(BigRational::one() / (q.clone() + q.clone())));
+            (
+                "exists".into(),
+                "exact rational solver found a strict-positive beta and positive-Q witness".into(),
+                Some(x.beta.iter().map(rat).collect()),
+                Some(q),
+                Some(action),
+            )
+        }
+        Some(x) => (
+            "exists_q_nonpositive".into(),
+            "exact rational solver found a strict-positive beta witness, but its Q is nonpositive so action is unavailable".into(),
+            Some(x.beta.iter().map(rat).collect()),
+            Some(x.q_exact),
+            None,
+        ),
+        None => (
+            "none_or_q_nonpositive_conflated".into(),
+            "exact API returned no positive witness; this conflates no strict-positive beta with any unexposed remaining exact distinction".into(),
+            None,
+            None,
+            None,
+        ),
+    };
     let qsign = classify_exact(pq.as_ref());
     let availability = if paction.is_some() {
         "available"

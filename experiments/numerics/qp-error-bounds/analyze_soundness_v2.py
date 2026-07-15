@@ -30,7 +30,7 @@ def main() -> None:
     per_case: dict[str, dict] = {}
     for row in rows:
         exact_status[row["exact_positive_witness_status"]] += 1
-        target_q = rat(row["exact_positive_witness_q"])
+        target_q = rat(row["exact_positive_witness_q"]) if row["exact_positive_witness_status"] == "exists" else None
         for c in row["centers"]:
             center_counts[c["center_id"]] += c["center_availability"] == "available"
             q = c["center_q_raw_f64"]

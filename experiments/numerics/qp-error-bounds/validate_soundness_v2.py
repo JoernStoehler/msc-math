@@ -98,6 +98,10 @@ def main() -> None:
                 fail(f"exact Q/action corruption {key}")
             if row["exact_action_availability"] != "available":
                 fail(f"available exact action mislabeled {key}")
+        elif row["exact_positive_witness_status"] == "exists_q_nonpositive":
+            q = rational(row["exact_positive_witness_q"], f"{key}.nonpositive_q")
+            if q > 0 or row["exact_positive_witness_action"] is not None or row["exact_action_availability"] != "unavailable":
+                fail(f"nonpositive-Q exact distinction corrupted {key}")
         else:
             if row["exact_positive_witness_q"] is not None or row["exact_positive_witness_action"] is not None:
                 fail(f"unavailable exact witness carries target values {key}")
