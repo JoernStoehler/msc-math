@@ -22,11 +22,12 @@ normalization.
 the current factor law. Before rationalization it requires maximum cyclic gap
 `< pi`, every proposed intersection to satisfy every original halfspace, and
 every input line to be active. It then makes an explicit
-`Fraction.limit_denominator(1e9)` reconstruction and exact hull. All
-incidence, area, centroid, polarity, double-polar, and Mahler fields after that
-boundary are exact. Shape views are centered, area-normalized support samples
-on a 64-direction grid; pair distances minimize grid cyclic shifts and
-reflection and are f64 diagnostics.
+`Fraction.limit_denominator(1e9)` reconstruction and exact hull. Rational
+vertices, facets, incidence, areas, centroids, polars, and Mahler products are
+exact after that boundary. `scale_f64`, support samples, distances, and stored
+residual numbers are f64 diagnostics. Shape views are centered,
+area-normalized support samples on a 64-direction grid; pair distances
+minimize grid cyclic shifts and reflection.
 
 The retained default has 24 sources in each side-count stratum `3,4,6` (72
 source/image pairs), allocated as 8 per stratum over three deterministic seeds
