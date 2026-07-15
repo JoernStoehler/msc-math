@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 from collections import defaultdict
+from fractions import Fraction
 import hashlib
 import importlib.util
 import json
@@ -156,6 +157,35 @@ def dirichlet_gap_geometry(proportions: np.ndarray, preferred_key: tuple[bool, i
     return chart.vector, chart
 
 
+def dirichlet_acceptance_normalizer(n: int, alpha: int) -> dict[str, Any]:
+    """Exact P(max p_i < 1/2) for symmetric integer-alpha Dirichlet.
+
+    Two coordinates cannot both exceed 1/2. The marginal p_1 is
+    Beta(alpha,(n-1)alpha), whose upper tail at 1/2 equals the indicated
+    finite binomial sum.
+    """
+    if alpha < 1:
+        raise ValueError("integer alpha must be positive")
+    trials = n * alpha - 1
+    upper_tail_numerator = sum(math.comb(trials, k) for k in range(alpha))
+    rejection_probability = n * Fraction(upper_tail_numerator, 2**trials)
+    normalizer = Fraction(1, 1) - rejection_probability
+    if normalizer <= 0:
+        raise ValueError("empty accepted Dirichlet chamber")
+    return {"n": n, "alpha": alpha, "formula": "1 - n * 2^(-(n*alpha-1)) * sum_{k=0}^{alpha-1} binom(n*alpha-1,k)", "exact_numerator": normalizer.numerator, "exact_denominator": normalizer.denominator, "exact_rejection_numerator": rejection_probability.numerator, "exact_rejection_denominator": rejection_probability.denominator, "rejection_probability": float(rejection_probability), "value": float(normalizer), "log_value": math.log1p(-float(rejection_probability))}
+
+
+def asymmetric_reflection_control() -> dict[str, Any]:
+    proportions = np.array([.1, .2, .3, .4])
+    base_vector, _ = dirichlet_gap_geometry(proportions)
+    cyclic_distances = [float(np.linalg.norm(base_vector - dirichlet_gap_geometry(np.roll(proportions, shift))[0])) for shift in range(4)]
+    reflected_gap_distance = float(np.linalg.norm(base_vector - dirichlet_gap_geometry(proportions[::-1])[0]))
+    angles = np.r_[0., np.cumsum(rank.TAU * proportions[:-1])]
+    vertices = rank.angle_polygon(angles, np.zeros(4)).vertices
+    traversal_reversal_distance = float(np.linalg.norm(rank.body_chart(vertices).vector - rank.body_chart(vertices[::-1]).vector))
+    return {"asymmetric_gap_proportions": proportions.tolist(), "cyclic_start_chart_distances": cyclic_distances, "same_vertex_set_traversal_reversal_chart_distance": traversal_reversal_distance, "reflected_gap_sequence_chart_distance": reflected_gap_distance, "conclusion": "The n cyclic starts represent the same rotation-quotiented body. Reversing vertex traversal also represents the same vertex set, but reversing the positive gap sequence produces a spatially reflected, generically distinct body; reflection is not quotiented."}
+
+
 def dirichlet_change_of_variables(proportions: np.ndarray, alphas: tuple[float, ...] = (1., 4., 16.)) -> dict[str, Any]:
     n = len(proportions); coordinates = rank.TAU * proportions[:-1]
     _, base_chart = dirichlet_gap_geometry(proportions)
@@ -175,10 +205,15 @@ def dirichlet_change_of_variables(proportions: np.ndarray, alphas: tuple[float, 
     log_jacobian = steps[1]["log_body_volume_jacobian"]
     law_densities = {}
     for alpha in alphas:
-        log_simplex_density = math.lgamma(n * alpha) - n * math.lgamma(alpha) + (alpha - 1) * float(np.sum(np.log(proportions))) - (n - 1) * math.log(rank.TAU)
-        single_branch = log_simplex_density - log_jacobian
-        law_densities[f"alpha={alpha:g}"] = {"log_density_wrt_gap_coordinates": log_simplex_density, "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": single_branch, "log_generic_unlabeled_body_density_including_2n_dihedral_preimages": single_branch + math.log(2 * n)}
-    return {"reference_measure": "Lebesgue dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi}, with the fixed body-chart Euclidean Hausdorff measure", "discrete_quotient_contract": f"A generic unlabeled body has 2n={2*n} cyclic/reversal preimages of equal Dirichlet density; the separate linked-label branch value omits this multiplicity. Symmetric stabilizer points require a smaller orbit and are not used as references.", "steps": steps, "log_body_volume_step_spread": float(max(item["log_body_volume_jacobian"] for item in steps) - min(item["log_body_volume_jacobian"] for item in steps)), "law_densities_at_same_body_point": law_densities}
+        integer_alpha = int(alpha)
+        if integer_alpha != alpha:
+            raise ValueError("exact conditioning normalizer is implemented for integer alpha only")
+        normalizer = dirichlet_acceptance_normalizer(n, integer_alpha)
+        log_unconditioned = math.lgamma(n * alpha) - n * math.lgamma(alpha) + (alpha - 1) * float(np.sum(np.log(proportions))) - (n - 1) * math.log(rank.TAU)
+        log_conditioned = log_unconditioned - normalizer["log_value"]
+        single_branch = log_conditioned - log_jacobian
+        law_densities[f"alpha={alpha:g}"] = {"acceptance_normalizer": normalizer, "log_unconditioned_density_wrt_gap_coordinates": log_unconditioned, "log_acceptance_conditioned_density_wrt_gap_coordinates": log_conditioned, "log_single_linked_label_branch_density_wrt_body_hausdorff_measure": single_branch, "log_generic_unlabeled_body_density_including_n_cyclic_preimages": single_branch + math.log(n)}
+    return {"reference_measure": "Acceptance-conditioned Lebesgue density dg_1...dg_(n-1) on {g_i>0, sum g_i=2pi, max g_i<pi}, with the fixed body-chart Euclidean Hausdorff measure", "discrete_quotient_contract": f"A generic rotation-quotiented body has n={n} cyclic starting-facet preimages of equal Dirichlet density. Reversing clockwise/counterclockwise traversal labels the same vertex set, but reversing the positive gap sequence is a spatial reflection and is not another preimage because reflection is not quotiented.", "steps": steps, "log_body_volume_step_spread": float(max(item["log_body_volume_jacobian"] for item in steps) - min(item["log_body_volume_jacobian"] for item in steps)), "law_densities_at_same_body_point": law_densities}
 
 
 def reparameterization_counterexamples() -> dict[str, Any]:
@@ -218,10 +253,10 @@ def analyze(rank_report_path: Path) -> dict[str, Any]:
             selected = [item for item in dirichlet_reference if item["side_count"] == n and item["source_population"] == source_population]
             evaluated = {}
             for alpha in ("alpha=1", "alpha=4", "alpha=16"):
-                values = [item["change_of_variables"]["law_densities_at_same_body_point"][alpha]["log_generic_unlabeled_body_density_including_2n_dihedral_preimages"] for item in selected]
+                values = [item["change_of_variables"]["law_densities_at_same_body_point"][alpha]["log_generic_unlabeled_body_density_including_n_cyclic_preimages"] for item in selected]
                 evaluated[alpha] = summary(values)
             dirichlet_summaries.append({"side_count": n, "reference_population": source_population, "reference_count": len(selected), "evaluated_law_log_density": evaluated})
-    return {"schema": "generator-map-distortion-report-v1", "target_free": True, "source_contract": source_contract(), "inputs": {"rank_report_repository_path": "experiments/sys-datascience/methods/generator-map-jacobian-rank/artifacts/report.json", "rank_report_sha256": sha256(rank_report_path), "rank_analyzer_sha256": sha256(RANK_ANALYZER)}, "reparameterization_counterexamples": reparameterization_counterexamples(), "dirichlet_common_measure_comparisons": dirichlet_reference, "dirichlet_reference_summaries": dirichlet_summaries, "per_base_diagnostics": records, "stratum_summaries": strata, "density_dispositions": {"equal_support_dirichlet_alpha_1_4_16": "implemented on a common gap-simplex Lebesgue measure and fixed body-chart Hausdorff measure", "regular_equal_support": "Dirac law; no density relative to the continuous gap measure", "current_baseline": "abandoned: translation/scale quotient fibers carry nonconstant latent law mass and require coarea integration", "zonogon": "abandoned: rotation/scale fibers and native length-coordinate choice require an explicit quotient reference measure", "regular_mutation": "abandoned: many-to-one step latents, clipping strata, and fibers require coarea integration", "primal_hull": "abandoned: inactive interior points and active-set conditioning contribute fiber probability mass"}, "scientific_disposition": "The common-measure Dirichlet comparison is informative about alpha-dependent concentration around the finite reference bodies. For every other law, this packet stops at native-coordinate conditioning and boundary diagnostics; no cross-law density claim is supported.", "supported_interpretation": "Within a fixed native parameterization, condition numbers describe local sensitivity anisotropy and normalized rejection margins describe proximity to named implementation boundaries. Dirichlet alpha densities are comparable only under the declared common gap/body measures.", "prohibited_interpretation": "Raw pseudo-determinants or condition numbers are not cross-law density, coverage, quality, naturalness, topology, rare-mode mass, target, or sys evidence. Boundary margins are not rejection probabilities."}
+    return {"schema": "generator-map-distortion-report-v1", "target_free": True, "source_contract": source_contract(), "inputs": {"rank_report_repository_path": "experiments/sys-datascience/methods/generator-map-jacobian-rank/artifacts/report.json", "rank_report_sha256": sha256(rank_report_path), "rank_analyzer_sha256": sha256(RANK_ANALYZER)}, "reparameterization_counterexamples": reparameterization_counterexamples(), "asymmetric_reflection_control": asymmetric_reflection_control(), "dirichlet_acceptance_normalizers": [dirichlet_acceptance_normalizer(n, alpha) for n in (4, 6, 8) for alpha in (1, 4, 16)], "dirichlet_common_measure_comparisons": dirichlet_reference, "dirichlet_reference_summaries": dirichlet_summaries, "per_base_diagnostics": records, "stratum_summaries": strata, "density_dispositions": {"equal_support_dirichlet_alpha_1_4_16": "implemented on the acceptance-conditioned common gap-simplex Lebesgue measure and fixed body-chart Hausdorff measure", "regular_equal_support": "Dirac law; no density relative to the continuous gap measure", "current_baseline": "abandoned: translation/scale quotient fibers carry nonconstant latent law mass and require coarea integration", "zonogon": "abandoned: rotation/scale fibers and native length-coordinate choice require an explicit quotient reference measure", "regular_mutation": "abandoned: many-to-one step latents, clipping strata, and fibers require coarea integration", "primal_hull": "abandoned: inactive interior points and active-set conditioning contribute fiber probability mass"}, "scientific_disposition": "The acceptance-conditioned common-measure Dirichlet comparison is informative about alpha-dependent concentration around the finite reference bodies. For every other law, this packet stops at native-coordinate conditioning and boundary diagnostics; no cross-law density claim is supported.", "supported_interpretation": "Within a fixed native parameterization, condition numbers describe local sensitivity anisotropy and normalized rejection margins describe proximity to named implementation boundaries. Dirichlet alpha densities are comparable only under the declared acceptance-conditioned common gap/body measures.", "prohibited_interpretation": "Raw pseudo-determinants or condition numbers are not cross-law density, coverage, quality, naturalness, topology, rare-mode mass, target, or sys evidence. Boundary margins are not rejection probabilities."}
 
 
 def main() -> None:
