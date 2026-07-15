@@ -75,6 +75,10 @@ path = "../sys-datascience/methods/product-bounce-distribution/class-minima.rs"
 name = "sys-datascience-product-bounce-null-audit"
 path = "../sys-datascience/methods/product-bounce-distribution/audit-null-availability.rs"
 
+[[bin]]
+name = "sys-datascience-generator-convex-operations"
+path = "../sys-datascience/methods/generator-convex-operations/main.rs"
+
 [lints]
 workspace = true
 
