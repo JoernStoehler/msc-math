@@ -1,9 +1,12 @@
 import copy
 import hashlib
 import json
+import os
+import signal
 import shutil
 import subprocess
 import tempfile
+import time
 import unittest
 from pathlib import Path
 
@@ -102,9 +105,48 @@ class AnalyzerCorruptionTests(unittest.TestCase):
         }
         self.store("run-status.json", status)
 
+    def remove_final_successful_request(self):
+        targets = self.load_jsonl("target-evaluations.jsonl")
+        final = targets.pop()
+        self.store_jsonl("target-evaluations.jsonl", targets)
+        ledger = self.load_jsonl("charged-requests.jsonl")
+        ledger.pop()
+        self.store_jsonl("charged-requests.jsonl", ledger)
+        caches = self.load_jsonl("cache.jsonl")
+        if final["cache_status"] == "miss":
+            caches.pop()
+            self.store_jsonl("cache.jsonl", caches)
+        runs = self.load_jsonl("arm-runs.jsonl")
+        iid = runs[-1]
+        iid["target_attempts"] -= 1
+        if final["cache_status"] == "miss":
+            iid["cache_misses"] -= 1
+            iid["distinct_successful_keys"] -= 1
+        else:
+            iid["cache_hits"] -= 1
+        iid["complete"] = False
+        self.store_jsonl("arm-runs.jsonl", runs)
+        status = self.load("run-status.json")
+        status["iid_charged_requests"] -= 1
+        status["total_charged_requests"] -= 1
+        return final, status, runs
+
     def assert_corrupt(self, pattern):
         with self.assertRaisesRegex(ArtifactError, pattern):
             verify(self.directory)
+
+    def production_refusal(self, arguments, *, validate_dirty_source=False):
+        environment = os.environ.copy()
+        environment["AMS_TEST_REFUSAL_ONLY"] = "1"
+        if validate_dirty_source:
+            environment["AMS_TEST_VALIDATE_DIRTY_SOURCE"] = "1"
+        return subprocess.run(
+            arguments,
+            cwd=HERE,
+            capture_output=True,
+            text=True,
+            env=environment,
+        )
 
     def test_normal_fixture_passes_only_readiness_gate(self):
         result = verify(self.directory)
@@ -155,6 +197,131 @@ class AnalyzerCorruptionTests(unittest.TestCase):
         self.assertEqual(result["adaptive_attempts"], 48)
         self.assertEqual(len(result["post_level_distinct_states"]), 1)
         self.assertFalse(result["readiness_passed"])
+
+    def test_finalized_terminal_failure_requires_terminal_transition(self):
+        shutil.rmtree(self.directory)
+        shutil.copytree(self.final_failure, self.directory)
+        transitions = self.load_jsonl("mutation-transitions.jsonl")
+        transitions.pop()
+        self.store_jsonl("mutation-transitions.jsonl", transitions)
+        self.rehash()
+        self.assert_corrupt("transitions do not exactly reconcile")
+
+    def test_transition_file_order_must_equal_mutation_target_order(self):
+        transitions = self.load_jsonl("mutation-transitions.jsonl")
+        transitions[0], transitions[1] = transitions[1], transitions[0]
+        self.store_jsonl("mutation-transitions.jsonl", transitions)
+        self.rehash()
+        self.assert_corrupt("transition file order")
+
+    def test_charged_ledger_is_required_one_for_one_when_finalized(self):
+        ledger = self.load_jsonl("charged-requests.jsonl")
+        ledger.pop()
+        self.store_jsonl("charged-requests.jsonl", ledger)
+        self.rehash()
+        self.assert_corrupt("ledger does not reconcile")
+
+    def test_cumulative_charge_times_must_be_ordered(self):
+        ledger = self.load_jsonl("charged-requests.jsonl")
+        ledger[1]["charged_monotonic_ms"] = -1
+        self.store_jsonl("charged-requests.jsonl", ledger)
+        self.rehash()
+        self.assert_corrupt("ordered cumulative monotonic")
+
+    def test_exact_row_schema_rejects_extra_key(self):
+        targets = self.load_jsonl("target-evaluations.jsonl")
+        targets[0]["unexpected"] = True
+        self.store_jsonl("target-evaluations.jsonl", targets)
+        self.rehash()
+        self.assert_corrupt("missing or extra fields")
+
+    def test_terminal_error_schema_is_bound_to_final_failure(self):
+        shutil.rmtree(self.directory)
+        shutil.copytree(self.final_failure, self.directory)
+        status = self.load("run-status.json")
+        status["terminal_error"]["candidate_id"] = "forged"
+        self.store("run-status.json", status)
+        self.assert_corrupt("disagrees with final target")
+
+    def test_exact_iid_construction_exhaustion_is_structurally_auditable(self):
+        final, status, runs = self.remove_final_successful_request()
+        identity = final["identity"]
+        rejections = self.load_jsonl("construction-rejections.jsonl")
+        for attempt in range(64):
+            attempt_identity = copy.deepcopy(identity)
+            attempt_identity["construction_attempt"] = attempt
+            rejections.append(
+                {
+                    "candidate_id": analyze.expected_candidate_id(attempt_identity),
+                    "identity": attempt_identity,
+                    "arm": "iid",
+                    "reason": "target-free construction exhaustion fixture",
+                    "parent_candidate_id": None,
+                    "root_candidate_id": None,
+                    "raw_proposed_chart": None,
+                }
+            )
+        self.store_jsonl("construction-rejections.jsonl", rejections)
+        runs[-1]["construction_rejections"] += 64
+        self.store_jsonl("arm-runs.jsonl", runs)
+        first_identity = copy.deepcopy(identity)
+        first_identity["construction_attempt"] = 0
+        status.update(
+            disposition="error",
+            error="construction_exhaustion: target-free fixture",
+            terminal_error={
+                "kind": "construction_exhaustion",
+                "arm": "iid",
+                "global_request_index": None,
+                "candidate_id": None,
+                "evaluation_status": None,
+                "failure_reason": None,
+                "next_schedule_identity": first_identity,
+            },
+        )
+        self.store("run-status.json", status)
+        self.rehash()
+        result = verify(self.directory)
+        self.assertEqual(result["disposition"], "error")
+        self.assertFalse(result["readiness_passed"])
+
+    def test_wall_termination_before_next_charge_is_structurally_auditable(self):
+        _, status, _ = self.remove_final_successful_request()
+        targets = self.load_jsonl("target-evaluations.jsonl")
+        final = targets[-1]
+        status.update(
+            disposition="error",
+            error="wall_termination: target-free fixture",
+            terminal_error={
+                "kind": "wall_termination",
+                "arm": "iid",
+                "global_request_index": final["global_request_index"],
+                "candidate_id": final["candidate_id"],
+                "evaluation_status": None,
+                "failure_reason": None,
+                "next_schedule_identity": None,
+            },
+        )
+        self.store("run-status.json", status)
+        self.rehash()
+        result = verify(self.directory)
+        self.assertEqual(result["disposition"], "error")
+        self.assertFalse(result["readiness_passed"])
+
+    def test_strict_json_rejects_duplicate_keys_and_nonstandard_constants(self):
+        with self.assertRaisesRegex(ValueError, "duplicate"):
+            analyze.strict_json_loads('{"a":1,"a":2}')
+        with self.assertRaisesRegex(ValueError, "nonstandard"):
+            analyze.strict_json_loads('{"a":NaN}')
+
+    def test_rational_spelling_is_canonical_reduced_positive_denominator(self):
+        good = [["0/1", "1/2", "0/1", "0/1"] for _ in range(10)]
+        analyze.parse_exact_vertices(good, "fixture")
+        for bad in ("2/4", "1/-2", "01/2", "+1/2", "1.0", "-0/1", "0/2"):
+            value = copy.deepcopy(good)
+            value[0][0] = bad
+            with self.assertRaisesRegex(ArtifactError, "noncanonical|invalid rational"):
+                analyze.parse_exact_vertices(value, "fixture")
 
     def test_post_level_population_collapse_cannot_hide_behind_diverse_proposals(self):
         levels = self.load_jsonl("levels.jsonl")
@@ -213,7 +380,7 @@ class AnalyzerCorruptionTests(unittest.TestCase):
             row["attempt_index"] = attempt
         self.store_jsonl("target-evaluations.jsonl", targets)
         self.rehash()
-        self.assert_corrupt("frozen global request schedule")
+        self.assert_corrupt("frozen global request schedule|charged ledger row")
 
     def test_mutation_step_cannot_precede_its_parent(self):
         targets = self.load_jsonl("target-evaluations.jsonl")
@@ -224,7 +391,7 @@ class AnalyzerCorruptionTests(unittest.TestCase):
             row["attempt_index"] = attempt
         self.store_jsonl("target-evaluations.jsonl", targets)
         self.rehash()
-        self.assert_corrupt("frozen global request schedule|does not follow its parent")
+        self.assert_corrupt("frozen global request schedule|does not follow its parent|charged ledger row")
 
     def test_sha_gaussian_mutation_is_recomputed_from_state_before(self):
         targets = self.load_jsonl("target-evaluations.jsonl")
@@ -232,7 +399,7 @@ class AnalyzerCorruptionTests(unittest.TestCase):
         proposal["raw_proposed_chart"]["relative_phase"] += 0.01
         self.store_jsonl("target-evaluations.jsonl", targets)
         self.rehash()
-        self.assert_corrupt("raw mutation")
+        self.assert_corrupt("raw mutation|charged ledger row")
 
     def test_successful_retry_requires_all_preceding_rejections(self):
         targets = self.load_jsonl("target-evaluations.jsonl")
@@ -244,14 +411,14 @@ class AnalyzerCorruptionTests(unittest.TestCase):
         target["root_candidate_id"] = new
         self.store_jsonl("target-evaluations.jsonl", targets)
         self.rehash()
-        self.assert_corrupt("retry history")
+        self.assert_corrupt("retry history|charged ledger row")
 
     def test_exact_product_geometry_is_independently_checked(self):
         targets = self.load_jsonl("target-evaluations.jsonl")
         targets[0]["dual_vertices_rational"][0][2] = "1/100"
         self.store_jsonl("target-evaluations.jsonl", targets)
         self.rehash()
-        self.assert_corrupt("product structure")
+        self.assert_corrupt("product structure|charged ledger row")
 
     def test_success_volume_is_recomputed_from_exact_product_geometry(self):
         targets = self.load_jsonl("target-evaluations.jsonl")
@@ -275,7 +442,7 @@ class AnalyzerCorruptionTests(unittest.TestCase):
         targets[0]["dual_vertices_rational"] = []
         self.store_jsonl("target-evaluations.jsonl", targets)
         self.rehash()
-        self.assert_corrupt("ten exact dual vertices")
+        self.assert_corrupt("ten exact dual vertices|charged ledger row")
 
     def test_artifact_tampering_without_final_hash_refresh_is_rejected(self):
         targets = self.load_jsonl("target-evaluations.jsonl")
@@ -287,7 +454,18 @@ class AnalyzerCorruptionTests(unittest.TestCase):
         status = self.load("run-status.json")
         status["total_monotonic_wall_time_ms"] = 0
         self.store("run-status.json", status)
-        self.assert_corrupt("target row wall times exceed")
+        self.assert_corrupt("target row wall times exceed|wall-clock and monotonic")
+
+    def test_wall_and_monotonic_reconciliation_tolerance_is_bounded(self):
+        status = self.load("run-status.json")
+        manifest = self.load("manifest.json")
+        rounded = round(status["total_monotonic_wall_time_ms"])
+        status["end_unix_ms"] = manifest["start_unix_ms"] + rounded + 99
+        self.store("run-status.json", status)
+        self.assertTrue(verify(self.directory)["verified"])
+        status["end_unix_ms"] = manifest["start_unix_ms"] + rounded + 101
+        self.store("run-status.json", status)
+        self.assert_corrupt("wall-clock and monotonic")
 
     def test_non_invariant_policy_and_no_probability_claim_are_frozen(self):
         manifest = self.load("manifest.json")
@@ -328,20 +506,17 @@ class AnalyzerCorruptionTests(unittest.TestCase):
         status["total_charged_requests"] -= 1
         self.store("run-status.json", status)
         self.rehash()
-        self.assert_corrupt("48/16 charged budgets")
+        self.assert_corrupt("48/16 charged budgets|ledger does not reconcile")
 
     def test_production_launch_refuses_missing_reviewed_commit(self):
-        result = subprocess.run(
+        result = self.production_refusal(
             [EXECUTABLE, "production", "--config", CONFIG, "--artifacts", self.directory / "unused"],
-            cwd=HERE,
-            capture_output=True,
-            text=True,
         )
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("requires --reviewed-commit", result.stderr)
 
     def test_production_launch_refuses_wrong_reviewed_commit(self):
-        result = subprocess.run(
+        result = self.production_refusal(
             [
                 EXECUTABLE,
                 "production",
@@ -352,9 +527,6 @@ class AnalyzerCorruptionTests(unittest.TestCase):
                 "--reviewed-commit",
                 "0" * 40,
             ],
-            cwd=HERE,
-            capture_output=True,
-            text=True,
         )
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("does not equal reviewed commit", result.stderr)
@@ -363,29 +535,33 @@ class AnalyzerCorruptionTests(unittest.TestCase):
         revision = subprocess.run(
             ["git", "rev-parse", "HEAD"], cwd=HERE, check=True, capture_output=True, text=True
         ).stdout.strip()
-        result = subprocess.run(
-            [
-                EXECUTABLE,
-                "production",
-                "--config",
-                CONFIG,
-                "--artifacts",
-                self.directory / "unused",
-                "--reviewed-commit",
-                revision,
-            ],
-            cwd=HERE,
-            capture_output=True,
-            text=True,
-        )
+        dirty_fixture = HERE / ".ams-dirty-source-refusal-test"
+        try:
+            dirty_fixture.write_text("intentional untracked dirtiness for refusal test\n")
+            result = self.production_refusal(
+                [
+                    EXECUTABLE,
+                    "production",
+                    "--config",
+                    CONFIG,
+                    "--artifacts",
+                    self.directory / "unused",
+                    "--reviewed-commit",
+                    revision,
+                ],
+                validate_dirty_source=True,
+            )
+        finally:
+            dirty_fixture.unlink(missing_ok=True)
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("dirty or untracked", result.stderr)
+        self.assertFalse((self.directory / "unused").exists())
 
     def test_production_launch_refuses_synthetic_flags(self):
         revision = subprocess.run(
             ["git", "rev-parse", "HEAD"], cwd=HERE, check=True, capture_output=True, text=True
         ).stdout.strip()
-        result = subprocess.run(
+        result = self.production_refusal(
             [
                 EXECUTABLE,
                 "production",
@@ -397,12 +573,102 @@ class AnalyzerCorruptionTests(unittest.TestCase):
                 revision,
                 "--force-synthetic-hit",
             ],
-            cwd=HERE,
-            capture_output=True,
-            text=True,
         )
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("synthetic test flags", result.stderr)
+
+    def test_private_refusal_test_guard_cannot_reach_a_target(self):
+        revision = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=HERE, check=True, capture_output=True, text=True
+        ).stdout.strip()
+        result = self.production_refusal(
+            [
+                EXECUTABLE,
+                "production",
+                "--config",
+                CONFIG,
+                "--artifacts",
+                self.directory / "unused",
+                "--reviewed-commit",
+                revision,
+            ],
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("AMS_TEST_REFUSAL_ONLY safety guard", result.stderr)
+        self.assertFalse((self.directory / "unused").exists())
+
+    def test_private_guard_also_blocks_direct_production_child_endpoint(self):
+        environment = os.environ.copy()
+        environment["AMS_TEST_REFUSAL_ONLY"] = "1"
+        payload = {
+            "mode": "production",
+            "exact_geometry_key": "guard-fixture",
+            "dual_vertices_f64": [],
+            "synthetic_force_hit": False,
+            "synthetic_force_failure": False,
+            "synthetic_validate_constructor": False,
+            "synthetic_delay_ms": 0,
+            "synthetic_response_padding_bytes": 0,
+        }
+        result = subprocess.run(
+            [EXECUTABLE, "target-once"],
+            cwd=HERE,
+            input=json.dumps(payload),
+            capture_output=True,
+            text=True,
+            env=environment,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("production target child disabled", result.stderr)
+
+    def test_external_parent_termination_retains_charge_and_kills_child(self):
+        artifacts = Path(self.temp.name) / "interrupted"
+        process = subprocess.Popen(
+            [
+                EXECUTABLE,
+                "synthetic",
+                "--config",
+                CONFIG,
+                "--artifacts",
+                artifacts,
+                "--synthetic-child-delay-ms",
+                "5000",
+            ],
+            cwd=HERE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        child_pid = None
+        deadline = time.monotonic() + 5.0
+        ledger = artifacts / "charged-requests.jsonl"
+        while time.monotonic() < deadline:
+            children_path = Path(f"/proc/{process.pid}/task/{process.pid}/children")
+            if ledger.exists() and ledger.read_text().count("\n") == 1 and children_path.exists():
+                children = children_path.read_text().split()
+                if children:
+                    child_pid = int(children[0])
+                    break
+            time.sleep(0.01)
+        self.assertIsNotNone(child_pid, "synthetic child was not observed after durable charge")
+        os.kill(process.pid, signal.SIGKILL)
+        process.wait(timeout=5)
+        process.communicate(timeout=1)
+        assert child_pid is not None
+        child_deadline = time.monotonic() + 2.0
+        while time.monotonic() < child_deadline and Path(f"/proc/{child_pid}").exists():
+            state = Path(f"/proc/{child_pid}/stat").read_text().split()[2]
+            if state == "Z":
+                break
+            time.sleep(0.01)
+        if Path(f"/proc/{child_pid}").exists():
+            self.assertEqual(Path(f"/proc/{child_pid}/stat").read_text().split()[2], "Z")
+        result = verify(artifacts)
+        self.assertEqual(result["disposition"], "externally_interrupted")
+        self.assertEqual(result["adaptive_attempts"], 0)
+        self.assertEqual(result["ledger_charged_requests"], 1)
+        self.assertEqual(result["outcome_unknown_requests"], 1)
+        self.assertFalse(result["readiness_passed"])
 
     def test_reused_output_directory_is_fail_closed(self):
         result = self.run_packet(self.directory, check=False)

@@ -9,7 +9,7 @@
   "mutation_steps_per_clone": 2,
   "iid_requests": 16,
   "construction_retry_cap": 64,
-  "abort_wall_time_seconds": 600,
+  "abort_wall_time_seconds": 900,
   "gap_logit_scale": 0.08,
   "centered_log_radius_scale": 0.04,
   "phase_scale": 0.08,

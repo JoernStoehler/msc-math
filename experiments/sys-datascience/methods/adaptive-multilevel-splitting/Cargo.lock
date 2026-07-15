@@ -8,6 +8,7 @@ version = "0.1.0"
 dependencies = [
  "equal-budget-product-search",
  "exp-sys-landscape",
+ "libc",
  "nalgebra",
  "serde",
  "serde_json",

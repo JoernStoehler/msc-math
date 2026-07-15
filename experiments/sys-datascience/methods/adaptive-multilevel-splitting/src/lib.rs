@@ -10,7 +10,7 @@ use std::f64::consts::TAU;
 use std::fs::{self, File, OpenOptions};
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
-use std::time::{Duration, Instant};
+use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
 pub const ADAPTIVE_BUDGET: usize = 48;
 pub const IID_BUDGET: usize = 16;
@@ -63,7 +63,7 @@ impl Config {
             && self.mutation_steps_per_clone == 2
             && self.iid_requests == 16
             && self.construction_retry_cap == 64
-            && self.abort_wall_time_seconds == 600
+            && self.abort_wall_time_seconds == 900
             && self.gap_logit_scale == 0.08
             && self.centered_log_radius_scale == 0.04
             && self.phase_scale == 0.08
@@ -285,7 +285,33 @@ pub struct TargetRow {
     pub level_threshold: Option<f64>,
     pub raw_proposed_chart: Option<ProductChart>,
     pub product_chart: ProductChart,
+    pub started_monotonic_ms: f64,
     pub wall_time_ms: f64,
+    pub cumulative_monotonic_ms: f64,
+}
+
+/// Durable charge record synchronized before a cache lookup or target child can
+/// be exposed. A normally finalized packet has exactly one matching target row
+/// for every ledger row; an externally interrupted packet may end with one
+/// unmatched ledger row because evaluation is sequential.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ChargedRequestRow {
+    pub global_request_index: usize,
+    pub candidate_id: String,
+    pub identity: CandidateIdentity,
+    pub arm: Arm,
+    pub attempt_index: usize,
+    pub exact_geometry_key: String,
+    pub geometry_identity: String,
+    pub dual_vertices_rational: Vec<[String; 4]>,
+    pub dual_vertices_f64: Vec<[f64; 4]>,
+    pub facet_count: usize,
+    pub parent_candidate_id: Option<String>,
+    pub root_candidate_id: String,
+    pub level_threshold: Option<f64>,
+    pub raw_proposed_chart: Option<ProductChart>,
+    pub product_chart: ProductChart,
+    pub charged_monotonic_ms: f64,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -351,7 +377,9 @@ pub struct ArmRunRow {
     pub cache_hits: usize,
     pub failed_misses: usize,
     pub distinct_successful_keys: usize,
+    pub started_monotonic_ms: f64,
     pub wall_time_ms: f64,
+    pub cumulative_monotonic_ms: f64,
     pub complete: bool,
 }
 
@@ -381,6 +409,8 @@ pub struct Manifest {
     pub artifact_kind: String,
     pub run_id: String,
     pub start_unix_ms: u128,
+    pub launch_process_id: u32,
+    pub artifact_directory: String,
     pub config_identity: String,
     pub exact_config: Config,
     pub source: SourceIdentity,
@@ -394,10 +424,31 @@ pub struct Manifest {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum TerminalErrorKind {
+    FailedTarget,
+    ConstructionExhaustion,
+    WallTermination,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct TerminalErrorEvidence {
+    pub kind: TerminalErrorKind,
+    pub arm: Arm,
+    pub global_request_index: Option<usize>,
+    pub candidate_id: Option<String>,
+    pub evaluation_status: Option<EvaluationStatus>,
+    pub failure_reason: Option<String>,
+    pub next_schedule_identity: Option<CandidateIdentity>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct RunStatus {
     pub run_id: String,
     pub disposition: String,
     pub error: Option<String>,
+    pub terminal_error: Option<TerminalErrorEvidence>,
+    pub end_unix_ms: u128,
     pub total_monotonic_wall_time_ms: f64,
     pub adaptive_charged_requests: usize,
     pub iid_charged_requests: usize,
@@ -450,7 +501,8 @@ impl ArtifactSink {
         &self,
         disposition: &str,
         error: Option<String>,
-        elapsed: Duration,
+        terminal_error: Option<TerminalErrorEvidence>,
+        started: Instant,
     ) -> Result<RunStatus, String> {
         let (adaptive, iid) = self.charged_counts()?;
         let mut hashes = BTreeMap::new();
@@ -462,10 +514,17 @@ impl ArtifactSink {
         for name in files {
             hashes.insert(name.to_owned(), file_sha256(&self.directory.join(name))?);
         }
+        let elapsed = started.elapsed();
+        let end_unix_ms = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .map_err(|e| format!("system clock before Unix epoch at finalization: {e}"))?
+            .as_millis();
         let status = RunStatus {
             run_id: self.run_id.clone(),
             disposition: disposition.to_owned(),
             error,
+            terminal_error,
+            end_unix_ms,
             total_monotonic_wall_time_ms: elapsed.as_secs_f64() * 1_000.0,
             adaptive_charged_requests: adaptive,
             iid_charged_requests: iid,
@@ -474,6 +533,74 @@ impl ArtifactSink {
         };
         write_json(self.directory.join("run-status.json"), &status)?;
         Ok(status)
+    }
+
+    pub fn terminal_error_evidence(&self, error: &str) -> Result<TerminalErrorEvidence, String> {
+        if error.starts_with("failed_target:") {
+            let rows = read_jsonl_rows::<TargetRow>(
+                &self.directory.join("target-evaluations.jsonl"),
+                "target row for terminal evidence",
+            )?;
+            let row = rows
+                .last()
+                .ok_or("failed-target terminal evidence has no target row")?;
+            return Ok(TerminalErrorEvidence {
+                kind: TerminalErrorKind::FailedTarget,
+                arm: row.arm,
+                global_request_index: Some(row.global_request_index),
+                candidate_id: Some(row.candidate_id.clone()),
+                evaluation_status: Some(row.evaluation_status),
+                failure_reason: row.failure_reason.clone(),
+                next_schedule_identity: None,
+            });
+        }
+        if error.starts_with("construction_exhaustion:") {
+            let rows = read_jsonl_rows::<ConstructionRejectionRow>(
+                &self.directory.join("construction-rejections.jsonl"),
+                "construction rejection for terminal evidence",
+            )?;
+            let row = rows
+                .last()
+                .ok_or("construction-exhaustion terminal evidence has no rejection row")?;
+            let mut identity = row.identity.clone();
+            identity.construction_attempt = 0;
+            return Ok(TerminalErrorEvidence {
+                kind: TerminalErrorKind::ConstructionExhaustion,
+                arm: row.arm,
+                global_request_index: None,
+                candidate_id: None,
+                evaluation_status: None,
+                failure_reason: None,
+                next_schedule_identity: Some(identity),
+            });
+        }
+        if error.starts_with("wall_termination:") {
+            let targets = read_jsonl_rows::<TargetRow>(
+                &self.directory.join("target-evaluations.jsonl"),
+                "target row for wall terminal evidence",
+            )?;
+            let arm_rows = read_jsonl_rows::<ArmRunRow>(
+                &self.directory.join("arm-runs.jsonl"),
+                "arm row for wall terminal evidence",
+            )?;
+            let arm = arm_rows
+                .last()
+                .map(|row| row.arm)
+                .or_else(|| targets.last().map(|row| row.arm))
+                .unwrap_or(Arm::Adaptive);
+            return Ok(TerminalErrorEvidence {
+                kind: TerminalErrorKind::WallTermination,
+                arm,
+                global_request_index: targets.last().map(|row| row.global_request_index),
+                candidate_id: targets.last().map(|row| row.candidate_id.clone()),
+                evaluation_status: None,
+                failure_reason: None,
+                next_schedule_identity: None,
+            });
+        }
+        Err(format!(
+            "unstructured packet error cannot be finalized: {error}"
+        ))
     }
 
     fn charged_counts(&self) -> Result<(usize, usize), String> {
@@ -493,8 +620,19 @@ impl ArtifactSink {
     }
 }
 
+fn read_jsonl_rows<T: for<'de> Deserialize<'de>>(
+    path: &Path,
+    label: &str,
+) -> Result<Vec<T>, String> {
+    let text = fs::read_to_string(path).map_err(|e| format!("read {label}: {e}"))?;
+    text.lines()
+        .map(|line| serde_json::from_str(line).map_err(|e| format!("parse {label}: {e}")))
+        .collect()
+}
+
 pub fn artifact_jsonl_files() -> Vec<&'static str> {
     vec![
+        "charged-requests.jsonl",
         "target-evaluations.jsonl",
         "cache.jsonl",
         "construction-rejections.jsonl",
@@ -589,7 +727,39 @@ impl ConstructedCandidate {
 
 fn decimal_rational(value: f64) -> String {
     let value = if value == 0.0 { 0.0 } else { value };
-    format!("{value:.17}")
+    let decimal = format!("{value:.17}");
+    let negative = decimal.starts_with('-');
+    let unsigned = decimal.strip_prefix('-').unwrap_or(&decimal);
+    let (whole, fractional) = unsigned
+        .split_once('.')
+        .expect("fixed precision decimal contains a point");
+    let fractional = fractional.trim_end_matches('0');
+    let denominator = 10_i128.pow(fractional.len() as u32);
+    let mut numerator = whole.parse::<i128>().expect("finite fixed decimal integer") * denominator
+        + if fractional.is_empty() {
+            0
+        } else {
+            fractional
+                .parse::<i128>()
+                .expect("finite fixed decimal fraction")
+        };
+    if negative {
+        numerator = -numerator;
+    }
+    if numerator == 0 {
+        return "0/1".into();
+    }
+    let divisor = gcd_i128(numerator.unsigned_abs(), denominator as u128) as i128;
+    let numerator = numerator / divisor;
+    let denominator = denominator / divisor;
+    format!("{numerator}/{denominator}")
+}
+
+fn gcd_i128(mut left: u128, mut right: u128) -> u128 {
+    while right != 0 {
+        (left, right) = (right, left % right);
+    }
+    left
 }
 
 fn exact_key(vertices: &[[String; 4]]) -> String {
@@ -635,7 +805,14 @@ impl Evaluator {
         sink: &ArtifactSink,
         global_request_count: &mut usize,
         deadline: Instant,
+        overall_started: Instant,
     ) -> Result<Evaluated, String> {
+        if Instant::now() >= deadline {
+            return Err(
+                "wall_termination: global deadline elapsed before the next request was charged"
+                    .into(),
+            );
+        }
         self.attempts += 1;
         *global_request_count += 1;
         let global_request_index = *global_request_count;
@@ -645,6 +822,28 @@ impl Evaluator {
         let exact_geometry = candidate.exact_geometry.clone();
         let geometry_identity = geometry_identity(&exact_geometry);
         let started = Instant::now();
+        let started_monotonic_ms = overall_started.elapsed().as_secs_f64() * 1_000.0;
+        sink.append(
+            "charged-requests.jsonl",
+            &ChargedRequestRow {
+                global_request_index,
+                candidate_id: candidate_id.clone(),
+                identity: identity.clone(),
+                arm: self.arm,
+                attempt_index,
+                exact_geometry_key: key.clone(),
+                geometry_identity: geometry_identity.clone(),
+                dual_vertices_rational: exact_geometry.clone(),
+                dual_vertices_f64: candidate.f64_geometry.clone(),
+                facet_count: candidate.facet_count,
+                parent_candidate_id: parent_candidate_id.clone(),
+                root_candidate_id: root_candidate_id.clone(),
+                level_threshold,
+                raw_proposed_chart: raw_proposed_chart.clone(),
+                product_chart: candidate.chart.clone(),
+                charged_monotonic_ms: overall_started.elapsed().as_secs_f64() * 1_000.0,
+            },
+        )?;
         let (cache_status, outcome) = if let Some(cached) = self.cache.get(&key) {
             self.hits += 1;
             (CacheStatus::Hit, OracleOutcome::Success(cached.clone()))
@@ -732,7 +931,9 @@ impl Evaluator {
             level_threshold,
             raw_proposed_chart,
             product_chart: candidate.chart.clone(),
+            started_monotonic_ms,
             wall_time_ms: started.elapsed().as_secs_f64() * 1_000.0,
+            cumulative_monotonic_ms: overall_started.elapsed().as_secs_f64() * 1_000.0,
         };
         sink.append("target-evaluations.jsonl", &row)?;
         Ok(Evaluated {
@@ -746,7 +947,7 @@ impl Evaluator {
         })
     }
 
-    fn row(&self, started: Instant, complete: bool) -> ArmRunRow {
+    fn row(&self, started: Instant, overall_started: Instant, complete: bool) -> ArmRunRow {
         ArmRunRow {
             arm: self.arm,
             target_attempts: self.attempts,
@@ -755,7 +956,9 @@ impl Evaluator {
             cache_hits: self.hits,
             failed_misses: self.failures,
             distinct_successful_keys: self.cache.len(),
+            started_monotonic_ms: started.duration_since(overall_started).as_secs_f64() * 1_000.0,
             wall_time_ms: started.elapsed().as_secs_f64() * 1_000.0,
+            cumulative_monotonic_ms: overall_started.elapsed().as_secs_f64() * 1_000.0,
             complete,
         }
     }
@@ -860,7 +1063,7 @@ fn run_packet_with_base_source(
     let mut particles = Vec::with_capacity(config.initial_particles);
 
     for base_index in 0..config.initial_particles {
-        let (identity, candidate, chart) = construct_base(
+        let construction = construct_base(
             config,
             &config_identity,
             source_revision,
@@ -869,9 +1072,19 @@ fn run_packet_with_base_source(
             &mut adaptive,
             sink,
             base_source,
-        )?;
+        );
+        let (identity, candidate, chart) = match construction {
+            Ok(value) => value,
+            Err(error) => {
+                sink.append(
+                    "arm-runs.jsonl",
+                    &adaptive.row(adaptive_started, overall_started, false),
+                )?;
+                return Err(error);
+            }
+        };
         let root = candidate_id(&identity);
-        let evaluated = adaptive.evaluate(
+        let evaluation = adaptive.evaluate(
             adaptive_oracle,
             identity,
             &candidate,
@@ -882,21 +1095,42 @@ fn run_packet_with_base_source(
             sink,
             &mut global_request_count,
             deadline,
-        )?;
+            overall_started,
+        );
+        let evaluated = match evaluation {
+            Ok(value) => value,
+            Err(error) if error.starts_with("wall_termination:") => {
+                sink.append(
+                    "arm-runs.jsonl",
+                    &adaptive.row(adaptive_started, overall_started, false),
+                )?;
+                return Err(error);
+            }
+            Err(error) => return Err(error),
+        };
         if let Some(stop) = hit_event(Arm::Adaptive, &evaluated) {
             sink.stop(&stop)?;
-            sink.append("arm-runs.jsonl", &adaptive.row(adaptive_started, false))?;
+            sink.append(
+                "arm-runs.jsonl",
+                &adaptive.row(adaptive_started, overall_started, false),
+            )?;
             return Ok(stopped_outcome(stop, &adaptive, None));
         }
         let sys = match require_success(&evaluated) {
             Ok(observation) => observation.sys,
             Err(error) => {
-                sink.append("arm-runs.jsonl", &adaptive.row(adaptive_started, false))?;
+                sink.append(
+                    "arm-runs.jsonl",
+                    &adaptive.row(adaptive_started, overall_started, false),
+                )?;
                 return Err(error);
             }
         };
         if let Err(error) = enforce_wall_time(config, overall_started) {
-            sink.append("arm-runs.jsonl", &adaptive.row(adaptive_started, false))?;
+            sink.append(
+                "arm-runs.jsonl",
+                &adaptive.row(adaptive_started, overall_started, false),
+            )?;
             return Err(error);
         }
         particles.push(Particle {
@@ -925,7 +1159,7 @@ fn run_packet_with_base_source(
             let mut state = survivors[parent_index].clone();
             for mutation_step in 0..config.mutation_steps_per_clone {
                 let before = state.candidate_id.clone();
-                let (identity, candidate, proposal_chart, raw_chart) = construct_mutation(
+                let construction = construct_mutation(
                     config,
                     &config_identity,
                     source_revision,
@@ -936,8 +1170,18 @@ fn run_packet_with_base_source(
                     &mut adaptive,
                     sink,
                     base_source,
-                )?;
-                let evaluated = adaptive.evaluate(
+                );
+                let (identity, candidate, proposal_chart, raw_chart) = match construction {
+                    Ok(value) => value,
+                    Err(error) => {
+                        sink.append(
+                            "arm-runs.jsonl",
+                            &adaptive.row(adaptive_started, overall_started, false),
+                        )?;
+                        return Err(error);
+                    }
+                };
+                let evaluation = adaptive.evaluate(
                     adaptive_oracle,
                     identity,
                     &candidate,
@@ -948,7 +1192,19 @@ fn run_packet_with_base_source(
                     sink,
                     &mut global_request_count,
                     deadline,
-                )?;
+                    overall_started,
+                );
+                let evaluated = match evaluation {
+                    Ok(value) => value,
+                    Err(error) if error.starts_with("wall_termination:") => {
+                        sink.append(
+                            "arm-runs.jsonl",
+                            &adaptive.row(adaptive_started, overall_started, false),
+                        )?;
+                        return Err(error);
+                    }
+                    Err(error) => return Err(error),
+                };
                 let proposal_sys = evaluated.observation.as_ref().map(|value| value.sys);
                 let accepted = proposal_sys.is_some_and(|sys| sys >= threshold);
                 if accepted {
@@ -974,15 +1230,24 @@ fn run_packet_with_base_source(
                 )?;
                 if let Some(stop) = hit_event(Arm::Adaptive, &evaluated) {
                     sink.stop(&stop)?;
-                    sink.append("arm-runs.jsonl", &adaptive.row(adaptive_started, false))?;
+                    sink.append(
+                        "arm-runs.jsonl",
+                        &adaptive.row(adaptive_started, overall_started, false),
+                    )?;
                     return Ok(stopped_outcome(stop, &adaptive, None));
                 }
                 if let Err(error) = require_success(&evaluated) {
-                    sink.append("arm-runs.jsonl", &adaptive.row(adaptive_started, false))?;
+                    sink.append(
+                        "arm-runs.jsonl",
+                        &adaptive.row(adaptive_started, overall_started, false),
+                    )?;
                     return Err(error);
                 }
                 if let Err(error) = enforce_wall_time(config, overall_started) {
-                    sink.append("arm-runs.jsonl", &adaptive.row(adaptive_started, false))?;
+                    sink.append(
+                        "arm-runs.jsonl",
+                        &adaptive.row(adaptive_started, overall_started, false),
+                    )?;
                     return Err(error);
                 }
             }
@@ -1023,7 +1288,10 @@ fn run_packet_with_base_source(
             },
         )?;
         if distinct < 8 {
-            sink.append("arm-runs.jsonl", &adaptive.row(adaptive_started, false))?;
+            sink.append(
+                "arm-runs.jsonl",
+                &adaptive.row(adaptive_started, overall_started, false),
+            )?;
             return Err(format!(
                 "post-level diversity gate failed at level {level}: {distinct} distinct states"
             ));
@@ -1035,12 +1303,15 @@ fn run_packet_with_base_source(
             adaptive.attempts
         ));
     }
-    sink.append("arm-runs.jsonl", &adaptive.row(adaptive_started, true))?;
+    sink.append(
+        "arm-runs.jsonl",
+        &adaptive.row(adaptive_started, overall_started, true),
+    )?;
 
     let iid_started = Instant::now();
     let mut iid = Evaluator::new(Arm::Iid);
     for base_index in 0..config.iid_requests {
-        let (identity, candidate, _) = construct_base(
+        let construction = construct_base(
             config,
             &config_identity,
             source_revision,
@@ -1049,9 +1320,19 @@ fn run_packet_with_base_source(
             &mut iid,
             sink,
             base_source,
-        )?;
+        );
+        let (identity, candidate, _) = match construction {
+            Ok(value) => value,
+            Err(error) => {
+                sink.append(
+                    "arm-runs.jsonl",
+                    &iid.row(iid_started, overall_started, false),
+                )?;
+                return Err(error);
+            }
+        };
         let root = candidate_id(&identity);
-        let evaluated = iid.evaluate(
+        let evaluation = iid.evaluate(
             iid_oracle,
             identity,
             &candidate,
@@ -1062,18 +1343,39 @@ fn run_packet_with_base_source(
             sink,
             &mut global_request_count,
             deadline,
-        )?;
+            overall_started,
+        );
+        let evaluated = match evaluation {
+            Ok(value) => value,
+            Err(error) if error.starts_with("wall_termination:") => {
+                sink.append(
+                    "arm-runs.jsonl",
+                    &iid.row(iid_started, overall_started, false),
+                )?;
+                return Err(error);
+            }
+            Err(error) => return Err(error),
+        };
         if let Some(stop) = hit_event(Arm::Iid, &evaluated) {
             sink.stop(&stop)?;
-            sink.append("arm-runs.jsonl", &iid.row(iid_started, false))?;
+            sink.append(
+                "arm-runs.jsonl",
+                &iid.row(iid_started, overall_started, false),
+            )?;
             return Ok(stopped_outcome(stop, &adaptive, Some(&iid)));
         }
         if let Err(error) = require_success(&evaluated) {
-            sink.append("arm-runs.jsonl", &iid.row(iid_started, false))?;
+            sink.append(
+                "arm-runs.jsonl",
+                &iid.row(iid_started, overall_started, false),
+            )?;
             return Err(error);
         }
         if let Err(error) = enforce_wall_time(config, overall_started) {
-            sink.append("arm-runs.jsonl", &iid.row(iid_started, false))?;
+            sink.append(
+                "arm-runs.jsonl",
+                &iid.row(iid_started, overall_started, false),
+            )?;
             return Err(error);
         }
     }
@@ -1083,7 +1385,10 @@ fn run_packet_with_base_source(
             iid.attempts
         ));
     }
-    sink.append("arm-runs.jsonl", &iid.row(iid_started, true))?;
+    sink.append(
+        "arm-runs.jsonl",
+        &iid.row(iid_started, overall_started, true),
+    )?;
     Ok(RunOutcome {
         stopped: None,
         adaptive_attempts: adaptive.attempts,
@@ -1093,14 +1398,10 @@ fn run_packet_with_base_source(
 
 fn require_success(evaluated: &Evaluated) -> Result<&Observation, String> {
     evaluated.observation.as_ref().ok_or_else(|| {
-        let prefix = if evaluated.failure_status == Some(EvaluationStatus::Timeout) {
-            "timeout"
-        } else {
-            "target failure"
-        };
         format!(
-            "{prefix}: charged request {} failed: {}",
+            "failed_target: charged request {} ({:?}) failed: {}",
             evaluated.global_request_index,
+            evaluated.failure_status,
             evaluated
                 .failure_reason
                 .as_deref()
@@ -1120,7 +1421,7 @@ fn stopped_outcome(stop: StopEvent, adaptive: &Evaluator, iid: Option<&Evaluator
 fn enforce_wall_time(config: &Config, started: Instant) -> Result<(), String> {
     if started.elapsed() > Duration::from_secs(config.abort_wall_time_seconds) {
         return Err(format!(
-            "timeout: readiness smoke exceeded frozen {}-second gate",
+            "wall_termination: readiness smoke exceeded frozen {}-second gate",
             config.abort_wall_time_seconds
         ));
     }
@@ -1208,7 +1509,7 @@ fn construct_base(
         }
     }
     Err(format!(
-        "{arm:?} base {base_index} exhausted construction retry cap"
+        "construction_exhaustion: {arm:?} base {base_index} exhausted construction retry cap"
     ))
 }
 
@@ -1301,7 +1602,7 @@ fn construct_mutation(
         }
     }
     Err(format!(
-        "adaptive level {level} clone {clone_index} step {mutation_step} exhausted construction retry cap"
+        "construction_exhaustion: adaptive level {level} clone {clone_index} step {mutation_step} exhausted construction retry cap"
     ))
 }
 
@@ -1390,6 +1691,8 @@ mod tests {
             artifact_kind: "synthetic_target_free".into(),
             run_id: "test-run".into(),
             start_unix_ms: 1,
+            launch_process_id: 1,
+            artifact_directory: "test-artifacts".into(),
             config_identity: config.identity(),
             exact_config: config.clone(),
             source: SourceIdentity {
@@ -1477,6 +1780,7 @@ mod tests {
                 &sink,
                 &mut global,
                 deadline,
+                Instant::now(),
             )
             .unwrap();
         evaluator
@@ -1491,6 +1795,7 @@ mod tests {
                 &sink,
                 &mut global,
                 deadline,
+                Instant::now(),
             )
             .unwrap();
         assert_eq!(evaluator.attempts, 2);
@@ -1546,6 +1851,7 @@ mod tests {
                 &sink,
                 &mut 0,
                 Instant::now() + Duration::from_secs(1),
+                Instant::now(),
             )
             .unwrap();
         assert_eq!(
@@ -1591,6 +1897,7 @@ mod tests {
                 &sink,
                 &mut 0,
                 Instant::now() + Duration::from_secs(1),
+                Instant::now(),
             )
             .unwrap();
         assert_eq!(

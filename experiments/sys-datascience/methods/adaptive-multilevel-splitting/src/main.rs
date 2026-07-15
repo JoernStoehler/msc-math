@@ -1,8 +1,8 @@
 use adaptive_multilevel_splitting::{
     file_sha256, run_packet, run_synthetic_packet, synthetic_observation, ArtifactSink, Config,
     EvaluationStatus, Manifest, Observation, Oracle, OracleOutcome, OracleRequest, RunOutcome,
-    SourceIdentity, TargetDiagnostics, ADAPTIVE_BUDGET, GENERATION_SCHEDULE, IID_BUDGET,
-    MUTATION_KERNEL,
+    SourceIdentity, TargetDiagnostics, TerminalErrorKind, ADAPTIVE_BUDGET, GENERATION_SCHEDULE,
+    IID_BUDGET, MUTATION_KERNEL,
 };
 use exp_sys_landscape::{
     compute_sys_computation, exact_volume_from_incidence_as_f64, SysLandscapePolytopeCache,
@@ -12,6 +12,8 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::env;
 use std::io::{Read, Write};
+#[cfg(target_os = "linux")]
+use std::os::unix::process::CommandExt;
 use std::path::{Path, PathBuf};
 use std::process::{Child, Command, ExitCode, Stdio};
 use std::thread;
@@ -187,20 +189,35 @@ fn real_main() -> Result<(), String> {
     let executable = env::current_exe().map_err(|e| format!("locate current executable: {e}"))?;
     let source = source_identity(args.mode, args.reviewed_commit.as_deref(), &executable)?;
     validate_launch(&args, &source)?;
+    if args.mode == Mode::Production
+        && env::var_os("AMS_TEST_REFUSAL_ONLY").is_some()
+        && env::var_os("AMS_TEST_VALIDATE_DIRTY_SOURCE").is_none()
+    {
+        return Err(
+            "production target disabled by the private AMS_TEST_REFUSAL_ONLY safety guard".into(),
+        );
+    }
+    if args.mode == Mode::Production && !source.source_tree_clean {
+        return Err("production target execution refuses a dirty or untracked source tree".into());
+    }
+    if args.mode == Mode::Production && env::var_os("AMS_TEST_REFUSAL_ONLY").is_some() {
+        return Err(
+            "production target disabled by the private AMS_TEST_REFUSAL_ONLY safety guard".into(),
+        );
+    }
     let artifact_kind = match args.mode {
         Mode::Synthetic => "synthetic_target_free",
         Mode::Production => "production_target",
     };
     let started = Instant::now();
-    let start_unix_ms = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map_err(|e| format!("system clock before Unix epoch: {e}"))?
-        .as_millis();
+    let start_unix_ms = unix_time_ms()?;
     let run_id = run_id(start_unix_ms, &source.git_revision, &args.artifacts);
     let manifest = Manifest {
         artifact_kind: artifact_kind.into(),
         run_id,
         start_unix_ms,
+        launch_process_id: std::process::id(),
+        artifact_directory: args.artifacts.display().to_string(),
         config_identity: config.identity(),
         exact_config: config.clone(),
         source,
@@ -245,13 +262,22 @@ fn real_main() -> Result<(), String> {
         }
         Mode::Production => run_packet(&config, &source_revision, &mut adaptive, &mut iid, &sink),
     };
-    let (disposition, status_error) = match &run_result {
-        Ok(outcome) if outcome.stopped.is_some() => ("sys_gt_one_stop", None),
-        Ok(_) => ("complete", None),
-        Err(error) if error.starts_with("timeout:") => ("timeout", Some(error.clone())),
-        Err(error) => ("error", Some(error.clone())),
+    let terminal_error = match &run_result {
+        Ok(_) => None,
+        Err(error) => Some(sink.terminal_error_evidence(error)?),
     };
-    sink.finalize(disposition, status_error, started.elapsed())?;
+    let (disposition, status_error) = match (&run_result, terminal_error.as_ref()) {
+        (Ok(outcome), _) if outcome.stopped.is_some() => ("sys_gt_one_stop", None),
+        (Ok(_), _) => ("complete", None),
+        (Err(error), Some(evidence))
+            if matches!(evidence.kind, TerminalErrorKind::FailedTarget)
+                && evidence.evaluation_status == Some(EvaluationStatus::Timeout) =>
+        {
+            ("timeout", Some(error.clone()))
+        }
+        (Err(error), _) => ("error", Some(error.clone())),
+    };
+    sink.finalize(disposition, status_error, terminal_error, started)?;
     let outcome = run_result?;
     print_outcome(args.mode, &args.artifacts, &outcome)?;
     Ok(())
@@ -283,11 +309,6 @@ fn validate_launch(args: &Args, source: &SourceIdentity) -> Result<(), String> {
                     "production HEAD {} does not equal reviewed commit {reviewed}",
                     source.git_revision
                 ));
-            }
-            if !source.source_tree_clean {
-                return Err(
-                    "production target execution refuses a dirty or untracked source tree".into(),
-                );
             }
         }
     }
@@ -323,6 +344,12 @@ fn target_once() -> Result<(), String> {
         .map_err(|e| format!("read target-once request: {e}"))?;
     let request: TargetOnceRequest =
         serde_json::from_slice(&bytes).map_err(|e| format!("parse target-once request: {e}"))?;
+    if request.mode == TargetMode::Production && env::var_os("AMS_TEST_REFUSAL_ONLY").is_some() {
+        return Err(
+            "production target child disabled by the private AMS_TEST_REFUSAL_ONLY safety guard"
+                .into(),
+        );
+    }
     if request.synthetic_delay_ms > 0 {
         if request.mode != TargetMode::Synthetic {
             return Err("synthetic delay is prohibited for a production target child".into());
@@ -502,11 +529,14 @@ fn invoke_target_child(
     request: &TargetOnceRequest,
     timeout: Duration,
 ) -> Result<TargetOnceResponse, ChildInvokeError> {
-    let mut child = Command::new(executable)
+    let mut command = Command::new(executable);
+    command
         .arg("target-once")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
+        .stderr(Stdio::piped());
+    configure_parent_death(&mut command)?;
+    let mut child = command
         .spawn()
         .map_err(|e| ChildInvokeError::Failure(format!("spawn target child: {e}")))?;
     let readers = start_child_pipe_readers(&mut child)?;
@@ -521,6 +551,7 @@ fn invoke_target_child(
     loop {
         match child.try_wait() {
             Ok(Some(status)) => {
+                let completed_elapsed = started.elapsed();
                 let (stdout, stderr) = finish_child_pipe_readers(readers)?;
                 if !status.success() {
                     return Err(ChildInvokeError::Failure(format!(
@@ -528,9 +559,11 @@ fn invoke_target_child(
                         String::from_utf8_lossy(&stderr).trim()
                     )));
                 }
-                return serde_json::from_slice(&stdout).map_err(|e| {
-                    ChildInvokeError::Failure(format!("parse target child response: {e}"))
-                });
+                let response: TargetOnceResponse =
+                    serde_json::from_slice(&stdout).map_err(|e| {
+                        ChildInvokeError::Failure(format!("parse target child response: {e}"))
+                    })?;
+                return classify_completed_response(response, completed_elapsed, timeout);
             }
             Ok(None) if started.elapsed() < timeout => {
                 thread::sleep(Duration::from_millis(2));
@@ -554,6 +587,53 @@ fn invoke_target_child(
             }
         }
     }
+}
+
+fn response_is_sys_hit(response: &TargetOnceResponse) -> bool {
+    matches!(
+        response,
+        TargetOnceResponse::Success { observation, .. } if observation.sys > 1.0
+    )
+}
+
+fn classify_completed_response(
+    response: TargetOnceResponse,
+    elapsed: Duration,
+    timeout: Duration,
+) -> Result<TargetOnceResponse, ChildInvokeError> {
+    if elapsed > timeout && !response_is_sys_hit(&response) {
+        return Err(ChildInvokeError::Timeout(format!(
+            "target child completed after {:.3} ms deadline; late non-hit was charged as timeout",
+            timeout.as_secs_f64() * 1_000.0
+        )));
+    }
+    Ok(response)
+}
+
+#[cfg(target_os = "linux")]
+fn configure_parent_death(command: &mut Command) -> Result<(), ChildInvokeError> {
+    let expected_parent = unsafe { libc::getpid() };
+    // SAFETY: only async-signal-safe libc calls occur between fork and exec.
+    unsafe {
+        command.pre_exec(move || {
+            if libc::prctl(libc::PR_SET_PDEATHSIG, libc::SIGKILL) != 0 {
+                return Err(std::io::Error::last_os_error());
+            }
+            if libc::getppid() != expected_parent {
+                libc::kill(libc::getpid(), libc::SIGKILL);
+                libc::_exit(125);
+            }
+            Ok(())
+        });
+    }
+    Ok(())
+}
+
+#[cfg(not(target_os = "linux"))]
+fn configure_parent_death(_command: &mut Command) -> Result<(), ChildInvokeError> {
+    Err(ChildInvokeError::Failure(
+        "target child parent-death enforcement is available only on Linux".into(),
+    ))
 }
 
 struct ChildPipeReaders {
@@ -755,4 +835,43 @@ fn run_id(start_unix_ms: u128, revision: &str, artifacts: &Path) -> String {
         "amsrun-{}",
         &format!("{:x}", Sha256::digest(material.as_bytes()))[..24]
     )
+}
+
+fn unix_time_ms() -> Result<u128, String> {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map_err(|e| format!("system clock before Unix epoch: {e}"))
+        .map(|duration| duration.as_millis())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn response(sys: f64) -> TargetOnceResponse {
+        TargetOnceResponse::Success {
+            observation: adaptive_multilevel_splitting::synthetic_observation(1.0, sys),
+            synthetic_padding: None,
+        }
+    }
+
+    #[test]
+    fn late_completed_non_hit_is_timeout() {
+        let result = classify_completed_response(
+            response(0.9),
+            Duration::from_millis(11),
+            Duration::from_millis(10),
+        );
+        assert!(matches!(result, Err(ChildInvokeError::Timeout(_))));
+    }
+
+    #[test]
+    fn late_completed_sys_hit_is_returned_for_flush_and_stop() {
+        let result = classify_completed_response(
+            response(1.01),
+            Duration::from_millis(11),
+            Duration::from_millis(10),
+        );
+        assert!(matches!(result, Ok(TargetOnceResponse::Success { .. })));
+    }
 }

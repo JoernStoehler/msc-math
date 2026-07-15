@@ -36,7 +36,13 @@ unquotiented.
 Construction failures are uncharged, reasoned, and retried at most 64 times.
 Every target request is charged before arm-private cache lookup, including a
 duplicate, cache hit, target failure, invalid result, or timeout. A failed
-target stops the readiness run incomplete.
+target stops the readiness run incomplete. Before either cache lookup or child
+spawn, the parent synchronizes a full charge row to
+`charged-requests.jsonl`. Finalized packets reconcile this ledger one-for-one
+with target rows. An externally terminated parent can instead leave only one
+final outcome-unknown ledger row; the analyzer audits that reachable prefix but
+never passes it as ready, and reports the unmatched charge as an unknown
+outcome.
 
 ## Killable target boundary and stop rules
 
@@ -45,9 +51,14 @@ Every uncached request invokes the same reviewed executable through its private
 For production, the child reconstructs with
 `SysLandscapePolytopeCache::from_f64_dual_vertices`, computes the current
 automatic target, and returns a structured result. The parent polls the child
-and kills it at the remaining global 600-second deadline. Stdout and stderr are
-drained concurrently while polling, and the structured response is bounded at
-64 MiB. A timeout is a charged final failure row.
+and kills it at the remaining global 900-second deadline. On Linux the child
+also installs `PR_SET_PDEATHSIG(SIGKILL)` before exec and checks the parent PID
+again to close the setup race, so external parent termination cannot leave the
+target child running. Stdout and stderr are drained concurrently while polling,
+and the structured response is bounded at 64 MiB. A timeout is a charged final
+failure row. If polling first observes an already-exited child after its
+deadline, a non-hit result is still a timeout; a late `sys > 1` result is
+retained so the mandatory flush-and-stop rule wins.
 
 A returned `sys > 1` is written before elapsed-time disposition. Exactly one
 such row must be the final charged request and agree with `stop-event.json` in
@@ -114,15 +125,23 @@ python3 analyze.py /tmp/ams-readiness-production \
 Production refuses a dirty tree, wrong/missing reviewed commit, reused output
 directory, and every synthetic test flag. Production analysis recomputes clean
 `HEAD`, the packet lock hash, and the executable hash against the manifest.
+The private refusal-test guard also blocks the `target-once` production
+endpoint itself, so production-refusal tests remain target-free on a clean
+checkout.
 
 ## Artifacts and readiness gates
 
-- `manifest.json`: launch run ID/start timestamp, exact config, reviewed source
+- `manifest.json`: recomputable launch run ID, start timestamp, process/artifact
+  launch identity, exact config, reviewed source
   and executable/lock identities, budgets, non-invariant kernel, and prohibited
   probability claim.
+- `charged-requests.jsonl`: synchronized pre-exposure rows binding every
+  global/arm request index to its candidate, geometry, genealogy, chart, and
+  cumulative monotonic charge time.
 - `target-evaluations.jsonl`: every charged request, explicit success/failure
   reason, exact and f64 dual geometry, key/identity/facets, canonical and raw
-  chart, genealogy/threshold, compact target diagnostics, and wall time.
+  chart, genealogy/threshold, compact target diagnostics, request duration, and
+  cumulative monotonic completion time.
 - `cache.jsonl`: exactly one row per arm-private successful miss, including
   exact geometry, compact diagnostics, and the full production
   `OrbitSearchResult` (synthetic rows identify their formula fixture instead).
@@ -135,18 +154,33 @@ directory, and every synthetic test flag. Production analysis recomputes clean
 - `arm-runs.jsonl`: reconciled per-arm attempts, rejection/cache/failure counts,
   completeness, distinct successful keys, and wall time.
 - `stop-event.json`: present only after a flushed `sys > 1` stop.
-- `run-status.json`: final disposition, matching run ID, charged counts, total
+- `run-status.json`: final disposition, exact tagged terminal-error evidence
+  when applicable, matching run ID, end wall timestamp, charged counts, total
   monotonic wall time, and SHA-256 of every owning artifact except itself.
 
 Only disposition `complete` can pass readiness. It requires exactly 48/16
 charged rows, exact base/mutation grids and retry histories, two complete level
 populations with at least eight distinct exact geometry keys each, at least two
 survivor roots per level, at least one accepted valid mutation, no failed row,
-full accounting, and total time at most 600 seconds. The analyzer independently
+full accounting, and total time at most 900 seconds. The 900-second gate is a
+cost-only pre-valid-smoke choice: seven accidentally retained initial target
+timings summed to 65.184 seconds (mean 9.312, maximum 10.470), so 64 times the
+mean is already about 596 seconds before mutation-tail and orchestration cost.
+The 1.5x margin reduces late-run censoring while retaining a killable
+local-minutes bound; it was not tuned using target-tail quality.
+
+The analyzer independently
 replays identities, clone assignments, Gaussian mutations, thresholds,
 genealogy, the exact global request schedule, exact product geometry and
 product volume, canonical chart encoding (absolute chart tolerance `2e-10`),
-cache audit, stop evidence, file hashes, and time totals.
+cache audit, stop evidence, exact stream schemas/order, file hashes, launch ID,
+and wall/monotonic timing. Wall and monotonic elapsed times must agree within
+100 ms, allowing millisecond quantization and short finalization scheduling but
+failing closed on a material clock adjustment. Production cache audit checks the full
+`OrbitSearchResult`/orbit schemas and independently derives admissibility
+counts, action minima, interval minima, and capacity from retained orbits.
+Exact geometry coordinates use reduced `numerator/positive-denominator`
+spelling, including `0/1`.
 
 ## Local gates
 

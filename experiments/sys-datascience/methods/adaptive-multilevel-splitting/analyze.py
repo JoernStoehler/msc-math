@@ -24,6 +24,7 @@ class ArtifactError(RuntimeError):
 
 
 JSONL_FILES = (
+    "charged-requests.jsonl",
     "target-evaluations.jsonl",
     "cache.jsonl",
     "construction-rejections.jsonl",
@@ -31,11 +32,75 @@ JSONL_FILES = (
     "levels.jsonl",
     "arm-runs.jsonl",
 )
+MANIFEST_FIELDS = {
+    "artifact_kind", "run_id", "start_unix_ms", "launch_process_id", "artifact_directory",
+    "config_identity", "exact_config", "source", "adaptive_budget", "iid_budget",
+    "target_probability_estimate", "tail_probability_supported", "mutation_kernel",
+    "generation_schedule", "factor_exchange_quotiented",
+}
+SOURCE_FIELDS = {
+    "git_revision", "reviewed_revision", "source_tree_clean", "executable_sha256",
+    "cargo_lock_sha256", "production_target",
+}
+STATUS_FIELDS = {
+    "run_id", "disposition", "error", "terminal_error", "end_unix_ms",
+    "total_monotonic_wall_time_ms", "adaptive_charged_requests", "iid_charged_requests",
+    "total_charged_requests", "artifact_sha256",
+}
+TERMINAL_ERROR_FIELDS = {
+    "kind", "arm", "global_request_index", "candidate_id", "evaluation_status",
+    "failure_reason", "next_schedule_identity",
+}
+CHARGED_FIELDS = {
+    "global_request_index", "candidate_id", "identity", "arm", "attempt_index",
+    "exact_geometry_key", "geometry_identity", "dual_vertices_rational", "dual_vertices_f64",
+    "facet_count", "parent_candidate_id", "root_candidate_id", "level_threshold",
+    "raw_proposed_chart", "product_chart", "charged_monotonic_ms",
+}
+TARGET_FIELDS = CHARGED_FIELDS - {"charged_monotonic_ms"} | {
+    "cache_status", "evaluation_status", "failure_reason", "capacity", "volume", "sys",
+    "diagnostics", "audit_kind", "started_monotonic_ms", "wall_time_ms",
+    "cumulative_monotonic_ms",
+}
+CACHE_FIELDS = {
+    "arm", "exact_geometry_key", "geometry_identity", "dual_vertices_rational",
+    "dual_vertices_f64", "facet_count", "product_chart", "capacity", "volume", "sys",
+    "diagnostics", "capacity_result", "audit_kind",
+}
+REJECTION_FIELDS = {
+    "candidate_id", "identity", "arm", "reason", "parent_candidate_id",
+    "root_candidate_id", "raw_proposed_chart",
+}
+TRANSITION_FIELDS = {
+    "level", "clone_index", "mutation_step", "frozen_threshold",
+    "state_before_candidate_id", "proposal_candidate_id", "proposal_sys", "accepted",
+    "state_after_candidate_id", "root_candidate_id",
+}
+LEVEL_FIELDS = {
+    "level", "frozen_threshold", "survivor_candidate_ids", "survivor_root_candidate_ids",
+    "clone_parent_candidate_ids", "post_level_population_candidate_ids",
+    "post_level_population_geometry_keys", "post_level_distinct_geometry_keys",
+}
+ARM_RUN_FIELDS = {
+    "arm", "target_attempts", "construction_rejections", "cache_misses", "cache_hits",
+    "failed_misses", "distinct_successful_keys", "wall_time_ms", "cumulative_monotonic_ms",
+    "started_monotonic_ms", "complete",
+}
+ROW_FIELDS = {
+    "charged-requests.jsonl": CHARGED_FIELDS,
+    "target-evaluations.jsonl": TARGET_FIELDS,
+    "cache.jsonl": CACHE_FIELDS,
+    "construction-rejections.jsonl": REJECTION_FIELDS,
+    "mutation-transitions.jsonl": TRANSITION_FIELDS,
+    "levels.jsonl": LEVEL_FIELDS,
+    "arm-runs.jsonl": ARM_RUN_FIELDS,
+}
 STOP_ACTION = (
     "artifacts_flushed_stop_unrelated_search_independent_validation_required"
 )
 CHART_TOLERANCE = 2.0e-10
 RAW_CHART_TOLERANCE = 2.0e-12
+WALL_CLOCK_RECONCILIATION_TOLERANCE_MS = 100.0
 IDENTITY_FIELDS = {
     "packet_version",
     "config_identity",
@@ -56,10 +121,15 @@ def fail(message: str) -> None:
     raise ArtifactError(message)
 
 
+def require_fields(value: Any, expected: set[str], label: str) -> None:
+    if not isinstance(value, dict) or set(value) != expected:
+        fail(f"{label} has missing or extra fields")
+
+
 def read_json(path: Path) -> Any:
     try:
-        return json.loads(path.read_text())
-    except (OSError, json.JSONDecodeError) as error:
+        return strict_json_loads(path.read_text())
+    except (OSError, json.JSONDecodeError, ValueError) as error:
         fail(f"cannot read valid JSON {path}: {error}")
 
 
@@ -73,13 +143,28 @@ def read_jsonl(path: Path) -> list[dict[str, Any]]:
         if not line.strip():
             fail(f"blank JSONL row in {path}:{number}")
         try:
-            row = json.loads(line)
-        except json.JSONDecodeError as error:
+            row = strict_json_loads(line)
+        except (json.JSONDecodeError, ValueError) as error:
             fail(f"invalid JSON in {path}:{number}: {error}")
         if not isinstance(row, dict):
             fail(f"non-object JSONL row in {path}:{number}")
         rows.append(row)
     return rows
+
+
+def strict_json_loads(text: str) -> Any:
+    def object_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError(f"duplicate JSON object key {key!r}")
+            result[key] = value
+        return result
+
+    def reject_constant(value: str) -> None:
+        raise ValueError(f"nonstandard JSON constant {value}")
+
+    return json.loads(text, object_pairs_hook=object_pairs, parse_constant=reject_constant)
 
 
 def compact_json(value: Any) -> bytes:
@@ -143,22 +228,22 @@ def validate_identity(
     if arm not in {"adaptive", "iid"}:
         fail("candidate identity has an invalid arm")
     attempt = identity.get("construction_attempt")
-    if not isinstance(attempt, int) or not 0 <= attempt < config["construction_retry_cap"]:
+    if not exact_integer(attempt) or attempt >= config["construction_retry_cap"]:
         fail("candidate identity construction attempt is outside the retry cap")
     if identity.get("level") is None:
         if (
             identity.get("parent_candidate_id") is not None
             or identity.get("clone_index") is not None
             or identity.get("mutation_step") is not None
-            or not isinstance(identity.get("base_index"), int)
+            or not exact_integer(identity.get("base_index"))
         ):
             fail("base candidate identity has mutation fields")
     else:
         if (
             arm != "adaptive"
-            or not isinstance(identity.get("level"), int)
-            or not isinstance(identity.get("clone_index"), int)
-            or not isinstance(identity.get("mutation_step"), int)
+            or not exact_integer(identity.get("level"))
+            or not exact_integer(identity.get("clone_index"))
+            or not exact_integer(identity.get("mutation_step"))
             or identity.get("base_index") is not None
             or not isinstance(identity.get("parent_candidate_id"), str)
         ):
@@ -177,6 +262,10 @@ def finite_positive(value: Any) -> bool:
     return finite_number(value) and value > 0
 
 
+def exact_integer(value: Any, minimum: int = 0) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool) and value >= minimum
+
+
 def parse_exact_vertices(value: Any, label: str) -> list[list[Fraction]]:
     if not isinstance(value, list) or len(value) != 10:
         fail(f"{label} lacks ten exact dual vertices")
@@ -185,9 +274,14 @@ def parse_exact_vertices(value: Any, label: str) -> list[list[Fraction]]:
         if not isinstance(row, list) or len(row) != 4 or not all(isinstance(x, str) for x in row):
             fail(f"{label} has malformed exact dual vertices")
         try:
-            parsed.append([Fraction(x) for x in row])
+            parsed_row = [Fraction(x) for x in row]
         except (ValueError, ZeroDivisionError) as error:
             fail(f"{label} has invalid rational coordinate: {error}")
+        for text, rational in zip(row, parsed_row):
+            canonical = f"{rational.numerator}/{rational.denominator}"
+            if text != canonical:
+                fail(f"{label} has noncanonical or unreduced rational coordinate")
+        parsed.append(parsed_row)
     return parsed
 
 
@@ -387,6 +481,7 @@ def verify_geometry(row: dict[str, Any], label: str) -> Fraction:
 
 
 def verify_artifact_hashes(directory: Path, manifest: dict[str, Any], status: dict[str, Any]) -> None:
+    require_fields(status, STATUS_FIELDS, "run status")
     if status.get("run_id") != manifest.get("run_id"):
         fail("manifest and final status run IDs disagree")
     expected_names = {"manifest.json", *JSONL_FILES}
@@ -456,6 +551,7 @@ def validate_manifest(
     cargo_lock: Path | None,
     executable: Path | None,
 ) -> tuple[dict[str, Any], str, str]:
+    require_fields(manifest, MANIFEST_FIELDS, "manifest")
     config = manifest.get("exact_config")
     if not isinstance(config, dict):
         fail("manifest exact_config is missing")
@@ -473,7 +569,7 @@ def validate_manifest(
         "mutation_steps_per_clone": 2,
         "iid_requests": 16,
         "construction_retry_cap": 64,
-        "abort_wall_time_seconds": 600,
+        "abort_wall_time_seconds": 900,
         "gap_logit_scale": 0.08,
         "centered_log_radius_scale": 0.04,
         "phase_scale": 0.08,
@@ -484,6 +580,15 @@ def validate_manifest(
     }
     if set(config) != set(fixed_fields):
         fail("config has missing or extra frozen fields")
+    integer_config_fields = {
+        "master_seed", "replicate", "initial_particles", "levels", "survivors_per_level",
+        "clones_per_level", "mutation_steps_per_clone", "iid_requests",
+        "construction_retry_cap", "abort_wall_time_seconds",
+    }
+    if any(not exact_integer(config[field]) for field in integer_config_fields):
+        fail("config integer fields have non-integer JSON types")
+    if not isinstance(config["factor_exchange_quotiented"], bool):
+        fail("config factor-exchange flag is not Boolean")
     for field, expected in fixed_fields.items():
         if config.get(field) != expected:
             fail(f"config changes frozen field {field}")
@@ -498,15 +603,24 @@ def validate_manifest(
     }
     if any(manifest.get(field) != expected for field, expected in manifest_fixed.items()):
         fail("manifest changes the fixed budget, policy, or claim boundary")
-    if not isinstance(manifest.get("run_id"), str) or not manifest["run_id"].startswith("amsrun-"):
-        fail("manifest lacks a launch run ID")
-    if not isinstance(manifest.get("start_unix_ms"), int) or manifest["start_unix_ms"] <= 0:
+    if not isinstance(manifest["tail_probability_supported"], bool) or not isinstance(
+        manifest["factor_exchange_quotiented"], bool
+    ):
+        fail("manifest claim-boundary flags are not Boolean")
+    if not exact_integer(manifest.get("start_unix_ms"), 1):
         fail("manifest lacks a pre-exposure start timestamp")
+    process_id = manifest.get("launch_process_id")
+    artifact_directory = manifest.get("artifact_directory")
+    if not exact_integer(process_id, 1) or not isinstance(artifact_directory, str):
+        fail("manifest lacks recomputable launch identity fields")
     kind = manifest.get("artifact_kind")
     if kind not in {"synthetic_target_free", "production_target"}:
         fail("unknown artifact kind")
     source = manifest.get("source")
-    if not isinstance(source, dict) or source.get("production_target") != (kind == "production_target"):
+    require_fields(source, SOURCE_FIELDS, "manifest source identity")
+    if not isinstance(source["source_tree_clean"], bool) or not isinstance(source["production_target"], bool):
+        fail("source identity flags are not Boolean")
+    if source.get("production_target") != (kind == "production_target"):
         fail("source identity disagrees with artifact kind")
     if not isinstance(source.get("git_revision"), str):
         fail("manifest lacks source revision")
@@ -518,11 +632,24 @@ def validate_manifest(
         if source.get("source_tree_clean") is not True:
             fail("production artifacts came from a dirty source tree")
         verify_production_identity(source, expected_reviewed_revision, repo_root, cargo_lock, executable)
+    material = (
+        f"ams-readiness-run-v1\n{manifest['start_unix_ms']}\n{process_id}\n"
+        f"{source['git_revision']}\n{artifact_directory}\n"
+    )
+    expected_run_id = "amsrun-" + sha256(material.encode())[:24]
+    if manifest.get("run_id") != expected_run_id:
+        fail("manifest run ID is not recomputable from launch identity")
     return config, config_id, kind
 
 
 def logical_identity(identity: dict[str, Any]) -> tuple[Any, ...]:
     return tuple(identity[field] for field in sorted(IDENTITY_FIELDS - {"construction_attempt"}))
+
+
+def copy_identity_with_attempt(identity: dict[str, Any], attempt: int) -> dict[str, Any]:
+    result = dict(identity)
+    result["construction_attempt"] = attempt
+    return result
 
 
 def request_schedule_token(identity: dict[str, Any]) -> tuple[Any, ...]:
@@ -615,7 +742,7 @@ def validate_diagnostics(row: dict[str, Any], label: str) -> None:
         "indeterminate_count",
     }:
         fail(f"{label} lacks compact target diagnostics")
-    if not all(isinstance(diagnostics[field], int) and diagnostics[field] >= 0 for field in (
+    if not all(exact_integer(diagnostics[field]) for field in (
         "iterations", "returned_orbit_count", "exact_admissible_count", "indeterminate_count"
     )):
         fail(f"{label} has invalid diagnostic counts")
@@ -634,18 +761,110 @@ def verify_full_cache_audit(row: dict[str, Any], kind: str) -> None:
         return
     if not isinstance(result, dict) or row.get("audit_kind") != "full_orbit_search_result":
         fail("production cache miss lacks full OrbitSearchResult")
+    require_fields(
+        result,
+        {"orbits", "min_action", "min_action_lower", "min_action_upper", "iterations"},
+        "full OrbitSearchResult",
+    )
     orbits = result.get("orbits")
     diagnostics = row["diagnostics"]
-    if not isinstance(orbits, list) or len(orbits) != diagnostics["returned_orbit_count"]:
+    if not isinstance(orbits, list) or not orbits or len(orbits) != diagnostics["returned_orbit_count"]:
         fail("full cache audit orbit count disagrees with compact diagnostics")
-    if result.get("iterations") != diagnostics["iterations"]:
+    if not exact_integer(result.get("iterations")) or result["iterations"] != diagnostics["iterations"]:
         fail("full cache audit iteration count disagrees with compact diagnostics")
+    if any(not finite_number(result.get(field)) for field in ("min_action", "min_action_lower", "min_action_upper")):
+        fail("full cache audit has invalid aggregate action values")
     if result.get("min_action") != row.get("capacity"):
         fail("full cache audit minimum action disagrees with capacity")
     if result.get("min_action_lower") != diagnostics["action_lower"] or result.get("min_action_upper") != diagnostics["action_upper"]:
         fail("full cache audit action interval disagrees with compact diagnostics")
-    exact = sum(orbit.get("admissibility") == "AdmissibleExact" for orbit in orbits if isinstance(orbit, dict))
-    indeterminate = sum(orbit.get("admissibility") == "IndeterminateF64" for orbit in orbits if isinstance(orbit, dict))
+    orbit_fields = {
+        "sigma", "beta", "beta_margin", "action", "action_lower", "action_upper", "q",
+        "q_error_bound", "mu", "xi", "admissibility",
+    }
+    seen_sigma: set[tuple[int, ...]] = set()
+    admissible_actions: list[float] = []
+    lower_values: list[float] = []
+    upper_values: list[float] = []
+    previous_lower = -math.inf
+    exact = 0
+    indeterminate = 0
+    for index, orbit in enumerate(orbits):
+        require_fields(orbit, orbit_fields, f"production orbit {index}")
+        sigma = orbit["sigma"]
+        beta = orbit["beta"]
+        if (
+            not isinstance(sigma, list) or not sigma
+            or any(not isinstance(value, int) or isinstance(value, bool) or not 0 <= value < 10 for value in sigma)
+            or len(set(sigma)) != len(sigma)
+            or not isinstance(beta, list) or len(beta) != len(sigma)
+            or any(not finite_number(value) for value in beta)
+        ):
+            fail(f"production orbit {index} has invalid sigma/beta payload")
+        sigma_key = tuple(sigma)
+        if sigma_key in seen_sigma:
+            fail("full cache audit contains duplicate orbit sigma")
+        seen_sigma.add(sigma_key)
+        if orbit["beta_margin"] != min(beta):
+            fail(f"production orbit {index} beta margin is not derived from beta")
+        if any(not finite_number(orbit[field]) for field in (
+            "beta_margin", "action", "action_lower", "action_upper", "q", "q_error_bound"
+        )):
+            fail(f"production orbit {index} has nonfinite scalar")
+        if orbit["action_lower"] > orbit["action_upper"] or not (
+            orbit["action_lower"] <= orbit["action"] <= orbit["action_upper"]
+        ) or orbit["q"] <= 0 or orbit["q_error_bound"] < 0:
+            fail(f"production orbit {index} has invalid action/q interval")
+        if not math.isclose(orbit["action"], 0.5 / orbit["q"], rel_tol=4.0e-15, abs_tol=0.0):
+            fail(f"production orbit {index} action is not derived from q")
+        q_upper = orbit["q"] + orbit["q_error_bound"]
+        q_lower = orbit["q"] - orbit["q_error_bound"]
+        expected_lower = 0.5 / q_upper
+        if q_lower <= 0:
+            fail(f"production orbit {index} has nonpositive lower q bound")
+        expected_upper = 0.5 / q_lower
+        if not math.isclose(orbit["action_lower"], expected_lower, rel_tol=4.0e-15, abs_tol=0.0) or not math.isclose(
+            orbit["action_upper"], expected_upper, rel_tol=4.0e-15, abs_tol=0.0
+        ):
+            fail(f"production orbit {index} action interval is not derived from q bounds")
+        if orbit["action_lower"] < previous_lower:
+            fail("full cache audit orbits are not ordered by action_lower")
+        previous_lower = orbit["action_lower"]
+        mu = orbit["mu"]
+        if mu is not None and (
+            not isinstance(mu, list) or len(mu) != 4 or any(not finite_number(value) for value in mu)
+        ):
+            fail(f"production orbit {index} has invalid mu")
+        if orbit["xi"] is not None and not finite_number(orbit["xi"]):
+            fail(f"production orbit {index} has invalid xi")
+        admissibility = orbit["admissibility"]
+        if admissibility not in {"AdmissibleF64", "AdmissibleExact", "IndeterminateF64"}:
+            fail(f"production orbit {index} has unknown admissibility")
+        if admissibility == "AdmissibleF64" and orbit["beta_margin"] <= 1.0e-9:
+            fail(f"production orbit {index} contradicts f64 admissibility classification")
+        if admissibility == "IndeterminateF64" and abs(orbit["beta_margin"]) > 1.0e-9:
+            fail(f"production orbit {index} contradicts indeterminate classification")
+        if admissibility == "AdmissibleExact" and (
+            orbit["beta_margin"] <= 0
+            or orbit["q_error_bound"] != 0
+            or orbit["action_lower"] != orbit["action"]
+            or orbit["action_upper"] != orbit["action"]
+        ):
+            fail(f"production orbit {index} contradicts exact fallback payload contract")
+        if admissibility != "IndeterminateF64":
+            admissible_actions.append(orbit["action"])
+        exact += admissibility == "AdmissibleExact"
+        indeterminate += admissibility == "IndeterminateF64"
+        lower_values.append(orbit["action_lower"])
+        upper_values.append(orbit["action_upper"])
+    if not admissible_actions:
+        fail("full cache audit has no admissible capacity candidate")
+    if (
+        result["min_action"] != min(admissible_actions)
+        or result["min_action_lower"] != min(lower_values)
+        or result["min_action_upper"] != min(upper_values)
+    ):
+        fail("full cache audit aggregate actions are not derived from orbit payloads")
     if exact != diagnostics["exact_admissible_count"] or indeterminate != diagnostics["indeterminate_count"]:
         fail("full cache audit admissibility counts disagree with compact diagnostics")
 
@@ -659,10 +878,20 @@ def verify(
     executable: Path | None = None,
 ) -> dict[str, Any]:
     manifest = read_json(directory / "manifest.json")
-    status = read_json(directory / "run-status.json")
-    if not isinstance(manifest, dict) or not isinstance(status, dict):
+    status_path = directory / "run-status.json"
+    interrupted = not status_path.exists()
+    status = None if interrupted else read_json(status_path)
+    if not isinstance(manifest, dict) or (status is not None and not isinstance(status, dict)):
         fail("manifest and run status must be JSON objects")
-    verify_artifact_hashes(directory, manifest, status)
+    if status is not None:
+        verify_artifact_hashes(directory, manifest, status)
+    else:
+        expected_names = {"manifest.json", *JSONL_FILES}
+        if (directory / "stop-event.json").exists():
+            expected_names.add("stop-event.json")
+        actual_names = {path.name for path in directory.iterdir() if path.is_file()}
+        if actual_names != expected_names:
+            fail("interrupted artifact directory contains missing or unexpected files")
     config, config_id, kind = validate_manifest(
         manifest,
         expected_reviewed_revision=expected_reviewed_revision,
@@ -671,6 +900,10 @@ def verify(
         executable=executable,
     )
     rows = {name: read_jsonl(directory / name) for name in JSONL_FILES}
+    for name, file_rows in rows.items():
+        for index, row in enumerate(file_rows, 1):
+            require_fields(row, ROW_FIELDS[name], f"{name} row {index}")
+    ledger = rows["charged-requests.jsonl"]
     targets = rows["target-evaluations.jsonl"]
     cache_rows = rows["cache.jsonl"]
     rejections = rows["construction-rejections.jsonl"]
@@ -678,6 +911,37 @@ def verify(
     levels = rows["levels.jsonl"]
     arm_runs = rows["arm-runs.jsonl"]
     source_revision = manifest["source"]["git_revision"]
+
+    if any(not exact_integer(row["global_request_index"], 1) for row in ledger) or [
+        row["global_request_index"] for row in ledger
+    ] != list(range(1, len(ledger) + 1)):
+        fail("charged-request ledger indices are not contiguous from one")
+    if len(ledger) < len(targets) or len(ledger) > len(targets) + (1 if interrupted else 0):
+        fail("charged-request ledger does not reconcile to target rows")
+    ledger_match_fields = CHARGED_FIELDS - {"charged_monotonic_ms"}
+    for index, target in enumerate(targets):
+        charge = ledger[index]
+        if any(target.get(field) != charge.get(field) for field in ledger_match_fields):
+            fail(f"target row {index + 1} does not exactly complete its charged ledger row")
+    ledger_times = [row["charged_monotonic_ms"] for row in ledger]
+    if any(not finite_number(value) or value < 0 for value in ledger_times) or ledger_times != sorted(ledger_times):
+        fail("charged-request ledger lacks ordered cumulative monotonic times")
+    ledger_schedule = [request_schedule_token(row["identity"]) for row in ledger]
+    expected_schedule = frozen_request_schedule()
+    if len(ledger_schedule) > len(expected_schedule) or ledger_schedule != expected_schedule[:len(ledger_schedule)]:
+        fail("charged-request ledger does not follow the frozen global schedule")
+    ledger_attempts = {"adaptive": [], "iid": []}
+    for row in ledger:
+        validate_identity(row["identity"], config=config, config_id=config_id, source_revision=source_revision)
+        if row["candidate_id"] != expected_candidate_id(row["identity"]):
+            fail("charged-request ledger candidate ID mismatch")
+        if row["arm"] != row["identity"]["arm"]:
+            fail("charged-request ledger arm mismatch")
+        ledger_attempts[row["arm"]].append(row["attempt_index"])
+        verify_geometry(row, f"charged ledger row {row['global_request_index']}")
+    for arm, indices in ledger_attempts.items():
+        if indices != list(range(1, len(indices) + 1)):
+            fail(f"{arm} ledger attempt indices are not contiguous from one")
 
     if [row.get("global_request_index") for row in targets] != list(range(1, len(targets) + 1)):
         fail("global charged request indices are not contiguous from one")
@@ -711,6 +975,15 @@ def verify(
             validate_chart_shape(raw_chart, f"target {candidate} raw proposal")
         if not finite_number(row.get("wall_time_ms")) or row["wall_time_ms"] < 0:
             fail(f"target {candidate} has invalid wall time")
+        if not finite_number(row.get("started_monotonic_ms")) or row["started_monotonic_ms"] < 0:
+            fail(f"target {candidate} has invalid monotonic start time")
+        if (
+            not finite_number(row.get("cumulative_monotonic_ms"))
+            or row["cumulative_monotonic_ms"] < ledger[row["global_request_index"] - 1]["charged_monotonic_ms"]
+            or ledger[row["global_request_index"] - 1]["charged_monotonic_ms"] < row["started_monotonic_ms"]
+            or row["wall_time_ms"] > row["cumulative_monotonic_ms"] - row["started_monotonic_ms"] + 5.0
+        ):
+            fail(f"target {candidate} has invalid cumulative completion time")
         evaluation_status = row.get("evaluation_status")
         success = evaluation_status == "success"
         scalar_fields = ("capacity", "volume", "sys")
@@ -755,7 +1028,9 @@ def verify(
     for arm, indices in attempts.items():
         if indices != list(range(1, len(indices) + 1)):
             fail(f"{arm} charged attempt indices are not contiguous from one")
-    expected_schedule = frozen_request_schedule()
+    target_cumulative = [row["cumulative_monotonic_ms"] for row in targets]
+    if target_cumulative != sorted(target_cumulative):
+        fail("target rows lack ordered cumulative completion times")
     actual_schedule = [request_schedule_token(row["identity"]) for row in targets]
     if len(actual_schedule) > len(expected_schedule) or actual_schedule != expected_schedule[: len(actual_schedule)]:
         fail("charged target rows do not follow the frozen global request schedule")
@@ -766,6 +1041,13 @@ def verify(
             fail(f"mutation candidate {row['candidate_id']} does not follow its parent")
 
     caches: dict[tuple[str, str], dict[str, Any]] = {}
+    expected_cache_order = [
+        (row["arm"], row["exact_geometry_key"])
+        for row in targets
+        if row["cache_status"] == "miss"
+    ]
+    if [(row["arm"], row["exact_geometry_key"]) for row in cache_rows] != expected_cache_order:
+        fail("cache JSONL order is not the successful-miss target order")
     for row in cache_rows:
         arm_key = (row.get("arm"), row.get("exact_geometry_key"))
         if arm_key in caches or arm_key not in seen_success:
@@ -814,15 +1096,20 @@ def verify(
             validate_chart_shape(row.get("raw_proposed_chart"), f"rejection {candidate} raw proposal")
         rejection_by_group.setdefault(logical_identity(identity), []).append(row)
 
+    schedule_positions = {token: index for index, token in enumerate(frozen_request_schedule())}
+    rejection_positions = [schedule_positions.get(request_schedule_token(row["identity"])) for row in rejections]
+    if any(position is None for position in rejection_positions) or rejection_positions != sorted(rejection_positions):
+        fail("construction rejection JSONL order does not follow the frozen schedule")
+
     for candidate, row in candidate_rows.items():
         identity = row["identity"]
-        prior = sorted(
-            (entry["identity"]["construction_attempt"] for entry in rejection_by_group.pop(logical_identity(identity), []))
-        )
+        prior = [
+            entry["identity"]["construction_attempt"]
+            for entry in rejection_by_group.pop(logical_identity(identity), [])
+        ]
         if prior != list(range(identity["construction_attempt"])):
             fail(f"candidate {candidate} lacks exact contiguous construction retry history")
-    if rejection_by_group:
-        fail("construction rejection history has no matching successful attempt")
+    unmatched_rejection_groups = rejection_by_group
 
     initial_adaptive: dict[str, dict[str, Any]] = {}
     for candidate, row in candidate_rows.items():
@@ -844,6 +1131,12 @@ def verify(
         fail("completed level records are not a zero-based prefix")
     transition_keys: set[tuple[int, int, int]] = set()
     transitions_by_key: dict[tuple[int, int, int], dict[str, Any]] = {}
+    mutation_targets = [row for row in targets if row["identity"]["level"] is not None]
+    mutation_target_keys = [
+        (row["identity"]["level"], row["identity"]["clone_index"], row["identity"]["mutation_step"])
+        for row in mutation_targets
+    ]
+    mutation_by_key = dict(zip(mutation_target_keys, mutation_targets))
     for row in transitions:
         key = (row.get("level"), row.get("clone_index"), row.get("mutation_step"))
         if key in transition_keys or not all(isinstance(value, int) for value in key):
@@ -853,6 +1146,15 @@ def verify(
             fail(f"mutation transition index outside frozen grid {key}")
         transition_keys.add(key)
         transitions_by_key[key] = row
+    transition_file_keys = [
+        (row["level"], row["clone_index"], row["mutation_step"]) for row in transitions
+    ]
+    if transition_file_keys != mutation_target_keys[:len(transition_file_keys)]:
+        fail("mutation transition file order is not the charged mutation-target prefix")
+    if len(transitions) > len(mutation_targets) or (
+        not interrupted and len(transitions) != len(mutation_targets)
+    ) or (interrupted and len(mutation_targets) - len(transitions) > 1):
+        fail("mutation transitions do not exactly reconcile to the target prefix")
 
     population = sorted(
         initial_adaptive,
@@ -861,6 +1163,7 @@ def verify(
     if population and [initial_adaptive[c]["identity"]["base_index"] for c in population] != list(range(len(population))):
         fail("adaptive base indices are not a zero-based prefix")
     completed_populations: list[list[str]] = []
+    expected_state_by_mutation_key: dict[tuple[int, int, int], str] = {}
     for level in range(2):
         if len(population) < 16:
             break
@@ -872,38 +1175,42 @@ def verify(
             state = parent
             clone_complete = True
             for step in range(2):
+                expected_state_by_mutation_key[(level, clone, step)] = state
+                proposal_row = mutation_by_key.get((level, clone, step))
                 transition = transitions_by_key.get((level, clone, step))
-                if transition is None:
+                if proposal_row is None:
                     clone_complete = False
                     break
-                proposal = transition.get("proposal_candidate_id")
-                proposal_row = candidate_rows.get(proposal)
-                if proposal_row is None:
-                    fail(f"transition {(level, clone, step)} lacks proposal target")
+                proposal = proposal_row["candidate_id"]
                 identity = proposal_row["identity"]
                 if (identity["level"], identity["clone_index"], identity["mutation_step"]) != (level, clone, step):
                     fail(f"transition {(level, clone, step)} disagrees with proposal identity")
                 if identity["parent_candidate_id"] != state or proposal_row["parent_candidate_id"] != state:
                     fail(f"transition {(level, clone, step)} proposal parent is not state-before")
-                if transition.get("state_before_candidate_id") != state:
-                    fail(f"transition {(level, clone, step)} state chain is broken")
-                if transition.get("frozen_threshold") != threshold or proposal_row.get("level_threshold") != threshold:
+                if proposal_row.get("level_threshold") != threshold:
                     fail(f"transition {(level, clone, step)} changes frozen target threshold")
                 if proposal_row["root_candidate_id"] != candidate_rows[state]["root_candidate_id"]:
                     fail(f"transition {(level, clone, step)} breaks root transitivity")
                 expected_raw = expected_raw_mutation(config, candidate_rows[state]["product_chart"], identity)
                 charts_close(proposal_row.get("raw_proposed_chart"), expected_raw, RAW_CHART_TOLERANCE, f"proposal {proposal} raw mutation")
                 proposal_sys = proposal_row.get("sys")
-                if transition.get("proposal_sys") != proposal_sys:
-                    fail(f"transition {(level, clone, step)} proposal scalar mismatch")
                 accepted = proposal_sys is not None and proposal_sys >= threshold
-                if transition.get("accepted") != accepted:
-                    fail(f"transition {(level, clone, step)} acceptance rule mismatch")
                 after = proposal if accepted else state
-                if transition.get("state_after_candidate_id") != after:
-                    fail(f"transition {(level, clone, step)} next state mismatch")
-                if transition.get("root_candidate_id") != proposal_row["root_candidate_id"]:
-                    fail(f"transition {(level, clone, step)} root mismatch")
+                if transition is not None:
+                    if transition.get("proposal_candidate_id") != proposal:
+                        fail(f"transition {(level, clone, step)} lacks its charged proposal target")
+                    if transition.get("state_before_candidate_id") != state:
+                        fail(f"transition {(level, clone, step)} state chain is broken")
+                    if transition.get("frozen_threshold") != threshold:
+                        fail(f"transition {(level, clone, step)} changes frozen target threshold")
+                    if transition.get("proposal_sys") != proposal_sys:
+                        fail(f"transition {(level, clone, step)} proposal scalar mismatch")
+                    if transition.get("accepted") != accepted:
+                        fail(f"transition {(level, clone, step)} acceptance rule mismatch")
+                    if transition.get("state_after_candidate_id") != after:
+                        fail(f"transition {(level, clone, step)} next state mismatch")
+                    if transition.get("root_candidate_id") != proposal_row["root_candidate_id"]:
+                        fail(f"transition {(level, clone, step)} root mismatch")
                 state = after
                 if proposal_row.get("evaluation_status") != "success" or (
                     proposal_sys is not None and proposal_sys > 1.0
@@ -955,8 +1262,10 @@ def verify(
     stop = read_json(stop_path) if stop_path.exists() else None
     sys_hits = [row for row in targets if row.get("sys") is not None and row["sys"] > 1.0]
     if stop is None:
-        if sys_hits:
+        if sys_hits and not interrupted:
             fail("target sys > 1 exists without a stop event")
+        if interrupted and (len(sys_hits) > 1 or (sys_hits and sys_hits[0] is not targets[-1])):
+            fail("interrupted target prefix has nonterminal sys > 1 evidence")
     else:
         if not isinstance(stop, dict) or len(sys_hits) != 1:
             fail("stop event requires exactly one sys > 1 target")
@@ -975,33 +1284,135 @@ def verify(
         if stop != expected:
             fail("stop event does not exactly match the final sys > 1 target")
 
-    disposition = status.get("disposition")
-    if disposition not in {"complete", "sys_gt_one_stop", "timeout", "error"}:
-        fail("final status has unknown disposition")
-    if (disposition == "sys_gt_one_stop") != (stop is not None):
-        fail("final status and stop-event disposition disagree")
-    if disposition == "timeout":
-        if not failures or failures[-1] is not targets[-1] or failures[-1]["evaluation_status"] != "timeout":
-            fail("timeout status lacks a final charged timeout row")
-    if disposition == "complete" and (stop is not None or failures):
-        fail("complete status contains a stop or failed target")
-    if disposition in {"timeout", "error"} and not isinstance(status.get("error"), str):
-        fail("failed final status lacks retained error")
-    if disposition in {"complete", "sys_gt_one_stop"} and status.get("error") is not None:
-        fail("successful/stopped final status carries an error")
+    terminal = None
+    if interrupted:
+        disposition = "externally_interrupted"
+        if unmatched_rejection_groups:
+            fail("interrupted prefix has unaudited unmatched construction rejections")
+    else:
+        assert status is not None
+        disposition = status.get("disposition")
+        if disposition not in {"complete", "sys_gt_one_stop", "timeout", "error"}:
+            fail("final status has unknown disposition")
+        if (disposition == "sys_gt_one_stop") != (stop is not None):
+            fail("final status and stop-event disposition disagree")
+        if disposition == "complete" and (stop is not None or failures):
+            fail("complete status contains a stop or failed target")
+        if disposition in {"timeout", "error"} and (
+            not isinstance(status.get("error"), str) or not status["error"]
+        ):
+            fail("failed final status lacks retained error")
+        if disposition in {"complete", "sys_gt_one_stop"} and status.get("error") is not None:
+            fail("successful/stopped final status carries an error")
+        terminal = status.get("terminal_error")
+        if disposition in {"complete", "sys_gt_one_stop"}:
+            if terminal is not None:
+                fail("successful/stopped final status carries terminal-error evidence")
+            if failures:
+                fail("successful/stopped status contains a failed target")
+            if unmatched_rejection_groups:
+                fail("successful/stopped status has unmatched construction rejections")
+        else:
+            require_fields(terminal, TERMINAL_ERROR_FIELDS, "terminal error evidence")
+            kind_name = terminal["kind"]
+            if kind_name == "failed_target":
+                if not status["error"].startswith("failed_target:"):
+                    fail("failed-target status lacks its structured error prefix")
+                if unmatched_rejection_groups or len(failures) != 1 or failures[-1] is not targets[-1]:
+                    fail("failed-target terminal evidence lacks one final failed target")
+                final = failures[-1]
+                if (
+                    terminal["arm"] != final["arm"]
+                    or terminal["global_request_index"] != final["global_request_index"]
+                    or terminal["candidate_id"] != final["candidate_id"]
+                    or terminal["evaluation_status"] != final["evaluation_status"]
+                    or terminal["failure_reason"] != final["failure_reason"]
+                    or terminal["next_schedule_identity"] is not None
+                ):
+                    fail("failed-target terminal evidence disagrees with final target")
+                if (disposition == "timeout") != (final["evaluation_status"] == "timeout"):
+                    fail("timeout disposition disagrees with failed-target kind")
+            elif kind_name == "construction_exhaustion":
+                if not status["error"].startswith("construction_exhaustion:"):
+                    fail("construction-exhaustion status lacks its structured error prefix")
+                if disposition != "error" or failures or len(unmatched_rejection_groups) != 1:
+                    fail("construction-exhaustion status has wrong terminal evidence")
+                group = next(iter(unmatched_rejection_groups.values()))
+                attempts_in_group = [row["identity"]["construction_attempt"] for row in group]
+                if attempts_in_group != list(range(64)):
+                    fail("construction exhaustion is not exactly 64 ordered rejections")
+                first_identity = copy_identity_with_attempt(group[0]["identity"], 0)
+                next_token_index = len(targets)
+                mutation_key = (
+                    first_identity["level"], first_identity["clone_index"], first_identity["mutation_step"]
+                )
+                if (
+                    next_token_index >= len(expected_schedule)
+                    or request_schedule_token(first_identity) != expected_schedule[next_token_index]
+                    or terminal["next_schedule_identity"] != first_identity
+                    or terminal["arm"] != first_identity["arm"]
+                    or terminal["global_request_index"] is not None
+                    or terminal["candidate_id"] is not None
+                    or terminal["evaluation_status"] is not None
+                    or terminal["failure_reason"] is not None
+                    or (
+                        first_identity["level"] is not None
+                        and first_identity["parent_candidate_id"]
+                        != expected_state_by_mutation_key.get(mutation_key)
+                    )
+                ):
+                    fail("construction exhaustion does not evidence the exact next schedule slot")
+            elif kind_name == "wall_termination":
+                if not status["error"].startswith("wall_termination:"):
+                    fail("wall-termination status lacks its structured error prefix")
+                if disposition != "error" or unmatched_rejection_groups or failures:
+                    fail("wall-termination status has incompatible terminal evidence")
+                if (
+                    terminal["next_schedule_identity"] is not None
+                    or terminal["evaluation_status"] is not None
+                    or terminal["failure_reason"] is not None
+                    or terminal["global_request_index"] != (targets[-1]["global_request_index"] if targets else None)
+                    or terminal["candidate_id"] != (targets[-1]["candidate_id"] if targets else None)
+                    or terminal["arm"] not in {"adaptive", "iid"}
+                ):
+                    fail("wall-termination evidence disagrees with completed prefix")
+                if not arm_runs or arm_runs[-1]["arm"] != terminal["arm"]:
+                    fail("wall-termination evidence lacks its active incomplete arm row")
+            else:
+                fail("terminal error evidence has unknown kind")
 
     charged_counts = {arm: len(indices) for arm, indices in attempts.items()}
-    if (
-        status.get("adaptive_charged_requests") != charged_counts["adaptive"]
-        or status.get("iid_charged_requests") != charged_counts["iid"]
-        or status.get("total_charged_requests") != len(targets)
-    ):
-        fail("final status charged counts disagree with target rows")
-    total_ms = status.get("total_monotonic_wall_time_ms")
-    if not finite_number(total_ms) or total_ms < 0:
-        fail("final status has invalid monotonic wall time")
-    if sum(row["wall_time_ms"] for row in targets) > total_ms + 20.0:
-        fail("target row wall times exceed total monotonic run time")
+    if status is not None:
+        if any(
+            not exact_integer(status.get(field))
+            for field in (
+                "adaptive_charged_requests", "iid_charged_requests", "total_charged_requests"
+            )
+        ):
+            fail("final status charged counts have non-integer JSON types")
+        if (
+            status.get("adaptive_charged_requests") != charged_counts["adaptive"]
+            or status.get("iid_charged_requests") != charged_counts["iid"]
+            or status.get("total_charged_requests") != len(targets)
+        ):
+            fail("final status charged counts disagree with target rows")
+        total_ms = status.get("total_monotonic_wall_time_ms")
+        if not finite_number(total_ms) or total_ms < 0:
+            fail("final status has invalid monotonic wall time")
+        end_ms = status.get("end_unix_ms")
+        if not exact_integer(end_ms, 1) or end_ms < manifest["start_unix_ms"]:
+            fail("run status has invalid end wall-clock timestamp")
+        wall_elapsed = end_ms - manifest["start_unix_ms"]
+        if abs(wall_elapsed - total_ms) > WALL_CLOCK_RECONCILIATION_TOLERANCE_MS:
+            fail("wall-clock and monotonic run durations do not reconcile")
+        if target_cumulative and target_cumulative[-1] > total_ms:
+            fail("target cumulative completion exceeds total monotonic run time")
+        if ledger_times and ledger_times[-1] > total_ms:
+            fail("charged cumulative time exceeds total monotonic run time")
+        if sum(row["wall_time_ms"] for row in targets) > total_ms + 20.0:
+            fail("target row wall times exceed total monotonic run time")
+    else:
+        total_ms = target_cumulative[-1] if target_cumulative else (ledger_times[-1] if ledger_times else 0.0)
 
     runs_by_arm: dict[str, dict[str, Any]] = {}
     for row in arm_runs:
@@ -1024,11 +1435,44 @@ def verify(
             fail(f"{arm} arm-run distinct key count mismatch")
         if not finite_number(row.get("wall_time_ms")) or row["wall_time_ms"] < 0:
             fail(f"{arm} arm-run wall time invalid")
+        if not finite_number(row.get("started_monotonic_ms")) or row["started_monotonic_ms"] < 0:
+            fail(f"{arm} arm-run monotonic start invalid")
+        if not finite_number(row.get("cumulative_monotonic_ms")) or row["cumulative_monotonic_ms"] < 0:
+            fail(f"{arm} arm-run cumulative time invalid")
+        if row["wall_time_ms"] > row["cumulative_monotonic_ms"] - row["started_monotonic_ms"] + 5.0:
+            fail(f"{arm} arm-run duration exceeds its cumulative interval")
         arm_target_ms = sum(target["wall_time_ms"] for target in targets if target["arm"] == arm)
         if arm_target_ms > row["wall_time_ms"] + 20.0:
             fail(f"{arm} target times exceed arm-run time")
     if sum(row["wall_time_ms"] for row in arm_runs) > total_ms + 20.0:
         fail("arm-run wall times exceed total monotonic run time")
+    if [row["arm"] for row in arm_runs] != ["adaptive", "iid"][:len(arm_runs)]:
+        fail("arm-run rows are not in exact phase order")
+    arm_cumulative = [row["cumulative_monotonic_ms"] for row in arm_runs]
+    if arm_cumulative != sorted(arm_cumulative) or (status is not None and arm_cumulative and arm_cumulative[-1] > total_ms):
+        fail("arm-run cumulative endpoints are not ordered within total time")
+
+    if not interrupted:
+        if disposition == "complete":
+            expected_arm_runs = [("adaptive", True), ("iid", True)]
+        else:
+            if stop is not None:
+                active_arm = stop["arm"]
+            else:
+                assert terminal is not None
+                active_arm = terminal["arm"]
+            expected_arm_runs = (
+                [("adaptive", False)]
+                if active_arm == "adaptive"
+                else [("adaptive", True), ("iid", False)]
+            )
+        if [(row["arm"], row["complete"]) for row in arm_runs] != expected_arm_runs:
+            fail("arm-run rows do not exactly match the terminal phase")
+    else:
+        if any(row["complete"] is not True for row in arm_runs[:-1]):
+            fail("interrupted arm-run prefix has an incomplete closed phase")
+        if len(arm_runs) == 2 and arm_runs[0]["complete"] is not True:
+            fail("interrupted IID phase lacks completed adaptive arm")
 
     readiness_passed = disposition == "complete"
     if readiness_passed:
@@ -1055,16 +1499,7 @@ def verify(
         if set(runs_by_arm) != {"adaptive", "iid"} or not all(row.get("complete") is True for row in arm_runs):
             fail("complete smoke lacks two complete arm-run records")
         if total_ms > config["abort_wall_time_seconds"] * 1000:
-            fail("complete smoke exceeds the frozen 600-second envelope")
-    else:
-        active_arm = targets[-1]["arm"] if targets else None
-        if any(
-            row.get("complete") is True
-            for row in arm_runs
-            if active_arm is None or row["arm"] == active_arm
-        ):
-            fail("stopped/failed active arm is marked complete")
-
+            fail("complete smoke exceeds the frozen 900-second envelope")
     return {
         "verified": True,
         "readiness_passed": readiness_passed,
@@ -1072,6 +1507,8 @@ def verify(
         "disposition": disposition,
         "adaptive_attempts": charged_counts["adaptive"],
         "iid_attempts": charged_counts["iid"],
+        "ledger_charged_requests": len(ledger),
+        "outcome_unknown_requests": len(ledger) - len(targets),
         "construction_rejections": len(rejections),
         "post_level_distinct_states": [row["post_level_distinct_geometry_keys"] for row in levels],
         "stopped_on_sys_gt_one": stop is not None,
