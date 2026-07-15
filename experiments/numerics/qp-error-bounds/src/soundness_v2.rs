@@ -96,6 +96,7 @@ struct RawRow {
     lifecycle_route_disposition: String,
     saddle_eig_actual_tier_status: String,
     saddle_eig_solver_outcome: String,
+    saddle_eig_beta_predicate: String,
     f64_retained_by_saddle: bool,
     qp_constraint_matrix_c_f64: Vec<Vec<f64>>,
     qp_objective_hessian_h_f64: Vec<Vec<f64>>,
@@ -376,7 +377,7 @@ fn observe(case: &Case, sigma: &[usize]) -> RawRow {
     let saddle = solve_kkt_for_dual_vertices(&case.dual_f64, sigma);
     let saddle_us = start.elapsed().as_secs_f64() * 1e6;
     timings.insert("saddle_eig_accepted_us".into(), saddle_us);
-    let (outcome, retained, saddle_center) = match saddle {
+    let (outcome, retained, beta_predicate, saddle_center) = match saddle {
         KktOutcome::Feasible(k) => {
             let mut x = DVector::zeros(sigma.len() + 5);
             for i in 0..sigma.len() {
@@ -391,12 +392,20 @@ fn observe(case: &Case, sigma: &[usize]) -> RawRow {
             c.center_q_constraint_residual_correction_f64 = Some(k.q_correction);
             c.center_action_from_positive_q_f64 =
                 (k.q_corrected > 0.0).then(|| 0.5 / k.q_corrected);
-            let ret = k.beta.iter().all(|x| *x > 1e-9) || (k.beta.iter().all(|x| *x >= -1e-9));
-            ("feasible".into(), ret, c)
+            let margin = k.beta.iter().copied().fold(f64::INFINITY, f64::min);
+            let predicate = if margin > 1e-9 {
+                "true"
+            } else if margin < -1e-9 {
+                "false"
+            } else {
+                "indeterminate"
+            };
+            ("feasible".into(), true, predicate.into(), c)
         }
         KktOutcome::Infeasible => (
             "infeasible".into(),
             false,
+            "unavailable".into(),
             unavailable_center(
                 "saddle_eig_accepted",
                 "current production saddle/eigendecomposition accepted center",
@@ -407,6 +416,7 @@ fn observe(case: &Case, sigma: &[usize]) -> RawRow {
         KktOutcome::SingularMatrix => (
             "singular_matrix".into(),
             false,
+            "unavailable".into(),
             unavailable_center(
                 "saddle_eig_accepted",
                 "current production saddle/eigendecomposition accepted center",
@@ -417,6 +427,7 @@ fn observe(case: &Case, sigma: &[usize]) -> RawRow {
         KktOutcome::TypeCViolation => (
             "type_c_violation".into(),
             false,
+            "unavailable".into(),
             unavailable_center(
                 "saddle_eig_accepted",
                 "current production saddle/eigendecomposition accepted center",
@@ -427,6 +438,7 @@ fn observe(case: &Case, sigma: &[usize]) -> RawRow {
         KktOutcome::ConstraintViolation => (
             "constraint_violation".into(),
             false,
+            "unavailable".into(),
             unavailable_center(
                 "saddle_eig_accepted",
                 "current production saddle/eigendecomposition accepted center",
@@ -624,6 +636,7 @@ fn observe(case: &Case, sigma: &[usize]) -> RawRow {
             "unavailable: production public KktOutcome does not expose permissive/strict tier"
                 .into(),
         saddle_eig_solver_outcome: outcome,
+        saddle_eig_beta_predicate: beta_predicate,
         f64_retained_by_saddle: retained,
         qp_constraint_matrix_c_f64: matrix_rows(&qp.c),
         qp_objective_hessian_h_f64: matrix_rows(&qp.h),
@@ -923,7 +936,7 @@ fn policy_rows(rows: &[RawRow]) -> Vec<PolicyRow> {
                 "unknown",
                 rs.iter()
                     .copied()
-                    .filter(|r| r.f64_retained_by_saddle && saddle_action(r).is_some())
+                    .filter(|r| r.saddle_eig_beta_predicate == "true" && saddle_action(r).is_some())
                     .collect(),
                 "no exact fallback",
             ),
