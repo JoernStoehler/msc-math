@@ -1,0 +1,17 @@
+case	disposition	label	quotient_distance_to_first	raw_distance_to_first	selected_by_frontier
+broad_no_new_support	control	broad	0.0	0.0	False
+broad_no_new_support	control	broad	0.0	0.0	False
+broad_no_new_support	control	broad	0.0	0.0	False
+broad_no_new_support	control	broad	0.0	0.0	False
+broad_no_new_support	control	broad	0.0	0.0	False
+broad_no_new_support	control	broad	0.0	0.0	False
+broad_no_new_support	control	broad	0.0	0.0	False
+broad_no_new_support	control	broad	0.0	0.0	False
+tiny_rare_remote_mode	remote-mode-discovered	rare_remote	0.6540160362583604	0.5571391360056798	True
+one_outlier_contamination	known-contamination-selected; not a population region	contamination_outlier	0.7975954818723551	0.6857079163866154	True
+duplicated_dependent_rows	control	duplicate	0.0	0.0	False
+duplicated_dependent_rows	control	duplicate	0.0	0.0	False
+duplicated_dependent_rows	control	duplicate	0.0	0.0	False
+duplicated_dependent_rows	control	duplicate	0.0	0.0	False
+representation_disagreement	control	raw	0.0	0.0	False
+representation_disagreement	control	rotated	3.551008815351844e-16	2.149139863647084	False
