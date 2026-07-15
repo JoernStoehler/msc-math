@@ -1,10 +1,10 @@
 {
-  "schema": "generator-factor-coupling-atlas-manifest-v1",
-  "source_revision": "180e262e0285caa9b1463c97c7abfc27d67bd1af",
-  "source_tree": "7c579ed9eccfa796603df044d837045cd7e6e24e",
+  "schema": "generator-factor-coupling-atlas-manifest-v2",
+  "source_revision": "4cbd3a864121123132f7da3813b77029ddaa13f9",
+  "source_tree": "343acacefd137de24644598047afe92229e5515a",
   "producer_blake3": "44ff62a37e23cf1eb342457dab670f6d758f9d0dc2f79f6c473cff3d0ee03ab8",
   "cargo_lock_blake3": "6aa2b854abde71d320c87e08bd8e8b1b0a73d3719081cc809e9fb6cd2e314419",
-  "rows_blake3": "2ddb6aa2da7510d4e357ff00225103d4770a9f819a6e1fb1e4819b87a5faca57",
-  "report_blake3": "31415fd38350ef003a63204c54be091483b827e080008b72b6f99918f549b757",
+  "rows_blake3": "3d71eb5f9fd4045471b1af1ab22abcf4f111582fc821dcd587f8d6a7be724f40",
+  "report_blake3": "1e50113b610147754cb8b5fb09929464377492eed0079694bda957c87c38deee",
   "replay_command": "cargo run -p exp-sys-landscape --release --bin sys-datascience-generator-factor-coupling-atlas -- --out-dir experiments/sys-datascience/methods/generator-factor-coupling-atlas/artifacts --seed 20260715 --attempts 64 --rows-per-arm 1"
 }
