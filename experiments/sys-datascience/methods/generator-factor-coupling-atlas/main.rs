@@ -9,7 +9,6 @@ use exp_sys_landscape::{exact_volume_from_incidence_as_f64, SysLandscapePolytope
 use nalgebra::Vector2;
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha8Rng;
-use rand_distr::{Distribution, Normal};
 use serde::Serialize;
 use std::collections::BTreeMap;
 use std::f64::consts::{PI, TAU};
@@ -17,7 +16,6 @@ use std::fs::{create_dir_all, File};
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::process::Command;
-use std::time::Instant;
 
 const VERSION: &str = "generator-factor-coupling-atlas-v1";
 const DEFAULT_SEED: u64 = 20260715;
@@ -72,6 +70,10 @@ struct Row {
     p_perimeter: Option<f64>,
     q_width: Option<f64>,
     p_width: Option<f64>,
+    q_normals: Vec<[f64; 2]>,
+    q_heights: Vec<f64>,
+    p_normals: Vec<[f64; 2]>,
+    p_heights: Vec<f64>,
     q_support_cv: Option<f64>,
     p_support_cv: Option<f64>,
     q_gap_cv: Option<f64>,
@@ -79,14 +81,13 @@ struct Row {
     width_balance: Option<f64>,
     quotient_distance: Option<f64>,
     product_volume: Option<f64>,
+    product_incidence_valid: Option<bool>,
     angle_primitive_corr: Option<f64>,
     height_primitive_corr: Option<f64>,
-    primitive_q_mean: Option<f64>,
-    primitive_p_mean: Option<f64>,
-    primitive_q_range: Option<f64>,
-    primitive_p_range: Option<f64>,
-    generation_ms: f64,
-    validation_ms: f64,
+    q_angle_uniforms: Vec<f64>,
+    p_angle_uniforms: Vec<f64>,
+    q_height_uniforms: Vec<f64>,
+    p_height_uniforms: Vec<f64>,
 }
 
 #[derive(Serialize)]
@@ -109,8 +110,9 @@ struct Report {
     attempts_total: usize,
     accepted_rows: usize,
     exhausted_rows: usize,
-    mean_generation_ms: f64,
-    mean_validation_ms: f64,
+    producer_blake3: String,
+    cargo_lock_blake3: String,
+    rows_blake3: String,
     marginal_control: MarginalControl,
     dependence_control: Vec<DependenceControl>,
     endpoint_control: EndpointControl,
@@ -118,6 +120,18 @@ struct Report {
     primitive_marginal_contract: &'static str,
     conditioning_contract: &'static str,
     interpretation_boundary: &'static str,
+}
+
+#[derive(Serialize)]
+struct Manifest {
+    schema: &'static str,
+    source_revision: String,
+    source_tree: String,
+    producer_blake3: String,
+    cargo_lock_blake3: String,
+    rows_blake3: String,
+    report_blake3: String,
+    replay_command: String,
 }
 
 #[derive(Serialize, Default)]
@@ -148,7 +162,7 @@ struct EndpointControl {
     rho_one_shared_primitives: bool,
     rho_one_max_quotient_distance: Option<f64>,
     corrupted_coupling_rejected: bool,
-    exact_product_incidence_rows: usize,
+    exact_rationalized_product_rows: usize,
     note: &'static str,
 }
 
@@ -158,8 +172,6 @@ struct Accumulator {
     accepted: usize,
     exhausted: usize,
     attempts_total: usize,
-    generation_ms: f64,
-    validation_ms: f64,
     q_uniform: Vec<f64>,
     p_uniform: Vec<f64>,
     controls: BTreeMap<(String, u64), (Vec<f64>, Vec<f64>, Vec<f64>)>,
@@ -243,16 +255,17 @@ fn pairing_id(seed: u64, rho: f64, sides: usize, rotation: &str, row: usize) -> 
     format!("{VERSION}/rho={rho:.3}/n={sides}/rotation={rotation}/seed={seed}/row={row}")
 }
 
-/// Abramowitz--Stegun normal CDF approximation; only the CDF transform is
-/// needed, and endpoint tests use exact stream sharing rather than this error.
-fn normal_cdf(x: f64) -> f64 {
-    let ax = x.abs();
-    let t = 1.0 / (1.0 + 0.2316419 * ax);
-    let poly = t
-        * (0.319381530
-            + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
-    let tail = (-(ax * ax) / 2.0).exp() * poly / (2.0 * PI).sqrt();
-    (if x >= 0.0 { 1.0 - tail } else { tail }).clamp(f64::MIN_POSITIVE, 1.0 - f64::EPSILON)
+/// Exact-uniform mixture copula.  Draw U,V independently uniform and copy U
+/// to the P factor with probability rho; otherwise use V.  This has exact
+/// uniform marginals, Pearson dependence rho, and literal rho=0/1 endpoints.
+fn coupled_uniform<R: Rng>(rho: f64, rng: &mut R) -> (f64, f64) {
+    let u = rng.gen::<f64>();
+    let v = rng.gen::<f64>();
+    if rho == 1.0 || (rho > 0.0 && rng.gen::<f64>() < rho) {
+        (u, u)
+    } else {
+        (u, v)
+    }
 }
 
 fn shoelace(v: &[Vector2<f64>]) -> f64 {
@@ -453,6 +466,48 @@ fn factor_features(f: &Factor) -> Option<(f64, f64, f64, f64, f64)> {
     Some((area, perimeter(f), diameter(f), cv(&f.heights)?, cv(&gaps)?))
 }
 
+fn factor_payload(f: &Factor) -> (Vec<[f64; 2]>, Vec<f64>) {
+    (
+        f.normals.iter().map(|u| [u[0], u[1]]).collect(),
+        f.heights.clone(),
+    )
+}
+
+fn expected_product_incidence(q: &Factor, p: &Factor, actual: &nalgebra::DMatrix<bool>) -> bool {
+    if actual.nrows() != q.vertices.len() * p.vertices.len()
+        || actual.ncols() != q.normals.len() + p.normals.len()
+    {
+        return false;
+    }
+    let mut expected = Vec::new();
+    for qv in &q.vertices {
+        let qi: Vec<bool> = q
+            .normals
+            .iter()
+            .zip(&q.heights)
+            .map(|(u, h)| (u.dot(qv) - h).abs() <= 1e-7)
+            .collect();
+        for pv in &p.vertices {
+            let pi: Vec<bool> = p
+                .normals
+                .iter()
+                .zip(&p.heights)
+                .map(|(u, h)| (u.dot(pv) - h).abs() <= 1e-7)
+                .collect();
+            expected.push(qi.iter().chain(&pi).copied().collect::<Vec<_>>());
+        }
+    }
+    let mut observed: Vec<Vec<bool>> = (0..actual.nrows())
+        .map(|r| (0..actual.ncols()).map(|c| actual[(r, c)]).collect())
+        .collect();
+    expected.sort();
+    observed.sort();
+    expected == observed
+        && expected
+            .iter()
+            .all(|row| row.iter().filter(|x| **x).count() == 4)
+}
+
 /// Minimize a cyclic shift and a common angle offset.  This removes the
 /// independent global rotations while retaining the factor's ordered shape.
 fn quotient_distance(q: &Factor, p: &Factor) -> Option<f64> {
@@ -484,29 +539,17 @@ fn quotient_distance(q: &Factor, p: &Factor) -> Option<f64> {
 }
 
 fn generate(n: usize, rho: f64, rotation: &str, rng: &mut ChaCha8Rng) -> Option<GeneratedPair> {
-    let normal = Normal::new(0.0, 1.0).ok()?;
-    let root = (1.0 - rho * rho).max(0.0).sqrt();
     let mut qa = Vec::with_capacity(n);
     let mut pa = Vec::with_capacity(n);
     let mut qh = Vec::with_capacity(n);
     let mut ph = Vec::with_capacity(n);
     for _ in 0..n {
-        let z = normal.sample(rng);
-        let w = if rho == 1.0 {
-            z
-        } else {
-            rho * z + root * normal.sample(rng)
-        };
-        qa.push(normal_cdf(z));
-        pa.push(normal_cdf(w));
-        let z = normal.sample(rng);
-        let w = if rho == 1.0 {
-            z
-        } else {
-            rho * z + root * normal.sample(rng)
-        };
-        qh.push(normal_cdf(z));
-        ph.push(normal_cdf(w));
+        let (q_angle, p_angle) = coupled_uniform(rho, rng);
+        qa.push(q_angle);
+        pa.push(p_angle);
+        let (q_height, p_height) = coupled_uniform(rho, rng);
+        qh.push(q_height);
+        ph.push(p_height);
     }
     let base = rng.gen::<f64>() * TAU;
     let rel = match rotation {
@@ -547,14 +590,12 @@ fn seed_for(seed: u64, rho: f64, n: usize, rotation: &str, row: usize, attempt: 
 
 fn evaluate(
     pair: GeneratedPair,
-    args: &Args,
     seed: u64,
     rho: f64,
     n: usize,
     rotation: &str,
     row: usize,
     attempt: usize,
-    generation_ms: f64,
 ) -> Row {
     let sample_id = sample_id(seed, rho, n, rotation, row, attempt);
     let pairing_id = pairing_id(seed, rho, n, rotation, row);
@@ -564,28 +605,25 @@ fn evaluate(
         cv(&pair.q.heights),
         cv(&pair.p.heights),
     );
-    let start = Instant::now();
     let poly = SysLandscapePolytopeCache::from_lagrangian_product(
         &pair.q.normals,
         &pair.q.heights,
         &pair.p.normals,
         &pair.p.heights,
     );
-    let mut validation_ms = start.elapsed().as_secs_f64() * 1000.0;
-    let (volume, valid) = if let Some(poly) = poly {
-        let vs = Instant::now();
+    let (volume, incidence_valid, valid) = if let Some(poly) = poly {
         let v = exact_volume_from_incidence_as_f64(&poly.vertices, &poly.vertex_facet_incidence);
-        validation_ms += vs.elapsed().as_secs_f64() * 1000.0;
-        (v, v.is_finite() && v > 0.0)
+        let incidence = expected_product_incidence(&pair.q, &pair.p, &poly.vertex_facet_incidence);
+        (v, incidence, incidence && v.is_finite() && v > 0.0)
     } else {
-        (f64::NAN, false)
+        (f64::NAN, false, false)
     };
     let angle_corr = pearson(&pair.q_angle_u, &pair.p_angle_u);
     let height_corr = pearson(&pair.q_height_u, &pair.p_height_u);
-    let primitive_q = [pair.q_angle_u.as_slice(), pair.q_height_u.as_slice()].concat();
-    let primitive_p = [pair.p_angle_u.as_slice(), pair.p_height_u.as_slice()].concat();
     let distance = quotient_distance(&pair.q, &pair.p);
     let width_balance = qa.zip(pa).map(|(a, b)| (a.2 - b.2).abs() / (a.2 + b.2));
+    let (q_normals, q_heights) = factor_payload(&pair.q);
+    let (p_normals, p_heights) = factor_payload(&pair.p);
     Row {
         schema: "generator-factor-coupling-atlas-row-v1",
         law_version: VERSION,
@@ -608,6 +646,10 @@ fn evaluate(
         p_perimeter: pa.map(|x| x.1),
         q_width: qa.map(|x| x.2),
         p_width: pa.map(|x| x.2),
+        q_normals,
+        q_heights,
+        p_normals,
+        p_heights,
         q_support_cv: qcv,
         p_support_cv: pcv,
         q_gap_cv: qa.map(|x| x.3),
@@ -615,14 +657,13 @@ fn evaluate(
         width_balance,
         quotient_distance: distance,
         product_volume: valid.then_some(volume),
+        product_incidence_valid: Some(incidence_valid),
         angle_primitive_corr: angle_corr,
         height_primitive_corr: height_corr,
-        primitive_q_mean: mean(&primitive_q),
-        primitive_p_mean: mean(&primitive_p),
-        primitive_q_range: range(&primitive_q),
-        primitive_p_range: range(&primitive_p),
-        generation_ms,
-        validation_ms,
+        q_angle_uniforms: pair.q_angle_u,
+        p_angle_uniforms: pair.p_angle_u,
+        q_height_uniforms: pair.q_height_u,
+        p_height_uniforms: pair.p_height_u,
     }
 }
 
@@ -648,6 +689,10 @@ fn exhausted(seed: u64, rho: f64, n: usize, rotation: &str, row: usize, args: &A
         p_perimeter: None,
         q_width: None,
         p_width: None,
+        q_normals: Vec::new(),
+        q_heights: Vec::new(),
+        p_normals: Vec::new(),
+        p_heights: Vec::new(),
         q_support_cv: None,
         p_support_cv: None,
         q_gap_cv: None,
@@ -655,14 +700,13 @@ fn exhausted(seed: u64, rho: f64, n: usize, rotation: &str, row: usize, args: &A
         width_balance: None,
         quotient_distance: None,
         product_volume: None,
+        product_incidence_valid: None,
         angle_primitive_corr: None,
         height_primitive_corr: None,
-        primitive_q_mean: None,
-        primitive_p_mean: None,
-        primitive_q_range: None,
-        primitive_p_range: None,
-        generation_ms: 0.0,
-        validation_ms: 0.0,
+        q_angle_uniforms: Vec::new(),
+        p_angle_uniforms: Vec::new(),
+        q_height_uniforms: Vec::new(),
+        p_height_uniforms: Vec::new(),
     }
 }
 
@@ -684,15 +728,36 @@ fn source_dirty() -> bool {
         .unwrap_or(true)
 }
 
+fn file_blake3(path: &std::path::Path) -> String {
+    std::fs::read(path)
+        .map(|bytes| blake3::hash(&bytes).to_hex().to_string())
+        .unwrap_or_else(|_| "unreadable".into())
+}
+
+fn maximum(xs: &[f64]) -> Option<f64> {
+    xs.iter().copied().reduce(f64::max)
+}
+
 fn main() {
     let args = parse_args();
     let source_revision = git_value(&["rev-parse", "HEAD"]);
     let source_tree = git_value(&["rev-parse", "HEAD^{tree}"]);
     let dirty = source_dirty();
+    if dirty {
+        eprintln!("refusing to run from a tracked-dirty source tree");
+        std::process::exit(2);
+    }
+    let producer_path = std::path::Path::new(
+        "experiments/sys-datascience/methods/generator-factor-coupling-atlas/main.rs",
+    );
+    let cargo_lock_path = std::path::Path::new("Cargo.lock");
+    let producer_blake3 = file_blake3(producer_path);
+    let cargo_lock_blake3 = file_blake3(cargo_lock_path);
     create_dir_all(&args.out_dir).expect("create output directory");
     let rows_path = args.out_dir.join("coupling-rows.jsonl");
     let report_path = args.out_dir.join("batch-report.json");
-    let mut out = BufWriter::new(File::create(rows_path).expect("create rows"));
+    let manifest_path = args.out_dir.join("manifest.json");
+    let mut out = BufWriter::new(File::create(&rows_path).expect("create rows"));
     let seeds = vec![args.seed, args.seed + 1, args.seed + 2];
     let requested =
         seeds.len() * RHO_VALUES.len() * SIDES.len() * ROTATIONS.len() * args.rows_per_arm;
@@ -710,9 +775,7 @@ fn main() {
                             let mut rng = ChaCha8Rng::from_seed(seed_for(
                                 seed, rho, n, rotation, row, attempt,
                             ));
-                            let st = Instant::now();
                             let pair = generate(n, rho, rotation, &mut rng);
-                            let gen_ms = st.elapsed().as_secs_f64() * 1000.0;
                             acc.attempts_total += 1;
                             let Some(pair) = pair else { continue };
                             if rho == 1.0 {
@@ -727,10 +790,7 @@ fn main() {
                                         .zip(&pair.p_height_u)
                                         .all(|(a, b)| (a - b).abs() < 1e-14);
                             }
-                            let outrow =
-                                evaluate(pair, &args, seed, rho, n, rotation, row, attempt, gen_ms);
-                            acc.generation_ms += outrow.generation_ms;
-                            acc.validation_ms += outrow.validation_ms;
+                            let outrow = evaluate(pair, seed, rho, n, rotation, row, attempt);
                             if outrow.accepted {
                                 exact_rows += 1;
                                 accepted = Some(outrow);
@@ -766,12 +826,14 @@ fn main() {
                             }
                         }
                         if outrow.accepted {
-                            if let (Some(q), Some(p)) =
-                                (outrow.primitive_q_mean, outrow.primitive_p_mean)
-                            {
-                                acc.q_uniform.push(q);
-                                acc.p_uniform.push(p);
-                            }
+                            acc.q_uniform
+                                .extend(outrow.q_angle_uniforms.iter().copied());
+                            acc.q_uniform
+                                .extend(outrow.q_height_uniforms.iter().copied());
+                            acc.p_uniform
+                                .extend(outrow.p_angle_uniforms.iter().copied());
+                            acc.p_uniform
+                                .extend(outrow.p_height_uniforms.iter().copied());
                         }
                         serde_json::to_writer(&mut out, &outrow).expect("write row");
                         out.write_all(b"\n").expect("newline");
@@ -781,7 +843,7 @@ fn main() {
         }
     }
     out.flush().expect("flush rows");
-    let marginal=MarginalControl { retained_rows:acc.accepted, primitive_values:acc.q_uniform.len()*2, q_mean:mean(&acc.q_uniform),p_mean:mean(&acc.p_uniform),q_min:acc.q_uniform.iter().copied().reduce(f64::min),q_max:acc.q_uniform.iter().copied().reduce(f64::max),p_min:acc.p_uniform.iter().copied().reduce(f64::min),p_max:acc.p_uniform.iter().copied().reduce(f64::max),note:"finite retained-row diagnostic only; pre-conditioning uniformity is by construction, post-conditioning equality is not a theorem" };
+    let marginal=MarginalControl { retained_rows:acc.accepted, primitive_values:acc.q_uniform.len()+acc.p_uniform.len(), q_mean:mean(&acc.q_uniform),p_mean:mean(&acc.p_uniform),q_min:acc.q_uniform.iter().copied().reduce(f64::min),q_max:acc.q_uniform.iter().copied().reduce(f64::max),p_min:acc.p_uniform.iter().copied().reduce(f64::min),p_max:acc.p_uniform.iter().copied().reduce(f64::max),note:"finite retained-row primitive diagnostic; pre-conditioning uniformity is by construction, post-conditioning equality is not a theorem" };
     let dependence_control = acc
         .controls
         .into_iter()
@@ -808,9 +870,30 @@ fn main() {
                 .unwrap_or(false)
         })
     };
-    let report=Report {schema:"generator-factor-coupling-atlas-report-v1",law_version:VERSION,source_revision,source_tree,source_dirty:dirty,source_dirty_scope:"tracked git status captured before output creation",command:std::env::args().collect::<Vec<_>>().join(" "),seed:args.seed,seeds,rho_values:RHO_VALUES.to_vec(),side_counts:SIDES.to_vec(),rotation_populations:ROTATIONS.to_vec(),rows:acc.rows,requested_rows:requested,status_counts:statuses,attempts_total:acc.attempts_total,accepted_rows:acc.accepted,exhausted_rows:acc.exhausted,mean_generation_ms:acc.generation_ms/(acc.rows.max(1) as f64),mean_validation_ms:acc.validation_ms/(acc.rows.max(1) as f64),marginal_control:marginal,dependence_control,endpoint_control:EndpointControl {rho_one_shared_primitives:endpoint_shared,rho_one_max_quotient_distance:mean(&acc.endpoint_distances),corrupted_coupling_rejected:corrupted,exact_product_incidence_rows:exact_rows,note:"endpoint and corruption controls are semantic witnesses, not population tests"},copula_formula:"For each angle and height primitive independently: Z_Q,E ~ iid N(0,1), Z_P = rho Z_Q + sqrt(1-rho^2) E, U_Q=Phi(Z_Q), U_P=Phi(Z_P); rho=1 shares Z exactly.",primitive_marginal_contract:"Before selection, each factor has independent U(0,1) angle primitives and independent U(0,1) height primitives; h=0.8+0.4U and angle=2piU plus a global rotation.",conditioning_contract:"A candidate is retained only after both factor H-reconstructions have all prescribed active facets and exact product incidence/positive volume validates. Gaussian-copula marginal preservation is theorem-by-construction before this selection; conditioning may alter the retained marginal, so only finite diagnostics are reported.",interpretation_boundary:"Target-free construction and geometry evidence only: no sys, exchangeability, rho monotonicity, best-rho choice, or transfer claim."};
-    serde_json::to_writer_pretty(File::create(report_path).expect("create report"), &report)
+    let rows_blake3 = file_blake3(&rows_path);
+    let replay_command = format!(
+        "cargo run -p exp-sys-landscape --release --bin sys-datascience-generator-factor-coupling-atlas -- --out-dir experiments/sys-datascience/methods/generator-factor-coupling-atlas/artifacts --seed {} --attempts {} --rows-per-arm {}",
+        args.seed, args.attempts, args.rows_per_arm
+    );
+    let report=Report {schema:"generator-factor-coupling-atlas-report-v1",law_version:VERSION,source_revision:source_revision.clone(),source_tree:source_tree.clone(),source_dirty:dirty,source_dirty_scope:"fail-closed git status --porcelain=v1 --untracked-files=no captured before output creation",command:replay_command.clone(),seed:args.seed,seeds,rho_values:RHO_VALUES.to_vec(),side_counts:SIDES.to_vec(),rotation_populations:ROTATIONS.to_vec(),rows:acc.rows,requested_rows:requested,status_counts:statuses,attempts_total:acc.attempts_total,accepted_rows:acc.accepted,exhausted_rows:acc.exhausted,producer_blake3:producer_blake3.clone(),cargo_lock_blake3:cargo_lock_blake3.clone(),rows_blake3:rows_blake3.clone(),marginal_control:marginal,dependence_control,endpoint_control:EndpointControl {rho_one_shared_primitives:endpoint_shared,rho_one_max_quotient_distance:maximum(&acc.endpoint_distances),corrupted_coupling_rejected:corrupted,exact_rationalized_product_rows:exact_rows,note:"incidence is exact for the rationalized f64 dual reconstruction; it is not an exact irrational-input theorem"},copula_formula:"For each angle and height primitive independently: U,V ~ iid Uniform(0,1), B ~ Bernoulli(rho), U_Q=U, U_P=U if B=1 else V. This mixture copula has exact uniform marginals, Pearson dependence rho, and literal rho=0/1 endpoints.",primitive_marginal_contract:"Before selection, each factor has independent U(0,1) angle primitives and independent U(0,1) height primitives; h=0.8+0.4U and angle=2piU plus a global rotation.",conditioning_contract:"A candidate is retained only after both factor H-reconstructions have all prescribed active facets and exact-after-rationalization product incidence/positive volume validates. Mixture-copula marginal preservation is theorem-by-construction before this selection; conditioning may alter the retained marginal, so finite diagnostics are reported.",interpretation_boundary:"Target-free construction and geometry evidence only: no sys, exchangeability, rho monotonicity, best-rho choice, or transfer claim."};
+    serde_json::to_writer_pretty(File::create(&report_path).expect("create report"), &report)
         .expect("write report");
+    let report_blake3 = file_blake3(&report_path);
+    let manifest = Manifest {
+        schema: "generator-factor-coupling-atlas-manifest-v1",
+        source_revision,
+        source_tree,
+        producer_blake3,
+        cargo_lock_blake3,
+        rows_blake3,
+        report_blake3,
+        replay_command,
+    };
+    serde_json::to_writer_pretty(
+        File::create(manifest_path).expect("create manifest"),
+        &manifest,
+    )
+    .expect("write manifest");
 }
 
 #[cfg(test)]
@@ -873,6 +956,11 @@ mod tests {
             &p.p.heights,
         )
         .expect("exact product");
+        assert!(expected_product_incidence(
+            &p.q,
+            &p.p,
+            &poly.vertex_facet_incidence
+        ));
         let v = exact_volume_from_incidence_as_f64(&poly.vertices, &poly.vertex_facet_incidence);
         assert!(v.is_finite() && v > 0.0);
     }
