@@ -47,3 +47,5 @@ def test_pool_contract_after_run():
     assert {s.sample_id for s in train}.isdisjoint({s.sample_id for s in holdout})
     with pytest.raises(ValueError, match="sample IDs overlap"):
         analyze.validate_pool_contract(train, train)
+    with pytest.raises(ValueError, match="unbalanced"):
+        analyze.validate_pool_contract(train[:-1], holdout)
