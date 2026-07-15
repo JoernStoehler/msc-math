@@ -1,10 +1,10 @@
 # Coverage-directed novelty search
 
 This packet evaluates a target-free discovery policy, not generator quality.
-It uses the existing cheap factor-only generator path on the fixed six-sided
-stratum, with balanced rows for the eight explicit planar populations and two
-independent master seeds.  The first seed is the training candidate pool; the
-second is an independent holdout pool.  Every retained row keeps its producer
+It uses the existing cheap factor-only generator path on separate fixed
+side-count panels 4, 6, and 8, with balanced rows for the eight explicit planar
+populations and three independent train/holdout seed pairs (20260716/17,
+20260718/19, and 20260720/21). Every retained row keeps its producer
 `sample_id`, law/parameter, seed, row, attempt, and deterministic witness ID.
 
 `analyze.py` generates the complete balanced train and holdout pools first,
@@ -26,7 +26,7 @@ per-generated-row or online sample-efficiency claim is made. The analyzer pins
 
 The frozen reference set is the lowest four deterministic witness IDs from the
 current-baseline population. The report's arm fields are explicitly qualified
-to the fixed train panel, `offline_greedy_max` order, retained budget 24,
+to each fixed train panel, `offline_greedy_max` order, retained budget 24,
 independent holdout panel, mean nearest-cover metric, and each view; they are
 not intrinsic properties of a law or population. Train/holdout master seeds and sample IDs must be
 disjoint, and all population/side-count strata must remain balanced; the
@@ -91,10 +91,12 @@ nondeterministic.
 
 The checked-in artifacts are separate bounded finite-panel results for side
 counts 4, 6, and 8. Side counts are never pooled and no law/view winner is
-selected; `stratum-findings.tsv` reports only side-local mean/q90 diagnostics
-and multi-law contribution counts. Rebuild the
+selected; `report.json` records only side-local mean/q90 diagnostics and
+multi-law contribution counts. Rebuild the
 producer from source rather than relying on a disposable absolute binary path;
 the analysis report binds exact input/report/analyzer hashes and the repository
-revision. A future packet should first check whether the bulk (mean/q90)
-holdout cover reductions survive another pair of seeds and side-count strata;
-do not select a target from this packet.
+revision. The confirmation is mixed: multi-law retained-witness contributions
+persist, but bulk mean/q90 reductions vary by side count and view, so it does
+not support smart-sampler promotion. If a later decision requires more
+evidence, repeat one named side-count panel with another independent seed pair;
+do not pool strata, select a winning law/view, or select a target.
