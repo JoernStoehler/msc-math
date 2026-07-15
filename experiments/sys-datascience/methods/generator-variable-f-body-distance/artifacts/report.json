@@ -2,7 +2,7 @@
   "comparisons": [
     {
       "case": "identity_permuted_presentation",
-      "cost_observation_seconds": 0.03997931999947468,
+      "cost_observation_seconds": 0.051865524999811896,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0,
@@ -35,20 +35,22 @@
       "right_facets": 8,
       "so4_finite_bank": {
         "bank_size": 192,
-        "l2": 0.0,
-        "linf": 0.0,
-        "winning_index": 0
+        "l2_min": 0.0,
+        "l2_winning_index": 0,
+        "linf_min": 0.0,
+        "linf_winning_index": 0
       },
       "u2_finite_bank": {
         "bank_size": 32,
-        "l2": 0.0,
-        "linf": 0.0,
-        "winning_index": 0
+        "l2_min": 0.0,
+        "l2_winning_index": 0,
+        "linf_min": 0.0,
+        "linf_winning_index": 0
       }
     },
     {
       "case": "translation_positive_scale",
-      "cost_observation_seconds": 0.048465771000337554,
+      "cost_observation_seconds": 0.04740667499936535,
       "direct_sampled": {
         "axis_only": {
           "l2": 3.925231146709438e-17,
@@ -81,20 +83,22 @@
       "right_facets": 8,
       "so4_finite_bank": {
         "bank_size": 192,
-        "l2": 6.593253383066049e-17,
-        "linf": 2.220446049250313e-16,
-        "winning_index": 144
+        "l2_min": 6.593253383066049e-17,
+        "l2_winning_index": 144,
+        "linf_min": 2.220446049250313e-16,
+        "linf_winning_index": 144
       },
       "u2_finite_bank": {
         "bank_size": 32,
-        "l2": 6.593253383066049e-17,
-        "linf": 2.220446049250313e-16,
-        "winning_index": 20
+        "l2_min": 6.593253383066049e-17,
+        "l2_winning_index": 20,
+        "linf_min": 2.220446049250313e-16,
+        "linf_winning_index": 20
       }
     },
     {
       "case": "facet_birth_truncated_cube",
-      "cost_observation_seconds": 0.04547045899926161,
+      "cost_observation_seconds": 0.053414592999615707,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0693455916073286,
@@ -127,20 +131,22 @@
       "right_facets": 9,
       "so4_finite_bank": {
         "bank_size": 192,
-        "l2": 0.0772986804076943,
-        "linf": 0.23452696187269062,
-        "winning_index": 0
+        "l2_min": 0.0772986804076943,
+        "l2_winning_index": 0,
+        "linf_min": 0.23452696187269062,
+        "linf_winning_index": 0
       },
       "u2_finite_bank": {
         "bank_size": 32,
-        "l2": 0.0772986804076943,
-        "linf": 0.23452696187269062,
-        "winning_index": 0
+        "l2_min": 0.0772986804076943,
+        "l2_winning_index": 0,
+        "linf_min": 0.23452696187269062,
+        "linf_winning_index": 0
       }
     },
     {
       "case": "adversarial_narrow_feature",
-      "cost_observation_seconds": 0.042417286000272725,
+      "cost_observation_seconds": 0.05786611899929994,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.07977971304969055,
@@ -173,20 +179,22 @@
       "right_facets": 9,
       "so4_finite_bank": {
         "bank_size": 192,
-        "l2": 0.08055562649970577,
-        "linf": 0.17259241118047886,
-        "winning_index": 0
+        "l2_min": 0.08055562649970577,
+        "l2_winning_index": 0,
+        "linf_min": 0.17259241118047886,
+        "linf_winning_index": 0
       },
       "u2_finite_bank": {
         "bank_size": 32,
-        "l2": 0.08055562649970577,
-        "linf": 0.17259241118047886,
-        "winning_index": 0
+        "l2_min": 0.08055562649970577,
+        "l2_winning_index": 0,
+        "linf_min": 0.17259241118047886,
+        "linf_winning_index": 0
       }
     },
     {
       "case": "ball_approximant_identity",
-      "cost_observation_seconds": 0.0968164860005345,
+      "cost_observation_seconds": 0.12429241899917542,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0,
@@ -219,20 +227,22 @@
       "right_facets": 16,
       "so4_finite_bank": {
         "bank_size": 192,
-        "l2": 0.0,
-        "linf": 0.0,
-        "winning_index": 4
+        "l2_min": 0.0,
+        "l2_winning_index": 4,
+        "linf_min": 0.0,
+        "linf_winning_index": 4
       },
       "u2_finite_bank": {
         "bank_size": 32,
-        "l2": 0.0,
-        "linf": 0.0,
-        "winning_index": 0
+        "l2_min": 0.0,
+        "l2_winning_index": 0,
+        "linf_min": 0.0,
+        "linf_winning_index": 0
       }
     },
     {
       "case": "ball_vs_ellipsoid_approximant",
-      "cost_observation_seconds": 0.08084507400053553,
+      "cost_observation_seconds": 0.1309310109991202,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.22173262424283688,
@@ -265,20 +275,22 @@
       "right_facets": 16,
       "so4_finite_bank": {
         "bank_size": 192,
-        "l2": 0.1200257344432219,
-        "linf": 0.3399147173654647,
-        "winning_index": 0
+        "l2_min": 0.1200257344432219,
+        "l2_winning_index": 0,
+        "linf_min": 0.3399147173654647,
+        "linf_winning_index": 0
       },
       "u2_finite_bank": {
         "bank_size": 32,
-        "l2": 0.1200257344432219,
-        "linf": 0.3399147173654647,
-        "winning_index": 0
+        "l2_min": 0.1200257344432219,
+        "l2_winning_index": 0,
+        "linf_min": 0.3399147173654647,
+        "linf_winning_index": 0
       }
     },
     {
       "case": "retained_orientation_u2",
-      "cost_observation_seconds": 0.030637744001069223,
+      "cost_observation_seconds": 0.04498484800024016,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0682635396392401,
@@ -303,28 +315,30 @@
         "direct_direction_refinement_abs_l2": 0.003263506092833268,
         "direct_direction_refinement_abs_linf": 0.0,
         "so4_finite_bank_search_refinement_abs_l2": 0.2777224125900507,
-        "so4_finite_bank_search_refinement_abs_linf": 0.8502820852953408,
+        "so4_finite_bank_search_refinement_abs_linf": 0.6828659796819427,
         "u2_finite_bank_search_refinement_abs_l2": 0.2777224125900507,
-        "u2_finite_bank_search_refinement_abs_linf": 0.8502820852953408
+        "u2_finite_bank_search_refinement_abs_linf": 0.7649412980003469
       },
       "right": "orientation:generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0/attempt=0/map=u2-deterministic",
       "right_facets": 6,
       "so4_finite_bank": {
         "bank_size": 192,
-        "l2": 2.1411214584335513e-17,
-        "linf": 1.1102230246251565e-16,
-        "winning_index": 118
+        "l2_min": 2.1411214584335513e-17,
+        "l2_winning_index": 118,
+        "linf_min": 1.1102230246251565e-16,
+        "linf_winning_index": 118
       },
       "u2_finite_bank": {
         "bank_size": 32,
-        "l2": 2.1411214584335513e-17,
-        "linf": 1.1102230246251565e-16,
-        "winning_index": 12
+        "l2_min": 2.1411214584335513e-17,
+        "l2_winning_index": 12,
+        "linf_min": 1.1102230246251565e-16,
+        "linf_winning_index": 12
       }
     },
     {
       "case": "retained_orientation_so4",
-      "cost_observation_seconds": 0.029664507001143647,
+      "cost_observation_seconds": 0.05530284799897345,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.07301114308952454,
@@ -357,20 +371,22 @@
       "right_facets": 6,
       "so4_finite_bank": {
         "bank_size": 192,
-        "l2": 2.988561546479478e-17,
-        "linf": 2.220446049250313e-16,
-        "winning_index": 1
+        "l2_min": 2.988561546479478e-17,
+        "l2_winning_index": 1,
+        "linf_min": 2.220446049250313e-16,
+        "linf_winning_index": 1
       },
       "u2_finite_bank": {
         "bank_size": 32,
-        "l2": 0.12715096511619295,
-        "linf": 0.3159019342784533,
-        "winning_index": 0
+        "l2_min": 0.12715096511619295,
+        "l2_winning_index": 0,
+        "linf_min": 0.3159019342784533,
+        "linf_winning_index": 0
       }
     },
     {
       "case": "retained_exact_feature_witness",
-      "cost_observation_seconds": 0.05955501800053753,
+      "cost_observation_seconds": 0.0697253019989148,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.20067121144363229,
@@ -395,40 +411,44 @@
         "direct_direction_refinement_abs_l2": 0.00010613380981172593,
         "direct_direction_refinement_abs_linf": 0.006367650419885296,
         "so4_finite_bank_search_refinement_abs_l2": 0.0,
-        "so4_finite_bank_search_refinement_abs_linf": 0.0,
+        "so4_finite_bank_search_refinement_abs_linf": 0.04162233022403283,
         "u2_finite_bank_search_refinement_abs_l2": 0.0,
-        "u2_finite_bank_search_refinement_abs_linf": 0.0
+        "u2_finite_bank_search_refinement_abs_linf": 0.024661982045566466
       },
       "right": "exact_feature:altgen-v2/scope=tangential-matchability-v1/factorial-baseline/param=current/seed=20260714/row=0/attempt=10/4x6",
       "right_facets": 10,
       "so4_finite_bank": {
         "bank_size": 192,
-        "l2": 0.23906502257937584,
-        "linf": 0.6149547217420853,
-        "winning_index": 2
+        "l2_min": 0.23906502257937584,
+        "l2_winning_index": 2,
+        "linf_min": 0.546286820193848,
+        "linf_winning_index": 10
       },
       "u2_finite_bank": {
         "bank_size": 32,
-        "l2": 0.23906502257937584,
-        "linf": 0.6149547217420853,
-        "winning_index": 8
+        "l2_min": 0.23906502257937584,
+        "l2_winning_index": 8,
+        "linf_min": 0.5902927396965189,
+        "linf_winning_index": 23
       }
     }
   ],
   "controls": {
+    "finite_bank_objective_winners_differ": true,
     "fixed_f_so4_gram_positive": true,
     "fixed_f_u2_gram_zero": true,
     "narrow_feature_axis_grid_understates_linf": true,
     "narrow_feature_primitive_grid_detected": true,
     "permuted_presentation_zero": true,
     "redundant_presentations_fail_closed": true,
-    "translation_positive_scale_zero": true
+    "translation_positive_scale_zero": true,
+    "unbounded_presentation_fail_closed": true
   },
   "coordinate_order": "q1,q2,p1,p2",
   "cost_observations_seconds": {
-    "exact_feature_reconstruction": 23.667392748000566,
-    "orientation_reconstruction": 1.828222045000075,
-    "synthetic_reconstruction": 0.24757627500002855
+    "exact_feature_reconstruction": 43.34470788600083,
+    "orientation_reconstruction": 3.2342197130001296,
+    "synthetic_reconstruction": 0.5437790630003292
   },
   "direction_designs": {
     "axis_only": 8,
@@ -464,14 +484,15 @@
   "method_contract": {
     "direct": "direct_sampled support L_infinity (sampled Hausdorff surrogate) and L2, neither exact Hausdorff",
     "directions": "axis-only plus antipodally complete normalized primitive integer S^3 directions, max coordinate 1/2/3; level 3 primary",
-    "groups": "u2_finite_bank: 32 monomial-unitary maps; so4_finite_bank: 192 orientation-preserving signed permutations; neither is a compact-group infimum/Haar integration",
-    "input": "irredundant normalized dual inequalities a_i.x <= 1; exact reconstruction fails closed on invalid/redundant/unreconstructable inputs",
+    "groups": "u2_finite_bank: 32 monomial-unitary maps; so4_finite_bank: 192 orientation-preserving signed permutations. Each records independently minimized linf_min and l2_min with separate winning indices; neither is a compact-group infimum/Haar integration",
+    "input": "irredundant normalized dual inequalities a_i.x <= 1; exact reconstruction fails closed on invalid/redundant/unreconstructable/unbounded inputs by an exact recession-cone witness",
     "no_sp4": "Sp(4) is noncompact and intentionally is not sampled as Haar probability",
     "normalization": "subtract arithmetic mean of reconstructed vertices and divide by RMS vertex radius: translation and positive global-scale quotient only"
   },
   "presentation_dispositions": {
     "synthetic:cube_duplicate": "fail_closed:redundant duplicate normalized inequality",
-    "synthetic:cube_vertex_touch": "fail_closed:redundant/nonfacet inequality indices: [8]"
+    "synthetic:cube_vertex_touch": "fail_closed:redundant/nonfacet inequality indices: [8]",
+    "synthetic:unbounded_box_with_cap": "fail_closed:unbounded recession witness: ['-1', '0', '0', '0']"
   },
   "provenance": {
     "exact_feature_input": {
@@ -531,13 +552,13 @@
   },
   "run": {
     "producer_path": "experiments/sys-datascience/methods/generator-variable-f-body-distance/body_distance.py",
-    "producer_sha256": "8fadebdbaa9b81e97baf5b55278e6e3d26e2154ea69fbfca98bc6a3e22a3a672",
-    "revision": "8d8d31b512e63af0a5a619e598a780e3c189751e",
+    "producer_sha256": "0bf6f2450974731c759ccac8ffdd272eec6ebd03370e6ccd926307acc4489ca4",
+    "revision": "a2233bd98314a50287d6784a9e5a107dbe1a3d42",
     "status_command": "git status --porcelain --untracked-files=no (cwd=repository root)",
     "terminal_status": "complete",
     "tracked_clean_before_generation": true,
     "tracked_status_porcelain": [],
-    "tree": "5bdb9d71d55885232dce04d7473cf9b16d9b9c65"
+    "tree": "830a8fdb6f38c126ac5af28ed8002bf4e3eec14c"
   },
   "schema": "generator-variable-f-body-distance-report-v1",
   "target_free": true
