@@ -180,7 +180,15 @@ fn validate_source(
     let mut selected = Vec::new();
     let mut bucket_counts = BTreeMap::<String, usize>::new();
     for (base, variants) in &bases {
-        if variants != &BTreeSet::from(["identity".into(), "u2-haar".into(), "so4-haar".into()]) {
+        if variants
+            != &BTreeSet::from([
+                "identity".into(),
+                "u2-deterministic".into(),
+                "u2-haar".into(),
+                "so4-deterministic".into(),
+                "so4-haar".into(),
+            ])
+        {
             return Err(format!("base {base} has wrong variant set"));
         }
         let group = rows
