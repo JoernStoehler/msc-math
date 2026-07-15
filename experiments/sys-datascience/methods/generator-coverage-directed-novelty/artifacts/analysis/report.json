@@ -3,116 +3,234 @@
     {
       "attempt_max_train": 10,
       "holdout_rows": 12,
-      "nonredundant_views": {
-        "chord_invariant": true,
-        "frame_geometry": true
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "seed=20260717 independent complete panel",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "seed=20260716 fixed complete panel",
+        "view_dependent": {
+          "chord_invariant": true,
+          "frame_geometry": true
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 6,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
       },
       "population": "current-baseline[delta=0.2]",
       "seed_counts_train": {
         "20260716": 12
       },
-      "selected_frontier_witnesses": 6,
       "train_rows": 12
     },
     {
       "attempt_max_train": 10,
       "holdout_rows": 12,
-      "nonredundant_views": {
-        "chord_invariant": true,
-        "frame_geometry": true
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "seed=20260717 independent complete panel",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "seed=20260716 fixed complete panel",
+        "view_dependent": {
+          "chord_invariant": true,
+          "frame_geometry": true
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 4,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
       },
       "population": "primal-hull-uniform-disk[points=n+4,origin=interior]",
       "seed_counts_train": {
         "20260716": 12
       },
-      "selected_frontier_witnesses": 4,
       "train_rows": 12
     },
     {
       "attempt_max_train": 0,
       "holdout_rows": 12,
-      "nonredundant_views": {
-        "chord_invariant": false,
-        "frame_geometry": false
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "seed=20260717 independent complete panel",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "seed=20260716 fixed complete panel",
+        "view_dependent": {
+          "chord_invariant": false,
+          "frame_geometry": false
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 0,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
       },
       "population": "regular-mutation[steps=4,scale=0.03]",
       "seed_counts_train": {
         "20260716": 12
       },
-      "selected_frontier_witnesses": 0,
       "train_rows": 12
     },
     {
       "attempt_max_train": 0,
       "holdout_rows": 12,
-      "nonredundant_views": {
-        "chord_invariant": true,
-        "frame_geometry": true
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "seed=20260717 independent complete panel",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "seed=20260716 fixed complete panel",
+        "view_dependent": {
+          "chord_invariant": true,
+          "frame_geometry": true
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 1,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
       },
       "population": "repulsive-gap[alpha=16]",
       "seed_counts_train": {
         "20260716": 12
       },
-      "selected_frontier_witnesses": 1,
       "train_rows": 12
     },
     {
       "attempt_max_train": 1,
       "holdout_rows": 12,
-      "nonredundant_views": {
-        "chord_invariant": true,
-        "frame_geometry": true
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "seed=20260717 independent complete panel",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "seed=20260716 fixed complete panel",
+        "view_dependent": {
+          "chord_invariant": true,
+          "frame_geometry": true
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 7,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
       },
       "population": "repulsive-gap[alpha=1]",
       "seed_counts_train": {
         "20260716": 12
       },
-      "selected_frontier_witnesses": 7,
       "train_rows": 12
     },
     {
       "attempt_max_train": 0,
       "holdout_rows": 12,
-      "nonredundant_views": {
-        "chord_invariant": true,
-        "frame_geometry": true
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "seed=20260717 independent complete panel",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "seed=20260716 fixed complete panel",
+        "view_dependent": {
+          "chord_invariant": true,
+          "frame_geometry": true
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 2,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
       },
       "population": "repulsive-gap[alpha=4]",
       "seed_counts_train": {
         "20260716": 12
       },
-      "selected_frontier_witnesses": 2,
       "train_rows": 12
     },
     {
       "attempt_max_train": 0,
       "holdout_rows": 12,
-      "nonredundant_views": {
-        "chord_invariant": false,
-        "frame_geometry": false
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "seed=20260717 independent complete panel",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "seed=20260716 fixed complete panel",
+        "view_dependent": {
+          "chord_invariant": false,
+          "frame_geometry": false
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 0,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
       },
       "population": "repulsive-gap[regular]",
       "seed_counts_train": {
         "20260716": 12
       },
-      "selected_frontier_witnesses": 0,
       "train_rows": 12
     },
     {
       "attempt_max_train": 0,
       "holdout_rows": 12,
-      "nonredundant_views": {
-        "chord_invariant": true,
-        "frame_geometry": true
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "seed=20260717 independent complete panel",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "seed=20260716 fixed complete panel",
+        "view_dependent": {
+          "chord_invariant": true,
+          "frame_geometry": true
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 4,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
       },
       "population": "zonogon[lengths=uniform(0.5,1.5)]",
       "seed_counts_train": {
         "20260716": 12
       },
-      "selected_frontier_witnesses": 4,
       "train_rows": 12
     }
   ],
+  "environment": {
+    "deterministic_replay_contract": "run with uv and the PEP-723 numpy pin; selection-cost-observation.json is excluded because it contains wall-clock timing",
+    "numpy_requirement": "numpy==1.26.4",
+    "numpy_version": "1.26.4",
+    "python_version": "3.12.3"
+  },
   "frozen_baseline": {
     "n": 4,
     "population": "current-baseline[delta=0.2]",
@@ -121,15 +239,15 @@
   "generation_cost_artifact": "generation-cost.tsv",
   "holdout_input_sha256": "90275c221e88f2a02fb2317587f7f5722cd23aebbdb77d2c2b3eecdef5d0d62b",
   "input_hashes": {
-    "experiments/sys-datascience/methods/generator-coverage-directed-novelty/artifacts/holdout/factor-only-report.json": "5ca755a8cf5d4f90311da123c7966a46298bb552fd82cb29c3e02958795d6e90",
-    "experiments/sys-datascience/methods/generator-coverage-directed-novelty/artifacts/holdout/factor-shapes.jsonl": "90275c221e88f2a02fb2317587f7f5722cd23aebbdb77d2c2b3eecdef5d0d62b",
-    "experiments/sys-datascience/methods/generator-coverage-directed-novelty/artifacts/train/factor-only-report.json": "3e5cf51f7535b2018ebadcdb81841dd741776dd9ca49e9aebed854fb02776d8a",
-    "experiments/sys-datascience/methods/generator-coverage-directed-novelty/artifacts/train/factor-shapes.jsonl": "608df0fd90b56c1fb85cd49489838bec301c1d75c2a990377cb1bf7111d6b24a"
+    "artifacts/holdout/factor-only-report.json": "5ca755a8cf5d4f90311da123c7966a46298bb552fd82cb29c3e02958795d6e90",
+    "artifacts/holdout/factor-shapes.jsonl": "90275c221e88f2a02fb2317587f7f5722cd23aebbdb77d2c2b3eecdef5d0d62b",
+    "artifacts/train/factor-only-report.json": "3e5cf51f7535b2018ebadcdb81841dd741776dd9ca49e9aebed854fb02776d8a",
+    "artifacts/train/factor-shapes.jsonl": "608df0fd90b56c1fb85cd49489838bec301c1d75c2a990377cb1bf7111d6b24a"
   },
   "interpretation": {
     "allowed": [
       "finite-panel holdout nearest-cover max/mean/q90 by named population and view",
-      "which arms contribute nonredundant retained witnesses under each view",
+      "which arms contribute nonredundant retained witnesses under each explicitly qualified panel/policy/metric/view field",
       "measured full-pool generation and offline selection costs",
       "metric-disagreement cases and synthetic calibration behavior"
     ],
@@ -140,6 +258,7 @@
     ],
     "prohibited": [
       "online allocation, sample-efficiency, or per-generated-row claims",
+      "reading arm contribution fields as intrinsic properties of a law or population",
       "sys or target exposure",
       "population support or density claims",
       "law quality ranking",
@@ -236,10 +355,10 @@
       "view": "frame_geometry"
     },
     {
-      "holdout_final_cover": 1.042605133995181,
+      "holdout_final_cover": 1.0426051339951807,
       "holdout_initial_cover": 1.5548707520570422,
-      "holdout_reduction_per_retained_witness": 0.021344400752577552,
-      "holdout_total_reduction": 0.5122656180618612,
+      "holdout_reduction_per_retained_witness": 0.02134440075257756,
+      "holdout_total_reduction": 0.5122656180618614,
       "metric": "q90",
       "policy": "offline_greedy_max",
       "retained_budget": 24,
@@ -296,10 +415,10 @@
       "view": "frame_geometry"
     },
     {
-      "holdout_final_cover": 0.8376533318316032,
+      "holdout_final_cover": 0.8376533318316031,
       "holdout_initial_cover": 1.5548707520570422,
-      "holdout_reduction_per_retained_witness": 0.02988405917605996,
-      "holdout_total_reduction": 0.717217420225439,
+      "holdout_reduction_per_retained_witness": 0.029884059176059963,
+      "holdout_total_reduction": 0.7172174202254391,
       "metric": "q90",
       "policy": "offline_greedy_frame",
       "retained_budget": 24,
@@ -336,30 +455,30 @@
       "view": "chord_invariant"
     },
     {
-      "holdout_final_cover": 2.942349756372451,
+      "holdout_final_cover": 2.9423497563724506,
       "holdout_initial_cover": 4.316716849968006,
-      "holdout_reduction_per_retained_witness": 0.057265295566481446,
-      "holdout_total_reduction": 1.3743670935955548,
+      "holdout_reduction_per_retained_witness": 0.05726529556648147,
+      "holdout_total_reduction": 1.3743670935955552,
       "metric": "max",
       "policy": "offline_greedy_chord",
       "retained_budget": 24,
       "view": "frame_geometry"
     },
     {
-      "holdout_final_cover": 0.496264675629578,
+      "holdout_final_cover": 0.4962646756295779,
       "holdout_initial_cover": 1.0593656064856514,
-      "holdout_reduction_per_retained_witness": 0.023462538785669725,
-      "holdout_total_reduction": 0.5631009308560734,
+      "holdout_reduction_per_retained_witness": 0.02346253878566973,
+      "holdout_total_reduction": 0.5631009308560735,
       "metric": "mean",
       "policy": "offline_greedy_chord",
       "retained_budget": 24,
       "view": "frame_geometry"
     },
     {
-      "holdout_final_cover": 0.858679004072701,
+      "holdout_final_cover": 0.8586790040727009,
       "holdout_initial_cover": 1.5548707520570422,
-      "holdout_reduction_per_retained_witness": 0.029007989499347547,
-      "holdout_total_reduction": 0.6961917479843411,
+      "holdout_reduction_per_retained_witness": 0.02900798949934755,
+      "holdout_total_reduction": 0.6961917479843412,
       "metric": "q90",
       "policy": "offline_greedy_chord",
       "retained_budget": 24,
@@ -405,8 +524,8 @@
   },
   "provenance": {
     "producer_reports": [
-      "experiments/sys-datascience/methods/generator-coverage-directed-novelty/artifacts/train/factor-only-report.json",
-      "experiments/sys-datascience/methods/generator-coverage-directed-novelty/artifacts/holdout/factor-only-report.json"
+      "artifacts/train/factor-only-report.json",
+      "artifacts/holdout/factor-only-report.json"
     ],
     "seed_contract": "train and holdout are independent master seeds; seed and attempt are retained in every witness row",
     "selection_contract": "all full train rows are generated before offline retained-witness selection",
@@ -423,16 +542,16 @@
     "train_full_pool_generated_rows": 96
   },
   "schema": "coverage-directed-novelty-v1",
-  "selection_cost_ms": 1573.1492129998514,
+  "selection_cost_artifact": "selection-cost-observation.json",
   "source": {
-    "analyzer_sha256": "88423845fd0c05f3aed6e30066e3976ef018c4335931d315ad9c53e6cf2da656",
+    "analyzer_sha256": "4d5fad7d8077e400755cb0929a3bf84d351626eb721e78c7e86df6b27dff752e",
     "producer_revision": "a50e1e930e21541506df6228aaed16355d830372",
     "producer_source_blobs": {
       "Cargo.lock": "8a51ae91187fdbc44c1539ddebf598feedd27b91",
       "experiments/sys-datascience/methods/generator-zoo-smoke/main.rs": "ea59cb1b3d123e630fdc034a95f4a2a43812b0a6",
       "experiments/sys-landscape/Cargo.toml": "a8efcf2366bcc08c5317d33926f44579727fbf31"
     },
-    "revision": "fb14bf170eb3d513c86c007a1bb5afe2f22f1589",
+    "revision": "1f49066867676c606d1e9d9af0e64a31855b9a53",
     "tracked_clean_for_analyzer": true
   },
   "synthetic_calibrations": {
@@ -461,7 +580,7 @@
     "contamination_not_population_region": true,
     "limitation": "Geometry alone cannot distinguish a tiny remote mode from a contaminated outlier; this calibration selected both and retains the known contamination label rather than promoting it.",
     "remote_mode_discovered": true,
-    "representation_quotient_distance": 6.544668208791957e-16,
+    "representation_quotient_distance": 6.352731987069327e-16,
     "representation_raw_distance": 2.1933217021505613,
     "schema": "coverage-directed-novelty-synthetic-v1"
   },

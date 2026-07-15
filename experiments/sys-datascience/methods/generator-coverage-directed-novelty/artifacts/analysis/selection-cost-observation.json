@@ -1,0 +1,9 @@
+{
+  "excluded_from_byte_replay": true,
+  "nondeterministic": true,
+  "note": "Wall-clock timing is an observation only; it is not part of deterministic evidence.",
+  "numpy_version": "1.26.4",
+  "python_version": "3.12.3",
+  "schema": "coverage-directed-novelty-selection-observation-v1",
+  "selection_cost_ms": 1555.9933530003036
+}
