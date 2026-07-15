@@ -37,4 +37,11 @@ fd9c3e7df08d generator-transfer parent/status branch
 1ff678a60a88 generator-within-distribution-quality
 2f9b287dbb29 rare-hit-curves-next
 f35dc0b0cde6 product-bounce-distribution (superseded on Main)
+21b5a96ccd75 convex-operations-next (unreviewed, no named consumer)
+2a7733b4da8d topology-density (unreviewed, no named consumer)
+829c81f49c48 empirical-standard-baseline-gate (superseded process trial)
+846154e8cf9a generator-combinatorial-coverage (unreviewed)
+096623311cef generator-cartan-anisotropy (unreviewed)
+0ab6d173c0ab generator-orbit-perturbation-zoo (unreviewed)
+158709c0ccb4 generic-4d-laws (unreviewed)
 ```
