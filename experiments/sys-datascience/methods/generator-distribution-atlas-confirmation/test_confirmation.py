@@ -53,6 +53,14 @@ class ConfirmationTests(unittest.TestCase):
         }
         self.assertEqual(report["implementation_hashes"], expected)
 
+    def test_executable_path_is_packet_relative_and_matches_hash(self):
+        report = json.loads((HERE / "artifacts/analysis/report.json").read_text())
+        producer = report["producer_provenance"]
+        self.assertIn("packet directory", producer["executable_path_base"])
+        executable = (HERE / producer["executable_path_at_capture"]).resolve()
+        self.assertTrue(executable.is_file())
+        self.assertEqual(hashlib.sha256(executable.read_bytes()).hexdigest(), producer["executable_sha256"])
+
     def test_local_grid_metric_and_geometry_copy(self):
         support = np.sin(2.0 * np.pi * np.arange(64) / 64.0)
         self.assertLess(atlas.l2(support, np.roll(support, 11)), 1e-12)

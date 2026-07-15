@@ -266,6 +266,7 @@ def main() -> None:
     for name, rows in (("per-seed-effects.tsv", effects), ("joint-effects.tsv", aggregate_effects(effects)), ("rank-stability.tsv", rank_stability(effects)), ("within-population.tsv", within_rows), ("saturation.tsv", saturation_rows), ("acceptance-cost.tsv", costs)):
         write_tsv(args.out_dir / name, rows)
     producer_identity = atlas.producer_provenance(args.producer_executable, args.producer_revision)
+    producer_identity["executable_path_base"] = "packet directory (the directory containing report.json; path is resolved relative to this directory)"
     report = {
         "schema": SCHEMA,
         "input_schema": shape_quality.SCHEMA,

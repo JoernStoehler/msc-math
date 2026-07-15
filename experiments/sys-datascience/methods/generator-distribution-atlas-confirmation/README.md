@@ -43,6 +43,9 @@ python3 analyze.py \
 The analyzer is copy-local. It retains exact input hashes, producer report
 hashes, producer executable hash, source blobs, analyzer hashes, repository
 revision/tree, and a tracked-clean predicate in `artifacts/analysis/report.json`.
+The recorded producer executable path is resolved relative to this packet
+directory (the directory containing `report.json`); its SHA-256 is checked by
+the packet tests and the path is capture metadata, not a build dependency.
 The grid-distance name and boundaries are explicit: L2 is a declared-grid
 circular-correlation rotation quotient; arbitrary rotations are approximate.
 Positive-Gram participation is not an intrinsic or metric dimension, and
