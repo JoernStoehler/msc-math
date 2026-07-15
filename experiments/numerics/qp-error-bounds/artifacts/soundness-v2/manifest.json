@@ -3,12 +3,12 @@
   "producer": "qp-soundness-v2",
   "producer_version": "qp-soundness-v2",
   "schema_version": "qp-soundness-row-v2",
-  "source_revision": "11b7837dcacebca7d1bcff478ee01e8d307bbf63",
-  "source_tree": "f30fbaf0186e098676b4c70caa44831da1f8c870",
-  "source_content_id": "f30fbaf0186e098676b4c70caa44831da1f8c870",
+  "source_revision": "63abdb285c49f722c55c86fef62ceef9a1422130",
+  "source_tree": "080f86e8f467a4dfe9b748ff696685c78dac8892",
+  "source_content_id": "080f86e8f467a4dfe9b748ff696685c78dac8892",
   "source_content_id_kind": "git_tree_oid",
   "source_snapshot_contract": "reachable clean source commit/tree captured before output deletion; generated artifact is not recursively hashed",
   "artifact_commit_contract": "commit this generated directory as a separate child of source_revision",
   "target_boundary": "exact targets are rational source coordinates or stored binary64 rationals; HKO intended algebraic transfer is unavailable",
-  "timing_scope": "per-row timings exclude compilation and fixture construction; policy timings cover aggregation only"
+  "timing_scope": "per-row timings exclude compilation and fixture construction; synthetic/exact policy timings cover aggregation only; current_production_minimasafe splits candidate-solve and production aggregation/fallback timings, whose sum is its total policy timing"
 }
