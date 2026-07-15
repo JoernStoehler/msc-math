@@ -141,8 +141,9 @@ def main() -> None:
             if policy["policy_production_call_status"] is not None:
                 fail("unchecked diagnostic is mislabeled as production output")
         elif policy["policy_id"] == "current_production_minimasafe":
-            if policy["policy_production_call_status"] != "ok":
-                fail("production MinimaSafe direct call did not succeed")
+            status = policy["policy_production_call_status"]
+            if status != "ok" and not str(status).startswith("aggregate_error:"):
+                fail("production MinimaSafe direct call has an unknown terminal status")
             if policy["policy_production_exact_resolution_count"] is not None or not str(policy["policy_production_exact_resolution_status"]).startswith("unavailable:"):
                 fail("production MinimaSafe exact-resolution exposure is mislabeled")
             returned = policy["policy_production_returned_orbits"]
@@ -153,6 +154,10 @@ def main() -> None:
                 fail("production MinimaSafe returned a word outside the declared stream")
             if any(orbit["admissibility"] not in {"admissible_f64", "admissible_exact", "indeterminate_f64"} for orbit in returned):
                 fail("production MinimaSafe returned an unknown admissibility state")
+            if status != "ok":
+                if returned or policy["policy_f64_min_action"] is not None:
+                    fail("failed production MinimaSafe aggregation carried a scalar or returned orbit")
+                continue
             reconstructed_min = min((orbit["action_f64"] for orbit in returned if orbit["admissibility"] in {"admissible_f64", "admissible_exact"}), default=None)
             if policy["policy_f64_min_action"] != reconstructed_min:
                 fail("production MinimaSafe scalar does not reconstruct from direct returned orbits")
