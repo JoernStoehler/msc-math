@@ -1,0 +1,46 @@
+censored	control	duplicate_count	first_hit_index	hit_count	hit_rate	known_probability	n	order_contract	replicate	wilson_high	wilson_low
+False	bernoulli_p=0.1	4998	3	510	0.102	0.1	5000	original seeded IID order	0	0.11069671843486187	0.0939143723134036
+False	bernoulli_p=0.1	4998	6	481	0.0962	0.1	5000	original seeded IID order	1	0.10468583893881711	0.08833415715201101
+False	bernoulli_p=0.1	4998	4	534	0.1068	0.1	5000	original seeded IID order	2	0.11566486775048387	0.09853885305910906
+False	bernoulli_p=0.1	4998	14	506	0.1012	0.1	5000	original seeded IID order	3	0.10986814477203596	0.0931441742993416
+False	bernoulli_p=0.1	4998	4	492	0.0984	0.1	5000	original seeded IID order	4	0.10696685653699382	0.09044976166527606
+False	bernoulli_p=0.01	4998	232	48	0.0096	0.01	5000	original seeded IID order	0	0.012704286970895016	0.007248675096817013
+False	bernoulli_p=0.01	4998	152	46	0.0092	0.01	5000	original seeded IID order	1	0.012248837681020369	0.0069047385482477065
+False	bernoulli_p=0.01	4998	112	55	0.011	0.01	5000	original seeded IID order	2	0.014289640166532683	0.008461172335733187
+False	bernoulli_p=0.01	4998	182	58	0.0116	0.01	5000	original seeded IID order	3	0.014965367809920811	0.008984523450010988
+False	bernoulli_p=0.01	4998	13	51	0.0102	0.01	5000	original seeded IID order	4	0.01338530492657819	0.007766735898799775
+True	duplicate-stream	63	NA	0	0.0	0.0	64	all values equal; duplicate stream must not be mistaken for IID evidence	0	0.05662405979280534	0.0
+True	no-hit-censoring	63	NA	0	0.0	0.0	64	threshold=1; no event by exhaustion	0	0.05662405979280534	0.0
+False	order-original	98	100	1	0.01	0.01	100	same multiset, event last	0	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	79	1	0.01	0.01	100	same multiset, seeded permutation	0	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	4	1	0.01	0.01	100	same multiset, seeded permutation	1	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	82	1	0.01	0.01	100	same multiset, seeded permutation	2	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	71	1	0.01	0.01	100	same multiset, seeded permutation	3	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	43	1	0.01	0.01	100	same multiset, seeded permutation	4	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	36	1	0.01	0.01	100	same multiset, seeded permutation	5	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	57	1	0.01	0.01	100	same multiset, seeded permutation	6	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	35	1	0.01	0.01	100	same multiset, seeded permutation	7	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	75	1	0.01	0.01	100	same multiset, seeded permutation	8	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	100	1	0.01	0.01	100	same multiset, seeded permutation	9	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	77	1	0.01	0.01	100	same multiset, seeded permutation	10	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	49	1	0.01	0.01	100	same multiset, seeded permutation	11	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	92	1	0.01	0.01	100	same multiset, seeded permutation	12	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	59	1	0.01	0.01	100	same multiset, seeded permutation	13	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	46	1	0.01	0.01	100	same multiset, seeded permutation	14	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	46	1	0.01	0.01	100	same multiset, seeded permutation	15	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	86	1	0.01	0.01	100	same multiset, seeded permutation	16	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	84	1	0.01	0.01	100	same multiset, seeded permutation	17	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	55	1	0.01	0.01	100	same multiset, seeded permutation	18	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	79	1	0.01	0.01	100	same multiset, seeded permutation	19	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	79	1	0.01	0.01	100	same multiset, seeded permutation	20	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	83	1	0.01	0.01	100	same multiset, seeded permutation	21	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	24	1	0.01	0.01	100	same multiset, seeded permutation	22	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	44	1	0.01	0.01	100	same multiset, seeded permutation	23	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	13	1	0.01	0.01	100	same multiset, seeded permutation	24	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	87	1	0.01	0.01	100	same multiset, seeded permutation	25	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	49	1	0.01	0.01	100	same multiset, seeded permutation	26	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	79	1	0.01	0.01	100	same multiset, seeded permutation	27	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	19	1	0.01	0.01	100	same multiset, seeded permutation	28	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	36	1	0.01	0.01	100	same multiset, seeded permutation	29	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	35	1	0.01	0.01	100	same multiset, seeded permutation	30	0.054486196178705315	0.0017674320641406505
+False	order-permutation	98	72	1	0.01	0.01	100	same multiset, seeded permutation	31	0.054486196178705315	0.0017674320641406505
