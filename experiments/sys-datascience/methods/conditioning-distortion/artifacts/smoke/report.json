@@ -39,7 +39,7 @@
     "producer_sha256": "f14fe0b77b5ab012f18bce888db61f3b0e70983c5cb3e9b7f7647aafdfdc0d5c",
     "product_source_blob": "9a15d5545efd85a5396fa818d7e604ffaab46b9c",
     "product_source_path": "experiments/sys-datascience/produce/random-product.rs",
-    "repository_revision": "f3c11a342892dba5a9c536d388a5ce0225052bae",
+    "repository_revision": "f8db2fa8d97238fb762531127952e5248bc142a4",
     "source_blob": "ea59cb1b3d123e630fdc034a95f4a2a43812b0a6",
     "source_path": "experiments/sys-datascience/methods/generator-zoo-smoke/main.rs",
     "source_revision": "fd9c3e7d",
