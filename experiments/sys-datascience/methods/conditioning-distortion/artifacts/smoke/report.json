@@ -1,0 +1,3108 @@
+{
+  "attempts_per_logical_draw": 32,
+  "calibration": {
+    "always_accept": {
+      "acceptance": 1.0,
+      "accepted": 256,
+      "attempts": 256,
+      "mean_shift": 0.0
+    },
+    "corrupted_reason_control": {
+      "expected": "reason/accepted_body_features consistency check fails",
+      "status": "fail_closed_if_reason_code_is_mutated"
+    },
+    "known_shift": {
+      "acceptance": 0.26171875,
+      "accepted": 67,
+      "accepted_mean": 0.13692339442508322,
+      "attempts": 256,
+      "expected_acceptance": 0.25,
+      "expected_accepted_mean": 0.125,
+      "proposed_mean": 0.504667574317153
+    }
+  },
+  "command": "python3 conditioning_audit.py --out-dir artifacts/smoke --seed 20260715 --attempts 32 --rows-per-stratum 12 --sides 3,4,6",
+  "interpretation": {
+    "allowed": [
+      "report bounded-attempt cost and terminal reason composition",
+      "describe accepted-vs-proposed shifts in retained primitive/body diagnostics",
+      "treat accepted rows as a conditional law and exhaustion as censored"
+    ],
+    "prohibited": [
+      "claim a density, mathematical support, or target/sys/capacity association",
+      "assign body features to rejected proposals",
+      "pool distinct rejection reasons",
+      "treat paired product factors as independent"
+    ]
+  },
+  "provenance": {
+    "producer_sha256": "4de0d0e18c4ba674a8ae1d3f4b7b01fc7102e2afed355a37dc36ed73ccd07fc3",
+    "product_source_blob": "9a15d5545efd85a5396fa818d7e604ffaab46b9c",
+    "product_source_path": "experiments/sys-datascience/produce/random-product.rs",
+    "repository_revision": "fa27e60fe8a46aa461d4ed83036d3500253cc5c4",
+    "source_blob": "ea59cb1b3d123e630fdc034a95f4a2a43812b0a6",
+    "source_path": "experiments/sys-datascience/methods/generator-zoo-smoke/main.rs",
+    "source_revision": "fd9c3e7d",
+    "tracked_clean": true,
+    "tracked_status": ""
+  },
+  "rows_per_stratum": 12,
+  "schema": "conditioning-distortion-report-v1",
+  "seed": 20260715,
+  "strata": {
+    "current-baseline|delta=0.2|side=3": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 10,
+          "attempts": 10,
+          "hi": 3.0076726592121545,
+          "lo": 2.449901120047682,
+          "rate": 1.0
+        },
+        {
+          "accepted": 3,
+          "attempts": 11,
+          "hi": 3.468932619286536,
+          "lo": 3.0076726592121545,
+          "rate": 0.2727272727272727
+        },
+        {
+          "accepted": 0,
+          "attempts": 10,
+          "hi": 4.645903444859963,
+          "lo": 3.468932619286536,
+          "rate": 0.0
+        },
+        {
+          "accepted": 0,
+          "attempts": 10,
+          "hi": null,
+          "lo": 4.645903444859963,
+          "rate": 0.0
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 12.389572765457885,
+        "bbox_aspect": 0.951752715820918,
+        "extreme_point_count": 3.0,
+        "realized_max_radius": 9.212627353692442,
+        "realized_min_radius": 1.4067116561646447,
+        "realized_support_spread": 0.22341125439143503
+      },
+      "attempts": 38,
+      "attempts_per_accepted_draw": 3.1666666666666665,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 0.2725357829287616,
+          "accepted_n": 12,
+          "accepted_q10": 0.16457271241575303,
+          "accepted_q90": 0.3483323373926611,
+          "mean_shift": -0.3370056733727768,
+          "proposed_mean": 0.6095414563015384,
+          "proposed_n": 38,
+          "proposed_q10": 0.19234317218451,
+          "proposed_q90": 0.953760857253868
+        },
+        "antipodal_width": {
+          "accepted_mean": 2.25,
+          "accepted_n": 12,
+          "accepted_q10": 2,
+          "accepted_q90": 3,
+          "mean_shift": 0.5394736842105263,
+          "proposed_mean": 1.7105263157894737,
+          "proposed_n": 38,
+          "proposed_q10": 1,
+          "proposed_q90": 2
+        },
+        "max_angular_gap": {
+          "accepted_mean": 2.7549503111263327,
+          "accepted_n": 12,
+          "accepted_q10": 2.522666034504507,
+          "accepted_q90": 3.0076726592121545,
+          "mean_shift": -1.0011707880473373,
+          "proposed_mean": 3.75612109917367,
+          "proposed_n": 38,
+          "proposed_q10": 2.5413907579138897,
+          "proposed_q90": 4.9049523704987115
+        },
+        "min_angular_gap": {
+          "accepted_mean": 1.426664733175361,
+          "accepted_n": 12,
+          "accepted_q10": 1.030012812545027,
+          "accepted_q90": 1.702514053796007,
+          "mean_shift": 0.5850485026861256,
+          "proposed_mean": 0.8416162304892354,
+          "proposed_n": 38,
+          "proposed_q10": 0.0746317215106771,
+          "proposed_q90": 1.535926706796426
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 3.0,
+          "accepted_n": 12,
+          "accepted_q10": 3.0,
+          "accepted_q90": 3.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 3.0,
+          "proposed_n": 38,
+          "proposed_q10": 3.0,
+          "proposed_q90": 3.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.2221112569093836,
+          "accepted_n": 12,
+          "accepted_q10": 0.14312466141955904,
+          "accepted_q90": 0.2770076917784501,
+          "mean_shift": 0.02199420367344604,
+          "proposed_mean": 0.20011705323593756,
+          "proposed_n": 38,
+          "proposed_q10": 0.0676581585682311,
+          "proposed_q90": 0.2846974032169881
+        },
+        "support_spread": {
+          "accepted_mean": 0.22341125439143503,
+          "accepted_n": 12,
+          "accepted_q10": 0.1503138974252961,
+          "accepted_q90": 0.27567474490923893,
+          "mean_shift": 0.022782215630345826,
+          "proposed_mean": 0.2006290387610892,
+          "proposed_n": 38,
+          "proposed_q10": 0.06881244271875753,
+          "proposed_q90": 0.27567474490923893
+        }
+      },
+      "reason_counts": {
+        "accepted": 12,
+        "unbounded_or_origin_failure": 26
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.6842105263157895,
+        "wrong_side_count": 0.0
+      }
+    },
+    "current-baseline|delta=0.2|side=4": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 6,
+          "attempts": 6,
+          "hi": 2.60091819044838,
+          "lo": 1.8672170246474513,
+          "rate": 1.0
+        },
+        {
+          "accepted": 6,
+          "attempts": 6,
+          "hi": 2.92197250696975,
+          "lo": 2.60091819044838,
+          "rate": 1.0
+        },
+        {
+          "accepted": 2,
+          "attempts": 6,
+          "hi": 3.7260202963566837,
+          "lo": 2.92197250696975,
+          "rate": 0.3333333333333333
+        },
+        {
+          "accepted": 0,
+          "attempts": 5,
+          "hi": null,
+          "lo": 3.7260202963566837,
+          "rate": 0.0
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 7.78984147053064,
+        "bbox_aspect": 1.0564493883406063,
+        "extreme_point_count": 4.0,
+        "realized_max_radius": 5.524247882179101,
+        "realized_min_radius": 1.1574355532944074,
+        "realized_support_spread": 0.3405054940653018
+      },
+      "attempts": 20,
+      "attempts_per_accepted_draw": 1.6666666666666667,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 0.500741357171468,
+          "accepted_n": 12,
+          "accepted_q10": 0.33423216110201076,
+          "accepted_q90": 0.5762522332379408,
+          "mean_shift": -0.17202290254697894,
+          "proposed_mean": 0.6727642597184469,
+          "proposed_n": 20,
+          "proposed_q10": 0.33423216110201076,
+          "proposed_q90": 0.9157799662526797
+        },
+        "antipodal_width": {
+          "accepted_mean": 2.1666666666666665,
+          "accepted_n": 12,
+          "accepted_q10": 2,
+          "accepted_q90": 2,
+          "mean_shift": 0.3666666666666665,
+          "proposed_mean": 1.8,
+          "proposed_n": 20,
+          "proposed_q10": 1,
+          "proposed_q90": 2
+        },
+        "max_angular_gap": {
+          "accepted_mean": 2.556625631261215,
+          "accepted_n": 12,
+          "accepted_q10": 1.965425591081377,
+          "accepted_q90": 2.8950070998509454,
+          "mean_shift": -0.5330251014249199,
+          "proposed_mean": 3.0896507326861347,
+          "proposed_n": 20,
+          "proposed_q10": 1.965425591081377,
+          "proposed_q90": 3.851662742734093
+        },
+        "min_angular_gap": {
+          "accepted_mean": 0.5970305248713356,
+          "accepted_n": 12,
+          "accepted_q10": 0.21590829694339542,
+          "accepted_q90": 0.8319699927035571,
+          "mean_shift": 0.15583995042737658,
+          "proposed_mean": 0.441190574443959,
+          "proposed_n": 20,
+          "proposed_q10": 0.04315628931239779,
+          "proposed_q90": 0.8319699927035571
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 4.0,
+          "accepted_n": 12,
+          "accepted_q10": 4.0,
+          "accepted_q90": 4.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 4.0,
+          "proposed_n": 20,
+          "proposed_q10": 4.0,
+          "proposed_q90": 4.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.3462554720062238,
+          "accepted_n": 12,
+          "accepted_q10": 0.29777091751301216,
+          "accepted_q90": 0.3744712541066135,
+          "mean_shift": 0.03914257400301352,
+          "proposed_mean": 0.3071128980032103,
+          "proposed_n": 20,
+          "proposed_q10": 0.18749307254172967,
+          "proposed_q90": 0.3744712541066135
+        },
+        "support_spread": {
+          "accepted_mean": 0.3405054940653018,
+          "accepted_n": 12,
+          "accepted_q10": 0.30182023259998325,
+          "accepted_q90": 0.36972355405604285,
+          "mean_shift": 0.03843218241561441,
+          "proposed_mean": 0.30207331164968737,
+          "proposed_n": 20,
+          "proposed_q10": 0.1719010183218186,
+          "proposed_q90": 0.36972355405604285
+        }
+      },
+      "reason_counts": {
+        "accepted": 12,
+        "unbounded_or_origin_failure": 8
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.4,
+        "wrong_side_count": 0.0
+      }
+    },
+    "current-baseline|delta=0.2|side=6": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 7,
+          "attempts": 12,
+          "hi": 2.132006003877495,
+          "lo": 1.5758436553467963,
+          "rate": 0.5833333333333334
+        },
+        {
+          "accepted": 5,
+          "attempts": 13,
+          "hi": 2.422061469066386,
+          "lo": 2.132006003877495,
+          "rate": 0.38461538461538464
+        },
+        {
+          "accepted": 1,
+          "attempts": 12,
+          "hi": 3.0021427575518524,
+          "lo": 2.422061469066386,
+          "rate": 0.08333333333333333
+        },
+        {
+          "accepted": 0,
+          "attempts": 12,
+          "hi": null,
+          "lo": 3.0021427575518524,
+          "rate": 0.0
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 4.3586978413188895,
+        "bbox_aspect": 0.8787553312613813,
+        "extreme_point_count": 6.0,
+        "realized_max_radius": 2.096142401036342,
+        "realized_min_radius": 1.053104407903955,
+        "realized_support_spread": 0.2357457855702821
+      },
+      "attempts": 46,
+      "attempts_per_accepted_draw": 3.8333333333333335,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 0.5620185043138868,
+          "accepted_n": 12,
+          "accepted_q10": 0.35421009223368893,
+          "accepted_q90": 0.6945585196923887,
+          "mean_shift": -0.21777780499910582,
+          "proposed_mean": 0.7797963093129926,
+          "proposed_n": 46,
+          "proposed_q10": 0.5280945170057672,
+          "proposed_q90": 1.0288069267405517
+        },
+        "antipodal_width": {
+          "accepted_mean": 1.25,
+          "accepted_n": 12,
+          "accepted_q10": 1,
+          "accepted_q90": 2,
+          "mean_shift": -0.09782608695652173,
+          "proposed_mean": 1.3478260869565217,
+          "proposed_n": 46,
+          "proposed_q10": 1,
+          "proposed_q90": 2
+        },
+        "max_angular_gap": {
+          "accepted_mean": 2.0295493337041264,
+          "accepted_n": 12,
+          "accepted_q10": 1.6978595380146857,
+          "accepted_q90": 2.2982622009396736,
+          "mean_shift": -0.4726008293118098,
+          "proposed_mean": 2.502150163015936,
+          "proposed_n": 46,
+          "proposed_q10": 1.7620945439062745,
+          "proposed_q90": 3.2655097233089525
+        },
+        "min_angular_gap": {
+          "accepted_mean": 0.30018014711211766,
+          "accepted_n": 12,
+          "accepted_q10": 0.19254205916113806,
+          "accepted_q90": 0.3762258198722961,
+          "mean_shift": 0.1271678563380592,
+          "proposed_mean": 0.17301229077405847,
+          "proposed_n": 46,
+          "proposed_q10": 0.021410155619045357,
+          "proposed_q90": 0.28507071113743176
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 6.0,
+          "accepted_n": 12,
+          "accepted_q10": 6.0,
+          "accepted_q90": 6.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 6.0,
+          "proposed_n": 46,
+          "proposed_q10": 6.0,
+          "proposed_q90": 6.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.2358393512416462,
+          "accepted_n": 12,
+          "accepted_q10": 0.1490208831656046,
+          "accepted_q90": 0.3108139649926257,
+          "mean_shift": -0.035695192247906266,
+          "proposed_mean": 0.27153454348955247,
+          "proposed_n": 46,
+          "proposed_q10": 0.18116999245274587,
+          "proposed_q90": 0.3522558101947352
+        },
+        "support_spread": {
+          "accepted_mean": 0.2357457855702821,
+          "accepted_n": 12,
+          "accepted_q10": 0.15993817678486277,
+          "accepted_q90": 0.3001299634973629,
+          "mean_shift": -0.032107004094276775,
+          "proposed_mean": 0.2678527896645589,
+          "proposed_n": 46,
+          "proposed_q10": 0.172525601844553,
+          "proposed_q90": 0.3441174885593056
+        }
+      },
+      "reason_counts": {
+        "accepted": 12,
+        "unbounded_or_origin_failure": 34
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.7391304347826086,
+        "wrong_side_count": 0.0
+      }
+    },
+    "primal-hull-uniform-disk|points=n+4,origin=interior|side=3": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 0,
+          "attempts": 92,
+          "hi": 1.7779392869587984,
+          "lo": 1.1309766409911646,
+          "rate": 0.0
+        },
+        {
+          "accepted": 0,
+          "attempts": 92,
+          "hi": 1.9762665000795046,
+          "lo": 1.7779392869587984,
+          "rate": 0.0
+        },
+        {
+          "accepted": 0,
+          "attempts": 92,
+          "hi": 2.2139206970155128,
+          "lo": 1.9762665000795046,
+          "rate": 0.0
+        },
+        {
+          "accepted": 1,
+          "attempts": 92,
+          "hi": null,
+          "lo": 2.2139206970155128,
+          "rate": 0.010869565217391304
+        }
+      ],
+      "accepted": 1,
+      "accepted_body_feature_means": {
+        "area": 0.9300788834484388,
+        "bbox_aspect": 1.391725378477337,
+        "extreme_point_count": 3.0,
+        "realized_max_radius": 0.9918281148598412,
+        "realized_min_radius": 0.7286266208630919,
+        "realized_support_spread": 0.37134784984222735
+      },
+      "attempts": 376,
+      "attempts_per_accepted_draw": 376.0,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 0.06539242670706084,
+          "accepted_n": 1,
+          "accepted_q10": 0.06539242670706084,
+          "accepted_q90": 0.06539242670706084,
+          "mean_shift": -0.40460898169823784,
+          "proposed_mean": 0.4700014084052987,
+          "proposed_n": 365,
+          "proposed_q10": 0.2417264537316636,
+          "proposed_q90": 0.7034088758509967
+        },
+        "antipodal_width": {
+          "accepted_mean": 3.0,
+          "accepted_n": 1,
+          "accepted_q10": 3,
+          "accepted_q90": 3,
+          "mean_shift": 1.3452054794520547,
+          "proposed_mean": 1.6547945205479453,
+          "proposed_n": 365,
+          "proposed_q10": 1,
+          "proposed_q90": 3
+        },
+        "max_angular_gap": {
+          "accepted_mean": 2.2255284966158184,
+          "accepted_n": 1,
+          "accepted_q10": 2.2255284966158184,
+          "accepted_q90": 2.2255284966158184,
+          "mean_shift": 0.2311129000368195,
+          "proposed_mean": 1.994415596578999,
+          "proposed_n": 365,
+          "proposed_q10": 1.6223799055741948,
+          "proposed_q90": 2.389300157536675
+        },
+        "min_angular_gap": {
+          "accepted_mean": 1.9053816878641334,
+          "accepted_n": 1,
+          "accepted_q10": 1.9053816878641334,
+          "accepted_q90": 1.9053816878641334,
+          "mean_shift": 1.44984283961516,
+          "proposed_mean": 0.45553884824897345,
+          "proposed_n": 365,
+          "proposed_q10": 0.06424419177391005,
+          "proposed_q90": 0.8955771076347689
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 3.0,
+          "accepted_n": 1,
+          "accepted_q10": 3.0,
+          "accepted_q90": 3.0,
+          "mean_shift": -2.1808219178082195,
+          "proposed_mean": 5.1808219178082195,
+          "proposed_n": 365,
+          "proposed_q10": 4.0,
+          "proposed_q90": 6.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.8558143726739992,
+          "accepted_n": 1,
+          "accepted_q10": 0.8558143726739992,
+          "accepted_q90": 0.8558143726739992,
+          "mean_shift": -0.3749752999230592,
+          "proposed_mean": 1.2307896725970584,
+          "proposed_n": 334,
+          "proposed_q10": 0.5302697627226968,
+          "proposed_q90": 2.0844927565237623
+        },
+        "support_spread": {
+          "accepted_mean": 0.37134784984222735,
+          "accepted_n": 1,
+          "accepted_q10": 0.37134784984222735,
+          "accepted_q90": 0.37134784984222735,
+          "mean_shift": -0.1563854922973399,
+          "proposed_mean": 0.5277333421395672,
+          "proposed_n": 365,
+          "proposed_q10": 0.27615576969738376,
+          "proposed_q90": 0.8099849965722838
+        }
+      },
+      "reason_counts": {
+        "accepted": 1,
+        "bounded_attempt_exhaustion": 11,
+        "wrong_side_count": 364
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.0,
+        "wrong_side_count": 0.9680851063829787
+      }
+    },
+    "primal-hull-uniform-disk|points=n+4,origin=interior|side=4": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 0,
+          "attempts": 21,
+          "hi": 1.7284377064244638,
+          "lo": 1.2438409470456406,
+          "rate": 0.0
+        },
+        {
+          "accepted": 1,
+          "attempts": 22,
+          "hi": 1.905084674893497,
+          "lo": 1.7284377064244638,
+          "rate": 0.045454545454545456
+        },
+        {
+          "accepted": 4,
+          "attempts": 22,
+          "hi": 2.0831540996202973,
+          "lo": 1.905084674893497,
+          "rate": 0.18181818181818182
+        },
+        {
+          "accepted": 7,
+          "attempts": 21,
+          "hi": null,
+          "lo": 2.0831540996202973,
+          "rate": 0.3333333333333333
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 1.0082349443946206,
+        "bbox_aspect": 0.9526000570530989,
+        "extreme_point_count": 4.0,
+        "realized_max_radius": 0.9650584797497332,
+        "realized_min_radius": 0.6099887517299064,
+        "realized_support_spread": 0.5013292274882079
+      },
+      "attempts": 83,
+      "attempts_per_accepted_draw": 6.916666666666667,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 0.3159526601997265,
+          "accepted_n": 12,
+          "accepted_q10": 0.1995651626485966,
+          "accepted_q90": 0.38720972247961044,
+          "mean_shift": -0.15900935000378463,
+          "proposed_mean": 0.47496201020351114,
+          "proposed_n": 83,
+          "proposed_q10": 0.27493173267538457,
+          "proposed_q90": 0.6624357753760548
+        },
+        "antipodal_width": {
+          "accepted_mean": 2.1666666666666665,
+          "accepted_n": 12,
+          "accepted_q10": 2,
+          "accepted_q90": 3,
+          "mean_shift": 0.6244979919678713,
+          "proposed_mean": 1.5421686746987953,
+          "proposed_n": 83,
+          "proposed_q10": 1,
+          "proposed_q90": 2
+        },
+        "max_angular_gap": {
+          "accepted_mean": 2.1264110576523367,
+          "accepted_n": 12,
+          "accepted_q10": 1.9269190410318284,
+          "accepted_q90": 2.2225386828275364,
+          "mean_shift": 0.22038347389509716,
+          "proposed_mean": 1.9060275837572396,
+          "proposed_n": 83,
+          "proposed_q10": 1.6076621547455159,
+          "proposed_q90": 2.2641283450280802
+        },
+        "min_angular_gap": {
+          "accepted_mean": 0.8708027380986739,
+          "accepted_n": 12,
+          "accepted_q10": 0.5178275683910201,
+          "accepted_q90": 1.1512671102237921,
+          "mean_shift": 0.4765744721118315,
+          "proposed_mean": 0.3942282659868424,
+          "proposed_n": 83,
+          "proposed_q10": 0.07399225354520489,
+          "proposed_q90": 0.7932928575405658
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 4.0,
+          "accepted_n": 12,
+          "accepted_q10": 4.0,
+          "accepted_q90": 4.0,
+          "mean_shift": -1.4939759036144578,
+          "proposed_mean": 5.493975903614458,
+          "proposed_n": 83,
+          "proposed_q10": 4.0,
+          "proposed_q90": 7.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 1.362490790788063,
+          "accepted_n": 12,
+          "accepted_q10": 0.8280021655715969,
+          "accepted_q90": 1.8343199206840108,
+          "mean_shift": 0.29577771815364207,
+          "proposed_mean": 1.066713072634421,
+          "proposed_n": 77,
+          "proposed_q10": 0.3758161587718531,
+          "proposed_q90": 1.9234542075979588
+        },
+        "support_spread": {
+          "accepted_mean": 0.5013292274882079,
+          "accepted_n": 12,
+          "accepted_q10": 0.3185366754904756,
+          "accepted_q90": 0.6786467904480507,
+          "mean_shift": 0.026373462005547854,
+          "proposed_mean": 0.47495576548266,
+          "proposed_n": 83,
+          "proposed_q10": 0.2091794729857025,
+          "proposed_q90": 0.6933264859769543
+        }
+      },
+      "reason_counts": {
+        "accepted": 12,
+        "unbounded_or_origin_failure": 1,
+        "wrong_side_count": 70
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.012048192771084338,
+        "wrong_side_count": 0.8433734939759037
+      }
+    },
+    "primal-hull-uniform-disk|points=n+4,origin=interior|side=6": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 2,
+          "attempts": 9,
+          "hi": 1.3854626287491023,
+          "lo": 1.1320045835178085,
+          "rate": 0.2222222222222222
+        },
+        {
+          "accepted": 5,
+          "attempts": 9,
+          "hi": 1.6343717588220856,
+          "lo": 1.3854626287491023,
+          "rate": 0.5555555555555556
+        },
+        {
+          "accepted": 4,
+          "attempts": 9,
+          "hi": 1.7787774359340336,
+          "lo": 1.6343717588220856,
+          "rate": 0.4444444444444444
+        },
+        {
+          "accepted": 3,
+          "attempts": 8,
+          "hi": null,
+          "lo": 1.7787774359340336,
+          "rate": 0.375
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 1.4448981445559215,
+        "bbox_aspect": 0.9784743285154912,
+        "extreme_point_count": 6.0,
+        "realized_max_radius": 0.9515930062401483,
+        "realized_min_radius": 0.5830064328503083,
+        "realized_support_spread": 0.4251051265663739
+      },
+      "attempts": 32,
+      "attempts_per_accepted_draw": 2.6666666666666665,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 0.3930630282676371,
+          "accepted_n": 12,
+          "accepted_q10": 0.26004196852240363,
+          "accepted_q90": 0.4787289275104758,
+          "mean_shift": -0.03033717323044105,
+          "proposed_mean": 0.42340020149807817,
+          "proposed_n": 32,
+          "proposed_q10": 0.26004196852240363,
+          "proposed_q90": 0.5790080216282012
+        },
+        "antipodal_width": {
+          "accepted_mean": 0.75,
+          "accepted_n": 12,
+          "accepted_q10": 0,
+          "accepted_q90": 1,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.75,
+          "proposed_n": 32,
+          "proposed_q10": 0,
+          "proposed_q90": 2
+        },
+        "max_angular_gap": {
+          "accepted_mean": 1.6175947059122897,
+          "accepted_n": 12,
+          "accepted_q10": 1.3854626287491023,
+          "accepted_q90": 1.7787774359340336,
+          "mean_shift": 0.002705108312456961,
+          "proposed_mean": 1.6148895975998327,
+          "proposed_n": 32,
+          "proposed_q10": 1.1932443875512195,
+          "proposed_q90": 1.8741659714332783
+        },
+        "min_angular_gap": {
+          "accepted_mean": 0.424548223579404,
+          "accepted_n": 12,
+          "accepted_q10": 0.17232416218586621,
+          "accepted_q90": 0.6973011837477845,
+          "mean_shift": 0.03635538697453922,
+          "proposed_mean": 0.3881928366048648,
+          "proposed_n": 32,
+          "proposed_q10": 0.08328127514509642,
+          "proposed_q90": 0.7259480703140357
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 6.0,
+          "accepted_n": 12,
+          "accepted_q10": 6.0,
+          "accepted_q90": 6.0,
+          "mean_shift": -0.34375,
+          "proposed_mean": 6.34375,
+          "proposed_n": 32,
+          "proposed_q10": 5.0,
+          "proposed_q90": 7.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.7166207107965321,
+          "accepted_n": 12,
+          "accepted_q10": 0.5206791750643384,
+          "accepted_q90": 1.0191161505263402,
+          "mean_shift": -0.1693272866489426,
+          "proposed_mean": 0.8859479974454747,
+          "proposed_n": 29,
+          "proposed_q10": 0.37274249682674854,
+          "proposed_q90": 1.4747665433078352
+        },
+        "support_spread": {
+          "accepted_mean": 0.4251051265663739,
+          "accepted_n": 12,
+          "accepted_q10": 0.32700048842838536,
+          "accepted_q90": 0.5070249230208524,
+          "mean_shift": -0.08369919153410077,
+          "proposed_mean": 0.5088043181004747,
+          "proposed_n": 32,
+          "proposed_q10": 0.2818540961136915,
+          "proposed_q90": 0.7819538549922727
+        }
+      },
+      "reason_counts": {
+        "accepted": 12,
+        "wrong_side_count": 20
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.0,
+        "wrong_side_count": 0.625
+      }
+    },
+    "regular-mutation|steps=4,scale=0.03|side=3": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 7,
+          "attempts": 7,
+          "hi": 2.8578923639130607,
+          "lo": 2.237122107635744,
+          "rate": 1.0
+        },
+        {
+          "accepted": 6,
+          "attempts": 7,
+          "hi": 3.1616262985102557,
+          "lo": 2.8578923639130607,
+          "rate": 0.8571428571428571
+        },
+        {
+          "accepted": 0,
+          "attempts": 7,
+          "hi": 3.6100691356266132,
+          "lo": 3.1616262985102557,
+          "rate": 0.0
+        },
+        {
+          "accepted": 0,
+          "attempts": 7,
+          "hi": null,
+          "lo": 3.6100691356266132,
+          "rate": 0.0
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 45.391318046239974,
+        "bbox_aspect": 1.0699039269869741,
+        "extreme_point_count": 3.0,
+        "realized_max_radius": 42.42495294361146,
+        "realized_min_radius": 1.3234404929167425,
+        "realized_support_spread": 0.04888219372125573
+      },
+      "attempts": 25,
+      "attempts_per_accepted_draw": 2.0833333333333335,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 0.3024803679354514,
+          "accepted_n": 12,
+          "accepted_q10": 0.09531136640045959,
+          "accepted_q90": 0.39145774228948366,
+          "mean_shift": -0.17618512966000494,
+          "proposed_mean": 0.47866549759545635,
+          "proposed_n": 25,
+          "proposed_q10": 0.21420565685611612,
+          "proposed_q90": 0.7220998293350467
+        },
+        "antipodal_width": {
+          "accepted_mean": 2.3333333333333335,
+          "accepted_n": 12,
+          "accepted_q10": 2,
+          "accepted_q90": 3,
+          "mean_shift": 0.3333333333333335,
+          "proposed_mean": 2.0,
+          "proposed_n": 25,
+          "proposed_q10": 1,
+          "proposed_q90": 3
+        },
+        "max_angular_gap": {
+          "accepted_mean": 2.7852630865101884,
+          "accepted_n": 12,
+          "accepted_q10": 2.2512883846189533,
+          "accepted_q90": 2.9999707880021416,
+          "mean_shift": -0.5258425764809607,
+          "proposed_mean": 3.311105662991149,
+          "proposed_n": 25,
+          "proposed_q10": 2.711463961846209,
+          "proposed_q90": 4.1871999344673325
+        },
+        "min_angular_gap": {
+          "accepted_mean": 1.3341357924598964,
+          "accepted_n": 12,
+          "accepted_q10": 0.7361106213116209,
+          "accepted_q90": 1.7178530012944115,
+          "mean_shift": 0.3467747571555312,
+          "proposed_mean": 0.9873610353043653,
+          "proposed_n": 25,
+          "proposed_q10": 0.42910518923723373,
+          "proposed_q90": 1.6550872620175374
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 3.0,
+          "accepted_n": 12,
+          "accepted_q10": 3.0,
+          "accepted_q90": 3.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 3.0,
+          "proposed_n": 25,
+          "proposed_q10": 3.0,
+          "proposed_q90": 3.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.04898289816042788,
+          "accepted_n": 12,
+          "accepted_q10": 0.010686346341762881,
+          "accepted_q90": 0.08340694244625058,
+          "mean_shift": 0.00025131800652326147,
+          "proposed_mean": 0.04873158015390462,
+          "proposed_n": 25,
+          "proposed_q10": 0.019211373122479974,
+          "proposed_q90": 0.08340694244625058
+        },
+        "support_spread": {
+          "accepted_mean": 0.04888219372125573,
+          "accepted_n": 12,
+          "accepted_q10": 0.010782674058607222,
+          "accepted_q90": 0.08447760666284787,
+          "mean_shift": 5.7913862239820924e-05,
+          "proposed_mean": 0.04882427985901591,
+          "proposed_n": 25,
+          "proposed_q10": 0.01917174873984595,
+          "proposed_q90": 0.08447760666284787
+        }
+      },
+      "reason_counts": {
+        "accepted": 12,
+        "unbounded_or_origin_failure": 13
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.52,
+        "wrong_side_count": 0.0
+      }
+    },
+    "regular-mutation|steps=4,scale=0.03|side=4": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 9,
+          "attempts": 11,
+          "hi": 2.624465299509725,
+          "lo": 1.9356623470147127,
+          "rate": 0.8181818181818182
+        },
+        {
+          "accepted": 3,
+          "attempts": 11,
+          "hi": 3.497158277100899,
+          "lo": 2.624465299509725,
+          "rate": 0.2727272727272727
+        },
+        {
+          "accepted": 0,
+          "attempts": 11,
+          "hi": 4.118630585729771,
+          "lo": 3.497158277100899,
+          "rate": 0.0
+        },
+        {
+          "accepted": 0,
+          "attempts": 10,
+          "hi": null,
+          "lo": 4.118630585729771,
+          "rate": 0.0
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 9.284567267177984,
+        "bbox_aspect": 1.4451939648209609,
+        "extreme_point_count": 4.0,
+        "realized_max_radius": 5.773311078690594,
+        "realized_min_radius": 1.1248689493785577,
+        "realized_support_spread": 0.060716667208476065
+      },
+      "attempts": 40,
+      "attempts_per_accepted_draw": 3.3333333333333335,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 0.46897857302932283,
+          "accepted_n": 12,
+          "accepted_q10": 0.3241191174635763,
+          "accepted_q90": 0.5775490183022621,
+          "mean_shift": -0.289694351122096,
+          "proposed_mean": 0.7586729241514188,
+          "proposed_n": 40,
+          "proposed_q10": 0.38587200590139775,
+          "proposed_q90": 1.0822933877029874
+        },
+        "antipodal_width": {
+          "accepted_mean": 2.25,
+          "accepted_n": 12,
+          "accepted_q10": 2,
+          "accepted_q90": 3,
+          "mean_shift": 0.675,
+          "proposed_mean": 1.575,
+          "proposed_n": 40,
+          "proposed_q10": 1,
+          "proposed_q90": 2
+        },
+        "max_angular_gap": {
+          "accepted_mean": 2.452500884701259,
+          "accepted_n": 12,
+          "accepted_q10": 2.1581034622983646,
+          "accepted_q90": 2.832326490504186,
+          "mean_shift": -0.9477673778107314,
+          "proposed_mean": 3.4002682625119904,
+          "proposed_n": 40,
+          "proposed_q10": 2.2236218732623647,
+          "proposed_q90": 4.513498201052016
+        },
+        "min_angular_gap": {
+          "accepted_mean": 0.49771272433515557,
+          "accepted_n": 12,
+          "accepted_q10": 0.19884590862796037,
+          "accepted_q90": 0.7807547635931806,
+          "mean_shift": 0.11720170670589092,
+          "proposed_mean": 0.38051101762926465,
+          "proposed_n": 40,
+          "proposed_q10": 0.06745479397498944,
+          "proposed_q90": 0.7807547635931806
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 4.0,
+          "accepted_n": 12,
+          "accepted_q10": 4.0,
+          "accepted_q90": 4.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 4.0,
+          "proposed_n": 40,
+          "proposed_q10": 4.0,
+          "proposed_q90": 4.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.0608617780995411,
+          "accepted_n": 12,
+          "accepted_q10": 0.01314837075239759,
+          "accepted_q90": 0.11070648991849708,
+          "mean_shift": 0.0033097929141550214,
+          "proposed_mean": 0.05755198518538608,
+          "proposed_n": 40,
+          "proposed_q10": 0.01314837075239759,
+          "proposed_q90": 0.09918076514192452
+        },
+        "support_spread": {
+          "accepted_mean": 0.060716667208476065,
+          "accepted_n": 12,
+          "accepted_q10": 0.013211018853641843,
+          "accepted_q90": 0.11080859749669492,
+          "mean_shift": 0.003256213737015415,
+          "proposed_mean": 0.05746045347146065,
+          "proposed_n": 40,
+          "proposed_q10": 0.013211018853641843,
+          "proposed_q90": 0.09755143090939478
+        }
+      },
+      "reason_counts": {
+        "accepted": 12,
+        "unbounded_or_origin_failure": 28
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.7,
+        "wrong_side_count": 0.0
+      }
+    },
+    "regular-mutation|steps=4,scale=0.03|side=6": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 5,
+          "attempts": 9,
+          "hi": 2.145238965654073,
+          "lo": 1.482124452832612,
+          "rate": 0.5555555555555556
+        },
+        {
+          "accepted": 3,
+          "attempts": 9,
+          "hi": 2.4016903208734712,
+          "lo": 2.145238965654073,
+          "rate": 0.3333333333333333
+        },
+        {
+          "accepted": 5,
+          "attempts": 9,
+          "hi": 2.972825415334519,
+          "lo": 2.4016903208734712,
+          "rate": 0.5555555555555556
+        },
+        {
+          "accepted": 1,
+          "attempts": 9,
+          "hi": null,
+          "lo": 2.972825415334519,
+          "rate": 0.1111111111111111
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 10.707666254020987,
+        "bbox_aspect": 1.805575352850898,
+        "extreme_point_count": 6.0,
+        "realized_max_radius": 8.48664302125763,
+        "realized_min_radius": 1.0204578025813886,
+        "realized_support_spread": 0.07177389953801913
+      },
+      "attempts": 33,
+      "attempts_per_accepted_draw": 2.75,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 0.6783188933173556,
+          "accepted_n": 12,
+          "accepted_q10": 0.3988393632823338,
+          "accepted_q90": 0.8497076150329786,
+          "mean_shift": -0.12807552306398928,
+          "proposed_mean": 0.8063944163813449,
+          "proposed_n": 33,
+          "proposed_q10": 0.5780344302339006,
+          "proposed_q90": 1.0548362503601363
+        },
+        "antipodal_width": {
+          "accepted_mean": 1.1666666666666667,
+          "accepted_n": 12,
+          "accepted_q10": 0,
+          "accepted_q90": 2,
+          "mean_shift": -0.16666666666666652,
+          "proposed_mean": 1.3333333333333333,
+          "proposed_n": 33,
+          "proposed_q10": 1,
+          "proposed_q90": 2
+        },
+        "max_angular_gap": {
+          "accepted_mean": 2.2692831786385597,
+          "accepted_n": 12,
+          "accepted_q10": 1.5239089317839634,
+          "accepted_q90": 2.828628585406441,
+          "mean_shift": -0.3109087921721678,
+          "proposed_mean": 2.5801919708107275,
+          "proposed_n": 33,
+          "proposed_q10": 1.8737968139550718,
+          "proposed_q90": 3.340547811953764
+        },
+        "min_angular_gap": {
+          "accepted_mean": 0.20970783511290178,
+          "accepted_n": 12,
+          "accepted_q10": 0.0356020425122443,
+          "accepted_q90": 0.37699636875961495,
+          "mean_shift": 0.034869160859840986,
+          "proposed_mean": 0.1748386742530608,
+          "proposed_n": 33,
+          "proposed_q10": 0.028453966669935715,
+          "proposed_q90": 0.3162873985806396
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 6.0,
+          "accepted_n": 12,
+          "accepted_q10": 6.0,
+          "accepted_q90": 6.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 6.0,
+          "proposed_n": 33,
+          "proposed_q10": 6.0,
+          "proposed_q90": 6.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.07225154898474168,
+          "accepted_n": 12,
+          "accepted_q10": 0.05246029650290743,
+          "accepted_q90": 0.09264437373324236,
+          "mean_shift": -0.0026349432383449556,
+          "proposed_mean": 0.07488649222308663,
+          "proposed_n": 33,
+          "proposed_q10": 0.04217440053357316,
+          "proposed_q90": 0.1040810186833466
+        },
+        "support_spread": {
+          "accepted_mean": 0.07177389953801913,
+          "accepted_n": 12,
+          "accepted_q10": 0.05132766219961005,
+          "accepted_q90": 0.08878280641569292,
+          "mean_shift": -0.0030397706934985613,
+          "proposed_mean": 0.07481367023151769,
+          "proposed_n": 33,
+          "proposed_q10": 0.04247415396099141,
+          "proposed_q90": 0.10538185751468354
+        }
+      },
+      "reason_counts": {
+        "accepted": 12,
+        "unbounded_or_origin_failure": 21
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.6363636363636364,
+        "wrong_side_count": 0.0
+      }
+    },
+    "repulsive-gap|alpha=16|side=3": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 2.2962676684696532,
+          "lo": 2.197379105274327,
+          "rate": 1.0
+        },
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 2.5199703662592667,
+          "lo": 2.2962676684696532,
+          "rate": 1.0
+        },
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 2.7216342624451766,
+          "lo": 2.5199703662592667,
+          "rate": 1.0
+        },
+        {
+          "accepted": 3,
+          "attempts": 3,
+          "hi": null,
+          "lo": 2.7216342624451766,
+          "rate": 1.0
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 7.004762353481155,
+        "bbox_aspect": 1.0474734704521684,
+        "extreme_point_count": 3.0,
+        "realized_max_radius": 4.271250529749568,
+        "realized_min_radius": 1.527780115299971,
+        "realized_support_spread": 0.0
+      },
+      "attempts": 12,
+      "attempts_per_accepted_draw": 1.0,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 0.1646033245423598,
+          "accepted_n": 12,
+          "accepted_q10": 0.08178150485522807,
+          "accepted_q90": 0.22801914221680225,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.1646033245423598,
+          "proposed_n": 12,
+          "proposed_q10": 0.08178150485522807,
+          "proposed_q90": 0.22801914221680225
+        },
+        "antipodal_width": {
+          "accepted_mean": 2.6666666666666665,
+          "accepted_n": 12,
+          "accepted_q10": 2,
+          "accepted_q90": 3,
+          "mean_shift": 0.0,
+          "proposed_mean": 2.6666666666666665,
+          "proposed_n": 12,
+          "proposed_q10": 2,
+          "proposed_q90": 3
+        },
+        "max_angular_gap": {
+          "accepted_mean": 2.50583874923327,
+          "accepted_n": 12,
+          "accepted_q10": 2.279003918742739,
+          "accepted_q90": 2.7216342624451766,
+          "mean_shift": 0.0,
+          "proposed_mean": 2.50583874923327,
+          "proposed_n": 12,
+          "proposed_q10": 2.279003918742739,
+          "proposed_q90": 2.7216342624451766
+        },
+        "min_angular_gap": {
+          "accepted_mean": 1.688924126453422,
+          "accepted_n": 12,
+          "accepted_q10": 1.4496330797801078,
+          "accepted_q90": 1.821070253046499,
+          "mean_shift": 0.0,
+          "proposed_mean": 1.688924126453422,
+          "proposed_n": 12,
+          "proposed_q10": 1.4496330797801078,
+          "proposed_q90": 1.821070253046499
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 3.0,
+          "accepted_n": 12,
+          "accepted_q10": 3.0,
+          "accepted_q90": 3.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 3.0,
+          "proposed_n": 12,
+          "proposed_q10": 3.0,
+          "proposed_q90": 3.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 12,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        },
+        "support_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 12,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        }
+      },
+      "reason_counts": {
+        "accepted": 12
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.0,
+        "wrong_side_count": 0.0
+      }
+    },
+    "repulsive-gap|alpha=16|side=4": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 1.879020582050443,
+          "lo": 1.7561659417288125,
+          "rate": 1.0
+        },
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 2.032436212548367,
+          "lo": 1.879020582050443,
+          "rate": 1.0
+        },
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 2.1532368567284017,
+          "lo": 2.032436212548367,
+          "rate": 1.0
+        },
+        {
+          "accepted": 3,
+          "attempts": 3,
+          "hi": null,
+          "lo": 2.1532368567284017,
+          "rate": 1.0
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 4.348891916732125,
+        "bbox_aspect": 1.0495217309183245,
+        "extreme_point_count": 4.0,
+        "realized_max_radius": 1.9873535626164027,
+        "realized_min_radius": 1.2037453932113984,
+        "realized_support_spread": 0.0
+      },
+      "attempts": 12,
+      "attempts_per_accepted_draw": 1.0,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 0.21477751852328242,
+          "accepted_n": 12,
+          "accepted_q10": 0.14450769112461395,
+          "accepted_q90": 0.253219697490874,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.21477751852328242,
+          "proposed_n": 12,
+          "proposed_q10": 0.14450769112461395,
+          "proposed_q90": 0.253219697490874
+        },
+        "antipodal_width": {
+          "accepted_mean": 1.8333333333333333,
+          "accepted_n": 12,
+          "accepted_q10": 1,
+          "accepted_q90": 2,
+          "mean_shift": 0.0,
+          "proposed_mean": 1.8333333333333333,
+          "proposed_n": 12,
+          "proposed_q10": 1,
+          "proposed_q90": 2
+        },
+        "max_angular_gap": {
+          "accepted_mean": 2.0303866851140437,
+          "accepted_n": 12,
+          "accepted_q10": 1.8735225874507853,
+          "accepted_q90": 2.1532368567284017,
+          "mean_shift": 0.0,
+          "proposed_mean": 2.0303866851140437,
+          "proposed_n": 12,
+          "proposed_q10": 1.8735225874507853,
+          "proposed_q90": 2.1532368567284017
+        },
+        "min_angular_gap": {
+          "accepted_mean": 1.164033632963574,
+          "accepted_n": 12,
+          "accepted_q10": 0.9815880824965211,
+          "accepted_q90": 1.3097302206097172,
+          "mean_shift": 0.0,
+          "proposed_mean": 1.164033632963574,
+          "proposed_n": 12,
+          "proposed_q10": 0.9815880824965211,
+          "proposed_q90": 1.3097302206097172
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 4.0,
+          "accepted_n": 12,
+          "accepted_q10": 4.0,
+          "accepted_q90": 4.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 4.0,
+          "proposed_n": 12,
+          "proposed_q10": 4.0,
+          "proposed_q90": 4.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 12,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        },
+        "support_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 12,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        }
+      },
+      "reason_counts": {
+        "accepted": 12
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.0,
+        "wrong_side_count": 0.0
+      }
+    },
+    "repulsive-gap|alpha=16|side=6": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 1.3155038523014015,
+          "lo": 1.1843049843372961,
+          "rate": 1.0
+        },
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 1.4503206081523161,
+          "lo": 1.3155038523014015,
+          "rate": 1.0
+        },
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 1.48570313678211,
+          "lo": 1.4503206081523161,
+          "rate": 1.0
+        },
+        {
+          "accepted": 3,
+          "attempts": 3,
+          "hi": null,
+          "lo": 1.48570313678211,
+          "rate": 1.0
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 3.535845493832267,
+        "bbox_aspect": 1.0095872234099963,
+        "extreme_point_count": 6.0,
+        "realized_max_radius": 1.305097146433345,
+        "realized_min_radius": 1.0708159204555336,
+        "realized_support_spread": 0.0
+      },
+      "attempts": 12,
+      "attempts_per_accepted_draw": 1.0,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 0.22385862605468676,
+          "accepted_n": 12,
+          "accepted_q10": 0.12173893391618139,
+          "accepted_q90": 0.2893243846199337,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.22385862605468676,
+          "proposed_n": 12,
+          "proposed_q10": 0.12173893391618139,
+          "proposed_q90": 0.2893243846199337
+        },
+        "antipodal_width": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0,
+          "accepted_q90": 0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 12,
+          "proposed_q10": 0,
+          "proposed_q90": 0
+        },
+        "max_angular_gap": {
+          "accepted_mean": 1.3862452981171725,
+          "accepted_n": 12,
+          "accepted_q10": 1.1934342114441447,
+          "accepted_q90": 1.48570313678211,
+          "mean_shift": 0.0,
+          "proposed_mean": 1.3862452981171725,
+          "proposed_n": 12,
+          "proposed_q10": 1.1934342114441447,
+          "proposed_q90": 1.48570313678211
+        },
+        "min_angular_gap": {
+          "accepted_mean": 0.7189938177095749,
+          "accepted_n": 12,
+          "accepted_q10": 0.5327004171531042,
+          "accepted_q90": 0.8313814561672599,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.7189938177095749,
+          "proposed_n": 12,
+          "proposed_q10": 0.5327004171531042,
+          "proposed_q90": 0.8313814561672599
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 6.0,
+          "accepted_n": 12,
+          "accepted_q10": 6.0,
+          "accepted_q90": 6.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 6.0,
+          "proposed_n": 12,
+          "proposed_q10": 6.0,
+          "proposed_q90": 6.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 12,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        },
+        "support_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 12,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        }
+      },
+      "reason_counts": {
+        "accepted": 12
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.0,
+        "wrong_side_count": 0.0
+      }
+    },
+    "repulsive-gap|alpha=1|side=3": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 12,
+          "attempts": 12,
+          "hi": 3.077809227730798,
+          "lo": 2.1690163614300175,
+          "rate": 1.0
+        },
+        {
+          "accepted": 1,
+          "attempts": 13,
+          "hi": 3.5119802237036626,
+          "lo": 3.077809227730798,
+          "rate": 0.07692307692307693
+        },
+        {
+          "accepted": 0,
+          "attempts": 13,
+          "hi": 4.149238909599169,
+          "lo": 3.5119802237036626,
+          "rate": 0.0
+        },
+        {
+          "accepted": 0,
+          "attempts": 12,
+          "hi": null,
+          "lo": 4.149238909599169,
+          "rate": 0.0
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 13.691497683697934,
+        "bbox_aspect": 1.0878316965299504,
+        "extreme_point_count": 3.0,
+        "realized_max_radius": 10.853152902563723,
+        "realized_min_radius": 1.3506061201264157,
+        "realized_support_spread": 0.0
+      },
+      "attempts": 47,
+      "attempts_per_accepted_draw": 3.9166666666666665,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 0.2773463971446505,
+          "accepted_n": 12,
+          "accepted_q10": 0.13343150182702204,
+          "accepted_q90": 0.40130423895197054,
+          "mean_shift": -0.31982598021885145,
+          "proposed_mean": 0.5971723773635019,
+          "proposed_n": 47,
+          "proposed_q10": 0.18400732192542624,
+          "proposed_q90": 0.9527021297635572
+        },
+        "antipodal_width": {
+          "accepted_mean": 2.4166666666666665,
+          "accepted_n": 12,
+          "accepted_q10": 2,
+          "accepted_q90": 3,
+          "mean_shift": 0.5656028368794326,
+          "proposed_mean": 1.851063829787234,
+          "proposed_n": 47,
+          "proposed_q10": 1,
+          "proposed_q90": 2
+        },
+        "max_angular_gap": {
+          "accepted_mean": 2.7306303968385017,
+          "accepted_n": 12,
+          "accepted_q10": 2.302238203960166,
+          "accepted_q90": 3.0290856159394792,
+          "mean_shift": -0.9420831212512053,
+          "proposed_mean": 3.672713518089707,
+          "proposed_n": 47,
+          "proposed_q10": 2.611559964175525,
+          "proposed_q90": 4.904695371117963
+        },
+        "min_angular_gap": {
+          "accepted_mean": 1.3677934044608648,
+          "accepted_n": 12,
+          "accepted_q10": 0.838368706603569,
+          "accepted_q90": 1.6968783191943193,
+          "mean_shift": 0.6214765369870767,
+          "proposed_mean": 0.7463168674737881,
+          "proposed_n": 47,
+          "proposed_q10": 0.17206182484234311,
+          "proposed_q90": 1.5556187345086112
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 3.0,
+          "accepted_n": 12,
+          "accepted_q10": 3.0,
+          "accepted_q90": 3.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 3.0,
+          "proposed_n": 47,
+          "proposed_q10": 3.0,
+          "proposed_q90": 3.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 47,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        },
+        "support_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 47,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        }
+      },
+      "reason_counts": {
+        "accepted": 12,
+        "unbounded_or_origin_failure": 35
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.7446808510638298,
+        "wrong_side_count": 0.0
+      }
+    },
+    "repulsive-gap|alpha=1|side=4": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 6,
+          "attempts": 6,
+          "hi": 2.503671798400038,
+          "lo": 2.0247169527137956,
+          "rate": 1.0
+        },
+        {
+          "accepted": 6,
+          "attempts": 6,
+          "hi": 2.954785191074903,
+          "lo": 2.503671798400038,
+          "rate": 1.0
+        },
+        {
+          "accepted": 2,
+          "attempts": 6,
+          "hi": 3.512606123496073,
+          "lo": 2.954785191074903,
+          "rate": 0.3333333333333333
+        },
+        {
+          "accepted": 0,
+          "attempts": 6,
+          "hi": null,
+          "lo": 3.512606123496073,
+          "rate": 0.0
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 10.287223229031994,
+        "bbox_aspect": 1.055942003316333,
+        "extreme_point_count": 4.0,
+        "realized_max_radius": 7.781817939928891,
+        "realized_min_radius": 1.0457655092329559,
+        "realized_support_spread": 0.0
+      },
+      "attempts": 21,
+      "attempts_per_accepted_draw": 1.75,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 0.508814732941763,
+          "accepted_n": 12,
+          "accepted_q10": 0.2501504696725356,
+          "accepted_q90": 0.6210994204382367,
+          "mean_shift": -0.1329062372243227,
+          "proposed_mean": 0.6417209701660858,
+          "proposed_n": 21,
+          "proposed_q10": 0.35804889382095767,
+          "proposed_q90": 0.8551747579486028
+        },
+        "antipodal_width": {
+          "accepted_mean": 2.0,
+          "accepted_n": 12,
+          "accepted_q10": 2,
+          "accepted_q90": 2,
+          "mean_shift": 0.19047619047619047,
+          "proposed_mean": 1.8095238095238095,
+          "proposed_n": 21,
+          "proposed_q10": 1,
+          "proposed_q90": 2
+        },
+        "max_angular_gap": {
+          "accepted_mean": 2.5300105835806628,
+          "accepted_n": 12,
+          "accepted_q10": 2.1035020987994226,
+          "accepted_q90": 2.759489325932317,
+          "mean_shift": -0.4549594877169869,
+          "proposed_mean": 2.9849700712976497,
+          "proposed_n": 21,
+          "proposed_q10": 2.124371631956666,
+          "proposed_q90": 3.8708806257330988
+        },
+        "min_angular_gap": {
+          "accepted_mean": 0.4618560071518349,
+          "accepted_n": 12,
+          "accepted_q10": 0.0775229179538961,
+          "accepted_q90": 0.7717044915488982,
+          "mean_shift": 0.05081128538656193,
+          "proposed_mean": 0.41104472176527296,
+          "proposed_n": 21,
+          "proposed_q10": 0.0775229179538961,
+          "proposed_q90": 0.7717044915488982
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 4.0,
+          "accepted_n": 12,
+          "accepted_q10": 4.0,
+          "accepted_q90": 4.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 4.0,
+          "proposed_n": 21,
+          "proposed_q10": 4.0,
+          "proposed_q90": 4.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 21,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        },
+        "support_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 21,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        }
+      },
+      "reason_counts": {
+        "accepted": 12,
+        "unbounded_or_origin_failure": 9
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.42857142857142855,
+        "wrong_side_count": 0.0
+      }
+    },
+    "repulsive-gap|alpha=1|side=6": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 2.1728179812991995,
+          "lo": 1.7606701425924633,
+          "rate": 1.0
+        },
+        {
+          "accepted": 5,
+          "attempts": 5,
+          "hi": 2.3889321879010086,
+          "lo": 2.1728179812991995,
+          "rate": 1.0
+        },
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 2.9696262193737706,
+          "lo": 2.3889321879010086,
+          "rate": 1.0
+        },
+        {
+          "accepted": 2,
+          "attempts": 4,
+          "hi": null,
+          "lo": 2.9696262193737706,
+          "rate": 0.5
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 6.082245446542753,
+        "bbox_aspect": 1.1370574061873149,
+        "extreme_point_count": 6.0,
+        "realized_max_radius": 3.8778617060545506,
+        "realized_min_radius": 1.007852267634217,
+        "realized_support_spread": 0.0
+      },
+      "attempts": 14,
+      "attempts_per_accepted_draw": 1.1666666666666667,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 0.7418069140980262,
+          "accepted_n": 12,
+          "accepted_q10": 0.5910425862554317,
+          "accepted_q90": 0.8665084307975678,
+          "mean_shift": -0.05503878868467427,
+          "proposed_mean": 0.7968457027827005,
+          "proposed_n": 14,
+          "proposed_q10": 0.5910425862554317,
+          "proposed_q90": 0.8825885132809801
+        },
+        "antipodal_width": {
+          "accepted_mean": 1.6666666666666667,
+          "accepted_n": 12,
+          "accepted_q10": 1,
+          "accepted_q90": 2,
+          "mean_shift": 0.09523809523809534,
+          "proposed_mean": 1.5714285714285714,
+          "proposed_n": 14,
+          "proposed_q10": 1,
+          "proposed_q90": 2
+        },
+        "max_angular_gap": {
+          "accepted_mean": 2.329105520610683,
+          "accepted_n": 12,
+          "accepted_q10": 1.9062719606346787,
+          "accepted_q90": 2.4224875240801858,
+          "mean_shift": -0.17396483189101764,
+          "proposed_mean": 2.503070352501701,
+          "proposed_n": 14,
+          "proposed_q10": 1.9062719606346787,
+          "proposed_q90": 2.9716818573867854
+        },
+        "min_angular_gap": {
+          "accepted_mean": 0.17714009383609397,
+          "accepted_n": 12,
+          "accepted_q10": 0.02266774449565645,
+          "accepted_q90": 0.33939799798966436,
+          "mean_shift": 0.006526645754602628,
+          "proposed_mean": 0.17061344808149134,
+          "proposed_n": 14,
+          "proposed_q10": 0.02266774449565645,
+          "proposed_q90": 0.33939799798966436
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 6.0,
+          "accepted_n": 12,
+          "accepted_q10": 6.0,
+          "accepted_q90": 6.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 6.0,
+          "proposed_n": 14,
+          "proposed_q10": 6.0,
+          "proposed_q90": 6.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 14,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        },
+        "support_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 14,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        }
+      },
+      "reason_counts": {
+        "accepted": 12,
+        "unbounded_or_origin_failure": 2
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.14285714285714285,
+        "wrong_side_count": 0.0
+      }
+    },
+    "repulsive-gap|alpha=4|side=3": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 2.6726458446365893,
+          "lo": 2.2122982872998143,
+          "rate": 1.0
+        },
+        {
+          "accepted": 5,
+          "attempts": 5,
+          "hi": 2.9985469133438203,
+          "lo": 2.6726458446365893,
+          "rate": 1.0
+        },
+        {
+          "accepted": 5,
+          "attempts": 5,
+          "hi": 3.1387890682642396,
+          "lo": 2.9985469133438203,
+          "rate": 1.0
+        },
+        {
+          "accepted": 1,
+          "attempts": 4,
+          "hi": null,
+          "lo": 3.1387890682642396,
+          "rate": 0.25
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 75.48575755059039,
+        "bbox_aspect": 4.575899415197463,
+        "extreme_point_count": 3.0,
+        "realized_max_radius": 72.57206517690743,
+        "realized_min_radius": 1.2692354962234618,
+        "realized_support_spread": 0.0
+      },
+      "attempts": 15,
+      "attempts_per_accepted_draw": 1.25,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 0.32497402671603165,
+          "accepted_n": 12,
+          "accepted_q10": 0.08294285973369554,
+          "accepted_q90": 0.4464474474558835,
+          "mean_shift": -0.04726276820924613,
+          "proposed_mean": 0.3722367949252778,
+          "proposed_n": 15,
+          "proposed_q10": 0.08294285973369554,
+          "proposed_q90": 0.49675835449289685
+        },
+        "antipodal_width": {
+          "accepted_mean": 2.1666666666666665,
+          "accepted_n": 12,
+          "accepted_q10": 2,
+          "accepted_q90": 2,
+          "mean_shift": 0.16666666666666652,
+          "proposed_mean": 2.0,
+          "proposed_n": 15,
+          "proposed_q10": 1,
+          "proposed_q90": 2
+        },
+        "max_angular_gap": {
+          "accepted_mean": 2.8195219417843553,
+          "accepted_n": 12,
+          "accepted_q10": 2.323383062842473,
+          "accepted_q90": 3.049500244554199,
+          "mean_shift": -0.18268648917519714,
+          "proposed_mean": 3.0022084309595525,
+          "proposed_n": 15,
+          "proposed_q10": 2.323383062842473,
+          "proposed_q90": 3.204721773133757
+        },
+        "min_angular_gap": {
+          "accepted_mean": 1.206865245670994,
+          "accepted_n": 12,
+          "accepted_q10": 0.7985064764378542,
+          "accepted_q90": 1.3675448141005937,
+          "mean_shift": 0.02658631439540793,
+          "proposed_mean": 1.1802789312755861,
+          "proposed_n": 15,
+          "proposed_q10": 0.7985064764378542,
+          "proposed_q90": 1.3675448141005937
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 3.0,
+          "accepted_n": 12,
+          "accepted_q10": 3.0,
+          "accepted_q90": 3.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 3.0,
+          "proposed_n": 15,
+          "proposed_q10": 3.0,
+          "proposed_q90": 3.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 15,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        },
+        "support_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 15,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        }
+      },
+      "reason_counts": {
+        "accepted": 12,
+        "unbounded_or_origin_failure": 3
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.2,
+        "wrong_side_count": 0.0
+      }
+    },
+    "repulsive-gap|alpha=4|side=4": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 1.9773239833637604,
+          "lo": 1.7824799985599231,
+          "rate": 1.0
+        },
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 2.3196771190651306,
+          "lo": 1.9773239833637604,
+          "rate": 1.0
+        },
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 2.5726757815879484,
+          "lo": 2.3196771190651306,
+          "rate": 1.0
+        },
+        {
+          "accepted": 3,
+          "attempts": 4,
+          "hi": null,
+          "lo": 2.5726757815879484,
+          "rate": 0.75
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 5.465637137168315,
+        "bbox_aspect": 0.834943976738426,
+        "extreme_point_count": 4.0,
+        "realized_max_radius": 3.1335275503043056,
+        "realized_min_radius": 1.1267426530665905,
+        "realized_support_spread": 0.0
+      },
+      "attempts": 13,
+      "attempts_per_accepted_draw": 1.0833333333333333,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 0.336496026989632,
+          "accepted_n": 12,
+          "accepted_q10": 0.14408199777915304,
+          "accepted_q90": 0.44922880633972734,
+          "mean_shift": -0.03444955176663794,
+          "proposed_mean": 0.37094557875626993,
+          "proposed_n": 13,
+          "proposed_q10": 0.14408199777915304,
+          "proposed_q90": 0.5097781145739477
+        },
+        "antipodal_width": {
+          "accepted_mean": 2.0833333333333335,
+          "accepted_n": 12,
+          "accepted_q10": 1,
+          "accepted_q90": 3,
+          "mean_shift": 0.08333333333333348,
+          "proposed_mean": 2.0,
+          "proposed_n": 13,
+          "proposed_q10": 1,
+          "proposed_q90": 3
+        },
+        "max_angular_gap": {
+          "accepted_mean": 2.2631294557010726,
+          "accepted_n": 12,
+          "accepted_q10": 1.8066520117355704,
+          "accepted_q90": 2.5726757815879484,
+          "mean_shift": -0.10219435929450293,
+          "proposed_mean": 2.3653238149955755,
+          "proposed_n": 13,
+          "proposed_q10": 1.8066520117355704,
+          "proposed_q90": 2.630163058506927
+        },
+        "min_angular_gap": {
+          "accepted_mean": 0.8957339216433526,
+          "accepted_n": 12,
+          "accepted_q10": 0.5532045962610646,
+          "accepted_q90": 1.104864291600526,
+          "mean_shift": 0.04775784506802483,
+          "proposed_mean": 0.8479760765753278,
+          "proposed_n": 13,
+          "proposed_q10": 0.4278796143490826,
+          "proposed_q90": 1.104864291600526
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 4.0,
+          "accepted_n": 12,
+          "accepted_q10": 4.0,
+          "accepted_q90": 4.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 4.0,
+          "proposed_n": 13,
+          "proposed_q10": 4.0,
+          "proposed_q90": 4.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 13,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        },
+        "support_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 13,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        }
+      },
+      "reason_counts": {
+        "accepted": 12,
+        "unbounded_or_origin_failure": 1
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.07692307692307693,
+        "wrong_side_count": 0.0
+      }
+    },
+    "repulsive-gap|alpha=4|side=6": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 1.6312393130259952,
+          "lo": 1.4952966931838318,
+          "rate": 1.0
+        },
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 1.7699747345254586,
+          "lo": 1.6312393130259952,
+          "rate": 1.0
+        },
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 1.9175003603777878,
+          "lo": 1.7699747345254586,
+          "rate": 1.0
+        },
+        {
+          "accepted": 3,
+          "attempts": 3,
+          "hi": null,
+          "lo": 1.9175003603777878,
+          "rate": 1.0
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 3.806138817275155,
+        "bbox_aspect": 1.0377515274816618,
+        "extreme_point_count": 6.0,
+        "realized_max_radius": 1.6161776685005824,
+        "realized_min_radius": 1.0282805260967243,
+        "realized_support_spread": 0.0
+      },
+      "attempts": 12,
+      "attempts_per_accepted_draw": 1.0,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 0.4445531988753611,
+          "accepted_n": 12,
+          "accepted_q10": 0.35132907738305735,
+          "accepted_q90": 0.5350101644795916,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.4445531988753611,
+          "proposed_n": 12,
+          "proposed_q10": 0.35132907738305735,
+          "proposed_q90": 0.5350101644795916
+        },
+        "antipodal_width": {
+          "accepted_mean": 1.1666666666666667,
+          "accepted_n": 12,
+          "accepted_q10": 1,
+          "accepted_q90": 2,
+          "mean_shift": 0.0,
+          "proposed_mean": 1.1666666666666667,
+          "proposed_n": 12,
+          "proposed_q10": 1,
+          "proposed_q90": 2
+        },
+        "max_angular_gap": {
+          "accepted_mean": 1.7742623704710334,
+          "accepted_n": 12,
+          "accepted_q10": 1.573196303342634,
+          "accepted_q90": 1.9175003603777878,
+          "mean_shift": 0.0,
+          "proposed_mean": 1.7742623704710334,
+          "proposed_n": 12,
+          "proposed_q10": 1.573196303342634,
+          "proposed_q90": 1.9175003603777878
+        },
+        "min_angular_gap": {
+          "accepted_mean": 0.4529952852127521,
+          "accepted_n": 12,
+          "accepted_q10": 0.3270235824456522,
+          "accepted_q90": 0.549685623608144,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.4529952852127521,
+          "proposed_n": 12,
+          "proposed_q10": 0.3270235824456522,
+          "proposed_q90": 0.549685623608144
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 6.0,
+          "accepted_n": 12,
+          "accepted_q10": 6.0,
+          "accepted_q90": 6.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 6.0,
+          "proposed_n": 12,
+          "proposed_q10": 6.0,
+          "proposed_q90": 6.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 12,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        },
+        "support_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 12,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        }
+      },
+      "reason_counts": {
+        "accepted": 12
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.0,
+        "wrong_side_count": 0.0
+      }
+    },
+    "repulsive-gap|regular|side=3": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 12,
+          "attempts": 12,
+          "hi": 2.0943951023931957,
+          "lo": 2.0943951023931957,
+          "rate": 1.0
+        },
+        {
+          "accepted": 12,
+          "attempts": 12,
+          "hi": 2.0943951023931957,
+          "lo": 2.0943951023931957,
+          "rate": 1.0
+        },
+        {
+          "accepted": 12,
+          "attempts": 12,
+          "hi": 2.0943951023931957,
+          "lo": 2.0943951023931957,
+          "rate": 1.0
+        },
+        {
+          "accepted": 12,
+          "attempts": 12,
+          "hi": null,
+          "lo": 2.0943951023931957,
+          "rate": 1.0
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 5.196152422706631,
+        "bbox_aspect": 0.9990789803724981,
+        "extreme_point_count": 3.0,
+        "realized_max_radius": 2.0000000000000004,
+        "realized_min_radius": 1.9999999999999991,
+        "realized_support_spread": 0.0
+      },
+      "attempts": 12,
+      "attempts_per_accepted_draw": 1.0,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 1.5603047536540735e-16,
+          "accepted_n": 12,
+          "accepted_q10": 9.995519036433211e-17,
+          "accepted_q90": 1.9991038072866422e-16,
+          "mean_shift": 0.0,
+          "proposed_mean": 1.5603047536540735e-16,
+          "proposed_n": 12,
+          "proposed_q10": 9.995519036433211e-17,
+          "proposed_q90": 1.9991038072866422e-16
+        },
+        "antipodal_width": {
+          "accepted_mean": 3.0,
+          "accepted_n": 12,
+          "accepted_q10": 3,
+          "accepted_q90": 3,
+          "mean_shift": 0.0,
+          "proposed_mean": 3.0,
+          "proposed_n": 12,
+          "proposed_q10": 3,
+          "proposed_q90": 3
+        },
+        "max_angular_gap": {
+          "accepted_mean": 2.0943951023931957,
+          "accepted_n": 12,
+          "accepted_q10": 2.0943951023931957,
+          "accepted_q90": 2.0943951023931957,
+          "mean_shift": 0.0,
+          "proposed_mean": 2.0943951023931957,
+          "proposed_n": 12,
+          "proposed_q10": 2.0943951023931957,
+          "proposed_q90": 2.0943951023931957
+        },
+        "min_angular_gap": {
+          "accepted_mean": 2.0943951023931953,
+          "accepted_n": 12,
+          "accepted_q10": 2.094395102393195,
+          "accepted_q90": 2.0943951023931953,
+          "mean_shift": 0.0,
+          "proposed_mean": 2.0943951023931953,
+          "proposed_n": 12,
+          "proposed_q10": 2.094395102393195,
+          "proposed_q90": 2.0943951023931953
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 3.0,
+          "accepted_n": 12,
+          "accepted_q10": 3.0,
+          "accepted_q90": 3.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 3.0,
+          "proposed_n": 12,
+          "proposed_q10": 3.0,
+          "proposed_q90": 3.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 12,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        },
+        "support_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 12,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        }
+      },
+      "reason_counts": {
+        "accepted": 12
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.0,
+        "wrong_side_count": 0.0
+      }
+    },
+    "repulsive-gap|regular|side=4": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 9,
+          "attempts": 9,
+          "hi": 1.5707963267948966,
+          "lo": 1.5707963267948966,
+          "rate": 1.0
+        },
+        {
+          "accepted": 9,
+          "attempts": 9,
+          "hi": 1.5707963267948966,
+          "lo": 1.5707963267948966,
+          "rate": 1.0
+        },
+        {
+          "accepted": 11,
+          "attempts": 11,
+          "hi": 1.570796326794897,
+          "lo": 1.5707963267948966,
+          "rate": 1.0
+        },
+        {
+          "accepted": 3,
+          "attempts": 3,
+          "hi": null,
+          "lo": 1.570796326794897,
+          "rate": 1.0
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 4.0,
+        "bbox_aspect": 0.9999999999999999,
+        "extreme_point_count": 4.0,
+        "realized_max_radius": 1.4142135623730951,
+        "realized_min_radius": 1.414213562373095,
+        "realized_support_spread": 0.0
+      },
+      "attempts": 12,
+      "attempts_per_accepted_draw": 1.0,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 1.0633000369781883e-16,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 1.9991038072866422e-16,
+          "mean_shift": 0.0,
+          "proposed_mean": 1.0633000369781883e-16,
+          "proposed_n": 12,
+          "proposed_q10": 0.0,
+          "proposed_q90": 1.9991038072866422e-16
+        },
+        "antipodal_width": {
+          "accepted_mean": 3.5,
+          "accepted_n": 12,
+          "accepted_q10": 3,
+          "accepted_q90": 4,
+          "mean_shift": 0.0,
+          "proposed_mean": 3.5,
+          "proposed_n": 12,
+          "proposed_q10": 3,
+          "proposed_q90": 4
+        },
+        "max_angular_gap": {
+          "accepted_mean": 1.5707963267948966,
+          "accepted_n": 12,
+          "accepted_q10": 1.5707963267948966,
+          "accepted_q90": 1.570796326794897,
+          "mean_shift": 0.0,
+          "proposed_mean": 1.5707963267948966,
+          "proposed_n": 12,
+          "proposed_q10": 1.5707963267948966,
+          "proposed_q90": 1.570796326794897
+        },
+        "min_angular_gap": {
+          "accepted_mean": 1.5707963267948963,
+          "accepted_n": 12,
+          "accepted_q10": 1.5707963267948961,
+          "accepted_q90": 1.5707963267948966,
+          "mean_shift": 0.0,
+          "proposed_mean": 1.5707963267948963,
+          "proposed_n": 12,
+          "proposed_q10": 1.5707963267948961,
+          "proposed_q90": 1.5707963267948966
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 4.0,
+          "accepted_n": 12,
+          "accepted_q10": 4.0,
+          "accepted_q90": 4.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 4.0,
+          "proposed_n": 12,
+          "proposed_q10": 4.0,
+          "proposed_q90": 4.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 12,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        },
+        "support_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 12,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        }
+      },
+      "reason_counts": {
+        "accepted": 12
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.0,
+        "wrong_side_count": 0.0
+      }
+    },
+    "repulsive-gap|regular|side=6": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 9,
+          "attempts": 9,
+          "hi": 1.0471975511965983,
+          "lo": 1.0471975511965983,
+          "rate": 1.0
+        },
+        {
+          "accepted": 9,
+          "attempts": 9,
+          "hi": 1.0471975511965983,
+          "lo": 1.0471975511965983,
+          "rate": 1.0
+        },
+        {
+          "accepted": 10,
+          "attempts": 10,
+          "hi": 1.0471975511965992,
+          "lo": 1.0471975511965983,
+          "rate": 1.0
+        },
+        {
+          "accepted": 3,
+          "attempts": 3,
+          "hi": null,
+          "lo": 1.0471975511965992,
+          "rate": 1.0
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 3.464101615137755,
+        "bbox_aspect": 0.990584730156018,
+        "extreme_point_count": 6.0,
+        "realized_max_radius": 1.154700538379252,
+        "realized_min_radius": 1.1547005383792512,
+        "realized_support_spread": 0.0
+      },
+      "attempts": 12,
+      "attempts_per_accepted_draw": 1.0,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 5.685034885466369e-16,
+          "accepted_n": 12,
+          "accepted_q10": 2.914169533272625e-16,
+          "accepted_q90": 7.996415229146569e-16,
+          "mean_shift": 0.0,
+          "proposed_mean": 5.685034885466369e-16,
+          "proposed_n": 12,
+          "proposed_q10": 2.914169533272625e-16,
+          "proposed_q90": 7.996415229146569e-16
+        },
+        "antipodal_width": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0,
+          "accepted_q90": 0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 12,
+          "proposed_q10": 0,
+          "proposed_q90": 0
+        },
+        "max_angular_gap": {
+          "accepted_mean": 1.0471975511965985,
+          "accepted_n": 12,
+          "accepted_q10": 1.0471975511965983,
+          "accepted_q90": 1.0471975511965992,
+          "mean_shift": 0.0,
+          "proposed_mean": 1.0471975511965985,
+          "proposed_n": 12,
+          "proposed_q10": 1.0471975511965983,
+          "proposed_q90": 1.0471975511965992
+        },
+        "min_angular_gap": {
+          "accepted_mean": 1.047197551196597,
+          "accepted_n": 12,
+          "accepted_q10": 1.0471975511965965,
+          "accepted_q90": 1.0471975511965974,
+          "mean_shift": 0.0,
+          "proposed_mean": 1.047197551196597,
+          "proposed_n": 12,
+          "proposed_q10": 1.0471975511965965,
+          "proposed_q90": 1.0471975511965974
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 6.0,
+          "accepted_n": 12,
+          "accepted_q10": 6.0,
+          "accepted_q90": 6.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 6.0,
+          "proposed_n": 12,
+          "proposed_q10": 6.0,
+          "proposed_q90": 6.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 12,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        },
+        "support_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 12,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        }
+      },
+      "reason_counts": {
+        "accepted": 12
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.0,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.0,
+        "wrong_side_count": 0.0
+      }
+    },
+    "zonogon|lengths=uniform(0.5,1.5)|side=4": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 2,
+          "attempts": 4,
+          "hi": 1.7702356405048478,
+          "lo": 1.698397769090842,
+          "rate": 0.5
+        },
+        {
+          "accepted": 4,
+          "attempts": 5,
+          "hi": 2.340680079470854,
+          "lo": 1.7702356405048478,
+          "rate": 0.8
+        },
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 2.6839064530849424,
+          "lo": 2.340680079470854,
+          "rate": 1.0
+        },
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": null,
+          "lo": 2.6839064530849424,
+          "rate": 1.0
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 3.0946126390020763,
+        "bbox_aspect": 0.9195231527873907,
+        "extreme_point_count": 4.0,
+        "realized_max_radius": 1.9130092079045526,
+        "realized_min_radius": 0.9423021905318157,
+        "realized_support_spread": 0.0
+      },
+      "attempts": 14,
+      "attempts_per_accepted_draw": 1.1666666666666667,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 0.5041145122814451,
+          "accepted_n": 12,
+          "accepted_q10": 0.12365427652447462,
+          "accepted_q90": 0.7386916776846287,
+          "mean_shift": 0.05714488663710671,
+          "proposed_mean": 0.4469696256443384,
+          "proposed_n": 14,
+          "proposed_q10": 0.08848293903844745,
+          "proposed_q90": 0.7386916776846287
+        },
+        "antipodal_width": {
+          "accepted_mean": 2.0,
+          "accepted_n": 12,
+          "accepted_q10": 2,
+          "accepted_q90": 2,
+          "mean_shift": 0.0,
+          "proposed_mean": 2.0,
+          "proposed_n": 14,
+          "proposed_q10": 2,
+          "proposed_q90": 2
+        },
+        "max_angular_gap": {
+          "accepted_mean": 2.362657550970592,
+          "accepted_n": 12,
+          "accepted_q10": 1.765032010152022,
+          "accepted_q90": 2.7311305007358713,
+          "mean_shift": 0.08976297802467847,
+          "proposed_mean": 2.2728945729459133,
+          "proposed_n": 14,
+          "proposed_q10": 1.7097850024205066,
+          "proposed_q90": 2.7311305007358713
+        },
+        "min_angular_gap": {
+          "accepted_mean": 0.7789351026192016,
+          "accepted_n": 12,
+          "accepted_q10": 0.19241430508810975,
+          "accepted_q90": 1.3316816784725662,
+          "mean_shift": -0.08976297802467803,
+          "proposed_mean": 0.8686980806438797,
+          "proposed_n": 14,
+          "proposed_q10": 0.19241430508810975,
+          "proposed_q90": 1.376560643437771
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 4.0,
+          "accepted_n": 12,
+          "accepted_q10": 4.0,
+          "accepted_q90": 4.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 4.0,
+          "proposed_n": 14,
+          "proposed_q10": 4.0,
+          "proposed_q90": 4.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 14,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        },
+        "support_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 14,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        }
+      },
+      "reason_counts": {
+        "accepted": 12,
+        "inactive_prescribed_facets": 2
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.14285714285714285,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.0,
+        "wrong_side_count": 0.0
+      }
+    },
+    "zonogon|lengths=uniform(0.5,1.5)|side=6": {
+      "acceptance_vs_max_gap_bins": [
+        {
+          "accepted": 3,
+          "attempts": 4,
+          "hi": 1.6892256231817306,
+          "lo": 1.3054239877332625,
+          "rate": 0.75
+        },
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 1.9962685534069244,
+          "lo": 1.6892256231817306,
+          "rate": 1.0
+        },
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": 2.2565323808887854,
+          "lo": 1.9962685534069244,
+          "rate": 1.0
+        },
+        {
+          "accepted": 4,
+          "attempts": 4,
+          "hi": null,
+          "lo": 2.2565323808887854,
+          "rate": 1.0
+        }
+      ],
+      "accepted": 12,
+      "accepted_body_feature_means": {
+        "area": 9.124346400195835,
+        "bbox_aspect": 1.3783879125534455,
+        "extreme_point_count": 6.0,
+        "realized_max_radius": 2.890873550660645,
+        "realized_min_radius": 1.4296820897454874,
+        "realized_support_spread": 0.0
+      },
+      "attempts": 13,
+      "attempts_per_accepted_draw": 1.0833333333333333,
+      "primitive_shift": {
+        "angular_gap_cv": {
+          "accepted_mean": 0.6901297655415949,
+          "accepted_n": 12,
+          "accepted_q10": 0.4643508110295398,
+          "accepted_q90": 0.8451826444682803,
+          "mean_shift": 0.016413549846782338,
+          "proposed_mean": 0.6737162156948125,
+          "proposed_n": 13,
+          "proposed_q10": 0.4643508110295398,
+          "proposed_q90": 0.8451826444682803
+        },
+        "antipodal_width": {
+          "accepted_mean": 1.8333333333333333,
+          "accepted_n": 12,
+          "accepted_q10": 2,
+          "accepted_q90": 2,
+          "mean_shift": 0.14102564102564097,
+          "proposed_mean": 1.6923076923076923,
+          "proposed_n": 13,
+          "proposed_q10": 0,
+          "proposed_q90": 2
+        },
+        "max_angular_gap": {
+          "accepted_mean": 1.9874042609322744,
+          "accepted_n": 12,
+          "accepted_q10": 1.6776857675330066,
+          "accepted_q90": 2.2766604424169614,
+          "mean_shift": 0.03358205949427551,
+          "proposed_mean": 1.953822201437999,
+          "proposed_n": 13,
+          "proposed_q10": 1.5508374875066933,
+          "proposed_q90": 2.2766604424169614
+        },
+        "min_angular_gap": {
+          "accepted_mean": 0.3392276404118198,
+          "accepted_n": 12,
+          "accepted_q10": 0.07290435316314925,
+          "accepted_q90": 0.4525306398789679,
+          "mean_shift": -0.0021240892217685436,
+          "proposed_mean": 0.34135172963358834,
+          "proposed_n": 13,
+          "proposed_q10": 0.07290435316314925,
+          "proposed_q90": 0.4525306398789679
+        },
+        "proposed_hull_extreme_point_count": {
+          "accepted_mean": 6.0,
+          "accepted_n": 12,
+          "accepted_q10": 6.0,
+          "accepted_q90": 6.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 6.0,
+          "proposed_n": 13,
+          "proposed_q10": 6.0,
+          "proposed_q90": 6.0
+        },
+        "support_log_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 13,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        },
+        "support_spread": {
+          "accepted_mean": 0.0,
+          "accepted_n": 12,
+          "accepted_q10": 0.0,
+          "accepted_q90": 0.0,
+          "mean_shift": 0.0,
+          "proposed_mean": 0.0,
+          "proposed_n": 13,
+          "proposed_q10": 0.0,
+          "proposed_q90": 0.0
+        }
+      },
+      "reason_counts": {
+        "accepted": 12,
+        "inactive_prescribed_facets": 1
+      },
+      "rejection_reason_proportions": {
+        "exact_reconstruction_incidence_failure": 0.0,
+        "inactive_prescribed_facets": 0.07692307692307693,
+        "invalid_geometry": 0.0,
+        "unbounded_or_origin_failure": 0.0,
+        "wrong_side_count": 0.0
+      }
+    }
+  }
+}
