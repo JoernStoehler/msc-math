@@ -43,8 +43,11 @@ def test_report_contract_after_run():
     assert "selection_cost_ms" not in report
     assert report["selection_cost_artifact"] == "selection-cost-observation.json"
     for arm in report["arms"]:
-        assert arm["offline_greedy_max_fixed_train_panel_selected_witnesses"]["not_intrinsic_arm_property"]
-        assert arm["offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views"]["not_intrinsic_arm_property"]
+        selected = arm["offline_greedy_max_fixed_train_panel_selected_witnesses"]
+        contribution = arm["offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views"]
+        assert selected["not_intrinsic_arm_property"] and selected["retained_budget"] == report["retained_budget"]
+        assert contribution["not_intrinsic_arm_property"] and contribution["retained_budget"] == report["retained_budget"]
+        assert contribution["metric"] == "holdout mean nearest-cover distance"
 
 
 def test_byte_replay_under_pinned_environment(tmp_path: Path):
