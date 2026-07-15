@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Fail-closed verifier for AMS readiness-smoke artifacts.
+"""Independent fail-closed verifier for the 64-request AMS readiness smoke.
 
-This verifies accounting, provenance links, genealogy, and state transitions.
-It deliberately does not estimate a tail probability or compare arm quality.
+Only a complete, valid 48-adaptive/16-IID artifact can pass readiness. A
+timeout, failure, or sys > 1 stop can be internally auditable but never passes
+the readiness gate. This verifier makes no arm-quality, probability, or
+scientific-negative claim.
 """
 
 from __future__ import annotations
@@ -11,8 +13,10 @@ import argparse
 import hashlib
 import json
 import math
+import subprocess
+from fractions import Fraction
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
 
 
 class ArtifactError(RuntimeError):
@@ -27,6 +31,25 @@ JSONL_FILES = (
     "levels.jsonl",
     "arm-runs.jsonl",
 )
+STOP_ACTION = (
+    "artifacts_flushed_stop_unrelated_search_independent_validation_required"
+)
+CHART_TOLERANCE = 2.0e-10
+RAW_CHART_TOLERANCE = 2.0e-12
+IDENTITY_FIELDS = {
+    "packet_version",
+    "config_identity",
+    "source_revision",
+    "parent_candidate_id",
+    "master_seed",
+    "replicate",
+    "arm",
+    "level",
+    "clone_index",
+    "mutation_step",
+    "base_index",
+    "construction_attempt",
+}
 
 
 def fail(message: str) -> None:
@@ -67,11 +90,20 @@ def sha256(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
 
 
+def file_sha256(path: Path) -> str:
+    try:
+        return sha256(path.read_bytes())
+    except OSError as error:
+        fail(f"cannot hash {path}: {error}")
+
+
 def option(value: Any) -> str:
     return "none" if value is None else str(value)
 
 
 def expected_candidate_id(identity: dict[str, Any]) -> str:
+    if set(identity) != IDENTITY_FIELDS:
+        fail("candidate identity has missing or extra fields")
     material = (
         f"packet={identity['packet_version']}\n"
         f"config={identity['config_identity']}\n"
@@ -89,31 +121,347 @@ def expected_candidate_id(identity: dict[str, Any]) -> str:
     return "amsv1-" + sha256(material.encode())[:24]
 
 
+def validate_identity(
+    identity: Any,
+    *,
+    config: dict[str, Any],
+    config_id: str,
+    source_revision: str,
+) -> None:
+    if not isinstance(identity, dict):
+        fail("row lacks candidate identity")
+    fixed = {
+        "packet_version": config["packet_version"],
+        "config_identity": config_id,
+        "source_revision": source_revision,
+        "master_seed": config["master_seed"],
+        "replicate": config["replicate"],
+    }
+    if any(identity.get(field) != expected for field, expected in fixed.items()):
+        fail("candidate identity changes a fixed packet/source field")
+    arm = identity.get("arm")
+    if arm not in {"adaptive", "iid"}:
+        fail("candidate identity has an invalid arm")
+    attempt = identity.get("construction_attempt")
+    if not isinstance(attempt, int) or not 0 <= attempt < config["construction_retry_cap"]:
+        fail("candidate identity construction attempt is outside the retry cap")
+    if identity.get("level") is None:
+        if (
+            identity.get("parent_candidate_id") is not None
+            or identity.get("clone_index") is not None
+            or identity.get("mutation_step") is not None
+            or not isinstance(identity.get("base_index"), int)
+        ):
+            fail("base candidate identity has mutation fields")
+    else:
+        if (
+            arm != "adaptive"
+            or not isinstance(identity.get("level"), int)
+            or not isinstance(identity.get("clone_index"), int)
+            or not isinstance(identity.get("mutation_step"), int)
+            or identity.get("base_index") is not None
+            or not isinstance(identity.get("parent_candidate_id"), str)
+        ):
+            fail("mutation candidate identity has invalid fields")
+
+
 def exact_key(vertices: list[list[str]]) -> str:
     return "|".join(",".join(row) for row in vertices)
 
 
+def finite_number(value: Any) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
+
+
 def finite_positive(value: Any) -> bool:
-    return isinstance(value, (int, float)) and math.isfinite(value) and value > 0
+    return finite_number(value) and value > 0
 
 
-def verify(directory: Path) -> dict[str, Any]:
-    manifest = read_json(directory / "manifest.json")
-    rows = {name: read_jsonl(directory / name) for name in JSONL_FILES}
+def parse_exact_vertices(value: Any, label: str) -> list[list[Fraction]]:
+    if not isinstance(value, list) or len(value) != 10:
+        fail(f"{label} lacks ten exact dual vertices")
+    parsed: list[list[Fraction]] = []
+    for row in value:
+        if not isinstance(row, list) or len(row) != 4 or not all(isinstance(x, str) for x in row):
+            fail(f"{label} has malformed exact dual vertices")
+        try:
+            parsed.append([Fraction(x) for x in row])
+        except (ValueError, ZeroDivisionError) as error:
+            fail(f"{label} has invalid rational coordinate: {error}")
+    return parsed
+
+
+def cross(a: tuple[Fraction, Fraction], b: tuple[Fraction, Fraction], c: tuple[Fraction, Fraction]) -> Fraction:
+    return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+
+
+def convex_hull(points: list[tuple[Fraction, Fraction]]) -> list[tuple[Fraction, Fraction]]:
+    ordered = sorted(set(points))
+    if len(ordered) < 3:
+        return ordered
+    lower: list[tuple[Fraction, Fraction]] = []
+    for point in ordered:
+        while len(lower) >= 2 and cross(lower[-2], lower[-1], point) <= 0:
+            lower.pop()
+        lower.append(point)
+    upper: list[tuple[Fraction, Fraction]] = []
+    for point in reversed(ordered):
+        while len(upper) >= 2 and cross(upper[-2], upper[-1], point) <= 0:
+            upper.pop()
+        upper.append(point)
+    return lower[:-1] + upper[:-1]
+
+
+def verify_factor(points: list[tuple[Fraction, Fraction]], label: str) -> None:
+    if len(set(points)) != 5:
+        fail(f"{label} factor has duplicate dual vertices")
+    hull = convex_hull(points)
+    if len(hull) != 5:
+        fail(f"{label} factor is not irredundant/extreme")
+    origin = (Fraction(0), Fraction(0))
+    signs = [cross(hull[i], hull[(i + 1) % 5], origin) for i in range(5)]
+    if any(value <= 0 for value in signs):
+        fail(f"{label} factor does not strictly contain the origin")
+
+
+def exact_primal_area(dual_points: list[tuple[Fraction, Fraction]], label: str) -> Fraction:
+    hull = convex_hull(dual_points)
+    if len(hull) != 5:
+        fail(f"{label} factor cannot reconstruct an exact primal polygon")
+    primal: list[tuple[Fraction, Fraction]] = []
+    for left, right in zip(hull, hull[1:] + hull[:1]):
+        determinant = left[0] * right[1] - left[1] * right[0]
+        if determinant == 0:
+            fail(f"{label} adjacent dual supports do not have a unique intersection")
+        primal.append(
+            (
+                (right[1] - left[1]) / determinant,
+                (left[0] - right[0]) / determinant,
+            )
+        )
+    twice_area = sum(
+        left[0] * right[1] - left[1] * right[0]
+        for left, right in zip(primal, primal[1:] + primal[:1])
+    )
+    area = abs(twice_area) / 2
+    if area <= 0:
+        fail(f"{label} reconstructed primal factor has nonpositive area")
+    return area
+
+
+def exact_product_volume(parsed: list[list[Fraction]]) -> Fraction:
+    q_area = exact_primal_area([(row[0], row[1]) for row in parsed[:5]], "q")
+    p_area = exact_primal_area([(row[2], row[3]) for row in parsed[5:]], "p")
+    return q_area * p_area
+
+
+def wrap_phase(value: float) -> float:
+    return value % math.tau if math.isfinite(value) else value
+
+
+def rotations_near(gaps: list[float], radii: list[float], left: int, right: int) -> bool:
+    for offset in range(5):
+        li = (left + offset) % 5
+        ri = (right + offset) % 5
+        if gaps[li] != gaps[ri]:
+            return abs(gaps[li] - gaps[ri]) <= 1.0e-10
+        if radii[li] != radii[ri]:
+            return abs(radii[li] - radii[ri]) <= 1.0e-10
+        if offset == 0:
+            return True
+    return True
+
+
+def encode_factor(points: list[tuple[Fraction, Fraction]]) -> tuple[list[float], list[float], float, bool]:
+    entries = sorted(
+        (wrap_phase(math.atan2(float(y), float(x))), math.log(math.hypot(float(x), float(y))))
+        for x, y in points
+    )
+    mean = sum(radius for _, radius in entries) / 5.0
+    angles = [angle for angle, _ in entries]
+    radii = [radius - mean for _, radius in entries]
+    gaps = [wrap_phase(angles[(i + 1) % 5] - angles[i]) for i in range(5)]
+    best = min(
+        range(5),
+        key=lambda start: tuple(
+            component
+            for offset in range(5)
+            for component in (gaps[(start + offset) % 5], radii[(start + offset) % 5])
+        ),
+    )
+    near = any(rotations_near(gaps, radii, best, other) for other in range(5) if other != best)
+    return (
+        [gaps[(best + i) % 5] for i in range(5)],
+        [radii[(best + i) % 5] for i in range(5)],
+        angles[best],
+        near,
+    )
+
+
+def chart_from_exact(parsed: list[list[Fraction]]) -> dict[str, Any]:
+    q_points = [(row[0], row[1]) for row in parsed[:5]]
+    p_points = [(row[2], row[3]) for row in parsed[5:]]
+    q_gaps, q_radii, q_origin, q_near = encode_factor(q_points)
+    p_gaps, p_radii, p_origin, p_near = encode_factor(p_points)
+    return {
+        "q_gap_logits": [math.log(q_gaps[i] / q_gaps[4]) for i in range(4)],
+        "q_centered_log_radii": q_radii,
+        "p_gap_logits": [math.log(p_gaps[i] / p_gaps[4]) for i in range(4)],
+        "p_centered_log_radii": p_radii,
+        "relative_phase": wrap_phase(p_origin - q_origin),
+        "near_tie": q_near or p_near,
+    }
+
+
+def validate_chart_shape(chart: Any, label: str) -> None:
+    if not isinstance(chart, dict) or set(chart) != {
+        "q_gap_logits",
+        "q_centered_log_radii",
+        "p_gap_logits",
+        "p_centered_log_radii",
+        "relative_phase",
+        "near_tie",
+    }:
+        fail(f"{label} has malformed chart fields")
+    for name, length in (
+        ("q_gap_logits", 4),
+        ("q_centered_log_radii", 5),
+        ("p_gap_logits", 4),
+        ("p_centered_log_radii", 5),
+    ):
+        values = chart[name]
+        if not isinstance(values, list) or len(values) != length or not all(finite_number(x) for x in values):
+            fail(f"{label} has invalid finite chart field {name}")
+    if not finite_number(chart["relative_phase"]) or not isinstance(chart["near_tie"], bool):
+        fail(f"{label} has invalid phase/tie chart fields")
+
+
+def charts_close(actual: Any, expected: Any, tolerance: float, label: str) -> None:
+    validate_chart_shape(actual, label)
+    validate_chart_shape(expected, f"expected {label}")
+    for name in (
+        "q_gap_logits",
+        "q_centered_log_radii",
+        "p_gap_logits",
+        "p_centered_log_radii",
+    ):
+        if any(abs(a - b) > tolerance for a, b in zip(actual[name], expected[name])):
+            fail(f"{label} disagrees with independently reconstructed {name}")
+    if abs((actual["relative_phase"] - expected["relative_phase"] + math.pi) % math.tau - math.pi) > tolerance:
+        fail(f"{label} disagrees with independently reconstructed phase")
+    if actual["near_tie"] != expected["near_tie"]:
+        fail(f"{label} disagrees with independently reconstructed tie diagnostic")
+
+
+def verify_geometry(row: dict[str, Any], label: str) -> Fraction:
+    raw_vertices = row.get("dual_vertices_rational")
+    parsed = parse_exact_vertices(raw_vertices, label)
+    zero = Fraction(0)
+    for index, vertex in enumerate(parsed):
+        if index < 5:
+            if vertex[2:] != [zero, zero] or vertex[:2] == [zero, zero]:
+                fail(f"{label} violates the five-q/five-p product structure")
+        elif vertex[:2] != [zero, zero] or vertex[2:] == [zero, zero]:
+            fail(f"{label} violates the five-q/five-p product structure")
+    verify_factor([(row[0], row[1]) for row in parsed[:5]], "q")
+    verify_factor([(row[2], row[3]) for row in parsed[5:]], "p")
+    if row.get("facet_count") != 10:
+        fail(f"{label} facet count is not fixed 5 x 5")
+    if exact_key(raw_vertices) != row.get("exact_geometry_key"):
+        fail(f"{label} exact key disagrees with geometry")
+    if sha256(compact_json(raw_vertices)) != row.get("geometry_identity"):
+        fail(f"{label} stable geometry identity mismatch")
+    f64_vertices = row.get("dual_vertices_f64")
+    if not isinstance(f64_vertices, list) or len(f64_vertices) != 10:
+        fail(f"{label} lacks f64 child geometry")
+    for exact_row, float_row in zip(parsed, f64_vertices):
+        if not isinstance(float_row, list) or len(float_row) != 4 or not all(finite_number(x) for x in float_row):
+            fail(f"{label} has malformed f64 child geometry")
+        if any(
+            not math.isclose(float(exact), value, rel_tol=2.0e-15, abs_tol=2.0e-17)
+            for exact, value in zip(exact_row, float_row)
+        ):
+            fail(f"{label} exact and f64 child geometry disagree")
+    charts_close(row.get("product_chart"), chart_from_exact(parsed), CHART_TOLERANCE, f"{label} canonical chart")
+    return exact_product_volume(parsed)
+
+
+def verify_artifact_hashes(directory: Path, manifest: dict[str, Any], status: dict[str, Any]) -> None:
+    if status.get("run_id") != manifest.get("run_id"):
+        fail("manifest and final status run IDs disagree")
+    expected_names = {"manifest.json", *JSONL_FILES}
+    if (directory / "stop-event.json").exists():
+        expected_names.add("stop-event.json")
+    try:
+        actual_names = {path.name for path in directory.iterdir() if path.is_file()}
+    except OSError as error:
+        fail(f"cannot enumerate artifact directory: {error}")
+    if actual_names != expected_names | {"run-status.json"}:
+        fail("artifact directory contains missing or unexpected files")
+    hashes = status.get("artifact_sha256")
+    if not isinstance(hashes, dict) or set(hashes) != expected_names:
+        fail("final status does not bind exactly the owning artifact files")
+    for name, expected in hashes.items():
+        if not isinstance(expected, str) or len(expected) != 64:
+            fail(f"final status has malformed hash for {name}")
+        if file_sha256(directory / name) != expected:
+            fail(f"final status hash mismatch for {name}")
+
+
+def git_output(root: Path, *args: str) -> str:
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(root), *args],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except (OSError, subprocess.CalledProcessError) as error:
+        fail(f"cannot verify current repository identity: {error}")
+    return result.stdout.strip()
+
+
+def verify_production_identity(
+    source: dict[str, Any],
+    expected_reviewed_revision: str | None,
+    repo_root: Path | None,
+    cargo_lock: Path | None,
+    executable: Path | None,
+) -> None:
+    if any(value is None for value in (expected_reviewed_revision, repo_root, cargo_lock, executable)):
+        fail("production analysis requires reviewed revision, repo root, Cargo.lock, and executable")
+    assert expected_reviewed_revision is not None
+    assert repo_root is not None and cargo_lock is not None and executable is not None
+    if len(expected_reviewed_revision) != 40 or any(c not in "0123456789abcdefABCDEF" for c in expected_reviewed_revision):
+        fail("expected reviewed revision is not full 40-hex")
+    if source.get("reviewed_revision") != expected_reviewed_revision:
+        fail("manifest reviewed revision differs from analyzer expectation")
+    if source.get("git_revision") != expected_reviewed_revision:
+        fail("manifest source revision differs from reviewed revision")
+    if git_output(repo_root, "rev-parse", "HEAD") != expected_reviewed_revision:
+        fail("current repository HEAD differs from reviewed revision")
+    if git_output(repo_root, "status", "--porcelain", "--untracked-files=normal"):
+        fail("current repository is dirty during production analysis")
+    if file_sha256(cargo_lock) != source.get("cargo_lock_sha256"):
+        fail("current packet Cargo.lock hash differs from manifest")
+    if file_sha256(executable) != source.get("executable_sha256"):
+        fail("current executable hash differs from manifest")
+
+
+def validate_manifest(
+    manifest: dict[str, Any],
+    *,
+    expected_reviewed_revision: str | None,
+    repo_root: Path | None,
+    cargo_lock: Path | None,
+    executable: Path | None,
+) -> tuple[dict[str, Any], str, str]:
     config = manifest.get("exact_config")
     if not isinstance(config, dict):
         fail("manifest exact_config is missing")
     config_id = sha256(compact_json(config))
     if manifest.get("config_identity") != config_id:
         fail("manifest config_identity does not bind exact_config")
-    if manifest.get("adaptive_budget") != 48 or manifest.get("iid_budget") != 16:
-        fail("manifest changes the fixed 48/16 charged budgets")
-    if manifest.get("target_probability_estimate") is not None:
-        fail("a readiness smoke must not contain a probability estimate")
-    if manifest.get("factor_exchange_quotiented") is not False:
-        fail("factor exchange must remain visibly unquotiented")
-    if config.get("factor_exchange_quotiented") is not False:
-        fail("config claims factor exchange is quotiented")
     fixed_fields = {
         "packet_version": "ams-readiness-smoke-v1",
         "master_seed": 202607150101,
@@ -132,283 +480,528 @@ def verify(directory: Path) -> dict[str, Any]:
         "tie_rule": "sys_desc_candidate_id_asc",
         "clone_assignment": "seeded_uniform_with_replacement",
         "acceptance_rule": "successful_sys_at_least_frozen_level_threshold",
+        "factor_exchange_quotiented": False,
     }
+    if set(config) != set(fixed_fields):
+        fail("config has missing or extra frozen fields")
     for field, expected in fixed_fields.items():
         if config.get(field) != expected:
             fail(f"config changes frozen field {field}")
+    manifest_fixed = {
+        "adaptive_budget": 48,
+        "iid_budget": 16,
+        "target_probability_estimate": None,
+        "tail_probability_supported": False,
+        "mutation_kernel": "non_invariant_threshold_only_gaussian",
+        "generation_schedule": "sha256_counter_box_muller_v1",
+        "factor_exchange_quotiented": False,
+    }
+    if any(manifest.get(field) != expected for field, expected in manifest_fixed.items()):
+        fail("manifest changes the fixed budget, policy, or claim boundary")
+    if not isinstance(manifest.get("run_id"), str) or not manifest["run_id"].startswith("amsrun-"):
+        fail("manifest lacks a launch run ID")
+    if not isinstance(manifest.get("start_unix_ms"), int) or manifest["start_unix_ms"] <= 0:
+        fail("manifest lacks a pre-exposure start timestamp")
     kind = manifest.get("artifact_kind")
     if kind not in {"synthetic_target_free", "production_target"}:
-        fail("unknown artifact_kind")
-    source = manifest.get("source", {})
-    if source.get("production_target") != (kind == "production_target"):
-        fail("source production_target disagrees with artifact_kind")
-    if kind == "production_target" and source.get("source_tree_clean") is not True:
-        fail("production artifacts came from a dirty source tree")
+        fail("unknown artifact kind")
+    source = manifest.get("source")
+    if not isinstance(source, dict) or source.get("production_target") != (kind == "production_target"):
+        fail("source identity disagrees with artifact kind")
+    if not isinstance(source.get("git_revision"), str):
+        fail("manifest lacks source revision")
     for field in ("executable_sha256", "cargo_lock_sha256"):
         value = source.get(field)
-        if not isinstance(value, str) or len(value) != 64:
+        if not isinstance(value, str) or (kind == "production_target" and len(value) != 64):
             fail(f"invalid source identity field {field}")
+    if kind == "production_target":
+        if source.get("source_tree_clean") is not True:
+            fail("production artifacts came from a dirty source tree")
+        verify_production_identity(source, expected_reviewed_revision, repo_root, cargo_lock, executable)
+    return config, config_id, kind
 
+
+def logical_identity(identity: dict[str, Any]) -> tuple[Any, ...]:
+    return tuple(identity[field] for field in sorted(IDENTITY_FIELDS - {"construction_attempt"}))
+
+
+def request_schedule_token(identity: dict[str, Any]) -> tuple[Any, ...]:
+    return (
+        identity["arm"],
+        identity["level"],
+        identity["clone_index"],
+        identity["mutation_step"],
+        identity["base_index"],
+    )
+
+
+def frozen_request_schedule() -> list[tuple[Any, ...]]:
+    schedule = [("adaptive", None, None, None, base) for base in range(16)]
+    schedule.extend(
+        ("adaptive", level, clone, step, None)
+        for level in range(2)
+        for clone in range(8)
+        for step in range(2)
+    )
+    schedule.extend(("iid", None, None, None, base) for base in range(16))
+    return schedule
+
+
+def sha_u64(material: str) -> int:
+    return int.from_bytes(hashlib.sha256(material.encode()).digest()[:8], "big")
+
+
+def expected_clone_parent(config_id: str, master_seed: int, level: int, clone: int, survivors: list[str]) -> str:
+    material = f"ams-clone-assignment-v1\n{config_id}\n{master_seed}\n{level}\n{clone}\n"
+    return survivors[sha_u64(material) % len(survivors)]
+
+
+def unit_from_digest(chunk: bytes) -> float:
+    bits = int.from_bytes(chunk, "big") >> 11
+    return (bits + 0.5) / float(1 << 53)
+
+
+def standard_normal(candidate: str, coordinate: int) -> float:
+    pair = coordinate // 2
+    digest = hashlib.sha256(f"ams-mutation-gaussian-v1\n{candidate}\n{pair}\n".encode()).digest()
+    radius = math.sqrt(-2.0 * math.log(unit_from_digest(digest[:8])))
+    angle = math.tau * unit_from_digest(digest[8:16])
+    return radius * (math.cos(angle) if coordinate % 2 == 0 else math.sin(angle))
+
+
+def continuous_coordinates(chart: dict[str, Any]) -> list[float]:
+    return [
+        *chart["q_gap_logits"],
+        *chart["q_centered_log_radii"][:4],
+        *chart["p_gap_logits"],
+        *chart["p_centered_log_radii"][:4],
+        chart["relative_phase"],
+    ]
+
+
+def chart_from_coordinates(values: list[float]) -> dict[str, Any]:
+    return {
+        "q_gap_logits": values[:4],
+        "q_centered_log_radii": [*values[4:8], -sum(values[4:8])],
+        "p_gap_logits": values[8:12],
+        "p_centered_log_radii": [*values[12:16], -sum(values[12:16])],
+        "relative_phase": wrap_phase(values[16]),
+        "near_tie": False,
+    }
+
+
+def expected_raw_mutation(config: dict[str, Any], before_chart: dict[str, Any], identity: dict[str, Any]) -> dict[str, Any]:
+    candidate = expected_candidate_id(identity)
+    values = continuous_coordinates(before_chart)
+    for index in range(17):
+        if index in {*range(4), *range(8, 12)}:
+            scale = config["gap_logit_scale"]
+        elif index == 16:
+            scale = config["phase_scale"]
+        else:
+            scale = config["centered_log_radius_scale"]
+        values[index] += scale * standard_normal(candidate, index)
+    return chart_from_coordinates(values)
+
+
+def validate_diagnostics(row: dict[str, Any], label: str) -> None:
+    diagnostics = row.get("diagnostics")
+    if not isinstance(diagnostics, dict) or set(diagnostics) != {
+        "iterations",
+        "returned_orbit_count",
+        "action_lower",
+        "action_upper",
+        "exact_admissible_count",
+        "indeterminate_count",
+    }:
+        fail(f"{label} lacks compact target diagnostics")
+    if not all(isinstance(diagnostics[field], int) and diagnostics[field] >= 0 for field in (
+        "iterations", "returned_orbit_count", "exact_admissible_count", "indeterminate_count"
+    )):
+        fail(f"{label} has invalid diagnostic counts")
+    if not finite_number(diagnostics["action_lower"]) or not finite_number(diagnostics["action_upper"]):
+        fail(f"{label} has invalid action interval")
+    if diagnostics["action_lower"] > diagnostics["action_upper"]:
+        fail(f"{label} has reversed action interval")
+
+
+def verify_full_cache_audit(row: dict[str, Any], kind: str) -> None:
+    validate_diagnostics(row, "cache row")
+    result = row.get("capacity_result")
+    if kind == "synthetic_target_free":
+        if result is not None or row.get("audit_kind") != "synthetic_formula_fixture":
+            fail("synthetic cache row misrepresents a production orbit audit")
+        return
+    if not isinstance(result, dict) or row.get("audit_kind") != "full_orbit_search_result":
+        fail("production cache miss lacks full OrbitSearchResult")
+    orbits = result.get("orbits")
+    diagnostics = row["diagnostics"]
+    if not isinstance(orbits, list) or len(orbits) != diagnostics["returned_orbit_count"]:
+        fail("full cache audit orbit count disagrees with compact diagnostics")
+    if result.get("iterations") != diagnostics["iterations"]:
+        fail("full cache audit iteration count disagrees with compact diagnostics")
+    if result.get("min_action") != row.get("capacity"):
+        fail("full cache audit minimum action disagrees with capacity")
+    if result.get("min_action_lower") != diagnostics["action_lower"] or result.get("min_action_upper") != diagnostics["action_upper"]:
+        fail("full cache audit action interval disagrees with compact diagnostics")
+    exact = sum(orbit.get("admissibility") == "AdmissibleExact" for orbit in orbits if isinstance(orbit, dict))
+    indeterminate = sum(orbit.get("admissibility") == "IndeterminateF64" for orbit in orbits if isinstance(orbit, dict))
+    if exact != diagnostics["exact_admissible_count"] or indeterminate != diagnostics["indeterminate_count"]:
+        fail("full cache audit admissibility counts disagree with compact diagnostics")
+
+
+def verify(
+    directory: Path,
+    *,
+    expected_reviewed_revision: str | None = None,
+    repo_root: Path | None = None,
+    cargo_lock: Path | None = None,
+    executable: Path | None = None,
+) -> dict[str, Any]:
+    manifest = read_json(directory / "manifest.json")
+    status = read_json(directory / "run-status.json")
+    if not isinstance(manifest, dict) or not isinstance(status, dict):
+        fail("manifest and run status must be JSON objects")
+    verify_artifact_hashes(directory, manifest, status)
+    config, config_id, kind = validate_manifest(
+        manifest,
+        expected_reviewed_revision=expected_reviewed_revision,
+        repo_root=repo_root,
+        cargo_lock=cargo_lock,
+        executable=executable,
+    )
+    rows = {name: read_jsonl(directory / name) for name in JSONL_FILES}
     targets = rows["target-evaluations.jsonl"]
     cache_rows = rows["cache.jsonl"]
     rejections = rows["construction-rejections.jsonl"]
     transitions = rows["mutation-transitions.jsonl"]
     levels = rows["levels.jsonl"]
     arm_runs = rows["arm-runs.jsonl"]
+    source_revision = manifest["source"]["git_revision"]
 
+    if [row.get("global_request_index") for row in targets] != list(range(1, len(targets) + 1)):
+        fail("global charged request indices are not contiguous from one")
     candidate_rows: dict[str, dict[str, Any]] = {}
     attempts: dict[str, list[int]] = {"adaptive": [], "iid": []}
-    successes_by_arm_key: dict[tuple[str, str], dict[str, Any]] = {}
-    seen_success_keys: set[tuple[str, str]] = set()
-    status_counts = {
-        arm: {"miss": 0, "hit": 0, "failed_miss": 0} for arm in attempts
-    }
+    seen_success: dict[tuple[str, str], dict[str, Any]] = {}
+    status_counts = {arm: {"miss": 0, "hit": 0, "failed_miss": 0} for arm in attempts}
+    failures: list[dict[str, Any]] = []
     for row in targets:
         identity = row.get("identity")
-        if not isinstance(identity, dict):
-            fail("target row lacks candidate identity")
+        validate_identity(identity, config=config, config_id=config_id, source_revision=source_revision)
         candidate = row.get("candidate_id")
         if candidate != expected_candidate_id(identity):
-            fail(f"candidate ID mismatch for target {candidate}")
-        if identity.get("config_identity") != config_id:
-            fail(f"target {candidate} has another config identity")
-        if identity.get("source_revision") != source.get("git_revision"):
-            fail(f"target {candidate} has another source revision")
-        if identity.get("parent_candidate_id") != row.get("parent_candidate_id"):
-            fail(f"target {candidate} identity does not bind its parent")
+            fail(f"target candidate ID mismatch: {candidate}")
         if candidate in candidate_rows:
             fail(f"duplicate target candidate identity {candidate}")
         candidate_rows[candidate] = row
         arm = row.get("arm")
-        if arm not in attempts or identity.get("arm") != arm:
-            fail(f"invalid arm on target {candidate}")
+        if arm not in attempts or identity["arm"] != arm:
+            fail(f"target {candidate} has invalid arm")
+        if identity["parent_candidate_id"] != row.get("parent_candidate_id"):
+            fail(f"target {candidate} identity does not bind parent")
         attempts[arm].append(row.get("attempt_index"))
-        key = row.get("exact_geometry_key")
-        geometry_id = row.get("geometry_identity")
-        if not isinstance(key, str) or not isinstance(geometry_id, str):
-            fail(f"target {candidate} lacks geometry identity")
         cache_status = row.get("cache_status")
         if cache_status not in status_counts[arm]:
             fail(f"target {candidate} has invalid cache status")
         status_counts[arm][cache_status] += 1
-        success = row.get("evaluation_status") == "success"
-        if success != (row.get("sys") is not None):
-            fail(f"target {candidate} success/payload disagreement")
-        arm_key = (arm, key)
-        if cache_status == "hit" and arm_key not in seen_success_keys:
-            fail(f"target {candidate} cache hit precedes successful miss")
-        if cache_status == "miss":
-            if not success or arm_key in seen_success_keys:
-                fail(f"target {candidate} invalid successful miss")
-            seen_success_keys.add(arm_key)
-        elif cache_status == "failed_miss" and success:
-            fail(f"target {candidate} failed_miss carries success")
-        if success:
-            for field in ("capacity", "volume", "sys"):
-                if field == "sys":
-                    if not isinstance(row[field], (int, float)) or not math.isfinite(row[field]):
-                        fail(f"target {candidate} has nonfinite sys")
-                elif not finite_positive(row[field]):
-                    fail(f"target {candidate} has invalid {field}")
-            expected_sys = row["capacity"] * row["capacity"] / (2.0 * row["volume"])
-            if not math.isclose(row["sys"], expected_sys, rel_tol=4e-15, abs_tol=0.0):
-                fail(f"target {candidate} sys disagrees with capacity and volume")
-            successes_by_arm_key[arm_key] = row
-        if not isinstance(row.get("product_chart"), dict):
-            fail(f"target {candidate} does not retain the product chart")
-        if not isinstance(row.get("wall_time_ms"), (int, float)) or row["wall_time_ms"] < 0:
+        geometry_volume = verify_geometry(row, f"target {candidate}")
+        raw_chart = row.get("raw_proposed_chart")
+        if raw_chart is not None:
+            validate_chart_shape(raw_chart, f"target {candidate} raw proposal")
+        if not finite_number(row.get("wall_time_ms")) or row["wall_time_ms"] < 0:
             fail(f"target {candidate} has invalid wall time")
+        evaluation_status = row.get("evaluation_status")
+        success = evaluation_status == "success"
+        scalar_fields = ("capacity", "volume", "sys")
+        if success:
+            if row.get("failure_reason") is not None:
+                fail(f"successful target {candidate} carries a failure reason")
+            if not all(finite_positive(row.get(field)) for field in scalar_fields):
+                fail(f"successful target {candidate} has invalid scalar payload")
+            expected_sys = row["capacity"] ** 2 / (2.0 * row["volume"])
+            if not math.isclose(row["sys"], expected_sys, rel_tol=4e-15, abs_tol=0.0):
+                fail(f"target {candidate} violates sys = c^2/(2V)")
+            if not math.isclose(
+                row["volume"], float(geometry_volume), rel_tol=5.0e-13, abs_tol=1.0e-14
+            ):
+                fail(f"target {candidate} volume disagrees with exact product geometry")
+            validate_diagnostics(row, f"target {candidate}")
+            if not isinstance(row.get("audit_kind"), str):
+                fail(f"target {candidate} lacks audit kind")
+        else:
+            failures.append(row)
+            if evaluation_status not in {"target_unavailable", "invalid_output", "child_failure", "timeout"}:
+                fail(f"target {candidate} has unknown failure status")
+            if cache_status != "failed_miss" or not isinstance(row.get("failure_reason"), str) or not row["failure_reason"]:
+                fail(f"failed target {candidate} lacks retained failure disposition")
+            if any(row.get(field) is not None for field in (*scalar_fields, "diagnostics", "audit_kind")):
+                fail(f"failed target {candidate} pretends target success")
+        arm_key = (arm, row["exact_geometry_key"])
+        if cache_status == "hit":
+            source = seen_success.get(arm_key)
+            if source is None or not success:
+                fail(f"target {candidate} cache hit precedes successful arm-private miss")
+            for field in (*scalar_fields, "diagnostics", "audit_kind", "geometry_identity"):
+                if row.get(field) != source.get(field):
+                    fail(f"target {candidate} cache hit payload disagrees with miss")
+        elif cache_status == "miss":
+            if not success or arm_key in seen_success:
+                fail(f"target {candidate} has invalid successful miss")
+            seen_success[arm_key] = row
+        elif success:
+            fail(f"target {candidate} success has failed-miss cache status")
 
     for arm, indices in attempts.items():
         if indices != list(range(1, len(indices) + 1)):
             fail(f"{arm} charged attempt indices are not contiguous from one")
+    expected_schedule = frozen_request_schedule()
+    actual_schedule = [request_schedule_token(row["identity"]) for row in targets]
+    if len(actual_schedule) > len(expected_schedule) or actual_schedule != expected_schedule[: len(actual_schedule)]:
+        fail("charged target rows do not follow the frozen global request schedule")
+    positions = {row["candidate_id"]: index for index, row in enumerate(targets)}
+    for index, row in enumerate(targets):
+        parent = row.get("parent_candidate_id")
+        if parent is not None and (parent not in positions or positions[parent] >= index):
+            fail(f"mutation candidate {row['candidate_id']} does not follow its parent")
 
     caches: dict[tuple[str, str], dict[str, Any]] = {}
     for row in cache_rows:
         arm_key = (row.get("arm"), row.get("exact_geometry_key"))
-        if arm_key in caches:
-            fail(f"duplicate cache row {arm_key}")
-        vertices = row.get("dual_vertices_rational")
-        if not isinstance(vertices, list) or len(vertices) != 10:
-            fail(f"cache row {arm_key} lacks ten exact dual vertices")
-        if exact_key(vertices) != arm_key[1]:
-            fail(f"cache row {arm_key} exact key disagrees with geometry")
-        if sha256(compact_json(vertices)) != row.get("geometry_identity"):
-            fail(f"cache row {arm_key} geometry identity mismatch")
-        if row.get("facet_count") != 10:
-            fail(f"cache row {arm_key} is outside the fixed 5 x 5 chart")
-        source_target = successes_by_arm_key.get(arm_key)
-        if source_target is None:
-            fail(f"orphan cache row {arm_key}")
-        for field in ("capacity", "volume", "sys", "geometry_identity"):
-            if row.get(field) != source_target.get(field):
+        if arm_key in caches or arm_key not in seen_success:
+            fail(f"duplicate or orphan cache row {arm_key}")
+        geometry_volume = verify_geometry(row, f"cache row {arm_key}")
+        if not math.isclose(
+            row.get("volume"), float(geometry_volume), rel_tol=5.0e-13, abs_tol=1.0e-14
+        ):
+            fail(f"cache row {arm_key} volume disagrees with exact product geometry")
+        verify_full_cache_audit(row, kind)
+        source = seen_success[arm_key]
+        for field in (
+            "geometry_identity", "dual_vertices_rational", "dual_vertices_f64", "facet_count", "product_chart",
+            "capacity", "volume", "sys", "diagnostics", "audit_kind",
+        ):
+            if row.get(field) != source.get(field):
                 fail(f"cache/target disagreement for {arm_key} field {field}")
         caches[arm_key] = row
-    miss_keys = {
-        (row["arm"], row["exact_geometry_key"])
-        for row in targets
-        if row["cache_status"] == "miss"
-    }
-    if set(caches) != miss_keys:
-        fail("cache rows are not exactly the successful misses")
+    if set(caches) != set(seen_success):
+        fail("cache rows are not exactly successful arm-private misses")
 
-    rejection_counts = {"adaptive": 0, "iid": 0}
+    rejection_by_group: dict[tuple[Any, ...], list[dict[str, Any]]] = {}
     rejected_candidates: set[str] = set()
+    rejection_counts = {"adaptive": 0, "iid": 0}
     for row in rejections:
         identity = row.get("identity")
+        validate_identity(identity, config=config, config_id=config_id, source_revision=source_revision)
         candidate = row.get("candidate_id")
-        if not isinstance(identity, dict) or candidate != expected_candidate_id(identity):
+        if candidate != expected_candidate_id(identity) or candidate in candidate_rows or candidate in rejected_candidates:
             fail(f"construction rejection candidate identity mismatch: {candidate}")
-        if identity.get("config_identity") != config_id:
-            fail(f"construction rejection {candidate} has another config")
-        if identity.get("source_revision") != source.get("git_revision"):
-            fail(f"construction rejection {candidate} has another source revision")
-        if candidate in rejected_candidates or candidate in candidate_rows:
-            fail(f"duplicate construction identity {candidate}")
         rejected_candidates.add(candidate)
         arm = row.get("arm")
-        if arm not in rejection_counts:
+        if arm != identity["arm"] or arm not in rejection_counts:
             fail(f"construction rejection {candidate} has invalid arm")
         rejection_counts[arm] += 1
-        if not row.get("reason"):
-            fail(f"construction rejection {candidate} has no reason")
+        if not isinstance(row.get("reason"), str) or not row["reason"]:
+            fail(f"construction rejection {candidate} lacks reason")
+        if row.get("parent_candidate_id") != identity["parent_candidate_id"]:
+            fail(f"construction rejection {candidate} parent mismatch")
+        if identity["level"] is None:
+            if row.get("root_candidate_id") is not None or row.get("raw_proposed_chart") is not None:
+                fail(f"base rejection {candidate} has mutation-only fields")
+        else:
+            if not isinstance(row.get("root_candidate_id"), str):
+                fail(f"mutation rejection {candidate} lacks root")
+            validate_chart_shape(row.get("raw_proposed_chart"), f"rejection {candidate} raw proposal")
+        rejection_by_group.setdefault(logical_identity(identity), []).append(row)
 
-    initial_adaptive = {
-        candidate: row
-        for candidate, row in candidate_rows.items()
-        if row["arm"] == "adaptive" and row["identity"]["level"] is None
-    }
     for candidate, row in candidate_rows.items():
-        root = row.get("root_candidate_id")
+        identity = row["identity"]
+        prior = sorted(
+            (entry["identity"]["construction_attempt"] for entry in rejection_by_group.pop(logical_identity(identity), []))
+        )
+        if prior != list(range(identity["construction_attempt"])):
+            fail(f"candidate {candidate} lacks exact contiguous construction retry history")
+    if rejection_by_group:
+        fail("construction rejection history has no matching successful attempt")
+
+    initial_adaptive: dict[str, dict[str, Any]] = {}
+    for candidate, row in candidate_rows.items():
+        identity = row["identity"]
         parent = row.get("parent_candidate_id")
-        if row["identity"]["level"] is None:
-            if parent is not None or root != candidate:
-                fail(f"base candidate {candidate} has invalid root/parent")
+        root = row.get("root_candidate_id")
+        if identity["level"] is None:
+            if parent is not None or root != candidate or row.get("level_threshold") is not None or row.get("raw_proposed_chart") is not None:
+                fail(f"base candidate {candidate} has invalid root/parent/threshold")
+            if row["arm"] == "adaptive":
+                initial_adaptive[candidate] = row
         else:
             if parent not in candidate_rows or root not in initial_adaptive:
                 fail(f"mutation candidate {candidate} has broken genealogy")
+            if candidate_rows[parent].get("root_candidate_id") != root:
+                fail(f"mutation candidate {candidate} breaks root transitivity")
 
-    if len(levels) not in {0, 1, 2}:
-        fail("invalid number of level records")
-    if [row.get("level") for row in levels] != list(range(len(levels))):
-        fail("level records are not sequential")
-    for row in levels:
-        if len(row.get("survivor_candidate_ids", [])) != 8:
-            fail("level does not retain eight survivor candidates")
-        if len(row.get("survivor_root_candidate_ids", [])) != 8:
-            fail("level does not retain eight survivor roots")
-        if len(row.get("clone_parent_candidate_ids", [])) != 8:
-            fail("level does not retain eight clone assignments")
-        expected_roots = [
-            candidate_rows[candidate]["root_candidate_id"]
-            for candidate in row["survivor_candidate_ids"]
-        ]
-        if row["survivor_root_candidate_ids"] != expected_roots:
-            fail("level survivor roots disagree with survivor genealogy")
-        survivor_set = set(row["survivor_candidate_ids"])
-        if any(parent not in survivor_set for parent in row["clone_parent_candidate_ids"]):
-            fail("clone assignment does not point to a survivor")
-        threshold = row.get("frozen_threshold")
-        survivor_sys = [candidate_rows[candidate]["sys"] for candidate in survivor_set]
-        if not survivor_sys or threshold != min(survivor_sys):
-            fail("frozen threshold is not the survivor minimum")
-
+    if [row.get("level") for row in levels] != list(range(len(levels))) or len(levels) > 2:
+        fail("completed level records are not a zero-based prefix")
     transition_keys: set[tuple[int, int, int]] = set()
-    clone_states: dict[tuple[int, int], str] = {}
+    transitions_by_key: dict[tuple[int, int, int], dict[str, Any]] = {}
     for row in transitions:
         key = (row.get("level"), row.get("clone_index"), row.get("mutation_step"))
-        if key in transition_keys:
-            fail(f"duplicate mutation transition {key}")
-        transition_keys.add(key)
+        if key in transition_keys or not all(isinstance(value, int) for value in key):
+            fail(f"duplicate or invalid mutation transition {key}")
         level, clone, step = key
-        if not all(isinstance(value, int) for value in key):
-            fail("mutation transition indices are not integers")
-        if level >= len(levels) or clone >= 8 or step >= 2:
-            fail(f"mutation transition index out of range {key}")
-        proposal = row.get("proposal_candidate_id")
-        proposal_row = candidate_rows.get(proposal)
-        if proposal_row is None:
-            fail(f"transition {key} lacks proposal target")
-        identity = proposal_row["identity"]
-        if (
-            identity["level"] != level
-            or identity["clone_index"] != clone
-            or identity["mutation_step"] != step
-        ):
-            fail(f"transition {key} disagrees with proposal identity")
-        expected_before = clone_states.get(
-            (level, clone), levels[level]["clone_parent_candidate_ids"][clone]
-        )
-        if row.get("state_before_candidate_id") != expected_before:
-            fail(f"transition {key} state chain is broken")
-        threshold = levels[level]["frozen_threshold"]
-        if row.get("frozen_threshold") != threshold:
-            fail(f"transition {key} changes frozen threshold")
-        expected_accept = proposal_row["sys"] is not None and proposal_row["sys"] >= threshold
-        if row.get("accepted") != expected_accept:
-            fail(f"transition {key} acceptance rule mismatch")
-        expected_after = proposal if expected_accept else expected_before
-        if row.get("state_after_candidate_id") != expected_after:
-            fail(f"transition {key} next-state semantics mismatch")
-        if row.get("root_candidate_id") != proposal_row["root_candidate_id"]:
-            fail(f"transition {key} changes ancestry root")
-        clone_states[(level, clone)] = expected_after
+        if not (0 <= level < 2 and 0 <= clone < 8 and 0 <= step < 2):
+            fail(f"mutation transition index outside frozen grid {key}")
+        transition_keys.add(key)
+        transitions_by_key[key] = row
 
-    population = [
-        candidate
-        for candidate, row in candidate_rows.items()
-        if row["arm"] == "adaptive" and row["identity"]["level"] is None
-    ]
-    if levels and len(population) != 16:
-        fail("first level does not begin with 16 successful initial particles")
-    for level_row in levels:
-        level = level_row["level"]
-        expected_survivors = sorted(
-            population,
-            key=lambda candidate: (-candidate_rows[candidate]["sys"], candidate),
-        )[:8]
-        if level_row["survivor_candidate_ids"] != expected_survivors:
-            fail(f"level {level} survivors violate the frozen tie rule")
-        if all((level, clone) in clone_states for clone in range(8)):
-            population = expected_survivors + [
-                clone_states[(level, clone)] for clone in range(8)
-            ]
+    population = sorted(
+        initial_adaptive,
+        key=lambda candidate: initial_adaptive[candidate]["identity"]["base_index"],
+    )
+    if population and [initial_adaptive[c]["identity"]["base_index"] for c in population] != list(range(len(population))):
+        fail("adaptive base indices are not a zero-based prefix")
+    completed_populations: list[list[str]] = []
+    for level in range(2):
+        if len(population) < 16:
+            break
+        survivors = sorted(population, key=lambda candidate: (-candidate_rows[candidate]["sys"], candidate))[:8]
+        threshold = candidate_rows[survivors[-1]]["sys"]
+        clone_states: dict[int, str] = {}
+        for clone in range(8):
+            parent = expected_clone_parent(config_id, config["master_seed"], level, clone, survivors)
+            state = parent
+            clone_complete = True
+            for step in range(2):
+                transition = transitions_by_key.get((level, clone, step))
+                if transition is None:
+                    clone_complete = False
+                    break
+                proposal = transition.get("proposal_candidate_id")
+                proposal_row = candidate_rows.get(proposal)
+                if proposal_row is None:
+                    fail(f"transition {(level, clone, step)} lacks proposal target")
+                identity = proposal_row["identity"]
+                if (identity["level"], identity["clone_index"], identity["mutation_step"]) != (level, clone, step):
+                    fail(f"transition {(level, clone, step)} disagrees with proposal identity")
+                if identity["parent_candidate_id"] != state or proposal_row["parent_candidate_id"] != state:
+                    fail(f"transition {(level, clone, step)} proposal parent is not state-before")
+                if transition.get("state_before_candidate_id") != state:
+                    fail(f"transition {(level, clone, step)} state chain is broken")
+                if transition.get("frozen_threshold") != threshold or proposal_row.get("level_threshold") != threshold:
+                    fail(f"transition {(level, clone, step)} changes frozen target threshold")
+                if proposal_row["root_candidate_id"] != candidate_rows[state]["root_candidate_id"]:
+                    fail(f"transition {(level, clone, step)} breaks root transitivity")
+                expected_raw = expected_raw_mutation(config, candidate_rows[state]["product_chart"], identity)
+                charts_close(proposal_row.get("raw_proposed_chart"), expected_raw, RAW_CHART_TOLERANCE, f"proposal {proposal} raw mutation")
+                proposal_sys = proposal_row.get("sys")
+                if transition.get("proposal_sys") != proposal_sys:
+                    fail(f"transition {(level, clone, step)} proposal scalar mismatch")
+                accepted = proposal_sys is not None and proposal_sys >= threshold
+                if transition.get("accepted") != accepted:
+                    fail(f"transition {(level, clone, step)} acceptance rule mismatch")
+                after = proposal if accepted else state
+                if transition.get("state_after_candidate_id") != after:
+                    fail(f"transition {(level, clone, step)} next state mismatch")
+                if transition.get("root_candidate_id") != proposal_row["root_candidate_id"]:
+                    fail(f"transition {(level, clone, step)} root mismatch")
+                state = after
+                if proposal_row.get("evaluation_status") != "success" or (
+                    proposal_sys is not None and proposal_sys > 1.0
+                ):
+                    clone_complete = False
+                    break
+            if clone_complete:
+                clone_states[clone] = state
+        if len(clone_states) != 8:
+            break
+        population = survivors + [clone_states[clone] for clone in range(8)]
+        completed_populations.append(population)
+        if level >= len(levels):
+            fail(f"completed transition grid for level {level} lacks population record")
+        row = levels[level]
+        expected_parents = [
+            expected_clone_parent(config_id, config["master_seed"], level, clone, survivors)
+            for clone in range(8)
+        ]
+        expected_roots = [candidate_rows[candidate]["root_candidate_id"] for candidate in survivors]
+        keys = [candidate_rows[candidate]["exact_geometry_key"] for candidate in population]
+        if (
+            row.get("frozen_threshold") != threshold
+            or row.get("survivor_candidate_ids") != survivors
+            or row.get("survivor_root_candidate_ids") != expected_roots
+            or row.get("clone_parent_candidate_ids") != expected_parents
+            or row.get("post_level_population_candidate_ids") != population
+            or row.get("post_level_population_geometry_keys") != keys
+            or row.get("post_level_distinct_geometry_keys") != len(set(keys))
+        ):
+            fail(f"completed level {level} population/assignment evidence mismatch")
+        if len(set(keys)) < 8:
+            fail(f"readiness gate requires eight distinct actual particle states after level {level}")
+        if len(set(expected_roots)) < 2:
+            fail(f"readiness gate requires two survivor roots at level {level}")
+    if len(levels) != len(completed_populations):
+        fail("level records do not equal completed rejuvenation populations")
+
+    for row in rejections:
+        identity = row["identity"]
+        if identity["level"] is not None:
+            parent = identity["parent_candidate_id"]
+            if parent not in candidate_rows or row["root_candidate_id"] != candidate_rows[parent]["root_candidate_id"]:
+                fail(f"mutation rejection {row['candidate_id']} has wrong parent/root")
+            expected_raw = expected_raw_mutation(config, candidate_rows[parent]["product_chart"], identity)
+            charts_close(row["raw_proposed_chart"], expected_raw, RAW_CHART_TOLERANCE, f"rejection {row['candidate_id']} raw mutation")
 
     stop_path = directory / "stop-event.json"
     stop = read_json(stop_path) if stop_path.exists() else None
+    sys_hits = [row for row in targets if row.get("sys") is not None and row["sys"] > 1.0]
     if stop is None:
-        if len(targets) != 64 or len(transitions) != 32 or len(levels) != 2:
-            fail("complete smoke does not contain 64 targets, 32 transitions, and two levels")
-        if attempts != {"adaptive": list(range(1, 49)), "iid": list(range(1, 17))}:
-            fail("complete smoke does not close the fixed arm budgets")
-        distinct_by_arm = {
-            arm: len(
-                {
-                    row["exact_geometry_key"]
-                    for row in targets
-                    if row["arm"] == arm and row["evaluation_status"] == "success"
-                }
-            )
-            for arm in attempts
-        }
-        if any(count < 4 for count in distinct_by_arm.values()):
-            fail("readiness gate requires four distinct successful keys per arm")
-        if any(len(set(row["survivor_root_candidate_ids"])) < 2 for row in levels):
-            fail("readiness gate requires two surviving roots at every level")
-        if not any(row["accepted"] for row in transitions):
-            fail("readiness gate requires a nonzero accepted valid mutation")
+        if sys_hits:
+            fail("target sys > 1 exists without a stop event")
     else:
-        candidate = stop.get("candidate_id")
-        target = candidate_rows.get(candidate)
-        if (
-            stop.get("event") != "sys_gt_one_flush_and_stop"
-            or target is None
-            or target.get("sys") != stop.get("sys")
-            or stop.get("sys", 0) <= 1
-        ):
-            fail("invalid sys > 1 stop event")
-        if targets[-1].get("candidate_id") != candidate:
-            fail("target evaluation continued after sys > 1 stop event")
+        if not isinstance(stop, dict) or len(sys_hits) != 1:
+            fail("stop event requires exactly one sys > 1 target")
+        hit = sys_hits[0]
+        if hit is not targets[-1]:
+            fail("a charged request follows the sys > 1 target")
+        expected = {
+            "event": "sys_gt_one_flush_and_stop",
+            "global_request_index": hit["global_request_index"],
+            "arm": hit["arm"],
+            "candidate_id": hit["candidate_id"],
+            "exact_geometry_key": hit["exact_geometry_key"],
+            "sys": hit["sys"],
+            "action": STOP_ACTION,
+        }
+        if stop != expected:
+            fail("stop event does not exactly match the final sys > 1 target")
+
+    disposition = status.get("disposition")
+    if disposition not in {"complete", "sys_gt_one_stop", "timeout", "error"}:
+        fail("final status has unknown disposition")
+    if (disposition == "sys_gt_one_stop") != (stop is not None):
+        fail("final status and stop-event disposition disagree")
+    if disposition == "timeout":
+        if not failures or failures[-1] is not targets[-1] or failures[-1]["evaluation_status"] != "timeout":
+            fail("timeout status lacks a final charged timeout row")
+    if disposition == "complete" and (stop is not None or failures):
+        fail("complete status contains a stop or failed target")
+    if disposition in {"timeout", "error"} and not isinstance(status.get("error"), str):
+        fail("failed final status lacks retained error")
+    if disposition in {"complete", "sys_gt_one_stop"} and status.get("error") is not None:
+        fail("successful/stopped final status carries an error")
+
+    charged_counts = {arm: len(indices) for arm, indices in attempts.items()}
+    if (
+        status.get("adaptive_charged_requests") != charged_counts["adaptive"]
+        or status.get("iid_charged_requests") != charged_counts["iid"]
+        or status.get("total_charged_requests") != len(targets)
+    ):
+        fail("final status charged counts disagree with target rows")
+    total_ms = status.get("total_monotonic_wall_time_ms")
+    if not finite_number(total_ms) or total_ms < 0:
+        fail("final status has invalid monotonic wall time")
+    if sum(row["wall_time_ms"] for row in targets) > total_ms + 20.0:
+        fail("target row wall times exceed total monotonic run time")
 
     runs_by_arm: dict[str, dict[str, Any]] = {}
     for row in arm_runs:
@@ -416,7 +1009,7 @@ def verify(directory: Path) -> dict[str, Any]:
         if arm in runs_by_arm or arm not in attempts:
             fail("duplicate or invalid arm-run row")
         runs_by_arm[arm] = row
-        if row.get("target_attempts") != len(attempts[arm]):
+        if row.get("target_attempts") != charged_counts[arm]:
             fail(f"{arm} arm-run target count mismatch")
         if row.get("construction_rejections") != rejection_counts[arm]:
             fail(f"{arm} arm-run construction count mismatch")
@@ -425,47 +1018,64 @@ def verify(directory: Path) -> dict[str, Any]:
         if row.get("cache_hits") != status_counts[arm]["hit"]:
             fail(f"{arm} arm-run hit count mismatch")
         if row.get("failed_misses") != status_counts[arm]["failed_miss"]:
-            fail(f"{arm} arm-run failed-miss count mismatch")
-        distinct = len(
-            {
-                target["exact_geometry_key"]
-                for target in targets
-                if target["arm"] == arm and target["evaluation_status"] == "success"
-            }
-        )
+            fail(f"{arm} arm-run failure count mismatch")
+        distinct = len({key for row_arm, key in seen_success if row_arm == arm})
         if row.get("distinct_successful_keys") != distinct:
-            fail(f"{arm} arm-run distinct-key count mismatch")
-        if not isinstance(row.get("wall_time_ms"), (int, float)) or row["wall_time_ms"] < 0:
+            fail(f"{arm} arm-run distinct key count mismatch")
+        if not finite_number(row.get("wall_time_ms")) or row["wall_time_ms"] < 0:
             fail(f"{arm} arm-run wall time invalid")
-    expected_run_arms = (
-        {"adaptive", "iid"}
-        if stop is None or stop["arm"] == "iid"
-        else {"adaptive"}
-    )
-    if set(runs_by_arm) != expected_run_arms:
-        fail("arm-run rows do not match completed/stopped execution")
-    if stop is None and not all(row.get("complete") is True for row in arm_runs):
-        fail("unstopped arm-run row is incomplete")
-    if stop is None and sum(row["wall_time_ms"] for row in arm_runs) > 601_000:
-        fail("complete smoke exceeds the frozen wall-time envelope")
+        arm_target_ms = sum(target["wall_time_ms"] for target in targets if target["arm"] == arm)
+        if arm_target_ms > row["wall_time_ms"] + 20.0:
+            fail(f"{arm} target times exceed arm-run time")
+    if sum(row["wall_time_ms"] for row in arm_runs) > total_ms + 20.0:
+        fail("arm-run wall times exceed total monotonic run time")
+
+    readiness_passed = disposition == "complete"
+    if readiness_passed:
+        if len(targets) != 64 or attempts != {"adaptive": list(range(1, 49)), "iid": list(range(1, 17))}:
+            fail("complete smoke does not close the exact 48/16 charged budgets")
+        if len(transitions) != 32 or transition_keys != {
+            (level, clone, step) for level in range(2) for clone in range(8) for step in range(2)
+        }:
+            fail("complete smoke does not contain the exact mutation index grid")
+        if len(levels) != 2:
+            fail("complete smoke lacks two completed post-level populations")
+        base_grid = {
+            arm: sorted(
+                row["identity"]["base_index"]
+                for row in targets
+                if row["arm"] == arm and row["identity"]["level"] is None
+            )
+            for arm in attempts
+        }
+        if base_grid != {"adaptive": list(range(16)), "iid": list(range(16))}:
+            fail("complete smoke changes the exact base index grids")
+        if not any(row.get("accepted") for row in transitions):
+            fail("readiness gate requires at least one accepted valid mutation")
+        if set(runs_by_arm) != {"adaptive", "iid"} or not all(row.get("complete") is True for row in arm_runs):
+            fail("complete smoke lacks two complete arm-run records")
+        if total_ms > config["abort_wall_time_seconds"] * 1000:
+            fail("complete smoke exceeds the frozen 600-second envelope")
+    else:
+        active_arm = targets[-1]["arm"] if targets else None
+        if any(
+            row.get("complete") is True
+            for row in arm_runs
+            if active_arm is None or row["arm"] == active_arm
+        ):
+            fail("stopped/failed active arm is marked complete")
 
     return {
         "verified": True,
+        "readiness_passed": readiness_passed,
         "artifact_kind": kind,
-        "adaptive_attempts": len(attempts["adaptive"]),
-        "iid_attempts": len(attempts["iid"]),
+        "disposition": disposition,
+        "adaptive_attempts": charged_counts["adaptive"],
+        "iid_attempts": charged_counts["iid"],
         "construction_rejections": len(rejections),
-        "distinct_successful_keys": {
-            arm: len(
-                {
-                    row["exact_geometry_key"]
-                    for row in targets
-                    if row["arm"] == arm and row["evaluation_status"] == "success"
-                }
-            )
-            for arm in attempts
-        },
+        "post_level_distinct_states": [row["post_level_distinct_geometry_keys"] for row in levels],
         "stopped_on_sys_gt_one": stop is not None,
+        "tail_probability_supported": False,
         "probability_estimate": None,
     }
 
@@ -473,9 +1083,19 @@ def verify(directory: Path) -> dict[str, Any]:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("artifacts", type=Path)
+    parser.add_argument("--expected-reviewed-revision")
+    parser.add_argument("--repo-root", type=Path)
+    parser.add_argument("--cargo-lock", type=Path)
+    parser.add_argument("--executable", type=Path)
     args = parser.parse_args()
     try:
-        result = verify(args.artifacts)
+        result = verify(
+            args.artifacts,
+            expected_reviewed_revision=args.expected_reviewed_revision,
+            repo_root=args.repo_root,
+            cargo_lock=args.cargo_lock,
+            executable=args.executable,
+        )
     except ArtifactError as error:
         raise SystemExit(f"artifact verification failed: {error}") from error
     print(json.dumps(result, indent=2, sort_keys=True))

@@ -6,15 +6,13 @@ version = 4
 name = "adaptive-multilevel-splitting"
 version = "0.1.0"
 dependencies = [
- "blake3",
  "equal-budget-product-search",
  "exp-sys-landscape",
- "rand",
- "rand_chacha",
- "rand_distr",
+ "nalgebra",
  "serde",
  "serde_json",
  "sha2",
+ "symplectic",
  "tempfile",
 ]
 

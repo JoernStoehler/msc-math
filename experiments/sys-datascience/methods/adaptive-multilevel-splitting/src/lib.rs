@@ -1,25 +1,25 @@
 use equal_budget_product_search::chart::{
     iid_base_candidate_attempt, ProductCandidate, ProductChart,
 };
-use exp_sys_landscape::{
-    dual_vertices_rational_strings, polytope_key, ExpensiveComputationCache,
-    SysLandscapePolytopeCache,
-};
-use rand::{Rng, SeedableRng};
-use rand_chacha::ChaCha8Rng;
-use rand_distr::{Distribution, Normal};
+use exp_sys_landscape::{dual_vertices_rational_strings, polytope_key};
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use sha2::{Digest, Sha256};
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
+use std::f64::consts::TAU;
 use std::fs::{self, File, OpenOptions};
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
 pub const ADAPTIVE_BUDGET: usize = 48;
 pub const IID_BUDGET: usize = 16;
 pub const PACKET_VERSION: &str = "ams-readiness-smoke-v1";
 pub const MASTER_SEED: u64 = 202607150101;
+pub const MUTATION_KERNEL: &str = "non_invariant_threshold_only_gaussian";
+pub const GENERATION_SCHEDULE: &str = "sha256_counter_box_muller_v1";
+pub const STOP_ACTION: &str =
+    "artifacts_flushed_stop_unrelated_search_independent_validation_required";
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Config {
@@ -78,14 +78,14 @@ impl Config {
             || self.acceptance_rule != "successful_sys_at_least_frozen_level_threshold"
             || self.factor_exchange_quotiented
         {
-            return Err("config changes a frozen policy rule or quotients factor exchange".into());
+            return Err("config changes a frozen policy or claim boundary".into());
         }
         Ok(())
     }
 
     pub fn identity(&self) -> String {
         let bytes = serde_json::to_vec(self).expect("config serializes");
-        format!("{:x}", Sha256::digest(bytes))
+        sha256_bytes(&bytes)
     }
 }
 
@@ -122,7 +122,12 @@ pub struct CandidateIdentity {
 }
 
 pub fn candidate_id(identity: &CandidateIdentity) -> String {
-    let material = format!(
+    let digest = sha256_bytes(candidate_material(identity).as_bytes());
+    format!("amsv1-{}", &digest[..24])
+}
+
+fn candidate_material(identity: &CandidateIdentity) -> String {
+    format!(
         "packet={}\nconfig={}\nsource={}\nparent={}\nseed={}\nreplicate={}\narm={}\nlevel={}\nclone={}\nstep={}\nbase={}\nconstruction={}\n",
         identity.packet_version,
         identity.config_identity,
@@ -136,9 +141,7 @@ pub fn candidate_id(identity: &CandidateIdentity) -> String {
         option_usize(identity.mutation_step),
         option_usize(identity.base_index),
         identity.construction_attempt,
-    );
-    let digest = format!("{:x}", Sha256::digest(material.as_bytes()));
-    format!("amsv1-{}", &digest[..24])
+    )
 }
 
 fn option_usize(value: Option<usize>) -> String {
@@ -157,7 +160,20 @@ pub enum CacheStatus {
 #[serde(rename_all = "snake_case")]
 pub enum EvaluationStatus {
     Success,
-    Failure,
+    TargetUnavailable,
+    InvalidOutput,
+    ChildFailure,
+    Timeout,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct TargetDiagnostics {
+    pub iterations: u64,
+    pub returned_orbit_count: usize,
+    pub action_lower: f64,
+    pub action_upper: f64,
+    pub exact_admissible_count: usize,
+    pub indeterminate_count: usize,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -165,35 +181,29 @@ pub struct Observation {
     pub capacity: f64,
     pub volume: f64,
     pub sys: f64,
+    pub diagnostics: TargetDiagnostics,
+    /// Full `OrbitSearchResult` for production. Synthetic target-free rows use
+    /// `None` and retain an explicit synthetic audit kind instead.
+    pub capacity_result: Option<Value>,
+    pub audit_kind: String,
+}
+
+#[derive(Clone, Debug)]
+pub enum OracleOutcome {
+    Success(Observation),
+    Failure {
+        status: EvaluationStatus,
+        reason: String,
+    },
+}
+
+pub struct OracleRequest<'a> {
+    pub exact_geometry_key: &'a str,
+    pub dual_vertices_f64: &'a [[f64; 4]],
 }
 
 pub trait Oracle {
-    fn compute(
-        &mut self,
-        exact_geometry_key: &str,
-        polytope: Option<&SysLandscapePolytopeCache>,
-    ) -> Option<Observation>;
-}
-
-#[derive(Default)]
-pub struct ProductionOracle {
-    cache: ExpensiveComputationCache,
-}
-
-impl Oracle for ProductionOracle {
-    fn compute(
-        &mut self,
-        _exact_geometry_key: &str,
-        polytope: Option<&SysLandscapePolytopeCache>,
-    ) -> Option<Observation> {
-        let polytope = polytope?;
-        let result = self.cache.compute(polytope)?;
-        Some(Observation {
-            capacity: result.capacity.min_action,
-            volume: result.vol,
-            sys: result.sys,
-        })
-    }
+    fn compute(&mut self, request: OracleRequest<'_>, timeout: Duration) -> OracleOutcome;
 }
 
 #[derive(Clone, Debug)]
@@ -216,45 +226,64 @@ impl SyntheticOracle {
 }
 
 impl Oracle for SyntheticOracle {
-    fn compute(
-        &mut self,
-        exact_geometry_key: &str,
-        _polytope: Option<&SysLandscapePolytopeCache>,
-    ) -> Option<Observation> {
+    fn compute(&mut self, request: OracleRequest<'_>, _timeout: Duration) -> OracleOutcome {
         self.calls += 1;
-        let digest = blake3::hash(exact_geometry_key.as_bytes());
-        let fraction =
-            u64::from_le_bytes(digest.as_bytes()[..8].try_into().unwrap()) as f64 / u64::MAX as f64;
+        let digest = Sha256::digest(request.exact_geometry_key.as_bytes());
+        let fraction = u64::from_be_bytes(digest[..8].try_into().expect("eight digest bytes"))
+            as f64
+            / u64::MAX as f64;
         let sys = if self.force_first_hit && self.calls == 1 {
             1.01
         } else {
             0.72 + 0.2 * fraction
         };
         let capacity = 1.0 + fraction;
-        Some(Observation {
-            capacity,
-            volume: capacity * capacity / (2.0 * sys),
-            sys,
-        })
+        OracleOutcome::Success(synthetic_observation(capacity, sys))
+    }
+}
+
+pub fn synthetic_observation(capacity: f64, sys: f64) -> Observation {
+    Observation {
+        capacity,
+        volume: capacity * capacity / (2.0 * sys),
+        sys,
+        diagnostics: TargetDiagnostics {
+            iterations: 0,
+            returned_orbit_count: 0,
+            action_lower: capacity,
+            action_upper: capacity,
+            exact_admissible_count: 0,
+            indeterminate_count: 0,
+        },
+        capacity_result: None,
+        audit_kind: "synthetic_formula_fixture".into(),
     }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct TargetRow {
+    pub global_request_index: usize,
     pub candidate_id: String,
     pub identity: CandidateIdentity,
     pub arm: Arm,
     pub attempt_index: usize,
     pub exact_geometry_key: String,
     pub geometry_identity: String,
+    pub dual_vertices_rational: Vec<[String; 4]>,
+    pub dual_vertices_f64: Vec<[f64; 4]>,
+    pub facet_count: usize,
     pub cache_status: CacheStatus,
     pub evaluation_status: EvaluationStatus,
+    pub failure_reason: Option<String>,
     pub capacity: Option<f64>,
     pub volume: Option<f64>,
     pub sys: Option<f64>,
+    pub diagnostics: Option<TargetDiagnostics>,
+    pub audit_kind: Option<String>,
     pub parent_candidate_id: Option<String>,
     pub root_candidate_id: String,
     pub level_threshold: Option<f64>,
+    pub raw_proposed_chart: Option<ProductChart>,
     pub product_chart: ProductChart,
     pub wall_time_ms: f64,
 }
@@ -265,10 +294,15 @@ pub struct CacheRow {
     pub exact_geometry_key: String,
     pub geometry_identity: String,
     pub dual_vertices_rational: Vec<[String; 4]>,
+    pub dual_vertices_f64: Vec<[f64; 4]>,
     pub facet_count: usize,
+    pub product_chart: ProductChart,
     pub capacity: f64,
     pub volume: f64,
     pub sys: f64,
+    pub diagnostics: TargetDiagnostics,
+    pub capacity_result: Option<Value>,
+    pub audit_kind: String,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -279,6 +313,7 @@ pub struct ConstructionRejectionRow {
     pub reason: String,
     pub parent_candidate_id: Option<String>,
     pub root_candidate_id: Option<String>,
+    pub raw_proposed_chart: Option<ProductChart>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -302,6 +337,9 @@ pub struct LevelRow {
     pub survivor_candidate_ids: Vec<String>,
     pub survivor_root_candidate_ids: Vec<String>,
     pub clone_parent_candidate_ids: Vec<String>,
+    pub post_level_population_candidate_ids: Vec<String>,
+    pub post_level_population_geometry_keys: Vec<String>,
+    pub post_level_distinct_geometry_keys: usize,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -320,6 +358,7 @@ pub struct ArmRunRow {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct StopEvent {
     pub event: String,
+    pub global_request_index: usize,
     pub arm: Arm,
     pub candidate_id: String,
     pub exact_geometry_key: String,
@@ -330,6 +369,7 @@ pub struct StopEvent {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SourceIdentity {
     pub git_revision: String,
+    pub reviewed_revision: Option<String>,
     pub source_tree_clean: bool,
     pub executable_sha256: String,
     pub cargo_lock_sha256: String,
@@ -339,17 +379,35 @@ pub struct SourceIdentity {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Manifest {
     pub artifact_kind: String,
+    pub run_id: String,
+    pub start_unix_ms: u128,
     pub config_identity: String,
     pub exact_config: Config,
     pub source: SourceIdentity,
     pub adaptive_budget: usize,
     pub iid_budget: usize,
     pub target_probability_estimate: Option<f64>,
+    pub tail_probability_supported: bool,
+    pub mutation_kernel: String,
+    pub generation_schedule: String,
     pub factor_exchange_quotiented: bool,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct RunStatus {
+    pub run_id: String,
+    pub disposition: String,
+    pub error: Option<String>,
+    pub total_monotonic_wall_time_ms: f64,
+    pub adaptive_charged_requests: usize,
+    pub iid_charged_requests: usize,
+    pub total_charged_requests: usize,
+    pub artifact_sha256: BTreeMap<String, String>,
 }
 
 pub struct ArtifactSink {
     directory: PathBuf,
+    run_id: String,
 }
 
 impl ArtifactSink {
@@ -359,18 +417,12 @@ impl ArtifactSink {
         }
         fs::create_dir_all(directory).map_err(|e| format!("create {directory:?}: {e}"))?;
         write_json(directory.join("manifest.json"), manifest)?;
-        for name in [
-            "target-evaluations.jsonl",
-            "cache.jsonl",
-            "construction-rejections.jsonl",
-            "mutation-transitions.jsonl",
-            "levels.jsonl",
-            "arm-runs.jsonl",
-        ] {
+        for name in artifact_jsonl_files() {
             File::create(directory.join(name)).map_err(|e| format!("create {name}: {e}"))?;
         }
         Ok(Self {
             directory: directory.to_owned(),
+            run_id: manifest.run_id.clone(),
         })
     }
 
@@ -393,6 +445,63 @@ impl ArtifactSink {
     pub fn stop(&self, event: &StopEvent) -> Result<(), String> {
         write_json(self.directory.join("stop-event.json"), event)
     }
+
+    pub fn finalize(
+        &self,
+        disposition: &str,
+        error: Option<String>,
+        elapsed: Duration,
+    ) -> Result<RunStatus, String> {
+        let (adaptive, iid) = self.charged_counts()?;
+        let mut hashes = BTreeMap::new();
+        let mut files = vec!["manifest.json"];
+        files.extend(artifact_jsonl_files());
+        if self.directory.join("stop-event.json").exists() {
+            files.push("stop-event.json");
+        }
+        for name in files {
+            hashes.insert(name.to_owned(), file_sha256(&self.directory.join(name))?);
+        }
+        let status = RunStatus {
+            run_id: self.run_id.clone(),
+            disposition: disposition.to_owned(),
+            error,
+            total_monotonic_wall_time_ms: elapsed.as_secs_f64() * 1_000.0,
+            adaptive_charged_requests: adaptive,
+            iid_charged_requests: iid,
+            total_charged_requests: adaptive + iid,
+            artifact_sha256: hashes,
+        };
+        write_json(self.directory.join("run-status.json"), &status)?;
+        Ok(status)
+    }
+
+    fn charged_counts(&self) -> Result<(usize, usize), String> {
+        let text = fs::read_to_string(self.directory.join("target-evaluations.jsonl"))
+            .map_err(|e| format!("read target rows for final status: {e}"))?;
+        let mut adaptive = 0;
+        let mut iid = 0;
+        for line in text.lines() {
+            let row: TargetRow = serde_json::from_str(line)
+                .map_err(|e| format!("parse target row for final status: {e}"))?;
+            match row.arm {
+                Arm::Adaptive => adaptive += 1,
+                Arm::Iid => iid += 1,
+            }
+        }
+        Ok((adaptive, iid))
+    }
+}
+
+pub fn artifact_jsonl_files() -> Vec<&'static str> {
+    vec![
+        "target-evaluations.jsonl",
+        "cache.jsonl",
+        "construction-rejections.jsonl",
+        "mutation-transitions.jsonl",
+        "levels.jsonl",
+        "arm-runs.jsonl",
+    ]
 }
 
 fn write_json(path: PathBuf, value: &impl Serialize) -> Result<(), String> {
@@ -421,8 +530,8 @@ struct ConstructedCandidate {
     chart: ProductChart,
     exact_geometry_key: String,
     exact_geometry: Vec<[String; 4]>,
+    f64_geometry: Vec<[f64; 4]>,
     facet_count: usize,
-    production: Option<ProductCandidate>,
 }
 
 impl ConstructedCandidate {
@@ -430,12 +539,18 @@ impl ConstructedCandidate {
         let chart = ProductChart::from_polytope(&candidate.polytope)
             .map_err(|_| "valid product did not encode into product chart".to_owned())?;
         let exact_geometry = dual_vertices_rational_strings(&candidate.polytope);
+        let f64_geometry = candidate
+            .polytope
+            .dual_vertices_f64
+            .iter()
+            .map(|vertex| [vertex[0], vertex[1], vertex[2], vertex[3]])
+            .collect();
         Ok(Self {
             chart,
             exact_geometry_key: polytope_key(&candidate.polytope),
             facet_count: candidate.polytope.facet_count(),
             exact_geometry,
-            production: Some(candidate),
+            f64_geometry,
         })
     }
 
@@ -443,29 +558,31 @@ impl ConstructedCandidate {
         let factors = chart
             .reconstruct_factors()
             .map_err(|error| format!("synthetic chart reconstruction failed: {error:?}"))?;
+        let canonical_chart = ProductChart::from_factors(
+            &factors.q_normals,
+            &factors.q_heights,
+            &factors.p_normals,
+            &factors.p_heights,
+        )
+        .map_err(|error| format!("synthetic factors failed canonical chart encoding: {error:?}"))?;
         let mut exact_geometry = Vec::with_capacity(10);
+        let mut f64_geometry = Vec::with_capacity(10);
         for (normal, height) in factors.q_normals.iter().zip(&factors.q_heights) {
-            exact_geometry.push([
-                decimal_rational(normal[0] / height),
-                decimal_rational(normal[1] / height),
-                "0".into(),
-                "0".into(),
-            ]);
+            let row = [normal[0] / height, normal[1] / height, 0.0, 0.0];
+            f64_geometry.push(row);
+            exact_geometry.push(row.map(decimal_rational));
         }
         for (normal, height) in factors.p_normals.iter().zip(&factors.p_heights) {
-            exact_geometry.push([
-                "0".into(),
-                "0".into(),
-                decimal_rational(normal[0] / height),
-                decimal_rational(normal[1] / height),
-            ]);
+            let row = [0.0, 0.0, normal[0] / height, normal[1] / height];
+            f64_geometry.push(row);
+            exact_geometry.push(row.map(decimal_rational));
         }
         Ok(Self {
-            chart,
+            chart: canonical_chart,
             exact_geometry_key: exact_key(&exact_geometry),
             exact_geometry,
+            f64_geometry,
             facet_count: 10,
-            production: None,
         })
     }
 }
@@ -484,8 +601,11 @@ fn exact_key(vertices: &[[String; 4]]) -> String {
 }
 
 struct Evaluated {
+    global_request_index: usize,
     candidate_id: String,
     observation: Option<Observation>,
+    failure_status: Option<EvaluationStatus>,
+    failure_reason: Option<String>,
     exact_geometry_key: String,
 }
 
@@ -508,33 +628,52 @@ impl Evaluator {
         oracle: &mut dyn Oracle,
         identity: CandidateIdentity,
         candidate: &ConstructedCandidate,
+        raw_proposed_chart: Option<ProductChart>,
         parent_candidate_id: Option<String>,
         root_candidate_id: String,
         level_threshold: Option<f64>,
         sink: &ArtifactSink,
+        global_request_count: &mut usize,
+        deadline: Instant,
     ) -> Result<Evaluated, String> {
-        // The charge intentionally happens before cache lookup.
         self.attempts += 1;
+        *global_request_count += 1;
+        let global_request_index = *global_request_count;
         let attempt_index = self.attempts;
         let candidate_id = candidate_id(&identity);
         let key = candidate.exact_geometry_key.clone();
         let exact_geometry = candidate.exact_geometry.clone();
         let geometry_identity = geometry_identity(&exact_geometry);
-        let chart = candidate.chart.clone();
         let started = Instant::now();
-        let (cache_status, observation) = if let Some(cached) = self.cache.get(&key) {
+        let (cache_status, outcome) = if let Some(cached) = self.cache.get(&key) {
             self.hits += 1;
-            (CacheStatus::Hit, Some(cached.clone()))
+            (CacheStatus::Hit, OracleOutcome::Success(cached.clone()))
         } else {
-            match oracle.compute(
-                &key,
-                candidate
-                    .production
-                    .as_ref()
-                    .map(|candidate| &candidate.polytope),
-            ) {
-                Some(observation) => {
-                    validate_observation(&observation)?;
+            let timeout = deadline.saturating_duration_since(Instant::now());
+            let mut outcome = if timeout.is_zero() {
+                OracleOutcome::Failure {
+                    status: EvaluationStatus::Timeout,
+                    reason: "global deadline elapsed before target child started".into(),
+                }
+            } else {
+                oracle.compute(
+                    OracleRequest {
+                        exact_geometry_key: &key,
+                        dual_vertices_f64: &candidate.f64_geometry,
+                    },
+                    timeout,
+                )
+            };
+            if let OracleOutcome::Success(observation) = &outcome {
+                if let Err(reason) = validate_observation(observation) {
+                    outcome = OracleOutcome::Failure {
+                        status: EvaluationStatus::InvalidOutput,
+                        reason,
+                    };
+                }
+            }
+            match &outcome {
+                OracleOutcome::Success(observation) => {
                     self.misses += 1;
                     self.cache.insert(key.clone(), observation.clone());
                     sink.append(
@@ -543,47 +682,66 @@ impl Evaluator {
                             arm: self.arm,
                             exact_geometry_key: key.clone(),
                             geometry_identity: geometry_identity.clone(),
-                            dual_vertices_rational: exact_geometry,
+                            dual_vertices_rational: exact_geometry.clone(),
+                            dual_vertices_f64: candidate.f64_geometry.clone(),
                             facet_count: candidate.facet_count,
+                            product_chart: candidate.chart.clone(),
                             capacity: observation.capacity,
                             volume: observation.volume,
                             sys: observation.sys,
+                            diagnostics: observation.diagnostics.clone(),
+                            capacity_result: observation.capacity_result.clone(),
+                            audit_kind: observation.audit_kind.clone(),
                         },
                     )?;
-                    (CacheStatus::Miss, Some(observation))
+                    (CacheStatus::Miss, outcome)
                 }
-                None => {
+                OracleOutcome::Failure { .. } => {
                     self.failures += 1;
-                    (CacheStatus::FailedMiss, None)
+                    (CacheStatus::FailedMiss, outcome)
                 }
             }
         };
+        let (evaluation_status, failure_reason, observation) = match outcome {
+            OracleOutcome::Success(observation) => {
+                (EvaluationStatus::Success, None, Some(observation))
+            }
+            OracleOutcome::Failure { status, reason } => (status, Some(reason), None),
+        };
         let row = TargetRow {
+            global_request_index,
             candidate_id: candidate_id.clone(),
             identity,
             arm: self.arm,
             attempt_index,
             exact_geometry_key: key.clone(),
             geometry_identity,
+            dual_vertices_rational: exact_geometry,
+            dual_vertices_f64: candidate.f64_geometry.clone(),
+            facet_count: candidate.facet_count,
             cache_status,
-            evaluation_status: if observation.is_some() {
-                EvaluationStatus::Success
-            } else {
-                EvaluationStatus::Failure
-            },
+            evaluation_status,
+            failure_reason: failure_reason.clone(),
             capacity: observation.as_ref().map(|value| value.capacity),
             volume: observation.as_ref().map(|value| value.volume),
             sys: observation.as_ref().map(|value| value.sys),
+            diagnostics: observation.as_ref().map(|value| value.diagnostics.clone()),
+            audit_kind: observation.as_ref().map(|value| value.audit_kind.clone()),
             parent_candidate_id,
             root_candidate_id,
             level_threshold,
-            product_chart: chart,
+            raw_proposed_chart,
+            product_chart: candidate.chart.clone(),
             wall_time_ms: started.elapsed().as_secs_f64() * 1_000.0,
         };
         sink.append("target-evaluations.jsonl", &row)?;
         Ok(Evaluated {
+            global_request_index,
             candidate_id,
             observation,
+            failure_status: (evaluation_status != EvaluationStatus::Success)
+                .then_some(evaluation_status),
+            failure_reason,
             exact_geometry_key: key,
         })
     }
@@ -609,8 +767,11 @@ fn validate_observation(value: &Observation) -> Result<(), String> {
         || !value.sys.is_finite()
         || value.capacity <= 0.0
         || value.volume <= 0.0
+        || !value.diagnostics.action_lower.is_finite()
+        || !value.diagnostics.action_upper.is_finite()
+        || value.diagnostics.action_lower > value.diagnostics.action_upper
     {
-        return Err("oracle returned an invalid observation".into());
+        return Err("oracle returned nonfinite or invalid output".into());
     }
     let expected_sys = value.capacity * value.capacity / (2.0 * value.volume);
     let tolerance = 16.0 * f64::EPSILON * value.sys.abs().max(expected_sys.abs()).max(1.0);
@@ -622,7 +783,7 @@ fn validate_observation(value: &Observation) -> Result<(), String> {
 
 fn geometry_identity(vertices: &[[String; 4]]) -> String {
     let bytes = serde_json::to_vec(vertices).expect("exact geometry serializes");
-    format!("{:x}", Sha256::digest(bytes))
+    sha256_bytes(&bytes)
 }
 
 #[derive(Clone)]
@@ -630,6 +791,7 @@ struct Particle {
     chart: ProductChart,
     candidate_id: String,
     root_candidate_id: String,
+    exact_geometry_key: String,
     sys: f64,
 }
 
@@ -657,9 +819,6 @@ pub fn run_packet(
     )
 }
 
-/// Target-free bounded smoke. It changes only the initial base source to
-/// near-regular valid charts; both arms still use the production driver,
-/// construction, mutation, charging, cache, genealogy, and stop paths.
 pub fn run_synthetic_packet(
     config: &Config,
     source_revision: &str,
@@ -693,8 +852,10 @@ fn run_packet_with_base_source(
 ) -> Result<RunOutcome, String> {
     config.validate()?;
     let overall_started = Instant::now();
+    let deadline = overall_started + Duration::from_secs(config.abort_wall_time_seconds);
     let config_identity = config.identity();
     let adaptive_started = Instant::now();
+    let mut global_request_count = 0;
     let mut adaptive = Evaluator::new(Arm::Adaptive);
     let mut particles = Vec::with_capacity(config.initial_particles);
 
@@ -715,29 +876,35 @@ fn run_packet_with_base_source(
             identity,
             &candidate,
             None,
+            None,
             root.clone(),
             None,
             sink,
+            &mut global_request_count,
+            deadline,
         )?;
-        enforce_wall_time(config, overall_started)?;
-        let Some(ref observation) = evaluated.observation else {
-            sink.append("arm-runs.jsonl", &adaptive.row(adaptive_started, false))?;
-            return Err("adaptive initial target evaluation failed; smoke is incomplete".into());
-        };
-        if let Some(stop) = hit_event(Arm::Adaptive, &evaluated, observation.sys) {
+        if let Some(stop) = hit_event(Arm::Adaptive, &evaluated) {
             sink.stop(&stop)?;
             sink.append("arm-runs.jsonl", &adaptive.row(adaptive_started, false))?;
-            return Ok(RunOutcome {
-                stopped: Some(stop),
-                adaptive_attempts: adaptive.attempts,
-                iid_attempts: 0,
-            });
+            return Ok(stopped_outcome(stop, &adaptive, None));
+        }
+        let sys = match require_success(&evaluated) {
+            Ok(observation) => observation.sys,
+            Err(error) => {
+                sink.append("arm-runs.jsonl", &adaptive.row(adaptive_started, false))?;
+                return Err(error);
+            }
+        };
+        if let Err(error) = enforce_wall_time(config, overall_started) {
+            sink.append("arm-runs.jsonl", &adaptive.row(adaptive_started, false))?;
+            return Err(error);
         }
         particles.push(Particle {
             chart,
             candidate_id: evaluated.candidate_id,
             root_candidate_id: root,
-            sys: observation.sys,
+            exact_geometry_key: evaluated.exact_geometry_key,
+            sys,
         });
     }
 
@@ -750,39 +917,15 @@ fn run_packet_with_base_source(
         });
         let survivors = particles[..config.survivors_per_level].to_vec();
         let threshold = survivors.last().expect("fixed nonempty survivor set").sys;
-        let mut assignment_rng = seeded_rng(&format!(
-            "clone-assignment\n{}\n{}\n{}\n",
-            config_identity, config.master_seed, level
-        ));
         let assignments: Vec<usize> = (0..config.clones_per_level)
-            .map(|_| assignment_rng.gen_range(0..survivors.len()))
+            .map(|clone| clone_assignment(&config_identity, config.master_seed, level, clone, 8))
             .collect();
-        sink.append(
-            "levels.jsonl",
-            &LevelRow {
-                level,
-                frozen_threshold: threshold,
-                survivor_candidate_ids: survivors
-                    .iter()
-                    .map(|particle| particle.candidate_id.clone())
-                    .collect(),
-                survivor_root_candidate_ids: survivors
-                    .iter()
-                    .map(|particle| particle.root_candidate_id.clone())
-                    .collect(),
-                clone_parent_candidate_ids: assignments
-                    .iter()
-                    .map(|&index| survivors[index].candidate_id.clone())
-                    .collect(),
-            },
-        )?;
-
         let mut clones = Vec::with_capacity(config.clones_per_level);
         for (clone_index, &parent_index) in assignments.iter().enumerate() {
             let mut state = survivors[parent_index].clone();
             for mutation_step in 0..config.mutation_steps_per_clone {
                 let before = state.candidate_id.clone();
-                let (identity, candidate, proposal_chart) = construct_mutation(
+                let (identity, candidate, proposal_chart, raw_chart) = construct_mutation(
                     config,
                     &config_identity,
                     source_revision,
@@ -798,17 +941,20 @@ fn run_packet_with_base_source(
                     adaptive_oracle,
                     identity,
                     &candidate,
+                    Some(raw_chart),
                     Some(before.clone()),
                     state.root_candidate_id.clone(),
                     Some(threshold),
                     sink,
+                    &mut global_request_count,
+                    deadline,
                 )?;
-                enforce_wall_time(config, overall_started)?;
                 let proposal_sys = evaluated.observation.as_ref().map(|value| value.sys);
                 let accepted = proposal_sys.is_some_and(|sys| sys >= threshold);
                 if accepted {
                     state.chart = proposal_chart;
                     state.candidate_id = evaluated.candidate_id.clone();
+                    state.exact_geometry_key = evaluated.exact_geometry_key.clone();
                     state.sys = proposal_sys.expect("accepted proposal has sys");
                 }
                 sink.append(
@@ -826,21 +972,62 @@ fn run_packet_with_base_source(
                         root_candidate_id: state.root_candidate_id.clone(),
                     },
                 )?;
-                if let Some(observation) = evaluated.observation.as_ref() {
-                    if let Some(stop) = hit_event(Arm::Adaptive, &evaluated, observation.sys) {
-                        sink.stop(&stop)?;
-                        sink.append("arm-runs.jsonl", &adaptive.row(adaptive_started, false))?;
-                        return Ok(RunOutcome {
-                            stopped: Some(stop),
-                            adaptive_attempts: adaptive.attempts,
-                            iid_attempts: 0,
-                        });
-                    }
+                if let Some(stop) = hit_event(Arm::Adaptive, &evaluated) {
+                    sink.stop(&stop)?;
+                    sink.append("arm-runs.jsonl", &adaptive.row(adaptive_started, false))?;
+                    return Ok(stopped_outcome(stop, &adaptive, None));
+                }
+                if let Err(error) = require_success(&evaluated) {
+                    sink.append("arm-runs.jsonl", &adaptive.row(adaptive_started, false))?;
+                    return Err(error);
+                }
+                if let Err(error) = enforce_wall_time(config, overall_started) {
+                    sink.append("arm-runs.jsonl", &adaptive.row(adaptive_started, false))?;
+                    return Err(error);
                 }
             }
             clones.push(state);
         }
-        particles = survivors.into_iter().chain(clones).collect();
+        particles = survivors.iter().cloned().chain(clones).collect();
+        let distinct = particles
+            .iter()
+            .map(|particle| particle.exact_geometry_key.as_str())
+            .collect::<std::collections::HashSet<_>>()
+            .len();
+        sink.append(
+            "levels.jsonl",
+            &LevelRow {
+                level,
+                frozen_threshold: threshold,
+                survivor_candidate_ids: survivors
+                    .iter()
+                    .map(|particle| particle.candidate_id.clone())
+                    .collect(),
+                survivor_root_candidate_ids: survivors
+                    .iter()
+                    .map(|particle| particle.root_candidate_id.clone())
+                    .collect(),
+                clone_parent_candidate_ids: assignments
+                    .iter()
+                    .map(|&index| survivors[index].candidate_id.clone())
+                    .collect(),
+                post_level_population_candidate_ids: particles
+                    .iter()
+                    .map(|particle| particle.candidate_id.clone())
+                    .collect(),
+                post_level_population_geometry_keys: particles
+                    .iter()
+                    .map(|particle| particle.exact_geometry_key.clone())
+                    .collect(),
+                post_level_distinct_geometry_keys: distinct,
+            },
+        )?;
+        if distinct < 8 {
+            sink.append("arm-runs.jsonl", &adaptive.row(adaptive_started, false))?;
+            return Err(format!(
+                "post-level diversity gate failed at level {level}: {distinct} distinct states"
+            ));
+        }
     }
     if adaptive.attempts != ADAPTIVE_BUDGET {
         return Err(format!(
@@ -864,18 +1051,30 @@ fn run_packet_with_base_source(
             base_source,
         )?;
         let root = candidate_id(&identity);
-        let evaluated = iid.evaluate(iid_oracle, identity, &candidate, None, root, None, sink)?;
-        enforce_wall_time(config, overall_started)?;
-        if let Some(observation) = evaluated.observation.as_ref() {
-            if let Some(stop) = hit_event(Arm::Iid, &evaluated, observation.sys) {
-                sink.stop(&stop)?;
-                sink.append("arm-runs.jsonl", &iid.row(iid_started, false))?;
-                return Ok(RunOutcome {
-                    stopped: Some(stop),
-                    adaptive_attempts: adaptive.attempts,
-                    iid_attempts: iid.attempts,
-                });
-            }
+        let evaluated = iid.evaluate(
+            iid_oracle,
+            identity,
+            &candidate,
+            None,
+            None,
+            root,
+            None,
+            sink,
+            &mut global_request_count,
+            deadline,
+        )?;
+        if let Some(stop) = hit_event(Arm::Iid, &evaluated) {
+            sink.stop(&stop)?;
+            sink.append("arm-runs.jsonl", &iid.row(iid_started, false))?;
+            return Ok(stopped_outcome(stop, &adaptive, Some(&iid)));
+        }
+        if let Err(error) = require_success(&evaluated) {
+            sink.append("arm-runs.jsonl", &iid.row(iid_started, false))?;
+            return Err(error);
+        }
+        if let Err(error) = enforce_wall_time(config, overall_started) {
+            sink.append("arm-runs.jsonl", &iid.row(iid_started, false))?;
+            return Err(error);
         }
     }
     if iid.attempts != IID_BUDGET {
@@ -892,24 +1091,52 @@ fn run_packet_with_base_source(
     })
 }
 
+fn require_success(evaluated: &Evaluated) -> Result<&Observation, String> {
+    evaluated.observation.as_ref().ok_or_else(|| {
+        let prefix = if evaluated.failure_status == Some(EvaluationStatus::Timeout) {
+            "timeout"
+        } else {
+            "target failure"
+        };
+        format!(
+            "{prefix}: charged request {} failed: {}",
+            evaluated.global_request_index,
+            evaluated
+                .failure_reason
+                .as_deref()
+                .unwrap_or("unknown failure")
+        )
+    })
+}
+
+fn stopped_outcome(stop: StopEvent, adaptive: &Evaluator, iid: Option<&Evaluator>) -> RunOutcome {
+    RunOutcome {
+        stopped: Some(stop),
+        adaptive_attempts: adaptive.attempts,
+        iid_attempts: iid.map_or(0, |value| value.attempts),
+    }
+}
+
 fn enforce_wall_time(config: &Config, started: Instant) -> Result<(), String> {
-    if started.elapsed().as_secs() > config.abort_wall_time_seconds {
+    if started.elapsed() > Duration::from_secs(config.abort_wall_time_seconds) {
         return Err(format!(
-            "readiness smoke exceeded frozen {}-second abort gate",
+            "timeout: readiness smoke exceeded frozen {}-second gate",
             config.abort_wall_time_seconds
         ));
     }
     Ok(())
 }
 
-fn hit_event(arm: Arm, evaluated: &Evaluated, sys: f64) -> Option<StopEvent> {
+fn hit_event(arm: Arm, evaluated: &Evaluated) -> Option<StopEvent> {
+    let sys = evaluated.observation.as_ref()?.sys;
     (sys > 1.0).then(|| StopEvent {
         event: "sys_gt_one_flush_and_stop".into(),
+        global_request_index: evaluated.global_request_index,
         arm,
         candidate_id: evaluated.candidate_id.clone(),
         exact_geometry_key: evaluated.exact_geometry_key.clone(),
         sys,
-        action: "artifacts_flushed_stop_unrelated_search_independent_validation_required".into(),
+        action: STOP_ACTION.into(),
     })
 }
 
@@ -974,6 +1201,7 @@ fn construct_base(
                         reason,
                         parent_candidate_id: None,
                         root_candidate_id: None,
+                        raw_proposed_chart: None,
                     },
                 )?;
             }
@@ -989,14 +1217,18 @@ fn bounded_synthetic_chart(
     base_index: usize,
     construction_attempt: usize,
 ) -> ProductChart {
-    let mut rng = seeded_rng(&format!(
-        "bounded-synthetic-base\n{arm_seed}\n{base_index}\n{construction_attempt}\n"
-    ));
     let mut coordinates = [0.0; 17];
-    for value in &mut coordinates[..16] {
-        *value = rng.gen_range(-0.03..0.03);
+    for (index, value) in coordinates[..16].iter_mut().enumerate() {
+        *value = -0.03
+            + 0.06
+                * deterministic_unit(&format!(
+                    "bounded-synthetic-base\n{arm_seed}\n{base_index}\n{construction_attempt}\n{index}\n"
+                ));
     }
-    coordinates[16] = rng.gen_range(0.0..std::f64::consts::TAU);
+    coordinates[16] = TAU
+        * deterministic_unit(&format!(
+            "bounded-synthetic-base\n{arm_seed}\n{base_index}\n{construction_attempt}\n16\n"
+        ));
     ProductChart::from_continuous_coordinates(coordinates, false)
 }
 
@@ -1012,7 +1244,15 @@ fn construct_mutation(
     evaluator: &mut Evaluator,
     sink: &ArtifactSink,
     base_source: BaseSource,
-) -> Result<(CandidateIdentity, ConstructedCandidate, ProductChart), String> {
+) -> Result<
+    (
+        CandidateIdentity,
+        ConstructedCandidate,
+        ProductChart,
+        ProductChart,
+    ),
+    String,
+> {
     for construction_attempt in 0..config.construction_retry_cap {
         let identity = CandidateIdentity {
             packet_version: config.packet_version.clone(),
@@ -1028,18 +1268,20 @@ fn construct_mutation(
             base_index: None,
             construction_attempt,
         };
-        let chart = mutate_chart(config, &state.chart, &identity);
+        let raw_chart = mutate_chart(config, &state.chart, &identity);
         let construction = match base_source {
-            BaseSource::ProductionIid => chart
+            BaseSource::ProductionIid => raw_chart
                 .reconstruct_candidate()
                 .map_err(|reason| format!("{reason:?}"))
                 .and_then(ConstructedCandidate::production),
-            BaseSource::BoundedSynthetic => ConstructedCandidate::bounded_synthetic(chart.clone()),
+            BaseSource::BoundedSynthetic => {
+                ConstructedCandidate::bounded_synthetic(raw_chart.clone())
+            }
         };
         match construction {
             Ok(candidate) => {
                 let canonical_chart = candidate.chart.clone();
-                return Ok((identity, candidate, canonical_chart));
+                return Ok((identity, candidate, canonical_chart, raw_chart));
             }
             Err(reason) => {
                 evaluator.construction_rejections += 1;
@@ -1052,6 +1294,7 @@ fn construct_mutation(
                         reason,
                         parent_candidate_id: Some(state.candidate_id.clone()),
                         root_candidate_id: Some(state.root_candidate_id.clone()),
+                        raw_proposed_chart: Some(raw_chart),
                     },
                 )?;
             }
@@ -1067,39 +1310,70 @@ fn mutate_chart(
     state: &ProductChart,
     identity: &CandidateIdentity,
 ) -> ProductChart {
-    let seed = serde_json::to_vec(identity).expect("identity serializes");
-    let mut rng = ChaCha8Rng::from_seed(blake3::derive_key("ams-chart-mutation-v1", &seed));
-    let gap = Normal::new(0.0, config.gap_logit_scale).expect("validated positive scale");
-    let radius =
-        Normal::new(0.0, config.centered_log_radius_scale).expect("validated positive scale");
-    let phase = Normal::new(0.0, config.phase_scale).expect("validated positive scale");
+    let id = candidate_id(identity);
     let mut coordinates = state.continuous_coordinates();
-    for value in &mut coordinates[..4] {
-        *value += gap.sample(&mut rng);
+    for (index, value) in coordinates.iter_mut().enumerate() {
+        let scale = match index {
+            0..=3 | 8..=11 => config.gap_logit_scale,
+            4..=7 | 12..=15 => config.centered_log_radius_scale,
+            16 => config.phase_scale,
+            _ => unreachable!(),
+        };
+        *value += scale * standard_normal(&id, index);
     }
-    for value in &mut coordinates[4..8] {
-        *value += radius.sample(&mut rng);
-    }
-    for value in &mut coordinates[8..12] {
-        *value += gap.sample(&mut rng);
-    }
-    for value in &mut coordinates[12..16] {
-        *value += radius.sample(&mut rng);
-    }
-    coordinates[16] += phase.sample(&mut rng);
     ProductChart::from_continuous_coordinates(coordinates, false)
 }
 
-fn seeded_rng(material: &str) -> ChaCha8Rng {
-    ChaCha8Rng::from_seed(blake3::derive_key(
-        "ams-deterministic-stream-v1",
-        material.as_bytes(),
-    ))
+fn clone_assignment(
+    config_identity: &str,
+    master_seed: u64,
+    level: usize,
+    clone_index: usize,
+    survivor_count: usize,
+) -> usize {
+    let material = format!(
+        "ams-clone-assignment-v1\n{config_identity}\n{master_seed}\n{level}\n{clone_index}\n"
+    );
+    derived_u64(&material) as usize % survivor_count
+}
+
+fn standard_normal(candidate: &str, coordinate: usize) -> f64 {
+    let pair = coordinate / 2;
+    let digest =
+        Sha256::digest(format!("ams-mutation-gaussian-v1\n{candidate}\n{pair}\n").as_bytes());
+    let u1 = unit_from_bytes(&digest[..8]);
+    let u2 = unit_from_bytes(&digest[8..16]);
+    let radius = (-2.0 * u1.ln()).sqrt();
+    let angle = TAU * u2;
+    if coordinate.is_multiple_of(2) {
+        radius * angle.cos()
+    } else {
+        radius * angle.sin()
+    }
+}
+
+fn deterministic_unit(material: &str) -> f64 {
+    let digest = Sha256::digest(material.as_bytes());
+    unit_from_bytes(&digest[..8])
+}
+
+fn unit_from_bytes(bytes: &[u8]) -> f64 {
+    let bits = u64::from_be_bytes(bytes.try_into().expect("eight digest bytes")) >> 11;
+    (bits as f64 + 0.5) / ((1_u64 << 53) as f64)
 }
 
 fn derived_u64(material: &str) -> u64 {
-    let hash = blake3::hash(material.as_bytes());
-    u64::from_le_bytes(hash.as_bytes()[..8].try_into().unwrap())
+    let digest = Sha256::digest(material.as_bytes());
+    u64::from_be_bytes(digest[..8].try_into().expect("eight digest bytes"))
+}
+
+fn sha256_bytes(bytes: &[u8]) -> String {
+    format!("{:x}", Sha256::digest(bytes))
+}
+
+pub fn file_sha256(path: &Path) -> Result<String, String> {
+    let bytes = fs::read(path).map_err(|e| format!("read {path:?} for identity: {e}"))?;
+    Ok(sha256_bytes(&bytes))
 }
 
 #[cfg(test)]
@@ -1114,10 +1388,13 @@ mod tests {
     fn manifest(config: &Config) -> Manifest {
         Manifest {
             artifact_kind: "synthetic_target_free".into(),
+            run_id: "test-run".into(),
+            start_unix_ms: 1,
             config_identity: config.identity(),
             exact_config: config.clone(),
             source: SourceIdentity {
                 git_revision: "test".into(),
+                reviewed_revision: None,
                 source_tree_clean: false,
                 executable_sha256: "test".into(),
                 cargo_lock_sha256: "test".into(),
@@ -1126,6 +1403,9 @@ mod tests {
             adaptive_budget: ADAPTIVE_BUDGET,
             iid_budget: IID_BUDGET,
             target_probability_estimate: None,
+            tail_probability_supported: false,
+            mutation_kernel: MUTATION_KERNEL.into(),
+            generation_schedule: GENERATION_SCHEDULE.into(),
             factor_exchange_quotiented: false,
         }
     }
@@ -1138,7 +1418,7 @@ mod tests {
     }
 
     #[test]
-    fn candidate_identity_is_deterministic_and_field_sensitive() {
+    fn candidate_identity_and_sha_schedules_are_deterministic() {
         let config = config();
         let identity = CandidateIdentity {
             packet_version: config.packet_version.clone(),
@@ -1155,46 +1435,63 @@ mod tests {
             construction_attempt: 0,
         };
         assert_eq!(candidate_id(&identity), candidate_id(&identity));
-        let mut changed = identity.clone();
-        changed.construction_attempt = 1;
-        assert_ne!(candidate_id(&identity), candidate_id(&changed));
-        changed = identity.clone();
-        changed.arm = Arm::Iid;
-        assert_ne!(candidate_id(&identity), candidate_id(&changed));
+        assert_eq!(
+            standard_normal(&candidate_id(&identity), 3),
+            standard_normal(&candidate_id(&identity), 3)
+        );
+        assert_eq!(
+            clone_assignment(&config.identity(), config.master_seed, 1, 4, 8),
+            clone_assignment(&config.identity(), config.master_seed, 1, 4, 8)
+        );
     }
 
     #[test]
     fn budget_is_charged_before_cache_lookup() {
         let config = config();
         let (_dir, sink) = sink(&config);
-        let config_identity = config.identity();
         let mut evaluator = Evaluator::new(Arm::Adaptive);
         let (identity, candidate, _) = construct_base(
             &config,
-            &config_identity,
+            &config.identity(),
             "test",
             Arm::Adaptive,
             0,
             &mut evaluator,
             &sink,
-            BaseSource::ProductionIid,
+            BaseSource::BoundedSynthetic,
         )
         .unwrap();
         let root = candidate_id(&identity);
         let mut oracle = SyntheticOracle::new(false);
+        let mut global = 0;
+        let deadline = Instant::now() + Duration::from_secs(10);
         evaluator
             .evaluate(
                 &mut oracle,
                 identity.clone(),
                 &candidate,
                 None,
+                None,
                 root.clone(),
                 None,
                 &sink,
+                &mut global,
+                deadline,
             )
             .unwrap();
         evaluator
-            .evaluate(&mut oracle, identity, &candidate, None, root, None, &sink)
+            .evaluate(
+                &mut oracle,
+                identity,
+                &candidate,
+                None,
+                None,
+                root,
+                None,
+                &sink,
+                &mut global,
+                deadline,
+            )
             .unwrap();
         assert_eq!(evaluator.attempts, 2);
         assert_eq!(evaluator.misses, 1);
@@ -1202,55 +1499,116 @@ mod tests {
         assert_eq!(oracle.calls(), 1);
     }
 
-    #[test]
-    fn construction_rejection_is_uncharged_and_retained() {
-        let config = config();
-        let (_dir, sink) = sink(&config);
-        let mut evaluator = Evaluator::new(Arm::Adaptive);
-        let invalid_chart = ProductChart {
-            q_gap_logits: [1000.0, -1000.0, -1000.0, -1000.0],
-            q_centered_log_radii: [0.0; 5],
-            p_gap_logits: [0.0; 4],
-            p_centered_log_radii: [0.0; 5],
-            relative_phase: 0.0,
-            near_tie: false,
-        };
-        let rejection = ConstructedCandidate::bounded_synthetic(invalid_chart)
-            .err()
-            .expect("invalid chart is rejected");
-        let identity = CandidateIdentity {
-            packet_version: config.packet_version.clone(),
-            config_identity: config.identity(),
-            source_revision: "test".into(),
-            parent_candidate_id: Some("parent".into()),
-            master_seed: config.master_seed,
-            replicate: 0,
-            arm: Arm::Adaptive,
-            level: Some(0),
-            clone_index: Some(0),
-            mutation_step: Some(0),
-            base_index: None,
-            construction_attempt: 0,
-        };
-        evaluator.construction_rejections += 1;
-        sink.append(
-            "construction-rejections.jsonl",
-            &ConstructionRejectionRow {
-                candidate_id: candidate_id(&identity),
-                identity,
-                arm: Arm::Adaptive,
-                reason: rejection,
-                parent_candidate_id: Some("parent".into()),
-                root_candidate_id: Some("root".into()),
-            },
-        )
-        .unwrap();
-        assert_eq!(evaluator.attempts, 0);
-        assert_eq!(evaluator.construction_rejections, 1);
+    struct InvalidOracle;
+    impl Oracle for InvalidOracle {
+        fn compute(&mut self, _request: OracleRequest<'_>, _timeout: Duration) -> OracleOutcome {
+            OracleOutcome::Success(synthetic_observation(1.0, f64::NAN))
+        }
+    }
+
+    struct UnavailableOracle;
+    impl Oracle for UnavailableOracle {
+        fn compute(&mut self, _request: OracleRequest<'_>, _timeout: Duration) -> OracleOutcome {
+            OracleOutcome::Failure {
+                status: EvaluationStatus::TargetUnavailable,
+                reason: "synthetic unavailable fixture".into(),
+            }
+        }
     }
 
     #[test]
-    fn synthetic_driver_closes_budget_and_genealogy() {
+    fn invalid_oracle_output_is_charged_and_retained() {
+        let config = config();
+        let (dir, sink) = sink(&config);
+        let mut evaluator = Evaluator::new(Arm::Adaptive);
+        let (identity, candidate, _) = construct_base(
+            &config,
+            &config.identity(),
+            "test",
+            Arm::Adaptive,
+            0,
+            &mut evaluator,
+            &sink,
+            BaseSource::BoundedSynthetic,
+        )
+        .unwrap();
+        let root = candidate_id(&identity);
+        let mut oracle = InvalidOracle;
+        let evaluated = evaluator
+            .evaluate(
+                &mut oracle,
+                identity,
+                &candidate,
+                None,
+                None,
+                root,
+                None,
+                &sink,
+                &mut 0,
+                Instant::now() + Duration::from_secs(1),
+            )
+            .unwrap();
+        assert_eq!(
+            evaluated.failure_status,
+            Some(EvaluationStatus::InvalidOutput)
+        );
+        let text =
+            fs::read_to_string(dir.path().join("artifacts/target-evaluations.jsonl")).unwrap();
+        let row: TargetRow = serde_json::from_str(text.trim()).unwrap();
+        assert_eq!(row.evaluation_status, EvaluationStatus::InvalidOutput);
+        assert_eq!(row.cache_status, CacheStatus::FailedMiss);
+        assert!(!row.failure_reason.unwrap().is_empty());
+        assert_eq!(row.dual_vertices_rational.len(), 10);
+    }
+
+    #[test]
+    fn explicit_oracle_failure_is_charged_and_retains_geometry_and_reason() {
+        let config = config();
+        let (dir, sink) = sink(&config);
+        let mut evaluator = Evaluator::new(Arm::Adaptive);
+        let (identity, candidate, _) = construct_base(
+            &config,
+            &config.identity(),
+            "test",
+            Arm::Adaptive,
+            0,
+            &mut evaluator,
+            &sink,
+            BaseSource::BoundedSynthetic,
+        )
+        .unwrap();
+        let root = candidate_id(&identity);
+        let mut oracle = UnavailableOracle;
+        let evaluated = evaluator
+            .evaluate(
+                &mut oracle,
+                identity,
+                &candidate,
+                None,
+                None,
+                root,
+                None,
+                &sink,
+                &mut 0,
+                Instant::now() + Duration::from_secs(1),
+            )
+            .unwrap();
+        assert_eq!(
+            evaluated.failure_status,
+            Some(EvaluationStatus::TargetUnavailable)
+        );
+        let text =
+            fs::read_to_string(dir.path().join("artifacts/target-evaluations.jsonl")).unwrap();
+        let row: TargetRow = serde_json::from_str(text.trim()).unwrap();
+        assert_eq!(row.dual_vertices_rational.len(), 10);
+        assert_eq!(
+            row.failure_reason.as_deref(),
+            Some("synthetic unavailable fixture")
+        );
+    }
+
+    #[test]
+    fn synthetic_driver_closes_budget_and_records_post_level_populations() {
         let config = config();
         let (dir, sink) = sink(&config);
         let mut adaptive = SyntheticOracle::new(false);
@@ -1260,17 +1618,12 @@ mod tests {
         assert!(outcome.stopped.is_none());
         assert_eq!(outcome.adaptive_attempts, ADAPTIVE_BUDGET);
         assert_eq!(outcome.iid_attempts, IID_BUDGET);
-        let transitions =
-            fs::read_to_string(dir.path().join("artifacts/mutation-transitions.jsonl")).unwrap();
-        assert_eq!(transitions.lines().count(), 32);
-        for line in transitions.lines() {
-            let row: MutationTransitionRow = serde_json::from_str(line).unwrap();
-            if row.accepted {
-                assert_eq!(row.state_after_candidate_id, row.proposal_candidate_id);
-                assert!(row.proposal_sys.unwrap() >= row.frozen_threshold);
-            } else {
-                assert_eq!(row.state_after_candidate_id, row.state_before_candidate_id);
-            }
+        let levels = fs::read_to_string(dir.path().join("artifacts/levels.jsonl")).unwrap();
+        assert_eq!(levels.lines().count(), 2);
+        for line in levels.lines() {
+            let row: LevelRow = serde_json::from_str(line).unwrap();
+            assert_eq!(row.post_level_population_candidate_ids.len(), 16);
+            assert!(row.post_level_distinct_geometry_keys >= 8);
         }
     }
 
@@ -1287,9 +1640,10 @@ mod tests {
         assert_eq!(outcome.iid_attempts, 0);
         assert_eq!(adaptive.calls(), 1);
         assert_eq!(iid.calls(), 0);
-        assert!(dir.path().join("artifacts/stop-event.json").is_file());
-        let targets =
-            fs::read_to_string(dir.path().join("artifacts/target-evaluations.jsonl")).unwrap();
-        assert_eq!(targets.lines().count(), 1);
+        let event: StopEvent = serde_json::from_slice(
+            &fs::read(dir.path().join("artifacts/stop-event.json")).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(event.global_request_index, 1);
     }
 }

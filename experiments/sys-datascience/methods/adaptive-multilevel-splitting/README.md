@@ -1,114 +1,154 @@
-# Adaptive multilevel splitting readiness smoke
+# Adaptive multilevel-splitting readiness smoke
 
-## Status and decision
+## Status and allowed use
 
-This is a target-free-tested, pre-run packet. No production target evaluation
+This is a target-free-tested pre-run packet. No production target evaluation
 has been run and no real-target artifact is tracked. Its next consumer is an
-independent technical review deciding whether the exact frozen command below
-may spend the 64-call readiness budget.
+independent review deciding whether exactly 64 real requests may be spent on a
+narrow driver/policy-readiness smoke.
 
-The smoke asks only whether this AMS-style candidate-finder policy is
-operationally healthy: honest target accounting, valid chart mutations,
-inspectable ancestry, enough diversity, and bounded runtime. It is not evidence
-that adaptive search beats IID, a scientific negative if it fails, an invariant
-MCMC kernel, or an estimate of conditional mass or rare-event probability.
+The smoke can test target accounting, valid chart mutation, retained genealogy,
+post-rejuvenation particle diversity, failure/timeout handling, and measured
+cost. It cannot support AMS superiority, a rare-event or tail probability, a
+conditional-law claim, or a scientific negative. The kernel is explicitly
+`non_invariant_threshold_only_gaussian`; `tail_probability_supported` is
+`false` in the manifest and is enforced independently by the analyzer.
 
 ## Frozen policy
 
 `resolved-config.json` is the tracked contract. The adaptive arm constructs 16
-independent valid `5 x 5` products, then runs two levels. At each level the
-deterministic order is descending exact `sys` and ascending candidate ID; the
-top eight survive. A seeded uniform-with-replacement assignment gives each of
-eight clones a survivor parent. Each clone receives two sequential charged
-valid Gaussian chart proposals. A successful proposal becomes the clone state
-exactly when its `sys` is at least the level's frozen threshold. This closes at
-`16 + 2 * 8 * 2 = 48` adaptive target requests. The control arm makes 16
-independent IID valid target requests.
+independent valid `5 x 5` products and runs two levels. Each level orders states
+by descending `sys` and ascending candidate ID, retains eight survivors, and
+uses a SHA-256 deterministic uniform-with-replacement assignment for eight
+clones. Each clone receives two sequential charged Gaussian chart proposals.
+A successful proposal becomes the state exactly when `sys` is at least the
+frozen level threshold. The adaptive budget is therefore
+`16 + 2 * 8 * 2 = 48`; the IID arm has 16 requests.
 
-The fixed mutation standard deviations are `0.08` for each independent gap
-logit, `0.04` for each independent centered log radius, and `0.08` radians for
-relative phase. They are conservative pre-target choices and were not tuned on
-smoke target values. The chart removes continuous gauges but deliberately does
-not quotient q/p factor exchange; named q and p chart fields remain in every
-target row.
+Gaussian standard deviations remain 0.08 for independent gap logits, 0.04 for
+independent centered log radii, and 0.08 radians for relative phase. SHA-256
+counter material and Box--Muller draws make clone assignments and mutation
+draws independently replayable with Python's standard library. The raw
+proposal chart is retained before construction; accepted state uses the
+canonical re-encoding from exact-valid geometry. Factor exchange remains
+unquotiented.
 
-Construction failures are uncharged, reasoned, and retried up to 64 times.
-Every valid target request is charged before arm-private cache lookup, so a
-duplicate, cache hit, failed computation, or fallback consumes budget.
-Execution aborts after crossing the frozen 600-second wall-time gate.
-Candidate IDs bind packet/config/source identity, parent, seed, replicate/arm,
-level/clone/step or base index, and construction attempt.
+Construction failures are uncharged, reasoned, and retried at most 64 times.
+Every target request is charged before arm-private cache lookup, including a
+duplicate, cache hit, target failure, invalid result, or timeout. A failed
+target stops the readiness run incomplete.
 
-## Target-free smoke
+## Killable target boundary and stop rules
 
-This command builds the binary it immediately runs, writes only disposable
-synthetic artifacts, and then invokes the independent fail-closed verifier:
+Every uncached request invokes the same reviewed executable through its private
+`target-once` subcommand. The parent feeds the constructed f64 dual vertices.
+For production, the child reconstructs with
+`SysLandscapePolytopeCache::from_f64_dual_vertices`, computes the current
+automatic target, and returns a structured result. The parent polls the child
+and kills it at the remaining global 600-second deadline. Stdout and stderr are
+drained concurrently while polling, and the structured response is bounded at
+64 MiB. A timeout is a charged final failure row.
+
+A returned `sys > 1` is written before elapsed-time disposition. Exactly one
+such row must be the final charged request and agree with `stop-event.json` in
+event, request index, arm, candidate, exact key, scalar, and fixed action.
+Independent geometry/target validation is still required before calling it a
+candidate.
+
+## Target-free verification
+
+Normal synthetic run:
 
 ```bash
 cd experiments/sys-datascience/methods/adaptive-multilevel-splitting
 rm -rf /tmp/ams-readiness-synthetic
-cargo build --release --locked && ./target/release/adaptive-multilevel-splitting synthetic --config resolved-config.json --artifacts /tmp/ams-readiness-synthetic
+cargo build --release --locked
+./target/release/adaptive-multilevel-splitting synthetic \
+  --config resolved-config.json \
+  --artifacts /tmp/ams-readiness-synthetic
 python3 analyze.py /tmp/ams-readiness-synthetic
 ```
 
-The synthetic path uses cheap near-regular valid chart states and a
-deterministic scalar oracle. It still enters the production adaptive/IID
-resampling, Gaussian mutation, chart-construction, charging, cache, genealogy,
-transition, artifact, and stop paths. It intentionally skips the expensive
-exact polytope constructor and production target evaluator, so its geometry and
-scores are plumbing fixtures, not research evidence.
+The synthetic child returns deterministic scalars satisfying
+`sys = c^2/(2V)` and never invokes the real target. It still exercises the
+production driver, child process, charging, cache, mutation, genealogy,
+artifact, and stop paths. `--force-synthetic-hit` exercises the stop path.
+The following target-free command proves that a slow child is killed and that
+the charged timeout row remains auditable; the producer intentionally exits
+nonzero and analysis returns `readiness_passed: false`:
 
-The positive stop path is exercised without a real target by adding
-`--force-synthetic-hit`; verification must then find one flushed target row, a
-`stop-event.json`, and no later request.
+```bash
+rm -rf /tmp/ams-readiness-timeout
+./target/release/adaptive-multilevel-splitting synthetic \
+  --config resolved-config.json \
+  --artifacts /tmp/ams-readiness-timeout \
+  --synthetic-child-delay-ms 100 \
+  --synthetic-call-timeout-ms 10 || true
+python3 analyze.py /tmp/ams-readiness-timeout
+```
 
-## Reserved production smoke
+## Reserved production command
 
-Do not run this until the packet and dependencies are committed cleanly and an
-independent pre-run review returns `GO`. The producer refuses production mode
-when `git status --porcelain` is nonempty. The exact run path builds the current
-binary before execution and requires a new artifact directory:
+Do not run this until the exact committed source and executable receive `GO`.
+The caller must supply the reviewed full 40-hex commit; the producer compares
+it with clean `HEAD` before creating artifacts. Any source change requires a
+new review and new reviewed commit value.
 
 ```bash
 cd experiments/sys-datascience/methods/adaptive-multilevel-splitting
+reviewed_commit=FULL_40_HEX_COMMIT_THAT_RECEIVED_GO
+repo_root=$(git rev-parse --show-toplevel)
 test ! -e /tmp/ams-readiness-production
-cargo build --release --locked && ./target/release/adaptive-multilevel-splitting production --config resolved-config.json --artifacts /tmp/ams-readiness-production
-python3 analyze.py /tmp/ams-readiness-production
+cargo build --release --locked
+./target/release/adaptive-multilevel-splitting production \
+  --config resolved-config.json \
+  --artifacts /tmp/ams-readiness-production \
+  --reviewed-commit "$reviewed_commit"
+python3 analyze.py /tmp/ams-readiness-production \
+  --expected-reviewed-revision "$reviewed_commit" \
+  --repo-root "$repo_root" \
+  --cargo-lock "$PWD/Cargo.lock" \
+  --executable "$PWD/target/release/adaptive-multilevel-splitting"
 ```
 
-Before any call, the manifest binds the exact config, clean Git revision,
-current executable SHA-256, and packet `Cargo.lock` SHA-256. A trusted
-`sys > 1` result synchronously flushes its cache and target rows, writes the
-stop event, and returns without starting another request. Such an event requires
-independent geometry/target validation and stopping unrelated search.
+Production refuses a dirty tree, wrong/missing reviewed commit, reused output
+directory, and every synthetic test flag. Production analysis recomputes clean
+`HEAD`, the packet lock hash, and the executable hash against the manifest.
 
-## Artifacts and gates
+## Artifacts and readiness gates
 
-- `manifest.json`: exact config, packet kind, source/build identity, fixed
-  budgets, explicit absence of a probability estimate, and unquotiented factor
-  exchange.
-- `target-evaluations.jsonl`: every charged request, candidate identity, exact
-  geometry key and stable identity, cache/evaluation status, capacity, volume,
-  `sys`, chart, ancestry, threshold, and target wall time.
-- `cache.jsonl`: every successful miss with exact geometry, facet count, and
-  returned scalars. Hits and failed misses remain visible in target rows.
-- `construction-rejections.jsonl`: every uncharged rejected attempt and reason.
-- `levels.jsonl`: frozen thresholds, ordered survivors, roots, and clone-parent
-  assignments.
-- `mutation-transitions.jsonl`: before/proposal/after state, threshold,
+- `manifest.json`: launch run ID/start timestamp, exact config, reviewed source
+  and executable/lock identities, budgets, non-invariant kernel, and prohibited
+  probability claim.
+- `target-evaluations.jsonl`: every charged request, explicit success/failure
+  reason, exact and f64 dual geometry, key/identity/facets, canonical and raw
+  chart, genealogy/threshold, compact target diagnostics, and wall time.
+- `cache.jsonl`: exactly one row per arm-private successful miss, including
+  exact geometry, compact diagnostics, and the full production
+  `OrbitSearchResult` (synthetic rows identify their formula fixture instead).
+- `construction-rejections.jsonl`: every uncharged rejected attempt, identity,
+  parent/root, reason, and raw mutation chart when applicable.
+- `levels.jsonl`: survivor order/roots, replayable clone assignments, and the
+  actual 16-particle post-level candidate/key population.
+- `mutation-transitions.jsonl`: before/proposal/after state, frozen threshold,
   acceptance, and root for every sequential proposal.
-- `arm-runs.jsonl`: per-arm attempts, rejection/cache counts, distinct
-  successful keys, completeness, and wall time.
-- `stop-event.json`: present only after `sys > 1` flush-and-stop.
+- `arm-runs.jsonl`: reconciled per-arm attempts, rejection/cache/failure counts,
+  completeness, distinct successful keys, and wall time.
+- `stop-event.json`: present only after a flushed `sys > 1` stop.
+- `run-status.json`: final disposition, matching run ID, charged counts, total
+  monotonic wall time, and SHA-256 of every owning artifact except itself.
 
-An unstopped smoke passes readiness only with exactly 48 adaptive and 16 IID
-charged rows, four distinct successful keys per arm, at least two surviving
-roots at every level, at least one accepted valid mutation, contiguous attempt
-indices, exact cache/geometry reconciliation, and complete accounting. These
-are operational gates only. The analyzer produces no arm-quality comparison or
-probability claim.
+Only disposition `complete` can pass readiness. It requires exactly 48/16
+charged rows, exact base/mutation grids and retry histories, two complete level
+populations with at least eight distinct exact geometry keys each, at least two
+survivor roots per level, at least one accepted valid mutation, no failed row,
+full accounting, and total time at most 600 seconds. The analyzer independently
+replays identities, clone assignments, Gaussian mutations, thresholds,
+genealogy, the exact global request schedule, exact product geometry and
+product volume, canonical chart encoding (absolute chart tolerance `2e-10`),
+cache audit, stop evidence, file hashes, and time totals.
 
-## Local verification
+## Local gates
 
 ```bash
 cargo fmt --check
