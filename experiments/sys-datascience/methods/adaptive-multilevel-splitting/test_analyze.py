@@ -13,7 +13,7 @@ class AnalyzerCorruptionTests(unittest.TestCase):
         self.directory = Path(self.temp.name)
         config = {
             "packet_version": "ams-readiness-smoke-v1",
-            "master_seed": 1,
+            "master_seed": 202607150101,
             "replicate": 0,
             "initial_particles": 16,
             "levels": 2,
@@ -90,6 +90,27 @@ class AnalyzerCorruptionTests(unittest.TestCase):
         changed["exact_config"]["phase_scale"] = 9.0
         (self.directory / "manifest.json").write_text(json.dumps(changed))
         with self.assertRaisesRegex(ArtifactError, "config_identity"):
+            verify(self.directory)
+
+    def test_rebound_nonfrozen_config_is_rejected(self):
+        import analyze
+
+        changed = copy.deepcopy(self.manifest)
+        changed["exact_config"]["phase_scale"] = 0.09
+        changed["config_identity"] = analyze.sha256(
+            analyze.compact_json(changed["exact_config"])
+        )
+        (self.directory / "manifest.json").write_text(json.dumps(changed))
+        for name in (
+            "target-evaluations.jsonl",
+            "cache.jsonl",
+            "construction-rejections.jsonl",
+            "mutation-transitions.jsonl",
+            "levels.jsonl",
+            "arm-runs.jsonl",
+        ):
+            (self.directory / name).write_text("")
+        with self.assertRaisesRegex(ArtifactError, "frozen field phase_scale"):
             verify(self.directory)
 
 

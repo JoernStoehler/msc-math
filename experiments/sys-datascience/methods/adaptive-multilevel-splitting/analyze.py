@@ -115,13 +115,20 @@ def verify(directory: Path) -> dict[str, Any]:
     if config.get("factor_exchange_quotiented") is not False:
         fail("config claims factor exchange is quotiented")
     fixed_fields = {
+        "packet_version": "ams-readiness-smoke-v1",
+        "master_seed": 202607150101,
+        "replicate": 0,
         "initial_particles": 16,
         "levels": 2,
         "survivors_per_level": 8,
         "clones_per_level": 8,
         "mutation_steps_per_clone": 2,
         "iid_requests": 16,
+        "construction_retry_cap": 64,
         "abort_wall_time_seconds": 600,
+        "gap_logit_scale": 0.08,
+        "centered_log_radius_scale": 0.04,
+        "phase_scale": 0.08,
         "tie_rule": "sys_desc_candidate_id_asc",
         "clone_assignment": "seeded_uniform_with_replacement",
         "acceptance_rule": "successful_sys_at_least_frozen_level_threshold",
@@ -129,11 +136,6 @@ def verify(directory: Path) -> dict[str, Any]:
     for field, expected in fixed_fields.items():
         if config.get(field) != expected:
             fail(f"config changes frozen field {field}")
-    if not isinstance(config.get("construction_retry_cap"), int) or config["construction_retry_cap"] <= 0:
-        fail("construction_retry_cap must be positive")
-    for field in ("gap_logit_scale", "centered_log_radius_scale", "phase_scale"):
-        if not finite_positive(config.get(field)):
-            fail(f"config has invalid mutation scale {field}")
     kind = manifest.get("artifact_kind")
     if kind not in {"synthetic_target_free", "production_target"}:
         fail("unknown artifact_kind")
@@ -208,6 +210,9 @@ def verify(directory: Path) -> dict[str, Any]:
                         fail(f"target {candidate} has nonfinite sys")
                 elif not finite_positive(row[field]):
                     fail(f"target {candidate} has invalid {field}")
+            expected_sys = row["capacity"] * row["capacity"] / (2.0 * row["volume"])
+            if not math.isclose(row["sys"], expected_sys, rel_tol=4e-15, abs_tol=0.0):
+                fail(f"target {candidate} sys disagrees with capacity and volume")
             successes_by_arm_key[arm_key] = row
         if not isinstance(row.get("product_chart"), dict):
             fail(f"target {candidate} does not retain the product chart")
@@ -294,6 +299,12 @@ def verify(directory: Path) -> dict[str, Any]:
             fail("level does not retain eight survivor roots")
         if len(row.get("clone_parent_candidate_ids", [])) != 8:
             fail("level does not retain eight clone assignments")
+        expected_roots = [
+            candidate_rows[candidate]["root_candidate_id"]
+            for candidate in row["survivor_candidate_ids"]
+        ]
+        if row["survivor_root_candidate_ids"] != expected_roots:
+            fail("level survivor roots disagree with survivor genealogy")
         survivor_set = set(row["survivor_candidate_ids"])
         if any(parent not in survivor_set for parent in row["clone_parent_candidate_ids"]):
             fail("clone assignment does not point to a survivor")
@@ -435,6 +446,8 @@ def verify(directory: Path) -> dict[str, Any]:
         fail("arm-run rows do not match completed/stopped execution")
     if stop is None and not all(row.get("complete") is True for row in arm_runs):
         fail("unstopped arm-run row is incomplete")
+    if stop is None and sum(row["wall_time_ms"] for row in arm_runs) > 601_000:
+        fail("complete smoke exceeds the frozen wall-time envelope")
 
     return {
         "verified": True,

@@ -18,6 +18,8 @@ use std::time::Instant;
 
 pub const ADAPTIVE_BUDGET: usize = 48;
 pub const IID_BUDGET: usize = 16;
+pub const PACKET_VERSION: &str = "ams-readiness-smoke-v1";
+pub const MASTER_SEED: u64 = 202607150101;
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Config {
@@ -51,32 +53,25 @@ impl Config {
     }
 
     pub fn validate(&self) -> Result<(), String> {
-        let fixed = self.initial_particles == 16
+        let fixed = self.packet_version == PACKET_VERSION
+            && self.master_seed == MASTER_SEED
+            && self.replicate == 0
+            && self.initial_particles == 16
             && self.levels == 2
             && self.survivors_per_level == 8
             && self.clones_per_level == 8
             && self.mutation_steps_per_clone == 2
             && self.iid_requests == 16
+            && self.construction_retry_cap == 64
+            && self.abort_wall_time_seconds == 600
+            && self.gap_logit_scale == 0.08
+            && self.centered_log_radius_scale == 0.04
+            && self.phase_scale == 0.08
             && self.initial_particles
                 + self.levels * self.clones_per_level * self.mutation_steps_per_clone
                 == ADAPTIVE_BUDGET;
         if !fixed {
-            return Err("config does not encode the fixed 48-adaptive/16-IID smoke".into());
-        }
-        if self.construction_retry_cap == 0 {
-            return Err("construction_retry_cap must be positive".into());
-        }
-        if self.abort_wall_time_seconds != 600 {
-            return Err("abort_wall_time_seconds must remain frozen at 600".into());
-        }
-        for (name, value) in [
-            ("gap_logit_scale", self.gap_logit_scale),
-            ("centered_log_radius_scale", self.centered_log_radius_scale),
-            ("phase_scale", self.phase_scale),
-        ] {
-            if !value.is_finite() || value <= 0.0 {
-                return Err(format!("{name} must be finite and positive"));
-            }
+            return Err("config differs from the fully frozen readiness smoke".into());
         }
         if self.tie_rule != "sys_desc_candidate_id_asc"
             || self.clone_assignment != "seeded_uniform_with_replacement"
@@ -235,9 +230,10 @@ impl Oracle for SyntheticOracle {
         } else {
             0.72 + 0.2 * fraction
         };
+        let capacity = 1.0 + fraction;
         Some(Observation {
-            capacity: 1.0 + fraction,
-            volume: 2.0 + fraction,
+            capacity,
+            volume: capacity * capacity / (2.0 * sys),
             sys,
         })
     }
@@ -615,6 +611,11 @@ fn validate_observation(value: &Observation) -> Result<(), String> {
         || value.volume <= 0.0
     {
         return Err("oracle returned an invalid observation".into());
+    }
+    let expected_sys = value.capacity * value.capacity / (2.0 * value.volume);
+    let tolerance = 16.0 * f64::EPSILON * value.sys.abs().max(expected_sys.abs()).max(1.0);
+    if (value.sys - expected_sys).abs() > tolerance {
+        return Err("oracle returned sys inconsistent with capacity and volume".into());
     }
     Ok(())
 }
@@ -1036,7 +1037,10 @@ fn construct_mutation(
             BaseSource::BoundedSynthetic => ConstructedCandidate::bounded_synthetic(chart.clone()),
         };
         match construction {
-            Ok(candidate) => return Ok((identity, candidate, chart)),
+            Ok(candidate) => {
+                let canonical_chart = candidate.chart.clone();
+                return Ok((identity, candidate, canonical_chart));
+            }
             Err(reason) => {
                 evaluator.construction_rejections += 1;
                 sink.append(
