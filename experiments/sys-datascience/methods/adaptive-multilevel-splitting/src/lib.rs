@@ -429,6 +429,7 @@ pub enum TerminalErrorKind {
     FailedTarget,
     ConstructionExhaustion,
     WallTermination,
+    PostLevelDiversityGate,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -440,6 +441,9 @@ pub struct TerminalErrorEvidence {
     pub evaluation_status: Option<EvaluationStatus>,
     pub failure_reason: Option<String>,
     pub next_schedule_identity: Option<CandidateIdentity>,
+    pub level: Option<usize>,
+    pub observed_distinct_geometry_keys: Option<usize>,
+    pub required_distinct_geometry_keys: Option<usize>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -552,6 +556,9 @@ impl ArtifactSink {
                 evaluation_status: Some(row.evaluation_status),
                 failure_reason: row.failure_reason.clone(),
                 next_schedule_identity: None,
+                level: None,
+                observed_distinct_geometry_keys: None,
+                required_distinct_geometry_keys: None,
             });
         }
         if error.starts_with("construction_exhaustion:") {
@@ -572,6 +579,9 @@ impl ArtifactSink {
                 evaluation_status: None,
                 failure_reason: None,
                 next_schedule_identity: Some(identity),
+                level: None,
+                observed_distinct_geometry_keys: None,
+                required_distinct_geometry_keys: None,
             });
         }
         if error.starts_with("wall_termination:") {
@@ -596,6 +606,34 @@ impl ArtifactSink {
                 evaluation_status: None,
                 failure_reason: None,
                 next_schedule_identity: None,
+                level: None,
+                observed_distinct_geometry_keys: None,
+                required_distinct_geometry_keys: None,
+            });
+        }
+        if error.starts_with("post_level_diversity_gate:") {
+            let levels = read_jsonl_rows::<LevelRow>(
+                &self.directory.join("levels.jsonl"),
+                "level row for diversity terminal evidence",
+            )?;
+            let level = levels
+                .last()
+                .ok_or("diversity-gate terminal evidence has no completed level row")?;
+            let targets = read_jsonl_rows::<TargetRow>(
+                &self.directory.join("target-evaluations.jsonl"),
+                "target row for diversity terminal evidence",
+            )?;
+            return Ok(TerminalErrorEvidence {
+                kind: TerminalErrorKind::PostLevelDiversityGate,
+                arm: Arm::Adaptive,
+                global_request_index: targets.last().map(|row| row.global_request_index),
+                candidate_id: targets.last().map(|row| row.candidate_id.clone()),
+                evaluation_status: None,
+                failure_reason: None,
+                next_schedule_identity: None,
+                level: Some(level.level),
+                observed_distinct_geometry_keys: Some(level.post_level_distinct_geometry_keys),
+                required_distinct_geometry_keys: Some(8),
             });
         }
         Err(format!(
@@ -1293,7 +1331,7 @@ fn run_packet_with_base_source(
                 &adaptive.row(adaptive_started, overall_started, false),
             )?;
             return Err(format!(
-                "post-level diversity gate failed at level {level}: {distinct} distinct states"
+                "post_level_diversity_gate: level {level} retained {distinct} distinct states; required 8"
             ));
         }
     }
@@ -1952,5 +1990,38 @@ mod tests {
         )
         .unwrap();
         assert_eq!(event.global_request_index, 1);
+    }
+
+    #[test]
+    fn diversity_gate_terminal_evidence_is_structured_from_final_level() {
+        let config = config();
+        let (_dir, sink) = sink(&config);
+        sink.append(
+            "levels.jsonl",
+            &LevelRow {
+                level: 0,
+                frozen_threshold: 0.8,
+                survivor_candidate_ids: vec!["s".into(); 8],
+                survivor_root_candidate_ids: vec!["r".into(); 8],
+                clone_parent_candidate_ids: vec!["s".into(); 8],
+                post_level_population_candidate_ids: vec!["p".into(); 16],
+                post_level_population_geometry_keys: vec!["k".into(); 16],
+                post_level_distinct_geometry_keys: 7,
+            },
+        )
+        .unwrap();
+        let evidence = sink
+            .terminal_error_evidence(
+                "post_level_diversity_gate: level 0 retained 7 distinct states; required 8",
+            )
+            .unwrap();
+        assert!(matches!(
+            evidence.kind,
+            TerminalErrorKind::PostLevelDiversityGate
+        ));
+        assert_eq!(evidence.arm, Arm::Adaptive);
+        assert_eq!(evidence.level, Some(0));
+        assert_eq!(evidence.observed_distinct_geometry_keys, Some(7));
+        assert_eq!(evidence.required_distinct_geometry_keys, Some(8));
     }
 }

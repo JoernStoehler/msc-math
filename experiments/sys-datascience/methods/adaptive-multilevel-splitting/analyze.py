@@ -49,7 +49,8 @@ STATUS_FIELDS = {
 }
 TERMINAL_ERROR_FIELDS = {
     "kind", "arm", "global_request_index", "candidate_id", "evaluation_status",
-    "failure_reason", "next_schedule_identity",
+    "failure_reason", "next_schedule_identity", "level", "observed_distinct_geometry_keys",
+    "required_distinct_geometry_keys",
 }
 CHARGED_FIELDS = {
     "global_request_index", "candidate_id", "identity", "arm", "attempt_index",
@@ -101,6 +102,9 @@ STOP_ACTION = (
 CHART_TOLERANCE = 2.0e-10
 RAW_CHART_TOLERANCE = 2.0e-12
 WALL_CLOCK_RECONCILIATION_TOLERANCE_MS = 100.0
+MONOTONIC_INTERVAL_TOLERANCE_MS = 5.0
+DEADLINE_RECONCILIATION_TOLERANCE_MS = 100.0
+MUTATION_GEOMETRY_TOLERANCE = 2.0e-12
 IDENTITY_FIELDS = {
     "packet_version",
     "config_identity",
@@ -224,6 +228,8 @@ def validate_identity(
     }
     if any(identity.get(field) != expected for field, expected in fixed.items()):
         fail("candidate identity changes a fixed packet/source field")
+    if not exact_integer(identity.get("master_seed")) or not exact_integer(identity.get("replicate")):
+        fail("candidate identity seed/replicate has a non-integer JSON type")
     arm = identity.get("arm")
     if arm not in {"adaptive", "iid"}:
         fail("candidate identity has an invalid arm")
@@ -459,7 +465,7 @@ def verify_geometry(row: dict[str, Any], label: str) -> Fraction:
             fail(f"{label} violates the five-q/five-p product structure")
     verify_factor([(row[0], row[1]) for row in parsed[:5]], "q")
     verify_factor([(row[2], row[3]) for row in parsed[5:]], "p")
-    if row.get("facet_count") != 10:
+    if not exact_integer(row.get("facet_count")) or row.get("facet_count") != 10:
         fail(f"{label} facet count is not fixed 5 x 5")
     if exact_key(raw_vertices) != row.get("exact_geometry_key"):
         fail(f"{label} exact key disagrees with geometry")
@@ -603,6 +609,8 @@ def validate_manifest(
     }
     if any(manifest.get(field) != expected for field, expected in manifest_fixed.items()):
         fail("manifest changes the fixed budget, policy, or claim boundary")
+    if not exact_integer(manifest.get("adaptive_budget")) or not exact_integer(manifest.get("iid_budget")):
+        fail("manifest budgets have non-integer JSON types")
     if not isinstance(manifest["tail_probability_supported"], bool) or not isinstance(
         manifest["factor_exchange_quotiented"], bool
     ):
@@ -729,6 +737,63 @@ def expected_raw_mutation(config: dict[str, Any], before_chart: dict[str, Any], 
             scale = config["centered_log_radius_scale"]
         values[index] += scale * standard_normal(candidate, index)
     return chart_from_coordinates(values)
+
+
+def decode_chart_factor(logits: list[float], log_radii: list[float], origin: float) -> list[list[float]]:
+    maximum = max(0.0, *logits)
+    weights = [math.exp(value - maximum) for value in logits] + [math.exp(-maximum)]
+    weight_sum = sum(weights)
+    gaps = [math.tau * weight / weight_sum for weight in weights]
+    angle = wrap_phase(origin)
+    points: list[list[float]] = []
+    for gap, log_radius in zip(gaps, log_radii):
+        radius = math.exp(log_radius)
+        points.append([radius * math.cos(angle), radius * math.sin(angle)])
+        angle = wrap_phase(angle + gap)
+    return points
+
+
+def dual_geometry_from_raw_chart(chart: dict[str, Any]) -> list[list[float]]:
+    validate_chart_shape(chart, "raw chart geometry decoder")
+    q = decode_chart_factor(chart["q_gap_logits"], chart["q_centered_log_radii"], 0.0)
+    p = decode_chart_factor(
+        chart["p_gap_logits"], chart["p_centered_log_radii"], chart["relative_phase"]
+    )
+    return [[x, y, 0.0, 0.0] for x, y in q] + [[0.0, 0.0, x, y] for x, y in p]
+
+
+def verify_mutation_chart_geometry(row: dict[str, Any], label: str) -> None:
+    expected = dual_geometry_from_raw_chart(row["raw_proposed_chart"])
+    actual = row["dual_vertices_f64"]
+    for expected_vertex, actual_vertex in zip(expected, actual):
+        if any(
+            not math.isclose(left, right, rel_tol=MUTATION_GEOMETRY_TOLERANCE, abs_tol=MUTATION_GEOMETRY_TOLERANCE)
+            for left, right in zip(expected_vertex, actual_vertex)
+        ):
+            fail(f"{label} resulting geometry is not decoded from its raw mutation chart")
+
+
+def verify_diversity_terminal_payload(
+    terminal: dict[str, Any], levels: list[dict[str, Any]], targets: list[dict[str, Any]]
+) -> None:
+    if not levels:
+        fail("diversity-gate terminal evidence has no completed level")
+    final_level = levels[-1]
+    if (
+        terminal["arm"] != "adaptive"
+        or terminal["global_request_index"]
+        != (targets[-1]["global_request_index"] if targets else None)
+        or terminal["candidate_id"] != (targets[-1]["candidate_id"] if targets else None)
+        or terminal["evaluation_status"] is not None
+        or terminal["failure_reason"] is not None
+        or terminal["next_schedule_identity"] is not None
+        or terminal["level"] != final_level["level"]
+        or terminal["observed_distinct_geometry_keys"]
+        != final_level["post_level_distinct_geometry_keys"]
+        or terminal["required_distinct_geometry_keys"] != 8
+        or terminal["observed_distinct_geometry_keys"] >= 8
+    ):
+        fail("diversity-gate terminal evidence disagrees with final completed level")
 
 
 def validate_diagnostics(row: dict[str, Any], label: str) -> None:
@@ -937,6 +1002,10 @@ def verify(
             fail("charged-request ledger candidate ID mismatch")
         if row["arm"] != row["identity"]["arm"]:
             fail("charged-request ledger arm mismatch")
+        if not exact_integer(row["attempt_index"], 1):
+            fail("charged-request ledger attempt index has a non-integer JSON type")
+        if not exact_integer(row["facet_count"]):
+            fail("charged-request ledger facet count has a non-integer JSON type")
         ledger_attempts[row["arm"]].append(row["attempt_index"])
         verify_geometry(row, f"charged ledger row {row['global_request_index']}")
     for arm, indices in ledger_attempts.items():
@@ -1026,11 +1095,23 @@ def verify(
             fail(f"target {candidate} success has failed-miss cache status")
 
     for arm, indices in attempts.items():
-        if indices != list(range(1, len(indices) + 1)):
+        if any(not exact_integer(index, 1) for index in indices) or indices != list(range(1, len(indices) + 1)):
             fail(f"{arm} charged attempt indices are not contiguous from one")
     target_cumulative = [row["cumulative_monotonic_ms"] for row in targets]
     if target_cumulative != sorted(target_cumulative):
         fail("target rows lack ordered cumulative completion times")
+    for index, row in enumerate(targets):
+        charge = ledger[index]["charged_monotonic_ms"]
+        start = row["started_monotonic_ms"]
+        finish = row["cumulative_monotonic_ms"]
+        if not (start <= charge <= finish):
+            fail("target charge/start/completion interval is reversed")
+        if abs(row["wall_time_ms"] - (finish - start)) > MONOTONIC_INTERVAL_TOLERANCE_MS:
+            fail("target wall duration does not reconcile with its monotonic interval")
+        if index and targets[index - 1]["cumulative_monotonic_ms"] > start:
+            fail("target charge/start/completion intervals overlap or are out of sequence")
+    if len(ledger) > len(targets) and targets and ledger[-1]["charged_monotonic_ms"] < target_cumulative[-1]:
+        fail("unmatched interrupted charge precedes the previous target completion")
     actual_schedule = [request_schedule_token(row["identity"]) for row in targets]
     if len(actual_schedule) > len(expected_schedule) or actual_schedule != expected_schedule[: len(actual_schedule)]:
         fail("charged target rows do not follow the frozen global request schedule")
@@ -1049,6 +1130,8 @@ def verify(
     if [(row["arm"], row["exact_geometry_key"]) for row in cache_rows] != expected_cache_order:
         fail("cache JSONL order is not the successful-miss target order")
     for row in cache_rows:
+        if not exact_integer(row.get("facet_count")):
+            fail("cache row facet count has a non-integer JSON type")
         arm_key = (row.get("arm"), row.get("exact_geometry_key"))
         if arm_key in caches or arm_key not in seen_success:
             fail(f"duplicate or orphan cache row {arm_key}")
@@ -1127,7 +1210,9 @@ def verify(
             if candidate_rows[parent].get("root_candidate_id") != root:
                 fail(f"mutation candidate {candidate} breaks root transitivity")
 
-    if [row.get("level") for row in levels] != list(range(len(levels))) or len(levels) > 2:
+    if any(not exact_integer(row.get("level")) for row in levels) or [
+        row.get("level") for row in levels
+    ] != list(range(len(levels))) or len(levels) > 2:
         fail("completed level records are not a zero-based prefix")
     transition_keys: set[tuple[int, int, int]] = set()
     transitions_by_key: dict[tuple[int, int, int], dict[str, Any]] = {}
@@ -1139,11 +1224,13 @@ def verify(
     mutation_by_key = dict(zip(mutation_target_keys, mutation_targets))
     for row in transitions:
         key = (row.get("level"), row.get("clone_index"), row.get("mutation_step"))
-        if key in transition_keys or not all(isinstance(value, int) for value in key):
+        if key in transition_keys or not all(exact_integer(value) for value in key):
             fail(f"duplicate or invalid mutation transition {key}")
         level, clone, step = key
         if not (0 <= level < 2 and 0 <= clone < 8 and 0 <= step < 2):
             fail(f"mutation transition index outside frozen grid {key}")
+        if not isinstance(row.get("accepted"), bool):
+            fail(f"mutation transition {key} acceptance has a non-Boolean JSON type")
         transition_keys.add(key)
         transitions_by_key[key] = row
     transition_file_keys = [
@@ -1163,6 +1250,7 @@ def verify(
     if population and [initial_adaptive[c]["identity"]["base_index"] for c in population] != list(range(len(population))):
         fail("adaptive base indices are not a zero-based prefix")
     completed_populations: list[list[str]] = []
+    diversity_failures: list[dict[str, Any]] = []
     expected_state_by_mutation_key: dict[tuple[int, int, int], str] = {}
     for level in range(2):
         if len(population) < 16:
@@ -1193,6 +1281,7 @@ def verify(
                     fail(f"transition {(level, clone, step)} breaks root transitivity")
                 expected_raw = expected_raw_mutation(config, candidate_rows[state]["product_chart"], identity)
                 charts_close(proposal_row.get("raw_proposed_chart"), expected_raw, RAW_CHART_TOLERANCE, f"proposal {proposal} raw mutation")
+                verify_mutation_chart_geometry(proposal_row, f"proposal {proposal}")
                 proposal_sys = proposal_row.get("sys")
                 accepted = proposal_sys is not None and proposal_sys >= threshold
                 after = proposal if accepted else state
@@ -1226,6 +1315,8 @@ def verify(
         if level >= len(levels):
             fail(f"completed transition grid for level {level} lacks population record")
         row = levels[level]
+        if not exact_integer(row.get("post_level_distinct_geometry_keys")):
+            fail(f"completed level {level} distinct count has a non-integer JSON type")
         expected_parents = [
             expected_clone_parent(config_id, config["master_seed"], level, clone, survivors)
             for clone in range(8)
@@ -1243,7 +1334,7 @@ def verify(
         ):
             fail(f"completed level {level} population/assignment evidence mismatch")
         if len(set(keys)) < 8:
-            fail(f"readiness gate requires eight distinct actual particle states after level {level}")
+            diversity_failures.append(row)
         if len(set(expected_roots)) < 2:
             fail(f"readiness gate requires two survivor roots at level {level}")
     if len(levels) != len(completed_populations):
@@ -1283,6 +1374,8 @@ def verify(
         }
         if stop != expected:
             fail("stop event does not exactly match the final sys > 1 target")
+        if not exact_integer(stop.get("global_request_index"), 1):
+            fail("stop event request index has a non-integer JSON type")
 
     terminal = None
     if interrupted:
@@ -1314,7 +1407,20 @@ def verify(
                 fail("successful/stopped status has unmatched construction rejections")
         else:
             require_fields(terminal, TERMINAL_ERROR_FIELDS, "terminal error evidence")
+            if terminal["global_request_index"] is not None and not exact_integer(
+                terminal["global_request_index"], 1
+            ):
+                fail("terminal error request index has a non-integer JSON type")
+            for field in (
+                "level", "observed_distinct_geometry_keys", "required_distinct_geometry_keys"
+            ):
+                if terminal[field] is not None and not exact_integer(terminal[field]):
+                    fail(f"terminal error {field} has a non-integer JSON type")
             kind_name = terminal["kind"]
+            diversity_fields = (
+                terminal["level"], terminal["observed_distinct_geometry_keys"],
+                terminal["required_distinct_geometry_keys"],
+            )
             if kind_name == "failed_target":
                 if not status["error"].startswith("failed_target:"):
                     fail("failed-target status lacks its structured error prefix")
@@ -1328,6 +1434,7 @@ def verify(
                     or terminal["evaluation_status"] != final["evaluation_status"]
                     or terminal["failure_reason"] != final["failure_reason"]
                     or terminal["next_schedule_identity"] is not None
+                    or any(value is not None for value in diversity_fields)
                 ):
                     fail("failed-target terminal evidence disagrees with final target")
                 if (disposition == "timeout") != (final["evaluation_status"] == "timeout"):
@@ -1355,6 +1462,7 @@ def verify(
                     or terminal["candidate_id"] is not None
                     or terminal["evaluation_status"] is not None
                     or terminal["failure_reason"] is not None
+                    or any(value is not None for value in diversity_fields)
                     or (
                         first_identity["level"] is not None
                         and first_identity["parent_candidate_id"]
@@ -1371,6 +1479,7 @@ def verify(
                     terminal["next_schedule_identity"] is not None
                     or terminal["evaluation_status"] is not None
                     or terminal["failure_reason"] is not None
+                    or any(value is not None for value in diversity_fields)
                     or terminal["global_request_index"] != (targets[-1]["global_request_index"] if targets else None)
                     or terminal["candidate_id"] != (targets[-1]["candidate_id"] if targets else None)
                     or terminal["arm"] not in {"adaptive", "iid"}
@@ -1378,8 +1487,27 @@ def verify(
                     fail("wall-termination evidence disagrees with completed prefix")
                 if not arm_runs or arm_runs[-1]["arm"] != terminal["arm"]:
                     fail("wall-termination evidence lacks its active incomplete arm row")
+            elif kind_name == "post_level_diversity_gate":
+                if not status["error"].startswith("post_level_diversity_gate:"):
+                    fail("diversity-gate status lacks its structured error prefix")
+                if (
+                    disposition != "error"
+                    or failures
+                    or unmatched_rejection_groups
+                    or len(diversity_failures) != 1
+                    or diversity_failures[0] is not levels[-1]
+                ):
+                    fail("diversity-gate status has incompatible terminal evidence")
+                verify_diversity_terminal_payload(terminal, levels, targets)
             else:
                 fail("terminal error evidence has unknown kind")
+
+    if diversity_failures and (
+        interrupted
+        or terminal is None
+        or terminal.get("kind") != "post_level_diversity_gate"
+    ):
+        fail("low-diversity completed level lacks matching terminal evidence")
 
     charged_counts = {arm: len(indices) for arm, indices in attempts.items()}
     if status is not None:
@@ -1420,6 +1548,14 @@ def verify(
         if arm in runs_by_arm or arm not in attempts:
             fail("duplicate or invalid arm-run row")
         runs_by_arm[arm] = row
+        for field in (
+            "target_attempts", "construction_rejections", "cache_misses", "cache_hits",
+            "failed_misses", "distinct_successful_keys",
+        ):
+            if not exact_integer(row.get(field)):
+                fail(f"{arm} arm-run {field} has a non-integer JSON type")
+        if not isinstance(row.get("complete"), bool):
+            fail(f"{arm} arm-run completion has a non-Boolean JSON type")
         if row.get("target_attempts") != charged_counts[arm]:
             fail(f"{arm} arm-run target count mismatch")
         if row.get("construction_rejections") != rejection_counts[arm]:
@@ -1439,8 +1575,11 @@ def verify(
             fail(f"{arm} arm-run monotonic start invalid")
         if not finite_number(row.get("cumulative_monotonic_ms")) or row["cumulative_monotonic_ms"] < 0:
             fail(f"{arm} arm-run cumulative time invalid")
-        if row["wall_time_ms"] > row["cumulative_monotonic_ms"] - row["started_monotonic_ms"] + 5.0:
-            fail(f"{arm} arm-run duration exceeds its cumulative interval")
+        if abs(
+            row["wall_time_ms"]
+            - (row["cumulative_monotonic_ms"] - row["started_monotonic_ms"])
+        ) > MONOTONIC_INTERVAL_TOLERANCE_MS:
+            fail(f"{arm} arm-run duration does not reconcile with its cumulative interval")
         arm_target_ms = sum(target["wall_time_ms"] for target in targets if target["arm"] == arm)
         if arm_target_ms > row["wall_time_ms"] + 20.0:
             fail(f"{arm} target times exceed arm-run time")
@@ -1451,6 +1590,16 @@ def verify(
     arm_cumulative = [row["cumulative_monotonic_ms"] for row in arm_runs]
     if arm_cumulative != sorted(arm_cumulative) or (status is not None and arm_cumulative and arm_cumulative[-1] > total_ms):
         fail("arm-run cumulative endpoints are not ordered within total time")
+    for index, row in enumerate(arm_runs):
+        if index and arm_runs[index - 1]["cumulative_monotonic_ms"] > row["started_monotonic_ms"]:
+            fail("arm-run monotonic intervals overlap")
+        arm_targets = [target for target in targets if target["arm"] == row["arm"]]
+        if any(
+            target["started_monotonic_ms"] < row["started_monotonic_ms"]
+            or target["cumulative_monotonic_ms"] > row["cumulative_monotonic_ms"]
+            for target in arm_targets
+        ):
+            fail(f"{row['arm']} target interval lies outside its arm interval")
 
     if not interrupted:
         if disposition == "complete":
@@ -1474,8 +1623,28 @@ def verify(
         if len(arm_runs) == 2 and arm_runs[0]["complete"] is not True:
             fail("interrupted IID phase lacks completed adaptive arm")
 
-    readiness_passed = disposition == "complete"
-    if readiness_passed:
+    deadline_ms = config["abort_wall_time_seconds"] * 1_000.0
+    if not interrupted and terminal is not None and terminal["kind"] == "wall_termination":
+        active_endpoint = arm_runs[-1]["cumulative_monotonic_ms"]
+        if abs(active_endpoint - deadline_ms) > DEADLINE_RECONCILIATION_TOLERANCE_MS:
+            fail("wall-termination arm endpoint does not reconcile with the frozen deadline")
+        if total_ms < active_endpoint or total_ms - active_endpoint > DEADLINE_RECONCILIATION_TOLERANCE_MS:
+            fail("wall-termination finalization does not reconcile with its arm endpoint")
+    if (
+        not interrupted
+        and terminal is not None
+        and terminal["kind"] == "failed_target"
+        and terminal["evaluation_status"] == "timeout"
+    ):
+        final_timeout_ms = targets[-1]["cumulative_monotonic_ms"]
+        if final_timeout_ms > deadline_ms + DEADLINE_RECONCILIATION_TOLERANCE_MS:
+            fail("timeout completion exceeds the frozen deadline tolerance")
+        if kind == "production_target" and abs(final_timeout_ms - deadline_ms) > DEADLINE_RECONCILIATION_TOLERANCE_MS:
+            fail("production timeout does not reconcile with the frozen global deadline")
+
+    complete = disposition == "complete"
+    readiness_passed = complete and kind == "production_target"
+    if complete:
         if len(targets) != 64 or attempts != {"adaptive": list(range(1, 49)), "iid": list(range(1, 17))}:
             fail("complete smoke does not close the exact 48/16 charged budgets")
         if len(transitions) != 32 or transition_keys != {

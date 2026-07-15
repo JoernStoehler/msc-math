@@ -158,7 +158,9 @@ checkout.
   when applicable, matching run ID, end wall timestamp, charged counts, total
   monotonic wall time, and SHA-256 of every owning artifact except itself.
 
-Only disposition `complete` can pass readiness. It requires exactly 48/16
+Only a `production_target` artifact with disposition `complete` can pass
+readiness. A complete synthetic packet verifies plumbing but reports
+`readiness_passed: false`. Production readiness requires exactly 48/16
 charged rows, exact base/mutation grids and retry histories, two complete level
 populations with at least eight distinct exact geometry keys each, at least two
 survivor roots per level, at least one accepted valid mutation, no failed row,
@@ -178,7 +180,13 @@ and wall/monotonic timing. Wall and monotonic elapsed times must agree within
 100 ms, allowing millisecond quantization and short finalization scheduling but
 failing closed on a material clock adjustment. Production cache audit checks the full
 `OrbitSearchResult`/orbit schemas and independently derives admissibility
-counts, action minima, interval minima, and capacity from retained orbits.
+counts, action minima, interval minima, and capacity from retained orbits. It
+intentionally does not reimplement the shared capacity/KKT algorithm. The
+readiness scope is source-pinned generation plus independent geometry, chart,
+SHA-Gaussian mutation, accounting, and retained-result structure/derivation
+checks. In particular, each charged mutation geometry is independently decoded
+from its retained raw chart before its canonical chart is checked. Any
+`sys > 1` result still requires independent target validation.
 Exact geometry coordinates use reduced `numerator/positive-denominator`
 spelling, including `0/1`.
 

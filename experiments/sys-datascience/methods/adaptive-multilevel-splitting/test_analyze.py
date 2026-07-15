@@ -148,10 +148,11 @@ class AnalyzerCorruptionTests(unittest.TestCase):
             env=environment,
         )
 
-    def test_normal_fixture_passes_only_readiness_gate(self):
+    def test_normal_synthetic_fixture_is_verified_but_never_production_ready(self):
         result = verify(self.directory)
         self.assertTrue(result["verified"])
-        self.assertTrue(result["readiness_passed"])
+        self.assertFalse(result["readiness_passed"])
+        self.assertEqual(result["artifact_kind"], "synthetic_target_free")
         self.assertIsNone(result["probability_estimate"])
 
     def test_forced_hit_is_auditable_but_not_readiness(self):
@@ -228,6 +229,49 @@ class AnalyzerCorruptionTests(unittest.TestCase):
         self.rehash()
         self.assert_corrupt("ordered cumulative monotonic")
 
+    def test_integer_schema_rejects_boolean_attempt_index(self):
+        targets = self.load_jsonl("target-evaluations.jsonl")
+        ledger = self.load_jsonl("charged-requests.jsonl")
+        targets[0]["attempt_index"] = True
+        ledger[0]["attempt_index"] = True
+        self.store_jsonl("target-evaluations.jsonl", targets)
+        self.store_jsonl("charged-requests.jsonl", ledger)
+        self.rehash()
+        self.assert_corrupt("attempt index has a non-integer")
+
+    def test_integer_schema_rejects_boolean_mutation_and_level_indices(self):
+        transitions = self.load_jsonl("mutation-transitions.jsonl")
+        transitions[0]["clone_index"] = False
+        self.store_jsonl("mutation-transitions.jsonl", transitions)
+        self.rehash()
+        self.assert_corrupt("invalid mutation transition")
+        shutil.rmtree(self.directory)
+        shutil.copytree(self.normal, self.directory)
+        levels = self.load_jsonl("levels.jsonl")
+        levels[0]["level"] = False
+        self.store_jsonl("levels.jsonl", levels)
+        self.rehash()
+        self.assert_corrupt("zero-based prefix")
+
+    def test_target_intervals_must_be_sequential_and_nonoverlapping(self):
+        targets = self.load_jsonl("target-evaluations.jsonl")
+        previous_finish = targets[0]["cumulative_monotonic_ms"]
+        targets[1]["started_monotonic_ms"] = previous_finish - 0.5
+        targets[1]["wall_time_ms"] = (
+            targets[1]["cumulative_monotonic_ms"] - targets[1]["started_monotonic_ms"]
+        )
+        self.store_jsonl("target-evaluations.jsonl", targets)
+        self.rehash()
+        self.assert_corrupt("intervals overlap")
+
+    def test_arm_intervals_must_be_sequential_and_nonoverlapping(self):
+        runs = self.load_jsonl("arm-runs.jsonl")
+        runs[1]["started_monotonic_ms"] = runs[0]["cumulative_monotonic_ms"] - 0.5
+        runs[1]["wall_time_ms"] = runs[1]["cumulative_monotonic_ms"] - runs[1]["started_monotonic_ms"]
+        self.store_jsonl("arm-runs.jsonl", runs)
+        self.rehash()
+        self.assert_corrupt("arm-run monotonic intervals overlap")
+
     def test_exact_row_schema_rejects_extra_key(self):
         targets = self.load_jsonl("target-evaluations.jsonl")
         targets[0]["unexpected"] = True
@@ -277,6 +321,9 @@ class AnalyzerCorruptionTests(unittest.TestCase):
                 "evaluation_status": None,
                 "failure_reason": None,
                 "next_schedule_identity": first_identity,
+                "level": None,
+                "observed_distinct_geometry_keys": None,
+                "required_distinct_geometry_keys": None,
             },
         )
         self.store("run-status.json", status)
@@ -300,13 +347,60 @@ class AnalyzerCorruptionTests(unittest.TestCase):
                 "evaluation_status": None,
                 "failure_reason": None,
                 "next_schedule_identity": None,
+                "level": None,
+                "observed_distinct_geometry_keys": None,
+                "required_distinct_geometry_keys": None,
             },
         )
+        deadline_ms = self.load("manifest.json")["exact_config"]["abort_wall_time_seconds"] * 1000
+        runs = self.load_jsonl("arm-runs.jsonl")
+        active = runs[-1]
+        active["cumulative_monotonic_ms"] = deadline_ms
+        active["wall_time_ms"] = deadline_ms - active["started_monotonic_ms"]
+        self.store_jsonl("arm-runs.jsonl", runs)
+        status["total_monotonic_wall_time_ms"] = deadline_ms
+        manifest = self.load("manifest.json")
+        status["end_unix_ms"] = manifest["start_unix_ms"] + deadline_ms
         self.store("run-status.json", status)
         self.rehash()
         result = verify(self.directory)
         self.assertEqual(result["disposition"], "error")
         self.assertFalse(result["readiness_passed"])
+        runs = self.load_jsonl("arm-runs.jsonl")
+        runs[-1]["cumulative_monotonic_ms"] = deadline_ms - 200
+        runs[-1]["wall_time_ms"] = (
+            runs[-1]["cumulative_monotonic_ms"] - runs[-1]["started_monotonic_ms"]
+        )
+        self.store_jsonl("arm-runs.jsonl", runs)
+        status = self.load("run-status.json")
+        status["total_monotonic_wall_time_ms"] = deadline_ms - 200
+        status["end_unix_ms"] = manifest["start_unix_ms"] + deadline_ms - 200
+        self.store("run-status.json", status)
+        self.rehash()
+        self.assert_corrupt("frozen deadline")
+
+    def test_diversity_terminal_payload_matches_final_completed_level(self):
+        level = {
+            "level": 0,
+            "post_level_distinct_geometry_keys": 7,
+        }
+        target = {"global_request_index": 32, "candidate_id": "last"}
+        terminal = {
+            "kind": "post_level_diversity_gate",
+            "arm": "adaptive",
+            "global_request_index": 32,
+            "candidate_id": "last",
+            "evaluation_status": None,
+            "failure_reason": None,
+            "next_schedule_identity": None,
+            "level": 0,
+            "observed_distinct_geometry_keys": 7,
+            "required_distinct_geometry_keys": 8,
+        }
+        analyze.verify_diversity_terminal_payload(terminal, [level], [target])
+        terminal["observed_distinct_geometry_keys"] = 8
+        with self.assertRaisesRegex(ArtifactError, "final completed level"):
+            analyze.verify_diversity_terminal_payload(terminal, [level], [target])
 
     def test_strict_json_rejects_duplicate_keys_and_nonstandard_constants(self):
         with self.assertRaisesRegex(ValueError, "duplicate"):
@@ -400,6 +494,65 @@ class AnalyzerCorruptionTests(unittest.TestCase):
         self.store_jsonl("target-evaluations.jsonl", targets)
         self.rehash()
         self.assert_corrupt("raw mutation|charged ledger row")
+
+    def test_raw_mutation_is_bound_to_resulting_geometry_and_canonical_chart(self):
+        targets = self.load_jsonl("target-evaluations.jsonl")
+        transitions = self.load_jsonl("mutation-transitions.jsonl")
+        transition = next(row for row in transitions if not row["accepted"])
+        proposal = next(
+            row for row in targets if row["candidate_id"] == transition["proposal_candidate_id"]
+        )
+        self.assertEqual(proposal["cache_status"], "miss")
+        adaptive_keys = {
+            row["exact_geometry_key"] for row in targets if row["arm"] == "adaptive"
+        }
+        donor = next(
+            row
+            for row in targets
+            if row["arm"] == "iid"
+            and row["evaluation_status"] == "success"
+            and row["exact_geometry_key"] not in adaptive_keys
+        )
+        new_sys = max(0.1, transition["frozen_threshold"] - 0.05)
+        new_capacity = (2.0 * donor["volume"] * new_sys) ** 0.5
+        geometry_fields = (
+            "exact_geometry_key", "geometry_identity", "dual_vertices_rational",
+            "dual_vertices_f64", "facet_count", "product_chart",
+        )
+        for field in geometry_fields:
+            proposal[field] = copy.deepcopy(donor[field])
+        proposal["capacity"] = new_capacity
+        proposal["volume"] = donor["volume"]
+        proposal["sys"] = new_sys
+        proposal["diagnostics"] = copy.deepcopy(donor["diagnostics"])
+        proposal["diagnostics"]["action_lower"] = new_capacity
+        proposal["diagnostics"]["action_upper"] = new_capacity
+        original_key = next(
+            row["exact_geometry_key"]
+            for row in self.load_jsonl("charged-requests.jsonl")
+            if row["candidate_id"] == proposal["candidate_id"]
+        )
+        ledger = self.load_jsonl("charged-requests.jsonl")
+        charge = next(row for row in ledger if row["candidate_id"] == proposal["candidate_id"])
+        for field in geometry_fields:
+            charge[field] = copy.deepcopy(proposal[field])
+        caches = self.load_jsonl("cache.jsonl")
+        cache = next(
+            row
+            for row in caches
+            if row["arm"] == "adaptive" and row["exact_geometry_key"] == original_key
+        )
+        for field in geometry_fields:
+            cache[field] = copy.deepcopy(proposal[field])
+        for field in ("capacity", "volume", "sys", "diagnostics", "audit_kind"):
+            cache[field] = copy.deepcopy(proposal[field])
+        transition["proposal_sys"] = new_sys
+        self.store_jsonl("target-evaluations.jsonl", targets)
+        self.store_jsonl("charged-requests.jsonl", ledger)
+        self.store_jsonl("cache.jsonl", caches)
+        self.store_jsonl("mutation-transitions.jsonl", transitions)
+        self.rehash()
+        self.assert_corrupt("resulting geometry is not decoded from its raw mutation chart")
 
     def test_successful_retry_requires_all_preceding_rejections(self):
         targets = self.load_jsonl("target-evaluations.jsonl")
