@@ -1,0 +1,195 @@
+{
+  "schema": "generator-orientation-target-pilot-selection-v1",
+  "source_path": "/workspaces/msc-math/.worktrees/generator-orientation-target-pilot/experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl",
+  "source_sha256": "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367",
+  "source_report_path": "/workspaces/msc-math/.worktrees/generator-orientation-target-pilot/experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/report.json",
+  "source_report_sha256": "02b7084141c0f2422aaabf1516fa62af501963ce638b9df3ef756c762722d61c",
+  "required_source_sha256": "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367",
+  "required_source_report_sha256": "02b7084141c0f2422aaabf1516fa62af501963ce638b9df3ef756c762722d61c",
+  "rows": 24,
+  "buckets": [
+    "3x3",
+    "4x4",
+    "4x6",
+    "6x6"
+  ],
+  "bases_per_bucket": 2,
+  "variants": [
+    "identity",
+    "u2-haar",
+    "so4-haar"
+  ],
+  "pair_key": "base_id",
+  "selected": [
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0/attempt=0",
+      "bucket": "3x3",
+      "map_variant": "identity",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0/attempt=0/map=identity",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0/attempt=0/map=identity"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0/attempt=0",
+      "bucket": "3x3",
+      "map_variant": "so4-haar",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0/attempt=0/map=so4-haar",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0/attempt=0/map=so4-haar"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0/attempt=0",
+      "bucket": "3x3",
+      "map_variant": "u2-haar",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0/attempt=0/map=u2-haar",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0/attempt=0/map=u2-haar"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=1/attempt=63",
+      "bucket": "3x3",
+      "map_variant": "identity",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=1/attempt=63/map=identity",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=1/attempt=63/map=identity"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=1/attempt=63",
+      "bucket": "3x3",
+      "map_variant": "so4-haar",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=1/attempt=63/map=so4-haar",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=1/attempt=63/map=so4-haar"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=1/attempt=63",
+      "bucket": "3x3",
+      "map_variant": "u2-haar",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=1/attempt=63/map=u2-haar",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=1/attempt=63/map=u2-haar"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=0/attempt=1",
+      "bucket": "4x4",
+      "map_variant": "identity",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=0/attempt=1/map=identity",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=0/attempt=1/map=identity"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=0/attempt=1",
+      "bucket": "4x4",
+      "map_variant": "so4-haar",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=0/attempt=1/map=so4-haar",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=0/attempt=1/map=so4-haar"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=0/attempt=1",
+      "bucket": "4x4",
+      "map_variant": "u2-haar",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=0/attempt=1/map=u2-haar",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=0/attempt=1/map=u2-haar"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=1/attempt=0",
+      "bucket": "4x4",
+      "map_variant": "identity",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=1/attempt=0/map=identity",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=1/attempt=0/map=identity"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=1/attempt=0",
+      "bucket": "4x4",
+      "map_variant": "so4-haar",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=1/attempt=0/map=so4-haar",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=1/attempt=0/map=so4-haar"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=1/attempt=0",
+      "bucket": "4x4",
+      "map_variant": "u2-haar",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=1/attempt=0/map=u2-haar",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=1/attempt=0/map=u2-haar"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=0/attempt=14",
+      "bucket": "4x6",
+      "map_variant": "identity",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=0/attempt=14/map=identity",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=0/attempt=14/map=identity"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=0/attempt=14",
+      "bucket": "4x6",
+      "map_variant": "so4-haar",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=0/attempt=14/map=so4-haar",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=0/attempt=14/map=so4-haar"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=0/attempt=14",
+      "bucket": "4x6",
+      "map_variant": "u2-haar",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=0/attempt=14/map=u2-haar",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=0/attempt=14/map=u2-haar"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=1/attempt=15",
+      "bucket": "4x6",
+      "map_variant": "identity",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=1/attempt=15/map=identity",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=1/attempt=15/map=identity"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=1/attempt=15",
+      "bucket": "4x6",
+      "map_variant": "so4-haar",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=1/attempt=15/map=so4-haar",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=1/attempt=15/map=so4-haar"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=1/attempt=15",
+      "bucket": "4x6",
+      "map_variant": "u2-haar",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=1/attempt=15/map=u2-haar",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=1/attempt=15/map=u2-haar"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=0/attempt=17",
+      "bucket": "6x6",
+      "map_variant": "identity",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=0/attempt=17/map=identity",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=0/attempt=17/map=identity"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=0/attempt=17",
+      "bucket": "6x6",
+      "map_variant": "so4-haar",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=0/attempt=17/map=so4-haar",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=0/attempt=17/map=so4-haar"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=0/attempt=17",
+      "bucket": "6x6",
+      "map_variant": "u2-haar",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=0/attempt=17/map=u2-haar",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=0/attempt=17/map=u2-haar"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=1/attempt=2",
+      "bucket": "6x6",
+      "map_variant": "identity",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=1/attempt=2/map=identity",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=1/attempt=2/map=identity"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=1/attempt=2",
+      "bucket": "6x6",
+      "map_variant": "so4-haar",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=1/attempt=2/map=so4-haar",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=1/attempt=2/map=so4-haar"
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=1/attempt=2",
+      "bucket": "6x6",
+      "map_variant": "u2-haar",
+      "sample_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=1/attempt=2/map=u2-haar",
+      "transformed_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=1/attempt=2/map=u2-haar"
+    }
+  ],
+  "target_fields_present": false,
+  "target_calls": 0
+}
