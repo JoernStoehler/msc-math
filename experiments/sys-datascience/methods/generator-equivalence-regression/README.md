@@ -17,6 +17,13 @@ The producer rejects optimized Python because its exact witness and schema
 guards deliberately use assertions; `python3 -O` is not an authorized replay
 mode.
 
+Independent positive factor scalings are not a broad geometry-coverage
+collapse: direct Euclidean and signed/absolute symplectic features change.
+Collapse those arms only after independently area-normalizing both factors, or
+when a consumer explicitly declares a quotient/invariance under independent
+positive factor scalings. Capacity and `sys` equivalence remain separately
+theorem-gated.
+
 The crucial law boundary is narrow. Sorted IID uniform angles and
 Dirichlet-(1,...,1) cyclic gaps agree as an angle proposal after accounting for
 a common uniform rotation and cyclic root, including under the same angle-only
@@ -53,9 +60,12 @@ collapsed.
 
 Generation is fail-closed on an exact clean source revision. The retained
 provenance binds that whole-repository revision/tree, the copy-local producer,
-all checked local sources, and each artifact byte string. From the final packet
-commit, the cheap replay check regenerates the matrix and witnesses in memory
-and compares bytes and hashes:
+all checked local sources, and each artifact byte string. Replay also requires
+the exact matrix/row/witness/provenance schemas, nonempty collapse rules, exact
+source/artifact/output path sets, revision-tree agreement, clean flags, and
+matching byte counts and hashes. Extra or omitted output-tree entries fail.
+From the final packet commit, the cheap replay check regenerates the matrix and
+witnesses in memory and compares bytes and hashes:
 
 ```bash
 python3 experiments/sys-datascience/methods/generator-equivalence-regression/produce.py --check

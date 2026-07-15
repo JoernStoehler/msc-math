@@ -66,6 +66,67 @@ SOURCE_PATHS = (
     "crates/euclidean-polytopes/DEVELOPMENT.md",
     "thesis/02-preliminaries-polytope-input-language.tex",
 )
+ROW_FIELDS = frozenset({
+    "row_id", "objects_laws", "level", "hypotheses_conditioning",
+    "transformation", "expected", "proof_status", "proof_source",
+    "arithmetic", "executable_control_status", "executable_control",
+    "collapse_scope",
+})
+WITNESS_FIELDS = frozenset({"row_id", "status", "evidence"})
+MATRIX_FIELDS = frozenset({
+    "schema", "complete", "target_free", "views", "view_definitions",
+    "outcome_vocabulary", "row_count", "counts_by_level",
+    "counts_by_proof_status", "counts_by_executable_control_status", "rows",
+})
+WITNESS_DOCUMENT_FIELDS = frozenset({
+    "schema", "complete", "witness_count", "witnesses",
+})
+PROVENANCE_FIELDS = frozenset({
+    "schema", "complete", "command", "source_revision",
+    "source_repository_tree", "source_tracked_clean",
+    "untracked_files_ignored_by_clean_predicate", "producer",
+    "producer_sha256", "producer_bytes", "source_inputs", "artifacts",
+    "independence_unit", "interpretation_boundary",
+})
+BYTE_RECORD_FIELDS = frozenset({"sha256", "bytes"})
+SOURCE_RECORD_FIELDS = frozenset({"path", "sha256", "bytes"})
+ARTIFACT_NAMES = frozenset({"matrix.json", "matrix.tsv", "witnesses.json"})
+OUTPUT_PATHS = ARTIFACT_NAMES | {"provenance.json"}
+
+
+class PacketValidationError(ValueError):
+    """A fail-closed packet schema, provenance, or replay failure."""
+
+
+def require(condition, message):
+    if not condition:
+        raise PacketValidationError(message)
+
+
+def require_exact_keys(value, expected_keys, where):
+    require(isinstance(value, dict), f"{where}: expected object")
+    actual = set(value)
+    require(
+        actual == set(expected_keys),
+        f"{where}: keys differ; missing={sorted(set(expected_keys) - actual)}, extra={sorted(actual - set(expected_keys))}",
+    )
+
+
+def require_nonempty_text(value, where):
+    require(isinstance(value, str) and bool(value.strip()), f"{where}: expected nonempty text")
+
+
+def validate_byte_record_shape(record, where):
+    require_exact_keys(record, BYTE_RECORD_FIELDS, where)
+    require(isinstance(record["bytes"], int) and record["bytes"] >= 0, f"{where}.bytes: expected nonnegative integer")
+    require_nonempty_text(record["sha256"], f"{where}.sha256")
+    require(len(record["sha256"]) == 64 and set(record["sha256"]) <= set("0123456789abcdef"), f"{where}.sha256: expected lowercase SHA-256")
+
+
+def validate_byte_record(record, data, where):
+    validate_byte_record_shape(record, where)
+    require(record["bytes"] == len(data), f"{where}: byte count mismatch")
+    require(record["sha256"] == sha256(data), f"{where}: SHA-256 mismatch")
 
 
 def sha256(data: bytes) -> str:
@@ -260,7 +321,7 @@ def rows():
             "proof_source": ["experiments/sys-datascience/methods/ridge-endpoint-path/notes/endpoint-predictions.md: factor-scale gauge", f"{zoo}/README.md: transformation contracts"],
             "arithmetic": "exact rational",
             "executable_control": "pass: A^T J A=ab J, determinant=a^2b^2, normalized area/volume ratios",
-            "collapse_scope": "collapse factor-scale arms in target-free geometry-coverage accounting; target equivalence requires a separately sourced conformal-invariance argument",
+            "collapse_scope": "collapse only after independently area-normalizing both factors, or for a consumer that explicitly declares a quotient/invariance under independent positive factor scalings; capacity/sys equivalence remains separately theorem-gated",
         },
         {
             "row_id": "simultaneous-common-factor-rotation",
@@ -548,31 +609,72 @@ def json_bytes(value):
     return (json.dumps(jsonable(value), indent=2, sort_keys=True) + "\n").encode()
 
 
+def row_counts(matrix_rows):
+    level_counts = {level: sum(r["level"] == level for r in matrix_rows) for level in sorted(LEVELS)}
+    proof_counts = {}
+    control_counts = {}
+    for row in matrix_rows:
+        proof_counts[row["proof_status"]] = proof_counts.get(row["proof_status"], 0) + 1
+        status = row["executable_control_status"]
+        control_counts[status] = control_counts.get(status, 0) + 1
+    return level_counts, dict(sorted(proof_counts.items())), dict(sorted(control_counts.items()))
+
+
 def validate_matrix(matrix_rows, witnesses):
+    require(isinstance(matrix_rows, list) and bool(matrix_rows), "rows: expected nonempty list")
+    require(isinstance(witnesses, list) and bool(witnesses), "witnesses: expected nonempty list")
+    for index, row in enumerate(matrix_rows):
+        where = f"rows[{index}]"
+        require_exact_keys(row, ROW_FIELDS, where)
+        for field in ROW_FIELDS - {"expected", "proof_source"}:
+            require_nonempty_text(row[field], f"{where}.{field}")
+        require(row["level"] in LEVELS, f"{where}.level: unknown level")
+        require_exact_keys(row["expected"], VIEWS, f"{where}.expected")
+        require(set(row["expected"].values()) <= OUTCOMES, f"{where}.expected: unknown outcome")
+        require(isinstance(row["proof_source"], list) and bool(row["proof_source"]), f"{where}.proof_source: expected nonempty list")
+        require(all(isinstance(source, str) and source.strip() for source in row["proof_source"]), f"{where}.proof_source: empty/non-text source")
+        require(row["executable_control_status"] == row["executable_control"].split(":", 1)[0], f"{where}: executable control status/detail disagree")
+        require(bool(row["collapse_scope"].strip()), f"{where}.collapse_scope: empty allocation rule")
+    for index, witness in enumerate(witnesses):
+        where = f"witnesses[{index}]"
+        require_exact_keys(witness, WITNESS_FIELDS, where)
+        require_nonempty_text(witness["row_id"], f"{where}.row_id")
+        require(witness["status"] == "pass", f"{where}.status: expected pass")
+        require(isinstance(witness["evidence"], dict) and bool(witness["evidence"]), f"{where}.evidence: expected nonempty object")
     ids = [r["row_id"] for r in matrix_rows]
-    assert ids == sorted(ids) or len(ids) == len(set(ids))
-    assert len(ids) == len(set(ids))
-    assert all(r["level"] in LEVELS for r in matrix_rows)
-    assert all(set(r["expected"]) == set(VIEWS) for r in matrix_rows)
-    assert all(set(r["expected"].values()) <= OUTCOMES for r in matrix_rows)
-    assert {w["row_id"] for w in witnesses} == set(ids)
-    assert all(w["status"] == "pass" for w in witnesses)
-    assert any(r["level"] == "not_equivalent" for r in matrix_rows)
-    assert any("proof_pending" in r["proof_status"] for r in matrix_rows)
-    assert not any("capacity" in r["expected"] or "sys" in r["expected"] for r in matrix_rows)
+    require(len(ids) == len(set(ids)), "rows: duplicate row_id")
+    witness_ids = [w["row_id"] for w in witnesses]
+    require(len(witness_ids) == len(set(witness_ids)), "witnesses: duplicate row_id")
+    require(set(witness_ids) == set(ids), "rows/witnesses: row_id sets differ")
+    require(any(r["level"] == "not_equivalent" for r in matrix_rows), "rows: missing negative control")
+    require(any("proof_pending" in r["proof_status"] for r in matrix_rows), "rows: missing proof-pending boundary")
+
+
+def validate_matrix_documents(matrix, witness_document):
+    require_exact_keys(matrix, MATRIX_FIELDS, "matrix")
+    require(matrix["schema"] == SCHEMA, "matrix.schema mismatch")
+    require(matrix["complete"] is True, "matrix.complete must be true")
+    require(matrix["target_free"] is True, "matrix.target_free must be true")
+    require(matrix["views"] == list(VIEWS), "matrix.views mismatch")
+    require(matrix["view_definitions"] == VIEW_DEFINITIONS, "matrix.view_definitions mismatch")
+    require(matrix["outcome_vocabulary"] == sorted(OUTCOMES), "matrix.outcome_vocabulary mismatch")
+    require_exact_keys(witness_document, WITNESS_DOCUMENT_FIELDS, "witness_document")
+    require(witness_document["schema"] == SCHEMA + "-witnesses", "witness_document.schema mismatch")
+    require(witness_document["complete"] is True, "witness_document.complete must be true")
+    validate_matrix(matrix["rows"], witness_document["witnesses"])
+    require(matrix["row_count"] == len(matrix["rows"]), "matrix.row_count mismatch")
+    require(witness_document["witness_count"] == len(witness_document["witnesses"]), "witness_document.witness_count mismatch")
+    level_counts, proof_counts, control_counts = row_counts(matrix["rows"])
+    require(matrix["counts_by_level"] == level_counts, "matrix.counts_by_level mismatch")
+    require(matrix["counts_by_proof_status"] == proof_counts, "matrix.counts_by_proof_status mismatch")
+    require(matrix["counts_by_executable_control_status"] == control_counts, "matrix.counts_by_executable_control_status mismatch")
 
 
 def artifact_payloads():
     matrix_rows = rows()
     witnesses = witness_results()
     validate_matrix(matrix_rows, witnesses)
-    level_counts = {level: sum(r["level"] == level for r in matrix_rows) for level in sorted(LEVELS)}
-    status_counts = {}
-    control_status_counts = {}
-    for r in matrix_rows:
-        status_counts[r["proof_status"]] = status_counts.get(r["proof_status"], 0) + 1
-        status = r["executable_control_status"]
-        control_status_counts[status] = control_status_counts.get(status, 0) + 1
+    level_counts, status_counts, control_status_counts = row_counts(matrix_rows)
     matrix = {
         "schema": SCHEMA,
         "complete": True,
@@ -582,8 +684,8 @@ def artifact_payloads():
         "outcome_vocabulary": sorted(OUTCOMES),
         "row_count": len(matrix_rows),
         "counts_by_level": level_counts,
-        "counts_by_proof_status": dict(sorted(status_counts.items())),
-        "counts_by_executable_control_status": dict(sorted(control_status_counts.items())),
+        "counts_by_proof_status": status_counts,
+        "counts_by_executable_control_status": control_status_counts,
         "rows": matrix_rows,
     }
     tsv = io.StringIO()
@@ -595,19 +697,16 @@ def artifact_payloads():
         flat.update(row["expected"])
         flat["proof_source"] = " | ".join(row["proof_source"])
         writer.writerow(flat)
+    witness_document = {"schema": SCHEMA + "-witnesses", "complete": True, "witness_count": len(witnesses), "witnesses": witnesses}
+    validate_matrix_documents(matrix, witness_document)
     return {
         "matrix.json": json_bytes(matrix),
         "matrix.tsv": tsv.getvalue().encode(),
-        "witnesses.json": json_bytes({"schema": SCHEMA + "-witnesses", "complete": True, "witness_count": len(witnesses), "witnesses": witnesses}),
+        "witnesses.json": json_bytes(witness_document),
     }
 
 
-def provenance(payloads, command, expected_revision):
-    head = run_git("rev-parse", "HEAD")
-    if head != expected_revision:
-        raise SystemExit(f"HEAD {head} does not equal --expected-revision {expected_revision}")
-    if subprocess.run(["git", "diff", "--quiet", "--ignore-submodules", "--"], cwd=REPO).returncode or subprocess.run(["git", "diff", "--cached", "--quiet", "--ignore-submodules", "--"], cwd=REPO).returncode:
-        raise SystemExit("tracked worktree must be clean before artifact generation")
+def provenance_document(payloads, command, revision, tree):
     inputs = []
     for relative in SOURCE_PATHS:
         data = (REPO / relative).read_bytes()
@@ -617,17 +716,97 @@ def provenance(payloads, command, expected_revision):
         "schema": SCHEMA + "-provenance",
         "complete": True,
         "command": command,
-        "source_revision": head,
-        "source_repository_tree": run_git("rev-parse", "HEAD^{tree}"),
+        "source_revision": revision,
+        "source_repository_tree": tree,
         "source_tracked_clean": True,
         "untracked_files_ignored_by_clean_predicate": True,
         "producer": str(Path(__file__).relative_to(REPO)),
         "producer_sha256": sha256(producer),
+        "producer_bytes": len(producer),
         "source_inputs": inputs,
         "artifacts": {name: {"sha256": sha256(data), "bytes": len(data)} for name, data in sorted(payloads.items())},
         "independence_unit": "one deterministic synthetic witness per matrix row; probability-law rows are theorem-backed bijection controls, not Monte Carlo samples",
         "interpretation_boundary": "Target-free regression infrastructure only. It supports only the named algebraic, marginal, pushforward, orbit, and negative-control statements; it contains no sys/capacity evaluation or population comparison.",
     }
+
+
+def validate_provenance_schema(prov):
+    require_exact_keys(prov, PROVENANCE_FIELDS, "provenance")
+    require(prov["schema"] == SCHEMA + "-provenance", "provenance.schema mismatch")
+    require(prov["complete"] is True, "provenance.complete must be true")
+    require(prov["source_tracked_clean"] is True, "provenance.source_tracked_clean must be true")
+    require(prov["untracked_files_ignored_by_clean_predicate"] is True, "provenance clean predicate mismatch")
+    for field in ("command", "source_revision", "source_repository_tree", "producer", "producer_sha256", "independence_unit", "interpretation_boundary"):
+        require_nonempty_text(prov[field], f"provenance.{field}")
+    require(isinstance(prov["producer_bytes"], int) and prov["producer_bytes"] >= 0, "provenance.producer_bytes: expected nonnegative integer")
+    require(prov["producer"] == str(Path(__file__).relative_to(REPO)), "provenance.producer path mismatch")
+    validate_byte_record_shape({"sha256": prov["producer_sha256"], "bytes": prov["producer_bytes"]}, "provenance.producer")
+    require(isinstance(prov["source_inputs"], list), "provenance.source_inputs: expected list")
+    require(len(prov["source_inputs"]) == len(SOURCE_PATHS), "provenance.source_inputs: omitted or extra entries")
+    source_paths = []
+    for index, source in enumerate(prov["source_inputs"]):
+        require_exact_keys(source, SOURCE_RECORD_FIELDS, f"provenance.source_inputs[{index}]")
+        require_nonempty_text(source["path"], f"provenance.source_inputs[{index}].path")
+        source_paths.append(source["path"])
+        validate_byte_record_shape({"sha256": source["sha256"], "bytes": source["bytes"]}, f"provenance.source_inputs[{index}]")
+    require(source_paths == list(SOURCE_PATHS), "provenance.source_inputs: path/order set mismatch")
+    require_exact_keys(prov["artifacts"], ARTIFACT_NAMES, "provenance.artifacts")
+    for name in sorted(ARTIFACT_NAMES):
+        validate_byte_record_shape(prov["artifacts"][name], f"provenance.artifacts.{name}")
+
+
+def validate_revision_tree(revision, recorded_tree):
+    require(len(revision) == 40 and set(revision) <= set("0123456789abcdef"), "provenance.source_revision malformed")
+    require(len(recorded_tree) == 40 and set(recorded_tree) <= set("0123456789abcdef"), "provenance.source_repository_tree malformed")
+    try:
+        actual_tree = run_git("rev-parse", f"{revision}^{{tree}}")
+    except subprocess.CalledProcessError as error:
+        raise PacketValidationError("provenance.source_revision is not a commit") from error
+    require(recorded_tree == actual_tree, "provenance source revision/tree mismatch")
+    require(subprocess.run(["git", "merge-base", "--is-ancestor", revision, "HEAD"], cwd=REPO).returncode == 0, "provenance source revision is not an ancestor of HEAD")
+
+
+def git_blob(revision, relative):
+    try:
+        return subprocess.check_output(["git", "show", f"{revision}:{relative}"], cwd=REPO)
+    except subprocess.CalledProcessError as error:
+        raise PacketValidationError(f"source path absent from recorded revision: {relative}") from error
+
+
+def validate_provenance_bindings(prov, actual_payloads):
+    validate_provenance_schema(prov)
+    validate_revision_tree(prov["source_revision"], prov["source_repository_tree"])
+    require(set(actual_payloads) == set(ARTIFACT_NAMES), "actual artifact path set mismatch")
+    producer_path = prov["producer"]
+    producer_data = (REPO / producer_path).read_bytes()
+    producer_record = {"sha256": prov["producer_sha256"], "bytes": prov["producer_bytes"]}
+    validate_byte_record(producer_record, producer_data, "provenance.producer")
+    require(git_blob(prov["source_revision"], producer_path) == producer_data, "producer bytes differ from recorded source revision")
+    for index, (relative, source) in enumerate(zip(SOURCE_PATHS, prov["source_inputs"])):
+        data = (REPO / relative).read_bytes()
+        validate_byte_record({"sha256": source["sha256"], "bytes": source["bytes"]}, data, f"provenance.source_inputs[{index}]")
+        require(git_blob(prov["source_revision"], relative) == data, f"source bytes differ from recorded revision: {relative}")
+    for name in sorted(ARTIFACT_NAMES):
+        validate_byte_record(prov["artifacts"][name], actual_payloads[name], f"provenance.artifacts.{name}")
+
+
+def validate_output_tree(out_dir):
+    require(out_dir.is_dir(), f"output directory missing: {out_dir}")
+    entries = list(out_dir.rglob("*"))
+    require(all(path.is_file() and not path.is_symlink() for path in entries), "output tree contains directory, symlink, or non-file entry")
+    actual = {str(path.relative_to(out_dir)) for path in entries}
+    require(actual == set(OUTPUT_PATHS), f"output tree mismatch; missing={sorted(set(OUTPUT_PATHS) - actual)}, extra={sorted(actual - set(OUTPUT_PATHS))}")
+
+
+def provenance(payloads, command, expected_revision):
+    head = run_git("rev-parse", "HEAD")
+    if head != expected_revision:
+        raise SystemExit(f"HEAD {head} does not equal --expected-revision {expected_revision}")
+    if subprocess.run(["git", "diff", "--quiet", "--ignore-submodules", "--"], cwd=REPO).returncode or subprocess.run(["git", "diff", "--cached", "--quiet", "--ignore-submodules", "--"], cwd=REPO).returncode:
+        raise SystemExit("tracked worktree must be clean before artifact generation")
+    prov = provenance_document(payloads, command, head, run_git("rev-parse", "HEAD^{tree}"))
+    validate_provenance_schema(prov)
+    return prov
 
 
 def write(args):
@@ -638,28 +817,24 @@ def write(args):
     for name, data in payloads.items():
         (args.out_dir / name).write_bytes(data)
     (args.out_dir / "provenance.json").write_bytes(json_bytes(prov))
+    validate_output_tree(args.out_dir)
+    validate_provenance_bindings(prov, payloads)
 
 
 def check(args):
-    payloads = artifact_payloads()
-    prov_path = args.out_dir / "provenance.json"
-    prov = json.loads(prov_path.read_text())
-    failures = []
-    for name, expected_data in payloads.items():
-        actual = (args.out_dir / name).read_bytes()
-        if actual != expected_data:
-            failures.append(f"{name}: deterministic replay mismatch")
-        if sha256(actual) != prov["artifacts"][name]["sha256"]:
-            failures.append(f"{name}: provenance hash mismatch")
-    if sha256(Path(__file__).read_bytes()) != prov["producer_sha256"]:
-        failures.append("producer hash mismatch")
-    for source in prov["source_inputs"]:
-        if sha256((REPO / source["path"]).read_bytes()) != source["sha256"]:
-            failures.append(f"source input changed: {source['path']}")
-    if subprocess.run(["git", "merge-base", "--is-ancestor", prov["source_revision"], "HEAD"], cwd=REPO).returncode:
-        failures.append("provenance source revision is not an ancestor of HEAD")
-    if failures:
-        raise SystemExit("\n".join(failures))
+    try:
+        validate_output_tree(args.out_dir)
+        expected_payloads = artifact_payloads()
+        actual_payloads = {name: (args.out_dir / name).read_bytes() for name in ARTIFACT_NAMES}
+        matrix = json.loads(actual_payloads["matrix.json"])
+        witness_document = json.loads(actual_payloads["witnesses.json"])
+        prov = json.loads((args.out_dir / "provenance.json").read_bytes())
+        validate_matrix_documents(matrix, witness_document)
+        validate_provenance_bindings(prov, actual_payloads)
+        for name in sorted(ARTIFACT_NAMES):
+            require(actual_payloads[name] == expected_payloads[name], f"{name}: deterministic replay mismatch")
+    except (PacketValidationError, json.JSONDecodeError, OSError) as error:
+        raise SystemExit(str(error)) from error
     print(f"PASS: {len(rows())} rows and {len(witness_results())} witnesses replay byte-identically")
 
 
