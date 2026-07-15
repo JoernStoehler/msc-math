@@ -370,7 +370,7 @@ fn productness(arm: &str) -> Productness {
 }
 
 fn law(arm: &str) -> &'static str {
-    match arm{"identity"=>"Dirac identity control.","u2-haar"=>"Haar U(2) by complex Gaussian QR in q,p block convention.","so4-haar"=>"Haar SO(4) by real Gaussian QR and determinant correction.","o4-det-minus-haar"=>"Haar det=-1 O(4) component: diag(-1,1,1,1) times Haar SO(4).",a if a.starts_with("so4-align")=>"R=U1 A_theta U2 with independent Haar U(2); A_theta rotates the q-plane. theta=pi gives anti-symplectic diag(-1,-1,1,1) in SO(4).", "sp4-bounded-cartan"=>"a,b iid Uniform[-log 2,log 2]; diag(e^a,e^b,e^-a,e^-b) U, U Haar U(2). Explicit bounded Cartan law, not Haar Sp(4).","sl4-bounded-weyl"=>"L,R Haar SO(4), x1,x2,x3 iid Uniform[-log2,log2], x4=-sum xi, reject if |x4|>log2; L diag(e^xi) R. Explicit coordinate-dependent bounded Weyl law, not Haar SL(4).",_=>"Fixed normal rays; support multipliers 1+epsilon z_i with |z_i|<=1. epsilon is one quarter of measured minimum inactive incidence-slack fraction, halved until exact labeled incidence survives. Not quotient-transverse."}
+    match arm{"identity"=>"Dirac identity control.","u2-haar"=>"Haar U(2) by complex Gaussian QR in q,p block convention.","so4-haar"=>"Haar SO(4) by real Gaussian QR and determinant correction.","o4-det-minus-haar"=>"Haar det=-1 O(4) component: diag(-1,1,1,1) times Haar SO(4).",a if a.starts_with("so4-align")=>"R=U1 A_theta U2 with independent Haar U(2); A_theta rotates the q-plane. theta=pi gives anti-symplectic diag(-1,-1,1,1) in SO(4).", "sp4-bounded-cartan"=>"a,b iid Uniform[-log 2,log 2]; diag(e^a,e^b,e^-a,e^-b) U, U Haar U(2). Explicit bounded Cartan law, not Haar Sp(4).","sl4-bounded-weyl"=>"Draw x1,x2,x3 iid Uniform[-log2,log2], set x4=-sum xi, reject if |x4|>log2, and sort the four values descending before L diag(e^xi) R for Haar SO(4) L,R. This is an explicit coordinate-dependent pushforward law in one bounded Weyl chamber, not Haar SL(4).",_=>"Fixed normal rays; support multipliers 1+epsilon z_i with |z_i|<=1. epsilon is one quarter of measured minimum inactive incidence-slack fraction, halved until exact labeled incidence survives. Not quotient-transverse."}
 }
 fn map(
     arm: &str,
@@ -439,17 +439,19 @@ fn map(
                 if x4.abs() > l {
                     continue;
                 }
+                let mut exponents = [x1, x2, x3, x4];
+                exponents.sort_by(|a, b| b.partial_cmp(a).expect("finite exponents"));
                 let mut x = linear(
                     so4(hash_seed(master, "sl-left", b, row + q))
                         * Matrix4::from_diagonal(&Vector4::new(
-                            x1.exp(),
-                            x2.exp(),
-                            x3.exp(),
-                            x4.exp(),
+                            exponents[0].exp(),
+                            exponents[1].exp(),
+                            exponents[2].exp(),
+                            exponents[3].exp(),
                         ))
                         * so4(hash_seed(master, "sl-right", b, row + q)),
                 );
-                for (i, v) in [x1, x2, x3, x4].iter().enumerate() {
+                for (i, v) in exponents.iter().enumerate() {
                     x.params.insert(format!("log_s{}", i + 1), *v);
                 }
                 x.attempts = q + 1;
