@@ -387,11 +387,11 @@ fn minkowski_sum(a: &Factor, b: &Factor) -> Option<Factor> {
 }
 
 fn reflected(factor: &Factor, theta: f64) -> Option<Factor> {
-    let (s, c) = theta.sin_cos();
+    let (s, c) = (2.0 * theta).sin_cos();
     let reflect = |p: Vector2<f64>| {
-        let x = c * p[0] + s * p[1];
-        let y = s * p[0] - c * p[1];
-        Vector2::new(c * x + s * y, s * x - c * y)
+        // Reflection across the line through the origin with direction
+        // `(cos(theta), sin(theta))`: [[cos(2θ), sin(2θ)], [sin(2θ), -cos(2θ)]].
+        Vector2::new(c * p[0] + s * p[1], s * p[0] - c * p[1])
     };
     centered_normalized(factor.vertices.iter().map(|p| reflect(*p)).collect())
 }
@@ -886,6 +886,16 @@ mod tests {
         let d = minkowski_sum(&a, &neg).unwrap();
         for p in &d.vertices {
             assert!(d.vertices.iter().any(|q| (*q + *p).norm() < 1e-8));
+        }
+    }
+
+    #[test]
+    fn minkowski_symmetrization_is_centrally_symmetric() {
+        let a = rectangle(1.0, 0.5);
+        let reflected = reflected(&a, 0.37).unwrap();
+        let s = minkowski_sum(&a, &reflected).unwrap();
+        for p in &s.vertices {
+            assert!(s.vertices.iter().any(|q| (*q + *p).norm() < 1e-8));
         }
     }
 
