@@ -626,9 +626,9 @@ def source_provenance() -> dict[str, Any]:
         "readme": packet / "README.md",
     }
     relative_sources = [str(path.relative_to(repo_root)) for path in source_files.values()]
-    repo_revision = subprocess.check_output(["git", "log", "-1", "--format=%H", "--", *relative_sources], text=True).strip()
-    repo_tree = subprocess.check_output(["git", "rev-parse", f"{repo_revision}^{{tree}}"], text=True).strip()
-    dirty = subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no", "--", *relative_sources], text=True)
+    repo_revision = subprocess.check_output(["git", "log", "-1", "--format=%H", "--", *relative_sources], cwd=repo_root, text=True).strip()
+    repo_tree = subprocess.check_output(["git", "rev-parse", f"{repo_revision}^{{tree}}"], cwd=repo_root, text=True).strip()
+    dirty = subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no", "--", *relative_sources], cwd=repo_root, text=True)
     if dirty:
         raise SystemExit("source files are dirty; commit source before artifact generation")
     return {
