@@ -1,0 +1,637 @@
+{
+  "calibration": {
+    "claimed_controls_pass": true,
+    "equivalence_regression_matrix": [
+      {
+        "expected": "zero",
+        "method": "raw_l2",
+        "observed": 0.0,
+        "passed": true,
+        "relation": "planar_identity"
+      },
+      {
+        "expected": "positive",
+        "method": "raw_l2",
+        "observed": 4.292521705967953,
+        "passed": true,
+        "relation": "cyclic_source_reorder"
+      },
+      {
+        "expected": "zero",
+        "method": "cyclic_l2",
+        "observed": 0.0,
+        "passed": true,
+        "relation": "cyclic_source_reorder"
+      },
+      {
+        "expected": "zero",
+        "method": "unrestricted_assignment",
+        "observed": 0.0,
+        "passed": true,
+        "relation": "cyclic_source_reorder"
+      },
+      {
+        "expected": "zero",
+        "method": "planar_support_C_G",
+        "observed": 1.3659226309074517e-16,
+        "passed": true,
+        "relation": "translation_scale_C_G_rotation"
+      },
+      {
+        "expected": "positive",
+        "method": "planar_support_C_G",
+        "observed": 0.002797817371755463,
+        "passed": true,
+        "relation": "off_grid_rotation"
+      },
+      {
+        "expected": "positive",
+        "method": "planar_support_C_G",
+        "observed": 0.017393126073488425,
+        "passed": true,
+        "relation": "reflection"
+      },
+      {
+        "expected": "zero",
+        "method": "planar_support_D_G_requested",
+        "observed": 3.024593730708204e-17,
+        "passed": true,
+        "relation": "reflection"
+      },
+      {
+        "expected": "positive",
+        "method": "euclidean_gram",
+        "observed": 0.33637062448483696,
+        "passed": true,
+        "relation": "symplectic_map"
+      },
+      {
+        "expected": "zero",
+        "method": "symplectic_gram",
+        "observed": 0.0,
+        "passed": true,
+        "relation": "symplectic_map"
+      },
+      {
+        "expected": "zero",
+        "method": "euclidean_gram",
+        "observed": 2.7755575615628914e-17,
+        "passed": true,
+        "relation": "orthogonal_non_symplectic_map"
+      },
+      {
+        "expected": "positive",
+        "method": "symplectic_gram",
+        "observed": 0.47140452079103173,
+        "passed": true,
+        "relation": "orthogonal_non_symplectic_map"
+      },
+      {
+        "expected": "positive",
+        "method": "fixed_label_euclidean_gram",
+        "observed": 0.5195153450781086,
+        "passed": true,
+        "relation": "facet_permutation"
+      },
+      {
+        "expected": "zero",
+        "method": "symplectic_gram_permutation",
+        "observed": 0.0,
+        "passed": true,
+        "relation": "facet_permutation"
+      },
+      {
+        "expected": "positive",
+        "method": "sampled_support",
+        "observed": 0.07844205168569779,
+        "passed": true,
+        "relation": "variable_facet_4_vs_5"
+      },
+      {
+        "expected": "unavailable",
+        "method": "unrestricted_assignment",
+        "observed": null,
+        "passed": true,
+        "relation": "variable_facet_4_vs_5"
+      },
+      {
+        "expected": "positive",
+        "method": "ordered_factor_pair",
+        "observed": 0.27130199383360737,
+        "passed": true,
+        "relation": "product_factor_swap"
+      },
+      {
+        "expected": "zero",
+        "method": "swap_enabled_factor_pair",
+        "observed": 0.0,
+        "passed": true,
+        "relation": "product_factor_swap"
+      }
+    ],
+    "identity_and_invariance": {
+      "canonical_removes_cyclic_start": 0.0,
+      "euclidean_gram_orthogonal": 2.7755575615628914e-17,
+      "exact_assignment_removes_cyclic_start": 0.0,
+      "off_grid_rotation_C_G_residual": 0.002797817371755463,
+      "planar_translation_scale_C_G_rotation": 1.3659226309074517e-16,
+      "raw_identity": {
+        "l1": 0.0,
+        "l2": 0.0,
+        "linf": 0.0
+      },
+      "reflection_quotiented_in_D_G_when_requested": 3.024593730708204e-17,
+      "reflection_separate_in_C_G": 0.017393126073488425,
+      "symplectic_gram_facet_permutation": 0.0,
+      "symplectic_gram_orthogonal_non_symplectic": 0.47140452079103173,
+      "symplectic_gram_symplectic_map": 0.0
+    },
+    "separation": {
+      "planar_deformation": 0.1918394795891747,
+      "response_deformation": 0.47336996489268357,
+      "variable_facet_cloud": 0.6180339887498949
+    },
+    "symmetry": {
+      "assignment_l2": {
+        "passed": true,
+        "triple_count": 125,
+        "violations": []
+      },
+      "canonical_l2": {
+        "passed": true,
+        "triple_count": 125,
+        "violations": []
+      },
+      "euclidean_gram": {
+        "passed": true,
+        "triple_count": 125,
+        "violations": []
+      },
+      "planar_support_rms": {
+        "passed": true,
+        "triple_count": 125,
+        "violations": []
+      },
+      "procrustes": {
+        "passed": true,
+        "triple_count": 125,
+        "violations": []
+      },
+      "raw_l1": {
+        "passed": true,
+        "triple_count": 125,
+        "violations": []
+      },
+      "raw_l2": {
+        "passed": true,
+        "triple_count": 125,
+        "violations": []
+      },
+      "raw_linf": {
+        "passed": true,
+        "triple_count": 125,
+        "violations": []
+      },
+      "symplectic_gram": {
+        "passed": true,
+        "triple_count": 125,
+        "violations": []
+      },
+      "variable_facet_vertex_cloud_hausdorff": {
+        "passed": true,
+        "triple_count": 125,
+        "violations": []
+      }
+    }
+  },
+  "catalog": [
+    {
+      "complexity": "O(F)",
+      "failure_boundary": "unequal F unavailable; deliberately order-sensitive",
+      "kind": "metrics on ordered equal-length coordinate sequences",
+      "knobs": "norm",
+      "name": "raw_vertex_l1_l2_linf",
+      "object": "planar CCW vertices",
+      "quotient": "none; source order and frame retained"
+    },
+    {
+      "complexity": "O(F^2)",
+      "failure_boundary": "does not repair reversal or arbitrary facet relabeling",
+      "kind": "metric after deterministic canonical cyclic-start map",
+      "knobs": "lexicographic tolerance",
+      "name": "canonical_cyclic_vertex_l2",
+      "object": "planar CCW vertices",
+      "quotient": "cyclic starting index only; no translation/scale/rotation quotient"
+    },
+    {
+      "complexity": "O(F! F), certified only F<=8",
+      "failure_boundary": "above cap returns unavailable; greedy fallback is explicitly heuristic",
+      "kind": "metric on unordered equal-cardinality vertex sets when exhaustive",
+      "knobs": "max_facets",
+      "name": "exact_vertex_assignment_l2",
+      "object": "planar vertices",
+      "quotient": "vertex permutation only"
+    },
+    {
+      "complexity": "O(F^2)",
+      "failure_boundary": "does not permit arbitrary facet matching",
+      "kind": "metrics after source-order-preserving cyclic or dihedral matching",
+      "knobs": "allow_reflection",
+      "name": "cyclic_dihedral_vertex_l2",
+      "object": "planar cyclic vertex/facet order",
+      "quotient": "C_F, or D_F when reflection is intentionally identified"
+    },
+    {
+      "complexity": "O(|P| F)",
+      "failure_boundary": "caller must justify closure and completeness of P; no default automorphism solver",
+      "kind": "metric on a caller-declared permutation quotient when the declared set is a group",
+      "knobs": "permitted permutations",
+      "name": "permitted_permutation_assignment_l2",
+      "object": "equal-cardinality vertices/facets",
+      "quotient": "only supplied incidence-automorphism or product-factor permutations"
+    },
+    {
+      "complexity": "O(F G^2) for declared grid G",
+      "failure_boundary": "off-grid rotations are nonzero; approximate continuous rotation only by an explicit grid-convergence study",
+      "kind": "numerical pseudometric on sampled normalized support functions",
+      "knobs": "support grid G, allow_reflection",
+      "name": "planar_support_rms_cyclic_grid",
+      "object": "strict convex planar polygons",
+      "quotient": "translation (area centroid), positive scale (area), and exactly C_G; D_G only when reflection is requested"
+    },
+    {
+      "complexity": "O(F G^2)",
+      "failure_boundary": "a sampled support/Hausdorff surrogate, not certified continuous Hausdorff distance",
+      "kind": "numerical pseudometric of convex bodies with unequal facet counts",
+      "knobs": "support grid G, allow_reflection",
+      "name": "variable_facet_sampled_support",
+      "object": "strict convex planar polygons",
+      "quotient": "translation, area scale, exactly C_G (or D_G with reflection)"
+    },
+    {
+      "complexity": "O(F^2) / O(4^3)",
+      "failure_boundary": "facet order remains meaningful; Gram uses finite precision",
+      "kind": "metrics on fixed labeled nonconstant 4D configurations after stated normalization",
+      "knobs": "none",
+      "name": "euclidean_gram_and_procrustes",
+      "object": "equal-F 4D point/facet configurations",
+      "quotient": "translation, positive Frobenius scale, O(4), but not relabeling"
+    },
+    {
+      "complexity": "O(F! F^2), exact disposition F<=8",
+      "failure_boundary": "float prototype is not an exact certificate; no answer above cap",
+      "kind": "metric only under validated analytic-center/volume-one spanning facet-covector contract and exhaustive permutation search",
+      "knobs": "max_facets",
+      "name": "symplectic_gram_quotient",
+      "object": "equal-F 4D facet covectors",
+      "quotient": "linear symplectic maps and facet relabeling; normalization contract supplies translation/scale"
+    },
+    {
+      "complexity": "O(F! V log V), certified only F<=7",
+      "failure_boundary": "not a geometric distance; above cap unavailable",
+      "kind": "metric on unlabeled incidence matrices when exhaustive",
+      "knobs": "max_facets",
+      "name": "incidence_isomorphism_hamming",
+      "object": "facet-by-vertex 0/1 incidence",
+      "quotient": "facet and vertex permutations"
+    },
+    {
+      "complexity": "O(d)",
+      "failure_boundary": "does not cover variable-F geometry or prove feature completeness",
+      "kind": "metric on an explicitly fixed normalized feature vector; otherwise only a representation distance",
+      "knobs": "feature schema and scales",
+      "name": "named_feature_l2",
+      "object": "named scalar dictionaries",
+      "quotient": "only coordinates whose normalization is declared"
+    },
+    {
+      "complexity": "O(B G F)",
+      "failure_boundary": "bank-dependent and not a privileged geometry definition",
+      "kind": "heuristic dissimilarity",
+      "knobs": "named transform bank/support grid",
+      "name": "response_signature_l2",
+      "object": "planar polygon under fixed linear-map bank",
+      "quotient": "translation and area normalization inside each response; no rotation quotient"
+    },
+    {
+      "complexity": "two factor comparisons",
+      "failure_boundary": "not unrestricted matching among all product facets",
+      "kind": "metric on an ordered pair of chosen factor representations when the factor distance is a metric",
+      "knobs": "factor distance, allow_factor_swap",
+      "name": "product_factor_support_pair",
+      "object": "two planar product factors",
+      "quotient": "factorwise chosen quotient; optional q/p swap only"
+    },
+    {
+      "complexity": "O(nm d)",
+      "failure_boundary": "vertex-cloud Hausdorff is not polytope Hausdorff; loses face interiors",
+      "kind": "metric on canonically centered/RMS-normalized finite vertex clouds",
+      "knobs": "normalization",
+      "name": "normalized_vertex_cloud_hausdorff",
+      "object": "variable-cardinality vertices in a fixed Euclidean frame",
+      "quotient": "translation and positive RMS scale; no rotation or affine quotient"
+    },
+    {
+      "complexity": "unmeasured",
+      "failure_boundary": "not substituted by Gram, support, or feature distances",
+      "kind": "deferred; no implementation or numerical claim",
+      "knobs": "optimization model and certificate",
+      "name": "symplectic_containment_gauge",
+      "object": "convex bodies",
+      "quotient": "would require an explicitly specified affine/linear symplectic containment optimization"
+    }
+  ],
+  "run": {
+    "input": "experiments/sys-datascience/methods/generator-zoo-smoke/artifacts/factor-shapes.jsonl",
+    "input_sha256": "4622400be1220f11f742a4bde29273fe45dcd4c8d27044d716059c429630d7a8",
+    "per_population": 2,
+    "producer_sha256": "b1fcad549facbbb55bf2d91014c52f650b29d747520ba4e9d60598fbbf3c317c",
+    "target_free": true
+  },
+  "schema": "generator-pair-similarity-report-v1",
+  "smoke": {
+    "comparison_table": {
+      "assignment_l2": {
+        "mean": 1.3145457822039737,
+        "median": 1.0036900537440234,
+        "pair_count": 60
+      },
+      "canonical_l2": {
+        "mean": 1.6093354427531874,
+        "median": 1.1250165187248857,
+        "pair_count": 60
+      },
+      "raw_l2": {
+        "mean": 2.3727073467847304,
+        "median": 2.443041978806921,
+        "pair_count": 60
+      },
+      "response_l2": {
+        "mean": 0.44136983240434496,
+        "median": 0.3425029173143045,
+        "pair_count": 60
+      },
+      "support_rms": {
+        "mean": 0.2846861658595787,
+        "median": 0.14757929649846652,
+        "pair_count": 60
+      },
+      "support_rms_reflection": {
+        "mean": 0.28416845906901994,
+        "median": 0.1452157892321878,
+        "pair_count": 60
+      }
+    },
+    "excluded_unequal_side_count_pairs": 60,
+    "input_row_count": 220,
+    "pair_examples": [
+      {
+        "assignment_l2": 1.1917580981247304,
+        "canonical_l2": 1.666396092720949,
+        "left": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=4/attempt=6/6x6/factor=q",
+        "left_population": "current-baseline[delta=0.2]",
+        "raw_l2": 1.2283107958837745,
+        "response_l2": 0.4028305501845253,
+        "right": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=3/attempt=2/6x6/factor=p",
+        "right_population": "current-baseline[delta=0.2]",
+        "side_count": 6,
+        "support_rms": 0.19625229329086172,
+        "support_rms_reflection": 0.19625229329086172
+      },
+      {
+        "assignment_l2": 0.8871999751355426,
+        "canonical_l2": 1.0949003322851736,
+        "left": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=4/attempt=6/6x6/factor=q",
+        "left_population": "current-baseline[delta=0.2]",
+        "raw_l2": 2.972453616788092,
+        "response_l2": 0.16676354040817054,
+        "right": "generator-zoo-v1/regular-mutation/param=steps=4,scale=0.03/seed=20260714/row=2/attempt=0/4x6/factor=p",
+        "right_population": "regular-mutation[steps=4,scale=0.03]",
+        "side_count": 6,
+        "support_rms": 0.07303737126213565,
+        "support_rms_reflection": 0.07303737126213565
+      },
+      {
+        "assignment_l2": 0.8110970003181629,
+        "canonical_l2": 1.1019559339294651,
+        "left": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=4/attempt=6/6x6/factor=q",
+        "left_population": "current-baseline[delta=0.2]",
+        "raw_l2": 0.8110970003181629,
+        "response_l2": 0.16372860557014715,
+        "right": "generator-zoo-v1/repulsive-gap/param=alpha=16/seed=20260714/row=0/attempt=0/4x6/factor=p",
+        "right_population": "repulsive-gap[alpha=16]",
+        "side_count": 6,
+        "support_rms": 0.0649179123640554,
+        "support_rms_reflection": 0.0649179123640554
+      },
+      {
+        "assignment_l2": 3.6844317113274196,
+        "canonical_l2": 3.6844317113274196,
+        "left": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=4/attempt=6/6x6/factor=q",
+        "left_population": "current-baseline[delta=0.2]",
+        "raw_l2": 5.022781647364368,
+        "response_l2": 1.3192189793297044,
+        "right": "generator-zoo-v1/repulsive-gap/param=alpha=1/seed=20260714/row=0/attempt=0/4x6/factor=p",
+        "right_population": "repulsive-gap[alpha=1]",
+        "side_count": 6,
+        "support_rms": 1.1654508836681101,
+        "support_rms_reflection": 1.1653815681438788
+      },
+      {
+        "assignment_l2": 0.5648449203842463,
+        "canonical_l2": 0.5648449203842463,
+        "left": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=4/attempt=6/6x6/factor=q",
+        "left_population": "current-baseline[delta=0.2]",
+        "raw_l2": 0.5648449203842463,
+        "response_l2": 0.21513721067887792,
+        "right": "generator-zoo-v1/repulsive-gap/param=alpha=4/seed=20260714/row=0/attempt=0/6x6/factor=q",
+        "right_population": "repulsive-gap[alpha=4]",
+        "side_count": 6,
+        "support_rms": 0.09300821217161193,
+        "support_rms_reflection": 0.09300821217161193
+      },
+      {
+        "assignment_l2": 0.7388125314676974,
+        "canonical_l2": 1.5683287677287645,
+        "left": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=4/attempt=6/6x6/factor=q",
+        "left_population": "current-baseline[delta=0.2]",
+        "raw_l2": 2.55113775925988,
+        "response_l2": 0.1545922194162917,
+        "right": "generator-zoo-v1/repulsive-gap/param=alpha=4/seed=20260714/row=3/attempt=0/6x6/factor=q",
+        "right_population": "repulsive-gap[alpha=4]",
+        "side_count": 6,
+        "support_rms": 0.06722411106681972,
+        "support_rms_reflection": 0.06722411106681972
+      },
+      {
+        "assignment_l2": 0.6355196357069665,
+        "canonical_l2": 1.4195142309983584,
+        "left": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=4/attempt=6/6x6/factor=q",
+        "left_population": "current-baseline[delta=0.2]",
+        "raw_l2": 1.4195142309983584,
+        "response_l2": 0.17202110362180034,
+        "right": "generator-zoo-v1/repulsive-gap/param=regular/seed=20260714/row=3/attempt=0/6x6/factor=p",
+        "right_population": "repulsive-gap[regular]",
+        "side_count": 6,
+        "support_rms": 0.07636956484217713,
+        "support_rms_reflection": 0.07636956484217713
+      },
+      {
+        "assignment_l2": 0.5972316259541925,
+        "canonical_l2": 0.5972316259541925,
+        "left": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=4/attempt=6/6x6/factor=q",
+        "left_population": "current-baseline[delta=0.2]",
+        "raw_l2": 0.5972316259541925,
+        "response_l2": 0.17328937530076682,
+        "right": "generator-zoo-v1/repulsive-gap/param=regular/seed=20260714/row=4/attempt=0/4x6/factor=p",
+        "right_population": "repulsive-gap[regular]",
+        "side_count": 6,
+        "support_rms": 0.07636844850762771,
+        "support_rms_reflection": 0.07636844850762771
+      },
+      {
+        "assignment_l2": 1.0531599473518578,
+        "canonical_l2": 1.835299493366011,
+        "left": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=4/attempt=6/6x6/factor=q",
+        "left_population": "current-baseline[delta=0.2]",
+        "raw_l2": 2.8481435104186135,
+        "response_l2": 0.3849771831345324,
+        "right": "generator-zoo-v1/zonogon/param=lengths=uniform(0.5,1.5)/seed=20260714/row=2/attempt=0/4x6/factor=p",
+        "right_population": "zonogon[lengths=uniform(0.5,1.5)]",
+        "side_count": 6,
+        "support_rms": 0.25428260797327157,
+        "support_rms_reflection": 0.25428260797327157
+      },
+      {
+        "assignment_l2": 1.1558651926374925,
+        "canonical_l2": 2.3068435630747417,
+        "left": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=3/attempt=2/6x6/factor=p",
+        "left_population": "current-baseline[delta=0.2]",
+        "raw_l2": 3.1589526592828814,
+        "response_l2": 0.5624244656597891,
+        "right": "generator-zoo-v1/regular-mutation/param=steps=4,scale=0.03/seed=20260714/row=2/attempt=0/4x6/factor=p",
+        "right_population": "regular-mutation[steps=4,scale=0.03]",
+        "side_count": 6,
+        "support_rms": 0.21660744625718242,
+        "support_rms_reflection": 0.21660744625718242
+      },
+      {
+        "assignment_l2": 1.1739714748730528,
+        "canonical_l2": 2.3363570417609076,
+        "left": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=3/attempt=2/6x6/factor=p",
+        "left_population": "current-baseline[delta=0.2]",
+        "raw_l2": 1.450142963032678,
+        "response_l2": 0.557666379959481,
+        "right": "generator-zoo-v1/repulsive-gap/param=alpha=16/seed=20260714/row=0/attempt=0/4x6/factor=p",
+        "right_population": "repulsive-gap[alpha=16]",
+        "side_count": 6,
+        "support_rms": 0.2101684320694053,
+        "support_rms_reflection": 0.2101684320694053
+      },
+      {
+        "assignment_l2": 3.6754091942161278,
+        "canonical_l2": 3.784248419436811,
+        "left": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=3/attempt=2/6x6/factor=p",
+        "left_population": "current-baseline[delta=0.2]",
+        "raw_l2": 5.036464651064977,
+        "response_l2": 0.9470599921855395,
+        "right": "generator-zoo-v1/repulsive-gap/param=alpha=1/seed=20260714/row=0/attempt=0/4x6/factor=p",
+        "right_population": "repulsive-gap[alpha=1]",
+        "side_count": 6,
+        "support_rms": 1.0116273780603022,
+        "support_rms_reflection": 1.0115968883345199
+      },
+      {
+        "assignment_l2": 1.1830374559276546,
+        "canonical_l2": 1.9271508558902282,
+        "left": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=3/attempt=2/6x6/factor=p",
+        "left_population": "current-baseline[delta=0.2]",
+        "raw_l2": 1.1830374559276546,
+        "response_l2": 0.27205729858754185,
+        "right": "generator-zoo-v1/repulsive-gap/param=alpha=4/seed=20260714/row=0/attempt=0/6x6/factor=q",
+        "right_population": "repulsive-gap[alpha=4]",
+        "side_count": 6,
+        "support_rms": 0.11536043968700425,
+        "support_rms_reflection": 0.11536043968700425
+      },
+      {
+        "assignment_l2": 1.1490300635770052,
+        "canonical_l2": 2.650560158420146,
+        "left": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=3/attempt=2/6x6/factor=p",
+        "left_population": "current-baseline[delta=0.2]",
+        "raw_l2": 2.650560158420146,
+        "response_l2": 0.4970933338434547,
+        "right": "generator-zoo-v1/repulsive-gap/param=alpha=4/seed=20260714/row=3/attempt=0/6x6/factor=q",
+        "right_population": "repulsive-gap[alpha=4]",
+        "side_count": 6,
+        "support_rms": 0.1708335668552809,
+        "support_rms_reflection": 0.1708335668552809
+      },
+      {
+        "assignment_l2": 1.151865498945553,
+        "canonical_l2": 2.5927042607912103,
+        "left": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=3/attempt=2/6x6/factor=p",
+        "left_population": "current-baseline[delta=0.2]",
+        "raw_l2": 1.4202138812210507,
+        "response_l2": 0.5688288202168502,
+        "right": "generator-zoo-v1/repulsive-gap/param=regular/seed=20260714/row=3/attempt=0/6x6/factor=p",
+        "right_population": "repulsive-gap[regular]",
+        "side_count": 6,
+        "support_rms": 0.2223416518276818,
+        "support_rms_reflection": 0.2223320034709927
+      },
+      {
+        "assignment_l2": 1.06746984727732,
+        "canonical_l2": 1.54793304365771,
+        "left": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=3/attempt=2/6x6/factor=p",
+        "left_population": "current-baseline[delta=0.2]",
+        "raw_l2": 1.06746984727732,
+        "response_l2": 0.5704254846558667,
+        "right": "generator-zoo-v1/repulsive-gap/param=regular/seed=20260714/row=4/attempt=0/4x6/factor=p",
+        "right_population": "repulsive-gap[regular]",
+        "side_count": 6,
+        "support_rms": 0.2223382149739947,
+        "support_rms_reflection": 0.22233213502681762
+      },
+      {
+        "assignment_l2": 1.6363810292975025,
+        "canonical_l2": 2.958977044933488,
+        "left": "generator-zoo-v1/current-baseline/param=delta=0.2/seed=20260714/row=3/attempt=2/6x6/factor=p",
+        "left_population": "current-baseline[delta=0.2]",
+        "raw_l2": 2.958977044933488,
+        "response_l2": 0.2674244653217661,
+        "right": "generator-zoo-v1/zonogon/param=lengths=uniform(0.5,1.5)/seed=20260714/row=2/attempt=0/4x6/factor=p",
+        "right_population": "zonogon[lengths=uniform(0.5,1.5)]",
+        "side_count": 6,
+        "support_rms": 0.1577071533485607,
+        "support_rms_reflection": 0.1577071533485607
+      },
+      {
+        "assignment_l2": 1.3924323811642536,
+        "canonical_l2": 1.3924323811642536,
+        "left": "generator-zoo-v1/primal-hull-uniform-disk/param=points=n+4,origin=interior/seed=20260714/row=3/attempt=28/4x6/factor=q",
+        "left_population": "primal-hull-uniform-disk[points=n+4,origin=interior]",
+        "raw_l2": 1.3924323811642536,
+        "response_l2": 0.16813002670503915,
+        "right": "generator-zoo-v1/primal-hull-uniform-disk/param=points=n+4,origin=interior/seed=20260714/row=0/attempt=6/4x6/factor=q",
+        "right_population": "primal-hull-uniform-disk[points=n+4,origin=interior]",
+        "side_count": 4,
+        "support_rms": 0.07500511503559663,
+        "support_rms_reflection": 0.0746089116647141
+      }
+    ],
+    "population_counts": {
+      "current-baseline[delta=0.2]": 2,
+      "primal-hull-uniform-disk[points=n+4,origin=interior]": 2,
+      "regular-mutation[steps=4,scale=0.03]": 2,
+      "repulsive-gap[alpha=16]": 2,
+      "repulsive-gap[alpha=1]": 2,
+      "repulsive-gap[alpha=4]": 2,
+      "repulsive-gap[regular]": 2,
+      "zonogon[lengths=uniform(0.5,1.5)]": 2
+    },
+    "schema": "generator-pair-similarity-report-v1",
+    "selected_row_count": 16,
+    "selection": "lowest SHA-256(sample_id) per population; descriptive deterministic smoke only"
+  }
+}
