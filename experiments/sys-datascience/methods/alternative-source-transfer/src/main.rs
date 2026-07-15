@@ -656,3 +656,33 @@ fn main() {
         other => panic!("unknown command {other}"),
     };
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn reviewed_owner_seed(row: usize, attempt: usize, k: usize, m: usize) -> [u8; 32] {
+        let mut key = Vec::new();
+        key.extend_from_slice(&MASTER_SEED.to_le_bytes());
+        key.extend_from_slice(b"factorial-base");
+        key.push(0);
+        key.extend_from_slice(b"paired-current");
+        key.push(0);
+        key.extend_from_slice(&(k as u64).to_le_bytes());
+        key.extend_from_slice(&(m as u64).to_le_bytes());
+        key.extend_from_slice(&(row as u64).to_le_bytes());
+        key.extend_from_slice(&(attempt as u64).to_le_bytes());
+        *blake3::hash(&key).as_bytes()
+    }
+
+    #[test]
+    fn seed_translation_is_explicit_and_law_semantics_survive() {
+        assert_ne!(law_seed(0, 0, 4, 6), reviewed_owner_seed(0, 0, 4, 6));
+        let (q, p) = (0..ATTEMPT_CAP)
+            .find_map(|attempt| latent(4, 6, 0, attempt))
+            .expect("reviewed admissible source draw");
+        assert!(active(&q) && active(&p));
+        assert!(q.heights.iter().all(|height| *height > 0.0));
+        assert!(p.heights.iter().all(|height| *height > 0.0));
+    }
+}

@@ -17,7 +17,9 @@ The deterministic producer scanned 4,000 row indices per bucket, retained
 user CPU seconds (26.02 system seconds; 1,088% aggregate CPU; peak RSS
 200,620 KiB). It wrote 6,400 rows and no target fields. `features`, `select`,
 and `validate` then completed in under one second plus process startup; the
-Python manifest gate and seven self-tests completed in under one second.
+Python manifest gate and fourteen adversarial tests completed in under ten
+seconds. The evaluator's two fake-target Rust tests and the producer's
+seed-translation semantic test also pass without invoking the real backend.
 
 Frozen artifact identity:
 
@@ -34,3 +36,9 @@ label, or target output was produced. The post-target analyzer was not run on
 fabricated values; its partial-artifact rejection is covered by
 `test_packet.py`.
 
+The frozen descriptive analysis constants are committed before exposure:
+bootstrap seed `2026071602`, permutation seed `2026071603`, and 10,000
+repetitions for each deterministic bucket/arm-stratified bootstrap and
+within-bucket label-permutation diagnostic. No result classification is
+authorized by this repair; the second independent review must approve the
+future evaluator command first.

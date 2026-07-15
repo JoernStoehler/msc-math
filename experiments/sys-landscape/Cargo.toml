@@ -79,6 +79,10 @@ path = "../sys-datascience/methods/product-bounce-distribution/audit-null-availa
 name = "sys-datascience-alternative-source-transfer"
 path = "../sys-datascience/methods/alternative-source-transfer/src/main.rs"
 
+[[bin]]
+name = "sys-datascience-alternative-source-transfer-evaluator"
+path = "../sys-datascience/methods/alternative-source-transfer/src/evaluator.rs"
+
 [lints]
 workspace = true
 

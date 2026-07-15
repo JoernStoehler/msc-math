@@ -54,12 +54,37 @@ verification and the portfolio owner's decision.
 
 ## Narrow provenance
 
-The law/feature semantics port only the reviewed `factorial-both` construction
-from `research/generator-transfer` commit `fd9c3e7df08d8c9d04491b8ebbb7b2628d2df32e`:
+The law/feature semantics are a narrow fresh-domain translation of the
+reviewed `factorial-both` construction from `research/generator-transfer`
+commit `fd9c3e7df08d8c9d04491b8ebbb7b2628d2df32e`:
 joint latent baseline/tangential admissibility, common support height one,
 separate factor area normalization, exact product reconstruction, canonical
 vertex covariance, and ordered two-face symplectic area. The breadth generator
 families, target backend, orientation arms, and paired baseline/q/p arms are
-not imported. The current source revision and Cargo lock hash are recorded in
-`manifest.json`.
+not imported. The BLAKE3 seed preimage places the latent-law identity before
+the master seed (the reviewed owner places the master seed first); this is an
+intentional fresh-domain byte-serialization translation, not a byte-exact
+replay. It leaves the named IID random-law and conditioning estimand unchanged
+and is covered by the semantic construction tests. The current producer
+revision and Cargo lock hash are recorded in `manifest.json`.
 
+## Future target command (unauthorized)
+
+Only after a second independent pre-target review returns `GO` may the exact
+stored-geometry evaluator be run:
+
+```text
+TRANSFER_EVALUATOR_BUILD=<immutable-build-id> \
+cargo run --release --manifest-path experiments/sys-landscape/Cargo.toml \
+  --bin sys-datascience-alternative-source-transfer-evaluator -- \
+  evaluate experiments/sys-datascience/methods/alternative-source-transfer/artifacts/transfer-v1 \
+  experiments/sys-datascience/methods/alternative-source-transfer/artifacts/transfer-v1/target-evaluations.jsonl
+```
+
+This command is not authorized or run in the current repair. It validates the
+three frozen SHA-256 artifacts, joins only the 91 stored selected IDs to their
+stored exact geometry, evaluates each unique candidate once, and atomically
+finalizes schema `alternative-source-transfer-target-v1`. It has no resume or
+cache path and never regenerates source/selection. `analyze.py` may consume the
+completed target file only after that gate and writes a report atomically when
+passed `--write`.
