@@ -33,6 +33,7 @@ def test_cli_replay() -> None:
         subprocess.run(command+[first],cwd=ROOT,check=True); subprocess.run(command+[second],cwd=ROOT,check=True)
         a=json.loads((Path(first)/"report.json").read_text()); b=json.loads((Path(second)/"report.json").read_text())
         for report in (a,b):
+            report.pop("cost_observations_seconds")
             for row in report["comparisons"]:row.pop("cost_observation_seconds")
         assert a==b,"only timing observations may vary between deterministic replays"
 

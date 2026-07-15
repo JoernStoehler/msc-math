@@ -23,6 +23,6 @@ uv run --script experiments/sys-datascience/methods/generator-variable-f-body-di
   --out-dir experiments/sys-datascience/methods/generator-variable-f-body-distance/artifacts
 ```
 
-`artifacts/report.json` binds exact input hashes, producer hash, revision, pre-generation tracked-clean predicate, reconstruction counts, finite designs, and target-free status. `artifacts/calibration.tsv` is the compact readable table. Wall seconds are retained only as observations; the replay check strips them before requiring equal scientific values.
+`artifacts/report.json` binds exact input hashes, producer hash, revision, pre-generation tracked-clean predicate, reconstruction counts, finite designs, and target-free status. It also records observed exact-reconstruction and finite-bank-search costs. `artifacts/calibration.tsv` is the compact readable table. Wall seconds are retained only as observations; the replay check strips them before requiring equal scientific values.
 
 The method can answer small-panel cross-facet Euclidean body-shape questions under its declared quotient. It cannot prove a population effect, establish a continuous compact-group quotient, recover exact Hausdorff distance, identify symplectic equivalence, or compare `sys` (which it never reads or evaluates). Normalized surface-area-measure transport and a directed symplectic containment gauge are explicitly deferred; the latter would remain only a dissimilarity pending metric and computation facts.
