@@ -431,6 +431,7 @@ def main() -> None:
         "retained_budget_per_side_count": MAX_BUDGET,
         "policy_results": policy_results,
         "stratum_findings": findings,
+        "generation_status": [row for row in generation_rows if row["population"] == "__full_pool__"],
         "selection_cost_artifact": "selection-cost-observation.json",
         "generation_cost_artifact": "generation-cost.tsv",
         "view_contract": {"frame_geometry": "cyclic/frame-adjusted vertices after translation and area normalization; minimum over start and reversal", "chord_invariant": "sorted all-pairs chord lengths after translation and area normalization", "offline_greedy_max": "max of per-view median-normalized gains for offline coreset acquisition only; no scientific scalar ranking", "passive_coreset": "deterministic SHA-256 rank order is the reproducible passive retained-budget comparator"},
