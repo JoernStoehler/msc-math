@@ -525,13 +525,20 @@ def git_output(root: Path, *args: str) -> str:
 def verify_production_identity(
     source: dict[str, Any],
     expected_reviewed_revision: str | None,
+    expected_executable_sha256: str | None,
     repo_root: Path | None,
     cargo_lock: Path | None,
     executable: Path | None,
 ) -> None:
-    if any(value is None for value in (expected_reviewed_revision, repo_root, cargo_lock, executable)):
-        fail("production analysis requires reviewed revision, repo root, Cargo.lock, and executable")
+    if any(value is None for value in (
+        expected_reviewed_revision, expected_executable_sha256, repo_root, cargo_lock, executable
+    )):
+        fail(
+            "production analysis requires reviewed revision, expected executable SHA-256, "
+            "repo root, Cargo.lock, and executable"
+        )
     assert expected_reviewed_revision is not None
+    assert expected_executable_sha256 is not None
     assert repo_root is not None and cargo_lock is not None and executable is not None
     if len(expected_reviewed_revision) != 40 or any(c not in "0123456789abcdefABCDEF" for c in expected_reviewed_revision):
         fail("expected reviewed revision is not full 40-hex")
@@ -539,20 +546,28 @@ def verify_production_identity(
         fail("manifest reviewed revision differs from analyzer expectation")
     if source.get("git_revision") != expected_reviewed_revision:
         fail("manifest source revision differs from reviewed revision")
+    if len(expected_executable_sha256) != 64 or any(
+        c not in "0123456789abcdefABCDEF" for c in expected_executable_sha256
+    ):
+        fail("expected executable SHA-256 is not full 64-hex")
+    expected_executable_sha256 = expected_executable_sha256.lower()
+    if source.get("executable_sha256") != expected_executable_sha256:
+        fail("manifest executable hash differs from analyzer expectation")
     if git_output(repo_root, "rev-parse", "HEAD") != expected_reviewed_revision:
         fail("current repository HEAD differs from reviewed revision")
     if git_output(repo_root, "status", "--porcelain", "--untracked-files=normal"):
         fail("current repository is dirty during production analysis")
     if file_sha256(cargo_lock) != source.get("cargo_lock_sha256"):
         fail("current packet Cargo.lock hash differs from manifest")
-    if file_sha256(executable) != source.get("executable_sha256"):
-        fail("current executable hash differs from manifest")
+    if file_sha256(executable) != expected_executable_sha256:
+        fail("current executable hash differs from analyzer expectation")
 
 
 def validate_manifest(
     manifest: dict[str, Any],
     *,
     expected_reviewed_revision: str | None,
+    expected_executable_sha256: str | None,
     repo_root: Path | None,
     cargo_lock: Path | None,
     executable: Path | None,
@@ -639,7 +654,14 @@ def validate_manifest(
     if kind == "production_target":
         if source.get("source_tree_clean") is not True:
             fail("production artifacts came from a dirty source tree")
-        verify_production_identity(source, expected_reviewed_revision, repo_root, cargo_lock, executable)
+        verify_production_identity(
+            source,
+            expected_reviewed_revision,
+            expected_executable_sha256,
+            repo_root,
+            cargo_lock,
+            executable,
+        )
     material = (
         f"ams-readiness-run-v1\n{manifest['start_unix_ms']}\n{process_id}\n"
         f"{source['git_revision']}\n{artifact_directory}\n"
@@ -938,6 +960,7 @@ def verify(
     directory: Path,
     *,
     expected_reviewed_revision: str | None = None,
+    expected_executable_sha256: str | None = None,
     repo_root: Path | None = None,
     cargo_lock: Path | None = None,
     executable: Path | None = None,
@@ -960,6 +983,7 @@ def verify(
     config, config_id, kind = validate_manifest(
         manifest,
         expected_reviewed_revision=expected_reviewed_revision,
+        expected_executable_sha256=expected_executable_sha256,
         repo_root=repo_root,
         cargo_lock=cargo_lock,
         executable=executable,
@@ -1690,6 +1714,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("artifacts", type=Path)
     parser.add_argument("--expected-reviewed-revision")
+    parser.add_argument("--expected-executable-sha256")
     parser.add_argument("--repo-root", type=Path)
     parser.add_argument("--cargo-lock", type=Path)
     parser.add_argument("--executable", type=Path)
@@ -1698,6 +1723,7 @@ def main() -> None:
         result = verify(
             args.artifacts,
             expected_reviewed_revision=args.expected_reviewed_revision,
+            expected_executable_sha256=args.expected_executable_sha256,
             repo_root=args.repo_root,
             cargo_lock=args.cargo_lock,
             executable=args.executable,

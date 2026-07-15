@@ -39,6 +39,7 @@ struct Args {
     config: PathBuf,
     artifacts: PathBuf,
     reviewed_commit: Option<String>,
+    expected_executable_sha256: Option<String>,
     force_synthetic_hit: bool,
     synthetic_hit_call: Option<usize>,
     synthetic_fail_call: Option<usize>,
@@ -289,6 +290,9 @@ fn validate_launch(args: &Args, source: &SourceIdentity) -> Result<(), String> {
             if args.reviewed_commit.is_some() {
                 return Err("--reviewed-commit is production-only".into());
             }
+            if args.expected_executable_sha256.is_some() {
+                return Err("--expected-executable-sha256 is production-only".into());
+            }
         }
         Mode::Production => {
             if args.force_synthetic_hit
@@ -308,6 +312,16 @@ fn validate_launch(args: &Args, source: &SourceIdentity) -> Result<(), String> {
                 return Err(format!(
                     "production HEAD {} does not equal reviewed commit {reviewed}",
                     source.git_revision
+                ));
+            }
+            let expected_executable_sha256 = args
+                .expected_executable_sha256
+                .as_deref()
+                .ok_or("production requires --expected-executable-sha256 FULL_64_HEX")?;
+            if source.executable_sha256 != expected_executable_sha256 {
+                return Err(format!(
+                    "current executable SHA-256 {} does not equal caller-supplied expected hash {expected_executable_sha256}",
+                    source.executable_sha256
                 ));
             }
         }
@@ -698,6 +712,7 @@ fn parse_args() -> Result<Args, String> {
     let mut config = None;
     let mut artifacts = None;
     let mut reviewed_commit = None;
+    let mut expected_executable_sha256 = None;
     let mut force_synthetic_hit = false;
     let mut synthetic_hit_call = None;
     let mut synthetic_fail_call = None;
@@ -713,6 +728,16 @@ fn parse_args() -> Result<Args, String> {
                     values
                         .next()
                         .ok_or_else(|| "--reviewed-commit needs a revision".to_owned())?,
+                )
+            }
+            "--expected-executable-sha256" => {
+                expected_executable_sha256 = Some(
+                    values
+                        .next()
+                        .ok_or_else(|| {
+                            "--expected-executable-sha256 needs a SHA-256 hash".to_owned()
+                        })?
+                        .to_ascii_lowercase(),
                 )
             }
             "--force-synthetic-hit" => force_synthetic_hit = true,
@@ -741,6 +766,7 @@ fn parse_args() -> Result<Args, String> {
         config: config.ok_or_else(usage)?,
         artifacts: artifacts.ok_or_else(usage)?,
         reviewed_commit,
+        expected_executable_sha256,
         force_synthetic_hit,
         synthetic_hit_call,
         synthetic_fail_call,
@@ -751,12 +777,20 @@ fn parse_args() -> Result<Args, String> {
     if args.mode == Mode::Production && args.reviewed_commit.is_none() {
         return Err("production requires --reviewed-commit FULL_40_HEX_REVISION".into());
     }
+    if args.mode == Mode::Production && args.expected_executable_sha256.is_none() {
+        return Err("production requires --expected-executable-sha256 FULL_64_HEX".into());
+    }
     if args.force_synthetic_hit && args.synthetic_hit_call.is_some() {
         return Err("use either --force-synthetic-hit or --synthetic-hit-call, not both".into());
     }
     if let Some(revision) = args.reviewed_commit.as_deref() {
         if revision.len() != 40 || !revision.bytes().all(|byte| byte.is_ascii_hexdigit()) {
             return Err("--reviewed-commit must be a full 40-hex commit".into());
+        }
+    }
+    if let Some(hash) = args.expected_executable_sha256.as_deref() {
+        if hash.len() != 64 || !hash.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+            return Err("--expected-executable-sha256 must be a full 64-hex SHA-256".into());
         }
     }
     Ok(args)
@@ -786,7 +820,7 @@ fn next_usize(values: &mut impl Iterator<Item = String>, flag: &str) -> Result<u
 }
 
 fn usage() -> String {
-    "usage: adaptive-multilevel-splitting synthetic --config PATH --artifacts NEW_DIRECTORY [--force-synthetic-hit|--synthetic-hit-call N] [--synthetic-fail-call N] [--synthetic-child-delay-ms N --synthetic-call-timeout-ms N] [--synthetic-response-padding-bytes N]\n       adaptive-multilevel-splitting production --config PATH --artifacts NEW_DIRECTORY --reviewed-commit FULL_40_HEX_REVISION".into()
+    "usage: adaptive-multilevel-splitting synthetic --config PATH --artifacts NEW_DIRECTORY [--force-synthetic-hit|--synthetic-hit-call N] [--synthetic-fail-call N] [--synthetic-child-delay-ms N --synthetic-call-timeout-ms N] [--synthetic-response-padding-bytes N]\n       adaptive-multilevel-splitting production --config PATH --artifacts NEW_DIRECTORY --reviewed-commit FULL_40_HEX_REVISION --expected-executable-sha256 FULL_64_HEX".into()
 }
 
 fn source_identity(

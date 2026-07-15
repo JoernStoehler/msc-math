@@ -9,6 +9,7 @@ import tempfile
 import time
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import analyze
 from analyze import ArtifactError, verify
@@ -23,6 +24,7 @@ class AnalyzerCorruptionTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         subprocess.run(["cargo", "build"], cwd=HERE, check=True, capture_output=True)
+        cls.executable_sha256 = hashlib.sha256(EXECUTABLE.read_bytes()).hexdigest()
         cls.fixtures = tempfile.TemporaryDirectory()
         root = Path(cls.fixtures.name)
         cls.normal = root / "normal"
@@ -135,7 +137,24 @@ class AnalyzerCorruptionTests(unittest.TestCase):
         with self.assertRaisesRegex(ArtifactError, pattern):
             verify(self.directory)
 
-    def production_refusal(self, arguments, *, validate_dirty_source=False):
+    def production_refusal(
+        self,
+        arguments,
+        *,
+        validate_dirty_source=False,
+        supply_expected_executable_sha256=True,
+    ):
+        arguments = [str(argument) for argument in arguments]
+        if (
+            supply_expected_executable_sha256
+            and len(arguments) > 1
+            and arguments[1] == "production"
+            and "--expected-executable-sha256" not in arguments
+        ):
+            arguments.extend([
+                "--expected-executable-sha256",
+                self.executable_sha256,
+            ])
         environment = os.environ.copy()
         environment["AMS_TEST_REFUSAL_ONLY"] = "1"
         if validate_dirty_source:
@@ -667,6 +686,95 @@ class AnalyzerCorruptionTests(unittest.TestCase):
         )
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("requires --reviewed-commit", result.stderr)
+
+    def test_production_launch_refuses_missing_expected_executable_hash(self):
+        revision = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=HERE, check=True, capture_output=True, text=True
+        ).stdout.strip()
+        result = self.production_refusal(
+            [
+                EXECUTABLE,
+                "production",
+                "--config",
+                CONFIG,
+                "--artifacts",
+                self.directory / "unused",
+                "--reviewed-commit",
+                revision,
+            ],
+            supply_expected_executable_sha256=False,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("requires --expected-executable-sha256", result.stderr)
+        self.assertFalse((self.directory / "unused").exists())
+
+    def test_production_launch_refuses_malformed_or_wrong_expected_executable_hash(self):
+        revision = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=HERE, check=True, capture_output=True, text=True
+        ).stdout.strip()
+        for supplied, message in (
+            ("not-a-full-hash", "must be a full 64-hex SHA-256"),
+            ("0" * 64, "does not equal caller-supplied expected hash"),
+        ):
+            with self.subTest(supplied=supplied):
+                result = self.production_refusal([
+                    EXECUTABLE,
+                    "production",
+                    "--config",
+                    CONFIG,
+                    "--artifacts",
+                    self.directory / "unused",
+                    "--reviewed-commit",
+                    revision,
+                    "--expected-executable-sha256",
+                    supplied,
+                ])
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(message, result.stderr)
+                self.assertFalse((self.directory / "unused").exists())
+
+    def test_analyzer_requires_independent_expected_executable_hash(self):
+        revision = "1" * 40
+        cargo_lock = Path(self.temp.name) / "Cargo.lock"
+        executable = Path(self.temp.name) / "reviewed-executable"
+        cargo_lock.write_bytes(b"lock fixture")
+        executable.write_bytes(b"executable fixture")
+        source = {
+            "reviewed_revision": revision,
+            "git_revision": revision,
+            "cargo_lock_sha256": hashlib.sha256(cargo_lock.read_bytes()).hexdigest(),
+            "executable_sha256": hashlib.sha256(executable.read_bytes()).hexdigest(),
+        }
+        with self.assertRaisesRegex(ArtifactError, "expected executable SHA-256"):
+            analyze.verify_production_identity(
+                source, revision, None, HERE, cargo_lock, executable
+            )
+
+    def test_analyzer_rejects_manifest_or_current_executable_hash_corruption(self):
+        revision = "1" * 40
+        cargo_lock = Path(self.temp.name) / "Cargo.lock"
+        executable = Path(self.temp.name) / "reviewed-executable"
+        cargo_lock.write_bytes(b"lock fixture")
+        executable.write_bytes(b"executable fixture")
+        expected_hash = hashlib.sha256(executable.read_bytes()).hexdigest()
+        source = {
+            "reviewed_revision": revision,
+            "git_revision": revision,
+            "cargo_lock_sha256": hashlib.sha256(cargo_lock.read_bytes()).hexdigest(),
+            "executable_sha256": "0" * 64,
+        }
+        with self.assertRaisesRegex(ArtifactError, "manifest executable hash differs"):
+            analyze.verify_production_identity(
+                source, revision, expected_hash, HERE, cargo_lock, executable
+            )
+
+        source["executable_sha256"] = expected_hash
+        executable.write_bytes(b"corrupted executable fixture")
+        with mock.patch.object(analyze, "git_output", side_effect=[revision, ""]):
+            with self.assertRaisesRegex(ArtifactError, "current executable hash differs"):
+                analyze.verify_production_identity(
+                    source, revision, expected_hash, HERE, cargo_lock, executable
+                )
 
     def test_production_launch_refuses_wrong_reviewed_commit(self):
         result = self.production_refusal(

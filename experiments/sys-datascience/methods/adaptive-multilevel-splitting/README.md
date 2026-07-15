@@ -100,31 +100,48 @@ python3 analyze.py /tmp/ams-readiness-timeout
 
 ## Reserved production command
 
-Do not run this until the exact committed source and executable receive `GO`.
-The caller must supply the reviewed full 40-hex commit; the producer compares
-it with clean `HEAD` before creating artifacts. Any source change requires a
-new review and new reviewed commit value.
+Do not expose the target until the exact committed source and exact executable
+receive `GO`. The reviewer/caller, not the producer, owns both frozen expected
+identities: the reviewed full 40-hex commit and the full 64-hex SHA-256 of the
+built executable. The producer compares both with clean `HEAD` and its actual
+current executable before creating artifacts or invoking a child. Any source or
+executable change requires a new review and newly frozen values.
 
 ```bash
 cd experiments/sys-datascience/methods/adaptive-multilevel-splitting
 reviewed_commit=FULL_40_HEX_COMMIT_THAT_RECEIVED_GO
 repo_root=$(git rev-parse --show-toplevel)
-test ! -e /tmp/ams-readiness-production
 cargo build --release --locked
+executable="$PWD/target/release/adaptive-multilevel-splitting"
+computed_executable_sha256=$(sha256sum "$executable" | cut -d' ' -f1)
+
+# STOP before target exposure. The reviewer independently records the displayed
+# hash together with the commit. After that exact pair receives GO, the caller
+# freezes the approved hash here and confirms the executable has not changed.
+printf '%s\n' "$computed_executable_sha256"
+expected_executable_sha256=FULL_64_HEX_SHA256_THAT_RECEIVED_GO
+test "$computed_executable_sha256" = "$expected_executable_sha256"
+readonly reviewed_commit expected_executable_sha256
+
+test ! -e /tmp/ams-readiness-production
 ./target/release/adaptive-multilevel-splitting production \
   --config resolved-config.json \
   --artifacts /tmp/ams-readiness-production \
-  --reviewed-commit "$reviewed_commit"
+  --reviewed-commit "$reviewed_commit" \
+  --expected-executable-sha256 "$expected_executable_sha256"
 python3 analyze.py /tmp/ams-readiness-production \
   --expected-reviewed-revision "$reviewed_commit" \
+  --expected-executable-sha256 "$expected_executable_sha256" \
   --repo-root "$repo_root" \
   --cargo-lock "$PWD/Cargo.lock" \
-  --executable "$PWD/target/release/adaptive-multilevel-splitting"
+  --executable "$executable"
 ```
 
-Production refuses a dirty tree, wrong/missing reviewed commit, reused output
-directory, and every synthetic test flag. Production analysis recomputes clean
-`HEAD`, the packet lock hash, and the executable hash against the manifest.
+Production refuses a dirty tree, wrong/missing reviewed commit, wrong/missing
+caller-owned expected executable hash, reused output directory, and every
+synthetic test flag. Production analysis requires the same independently
+supplied expected hash and compares it with both the manifest and current
+executable, in addition to recomputing clean `HEAD` and the packet lock hash.
 The private refusal-test guard also blocks the `target-once` production
 endpoint itself, so production-refusal tests remain target-free on a clean
 checkout.
