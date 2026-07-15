@@ -191,6 +191,7 @@ struct Report {
     output_rows_count: usize,
     output_paired_sha256: String,
     output_paired_count: usize,
+    output_paired_tsv_sha256: String,
     diagonal_quotient_control: DiagonalQuotientControl,
     exactness_boundary: &'static str,
     interpretation_boundary: &'static str,
@@ -750,11 +751,34 @@ fn run(args: &Args, argv: &[String]) -> Result<(), String> {
         writeln!(pw).map_err(|e| e.to_string())?;
     }
     pw.flush().map_err(|e| e.to_string())?;
+    let paired_tsv_path = args.out_dir.join("paired.tsv");
+    let mut tw = BufWriter::new(File::create(&paired_tsv_path).map_err(|e| e.to_string())?);
+    writeln!(tw, "base_id\tbase_geometry_id\tbucket\tt\ts_row_id\tn_row_id\tsingular_spectrum_max_abs_delta\tsymplectic_residual_s\tsymplectic_residual_n\tsymplectic_feature_l1_delta\tresponse_difference_l1\tnegative_control_equal_at_t1").map_err(|e| e.to_string())?;
+    for p in &pairs {
+        writeln!(
+            tw,
+            "{}\t{}\t{}\t{}\t{}\t{}\t{:.17e}\t{:.17e}\t{:.17e}\t{:.17e}\t{:.17e}\t{}",
+            p.base_id,
+            p.base_geometry_id,
+            p.bucket,
+            p.t,
+            p.s_row_id,
+            p.n_row_id,
+            p.singular_spectrum_max_abs_delta,
+            p.symplectic_residual_s,
+            p.symplectic_residual_n,
+            p.symplectic_feature_l1_delta,
+            p.response_difference_l1,
+            p.negative_control_equal_at_t1
+        )
+        .map_err(|e| e.to_string())?;
+    }
+    tw.flush().map_err(|e| e.to_string())?;
     let (rev, tree, dirty) = repo_identity();
     let producer_path =
         Path::new("experiments/sys-datascience/methods/generator-cartan-anisotropy/main.rs");
     let lock_path = Path::new("Cargo.lock");
-    let report = Report { schema: REPORT_SCHEMA, command: argv.join(" "), source_path: args.source.display().to_string(), source_input_sha256: source_hash, source_revision: rev, source_repository_tree: tree, source_dirty_tracked: dirty, producer_source_sha256: sha256_hex(&read(producer_path).map_err(|e|e.to_string())?), cargo_lock_sha256: sha256_hex(&read(lock_path).map_err(|e|e.to_string())?), coordinate_order: COORDINATE_ORDER, requested_buckets: BUCKETS.iter().map(|(q,p)|format!("{q}x{p}")).collect(), requested_base_count: bases.len(), requested_rows: bases.len()*LEVELS.len()*2, observed_rows: rows.len(), passed_rows: rows.iter().filter(|r| r.failures.is_empty()).count(), failure_rows: rows.iter().filter(|r| !r.failures.is_empty()).count(), pair_count: pairs.len(), failures: rows.iter().flat_map(|r|r.failures.clone()).collect(), output_rows_sha256: sha256_hex(&read(&rows_path).map_err(|e|e.to_string())?), output_rows_count: rows.len(), output_paired_sha256: sha256_hex(&read(&paired_path).map_err(|e|e.to_string())?), output_paired_count: pairs.len(), diagonal_quotient_control: quotient_control(), exactness_boundary: "Intervention matrices and Cartan pair weights are exact rationals. Source f64 payloads are converted at the existing binary-rational reconstruction boundary; the resulting reconstructed geometry, incidence, and volume are exact there. Floating residuals and singular values are diagnostic views.", interpretation_boundary: "Target-free paired geometry only. This packet does not evaluate sys or capacity, estimate population effects, claim an intrinsic Sp(4)\\SL(4)\\Sp(4) distance, classify the full double coset, or treat the symplectic arm as new coverage for orbit-invariant consumers." };
+    let report = Report { schema: REPORT_SCHEMA, command: argv.join(" "), source_path: args.source.display().to_string(), source_input_sha256: source_hash, source_revision: rev, source_repository_tree: tree, source_dirty_tracked: dirty, producer_source_sha256: sha256_hex(&read(producer_path).map_err(|e|e.to_string())?), cargo_lock_sha256: sha256_hex(&read(lock_path).map_err(|e|e.to_string())?), coordinate_order: COORDINATE_ORDER, requested_buckets: BUCKETS.iter().map(|(q,p)|format!("{q}x{p}")).collect(), requested_base_count: bases.len(), requested_rows: bases.len()*LEVELS.len()*2, observed_rows: rows.len(), passed_rows: rows.iter().filter(|r| r.failures.is_empty()).count(), failure_rows: rows.iter().filter(|r| !r.failures.is_empty()).count(), pair_count: pairs.len(), failures: rows.iter().flat_map(|r|r.failures.clone()).collect(), output_rows_sha256: sha256_hex(&read(&rows_path).map_err(|e|e.to_string())?), output_rows_count: rows.len(), output_paired_sha256: sha256_hex(&read(&paired_path).map_err(|e|e.to_string())?), output_paired_count: pairs.len(), output_paired_tsv_sha256: sha256_hex(&read(&paired_tsv_path).map_err(|e|e.to_string())?), diagonal_quotient_control: quotient_control(), exactness_boundary: "Intervention matrices and Cartan pair weights are exact rationals. Source f64 payloads are converted at the existing binary-rational reconstruction boundary; the resulting reconstructed geometry, incidence, and volume are exact there. Floating residuals and singular values are diagnostic views.", interpretation_boundary: "Target-free paired geometry only. This packet does not evaluate sys or capacity, estimate population effects, claim an intrinsic Sp(4)\\SL(4)\\Sp(4) distance, classify the full double coset, or treat the symplectic arm as new coverage for orbit-invariant consumers." };
     serde_json::to_writer_pretty(
         File::create(args.out_dir.join("report.json")).map_err(|e| e.to_string())?,
         &report,

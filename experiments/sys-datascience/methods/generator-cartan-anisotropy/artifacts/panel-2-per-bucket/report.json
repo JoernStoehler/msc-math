@@ -1,0 +1,94 @@
+{
+  "schema": "generator-cartan-anisotropy-report-v1",
+  "command": "target/release/sys-datascience-generator-cartan-anisotropy --out-dir experiments/sys-datascience/methods/generator-cartan-anisotropy/artifacts/panel-2-per-bucket",
+  "source_path": "experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl",
+  "source_input_sha256": "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367",
+  "source_revision": "4e3441faa12832f210436c18729112143c4ac1c6",
+  "source_repository_tree": "909e6c5610c0127582556d41c06740c9a1df2b58",
+  "source_dirty_tracked": false,
+  "producer_source_sha256": "ec93920698ca49d8978f3dff137507e21581172e195ba0014e25864163ebcaf9",
+  "cargo_lock_sha256": "61cbc0cec713df9c7b6ec79c19d4abbc34fcbc4b30ed9911df02502e0c444c1f",
+  "coordinate_order": "q1,q2,p1,p2",
+  "requested_buckets": [
+    "3x3",
+    "4x4",
+    "4x6",
+    "6x6"
+  ],
+  "requested_base_count": 8,
+  "requested_rows": 64,
+  "observed_rows": 64,
+  "passed_rows": 64,
+  "failure_rows": 0,
+  "pair_count": 32,
+  "failures": [],
+  "output_rows_sha256": "f621f33af3af2ada6f10b534cf2df1c8fc36ee5a2ff27c4099424f5e89944a8b",
+  "output_rows_count": 64,
+  "output_paired_sha256": "73c697287e379f04641995db46864bc97d4df7eb7e6f64a29048f3cfc07aa979",
+  "output_paired_count": 32,
+  "diagonal_quotient_control": {
+    "input_d_exact": [
+      "2/1",
+      "1/2",
+      "2/1",
+      "1/2"
+    ],
+    "t_squared_exact": "4/1",
+    "symplectic_factor_exact": [
+      [
+        "1/1",
+        "0/1",
+        "0/1",
+        "0/1"
+      ],
+      [
+        "0/1",
+        "1/1",
+        "0/1",
+        "0/1"
+      ],
+      [
+        "0/1",
+        "0/1",
+        "1/1",
+        "0/1"
+      ],
+      [
+        "0/1",
+        "0/1",
+        "0/1",
+        "1/1"
+      ]
+    ],
+    "reconstructed_d_exact": [
+      [
+        "2/1",
+        "0/1",
+        "0/1",
+        "0/1"
+      ],
+      [
+        "0/1",
+        "1/2",
+        "0/1",
+        "0/1"
+      ],
+      [
+        "0/1",
+        "0/1",
+        "2/1",
+        "0/1"
+      ],
+      [
+        "0/1",
+        "0/1",
+        "0/1",
+        "1/2"
+      ]
+    ],
+    "reconstruction_passed": true,
+    "scope": "positive diagonal determinant-one Cartan quotient only; not a classification of Sp(4)\\SL(4)\\Sp(4)"
+  },
+  "exactness_boundary": "Intervention matrices and Cartan pair weights are exact rationals. Source f64 payloads are converted at the existing binary-rational reconstruction boundary; the resulting reconstructed geometry, incidence, and volume are exact there. Floating residuals and singular values are diagnostic views.",
+  "interpretation_boundary": "Target-free paired geometry only. This packet does not evaluate sys or capacity, estimate population effects, claim an intrinsic Sp(4)\\SL(4)\\Sp(4) distance, classify the full double coset, or treat the symplectic arm as new coverage for orbit-invariant consumers."
+}

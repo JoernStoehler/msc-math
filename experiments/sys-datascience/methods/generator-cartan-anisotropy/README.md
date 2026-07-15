@@ -39,8 +39,8 @@ The retained packet contains:
   matrices and pair weights, determinant, singular values, exact/floating
   symplectic residuals, reconstruction/incidence/volume checks, and direct
   Euclidean/symplectic signatures plus compact exact-feature responses;
-- `paired.jsonl`: 32 matched S-versus-N rows, never pooled across bases or
-  levels;
+- `paired.jsonl` and `paired.tsv`: 32 matched S-versus-N rows, never pooled
+  across bases or levels; TSV is the compact human-readable table;
 - `report.json`: source revision/tree and tracked-clean state, source and
   producer hashes, row hashes/counts, the quotient control, and interpretation
   boundaries.
