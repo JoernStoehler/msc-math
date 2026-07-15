@@ -31,6 +31,7 @@ def main() -> None:
         assert row["exact_matrix_action_matches"] is True
         assert row["reconstruction_passed"] is True
         assert row["euclidean_checks"]["exact_volume_matches_base"] is True
+        assert row["euclidean_checks"]["singular_spectrum_control"] is True
         if row["map_family"] == "symplectic-control":
             assert row["base_signature"]["symplectic_gram_upper_exact"] == row["response_signature"]["symplectic_gram_upper_exact"]
         by_pair.setdefault((row["base_id"], row["t"]), {})[row["map_family"]] = row

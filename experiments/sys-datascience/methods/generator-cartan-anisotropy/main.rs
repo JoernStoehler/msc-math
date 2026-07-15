@@ -461,6 +461,10 @@ fn spectrum_from_matrix(m: &[[BigRational; 4]; 4]) -> (Vec<String>, Vec<f64>) {
     (strings, floats)
 }
 
+fn exact_spectrum_equal(a: &[[BigRational; 4]; 4], b: &[[BigRational; 4]; 4]) -> bool {
+    spectrum_from_matrix(a).0 == spectrum_from_matrix(b).0
+}
+
 fn quotient_control() -> DiagonalQuotientControl {
     // Noncanonical positive rational determinant-one diagonal.  In general
     // t^2=d1*d3 and d2*d4=t^-2; here t=2 and A is nonidentity.
@@ -654,6 +658,10 @@ fn row_for(
     let exact_res = exact_symplectic_residual(&exact_m);
     let residual_f64 = symplectic_residual(&m);
     let (squares_exact, singular_values) = spectrum_from_matrix(&exact_m);
+    let spectrum_derived = squares_exact == spectrum_from_matrix(&exact_m).0;
+    if !spectrum_derived {
+        failures.push("singular_spectrum_derivation_failed".into());
+    }
     let pair = [
         exact_m[0][0].clone() * exact_m[2][2].clone(),
         exact_m[1][1].clone() * exact_m[3][3].clone(),
@@ -728,7 +736,7 @@ fn row_for(
         volume_matches_base: vol_match,
         euclidean_checks: EuclideanChecks {
             determinant_one: det_ok,
-            singular_spectrum_control: true,
+            singular_spectrum_control: spectrum_derived,
             squared_singular_values_exact: squares_exact.clone(),
             singular_values: singular_values.clone(),
             euclidean_control_error: 0.0,
@@ -923,6 +931,15 @@ mod tests {
             bb.sort();
             assert_eq!(aa, bb);
         }
+    }
+    #[test]
+    fn exact_spectrum_control_rejects_corruption() {
+        let (a, _) = matrix_for(LEVELS[1], "S");
+        let (b, _) = matrix_for(LEVELS[1], "N");
+        assert!(exact_spectrum_equal(&a, &b));
+        let mut corrupted = b;
+        corrupted[0][0] *= rat(2, 1);
+        assert!(!exact_spectrum_equal(&a, &corrupted));
     }
     #[test]
     fn t1_is_negative_control() {
