@@ -6,7 +6,7 @@ This is a target-free finite-panel audit of planar generator transfer. It does n
 
 - Source law: IID sorted normal angles and IID support heights in `[0.8,1.2)`, conditioned on a bounded irredundant polygon, followed by explicit `Fraction.limit_denominator(1e9)` reconstruction and an exact hull.
 - Exact panel: 72 source/image pairs, strata `n=3,4,6`, 24 per stratum. Every row retains source, preserved-mark polar, centroid polar, and both double-polar controls.
-- Product arms: 144 exact rows (36 paired cells, four arms per cell: `QxP`, `Q^circ x P`, `Q x P^circ`, `Q^circ x P^circ`).
+- Product arms: 144 exact rows (36 paired cells, four arms per cell: `QxP`, `Q^circ x P`, `Q x P^circ`, `Q^circ x P^circ`). Cartesian H reconstruction, incidence counts, and volume `area(Q) area(P)` are exact.
 - No relative-rotation knob is used. Factor area normalization is recorded by exact `scale_squared=1/area`; normalized product volume is therefore one by construction, while raw rational areas/volumes remain available.
 
 ## Mathematical controls
@@ -19,10 +19,11 @@ Polar images are deterministic pushforwards paired to their sources. `P_#mu` is 
 
 ## Provenance and replay
 
-Source revision `e353a97c28f4e581506b00e37d286004b22611b4`, tree `03ff11fa5cef0bb3b7fd9ede9fa4f4a3b33f6771`, tracked-dirty before artifact creation `false`. Producer SHA-256 `53d064c61a3ae7682a39bb8315295758aeb9d3a36d7db3a6cd98727d1727e333`. Python dependencies are standard library only. Reproduce from a clean checkout with:
+Source revision `b7e912d3b49099442e2edf0ae7d10b522691b121`, tree `76337de27d9a129f1019f5239f1de15f8e2a1f8a`, tracked-dirty before artifact creation `false`. Producer SHA-256 `ea37b32bba72dafb49b76067b8536df7fb6e652c9bc72095cc229ac64eb2155f`. Python dependencies are standard library only. Reproduce from that source revision (the later artifact commit changes repository `HEAD`) with:
 
 ```text
-python3 experiments/sys-datascience/methods/generator-polarity-pushforward/run.py --out-dir experiments/sys-datascience/methods/generator-polarity-pushforward/artifacts --seed 20260715 --per-stratum 24
+git worktree add --detach /tmp/generator-polarity-replay b7e912d3b49099442e2edf0ae7d10b522691b121
+python3 /tmp/generator-polarity-replay/experiments/sys-datascience/methods/generator-polarity-pushforward/run.py --out-dir /tmp/polarity-artifacts --seed 20260715 --per-stratum 24
 sha256sum experiments/sys-datascience/methods/generator-polarity-pushforward/artifacts/{panel.jsonl,diversity.tsv,product-arms.jsonl,fixtures.json}
 ```
 

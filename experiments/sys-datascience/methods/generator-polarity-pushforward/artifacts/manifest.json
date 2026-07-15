@@ -14,18 +14,18 @@
   "output_sha256": {
     "diversity": "52261d5be7eaed350f3c640b4f09ad9ff991e171bf3bc70fa215163b641ca4b7",
     "fixtures": "70f28cfddf300d6dfe19b1b8380425aef57eec7b6084c795fc73e7cb5bbf079e",
-    "panel": "9885ebd08af574c53c73a29bd3375b802de8d622a3c5ed2434759247055b2204",
-    "product_arms": "9d7d9e21453ed5948e2b94b7c0b4bd03dd405f71fb16b0c62451dc26417d7dce"
+    "panel": "fbee425786c9a3bb7dacfaff55144af5d69f4df4c77c979431b8e5da3defcfe6",
+    "product_arms": "9e29d8d6924907f0adc39dbef117f5f5f78e9fcf08f70dc5402ce05577447d7c"
   },
   "panel_rows": 72,
-  "producer_sha256": "53d064c61a3ae7682a39bb8315295758aeb9d3a36d7db3a6cd98727d1727e333",
+  "producer_sha256": "ea37b32bba72dafb49b76067b8536df7fb6e652c9bc72095cc229ac64eb2155f",
   "product_arm_rows": 144,
   "rows_per_stratum": 24,
   "schema": "generator-polarity-manifest-v1",
   "seed": 20260715,
   "source_dirty_tracked": false,
-  "source_revision": "e353a97c28f4e581506b00e37d286004b22611b4",
-  "source_tree": "03ff11fa5cef0bb3b7fd9ede9fa4f4a3b33f6771",
+  "source_revision": "b7e912d3b49099442e2edf0ae7d10b522691b121",
+  "source_tree": "76337de27d9a129f1019f5239f1de15f8e2a1f8a",
   "strata": [
     3,
     4,
