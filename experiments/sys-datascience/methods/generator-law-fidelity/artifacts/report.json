@@ -1,0 +1,1236 @@
+{
+  "calibration_status": "pass",
+  "calibrations": [
+    {
+      "control": "duplicated_independent_units",
+      "diagnostic": {
+        "duplicate_geometries": 1
+      },
+      "passed": true
+    },
+    {
+      "control": "biased_angular_sector",
+      "diagnostic": {
+        "biased": {
+          "kuiper": 0.8763834457504619,
+          "mean_resultant": 0.9745400548129295,
+          "n": 256
+        },
+        "uniform_reference": {
+          "kuiper": 0.0580857352773656,
+          "mean_resultant": 0.014772047193738423,
+          "n": 256
+        }
+      },
+      "passed": true
+    },
+    {
+      "control": "wrong_dirichlet_alpha",
+      "diagnostic": {
+        "expected_marginal_variance": 0.01984126984126984,
+        "marginal_mean": 0.16666666666666666,
+        "marginal_variance": 0.005285179781091956,
+        "max_simplex_sum_error": 2.220446049250313e-16,
+        "n_gaps": 768,
+        "pit_ks": 0.8621354243880044,
+        "pit_mean": 0.13515664631097515,
+        "positivity": true
+      },
+      "passed": true
+    },
+    {
+      "control": "law_ordered_truncation",
+      "diagnostic": {
+        "flagged": true,
+        "n": 64,
+        "spearman_row_index_vs_value": 0.9999999999999998
+      },
+      "passed": true
+    },
+    {
+      "control": "wrong_correlation_arm",
+      "diagnostic": {
+        "absolute_error": 0.829690452647379,
+        "coordinates": 256,
+        "declared_rho": 0.8,
+        "flagged": true,
+        "observed_pearson": -0.02969045264737896
+      },
+      "passed": true
+    }
+  ],
+  "cross_seed_same_law": {
+    "cheapest_next_input": "At least two retained panels per law/parameter/side-count with distinct declared master seeds.",
+    "interpretation": "A same-law cross-seed comparison is a consistency check only, never proof that the declared law is correct.",
+    "observed_seeds": [
+      20260714
+    ],
+    "status": "not_auditable_from_retained_schema"
+  },
+  "deterministic_replay": {
+    "comparison": "exact JSON row order after removing wall-clock fields",
+    "left_rows": 30,
+    "name": "deterministic_replay",
+    "right_rows": 30,
+    "status": "pass"
+  },
+  "global_checks": [
+    {
+      "duplicate_ids": 0,
+      "name": "sample_id_collision",
+      "rows": 335,
+      "status": "pass"
+    },
+    {
+      "duplicate_seed_tuples": 0,
+      "effective_unit": "one q factor per accepted product logical row",
+      "name": "duplicate_q_seed_lineage",
+      "scope_note": "The paired p factor intentionally shares the product seed tuple and is excluded here.",
+      "status": "pass"
+    },
+    {
+      "mismatching_ids": 0,
+      "name": "sample_id_field_lineage",
+      "status": "pass"
+    },
+    {
+      "duplicate_logical_rows": 0,
+      "logical_rows": 115,
+      "name": "one_terminal_product_outcome_per_logical_row",
+      "status": "pass"
+    },
+    {
+      "declared_seed": 20260714,
+      "mismatching_rows": 0,
+      "name": "batch_seed_lineage",
+      "status": "pass"
+    },
+    {
+      "contract_note": "v1 uses accepted=false plus a bounded-exhaustion reason; it does not retain rejected proposals.",
+      "name": "terminal_acceptance_or_exhaustion",
+      "rows": 115,
+      "status": "pass",
+      "terminal_rows": 115
+    },
+    {
+      "duplicate_geometries": 0,
+      "effective_unit": "one q factor per accepted product logical row",
+      "name": "duplicate_independent_q_unit_geometry",
+      "status": "pass"
+    },
+    {
+      "interpretation": "serialization consistency only; monotonic row order is not a sampling-law test.",
+      "name": "row_order_monotone_within_declared_stratum",
+      "status": "pass",
+      "strata_out_of_order": 0
+    },
+    {
+      "cheapest_producer_amendment": "Emit a compact proposal ledger keyed by law/parameter/bucket/row/attempt with terminal acceptance reason; geometry payload is unnecessary for rejected proposals.",
+      "missing_fields": [
+        "one record per rejected proposal",
+        "proposal_status",
+        "proposal_seed_or_counter"
+      ],
+      "name": "proposal_vs_accepted_conditioning",
+      "status": "not_auditable_from_retained_schema"
+    }
+  ],
+  "inputs": [
+    {
+      "bytes": 133109,
+      "path": "experiments/sys-datascience/methods/generator-zoo-smoke/artifacts/factor-shapes.jsonl",
+      "sha256": "4622400be1220f11f742a4bde29273fe45dcd4c8d27044d716059c429630d7a8"
+    },
+    {
+      "bytes": 57499,
+      "path": "experiments/sys-datascience/methods/generator-zoo-smoke/artifacts/product-smoke.jsonl",
+      "sha256": "65eadca0eb010730855b21e0348a8f1622e45ee0d195ce623d49ad0a8ac26df7"
+    },
+    {
+      "bytes": 4451,
+      "path": "experiments/sys-datascience/methods/generator-zoo-smoke/artifacts/batch-report.json",
+      "sha256": "c7d6dc1abcd070569d3dfbebccbe06fcddbe8abb66f06f7b6c125318b3d2326c"
+    },
+    {
+      "bytes": 24918,
+      "path": "experiments/sys-datascience/methods/generator-law-fidelity/artifacts/natural-smoke/smoke-rows.jsonl",
+      "sha256": "0923fb77733c54a799e33291f50a4b165e10a22772788a1bc56f83631ca96335"
+    },
+    {
+      "bytes": 5176,
+      "path": "experiments/sys-datascience/methods/generator-law-fidelity/artifacts/natural-smoke/batch-report.json",
+      "sha256": "c56d6c611b5ac9cdd3db2691e5eb003e8166600ebf982461759ceefc846f8f78"
+    }
+  ],
+  "interpretation_boundary": "Passes establish calibration of these diagnostic implementations and schema/lineage observations only. They do not prove a null law, population IID behavior after conditioning, or target transfer.",
+  "law_arms": [
+    {
+      "arm": "delta=0.2",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.23230441953599332,
+          "mean_resultant": 0.11074066403633379,
+          "n": 15
+        },
+        "declared_iid_uniform_angle": true,
+        "effective_unit_contract": "one q factor from each accepted product row; q/p pairing is not counted twice",
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "current-baseline",
+      "pair_bucket": "3x3",
+      "sample_count": 5,
+      "side_count": 3,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "delta=0.2",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.2568286956256463,
+          "mean_resultant": 0.07417982630371599,
+          "n": 20
+        },
+        "declared_iid_uniform_angle": true,
+        "effective_unit_contract": "one q factor from each accepted product row; q/p pairing is not counted twice",
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "current-baseline",
+      "pair_bucket": "4x6",
+      "sample_count": 5,
+      "side_count": 4,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "delta=0.2",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.15596777135906764,
+          "mean_resultant": 0.08629478889322362,
+          "n": 30
+        },
+        "declared_iid_uniform_angle": true,
+        "effective_unit_contract": "one q factor from each accepted product row; q/p pairing is not counted twice",
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "current-baseline",
+      "pair_bucket": "6x6",
+      "sample_count": 5,
+      "side_count": 6,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "points=n+4,origin=interior",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.24706670449834553,
+          "mean_resultant": 0.1501553403196691,
+          "n": 20
+        },
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "primal-hull-uniform-disk",
+      "pair_bucket": "4x6",
+      "sample_count": 5,
+      "side_count": 4,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "points=n+4,origin=interior",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.14310651255708995,
+          "mean_resultant": 0.04767010781311544,
+          "n": 30
+        },
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "primal-hull-uniform-disk",
+      "pair_bucket": "6x6",
+      "sample_count": 5,
+      "side_count": 6,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "steps=4,scale=0.03",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.25396177946983733,
+          "mean_resultant": 0.005910337070240631,
+          "n": 15
+        },
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "regular-mutation",
+      "pair_bucket": "3x3",
+      "sample_count": 5,
+      "side_count": 3,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "steps=4,scale=0.03",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.12642407782458642,
+          "mean_resultant": 0.030456583688630308,
+          "n": 20
+        },
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "regular-mutation",
+      "pair_bucket": "4x6",
+      "sample_count": 5,
+      "side_count": 4,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "steps=4,scale=0.03",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.0890826523871035,
+          "mean_resultant": 0.007299808603908265,
+          "n": 30
+        },
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "regular-mutation",
+      "pair_bucket": "6x6",
+      "sample_count": 5,
+      "side_count": 6,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "alpha=1",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.18271354943858997,
+          "mean_resultant": 0.08722593472092291,
+          "n": 15
+        },
+        "dirichlet": {
+          "expected_marginal_variance": 0.05555555555555555,
+          "marginal_mean": 0.3333333333333333,
+          "marginal_variance": 0.012553889850745455,
+          "max_simplex_sum_error": 0.0,
+          "n_gaps": 15,
+          "pit_ks": 0.29693216109833503,
+          "pit_mean": 0.471500832852405,
+          "positivity": true
+        },
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "repulsive-gap",
+      "pair_bucket": "3x3",
+      "sample_count": 5,
+      "side_count": 3,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "alpha=1",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.16603303207145104,
+          "mean_resultant": 0.06892351784615369,
+          "n": 20
+        },
+        "dirichlet": {
+          "expected_marginal_variance": 0.0375,
+          "marginal_mean": 0.25,
+          "marginal_variance": 0.014017503231705603,
+          "max_simplex_sum_error": 0.0,
+          "n_gaps": 20,
+          "pit_ks": 0.6343335169687563,
+          "pit_mean": 0.2993738576010255,
+          "positivity": true
+        },
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "repulsive-gap",
+      "pair_bucket": "4x6",
+      "sample_count": 5,
+      "side_count": 4,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "alpha=1",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.20655540429096528,
+          "mean_resultant": 0.15911977618602918,
+          "n": 30
+        },
+        "dirichlet": {
+          "expected_marginal_variance": 0.01984126984126984,
+          "marginal_mean": 0.16666666666666666,
+          "marginal_variance": 0.014133712342879665,
+          "max_simplex_sum_error": 0.0,
+          "n_gaps": 30,
+          "pit_ks": 0.7279809280400523,
+          "pit_mean": 0.2688292927125436,
+          "positivity": true
+        },
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "repulsive-gap",
+      "pair_bucket": "6x6",
+      "sample_count": 5,
+      "side_count": 6,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "alpha=16",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.24951399633924515,
+          "mean_resultant": 0.016091361304997467,
+          "n": 15
+        },
+        "dirichlet": {
+          "expected_marginal_variance": 0.0045351473922902496,
+          "marginal_mean": 0.3333333333333333,
+          "marginal_variance": 0.002077333711092738,
+          "max_simplex_sum_error": 0.0,
+          "n_gaps": 15,
+          "pit_ks": 0.6666666666666666,
+          "pit_mean": 0.3333333333333333,
+          "positivity": true
+        },
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "repulsive-gap",
+      "pair_bucket": "3x3",
+      "sample_count": 5,
+      "side_count": 3,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "alpha=16",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.1616912375862882,
+          "mean_resultant": 0.040836046675143,
+          "n": 20
+        },
+        "dirichlet": {
+          "expected_marginal_variance": 0.0028846153846153848,
+          "marginal_mean": 0.25,
+          "marginal_variance": 0.005087690480881896,
+          "max_simplex_sum_error": 1.1102230246251565e-16,
+          "n_gaps": 20,
+          "pit_ks": 0.6,
+          "pit_mean": 0.4,
+          "positivity": true
+        },
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "repulsive-gap",
+      "pair_bucket": "4x6",
+      "sample_count": 5,
+      "side_count": 4,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "alpha=16",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.14985607733086945,
+          "mean_resultant": 0.061766910435179144,
+          "n": 30
+        },
+        "dirichlet": {
+          "expected_marginal_variance": 0.0014318442153493699,
+          "marginal_mean": 0.16666666666666666,
+          "marginal_variance": 0.0014061433525259,
+          "max_simplex_sum_error": 0.0,
+          "n_gaps": 30,
+          "pit_ks": 0.5666666666666667,
+          "pit_mean": 0.43333333333333335,
+          "positivity": true
+        },
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "repulsive-gap",
+      "pair_bucket": "6x6",
+      "sample_count": 5,
+      "side_count": 6,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "alpha=4",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.18985743528863547,
+          "mean_resultant": 0.04441667171480831,
+          "n": 15
+        },
+        "dirichlet": {
+          "expected_marginal_variance": 0.017094017094017096,
+          "marginal_mean": 0.3333333333333333,
+          "marginal_variance": 0.004789563915525721,
+          "max_simplex_sum_error": 0.0,
+          "n_gaps": 15,
+          "pit_ks": 0.5999999858113907,
+          "pit_mean": 0.40000000295844984,
+          "positivity": true
+        },
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "repulsive-gap",
+      "pair_bucket": "3x3",
+      "sample_count": 5,
+      "side_count": 3,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "alpha=4",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.20653858687772558,
+          "mean_resultant": 0.12529223446701365,
+          "n": 20
+        },
+        "dirichlet": {
+          "expected_marginal_variance": 0.011029411764705883,
+          "marginal_mean": 0.25,
+          "marginal_variance": 0.011071605980718551,
+          "max_simplex_sum_error": 1.1102230246251565e-16,
+          "n_gaps": 20,
+          "pit_ks": 0.5999999999995607,
+          "pit_mean": 0.4000000000000825,
+          "positivity": true
+        },
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "repulsive-gap",
+      "pair_bucket": "4x6",
+      "sample_count": 5,
+      "side_count": 4,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "alpha=4",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.10476373800546898,
+          "mean_resultant": 0.034418559335004206,
+          "n": 30
+        },
+        "dirichlet": {
+          "expected_marginal_variance": 0.005555555555555556,
+          "marginal_mean": 0.16666666666666666,
+          "marginal_variance": 0.004698298825662459,
+          "max_simplex_sum_error": 1.1102230246251565e-16,
+          "n_gaps": 30,
+          "pit_ks": 0.7333333333333333,
+          "pit_mean": 0.26666666666666666,
+          "positivity": true
+        },
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "repulsive-gap",
+      "pair_bucket": "6x6",
+      "sample_count": 5,
+      "side_count": 6,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "regular",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.2420983332474945,
+          "mean_resultant": 2.9513625900364914e-17,
+          "n": 15
+        },
+        "dirichlet": {
+          "reason": "regular is a deterministic limiting control, not finite-alpha Dirichlet data",
+          "simplex_sum_error": 0.0,
+          "status": "inapplicable_exact_regular_limit"
+        },
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "repulsive-gap",
+      "pair_bucket": "3x3",
+      "sample_count": 5,
+      "side_count": 3,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "regular",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.1074805638030692,
+          "mean_resultant": 6.980597104258442e-17,
+          "n": 20
+        },
+        "dirichlet": {
+          "reason": "regular is a deterministic limiting control, not finite-alpha Dirichlet data",
+          "simplex_sum_error": 0.0,
+          "status": "inapplicable_exact_regular_limit"
+        },
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "repulsive-gap",
+      "pair_bucket": "4x6",
+      "sample_count": 5,
+      "side_count": 4,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "regular",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.07824522250572011,
+          "mean_resultant": 5.767589616459239e-17,
+          "n": 30
+        },
+        "dirichlet": {
+          "reason": "regular is a deterministic limiting control, not finite-alpha Dirichlet data",
+          "simplex_sum_error": 0.0,
+          "status": "inapplicable_exact_regular_limit"
+        },
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "repulsive-gap",
+      "pair_bucket": "6x6",
+      "sample_count": 5,
+      "side_count": 6,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "lengths=uniform(0.5,1.5)",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.13077302244765182,
+          "mean_resultant": 6.33890276745811e-17,
+          "n": 20
+        },
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "zonogon",
+      "pair_bucket": "4x6",
+      "sample_count": 5,
+      "side_count": 4,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "lengths=uniform(0.5,1.5)",
+      "diagnostics": {
+        "circular": {
+          "kuiper": 0.1371911102682694,
+          "mean_resultant": 8.75123244223454e-17,
+          "n": 30
+        },
+        "geometry_valid_rows": 5
+      },
+      "effective_independent_unit": "accepted product logical row, represented by its q factor only",
+      "interpretation": "Descriptive diagnostic only; this five-unit smoke cannot accept a null sampling law.",
+      "law": "zonogon",
+      "pair_bucket": "6x6",
+      "sample_count": 5,
+      "side_count": 6,
+      "source": "generator-zoo-factor-shapes-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "center=centroid,phi=0",
+      "diagnostics": [
+        {
+          "name": "terminal_status",
+          "status": "pass",
+          "statuses": {
+            "survived": 2
+          }
+        }
+      ],
+      "effective_independent_unit": "one accepted or exhausted requested product row; q/p are a paired unit",
+      "interpretation": "Terminal and lineage fields are auditable. Aggregate CV witnesses are insufficient for a logistic-normal joint-law acceptance claim.",
+      "law": "polar-coupled",
+      "pair_bucket": "3x3",
+      "producer_report_terminal_contract": true,
+      "sample_count": 2,
+      "side_count": 3,
+      "source": "generator-natural-law-expansion-row-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "center=centroid,phi=0",
+      "diagnostics": [
+        {
+          "name": "terminal_status",
+          "status": "pass",
+          "statuses": {
+            "survived": 2
+          }
+        }
+      ],
+      "effective_independent_unit": "one accepted or exhausted requested product row; q/p are a paired unit",
+      "interpretation": "Terminal and lineage fields are auditable. Aggregate CV witnesses are insufficient for a logistic-normal joint-law acceptance claim.",
+      "law": "polar-coupled",
+      "pair_bucket": "4x4",
+      "producer_report_terminal_contract": true,
+      "sample_count": 2,
+      "side_count": 4,
+      "source": "generator-natural-law-expansion-row-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "center=centroid,phi=0",
+      "diagnostics": [
+        {
+          "name": "terminal_status",
+          "status": "pass",
+          "statuses": {
+            "survived": 2
+          }
+        }
+      ],
+      "effective_independent_unit": "one accepted or exhausted requested product row; q/p are a paired unit",
+      "interpretation": "Terminal and lineage fields are auditable. Aggregate CV witnesses are insufficient for a logistic-normal joint-law acceptance claim.",
+      "law": "polar-coupled",
+      "pair_bucket": "6x6",
+      "producer_report_terminal_contract": true,
+      "sample_count": 2,
+      "side_count": 6,
+      "source": "generator-natural-law-expansion-row-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "center=centroid,phi=pi/4",
+      "diagnostics": [
+        {
+          "name": "terminal_status",
+          "status": "pass",
+          "statuses": {
+            "survived": 2
+          }
+        }
+      ],
+      "effective_independent_unit": "one accepted or exhausted requested product row; q/p are a paired unit",
+      "interpretation": "Terminal and lineage fields are auditable. Aggregate CV witnesses are insufficient for a logistic-normal joint-law acceptance claim.",
+      "law": "polar-coupled",
+      "pair_bucket": "3x3",
+      "producer_report_terminal_contract": true,
+      "sample_count": 2,
+      "side_count": 3,
+      "source": "generator-natural-law-expansion-row-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "center=centroid,phi=pi/4",
+      "diagnostics": [
+        {
+          "name": "terminal_status",
+          "status": "pass",
+          "statuses": {
+            "survived": 2
+          }
+        }
+      ],
+      "effective_independent_unit": "one accepted or exhausted requested product row; q/p are a paired unit",
+      "interpretation": "Terminal and lineage fields are auditable. Aggregate CV witnesses are insufficient for a logistic-normal joint-law acceptance claim.",
+      "law": "polar-coupled",
+      "pair_bucket": "4x4",
+      "producer_report_terminal_contract": true,
+      "sample_count": 2,
+      "side_count": 4,
+      "source": "generator-natural-law-expansion-row-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "center=centroid,phi=pi/4",
+      "diagnostics": [
+        {
+          "name": "terminal_status",
+          "status": "pass",
+          "statuses": {
+            "survived": 2
+          }
+        }
+      ],
+      "effective_independent_unit": "one accepted or exhausted requested product row; q/p are a paired unit",
+      "interpretation": "Terminal and lineage fields are auditable. Aggregate CV witnesses are insufficient for a logistic-normal joint-law acceptance claim.",
+      "law": "polar-coupled",
+      "pair_bucket": "6x6",
+      "producer_report_terminal_contract": true,
+      "sample_count": 2,
+      "side_count": 6,
+      "source": "generator-natural-law-expansion-row-v1",
+      "status": "observed_small_panel"
+    },
+    {
+      "arm": "rho=0,sigma=0.2",
+      "diagnostics": [
+        {
+          "name": "terminal_status",
+          "status": "pass",
+          "statuses": {
+            "survived": 2
+          }
+        },
+        {
+          "cheapest_producer_amendment": "Retain centered pre-softmax gap logits and centered log supports for both factors (or factor vertices sufficient to recover them) in accepted shared-latent rows.",
+          "missing_fields": [
+            "q_gap_logits",
+            "p_gap_logits",
+            "q_log_supports",
+            "p_log_supports",
+            "or q/p factor vertices"
+          ],
+          "name": "rho_latent_correlation",
+          "reason": "CV summaries do not identify the intended coordinatewise logistic-normal correlation, including rho endpoints.",
+          "status": "not_auditable_from_retained_schema"
+        },
+        {
+          "cheapest_producer_amendment": "Retain factor-level latent vectors or a deterministic factor fingerprint in each accepted row.",
+          "missing_fields": [
+            "factor-level latent or geometry fingerprint"
+          ],
+          "name": "shared_seed_duplicate_detection",
+          "status": "not_auditable_from_retained_schema"
+        }
+      ],
+      "effective_independent_unit": "one accepted or exhausted requested product row; q/p are a paired unit",
+      "interpretation": "Terminal and lineage fields are auditable. Aggregate CV witnesses are insufficient for a logistic-normal joint-law acceptance claim.",
+      "law": "shared-latent",
+      "pair_bucket": "3x3",
+      "producer_report_terminal_contract": true,
+      "sample_count": 2,
+      "side_count": 3,
+      "source": "generator-natural-law-expansion-row-v1",
+      "status": "schema_limited"
+    },
+    {
+      "arm": "rho=0,sigma=0.2",
+      "diagnostics": [
+        {
+          "name": "terminal_status",
+          "status": "pass",
+          "statuses": {
+            "survived": 2
+          }
+        },
+        {
+          "cheapest_producer_amendment": "Retain centered pre-softmax gap logits and centered log supports for both factors (or factor vertices sufficient to recover them) in accepted shared-latent rows.",
+          "missing_fields": [
+            "q_gap_logits",
+            "p_gap_logits",
+            "q_log_supports",
+            "p_log_supports",
+            "or q/p factor vertices"
+          ],
+          "name": "rho_latent_correlation",
+          "reason": "CV summaries do not identify the intended coordinatewise logistic-normal correlation, including rho endpoints.",
+          "status": "not_auditable_from_retained_schema"
+        },
+        {
+          "cheapest_producer_amendment": "Retain factor-level latent vectors or a deterministic factor fingerprint in each accepted row.",
+          "missing_fields": [
+            "factor-level latent or geometry fingerprint"
+          ],
+          "name": "shared_seed_duplicate_detection",
+          "status": "not_auditable_from_retained_schema"
+        }
+      ],
+      "effective_independent_unit": "one accepted or exhausted requested product row; q/p are a paired unit",
+      "interpretation": "Terminal and lineage fields are auditable. Aggregate CV witnesses are insufficient for a logistic-normal joint-law acceptance claim.",
+      "law": "shared-latent",
+      "pair_bucket": "4x4",
+      "producer_report_terminal_contract": true,
+      "sample_count": 2,
+      "side_count": 4,
+      "source": "generator-natural-law-expansion-row-v1",
+      "status": "schema_limited"
+    },
+    {
+      "arm": "rho=0,sigma=0.2",
+      "diagnostics": [
+        {
+          "name": "terminal_status",
+          "status": "pass",
+          "statuses": {
+            "survived": 2
+          }
+        },
+        {
+          "cheapest_producer_amendment": "Retain centered pre-softmax gap logits and centered log supports for both factors (or factor vertices sufficient to recover them) in accepted shared-latent rows.",
+          "missing_fields": [
+            "q_gap_logits",
+            "p_gap_logits",
+            "q_log_supports",
+            "p_log_supports",
+            "or q/p factor vertices"
+          ],
+          "name": "rho_latent_correlation",
+          "reason": "CV summaries do not identify the intended coordinatewise logistic-normal correlation, including rho endpoints.",
+          "status": "not_auditable_from_retained_schema"
+        },
+        {
+          "cheapest_producer_amendment": "Retain factor-level latent vectors or a deterministic factor fingerprint in each accepted row.",
+          "missing_fields": [
+            "factor-level latent or geometry fingerprint"
+          ],
+          "name": "shared_seed_duplicate_detection",
+          "status": "not_auditable_from_retained_schema"
+        }
+      ],
+      "effective_independent_unit": "one accepted or exhausted requested product row; q/p are a paired unit",
+      "interpretation": "Terminal and lineage fields are auditable. Aggregate CV witnesses are insufficient for a logistic-normal joint-law acceptance claim.",
+      "law": "shared-latent",
+      "pair_bucket": "6x6",
+      "producer_report_terminal_contract": true,
+      "sample_count": 2,
+      "side_count": 6,
+      "source": "generator-natural-law-expansion-row-v1",
+      "status": "schema_limited"
+    },
+    {
+      "arm": "rho=0.5,sigma=0.2",
+      "diagnostics": [
+        {
+          "name": "terminal_status",
+          "status": "pass",
+          "statuses": {
+            "survived": 2
+          }
+        },
+        {
+          "cheapest_producer_amendment": "Retain centered pre-softmax gap logits and centered log supports for both factors (or factor vertices sufficient to recover them) in accepted shared-latent rows.",
+          "missing_fields": [
+            "q_gap_logits",
+            "p_gap_logits",
+            "q_log_supports",
+            "p_log_supports",
+            "or q/p factor vertices"
+          ],
+          "name": "rho_latent_correlation",
+          "reason": "CV summaries do not identify the intended coordinatewise logistic-normal correlation, including rho endpoints.",
+          "status": "not_auditable_from_retained_schema"
+        },
+        {
+          "cheapest_producer_amendment": "Retain factor-level latent vectors or a deterministic factor fingerprint in each accepted row.",
+          "missing_fields": [
+            "factor-level latent or geometry fingerprint"
+          ],
+          "name": "shared_seed_duplicate_detection",
+          "status": "not_auditable_from_retained_schema"
+        }
+      ],
+      "effective_independent_unit": "one accepted or exhausted requested product row; q/p are a paired unit",
+      "interpretation": "Terminal and lineage fields are auditable. Aggregate CV witnesses are insufficient for a logistic-normal joint-law acceptance claim.",
+      "law": "shared-latent",
+      "pair_bucket": "3x3",
+      "producer_report_terminal_contract": true,
+      "sample_count": 2,
+      "side_count": 3,
+      "source": "generator-natural-law-expansion-row-v1",
+      "status": "schema_limited"
+    },
+    {
+      "arm": "rho=0.5,sigma=0.2",
+      "diagnostics": [
+        {
+          "name": "terminal_status",
+          "status": "pass",
+          "statuses": {
+            "survived": 2
+          }
+        },
+        {
+          "cheapest_producer_amendment": "Retain centered pre-softmax gap logits and centered log supports for both factors (or factor vertices sufficient to recover them) in accepted shared-latent rows.",
+          "missing_fields": [
+            "q_gap_logits",
+            "p_gap_logits",
+            "q_log_supports",
+            "p_log_supports",
+            "or q/p factor vertices"
+          ],
+          "name": "rho_latent_correlation",
+          "reason": "CV summaries do not identify the intended coordinatewise logistic-normal correlation, including rho endpoints.",
+          "status": "not_auditable_from_retained_schema"
+        },
+        {
+          "cheapest_producer_amendment": "Retain factor-level latent vectors or a deterministic factor fingerprint in each accepted row.",
+          "missing_fields": [
+            "factor-level latent or geometry fingerprint"
+          ],
+          "name": "shared_seed_duplicate_detection",
+          "status": "not_auditable_from_retained_schema"
+        }
+      ],
+      "effective_independent_unit": "one accepted or exhausted requested product row; q/p are a paired unit",
+      "interpretation": "Terminal and lineage fields are auditable. Aggregate CV witnesses are insufficient for a logistic-normal joint-law acceptance claim.",
+      "law": "shared-latent",
+      "pair_bucket": "4x4",
+      "producer_report_terminal_contract": true,
+      "sample_count": 2,
+      "side_count": 4,
+      "source": "generator-natural-law-expansion-row-v1",
+      "status": "schema_limited"
+    },
+    {
+      "arm": "rho=0.5,sigma=0.2",
+      "diagnostics": [
+        {
+          "name": "terminal_status",
+          "status": "pass",
+          "statuses": {
+            "survived": 2
+          }
+        },
+        {
+          "cheapest_producer_amendment": "Retain centered pre-softmax gap logits and centered log supports for both factors (or factor vertices sufficient to recover them) in accepted shared-latent rows.",
+          "missing_fields": [
+            "q_gap_logits",
+            "p_gap_logits",
+            "q_log_supports",
+            "p_log_supports",
+            "or q/p factor vertices"
+          ],
+          "name": "rho_latent_correlation",
+          "reason": "CV summaries do not identify the intended coordinatewise logistic-normal correlation, including rho endpoints.",
+          "status": "not_auditable_from_retained_schema"
+        },
+        {
+          "cheapest_producer_amendment": "Retain factor-level latent vectors or a deterministic factor fingerprint in each accepted row.",
+          "missing_fields": [
+            "factor-level latent or geometry fingerprint"
+          ],
+          "name": "shared_seed_duplicate_detection",
+          "status": "not_auditable_from_retained_schema"
+        }
+      ],
+      "effective_independent_unit": "one accepted or exhausted requested product row; q/p are a paired unit",
+      "interpretation": "Terminal and lineage fields are auditable. Aggregate CV witnesses are insufficient for a logistic-normal joint-law acceptance claim.",
+      "law": "shared-latent",
+      "pair_bucket": "6x6",
+      "producer_report_terminal_contract": true,
+      "sample_count": 2,
+      "side_count": 6,
+      "source": "generator-natural-law-expansion-row-v1",
+      "status": "schema_limited"
+    },
+    {
+      "arm": "rho=1,sigma=0.2",
+      "diagnostics": [
+        {
+          "name": "terminal_status",
+          "status": "pass",
+          "statuses": {
+            "survived": 2
+          }
+        },
+        {
+          "cheapest_producer_amendment": "Retain centered pre-softmax gap logits and centered log supports for both factors (or factor vertices sufficient to recover them) in accepted shared-latent rows.",
+          "missing_fields": [
+            "q_gap_logits",
+            "p_gap_logits",
+            "q_log_supports",
+            "p_log_supports",
+            "or q/p factor vertices"
+          ],
+          "name": "rho_latent_correlation",
+          "reason": "CV summaries do not identify the intended coordinatewise logistic-normal correlation, including rho endpoints.",
+          "status": "not_auditable_from_retained_schema"
+        },
+        {
+          "cheapest_producer_amendment": "Retain factor-level latent vectors or a deterministic factor fingerprint in each accepted row.",
+          "missing_fields": [
+            "factor-level latent or geometry fingerprint"
+          ],
+          "name": "shared_seed_duplicate_detection",
+          "status": "not_auditable_from_retained_schema"
+        }
+      ],
+      "effective_independent_unit": "one accepted or exhausted requested product row; q/p are a paired unit",
+      "interpretation": "Terminal and lineage fields are auditable. Aggregate CV witnesses are insufficient for a logistic-normal joint-law acceptance claim.",
+      "law": "shared-latent",
+      "pair_bucket": "3x3",
+      "producer_report_terminal_contract": true,
+      "sample_count": 2,
+      "side_count": 3,
+      "source": "generator-natural-law-expansion-row-v1",
+      "status": "schema_limited"
+    },
+    {
+      "arm": "rho=1,sigma=0.2",
+      "diagnostics": [
+        {
+          "name": "terminal_status",
+          "status": "pass",
+          "statuses": {
+            "survived": 2
+          }
+        },
+        {
+          "cheapest_producer_amendment": "Retain centered pre-softmax gap logits and centered log supports for both factors (or factor vertices sufficient to recover them) in accepted shared-latent rows.",
+          "missing_fields": [
+            "q_gap_logits",
+            "p_gap_logits",
+            "q_log_supports",
+            "p_log_supports",
+            "or q/p factor vertices"
+          ],
+          "name": "rho_latent_correlation",
+          "reason": "CV summaries do not identify the intended coordinatewise logistic-normal correlation, including rho endpoints.",
+          "status": "not_auditable_from_retained_schema"
+        },
+        {
+          "cheapest_producer_amendment": "Retain factor-level latent vectors or a deterministic factor fingerprint in each accepted row.",
+          "missing_fields": [
+            "factor-level latent or geometry fingerprint"
+          ],
+          "name": "shared_seed_duplicate_detection",
+          "status": "not_auditable_from_retained_schema"
+        }
+      ],
+      "effective_independent_unit": "one accepted or exhausted requested product row; q/p are a paired unit",
+      "interpretation": "Terminal and lineage fields are auditable. Aggregate CV witnesses are insufficient for a logistic-normal joint-law acceptance claim.",
+      "law": "shared-latent",
+      "pair_bucket": "4x4",
+      "producer_report_terminal_contract": true,
+      "sample_count": 2,
+      "side_count": 4,
+      "source": "generator-natural-law-expansion-row-v1",
+      "status": "schema_limited"
+    },
+    {
+      "arm": "rho=1,sigma=0.2",
+      "diagnostics": [
+        {
+          "name": "terminal_status",
+          "status": "pass",
+          "statuses": {
+            "survived": 2
+          }
+        },
+        {
+          "cheapest_producer_amendment": "Retain centered pre-softmax gap logits and centered log supports for both factors (or factor vertices sufficient to recover them) in accepted shared-latent rows.",
+          "missing_fields": [
+            "q_gap_logits",
+            "p_gap_logits",
+            "q_log_supports",
+            "p_log_supports",
+            "or q/p factor vertices"
+          ],
+          "name": "rho_latent_correlation",
+          "reason": "CV summaries do not identify the intended coordinatewise logistic-normal correlation, including rho endpoints.",
+          "status": "not_auditable_from_retained_schema"
+        },
+        {
+          "cheapest_producer_amendment": "Retain factor-level latent vectors or a deterministic factor fingerprint in each accepted row.",
+          "missing_fields": [
+            "factor-level latent or geometry fingerprint"
+          ],
+          "name": "shared_seed_duplicate_detection",
+          "status": "not_auditable_from_retained_schema"
+        }
+      ],
+      "effective_independent_unit": "one accepted or exhausted requested product row; q/p are a paired unit",
+      "interpretation": "Terminal and lineage fields are auditable. Aggregate CV witnesses are insufficient for a logistic-normal joint-law acceptance claim.",
+      "law": "shared-latent",
+      "pair_bucket": "6x6",
+      "producer_report_terminal_contract": true,
+      "sample_count": 2,
+      "side_count": 6,
+      "source": "generator-natural-law-expansion-row-v1",
+      "status": "schema_limited"
+    }
+  ],
+  "producer_provenance": {
+    "generator_zoo_report": {
+      "law_version": "generator-zoo-v1",
+      "max_attempts_per_row": 64,
+      "seed": 20260714,
+      "source_dirty": false,
+      "source_revision": "6b55461dafe7997662e9659380e18be9c58b5f72",
+      "status_counts": {
+        "accepted": 110,
+        "exhausted": 5
+      }
+    },
+    "natural_law_report": {
+      "all_requested_rows_terminal": true,
+      "law_version": "generator-natural-law-expansion-v1",
+      "max_attempts_per_row": 64,
+      "seed": 20260715,
+      "source_dirty": false,
+      "source_revision": "9d8bb3d1b0bd79c21901624470759510a4e4e529",
+      "source_tree": "a8c7a07208cf7e6ecabed1f54d5ad300fbbade8f",
+      "status_counts": {
+        "survived": 30
+      }
+    }
+  },
+  "question": "Do retained generator rows support the declared law and effective-independent-unit assumptions needed before later distribution comparisons?",
+  "schema": "generator-law-fidelity-report-v1",
+  "source_provenance": {
+    "analyzer_path": "experiments/sys-datascience/methods/generator-law-fidelity/analyze.py",
+    "analyzer_sha256": "df43ee8770da01f00bbed42946ed66db7578d22186e0e2c1de6c3250f1729f2e",
+    "repository_revision": "9d8bb3d1b0bd79c21901624470759510a4e4e529",
+    "repository_tree": "a8c7a07208cf7e6ecabed1f54d5ad300fbbade8f",
+    "tracked_clean": true,
+    "tracked_status": ""
+  }
+}
