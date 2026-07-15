@@ -1,163 +1,75 @@
-\subsubsection*{How the Sage verifier represents the certificate}
+\subsubsection*{What Sage verifies}
 
-This subsection records the trust boundary for the computation used above. The
-hand proof has reduced the theorem to the finite predicate just listed.
-SageMath is used for that finite predicate because the checks are exact
-algebraic equalities, inequalities, ranks, and kernel computations. It does not
-prove the Hausdorff-local theorem by itself; it checks the finite row and
-quotient predicates that the hand proof uses. The script \path{verify.sage.py}
-is fail-closed: every proof-facing assertion goes through an explicit check,
-and a failed check raises an exception instead of producing a successful
-certificate summary. The excerpts below are shortened to show the proof-facing
-checks; the executable source file is the reference implementation.
+SageMath checks the finite predicate above over the ordered field
+\(\mathbb Q(t)\), where \(0<t<1\) and \(t^4-10t^2+5=0\).
+Table~\ref{tab:hko-verification-interface} organizes the computation by proof
+obligation.  Its HKO formulas are hand-derived inputs, so exact evaluation does
+not prove their geometric correspondence.
 
-\begin{verbatim}
-def check(condition, message):
-    if not bool(condition):
-        raise ValueError(f"verification failed: {message}")
-\end{verbatim}
+\begin{table}[!ht]
+\centering
+\small
+\begin{tabular}{@{}p{0.20\linewidth}p{0.40\linewidth}p{0.31\linewidth}@{}}
+\toprule
+Mathematical object & Exact Sage acceptance check & Use in the hand proof \\
+\midrule
+HKO base point and symmetry directions
+& Evaluate the supplied dual-vertex, volume, volume-derivative, and action
+  formulas exactly; check the cited action expression; construct the symmetry
+  tangent columns and check that their rank is \(15\).
+& The hand argument identifies the formulas with the HKO body and its volume
+  variation.  Their values fix the normalization; the rank gives the
+  \(25\)-dimensional quotient of the \(40\)-dimensional chart. \\
+\addlinespace
+One selected feasible section
+& Check the word, strict positivity of \(\beta\), closure and normalization,
+  invertibility of the chosen five-column minor, equality with the HKO
+  action, the differentiated feasible-section equations, and the formula for
+  \(DU_\sigma(a_{\mathrm{HKO}})\).
+& Gives a smooth upper function
+  \(\operatorname{sys}\leq U_\sigma\) that touches at HKO, with the claimed
+  derivative row.  No nearby optimizing-branch claim is used. \\
+\addlinespace
+The \(26\)-row quotient certificate
+& Check that every row annihilates the symmetry tangent columns, that the rows
+  have rank \(25\), and that exact coefficients \(\lambda_\sigma>0\) sum to
+  \(1\) and combine the rows to zero.
+& Descends the rows to \(S^*\) and supplies the spanning and positive-convex-
+  relation hypotheses that force a negative upper slope in every nonzero
+  slice direction. \\
+\bottomrule
+\end{tabular}
+\caption{Interface between the exact verifier and the proof.  The first two
+columns describe the finite algebraic predicate checked by Sage; the last
+column is mathematical reasoning in the thesis, not an additional Sage
+check.}
+\label{tab:hko-verification-interface}
+\end{table}
 
-The verifier first constructs the ordered field and the HKO dual vertices from
-the exact formulas used in the hand proof, rather than trusting floating-point
-coordinates from the Rust generator. The field is \(Q(t)\), where \(t\) is the
-real root in \((0,1)\) of \(t^4-10t^2+5\), i.e. \(t=\tan(\pi/5)\).
+The finite choices read from \path{witness.json} are the selected words, the
+five-column minors, and the beta coordinates held fixed in each feasible
+section.  Floating-point entries in the witness are search hints and
+diagnostics only.  Sage reconstructs candidate exact beta values and accepts a
+row only after all rowwise checks in the table pass.  After the \(26\) rows
+have passed, it performs the rank and positive-kernel checks over the same
+ordered field.  A failed proof-facing check raises an exception, and the
+successful summary is written only after all checks pass.
 
-\begin{verbatim}
-def exact_hko_geometry():
-    ring = PolynomialRing(QQ, "x")
-    x = ring.gen()
-    polynomial = x**4 - 10 * x**2 + 5
-    K = NumberField(
-        polynomial, "t",
-        embedding=AA.polynomial_root(polynomial, RIF(0, 1)),
-    )
-    t = K.gen()
-    sqrt5 = (QQ(5) - t**2) / 2
-    alpha = (QQ(3) - sqrt5) / 2
-    beta = t * (QQ(1) + sqrt5) / 2
-    sec36 = sqrt5 - 1
-    ...
-    return K, t, sqrt5, duals
-\end{verbatim}
+The complete executable and a line-by-line explanation organized by proof
+obligation are stored in
+\path{experiments/hko-local-maximum/theorem/verify.sage.py} and
+\path{experiments/hko-local-maximum/theorem/verify.sage.py.explained.md}.
+Keeping them with the witness and verification summary makes the complete
+audit available without asking the thesis reader to reconstruct the proof
+interface from several pages of implementation excerpts.
 
-The proof-relevant finite choices read from \path{witness.json} are the words
-\(\sigma\), the selected five-column minors, and the beta coordinates that are
-kept fixed in the feasible section. The witness also contains floating-point
-hints. These hints guide the search for exact beta candidates and are recorded
-for diagnostics, but they do not decide whether a row is accepted. A row is
-accepted only after exact checks against the formulas from the hand proof:
-closure plus normalization, strict beta positivity in the chosen real
-embedding, invertibility of the selected minor, equality with the HKO action,
-the differentiated feasible-section equation, the derivative formula for
-\(D\operatorname{sys}\), and annihilation of every symmetry tangent column.
-
-\begin{verbatim}
-def beta_is_valid(K, duals, sigma, beta, q_min):
-    C = constraint_matrix(K, duals, sigma)
-    e = vector(K, [0, 0, 0, 0, 1])
-    return (
-        C * beta == e
-        and all(entry > K(0) for entry in beta)
-        and q_value(duals, sigma, beta) == q_min
-    )
-\end{verbatim}
-
-For a selected word, Sage forms the feasible section by the standard block
-solve. If \(C_\sigma(a)\beta=e\) and the selected columns are split as
-\(C=[C_I\ C_J]\), then the fixed coordinates \(u=\beta_J\) determine
-\[
-  \beta_I(u)=C_I^{-1}(e-C_Ju),\qquad \beta_J(u)=u.
-\]
-The code implements this formula over the exact polynomial ring in the fixed
-beta variables.
-
-\begin{verbatim}
-C_I = C[:, minor_columns]
-C_J = C[:, fixed_indices]
-beta_I = C_I_S.inverse() * (e_S - C_J_S * vector(S, variables))
-\end{verbatim}
-
-The search routine then uses the floating-point entries from the witness to
-generate and order rational values and algebraic roots to try. A candidate is
-returned only when \verb|beta_is_valid| accepts it in the exact field.
-
-\begin{verbatim}
-def verify_entry(..., sym_cols, entry):
-    C = constraint_matrix(K, duals, sigma)
-    e = vector(K, [0, 0, 0, 0, 1])
-    check(C * beta == e, "closure")
-    check(all(b > K(0) for b in beta), "beta > 0")
-    minor = C[:, minor_columns]
-    check(minor.det() != K(0), "minor det")
-    check(q == q_min, "q_min")
-    check(action == action_min, "HKO action")
-    verify_d_beta(...)
-    ...
-    check(d_sys == recomputed_d_sys, "D sys")
-    for column in sym_cols:
-        check(d_sys.dot_product(column) == K(0), "symmetry")
-\end{verbatim}
-
-After all rows have been checked, the final quotient certificate is a pure
-linear-algebra assertion over the same ordered field. The verified rows must
-have rank \(25\). Their left kernel must contain a vector whose entries are all
-strictly positive after a possible sign change. Normalizing that vector gives
-the coefficients \(\lambda_\sigma\), and the verifier checks exactly that they
-sum to \(1\) and combine the rows to zero.
-
-\begin{verbatim}
-def compute_convex_coefficients(K, verified_rows):
-    M = matrix(K, [list(row) for row in verified_rows])
-    check(M.rank() == 25, "rank 25")
-    kernel = M.transpose().right_kernel().basis()
-    check(len(kernel) == 1, "one left-kernel line")
-    lambdas = list(kernel[0])
-    if all(entry < K(0) for entry in lambdas):
-        lambdas = [-entry for entry in lambdas]
-    check(all(entry > K(0) for entry in lambdas), "positive")
-    total = sum(lambdas, K(0))
-    lambdas = vector(K, [entry / total for entry in lambdas])
-    check(sum(lambdas, K(0)) == K(1), "sum 1")
-    zero = vector(K, [0 for _ in range(M.ncols())])
-    check(lambdas * M == zero, "weighted sum 0")
-    return M, lambdas
-\end{verbatim}
-
-The top-level verifier wires these checks together. It checks the packet
-identity, constructs the exact HKO data and symmetry tangent space from the
-hand-supplied formulas, checks the requested ambient and quotient dimensions,
-verifies all 26 entries, computes the convex coefficients, and writes the
-successful summary only after these checks have passed.
-
-\begin{verbatim}
-entries = [
-    compute_entry(K, duals, volume, volume_row,
-                  action_min, q_min, row)
-    for row in witness["entries"]
-]
-for entry in entries:
-    verify_entry(K, duals, volume, volume_row,
-                 action_min, q_min, symmetry_columns, entry)
-verified_rows = [
-    entry["d_sys"]
-    for entry in entries
-]
-row_matrix, lambdas = compute_convex_coefficients(
-    K, verified_rows
-)
-\end{verbatim}
-
-The successful run records the proof-facing summary values used above: 26
-verified rows, ambient dimension \(40\), row rank \(25\), and symmetry rank
-\(15\). During the run, Sage also computes and checks positive exact
-coefficients \(\lambda_\sigma\) with
-\(\sum_\sigma \lambda_\sigma=1\) and
-\(\sum_\sigma \lambda_\sigma r_\sigma=0\). These are the computational inputs
-to the hand proof of Theorem~\ref{thm:hko-ten-facet-local-maximum}.
-
-Thus the theorem does not rely on Rust correctness or on floating-point search
-correctness. Rust generates the finite witness input that tells Sage which
-words, minors, fixed beta coordinates, and hints to try. Sage accepts only
-after the exact row and quotient predicates over the ordered field have passed.
-The theorem then uses those checked predicates together with the chart,
-feasible-section, and quotient-slice arguments above.
+This separates the trust boundary.  Rust searches for the finite witness but
+is not trusted for theorem correctness.  Sage checks exact algebraic
+equalities, inequalities, ranks, and the positive kernel relation from the
+hand-supplied formulas.  It does not prove the Hausdorff-local chart, the
+existence and use of the transverse slice, the upper-function implication, or
+the Taylor-remainder argument.  Nor does exact substitution prove that the
+hand-supplied geometry and volume-variation formulas represent the intended
+polytope, and the computation does not verify SageMath itself.  Those
+mathematical identifications and implications are supplied by the surrounding
+proof.

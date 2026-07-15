@@ -17,7 +17,32 @@ evidence in thesis prose.
 Update rule: add or change a claim only with a source pointer or an explicit
 `needs source` marker.
 
-Current HKO chapter checkpoint, 2026-06-15:
+Current HKO chapter checkpoint, 2026-07-15:
+- The publication-presentation candidate replaces the implementation-order
+  Sage excerpts with two reader-facing interfaces: an exact proof-spine
+  display for the \(40\)-dimensional chart, \(15\) symmetry directions,
+  \(25\)-dimensional slice, and \(26\) upper functions; and a three-row table
+  mapping mathematical objects to exact Sage checks and their hand-proof use.
+  The full executable and its explained listing remain in
+  `experiments/hko-local-maximum/theorem/`.
+- This presentation choice deliberately avoids a low-dimensional geometry
+  figure: it would make the quotient visually memorable but risks suggesting
+  an orthogonal or global decomposition, while adding little to the
+  computation trust boundary. Reopen the figure route only if cold-reader
+  review still cannot recover the proof spine from the integrated display.
+- Independent review of this candidate separated three failure modes.  The
+  mathematical/trust-boundary pass found that the first table draft could
+  suggest Sage validated the geometric HKO and volume-variation formulas, and
+  that the compact proof display relied too much on surrounding locality
+  prose.  The repaired text now treats those formulas as hand-derived inputs,
+  restricts the display to explicit local neighborhoods and sufficiently small
+  slice vectors, and passed focused rereview with no remaining material
+  finding.  The cold-reader pass reconstructed the entire chart--slice--upper-
+  function implication and Rust/Sage/hand-proof split; its requests to name the
+  reflection and make the implicit-function/feasibility bridge explicit were
+  incorporated.  The rendered-page pass retained both new elements at normal
+  whole-page scale and confirmed the repaired theorem placement and chapter
+  transition.
 - `thesis/07-hko-local-maximum.tex` is the HKO chapter proposed for `main`. It
   contains a theorem-strength proof route and is suitable for repo integration
   under the HKO branch acceptance criteria. This does not claim that the

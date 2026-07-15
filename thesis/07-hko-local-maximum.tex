@@ -17,8 +17,9 @@ subspace of convex polytopes with exactly ten facets. Let
 \((1,0)\), and let \(R(\theta)\) denote counterclockwise rotation. The HKO
 paper uses the symplectic form \(\sum_i dp_i\wedge dq_i=-\omega_0\) and the
 body \(P_5\times_L R(-\pi/2)P_5\).  Changing to our convention sends this
-body to \(P_5\times_L R(\pi/2)P_5\); a simultaneous reflection of both factors
-is symplectic and identifies it with the representative
+body to \(P_5\times_L R(\pi/2)P_5\).  Let \(D(x,y)=(x,-y)\).  Since
+\(D(P_5)=P_5\) and \(D R(\theta)=R(-\theta)D\), the block map
+\(D\oplus D\) is symplectic and identifies this body with the representative
 \[
   K_{\mathrm{HKO}}=P_5\times_L R(-\pi/2)P_5.
 \]
@@ -38,10 +39,6 @@ The result of this section is local in the ten-facet space. Nearby equality
 occurs exactly along the \(G_{\operatorname{sys}}\)-orbit from
 Definition~\ref{def:preliminaries-systolic-ratio-symmetries}; all other small
 perturbations decrease the systolic ratio.
-This makes the HKO point a focused test for the thesis: the example already
-has systolic ratio larger than \(1\), and the theorem below says that the
-same ten-facet local model contains no better nearby value once the standard
-ratio-preserving symmetries have been removed.
 The restriction to \(\mathcal P_{10}\) is part of the local model: the HKO body
 itself has ten facets, and after polarity a Hausdorff-small ten-facet
 perturbation is described by a labelled perturbation of its ten dual vertices.
@@ -79,6 +76,49 @@ derivative rows span the quotient cotangent space and have a positive convex
 relation summing to zero. The Sage verifier checks this finite exact predicate;
 the surrounding hand argument turns it into strict decrease on the slice and
 then into the Hausdorff-local theorem.
+
+\begin{certificatecheck}
+\textbf{Proof spine.}  At the HKO point, the three reductions are
+\[
+\begin{gathered}
+ K\in\mathcal U
+ \quad\longleftrightarrow\quad
+ a\in\mathcal V\subset(\mathbb R^4)^{10},
+ \\[1mm]
+ K=K(a),\qquad
+ a_{\mathrm{HKO}}\in\mathcal V,\qquad \dim\mathcal V=40,
+ \\[2mm]
+ T_{a_{\mathrm{HKO}}}(\mathbb R^4)^{10}
+   =T_{\mathrm{orb}}^{\vphantom{*}}\oplus S,
+ \qquad \dim T_{\mathrm{orb}}=15,
+ \qquad \dim S=25,
+ \\[2mm]
+ \operatorname{sys}(a_{\mathrm{HKO}}+s)\leq
+ U_\sigma(a_{\mathrm{HKO}}+s),
+ \\[1mm]
+ U_\sigma(a_{\mathrm{HKO}})=\operatorname{sys}(a_{\mathrm{HKO}})
+ \quad(\sigma\in\Sigma,\ |\Sigma|=26),
+ \\[1mm]
+ s\in S,\qquad \lVert s\rVert\text{ sufficiently small}.
+\end{gathered}
+\]
+Here \(\mathcal U\) is a sufficiently small neighborhood from the theorem and
+\(\mathcal V\) is its labelled chart.  The first arrow uses polarity and the
+unique local labelling of the ten dual vertices; its left side is the
+unlabelled Hausdorff-local problem.
+On the slice, the rows
+\(r_\sigma=DU_\sigma(a_{\mathrm{HKO}})|_S\) span \(S^*\) and satisfy
+\[
+  \sum_{\sigma\in\Sigma}\lambda_\sigma r_\sigma=0,
+  \qquad \lambda_\sigma>0,
+  \qquad \sum_{\sigma\in\Sigma}\lambda_\sigma=1.
+\]
+Thus every nonzero \(h\in S\) has \(r_\sigma(h)<0\) for at least one selected
+upper function.  A uniform Taylor estimate gives strict decrease on the
+slice.  The first line and the local symmetry slice then return to the
+Hausdorff theorem.  The direct sum displayed here is tangent-space data; it is
+not a global linear decomposition of the space of polytopes.
+\end{certificatecheck}
 
 \input{07-hko-local-maximum-chart-reduction}
 \input{07-hko-local-maximum-exact-certificate}
