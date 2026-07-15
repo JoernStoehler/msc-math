@@ -1,0 +1,37 @@
+{
+  "schema": "alternative-source-transfer-manifest-v1",
+  "identity_scope": "alternative-source-transfer-v1",
+  "master_seed": 2026071601,
+  "control_seed": 2026071299,
+  "law": "factorial-both",
+  "buckets": [
+    "4x6",
+    "6x6"
+  ],
+  "row_target_per_bucket": 3200,
+  "row_cap_per_bucket": 4000,
+  "attempt_cap": 128,
+  "source_sha256": "161f6361fd9c99b1b86a863c3cdb7db438fd76329392992f6212e37c83e69963",
+  "feature_sha256": "8a87ef1a050cd9b3a717c85a43b0577f9e72c308e635fcc93defed58ec8883a5",
+  "selection_sha256": "2e4953cc61fa3eb02405c2fff9844c842c7813fd05edb7a741413574b794a168",
+  "source_count": 6400,
+  "feature_count": 6400,
+  "selection_count": 91,
+  "membership_counts": {
+    "4x6": {
+      "control": 16,
+      "rho": 16,
+      "ridge": 16
+    },
+    "6x6": {
+      "control": 16,
+      "rho": 16,
+      "ridge": 16
+    }
+  },
+  "unique_target_rows": 91,
+  "arm_overlap_rows": 5,
+  "target_free": true,
+  "clean_commit": "fcd5546af014942b74a1e9313ee898329a507d3d",
+  "lock_hash": "740441674806a1baaea966d5f8f12a66d8e2ef1229b66ca9dcf9225a02f6c45f"
+}

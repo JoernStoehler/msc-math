@@ -1,0 +1,20 @@
+{
+  "feature_sha256": "8a87ef1a050cd9b3a717c85a43b0577f9e72c308e635fcc93defed58ec8883a5",
+  "membership_counts": {
+    "4x6": {
+      "control": 16,
+      "rho": 16,
+      "ridge": 16
+    },
+    "6x6": {
+      "control": 16,
+      "rho": 16,
+      "ridge": 16
+    }
+  },
+  "schema": "alternative-source-transfer-selection-v1",
+  "selection_count": 91,
+  "selection_sha256": "2e4953cc61fa3eb02405c2fff9844c842c7813fd05edb7a741413574b794a168",
+  "source_sha256": "161f6361fd9c99b1b86a863c3cdb7db438fd76329392992f6212e37c83e69963",
+  "target_free": true
+}

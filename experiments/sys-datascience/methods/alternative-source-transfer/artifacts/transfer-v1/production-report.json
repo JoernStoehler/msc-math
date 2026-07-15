@@ -1,0 +1,10 @@
+{
+  "counts": {
+    "4x6": 3200,
+    "6x6": 3200
+  },
+  "elapsed_seconds": 752.788457746,
+  "schema": "alternative-source-transfer-production-v1",
+  "source_sha256": "161f6361fd9c99b1b86a863c3cdb7db438fd76329392992f6212e37c83e69963",
+  "target_free": true
+}
