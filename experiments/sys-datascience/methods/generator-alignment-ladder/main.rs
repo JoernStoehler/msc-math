@@ -360,6 +360,35 @@ fn empty(
     let id = format!("alignment-ladder-v1/seed={SEED}/bucket={name}/row={row}/theta={label}");
     Row {schema:"alignment-ladder-row-v1",id,base_id:format!("generator-orientation-v1/base/seed={SEED}/bucket={name}/row={row}"),source_base_contract:"regenerated orientation-smoke v1 base law; byte comparison deferred while LFS panel rows are unavailable",bucket:name,row_index:row,seed:SEED,base_seed,accepted_base_attempt:attempt,theta_label:label,theta_radians:theta,kahler_departure_sin_sq_half_theta:(theta/2.).sin().powi(2),left_u2_seed:seed_u64(derive_seed(SEED,"alignment-left-u2",b,row,0)),right_u2_seed:seed_u64(derive_seed(SEED,"alignment-right-u2",b,row,0)),coordinate_order:"q1,q2,p1,p2",a_theta_convention:"diag(Q(theta),I_2), Q rotates (q1,q2) positively",primal_action:"not reached",dual_action:"not reached",matrix_row_major:None,determinant:None,orthogonality_residual:None,symplectic_residual:None,anti_symplectic_residual:None,condition_number:None,exact_reconstruction_status:"base_rejected",source_incidence_preserved:None,exact_base_volume:None,exact_response_volume:None,relative_volume_change:None,base_geometry_id:None,base_signature:None,response_signature:None,euclidean_gram_max_abs_change:None,symplectic_gram_l2_change:None,symplectic_gram_max_abs_change:None,failures:vec!["base_generation_exhausted".into()],generation_ms:ms,reconstruction_ms:0.}
 }
+fn failed_after_base(
+    b: (usize, usize),
+    row: usize,
+    label: &'static str,
+    theta: f64,
+    base: &SysLandscapePolytopeCache,
+    attempt: usize,
+    base_seed: u64,
+    generation_ms: f64,
+    status: &'static str,
+    failure: &'static str,
+) -> Row {
+    let mut failed = empty(
+        b,
+        row,
+        label,
+        theta,
+        base_seed,
+        Some(attempt),
+        generation_ms,
+    );
+    failed.exact_reconstruction_status = status;
+    failed.base_geometry_id = Some(geometry_id(base));
+    failed.base_signature = Some(signature(base));
+    failed.primal_action = "map generation/reconstruction failed";
+    failed.dual_action = "not reached";
+    failed.failures = vec![failure.into()];
+    failed
+}
 fn evaluate(
     b: (usize, usize),
     row: usize,
@@ -375,15 +404,48 @@ fn evaluate(
     let ls = derive_seed(SEED, "alignment-left-u2", b, row, 0);
     let rs = derive_seed(SEED, "alignment-right-u2", b, row, 0);
     let Some(left) = u2(ls) else {
-        return empty(b, row, label, theta, base_seed, Some(attempt), gen);
+        return failed_after_base(
+            b,
+            row,
+            label,
+            theta,
+            base,
+            attempt,
+            base_seed,
+            gen,
+            "map_rejected",
+            "left_u2_generation_rejected",
+        );
     };
     let Some(right) = u2(rs) else {
-        return empty(b, row, label, theta, base_seed, Some(attempt), gen);
+        return failed_after_base(
+            b,
+            row,
+            label,
+            theta,
+            base,
+            attempt,
+            base_seed,
+            gen,
+            "map_rejected",
+            "right_u2_generation_rejected",
+        );
     };
     let m = left * a_theta(theta) * right;
     let t = Instant::now();
     let Some(inv) = m.try_inverse() else {
-        return empty(b, row, label, theta, base_seed, Some(attempt), gen);
+        return failed_after_base(
+            b,
+            row,
+            label,
+            theta,
+            base,
+            attempt,
+            base_seed,
+            gen,
+            "inverse_transpose_rejected",
+            "inverse_transpose_failed",
+        );
     };
     let Some(p) = SysLandscapePolytopeCache::from_f64_dual_vertices(
         base.dual_vertices_f64
@@ -391,7 +453,18 @@ fn evaluate(
             .map(|x| inv.transpose() * x)
             .collect(),
     ) else {
-        return empty(b, row, label, theta, base_seed, Some(attempt), gen);
+        return failed_after_base(
+            b,
+            row,
+            label,
+            theta,
+            base,
+            attempt,
+            base_seed,
+            gen,
+            "exact_reconstruction_rejected",
+            "exact_reconstruction_rejected",
+        );
     };
     let rec = t.elapsed().as_secs_f64() * 1e3;
     let bv = exact_volume_from_incidence_as_f64(&base.vertices, &base.vertex_facet_incidence);
