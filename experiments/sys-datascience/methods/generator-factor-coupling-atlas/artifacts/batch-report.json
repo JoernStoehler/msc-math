@@ -1,8 +1,8 @@
 {
   "schema": "generator-factor-coupling-atlas-report-v1",
   "law_version": "generator-factor-coupling-atlas-v1",
-  "source_revision": "c3e977d99d7a92bbfe54f1ef755fb9bdaf5fdb91",
-  "source_tree": "822d4131d913bda2600efcdd08ede8b44b2c15ab",
+  "source_revision": "180e262e0285caa9b1463c97c7abfc27d67bd1af",
+  "source_tree": "7c579ed9eccfa796603df044d837045cd7e6e24e",
   "source_dirty": false,
   "source_dirty_scope": "fail-closed git status --porcelain=v1 --untracked-files=no captured before output creation",
   "command": "cargo run -p exp-sys-landscape --release --bin sys-datascience-generator-factor-coupling-atlas -- --out-dir experiments/sys-datascience/methods/generator-factor-coupling-atlas/artifacts --seed 20260715 --attempts 64 --rows-per-arm 1",
@@ -35,7 +35,7 @@
   "attempts_total": 276,
   "accepted_rows": 72,
   "exhausted_rows": 0,
-  "producer_blake3": "4750984f7d31225a7238eba497d68c7c5dec80d9ee15d437862aa68af94d235a",
+  "producer_blake3": "44ff62a37e23cf1eb342457dab670f6d758f9d0dc2f79f6c473cff3d0ee03ab8",
   "cargo_lock_blake3": "6aa2b854abde71d320c87e08bd8e8b1b0a73d3719081cc809e9fb6cd2e314419",
   "rows_blake3": "2ddb6aa2da7510d4e357ff00225103d4770a9f819a6e1fb1e4819b87a5faca57",
   "marginal_control": {
