@@ -36,10 +36,10 @@
     ]
   },
   "provenance": {
-    "producer_sha256": "4de0d0e18c4ba674a8ae1d3f4b7b01fc7102e2afed355a37dc36ed73ccd07fc3",
+    "producer_sha256": "f14fe0b77b5ab012f18bce888db61f3b0e70983c5cb3e9b7f7647aafdfdc0d5c",
     "product_source_blob": "9a15d5545efd85a5396fa818d7e604ffaab46b9c",
     "product_source_path": "experiments/sys-datascience/produce/random-product.rs",
-    "repository_revision": "fa27e60fe8a46aa461d4ed83036d3500253cc5c4",
+    "repository_revision": "f3c11a342892dba5a9c536d388a5ce0225052bae",
     "source_blob": "ea59cb1b3d123e630fdc034a95f4a2a43812b0a6",
     "source_path": "experiments/sys-datascience/methods/generator-zoo-smoke/main.rs",
     "source_revision": "fd9c3e7d",
@@ -173,9 +173,15 @@
       },
       "reason_counts": {
         "accepted": 12,
-        "unbounded_or_origin_failure": 26
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 26,
+        "wrong_side_count": 0
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -306,9 +312,15 @@
       },
       "reason_counts": {
         "accepted": 12,
-        "unbounded_or_origin_failure": 8
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 8,
+        "wrong_side_count": 0
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -439,9 +451,15 @@
       },
       "reason_counts": {
         "accepted": 12,
-        "unbounded_or_origin_failure": 34
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 34,
+        "wrong_side_count": 0
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -573,9 +591,14 @@
       "reason_counts": {
         "accepted": 1,
         "bounded_attempt_exhaustion": 11,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 0,
         "wrong_side_count": 364
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.02925531914893617,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -706,10 +729,15 @@
       },
       "reason_counts": {
         "accepted": 12,
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
         "unbounded_or_origin_failure": 1,
         "wrong_side_count": 70
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -840,9 +868,15 @@
       },
       "reason_counts": {
         "accepted": 12,
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 0,
         "wrong_side_count": 20
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -973,9 +1007,15 @@
       },
       "reason_counts": {
         "accepted": 12,
-        "unbounded_or_origin_failure": 13
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 13,
+        "wrong_side_count": 0
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -1106,9 +1146,15 @@
       },
       "reason_counts": {
         "accepted": 12,
-        "unbounded_or_origin_failure": 28
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 28,
+        "wrong_side_count": 0
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -1239,9 +1285,15 @@
       },
       "reason_counts": {
         "accepted": 12,
-        "unbounded_or_origin_failure": 21
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 21,
+        "wrong_side_count": 0
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -1371,9 +1423,16 @@
         }
       },
       "reason_counts": {
-        "accepted": 12
+        "accepted": 12,
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 0,
+        "wrong_side_count": 0
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -1503,9 +1562,16 @@
         }
       },
       "reason_counts": {
-        "accepted": 12
+        "accepted": 12,
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 0,
+        "wrong_side_count": 0
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -1635,9 +1701,16 @@
         }
       },
       "reason_counts": {
-        "accepted": 12
+        "accepted": 12,
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 0,
+        "wrong_side_count": 0
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -1768,9 +1841,15 @@
       },
       "reason_counts": {
         "accepted": 12,
-        "unbounded_or_origin_failure": 35
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 35,
+        "wrong_side_count": 0
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -1901,9 +1980,15 @@
       },
       "reason_counts": {
         "accepted": 12,
-        "unbounded_or_origin_failure": 9
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 9,
+        "wrong_side_count": 0
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -2034,9 +2119,15 @@
       },
       "reason_counts": {
         "accepted": 12,
-        "unbounded_or_origin_failure": 2
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 2,
+        "wrong_side_count": 0
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -2167,9 +2258,15 @@
       },
       "reason_counts": {
         "accepted": 12,
-        "unbounded_or_origin_failure": 3
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 3,
+        "wrong_side_count": 0
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -2300,9 +2397,15 @@
       },
       "reason_counts": {
         "accepted": 12,
-        "unbounded_or_origin_failure": 1
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 1,
+        "wrong_side_count": 0
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -2432,9 +2535,16 @@
         }
       },
       "reason_counts": {
-        "accepted": 12
+        "accepted": 12,
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 0,
+        "wrong_side_count": 0
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -2564,9 +2674,16 @@
         }
       },
       "reason_counts": {
-        "accepted": 12
+        "accepted": 12,
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 0,
+        "wrong_side_count": 0
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -2696,9 +2813,16 @@
         }
       },
       "reason_counts": {
-        "accepted": 12
+        "accepted": 12,
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 0,
+        "wrong_side_count": 0
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -2828,9 +2952,16 @@
         }
       },
       "reason_counts": {
-        "accepted": 12
+        "accepted": 12,
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 0,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 0,
+        "wrong_side_count": 0
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.0,
         "invalid_geometry": 0.0,
@@ -2961,9 +3092,15 @@
       },
       "reason_counts": {
         "accepted": 12,
-        "inactive_prescribed_facets": 2
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 2,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 0,
+        "wrong_side_count": 0
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.14285714285714285,
         "invalid_geometry": 0.0,
@@ -3094,9 +3231,15 @@
       },
       "reason_counts": {
         "accepted": 12,
-        "inactive_prescribed_facets": 1
+        "bounded_attempt_exhaustion": 0,
+        "exact_reconstruction_incidence_failure": 0,
+        "inactive_prescribed_facets": 1,
+        "invalid_geometry": 0,
+        "unbounded_or_origin_failure": 0,
+        "wrong_side_count": 0
       },
       "rejection_reason_proportions": {
+        "bounded_attempt_exhaustion": 0.0,
         "exact_reconstruction_incidence_failure": 0.0,
         "inactive_prescribed_facets": 0.07692307692307693,
         "invalid_geometry": 0.0,
