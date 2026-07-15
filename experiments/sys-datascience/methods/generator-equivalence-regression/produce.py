@@ -410,9 +410,11 @@ def witness_results():
 
     supports = (F(4, 5), F(6, 5), F(9, 10), F(11, 10))
     assert any(h != 1 for h in supports)
-    width_ratio = (supports[0] + supports[2]) / (supports[1] + supports[3])
-    assert width_ratio == F(17, 23) and width_ratio != 1
-    out.append(("iid-support-baseline-vs-equal-support-dirichlet1", {"baseline_supports": supports, "equal_supports": (F(1),) * 4, "marks_differ": True, "translation_and_area_scale_invariant_width_ratio": width_ratio, "equal_support_width_ratio": F(1)}))
+    support_fixture_normals = ((F(1), F(0)), (F(0), F(1)), (F(-1), F(0)), (F(0), F(-1)))
+    width_aspect = (supports[0] + supports[2]) / (supports[1] + supports[3])
+    assert all_active(support_fixture_normals, supports)
+    assert width_aspect == F(17, 23) and width_aspect != 1
+    out.append(("iid-support-baseline-vs-equal-support-dirichlet1", {"synthetic_opposite_normal_fixture": support_fixture_normals, "baseline_supports": supports, "equal_supports": (F(1),) * 4, "support_mark_laws_differ": True, "translation_and_area_scale_invariant_width_aspect_on_named_fixture": width_aspect, "equal_support_width_aspect": F(1), "full_law_equivalence_rejected_before_geometry_acceptance": True}))
 
     normals = ((F(1), F(0)), (F(3, 5), F(4, 5)), (F(-3, 5), F(4, 5)), (F(-1), F(0)), (F(0), F(-1)))
     heights = (F(1),) * len(normals)
