@@ -14,13 +14,9 @@ The compact provenance and scope record is
 The result is for one `factorial-both` source, master seed `2026071601`, and
 the two fixed buckets `4x6` and `6x6`. The frozen design has shared controls,
 five rho/ridge overlaps, and no `sys > 1` rows. The analysis JSON owns the
-full bucket-level descriptive table and all detailed metric rows. Its compact
-top-line summary is:
-
-| selector | equal-bucket effect | descriptive bootstrap range | sampled null relabelings at least as extreme | frozen label |
-|---|---:|---:|---:|---|
-| rho | 0.2587281074 | [0.1921793374, 0.3293762727] | 0/10,000 | `strong_transfer` |
-| ridge | 0.2253551372 | [0.1598865061, 0.2956697829] | 0/10,000 | `strong_transfer` |
+full bucket-level descriptive table, detailed metric rows, intervals, and
+permutation counts. Both selectors received the predeclared
+`strong_transfer` label as finite-design enrichers in both tested buckets.
 
 The strongest supported claim is: on this one fresh, separately
 area-normalized source, both frozen target-free selectors operationally

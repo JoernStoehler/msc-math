@@ -50,8 +50,8 @@ The reviewed evaluator identity is source digest
 digest `740441674806a1baaea966d5f8f12a66d8e2ef1229b66ca9dcf9225a02f6c45f`,
 backend digest
 `2fb95be2f16bbd730adfcc610fdb331bfdb692a283bdfe7092bc12cfde07721b`, and
-repository HEAD `5a5736687dcd8ad10f4a682266fa24d1fe067efc`; future evaluation
-uses a detached clean worktree at that commit.
+repository HEAD `5a5736687dcd8ad10f4a682266fa24d1fe067efc`; the accepted
+evaluation used a detached clean worktree at that commit.
 
 ## Accepted post-target result
 
@@ -61,12 +61,10 @@ frozen analysis has SHA-256
 `872b932cf38811184104a6bf46afe34f079c291fa5b6e9bc90e05a80df1d407a`.
 Both selectors received the predeclared `strong_transfer` label as finite
 sub-threshold enrichers on the one `factorial-both` source across `4x6` and
-`6x6`. The analysis JSON owns the detailed bucket table. Its equal-bucket
-effects are rho `0.2587281074` and ridge `0.2253551372`, with descriptive
-bootstrap ranges `[0.1921793374, 0.3293762727]` and
-`[0.1598865061, 0.2956697829]`; each has 0/10,000 sampled null relabelings at
-least as extreme. These are not population confidence intervals, `p = 0`, or
-causal randomization evidence.
+`6x6`. The analysis JSON owns the detailed bucket table, exact effects,
+descriptive bootstrap ranges, and permutation counts. These diagnostics are
+not population confidence intervals, `p = 0`, or causal randomization
+evidence.
 
 The result has shared controls, five rho/ridge overlaps, one master seed, two
 fixed buckets, and zero `sys > 1` rows. It does not support threshold,
