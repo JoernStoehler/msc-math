@@ -1,8 +1,8 @@
 {
   "schema": "generator-factor-coupling-atlas-report-v2",
   "law_version": "generator-factor-coupling-atlas-v1",
-  "source_revision": "4cbd3a864121123132f7da3813b77029ddaa13f9",
-  "source_tree": "343acacefd137de24644598047afe92229e5515a",
+  "source_revision": "1aa614e94234cb3900ea911ba447123a073fd9e7",
+  "source_tree": "6329ceefc16fdb350c234d3db4ee91506eb4334c",
   "source_dirty": false,
   "source_dirty_scope": "fail-closed git status --porcelain=v1 --untracked-files=no captured before output creation",
   "command": "cargo run -p exp-sys-landscape --release --bin sys-datascience-generator-factor-coupling-atlas -- --out-dir experiments/sys-datascience/methods/generator-factor-coupling-atlas/artifacts --seed 20260715 --attempts 64 --rows-per-arm 1",
