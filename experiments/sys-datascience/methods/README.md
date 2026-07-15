@@ -58,9 +58,26 @@ Read first:
   geometry/HK-branch hypothesis formation; exploratory (`G`) only.
 - `equal-budget-product-search/`: parked target-free S0 prototype for a fixed
   `5 x 5` IID/local/CEM comparison. It has no real-run artifacts or empirical
-  result and must not be resumed without a new portfolio decision.
+  result and must not be resumed without a new portfolio decision. The
+  separately integrated standard fixed-population AMS core is reusable method
+  code only; the bespoke adaptive comparison was never run.
 - `product-bounce-distribution/`: exact-`(k,m)` descriptive distribution and
   ridge-adjustment packet for 2- versus 3-bounce retained random products.
+- `product-bounce-class-degeneration/`: generator-local retained-row packet for
+  common-support enrichment and the exact one-swap class-difference identity;
+  not a physical or causal mechanism.
+- `product-triangle-bounce-classification/`: exact falsifier/support packet for
+  the agent-reviewed triangle-product capacity theorem. The proof owner is
+  `formal/product-triangle-bounce-classification.tex`; empirical artifacts are
+  support, not proof premises.
+- `generator-orientation-smoke/` and
+  `generator-orientation-target-pilot/`: frozen fixed-shape orientation witness
+  with Haar-`U(2)` invariance control and Haar-`SO(4)` alignment-changing arm.
+  Retain the witness-level boundary and failed directional ridge-mediator gate.
+- `alternative-source-transfer/`: prospectively frozen `factorial-both`
+  source, exact-feature selection, and one target exposure establishing bounded
+  operational sub-threshold ridge/rho proposer transfer. It does not support a
+  threshold-directed, population, mechanism, or rho-superiority claim.
 
 Exploratory fixed-bucket distribution-shape packets:
 

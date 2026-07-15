@@ -1,74 +1,85 @@
 # Sys-Datascience Research Ledger
 
-Use: current global belief and prioritization state. It is not a metric owner
-or queue. `research-direction-review-2026-07-11.md` is the closed-cycle
-exhaustive direction inventory, not current routing; the final account and
+Use: current global belief and routing state. It is not a metric owner or
+queue. Detailed measurements remain in the owning method artifacts. The July
+11 direction review is a historical inventory; the final account and
 next-session board govern current routing.
 
 ## Evidence State
 
-- No named retained/generated hostile-search packet has produced a new source
-  of sys > 1. Known HKO/rotated-pentagon examples are structured contrasts, not
-  discoveries of this search.
-- A fresh frozen random-product rule replicated sub-threshold enrichment from
-  low normalized two-face-area magnitude plus concentration. It did not reach
-  the threshold or establish a mechanism.
-- A second frozen low-covariance-rho selector prospectively enriches the same
-  generator relative to controls and is competitive with, but not better than,
-  the ridge cascade. It is a bounded selector result, not transfer or mechanism.
-- Ridge sum is not unique within its family: mean is redundant in fixed product
-  buckets, while max, standard deviation, and upper quantiles are competing
-  selection directions.
-- Two frozen endpoint paths reverse the ridge objective locally; this parks a
-  ridge-only optimizer. On triangle--hexagon, an explicit admissible
-  three-bounce competitor proves the full-interval Viterbo bound and a separate
-  endpoint lower bound gives equality; all-branch minimality is optional exact
-  interior-profile work.
-- The narrow-gap scheduler ablation has no universal winner: dyadic improves
-  on fixed step on both starts, while boundary scaling is start-dependent.
-- The active invariant schema has essentially combinatorial and two-face-area
-  families. Existing ablations therefore do not establish ridge uniqueness
-  among natural geometric descriptions.
-- Viable direct-search objects exist outside the retained table: constrained
-  product coordinates, fixed-facet dual vertices, branch-aware local moves,
-  boundary/facet changes, and structured families.
-- Tail extrapolation is model-sensitive. No calibrated hit rate, impossibility,
-  arbitrary-generator, or mechanism claim is supported.
-- On the 9,455 retained random products with both exact bounce-class minima,
-  equal A2/A3 six-facet support is enriched among small class gaps. On the
-  3,559 equal-support rows, every retained minimizer pair admits a symmetric
-  cyclic representation whose exact class difference is one q/p order term.
-  This is a reviewed generator-local algebraic description, not a physical or
-  causal degeneration mechanism; see
-  `../methods/product-bounce-class-degeneration/interpretation.md`.
-- The reviewed 2026-07-10 source-to-table/P2 rebuild establishes current
-  identity; rerunning it is not selected.
+- No reviewed hostile-search packet has produced a new source of `sys > 1`.
+  Known HKO/rotated-pentagon examples remain references, not discoveries of
+  this search. Current evidence does not calibrate rarity or impossibility.
+- Low normalized symplectic two-face-area magnitude is a prospective
+  sub-threshold selector under the original random-product generator. Within
+  fixed ridge-count buckets, sum and mean are rank-equivalent algebraically.
+  A frozen concentration cascade adds same-source enrichment.
+- On a prospectively frozen generic `F=10` pool, low ridge transfers as a
+  coarse filter. Hardening from the favorable 1% to the most favorable 0.1%
+  did not improve `sys` and failed the continuation gate. This stops further
+  “make ridge smaller” scale-up, but is not a universal Goodhart law or causal
+  mechanism.
+- A frozen low covariance-rho selector prospectively enriches the original
+  product source. On a separately generated `factorial-both` source, frozen
+  rho and ridge rules both enrich their finite sub-threshold selected sets
+  relative to disjoint controls in both tested buckets. This establishes
+  bounded operational generated-candidate proposers/enrichers, not a
+  threshold-directed proposer, population stability, mechanism, or rho
+  superiority.
+- Product bounce-label association is descriptive and post-target. Separately,
+  the common-support packet gives a generator-local exact one-swap identity on
+  its retained rows, not a physical or causal mechanism.
+- The agent-reviewed triangle theorem gives an exact capacity classification
+  for products of two triangles using the strict directed Hamiltonian
+  six-cycle predicate, with equality on the incident-zero boundary. It is not
+  a non-triangular theorem and remains behind Jörn's mathematical acceptance
+  gate.
+- A fixed-shape orientation pilot supports a witness-level alignment role:
+  Haar `U(2)` is the invariance control and Haar `SO(4)` changes `sys`
+  materially on seven of eight frozen bases. The predeclared directional ridge
+  mediator gate failed. No population, common-sign, proposer, or causal claim
+  follows.
+- The random-start gradient packet supports bounded finite-step progress but
+  not endpoints or maxima. The scheduler ablation selects no default. The
+  adaptive-direction ablation finds no incremental near-active-maximin benefit
+  on its declared generic panel and does not close optimization generally.
+- Bespoke adaptive hostile search produced no scientific adaptive-versus-IID
+  comparison. Its readiness smoke and architecture failure are process
+  evidence only. The standard fixed-population AMS core is reusable code, not
+  a search result.
+- The stopped generator breadth wave is not integrated scientific evidence or
+  a launch queue. Only the independently reviewed orientation transplant is
+  retained from it; the alternative-source proposer packet has separate
+  ownership and review.
+- The reviewed July 10 source-to-table/P2 reconstruction establishes retained
+  table identity. A redundant rebuild is not selected.
 
 ## Current Prioritization
 
-`final-research-account-2026-07-12.md` is a reviewed checkpoint and source
-index, not authority that empirical exploration is complete. Current work
-should compare whole research lines against the intended thesis consumer and
-Jörn's research taste rather than automatically resuming old packets or routing
-to demonstration. No experiment packet is selected merely from the open
-questions below.
+Exploration is closed after the July 15 portfolio review. The default next
+phase is readiness/demonstration for a named thesis consumer, including any
+additional FACTSHEET 34.1 data selected for an already fixed role. New rows,
+methods, sources, or proofs do not reopen exploration merely because they are
+feasible.
 
-## Future Discriminators
+## Reopen Conditions
 
-- How many independent ridge-area directions remain after quotienting?
-- Which natural invariant geometry adds residual information?
-- Which concrete examples most strongly contradict the current picture?
-- Does a named search objective need a scheduler or direct-search comparison?
-- Do structured branch phases or combinatorial transitions yield a sharp
-  conjecture, obstruction, or minimal witness from existing evidence?
-- Which generator contrast is mathematically meaningful and decision-changing?
-- Would an all-branch proof add enough exact interior-profile value to repay
-  its cost beyond the settled triangle--hexagon Viterbo bound?
-- Would a symbolic six-facet common-support order theorem, an independently
-  frozen generator test, or a predeclared physical contact study add enough
-  value beyond the reviewed one-swap identity? Generic beta diagnostics do not.
+- Ridge/scalar work: a second stage must add information beyond lower ridge or
+  answer a named source-stability or threshold-directed question.
+- Triangle/bounce work: a concrete proof defect, selected non-triangular
+  theorem, or thesis need for a named degeneracy.
+- Orientation: a necessary population or common-direction claim.
+- Optimization: a downstream default-policy need, a concrete trajectory
+  failure, or a mechanism-stratified panel with actual near-active
+  multiplicity.
+- Adaptive search: first choose fixed-budget candidate quality versus
+  rare-event probability estimation; then compare a thin standard core with
+  IID under a small predeclared gate.
+- Broader invariants/generators: a named claim-changing outcome that beats
+  demonstration after charging implementation and review debt.
 
 ## Update Rule
 
-Update only when evidence, review, or a Jörn decision changes beliefs,
-priorities, or phase routing. Detailed metrics remain in owning artifacts.
+Update only when evidence, review, or a Jörn/Kai decision changes beliefs,
+priorities, or phase routing. Generated artifacts and producers own detailed
+metrics.

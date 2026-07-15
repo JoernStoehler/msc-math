@@ -43,11 +43,14 @@ Current retained producer contract:
   valid polytope is produced.
 
 This is a finite sample from these distributions, not a universal random-model
-claim. Broader height intervals, independent seeds, other facet-count ranges,
-or new distributions are separate producer changes. No producer extension is
-currently selected for execution. The exploration phase must tie any proposed
-extension to an exact claim, cost, review gate, and stopping rule before compute
-begins.
+claim. A separate method-local `factorial-both` source under
+`methods/alternative-source-transfer/` supplied one frozen prospective
+ridge/rho transfer test; it does not extend or replace these retained tables.
+Broader height intervals, independent seeds, other facet-count ranges, or new
+distributions remain separate producer changes. No further extension is
+selected. Later demonstration data must be chosen for an explicit consumer;
+reopened exploration still requires an exact claim, cost, review gate, and
+stopping rule before compute begins.
 
 ## Retained Tables
 
@@ -110,13 +113,16 @@ cites current numbers. Keep durable packet conclusions in
 `methods/<method>/README.md`, not only in `/tmp`.
 
 Current coordination status: the corrected exploration/research slice is
-feature-complete under
+feature-complete under the July 15 refresh of
 `coordination/final-research-account-2026-07-12.md`. Existing evidence supports
-a controlled negative hostile-search benchmark, a validated sub-threshold
-pool-screening cascade under one random-product generator, a descriptive
-product bounce-label result, and bounded random-start gradient progress. The
-feature map remains narrow; parked routes have named reopen conditions rather
-than forming a queue. FACTSHEET 34.1 still requires later thesis-level data.
+a controlled negative hostile-search benchmark; bounded same-source and
+alternative-source operational sub-threshold ridge/rho proposers; coarse
+generic ridge transfer with failed harder conditioning; exact triangle and
+generator-local bounce structure under their separate review boundaries;
+witness-level orientation relevance with a failed ridge mediator; and bounded
+gradient/optimizer results. Bespoke adaptive search produced no scientific
+comparison. Parked routes have named reopen conditions rather than forming a
+queue. FACTSHEET 34.1 still requires later consumer-driven thesis-level data.
 `LICCA.md` classifies retained dormant scripts; none is selected by default.
 
 Escalate before unrelated work only when an active method produces a trusted

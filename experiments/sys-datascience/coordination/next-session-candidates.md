@@ -1,25 +1,27 @@
 # Sys-Datascience Next Session Candidates
 
-Use: compact current decision board, not a backlog. Evidence and reasoning live
-in owning packets and `final-research-account-2026-07-12.md`.
-`research-direction-review-2026-07-11.md` is a closed-cycle inventory, not
-current routing authority.
+Use: compact routing board, not a backlog. Evidence and reasoning live in
+owning packets and `final-research-account-2026-07-12.md`.
+`research-direction-review-2026-07-11.md` is a historical inventory, not
+launch authority.
 
-Current default: treat the reviewed account as a checkpoint while comparing
-new research lines by thesis value, information value, cost, and reviewability.
-Do not relaunch an old audit, a ridge-only optimizer, blind dataset, arbitrary
-model family, or proof-adjacent sampling without its named reopen gate. A
-demonstration/readiness handoff remains available but is not automatic phase
-authority.
+Current default: empirical exploration is closed after the reviewed July 15
+portfolio refresh. The next sys-datascience session should perform
+readiness/demonstration work for an explicit thesis consumer: select source
+roles, choose any additional FACTSHEET 34.1 data for those roles, and verify
+the reproduction path while preserving the recorded claim boundaries. Do not
+restart exploration merely because a method, worktree, larger sample, or
+possible generalization exists.
 
-| Topic | Stance | Next action | Gate |
+| Topic | Stance | Next action | Reopen gate |
 | --- | --- | --- | --- |
-| Demonstration/readiness | available checkpoint | assess source roles, provenance, claim boundaries, and fresh-session usability if selected | no new experiment is needed merely to make a packet presentable |
-| Bounce-class common-support coupling | reviewed and parked | consume the exact one-swap interpretation if it serves a thesis explanation | reopen only for a symbolic six-facet theorem, a predeclared physical-contact family, independent-generator validation, or a targeted different-support discriminator |
-| Triangle--hexagon exact profile | optional mathematics | preserve the full-interval competitor bound and endpoint equality source | all-branch minimality may refine the interior profile; it is not a Viterbo-on-path or sampling gate |
-| Pool-screening results | ready for bounded use | select whether ridge and covariance-rho have distinct demonstration roles | preserve same-generator, sub-threshold, non-mechanism limits |
-| Ridge-only optimization | parked | none | reopen only for an objective beyond ridge magnitude |
-| Optimizer scheduler | parked | none | reopen only if a downstream method needs a default or a concrete failure distinguishes regimes |
-| Generator transfer | conditional | name one decision-changing alternative source | freeze rule and stopping criterion before target evaluation |
-| Broader invariant map / direct search | conditional | name a claim-changing outcome before design | do not revive an old audit as a launch authority |
-| Presentation/thesis prose | later, after readiness | use selected sources only | demonstration does not itself widen empirical claims |
+| Demonstration/readiness | next default | choose exact owner artifacts and any consumer-driven additional data; verify source-to-output reproduction | presentation needs do not widen empirical claims |
+| Alternative-source ridge/rho proposer | reviewed and closed | may be consumed as bounded operational sub-threshold proposer-transfer evidence | reopen only for a named source-stability or threshold-directed claim |
+| Fixed-shape orientation witness | reviewed and closed after transplant | may be consumed as witness-level evidence that symplectic alignment matters; retain the failed ridge-mediator gate | enlarge only for a necessary population or common-direction claim |
+| Generic ridge hardening | reviewed and closed | retain coarse transfer and failed-hardening result | reopen only for a second stage adding information beyond lower ridge |
+| Triangle-product bounce classification | research closed; Jörn math review remains | review the theorem if it will enter the thesis | reopen research only for a proof defect or selected non-triangular theorem |
+| Common-support bounce coupling | reviewed and closed | consume only its generator-local exact interpretation | reopen for a named symbolic theorem, physical-contact family, or different-support discriminator |
+| Optimizer adaptive directions | reviewed and closed | retain bounded negative incremental result | reopen near-active maximin only on a mechanism-stratified panel with actual multiplicity; reopen scheduler work only for a downstream default need |
+| Adaptive hostile search | failed without scientific comparison | none; the bespoke branch must not merge | first choose candidate-quality versus probability-estimation objective, then compare a thin standard core with IID |
+| Stopped generator breadth wave | parked preservation, not a queue | none beyond the separately salvaged orientation packet | a named packet must change a retained thesis claim and beat demonstration after review debt |
+| Presentation/thesis prose | later session | use selected sources only | outside this exploration closeout |

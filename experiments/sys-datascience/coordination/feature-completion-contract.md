@@ -1,7 +1,7 @@
 # Sys-Datascience Exploration Completion Contract
 
-Status: exploration/research slice satisfied on 2026-07-12 after the corrected
-broad-first audit and bounded execution cycle. This is not thesis-level closure
+Status: exploration/research slice satisfied after the corrected broad-first
+cycle and its reviewed 2026-07-15 portfolio refresh. This is not thesis-level closure
 of the data-science story: FACTSHEET 34.1 still requires more data, whose exact
 design belongs to the later demonstration/integration decision. The recovery-
 era demonstration-readiness judgment was premature; this phase transition
@@ -75,7 +75,28 @@ In particular:
 - the two-start iterative scheduler ablation has a start-dependent regime
   split, not a selected default policy; it is parked with a downstream-method
   reopen condition;
-- direct adaptive S0, new generator data, and broader invariant construction
-  are parked with named reopen conditions; the executed class-minimum audit
-  identifies the bounce label as the post-target winning class and finds no
-  simple angular-gap mechanism worth expanding.
+- a prospectively frozen generic `F=10` packet supports coarse ridge transfer
+  but fails its harder-conditioning continuation gate, so larger ridge-only
+  tails are closed rather than queued;
+- the common-support packet retains a generator-local exact one-swap identity,
+  while the agent-reviewed triangle-product theorem gives a strict-cycle
+  capacity classification only for products of two triangles;
+- the adaptive-direction ablation supplies a bounded negative incremental
+  result and does not promote a default optimizer or endpoint;
+- the fixed-shape orientation pilot supports a witness-level alignment role
+  while failing its directional ridge-mediator gate;
+- the separately owned alternative-source packet establishes finite-design
+  operational sub-threshold ridge/rho proposer transfer on one new product
+  source, without threshold, population, or mechanism evidence;
+- bespoke adaptive hostile search and the stopped generator breadth wave
+  produced no scientific comparison and are parked as process failures, not
+  negative `sys` results; and
+- every selected post-July line is executed, closed, or parked under a named
+  reopen condition. No cheap unrun packet on the current board is likely to
+  change a retained claim or the decision to move to demonstration/readiness.
+
+Closure was rechecked across code, data, artifact identity, provenance,
+interpretation, review status, and future-session routing. The triangle theorem
+still needs Jörn's mathematical acceptance before thesis use. FACTSHEET 34.1
+still owns later consumer-driven data acquisition. Neither point is authority
+to drain the exploration inventory.

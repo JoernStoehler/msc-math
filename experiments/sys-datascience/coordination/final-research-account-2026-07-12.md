@@ -1,11 +1,12 @@
 # Sys-Datascience Exploration Account
 
-Date: 2026-07-12.
+Original account: 2026-07-12. Closure refresh: 2026-07-15.
 
-Status: reviewed exploration synthesis for the corrected broad-first cycle.
-This closes the exploration/research slice, not the thesis-level data-science
-story: FACTSHEET 34.1 still requires more data, to be designed from the retained
-claims and demonstration needs rather than launched as unprioritized research.
+Status: reviewed exploration synthesis for the corrected broad-first cycle,
+refreshed after disposition of the selected later research lines. This closes
+the exploration/research slice, not the thesis-level data-science story:
+FACTSHEET 34.1 still requires more data, to be designed from retained claims
+and demonstration needs rather than launched as unprioritized research.
 Generated artifacts and their producers own detailed metrics; this file owns
 claim boundaries, research decisions, and downstream routing.
 
@@ -107,6 +108,60 @@ No new dataset was collected merely because a producer or method existed.
    no optimizer policy is selected and the line is parked. Source:
    `../../dev-gradient-ascent/iterative-policy-ablation/`.
 
+10. **Generic ridge transfer and failed hardening.** A prospectively frozen
+    generic, non-product `F=10` pool supports low ridge mean as a coarse
+    sub-threshold selector against a disjoint baseline. Pushing from the
+    favorable one-percent band into its hardest tenth did not improve `sys`
+    and failed the predeclared continuation gate. This closes larger
+    ridge-only tails under this design, not ridge enrichment generally or an
+    asymptotic Goodhart law. Sources: `../methods/generic-ridge-tail-stage1/`,
+    `../methods/generic-ridge-tail-stage1-target/`, and
+    `../methods/ridge-tail-anatomy/`.
+
+11. **Exact bounce structure at two levels.** On retained equal-support rows,
+    the common-support packet gives a generator-local exact one-swap identity
+    between retained class minimizers. Separately, the agent-reviewed triangle
+    theorem classifies capacity for products of two triangles by a strict
+    directed Hamiltonian six-cycle predicate, with equality on the
+    incident-zero boundary and explicit proper three-bounce realization in
+    the strict case. The theorem is triangle-specific and remains behind
+    Jörn's mathematical acceptance gate. Sources:
+    `../methods/product-bounce-class-degeneration/`,
+    `../methods/product-triangle-bounce-classification/`, and
+    `../../../formal/product-triangle-bounce-classification.tex`.
+
+12. **Adaptive-direction optimizer closeout.** On the declared generic panel,
+    near-active zero-gap maximin supplies no incremental benefit over the
+    direct single-branch box-steepest control: actual near-active multiplicity
+    is nearly absent and the controls agree where the comparison is defined.
+    Candidate-window directions remain diagnostic. This is a bounded negative
+    increment, not convergence, stationarity, local maximality, transfer, or
+    closure of optimization. Source:
+    `../../dev-gradient-ascent/adaptive-direction-ablation/`.
+
+13. **Fixed-shape orientation witness.** On eight frozen product bodies, the
+    Haar `U(2)` invariance control is numerically unchanged while a Haar
+    `SO(4)` map changes `sys` materially on seven witnesses. This supports a
+    witness-level role for symplectic alignment at fixed Euclidean shape. The
+    directional ridge-mediator gate failed; no population, common-sign,
+    proposer, or causal claim follows. Source:
+    `../methods/generator-orientation-target-pilot/`.
+
+14. **Alternative-source operational proposers.** A target-free
+    `factorial-both` source was generated and exact-featured before frozen rho,
+    ridge, and disjoint control memberships selected a finite target union.
+    Both selectors enrich mean `sys` over controls in both tested buckets and
+    no row reaches one. This establishes bounded operational sub-threshold
+    generated-candidate proposer/enricher transfer on one source/seed/design,
+    not threshold finding, population stability, mechanism, causal support,
+    or rho superiority. Source: `../methods/alternative-source-transfer/`.
+
+15. **No adaptive-hostile-search result.** The bespoke adaptive route ran no
+    real adaptive-versus-IID target comparison. Its readiness/accounting
+    plumbing and architecture failure are process evidence only. The retained
+    standard fixed-population AMS core is reusable method code, not a
+    scientific search result.
+
 ## Corrected Interpretations
 
 - The four exact cyclic classes seen in two lower-`sys` product examples were
@@ -136,31 +191,44 @@ No new dataset was collected merely because a producer or method existed.
 - Existing regular-product artifacts show the exact smooth pentagon profile,
   known midpoint symmetry, sparse wider sweeps, and no unexplained competitive
   phase that justifies another broad producer.
+- Operational candidate proposal and causal explanation are separate. The
+  frozen ridge/rho filters are candidate proposers in the bounded workflow
+  sense because they generate, filter, then evaluate new candidates; neither
+  is a threshold-directed proposer or a validated mechanism.
+- The fixed-shape orientation result shows that symplectic alignment can matter
+  without changing Euclidean shape. Its failed ridge-direction gate weakens a
+  causal ridge account but does not negate the selectors' operational
+  enrichment.
+- The stopped generator breadth wave is preservation inventory, not evidence
+  that its many target-free packets were scientifically compared or accepted.
 
 ## Failed, Parked, And Reopen Conditions
 
 - **Compact incidence-area statistics:** stopped after the frozen negative
   panel; reopen only for an independently motivated mathematical definition.
-- **Ridge selection-pressure curve:** parked. Reopen only if distinguishing
-  sustained ordering, saturation, reversal, or generator mixture would change
-  whether scalar-proposer work receives resources.
+- **Ridge selection-pressure curve:** closed under the prospective generic
+  hardening design. Reopen only for a second stage adding information beyond
+  lower ridge or for a named source-identifiable competing explanation.
 - **Ridge-only optimization and triangle--hexagon densification:** parked.
   Reopen the former only for an objective beyond ridge magnitude; reopen the
   latter only for a new named empirical question. Optional all-branch work is
   exact-profile mathematics, not a reason to resume sampling.
 - **Regular-product phase mining:** closed at current scope. Reopen for a named
   general `(n,m)` theorem or branch-feasibility question, not another sweep.
-- **Class-specific bounce minima `(A_2,A_3)` and gap:** scientifically plausible
-  but optional. Reopen if the high normalized intersection of the two lower
-  envelopes becomes a selected HKO/thesis question or a cheap pre-target width
-  rule is proposed.
-- **Equal-budget IID/local/CEM product search (S0):** parked target-free. Its
-  implementation cost and verification burden exceeded its current marginal
-  information value; no real target run occurred. Reopen only after a new
-  portfolio comparison names an outcome that changes a retained decision.
-- **Alternative generator and broader invariant families:** technically viable,
-  not forbidden. Reopen for a named transfer, counterexample, or geometric
-  uniqueness question whose possible outcomes outrank current integration work.
+- **Triangle bounce classification and common-support coupling:** closed as
+  research. Jörn review remains an acceptance gate for the triangle theorem.
+  Reopen for a concrete proof defect, selected non-triangular theorem, named
+  degeneracy need, symbolic common-support theorem, or targeted
+  different-support discriminator.
+- **Adaptive hostile search:** failed procedurally without a scientific
+  comparison. Do not revive the bespoke target plan. Reopen only after choosing
+  candidate quality versus probability estimation and designing the thinnest
+  standard-core comparison with a small observation gate.
+- **Alternative generators and broader invariants:** the selected
+  `factorial-both` transfer question is complete; the stopped generator breadth
+  wave is parked unmerged. Reopen only for a named threshold/source-stability,
+  counterexample, or geometric-uniqueness claim that beats demonstration after
+  review debt.
 - **Covariance-rho follow-up:** parked. Same-generator repetition, scale-up,
   cutoff search, and post-target bucket refinement have no current decision
   role; reopen for a frozen transfer question or another named missing claim.
@@ -184,6 +252,13 @@ Current evidence does not establish:
   classification, or generator-independent law;
 - covariance rho as better than ridge, transferable, or mechanistic;
 - a default optimizer scheduler, endpoint, or local maximum;
+- incremental near-active-maximin value beyond its declared generic panel;
+- population or common-direction orientation behavior, or ridge mediation of
+  the fixed-witness orientation changes;
+- threshold-directed, cross-seed, population-stable, or mechanistic validity
+  of the alternative-source ridge/rho proposers;
+- adaptive-versus-IID search performance from the unrun bespoke comparison;
+- a non-triangular bounce classification from the triangle theorem;
 - completeness of HK branch or transition types;
 - gradient endpoints, local maxima, or absence of nearby improvements;
 - theorem evidence from any empirical packet.
@@ -205,6 +280,23 @@ Current evidence does not establish:
 - Mixed observations were repaired rather than globally discarded: cyclic-word
   counts remain correct under their computation convention, while the defective
   branch interpretation was removed and the bounce-pattern signal retained.
+- The generic ridge packet froze target selection before evaluation and stopped
+  at its declared hardening gate; its source, target, and anatomy packets were
+  independently reviewed.
+- The triangle theorem passed exact falsification support and independent agent
+  proof review; computation is not used as a proof premise and Jörn review is
+  still outstanding.
+- The adaptive-direction packet uses a common executor and reviewed artifact
+  validation; its negative conclusion is restricted to the named panel.
+- The orientation transplant preserves the accepted source/target identities,
+  protocol history, validation-only replay, and an orientation-only feature
+  snapshot; no target was rerun during transplant.
+- The alternative-source packet froze source, exact features, memberships,
+  evaluator identity, target union, and analyzer formula gate before its one
+  target exposure. Technical and interpretive reviews accepted the resulting
+  bounded claim.
+- The adaptive and generator allocation failures are explicitly classified as
+  process evidence rather than laundered into scientific negatives.
 
 ## What A Later Demonstration Session May Consume
 
@@ -219,6 +311,14 @@ A later session may select presentation roles and exact source inputs from:
   source boundaries;
 - the parked optimizer ablation only as development-method evidence;
 - the exact regular-pentagon owner for the separately proved structured result.
+- the generic ridge source-transfer/failed-hardening packets;
+- the common-support exact interpretation and, after Jörn mathematical review,
+  the triangle-product classification theorem;
+- the adaptive-direction packet as a bounded negative method increment;
+- the orientation pilot as fixed-witness alignment evidence with a failed
+  ridge-mediator gate; and
+- the alternative-source packet as bounded operational sub-threshold proposer
+  transfer.
 
 It must preserve the prohibited claims above, keep known HKO/reference positives
 separate from new discoveries, and avoid presenting post-target diagnostics as
@@ -227,12 +327,16 @@ in this exploration cycle.
 
 ## Remaining Uncertainty
 
-The main remaining exploration uncertainties are scientific opportunities:
-whether class-specific bounce competition deserves proof work, whether a
-meaningful alternative generator changes the bounded pool-screening results,
-and whether a named optimizer objective needs a scheduler decision. None has a
-cheap unrun packet likely to change the retained claims or the decision to move
-into later integration and demonstration. Separately, FACTSHEET 34.1 requires
-more data before thesis-level data-science closure; the later session must
-choose datasets and budgets for its actual consumer rather than infer them from
-these parked research families.
+Scientific uncertainty remains about `sys > 1` prevalence under other sources,
+threshold-directed proposal, population stability of ridge/rho, causal
+mechanism, non-triangular bounce classification, degenerate triangle contacts,
+population orientation effects, effective survivor-conditioned adaptive
+search, and Jörn's acceptance of the triangle mathematics. These are explicit
+future opportunities, not an active queue: no cheap unrun packet is likely to
+change a retained claim or the decision to move into readiness/demonstration.
+
+FACTSHEET 34.1 still requires more data before thesis-level data-science
+closure. The next session must choose datasets and budgets for an actual
+consumer, verify reproduction, and preserve these claim boundaries. It becomes
+reopened exploration only if it again searches across methods, sources, or
+objectives to decide what the scientific account should be.

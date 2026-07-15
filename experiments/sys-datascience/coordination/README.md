@@ -3,9 +3,11 @@
 This directory coordinates the current sys-datascience exploration. It is not
 a second source for experiment metrics.
 
-Current phase: the corrected broad-first exploration/research slice is
-feature-complete. Start with `final-research-account-2026-07-12.md` and use
-`next-session-candidates.md` for current launch/routing. Use
+Current phase: the corrected broad-first exploration/research slice is closed
+after its reviewed July 15 portfolio refresh. Start with
+`final-research-account-2026-07-12.md` and use
+`next-session-candidates.md` for current routing. The next default is
+consumer-driven readiness/demonstration, not automatic empirical reopening. Use
 `research-direction-review-2026-07-11.md` only as the closed-cycle exhaustive
 assessed inventory, not as current authority or a launch queue. Generated
 metrics and packet interpretation remain under ../methods/; producer and table
@@ -15,7 +17,8 @@ exploration-result.md audits and rejects the 2026-07-10 recovery closure as
 phase authority while preserving its bounded retained-table findings.
 feature-completion-contract.md records the corrected stopping condition and its
 scope. Thesis-level data-science closure still requires later data under
-FACTSHEET 34.1; demonstration/integration must choose it for the actual consumer.
+FACTSHEET 34.1; readiness/demonstration must choose it for the actual consumer
+without treating available packets, worktrees, or larger samples as a queue.
 
 recovery-audit-2026-07-10.md records the completed checkpoint audit.
 workflow-evaluations/ contains historical GPT-5.5 process evidence, not current

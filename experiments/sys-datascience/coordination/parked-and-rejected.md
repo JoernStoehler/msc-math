@@ -17,3 +17,28 @@ Currently rejected as standalone sessions unless a topic owner reopens them:
 - seed-effect studies;
 - old ascent/continuation/local-behavior work;
 - generic neural/RL/MCMC/time-series families without a new source interface.
+
+Durable July 15 dispositions:
+
+- The stopped generator parent is preserved at
+  `research/generator-transfer@fd9c3e7d` only as an inventory of work. Its
+  unauthorized breadth wave must not merge and its worktrees are not a launch
+  queue. The separately reviewed orientation transplant and independently
+  owned alternative-source transfer packet are the only retained scientific
+  results from that allocation.
+- The bounded distribution-contract handoff at
+  `research/generator-distribution-contract@81655493` is accepted but parked
+  unmerged. Reopen only when a named distribution comparison needs its
+  contract.
+- The exact `F<=8` target-quotient smoke/proof packet at
+  `research/generator-target-quotient-distance@f7f11464` is parked unmerged.
+  It is not a general cloud-distance backend; reopen only for a named distance
+  consumer.
+- The bespoke adaptive-hostile-search branch is rejected for merge. It ran no
+  real adaptive-versus-IID comparison. Only the separately reviewed standard
+  fixed-population AMS core already integrated in project history is retained
+  as reusable method code.
+- Larger ridge tails, fresh alternative-source seeds/buckets/cutoffs,
+  population orientation studies, polygon bounce generalization, and further
+  optimizer policies are future opportunities only under the explicit reopen
+  gates in `next-session-candidates.md`.
