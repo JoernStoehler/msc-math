@@ -1,0 +1,21 @@
+{
+  "schema": "orbit-zoo-report-v2",
+  "command": "/workspaces/msc-math/target/debug/sys-datascience-generator-orbit-perturbation-zoo --out-dir experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/artifacts/smoke --seed 20260715",
+  "seed": 20260715,
+  "rows": 10,
+  "passed": 10,
+  "source_revision": "059e522c228874434063d021e68fcb17e7587808",
+  "arms": {
+    "fixed-normal-type-cone": "Fixed normal rays; support multipliers 1+epsilon z_i with |z_i|<=1. epsilon is one quarter of measured minimum inactive incidence-slack fraction, halved until exact labeled incidence survives. Not quotient-transverse.",
+    "identity": "Dirac identity control.",
+    "o4-det-minus-haar": "Haar det=-1 O(4) component: diag(-1,1,1,1) times Haar SO(4).",
+    "sl4-bounded-weyl": "L,R Haar SO(4), x1,x2,x3 iid Uniform[-log2,log2], x4=-sum xi, reject if |x4|>log2; L diag(e^xi) R. Explicit coordinate-dependent bounded Weyl law, not Haar SL(4).",
+    "so4-align-0": "R=U1 A_theta U2 with independent Haar U(2); A_theta rotates the q-plane. theta=pi gives anti-symplectic diag(-1,-1,1,1) in SO(4).",
+    "so4-align-pi": "R=U1 A_theta U2 with independent Haar U(2); A_theta rotates the q-plane. theta=pi gives anti-symplectic diag(-1,-1,1,1) in SO(4).",
+    "so4-align-pi-over-2": "R=U1 A_theta U2 with independent Haar U(2); A_theta rotates the q-plane. theta=pi gives anti-symplectic diag(-1,-1,1,1) in SO(4).",
+    "so4-haar": "Haar SO(4) by real Gaussian QR and determinant correction.",
+    "sp4-bounded-cartan": "a,b iid Uniform[-log 2,log 2]; diag(e^a,e^b,e^-a,e^-b) U, U Haar U(2). Explicit bounded Cartan law, not Haar Sp(4).",
+    "u2-haar": "Haar U(2) by complex Gaussian QR in q,p block convention."
+  },
+  "interpretation_boundary": "Target-free geometry/reconstruction smoke only: it neither evaluates sys nor establishes a canonical metric, quotient-natural law, invariance of sys, or population effect."
+}
