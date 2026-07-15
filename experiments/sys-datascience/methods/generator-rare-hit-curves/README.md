@@ -77,7 +77,7 @@ under seeded order permutations of the same multiset.
 ## Interpretation boundary
 
 Allowed uses are finite-panel accepted-prefix curves, attempt/rejection/
-exhaustion accounting, generator-versus-validation cost separation, and named
+exhaustion accounting, producer generator-cost accounting, and named
 law-by-side contrasts when the frozen region and overlap field are visible.
 These are descriptive factor-stream results. They do not estimate natural-law
 probabilities, establish universal geometric extremes, pool facets or side
