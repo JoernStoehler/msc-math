@@ -1,0 +1,13 @@
+{
+  "adapter_elapsed_ms": 36.100291999999996,
+  "adapter_section_canonicalization_count": 73,
+  "comparison_boundary": "The orientation timings measure its exact reconstruction boundary row by row; the adapter timing measures one release-process pass including f64 volume reconstruction, comparisons, provenance, and deterministic artifact writes. This is a cost-scale observation, not a controlled benchmark.",
+  "input_blake3": "610f9ed9a7ca17bb91296ad288b24602da981a8594f4f2ac5b2ba4fc68f8cb50",
+  "orientation_input_geometry_reconstruction_ms_observation_total": 14891.988604000002,
+  "orientation_input_geometry_reconstruction_observation_count": 40,
+  "orientation_to_adapter_elapsed_ratio": 412.5171232409977,
+  "schema": "generator-sys-orbit-view-cost-observation-v1",
+  "source_revision": "f00e2b0ada51f0d38a93cd5771fbc5cc4778a2f3",
+  "source_tree": "10592428de5d706b5c61be21d021f0180d02598f",
+  "status": "nondeterministic_wall_clock_observation"
+}

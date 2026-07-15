@@ -1,0 +1,315 @@
+{
+  "command": "cargo run -p exp-generator-sys-orbit-view --release -- --input experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl --out-dir experiments/sys-datascience/methods/generator-sys-orbit-view/artifacts/panel-2-per-bucket",
+  "completion": {
+    "all_required_controls_passed": true,
+    "haar_so4_has_observed_nonzero_section_view": true,
+    "identity_controls_passed": true,
+    "stochastic_invariance_controls_passed": true,
+    "tied_boundary_control_passed": true,
+    "u2_deterministic_generic_controls_passed": true,
+    "u2_haar_generic_controls_passed": true
+  },
+  "cost": {
+    "adapter_wall_clock_policy": "cost-observation.json is explicitly nondeterministic; rows.jsonl and report.json remain byte-replayable",
+    "adapter_wall_clock_retained": "separate cost-observation.json",
+    "boundary_section_canonicalization_count": 1,
+    "dominant_adapter_work": "f64 vertex enumeration and volume reconstruction, followed by O(F^4) ordered frame scan in the worst case and O(F^3) assignment distance",
+    "panel_section_canonicalization_count": 40,
+    "retained_orientation_geometry_reconstruction_ms_observation_total": 14891.988604000002,
+    "retained_orientation_geometry_reconstruction_observation_count": 40,
+    "stochastic_transformed_section_canonicalization_count": 32
+  },
+  "formula_correspondence": {
+    "formal_labels": [
+      "def:omega-row-signatures",
+      "def:symplectic-gram-schmidt-quadruple",
+      "def:generic-coordinate-section",
+      "prop:generic-coordinate-canonization",
+      "rem:generic-coordinate-canonization-not-universal"
+    ],
+    "formal_source": "formal/generic-coordinate-canonization.tex",
+    "frozen_candidate": "experiments/dev-canonization-t-search/src/candidates/volume_one_omega_labeled_symplectic_frame.rs",
+    "local_steps": [
+      "volume-one scaling reconstructed from normalized dual inequalities",
+      "analytic-center translation",
+      "descending quantized sorted omega-row signatures and explicit tie non-success",
+      "lexicographic ordered-quadruple scan",
+      "symplectic Gram-Schmidt frame (q1,q2,p1,p2)",
+      "frame-inverse coordinate rows"
+    ],
+    "theorem_boundary": "The formal note is agent-written and unreviewed; it proves the generic Sp(4) and facet-permutation section after scale fixing and centering. The Rust adapter is an f64 prototype of the frozen candidate."
+  },
+  "generic_domain_boundary": {
+    "control_passed": true,
+    "coordinates_emitted": false,
+    "input": "symmetric dual cube with rows plus/minus e_i",
+    "status": "nonunique_omega_signature"
+  },
+  "input": {
+    "base_independence_units": 8,
+    "blake3": "610f9ed9a7ca17bb91296ad288b24602da981a8594f4f2ac5b2ba4fc68f8cb50",
+    "path": "experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl",
+    "row_count": 40,
+    "schema": "generator-orientation-smoke-row-v2",
+    "selection": "all retained orientation panel rows; paired by base_id against the identity row"
+  },
+  "interpretation": {
+    "allowed": [
+      "the adapter implements the frozen generic construction with observable statuses",
+      "the retained finite panel and seeded controls test numerical section behavior",
+      "Haar U(2) panel pairs are Sp(4)-inside controls on generic successes",
+      "nonzero Haar SO(4) values are section-view evidence on this finite panel"
+    ],
+    "deferred": {
+      "GL(4)_representatives": "not created; direct invariant or optimized comparisons may be preferable",
+      "O(4)_representatives": "not created; direct invariant or optimized comparisons may be preferable"
+    },
+    "prohibited": [
+      "a universal canonical form",
+      "a theorem that the section distance is an optimized quotient metric",
+      "population support, law ranking, mechanism, target transfer, or any sys/capacity claim",
+      "interpreting section Euclidean geometry as intrinsic body geometry"
+    ],
+    "section_warning": "The section is generic, discontinuous near omega-signature ties, and chooses an arbitrary-but-canonical facet-derived symplectic frame. It complements direct invariants and optimized quotient distances."
+  },
+  "panel": {
+    "by_map_variant": {
+      "identity": {
+        "base_non_success_count": 0,
+        "evaluated_control_count": 8,
+        "generic_success_pair_count": 8,
+        "generic_sys_section_distance": {
+          "count": 8,
+          "max": 0.0,
+          "mean": 0.0,
+          "positive_above_so4_threshold": 0
+        },
+        "pair_count": 8,
+        "passed_control_count": 8,
+        "raw_coordinate_distance": {
+          "count": 8,
+          "max": 0.0,
+          "mean": 0.0,
+          "positive_above_so4_threshold": 0
+        },
+        "transformed_non_success_count": 0
+      },
+      "so4-deterministic": {
+        "base_non_success_count": 0,
+        "evaluated_control_count": 0,
+        "generic_success_pair_count": 8,
+        "generic_sys_section_distance": {
+          "count": 8,
+          "max": 100.63768721740814,
+          "mean": 19.834950068667556,
+          "positive_above_so4_threshold": 8
+        },
+        "pair_count": 8,
+        "passed_control_count": 0,
+        "raw_coordinate_distance": {
+          "count": 8,
+          "max": 6.593423204689003,
+          "mean": 2.771640548569535,
+          "positive_above_so4_threshold": 8
+        },
+        "transformed_non_success_count": 0
+      },
+      "so4-haar": {
+        "base_non_success_count": 0,
+        "evaluated_control_count": 0,
+        "generic_success_pair_count": 8,
+        "generic_sys_section_distance": {
+          "count": 8,
+          "max": 145.57142819901895,
+          "mean": 49.95547473171299,
+          "positive_above_so4_threshold": 8
+        },
+        "pair_count": 8,
+        "passed_control_count": 0,
+        "raw_coordinate_distance": {
+          "count": 8,
+          "max": 6.292475211326169,
+          "mean": 3.566429338649888,
+          "positive_above_so4_threshold": 8
+        },
+        "transformed_non_success_count": 0
+      },
+      "u2-deterministic": {
+        "base_non_success_count": 0,
+        "evaluated_control_count": 8,
+        "generic_success_pair_count": 8,
+        "generic_sys_section_distance": {
+          "count": 8,
+          "max": 9.758549387192836e-13,
+          "mean": 1.8925004069725075e-13,
+          "positive_above_so4_threshold": 0
+        },
+        "pair_count": 8,
+        "passed_control_count": 8,
+        "raw_coordinate_distance": {
+          "count": 8,
+          "max": 6.895859607379422,
+          "mean": 3.2592704358130264,
+          "positive_above_so4_threshold": 8
+        },
+        "transformed_non_success_count": 0
+      },
+      "u2-haar": {
+        "base_non_success_count": 0,
+        "evaluated_control_count": 8,
+        "generic_success_pair_count": 8,
+        "generic_sys_section_distance": {
+          "count": 8,
+          "max": 2.9631485900790655e-13,
+          "mean": 8.109097457969309e-14,
+          "positive_above_so4_threshold": 0
+        },
+        "pair_count": 8,
+        "passed_control_count": 8,
+        "raw_coordinate_distance": {
+          "count": 8,
+          "max": 7.180906501596693,
+          "mean": 3.557415159403022,
+          "positive_above_so4_threshold": 8
+        },
+        "transformed_non_success_count": 0
+      }
+    },
+    "pair_rows": 40,
+    "section_evaluations": {
+      "evaluation_count": 40,
+      "max_analytic_center_gradient_norm": 2.4869536436443647e-7,
+      "max_analytic_center_newton_decrement": 4.614588519571751e-15,
+      "max_frame_solve_relative_residual": 6.020302532989897e-14,
+      "max_frame_symplectic_defect_frobenius": 3.774510567289291e-13,
+      "max_volume_one_algebraic_residual": 4.440892098500626e-16,
+      "minimum_quantized_signature_linf_gap_on_success": 48871264872,
+      "status_counts": {
+        "ok": 40
+      },
+      "success_count": 40
+    }
+  },
+  "provenance": {
+    "producer_and_source_file_blake3": {
+      "experiments/dev-canonization-t-search/README.md": "8ee7f967461f542bd376a2feb0de1a8bfcd3a4c925dc22e318403dc709f1688c",
+      "experiments/dev-canonization-t-search/src/candidates/volume_one_omega_labeled_symplectic_frame.rs": "625a54c394edd877aa0c45120a16acb928a4512f84c6d320029bc52ca3408666",
+      "experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/report.json": "84ada448e6caf65d75536ff640b998d2f3808a42c10b11238a69a006c7715544",
+      "experiments/sys-datascience/methods/generator-sys-orbit-view/Cargo.toml": "43e538e6eaec238e2c6ea6eff6a3c71850b737ec21171efeaf44a0ccf14bb4a0",
+      "experiments/sys-datascience/methods/generator-sys-orbit-view/README.md": "92d5c0a26452a59a7f81ca9dbcb1374d1d403e327a76434a8753966dbd942aad",
+      "experiments/sys-datascience/methods/generator-sys-orbit-view/src/lib.rs": "8a4a71facff356a4f49ae697700ebd2c3f4f1191338462056cc1aac260b3a4b5",
+      "experiments/sys-datascience/methods/generator-sys-orbit-view/src/main.rs": "168d3eab99b69cf27d6e7466a1f745eb2c3b0ef38ccd661851379b11969df63b",
+      "formal/generic-coordinate-canonization.tex": "377036751e19bd62716d87516111cc1db43edf907a2edd2a6762301826dc1f71"
+    },
+    "source_revision": "f00e2b0ada51f0d38a93cd5771fbc5cc4778a2f3",
+    "source_tree": "10592428de5d706b5c61be21d021f0180d02598f",
+    "tracked_clean_at_execution": true
+  },
+  "schema": "generator-sys-orbit-view-report-v1",
+  "stochastic_invariance_controls": {
+    "attempt_per_base_family": 0,
+    "base_count": 8,
+    "by_family": {
+      "facet_permutation": {
+        "base_non_success_count": 0,
+        "evaluated_control_count": 8,
+        "generic_success_pair_count": 8,
+        "generic_sys_section_distance": {
+          "count": 8,
+          "max": 5.450130798540434e-14,
+          "mean": 1.7315811521378328e-14,
+          "positive_above_so4_threshold": 0
+        },
+        "pair_count": 8,
+        "passed_control_count": 8,
+        "raw_coordinate_distance": {
+          "count": 8,
+          "max": 0.0,
+          "mean": 0.0,
+          "positive_above_so4_threshold": 0
+        },
+        "transformed_non_success_count": 0
+      },
+      "scale": {
+        "base_non_success_count": 0,
+        "evaluated_control_count": 8,
+        "generic_success_pair_count": 8,
+        "generic_sys_section_distance": {
+          "count": 8,
+          "max": 1.258901419409975e-12,
+          "mean": 2.030903615518027e-13,
+          "positive_above_so4_threshold": 0
+        },
+        "pair_count": 8,
+        "passed_control_count": 8,
+        "raw_coordinate_distance": {
+          "count": 8,
+          "max": 10.449448784921877,
+          "mean": 2.591515239698678,
+          "positive_above_so4_threshold": 8
+        },
+        "transformed_non_success_count": 0
+      },
+      "sp4": {
+        "base_non_success_count": 0,
+        "evaluated_control_count": 8,
+        "generic_success_pair_count": 8,
+        "generic_sys_section_distance": {
+          "count": 8,
+          "max": 5.345066132678459e-13,
+          "mean": 1.5062565554726665e-13,
+          "positive_above_so4_threshold": 0
+        },
+        "pair_count": 8,
+        "passed_control_count": 8,
+        "raw_coordinate_distance": {
+          "count": 8,
+          "max": 6.886781140576103,
+          "mean": 2.9210122216811625,
+          "positive_above_so4_threshold": 8
+        },
+        "transformed_non_success_count": 0
+      },
+      "translation": {
+        "base_non_success_count": 0,
+        "evaluated_control_count": 8,
+        "generic_success_pair_count": 8,
+        "generic_sys_section_distance": {
+          "count": 8,
+          "max": 5.068692561608156e-6,
+          "mean": 9.27417559047894e-7,
+          "positive_above_so4_threshold": 0
+        },
+        "pair_count": 8,
+        "passed_control_count": 8,
+        "raw_coordinate_distance": {
+          "count": 8,
+          "max": 2.652922640657205,
+          "mean": 1.146424917119457,
+          "positive_above_so4_threshold": 8
+        },
+        "transformed_non_success_count": 0
+      }
+    },
+    "pair_rows": 32,
+    "seed": 20260715
+  },
+  "tolerances": {
+    "generic_section_invariance": 0.00001,
+    "identity_numerical_zero": 1e-12,
+    "justification": "The frozen 256-case candidate artifact used 1e-5 as its residual-failure threshold and observed maxima below 1e-6 for ordinary random inputs. Identity uses a stricter direct self-comparison tolerance.",
+    "so4_observed_nonzero": 0.00001
+  },
+  "views": {
+    "generic_sys_section_unordered_row_assignment_rms": {
+      "boundary": "one partial section view, not an optimized quotient metric theorem; absent on any non-success",
+      "definition": "the same exact assignment RMS after successful generic section construction on both inputs",
+      "quotient": "generic f64 representative for positive scale, analytic-center translation, facet permutation, and Sp(4)"
+    },
+    "raw_coordinate_unordered_row_assignment_rms": {
+      "boundary": "order-insensitive raw coordinate diagnostic; not translation, scale, O(4), GL(4), or Sp(4) invariant",
+      "definition": "sqrt(minimum over row bijections of mean squared Euclidean row distance)",
+      "quotient": "facet-row permutation only"
+    }
+  }
+}
