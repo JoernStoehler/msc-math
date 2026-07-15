@@ -1,9 +1,9 @@
 {
   "schema": "generator-factor-coupling-atlas-report-v1",
   "law_version": "generator-factor-coupling-atlas-v1",
-  "source_revision": "75b7ef960652d27b25cdbc9c9694f17cdadd4cd4",
-  "source_tree": "228c176cde6c81a435833287be3475b7118e70d9",
-  "source_dirty": false,
+  "source_revision": "ffdb4ffef3d1f7e4d4ff7b8f94cfd9c29ad293ad",
+  "source_tree": "ddb25b2cca68398b7f8bcd0223c75c0fa93a2598",
+  "source_dirty": true,
   "source_dirty_scope": "tracked git status captured before output creation",
   "command": "target/release/sys-datascience-generator-factor-coupling-atlas --out-dir experiments/sys-datascience/methods/generator-factor-coupling-atlas/artifacts --seed 20260715 --attempts 64 --rows-per-arm 1",
   "seed": 20260715,
@@ -35,8 +35,8 @@
   "attempts_total": 346,
   "accepted_rows": 72,
   "exhausted_rows": 0,
-  "mean_generation_ms": 0.0038756944444444464,
-  "mean_validation_ms": 381.33147015277774,
+  "mean_generation_ms": 0.004216222222222222,
+  "mean_validation_ms": 423.6251056527778,
   "marginal_control": {
     "retained_rows": 72,
     "primitive_values": 144,
