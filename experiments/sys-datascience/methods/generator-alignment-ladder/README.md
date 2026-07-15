@@ -65,3 +65,22 @@ used.  This family is not claimed to exhaust or uniquely parameterize
 and whether anti-symplectic maps preserve the capacity used later, are explicit
 proof-review cruxes recorded in the report rather than assumptions of this
 packet.
+
+## Current compact panel
+
+The committed `artifacts/panel/` run contains all 40 requested rows and passes
+the formula controls. All eight bases retain exact reconstruction and labeled
+incidence; maximum relative volume change is `3.78e-15`, and the Euclidean
+dual-Gram control changes by at most `5.69e-14`. The mean direct symplectic
+Gram response norm across bases is approximately `0`, `33.9`, `61.1`, `73.0`,
+and `72.6` at the five increasing angles. Six of eight finite base sequences
+are non-decreasing and endpoint-controlled under this scalar norm; none is
+reverse-theta symmetric under the declared strict comparison; all eight have
+non-collinear successive response vectors. These are finite-panel
+classification facts, not a monotone capacity result or a general statement
+about `SO(4)`.
+
+Disposition: this supports a later decision about whether a small *target*
+ladder is worth exposing, provided the double-coset and anti-symplectic
+capacity proof cruxes have been reviewed. It does not itself authorize that
+target exposure.
