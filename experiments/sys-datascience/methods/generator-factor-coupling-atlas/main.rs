@@ -70,6 +70,8 @@ struct Row {
     p_area: Option<f64>,
     q_perimeter: Option<f64>,
     p_perimeter: Option<f64>,
+    q_width: Option<f64>,
+    p_width: Option<f64>,
     q_support_cv: Option<f64>,
     p_support_cv: Option<f64>,
     q_gap_cv: Option<f64>,
@@ -424,7 +426,17 @@ fn perimeter(f: &Factor) -> f64 {
         .sum()
 }
 
-fn factor_features(f: &Factor) -> Option<(f64, f64, f64, f64)> {
+fn diameter(f: &Factor) -> f64 {
+    let mut best: f64 = 0.0;
+    for (i, a) in f.vertices.iter().enumerate() {
+        for b in f.vertices.iter().skip(i + 1) {
+            best = best.max((*a - *b).norm());
+        }
+    }
+    best
+}
+
+fn factor_features(f: &Factor) -> Option<(f64, f64, f64, f64, f64)> {
     let area = shoelace(&f.vertices).abs();
     let mut angles: Vec<f64> = f
         .normals
@@ -438,7 +450,7 @@ fn factor_features(f: &Factor) -> Option<(f64, f64, f64, f64)> {
                 + if i + 1 == angles.len() { TAU } else { 0.0 }
         })
         .collect();
-    Some((area, perimeter(f), cv(&f.heights)?, cv(&gaps)?))
+    Some((area, perimeter(f), diameter(f), cv(&f.heights)?, cv(&gaps)?))
 }
 
 /// Minimize a cyclic shift and a common angle offset.  This removes the
@@ -573,7 +585,7 @@ fn evaluate(
     let primitive_q = [pair.q_angle_u.as_slice(), pair.q_height_u.as_slice()].concat();
     let primitive_p = [pair.p_angle_u.as_slice(), pair.p_height_u.as_slice()].concat();
     let distance = quotient_distance(&pair.q, &pair.p);
-    let width_balance = qa.zip(pa).map(|(a, b)| (a.1 - b.1).abs() / (a.1 + b.1));
+    let width_balance = qa.zip(pa).map(|(a, b)| (a.2 - b.2).abs() / (a.2 + b.2));
     Row {
         schema: "generator-factor-coupling-atlas-row-v1",
         law_version: VERSION,
@@ -594,6 +606,8 @@ fn evaluate(
         p_area: pa.map(|x| x.0),
         q_perimeter: qa.map(|x| x.1),
         p_perimeter: pa.map(|x| x.1),
+        q_width: qa.map(|x| x.2),
+        p_width: pa.map(|x| x.2),
         q_support_cv: qcv,
         p_support_cv: pcv,
         q_gap_cv: qa.map(|x| x.3),
@@ -632,6 +646,8 @@ fn exhausted(seed: u64, rho: f64, n: usize, rotation: &str, row: usize, args: &A
         p_area: None,
         q_perimeter: None,
         p_perimeter: None,
+        q_width: None,
+        p_width: None,
         q_support_cv: None,
         p_support_cv: None,
         q_gap_cv: None,
