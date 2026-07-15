@@ -50,6 +50,31 @@ class WithinDistributionTests(unittest.TestCase):
             json.dumps(report)
             self.assertEqual(report["rows"], 18)
 
+    def test_rare_split_preserves_input_order_and_rejects_undeclared_costs(self):
+        rows = [module.validate_row(r, i + 1) for i, r in enumerate(module.synthetic_rows(per_case=4))]
+        rows = [row for row in rows if row["population"] == "rare-mixture"]
+        for row in rows:
+            row["attempts"] = 999  # producer attempt index: must not be treated as a count
+            row["accepted"] = True
+        result = module.rare_discovery(rows)
+        self.assertEqual(result["split_contract"], "input order; first half calibration, second half holdout")
+        self.assertEqual(result["holdout_order"], "input order")
+        self.assertEqual(result["cost_status"], "unavailable-no-declared-count-semantics")
+        self.assertIsNone(result["attempted_cost"])
+        self.assertIsNone(result["accepted_cost"])
+
+    def test_retained_synthetic_and_real_reports_regenerate_byte_identically(self):
+        cases = [
+            (HERE / "fixtures/synthetic.jsonl", HERE / "artifacts/synthetic/report.json"),
+            (HERE / "../generator-zoo-smoke/artifacts/factor-shapes.jsonl", HERE / "artifacts/real-smoke/report.json"),
+        ]
+        for input_path, report_path in cases:
+            with self.subTest(input=input_path):
+                rows = module.load_rows(input_path)
+                report = module.analyze(rows, module.SEED, module.build_provenance(input_path, module.SEED))
+                rendered = module.render_report(report)
+                self.assertEqual(rendered, report_path.read_text())
+
 
 if __name__ == "__main__":
     unittest.main()

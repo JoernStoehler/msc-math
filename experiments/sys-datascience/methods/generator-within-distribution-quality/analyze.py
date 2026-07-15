@@ -29,6 +29,7 @@ SCHEMA = "shape-row-v1"
 SEED = 20260715
 SMALL_N = 20
 GOOD_TURING_N = 50
+ANALYZER_REPO_PATH = "experiments/sys-datascience/methods/generator-within-distribution-quality/analyze.py"
 
 
 def polygon_area(v: np.ndarray) -> float:
@@ -100,6 +101,47 @@ def load_rows(path: Path) -> list[dict[str, Any]]:
     return rows
 
 
+def sha256_bytes(payload: bytes) -> str:
+    return hashlib.sha256(payload).hexdigest()
+
+
+def build_provenance(input_path: Path, seed: int) -> dict[str, Any]:
+    """Return deterministic identity/provenance; omit mutable HEAD by contract."""
+    try:
+        input_label = str(input_path.resolve().relative_to(Path(__file__).resolve().parent))
+    except ValueError:
+        repo_root = Path(__file__).resolve().parents[4]
+        try:
+            input_label = str(input_path.resolve().relative_to(repo_root))
+        except ValueError:
+            input_label = str(input_path)
+    return {
+        "input_path_as_invoked": input_label,
+        "input_sha256": sha256_bytes(input_path.read_bytes()),
+        "analyzer_repo_path": ANALYZER_REPO_PATH,
+        "analyzer_source_sha256": sha256_bytes(Path(__file__).read_bytes()),
+        "source_revision_contract": "analyzer_source_sha256 identifies the exact analyzer bytes; mutable VCS HEAD is intentionally omitted to avoid self-referential artifacts",
+        "source_dirty_contract": "run only from a clean worktree for this owned path; a dirty source invalidates the artifact and must be repaired before reuse",
+        "command_template": "uv run --script analyze.py --input <input> --out-dir <out-dir>",
+        "seed": seed,
+    }
+
+
+def canonicalize_json(value: Any) -> Any:
+    """Round floating diagnostics so separate BLAS/JSON runs compare bytewise."""
+    if isinstance(value, float):
+        return round(value, 12)
+    if isinstance(value, dict):
+        return {key: canonicalize_json(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [canonicalize_json(item) for item in value]
+    return value
+
+
+def render_report(report: dict[str, Any]) -> str:
+    return json.dumps(canonicalize_json(report), indent=2, sort_keys=True) + "\n"
+
+
 def procrustes_distance(left: np.ndarray, right: np.ndarray) -> float:
     """Best orientation-preserving cyclic vertex alignment (frame view)."""
     if left.shape != right.shape:
@@ -129,7 +171,7 @@ def distance_matrix(rows: list[dict[str, Any]], view: str) -> np.ndarray:
     result = np.zeros((n, n), dtype=float)
     fn = raw_distance if view == "raw_ordered" else procrustes_distance
     for i, j in itertools.combinations(range(n), 2):
-        d = fn(rows[i]["_vertices"], rows[j]["_vertices"])
+        d = round(fn(rows[i]["_vertices"], rows[j]["_vertices"]), 12)
         result[i, j] = result[j, i] = d
     return result
 
@@ -289,20 +331,21 @@ def _tail_score(row: dict[str, Any]) -> float:
 
 
 def rare_discovery(rows: list[dict[str, Any]]) -> dict[str, Any]:
-    """Passive-search utility on an untouched second half of the stream.
+    """Passive-search utility on an input-order split calibration/holdout.
 
     The event rule is frozen from the first half: an event is a row whose
     target-free edge-CV score is at least the calibration 90th percentile.
     This deliberately measures scalar-tail discovery separately from metric
-    coverage.  If a producer supplies ``attempts``/``accepted`` those costs
-    are retained; otherwise accepted rows count as one attempted unit.
+    coverage. Input order is preserved: no sample-id sorting or post-hoc
+    selection is performed. Attempt/accepted costs are consumed only when a
+    row declares ``cost_semantics=counts-v1`` and supplies numeric
+    ``attempt_count``/``accepted_count`` fields.
     """
     n = len(rows)
     if n < 4:
         return {"status": "small-sample-limit", "n": n}
-    ordered = sorted(rows, key=lambda r: r["sample_id"])
     split = max(2, n // 2)
-    calibration, holdout = ordered[:split], ordered[split:]
+    calibration, holdout = rows[:split], rows[split:]
     threshold = float(np.quantile([_tail_score(r) for r in calibration], 0.9))
     hits = [_tail_score(r) >= threshold for r in holdout]
     hit_indices = [i for i, hit in enumerate(hits) if hit]
@@ -317,15 +360,34 @@ def rare_discovery(rows: list[dict[str, Any]]) -> dict[str, Any]:
         if signature is None:
             signature = f"cv-bin-{min(9, int(_tail_score(row) / 0.05))}"
         signatures.append(str(signature))
-    attempted = sum(float(holdout[i].get("attempts", 1.0)) for i in range(len(holdout)))
-    accepted = sum(float(holdout[i].get("accepted", 1.0)) for i in range(len(holdout)))
+    cost_rows = [
+        row
+        for row in holdout
+        if row.get("cost_semantics") == "counts-v1"
+        and isinstance(row.get("attempt_count"), (int, float))
+        and not isinstance(row.get("attempt_count"), bool)
+        and isinstance(row.get("accepted_count"), (int, float))
+        and not isinstance(row.get("accepted_count"), bool)
+    ]
+    if len(cost_rows) == len(holdout):
+        cost_status = "declared-counts-v1"
+        attempted = sum(float(row["attempt_count"]) for row in cost_rows)
+        accepted = sum(float(row["accepted_count"]) for row in cost_rows)
+    elif cost_rows:
+        cost_status = "partial-declared-counts-v1"
+        attempted = accepted = None
+    else:
+        cost_status = "unavailable-no-declared-count-semantics"
+        attempted = accepted = None
     independent_blocks = max(1, len(blocks))
     first = (hit_indices[0] + 1) if hit_indices else None
     return {
-        "status": "small-sample-limit" if n < GOOD_TURING_N else "descriptive-untouched-holdout",
+        "status": "small-sample-limit" if n < GOOD_TURING_N else "descriptive-split-holdout",
         "n": n,
         "calibration_n": len(calibration),
         "holdout_n": len(holdout),
+        "split_contract": "input order; first half calibration, second half holdout",
+        "holdout_order": "input order",
         "frozen_score": "edge-length coefficient of variation",
         "frozen_threshold_calibration_p90": threshold,
         "holdout_hit_count": len(hit_indices),
@@ -339,6 +401,8 @@ def rare_discovery(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "zero_hit_upper_bound_95_if_none": zero_hit_upper_95,
         "attempted_cost": attempted,
         "accepted_cost": accepted,
+        "cost_status": cost_status,
+        "cost_contract": "only cost_semantics=counts-v1 with attempt_count and accepted_count is consumed; attempts/accepted fields and attempt indices are ignored",
         "independent_block_cost": independent_blocks,
         "interpretation": "scalar tail event only; it is not geometric support coverage or a population discovery probability",
     }
@@ -411,12 +475,12 @@ def write_jsonl(rows: list[dict[str, Any]], path: Path) -> None:
             handle.write(json.dumps(clean, sort_keys=True, separators=(",", ":")) + "\n")
 
 
-def analyze(rows: list[dict[str, Any]], seed: int = SEED) -> dict[str, Any]:
+def analyze(rows: list[dict[str, Any]], seed: int = SEED, provenance: dict[str, Any] | None = None) -> dict[str, Any]:
     strata: dict[tuple[str, int], list[dict[str, Any]]] = defaultdict(list)
     for row in rows:
         strata[(row["population"], row["side_count"])].append(row)
     results = [summarize_stratum(group, seed) for _, group in sorted(strata.items())]
-    return {"schema": "generator-within-distribution-quality-report-v1", "seed": seed, "rows": len(rows), "strata_count": len(results), "strata": results, "metric_contract": {"raw_ordered": "centroid/area-normalized vertex coordinates, preserving cyclic start and orientation", "frame_adjusted": "centroid/area-normalized cyclic vertex alignment with best orientation-preserving 2D rotation", "stratification": "population (law plus knob) and side_count; no pooling", "scaling": "pair and frame distances O(n^2 * side_count), occupancy/rare score O(n), saturation bounded by 32 replicates", "minimum_useful_n": {"pair/NN": 10, "cluster/coverage": 20, "Good-Turing singleton estimate": 50, "untouched rare-event holdout": 50}}, "dispositions": {"implemented": ["raw and frame-adjusted pair/nearest-neighbor distributions", "duplicate/near-duplicate rates", "greedy k-center coverage curves", "coarse occupancy, entropy/effective number, Good-Turing singleton diagnostic", "subsample saturation", "distance-threshold cluster balance", "leave-one-influential-point-outlier sensitivity", "frozen target-free rare-region discovery on untouched holdout blocks"], "deferred": ["certified packing numbers (heuristic k-center retained instead)", "population-level unseen-mass inference", "formal clustering model selection", "p-values and generator rankings"]}}
+    return {"schema": "generator-within-distribution-quality-report-v1", "seed": seed, "rows": len(rows), "strata_count": len(results), "strata": results, "provenance": provenance or {"status": "not-supplied; use build_provenance for retained artifacts"}, "metric_contract": {"raw_ordered": "centroid/area-normalized vertex coordinates, preserving cyclic start and orientation", "frame_adjusted": "centroid/area-normalized cyclic vertex alignment with best orientation-preserving 2D rotation", "stratification": "population (law plus knob) and side_count; no pooling", "scaling": "pair and frame distances O(n^2 * side_count), occupancy/rare score O(n), saturation bounded by 32 replicates", "minimum_useful_n": {"pair/NN": 10, "cluster/coverage": 20, "Good-Turing singleton estimate": 50, "split rare-event holdout": 50}}, "dispositions": {"implemented": ["raw and frame-adjusted pair/nearest-neighbor distributions", "duplicate/near-duplicate rates", "greedy k-center coverage curves", "coarse occupancy, entropy/effective number, Good-Turing singleton diagnostic", "subsample saturation", "distance-threshold cluster balance", "leave-one-influential-point-outlier sensitivity", "frozen target-free rare-region discovery on input-order split calibration/holdout"], "deferred": ["certified packing numbers (heuristic k-center retained instead)", "population-level unseen-mass inference", "formal clustering model selection", "p-values and generator rankings"]}}
 
 
 def main() -> None:
@@ -431,9 +495,9 @@ def main() -> None:
     if not args.input:
         return
     rows = load_rows(args.input)
-    report = analyze(rows, args.seed)
+    report = analyze(rows, args.seed, build_provenance(args.input, args.seed))
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    (args.out_dir / "report.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
+    (args.out_dir / "report.json").write_text(render_report(report))
     table = args.out_dir / "summary.tsv"
     with table.open("w") as handle:
         handle.write("population\tside_count\tn\tview\tpair_mean\tnn_mean\tduplicate_fraction\tcell_count\tgood_turing_unseen_mass\n")

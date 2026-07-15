@@ -36,10 +36,13 @@ warning describe finite-sample discovery only. They do not estimate support
 probability or population mass.
 
 `rare_region_discovery` freezes a target-free scalar tail rule (edge-length CV
-at the calibration-half 90th percentile), then evaluates only the untouched
-second half. It records time-to-first-hit, block hit probability, distinct tail
-signatures, and attempted/accepted/independent-block costs. A zero-hit bound is
-reported only as a finite block heuristic. This scalar event is deliberately
+at the calibration-half 90th percentile), then evaluates the second half of
+the input-order stream as a split holdout. It records time-to-first-hit, block
+hit probability, distinct tail signatures, and attempted/accepted/independent-
+block costs. Attempted/accepted costs are non-null only for rows explicitly
+declaring `cost_semantics=counts-v1` with numeric count fields; producer
+attempt indices and Boolean `accepted` flags are not counts. A zero-hit bound
+is reported only as a finite block heuristic. This scalar event is deliberately
 separate from geometric support coverage; it is not a `sys` proxy.
 
 ## Synthetic calibration
@@ -67,7 +70,9 @@ uv run --script test_analyze.py
 ```
 
 `artifacts/synthetic/report.json` is generated source data; `summary.tsv` is a
-compact investigation table. Regenerate, do not hand-edit them.
+compact investigation table. Reports include deterministic input and analyzer
+source SHA-256 values, a source revision/dirty-state contract, command
+template, and seed. Regenerate, do not hand-edit them.
 
 ## Real smoke
 
@@ -96,8 +101,8 @@ population rankings, or downstream-`sys` mechanism claims are authorized.
 Implemented: raw/frame pair and nearest-neighbor views; duplicate/near-
 duplicate rates; heuristic k-center coverage; coarse occupancy,
 entropy/effective number, and Good--Turing singleton diagnostics; saturation;
-cluster/mode balance; outlier influence; and untouched-block rare-region
-discovery/cost curves.
+cluster/mode balance; outlier influence; and input-order split-holdout
+rare-region discovery/cost curves.
 
 Deferred: certified packing numbers (the k-center curve is a bounded heuristic),
 population-level unseen-mass inference, formal model-selected clustering, and
