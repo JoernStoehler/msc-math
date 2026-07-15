@@ -1,11 +1,11 @@
 {
   "schema": "generator-factor-coupling-atlas-report-v1",
   "law_version": "generator-factor-coupling-atlas-v1",
-  "source_revision": "ffdb4ffef3d1f7e4d4ff7b8f94cfd9c29ad293ad",
-  "source_tree": "ddb25b2cca68398b7f8bcd0223c75c0fa93a2598",
-  "source_dirty": true,
-  "source_dirty_scope": "tracked git status captured before output creation",
-  "command": "target/release/sys-datascience-generator-factor-coupling-atlas --out-dir experiments/sys-datascience/methods/generator-factor-coupling-atlas/artifacts --seed 20260715 --attempts 64 --rows-per-arm 1",
+  "source_revision": "c3e977d99d7a92bbfe54f1ef755fb9bdaf5fdb91",
+  "source_tree": "822d4131d913bda2600efcdd08ede8b44b2c15ab",
+  "source_dirty": false,
+  "source_dirty_scope": "fail-closed git status --porcelain=v1 --untracked-files=no captured before output creation",
+  "command": "cargo run -p exp-sys-landscape --release --bin sys-datascience-generator-factor-coupling-atlas -- --out-dir experiments/sys-datascience/methods/generator-factor-coupling-atlas/artifacts --seed 20260715 --attempts 64 --rows-per-arm 1",
   "seed": 20260715,
   "seeds": [
     20260715,
@@ -32,46 +32,47 @@
   "status_counts": {
     "survived": 72
   },
-  "attempts_total": 346,
+  "attempts_total": 276,
   "accepted_rows": 72,
   "exhausted_rows": 0,
-  "mean_generation_ms": 0.004216222222222222,
-  "mean_validation_ms": 423.6251056527778,
+  "producer_blake3": "4750984f7d31225a7238eba497d68c7c5dec80d9ee15d437862aa68af94d235a",
+  "cargo_lock_blake3": "6aa2b854abde71d320c87e08bd8e8b1b0a73d3719081cc809e9fb6cd2e314419",
+  "rows_blake3": "2ddb6aa2da7510d4e357ff00225103d4770a9f819a6e1fb1e4819b87a5faca57",
   "marginal_control": {
     "retained_rows": 72,
-    "primitive_values": 144,
-    "q_mean": 0.49209992954269616,
-    "p_mean": 0.49115032306115175,
-    "q_min": 0.26677464519374255,
-    "q_max": 0.6841469133459054,
-    "p_min": 0.26677464519374255,
-    "p_max": 0.6549229567014245,
-    "note": "finite retained-row diagnostic only; pre-conditioning uniformity is by construction, post-conditioning equality is not a theorem"
+    "primitive_values": 1440,
+    "q_mean": 0.5079506095460175,
+    "p_mean": 0.500439077600704,
+    "q_min": 0.0007185265493390158,
+    "q_max": 0.9995174003952931,
+    "p_min": 0.0007320589228937413,
+    "p_max": 0.9993230284506218,
+    "note": "finite retained-row primitive diagnostic; pre-conditioning uniformity is by construction, post-conditioning equality is not a theorem"
   },
   "dependence_control": [
     {
       "rho": 0.0,
       "rotation_population": "pi/4",
       "pairs": 6,
-      "angle_corr_mean": -0.296185357967547,
-      "height_corr_mean": 0.049388285265404196,
-      "quotient_distance_mean": 0.43594685014942636
+      "angle_corr_mean": -0.07354533291615285,
+      "height_corr_mean": 0.21139711139551118,
+      "quotient_distance_mean": 0.4350765417158296
     },
     {
       "rho": 0.5,
       "rotation_population": "pi/4",
       "pairs": 6,
-      "angle_corr_mean": 0.31030481995088754,
-      "height_corr_mean": 0.23102132965100045,
-      "quotient_distance_mean": 0.3803378365543861
+      "angle_corr_mean": 0.4145615593407704,
+      "height_corr_mean": 0.6703386162889352,
+      "quotient_distance_mean": 0.45019502615782203
     },
     {
       "rho": 0.9,
       "rotation_population": "pi/4",
       "pairs": 6,
-      "angle_corr_mean": 0.9394546570271847,
-      "height_corr_mean": 0.8738671579856471,
-      "quotient_distance_mean": 0.39190238728353616
+      "angle_corr_mean": 0.9004634917154418,
+      "height_corr_mean": 0.9999037860892317,
+      "quotient_distance_mean": 0.04224310322060662
     },
     {
       "rho": 1.0,
@@ -79,31 +80,31 @@
       "pairs": 6,
       "angle_corr_mean": 1.0,
       "height_corr_mean": 1.0,
-      "quotient_distance_mean": 8.10809500847581e-16
+      "quotient_distance_mean": 8.191492473761457e-16
     },
     {
       "rho": 0.0,
       "rotation_population": "uniform",
       "pairs": 6,
-      "angle_corr_mean": 0.057018382504107616,
-      "height_corr_mean": -0.06767843147587883,
-      "quotient_distance_mean": 0.44096803876869606
+      "angle_corr_mean": 0.21596443596540868,
+      "height_corr_mean": -0.26569119124920726,
+      "quotient_distance_mean": 0.39805944367053936
     },
     {
       "rho": 0.5,
       "rotation_population": "uniform",
       "pairs": 6,
-      "angle_corr_mean": 0.21850713556175574,
-      "height_corr_mean": 0.40396426232855154,
-      "quotient_distance_mean": 0.3384223178135795
+      "angle_corr_mean": 0.17756988991949227,
+      "height_corr_mean": 0.6371885552028234,
+      "quotient_distance_mean": 0.38047381211841974
     },
     {
       "rho": 0.9,
       "rotation_population": "uniform",
       "pairs": 6,
-      "angle_corr_mean": 0.8990040824168811,
-      "height_corr_mean": 0.8064305249584393,
-      "quotient_distance_mean": 0.458938049196056
+      "angle_corr_mean": 1.0,
+      "height_corr_mean": 0.7751966364551054,
+      "quotient_distance_mean": 0.0180528329196324
     },
     {
       "rho": 1.0,
@@ -111,31 +112,31 @@
       "pairs": 6,
       "angle_corr_mean": 1.0,
       "height_corr_mean": 1.0,
-      "quotient_distance_mean": 5.679787634264934e-16
+      "quotient_distance_mean": 1.0933243579097446e-15
     },
     {
       "rho": 0.0,
       "rotation_population": "zero",
       "pairs": 6,
-      "angle_corr_mean": 0.2284462950504169,
-      "height_corr_mean": -0.3327327116067075,
-      "quotient_distance_mean": 0.3589183269586171
+      "angle_corr_mean": 0.20553950323380155,
+      "height_corr_mean": 0.11366146260064904,
+      "quotient_distance_mean": 0.4272595782884408
     },
     {
       "rho": 0.5,
       "rotation_population": "zero",
       "pairs": 6,
-      "angle_corr_mean": 0.5725849863513924,
-      "height_corr_mean": 0.5726621241646822,
-      "quotient_distance_mean": 0.3634479623894779
+      "angle_corr_mean": 0.6714595214676401,
+      "height_corr_mean": 0.4041080922555698,
+      "quotient_distance_mean": 0.2926636849900726
     },
     {
       "rho": 0.9,
       "rotation_population": "zero",
       "pairs": 6,
-      "angle_corr_mean": 0.9224253947577328,
-      "height_corr_mean": 0.8627137841872315,
-      "quotient_distance_mean": 0.42614905431301336
+      "angle_corr_mean": 0.8265868179587744,
+      "height_corr_mean": 0.9174988548973531,
+      "quotient_distance_mean": 0.12554623052148603
     },
     {
       "rho": 1.0,
@@ -148,13 +149,13 @@
   ],
   "endpoint_control": {
     "rho_one_shared_primitives": true,
-    "rho_one_max_quotient_distance": 4.595960880913583e-16,
+    "rho_one_max_quotient_distance": 2.3816034624526542e-15,
     "corrupted_coupling_rejected": true,
-    "exact_product_incidence_rows": 72,
-    "note": "endpoint and corruption controls are semantic witnesses, not population tests"
+    "exact_rationalized_product_rows": 72,
+    "note": "incidence is exact for the rationalized f64 dual reconstruction; it is not an exact irrational-input theorem"
   },
-  "copula_formula": "For each angle and height primitive independently: Z_Q,E ~ iid N(0,1), Z_P = rho Z_Q + sqrt(1-rho^2) E, U_Q=Phi(Z_Q), U_P=Phi(Z_P); rho=1 shares Z exactly.",
+  "copula_formula": "For each angle and height primitive independently: U,V ~ iid Uniform(0,1), B ~ Bernoulli(rho), U_Q=U, U_P=U if B=1 else V. This mixture copula has exact uniform marginals, Pearson dependence rho, and literal rho=0/1 endpoints.",
   "primitive_marginal_contract": "Before selection, each factor has independent U(0,1) angle primitives and independent U(0,1) height primitives; h=0.8+0.4U and angle=2piU plus a global rotation.",
-  "conditioning_contract": "A candidate is retained only after both factor H-reconstructions have all prescribed active facets and exact product incidence/positive volume validates. Gaussian-copula marginal preservation is theorem-by-construction before this selection; conditioning may alter the retained marginal, so only finite diagnostics are reported.",
+  "conditioning_contract": "A candidate is retained only after both factor H-reconstructions have all prescribed active facets and exact-after-rationalization product incidence/positive volume validates. Mixture-copula marginal preservation is theorem-by-construction before this selection; conditioning may alter the retained marginal, so finite diagnostics are reported.",
   "interpretation_boundary": "Target-free construction and geometry evidence only: no sys, exchangeability, rho monotonicity, best-rho choice, or transfer claim."
 }
