@@ -1,0 +1,23 @@
+[package]
+name = "generic-4d-laws"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[dependencies]
+euclidean-polytopes = { path = "../../../../crates/euclidean-polytopes" }
+nalgebra = { version = "0.33", features = ["serde-serialize"] }
+num-rational = { version = "0.4", features = ["serde"] }
+num-bigint = "0.4"
+num-traits = "0.2"
+rand = "0.8"
+rand_chacha = "0.3"
+rand_distr = "0.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+symplectic = { path = "../../../../crates/symplectic" }
+
+[profile.release]
+debug = true
