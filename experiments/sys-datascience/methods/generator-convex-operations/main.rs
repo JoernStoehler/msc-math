@@ -48,8 +48,8 @@ struct Generated {
     active_input_inequalities: usize,
     active_source_vertices: usize,
     lineage: String,
-    source_coordinate_overlap_a: Option<f64>,
-    source_coordinate_overlap_b: Option<f64>,
+    source_coordinate_overlap_pre_area_normalization_a: Option<f64>,
+    source_coordinate_overlap_pre_area_normalization_b: Option<f64>,
     source_ids: Vec<String>,
     source_rotation_angles_rad: Vec<f64>,
     reflection_theta_rad: Option<f64>,
@@ -94,8 +94,8 @@ struct Row {
     reflection_symmetry_residual: Option<f64>,
     perimeter: Option<f64>,
     covariance_anisotropy: Option<f64>,
-    source_coordinate_overlap_a: Option<f64>,
-    source_coordinate_overlap_b: Option<f64>,
+    source_coordinate_overlap_pre_area_normalization_a: Option<f64>,
+    source_coordinate_overlap_pre_area_normalization_b: Option<f64>,
 }
 
 #[derive(Serialize)]
@@ -502,6 +502,10 @@ fn overlap_ratio(output: &Factor, source: &Factor) -> Option<f64> {
     area_intersection(output, source).map(|area| area / shoelace(&source.vertices).abs())
 }
 
+fn scaled_factor(factor: &Factor, scale: f64) -> Option<Factor> {
+    factor_from_vertices(factor.vertices.iter().map(|point| *point * scale).collect())
+}
+
 fn source_id(
     operation: &str,
     seed: u64,
@@ -550,8 +554,8 @@ fn operation(
         active_vertices,
         lineage,
         sources,
-        source_coordinate_overlap_a,
-        source_coordinate_overlap_b,
+        source_coordinate_overlap_pre_area_normalization_a,
+        source_coordinate_overlap_pre_area_normalization_b,
     ) = match operation {
         "baseline" => (
             a.clone(),
@@ -599,6 +603,7 @@ fn operation(
             let neg: Vec<_> = a.vertices.iter().map(|p| -*p).collect();
             let b = centered_normalized(neg)?;
             let raw = factor_from_vertices(minkowski_raw(&a, &b))?;
+            let half_scaled = scaled_factor(&raw, 0.5)?;
             let output = centered_normalized(raw.vertices.clone())?;
             (
                 output,
@@ -606,7 +611,7 @@ fn operation(
                 0,
                 "deterministic pushforward K + (-K)".to_string(),
                 vec![a.clone()],
-                overlap_ratio(&raw, &a),
+                overlap_ratio(&half_scaled, &a),
                 None,
             )
         }
@@ -637,6 +642,7 @@ fn operation(
             let theta = reflection_theta_rad?;
             let reflected = reflected(&a, theta)?;
             let raw = factor_from_vertices(minkowski_raw(&a, &reflected))?;
+            let half_scaled = scaled_factor(&raw, 0.5)?;
             let out = centered_normalized(raw.vertices.clone())?;
             (
                 out,
@@ -644,7 +650,7 @@ fn operation(
                 0,
                 "deterministic pushforward (K + reflection_u K)/2; classical Minkowski symmetrization".to_string(),
                 vec![a.clone()],
-                overlap_ratio(&raw, &a),
+                overlap_ratio(&half_scaled, &a),
                 None,
             )
         }
@@ -662,8 +668,8 @@ fn operation(
         active_input_inequalities: active,
         active_source_vertices: active_vertices,
         lineage,
-        source_coordinate_overlap_a,
-        source_coordinate_overlap_b,
+        source_coordinate_overlap_pre_area_normalization_a,
+        source_coordinate_overlap_pre_area_normalization_b,
         source_ids,
         source_rotation_angles_rad,
         reflection_axis,
@@ -826,8 +832,10 @@ fn row_for(
         reflection_symmetry_residual: generated.reflection_symmetry_residual,
         perimeter: Some(perimeter(output)),
         covariance_anisotropy: covariance_anisotropy(output),
-        source_coordinate_overlap_a: generated.source_coordinate_overlap_a,
-        source_coordinate_overlap_b: generated.source_coordinate_overlap_b,
+        source_coordinate_overlap_pre_area_normalization_a: generated
+            .source_coordinate_overlap_pre_area_normalization_a,
+        source_coordinate_overlap_pre_area_normalization_b: generated
+            .source_coordinate_overlap_pre_area_normalization_b,
     }
 }
 
@@ -881,8 +889,8 @@ fn exhausted_row(operation: &str, n: usize, seed: u64, row: usize, attempts: usi
         reflection_symmetry_residual: None,
         perimeter: None,
         covariance_anisotropy: None,
-        source_coordinate_overlap_a: None,
-        source_coordinate_overlap_b: None,
+        source_coordinate_overlap_pre_area_normalization_a: None,
+        source_coordinate_overlap_pre_area_normalization_b: None,
     }
 }
 
@@ -1170,6 +1178,19 @@ mod tests {
         let s = centered_normalized(raw.vertices).unwrap();
         assert!(reflection_symmetry_residual(&s, theta) < 1e-8);
         assert!(central_symmetry_residual(&s) > 1e-4);
+    }
+
+    #[test]
+    fn half_scaled_overlap_is_distinct_from_raw_sum_overlap() {
+        let a = asymmetric_triangle();
+        let neg = centered_normalized(a.vertices.iter().map(|point| -*point).collect()).unwrap();
+        let raw = factor_from_vertices(minkowski_raw(&a, &neg)).unwrap();
+        let half = scaled_factor(&raw, 0.5).unwrap();
+        let raw_overlap = overlap_ratio(&raw, &a).unwrap();
+        let half_overlap = overlap_ratio(&half, &a).unwrap();
+        assert!(raw_overlap > half_overlap + 1e-4);
+        assert!((raw_overlap - 1.0).abs() < 1e-8);
+        assert!(half_overlap < 1.0 - 1e-4);
     }
 
     #[test]

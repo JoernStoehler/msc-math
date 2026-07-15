@@ -16,7 +16,7 @@ finite unit outward normals, and all active inequalities globally.
 | `baseline` | fresh current law | current-law IID normal angles and supports in `[0.8,1.2)`, conditioned on all requested inequalities being active |
 | `minkowski-sum` | binary random | independently rotated current-law `A+B`; support addition is `h_{A+B}=h_A+h_B` |
 | `intersection` | binary random | independently rotated current-law `A∩B`; all pairwise H-boundary intersections are tested against both halfspace systems, and active input inequalities are counted |
-| `difference-body` | deterministic pushforward | `K+(-K)` from one current-law factor; this is marked as a pushforward, not independent breadth |
+| `difference-body` | deterministic pushforward | `(K+(-K))/2` from one current-law factor; final area normalization removes the scalar, and this is marked as a pushforward, not independent breadth |
 | `convex-hull-union` | binary random | `conv(A∪B)` from independently rotated vertex sets; source vertices on the output boundary are counted |
 | `minkowski-symmetrization` | deterministic pushforward | classical polygonal Minkowski symmetrization `(K+R_uK)/2` in a uniformly random axis direction `u`; the output is reflection-symmetric about `u`, not generically centrally symmetric |
 
@@ -33,8 +33,11 @@ pushforward lineage replayable without a sidecar. Directed overlaps are
 source-coordinate intersection-area ratios (`area(output ∩ source) /
 area(source)`), not quotient shape distances; compare them only after explicit
 side-count stratification; the JSONL fields are named
-`source_coordinate_overlap_a/b` to keep this boundary visible. They are
-descriptive and not target associations.
+`source_coordinate_overlap_pre_area_normalization_a/b` to keep both the
+coordinate frame and the pre-area-normalization basis visible. For the
+difference-body and symmetrization arms this is computed from the explicit
+half-scaled operation, not the unhalved Minkowski sum. They are descriptive
+and not target associations.
 Wall-clock generation/validation timings are printed to stdout only and are
 not retained in deterministic artifacts.
 
