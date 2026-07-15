@@ -12,6 +12,7 @@ use std::{
     fs::{create_dir_all, File},
     io::{BufWriter, Write},
     path::PathBuf,
+    process::Command,
     time::Instant,
 };
 use symplectic::{geom::polygon::random_polygon_2d, omega0};
@@ -111,6 +112,11 @@ struct Report {
     rows: usize,
     passed: usize,
     source_revision: String,
+    source_dirty: bool,
+    producer_source_sha256: String,
+    cargo_lock_sha256: String,
+    build_source_closure: &'static str,
+    timing_fields: &'static str,
     arms: BTreeMap<String, &'static str>,
     interpretation_boundary: &'static str,
 }
@@ -752,6 +758,45 @@ fn failed(
         reconstruction_ms: 0.,
     }
 }
+fn sha256(path: &str) -> String {
+    Command::new("sha256sum")
+        .arg(path)
+        .output()
+        .ok()
+        .filter(|output| output.status.success())
+        .and_then(|output| String::from_utf8(output.stdout).ok())
+        .and_then(|line| line.split_whitespace().next().map(str::to_owned))
+        .unwrap_or_else(|| "unavailable".into())
+}
+fn source_provenance() -> (String, bool, String, String) {
+    let revision = Command::new("git")
+        .args(["rev-parse", "HEAD"])
+        .output()
+        .ok()
+        .filter(|output| output.status.success())
+        .map(|output| String::from_utf8_lossy(&output.stdout).trim().to_owned())
+        .unwrap_or_else(|| "unknown".into());
+    let dirty = Command::new("git")
+        .args([
+            "status",
+            "--porcelain",
+            "--",
+            "experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/main.rs",
+            "experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/README.md",
+            "experiments/sys-landscape/Cargo.toml",
+            "Cargo.lock",
+        ])
+        .output()
+        .map_or(true, |output| {
+            !output.status.success() || !output.stdout.is_empty()
+        });
+    (
+        revision,
+        dirty,
+        sha256("experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/main.rs"),
+        sha256("Cargo.lock"),
+    )
+}
 fn main() {
     let a: Vec<String> = std::env::args().collect();
     let out=a.windows(2).find(|x|x[0]=="--out-dir").map(|x|PathBuf::from(&x[1])).unwrap_or_else(||PathBuf::from("experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/artifacts/smoke"));
@@ -760,6 +805,7 @@ fn main() {
         .find(|x| x[0] == "--seed")
         .and_then(|x| x[1].parse().ok())
         .unwrap_or(20260715u64);
+    let (revision, dirty, source_sha256, lock_sha256) = source_provenance();
     create_dir_all(&out).unwrap();
     let mut w = BufWriter::new(File::create(out.join("rows.jsonl")).unwrap());
     let mut rows = Vec::new();
@@ -777,13 +823,7 @@ fn main() {
     for arm in ARMS {
         arms.insert((*arm).into(), law(arm));
     }
-    let rev = std::process::Command::new("git")
-        .args(["rev-parse", "HEAD"])
-        .output()
-        .ok()
-        .map(|x| String::from_utf8_lossy(&x.stdout).trim().into())
-        .unwrap_or_else(|| "unknown".into());
-    let report=Report{schema:"orbit-zoo-report-v2",command:a.join(" "),seed,rows:rows.len(),passed:rows.iter().filter(|x|x.failures.is_empty()).count(),source_revision:rev,arms,interpretation_boundary:"Target-free geometry/reconstruction smoke only: it neither evaluates sys nor establishes a canonical metric, quotient-natural law, invariance of sys, or population effect."};
+    let report=Report{schema:"orbit-zoo-report-v3",command:a.join(" "),seed,rows:rows.len(),passed:rows.iter().filter(|x|x.failures.is_empty()).count(),source_revision:revision,source_dirty:dirty,producer_source_sha256:source_sha256,cargo_lock_sha256:lock_sha256,build_source_closure:"Cargo.lock plus experiments/sys-landscape/Cargo.toml and this producer source; hashes above identify mutable source inputs without relying on a deletable target binary.",timing_fields:"generation_ms, intervention_ms, and reconstruction_ms are one-run observations only; timing values are not byte-reproducible freeze data.",arms,interpretation_boundary:"Target-free geometry/reconstruction smoke only: it neither evaluates sys nor establishes a canonical metric, quotient-natural law, invariance of sys, or population effect."};
     serde_json::to_writer_pretty(File::create(out.join("report.json")).unwrap(), &report).unwrap();
     if rows.iter().any(|x| !x.failures.is_empty()) {
         std::process::exit(1)
@@ -793,19 +833,108 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[test]
-    fn compact_maps_are_symplectic() {
-        assert!(symp(&u2(hash_seed(1, "u", (3, 3), 0))) < 1e-10);
-        let a: f64 = 0.3;
-        let d = Matrix4::from_diagonal(&Vector4::new(a.exp(), a.exp(), (-a).exp(), (-a).exp()));
-        assert!(symp(&d) < 1e-10)
+
+    fn fixture() -> SysLandscapePolytopeCache {
+        base(hash_seed(91, "fixture", (3, 3), 0), (3, 3))
+            .0
+            .expect("deterministic valid product fixture")
     }
+    fn matrix_arm(name: &str, base: &SysLandscapePolytopeCache) -> Matrix4<f64> {
+        map(name, 91, (3, 3), 0, base)
+            .expect("deterministic map")
+            .matrix
+            .expect("linear arm")
+    }
+    fn assert_orthogonal(m: &Matrix4<f64>) {
+        assert!((m.transpose() * m - Matrix4::identity()).norm() < 1e-10);
+    }
+
     #[test]
-    fn anti_endpoint_is_so4() {
-        let m = Matrix4::new(
-            -1., 0., 0., 0., 0., -1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1.,
+    fn so4_and_det_minus_o4_contracts_hold() {
+        let base = fixture();
+        let so = matrix_arm("so4-haar", &base);
+        let o = matrix_arm("o4-det-minus-haar", &base);
+        assert_orthogonal(&so);
+        assert_orthogonal(&o);
+        assert!((so.determinant() - 1.0).abs() < 1e-10);
+        assert!((o.determinant() + 1.0).abs() < 1e-10);
+    }
+
+    #[test]
+    fn alignment_ladder_has_declared_symplectic_endpoints() {
+        let base = fixture();
+        let zero = matrix_arm("so4-align-0", &base);
+        let half = matrix_arm("so4-align-pi-over-2", &base);
+        let pi = matrix_arm("so4-align-pi", &base);
+        for m in [&zero, &half, &pi] {
+            assert_orthogonal(m);
+            assert!((m.determinant() - 1.0).abs() < 1e-10);
+        }
+        assert!(symp(&zero) < 1e-10);
+        assert!(
+            symp(&half) > 0.1,
+            "pi/2 is neither symplectic nor anti-symplectic"
         );
-        assert!((m.determinant() - 1.0_f64).abs() < 1e-12);
-        assert!(symp(&m) > 1.)
+        assert!(
+            symp(&pi) > 1.0,
+            "pi endpoint is anti-symplectic, not symplectic"
+        );
+        assert!((pi.transpose() * j() * pi + j()).norm() < 1e-10);
+    }
+
+    #[test]
+    fn bounded_sp4_and_sl4_contracts_hold() {
+        let base = fixture();
+        let sp = map("sp4-bounded-cartan", 91, (3, 3), 0, &base).unwrap();
+        let sp_matrix = sp.matrix.unwrap();
+        assert!(symp(&sp_matrix) < 1e-10);
+        assert!((sp_matrix.determinant() - 1.0).abs() < 1e-10);
+
+        let sl = map("sl4-bounded-weyl", 91, (3, 3), 0, &base).unwrap();
+        let sl_matrix = sl.matrix.unwrap();
+        assert!((sl_matrix.determinant() - 1.0).abs() < 1e-10);
+        let log_bound = 2f64.ln();
+        let exponents: Vec<f64> = (1..=4)
+            .map(|index| sl.params[&format!("log_s{index}")])
+            .collect();
+        assert!(exponents.iter().all(|x| x.abs() <= log_bound + 1e-12));
+        assert!(exponents.windows(2).all(|pair| pair[0] >= pair[1]));
+        assert!(exponents.iter().sum::<f64>().abs() < 1e-12);
+    }
+
+    #[test]
+    fn type_cone_support_intervention_preserves_labeled_incidence_exactly() {
+        let base = fixture();
+        let support = map("fixed-normal-type-cone", 91, (3, 3), 0, &base).unwrap();
+        let duals = support
+            .explicit_duals
+            .expect("accepted support perturbation");
+        let reconstructed =
+            SysLandscapePolytopeCache::from_f64_dual_vertices(duals).expect("exact reconstruction");
+        assert_eq!(incidence(&reconstructed), incidence(&base));
+        assert!(support.params["minimum_inactive_slack_fraction"] > 0.0);
+        assert!(support.params["epsilon"] > 0.0);
+    }
+
+    #[test]
+    fn map_replay_and_row_id_are_deterministic() {
+        let base = fixture();
+        let first = map("sl4-bounded-weyl", 91, (3, 3), 0, &base).unwrap();
+        let second = map("sl4-bounded-weyl", 91, (3, 3), 0, &base).unwrap();
+        assert_eq!(first.params, second.params);
+        assert_eq!(first.matrix, second.matrix);
+        let first_row = evaluate("u2-haar", 91, (3, 3), 0, Some(&base), Some(0), 0.0);
+        let second_row = evaluate("u2-haar", 91, (3, 3), 0, Some(&base), Some(0), 0.0);
+        assert_eq!(first_row.id, second_row.id);
+        assert_eq!(
+            first_row
+                .response_signature
+                .unwrap()
+                .raw_ordered_dual_coordinates,
+            second_row
+                .response_signature
+                .unwrap()
+                .raw_ordered_dual_coordinates
+        );
     }
 }

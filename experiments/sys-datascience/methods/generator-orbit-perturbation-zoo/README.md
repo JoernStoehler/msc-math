@@ -7,8 +7,9 @@ and emits an identity control plus these intervention laws:
   `O(4)`;
 - an explicit `SO(4)` alignment ladder `U1 A_theta U2` at `theta=0,pi/2,pi`,
   with `A_pi=diag(-1,-1,1,1)` anti-symplectic but still in `SO(4)`;
-- a bounded Cartan-times-compact `Sp(4)` law which is explicitly not Haar on
-  noncompact `Sp(4)`;
+- a restricted one-sided diagonal-times-`U(2)` `Sp(4)` intervention, with two
+  independently bounded diagonal parameters. It is not Haar and not a generic
+  `KAK`/double-compact Cartan law on noncompact `Sp(4)`;
 - a bounded-Weyl, coordinate-dependent `SL(4)` control (no normalized `GL+`
   duplicate); and
 - a fixed-normal type-cone support perturbation, with epsilon derived from
@@ -31,8 +32,12 @@ CARGO_TARGET_DIR=/workspaces/msc-math/target cargo run -p exp-sys-landscape \
   --out-dir /tmp/orbit-perturbation-zoo --seed 20260715
 ```
 
-`rows.jsonl` is the row-level producer artifact; `report.json` records source
-identity, resolved smoke parameters, statuses, and the interpretation boundary.
+`rows.jsonl` is the row-level producer artifact; `report.json` freezes the
+source revision, a scoped-clean predicate, SHA-256 hashes of this producer and
+`Cargo.lock`, and the declared source closure. This avoids treating a local
+`target/` executable path as durable identity. Timing fields are explicitly
+one-run observations, not byte-reproducible freeze data; all non-timing rows
+are deterministic under the recorded seed and source closure.
 No capacity backend or `sys` value is called. Passing rows show only the
 specific geometry/reconstruction contracts checked in that run; they do not
 establish invariance of `sys`, a population effect, or a natural quotient law.
