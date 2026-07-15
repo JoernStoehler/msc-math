@@ -45,9 +45,9 @@ authorized by this repair; the second independent review must approve the
 future evaluator command first.
 
 The reviewed evaluator identity is source digest
-`0ed699ca2d770e816a3091b8e378907ec1540fe9cfa1221ef37ffc772a4fd37a`, lock
+`a810e55a82bce73b8a728d7394a576a260f80da204b689b55f7dfff89a9a451a`, lock
 digest `740441674806a1baaea966d5f8f12a66d8e2ef1229b66ca9dcf9225a02f6c45f`,
 backend digest
 `37123b129e112f01ed5f2514b7f724cde6664ab82013a5ea21ed1716a3af0902`, and
-evaluator-source commit `06342c302a5461c034bc119b44f056137a5a0ca8`; future
-evaluation requires the checkout to report clean.
+repository HEAD `5a5736687dcd8ad10f4a682266fa24d1fe067efc`; future evaluation
+uses a detached clean worktree at that commit.

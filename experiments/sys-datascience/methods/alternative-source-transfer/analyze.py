@@ -22,10 +22,10 @@ SYS_FORMULA_REL_TOL = 1e-10
 TARGET_SCHEMA = "alternative-source-transfer-target-v1"
 EVALUATOR_IDENTITY = {
     "evaluator_identity_schema": "alternative-source-transfer-evaluator-identity-v1",
-    "evaluator_source_sha256": "0ed699ca2d770e816a3091b8e378907ec1540fe9cfa1221ef37ffc772a4fd37a",
+    "evaluator_source_sha256": "a810e55a82bce73b8a728d7394a576a260f80da204b689b55f7dfff89a9a451a",
     "evaluator_lock_sha256": "740441674806a1baaea966d5f8f12a66d8e2ef1229b66ca9dcf9225a02f6c45f",
     "evaluator_backend_sha256": "37123b129e112f01ed5f2514b7f724cde6664ab82013a5ea21ed1716a3af0902",
-    "evaluator_git_commit": "06342c302a5461c034bc119b44f056137a5a0ca8",
+    "evaluator_git_commit": "5a5736687dcd8ad10f4a682266fa24d1fe067efc",
     "evaluator_git_clean": True,
 }
 TARGET_FIELDS = {
@@ -65,7 +65,10 @@ def target_rows(out: Path, target_path: Path) -> tuple[list[dict], dict, dict, s
         if any(row.get(key) != value for key, value in EVALUATOR_IDENTITY.items()):
             raise ValueError("target evaluator identity is not the reviewed evaluator")
         expected_sys = row["capacity"] * row["capacity"] / (2.0 * row["volume"])
-        if abs(row["sys"] - expected_sys) > SYS_FORMULA_REL_TOL * max(1.0, abs(expected_sys)):
+        tolerance = SYS_FORMULA_REL_TOL * max(1.0, abs(expected_sys))
+        if not math.isfinite(expected_sys) or not math.isfinite(tolerance):
+            raise ValueError("target sys/capacity/volume formula is nonfinite")
+        if abs(row["sys"] - expected_sys) > tolerance:
             raise ValueError("target sys/capacity/volume identity mismatch")
     data.sort(key=lambda row: row["candidate_id"])
     return data, source, selection, hashlib.sha256(target_path.read_bytes()).hexdigest()

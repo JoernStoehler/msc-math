@@ -111,6 +111,16 @@ class PacketTests(unittest.TestCase):
       out=subprocess.run(["python3",str(Path(__file__).parent/"analyze.py"),str(tmp_path),"--targets",str(targets)],capture_output=True,text=True)
       self.assertNotEqual(out.returncode,0); self.assertIn("finite",out.stderr)
 
+  def test_nonfinite_computed_formula_rejected(self):
+    with tempfile.TemporaryDirectory() as d:
+      p=Path(d); _minimal(p); target=_target_rows(p)
+      target[0]["volume"] = 1.0
+      target[0]["capacity"] = 1e308
+      target[0]["sys"] = 1e308
+      path=p/"targets.jsonl"; path.write_text("\n".join(json.dumps(x) for x in target)+"\n"); import subprocess
+      out=subprocess.run(["python3",str(Path(__file__).parent/"analyze.py"),str(p),"--targets",str(path)],capture_output=True,text=True)
+      self.assertNotEqual(out.returncode,0); self.assertIn("formula is nonfinite",out.stderr)
+
   def test_boolean_target_numeric_rejected(self):
     with tempfile.TemporaryDirectory() as d:
       p=Path(d); _minimal(p); target=_target_rows(p); target[0]["sys"]=True

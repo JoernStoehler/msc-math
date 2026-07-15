@@ -77,6 +77,10 @@ Only after a second independent pre-target review returns `GO` may the exact
 stored-geometry evaluator be run:
 
 ```text
+git worktree add --detach /tmp/alternative-source-transfer-evaluator-5a573668 5a5736687dcd8ad10f4a682266fa24d1fe067efc
+cd /tmp/alternative-source-transfer-evaluator-5a573668
+cargo build --release --manifest-path experiments/sys-landscape/Cargo.toml \
+  --bin sys-datascience-alternative-source-transfer-evaluator
 cargo run --release --manifest-path experiments/sys-landscape/Cargo.toml \
   --bin sys-datascience-alternative-source-transfer-evaluator -- \
   evaluate experiments/sys-datascience/methods/alternative-source-transfer/artifacts/transfer-v1 \
@@ -90,9 +94,10 @@ finalizes schema `alternative-source-transfer-target-v1`; it refuses to
 overwrite an existing finalized target file. There is no build-label or
 environment-variable trust: each row records an identity made from the
 compile-time evaluator source digest, root `Cargo.lock` digest, the digest of
-the three capacity-backend source files, the Git commit containing the
-evaluator source, and a clean-checkout flag. `analyze.py` accepts only the
-reviewed exact identity values and records the target-file SHA-256 in its
-analysis JSON. It has no resume or cache path and never regenerates
-source/selection. `analyze.py` may consume the completed target file only
-after that gate and writes a report atomically when passed `--write`.
+the three capacity-backend source files, the actual repository `HEAD`, and a
+clean-checkout flag. The exact detached worktree build above is commit
+`5a5736687dcd8ad10f4a682266fa24d1fe067efc`; `analyze.py` accepts only that
+reviewed identity and records the target-file SHA-256 in its analysis JSON. It
+has no resume or cache path and never regenerates source/selection.
+`analyze.py` may consume the completed target file only after that gate and
+writes a report atomically when passed `--write`.
