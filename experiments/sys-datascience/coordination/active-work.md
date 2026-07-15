@@ -5,11 +5,6 @@ entries after merge, durable parking, discard, or handoff.
 
 ## Current Active Entries
 
-- **Tangential-both ridge/rho proposer-transfer freeze** — branch
-  `alternative-source-transfer`, worktree `.worktrees/alternative-source-transfer`.
-  Owns only `methods/alternative-source-transfer/**` plus its binary
-  registration; target-free until independent pre-target review.
-
 - **Alternative-generator and transfer line** — branch
   `research/generator-transfer`, worktree `.worktrees/generator-transfer`.
   Owns generator-law contrasts, transfer interpretation, and integration of its

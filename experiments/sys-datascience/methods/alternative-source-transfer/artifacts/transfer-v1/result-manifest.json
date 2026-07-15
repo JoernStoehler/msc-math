@@ -1,0 +1,48 @@
+{
+  "schema": "alternative-source-transfer-result-manifest-v1",
+  "status": "accepted-and-closed",
+  "reviewed_packet_head": "9d95c6b3399c6478980fab2adb192dcd1ac91f65",
+  "source_sha256": "161f6361fd9c99b1b86a863c3cdb7db438fd76329392992f6212e37c83e69963",
+  "feature_sha256": "8a87ef1a050cd9b3a717c85a43b0577f9e72c308e635fcc93defed58ec8883a5",
+  "selection_sha256": "2e4953cc61fa3eb02405c2fff9844c842c7813fd05edb7a741413574b794a168",
+  "target": {
+    "path": "target-evaluations.jsonl",
+    "sha256": "6016b66c5cad4af948b6d0188ccfa5f1d455b10093e5e2f61d303401fc0082f5",
+    "rows": 91,
+    "unique_rows": 91
+  },
+  "analysis": {
+    "path": "analysis.json",
+    "sha256": "872b932cf38811184104a6bf46afe34f079c291fa5b6e9bc90e05a80df1d407a",
+    "schema": "alternative-source-transfer-analysis-v1"
+  },
+  "evaluator_identity": {
+    "schema": "alternative-source-transfer-evaluator-identity-v1",
+    "git_commit": "5a5736687dcd8ad10f4a682266fa24d1fe067efc",
+    "source_sha256": "a810e55a82bce73b8a728d7394a576a260f80da204b689b55f7dfff89a9a451a",
+    "lock_sha256": "740441674806a1baaea966d5f8f12a66d8e2ef1229b66ca9dcf9225a02f6c45f",
+    "backend_sha256": "2fb95be2f16bbd730adfcc610fdb331bfdb692a283bdfe7092bc12cfde07721b",
+    "git_clean": true
+  },
+  "design": {
+    "law": "factorial-both",
+    "master_seed": 2026071601,
+    "buckets": ["4x6", "6x6"],
+    "shared_control_set": true,
+    "rho_ridge_overlap_rows": 5,
+    "bootstrap_repetitions": 10000,
+    "permutation_repetitions": 10000,
+    "sys_gt_1_rows": 0
+  },
+  "scope": {
+    "strongest_supported_claim": "Both frozen target-free selectors enriched mean sys over disjoint controls in both tested buckets on this finite fresh product source.",
+    "prohibited_claims": [
+      "population or cross-seed inference",
+      "causal, mechanism, theorem, counterexample, or threshold-finding claim",
+      "rho superiority over ridge",
+      "evidence for sys > 1"
+    ],
+    "diagnostics": "Bootstrap ranges are descriptive finite-panel resampling diagnostics; permutation output is 0/10,000 sampled null relabelings, not p=0 or a causal randomization test.",
+    "stop_disposition": "Integrate this bounded result and close the packet; no automatic follow-up is queued."
+  }
+}

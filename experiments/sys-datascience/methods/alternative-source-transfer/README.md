@@ -71,10 +71,25 @@ replay. It leaves the named IID random-law and conditioning estimand unchanged
 and is covered by the semantic construction tests. The current producer
 revision and Cargo lock hash are recorded in `manifest.json`.
 
-## Future target command (unauthorized)
+## Accepted post-target result
 
-Only after a second independent pre-target review returns `GO` may the exact
-stored-geometry evaluator be run:
+The reviewed target artifact and frozen analysis are preserved under
+`artifacts/transfer-v1/target-evaluations.jsonl` (SHA-256
+`6016b66c5cad4af948b6d0188ccfa5f1d455b10093e5e2f61d303401fc0082f5`) and
+`artifacts/transfer-v1/analysis.json` (SHA-256
+`872b932cf38811184104a6bf46afe34f079c291fa5b6e9bc90e05a80df1d407a`). See
+[`POST-TARGET-ACCOUNT.md`](POST-TARGET-ACCOUNT.md) and
+`artifacts/transfer-v1/result-manifest.json` for the bounded interpretation,
+provenance, and stop disposition. Both frozen selectors were classified
+`strong_transfer` as finite-design enrichers in both tested buckets; there
+were 91 unique targets, five rho/ridge overlaps, shared controls, one seed,
+and zero `sys > 1` rows. This does not support threshold, mechanism, causal,
+population, superiority, or theorem claims.
+
+## Historical target command / reproduction (do not rerun)
+
+The accepted artifact was produced only after independent review, using this
+exact detached clean-worktree command (preserved here for provenance):
 
 ```text
 git worktree add --detach /tmp/alternative-source-transfer-evaluator-5a573668 5a5736687dcd8ad10f4a682266fa24d1fe067efc
@@ -87,17 +102,17 @@ cargo run --release --manifest-path experiments/sys-landscape/Cargo.toml \
   experiments/sys-datascience/methods/alternative-source-transfer/artifacts/transfer-v1/target-evaluations.jsonl
 ```
 
-This command is not authorized or run in the current repair. It validates the
-three frozen SHA-256 artifacts, joins only the 91 stored selected IDs to their
-stored exact geometry, evaluates each unique candidate once, and atomically
-finalizes schema `alternative-source-transfer-target-v1`; it refuses to
-overwrite an existing finalized target file. There is no build-label or
-environment-variable trust: each row records an identity made from the
-compile-time evaluator source digest, root `Cargo.lock` digest, the digest of
-the three capacity-backend source files, the actual repository `HEAD`, and a
-clean-checkout flag. The exact detached worktree build above is commit
+This exact command produced the accepted artifact in the detached clean
+worktree reviewed for this packet; it must not be rerun over the preserved
+bytes. It validates the three frozen SHA-256 artifacts, joins only the 91
+stored selected IDs to their stored exact geometry, evaluates each unique
+candidate once, and atomically finalizes schema
+`alternative-source-transfer-target-v1`; it refuses to overwrite an existing
+finalized target file. There is no build-label or environment-variable trust:
+each row records an identity made from the compile-time evaluator source
+digest, root `Cargo.lock` digest, the digest of the three capacity-backend
+source files, the actual repository `HEAD`, and a clean-checkout flag. The
+exact detached worktree build above is commit
 `5a5736687dcd8ad10f4a682266fa24d1fe067efc`; `analyze.py` accepts only that
 reviewed identity and records the target-file SHA-256 in its analysis JSON. It
 has no resume or cache path and never regenerates source/selection.
-`analyze.py` may consume the completed target file only after that gate and
-writes a report atomically when passed `--write`.
