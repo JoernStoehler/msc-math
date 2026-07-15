@@ -61,6 +61,9 @@ Read first:
   result and must not be resumed without a new portfolio decision.
 - `product-bounce-distribution/`: exact-`(k,m)` descriptive distribution and
   ridge-adjustment packet for 2- versus 3-bounce retained random products.
+- `topology-density/`: calibrated persistent-H0/H1 and resampling-stable
+  density-component diagnostics for fixed-side factor-shape clouds. This is a
+  feasibility packet; it makes no population or target claim.
 
 Exploratory fixed-bucket distribution-shape packets:
 
