@@ -1,0 +1,16 @@
+[package]
+name = "exp-generator-sys-orbit-view"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+blake3 = { workspace = true }
+euclidean-polytopes = { workspace = true }
+nalgebra = { workspace = true }
+rand = { workspace = true }
+rand_chacha = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+[lints]
+workspace = true

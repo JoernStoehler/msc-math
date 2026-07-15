@@ -17,6 +17,7 @@ members = [
     "experiments/dev-sys-prediction",
     "experiments/visualization",
     "experiments/dev-canonization-t-search",
+    "experiments/sys-datascience/methods/generator-sys-orbit-view",
 ]
 resolver = "2"
 

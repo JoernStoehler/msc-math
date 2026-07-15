@@ -558,6 +558,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "exp-generator-sys-orbit-view"
+version = "0.1.0"
+dependencies = [
+ "blake3",
+ "euclidean-polytopes",
+ "nalgebra",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "exp-hko-local-maximum"
 version = "0.1.0"
 dependencies = [
