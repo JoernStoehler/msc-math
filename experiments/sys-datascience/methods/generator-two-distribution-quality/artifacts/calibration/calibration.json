@@ -1,0 +1,143 @@
+{
+  "cases": [
+    {
+      "case": "same_law_split",
+      "energy_v": 0.3272871452909234,
+      "mixing": {
+        "cross_nearest_neighbor_mixing": 0.5625,
+        "within_nearest_fraction": 0.4375
+      },
+      "mmd_bandwidths": {
+        "0.5": 0.05072860734283724,
+        "1": 0.02899106502551163,
+        "2": 0.009683621065652348,
+        "4": 0.0026250421014704095
+      },
+      "occupancy_js": 0.012612282620907914,
+      "sliced_wasserstein": 0.3141257069177017
+    },
+    {
+      "case": "location_change",
+      "energy_v": 4.191390900353882,
+      "mixing": {
+        "cross_nearest_neighbor_mixing": 0.012499999999999956,
+        "within_nearest_fraction": 0.9875
+      },
+      "mmd_bandwidths": {
+        "0.5": 0.450070298003146,
+        "1": 0.34060317817256847,
+        "2": 0.1174572052123739,
+        "4": 0.031931677736063646
+      },
+      "occupancy_js": 0.4548898527327925,
+      "sliced_wasserstein": 1.2908291474771172
+    },
+    {
+      "case": "scale_change",
+      "energy_v": 1.2980796882607457,
+      "mixing": {
+        "cross_nearest_neighbor_mixing": 0.38749999999999996,
+        "within_nearest_fraction": 0.6125
+      },
+      "mmd_bandwidths": {
+        "0.5": 0.24319191409971647,
+        "1": 0.08205092724546148,
+        "2": 0.014487952322340014,
+        "4": 0.00286069008272416
+      },
+      "occupancy_js": 0.12131744955782013,
+      "sliced_wasserstein": 0.8834936984732876
+    },
+    {
+      "case": "narrow_broad",
+      "energy_v": 3.134267099776755,
+      "mixing": {
+        "cross_nearest_neighbor_mixing": 0.26249999999999996,
+        "within_nearest_fraction": 0.7375
+      },
+      "mmd_bandwidths": {
+        "0.5": 0.6483989075637193,
+        "1": 0.16675585395895576,
+        "2": 0.021936172413126398,
+        "4": 0.0032239168978265287
+      },
+      "occupancy_js": 0.2934167135320169,
+      "sliced_wasserstein": 1.43558083878596
+    },
+    {
+      "case": "mixture_weights_same_support",
+      "energy_v": 8.883893430472162,
+      "mixing": {
+        "cross_nearest_neighbor_mixing": 0.375,
+        "within_nearest_fraction": 0.625
+      },
+      "mmd_bandwidths": {
+        "0.5": 0.6067893927978408,
+        "1": 0.2853235920224635,
+        "2": 0.08604005814729443,
+        "4": 0.02258599857931043
+      },
+      "occupancy_js": 0.17523278068181963,
+      "sliced_wasserstein": 2.1709344769159333
+    },
+    {
+      "case": "disjoint_modes",
+      "energy_v": 32.443989388013165,
+      "mixing": {
+        "cross_nearest_neighbor_mixing": 0.0,
+        "within_nearest_fraction": 1.0
+      },
+      "mmd_bandwidths": {
+        "0.5": 1.5106249196760353,
+        "1": 0.7330421058752097,
+        "2": 0.2224572482950684,
+        "4": 0.05848570003953224
+      },
+      "occupancy_js": 0.5082397813921696,
+      "sliced_wasserstein": 4.5610260443157
+    },
+    {
+      "case": "outliers",
+      "energy_v": 0.4338576470979847,
+      "mixing": {
+        "cross_nearest_neighbor_mixing": 0.5375,
+        "within_nearest_fraction": 0.4625
+      },
+      "mmd_bandwidths": {
+        "0.5": 0.05026562837903431,
+        "1": 0.0298116900360339,
+        "2": 0.013098139013874688,
+        "4": 0.005562341182347996
+      },
+      "occupancy_js": 0.03003667395949448,
+      "sliced_wasserstein": 0.6947874682519983
+    },
+    {
+      "case": "high_dim_noise",
+      "energy_v": 3.9819766972370907,
+      "mixing": {
+        "cross_nearest_neighbor_mixing": 0.17500000000000004,
+        "within_nearest_fraction": 0.825
+      },
+      "mmd_bandwidths": {
+        "0.5": 0.49730663024903077,
+        "1": 0.1387700785632413,
+        "2": 0.016598728064479484,
+        "4": 0.001956541239834797
+      },
+      "occupancy_js": 0.20619984171385775,
+      "sliced_wasserstein": 2.1209846123098837
+    }
+  ],
+  "dimension": 12,
+  "interpretation": "same-law should be small on most views; location/scale/disjoint controls should separate; high-dimensional noise tests projection and bandwidth sensitivity. Qualitative checks are not inferential thresholds.",
+  "provenance": {
+    "command_contract": "two-distribution-quality-v1",
+    "implementation": "compare.py",
+    "implementation_sha256": "e837ede714e1c0d435b88222e7440ea475bcfc7cce9085407440947ec98e1110"
+  },
+  "purpose": "synthetic qualitative method controls; not empirical calibration of metric estimates",
+  "sample_size_per_side": 40,
+  "schema": "two-distribution-calibration-v1",
+  "seed": 20260715
+}

@@ -1,0 +1,309 @@
+{
+  "disposition": {
+    "claim_boundary": "No metric is a target-transfer score or a population law ranking; retained strata are descriptive-only and uncalibrated.",
+    "deferred": [
+      "full optimal-transport Wasserstein",
+      "learned classifier (dependency-free grouped nearest-centroid retained instead)",
+      "high-dimensional occupancy grids (sparse and bin-sensitive)",
+      "actual cyclic, dihedral, or optimal vertex-assignment distance; chord_multiset_quotient is a lossy adjacency-free surrogate"
+    ],
+    "implemented": [
+      "energy distance",
+      "MMD bandwidth ladder",
+      "sliced Wasserstein",
+      "grouped nearest-centroid and kNN diagnostics",
+      "cross-nearest-neighbor mixing",
+      "precision/recall coverage-density",
+      "quantile-region overlap",
+      "smoothed occupancy Jensen-Shannon"
+    ]
+  },
+  "left_population": "current-baseline[delta=0.2]",
+  "provenance": {
+    "command_contract": "two-distribution-quality-v1",
+    "implementation": "compare.py",
+    "implementation_sha256": "e837ede714e1c0d435b88222e7440ea475bcfc7cce9085407440947ec98e1110",
+    "input_path": "../generator-zoo-smoke/artifacts/factor-shapes.jsonl",
+    "input_sha256": "4622400be1220f11f742a4bde29273fe45dcd4c8d27044d716059c429630d7a8"
+  },
+  "right_population": "zonogon[lengths=uniform(0.5,1.5)]",
+  "sample_size_contract": {
+    "descriptive_floor_rows_per_side": 10,
+    "meaning": "This packet has no empirical calibration of metric estimates; statuses are descriptive sample-size flags only.",
+    "status_values": [
+      "uncalibrated_descriptive",
+      "descriptive_floor_met_uncalibrated",
+      "below_descriptive_floor"
+    ]
+  },
+  "schema": "two-distribution-quality-report-v1",
+  "seed": 20260715,
+  "strata": [
+    {
+      "comparisons": [
+        {
+          "center_distance": 2.7174619736250003,
+          "classifier": {
+            "grouped_folds": 0,
+            "interpretation": "diagnostic separability only; not coverage evidence",
+            "knn5_accuracy": null,
+            "nearest_centroid_accuracy": null
+          },
+          "coverage_a_by_b": 0.0,
+          "coverage_b_by_a": 0.0,
+          "cross_nearest_neighbor_mixing": 0.0,
+          "disposition": "descriptive_only_do_not_treat_as_estimate_or_ranking",
+          "energy_v": 4.404590442961407,
+          "median_cross_distance": 3.6139487271762314,
+          "mmd_rbf": {
+            "0.5": 1.0428092426270208,
+            "1.0": 0.5812584204262075,
+            "2.0": 0.18805192319114772,
+            "4.0": 0.050366941959898215
+          },
+          "n_a": 5,
+          "n_b": 5,
+          "occupancy_js": 0.1680700145253048,
+          "precision_a_relative_to_b": 0.0,
+          "precision_b_relative_to_a": 0.0,
+          "quantile_region_overlap": 0.5,
+          "radius_a": 1.330743650627277,
+          "radius_b": 2.9373218765252176,
+          "sample_size_status": "uncalibrated_descriptive",
+          "sliced_wasserstein": 0.8234055134379116,
+          "view": "raw_ordered",
+          "warning": "representation-induced separation if raw/canonicalized changes disappear in chord_multiset_quotient",
+          "within_nearest_fraction": 1.0
+        },
+        {
+          "center_distance": 1.8249845308427337,
+          "classifier": {
+            "grouped_folds": 0,
+            "interpretation": "diagnostic separability only; not coverage evidence",
+            "knn5_accuracy": null,
+            "nearest_centroid_accuracy": null
+          },
+          "coverage_a_by_b": 0.0,
+          "coverage_b_by_a": 0.6,
+          "cross_nearest_neighbor_mixing": 0.30000000000000004,
+          "disposition": "descriptive_only_do_not_treat_as_estimate_or_ranking",
+          "energy_v": 2.017524624280711,
+          "median_cross_distance": 2.447575343329308,
+          "mmd_rbf": {
+            "0.5": 0.4998662966246909,
+            "1.0": 0.36131835797112744,
+            "2.0": 0.15037366191089063,
+            "4.0": 0.04385502308445677
+          },
+          "n_a": 5,
+          "n_b": 5,
+          "occupancy_js": 0.1680700145253048,
+          "precision_a_relative_to_b": 0.0,
+          "precision_b_relative_to_a": 0.6,
+          "quantile_region_overlap": 1.0,
+          "radius_a": 1.878483033922504,
+          "radius_b": 2.8104955983763404,
+          "sample_size_status": "uncalibrated_descriptive",
+          "sliced_wasserstein": 0.7839926029710208,
+          "view": "canonicalized",
+          "warning": "representation-induced separation if raw/canonicalized changes disappear in chord_multiset_quotient",
+          "within_nearest_fraction": 0.7
+        },
+        {
+          "center_distance": 0.9269978473119705,
+          "classifier": {
+            "grouped_folds": 0,
+            "interpretation": "diagnostic separability only; not coverage evidence",
+            "knn5_accuracy": null,
+            "nearest_centroid_accuracy": null
+          },
+          "coverage_a_by_b": 0.6,
+          "coverage_b_by_a": 0.4,
+          "cross_nearest_neighbor_mixing": 0.4,
+          "disposition": "descriptive_only_do_not_treat_as_estimate_or_ranking",
+          "energy_v": 1.111014461771565,
+          "median_cross_distance": 1.516447511050054,
+          "mmd_rbf": {
+            "0.5": 0.32833297681504037,
+            "1.0": 0.2885565372204304,
+            "2.0": 0.1496303139630959,
+            "4.0": 0.04808690073139177
+          },
+          "n_a": 5,
+          "n_b": 5,
+          "occupancy_js": 0.1276390192430314,
+          "precision_a_relative_to_b": 0.6,
+          "precision_b_relative_to_a": 0.4,
+          "quantile_region_overlap": 1.0,
+          "radius_a": 1.4855204275889677,
+          "radius_b": 3.707073626124422,
+          "sample_size_status": "uncalibrated_descriptive",
+          "sliced_wasserstein": 0.5812809829555845,
+          "view": "chord_multiset_quotient",
+          "warning": "representation-induced separation if raw/canonicalized changes disappear in chord_multiset_quotient",
+          "within_nearest_fraction": 0.6
+        }
+      ],
+      "disposition": "descriptive_only_do_not_treat_as_estimate_or_ranking",
+      "n_a": 5,
+      "n_b": 5,
+      "representation_diagnostic": {
+        "energy_by_view": {
+          "canonicalized": 2.017524624280711,
+          "chord_multiset_quotient": 1.111014461771565,
+          "raw_ordered": 4.404590442961407
+        },
+        "note": "representation-induced separation likely: chord multiset quotient is less than half raw energy",
+        "quotient_to_raw_energy_ratio": 0.25224012905603527
+      },
+      "sample_size_status": "uncalibrated_descriptive",
+      "side_count": 4
+    },
+    {
+      "comparisons": [
+        {
+          "center_distance": 2.87213248403348,
+          "classifier": {
+            "grouped_folds": 2,
+            "interpretation": "diagnostic separability only; not coverage evidence",
+            "knn5_accuracy": 1.0,
+            "nearest_centroid_accuracy": 0.975
+          },
+          "coverage_a_by_b": 0.06666666666666667,
+          "coverage_b_by_a": 0.06666666666666667,
+          "cross_nearest_neighbor_mixing": 0.0,
+          "disposition": "descriptive_only_do_not_treat_as_estimate_or_ranking",
+          "energy_v": 3.089574890868453,
+          "median_cross_distance": 3.3385974596454813,
+          "mmd_rbf": {
+            "0.5": 0.7940434143349293,
+            "1.0": 0.46963804949291044,
+            "2.0": 0.15460910624294844,
+            "4.0": 0.04160028850641684
+          },
+          "n_a": 15,
+          "n_b": 15,
+          "occupancy_js": 0.09588366513656926,
+          "precision_a_relative_to_b": 0.06666666666666667,
+          "precision_b_relative_to_a": 0.06666666666666667,
+          "quantile_region_overlap": 0.5,
+          "radius_a": 2.454033082320729,
+          "radius_b": 3.1135213756598343,
+          "sample_size_status": "uncalibrated_descriptive",
+          "sliced_wasserstein": 0.6658367965170111,
+          "view": "raw_ordered",
+          "warning": "representation-induced separation if raw/canonicalized changes disappear in chord_multiset_quotient",
+          "within_nearest_fraction": 1.0
+        },
+        {
+          "center_distance": 1.0180246568241205,
+          "classifier": {
+            "grouped_folds": 2,
+            "interpretation": "diagnostic separability only; not coverage evidence",
+            "knn5_accuracy": 0.55,
+            "nearest_centroid_accuracy": 0.575
+          },
+          "coverage_a_by_b": 0.8666666666666667,
+          "coverage_b_by_a": 0.8666666666666667,
+          "cross_nearest_neighbor_mixing": 0.16666666666666663,
+          "disposition": "descriptive_only_do_not_treat_as_estimate_or_ranking",
+          "energy_v": 0.7315611288730213,
+          "median_cross_distance": 2.8957543220947923,
+          "mmd_rbf": {
+            "0.5": 0.19069031713749868,
+            "1.0": 0.1107698348573043,
+            "2.0": 0.03963646491877992,
+            "4.0": 0.01103943086217618
+          },
+          "n_a": 15,
+          "n_b": 15,
+          "occupancy_js": 0.04995602919254587,
+          "precision_a_relative_to_b": 0.8666666666666667,
+          "precision_b_relative_to_a": 0.8666666666666667,
+          "quantile_region_overlap": 1.0,
+          "radius_a": 3.2958304766879927,
+          "radius_b": 3.8464910877804526,
+          "sample_size_status": "uncalibrated_descriptive",
+          "sliced_wasserstein": 0.4233276880990514,
+          "view": "canonicalized",
+          "warning": "representation-induced separation if raw/canonicalized changes disappear in chord_multiset_quotient",
+          "within_nearest_fraction": 0.8333333333333334
+        },
+        {
+          "center_distance": 0.7645484649858751,
+          "classifier": {
+            "grouped_folds": 2,
+            "interpretation": "diagnostic separability only; not coverage evidence",
+            "knn5_accuracy": 0.625,
+            "nearest_centroid_accuracy": 0.675
+          },
+          "coverage_a_by_b": 0.8666666666666667,
+          "coverage_b_by_a": 0.8,
+          "cross_nearest_neighbor_mixing": 0.23333333333333328,
+          "disposition": "descriptive_only_do_not_treat_as_estimate_or_ranking",
+          "energy_v": 0.46613006589373596,
+          "median_cross_distance": 1.3869493740472725,
+          "mmd_rbf": {
+            "0.5": 0.2029065672105238,
+            "1.0": 0.11927190600777005,
+            "2.0": 0.05083054695779854,
+            "4.0": 0.02074718367659889
+          },
+          "n_a": 15,
+          "n_b": 15,
+          "occupancy_js": 0.028302640112269073,
+          "precision_a_relative_to_b": 0.8666666666666667,
+          "precision_b_relative_to_a": 0.8,
+          "quantile_region_overlap": 1.0,
+          "radius_a": 3.3828671976827582,
+          "radius_b": 3.368297849792457,
+          "sample_size_status": "uncalibrated_descriptive",
+          "sliced_wasserstein": 0.25461350508860275,
+          "view": "chord_multiset_quotient",
+          "warning": "representation-induced separation if raw/canonicalized changes disappear in chord_multiset_quotient",
+          "within_nearest_fraction": 0.7666666666666667
+        }
+      ],
+      "disposition": "descriptive_only_do_not_treat_as_estimate_or_ranking",
+      "n_a": 15,
+      "n_b": 15,
+      "representation_diagnostic": {
+        "energy_by_view": {
+          "canonicalized": 0.7315611288730213,
+          "chord_multiset_quotient": 0.46613006589373596,
+          "raw_ordered": 3.089574890868453
+        },
+        "note": "representation-induced separation likely: chord multiset quotient is less than half raw energy",
+        "quotient_to_raw_energy_ratio": 0.15087191033026254
+      },
+      "sample_size_status": "uncalibrated_descriptive",
+      "side_count": 6
+    }
+  ],
+  "stratum_inventory": [
+    {
+      "disposition": "omitted_from_pairwise_metrics",
+      "left_count": 10,
+      "paired": false,
+      "right_count": 0,
+      "sample_size_status": "unpaired",
+      "side_count": 3
+    },
+    {
+      "disposition": "descriptive_only_do_not_treat_as_estimate_or_ranking",
+      "left_count": 5,
+      "paired": true,
+      "right_count": 5,
+      "sample_size_status": "uncalibrated_descriptive",
+      "side_count": 4
+    },
+    {
+      "disposition": "descriptive_only_do_not_treat_as_estimate_or_ranking",
+      "left_count": 15,
+      "paired": true,
+      "right_count": 15,
+      "sample_size_status": "uncalibrated_descriptive",
+      "side_count": 6
+    }
+  ]
+}

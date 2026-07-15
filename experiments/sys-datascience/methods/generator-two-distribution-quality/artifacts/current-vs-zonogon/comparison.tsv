@@ -1,0 +1,7 @@
+side_count	view	n_a	n_b	sample_size_status	disposition	energy_v	sliced_wasserstein	median_cross_distance	cross_nearest_neighbor_mixing	occupancy_js	nearest_centroid_accuracy	knn5_accuracy
+4	raw_ordered	5	5	uncalibrated_descriptive	descriptive_only_do_not_treat_as_estimate_or_ranking	4.404590443	0.8234055134	3.613948727	0	0.1680700145	NA	NA
+4	canonicalized	5	5	uncalibrated_descriptive	descriptive_only_do_not_treat_as_estimate_or_ranking	2.017524624	0.783992603	2.447575343	0.3	0.1680700145	NA	NA
+4	chord_multiset_quotient	5	5	uncalibrated_descriptive	descriptive_only_do_not_treat_as_estimate_or_ranking	1.111014462	0.581280983	1.516447511	0.4	0.1276390192	NA	NA
+6	raw_ordered	15	15	uncalibrated_descriptive	descriptive_only_do_not_treat_as_estimate_or_ranking	3.089574891	0.6658367965	3.33859746	0	0.09588366514	0.975	1
+6	canonicalized	15	15	uncalibrated_descriptive	descriptive_only_do_not_treat_as_estimate_or_ranking	0.7315611289	0.4233276881	2.895754322	0.1666666667	0.04995602919	0.575	0.55
+6	chord_multiset_quotient	15	15	uncalibrated_descriptive	descriptive_only_do_not_treat_as_estimate_or_ranking	0.4661300659	0.2546135051	1.386949374	0.2333333333	0.02830264011	0.675	0.625

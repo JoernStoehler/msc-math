@@ -1,0 +1,11 @@
+method	detects	knob_or_symmetry	sample_size_dependence	failure_case
+energy_v	global metric displacement	symmetric, self-zero V-statistic	quadratic pair cost; unstable for tiny strata	quotient distance need not be negative type
+mmd_rbf	kernel-scale-sensitive location/shape difference	bandwidth 0.5,1,2,4 times median	median bandwidth noisy for small n	bandwidth can hide narrow or broad changes
+sliced_wasserstein	projected one-dimensional transport	32 seeded projections	quantile noise and projection Monte Carlo	projection misses directions; not full OT
+grouped_nearest_centroid	held-out linear-centroid separability	deterministic grouped folds	requires at least two valid training groups	accuracy is not support coverage
+knn5	local neighborhood separability	k=5, grouped folds	k and neighborhoods need enough rows	sample-size and density sensitive
+cross_nearest_neighbor_mixing	local interpenetration versus separation	nearest neighbor	very noisy below roughly 10 per side	unequal density and side-count mixing bias
+precision_recall	finite-sample local support coverage/density	within-law 90% radius	local radius has high variance for small n	not a population confidence region
+quantile_region_overlap	coarse medoid-region overlap	90% radius	medoid and quantile unstable for tiny n	elliptic/nonconvex shapes reduced to one radius
+occupancy_js	coarse projected occupancy imbalance	8 bins, additive smoothing 0.5	occupancy sparse when n is small	bin/projection sensitive; no high-dimensional grid
+chord_multiset_quotient	assignment-invariant chord-length multiset difference	translation/scale/rotation/reflection invariant; adjacency discarded	quadratic pair construction; small strata remain noisy	not an optimal cyclic/dihedral assignment distance; non-isometric shapes can collide
