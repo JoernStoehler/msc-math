@@ -416,7 +416,9 @@ def witness_results():
     correction_squared = F(1) / (at * ai)
     assert correction_squared * at * ai == 1
     out.append(("area-normalized-polar-scale-correction", {"tangential_area": at, "inscribed_area": ai, "polar_homothety_correction_squared": correction_squared, "symbolic_identity": True}))
-    out.append(("double-polarity-marked-origin", {"original_polar_rows": normals, "double_polar_extreme_rows": normals, "roundtrip": True}))
+    recovered_double_polar = vertices_from_halfspaces(normals, heights)
+    assert set(recovered_double_polar) == set(tangential_vertices)
+    out.append(("double-polarity-marked-origin", {"original_vertices": tangential_vertices, "recovered_double_polar_vertices": recovered_double_polar, "roundtrip": True}))
 
     a, b = F(2), F(3)
     scale = ((a, 0, 0, 0), (0, a, 0, 0), (0, 0, b, 0), (0, 0, 0, b))
