@@ -92,9 +92,13 @@
   },
   {
     "fixture": "area-normalization-correction",
-    "normalized_product": 1.0,
+    "normalized_polar_area": "1",
+    "normalized_product": "1",
+    "normalized_source_area": "1",
     "polar_area": "16/15",
-    "source_area": "8"
+    "polar_scale_squared": "15/16",
+    "source_area": "8",
+    "source_scale_squared": "1/8"
   },
   {
     "fixture": "recenter-every-step-non-involution",

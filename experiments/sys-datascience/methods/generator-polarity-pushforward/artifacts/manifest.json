@@ -13,19 +13,19 @@
   },
   "output_sha256": {
     "diversity": "52261d5be7eaed350f3c640b4f09ad9ff991e171bf3bc70fa215163b641ca4b7",
-    "fixtures": "70f28cfddf300d6dfe19b1b8380425aef57eec7b6084c795fc73e7cb5bbf079e",
+    "fixtures": "131e262e943ef209842d886b87b8250f1013d05fe17939406e3578a724a47dc0",
     "panel": "fbee425786c9a3bb7dacfaff55144af5d69f4df4c77c979431b8e5da3defcfe6",
     "product_arms": "9e29d8d6924907f0adc39dbef117f5f5f78e9fcf08f70dc5402ce05577447d7c"
   },
   "panel_rows": 72,
-  "producer_sha256": "ea37b32bba72dafb49b76067b8536df7fb6e652c9bc72095cc229ac64eb2155f",
+  "producer_sha256": "e7f70483216a967c23983da61e0750639b9bb5476b0c3fafd77252177a93eb1c",
   "product_arm_rows": 144,
   "rows_per_stratum": 24,
   "schema": "generator-polarity-manifest-v1",
   "seed": 20260715,
   "source_dirty_tracked": false,
-  "source_revision": "b7e912d3b49099442e2edf0ae7d10b522691b121",
-  "source_tree": "76337de27d9a129f1019f5239f1de15f8e2a1f8a",
+  "source_revision": "ded422fd076b8d741a5a8dc651d02caddb25c7b4",
+  "source_tree": "b0ef60590feb23963fbf33b97c8255a872296993",
   "strata": [
     3,
     4,
