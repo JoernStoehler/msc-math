@@ -120,7 +120,8 @@ def main() -> None:
         for value in item["values"]:
             if set(value) != {"value_kind", "unit", "role", "f64_value", "text_value", "boolean_value"}:
                 fail("formula evaluation value is not long-form-value-v1")
-    coverage = json.loads((out / "analysis.json").read_text()).get("formula_coverage", {})
+    analysis = json.loads((out / "analysis.json").read_text())
+    coverage = analysis.get("formula_coverage", {})
     if set(coverage) != registry_ids:
         fail("analysis does not report coverage for every registered formula")
     raw_by_case = {case: [r for r in rows if r["target_polytope_id"] == case] for case in EXPECTED_CASES}
@@ -132,11 +133,40 @@ def main() -> None:
             fail(f"policy supplied-stream count mismatch {policy['target_polytope_id']}")
         if policy["policy_candidate_count"] < policy["policy_exact_accept_count"]:
             fail("policy accepted count exceeds policy candidate count")
-        if policy["policy_id"] in {"actual_current_f64_policy", "strict_margin_f64_simulation"}:
+        if policy["policy_id"] in {"unchecked_saddle_feasible_no_fallback_diagnostic", "strict_margin_f64_simulation"}:
             if policy["policy_exact_resolution_count"] != 0 or policy["policy_min_action"] is not None or policy["policy_window_cutoff"] is not None:
                 fail("f64-only policy incorrectly carries exact aggregation output")
             if policy["policy_f64_min_action"] is not None and policy["policy_f64_window_cutoff"] is None:
                 fail("f64-only policy minimum lacks its declared window cutoff")
+            if policy["policy_production_call_status"] is not None:
+                fail("unchecked diagnostic is mislabeled as production output")
+        elif policy["policy_id"] == "current_production_minimasafe":
+            if policy["policy_production_call_status"] != "ok":
+                fail("production MinimaSafe direct call did not succeed")
+            if policy["policy_production_exact_resolution_count"] is not None or not str(policy["policy_production_exact_resolution_status"]).startswith("unavailable:"):
+                fail("production MinimaSafe exact-resolution exposure is mislabeled")
+            returned = policy["policy_production_returned_orbits"]
+            if not isinstance(returned, list) or policy["policy_candidate_count"] < len(returned):
+                fail("production MinimaSafe returned-orbit payload is malformed")
+            stream_words = {tuple(row["sigma_active_reeb_word"]) for row in case_rows}
+            if any(tuple(orbit["sigma_active_reeb_word"]) not in stream_words for orbit in returned):
+                fail("production MinimaSafe returned a word outside the declared stream")
+            if any(orbit["admissibility"] not in {"admissible_f64", "admissible_exact", "indeterminate_f64"} for orbit in returned):
+                fail("production MinimaSafe returned an unknown admissibility state")
+            reconstructed_min = min((orbit["action_f64"] for orbit in returned if orbit["admissibility"] in {"admissible_f64", "admissible_exact"}), default=None)
+            if policy["policy_f64_min_action"] != reconstructed_min:
+                fail("production MinimaSafe scalar does not reconstruct from direct returned orbits")
+            if reconstructed_min is not None:
+                lower = policy["policy_production_min_action_lower"]
+                upper = policy["policy_production_min_action_upper"]
+                if lower is None or upper is None or lower > upper:
+                    fail("production MinimaSafe minimum interval is malformed")
+                cutoff = policy["policy_f64_window_cutoff"]
+                if cutoff != reconstructed_min * (1 + policy["requested_relative_gap"]):
+                    fail("production MinimaSafe relative diagnostic cutoff does not reconstruct")
+                expected_window = [orbit["sigma_active_reeb_word"] for orbit in returned if orbit["action_f64"] <= cutoff]
+                if policy["policy_f64_window_active_words"] != expected_window:
+                    fail("production MinimaSafe window does not reconstruct from direct output")
         else:
             if policy["policy_exact_resolution_count"] != policy["policy_candidate_count"]:
                 fail("exact policy did not record every attempted resolution")
@@ -150,6 +180,12 @@ def main() -> None:
             # Binary f64 gap is the producer's declared calculation contract.
             if c != m * (1 + gap):
                 fail("policy relative window corruption")
+    production = [p for p in policies if p["policy_id"] == "current_production_minimasafe"]
+    comparisons = analysis.get("production_minimasafe_comparisons")
+    if not isinstance(comparisons, list) or len(comparisons) != 2 * len(production):
+        fail("production MinimaSafe exact-comparison coverage is incomplete")
+    if any("physical orbit" not in item.get("comparison_scope", "") for item in comparisons):
+        fail("production MinimaSafe comparison lacks active-word caveat")
     if manifest.get("schema_version") != "qp-soundness-row-v2" or manifest.get("artifact_commit_contract") != "commit this generated directory as a separate child of source_revision":
         fail("manifest provenance contract mismatch")
     repo = Path(__file__).resolve().parents[3]
@@ -162,19 +198,19 @@ def main() -> None:
     actual_tree = subprocess.check_output(["git", "rev-parse", f"{commit}^{{tree}}"], cwd=repo, text=True).strip()
     if actual_tree != tree:
         fail("source tree provenance mismatch")
-    # Reconstruction guard for the actual production-retained f64 policy.
+    # Reconstruction guard for the intentionally unchecked raw-flag diagnostic.
     def saddle_action(row: dict) -> float | None:
         for center in row["centers"]:
             if center["center_id"] == "saddle_eig_accepted":
                 return center["center_action_from_positive_q_f64"]
         return None
-    for policy in (p for p in policies if p["policy_id"] == "actual_current_f64_policy"):
+    for policy in (p for p in policies if p["policy_id"] == "unchecked_saddle_feasible_no_fallback_diagnostic"):
         candidates = [r for r in raw_by_case[policy["target_polytope_id"]] if r["f64_retained_by_saddle"] and saddle_action(r) is not None]
         if policy["policy_candidate_count"] != len(candidates):
-            fail("actual current f64 policy added a hidden margin filter")
+            fail("unchecked saddle diagnostic added a hidden margin filter")
         expected_min = min((saddle_action(r) for r in candidates), default=None)
         if policy["policy_f64_min_action"] != expected_min:
-            fail("actual current f64 policy minimum does not reconstruct")
+            fail("unchecked saddle diagnostic minimum does not reconstruct")
     # Exhaustive ternary truth-table contract used by predicate evaluations.
     for exact, expected in {"true": {"true": True, "false": False, "indeterminate": True}, "false": {"true": False, "false": True, "indeterminate": True}}.items():
         for predicted, sound in expected.items():
@@ -183,7 +219,7 @@ def main() -> None:
                 fail("ternary truth-table reconstruction failure")
     with tempfile.TemporaryDirectory() as tmp:
         temp = Path(tmp)
-        for name in ("raw_rows.jsonl", "formula_registry.json"):
+        for name in ("raw_rows.jsonl", "policy_rows.jsonl", "formula_registry.json"):
             (temp / name).write_bytes((out / name).read_bytes())
         subprocess.run([sys.executable, str(Path(__file__).with_name("analyze_soundness_v2.py")), str(temp)], check=True)
         for name in ("analysis.json", "formula_evaluations.jsonl", "interpretation.md"):

@@ -61,6 +61,7 @@ def role_bool(item: dict, role: str) -> bool | None:
 def main() -> None:
     out = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("artifacts/soundness-v2")
     rows = [json.loads(x) for x in (out / "raw_rows.jsonl").read_text().splitlines() if x]
+    policies = [json.loads(x) for x in (out / "policy_rows.jsonl").read_text().splitlines() if x]
     registry = json.loads((out / "formula_registry.json").read_text())
     registry_ids = {x["formula_id"] for x in registry}
     evals: list[dict] = []
@@ -140,9 +141,28 @@ def main() -> None:
         coverage[formula["formula_id"]] = {"eligible_rows":eligibility[formula["formula_id"]], "exact_target_covered_rows":exact_coverage[formula["formula_id"]], "undercoverage_rows":eligibility[formula["formula_id"]]-exact_coverage[formula["formula_id"]], "evaluated_rows":len(items), "sound_rows":sum(role_bool(x,"sound") is True for x in sound_items), "unsound_rows":sum(role_bool(x,"sound") is False for x in sound_items), "sharpness_min_slack":min(slack) if slack else None, "sharpness_max_slack":max(slack) if slack else None}
     with (out/"formula_evaluations.jsonl").open("w") as f:
         for item in evals: f.write(json.dumps(item,sort_keys=True)+"\n")
-    analysis={"schema_version":"qp-soundness-analysis-v2","raw_row_count":len(rows),"formula_registry_entry_count":len(registry),"emitted_formula_entry_count":len(emitted),"formula_evaluation_value_schema":"long-form-value-v1","formula_coverage":coverage,"available_center_counts":dict(center_counts),"exact_lifecycle_status":dict(lifecycle_counts),"interpretation_boundary":"Candidate bounds are empirical diagnostics, not verified enclosures. Exact Q comparisons use either positive-beta Q sign; beta-vector errors remain unique-exact only. HKO remains stored-binary64 rational only."}
+    by_policy = {(p["target_polytope_id"], p["requested_relative_gap"], p["policy_id"]): p for p in policies}
+    comparisons = []
+    for current in (p for p in policies if p["policy_id"] == "current_production_minimasafe"):
+        key = (current["target_polytope_id"], current["requested_relative_gap"])
+        for exact_id in ("exact_every_f64_retained", "exact_every_supplied_sigma"):
+            exact = by_policy[key + (exact_id,)]
+            current_scalar = current["policy_f64_min_action"]
+            exact_scalar = None if exact["policy_min_action"] is None else float(rat(exact["policy_min_action"]))
+            scalar_difference = None if current_scalar is None or exact_scalar is None else current_scalar - exact_scalar
+            comparisons.append({
+                "target_polytope_id": key[0], "requested_relative_gap": key[1],
+                "current_policy_id": "current_production_minimasafe", "exact_policy_id": exact_id,
+                "current_scalar_f64": current_scalar, "exact_scalar_f64": exact_scalar,
+                "scalar_difference_f64": scalar_difference,
+                "scalar_matches_within_1e-12": None if scalar_difference is None else abs(scalar_difference) <= 1e-12,
+                "minimizer_active_words_match": set(map(tuple, current["policy_f64_minimizer_active_words"])) == set(map(tuple, exact["policy_minimizer_active_words"])),
+                "window_active_words_match": set(map(tuple, current["policy_f64_window_active_words"])) == set(map(tuple, exact["policy_window_active_words"])),
+                "comparison_scope": "same declared supplied stream and relative gap; active words are candidate identifiers, not physical orbit sets",
+            })
+    analysis={"schema_version":"qp-soundness-analysis-v2","raw_row_count":len(rows),"formula_registry_entry_count":len(registry),"emitted_formula_entry_count":len(emitted),"formula_evaluation_value_schema":"long-form-value-v1","formula_coverage":coverage,"available_center_counts":dict(center_counts),"exact_lifecycle_status":dict(lifecycle_counts),"production_minimasafe_comparisons":comparisons,"interpretation_boundary":"Candidate bounds are empirical diagnostics, not verified enclosures. Exact Q comparisons use either positive-beta Q sign; beta-vector errors remain unique-exact only. HKO remains stored-binary64 rational only. Production MinimaSafe comparisons are over each declared supplied stream only; active words are not physical-orbit sets."}
     (out/"analysis.json").write_text(json.dumps(analysis,indent=2,sort_keys=True)+"\n")
-    (out/"interpretation.md").write_text("# QP soundness v2 interpretation boundary\n\nFormula evaluations use the stable `long-form-value-v1` schema. Exact lifecycle separates inconsistent, no strict-positive beta, positive-beta/nonpositive-Q, and positive-beta/positive-Q-action outcomes. Only unique exact systems support vector beta-error comparisons.\n")
+    (out/"interpretation.md").write_text("# QP soundness v2 interpretation boundary\n\nFormula evaluations use the stable `long-form-value-v1` schema. Exact lifecycle separates inconsistent, no strict-positive beta, positive-beta/nonpositive-Q, and positive-beta/positive-Q-action outcomes. Only unique exact systems support vector beta-error comparisons. `current_production_minimasafe` is a direct production candidate-and-aggregator replay over each declared supplied stream. Its comparisons with exact retained and exact supplied-stream policies concern candidate active words, not physical-orbit sets or a complete HK family.\n")
 
 
 if __name__ == "__main__":

@@ -106,14 +106,23 @@ centre explicitly (current saddle/eigen accepted centre, unconditional SVD,
 projected critical and max-margin, local LU/QR, and one QR refinement), then
 compares only against the same-word stored-rational exact positive witness.
 The formula registry, derived formula observations, and policy rows are
-separate artifacts.  Policies distinguish the actual current production-retained
-f64 policy (positive production action and no added margin filter), a separately
-named strict-margin simulation, exact retained candidates, one-shot f64-anchored
+separate artifacts. Policies include `current_production_minimasafe`, which
+directly invokes the public production candidate solver and
+`aggregate_orbits_with_dual_vertices_exact(..., OrbitGuaranteeMode::MinimaSafe)`
+over each declared supplied stream. Its returned scalar, action intervals,
+admissibility, Q error bounds, errors, and timing are recorded directly; the
+production result does not expose its exact-resolution count. The separately
+named `unchecked_saddle_feasible_no_fallback_diagnostic` is only a raw-flag,
+no-fallback diagnostic, not a production policy. The remaining policies are a
+strict-margin simulation, exact retained candidates, one-shot f64-anchored
 selective windows, and exact supplied-stream replay. F64-only policies report
 only their own f64 scalar, minimizers, and window; their exact fields are
 unavailable. Exact policies record
 every attempted resolution separately from positive-Q accepts. A policy's
-active words are not physical-orbit sets.
+active words are not physical-orbit sets. The analysis compares the direct
+MinimaSafe scalar, minimizer words, and diagnostic windows against both exact
+retained and exact supplied-stream replays, always with the declared-stream
+scope and active-word caveat.
 
 The packet includes ordinary F5/F8 controls, a product tie, the pinned q4:p5
 stream, the four named HKO stress words, and the hypercube boundary word. HKO

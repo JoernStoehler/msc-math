@@ -22,6 +22,7 @@ use std::{
     time::Instant,
 };
 use symplectic::{
+    aggregate_orbits_with_dual_vertices_exact,
     algorithms::{
         facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega,
         hk2017::SimpleDirectedCyclesCanonical,
@@ -37,6 +38,7 @@ use symplectic::{
         saddle_point_solver::{solve_kkt_for_dual_vertices, KktOutcome},
         Verdict,
     },
+    solve_orbit_sigma_saddle_point, OrbitAdmissibility, OrbitGuaranteeMode,
 };
 
 const RUN_ID: &str = "qp-soundness-v2";
@@ -148,6 +150,38 @@ struct PolicyRow {
     policy_fallback_trigger: String,
     policy_fallback_result: String,
     policy_stage_timing_us: f64,
+    // These fields are populated only by `current_production_minimasafe`.
+    // They preserve the direct production aggregator output rather than
+    // reconstructing a purported production result from raw solver flags.
+    policy_production_call_status: Option<String>,
+    policy_production_call_errors: Option<Vec<String>>,
+    policy_production_returned_orbits: Option<Vec<ProductionOrbitRecord>>,
+    policy_production_min_action_lower: Option<f64>,
+    policy_production_min_action_upper: Option<f64>,
+    policy_production_exact_resolution_count: Option<usize>,
+    policy_production_exact_resolution_status: Option<String>,
+}
+
+#[derive(Serialize, Clone)]
+struct ProductionOrbitRecord {
+    sigma_active_reeb_word: Vec<usize>,
+    action_f64: f64,
+    action_lower_f64: f64,
+    action_upper_f64: f64,
+    q_f64: f64,
+    q_error_bound_f64: f64,
+    admissibility: String,
+}
+
+struct ProductionMinimaSafe {
+    candidate_count: usize,
+    status: String,
+    errors: Vec<String>,
+    returned_orbits: Vec<ProductionOrbitRecord>,
+    min_action: Option<f64>,
+    min_action_lower: Option<f64>,
+    min_action_upper: Option<f64>,
+    elapsed_us: f64,
 }
 
 #[derive(Serialize)]
@@ -928,7 +962,76 @@ fn saddle_action(row: &RawRow) -> Option<f64> {
         .find(|c| c.center_id == "saddle_eig_accepted")
         .and_then(|c| c.center_action_from_positive_q_f64)
 }
-fn policy_rows(rows: &[RawRow]) -> Vec<PolicyRow> {
+
+fn orbit_admissibility_name(admissibility: OrbitAdmissibility) -> String {
+    match admissibility {
+        OrbitAdmissibility::AdmissibleF64 => "admissible_f64",
+        OrbitAdmissibility::IndeterminateF64 => "indeterminate_f64",
+        OrbitAdmissibility::AdmissibleExact => "admissible_exact",
+    }
+    .into()
+}
+
+/// Invoke the public production candidate solver and production MinimaSafe
+/// aggregator over this v2 case's declared supplied stream.  `f64::MAX` keeps
+/// the returned stream untrimmed for the separately declared relative-window
+/// diagnostics; MinimaSafe itself still certifies only the minimum window.
+fn current_production_minimasafe(case: &Case) -> ProductionMinimaSafe {
+    let start = Instant::now();
+    let mut candidates = Vec::new();
+    let mut errors = Vec::new();
+    for sigma in &case.sigmas {
+        match solve_orbit_sigma_saddle_point(&case.dual_f64, sigma) {
+            Ok(orbit) => candidates.push(orbit),
+            Err(error) => errors.push(format!("{:?}: {:?}", sigma, error)),
+        }
+    }
+    let candidate_count = candidates.len();
+    let aggregate = aggregate_orbits_with_dual_vertices_exact(
+        &case.dual_exact,
+        candidates,
+        case.sigmas.len() as u64,
+        f64::MAX,
+        OrbitGuaranteeMode::MinimaSafe,
+    );
+    let elapsed_us = start.elapsed().as_secs_f64() * 1e6;
+    match aggregate {
+        Ok(result) => ProductionMinimaSafe {
+            candidate_count,
+            status: "ok".into(),
+            errors,
+            returned_orbits: result
+                .orbits
+                .into_iter()
+                .map(|orbit| ProductionOrbitRecord {
+                    sigma_active_reeb_word: orbit.sigma,
+                    action_f64: orbit.action,
+                    action_lower_f64: orbit.action_lower,
+                    action_upper_f64: orbit.action_upper,
+                    q_f64: orbit.q,
+                    q_error_bound_f64: orbit.q_error_bound,
+                    admissibility: orbit_admissibility_name(orbit.admissibility),
+                })
+                .collect(),
+            min_action: Some(result.min_action),
+            min_action_lower: Some(result.min_action_lower),
+            min_action_upper: Some(result.min_action_upper),
+            elapsed_us,
+        },
+        Err(error) => ProductionMinimaSafe {
+            candidate_count,
+            status: format!("aggregate_error:{error:?}"),
+            errors,
+            returned_orbits: vec![],
+            min_action: None,
+            min_action_lower: None,
+            min_action_upper: None,
+            elapsed_us,
+        },
+    }
+}
+
+fn policy_rows(rows: &[RawRow], cases: &[Case]) -> Vec<PolicyRow> {
     let mut by: BTreeMap<&str, Vec<&RawRow>> = BTreeMap::new();
     for r in rows {
         by.entry(&r.target_polytope_id).or_default().push(r);
@@ -952,8 +1055,8 @@ fn policy_rows(rows: &[RawRow]) -> Vec<PolicyRow> {
             .collect();
         for (policy_id, description, f64_set) in [
             (
-                "actual_current_f64_policy",
-                "production-retained saddle rows with a positive production action; no extra margin filter",
+                "unchecked_saddle_feasible_no_fallback_diagnostic",
+                "unchecked diagnostic: saddle-feasible rows with a positive action, reconstructed from raw flags; this is not a production aggregate and runs no fallback",
                 production_retained.as_slice(),
             ),
             (
@@ -1009,8 +1112,75 @@ fn policy_rows(rows: &[RawRow]) -> Vec<PolicyRow> {
                 policy_fallback_result:
                     "f64-only heuristic result; exact fields intentionally unavailable".into(),
                 policy_stage_timing_us: start.elapsed().as_secs_f64() * 1e6,
+                policy_production_call_status: None,
+                policy_production_call_errors: None,
+                policy_production_returned_orbits: None,
+                policy_production_min_action_lower: None,
+                policy_production_min_action_upper: None,
+                policy_production_exact_resolution_count: None,
+                policy_production_exact_resolution_status: None,
             });
         }
+        }
+        let case_config = cases
+            .iter()
+            .find(|config| config.case_id == case)
+            .expect("raw case must have its declared source configuration");
+        let production = current_production_minimasafe(case_config);
+        for gap in RELATIVE_WINDOWS {
+            let f64_cutoff = production.min_action.map(|min| min * (1.0 + gap));
+            let f64_minimizers = production
+                .min_action
+                .map(|min| {
+                    production
+                        .returned_orbits
+                        .iter()
+                        .filter(|orbit| orbit.action_f64 == min)
+                        .map(|orbit| orbit.sigma_active_reeb_word.clone())
+                        .collect()
+                })
+                .unwrap_or_default();
+            let f64_window = f64_cutoff
+                .map(|cutoff| {
+                    production
+                        .returned_orbits
+                        .iter()
+                        .filter(|orbit| orbit.action_f64 <= cutoff)
+                        .map(|orbit| orbit.sigma_active_reeb_word.clone())
+                        .collect()
+                })
+                .unwrap_or_default();
+            out.push(PolicyRow {
+                schema_version: POLICY_SCHEMA.into(),
+                target_polytope_id: case.into(),
+                policy_id: "current_production_minimasafe".into(),
+                policy_description: "direct public production candidate solves followed by aggregate_orbits_with_dual_vertices_exact(..., OrbitGuaranteeMode::MinimaSafe) on this declared supplied stream; f64::MAX aggregate gap retains the returned stream for separately declared relative-window diagnostics".into(),
+                exactness_scope: "production MinimaSafe guarantee over the declared supplied stream only; not a complete HK family or physical-orbit claim".into(),
+                requested_window_kind: "relative_to_returned_production_minimasafe_scalar_over_returned_orbits".into(),
+                requested_relative_gap: gap,
+                supplied_stream_count: rs.len(),
+                policy_candidate_count: production.candidate_count,
+                policy_exact_resolution_count: 0,
+                policy_exact_accept_count: 0,
+                policy_min_action: None,
+                policy_minimizer_active_words: vec![],
+                policy_window_active_words: vec![],
+                policy_window_cutoff: None,
+                policy_f64_min_action: production.min_action,
+                policy_f64_minimizer_active_words: f64_minimizers,
+                policy_f64_window_active_words: f64_window,
+                policy_f64_window_cutoff: f64_cutoff,
+                policy_fallback_trigger: "production MinimaSafe resolves indeterminate candidates intersecting its minimum-action interval; exact-resolution count is not exposed by OrbitSearchResult".into(),
+                policy_fallback_result: "direct production aggregator output recorded below; per-orbit action intervals, q_error_bound, and post-aggregation admissibility are source truth for this policy".into(),
+                policy_stage_timing_us: production.elapsed_us,
+                policy_production_call_status: Some(production.status.clone()),
+                policy_production_call_errors: Some(production.errors.clone()),
+                policy_production_returned_orbits: Some(production.returned_orbits.clone()),
+                policy_production_min_action_lower: production.min_action_lower,
+                policy_production_min_action_upper: production.min_action_upper,
+                policy_production_exact_resolution_count: None,
+                policy_production_exact_resolution_status: Some("unavailable: OrbitSearchResult does not expose MinimaSafe exact-resolution count".into()),
+            });
         }
         for (id, desc, scope, set, trigger) in [
             (
@@ -1084,6 +1254,13 @@ fn policy_rows(rows: &[RawRow]) -> Vec<PolicyRow> {
                         set.len() - accepted.len()
                     ),
                     policy_stage_timing_us: start.elapsed().as_secs_f64() * 1e6,
+                    policy_production_call_status: None,
+                    policy_production_call_errors: None,
+                    policy_production_returned_orbits: None,
+                    policy_production_min_action_lower: None,
+                    policy_production_min_action_upper: None,
+                    policy_production_exact_resolution_count: None,
+                    policy_production_exact_resolution_status: None,
                 });
             }
         }
@@ -1115,7 +1292,7 @@ fn policy_rows(rows: &[RawRow]) -> Vec<PolicyRow> {
             let cutoff = min
                 .as_ref()
                 .map(|m| m.clone() * (BigRational::one() + BigRational::from_float(gap).unwrap()));
-            out.push(PolicyRow{schema_version:POLICY_SCHEMA.into(),target_polytope_id:case.into(),policy_id:"selective_fallback_f64_anchored_window".into(),policy_description:"one-shot anchored rule: retain saddle candidates whose f64 action is at most f64 minimum times (1+relative gap), then exact-resolve that selected set; no iterative expansion".into(),exactness_scope:"selected f64-anchored window only".into(),requested_window_kind:"relative_f64_anchor_then_exact_report".into(),requested_relative_gap:gap,supplied_stream_count:rs.len(),policy_candidate_count:selected.len(),policy_exact_resolution_count:selected.len(),policy_exact_accept_count:accepted.len(),policy_min_action:min.as_ref().map(rat),policy_minimizer_active_words:min.as_ref().map(|m|accepted.iter().filter(|r|exact_action(r).as_ref()==Some(m)).map(|r|r.sigma_active_reeb_word.clone()).collect()).unwrap_or_default(),policy_window_active_words:cutoff.as_ref().map(|c|accepted.iter().filter(|r|exact_action(r).as_ref().is_some_and(|a|a<=c)).map(|r|r.sigma_active_reeb_word.clone()).collect()).unwrap_or_default(),policy_window_cutoff:cutoff.as_ref().map(rat),policy_f64_min_action:f64_anchor,policy_f64_minimizer_active_words:f64_anchor.map(|m|f64_retained.iter().filter(|r|saddle_action(r).is_some_and(|a|a==m)).map(|r|r.sigma_active_reeb_word.clone()).collect()).unwrap_or_default(),policy_f64_window_active_words:selected.iter().map(|r|r.sigma_active_reeb_word.clone()).collect(),policy_f64_window_cutoff:f64_anchor.map(|a|a*(1.0+gap)),policy_fallback_trigger:"f64 saddle action overlaps one-shot anchored relative window".into(),policy_fallback_result:format!("{} exact positive-Q accepts; {} exact rejects or nonpositive-Q outcomes",accepted.len(),selected.len()-accepted.len()),policy_stage_timing_us:start.elapsed().as_secs_f64()*1e6});
+            out.push(PolicyRow{schema_version:POLICY_SCHEMA.into(),target_polytope_id:case.into(),policy_id:"selective_fallback_f64_anchored_window".into(),policy_description:"one-shot anchored rule: retain saddle candidates whose f64 action is at most f64 minimum times (1+relative gap), then exact-resolve that selected set; no iterative expansion".into(),exactness_scope:"selected f64-anchored window only".into(),requested_window_kind:"relative_f64_anchor_then_exact_report".into(),requested_relative_gap:gap,supplied_stream_count:rs.len(),policy_candidate_count:selected.len(),policy_exact_resolution_count:selected.len(),policy_exact_accept_count:accepted.len(),policy_min_action:min.as_ref().map(rat),policy_minimizer_active_words:min.as_ref().map(|m|accepted.iter().filter(|r|exact_action(r).as_ref()==Some(m)).map(|r|r.sigma_active_reeb_word.clone()).collect()).unwrap_or_default(),policy_window_active_words:cutoff.as_ref().map(|c|accepted.iter().filter(|r|exact_action(r).as_ref().is_some_and(|a|a<=c)).map(|r|r.sigma_active_reeb_word.clone()).collect()).unwrap_or_default(),policy_window_cutoff:cutoff.as_ref().map(rat),policy_f64_min_action:f64_anchor,policy_f64_minimizer_active_words:f64_anchor.map(|m|f64_retained.iter().filter(|r|saddle_action(r).is_some_and(|a|a==m)).map(|r|r.sigma_active_reeb_word.clone()).collect()).unwrap_or_default(),policy_f64_window_active_words:selected.iter().map(|r|r.sigma_active_reeb_word.clone()).collect(),policy_f64_window_cutoff:f64_anchor.map(|a|a*(1.0+gap)),policy_fallback_trigger:"f64 saddle action overlaps one-shot anchored relative window".into(),policy_fallback_result:format!("{} exact positive-Q accepts; {} exact rejects or nonpositive-Q outcomes",accepted.len(),selected.len()-accepted.len()),policy_stage_timing_us:start.elapsed().as_secs_f64()*1e6,policy_production_call_status:None,policy_production_call_errors:None,policy_production_returned_orbits:None,policy_production_min_action_lower:None,policy_production_min_action_upper:None,policy_production_exact_resolution_count:None,policy_production_exact_resolution_status:None});
         }
     }
     out
@@ -1129,12 +1306,13 @@ fn main() {
     create_dir_all(&out).expect("create output");
     let start = Instant::now();
     let mut raw = Vec::new();
-    for case in cases() {
+    let cases = cases();
+    for case in &cases {
         for sigma in &case.sigmas {
-            raw.push(observe(&case, sigma));
+            raw.push(observe(case, sigma));
         }
     }
-    let policies = policy_rows(&raw);
+    let policies = policy_rows(&raw, &cases);
     let mut w = BufWriter::new(File::create(out.join("raw_rows.jsonl")).expect("raw"));
     for row in &raw {
         serde_json::to_writer(&mut w, row).expect("raw json");
