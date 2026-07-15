@@ -29,6 +29,27 @@ def test_packet_controls_and_cross_f() -> None:
     axis=cases["adversarial_narrow_feature"]["direct_sampled"]["axis_only"]["linf"]
     fine=cases["adversarial_narrow_feature"]["direct_sampled"]["primitive_level_3"]["linf"]
     assert axis <= .51*fine and fine>1e-4
+    translated_scaled=cases["translation_positive_scale"]["direct_sampled"]["primitive_level_3"]
+    assert translated_scaled["linf"]<1e-12 and translated_scaled["l2"]<1e-12
+
+def test_staged_dependency_rejects_clean_guard() -> None:
+    with tempfile.TemporaryDirectory() as directory:
+        repo=Path(directory)
+        subprocess.run(["git","init","-q"],cwd=repo,check=True)
+        subprocess.run(["git","config","user.email","test@example.invalid"],cwd=repo,check=True)
+        subprocess.run(["git","config","user.name","Test"],cwd=repo,check=True)
+        dependency=repo/"tracked-dependency.txt"; dependency.write_text("base\n")
+        subprocess.run(["git","add","tracked-dependency.txt"],cwd=repo,check=True)
+        subprocess.run(["git","commit","-qm","base"],cwd=repo,check=True)
+        dependency.write_text("staged edit\n")
+        subprocess.run(["git","add","tracked-dependency.txt"],cwd=repo,check=True)
+        state=mod.git_state(repo)
+        assert state["revision"] != "unknown" and state["tree"] != "unknown"
+        assert state["tracked_clean_before_generation"] is False
+        assert state["tracked_status_porcelain"] == ["M  tracked-dependency.txt"]
+        try: mod.require_tracked_clean(state)
+        except RuntimeError as exc: assert "not clean" in str(exc)
+        else: raise AssertionError("--require-tracked-clean precondition accepted a staged tracked edit")
 
 def test_cli_replay() -> None:
     with tempfile.TemporaryDirectory() as first, tempfile.TemporaryDirectory() as second:
@@ -41,4 +62,4 @@ def test_cli_replay() -> None:
         assert a==b,"only timing observations may vary between deterministic replays"
 
 if __name__=="__main__":
-    test_reconstruction_boundary(); test_packet_controls_and_cross_f(); test_cli_replay(); print("variable-facet body-distance tests: PASS")
+    test_reconstruction_boundary(); test_packet_controls_and_cross_f(); test_staged_dependency_rejects_clean_guard(); test_cli_replay(); print("variable-facet body-distance tests: PASS")
