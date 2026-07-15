@@ -5,5 +5,5 @@
   "numpy_version": "1.26.4",
   "python_version": "3.12.3",
   "schema": "coverage-directed-novelty-selection-observation-v1",
-  "selection_cost_ms": 5188.22966100015
+  "selection_cost_ms": 7693.516454999553
 }

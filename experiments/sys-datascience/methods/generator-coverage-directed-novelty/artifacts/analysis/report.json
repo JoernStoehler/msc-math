@@ -1285,6 +1285,80 @@
     "selection": "lowest deterministic witness IDs separately within each side-count train panel"
   },
   "generation_cost_artifact": "generation-cost.tsv",
+  "generation_status": [
+    {
+      "accepted": 96,
+      "exhausted": 0,
+      "generation_ms": 0.27472399999999997,
+      "generation_ms_per_accepted": 0.002861708333333333,
+      "pool": "train",
+      "population": "__full_pool__",
+      "requested": 96,
+      "side_count": 4,
+      "source_dirty": false,
+      "source_revision": "f1a16ab7dcf21a19a969f2c3a672cdfd4540ad57"
+    },
+    {
+      "accepted": 96,
+      "exhausted": 0,
+      "generation_ms": 0.15972999999999998,
+      "generation_ms_per_accepted": 0.0016638541666666666,
+      "pool": "holdout",
+      "population": "__full_pool__",
+      "requested": 96,
+      "side_count": 4,
+      "source_dirty": false,
+      "source_revision": "f1a16ab7dcf21a19a969f2c3a672cdfd4540ad57"
+    },
+    {
+      "accepted": 96,
+      "exhausted": 0,
+      "generation_ms": 0.19580100000000006,
+      "generation_ms_per_accepted": 0.0020395937500000006,
+      "pool": "train",
+      "population": "__full_pool__",
+      "requested": 96,
+      "side_count": 6,
+      "source_dirty": false,
+      "source_revision": "a50e1e930e21541506df6228aaed16355d830372"
+    },
+    {
+      "accepted": 96,
+      "exhausted": 0,
+      "generation_ms": 0.15427899999999997,
+      "generation_ms_per_accepted": 0.0016070729166666664,
+      "pool": "holdout",
+      "population": "__full_pool__",
+      "requested": 96,
+      "side_count": 6,
+      "source_dirty": false,
+      "source_revision": "a50e1e930e21541506df6228aaed16355d830372"
+    },
+    {
+      "accepted": 96,
+      "exhausted": 0,
+      "generation_ms": 0.39847,
+      "generation_ms_per_accepted": 0.004150729166666666,
+      "pool": "train",
+      "population": "__full_pool__",
+      "requested": 96,
+      "side_count": 8,
+      "source_dirty": false,
+      "source_revision": "f1a16ab7dcf21a19a969f2c3a672cdfd4540ad57"
+    },
+    {
+      "accepted": 96,
+      "exhausted": 0,
+      "generation_ms": 0.379547,
+      "generation_ms_per_accepted": 0.003953614583333333,
+      "pool": "holdout",
+      "population": "__full_pool__",
+      "requested": 96,
+      "side_count": 8,
+      "source_dirty": false,
+      "source_revision": "f1a16ab7dcf21a19a969f2c3a672cdfd4540ad57"
+    }
+  ],
   "input_hashes": {
     "artifacts/holdout-side4/factor-only-report.json": "408a5d78e7459e4094398987535635dfc1a68ec2301e5b4562e1fdf7b146dc9c",
     "artifacts/holdout-side4/factor-shapes.jsonl": "09925af9bed28ed2a6559562affbc0a229d5903cbfae8e70db82294faa5f702c",
@@ -2188,14 +2262,14 @@
     8
   ],
   "source": {
-    "analyzer_sha256": "e8cac6102fe37a60c9d6999346238c3c3127eace2b02f3fbbfe5241431666940",
+    "analyzer_sha256": "056c54109d76a79cf05af6aba0c52d539b908d2ea59a67ed41b039434a7698c3",
     "producer_revision": "f1a16ab7dcf21a19a969f2c3a672cdfd4540ad57",
     "producer_source_blobs": {
       "Cargo.lock": "8a51ae91187fdbc44c1539ddebf598feedd27b91",
       "experiments/sys-datascience/methods/generator-zoo-smoke/main.rs": "ea59cb1b3d123e630fdc034a95f4a2a43812b0a6",
       "experiments/sys-landscape/Cargo.toml": "a8efcf2366bcc08c5317d33926f44579727fbf31"
     },
-    "revision": "48f77c3a7610e1ab32686b7ec0ffa3b2f8a102cd",
+    "revision": "150e3b678cf08d93ef474e856570e752e56fb924",
     "tracked_clean_for_analyzer": true
   },
   "stratum_findings": [
