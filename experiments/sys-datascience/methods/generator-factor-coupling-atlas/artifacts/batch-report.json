@@ -1,0 +1,160 @@
+{
+  "schema": "generator-factor-coupling-atlas-report-v1",
+  "law_version": "generator-factor-coupling-atlas-v1",
+  "source_revision": "75b7ef960652d27b25cdbc9c9694f17cdadd4cd4",
+  "source_tree": "228c176cde6c81a435833287be3475b7118e70d9",
+  "source_dirty": false,
+  "source_dirty_scope": "tracked git status captured before output creation",
+  "command": "target/release/sys-datascience-generator-factor-coupling-atlas --out-dir experiments/sys-datascience/methods/generator-factor-coupling-atlas/artifacts --seed 20260715 --attempts 64 --rows-per-arm 1",
+  "seed": 20260715,
+  "seeds": [
+    20260715,
+    20260716,
+    20260717
+  ],
+  "rho_values": [
+    0.0,
+    0.5,
+    0.9,
+    1.0
+  ],
+  "side_counts": [
+    4,
+    6
+  ],
+  "rotation_populations": [
+    "uniform",
+    "zero",
+    "pi/4"
+  ],
+  "rows": 72,
+  "requested_rows": 72,
+  "status_counts": {
+    "survived": 72
+  },
+  "attempts_total": 346,
+  "accepted_rows": 72,
+  "exhausted_rows": 0,
+  "mean_generation_ms": 0.0038756944444444464,
+  "mean_validation_ms": 381.33147015277774,
+  "marginal_control": {
+    "retained_rows": 72,
+    "primitive_values": 144,
+    "q_mean": 0.49209992954269616,
+    "p_mean": 0.49115032306115175,
+    "q_min": 0.26677464519374255,
+    "q_max": 0.6841469133459054,
+    "p_min": 0.26677464519374255,
+    "p_max": 0.6549229567014245,
+    "note": "finite retained-row diagnostic only; pre-conditioning uniformity is by construction, post-conditioning equality is not a theorem"
+  },
+  "dependence_control": [
+    {
+      "rho": 0.0,
+      "rotation_population": "pi/4",
+      "pairs": 6,
+      "angle_corr_mean": -0.296185357967547,
+      "height_corr_mean": 0.049388285265404196,
+      "quotient_distance_mean": 0.43594685014942636
+    },
+    {
+      "rho": 0.5,
+      "rotation_population": "pi/4",
+      "pairs": 6,
+      "angle_corr_mean": 0.31030481995088754,
+      "height_corr_mean": 0.23102132965100045,
+      "quotient_distance_mean": 0.3803378365543861
+    },
+    {
+      "rho": 0.9,
+      "rotation_population": "pi/4",
+      "pairs": 6,
+      "angle_corr_mean": 0.9394546570271847,
+      "height_corr_mean": 0.8738671579856471,
+      "quotient_distance_mean": 0.39190238728353616
+    },
+    {
+      "rho": 1.0,
+      "rotation_population": "pi/4",
+      "pairs": 6,
+      "angle_corr_mean": 1.0,
+      "height_corr_mean": 1.0,
+      "quotient_distance_mean": 8.10809500847581e-16
+    },
+    {
+      "rho": 0.0,
+      "rotation_population": "uniform",
+      "pairs": 6,
+      "angle_corr_mean": 0.057018382504107616,
+      "height_corr_mean": -0.06767843147587883,
+      "quotient_distance_mean": 0.44096803876869606
+    },
+    {
+      "rho": 0.5,
+      "rotation_population": "uniform",
+      "pairs": 6,
+      "angle_corr_mean": 0.21850713556175574,
+      "height_corr_mean": 0.40396426232855154,
+      "quotient_distance_mean": 0.3384223178135795
+    },
+    {
+      "rho": 0.9,
+      "rotation_population": "uniform",
+      "pairs": 6,
+      "angle_corr_mean": 0.8990040824168811,
+      "height_corr_mean": 0.8064305249584393,
+      "quotient_distance_mean": 0.458938049196056
+    },
+    {
+      "rho": 1.0,
+      "rotation_population": "uniform",
+      "pairs": 6,
+      "angle_corr_mean": 1.0,
+      "height_corr_mean": 1.0,
+      "quotient_distance_mean": 5.679787634264934e-16
+    },
+    {
+      "rho": 0.0,
+      "rotation_population": "zero",
+      "pairs": 6,
+      "angle_corr_mean": 0.2284462950504169,
+      "height_corr_mean": -0.3327327116067075,
+      "quotient_distance_mean": 0.3589183269586171
+    },
+    {
+      "rho": 0.5,
+      "rotation_population": "zero",
+      "pairs": 6,
+      "angle_corr_mean": 0.5725849863513924,
+      "height_corr_mean": 0.5726621241646822,
+      "quotient_distance_mean": 0.3634479623894779
+    },
+    {
+      "rho": 0.9,
+      "rotation_population": "zero",
+      "pairs": 6,
+      "angle_corr_mean": 0.9224253947577328,
+      "height_corr_mean": 0.8627137841872315,
+      "quotient_distance_mean": 0.42614905431301336
+    },
+    {
+      "rho": 1.0,
+      "rotation_population": "zero",
+      "pairs": 6,
+      "angle_corr_mean": 1.0,
+      "height_corr_mean": 1.0,
+      "quotient_distance_mean": 0.0
+    }
+  ],
+  "endpoint_control": {
+    "rho_one_shared_primitives": true,
+    "rho_one_max_quotient_distance": 4.595960880913583e-16,
+    "corrupted_coupling_rejected": true,
+    "exact_product_incidence_rows": 72,
+    "note": "endpoint and corruption controls are semantic witnesses, not population tests"
+  },
+  "copula_formula": "For each angle and height primitive independently: Z_Q,E ~ iid N(0,1), Z_P = rho Z_Q + sqrt(1-rho^2) E, U_Q=Phi(Z_Q), U_P=Phi(Z_P); rho=1 shares Z exactly.",
+  "primitive_marginal_contract": "Before selection, each factor has independent U(0,1) angle primitives and independent U(0,1) height primitives; h=0.8+0.4U and angle=2piU plus a global rotation.",
+  "conditioning_contract": "A candidate is retained only after both factor H-reconstructions have all prescribed active facets and exact product incidence/positive volume validates. Gaussian-copula marginal preservation is theorem-by-construction before this selection; conditioning may alter the retained marginal, so only finite diagnostics are reported.",
+  "interpretation_boundary": "Target-free construction and geometry evidence only: no sys, exchangeability, rho monotonicity, best-rho choice, or transfer claim."
+}
