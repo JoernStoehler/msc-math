@@ -44,6 +44,8 @@ struct Generated {
     active_input_inequalities: usize,
     active_source_vertices: usize,
     lineage: String,
+    directed_overlap_a: Option<f64>,
+    directed_overlap_b: Option<f64>,
 }
 
 #[derive(Serialize)]
@@ -479,6 +481,10 @@ fn area_intersection(a: &Factor, b: &Factor) -> Option<f64> {
     intersection_raw(a, b).map(|v| shoelace(&v).abs())
 }
 
+fn overlap_ratio(output: &Factor, source: &Factor) -> Option<f64> {
+    area_intersection(output, source).map(|area| area / shoelace(&source.vertices).abs())
+}
+
 fn operation(
     operation: &str,
     n: usize,
@@ -500,70 +506,113 @@ fn operation(
     } else {
         None
     };
-    let (output, active, active_vertices, lineage, sources) = match operation {
-        "baseline" => (
-            a.clone(),
-            0,
-            n,
-            "current-law fresh baseline".to_string(),
-            vec![a.clone()],
-        ),
-        "minkowski-sum" => (
-            minkowski_sum(&a, b.as_ref()?)?,
-            0,
-            0,
-            "independent current-law A + independent current-law B".to_string(),
-            vec![a.clone(), b.clone()?],
-        ),
-        "intersection" => {
-            let b = b?;
-            let raw = intersection_raw(&a, &b)?;
-            let out = centered_normalized(raw)?;
-            let active = active_inequalities(&out, &a) + active_inequalities(&out, &b);
-            (
-                out,
-                active,
+    let (output, active, active_vertices, lineage, sources, directed_overlap_a, directed_overlap_b) =
+        match operation {
+            "baseline" => (
+                a.clone(),
                 0,
-                "independent rotated current-law A ∩ B; retain active inequalities".to_string(),
-                vec![a.clone(), b],
-            )
-        }
-        "difference-body" => {
-            let neg: Vec<_> = a.vertices.iter().map(|p| -*p).collect();
-            let b = centered_normalized(neg)?;
-            (
-                minkowski_sum(&a, &b)?,
-                0,
-                0,
-                "deterministic pushforward K + (-K)".to_string(),
+                n,
+                "current-law fresh baseline".to_string(),
                 vec![a.clone()],
-            )
-        }
-        "convex-hull-union" => {
-            let b = b?;
-            let (out, active) = hull_union(&a, &b)?;
-            (
+                Some(1.0),
+                None,
+            ),
+            "minkowski-sum" => {
+                let b = b.clone()?;
+                let raw = factor_from_vertices(minkowski_raw(&a, &b))?;
+                let output = centered_normalized(raw.vertices.clone())?;
+                (
+                    output,
+                    0,
+                    0,
+                    "independent current-law A + independent current-law B".to_string(),
+                    vec![a.clone(), b.clone()],
+                    overlap_ratio(&raw, &a),
+                    overlap_ratio(&raw, &b),
+                )
+            }
+            "intersection" => {
+                let b = b?;
+                let raw = intersection_raw(&a, &b)?;
+                let raw_factor = factor_from_vertices(raw)?;
+                let active =
+                    active_inequalities(&raw_factor, &a) + active_inequalities(&raw_factor, &b);
+                let overlap_a = overlap_ratio(&raw_factor, &a);
+                let overlap_b = overlap_ratio(&raw_factor, &b);
+                let out = centered_normalized(raw_factor.vertices.clone())?;
+                (
+                    out,
+                    active,
+                    0,
+                    "independent rotated current-law A ∩ B; retain active inequalities".to_string(),
+                    vec![a.clone(), b],
+                    overlap_a,
+                    overlap_b,
+                )
+            }
+            "difference-body" => {
+                let neg: Vec<_> = a.vertices.iter().map(|p| -*p).collect();
+                let b = centered_normalized(neg)?;
+                let raw = factor_from_vertices(minkowski_raw(&a, &b))?;
+                let output = centered_normalized(raw.vertices.clone())?;
+                (
+                    output,
+                    0,
+                    0,
+                    "deterministic pushforward K + (-K)".to_string(),
+                    vec![a.clone()],
+                    overlap_ratio(&raw, &a),
+                    None,
+                )
+            }
+            "convex-hull-union" => {
+                let b = b?;
+                let raw =
+                    factor_from_vertices(a.vertices.iter().chain(&b.vertices).copied().collect())?;
+                let active = a
+                    .vertices
+                    .iter()
+                    .chain(&b.vertices)
+                    .filter(|p| point_on_boundary(**p, &raw))
+                    .count();
+                let overlap_a = overlap_ratio(&raw, &a);
+                let overlap_b = overlap_ratio(&raw, &b);
+                let out = centered_normalized(raw.vertices.clone())?;
+                (
+                    out,
+                    0,
+                    active,
+                    "independent rotated current-law hull(A ∪ B)".to_string(),
+                    vec![a.clone(), b],
+                    overlap_a,
+                    overlap_b,
+                )
+            }
+            "minkowski-symmetrization" => {
+                let theta = ra.gen::<f64>() * PI;
+                let reflected = reflected(&a, theta)?;
+                let raw = factor_from_vertices(minkowski_raw(&a, &reflected))?;
+                let out = centered_normalized(raw.vertices.clone())?;
+                (
                 out,
                 0,
-                active,
-                "independent rotated current-law hull(A ∪ B)".to_string(),
-                vec![a.clone(), b],
+                0,
+                "deterministic pushforward (K + reflection_u K)/2; classical Minkowski symmetrization".to_string(),
+                vec![a.clone()],
+                overlap_ratio(&raw, &a),
+                None,
             )
-        }
-        "minkowski-symmetrization" => {
-            let theta = ra.gen::<f64>() * PI;
-            let reflected = reflected(&a, theta)?;
-            let out = minkowski_sum(&a, &reflected)?;
-            (out,0,0,"deterministic pushforward (K + reflection_u K)/2; classical Minkowski symmetrization".to_string(), vec![a.clone()])
-        }
-        _ => return None,
-    };
+            }
+            _ => return None,
+        };
     Some(Generated {
         output,
         sources,
         active_input_inequalities: active,
         active_source_vertices: active_vertices,
         lineage,
+        directed_overlap_a,
+        directed_overlap_b,
     })
 }
 
@@ -606,12 +655,6 @@ fn row_for(
     let output = &generated.output;
     let area = shoelace(&output.vertices).abs();
     let sources = &generated.sources;
-    let overlap_a = sources
-        .first()
-        .and_then(|a| area_intersection(output, a).map(|x| x / shoelace(&a.vertices).abs()));
-    let overlap_b = sources
-        .get(1)
-        .and_then(|b| area_intersection(output, b).map(|x| x / shoelace(&b.vertices).abs()));
     let law_kind = if matches!(
         operation_name,
         "minkowski-sum" | "intersection" | "convex-hull-union"
@@ -649,8 +692,8 @@ fn row_for(
         area: Some(area),
         perimeter: Some(perimeter(output)),
         covariance_anisotropy: covariance_anisotropy(output),
-        directed_overlap_a: overlap_a,
-        directed_overlap_b: overlap_b,
+        directed_overlap_a: generated.directed_overlap_a,
+        directed_overlap_b: generated.directed_overlap_b,
     }
 }
 
