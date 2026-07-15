@@ -32,6 +32,8 @@ cargo run --release --manifest-path experiments/sys-landscape/Cargo.toml \
 cargo run --release --manifest-path experiments/sys-landscape/Cargo.toml \
   --bin sys-datascience-alternative-source-transfer -- validate OUT
 python3 experiments/sys-datascience/methods/alternative-source-transfer/validate_packet.py OUT --validate-only
+cargo test --locked --manifest-path \
+  experiments/sys-datascience/methods/alternative-source-transfer/Cargo.toml
 ```
 
 `validate_packet.py` checks immutable SHA-256 identity, exact JSON field
@@ -46,14 +48,20 @@ The checked target identity enforces `capacity > 0`, `sys >= 0`, and
 
 ## Evidence boundary
 
-No command in this method computes capacity, `sys`, bounce labels, or target
-outputs. A clean manifest is a pre-target implementation handoff, not target
-authorization or evidence of transfer. Later results may support only the
-finite, equal-bucket-weighted rho/control and ridge/control estimands on this
-single fresh area-normalized factorial-both source. They do not establish a
-paired support-height effect, mechanism, population stability, or transfer to
-other buckets/laws. Any `sys > 1` row requires independent geometry/capacity
-verification and the portfolio owner's decision.
+The `produce`, `features`, `select`, and `validate` commands above do not
+compute capacity, `sys`, bounce labels, or target outputs. `analyze.py` only
+reads a complete frozen target artifact and never calls capacity. Before
+exposure, a clean manifest was an implementation handoff rather than target
+authorization or transfer evidence. The historical evaluator recorded below
+is the sole target-producing command in this packet; its accepted output is
+frozen and must not be rerun over the preserved bytes.
+
+The accepted result supports only the finite, equal-bucket-weighted
+rho/control and ridge/control estimands on this single fresh area-normalized
+factorial-both source. It does not establish a paired support-height effect,
+mechanism, population stability, or transfer to other buckets/laws. Any future
+`sys > 1` row would require independent geometry/capacity verification and a
+new portfolio decision.
 
 ## Narrow provenance
 
