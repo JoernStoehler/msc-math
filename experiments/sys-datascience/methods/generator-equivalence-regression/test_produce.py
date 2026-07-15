@@ -35,6 +35,8 @@ class EquivalenceMatrixTests(unittest.TestCase):
         row = next(row for row in produce.rows() if row["row_id"] == "antiunitary-antisymplectic-endpoint")
         self.assertIn("proof_pending", row["proof_status"])
         self.assertIn("do not collapse", row["collapse_scope"])
+        self.assertEqual(row["expected"]["signed_symplectic_features"], "nonzero")
+        self.assertEqual(row["expected"]["absolute_symplectic_features"], "zero")
 
     def test_payload_generation_is_byte_deterministic(self):
         self.assertEqual(produce.artifact_payloads(), produce.artifact_payloads())

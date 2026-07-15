@@ -5,8 +5,9 @@ of representation, a component marginal, or a proved orbit/gauge move as new
 geometric coverage. Its authoritative compact output is
 `artifacts/matrix.json`; `matrix.tsv` is the copy-edit/review view. Every row
 states its comparison level, conditioning, transformation, expected outcome in
-all declared views, proof/source status, arithmetic boundary, executable
-control, and allocation-time collapse rule.
+all declared views (including separate signed and absolute symplectic-feature
+views), proof/source status, arithmetic boundary, machine-readable executable
+control status, and allocation-time collapse rule.
 
 The crucial law boundary is narrow. Sorted IID uniform angles and
 Dirichlet-(1,...,1) cyclic gaps agree as an angle proposal after accounting for

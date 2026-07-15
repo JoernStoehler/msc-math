@@ -27,7 +27,8 @@ VIEWS = (
     "raw_geometry_after_transform",
     "combinatorics",
     "euclidean_features",
-    "symplectic_features",
+    "signed_symplectic_features",
+    "absolute_symplectic_features",
     "normalized_product_features",
     "matrix_identity",
 )
@@ -174,7 +175,7 @@ def rows():
             "level": "component_marginal",
             "hypotheses_conditioning": "n>=3; compare the angle proposal only; impose the same angle-only boundedness condition max cyclic gap<pi if conditioning; do not include support-dependent irredundancy/acceptance",
             "transformation": "sort cyclically, quotient/add the common rotation, and convert consecutive differences to gaps",
-            "expected": expected(law_parameters=ZERO, raw_geometry_after_transform=ZERO, combinatorics=NA, euclidean_features=NA, symplectic_features=NA, normalized_product_features=NA, matrix_identity=NA),
+            "expected": expected(law_parameters=ZERO, raw_geometry_after_transform=ZERO, combinatorics=NA, euclidean_features=NA, signed_symplectic_features=NA, absolute_symplectic_features=NA, normalized_product_features=NA, matrix_identity=NA),
             "proof_status": "proved_standard_order_statistics_with_local_bijection_control",
             "proof_source": [f"{alt}/main.rs: random_angles and dirichlet", f"{alt}/README.md: boundedness and acceptance boundary"],
             "arithmetic": "exact rational simplex/rotation witness; probability identity is analytic",
@@ -187,7 +188,7 @@ def rows():
             "level": "not_equivalent",
             "hypotheses_conditioning": "baseline supports are IID Uniform[0.8,1.2); Dirichlet arm supports equal 1; each arm then applies its own all-facets-active and area-normalization acceptance",
             "transformation": "angle-marginal coupling from the previous row; no transformation identifies the support marks or support-dependent accepted full laws",
-            "expected": expected(law_parameters=NONZERO, raw_geometry_after_transform=NONZERO, combinatorics=ZERO, euclidean_features=NONZERO, symplectic_features=NA, normalized_product_features=NONZERO, matrix_identity=NA),
+            "expected": expected(law_parameters=NONZERO, raw_geometry_after_transform=NONZERO, combinatorics=ZERO, euclidean_features=NONZERO, signed_symplectic_features=NA, absolute_symplectic_features=NA, normalized_product_features=NONZERO, matrix_identity=NA),
             "proof_status": "proved_by_support_mark_counterexample",
             "proof_source": [f"{alt}/main.rs: baseline, equal_support, dirichlet, make_pair", f"{alt}/README.md: law and normalization declarations"],
             "arithmetic": "exact rational support-mark negative control",
@@ -200,7 +201,7 @@ def rows():
             "level": "paired_pushforward",
             "hypotheses_conditioning": "unit normal rays in cyclic order, 0 in the interior, irredundant facets, and the origin retained as the polarity mark",
             "transformation": "I=T^circ; normalized halfspace rows n_i are the polar vertices",
-            "expected": expected(law_parameters=ZERO, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=NONZERO, symplectic_features=NA, normalized_product_features=NA, matrix_identity=NA),
+            "expected": expected(law_parameters=ZERO, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=NONZERO, signed_symplectic_features=NA, absolute_symplectic_features=NA, normalized_product_features=NA, matrix_identity=NA),
             "proof_status": "proved_convex_polarity",
             "proof_source": ["thesis/02-preliminaries-polytope-input-language.tex", f"{polar}: exact polarity soundness/roundtrip tests", f"{alt}/main.rs: tangentialize and inscribed formulas"],
             "arithmetic": "exact rational unit-normal fixture",
@@ -213,7 +214,7 @@ def rows():
             "level": "paired_pushforward",
             "hypotheses_conditioning": "same hypotheses as tangential polar row; A_T,A_I>0; each factor normalized to area one independently",
             "transformation": "I_norm=(A_T A_I)^(-1/2) (T_norm)^circ; the uncorrected normalized bodies are generally not literal polars",
-            "expected": expected(law_parameters=ZERO, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=NONZERO, symplectic_features=NA, normalized_product_features=ZERO, matrix_identity=NA),
+            "expected": expected(law_parameters=ZERO, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=NONZERO, signed_symplectic_features=NA, absolute_symplectic_features=NA, normalized_product_features=ZERO, matrix_identity=NA),
             "proof_status": "proved_by_polar_scaling_identity",
             "proof_source": [f"{alt}/main.rs: area_normalize, tangentialize, inscribed", "thesis/02-preliminaries-polytope-input-language.tex"],
             "arithmetic": "exact symbolic square of the homothety factor from rational areas",
@@ -226,7 +227,7 @@ def rows():
             "level": "paired_pushforward",
             "hypotheses_conditioning": "closed convex polygon with 0 in its interior; preserve the same origin mark",
             "transformation": "apply polarity twice",
-            "expected": expected(law_parameters=ZERO, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, symplectic_features=NA, normalized_product_features=ZERO, matrix_identity=NA),
+            "expected": expected(law_parameters=ZERO, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, signed_symplectic_features=NA, absolute_symplectic_features=NA, normalized_product_features=ZERO, matrix_identity=NA),
             "proof_status": "proved_bipolar_theorem_exact_fixture_control",
             "proof_source": [f"{polar}: exact polarity roundtrip tests", "crates/euclidean-polytopes/DEVELOPMENT.md: exact polarity roundtrip contract"],
             "arithmetic": "exact rational",
@@ -239,7 +240,7 @@ def rows():
             "level": "pointwise_orbit",
             "hypotheses_conditioning": "positive scales; product coordinates ordered (q1,q2,p1,p2)",
             "transformation": "diag(a I2,b I2); conformally symplectic multiplier ab; factor areas scale a^2,b^2 and 4-volume scales a^2 b^2",
-            "expected": expected(law_parameters=NA, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=NONZERO, symplectic_features=NONZERO, normalized_product_features=ZERO, matrix_identity=ZERO),
+            "expected": expected(law_parameters=NA, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=NONZERO, signed_symplectic_features=NONZERO, absolute_symplectic_features=NONZERO, normalized_product_features=ZERO, matrix_identity=ZERO),
             "proof_status": "proved_algebraic_target_free_orbit",
             "proof_source": ["experiments/sys-datascience/methods/ridge-endpoint-path/notes/endpoint-predictions.md: factor-scale gauge", f"{zoo}/README.md: transformation contracts"],
             "arithmetic": "exact rational",
@@ -252,7 +253,7 @@ def rows():
             "level": "pointwise_orbit",
             "hypotheses_conditioning": "R in SO(2); product coordinates (q1,q2,p1,p2)",
             "transformation": "diag(R,R), a symplectic orthogonal map",
-            "expected": expected(law_parameters=NA, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, symplectic_features=ZERO, normalized_product_features=ZERO, matrix_identity=ZERO),
+            "expected": expected(law_parameters=NA, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, signed_symplectic_features=ZERO, absolute_symplectic_features=ZERO, normalized_product_features=ZERO, matrix_identity=ZERO),
             "proof_status": "proved_matrix_identity",
             "proof_source": [f"{alt}/README.md: common planar rotation gauge", f"{orient}/main.rs and README.md: matrix convention and symplectic controls"],
             "arithmetic": "exact rational signed-permutation rotation",
@@ -265,7 +266,7 @@ def rows():
             "level": "not_equivalent",
             "hypotheses_conditioning": "generic factors; R is a quarter turn; do not confuse common and relative rotation",
             "transformation": "diag(R,I2), which is orthogonal but not symplectic in (q1,q2,p1,p2) order",
-            "expected": expected(law_parameters=NA, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, symplectic_features=NONZERO, normalized_product_features=NONZERO, matrix_identity=NONZERO),
+            "expected": expected(law_parameters=NA, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, signed_symplectic_features=NONZERO, absolute_symplectic_features=NONZERO, normalized_product_features=NONZERO, matrix_identity=NONZERO),
             "proof_status": "proved_matrix_counterexample",
             "proof_source": [f"{alt}/README.md: relative factor rotation remains explicit", f"{orient}/README.md: Euclidean versus symplectic semantics"],
             "arithmetic": "exact rational",
@@ -278,7 +279,7 @@ def rows():
             "level": "pointwise_orbit",
             "hypotheses_conditioning": "two linearly independent normal directions; all four supports positive and facets active",
             "transformation": "translate by -t, where u_i dot t=(h_i^+-h_i^-)/2 for i=1,2",
-            "expected": expected(law_parameters=ZERO, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, symplectic_features=NA, normalized_product_features=ZERO, matrix_identity=NA),
+            "expected": expected(law_parameters=ZERO, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, signed_symplectic_features=NA, absolute_symplectic_features=NA, normalized_product_features=ZERO, matrix_identity=NA),
             "proof_status": "proved_linear_translation_system",
             "proof_source": [f"{alt}/main.rs: antipodal_broken_and_control width matching", f"{alt}/README.md: paired broken/control law"],
             "arithmetic": "exact rational",
@@ -291,7 +292,7 @@ def rows():
             "level": "not_equivalent",
             "hypotheses_conditioning": "three normal directions spanning R2; all six supports positive and all facets active",
             "transformation": "candidate translation must solve three equations u_i dot t=(h_i^+-h_i^-)/2 in two unknowns",
-            "expected": expected(law_parameters=ZERO, raw_geometry_after_transform=NONZERO, combinatorics=ZERO, euclidean_features=NONZERO, symplectic_features=NA, normalized_product_features=NONZERO, matrix_identity=NA),
+            "expected": expected(law_parameters=ZERO, raw_geometry_after_transform=NONZERO, combinatorics=ZERO, euclidean_features=NONZERO, signed_symplectic_features=NA, absolute_symplectic_features=NA, normalized_product_features=NONZERO, matrix_identity=NA),
             "proof_status": "proved_overdetermined_counterexample",
             "proof_source": [f"{alt}/main.rs: antipodal_broken_and_control and six-side availability"],
             "arithmetic": "exact rational",
@@ -304,7 +305,7 @@ def rows():
             "level": "paired_pushforward",
             "hypotheses_conditioning": "det A>0; compare the same base body; scalar fourth root is the positive root",
             "transformation": "remove the positive scalar radial part before/after volume normalization",
-            "expected": expected(law_parameters=ZERO, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, symplectic_features=ZERO, normalized_product_features=ZERO, matrix_identity=ZERO),
+            "expected": expected(law_parameters=ZERO, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, signed_symplectic_features=ZERO, absolute_symplectic_features=ZERO, normalized_product_features=ZERO, matrix_identity=ZERO),
             "proof_status": "proved_algebraic_matrix_identity",
             "proof_source": [f"{zoo}/README.md: no normalized GL+ duplicate", f"{zoo}/main.rs: determinant-one SL4 law"],
             "arithmetic": "exact rational perfect-fourth determinant witness; analytic identity general",
@@ -317,7 +318,7 @@ def rows():
             "level": "not_equivalent",
             "hypotheses_conditioning": "both laws may have positive/unit determinant, but their induced laws on S=(det A)^(-1/4)A must be compared",
             "transformation": "radial quotient map GL+(4)->SL(4)",
-            "expected": expected(law_parameters=NONZERO, raw_geometry_after_transform=NONZERO, combinatorics=ZERO, euclidean_features=NONZERO, symplectic_features=NONZERO, normalized_product_features=NONZERO, matrix_identity=NONZERO),
+            "expected": expected(law_parameters=NONZERO, raw_geometry_after_transform=NONZERO, combinatorics=ZERO, euclidean_features=NONZERO, signed_symplectic_features=NONZERO, absolute_symplectic_features=NONZERO, normalized_product_features=NONZERO, matrix_identity=NONZERO),
             "proof_status": "proved_law_counterexample",
             "proof_source": [f"{zoo}/README.md and main.rs: explicit coordinate-dependent bounded SL4 law"],
             "arithmetic": "exact rational Dirac-law counterexample",
@@ -330,7 +331,7 @@ def rows():
             "level": "pointwise_orbit",
             "hypotheses_conditioning": "U unitary; real coordinates ordered (q1,q2,p1,p2)",
             "transformation": "real embedding [[Re U,-Im U],[Im U,Re U]], contained in O(4) intersect Sp(4)",
-            "expected": expected(law_parameters=NA, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, symplectic_features=ZERO, normalized_product_features=ZERO, matrix_identity=ZERO),
+            "expected": expected(law_parameters=NA, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, signed_symplectic_features=ZERO, absolute_symplectic_features=ZERO, normalized_product_features=ZERO, matrix_identity=ZERO),
             "proof_status": "proved_subgroup_matrix_identity",
             "proof_source": [f"{orient}/main.rs: deterministic_u2_i8 and Haar embedding", f"{orient}/README.md: U2 semantic controls", f"{zoo}/README.md: U2 orbit arm"],
             "arithmetic": "exact rational signed-permutation U(2) witness",
@@ -343,7 +344,7 @@ def rows():
             "level": "pointwise_orbit",
             "hypotheses_conditioning": "coordinates (q1,q2,p1,p2); target-free matrix and feature controls only",
             "transformation": "A^T A=I, det A=1, and A^T J A=-J",
-            "expected": expected(law_parameters=NA, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, symplectic_features=ZERO, normalized_product_features=ZERO, matrix_identity=ZERO),
+            "expected": expected(law_parameters=NA, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, signed_symplectic_features=NONZERO, absolute_symplectic_features=ZERO, normalized_product_features=ZERO, matrix_identity=ZERO),
             "proof_status": "capacity_and_sys_invariance_proof_pending; target_free_matrix_and_absolute_omega_controls_proved",
             "proof_source": [f"{orient}/main.rs: deterministic_so4_i8", f"{zoo}/README.md and main.rs: anti-symplectic pi endpoint"],
             "arithmetic": "exact rational",
@@ -356,7 +357,7 @@ def rows():
             "level": "not_equivalent",
             "hypotheses_conditioning": "orthogonal determinant-one is insufficient for U(2)=O(4) intersect Sp(4)",
             "transformation": "test the signed symplectic form, not only Euclidean and determinant views",
-            "expected": expected(law_parameters=NA, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, symplectic_features=NONZERO, normalized_product_features=ZERO, matrix_identity=NONZERO),
+            "expected": expected(law_parameters=NA, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, signed_symplectic_features=NONZERO, absolute_symplectic_features=ZERO, normalized_product_features=ZERO, matrix_identity=NONZERO),
             "proof_status": "proved_matrix_counterexample",
             "proof_source": [f"{orient}/README.md: SO4 versus U2 distinction", f"{zoo}/main.rs: anti-symplectic endpoint test"],
             "arithmetic": "exact rational",
@@ -369,7 +370,7 @@ def rows():
             "level": "not_equivalent",
             "hypotheses_conditioning": "nonzero translation t while polarity is still taken about coordinate origin",
             "transformation": "translation does not commute with origin-based polarity by a fixed translation/scale",
-            "expected": expected(law_parameters=NA, raw_geometry_after_transform=NONZERO, combinatorics=ZERO, euclidean_features=ZERO, symplectic_features=NA, normalized_product_features=NONZERO, matrix_identity=NA),
+            "expected": expected(law_parameters=NA, raw_geometry_after_transform=NONZERO, combinatorics=ZERO, euclidean_features=ZERO, signed_symplectic_features=NA, absolute_symplectic_features=NA, normalized_product_features=NONZERO, matrix_identity=NA),
             "proof_status": "proved_origin_mark_counterexample",
             "proof_source": ["thesis/02-preliminaries-polytope-input-language.tex: origin-based normalized halfspaces", f"{alt}/main.rs: polar coupling deferred for lack of named exact center"],
             "arithmetic": "exact rational",
@@ -377,6 +378,8 @@ def rows():
             "collapse_scope": "never apply the polar collapse without a shared marked origin",
         },
     ]
+    for row in base:
+        row["executable_control_status"] = row["executable_control"].split(":", 1)[0]
     return base
 
 
@@ -523,8 +526,11 @@ def artifact_payloads():
     validate_matrix(matrix_rows, witnesses)
     level_counts = {level: sum(r["level"] == level for r in matrix_rows) for level in sorted(LEVELS)}
     status_counts = {}
+    control_status_counts = {}
     for r in matrix_rows:
         status_counts[r["proof_status"]] = status_counts.get(r["proof_status"], 0) + 1
+        status = r["executable_control_status"]
+        control_status_counts[status] = control_status_counts.get(status, 0) + 1
     matrix = {
         "schema": SCHEMA,
         "complete": True,
@@ -534,10 +540,11 @@ def artifact_payloads():
         "row_count": len(matrix_rows),
         "counts_by_level": level_counts,
         "counts_by_proof_status": dict(sorted(status_counts.items())),
+        "counts_by_executable_control_status": dict(sorted(control_status_counts.items())),
         "rows": matrix_rows,
     }
     tsv = io.StringIO()
-    fields = ["row_id", "objects_laws", "level", "hypotheses_conditioning", "transformation", *VIEWS, "proof_status", "proof_source", "arithmetic", "executable_control", "collapse_scope"]
+    fields = ["row_id", "objects_laws", "level", "hypotheses_conditioning", "transformation", *VIEWS, "proof_status", "proof_source", "arithmetic", "executable_control_status", "executable_control", "collapse_scope"]
     writer = csv.DictWriter(tsv, fieldnames=fields, dialect="excel-tab", lineterminator="\n")
     writer.writeheader()
     for row in matrix_rows:
