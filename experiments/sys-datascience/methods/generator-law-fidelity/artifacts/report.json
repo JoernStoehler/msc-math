@@ -69,9 +69,72 @@
   },
   "deterministic_replay": {
     "comparison": "exact JSON row order after removing wall-clock fields",
+    "distinct_run_contract": {
+      "note": "The two runs deliberately share producer source revision and seed; distinct artifacts, report paths, and recorded out-dir commands establish separate sequential executions.",
+      "recorded_commands_distinct": true,
+      "resolved_producer_report_paths_distinct": true,
+      "resolved_row_paths_distinct": true,
+      "row_byte_identities_distinct": true
+    },
     "left_rows": 30,
     "name": "deterministic_replay",
     "right_rows": 30,
+    "runs": {
+      "left": {
+        "producer_command": "target/release/sys-datascience-generator-natural-law-expansion --out-dir experiments/sys-datascience/methods/generator-law-fidelity/artifacts/replay-left --seed 20260715 --attempts 64 --rows-per-law 2",
+        "producer_provenance": {
+          "all_requested_rows_terminal": true,
+          "max_attempts_per_row": 64,
+          "seed": 20260715,
+          "source_dirty": false,
+          "source_revision": "d8a89bc487a222341340ba429055803d1b8ae501",
+          "source_tree": "a37feaadfe322764daacf0843e4b0439d6017d11",
+          "status_counts": {
+            "survived": 30
+          }
+        },
+        "producer_report": {
+          "bytes": 5221,
+          "path": "experiments/sys-datascience/methods/generator-law-fidelity/artifacts/replay-left/batch-report.json",
+          "resolved_path": "/workspaces/msc-math/.worktrees/generator-law-fidelity/experiments/sys-datascience/methods/generator-law-fidelity/artifacts/replay-left/batch-report.json",
+          "sha256": "6956a85f2613bfeca549aca65d6e15cc9e920cb4a736eae10e47f07c5abe3961"
+        },
+        "rows": {
+          "bytes": 24942,
+          "path": "experiments/sys-datascience/methods/generator-law-fidelity/artifacts/replay-left/smoke-rows.jsonl",
+          "resolved_path": "/workspaces/msc-math/.worktrees/generator-law-fidelity/experiments/sys-datascience/methods/generator-law-fidelity/artifacts/replay-left/smoke-rows.jsonl",
+          "row_count": 30,
+          "sha256": "952ff86b403e92ef99fbb6acd534a46c6f1b2f27217801b488e629d28613f0d8"
+        }
+      },
+      "right": {
+        "producer_command": "target/release/sys-datascience-generator-natural-law-expansion --out-dir experiments/sys-datascience/methods/generator-law-fidelity/artifacts/replay-right --seed 20260715 --attempts 64 --rows-per-law 2",
+        "producer_provenance": {
+          "all_requested_rows_terminal": true,
+          "max_attempts_per_row": 64,
+          "seed": 20260715,
+          "source_dirty": false,
+          "source_revision": "d8a89bc487a222341340ba429055803d1b8ae501",
+          "source_tree": "a37feaadfe322764daacf0843e4b0439d6017d11",
+          "status_counts": {
+            "survived": 30
+          }
+        },
+        "producer_report": {
+          "bytes": 5222,
+          "path": "experiments/sys-datascience/methods/generator-law-fidelity/artifacts/replay-right/batch-report.json",
+          "resolved_path": "/workspaces/msc-math/.worktrees/generator-law-fidelity/experiments/sys-datascience/methods/generator-law-fidelity/artifacts/replay-right/batch-report.json",
+          "sha256": "0c2c0f8bd7436faa21c380290c4b1faad75e029c42bc9c1e8b8bebbcd8776a03"
+        },
+        "rows": {
+          "bytes": 24897,
+          "path": "experiments/sys-datascience/methods/generator-law-fidelity/artifacts/replay-right/smoke-rows.jsonl",
+          "resolved_path": "/workspaces/msc-math/.worktrees/generator-law-fidelity/experiments/sys-datascience/methods/generator-law-fidelity/artifacts/replay-right/smoke-rows.jsonl",
+          "row_count": 30,
+          "sha256": "97afb31d92aea31abf7b6b933c17faf26f488d89c47c8ae130d58b1159119b83"
+        }
+      }
+    },
     "status": "pass"
   },
   "global_checks": [
@@ -139,27 +202,44 @@
     {
       "bytes": 133109,
       "path": "experiments/sys-datascience/methods/generator-zoo-smoke/artifacts/factor-shapes.jsonl",
+      "resolved_path": "/workspaces/msc-math/.worktrees/generator-law-fidelity/experiments/sys-datascience/methods/generator-zoo-smoke/artifacts/factor-shapes.jsonl",
       "sha256": "4622400be1220f11f742a4bde29273fe45dcd4c8d27044d716059c429630d7a8"
     },
     {
       "bytes": 57499,
       "path": "experiments/sys-datascience/methods/generator-zoo-smoke/artifacts/product-smoke.jsonl",
+      "resolved_path": "/workspaces/msc-math/.worktrees/generator-law-fidelity/experiments/sys-datascience/methods/generator-zoo-smoke/artifacts/product-smoke.jsonl",
       "sha256": "65eadca0eb010730855b21e0348a8f1622e45ee0d195ce623d49ad0a8ac26df7"
     },
     {
       "bytes": 4451,
       "path": "experiments/sys-datascience/methods/generator-zoo-smoke/artifacts/batch-report.json",
+      "resolved_path": "/workspaces/msc-math/.worktrees/generator-law-fidelity/experiments/sys-datascience/methods/generator-zoo-smoke/artifacts/batch-report.json",
       "sha256": "c7d6dc1abcd070569d3dfbebccbe06fcddbe8abb66f06f7b6c125318b3d2326c"
     },
     {
-      "bytes": 24918,
-      "path": "experiments/sys-datascience/methods/generator-law-fidelity/artifacts/natural-smoke/smoke-rows.jsonl",
-      "sha256": "0923fb77733c54a799e33291f50a4b165e10a22772788a1bc56f83631ca96335"
+      "bytes": 24942,
+      "path": "experiments/sys-datascience/methods/generator-law-fidelity/artifacts/replay-left/smoke-rows.jsonl",
+      "resolved_path": "/workspaces/msc-math/.worktrees/generator-law-fidelity/experiments/sys-datascience/methods/generator-law-fidelity/artifacts/replay-left/smoke-rows.jsonl",
+      "sha256": "952ff86b403e92ef99fbb6acd534a46c6f1b2f27217801b488e629d28613f0d8"
     },
     {
-      "bytes": 5176,
-      "path": "experiments/sys-datascience/methods/generator-law-fidelity/artifacts/natural-smoke/batch-report.json",
-      "sha256": "c56d6c611b5ac9cdd3db2691e5eb003e8166600ebf982461759ceefc846f8f78"
+      "bytes": 5221,
+      "path": "experiments/sys-datascience/methods/generator-law-fidelity/artifacts/replay-left/batch-report.json",
+      "resolved_path": "/workspaces/msc-math/.worktrees/generator-law-fidelity/experiments/sys-datascience/methods/generator-law-fidelity/artifacts/replay-left/batch-report.json",
+      "sha256": "6956a85f2613bfeca549aca65d6e15cc9e920cb4a736eae10e47f07c5abe3961"
+    },
+    {
+      "bytes": 24897,
+      "path": "experiments/sys-datascience/methods/generator-law-fidelity/artifacts/replay-right/smoke-rows.jsonl",
+      "resolved_path": "/workspaces/msc-math/.worktrees/generator-law-fidelity/experiments/sys-datascience/methods/generator-law-fidelity/artifacts/replay-right/smoke-rows.jsonl",
+      "sha256": "97afb31d92aea31abf7b6b933c17faf26f488d89c47c8ae130d58b1159119b83"
+    },
+    {
+      "bytes": 5222,
+      "path": "experiments/sys-datascience/methods/generator-law-fidelity/artifacts/replay-right/batch-report.json",
+      "resolved_path": "/workspaces/msc-math/.worktrees/generator-law-fidelity/experiments/sys-datascience/methods/generator-law-fidelity/artifacts/replay-right/batch-report.json",
+      "sha256": "0c2c0f8bd7436faa21c380290c4b1faad75e029c42bc9c1e8b8bebbcd8776a03"
     }
   ],
   "interpretation_boundary": "Passes establish calibration of these diagnostic implementations and schema/lineage observations only. They do not prove a null law, population IID behavior after conditioning, or target transfer.",
@@ -1216,8 +1296,8 @@
       "max_attempts_per_row": 64,
       "seed": 20260715,
       "source_dirty": false,
-      "source_revision": "9d8bb3d1b0bd79c21901624470759510a4e4e529",
-      "source_tree": "a8c7a07208cf7e6ecabed1f54d5ad300fbbade8f",
+      "source_revision": "d8a89bc487a222341340ba429055803d1b8ae501",
+      "source_tree": "a37feaadfe322764daacf0843e4b0439d6017d11",
       "status_counts": {
         "survived": 30
       }
@@ -1227,9 +1307,9 @@
   "schema": "generator-law-fidelity-report-v1",
   "source_provenance": {
     "analyzer_path": "experiments/sys-datascience/methods/generator-law-fidelity/analyze.py",
-    "analyzer_sha256": "df43ee8770da01f00bbed42946ed66db7578d22186e0e2c1de6c3250f1729f2e",
-    "repository_revision": "9d8bb3d1b0bd79c21901624470759510a4e4e529",
-    "repository_tree": "a8c7a07208cf7e6ecabed1f54d5ad300fbbade8f",
+    "analyzer_sha256": "f7e3f8ba886646de7ea64dca467de6b37a964010effff1ce75a3b601a3c6f9ac",
+    "repository_revision": "d8a89bc487a222341340ba429055803d1b8ae501",
+    "repository_tree": "a37feaadfe322764daacf0843e4b0439d6017d11",
     "tracked_clean": true,
     "tracked_status": ""
   }

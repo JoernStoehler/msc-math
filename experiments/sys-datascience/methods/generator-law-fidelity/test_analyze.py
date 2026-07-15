@@ -50,6 +50,15 @@ class CalibrationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "distinct resolved row paths"):
                 AUDIT.check_replay([{"sample_id": "x"}], [{"sample_id": "x"}], path, path)
 
+    def test_replay_rejects_distinct_paths_with_identical_byte_identity(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            left_path = Path(directory) / "left.jsonl"
+            right_path = Path(directory) / "right.jsonl"
+            left_path.write_text('{"sample_id":"x"}\n')
+            right_path.write_text('{"sample_id":"x"}\n')
+            with self.assertRaisesRegex(ValueError, "identical byte identity"):
+                AUDIT.check_replay([{"sample_id": "x"}], [{"sample_id": "x"}], left_path, right_path)
+
     def test_replay_fails_for_changed_stable_row(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             left_path = Path(directory) / "left.jsonl"

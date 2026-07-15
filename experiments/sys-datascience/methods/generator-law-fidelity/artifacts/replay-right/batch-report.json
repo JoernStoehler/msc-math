@@ -1,0 +1,147 @@
+{
+  "schema": "generator-natural-law-expansion-report-v1",
+  "law_version": "generator-natural-law-expansion-v1",
+  "seed": 20260715,
+  "max_attempts_per_row": 64,
+  "rows_per_law": 2,
+  "rows": 30,
+  "requested_rows": 30,
+  "all_requested_rows_terminal": true,
+  "status_counts": {
+    "survived": 30
+  },
+  "dispositions": [
+    {
+      "wishlist_item": 1,
+      "law": "fresh baseline",
+      "disposition": "already faithful",
+      "evidence": "generator-zoo-smoke current-baseline arm"
+    },
+    {
+      "wishlist_item": 2,
+      "law": "equal-support tangential",
+      "disposition": "already faithful",
+      "evidence": "alternative-generator-smoke equal-support and factorial arms"
+    },
+    {
+      "wishlist_item": 3,
+      "law": "support-variance ladder",
+      "disposition": "already faithful",
+      "evidence": "alternative-generator-smoke log-support ladder"
+    },
+    {
+      "wishlist_item": 4,
+      "law": "smooth support field",
+      "disposition": "already faithful",
+      "evidence": "alternative-generator-smoke smooth-support-r2/r3; no translation claim"
+    },
+    {
+      "wishlist_item": 5,
+      "law": "shape-cell conditional",
+      "disposition": "dependency expansion",
+      "evidence": "requires matched population design, not a standalone unconditional sampler"
+    },
+    {
+      "wishlist_item": 6,
+      "law": "one-factor factorial",
+      "disposition": "already faithful",
+      "evidence": "paired baseline fans and explicit pairing IDs"
+    },
+    {
+      "wishlist_item": 7,
+      "law": "Dirichlet angular gaps",
+      "disposition": "already faithful",
+      "evidence": "generator-zoo-smoke repulsive-gap arm"
+    },
+    {
+      "wishlist_item": 8,
+      "law": "jittered regular",
+      "disposition": "already faithful",
+      "evidence": "alternative-generator-smoke jittered-regular arm"
+    },
+    {
+      "wishlist_item": 9,
+      "law": "centrally symmetric strips",
+      "disposition": "already faithful",
+      "evidence": "alternative-generator-smoke symmetric-strip arms"
+    },
+    {
+      "wishlist_item": 10,
+      "law": "broken antipodal supports",
+      "disposition": "already faithful",
+      "evidence": "paired shared lines and preserved strip widths"
+    },
+    {
+      "wishlist_item": 11,
+      "law": "random zonogon",
+      "disposition": "already faithful",
+      "evidence": "generator-zoo-smoke zonogon edge-walk arm"
+    },
+    {
+      "wishlist_item": 12,
+      "law": "congruent factors",
+      "disposition": "already faithful",
+      "evidence": "alternative-generator-smoke explicit relative rotations"
+    },
+    {
+      "wishlist_item": 13,
+      "law": "shared-latent factors",
+      "disposition": "implemented",
+      "evidence": "correlated logistic-normal gaps and centered log supports; rho=0,1 are independent/congruent-shape endpoints"
+    },
+    {
+      "wishlist_item": 14,
+      "law": "polar coupling",
+      "disposition": "implemented",
+      "evidence": "polar of Q minus its area centroid, then explicit relative rotation and area normalization"
+    },
+    {
+      "wishlist_item": 15,
+      "law": "primal IID-point hull",
+      "disposition": "already faithful",
+      "evidence": "generator-zoo-smoke uniform-disk hull conditioned on side count"
+    },
+    {
+      "wishlist_item": 16,
+      "law": "inscribed polygon",
+      "disposition": "already faithful",
+      "evidence": "alternative-generator-smoke circle-hull support formula"
+    },
+    {
+      "wishlist_item": 17,
+      "law": "Poisson-line/Crofton cell",
+      "disposition": "dependency expansion",
+      "evidence": "faithful stationary line process plus side-count conditioning needs a finite-window/conditional sampler; no shortcut used"
+    },
+    {
+      "wishlist_item": 18,
+      "law": "SO(4)/U(2) orientation",
+      "disposition": "dependency expansion",
+      "evidence": "orbit intervention explicitly outside this planar owner"
+    },
+    {
+      "wishlist_item": 19,
+      "law": "quotient-transverse perturbation",
+      "disposition": "dependency expansion",
+      "evidence": "orbit intervention explicitly outside this planar owner"
+    },
+    {
+      "wishlist_item": 20,
+      "law": "generic centrally symmetric 4-polytopes",
+      "disposition": "dependency expansion",
+      "evidence": "generic 4D exact reconstruction owner required"
+    },
+    {
+      "wishlist_item": 21,
+      "law": "SL(4) structured images",
+      "disposition": "dependency expansion",
+      "evidence": "generic 4D image law and quotient measure are outside this owner"
+    }
+  ],
+  "command": "target/release/sys-datascience-generator-natural-law-expansion --out-dir experiments/sys-datascience/methods/generator-law-fidelity/artifacts/replay-right --seed 20260715 --attempts 64 --rows-per-law 2",
+  "source_revision": "d8a89bc487a222341340ba429055803d1b8ae501",
+  "source_tree": "a37feaadfe322764daacf0843e4b0439d6017d11",
+  "source_dirty": false,
+  "source_dirty_scope": "git status --porcelain=v1 --untracked-files=no (repository-wide tracked files; snapshot captured before output creation)",
+  "interpretation_boundary": "Exact geometry and finite-volume smoke evidence only; no target, ranking, population estimate, or transfer claim."
+}
