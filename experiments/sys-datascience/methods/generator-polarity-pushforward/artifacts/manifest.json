@@ -1,7 +1,7 @@
 {
   "capacity_claim": false,
   "dependencies": "Python stdlib only",
-  "exact_boundary": "Current-law f64 candidates first pass cyclic-gap, original-halfspace, and all-facets-active checks. Vertices then cross an explicit Fraction.limit_denominator(1e9) reconstruction boundary and exact hull; polarity, incidence, area, centroid, and residual fields are exact thereafter. Support views and quotient distances are f64 diagnostics.",
+  "exact_boundary": "Current-law f64 candidates first pass cyclic-gap, original-halfspace, and all-facets-active checks. After Fraction.limit_denominator(1e9) reconstruction and exact hull, rational vertices/facets/incidence/areas/centroids/polars/Mahler are exact. scale_f64, support samples/distances, and stored residual numbers are f64 diagnostics.",
   "fixtures": 8,
   "generation_failures": [],
   "input_files": [],
@@ -13,13 +13,13 @@
     "product_arms": "product-arms.jsonl"
   },
   "output_sha256": {
-    "diversity": "04d59cfc9c61a9385040e91d06274bb06de7c28da0c7483ae36a2001e9aae58e",
+    "diversity": "82f4abb96dcb0f49654ff6c7adb349cbb99c9ecd8107bdea46e5fa6ab219c45c",
     "fixtures": "6a77191dfec9143e81524514fa82ec0fe3e4f155bd684e7a49e1ff777c51cde9",
-    "panel": "cd59786949e90d43f6ec417b79ced14b0b2e95ee5d4265025cdf0d5ca26f666d",
-    "product_arms": "4fcbaf368754ee7fe60d375e4c2fab3ab73964fa869e4766953071ca6cdd874e"
+    "panel": "5c87e4ec7bee4f0741a6f8b273f5631ccf21e9e7191fe65622a7c714ff9dffeb",
+    "product_arms": "6ed32e251da17e6c7c13b9a3d86a55f6968691c126b5e6ac97c86358c5c2f7e1"
   },
   "panel_rows": 72,
-  "producer_sha256": "856f607f6a62de8d4acdca94b4e25f4395cda4fc42998ad3a9e02b0195bc445f",
+  "producer_sha256": "0754518e2e9ca501d2ed338b02dda78434ebe0e120b587eb05dfe3f585171c5d",
   "product_arm_rows": 144,
   "rows_per_stratum": 24,
   "schema": "generator-polarity-manifest-v1",
@@ -52,8 +52,8 @@
     20260717
   ],
   "source_dirty_tracked": false,
-  "source_revision": "9608b0954940839542a51d7cc46a5f41438b8527",
-  "source_tree": "8ca6cb936b4cd217c201c873a9d3c7ce0155c2cd",
+  "source_revision": "986f4284c190b381cfed7865718528923fff7f0f",
+  "source_tree": "53f6d68d19439ce6336e3d1951d4fe5f7cf2fd54",
   "strata": [
     3,
     4,
