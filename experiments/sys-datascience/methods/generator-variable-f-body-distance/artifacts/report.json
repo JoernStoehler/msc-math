@@ -2,7 +2,7 @@
   "comparisons": [
     {
       "case": "identity_permuted_presentation",
-      "cost_observation_seconds": 0.03850105200035614,
+      "cost_observation_seconds": 0.03953667700079677,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0,
@@ -48,7 +48,7 @@
     },
     {
       "case": "facet_birth_truncated_cube",
-      "cost_observation_seconds": 0.06142172700128867,
+      "cost_observation_seconds": 0.040726020000874996,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0693455916073286,
@@ -94,7 +94,7 @@
     },
     {
       "case": "adversarial_narrow_feature",
-      "cost_observation_seconds": 0.05757087900019542,
+      "cost_observation_seconds": 0.04262382200067805,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.07977971304969055,
@@ -140,7 +140,7 @@
     },
     {
       "case": "ball_approximant_identity",
-      "cost_observation_seconds": 0.09808080200127733,
+      "cost_observation_seconds": 0.08536855100101093,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0,
@@ -186,7 +186,7 @@
     },
     {
       "case": "ball_vs_ellipsoid_approximant",
-      "cost_observation_seconds": 0.08008707499902812,
+      "cost_observation_seconds": 0.1158399020005163,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.22173262424283688,
@@ -232,7 +232,7 @@
     },
     {
       "case": "retained_orientation_u2",
-      "cost_observation_seconds": 0.031897705999654136,
+      "cost_observation_seconds": 0.04985564799972053,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0682635396392401,
@@ -278,7 +278,7 @@
     },
     {
       "case": "retained_orientation_so4",
-      "cost_observation_seconds": 0.029747038999630604,
+      "cost_observation_seconds": 0.035992184000861016,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.07301114308952454,
@@ -324,7 +324,7 @@
     },
     {
       "case": "retained_exact_feature_witness",
-      "cost_observation_seconds": 0.06106734199966013,
+      "cost_observation_seconds": 0.06656377199942654,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.20067121144363229,
@@ -378,6 +378,11 @@
     "redundant_presentation_fail_closed": true
   },
   "coordinate_order": "q1,q2,p1,p2",
+  "cost_observations_seconds": {
+    "exact_feature_reconstruction": 20.23271133199887,
+    "orientation_reconstruction": 1.8027424240008258,
+    "synthetic_reconstruction": 0.2257482169989089
+  },
   "direction_designs": {
     "axis_only": 8,
     "primitive_level_1": 80,
@@ -469,8 +474,8 @@
   },
   "run": {
     "producer_path": "experiments/sys-datascience/methods/generator-variable-f-body-distance/body_distance.py",
-    "producer_sha256": "cca81e568205e18a69469727b385e43fc26b9ccbb358dc97c03388043a6a4e84",
-    "revision": "ce63cee0f4beff8a123d41a1a61e7e1502815e17",
+    "producer_sha256": "56fdc71798ab9d03f1cd5429b150dc6dae084c5d7ed72adbb44c70e6a873633f",
+    "revision": "85ce614c5300e7f91db44b4dc2a5d93d2e5f1120",
     "terminal_status": "complete",
     "tracked_clean_before_generation": true
   },
