@@ -8,6 +8,20 @@ copied. `extract_orientation_features.py` records the original full-feature
 and report hashes and copies the reviewed orientation lines without
 re-serializing or recomputing them.
 
+Transplant inventory:
+
+- retained: `generator-orientation-smoke/{README.md,main.rs,artifacts/**}`;
+  `generator-orientation-target-pilot/{README.md,analyze.py,design.json,
+  main.rs,protocol-history.json,select.py,selection-manifest.json,
+  test_analyze.py,artifacts/**}`; and the two binary registrations in
+  `experiments/sys-landscape/Cargo.toml`;
+- explicitly excluded: `generator-exact-feature-augmenter/` (apart from its
+  bound 40-row snapshot), `generator-tangential-matchability/`,
+  `generator-zoo-smoke/`, `generator-quality-atlas/`,
+  `generator-smoke-integration/`, `generator-sys-effects/`,
+  `generator-target-quotient-distance/`, and all other stopped generator-law,
+  distribution, quality, and transfer breadth owners.
+
 This packet tests one mechanism question: on the eight reviewed Euclidean
 product witnesses, does a Haar `SO(4)` orientation change `sys` through
 symplectic alignment? The same source bodies are evaluated under exactly one
