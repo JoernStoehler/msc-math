@@ -22,13 +22,16 @@ but are held fixed across the five angles of each base.  The declared
 Kähler-departure coordinate is `sin^2(theta/2)`: it is a named dose coordinate,
 not a distance on a quotient or a capacity coordinate.
 
-The producer regenerates the documented `generator-orientation-smoke` source
-base contract (seed `20260714`, 128 bounded attempts, two bases in each of
-`3x3,4x4,4x6,6x6`) to preserve base identity whenever that generator remains
-identical.  The orientation panel's raw rows are LFS-managed and need not be
-available to run this packet; the generated rows record source-base IDs,
-attempts, and geometry IDs so a future byte-level comparison can verify this
-conditional identity.
+The producer copies the documented `generator-orientation-smoke` source base
+contract bit-for-bit, including area-normalization operation order (seed
+`20260714`, 128 bounded attempts, two bases in each of `3x3,4x4,4x6,6x6`).
+Its report binds the source orientation report revision
+`8174467dbd171281eb5746480b06629aa41ebfa7` and raw-row LFS object
+`sha256:b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367`.
+Those raw rows are not present in this checkout, so the generated geometry IDs
+are currently an **unverified deterministic regeneration**, not a claim of
+established identity with the old panel. Fetching that object and comparing the
+eight IDs is the explicit reopen step before any cross-panel reuse claim.
 
 Run the full compact panel from the repository root after committing source:
 

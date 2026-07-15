@@ -29,6 +29,10 @@ const THETAS: &[(&str, f64)] = &[
 ];
 const MATRIX_TOL: f64 = 1e-10;
 const VOLUME_TOL: f64 = 1e-9;
+const ORIENTATION_SOURCE_REVISION: &str = "8174467dbd171281eb5746480b06629aa41ebfa7";
+const ORIENTATION_ROWS_LFS_OID: &str =
+    "sha256:b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367";
+const SOURCE_BASE_CONTRACT: &str = "bit-for-bit copied generator-orientation-smoke v1 base law (including area-normalization operation order); original geometry-ID comparison is unverified until the recorded LFS rows are available";
 
 #[derive(Clone)]
 struct Factor {
@@ -147,6 +151,9 @@ struct Report {
     analyzer_source_sha256: String,
     cargo_lock_sha256: String,
     source_base_contract: &'static str,
+    orientation_source_revision: &'static str,
+    orientation_rows_lfs_oid: &'static str,
+    orientation_geometry_id_comparison_status: &'static str,
     expected_bases: usize,
     expected_rows: usize,
     observed_rows: usize,
@@ -211,7 +218,10 @@ fn factor(sides: usize, seed: [u8; 32]) -> Option<Factor> {
     if !a.is_finite() || a <= 0. {
         return None;
     };
-    h.iter_mut().for_each(|x| *x /= a.sqrt());
+    // Match generator-orientation-smoke's floating-point operation order so
+    // binary-rational reconstruction can reproduce its base geometry IDs.
+    let scale = a.sqrt().recip();
+    h.iter_mut().for_each(|height| *height *= scale);
     let f = Factor {
         normals: f.normals,
         heights: h,
@@ -358,7 +368,46 @@ fn empty(
 ) -> Row {
     let name = format!("{}x{}", b.0, b.1);
     let id = format!("alignment-ladder-v1/seed={SEED}/bucket={name}/row={row}/theta={label}");
-    Row {schema:"alignment-ladder-row-v1",id,base_id:format!("generator-orientation-v1/base/seed={SEED}/bucket={name}/row={row}"),source_base_contract:"regenerated orientation-smoke v1 base law; byte comparison deferred while LFS panel rows are unavailable",bucket:name,row_index:row,seed:SEED,base_seed,accepted_base_attempt:attempt,theta_label:label,theta_radians:theta,kahler_departure_sin_sq_half_theta:(theta/2.).sin().powi(2),left_u2_seed:seed_u64(derive_seed(SEED,"alignment-left-u2",b,row,0)),right_u2_seed:seed_u64(derive_seed(SEED,"alignment-right-u2",b,row,0)),coordinate_order:"q1,q2,p1,p2",a_theta_convention:"diag(Q(theta),I_2), Q rotates (q1,q2) positively",primal_action:"not reached",dual_action:"not reached",matrix_row_major:None,determinant:None,orthogonality_residual:None,symplectic_residual:None,anti_symplectic_residual:None,condition_number:None,exact_reconstruction_status:"base_rejected",source_incidence_preserved:None,exact_base_volume:None,exact_response_volume:None,relative_volume_change:None,base_geometry_id:None,base_signature:None,response_signature:None,euclidean_gram_max_abs_change:None,symplectic_gram_l2_change:None,symplectic_gram_max_abs_change:None,failures:vec!["base_generation_exhausted".into()],generation_ms:ms,reconstruction_ms:0.}
+    Row {
+        schema: "alignment-ladder-row-v1",
+        id,
+        base_id: format!("generator-orientation-v1/base/seed={SEED}/bucket={name}/row={row}"),
+        source_base_contract: SOURCE_BASE_CONTRACT,
+        bucket: name,
+        row_index: row,
+        seed: SEED,
+        base_seed,
+        accepted_base_attempt: attempt,
+        theta_label: label,
+        theta_radians: theta,
+        kahler_departure_sin_sq_half_theta: (theta / 2.).sin().powi(2),
+        left_u2_seed: seed_u64(derive_seed(SEED, "alignment-left-u2", b, row, 0)),
+        right_u2_seed: seed_u64(derive_seed(SEED, "alignment-right-u2", b, row, 0)),
+        coordinate_order: "q1,q2,p1,p2",
+        a_theta_convention: "diag(Q(theta),I_2), Q rotates (q1,q2) positively",
+        primal_action: "not reached",
+        dual_action: "not reached",
+        matrix_row_major: None,
+        determinant: None,
+        orthogonality_residual: None,
+        symplectic_residual: None,
+        anti_symplectic_residual: None,
+        condition_number: None,
+        exact_reconstruction_status: "base_rejected",
+        source_incidence_preserved: None,
+        exact_base_volume: None,
+        exact_response_volume: None,
+        relative_volume_change: None,
+        base_geometry_id: None,
+        base_signature: None,
+        response_signature: None,
+        euclidean_gram_max_abs_change: None,
+        symplectic_gram_l2_change: None,
+        symplectic_gram_max_abs_change: None,
+        failures: vec!["base_generation_exhausted".into()],
+        generation_ms: ms,
+        reconstruction_ms: 0.,
+    }
 }
 fn failed_after_base(
     b: (usize, usize),
@@ -495,7 +544,46 @@ fn evaluate(
     if euclid > MATRIX_TOL {
         failures.push("euclidean_control_changed".into())
     }
-    Row {schema:"alignment-ladder-row-v1",id,base_id:format!("generator-orientation-v1/base/seed={SEED}/bucket={name}/row={row}"),source_base_contract:"regenerated orientation-smoke v1 base law; byte comparison deferred while LFS panel rows are unavailable",bucket:name,row_index:row,seed:SEED,base_seed,accepted_base_attempt:Some(attempt),theta_label:label,theta_radians:theta,kahler_departure_sin_sq_half_theta:(theta/2.).sin().powi(2),left_u2_seed:seed_u64(ls),right_u2_seed:seed_u64(rs),coordinate_order:"q1,q2,p1,p2",a_theta_convention:"diag(Q(theta),I_2), Q rotates (q1,q2) positively",primal_action:"R_theta = U1 A_theta U2",dual_action:"inverse_transpose",matrix_row_major:Some(rows(&m)),determinant:Some(d),orthogonality_residual:Some(o),symplectic_residual:Some(s),anti_symplectic_residual:Some(a),condition_number:Some(cond(&m)),exact_reconstruction_status:"reconstructed",source_incidence_preserved:Some(inc),exact_base_volume:Some(bv),exact_response_volume:Some(v),relative_volume_change:Some(rel),base_geometry_id:Some(geometry_id(base)),base_signature:Some(bs),response_signature:Some(ps),euclidean_gram_max_abs_change:Some(euclid),symplectic_gram_l2_change:Some(syml2),symplectic_gram_max_abs_change:Some(symmax),failures,generation_ms:gen,reconstruction_ms:rec}
+    Row {
+        schema: "alignment-ladder-row-v1",
+        id,
+        base_id: format!("generator-orientation-v1/base/seed={SEED}/bucket={name}/row={row}"),
+        source_base_contract: SOURCE_BASE_CONTRACT,
+        bucket: name,
+        row_index: row,
+        seed: SEED,
+        base_seed,
+        accepted_base_attempt: Some(attempt),
+        theta_label: label,
+        theta_radians: theta,
+        kahler_departure_sin_sq_half_theta: (theta / 2.).sin().powi(2),
+        left_u2_seed: seed_u64(ls),
+        right_u2_seed: seed_u64(rs),
+        coordinate_order: "q1,q2,p1,p2",
+        a_theta_convention: "diag(Q(theta),I_2), Q rotates (q1,q2) positively",
+        primal_action: "R_theta = U1 A_theta U2",
+        dual_action: "inverse_transpose",
+        matrix_row_major: Some(rows(&m)),
+        determinant: Some(d),
+        orthogonality_residual: Some(o),
+        symplectic_residual: Some(s),
+        anti_symplectic_residual: Some(a),
+        condition_number: Some(cond(&m)),
+        exact_reconstruction_status: "reconstructed",
+        source_incidence_preserved: Some(inc),
+        exact_base_volume: Some(bv),
+        exact_response_volume: Some(v),
+        relative_volume_change: Some(rel),
+        base_geometry_id: Some(geometry_id(base)),
+        base_signature: Some(bs),
+        response_signature: Some(ps),
+        euclidean_gram_max_abs_change: Some(euclid),
+        symplectic_gram_l2_change: Some(syml2),
+        symplectic_gram_max_abs_change: Some(symmax),
+        failures,
+        generation_ms: gen,
+        reconstruction_ms: rec,
+    }
 }
 fn formula_controls() -> bool {
     THETAS.iter().all(|(_, t)| {
@@ -567,7 +655,7 @@ fn main() {
         && all
             .iter()
             .all(|r| r.exact_reconstruction_status == "reconstructed" && r.failures.is_empty());
-    let report=Report{schema:"alignment-ladder-report-v1",command:a.join(" "),source_revision:revision,source_repository_tree:tree,source_dirty:dirty,producer_source_sha256:sha("experiments/sys-datascience/methods/generator-alignment-ladder/main.rs"),analyzer_source_sha256:sha("experiments/sys-datascience/methods/generator-alignment-ladder/analyze.py"),cargo_lock_sha256:sha("Cargo.lock"),source_base_contract:"orientation-smoke v1 seed=20260714, attempts=128, rows_per_bucket=2, buckets=3x3,4x4,4x6,6x6; regenerated because LFS raw rows need not be present",expected_bases:8,expected_rows:40,observed_rows:all.len(),passed_rows:all.iter().filter(|r|r.failures.is_empty()).count(),all_requested_rows_passed:pass,formula_controls_passed:formula_controls(),coordinate_order:"q1,q2,p1,p2",a_theta_convention:"A_theta=diag(Q(theta),I_2), Q(theta) rotates q1,q2; A_pi=diag(-1,-1,1,1)",kahler_departure_coordinate:"sin^2(theta/2)",proof_review_cruxes:vec!["Do not promote this representative family to an exhaustion or unique parameterization of U(2)\\SO(4)/U(2) without proof review.","Do not assume anti-symplectic capacity invariance; review the capacity definition and proof separately before later target interpretation."],interpretation_boundary:"Target-free finite-panel geometry only: no sys, capacity, target-derived field, capacity dose claim, population claim, or quotient-natural-law claim."};
+    let report=Report{schema:"alignment-ladder-report-v1",command:a.join(" "),source_revision:revision,source_repository_tree:tree,source_dirty:dirty,producer_source_sha256:sha("experiments/sys-datascience/methods/generator-alignment-ladder/main.rs"),analyzer_source_sha256:sha("experiments/sys-datascience/methods/generator-alignment-ladder/analyze.py"),cargo_lock_sha256:sha("Cargo.lock"),source_base_contract:SOURCE_BASE_CONTRACT,orientation_source_revision:ORIENTATION_SOURCE_REVISION,orientation_rows_lfs_oid:ORIENTATION_ROWS_LFS_OID,orientation_geometry_id_comparison_status:"unverified_lfs_rows_unavailable",expected_bases:8,expected_rows:40,observed_rows:all.len(),passed_rows:all.iter().filter(|r|r.failures.is_empty()).count(),all_requested_rows_passed:pass,formula_controls_passed:formula_controls(),coordinate_order:"q1,q2,p1,p2",a_theta_convention:"A_theta=diag(Q(theta),I_2), Q(theta) rotates q1,q2; A_pi=diag(-1,-1,1,1)",kahler_departure_coordinate:"sin^2(theta/2)",proof_review_cruxes:vec!["Do not promote this representative family to an exhaustion or unique parameterization of U(2)\\SO(4)/U(2) without proof review.","Do not assume anti-symplectic capacity invariance; review the capacity definition and proof separately before later target interpretation."],interpretation_boundary:"Target-free finite-panel geometry only: no sys, capacity, target-derived field, capacity dose claim, population claim, or quotient-natural-law claim."};
     serde_json::to_writer_pretty(File::create(out.join("report.json")).unwrap(), &report).unwrap();
     if !pass {
         std::process::exit(1)
