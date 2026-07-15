@@ -121,10 +121,10 @@
   "generation_cost_artifact": "generation-cost.tsv",
   "holdout_input_sha256": "90275c221e88f2a02fb2317587f7f5722cd23aebbdb77d2c2b3eecdef5d0d62b",
   "input_hashes": {
-    "artifacts/holdout/factor-only-report.json": "5ca755a8cf5d4f90311da123c7966a46298bb552fd82cb29c3e02958795d6e90",
-    "artifacts/holdout/factor-shapes.jsonl": "90275c221e88f2a02fb2317587f7f5722cd23aebbdb77d2c2b3eecdef5d0d62b",
-    "artifacts/train/factor-only-report.json": "3e5cf51f7535b2018ebadcdb81841dd741776dd9ca49e9aebed854fb02776d8a",
-    "artifacts/train/factor-shapes.jsonl": "608df0fd90b56c1fb85cd49489838bec301c1d75c2a990377cb1bf7111d6b24a"
+    "experiments/sys-datascience/methods/generator-coverage-directed-novelty/artifacts/holdout/factor-only-report.json": "5ca755a8cf5d4f90311da123c7966a46298bb552fd82cb29c3e02958795d6e90",
+    "experiments/sys-datascience/methods/generator-coverage-directed-novelty/artifacts/holdout/factor-shapes.jsonl": "90275c221e88f2a02fb2317587f7f5722cd23aebbdb77d2c2b3eecdef5d0d62b",
+    "experiments/sys-datascience/methods/generator-coverage-directed-novelty/artifacts/train/factor-only-report.json": "3e5cf51f7535b2018ebadcdb81841dd741776dd9ca49e9aebed854fb02776d8a",
+    "experiments/sys-datascience/methods/generator-coverage-directed-novelty/artifacts/train/factor-shapes.jsonl": "608df0fd90b56c1fb85cd49489838bec301c1d75c2a990377cb1bf7111d6b24a"
   },
   "interpretation": {
     "allowed": [
@@ -405,8 +405,8 @@
   },
   "provenance": {
     "producer_reports": [
-      "artifacts/train/factor-only-report.json",
-      "artifacts/holdout/factor-only-report.json"
+      "experiments/sys-datascience/methods/generator-coverage-directed-novelty/artifacts/train/factor-only-report.json",
+      "experiments/sys-datascience/methods/generator-coverage-directed-novelty/artifacts/holdout/factor-only-report.json"
     ],
     "seed_contract": "train and holdout are independent master seeds; seed and attempt are retained in every witness row",
     "selection_contract": "all full train rows are generated before offline retained-witness selection",
@@ -423,16 +423,16 @@
     "train_full_pool_generated_rows": 96
   },
   "schema": "coverage-directed-novelty-v1",
-  "selection_cost_ms": 1481.9884060016193,
+  "selection_cost_ms": 1573.1492129998514,
   "source": {
-    "analyzer_sha256": "88a08a2f43a6bd24be5891b73646e75f4e920ba6b0ad85fdf5d1f5c9c4bee44b",
+    "analyzer_sha256": "88423845fd0c05f3aed6e30066e3976ef018c4335931d315ad9c53e6cf2da656",
     "producer_revision": "a50e1e930e21541506df6228aaed16355d830372",
     "producer_source_blobs": {
       "Cargo.lock": "8a51ae91187fdbc44c1539ddebf598feedd27b91",
       "experiments/sys-datascience/methods/generator-zoo-smoke/main.rs": "ea59cb1b3d123e630fdc034a95f4a2a43812b0a6",
       "experiments/sys-landscape/Cargo.toml": "a8efcf2366bcc08c5317d33926f44579727fbf31"
     },
-    "revision": "fd9e7a7876aed7b330d93bfe1830d2ce53b9933e",
+    "revision": "fb14bf170eb3d513c86c007a1bb5afe2f22f1589",
     "tracked_clean_for_analyzer": true
   },
   "synthetic_calibrations": {
