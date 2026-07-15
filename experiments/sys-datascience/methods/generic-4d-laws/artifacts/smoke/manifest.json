@@ -1,0 +1,27 @@
+{
+  "packet": "generic-4d-laws",
+  "question": "Can cheap non-product and structured 4D laws broaden combinatorial/geometric coverage beyond IID halfspaces and planar products?",
+  "seeds": [
+    11,
+    29,
+    47
+  ],
+  "grid": [
+    "central_h r={4,6}, sigma={0,0.15}",
+    "central_v n={5,7}, sphere/ball",
+    "zonotope m=4, equal lengths (m=5 modest-lognormal abandoned: exact smoke excessive)",
+    "iid_ball_hull proposal_n=12 (proposal_n=20 abandoned: exact smoke excessive)",
+    "affine_control base={simplex,cube,crosspolytope}, diagonal lognormal det=1"
+  ],
+  "source_commit": "a466b2565724057681bef89da398b31552661fb0",
+  "target_fields": [
+    "capacity",
+    "sys",
+    "target",
+    "selection_rank"
+  ],
+  "variable_facet_distance": "omitted: no copy-local variable-facet distance contract was cheap enough for this breadth smoke",
+  "generated_rows": 27,
+  "accepted_rows": 27,
+  "abandoned_arms": []
+}

@@ -1,0 +1,29 @@
+{
+  "accepted_rows": 27,
+  "arms": {
+    "affine_control": {
+      "accepted": 9,
+      "rejected": 0
+    },
+    "central_h": {
+      "accepted": 6,
+      "rejected": 0
+    },
+    "central_v": {
+      "accepted": 6,
+      "rejected": 0
+    },
+    "iid_ball_hull": {
+      "accepted": 3,
+      "rejected": 0
+    },
+    "zonotope": {
+      "accepted": 3,
+      "rejected": 0
+    }
+  },
+  "generated_rows": 27,
+  "note": "Wall time is reported for smoke-cost disposition only; rows.jsonl and manifest parameters are deterministic.",
+  "rejected_rows": 0,
+  "wall_seconds_non_deterministic": 46.529079637
+}
