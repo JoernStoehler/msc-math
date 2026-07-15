@@ -1,0 +1,67 @@
+# Target-free SO(4) alignment dose ladder
+
+This packet asks a narrow geometry question: on the eight retained-orientation
+base identities, what changes under the controlled family
+`R_theta = U1 A_theta U2` in `SO(4)`?  It is designed to decide whether a
+later target ladder is worth exposing, not to make a capacity or `sys` claim.
+
+## Transformation and scope
+
+Coordinates are `(q1,q2,p1,p2)` and matrices act on primal points.  Dual
+normals therefore use the inverse transpose.  With
+
+```text
+Q(theta) = [[cos(theta), -sin(theta)], [sin(theta), cos(theta)]]
+A_theta = diag(Q(theta), I_2),
+```
+
+the five arms use `theta = 0, pi/4, pi/2, 3pi/4, pi`.  Thus `A_0 = I`, while
+`A_pi = diag(-1,-1,1,1)` is orientation-preserving, orthogonal, and
+anti-symplectic.  `U1` and `U2` are independently seeded Haar `U(2)` draws,
+but are held fixed across the five angles of each base.  The declared
+Kähler-departure coordinate is `sin^2(theta/2)`: it is a named dose coordinate,
+not a distance on a quotient or a capacity coordinate.
+
+The producer regenerates the documented `generator-orientation-smoke` source
+base contract (seed `20260714`, 128 bounded attempts, two bases in each of
+`3x3,4x4,4x6,6x6`) to preserve base identity whenever that generator remains
+identical.  The orientation panel's raw rows are LFS-managed and need not be
+available to run this packet; the generated rows record source-base IDs,
+attempts, and geometry IDs so a future byte-level comparison can verify this
+conditional identity.
+
+Run the full compact panel from the repository root after committing source:
+
+```bash
+CARGO_TARGET_DIR=/workspaces/msc-math/target cargo run -p exp-sys-landscape --release \
+  --bin sys-datascience-generator-alignment-ladder -- \
+  --out-dir experiments/sys-datascience/methods/generator-alignment-ladder/artifacts/panel
+uv run --script experiments/sys-datascience/methods/generator-alignment-ladder/analyze.py \
+  --rows experiments/sys-datascience/methods/generator-alignment-ladder/artifacts/panel/rows.jsonl \
+  --report experiments/sys-datascience/methods/generator-alignment-ladder/artifacts/panel/report.json \
+  --out-dir experiments/sys-datascience/methods/generator-alignment-ladder/artifacts/panel
+```
+
+`rows.jsonl` has every requested base/angle row or a terminal fail-closed
+status.  It retains matrix contracts, exact reconstruction/incidence/volume
+checks, raw/euclidean/symplectic dual-Gram signatures, and paired controls.
+`report.json` freezes the producer source closure before outputs are written.
+`analysis.json`, `paired-by-base.tsv`, and `paired-by-theta.tsv` are generated
+from those rows and classify only this finite panel's response shapes.
+
+## Interpretation
+
+Passing rows establish the stated finite-panel geometry and reconstruction
+contracts.  Euclidean response signatures are controls and must remain fixed
+under all orthogonal arms; a change is a packet failure.  Symplectic signatures
+are descriptive post-reconstruction responses.  The analysis labels a response
+as monotone, reverse-symmetric, endpoint-controlled, or multi-directional only
+as a property of the retained five-angle sequence; it does not rank laws,
+estimate a population effect, or show a capacity dose-response.
+
+No capacity backend, target field, `sys` value, or target-derived selection is
+used.  This family is not claimed to exhaust or uniquely parameterize
+`U(2) \\ SO(4) / U(2)`.  Whether that double-coset statement is appropriate,
+and whether anti-symplectic maps preserve the capacity used later, are explicit
+proof-review cruxes recorded in the report rather than assumptions of this
+packet.
