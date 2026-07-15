@@ -91,10 +91,25 @@ class SupportProcessAtlasTests(unittest.TestCase):
         )
 
     def test_cyclic_so2_quotient_separates_distinct_shapes(self) -> None:
-        grid = range(atlas.SUPPORT_GRID_SIZE)
-        first = [1.0 + 0.12 * math.cos(4.0 * math.pi * index / atlas.SUPPORT_GRID_SIZE) for index in grid]
-        second = [1.0 + 0.12 * math.cos(8.0 * math.pi * index / atlas.SUPPORT_GRID_SIZE) for index in grid]
-        self.assertGreater(atlas.support_grid_l2_cyclic_so2_quotient_64(first, second), 0.05)
+        angles = [
+            2.0 * math.pi * index / atlas.SUPPORT_GRID_SIZE
+            for index in range(atlas.SUPPORT_GRID_SIZE)
+        ]
+        first, first_failure = atlas.construct_polygon(
+            angles, [1.0 + 0.04 * math.cos(2.0 * angle) for angle in angles]
+        )
+        second, second_failure = atlas.construct_polygon(
+            angles, [1.0 + 0.04 * math.cos(4.0 * angle) for angle in angles]
+        )
+        self.assertIsNone(first_failure)
+        self.assertIsNone(second_failure)
+        assert first is not None and second is not None
+        self.assertGreater(
+            atlas.support_grid_l2_cyclic_so2_quotient_64(
+                first["support_grid_centered_area1"], second["support_grid_centered_area1"]
+            ),
+            0.01,
+        )
 
     def test_cyclic_so2_quotient_does_not_identify_reflection(self) -> None:
         base = [
