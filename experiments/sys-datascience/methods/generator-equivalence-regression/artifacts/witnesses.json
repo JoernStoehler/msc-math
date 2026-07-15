@@ -1,0 +1,633 @@
+{
+  "complete": true,
+  "schema": "generator-equivalence-regression-v1-witnesses",
+  "witness_count": 16,
+  "witnesses": [
+    {
+      "evidence": {
+        "bounded_max_gap_lt_half_turn": true,
+        "gaps": [
+          "1/10",
+          "1/5",
+          "3/10",
+          "2/5"
+        ],
+        "rotation_turns": "7/100",
+        "roundtrip": true
+      },
+      "row_id": "angles-iid-dirichlet1-marginal",
+      "status": "pass"
+    },
+    {
+      "evidence": {
+        "baseline_supports": [
+          "4/5",
+          "6/5",
+          "9/10",
+          "11/10"
+        ],
+        "equal_support_width_aspect": "1",
+        "equal_supports": [
+          "1",
+          "1",
+          "1",
+          "1"
+        ],
+        "full_law_equivalence_rejected_before_geometry_acceptance": true,
+        "support_mark_laws_differ": true,
+        "synthetic_opposite_normal_fixture": [
+          [
+            "1",
+            "0"
+          ],
+          [
+            "0",
+            "1"
+          ],
+          [
+            "-1",
+            "0"
+          ],
+          [
+            "0",
+            "-1"
+          ]
+        ],
+        "translation_and_area_scale_invariant_width_aspect_on_named_fixture": "17/23"
+      },
+      "row_id": "iid-support-baseline-vs-equal-support-dirichlet1",
+      "status": "pass"
+    },
+    {
+      "evidence": {
+        "polar_vertices": [
+          [
+            "1",
+            "0"
+          ],
+          [
+            "3/5",
+            "4/5"
+          ],
+          [
+            "-3/5",
+            "4/5"
+          ],
+          [
+            "-1",
+            "0"
+          ],
+          [
+            "0",
+            "-1"
+          ]
+        ],
+        "support_equalities": true,
+        "tangential_vertices": [
+          [
+            "1",
+            "1/2"
+          ],
+          [
+            "0",
+            "5/4"
+          ],
+          [
+            "-1",
+            "1/2"
+          ],
+          [
+            "-1",
+            "-1"
+          ],
+          [
+            "1",
+            "-1"
+          ]
+        ],
+        "unit_normals": [
+          [
+            "1",
+            "0"
+          ],
+          [
+            "3/5",
+            "4/5"
+          ],
+          [
+            "-3/5",
+            "4/5"
+          ],
+          [
+            "-1",
+            "0"
+          ],
+          [
+            "0",
+            "-1"
+          ]
+        ]
+      },
+      "row_id": "tangential-to-same-angle-inscribed-polar",
+      "status": "pass"
+    },
+    {
+      "evidence": {
+        "inscribed_area": "57/25",
+        "inscribed_normalized_max_radius_squared": "25/57",
+        "normalized_feature_difference": "9/95",
+        "polar_homothety_correction_squared": "20/171",
+        "symbolic_identity": true,
+        "tangential_area": "15/4",
+        "tangential_normalized_max_radius_squared": "8/15"
+      },
+      "row_id": "area-normalized-polar-scale-correction",
+      "status": "pass"
+    },
+    {
+      "evidence": {
+        "original_vertices": [
+          [
+            "1",
+            "1/2"
+          ],
+          [
+            "0",
+            "5/4"
+          ],
+          [
+            "-1",
+            "1/2"
+          ],
+          [
+            "-1",
+            "-1"
+          ],
+          [
+            "1",
+            "-1"
+          ]
+        ],
+        "recovered_double_polar_vertices": [
+          [
+            "-1",
+            "-1"
+          ],
+          [
+            "-1",
+            "1/2"
+          ],
+          [
+            "0",
+            "5/4"
+          ],
+          [
+            "1",
+            "-1"
+          ],
+          [
+            "1",
+            "1/2"
+          ]
+        ],
+        "roundtrip": true
+      },
+      "row_id": "double-polarity-marked-origin",
+      "status": "pass"
+    },
+    {
+      "evidence": {
+        "a": "2",
+        "b": "3",
+        "conformal_symplectic_multiplier": "6",
+        "determinant": "36",
+        "independently_area_normalized_factor_areas": [
+          "1",
+          "1"
+        ],
+        "p_area_before_after": [
+          "7",
+          "63"
+        ],
+        "product_volume_before_after": [
+          "35",
+          "1260"
+        ],
+        "q_area_before_after": [
+          "5",
+          "20"
+        ],
+        "volume_ratio_equals_determinant": true
+      },
+      "row_id": "independent-positive-factor-scalings",
+      "status": "pass"
+    },
+    {
+      "evidence": {
+        "gram_controls": true,
+        "matrix": [
+          [
+            0,
+            -1,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            -1
+          ],
+          [
+            0,
+            0,
+            1,
+            0
+          ]
+        ],
+        "orthogonal": true,
+        "symplectic": true
+      },
+      "row_id": "simultaneous-common-factor-rotation",
+      "status": "pass"
+    },
+    {
+      "evidence": {
+        "absolute_omega_before_after": [
+          "5",
+          "0"
+        ],
+        "euclidean_gram_fixed": true,
+        "factor_areas_and_product_volume_fixed": true,
+        "matrix": [
+          [
+            0,
+            -1,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "omega_before_after": [
+          "5",
+          "0"
+        ],
+        "orthogonal": true,
+        "symplectic": false
+      },
+      "row_id": "one-factor-only-rotation-negative-control",
+      "status": "pass"
+    },
+    {
+      "evidence": {
+        "broken_supports": [
+          "3",
+          "4",
+          "1",
+          "2"
+        ],
+        "control_supports": [
+          "2",
+          "3",
+          "2",
+          "3"
+        ],
+        "translated_equal": true,
+        "translation_subtracted": [
+          "1",
+          "1"
+        ]
+      },
+      "row_id": "four-facet-broken-pairs-width-control",
+      "status": "pass"
+    },
+    {
+      "evidence": {
+        "actual_diagonal_dot": "1",
+        "all_facets_active": true,
+        "candidate_from_axis_pairs": [
+          "1/2",
+          "1/2"
+        ],
+        "required_diagonal_dot": "3/2"
+      },
+      "row_id": "six-facet-broken-pairs-not-generally-translation",
+      "status": "pass"
+    },
+    {
+      "evidence": {
+        "A": [
+          [
+            4,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            2
+          ]
+        ],
+        "S": [
+          [
+            "2",
+            "0",
+            "0",
+            "0"
+          ],
+          [
+            "0",
+            "1",
+            "0",
+            "0"
+          ],
+          [
+            "0",
+            "0",
+            "1/2",
+            "0"
+          ],
+          [
+            "0",
+            "0",
+            "0",
+            "1"
+          ]
+        ],
+        "det_A": 16,
+        "det_S": 1,
+        "normalized_maps_equal": true,
+        "positive_fourth_root": 2
+      },
+      "row_id": "gl4-volume-normalization-vs-sl4-representative",
+      "status": "pass"
+    },
+    {
+      "evidence": {
+        "both_determinants_after_radial_quotient": [
+          "1",
+          "1"
+        ],
+        "euclidean_gram_identity": [
+          [
+            "30",
+            "11"
+          ],
+          [
+            "11",
+            "31"
+          ]
+        ],
+        "euclidean_gram_named_sl": [
+          [
+            "21",
+            "8"
+          ],
+          [
+            "8",
+            "169/4"
+          ]
+        ],
+        "general_equivalence_condition": "induced radial-quotient laws must match",
+        "induced_laws_and_normalized_features_differ": true,
+        "named_sl_dirac": [
+          [
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            "1/2"
+          ]
+        ],
+        "normalized_dirac_at_2I": [
+          [
+            "1",
+            "0",
+            "0",
+            "0"
+          ],
+          [
+            "0",
+            "1",
+            "0",
+            "0"
+          ],
+          [
+            "0",
+            "0",
+            "1",
+            "0"
+          ],
+          [
+            "0",
+            "0",
+            "0",
+            "1"
+          ]
+        ],
+        "omega_gram_identity": [
+          [
+            "0",
+            "5"
+          ],
+          [
+            "-5",
+            "0"
+          ]
+        ],
+        "omega_gram_named_sl": [
+          [
+            "0",
+            "19"
+          ],
+          [
+            "-19",
+            "0"
+          ]
+        ]
+      },
+      "row_id": "gl4-sl4-dirac-law-negative-control",
+      "status": "pass"
+    },
+    {
+      "evidence": {
+        "determinant": 1,
+        "gram_controls": true,
+        "matrix": [
+          [
+            0,
+            0,
+            -1,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "orthogonal": true,
+        "symplectic": true
+      },
+      "row_id": "u2-subgroup-sp4-pointwise-orbit",
+      "status": "pass"
+    },
+    {
+      "evidence": {
+        "absolute_omega_fixed": true,
+        "anti_symplectic": true,
+        "capacity_sys_status": "proof_pending",
+        "determinant": 1,
+        "matrix": [
+          [
+            -1,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            -1,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "orthogonal": true
+      },
+      "row_id": "antiunitary-antisymplectic-endpoint",
+      "status": "pass"
+    },
+    {
+      "evidence": {
+        "in_SO4": true,
+        "in_Sp4": false,
+        "same_matrix": [
+          [
+            -1,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            -1,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "signed_omega_reversed": true
+      },
+      "row_id": "generic-so4-not-u2-negative-control",
+      "status": "pass"
+    },
+    {
+      "evidence": {
+        "nonuniform_row_change": true,
+        "support_denominators": [
+          "6/5",
+          "216/175",
+          "174/175",
+          "4/5",
+          "6/7"
+        ],
+        "translation": [
+          "1/5",
+          "1/7"
+        ]
+      },
+      "row_id": "polar-without-origin-mark-negative-control",
+      "status": "pass"
+    }
+  ]
+}

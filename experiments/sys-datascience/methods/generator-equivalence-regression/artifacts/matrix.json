@@ -1,0 +1,478 @@
+{
+  "complete": true,
+  "counts_by_executable_control_status": {
+    "matrix_feature_control_pass_proof_pending": 1,
+    "negative_control_pass": 6,
+    "pass": 9
+  },
+  "counts_by_level": {
+    "component_marginal": 1,
+    "full_law": 0,
+    "not_equivalent": 6,
+    "paired_pushforward": 4,
+    "pointwise_orbit": 5
+  },
+  "counts_by_proof_status": {
+    "capacity_and_sys_invariance_proof_pending; target_free_matrix_and_absolute_omega_controls_proved": 1,
+    "proved_algebraic_matrix_identity": 1,
+    "proved_algebraic_target_free_orbit": 1,
+    "proved_bipolar_theorem_exact_fixture_control": 1,
+    "proved_by_polar_scaling_identity": 1,
+    "proved_by_support_mark_counterexample": 1,
+    "proved_convex_polarity": 1,
+    "proved_law_counterexample": 1,
+    "proved_linear_translation_system": 1,
+    "proved_matrix_counterexample": 2,
+    "proved_matrix_identity": 1,
+    "proved_origin_mark_counterexample": 1,
+    "proved_overdetermined_counterexample": 1,
+    "proved_standard_order_statistics_with_local_bijection_control": 1,
+    "proved_subgroup_matrix_identity": 1
+  },
+  "outcome_vocabulary": [
+    "nonzero",
+    "not_applicable",
+    "zero"
+  ],
+  "row_count": 16,
+  "rows": [
+    {
+      "arithmetic": "exact rational simplex/rotation witness; probability identity is analytic",
+      "collapse_scope": "collapse only the pre-support angle-proposal marginal",
+      "executable_control": "pass: rational cyclic-gap roundtrip and matched max-gap predicate",
+      "executable_control_status": "pass",
+      "expected": {
+        "absolute_symplectic_features": "not_applicable",
+        "combinatorics": "not_applicable",
+        "euclidean_features": "not_applicable",
+        "law_parameters": "zero",
+        "matrix_identity": "not_applicable",
+        "normalized_product_features": "not_applicable",
+        "raw_geometry_after_transform": "zero",
+        "signed_symplectic_features": "not_applicable"
+      },
+      "hypotheses_conditioning": "n>=3; compare the angle proposal only; impose the same angle-only boundedness condition max cyclic gap<pi if conditioning; do not include support-dependent irredundancy/acceptance",
+      "level": "component_marginal",
+      "objects_laws": "unordered n IID Uniform[0,2pi) angles versus Dirichlet(1^n) cyclic gaps plus a uniform common rotation and a uniformly marked cyclic root",
+      "proof_source": [
+        "experiments/sys-datascience/methods/alternative-generator-smoke/main.rs: random_angles and dirichlet",
+        "experiments/sys-datascience/methods/alternative-generator-smoke/README.md: boundedness and acceptance boundary"
+      ],
+      "proof_status": "proved_standard_order_statistics_with_local_bijection_control",
+      "row_id": "angles-iid-dirichlet1-marginal",
+      "transformation": "sort cyclically, quotient/add the common rotation, and convert consecutive differences to gaps"
+    },
+    {
+      "arithmetic": "exact rational support-mark negative control",
+      "collapse_scope": "never collapse the full generator arms",
+      "executable_control": "negative_control_pass: 4/5 and 6/5 marks cannot equal all-one marks",
+      "executable_control_status": "negative_control_pass",
+      "expected": {
+        "absolute_symplectic_features": "not_applicable",
+        "combinatorics": "zero",
+        "euclidean_features": "nonzero",
+        "law_parameters": "nonzero",
+        "matrix_identity": "not_applicable",
+        "normalized_product_features": "nonzero",
+        "raw_geometry_after_transform": "nonzero",
+        "signed_symplectic_features": "not_applicable"
+      },
+      "hypotheses_conditioning": "baseline supports are IID Uniform[0.8,1.2); Dirichlet arm supports equal 1; each arm then applies its own all-facets-active and area-normalization acceptance",
+      "level": "not_equivalent",
+      "objects_laws": "current IID-angle IID-support baseline versus equal-support Dirichlet alpha=1 generator",
+      "proof_source": [
+        "experiments/sys-datascience/methods/alternative-generator-smoke/main.rs: baseline, equal_support, dirichlet, make_pair",
+        "experiments/sys-datascience/methods/alternative-generator-smoke/README.md: law and normalization declarations"
+      ],
+      "proof_status": "proved_by_support_mark_counterexample",
+      "row_id": "iid-support-baseline-vs-equal-support-dirichlet1",
+      "transformation": "angle-marginal coupling from the previous row; no transformation identifies the support marks or support-dependent accepted full laws"
+    },
+    {
+      "arithmetic": "exact rational unit-normal fixture",
+      "collapse_scope": "collapse only when polarity and the marked origin are explicit",
+      "executable_control": "pass: exact halfspace vertices, active facets, and polar support equalities",
+      "executable_control_status": "pass",
+      "expected": {
+        "absolute_symplectic_features": "not_applicable",
+        "combinatorics": "zero",
+        "euclidean_features": "nonzero",
+        "law_parameters": "zero",
+        "matrix_identity": "not_applicable",
+        "normalized_product_features": "not_applicable",
+        "raw_geometry_after_transform": "zero",
+        "signed_symplectic_features": "not_applicable"
+      },
+      "hypotheses_conditioning": "unit normal rays in cyclic order, 0 in the interior, irredundant facets, and the origin retained as the polarity mark",
+      "level": "paired_pushforward",
+      "objects_laws": "equal-support tangential polygon T={x:<n_i,x><=1} and same marked-origin inscribed polygon I=conv{n_i}",
+      "proof_source": [
+        "thesis/02-preliminaries-polytope-input-language.tex",
+        "crates/euclidean-polytopes/tests/polar_vertices.rs: exact polarity soundness/roundtrip tests",
+        "experiments/sys-datascience/methods/alternative-generator-smoke/main.rs: tangentialize and inscribed formulas"
+      ],
+      "proof_status": "proved_convex_polarity",
+      "row_id": "tangential-to-same-angle-inscribed-polar",
+      "transformation": "I=T^circ; normalized halfspace rows n_i are the polar vertices"
+    },
+    {
+      "arithmetic": "exact symbolic square of the homothety factor from rational areas",
+      "collapse_scope": "collapse after recording the polarity scale; do not claim literal normalized polarity",
+      "executable_control": "pass: exact A_T, A_I and squared correction (A_T A_I)^-1",
+      "executable_control_status": "pass",
+      "expected": {
+        "absolute_symplectic_features": "not_applicable",
+        "combinatorics": "zero",
+        "euclidean_features": "nonzero",
+        "law_parameters": "zero",
+        "matrix_identity": "not_applicable",
+        "normalized_product_features": "nonzero",
+        "raw_geometry_after_transform": "zero",
+        "signed_symplectic_features": "not_applicable"
+      },
+      "hypotheses_conditioning": "same hypotheses as tangential polar row; A_T,A_I>0; each factor normalized to area one independently",
+      "level": "paired_pushforward",
+      "objects_laws": "independently area-normalized tangential T and same-angle inscribed I=T^circ",
+      "proof_source": [
+        "experiments/sys-datascience/methods/alternative-generator-smoke/main.rs: area_normalize, tangentialize, inscribed",
+        "thesis/02-preliminaries-polytope-input-language.tex"
+      ],
+      "proof_status": "proved_by_polar_scaling_identity",
+      "row_id": "area-normalized-polar-scale-correction",
+      "transformation": "I_norm=(A_T A_I)^(-1/2) (T_norm)^circ; the uncorrected normalized bodies are generally not literal polars"
+    },
+    {
+      "arithmetic": "exact rational",
+      "collapse_scope": "collapse double-polar arms with the same origin mark",
+      "executable_control": "pass: every original supporting row is recovered as an extreme polar vertex on the fixture",
+      "executable_control_status": "pass",
+      "expected": {
+        "absolute_symplectic_features": "not_applicable",
+        "combinatorics": "zero",
+        "euclidean_features": "zero",
+        "law_parameters": "zero",
+        "matrix_identity": "not_applicable",
+        "normalized_product_features": "zero",
+        "raw_geometry_after_transform": "zero",
+        "signed_symplectic_features": "not_applicable"
+      },
+      "hypotheses_conditioning": "closed convex polygon with 0 in its interior; preserve the same origin mark",
+      "level": "paired_pushforward",
+      "objects_laws": "a marked-origin irredundant rational polygon T and (T^circ)^circ",
+      "proof_source": [
+        "crates/euclidean-polytopes/tests/polar_vertices.rs: exact polarity roundtrip tests",
+        "crates/euclidean-polytopes/DEVELOPMENT.md: exact polarity roundtrip contract"
+      ],
+      "proof_status": "proved_bipolar_theorem_exact_fixture_control",
+      "row_id": "double-polarity-marked-origin",
+      "transformation": "apply polarity twice"
+    },
+    {
+      "arithmetic": "exact rational",
+      "collapse_scope": "collapse factor-scale arms in target-free geometry-coverage accounting; target equivalence requires a separately sourced conformal-invariance argument",
+      "executable_control": "pass: A^T J A=ab J, determinant=a^2b^2, normalized area/volume ratios",
+      "executable_control_status": "pass",
+      "expected": {
+        "absolute_symplectic_features": "nonzero",
+        "combinatorics": "zero",
+        "euclidean_features": "nonzero",
+        "law_parameters": "not_applicable",
+        "matrix_identity": "zero",
+        "normalized_product_features": "zero",
+        "raw_geometry_after_transform": "zero",
+        "signed_symplectic_features": "nonzero"
+      },
+      "hypotheses_conditioning": "positive scales; product coordinates ordered (q1,q2,p1,p2)",
+      "level": "pointwise_orbit",
+      "objects_laws": "product QxP and (aQ)x(bP), a,b>0",
+      "proof_source": [
+        "experiments/sys-datascience/methods/ridge-endpoint-path/notes/endpoint-predictions.md: factor-scale gauge",
+        "experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/README.md: transformation contracts"
+      ],
+      "proof_status": "proved_algebraic_target_free_orbit",
+      "row_id": "independent-positive-factor-scalings",
+      "transformation": "diag(a I2,b I2); conformally symplectic multiplier ab; factor areas scale a^2,b^2 and 4-volume scales a^2 b^2"
+    },
+    {
+      "arithmetic": "exact rational signed-permutation rotation",
+      "collapse_scope": "collapse simultaneous common-rotation arms in target-free symplectic-orbit/feature coverage",
+      "executable_control": "pass: A^T A=I and A^T J A=J with Gram controls",
+      "executable_control_status": "pass",
+      "expected": {
+        "absolute_symplectic_features": "zero",
+        "combinatorics": "zero",
+        "euclidean_features": "zero",
+        "law_parameters": "not_applicable",
+        "matrix_identity": "zero",
+        "normalized_product_features": "zero",
+        "raw_geometry_after_transform": "zero",
+        "signed_symplectic_features": "zero"
+      },
+      "hypotheses_conditioning": "R in SO(2); product coordinates (q1,q2,p1,p2)",
+      "level": "pointwise_orbit",
+      "objects_laws": "product QxP and (RQ)x(RP) under the same planar rotation R",
+      "proof_source": [
+        "experiments/sys-datascience/methods/alternative-generator-smoke/README.md: common planar rotation gauge",
+        "experiments/sys-datascience/methods/generator-orientation-smoke/main.rs and README.md: matrix convention and symplectic controls"
+      ],
+      "proof_status": "proved_matrix_identity",
+      "row_id": "simultaneous-common-factor-rotation",
+      "transformation": "diag(R,R), a symplectic orthogonal map"
+    },
+    {
+      "arithmetic": "exact rational",
+      "collapse_scope": "never collapse relative-rotation arms as common gauge",
+      "executable_control": "negative_control_pass: A^T J A differs from J; a cross-factor omega entry and its absolute value change, while Euclidean/area/volume normalization controls stay fixed",
+      "executable_control_status": "negative_control_pass",
+      "expected": {
+        "absolute_symplectic_features": "nonzero",
+        "combinatorics": "zero",
+        "euclidean_features": "zero",
+        "law_parameters": "not_applicable",
+        "matrix_identity": "nonzero",
+        "normalized_product_features": "zero",
+        "raw_geometry_after_transform": "zero",
+        "signed_symplectic_features": "nonzero"
+      },
+      "hypotheses_conditioning": "generic factors; R is a quarter turn; do not confuse common and relative rotation",
+      "level": "not_equivalent",
+      "objects_laws": "product QxP and (RQ)xP for nontrivial R",
+      "proof_source": [
+        "experiments/sys-datascience/methods/alternative-generator-smoke/README.md: relative factor rotation remains explicit",
+        "experiments/sys-datascience/methods/generator-orientation-smoke/README.md: Euclidean versus symplectic semantics"
+      ],
+      "proof_status": "proved_matrix_counterexample",
+      "row_id": "one-factor-only-rotation-negative-control",
+      "transformation": "diag(R,I2), which is orthogonal but not symplectic in (q1,q2,p1,p2) order"
+    },
+    {
+      "arithmetic": "exact rational",
+      "collapse_scope": "collapse four-facet broken/control factor arms up to translation",
+      "executable_control": "pass: exact translation solves both support differences and translated halfspaces equal the symmetric control",
+      "executable_control_status": "pass",
+      "expected": {
+        "absolute_symplectic_features": "not_applicable",
+        "combinatorics": "zero",
+        "euclidean_features": "zero",
+        "law_parameters": "nonzero",
+        "matrix_identity": "not_applicable",
+        "normalized_product_features": "zero",
+        "raw_geometry_after_transform": "zero",
+        "signed_symplectic_features": "not_applicable"
+      },
+      "hypotheses_conditioning": "two linearly independent normal directions; all four supports positive and facets active",
+      "level": "pointwise_orbit",
+      "objects_laws": "two independent opposite support pairs (four sides) and symmetric strips with the same two widths",
+      "proof_source": [
+        "experiments/sys-datascience/methods/alternative-generator-smoke/main.rs: antipodal_broken_and_control width matching",
+        "experiments/sys-datascience/methods/alternative-generator-smoke/README.md: paired broken/control law"
+      ],
+      "proof_status": "proved_linear_translation_system",
+      "row_id": "four-facet-broken-pairs-width-control",
+      "transformation": "translate by -t, where u_i dot t=(h_i^+-h_i^-)/2 for i=1,2"
+    },
+    {
+      "arithmetic": "exact rational",
+      "collapse_scope": "do not collapse six-or-more-side broken/control arms without solving every translation equation",
+      "executable_control": "negative_control_pass: active six-sided witness violates the third translation equation",
+      "executable_control_status": "negative_control_pass",
+      "expected": {
+        "absolute_symplectic_features": "not_applicable",
+        "combinatorics": "zero",
+        "euclidean_features": "nonzero",
+        "law_parameters": "nonzero",
+        "matrix_identity": "not_applicable",
+        "normalized_product_features": "nonzero",
+        "raw_geometry_after_transform": "nonzero",
+        "signed_symplectic_features": "not_applicable"
+      },
+      "hypotheses_conditioning": "three normal directions spanning R2; all six supports positive and all facets active",
+      "level": "not_equivalent",
+      "objects_laws": "three broken opposite support pairs (six sides) and width-matched symmetric strips",
+      "proof_source": [
+        "experiments/sys-datascience/methods/alternative-generator-smoke/main.rs: antipodal_broken_and_control and six-side availability"
+      ],
+      "proof_status": "proved_overdetermined_counterexample",
+      "row_id": "six-facet-broken-pairs-not-generally-translation",
+      "transformation": "candidate translation must solve three equations u_i dot t=(h_i^+-h_i^-)/2 in two unknowns"
+    },
+    {
+      "arithmetic": "exact rational perfect-fourth determinant witness; analytic identity general",
+      "collapse_scope": "collapse a GL+ arm only with its own induced SL representative",
+      "executable_control": "pass: det A=16, S=A/2, det S=1, and normalization maps agree",
+      "executable_control_status": "pass",
+      "expected": {
+        "absolute_symplectic_features": "zero",
+        "combinatorics": "zero",
+        "euclidean_features": "zero",
+        "law_parameters": "zero",
+        "matrix_identity": "zero",
+        "normalized_product_features": "zero",
+        "raw_geometry_after_transform": "zero",
+        "signed_symplectic_features": "zero"
+      },
+      "hypotheses_conditioning": "det A>0; compare the same base body; scalar fourth root is the positive root",
+      "level": "paired_pushforward",
+      "objects_laws": "A in GL+(4) followed by four-volume normalization versus S=(det A)^(-1/4) A in SL(4)",
+      "proof_source": [
+        "experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/README.md: no normalized GL+ duplicate",
+        "experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/main.rs: determinant-one SL4 law"
+      ],
+      "proof_status": "proved_algebraic_matrix_identity",
+      "row_id": "gl4-volume-normalization-vs-sl4-representative",
+      "transformation": "remove the positive scalar radial part before/after volume normalization"
+    },
+    {
+      "arithmetic": "exact rational Dirac-law counterexample",
+      "collapse_scope": "do not collapse random GL+/SL laws unless their induced radial-quotient laws match",
+      "executable_control": "negative_control_pass: normalized 2I gives I while chosen determinant-one diagonal map is nonidentity",
+      "executable_control_status": "negative_control_pass",
+      "expected": {
+        "absolute_symplectic_features": "nonzero",
+        "combinatorics": "zero",
+        "euclidean_features": "nonzero",
+        "law_parameters": "nonzero",
+        "matrix_identity": "nonzero",
+        "normalized_product_features": "nonzero",
+        "raw_geometry_after_transform": "nonzero",
+        "signed_symplectic_features": "nonzero"
+      },
+      "hypotheses_conditioning": "specific negative-control laws; generally two random matrix laws are equivalent here only if their induced laws on S=(det A)^(-1/4)A match",
+      "level": "not_equivalent",
+      "objects_laws": "the Dirac GL+(4) law at 2I, normalized radially, versus the Dirac SL(4) law at diag(2,1,1,1/2)",
+      "proof_source": [
+        "experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/README.md and main.rs: explicit coordinate-dependent bounded SL4 law"
+      ],
+      "proof_status": "proved_law_counterexample",
+      "row_id": "gl4-sl4-dirac-law-negative-control",
+      "transformation": "radial quotient map GL+(4)->SL(4)"
+    },
+    {
+      "arithmetic": "exact rational signed-permutation U(2) witness",
+      "collapse_scope": "collapse pointwise U(2) arms when only symplectic/Euclidean orbit-invariant quantities are consumed",
+      "executable_control": "pass: U^T U=I, U^T J U=J, determinant=1, Euclidean and omega Grams fixed",
+      "executable_control_status": "pass",
+      "expected": {
+        "absolute_symplectic_features": "zero",
+        "combinatorics": "zero",
+        "euclidean_features": "zero",
+        "law_parameters": "not_applicable",
+        "matrix_identity": "zero",
+        "normalized_product_features": "zero",
+        "raw_geometry_after_transform": "zero",
+        "signed_symplectic_features": "zero"
+      },
+      "hypotheses_conditioning": "U unitary; real coordinates ordered (q1,q2,p1,p2)",
+      "level": "pointwise_orbit",
+      "objects_laws": "a body K and U K for U in U(2) under the real (q,p)-block embedding",
+      "proof_source": [
+        "experiments/sys-datascience/methods/generator-orientation-smoke/main.rs: deterministic_u2_i8 and Haar embedding",
+        "experiments/sys-datascience/methods/generator-orientation-smoke/README.md: U2 semantic controls",
+        "experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/README.md: U2 orbit arm"
+      ],
+      "proof_status": "proved_subgroup_matrix_identity",
+      "row_id": "u2-subgroup-sp4-pointwise-orbit",
+      "transformation": "real embedding [[Re U,-Im U],[Im U,Re U]], contained in O(4) intersect Sp(4)"
+    },
+    {
+      "arithmetic": "exact rational",
+      "collapse_scope": "do not collapse target arms until an authoritative capacity/sys anti-symplectic invariance theorem is supplied",
+      "executable_control": "matrix_feature_control_pass_proof_pending: signed omega Gram flips and absolute omega Gram is fixed; no capacity/sys claim",
+      "executable_control_status": "matrix_feature_control_pass_proof_pending",
+      "expected": {
+        "absolute_symplectic_features": "zero",
+        "combinatorics": "zero",
+        "euclidean_features": "zero",
+        "law_parameters": "not_applicable",
+        "matrix_identity": "zero",
+        "normalized_product_features": "zero",
+        "raw_geometry_after_transform": "zero",
+        "signed_symplectic_features": "nonzero"
+      },
+      "hypotheses_conditioning": "coordinates (q1,q2,p1,p2); target-free matrix and feature controls only",
+      "level": "pointwise_orbit",
+      "objects_laws": "K and A K for A=diag(-1,-1,1,1), an orthogonal antiunitary/anti-symplectic endpoint",
+      "proof_source": [
+        "experiments/sys-datascience/methods/generator-orientation-smoke/main.rs: deterministic_so4_i8",
+        "experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/README.md and main.rs: anti-symplectic pi endpoint"
+      ],
+      "proof_status": "capacity_and_sys_invariance_proof_pending; target_free_matrix_and_absolute_omega_controls_proved",
+      "row_id": "antiunitary-antisymplectic-endpoint",
+      "transformation": "A^T A=I, det A=1, and A^T J A=-J"
+    },
+    {
+      "arithmetic": "exact rational",
+      "collapse_scope": "never infer U(2)/Sp(4) membership from SO(4) membership",
+      "executable_control": "negative_control_pass: A^T J A=-J rather than J and signed omega entry reverses",
+      "executable_control_status": "negative_control_pass",
+      "expected": {
+        "absolute_symplectic_features": "zero",
+        "combinatorics": "zero",
+        "euclidean_features": "zero",
+        "law_parameters": "not_applicable",
+        "matrix_identity": "nonzero",
+        "normalized_product_features": "zero",
+        "raw_geometry_after_transform": "zero",
+        "signed_symplectic_features": "nonzero"
+      },
+      "hypotheses_conditioning": "orthogonal determinant-one is insufficient for U(2)=O(4) intersect Sp(4)",
+      "level": "not_equivalent",
+      "objects_laws": "K and A K for A=diag(-1,-1,1,1), viewed incorrectly as a U(2) element",
+      "proof_source": [
+        "experiments/sys-datascience/methods/generator-orientation-smoke/README.md: SO4 versus U2 distinction",
+        "experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/main.rs: anti-symplectic endpoint test"
+      ],
+      "proof_status": "proved_matrix_counterexample",
+      "row_id": "generic-so4-not-u2-negative-control",
+      "transformation": "test the signed symplectic form, not only Euclidean and determinant views"
+    },
+    {
+      "arithmetic": "exact rational",
+      "collapse_scope": "never apply the polar collapse without a shared marked origin",
+      "executable_control": "negative_control_pass: translated support rows n_i/(1+n_i dot t) differ nonuniformly",
+      "executable_control_status": "negative_control_pass",
+      "expected": {
+        "absolute_symplectic_features": "not_applicable",
+        "combinatorics": "zero",
+        "euclidean_features": "zero",
+        "law_parameters": "not_applicable",
+        "matrix_identity": "not_applicable",
+        "normalized_product_features": "nonzero",
+        "raw_geometry_after_transform": "nonzero",
+        "signed_symplectic_features": "not_applicable"
+      },
+      "hypotheses_conditioning": "nonzero translation t while polarity is still taken about coordinate origin",
+      "level": "not_equivalent",
+      "objects_laws": "a tangential polygon T and a translated copy T+t presented without preserving the polarity origin",
+      "proof_source": [
+        "thesis/02-preliminaries-polytope-input-language.tex: origin-based normalized halfspaces",
+        "experiments/sys-datascience/methods/alternative-generator-smoke/main.rs: polar coupling deferred for lack of named exact center"
+      ],
+      "proof_status": "proved_origin_mark_counterexample",
+      "row_id": "polar-without-origin-mark-negative-control",
+      "transformation": "translation does not commute with origin-based polarity by a fixed translation/scale"
+    }
+  ],
+  "schema": "generator-equivalence-regression-v1",
+  "target_free": true,
+  "view_definitions": {
+    "absolute_symplectic_features": "direct difference after taking absolute values of omega-based features",
+    "combinatorics": "direct unlabelled combinatorial difference; all named invertible transformations preserve it",
+    "euclidean_features": "direct difference of Euclidean metric features of the two nominal arms, without quotient alignment",
+    "law_parameters": "direct difference of probability laws/marks after the stated law-level coupling or pushforward",
+    "matrix_identity": "residual of the row's declared matrix/form identity, not distance of the transform from identity",
+    "normalized_product_features": "direct difference of the declared scale/area/volume-normalized product features",
+    "raw_geometry_after_transform": "residual after explicitly applying the row's named geometric transformation",
+    "signed_symplectic_features": "direct difference of signed omega-based features of the two nominal arms"
+  },
+  "views": [
+    "law_parameters",
+    "raw_geometry_after_transform",
+    "combinatorics",
+    "euclidean_features",
+    "signed_symplectic_features",
+    "absolute_symplectic_features",
+    "normalized_product_features",
+    "matrix_identity"
+  ]
+}

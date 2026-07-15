@@ -1,0 +1,79 @@
+{
+  "artifacts": {
+    "matrix.json": {
+      "bytes": 26123,
+      "sha256": "06ae132b78dab4cdfaa119b2b59f2ef4d9652876c1ebb125b25b0f2ff2a0be2f"
+    },
+    "matrix.tsv": {
+      "bytes": 13567,
+      "sha256": "babacc6a446b1796dde220c0e99969d5ddd6e08f101c2aca3cc844fe5dbfb179"
+    },
+    "witnesses.json": {
+      "bytes": 11542,
+      "sha256": "60b8cdaea22b0f21d52919f9f37198ead7dfd7916a18123b3d4256e80911e4ae"
+    }
+  },
+  "command": "experiments/sys-datascience/methods/generator-equivalence-regression/produce.py --out-dir experiments/sys-datascience/methods/generator-equivalence-regression/artifacts --expected-revision 73dda723a96b4952af82d3a8474152949342f426",
+  "complete": true,
+  "independence_unit": "one deterministic synthetic witness per matrix row; probability-law rows are theorem-backed bijection controls, not Monte Carlo samples",
+  "interpretation_boundary": "Target-free regression infrastructure only. It supports only the named algebraic, marginal, pushforward, orbit, and negative-control statements; it contains no sys/capacity evaluation or population comparison.",
+  "producer": "experiments/sys-datascience/methods/generator-equivalence-regression/produce.py",
+  "producer_sha256": "2c71783018cc8ff73b420d63617842553c3eb78300f0b229d12cec8dbd8e903a",
+  "schema": "generator-equivalence-regression-v1-provenance",
+  "source_inputs": [
+    {
+      "bytes": 54007,
+      "path": "experiments/sys-datascience/methods/alternative-generator-smoke/main.rs",
+      "sha256": "1cee0ffadae645a40b32f7ca02dc28b931738c53aa93bfd25067493595e3a5ca"
+    },
+    {
+      "bytes": 5067,
+      "path": "experiments/sys-datascience/methods/alternative-generator-smoke/README.md",
+      "sha256": "725df0809f2768cb8f0851a00667a68b9cff10cc990fa48aafd9b0eeadb8142f"
+    },
+    {
+      "bytes": 52960,
+      "path": "experiments/sys-datascience/methods/generator-orientation-smoke/main.rs",
+      "sha256": "64e2e303ef6502a6908ab99aba2b313e572112ff1e889a8e1400c1ff0b54c88e"
+    },
+    {
+      "bytes": 3456,
+      "path": "experiments/sys-datascience/methods/generator-orientation-smoke/README.md",
+      "sha256": "2bfb2e5985138f593d49b555d7d0ea478f2d290baab0ecdf26b41e957d4e4e42"
+    },
+    {
+      "bytes": 34916,
+      "path": "experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/main.rs",
+      "sha256": "7d4ffe8b3d4e1a7d8120a2a0cba873b04d4efec5c9cf2aa70f6294a5af8d63be"
+    },
+    {
+      "bytes": 2722,
+      "path": "experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/README.md",
+      "sha256": "cfd5fc6cc8f37886df987b83dda288cccf6c1b81e78e0dab63a0b3facea143e9"
+    },
+    {
+      "bytes": 11728,
+      "path": "experiments/sys-datascience/methods/ridge-endpoint-path/notes/endpoint-predictions.md",
+      "sha256": "32096eda789ca5896a67c9e793ef00580f5e4a55ad785a8c3ebc307fd9e89fd3"
+    },
+    {
+      "bytes": 15166,
+      "path": "crates/euclidean-polytopes/tests/polar_vertices.rs",
+      "sha256": "f54e389564045678de6f5dc8dc0667c9371d458c376027e5c7a452c737c54845"
+    },
+    {
+      "bytes": 37675,
+      "path": "crates/euclidean-polytopes/DEVELOPMENT.md",
+      "sha256": "44c0ea61c96e37879ee618b34fef45199bb2ccb29a3d50466a3958c3c4e655ea"
+    },
+    {
+      "bytes": 1297,
+      "path": "thesis/02-preliminaries-polytope-input-language.tex",
+      "sha256": "012e37cef55926c3b2f38aeb762c3768ed85c5dc3b502c0dac84a42a869ca66b"
+    }
+  ],
+  "source_repository_tree": "2ebd13854fc881275312b5e211770bc87e0e1e2e",
+  "source_revision": "73dda723a96b4952af82d3a8474152949342f426",
+  "source_tracked_clean": true,
+  "untracked_files_ignored_by_clean_predicate": true
+}
