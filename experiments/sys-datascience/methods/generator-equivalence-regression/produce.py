@@ -57,6 +57,7 @@ SOURCE_PATHS = (
     "experiments/sys-datascience/methods/generator-orientation-smoke/README.md",
     "experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/main.rs",
     "experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/README.md",
+    "experiments/sys-datascience/methods/ridge-endpoint-path/notes/endpoint-predictions.md",
     "crates/euclidean-polytopes/tests/polar_vertices.rs",
     "crates/euclidean-polytopes/DEVELOPMENT.md",
     "thesis/02-preliminaries-polytope-input-language.tex",
