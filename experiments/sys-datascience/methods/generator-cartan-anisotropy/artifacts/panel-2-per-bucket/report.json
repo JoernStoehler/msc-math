@@ -3,10 +3,10 @@
   "command": "cargo run -p exp-sys-landscape --release --bin sys-datascience-generator-cartan-anisotropy -- --out-dir experiments/sys-datascience/methods/generator-cartan-anisotropy/artifacts/panel-2-per-bucket",
   "source_path": "experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl",
   "source_input_sha256": "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367",
-  "source_revision": "d6b69d58ff926c180a73356475f4754153ac7ce9",
-  "source_repository_tree": "f4d744a9bcb4c0f92dcc7a49cbfa430dbf5c6173",
+  "source_revision": "715d4f41a068704ca275fe60741906772ba33373",
+  "source_repository_tree": "fa07a4fe0b45880e2d2bd1a755c3b49455bf3956",
   "source_dirty_tracked": false,
-  "producer_source_sha256": "d28d1451da97f4cb8d0fe0351061398a01420cdf101d55a13c0d80f3c7046fc5",
+  "producer_source_sha256": "24d6d1957b2ce396bf003bc0f59630ff6e8227c2d31c7ed288eee304ccb02634",
   "cargo_lock_sha256": "61cbc0cec713df9c7b6ec79c19d4abbc34fcbc4b30ed9911df02502e0c444c1f",
   "coordinate_order": "q1,q2,p1,p2",
   "requested_buckets": [
@@ -22,11 +22,11 @@
   "failure_rows": 0,
   "pair_count": 32,
   "failures": [],
-  "output_rows_sha256": "f621f33af3af2ada6f10b534cf2df1c8fc36ee5a2ff27c4099424f5e89944a8b",
+  "output_rows_sha256": "4eea1d9c85d007bf2889291a713bb2bfdd0bd166b2c45d6cd7e9bd3e6c6227e7",
   "output_rows_count": 64,
-  "output_paired_sha256": "73c697287e379f04641995db46864bc97d4df7eb7e6f64a29048f3cfc07aa979",
+  "output_paired_sha256": "1b43e902518185dce008f298f4275764987b25b73a02c4b3ed750342bbd21714",
   "output_paired_count": 32,
-  "output_paired_tsv_sha256": "52d86837d8f90297fe4134e9e651b77329888cc211e50a95897212617280d79a",
+  "output_paired_tsv_sha256": "130f54d7986fbe1a3e3242335ab4e0ec9dc54e3c28dcd2f873130dfab262c9fa",
   "diagonal_quotient_control": {
     "input_d_exact": [
       "1/1",
@@ -96,6 +96,6 @@
     "reconstruction_passed": true,
     "scope": "positive diagonal determinant-one Cartan quotient only; not a classification of Sp(4)\\SL(4)\\Sp(4)"
   },
-  "exactness_boundary": "Intervention matrices and Cartan pair weights are exact rationals. Source f64 payloads are converted at the existing binary-rational reconstruction boundary; the resulting reconstructed geometry, incidence, and volume are exact there. Floating residuals and singular values are diagnostic views.",
+  "exactness_boundary": "Intervention matrices and Cartan pair weights are exact rationals. Retained source rational duals are transformed by exact rational inverse-transpose matrices and reconstructed through the exact polar API; incidence, volume, and symplectic signatures are exact checks. Floating singular values and residuals are diagnostic views.",
   "interpretation_boundary": "Target-free paired geometry only. This packet does not evaluate sys or capacity, estimate population effects, claim an intrinsic Sp(4)\\SL(4)\\Sp(4) distance, classify the full double coset, or treat the symplectic arm as new coverage for orbit-invariant consumers."
 }
