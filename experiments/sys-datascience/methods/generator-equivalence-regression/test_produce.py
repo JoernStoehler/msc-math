@@ -41,6 +41,9 @@ class EquivalenceMatrixTests(unittest.TestCase):
     def test_payload_generation_is_byte_deterministic(self):
         self.assertEqual(produce.artifact_payloads(), produce.artifact_payloads())
 
+    def test_every_view_has_an_explicit_comparison_semantics(self):
+        self.assertEqual(set(produce.VIEWS), set(produce.VIEW_DEFINITIONS))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -33,6 +33,16 @@ VIEWS = (
     "matrix_identity",
 )
 OUTCOMES = {"zero", "nonzero", "not_applicable"}
+VIEW_DEFINITIONS = {
+    "law_parameters": "direct difference of probability laws/marks after the stated law-level coupling or pushforward",
+    "raw_geometry_after_transform": "residual after explicitly applying the row's named geometric transformation",
+    "combinatorics": "direct unlabelled combinatorial difference; all named invertible transformations preserve it",
+    "euclidean_features": "direct difference of Euclidean metric features of the two nominal arms, without quotient alignment",
+    "signed_symplectic_features": "direct difference of signed omega-based features of the two nominal arms",
+    "absolute_symplectic_features": "direct difference after taking absolute values of omega-based features",
+    "normalized_product_features": "direct difference of the declared scale/area/volume-normalized product features",
+    "matrix_identity": "residual of the row's declared matrix/form identity, not distance of the transform from identity",
+}
 LEVELS = {
     "full_law",
     "component_marginal",
@@ -245,7 +255,7 @@ def rows():
             "proof_source": ["experiments/sys-datascience/methods/ridge-endpoint-path/notes/endpoint-predictions.md: factor-scale gauge", f"{zoo}/README.md: transformation contracts"],
             "arithmetic": "exact rational",
             "executable_control": "pass: A^T J A=ab J, determinant=a^2b^2, normalized area/volume ratios",
-            "collapse_scope": "collapse factor-scale gauge arms before target allocation when features/target are scale-normalized as declared",
+            "collapse_scope": "collapse factor-scale arms in target-free geometry-coverage accounting; target equivalence requires a separately sourced conformal-invariance argument",
         },
         {
             "row_id": "simultaneous-common-factor-rotation",
@@ -258,7 +268,7 @@ def rows():
             "proof_source": [f"{alt}/README.md: common planar rotation gauge", f"{orient}/main.rs and README.md: matrix convention and symplectic controls"],
             "arithmetic": "exact rational signed-permutation rotation",
             "executable_control": "pass: A^T A=I and A^T J A=J with Gram controls",
-            "collapse_scope": "collapse simultaneous common-rotation gauge arms",
+            "collapse_scope": "collapse simultaneous common-rotation arms in target-free symplectic-orbit/feature coverage",
         },
         {
             "row_id": "one-factor-only-rotation-negative-control",
@@ -279,7 +289,7 @@ def rows():
             "level": "pointwise_orbit",
             "hypotheses_conditioning": "two linearly independent normal directions; all four supports positive and facets active",
             "transformation": "translate by -t, where u_i dot t=(h_i^+-h_i^-)/2 for i=1,2",
-            "expected": expected(law_parameters=ZERO, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, signed_symplectic_features=NA, absolute_symplectic_features=NA, normalized_product_features=ZERO, matrix_identity=NA),
+            "expected": expected(law_parameters=NONZERO, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, signed_symplectic_features=NA, absolute_symplectic_features=NA, normalized_product_features=ZERO, matrix_identity=NA),
             "proof_status": "proved_linear_translation_system",
             "proof_source": [f"{alt}/main.rs: antipodal_broken_and_control width matching", f"{alt}/README.md: paired broken/control law"],
             "arithmetic": "exact rational",
@@ -292,7 +302,7 @@ def rows():
             "level": "not_equivalent",
             "hypotheses_conditioning": "three normal directions spanning R2; all six supports positive and all facets active",
             "transformation": "candidate translation must solve three equations u_i dot t=(h_i^+-h_i^-)/2 in two unknowns",
-            "expected": expected(law_parameters=ZERO, raw_geometry_after_transform=NONZERO, combinatorics=ZERO, euclidean_features=NONZERO, signed_symplectic_features=NA, absolute_symplectic_features=NA, normalized_product_features=NONZERO, matrix_identity=NA),
+            "expected": expected(law_parameters=NONZERO, raw_geometry_after_transform=NONZERO, combinatorics=ZERO, euclidean_features=NONZERO, signed_symplectic_features=NA, absolute_symplectic_features=NA, normalized_product_features=NONZERO, matrix_identity=NA),
             "proof_status": "proved_overdetermined_counterexample",
             "proof_source": [f"{alt}/main.rs: antipodal_broken_and_control and six-side availability"],
             "arithmetic": "exact rational",
@@ -538,6 +548,7 @@ def artifact_payloads():
         "complete": True,
         "target_free": True,
         "views": list(VIEWS),
+        "view_definitions": VIEW_DEFINITIONS,
         "outcome_vocabulary": sorted(OUTCOMES),
         "row_count": len(matrix_rows),
         "counts_by_level": level_counts,

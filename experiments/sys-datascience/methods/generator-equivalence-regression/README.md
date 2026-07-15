@@ -8,6 +8,11 @@ states its comparison level, conditioning, transformation, expected outcome in
 all declared views (including separate signed and absolute symplectic-feature
 views), proof/source status, arithmetic boundary, machine-readable executable
 control status, and allocation-time collapse rule.
+`zero` and `nonzero` are interpreted according to the generated
+`view_definitions`: geometry residual is measured after the named transform,
+while metric and symplectic feature views compare the two nominal arms
+directly. This is why a polar pair has zero transformed-geometry residual but
+generally nonzero Euclidean-feature difference.
 
 The crucial law boundary is narrow. Sorted IID uniform angles and
 Dirichlet-(1,...,1) cyclic gaps agree as an angle proposal after accounting for
