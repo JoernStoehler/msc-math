@@ -551,7 +551,7 @@
       "experiments/sys-datascience/methods/generator-zoo-smoke/main.rs": "ea59cb1b3d123e630fdc034a95f4a2a43812b0a6",
       "experiments/sys-landscape/Cargo.toml": "a8efcf2366bcc08c5317d33926f44579727fbf31"
     },
-    "revision": "1f49066867676c606d1e9d9af0e64a31855b9a53",
+    "revision": "84193a47aa953532c018f067ea8e4642359f3822",
     "tracked_clean_for_analyzer": true
   },
   "synthetic_calibrations": {
