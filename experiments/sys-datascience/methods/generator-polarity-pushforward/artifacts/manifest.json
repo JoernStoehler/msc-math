@@ -1,8 +1,9 @@
 {
   "capacity_claim": false,
   "dependencies": "Python stdlib only",
-  "exact_boundary": "All panel vertices are Fraction values after current-law f64 generation and explicit denominator reconstruction; all polarity, incidence, area, centroid, and residual fields are exact thereafter. Shape views and nearest summaries are f64 diagnostics.",
-  "fixtures": 7,
+  "exact_boundary": "Current-law f64 candidates first pass cyclic-gap, original-halfspace, and all-facets-active checks. Vertices then cross an explicit Fraction.limit_denominator(1e9) reconstruction boundary and exact hull; polarity, incidence, area, centroid, and residual fields are exact thereafter. Support views and quotient distances are f64 diagnostics.",
+  "fixtures": 8,
+  "generation_failures": [],
   "input_files": [],
   "law_version": "generator-polarity-pushforward-v1",
   "output_files": {
@@ -12,20 +13,47 @@
     "product_arms": "product-arms.jsonl"
   },
   "output_sha256": {
-    "diversity": "52261d5be7eaed350f3c640b4f09ad9ff991e171bf3bc70fa215163b641ca4b7",
-    "fixtures": "131e262e943ef209842d886b87b8250f1013d05fe17939406e3578a724a47dc0",
-    "panel": "fbee425786c9a3bb7dacfaff55144af5d69f4df4c77c979431b8e5da3defcfe6",
-    "product_arms": "9e29d8d6924907f0adc39dbef117f5f5f78e9fcf08f70dc5402ce05577447d7c"
+    "diversity": "04d59cfc9c61a9385040e91d06274bb06de7c28da0c7483ae36a2001e9aae58e",
+    "fixtures": "6a77191dfec9143e81524514fa82ec0fe3e4f155bd684e7a49e1ff777c51cde9",
+    "panel": "cd59786949e90d43f6ec417b79ced14b0b2e95ee5d4265025cdf0d5ca26f666d",
+    "product_arms": "4fcbaf368754ee7fe60d375e4c2fab3ab73964fa869e4766953071ca6cdd874e"
   },
   "panel_rows": 72,
-  "producer_sha256": "e7f70483216a967c23983da61e0750639b9bb5476b0c3fafd77252177a93eb1c",
+  "producer_sha256": "856f607f6a62de8d4acdca94b4e25f4395cda4fc42998ad3a9e02b0195bc445f",
   "product_arm_rows": 144,
   "rows_per_stratum": 24,
   "schema": "generator-polarity-manifest-v1",
   "seed": 20260715,
+  "seed_counts": {
+    "20260715": 24,
+    "20260716": 24,
+    "20260717": 24
+  },
+  "seed_stratum_counts": {
+    "20260715": {
+      "3": 8,
+      "4": 8,
+      "6": 8
+    },
+    "20260716": {
+      "3": 8,
+      "4": 8,
+      "6": 8
+    },
+    "20260717": {
+      "3": 8,
+      "4": 8,
+      "6": 8
+    }
+  },
+  "seeds": [
+    20260715,
+    20260716,
+    20260717
+  ],
   "source_dirty_tracked": false,
-  "source_revision": "ded422fd076b8d741a5a8dc651d02caddb25c7b4",
-  "source_tree": "b0ef60590feb23963fbf33b97c8255a872296993",
+  "source_revision": "9608b0954940839542a51d7cc46a5f41438b8527",
+  "source_tree": "8ca6cb936b4cd217c201c873a9d3c7ce0155c2cd",
   "strata": [
     3,
     4,

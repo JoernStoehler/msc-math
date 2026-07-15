@@ -86,9 +86,9 @@
     "residual": 0.0
   },
   {
-    "error": "mark is not interior",
     "fixture": "raw-origin-translation-failure",
-    "status": "undefined: translated origin is outside"
+    "raw_vs_centroid_residual": 0.47580645161290325,
+    "status": "defined: raw origin remains interior"
   },
   {
     "fixture": "area-normalization-correction",
@@ -110,5 +110,13 @@
     "mahler": "8",
     "residual": 0.0,
     "single_polar_shape_residual": 2.0
+  },
+  {
+    "distinct_triangle": 0.1849874578658969,
+    "fixture": "support-metric-invariance-controls",
+    "reflection": 1.138063217752167e-16,
+    "rotation_90": 1.1145513959121702e-16,
+    "scale": 0.0,
+    "translation": 1.3755821205440478e-16
   }
 ]
