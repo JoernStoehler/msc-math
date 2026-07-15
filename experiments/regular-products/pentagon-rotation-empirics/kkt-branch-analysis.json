@@ -4,7 +4,7 @@
     "group_action_decimals": 10,
     "publication_input_is_explicit": true,
     "source": "experiments/regular-products/pentagon-rotation-empirics/analyze.py",
-    "source_sha256": "898d94b22ae40c6c1fb06971fadb83f7dfa9a6f321f35283fe4bc6d016ca52d8"
+    "source_sha256": "192428e868528522c1f3455489250c2b86b24113babb6e216b535a0833e2c1e0"
   },
   "candidate_views": {
     "raw": "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape_raw.png",
@@ -1685,10 +1685,10 @@
     }
   },
   "output_sha256": {
-    "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape.pdf": "54ecdad56e6f58b317ca57f6fdd2a46180d1ebb8d9500cb2c427aa705f318687",
-    "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape.png": "57547fafbdb6580fc219bc481df34dc7957a5bf2ef7b0b642d32363e271b33ab",
-    "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape_grouped.png": "57547fafbdb6580fc219bc481df34dc7957a5bf2ef7b0b642d32363e271b33ab",
-    "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape_raw.png": "9e38959912421236e8eef75ce7438bd9228c747ebadc5a4b293045723996c161",
+    "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape.pdf": "1e2f6c7f666ebf178d693201c41027b7c3669f250a9b15208bce29aac00b843f",
+    "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape.png": "cb46692cab4ebee687cd38a995ba5d1225f11542faff5a9eac540fc1d44da689",
+    "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape_grouped.png": "cb46692cab4ebee687cd38a995ba5d1225f11542faff5a9eac540fc1d44da689",
+    "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape_raw.png": "cc6d52bba8f14b3ae97c0b7c4f50f594fa557d7ded97be89220906799aedd960",
     "experiments/regular-products/pentagon-rotation-empirics/kkt_branch_sampled_classification.pdf": "e6aca91e505e82764a6912fd317fd873e5f1189ffff2911c371affcc60681b70",
     "experiments/regular-products/pentagon-rotation-empirics/kkt_branch_sampled_classification.png": "9c289699532a0ecb6f483d6be730a477a38a86ae0a4744f7740ba1e2fa2974a6"
   },

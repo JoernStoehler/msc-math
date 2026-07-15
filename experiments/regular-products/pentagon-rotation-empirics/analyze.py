@@ -1616,7 +1616,7 @@ def plot_landscape(
             [0],
             color="#1769aa",
             linewidth=1.8,
-            label="worked 3-block branch",
+            label=r"example competitor $\tau$ (3 blocks)",
         ),
         Line2D(
             [0],

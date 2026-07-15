@@ -177,12 +177,12 @@ attention cost. Their producer artifacts remain available under
   repository or Zenodo locator once the thesis release is fixed.  This is a
   publication-provenance dependency owned by the Published Code and Data
   chapter, not a current mathematical or chapter-review blocker.
-- The worked competitor `(0,5,3,8,1,7)` has constant positive weights and an
+- The example competitor `(0,5,3,8,1,7)` has constant positive weights and an
   exact positive action gap on `0 <= theta < pi/10`, with equality only at the
   right endpoint. Its branch has a strict internal action minimum at
   `tan(theta) = tan(pi/5)/3`, illustrating branch geometry hidden by the final
   lower envelope.
-- Independent review checked the worked branch's block convention, KKT
+- Independent review checked the example competitor's block convention, KKT
   weights, `Q`, action, both gap formulas, endpoint tie, and internal minimum.
   It found only an ambiguity in the classifier-path sentence; the repaired
   wording no longer suggests that every other word takes an early exit.
@@ -244,6 +244,6 @@ whole-profile grouping rule, or shared solver's admissibility behavior changes.
 Jörn has accepted the theorem-strength finite-enumeration dependency.  The
 active chapter now makes the exact, source-identified Sage classification
 visibly correspond to the mathematical predicates and supplements it with an
-exact worked branch plus a separately labelled empirical landscape.  The
+exact example competitor plus a separately labelled empirical landscape.  The
 chapter remains subject to his writing review and, ultimately, Kai's review.
 No current agent audit identified a theorem gap requiring a weaker statement.

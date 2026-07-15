@@ -110,7 +110,7 @@ continue above the fixed action cutoff 6; a line break without that glyph
 comes from a non-admissible sampled status. Indeterminate and failure statuses
 are kept out of the action panels and reported in the adjacent classification
 table instead. The cutoff affects only the display; the JSONL retains all
-numerical actions. The black active branch and the worked competitor
+numerical actions. The black active branch and the example competitor
 `(0,5,3,8,1,7)` are fixed raw words, not angle-wise selected curves.
 
 The sampled-presence classification has only these four exhaustive classes:
