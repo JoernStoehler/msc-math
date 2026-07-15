@@ -1,0 +1,479 @@
+{
+  "comparisons": [
+    {
+      "case": "identity_permuted_presentation",
+      "cost_observation_seconds": 0.03850105200035614,
+      "direct_sampled": {
+        "axis_only": {
+          "l2": 0.0,
+          "linf": 0.0
+        },
+        "primitive_level_1": {
+          "l2": 0.0,
+          "linf": 0.0
+        },
+        "primitive_level_2": {
+          "l2": 0.0,
+          "linf": 0.0
+        },
+        "primitive_level_3": {
+          "l2": 0.0,
+          "linf": 0.0
+        }
+      },
+      "left": "synthetic:cube",
+      "left_facets": 8,
+      "residuals": {
+        "direct_direction_refinement_abs_l2": 0.0,
+        "direct_direction_refinement_abs_linf": 0.0,
+        "so4_finite_bank_search_refinement_abs_l2": 0.0,
+        "so4_finite_bank_search_refinement_abs_linf": 0.0,
+        "u2_finite_bank_search_refinement_abs_l2": 0.0,
+        "u2_finite_bank_search_refinement_abs_linf": 0.0
+      },
+      "right": "synthetic:cube_permuted",
+      "right_facets": 8,
+      "so4_finite_bank": {
+        "bank_size": 192,
+        "l2": 0.0,
+        "linf": 0.0,
+        "winning_index": 0
+      },
+      "u2_finite_bank": {
+        "bank_size": 32,
+        "l2": 0.0,
+        "linf": 0.0,
+        "winning_index": 0
+      }
+    },
+    {
+      "case": "facet_birth_truncated_cube",
+      "cost_observation_seconds": 0.06142172700128867,
+      "direct_sampled": {
+        "axis_only": {
+          "l2": 0.0693455916073286,
+          "linf": 0.08257240069866023
+        },
+        "primitive_level_1": {
+          "l2": 0.07569892444241622,
+          "linf": 0.23452696187269062
+        },
+        "primitive_level_2": {
+          "l2": 0.07709762408271836,
+          "linf": 0.23452696187269062
+        },
+        "primitive_level_3": {
+          "l2": 0.0772986804076943,
+          "linf": 0.23452696187269062
+        }
+      },
+      "left": "synthetic:cube",
+      "left_facets": 8,
+      "residuals": {
+        "direct_direction_refinement_abs_l2": 0.00020105632497594006,
+        "direct_direction_refinement_abs_linf": 0.0,
+        "so4_finite_bank_search_refinement_abs_l2": 0.0,
+        "so4_finite_bank_search_refinement_abs_linf": 0.0,
+        "u2_finite_bank_search_refinement_abs_l2": 0.0,
+        "u2_finite_bank_search_refinement_abs_linf": 0.0
+      },
+      "right": "synthetic:truncated_cube",
+      "right_facets": 9,
+      "so4_finite_bank": {
+        "bank_size": 192,
+        "l2": 0.0772986804076943,
+        "linf": 0.23452696187269062,
+        "winning_index": 0
+      },
+      "u2_finite_bank": {
+        "bank_size": 32,
+        "l2": 0.0772986804076943,
+        "linf": 0.23452696187269062,
+        "winning_index": 0
+      }
+    },
+    {
+      "case": "adversarial_narrow_feature",
+      "cost_observation_seconds": 0.05757087900019542,
+      "direct_sampled": {
+        "axis_only": {
+          "l2": 0.07977971304969055,
+          "linf": 0.08629620559023943
+        },
+        "primitive_level_1": {
+          "l2": 0.08038856817725583,
+          "linf": 0.17259241118047886
+        },
+        "primitive_level_2": {
+          "l2": 0.08052679550773825,
+          "linf": 0.17259241118047886
+        },
+        "primitive_level_3": {
+          "l2": 0.08055562649970577,
+          "linf": 0.17259241118047886
+        }
+      },
+      "left": "synthetic:cube",
+      "left_facets": 8,
+      "residuals": {
+        "direct_direction_refinement_abs_l2": 2.8830991967515596e-05,
+        "direct_direction_refinement_abs_linf": 0.0,
+        "so4_finite_bank_search_refinement_abs_l2": 0.0,
+        "so4_finite_bank_search_refinement_abs_linf": 0.0,
+        "u2_finite_bank_search_refinement_abs_l2": 0.0,
+        "u2_finite_bank_search_refinement_abs_linf": 0.0
+      },
+      "right": "synthetic:narrow_cut_cube",
+      "right_facets": 9,
+      "so4_finite_bank": {
+        "bank_size": 192,
+        "l2": 0.08055562649970577,
+        "linf": 0.17259241118047886,
+        "winning_index": 0
+      },
+      "u2_finite_bank": {
+        "bank_size": 32,
+        "l2": 0.08055562649970577,
+        "linf": 0.17259241118047886,
+        "winning_index": 0
+      }
+    },
+    {
+      "case": "ball_approximant_identity",
+      "cost_observation_seconds": 0.09808080200127733,
+      "direct_sampled": {
+        "axis_only": {
+          "l2": 0.0,
+          "linf": 0.0
+        },
+        "primitive_level_1": {
+          "l2": 0.0,
+          "linf": 0.0
+        },
+        "primitive_level_2": {
+          "l2": 0.0,
+          "linf": 0.0
+        },
+        "primitive_level_3": {
+          "l2": 0.0,
+          "linf": 0.0
+        }
+      },
+      "left": "synthetic:ball_approximant",
+      "left_facets": 16,
+      "residuals": {
+        "direct_direction_refinement_abs_l2": 0.0,
+        "direct_direction_refinement_abs_linf": 0.0,
+        "so4_finite_bank_search_refinement_abs_l2": 0.0,
+        "so4_finite_bank_search_refinement_abs_linf": 0.0,
+        "u2_finite_bank_search_refinement_abs_l2": 0.0,
+        "u2_finite_bank_search_refinement_abs_linf": 0.0
+      },
+      "right": "synthetic:ball_approximant",
+      "right_facets": 16,
+      "so4_finite_bank": {
+        "bank_size": 192,
+        "l2": 0.0,
+        "linf": 0.0,
+        "winning_index": 4
+      },
+      "u2_finite_bank": {
+        "bank_size": 32,
+        "l2": 0.0,
+        "linf": 0.0,
+        "winning_index": 0
+      }
+    },
+    {
+      "case": "ball_vs_ellipsoid_approximant",
+      "cost_observation_seconds": 0.08008707499902812,
+      "direct_sampled": {
+        "axis_only": {
+          "l2": 0.22173262424283688,
+          "linf": 0.3399147173654647
+        },
+        "primitive_level_1": {
+          "l2": 0.13086734886433354,
+          "linf": 0.3399147173654647
+        },
+        "primitive_level_2": {
+          "l2": 0.12199217882928526,
+          "linf": 0.3399147173654647
+        },
+        "primitive_level_3": {
+          "l2": 0.1200257344432219,
+          "linf": 0.3399147173654647
+        }
+      },
+      "left": "synthetic:ball_approximant",
+      "left_facets": 16,
+      "residuals": {
+        "direct_direction_refinement_abs_l2": 0.0019664443860633596,
+        "direct_direction_refinement_abs_linf": 0.0,
+        "so4_finite_bank_search_refinement_abs_l2": 0.0,
+        "so4_finite_bank_search_refinement_abs_linf": 0.0,
+        "u2_finite_bank_search_refinement_abs_l2": 0.0,
+        "u2_finite_bank_search_refinement_abs_linf": 0.0
+      },
+      "right": "synthetic:ellipsoid_approximant",
+      "right_facets": 16,
+      "so4_finite_bank": {
+        "bank_size": 192,
+        "l2": 0.1200257344432219,
+        "linf": 0.3399147173654647,
+        "winning_index": 0
+      },
+      "u2_finite_bank": {
+        "bank_size": 32,
+        "l2": 0.1200257344432219,
+        "linf": 0.3399147173654647,
+        "winning_index": 0
+      }
+    },
+    {
+      "case": "retained_orientation_u2",
+      "cost_observation_seconds": 0.031897705999654136,
+      "direct_sampled": {
+        "axis_only": {
+          "l2": 0.0682635396392401,
+          "linf": 0.14945595353271546
+        },
+        "primitive_level_1": {
+          "l2": 0.282775451304716,
+          "linf": 0.8502820852953409
+        },
+        "primitive_level_2": {
+          "l2": 0.280985918682884,
+          "linf": 0.8502820852953409
+        },
+        "primitive_level_3": {
+          "l2": 0.2777224125900507,
+          "linf": 0.8502820852953409
+        }
+      },
+      "left": "orientation:generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0/attempt=0/map=identity",
+      "left_facets": 6,
+      "residuals": {
+        "direct_direction_refinement_abs_l2": 0.003263506092833268,
+        "direct_direction_refinement_abs_linf": 0.0,
+        "so4_finite_bank_search_refinement_abs_l2": 0.2777224125900507,
+        "so4_finite_bank_search_refinement_abs_linf": 0.8502820852953408,
+        "u2_finite_bank_search_refinement_abs_l2": 0.2777224125900507,
+        "u2_finite_bank_search_refinement_abs_linf": 0.8502820852953408
+      },
+      "right": "orientation:generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0/attempt=0/map=u2-deterministic",
+      "right_facets": 6,
+      "so4_finite_bank": {
+        "bank_size": 192,
+        "l2": 2.1411214584335513e-17,
+        "linf": 1.1102230246251565e-16,
+        "winning_index": 118
+      },
+      "u2_finite_bank": {
+        "bank_size": 32,
+        "l2": 2.1411214584335513e-17,
+        "linf": 1.1102230246251565e-16,
+        "winning_index": 12
+      }
+    },
+    {
+      "case": "retained_orientation_so4",
+      "cost_observation_seconds": 0.029747038999630604,
+      "direct_sampled": {
+        "axis_only": {
+          "l2": 0.07301114308952454,
+          "linf": 0.10766714145753359
+        },
+        "primitive_level_1": {
+          "l2": 0.0946406586720903,
+          "linf": 0.2102503445313989
+        },
+        "primitive_level_2": {
+          "l2": 0.12905409055174785,
+          "linf": 0.3100621450921807
+        },
+        "primitive_level_3": {
+          "l2": 0.12715096511619295,
+          "linf": 0.3159019342784533
+        }
+      },
+      "left": "orientation:generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0/attempt=0/map=identity",
+      "left_facets": 6,
+      "residuals": {
+        "direct_direction_refinement_abs_l2": 0.0019031254355549032,
+        "direct_direction_refinement_abs_linf": 0.005839789186272593,
+        "so4_finite_bank_search_refinement_abs_l2": 0.0,
+        "so4_finite_bank_search_refinement_abs_linf": 0.0,
+        "u2_finite_bank_search_refinement_abs_l2": 0.0,
+        "u2_finite_bank_search_refinement_abs_linf": 0.0
+      },
+      "right": "orientation:generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0/attempt=0/map=so4-deterministic",
+      "right_facets": 6,
+      "so4_finite_bank": {
+        "bank_size": 192,
+        "l2": 2.988561546479478e-17,
+        "linf": 2.220446049250313e-16,
+        "winning_index": 1
+      },
+      "u2_finite_bank": {
+        "bank_size": 32,
+        "l2": 0.12715096511619295,
+        "linf": 0.3159019342784533,
+        "winning_index": 0
+      }
+    },
+    {
+      "case": "retained_exact_feature_witness",
+      "cost_observation_seconds": 0.06106734199966013,
+      "direct_sampled": {
+        "axis_only": {
+          "l2": 0.20067121144363229,
+          "linf": 0.28997102537882447
+        },
+        "primitive_level_1": {
+          "l2": 0.24323524570700097,
+          "linf": 0.4933433318259983
+        },
+        "primitive_level_2": {
+          "l2": 0.2649628429984625,
+          "linf": 0.7329316315529057
+        },
+        "primitive_level_3": {
+          "l2": 0.26506897680827424,
+          "linf": 0.739299281972791
+        }
+      },
+      "left": "orientation:generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0/attempt=0/map=identity",
+      "left_facets": 6,
+      "residuals": {
+        "direct_direction_refinement_abs_l2": 0.00010613380981172593,
+        "direct_direction_refinement_abs_linf": 0.006367650419885296,
+        "so4_finite_bank_search_refinement_abs_l2": 0.0,
+        "so4_finite_bank_search_refinement_abs_linf": 0.0,
+        "u2_finite_bank_search_refinement_abs_l2": 0.0,
+        "u2_finite_bank_search_refinement_abs_linf": 0.0
+      },
+      "right": "exact_feature:altgen-v2/scope=tangential-matchability-v1/factorial-baseline/param=current/seed=20260714/row=0/attempt=10/4x6",
+      "right_facets": 10,
+      "so4_finite_bank": {
+        "bank_size": 192,
+        "l2": 0.23906502257937584,
+        "linf": 0.6149547217420853,
+        "winning_index": 2
+      },
+      "u2_finite_bank": {
+        "bank_size": 32,
+        "l2": 0.23906502257937584,
+        "linf": 0.6149547217420853,
+        "winning_index": 8
+      }
+    }
+  ],
+  "controls": {
+    "fixed_f_so4_gram_positive": true,
+    "fixed_f_u2_gram_zero": true,
+    "narrow_feature_axis_grid_understates_linf": true,
+    "narrow_feature_primitive_grid_detected": true,
+    "permuted_presentation_zero": true,
+    "redundant_presentation_fail_closed": true
+  },
+  "coordinate_order": "q1,q2,p1,p2",
+  "direction_designs": {
+    "axis_only": 8,
+    "primitive_level_1": 80,
+    "primitive_level_2": 544,
+    "primitive_level_3": 2240
+  },
+  "finite_banks": {
+    "so4_coarse": 8,
+    "so4_fine": 192,
+    "u2_coarse": 8,
+    "u2_fine": 32
+  },
+  "fixed_f_direct_view": {
+    "orientation_identity_vs_so4": 1.2799946589467337,
+    "orientation_identity_vs_u2": 2.341269817658175e-16,
+    "selected_ids": {
+      "exact_feature": "exact_feature:altgen-v2/scope=tangential-matchability-v1/factorial-baseline/param=current/seed=20260714/row=0/attempt=10/4x6",
+      "identity": "orientation:generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0/attempt=0/map=identity",
+      "so4": "orientation:generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0/attempt=0/map=so4-deterministic",
+      "u2": "orientation:generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0/attempt=0/map=u2-deterministic"
+    },
+    "source": "copy-local bounded direct symplectic-Gram permutation quotient on six normalized dual facets"
+  },
+  "interpretation": {
+    "answerable_cross_f": "Direct normalized body-shape differences, including facet birth/death, under the stated Euclidean translation/scale convention.",
+    "deferrals": [
+      "normalized surface-area-measure transport: no transport/certificate contract selected",
+      "directed symplectic containment gauge: not implemented; would remain a dissimilarity pending metric/computation facts"
+    ],
+    "invisible_distinctions": "No symplectic-equivalence, combinatorial-type, exact-Hausdorff, or continuous-U(2)/SO(4)-quotient claim; finite directions can miss features."
+  },
+  "method_contract": {
+    "direct": "direct_sampled support L_infinity (sampled Hausdorff surrogate) and L2, neither exact Hausdorff",
+    "directions": "axis-only plus antipodally complete normalized primitive integer S^3 directions, max coordinate 1/2/3; level 3 primary",
+    "groups": "u2_finite_bank: 32 monomial-unitary maps; so4_finite_bank: 192 orientation-preserving signed permutations; neither is a compact-group infimum/Haar integration",
+    "input": "irredundant normalized dual inequalities a_i.x <= 1; exact reconstruction fails closed on invalid/redundant/unreconstructable inputs",
+    "no_sp4": "Sp(4) is noncompact and intentionally is not sampled as Haar probability",
+    "normalization": "subtract arithmetic mean of reconstructed vertices and divide by RMS vertex radius: translation and positive global-scale quotient only"
+  },
+  "presentation_dispositions": {
+    "synthetic:cube_redundant": "fail_closed:redundant duplicate normalized inequality"
+  },
+  "provenance": {
+    "exact_feature_input": {
+      "accepted_target_free_geometry_rows": 768,
+      "path": "experiments/sys-datascience/methods/generator-exact-feature-augmenter/artifacts/full-panels/tangential-replay/smoke-rows.jsonl",
+      "rows": 768,
+      "sha256": "0dc72ef98fb860ad838026e5354c36f254985aca9b90a060aee2f58f231832d2"
+    },
+    "orientation_input": {
+      "accepted_reconstructed_rows": 40,
+      "path": "experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl",
+      "rows": 40,
+      "sha256": "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367"
+    },
+    "synthetic_definitions": "exact rational normalized inequalities embedded in body_distance.py"
+  },
+  "reconstruction": {
+    "synthetic:ball_approximant": {
+      "facets": 16,
+      "four_facet_joins_checked": 1820,
+      "vertices": 64
+    },
+    "synthetic:cube": {
+      "facets": 8,
+      "four_facet_joins_checked": 70,
+      "vertices": 16
+    },
+    "synthetic:cube_permuted": {
+      "facets": 8,
+      "four_facet_joins_checked": 70,
+      "vertices": 16
+    },
+    "synthetic:ellipsoid_approximant": {
+      "facets": 16,
+      "four_facet_joins_checked": 1820,
+      "vertices": 64
+    },
+    "synthetic:narrow_cut_cube": {
+      "facets": 9,
+      "four_facet_joins_checked": 126,
+      "vertices": 19
+    },
+    "synthetic:truncated_cube": {
+      "facets": 9,
+      "four_facet_joins_checked": 126,
+      "vertices": 19
+    }
+  },
+  "run": {
+    "producer_path": "experiments/sys-datascience/methods/generator-variable-f-body-distance/body_distance.py",
+    "producer_sha256": "cca81e568205e18a69469727b385e43fc26b9ccbb358dc97c03388043a6a4e84",
+    "revision": "ce63cee0f4beff8a123d41a1a61e7e1502815e17",
+    "terminal_status": "complete",
+    "tracked_clean_before_generation": true
+  },
+  "schema": "generator-variable-f-body-distance-report-v1",
+  "target_free": true
+}
