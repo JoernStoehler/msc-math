@@ -37,8 +37,27 @@ class PolarityPacketTests(unittest.TestCase):
             self.assertEqual(fixtures["marked-double-polar"]["residual"], 0.0)
             self.assertEqual(fixtures["centroid-translation-covariance"]["residual"], 0.0)
             self.assertEqual(fixtures["symmetric-double-polar-negative-control"]["residual"], 0.0)
-            self.assertEqual(fixtures["raw-origin-translation-failure"]["status"], "undefined: translated origin is outside")
+            self.assertEqual(fixtures["raw-origin-translation-failure"]["status"], "defined: raw origin remains interior")
+            self.assertGreater(fixtures["raw-origin-translation-failure"]["raw_vs_centroid_residual"], 1e-3)
             self.assertEqual(fixtures["recenter-every-step-non-involution"]["status"], "fails")
+
+    def test_metric_and_product_validity(self):
+        with tempfile.TemporaryDirectory() as d:
+            out = Path(d) / "out"
+            self.run_packet(out)
+            fixtures = {r["fixture"]: r for r in json.loads((out / "fixtures.json").read_text())}
+            metric = fixtures["support-metric-invariance-controls"]
+            for key in ("scale", "translation", "rotation_90", "reflection"):
+                self.assertLess(metric[key], 1e-12, key)
+            self.assertGreater(metric["distinct_triangle"], 1e-3)
+            arms = [json.loads(line) for line in (out / "product-arms.jsonl").read_text().splitlines()]
+            self.assertEqual(len(arms), 144)
+            self.assertTrue(all(row["exact_reconstruction"] and row["incidence_valid"] for row in arms))
+            self.assertTrue(all(row["normalized_volume"] == "1" for row in arms))
+            self.assertTrue(all(all(count == 4 for count in row["vertex_incidence_counts"]) for row in arms))
+            manifest = json.loads((out / "manifest.json").read_text())
+            self.assertEqual(manifest["seeds"], [20260715, 20260716, 20260717])
+            self.assertTrue(all(all(value == 8 for value in counts.values()) for counts in manifest["seed_stratum_counts"].values()))
 
     def test_fail_closed_minimum_panel(self):
         proc = subprocess.run(["python3", str(HERE / "run.py"), "--per-stratum", "23"], cwd=HERE.parents[4], text=True, capture_output=True)

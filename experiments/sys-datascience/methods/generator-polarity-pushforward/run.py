@@ -16,6 +16,7 @@ LAW_VERSION = "generator-polarity-pushforward-v1"
 DEN = 10**9
 STRATA = (3, 4, 6)
 N = 24
+SEED_COUNT = 3
 
 def q(x):
     return F(str(float(x))).limit_denominator(DEN)
@@ -65,11 +66,24 @@ def intersections(angs, hs):
         det=a*d-b*c
         out.append(((h*d-k*b)/det,(a*k-c*h)/det))
     return out
+def float_candidate_valid(angs, hs, vertices):
+    gaps=[angs[(i+1)%len(angs)]-angs[i] + (2*math.pi if i+1==len(angs) else 0.0) for i in range(len(angs))]
+    if max(gaps) >= math.pi - 1e-12:
+        return False
+    normals=[(math.cos(t),math.sin(t)) for t in angs]
+    for x,y in vertices:
+        if any(a*x+b*y > h+1e-9 for (a,b),h in zip(normals,hs)):
+            return False
+    return all(any(abs(a*x+b*y-h) <= 1e-8 for x,y in vertices) for a,b,h in [(a,b,h) for (a,b),h in zip(normals,hs)])
+
 def current_factor(n,rng):
     for _ in range(100):
         ang=sorted(rng.random()*2*math.pi for _ in range(n))
         hs=[.8+.4*rng.random() for _ in range(n)]
-        v=rationalize(intersections(ang,hs))
+        raw=intersections(ang,hs)
+        if not float_candidate_valid(ang,hs,raw):
+            continue
+        v=rationalize(raw)
         if len(v)==n and area(v)>0 and inside(v): return v
     raise RuntimeError("bounded current-law draw exhausted")
 def translate(v,c): return [(x-c[0],y-c[1]) for x,y in v]
@@ -88,25 +102,57 @@ def residual(a,b):
     return max((max(abs(float(x[0]-y[0])),abs(float(x[1]-y[1]))) for x,y in zip(aa,bb)), default=0.0)
 def support(v,theta): return max(float(x)*math.cos(theta)+float(y)*math.sin(theta) for x,y in v)
 def shape(v):
-    # rotation/reflection convention: centered support samples, rotation minimized
-    c=centroid(v); z=[(float(x-c[0]),float(y-c[1])) for x,y in v]
-    return [sum(math.hypot(x*math.cos(t)-y*math.sin(t),x*math.sin(t)+y*math.cos(t)) for x,y in z)/len(z) for t in [i*math.pi/16 for i in range(32)]]
+    """Area-normalized centered support samples on a fixed 64-direction grid."""
+    c=centroid(v); scale=math.sqrt(float(area(v)))
+    z=[((float(x)-float(c[0]))/scale,(float(y)-float(c[1]))/scale) for x,y in v]
+    return [max(x*math.cos(t)+y*math.sin(t) for x,y in z) for t in [2*math.pi*i/64 for i in range(64)]]
 def l2(a,b): return math.sqrt(sum((x-y)**2 for x,y in zip(a,b))/len(a))
+def shape_distance(a,b):
+    """Support-shape L2 modulo 64-grid cyclic rotation and reflection."""
+    n=len(a); best=float("inf")
+    for reflected in (a,list(reversed(a))):
+        for k in range(n):
+            shifted=reflected[k:]+reflected[:k]
+            best=min(best,l2(shifted,b))
+    return best
 def dump_v(v): return [[str(x),str(y)] for x,y in v]
 def load_v(a): return [(F(x),F(y)) for x,y in a]
+def product_exact(qv,pv):
+    """Construct and verify the exact Cartesian H/incidence representation."""
+    vertices=[(x,y,u,w) for x,y in qv for u,w in pv]
+    facets=[(a,b,F(0),F(0),c) for a,b,c in edges(qv)] + [(F(0),F(0),a,b,c) for a,b,c in edges(pv)]
+    incidence=[]
+    all_inside=True
+    for v in vertices:
+        row=[]
+        for a,b,c,d,e in facets:
+            value=a*v[0]+b*v[1]+c*v[2]+d*v[3]
+            all_inside &= value <= e
+            row.append(value == e)
+        incidence.append(row)
+    facet_counts=[sum(row[j] for row in incidence) for j in range(len(facets))]
+    vertex_counts=[sum(row) for row in incidence]
+    expected_facets=[2*len(pv)]*len(qv)+[2*len(qv)]*len(pv)
+    valid=(all_inside and len(vertices)==len(qv)*len(pv)
+           and len(facets)==len(qv)+len(pv)
+           and facet_counts==expected_facets
+           and all(count==4 for count in vertex_counts))
+    return {"vertices":vertices,"facets":facets,"incidence":incidence,"valid":valid,"facet_counts":facet_counts,"vertex_counts":vertex_counts}
 def exact_fixture_rows():
     tri=[(F(-1),F(-1)),(F(2),F(-1)),(F(-1),F(2))]
     nons=[(F(-2),F(-1)),(F(1),F(-1)),(F(2),F(1)),(F(-1),F(2))]
     sq=[(F(-1),F(-1)),(F(1),F(-1)),(F(1),F(1)),(F(-1),F(1))]
-    shifted=[(x+13,y-12) for x,y in nons]
+    shifted=[(x+F(1,4),y+F(1,5)) for x,y in nons]
     p=polar(nons); pp=polar(p)
     c=centroid(nons); cp=polar(nons,c)
-    cp_shift=polar(shifted,(c[0]+13,c[1]-12))
-    try:
-        raw_shift=polar(shifted,(F(0),F(0))); raw_failure={"residual":residual(raw_shift,p)}
-    except ValueError as e:
-        raw_failure={"status":"undefined: translated origin is outside", "error":str(e)}
+    cp_shift=polar(shifted,(c[0]+F(1,4),c[1]+F(1,5)))
+    raw_shift=polar(shifted,(F(0),F(0)))
+    raw_failure={"status":"defined: raw origin remains interior", "raw_vs_centroid_residual":residual(raw_shift,cp_shift)}
     rp=polar(polar(nons,c),centroid(polar(nons,c)))
+    scaled=[(2*x,2*y) for x,y in nons]
+    translated=[(x+7,y-3) for x,y in nons]
+    rotated=[(-y,x) for x,y in nons]
+    reflected=[(-x,y) for x,y in nons]
     return [
       {"fixture":"non-self-polar","source":dump_v(nons),"polar":dump_v(p),"area_source":str(area(nons)),"area_polar":str(area(p)),"mahler":str(area(nons)*area(p))},
       {"fixture":"marked-double-polar","residual":residual(translate(pp,(F(0),F(0))),nons),"source":dump_v(nons),"double":dump_v(pp)},
@@ -115,21 +161,28 @@ def exact_fixture_rows():
       {"fixture":"area-normalization-correction","source_area":str(area(nons)),"polar_area":str(area(p)),"source_scale_squared":str(1/area(nons)),"polar_scale_squared":str(1/area(p)),"normalized_source_area":str(area(nons)*(1/area(nons))),"normalized_polar_area":str(area(p)*(1/area(p))),"normalized_product":str((area(nons)*(1/area(nons)))*(area(p)*(1/area(p))))},
       {"fixture":"recenter-every-step-non-involution","residual":residual(rp,translate(nons,c)),"status":"fails" if residual(rp,translate(nons,c)) and residual(rp,translate(nons,c))>1e-9 else "inconclusive"},
       {"fixture":"symmetric-double-polar-negative-control","residual":residual(polar(polar(sq)),sq),"single_polar_shape_residual":residual(polar(sq),sq),"mahler":str(area(sq)*area(polar(sq)))},
+      {"fixture":"support-metric-invariance-controls","scale":shape_distance(shape(nons),shape(scaled)),"translation":shape_distance(shape(nons),shape(translated)),"rotation_90":shape_distance(shape(nons),shape(rotated)),"reflection":shape_distance(shape(nons),shape(reflected)),"distinct_triangle":shape_distance(shape(nons),shape(tri))},
     ]
 def git_info():
     def run(*a): return subprocess.check_output(a,cwd=ROOT,text=True).strip()
     return run("git","rev-parse","HEAD"),run("git","rev-parse","HEAD^{tree}"),bool(run("git","status","--porcelain=v1","--untracked-files=no"))
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument("--out-dir",default=str(Path(__file__).parent/"artifacts")); ap.add_argument("--seed",type=int,default=20260715); ap.add_argument("--per-stratum",type=int,default=N); args=ap.parse_args()
-    if args.per_stratum<24: ap.error("--per-stratum must be >=24")
+    if args.per_stratum<24 or args.per_stratum % SEED_COUNT: ap.error("--per-stratum must be >=24 and divisible by 3")
     out=Path(args.out_dir); out.mkdir(parents=True,exist_ok=True)
-    rev,tree,dirty=git_info(); rows=[]; factors={}
+    rev,tree,dirty=git_info(); rows=[]; factors={}; generation_failures=[]
+    seeds=[args.seed+i for i in range(SEED_COUNT)]; per_seed=args.per_stratum//SEED_COUNT
     for n in STRATA:
-      for i in range(args.per_stratum):
-        rng=random.Random(args.seed*1000+n*100+i); v=current_factor(n,rng); c=centroid(v)
+      for seed in seeds:
+       for i in range(per_seed):
+        rng=random.Random(seed*1000+n*100+i)
+        try: v=current_factor(n,rng)
+        except RuntimeError:
+            generation_failures.append({"stratum":n,"seed":seed,"row":i,"reason":"bounded current-law draw exhausted"}); continue
+        c=centroid(v)
         pm=polar(v); cp=polar(v,c); dpm=polar(pm); dcp=polar(cp)
-        sid=f"{LAW_VERSION}/source/n={n}/seed={args.seed}/row={i}"; factors[sid]=v
-        row={"schema":"generator-polarity-row-v1","source_id":sid,"pair_id":sid+"/pair","image_ids":{"preserved_mark":sid+"/preserved-mark-polar","centroid":sid+"/centroid-polar","preserved_double":sid+"/preserved-double","centroid_double":sid+"/centroid-double"},"stratum":n,"seed":args.seed,"row":i,"rationalization":"float current-law vertices rounded by Fraction.limit_denominator(1e9), then exact convex hull","source":dump_v(v),"preserved_mark":["0","0"],"centroid":[str(c[0]),str(c[1])],"preserved_mark_polar":dump_v(pm),"centroid_polar":dump_v(cp),"preserved_double_polar":dump_v(dpm),"centroid_double_polar":dump_v(dcp),"source_area":str(area(v)),"polar_area":str(area(cp)),"source_meta":normalize_meta(v),"polar_meta":normalize_meta(cp),"source_sides":len(v),"polar_sides":len(cp),"bounded":inside(v),"irredundant":len(edges(v))==len(v),"preserved_double_residual":residual(dpm,v),"centroid_double_residual":residual(dcp,translate(v,c)),"mahler":str(area(translate(v,c))*area(cp)),"shape_source":shape(v),"shape_polar":shape(cp)}
+        sid=f"{LAW_VERSION}/source/n={n}/seed={seed}/row={i}"; factors[sid]=v
+        row={"schema":"generator-polarity-row-v1","source_id":sid,"pair_id":sid+"/pair","image_ids":{"preserved_mark":sid+"/preserved-mark-polar","centroid":sid+"/centroid-polar","preserved_double":sid+"/preserved-double","centroid_double":sid+"/centroid-double"},"stratum":n,"seed":seed,"row":i,"rationalization":"float current-law vertices pass cyclic-gap/halfspace/all-facets-active checks, then vertices are rounded by Fraction.limit_denominator(1e9) and exact convex-hulled; all fields below are exact after this boundary","source":dump_v(v),"preserved_mark":["0","0"],"centroid":[str(c[0]),str(c[1])],"preserved_mark_polar":dump_v(pm),"centroid_polar":dump_v(cp),"preserved_double_polar":dump_v(dpm),"centroid_double_polar":dump_v(dcp),"source_area":str(area(v)),"polar_area":str(area(cp)),"source_meta":normalize_meta(v),"polar_meta":normalize_meta(cp),"source_sides":len(v),"polar_sides":len(cp),"bounded":inside(v),"irredundant":len(edges(v))==len(v),"preserved_double_residual":residual(dpm,v),"centroid_double_residual":residual(dcp,translate(v,c)),"mahler":str(area(translate(v,c))*area(cp)),"shape_source":shape(v),"shape_polar":shape(cp)}
         rows.append(row)
     with (out/"panel.jsonl").open("w") as f:
       for r in rows: f.write(json.dumps(r,sort_keys=True)+"\n")
@@ -138,21 +191,25 @@ def main():
     by={n:[r for r in rows if r["stratum"]==n] for n in STRATA}
     for n,rs in by.items():
       src=[r["shape_source"] for r in rs]; pol=[r["shape_polar"] for r in rs]
-      within_src=sum(l2(src[i],src[j]) for i in range(len(src)) for j in range(i))/max(1,len(src)*(len(src)-1)/2)
-      within_pol=sum(l2(pol[i],pol[j]) for i in range(len(pol)) for j in range(i))/max(1,len(pol)*(len(pol)-1)/2)
-      cross=sum(min(l2(pol[i],src[j]) for j in range(len(src))) for i in range(len(pol)))/len(pol)
+      within_src=sum(shape_distance(src[i],src[j]) for i in range(len(src)) for j in range(i))/max(1,len(src)*(len(src)-1)/2)
+      within_pol=sum(shape_distance(pol[i],pol[j]) for i in range(len(pol)) for j in range(i))/max(1,len(pol)*(len(pol)-1)/2)
+      cross=sum(min(shape_distance(pol[i],src[j]) for j in range(len(src))) for i in range(len(pol)))/len(pol)
       div.append({"stratum":n,"source_count":len(rs),"within_source_l2":within_src,"within_polar_l2":within_pol,"directed_polar_to_source_nearest":cross})
       for k in range(min(len(rs)//2,12)):
         q=load_v(rs[2*k]["source"]); p=load_v(rs[2*k+1]["source"]); qp=load_v(rs[2*k]["centroid_polar"]); pp=load_v(rs[2*k+1]["centroid_polar"])
+        pair_seed=rs[2*k]["seed"]
         for label,a,b in [("QxP",q,p),("QpolarxP",qp,p),("QxPpolar",q,pp),("QpolarxPpolar",qp,pp)]:
-          arms.append({"schema":"generator-polarity-product-arm-v1","arm":label,"stratum":n,"pair_id":f"n={n}/pair={k}","q_sides":len(a),"p_sides":len(b),"product_facets":len(a)+len(b),"product_vertices":len(a)*len(b),"exact_reconstruction":True,"incidence_valid":True,"q_area":str(area(a)),"p_area":str(area(b)),"volume":str(area(a)*area(b)),"normalized_volume":1.0,"q_bounded":inside(a),"p_bounded":inside(b)})
+          product=product_exact(a,b)
+          arms.append({"schema":"generator-polarity-product-arm-v1","arm":label,"stratum":n,"seed":pair_seed,"pair_id":f"n={n}/seed={pair_seed}/pair={k}","q_sides":len(a),"p_sides":len(b),"product_facets":len(product["facets"]),"product_vertices":len(product["vertices"]),"facet_incidence_counts":product["facet_counts"],"vertex_incidence_counts":product["vertex_counts"],"exact_reconstruction":product["valid"],"incidence_valid":product["valid"],"q_area":str(area(a)),"p_area":str(area(b)),"q_scale_squared":str(1/area(a)),"p_scale_squared":str(1/area(b)),"volume":str(area(a)*area(b)),"normalized_volume":"1","q_bounded":inside(a),"p_bounded":inside(b)})
     (out/"diversity.tsv").write_text("stratum\tsource_count\twithin_source_l2\twithin_polar_l2\tdirected_polar_to_source_nearest\n"+"\n".join(f"{d['stratum']}\t{d['source_count']}\t{d['within_source_l2']:.12g}\t{d['within_polar_l2']:.12g}\t{d['directed_polar_to_source_nearest']:.12g}" for d in div)+"\n")
     (out/"product-arms.jsonl").write_text("".join(json.dumps(x,sort_keys=True)+"\n" for x in arms))
     fixtures=exact_fixture_rows(); (out/"fixtures.json").write_text(json.dumps(fixtures,indent=2,sort_keys=True)+"\n")
     producer_hash=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     names={"panel":"panel.jsonl","diversity":"diversity.tsv","product_arms":"product-arms.jsonl","fixtures":"fixtures.json"}
     hashes={k:hashlib.sha256((out/v).read_bytes()).hexdigest() for k,v in names.items()}
-    manifest={"schema":"generator-polarity-manifest-v1","law_version":LAW_VERSION,"source_revision":rev,"source_tree":tree,"source_dirty_tracked":dirty,"producer_sha256":producer_hash,"seed":args.seed,"strata":list(STRATA),"rows_per_stratum":args.per_stratum,"panel_rows":len(rows),"product_arm_rows":len(arms),"exact_boundary":"All panel vertices are Fraction values after current-law f64 generation and explicit denominator reconstruction; all polarity, incidence, area, centroid, and residual fields are exact thereafter. Shape views and nearest summaries are f64 diagnostics.","dependencies":"Python stdlib only","fixtures":len(fixtures),"target_evaluation":False,"sys_evaluation":False,"capacity_claim":False,"volatile_timings_excluded":True,"input_files":[],"output_files":names,"output_sha256":hashes}
+    seed_counts={str(seed):sum(r["seed"]==seed for r in rows) for seed in seeds}
+    seed_stratum_counts={str(seed):{str(n):sum(r["seed"]==seed and r["stratum"]==n for r in rows) for n in STRATA} for seed in seeds}
+    manifest={"schema":"generator-polarity-manifest-v1","law_version":LAW_VERSION,"source_revision":rev,"source_tree":tree,"source_dirty_tracked":dirty,"producer_sha256":producer_hash,"seed":args.seed,"seeds":seeds,"seed_counts":seed_counts,"seed_stratum_counts":seed_stratum_counts,"generation_failures":generation_failures,"strata":list(STRATA),"rows_per_stratum":args.per_stratum,"panel_rows":len(rows),"product_arm_rows":len(arms),"exact_boundary":"Current-law f64 candidates first pass cyclic-gap, original-halfspace, and all-facets-active checks. Vertices then cross an explicit Fraction.limit_denominator(1e9) reconstruction boundary and exact hull; polarity, incidence, area, centroid, and residual fields are exact thereafter. Support views and quotient distances are f64 diagnostics.","dependencies":"Python stdlib only","fixtures":len(fixtures),"target_evaluation":False,"sys_evaluation":False,"capacity_claim":False,"volatile_timings_excluded":True,"input_files":[],"output_files":names,"output_sha256":hashes}
     (out/"manifest.json").write_text(json.dumps(manifest,indent=2,sort_keys=True)+"\n")
     fixture_map={x["fixture"]:x for x in fixtures}
     report=f"""# Polarity pushforward and center audit
@@ -161,14 +218,14 @@ This is a target-free finite-panel audit of planar generator transfer. It does n
 
 ## Retained panel
 
-- Source law: IID sorted normal angles and IID support heights in `[0.8,1.2)`, conditioned on a bounded irredundant polygon, followed by explicit `Fraction.limit_denominator(1e9)` reconstruction and an exact hull.
-- Exact panel: {len(rows)} source/image pairs, strata `n=3,4,6`, {args.per_stratum} per stratum. Every row retains source, preserved-mark polar, centroid polar, and both double-polar controls.
+- Source law: IID sorted normal angles and IID support heights in `[0.8,1.2)`, with max cyclic angular gap `< pi`, every intersection satisfying every original halfspace, and every input line active before explicit `Fraction.limit_denominator(1e9)` reconstruction and an exact hull.
+- Exact panel: {len(rows)} source/image pairs, strata `n=3,4,6`, {args.per_stratum} per stratum across seeds `{','.join(map(str,seeds))}`. Aggregate seed counts are `{seed_counts}` and seed-by-stratum counts are `{seed_stratum_counts}`; bounded-generation failures are `{len(generation_failures)}`. Every row retains source, preserved-mark polar, centroid polar, and both double-polar controls.
 - Product arms: {len(arms)} exact rows ({len(arms)//4} paired cells, four arms per cell: `QxP`, `Q^circ x P`, `Q x P^circ`, `Q^circ x P^circ`). Cartesian H reconstruction, incidence counts, and volume `area(Q) area(P)` are exact.
-- No relative-rotation knob is used. Factor area normalization is recorded by exact `scale_squared=1/area`; normalized product volume is therefore one by construction, while raw rational areas/volumes remain available.
+- No relative-rotation knob is used. Shape views are centered, area-normalized support samples on a 64-direction grid; distances minimize cyclic shifts and reflection. Factor area normalization is recorded by exact `scale_squared=1/area`; normalized product volume is the exact string `1`, while raw rational areas/volumes remain available.
 
 ## Mathematical controls
 
-The marked law translates by an explicitly preserved interior mark `c`, applies `B^circ={{y:<x,y><=1 for x in B}}`, and retains the translated origin mark. The centroid law chooses the exact area centroid and records that choice. The exact fixture results are in `fixtures.json`: marked double polarity residual `{fixture_map['marked-double-polar']['residual']}`, centroid translation covariance residual `{fixture_map['centroid-translation-covariance']['residual']}`, raw-origin translation status `{fixture_map['raw-origin-translation-failure'].get('status','defined')}`, and recenter-every-step residual `{fixture_map['recenter-every-step-non-involution']['residual']}` (non-involution). The symmetric double-polar negative control has residual `{fixture_map['symmetric-double-polar-negative-control']['residual']}`; a metric cannot pass only by reporting nonzero distances.
+The marked law translates by an explicitly preserved interior mark `c`, applies `B^circ={{y:<x,y><=1 for x in B}}`, and retains the translated origin mark. The centroid law chooses the exact area centroid and records that choice. The exact fixture results are in `fixtures.json`: marked double polarity residual `{fixture_map['marked-double-polar']['residual']}`, centroid translation covariance residual `{fixture_map['centroid-translation-covariance']['residual']}`, raw-origin translation status `{fixture_map['raw-origin-translation-failure'].get('status','defined')}` with raw-vs-centroid residual `{fixture_map['raw-origin-translation-failure'].get('raw_vs_centroid_residual')}`, and recenter-every-step residual `{fixture_map['recenter-every-step-non-involution']['residual']}` (non-involution). The symmetric double-polar negative control has residual `{fixture_map['symmetric-double-polar-negative-control']['residual']}`. Synthetic support-metric controls are in `fixtures.json`; scale, translation, 90-degree rotation, and reflection should be zero while the distinct-triangle control should be positive.
 
 ## Interpretation boundary
 

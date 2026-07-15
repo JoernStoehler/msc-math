@@ -19,17 +19,24 @@ normalization.
 ## Producer and artifacts
 
 `run.py` samples IID sorted normal angles and IID supports in `[0.8,1.2)` as in
-the current factor law, conditions on bounded irredundant polygons, then makes
-an explicit `Fraction.limit_denominator(1e9)` reconstruction. All incidence,
-area, centroid, polarity, double-polar, and Mahler fields after that boundary
-are exact. Shape views and nearest-cross summaries are f64 diagnostics.
+the current factor law. Before rationalization it requires maximum cyclic gap
+`< pi`, every proposed intersection to satisfy every original halfspace, and
+every input line to be active. It then makes an explicit
+`Fraction.limit_denominator(1e9)` reconstruction and exact hull. All
+incidence, area, centroid, polarity, double-polar, and Mahler fields after that
+boundary are exact. Shape views are centered, area-normalized support samples
+on a 64-direction grid; pair distances minimize grid cyclic shifts and
+reflection and are f64 diagnostics.
 
 The retained default has 24 sources in each side-count stratum `3,4,6` (72
-source/image pairs), plus 144 product-arm rows over paired `QxP`,
+source/image pairs), allocated as 8 per stratum over three deterministic seeds
+`20260715,20260716,20260717`, plus 144 product-arm rows over paired `QxP`,
 `Q^circxP`, `QxP^circ`, and `Q^circxP^circ` cells. `fixtures.json` contains
 non-self-polar, marked double-polar, centroid covariance, raw-origin failure,
-normalization, recenter-every-step, and symmetric double-polar negative
-controls. `REPORT.md` and `manifest.json` are generated, not hand-edited.
+normalization, recenter-every-step, symmetric double-polar negative, and
+support-metric invariance/distinct-shape controls. Product rows construct and
+verify exact Cartesian vertices, facets, incidence counts, and normalized
+volume `"1"`. `REPORT.md` and `manifest.json` are generated, not hand-edited.
 
 ```text
 python3 experiments/sys-datascience/methods/generator-polarity-pushforward/run.py \
