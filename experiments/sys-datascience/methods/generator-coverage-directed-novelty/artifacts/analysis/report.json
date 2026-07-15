@@ -244,11 +244,11 @@
     "train": 96
   },
   "schema": "coverage-directed-novelty-v1",
-  "selection_cost_ms": 1426.3709840015508,
+  "selection_cost_ms": 1486.245998999948,
   "source": {
     "analyzer_sha256": "c76c1273cf10255e65d1dbf1bef2473d6ae4d48a32c899d18b4c77385644044e",
-    "revision": "a50e1e930e21541506df6228aaed16355d830372",
-    "tracked_clean_for_analyzer": false
+    "revision": "48f64877629f337073bd5852c7500c96d23b0ae9",
+    "tracked_clean_for_analyzer": true
   },
   "synthetic_calibrations": {
     "cases": [
