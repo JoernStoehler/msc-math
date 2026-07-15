@@ -1,9 +1,10 @@
-//! Base point recovery and orbit verification for Reeb orbits on polytopes.
+//! Base point recovery and geometric diagnostics for Reeb-orbit candidates.
 //!
-//! Given solved orbit data (sigma, beta, action), recovers the primal
-//! Reeb orbit gamma on the boundary of K and verifies its geometric validity.
-//! Combines the old `recover_base_point` and `verify_orbit` into a single
-//! `recover_and_verify` function, since they are always called together.
+//! Given solved orbit data (sigma, beta, action), this module recovers a
+//! candidate primal trajectory and reports violation, closure, and action
+//! diagnostics. The legacy `recover_and_verify` name does not imply that
+//! tolerances are enforced internally; callers and tests decide whether the
+//! returned diagnostics establish validity for their use.
 //!
 //! ## Mathematical background
 //!
@@ -46,7 +47,7 @@ pub struct GeometricOrbit {
     /// For a closed orbit, `breakpoints[m]` should be close to `breakpoints[0]`.
     pub breakpoints: Vec<Vector4<f64>>,
 
-    /// Time spent on each facet: tau_k = T * h_{sigma(k)} * beta_k.
+    /// Time spent on each facet: tau_k = T * beta_k in dual-row coordinates.
     /// Length equals the permutation length m.
     pub dwell_times: Vec<f64>,
 
@@ -74,13 +75,15 @@ pub struct GeometricOrbit {
     pub facet_sequence: Vec<usize>,
 }
 
-/// Recover a Reeb orbit from solved orbit/KKT data and verify its validity.
+/// Recover a Reeb-orbit candidate from solved orbit/KKT data and compute
+/// geometric diagnostics.
 ///
 /// Performs three stages:
-/// 1. **Beta-to-tau conversion**: dwell times tau_k = capacity * h_{sigma(k)} * beta_k.
+/// 1. **Beta-to-tau conversion**: dwell times tau_k = capacity * beta_k.
 /// 2. **Base point recovery**: solve the linear system N_S b = r via SVD, then
 ///    optimize in the null space to minimize halfspace violations.
-/// 3. **Orbit verification**: check closure, on-facet, inside-K, and action consistency.
+/// 3. **Diagnostics**: compute closure, inside-K, and action-consistency
+///    residuals. This function does not apply acceptance tolerances.
 ///
 /// Returns `None` if the linear system has no active equations (all dwell times
 /// are zero), which should not happen for valid algorithm output.

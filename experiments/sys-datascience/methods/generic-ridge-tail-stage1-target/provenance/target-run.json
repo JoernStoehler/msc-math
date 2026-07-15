@@ -1,0 +1,28 @@
+{
+  "schema": "sys-datascience.generic-ridge-tail-stage1-target.run-provenance.v1",
+  "status": "historical-completed-target-run",
+  "target_run_source": {
+    "path": "experiments/sys-datascience/methods/generic-ridge-tail-stage1-target/provenance/target-run-main.rs",
+    "sha256": "c2441988497351f719a6b59bccc37133912eb0b95d07a0b942c58b74b2645ede"
+  },
+  "repository_dependency_commit": "310ec8bbb6123a34df8bbdb151717d6cee0fccf7",
+  "repository_dependency_commit_role": "target-free full-validation gate and all tracked path dependencies present when the target package was created",
+  "target_package_history_commit": "029e2875f10bdcc98dc6f58d1ed8e161ebb40425",
+  "target_package_history_commit_role": "first commit containing the target package Cargo.toml and Cargo.lock used by the run; its main.rs includes later post-run repairs and is not the target-run source",
+  "target_package_sha256": {
+    "Cargo.toml_before_publish_false_metadata": "87bc197ed0d227248aa598fb6972aa4ad92a9a7c918a3be9cdb2a62a3078b397",
+    "Cargo.lock": "ebe0329e9916f53c39dce5fd65e37b908d79005adbe53774bfb268926e984b4e"
+  },
+  "input_and_output_sha256": {
+    "full-validation.json": "524dce5b2e93ba1090f6a648f87793fee0a8665d64ae929a326d1ceee2cd6bc3",
+    "target-rows.jsonl": "24b9aa0baf2293996dc539815a2f353a21e8b13f94a844714d5a970f439b649f"
+  },
+  "historical_command": "cargo run --release --manifest-path experiments/sys-datascience/methods/generic-ridge-tail-stage1-target/Cargo.toml -- evaluate --out-dir experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/stage1 --workers 12",
+  "current_authority": "Do not repeat the target run or evaluate a new arm without a new portfolio decision.",
+  "source_recovery_audit": {
+    "thread_id": "019f6184-b3ef-77e0-a047-667f4005f448",
+    "rollout_path": "/home/vscode/.codex/sessions/2026/07/14/rollout-2026-07-14T16-45-14-019f6184-b3ef-77e0-a047-667f4005f448.jsonl",
+    "focused_query": "select custom_tool_call events whose input names generic-ridge-tail-stage1-target/src/main.rs, then replay the add-file and three pre-evaluation patches followed by rustfmt",
+    "extracted_result": "The reconstructed pre-evaluation file hashes to c2441988497351f719a6b59bccc37133912eb0b95d07a0b942c58b74b2645ede, matching evaluation-manifest.json."
+  }
+}

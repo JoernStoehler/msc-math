@@ -39,6 +39,20 @@ Read first:
 - `ridge-mechanism-discriminator/`: compact diagnostic table combining retained
   tail-rule diagnostics and generated ridge/proposer summaries to distinguish
   ridge-magnitude, concentration, proxy, small-area, and Goodhart explanations.
+- `tail-dependence-feasibility/`: existing-data identifiability and censoring
+  audit that selected the bounded generic `F=10` transfer experiment and its
+  stopping rule.
+- `ridge-tail-source-comparison/`: frozen generic/product source comparison and
+  product `5x5` versus `4x6` sensitivity evidence used to avoid a multi-bucket
+  replication.
+- `generic-ridge-tail-stage1/` and `generic-ridge-tail-stage1-target/`: reviewed
+  target-free 10,000-candidate generic `F=10` selection followed by exactly 200
+  frozen target evaluations. Low ridge transfers as a coarse filter but harder
+  conditioning does not improve `sys`, so the packet stops at 10,000.
+- `ridge-tail-anatomy/`: retained-data Euclidean-area/Kähler-angle decomposition
+  for the generic ridge panel and frozen product `5x5` rho/ridge/control arms.
+  Both components move with the coarse filter, but neither supplies a
+  supported scalar ordering inside the favorable region.
 - `residual-exemplar-seeds/`: target-free matched-pair construction plus
   post-target model-consistent residual inspection candidates for bounded
   geometry/HK-branch hypothesis formation; exploratory (`G`) only.

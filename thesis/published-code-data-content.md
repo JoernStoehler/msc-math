@@ -1,56 +1,87 @@
-# Published Code And Data Content Notes
+# Availability of Code and Data Companion
 
-Status: section-local content companion for `thesis/12-published-code-data.tex`.
-Not source truth.
+Status: chapter-local purpose, source map, and review state for
+`thesis/12-published-code-data.tex`. Not source truth.
 
-Purpose: gather the publication and reproducibility claims before final prose is
-written.
+## Reader purpose
 
-Overruled by: final repository state, `submit/`, `FACTSHEET.md`, and Jörn/Kai
-review.
+Jörn's 2026-07-15 review reset the chapter's purpose. Kai and the other thesis
+readers need to understand what mathematical research material will be
+available to future researchers, what that material permits them to check or
+continue, and what is not preserved or promised. They do not need a release
+manual in the thesis.
 
-Lifecycle: keep while publication mechanics are unsettled. After the section is
-stable, delete this file or reduce it to a short maintenance note.
+The chapter follows Numerics, which already distinguishes exact verification
+from floating-point evidence. It applies that distinction to availability:
 
-Update rule: add or change a claim only with a source pointer or an explicit
-`needs source` marker.
+- exact verifier source, finite inputs, and outputs remain available for direct
+  checking of the theorem-facing finite predicates;
+- retained empirical data and provenance remain available for reanalysis and
+  continuation without acquiring theorem status;
+- code, sources, notes, and environment definitions support later development;
+- exclusions and reproduction limits prevent "available" from being read as
+  "complete process archive" or "universally byte-reproducible."
 
-## Content Inventory
+## Deliberate exclusions from thesis prose
 
-- Current text records the two exact SageMath packet locations, the differing
-  explicit-check/Python-assertion boundaries, their owner-local rerun READMEs,
-  and the lack of embedded source/environment identity in retained generated
-  records.  This material was moved from the rejected standalone Sage appendix.
-- State the repository structure at a high level.
-- State the live GitHub repository, with the caveat that it may retire in a few
-  years, and the permanent uploads on chosen archive sites once known.
-- Settled default, 2026-06-11: archive the GitHub repository and also upload to
-  Zenodo or an equivalent permanent archive. Fill exact URLs near submission.
-- State which experiment artifacts support thesis claims.
-- State that data is committed, the git history is not pruned and covers
-  roughly half the thesis lifetime, the thesis PDF is rebuildable, and
-  documentation explains how to read and run the repo.
-- State which commands or archived outputs are promised.
-- Do not turn the thesis into the run manual. "How to read this" and "how to
-  run this" live in the repo.
-- The repo promises reproducibility via the devcontainer/Docker definition.
-  Open TODO: pin versions if needed before submission.
-- The repo root `README.md` should be the detailed reproducibility surface. The
-  thesis can copy final numbers or summaries from it.
-- Include rough total core-hour estimates for reproducing different parts.
-  These estimates help readers distinguish cheap sanity checks from expensive
-  full reproduction and are evidence that the reproducibility promise has been
-  thought through.
-- Caveat: the repo documentation is optimized mostly for capable current
-  GPT-5.6 agents as readers/operators, not primarily for human readers.
-- Maintenance philosophy: code clarity wins by default; optimize only when
-  tracing, profiling, benchmarking, or final consumers show that performance is
-  material for a retained thesis computation.
-- Maintenance after writeup should repair thesis/code mismatches, missing
-  tests, reproducibility gaps, and profiling evidence that matters for final
-  experiments.
+Repository paths, command sequences, packager and manifest implementation,
+Python assertion modes, artifact hashes, detailed comparison procedures, and
+packet-local operational caveats belong in `REPRODUCIBILITY.md` and owner-local
+READMEs. Mention an implementation distinction only when it changes the
+mathematical trust boundary, as with untrusted HKO witness generation versus
+exact SageMath verification.
 
-## Open Decisions
+The previous four-page candidate at commit `94db62a5` was rejected as the
+chapter structure because it answered repository-audit questions more than the
+reader's availability question. Its source audits remain useful evidence; its
+organization and operational detail are superseded.
 
-- Fill archive-site names and exact reproducibility promise when
-  submission/archive mechanics are known.
+## Source and claim map
+
+- Publication and archive outcome: `FACTSHEET.md` items 5, 6, and 6.1;
+  `submit/README.md`; `submit/archive-closure-checklist.md`.
+- General availability and data policy: `REPRODUCIBILITY.md`.
+- Rights and exclusions: `LICENSE.md` and
+  `submit/archive-rights-and-exclusions.md`. Final path selection and notices
+  remain closure work; do not describe rights review as complete.
+- HKO exact material: `experiments/hko-local-maximum/theorem/README.md` and
+  `thesis/07-hko-local-maximum-exact-certificate.tex`. Rust selects finite
+  choices; Sage verifies the exact predicate used by the hand argument.
+- Rotated-pentagon exact material:
+  `experiments/regular-products/pentagon-rotation-formula-proof/README.md` and
+  `thesis/09-rotated-regular-polygons-exact-certificate.tex`.
+- Bounded data-science material: `experiments/sys-datascience/README.md`, its
+  producer/prepare/method owners, `thesis/08-black-box-datascience.tex`, and
+  `thesis/a-datascience-results.tex`. Preserve the finite-distribution and
+  generated-rule boundaries.
+- First-order panel:
+  `experiments/sys-landscape/gradient-ascent-observed-general/README.md` and
+  `thesis/06-first-order-perturbations.tex`. It supports finite-step progress
+  and recorded cost on twelve fixed starts, not an endpoint or local maximum.
+- Figure availability is governed by the thesis and experiment asset owners;
+  publication of a producer does not turn an exploratory figure into proof.
+
+## Archive placeholder
+
+The only literal value the current prose chooses to expose is the final Zenodo
+DOI and record URL. Archive filename, size, release commit, hashes, publication
+date, and exact environment identities belong in archive metadata and
+repository documentation unless a later reader need justifies adding them to
+the thesis.
+
+## Review status
+
+The clean-sheet availability draft was reviewed on 2026-07-15:
+
+- `latexmk` and `check-build.sh` completed cleanly;
+- candidate PDF pages 70--72 were inspected with Numerics and the opening of
+  the AI chapter at normal whole-page scale;
+- a fresh mathematical reader understood the exact and empirical material
+  available for checking and continuation, together with the exclusions and
+  reproduction limits;
+- the reviewer found no material source-strength, adjacent-chapter duplication,
+  operational-clutter, reader-understanding, or rendered-presentation issue.
+
+Reopen the purpose if operational explanation again occupies more of the
+chapter than the future-researcher availability account, or if final archive
+selection makes any stated availability or exclusion false.

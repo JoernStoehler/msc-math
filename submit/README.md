@@ -25,3 +25,36 @@ Preservation/reference links checked in the migrated submission state:
   <https://help.zenodo.org/docs/github/>
 - OpenDOAR, "OPUS Augsburg":
   <https://opendoar.ac.uk/repository/3341>
+
+## Accepted archive direction
+
+Jörn accepted the archive direction on 2026-07-14:
+
+- GitHub remains the living, agent-oriented repository.
+- One manually curated Zenodo record is the frozen, citable thesis-support and
+  continuation archive.
+- Software Heritage is optional and does not replace the mixed Zenodo bundle.
+  Omit it unless a separately audited clean origin has a concrete preservation
+  benefit; inherited history contains cached/copied third-party material with
+  unclear redistribution terms.
+- Preserve the useful closure-time repository state, including the repo-local
+  agent harness, ordinary project context, and research continuation material.
+  Exclude raw sessions, credentials/authentication state, genuinely private
+  correspondence, disposable state, and third-party material without clear
+  redistribution rights. Project administration, usernames, and local paths
+  are not presumed sensitive.
+- Use one Zenodo record unless a final software or data object has a concrete
+  independent citation use.
+
+Jörn created the Zenodo account successfully through `Sign up with GitHub` on
+2026-07-14. Record creation, DOI reservation, upload, and publication remain
+later actions. Agents own the local rights/exclusion inventory, metadata
+candidate, payload manifest, package construction, and verification before
+asking Jörn to operate the draft record.
+
+Prepared local audit: `archive-rights-and-exclusions.md` records the current
+license gap, recommended two-part license, alternatives, preliminary archive
+boundary, and remaining checks. It does not authorize publication.
+
+`archive-closure-checklist.md` records the final cleanup, data-disposition, and
+publication gates agreed after that preliminary audit.

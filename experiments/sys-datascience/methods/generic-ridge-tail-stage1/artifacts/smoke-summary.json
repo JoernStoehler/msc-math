@@ -1,0 +1,62 @@
+{
+  "schema": "sys-datascience.generic-ridge-tail-stage1.smoke.v1",
+  "role": "engineering smoke; not a scientific stage",
+  "retained_population": "retained seed-42 generic F=10 random_sample rows",
+  "row_count": 512,
+  "rational_volume_reference": "euclidean_polytopes::volume_from_incidence_exact returns BigRational; this packet converts that result to f64 for proxy ranking and reporting",
+  "proxy": "ridge_symp_area_mean_over_volume_sqrt",
+  "max_absolute_relative_volume_error": 9.509433096468577e-15,
+  "mean_absolute_relative_volume_error": 3.199959804671679e-16,
+  "max_absolute_sys_change_from_f64_volume": 6.106226635438361e-16,
+  "max_relative_sys_change_from_f64_volume": 9.57719904574253e-15,
+  "nonfinite_or_invalid_count": 0,
+  "rational_reference_rank_equal_count": 512,
+  "spearman_rank_correlation": 1.0,
+  "bottom_one_percent": {
+    "fraction": 0.01,
+    "retained_count": 6,
+    "rational_reference_bottom_count": 6,
+    "overlap_count": 6,
+    "recall": 1.0,
+    "precision": 1.0
+  },
+  "f64_bottom_two_percent_screen": {
+    "fraction": 0.02,
+    "retained_count": 11,
+    "rational_reference_bottom_count": 6,
+    "overlap_count": 6,
+    "recall": 1.0,
+    "precision": 0.5454545454545454
+  },
+  "f64_bottom_three_percent_screen": {
+    "fraction": 0.03,
+    "retained_count": 16,
+    "rational_reference_bottom_count": 6,
+    "overlap_count": 6,
+    "recall": 1.0,
+    "precision": 0.375
+  },
+  "rational_volume_worker_time_ms": 1410554.8098469987,
+  "f64_volume_worker_time_ms": 85.86739699999997,
+  "smoke_wall_time_ms": 120414.42294399999,
+  "measured_rational_over_f64_worker_time_ratio": 16427.12902834354,
+  "pass_for_stage_one": true,
+  "frozen_high_sys_threshold": {
+    "definition": "retained generic F=10 nearest-rank empirical 90th percentile; future exceedance is sys >= threshold",
+    "retained_population_count": 512,
+    "exceedance_tail_fraction": 0.1,
+    "nearest_rank": 461,
+    "value": 0.5949424195457518
+  },
+  "source_hashes": [
+    {
+      "path": "experiments/sys-datascience/produce/random.jsonl",
+      "blake3": "536d5a79597bdf21771e900377e8c1dc249ab8c0520a4680c8036c8909b3d7c8"
+    },
+    {
+      "path": "experiments/sys-datascience/prepare/polytope-table.jsonl",
+      "blake3": "76d635c0b4c4676b275af515ad8f808031b028115711318b2fc43611efa428ca"
+    }
+  ],
+  "target_boundary": "Existing retained sys was read only to freeze the predeclared high-sys threshold and check for trusted sys > 1; no new candidate target was computed."
+}

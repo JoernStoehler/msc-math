@@ -12,12 +12,16 @@ problem to a finite exact certificate.
 Let \(\mathcal K\) be the space of convex bodies in \(\mathbb R^4\), equipped
 with the Hausdorff metric, and let \(\mathcal P_{10}\subset\mathcal K\) be the
 subspace of convex polytopes with exactly ten facets. Let
-\(K_{\mathrm{HKO}}\) be the HKO polytope from
-\cite[Proposition~1.3]{HaimKislevOstrover2024}: the Lagrangian product of the
-two regular pentagons with circumradius \(1\) used there. We use the centered
-representative, so \(0\in\operatorname{int}(K_{\mathrm{HKO}})\). It lies in
+\(P_5\subset\mathbb R^2\) be the centered regular pentagon of circumradius
+\(1\) with a vertex at
+\((1,0)\), and let \(R(\theta)\) denote counterclockwise rotation. The HKO
+polytope from \cite[Proposition~1.4]{HaimKislevOstrover2024} is
+\[
+  K_{\mathrm{HKO}}=P_5\times_L R(-\pi/2)P_5.
+\]
+In particular, \(0\in\operatorname{int}(K_{\mathrm{HKO}})\). It lies in
 \(\mathcal P_{10}\), and the computation in
-\cite[Proof of Theorem~1.2]{HaimKislevOstrover2024} gives
+\cite[Proof of Theorem~1.3]{HaimKislevOstrover2024} gives
 \[
   \operatorname{sys}(K_{\mathrm{HKO}})
   =
@@ -63,8 +67,8 @@ The proof route is as follows. First, a Hausdorff-local ten-facet neighborhood
 is put into the fixed labelled dual-vertex chart used by the certificate. In
 that labelled chart, the \(G_{\operatorname{sys}}\)-directions are split off by
 a transverse slice. The
-exact certificate then verifies data defining \(26\) smooth feasible upper
-branches for \(\operatorname{sys}\), all touching the HKO value, whose
+exact certificate then verifies data defining \(26\) smooth feasible sections
+and their upper functions for \(\operatorname{sys}\), all touching the HKO value, whose
 derivative rows span the quotient cotangent space and have a positive convex
 relation summing to zero. The Sage verifier checks this finite exact predicate;
 the surrounding hand argument turns it into strict decrease on the slice and

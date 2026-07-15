@@ -1,0 +1,22 @@
+{
+  "schema": "sys-datascience.generic-ridge-tail-stage1-target.evaluation.v1",
+  "status": "evaluated-frozen-200-target-free-panel",
+  "row_count": 200,
+  "selected_count": 100,
+  "baseline_count": 100,
+  "threshold": 0.5949424195457518,
+  "volume_definition": "euclidean_polytopes::volume_from_incidence_f64 on exact-derived incidence",
+  "capacity_route": "exp_sys_landscape::capacity_auto (billiard when Lagrangian-product classification succeeds; otherwise pruned HK2017)",
+  "preflight_sha256": "b2a7eb09890fde90f5c99f2643920d4372798995e43f9849a24ed9406d9a0e7c",
+  "evaluator_source_sha256": "c2441988497351f719a6b59bccc37133912eb0b95d07a0b942c58b74b2645ede",
+  "target_evaluator_source_sha256": "c2441988497351f719a6b59bccc37133912eb0b95d07a0b942c58b74b2645ede",
+  "manifest_repair_source_sha256": "0d9519edcb7a0e16a1b85223ba0cc65d60a0d76b929c248c210104bd228e72d4",
+  "target_free_full_validation_sha256": "524dce5b2e93ba1090f6a648f87793fee0a8665d64ae929a326d1ceee2cd6bc3",
+  "target_calls_for_new_population": true,
+  "rows_sha256": "24b9aa0baf2293996dc539815a2f353a21e8b13f94a844714d5a970f439b649f",
+  "rows_blake3": "12ad673082712a8cbf36ca7eb45bd75768cfbcc0ce23c1402d76effe314379a9",
+  "wall_ms": 986.517877,
+  "process_user_cpu_seconds": 9.979096,
+  "process_system_cpu_seconds": 0.029459,
+  "max_rss_kib": 44920
+}

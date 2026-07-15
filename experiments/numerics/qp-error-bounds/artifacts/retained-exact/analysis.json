@@ -1,0 +1,102 @@
+{
+  "schema_version": "qp-retained-exact-analysis-v1",
+  "cases": [
+    {
+      "case_id": "ordinary_generated_F5",
+      "stream_candidates_rejected": 7,
+      "retained_count": 2,
+      "retained_exact_accept_count": 2,
+      "retained_exact_reject_count": 0,
+      "f64_to_exact_strata": {
+        "AdmissibleF64|accepted": 2
+      },
+      "scalar_agreement": true,
+      "minimizer_agreement": true,
+      "window_agreement": true,
+      "current_vs_retained": {
+        "scalar": true,
+        "minimizer": true,
+        "window": true
+      },
+      "candidate_generation_ms": 0.063018,
+      "current_minimasafe_ms": 0.001944,
+      "retained_exact_ms": 75.477126,
+      "exact_all_reference_ms": 122.528757,
+      "retained_exact_over_generation": 1197.7074169284965,
+      "exact_all_over_retained_exact": 1.6233892769048996
+    },
+    {
+      "case_id": "pinned_q4_p5",
+      "stream_candidates_rejected": 575,
+      "retained_count": 41,
+      "retained_exact_accept_count": 41,
+      "retained_exact_reject_count": 0,
+      "f64_to_exact_strata": {
+        "AdmissibleF64|accepted": 41
+      },
+      "scalar_agreement": true,
+      "minimizer_agreement": true,
+      "window_agreement": true,
+      "current_vs_retained": {
+        "scalar": true,
+        "minimizer": false,
+        "window": false
+      },
+      "candidate_generation_ms": 11.466822,
+      "current_minimasafe_ms": 0.007294,
+      "retained_exact_ms": 447.68319299999996,
+      "exact_all_reference_ms": 6920.389564,
+      "retained_exact_over_generation": 39.041610046794126,
+      "exact_all_over_retained_exact": 15.458229552075235
+    },
+    {
+      "case_id": "triangle_square_tie",
+      "stream_candidates_rejected": 56,
+      "retained_count": 30,
+      "retained_exact_accept_count": 4,
+      "retained_exact_reject_count": 26,
+      "f64_to_exact_strata": {
+        "AdmissibleF64|accepted": 4,
+        "IndeterminateF64|rejected_exact": 26
+      },
+      "scalar_agreement": true,
+      "minimizer_agreement": true,
+      "window_agreement": true,
+      "current_vs_retained": {
+        "scalar": true,
+        "minimizer": true,
+        "window": true
+      },
+      "candidate_generation_ms": 1.459199,
+      "current_minimasafe_ms": 33.256437,
+      "retained_exact_ms": 104.397691,
+      "exact_all_reference_ms": 337.191515,
+      "retained_exact_over_generation": 71.54451928763658,
+      "exact_all_over_retained_exact": 3.2298752182172303
+    },
+    {
+      "case_id": "pruning_roundoff",
+      "stream_candidates_rejected": 7,
+      "retained_count": 2,
+      "retained_exact_accept_count": 2,
+      "retained_exact_reject_count": 0,
+      "f64_to_exact_strata": {
+        "AdmissibleF64|accepted": 2
+      },
+      "scalar_agreement": true,
+      "minimizer_agreement": true,
+      "window_agreement": true,
+      "current_vs_retained": {
+        "scalar": true,
+        "minimizer": true,
+        "window": true
+      },
+      "candidate_generation_ms": 0.062667,
+      "current_minimasafe_ms": 0.001473,
+      "retained_exact_ms": 75.050955,
+      "exact_all_reference_ms": 120.93882,
+      "retained_exact_over_generation": 1197.6152520465316,
+      "exact_all_over_retained_exact": 1.6114227993501216
+    }
+  ]
+}

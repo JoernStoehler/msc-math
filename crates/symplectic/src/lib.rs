@@ -1,7 +1,9 @@
 //! Symplectic geometry library for convex-polytopal data in R^4.
 //!
-//! Computes the Ekeland-Hofer-Zehnder capacity c_EHZ(K) via exhaustive
-//! enumeration of closed Reeb orbits.
+//! Provides finite-word candidate enumeration, KKT solvers, exact fallback
+//! kernels, and geometric diagnostics used in Ekeland--Hofer--Zehnder capacity
+//! computations. Global-capacity guarantees depend on the selected frontend,
+//! candidate-family coverage, and certification policy.
 //!
 //! # Submodules
 //!
@@ -9,10 +11,10 @@
 //!   polygon/Lagrangian-product constructors, and named flat polytope fixtures.
 //! - `kkt` — context-free constrained QP solvers (saddle-point and
 //!   projection variants) + exact rational fallback.
-//! - `algorithms` — EHZ capacity algorithms: `hk2017` (general, exponential)
-//!   and `billiard` (Lagrangian products, fast). The tube algorithm is being
-//!   re-imported from the current mathematical source before it becomes an
-//!   active implementation.
+//! - `algorithms` — finite-word capacity routes: `hk2017` (general,
+//!   exponential), `billiard` (Lagrangian products), and the conditional
+//!   exact/f64 flow-graph work surface. Each module documents its own input and
+//!   guarantee boundary.
 //! - `constants` — cross-module numerical tolerance constants.
 //! - `dataset` — JSONL row schemas (`PolytopeRow`, `AcceptanceRow`) for
 //!   dataset generation and acceptance sweeps.

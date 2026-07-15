@@ -31,9 +31,11 @@ Outputs are written under this directory:
   against direct exact closed-word resolution under the current flow-graph
   convention.
 - `cutoff_enabled_matches_disabled`: checks that exact action-cutoff execution
-  preserves the disabled-cutoff output on selected rows. The cutoff counters
-  show that the cutoff path was exercised; they are not lower-bound
-  certificates.
+  preserves the disabled-cutoff output on selected rows. The counters record
+  how many later words received an active cutoff and how many nonempty tubes
+  were actually intersected with it. The selected F5/F6 fixtures may reach the
+  policy without requiring an intersection; neither counter is a lower-bound
+  certificate.
 - `zero_omega_fixture_rejected`: checks that known zero-omega fixtures are
   rejected before exact capacity output.
 - `positive_singular_word_is_typed_unsupported`: replays the structural
@@ -55,5 +57,7 @@ finite-domain completeness, or cutoff lower-bound soundness. It also does not
 justify rejecting every singular fixed map: generated polytopes routinely have
 length-three zero-time singular fixed lines. Positive-action singular
 fixed-set rejection is tracked separately by the structural hypercube row.
-Other singular no-orbit statuses are not theorem-facing accepted outputs unless
-a future lemma covers them.
+An inconsistent singular fixed equation, or a singular fixed set disjoint from
+the searched tube, is an exact empty-tube/no-orbit outcome. Other intersecting
+singular no-orbit statuses are not theorem-facing accepted outputs unless a
+future lemma covers them.

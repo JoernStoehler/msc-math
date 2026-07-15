@@ -1,0 +1,264 @@
+"""Integrity checks for the distinct v2 rows, formulas, policies, and provenance."""
+from __future__ import annotations
+
+from fractions import Fraction
+import json
+import math
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+
+EXPECTED_CASES = {
+    "simplex_F5", "hypercube_F8", "triangle_times_square_tie", "ordinary_generated_F5",
+    "pinned_q4_p5", "hko_beta_boundary", "hko_near_singular_false_acceptance",
+    "hko_residual_q_failure", "hko_rank_deficient", "hypercube_exact_zero_beta_boundary",
+}
+EXPECTED_CENTERS = {
+    "saddle_eig_accepted", "svd_lstsq_proposal", "projected_critical_proposal",
+    "projected_max_margin_proposal", "lu_partial_pivot_proposal", "qr_proposal",
+    "refined_svd_lstsq_proposal_qr_correction",
+}
+
+
+def fail(message: str) -> None:
+    raise SystemExit(f"validation failed: {message}")
+
+
+def rational(value: object, label: str) -> Fraction:
+    if not isinstance(value, str) or value.count("/") != 1:
+        fail(f"{label}: malformed rational")
+    n, d = value.split("/")
+    try:
+        x = Fraction(int(n), int(d))
+    except (ValueError, ZeroDivisionError):
+        fail(f"{label}: invalid rational")
+    if str(x.numerator) != n or str(x.denominator) != d:
+        fail(f"{label}: rational is not reduced")
+    return x
+
+
+def validate_registry(registry: list[dict]) -> None:
+    ids = [x.get("formula_id") for x in registry]
+    outputs = [x.get("output_column") for x in registry]
+    if len(ids) != len(set(ids)) or len(outputs) != len(set(outputs)):
+        fail("duplicate formula ID or output column")
+    for formula in registry:
+        required = {"formula_id", "output_column", "dependencies", "center", "exact_target", "hypothesis_status", "status", "consumers", "unavailable_rule"}
+        if required - formula.keys():
+            fail(f"registry entry incomplete: {formula.get('formula_id')}")
+        for dep in formula["dependencies"]:
+            if not isinstance(dep, list) or len(dep) != 2:
+                fail(f"malformed dependency for {formula['formula_id']}")
+            if dep[1] not in (formula["center"], "exact_positive_witness", ""):
+                fail(f"mixed-center dependency in {formula['formula_id']}")
+        if "action" in formula["formula_id"] and "positive_q" not in formula["formula_id"] and formula["status"] != "unavailable":
+            fail(f"action formula lacks explicit positive-Q prerequisite: {formula['formula_id']}")
+
+
+def main() -> None:
+    out = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("artifacts/soundness-v2")
+    required = ["raw_rows.jsonl", "policy_rows.jsonl", "formula_registry.json", "producer_summary.json", "analysis.json", "formula_evaluations.jsonl", "interpretation.md", "manifest.json"]
+    for name in required:
+        if not (out / name).exists() or not (out / name).read_text().strip():
+            fail(f"missing or empty {name}")
+    rows = [json.loads(x) for x in (out / "raw_rows.jsonl").read_text().splitlines() if x]
+    policies = [json.loads(x) for x in (out / "policy_rows.jsonl").read_text().splitlines() if x]
+    registry = json.loads((out / "formula_registry.json").read_text())
+    evaluations = [json.loads(x) for x in (out / "formula_evaluations.jsonl").read_text().splitlines() if x]
+    summary = json.loads((out / "producer_summary.json").read_text())
+    manifest = json.loads((out / "manifest.json").read_text())
+    if summary.get("row_count") != len(rows) or summary.get("policy_row_count") != len(policies):
+        fail("truncated raw or policy artifact disagrees with producer summary")
+    if {r.get("target_polytope_id") for r in rows} != EXPECTED_CASES:
+        fail("case set differs from declared v2 fixtures")
+    seen = set()
+    for row in rows:
+        if row.get("schema_version") != "qp-soundness-row-v2" or row.get("run_id") != "qp-soundness-v2":
+            fail("raw schema/run mismatch")
+        key = (row["target_polytope_id"], tuple(row["sigma_active_reeb_word"]))
+        if key in seen:
+            fail(f"duplicate lifecycle row {key}")
+        seen.add(key)
+        if row["sigma_length"] != len(key[1]) or not key[1]:
+            fail(f"sigma length corruption {key}")
+        if set(c["center_id"] for c in row["centers"]) != EXPECTED_CENTERS:
+            fail(f"center set changed for {key}")
+        if len(row["qp_constraint_matrix_c_f64"]) != 5 or len(row["qp_constraint_matrix_c_exact"]) != 5:
+            fail(f"C shape corruption {key}")
+        n = row["sigma_length"] + 5
+        if len(row["kkt_augmented_matrix_m_f64"]) != n or len(row["kkt_augmented_matrix_m_exact"]) != n:
+            fail(f"KKT shape corruption {key}")
+        lifecycle = row["exact_lifecycle_status"]
+        if lifecycle == "inconsistent":
+            if row["exact_row_reduction_system_status"] != "inconsistent" or any(row[k] is not None for k in ("exact_positive_witness_beta", "exact_positive_witness_q", "exact_positive_witness_action")):
+                fail(f"inconsistent lifecycle corruption {key}")
+        elif lifecycle == "consistent_no_strict_positive_beta":
+            if not row["exact_row_reduction_system_status"].startswith("consistent") or any(row[k] is not None for k in ("exact_positive_witness_beta", "exact_positive_witness_q", "exact_positive_witness_action")):
+                fail(f"no-positive-beta lifecycle corruption {key}")
+        elif lifecycle == "positive_beta_q_positive_action":
+            q = rational(row["exact_positive_witness_q"], f"{key}.q")
+            a = rational(row["exact_positive_witness_action"], f"{key}.action")
+            if q <= 0 or a != 1 / (2 * q):
+                fail(f"exact Q/action corruption {key}")
+            if row["exact_action_availability"] != "available":
+                fail(f"available exact action mislabeled {key}")
+        elif lifecycle == "positive_beta_q_nonpositive":
+            q = rational(row["exact_positive_witness_q"], f"{key}.nonpositive_q")
+            if q > 0 or row["exact_positive_witness_action"] is not None or row["exact_action_availability"] != "unavailable":
+                fail(f"nonpositive-Q exact distinction corrupted {key}")
+        else:
+            fail(f"unknown exact lifecycle {lifecycle}")
+    validate_registry(registry)
+    registry_ids = {x["formula_id"] for x in registry}
+    if {x.get("formula_id") for x in evaluations} - registry_ids:
+        fail("formula evaluations contain an unregistered formula ID")
+    for item in evaluations:
+        if set(item) != {"formula_id", "target_polytope_id", "sigma_active_reeb_word", "center", "status", "values"}:
+            fail("formula evaluation has hidden translated output fields")
+        for value in item["values"]:
+            if set(value) != {"value_kind", "unit", "role", "f64_value", "text_value", "boolean_value"}:
+                fail("formula evaluation value is not long-form-value-v1")
+    analysis = json.loads((out / "analysis.json").read_text())
+    coverage = analysis.get("formula_coverage", {})
+    if set(coverage) != registry_ids:
+        fail("analysis does not report coverage for every registered formula")
+    raw_by_case = {case: [r for r in rows if r["target_polytope_id"] == case] for case in EXPECTED_CASES}
+    if not policies or {p.get("target_polytope_id") for p in policies} != EXPECTED_CASES:
+        fail("policy join case coverage failure")
+    for policy in policies:
+        case_rows = raw_by_case[policy["target_polytope_id"]]
+        if policy["supplied_stream_count"] != len(case_rows):
+            fail(f"policy supplied-stream count mismatch {policy['target_polytope_id']}")
+        if policy["policy_id"] != "current_production_minimasafe":
+            if not isinstance(policy["policy_exact_resolution_count"], int) or not isinstance(policy["policy_exact_accept_count"], int):
+                fail("synthetic/exact policy exact counts must be numeric")
+            if policy["policy_candidate_count"] < policy["policy_exact_accept_count"]:
+                fail("policy accepted count exceeds policy candidate count")
+        if policy["policy_id"] in {"unchecked_saddle_feasible_no_fallback_diagnostic", "strict_margin_f64_simulation"}:
+            if policy["policy_exact_resolution_count"] != 0 or policy["policy_exact_accept_count"] != 0 or policy["policy_min_action"] is not None or policy["policy_window_cutoff"] is not None:
+                fail("f64-only policy incorrectly carries exact aggregation output")
+            if policy["policy_f64_min_action"] is not None and policy["policy_f64_window_cutoff"] is None:
+                fail("f64-only policy minimum lacks its declared window cutoff")
+            if policy["policy_production_call_status"] is not None:
+                fail("unchecked diagnostic is mislabeled as production output")
+        elif policy["policy_id"] == "current_production_minimasafe":
+            status = policy["policy_production_call_status"]
+            if status != "ok" and not str(status).startswith("aggregate_error:"):
+                fail("production MinimaSafe direct call has an unknown terminal status")
+            if policy["policy_exact_resolution_count"] is not None or policy["policy_exact_accept_count"] is not None:
+                fail("production MinimaSafe uses a misleading generic exact count")
+            if policy["policy_production_exact_resolution_count"] is not None or not str(policy["policy_production_exact_resolution_status"]).startswith("unavailable:"):
+                fail("production MinimaSafe exact-resolution exposure is mislabeled")
+            returned = policy["policy_production_returned_orbits"]
+            if not isinstance(returned, list) or policy["policy_candidate_count"] < len(returned):
+                fail("production MinimaSafe returned-orbit payload is malformed")
+            stream_words = {tuple(row["sigma_active_reeb_word"]) for row in case_rows}
+            if any(tuple(orbit["sigma_active_reeb_word"]) not in stream_words for orbit in returned):
+                fail("production MinimaSafe returned a word outside the declared stream")
+            if any(orbit["admissibility"] not in {"admissible_f64", "admissible_exact", "indeterminate_f64"} for orbit in returned):
+                fail("production MinimaSafe returned an unknown admissibility state")
+            if policy.get("policy_timing_scope") != "production candidate solve plus production MinimaSafe aggregation/fallback; excludes fixture construction and compilation":
+                fail("production timing scope does not include solve plus aggregation/fallback")
+            solve_us = policy.get("policy_candidate_solve_timing_us")
+            aggregation_us = policy.get("policy_aggregation_timing_us")
+            total_us = policy.get("policy_stage_timing_us")
+            if not isinstance(solve_us, (int, float)) or not isinstance(aggregation_us, (int, float)) or not isinstance(total_us, (int, float)) or solve_us < 0 or aggregation_us < 0 or not math.isclose(total_us, solve_us + aggregation_us, rel_tol=0.0, abs_tol=1e-6):
+                fail("production timing payload does not split solve plus aggregation/fallback")
+            if status != "ok":
+                if returned or policy["policy_f64_min_action"] is not None:
+                    fail("failed production MinimaSafe aggregation carried a scalar or returned orbit")
+                continue
+            reconstructed_min = min((orbit["action_f64"] for orbit in returned if orbit["admissibility"] in {"admissible_f64", "admissible_exact"}), default=None)
+            if policy["policy_f64_min_action"] != reconstructed_min:
+                fail("production MinimaSafe scalar does not reconstruct from direct returned orbits")
+            if reconstructed_min is not None:
+                lower = policy["policy_production_min_action_lower"]
+                upper = policy["policy_production_min_action_upper"]
+                if lower is None or upper is None or lower > upper:
+                    fail("production MinimaSafe minimum interval is malformed")
+                cutoff = policy["policy_f64_window_cutoff"]
+                if cutoff != reconstructed_min * (1 + policy["requested_relative_gap"]):
+                    fail("production MinimaSafe relative diagnostic cutoff does not reconstruct")
+                expected_window = [orbit["sigma_active_reeb_word"] for orbit in returned if orbit["action_f64"] <= cutoff]
+                if policy["policy_f64_window_active_words"] != expected_window:
+                    fail("production MinimaSafe window does not reconstruct from direct output")
+        else:
+            if policy["policy_exact_resolution_count"] != policy["policy_candidate_count"]:
+                fail("exact policy did not record every attempted resolution")
+            if any(policy[key] is not None for key in ("policy_f64_min_action", "policy_f64_window_cutoff")) and policy["policy_id"] != "selective_fallback_f64_anchored_window":
+                fail("exact-only policy carries an undeclared f64 aggregate")
+        scope = policy.get("policy_timing_scope")
+        solve_us = policy.get("policy_candidate_solve_timing_us")
+        aggregation_us = policy.get("policy_aggregation_timing_us")
+        total_us = policy.get("policy_stage_timing_us")
+        if not isinstance(aggregation_us, (int, float)) or not isinstance(total_us, (int, float)) or aggregation_us < 0 or total_us < aggregation_us:
+            fail("policy timing payload is malformed")
+        if policy["policy_id"] == "current_production_minimasafe":
+            if scope != "production candidate solve plus production MinimaSafe aggregation/fallback; excludes fixture construction and compilation" or not isinstance(solve_us, (int, float)) or solve_us < 0:
+                fail("production timing scope does not include solve plus aggregation/fallback")
+            if not math.isclose(total_us, solve_us + aggregation_us, rel_tol=0.0, abs_tol=1e-6):
+                fail("production total timing does not equal solve plus aggregation timing")
+        elif scope != "policy aggregation only; excludes candidate solves, fixture construction, and compilation" or solve_us is not None or total_us != aggregation_us:
+            fail("synthetic policy timing scope is not aggregation-only")
+        cutoff = policy["policy_window_cutoff"]
+        if cutoff is not None:
+            c = rational(cutoff, "policy cutoff")
+            m = rational(policy["policy_min_action"], "policy minimum")
+            gap = Fraction.from_float(policy["requested_relative_gap"])
+            # Binary f64 gap is the producer's declared calculation contract.
+            if c != m * (1 + gap):
+                fail("policy relative window corruption")
+    production = [p for p in policies if p["policy_id"] == "current_production_minimasafe"]
+    comparisons = analysis.get("production_minimasafe_comparisons")
+    if not isinstance(comparisons, list) or len(comparisons) != 2 * len(production):
+        fail("production MinimaSafe exact-comparison coverage is incomplete")
+    if any("physical orbit" not in item.get("comparison_scope", "") for item in comparisons):
+        fail("production MinimaSafe comparison lacks active-word caveat")
+    if manifest.get("schema_version") != "qp-soundness-row-v2" or manifest.get("artifact_commit_contract") != "commit this generated directory as a separate child of source_revision":
+        fail("manifest provenance contract mismatch")
+    if manifest.get("timing_scope") != "per-row timings exclude compilation and fixture construction; synthetic/exact policy timings cover aggregation only; current_production_minimasafe splits candidate-solve and production aggregation/fallback timings, whose sum is its total policy timing":
+        fail("manifest timing contract mismatch")
+    repo = Path(__file__).resolve().parents[3]
+    commit = manifest.get("source_revision")
+    tree = manifest.get("source_tree")
+    if not isinstance(commit, str) or not isinstance(tree, str):
+        fail("manifest lacks source identity")
+    if subprocess.run(["git", "cat-file", "-e", f"{commit}^{{commit}}"], cwd=repo).returncode != 0:
+        fail("source commit unavailable")
+    actual_tree = subprocess.check_output(["git", "rev-parse", f"{commit}^{{tree}}"], cwd=repo, text=True).strip()
+    if actual_tree != tree:
+        fail("source tree provenance mismatch")
+    # Reconstruction guard for the intentionally unchecked raw-flag diagnostic.
+    def saddle_action(row: dict) -> float | None:
+        for center in row["centers"]:
+            if center["center_id"] == "saddle_eig_accepted":
+                return center["center_action_from_positive_q_f64"]
+        return None
+    for policy in (p for p in policies if p["policy_id"] == "unchecked_saddle_feasible_no_fallback_diagnostic"):
+        candidates = [r for r in raw_by_case[policy["target_polytope_id"]] if r["f64_retained_by_saddle"] and saddle_action(r) is not None]
+        if policy["policy_candidate_count"] != len(candidates):
+            fail("unchecked saddle diagnostic added a hidden margin filter")
+        expected_min = min((saddle_action(r) for r in candidates), default=None)
+        if policy["policy_f64_min_action"] != expected_min:
+            fail("unchecked saddle diagnostic minimum does not reconstruct")
+    # Exhaustive ternary truth-table contract used by predicate evaluations.
+    for exact, expected in {"true": {"true": True, "false": False, "indeterminate": True}, "false": {"true": False, "false": True, "indeterminate": True}}.items():
+        for predicted, sound in expected.items():
+            observed = (predicted != "false") if exact == "true" else (predicted != "true")
+            if observed != sound:
+                fail("ternary truth-table reconstruction failure")
+    with tempfile.TemporaryDirectory() as tmp:
+        temp = Path(tmp)
+        for name in ("raw_rows.jsonl", "policy_rows.jsonl", "formula_registry.json"):
+            (temp / name).write_bytes((out / name).read_bytes())
+        subprocess.run([sys.executable, str(Path(__file__).with_name("analyze_soundness_v2.py")), str(temp)], check=True)
+        for name in ("analysis.json", "formula_evaluations.jsonl", "interpretation.md"):
+            if (temp / name).read_bytes() != (out / name).read_bytes():
+                fail(f"derived artifact is stale: {name}")
+    print(f"validated {len(rows)} v2 raw rows and {len(policies)} policy rows")
+
+
+if __name__ == "__main__":
+    main()

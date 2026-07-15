@@ -1,0 +1,21 @@
+{
+  "command": "bash experiments/numerics/qp-error-bounds/run_retained_exact.sh",
+  "producer": "qp-retained-exact",
+  "producer_version": "retained-exact-v1",
+  "schema_version": "qp-retained-exact-v1",
+  "source_revision": "68fd57f9c50464d70cf16969190394683338be5a",
+  "source_tree": "dbe8f2c8d744b7cc347cd3b13396e11f5f12370d",
+  "source_content_id": "dbe8f2c8d744b7cc347cd3b13396e11f5f12370d",
+  "source_content_id_kind": "git_tree_oid",
+  "source_snapshot_contract": "reachable clean source commit/tree captured before output deletion; generated artifact is not recursively hashed",
+  "artifact_commit_contract": "commit this generated directory as a separate child of source_revision",
+  "target_input_kind": "stored_binary64_rational; intended algebraic target unavailable",
+  "window_definition": "exact [minimum, 21/20 * minimum]",
+  "timing_scope": {
+    "candidate_generation_ms": "route enumeration and f64 solves; excludes fixture/exact-geometry setup and compilation",
+    "current_minimasafe_ms": "ordinary MinimaSafe aggregation/fallback; excludes candidate generation and compilation",
+    "retained_exact_ms": "exact resolution of every retained candidate; excludes candidate generation and compilation",
+    "exact_all_reference_ms": "complete supplied-stream exact enumeration, solving, and sorting; excludes fixture setup and compilation",
+    "analysis_validation": "Python analysis/validation and compilation are excluded from all row timers"
+  }
+}

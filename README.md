@@ -20,6 +20,7 @@ Primary deliverables:
   recovery checkpoint, required surface, crux register, and completion gates.
 - `FACTSHEET.md`: Jörn-confirmed project facts and external/Jörn/Kai
   constraints.
+- `REPRODUCIBILITY.md`: thesis-facing code/data paths and final release route.
 - `AGENTS.md`: Codex operating rules and detailed repo navigation.
 - `thesis/MAP.md`: active thesis surface and thesis-local content companions.
 - `thesis/central-claim-control.md`: thesis-wide central-claim companion for

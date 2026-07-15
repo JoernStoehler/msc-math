@@ -1,0 +1,26 @@
+{
+  "retained_3x3_rows": 1024,
+  "strict_sign_rows": 1024,
+  "zero_pairing_rows": 0,
+  "feasible_word_total": 814,
+  "revealed_strict_rows": 1024,
+  "stored_a2_exact_mismatches": 0,
+  "a3_availability_mismatches": 0,
+  "a3_action_mismatches": 0,
+  "producer_label_availability_mismatches": 0,
+  "strict_dominance_feasible_rows": 718,
+  "strict_dominance_true_rows": 718,
+  "strict_dominance_unavailable_rows": 306,
+  "stored_sys_max_abs_error": 2.7755575615628914e-17,
+  "a2_formula_geometry_cross_checks": 16,
+  "stress": {
+    "seed": 20260714,
+    "requested_pairs": 20000,
+    "strict_sign_pairs": 19968,
+    "zero_pairing_pairs": 32,
+    "feasible_all_single_words": 11101
+  },
+  "stress_strict_counterexample_count": 0,
+  "stress_boundary_equality_count": 27,
+  "wall_seconds": 15.537702114997956
+}

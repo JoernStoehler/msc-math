@@ -1,6 +1,6 @@
 # Quadratic Program Content Notes
 
-Status: section-local content companion for
+Status: maintenance companion for the integrated chapter candidate in
 `thesis/04-haim-kislev-quadratic-program.tex`. Not source truth.
 
 Purpose: gather the writing inventory for the Haim--Kislev quadratic-program
@@ -9,8 +9,55 @@ section.
 Overruled by: source papers, `formal/`, `crates/symplectic/`, revalidated
 legacy thesis material, experiment artifacts, and Jörn/Kai review.
 
-Lifecycle: keep while the section is being assembled. After the section is
-stable, delete this file or reduce it to a short maintenance index.
+Lifecycle: retain through Jörn/Kai review because the product-enumeration gate,
+source hierarchy, and implementation boundaries are not recoverable cheaply
+from the chapter alone. Reduce it after those gates close.
+
+## Integrated Audit, 2026-07-14
+
+The chapter was audited from Main commit `3dcc1efd` against HK2017 Theorems
+1.1 and 1.5, the active Clarke/simple-minimizer foundation, the current formal
+QP notes, Rudolf's published Theorem 1, the rotated-pentagon dependency, and
+the current Rust QP surfaces. The HK convention translation, factor
+`c_EHZ = 1/(2 Q_max)`, and global-maximizer realization are supported.
+
+Accepted chapter boundary:
+
+- a feasible or positive KKT point is not a fixed-word maximum or a global
+  capacity maximizer;
+- complete exact support/word coverage makes KKT candidates sufficient for the
+  scalar maximum, but one KKT solve does not solve a nonconcave fixed-word QP;
+- the restricted Lagrangian-product family is existential and exhaustive for
+  the capacity value, not a classification of every minimizing orbit;
+- the general Rust search is an f64-first candidate path with exact rational
+  fallback/certification surfaces; an exact KKT witness is global only when
+  the candidate family and resolution policy establish coverage;
+- the HKO and rotated-pentagon theorem packets own their exact Sage
+  certificates. Numerical discovery and crate tests remain supporting evidence.
+
+The product finite-enumeration proof was reconstructed independently from
+Rudolf's short strong billiard, the thesis splitting/merging argument, dual
+minimality, and Clarke realization. No contradiction was found. On 2026-07-14
+Jörn accepted the conceptual reduction and specifically confirmed that the
+splitting/merging step produces a distinct-facet dual minimizer without
+increasing the inherited three-block bound. He emphasized that this surgery is
+in the dual problem: containment in the factor polygons follows only after
+Clarke reconstruction returns the dual minimizer to a primal orbit on the
+product boundary. Blocks may disappear under merging, but this only decreases
+the paired block counts; primal simplicity then bounds every surviving block
+by two adjacent facets, while closure excludes a single block of each type.
+Thus the retained cases have two or three blocks of each type and at most
+twelve distinct facets. Jörn did not personally line-check the convention
+calculation. Kai/expert line review remains appropriate because this is a
+project-derived, theorem-critical reduction. Reopen the chapter if that review
+changes the block family, convention lift, or use of the simple-minimizer
+theorem.
+
+Corrections made during this audit: the fixed-word KKT wording now preserves
+support-face/global distinctions; the reversed-lift action sign is explicit;
+the merging invariant is block count rather than block length; and stale
+contradictory statements in `formal/ehz-kkt-system.tex` and
+`formal/hk2017-qp-core.tex` were repaired.
 
 Update rule: add or change a claim only with a source pointer or an explicit
 `needs source` marker.
@@ -91,15 +138,34 @@ Update rule: add or change a claim only with a source pointer or an explicit
   formula; base-point recovery and later feasibility/pruning are separate
   computational questions for such non-global candidates. A certified global
   QP maximizer is different: HK's construction makes it a global dual
-  minimizer, and Clarke's correspondence realizes it, after translation and
-  positive rescaling, as a minimum-action simple generalized Reeb orbit.
-  Base-point recovery is then an explicit reconstruction method rather than an
-  extra existence hypothesis.
+  minimizer. In the active free-period normalization, assigning dwell times
+  \(T\beta_k\), with \(T=1/(2Q_{\max})\), gives
+  \(A=I_K=T\) and multiplier \(\nu=1\). Clarke's correspondence therefore
+  realizes it by translation alone as a minimum-action simple generalized
+  Reeb orbit. The active word is preserved because
+  \(-J_0R_i=2a_i\) belongs to the reconstructed polytope subdifferential and
+  irredundancy makes \(a_i\) an extreme polar vertex, forcing facet \(F_i\) to
+  be active on that piece. Base-point recovery is then an explicit
+  reconstruction method rather than an extra existence hypothesis.
 - For the Lagrangian-product enumeration, state only a capacity-search result:
   the restricted alternating \(q/p\)-block family contains a capacity
   minimizer. Do not claim it classifies all minimum-action simple Reeb orbits;
   the billiard bounce bound gives existence of one minimizer with at most three
   bounces, not nonexistence of longer minimizers.
+- The former proof incorrectly combined the existence of a simple capacity
+  minimizer with the existence of a capacity-minimizing billiard having at
+  most three bounces; those statements need not initially select the same
+  minimizer. The repaired proof starts with Rudolf's short strong billiard,
+  reverses its polygonal lift to the thesis symplectic convention, and applies
+  the already proved dual splitting and merging operations. Merging repeated
+  facet directions cannot increase the number of alternating blocks. Rescaling
+  would produce a dual-feasible value below the capacity unless every action
+  increase was zero, so the resulting distinct-facet word is itself globally
+  maximizing. Clarke reconstruction then makes this same word physical; only
+  at that point does the planar incidence argument force every maximal block
+  to have one or two adjacent facets. Source: Rudolf, Theorem 1, arXiv
+  2203.01718 / published DOI `10.1007/s10884-022-10228-0`; local proof details
+  are in the active thesis theorem.
 - 2026-06-20 legacy/PDF comparison found the old KKT linear system,
   well-definedness, non-maximizer warning, and unpruned solver correctness as
   substantial old material not represented here. This is deliberate for this

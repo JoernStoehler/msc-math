@@ -1,0 +1,61 @@
+{
+  "baseline": {
+    "count": 100,
+    "rule": "deterministic disjoint baseline from the same F=10 candidate population, frozen before target evaluation"
+  },
+  "candidate_count": 10000,
+  "comparison_guardrails": [
+    "product 5x5 has fixed ridge count, so mean/sum ranks are equivalent",
+    "product 4x6 is a sensitivity check only",
+    "generated product panels are censored to selected target rows and are not symmetric with future generic design",
+    "differences are operational and confounded by generator, combinatorics, and capacity backend"
+  ],
+  "continue_100k": {
+    "next_scale": "100,000 candidates; 1,000 at 1%, 100 at .1%, 10 at .01%; one million is outside this contract",
+    "rule": "continue only if generic hardening or generic-minus-product interaction is material (point estimate >= 0.04 with positive uncertainty evidence), or a 95% interval still spans both plateau (0) and decision-changing +0.04 while retained product evidence is not flat/reversed; budget remaining alone is insufficient",
+    "stop": "stop if contrasts are reversed/flat and uncertainty upper bounds are below +0.04, or if both generic and product comparisons are practically flat/reversed"
+  },
+  "high_sys_exceedance": {
+    "definition": "retained generic F=10 nearest-rank empirical 90th percentile; sys >= threshold",
+    "source": "retained generic rows only",
+    "threshold": 0.5949424195457518,
+    "uncertainty": "Wilson 95% interval"
+  },
+  "mean_uncertainty": {
+    "method": "deterministic percentile bootstrap 20,000 resamples; report as descriptive at n=10 and n=90, not asymptotic proof"
+  },
+  "population": "generic/non-product F=10",
+  "primary_contrasts": [
+    {
+      "decision_effect": 0.04,
+      "definition": "mean(sys in selected lowest 1%) - mean(sys in deterministic baseline)",
+      "name": "low_1pct_vs_baseline_mean_sys"
+    },
+    {
+      "decision_effect": 0.04,
+      "definition": "mean(sys in 0-.1%) - mean(sys in .1-1%)",
+      "name": "hardening_0_to_0p1_vs_0p1_to_1pct_mean_sys"
+    },
+    {
+      "definition": "same nominal cutoff contrasts against the reused product 5x5 panels; operational, not causal",
+      "name": "generic_vs_product_5x5"
+    }
+  ],
+  "proxy": "ridge_symp_area_mean_over_volume_sqrt",
+  "schema": "sys-datascience.ridge-tail-source-comparison.future-contract.v1",
+  "selected_rows": {
+    "bands": {
+      ".1-1%": 90,
+      "0-.1%": 10
+    },
+    "count": 100,
+    "fraction": 0.01
+  },
+  "singleton_0p01_percent": {
+    "count": 1,
+    "inferential_role": "none"
+  },
+  "status": "frozen_contract_target_evaluation_pending",
+  "target_boundary": "This packet never generates geometry or computes capacity/sys for generic candidates; future target evaluation is a separate stage consuming at most the frozen 200 rows.",
+  "volume_definition": "f64 volume for future production; retained rational-derived values are historical only"
+}

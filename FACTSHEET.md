@@ -34,11 +34,34 @@ maintenance low. The numbers are stable and can be out of order.
    official rule makes it mandatory. Jörn said this decision costs him about
    30 seconds.
 
-5. Agents may prepare archive options and an artifact checklist, but the final
-   archive target and artifact set need Jörn acceptance near finalization.
+5. Jörn accepted the thesis-support plus continuation archive outcome on
+   2026-07-14. Preserve the closure-time live repository state as the main
+   continuation surface, including the agent harness, thesis sources and
+   companions, formal notes, crates, experiments, retained data/artifacts, and
+   provenance needed to continue the work. Ordinary public project context is
+   not presumed sensitive merely because it identifies Jörn, records
+   coordination or administration, or contains local paths. Exclude raw session
+   logs, credentials/authentication state, genuinely private correspondence,
+   downloaded third-party material without clear redistribution rights, and
+   disposable state with no continuation value. The final payload still needs a
+   closure-time rights, data-disposition, and claim audit.
 
-6. Zenodo is the leading non-GitHub preservation candidate because Kai named
-   it. arXiv/outreach are post-Kai-review unless promoted.
+6. Jörn accepted Zenodo as the primary frozen, citable archive on 2026-07-14.
+   GitHub remains the living agent-oriented repository; one manually curated
+   Zenodo record will hold the thesis-support plus continuation bundle.
+   Software Heritage is optional: omit it unless a separately audited clean
+   origin has a concrete preservation benefit, because inherited history
+   contains cached/copied third-party material with unclear redistribution
+   terms. Do not split
+   software and data into separate Zenodo records unless the final artifacts
+   acquire a clear independent citation use. Jörn created the Zenodo account
+   successfully through GitHub sign-up on 2026-07-14.
+
+6.1. Jörn accepted permissive reuse on 2026-07-14: Apache License 2.0 for
+     project software and Creative Commons Attribution 4.0 International for
+     Jörn-owned thesis/research text, documentation, original figures, and
+     project-generated data. Third-party material is not relicensed and must
+     be excluded or carry its own rights terms.
 
 7. Stale deadline/admin notes should be removed or corrected when found. The
    repo should not keep old deadline notes as live planning context.

@@ -63,3 +63,16 @@ Split packets when their questions or update cycles interfere. Combine work
 when shared setup, evidence, or interpretation makes that cheaper and does not
 hide an independently failing dimension. A dormant plan, feasible method, or
 available dataset is not an execution queue.
+
+When one executor owns a coherent implementation surface with substantial
+shared setup, give it a ranked wishlist and a total resource envelope. Separate
+fixed setup cost from marginal items, ask for the largest coherent subset that
+fits, and require explicit deferrals. Do not batch items whose independent
+failure, target timing, or review boundary must remain visible.
+
+Before the first irreversible target evaluation, freeze the evaluator that will
+actually run. Prefer a clean committed source and build state. Otherwise retain
+an immutable snapshot of every required source, dependency, and build input.
+Record repo-relative source identities, revision and lockfile state, input
+hashes, and the evaluator source or executable hash before exposure. A hash of
+mutable or unretained source is not self-contained provenance.

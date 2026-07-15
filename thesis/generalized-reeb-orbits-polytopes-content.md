@@ -105,6 +105,9 @@ flow-graph companion.
 - Current checkpoint status: the active text now proves the theorem using the
   five-operation legacy proof spine: piecewise affine approximation, splitting
   mixed velocities, merging repeated velocities, rescaling, and compactness.
+  The proof introduction states how these operations interact, and the final
+  argument uses explicitly indexed approximation and rescaling sequences; the
+  former unindexed notation obscured which limit dual minimality controlled.
 - Existing thesis text defines "simple" as a generalized Reeb orbit whose
   derivative can be represented by finitely many pure facet Reeb velocities
   with each facet direction occurring in one connected interval, possibly not
@@ -121,3 +124,7 @@ flow-graph companion.
   full-dimensional with \(0\in\operatorname{int}(K)\), and the prose explicitly
   says that HK's positive multiples of \(J_0n_i\) are reparametrized into the
   contact-normalized directions \(R_i=2J_0a_i\).
+- The active free-period proof was rechecked against the proof of HK2017
+  Theorem 1.5. Its splitting and merging action inequalities are the same two
+  rearrangements, while the local rescaling and compactness argument replaces
+  HK's fixed-period normalization without changing the existential theorem.

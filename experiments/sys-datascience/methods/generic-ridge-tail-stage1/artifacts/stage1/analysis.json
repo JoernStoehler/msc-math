@@ -1,0 +1,159 @@
+{
+  "schema": "sys-datascience.generic-ridge-tail-stage1-target.analysis.v1",
+  "row_count": 200,
+  "bootstrap": {
+    "method": "deterministic percentile bootstrap",
+    "resamples": 20000,
+    "seed": 20260714
+  },
+  "threshold": 0.5949424195457518,
+  "groups": [
+    {
+      "name": "selected_low_1pct",
+      "n": 100,
+      "mean_sys": 0.6257067667475406,
+      "mean_bootstrap_percentile95": [
+        0.6080954571744984,
+        0.6433149016313018
+      ],
+      "median_sys": 0.6267432744636223,
+      "range_sys": [
+        0.3964350798862799,
+        0.8057654113522604
+      ],
+      "threshold": 0.5949424195457518,
+      "threshold_count": 70,
+      "threshold_rate": 0.7,
+      "threshold_wilson95": [
+        0.6041514536665332,
+        0.7810511470506724
+      ]
+    },
+    {
+      "name": "baseline_disjoint",
+      "n": 100,
+      "mean_sys": 0.3385699646305358,
+      "mean_bootstrap_percentile95": [
+        0.3061955134263719,
+        0.3719135962059608
+      ],
+      "median_sys": 0.3387305500388208,
+      "range_sys": [
+        0.011014773879884138,
+        0.7258312082086045
+      ],
+      "threshold": 0.5949424195457518,
+      "threshold_count": 8,
+      "threshold_rate": 0.08,
+      "threshold_wilson95": [
+        0.041093461484380624,
+        0.14998107700948735
+      ]
+    },
+    {
+      "name": "selected_0_to_0p1pct",
+      "n": 10,
+      "mean_sys": 0.5971220996665288,
+      "mean_bootstrap_percentile95": [
+        0.5363892649447695,
+        0.6596429553256119
+      ],
+      "median_sys": 0.6051174819285801,
+      "range_sys": [
+        0.4449124694500824,
+        0.7720055342120571
+      ],
+      "threshold": 0.5949424195457518,
+      "threshold_count": 6,
+      "threshold_rate": 0.6,
+      "threshold_wilson95": [
+        0.31267376973365824,
+        0.8318196702937638
+      ]
+    },
+    {
+      "name": "selected_0p1_to_1pct",
+      "n": 90,
+      "mean_sys": 0.628882840867653,
+      "mean_bootstrap_percentile95": [
+        0.6104136946173296,
+        0.6469545530722748
+      ],
+      "median_sys": 0.6281003791153916,
+      "range_sys": [
+        0.3964350798862799,
+        0.8057654113522604
+      ],
+      "threshold": 0.5949424195457518,
+      "threshold_count": 64,
+      "threshold_rate": 0.7111111111111111,
+      "threshold_wilson95": [
+        0.6103595640200169,
+        0.7945787274083785
+      ]
+    }
+  ],
+  "contrasts": [
+    {
+      "name": "low_1pct_vs_baseline_mean_sys",
+      "mean_difference": 0.28713680211700476,
+      "bootstrap_percentile95": [
+        0.2497672749964506,
+        0.32411699857839715
+      ]
+    },
+    {
+      "name": "hardening_0_to_0p1_vs_0p1_to_1pct_mean_sys",
+      "mean_difference": -0.031760741201124154,
+      "bootstrap_percentile95": [
+        -0.09457416928489645,
+        0.033126374658897326
+      ]
+    }
+  ],
+  "generic_product_operational_comparator": {
+    "generic_selected_minus_product_5x5_selected": -0.007113168587079333,
+    "generic_first10_minus_product_5x5_first10": -0.021772997746178024,
+    "generic_hardening": -0.031760741201124154,
+    "product_5x5_hardening": -0.013924837921913014,
+    "generic_minus_product_hardening_interaction": -0.01783590327921114,
+    "interpretation": "operational comparator only; product generator/combinatorics/backend are confounded"
+  },
+  "maximum_sys_row": {
+    "candidate_id": "817f17a018abd68d0eb509a84b671a7818e152f53cecff66eda95b51318d2205",
+    "poly_id": "6e605a03e0d2b250ec45ed38a852523e9dd3293454731340729a4ba57c69dea2",
+    "sample_index": 7356,
+    "rejection_attempt": 0,
+    "role": "selected",
+    "future_band": ".1-1%",
+    "f64_rank": 67,
+    "proxy": 0.3480497573785152,
+    "ridge_count": 36,
+    "ridge_symp_area_mean": 2.0631517843458087,
+    "f64_volume": 35.13821444370515,
+    "capacity": 7.52504588895191,
+    "sys": 0.8057654113522604,
+    "backend": "auto->pruned_hk2017",
+    "capacity_iterations": 848,
+    "returned_orbit_count": 1,
+    "best_sigma": [
+      0,
+      1,
+      4,
+      2,
+      9,
+      6
+    ],
+    "best_action": 7.52504588895191,
+    "best_beta_margin": 0.07082210447276732,
+    "best_admissibility": "AdmissibleF64",
+    "time_reconstruct_ms": 29.568713,
+    "time_capacity_ms": 12.414636
+  },
+  "any_sys_gt_1": false,
+  "continue_100k": {
+    "decision": "stop",
+    "disposition": "Stop at 10k: the selected-vs-baseline transfer contrast is positive and material, but hardening reverses/flat (point estimate below 0) and the generic/product operational contrasts are not positive-material; the frozen 100k rule does not trigger."
+  },
+  "target_rows_sha256": "24b9aa0baf2293996dc539815a2f353a21e8b13f94a844714d5a970f439b649f"
+}

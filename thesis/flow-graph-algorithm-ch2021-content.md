@@ -22,6 +22,48 @@ useful.
 The correctness proof uses the simple-minimizer theorem from Section 3. It does
 not use the CH2021 Type 1/2/3 capacity theorem as a black box.
 
+## Integrated Audit, 2026-07-14
+
+The chapter was audited from Main commit `3dcc1efd` against the revised and
+published CH2021 paper, the active simple-minimizer theorem,
+`formal/flow-graph-real-algorithm.tex`, the Rust module contract/source/tests,
+the proof-risk verification packet, and both figure producers and thesis
+copies. No conflict was found in the conditional idealized theorem or its
+normalization. The chapter now distinguishes the two-dimensional ambient
+facet-pair chart from a section polygon that may be empty or lower-dimensional,
+and presents the idealized exhaustive algorithm explicitly.
+
+The projection asset remains experiment-owned but was removed from the active
+chapter after cold-reader review: at whole-page scale it did not make the word
+or affine-tube mechanism legible enough to repay its attention cost. The
+tube-sequence figure remains active, with tube-focused crops, full-section
+insets, and identical start/return limits so the fixed-point return is visible.
+
+The current reader-facing boundary is:
+
+- CH2021's open-two-face flow graph and smoothing correspondence motivate the
+  affine-passage model but do not prove the project algorithm;
+- the project theorem uses closed facet-pair sections, simple distinct-facet
+  words, and the active simple-minimizer theorem under its displayed regularity
+  hypotheses;
+- the exact rational Rust wrapper has an additional caller/input and typed
+  rejection boundary; an inconsistent singular fixed equation, or one whose
+  fixed set misses the searched tube, is an exact no-orbit outcome, while an
+  intersecting unsupported singular fixed set is rejected; it is implementation
+  correspondence evidence, not the proof;
+- the f64 path is approximate, and exact resolution of f64 error words does not
+  turn directly accepted f64 words into exact certificates; the mixed wrapper
+  checks that its two arithmetic inputs encode the same ordered facet data;
+- the three deterministic QP-agreement examples and targeted resolver tests
+  are falsification/correspondence evidence only.
+
+The published CH2021 numbering is Proposition 2.14, Theorems 1.11 and 1.12,
+and Corollary 1.15. The bibliography now records the Journal of Computational
+Dynamics publication and DOI. Reopen this chapter if Jörn/Kai changes the
+conditional theorem role, if the Rust caller contract broadens, if a proved
+f64 acceptance contract appears, or if a singular positive-action branch is
+admitted rather than rejected.
+
 ## Proof Sources
 
 - `formal/flow-graph-real-algorithm.tex`: transition signs, affine primitive
@@ -31,8 +73,7 @@ not use the CH2021 Type 1/2/3 capacity theorem as a black box.
 - `formal/flow-graph-ch2021-comparison.tex`: exact boundary between the
   project theorem and CH2021.
 - `thesis/05-flow-graph-ch2021-background-comparison.tex`: active
-  reader-facing account of CH2021's Type 1/2/3 model, smoothing results, and
-  its relation to the project algorithm.
+  reader-facing provenance and concise relation to the project algorithm.
 - `thesis/03-generalized-reeb-orbits-simple-minimizers.tex`: the
   simple-minimizer theorem used for completeness.
 - `papers/ch2021/`: source cache for the cited flow-graph terminology and
@@ -49,11 +90,12 @@ The genericity proposition is chamber-relative genericity of presentations.
 It is not the CH2021 conjecture that generic polytopes have no Type 2 orbit
 below a prescribed action bound.
 
-The active CH2021 comparison preserves three source qualifications: Theorem
-1.9 uses a sequence \(\varepsilon_i\to0\); Theorem 1.8 gives eventual equality
-of rotation and Conley--Zehnder data rather than only convergence; and the
-rotation bound in Corollary 1.13 applies to Type 1 orbits, while CH2021 does
-not define a combinatorial rotation number for Type 2.
+The source audit behind the compressed CH2021 comparison records three
+qualifications for any later expansion: Theorem 1.12 uses a sequence
+\(\varepsilon_i\to0\); Theorem 1.11 gives eventual equality of rotation and
+Conley--Zehnder data rather than only convergence; and the rotation bound in
+Corollary 1.15 applies to Type 1 orbits, while CH2021 does not define a
+combinatorial rotation number for Type 2.
 
 The Rust exact implementation uses rational inputs and caller-supplied
 incidence and symplectic-sign matrices. Tests provide implementation
@@ -61,29 +103,28 @@ correspondence and falsification evidence; they are not the proof of the two
 mathematical results. The f64 path is diagnostic and is not an exact capacity
 certificate.
 
-## Explanatory Figures
+## Explanatory Figure
 
-Figures `fig:flow-graph-projected-orbit` and
-`fig:flow-graph-tube-sequence` use the deterministic generated
-six-facet case with master seed `20260605`, attempt `3`, and facet word
-`(1,2,4,5,3)`. The exact resolver and retained regression tests identify this
-word as a positive capacity word; the plotted geometry is generated by the f64
+Figure `fig:flow-graph-tube-sequence` uses the deterministic generated six-facet
+case with master seed `20260605`, attempt `3`, and facet word `(1,2,4,5,3)`.
+The exact resolver and retained regression tests identify this word as a
+positive capacity word; the plotted geometry is generated by the f64
 visualization path and is explanatory rather than proof evidence.
 
 The owner artifacts and reproduction commands are in
 `experiments/dev-flow-graph/visualize-tube/` and
-`experiments/dev-flow-graph/README.md`. The two PDFs are copied deliberately to
-`thesis/figures/flow-graph/` so the thesis build is self-contained.
+`experiments/dev-flow-graph/README.md`. The active PDF is copied deliberately
+to `thesis/figures/flow-graph/` so the thesis build is self-contained. The
+experiment also retains the projection asset for future redesign or diagnostic
+use, but the active thesis does not include it.
 
-- The projection figure shows two camera views of the same projected
-  one-skeleton, translucent two-faces, and orbit after radial projection to
-  `S^3` and stereographic projection to `R^3`; it distorts metric geometry.
 - The sequence panel shows only the visited facet-pair charts. Its axes are
   Euclidean-orthonormal in the corresponding affine two-plane, constructed by
   Gram--Schmidt from the producer's coordinate split. Affine origins and
-  orientations are chosen independently, and the renderer autoscales panels
-  separately; apparent cross-panel display size is therefore not comparable.
-- Both panels explain the construction. Neither supports correctness,
+  orientations are chosen independently for distinct sections. Intermediate
+  panels are autoscaled separately, while start and return use the same frame
+  and limits so the fixed-point coordinates are directly comparable.
+- The panel explains the construction. It does not support correctness,
   genericity, or implementation-validation claims.
 
 ## Review Status

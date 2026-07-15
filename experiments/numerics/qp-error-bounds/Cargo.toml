@@ -1,0 +1,32 @@
+[package]
+name = "exp-qp-error-evidence"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "qp-error-observe"
+path = "src/main.rs"
+
+[[bin]]
+name = "qp-retained-exact"
+path = "src/retained_exact.rs"
+
+[[bin]]
+name = "qp-soundness-v2"
+path = "src/soundness_v2.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+algebraic-numbers.workspace = true
+symplectic.workspace = true
+exp-dev-quadratic-program = { path = "../../dev-quadratic-program" }
+exp-sys-landscape = { path = "../../sys-landscape" }
+euclidean-polytopes.workspace = true
+nalgebra.workspace = true
+num-rational.workspace = true
+num-traits.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+blake3.workspace = true

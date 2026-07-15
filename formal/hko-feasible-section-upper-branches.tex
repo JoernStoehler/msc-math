@@ -30,9 +30,15 @@ as an upper bound for the capacity.
 
 \begin{lemma}[HKO capacity normalization used by the certificate]
 \label{lem:hko-capacity-normalization}
-Let $K_{\mathrm{HKO}}=K\times T$ be the Lagrangian product of the two
-regular pentagons with circumradius~$1$ used in
-\cite[Proposition~1.3]{HaimKislevOstrover2024}.
+Let $K$ be the centered regular pentagon of circumradius~$1$ with a vertex at
+$(1,0)$, let $R(\theta)$ denote counterclockwise rotation, and put
+\[
+  T=R(-\pi/2)K,
+  \qquad
+  K_{\mathrm{HKO}}=K\times T.
+\]
+This is the Lagrangian product from
+\cite[Proposition~1.4]{HaimKislevOstrover2024}.
 Let
 \[
   t=\tan(\pi/5),
@@ -53,7 +59,7 @@ Then
 
 \begin{proof}
 The first equality is exactly the capacity computation in
-\cite[Proposition~1.3]{HaimKislevOstrover2024}.  For the second equality,
+\cite[Proposition~1.4]{HaimKislevOstrover2024}.  For the second equality,
 work in the ordered number field determined by the real root
 $0<t<1$ of $t^4-10t^2+5$.  Put $s=(5-t^2)/2$, so $s=\sqrt{5}$ in this
 ordered field.  The identities

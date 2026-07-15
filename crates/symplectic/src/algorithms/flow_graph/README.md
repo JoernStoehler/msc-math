@@ -34,7 +34,7 @@ proof text can overrule it. When they do, update this file or mark the mismatch.
 - The co-located `tube-algorithm*.md` files are legacy/imported source
   material, not the live control surface.
 - The current experiment package is `experiments/dev-flow-graph/`.
-- The thesis section is `thesis/flow-graph-algorithm-ch2021.tex`.
+- The thesis section is `thesis/05-flow-graph-algorithm-ch2021.tex`.
 
 ## Scope and Caveats
 
@@ -155,7 +155,8 @@ Path-specific outcome contract:
 | nonsingular fixed point with zero action or nonpositive segment time | return no-orbit, not a capacity word | exact resolver tests |
 | nonsingular fixed point with positive action and all segment times positive | accept as a closed orbit candidate; retained only if within the requested action window | exact E2E tests and proof-risk rows |
 | singular fixed set with positive-action candidate | reject as unsupported; do not silently use it as a capacity value | exact test and proof-risk row |
-| singular no-orbit status other than `length_three_zero_time` | reject at exact-search boundary until a broader lemma is proved | exact-search boundary tests |
+| singular fixed equation inconsistent, or with no fixed point in the searched tube domain | return exact empty-tube/no-orbit | exact singular classifier |
+| singular fixed set meeting the tube domain with a nonpositive action status other than `length_three_zero_time` | reject at exact-search boundary until a broader lemma is proved | exact-search boundary tests |
 | exact action cutoff | speedup after a positive exact action is known; not an independent certificate | cutoff-vs-disabled tests and proof-risk rows |
 
 - Exact accepted output contains the exact reported action, retained cyclic
@@ -167,8 +168,10 @@ Path-specific outcome contract:
   nonempty directed facet-pair candidate with `omega_0 = 0`, failure of the
   linear-independence input contract for subsets of at most four listed facet
   normals, a singular fixed set with a positive-action closed candidate, and
-  any non-length-three singular no-orbit outcome not covered by the structural
-  zero-time lemma. If exhaustive exact search finishes without finding any
+  any intersecting non-length-three singular fixed set not covered by the
+  structural zero-time lemma. An inconsistent singular fixed equation, or one
+  whose fixed set misses the searched tube domain, is an exact empty-tube
+  outcome rather than an unsupported fixed set. If exhaustive exact search finishes without finding any
   positive orbit, that is also returned as a typed non-success instead of a
   panic. Full bounded-irredundant validation is not part of this rejection
   boundary.
@@ -189,8 +192,9 @@ Path-specific outcome contract:
 - Current theorem/runtime boundary direction: do not reject all singular fixed
   maps. Deterministic generated polytopes routinely contain length-three
   zero-time singular fixed lines. Exact search accepts that proved structural
-  case as no-orbit, rejects positive-action singular fixed sets, and rejects
-  any remaining singular no-orbit status until a broader nonpositive-singular
+  case as no-orbit and also accepts an exactly empty singular fixed equation as
+  no-orbit. It rejects positive-action singular fixed sets and any remaining
+  intersecting singular no-orbit status until a broader nonpositive-singular
   lemma is proved.
 - f64 accepted output has approximate actions and may include words accepted by
   f64 predicates directly. It is not covered by the exact strict segment-time
@@ -207,6 +211,10 @@ Path-specific outcome contract:
   closed candidate, and at least one positive orbit remains. Its returned
   action is the minimum of direct f64 positive words and exact-resolution
   positive words.
+- `capacity_f64` requires its f64 and exact arguments to be the two arithmetic
+  representations of the same ordered facet presentation. It checks the
+  ordered converted coordinates and equality of the caller-supplied incidence
+  and sign matrices before combining results.
 - `capacity_exact` is the current exact rational search wrapper used by tests
   and experiments.
 - `diagnose_f64_closed_words` is the development/experiment function.
@@ -475,7 +483,7 @@ Project sources:
 - `AGENTS.md`
 - `tube-algorithm-legacy-source-note.md`
 - `tube-algorithm-raw-jorn-2026-05-04.md`
-- `thesis/flow-graph-algorithm-ch2021.tex`
+- `thesis/05-flow-graph-algorithm-ch2021.tex`
 - `papers/ch2021/`
 
 ## Maintenance Rule

@@ -47,13 +47,16 @@ The algorithm contract and result-control surface live in
   - Emits one JSON object for a generated polytope and one closed tube word.
   - Defaults to the retained thesis example:
     `facet_count=6`, `master_seed=20260605`, `attempt=3`, `sigma=1,2,4,5,3`.
-  - `visualize-tube/render.py` renders that JSON to a PNG with matplotlib.
+  - `visualize-tube/render.py` renders that JSON with matplotlib.
   - Two-face panels use ordered local frames, so `F_i cap F_j` and
     `F_j cap F_i` are separate panels when both are needed.
-  - `render.py --layout sequence` shows only the facet-pair sections visited by
-    the word; `--layout projection` shows the same closed orbit in a radial and
+  - `render.py --layout sequence` shows tube-focused crops of the facet-pair
+    sections visited by the word, with an inset locating each crop in its full
+    section; the start and return crops share a frame and plot limits so their
+    fixed-point coordinates can be compared directly. `--layout projection`
+    shows the same closed orbit in a radial and
     stereographic projection, with two camera views of the polytope's
-    one-skeleton and translucent two-faces.
+    one-skeleton and schematic translucent face patches.
 
 The retained thesis example uses `facet_count=6`, `attempt=3`, and
 `sigma=1,2,4,5,3`.  Its generated owner artifacts are

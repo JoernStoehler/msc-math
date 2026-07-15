@@ -117,6 +117,8 @@ def render_sequence(data, output):
         if len(panels) == 6
         else list(axes[: len(panels)])
     )
+    shared_start_return_points = tube_focus_points(panels[0], fixed_points[0])
+    shared_start_return_points.extend(tube_focus_points(panels[-1], fixed_points[-1]))
 
     for index, (panel, fixed, ax) in enumerate(zip(panels, fixed_points, panel_axes)):
         pair = tuple(panel["pair"])
@@ -146,11 +148,33 @@ def render_sequence(data, output):
         role = panel["role"]
         role_label = "start" if role == "start" else "return" if role == "end" else f"step {index}"
         ax.set_title(rf"{role_label}: $P_{{{pair[0]}{pair[1]}}}$")
-        set_axis_limits(ax, face, [panel], [fixed])
+        if index in (0, len(panels) - 1):
+            set_axis_limits_to_points(ax, shared_start_return_points, pad_fraction=0.2)
+        else:
+            set_axis_limits_to_tube(ax, panel, fixed)
         ax.set_aspect("equal", adjustable="box")
         ax.set_xticks([])
         ax.set_yticks([])
         ax.grid(False)
+
+        inset = ax.inset_axes([0.72, 0.04, 0.26, 0.26])
+        draw_polygon_or_points(
+            inset, face["vertices"], FACE_COLOR, 0.35, FACE_COLOR, "full section"
+        )
+        draw_polygon_or_points(
+            inset,
+            panel["polygon"]["vertices"],
+            color,
+            0.7,
+            color,
+            "surviving tube",
+            linewidth=1.0,
+        )
+        set_axis_limits(inset, face, [panel], [fixed])
+        inset.set_aspect("equal", adjustable="box")
+        inset.set_xticks([])
+        inset.set_yticks([])
+        inset.set_facecolor("white")
 
     for ax in axes:
         if ax not in panel_axes:
@@ -424,6 +448,36 @@ def set_axis_limits(ax, face, tube_faces, fixed_points):
     maxs = finite.max(axis=0)
     span = np.maximum(maxs - mins, 1e-6)
     pad = 0.12 * span + 1e-6
+    ax.set_xlim(mins[0] - pad[0], maxs[0] + pad[0])
+    ax.set_ylim(mins[1] - pad[1], maxs[1] + pad[1])
+
+
+def set_axis_limits_to_tube(ax, tube_face, fixed_point):
+    set_axis_limits_to_points(ax, tube_focus_points(tube_face, fixed_point), pad_fraction=0.2)
+
+
+def tube_focus_points(tube_face, fixed_point):
+    points = list(tube_face["polygon"]["vertices"])
+    if fixed_point.get("point") is not None:
+        points.append(fixed_point["point"])
+    return points
+
+
+def set_axis_limits_to_points(ax, points, pad_fraction):
+    if not points:
+        ax.set_xlim(-1, 1)
+        ax.set_ylim(-1, 1)
+        return
+    arr = np.array(points, dtype=float)
+    finite = arr[np.isfinite(arr).all(axis=1)]
+    if len(finite) == 0:
+        ax.set_xlim(-1, 1)
+        ax.set_ylim(-1, 1)
+        return
+    mins = finite.min(axis=0)
+    maxs = finite.max(axis=0)
+    span = np.maximum(maxs - mins, 1e-6)
+    pad = pad_fraction * span + 1e-6
     ax.set_xlim(mins[0] - pad[0], maxs[0] + pad[0])
     ax.set_ylim(mins[1] - pad[1], maxs[1] + pad[1])
 

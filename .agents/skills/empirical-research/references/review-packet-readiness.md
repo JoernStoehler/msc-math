@@ -21,6 +21,14 @@ Establish:
 - the claims the packet may support and prohibited stronger conclusions;
 - evidence or review that could materially change the conclusion.
 
+For a transition that authorizes irreversible target evaluation, readiness
+attaches to the exact evaluator source or executable and its dependency and
+input state. A readiness review of frozen inputs does not cover an evaluator
+created afterward. A material evaluator, dependency, input, or executable
+change after review requires a narrow recheck before exposure. Verify a clean
+committed state or a retained immutable snapshot, plus repo-relative identities
+and hashes sufficient to recover what actually ran.
+
 Before honoring a saved status, phase label, launch contract, or stopping rule,
 establish whether it had authority to settle the transition. At a claimed
 research-phase boundary, identify and disposition each known current

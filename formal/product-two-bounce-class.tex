@@ -1,0 +1,704 @@
+% formal/product-two-bounce-class.tex
+%
+% Developer-facing proof packet for the two-bounce class of a planar
+% Lagrangian product.  All mathematics in the red status frame is
+% agent-derived and awaits Jörn's review.
+
+\subsection{Status, scope, and source conventions}
+\label{subsec:product-two-bounce-status}
+
+This packet separates three claims which must not be conflated:
+\begin{enumerate}
+  \item the geometric minimum among strong two-bounce Minkowski billiards;
+  \item the optimum of the complete mathematical \(k=2\) product QP family,
+    before transition pruning or numerical solution;
+  \item the value returned from the transition-pruned, f64-seeded candidate
+    stream used by
+    \path{experiments/sys-datascience/methods/product-bounce-distribution/class-minima.rs}.
+\end{enumerate}
+The first two values are proved below to equal the same difference-body
+inradius.  Equality for the implementation stream is conditional on retaining
+and exactly resolving one equality candidate.  Current sources do not prove
+that coverage condition universally.
+
+The strong-billiard convention and its two normal-cone inclusions are
+Rudolf's published Definition~2 \cite[Definition~2]{Rudolf2022}.  The
+published Theorem~1 identifies the unrestricted strong-billiard minimum with
+the EHZ capacity, but that global theorem is not used to prove the
+class-restricted statements below.  The QP orientation and the action formula
+\(1/(2Q_\sigma)\) are those of
+\texttt{thesis/04-haim-kislev-quadratic-program.tex}.
+
+\begin{unverified}
+All new mathematical claims in this packet have been checked by agents and
+compiled, but have not been accepted by Jörn.  In particular, \emph{proved}
+below means proved within this packet at agent-review status, not approved for
+publication in the thesis.
+\end{unverified}
+
+\subsection{Conventions}
+\label{subsec:product-two-bounce-conventions}
+
+Let \(P,Q\subset\mathbb R^2\) be compact full-dimensional convex polygons.
+For a convex body \(C\), write
+\[
+ h_C(u)=\max_{x\in C}\langle u,x\rangle,
+ \qquad
+ C^\circ=\{u:h_C(u)\leq1\},
+\]
+and use the outer normal cone
+\[
+ N_C(x)=\{u:\langle u,z-x\rangle\leq0
+                 \text{ for every }z\in C\}.
+\]
+The exposed face with outer normal \(u\neq0\) is
+\[
+ F_C(u)=\{x\in C:\langle u,x\rangle=h_C(u)\}.
+\]
+Put
+\[
+ D_P=P-P,\qquad D_Q=Q-Q.
+\]
+These difference bodies are centrally symmetric convex bodies with zero in
+their interiors.  The polar convention gives
+\[
+ \mu_{D_Q^\circ}(d)=h_{D_Q}(d).
+\]
+
+A \emph{nondegenerate strong two-bounce \((P,Q)\)-billiard} consists of
+distinct \(q_1,q_2\in\partial P\) and \(p_1,p_2\in\partial Q\) such that,
+with \(d=q_2-q_1\neq0\),
+\begin{equation}
+\label{eq:product-two-bounce-strong-relations}
+ d\in N_Q(p_1),\qquad
+ -d\in N_Q(p_2),\qquad
+ p_2-p_1\in-N_P(q_2),\qquad
+ p_1-p_2\in-N_P(q_1).
+\end{equation}
+Its closed length in the repository convention is
+\begin{equation}
+\label{eq:product-two-bounce-length}
+ \ell_Q(q_1,q_2)
+ =h_Q(d)+h_Q(-d)
+ =h_{D_Q}(d).
+\end{equation}
+There is no additional factor of two.  If \(Q=-Q\), then \(D_Q=2Q\), and
+only in that special case does the last expression become \(2h_Q(d)\).
+
+For the QP discussion, translate \(P\) and \(Q\), without changing their
+difference bodies or the billiard length, so that
+\(0\in\operatorname{int}P\cap\operatorname{int}Q\).  Write irredundant facet
+representations
+\[
+ P=\{q:\langle a_i,q\rangle\leq1\},
+ \qquad
+ Q=\{p:\langle b_j,p\rangle\leq1\}.
+\]
+The \(a_i\) are the vertices of \(P^\circ\), and the \(b_j\) are the
+vertices of \(Q^\circ\).  Product coordinates have the project order
+\((q_1,q_2,p_1,p_2)\), and
+\[
+ \omega_0((u,0),(0,v))=\langle u,v\rangle.
+\]
+
+\subsection{Two-point translatability and the difference-body value}
+\label{subsec:product-two-bounce-difference-body}
+
+\begin{unverified}
+\begin{lemma}[Two-point translatability]
+\label{lem:product-two-bounce-translatability}
+For \(d\in\mathbb R^2\), a two-point set with displacement \(d\) is
+translatable into \(\operatorname{int}P\) if and only if
+\[
+ d\in\operatorname{int}(P-P).
+\]
+\end{lemma}
+
+\begin{proof}
+Translation does not change displacement.  Thus the asserted equivalence is
+the identity
+\[
+ \operatorname{int}P-\operatorname{int}P
+ =\operatorname{int}(P-P).
+\]
+The left side is open and contained in \(P-P\), hence is contained in the
+right side.  Conversely, take \(d\in\operatorname{int}(P-P)\).  If \(d=0\),
+write \(d=p_0-p_0\) with \(p_0\in\operatorname{int}P\).  If \(d\neq0\),
+the ray through \(d\) continues a little past \(d\) inside \(P-P\); hence
+\(\lambda d=x-y\) for some \(\lambda>1\) and \(x,y\in P\).  For
+\(p_0\in\operatorname{int}P\), the points
+\[
+ x'=\lambda^{-1}x+(1-\lambda^{-1})p_0,\qquad
+ y'=\lambda^{-1}y+(1-\lambda^{-1})p_0
+\]
+belong to \(\operatorname{int}P\) and satisfy \(x'-y'=d\).
+\end{proof}
+
+\begin{definition}[Difference-body two-bounce value]
+\label{def:product-two-bounce-a2}
+Define
+\begin{equation}
+\label{eq:product-two-bounce-boundary}
+ A_2(P,Q)=\min_{d\in\partial D_P}h_{D_Q}(d).
+\end{equation}
+\end{definition}
+
+\begin{lemma}[Boundary and containment formulations]
+\label{lem:product-two-bounce-containment}
+The minimum \(Q\)-length of a non-translatable two-point polygon is
+\(A_2(P,Q)\), and
+\begin{equation}
+\label{eq:product-two-bounce-containment}
+ A_2(P,Q)
+ =\max\{r\geq0:rD_Q^\circ\subseteq D_P\}.
+\end{equation}
+The minimum and maximum are positive and attained.
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:product-two-bounce-translatability}, the admissible
+displacements are \(\mathbb R^2\setminus\operatorname{int}D_P\).
+The function \(h_{D_Q}\) is positive away from zero and positively
+homogeneous.  On each ray, the first admissible point is the unique point of
+\(\partial D_P\) on that ray; every point farther out has at least its
+\(h_{D_Q}\)-value.  Compactness of \(\partial D_P\) gives
+\eqref{eq:product-two-bounce-boundary} and attainment.
+
+Set \(C=D_Q^\circ\), so that \(h_{D_Q}=\mu_C\).  For two convex bodies
+\(B,C\) containing zero in their interiors, radial comparison gives
+\[
+ \max\{r:rC\subseteq B\}=\min_{x\in\partial B}\mu_C(x).
+\]
+Indeed, \(rC\subseteq B\) precisely when the radial size of \(rC\) does not
+exceed that of \(B\) on any ray, which is equivalent to
+\(\mu_C(x)\geq r\) for every \(x\in\partial B\).
+Taking \(B=D_P\) proves \eqref{eq:product-two-bounce-containment}.
+Positivity follows because both bodies contain zero in their interiors.
+\end{proof}
+\end{unverified}
+
+\subsection{Strong two-bounce realization}
+\label{subsec:product-two-bounce-strong-realization}
+
+The next theorem proves the optimizer correspondence directly.  It is
+stronger than equality of the two minimum values: every minimizing
+displacement is realized by a strong billiard.
+
+\begin{unverified}
+\begin{theorem}[Strong two-bounce formula]
+\label{thm:product-strong-two-bounce}
+For full-dimensional convex polygons \(P,Q\subset\mathbb R^2\),
+\begin{equation}
+\label{eq:product-strong-two-bounce-minimum}
+ \min\{\ell_Q(q_1,q_2):
+       (q_1,q_2;p_1,p_2)\text{ is a nondegenerate strong two-bounce
+       billiard}\}
+ =A_2(P,Q).
+\end{equation}
+Moreover, every \(d\in\partial D_P\) satisfying
+\(h_{D_Q}(d)=A_2(P,Q)\) occurs as \(q_2-q_1\) in a minimizing strong
+two-bounce billiard.
+\end{theorem}
+
+\begin{proof}
+Put \(r=A_2(P,Q)\), \(C=D_Q^\circ\), and choose a minimizing
+\(d\in\partial D_P\).  Then \(h_{D_Q}(d)=r\), so
+\(x=d/r\in\partial C\).  Lemma~\ref{lem:product-two-bounce-containment}
+gives
+\[
+ rC\subseteq D_P,\qquad d\in\partial(rC)\cap\partial D_P.
+\]
+Choose \(0\neq u\in N_{D_P}(d)\).  Because \(d\in rC\subseteq D_P\),
+\[
+ h_{rC}(u)\geq\langle u,d\rangle
+ =h_{D_P}(u)\geq h_{rC}(u).
+\]
+Thus equality holds throughout, and \(u\in N_{rC}(d)=N_C(x)\).
+
+For Minkowski differences,
+\begin{equation}
+\label{eq:product-two-bounce-face-decompositions}
+ F_{D_P}(u)=F_P(u)-F_P(-u),\qquad
+ F_{D_Q}(x)=F_Q(x)-F_Q(-x).
+\end{equation}
+Since \(d\in F_{D_P}(u)\), choose
+\[
+ q_2\in F_P(u),\qquad q_1\in F_P(-u),\qquad d=q_2-q_1.
+\]
+Both points lie on \(\partial P\), and they are distinct because \(d\neq0\).
+
+The polar body is the sublevel set
+\(C=\{z:h_{D_Q}(z)\leq1\}\).  At \(x\in\partial C\), the normal-cone
+formula for a sublevel set of a support function is
+\[
+ N_C(x)=\{\lambda y:\lambda\geq0,\ y\in F_{D_Q}(x)\}.
+\]
+Consequently, \(u=\lambda y\) for some \(\lambda>0\) and
+\(y\in F_{D_Q}(x)\).  By
+\eqref{eq:product-two-bounce-face-decompositions}, choose
+\[
+ p_1\in F_Q(x),\qquad p_2\in F_Q(-x),\qquad y=p_1-p_2.
+\]
+Because \(d=rx\), these exposed-face conditions give
+\[
+ d\in N_Q(p_1),\qquad -d\in N_Q(p_2).
+\]
+Because \(u\) is a positive multiple of \(y\), the choices of \(q_1,q_2\)
+give
+\[
+ y\in N_P(q_2),\qquad -y\in N_P(q_1).
+\]
+Equivalently,
+\[
+ p_2-p_1=-y\in-N_P(q_2),\qquad
+ p_1-p_2=y\in-N_P(q_1).
+\]
+These are all four relations in
+\eqref{eq:product-two-bounce-strong-relations}.  The resulting billiard has
+length \(h_{D_Q}(d)=r\).
+
+Conversely, let a nondegenerate strong two-bounce billiard be given, and set
+\[
+ d=q_2-q_1,\qquad y=p_1-p_2.
+\]
+The vector \(y\) is nonzero.  Otherwise, the first two strong relations put
+both \(d\) and \(-d\) in the normal cone of \(Q\) at one point.  A normal
+cone of a full-dimensional convex body is pointed, so this would force
+\(d=0\).
+The last two strong relations give
+\[
+ y\in N_P(q_2),\qquad -y\in N_P(q_1).
+\]
+Therefore
+\[
+ \langle y,d\rangle
+ =h_P(y)+h_P(-y)
+ =h_{D_P}(y)>0,
+\]
+and \(d=q_2-q_1\in F_{D_P}(y)\subset\partial D_P\).  Hence
+\[
+ \ell_Q(q_1,q_2)=h_{D_Q}(d)\geq A_2(P,Q).
+\]
+Together with the construction, this proves
+\eqref{eq:product-strong-two-bounce-minimum} and realization of every
+minimizing displacement.
+\end{proof}
+\end{unverified}
+
+Thus the minimizing displacement classes and the minimizing strong
+two-bounce classes correspond: every strong two-bounce billiard supplies a
+boundary displacement, and every minimizing boundary displacement has at
+least one strong realization.  This is not a setwise identification of all
+non-translatable pairs with all billiards.  A general
+\(d\notin\operatorname{int}D_P\) need not satisfy the normal-cone relations,
+and even a minimizing \(d\) can have several realizations through different
+face decompositions.
+
+\subsection{The complete mathematical two-bounce product QP}
+\label{subsec:product-two-bounce-complete-qp}
+
+A broad two-block word has cyclic form
+\[
+ \mathcal Q_+\,\mathcal P_+\,\mathcal Q_-\,\mathcal P_-,
+\]
+where each block is a singleton or an ordered adjacent pair of facets of the
+indicated factor.  Initially, allow the same facet to occur in the two blocks
+of one factor.  Give every active occurrence a positive weight \(\beta_k\)
+satisfying
+\begin{equation}
+\label{eq:product-two-bounce-qp-constraints}
+ \sum_k\beta_k=1,\qquad
+ \sum_k\beta_k\widehat a_{\sigma_k}=0,
+\end{equation}
+where a product \(q\)-facet has dual vertex
+\(\widehat a_i=(a_i,0)\), while a product \(p\)-facet has dual vertex
+\(\widehat b_j=(0,b_j)\).  The active-traversal objective is
+\[
+ Q_\sigma(\beta)
+ =\sum_{j<k}\beta_j\beta_k\,
+   \omega_0(\widehat a_{\sigma_j},\widehat a_{\sigma_k}),
+\]
+with \(\widehat a_{\sigma_k}\) understood to mean the appropriate
+\(\widehat a_i\) or \(\widehat b_j\).
+
+The complete mathematical repository family additionally requires distinct
+facets, equivalently disjoint blocks of the same factor.  Zero weights are
+deleted from an active word.  The repeated-facet repair below proves that the
+distinctness requirement does not lower the \(k=2\) optimum.
+
+\begin{unverified}
+\begin{lemma}[Collapse of an alternating four-block word]
+\label{lem:product-two-bounce-block-collapse}
+Let \((\sigma,\beta)\) be a positive feasible broad word.  If \(u\) is the
+weighted planar sum in \(\mathcal Q_+\) and \(v\) is the weighted planar sum
+in \(\mathcal P_+\), factorwise closure makes the four block sums, in cyclic
+order,
+\[
+ u,\quad v,\quad -u,\quad -v.
+\]
+They satisfy \(u,v\neq0\),
+\begin{equation}
+\label{eq:product-two-bounce-block-normalization}
+ h_{D_P}(u)+h_{D_Q}(v)=1,
+\end{equation}
+and
+\begin{equation}
+\label{eq:product-two-bounce-block-objective}
+ Q_\sigma(\beta)=2\langle u,v\rangle.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Consider a \(q\)-facet block of total mass \(s>0\) and weighted planar sum
+\(w\).  The point \(w/s\) is either a vertex of \(P^\circ\) or an interior
+point of an edge joining two adjacent vertices.  Hence
+\(w/s\in\partial P^\circ\), and
+\[
+ h_P(w)=\mu_{P^\circ}(w)=s.
+\]
+Applying this to the two \(q\)-facet blocks with sums \(u,-u\), and then to
+the two \(p\)-facet blocks with sums \(v,-v\), turns
+\(\sum_k\beta_k=1\) into
+\eqref{eq:product-two-bounce-block-normalization}.  A positive combination
+of one vertex or of two adjacent vertices of a polar polygon cannot vanish,
+because the corresponding boundary vertex or edge does not contain zero.
+Thus \(u,v\neq0\).
+
+Pairings within one factor vanish.  The four nonzero cross-block
+contributions are
+\[
+ \langle u,v\rangle,\quad
+ \langle u,-v\rangle,\quad
+ -\langle -u,v\rangle,\quad
+ \langle -u,-v\rangle.
+\]
+Their sum is \(2\langle u,v\rangle\), proving
+\eqref{eq:product-two-bounce-block-objective}.  This calculation fixes the
+repository orientation.  Reversing a fixed cyclic word negates its
+objective; the complete ordered family contains the reverse orientation, so
+we choose the orientation with positive objective when necessary.
+\end{proof}
+
+\begin{lemma}[Radial block encoding]
+\label{lem:product-two-bounce-radial-encoding}
+For every \(0\neq w\in\mathbb R^2\), the vector \(w\) is a positive weighted
+sum of either one vertex or two adjacent vertices of \(P^\circ\), with total
+coefficient \(h_P(w)\).  The analogous statement holds for \(Q^\circ\).
+\end{lemma}
+
+\begin{proof}
+The radial point \(w/h_P(w)\) belongs to \(\partial P^\circ\).  In a polygon
+it is either a vertex or lies in the relative interior of an edge.  In the
+first case use the single vertex.  In the second, write the radial point as a
+strict convex combination of the two endpoints of that edge and multiply
+the coefficients by \(h_P(w)\).
+\end{proof}
+
+\begin{lemma}[Polar pairing value]
+\label{lem:product-two-bounce-polar-pairing}
+Let
+\[
+ M(P,Q)=\max\{\langle x,y\rangle:
+                    x\in D_P^\circ,\ y\in D_Q^\circ\}.
+\]
+Then
+\begin{equation}
+\label{eq:product-two-bounce-polar-pairing}
+ M(P,Q)=\frac1{A_2(P,Q)}.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+For fixed \(y\),
+\[
+ \max_{x\in D_P^\circ}\langle x,y\rangle
+ =h_{D_P^\circ}(y)=\mu_{D_P}(y).
+\]
+Therefore
+\[
+ M(P,Q)=\max_{y\in D_Q^\circ}\mu_{D_P}(y).
+\]
+For \(r\geq0\),
+\[
+ rD_Q^\circ\subseteq D_P
+ \quad\Longleftrightarrow\quad
+ r\,\mu_{D_P}(y)\leq1
+ \text{ for every }y\in D_Q^\circ
+ \quad\Longleftrightarrow\quad
+ rM(P,Q)\leq1.
+\]
+The largest such \(r\) is \(A_2(P,Q)\) by
+Lemma~\ref{lem:product-two-bounce-containment}, proving the identity.  This
+argument also fixes which polar belongs to which factor.
+\end{proof}
+
+\begin{proposition}[Removing repeated facets at the class optimum]
+\label{prop:product-two-bounce-distinct-repair}
+Every maximizing broad four-block candidate can be changed, without changing
+its objective, to a maximizing candidate whose two blocks in each factor are
+disjoint.  After zero coefficients are deleted, all four blocks remain
+nonempty and have length one or two.
+\end{proposition}
+
+\begin{proof}
+Consider the radial boundary points of \(P^\circ\) in the directions \(u\)
+and \(-u\) supplied by
+Lemma~\ref{lem:product-two-bounce-block-collapse}.  Their minimal faces are
+vertices or edges and can share at most one polar vertex.  Indeed, two
+distinct polygon edges share at most one vertex, while if the two minimal
+faces shared an edge, that edge would contain the two opposite radial points
+and hence zero, contradicting \(0\in\operatorname{int}P^\circ\).
+
+Suppose the only possible shared vertex \(a\) occurs with coefficients
+\(c_+>0\) and \(c_->0\) in the two temporal \(q\)-blocks.  Hold
+\(c=c_++c_-\) fixed and replace these coefficients by
+\[
+ \theta,\qquad c-\theta,\qquad 0\leq\theta\leq c,
+\]
+leaving every other coefficient unchanged.  Closure and normalization depend
+only on the total coefficient of \(a\), so they remain fixed.  If
+\(u(\theta)\) is the first \(q\)-block sum, the other is
+\(-u(\theta)\), and
+\[
+ Q_\sigma(\theta)=2\langle u(\theta),v\rangle
+\]
+is affine in \(\theta\).  One endpoint is no worse than the original split
+and deletes one occurrence of \(a\).  Since the original candidate is a
+broad-family maximum, that endpoint has the same value.
+
+Neither endpoint can erase an entire \(q\)-block.  If one of the original
+blocks consisted only of \(a\), factorwise closure would express zero as a
+positive combination of \(a\) and the one or two vertices in the opposite
+block.  Because the opposite minimal face shares \(a\), all these vertices
+lie in one boundary edge (or at one boundary vertex) of \(P^\circ\), which
+cannot contain zero.  Thus each block has a non-shared active vertex and
+survives deletion of the repeated occurrence.
+
+This removes the only possible repeated \(q\)-facet.  Apply the identical
+argument to the two \(p\)-blocks.  The result has disjoint same-factor blocks,
+four nonempty blocks, and unchanged maximal objective.
+\end{proof}
+
+\begin{theorem}[Complete mathematical \(k=2\) product QP]
+\label{thm:product-two-bounce-complete-qp}
+Let \(Q_{2,\max}(P,Q)\) be the maximum of \(Q_\sigma\) over the complete
+mathematical \(k=2\) product family: alternating cyclic words with two
+nonempty \(q\)-blocks and two nonempty \(p\)-blocks, every block a singleton
+or an ordered adjacent pair, same-factor blocks disjoint, and weights
+satisfying \eqref{eq:product-two-bounce-qp-constraints}.  This is the family
+before transition pruning or numerical proposal.  Then
+\begin{equation}
+\label{eq:product-two-bounce-complete-qp}
+ \begin{split}
+ Q_{2,\max}(P,Q)
+ &=\frac12\max_{\substack{x\in D_P^\circ\\y\in D_Q^\circ}}
+      \langle x,y\rangle\\
+ &=\frac1{2A_2(P,Q)},
+ \qquad
+ \frac1{2Q_{2,\max}(P,Q)}=A_2(P,Q).
+ \end{split}
+\end{equation}
+In particular, no feasible mathematical \(k=2\) candidate with
+\(Q_\sigma>0\), physical or spurious, has action below \(A_2(P,Q)\).
+\end{theorem}
+
+\begin{proof}
+For any feasible broad word, put
+\[
+ s=h_{D_P}(u),\qquad t=h_{D_Q}(v).
+\]
+Lemma~\ref{lem:product-two-bounce-block-collapse} gives
+\(s,t>0\) and \(s+t=1\).  Therefore
+\[
+ x=\frac{u}{s}\in\partial D_P^\circ,\qquad
+ y=\frac{v}{t}\in\partial D_Q^\circ,
+\]
+and
+\[
+ Q_\sigma(\beta)
+ =2st\langle x,y\rangle
+ \leq2st\,M(P,Q)
+ \leq\frac{M(P,Q)}2.
+\]
+
+Conversely, compactness supplies maximizers in
+\(D_P^\circ\times D_Q^\circ\), and the maximum is positive.  Radially
+enlarging either member of a positive maximizing pair shows that both belong
+to the respective boundaries.  Thus choose
+\(x\in\partial D_P^\circ\) and \(y\in\partial D_Q^\circ\) with
+\(\langle x,y\rangle=M(P,Q)>0\), and set
+\[
+ u=\frac{x}{2},\qquad v=\frac{y}{2}.
+\]
+Lemma~\ref{lem:product-two-bounce-radial-encoding} encodes
+\(u,-u\) as one- or two-facet \(q\)-blocks and \(v,-v\) as one- or
+two-facet \(p\)-blocks.  The total coefficient is
+\[
+ h_{D_P}(u)+h_{D_Q}(v)=\frac12+\frac12=1,
+\]
+and the four block sums close.  Choosing the cyclic orientation
+\(\mathcal Q_+\mathcal P_+\mathcal Q_-\mathcal P_-\) gives
+\[
+ Q_\sigma=2\langle u,v\rangle=\frac{M(P,Q)}2.
+\]
+Proposition~\ref{prop:product-two-bounce-distinct-repair} replaces this broad
+maximizer by a distinct-facet word of the same value.  Hence
+\(Q_{2,\max}=M/2\), and
+Lemma~\ref{lem:product-two-bounce-polar-pairing} proves
+\eqref{eq:product-two-bounce-complete-qp}.  The project action of a positive
+QP candidate is \(1/(2Q_\sigma)\), so the upper bound on \(Q_\sigma\)
+also excludes a smaller action from a nonphysical candidate.
+\end{proof}
+\end{unverified}
+
+\subsection{Physical placement is a separate claim}
+\label{subsec:product-two-bounce-physical-placement}
+
+Theorem~\ref{thm:product-strong-two-bounce} constructs a mixed-normal strong
+billiard at every minimizing displacement.  After reversing the loop to pass
+from Rudolf's Reeb orientation to the repository orientation, splitting a
+polygonal normal cone into one or two extremal facet directions yields the
+block supports used in the finite QP.  Conversely, reversing back after
+summing a physically placed factor-pure generalized characteristic with two
+blocks of each type gives the four strong relations
+\eqref{eq:product-two-bounce-strong-relations}.
+
+This does not make every feasible or stationary QP word physical.  A feasible
+weight vector first gives a closed dual curve.  A translation placing all its
+pieces on the prescribed facets is an additional base-point condition, as
+recorded in \texttt{formal/reeb-orbit-recovery.tex}.  The global Haim--Kislev
+maximizer has such a placement through dual minimality and Clarke
+reconstruction, but a \(k=2\) class maximizer need not be the global capacity
+maximizer when a three-bounce trajectory is shorter.  Thus the global
+reconstruction argument cannot be restricted merely by replacing the full
+word family with the \(k=2\) family.
+
+The complete-QP theorem deliberately needs no physicality claim.  Its polar
+bound applies to every algebraically feasible word, including spurious ones,
+and its broad equality construction followed by the affine repeated-facet
+repair proves equality inside the complete finite family.
+
+\subsection{Transition-pruned and exactly aggregated stream}
+\label{subsec:product-two-bounce-stream}
+
+The current implementation has further layers:
+\begin{enumerate}
+  \item
+    \texttt{crates/symplectic/src/algorithms/billiard/%
+    block\_enumeration.rs} generates distinct one- or two-facet blocks and
+    their \(k=2,3\) alternating words.
+  \item
+    \texttt{crates/symplectic/src/algorithms/billiard/mod.rs} discards words
+    failing \texttt{is\_feasible\_cycle}; its transition matrix combines
+    facet intersection with the directed sign of \(\omega_0\).
+  \item
+    \texttt{solve\_billiard\_candidates} sends the surviving words through
+    the f64 KKT path.
+  \item
+    \texttt{class-minima.rs} groups the resulting payloads by bounce count
+    and calls
+    \path{aggregate_certified_orbits_with_dual_vertices_exact}.
+\end{enumerate}
+For each candidate that the exact aggregator resolves,
+\texttt{orbit\_search.rs} checks exact positivity of all weights, exact
+normalization, exact closure in all four coordinates, and positivity of the
+exact \(Q\), then records the exact action \(1/(2Q)\).  Its API explicitly
+states that the scalar is a global capacity only under candidate-family
+coverage and that the candidates are not automatically physical orbits.
+Exact aggregation therefore certifies its resolved inputs; it does not prove
+that transition pruning or the f64 frontend omitted no relevant word.
+
+\begin{unverified}
+\begin{proposition}[Sufficient condition for the stored \(k=2\) value]
+\label{prop:product-two-bounce-stream-condition}
+For a rational input pair \(P,Q\), suppose the final exactly certified
+\(k=2\) candidate set used by \texttt{class-minima.rs} contains a candidate
+with
+\[
+ Q=Q_{2,\max}(P,Q)=\frac1{2A_2(P,Q)}.
+\]
+Then its stored two-bounce class minimum is exactly \(A_2(P,Q)\).
+\end{proposition}
+
+\begin{proof}
+The displayed candidate supplies stored action \(A_2(P,Q)\).  Every exactly
+certified stream candidate is a feasible mathematical \(k=2\) word, so
+Theorem~\ref{thm:product-two-bounce-complete-qp} gives it action at least
+\(A_2(P,Q)\), whether or not it is physical.  The minimum over the certified
+stream is therefore \(A_2(P,Q)\).
+\end{proof}
+\end{unverified}
+
+The smallest unresolved universal implementation condition is precisely the
+hypothesis of
+Proposition~\ref{prop:product-two-bounce-stream-condition}: at least one
+complete-family equality word must survive the directed transition filter,
+be accepted by the f64 proposal path, and be resolved by the exact
+aggregation.  The available source does not prove this.  The transition tests
+are necessary local tests, not a sufficient base-point theorem.  The affine
+repeated-facet repair preserves closure, normalization, and objective, but no
+already established primal base point.  Conversely, the mixed-normal strong
+billiard does not by itself select a distinct pure-facet ordering proved to
+pass all four directed transitions.  This is the exact remaining gap.
+
+There is no separate risk of an exactly certified nonphysical \(k=2\)
+candidate lowering the stored value: the polar upper bound in
+Theorem~\ref{thm:product-two-bounce-complete-qp} excludes that algebraically.
+A coverage failure can omit all equality candidates and thus produce a larger
+value or no \(k=2\) class.
+
+\subsection{Scope of the retained exact comparison}
+\label{subsec:product-two-bounce-retained-evidence}
+
+The width-shortcut packet in
+\begin{center}
+\path{experiments/sys-datascience/methods/product-bounce-width-shortcut/}
+\end{center}
+is not part of the reviewed proof commit
+\texttt{995060e89d4d321b15c786e9391e31d7883de5e9}.  Its current source is
+the sibling commit
+\texttt{ff636417baa68013033a11a3fc411fb7145515e5}, which has not been
+imported or merged here.  On that sibling commit, the packet
+computed \(A_2(P,Q)\) independently from factor vertices on 20 deterministic
+retained rows, two from each retained \((k,m)\)-bucket.  Its
+\texttt{artifacts/summary.json} records 20 exact matches and zero exact
+mismatches against the stored two-bounce class minima.
+
+This is finite validation of those 20 rows only.  It does not prove the
+universal stream-coverage condition, physicality of the reported minimizing
+words, completeness on the other 10,220 retained rows, or absence of f64
+false negatives on other inputs.  It also says nothing about the
+three-bounce class or which class realizes the global EHZ capacity.  The
+geometric and complete-QP theorems above are exact arguments independent of
+these comparisons.
+
+\subsection{Proved and unproved boundary}
+\label{subsec:product-two-bounce-conclusion}
+
+At agent-review status, the packet proves
+\[
+ \boxed{
+ \min_{\text{strong two-bounce billiards}}\ell_Q
+ =\min_{d\in\partial(P-P)}h_{Q-Q}(d)
+ =\max\{r:r(Q-Q)^\circ\subseteq P-P\}
+ }
+\]
+and
+\[
+ \boxed{
+ Q_{2,\max}^{\mathrm{complete}}
+ =\frac12
+   \max_{\substack{x\in(P-P)^\circ\\y\in(Q-Q)^\circ}}
+   \langle x,y\rangle
+ =\frac1{2A_2(P,Q)}.
+ }
+\]
+The first identity includes strong realization of every minimizing
+displacement.  The second includes the distinct-facet affine repair and rules
+out smaller spurious \(k=2\) QP actions.
+
+Unproved universally is equality with the actual transition-pruned,
+f64-seeded stream.  It follows under the single explicit coverage condition
+in Proposition~\ref{prop:product-two-bounce-stream-condition}.  The 20/20
+retained exact comparison validates only those rows.  Agent review and a
+successful build do not constitute Jörn's mathematical acceptance.

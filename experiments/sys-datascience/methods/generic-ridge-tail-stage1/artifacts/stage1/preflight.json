@@ -1,0 +1,26 @@
+{
+  "schema": "sys-datascience.generic-ridge-tail-stage1-target.preflight.v1",
+  "valid": true,
+  "target_calls": false,
+  "full_validation_sha256": "524dce5b2e93ba1090f6a648f87793fee0a8665d64ae929a326d1ceee2cd6bc3",
+  "artifact_sha256": {
+    "manifest.json": "b57fdba2afde97a2bec8644d4dc02a00104ec2bc088fdae66d52539a4ceea936",
+    "panel-geometries.jsonl": "a08c846d412ab77a7974b23b13cac6be0d7eb0418617cc551a8ecbb0a0f6a379",
+    "selection.jsonl": "f155c6868c3414af1e33c78aff6dc4eaf0156d92577f915db4a29ca6ebfbc23f"
+  },
+  "selected_hash": "7536b8e6d12691a12878f3f17bf8ce0bcdab910697ad581459713242a310b68b",
+  "baseline_hash": "69ec2feb35faa19c8ed9fc31b4dd4a674dac30ea63b78431f47677dcda11f763",
+  "panel_hash": "af5492cea21899774b47cbb578c316972fdee8285fbd7bd61d608adb5ac3c708",
+  "panel_rows": 200,
+  "selected_rows": 100,
+  "baseline_rows": 100,
+  "checks": {
+    "counts_and_roles": true,
+    "frozen_artifact_bytes": true,
+    "full_validation_identity": true,
+    "manifest_counts": true,
+    "selection_input_present": true,
+    "semantic_hashes": true,
+    "target_free_input": true
+  }
+}

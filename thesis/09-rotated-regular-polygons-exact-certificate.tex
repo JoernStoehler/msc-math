@@ -51,10 +51,10 @@ denominator polynomials, then checks one exact algebraic sample point in each
 cell. No floating-point sign test is used for the proof predicate.
 \end{certificatecheck}
 
-The finite-enumeration theorem specializes to the following enumeration
-problem.
-It is exhaustive to consider the two- and three-bounce candidates; all other
-combinatorial types are either redundant or cannot realize a smaller action.
+The finite-enumeration theorem says that the two- and three-block family
+contains a capacity minimizer; it does not classify all minimizing orbits.
+It therefore suffices to check a raw superset of that family. Extra or
+duplicate words enlarge the certificate but cannot invalidate the lower bound.
 In the Lagrangian product
 \(P_5{}_q\times_L R(\theta)P_5{}_p\), the relevant facet sequence alternates
 between \(q\)-blocks and \(p\)-blocks. We label the \(q\)-facets
@@ -105,6 +105,15 @@ cell decides the relevant sign. Thus the strict inequalities
   \frac{1}{2Q_\sigma}-c_{\mathrm{act}}(\theta)>0
 \]
 are decided by exact algebraic computation, not by numerical sampling.
+
+This fixed-word test is sufficient for an existential reason. The
+finite-enumeration theorem supplies at least one capacity-minimizing active
+word in the enumerated family, and all weights of an active word are positive.
+Such an interior maximizer satisfies the KKT equations. If the displayed
+branch were not capacity-minimizing, a strictly positive KKT branch in the
+enumerated family would therefore have smaller action and would be detected by
+the classification. Boundary maximizers of padded words need not be trusted
+separately: deleting their zero weights gives a shorter active word.
 
 The classifier is an ordered chain of proof exits. For each raw sigma, one of
 the following accepted cases must occur.
