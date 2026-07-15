@@ -3,13 +3,13 @@
 
 from __future__ import annotations
 
-import copy
 import importlib.util
 import itertools
 import sys
 import unittest
 from fractions import Fraction
 from pathlib import Path
+from unittest import mock
 
 HERE = Path(__file__).parent
 SPEC = importlib.util.spec_from_file_location("quotient_distance", HERE / "quotient_distance.py")
@@ -31,6 +31,25 @@ class QuotientDistanceTests(unittest.TestCase):
         self.assertTrue(result.exact)
         self.assertEqual(result.evaluated_permutations, 40320)
         return result
+
+    def simplex_configuration(self):
+        simplex_rows = tuple(
+            quotient_distance.vector(row)
+            for row in (
+                (1, 0, 0, 0),
+                (0, 1, 0, 0),
+                (0, 0, 1, 0),
+                (0, 0, 0, 1),
+                (-1, -1, -1, -1),
+            )
+        )
+        return quotient_distance.NormalizedConfiguration(
+            quotient_distance.validate_normalized_configuration(simplex_rows),
+            quotient_distance.CENTER_CALLER_CERTIFIED,
+            quotient_distance.SCALE_CALLER_CERTIFIED,
+            Fraction(1),
+            Fraction(1),
+        )
 
     def test_identical_labeled_and_permuted_zero(self):
         labeled = quotient_distance.squared_frobenius(
@@ -76,23 +95,7 @@ class QuotientDistanceTests(unittest.TestCase):
         self.assertGreater(self.distance(self.base, gl).squared_distance, 0)
 
     def test_unequal_facet_counts_fail_closed(self):
-        simplex_rows = tuple(
-            quotient_distance.vector(row)
-            for row in (
-                (1, 0, 0, 0),
-                (0, 1, 0, 0),
-                (0, 0, 1, 0),
-                (0, 0, 0, 1),
-                (-1, -1, -1, -1),
-            )
-        )
-        simplex = quotient_distance.NormalizedConfiguration(
-            quotient_distance.validate_normalized_configuration(simplex_rows),
-            "caller-certified analytic center",
-            "caller-certified volume one",
-            Fraction(1),
-            Fraction(1),
-        )
+        simplex = self.simplex_configuration()
         with self.assertRaisesRegex(quotient_distance.ContractError, "unequal_facet_counts"):
             quotient_distance.quotient_distance(self.base, simplex)
 
@@ -129,19 +132,98 @@ class QuotientDistanceTests(unittest.TestCase):
         self.assertEqual(timeout.status, "timeout")
         self.assertFalse(timeout.exact)
         self.assertIsNone(timeout.squared_distance)
+        self.assertIsNone(timeout.minimizing_permutations)
+        self.assertIsNone(timeout.multiple_minimizers)
+        self.assertIsNone(timeout.near_symmetry)
         self.assertLess(timeout.evaluated_permutations, timeout.total_permutations)
 
-    def test_bound_above_eight_facets_fails_closed(self):
-        over_bound = copy.copy(self.base)
+    def test_bound_above_eight_cannot_be_overridden(self):
         over_bound = quotient_distance.NormalizedConfiguration(
-            over_bound.duals + (quotient_distance.vector((1, 1, 1, 1)),),
-            over_bound.center_convention,
-            over_bound.scale_convention,
-            over_bound.exact_volume,
-            over_bound.volume_quarter_root,
+            self.base.duals + (quotient_distance.vector((1, 1, 1, 1)),),
+            self.base.center_convention,
+            self.base.scale_convention,
+            self.base.exact_volume,
+            self.base.volume_quarter_root,
         )
-        with self.assertRaisesRegex(quotient_distance.ContractError, "exact_bound"):
-            quotient_distance.quotient_distance(over_bound, over_bound)
+        with mock.patch.object(
+            quotient_distance.itertools,
+            "permutations",
+            side_effect=AssertionError("F=9 search was entered"),
+        ):
+            with self.assertRaisesRegex(quotient_distance.ContractError, "max_facets"):
+                quotient_distance.quotient_distance(
+                    over_bound, over_bound, max_facets=9
+                )
+
+    def test_invalid_search_parameters_fail_before_search(self):
+        simplex = self.simplex_configuration()
+        cases = (
+            {"timeout_seconds": -1},
+            {"timeout_seconds": float("nan")},
+            {"timeout_seconds": float("inf")},
+            {"near_symmetry_relative_gap": Fraction(-1)},
+            {"near_symmetry_relative_gap": float("nan")},
+            {"near_symmetry_relative_gap": float("inf")},
+        )
+        with mock.patch.object(
+            quotient_distance.itertools,
+            "permutations",
+            side_effect=AssertionError("invalid parameter entered search"),
+        ):
+            for arguments in cases:
+                with self.subTest(arguments=arguments):
+                    with self.assertRaisesRegex(
+                        quotient_distance.ContractError, "finite and nonnegative"
+                    ):
+                        quotient_distance.quotient_distance(
+                            simplex, simplex, **arguments
+                        )
+
+    def test_normalization_declarations_are_required_and_compatible(self):
+        caller_certified = quotient_distance.NormalizedConfiguration(
+            self.base.duals,
+            quotient_distance.CENTER_CALLER_CERTIFIED,
+            quotient_distance.SCALE_CALLER_CERTIFIED,
+            self.base.exact_volume,
+            self.base.volume_quarter_root,
+        )
+        self.assertEqual(
+            self.distance(self.base, caller_certified).squared_distance, 0
+        )
+
+        invalid_center = quotient_distance.NormalizedConfiguration(
+            self.base.duals,
+            "centroid",
+            quotient_distance.SCALE_EXACT_VOLUME,
+            self.base.exact_volume,
+            self.base.volume_quarter_root,
+        )
+        invalid_scale = quotient_distance.NormalizedConfiguration(
+            self.base.duals,
+            quotient_distance.CENTER_EXACT_SYMMETRY,
+            "unit diameter",
+            self.base.exact_volume,
+            self.base.volume_quarter_root,
+        )
+        mixed_declarations = quotient_distance.NormalizedConfiguration(
+            self.base.duals,
+            quotient_distance.CENTER_CALLER_CERTIFIED,
+            quotient_distance.SCALE_EXACT_VOLUME,
+            self.base.exact_volume,
+            self.base.volume_quarter_root,
+        )
+        with mock.patch.object(
+            quotient_distance.itertools,
+            "permutations",
+            side_effect=AssertionError("normalization mismatch entered search"),
+        ):
+            for invalid in (invalid_center, invalid_scale, mixed_declarations):
+                with self.subTest(invalid=invalid):
+                    with self.assertRaisesRegex(
+                        quotient_distance.ContractError,
+                        "unrecognized (center|scale)_convention|incompatible normalization declaration pair",
+                    ):
+                        quotient_distance.quotient_distance(self.base, invalid)
 
     def test_triangle_inequality_on_enumerated_fixture_set(self):
         names = ("base", "so4_outside_u2", "nonsymplectic_gl")

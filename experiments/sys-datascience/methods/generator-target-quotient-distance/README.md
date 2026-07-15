@@ -54,7 +54,20 @@ symplectic, orthogonal, and general-linear controls exact without introducing a
 numerical analytic-center or volume solver. A future caller with exact geometry
 from `euclidean-polytopes` may use the first route after its owner certifies the
 center and volume normalization. Constructing `NormalizedConfiguration`
-directly bypasses validation and is an internal/caller-contract operation.
+directly bypasses geometric validation and is an internal/caller-contract
+operation, but comparison accepts only these exact declarations:
+
+- center: `exact symmetry center = analytic center` or the single recognized
+  equivalent `caller-certified analytic center`;
+- scale: `ordinary Euclidean volume one` or the single recognized equivalent
+  `caller-certified ordinary Euclidean volume one`.
+
+The exact pair and the caller-certified pair canonicalize to the same
+normalization contract; mixing one string from each route is rejected. Unknown
+or incompatible strings fail before permutation search. The
+caller-certified route asserts that the upstream owner has established the
+analytic center and ordinary Euclidean volume-one scaling; this packet does not
+infer those facts from a string.
 
 The result records:
 
@@ -62,10 +75,12 @@ The result records:
 - the number evaluated and the required total $F!$;
 - exact minimum squared Frobenius objective and exact squared metric distance;
 - the distance as a rational or symbolic square root, plus a display-only f64;
-- number of minimizing permutations and whether the minimizer is nonunique;
+- number of minimizing permutations and whether the minimizer is nonunique,
+  both `null` until a search completes;
 - exact second-distinct objective and a declared near-symmetry flag.
 
-No stochastic permutation search is used. A timeout result has no distance.
+No stochastic permutation search is used. A timeout result has no distance,
+minimizer count, or multiplicity claim.
 
 ## Controls
 
@@ -83,9 +98,16 @@ discriminating controls:
   distance is `5/2`;
 - unequal facet count, a duplicate/redundant row, a degenerate lower-rank
   presentation, malformed opposite pairs, and $F>8$ fail closed;
+- passing `max_facets=9` cannot override the hard certified bound and is
+  rejected before the permutation iterator is entered;
+- unknown normalization declarations and incompatible records fail before
+  search, while the one recognized caller-certified equivalent compares;
 - a rational perturbation of a symmetric fixture has an exact near-optimal
   second permutation and is flagged `near_symmetry`;
-- a zero-second timeout reports `timeout`, `exact: false`, and no distance;
+- a zero-second timeout reports `timeout`, `exact: false`, and no distance or
+  minimizer-state claims;
+- negative, NaN, or infinite timeout/near-symmetry parameters fail before
+  search;
 - all ordered triangle inequalities on the three-fixture set `base`,
   `so4_outside_u2`, and `nonsymplectic_gl` pass by exact rational comparison.
 
@@ -108,7 +130,7 @@ python3 -m compileall -q \
   experiments/sys-datascience/methods/generator-target-quotient-distance
 ```
 
-On the development container, the nine focused tests took `72.797 s`. The
+On the development container, the eleven focused tests took `75.559 s`. The
 retained report took `56.82 s` wall time and `21,376 KiB` maximum RSS. Its
 individual exact $F=8$ comparisons took about `6.48-7.83 s`, each recording
 all `40,320` permutations. These are smoke measurements, not a stable
@@ -119,7 +141,13 @@ does not imply that repeated cloud-scale pair distances at $F=8$ are cheap.
 
 - Different facet counts: error `unequal_facet_counts` before search.
 - More than eight facets: error `facet_count_exceeds_exact_bound`.
-- Timeout: explicit incomplete result with no objective or distance.
+- A requested `max_facets` above eight is itself rejected; callers may only
+  tighten the hard bound.
+- Timeout: explicit incomplete result with no objective, distance, minimizer
+  count, multiplicity, or near-symmetry conclusion.
+- Timeout and near-symmetry-gap parameters must be finite and nonnegative.
+- Missing, unknown, or incompatible normalization declarations are rejected
+  before facet-count checks or search.
 - Redundant or degenerate inequalities: validation error.
 - General exact volume whose fourth root is not rational: the local
   parallelotope normalizer rejects it. This is an implementation boundary, not

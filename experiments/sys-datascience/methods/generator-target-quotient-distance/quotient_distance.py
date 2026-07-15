@@ -20,14 +20,38 @@ import time
 from dataclasses import dataclass
 from fractions import Fraction
 from pathlib import Path
-from typing import Iterable, Sequence
+from typing import Callable, Iterable, Sequence
 
 DIMENSION = 4
 MAX_FACETS = 8
 COORDINATE_ORDER = "q1,q2,p1,p2"
-SCHEMA = "generator-target-quotient-distance-smoke-v1"
+SCHEMA = "generator-target-quotient-distance-smoke-v2"
+CENTER_EXACT_SYMMETRY = "exact symmetry center = analytic center"
+CENTER_CALLER_CERTIFIED = "caller-certified analytic center"
+SCALE_EXACT_VOLUME = "ordinary Euclidean volume one"
+SCALE_CALLER_CERTIFIED = "caller-certified ordinary Euclidean volume one"
+
+_CENTER_CONVENTIONS = {
+    CENTER_EXACT_SYMMETRY: "analytic_center",
+    CENTER_CALLER_CERTIFIED: "analytic_center",
+}
+_SCALE_CONVENTIONS = {
+    SCALE_EXACT_VOLUME: "ordinary_euclidean_volume_one",
+    SCALE_CALLER_CERTIFIED: "ordinary_euclidean_volume_one",
+}
+_NORMALIZATION_CONVENTIONS = {
+    (CENTER_EXACT_SYMMETRY, SCALE_EXACT_VOLUME): (
+        "analytic_center",
+        "ordinary_euclidean_volume_one",
+    ),
+    (CENTER_CALLER_CERTIFIED, SCALE_CALLER_CERTIFIED): (
+        "analytic_center",
+        "ordinary_euclidean_volume_one",
+    ),
+}
 
 Scalar = Fraction
+NumericParameter = int | float | Fraction
 Vector = tuple[Scalar, Scalar, Scalar, Scalar]
 Matrix = tuple[Vector, Vector, Vector, Vector]
 Gram = tuple[tuple[Scalar, ...], ...]
@@ -324,8 +348,8 @@ def normalize_parallelotope(presentation: Presentation) -> NormalizedConfigurati
     checked = validate_normalized_configuration(volume_one)
     return NormalizedConfiguration(
         duals=checked,
-        center_convention="exact symmetry center = analytic center",
-        scale_convention="ordinary Euclidean volume one",
+        center_convention=CENTER_EXACT_SYMMETRY,
+        scale_convention=SCALE_EXACT_VOLUME,
         exact_volume=exact_volume,
         volume_quarter_root=volume_quarter_root,
     )
@@ -375,6 +399,50 @@ def radical_text(squared_distance: Fraction | None) -> str | None:
     return f"sqrt({fraction_text(squared_distance)})"
 
 
+def _normalization_contract(
+    configuration: NormalizedConfiguration, label: str
+) -> tuple[str, str]:
+    center = _CENTER_CONVENTIONS.get(configuration.center_convention)
+    if center is None:
+        raise ContractError(
+            f"{label} configuration has unrecognized center_convention: "
+            f"{configuration.center_convention!r}"
+        )
+    scale_convention = _SCALE_CONVENTIONS.get(configuration.scale_convention)
+    if scale_convention is None:
+        raise ContractError(
+            f"{label} configuration has unrecognized scale_convention: "
+            f"{configuration.scale_convention!r}"
+        )
+    canonical = _NORMALIZATION_CONVENTIONS.get(
+        (configuration.center_convention, configuration.scale_convention)
+    )
+    if canonical is None:
+        raise ContractError(
+            f"{label} configuration has incompatible normalization declaration pair"
+        )
+    assert canonical == (center, scale_convention)
+    return canonical
+
+
+def _require_nonnegative_finite(
+    name: str,
+    value: NumericParameter | None,
+    *,
+    allow_none: bool,
+) -> None:
+    if value is None:
+        if allow_none:
+            return
+        raise ContractError(f"{name} must be finite and nonnegative")
+    if isinstance(value, bool) or not isinstance(value, (int, float, Fraction)):
+        raise ContractError(f"{name} must be finite and nonnegative")
+    if isinstance(value, float) and not math.isfinite(value):
+        raise ContractError(f"{name} must be finite and nonnegative")
+    if value < 0:
+        raise ContractError(f"{name} must be finite and nonnegative")
+
+
 @dataclass(frozen=True)
 class SearchResult:
     status: str
@@ -387,9 +455,9 @@ class SearchResult:
     squared_distance: Fraction | None
     distance_radical: str | None
     distance_approx: float | None
-    minimizing_permutations: int
+    minimizing_permutations: int | None
     second_distinct_squared_frobenius: Fraction | None
-    multiple_minimizers: bool
+    multiple_minimizers: bool | None
     near_symmetry: bool | None
 
     def as_json(self) -> dict[str, object]:
@@ -418,16 +486,28 @@ def quotient_distance(
     right: NormalizedConfiguration,
     *,
     max_facets: int = MAX_FACETS,
-    timeout_seconds: float | None = None,
-    near_symmetry_relative_gap: Fraction = Fraction(1, 1_000_000),
+    timeout_seconds: NumericParameter | None = None,
+    near_symmetry_relative_gap: NumericParameter = Fraction(1, 1_000_000),
 ) -> SearchResult:
+    left_normalization = _normalization_contract(left, "left")
+    right_normalization = _normalization_contract(right, "right")
+    if left_normalization != right_normalization:
+        raise ContractError("incompatible_normalization_conventions")
+
+    if isinstance(max_facets, bool) or not isinstance(max_facets, int):
+        raise ContractError("max_facets must be an integer at most MAX_FACETS")
+    if max_facets < 0 or max_facets > MAX_FACETS:
+        raise ContractError(f"max_facets must lie in [0, {MAX_FACETS}]")
+    _require_nonnegative_finite("timeout_seconds", timeout_seconds, allow_none=True)
+    _require_nonnegative_finite(
+        "near_symmetry_relative_gap", near_symmetry_relative_gap, allow_none=False
+    )
+
     facet_count = len(left.duals)
     if facet_count != len(right.duals):
         raise ContractError("unequal_facet_counts: quotient distance is stratum-local")
     if facet_count > max_facets:
         raise ContractError(f"facet_count_exceeds_exact_bound: {facet_count} > {max_facets}")
-    if timeout_seconds is not None and timeout_seconds < 0:
-        raise ContractError("timeout must be nonnegative")
 
     left_gram = gram(left.duals)
     right_gram = gram(right.duals)
@@ -450,9 +530,9 @@ def quotient_distance(
                 squared_distance=None,
                 distance_radical=None,
                 distance_approx=None,
-                minimizing_permutations=0,
+                minimizing_permutations=None,
                 second_distinct_squared_frobenius=None,
-                multiple_minimizers=False,
+                multiple_minimizers=None,
                 near_symmetry=None,
             )
         objective = permuted_squared_frobenius(left_gram, right_gram, permutation)
@@ -581,6 +661,13 @@ def smoke_configurations() -> dict[str, NormalizedConfiguration]:
     )
     return {
         "base": base,
+        "caller_certified_equivalent": NormalizedConfiguration(
+            base.duals,
+            CENTER_CALLER_CERTIFIED,
+            SCALE_CALLER_CERTIFIED,
+            base.exact_volume,
+            base.volume_quarter_root,
+        ),
         "permuted": permute_configuration(base, (3, 0, 7, 2, 5, 1, 6, 4)),
         "nonorthogonal_symplectic": normalize_parallelotope(
             transform_presentation(base_presentation, symplectic_map, vector((0, 0, 0, 0)))
@@ -616,6 +703,14 @@ def _source_sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _contract_control(action: Callable[[], object]) -> dict[str, object]:
+    try:
+        action()
+    except ContractError as error:
+        return {"status": "rejected", "error": str(error)}
+    return {"status": "unexpectedly_accepted", "error": None}
+
+
 def make_smoke_report(repo_root: Path) -> dict[str, object]:
     configurations = smoke_configurations()
     base = configurations["base"]
@@ -623,6 +718,7 @@ def make_smoke_report(repo_root: Path) -> dict[str, object]:
     control_results: dict[str, SearchResult] = {}
     for name in (
         "base",
+        "caller_certified_equivalent",
         "permuted",
         "nonorthogonal_symplectic",
         "translated_scaled",
@@ -667,6 +763,39 @@ def make_smoke_report(repo_root: Path) -> dict[str, object]:
         )
 
     timeout = quotient_distance(base, base, timeout_seconds=0).as_json()
+    over_bound = NormalizedConfiguration(
+        base.duals + (vector((1, 1, 1, 1)),),
+        base.center_convention,
+        base.scale_convention,
+        base.exact_volume,
+        base.volume_quarter_root,
+    )
+    invalid_normalization = NormalizedConfiguration(
+        base.duals,
+        "centroid",
+        base.scale_convention,
+        base.exact_volume,
+        base.volume_quarter_root,
+    )
+    contract_controls = {
+        "f9_max_facets_override": _contract_control(
+            lambda: quotient_distance(over_bound, over_bound, max_facets=9)
+        ),
+        "negative_timeout": _contract_control(
+            lambda: quotient_distance(base, base, timeout_seconds=-1)
+        ),
+        "nan_timeout": _contract_control(
+            lambda: quotient_distance(base, base, timeout_seconds=float("nan"))
+        ),
+        "infinite_near_symmetry_gap": _contract_control(
+            lambda: quotient_distance(
+                base, base, near_symmetry_relative_gap=float("inf")
+            )
+        ),
+        "unknown_normalization": _contract_control(
+            lambda: quotient_distance(base, invalid_normalization)
+        ),
+    }
     source_path = Path(__file__)
     symplectic_map = matrix(
         ((2, 0, 0, 0), (0, Fraction(1, 3), 0, 0), (0, 0, Fraction(1, 2), 0), (0, 0, 0, 3))
@@ -686,13 +815,22 @@ def make_smoke_report(repo_root: Path) -> dict[str, object]:
             "center": "analytic center; certified here by exact central symmetry",
             "scale": "ordinary Euclidean volume one",
             "base_exact_volume": fraction_text(base.exact_volume),
+            "accepted_center_declarations": sorted(_CENTER_CONVENTIONS),
+            "accepted_scale_declarations": sorted(_SCALE_CONVENTIONS),
+            "accepted_declaration_pairs": [
+                {"center": center, "scale": scale_convention}
+                for center, scale_convention in sorted(_NORMALIZATION_CONVENTIONS)
+            ],
+            "comparison_requires_compatible_canonical_conventions": True,
         },
         "algorithm": {
             "search": "exhaustive simultaneous facet permutations",
             "max_facets": MAX_FACETS,
+            "max_facets_argument": "may only tighten the hard certified bound",
             "permutations_at_bound": math.factorial(MAX_FACETS),
             "arithmetic": "fractions.Fraction; exact squared distances and symbolic square roots",
             "near_symmetry_relative_gap": "1/1000000",
+            "incomplete_search_minimizer_fields": "null/unknown",
         },
         "matrix_controls": {
             "nonorthogonal_symplectic_is_symplectic": is_symplectic(symplectic_map),
@@ -702,6 +840,7 @@ def make_smoke_report(repo_root: Path) -> dict[str, object]:
             "so4_is_symplectic": is_symplectic(so4_map),
         },
         "distance_controls": controls,
+        "contract_controls": contract_controls,
         "timeout_control": timeout,
         "triangle_fixture_names": list(triangle_names),
         "triangle_checks": triangle_checks,
