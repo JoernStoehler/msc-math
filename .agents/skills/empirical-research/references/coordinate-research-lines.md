@@ -39,9 +39,11 @@ by itself.
 
 1. Reconstruct the current source state and downstream thesis decision. Run
    cheap queries or small scripts when they settle premises needed for planning.
-2. Maintain competing explanations and serious alternative lines. Compare the
-   next material unit of work against those alternatives before local momentum
-   becomes an implicit priority rule.
+2. Maintain competing explanations and serious alternative lines. Include the
+   nearest standard method and simplest end-to-end implementation among the
+   alternatives when custom methodology or infrastructure is proposed. Compare
+   the next material unit of work against those alternatives before local
+   momentum becomes an implicit priority rule.
 3. State the smallest discriminating packet, predicted outcomes, interpretation
    consequences, cost envelope, and stopping condition. Numbers are useful when
    they transmit a real estimate; do not manufacture precision.
@@ -53,8 +55,10 @@ by itself.
    input identity, build/binary identity, output schema, provenance fields, and
    the reviewer entry path. Disposable probes need only the checks relevant to
    their immediate inference.
-6. Review at the transition where an undetected error would be costly. Repair
-   specific findings, check those repairs cheaply, and repeat the whole review
+6. Interpret smoke or feasibility evidence against the alternatives before
+   turning readiness defects into a hardening program. Review at the transition
+   where an undetected error would be costly. Repair only what the next selected
+   evidence step needs, check those repairs cheaply, and repeat the whole review
    only when the repair can invalidate unrelated parts.
 7. Have the line lead interpret technically plausible evidence, update local
    beliefs, and decide whether another packet beats returning the line to the
@@ -87,6 +91,13 @@ binary in the same command path. Declare full-run and repair-run budgets before
 execution. A failed build must not fall through to a stale binary. Do not live-
 monitor an owned child merely because it is running; inspect after its declared
 deadline, an explicit blocker, or an externally observed resource symptom.
+
+Set a labor recheck before an implementation/review cascade can dominate the
+line. If implementation or repair reaches that recheck before producing the
+intended evidence, return to the method and architecture comparison. Successful
+repair can establish technical readiness; it does not establish that the
+chosen route was worth its cost. Keep later polish or generalization from
+blocking portfolio return or other independent work.
 
 ## Model And Effort Choice
 

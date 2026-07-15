@@ -19,6 +19,26 @@ Compare serious alternatives before selecting work. Keep separate:
 - implementation, compute, review, and attention cost;
 - dependencies and option value for other research lines.
 
+The first product of research is a decision-relevant observation and its
+interpretation: what was learned and what should be prioritized next. Use KISS
+and YAGNI to build the cheapest trustworthy path to that update. After a smoke
+or feasibility result, interpret it before hardening the apparatus. Keep
+reusable infrastructure, generalization, presentation polish, and exhaustive
+validation separate; defer them until the result is valuable enough or a named
+consumer requires them. Deferred work must not block interpretation, portfolio
+return, or unrelated research progress. Do not defer the correctness, safety,
+accounting, freeze, or provenance needed for the observation to be trustworthy.
+
+Treat the scientific method and its implementation architecture as separate
+choices. Before building custom infrastructure for a standard or near-standard
+method, identify the nearest standard formulation and the thinnest end-to-end
+composition of trusted project components. Timebox that vertical spike when it
+can cheaply reveal implementation cost, readability, or a real incompatibility;
+include the tests and self-review needed for the comparison to be informative.
+Compare custom work against this baseline before starting a production/review
+cascade. Omit the spike only for a concrete source-backed reason, not because a
+more elaborate design is already available or appears more complete.
+
 Numerical probabilities, value estimates, and intervals are useful when they
 transmit a real belief or reveal a crux. Prefer rough explicit distributions to
 an unlabeled `high/medium/low`; do not spend effort distinguishing near-equal
