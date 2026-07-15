@@ -1,0 +1,113 @@
+{
+  "schema": "generator-zoo-factor-only-report-v1",
+  "mode": "factor-only",
+  "law_version": "generator-zoo-v1",
+  "seed": 20260718,
+  "max_attempts_per_row": 256,
+  "rows_per_population_side_count": 12,
+  "selected_populations": [
+    "current-baseline|delta=0.2",
+    "primal-hull-uniform-disk|points=n+4,origin=interior",
+    "repulsive-gap|alpha=1",
+    "repulsive-gap|alpha=4",
+    "repulsive-gap|alpha=16",
+    "repulsive-gap|regular",
+    "regular-mutation|steps=4,scale=0.03",
+    "zonogon|lengths=uniform(0.5,1.5)"
+  ],
+  "side_counts": [
+    4
+  ],
+  "factor_rows": 96,
+  "status_counts": {
+    "accepted": 96
+  },
+  "per_population": [
+    {
+      "law": "current-baseline",
+      "parameter": "delta=0.2",
+      "side_count": 4,
+      "requested": 12,
+      "accepted": 12,
+      "exhausted": 0,
+      "total_generation_ms": 0.053854,
+      "max_attempts_observed": 8
+    },
+    {
+      "law": "primal-hull-uniform-disk",
+      "parameter": "points=n+4,origin=interior",
+      "side_count": 4,
+      "requested": 12,
+      "accepted": 12,
+      "exhausted": 0,
+      "total_generation_ms": 0.127004,
+      "max_attempts_observed": 25
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=1",
+      "side_count": 4,
+      "requested": 12,
+      "accepted": 12,
+      "exhausted": 0,
+      "total_generation_ms": 0.018893999999999998,
+      "max_attempts_observed": 5
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=4",
+      "side_count": 4,
+      "requested": 12,
+      "accepted": 12,
+      "exhausted": 0,
+      "total_generation_ms": 0.017202000000000002,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=16",
+      "side_count": 4,
+      "requested": 12,
+      "accepted": 12,
+      "exhausted": 0,
+      "total_generation_ms": 0.012782,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "regular",
+      "side_count": 4,
+      "requested": 12,
+      "accepted": 12,
+      "exhausted": 0,
+      "total_generation_ms": 0.010048,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "regular-mutation",
+      "parameter": "steps=4,scale=0.03",
+      "side_count": 4,
+      "requested": 12,
+      "accepted": 12,
+      "exhausted": 0,
+      "total_generation_ms": 0.025800000000000007,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "zonogon",
+      "parameter": "lengths=uniform(0.5,1.5)",
+      "side_count": 4,
+      "requested": 12,
+      "accepted": 12,
+      "exhausted": 0,
+      "total_generation_ms": 0.009140000000000002,
+      "max_attempts_observed": 1
+    }
+  ],
+  "command": "target/release/sys-datascience-generator-zoo-smoke --factor-only --attempts 256 --factor-rows-per-population 12 --factor-side-counts 4 --factor-population current-baseline|delta=0.2 --factor-population primal-hull-uniform-disk|points=n+4,origin=interior --factor-population repulsive-gap|alpha=1 --factor-population repulsive-gap|alpha=4 --factor-population repulsive-gap|alpha=16 --factor-population repulsive-gap|regular --factor-population regular-mutation|steps=4,scale=0.03 --factor-population zonogon|lengths=uniform(0.5,1.5) --seed 20260718 --factor-out-dir experiments/sys-datascience/methods/generator-coverage-directed-novelty/artifacts/train-side4",
+  "source_revision": "f1a16ab7dcf21a19a969f2c3a672cdfd4540ad57",
+  "source_dirty": false,
+  "source_dirty_scope": "git status --porcelain -- experiments/sys-datascience/methods/generator-zoo-smoke/main.rs experiments/sys-landscape/Cargo.toml",
+  "validation_boundary": "Factor-only mode validates the local polygon construction, active-facet conditioning, and area normalization; it deliberately does not call the exact 4D product boundary.",
+  "interpretation_boundary": "Factor-only rows are named-population shape evidence for the bounded smoke only; they do not estimate population laws or establish product validity, sys transfer, or persistence."
+}

@@ -1,99 +1,198 @@
 {
   "arms": [
     {
-      "attempt_max_train": 10,
+      "attempt_max_train": 7,
       "holdout_rows": 12,
+      "holdout_seed": [
+        20260719
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=4, seed=[20260719]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=4, seed=[20260718]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          },
+          "q90": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          }
+        }
+      },
       "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
-        "holdout_panel": "seed=20260717 independent complete panel",
+        "holdout_panel": "side_count=4, seed=[20260719]",
         "metric": "holdout mean nearest-cover distance",
         "not_intrinsic_arm_property": true,
         "policy": "offline_greedy_max",
         "retained_budget": 24,
-        "train_panel": "seed=20260716 fixed complete panel",
+        "train_panel": "side_count=4, seed=[20260718]",
         "view_dependent": {
           "chord_invariant": true,
           "frame_geometry": true
         }
       },
       "offline_greedy_max_fixed_train_panel_selected_witnesses": {
-        "count_for_this_arm": 6,
+        "count_for_this_arm": 5,
         "not_intrinsic_arm_property": true,
         "policy": "offline_greedy_max",
         "retained_budget": 24,
         "selection_order": "deterministic greedy order over the complete fixed train panel"
       },
       "population": "current-baseline[delta=0.2]",
-      "seed_counts_train": {
-        "20260716": 12
-      },
-      "train_rows": 12
+      "side_count": 4,
+      "train_rows": 12,
+      "train_seed": [
+        20260718
+      ]
     },
     {
-      "attempt_max_train": 10,
+      "attempt_max_train": 24,
       "holdout_rows": 12,
+      "holdout_seed": [
+        20260719
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=4, seed=[20260719]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=4, seed=[20260718]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          },
+          "q90": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          }
+        }
+      },
       "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
-        "holdout_panel": "seed=20260717 independent complete panel",
+        "holdout_panel": "side_count=4, seed=[20260719]",
         "metric": "holdout mean nearest-cover distance",
         "not_intrinsic_arm_property": true,
         "policy": "offline_greedy_max",
         "retained_budget": 24,
-        "train_panel": "seed=20260716 fixed complete panel",
+        "train_panel": "side_count=4, seed=[20260718]",
         "view_dependent": {
           "chord_invariant": true,
           "frame_geometry": true
         }
       },
       "offline_greedy_max_fixed_train_panel_selected_witnesses": {
-        "count_for_this_arm": 4,
+        "count_for_this_arm": 3,
         "not_intrinsic_arm_property": true,
         "policy": "offline_greedy_max",
         "retained_budget": 24,
         "selection_order": "deterministic greedy order over the complete fixed train panel"
       },
       "population": "primal-hull-uniform-disk[points=n+4,origin=interior]",
-      "seed_counts_train": {
-        "20260716": 12
-      },
-      "train_rows": 12
+      "side_count": 4,
+      "train_rows": 12,
+      "train_seed": [
+        20260718
+      ]
     },
     {
       "attempt_max_train": 0,
       "holdout_rows": 12,
+      "holdout_seed": [
+        20260719
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=4, seed=[20260719]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=4, seed=[20260718]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          },
+          "q90": {
+            "chord_invariant": true,
+            "frame_geometry": false
+          }
+        }
+      },
       "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
-        "holdout_panel": "seed=20260717 independent complete panel",
+        "holdout_panel": "side_count=4, seed=[20260719]",
         "metric": "holdout mean nearest-cover distance",
         "not_intrinsic_arm_property": true,
         "policy": "offline_greedy_max",
         "retained_budget": 24,
-        "train_panel": "seed=20260716 fixed complete panel",
+        "train_panel": "side_count=4, seed=[20260718]",
         "view_dependent": {
-          "chord_invariant": false,
-          "frame_geometry": false
+          "chord_invariant": true,
+          "frame_geometry": true
         }
       },
       "offline_greedy_max_fixed_train_panel_selected_witnesses": {
-        "count_for_this_arm": 0,
+        "count_for_this_arm": 1,
         "not_intrinsic_arm_property": true,
         "policy": "offline_greedy_max",
         "retained_budget": 24,
         "selection_order": "deterministic greedy order over the complete fixed train panel"
       },
       "population": "regular-mutation[steps=4,scale=0.03]",
-      "seed_counts_train": {
-        "20260716": 12
-      },
-      "train_rows": 12
+      "side_count": 4,
+      "train_rows": 12,
+      "train_seed": [
+        20260718
+      ]
     },
     {
       "attempt_max_train": 0,
       "holdout_rows": 12,
+      "holdout_seed": [
+        20260719
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=4, seed=[20260719]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=4, seed=[20260718]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          },
+          "q90": {
+            "chord_invariant": false,
+            "frame_geometry": true
+          }
+        }
+      },
       "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
-        "holdout_panel": "seed=20260717 independent complete panel",
+        "holdout_panel": "side_count=4, seed=[20260719]",
         "metric": "holdout mean nearest-cover distance",
         "not_intrinsic_arm_property": true,
         "policy": "offline_greedy_max",
         "retained_budget": 24,
-        "train_panel": "seed=20260716 fixed complete panel",
+        "train_panel": "side_count=4, seed=[20260718]",
         "view_dependent": {
           "chord_invariant": true,
           "frame_geometry": true
@@ -107,77 +206,152 @@
         "selection_order": "deterministic greedy order over the complete fixed train panel"
       },
       "population": "repulsive-gap[alpha=16]",
-      "seed_counts_train": {
-        "20260716": 12
-      },
-      "train_rows": 12
+      "side_count": 4,
+      "train_rows": 12,
+      "train_seed": [
+        20260718
+      ]
     },
     {
-      "attempt_max_train": 1,
+      "attempt_max_train": 4,
       "holdout_rows": 12,
+      "holdout_seed": [
+        20260719
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=4, seed=[20260719]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=4, seed=[20260718]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          },
+          "q90": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          }
+        }
+      },
       "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
-        "holdout_panel": "seed=20260717 independent complete panel",
+        "holdout_panel": "side_count=4, seed=[20260719]",
         "metric": "holdout mean nearest-cover distance",
         "not_intrinsic_arm_property": true,
         "policy": "offline_greedy_max",
         "retained_budget": 24,
-        "train_panel": "seed=20260716 fixed complete panel",
+        "train_panel": "side_count=4, seed=[20260718]",
         "view_dependent": {
           "chord_invariant": true,
           "frame_geometry": true
         }
       },
       "offline_greedy_max_fixed_train_panel_selected_witnesses": {
-        "count_for_this_arm": 7,
+        "count_for_this_arm": 4,
         "not_intrinsic_arm_property": true,
         "policy": "offline_greedy_max",
         "retained_budget": 24,
         "selection_order": "deterministic greedy order over the complete fixed train panel"
       },
       "population": "repulsive-gap[alpha=1]",
-      "seed_counts_train": {
-        "20260716": 12
-      },
-      "train_rows": 12
+      "side_count": 4,
+      "train_rows": 12,
+      "train_seed": [
+        20260718
+      ]
     },
     {
       "attempt_max_train": 0,
       "holdout_rows": 12,
+      "holdout_seed": [
+        20260719
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=4, seed=[20260719]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=4, seed=[20260718]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          },
+          "q90": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          }
+        }
+      },
       "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
-        "holdout_panel": "seed=20260717 independent complete panel",
+        "holdout_panel": "side_count=4, seed=[20260719]",
         "metric": "holdout mean nearest-cover distance",
         "not_intrinsic_arm_property": true,
         "policy": "offline_greedy_max",
         "retained_budget": 24,
-        "train_panel": "seed=20260716 fixed complete panel",
+        "train_panel": "side_count=4, seed=[20260718]",
         "view_dependent": {
           "chord_invariant": true,
           "frame_geometry": true
         }
       },
       "offline_greedy_max_fixed_train_panel_selected_witnesses": {
-        "count_for_this_arm": 2,
+        "count_for_this_arm": 5,
         "not_intrinsic_arm_property": true,
         "policy": "offline_greedy_max",
         "retained_budget": 24,
         "selection_order": "deterministic greedy order over the complete fixed train panel"
       },
       "population": "repulsive-gap[alpha=4]",
-      "seed_counts_train": {
-        "20260716": 12
-      },
-      "train_rows": 12
+      "side_count": 4,
+      "train_rows": 12,
+      "train_seed": [
+        20260718
+      ]
     },
     {
       "attempt_max_train": 0,
       "holdout_rows": 12,
+      "holdout_seed": [
+        20260719
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=4, seed=[20260719]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=4, seed=[20260718]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": false,
+            "frame_geometry": false
+          },
+          "q90": {
+            "chord_invariant": false,
+            "frame_geometry": false
+          }
+        }
+      },
       "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
-        "holdout_panel": "seed=20260717 independent complete panel",
+        "holdout_panel": "side_count=4, seed=[20260719]",
         "metric": "holdout mean nearest-cover distance",
         "not_intrinsic_arm_property": true,
         "policy": "offline_greedy_max",
         "retained_budget": 24,
-        "train_panel": "seed=20260716 fixed complete panel",
+        "train_panel": "side_count=4, seed=[20260718]",
         "view_dependent": {
           "chord_invariant": false,
           "frame_geometry": false
@@ -191,21 +365,470 @@
         "selection_order": "deterministic greedy order over the complete fixed train panel"
       },
       "population": "repulsive-gap[regular]",
-      "seed_counts_train": {
-        "20260716": 12
-      },
-      "train_rows": 12
+      "side_count": 4,
+      "train_rows": 12,
+      "train_seed": [
+        20260718
+      ]
     },
     {
       "attempt_max_train": 0,
       "holdout_rows": 12,
+      "holdout_seed": [
+        20260719
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=4, seed=[20260719]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=4, seed=[20260718]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          },
+          "q90": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          }
+        }
+      },
       "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
-        "holdout_panel": "seed=20260717 independent complete panel",
+        "holdout_panel": "side_count=4, seed=[20260719]",
         "metric": "holdout mean nearest-cover distance",
         "not_intrinsic_arm_property": true,
         "policy": "offline_greedy_max",
         "retained_budget": 24,
-        "train_panel": "seed=20260716 fixed complete panel",
+        "train_panel": "side_count=4, seed=[20260718]",
+        "view_dependent": {
+          "chord_invariant": true,
+          "frame_geometry": true
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 5,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
+      },
+      "population": "zonogon[lengths=uniform(0.5,1.5)]",
+      "side_count": 4,
+      "train_rows": 12,
+      "train_seed": [
+        20260718
+      ]
+    },
+    {
+      "attempt_max_train": 10,
+      "holdout_rows": 12,
+      "holdout_seed": [
+        20260717
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=6, seed=[20260717]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=6, seed=[20260716]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          },
+          "q90": {
+            "chord_invariant": true,
+            "frame_geometry": false
+          }
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "side_count=6, seed=[20260717]",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=6, seed=[20260716]",
+        "view_dependent": {
+          "chord_invariant": true,
+          "frame_geometry": true
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 6,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
+      },
+      "population": "current-baseline[delta=0.2]",
+      "side_count": 6,
+      "train_rows": 12,
+      "train_seed": [
+        20260716
+      ]
+    },
+    {
+      "attempt_max_train": 10,
+      "holdout_rows": 12,
+      "holdout_seed": [
+        20260717
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=6, seed=[20260717]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=6, seed=[20260716]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          },
+          "q90": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          }
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "side_count=6, seed=[20260717]",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=6, seed=[20260716]",
+        "view_dependent": {
+          "chord_invariant": true,
+          "frame_geometry": true
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 4,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
+      },
+      "population": "primal-hull-uniform-disk[points=n+4,origin=interior]",
+      "side_count": 6,
+      "train_rows": 12,
+      "train_seed": [
+        20260716
+      ]
+    },
+    {
+      "attempt_max_train": 0,
+      "holdout_rows": 12,
+      "holdout_seed": [
+        20260717
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=6, seed=[20260717]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=6, seed=[20260716]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": false,
+            "frame_geometry": false
+          },
+          "q90": {
+            "chord_invariant": false,
+            "frame_geometry": false
+          }
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "side_count=6, seed=[20260717]",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=6, seed=[20260716]",
+        "view_dependent": {
+          "chord_invariant": false,
+          "frame_geometry": false
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 0,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
+      },
+      "population": "regular-mutation[steps=4,scale=0.03]",
+      "side_count": 6,
+      "train_rows": 12,
+      "train_seed": [
+        20260716
+      ]
+    },
+    {
+      "attempt_max_train": 0,
+      "holdout_rows": 12,
+      "holdout_seed": [
+        20260717
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=6, seed=[20260717]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=6, seed=[20260716]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          },
+          "q90": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          }
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "side_count=6, seed=[20260717]",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=6, seed=[20260716]",
+        "view_dependent": {
+          "chord_invariant": true,
+          "frame_geometry": true
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 1,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
+      },
+      "population": "repulsive-gap[alpha=16]",
+      "side_count": 6,
+      "train_rows": 12,
+      "train_seed": [
+        20260716
+      ]
+    },
+    {
+      "attempt_max_train": 1,
+      "holdout_rows": 12,
+      "holdout_seed": [
+        20260717
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=6, seed=[20260717]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=6, seed=[20260716]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          },
+          "q90": {
+            "chord_invariant": true,
+            "frame_geometry": false
+          }
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "side_count=6, seed=[20260717]",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=6, seed=[20260716]",
+        "view_dependent": {
+          "chord_invariant": true,
+          "frame_geometry": true
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 7,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
+      },
+      "population": "repulsive-gap[alpha=1]",
+      "side_count": 6,
+      "train_rows": 12,
+      "train_seed": [
+        20260716
+      ]
+    },
+    {
+      "attempt_max_train": 0,
+      "holdout_rows": 12,
+      "holdout_seed": [
+        20260717
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=6, seed=[20260717]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=6, seed=[20260716]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          },
+          "q90": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          }
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "side_count=6, seed=[20260717]",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=6, seed=[20260716]",
+        "view_dependent": {
+          "chord_invariant": true,
+          "frame_geometry": true
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 2,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
+      },
+      "population": "repulsive-gap[alpha=4]",
+      "side_count": 6,
+      "train_rows": 12,
+      "train_seed": [
+        20260716
+      ]
+    },
+    {
+      "attempt_max_train": 0,
+      "holdout_rows": 12,
+      "holdout_seed": [
+        20260717
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=6, seed=[20260717]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=6, seed=[20260716]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": false,
+            "frame_geometry": false
+          },
+          "q90": {
+            "chord_invariant": false,
+            "frame_geometry": false
+          }
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "side_count=6, seed=[20260717]",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=6, seed=[20260716]",
+        "view_dependent": {
+          "chord_invariant": false,
+          "frame_geometry": false
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 0,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
+      },
+      "population": "repulsive-gap[regular]",
+      "side_count": 6,
+      "train_rows": 12,
+      "train_seed": [
+        20260716
+      ]
+    },
+    {
+      "attempt_max_train": 0,
+      "holdout_rows": 12,
+      "holdout_seed": [
+        20260717
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=6, seed=[20260717]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=6, seed=[20260716]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          },
+          "q90": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          }
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "side_count=6, seed=[20260717]",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=6, seed=[20260716]",
         "view_dependent": {
           "chord_invariant": true,
           "frame_geometry": true
@@ -219,10 +842,435 @@
         "selection_order": "deterministic greedy order over the complete fixed train panel"
       },
       "population": "zonogon[lengths=uniform(0.5,1.5)]",
-      "seed_counts_train": {
-        "20260716": 12
+      "side_count": 6,
+      "train_rows": 12,
+      "train_seed": [
+        20260716
+      ]
+    },
+    {
+      "attempt_max_train": 33,
+      "holdout_rows": 12,
+      "holdout_seed": [
+        20260721
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=8, seed=[20260721]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=8, seed=[20260720]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          },
+          "q90": {
+            "chord_invariant": true,
+            "frame_geometry": false
+          }
+        }
       },
-      "train_rows": 12
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "side_count=8, seed=[20260721]",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=8, seed=[20260720]",
+        "view_dependent": {
+          "chord_invariant": true,
+          "frame_geometry": true
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 3,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
+      },
+      "population": "current-baseline[delta=0.2]",
+      "side_count": 8,
+      "train_rows": 12,
+      "train_seed": [
+        20260720
+      ]
+    },
+    {
+      "attempt_max_train": 16,
+      "holdout_rows": 12,
+      "holdout_seed": [
+        20260721
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=8, seed=[20260721]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=8, seed=[20260720]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          },
+          "q90": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          }
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "side_count=8, seed=[20260721]",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=8, seed=[20260720]",
+        "view_dependent": {
+          "chord_invariant": true,
+          "frame_geometry": true
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 5,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
+      },
+      "population": "primal-hull-uniform-disk[points=n+4,origin=interior]",
+      "side_count": 8,
+      "train_rows": 12,
+      "train_seed": [
+        20260720
+      ]
+    },
+    {
+      "attempt_max_train": 0,
+      "holdout_rows": 12,
+      "holdout_seed": [
+        20260721
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=8, seed=[20260721]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=8, seed=[20260720]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          },
+          "q90": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          }
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "side_count=8, seed=[20260721]",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=8, seed=[20260720]",
+        "view_dependent": {
+          "chord_invariant": true,
+          "frame_geometry": true
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 1,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
+      },
+      "population": "regular-mutation[steps=4,scale=0.03]",
+      "side_count": 8,
+      "train_rows": 12,
+      "train_seed": [
+        20260720
+      ]
+    },
+    {
+      "attempt_max_train": 0,
+      "holdout_rows": 12,
+      "holdout_seed": [
+        20260721
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=8, seed=[20260721]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=8, seed=[20260720]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          },
+          "q90": {
+            "chord_invariant": false,
+            "frame_geometry": false
+          }
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "side_count=8, seed=[20260721]",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=8, seed=[20260720]",
+        "view_dependent": {
+          "chord_invariant": true,
+          "frame_geometry": true
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 1,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
+      },
+      "population": "repulsive-gap[alpha=16]",
+      "side_count": 8,
+      "train_rows": 12,
+      "train_seed": [
+        20260720
+      ]
+    },
+    {
+      "attempt_max_train": 0,
+      "holdout_rows": 12,
+      "holdout_seed": [
+        20260721
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=8, seed=[20260721]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=8, seed=[20260720]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          },
+          "q90": {
+            "chord_invariant": false,
+            "frame_geometry": true
+          }
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "side_count=8, seed=[20260721]",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=8, seed=[20260720]",
+        "view_dependent": {
+          "chord_invariant": true,
+          "frame_geometry": true
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 5,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
+      },
+      "population": "repulsive-gap[alpha=1]",
+      "side_count": 8,
+      "train_rows": 12,
+      "train_seed": [
+        20260720
+      ]
+    },
+    {
+      "attempt_max_train": 0,
+      "holdout_rows": 12,
+      "holdout_seed": [
+        20260721
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=8, seed=[20260721]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=8, seed=[20260720]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          },
+          "q90": {
+            "chord_invariant": false,
+            "frame_geometry": true
+          }
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "side_count=8, seed=[20260721]",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=8, seed=[20260720]",
+        "view_dependent": {
+          "chord_invariant": true,
+          "frame_geometry": true
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 1,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
+      },
+      "population": "repulsive-gap[alpha=4]",
+      "side_count": 8,
+      "train_rows": 12,
+      "train_seed": [
+        20260720
+      ]
+    },
+    {
+      "attempt_max_train": 0,
+      "holdout_rows": 12,
+      "holdout_seed": [
+        20260721
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=8, seed=[20260721]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=8, seed=[20260720]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": false,
+            "frame_geometry": false
+          },
+          "q90": {
+            "chord_invariant": false,
+            "frame_geometry": false
+          }
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "side_count=8, seed=[20260721]",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=8, seed=[20260720]",
+        "view_dependent": {
+          "chord_invariant": false,
+          "frame_geometry": false
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 0,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
+      },
+      "population": "repulsive-gap[regular]",
+      "side_count": 8,
+      "train_rows": 12,
+      "train_seed": [
+        20260720
+      ]
+    },
+    {
+      "attempt_max_train": 0,
+      "holdout_rows": 12,
+      "holdout_seed": [
+        20260721
+      ],
+      "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {
+        "holdout_panel": "side_count=8, seed=[20260721]",
+        "metrics": [
+          "mean",
+          "q90"
+        ],
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=8, seed=[20260720]",
+        "view_dependent_by_metric": {
+          "mean": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          },
+          "q90": {
+            "chord_invariant": true,
+            "frame_geometry": true
+          }
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {
+        "holdout_panel": "side_count=8, seed=[20260721]",
+        "metric": "holdout mean nearest-cover distance",
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "train_panel": "side_count=8, seed=[20260720]",
+        "view_dependent": {
+          "chord_invariant": true,
+          "frame_geometry": true
+        }
+      },
+      "offline_greedy_max_fixed_train_panel_selected_witnesses": {
+        "count_for_this_arm": 8,
+        "not_intrinsic_arm_property": true,
+        "policy": "offline_greedy_max",
+        "retained_budget": 24,
+        "selection_order": "deterministic greedy order over the complete fixed train panel"
+      },
+      "population": "zonogon[lengths=uniform(0.5,1.5)]",
+      "side_count": 8,
+      "train_rows": 12,
+      "train_seed": [
+        20260720
+      ]
     }
   ],
   "environment": {
@@ -234,29 +1282,37 @@
   "frozen_baseline": {
     "n": 4,
     "population": "current-baseline[delta=0.2]",
-    "selection": "lowest deterministic witness IDs"
+    "selection": "lowest deterministic witness IDs separately within each side-count train panel"
   },
   "generation_cost_artifact": "generation-cost.tsv",
-  "holdout_input_sha256": "90275c221e88f2a02fb2317587f7f5722cd23aebbdb77d2c2b3eecdef5d0d62b",
   "input_hashes": {
+    "artifacts/holdout-side4/factor-only-report.json": "408a5d78e7459e4094398987535635dfc1a68ec2301e5b4562e1fdf7b146dc9c",
+    "artifacts/holdout-side4/factor-shapes.jsonl": "09925af9bed28ed2a6559562affbc0a229d5903cbfae8e70db82294faa5f702c",
+    "artifacts/holdout-side8/factor-only-report.json": "2ba3f01e99cc5fe918417a594ac5a65c85d6079599f7b345cc0ec7a557ae0d9b",
+    "artifacts/holdout-side8/factor-shapes.jsonl": "63a17fb7d45bb8189b99e78af34ba8dc58601181aa98f6fe8bd02f2473b6d77b",
     "artifacts/holdout/factor-only-report.json": "5ca755a8cf5d4f90311da123c7966a46298bb552fd82cb29c3e02958795d6e90",
     "artifacts/holdout/factor-shapes.jsonl": "90275c221e88f2a02fb2317587f7f5722cd23aebbdb77d2c2b3eecdef5d0d62b",
+    "artifacts/train-side4/factor-only-report.json": "76420154032280eb9996cbcd320ac78f5d152a8f4a731785dc37f9ca2874e678",
+    "artifacts/train-side4/factor-shapes.jsonl": "1fb9143b58b06d92cb40920577970fedc1b1357dded3ac6e4659388224139d74",
+    "artifacts/train-side8/factor-only-report.json": "b46b1a2457970a8196823d0aa5dd4006f2573b82eb1f9c7035987b9f33887a67",
+    "artifacts/train-side8/factor-shapes.jsonl": "e20989c7621a0e9d6bcf7bb085e4f9dee7fcad670d01029bd89fd558c01f78b8",
     "artifacts/train/factor-only-report.json": "3e5cf51f7535b2018ebadcdb81841dd741776dd9ca49e9aebed854fb02776d8a",
     "artifacts/train/factor-shapes.jsonl": "608df0fd90b56c1fb85cd49489838bec301c1d75c2a990377cb1bf7111d6b24a"
   },
   "interpretation": {
     "allowed": [
-      "finite-panel holdout nearest-cover max/mean/q90 by named population and view",
-      "which arms contribute nonredundant retained witnesses under each explicitly qualified panel/policy/metric/view field",
+      "stratum-local holdout nearest-cover max/mean/q90 by named panel, population, and view",
+      "which arms contribute retained witnesses under each explicitly qualified panel/policy/metric/view field",
       "measured full-pool generation and offline selection costs",
       "metric-disagreement cases and synthetic calibration behavior"
     ],
     "limitations": [
       "geometry alone cannot distinguish a rare remote mode from a contamination outlier",
-      "one fixed side-count stratum and two seeds are implementation/finite-panel evidence only",
+      "three finite side-count panels and independent seed pairs are bounded confirmation evidence only",
       "offline greedy views are retained-coreset heuristics, not online policies"
     ],
     "prohibited": [
+      "pooling side counts or selecting a best side count, law, or view",
       "online allocation, sample-efficiency, or per-generated-row claims",
       "reading arm contribution fields as intrinsic properties of a law or population",
       "sys or target exposure",
@@ -265,8 +1321,43 @@
       "target transfer, inferential, causal, or post-selection claims"
     ],
     "selected_witness_authorization": "geometry-only follow-up only",
-    "smallest_next_geometry_only_follow_up": "Repeat the same frozen offline coreset on one additional independent seed pair at side count 4 or 8, then test whether bulk (mean/q90) reductions persist before any target exposure."
+    "smallest_next_geometry_only_follow_up": "If a later decision needs more evidence, repeat one named side-count panel with another independent seed pair; do not pool these strata or choose a winning law/view."
   },
+  "panels": [
+    {
+      "holdout_rows": 96,
+      "holdout_seeds": [
+        20260719
+      ],
+      "side_count": 4,
+      "train_rows": 96,
+      "train_seeds": [
+        20260718
+      ]
+    },
+    {
+      "holdout_rows": 96,
+      "holdout_seeds": [
+        20260717
+      ],
+      "side_count": 6,
+      "train_rows": 96,
+      "train_seeds": [
+        20260716
+      ]
+    },
+    {
+      "holdout_rows": 96,
+      "holdout_seeds": [
+        20260721
+      ],
+      "side_count": 8,
+      "train_rows": 96,
+      "train_seeds": [
+        20260720
+      ]
+    }
+  ],
   "policies": [
     "passive_coreset",
     "offline_greedy_max",
@@ -275,6 +1366,270 @@
   ],
   "policy_results": [
     {
+      "holdout_final_cover": 16.738416942906888,
+      "holdout_initial_cover": 19.894991910069173,
+      "holdout_reduction_per_retained_witness": 0.13152395696509522,
+      "holdout_total_reduction": 3.1565749671622854,
+      "metric": "max",
+      "policy": "passive_coreset",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.7907905561210035,
+      "holdout_initial_cover": 1.4622834284402042,
+      "holdout_reduction_per_retained_witness": 0.027978869679966697,
+      "holdout_total_reduction": 0.6714928723192007,
+      "metric": "mean",
+      "policy": "passive_coreset",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.9628228391606544,
+      "holdout_initial_cover": 1.679357345858421,
+      "holdout_reduction_per_retained_witness": 0.029855604445740275,
+      "holdout_total_reduction": 0.7165345066977666,
+      "metric": "q90",
+      "policy": "passive_coreset",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.30396929714998794,
+      "holdout_initial_cover": 0.620565170514148,
+      "holdout_reduction_per_retained_witness": 0.013191494723506668,
+      "holdout_total_reduction": 0.31659587336416,
+      "metric": "max",
+      "policy": "passive_coreset",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.11889248922355924,
+      "holdout_initial_cover": 0.2866783821620545,
+      "holdout_reduction_per_retained_witness": 0.006991078872437302,
+      "holdout_total_reduction": 0.16778589293849525,
+      "metric": "mean",
+      "policy": "passive_coreset",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.23611508612054402,
+      "holdout_initial_cover": 0.36701092755312476,
+      "holdout_reduction_per_retained_witness": 0.005453993393024197,
+      "holdout_total_reduction": 0.13089584143258073,
+      "metric": "q90",
+      "policy": "passive_coreset",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 14.774600117466735,
+      "holdout_initial_cover": 19.894991910069173,
+      "holdout_reduction_per_retained_witness": 0.2133496580251016,
+      "holdout_total_reduction": 5.1203917926024385,
+      "metric": "max",
+      "policy": "offline_greedy_max",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.7585824754741681,
+      "holdout_initial_cover": 1.4622834284402042,
+      "holdout_reduction_per_retained_witness": 0.029320873040251504,
+      "holdout_total_reduction": 0.7037009529660361,
+      "metric": "mean",
+      "policy": "offline_greedy_max",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.834305451754128,
+      "holdout_initial_cover": 1.679357345858421,
+      "holdout_reduction_per_retained_witness": 0.03521049558767888,
+      "holdout_total_reduction": 0.845051894104293,
+      "metric": "q90",
+      "policy": "offline_greedy_max",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.30396929714998794,
+      "holdout_initial_cover": 0.620565170514148,
+      "holdout_reduction_per_retained_witness": 0.013191494723506668,
+      "holdout_total_reduction": 0.31659587336416,
+      "metric": "max",
+      "policy": "offline_greedy_max",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.12630628248110431,
+      "holdout_initial_cover": 0.2866783821620545,
+      "holdout_reduction_per_retained_witness": 0.00668217082003959,
+      "holdout_total_reduction": 0.16037209968095018,
+      "metric": "mean",
+      "policy": "offline_greedy_max",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.2079311740497189,
+      "holdout_initial_cover": 0.36701092755312476,
+      "holdout_reduction_per_retained_witness": 0.006628323062641911,
+      "holdout_total_reduction": 0.15907975350340586,
+      "metric": "q90",
+      "policy": "offline_greedy_max",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 14.774600117466735,
+      "holdout_initial_cover": 19.894991910069173,
+      "holdout_reduction_per_retained_witness": 0.2133496580251016,
+      "holdout_total_reduction": 5.1203917926024385,
+      "metric": "max",
+      "policy": "offline_greedy_frame",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.7514655901295866,
+      "holdout_initial_cover": 1.4622834284402042,
+      "holdout_reduction_per_retained_witness": 0.029617409929609068,
+      "holdout_total_reduction": 0.7108178383106176,
+      "metric": "mean",
+      "policy": "offline_greedy_frame",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.8179752180968661,
+      "holdout_initial_cover": 1.679357345858421,
+      "holdout_reduction_per_retained_witness": 0.035890921990064786,
+      "holdout_total_reduction": 0.8613821277615549,
+      "metric": "q90",
+      "policy": "offline_greedy_frame",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.33782460923376234,
+      "holdout_initial_cover": 0.620565170514148,
+      "holdout_reduction_per_retained_witness": 0.011780856720016067,
+      "holdout_total_reduction": 0.2827405612803856,
+      "metric": "max",
+      "policy": "offline_greedy_frame",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.1267895360320273,
+      "holdout_initial_cover": 0.2866783821620545,
+      "holdout_reduction_per_retained_witness": 0.006662035255417799,
+      "holdout_total_reduction": 0.15988884613002718,
+      "metric": "mean",
+      "policy": "offline_greedy_frame",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.20914143947637545,
+      "holdout_initial_cover": 0.36701092755312476,
+      "holdout_reduction_per_retained_witness": 0.006577895336531221,
+      "holdout_total_reduction": 0.1578694880767493,
+      "metric": "q90",
+      "policy": "offline_greedy_frame",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 14.774600117466735,
+      "holdout_initial_cover": 19.894991910069173,
+      "holdout_reduction_per_retained_witness": 0.2133496580251016,
+      "holdout_total_reduction": 5.1203917926024385,
+      "metric": "max",
+      "policy": "offline_greedy_chord",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.800434869044364,
+      "holdout_initial_cover": 1.4622834284402042,
+      "holdout_reduction_per_retained_witness": 0.027577023308160007,
+      "holdout_total_reduction": 0.6618485593958402,
+      "metric": "mean",
+      "policy": "offline_greedy_chord",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.8234759641726046,
+      "holdout_initial_cover": 1.679357345858421,
+      "holdout_reduction_per_retained_witness": 0.03566172423690902,
+      "holdout_total_reduction": 0.8558813816858164,
+      "metric": "q90",
+      "policy": "offline_greedy_chord",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.2934252236852977,
+      "holdout_initial_cover": 0.620565170514148,
+      "holdout_reduction_per_retained_witness": 0.01363083111786876,
+      "holdout_total_reduction": 0.3271399468288502,
+      "metric": "max",
+      "policy": "offline_greedy_chord",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.12449556366362081,
+      "holdout_initial_cover": 0.2866783821620545,
+      "holdout_reduction_per_retained_witness": 0.006757617437434737,
+      "holdout_total_reduction": 0.1621828184984337,
+      "metric": "mean",
+      "policy": "offline_greedy_chord",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.21255377567320377,
+      "holdout_initial_cover": 0.36701092755312476,
+      "holdout_reduction_per_retained_witness": 0.006435714661663375,
+      "holdout_total_reduction": 0.15445715187992098,
+      "metric": "q90",
+      "policy": "offline_greedy_chord",
+      "retained_budget": 24,
+      "side_count": 4,
+      "view": "chord_invariant"
+    },
+    {
       "holdout_final_cover": 3.699313598653523,
       "holdout_initial_cover": 4.316716849968006,
       "holdout_reduction_per_retained_witness": 0.02572513547143679,
@@ -282,6 +1637,7 @@
       "metric": "max",
       "policy": "passive_coreset",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "frame_geometry"
     },
     {
@@ -292,6 +1648,7 @@
       "metric": "mean",
       "policy": "passive_coreset",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "frame_geometry"
     },
     {
@@ -302,6 +1659,7 @@
       "metric": "q90",
       "policy": "passive_coreset",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "frame_geometry"
     },
     {
@@ -312,6 +1670,7 @@
       "metric": "max",
       "policy": "passive_coreset",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "chord_invariant"
     },
     {
@@ -322,6 +1681,7 @@
       "metric": "mean",
       "policy": "passive_coreset",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "chord_invariant"
     },
     {
@@ -332,6 +1692,7 @@
       "metric": "q90",
       "policy": "passive_coreset",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "chord_invariant"
     },
     {
@@ -342,6 +1703,7 @@
       "metric": "max",
       "policy": "offline_greedy_max",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "frame_geometry"
     },
     {
@@ -352,6 +1714,7 @@
       "metric": "mean",
       "policy": "offline_greedy_max",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "frame_geometry"
     },
     {
@@ -362,6 +1725,7 @@
       "metric": "q90",
       "policy": "offline_greedy_max",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "frame_geometry"
     },
     {
@@ -372,6 +1736,7 @@
       "metric": "max",
       "policy": "offline_greedy_max",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "chord_invariant"
     },
     {
@@ -382,6 +1747,7 @@
       "metric": "mean",
       "policy": "offline_greedy_max",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "chord_invariant"
     },
     {
@@ -392,6 +1758,7 @@
       "metric": "q90",
       "policy": "offline_greedy_max",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "chord_invariant"
     },
     {
@@ -402,6 +1769,7 @@
       "metric": "max",
       "policy": "offline_greedy_frame",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "frame_geometry"
     },
     {
@@ -412,6 +1780,7 @@
       "metric": "mean",
       "policy": "offline_greedy_frame",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "frame_geometry"
     },
     {
@@ -422,6 +1791,7 @@
       "metric": "q90",
       "policy": "offline_greedy_frame",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "frame_geometry"
     },
     {
@@ -432,6 +1802,7 @@
       "metric": "max",
       "policy": "offline_greedy_frame",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "chord_invariant"
     },
     {
@@ -442,6 +1813,7 @@
       "metric": "mean",
       "policy": "offline_greedy_frame",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "chord_invariant"
     },
     {
@@ -452,6 +1824,7 @@
       "metric": "q90",
       "policy": "offline_greedy_frame",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "chord_invariant"
     },
     {
@@ -462,6 +1835,7 @@
       "metric": "max",
       "policy": "offline_greedy_chord",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "frame_geometry"
     },
     {
@@ -472,6 +1846,7 @@
       "metric": "mean",
       "policy": "offline_greedy_chord",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "frame_geometry"
     },
     {
@@ -482,6 +1857,7 @@
       "metric": "q90",
       "policy": "offline_greedy_chord",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "frame_geometry"
     },
     {
@@ -492,6 +1868,7 @@
       "metric": "max",
       "policy": "offline_greedy_chord",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "chord_invariant"
     },
     {
@@ -502,6 +1879,7 @@
       "metric": "mean",
       "policy": "offline_greedy_chord",
       "retained_budget": 24,
+      "side_count": 6,
       "view": "chord_invariant"
     },
     {
@@ -512,6 +1890,271 @@
       "metric": "q90",
       "policy": "offline_greedy_chord",
       "retained_budget": 24,
+      "side_count": 6,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 1.8727367468438032,
+      "holdout_initial_cover": 2.3782161242367583,
+      "holdout_reduction_per_retained_witness": 0.021061640724706465,
+      "holdout_total_reduction": 0.5054793773929551,
+      "metric": "max",
+      "policy": "passive_coreset",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.4632674760625609,
+      "holdout_initial_cover": 0.764750702363058,
+      "holdout_reduction_per_retained_witness": 0.012561801095854044,
+      "holdout_total_reduction": 0.30148322630049706,
+      "metric": "mean",
+      "policy": "passive_coreset",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 1.0231313269154878,
+      "holdout_initial_cover": 1.162758403457701,
+      "holdout_reduction_per_retained_witness": 0.0058177948559255495,
+      "holdout_total_reduction": 0.13962707654221318,
+      "metric": "q90",
+      "policy": "passive_coreset",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.9057720580355556,
+      "holdout_initial_cover": 2.0684783765412975,
+      "holdout_reduction_per_retained_witness": 0.04844609660440591,
+      "holdout_total_reduction": 1.1627063185057418,
+      "metric": "max",
+      "policy": "passive_coreset",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.23581282448021765,
+      "holdout_initial_cover": 0.46355095500688703,
+      "holdout_reduction_per_retained_witness": 0.009489088771944558,
+      "holdout_total_reduction": 0.22773813052666939,
+      "metric": "mean",
+      "policy": "passive_coreset",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.3916032047646352,
+      "holdout_initial_cover": 0.604367993929195,
+      "holdout_reduction_per_retained_witness": 0.008865199548523326,
+      "holdout_total_reduction": 0.21276478916455982,
+      "metric": "q90",
+      "policy": "passive_coreset",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 1.8077527169247658,
+      "holdout_initial_cover": 2.3782161242367583,
+      "holdout_reduction_per_retained_witness": 0.023769308637999687,
+      "holdout_total_reduction": 0.5704634073119925,
+      "metric": "max",
+      "policy": "offline_greedy_max",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.574652377773932,
+      "holdout_initial_cover": 0.764750702363058,
+      "holdout_reduction_per_retained_witness": 0.007920763524546917,
+      "holdout_total_reduction": 0.190098324589126,
+      "metric": "mean",
+      "policy": "offline_greedy_max",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.7897499869967651,
+      "holdout_initial_cover": 1.162758403457701,
+      "holdout_reduction_per_retained_witness": 0.015542017352538995,
+      "holdout_total_reduction": 0.37300841646093585,
+      "metric": "q90",
+      "policy": "offline_greedy_max",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.5055768128352194,
+      "holdout_initial_cover": 2.0684783765412975,
+      "holdout_reduction_per_retained_witness": 0.06512089848775325,
+      "holdout_total_reduction": 1.5629015637060781,
+      "metric": "max",
+      "policy": "offline_greedy_max",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.24562132340073506,
+      "holdout_initial_cover": 0.46355095500688703,
+      "holdout_reduction_per_retained_witness": 0.009080401316922998,
+      "holdout_total_reduction": 0.21792963160615197,
+      "metric": "mean",
+      "policy": "offline_greedy_max",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.3751115424797157,
+      "holdout_initial_cover": 0.604367993929195,
+      "holdout_reduction_per_retained_witness": 0.009552352143728307,
+      "holdout_total_reduction": 0.22925645144947937,
+      "metric": "q90",
+      "policy": "offline_greedy_max",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 1.6576224811748312,
+      "holdout_initial_cover": 2.3782161242367583,
+      "holdout_reduction_per_retained_witness": 0.030024735127580294,
+      "holdout_total_reduction": 0.7205936430619271,
+      "metric": "max",
+      "policy": "offline_greedy_frame",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.5158428039103786,
+      "holdout_initial_cover": 0.764750702363058,
+      "holdout_reduction_per_retained_witness": 0.010371162435528306,
+      "holdout_total_reduction": 0.24890789845267935,
+      "metric": "mean",
+      "policy": "offline_greedy_frame",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.7980630991623395,
+      "holdout_initial_cover": 1.162758403457701,
+      "holdout_reduction_per_retained_witness": 0.015195637678973395,
+      "holdout_total_reduction": 0.36469530429536146,
+      "metric": "q90",
+      "policy": "offline_greedy_frame",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.5055768128352194,
+      "holdout_initial_cover": 2.0684783765412975,
+      "holdout_reduction_per_retained_witness": 0.06512089848775325,
+      "holdout_total_reduction": 1.5629015637060781,
+      "metric": "max",
+      "policy": "offline_greedy_frame",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.2447969296117215,
+      "holdout_initial_cover": 0.46355095500688703,
+      "holdout_reduction_per_retained_witness": 0.009114751058131898,
+      "holdout_total_reduction": 0.21875402539516553,
+      "metric": "mean",
+      "policy": "offline_greedy_frame",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.37933435207636895,
+      "holdout_initial_cover": 0.604367993929195,
+      "holdout_reduction_per_retained_witness": 0.009376401743867753,
+      "holdout_total_reduction": 0.2250336418528261,
+      "metric": "q90",
+      "policy": "offline_greedy_frame",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 1.8077527169247658,
+      "holdout_initial_cover": 2.3782161242367583,
+      "holdout_reduction_per_retained_witness": 0.023769308637999687,
+      "holdout_total_reduction": 0.5704634073119925,
+      "metric": "max",
+      "policy": "offline_greedy_chord",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.5748905801159485,
+      "holdout_initial_cover": 0.764750702363058,
+      "holdout_reduction_per_retained_witness": 0.007910838426962894,
+      "holdout_total_reduction": 0.18986012224710946,
+      "metric": "mean",
+      "policy": "offline_greedy_chord",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.8589181038058117,
+      "holdout_initial_cover": 1.162758403457701,
+      "holdout_reduction_per_retained_witness": 0.012660012485495387,
+      "holdout_total_reduction": 0.3038402996518893,
+      "metric": "q90",
+      "policy": "offline_greedy_chord",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.5055768128352194,
+      "holdout_initial_cover": 2.0684783765412975,
+      "holdout_reduction_per_retained_witness": 0.06512089848775325,
+      "holdout_total_reduction": 1.5629015637060781,
+      "metric": "max",
+      "policy": "offline_greedy_chord",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.24231141612367132,
+      "holdout_initial_cover": 0.46355095500688703,
+      "holdout_reduction_per_retained_witness": 0.009218314120133988,
+      "holdout_total_reduction": 0.2212395388832157,
+      "metric": "mean",
+      "policy": "offline_greedy_chord",
+      "retained_budget": 24,
+      "side_count": 8,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.3751115424797157,
+      "holdout_initial_cover": 0.604367993929195,
+      "holdout_reduction_per_retained_witness": 0.009552352143728307,
+      "holdout_total_reduction": 0.22925645144947937,
+      "metric": "q90",
+      "policy": "offline_greedy_chord",
+      "retained_budget": 24,
+      "side_count": 8,
       "view": "chord_invariant"
     }
   ],
@@ -519,41 +2162,164 @@
     "abandoned_or_capped_arms": [],
     "balanced_population_side_count_strata": true,
     "disjoint_sample_ids": true,
-    "failure_mode": "analyze.py fails closed on overlap, imbalance, or side-count drift",
+    "failure_mode": "analyze.py fails closed on overlap, imbalance, side-count drift, or duplicate side panels",
     "independent_master_seeds": true
   },
   "provenance": {
     "producer_reports": [
+      "artifacts/train-side4/factor-only-report.json",
+      "artifacts/holdout-side4/factor-only-report.json",
       "artifacts/train/factor-only-report.json",
-      "artifacts/holdout/factor-only-report.json"
+      "artifacts/holdout/factor-only-report.json",
+      "artifacts/train-side8/factor-only-report.json",
+      "artifacts/holdout-side8/factor-only-report.json"
     ],
-    "seed_contract": "train and holdout are independent master seeds; seed and attempt are retained in every witness row",
-    "selection_contract": "all full train rows are generated before offline retained-witness selection",
+    "seed_contract": "each side-count train/holdout pair uses independent master seeds; seed and attempt are retained in every witness row",
+    "selection_contract": "all full train rows are generated before offline retained-witness selection separately within each side-count panel",
     "witness_id": "sha256(sample_id) prefix"
   },
-  "question": "Can an offline multi-view greedy coreset retain nonredundant finite-panel geometry from an already generated pool?",
-  "retained_budget": 24,
-  "rows": {
-    "holdout": 96,
-    "holdout_full_pool_generated_rows": 96,
-    "populations": 8,
-    "side_count": 6,
-    "train": 96,
-    "train_full_pool_generated_rows": 96
-  },
+  "question": "Do bulk holdout mean/q90 cover reductions and multi-law retained-witness contributions persist separately at side counts 4, 6, and 8?",
+  "retained_budget_per_side_count": 24,
   "schema": "coverage-directed-novelty-v1",
   "selection_cost_artifact": "selection-cost-observation.json",
+  "side_counts": [
+    4,
+    6,
+    8
+  ],
   "source": {
-    "analyzer_sha256": "4d5fad7d8077e400755cb0929a3bf84d351626eb721e78c7e86df6b27dff752e",
-    "producer_revision": "a50e1e930e21541506df6228aaed16355d830372",
+    "analyzer_sha256": "e8cac6102fe37a60c9d6999346238c3c3127eace2b02f3fbbfe5241431666940",
+    "producer_revision": "f1a16ab7dcf21a19a969f2c3a672cdfd4540ad57",
     "producer_source_blobs": {
       "Cargo.lock": "8a51ae91187fdbc44c1539ddebf598feedd27b91",
       "experiments/sys-datascience/methods/generator-zoo-smoke/main.rs": "ea59cb1b3d123e630fdc034a95f4a2a43812b0a6",
       "experiments/sys-landscape/Cargo.toml": "a8efcf2366bcc08c5317d33926f44579727fbf31"
     },
-    "revision": "84193a47aa953532c018f067ea8e4642359f3822",
+    "revision": "48f77c3a7610e1ab32686b7ec0ffa3b2f8a102cd",
     "tracked_clean_for_analyzer": true
   },
+  "stratum_findings": [
+    {
+      "interpretation": "stratum-local bulk diagnostic; do not compare side counts or select a best law/view",
+      "metric": "mean",
+      "offline_greedy_max_reduction_per_retained_witness": 0.029320873040251504,
+      "offline_greedy_max_total_reduction": 0.7037009529660361,
+      "passive_coreset_total_reduction": 0.6714928723192007,
+      "positive_arm_contribution_count": 7,
+      "side_count": 4,
+      "view": "frame_geometry"
+    },
+    {
+      "interpretation": "stratum-local bulk diagnostic; do not compare side counts or select a best law/view",
+      "metric": "q90",
+      "offline_greedy_max_reduction_per_retained_witness": 0.03521049558767888,
+      "offline_greedy_max_total_reduction": 0.845051894104293,
+      "passive_coreset_total_reduction": 0.7165345066977666,
+      "positive_arm_contribution_count": 6,
+      "side_count": 4,
+      "view": "frame_geometry"
+    },
+    {
+      "interpretation": "stratum-local bulk diagnostic; do not compare side counts or select a best law/view",
+      "metric": "mean",
+      "offline_greedy_max_reduction_per_retained_witness": 0.00668217082003959,
+      "offline_greedy_max_total_reduction": 0.16037209968095018,
+      "passive_coreset_total_reduction": 0.16778589293849525,
+      "positive_arm_contribution_count": 7,
+      "side_count": 4,
+      "view": "chord_invariant"
+    },
+    {
+      "interpretation": "stratum-local bulk diagnostic; do not compare side counts or select a best law/view",
+      "metric": "q90",
+      "offline_greedy_max_reduction_per_retained_witness": 0.006628323062641911,
+      "offline_greedy_max_total_reduction": 0.15907975350340586,
+      "passive_coreset_total_reduction": 0.13089584143258073,
+      "positive_arm_contribution_count": 6,
+      "side_count": 4,
+      "view": "chord_invariant"
+    },
+    {
+      "interpretation": "stratum-local bulk diagnostic; do not compare side counts or select a best law/view",
+      "metric": "mean",
+      "offline_greedy_max_reduction_per_retained_witness": 0.021075192551308682,
+      "offline_greedy_max_total_reduction": 0.5058046212314083,
+      "passive_coreset_total_reduction": 0.5989504985362719,
+      "positive_arm_contribution_count": 6,
+      "side_count": 6,
+      "view": "frame_geometry"
+    },
+    {
+      "interpretation": "stratum-local bulk diagnostic; do not compare side counts or select a best law/view",
+      "metric": "q90",
+      "offline_greedy_max_reduction_per_retained_witness": 0.02134440075257756,
+      "offline_greedy_max_total_reduction": 0.5122656180618614,
+      "passive_coreset_total_reduction": 0.7263801237083276,
+      "positive_arm_contribution_count": 4,
+      "side_count": 6,
+      "view": "frame_geometry"
+    },
+    {
+      "interpretation": "stratum-local bulk diagnostic; do not compare side counts or select a best law/view",
+      "metric": "mean",
+      "offline_greedy_max_reduction_per_retained_witness": 0.008644691312587544,
+      "offline_greedy_max_total_reduction": 0.20747259150210107,
+      "passive_coreset_total_reduction": 0.22029116020464057,
+      "positive_arm_contribution_count": 6,
+      "side_count": 6,
+      "view": "chord_invariant"
+    },
+    {
+      "interpretation": "stratum-local bulk diagnostic; do not compare side counts or select a best law/view",
+      "metric": "q90",
+      "offline_greedy_max_reduction_per_retained_witness": 0.01030073807060973,
+      "offline_greedy_max_total_reduction": 0.24721771369463352,
+      "passive_coreset_total_reduction": 0.1973396130439518,
+      "positive_arm_contribution_count": 6,
+      "side_count": 6,
+      "view": "chord_invariant"
+    },
+    {
+      "interpretation": "stratum-local bulk diagnostic; do not compare side counts or select a best law/view",
+      "metric": "mean",
+      "offline_greedy_max_reduction_per_retained_witness": 0.007920763524546917,
+      "offline_greedy_max_total_reduction": 0.190098324589126,
+      "passive_coreset_total_reduction": 0.30148322630049706,
+      "positive_arm_contribution_count": 7,
+      "side_count": 8,
+      "view": "frame_geometry"
+    },
+    {
+      "interpretation": "stratum-local bulk diagnostic; do not compare side counts or select a best law/view",
+      "metric": "q90",
+      "offline_greedy_max_reduction_per_retained_witness": 0.015542017352538995,
+      "offline_greedy_max_total_reduction": 0.37300841646093585,
+      "passive_coreset_total_reduction": 0.13962707654221318,
+      "positive_arm_contribution_count": 5,
+      "side_count": 8,
+      "view": "frame_geometry"
+    },
+    {
+      "interpretation": "stratum-local bulk diagnostic; do not compare side counts or select a best law/view",
+      "metric": "mean",
+      "offline_greedy_max_reduction_per_retained_witness": 0.009080401316922998,
+      "offline_greedy_max_total_reduction": 0.21792963160615197,
+      "passive_coreset_total_reduction": 0.22773813052666939,
+      "positive_arm_contribution_count": 7,
+      "side_count": 8,
+      "view": "chord_invariant"
+    },
+    {
+      "interpretation": "stratum-local bulk diagnostic; do not compare side counts or select a best law/view",
+      "metric": "q90",
+      "offline_greedy_max_reduction_per_retained_witness": 0.009552352143728307,
+      "offline_greedy_max_total_reduction": 0.22925645144947937,
+      "passive_coreset_total_reduction": 0.21276478916455982,
+      "positive_arm_contribution_count": 4,
+      "side_count": 8,
+      "view": "chord_invariant"
+    }
+  ],
   "synthetic_calibrations": {
     "cases": [
       [
@@ -584,7 +2350,6 @@
     "representation_raw_distance": 2.1933217021505613,
     "schema": "coverage-directed-novelty-synthetic-v1"
   },
-  "train_input_sha256": "608df0fd90b56c1fb85cd49489838bec301c1d75c2a990377cb1bf7111d6b24a",
   "view_contract": {
     "chord_invariant": "sorted all-pairs chord lengths after translation and area normalization",
     "frame_geometry": "cyclic/frame-adjusted vertices after translation and area normalization; minimum over start and reversal",
