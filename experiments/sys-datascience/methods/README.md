@@ -85,6 +85,13 @@ promoted into the packet directories.
   variant-comparison scripts. They are not active method-table rows until two
   or more prepared random/product variants exist and are reviewed.
 
+Target-free generator support:
+
+- `conditioning-distortion/`: candidate-level proposal/rejection audit for the
+  alternative planar laws. It reports bounded retry cost, separate terminal
+  reasons, and accepted-versus-proposed feature shifts; it makes no target,
+  `sys`, or capacity calls.
+
 The old ascent endpoint, local-behavior, continuation, and perturbation packets
 are not active in this slice. Use git history for archaeology only.
 
