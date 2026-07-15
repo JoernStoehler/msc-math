@@ -1,25 +1,25 @@
 {
   "artifacts": {
     "matrix.json": {
-      "bytes": 26204,
-      "sha256": "3eff731caeeb952158d4786a30c6b03136ecdfc2908d8c0c7da56f47916a26db"
+      "bytes": 27257,
+      "sha256": "c5c53b246b32e5e5a5227b470505c823963f253de32d88a3f9eb35846b5afc34"
     },
     "matrix.tsv": {
-      "bytes": 13648,
-      "sha256": "7eedcd751a4cff26369449410c847429aedfe04e73cdd4409129e55b79b926ec"
+      "bytes": 14613,
+      "sha256": "2902c200ee2a41adf63874092673c406489b6aa6a2da234dc62eef0f4a010b9f"
     },
     "witnesses.json": {
-      "bytes": 11542,
-      "sha256": "60b8cdaea22b0f21d52919f9f37198ead7dfd7916a18123b3d4256e80911e4ae"
+      "bytes": 11626,
+      "sha256": "f84d1cc2a325937997d7f7ec1c62fc892e04225c192dc5c0ac25b48235ac835c"
     }
   },
-  "command": "experiments/sys-datascience/methods/generator-equivalence-regression/produce.py --out-dir experiments/sys-datascience/methods/generator-equivalence-regression/artifacts --expected-revision 045908e6777573c8008d51ef9b6a4feda0c08af0",
+  "command": "experiments/sys-datascience/methods/generator-equivalence-regression/produce.py --out-dir experiments/sys-datascience/methods/generator-equivalence-regression/artifacts --expected-revision 2f794973b58ad82ab882e9718ed77de1ec4f2ccd",
   "complete": true,
   "independence_unit": "one deterministic synthetic witness per matrix row; probability-law rows are theorem-backed bijection controls, not Monte Carlo samples",
   "interpretation_boundary": "Target-free regression infrastructure only. It supports only the named algebraic, marginal, pushforward, orbit, and negative-control statements; it contains no sys/capacity evaluation or population comparison.",
   "producer": "experiments/sys-datascience/methods/generator-equivalence-regression/produce.py",
-  "producer_bytes": 54318,
-  "producer_sha256": "d5618c31b7f0df333e1b296215577b6484cb5b7fd7d0cf80d0e48d900344a947",
+  "producer_bytes": 55335,
+  "producer_sha256": "bb5ddefe340c549d0b0db69d8a2dbfada6aa44f0a14ce324de775234949e0408",
   "schema": "generator-equivalence-regression-v1-provenance",
   "source_inputs": [
     {
@@ -58,6 +58,21 @@
       "sha256": "32096eda789ca5896a67c9e793ef00580f5e4a55ad785a8c3ebc307fd9e89fd3"
     },
     {
+      "bytes": 62909,
+      "path": "papers/hk2017/EHZ-polytopes.tex",
+      "sha256": "a6d8b0a1d198b658f9c909c44842a706fb89f5e3f5ebd9f7286830773490c0e6"
+    },
+    {
+      "bytes": 4910,
+      "path": "thesis/02-preliminaries-ehz-capacity.tex",
+      "sha256": "79e8c72aeaa3fe63159bfc8fedf11204895f9f3c8e43e4c482fcdedfadd32e54"
+    },
+    {
+      "bytes": 28651,
+      "path": "formal/hk2017-qp-core.tex",
+      "sha256": "541c3d83453a98bcddca666fc8b3c0cdf3f3c80f1b0b981aa8f8f1d8b77a87ae"
+    },
+    {
       "bytes": 15166,
       "path": "crates/euclidean-polytopes/tests/polar_vertices.rs",
       "sha256": "f54e389564045678de6f5dc8dc0667c9371d458c376027e5c7a452c737c54845"
@@ -73,8 +88,8 @@
       "sha256": "012e37cef55926c3b2f38aeb762c3768ed85c5dc3b502c0dac84a42a869ca66b"
     }
   ],
-  "source_repository_tree": "5d881e2158ca0e0da242d5fd818396d19e4d28c8",
-  "source_revision": "045908e6777573c8008d51ef9b6a4feda0c08af0",
+  "source_repository_tree": "54eabcd17b42e6f4ce4ef5f7d9b8c8d8f9b3eee0",
+  "source_revision": "2f794973b58ad82ab882e9718ed77de1ec4f2ccd",
   "source_tracked_clean": true,
   "untracked_files_ignored_by_clean_predicate": true
 }

@@ -543,8 +543,8 @@
       "evidence": {
         "absolute_omega_fixed": true,
         "anti_symplectic": true,
-        "capacity_sys_status": "proof_pending",
         "determinant": 1,
+        "ehz_sys_status": "analytic_theorem_source_backed_no_dedicated_capacity_regression",
         "matrix": [
           [
             -1,
@@ -571,7 +571,8 @@
             1
           ]
         ],
-        "orthogonal": true
+        "orthogonal": true,
+        "signed_omega_reversed": true
       },
       "row_id": "antiunitary-antisymplectic-endpoint",
       "status": "pass"

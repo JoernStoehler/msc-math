@@ -1,7 +1,7 @@
 {
   "complete": true,
   "counts_by_executable_control_status": {
-    "matrix_feature_control_pass_proof_pending": 1,
+    "matrix_feature_control_pass_theorem_source_backed_no_capacity_regression": 1,
     "negative_control_pass": 6,
     "pass": 9
   },
@@ -13,7 +13,7 @@
     "pointwise_orbit": 5
   },
   "counts_by_proof_status": {
-    "capacity_and_sys_invariance_proof_pending; target_free_matrix_and_absolute_omega_controls_proved": 1,
+    "ehz_and_sys_invariance_theorem_proved; target_free_matrix_and_absolute_omega_controls_proved; no_dedicated_capacity_regression": 1,
     "proved_algebraic_matrix_identity": 1,
     "proved_algebraic_target_free_orbit": 1,
     "proved_bipolar_theorem_exact_fixture_control": 1,
@@ -375,10 +375,10 @@
       "transformation": "real embedding [[Re U,-Im U],[Im U,Re U]], contained in O(4) intersect Sp(4)"
     },
     {
-      "arithmetic": "exact rational",
-      "collapse_scope": "do not collapse target arms until an authoritative capacity/sys anti-symplectic invariance theorem is supplied",
-      "executable_control": "matrix_feature_control_pass_proof_pending: signed omega Gram flips and absolute omega Gram is fixed; no capacity/sys claim",
-      "executable_control_status": "matrix_feature_control_pass_proof_pending",
+      "arithmetic": "exact rational matrix witness; analytic theorem for exact/certified real anti-symplectic maps",
+      "collapse_scope": "derive/collapse only c_EHZ and sys target values from the paired base when A^T J A=-J is exact or certified; retain signed omega features and reversed directed/facet-word semantics; near-floating matrices remain non-theorem",
+      "executable_control": "matrix_feature_control_pass_theorem_source_backed_no_capacity_regression: exact A^T J A=-J, det A=1, signed omega Gram reversal, and absolute omega Gram invariance; c_EHZ/sys were not evaluated",
+      "executable_control_status": "matrix_feature_control_pass_theorem_source_backed_no_capacity_regression",
       "expected": {
         "absolute_symplectic_features": "zero",
         "combinatorics": "zero",
@@ -389,16 +389,19 @@
         "raw_geometry_after_transform": "zero",
         "signed_symplectic_features": "nonzero"
       },
-      "hypotheses_conditioning": "coordinates (q1,q2,p1,p2); target-free matrix and feature controls only",
+      "hypotheses_conditioning": "coordinates (q1,q2,p1,p2); K compact, convex, and full-dimensional; C is exact and orthogonal; theorem-based target collapse for a general A requires exact or certified A^T J A=-J, never a near-floating residual",
       "level": "pointwise_orbit",
-      "objects_laws": "K and A K for A=diag(-1,-1,1,1), an orthogonal antiunitary/anti-symplectic endpoint",
+      "objects_laws": "a compact full-dimensional convex 4-polytope K and C K for the exact orthogonal endpoint C=diag(-1,-1,1,1); theorem scope also covers exact/certified A^T J A=-J",
       "proof_source": [
-        "experiments/sys-datascience/methods/generator-orientation-smoke/main.rs: deterministic_so4_i8",
-        "experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/README.md and main.rs: anti-symplectic pi endpoint"
+        "experiments/sys-datascience/methods/generator-orientation-smoke/main.rs: exact deterministic anti-symplectic matrix",
+        "experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/README.md and main.rs: anti-symplectic pi endpoint",
+        "papers/hk2017/EHZ-polytopes.tex: Theorem 1.1 and generalized-characteristic/action definitions",
+        "thesis/02-preliminaries-ehz-capacity.tex: EHZ minimum-action and sys conventions",
+        "formal/hk2017-qp-core.tex: active-word dual-vertex formula"
       ],
-      "proof_status": "capacity_and_sys_invariance_proof_pending; target_free_matrix_and_absolute_omega_controls_proved",
+      "proof_status": "ehz_and_sys_invariance_theorem_proved; target_free_matrix_and_absolute_omega_controls_proved; no_dedicated_capacity_regression",
       "row_id": "antiunitary-antisymplectic-endpoint",
-      "transformation": "A^T A=I, det A=1, and A^T J A=-J"
+      "transformation": "C^T C=I and C^T J C=-J; generally A^T J A=-J implies det A=1 in dimension four, while time reversal of generalized characteristics and reversal of HK facet words preserve c_EHZ, volume, and sys"
     },
     {
       "arithmetic": "exact rational",
