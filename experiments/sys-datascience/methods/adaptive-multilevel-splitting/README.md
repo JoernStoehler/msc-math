@@ -2,10 +2,12 @@
 
 ## Status and allowed use
 
-This is a target-free-tested pre-run packet. No production target evaluation
-has been run and no real-target artifact is tracked. Its next consumer is an
-independent review deciding whether exactly 64 real requests may be spent on a
-narrow driver/policy-readiness smoke.
+This packet has passed its reviewed 64-request production readiness smoke. The
+result and the next frozen, unspent comparison are recorded in
+[READINESS-REPORT.md](READINESS-REPORT.md) and
+[SCIENTIFIC-COMPARISON.md](SCIENTIFIC-COMPARISON.md). The comparison's exact
+machine-readable contract is
+[scientific-comparison-v1.json](scientific-comparison-v1.json).
 
 The smoke can test target accounting, valid chart mutation, retained genealogy,
 post-rejuvenation particle diversity, failure/timeout handling, and measured

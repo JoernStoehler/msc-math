@@ -1,0 +1,147 @@
+{
+  "protocol": "ams-vs-iid-scientific-v1",
+  "status": "frozen_not_authorized",
+  "comparison_targets_spent": 0,
+  "claim_scope": "adaptive_search_quality_not_tail_probability",
+  "replicates": [
+    {
+      "replicate": 0,
+      "master_seed": 9823939103103691338,
+      "arm_order": ["adaptive", "iid"]
+    },
+    {
+      "replicate": 1,
+      "master_seed": 12729872386946910155,
+      "arm_order": ["iid", "adaptive"]
+    },
+    {
+      "replicate": 2,
+      "master_seed": 15242111109740286705,
+      "arm_order": ["adaptive", "iid"]
+    }
+  ],
+  "budget": {
+    "adaptive_requests_per_replicate": 256,
+    "iid_requests_per_replicate": 256,
+    "total_charged_requests": 1536,
+    "charge_before_arm_private_cache_lookup": true,
+    "duplicates_and_cache_hits_are_charged": true,
+    "construction_rejections_are_charged": false,
+    "per_arm_wall_limit_seconds": 600
+  },
+  "base_law": {
+    "reference_source_revision": "8c63f94f72d4af7007a04ea49f74e252c4959017",
+    "producer": "equal_budget_product_search::chart::iid_base_candidate_attempt",
+    "chart_codec": "equal_budget_product_search::chart::ProductChart_at_reference_source_revision",
+    "stream_domain": "s0-iid-product-base-stream-v1",
+    "seed_material": "little_endian_u64(master_seed,replicate,base_index,construction_attempt)",
+    "key_derivation": "blake3_derive_key_then_chacha8rng",
+    "factor_vertex_counts": [5, 5],
+    "height_interval": [0.8, 1.2],
+    "construction_retry_cap": 64,
+    "matched_initial_prefix": 64,
+    "matched_prefix_is_separately_evaluated_and_charged": true
+  },
+  "random_schedule": {
+    "identifier": "sha256_counter_box_muller_v1",
+    "mutation_kernel": "non_invariant_threshold_only_gaussian",
+    "clone_material": "ams-clone-assignment-v1\nams-vs-iid-scientific-v1\n{master_seed}\n{replicate}\n{level}\n{clone_index}\n",
+    "clone_reduction": "first_8_sha256_bytes_big_endian_mod_32",
+    "base_candidate_id_material": "ams-vs-iid-scientific-base-v1\n{master_seed}\n{replicate}\n{arm}\n{base_index}\n{construction_attempt}\n",
+    "mutation_candidate_id_material": "ams-vs-iid-scientific-mutation-v1\n{master_seed}\n{replicate}\n{level}\n{clone_index}\n{mutation_step}\n{construction_attempt}\n{parent_candidate_id}\n",
+    "candidate_id_encoding": "first_24_lowercase_hex_sha256",
+    "gaussian_material": "ams-mutation-gaussian-v1\n{proposal_candidate_id}\n{coordinate_pair}\n",
+    "uniform_conversion": "((big_endian_u64>>11)+0.5)/2^53",
+    "normal_conversion": "box_muller_cosine_then_sine",
+    "continuous_coordinate_order": "q_gap_logits_0_3,q_centered_log_radii_0_3,p_gap_logits_0_3,p_centered_log_radii_0_3,relative_phase",
+    "construction_retry_draw": "increment_construction_attempt_for_fresh_candidate_id_and_draw"
+  },
+  "cache_scope": {
+    "identity": "replicate_times_arm",
+    "initially_empty": true,
+    "key": "exact_geometry_key",
+    "cross_arm_reuse": false,
+    "cross_replicate_reuse": false,
+    "retained_result_reuse": false
+  },
+  "adaptive_policy": {
+    "initial_particles": 64,
+    "levels": 3,
+    "survivors_per_level": 32,
+    "clones_per_level": 32,
+    "mutation_steps_per_clone": 2,
+    "selection_order": "sys_desc_candidate_id_asc",
+    "threshold": "32nd_survivor_sys",
+    "clone_assignment": "seeded_uniform_with_replacement",
+    "acceptance": "successful_sys_at_least_frozen_threshold",
+    "gap_logit_scale": 0.08,
+    "centered_log_radius_scale": 0.04,
+    "phase_scale": 0.08,
+    "search_factor_exchange_quotiented": false
+  },
+  "analysis": {
+    "factor_exchange_orbit_key": "lexicographic_min(canonical_exact_key(X),canonical_exact_key(JX))",
+    "symplectic_exchange": "J(q1,q2,p1,p2)=(p1,p2,-q1,-q2)",
+    "auc": "mean_over_256_charges_of_running_best_starting_at_zero",
+    "failed_charge_auc_behavior": "occupies_index_without_improving_running_best",
+    "t8": "mean_of_one_indexed_ranks_4_and_5_among_top_8_orbit_distinct_successes",
+    "orbit_representative_order": "sys_desc_candidate_id_asc",
+    "orbit_distinct_ranking_order": "sys_desc_factor_exchange_orbit_key_asc",
+    "primary_differences": ["adaptive_auc_minus_iid_auc", "adaptive_t8_minus_iid_t8"],
+    "credible_generator_rule": {
+      "replicates_required": 2,
+      "simultaneous_auc_difference_at_least": 0.02,
+      "simultaneous_t8_difference_at_least": 0.01
+    },
+    "maximum_only_diagnostic": {
+      "replicates_required": 2,
+      "maximum_difference_at_least": 0.02,
+      "sufficient_for_promotion": false
+    }
+  },
+  "health_gates_per_replicate": {
+    "exact_requests_per_arm": 256,
+    "target_failures": 0,
+    "minimum_post_level_adaptive_orbit_distinct_states": 32,
+    "minimum_initial_roots_per_survivor_set": 4,
+    "minimum_initial_roots_in_final_adaptive_top8": 2,
+    "minimum_accepted_mutations_per_level": 1,
+    "minimum_orbit_distinct_successes_per_arm": 8
+  },
+  "stop_rule": {
+    "condition": "any_successful_observed_sys_gt_1",
+    "action": "synchronously_flush_exact_row_stop_comparison_and_unrelated_work_then_independently_classify",
+    "classifications": ["new_trusted_example", "known_equivalent_control", "evaluator_failure"],
+    "comparison_decision_after_stop": "incomplete_no_resume_without_new_authorization"
+  },
+  "cost_from_readiness_smoke": {
+    "readiness_artifact": "/tmp/sys-ds-research-lines/adaptive-hostile-search/readiness-production-8c63f94f",
+    "target_mean_seconds": {
+      "adaptive_initial": 0.4228652374375,
+      "adaptive_level0": 0.37257245025,
+      "adaptive_level1": 0.371567182875,
+      "iid": 0.3860278766875
+    },
+    "third_mutation_level_target_seconds_range": [0.371567182875, 0.610636519],
+    "target_only_total_seconds_range": [591.875, 637.777],
+    "overhead_total_seconds_range": [280.649, 307.626],
+    "all_in_total_seconds_range": [872.524, 945.403],
+    "all_in_total_minutes_range": [14.542, 15.757],
+    "hard_six_arm_wall_cap_seconds": 3600
+  },
+  "interpretation_precedence": [
+    "observed_sys_gt_1_then_independent_classification",
+    "evaluator_or_artifact_failure",
+    "failed_health_gate_is_policy_degeneracy_with_diversity_collapse_subtype",
+    "at_least_2_replicates_meet_both_primary_thresholds_is_credible_adaptive_generator",
+    "otherwise_at_least_2_replicates_meet_maximum_threshold_is_healthy_maximum_only_signal",
+    "otherwise_at_least_1_replicate_meets_either_primary_threshold_is_heterogeneous_healthy_result",
+    "otherwise_all_healthy_and_no_replicate_meets_either_primary_threshold_is_healthy_ams_specific_negative"
+  ],
+  "pre_exposure_requirements": [
+    "implementation_matches_this_frozen_contract",
+    "fresh_target_free_exact_commit_review",
+    "caller_owned_commit_and_executable_hash_binding",
+    "new_output_directories"
+  ]
+}
