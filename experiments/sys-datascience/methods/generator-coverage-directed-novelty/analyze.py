@@ -193,6 +193,9 @@ def baseline_refs(shapes: list[Shape], n: int = 4) -> list[Shape]:
 
 
 def frontier(train: list[Shape], holdout: list[Shape], mode: str, budget: int = MAX_BUDGET) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+    if not train or not holdout or {s.side_count for s in train + holdout} != {train[0].side_count}:
+        raise ValueError("frontier requires one nonempty side-count stratum")
+    side_count = train[0].side_count
     refs = baseline_refs(train)
     ref_ids = {s.witness_id for s in refs}
     candidates = [s for s in train if s.witness_id not in ref_ids]
@@ -241,7 +244,7 @@ def frontier(train: list[Shape], holdout: list[Shape], mode: str, budget: int = 
                 chosen = best_by_view["chord_invariant"]
             else:
                 chosen = max(remaining, key=lambda i: (max(scores[v][i] for v in VIEW_NAMES), ordered[i].witness_id))
-            disagreements.append({"step": step + 1, "frame_witness_id": ordered[best_by_view["frame_geometry"]].witness_id, "chord_witness_id": ordered[best_by_view["chord_invariant"]].witness_id, "disagree": best_by_view["frame_geometry"] != best_by_view["chord_invariant"], "chosen_witness_id": ordered[chosen].witness_id, "mode": mode})
+            disagreements.append({"side_count": side_count, "step": step + 1, "frame_witness_id": ordered[best_by_view["frame_geometry"]].witness_id, "chord_witness_id": ordered[best_by_view["chord_invariant"]].witness_id, "disagree": best_by_view["frame_geometry"] != best_by_view["chord_invariant"], "chosen_witness_id": ordered[chosen].witness_id, "mode": mode})
             selected.append(chosen)
             current = selected
         selected_global = ref_idx + [candidate_indices[i] for i in current]
@@ -252,7 +255,7 @@ def frontier(train: list[Shape], holdout: list[Shape], mode: str, budget: int = 
             train_after_stats = cover_stats(selected_global, candidate_indices, matrices_train[view])
             hold_before_stats = cover_stats(ref_idx + [candidate_indices[i] for i in current[:-1]], hold_candidates, matrices_cross[view])
             hold_after_stats = cover_stats(selected_train_global, hold_candidates, matrices_cross[view])
-            row = {"policy": mode, "step": step + 1, "budget": step + 1, "view": view, "witness_id": chosen.witness_id, "population": chosen.population, "seed": chosen.seed, "attempt": chosen.attempt}
+            row = {"side_count": side_count, "policy": mode, "step": step + 1, "budget": step + 1, "view": view, "witness_id": chosen.witness_id, "population": chosen.population, "seed": chosen.seed, "attempt": chosen.attempt}
             for metric in ("max", "mean", "q90"):
                 row[f"train_cover_{metric}_before"] = train_before_stats[metric]
                 row[f"train_cover_{metric}_after"] = train_after_stats[metric]
@@ -261,7 +264,7 @@ def frontier(train: list[Shape], holdout: list[Shape], mode: str, budget: int = 
                 row[f"holdout_cover_{metric}_after"] = hold_after_stats[metric]
                 row[f"holdout_cover_{metric}_incremental_reduction"] = hold_before_stats[metric] - hold_after_stats[metric]
             rows.append(row)
-    return rows, disagreements, [{"policy": mode, "budget": len(selected), "selected_witnesses": len(selected), "selected_populations": json.dumps(Counter(ordered[i].population for i in selected), sort_keys=True), "holdout_candidate_count": len(hold_candidates)}]
+    return rows, disagreements, [{"side_count": side_count, "policy": mode, "budget": len(selected), "selected_witnesses": len(selected), "selected_populations": json.dumps(Counter(ordered[i].population for i in selected), sort_keys=True), "holdout_candidate_count": len(hold_candidates)}]
 
 
 def synthetic_calibration(out_dir: Path) -> dict[str, Any]:
@@ -299,7 +302,7 @@ def synthetic_calibration(out_dir: Path) -> dict[str, Any]:
     return {"schema": "coverage-directed-novelty-synthetic-v1", "cases": sorted(Counter(c["case"] for c in cases).items()), "remote_mode_discovered": remote_row["selected_by_frontier"], "contamination_not_population_region": contamination_row["disposition"].startswith("known-contamination"), "representation_raw_distance": float(np.linalg.norm(raw[-1] - raw[-2])), "representation_quotient_distance": float(np.linalg.norm(quotient[-1] - quotient[-2])), "limitation": "Geometry alone cannot distinguish a tiny remote mode from a contaminated outlier; this calibration selected both and retains the known contamination label rather than promoting it."}
 
 
-def validate_pool_contract(train: list[Shape], holdout: list[Shape]) -> None:
+def validate_pool_contract(train: list[Shape], holdout: list[Shape], expected_side_count: int | None = None) -> None:
     """Fail closed on independence or unbalanced explicit-arm strata."""
     train_ids, hold_ids = {s.sample_id for s in train}, {s.sample_id for s in holdout}
     if train_ids & hold_ids:
@@ -312,8 +315,8 @@ def validate_pool_contract(train: list[Shape], holdout: list[Shape]) -> None:
         if not counts or len({count for count in counts.values()}) != 1:
             raise ValueError(f"{label} population/side-count strata are unbalanced")
         side_counts = {s.side_count for s in pool}
-        if side_counts != {6}:
-            raise ValueError(f"{label} is not the fixed side-count-6 stratum")
+        if len(side_counts) != 1 or (expected_side_count is not None and side_counts != {expected_side_count}):
+            raise ValueError(f"{label} is not one fixed requested side-count stratum")
     train_counts = Counter(s.population for s in train)
     hold_counts = Counter(s.population for s in holdout)
     if train_counts != hold_counts:
@@ -322,51 +325,87 @@ def validate_pool_contract(train: list[Shape], holdout: list[Shape]) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--train", type=Path, required=True)
-    parser.add_argument("--holdout", type=Path, required=True)
+    parser.add_argument("--train", type=Path, action="append", required=True, help="one complete train panel per side count")
+    parser.add_argument("--holdout", type=Path, action="append", required=True, help="one complete holdout panel per side count")
     parser.add_argument("--producer-report", type=Path, action="append", required=True)
     parser.add_argument("--out-dir", type=Path, required=True)
     args = parser.parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    train, holdout = load(args.train), load(args.holdout)
-    validate_pool_contract(train, holdout)
-    if {s.population for s in train} != {s.population for s in holdout}:
-        raise SystemExit("train/holdout population sets differ")
+    if len(args.train) != len(args.holdout):
+        raise SystemExit("provide one holdout panel for every train panel")
+    train_pools, holdout_pools = [load(path) for path in args.train], [load(path) for path in args.holdout]
+    panels: list[tuple[int, list[Shape], list[Shape]]] = []
+    for train, holdout in zip(train_pools, holdout_pools):
+        side_counts = {s.side_count for s in train + holdout}
+        if len(side_counts) != 1:
+            raise SystemExit("each input panel must contain exactly one side count")
+        side_count = next(iter(side_counts))
+        validate_pool_contract(train, holdout, side_count)
+        if {s.population for s in train} != {s.population for s in holdout}:
+            raise SystemExit(f"train/holdout population sets differ at side count {side_count}")
+        panels.append((side_count, train, holdout))
+    if len({side for side, _, _ in panels}) != len(panels):
+        raise SystemExit("duplicate side-count panel")
+    panels.sort(key=lambda item: item[0])
     start = time.perf_counter()
     policy_rows, disagreement, policy_summary = [], [], []
-    for mode in ("passive_coreset", "offline_greedy_max", "offline_greedy_frame", "offline_greedy_chord"):
-        rows, disagreements, summary = frontier(train, holdout, mode)
-        policy_rows.extend(rows); disagreement.extend(disagreements); policy_summary.extend(summary)
+    for side_count, train, holdout in panels:
+        for mode in ("passive_coreset", "offline_greedy_max", "offline_greedy_frame", "offline_greedy_chord"):
+            rows, disagreements, summary = frontier(train, holdout, mode)
+            policy_rows.extend(rows); disagreement.extend(disagreements); policy_summary.extend(summary)
     selection_ms = (time.perf_counter() - start) * 1000.0
     write_tsv(args.out_dir / "coreset-yield.tsv", policy_rows)
     write_tsv(args.out_dir / "view-disagreement.tsv", disagreement)
     write_tsv(args.out_dir / "policy-summary.tsv", policy_summary)
     arms = []
-    for population in arm_order(train):
-        rows = [s for s in train if s.population == population]
-        arms.append({"population": population, "train_rows": len(rows), "holdout_rows": len([s for s in holdout if s.population == population]), "seed_counts_train": dict(Counter(str(s.seed) for s in rows)), "attempt_max_train": max(s.attempt for s in rows), "offline_greedy_max_fixed_train_panel_selected_witnesses": {"policy": "offline_greedy_max", "selection_order": "deterministic greedy order over the complete fixed train panel", "retained_budget": MAX_BUDGET, "count_for_this_arm": sum(1 for row in policy_rows if row["policy"] == "offline_greedy_max" and row["population"] == population and row["view"] == "frame_geometry"), "not_intrinsic_arm_property": True}, "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {"policy": "offline_greedy_max", "train_panel": "seed=20260716 fixed complete panel", "holdout_panel": "seed=20260717 independent complete panel", "retained_budget": MAX_BUDGET, "metric": "holdout mean nearest-cover distance", "view_dependent": {v: any(row["population"] == population and row["view"] == v and row["holdout_cover_mean_incremental_reduction"] > 1e-10 for row in policy_rows if row["policy"] == "offline_greedy_max") for v in VIEW_NAMES}, "not_intrinsic_arm_property": True}})
+    for side_count, train, holdout in panels:
+        train_seed = sorted({s.seed for s in train})
+        holdout_seed = sorted({s.seed for s in holdout})
+        for population in arm_order(train):
+            rows = [s for s in train if s.population == population]
+            panel_rows = [row for row in policy_rows if row["side_count"] == side_count]
+            view_by_metric = {metric: {v: any(row["population"] == population and row["view"] == v and row[f"holdout_cover_{metric}_incremental_reduction"] > 1e-10 for row in panel_rows if row["policy"] == "offline_greedy_max") for v in VIEW_NAMES} for metric in ("mean", "q90")}
+            arms.append({"side_count": side_count, "population": population, "train_rows": len(rows), "holdout_rows": len([s for s in holdout if s.population == population]), "train_seed": train_seed, "holdout_seed": holdout_seed, "attempt_max_train": max(s.attempt for s in rows), "offline_greedy_max_fixed_train_panel_selected_witnesses": {"policy": "offline_greedy_max", "selection_order": "deterministic greedy order over the complete fixed train panel", "retained_budget": MAX_BUDGET, "count_for_this_arm": sum(1 for row in panel_rows if row["policy"] == "offline_greedy_max" and row["population"] == population and row["view"] == "frame_geometry"), "not_intrinsic_arm_property": True}, "offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views": {"policy": "offline_greedy_max", "train_panel": f"side_count={side_count}, seed={train_seed}", "holdout_panel": f"side_count={side_count}, seed={holdout_seed}", "retained_budget": MAX_BUDGET, "metric": "holdout mean nearest-cover distance", "view_dependent": view_by_metric["mean"], "not_intrinsic_arm_property": True}, "offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views": {"policy": "offline_greedy_max", "train_panel": f"side_count={side_count}, seed={train_seed}", "holdout_panel": f"side_count={side_count}, seed={holdout_seed}", "retained_budget": MAX_BUDGET, "metrics": ("mean", "q90"), "view_dependent_by_metric": view_by_metric, "not_intrinsic_arm_property": True}})
     generation_rows = []
+    train_seed_set = {s.seed for pool in train_pools for s in pool}
+    holdout_seed_set = {s.seed for pool in holdout_pools for s in pool}
+    if train_seed_set & holdout_seed_set:
+        raise SystemExit("producer report seed roles overlap")
     for path in args.producer_report:
         report = json.loads(path.read_text())
-        pool_label = "train" if path == args.producer_report[0] else "holdout"
+        report_seed = int(report["seed"])
+        pool_label = "train" if report_seed in train_seed_set else ("holdout" if report_seed in holdout_seed_set else None)
+        if pool_label is None:
+            raise SystemExit(f"producer report seed is not assigned to a panel: {report_seed}")
+        report_side_count = int(report["per_population"][0]["side_count"])
         pool_requested = pool_accepted = pool_exhausted = 0
         pool_generation_ms = 0.0
         for item in report["per_population"]:
             pool_requested += int(item["requested"]); pool_accepted += int(item["accepted"]); pool_exhausted += int(item["exhausted"]); pool_generation_ms += float(item["total_generation_ms"])
             generation_rows.append({"pool": pool_label, "population": f"{item['law']}[{item['parameter']}]", "side_count": item["side_count"], "requested": item["requested"], "accepted": item["accepted"], "exhausted": item["exhausted"], "generation_ms": item["total_generation_ms"], "generation_ms_per_accepted": (item["total_generation_ms"] / item["accepted"] if item["accepted"] else None), "source_revision": report.get("source_revision"), "source_dirty": report.get("source_dirty")})
-        generation_rows.append({"pool": pool_label, "population": "__full_pool__", "side_count": 6, "requested": pool_requested, "accepted": pool_accepted, "exhausted": pool_exhausted, "generation_ms": pool_generation_ms, "generation_ms_per_accepted": (pool_generation_ms / pool_accepted if pool_accepted else None), "source_revision": report.get("source_revision"), "source_dirty": report.get("source_dirty")})
+        generation_rows.append({"pool": pool_label, "population": "__full_pool__", "side_count": report_side_count, "requested": pool_requested, "accepted": pool_accepted, "exhausted": pool_exhausted, "generation_ms": pool_generation_ms, "generation_ms_per_accepted": (pool_generation_ms / pool_accepted if pool_accepted else None), "source_revision": report.get("source_revision"), "source_dirty": report.get("source_dirty")})
     write_tsv(args.out_dir / "generation-cost.tsv", generation_rows)
     calibration = synthetic_calibration(args.out_dir)
     policy_results = []
-    for policy in ("passive_coreset", "offline_greedy_max", "offline_greedy_frame", "offline_greedy_chord"):
+    for side_count, _, _ in panels:
+      for policy in ("passive_coreset", "offline_greedy_max", "offline_greedy_frame", "offline_greedy_chord"):
         for view in VIEW_NAMES:
-            values = [row for row in policy_rows if row["policy"] == policy and row["view"] == view]
+            values = [row for row in policy_rows if row["side_count"] == side_count and row["policy"] == policy and row["view"] == view]
             first, last = values[0], values[-1]
             for metric in ("max", "mean", "q90"):
                 initial = float(first[f"holdout_cover_{metric}_before"])
                 final = float(last[f"holdout_cover_{metric}_after"])
-                policy_results.append({"policy": policy, "view": view, "metric": metric, "retained_budget": int(last["budget"]), "holdout_initial_cover": initial, "holdout_final_cover": final, "holdout_total_reduction": initial - final, "holdout_reduction_per_retained_witness": (initial - final) / int(last["budget"])})
-    inputs = {str(path): sha256(path) for path in [args.train, args.holdout, *args.producer_report]}
+                policy_results.append({"side_count": side_count, "policy": policy, "view": view, "metric": metric, "retained_budget": int(last["budget"]), "holdout_initial_cover": initial, "holdout_final_cover": final, "holdout_total_reduction": initial - final, "holdout_reduction_per_retained_witness": (initial - final) / int(last["budget"])})
+    findings = []
+    for side_count, _, _ in panels:
+        panel_arms = [arm for arm in arms if arm["side_count"] == side_count]
+        for view in VIEW_NAMES:
+            for metric in ("mean", "q90"):
+                lookup = lambda policy: next(row for row in policy_results if row["side_count"] == side_count and row["policy"] == policy and row["view"] == view and row["metric"] == metric)
+                off, passive = lookup("offline_greedy_max"), lookup("passive_coreset")
+                positive = sum(bool(arm["offline_greedy_max_fixed_train_panel_holdout_bulk_nonredundant_views"]["view_dependent_by_metric"][metric][view]) for arm in panel_arms)
+                findings.append({"side_count": side_count, "view": view, "metric": metric, "offline_greedy_max_total_reduction": off["holdout_total_reduction"], "passive_coreset_total_reduction": passive["holdout_total_reduction"], "offline_greedy_max_reduction_per_retained_witness": off["holdout_reduction_per_retained_witness"], "positive_arm_contribution_count": positive, "interpretation": "stratum-local bulk diagnostic; do not compare side counts or select a best law/view"})
+    inputs = {str(path): sha256(path) for path in [*args.train, *args.holdout, *args.producer_report]}
     source_files = [Path(__file__)]
     repo = Path(__file__).resolve().parents[4]
     revision = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True).stdout.strip()
@@ -380,7 +419,29 @@ def main() -> None:
     python_version, numpy_version = platform.python_version(), np.__version__
     selection_observation = {"schema": "coverage-directed-novelty-selection-observation-v1", "selection_cost_ms": selection_ms, "python_version": python_version, "numpy_version": numpy_version, "nondeterministic": True, "excluded_from_byte_replay": True, "note": "Wall-clock timing is an observation only; it is not part of deterministic evidence."}
     (args.out_dir / "selection-cost-observation.json").write_text(json.dumps(selection_observation, indent=2, sort_keys=True) + "\n")
-    report = {"schema": SCHEMA, "question": "Can an offline multi-view greedy coreset retain nonredundant finite-panel geometry from an already generated pool?", "train_input_sha256": sha256(args.train), "holdout_input_sha256": sha256(args.holdout), "rows": {"train": len(train), "holdout": len(holdout), "train_full_pool_generated_rows": len(train), "holdout_full_pool_generated_rows": len(holdout), "populations": len(arm_order(train)), "side_count": 6}, "environment": {"python_version": python_version, "numpy_version": numpy_version, "numpy_requirement": "numpy==1.26.4", "deterministic_replay_contract": "run with uv and the PEP-723 numpy pin; selection-cost-observation.json is excluded because it contains wall-clock timing"}, "arms": arms, "policies": ["passive_coreset", "offline_greedy_max", "offline_greedy_frame", "offline_greedy_chord"], "retained_budget": MAX_BUDGET, "policy_results": policy_results, "selection_cost_artifact": "selection-cost-observation.json", "generation_cost_artifact": "generation-cost.tsv", "view_contract": {"frame_geometry": "cyclic/frame-adjusted vertices after translation and area normalization; minimum over start and reversal", "chord_invariant": "sorted all-pairs chord lengths after translation and area normalization", "offline_greedy_max": "max of per-view median-normalized gains for offline coreset acquisition only; no scientific scalar ranking", "passive_coreset": "deterministic SHA-256 rank order is the reproducible passive retained-budget comparator"}, "frozen_baseline": {"population": BASELINE, "n": 4, "selection": "lowest deterministic witness IDs"}, "pool_contract": {"independent_master_seeds": True, "disjoint_sample_ids": True, "balanced_population_side_count_strata": True, "abandoned_or_capped_arms": [], "failure_mode": "analyze.py fails closed on overlap, imbalance, or side-count drift"}, "synthetic_calibrations": calibration, "input_hashes": inputs, "source": {"revision": revision, "analyzer_sha256": sha256(Path(__file__)), "tracked_clean_for_analyzer": not bool(dirty), "producer_revision": producer_revision, "producer_source_blobs": producer_source_blobs}, "provenance": {"producer_reports": [str(p) for p in args.producer_report], "seed_contract": "train and holdout are independent master seeds; seed and attempt are retained in every witness row", "witness_id": "sha256(sample_id) prefix", "selection_contract": "all full train rows are generated before offline retained-witness selection"}, "interpretation": {"allowed": ["finite-panel holdout nearest-cover max/mean/q90 by named population and view", "which arms contribute nonredundant retained witnesses under each explicitly qualified panel/policy/metric/view field", "measured full-pool generation and offline selection costs", "metric-disagreement cases and synthetic calibration behavior"], "prohibited": ["online allocation, sample-efficiency, or per-generated-row claims", "reading arm contribution fields as intrinsic properties of a law or population", "sys or target exposure", "population support or density claims", "law quality ranking", "target transfer, inferential, causal, or post-selection claims"], "limitations": ["geometry alone cannot distinguish a rare remote mode from a contamination outlier", "one fixed side-count stratum and two seeds are implementation/finite-panel evidence only", "offline greedy views are retained-coreset heuristics, not online policies"], "smallest_next_geometry_only_follow_up": "Repeat the same frozen offline coreset on one additional independent seed pair at side count 4 or 8, then test whether bulk (mean/q90) reductions persist before any target exposure.", "selected_witness_authorization": "geometry-only follow-up only"}}
+    panel_metadata = [{"side_count": side_count, "train_rows": len(train), "holdout_rows": len(holdout), "train_seeds": sorted({s.seed for s in train}), "holdout_seeds": sorted({s.seed for s in holdout})} for side_count, train, holdout in panels]
+    report = {
+        "schema": SCHEMA,
+        "question": "Do bulk holdout mean/q90 cover reductions and multi-law retained-witness contributions persist separately at side counts 4, 6, and 8?",
+        "panels": panel_metadata,
+        "side_counts": [item["side_count"] for item in panel_metadata],
+        "environment": {"python_version": python_version, "numpy_version": numpy_version, "numpy_requirement": "numpy==1.26.4", "deterministic_replay_contract": "run with uv and the PEP-723 numpy pin; selection-cost-observation.json is excluded because it contains wall-clock timing"},
+        "arms": arms,
+        "policies": ["passive_coreset", "offline_greedy_max", "offline_greedy_frame", "offline_greedy_chord"],
+        "retained_budget_per_side_count": MAX_BUDGET,
+        "policy_results": policy_results,
+        "stratum_findings": findings,
+        "selection_cost_artifact": "selection-cost-observation.json",
+        "generation_cost_artifact": "generation-cost.tsv",
+        "view_contract": {"frame_geometry": "cyclic/frame-adjusted vertices after translation and area normalization; minimum over start and reversal", "chord_invariant": "sorted all-pairs chord lengths after translation and area normalization", "offline_greedy_max": "max of per-view median-normalized gains for offline coreset acquisition only; no scientific scalar ranking", "passive_coreset": "deterministic SHA-256 rank order is the reproducible passive retained-budget comparator"},
+        "frozen_baseline": {"population": BASELINE, "n": 4, "selection": "lowest deterministic witness IDs separately within each side-count train panel"},
+        "pool_contract": {"independent_master_seeds": True, "disjoint_sample_ids": True, "balanced_population_side_count_strata": True, "abandoned_or_capped_arms": [], "failure_mode": "analyze.py fails closed on overlap, imbalance, side-count drift, or duplicate side panels"},
+        "synthetic_calibrations": calibration,
+        "input_hashes": inputs,
+        "source": {"revision": revision, "analyzer_sha256": sha256(Path(__file__)), "tracked_clean_for_analyzer": not bool(dirty), "producer_revision": producer_revision, "producer_source_blobs": producer_source_blobs},
+        "provenance": {"producer_reports": [str(p) for p in args.producer_report], "seed_contract": "each side-count train/holdout pair uses independent master seeds; seed and attempt are retained in every witness row", "witness_id": "sha256(sample_id) prefix", "selection_contract": "all full train rows are generated before offline retained-witness selection separately within each side-count panel"},
+        "interpretation": {"allowed": ["stratum-local holdout nearest-cover max/mean/q90 by named panel, population, and view", "which arms contribute retained witnesses under each explicitly qualified panel/policy/metric/view field", "measured full-pool generation and offline selection costs", "metric-disagreement cases and synthetic calibration behavior"], "prohibited": ["pooling side counts or selecting a best side count, law, or view", "online allocation, sample-efficiency, or per-generated-row claims", "reading arm contribution fields as intrinsic properties of a law or population", "sys or target exposure", "population support or density claims", "law quality ranking", "target transfer, inferential, causal, or post-selection claims"], "limitations": ["geometry alone cannot distinguish a rare remote mode from a contamination outlier", "three finite side-count panels and independent seed pairs are bounded confirmation evidence only", "offline greedy views are retained-coreset heuristics, not online policies"], "smallest_next_geometry_only_follow_up": "If a later decision needs more evidence, repeat one named side-count panel with another independent seed pair; do not pool these strata or choose a winning law/view.", "selected_witness_authorization": "geometry-only follow-up only"}
+    }
     (args.out_dir / "report.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
     print(json.dumps({"schema": SCHEMA, "train_rows": len(train), "holdout_rows": len(holdout), "selection_cost_artifact": str(args.out_dir / "selection-cost-observation.json")}))
 

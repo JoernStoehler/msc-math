@@ -36,7 +36,7 @@ def test_report_contract_after_run():
     report = json.loads(report_path.read_text())
     assert report["schema"] == analyze.SCHEMA
     assert set(report["policies"]) == {"passive_coreset", "offline_greedy_max", "offline_greedy_frame", "offline_greedy_chord"}
-    assert report["rows"]["side_count"] == 6
+    assert report["side_counts"] == [4, 6, 8]
     assert len(report["input_hashes"]) >= 4
     assert report["environment"]["numpy_requirement"] == "numpy==1.26.4"
     assert report["environment"]["numpy_version"] == "1.26.4"
@@ -45,20 +45,22 @@ def test_report_contract_after_run():
     for arm in report["arms"]:
         selected = arm["offline_greedy_max_fixed_train_panel_selected_witnesses"]
         contribution = arm["offline_greedy_max_fixed_train_panel_holdout_mean_nonredundant_views"]
-        assert selected["not_intrinsic_arm_property"] and selected["retained_budget"] == report["retained_budget"]
-        assert contribution["not_intrinsic_arm_property"] and contribution["retained_budget"] == report["retained_budget"]
+        assert selected["not_intrinsic_arm_property"] and selected["retained_budget"] == report["retained_budget_per_side_count"]
+        assert contribution["not_intrinsic_arm_property"] and contribution["retained_budget"] == report["retained_budget_per_side_count"]
         assert contribution["metric"] == "holdout mean nearest-cover distance"
 
 
 def test_byte_replay_under_pinned_environment(tmp_path: Path):
     assert np.__version__ == "1.26.4", "run tests with: uv run --with pytest --with numpy==1.26.4 python -m pytest"
     packet = Path(__file__).parent
-    inputs = [
-        "--train", str((packet / "artifacts/train/factor-shapes.jsonl").resolve()),
-        "--holdout", str((packet / "artifacts/holdout/factor-shapes.jsonl").resolve()),
-        "--producer-report", str((packet / "artifacts/train/factor-only-report.json").resolve()),
-        "--producer-report", str((packet / "artifacts/holdout/factor-only-report.json").resolve()),
-    ]
+    panel_dirs = {4: (packet / "artifacts/train-side4", packet / "artifacts/holdout-side4"), 6: (packet / "artifacts/train", packet / "artifacts/holdout"), 8: (packet / "artifacts/train-side8", packet / "artifacts/holdout-side8")}
+    inputs = []
+    for side in (4, 6, 8):
+        train_dir, holdout_dir = panel_dirs[side]
+        inputs.extend(["--train", str((train_dir / "factor-shapes.jsonl").resolve()), "--holdout", str((holdout_dir / "factor-shapes.jsonl").resolve())])
+    for side in (4, 6, 8):
+        train_dir, holdout_dir = panel_dirs[side]
+        inputs.extend(["--producer-report", str((train_dir / "factor-only-report.json").resolve()), "--producer-report", str((holdout_dir / "factor-only-report.json").resolve())])
     runs = []
     for index in (1, 2):
         output = tmp_path / f"run{index}"

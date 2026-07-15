@@ -38,7 +38,7 @@ synthetic calibration retains that limitation explicitly.
 
 ## Reproduce
 
-From this worktree, build the existing producer and run two independent pools:
+From this worktree, build the existing producer and run independent train/holdout pools for each side-count panel:
 
 ```bash
 cargo build --release --locked --package exp-sys-landscape --bin sys-datascience-generator-zoo-smoke
@@ -55,10 +55,25 @@ COMMON=(--factor-only --attempts 256 --factor-rows-per-population 12 --factor-si
   --factor-population 'zonogon|lengths=uniform(0.5,1.5)')
 "$PRODUCER" "${COMMON[@]}" --seed 20260716 --factor-out-dir "$PACKET/artifacts/train"
 "$PRODUCER" "${COMMON[@]}" --seed 20260717 --factor-out-dir "$PACKET/artifacts/holdout"
-uv run --script "$PACKET/analyze.py" --train "$PACKET/artifacts/train/factor-shapes.jsonl" \
-  --holdout "$PACKET/artifacts/holdout/factor-shapes.jsonl" \
-  --producer-report "$PACKET/artifacts/train/factor-only-report.json" \
-  --producer-report "$PACKET/artifacts/holdout/factor-only-report.json" \
+COMMON4=(--factor-only --attempts 256 --factor-rows-per-population 12 --factor-side-counts 4
+  --factor-population 'current-baseline|delta=0.2'
+  --factor-population 'primal-hull-uniform-disk|points=n+4,origin=interior'
+  --factor-population 'repulsive-gap|alpha=1' --factor-population 'repulsive-gap|alpha=4'
+  --factor-population 'repulsive-gap|alpha=16' --factor-population 'repulsive-gap|regular'
+  --factor-population 'regular-mutation|steps=4,scale=0.03'
+  --factor-population 'zonogon|lengths=uniform(0.5,1.5)')
+COMMON8=("${COMMON4[@]/--factor-side-counts 4/--factor-side-counts 8}")
+"$PRODUCER" "${COMMON4[@]}" --seed 20260718 --factor-out-dir "$PACKET/artifacts/train-side4"
+"$PRODUCER" "${COMMON4[@]}" --seed 20260719 --factor-out-dir "$PACKET/artifacts/holdout-side4"
+"$PRODUCER" "${COMMON8[@]}" --seed 20260720 --factor-out-dir "$PACKET/artifacts/train-side8"
+"$PRODUCER" "${COMMON8[@]}" --seed 20260721 --factor-out-dir "$PACKET/artifacts/holdout-side8"
+uv run --script "$PACKET/analyze.py" \
+  --train "$PACKET/artifacts/train-side4/factor-shapes.jsonl" --holdout "$PACKET/artifacts/holdout-side4/factor-shapes.jsonl" \
+  --train "$PACKET/artifacts/train/factor-shapes.jsonl" --holdout "$PACKET/artifacts/holdout/factor-shapes.jsonl" \
+  --train "$PACKET/artifacts/train-side8/factor-shapes.jsonl" --holdout "$PACKET/artifacts/holdout-side8/factor-shapes.jsonl" \
+  --producer-report "$PACKET/artifacts/train-side4/factor-only-report.json" --producer-report "$PACKET/artifacts/holdout-side4/factor-only-report.json" \
+  --producer-report "$PACKET/artifacts/train/factor-only-report.json" --producer-report "$PACKET/artifacts/holdout/factor-only-report.json" \
+  --producer-report "$PACKET/artifacts/train-side8/factor-only-report.json" --producer-report "$PACKET/artifacts/holdout-side8/factor-only-report.json" \
   --out-dir "$PACKET/artifacts/analysis"
 uv run --with pytest --with numpy==1.26.4 python -m pytest -q "$PACKET/test_packet.py"
 ```
@@ -68,7 +83,10 @@ compares `report.json` plus all deterministic TSVs byte-for-byte. It excludes
 `selection-cost-observation.json`, whose wall-clock value is intentionally
 nondeterministic.
 
-The checked-in artifacts are a bounded finite-panel result.  Rebuild the
+The checked-in artifacts are separate bounded finite-panel results for side
+counts 4, 6, and 8. Side counts are never pooled and no law/view winner is
+selected; `stratum-findings.tsv` reports only side-local mean/q90 diagnostics
+and multi-law contribution counts. Rebuild the
 producer from source rather than relying on a disposable absolute binary path;
 the analysis report binds exact input/report/analyzer hashes and the repository
 revision. A future packet should first check whether the bulk (mean/q90)
