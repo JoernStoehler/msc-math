@@ -2,9 +2,10 @@
 """Target-free exact audit of planar polarity pushforwards.
 
 The sampler mirrors the current factor law (IID angles, IID supports), then
-crosses an explicit rationalization boundary.  Everything after that boundary
-is exact Fraction arithmetic; scale factors, support samples, distances, and
-residuals are retained as f64 diagnostics.
+crosses an explicit rationalization boundary. Rational geometric fields after
+that boundary use exact Fraction arithmetic. scale_f64, support samples,
+distances, and stored residuals are f64 diagnostics; scale_squared remains
+exact.
 """
 from __future__ import annotations
 
