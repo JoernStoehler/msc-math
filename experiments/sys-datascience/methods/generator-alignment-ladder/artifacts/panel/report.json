@@ -1,0 +1,25 @@
+{
+  "schema": "alignment-ladder-report-v1",
+  "command": "/workspaces/msc-math/target/release/sys-datascience-generator-alignment-ladder --out-dir experiments/sys-datascience/methods/generator-alignment-ladder/artifacts/panel",
+  "source_revision": "738cf0ae1d673362d47a882856affb699bd81dc2",
+  "source_repository_tree": "48fb28923ea4c63198847c19247126976fbb5baa",
+  "source_dirty": false,
+  "producer_source_sha256": "42dc7640b4458d97a1a8e9e047bf496c0b919e1d5f9fbc9b69f9b692fa344646",
+  "analyzer_source_sha256": "e1de98e6b9af0a86f65e9a5249f1530f5d62fbb1e25567e98e23725e4cba84da",
+  "cargo_lock_sha256": "9e59bc0ed96aeccce2decc178beff2f224702174122ccf55d158fb009ef96d1e",
+  "source_base_contract": "orientation-smoke v1 seed=20260714, attempts=128, rows_per_bucket=2, buckets=3x3,4x4,4x6,6x6; regenerated because LFS raw rows need not be present",
+  "expected_bases": 8,
+  "expected_rows": 40,
+  "observed_rows": 40,
+  "passed_rows": 40,
+  "all_requested_rows_passed": true,
+  "formula_controls_passed": true,
+  "coordinate_order": "q1,q2,p1,p2",
+  "a_theta_convention": "A_theta=diag(Q(theta),I_2), Q(theta) rotates q1,q2; A_pi=diag(-1,-1,1,1)",
+  "kahler_departure_coordinate": "sin^2(theta/2)",
+  "proof_review_cruxes": [
+    "Do not promote this representative family to an exhaustion or unique parameterization of U(2)\\SO(4)/U(2) without proof review.",
+    "Do not assume anti-symplectic capacity invariance; review the capacity definition and proof separately before later target interpretation."
+  ],
+  "interpretation_boundary": "Target-free finite-panel geometry only: no sys, capacity, target-derived field, capacity dose claim, population claim, or quotient-natural-law claim."
+}

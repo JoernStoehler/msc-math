@@ -1,0 +1,121 @@
+{
+  "analyzer_sha256": "e1de98e6b9af0a86f65e9a5249f1530f5d62fbb1e25567e98e23725e4cba84da",
+  "bases": 8,
+  "classification_counts": {
+    "endpoint_controlled_l2": 6,
+    "genuinely_multi_directional_signature_response": 8,
+    "monotone_non_decreasing_l2": 6,
+    "reverse_theta_symmetric_l2": 0
+  },
+  "interpretation": "Finite-panel, target-free direct symplectic-signature responses after exact reconstruction. These labels do not show a capacity dose-response, population law, quotient parameterization, or target transfer.",
+  "per_base": [
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0",
+      "bucket": "3x3",
+      "endpoint_controlled_l2": true,
+      "genuinely_multi_directional_signature_response": true,
+      "monotone_non_decreasing_l2": true,
+      "reverse_theta_symmetric_l2": false,
+      "successive_abs_cosines": [
+        0.9125561046368319,
+        0.9335699811888992,
+        0.9450669629000966
+      ]
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=1",
+      "bucket": "3x3",
+      "endpoint_controlled_l2": true,
+      "genuinely_multi_directional_signature_response": true,
+      "monotone_non_decreasing_l2": true,
+      "reverse_theta_symmetric_l2": false,
+      "successive_abs_cosines": [
+        0.9239642054490297,
+        0.9752913911956598,
+        0.985591478759003
+      ]
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=0",
+      "bucket": "4x4",
+      "endpoint_controlled_l2": false,
+      "genuinely_multi_directional_signature_response": true,
+      "monotone_non_decreasing_l2": false,
+      "reverse_theta_symmetric_l2": false,
+      "successive_abs_cosines": [
+        0.9483393407152136,
+        0.9388370919975073,
+        0.9177697792488744
+      ]
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=1",
+      "bucket": "4x4",
+      "endpoint_controlled_l2": true,
+      "genuinely_multi_directional_signature_response": true,
+      "monotone_non_decreasing_l2": true,
+      "reverse_theta_symmetric_l2": false,
+      "successive_abs_cosines": [
+        0.9499793216757779,
+        0.9715480971079761,
+        0.9753267992798011
+      ]
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=0",
+      "bucket": "4x6",
+      "endpoint_controlled_l2": true,
+      "genuinely_multi_directional_signature_response": true,
+      "monotone_non_decreasing_l2": true,
+      "reverse_theta_symmetric_l2": false,
+      "successive_abs_cosines": [
+        0.9264578042865471,
+        0.9214408859113055,
+        0.9175950656666907
+      ]
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=1",
+      "bucket": "4x6",
+      "endpoint_controlled_l2": true,
+      "genuinely_multi_directional_signature_response": true,
+      "monotone_non_decreasing_l2": true,
+      "reverse_theta_symmetric_l2": false,
+      "successive_abs_cosines": [
+        0.9545065451664424,
+        0.9684768953402364,
+        0.9682589623631923
+      ]
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=0",
+      "bucket": "6x6",
+      "endpoint_controlled_l2": true,
+      "genuinely_multi_directional_signature_response": true,
+      "monotone_non_decreasing_l2": true,
+      "reverse_theta_symmetric_l2": false,
+      "successive_abs_cosines": [
+        0.9089113546142152,
+        0.9254678145531361,
+        0.9378977097527756
+      ]
+    },
+    {
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=1",
+      "bucket": "6x6",
+      "endpoint_controlled_l2": false,
+      "genuinely_multi_directional_signature_response": true,
+      "monotone_non_decreasing_l2": false,
+      "reverse_theta_symmetric_l2": false,
+      "successive_abs_cosines": [
+        0.9781511193663743,
+        0.9280907912461851,
+        0.6805574681922393
+      ]
+    }
+  ],
+  "report_sha256": "fb6fdbd97b270dd2ffd93869c38ca30f69f070445c5364ce153e97bd576dda9e",
+  "rows": 40,
+  "rows_sha256": "169cfc2412ff88b506844edf4140fa38599d913928c0960949652fe4a236494b",
+  "schema": "alignment-ladder-analysis-v1"
+}
