@@ -200,8 +200,14 @@ struct Report {
 #[derive(Serialize)]
 struct DiagonalQuotientControl {
     input_d_exact: [String; 4],
+    input_positive: bool,
+    input_determinant_exact: String,
+    input_determinant_one: bool,
     t_squared_exact: String,
     symplectic_factor_exact: [[String; 4]; 4],
+    symplectic_factor_residual_exact: String,
+    symplectic_factor_is_exact: bool,
+    nonidentity_factor: bool,
     reconstructed_d_exact: [[String; 4]; 4],
     reconstruction_passed: bool,
     scope: &'static str,
@@ -408,15 +414,15 @@ fn square_spectrum(level: Level) -> (Vec<String>, Vec<f64>) {
 }
 
 fn quotient_control() -> DiagonalQuotientControl {
-    // Concrete positive rational determinant-one diagonal.  In general
-    // t^2=d1*d3 and d2*d4=t^-2; this case has t=2 and D=N_2.
-    let d = [rat(2, 1), rat(1, 2), rat(2, 1), rat(1, 2)];
+    // Noncanonical positive rational determinant-one diagonal.  In general
+    // t^2=d1*d3 and d2*d4=t^-2; here t=2 and A is nonidentity.
+    let d = [rat(1, 1), rat(1, 1), rat(4, 1), rat(1, 4)];
     let t = rat(2, 1);
     let a = [
         d[0].clone() / t.clone(),
         d[1].clone() * t.clone(),
-        t.clone() / d[2].clone(),
-        rat(1, 1) / (d[3].clone() * t.clone()),
+        d[2].clone() / t.clone(),
+        d[3].clone() * t.clone(),
     ];
     let factor = std::array::from_fn(|i| {
         std::array::from_fn(|j| if i == j { a[i].clone() } else { rat(0, 1) })
@@ -437,6 +443,8 @@ fn quotient_control() -> DiagonalQuotientControl {
         })
     });
     let input_d_exact = std::array::from_fn(|i| rat_string(&d[i]));
+    let determinant = d.iter().cloned().fold(rat(1, 1), |x, y| x * y);
+    let factor_residual = exact_symplectic_residual(&factor);
     let reconstruction_passed = rec.iter().enumerate().all(|(i, row)| {
         row[i] == d[i]
             && row
@@ -446,8 +454,16 @@ fn quotient_control() -> DiagonalQuotientControl {
     });
     DiagonalQuotientControl {
         input_d_exact,
+        input_positive: d.iter().all(|x| x > &rat(0, 1)),
+        input_determinant_exact: rat_string(&determinant),
+        input_determinant_one: determinant == rat(1, 1),
         t_squared_exact: rat_string(&(t.clone() * t)),
         symplectic_factor_exact: exact_matrix_strings(&factor),
+        symplectic_factor_residual_exact: factor_residual.clone(),
+        symplectic_factor_is_exact: factor_residual == "0/1",
+        nonidentity_factor: factor != std::array::from_fn(|i| {
+            std::array::from_fn(|j| if i == j { rat(1, 1) } else { rat(0, 1) })
+        }),
         reconstructed_d_exact: exact_matrix_strings(&rec),
         reconstruction_passed,
         scope: "positive diagonal determinant-one Cartan quotient only; not a classification of Sp(4)\\SL(4)\\Sp(4)",
@@ -469,13 +485,10 @@ fn geometry_id(p: &SysLandscapePolytopeCache) -> String {
 fn load_bases(path: &Path) -> Result<(Vec<SourceRow>, String), String> {
     let bytes = read(path).map_err(|e| format!("source read failed: {e}"))?;
     let digest = sha256_hex(&bytes);
+    let text = std::str::from_utf8(&bytes).map_err(|_| "source is not UTF-8".to_string())?;
     let mut bases = Vec::new();
     let mut seen = BTreeSet::new();
-    for (line_no, line) in String::from_utf8(bytes)
-        .map_err(|_| "source is not UTF-8".to_string())?
-        .lines()
-        .enumerate()
-    {
+    for (line_no, line) in text.lines().enumerate() {
         let row: SourceRow =
             serde_json::from_str(line).map_err(|e| format!("source line {}: {e}", line_no + 1))?;
         if row.schema != SOURCE_SCHEMA {
@@ -676,6 +689,13 @@ fn l1_diff(a: &[f64], b: &[f64]) -> f64 {
     a.iter().zip(b).map(|(x, y)| (x - y).abs()).sum()
 }
 
+fn max_abs_diff(a: &[f64], b: &[f64]) -> f64 {
+    a.iter()
+        .zip(b)
+        .map(|(x, y)| (x - y).abs())
+        .fold(0.0, f64::max)
+}
+
 fn main() {
     let argv: Vec<String> = env::args().collect();
     let args = match parse_args(&argv) {
@@ -719,7 +739,10 @@ fn run(args: &Args, _argv: &[String]) -> Result<(), String> {
                 t: level.name.into(),
                 s_row_id: s.row_id.clone(),
                 n_row_id: n.row_id.clone(),
-                singular_spectrum_max_abs_delta: l1_diff(&s.singular_values, &n.singular_values),
+                singular_spectrum_max_abs_delta: max_abs_diff(
+                    &s.singular_values,
+                    &n.singular_values,
+                ),
                 symplectic_residual_s: s.symplectic_residual_f64,
                 symplectic_residual_n: n.symplectic_residual_f64,
                 symplectic_feature_l1_delta: (s.response_exact_features.symplectic_gram_l1
@@ -840,6 +863,18 @@ mod tests {
         let (s, _) = matrix_for(LEVELS[0], "S");
         let (n, _) = matrix_for(LEVELS[0], "N");
         assert_eq!(s, n);
+    }
+    #[test]
+    fn diagonal_quotient_control_is_noncanonical_and_exact() {
+        let q = quotient_control();
+        assert!(q.input_positive);
+        assert_eq!(q.input_determinant_exact, "1/1");
+        assert!(q.input_determinant_one);
+        assert_eq!(q.t_squared_exact, "4/1");
+        assert_eq!(q.symplectic_factor_residual_exact, "0/1");
+        assert!(q.symplectic_factor_is_exact);
+        assert!(q.nonidentity_factor);
+        assert!(q.reconstruction_passed);
     }
     #[test]
     fn cli_fails_closed_on_unknown() {

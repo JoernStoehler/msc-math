@@ -21,7 +21,10 @@ are `(1,1)` and `(t^2,t^-2)`, respectively.  The exact positive-diagonal
 control in `report.json` verifies the quotient identity: for positive diagonal
 determinant-one `D`, the unique representative is `N_t` with
 `t^2=d1*d3=d2^-1*d4^-1`; this is only the diagonal Cartan quotient, not a
-classification of `Sp(4)\\SL(4)\\Sp(4)`.
+classification of `Sp(4)\\SL(4)\\Sp(4)`.  The report's exact noncanonical
+fixture is `D=diag(1,1,4,1/4)`, `t=2`, and
+`A=diag(1/2,2,2,1/2)`, with checks for positive determinant-one input,
+`A^T J A=J`, nonidentity `A`, and exact reconstruction `D=A N_t`.
 
 ## Run and artifacts
 

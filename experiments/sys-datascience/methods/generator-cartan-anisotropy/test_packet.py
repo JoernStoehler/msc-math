@@ -37,7 +37,15 @@ def main() -> None:
         else:
             assert s["symplectic_residual_exact"] == "0/1"
             assert n["symplectic_residual_exact"] != "0/1"
-    assert report["diagonal_quotient_control"]["reconstruction_passed"] is True
+    quotient = report["diagonal_quotient_control"]
+    assert quotient["input_positive"] is True
+    assert quotient["input_determinant_exact"] == "1/1"
+    assert quotient["input_determinant_one"] is True
+    assert quotient["t_squared_exact"] == "4/1"
+    assert quotient["symplectic_factor_residual_exact"] == "0/1"
+    assert quotient["symplectic_factor_is_exact"] is True
+    assert quotient["nonidentity_factor"] is True
+    assert quotient["reconstruction_passed"] is True
     print("Cartan packet checks passed: 64 rows, 32 pairs, byte hashes and controls valid")
 
 
