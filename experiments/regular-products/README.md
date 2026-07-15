@@ -165,11 +165,16 @@ Pentagon empirical minima sweep:
 cargo run -p exp-regular-products --release --bin regular-pentagon-rotation-empirics -- --canonical
 ```
 
-Pentagon empirical figures:
+Pentagon sampled KKT-branch landscape:
 
 ```bash
-uv run --script experiments/regular-products/pentagon-rotation-empirics/analyze.py
+cargo run -p exp-regular-products --release --bin regular-pentagon-rotation-empirics -- --branch-landscape --canonical
+uv run --script experiments/regular-products/pentagon-rotation-empirics/analyze.py landscape \
+  --input experiments/regular-products/pentagon-rotation-empirics/kkt-branch-landscape.jsonl
 ```
+
+The owner README records the bounded spike and the explicit-input command for
+the retained legacy figures.
 
 Pentagon orbit viewer:
 

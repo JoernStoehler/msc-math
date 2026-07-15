@@ -1,0 +1,1726 @@
+{
+  "allowed_interpretation": "The sampled numerical grid illustrates the scale and competition of the enumerated two-/three-block KKT family and sampled appearance or disappearance of admissible branches.",
+  "analyzer": {
+    "group_action_decimals": 10,
+    "publication_input_is_explicit": true,
+    "source": "experiments/regular-products/pentagon-rotation-empirics/analyze.py",
+    "source_sha256": "11d9e4b81ace0057be6f7b26eb899cce1bd4f9f4415c4858691fe7df61af09f7"
+  },
+  "candidate_views": {
+    "raw": "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape_raw.png",
+    "sampled_classification": "experiments/regular-products/pentagon-rotation-empirics/kkt_branch_sampled_classification.png",
+    "sampled_classification_vector": "experiments/regular-products/pentagon-rotation-empirics/kkt_branch_sampled_classification.pdf",
+    "whole_profile_grouped": "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape_grouped.png"
+  },
+  "classification": {
+    "endpoint_status": {
+      "theta_0": {
+        "2": {
+          "admissible": 95,
+          "indeterminate": 0,
+          "numerically_inadmissible": 855,
+          "solve_failure": 0
+        },
+        "3": {
+          "admissible": 300,
+          "indeterminate": 0,
+          "numerically_inadmissible": 2090,
+          "solve_failure": 0
+        },
+        "all": {
+          "admissible": 395,
+          "indeterminate": 0,
+          "numerically_inadmissible": 2945,
+          "solve_failure": 0
+        }
+      },
+      "theta_pi_over_10": {
+        "2": {
+          "admissible": 110,
+          "indeterminate": 70,
+          "numerically_inadmissible": 770,
+          "solve_failure": 0
+        },
+        "3": {
+          "admissible": 425,
+          "indeterminate": 219,
+          "numerically_inadmissible": 1746,
+          "solve_failure": 0
+        },
+        "all": {
+          "admissible": 535,
+          "indeterminate": 289,
+          "numerically_inadmissible": 2516,
+          "solve_failure": 0
+        }
+      }
+    },
+    "presence": {
+      "2": {
+        "admissible_at_every_sample": 50,
+        "multiple_sampled_runs": 0,
+        "no_admissible_sample": 795,
+        "one_contiguous_sampled_run": 105
+      },
+      "3": {
+        "admissible_at_every_sample": 155,
+        "multiple_sampled_runs": 1,
+        "no_admissible_sample": 1820,
+        "one_contiguous_sampled_run": 414
+      },
+      "all": {
+        "admissible_at_every_sample": 205,
+        "multiple_sampled_runs": 1,
+        "no_admissible_sample": 2615,
+        "one_contiguous_sampled_run": 519
+      }
+    }
+  },
+  "grouping": {
+    "curve_semantics": "each gray curve in the grouped landscape is one fixed raw representative across all sampled angles; curves are never pointwise aggregated, minimized, or spliced",
+    "group_count_by_block": {
+      "2": 7,
+      "3": 33
+    },
+    "largest_raw_multiplicity": 1710,
+    "multiplicity_encoding": "gray-curve width and opacity increase monotonically with the represented group's raw-word multiplicity; exact multiplicities remain in this report",
+    "raw_multiplicity_preserved": true,
+    "raw_word_count": 3340,
+    "semantics": "branches are grouped only when block count and the entire sampled sequence of four-way statuses plus actions rounded to 10 decimal places agree; each plotted group uses the lexicographically smallest raw sigma as one fixed representative for the whole domain, never a pointwise minimum or splice",
+    "singleton_groups": 1,
+    "whole_profile_group_count": 40
+  },
+  "highlighted_raw_sigmas": {
+    "active": {
+      "raw_sigma_id": 2789,
+      "samples": [
+        {
+          "action": 3.2725424859373677,
+          "action_lower": 3.2725424859373677,
+          "action_upper": 3.2725424859373677,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501042,
+          "q": 0.1527864045000421,
+          "q_error_bound": 5.059176399607313e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.272573638479748,
+          "action_lower": 3.272573638479748,
+          "action_upper": 3.272573638479748,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250103,
+          "q": 0.15278495008358975,
+          "q_error_bound": 1.1134221009379632e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.2726670990724887,
+          "action_lower": 3.2726670990724887,
+          "action_upper": 3.2726670990724887,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501048,
+          "q": 0.15278058686192242,
+          "q_error_bound": 8.242233367317732e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.272822876613054,
+          "action_lower": 3.272822876613054,
+          "action_upper": 3.272822876613054,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250102,
+          "q": 0.15277331491810978,
+          "q_error_bound": 1.0815670480729166e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.273040985932856,
+          "action_lower": 3.273040985932856,
+          "action_upper": 3.273040985932856,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250104,
+          "q": 0.15276313439059913,
+          "q_error_bound": 1.2346207358513266e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.2733214478006953,
+          "action_lower": 3.2733214478006953,
+          "action_upper": 3.2733214478006953,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250103,
+          "q": 0.1527500454732131,
+          "q_error_bound": 1.5169821832697624e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.2736642889275935,
+          "action_lower": 3.2736642889275935,
+          "action_upper": 3.2736642889275935,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501042,
+          "q": 0.1527340484151455,
+          "q_error_bound": 1.267492772775145e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.274069541972982,
+          "action_lower": 3.274069541972982,
+          "action_upper": 3.274069541972982,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250104,
+          "q": 0.15271514352095764,
+          "q_error_bound": 3.7865111876391754e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.274537245552324,
+          "action_lower": 3.274537245552324,
+          "action_upper": 3.274537245552324,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.15269333115057113,
+          "q_error_bound": 3.268849932197272e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.2750674442460714,
+          "action_lower": 3.2750674442460714,
+          "action_upper": 3.2750674442460714,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250104,
+          "q": 0.15266861171926224,
+          "q_error_bound": 1.0496591966934117e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.2756601886100545,
+          "action_lower": 3.2756601886100545,
+          "action_upper": 3.2756601886100545,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501045,
+          "q": 0.15264098569765341,
+          "q_error_bound": 3.395561337827464e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.2763155351872566,
+          "action_lower": 3.2763155351872566,
+          "action_upper": 3.2763155351872566,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.152610453611704,
+          "q_error_bound": 5.025177874224013e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.277033546520971,
+          "action_lower": 3.277033546520971,
+          "action_upper": 3.277033546520971,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501034,
+          "q": 0.15257701604270113,
+          "q_error_bound": 1.2343036521594155e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.2778142911693986,
+          "action_lower": 3.2778142911693986,
+          "action_upper": 3.2778142911693986,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501045,
+          "q": 0.15254067362724785,
+          "q_error_bound": 5.6123683853368474e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.278657843721637,
+          "action_lower": 3.278657843721637,
+          "action_upper": 3.278657843721637,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501048,
+          "q": 0.15250142705725128,
+          "q_error_bound": 3.512902878119086e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.2795642848150934,
+          "action_lower": 3.2795642848150934,
+          "action_upper": 3.2795642848150934,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501053,
+          "q": 0.15245927707990964,
+          "q_error_bound": 1.1629347981894784e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.280533701154334,
+          "action_lower": 3.280533701154334,
+          "action_upper": 3.280533701154334,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.15241422449769776,
+          "q_error_bound": 7.324379654217701e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.281566185531367,
+          "action_lower": 3.281566185531367,
+          "action_upper": 3.281566185531367,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501017,
+          "q": 0.15236627016835183,
+          "q_error_bound": 6.654560631301617e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.282661836847367,
+          "action_lower": 3.282661836847367,
+          "action_upper": 3.282661836847367,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.15231541500485307,
+          "q_error_bound": 3.9275767729617084e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.2838207601358547,
+          "action_lower": 3.2838207601358547,
+          "action_upper": 3.2838207601358547,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501045,
+          "q": 0.15226165997541063,
+          "q_error_bound": 5.318608593745304e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.285043066587351,
+          "action_lower": 3.285043066587351,
+          "action_upper": 3.285043066587351,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501034,
+          "q": 0.15220500610344273,
+          "q_error_bound": 7.976770739934062e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.286328873575498,
+          "action_lower": 3.286328873575498,
+          "action_upper": 3.286328873575498,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501045,
+          "q": 0.15214545446755737,
+          "q_error_bound": 4.505324363077106e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.287678304684665,
+          "action_lower": 3.287678304684665,
+          "action_upper": 3.287678304684665,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501053,
+          "q": 0.15208300620153195,
+          "q_error_bound": 1.7174585773944902e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.289091489739072,
+          "action_lower": 3.289091489739072,
+          "action_upper": 3.289091489739072,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501034,
+          "q": 0.1520176624942913,
+          "q_error_bound": 4.0102105525434524e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.290568564833397,
+          "action_lower": 3.290568564833397,
+          "action_upper": 3.290568564833397,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501025,
+          "q": 0.1519494245898855,
+          "q_error_bound": 5.292842773640031e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.2921096723649366,
+          "action_lower": 3.2921096723649366,
+          "action_upper": 3.2921096723649366,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250103,
+          "q": 0.15187829378746592,
+          "q_error_bound": 1.3374796310649136e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.2937149610672907,
+          "action_lower": 3.2937149610672907,
+          "action_upper": 3.2937149610672907,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501025,
+          "q": 0.15180427144126057,
+          "q_error_bound": 3.5218668659353714e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.295384586045617,
+          "action_lower": 3.295384586045617,
+          "action_upper": 3.295384586045617,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501045,
+          "q": 0.15172735896054795,
+          "q_error_bound": 5.0887828199823304e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.2971187088134246,
+          "action_lower": 3.2971187088134246,
+          "action_upper": 3.2971187088134246,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250104,
+          "q": 0.15164755780963107,
+          "q_error_bound": 2.903024500900417e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.2989174973309985,
+          "action_lower": 3.2989174973309985,
+          "action_upper": 3.2989174973309985,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.1515648695078088,
+          "q_error_bound": 7.855124170608032e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.300781126045398,
+          "action_lower": 3.300781126045398,
+          "action_upper": 3.300781126045398,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501025,
+          "q": 0.1514792956293471,
+          "q_error_bound": 1.2481974454083731e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.30270977593208,
+          "action_lower": 3.30270977593208,
+          "action_upper": 3.30270977593208,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501014,
+          "q": 0.15139083780344934,
+          "q_error_bound": 9.012758675483779e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.3047036345381757,
+          "action_lower": 3.3047036345381757,
+          "action_upper": 3.3047036345381757,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250105,
+          "q": 0.15129949771422507,
+          "q_error_bound": 3.523938384475249e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.306762896027424,
+          "action_lower": 3.306762896027424,
+          "action_upper": 3.306762896027424,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501025,
+          "q": 0.1512052771006577,
+          "q_error_bound": 1.0375383437694442e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.3088877612267633,
+          "action_lower": 3.3088877612267633,
+          "action_upper": 3.3088877612267633,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501023,
+          "q": 0.1511081777565722,
+          "q_error_bound": 8.125428243081789e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.311078437674668,
+          "action_lower": 3.311078437674668,
+          "action_upper": 3.311078437674668,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250103,
+          "q": 0.15100820153059988,
+          "q_error_bound": 1.4347890227722464e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.31333513967116,
+          "action_lower": 3.31333513967116,
+          "action_upper": 3.31333513967116,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501025,
+          "q": 0.1509053503261441,
+          "q_error_bound": 6.298676167599774e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.3156580883296094,
+          "action_lower": 3.3156580883296094,
+          "action_upper": 3.3156580883296094,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250104,
+          "q": 0.15079962610134337,
+          "q_error_bound": 6.399939204763133e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.3180475116302626,
+          "action_lower": 3.3180475116302626,
+          "action_upper": 3.3180475116302626,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.1506910308690348,
+          "q_error_bound": 9.20730071883579e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.3205036444756115,
+          "action_lower": 3.3205036444756115,
+          "action_upper": 3.3205036444756115,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.15057956669671482,
+          "q_error_bound": 4.059510865994019e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.3230267287475357,
+          "action_lower": 3.3230267287475357,
+          "action_upper": 3.3230267287475357,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.15046523570650072,
+          "q_error_bound": 9.550788803413046e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.3256170133663217,
+          "action_lower": 3.3256170133663217,
+          "action_upper": 3.3256170133663217,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.15034804007508976,
+          "q_error_bound": 3.381349358976506e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.3282747543515394,
+          "action_lower": 3.3282747543515394,
+          "action_upper": 3.3282747543515394,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501017,
+          "q": 0.15022798203371793,
+          "q_error_bound": 8.556145354138643e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.3310002148848405,
+          "action_lower": 3.3310002148848405,
+          "action_upper": 3.3310002148848405,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501048,
+          "q": 0.15010506386811687,
+          "q_error_bound": 5.6952353400969776e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.3337936653746376,
+          "action_lower": 3.3337936653746376,
+          "action_upper": 3.3337936653746376,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.14997928791847173,
+          "q_error_bound": 4.0420348817046506e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.3366553835228108,
+          "action_lower": 3.3366553835228108,
+          "action_upper": 3.3366553835228108,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501028,
+          "q": 0.14985065657937516,
+          "q_error_bound": 1.0900209616306613e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.339585654393354,
+          "action_lower": 3.339585654393354,
+          "action_upper": 3.339585654393354,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501034,
+          "q": 0.14971917229978235,
+          "q_error_bound": 6.00388960216302e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.342584770483067,
+          "action_lower": 3.342584770483067,
+          "action_upper": 3.342584770483067,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501045,
+          "q": 0.14958483758296443,
+          "q_error_bound": 7.854022169849576e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.345653031794291,
+          "action_lower": 3.345653031794291,
+          "action_upper": 3.345653031794291,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501023,
+          "q": 0.14944765498646087,
+          "q_error_bound": 6.1516431698165484e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.348790745909755,
+          "action_lower": 3.348790745909755,
+          "action_upper": 3.348790745909755,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.14930762712203047,
+          "q_error_bound": 2.535977488483529e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.3519982280695233,
+          "action_lower": 3.3519982280695233,
+          "action_upper": 3.3519982280695233,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501028,
+          "q": 0.14916475665560214,
+          "q_error_bound": 8.803673342320737e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.3552758012501376,
+          "action_lower": 3.3552758012501376,
+          "action_upper": 3.3552758012501376,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.1490190463072233,
+          "q_error_bound": 3.94969441275227e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.3586237962459182,
+          "action_lower": 3.3586237962459182,
+          "action_upper": 3.3586237962459182,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501042,
+          "q": 0.14887049885100917,
+          "q_error_bound": 2.1239791691261572e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.3620425517525483,
+          "action_lower": 3.3620425517525483,
+          "action_upper": 3.3620425517525483,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.14871911711508903,
+          "q_error_bound": 2.4443181216341157e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.3655324144529026,
+          "action_lower": 3.3655324144529026,
+          "action_upper": 3.3655324144529026,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.1485649039815531,
+          "q_error_bound": 4.180241936053232e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.369093739105224,
+          "action_lower": 3.369093739105224,
+          "action_upper": 3.369093739105224,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501042,
+          "q": 0.14840786238639705,
+          "q_error_bound": 3.451121950268568e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.3727268886336508,
+          "action_lower": 3.3727268886336508,
+          "action_upper": 3.3727268886336508,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501053,
+          "q": 0.14824799531946642,
+          "q_error_bound": 7.199418717572178e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.3764322342211424,
+          "action_lower": 3.3764322342211424,
+          "action_upper": 3.3764322342211424,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501034,
+          "q": 0.1480853058244,
+          "q_error_bound": 8.480731766622337e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.380210155404898,
+          "action_lower": 3.380210155404898,
+          "action_upper": 3.380210155404898,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501034,
+          "q": 0.1479197969985708,
+          "q_error_bound": 2.5250695757137615e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.384061040174214,
+          "action_lower": 3.384061040174214,
+          "action_upper": 3.384061040174214,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501042,
+          "q": 0.1477514719930287,
+          "q_error_bound": 4.3070576711280596e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.387985285070957,
+          "action_lower": 3.387985285070957,
+          "action_upper": 3.387985285070957,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501014,
+          "q": 0.14758033401243895,
+          "q_error_bound": 1.0086657409856971e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.3919832952925812,
+          "action_lower": 3.3919832952925812,
+          "action_upper": 3.3919832952925812,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250106,
+          "q": 0.14740638631502212,
+          "q_error_bound": 5.359357124824406e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.3960554847978353,
+          "action_lower": 3.3960554847978353,
+          "action_upper": 3.3960554847978353,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.14722963221249155,
+          "q_error_bound": 5.013423128159653e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4002022764151474,
+          "action_lower": 3.4002022764151474,
+          "action_upper": 3.4002022764151474,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501048,
+          "q": 0.1470500750699905,
+          "q_error_bound": 7.031730339398067e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.404424101953769,
+          "action_lower": 3.404424101953769,
+          "action_upper": 3.404424101953769,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501042,
+          "q": 0.14686771830602843,
+          "q_error_bound": 7.770508932942821e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.408721402317765,
+          "action_lower": 3.408721402317765,
+          "action_upper": 3.408721402317765,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.14668256539241495,
+          "q_error_bound": 5.1809726151224585e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4130946276228227,
+          "action_lower": 3.4130946276228227,
+          "action_upper": 3.4130946276228227,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250103,
+          "q": 0.14649461985419482,
+          "q_error_bound": 2.445440819168248e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4175442373160383,
+          "action_lower": 3.4175442373160383,
+          "action_upper": 3.4175442373160383,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501028,
+          "q": 0.14630388526958002,
+          "q_error_bound": 3.040264102861264e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.422070700298666,
+          "action_lower": 3.422070700298666,
+          "action_upper": 3.422070700298666,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501053,
+          "q": 0.1461103652698823,
+          "q_error_bound": 1.0360626582162482e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4266744950519477,
+          "action_lower": 3.4266744950519477,
+          "action_upper": 3.4266744950519477,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250104,
+          "q": 0.1459140635394434,
+          "q_error_bound": 5.333579786685985e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.431356109766044,
+          "action_lower": 3.431356109766044,
+          "action_upper": 3.431356109766044,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501023,
+          "q": 0.14571498381556525,
+          "q_error_bound": 7.762217535383307e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.436116042472157,
+          "action_lower": 3.436116042472157,
+          "action_upper": 3.436116042472157,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501028,
+          "q": 0.145513129888439,
+          "q_error_bound": 1.3017069034024804e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4409548011779347,
+          "action_lower": 3.4409548011779347,
+          "action_upper": 3.4409548011779347,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501003,
+          "q": 0.14530850560107214,
+          "q_error_bound": 1.7093950534972023e-29,
+          "status": "admissible"
+        }
+      ],
+      "sigma": [
+        3,
+        8,
+        1,
+        0,
+        5,
+        6
+      ]
+    },
+    "semantics": "the active label comes from the theorem source and the worked-competitor label from the chapter calculation; the numerical action-bound diagnostics are not used to establish ordering or ties",
+    "worked_competitor": {
+      "raw_sigma_id": 281,
+      "samples": [
+        {
+          "action": 3.5300566479164903,
+          "action_lower": 3.5300566479164903,
+          "action_upper": 3.5300566479164903,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250104,
+          "q": 0.14164078649987386,
+          "q_error_bound": 8.255263934548338e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.526363872675306,
+          "action_lower": 3.526363872675306,
+          "action_upper": 3.526363872675306,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.14178911140575823,
+          "q_error_bound": 5.644083111238941e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.5227458132653617,
+          "action_lower": 3.5227458132653617,
+          "action_upper": 3.5227458132653617,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250105,
+          "q": 0.141934736851346,
+          "q_error_bound": 1.2163197058030627e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.519202102387406,
+          "action_lower": 3.519202102387406,
+          "action_upper": 3.519202102387406,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501048,
+          "q": 0.14207766006413866,
+          "q_error_bound": 2.1582993583838892e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.5157323811576062,
+          "action_lower": 3.5157323811576062,
+          "action_upper": 3.5157323811576062,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501042,
+          "q": 0.14221787832308433,
+          "q_error_bound": 6.93498031541021e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.512336299016455,
+          "action_lower": 3.512336299016455,
+          "action_upper": 3.512336299016455,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501034,
+          "q": 0.14235538895862931,
+          "q_error_bound": 2.559050649736412e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.5090135136400695,
+          "action_lower": 3.5090135136400695,
+          "action_upper": 3.5090135136400695,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501028,
+          "q": 0.14249018935276936,
+          "q_error_bound": 4.436352836729239e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.50576369085387,
+          "action_lower": 3.50576369085387,
+          "action_upper": 3.50576369085387,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501048,
+          "q": 0.14262227693909943,
+          "q_error_bound": 9.477261834969138e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.5025865045485958,
+          "action_lower": 3.5025865045485958,
+          "action_upper": 3.5025865045485958,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501048,
+          "q": 0.14275164920286207,
+          "q_error_bound": 1.1453038541234771e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4994816365985746,
+          "action_lower": 3.4994816365985746,
+          "action_upper": 3.4994816365985746,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.142878303680996,
+          "q_error_bound": 9.253656762917376e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4964487767822687,
+          "action_lower": 3.4964487767822687,
+          "action_upper": 3.4964487767822687,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250103,
+          "q": 0.14300223796218253,
+          "q_error_bound": 3.647149647374662e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.493487622705019,
+          "action_lower": 3.493487622705019,
+          "action_upper": 3.493487622705019,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250103,
+          "q": 0.1431234496868915,
+          "q_error_bound": 1.2485560270438898e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4905978797239565,
+          "action_lower": 3.4905978797239565,
+          "action_upper": 3.4905978797239565,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250104,
+          "q": 0.14324193654742637,
+          "q_error_bound": 9.138077253344532e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.48777926087505,
+          "action_lower": 3.48777926087505,
+          "action_upper": 3.48777926087505,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501012,
+          "q": 0.1433576962879683,
+          "q_error_bound": 5.948502832764767e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4850314868022796,
+          "action_lower": 3.4850314868022796,
+          "action_upper": 3.4850314868022796,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250103,
+          "q": 0.14347072670461847,
+          "q_error_bound": 3.1409844031720953e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4823542856888374,
+          "action_lower": 3.4823542856888374,
+          "action_upper": 3.4823542856888374,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501023,
+          "q": 0.1435810256454409,
+          "q_error_bound": 1.989338552954968e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.479747393190417,
+          "action_lower": 3.479747393190417,
+          "action_upper": 3.479747393190417,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501048,
+          "q": 0.1436885910105025,
+          "q_error_bound": 5.171256418481822e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4772105523704533,
+          "action_lower": 3.4772105523704533,
+          "action_upper": 3.4772105523704533,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501028,
+          "q": 0.14379342075191404,
+          "q_error_bound": 4.4217282072834995e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4747435136373976,
+          "action_lower": 3.4747435136373976,
+          "action_upper": 3.4747435136373976,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.14389551287386815,
+          "q_error_bound": 4.62240683296426e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.472346034683892,
+          "action_lower": 3.472346034683892,
+          "action_upper": 3.472346034683892,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501042,
+          "q": 0.14399486543267798,
+          "q_error_bound": 3.869183368574642e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.470017880427881,
+          "action_lower": 3.470017880427881,
+          "action_upper": 3.470017880427881,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501017,
+          "q": 0.14409147653681426,
+          "q_error_bound": 1.0817489080719094e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4677588229556378,
+          "action_lower": 3.4677588229556378,
+          "action_upper": 3.4677588229556378,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250104,
+          "q": 0.14418534434694058,
+          "q_error_bound": 6.512160606972913e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4655686414666134,
+          "action_lower": 3.4655686414666134,
+          "action_upper": 3.4655686414666134,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501017,
+          "q": 0.14427646707594924,
+          "q_error_bound": 1.1129901166966231e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4634471222201637,
+          "action_lower": 3.4634471222201637,
+          "action_upper": 3.4634471222201637,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501025,
+          "q": 0.14436484298899485,
+          "q_error_bound": 8.274753857768421e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.46139405848408,
+          "action_lower": 3.46139405848408,
+          "action_upper": 3.46139405848408,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501042,
+          "q": 0.14445047040352735,
+          "q_error_bound": 5.8307127432066436e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4594092504849097,
+          "action_lower": 3.4594092504849097,
+          "action_upper": 3.4594092504849097,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250103,
+          "q": 0.14453334768932424,
+          "q_error_bound": 3.757009813723199e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4574925053600567,
+          "action_lower": 3.4574925053600567,
+          "action_upper": 3.4574925053600567,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250103,
+          "q": 0.1446134732685215,
+          "q_error_bound": 4.446074543052968e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.455643637111632,
+          "action_lower": 3.455643637111632,
+          "action_upper": 3.455643637111632,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250103,
+          "q": 0.14469084561564352,
+          "q_error_bound": 1.7633373199143546e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4538624665620206,
+          "action_lower": 3.4538624665620206,
+          "action_upper": 3.4538624665620206,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501048,
+          "q": 0.14476546325763245,
+          "q_error_bound": 5.2505342480607735e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.45214882131118,
+          "action_lower": 3.45214882131118,
+          "action_upper": 3.45214882131118,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250103,
+          "q": 0.14483732477387581,
+          "q_error_bound": 1.0281280648745555e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4505025356956054,
+          "action_lower": 3.4505025356956054,
+          "action_upper": 3.4505025356956054,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501042,
+          "q": 0.14490642879623397,
+          "q_error_bound": 7.36170591085726e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.448923450748979,
+          "action_lower": 3.448923450748979,
+          "action_upper": 3.448923450748979,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501045,
+          "q": 0.14497277400906605,
+          "q_error_bound": 4.753785610586851e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.447411414164484,
+          "action_lower": 3.447411414164484,
+          "action_upper": 3.447411414164484,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250103,
+          "q": 0.14503635914925467,
+          "q_error_bound": 2.7704491903671038e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.445966280258724,
+          "action_lower": 3.445966280258724,
+          "action_upper": 3.445966280258724,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.14509718300623065,
+          "q_error_bound": 2.1676472631454064e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.444587909937313,
+          "action_lower": 3.444587909937313,
+          "action_upper": 3.444587909937313,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501042,
+          "q": 0.14515524442199512,
+          "q_error_bound": 2.93618005798295e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.443276170662016,
+          "action_lower": 3.443276170662016,
+          "action_upper": 3.443276170662016,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250106,
+          "q": 0.14521054229114252,
+          "q_error_bound": 6.845474998224791e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.44203093641952,
+          "action_lower": 3.44203093641952,
+          "action_upper": 3.44203093641952,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501028,
+          "q": 0.14526307556088136,
+          "q_error_bound": 1.2845975178552607e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4408520876917845,
+          "action_lower": 3.4408520876917845,
+          "action_upper": 3.4408520876917845,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501045,
+          "q": 0.14531284323105367,
+          "q_error_bound": 1.5387908211907293e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4397395114279274,
+          "action_lower": 3.4397395114279274,
+          "action_upper": 3.4397395114279274,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501034,
+          "q": 0.1453598443541548,
+          "q_error_bound": 5.047615897067263e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.438693101017691,
+          "action_lower": 3.438693101017691,
+          "action_upper": 3.438693101017691,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501042,
+          "q": 0.14540407803535116,
+          "q_error_bound": 3.353109970216219e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4377127562664405,
+          "action_lower": 3.4377127562664405,
+          "action_upper": 3.4377127562664405,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250102,
+          "q": 0.14544554343249713,
+          "q_error_bound": 1.0658249764631256e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.436798383371685,
+          "action_lower": 3.436798383371685,
+          "action_upper": 3.436798383371685,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501042,
+          "q": 0.14548423975615146,
+          "q_error_bound": 1.0888387924611027e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4359498949011376,
+          "action_lower": 3.4359498949011376,
+          "action_upper": 3.4359498949011376,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501034,
+          "q": 0.1455201662695918,
+          "q_error_bound": 7.448692162883046e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4351672097722616,
+          "action_lower": 3.4351672097722616,
+          "action_upper": 3.4351672097722616,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501042,
+          "q": 0.14555332228882917,
+          "q_error_bound": 4.257080942505668e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.434450253233338,
+          "action_lower": 3.434450253233338,
+          "action_upper": 3.434450253233338,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250104,
+          "q": 0.14558370718262076,
+          "q_error_bound": 4.001752056595685e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4337989568460165,
+          "action_lower": 3.4337989568460165,
+          "action_upper": 3.4337989568460165,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250103,
+          "q": 0.14561132037248206,
+          "q_error_bound": 7.22998660896872e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4332132584693613,
+          "action_lower": 3.4332132584693613,
+          "action_upper": 3.4332132584693613,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501017,
+          "q": 0.1456361613326975,
+          "q_error_bound": 8.256382654395364e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.43269310224535,
+          "action_lower": 3.43269310224535,
+          "action_upper": 3.43269310224535,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250103,
+          "q": 0.14565822959033137,
+          "q_error_bound": 9.67690814840561e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.432238438585891,
+          "action_lower": 3.432238438585891,
+          "action_upper": 3.432238438585891,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501028,
+          "q": 0.14567752472523554,
+          "q_error_bound": 8.926105708477604e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.431849224161257,
+          "action_lower": 3.431849224161257,
+          "action_upper": 3.431849224161257,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501034,
+          "q": 0.14569404637005867,
+          "q_error_bound": 1.1194143824550004e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4315254218900186,
+          "action_lower": 3.4315254218900186,
+          "action_upper": 3.4315254218900186,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501048,
+          "q": 0.1457077942102523,
+          "q_error_bound": 5.186420660237626e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.431267000930414,
+          "action_lower": 3.431267000930414,
+          "action_upper": 3.431267000930414,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501045,
+          "q": 0.14571876798407737,
+          "q_error_bound": 1.7924573837905906e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4310739366731777,
+          "action_lower": 3.4310739366731777,
+          "action_upper": 3.4310739366731777,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501,
+          "q": 0.14572696748260916,
+          "q_error_bound": 1.4582632512871098e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4309462107358275,
+          "action_lower": 3.4309462107358275,
+          "action_upper": 3.4309462107358275,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250103,
+          "q": 0.145732392549741,
+          "q_error_bound": 1.2092045058405793e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.430883810958388,
+          "action_lower": 3.430883810958388,
+          "action_upper": 3.430883810958388,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501048,
+          "q": 0.1457350430821874,
+          "q_error_bound": 1.3972012130548883e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.43088673140057,
+          "action_lower": 3.43088673140057,
+          "action_upper": 3.43088673140057,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501028,
+          "q": 0.14573491902948602,
+          "q_error_bound": 8.361516972991406e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.430954972340382,
+          "action_lower": 3.430954972340382,
+          "action_upper": 3.430954972340382,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501034,
+          "q": 0.14573202039399877,
+          "q_error_bound": 5.2597080521532846e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4310885402742093,
+          "action_lower": 3.4310885402742093,
+          "action_upper": 3.4310885402742093,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501028,
+          "q": 0.1457263472309113,
+          "q_error_bound": 2.476955998913199e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4312874479183084,
+          "action_lower": 3.4312874479183084,
+          "action_upper": 3.4312874479183084,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250104,
+          "q": 0.14571789964823254,
+          "q_error_bound": 6.763851359455082e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4315517142117655,
+          "action_lower": 3.4315517142117655,
+          "action_upper": 3.4315517142117655,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.14570667780679245,
+          "q_error_bound": 9.546759379626829e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.431881364320907,
+          "action_lower": 3.431881364320907,
+          "action_upper": 3.431881364320907,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501028,
+          "q": 0.1456926819202385,
+          "q_error_bound": 3.176643969676903e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.432276429645136,
+          "action_lower": 3.432276429645136,
+          "action_upper": 3.432276429645136,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501048,
+          "q": 0.1456759122550322,
+          "q_error_bound": 4.5705591863199395e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4327369478242327,
+          "action_lower": 3.4327369478242327,
+          "action_upper": 3.4327369478242327,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501042,
+          "q": 0.14565636913044397,
+          "q_error_bound": 3.478595306660062e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.43326296274712,
+          "action_lower": 3.43326296274712,
+          "action_upper": 3.43326296274712,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250103,
+          "q": 0.14563405291854656,
+          "q_error_bound": 7.247966967894267e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4338545245620584,
+          "action_lower": 3.4338545245620584,
+          "action_upper": 3.4338545245620584,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501017,
+          "q": 0.14560896404420867,
+          "q_error_bound": 8.020128072361036e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.434511689688338,
+          "action_lower": 3.434511689688338,
+          "action_upper": 3.434511689688338,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501014,
+          "q": 0.14558110298508609,
+          "q_error_bound": 1.1777678284946598e-29,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4352345208294053,
+          "action_lower": 3.4352345208294053,
+          "action_upper": 3.4352345208294053,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501023,
+          "q": 0.14555047027161327,
+          "q_error_bound": 6.774808207808732e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.436023086987479,
+          "action_lower": 3.436023086987479,
+          "action_upper": 3.436023086987479,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501034,
+          "q": 0.14551706648699303,
+          "q_error_bound": 4.928924982313853e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4368774634796524,
+          "action_lower": 3.4368774634796524,
+          "action_upper": 3.4368774634796524,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501037,
+          "q": 0.1454808922671852,
+          "q_error_bound": 9.65193805703412e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4377977319554627,
+          "action_lower": 3.4377977319554627,
+          "action_upper": 3.4377977319554627,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501014,
+          "q": 0.14544194830089485,
+          "q_error_bound": 5.30309166051852e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4387839804159754,
+          "action_lower": 3.4387839804159754,
+          "action_upper": 3.4387839804159754,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250104,
+          "q": 0.14540023532955887,
+          "q_error_bound": 5.087256247174454e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4398363032343497,
+          "action_lower": 3.4398363032343497,
+          "action_upper": 3.4398363032343497,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.1381966011250101,
+          "q": 0.14535575414733215,
+          "q_error_bound": 7.208119918867059e-30,
+          "status": "admissible"
+        },
+        {
+          "action": 3.4409548011779325,
+          "action_lower": 3.4409548011779325,
+          "action_upper": 3.4409548011779325,
+          "action_upper_unbounded": false,
+          "beta_margin": 0.13819660112501034,
+          "q": 0.14530850560107222,
+          "q_error_bound": 4.837742715942969e-30,
+          "status": "admissible"
+        }
+      ],
+      "sigma": [
+        0,
+        5,
+        3,
+        8,
+        1,
+        7
+      ]
+    }
+  },
+  "input": {
+    "display_action_cutoff": 6.0,
+    "exact_family_comparison": "count comparison only against the exact certificate's 3340-word open-domain family; no set comparison because the exact family is not retained as a non-Sage artifact and this packet is forbidden to invoke Sage",
+    "frozen_universe_count": 3340,
+    "frozen_universe_sha256": "6b53def6cb1de0ae618c34f733193260ed4a4e1a206481469073ebed2408d087",
+    "numerical_contract": {
+      "action_bound_fields": "action_lower/action_upper are copied from the shared OrbitKktData residual diagnostic; the shared saddle-point source marks the underlying q_error_bound lemma as needing replacement before thesis-facing use, so this packet does not use these fields for tie, ordering, or lower-envelope claims; an unbounded upper diagnostic is represented by action_upper=null and action_upper_unbounded=true",
+      "beta_indeterminate_band": [
+        -1e-09,
+        1e-09
+      ],
+      "beta_positive_threshold": 1e-09,
+      "eigen_condition_ratio": 0.001,
+      "kkt_residual_threshold": 1e-06,
+      "q_positive_threshold": 1e-15,
+      "saddle_beta_feasibility_rule": "the saddle solver rejects a unique solution with any beta <= -1e-12 before the later margin classifier; rank-deficient paths apply the same scale while searching or validating a feasible representative, so not every beta in the later +/-1e-9 band reaches indeterminate status",
+      "saddle_beta_feasibility_threshold": 1e-12,
+      "status_rule": "Ok + AdmissibleF64/AdmissibleExact -> admissible; Ok + IndeterminateF64 -> indeterminate; OrbitSolveError::Inadmissible -> numerically_inadmissible; OrbitSolveError::NumericalFailure -> solve_failure"
+    },
+    "path": "experiments/regular-products/pentagon-rotation-empirics/kkt-branch-landscape.jsonl",
+    "producer_source_sha256": "7041f5633a3688ae4ce95aaca5a8cc4b7919242067f2ad4ff10d35bf4baaddb5",
+    "run_kind": "canonical",
+    "sample_angles_deg": [
+      0.0,
+      0.25,
+      0.5,
+      0.75,
+      1.0,
+      1.25,
+      1.5,
+      1.75,
+      2.0,
+      2.25,
+      2.5,
+      2.75,
+      3.0,
+      3.25,
+      3.5,
+      3.75,
+      4.0,
+      4.25,
+      4.5,
+      4.75,
+      5.0,
+      5.25,
+      5.5,
+      5.75,
+      6.0,
+      6.25,
+      6.5,
+      6.75,
+      7.0,
+      7.25,
+      7.5,
+      7.75,
+      8.0,
+      8.25,
+      8.5,
+      8.75,
+      9.0,
+      9.25,
+      9.5,
+      9.75,
+      10.0,
+      10.25,
+      10.5,
+      10.75,
+      11.0,
+      11.25,
+      11.5,
+      11.75,
+      12.0,
+      12.25,
+      12.5,
+      12.75,
+      13.0,
+      13.25,
+      13.5,
+      13.75,
+      14.0,
+      14.25,
+      14.5,
+      14.75,
+      15.0,
+      15.25,
+      15.5,
+      15.75,
+      16.0,
+      16.25,
+      16.5,
+      16.75,
+      17.0,
+      17.25,
+      17.5,
+      17.75,
+      18.0
+    ],
+    "sha256": "5aa59f96a010c447f21740934cae3ef5f7195810071bdfb40fe3981adf5d4bd8",
+    "status_counts": {
+      "admissible": 29164,
+      "indeterminate": 289,
+      "numerically_inadmissible": 214367,
+      "solve_failure": 0
+    }
+  },
+  "output_sha256": {
+    "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape.pdf": "8fbd83ace28647a25ca1e470a1f2bdf0f83132a26651cd65c5ca04d9b6d503e1",
+    "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape.png": "29d77dff2f5abaa0db557867b20a1a4026bfa2cf92ab329414aeaadf4eb7e6c8",
+    "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape_grouped.png": "29d77dff2f5abaa0db557867b20a1a4026bfa2cf92ab329414aeaadf4eb7e6c8",
+    "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape_raw.png": "0da16c51e37dcc6f42e5d2960ea16a12dbad816fe2771954eeab31bc6d7372f0",
+    "experiments/regular-products/pentagon-rotation-empirics/kkt_branch_sampled_classification.pdf": "e6aca91e505e82764a6912fd317fd873e5f1189ffff2911c371affcc60681b70",
+    "experiments/regular-products/pentagon-rotation-empirics/kkt_branch_sampled_classification.png": "9c289699532a0ecb6f483d6be730a477a38a86ae0a4744f7740ba1e2fa2974a6"
+  },
+  "prohibited_interpretation": [
+    "the figure proves the lower envelope or theorem",
+    "the sampled presence classes are exact interval-topology classifications",
+    "the figure displays every billiard orbit",
+    "the grid excludes narrow or isolated specialization-only components",
+    "the shared action_lower/action_upper diagnostics certify ordering or ties"
+  ],
+  "schema_version": "pentagon-kkt-branch-analysis-v1",
+  "selected_view": {
+    "curve_semantics": "one fixed representative raw word per whole sampled-profile group; gray width and opacity encode raw multiplicity, with no pointwise aggregation or splicing",
+    "cutoff_encoding": "an upward hollow triangle marks an interpolated crossing where adjacent admissible samples continue above the action-6 display window; a line break without that glyph comes from a non-admissible sampled status, while a hollow orange diamond marks an indeterminate sample",
+    "indeterminate_marker_placement": "diamonds retain nominal vertical position inside the display window and are clamped to its nearest vertical boundary outside the window so endpoint statuses remain visible",
+    "kind": "whole-profile grouped landscape",
+    "panel_counts": {
+      "2": {
+        "raw_words": 950,
+        "sampled_profile_groups": 7
+      },
+      "3": {
+        "raw_words": 2390,
+        "sampled_profile_groups": 33
+      }
+    },
+    "path": "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape.png",
+    "publication_formats": {
+      "pdf_is_vector": true,
+      "png_dpi": 300
+    },
+    "reason": "it preserves one complete raw representative per group and reports raw multiplicity while reducing exact-overplotting; the raw-line render is retained for comparison",
+    "vector_path": "experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape.pdf"
+  }
+}

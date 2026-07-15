@@ -94,6 +94,18 @@ samples with the proved exact profile. It shows the discovery pattern and the
 sample/theorem agreement. It does not exclude branch crossings and is not a
 proof input.
 
+The chapter also retains the sampled enumerated KKT-branch landscape from
+`experiments/regular-products/pentagon-rotation-empirics/`. Its canonical Rust
+artifact freezes 3340 raw words at 9 degrees and solves them on a 73-angle
+grid. The Rust and Sage families agree by count, not by an independently
+retained set comparison. Every word/angle pair records one of admissible,
+numerically inadmissible, indeterminate, or solve failure. Whole-profile
+grouping uses one fixed raw representative and never an angle-wise minimum.
+The thesis copy is
+`thesis/working/rotated-regular-polygons/enumerated-kkt-branch-landscape.pdf`.
+This figure and its sampled presence table explain the finite problem but do
+not prove ordering or exact feasibility-set topology.
+
 The broad polygon-pair sweep, labeled-pentagon diagram, orbit projection, and
 sampled three-bounce action plot were removed from the chapter because they did
 not reduce the audit burden for this theorem enough to justify their page and
@@ -163,12 +175,39 @@ attention cost. Their producer artifacts remain available under
   repository or Zenodo locator once the thesis release is fixed.  This is a
   publication-provenance dependency owned by the Published Code and Data
   chapter, not a current mathematical or chapter-review blocker.
+- The worked competitor `(0,5,3,8,1,7)` has constant positive weights and an
+  exact positive action gap on `0 <= theta < pi/10`, with equality only at the
+  right endpoint. Its branch has a strict internal action minimum at
+  `tan(theta) = tan(pi/5)/3`, illustrating branch geometry hidden by the final
+  lower envelope.
+- Independent review checked the worked branch's block convention, KKT
+  weights, `Q`, action, both gap formulas, endpoint tie, and internal minimum.
+  It found only an ambiguity in the classifier-path sentence; the repaired
+  wording no longer suggests that every other word takes an early exit.
+- The empirical packet's bounded spike retained all 10020 word/angle outcomes
+  in 0.815 seconds. The canonical run retained 243820 outcomes in 13.397
+  seconds: 29164 admissible, 214367 numerically inadmissible, 289
+  indeterminate, and zero solve failures. The 289 indeterminate outcomes all
+  occur at the right endpoint.
+- A read-only packet review rejected the first draft's use of the shared
+  solver's uncertified action-bound diagnostics and its self-attested
+  canonical label. The final analyzer makes no bound-derived ordering/tie
+  claim and requires the exact 73-angle canonical grid; the repaired packet
+  passed re-review.
+- Cold review of the integrated pages initially found that display clipping
+  could be mistaken for sampled inadmissibility and that 40 plotted profiles
+  were not visibly reconciled with 3340 raw words. The final vector figure has
+  cutoff-continuation triangles, larger indeterminate diamonds, explicit
+  7/33-group and 950/2390-word labels, and separate fixed-representative and
+  multiplicity semantics. The same reviewer found both issues resolved at
+  whole-page scale and judged the figure/table thesis-ready.
 
 Independent review used for the candidate: primary-paper/citation audit,
 finite-enumeration coverage audit, exact-verifier audit, mathematical/source
-review, and cold-reader/rendered-PDF review. These reviews are agent evidence;
-Jörn's acceptance of the finite-enumeration dependency is recorded separately
-above and does not by itself record Kai's acceptance.
+review, worked-branch mathematical review, empirical-packet/provenance review,
+and cold-reader/rendered-PDF review. These reviews are agent evidence; Jörn's
+acceptance of the finite-enumeration dependency is recorded separately above
+and does not by itself record Kai's acceptance.
 
 ## Reopen conditions
 
@@ -189,15 +228,17 @@ occurs:
 - an accepted and merged bounce/difference-body result materially simplifies
   the active-branch derivation or changes the theorem statement.
 
-Reopen the figure only if its data/producer changes, the thesis copy ceases to
-match, or rendered review shows that the sample/exact distinction is not
-perceptible at normal page scale.
+Reopen either empirical figure if its data/producer changes, a thesis copy
+ceases to match, or rendered review shows that the sample/exact distinction is
+not perceptible at normal page scale. Reopen the branch landscape specifically
+if the Rust/Sage word-family relationship, four-way status semantics,
+whole-profile grouping rule, or shared solver's admissibility behavior changes.
 
 ## Remaining stakeholder gate
 
 Jörn has accepted the theorem-strength finite-enumeration dependency.  The
-remaining implementation task is to make the exact, source-identified Sage
-classification visibly correspond to the mathematical predicates; the active
-chapter now does this with cleaned excerpts.  The chapter remains subject to
-his writing review and, ultimately, Kai's review. No current agent audit
-identified a theorem gap requiring a weaker statement.
+active chapter now makes the exact, source-identified Sage classification
+visibly correspond to the mathematical predicates and supplements it with an
+exact worked branch plus a separately labelled empirical landscape.  The
+chapter remains subject to his writing review and, ultimately, Kai's review.
+No current agent audit identified a theorem gap requiring a weaker statement.

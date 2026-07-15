@@ -5,14 +5,21 @@
 # ///
 
 """
-Goal: summarize the pentagon-rotation minima surface and render the sigma-level
-branch plots needed for the 3-bounce exclusion.
+Goal: render the sampled enumerated KKT-branch landscape, or explicitly invoke
+the retained legacy minima/three-bounce analysis.
 Input Artifacts:
+  - required explicit KKT landscape path in `landscape` mode
   - committed minima sweep: experiments/regular-products/pentagon-rotation-empirics/theta-sweep.jsonl
-  - optional smoke minima run: experiments/regular-products/pentagon-rotation-empirics/smoke-theta-sweep.jsonl
-  - optional branch run: experiments/regular-products/pentagon-rotation-empirics/three-bounce-branches.jsonl
-  - optional smoke branch run: experiments/regular-products/pentagon-rotation-empirics/smoke-three-bounce-branches.jsonl
+  - required explicit minima and branch paths in `legacy` mode
 Output Artifacts:
+  - experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape.png
+  - experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape.pdf
+  - experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape_raw.png
+  - experiments/regular-products/pentagon-rotation-empirics/enumerated_kkt_branch_landscape_grouped.png
+  - experiments/regular-products/pentagon-rotation-empirics/kkt_branch_sampled_classification.png
+  - experiments/regular-products/pentagon-rotation-empirics/kkt_branch_sampled_classification.pdf
+  - experiments/regular-products/pentagon-rotation-empirics/kkt-branch-analysis.json
+Legacy outputs:
   - experiments/regular-products/pentagon-rotation-empirics/three_bounce_branch_actions.png
   - experiments/regular-products/pentagon-rotation-empirics/signature_state_table_full.png
   - experiments/regular-products/pentagon-rotation-empirics/signature_state_table_competitive.png
@@ -26,30 +33,42 @@ Related Viewer Artifacts:
   - html: experiments/regular-products/pentagon-rotation-empirics/minimum_orbit_projection_viewer.html
 """
 
+import argparse
+import hashlib
 import json
 import math
 import sys
 from string import ascii_uppercase
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.colors import BoundaryNorm, ListedColormap
+from matplotlib.lines import Line2D
 from matplotlib.patches import Arc, Patch
 from matplotlib.transforms import blended_transform_factory
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
-from figure_config import FIGSIZE_DUAL, FIGSIZE_SINGLE, FIGSIZE_SQUARE, setup
+from figure_config import FIGSIZE_DUAL, FIGSIZE_SQUARE, TEXT_WIDTH, setup
 
 setup()
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
-MINIMA_SMOKE_DATA_PATH = EXPERIMENT_DIR / "smoke-theta-sweep.jsonl"
-MINIMA_CANONICAL_DATA_PATH = EXPERIMENT_DIR / "theta-sweep.jsonl"
-BRANCH_SMOKE_DATA_PATH = EXPERIMENT_DIR / "smoke-three-bounce-branches.jsonl"
-BRANCH_CANONICAL_DATA_PATH = EXPERIMENT_DIR / "three-bounce-branches.jsonl"
+LANDSCAPE_SELECTED_FIGURE_PATH = EXPERIMENT_DIR / "enumerated_kkt_branch_landscape.png"
+LANDSCAPE_SELECTED_PDF_PATH = EXPERIMENT_DIR / "enumerated_kkt_branch_landscape.pdf"
+LANDSCAPE_RAW_FIGURE_PATH = EXPERIMENT_DIR / "enumerated_kkt_branch_landscape_raw.png"
+LANDSCAPE_GROUPED_FIGURE_PATH = (
+    EXPERIMENT_DIR / "enumerated_kkt_branch_landscape_grouped.png"
+)
+LANDSCAPE_CLASSIFICATION_FIGURE_PATH = (
+    EXPERIMENT_DIR / "kkt_branch_sampled_classification.png"
+)
+LANDSCAPE_CLASSIFICATION_PDF_PATH = (
+    EXPERIMENT_DIR / "kkt_branch_sampled_classification.pdf"
+)
+LANDSCAPE_ANALYSIS_PATH = EXPERIMENT_DIR / "kkt-branch-analysis.json"
 
 BRANCH_FIGURE_PATH = EXPERIMENT_DIR / "three_bounce_branch_actions.png"
 FULL_TABLE_PATH = EXPERIMENT_DIR / "signature_state_table_full.png"
@@ -79,19 +98,30 @@ PENTAGON_LABEL_COLOR = "#3d3d3d"
 PENTAGON_LABEL_BOX = "#f7f7f7"
 TRAJECTORY_COLORS = {"minimum": "#1f5aa6"}
 
+LANDSCAPE_SCHEMA = "pentagon-kkt-branch-landscape-v1"
+LANDSCAPE_STATUSES = (
+    "admissible",
+    "numerically_inadmissible",
+    "indeterminate",
+    "solve_failure",
+)
+PRESENCE_CLASSES = (
+    "no_admissible_sample",
+    "admissible_at_every_sample",
+    "one_contiguous_sampled_run",
+    "multiple_sampled_runs",
+)
+ACTIVE_SIGMA = (3, 8, 1, 0, 5, 6)
+WORKED_COMPETITOR_SIGMA = (0, 5, 3, 8, 1, 7)
+GROUP_ACTION_DECIMALS = 10
 
-def preferred_path(smoke_path: Path, canonical_path: Path) -> Path:
-    if smoke_path.exists():
-        return smoke_path
-    return canonical_path
 
-
-def minima_data_path() -> Path:
-    return preferred_path(MINIMA_SMOKE_DATA_PATH, MINIMA_CANONICAL_DATA_PATH)
-
-
-def branch_data_path() -> Path:
-    return preferred_path(BRANCH_SMOKE_DATA_PATH, BRANCH_CANONICAL_DATA_PATH)
+def figure_save_kwargs(path: Path) -> dict:
+    if path.suffix.lower() == ".png":
+        return {"dpi": 300}
+    if path.suffix.lower() == ".pdf":
+        return {"metadata": {"CreationDate": None, "ModDate": None}}
+    return {}
 
 
 def load_jsonl(path: Path) -> list[dict]:
@@ -101,12 +131,12 @@ def load_jsonl(path: Path) -> list[dict]:
         return [json.loads(line) for line in handle if line.strip()]
 
 
-def load_minima_rows() -> list[dict]:
-    return load_jsonl(minima_data_path())
+def load_minima_rows(path: Path) -> list[dict]:
+    return load_jsonl(path)
 
 
-def load_branch_rows() -> list[dict]:
-    return load_jsonl(branch_data_path())
+def load_branch_rows(path: Path) -> list[dict]:
+    return load_jsonl(path)
 
 
 def conjectured_sys(theta: float) -> float:
@@ -1122,9 +1152,14 @@ def plot_affine_trajectory_projections(minima_rows: list[dict]) -> None:
     print(f"Saved: {AFFINE_TRAJECTORY_PROJECTION_FIGURE_PATH}")
 
 
-def print_text_summary(minima_rows: list[dict], branch_rows: list[dict]) -> None:
-    print(f"minima_data_path={minima_data_path().name}")
-    print(f"branch_data_path={branch_data_path().name}")
+def print_text_summary(
+    minima_rows: list[dict],
+    branch_rows: list[dict],
+    minima_path: Path,
+    branch_path: Path,
+) -> None:
+    print(f"minima_data_path={minima_path}")
+    print(f"branch_data_path={branch_path}")
     print(f"rows={len(minima_rows)}")
 
     max_err = 0.0
@@ -1171,27 +1206,844 @@ def print_text_summary(minima_rows: list[dict], branch_rows: list[dict]) -> None
     )
 
 
-def main() -> None:
-    try:
-        minima_rows = filter_half_domain(load_minima_rows())
-        branch_rows = filter_half_domain(load_branch_rows())
-    except FileNotFoundError as err:
-        missing = Path(err.args[0])
-        print(f"ERROR: data file not found: {missing}", file=sys.stderr)
-        if missing == branch_data_path():
-            print(
-                "Run: cargo run -p exp-regular-products --release --bin regular-pentagon-rotation-empirics -- --three-bounce-branches",
-                file=sys.stderr,
-            )
-        else:
-            print(
-                "Run: cargo run -p exp-regular-products --release --bin regular-pentagon-rotation-empirics",
-                file=sys.stderr,
-            )
-        sys.exit(1)
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise ValueError(message)
 
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def load_landscape(
+    path: Path, allow_spike: bool
+) -> tuple[dict, list[dict], dict]:
+    records = load_jsonl(path)
+    metadata_records = [row for row in records if row.get("record_type") == "metadata"]
+    branches = [row for row in records if row.get("record_type") == "branch"]
+    summary_records = [
+        row for row in records if row.get("record_type") == "run_summary"
+    ]
+    require(len(metadata_records) == 1, "landscape must contain one metadata record")
+    require(len(summary_records) == 1, "landscape must contain one run_summary record")
+    require(
+        len(records) == len(branches) + 2,
+        "landscape contains an unknown record type",
+    )
+    metadata = metadata_records[0]
+    summary = summary_records[0]
+    require(metadata.get("schema_version") == LANDSCAPE_SCHEMA, "unexpected schema")
+    require(summary.get("completed") is True, "landscape run is incomplete")
+    require(
+        metadata.get("epistemic_role")
+        == "sampled numerical explanation only; not a proof input",
+        "landscape epistemic role is missing or changed",
+    )
+    run_kind = metadata.get("run_kind")
+    require(
+        run_kind in ("canonical", "three-angle-spike"),
+        f"unknown landscape run kind: {run_kind}",
+    )
+    if run_kind == "three-angle-spike":
+        require(
+            allow_spike,
+            "publication analysis refuses a spike artifact; pass the canonical artifact",
+        )
+
+    angles = metadata.get("sample_angles_deg", [])
+    require(metadata.get("theta_domain_deg") == [0.0, 18.0], "unexpected theta domain")
+    if run_kind == "canonical":
+        expected_angles = [0.25 * index for index in range(73)]
+        require(
+            angles == expected_angles,
+            "canonical landscape must use the exact 73-angle 0.25-degree grid",
+        )
+        require(
+            metadata.get("canonical_step_deg") == 0.25,
+            "canonical landscape must declare the 0.25-degree step",
+        )
+    else:
+        require(
+            angles == [0.0, 9.0, 18.0],
+            "spike landscape must use exactly 0, 9, and 18 degrees",
+        )
+        require(
+            metadata.get("canonical_step_deg") is None,
+            "spike landscape must not declare a canonical step",
+        )
+    require(
+        metadata.get("frozen_universe_count") == 3340,
+        "frozen universe is not the expected 3340 raw words",
+    )
+    require(len(branches) == 3340, "branch row count does not match frozen universe")
+    require(
+        metadata.get("generic_angle_set_checks_equal") is True,
+        "generic-angle Rust universe check did not pass",
+    )
+
+    branches.sort(key=lambda branch: branch["raw_sigma_id"])
+    require(
+        [branch["raw_sigma_id"] for branch in branches] == list(range(len(branches))),
+        "raw sigma IDs must be consecutive and unique",
+    )
+    sigma_tuples = [tuple(branch["sigma"]) for branch in branches]
+    require(len(set(sigma_tuples)) == len(branches), "raw sigma words are not unique")
+    universe_payload = json.dumps(
+        [branch["sigma"] for branch in branches], separators=(",", ":")
+    ).encode()
+    require(
+        hashlib.sha256(universe_payload).hexdigest()
+        == metadata.get("frozen_universe_sha256"),
+        "frozen universe hash mismatch",
+    )
+
+    recomputed_statuses = Counter()
+    recomputed_block_counts = Counter()
+    for branch in branches:
+        require(branch.get("block_count") in (2, 3), "unexpected block count")
+        recomputed_block_counts[branch["block_count"]] += 1
+        samples = branch.get("samples", [])
+        require(
+            len(samples) == len(angles),
+            f"raw sigma {branch['raw_sigma_id']} does not retain every sample",
+        )
+        for sample in samples:
+            status = sample.get("status")
+            require(status in LANDSCAPE_STATUSES, f"unknown solve status {status}")
+            recomputed_statuses[status] += 1
+            if status in ("admissible", "indeterminate"):
+                require(sample.get("action") is not None, "numerical outcome lacks action")
+
+    require(
+        dict(recomputed_block_counts)
+        == {int(key): value for key, value in metadata["frozen_block_counts"].items()},
+        "block-count metadata mismatch",
+    )
+    expected_outcomes = len(branches) * len(angles)
+    require(summary.get("expected_outcomes") == expected_outcomes, "expected outcome mismatch")
+    require(summary.get("retained_outcomes") == expected_outcomes, "retained outcome mismatch")
+    require(summary.get("branch_rows") == len(branches), "summary branch row mismatch")
+    require(summary.get("sample_angles") == len(angles), "summary sample-angle mismatch")
+    summary_statuses = Counter(summary.get("status_counts", {}))
+    require(recomputed_statuses == summary_statuses, "summary status counts mismatch")
+
+    producer_path = EXPERIMENT_DIR.parents[2] / metadata["producer_source"]
+    require(producer_path.exists(), f"producer source is missing: {producer_path}")
+    require(
+        sha256(producer_path) == metadata.get("producer_source_sha256"),
+        "current producer source does not match the input artifact",
+    )
+    return metadata, branches, summary
+
+
+def presence_class(samples: list[dict]) -> str:
+    flags = [sample["status"] == "admissible" for sample in samples]
+    count = sum(flags)
+    if count == 0:
+        return "no_admissible_sample"
+    if count == len(flags):
+        return "admissible_at_every_sample"
+    runs = sum(flag and (index == 0 or not flags[index - 1]) for index, flag in enumerate(flags))
+    if runs == 1:
+        return "one_contiguous_sampled_run"
+    return "multiple_sampled_runs"
+
+
+def profile_key(branch: dict) -> tuple:
+    profile = []
+    for sample in branch["samples"]:
+        status = sample["status"]
+        action = sample.get("action")
+        profile.append(
+            (
+                status,
+                round(float(action), GROUP_ACTION_DECIMALS)
+                if action is not None
+                else None,
+            )
+        )
+    return (branch["block_count"], tuple(profile))
+
+
+def profile_groups(branches: list[dict]) -> list[dict]:
+    grouped = defaultdict(list)
+    for branch in branches:
+        grouped[profile_key(branch)].append(branch)
+    groups = []
+    for members in grouped.values():
+        members.sort(key=lambda branch: tuple(branch["sigma"]))
+        groups.append(
+            {
+                "block_count": members[0]["block_count"],
+                "representative": members[0],
+                "member_raw_sigma_ids": [member["raw_sigma_id"] for member in members],
+                "raw_multiplicity": len(members),
+            }
+        )
+    groups.sort(
+        key=lambda group: (
+            group["block_count"],
+            tuple(group["representative"]["sigma"]),
+        )
+    )
+    return groups
+
+
+def sampled_classification(branches: list[dict]) -> dict:
+    result = {
+        "presence": {
+            str(block): {category: 0 for category in PRESENCE_CLASSES}
+            for block in (2, 3, "all")
+        },
+        "endpoint_status": {
+            endpoint: {
+                str(block): {status: 0 for status in LANDSCAPE_STATUSES}
+                for block in (2, 3, "all")
+            }
+            for endpoint in ("theta_0", "theta_pi_over_10")
+        },
+    }
+    for branch in branches:
+        block = str(branch["block_count"])
+        category = presence_class(branch["samples"])
+        result["presence"][block][category] += 1
+        result["presence"]["all"][category] += 1
+        for endpoint, index in (("theta_0", 0), ("theta_pi_over_10", -1)):
+            status = branch["samples"][index]["status"]
+            result["endpoint_status"][endpoint][block][status] += 1
+            result["endpoint_status"][endpoint]["all"][status] += 1
+    return result
+
+
+def branch_by_sigma(branches: list[dict], sigma: tuple[int, ...]) -> dict:
+    try:
+        return next(branch for branch in branches if tuple(branch["sigma"]) == sigma)
+    except StopIteration as error:
+        raise ValueError(f"required raw sigma is absent: {sigma}") from error
+
+
+def plot_branch_series(
+    ax: Axes,
+    angles: np.ndarray,
+    branch: dict,
+    display_floor: float,
+    cutoff: float,
+    *,
+    color: str,
+    linewidth: float,
+    alpha: float,
+    zorder: float,
+    rasterized: bool,
+) -> None:
+    values = np.array(
+        [
+            sample.get("action", np.nan)
+            if sample["status"] == "admissible"
+            else np.nan
+            for sample in branch["samples"]
+        ],
+        dtype=float,
+    )
+    ax.plot(
+        angles,
+        values,
+        color=color,
+        linewidth=linewidth,
+        alpha=alpha,
+        zorder=zorder,
+        rasterized=rasterized,
+    )
+
+    continuation_crossings = []
+    for left_index in range(len(angles) - 1):
+        left_sample = branch["samples"][left_index]
+        right_sample = branch["samples"][left_index + 1]
+        if (
+            left_sample["status"] != "admissible"
+            or right_sample["status"] != "admissible"
+        ):
+            continue
+        left_action = float(left_sample["action"])
+        right_action = float(right_sample["action"])
+        if not (
+            left_action <= cutoff < right_action
+            or right_action <= cutoff < left_action
+        ):
+            continue
+        fraction = (cutoff - left_action) / (right_action - left_action)
+        continuation_crossings.append(
+            float(angles[left_index] + fraction * (angles[left_index + 1] - angles[left_index]))
+        )
+    if continuation_crossings:
+        ax.scatter(
+            continuation_crossings,
+            [cutoff] * len(continuation_crossings),
+            s=34,
+            marker="^",
+            facecolors="white",
+            edgecolors="#444444",
+            linewidths=0.9,
+            alpha=max(alpha, 0.85),
+            zorder=7.0,
+            clip_on=False,
+            rasterized=rasterized,
+        )
+
+    indeterminate = [
+        (angle, sample.get("action"))
+        for angle, sample in zip(angles, branch["samples"])
+        if sample["status"] == "indeterminate" and sample.get("action") is not None
+    ]
+    if indeterminate:
+        ax.scatter(
+            [point[0] for point in indeterminate],
+            [min(cutoff, max(display_floor, point[1])) for point in indeterminate],
+            s=25,
+            marker="D",
+            facecolors="white",
+            edgecolors="#d97706",
+            linewidths=0.9,
+            alpha=max(alpha, 0.9),
+            zorder=8.0,
+            clip_on=False,
+            rasterized=rasterized,
+        )
+    failures = [
+        angle
+        for angle, sample in zip(angles, branch["samples"])
+        if sample["status"] == "solve_failure"
+    ]
+    if failures:
+        ax.scatter(
+            failures,
+            [cutoff * 0.995] * len(failures),
+            s=20,
+            marker="x",
+            color="#b91c1c",
+            linewidths=0.9,
+            zorder=8.0,
+            clip_on=False,
+            rasterized=rasterized,
+        )
+
+
+def plot_landscape(
+    metadata: dict,
+    branches: list[dict],
+    groups: list[dict],
+    *,
+    grouped: bool,
+    output_paths: list[Path],
+) -> None:
+    angles = np.array(metadata["sample_angles_deg"], dtype=float)
+    cutoff = float(metadata["display_action_cutoff"])
+    active = branch_by_sigma(branches, ACTIVE_SIGMA)
+    competitor = branch_by_sigma(branches, WORKED_COMPETITOR_SIGMA)
+    highlighted_ids = {active["raw_sigma_id"], competitor["raw_sigma_id"]}
+    finite_actions = [
+        float(sample["action"])
+        for branch in branches
+        for sample in branch["samples"]
+        if sample["status"] == "admissible"
+        and sample.get("action") is not None
+        and sample["action"] <= cutoff
+    ]
+    require(finite_actions, "no admissible actions fall below the display cutoff")
+    y_min = min(finite_actions)
+    y_min -= 0.035 * (cutoff - y_min)
+
+    fig = plt.figure(figsize=(TEXT_WIDTH, 6.15))
+    grid = fig.add_gridspec(3, 1, height_ratios=[2.2, 2.2, 0.95], hspace=0.08)
+    action_axes = [fig.add_subplot(grid[index, 0]) for index in range(2)]
+    multiplicity_ax = fig.add_subplot(grid[2, 0], sharex=action_axes[0])
+
+    if grouped:
+        for group in groups:
+            representative = group["representative"]
+            if representative["raw_sigma_id"] in highlighted_ids:
+                continue
+            multiplicity = group["raw_multiplicity"]
+            plot_branch_series(
+                action_axes[group["block_count"] - 2],
+                angles,
+                representative,
+                y_min,
+                cutoff,
+                color="#858585",
+                linewidth=0.32 + 0.11 * math.log2(multiplicity + 1),
+                alpha=min(0.72, 0.14 + 0.09 * math.log2(multiplicity + 1)),
+                zorder=0.5,
+                rasterized=False,
+            )
+    else:
+        for branch in branches:
+            if branch["raw_sigma_id"] in highlighted_ids:
+                continue
+            plot_branch_series(
+                action_axes[branch["block_count"] - 2],
+                angles,
+                branch,
+                y_min,
+                cutoff,
+                color="#777777",
+                linewidth=0.34,
+                alpha=0.055,
+                zorder=0.4,
+                rasterized=True,
+            )
+
+    plot_branch_series(
+        action_axes[0],
+        angles,
+        active,
+        y_min,
+        cutoff,
+        color="#111111",
+        linewidth=2.0,
+        alpha=1.0,
+        zorder=5.0,
+        rasterized=False,
+    )
+    plot_branch_series(
+        action_axes[1],
+        angles,
+        competitor,
+        y_min,
+        cutoff,
+        color="#1769aa",
+        linewidth=1.8,
+        alpha=1.0,
+        zorder=5.0,
+        rasterized=False,
+    )
+
+    raw_counts = Counter(branch["block_count"] for branch in branches)
+    group_counts = Counter(group["block_count"] for group in groups)
+    for block_count, ax in zip((2, 3), action_axes):
+        ax.set_ylim(y_min, cutoff)
+        ax.axhline(cutoff, color="#555555", linewidth=0.7, linestyle=(0, (3, 2)))
+        ax.set_ylabel("action")
+        ax.text(
+            0.012,
+            0.96,
+            (
+                f"{block_count}-block — {group_counts[block_count]:,} sampled-profile groups"
+                f" / {raw_counts[block_count]:,} raw words"
+                if grouped
+                else f"{block_count}-block — {raw_counts[block_count]:,} raw curves / raw words"
+            ),
+            transform=ax.transAxes,
+            ha="left",
+            va="top",
+            fontsize=8.7,
+            bbox={"facecolor": "white", "edgecolor": "none", "pad": 1.0, "alpha": 0.88},
+        )
+        ax.tick_params(labelbottom=False)
+        ax.grid(axis="x", visible=False)
+    action_axes[0].text(
+        0.985,
+        0.96,
+        f"cutoff {cutoff:g}",
+        transform=action_axes[0].transAxes,
+        ha="right",
+        va="top",
+        fontsize=7.2,
+        color="#555555",
+        bbox={"facecolor": "white", "edgecolor": "none", "pad": 0.8, "alpha": 0.88},
+    )
+
+    status_by_block = {
+        block: {
+            status: np.array(
+                [
+                    sum(
+                        branch["block_count"] == block
+                        and branch["samples"][index]["status"] == status
+                        for branch in branches
+                    )
+                    for index in range(len(angles))
+                ],
+                dtype=int,
+            )
+            for status in LANDSCAPE_STATUSES
+        }
+        for block in (2, 3)
+    }
+    multiplicity_ax.plot(
+        angles,
+        status_by_block[2]["admissible"],
+        color="#111111",
+        linewidth=1.5,
+        label="2-block admissible",
+    )
+    multiplicity_ax.plot(
+        angles,
+        status_by_block[3]["admissible"],
+        color="#1769aa",
+        linewidth=1.5,
+        label="3-block admissible",
+    )
+    multiplicity_ax.plot(
+        angles,
+        status_by_block[2]["indeterminate"],
+        color="#111111",
+        linewidth=0.9,
+        linestyle=(0, (3, 2)),
+        alpha=0.75,
+        label="2-block indeterminate",
+    )
+    multiplicity_ax.plot(
+        angles,
+        status_by_block[3]["indeterminate"],
+        color="#1769aa",
+        linewidth=0.9,
+        linestyle=(0, (3, 2)),
+        alpha=0.75,
+        label="3-block indeterminate",
+    )
+    multiplicity_ax.set_ylabel("raw\nwords")
+    multiplicity_ax.set_xlabel(r"rotation angle $\theta$")
+    multiplicity_ax.set_xticks([0.0, 4.5, 9.0, 13.5, 18.0])
+    multiplicity_ax.set_xticklabels(
+        [r"$0$", r"$\pi/40$", r"$\pi/20$", r"$3\pi/40$", r"$\pi/10$"]
+    )
+    multiplicity_ax.legend(loc="upper center", ncols=2, frameon=False, fontsize=7.0)
+
+    legend_handles = [
+        Line2D([0], [0], color="#111111", linewidth=2.0, label="active branch"),
+        Line2D(
+            [0],
+            [0],
+            color="#1769aa",
+            linewidth=1.8,
+            label="worked 3-block branch",
+        ),
+        Line2D(
+            [0],
+            [0],
+            color="#858585",
+            linewidth=1.0,
+            label="fixed reps. (width: raw multiplicity)"
+            if grouped
+            else "other raw branches",
+        ),
+        Line2D(
+            [0],
+            [0],
+            marker="^",
+            color="none",
+            markeredgecolor="#444444",
+            markerfacecolor="white",
+            markersize=5.8,
+            label="continues above cutoff",
+        ),
+        Line2D(
+            [0],
+            [0],
+            marker="D",
+            color="none",
+            markeredgecolor="#d97706",
+            markerfacecolor="white",
+            markersize=4.8,
+            label="indeterminate sample",
+        ),
+        Line2D(
+            [0],
+            [0],
+            marker="x",
+            color="#b91c1c",
+            linewidth=0,
+            markersize=4,
+            label="solve failure",
+        ),
+    ]
+    fig.legend(
+        handles=legend_handles,
+        loc="upper center",
+        bbox_to_anchor=(0.5, 0.952),
+        ncols=3,
+        frameon=False,
+        fontsize=6.8,
+    )
+    fig.suptitle("Sampled enumerated KKT-branch landscape", y=0.995, fontsize=11.0)
+    fig.subplots_adjust(left=0.13, right=0.98, bottom=0.075, top=0.855)
+    for output_path in output_paths:
+        fig.savefig(output_path, **figure_save_kwargs(output_path))
+        print(f"Saved: {output_path}")
+    plt.close(fig)
+
+
+def plot_sampled_classification(
+    metadata: dict, classification: dict, output_paths: list[Path]
+) -> None:
+    presence_labels = {
+        "no_admissible_sample": "no admissible\nsample",
+        "admissible_at_every_sample": "admissible at\nevery sample",
+        "one_contiguous_sampled_run": "one contiguous\nsampled run",
+        "multiple_sampled_runs": "multiple\nsampled runs",
+    }
+    status_labels = {
+        "admissible": "admissible",
+        "numerically_inadmissible": "numerically\ninadmissible",
+        "indeterminate": "indeterminate",
+        "solve_failure": "solve failure",
+    }
+    columns = ["2-block", "3-block", "all"]
+    keys = ["2", "3", "all"]
+    presence_values = [
+        [classification["presence"][key][category] for key in keys]
+        for category in PRESENCE_CLASSES
+    ]
+    endpoint_rows = []
+    endpoint_values = []
+    for endpoint, endpoint_label in (
+        ("theta_0", r"$0$"),
+        ("theta_pi_over_10", r"$\pi/10$"),
+    ):
+        for status in LANDSCAPE_STATUSES:
+            endpoint_rows.append(f"{endpoint_label}: {status_labels[status]}")
+            endpoint_values.append(
+                [classification["endpoint_status"][endpoint][key][status] for key in keys]
+            )
+
+    fig, axes = plt.subplots(
+        2,
+        1,
+        figsize=(TEXT_WIDTH, 4.8),
+        gridspec_kw={"height_ratios": [0.9, 1.7]},
+    )
+    for ax in axes:
+        ax.axis("off")
+    presence_table = axes[0].table(
+        cellText=presence_values,
+        rowLabels=[presence_labels[category] for category in PRESENCE_CLASSES],
+        colLabels=columns,
+        loc="center",
+        cellLoc="right",
+        colLoc="right",
+    )
+    endpoint_table = axes[1].table(
+        cellText=endpoint_values,
+        rowLabels=endpoint_rows,
+        colLabels=columns,
+        loc="center",
+        cellLoc="right",
+        colLoc="right",
+    )
+    for table in (presence_table, endpoint_table):
+        table.auto_set_font_size(False)
+        table.set_fontsize(6.7)
+        table.scale(1.0, 1.23)
+        for (row, _column), cell in table.get_celld().items():
+            cell.set_linewidth(0.35)
+            if row == 0:
+                cell.set_facecolor("#e9edf2")
+                cell.set_text_props(weight="bold")
+    axes[0].set_title("Sampled presence class", fontsize=9.0, pad=0)
+    axes[1].set_title("Endpoint solve status (reported separately)", fontsize=9.0, pad=0)
+    fig.suptitle(
+        f"Raw-word classification on the {len(metadata['sample_angles_deg'])}-angle grid",
+        y=0.99,
+        fontsize=10.5,
+    )
+    fig.text(
+        0.5,
+        0.015,
+        "Sampled classes are not claims about exact feasibility intervals or isolated specializations.",
+        ha="center",
+        fontsize=6.7,
+    )
+    fig.subplots_adjust(left=0.31, right=0.98, bottom=0.07, top=0.91, hspace=0.18)
+    for output_path in output_paths:
+        fig.savefig(output_path, **figure_save_kwargs(output_path))
+        print(f"Saved: {output_path}")
+    plt.close(fig)
+
+
+def write_landscape_analysis(
+    input_path: Path,
+    metadata: dict,
+    branches: list[dict],
+    summary: dict,
+    groups: list[dict],
+    classification: dict,
+) -> None:
+    active = branch_by_sigma(branches, ACTIVE_SIGMA)
+    competitor = branch_by_sigma(branches, WORKED_COMPETITOR_SIGMA)
+    group_counts = Counter(group["block_count"] for group in groups)
+    group_multiplicities = [group["raw_multiplicity"] for group in groups]
+    repo_root = EXPERIMENT_DIR.parents[2]
+
+    def relative(path: Path) -> str:
+        return str(path.relative_to(repo_root))
+
+    output_paths = [
+        LANDSCAPE_SELECTED_FIGURE_PATH,
+        LANDSCAPE_SELECTED_PDF_PATH,
+        LANDSCAPE_RAW_FIGURE_PATH,
+        LANDSCAPE_GROUPED_FIGURE_PATH,
+        LANDSCAPE_CLASSIFICATION_FIGURE_PATH,
+        LANDSCAPE_CLASSIFICATION_PDF_PATH,
+    ]
+    report = {
+        "schema_version": "pentagon-kkt-branch-analysis-v1",
+        "analyzer": {
+            "source": relative(Path(__file__).resolve()),
+            "source_sha256": sha256(Path(__file__).resolve()),
+            "publication_input_is_explicit": True,
+            "group_action_decimals": GROUP_ACTION_DECIMALS,
+        },
+        "input": {
+            "path": str(input_path),
+            "sha256": sha256(input_path),
+            "producer_source_sha256": metadata["producer_source_sha256"],
+            "run_kind": metadata["run_kind"],
+            "sample_angles_deg": metadata["sample_angles_deg"],
+            "frozen_universe_count": metadata["frozen_universe_count"],
+            "frozen_universe_sha256": metadata["frozen_universe_sha256"],
+            "status_counts": {
+                status: summary.get("status_counts", {}).get(status, 0)
+                for status in LANDSCAPE_STATUSES
+            },
+            "display_action_cutoff": metadata["display_action_cutoff"],
+            "numerical_contract": metadata["numerical_contract"],
+            "exact_family_comparison": metadata["exact_family_comparison"],
+        },
+        "classification": classification,
+        "grouping": {
+            "semantics": f"branches are grouped only when block count and the entire sampled sequence of four-way statuses plus actions rounded to {GROUP_ACTION_DECIMALS} decimal places agree; each plotted group uses the lexicographically smallest raw sigma as one fixed representative for the whole domain, never a pointwise minimum or splice",
+            "curve_semantics": "each gray curve in the grouped landscape is one fixed raw representative across all sampled angles; curves are never pointwise aggregated, minimized, or spliced",
+            "multiplicity_encoding": "gray-curve width and opacity increase monotonically with the represented group's raw-word multiplicity; exact multiplicities remain in this report",
+            "raw_word_count": len(branches),
+            "whole_profile_group_count": len(groups),
+            "group_count_by_block": {str(key): value for key, value in group_counts.items()},
+            "largest_raw_multiplicity": max(group_multiplicities),
+            "singleton_groups": sum(value == 1 for value in group_multiplicities),
+            "raw_multiplicity_preserved": True,
+        },
+        "highlighted_raw_sigmas": {
+            "semantics": "the active label comes from the theorem source and the worked-competitor label from the chapter calculation; the numerical action-bound diagnostics are not used to establish ordering or ties",
+            "active": {
+                "sigma": list(ACTIVE_SIGMA),
+                "raw_sigma_id": active["raw_sigma_id"],
+                "samples": active["samples"],
+            },
+            "worked_competitor": {
+                "sigma": list(WORKED_COMPETITOR_SIGMA),
+                "raw_sigma_id": competitor["raw_sigma_id"],
+                "samples": competitor["samples"],
+            },
+        },
+        "selected_view": {
+            "path": relative(LANDSCAPE_SELECTED_FIGURE_PATH),
+            "vector_path": relative(LANDSCAPE_SELECTED_PDF_PATH),
+            "kind": "whole-profile grouped landscape",
+            "reason": "it preserves one complete raw representative per group and reports raw multiplicity while reducing exact-overplotting; the raw-line render is retained for comparison",
+            "panel_counts": {
+                str(block): {
+                    "sampled_profile_groups": group_counts[block],
+                    "raw_words": sum(
+                        branch["block_count"] == block for branch in branches
+                    ),
+                }
+                for block in (2, 3)
+            },
+            "curve_semantics": "one fixed representative raw word per whole sampled-profile group; gray width and opacity encode raw multiplicity, with no pointwise aggregation or splicing",
+            "cutoff_encoding": "an upward hollow triangle marks an interpolated crossing where adjacent admissible samples continue above the action-6 display window; a line break without that glyph comes from a non-admissible sampled status, while a hollow orange diamond marks an indeterminate sample",
+            "indeterminate_marker_placement": "diamonds retain nominal vertical position inside the display window and are clamped to its nearest vertical boundary outside the window so endpoint statuses remain visible",
+            "publication_formats": {
+                "png_dpi": 300,
+                "pdf_is_vector": True,
+            },
+        },
+        "candidate_views": {
+            "raw": relative(LANDSCAPE_RAW_FIGURE_PATH),
+            "whole_profile_grouped": relative(LANDSCAPE_GROUPED_FIGURE_PATH),
+            "sampled_classification": relative(LANDSCAPE_CLASSIFICATION_FIGURE_PATH),
+            "sampled_classification_vector": relative(
+                LANDSCAPE_CLASSIFICATION_PDF_PATH
+            ),
+        },
+        "output_sha256": {relative(path): sha256(path) for path in output_paths},
+        "allowed_interpretation": "The sampled numerical grid illustrates the scale and competition of the enumerated two-/three-block KKT family and sampled appearance or disappearance of admissible branches.",
+        "prohibited_interpretation": [
+            "the figure proves the lower envelope or theorem",
+            "the sampled presence classes are exact interval-topology classifications",
+            "the figure displays every billiard orbit",
+            "the grid excludes narrow or isolated specialization-only components",
+            "the shared action_lower/action_upper diagnostics certify ordering or ties",
+        ],
+    }
+    LANDSCAPE_ANALYSIS_PATH.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
+    print(f"Saved: {LANDSCAPE_ANALYSIS_PATH}")
+
+
+def run_landscape_analysis(input_path: Path, allow_spike: bool, validate_only: bool) -> None:
+    metadata, branches, summary = load_landscape(input_path, allow_spike)
+    print(
+        "landscape_validated:",
+        {
+            "input": str(input_path),
+            "run_kind": metadata["run_kind"],
+            "raw_words": len(branches),
+            "sample_angles": len(metadata["sample_angles_deg"]),
+            "outcomes": summary["retained_outcomes"],
+            "status_counts": {
+                status: summary.get("status_counts", {}).get(status, 0)
+                for status in LANDSCAPE_STATUSES
+            },
+        },
+    )
+    if validate_only:
+        return
+    require(
+        metadata["run_kind"] == "canonical",
+        "figure generation is allowed only for the canonical artifact",
+    )
+    groups = profile_groups(branches)
+    classification = sampled_classification(branches)
+    plot_landscape(
+        metadata,
+        branches,
+        groups,
+        grouped=False,
+        output_paths=[LANDSCAPE_RAW_FIGURE_PATH],
+    )
+    plot_landscape(
+        metadata,
+        branches,
+        groups,
+        grouped=True,
+        output_paths=[
+            LANDSCAPE_GROUPED_FIGURE_PATH,
+            LANDSCAPE_SELECTED_FIGURE_PATH,
+            LANDSCAPE_SELECTED_PDF_PATH,
+        ],
+    )
+    plot_sampled_classification(
+        metadata,
+        classification,
+        [LANDSCAPE_CLASSIFICATION_FIGURE_PATH, LANDSCAPE_CLASSIFICATION_PDF_PATH],
+    )
+    write_landscape_analysis(
+        input_path,
+        metadata,
+        branches,
+        summary,
+        groups,
+        classification,
+    )
+
+
+def run_legacy_analysis(minima_path: Path, branch_path: Path) -> None:
+    minima_rows = filter_half_domain(load_minima_rows(minima_path))
+    branch_rows = filter_half_domain(load_branch_rows(branch_path))
     signatures = collect_signatures(minima_rows, branch_rows)
-    print_text_summary(minima_rows, branch_rows)
+    print_text_summary(minima_rows, branch_rows, minima_path, branch_path)
     write_signature_legend(signatures, minima_rows, branch_rows)
     plot_three_bounce_branches(minima_rows, branch_rows)
     plot_minimum_signature_table(minima_rows, branch_rows)
@@ -1199,6 +2051,45 @@ def main() -> None:
     plot_labeled_pentagons()
     plot_trajectory_projections(minima_rows)
     plot_affine_trajectory_projections(minima_rows)
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Analyze an explicitly named pentagon-rotation artifact."
+    )
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    landscape = subparsers.add_parser(
+        "landscape", help="validate and render a frozen KKT-branch landscape"
+    )
+    landscape.add_argument("--input", required=True, type=Path)
+    landscape.add_argument(
+        "--allow-spike",
+        action="store_true",
+        help="allow a spike artifact for validation only",
+    )
+    landscape.add_argument("--validate-only", action="store_true")
+    legacy = subparsers.add_parser(
+        "legacy", help="regenerate the retained minima/three-bounce figures"
+    )
+    legacy.add_argument("--minima-input", required=True, type=Path)
+    legacy.add_argument("--branch-input", required=True, type=Path)
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    try:
+        if args.command == "landscape":
+            require(
+                not args.allow_spike or args.validate_only,
+                "--allow-spike may be used only with --validate-only",
+            )
+            run_landscape_analysis(args.input, args.allow_spike, args.validate_only)
+        else:
+            run_legacy_analysis(args.minima_input, args.branch_input)
+    except (FileNotFoundError, ValueError, KeyError) as error:
+        print(f"ERROR: {error}", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

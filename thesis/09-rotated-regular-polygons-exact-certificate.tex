@@ -51,6 +51,113 @@ half-domain into cells.  SageMath isolates these algebraic numbers exactly in
 its real algebraic field and checks one exact sample in each cell, where every
 sign is constant.  No floating-point sign decision enters the certificate.
 
+\par\medskip\noindent\textbf{One branch by hand.}
+To make the repeated calculation concrete, consider the word with three
+blocks per factor
+\[
+  \tau=(0,5,3,8,1,7).
+\]
+Write \(s=\sqrt5\).  Exact row reduction of the KKT system gives, in the order
+of the facets in \(\tau\),
+\[
+  \beta_\tau=
+  \left(
+    \frac{5-s}{20},\frac{s}{10},\frac{s}{10},
+    \frac{5-s}{20},\frac{5-s}{20},\frac{5-s}{20}
+  \right).
+\]
+Thus all six weights are positive, independently of \(\theta\).  Substitution
+in the quadratic form gives
+\[
+  Q_\tau(\theta)
+  =\frac{3(s-2)}5\cos\theta
+   +\frac{(5s-11)\cos(\pi/10)}5\sin\theta.
+\]
+This is positive on the entire half-domain.  The active word above has
+\(Q_{\mathrm{act}}=(3-s)\cos\theta/5\), and direct simplification yields the
+particularly transparent comparison
+\begin{equation}
+\label{eq:rotated-pentagon-worked-q-gap}
+  Q_{\mathrm{act}}(\theta)-Q_\tau(\theta)
+  =\frac{5s-11}{5}\sin\!\left(\frac{\pi}{10}-\theta\right).
+\end{equation}
+Since \(5s-11>0\), the competitor has smaller \(Q\), and hence larger action,
+for \(0\le\theta<\pi/10\); it ties at the right endpoint.  In action form the
+same branch is
+\begin{equation}
+\label{eq:rotated-pentagon-worked-action}
+  A_\tau(\theta)
+  =\frac{5(2+\sqrt5)}
+  {2\bigl(\tan(\pi/5)\sin\theta+3\cos\theta\bigr)},
+\end{equation}
+and the exact action gap is
+\[
+  A_\tau(\theta)-c_{\mathrm{act}}(\theta)
+  =\frac{10\sin(\pi/10-\theta)}
+  {\bigl(4\tan(\pi/5)\sin\theta+12\cos\theta\bigr)\cos\theta}.
+\]
+This example also illustrates why it is useful to retain whole branch
+formulas: \(A_\tau\) has its own strict minimum at
+\[
+  \tan\theta=\frac13\tan\frac\pi5,
+  \qquad \theta\approx13.61^\circ,
+\]
+although it never determines the capacity on the open half-domain.  This is the
+regular positive-\(Q\) path through the executable's classifier: solve the KKT
+system, test positivity, and determine the sign of the action gap.  Many words
+instead reach the inconsistent, zero-\(Q\), forced-zero, or no-feasible-cell
+outcomes; the remaining feasible words either tie identically or have strictly
+positive gap, as Table~\ref{tab:rotated-pentagon-certificate-outcomes} records.
+
+Figure~\ref{fig:rotated-pentagon-branch-landscape} places this worked branch in
+the larger stationary-branch problem.  An independent floating-point producer
+freezes \(3340\) raw two- and three-block words at the generic angle
+\(\theta=\pi/20\), then solves the same words at \(73\) angles from \(0\) to
+\(\pi/10\).  Its word count agrees with the exact certificate's count; the two
+word sets were not compared independently.  This is an empirical explanation
+of the finite classification, not another input to the proof.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.98\linewidth]{working/rotated-regular-polygons/enumerated-kkt-branch-landscape.pdf}
+  \caption{Sampled enumerated KKT-branch landscape.  Black marks the active
+  branch and blue the worked branch \(\tau\).  Each gray curve is one fixed
+  representative of a complete sampled profile; its width encodes how many raw
+  words share that profile, and no pointwise aggregation or splicing is used.
+  Only consecutive admissible samples are joined.  Triangles mark curves that
+  continue above the fixed cutoff \(6\), whereas a gap below the cutoff means
+  that no admissible sample was returned there.  Orange endpoint diamonds are
+  indeterminate solves; the lower panel gives raw status counts.  This grid
+  neither certifies exact feasibility sets nor proves the lower envelope.}
+  \label{fig:rotated-pentagon-branch-landscape}
+\end{figure}
+
+The same data give the compact sampled classification in
+Table~\ref{tab:rotated-pentagon-sampled-presence}.  At the left endpoint \(395\)
+words are admissible and none are indeterminate; at the right endpoint the
+corresponding counts are \(535\) and \(289\).  No solve failure occurred.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+sampled presence class & two-block & three-block & all\\
+\midrule
+no admissible sample & \(795\) & \(1820\) & \(2615\)\\
+admissible at every sample & \(50\) & \(155\) & \(205\)\\
+one contiguous sampled run & \(105\) & \(414\) & \(519\)\\
+multiple sampled runs & \(0\) & \(1\) & \(1\)\\
+\bottomrule
+\end{tabular}
+\caption{Classification on the \(73\)-angle grid.  These four classes are
+exhaustive for the sampled statuses, not claims about exact feasibility-set
+topology.  The sole multiple-run word has one numerically inadmissible grid
+point separating its two sampled admissible runs.}
+\label{tab:rotated-pentagon-sampled-presence}
+\end{table}
+\FloatBarrier
+
 The classifier is fail-closed.  Each word must reach one of the six conclusions
 in Table~\ref{tab:rotated-pentagon-certificate-outcomes}; every other case is
 labelled for manual review, and that label is not accepted by the full run.
