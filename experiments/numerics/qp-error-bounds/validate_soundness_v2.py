@@ -66,6 +66,7 @@ def main() -> None:
     rows = [json.loads(x) for x in (out / "raw_rows.jsonl").read_text().splitlines() if x]
     policies = [json.loads(x) for x in (out / "policy_rows.jsonl").read_text().splitlines() if x]
     registry = json.loads((out / "formula_registry.json").read_text())
+    evaluations = [json.loads(x) for x in (out / "formula_evaluations.jsonl").read_text().splitlines() if x]
     summary = json.loads((out / "producer_summary.json").read_text())
     manifest = json.loads((out / "manifest.json").read_text())
     if summary.get("row_count") != len(rows) or summary.get("policy_row_count") != len(policies):
@@ -106,6 +107,12 @@ def main() -> None:
             if row["exact_positive_witness_q"] is not None or row["exact_positive_witness_action"] is not None:
                 fail(f"unavailable exact witness carries target values {key}")
     validate_registry(registry)
+    registry_ids = {x["formula_id"] for x in registry}
+    if {x.get("formula_id") for x in evaluations} - registry_ids:
+        fail("formula evaluations contain an unregistered formula ID")
+    coverage = json.loads((out / "analysis.json").read_text()).get("formula_coverage", {})
+    if set(coverage) != registry_ids:
+        fail("analysis does not report coverage for every registered formula")
     raw_by_case = {case: [r for r in rows if r["target_polytope_id"] == case] for case in EXPECTED_CASES}
     if not policies or {p.get("target_polytope_id") for p in policies} != EXPECTED_CASES:
         fail("policy join case coverage failure")

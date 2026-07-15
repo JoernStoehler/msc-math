@@ -147,15 +147,15 @@ struct PolicyRow {
 
 #[derive(Serialize)]
 struct FormulaRegistryEntry {
-    formula_id: &'static str,
-    output_column: &'static str,
-    dependencies: Vec<(&'static str, &'static str)>,
-    center: &'static str,
-    exact_target: &'static str,
-    hypothesis_status: &'static str,
-    status: &'static str,
-    consumers: Vec<&'static str>,
-    unavailable_rule: &'static str,
+    formula_id: String,
+    output_column: String,
+    dependencies: Vec<(String, String)>,
+    center: String,
+    exact_target: String,
+    hypothesis_status: String,
+    status: String,
+    consumers: Vec<String>,
+    unavailable_rule: String,
 }
 
 fn rat(x: &BigRational) -> String {
@@ -782,7 +782,109 @@ fn cases() -> Vec<Case> {
 }
 
 fn formula_registry() -> Vec<FormulaRegistryEntry> {
-    vec![FormulaRegistryEntry{formula_id:"bound_q_abs__saddle_eig_accepted__eigen_residual_9over2",output_column:"saddle_eig_accepted.center_q_error_bound_f64",dependencies:vec![("saddle_eig_accepted.center_full_kkt_residual_norm_f64","saddle_eig_accepted"),("kkt_augmented_eigenvalues_f64","saddle_eig_accepted")],center:"saddle_eig_accepted",exact_target:"exact_positive_witness_q",hypothesis_status:"conjectured; current formal lemma is known too loose for thesis use",status:"available_when_saddle_center_available",consumers:vec!["soundness analyzer"],unavailable_rule:"unavailable unless the accepted saddle center and a nonzero eigenvalue atom exist"},FormulaRegistryEntry{formula_id:"error_q_abs__svd_lstsq_proposal_q_raw__to_exact_positive_witness_q",output_column:"error_q_abs__svd_lstsq_proposal_q_raw__to_exact_positive_witness_q",dependencies:vec![("svd_lstsq_proposal.center_q_raw_f64","svd_lstsq_proposal"),("exact_positive_witness_q","exact_positive_witness")],center:"svd_lstsq_proposal",exact_target:"exact_positive_witness_q",hypothesis_status:"observational error only",status:"available_when_matching_exact_positive_witness_exists",consumers:vec!["soundness analyzer"],unavailable_rule:"unavailable without an exact positive witness for the same sigma"},FormulaRegistryEntry{formula_id:"predicate_beta_positive__saddle_eig_accepted__to_exact_positive_witness",output_column:"predicate_beta_positive__saddle_eig_accepted__to_exact_positive_witness",dependencies:vec![("saddle_eig_accepted.center_beta_margin_f64","saddle_eig_accepted"),("exact_positive_witness_status","exact_positive_witness")],center:"saddle_eig_accepted",exact_target:"exact_positive_witness_status",hypothesis_status:"heuristic f64 classifier",status:"available_when_saddle_center_available",consumers:vec!["policy comparison"],unavailable_rule:"unavailable when the saddle solver did not accept a center"},FormulaRegistryEntry{formula_id:"interval_action__saddle_eig_accepted__positive_q_monotone",output_column:"interval_action__saddle_eig_accepted__positive_q_monotone",dependencies:vec![("saddle_eig_accepted.center_q_corrected_f64","saddle_eig_accepted"),("saddle_eig_accepted.center_q_error_bound_f64","saddle_eig_accepted")],center:"saddle_eig_accepted",exact_target:"exact_positive_witness_action",hypothesis_status:"conditionally justified only if its Q-bound hypotheses hold",status:"unavailable",consumers:vec!["selective fallback design"],unavailable_rule:"unavailable: this v2 producer records no verified enclosure and does not call ordinary f64 interval arithmetic rigorous"}]
+    let centers = [
+        "saddle_eig_accepted",
+        "svd_lstsq_proposal",
+        "projected_critical_proposal",
+        "projected_max_margin_proposal",
+        "lu_partial_pivot_proposal",
+        "qr_proposal",
+        "refined_svd_lstsq_proposal_qr_correction",
+    ];
+    let mut entries = Vec::new();
+    for center in centers {
+        let c = center.to_string();
+        let exact_q = "exact_positive_witness_q".to_string();
+        entries.push(FormulaRegistryEntry {
+            formula_id: format!("error_q_abs__{center}_q_raw__to_exact_positive_witness_q"),
+            output_column: format!("error_q_abs__{center}_q_raw__to_exact_positive_witness_q"),
+            dependencies: vec![
+                (format!("{center}.center_q_raw_f64"), c.clone()),
+                (exact_q.clone(), "exact_positive_witness".into()),
+            ],
+            center: c.clone(),
+            exact_target: exact_q.clone(),
+            hypothesis_status: "observational error only".into(),
+            status: "available_when_matching_exact_positive_witness_exists".into(),
+            consumers: vec!["soundness analyzer".into()],
+            unavailable_rule: "unavailable without a same-sigma exact positive-Q witness".into(),
+        });
+        entries.push(FormulaRegistryEntry {
+            formula_id: format!("bound_q_abs__{center}__eigen_residual_9over2"),
+            output_column: format!("bound_q_abs__{center}__eigen_residual_9over2"),
+            dependencies: vec![
+                (
+                    format!("{center}.center_full_kkt_residual_norm_f64"),
+                    c.clone(),
+                ),
+                ("kkt_augmented_eigenvalues_f64".into(), c.clone()),
+            ],
+            center: c.clone(),
+            exact_target: exact_q.clone(),
+            hypothesis_status: "conjectured; ordinary f64 atoms are not verified enclosures".into(),
+            status: "available_when_full_residual_and_nonzero_eigenvalue_exist".into(),
+            consumers: vec!["soundness analyzer".into()],
+            unavailable_rule: "unavailable for projected centres without a full KKT residual"
+                .into(),
+        });
+        entries.push(FormulaRegistryEntry {
+            formula_id: format!("bound_beta_l2__{center}__inverse_singular_residual"),
+            output_column: format!("bound_beta_l2__{center}__inverse_singular_residual"),
+            dependencies: vec![
+                (
+                    format!("{center}.center_full_kkt_residual_norm_f64"),
+                    c.clone(),
+                ),
+                ("kkt_augmented_singular_values_f64".into(), c.clone()),
+            ],
+            center: c.clone(),
+            exact_target: "exact_positive_witness_beta".into(),
+            hypothesis_status: "heuristic inverse-norm diagnostic, not a verified beta enclosure"
+                .into(),
+            status: "available_when_full_residual_and_positive_singular_value_exist".into(),
+            consumers: vec!["soundness analyzer".into()],
+            unavailable_rule: "unavailable for projected centres without a full KKT residual"
+                .into(),
+        });
+        entries.push(FormulaRegistryEntry {
+            formula_id: format!("bound_q_abs__{center}__beta_radius_first_plus_quadratic"),
+            output_column: format!("bound_q_abs__{center}__beta_radius_first_plus_quadratic"),
+            dependencies: vec![
+                (
+                    format!("bound_beta_l2__{center}__inverse_singular_residual"),
+                    c.clone(),
+                ),
+                ("qp_objective_hessian_h_f64".into(), c.clone()),
+                (format!("{center}.center_beta_f64"), c.clone()),
+            ],
+            center: c.clone(),
+            exact_target: exact_q.clone(),
+            hypothesis_status: "heuristic Q propagation from the inverse-norm radius".into(),
+            status: "available_when_beta-radius-is-computable".into(),
+            consumers: vec!["soundness analyzer".into()],
+            unavailable_rule: "unavailable when the radius or centre beta is unavailable".into(),
+        });
+        entries.push(FormulaRegistryEntry { formula_id: format!("interval_action__{center}__positive_q_monotone"), output_column: format!("interval_action__{center}__positive_q_monotone"), dependencies: vec![(format!("{center}.center_q_corrected_f64"), c.clone()), (format!("bound_q_abs__{center}__eigen_residual_9over2"), c.clone())], center:c.clone(), exact_target:"exact_positive_witness_action".into(), hypothesis_status:"conditionally justified only if the Q bound is justified and has positive lower endpoint".into(), status:"candidate_interval_not_verified".into(), consumers:vec!["selective fallback design".into()], unavailable_rule:"unavailable without corrected Q, candidate Q bound, and positive lower endpoint".into() });
+        entries.push(FormulaRegistryEntry {
+            formula_id: format!("predicate_beta_positive__{center}__from_radius"),
+            output_column: format!("predicate_beta_positive__{center}__from_radius"),
+            dependencies: vec![
+                (format!("{center}.center_beta_margin_f64"), c.clone()),
+                (
+                    format!("bound_beta_l2__{center}__inverse_singular_residual"),
+                    c.clone(),
+                ),
+            ],
+            center: c.clone(),
+            exact_target: "exact_positive_witness_status".into(),
+            hypothesis_status: "heuristic ternary predicate from f64 margin minus heuristic radius"
+                .into(),
+            status: "available_when_margin_and_radius_exist".into(),
+            consumers: vec!["policy comparison".into()],
+            unavailable_rule: "unavailable when either atom is unavailable".into(),
+        });
+    }
+    entries
 }
 
 fn exact_action(row: &RawRow) -> Option<BigRational> {
