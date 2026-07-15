@@ -1,12 +1,12 @@
 {
   "schema": "generator-cartan-anisotropy-report-v1",
-  "command": "target/release/sys-datascience-generator-cartan-anisotropy --out-dir /tmp/cartan-final2 --source experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl",
+  "command": "cargo run -p exp-sys-landscape --release --bin sys-datascience-generator-cartan-anisotropy -- --out-dir experiments/sys-datascience/methods/generator-cartan-anisotropy/artifacts/panel-2-per-bucket",
   "source_path": "experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl",
   "source_input_sha256": "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367",
-  "source_revision": "32fb2e548e4e81f0eef8d6c75983167e4f3879f4",
-  "source_repository_tree": "d852f54d444ca3eaba0ad162c82e325b47c4998c",
+  "source_revision": "12b3410c4534afa8251316e3487e5703f0413160",
+  "source_repository_tree": "28f0776fefb5a49b910fabd06e7277ef52131ca2",
   "source_dirty_tracked": false,
-  "producer_source_sha256": "3d16c78120b1727c0ef7680f068ae906b6d8f4f1324875fe75579a17363a44b2",
+  "producer_source_sha256": "124c34d026d6ad7fe34f4c5faef10ece50e2190be19aa4a8b818d37ef4e1cc7b",
   "cargo_lock_sha256": "61cbc0cec713df9c7b6ec79c19d4abbc34fcbc4b30ed9911df02502e0c444c1f",
   "coordinate_order": "q1,q2,p1,p2",
   "requested_buckets": [
