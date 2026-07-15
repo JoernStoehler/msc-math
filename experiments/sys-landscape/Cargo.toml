@@ -90,6 +90,10 @@ path = "../sys-datascience/methods/generator-orientation-smoke/main.rs"
 name = "sys-datascience-generator-natural-law-expansion"
 path = "../sys-datascience/methods/generator-natural-law-expansion/main.rs"
 
+[[bin]]
+name = "sys-datascience-generator-factor-coupling-atlas"
+path = "../sys-datascience/methods/generator-factor-coupling-atlas/main.rs"
+
 [lints]
 workspace = true
 
