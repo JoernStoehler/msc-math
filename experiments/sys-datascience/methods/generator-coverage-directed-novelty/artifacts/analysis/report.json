@@ -19,7 +19,7 @@
       "holdout_rows": 12,
       "nonredundant_views": {
         "chord_invariant": true,
-        "frame_geometry": false
+        "frame_geometry": true
       },
       "population": "primal-hull-uniform-disk[points=n+4,origin=interior]",
       "seed_counts_train": {
@@ -46,8 +46,8 @@
       "attempt_max_train": 0,
       "holdout_rows": 12,
       "nonredundant_views": {
-        "chord_invariant": false,
-        "frame_geometry": false
+        "chord_invariant": true,
+        "frame_geometry": true
       },
       "population": "repulsive-gap[alpha=16]",
       "seed_counts_train": {
@@ -60,8 +60,8 @@
       "attempt_max_train": 1,
       "holdout_rows": 12,
       "nonredundant_views": {
-        "chord_invariant": false,
-        "frame_geometry": false
+        "chord_invariant": true,
+        "frame_geometry": true
       },
       "population": "repulsive-gap[alpha=1]",
       "seed_counts_train": {
@@ -75,7 +75,7 @@
       "holdout_rows": 12,
       "nonredundant_views": {
         "chord_invariant": true,
-        "frame_geometry": false
+        "frame_geometry": true
       },
       "population": "repulsive-gap[alpha=4]",
       "seed_counts_train": {
@@ -103,7 +103,7 @@
       "holdout_rows": 12,
       "nonredundant_views": {
         "chord_invariant": true,
-        "frame_geometry": false
+        "frame_geometry": true
       },
       "population": "zonogon[lengths=uniform(0.5,1.5)]",
       "seed_counts_train": {
@@ -113,7 +113,6 @@
       "train_rows": 12
     }
   ],
-  "budget": 24,
   "frozen_baseline": {
     "n": 4,
     "population": "current-baseline[delta=0.2]",
@@ -122,138 +121,318 @@
   "generation_cost_artifact": "generation-cost.tsv",
   "holdout_input_sha256": "90275c221e88f2a02fb2317587f7f5722cd23aebbdb77d2c2b3eecdef5d0d62b",
   "input_hashes": {
-    "experiments/sys-datascience/methods/generator-coverage-directed-novelty/artifacts/holdout/factor-only-report.json": "5ca755a8cf5d4f90311da123c7966a46298bb552fd82cb29c3e02958795d6e90",
-    "experiments/sys-datascience/methods/generator-coverage-directed-novelty/artifacts/holdout/factor-shapes.jsonl": "90275c221e88f2a02fb2317587f7f5722cd23aebbdb77d2c2b3eecdef5d0d62b",
-    "experiments/sys-datascience/methods/generator-coverage-directed-novelty/artifacts/train/factor-only-report.json": "3e5cf51f7535b2018ebadcdb81841dd741776dd9ca49e9aebed854fb02776d8a",
-    "experiments/sys-datascience/methods/generator-coverage-directed-novelty/artifacts/train/factor-shapes.jsonl": "608df0fd90b56c1fb85cd49489838bec301c1d75c2a990377cb1bf7111d6b24a"
+    "artifacts/holdout/factor-only-report.json": "5ca755a8cf5d4f90311da123c7966a46298bb552fd82cb29c3e02958795d6e90",
+    "artifacts/holdout/factor-shapes.jsonl": "90275c221e88f2a02fb2317587f7f5722cd23aebbdb77d2c2b3eecdef5d0d62b",
+    "artifacts/train/factor-only-report.json": "3e5cf51f7535b2018ebadcdb81841dd741776dd9ca49e9aebed854fb02776d8a",
+    "artifacts/train/factor-shapes.jsonl": "608df0fd90b56c1fb85cd49489838bec301c1d75c2a990377cb1bf7111d6b24a"
   },
   "interpretation": {
     "allowed": [
-      "finite-panel holdout cover radius and yield per generated row by named population and view",
-      "which arms contribute nonredundant witnesses under each view",
-      "measured generation and selection costs",
+      "finite-panel holdout nearest-cover max/mean/q90 by named population and view",
+      "which arms contribute nonredundant retained witnesses under each view",
+      "measured full-pool generation and offline selection costs",
       "metric-disagreement cases and synthetic calibration behavior"
     ],
     "limitations": [
       "geometry alone cannot distinguish a rare remote mode from a contamination outlier",
       "one fixed side-count stratum and two seeds are implementation/finite-panel evidence only",
-      "adaptive_max is an acquisition heuristic, not a population score"
+      "offline greedy views are retained-coreset heuristics, not online policies"
     ],
     "prohibited": [
+      "online allocation, sample-efficiency, or per-generated-row claims",
       "sys or target exposure",
       "population support or density claims",
       "law quality ranking",
       "target transfer, inferential, causal, or post-selection claims"
     ],
     "selected_witness_authorization": "geometry-only follow-up only",
-    "smallest_next_geometry_only_follow_up": "Repeat the same frozen policy on one additional independent seed pair at side count 4 or 8, then test whether the holdout reduction-per-row ordering persists before any target exposure."
+    "smallest_next_geometry_only_follow_up": "Repeat the same frozen offline coreset on one additional independent seed pair at side count 4 or 8, then test whether bulk (mean/q90) reductions persist before any target exposure."
   },
   "policies": [
-    "passive_random",
-    "adaptive_max",
-    "adaptive_frame",
-    "adaptive_chord"
+    "passive_coreset",
+    "offline_greedy_max",
+    "offline_greedy_frame",
+    "offline_greedy_chord"
   ],
   "policy_results": [
     {
-      "budget": 24,
-      "holdout_final_radius": 3.699313598653523,
-      "holdout_initial_radius": 4.316716849968006,
-      "holdout_reduction_per_generated_row": 0.02572513547143679,
+      "holdout_final_cover": 3.699313598653523,
+      "holdout_initial_cover": 4.316716849968006,
+      "holdout_reduction_per_retained_witness": 0.02572513547143679,
       "holdout_total_reduction": 0.6174032513144829,
-      "policy": "passive_random",
+      "metric": "max",
+      "policy": "passive_coreset",
+      "retained_budget": 24,
       "view": "frame_geometry"
     },
     {
-      "budget": 24,
-      "holdout_final_radius": 0.5466168996404929,
-      "holdout_initial_radius": 1.0303428603039597,
-      "holdout_reduction_per_generated_row": 0.020155248360977786,
+      "holdout_final_cover": 0.4604151079493794,
+      "holdout_initial_cover": 1.0593656064856514,
+      "holdout_reduction_per_retained_witness": 0.024956270772344663,
+      "holdout_total_reduction": 0.5989504985362719,
+      "metric": "mean",
+      "policy": "passive_coreset",
+      "retained_budget": 24,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.8284906283487146,
+      "holdout_initial_cover": 1.5548707520570422,
+      "holdout_reduction_per_retained_witness": 0.030265838487846985,
+      "holdout_total_reduction": 0.7263801237083276,
+      "metric": "q90",
+      "policy": "passive_coreset",
+      "retained_budget": 24,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.5466168996404929,
+      "holdout_initial_cover": 1.0303428603039597,
+      "holdout_reduction_per_retained_witness": 0.020155248360977786,
       "holdout_total_reduction": 0.48372596066346685,
-      "policy": "passive_random",
+      "metric": "max",
+      "policy": "passive_coreset",
+      "retained_budget": 24,
       "view": "chord_invariant"
     },
     {
-      "budget": 24,
-      "holdout_final_radius": 3.1786085739613,
-      "holdout_initial_radius": 4.316716849968006,
-      "holdout_reduction_per_generated_row": 0.047421178166946076,
+      "holdout_final_cover": 0.194129810077186,
+      "holdout_initial_cover": 0.41442097028182656,
+      "holdout_reduction_per_retained_witness": 0.009178798341860023,
+      "holdout_total_reduction": 0.22029116020464057,
+      "metric": "mean",
+      "policy": "passive_coreset",
+      "retained_budget": 24,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.35865032470466224,
+      "holdout_initial_cover": 0.555989937748614,
+      "holdout_reduction_per_retained_witness": 0.008222483876831325,
+      "holdout_total_reduction": 0.1973396130439518,
+      "metric": "q90",
+      "policy": "passive_coreset",
+      "retained_budget": 24,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 3.1786085739613,
+      "holdout_initial_cover": 4.316716849968006,
+      "holdout_reduction_per_retained_witness": 0.047421178166946076,
       "holdout_total_reduction": 1.1381082760067058,
-      "policy": "adaptive_max",
+      "metric": "max",
+      "policy": "offline_greedy_max",
+      "retained_budget": 24,
       "view": "frame_geometry"
     },
     {
-      "budget": 24,
-      "holdout_final_radius": 0.43583588739944107,
-      "holdout_initial_radius": 1.0303428603039597,
-      "holdout_reduction_per_generated_row": 0.02477112387102161,
-      "holdout_total_reduction": 0.5945069729045187,
-      "policy": "adaptive_max",
-      "view": "chord_invariant"
-    },
-    {
-      "budget": 24,
-      "holdout_final_radius": 3.1786085739613,
-      "holdout_initial_radius": 4.316716849968006,
-      "holdout_reduction_per_generated_row": 0.047421178166946076,
-      "holdout_total_reduction": 1.1381082760067058,
-      "policy": "adaptive_frame",
+      "holdout_final_cover": 0.553560985254243,
+      "holdout_initial_cover": 1.0593656064856514,
+      "holdout_reduction_per_retained_witness": 0.021075192551308682,
+      "holdout_total_reduction": 0.5058046212314083,
+      "metric": "mean",
+      "policy": "offline_greedy_max",
+      "retained_budget": 24,
       "view": "frame_geometry"
     },
     {
-      "budget": 24,
-      "holdout_final_radius": 0.43583588739944107,
-      "holdout_initial_radius": 1.0303428603039597,
-      "holdout_reduction_per_generated_row": 0.02477112387102161,
+      "holdout_final_cover": 1.042605133995181,
+      "holdout_initial_cover": 1.5548707520570422,
+      "holdout_reduction_per_retained_witness": 0.021344400752577552,
+      "holdout_total_reduction": 0.5122656180618612,
+      "metric": "q90",
+      "policy": "offline_greedy_max",
+      "retained_budget": 24,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.43583588739944107,
+      "holdout_initial_cover": 1.0303428603039597,
+      "holdout_reduction_per_retained_witness": 0.02477112387102161,
       "holdout_total_reduction": 0.5945069729045187,
-      "policy": "adaptive_frame",
+      "metric": "max",
+      "policy": "offline_greedy_max",
+      "retained_budget": 24,
       "view": "chord_invariant"
     },
     {
-      "budget": 24,
-      "holdout_final_radius": 2.942349756372451,
-      "holdout_initial_radius": 4.316716849968006,
-      "holdout_reduction_per_generated_row": 0.057265295566481446,
+      "holdout_final_cover": 0.2069483787797255,
+      "holdout_initial_cover": 0.41442097028182656,
+      "holdout_reduction_per_retained_witness": 0.008644691312587544,
+      "holdout_total_reduction": 0.20747259150210107,
+      "metric": "mean",
+      "policy": "offline_greedy_max",
+      "retained_budget": 24,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.3087722240539805,
+      "holdout_initial_cover": 0.555989937748614,
+      "holdout_reduction_per_retained_witness": 0.01030073807060973,
+      "holdout_total_reduction": 0.24721771369463352,
+      "metric": "q90",
+      "policy": "offline_greedy_max",
+      "retained_budget": 24,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 3.1786085739613,
+      "holdout_initial_cover": 4.316716849968006,
+      "holdout_reduction_per_retained_witness": 0.047421178166946076,
+      "holdout_total_reduction": 1.1381082760067058,
+      "metric": "max",
+      "policy": "offline_greedy_frame",
+      "retained_budget": 24,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.5030081049032548,
+      "holdout_initial_cover": 1.0593656064856514,
+      "holdout_reduction_per_retained_witness": 0.023181562565933192,
+      "holdout_total_reduction": 0.5563575015823966,
+      "metric": "mean",
+      "policy": "offline_greedy_frame",
+      "retained_budget": 24,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.8376533318316032,
+      "holdout_initial_cover": 1.5548707520570422,
+      "holdout_reduction_per_retained_witness": 0.02988405917605996,
+      "holdout_total_reduction": 0.717217420225439,
+      "metric": "q90",
+      "policy": "offline_greedy_frame",
+      "retained_budget": 24,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.43583588739944107,
+      "holdout_initial_cover": 1.0303428603039597,
+      "holdout_reduction_per_retained_witness": 0.02477112387102161,
+      "holdout_total_reduction": 0.5945069729045187,
+      "metric": "max",
+      "policy": "offline_greedy_frame",
+      "retained_budget": 24,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.20356847959628493,
+      "holdout_initial_cover": 0.41442097028182656,
+      "holdout_reduction_per_retained_witness": 0.0087855204452309,
+      "holdout_total_reduction": 0.21085249068554163,
+      "metric": "mean",
+      "policy": "offline_greedy_frame",
+      "retained_budget": 24,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.34073814070831077,
+      "holdout_initial_cover": 0.555989937748614,
+      "holdout_reduction_per_retained_witness": 0.008968824876679304,
+      "holdout_total_reduction": 0.21525179704030328,
+      "metric": "q90",
+      "policy": "offline_greedy_frame",
+      "retained_budget": 24,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 2.942349756372451,
+      "holdout_initial_cover": 4.316716849968006,
+      "holdout_reduction_per_retained_witness": 0.057265295566481446,
       "holdout_total_reduction": 1.3743670935955548,
-      "policy": "adaptive_chord",
+      "metric": "max",
+      "policy": "offline_greedy_chord",
+      "retained_budget": 24,
       "view": "frame_geometry"
     },
     {
-      "budget": 24,
-      "holdout_final_radius": 0.43129565932096353,
-      "holdout_initial_radius": 1.0303428603039597,
-      "holdout_reduction_per_generated_row": 0.024960300040958172,
+      "holdout_final_cover": 0.496264675629578,
+      "holdout_initial_cover": 1.0593656064856514,
+      "holdout_reduction_per_retained_witness": 0.023462538785669725,
+      "holdout_total_reduction": 0.5631009308560734,
+      "metric": "mean",
+      "policy": "offline_greedy_chord",
+      "retained_budget": 24,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.858679004072701,
+      "holdout_initial_cover": 1.5548707520570422,
+      "holdout_reduction_per_retained_witness": 0.029007989499347547,
+      "holdout_total_reduction": 0.6961917479843411,
+      "metric": "q90",
+      "policy": "offline_greedy_chord",
+      "retained_budget": 24,
+      "view": "frame_geometry"
+    },
+    {
+      "holdout_final_cover": 0.43129565932096353,
+      "holdout_initial_cover": 1.0303428603039597,
+      "holdout_reduction_per_retained_witness": 0.024960300040958172,
       "holdout_total_reduction": 0.5990472009829961,
-      "policy": "adaptive_chord",
+      "metric": "max",
+      "policy": "offline_greedy_chord",
+      "retained_budget": 24,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.1996349512978089,
+      "holdout_initial_cover": 0.41442097028182656,
+      "holdout_reduction_per_retained_witness": 0.008949417457667403,
+      "holdout_total_reduction": 0.21478601898401767,
+      "metric": "mean",
+      "policy": "offline_greedy_chord",
+      "retained_budget": 24,
+      "view": "chord_invariant"
+    },
+    {
+      "holdout_final_cover": 0.30381579657578356,
+      "holdout_initial_cover": 0.555989937748614,
+      "holdout_reduction_per_retained_witness": 0.01050725588220127,
+      "holdout_total_reduction": 0.2521741411728305,
+      "metric": "q90",
+      "policy": "offline_greedy_chord",
+      "retained_budget": 24,
       "view": "chord_invariant"
     }
   ],
+  "pool_contract": {
+    "abandoned_or_capped_arms": [],
+    "balanced_population_side_count_strata": true,
+    "disjoint_sample_ids": true,
+    "failure_mode": "analyze.py fails closed on overlap, imbalance, or side-count drift",
+    "independent_master_seeds": true
+  },
   "provenance": {
     "producer_reports": [
-      "experiments/sys-datascience/methods/generator-coverage-directed-novelty/artifacts/train/factor-only-report.json",
-      "experiments/sys-datascience/methods/generator-coverage-directed-novelty/artifacts/holdout/factor-only-report.json"
+      "artifacts/train/factor-only-report.json",
+      "artifacts/holdout/factor-only-report.json"
     ],
     "seed_contract": "train and holdout are independent master seeds; seed and attempt are retained in every witness row",
+    "selection_contract": "all full train rows are generated before offline retained-witness selection",
     "witness_id": "sha256(sample_id) prefix"
   },
-  "question": "Can a target-free multi-view frontier find nonredundant finite-panel geometry more efficiently than passive allocation across current explicit planar populations?",
+  "question": "Can an offline multi-view greedy coreset retain nonredundant finite-panel geometry from an already generated pool?",
+  "retained_budget": 24,
   "rows": {
     "holdout": 96,
+    "holdout_full_pool_generated_rows": 96,
     "populations": 8,
     "side_count": 6,
-    "train": 96
+    "train": 96,
+    "train_full_pool_generated_rows": 96
   },
   "schema": "coverage-directed-novelty-v1",
-  "selection_cost_ms": 1427.8187030013214,
+  "selection_cost_ms": 1481.9884060016193,
   "source": {
-    "analyzer_sha256": "da2f3f054e7db37c5fa93aab4db9a20e11e8e155a664ffbc3ea3e7d746fbdff0",
+    "analyzer_sha256": "88a08a2f43a6bd24be5891b73646e75f4e920ba6b0ad85fdf5d1f5c9c4bee44b",
     "producer_revision": "a50e1e930e21541506df6228aaed16355d830372",
     "producer_source_blobs": {
       "Cargo.lock": "8a51ae91187fdbc44c1539ddebf598feedd27b91",
       "experiments/sys-datascience/methods/generator-zoo-smoke/main.rs": "ea59cb1b3d123e630fdc034a95f4a2a43812b0a6",
       "experiments/sys-landscape/Cargo.toml": "a8efcf2366bcc08c5317d33926f44579727fbf31"
     },
-    "revision": "6ce3c40920b0ad9f3075c90537cdedcfef04f1dc",
+    "revision": "fd9e7a7876aed7b330d93bfe1830d2ce53b9933e",
     "tracked_clean_for_analyzer": true
   },
   "synthetic_calibrations": {
@@ -282,15 +461,15 @@
     "contamination_not_population_region": true,
     "limitation": "Geometry alone cannot distinguish a tiny remote mode from a contaminated outlier; this calibration selected both and retains the known contamination label rather than promoting it.",
     "remote_mode_discovered": true,
-    "representation_quotient_distance": 3.551008815351844e-16,
-    "representation_raw_distance": 2.149139863647084,
+    "representation_quotient_distance": 6.544668208791957e-16,
+    "representation_raw_distance": 2.1933217021505613,
     "schema": "coverage-directed-novelty-synthetic-v1"
   },
   "train_input_sha256": "608df0fd90b56c1fb85cd49489838bec301c1d75c2a990377cb1bf7111d6b24a",
   "view_contract": {
-    "adaptive_max": "max of per-view median-normalized gains for acquisition only; no scientific scalar ranking",
     "chord_invariant": "sorted all-pairs chord lengths after translation and area normalization",
     "frame_geometry": "cyclic/frame-adjusted vertices after translation and area normalization; minimum over start and reversal",
-    "passive_random": "deterministic SHA-256 rank order is the reproducible passive-random allocation"
+    "offline_greedy_max": "max of per-view median-normalized gains for offline coreset acquisition only; no scientific scalar ranking",
+    "passive_coreset": "deterministic SHA-256 rank order is the reproducible passive retained-budget comparator"
   }
 }
