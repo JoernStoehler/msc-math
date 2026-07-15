@@ -625,7 +625,7 @@ fn evaluate(
     let (q_normals, q_heights) = factor_payload(&pair.q);
     let (p_normals, p_heights) = factor_payload(&pair.p);
     Row {
-        schema: "generator-factor-coupling-atlas-row-v1",
+        schema: "generator-factor-coupling-atlas-row-v2",
         law_version: VERSION,
         sample_id,
         pairing_id,
@@ -669,7 +669,7 @@ fn evaluate(
 
 fn exhausted(seed: u64, rho: f64, n: usize, rotation: &str, row: usize, args: &Args) -> Row {
     Row {
-        schema: "generator-factor-coupling-atlas-row-v1",
+        schema: "generator-factor-coupling-atlas-row-v2",
         law_version: VERSION,
         sample_id: sample_id(seed, rho, n, rotation, row, args.attempts.saturating_sub(1)),
         pairing_id: pairing_id(seed, rho, n, rotation, row),
@@ -875,12 +875,12 @@ fn main() {
         "cargo run -p exp-sys-landscape --release --bin sys-datascience-generator-factor-coupling-atlas -- --out-dir experiments/sys-datascience/methods/generator-factor-coupling-atlas/artifacts --seed {} --attempts {} --rows-per-arm {}",
         args.seed, args.attempts, args.rows_per_arm
     );
-    let report=Report {schema:"generator-factor-coupling-atlas-report-v1",law_version:VERSION,source_revision:source_revision.clone(),source_tree:source_tree.clone(),source_dirty:dirty,source_dirty_scope:"fail-closed git status --porcelain=v1 --untracked-files=no captured before output creation",command:replay_command.clone(),seed:args.seed,seeds,rho_values:RHO_VALUES.to_vec(),side_counts:SIDES.to_vec(),rotation_populations:ROTATIONS.to_vec(),rows:acc.rows,requested_rows:requested,status_counts:statuses,attempts_total:acc.attempts_total,accepted_rows:acc.accepted,exhausted_rows:acc.exhausted,producer_blake3:producer_blake3.clone(),cargo_lock_blake3:cargo_lock_blake3.clone(),rows_blake3:rows_blake3.clone(),marginal_control:marginal,dependence_control,endpoint_control:EndpointControl {rho_one_shared_primitives:endpoint_shared,rho_one_max_quotient_distance:maximum(&acc.endpoint_distances),corrupted_coupling_rejected:corrupted,exact_rationalized_product_rows:exact_rows,note:"incidence is exact for the rationalized f64 dual reconstruction; it is not an exact irrational-input theorem"},copula_formula:"For each angle and height primitive independently: U,V ~ iid Uniform(0,1), B ~ Bernoulli(rho), U_Q=U, U_P=U if B=1 else V. This mixture copula has exact uniform marginals, Pearson dependence rho, and literal rho=0/1 endpoints.",primitive_marginal_contract:"Before selection, each factor has independent U(0,1) angle primitives and independent U(0,1) height primitives; h=0.8+0.4U and angle=2piU plus a global rotation.",conditioning_contract:"A candidate is retained only after both factor H-reconstructions have all prescribed active facets and exact-after-rationalization product incidence/positive volume validates. Mixture-copula marginal preservation is theorem-by-construction before this selection; conditioning may alter the retained marginal, so finite diagnostics are reported.",interpretation_boundary:"Target-free construction and geometry evidence only: no sys, exchangeability, rho monotonicity, best-rho choice, or transfer claim."};
+    let report=Report {schema:"generator-factor-coupling-atlas-report-v2",law_version:VERSION,source_revision:source_revision.clone(),source_tree:source_tree.clone(),source_dirty:dirty,source_dirty_scope:"fail-closed git status --porcelain=v1 --untracked-files=no captured before output creation",command:replay_command.clone(),seed:args.seed,seeds,rho_values:RHO_VALUES.to_vec(),side_counts:SIDES.to_vec(),rotation_populations:ROTATIONS.to_vec(),rows:acc.rows,requested_rows:requested,status_counts:statuses,attempts_total:acc.attempts_total,accepted_rows:acc.accepted,exhausted_rows:acc.exhausted,producer_blake3:producer_blake3.clone(),cargo_lock_blake3:cargo_lock_blake3.clone(),rows_blake3:rows_blake3.clone(),marginal_control:marginal,dependence_control,endpoint_control:EndpointControl {rho_one_shared_primitives:endpoint_shared,rho_one_max_quotient_distance:maximum(&acc.endpoint_distances),corrupted_coupling_rejected:corrupted,exact_rationalized_product_rows:exact_rows,note:"incidence is exact for the rationalized f64 dual reconstruction; it is not an exact irrational-input theorem"},copula_formula:"For each angle and height primitive independently: U,V ~ iid Uniform(0,1), B ~ Bernoulli(rho), U_Q=U, U_P=U if B=1 else V. This mixture copula has exact uniform marginals, Pearson dependence rho, and literal rho=0/1 endpoints.",primitive_marginal_contract:"Before selection, each factor has independent U(0,1) angle primitives and independent U(0,1) height primitives; h=0.8+0.4U and angle=2piU plus a global rotation.",conditioning_contract:"A candidate is retained only after both factor H-reconstructions have all prescribed active facets and exact-after-rationalization product incidence/positive volume validates. Mixture-copula marginal preservation is theorem-by-construction before this selection; conditioning may alter the retained marginal, so finite diagnostics are reported.",interpretation_boundary:"Target-free construction and geometry evidence only: no sys, exchangeability, rho monotonicity, best-rho choice, or transfer claim."};
     serde_json::to_writer_pretty(File::create(&report_path).expect("create report"), &report)
         .expect("write report");
     let report_blake3 = file_blake3(&report_path);
     let manifest = Manifest {
-        schema: "generator-factor-coupling-atlas-manifest-v1",
+        schema: "generator-factor-coupling-atlas-manifest-v2",
         source_revision,
         source_tree,
         producer_blake3,
