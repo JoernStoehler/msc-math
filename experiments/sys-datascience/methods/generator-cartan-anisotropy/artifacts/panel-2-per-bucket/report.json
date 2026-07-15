@@ -3,10 +3,10 @@
   "command": "cargo run -p exp-sys-landscape --release --bin sys-datascience-generator-cartan-anisotropy -- --out-dir experiments/sys-datascience/methods/generator-cartan-anisotropy/artifacts/panel-2-per-bucket",
   "source_path": "experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl",
   "source_input_sha256": "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367",
-  "source_revision": "12b3410c4534afa8251316e3487e5703f0413160",
-  "source_repository_tree": "28f0776fefb5a49b910fabd06e7277ef52131ca2",
+  "source_revision": "d6b69d58ff926c180a73356475f4754153ac7ce9",
+  "source_repository_tree": "f4d744a9bcb4c0f92dcc7a49cbfa430dbf5c6173",
   "source_dirty_tracked": false,
-  "producer_source_sha256": "124c34d026d6ad7fe34f4c5faef10ece50e2190be19aa4a8b818d37ef4e1cc7b",
+  "producer_source_sha256": "d28d1451da97f4cb8d0fe0351061398a01420cdf101d55a13c0d80f3c7046fc5",
   "cargo_lock_sha256": "61cbc0cec713df9c7b6ec79c19d4abbc34fcbc4b30ed9911df02502e0c444c1f",
   "coordinate_order": "q1,q2,p1,p2",
   "requested_buckets": [
@@ -29,48 +29,25 @@
   "output_paired_tsv_sha256": "52d86837d8f90297fe4134e9e651b77329888cc211e50a95897212617280d79a",
   "diagonal_quotient_control": {
     "input_d_exact": [
-      "2/1",
-      "1/2",
-      "2/1",
-      "1/2"
+      "1/1",
+      "1/1",
+      "4/1",
+      "1/4"
     ],
+    "input_positive": true,
+    "input_determinant_exact": "1/1",
+    "input_determinant_one": true,
     "t_squared_exact": "4/1",
     "symplectic_factor_exact": [
       [
-        "1/1",
-        "0/1",
-        "0/1",
-        "0/1"
-      ],
-      [
-        "0/1",
-        "1/1",
-        "0/1",
-        "0/1"
-      ],
-      [
-        "0/1",
-        "0/1",
-        "1/1",
-        "0/1"
-      ],
-      [
-        "0/1",
-        "0/1",
-        "0/1",
-        "1/1"
-      ]
-    ],
-    "reconstructed_d_exact": [
-      [
-        "2/1",
-        "0/1",
-        "0/1",
-        "0/1"
-      ],
-      [
-        "0/1",
         "1/2",
+        "0/1",
+        "0/1",
+        "0/1"
+      ],
+      [
+        "0/1",
+        "2/1",
         "0/1",
         "0/1"
       ],
@@ -85,6 +62,35 @@
         "0/1",
         "0/1",
         "1/2"
+      ]
+    ],
+    "symplectic_factor_residual_exact": "0/1",
+    "symplectic_factor_is_exact": true,
+    "nonidentity_factor": true,
+    "reconstructed_d_exact": [
+      [
+        "1/1",
+        "0/1",
+        "0/1",
+        "0/1"
+      ],
+      [
+        "0/1",
+        "1/1",
+        "0/1",
+        "0/1"
+      ],
+      [
+        "0/1",
+        "0/1",
+        "4/1",
+        "0/1"
+      ],
+      [
+        "0/1",
+        "0/1",
+        "0/1",
+        "1/4"
       ]
     ],
     "reconstruction_passed": true,
