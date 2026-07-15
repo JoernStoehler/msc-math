@@ -1,6 +1,6 @@
 {
-  "schema": "generator-convex-operations-report-v1",
-  "law_version": "generator-convex-operations-v1",
+  "schema": "generator-convex-operations-report-v2",
+  "law_version": "generator-convex-operations-v2",
   "seed_panel": [
     20260715,
     20260716,
@@ -34,13 +34,13 @@
       "requested": 18,
       "accepted": 18,
       "exhausted": 0,
-      "total_attempts": 36,
+      "total_attempts": 39,
       "output_side_counts": {
         "4": 2,
-        "5": 6,
-        "6": 4,
+        "5": 4,
+        "6": 5,
         "7": 2,
-        "8": 4
+        "8": 5
       }
     },
     "difference-body": {
@@ -58,20 +58,21 @@
       "requested": 18,
       "accepted": 18,
       "exhausted": 0,
-      "total_attempts": 48,
+      "total_attempts": 49,
       "output_side_counts": {
-        "4": 4,
-        "5": 3,
-        "6": 6,
-        "8": 3,
-        "9": 2
+        "10": 2,
+        "4": 6,
+        "5": 5,
+        "6": 1,
+        "7": 2,
+        "8": 2
       }
     },
     "minkowski-sum": {
       "requested": 18,
       "accepted": 18,
       "exhausted": 0,
-      "total_attempts": 42,
+      "total_attempts": 38,
       "output_side_counts": {
         "12": 6,
         "6": 6,
@@ -91,14 +92,14 @@
     }
   },
   "side_count_histogram": {
+    "10": 2,
     "12": 18,
     "3": 6,
-    "4": 12,
+    "4": 14,
     "5": 9,
-    "6": 34,
-    "7": 2,
-    "8": 25,
-    "9": 2
+    "6": 30,
+    "7": 4,
+    "8": 25
   },
   "dispositions": [
     {
@@ -144,16 +145,19 @@
       "note": "classical polygonal Minkowski symmetrization in uniform direction u"
     }
   ],
-  "command": "./target/release/sys-datascience-generator-convex-operations --out-dir experiments/sys-datascience/methods/generator-convex-operations/artifacts --attempts 32 --rows-per-bucket 2",
-  "source_revision": "081fd2b8ce8f09aab3556e94ffd91a1cb7c5357a",
-  "source_tree": "af1f68f1a9d1b975f21e3459dadee9a074e40788",
+  "command": "cargo run -p exp-sys-landscape --release --bin sys-datascience-generator-convex-operations -- --attempts 32 --rows-per-bucket 2",
+  "producer_revision": "a5c0cf9c5a227c77dc6c924084be6f4f3257cf37",
+  "producer_tree": "fe58ab6db480ab0ca004b62f7b93d292c53d0440",
+  "producer_paths": [
+    "experiments/sys-datascience/methods/generator-convex-operations/main.rs",
+    "experiments/sys-landscape/Cargo.toml"
+  ],
+  "cargo_lock_blake3": "9a6b7c795334e51dfa98c8a82ed4d33ef7633dfdf8e5142fc6aae6a3e4f09a5e",
+  "input_hashes": {},
+  "output_rows_blake3": "02e99c8a0f692ca18c06cc536e7ac36e1ae4583949b82a4a1818880427cdaee7",
+  "output_rows_count": 108,
   "source_dirty": false,
-  "timing_ms_volatile": {
-    "generation_total_ms": 1.3897249999999988,
-    "validation_total_ms": 0.016926000000000004,
-    "note": "wall-clock diagnostics only; omitted from deterministic row identities and not evidence of population cost"
-  },
-  "interpretation_boundary": "Target-free geometry smoke only. Rows expose operation lineage, side counts, active subsets, common shape views, and directed overlaps after no target stratification; no population ranking, sys/capacity, transfer, or independence claim is supported.",
+  "interpretation_boundary": "Target-free geometry smoke only. Rows expose operation lineage, side counts, active subsets, common shape views, and source-coordinate directed overlaps; no population ranking, sys/capacity, transfer, quotient-distance, or independence claim is supported.",
   "abandoned": [
     {
       "operation": "crofton-poisson-cell",
