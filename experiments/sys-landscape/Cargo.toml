@@ -83,6 +83,14 @@ path = "../sys-datascience/methods/alternative-source-transfer/src/main.rs"
 name = "sys-datascience-alternative-source-transfer-evaluator"
 path = "../sys-datascience/methods/alternative-source-transfer/src/evaluator.rs"
 
+[[bin]]
+name = "sys-datascience-generator-orientation-smoke"
+path = "../sys-datascience/methods/generator-orientation-smoke/main.rs"
+
+[[bin]]
+name = "sys-datascience-generator-orientation-target-pilot"
+path = "../sys-datascience/methods/generator-orientation-target-pilot/main.rs"
+
 [lints]
 workspace = true
 

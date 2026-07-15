@@ -1,0 +1,55 @@
+{
+  "schema": "generator-orientation-target-pilot-design-v1",
+  "question": "On eight frozen Euclidean witnesses, does Haar SO(4) orientation change sys while Haar U(2) remains a numerical invariance control?",
+  "protocol_history": "experiments/sys-datascience/methods/generator-orientation-target-pilot/protocol-history.json",
+  "protocol_history_sha256": "604aa4edfd6d515df3af56166dd8a6afa527bbb8173669ed90b042a339c7d64d",
+  "retained_run": {
+    "commit": "a59441c0ecde29ac667745e02aac4bedb8ca7d14",
+    "target_sha256": "2d0f91e1aeb99350b345d5e5a36d44a0a68f83d35ac79d3865c457bbbe187a88",
+    "target_rows_immutable": true
+  },
+  "source_panel": "experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl",
+    "source_sha256": "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367",
+  "source_report": "experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/report.json",
+  "source_report_sha256": "02b7084141c0f2422aaabf1516fa62af501963ce638b9df3ef756c762722d61c",
+  "selection": {
+    "manifest": "experiments/sys-datascience/methods/generator-orientation-target-pilot/selection-manifest.json",
+    "manifest_sha256": "6752940d5cf1f80598bff8676570c25d0215e83b1e105c94075d665b4efae030",
+    "buckets": ["3x3", "4x4", "4x6", "6x6"],
+    "bases_per_bucket": 2,
+    "variants": ["identity", "u2-haar", "so4-haar"],
+    "rows": 24,
+    "pair_key": "base_id",
+    "facet_order": "preserve transformed_dual_vertices_f64 order",
+    "source_status": ["base_accepted=true", "reconstruction_status=reconstructed", "semantic_invariants_passed=true", "no target fields"]
+  },
+  "evaluator": {
+    "binary": "sys-datascience-generator-orientation-target-pilot",
+    "source": "experiments/sys-datascience/methods/generator-orientation-target-pilot/main.rs",
+    "source_sha256": "3b0a67fe379c71a102ef44c9e39d491a509ebc5ee7ef09c8853b33a44b5e5f20",
+    "implementation_files": [
+      {"path": "experiments/sys-landscape/src/datascience_cache.rs", "sha256": "ce15a5a29b6b11053072336421f004c028cb04ffdc40001d291e70298e731569"},
+      {"path": "experiments/sys-landscape/src/sys_landscape_cache.rs", "sha256": "de69e5e50fec9f5f036941fcdd4d013ec16b4171cc9eba91f610eff815e9d240"},
+      {"path": "experiments/sys-landscape/src/lib.rs", "sha256": "1b504f7674a756431eba1f2a01fce6660184c801d4733d9b2da463d1a1bfc75a"},
+      {"path": "experiments/sys-landscape/Cargo.toml", "sha256": "b659df44f0101f5dc85f3913a0131eb2aad08c6a728f6ab4ea3ac60087ce48b5"},
+      {"path": "Cargo.lock", "sha256": "9e59bc0ed96aeccce2decc178beff2f224702174122ccf55d158fb009ef96d1e"}
+    ],
+    "target_backend": "CapacityBackend::Auto",
+    "cache": "ComputedPolytopeCache::load(&[]) method-local empty cache",
+    "reconstruction": "SysLandscapePolytopeCache::from_f64_dual_vertices"
+  },
+  "analysis": {
+    "u2_max_abs_delta_gate": 1e-8,
+    "material_so4_threshold": 0.01,
+    "contradiction_so4_threshold": 0.005,
+    "supports_if_material_count_at_least": 6,
+    "ridge_direction": "delta_so4 opposite sign to retained exact-feature symplectic_ridge_area_mean delta",
+    "ridge_sign_gate": 6,
+    "ridge_spearman_gate": -0.5,
+    "heterogeneity_common_sign_gate": 7,
+    "bucket_concentration_gate": 0.5,
+    "no_p_values_bootstrap_population_or_causal_claims": true
+  },
+  "target_exposure_boundary": "after-pre-target-commit",
+  "prohibition": "Do not evaluate deterministic arms, tangential arms, other generators, or additional bases; do not modify source or feature artifacts."
+}

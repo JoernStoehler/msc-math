@@ -1,0 +1,46 @@
+{
+  "schema": "generator-orientation-target-pilot-protocol-history-v1",
+  "design_evaluator_first_committed": {
+    "commit": "dfbcc400b8cc39c60f8e8c22f8e9ed95acc229be",
+    "role": "design and evaluator first committed",
+    "design_path": "experiments/sys-datascience/methods/generator-orientation-target-pilot/design.json",
+    "evaluator_path": "experiments/sys-datascience/methods/generator-orientation-target-pilot/main.rs"
+  },
+  "source_variant_validation_repaired_pre_run": {
+    "commit": "f5f38f351576e7eccb5a51242ff95211ed7b8761",
+    "role": "source variant grid validation repaired before target exposure"
+  },
+  "earlier_exposure": {
+    "after_commit": "f5f38f351576e7eccb5a51242ff95211ed7b8761",
+    "rows_first_exposed": 24,
+    "status": "rejected_and_deleted",
+    "rejection_reasons": [
+      "design contained one mistyped experiments/sys-landscape/src/lib.rs SHA-256 nibble",
+      "analyze.py used the wrong repository-parent depth"
+    ],
+    "retained_or_analyzed": false,
+    "interpretation": "These initial outputs were not analyzed or retained. They are protocol history only."
+  },
+  "valid_pre_retained_rerun_commit": {
+    "commit": "a59441c0ecde29ac667745e02aac4bedb8ca7d14",
+    "role": "valid pre-retained-rerun commit",
+    "changed_only": [
+      "implementation-closure provenance line",
+      "analyzer repository-parent audit line"
+    ],
+    "did_not_change": [
+      "selection",
+      "evaluator",
+      "formulas",
+      "gates",
+      "interpretation"
+    ],
+    "caveat": "This is not the first absolute pre-target freeze; 24 values had been exposed after f5f38f35 and rejected before this valid rerun."
+  },
+  "retained_artifact": {
+    "rerun_after_commit": "a59441c0ecde29ac667745e02aac4bedb8ca7d14",
+    "target_rows": "artifacts/target-rows.jsonl",
+    "target_sha256": "2d0f91e1aeb99350b345d5e5a36d44a0a68f83d35ac79d3865c457bbbe187a88",
+    "only_retained_or_analyzed_target_artifact": true
+  }
+}
