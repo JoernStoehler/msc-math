@@ -4,7 +4,7 @@ This target-free packet supplies a body-level comparison for irredundant four-di
 
 ## Contract
 
-The executable accepts only normalized dual presentations `a_i . x <= 1` in `(q1,q2,p1,p2)` order. It reconstructs all vertices by exact rational four-facet joins, checks every join against every inequality, and rejects a presentation with a duplicate or any inequality not tight on a reconstructed vertex. The redundant-cube calibration therefore has the explicit `fail_closed` disposition; a merely permuted irredundant cube is invariant.
+The executable accepts only normalized dual presentations `a_i . x <= 1` in `(q1,q2,p1,p2)` order. It reconstructs all vertices by exact rational four-facet joins, checks every join against every inequality, and rejects a presentation with a duplicate or any inequality that does not span a three-dimensional reconstructed facet. The redundant-cube calibration includes both a duplicate and a supporting plane that touches only one vertex, each with an explicit `fail_closed` disposition; a merely permuted irredundant cube is invariant.
 
 The convention subtracts the arithmetic mean of reconstructed vertices and divides by RMS vertex radius. It quotients translation and positive global scale only. Support is evaluated on an antipodally complete finite `S^3` design: normalized primitive integer directions with maximum coordinate 3. `direct_sampled` reports support `L_infinity` (a sampled Hausdorff surrogate, not exact Hausdorff) and `L2`.
 

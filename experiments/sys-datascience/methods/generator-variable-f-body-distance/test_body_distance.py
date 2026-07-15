@@ -17,6 +17,9 @@ def test_reconstruction_boundary() -> None:
     try: mod.reconstruct_body("redundant",mod.cube_normals()+[mod.cube_normals()[0]])
     except mod.ReconstructionError as exc: assert "redundant" in str(exc)
     else: raise AssertionError("redundant normalized inequality accepted")
+    try: mod.reconstruct_body("vertex_touch",mod.cube_normals()+[["1/4"]*4])
+    except mod.ReconstructionError as exc: assert "nonfacet" in str(exc)
+    else: raise AssertionError("vertex-touching redundant inequality accepted")
 
 def test_packet_controls_and_cross_f() -> None:
     report=mod.run_packet(ROOT/"experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl",ROOT/"experiments/sys-datascience/methods/generator-exact-feature-augmenter/artifacts/full-panels/tangential-replay/smoke-rows.jsonl")

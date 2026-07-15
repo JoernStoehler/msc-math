@@ -39,6 +39,21 @@ def solve(a: Sequence[Sequence[Fraction]])->tuple[Fraction,...]|None:
             if r!=c and w[r][c]:
                 f=w[r][c]; w[r]=[x-f*y for x,y in zip(w[r],w[c])]
     return tuple(w[r][-1] for r in range(DIM))
+def exact_rank(rows: Sequence[Sequence[Fraction]])->int:
+    """Rank over Q, used to distinguish a supporting facet from a vertex touch."""
+    w=[list(row) for row in rows if any(row)]
+    if not w:return 0
+    rank=0
+    for c in range(len(w[0])):
+        pivot=next((r for r in range(rank,len(w)) if w[r][c]),None)
+        if pivot is None:continue
+        w[rank],w[pivot]=w[pivot],w[rank]; d=w[rank][c];w[rank]=[x/d for x in w[rank]]
+        for r in range(len(w)):
+            if r!=rank and w[r][c]:
+                f=w[r][c];w[r]=[x-f*y for x,y in zip(w[r],w[rank])]
+        rank+=1
+        if rank==len(w):break
+    return rank
 def reconstruct_body(name: str, values: Sequence[Sequence[str|int|float|Fraction]])->Body:
     """Exact reconstruction of a_i.x<=1; reject redundant/unbounded inputs."""
     n=normals_of(values); vertices=set(); joins=0
@@ -48,8 +63,11 @@ def reconstruct_body(name: str, values: Sequence[Sequence[str|int|float|Fraction
     if len(vertices)<5:raise ReconstructionError("inequalities do not reconstruct a full-dimensional bounded body")
     ordered=tuple(sorted(vertices)); p=np.asarray([[float(x) for x in v] for v in ordered])
     if np.linalg.matrix_rank(p[1:]-p[0],tol=1e-10)!=DIM:raise ReconstructionError("reconstructed vertices are not four-dimensional")
-    unused=[i for i,a in enumerate(n) if not any(dot(a,v)==1 for v in ordered)]
-    if unused:raise ReconstructionError(f"redundant inequality indices: {unused}")
+    nonfacets=[]
+    for i,a in enumerate(n):
+        active=[v for v in ordered if dot(a,v)==1]
+        if not active or exact_rank([[x-y for x,y in zip(v,active[0])] for v in active[1:]]) != DIM-1:nonfacets.append(i)
+    if nonfacets:raise ReconstructionError(f"redundant/nonfacet inequality indices: {nonfacets}")
     return Body(name,n,p,len(ordered),joins)
 
 def canonical(body: Body,matrix: np.ndarray|None=None)->np.ndarray:
@@ -118,9 +136,12 @@ def synthetic()->tuple[dict[str,Body],dict[str,str]]:
       "synthetic:narrow_cut_cube":reconstruct_body("synthetic:narrow_cut_cube",cube+[["50/199"]*4]),
       "synthetic:ball_approximant":reconstruct_body("synthetic:ball_approximant",ball),
       "synthetic:ellipsoid_approximant":reconstruct_body("synthetic:ellipsoid_approximant",scale_normals(ball,(Fraction(3,2),Fraction(1),Fraction(1),Fraction(1,2))))}
-    try:reconstruct_body("synthetic:cube_redundant",cube+[cube[0]])
-    except ReconstructionError as e:return bodies,{"synthetic:cube_redundant":f"fail_closed:{e}"}
-    raise AssertionError("redundant cube accepted")
+    dispositions={}
+    for name,extra in (("synthetic:cube_duplicate",cube[0]),("synthetic:cube_vertex_touch",["1/4"]*4)):
+        try:reconstruct_body(name,cube+[extra])
+        except ReconstructionError as e:dispositions[name]=f"fail_closed:{e}"
+        else:raise AssertionError("redundant cube presentation accepted")
+    return bodies,dispositions
 def load_jsonl(path:Path)->tuple[list[dict[str,Any]],str]:
     raw=path.read_bytes()
     if not raw.endswith(b"\n"):raise ValueError(f"{path}: missing final newline")
@@ -157,7 +178,7 @@ def run_packet(orientation:Path,feature:Path)->dict[str,Any]:
     cases += [("retained_orientation_u2",base,ub),("retained_orientation_so4",base,sb),("retained_exact_feature_witness",base,fb)]
     comparisons=[compare(*case,directions,u2,so4) for case in cases];narrow=next(x for x in comparisons if x["case"]=="adversarial_narrow_feature");perm=next(x for x in comparisons if x["case"]=="identity_permuted_presentation")
     fixed={"source":"copy-local bounded direct symplectic-Gram permutation quotient on six normalized dual facets","orientation_identity_vs_u2":symplectic_gram(base,ub),"orientation_identity_vs_so4":symplectic_gram(base,sb),"selected_ids":{"identity":bn,"u2":un,"so4":sn,"exact_feature":fn}}
-    controls={"permuted_presentation_zero":perm["direct_sampled"]["primitive_level_3"]["linf"]<1e-12,"redundant_presentation_fail_closed":dispositions["synthetic:cube_redundant"].startswith("fail_closed:"),"narrow_feature_axis_grid_understates_linf":narrow["direct_sampled"]["axis_only"]["linf"] <= .51*narrow["direct_sampled"]["primitive_level_3"]["linf"],"narrow_feature_primitive_grid_detected":narrow["direct_sampled"]["primitive_level_3"]["linf"]>1e-4,"fixed_f_u2_gram_zero":fixed["orientation_identity_vs_u2"]<1e-10,"fixed_f_so4_gram_positive":fixed["orientation_identity_vs_so4"]>1e-4}
+    controls={"permuted_presentation_zero":perm["direct_sampled"]["primitive_level_3"]["linf"]<1e-12,"redundant_presentations_fail_closed":all(value.startswith("fail_closed:") for value in dispositions.values()),"narrow_feature_axis_grid_understates_linf":narrow["direct_sampled"]["axis_only"]["linf"] <= .51*narrow["direct_sampled"]["primitive_level_3"]["linf"],"narrow_feature_primitive_grid_detected":narrow["direct_sampled"]["primitive_level_3"]["linf"]>1e-4,"fixed_f_u2_gram_zero":fixed["orientation_identity_vs_u2"]<1e-10,"fixed_f_so4_gram_positive":fixed["orientation_identity_vs_so4"]>1e-4}
     return {"schema":SCHEMA,"target_free":True,"coordinate_order":"q1,q2,p1,p2","method_contract":{"input":"irredundant normalized dual inequalities a_i.x <= 1; exact reconstruction fails closed on invalid/redundant/unreconstructable inputs","normalization":"subtract arithmetic mean of reconstructed vertices and divide by RMS vertex radius: translation and positive global-scale quotient only","direct":"direct_sampled support L_infinity (sampled Hausdorff surrogate) and L2, neither exact Hausdorff","directions":"axis-only plus antipodally complete normalized primitive integer S^3 directions, max coordinate 1/2/3; level 3 primary","groups":"u2_finite_bank: 32 monomial-unitary maps; so4_finite_bank: 192 orientation-preserving signed permutations; neither is a compact-group infimum/Haar integration","no_sp4":"Sp(4) is noncompact and intentionally is not sampled as Haar probability"},"direction_designs":{k:len(v) for k,v in directions.items()},"finite_banks":{"u2_coarse":len(u2[0]),"u2_fine":len(u2[1]),"so4_coarse":len(so4[0]),"so4_fine":len(so4[1])},"reconstruction":{k:{"facets":len(v.normals),"vertices":v.exact_vertex_count,"four_facet_joins_checked":v.combination_count} for k,v in bodies.items()},"cost_observations_seconds":{"synthetic_reconstruction":synthetic_reconstruction_seconds,"orientation_reconstruction":orientation_reconstruction_seconds,"exact_feature_reconstruction":feature_reconstruction_seconds},"presentation_dispositions":dispositions,"comparisons":comparisons,"fixed_f_direct_view":fixed,"controls":controls,"provenance":{"orientation_input":{"path":rel(orientation),"sha256":oh,"rows":len(orows),"accepted_reconstructed_rows":len(obs)},"exact_feature_input":{"path":rel(feature),"sha256":fh,"rows":len(frows),"accepted_target_free_geometry_rows":len(fbs)},"synthetic_definitions":"exact rational normalized inequalities embedded in body_distance.py"},"interpretation":{"answerable_cross_f":"Direct normalized body-shape differences, including facet birth/death, under the stated Euclidean translation/scale convention.","invisible_distinctions":"No symplectic-equivalence, combinatorial-type, exact-Hausdorff, or continuous-U(2)/SO(4)-quotient claim; finite directions can miss features.","deferrals":["normalized surface-area-measure transport: no transport/certificate contract selected","directed symplectic containment gauge: not implemented; would remain a dissimilarity pending metric/computation facts"]}}
 
 def table(report:dict[str,Any])->list[dict[str,Any]]:
