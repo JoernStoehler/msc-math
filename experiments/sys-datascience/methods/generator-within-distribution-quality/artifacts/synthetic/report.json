@@ -1,0 +1,2545 @@
+{
+  "dispositions": {
+    "deferred": [
+      "certified packing numbers (heuristic k-center retained instead)",
+      "population-level unseen-mass inference",
+      "formal clustering model selection",
+      "p-values and generator rankings"
+    ],
+    "implemented": [
+      "raw and frame-adjusted pair/nearest-neighbor distributions",
+      "duplicate/near-duplicate rates",
+      "greedy k-center coverage curves",
+      "coarse occupancy, entropy/effective number, Good-Turing singleton diagnostic",
+      "subsample saturation",
+      "distance-threshold cluster balance",
+      "leave-one-influential-point-outlier sensitivity",
+      "frozen target-free rare-region discovery on untouched holdout blocks"
+    ]
+  },
+  "metric_contract": {
+    "frame_adjusted": "centroid/area-normalized cyclic vertex alignment with best orientation-preserving 2D rotation",
+    "minimum_useful_n": {
+      "Good-Turing singleton estimate": 50,
+      "cluster/coverage": 20,
+      "pair/NN": 10,
+      "untouched rare-event holdout": 50
+    },
+    "raw_ordered": "centroid/area-normalized vertex coordinates, preserving cyclic start and orientation",
+    "scaling": "pair and frame distances O(n^2 * side_count), occupancy/rare score O(n), saturation bounded by 32 replicates",
+    "stratification": "population (law plus knob) and side_count; no pooling"
+  },
+  "rows": 162,
+  "schema": "generator-within-distribution-quality-report-v1",
+  "seed": 20260715,
+  "strata": [
+    {
+      "interpretation_guardrails": [
+        "raw/frame disagreement is representation sensitivity, not evidence that one view is correct",
+        "support coverage, mass concentration, finite-sample discovery, and feature variance are separate quantities",
+        "no p-values or population ranking are supported by this bounded descriptive sample"
+      ],
+      "n": 18,
+      "occupancy": {
+        "cell_count_observed": 4,
+        "cell_definition": "producer combinatorial_cell/f_vector when supplied; otherwise side_count plus edge-length-CV bin floor(CV/0.1), capped at 4",
+        "combinatorial_label_rows": 0,
+        "effective_number_exp_entropy": 3.8763153602252833,
+        "good_turing_status": "small-sample-limit",
+        "good_turing_unseen_mass": 0.0,
+        "n": 18,
+        "occupied_cells": {
+          "8:0": 3,
+          "8:1": 5,
+          "8:2": 6,
+          "8:3": 4
+        },
+        "plugin_entropy": 1.3548850530060133,
+        "singleton_cell_count": 0
+      },
+      "population": "broad",
+      "rare_region_discovery": {
+        "accepted_cost": 9.0,
+        "attempted_cost": 9.0,
+        "block_size": 2,
+        "blocks": 5,
+        "blocks_with_hit": 0,
+        "calibration_n": 9,
+        "distinct_tail_signature_count": 0,
+        "distinct_tail_signatures": [],
+        "frozen_score": "edge-length coefficient of variation",
+        "frozen_threshold_calibration_p90": 0.3631680083259745,
+        "holdout_hit_count": 0,
+        "holdout_hit_probability": 0.0,
+        "holdout_n": 9,
+        "independent_block_cost": 5,
+        "interpretation": "scalar tail event only; it is not geometric support coverage or a population discovery probability",
+        "n": 18,
+        "status": "small-sample-limit",
+        "time_to_first_hit_holdout_rows": null,
+        "zero_hit_upper_bound_95_if_none": 0.4507197283469412
+      },
+      "side_count": 8,
+      "views": {
+        "frame_adjusted": {
+          "cluster_balance": {
+            "cluster_count": 3,
+            "cluster_sizes": [
+              15,
+              2,
+              1
+            ],
+            "largest_fraction": 0.8333333333333334,
+            "status": "small-sample",
+            "threshold": 0.07198236196644404
+          },
+          "k_center_coverage": {
+            "curves": [
+              {
+                "k": 1,
+                "radius": 0.22357103154714164,
+                "radius_over_pair_median": 1.85630994466588
+              },
+              {
+                "k": 2,
+                "radius": 0.12942765768887285,
+                "radius_over_pair_median": 1.0746376505938597
+              },
+              {
+                "k": 3,
+                "radius": 0.10095110896230335,
+                "radius_over_pair_median": 0.8381969085841006
+              },
+              {
+                "k": 4,
+                "radius": 0.07583733916168137,
+                "radius_over_pair_median": 0.6296773150288224
+              },
+              {
+                "k": 5,
+                "radius": 0.07262997708060129,
+                "radius_over_pair_median": 0.6030465924076863
+              },
+              {
+                "k": 6,
+                "radius": 0.07123197328653054,
+                "radius_over_pair_median": 0.5914389689707163
+              },
+              {
+                "k": 7,
+                "radius": 0.05416782158629966,
+                "radius_over_pair_median": 0.44975534261169686
+              },
+              {
+                "k": 8,
+                "radius": 0.037895510225262254,
+                "radius_over_pair_median": 0.31464636541925567
+              }
+            ],
+            "status": "small-sample"
+          },
+          "outlier_sensitivity": {
+            "max_nearest_neighbor": 0.07583733916168137,
+            "mean_pair_all": 0.13653696696723694,
+            "mean_pair_without_most_influential": 0.12457721438806457,
+            "most-influential_index": 11,
+            "relative_change": -0.08759351291318929,
+            "status": "usable-descriptive"
+          },
+          "pair_distances": {
+            "duplicate_pair_fraction": 0.0,
+            "mean": 0.13653696696723694,
+            "median": 0.12043841718866756,
+            "n": 18,
+            "near_duplicate_eps": 0.00349734885494224,
+            "near_duplicate_fraction_eps": 0.0,
+            "nearest_neighbor_mean": 0.028413278557392334,
+            "nearest_neighbor_median": 0.025817821873569208,
+            "p90": 0.2514979128334101,
+            "pair_count": 153,
+            "status": "small-sample"
+          },
+          "saturation": {
+            "points": [
+              {
+                "mean_pair_distance": 0.13284790534643623,
+                "n": 2,
+                "replicates": 32,
+                "sd": 0.09488221703113933
+              },
+              {
+                "mean_pair_distance": 0.14098997465027044,
+                "n": 4,
+                "replicates": 32,
+                "sd": 0.04309327169008338
+              },
+              {
+                "mean_pair_distance": 0.12445457804289187,
+                "n": 8,
+                "replicates": 16,
+                "sd": 0.029595091740341632
+              },
+              {
+                "mean_pair_distance": 0.1389894045736005,
+                "n": 16,
+                "replicates": 8,
+                "sd": 0.006424235292271132
+              },
+              {
+                "mean_pair_distance": 0.13653696696723694,
+                "n": 18,
+                "replicates": 7,
+                "sd": 1.1331166295920986e-17
+              }
+            ],
+            "seed": 20260715,
+            "status": "small-sample"
+          }
+        },
+        "raw_ordered": {
+          "cluster_balance": {
+            "cluster_count": 2,
+            "cluster_sizes": [
+              15,
+              3
+            ],
+            "largest_fraction": 0.8333333333333334,
+            "status": "small-sample",
+            "threshold": 0.4386981689567715
+          },
+          "k_center_coverage": {
+            "curves": [
+              {
+                "k": 1,
+                "radius": 1.1115564086596788,
+                "radius_over_pair_median": 1.680063224680529
+              },
+              {
+                "k": 2,
+                "radius": 0.7544648724490587,
+                "radius_over_pair_median": 1.1403368075969866
+              },
+              {
+                "k": 3,
+                "radius": 0.6920427463076667,
+                "radius_over_pair_median": 1.0459888125519323
+              },
+              {
+                "k": 4,
+                "radius": 0.5745763138781885,
+                "radius_over_pair_median": 0.8684440368467086
+              },
+              {
+                "k": 5,
+                "radius": 0.44035166928285263,
+                "radius_over_pair_median": 0.6655700419026694
+              },
+              {
+                "k": 6,
+                "radius": 0.3828200198627773,
+                "radius_over_pair_median": 0.57861376357719
+              },
+              {
+                "k": 7,
+                "radius": 0.34728590901404033,
+                "radius_over_pair_median": 0.5249056904703375
+              },
+              {
+                "k": 8,
+                "radius": 0.30706190206588496,
+                "radius_over_pair_median": 0.46410906845780564
+              }
+            ],
+            "status": "small-sample"
+          },
+          "outlier_sensitivity": {
+            "max_nearest_neighbor": 0.30706190206588496,
+            "mean_pair_all": 0.619629730488272,
+            "mean_pair_without_most_influential": 0.5983250754126229,
+            "most-influential_index": 16,
+            "relative_change": -0.03438288065819706,
+            "status": "usable-descriptive"
+          },
+          "pair_distances": {
+            "duplicate_pair_fraction": 0.0,
+            "mean": 0.619629730488272,
+            "median": 0.6616158203635735,
+            "n": 18,
+            "near_duplicate_eps": 0.02487977423266497,
+            "near_duplicate_fraction_eps": 0.0,
+            "nearest_neighbor_mean": 0.18568757736926983,
+            "nearest_neighbor_median": 0.19301606596076992,
+            "p90": 0.9038676156668807,
+            "pair_count": 153,
+            "status": "small-sample"
+          },
+          "saturation": {
+            "points": [
+              {
+                "mean_pair_distance": 0.6786157831954474,
+                "n": 2,
+                "replicates": 32,
+                "sd": 0.23504207020217185
+              },
+              {
+                "mean_pair_distance": 0.5600282633598685,
+                "n": 4,
+                "replicates": 32,
+                "sd": 0.1254283617322751
+              },
+              {
+                "mean_pair_distance": 0.5986946076387976,
+                "n": 8,
+                "replicates": 16,
+                "sd": 0.07334085026369555
+              },
+              {
+                "mean_pair_distance": 0.6182705261533762,
+                "n": 16,
+                "replicates": 8,
+                "sd": 0.027182960448054478
+              },
+              {
+                "mean_pair_distance": 0.619629730488272,
+                "n": 18,
+                "replicates": 7,
+                "sd": 6.409875621278546e-17
+              }
+            ],
+            "seed": 20260715,
+            "status": "small-sample"
+          }
+        }
+      }
+    },
+    {
+      "interpretation_guardrails": [
+        "raw/frame disagreement is representation sensitivity, not evidence that one view is correct",
+        "support coverage, mass concentration, finite-sample discovery, and feature variance are separate quantities",
+        "no p-values or population ranking are supported by this bounded descriptive sample"
+      ],
+      "n": 18,
+      "occupancy": {
+        "cell_count_observed": 1,
+        "cell_definition": "producer combinatorial_cell/f_vector when supplied; otherwise side_count plus edge-length-CV bin floor(CV/0.1), capped at 4",
+        "combinatorial_label_rows": 0,
+        "effective_number_exp_entropy": 1.0,
+        "good_turing_status": "small-sample-limit",
+        "good_turing_unseen_mass": 0.0,
+        "n": 18,
+        "occupied_cells": {
+          "8:0": 18
+        },
+        "plugin_entropy": -0.0,
+        "singleton_cell_count": 0
+      },
+      "population": "concentrated",
+      "rare_region_discovery": {
+        "accepted_cost": 9.0,
+        "attempted_cost": 9.0,
+        "block_size": 2,
+        "blocks": 5,
+        "blocks_with_hit": 4,
+        "calibration_n": 9,
+        "distinct_tail_signature_count": 1,
+        "distinct_tail_signatures": [
+          "cv-bin-0"
+        ],
+        "frozen_score": "edge-length coefficient of variation",
+        "frozen_threshold_calibration_p90": 0.00560842284463328,
+        "holdout_hit_count": 5,
+        "holdout_hit_probability": 0.5555555555555556,
+        "holdout_n": 9,
+        "independent_block_cost": 5,
+        "interpretation": "scalar tail event only; it is not geometric support coverage or a population discovery probability",
+        "n": 18,
+        "status": "small-sample-limit",
+        "time_to_first_hit_holdout_rows": 3,
+        "zero_hit_upper_bound_95_if_none": null
+      },
+      "side_count": 8,
+      "views": {
+        "frame_adjusted": {
+          "cluster_balance": {
+            "cluster_count": 5,
+            "cluster_sizes": [
+              12,
+              3,
+              1,
+              1,
+              1
+            ],
+            "largest_fraction": 0.6666666666666666,
+            "status": "small-sample",
+            "threshold": 0.0013120766684700572
+          },
+          "k_center_coverage": {
+            "curves": [
+              {
+                "k": 1,
+                "radius": 0.00765506929849585,
+                "radius_over_pair_median": 3.52375857746855
+              },
+              {
+                "k": 2,
+                "radius": 0.003555833358822951,
+                "radius_over_pair_median": 1.6368105642966793
+              },
+              {
+                "k": 3,
+                "radius": 0.002376680187145979,
+                "radius_over_pair_median": 1.0940263071166165
+              },
+              {
+                "k": 4,
+                "radius": 0.001673295896205121,
+                "radius_over_pair_median": 0.7702465564948295
+              },
+              {
+                "k": 5,
+                "radius": 0.0015398016529275787,
+                "radius_over_pair_median": 0.7087968861588154
+              },
+              {
+                "k": 6,
+                "radius": 0.001408927500264985,
+                "radius_over_pair_median": 0.6485532880891861
+              },
+              {
+                "k": 7,
+                "radius": 0.001183788068314609,
+                "radius_over_pair_median": 0.544917778921762
+              },
+              {
+                "k": 8,
+                "radius": 0.0011627246936311464,
+                "radius_over_pair_median": 0.5352219493587469
+              }
+            ],
+            "status": "small-sample"
+          },
+          "outlier_sensitivity": {
+            "max_nearest_neighbor": 0.0023174319556170915,
+            "mean_pair_all": 0.0030021198960386987,
+            "mean_pair_without_most_influential": 0.0025225461150151056,
+            "most-influential_index": 4,
+            "relative_change": -0.1597450460444273,
+            "status": "usable-descriptive"
+          },
+          "pair_distances": {
+            "duplicate_pair_fraction": 0.0,
+            "mean": 0.0030021198960386987,
+            "median": 0.0021724159388908,
+            "n": 18,
+            "near_duplicate_eps": 8.79914460179568e-05,
+            "near_duplicate_fraction_eps": 0.0,
+            "nearest_neighbor_mean": 0.0007572908354645669,
+            "nearest_neighbor_median": 0.000570195157928031,
+            "p90": 0.006121536117915142,
+            "pair_count": 153,
+            "status": "small-sample"
+          },
+          "saturation": {
+            "points": [
+              {
+                "mean_pair_distance": 0.0025591431215798554,
+                "n": 2,
+                "replicates": 32,
+                "sd": 0.0018288962876904348
+              },
+              {
+                "mean_pair_distance": 0.0034264183958630998,
+                "n": 4,
+                "replicates": 32,
+                "sd": 0.0012632425925571157
+              },
+              {
+                "mean_pair_distance": 0.0031733360659408575,
+                "n": 8,
+                "replicates": 16,
+                "sd": 0.0006938576245874037
+              },
+              {
+                "mean_pair_distance": 0.003006156781845977,
+                "n": 16,
+                "replicates": 8,
+                "sd": 0.00019515668993965837
+              },
+              {
+                "mean_pair_distance": 0.0030021198960386987,
+                "n": 18,
+                "replicates": 7,
+                "sd": 0.0
+              }
+            ],
+            "seed": 20260715,
+            "status": "small-sample"
+          }
+        },
+        "raw_ordered": {
+          "cluster_balance": {
+            "cluster_count": 1,
+            "cluster_sizes": [
+              18
+            ],
+            "largest_fraction": 1.0,
+            "status": "small-sample",
+            "threshold": 0.3166795602535399
+          },
+          "k_center_coverage": {
+            "curves": [
+              {
+                "k": 1,
+                "radius": 0.8410760787870678,
+                "radius_over_pair_median": 2.477146570561136
+              },
+              {
+                "k": 2,
+                "radius": 0.592259794248635,
+                "radius_over_pair_median": 1.7443300971298628
+              },
+              {
+                "k": 3,
+                "radius": 0.3250573676253064,
+                "radius_over_pair_median": 0.9573625546572125
+              },
+              {
+                "k": 4,
+                "radius": 0.31869603312332395,
+                "radius_over_pair_median": 0.9386270819179297
+              },
+              {
+                "k": 5,
+                "radius": 0.01497179993203334,
+                "radius_over_pair_median": 0.044095110766018
+              },
+              {
+                "k": 6,
+                "radius": 0.014617841751797943,
+                "radius_over_pair_median": 0.043052629218383646
+              },
+              {
+                "k": 7,
+                "radius": 0.013761158820483736,
+                "radius_over_pair_median": 0.040529517173128936
+              },
+              {
+                "k": 8,
+                "radius": 0.010246462638584029,
+                "radius_over_pair_median": 0.030177995101412343
+              }
+            ],
+            "status": "small-sample"
+          },
+          "outlier_sensitivity": {
+            "max_nearest_neighbor": 0.01091947623538314,
+            "mean_pair_all": 0.4563110479033442,
+            "mean_pair_without_most_influential": 0.44033873041622196,
+            "most-influential_index": 4,
+            "relative_change": -0.035003135603470015,
+            "status": "usable-descriptive"
+          },
+          "pair_distances": {
+            "duplicate_pair_fraction": 0.0,
+            "mean": 0.4563110479033442,
+            "median": 0.33953424023534584,
+            "n": 18,
+            "near_duplicate_eps": 0.0009224791929785402,
+            "near_duplicate_fraction_eps": 0.0,
+            "nearest_neighbor_mean": 0.006591832895482883,
+            "nearest_neighbor_median": 0.006369557631758421,
+            "p90": 0.781042514286663,
+            "pair_count": 153,
+            "status": "small-sample"
+          },
+          "saturation": {
+            "points": [
+              {
+                "mean_pair_distance": 0.3710158926395868,
+                "n": 2,
+                "replicates": 32,
+                "sd": 0.2573805972408005
+              },
+              {
+                "mean_pair_distance": 0.48459594573697545,
+                "n": 4,
+                "replicates": 32,
+                "sd": 0.08477421565670912
+              },
+              {
+                "mean_pair_distance": 0.4528110261560164,
+                "n": 8,
+                "replicates": 16,
+                "sd": 0.058823095037132275
+              },
+              {
+                "mean_pair_distance": 0.4524224267827459,
+                "n": 16,
+                "replicates": 8,
+                "sd": 0.007328802485755064
+              },
+              {
+                "mean_pair_distance": 0.45631104790334426,
+                "n": 18,
+                "replicates": 7,
+                "sd": 5.99588961666477e-17
+              }
+            ],
+            "seed": 20260715,
+            "status": "small-sample"
+          }
+        }
+      }
+    },
+    {
+      "interpretation_guardrails": [
+        "raw/frame disagreement is representation sensitivity, not evidence that one view is correct",
+        "support coverage, mass concentration, finite-sample discovery, and feature variance are separate quantities",
+        "no p-values or population ranking are supported by this bounded descriptive sample"
+      ],
+      "n": 18,
+      "occupancy": {
+        "cell_count_observed": 2,
+        "cell_definition": "producer combinatorial_cell/f_vector when supplied; otherwise side_count plus edge-length-CV bin floor(CV/0.1), capped at 4",
+        "combinatorial_label_rows": 0,
+        "effective_number_exp_entropy": 1.4174111811317323,
+        "good_turing_status": "small-sample-limit",
+        "good_turing_unseen_mass": 0.0,
+        "n": 18,
+        "occupied_cells": {
+          "8:0": 16,
+          "8:4": 2
+        },
+        "plugin_entropy": 0.34883209584303193,
+        "singleton_cell_count": 0
+      },
+      "population": "contaminated-outliers",
+      "rare_region_discovery": {
+        "accepted_cost": 9.0,
+        "attempted_cost": 9.0,
+        "block_size": 2,
+        "blocks": 5,
+        "blocks_with_hit": 1,
+        "calibration_n": 9,
+        "distinct_tail_signature_count": 1,
+        "distinct_tail_signatures": [
+          "cv-bin-9"
+        ],
+        "frozen_score": "edge-length coefficient of variation",
+        "frozen_threshold_calibration_p90": 0.13992949893194562,
+        "holdout_hit_count": 1,
+        "holdout_hit_probability": 0.1111111111111111,
+        "holdout_n": 9,
+        "independent_block_cost": 5,
+        "interpretation": "scalar tail event only; it is not geometric support coverage or a population discovery probability",
+        "n": 18,
+        "status": "small-sample-limit",
+        "time_to_first_hit_holdout_rows": 1,
+        "zero_hit_upper_bound_95_if_none": null
+      },
+      "side_count": 8,
+      "views": {
+        "frame_adjusted": {
+          "cluster_balance": {
+            "cluster_count": 4,
+            "cluster_sizes": [
+              14,
+              2,
+              1,
+              1
+            ],
+            "largest_fraction": 0.7777777777777778,
+            "status": "small-sample",
+            "threshold": 0.006732799639682015
+          },
+          "k_center_coverage": {
+            "curves": [
+              {
+                "k": 1,
+                "radius": 0.7456402673445206,
+                "radius_over_pair_median": 76.05425039257847
+              },
+              {
+                "k": 2,
+                "radius": 0.030692998106215272,
+                "radius_over_pair_median": 3.1306423023294987
+              },
+              {
+                "k": 3,
+                "radius": 0.011599945279064846,
+                "radius_over_pair_median": 1.1831779766080917
+              },
+              {
+                "k": 4,
+                "radius": 0.010905585306827583,
+                "radius_over_pair_median": 1.1123542436313472
+              },
+              {
+                "k": 5,
+                "radius": 0.007140141448469649,
+                "radius_over_pair_median": 0.7282843072495032
+              },
+              {
+                "k": 6,
+                "radius": 0.004462876779933008,
+                "radius_over_pair_median": 0.4552071058354217
+              },
+              {
+                "k": 7,
+                "radius": 0.00433032890616816,
+                "radius_over_pair_median": 0.44168741058583855
+              },
+              {
+                "k": 8,
+                "radius": 0.003968628841555249,
+                "radius_over_pair_median": 0.40479451667192684
+              }
+            ],
+            "status": "small-sample"
+          },
+          "outlier_sensitivity": {
+            "max_nearest_neighbor": 0.011599945279064846,
+            "mean_pair_all": 0.16256717057283096,
+            "mean_pair_without_most_influential": 0.09587692200666964,
+            "most-influential_index": 16,
+            "relative_change": -0.4102319572344635,
+            "status": "usable-descriptive"
+          },
+          "pair_distances": {
+            "duplicate_pair_fraction": 0.006535947712418301,
+            "mean": 0.16256717057283096,
+            "median": 0.009804057807363278,
+            "n": 18,
+            "near_duplicate_eps": 0.00025129672036311863,
+            "near_duplicate_fraction_eps": 0.006535947712418301,
+            "nearest_neighbor_mean": 0.0022420536976268004,
+            "nearest_neighbor_median": 0.001570493194690238,
+            "p90": 0.7412121392340282,
+            "pair_count": 153,
+            "status": "small-sample"
+          },
+          "saturation": {
+            "points": [
+              {
+                "mean_pair_distance": 0.23781278529450545,
+                "n": 2,
+                "replicates": 32,
+                "sd": 0.3439640758659792
+              },
+              {
+                "mean_pair_distance": 0.11334150206656465,
+                "n": 4,
+                "replicates": 32,
+                "sd": 0.16610582103105265
+              },
+              {
+                "mean_pair_distance": 0.16255874302015808,
+                "n": 8,
+                "replicates": 16,
+                "sd": 0.10171983958427823
+              },
+              {
+                "mean_pair_distance": 0.16025573256737832,
+                "n": 16,
+                "replicates": 8,
+                "sd": 0.03689799361346105
+              },
+              {
+                "mean_pair_distance": 0.16256717057283096,
+                "n": 18,
+                "replicates": 7,
+                "sd": 1.1331166295920986e-17
+              }
+            ],
+            "seed": 20260715,
+            "status": "small-sample"
+          }
+        },
+        "raw_ordered": {
+          "cluster_balance": {
+            "cluster_count": 3,
+            "cluster_sizes": [
+              16,
+              1,
+              1
+            ],
+            "largest_fraction": 0.8888888888888888,
+            "status": "small-sample",
+            "threshold": 0.32382959527945565
+          },
+          "k_center_coverage": {
+            "curves": [
+              {
+                "k": 1,
+                "radius": 1.1776536771513102,
+                "radius_over_pair_median": 1.9615808952277842
+              },
+              {
+                "k": 2,
+                "radius": 0.8412764961170005,
+                "radius_over_pair_median": 1.401287946027659
+              },
+              {
+                "k": 3,
+                "radius": 0.7801139695434333,
+                "radius_over_pair_median": 1.2994114385634394
+              },
+              {
+                "k": 4,
+                "radius": 0.5951894597654712,
+                "radius_over_pair_median": 0.991388466718885
+              },
+              {
+                "k": 5,
+                "radius": 0.3213093140660114,
+                "radius_over_pair_median": 0.5351948744857113
+              },
+              {
+                "k": 6,
+                "radius": 0.31716903563778515,
+                "radius_over_pair_median": 0.528298542207976
+              },
+              {
+                "k": 7,
+                "radius": 0.057807888759759105,
+                "radius_over_pair_median": 0.09628879218455236
+              },
+              {
+                "k": 8,
+                "radius": 0.03790656382745542,
+                "radius_over_pair_median": 0.06313977772101453
+              }
+            ],
+            "status": "small-sample"
+          },
+          "outlier_sensitivity": {
+            "max_nearest_neighbor": 0.7549531678229592,
+            "mean_pair_all": 0.5788586782294926,
+            "mean_pair_without_most_influential": 0.5330080032908318,
+            "most-influential_index": 16,
+            "relative_change": -0.0792087545079232,
+            "status": "usable-descriptive"
+          },
+          "pair_distances": {
+            "duplicate_pair_fraction": 0.0,
+            "mean": 0.5788586782294926,
+            "median": 0.6003594753682375,
+            "n": 18,
+            "near_duplicate_eps": 0.004284070707809859,
+            "near_duplicate_fraction_eps": 0.0,
+            "nearest_neighbor_mean": 0.10334945513069416,
+            "nearest_neighbor_median": 0.020335861330142264,
+            "p90": 0.9347063051856073,
+            "pair_count": 153,
+            "status": "small-sample"
+          },
+          "saturation": {
+            "points": [
+              {
+                "mean_pair_distance": 0.5577355476017318,
+                "n": 2,
+                "replicates": 32,
+                "sd": 0.3362258357826587
+              },
+              {
+                "mean_pair_distance": 0.5647474850795748,
+                "n": 4,
+                "replicates": 32,
+                "sd": 0.13452964178937835
+              },
+              {
+                "mean_pair_distance": 0.5751929370998679,
+                "n": 8,
+                "replicates": 16,
+                "sd": 0.08626270876722077
+              },
+              {
+                "mean_pair_distance": 0.5736383604284813,
+                "n": 16,
+                "replicates": 8,
+                "sd": 0.029961656154731547
+              },
+              {
+                "mean_pair_distance": 0.5788586782294926,
+                "n": 18,
+                "replicates": 7,
+                "sd": 0.0
+              }
+            ],
+            "seed": 20260715,
+            "status": "small-sample"
+          }
+        }
+      }
+    },
+    {
+      "interpretation_guardrails": [
+        "raw/frame disagreement is representation sensitivity, not evidence that one view is correct",
+        "support coverage, mass concentration, finite-sample discovery, and feature variance are separate quantities",
+        "no p-values or population ranking are supported by this bounded descriptive sample"
+      ],
+      "n": 18,
+      "occupancy": {
+        "cell_count_observed": 4,
+        "cell_definition": "producer combinatorial_cell/f_vector when supplied; otherwise side_count plus edge-length-CV bin floor(CV/0.1), capped at 4",
+        "combinatorial_label_rows": 0,
+        "effective_number_exp_entropy": 3.77976314968462,
+        "good_turing_status": "small-sample-limit",
+        "good_turing_unseen_mass": 0.0,
+        "n": 18,
+        "occupied_cells": {
+          "8:0": 6,
+          "8:1": 3,
+          "8:2": 6,
+          "8:3": 3
+        },
+        "plugin_entropy": 1.3296613488547582,
+        "singleton_cell_count": 0
+      },
+      "population": "dependent-duplicates",
+      "rare_region_discovery": {
+        "accepted_cost": 9.0,
+        "attempted_cost": 9.0,
+        "block_size": 2,
+        "blocks": 5,
+        "blocks_with_hit": 1,
+        "calibration_n": 9,
+        "distinct_tail_signature_count": 1,
+        "distinct_tail_signatures": [
+          "cv-bin-6"
+        ],
+        "frozen_score": "edge-length coefficient of variation",
+        "frozen_threshold_calibration_p90": 0.33135489876255114,
+        "holdout_hit_count": 1,
+        "holdout_hit_probability": 0.1111111111111111,
+        "holdout_n": 9,
+        "independent_block_cost": 5,
+        "interpretation": "scalar tail event only; it is not geometric support coverage or a population discovery probability",
+        "n": 18,
+        "status": "small-sample-limit",
+        "time_to_first_hit_holdout_rows": 1,
+        "zero_hit_upper_bound_95_if_none": null
+      },
+      "side_count": 8,
+      "views": {
+        "frame_adjusted": {
+          "cluster_balance": {
+            "cluster_count": 3,
+            "cluster_sizes": [
+              12,
+              3,
+              3
+            ],
+            "largest_fraction": 0.6666666666666666,
+            "status": "small-sample",
+            "threshold": 0.05540516442323603
+          },
+          "k_center_coverage": {
+            "curves": [
+              {
+                "k": 1,
+                "radius": 0.28086283197957185,
+                "radius_over_pair_median": 2.6061767343384945
+              },
+              {
+                "k": 2,
+                "radius": 0.12469067511259053,
+                "radius_over_pair_median": 1.157027201417058
+              },
+              {
+                "k": 3,
+                "radius": 0.05963479205092652,
+                "radius_over_pair_median": 0.5533619614415305
+              },
+              {
+                "k": 4,
+                "radius": 0.05540516442323603,
+                "radius_over_pair_median": 0.5141144859371746
+              },
+              {
+                "k": 5,
+                "radius": 0.051059518593687556,
+                "radius_over_pair_median": 0.47379045667057484
+              },
+              {
+                "k": 6,
+                "radius": 1.8081944052427393e-16,
+                "radius_over_pair_median": 1.6778561110739686e-15
+              },
+              {
+                "k": 7,
+                "radius": 1.7949149520507296e-16,
+                "radius_over_pair_median": 1.665533867610914e-15
+              },
+              {
+                "k": 8,
+                "radius": 1.724283721331207e-16,
+                "radius_over_pair_median": 1.5999938782426154e-15
+              }
+            ],
+            "status": "small-sample"
+          },
+          "outlier_sensitivity": {
+            "max_nearest_neighbor": 1.8081944052427393e-16,
+            "mean_pair_all": 0.11581457326279335,
+            "mean_pair_without_most_influential": 0.11083858704367479,
+            "most-influential_index": 17,
+            "relative_change": -0.04296511292950678,
+            "status": "usable-descriptive"
+          },
+          "pair_distances": {
+            "duplicate_pair_fraction": 0.11764705882352941,
+            "mean": 0.11581457326279335,
+            "median": 0.10776814491472354,
+            "n": 18,
+            "near_duplicate_eps": 1e-12,
+            "near_duplicate_fraction_eps": 0.11764705882352941,
+            "nearest_neighbor_mean": 1.0962888245830833e-16,
+            "nearest_neighbor_median": 1.0025441086192112e-16,
+            "p90": 0.2314149737354896,
+            "pair_count": 153,
+            "status": "small-sample"
+          },
+          "saturation": {
+            "points": [
+              {
+                "mean_pair_distance": 0.11342816802347688,
+                "n": 2,
+                "replicates": 32,
+                "sd": 0.07924644007763974
+              },
+              {
+                "mean_pair_distance": 0.11686330128293883,
+                "n": 4,
+                "replicates": 32,
+                "sd": 0.029934462926163717
+              },
+              {
+                "mean_pair_distance": 0.11731003622842134,
+                "n": 8,
+                "replicates": 16,
+                "sd": 0.02382017505788666
+              },
+              {
+                "mean_pair_distance": 0.11349693750490006,
+                "n": 16,
+                "replicates": 8,
+                "sd": 0.0054503297294210195
+              },
+              {
+                "mean_pair_distance": 0.11581457326279333,
+                "n": 18,
+                "replicates": 7,
+                "sd": 1.4989724041661926e-17
+              }
+            ],
+            "seed": 20260715,
+            "status": "small-sample"
+          }
+        },
+        "raw_ordered": {
+          "cluster_balance": {
+            "cluster_count": 1,
+            "cluster_sizes": [
+              18
+            ],
+            "largest_fraction": 1.0,
+            "status": "small-sample",
+            "threshold": 0.3254191445925558
+          },
+          "k_center_coverage": {
+            "curves": [
+              {
+                "k": 1,
+                "radius": 0.902707806748146,
+                "radius_over_pair_median": 1.6254398558058725
+              },
+              {
+                "k": 2,
+                "radius": 0.5667258728462553,
+                "radius_over_pair_median": 1.0204617863659196
+              },
+              {
+                "k": 3,
+                "radius": 0.3947094187023978,
+                "radius_over_pair_median": 0.7107243515839494
+              },
+              {
+                "k": 4,
+                "radius": 0.3439730265063912,
+                "radius_over_pair_median": 0.6193670448245587
+              },
+              {
+                "k": 5,
+                "radius": 0.3227090157015575,
+                "radius_over_pair_median": 0.5810784974141047
+              },
+              {
+                "k": 6,
+                "radius": 0.3217971264527913,
+                "radius_over_pair_median": 0.5794365252078767
+              },
+              {
+                "k": 7,
+                "radius": 0.29089355924773846,
+                "radius_over_pair_median": 0.5237907343482405
+              },
+              {
+                "k": 8,
+                "radius": 0.20573676429131893,
+                "radius_over_pair_median": 0.37045512843000017
+              }
+            ],
+            "status": "small-sample"
+          },
+          "outlier_sensitivity": {
+            "max_nearest_neighbor": 0.15587365640793086,
+            "mean_pair_all": 0.5432221918008713,
+            "mean_pair_without_most_influential": 0.5229724439497737,
+            "most-influential_index": 15,
+            "relative_change": -0.03727709978851623,
+            "status": "usable-descriptive"
+          },
+          "pair_distances": {
+            "duplicate_pair_fraction": 0.0,
+            "mean": 0.5432221918008713,
+            "median": 0.5553621707526022,
+            "n": 18,
+            "near_duplicate_eps": 0.020573676429131896,
+            "near_duplicate_fraction_eps": 0.0,
+            "nearest_neighbor_mean": 0.10009711987082581,
+            "nearest_neighbor_median": 0.08188629113907991,
+            "p90": 0.8927658072658645,
+            "pair_count": 153,
+            "status": "small-sample"
+          },
+          "saturation": {
+            "points": [
+              {
+                "mean_pair_distance": 0.4619482326237593,
+                "n": 2,
+                "replicates": 32,
+                "sd": 0.23760789950469766
+              },
+              {
+                "mean_pair_distance": 0.5667388542734391,
+                "n": 4,
+                "replicates": 32,
+                "sd": 0.10708889345389887
+              },
+              {
+                "mean_pair_distance": 0.5341462736378952,
+                "n": 8,
+                "replicates": 16,
+                "sd": 0.05975084448904526
+              },
+              {
+                "mean_pair_distance": 0.5356541205096876,
+                "n": 16,
+                "replicates": 8,
+                "sd": 0.011872411909035588
+              },
+              {
+                "mean_pair_distance": 0.5432221918008713,
+                "n": 18,
+                "replicates": 7,
+                "sd": 0.0
+              }
+            ],
+            "seed": 20260715,
+            "status": "small-sample"
+          }
+        }
+      }
+    },
+    {
+      "interpretation_guardrails": [
+        "raw/frame disagreement is representation sensitivity, not evidence that one view is correct",
+        "support coverage, mass concentration, finite-sample discovery, and feature variance are separate quantities",
+        "no p-values or population ranking are supported by this bounded descriptive sample"
+      ],
+      "n": 18,
+      "occupancy": {
+        "cell_count_observed": 3,
+        "cell_definition": "producer combinatorial_cell/f_vector when supplied; otherwise side_count plus edge-length-CV bin floor(CV/0.1), capped at 4",
+        "combinatorial_label_rows": 0,
+        "effective_number_exp_entropy": 2.9999999999999996,
+        "good_turing_status": "small-sample-limit",
+        "good_turing_unseen_mass": 0.0,
+        "n": 18,
+        "occupied_cells": {
+          "8:0": 6,
+          "8:1": 6,
+          "8:2": 6
+        },
+        "plugin_entropy": 1.0986122886681096,
+        "singleton_cell_count": 0
+      },
+      "population": "duplicated",
+      "rare_region_discovery": {
+        "accepted_cost": 9.0,
+        "attempted_cost": 9.0,
+        "block_size": 2,
+        "blocks": 5,
+        "blocks_with_hit": 1,
+        "calibration_n": 9,
+        "distinct_tail_signature_count": 1,
+        "distinct_tail_signatures": [
+          "cv-bin-5"
+        ],
+        "frozen_score": "edge-length coefficient of variation",
+        "frozen_threshold_calibration_p90": 0.25205755027541354,
+        "holdout_hit_count": 1,
+        "holdout_hit_probability": 0.1111111111111111,
+        "holdout_n": 9,
+        "independent_block_cost": 5,
+        "interpretation": "scalar tail event only; it is not geometric support coverage or a population discovery probability",
+        "n": 18,
+        "status": "small-sample-limit",
+        "time_to_first_hit_holdout_rows": 1,
+        "zero_hit_upper_bound_95_if_none": null
+      },
+      "side_count": 8,
+      "views": {
+        "frame_adjusted": {
+          "cluster_balance": {
+            "cluster_count": 3,
+            "cluster_sizes": [
+              12,
+              3,
+              3
+            ],
+            "largest_fraction": 0.6666666666666666,
+            "status": "small-sample",
+            "threshold": 0.035260644248693816
+          },
+          "k_center_coverage": {
+            "curves": [
+              {
+                "k": 1,
+                "radius": 0.17737678877358137,
+                "radius_over_pair_median": 2.548370628560025
+              },
+              {
+                "k": 2,
+                "radius": 0.07472446343088798,
+                "radius_over_pair_median": 1.073565651733936
+              },
+              {
+                "k": 3,
+                "radius": 0.036541350031955244,
+                "radius_over_pair_median": 0.5249892265680434
+              },
+              {
+                "k": 4,
+                "radius": 0.035260644248693844,
+                "radius_over_pair_median": 0.5065893388236756
+              },
+              {
+                "k": 5,
+                "radius": 0.033960759003013666,
+                "radius_over_pair_median": 0.4879138999260961
+              },
+              {
+                "k": 6,
+                "radius": 1.5226090012068546e-16,
+                "radius_over_pair_median": 2.187530896395718e-15
+              },
+              {
+                "k": 7,
+                "radius": 1.3871281069405136e-16,
+                "radius_over_pair_median": 1.9928856251251334e-15
+              },
+              {
+                "k": 8,
+                "radius": 1.3795142356270331e-16,
+                "radius_over_pair_median": 1.9819467834880364e-15
+              }
+            ],
+            "status": "small-sample"
+          },
+          "outlier_sensitivity": {
+            "max_nearest_neighbor": 1.519839539901973e-16,
+            "mean_pair_all": 0.07311538623498394,
+            "mean_pair_without_most_influential": 0.07025215760946295,
+            "most-influential_index": 15,
+            "relative_change": -0.039160411685700836,
+            "status": "usable-descriptive"
+          },
+          "pair_distances": {
+            "duplicate_pair_fraction": 0.11764705882352941,
+            "mean": 0.07311538623498394,
+            "median": 0.06960399982078329,
+            "n": 18,
+            "near_duplicate_eps": 1e-12,
+            "near_duplicate_fraction_eps": 0.11764705882352941,
+            "nearest_neighbor_mean": 8.736929869018987e-17,
+            "nearest_neighbor_median": 7.858125020761362e-17,
+            "p90": 0.14394640019728194,
+            "pair_count": 153,
+            "status": "small-sample"
+          },
+          "saturation": {
+            "points": [
+              {
+                "mean_pair_distance": 0.07130414791311009,
+                "n": 2,
+                "replicates": 32,
+                "sd": 0.04964777692388301
+              },
+              {
+                "mean_pair_distance": 0.07378909873763312,
+                "n": 4,
+                "replicates": 32,
+                "sd": 0.018508801150759226
+              },
+              {
+                "mean_pair_distance": 0.07429528967657933,
+                "n": 8,
+                "replicates": 16,
+                "sd": 0.014637115792171213
+              },
+              {
+                "mean_pair_distance": 0.07169308634797841,
+                "n": 16,
+                "replicates": 8,
+                "sd": 0.0032769702783823646
+              },
+              {
+                "mean_pair_distance": 0.07311538623498394,
+                "n": 18,
+                "replicates": 7,
+                "sd": 5.665583147960493e-18
+              }
+            ],
+            "seed": 20260715,
+            "status": "small-sample"
+          }
+        },
+        "raw_ordered": {
+          "cluster_balance": {
+            "cluster_count": 1,
+            "cluster_sizes": [
+              18
+            ],
+            "largest_fraction": 1.0,
+            "status": "small-sample",
+            "threshold": 0.28309295401240886
+          },
+          "k_center_coverage": {
+            "curves": [
+              {
+                "k": 1,
+                "radius": 0.859966795916872,
+                "radius_over_pair_median": 1.6871446686056188
+              },
+              {
+                "k": 2,
+                "radius": 0.5464541930271412,
+                "radius_over_pair_median": 1.0720731111716624
+              },
+              {
+                "k": 3,
+                "radius": 0.28309295401240886,
+                "radius_over_pair_median": 0.5553921039156259
+              },
+              {
+                "k": 4,
+                "radius": 0.2649263704292677,
+                "radius_over_pair_median": 0.5197515945557301
+              },
+              {
+                "k": 5,
+                "radius": 0.26127816257414593,
+                "radius_over_pair_median": 0.5125942781779838
+              },
+              {
+                "k": 6,
+                "radius": 0.22871134666820928,
+                "radius_over_pair_median": 0.448702358059625
+              },
+              {
+                "k": 7,
+                "radius": 0.16585867693474993,
+                "radius_over_pair_median": 0.32539347316788075
+              },
+              {
+                "k": 8,
+                "radius": 0.15925918030732192,
+                "radius_over_pair_median": 0.3124461063587066
+              }
+            ],
+            "status": "small-sample"
+          },
+          "outlier_sensitivity": {
+            "max_nearest_neighbor": 0.11335479863173949,
+            "mean_pair_all": 0.5005421447289559,
+            "mean_pair_without_most_influential": 0.4840856154328165,
+            "most-influential_index": 4,
+            "relative_change": -0.03287740996325217,
+            "status": "usable-descriptive"
+          },
+          "pair_distances": {
+            "duplicate_pair_fraction": 0.0,
+            "mean": 0.5005421447289559,
+            "median": 0.5097172826486849,
+            "n": 18,
+            "near_duplicate_eps": 0.01592591803073219,
+            "near_duplicate_fraction_eps": 0.0,
+            "nearest_neighbor_mean": 0.07719556742733326,
+            "nearest_neighbor_median": 0.058222094339762435,
+            "p90": 0.8505882989014649,
+            "pair_count": 153,
+            "status": "small-sample"
+          },
+          "saturation": {
+            "points": [
+              {
+                "mean_pair_distance": 0.419649102329859,
+                "n": 2,
+                "replicates": 32,
+                "sd": 0.23291135387528838
+              },
+              {
+                "mean_pair_distance": 0.5260860620112675,
+                "n": 4,
+                "replicates": 32,
+                "sd": 0.10197159670196695
+              },
+              {
+                "mean_pair_distance": 0.49517590189313404,
+                "n": 8,
+                "replicates": 16,
+                "sd": 0.055253305105781726
+              },
+              {
+                "mean_pair_distance": 0.4942189289411346,
+                "n": 16,
+                "replicates": 8,
+                "sd": 0.00853282888826971
+              },
+              {
+                "mean_pair_distance": 0.5005421447289559,
+                "n": 18,
+                "replicates": 7,
+                "sd": 0.0
+              }
+            ],
+            "seed": 20260715,
+            "status": "small-sample"
+          }
+        }
+      }
+    },
+    {
+      "interpretation_guardrails": [
+        "raw/frame disagreement is representation sensitivity, not evidence that one view is correct",
+        "support coverage, mass concentration, finite-sample discovery, and feature variance are separate quantities",
+        "no p-values or population ranking are supported by this bounded descriptive sample"
+      ],
+      "n": 18,
+      "occupancy": {
+        "cell_count_observed": 1,
+        "cell_definition": "producer combinatorial_cell/f_vector when supplied; otherwise side_count plus edge-length-CV bin floor(CV/0.1), capped at 4",
+        "combinatorial_label_rows": 0,
+        "effective_number_exp_entropy": 1.0,
+        "good_turing_status": "small-sample-limit",
+        "good_turing_unseen_mass": 0.0,
+        "n": 18,
+        "occupied_cells": {
+          "8:0": 18
+        },
+        "plugin_entropy": -0.0,
+        "singleton_cell_count": 0
+      },
+      "population": "identical",
+      "rare_region_discovery": {
+        "accepted_cost": 9.0,
+        "attempted_cost": 9.0,
+        "block_size": 2,
+        "blocks": 5,
+        "blocks_with_hit": 1,
+        "calibration_n": 9,
+        "distinct_tail_signature_count": 1,
+        "distinct_tail_signatures": [
+          "cv-bin-0"
+        ],
+        "frozen_score": "edge-length coefficient of variation",
+        "frozen_threshold_calibration_p90": 2.0227835892377886e-16,
+        "holdout_hit_count": 1,
+        "holdout_hit_probability": 0.1111111111111111,
+        "holdout_n": 9,
+        "independent_block_cost": 5,
+        "interpretation": "scalar tail event only; it is not geometric support coverage or a population discovery probability",
+        "n": 18,
+        "status": "small-sample-limit",
+        "time_to_first_hit_holdout_rows": 1,
+        "zero_hit_upper_bound_95_if_none": null
+      },
+      "side_count": 8,
+      "views": {
+        "frame_adjusted": {
+          "cluster_balance": {
+            "cluster_count": 4,
+            "cluster_sizes": [
+              15,
+              1,
+              1,
+              1
+            ],
+            "largest_fraction": 0.8333333333333334,
+            "status": "small-sample",
+            "threshold": 5.419449386414209e-17
+          },
+          "k_center_coverage": {
+            "curves": [
+              {
+                "k": 1,
+                "radius": 8.637607469862771e-17,
+                "radius_over_pair_median": 1.3874114573281409
+              },
+              {
+                "k": 2,
+                "radius": 8.327963792095338e-17,
+                "radius_over_pair_median": 1.3376750936738913
+              },
+              {
+                "k": 3,
+                "radius": 6.763197186183236e-17,
+                "radius_over_pair_median": 1.086335226162939
+              },
+              {
+                "k": 4,
+                "radius": 6.582812753581314e-17,
+                "radius_over_pair_median": 1.057361065275362
+              },
+              {
+                "k": 5,
+                "radius": 6.036774157024294e-17,
+                "radius_over_pair_median": 0.9696538839002138
+              },
+              {
+                "k": 6,
+                "radius": 5.763878168445254e-17,
+                "radius_over_pair_median": 0.9258200997725514
+              },
+              {
+                "k": 7,
+                "radius": 5.695112817973877e-17,
+                "radius_over_pair_median": 0.9147746991284436
+              },
+              {
+                "k": 8,
+                "radius": 5.599887994770072e-17,
+                "radius_over_pair_median": 0.8994792586727423
+              }
+            ],
+            "status": "small-sample"
+          },
+          "outlier_sensitivity": {
+            "max_nearest_neighbor": 6.397344083151129e-17,
+            "mean_pair_all": 6.215035582942287e-17,
+            "mean_pair_without_most_influential": 6.006441404721572e-17,
+            "most-influential_index": 11,
+            "relative_change": -0.033562829276990724,
+            "status": "usable-descriptive"
+          },
+          "pair_distances": {
+            "duplicate_pair_fraction": 1.0,
+            "mean": 6.215035582942287e-17,
+            "median": 6.225699971151286e-17,
+            "n": 18,
+            "near_duplicate_eps": 1e-12,
+            "near_duplicate_fraction_eps": 1.0,
+            "nearest_neighbor_mean": 4.1824992549344127e-17,
+            "nearest_neighbor_median": 4.112422495115347e-17,
+            "p90": 7.726613956610721e-17,
+            "pair_count": 153,
+            "status": "small-sample"
+          },
+          "saturation": {
+            "points": [
+              {
+                "mean_pair_distance": 6.632053615724237e-17,
+                "n": 2,
+                "replicates": 32,
+                "sd": 1.594727721942403e-17
+              },
+              {
+                "mean_pair_distance": 6.209061394525525e-17,
+                "n": 4,
+                "replicates": 32,
+                "sd": 5.852820140383076e-18
+              },
+              {
+                "mean_pair_distance": 6.27499360009746e-17,
+                "n": 8,
+                "replicates": 16,
+                "sd": 4.699045351906596e-18
+              },
+              {
+                "mean_pair_distance": 6.258818420687431e-17,
+                "n": 16,
+                "replicates": 8,
+                "sd": 1.2032622559662008e-18
+              },
+              {
+                "mean_pair_distance": 6.215035582942287e-17,
+                "n": 18,
+                "replicates": 7,
+                "sd": 1.0064097374070423e-32
+              }
+            ],
+            "seed": 20260715,
+            "status": "small-sample"
+          }
+        },
+        "raw_ordered": {
+          "cluster_balance": {
+            "cluster_count": 1,
+            "cluster_sizes": [
+              18
+            ],
+            "largest_fraction": 1.0,
+            "status": "small-sample",
+            "threshold": 0.38487197810623003
+          },
+          "k_center_coverage": {
+            "curves": [
+              {
+                "k": 1,
+                "radius": 0.8407145833356954,
+                "radius_over_pair_median": 1.4288420681118628
+              },
+              {
+                "k": 2,
+                "radius": 0.588388739454357,
+                "radius_over_pair_median": 1.0
+              },
+              {
+                "k": 3,
+                "radius": 0.5883887394543569,
+                "radius_over_pair_median": 0.9999999999999998
+              },
+              {
+                "k": 4,
+                "radius": 0.2813748429038106,
+                "radius_over_pair_median": 0.47821248782691506
+              },
+              {
+                "k": 5,
+                "radius": 0.24818200252988296,
+                "radius_over_pair_median": 0.42179937495070835
+              },
+              {
+                "k": 6,
+                "radius": 0.24818200252988282,
+                "radius_over_pair_median": 0.4217993749507081
+              },
+              {
+                "k": 7,
+                "radius": 0.24818200252988273,
+                "radius_over_pair_median": 0.42179937495070796
+              },
+              {
+                "k": 8,
+                "radius": 0.1980033813119983,
+                "radius_over_pair_median": 0.33651796513919857
+              }
+            ],
+            "status": "small-sample"
+          },
+          "outlier_sensitivity": {
+            "max_nearest_neighbor": 0.19800338131199832,
+            "mean_pair_all": 0.5588050711097978,
+            "mean_pair_without_most_influential": 0.5520353350552275,
+            "most-influential_index": 10,
+            "relative_change": -0.012114664673900544,
+            "status": "usable-descriptive"
+          },
+          "pair_distances": {
+            "duplicate_pair_fraction": 0.0,
+            "mean": 0.5588050711097978,
+            "median": 0.588388739454357,
+            "n": 18,
+            "near_duplicate_eps": 0.019800338131199816,
+            "near_duplicate_fraction_eps": 0.0,
+            "nearest_neighbor_mean": 0.10842663124376713,
+            "nearest_neighbor_median": 0.08687363571580248,
+            "p90": 0.8308153544573934,
+            "pair_count": 153,
+            "status": "small-sample"
+          },
+          "saturation": {
+            "points": [
+              {
+                "mean_pair_distance": 0.5323739074910012,
+                "n": 2,
+                "replicates": 32,
+                "sd": 0.25381237506811566
+              },
+              {
+                "mean_pair_distance": 0.5232839092818131,
+                "n": 4,
+                "replicates": 32,
+                "sd": 0.11652389539119194
+              },
+              {
+                "mean_pair_distance": 0.549644040838009,
+                "n": 8,
+                "replicates": 16,
+                "sd": 0.04493310952866105
+              },
+              {
+                "mean_pair_distance": 0.5598887401178669,
+                "n": 16,
+                "replicates": 8,
+                "sd": 0.0044849352356195055
+              },
+              {
+                "mean_pair_distance": 0.5588050711097978,
+                "n": 18,
+                "replicates": 7,
+                "sd": 9.064933036736789e-17
+              }
+            ],
+            "seed": 20260715,
+            "status": "small-sample"
+          }
+        }
+      }
+    },
+    {
+      "interpretation_guardrails": [
+        "raw/frame disagreement is representation sensitivity, not evidence that one view is correct",
+        "support coverage, mass concentration, finite-sample discovery, and feature variance are separate quantities",
+        "no p-values or population ranking are supported by this bounded descriptive sample"
+      ],
+      "n": 18,
+      "occupancy": {
+        "cell_count_observed": 2,
+        "cell_definition": "producer combinatorial_cell/f_vector when supplied; otherwise side_count plus edge-length-CV bin floor(CV/0.1), capped at 4",
+        "combinatorial_label_rows": 0,
+        "effective_number_exp_entropy": 1.6984332340231805,
+        "good_turing_status": "small-sample-limit",
+        "good_turing_unseen_mass": 0.0,
+        "n": 18,
+        "occupied_cells": {
+          "8:1": 14,
+          "8:2": 4
+        },
+        "plugin_entropy": 0.5297061990576545,
+        "singleton_cell_count": 0
+      },
+      "population": "imbalanced",
+      "rare_region_discovery": {
+        "accepted_cost": 9.0,
+        "attempted_cost": 9.0,
+        "block_size": 2,
+        "blocks": 5,
+        "blocks_with_hit": 0,
+        "calibration_n": 9,
+        "distinct_tail_signature_count": 0,
+        "distinct_tail_signatures": [],
+        "frozen_score": "edge-length coefficient of variation",
+        "frozen_threshold_calibration_p90": 0.20374771847907958,
+        "holdout_hit_count": 0,
+        "holdout_hit_probability": 0.0,
+        "holdout_n": 9,
+        "independent_block_cost": 5,
+        "interpretation": "scalar tail event only; it is not geometric support coverage or a population discovery probability",
+        "n": 18,
+        "status": "small-sample-limit",
+        "time_to_first_hit_holdout_rows": null,
+        "zero_hit_upper_bound_95_if_none": 0.4507197283469412
+      },
+      "side_count": 8,
+      "views": {
+        "frame_adjusted": {
+          "cluster_balance": {
+            "cluster_count": 1,
+            "cluster_sizes": [
+              18
+            ],
+            "largest_fraction": 1.0,
+            "status": "small-sample",
+            "threshold": 0.006059536530563192
+          },
+          "k_center_coverage": {
+            "curves": [
+              {
+                "k": 1,
+                "radius": 0.023819301310256547,
+                "radius_over_pair_median": 2.4368377557061196
+              },
+              {
+                "k": 2,
+                "radius": 0.011859851394614823,
+                "radius_over_pair_median": 1.2133241558608088
+              },
+              {
+                "k": 3,
+                "radius": 0.008690201587872566,
+                "radius_over_pair_median": 0.8890525821135875
+              },
+              {
+                "k": 4,
+                "radius": 0.007715714389022923,
+                "radius_over_pair_median": 0.7893575000589942
+              },
+              {
+                "k": 5,
+                "radius": 0.005815607111874642,
+                "radius_over_pair_median": 0.5949666952013763
+              },
+              {
+                "k": 6,
+                "radius": 0.005302264191400301,
+                "radius_over_pair_median": 0.5424490586031244
+              },
+              {
+                "k": 7,
+                "radius": 0.005196798430675187,
+                "radius_over_pair_median": 0.5316593656427118
+              },
+              {
+                "k": 8,
+                "radius": 0.00380076083058719,
+                "radius_over_pair_median": 0.38883749660598504
+              }
+            ],
+            "status": "small-sample"
+          },
+          "outlier_sensitivity": {
+            "max_nearest_neighbor": 0.005302264191400301,
+            "mean_pair_all": 0.011113985576353149,
+            "mean_pair_without_most_influential": 0.01030474765289949,
+            "most-influential_index": 16,
+            "relative_change": -0.07281257636103544,
+            "status": "usable-descriptive"
+          },
+          "pair_distances": {
+            "duplicate_pair_fraction": 0.0,
+            "mean": 0.011113985576353149,
+            "median": 0.009774676731957666,
+            "n": 18,
+            "near_duplicate_eps": 0.00028180269539078434,
+            "near_duplicate_fraction_eps": 0.013071895424836602,
+            "nearest_neighbor_mean": 0.0019460092083737242,
+            "nearest_neighbor_median": 0.0012288318629433484,
+            "p90": 0.020269927977945967,
+            "pair_count": 153,
+            "status": "small-sample"
+          },
+          "saturation": {
+            "points": [
+              {
+                "mean_pair_distance": 0.012406627867391452,
+                "n": 2,
+                "replicates": 32,
+                "sd": 0.00863405542220259
+              },
+              {
+                "mean_pair_distance": 0.01023060714167082,
+                "n": 4,
+                "replicates": 32,
+                "sd": 0.0031271377976299234
+              },
+              {
+                "mean_pair_distance": 0.010865364100906032,
+                "n": 8,
+                "replicates": 16,
+                "sd": 0.0011521231979101983
+              },
+              {
+                "mean_pair_distance": 0.010999211491406913,
+                "n": 16,
+                "replicates": 8,
+                "sd": 0.0005634279541998545
+              },
+              {
+                "mean_pair_distance": 0.01111398557635315,
+                "n": 18,
+                "replicates": 7,
+                "sd": 1.4163957869901233e-18
+              }
+            ],
+            "seed": 20260715,
+            "status": "small-sample"
+          }
+        },
+        "raw_ordered": {
+          "cluster_balance": {
+            "cluster_count": 2,
+            "cluster_sizes": [
+              17,
+              1
+            ],
+            "largest_fraction": 0.9444444444444444,
+            "status": "small-sample",
+            "threshold": 0.3389455252457262
+          },
+          "k_center_coverage": {
+            "curves": [
+              {
+                "k": 1,
+                "radius": 0.9186765666928991,
+                "radius_over_pair_median": 1.7155433803837281
+              },
+              {
+                "k": 2,
+                "radius": 0.6459073202313764,
+                "radius_over_pair_median": 1.2061720824699638
+              },
+              {
+                "k": 3,
+                "radius": 0.483089590155896,
+                "radius_over_pair_median": 0.9021250552930223
+              },
+              {
+                "k": 4,
+                "radius": 0.3510333575380124,
+                "radius_over_pair_median": 0.6555222748154881
+              },
+              {
+                "k": 5,
+                "radius": 0.34838982155344395,
+                "radius_over_pair_median": 0.650585716266424
+              },
+              {
+                "k": 6,
+                "radius": 0.19964195228016862,
+                "radius_over_pair_median": 0.3728128506793823
+              },
+              {
+                "k": 7,
+                "radius": 0.19963723601335645,
+                "radius_over_pair_median": 0.37280404348803436
+              },
+              {
+                "k": 8,
+                "radius": 0.19463392432314086,
+                "radius_over_pair_median": 0.363460822422709
+              }
+            ],
+            "status": "small-sample"
+          },
+          "outlier_sensitivity": {
+            "max_nearest_neighbor": 0.350623681399397,
+            "mean_pair_all": 0.5279736208831386,
+            "mean_pair_without_most_influential": 0.503191426711436,
+            "most-influential_index": 15,
+            "relative_change": -0.046938318869510054,
+            "status": "usable-descriptive"
+          },
+          "pair_distances": {
+            "duplicate_pair_fraction": 0.0,
+            "mean": 0.5279736208831386,
+            "median": 0.5355017991369079,
+            "n": 18,
+            "near_duplicate_eps": 0.01912923569551508,
+            "near_duplicate_fraction_eps": 0.05228758169934641,
+            "nearest_neighbor_mean": 0.06178873488399212,
+            "nearest_neighbor_median": 0.014950086057633052,
+            "p90": 0.8793644515911757,
+            "pair_count": 153,
+            "status": "small-sample"
+          },
+          "saturation": {
+            "points": [
+              {
+                "mean_pair_distance": 0.49467638223667093,
+                "n": 2,
+                "replicates": 32,
+                "sd": 0.2635824982322756
+              },
+              {
+                "mean_pair_distance": 0.5546156266062658,
+                "n": 4,
+                "replicates": 32,
+                "sd": 0.10620938458279716
+              },
+              {
+                "mean_pair_distance": 0.51892814213961,
+                "n": 8,
+                "replicates": 16,
+                "sd": 0.0698006403734879
+              },
+              {
+                "mean_pair_distance": 0.5184363181391205,
+                "n": 16,
+                "replicates": 8,
+                "sd": 0.01898705281112524
+              },
+              {
+                "mean_pair_distance": 0.5279736208831385,
+                "n": 18,
+                "replicates": 7,
+                "sd": 1.013490324081353e-16
+              }
+            ],
+            "seed": 20260715,
+            "status": "small-sample"
+          }
+        }
+      }
+    },
+    {
+      "interpretation_guardrails": [
+        "raw/frame disagreement is representation sensitivity, not evidence that one view is correct",
+        "support coverage, mass concentration, finite-sample discovery, and feature variance are separate quantities",
+        "no p-values or population ranking are supported by this bounded descriptive sample"
+      ],
+      "n": 18,
+      "occupancy": {
+        "cell_count_observed": 2,
+        "cell_definition": "producer combinatorial_cell/f_vector when supplied; otherwise side_count plus edge-length-CV bin floor(CV/0.1), capped at 4",
+        "combinatorial_label_rows": 0,
+        "effective_number_exp_entropy": 1.4174111811317323,
+        "good_turing_status": "small-sample-limit",
+        "good_turing_unseen_mass": 0.0,
+        "n": 18,
+        "occupied_cells": {
+          "8:1": 16,
+          "8:2": 2
+        },
+        "plugin_entropy": 0.34883209584303193,
+        "singleton_cell_count": 0
+      },
+      "population": "multimodal",
+      "rare_region_discovery": {
+        "accepted_cost": 9.0,
+        "attempted_cost": 9.0,
+        "block_size": 2,
+        "blocks": 5,
+        "blocks_with_hit": 0,
+        "calibration_n": 9,
+        "distinct_tail_signature_count": 0,
+        "distinct_tail_signatures": [],
+        "frozen_score": "edge-length coefficient of variation",
+        "frozen_threshold_calibration_p90": 0.20278897550935746,
+        "holdout_hit_count": 0,
+        "holdout_hit_probability": 0.0,
+        "holdout_n": 9,
+        "independent_block_cost": 5,
+        "interpretation": "scalar tail event only; it is not geometric support coverage or a population discovery probability",
+        "n": 18,
+        "status": "small-sample-limit",
+        "time_to_first_hit_holdout_rows": null,
+        "zero_hit_upper_bound_95_if_none": 0.4507197283469412
+      },
+      "side_count": 8,
+      "views": {
+        "frame_adjusted": {
+          "cluster_balance": {
+            "cluster_count": 2,
+            "cluster_sizes": [
+              9,
+              9
+            ],
+            "largest_fraction": 0.5,
+            "status": "small-sample",
+            "threshold": 0.00531775305435501
+          },
+          "k_center_coverage": {
+            "curves": [
+              {
+                "k": 1,
+                "radius": 0.02044848649091314,
+                "radius_over_pair_median": 2.4855528826309103
+              },
+              {
+                "k": 2,
+                "radius": 0.010549786598587308,
+                "radius_over_pair_median": 1.2823468623417258
+              },
+              {
+                "k": 3,
+                "radius": 0.006391269855806579,
+                "radius_over_pair_median": 0.7768711498932405
+              },
+              {
+                "k": 4,
+                "radius": 0.0045626369698120285,
+                "radius_over_pair_median": 0.5545973037052986
+              },
+              {
+                "k": 5,
+                "radius": 0.004289203794823671,
+                "radius_over_pair_median": 0.5213609751094758
+              },
+              {
+                "k": 6,
+                "radius": 0.0029803232943440613,
+                "radius_over_pair_median": 0.36226403155660325
+              },
+              {
+                "k": 7,
+                "radius": 0.0029265592547934355,
+                "radius_over_pair_median": 0.35572890908940624
+              },
+              {
+                "k": 8,
+                "radius": 0.002178573261514116,
+                "radius_over_pair_median": 0.26480977223352564
+              }
+            ],
+            "status": "small-sample"
+          },
+          "outlier_sensitivity": {
+            "max_nearest_neighbor": 0.002178573261514116,
+            "mean_pair_all": 0.008620427088820585,
+            "mean_pair_without_most_influential": 0.008260157603854568,
+            "most-influential_index": 14,
+            "relative_change": -0.04179253316036202,
+            "status": "usable-descriptive"
+          },
+          "pair_distances": {
+            "duplicate_pair_fraction": 0.0,
+            "mean": 0.008620427088820585,
+            "median": 0.008226936805009277,
+            "n": 18,
+            "near_duplicate_eps": 0.0002454647234124113,
+            "near_duplicate_fraction_eps": 0.006535947712418301,
+            "nearest_neighbor_mean": 0.0006104627877371733,
+            "nearest_neighbor_median": 0.0006591065218147325,
+            "p90": 0.0165606346974959,
+            "pair_count": 153,
+            "status": "small-sample"
+          },
+          "saturation": {
+            "points": [
+              {
+                "mean_pair_distance": 0.008810848986111921,
+                "n": 2,
+                "replicates": 32,
+                "sd": 0.005088792212250788
+              },
+              {
+                "mean_pair_distance": 0.008466235756455383,
+                "n": 4,
+                "replicates": 32,
+                "sd": 0.0023155241806358242
+              },
+              {
+                "mean_pair_distance": 0.008529494622187665,
+                "n": 8,
+                "replicates": 16,
+                "sd": 0.0007605414036362968
+              },
+              {
+                "mean_pair_distance": 0.008628369937651321,
+                "n": 16,
+                "replicates": 8,
+                "sd": 0.00041421306805436724
+              },
+              {
+                "mean_pair_distance": 0.008620427088820585,
+                "n": 18,
+                "replicates": 7,
+                "sd": 7.081978934950616e-19
+              }
+            ],
+            "seed": 20260715,
+            "status": "small-sample"
+          }
+        },
+        "raw_ordered": {
+          "cluster_balance": {
+            "cluster_count": 2,
+            "cluster_sizes": [
+              16,
+              2
+            ],
+            "largest_fraction": 0.8888888888888888,
+            "status": "small-sample",
+            "threshold": 0.34308746343999286
+          },
+          "k_center_coverage": {
+            "curves": [
+              {
+                "k": 1,
+                "radius": 0.9000106737192134,
+                "radius_over_pair_median": 1.6914968716135599
+              },
+              {
+                "k": 2,
+                "radius": 0.6383818581523799,
+                "radius_over_pair_median": 1.1997867886358935
+              },
+              {
+                "k": 3,
+                "radius": 0.48899985164611,
+                "radius_over_pair_median": 0.9190354552805479
+              },
+              {
+                "k": 4,
+                "radius": 0.3475561342131096,
+                "radius_over_pair_median": 0.6532034906899207
+              },
+              {
+                "k": 5,
+                "radius": 0.3439107192640267,
+                "radius_over_pair_median": 0.6463522297413969
+              },
+              {
+                "k": 6,
+                "radius": 0.19911266770865763,
+                "radius_over_pair_median": 0.37421606694511217
+              },
+              {
+                "k": 7,
+                "radius": 0.1966215373866361,
+                "radius_over_pair_median": 0.369534190085732
+              },
+              {
+                "k": 8,
+                "radius": 0.19630182771279348,
+                "radius_over_pair_median": 0.36893332175281035
+              }
+            ],
+            "status": "small-sample"
+          },
+          "outlier_sensitivity": {
+            "max_nearest_neighbor": 0.33221693541211694,
+            "mean_pair_all": 0.5350413476743039,
+            "mean_pair_without_most_influential": 0.5121725643757619,
+            "most-influential_index": 4,
+            "relative_change": -0.0427420860050296,
+            "status": "usable-descriptive"
+          },
+          "pair_distances": {
+            "duplicate_pair_fraction": 0.0,
+            "mean": 0.5350413476743039,
+            "median": 0.5320794196093732,
+            "n": 18,
+            "near_duplicate_eps": 0.019336522547345383,
+            "near_duplicate_fraction_eps": 0.0392156862745098,
+            "nearest_neighbor_mean": 0.039847502360114355,
+            "nearest_neighbor_median": 0.011213189349891243,
+            "p90": 0.8812202738496812,
+            "pair_count": 153,
+            "status": "small-sample"
+          },
+          "saturation": {
+            "points": [
+              {
+                "mean_pair_distance": 0.5071036150728796,
+                "n": 2,
+                "replicates": 32,
+                "sd": 0.22728465362096725
+              },
+              {
+                "mean_pair_distance": 0.5596718130704901,
+                "n": 4,
+                "replicates": 32,
+                "sd": 0.1439603545409285
+              },
+              {
+                "mean_pair_distance": 0.5290246912985888,
+                "n": 8,
+                "replicates": 16,
+                "sd": 0.049271884013909105
+              },
+              {
+                "mean_pair_distance": 0.5302675288166556,
+                "n": 16,
+                "replicates": 8,
+                "sd": 0.013775484217919586
+              },
+              {
+                "mean_pair_distance": 0.535041347674304,
+                "n": 18,
+                "replicates": 7,
+                "sd": 9.064933036736789e-17
+              }
+            ],
+            "seed": 20260715,
+            "status": "small-sample"
+          }
+        }
+      }
+    },
+    {
+      "interpretation_guardrails": [
+        "raw/frame disagreement is representation sensitivity, not evidence that one view is correct",
+        "support coverage, mass concentration, finite-sample discovery, and feature variance are separate quantities",
+        "no p-values or population ranking are supported by this bounded descriptive sample"
+      ],
+      "n": 18,
+      "occupancy": {
+        "cell_count_observed": 2,
+        "cell_definition": "producer combinatorial_cell/f_vector when supplied; otherwise side_count plus edge-length-CV bin floor(CV/0.1), capped at 4",
+        "combinatorial_label_rows": 0,
+        "effective_number_exp_entropy": 1.239315430729068,
+        "good_turing_status": "small-sample-limit",
+        "good_turing_unseen_mass": 0.05555555555555555,
+        "n": 18,
+        "occupied_cells": {
+          "8:0": 17,
+          "8:4": 1
+        },
+        "plugin_entropy": 0.2145591551764051,
+        "singleton_cell_count": 1
+      },
+      "population": "rare-mixture",
+      "rare_region_discovery": {
+        "accepted_cost": 9.0,
+        "attempted_cost": 9.0,
+        "block_size": 2,
+        "blocks": 5,
+        "blocks_with_hit": 1,
+        "calibration_n": 9,
+        "distinct_tail_signature_count": 1,
+        "distinct_tail_signatures": [
+          "cv-bin-8"
+        ],
+        "frozen_score": "edge-length coefficient of variation",
+        "frozen_threshold_calibration_p90": 0.023159122591373506,
+        "holdout_hit_count": 1,
+        "holdout_hit_probability": 0.1111111111111111,
+        "holdout_n": 9,
+        "independent_block_cost": 5,
+        "interpretation": "scalar tail event only; it is not geometric support coverage or a population discovery probability",
+        "n": 18,
+        "status": "small-sample-limit",
+        "time_to_first_hit_holdout_rows": 1,
+        "zero_hit_upper_bound_95_if_none": null
+      },
+      "side_count": 8,
+      "views": {
+        "frame_adjusted": {
+          "cluster_balance": {
+            "cluster_count": 4,
+            "cluster_sizes": [
+              15,
+              1,
+              1,
+              1
+            ],
+            "largest_fraction": 0.8333333333333334,
+            "status": "small-sample",
+            "threshold": 0.0028599877957014856
+          },
+          "k_center_coverage": {
+            "curves": [
+              {
+                "k": 1,
+                "radius": 0.40917828941005663,
+                "radius_over_pair_median": 69.3268715473284
+              },
+              {
+                "k": 2,
+                "radius": 0.014076125486105902,
+                "radius_over_pair_median": 2.384910853570217
+              },
+              {
+                "k": 3,
+                "radius": 0.0071665199625424855,
+                "radius_over_pair_median": 1.2142198688030799
+              },
+              {
+                "k": 4,
+                "radius": 0.006911539923499541,
+                "radius_over_pair_median": 1.171018729174315
+              },
+              {
+                "k": 5,
+                "radius": 0.0044049441029409275,
+                "radius_over_pair_median": 0.7463274614057318
+              },
+              {
+                "k": 6,
+                "radius": 0.003235933319043028,
+                "radius_over_pair_median": 0.5482625529044073
+              },
+              {
+                "k": 7,
+                "radius": 0.002573340105484101,
+                "radius_over_pair_median": 0.4359997183567582
+              },
+              {
+                "k": 8,
+                "radius": 0.0016781489087759646,
+                "radius_over_pair_median": 0.2843279246407183
+              }
+            ],
+            "status": "small-sample"
+          },
+          "outlier_sensitivity": {
+            "max_nearest_neighbor": 0.3996333842832286,
+            "mean_pair_all": 0.05108432933370742,
+            "mean_pair_without_most_influential": 0.006083314089164502,
+            "most-influential_index": 17,
+            "relative_change": -0.8809162385312849,
+            "status": "usable-descriptive"
+          },
+          "pair_distances": {
+            "duplicate_pair_fraction": 0.0,
+            "mean": 0.05108432933370742,
+            "median": 0.005902160017861427,
+            "n": 18,
+            "near_duplicate_eps": 0.0001506726640115252,
+            "near_duplicate_fraction_eps": 0.0,
+            "nearest_neighbor_mean": 0.023839504725076458,
+            "nearest_neighbor_median": 0.0010412270921142132,
+            "p90": 0.40534262830798956,
+            "pair_count": 153,
+            "status": "small-sample"
+          },
+          "saturation": {
+            "points": [
+              {
+                "mean_pair_distance": 0.042920692442668114,
+                "n": 2,
+                "replicates": 32,
+                "sd": 0.11871509433814456
+              },
+              {
+                "mean_pair_distance": 0.03828641625597372,
+                "n": 4,
+                "replicates": 32,
+                "sd": 0.07436253341453478
+              },
+              {
+                "mean_pair_distance": 0.06886965206336049,
+                "n": 8,
+                "replicates": 16,
+                "sd": 0.05070673037134517
+              },
+              {
+                "mean_pair_distance": 0.056575210404429886,
+                "n": 16,
+                "replicates": 8,
+                "sd": 0.000657086655064913
+              },
+              {
+                "mean_pair_distance": 0.051084329333707434,
+                "n": 18,
+                "replicates": 7,
+                "sd": 8.498374721940739e-18
+              }
+            ],
+            "seed": 20260715,
+            "status": "small-sample"
+          }
+        },
+        "raw_ordered": {
+          "cluster_balance": {
+            "cluster_count": 2,
+            "cluster_sizes": [
+              17,
+              1
+            ],
+            "largest_fraction": 0.9444444444444444,
+            "status": "small-sample",
+            "threshold": 0.3165102210175239
+          },
+          "k_center_coverage": {
+            "curves": [
+              {
+                "k": 1,
+                "radius": 0.8407054738577779,
+                "radius_over_pair_median": 1.4523202834123838
+              },
+              {
+                "k": 2,
+                "radius": 0.6699553515713311,
+                "radius_over_pair_median": 1.1573491268029015
+              },
+              {
+                "k": 3,
+                "radius": 0.4875241744641541,
+                "radius_over_pair_median": 0.8421989260747313
+              },
+              {
+                "k": 4,
+                "radius": 0.33358793724241936,
+                "radius_over_pair_median": 0.5762737874605797
+              },
+              {
+                "k": 5,
+                "radius": 0.3161556648164723,
+                "radius_over_pair_median": 0.5461595041385036
+              },
+              {
+                "k": 6,
+                "radius": 0.03785973783228326,
+                "radius_over_pair_median": 0.06540276813732497
+              },
+              {
+                "k": 7,
+                "radius": 0.03412877858281506,
+                "radius_over_pair_median": 0.0589575290338808
+              },
+              {
+                "k": 8,
+                "radius": 0.025217896691729327,
+                "radius_over_pair_median": 0.04356396384852409
+              }
+            ],
+            "status": "small-sample"
+          },
+          "outlier_sensitivity": {
+            "max_nearest_neighbor": 0.43728521937197806,
+            "mean_pair_all": 0.48982325054024567,
+            "mean_pair_without_most_influential": 0.4711055920046396,
+            "most-influential_index": 17,
+            "relative_change": -0.038213087098175946,
+            "status": "usable-descriptive"
+          },
+          "pair_distances": {
+            "duplicate_pair_fraction": 0.0,
+            "mean": 0.48982325054024567,
+            "median": 0.5788705724624663,
+            "n": 18,
+            "near_duplicate_eps": 0.0031041282715337285,
+            "near_duplicate_fraction_eps": 0.0,
+            "nearest_neighbor_mean": 0.0375990297627318,
+            "nearest_neighbor_median": 0.012739580522757586,
+            "p90": 0.7969283494387196,
+            "pair_count": 153,
+            "status": "small-sample"
+          },
+          "saturation": {
+            "points": [
+              {
+                "mean_pair_distance": 0.40254060069031117,
+                "n": 2,
+                "replicates": 32,
+                "sd": 0.258063472794559
+              },
+              {
+                "mean_pair_distance": 0.5119096168892272,
+                "n": 4,
+                "replicates": 32,
+                "sd": 0.08465341310158558
+              },
+              {
+                "mean_pair_distance": 0.5025119267707856,
+                "n": 8,
+                "replicates": 16,
+                "sd": 0.05851196394622223
+              },
+              {
+                "mean_pair_distance": 0.4896499466802722,
+                "n": 16,
+                "replicates": 8,
+                "sd": 0.005980336077302504
+              },
+              {
+                "mean_pair_distance": 0.4898232505402457,
+                "n": 18,
+                "replicates": 7,
+                "sd": 8.777083671441753e-17
+              }
+            ],
+            "seed": 20260715,
+            "status": "small-sample"
+          }
+        }
+      }
+    }
+  ],
+  "strata_count": 9
+}
