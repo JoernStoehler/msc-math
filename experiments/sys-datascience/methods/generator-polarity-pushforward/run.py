@@ -3,7 +3,8 @@
 
 The sampler mirrors the current factor law (IID angles, IID supports), then
 crosses an explicit rationalization boundary.  Everything after that boundary
-is exact Fraction arithmetic; f64 is used only for compact shape views.
+is exact Fraction arithmetic; scale factors, support samples, distances, and
+residuals are retained as f64 diagnostics.
 """
 from __future__ import annotations
 
@@ -138,6 +139,20 @@ def product_exact(qv,pv):
            and facet_counts==expected_facets
            and all(count==4 for count in vertex_counts))
     return {"vertices":vertices,"facets":facets,"incidence":incidence,"valid":valid,"facet_counts":facet_counts,"vertex_counts":vertex_counts}
+def validate_product_arm_linkage(arms, panel):
+    """Fail closed unless each four-arm cell uses exactly its paired images."""
+    rows={row["source_id"]:row for row in panel}
+    groups={}
+    for arm in arms: groups.setdefault(arm["pair_id"],{})[arm["arm"]]=arm
+    for pair_id,group in groups.items():
+        if set(group)!={"QxP","QpolarxP","QxPpolar","QpolarxPpolar"}: raise RuntimeError(f"incomplete product arm linkage: {pair_id}")
+        base=group["QxP"]
+        q_source=rows.get(base["q_source_id"]); p_source=rows.get(base["p_source_id"])
+        if q_source is None or p_source is None: raise RuntimeError(f"unknown product source ID: {pair_id}")
+        expected={"QxP":(None,None),"QpolarxP":(q_source["image_ids"]["centroid"],None),"QxPpolar":(None,p_source["image_ids"]["centroid"]),"QpolarxPpolar":(q_source["image_ids"]["centroid"],p_source["image_ids"]["centroid"])}
+        for label,arm in group.items():
+            if arm["q_source_id"]!=base["q_source_id"] or arm["p_source_id"]!=base["p_source_id"]: raise RuntimeError(f"source linkage mismatch: {pair_id}")
+            if (arm["q_polar_image_id"],arm["p_polar_image_id"])!=expected[label]: raise RuntimeError(f"polar image linkage mismatch: {pair_id}/{label}")
 def exact_fixture_rows():
     tri=[(F(-1),F(-1)),(F(2),F(-1)),(F(-1),F(2))]
     nons=[(F(-2),F(-1)),(F(1),F(-1)),(F(2),F(1)),(F(-1),F(2))]
@@ -210,14 +225,7 @@ def main():
         for label,a,b,q_polar_image_id,p_polar_image_id in arm_specs:
           product=product_exact(a,b)
           arms.append({"schema":"generator-polarity-product-arm-v1","arm":label,"stratum":n,"seed":pair_seed,"pair_id":f"n={n}/seed={pair_seed}/pair={k}","q_source_id":rs[2*k]["source_id"],"p_source_id":rs[2*k+1]["source_id"],"q_polar_image_id":q_polar_image_id,"p_polar_image_id":p_polar_image_id,"q_sides":len(a),"p_sides":len(b),"product_facets":len(product["facets"]),"product_vertices":len(product["vertices"]),"facet_incidence_counts":product["facet_counts"],"vertex_incidence_counts":product["vertex_counts"],"exact_reconstruction":product["valid"],"incidence_valid":product["valid"],"q_area":str(area(a)),"p_area":str(area(b)),"q_scale_squared":str(1/area(a)),"p_scale_squared":str(1/area(b)),"volume":str(area(a)*area(b)),"normalized_volume":"1","q_bounded":inside(a),"p_bounded":inside(b)})
-    by_arm_pair={}
-    for arm in arms: by_arm_pair.setdefault(arm["pair_id"],{})[arm["arm"]]=arm
-    for pair_id,group in by_arm_pair.items():
-        if set(group)!={"QxP","QpolarxP","QxPpolar","QpolarxPpolar"}: raise RuntimeError(f"incomplete product arm linkage: {pair_id}")
-        base=group["QxP"]
-        if any(row["q_source_id"]!=base["q_source_id"] or row["p_source_id"]!=base["p_source_id"] for row in group.values()): raise RuntimeError(f"source linkage mismatch: {pair_id}")
-        if group["QxP"]["q_polar_image_id"] is not None or group["QxP"]["p_polar_image_id"] is not None: raise RuntimeError(f"identity arm has polar IDs: {pair_id}")
-        if group["QpolarxP"]["q_polar_image_id"] is None or group["QxPpolar"]["p_polar_image_id"] is None or group["QpolarxPpolar"]["q_polar_image_id"] is None or group["QpolarxPpolar"]["p_polar_image_id"] is None: raise RuntimeError(f"polar arm linkage mismatch: {pair_id}")
+    validate_product_arm_linkage(arms, rows)
     (out/"diversity.tsv").write_text("stratum\tsource_count\twithin_source_l2\twithin_polar_l2\tdirected_polar_to_source_nearest_paired_included\tdirected_polar_to_source_nearest_leave_pair_out\tpaired_source_wins\n"+"\n".join(f"{d['stratum']}\t{d['source_count']}\t{d['within_source_l2']:.12g}\t{d['within_polar_l2']:.12g}\t{d['directed_polar_to_source_nearest_paired_included']:.12g}\t{d['directed_polar_to_source_nearest_leave_pair_out']:.12g}\t{d['paired_source_wins']}" for d in div)+"\n")
     (out/"product-arms.jsonl").write_text("".join(json.dumps(x,sort_keys=True)+"\n" for x in arms))
     fixtures=exact_fixture_rows(); (out/"fixtures.json").write_text(json.dumps(fixtures,indent=2,sort_keys=True)+"\n")

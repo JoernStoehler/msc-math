@@ -1,4 +1,5 @@
 import hashlib
+import copy
 import json
 import subprocess
 import tempfile
@@ -8,6 +9,9 @@ from pathlib import Path
 
 HERE = Path(__file__).parent
 FILES = ("panel.jsonl", "diversity.tsv", "product-arms.jsonl", "fixtures.json", "manifest.json", "REPORT.md")
+import sys
+sys.path.insert(0, str(HERE))
+import run
 
 
 class PolarityPacketTests(unittest.TestCase):
@@ -74,6 +78,12 @@ class PolarityPacketTests(unittest.TestCase):
                 self.assertIsNone(base["p_polar_image_id"])
                 self.assertIsNotNone(group["QpolarxP"]["q_polar_image_id"])
                 self.assertIsNotNone(group["QxPpolar"]["p_polar_image_id"])
+            bad = copy.deepcopy(arms)
+            qpolar = next(row for row in bad if row["arm"] == "QpolarxP")
+            other_image = next(row["image_ids"]["centroid"] for row in panel if row["source_id"] != qpolar["q_source_id"])
+            qpolar["q_polar_image_id"] = other_image
+            with self.assertRaises(RuntimeError):
+                run.validate_product_arm_linkage(bad, panel)
             diversity_header = (out / "diversity.tsv").read_text().splitlines()[0].split("\t")
             self.assertIn("directed_polar_to_source_nearest_paired_included", diversity_header)
             self.assertIn("directed_polar_to_source_nearest_leave_pair_out", diversity_header)
