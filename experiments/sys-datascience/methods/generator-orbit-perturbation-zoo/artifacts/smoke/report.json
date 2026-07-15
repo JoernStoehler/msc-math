@@ -1,10 +1,15 @@
 {
-  "schema": "orbit-zoo-report-v2",
+  "schema": "orbit-zoo-report-v3",
   "command": "/workspaces/msc-math/target/debug/sys-datascience-generator-orbit-perturbation-zoo --out-dir experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/artifacts/smoke --seed 20260715",
   "seed": 20260715,
   "rows": 10,
   "passed": 10,
-  "source_revision": "dd3557179ac0537488c8a0327a14ebf0cd35233b",
+  "source_revision": "cedd159f5f6aca57472db13e171bcb378b753621",
+  "source_dirty": false,
+  "producer_source_sha256": "718459256533ca4c1d2518f13cdb334815f0cb1c03a4cdd6a6bd66c9bd74c465",
+  "cargo_lock_sha256": "9e59bc0ed96aeccce2decc178beff2f224702174122ccf55d158fb009ef96d1e",
+  "build_source_closure": "Cargo.lock plus experiments/sys-landscape/Cargo.toml and this producer source; hashes above identify mutable source inputs without relying on a deletable target binary.",
+  "timing_fields": "generation_ms, intervention_ms, and reconstruction_ms are one-run observations only; timing values are not byte-reproducible freeze data.",
   "arms": {
     "fixed-normal-type-cone": "Fixed normal rays; support multipliers 1+epsilon z_i with |z_i|<=1. epsilon is one quarter of measured minimum inactive incidence-slack fraction, halved until exact labeled incidence survives. Not quotient-transverse.",
     "identity": "Dirac identity control.",
