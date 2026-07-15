@@ -132,9 +132,11 @@
       "smooth_log_r3_sd_0.1"
     ],
     "complete_boundary": "subset of fan_ids on which every requested arm accepted; not the original marginal laws",
+    "cross_fan_distance": "support-grid L2 minimized over all 64 cyclic shifts: a discrete SO(2) quotient on the 64-direction grid; reflections are not quotiented",
     "fans_per_seed_side_count": 48,
     "marginal_boundary": "all arm attempts on all requested frozen fans",
     "normal_fan_policy": "one deterministic IID-uniform sorted fan per fan_id; never redrawn after any arm failure",
+    "same_fan_source_distance": "fixed common world frame and corresponding-vertex order; rotations and reflections are not quotiented",
     "seeds": [
       1201,
       2203,
@@ -180,17 +182,17 @@
     "python_version": "3.12.3",
     "snapshot_timing": "captured before artifact directory creation",
     "source_hashes": {
-      "experiments/sys-datascience/methods/generator-support-process-atlas/README.md": "0c9be596717937ded9be94836f5bb9821ae70be2a76e9d289316b42a8db08424",
-      "experiments/sys-datascience/methods/generator-support-process-atlas/run.py": "6f9ab27e9bc08c4e7b7459d925ad386f243c330a36e3858d948859df3c26b8ae",
-      "experiments/sys-datascience/methods/generator-support-process-atlas/test_run.py": "e224cfc9545521bda5a1ea95ee475f9ea08a1d3b0095b0e07b985d429795dbac"
+      "experiments/sys-datascience/methods/generator-support-process-atlas/README.md": "1aee455f57d6cbe90bee3194fb14078c2328f8f38d1145bf9a61c5e33213f933",
+      "experiments/sys-datascience/methods/generator-support-process-atlas/run.py": "79bc0ab6401640952895008ee748518e042d1202b130d8ebc2b0a19941cf09df",
+      "experiments/sys-datascience/methods/generator-support-process-atlas/test_run.py": "d2c5e82fa515a46514c2a09e183d85dfe0bdebf3be2ac8f07a31d1cf95acf3c1"
     },
-    "source_revision": "d0e7c84c84c1394d9aaa9bf367517b4757772a8a",
-    "source_tree": "d8a26049db6a60705cbd8502fe238d54b7e15511",
+    "source_revision": "d87b51bea974c1dad06394e21cb136cae225d7d7",
+    "source_tree": "21b2a3db95686313ff7d1c81ea20cfa5cd371c12",
     "stdlib_only": true,
     "tracked_clean_command": "git status --porcelain=v1 --untracked-files=no",
     "tracked_source_dirty": false,
     "tracked_status": ""
   },
   "question": "On identical frozen normal fans, how do facetwise IID and low-frequency correlated support processes change factor geometry, acceptance, diversity, and tails?",
-  "schema": "generator-support-process-atlas-report-v1"
+  "schema": "generator-support-process-atlas-report-v2"
 }
