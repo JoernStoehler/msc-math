@@ -179,6 +179,86 @@ Remaining high-value unknowns are scaling on larger candidate streams,
 indeterminate prevalence outside these fixtures, and whether an intended
 algebraic HKO oracle changes any decision. This packet does not claim them.
 
+## Multi-centre soundness and production-policy trial
+
+The separate v2 packet under `artifacts/soundness-v2/` is the current trial
+architecture for formula search. It contains 1,593 same-word rows across ten
+declared streams, with explicitly named production saddle, SVD, projected,
+LU, QR, and refined centres. Formula evaluations use a long-form registry
+schema: the formula ID, centre, exact target, hypotheses, availability, value
+kind, unit, and role remain explicit rather than being inferred from a generic
+`q` or `error` column. Exact lifecycle states are also separate: this packet
+observed 109 inconsistent systems, 1,333 consistent systems with no strictly
+positive beta, 87 positive-beta/nonpositive-Q systems, and 64
+positive-beta/positive-Q-action systems. These are selected packet counts, not
+prevalence estimates.
+
+The main formula observations are discriminating rather than promotional:
+
+* The residual-squared/eigenvalue Q candidate is empirically unsound on 38--50
+  of 60 exact-covered rows, depending on the solver centre. Typical failed
+  bounds are around `1e-28` while the observed Q error is around `1e-15`.
+  Its derived reciprocal-action intervals therefore also fail frequently.
+  This supports the hypothesis that a proof-relevant formula must include
+  input/assembly rounding and not only the residual of the rounded system.
+* The inverse-singular-value beta-radius diagnostic and its
+  first-plus-quadratic Q propagation covered all 60 unique exact positive-Q
+  comparisons for each applicable centre. The radius-derived ternary beta
+  predicates were sound on all 3,412 eligible comparisons: 2,368
+  `false|false`, 744 `indeterminate|false`, 295 `true|true`, and 5
+  `indeterminate|true`. This is high-value evidence for the shape of a bound,
+  not a certificate: the inverse, singular value, residual, and assembled
+  matrices are ordinary binary64 quantities, and unavailable rows are not
+  counted as successful decisions.
+* The one-shot f64-anchored exact fallback is not a generally usable policy.
+  On the capped hypercube and triangle-times-square streams it can exact-reject
+  every selected low-action candidate while a valid exact minimum exists
+  outside the selected set. A useful selective policy must expand after exact
+  rejection or stop only when proven action intervals exclude every remaining
+  competitor.
+
+The packet directly invokes the production candidate conversion and
+`MinimaSafe` aggregator, separately from an unchecked saddle-feasible
+no-fallback diagnostic. On the named stored-binary64-rational HKO
+near-singular and rank-deficient words, production returns an
+`AdmissibleF64` scalar near `3.44095480117793` although exact retained and
+exact supplied-word replay find no positive-Q action. These are genuine
+fixed-word/current-policy false acceptances. They do not by themselves show
+that the full-polytope HKO capacity is wrong: the packet contains one named
+word in each case and does not establish whether another valid word shadows
+the false candidate in the complete candidate family. The HKO target is the
+exact rational represented by stored binary64 coordinates, not the intended
+algebraic polytope.
+
+For the ordinary generated F5, capped simplex F5 and hypercube F8,
+triangle-times-square, and pinned q4:p5 streams, the production scalar agrees
+with exact supplied-stream replay within `1e-12`. Scalar agreement does not
+extend to exact active-word ties. At zero gap production reports three q4
+minimizer words where exact replay reports four; simplex, hypercube, and
+triangle-times-square likewise lose exact-equality ties. The q4 relative
+windows agree for positive tested gaps but not at zero; the triangle 20%
+window also differs. `MinimaSafe` is therefore evidence about its scalar
+contract, not a certified minimizer-set or low-action-window contract.
+
+The representative v2 run takes about 30 seconds because exact row reduction
+and positive-witness search dominate. All broad f64 solver variants together
+take under 0.2 seconds. On q4:p5, direct production candidate solving takes
+about 54 ms and `MinimaSafe` aggregation after candidate construction takes
+microseconds; exact resolution counts are unavailable from the public
+production result and are recorded as unavailable rather than zero. This
+supports selective exact work, but only behind predicates and action intervals
+whose soundness has actually been proved.
+
+The next proof-search target should therefore combine: (i) residual and
+conditioning terms for one named centre; (ii) explicit binary64 assembly/input
+perturbation terms; (iii) beta, Q, and reciprocal-action propagation with
+positive-endpoint guards; and (iv) a ternary rule that returns indeterminate
+when any hypothesis or enclosure is unavailable. Rank-deficient critical sets
+need a separate projected-set certificate or exact fallback, not a forced
+inverse formula. Candidate-family enumeration/pruning soundness and the
+consumer-specific scalar/minimizer/window aggregation argument remain
+separate proof obligations.
+
 ## Promotion path
 
 Empirical 100% is a falsification-screen result.  Promotion requires (i) a
