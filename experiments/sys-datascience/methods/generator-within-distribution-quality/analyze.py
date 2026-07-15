@@ -352,7 +352,22 @@ def rare_discovery(rows: list[dict[str, Any]]) -> dict[str, Any]:
     block_size = max(1, min(4, len(holdout) // 4))
     blocks = [hits[i : i + block_size] for i in range(0, len(hits), block_size)]
     hit_probability = float(np.mean(hits)) if hits else None
-    zero_hit_upper_95 = (1.0 - 0.05 ** (1.0 / len(blocks))) if blocks and not any(hits) else None
+    declared_independence = all(
+        row.get("independence_semantics") == "independent-block-v1"
+        and isinstance(row.get("independence_unit_id"), str)
+        and row.get("independence_unit_id")
+        for row in holdout
+    )
+    independent_units = (
+        sorted({row["independence_unit_id"] for row in holdout})
+        if declared_independence
+        else []
+    )
+    zero_hit_upper_95 = (
+        1.0 - 0.05 ** (1.0 / len(independent_units))
+        if independent_units and not any(hits)
+        else None
+    )
     signatures = []
     for i in hit_indices:
         row = holdout[i]
@@ -379,7 +394,7 @@ def rare_discovery(rows: list[dict[str, Any]]) -> dict[str, Any]:
     else:
         cost_status = "unavailable-no-declared-count-semantics"
         attempted = accepted = None
-    independent_blocks = max(1, len(blocks))
+    independent_blocks = len(independent_units) if independent_units else None
     first = (hit_indices[0] + 1) if hit_indices else None
     return {
         "status": "small-sample-limit" if n < GOOD_TURING_N else "descriptive-split-holdout",
@@ -396,8 +411,11 @@ def rare_discovery(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "distinct_tail_signatures": sorted(set(signatures)),
         "distinct_tail_signature_count": len(set(signatures)),
         "blocks": len(blocks),
+        "block_contract": "contiguous input-order blocks; block counts are descriptive and independence is not assumed",
         "block_size": block_size,
         "blocks_with_hit": sum(bool(block) and any(block) for block in blocks),
+        "independence_status": "declared-independent-block-v1" if declared_independence else "unavailable-no-declared-independence-unit",
+        "independent_block_count": independent_blocks,
         "zero_hit_upper_bound_95_if_none": zero_hit_upper_95,
         "attempted_cost": attempted,
         "accepted_cost": accepted,

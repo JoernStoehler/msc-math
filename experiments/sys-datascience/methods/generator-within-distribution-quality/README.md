@@ -42,8 +42,11 @@ hit probability, distinct tail signatures, and attempted/accepted/independent-
 block costs. Attempted/accepted costs are non-null only for rows explicitly
 declaring `cost_semantics=counts-v1` with numeric count fields; producer
 attempt indices and Boolean `accepted` flags are not counts. A zero-hit bound
-is reported only as a finite block heuristic. This scalar event is deliberately
-separate from geometric support coverage; it is not a `sys` proxy.
+and independent-block cost/count are null unless every row declares
+`independence_semantics=independent-block-v1` with an independence-unit ID.
+Contiguous block counts remain plain non-inferential diagnostics. This scalar
+event is deliberately separate from geometric support coverage; it is not a
+`sys` proxy.
 
 ## Synthetic calibration
 

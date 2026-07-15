@@ -63,6 +63,19 @@ class WithinDistributionTests(unittest.TestCase):
         self.assertIsNone(result["attempted_cost"])
         self.assertIsNone(result["accepted_cost"])
 
+    def test_dependent_pair_fixture_suppresses_independence_bound(self):
+        rows = [module.validate_row(r, i + 1) for i, r in enumerate(module.synthetic_rows(per_case=4))]
+        rows = [row for row in rows if row["population"] == "dependent-duplicates"]
+        for row in rows:
+            row["independence_semantics"] = "dependent-pair-v1"
+            row["independence_unit_id"] = "shared-pair"
+        result = module.rare_discovery(rows)
+        self.assertEqual(result["blocks"], 2)
+        self.assertEqual(result["independence_status"], "unavailable-no-declared-independence-unit")
+        self.assertIsNone(result["independent_block_count"])
+        self.assertIsNone(result["independent_block_cost"])
+        self.assertIsNone(result["zero_hit_upper_bound_95_if_none"])
+
     def test_retained_synthetic_and_real_reports_regenerate_byte_identically(self):
         cases = [
             (HERE / "fixtures/synthetic.jsonl", HERE / "artifacts/synthetic/report.json"),
