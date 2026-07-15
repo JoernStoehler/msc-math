@@ -74,7 +74,7 @@ def validate_inputs(target_path: Path, manifest_path: Path):
     if design.get("source_sha256") != SOURCE_SHA or design.get("source_report_sha256") != SOURCE_REPORT_SHA: raise AnalysisError("design source binding")
     if design.get("evaluator", {}).get("source_sha256") != digest(ROOT / "main.rs"): raise AnalysisError("design evaluator source binding")
     for item in design.get("evaluator", {}).get("implementation_files", []):
-        path = Path(__file__).resolve().parents[3] / item["path"]
+        path = Path(__file__).resolve().parents[4] / item["path"]
         if not path.is_file() or digest(path) != item["sha256"]: raise AnalysisError(f"design implementation closure mismatch: {item['path']}")
     selection_manifest = ROOT / "selection-manifest.json"
     if digest(selection_manifest) != design.get("selection", {}).get("manifest_sha256"): raise AnalysisError("selection manifest binding")
