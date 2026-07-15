@@ -310,7 +310,24 @@ Put \(T=c_{\mathrm{EHZ}}(K)\). Rudolf's nonsmooth billiard theorem gives a
 strong minimizing Minkowski billiard in \(K_q\), together with its polygonal
 dual in \(K_p\), having at most three bounce points and length \(T\)
 \cite[Theorem~1]{Rudolf2022}. Write its vertices as \(q_j\) and its dual
-vertices as \(p_j\). The strong billiard normal-cone relations say precisely
+vertices as \(p_j\), with indices understood cyclically.  In the notation
+needed here, write
+\[
+  N_C(x)=\{u:\langle u,y-x\rangle\leq0\text{ for every }y\in C\}
+\]
+for the outward normal cone.  The strong billiard relations and length are
+\[
+  q_{j+1}-q_j\in N_{K_p}(p_j),
+  \qquad
+  p_{j+1}-p_j\in-N_{K_q}(q_{j+1}),
+\]
+\[
+  \ell_{K_p}(q)
+  =\sum_j h_{K_p}(q_{j+1}-q_j)
+  =\sum_j\langle p_j,q_{j+1}-q_j\rangle.
+\]
+The last equality follows from the first normal-cone relation and
+\(p_j\in\partial K_p\). These relations say precisely
 that the alternating broken line through
 \[
   (q_j,p_j),\ (q_{j+1},p_j),\ (q_{j+1},p_{j+1})
