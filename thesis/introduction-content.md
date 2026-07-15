@@ -66,8 +66,8 @@ The introduction makes four moves:
   `thesis/10-visualization-3d.tex`, `thesis/11-numerics.tex`,
   `thesis/12-published-code-data.tex`, and `thesis/13-use-of-ai.tex`.
   Visualization remains qualitative; exact and floating-point evidence remain
-  distinct; the numbered AI discussion is provisional and is not promoted to
-  a central mathematical contribution.
+  distinct; the later AI-process discussion is provisional and is not
+  promoted to a central mathematical contribution.
 
 ## Narrow reopen conditions
 
