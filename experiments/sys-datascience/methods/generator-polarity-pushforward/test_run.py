@@ -55,6 +55,28 @@ class PolarityPacketTests(unittest.TestCase):
             self.assertTrue(all(row["exact_reconstruction"] and row["incidence_valid"] for row in arms))
             self.assertTrue(all(row["normalized_volume"] == "1" for row in arms))
             self.assertTrue(all(all(count == 4 for count in row["vertex_incidence_counts"]) for row in arms))
+            panel = [json.loads(line) for line in (out / "panel.jsonl").read_text().splitlines()]
+            source_ids = {row["source_id"] for row in panel}
+            image_ids = {image_id for row in panel for image_id in row["image_ids"].values()}
+            self.assertEqual(len(source_ids), 72)
+            self.assertEqual(len(image_ids), 72 * 4)
+            self.assertTrue(all(row["q_source_id"] in source_ids and row["p_source_id"] in source_ids for row in arms))
+            self.assertTrue(all((row["q_polar_image_id"] is None or row["q_polar_image_id"] in image_ids) and (row["p_polar_image_id"] is None or row["p_polar_image_id"] in image_ids) for row in arms))
+            groups = {}
+            for row in arms:
+                groups.setdefault(row["pair_id"], {})[row["arm"]] = row
+            self.assertTrue(all(set(group) == {"QxP", "QpolarxP", "QxPpolar", "QpolarxPpolar"} for group in groups.values()))
+            for group in groups.values():
+                base = group["QxP"]
+                self.assertTrue(all(row["q_source_id"] == base["q_source_id"] and row["p_source_id"] == base["p_source_id"] for row in group.values()))
+                self.assertIsNone(base["q_polar_image_id"])
+                self.assertIsNone(base["p_polar_image_id"])
+                self.assertIsNotNone(group["QpolarxP"]["q_polar_image_id"])
+                self.assertIsNotNone(group["QxPpolar"]["p_polar_image_id"])
+            diversity_header = (out / "diversity.tsv").read_text().splitlines()[0].split("\t")
+            self.assertIn("directed_polar_to_source_nearest_paired_included", diversity_header)
+            self.assertIn("directed_polar_to_source_nearest_leave_pair_out", diversity_header)
+            self.assertIn("paired_source_wins", diversity_header)
             manifest = json.loads((out / "manifest.json").read_text())
             self.assertEqual(manifest["seeds"], [20260715, 20260716, 20260717])
             self.assertTrue(all(all(value == 8 for value in counts.values()) for counts in manifest["seed_stratum_counts"].values()))
