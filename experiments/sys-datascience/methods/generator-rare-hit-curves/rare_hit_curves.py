@@ -630,6 +630,16 @@ def source_provenance() -> dict[str, Any]:
         "tests": packet / "test_rare_hit_curves.py",
         "readme": packet / "README.md",
     }
+    return {
+        "source_revision": repo_revision,
+        "source_tree": repo_tree,
+        "source_dirty": False,
+        "tracked_clean_predicate": "git status --porcelain --untracked-files=no",
+        "source_file_hashes": {name: sha256(path) for name, path in source_files.items()},
+        "source_files": {name: str(path.relative_to(repo_root)) for name, path in source_files.items()},
+        "input_schema": ROW_SCHEMA,
+        "analyzer_schema": SCHEMA,
+    }
 
 
 def producer_report_records(paths: Iterable[Path]) -> list[dict[str, Any]]:
@@ -654,18 +664,6 @@ def producer_report_records(paths: Iterable[Path]) -> list[dict[str, Any]]:
     if len(records) != 6 or len({record["path"] for record in records}) != 6:
         raise ValueError("producer report completeness requires six distinct reports")
     return records
-    return {
-        "source_revision": repo_revision,
-        "source_tree": repo_tree,
-        "source_dirty": False,
-        "tracked_clean_predicate": "git status --porcelain --untracked-files=no",
-        "source_file_hashes": {name: sha256(path) for name, path in source_files.items()},
-        "source_files": {name: str(path.relative_to(repo_root)) for name, path in source_files.items()},
-        "input_schema": ROW_SCHEMA,
-        "analyzer_schema": SCHEMA,
-    }
-
-
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--pilot-input", type=Path, action="append", required=True)
