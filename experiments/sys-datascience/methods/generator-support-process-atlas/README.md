@@ -29,6 +29,10 @@ separate population. Accepted polygons are area-normalized and translated by
 their area centroid before shape distances. A 64-direction centered support
 signature provides the common distance view.
 
+Synthetic controls check that equal and `sigma=0` collapse exactly, and that
+the adjacency/roughness metrics separate a fixed IID Gaussian log-support
+sample from a coherent Fourier mode after matching empirical log variance.
+
 Two sampling objects remain separate:
 
 1. The arm-marginal table contains every requested arm attempt on every fan,

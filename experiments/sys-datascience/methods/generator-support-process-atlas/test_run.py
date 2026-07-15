@@ -26,17 +26,22 @@ class SupportProcessAtlasTests(unittest.TestCase):
         self.assertEqual(supports, [1.0] * len(angles))
         self.assertEqual(atlas.support_process_metrics(supports)["log_support_roughness"], 0.0)
 
-    def test_coherent_field_is_smoother_than_equal_variance_alternation(self) -> None:
-        n = 8
-        alternating_logs = [0.1 if index % 2 == 0 else -0.1 for index in range(n)]
+    def test_coherent_field_is_smoother_than_equal_variance_iid_sample(self) -> None:
+        n = 16
+        rng = atlas.deterministic_rng("iid-roughness-control", 0)
+        iid_raw = [atlas.standard_normal(rng) for _ in range(n)]
+        iid_center = atlas.mean(iid_raw)
+        iid_centered = [value - iid_center for value in iid_raw]
+        iid_scale = 0.1 / atlas.population_sd(iid_centered)
+        iid_logs = [iid_scale * value for value in iid_centered]
         cosine_raw = [math.cos(2.0 * math.pi * index / n) for index in range(n)]
         cosine_scale = 0.1 / atlas.population_sd(cosine_raw)
         smooth_logs = [cosine_scale * value for value in cosine_raw]
-        self.assertAlmostEqual(atlas.population_sd(alternating_logs), atlas.population_sd(smooth_logs), places=14)
-        alternating = atlas.support_process_metrics([math.exp(value) for value in alternating_logs])
+        self.assertAlmostEqual(atlas.population_sd(iid_logs), atlas.population_sd(smooth_logs), places=14)
+        iid = atlas.support_process_metrics([math.exp(value) for value in iid_logs])
         smooth = atlas.support_process_metrics([math.exp(value) for value in smooth_logs])
-        self.assertGreater(alternating["log_support_roughness"], smooth["log_support_roughness"])
-        self.assertLess(alternating["log_support_adjacency_correlation"], smooth["log_support_adjacency_correlation"])
+        self.assertGreater(iid["log_support_roughness"], smooth["log_support_roughness"])
+        self.assertLess(iid["log_support_adjacency_correlation"], smooth["log_support_adjacency_correlation"])
 
     def test_fans_and_latents_replay_without_redraw(self) -> None:
         first = atlas.generate_rows((17,), (4,), 3)
