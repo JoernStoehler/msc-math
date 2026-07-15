@@ -73,3 +73,7 @@ inverse-transpose matrices and reconstructed through the exact polar API.
 Stored exact dual coordinates, incidence, volume, and symplectic signatures
 are checked before f64 diagnostic summaries are emitted.  Floating singular
 values and residual norms remain diagnostic views only.
+
+The current row hashes intentionally replace the prior f64-roundtrip packet:
+the old rows hash began `f621f33a`, while the exact-path rows hash begins
+`4eea1d9c`.  The report records this regeneration reason.

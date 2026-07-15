@@ -23,6 +23,7 @@ def main() -> None:
     assert sha256(ROOT / "rows.jsonl") == report["output_rows_sha256"]
     assert sha256(ROOT / "paired.jsonl") == report["output_paired_sha256"]
     assert sha256(ROOT / "paired.tsv") == report["output_paired_tsv_sha256"]
+    assert "exact rational" in report["regeneration_note"]
     by_pair = {}
     for row in rows:
         assert row["exact_matrix_action_matches"] is True
