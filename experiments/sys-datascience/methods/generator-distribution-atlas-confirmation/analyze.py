@@ -77,6 +77,7 @@ def named_effects(shapes: list[shape_quality.Shape]) -> tuple[list[dict[str, Any
     effects: list[dict[str, Any]] = []
     within_rows: list[dict[str, Any]] = []
     saturation_rows: list[dict[str, Any]] = []
+    first_stable_by_key: dict[tuple[int, int, str], int | None] = {}
     seeds = sorted({key[0] for key in by_group})
     sides = sorted({key[1] for key in by_group})
 
@@ -148,19 +149,11 @@ def named_effects(shapes: list[shape_quality.Shape]) -> tuple[list[dict[str, Any
                 q95 = float(np.quantile(anisotropy, 0.95))
                 effects.append({"master_seed": seed, "contrast": "thin_shape_anisotropy_tail", "side_count": side, "effect": f"q95_covariance_anisotropy:{population}", "value": q95, "tail_threshold": 10.0, "pass": q95 >= 10.0, "definition": "q95 of rotation/translation/positive-scale invariant covariance eigenvalue ratio; raw anisotropy tail"})
 
-        for population in (BASELINE, ALPHA1):
-            q95_by_side = {}
-            for side in sides:
-                members = get(seed, side, population)
-                if members:
-                    q95_by_side[side] = float(np.quantile([atlas.invariant_features(shape)[1] for shape in members], 0.95))
-            if 3 in q95_by_side:
-                other = [q95_by_side[side] for side in (4, 6) if side in q95_by_side]
-                if other:
-                    effects.append({"master_seed": seed, "contrast": "thin_shape_anisotropy_tail", "side_count": 3, "effect": f"triangle_q95_exceeds_other_sides:{population}", "value": int(q95_by_side[3] > max(other)), "pass": q95_by_side[3] > max(other), "definition": "triangle q95 exceeds both available non-triangle q95 values; side-stratified tail emphasis"})
-
+            # Saturation is a per-seed/per-side/per-population prefix curve.
+            # Keep this inside the side loop so no stratum is duplicated or omitted.
             for population in (REGULAR, MUTATION, ALPHA16, ALPHA4, ALPHA1, BASELINE):
                 members = get(seed, side, population)
+                first_stable_by_key[(seed, side, population)] = None
                 if len(members) < 2:
                     continue
                 distances, _ = atlas.distances(members)
@@ -176,6 +169,35 @@ def named_effects(shapes: list[shape_quality.Shape]) -> tuple[list[dict[str, Any
                         first_stable = requested
                     saturation_rows.append({"master_seed": seed, "side_count": side, "population": population, "requested_n": requested, "used_n": n, "pairwise_l2_mean": value, "relative_change": change, "first_stable_n": first_stable, "stability_threshold": 0.15, "definition": "first deterministic prefix n with relative change <= 0.15; exact-zero controls stable at n=4"})
                     previous = value
+                first_stable_by_key[(seed, side, population)] = first_stable
+
+        for population in (BASELINE, ALPHA1):
+            q95_by_side = {}
+            for side in sides:
+                members = get(seed, side, population)
+                if members:
+                    q95_by_side[side] = float(np.quantile([atlas.invariant_features(shape)[1] for shape in members], 0.95))
+            if 3 in q95_by_side:
+                other = [q95_by_side[side] for side in (4, 6) if side in q95_by_side]
+                if other:
+                    effects.append({"master_seed": seed, "contrast": "thin_shape_anisotropy_tail", "side_count": 3, "effect": f"triangle_q95_exceeds_other_sides:{population}", "value": int(q95_by_side[3] > max(other)), "pass": q95_by_side[3] > max(other), "definition": "triangle q95 exceeds both available non-triangle q95 values; side-stratified tail emphasis"})
+
+        # Observation 5 is evaluated explicitly from the first-stable values,
+        # not inferred from the retained curves.  The sets are frozen here:
+        # narrow=(regular, four-step mutation, alpha=16), broad=(alpha=4,
+        # alpha=1, current baseline). Missing first-stable values remain
+        # unavailable and do not silently become a pass or a zero.
+        for side in sides:
+            narrow = [first_stable_by_key.get((seed, side, population)) for population in (REGULAR, MUTATION, ALPHA16)]
+            broad = [first_stable_by_key.get((seed, side, population)) for population in (ALPHA4, ALPHA1, BASELINE)]
+            narrow_available = all(value is not None for value in narrow)
+            broad_available = all(value is not None for value in broad)
+            narrow_median = float(np.median(narrow)) if narrow_available else None
+            broad_median = float(np.median(broad)) if broad_available else None
+            available = narrow_available and broad_available
+            effects.append({"master_seed": seed, "contrast": "saturation_narrow_vs_broad", "side_count": side, "effect": "narrow_first_stable_median", "value": narrow_median, "pass": None if not available else narrow_median < broad_median, "available": available, "definition": "narrow=(regular,regular-mutation,alpha16); broad=(alpha4,alpha1,current-baseline); compare medians of first stable n"})
+            effects.append({"master_seed": seed, "contrast": "saturation_narrow_vs_broad", "side_count": side, "effect": "broad_first_stable_median", "value": broad_median, "pass": None if not available else narrow_median < broad_median, "available": available, "definition": "narrow=(regular,regular-mutation,alpha16); broad=(alpha4,alpha1,current-baseline); compare medians of first stable n"})
+            effects.append({"master_seed": seed, "contrast": "saturation_narrow_vs_broad", "side_count": side, "effect": "narrow_stabilizes_earlier", "value": None if not available else int(narrow_median < broad_median), "pass": None if not available else narrow_median < broad_median, "available": available, "availability_reason": "all six first-stable values available" if available else f"unavailable narrow={narrow} broad={broad}", "definition": "narrow median first-stable n < broad median first-stable n; unavailable if any named population lacks a first-stable n"})
 
     return effects, within_rows, saturation_rows
 
@@ -188,7 +210,8 @@ def aggregate_effects(effects: list[dict[str, Any]]) -> list[dict[str, Any]]:
     for (contrast, side, effect), rows in sorted(grouped_effects.items()):
         values = [float(row["value"]) for row in rows if isinstance(row.get("value"), (int, float)) and math.isfinite(float(row["value"]))]
         passes = [row["pass"] for row in rows if isinstance(row.get("pass"), bool)]
-        out.append({"contrast": contrast, "side_count": side, "effect": effect, "seeds": len(rows), "mean": None if not values else float(np.mean(values)), "median": None if not values else float(np.median(values)), "min": None if not values else float(np.min(values)), "max": None if not values else float(np.max(values)), "between_seed_std": None if len(values) < 2 else float(np.std(values, ddof=1)), "seeds_passing": sum(passes), "pass_rate": None if not passes else sum(passes) / len(passes), "definition": rows[0].get("definition")})
+        unavailable = sum(row.get("available") is False for row in rows)
+        out.append({"contrast": contrast, "side_count": side, "effect": effect, "seeds": len(rows), "mean": None if not values else float(np.mean(values)), "median": None if not values else float(np.median(values)), "min": None if not values else float(np.min(values)), "max": None if not values else float(np.max(values)), "between_seed_std": None if len(values) < 2 else float(np.std(values, ddof=1)), "seeds_passing": sum(passes), "pass_rate": None if not passes else sum(passes) / len(passes), "unavailable_seeds": unavailable, "definition": rows[0].get("definition")})
     return out
 
 
@@ -275,7 +298,7 @@ def main() -> None:
             "regular_controls": "regular/mutation are local negative controls; alpha16/alpha4/alpha1 order is reported per side and seed, including reversals",
             "zonogon_diversity": "strong excess is predeclared as ratio >=2 at side 4 or 6; side 6 need not pass",
             "anisotropy": "q95 >=10 is a finite-panel thin-tail flag; triangle emphasis remains a side-stratified contrast",
-            "saturation": "first deterministic prefix n with <=0.15 relative change is a descriptive saturation estimate only",
+            "saturation": "first deterministic prefix n with <=0.15 relative change is a descriptive saturation estimate only; narrow=(regular,regular-mutation,alpha16) versus broad=(alpha4,alpha1,current-baseline) is evaluated by first-stable medians, with unavailable values explicit",
         },
         "interpretation": {
             "allowed": ["per-seed and joint named contrasts, finite-panel effect sizes, rank/order stability, between-seed variability, acceptance/exhaustion/cost, and sign/order reversals"],

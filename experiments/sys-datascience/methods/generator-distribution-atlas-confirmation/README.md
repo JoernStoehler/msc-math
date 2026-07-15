@@ -73,7 +73,13 @@ predeclared strong threshold (2.0) at side 4 in any confirmation seed, so the
 one-seed side-4 excess is unstable; side 6 remains below baseline. Baseline
 and alpha=1 retain q95 anisotropy tails above the predeclared 10 threshold,
 with triangles exceeding both non-triangle strata in the named side-stratified
-comparison. Saturation and cost remain descriptive finite-panel summaries.
+comparison for 2/3 seeds for each of baseline and alpha=1. The explicit
+saturation comparison uses narrow=(regular, four-step mutation, alpha=16) and
+broad=(alpha=4, alpha=1, baseline): six of nine seed/side comparisons are
+unavailable because at least one named population has no first-stable prefix,
+and all three available comparisons are non-passes (the medians tie). Thus
+the narrow-laws-earlier observation is not supported by this confirmation.
+Saturation curves and cost remain descriptive finite-panel summaries.
 
 These observations do not select a best generator, establish population
 support or natural-law probabilities, imply a mechanism or target transfer,

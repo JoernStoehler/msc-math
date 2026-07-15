@@ -46,6 +46,20 @@ class ConfirmationTests(unittest.TestCase):
         self.assertEqual(shape.side_count, 5)
         self.assertTrue(np.all(np.isfinite(shape.support)))
 
+    def test_saturation_side_coverage_and_narrow_broad_comparison(self):
+        with (HERE / "artifacts/analysis/saturation.tsv").open() as handle:
+            rows = list(csv.DictReader(handle, delimiter="\t"))
+        keys = {(row["master_seed"], row["side_count"], row["population"], row["requested_n"]) for row in rows}
+        self.assertEqual(len(rows), 216)  # 3 seeds * 3 sides * 6 laws * 4 prefixes
+        self.assertEqual(len(keys), len(rows))
+        self.assertEqual({row["side_count"] for row in rows}, {"3", "4", "6"})
+        with (HERE / "artifacts/analysis/joint-effects.tsv").open() as handle:
+            joint = list(csv.DictReader(handle, delimiter="\t"))
+        comparison = [row for row in joint if row["contrast"] == "saturation_narrow_vs_broad" and row["effect"] == "narrow_stabilizes_earlier"]
+        self.assertEqual({row["side_count"] for row in comparison}, {"3", "4", "6"})
+        self.assertTrue(all(row["seeds"] == "3" for row in comparison))
+        self.assertTrue(all("unavailable_seeds" in row for row in comparison))
+
 
 if __name__ == "__main__":
     unittest.main()
