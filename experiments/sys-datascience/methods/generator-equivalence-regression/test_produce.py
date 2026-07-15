@@ -49,10 +49,26 @@ class EquivalenceMatrixTests(unittest.TestCase):
         self.assertEqual(by_id["iid-support-baseline-vs-equal-support-dirichlet1"]["level"], "not_equivalent")
         self.assertEqual(by_id["iid-support-baseline-vs-equal-support-dirichlet1"]["expected"]["law_parameters"], "nonzero")
 
-    def test_anti_symplectic_capacity_status_remains_pending(self):
+    def test_anti_symplectic_theorem_and_executable_boundaries_are_explicit(self):
         row = next(row for row in produce.rows() if row["row_id"] == "antiunitary-antisymplectic-endpoint")
-        self.assertIn("proof_pending", row["proof_status"])
-        self.assertIn("do not collapse", row["collapse_scope"])
+        self.assertIn("ehz_and_sys_invariance_theorem_proved", row["proof_status"])
+        self.assertIn("no_dedicated_capacity_regression", row["proof_status"])
+        self.assertNotIn("proof_pending", row["proof_status"])
+        self.assertIn("exact or certified", row["collapse_scope"])
+        self.assertIn("near-floating matrices remain non-theorem", row["collapse_scope"])
+        self.assertIn("retain signed omega features", row["collapse_scope"])
+        self.assertIn("reversed directed/facet-word semantics", row["collapse_scope"])
+        self.assertIn("c_EHZ/sys were not evaluated", row["executable_control"])
+        required_sources = {
+            "papers/hk2017/EHZ-polytopes.tex",
+            "thesis/02-preliminaries-ehz-capacity.tex",
+            "formal/hk2017-qp-core.tex",
+        }
+        self.assertTrue(required_sources <= set(produce.SOURCE_PATHS))
+        for source in required_sources:
+            self.assertTrue(any(citation.startswith(source) for citation in row["proof_source"]))
+        witness = next(witness for witness in produce.witness_results() if witness["row_id"] == row["row_id"])
+        self.assertEqual(witness["evidence"]["ehz_sys_status"], "analytic_theorem_source_backed_no_dedicated_capacity_regression")
         self.assertEqual(row["expected"]["signed_symplectic_features"], "nonzero")
         self.assertEqual(row["expected"]["absolute_symplectic_features"], "zero")
 

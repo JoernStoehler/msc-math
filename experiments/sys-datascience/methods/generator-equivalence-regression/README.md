@@ -50,11 +50,17 @@ two translation equations in two unknowns. With three pairs, all equations
 must still be consistent. The retained active six-sided rational witness is
 inconsistent and prevents a false general collapse.
 
-The anti-symplectic endpoint retains exact matrix, Euclidean, volume, and
-absolute-symplectic-feature controls. No authoritative local theorem checked by
-this packet establishes capacity or `sys` invariance under that endpoint, so
-that part remains explicitly proof-pending and its target arms must not be
-collapsed.
+For compact full-dimensional convex four-polytopes, an exact or certified
+identity `A^T J A=-J` preserves EHZ capacity and `sys`: time reversal restores
+the positive orientation of generalized characteristics, while reversal of HK
+facet words independently cancels the omega sign change. In dimension four
+such `A` has determinant one, so volume is preserved. Therefore a paired
+anti-symplectic target value may be derived/collapsed for `c_EHZ` and `sys`
+without reevaluation. Signed omega features and reversed directed/facet-word
+semantics remain distinct, and near-floating matrices are not covered by the
+theorem. The packet retains exact matrix and feature controls but no dedicated
+capacity regression; this is a prudent nonblocking evidence gap, not a target
+evaluation performed here.
 
 ## Reproduce and check
 

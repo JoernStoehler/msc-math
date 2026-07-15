@@ -62,6 +62,9 @@ SOURCE_PATHS = (
     "experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/main.rs",
     "experiments/sys-datascience/methods/generator-orbit-perturbation-zoo/README.md",
     "experiments/sys-datascience/methods/ridge-endpoint-path/notes/endpoint-predictions.md",
+    "papers/hk2017/EHZ-polytopes.tex",
+    "thesis/02-preliminaries-ehz-capacity.tex",
+    "formal/hk2017-qp-core.tex",
     "crates/euclidean-polytopes/tests/polar_vertices.rs",
     "crates/euclidean-polytopes/DEVELOPMENT.md",
     "thesis/02-preliminaries-polytope-input-language.tex",
@@ -416,16 +419,16 @@ def rows():
         },
         {
             "row_id": "antiunitary-antisymplectic-endpoint",
-            "objects_laws": "K and A K for A=diag(-1,-1,1,1), an orthogonal antiunitary/anti-symplectic endpoint",
+            "objects_laws": "a compact full-dimensional convex 4-polytope K and C K for the exact orthogonal endpoint C=diag(-1,-1,1,1); theorem scope also covers exact/certified A^T J A=-J",
             "level": "pointwise_orbit",
-            "hypotheses_conditioning": "coordinates (q1,q2,p1,p2); target-free matrix and feature controls only",
-            "transformation": "A^T A=I, det A=1, and A^T J A=-J",
+            "hypotheses_conditioning": "coordinates (q1,q2,p1,p2); K compact, convex, and full-dimensional; C is exact and orthogonal; theorem-based target collapse for a general A requires exact or certified A^T J A=-J, never a near-floating residual",
+            "transformation": "C^T C=I and C^T J C=-J; generally A^T J A=-J implies det A=1 in dimension four, while time reversal of generalized characteristics and reversal of HK facet words preserve c_EHZ, volume, and sys",
             "expected": expected(law_parameters=NA, raw_geometry_after_transform=ZERO, combinatorics=ZERO, euclidean_features=ZERO, signed_symplectic_features=NONZERO, absolute_symplectic_features=ZERO, normalized_product_features=ZERO, matrix_identity=ZERO),
-            "proof_status": "capacity_and_sys_invariance_proof_pending; target_free_matrix_and_absolute_omega_controls_proved",
-            "proof_source": [f"{orient}/main.rs: deterministic_so4_i8", f"{zoo}/README.md and main.rs: anti-symplectic pi endpoint"],
-            "arithmetic": "exact rational",
-            "executable_control": "matrix_feature_control_pass_proof_pending: signed omega Gram flips and absolute omega Gram is fixed; no capacity/sys claim",
-            "collapse_scope": "do not collapse target arms until an authoritative capacity/sys anti-symplectic invariance theorem is supplied",
+            "proof_status": "ehz_and_sys_invariance_theorem_proved; target_free_matrix_and_absolute_omega_controls_proved; no_dedicated_capacity_regression",
+            "proof_source": [f"{orient}/main.rs: exact deterministic anti-symplectic matrix", f"{zoo}/README.md and main.rs: anti-symplectic pi endpoint", "papers/hk2017/EHZ-polytopes.tex: Theorem 1.1 and generalized-characteristic/action definitions", "thesis/02-preliminaries-ehz-capacity.tex: EHZ minimum-action and sys conventions", "formal/hk2017-qp-core.tex: active-word dual-vertex formula"],
+            "arithmetic": "exact rational matrix witness; analytic theorem for exact/certified real anti-symplectic maps",
+            "executable_control": "matrix_feature_control_pass_theorem_source_backed_no_capacity_regression: exact A^T J A=-J, det A=1, signed omega Gram reversal, and absolute omega Gram invariance; c_EHZ/sys were not evaluated",
+            "collapse_scope": "derive/collapse only c_EHZ and sys target values from the paired base when A^T J A=-J is exact or certified; retain signed omega features and reversed directed/facet-word semantics; near-floating matrices remain non-theorem",
         },
         {
             "row_id": "generic-so4-not-u2-negative-control",
@@ -580,7 +583,7 @@ def witness_results():
     signed_before, signed_after = gram(points, omega), gram(anti_points, omega)
     assert signed_after == tuple(tuple(-x for x in row) for row in signed_before)
     assert tuple(tuple(abs(x) for x in row) for row in signed_after) == tuple(tuple(abs(x) for x in row) for row in signed_before)
-    out.append(("antiunitary-antisymplectic-endpoint", {"matrix": anti, "determinant": 1, "orthogonal": True, "anti_symplectic": True, "absolute_omega_fixed": True, "capacity_sys_status": "proof_pending"}))
+    out.append(("antiunitary-antisymplectic-endpoint", {"matrix": anti, "determinant": 1, "orthogonal": True, "anti_symplectic": True, "signed_omega_reversed": True, "absolute_omega_fixed": True, "ehz_sys_status": "analytic_theorem_source_backed_no_dedicated_capacity_regression"}))
     out.append(("generic-so4-not-u2-negative-control", {"same_matrix": anti, "in_SO4": True, "in_Sp4": False, "signed_omega_reversed": True}))
 
     translation = (F(1, 5), F(1, 7))
@@ -647,7 +650,6 @@ def validate_matrix(matrix_rows, witnesses):
     require(len(witness_ids) == len(set(witness_ids)), "witnesses: duplicate row_id")
     require(set(witness_ids) == set(ids), "rows/witnesses: row_id sets differ")
     require(any(r["level"] == "not_equivalent" for r in matrix_rows), "rows: missing negative control")
-    require(any("proof_pending" in r["proof_status"] for r in matrix_rows), "rows: missing proof-pending boundary")
 
 
 def validate_matrix_documents(matrix, witness_document):
