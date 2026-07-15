@@ -92,3 +92,26 @@ f64 solves but excludes fixture/exact-geometry setup and compilation;
 includes exact resolution of every retained candidate; exact-all includes
 complete-stream exact enumeration, solving, and sorting. Fixture construction,
 Python analysis/validation, and compilation are excluded from all row timers.
+
+## v2 multi-centre soundness trial
+
+Run the separate v2 surface with:
+
+```bash
+bash experiments/numerics/qp-error-bounds/run_soundness_v2.sh
+```
+
+It writes `artifacts/soundness-v2/`.  Each raw lifecycle row names its solver
+centre explicitly (current saddle/eigen accepted centre, unconditional SVD,
+projected critical and max-margin, local LU/QR, and one QR refinement), then
+compares only against the same-word stored-rational exact positive witness.
+The formula registry, derived formula observations, and policy rows are
+separate artifacts.  Policies distinguish the unchecked current f64 heuristic,
+exact retained candidates, one-shot f64-anchored selective windows, and exact
+supplied-stream replay.  A policy's active words are not physical-orbit sets.
+
+The packet includes ordinary F5/F8 controls, a product tie, the pinned q4:p5
+stream, the four named HKO stress words, and the hypercube boundary word. HKO
+exactness is only for the stored binary64 rational target; algebraic HKO
+transfer is explicitly unavailable. Small streams are deliberately capped and
+their policy exactness scope stays stream-relative.
