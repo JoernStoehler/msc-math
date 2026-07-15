@@ -18,18 +18,23 @@ finite unit outward normals, and all active inequalities globally.
 | `intersection` | binary random | independently rotated current-law `A∩B`; all pairwise H-boundary intersections are tested against both halfspace systems, and active input inequalities are counted |
 | `difference-body` | deterministic pushforward | `K+(-K)` from one current-law factor; this is marked as a pushforward, not independent breadth |
 | `convex-hull-union` | binary random | `conv(A∪B)` from independently rotated vertex sets; source vertices on the output boundary are counted |
-| `minkowski-symmetrization` | deterministic pushforward | classical polygonal Minkowski symmetrization `(K+R_uK)/2` in a uniformly random direction `u` |
+| `minkowski-symmetrization` | deterministic pushforward | classical polygonal Minkowski symmetrization `(K+R_uK)/2` in a uniformly random axis direction `u`; the output is reflection-symmetric about `u`, not generically centrally symmetric |
 
 The Crofton/Poisson-line zero-cell arm is abandoned in this packet. A faithful
 stationary line process with finite-window and side-count conditioning needs a
 separate law definition; a finite-window substitute would be misleading.
 
-Rows retain operation, law kind, parameter, seed, source side counts, output
-side count, active-subset counts, lineage, area-normalized shape views, and
-directed overlaps. Overlaps are only recorded against the source factors and
-are descriptive; they are not target associations. Generation and validation
-wall-clock totals are retained only in `batch-report.json` under an explicit
-volatile-timing field and never enter deterministic row identities.
+Rows retain operation, law kind, parameters, seed, stable output/source IDs,
+source side counts and rotation angles, output side count, active-subset counts,
+lineage, canonical CCW area-one output vertices, embedded source vertices,
+64-direction centered support signatures, and (for symmetrization) the axis and
+reflection residual. The embedded source geometry makes binary versus
+pushforward lineage replayable without a sidecar. Directed overlaps are
+source-coordinate intersection-area ratios (`area(output ∩ source) /
+area(source)`), not quotient shape distances; compare them only after explicit
+side-count stratification. They are descriptive and not target associations.
+Wall-clock generation/validation timings are printed to stdout only and are
+not retained in deterministic artifacts.
 
 ## Reproduction
 
@@ -40,19 +45,34 @@ cargo run -p exp-sys-landscape --release --bin sys-datascience-generator-convex-
   --attempts 32 --rows-per-bucket 2
 ```
 
+For a byte replay from a clean source checkout, run twice into separate output
+directories and compare both files:
+
+```text
+./target/release/sys-datascience-generator-convex-operations --out-dir /tmp/convex-a --attempts 32 --rows-per-bucket 2
+./target/release/sys-datascience-generator-convex-operations --out-dir /tmp/convex-b --attempts 32 --rows-per-bucket 2
+cmp /tmp/convex-a/rows.jsonl /tmp/convex-b/rows.jsonl
+cmp /tmp/convex-a/batch-report.json /tmp/convex-b/batch-report.json
+```
+
 The default panel uses three deterministic seeds (`20260715`, `20260716`,
 `20260717`), side-count buckets `3,4,6`, and two rows per bucket for each
 operation. Exhausted attempts are retained as terminal rows; inconvenient
 rows are never deleted to force a fixed output side count. The resulting
 `rows.jsonl` is deterministic for a committed source and command parameters.
-`batch-report.json` records the source revision/tree, status and side-count
-histograms, operation dispositions, measured (volatile) generation/validation
-cost, and the exact interpretation boundary.
+`batch-report.json` records a producer-source revision/tree (stable across the
+later artifact commit), producer paths, the workspace `Cargo.lock` BLAKE3,
+empty input-hash map (there are no external inputs), output-row BLAKE3/count,
+status and side-count histograms, operation dispositions, and the exact
+interpretation boundary. The producer refuses tracked dirty source and fails
+closed on an incomplete/nonterminal row contract. Timings are stdout-only.
 
 ## Evidence boundary
 
 This packet can support only geometry-plumbing and target-free shape-law
 comparison. The small three-seed panel is not a population estimate, ranking,
-transfer result, `sys`/capacity result, or independence claim. Further common
-shape comparisons should stratify by observed side count and preserve binary
-random versus deterministic-pushforward labels.
+transfer result, `sys`/capacity result, or independence claim. Minkowski
+symmetrization supports a reflection-axis statement only; central symmetry is
+reserved for the difference-body arm. Further common-shape comparisons should
+stratify by observed side count and preserve binary-random versus
+deterministic-pushforward labels.

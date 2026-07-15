@@ -14,11 +14,15 @@ use std::fs::{create_dir_all, File};
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::process::Command;
-use std::time::Instant;
 
-const SCHEMA: &str = "generator-convex-operations-row-v1";
-const REPORT_SCHEMA: &str = "generator-convex-operations-report-v1";
-const LAW_VERSION: &str = "generator-convex-operations-v1";
+const SCHEMA: &str = "generator-convex-operations-row-v2";
+const REPORT_SCHEMA: &str = "generator-convex-operations-report-v2";
+const LAW_VERSION: &str = "generator-convex-operations-v2";
+const PRODUCER_PATH: &str =
+    "experiments/sys-datascience/methods/generator-convex-operations/main.rs";
+const CARGO_MANIFEST_PATH: &str = "experiments/sys-landscape/Cargo.toml";
+const CARGO_LOCK_PATH: &str = "Cargo.lock";
+const SUPPORT_GRID_SIZE: usize = 64;
 const SEEDS: &[u64] = &[20260715, 20260716, 20260717];
 const SIDE_COUNTS: &[usize] = &[3, 4, 6];
 const ROWS_PER_BUCKET: usize = 2;
@@ -46,6 +50,11 @@ struct Generated {
     lineage: String,
     directed_overlap_a: Option<f64>,
     directed_overlap_b: Option<f64>,
+    source_ids: Vec<String>,
+    source_rotation_angles_rad: Vec<f64>,
+    reflection_theta_rad: Option<f64>,
+    reflection_axis: Option<[f64; 2]>,
+    reflection_symmetry_residual: Option<f64>,
 }
 
 #[derive(Serialize)]
@@ -53,9 +62,12 @@ struct Row {
     schema: &'static str,
     law_version: &'static str,
     sample_id: String,
+    output_id: String,
+    source_ids: Vec<String>,
     operation: String,
     law_kind: String,
     parameter: String,
+    operation_parameters: BTreeMap<String, String>,
     seed: u64,
     side_count_requested: usize,
     source_side_counts: Vec<usize>,
@@ -72,6 +84,14 @@ struct Row {
     center: &'static str,
     area_normalized: bool,
     area: Option<f64>,
+    vertices_ccw: Option<Vec<[f64; 2]>>,
+    support_signature_64: Option<Vec<f64>>,
+    source_vertices_ccw: Vec<Vec<[f64; 2]>>,
+    source_support_signatures_64: Vec<Vec<f64>>,
+    source_rotation_angles_rad: Vec<f64>,
+    reflection_theta_rad: Option<f64>,
+    reflection_axis: Option<[f64; 2]>,
+    reflection_symmetry_residual: Option<f64>,
     perimeter: Option<f64>,
     covariance_anisotropy: Option<f64>,
     directed_overlap_a: Option<f64>,
@@ -101,11 +121,15 @@ struct Report {
     operation_summary: BTreeMap<String, OperationSummary>,
     side_count_histogram: BTreeMap<String, usize>,
     dispositions: Vec<Disposition>,
-    command: String,
-    source_revision: String,
-    source_tree: String,
+    command: &'static str,
+    producer_revision: String,
+    producer_tree: String,
+    producer_paths: Vec<&'static str>,
+    cargo_lock_blake3: String,
+    input_hashes: BTreeMap<String, String>,
+    output_rows_blake3: String,
+    output_rows_count: usize,
     source_dirty: bool,
-    timing_ms_volatile: TimingSummary,
     interpretation_boundary: &'static str,
     abandoned: Vec<Abandonment>,
 }
@@ -117,13 +141,6 @@ struct OperationSummary {
     exhausted: usize,
     total_attempts: usize,
     output_side_counts: BTreeMap<String, usize>,
-}
-
-#[derive(Serialize)]
-struct TimingSummary {
-    generation_total_ms: f64,
-    validation_total_ms: f64,
-    note: &'static str,
 }
 
 #[derive(Serialize)]
@@ -485,6 +502,19 @@ fn overlap_ratio(output: &Factor, source: &Factor) -> Option<f64> {
     area_intersection(output, source).map(|area| area / shoelace(&source.vertices).abs())
 }
 
+fn source_id(
+    operation: &str,
+    seed: u64,
+    n: usize,
+    row: usize,
+    attempt: usize,
+    index: usize,
+) -> String {
+    format!(
+        "{LAW_VERSION}/{operation}/seed={seed}/n={n}/row={row}/attempt={attempt}/source={index}"
+    )
+}
+
 fn operation(
     operation: &str,
     n: usize,
@@ -496,13 +526,21 @@ fn operation(
     let a = current_factor(n, &mut ra)?;
     let angle_a = ra.gen::<f64>() * TAU;
     let a = rotate(&a, angle_a)?;
+    let mut source_rotation_angles_rad = vec![angle_a];
     let b = if matches!(
         operation,
         "minkowski-sum" | "intersection" | "convex-hull-union"
     ) {
         let mut rb = ChaCha8Rng::from_seed(seed_bytes(seed, operation, n, row, attempt, "b"));
-        let b = rotate(&current_factor(n, &mut rb)?, rb.gen::<f64>() * TAU)?;
+        let angle_b = rb.gen::<f64>() * TAU;
+        source_rotation_angles_rad.push(angle_b);
+        let b = rotate(&current_factor(n, &mut rb)?, angle_b)?;
         Some(b)
+    } else {
+        None
+    };
+    let reflection_theta_rad = if operation == "minkowski-symmetrization" {
+        Some(ra.gen::<f64>() * PI)
     } else {
         None
     };
@@ -589,7 +627,7 @@ fn operation(
                 )
             }
             "minkowski-symmetrization" => {
-                let theta = ra.gen::<f64>() * PI;
+                let theta = reflection_theta_rad?;
                 let reflected = reflected(&a, theta)?;
                 let raw = factor_from_vertices(minkowski_raw(&a, &reflected))?;
                 let out = centered_normalized(raw.vertices.clone())?;
@@ -605,6 +643,12 @@ fn operation(
             }
             _ => return None,
         };
+    let source_ids = (0..sources.len())
+        .map(|index| source_id(operation, seed, n, row, attempt, index))
+        .collect();
+    let reflection_axis = reflection_theta_rad.map(|theta| [theta.cos(), theta.sin()]);
+    let reflection_symmetry_residual =
+        reflection_theta_rad.map(|theta| reflection_symmetry_residual(&output, theta));
     Some(Generated {
         output,
         sources,
@@ -613,6 +657,11 @@ fn operation(
         lineage,
         directed_overlap_a,
         directed_overlap_b,
+        source_ids,
+        source_rotation_angles_rad,
+        reflection_axis,
+        reflection_symmetry_residual,
+        reflection_theta_rad,
     })
 }
 
@@ -644,6 +693,58 @@ fn covariance_anisotropy(factor: &Factor) -> Option<f64> {
     Some(disc / trace)
 }
 
+fn vertices_arrays(factor: &Factor) -> Vec<[f64; 2]> {
+    factor.vertices.iter().map(|p| [p[0], p[1]]).collect()
+}
+
+fn support_signature_64(factor: &Factor) -> Vec<f64> {
+    (0..SUPPORT_GRID_SIZE)
+        .map(|k| {
+            let theta = TAU * k as f64 / SUPPORT_GRID_SIZE as f64;
+            let direction = Vector2::new(theta.cos(), theta.sin());
+            factor
+                .vertices
+                .iter()
+                .map(|p| direction.dot(p))
+                .fold(f64::NEG_INFINITY, f64::max)
+        })
+        .collect()
+}
+
+fn reflect_point(point: Vector2<f64>, theta: f64) -> Vector2<f64> {
+    let (s, c) = (2.0 * theta).sin_cos();
+    Vector2::new(c * point[0] + s * point[1], s * point[0] - c * point[1])
+}
+
+fn reflection_symmetry_residual(factor: &Factor, theta: f64) -> f64 {
+    factor
+        .vertices
+        .iter()
+        .map(|point| {
+            let reflected = reflect_point(*point, theta);
+            factor
+                .vertices
+                .iter()
+                .map(|candidate| (reflected - *candidate).norm())
+                .fold(f64::INFINITY, f64::min)
+        })
+        .fold(0.0, f64::max)
+}
+
+fn central_symmetry_residual(factor: &Factor) -> f64 {
+    factor
+        .vertices
+        .iter()
+        .map(|point| {
+            factor
+                .vertices
+                .iter()
+                .map(|candidate| (-*point - *candidate).norm())
+                .fold(f64::INFINITY, f64::min)
+        })
+        .fold(0.0, f64::max)
+}
+
 fn row_for(
     operation_name: &str,
     n: usize,
@@ -655,6 +756,23 @@ fn row_for(
     let output = &generated.output;
     let area = shoelace(&output.vertices).abs();
     let sources = &generated.sources;
+    let sample_id =
+        format!("{LAW_VERSION}/{operation_name}/seed={seed}/n={n}/row={row}/attempt={attempt}");
+    let mut operation_parameters = BTreeMap::new();
+    operation_parameters.insert("requested_side_count".to_string(), n.to_string());
+    for (index, angle) in generated.source_rotation_angles_rad.iter().enumerate() {
+        operation_parameters.insert(
+            format!("source_rotation_{index}_rad"),
+            format!("{angle:.17e}"),
+        );
+    }
+    if let Some(theta) = generated.reflection_theta_rad {
+        operation_parameters.insert("reflection_theta_rad".to_string(), format!("{theta:.17e}"));
+        operation_parameters.insert(
+            "reflection_axis".to_string(),
+            format!("[{:.17e},{:.17e}]", theta.cos(), theta.sin()),
+        );
+    }
     let law_kind = if matches!(
         operation_name,
         "minkowski-sum" | "intersection" | "convex-hull-union"
@@ -668,12 +786,13 @@ fn row_for(
     Row {
         schema: SCHEMA,
         law_version: LAW_VERSION,
-        sample_id: format!(
-            "{LAW_VERSION}/{operation_name}/seed={seed}/n={n}/row={row}/attempt={attempt}"
-        ),
+        sample_id: sample_id.clone(),
+        output_id: format!("{sample_id}/output"),
+        source_ids: generated.source_ids.clone(),
         operation: operation_name.to_string(),
         law_kind: law_kind.to_string(),
         parameter: format!("side_count={n}"),
+        operation_parameters,
         seed,
         side_count_requested: n,
         source_side_counts: sources.iter().map(|s| s.vertices.len()).collect(),
@@ -690,6 +809,14 @@ fn row_for(
         center: "area_centroid",
         area_normalized: (area - 1.0).abs() < 1e-8,
         area: Some(area),
+        vertices_ccw: Some(vertices_arrays(output)),
+        support_signature_64: Some(support_signature_64(output)),
+        source_vertices_ccw: sources.iter().map(vertices_arrays).collect(),
+        source_support_signatures_64: sources.iter().map(support_signature_64).collect(),
+        source_rotation_angles_rad: generated.source_rotation_angles_rad,
+        reflection_theta_rad: generated.reflection_theta_rad,
+        reflection_axis: generated.reflection_axis,
+        reflection_symmetry_residual: generated.reflection_symmetry_residual,
         perimeter: Some(perimeter(output)),
         covariance_anisotropy: covariance_anisotropy(output),
         directed_overlap_a: generated.directed_overlap_a,
@@ -715,9 +842,12 @@ fn exhausted_row(operation: &str, n: usize, seed: u64, row: usize, attempts: usi
             "{LAW_VERSION}/{operation}/seed={seed}/n={n}/row={row}/attempt={}",
             attempts.saturating_sub(1)
         ),
+        output_id: String::new(),
+        source_ids: Vec::new(),
         operation: operation.to_string(),
         law_kind: kind.to_string(),
         parameter: format!("side_count={n}"),
+        operation_parameters: BTreeMap::from([("requested_side_count".to_string(), n.to_string())]),
         seed,
         side_count_requested: n,
         source_side_counts: Vec::new(),
@@ -734,6 +864,14 @@ fn exhausted_row(operation: &str, n: usize, seed: u64, row: usize, attempts: usi
         center: "area_centroid",
         area_normalized: false,
         area: None,
+        vertices_ccw: None,
+        support_signature_64: None,
+        source_vertices_ccw: Vec::new(),
+        source_support_signatures_64: Vec::new(),
+        source_rotation_angles_rad: Vec::new(),
+        reflection_theta_rad: None,
+        reflection_axis: None,
+        reflection_symmetry_residual: None,
         perimeter: None,
         covariance_anisotropy: None,
         directed_overlap_a: None,
@@ -799,11 +937,43 @@ fn git_value(args: &[&str]) -> String {
         .unwrap_or_else(|| "unknown".to_string())
 }
 
+fn producer_revision() -> String {
+    git_value(&[
+        "log",
+        "-1",
+        "--format=%H",
+        "--",
+        PRODUCER_PATH,
+        CARGO_MANIFEST_PATH,
+    ])
+}
+
+fn producer_tree(revision: &str) -> String {
+    git_value(&["rev-parse", &format!("{revision}^{{tree}}")])
+}
+
+fn blake3_file(path: &str) -> String {
+    let bytes = std::fs::read(path).unwrap_or_else(|error| panic!("read {path}: {error}"));
+    blake3::hash(&bytes).to_hex().to_string()
+}
+
+fn tracked_source_dirty() -> bool {
+    !git_value(&["status", "--porcelain=v1", "--untracked-files=no"]).is_empty()
+}
+
+const PRODUCER_COMMAND: &str =
+    "cargo run -p exp-sys-landscape --release --bin sys-datascience-generator-convex-operations -- --attempts 32 --rows-per-bucket 2";
+
 fn main() {
     let args = parse_args();
-    let source_revision = git_value(&["rev-parse", "HEAD"]);
-    let source_tree = git_value(&["rev-parse", "HEAD^{tree}"]);
-    let source_dirty = !git_value(&["status", "--porcelain=v1", "--untracked-files=no"]).is_empty();
+    let source_dirty = tracked_source_dirty();
+    if source_dirty {
+        eprintln!("tracked source is dirty; refusing to produce a retained packet");
+        std::process::exit(2);
+    }
+    let producer_revision = producer_revision();
+    let producer_tree = producer_tree(&producer_revision);
+    let cargo_lock_blake3 = blake3_file(CARGO_LOCK_PATH);
     create_dir_all(&args.out_dir).expect("create output directory");
     let rows_path = args.out_dir.join("rows.jsonl");
     let report_path = args.out_dir.join("batch-report.json");
@@ -833,11 +1003,11 @@ fn main() {
                     let mut attempts_used = 0;
                     for attempt in 0..args.attempts {
                         attempts_used = attempt + 1;
-                        let t = Instant::now();
+                        let t = std::time::Instant::now();
                         let generated = operation(operation_name, n, seed, row, attempt);
                         generation_total += t.elapsed().as_secs_f64() * 1000.0;
                         let Some(generated) = generated else { continue };
-                        let t = Instant::now();
+                        let t = std::time::Instant::now();
                         let valid = validate_factor(&generated.output);
                         validation_total += t.elapsed().as_secs_f64() * 1000.0;
                         if valid {
@@ -868,9 +1038,52 @@ fn main() {
         }
     }
     writer.flush().expect("flush rows");
-    let report=Report { schema:REPORT_SCHEMA, law_version:LAW_VERSION, seed_panel:SEEDS.to_vec(), side_counts:SIDE_COUNTS.to_vec(), rows_per_bucket:args.rows_per_bucket, max_attempts_per_row:args.attempts, requested_rows, rows, status_counts, operation_summary:summaries, side_count_histogram:side_hist, dispositions:dispositions(), command:std::env::args().collect::<Vec<_>>().join(" "), source_revision, source_tree, source_dirty, timing_ms_volatile:TimingSummary { generation_total_ms:generation_total, validation_total_ms:validation_total, note:"wall-clock diagnostics only; omitted from deterministic row identities and not evidence of population cost" }, interpretation_boundary:"Target-free geometry smoke only. Rows expose operation lineage, side counts, active subsets, common shape views, and directed overlaps after no target stratification; no population ranking, sys/capacity, transfer, or independence claim is supported.", abandoned:vec![Abandonment { operation:"crofton-poisson-cell", status:"abandoned", reason:"faithful stationary line process plus finite-window/side-count conditioning was not available within this bounded planar geometry owner" }] };
+    println!(
+        "volatile timing (not retained): generation_ms={generation_total:.6}, validation_ms={validation_total:.6}"
+    );
+    let output_rows = args.out_dir.join("rows.jsonl");
+    let output_rows_blake3 = blake3_file(output_rows.to_str().expect("rows path UTF-8"));
+    let report = Report {
+        schema: REPORT_SCHEMA,
+        law_version: LAW_VERSION,
+        seed_panel: SEEDS.to_vec(),
+        side_counts: SIDE_COUNTS.to_vec(),
+        rows_per_bucket: args.rows_per_bucket,
+        max_attempts_per_row: args.attempts,
+        requested_rows,
+        rows,
+        status_counts,
+        operation_summary: summaries,
+        side_count_histogram: side_hist,
+        dispositions: dispositions(),
+        command: PRODUCER_COMMAND,
+        producer_revision,
+        producer_tree,
+        producer_paths: vec![PRODUCER_PATH, CARGO_MANIFEST_PATH],
+        cargo_lock_blake3,
+        input_hashes: BTreeMap::new(),
+        output_rows_blake3,
+        output_rows_count: rows,
+        source_dirty,
+        interpretation_boundary: "Target-free geometry smoke only. Rows expose operation lineage, side counts, active subsets, common shape views, and source-coordinate directed overlaps; no population ranking, sys/capacity, transfer, quotient-distance, or independence claim is supported.",
+        abandoned: vec![Abandonment {
+            operation: "crofton-poisson-cell",
+            status: "abandoned",
+            reason: "faithful stationary line process plus finite-window/side-count conditioning was not available within this bounded planar geometry owner",
+        }],
+    };
     serde_json::to_writer_pretty(File::create(report_path).expect("create report"), &report)
         .expect("write report");
+    let terminal_rows = rows == requested_rows
+        && report.output_rows_count == report.requested_rows
+        && report
+            .status_counts
+            .keys()
+            .all(|status| status == "survived" || status == "exhausted");
+    if !terminal_rows {
+        eprintln!("requested row contract failed; refusing successful exit");
+        std::process::exit(3);
+    }
 }
 
 #[cfg(test)]
@@ -883,6 +1096,15 @@ mod tests {
             Vector2::new(x, -y),
             Vector2::new(x, y),
             Vector2::new(-x, y),
+        ])
+        .unwrap()
+    }
+
+    fn asymmetric_triangle() -> Factor {
+        centered_normalized(vec![
+            Vector2::new(-0.8, -0.2),
+            Vector2::new(1.3, -0.1),
+            Vector2::new(-0.15, 1.1),
         ])
         .unwrap()
     }
@@ -924,7 +1146,7 @@ mod tests {
 
     #[test]
     fn difference_body_is_centrally_symmetric() {
-        let a = rectangle(1.0, 0.5);
+        let a = asymmetric_triangle();
         let neg = centered_normalized(a.vertices.iter().map(|p| -*p).collect()).unwrap();
         let d = minkowski_sum(&a, &neg).unwrap();
         for p in &d.vertices {
@@ -933,13 +1155,37 @@ mod tests {
     }
 
     #[test]
-    fn minkowski_symmetrization_is_centrally_symmetric() {
-        let a = rectangle(1.0, 0.5);
-        let reflected = reflected(&a, 0.37).unwrap();
-        let s = minkowski_sum(&a, &reflected).unwrap();
-        for p in &s.vertices {
-            assert!(s.vertices.iter().any(|q| (*q + *p).norm() < 1e-8));
-        }
+    fn minkowski_symmetrization_is_reflection_symmetric_not_generically_central() {
+        let a = asymmetric_triangle();
+        let theta = 0.37;
+        let reflected = reflected(&a, theta).unwrap();
+        let raw = factor_from_vertices(minkowski_raw(&a, &reflected)).unwrap();
+        let s = centered_normalized(raw.vertices).unwrap();
+        assert!(reflection_symmetry_residual(&s, theta) < 1e-8);
+        assert!(central_symmetry_residual(&s) > 1e-4);
+    }
+
+    #[test]
+    fn canonical_shape_linkage_has_stable_ids_and_support_grid() {
+        let generated = operation("minkowski-sum", 3, 20260715, 0, 0).unwrap();
+        assert_eq!(generated.source_ids.len(), generated.sources.len());
+        assert_eq!(
+            generated.source_rotation_angles_rad.len(),
+            generated.sources.len()
+        );
+        assert_eq!(
+            support_signature_64(&generated.output).len(),
+            SUPPORT_GRID_SIZE
+        );
+        assert!(generated
+            .source_ids
+            .iter()
+            .all(|id| id.contains("/source=")));
+        assert!(generated
+            .output
+            .vertices
+            .iter()
+            .all(|p| p[0].is_finite() && p[1].is_finite()));
     }
 
     #[test]
