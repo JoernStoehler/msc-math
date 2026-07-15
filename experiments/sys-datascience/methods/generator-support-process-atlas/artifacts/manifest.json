@@ -2,14 +2,14 @@
   "artifact_directory": "experiments/sys-datascience/methods/generator-support-process-atlas/artifacts",
   "artifact_hashes": {
     "attempts.jsonl": "9421047a8bf84217e36c4b58becedc27241511c1b8c9988385d3acb501aa0f15",
-    "checksums.sha256": "08f88ed963e0c4c59b2e19264d3818ab16a1c0e6defbca1b785fe40a50c42307",
+    "checksums.sha256": "537a2636f7ac452f9fbef6ff426deed3f705e36d3208cdb1c02dd926629c86ae",
     "complete-fans.jsonl": "68883cf9af635771039b12bdbdd59a8f0f08dab1c4ec3541dc7015d4ed9fd845",
     "cv-matching.jsonl": "3afd000a151e86ac3b7489cf9f276c4d8d65ee988fa2ec9ee566a9a63f1a43f7",
     "directed-overlap.jsonl": "10e0287ef26f537034a5c4453ce2031ecf9e615fa33e4efe91dc13d1fbecbad1",
     "fans.jsonl": "81434bdcf6cb45602afa752be8e69a8d0f536bbd1e3222b3f0237dc44782f728",
     "metric-summaries.jsonl": "9f394bcb396803a0685b24c816529979aae2033da9278584f5bfea1188c68035",
     "paired-distances.jsonl": "7228f59350f4fdff9cf2b51829db5cc9cc9879b5a43be9ca9e06138a4bf18a90",
-    "report.json": "e16276309bc179510a95bbe5514032a0df85c2e5475457ffebe74b2333977a21",
+    "report.json": "68ec1c3a740f1b8b042db8b74176d08377456fd3e2a40b64fc1326df309be65b",
     "sigma-monotonicity.jsonl": "39a4c9135348f2ed90dccabdea15cab9907b397cc1d9bcc59440acf2fa5eee48",
     "within-diversity.jsonl": "80589aa23b6c022ad5b97150d6243d49cc036252855170022465f698b2663ab7"
   },
@@ -19,12 +19,12 @@
     "python_version": "3.12.3",
     "snapshot_timing": "captured before artifact directory creation",
     "source_hashes": {
-      "experiments/sys-datascience/methods/generator-support-process-atlas/README.md": "c25bd726692caff390fb6f318c3a41955666d0727ec73c81b3575de36f10a996",
+      "experiments/sys-datascience/methods/generator-support-process-atlas/README.md": "0c9be596717937ded9be94836f5bb9821ae70be2a76e9d289316b42a8db08424",
       "experiments/sys-datascience/methods/generator-support-process-atlas/run.py": "6f9ab27e9bc08c4e7b7459d925ad386f243c330a36e3858d948859df3c26b8ae",
-      "experiments/sys-datascience/methods/generator-support-process-atlas/test_run.py": "3150d0dca946ca9487f7ba32704c4cb97f0fd3ef1a7b7d926a6ab0b2f16aac95"
+      "experiments/sys-datascience/methods/generator-support-process-atlas/test_run.py": "e224cfc9545521bda5a1ea95ee475f9ea08a1d3b0095b0e07b985d429795dbac"
     },
-    "source_revision": "97b989383172cff95cb15f55a0b40931978dcbb6",
-    "source_tree": "b2fb8eb8276b81bd3fd7e3311d547f1aff93b115",
+    "source_revision": "d0e7c84c84c1394d9aaa9bf367517b4757772a8a",
+    "source_tree": "d8a26049db6a60705cbd8502fe238d54b7e15511",
     "stdlib_only": true,
     "tracked_clean_command": "git status --porcelain=v1 --untracked-files=no",
     "tracked_source_dirty": false,
