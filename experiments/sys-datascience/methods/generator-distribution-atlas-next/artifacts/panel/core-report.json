@@ -1,0 +1,245 @@
+{
+  "schema": "generator-zoo-factor-only-report-v1",
+  "mode": "factor-only",
+  "law_version": "generator-zoo-v1",
+  "seed": 20260715,
+  "max_attempts_per_row": 128,
+  "rows_per_population_side_count": 24,
+  "selected_populations": [
+    "current-baseline|delta=0.2",
+    "primal-hull-uniform-disk|points=n+4,origin=interior",
+    "repulsive-gap|alpha=1",
+    "repulsive-gap|alpha=4",
+    "repulsive-gap|alpha=16",
+    "repulsive-gap|regular",
+    "regular-mutation|steps=4,scale=0.03"
+  ],
+  "side_counts": [
+    3,
+    4,
+    6
+  ],
+  "factor_rows": 496,
+  "status_counts": {
+    "accepted": 496,
+    "exhausted": 8
+  },
+  "per_population": [
+    {
+      "law": "current-baseline",
+      "parameter": "delta=0.2",
+      "side_count": 3,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.12140300000000004,
+      "max_attempts_observed": 21
+    },
+    {
+      "law": "current-baseline",
+      "parameter": "delta=0.2",
+      "side_count": 4,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.06721700000000001,
+      "max_attempts_observed": 5
+    },
+    {
+      "law": "current-baseline",
+      "parameter": "delta=0.2",
+      "side_count": 6,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.071908,
+      "max_attempts_observed": 6
+    },
+    {
+      "law": "primal-hull-uniform-disk",
+      "parameter": "points=n+4,origin=interior",
+      "side_count": 3,
+      "requested": 24,
+      "accepted": 16,
+      "exhausted": 8,
+      "total_generation_ms": 2.7458880000000003,
+      "max_attempts_observed": 128
+    },
+    {
+      "law": "primal-hull-uniform-disk",
+      "parameter": "points=n+4,origin=interior",
+      "side_count": 4,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.342021,
+      "max_attempts_observed": 46
+    },
+    {
+      "law": "primal-hull-uniform-disk",
+      "parameter": "points=n+4,origin=interior",
+      "side_count": 6,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.122261,
+      "max_attempts_observed": 8
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=1",
+      "side_count": 3,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.044862,
+      "max_attempts_observed": 13
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=1",
+      "side_count": 4,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.032392000000000004,
+      "max_attempts_observed": 4
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=1",
+      "side_count": 6,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.036392,
+      "max_attempts_observed": 3
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=4",
+      "side_count": 3,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.031620999999999996,
+      "max_attempts_observed": 3
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=4",
+      "side_count": 4,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.027402000000000003,
+      "max_attempts_observed": 2
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=4",
+      "side_count": 6,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.035004999999999994,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=16",
+      "side_count": 3,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.023593000000000003,
+      "max_attempts_observed": 2
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=16",
+      "side_count": 4,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.033125999999999996,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "alpha=16",
+      "side_count": 6,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.035548,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "regular",
+      "side_count": 3,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.018685999999999998,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "regular",
+      "side_count": 4,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.019607,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "repulsive-gap",
+      "parameter": "regular",
+      "side_count": 6,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.025749999999999995,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "regular-mutation",
+      "parameter": "steps=4,scale=0.03",
+      "side_count": 3,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.04227700000000001,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "regular-mutation",
+      "parameter": "steps=4,scale=0.03",
+      "side_count": 4,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.04795700000000001,
+      "max_attempts_observed": 1
+    },
+    {
+      "law": "regular-mutation",
+      "parameter": "steps=4,scale=0.03",
+      "side_count": 6,
+      "requested": 24,
+      "accepted": 24,
+      "exhausted": 0,
+      "total_generation_ms": 0.062499,
+      "max_attempts_observed": 1
+    }
+  ],
+  "command": "/workspaces/msc-math/.worktrees/generator-transfer/target/release/sys-datascience-generator-zoo-smoke --factor-only --factor-out-dir /workspaces/msc-math/.worktrees/generator-distribution-atlas-next/experiments/sys-datascience/methods/generator-distribution-atlas-next/artifacts/panel-core --seed 20260715 --attempts 128 --factor-rows-per-population 24 --factor-side-counts 3,4,6 --factor-population current-baseline|delta=0.2 --factor-population primal-hull-uniform-disk|points=n+4,origin=interior --factor-population repulsive-gap|alpha=1 --factor-population repulsive-gap|alpha=4 --factor-population repulsive-gap|alpha=16 --factor-population repulsive-gap|regular --factor-population regular-mutation|steps=4,scale=0.03",
+  "source_revision": "fd9c3e7df08d8c9d04491b8ebbb7b2628d2df32e",
+  "source_dirty": false,
+  "source_dirty_scope": "git status --porcelain -- experiments/sys-datascience/methods/generator-zoo-smoke/main.rs experiments/sys-landscape/Cargo.toml",
+  "validation_boundary": "Factor-only mode validates the local polygon construction, active-facet conditioning, and area normalization; it deliberately does not call the exact 4D product boundary.",
+  "interpretation_boundary": "Factor-only rows are named-population shape evidence for the bounded smoke only; they do not estimate population laws or establish product validity, sys transfer, or persistence."
+}

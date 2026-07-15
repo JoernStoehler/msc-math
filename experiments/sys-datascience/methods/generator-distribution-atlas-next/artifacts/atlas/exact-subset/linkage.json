@@ -1,0 +1,10 @@
+{
+  "contract": "Exact-product rows calibrate the geometry-only strata; their IDs do not match the larger factor-only panel.",
+  "individual_row_linkage": false,
+  "linkage_kind": "population-and-side-count stratum only",
+  "per_population_side_count": 2,
+  "retained_rows": 44,
+  "source": "/workspaces/msc-math/.worktrees/generator-transfer/experiments/sys-datascience/methods/generator-zoo-smoke/artifacts/factor-shapes.jsonl",
+  "source_sha256": "4622400be1220f11f742a4bde29273fe45dcd4c8d27044d716059c429630d7a8",
+  "target_evaluation": false
+}
