@@ -1,165 +1,86 @@
-\section{Published Code and Data}\label{sec:published-code-data}
+\section{Availability of Code and Data}\label{sec:published-code-data}
 
-The preceding sections distinguish computations that enter a proof from
-floating-point experiments that provide bounded empirical evidence.  This
-section explains how the published material preserves that distinction.  The
-repository is not an additional proof: it exposes the sources, retained
-artifacts, and checking routes that connect the claims in the thesis to their
-computational support.  Detailed commands remain with the experiment that owns
-each result, while \path{REPRODUCIBILITY.md} gives the common entry point.
+Several results in this thesis depend on computation, but not all in the same
+way.  For a future researcher, the important question is therefore not how the
+project repository is organized.  It is which mathematical evidence remains
+available after completion of the thesis, what can be checked or developed
+from it, and which parts of the research process are not preserved.  The
+published material is intended to support three uses: auditing the exact finite
+calculations, re-examining the empirical observations, and continuing the
+computational investigation.
 
-\subsection{Living repository and frozen archive}
+For the theorem-bearing calculations, the release contains the complete
+SageMath verifiers and their recorded outputs for the HKO local-maximum result
+and the rotated-pentagon formula.  The HKO material also contains the finite
+witness input.  A retained Rust program produces these finite choices, while
+the SageMath verifier reconstructs the proof-facing algebraic objects and
+checks the exact certificate.  The theorem therefore does not require trusting
+the search procedure that found those choices.  For the rotated-pentagon
+result, the retained SageMath program performs the exact finite classification
+left after the mathematical reduction in
+Section~\ref{sec:rotated-regular-polygons}.  These programs and their recorded
+outputs do not replace the arguments in the thesis: the mathematical meaning
+of the checked predicates and their implication for the theorems are given in
+the corresponding result sections.  They make the finite parts of those
+arguments available for direct re-execution and inspection.
 
-The living project repository is at
-\url{https://github.com/JoernStoehler/msc-math}.  It is the continuation
-surface: code, thesis sources, experiment packets, and their documentation can
-change there after the thesis release.  A single Zenodo record will instead
-preserve a frozen, citable snapshot of the reviewed release.  The intended
-bundle is a useful near-mirror of the closure-time repository, together with
-the checked thesis PDF.  Thus a reader can inspect the state on which the
-thesis was based without confusing it with later development on GitHub.
+The empirical material is retained for a different reason.  The release
+contains the random/product data underlying the bounded data-science search,
+together with row provenance and the derived feature table.  It also contains
+the selected and evaluated rows from the frozen generated-candidate
+experiment, and the twelve-run panel used to assess the first-order ascent
+method.  Keeping these data allows another researcher to inspect individual
+examples, repeat the reported analyses, compare alternative methods on the
+same inputs, or use the samples as a starting point for a broader search
+without first repeating the expensive production runs.
 
-The bundle is curated rather than a mechanical copy of every file ever stored
-in the repository.  It excludes Git history, raw agent-session logs,
-credentials, private correspondence, disposable build or smoke output, cached
-papers and submission forms, and other third-party material without clear
-redistribution rights.  Project software is released under Apache-2.0.
-Jörn-owned thesis and research text, documentation, original figures, and
-project-generated data are released under CC BY~4.0.  These licenses do not
-relicense quotations, dependencies, downloaded material, or other
-third-party content.
+Availability does not strengthen the conclusions drawn from these data.  The
+random/product table remains a finite sample from the distributions specified
+in Section~\ref{sec:black-box-datascience}; it does not represent all random
+polytopes or all Lagrangian products.  The generated-candidate records support
+the stated experiment for one generator and frozen rule set, not a general
+candidate-selection theorem.  The first-order panel records finite-step
+improvement on twelve fixed starts, while its unfinished trajectories provide
+no endpoint or local-maximality evidence.  Where a project-owned thesis figure
+comes from an experiment, its source data and producer are retained so that the
+figure can be inspected or regenerated.  This does not make an exploratory
+figure part of a proof.
 
-Retained data are selected by their use for interpretation, validation, or
-continuation, not merely by whether they can in principle be regenerated.
-Small inspectable files are stored directly in Git.  Large or poorly diffing
-JSONL files are stored with Git LFS.  In the Zenodo bundle these occur as their
-hydrated contents, never as LFS pointer files.  In particular, the retained
-random/product table and the twelve-start first-order panel described below
-remain available for inspection without repeating their original computation.
+The release also preserves the Rust libraries, experiment producers and
+analyzers, thesis sources, formal notes, documentation, and environment
+definitions.  These materials go beyond checking the displayed
+results: they allow later work to change an analysis, extend a sample, test a
+new search method, or rebuild the thesis from its sources.  GitHub is the
+living continuation repository and may change after submission:
+\begin{center}
+  \url{https://github.com/JoernStoehler/msc-math}.
+\end{center}
+Its frozen counterpart is a single Zenodo archive containing the reviewed
+release state together with the checked thesis PDF.  Large data stored through
+Git LFS appear in that archive as ordinary hydrated files, so access to the
+frozen data does not depend on retrieving separate LFS objects.
 
-The release packager makes the archive identity checkable.  It accepts an
-externally reviewed full commit identifier and refuses a different or modified
-tracked tree.  It reads the committed file inventory, verifies the size and
-SHA-256 identity of each hydrated LFS object, rebuilds and checks the thesis,
-and adds the resulting PDF.  It then writes an embedded file manifest containing
-sizes and SHA-256 digests, reopens the ZIP, and checks every payload entry
-against that manifest.  Selection of useful data and the final rights and
-privacy audit remain closure-time review decisions; a successful packaging run
-does not settle them.
+The archive is deliberately selective rather than a complete record of every
+computation or of the research process.  It excludes private material, raw
+agent sessions, disposable outputs, and third-party material that cannot be
+redistributed.  Some large intermediate caches are also omitted when they have
+no independent interpretive value and can be regenerated from the retained
+source and inputs.  Project software is made available under Apache-2.0, while
+Jörn-owned thesis and research text, original figures, documentation, and
+project-generated data are made available under CC BY~4.0.  These licenses do
+not relicense third-party material.
+
+Finally, availability is weaker than a promise of identical execution in every
+future environment.  Exact verifier reruns are compared through the predicates
+they check.  Retained datasets have explicit identities, whereas empirical
+outputs containing timings or environment-dependent fields need not reproduce
+byte for byte.  A small smoke run can show that a computational route still
+connects, but it cannot replace either a full retained dataset or an exact
+certificate.  Detailed access, build, and rerun instructions are kept with the
+repository and the experiment that owns each result rather than repeated in
+the thesis.
 
 \begin{quote}
-\textbf{Archive record---closure placeholders.}
-Zenodo DOI and URL: \textbf{TODO at publication}; archive filename and byte
-size: \textbf{TODO at publication}; full release commit and archive SHA-256:
-\textbf{TODO at publication}; publication date: \textbf{TODO at publication}.
+\textbf{Frozen release.}  Zenodo DOI and record URL:
+\textbf{TODO at archive publication}.
 \end{quote}
-
-\subsection{Claim-specific checking routes}
-
-The following four routes are not an inventory of the repository.  They are
-the packets needed to audit the computation-backed claims made earlier in the
-thesis.  All paths are relative to the repository root.
-
-\paragraph{HKO local maximum.}
-The packet
-\path{experiments/hko-local-maximum/theorem/} separates candidate production
-from theorem-facing verification.  Rust selects the finite data in
-\path{witness.json}; neither this search nor its floating-point diagnostic
-fields are trusted for the theorem.  The SageMath program
-\path{verify.sage.py} reconstructs the HKO objects over the ordered algebraic
-number field and checks the exact finite predicate: the 26 feasible sections,
-their positivity and touching conditions, annihilation of the symmetry
-tangent space, rank \(25\), and the positive convex relation among their
-derivative covectors.  These checks enter the upper-function and transverse-
-slice argument in Section~\ref{sec:hko-local-maximum}.  The retained
-\path{verification-summary.json} records a successful run, but the witness and
-summary do not authenticate the verifier source by themselves.  The audit
-route is therefore to identify the release source and rerun the exact verifier,
-not to accept the Rust-generated witness as a proof object.
-
-\paragraph{Rotated pentagons.}
-The exact SageMath executable and the retained full-run transcript are stored
-in the following packet:
-\par\smallskip
-{\small\noindent
-\path{experiments/regular-products/pentagon-rotation-formula-proof/}.}
-\par\smallskip\noindent
-After the finite-enumeration reduction proved in the thesis, the executable
-constructs the full raw list on the open half-domain and classifies all
-\(3340\) surviving words by exact algebraic sign decisions.  This is the
-certificate used in
-Section~\ref{sec:rotated-regular-polygons}; the sampled curves stored nearby
-are explanatory figures, not proof input.  The executable uses ordinary Python
-assertions, so it must be run without Python optimization.  Its transcript
-contains elapsed time and is not a byte-identical target.  A source change
-requires a new full run whose exact assertions and classification counts pass.
-
-\paragraph{Bounded data-science search.}
-Data and method packets are owned by
-\par\smallskip
-{\small\noindent\path{experiments/sys-datascience/}.}
-\par\smallskip\noindent
-This owner retains the \(14336\)-row random/product feature table together with
-a separate provenance table.  The producer contract fixes the distributions,
-seed, facet and polygon ranges, and sample counts stated in
-Section~\ref{sec:black-box-datascience}.  Its build script reconstructs the
-prepared tables from the retained producer data, and the fingerprint script
-checks their row counts, source counts, forbidden legacy fields, target
-summary, and SHA-256 digests.  The retained producer data are the source for
-reconstructing the current feature schema, rather than an older prepared-table
-snapshot.  The method packets recompute the direct scan and the in-table
-diagnostics.
-
-The frozen generated-candidate evidence is owned by the method folder
-\par\smallskip
-{\footnotesize\noindent
-\path{experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/}\linebreak
-\path{artifacts/100k-promising-scalars/}.}
-\par\smallskip\noindent
-It retains the selected and evaluated rows, whose selection preceded evaluation
-of the systolic ratio.  Large intermediate geometry and feature caches are
-deliberately omitted.  Rechecking the ranking over all \(100000\) pool rows and
-whether it was formed without the target therefore requires regeneration,
-rather than inspection of the compact outputs alone.  These routes reproduce
-the finite-table and configured-generator observations.  They do not prove
-anything about other random distributions, and the table audit does not
-independently certify the capacity and volume algorithms that produced each
-row.
-
-\paragraph{Finite first-order ascent.}
-The twelve deterministic ten-facet runs are preserved in
-\par\smallskip
-{\small\noindent
-\path{experiments/sys-landscape/gradient-ascent-observed-general/}.}
-\par\smallskip\noindent
-They are the fixed panel used in
-Section~\ref{sec:first-order-perturbations}.  Its analyzer requires exactly one
-successful row for each seed \(42,\ldots,53\), checks the shared parameters and
-recorded trace and endpoint statuses, aggregates the recorded costs, and writes
-the retained panel and summary.  A fresh run is matched by source and lockfile
-identity, analyzer checks, and exact concatenation of that run's twelve raw
-rows.  It is not compared byte-for-byte with the historical panel because
-timings and an input directory are run-specific.  The reproduced statement is
-correspondingly finite: all twelve traces made eight accepted moves on the
-configured panel, but stopped at the iteration cap while further tested moves
-remained.  This supports bounded finite-step progress and cost, not an endpoint
-or local-maximality claim.
-
-\subsection{Scope of reproduction}
-
-There is deliberately no command that reruns every executable in the project.
-The correct comparison depends on the claim.  An exact certificate rerun must
-pass its proof-facing predicate; a retained table must satisfy its producer and
-fingerprint contract; and a timing-bearing empirical run may reproduce the
-same validated statuses without reproducing identical bytes.  A small smoke
-run is useful for checking that source, dependencies, and output plumbing still
-connect, but it does not replace the retained full data or the exact
-verification.
-
-The frozen archive therefore promises an identifiable and inspectable release
-with claim-specific routes for the principal computational support.  It does
-not promise byte-identical output for every artifact, successful execution on
-arbitrary future hardware, or a universal clean-checkout rerun of all project
-code.  Those limits are part of the evidence account: they prevent a working
-archive or smoke test from being mistaken for stronger mathematical or
-empirical support than the owning packet provides.
