@@ -19,7 +19,7 @@
     "product_arms": "6ed32e251da17e6c7c13b9a3d86a55f6968691c126b5e6ac97c86358c5c2f7e1"
   },
   "panel_rows": 72,
-  "producer_sha256": "0754518e2e9ca501d2ed338b02dda78434ebe0e120b587eb05dfe3f585171c5d",
+  "producer_sha256": "cc167aa84cb457b830e5e8f3db8d2d6b626356776ff1b3b1db5a7a43c07cbf82",
   "product_arm_rows": 144,
   "rows_per_stratum": 24,
   "schema": "generator-polarity-manifest-v1",
@@ -52,8 +52,8 @@
     20260717
   ],
   "source_dirty_tracked": false,
-  "source_revision": "381acb31537998192a260cb941cc930f18c2d017",
-  "source_tree": "3549e22cb5d962fde27c364ab1be4c43eadf94c7",
+  "source_revision": "437545807c0a6153d7447896fcd2d924337e1c9e",
+  "source_tree": "5ca572df891db2ad1f433b0db330be826bf15c7d",
   "strata": [
     3,
     4,
