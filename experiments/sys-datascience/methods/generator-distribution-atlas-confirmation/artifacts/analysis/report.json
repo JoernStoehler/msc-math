@@ -19,7 +19,7 @@
     "support_grid": 64
   },
   "implementation_hashes": {
-    "analyze_py_sha256": "4e75603eb7e0f14e0642cda227e99ea7b2ae64ca9b064ed062b6e79f531080b5",
+    "analyze_py_sha256": "58e8d54ab9b1d513bd0a624ef896919fca935f752c0d12b2bd319dff0b0f2a41",
     "atlas_py_sha256": "2955dccbb06f6cae0d6987b50925059b0e99cfb9db594209998ba8cfc6c03c72",
     "shape_quality_py_sha256": "d21d4858f2e14704c1a66e06e1673a11134304ec6dd7953b21eedaf1d5d82744"
   },
@@ -81,7 +81,8 @@
   "producer_provenance": {
     "build_contract": "cargo build --release --locked --package exp-sys-landscape --bin sys-datascience-generator-zoo-smoke at source_revision, with the source blobs and Cargo.lock above",
     "dirty_scope": "producer reports separately record source_dirty for generator-zoo-smoke/main.rs and experiments/sys-landscape/Cargo.toml",
-    "executable_path_at_capture": "../../../../../../target/release/sys-datascience-generator-zoo-smoke",
+    "executable_path_at_capture": "../../../../target/release/sys-datascience-generator-zoo-smoke",
+    "executable_path_base": "packet directory (the directory containing report.json; path is resolved relative to this directory)",
     "executable_sha256": "d0b560c7208de4c3a97f6ddbf4925fc55267483c25c21e1707ce5942d9c9554c",
     "source_blobs": {
       "Cargo.lock": "8a51ae91187fdbc44c1539ddebf598feedd27b91",
@@ -117,10 +118,10 @@
     }
   ],
   "repository": {
-    "revision": "169577c492ca12ac24b1f9cf87e08f5beec62a9e",
+    "revision": "e3613a467383d8ae85eef2b273edb4a5a81e1612",
     "tracked_clean": true,
     "tracked_clean_predicate": "git status --porcelain --untracked-files=no",
-    "tree": "d301109bb4e931acbe56ac80a0dbc70a805d2353"
+    "tree": "3bf72eee96d3797bd46890693134b0b9874c9124"
   },
   "rows_validated": 1635,
   "schema": "generator-distribution-atlas-confirmation-v1"
