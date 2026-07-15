@@ -1,5 +1,5 @@
 {
-  "analyzer_sha256": "e1de98e6b9af0a86f65e9a5249f1530f5d62fbb1e25567e98e23725e4cba84da",
+  "analyzer_sha256": "451dcc7f92e3340f08d931402d5930e7d2c86ce32a993277a1ecbed529457505",
   "bases": 8,
   "classification_counts": {
     "endpoint_controlled_l2": 6,
@@ -8,22 +8,29 @@
     "reverse_theta_symmetric_l2": 0
   },
   "interpretation": "Finite-panel, target-free direct symplectic-signature responses after exact reconstruction. These labels do not show a capacity dose-response, population law, quotient parameterization, or target transfer.",
+  "orientation_base_comparison": {
+    "bases": 8,
+    "orientation_rows_lfs_oid": "sha256:b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367",
+    "orientation_rows_sha256": "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367",
+    "orientation_source_revision": "8174467dbd171281eb5746480b06629aa41ebfa7",
+    "status": "verified_exact_base_id_and_geometry_id_match"
+  },
   "per_base": [
     {
-      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0",
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=0/attempt=0",
       "bucket": "3x3",
       "endpoint_controlled_l2": true,
       "genuinely_multi_directional_signature_response": true,
       "monotone_non_decreasing_l2": true,
       "reverse_theta_symmetric_l2": false,
       "successive_abs_cosines": [
-        0.9125561046368319,
-        0.9335699811888992,
-        0.9450669629000966
+        0.9125561046368318,
+        0.9335699811888991,
+        0.9450669629000968
       ]
     },
     {
-      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=1",
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=3x3/row=1/attempt=63",
       "bucket": "3x3",
       "endpoint_controlled_l2": true,
       "genuinely_multi_directional_signature_response": true,
@@ -31,12 +38,12 @@
       "reverse_theta_symmetric_l2": false,
       "successive_abs_cosines": [
         0.9239642054490297,
-        0.9752913911956598,
-        0.985591478759003
+        0.9752913911956597,
+        0.9855914787590028
       ]
     },
     {
-      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=0",
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=0/attempt=1",
       "bucket": "4x4",
       "endpoint_controlled_l2": false,
       "genuinely_multi_directional_signature_response": true,
@@ -49,7 +56,7 @@
       ]
     },
     {
-      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=1",
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x4/row=1/attempt=0",
       "bucket": "4x4",
       "endpoint_controlled_l2": true,
       "genuinely_multi_directional_signature_response": true,
@@ -57,12 +64,12 @@
       "reverse_theta_symmetric_l2": false,
       "successive_abs_cosines": [
         0.9499793216757779,
-        0.9715480971079761,
+        0.971548097107976,
         0.9753267992798011
       ]
     },
     {
-      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=0",
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=0/attempt=14",
       "bucket": "4x6",
       "endpoint_controlled_l2": true,
       "genuinely_multi_directional_signature_response": true,
@@ -75,7 +82,7 @@
       ]
     },
     {
-      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=1",
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=4x6/row=1/attempt=15",
       "bucket": "4x6",
       "endpoint_controlled_l2": true,
       "genuinely_multi_directional_signature_response": true,
@@ -83,12 +90,12 @@
       "reverse_theta_symmetric_l2": false,
       "successive_abs_cosines": [
         0.9545065451664424,
-        0.9684768953402364,
-        0.9682589623631923
+        0.9684768953402366,
+        0.9682589623631924
       ]
     },
     {
-      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=0",
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=0/attempt=17",
       "bucket": "6x6",
       "endpoint_controlled_l2": true,
       "genuinely_multi_directional_signature_response": true,
@@ -101,21 +108,21 @@
       ]
     },
     {
-      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=1",
+      "base_id": "generator-orientation-v1/base/seed=20260714/bucket=6x6/row=1/attempt=2",
       "bucket": "6x6",
       "endpoint_controlled_l2": false,
       "genuinely_multi_directional_signature_response": true,
       "monotone_non_decreasing_l2": false,
       "reverse_theta_symmetric_l2": false,
       "successive_abs_cosines": [
-        0.9781511193663743,
-        0.9280907912461851,
-        0.6805574681922393
+        0.9781511193663746,
+        0.9280907912461853,
+        0.6805574681922392
       ]
     }
   ],
-  "report_sha256": "fb6fdbd97b270dd2ffd93869c38ca30f69f070445c5364ce153e97bd576dda9e",
+  "report_sha256": "81407be25587ac1e2a04c194938ed23b487be8f9d40b0d7e182b92ee8b1e5121",
   "rows": 40,
-  "rows_sha256": "169cfc2412ff88b506844edf4140fa38599d913928c0960949652fe4a236494b",
+  "rows_sha256": "e64c62fe0600b0d06deef37fb18bf269ed5e3b387b6c5e9fa5096e4e15422969",
   "schema": "alignment-ladder-analysis-v1"
 }
