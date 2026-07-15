@@ -2,7 +2,7 @@
   "comparisons": [
     {
       "case": "identity_permuted_presentation",
-      "cost_observation_seconds": 0.051865524999811896,
+      "cost_observation_seconds": 0.03960219399959897,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0,
@@ -50,7 +50,7 @@
     },
     {
       "case": "translation_positive_scale",
-      "cost_observation_seconds": 0.04740667499936535,
+      "cost_observation_seconds": 0.0428136220016313,
       "direct_sampled": {
         "axis_only": {
           "l2": 3.925231146709438e-17,
@@ -98,7 +98,7 @@
     },
     {
       "case": "facet_birth_truncated_cube",
-      "cost_observation_seconds": 0.053414592999615707,
+      "cost_observation_seconds": 0.041882604999045725,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0693455916073286,
@@ -146,7 +146,7 @@
     },
     {
       "case": "adversarial_narrow_feature",
-      "cost_observation_seconds": 0.05786611899929994,
+      "cost_observation_seconds": 0.0423528270002862,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.07977971304969055,
@@ -194,7 +194,7 @@
     },
     {
       "case": "ball_approximant_identity",
-      "cost_observation_seconds": 0.12429241899917542,
+      "cost_observation_seconds": 0.12956974600092508,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0,
@@ -242,7 +242,7 @@
     },
     {
       "case": "ball_vs_ellipsoid_approximant",
-      "cost_observation_seconds": 0.1309310109991202,
+      "cost_observation_seconds": 0.12778074800007744,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.22173262424283688,
@@ -290,7 +290,7 @@
     },
     {
       "case": "retained_orientation_u2",
-      "cost_observation_seconds": 0.04498484800024016,
+      "cost_observation_seconds": 0.041898684999978286,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.0682635396392401,
@@ -338,7 +338,7 @@
     },
     {
       "case": "retained_orientation_so4",
-      "cost_observation_seconds": 0.05530284799897345,
+      "cost_observation_seconds": 0.039288495001528645,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.07301114308952454,
@@ -386,7 +386,7 @@
     },
     {
       "case": "retained_exact_feature_witness",
-      "cost_observation_seconds": 0.0697253019989148,
+      "cost_observation_seconds": 0.06024320199867361,
       "direct_sampled": {
         "axis_only": {
           "l2": 0.20067121144363229,
@@ -446,9 +446,9 @@
   },
   "coordinate_order": "q1,q2,p1,p2",
   "cost_observations_seconds": {
-    "exact_feature_reconstruction": 43.34470788600083,
-    "orientation_reconstruction": 3.2342197130001296,
-    "synthetic_reconstruction": 0.5437790630003292
+    "exact_feature_reconstruction": 0.043790346000605496,
+    "orientation_reconstruction": 2.6926393730009295,
+    "synthetic_reconstruction": 0.49144937900018704
   },
   "direction_designs": {
     "axis_only": 8,
@@ -499,6 +499,7 @@
       "accepted_target_free_geometry_rows": 768,
       "path": "experiments/sys-datascience/methods/generator-exact-feature-augmenter/artifacts/full-panels/tangential-replay/smoke-rows.jsonl",
       "rows": 768,
+      "selected_reconstructed_row": "exact_feature:altgen-v2/scope=tangential-matchability-v1/factorial-baseline/param=current/seed=20260714/row=0/attempt=10/4x6",
       "sha256": "0dc72ef98fb860ad838026e5354c36f254985aca9b90a060aee2f58f231832d2"
     },
     "input_exactness": {
@@ -552,13 +553,13 @@
   },
   "run": {
     "producer_path": "experiments/sys-datascience/methods/generator-variable-f-body-distance/body_distance.py",
-    "producer_sha256": "0bf6f2450974731c759ccac8ffdd272eec6ebd03370e6ccd926307acc4489ca4",
-    "revision": "a2233bd98314a50287d6784a9e5a107dbe1a3d42",
+    "producer_sha256": "c70fb6950d80e8ae4fdae2611acbd067eb36a50a2b1bb5c2ff710e1de1ffe1ac",
+    "revision": "8974f4a0f762670463f4e14ddb94652de5b61121",
     "status_command": "git status --porcelain --untracked-files=no (cwd=repository root)",
     "terminal_status": "complete",
     "tracked_clean_before_generation": true,
     "tracked_status_porcelain": [],
-    "tree": "830a8fdb6f38c126ac5af28ed8002bf4e3eec14c"
+    "tree": "2e91f6112b745874e735d1a6b6b80bf626b2b87a"
   },
   "schema": "generator-variable-f-body-distance-report-v1",
   "target_free": true
