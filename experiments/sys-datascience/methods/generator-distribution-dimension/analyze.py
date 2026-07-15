@@ -49,6 +49,35 @@ def repository_relative_display(path: Path) -> str:
     return "/".join(parts[start:])
 
 
+SOURCE_CONTRACT_FILES = ("analyze.py", "README.md", "test_packet.py", "test_reproducibility.py")
+
+
+def source_contract() -> dict[str, Any]:
+    """Identity of the analyzer surface, excluding generated reports themselves."""
+    try:
+        revision = subprocess.check_output(
+            ["git", "log", "-1", "--format=%H", "--", *SOURCE_CONTRACT_FILES],
+            cwd=HERE,
+            text=True,
+        ).strip()
+        dirty = bool(
+            subprocess.check_output(
+                ["git", "status", "--porcelain", "--", *SOURCE_CONTRACT_FILES],
+                cwd=HERE,
+                text=True,
+            ).strip()
+        )
+    except (OSError, subprocess.CalledProcessError):
+        revision, dirty = None, None
+    return {
+        "contract": "generator-distribution-dimension-source-v1",
+        "declared_source_revision": revision,
+        "source_dirty": dirty,
+        "analyzer_sha256": sha256(Path(__file__)),
+        "numpy_version": np.__version__,
+    }
+
+
 def pairwise_distances(points: np.ndarray) -> np.ndarray:
     squared = np.sum(points * points, axis=1)[:, None] + np.sum(points * points, axis=1)[None, :] - 2 * points @ points.T
     return np.sqrt(np.maximum(squared, 0.0))
@@ -311,13 +340,6 @@ def calibration(seed: int, n: int, ks: list[int]) -> dict[str, Any]:
     return output
 
 
-def revision() -> str | None:
-    try:
-        return subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
-    except (OSError, subprocess.CalledProcessError):
-        return None
-
-
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--factor-shapes", type=Path, help="hydrated generator-zoo factor-shapes.jsonl for the real smoke")
@@ -330,14 +352,13 @@ def main() -> None:
     if min(ks) < 3 or len(set(ks)) != len(ks):
         raise ValueError("ks must be distinct integers at least 3")
     start = time.monotonic()
-    report: dict[str, Any] = {"schema": SCHEMA, "target_free": True, "revision": revision(), "analyzer_sha256": sha256(Path(__file__)), "calibration": calibration(args.seed, args.calibration_n, ks), "topology_disposition": {"persistent_homology": "deferred", "reason": "This copy-local packet declares only numpy. No lightweight persistent-homology dependency with a calibrated coefficient/filtration/noise contract is available here. Graph connectivity is retained as a non-topological neighborhood diagnostic; UMAP/t-SNE are intentionally absent as they cannot establish dimension or topology."}, "secondary_dispositions": {"generator_map_local_rank": "deferred: the reviewed generator maps and their conditioning/rejection semantics are not yet a common differentiable contract; finite-difference rank would otherwise silently measure implementation choices.", "density_cluster_tree": "deferred: stable cluster trees require a selected density estimator, density level/noise calibration, and a population-scale per-law sample, none of which this smoke provides."}, "interpretation": {"supported": "Within a declared fixed-F/view stratum, agreement of estimators across calibration-relevant knobs is descriptive evidence against a gross ambient-filling interpretation. Split-calibrated radii can describe held-out empirical law mass only under the stated exchangeability contract, separately from declared-Q chart coverage.", "prohibited": "No estimator value proves an intrinsic dimension, a manifold population, a quotient dimension, a topology, a density body, or support coverage. Do not pool F, call mass-radius a confidence body, or compare views as though they implemented the same quotient."}, "larger_n_resolves": ["separate local neighborhoods from boundary/mixture effects and make k-range stability checkable", "permits held-out or bootstrap stability of estimator ranges and split-calibrated law-mass coverage within each F/view/population stratum", "reduces Monte Carlo/holdout uncertainty for declared-Q chart coverage and improves graph-component persistence checks across k; it cannot resolve an unchosen quotient or a missing topology contract"]}
+    report: dict[str, Any] = {"schema": SCHEMA, "target_free": True, "source_contract": source_contract(), "calibration": calibration(args.seed, args.calibration_n, ks), "topology_disposition": {"persistent_homology": "deferred", "reason": "This copy-local packet declares only numpy. No lightweight persistent-homology dependency with a calibrated coefficient/filtration/noise contract is available here. Graph connectivity is retained as a non-topological neighborhood diagnostic; UMAP/t-SNE are intentionally absent as they cannot establish dimension or topology."}, "secondary_dispositions": {"generator_map_local_rank": "deferred: the reviewed generator maps and their conditioning/rejection semantics are not yet a common differentiable contract; finite-difference rank would otherwise silently measure implementation choices.", "density_cluster_tree": "deferred: stable cluster trees require a selected density estimator, density level/noise calibration, and a population-scale per-law sample, none of which this smoke provides."}, "interpretation": {"supported": "Within a declared fixed-F/view stratum, agreement of estimators across calibration-relevant knobs is descriptive evidence against a gross ambient-filling interpretation. Split-calibrated radii can describe held-out empirical law mass only under the stated exchangeability contract, separately from declared-Q chart coverage.", "prohibited": "No estimator value proves an intrinsic dimension, a manifold population, a quotient dimension, a topology, a density body, or support coverage. Do not pool F, call mass-radius a confidence body, or compare views as though they implemented the same quotient."}, "larger_n_resolves": ["separate local neighborhoods from boundary/mixture effects and make k-range stability checkable", "permits held-out or bootstrap stability of estimator ranges and split-calibrated law-mass coverage within each F/view/population stratum", "reduces Monte Carlo/holdout uncertainty for declared-Q chart coverage and improves graph-component persistence checks across k; it cannot resolve an unchosen quotient or a missing topology contract"]}
     if args.factor_shapes is not None:
         views, population_views, source = load_product_dual_views(args.factor_shapes)
         report["real_smoke"] = {"source": {"repository_relative_path": repository_relative_display(args.factor_shapes), "sha256": sha256(args.factor_shapes)}, "pairing": source, "fixed_f_mixture_diagnostics": {str(f): {name: assess(points, ks, args.seed + f) for name, points in sorted(by_view.items())} for f, by_view in sorted(views.items())}, "fixed_f_population_strata": {str(f): {population: {name: assess(points, ks, args.seed + f) for name, points in sorted(by_view.items())} for population, by_view in sorted(by_population.items())} for f, by_population in sorted(population_views.items())}, "scope": "generator-zoo accepted product factors only. Fixed-F mixture diagnostics intentionally retain population multimodality as a diagnostic; population strata are reported separately and are too small for the declared k range. Neither is a law-level dimension claim."}
-    report["runtime_seconds"] = time.monotonic() - start
     args.out_dir.mkdir(parents=True, exist_ok=True)
     (args.out_dir / "report.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
-    print(json.dumps({"out": str(args.out_dir / "report.json"), "runtime_seconds": report["runtime_seconds"]}, sort_keys=True))
+    print(json.dumps({"out": str(args.out_dir / "report.json"), "runtime_seconds_observed_not_retained": time.monotonic() - start}, sort_keys=True))
 
 
 if __name__ == "__main__":

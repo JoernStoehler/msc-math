@@ -59,7 +59,16 @@ Run the synthetic calibration and tests from this directory:
 ```bash
 uv run --script analyze.py --out-dir /tmp/generator-distribution-dimension/calibration
 uv run --with numpy --script test_packet.py
+uv run --with numpy --script test_reproducibility.py \
+  --factor-shapes /workspaces/msc-math/.worktrees/generator-transfer/experiments/sys-datascience/methods/generator-zoo-smoke/artifacts/factor-shapes.jsonl
 ```
+
+The retained reports are byte-reproducible. Their `source_contract` binds the
+analyzer hash, NumPy version, and the latest commit touching the local source
+surface (`analyze.py`, this README, and the tests); generated artifacts are
+excluded from that dirty/revision predicate so committing a regenerated report
+does not invalidate its own provenance. Wall time is printed to stdout for a
+local smoke-cost observation but is deliberately not retained in the report.
 
 For the deliberately small real generator-zoo smoke, pass the hydrated source
 artifact from its owner worktree (the source hash is bound into the report):
