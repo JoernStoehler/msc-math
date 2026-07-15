@@ -19,10 +19,10 @@ Polar images are deterministic pushforwards paired to their sources. `P_#mu` is 
 
 ## Provenance and replay
 
-Source revision `cf19feb793a787927b95721017bfbe26706c7d8a`, tree `88bbdc70556ea8d076c35ee533e726015a7fd728`, tracked-dirty before artifact creation `false`. Producer SHA-256 `0754518e2e9ca501d2ed338b02dda78434ebe0e120b587eb05dfe3f585171c5d`. Python dependencies are standard library only. Reproduce from that source revision (the later artifact commit changes repository `HEAD`) with:
+Source revision `381acb31537998192a260cb941cc930f18c2d017`, tree `3549e22cb5d962fde27c364ab1be4c43eadf94c7`, tracked-dirty before artifact creation `false`. Producer SHA-256 `0754518e2e9ca501d2ed338b02dda78434ebe0e120b587eb05dfe3f585171c5d`. Python dependencies are standard library only. Reproduce from that source revision (the later artifact commit changes repository `HEAD`) with:
 
 ```text
-git worktree add --detach /tmp/generator-polarity-replay cf19feb793a787927b95721017bfbe26706c7d8a
+git worktree add --detach /tmp/generator-polarity-replay 381acb31537998192a260cb941cc930f18c2d017
 python3 /tmp/generator-polarity-replay/experiments/sys-datascience/methods/generator-polarity-pushforward/run.py --out-dir /tmp/polarity-artifacts --seed 20260715 --per-stratum 24
 sha256sum /tmp/polarity-artifacts/{panel.jsonl,diversity.tsv,product-arms.jsonl,fixtures.json}
 ```
