@@ -1,12 +1,12 @@
 # Archived active-support resampling smoke
 
 The complete active-support conditional-resampling smoke was preserved in Git
-commit `2fcd3843` (`Add active-support resampling smoke`) and then removed from
+commit `716ded94` (`Add active-support resampling smoke`) and then removed from
 the final tree during this wrap-up.  That commit contains the complete former
 directory
 `experiments/sys-datascience/methods/product-bounce-active-resampling/`,
-including Rust and Python sources, the reviewed smoke artifacts, provenance,
-interpretation, and review.
+including Rust and Python sources, the retained smoke artifacts, provenance,
+interpretation, and owner self-review.
 
 The smoke compiled and ran successfully.  It established the bounded plumbing
 and failure-layer gate for four selected retained random `5x5` bases under two
@@ -18,18 +18,19 @@ recovery diagnostics.  It was not broken.
 It is not retained on Main because it is a stopped, four-base feasibility
 smoke rather than current evidence for an inactive-facet mechanism or a
 two-/three-bounce class effect.  The retained mechanism and width packets give
-the active current route: the mechanism packet resolves the cheap existing-row
-question, and the width packet plus
-`formal/product-two-bounce-class.tex` resolves the two-bounce component.
+the durable evidence behind the closure decision: the mechanism packet resolves
+the cheap existing-row question, and the width packet plus
+`formal/product-two-bounce-class.tex` resolves the two-bounce component.  No
+resampling continuation is currently authorized.
 
 To inspect the archived packet without changing the current tree, run
 
 ```bash
-git show 2fcd3843:experiments/sys-datascience/methods/product-bounce-active-resampling/README.md
-git ls-tree -r --name-only 2fcd3843 -- experiments/sys-datascience/methods/product-bounce-active-resampling
+git show 716ded94:experiments/sys-datascience/methods/product-bounce-active-resampling/README.md
+git ls-tree -r --name-only 716ded94 -- experiments/sys-datascience/methods/product-bounce-active-resampling
 ```
 
 To recover it into a new branch or worktree, restore that directory from
-`2fcd3843` with `git restore --source=2fcd3843 --
+`716ded94` with `git restore --source=716ded94 --
 experiments/sys-datascience/methods/product-bounce-active-resampling/`, then
 reassess the archived provenance and bounded interpretation before reuse.
