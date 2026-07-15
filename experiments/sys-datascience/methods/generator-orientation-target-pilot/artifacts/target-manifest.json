@@ -2,18 +2,21 @@
   "backend": "auto",
   "completed_rows": 24,
   "design_path": "experiments/sys-datascience/methods/generator-orientation-target-pilot/design.json",
-  "design_sha256": "35253ac47127a5358378cb386028eaaf24eb91466c40227cd7522c2fc27cd3df",
-  "evaluator_source_sha256": "ec92a3b1e76e201fb8e3cb843a437a1b336865bf3adfefce0b6628398c8ca91b",
+  "design_sha256": "f2b232a9f666794c6cd4ac39fcebfc7244dccc099fec8fca361efe8f2a448c59",
+  "evaluator_source_sha256": "3b0a67fe379c71a102ef44c9e39d491a509ebc5ee7ef09c8853b33a44b5e5f20",
   "expected_rows": 24,
   "method_local_cache": true,
+  "protocol_history_sha256": "604aa4edfd6d515df3af56166dd8a6afa527bbb8173669ed90b042a339c7d64d",
   "pre_target_commit": "a59441c0ecde29ac667745e02aac4bedb8ca7d14",
+  "retained_design_sha256": "35253ac47127a5358378cb386028eaaf24eb91466c40227cd7522c2fc27cd3df",
+  "retained_evaluator_source_sha256": "ec92a3b1e76e201fb8e3cb843a437a1b336865bf3adfefce0b6628398c8ca91b",
   "provenance": {
     "implementation_files": [
-      "experiments/sys-landscape/src/datascience_cache.rs",
-      "experiments/sys-landscape/src/sys_landscape_cache.rs",
-      "experiments/sys-landscape/src/lib.rs",
-      "experiments/sys-landscape/Cargo.toml",
-      "Cargo.lock"
+      {"path": "experiments/sys-landscape/src/datascience_cache.rs", "sha256": "ce15a5a29b6b11053072336421f004c028cb04ffdc40001d291e70298e731569"},
+      {"path": "experiments/sys-landscape/src/sys_landscape_cache.rs", "sha256": "de69e5e50fec9f5f036941fcdd4d013ec16b4171cc9eba91f610eff815e9d240"},
+      {"path": "experiments/sys-landscape/src/lib.rs", "sha256": "1b504f7674a756431eba1f2a01fce6660184c801d4733d9b2da463d1a1bfc75a"},
+      {"path": "experiments/sys-landscape/Cargo.toml", "sha256": "b659df44f0101f5dc85f3913a0131eb2aad08c6a728f6ab4ea3ac60087ce48b5"},
+      {"path": "Cargo.lock", "sha256": "9e59bc0ed96aeccce2decc178beff2f224702174122ccf55d158fb009ef96d1e"}
     ]
   },
   "schema": "generator-orientation-target-pilot-manifest-v1",

@@ -1,30 +1,22 @@
-//! Frozen 24-row orientation target evaluator.
+//! Target-free orientation target-pilot freeze validator.
 //!
 //! The target-free source panel is selected and validated before any capacity
-//! call. Each selected f64 dual payload is reconstructed locally and evaluated
-//! with an empty method-local ComputedPolytopeCache.
+//! call. Historical target reproduction remains pinned to the retained
+//! pre-rerun commit recorded in protocol-history.json.
 
-use exp_sys_landscape::{CapacityBackend, ComputedPolytopeCache, SysLandscapePolytopeCache};
-use nalgebra::Vector4;
-use serde_json::{json, Value};
+use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet, HashSet};
-use std::fs::{create_dir_all, read_to_string, File};
-use std::io::{BufRead, BufReader, BufWriter, Write};
+use std::fs::{read_to_string, File};
+use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use std::time::Instant;
 
 const SOURCE_SHA256: &str = "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367";
 const SOURCE_REPORT_SHA256: &str =
     "02b7084141c0f2422aaabf1516fa62af501963ce638b9df3ef756c762722d61c";
 const SOURCE_SCHEMA: &str = "generator-orientation-smoke-row-v2";
-const TARGET_SCHEMA: &str = "generator-orientation-target-pilot-row-v1";
-const MANIFEST_SCHEMA: &str = "generator-orientation-target-pilot-manifest-v1";
-const COORDINATE_ORDER: &str = "q1,q2,p1,p2";
 const VARIANTS: [&str; 3] = ["identity", "u2-haar", "so4-haar"];
 const BUCKETS: [&str; 4] = ["3x3", "4x4", "4x6", "6x6"];
-
-const EVALUATOR_SOURCE: &[u8] = include_bytes!("main.rs");
 
 #[derive(Debug)]
 struct Args {
@@ -32,6 +24,7 @@ struct Args {
     source_report: PathBuf,
     design: PathBuf,
     out: PathBuf,
+    validate_only: bool,
 }
 
 fn arg_value(args: &[String], index: &mut usize, flag: &str) -> Result<String, String> {
@@ -51,6 +44,7 @@ fn parse_args() -> Result<Args, String> {
         "experiments/sys-datascience/methods/generator-orientation-target-pilot/design.json",
     );
     let mut out = PathBuf::from("experiments/sys-datascience/methods/generator-orientation-target-pilot/artifacts/target-rows.jsonl");
+    let mut validate_only = false;
     let mut i = 1;
     while i < argv.len() {
         match argv[i].as_str() {
@@ -60,8 +54,14 @@ fn parse_args() -> Result<Args, String> {
             }
             "--design" => design = arg_value(&argv, &mut i, "--design")?.into(),
             "--out" => out = arg_value(&argv, &mut i, "--out")?.into(),
+            "--validate-only" => {
+                validate_only = true;
+                i += 1;
+            }
             "--help" | "-h" => {
-                println!("--source PATH --source-report PATH --design PATH --out PATH");
+                println!(
+                    "--source PATH --source-report PATH --design PATH --out PATH [--validate-only]"
+                );
                 std::process::exit(0);
             }
             other => return Err(format!("unknown argument {other}")),
@@ -72,6 +72,7 @@ fn parse_args() -> Result<Args, String> {
         source_report,
         design,
         out,
+        validate_only,
     })
 }
 
@@ -88,6 +89,17 @@ fn sha256_file(path: &Path) -> Result<String, String> {
         .next()
         .map(str::to_owned)
         .ok_or_else(|| format!("sha256sum returned no digest for {}", path.display()))
+}
+
+fn validate_hash_binding(path: &Path, expected: &str) -> Result<(), String> {
+    let actual = sha256_file(path)?;
+    if actual != expected {
+        return Err(format!(
+            "hash mismatch for {}: expected {expected}, found {actual}",
+            path.display()
+        ));
+    }
+    Ok(())
 }
 
 fn source_rows(path: &Path) -> Result<Vec<Value>, String> {
@@ -125,7 +137,8 @@ fn validate_source(
     if rows.len() != 40 {
         return Err(format!("expected 40 source rows, found {}", rows.len()));
     }
-    let mut ids = HashSet::new();
+    let mut sample_ids = HashSet::new();
+    let mut transformed_ids = HashSet::new();
     let mut bases = BTreeMap::<String, BTreeSet<String>>::new();
     let forbidden = [
         "capacity",
@@ -140,7 +153,7 @@ fn validate_source(
             return Err("unexpected source schema".into());
         }
         for key in forbidden {
-            if row.get(key).is_some() && !row[key].is_null() {
+            if row.get(key).is_some() {
                 return Err(format!("source contains target field {key}"));
             }
         }
@@ -159,9 +172,12 @@ fn validate_source(
             return Err("source reconstruction/semantic status failed".into());
         }
         let base = str_field(row, "base_id")?;
-        let _sample = str_field(row, "sample_id")?;
+        let sample = str_field(row, "sample_id")?;
         let transformed = str_field(row, "transformed_id")?;
-        if !ids.insert(transformed.to_owned()) {
+        if !sample_ids.insert(sample.to_owned()) {
+            return Err("duplicate source sample ID".into());
+        }
+        if !transformed_ids.insert(transformed.to_owned()) {
             return Err("duplicate source transformed ID".into());
         }
         let bucket = str_field(row, "bucket")?;
@@ -225,51 +241,223 @@ fn validate_source(
     Ok(selected)
 }
 
-fn dual_vertices(row: &Value) -> Result<Vec<Vector4<f64>>, String> {
-    let values = row
-        .get("transformed_dual_vertices_f64")
+fn validate_selection_manifest(
+    path: &Path,
+    source_rows: &[Value],
+    expected_hash: &str,
+) -> Result<(), String> {
+    validate_hash_binding(path, expected_hash)?;
+    let text = read_to_string(path).map_err(|e| format!("read selection manifest: {e}"))?;
+    let manifest: Value =
+        serde_json::from_str(&text).map_err(|e| format!("selection manifest JSON: {e}"))?;
+    if manifest.get("rows").and_then(Value::as_u64) != Some(24)
+        || manifest.get("bases_per_bucket").and_then(Value::as_u64) != Some(2)
+        || manifest.get("pair_key").and_then(Value::as_str) != Some("base_id")
+        || manifest.get("target_calls").and_then(Value::as_u64) != Some(0)
+        || manifest
+            .get("target_fields_present")
+            .and_then(Value::as_bool)
+            != Some(false)
+    {
+        return Err("selection manifest count/target-free contract mismatch".into());
+    }
+    let buckets = manifest
+        .get("buckets")
         .and_then(Value::as_array)
-        .ok_or_else(|| "missing transformed dual vertices".to_string())?;
-    values
+        .ok_or("selection buckets missing")?;
+    if buckets.iter().filter_map(Value::as_str).collect::<Vec<_>>() != BUCKETS {
+        return Err("selection bucket order mismatch".into());
+    }
+    let variants = manifest
+        .get("variants")
+        .and_then(Value::as_array)
+        .ok_or("selection variants missing")?;
+    if variants
         .iter()
-        .map(|v| {
-            let a = v
-                .as_array()
-                .ok_or_else(|| "dual vertex is not array".to_string())?;
-            if a.len() != 4 {
-                return Err("dual vertex has wrong dimension".into());
-            }
-            let x = a
-                .iter()
-                .map(|x| {
-                    x.as_f64()
-                        .ok_or_else(|| "dual coordinate is non-f64".to_string())
-                })
-                .collect::<Result<Vec<_>, _>>()?;
-            if !x.iter().all(|v| v.is_finite()) {
-                return Err("nonfinite dual coordinate".into());
-            }
-            Ok(Vector4::new(x[0], x[1], x[2], x[3]))
+        .filter_map(Value::as_str)
+        .collect::<Vec<_>>()
+        != VARIANTS
+    {
+        return Err("selection variant order mismatch".into());
+    }
+    let source_by_id: BTreeMap<_, _> = source_rows
+        .iter()
+        .filter_map(|r| {
+            r.get("transformed_id")
+                .and_then(Value::as_str)
+                .map(|id| (id, r))
         })
-        .collect()
+        .collect();
+    let selected = manifest
+        .get("selected")
+        .and_then(Value::as_array)
+        .ok_or("selection selected rows missing")?;
+    if selected.len() != 24 {
+        return Err("selection selected row count mismatch".into());
+    }
+    let mut ids = HashSet::new();
+    let mut grid = BTreeMap::<String, BTreeSet<String>>::new();
+    let mut buckets_per_base = BTreeMap::<String, String>::new();
+    for row in selected {
+        let id = row
+            .get("transformed_id")
+            .and_then(Value::as_str)
+            .ok_or("selection transformed ID missing")?;
+        if !ids.insert(id) || !source_by_id.contains_key(id) {
+            return Err("selection transformed ID duplicate/substitution".into());
+        }
+        if !VARIANTS.contains(&row.get("map_variant").and_then(Value::as_str).unwrap_or("")) {
+            return Err("selection variant outside exact grid".into());
+        }
+        let base = row
+            .get("base_id")
+            .and_then(Value::as_str)
+            .ok_or("selection base ID missing")?;
+        let bucket = row
+            .get("bucket")
+            .and_then(Value::as_str)
+            .ok_or("selection bucket missing")?;
+        grid.entry(base.to_owned())
+            .or_default()
+            .insert(row["map_variant"].as_str().unwrap().to_owned());
+        if buckets_per_base
+            .insert(base.to_owned(), bucket.to_owned())
+            .is_some_and(|previous| previous != bucket)
+        {
+            return Err("selection base spans buckets".into());
+        }
+        let source = source_by_id[id];
+        for key in ["base_id", "bucket", "map_variant", "sample_id"] {
+            if row.get(key) != source.get(key) {
+                return Err(format!("selection/source identity mismatch: {key}"));
+            }
+        }
+    }
+    if grid.len() != 8 || grid.values().any(|variants| variants.len() != 3) {
+        return Err("selection exact base/variant grid mismatch".into());
+    }
+    Ok(())
 }
 
-fn fail_manifest(
-    path: &Path,
-    args: &Args,
-    source_hash: &str,
-    source_report_hash: &str,
-    design_hash: &str,
-    reason: &str,
-    completed: usize,
-) -> Result<(), String> {
-    let manifest = json!({"schema": MANIFEST_SCHEMA, "status": "failed", "failure": reason, "completed_rows": completed,
-        "expected_rows": 24, "source_path": args.source, "source_sha256": source_hash, "source_report_path": args.source_report,
-        "source_report_sha256": source_report_hash, "design_path": args.design, "design_sha256": design_hash,
-        "evaluator_source_blake3": blake3::hash(EVALUATOR_SOURCE).to_hex().to_string()});
-    let path = path.with_file_name("target-manifest.json");
-    std::fs::write(&path, serde_json::to_vec_pretty(&manifest).unwrap())
-        .map_err(|e| format!("write {}: {e}", path.display()))
+fn validate_design(
+    design: &Value,
+    design_path: &Path,
+    source_path: &Path,
+    source_report_path: &Path,
+    source_rows: &[Value],
+) -> Result<(String, String), String> {
+    if design.get("schema").and_then(Value::as_str)
+        != Some("generator-orientation-target-pilot-design-v1")
+    {
+        return Err("design schema mismatch".into());
+    }
+    let source_hash = sha256_file(source_path)?;
+    let report_hash = sha256_file(source_report_path)?;
+    if source_hash != SOURCE_SHA256 || report_hash != SOURCE_REPORT_SHA256 {
+        return Err("source/report hash mismatch".into());
+    }
+    if design.get("source_sha256").and_then(Value::as_str) != Some(SOURCE_SHA256)
+        || design.get("source_report_sha256").and_then(Value::as_str) != Some(SOURCE_REPORT_SHA256)
+        || design.get("source_panel").and_then(Value::as_str)
+            != Some("experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl")
+        || design.get("source_report").and_then(Value::as_str)
+            != Some("experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket/report.json")
+    {
+        return Err("design source binding mismatch".into());
+    }
+    let evaluator = design.get("evaluator").ok_or("design evaluator missing")?;
+    let evaluator_path =
+        Path::new("experiments/sys-datascience/methods/generator-orientation-target-pilot/main.rs");
+    let evaluator_hash = sha256_file(evaluator_path)?;
+    if evaluator.get("source").and_then(Value::as_str) != Some(evaluator_path.to_str().unwrap())
+        || evaluator.get("source_sha256").and_then(Value::as_str) != Some(evaluator_hash.as_str())
+    {
+        return Err("design evaluator source binding mismatch".into());
+    }
+    if evaluator.get("target_backend").and_then(Value::as_str) != Some("CapacityBackend::Auto")
+        || evaluator.get("cache").and_then(Value::as_str)
+            != Some("ComputedPolytopeCache::load(&[]) method-local empty cache")
+        || evaluator.get("reconstruction").and_then(Value::as_str)
+            != Some("SysLandscapePolytopeCache::from_f64_dual_vertices")
+    {
+        return Err("design evaluator backend/cache/reconstruction mismatch".into());
+    }
+    let implementation = evaluator
+        .get("implementation_files")
+        .and_then(Value::as_array)
+        .ok_or("implementation closure missing")?;
+    if implementation.len() != 5 {
+        return Err("implementation closure count mismatch".into());
+    }
+    for item in implementation {
+        let path = item
+            .get("path")
+            .and_then(Value::as_str)
+            .ok_or("implementation path missing")?;
+        let expected = item
+            .get("sha256")
+            .and_then(Value::as_str)
+            .ok_or("implementation hash missing")?;
+        validate_hash_binding(Path::new(path), expected)?;
+    }
+    let selection = design.get("selection").ok_or("design selection missing")?;
+    if selection.get("manifest").and_then(Value::as_str)
+        != Some("experiments/sys-datascience/methods/generator-orientation-target-pilot/selection-manifest.json")
+    {
+        return Err("selection manifest path mismatch".into());
+    }
+    let selection_path = Path::new("experiments/sys-datascience/methods/generator-orientation-target-pilot/selection-manifest.json");
+    validate_selection_manifest(
+        selection_path,
+        source_rows,
+        selection
+            .get("manifest_sha256")
+            .and_then(Value::as_str)
+            .ok_or("selection hash missing")?,
+    )?;
+    if selection.get("rows").and_then(Value::as_u64) != Some(24)
+        || selection.get("bases_per_bucket").and_then(Value::as_u64) != Some(2)
+        || selection
+            .get("variants")
+            .and_then(Value::as_array)
+            .map(|v| v.iter().filter_map(Value::as_str).collect::<Vec<_>>())
+            != Some(VARIANTS.to_vec())
+    {
+        return Err("design exact selection specification mismatch".into());
+    }
+    let analysis = design.get("analysis").ok_or("design analysis missing")?;
+    let checks = [
+        ("u2_max_abs_delta_gate", 1e-8),
+        ("material_so4_threshold", 0.01),
+        ("contradiction_so4_threshold", 0.005),
+        ("ridge_spearman_gate", -0.5),
+        ("bucket_concentration_gate", 0.5),
+    ];
+    for (key, expected) in checks {
+        if (analysis
+            .get(key)
+            .and_then(Value::as_f64)
+            .unwrap_or(f64::NAN)
+            - expected)
+            .abs()
+            > f64::EPSILON
+        {
+            return Err(format!("design analysis gate mismatch: {key}"));
+        }
+    }
+    if design
+        .get("target_exposure_boundary")
+        .and_then(Value::as_str)
+        != Some("after-pre-target-commit")
+        || !design
+            .get("prohibition")
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .contains("additional bases")
+    {
+        return Err("design exposure/prohibition contract mismatch".into());
+    }
+    Ok((evaluator_hash, sha256_file(design_path)?))
 }
 
 fn main() -> Result<(), String> {
@@ -277,141 +465,48 @@ fn main() -> Result<(), String> {
     let source_hash = sha256_file(&args.source)?;
     let report_hash = sha256_file(&args.source_report)?;
     let design_hash = sha256_file(&args.design)?;
-    let evaluator_path =
-        Path::new("experiments/sys-datascience/methods/generator-orientation-target-pilot/main.rs");
-    let evaluator_sha256 = sha256_file(evaluator_path)?;
-    let repo_commit = Command::new("git")
-        .args(["rev-parse", "HEAD"])
-        .output()
-        .map_err(|e| format!("git rev-parse: {e}"))?;
-    let repo_commit = String::from_utf8_lossy(&repo_commit.stdout)
-        .trim()
-        .to_owned();
+    let rows = source_rows(&args.source)?;
+    let selected = validate_source(&rows, &source_hash, &report_hash)?;
     let design_text = read_to_string(&args.design).map_err(|e| format!("read design: {e}"))?;
     let design: Value =
         serde_json::from_str(&design_text).map_err(|e| format!("design JSON: {e}"))?;
-    if design
-        .get("target_exposure_boundary")
-        .and_then(Value::as_str)
-        != Some("after-pre-target-commit")
-    {
-        return Err("design target boundary missing".into());
+    let (_evaluator_sha256, design_hash_checked) = validate_design(
+        &design,
+        &args.design,
+        &args.source,
+        &args.source_report,
+        &rows,
+    )?;
+    if design_hash_checked != design_hash {
+        return Err("design hash changed while validating".into());
     }
-    let rows = source_rows(&args.source)?;
-    let selected = match validate_source(&rows, &source_hash, &report_hash) {
-        Ok(rows) => rows,
-        Err(error) => {
-            let _ = fail_manifest(
-                &args.out,
-                &args,
-                &source_hash,
-                &report_hash,
-                &design_hash,
-                &error,
-                0,
-            );
-            return Err(error);
-        }
-    };
-    if let Some(parent) = args.out.parent() {
-        create_dir_all(parent).map_err(|e| format!("create output parent: {e}"))?;
+    if !args.validate_only {
+        return Err("this repaired binary is validation-only; reproduce historical targets only at retained commit a59441c0ecde29ac667745e02aac4bedb8ca7d14".into());
     }
-    let file = File::create(&args.out).map_err(|e| format!("create target output: {e}"))?;
-    let mut writer = BufWriter::new(file);
-    let cache = ComputedPolytopeCache::load(&[]);
-    let mut completed = 0usize;
-    let mut seen = HashSet::new();
-    let start = Instant::now();
-    for source in selected {
-        let source_id = str_field(&source, "transformed_id")?.to_owned();
-        if !seen.insert(source_id.clone()) {
-            return Err("duplicate selected target ID".into());
-        }
-        let dual = match dual_vertices(&source) {
-            Ok(v) => v,
-            Err(error) => {
-                let _ = fail_manifest(
-                    &args.out,
-                    &args,
-                    &source_hash,
-                    &report_hash,
-                    &design_hash,
-                    &error,
-                    completed,
-                );
-                return Err(error);
-            }
-        };
-        let poly = match SysLandscapePolytopeCache::from_f64_dual_vertices(dual) {
-            Some(v) => v,
-            None => {
-                let error = format!("reconstruction failed for {source_id}");
-                let _ = fail_manifest(
-                    &args.out,
-                    &args,
-                    &source_hash,
-                    &report_hash,
-                    &design_hash,
-                    &error,
-                    completed,
-                );
-                return Err(error);
-            }
-        };
-        let payload = match cache.compute(&poly, CapacityBackend::Auto) {
-            Some(v) => v,
-            None => {
-                let error = format!("capacity failed for {source_id}");
-                let _ = fail_manifest(
-                    &args.out,
-                    &args,
-                    &source_hash,
-                    &report_hash,
-                    &design_hash,
-                    &error,
-                    completed,
-                );
-                return Err(error);
-            }
-        };
-        let values = json!({
-            "schema": TARGET_SCHEMA, "target_status": "complete", "source_id": source_id,
-            "sample_id": source["sample_id"], "transformed_id": source["transformed_id"], "base_id": source["base_id"],
-            "bucket": source["bucket"], "q_sides": source["q_sides"], "p_sides": source["p_sides"],
-            "map_variant": source["map_variant"], "map_family": source["map_family"], "map_mode": source["map_mode"],
-            "map_seed": source["map_seed"], "row_index": source["row_index"], "facet_count": payload.facet_count,
-            "poly_id": payload.poly_id, "backend": payload.backend, "exact_volume_as_f64": payload.volume,
-            "volume": payload.volume, "capacity": payload.capacity, "sys": payload.sys,
-            "sigma_gap_cutoff": payload.sigma_gap_cutoff, "sigmas": payload.sigmas, "orbit_scalars": payload.orbit_scalars,
-            "time_volume_ms": payload.time_volume_ms, "time_capacity_ms": payload.time_capacity_ms,
-            "source_sha256": source_hash, "source_report_sha256": report_hash, "design_sha256": design_hash,
-            "evaluator_source_sha256": evaluator_sha256,
-            "coordinate_order": COORDINATE_ORDER, "total_elapsed_ms": start.elapsed().as_secs_f64()*1000.0,
-            "source_transformed_dual_vertices_f64": source["transformed_dual_vertices_f64"]
-        });
-        serde_json::to_writer(&mut writer, &values)
-            .map_err(|e| format!("write target row: {e}"))?;
-        writeln!(&mut writer).map_err(|e| format!("write target newline: {e}"))?;
-        writer
-            .flush()
-            .map_err(|e| format!("flush target row: {e}"))?;
-        completed += 1;
-    }
-    let manifest = json!({"schema": MANIFEST_SCHEMA, "status": "complete", "completed_rows": completed, "expected_rows": 24,
-        "source_path": args.source, "source_sha256": source_hash, "source_report_path": args.source_report,
-        "source_report_sha256": report_hash, "design_path": args.design, "design_sha256": design_hash,
-        "target_path": args.out, "target_schema": TARGET_SCHEMA, "target_sha256": sha256_file(&args.out)?,
-        "evaluator_source_sha256": evaluator_sha256, "backend": "auto", "method_local_cache": true,
-        "pre_target_commit": repo_commit, "provenance": {"implementation_files": ["experiments/sys-landscape/src/datascience_cache.rs", "experiments/sys-landscape/src/sys_landscape_cache.rs", "experiments/sys-landscape/src/lib.rs", "experiments/sys-landscape/Cargo.toml", "Cargo.lock"]}});
-    let manifest_path = args.out.with_file_name("target-manifest.json");
-    std::fs::write(
-        &manifest_path,
-        serde_json::to_vec_pretty(&manifest).unwrap(),
-    )
-    .map_err(|e| format!("write manifest: {e}"))?;
     println!(
-        "completed {completed} target rows in {:.3}s",
-        start.elapsed().as_secs_f64()
+        "target-free validation passed: {} selected rows; no capacity calls",
+        selected.len()
     );
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::validate_hash_binding;
+    use std::fs;
+
+    #[test]
+    fn implementation_hash_mismatch_rejected_before_capacity() {
+        let path = std::env::temp_dir().join(format!(
+            "orientation-target-pilot-hash-test-{}",
+            std::process::id()
+        ));
+        fs::write(&path, b"implementation closure").expect("write fixture");
+        let result = validate_hash_binding(&path, &"0".repeat(64));
+        fs::remove_file(&path).expect("remove fixture");
+        assert!(
+            result.is_err(),
+            "one-character implementation mismatch must fail closed"
+        );
+    }
 }
