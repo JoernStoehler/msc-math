@@ -134,6 +134,9 @@ class EquivalenceMatrixTests(unittest.TestCase):
         wrong = {"sha256": produce.sha256(data), "bytes": len(data) + 1}
         with self.assertRaises(produce.PacketValidationError):
             produce.validate_byte_record(wrong, data, "malformed bytes")
+        wrong_hash = {"sha256": produce.sha256(b"wrong bytes"), "bytes": len(data)}
+        with self.assertRaises(produce.PacketValidationError):
+            produce.validate_byte_record(wrong_hash, data, "wrong byte content")
 
     def test_output_tree_rejects_junk_and_missing_paths(self):
         with tempfile.TemporaryDirectory() as raw:

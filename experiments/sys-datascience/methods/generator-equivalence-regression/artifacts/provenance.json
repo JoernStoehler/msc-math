@@ -1,24 +1,25 @@
 {
   "artifacts": {
     "matrix.json": {
-      "bytes": 26123,
-      "sha256": "06ae132b78dab4cdfaa119b2b59f2ef4d9652876c1ebb125b25b0f2ff2a0be2f"
+      "bytes": 26204,
+      "sha256": "3eff731caeeb952158d4786a30c6b03136ecdfc2908d8c0c7da56f47916a26db"
     },
     "matrix.tsv": {
-      "bytes": 13567,
-      "sha256": "babacc6a446b1796dde220c0e99969d5ddd6e08f101c2aca3cc844fe5dbfb179"
+      "bytes": 13648,
+      "sha256": "7eedcd751a4cff26369449410c847429aedfe04e73cdd4409129e55b79b926ec"
     },
     "witnesses.json": {
       "bytes": 11542,
       "sha256": "60b8cdaea22b0f21d52919f9f37198ead7dfd7916a18123b3d4256e80911e4ae"
     }
   },
-  "command": "experiments/sys-datascience/methods/generator-equivalence-regression/produce.py --out-dir experiments/sys-datascience/methods/generator-equivalence-regression/artifacts --expected-revision 73dda723a96b4952af82d3a8474152949342f426",
+  "command": "experiments/sys-datascience/methods/generator-equivalence-regression/produce.py --out-dir experiments/sys-datascience/methods/generator-equivalence-regression/artifacts --expected-revision 7dc40fe500598de576fbc7495a111225b4a439c3",
   "complete": true,
   "independence_unit": "one deterministic synthetic witness per matrix row; probability-law rows are theorem-backed bijection controls, not Monte Carlo samples",
   "interpretation_boundary": "Target-free regression infrastructure only. It supports only the named algebraic, marginal, pushforward, orbit, and negative-control statements; it contains no sys/capacity evaluation or population comparison.",
   "producer": "experiments/sys-datascience/methods/generator-equivalence-regression/produce.py",
-  "producer_sha256": "2c71783018cc8ff73b420d63617842553c3eb78300f0b229d12cec8dbd8e903a",
+  "producer_bytes": 54318,
+  "producer_sha256": "d5618c31b7f0df333e1b296215577b6484cb5b7fd7d0cf80d0e48d900344a947",
   "schema": "generator-equivalence-regression-v1-provenance",
   "source_inputs": [
     {
@@ -72,8 +73,8 @@
       "sha256": "012e37cef55926c3b2f38aeb762c3768ed85c5dc3b502c0dac84a42a869ca66b"
     }
   ],
-  "source_repository_tree": "2ebd13854fc881275312b5e211770bc87e0e1e2e",
-  "source_revision": "73dda723a96b4952af82d3a8474152949342f426",
+  "source_repository_tree": "360c19bade0eda0d8afa1ef609bb3113d92c83fe",
+  "source_revision": "7dc40fe500598de576fbc7495a111225b4a439c3",
   "source_tracked_clean": true,
   "untracked_files_ignored_by_clean_predicate": true
 }

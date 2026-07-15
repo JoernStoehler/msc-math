@@ -169,7 +169,7 @@
     },
     {
       "arithmetic": "exact rational",
-      "collapse_scope": "collapse factor-scale arms in target-free geometry-coverage accounting; target equivalence requires a separately sourced conformal-invariance argument",
+      "collapse_scope": "collapse only after independently area-normalizing both factors, or for a consumer that explicitly declares a quotient/invariance under independent positive factor scalings; capacity/sys equivalence remains separately theorem-gated",
       "executable_control": "pass: A^T J A=ab J, determinant=a^2b^2, normalized area/volume ratios",
       "executable_control_status": "pass",
       "expected": {
