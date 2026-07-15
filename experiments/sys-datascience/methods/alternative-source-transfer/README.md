@@ -34,12 +34,15 @@ cargo run --release --manifest-path experiments/sys-landscape/Cargo.toml \
 python3 experiments/sys-datascience/methods/alternative-source-transfer/validate_packet.py OUT --validate-only
 ```
 
-`validate_packet.py` checks SHA-256 identity, target-field leakage, source and
-logical-cell uniqueness, selected/control geometry uniqueness, exact arm
-counts, disjoint controls, and the 96-row cap. `analyze.py` is the later
-manifest-gated post-target reader: it accepts only a complete target file on
-the frozen union and does not produce targets or call capacity. Empty,
-partial, mismatched, or nonnumeric target artifacts fail closed.
+`validate_packet.py` checks immutable SHA-256 identity, exact JSON field
+schemas, target-field leakage, source and logical-cell uniqueness,
+selected/control geometry uniqueness, exact arm and bucket counts, disjoint
+controls, and the 96-row cap. `analyze.py` is the later manifest-gated
+post-target reader: it accepts only a complete target file on the frozen union
+and does not produce targets or call capacity. Empty, partial, mismatched,
+boolean/nonfinite, or formula-inconsistent target artifacts fail closed.
+The checked target identity enforces `capacity > 0`, `sys >= 0`, and
+`sys = capacity^2/(2 volume)` to relative tolerance `1e-10`.
 
 ## Evidence boundary
 
@@ -74,7 +77,6 @@ Only after a second independent pre-target review returns `GO` may the exact
 stored-geometry evaluator be run:
 
 ```text
-TRANSFER_EVALUATOR_BUILD=<immutable-build-id> \
 cargo run --release --manifest-path experiments/sys-landscape/Cargo.toml \
   --bin sys-datascience-alternative-source-transfer-evaluator -- \
   evaluate experiments/sys-datascience/methods/alternative-source-transfer/artifacts/transfer-v1 \
@@ -84,7 +86,13 @@ cargo run --release --manifest-path experiments/sys-landscape/Cargo.toml \
 This command is not authorized or run in the current repair. It validates the
 three frozen SHA-256 artifacts, joins only the 91 stored selected IDs to their
 stored exact geometry, evaluates each unique candidate once, and atomically
-finalizes schema `alternative-source-transfer-target-v1`. It has no resume or
-cache path and never regenerates source/selection. `analyze.py` may consume the
-completed target file only after that gate and writes a report atomically when
-passed `--write`.
+finalizes schema `alternative-source-transfer-target-v1`; it refuses to
+overwrite an existing finalized target file. There is no build-label or
+environment-variable trust: each row records an identity made from the
+compile-time evaluator source digest, root `Cargo.lock` digest, the digest of
+the three capacity-backend source files, the Git commit containing the
+evaluator source, and a clean-checkout flag. `analyze.py` accepts only the
+reviewed exact identity values and records the target-file SHA-256 in its
+analysis JSON. It has no resume or cache path and never regenerates
+source/selection. `analyze.py` may consume the completed target file only
+after that gate and writes a report atomically when passed `--write`.

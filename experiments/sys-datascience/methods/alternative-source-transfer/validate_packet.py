@@ -30,10 +30,31 @@ EXPECTED = {
     "arm_overlap_rows": 5,
     "clean_commit": "fcd5546af014942b74a1e9313ee898329a507d3d",
     "lock_hash": "740441674806a1baaea966d5f8f12a66d8e2ef1229b66ca9dcf9225a02f6c45f",
+    "source_sha256": "161f6361fd9c99b1b86a863c3cdb7db438fd76329392992f6212e37c83e69963",
+    "feature_sha256": "8a87ef1a050cd9b3a717c85a43b0577f9e72c308e635fcc93defed58ec8883a5",
+    "selection_sha256": "2e4953cc61fa3eb02405c2fff9844c842c7813fd05edb7a741413574b794a168",
 }
 SCHEMAS = {
     "source": "alternative-source-transfer-source-v1",
     "feature": "alternative-source-transfer-feature-v1",
+}
+FIELDS = {
+    "source": {
+        "schema", "candidate_id", "logical_cell", "identity_scope", "law", "law_version",
+        "seed", "bucket", "k", "m", "row_index", "attempt", "accepted", "validation_status",
+        "exact_dual_vertices", "exact_primal_vertices", "vertex_facet_incidence", "exact_volume",
+        "volume", "geometry_fingerprint",
+    },
+    "feature": {
+        "schema", "candidate_id", "logical_cell", "identity_scope", "law", "seed", "bucket",
+        "k", "m", "row_index", "attempt", "vertex_covariance_status", "vertex_covariance_rho",
+        "ridge_symp_area_sum_over_volume_sqrt", "ridge_symp_area_max_share",
+        "ridge_symp_area_ordering_failure_count", "source_geometry_fingerprint",
+    },
+    "selection": {
+        "candidate_id", "logical_cell", "bucket", "row_index", "attempt", "memberships",
+        "geometry_fingerprint",
+    },
 }
 
 
@@ -63,28 +84,32 @@ def validate(out: Path) -> dict:
     feature = list(rows(out / "features.jsonl"))
     selection = list(rows(out / "selection.jsonl"))
     for key, expected in EXPECTED.items():
+        if key.endswith("_sha256"):
+            continue
         if manifest.get(key) != expected:
             raise ValueError(f"manifest {key} mismatch: {manifest.get(key)!r}")
     if manifest.get("buckets") != EXPECTED["buckets"] or manifest.get("target_free") is not True:
         raise ValueError("manifest identity/target-free constants mismatch")
-    if manifest.get("source_sha256") != digest(out / "source.jsonl"):
-        raise ValueError("source hash mismatch")
-    if manifest.get("feature_sha256") != digest(out / "features.jsonl"):
-        raise ValueError("feature hash mismatch")
-    if manifest.get("selection_sha256") != digest(out / "selection.jsonl"):
-        raise ValueError("selection hash mismatch")
+    for path in (out / "source.jsonl", out / "features.jsonl", out / "selection.jsonl"):
+        check_no_target(path)
     if len(source) != EXPECTED["source_count"] or len(feature) != EXPECTED["feature_count"]:
         raise ValueError("incomplete frozen source or feature population")
     if len(selection) != EXPECTED["selection_count"] or len(selection) > 96:
         raise ValueError("selection union exceeds 96 unique rows")
-    for path in (out / "source.jsonl", out / "features.jsonl", out / "selection.jsonl"):
-        check_no_target(path)
+    if manifest.get("source_sha256") != EXPECTED["source_sha256"] or manifest.get("source_sha256") != digest(out / "source.jsonl"):
+        raise ValueError("source hash mismatch")
+    if manifest.get("feature_sha256") != EXPECTED["feature_sha256"] or manifest.get("feature_sha256") != digest(out / "features.jsonl"):
+        raise ValueError("feature hash mismatch")
+    if manifest.get("selection_sha256") != EXPECTED["selection_sha256"] or manifest.get("selection_sha256") != digest(out / "selection.jsonl"):
+        raise ValueError("selection hash mismatch")
     ids = [r["candidate_id"] for r in source]
     cells = [r["logical_cell"] for r in source]
     if len(ids) != len(set(ids)) or len(cells) != len(set(cells)):
         raise ValueError("duplicate source identity")
     source_by_id = {}
     for row in source:
+        if set(row) != FIELDS["source"]:
+            raise ValueError("source field schema mismatch")
         if row.get("schema") != SCHEMAS["source"] or row.get("identity_scope") != EXPECTED["identity_scope"] or row.get("law") != EXPECTED["law"]:
             raise ValueError("source schema or identity mismatch")
         if row.get("bucket") not in EXPECTED["buckets"] or not isinstance(row.get("geometry_fingerprint"), str):
@@ -96,6 +121,8 @@ def validate(out: Path) -> dict:
     if len({r.get("candidate_id") for r in feature}) != len(feature):
         raise ValueError("duplicate feature identity")
     for row in feature:
+        if set(row) != FIELDS["feature"]:
+            raise ValueError("feature field schema mismatch")
         if row.get("schema") != SCHEMAS["feature"] or row.get("identity_scope") != EXPECTED["identity_scope"] or row.get("law") != EXPECTED["law"]:
             raise ValueError("feature schema or identity mismatch")
         if row.get("candidate_id") not in source_by_id:
@@ -127,6 +154,8 @@ def validate(out: Path) -> dict:
         raise ValueError("duplicate geometry fingerprint in selected/control union")
     counts = {bucket: {arm: 0 for arm in ARMS} for bucket in ("4x6", "6x6")}
     for row in selection:
+        if set(row) != FIELDS["selection"]:
+            raise ValueError("selection field schema mismatch")
         if row.get("candidate_id") not in source_by_id:
             raise ValueError("selection references unknown source row")
         src = source_by_id[row["candidate_id"]]
@@ -141,6 +170,16 @@ def validate(out: Path) -> dict:
             counts[row["bucket"]][arm] += 1
     if any(counts[b][a] != 16 for b in counts for a in ARMS):
         raise ValueError(f"membership count mismatch: {counts}")
+    source_counts = {bucket: 0 for bucket in EXPECTED["buckets"]}
+    feature_counts = {bucket: 0 for bucket in EXPECTED["buckets"]}
+    for row in source:
+        source_counts[row["bucket"]] += 1
+    for row in feature:
+        feature_counts[row["bucket"]] += 1
+    if any(source_counts[b] != EXPECTED["row_target_per_bucket"] for b in source_counts):
+        raise ValueError(f"source bucket count mismatch: {source_counts}")
+    if any(feature_counts[b] != EXPECTED["row_target_per_bucket"] for b in feature_counts):
+        raise ValueError(f"feature bucket count mismatch: {feature_counts}")
     for row in selection:
         if "control" in row["memberships"] and len(row["memberships"]) > 1:
             raise ValueError("control overlaps selected arm")

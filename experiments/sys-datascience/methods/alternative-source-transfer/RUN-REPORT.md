@@ -17,9 +17,10 @@ The deterministic producer scanned 4,000 row indices per bucket, retained
 user CPU seconds (26.02 system seconds; 1,088% aggregate CPU; peak RSS
 200,620 KiB). It wrote 6,400 rows and no target fields. `features`, `select`,
 and `validate` then completed in under one second plus process startup; the
-Python manifest gate and fourteen adversarial tests completed in under ten
-seconds. The evaluator's two fake-target Rust tests and the producer's
-seed-translation semantic test also pass without invoking the real backend.
+Python manifest gate and adversarial tests completed without invoking the real
+backend. The evaluator's fake-target Rust tests (including clean-identity and
+overwrite gates) and the producer's seed-translation semantic test also pass
+without invoking the real backend.
 
 Frozen artifact identity:
 
@@ -42,3 +43,11 @@ repetitions for each deterministic bucket/arm-stratified bootstrap and
 within-bucket label-permutation diagnostic. No result classification is
 authorized by this repair; the second independent review must approve the
 future evaluator command first.
+
+The reviewed evaluator identity is source digest
+`fa3265830fb0d6eef8457ece61fd5081737d7eb9b15b26264db55c3d785e8bf6`, lock
+digest `740441674806a1baaea966d5f8f12a66d8e2ef1229b66ca9dcf9225a02f6c45f`,
+backend digest
+`37123b129e112f01ed5f2514b7f724cde6664ab82013a5ea21ed1716a3af0902`, and
+evaluator-source commit `d1eb5b2bab459a9f899879494be85b00165d0b42`; future
+evaluation requires the checkout to report clean.

@@ -7,6 +7,7 @@ reads a complete authorized evaluator artifact and writes an analysis report.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import random
@@ -17,19 +18,28 @@ BOOTSTRAP_SEED = 2026071602
 PERMUTATION_SEED = 2026071603
 BOOTSTRAP_REPETITIONS = 10000
 PERMUTATION_REPETITIONS = 10000
+SYS_FORMULA_REL_TOL = 1e-10
 TARGET_SCHEMA = "alternative-source-transfer-target-v1"
+EVALUATOR_IDENTITY = {
+    "evaluator_identity_schema": "alternative-source-transfer-evaluator-identity-v1",
+    "evaluator_source_sha256": "fa3265830fb0d6eef8457ece61fd5081737d7eb9b15b26264db55c3d785e8bf6",
+    "evaluator_lock_sha256": "740441674806a1baaea966d5f8f12a66d8e2ef1229b66ca9dcf9225a02f6c45f",
+    "evaluator_backend_sha256": "37123b129e112f01ed5f2514b7f724cde6664ab82013a5ea21ed1716a3af0902",
+    "evaluator_git_commit": "d1eb5b2bab459a9f899879494be85b00165d0b42",
+    "evaluator_git_clean": True,
+}
 TARGET_FIELDS = {
     "schema", "candidate_id", "logical_cell", "bucket", "selection_memberships",
     "geometry_fingerprint", "source_sha256", "feature_sha256", "selection_sha256",
-    "evaluator_source", "evaluator_build", "volume", "capacity", "sys",
+    *EVALUATOR_IDENTITY, "volume", "capacity", "sys",
 }
 
 
 def finite(value: object) -> bool:
-    return isinstance(value, (int, float)) and math.isfinite(float(value))
+    return not isinstance(value, bool) and isinstance(value, (int, float)) and math.isfinite(float(value))
 
 
-def target_rows(out: Path, target_path: Path) -> tuple[list[dict], dict, dict]:
+def target_rows(out: Path, target_path: Path) -> tuple[list[dict], dict, dict, str]:
     gate = validate(out)
     source = {row["candidate_id"]: row for row in rows(out / "source.jsonl")}
     selection = {row["candidate_id"]: row for row in rows(out / "selection.jsonl")}
@@ -50,11 +60,15 @@ def target_rows(out: Path, target_path: Path) -> tuple[list[dict], dict, dict]:
             raise ValueError("target membership mismatch")
         if row.get("source_sha256") != gate_source_hash(out, "source_sha256") or row.get("feature_sha256") != gate_source_hash(out, "feature_sha256") or row.get("selection_sha256") != gate_source_hash(out, "selection_sha256"):
             raise ValueError("target frozen artifact provenance mismatch")
-        if not all(finite(row.get(key)) for key in ("volume", "capacity", "sys")) or row["volume"] <= 0:
+        if not all(finite(row.get(key)) for key in ("volume", "capacity", "sys")) or row["volume"] <= 0 or row["capacity"] <= 0 or row["sys"] < 0:
             raise ValueError("target numeric field is malformed or nonfinite")
-        if not isinstance(row.get("evaluator_source"), str) or not row["evaluator_source"] or not isinstance(row.get("evaluator_build"), str) or not row["evaluator_build"]:
-            raise ValueError("target evaluator identity is missing")
-    return data, source, selection
+        if any(row.get(key) != value for key, value in EVALUATOR_IDENTITY.items()):
+            raise ValueError("target evaluator identity is not the reviewed evaluator")
+        expected_sys = row["capacity"] * row["capacity"] / (2.0 * row["volume"])
+        if abs(row["sys"] - expected_sys) > SYS_FORMULA_REL_TOL * max(1.0, abs(expected_sys)):
+            raise ValueError("target sys/capacity/volume identity mismatch")
+    data.sort(key=lambda row: row["candidate_id"])
+    return data, source, selection, hashlib.sha256(target_path.read_bytes()).hexdigest()
 
 
 def gate_source_hash(out: Path, field: str) -> str:
@@ -88,7 +102,7 @@ def estimand(data: list[dict], selection: dict, arm: str) -> dict:
             "selected_range": [min(selected), max(selected)],
             "control_range": [min(control), max(control)],
             "n_selected": len(selected), "n_control": len(control),
-            "overlap_rows": len({r["candidate_id"] for r in data if r["bucket"] == bucket and arm in selection[r["candidate_id"]]["memberships"] and "ridge" in selection[r["candidate_id"]]["memberships"]}),
+            "overlap_rows": len({r["candidate_id"] for r in data if r["bucket"] == bucket and "rho" in selection[r["candidate_id"]]["memberships"] and "ridge" in selection[r["candidate_id"]]["memberships"]}),
         }
     point = sum(bucket_effects[b]["effect"] for b in bucket_effects) / 2
     return {"bucket_effects": bucket_effects, "equal_bucket_effect": point}
@@ -120,8 +134,8 @@ def permutation(data: list[dict], selection: dict, arm: str) -> dict:
     return {"observed": observed, "null_ge_abs_observed": sum(abs(x) >= abs(observed) for x in null) / len(null)}
 
 
-def summarize(data: list[dict], selection: dict) -> dict:
-    result = {"schema": "alternative-source-transfer-analysis-v1", "bootstrap_seed": BOOTSTRAP_SEED, "bootstrap_repetitions": BOOTSTRAP_REPETITIONS, "permutation_seed": PERMUTATION_SEED, "permutation_repetitions": PERMUTATION_REPETITIONS, "all_sys_gt_1": [row for row in data if row["sys"] > 1], "selectors": {}}
+def summarize(data: list[dict], selection: dict, target_sha256: str) -> dict:
+    result = {"schema": "alternative-source-transfer-analysis-v1", "target_sha256": target_sha256, "evaluator_identity": EVALUATOR_IDENTITY, "bootstrap_seed": BOOTSTRAP_SEED, "bootstrap_repetitions": BOOTSTRAP_REPETITIONS, "permutation_seed": PERMUTATION_SEED, "permutation_repetitions": PERMUTATION_REPETITIONS, "all_sys_gt_1": [row for row in data if row["sys"] > 1], "selectors": {}}
     for arm in ("rho", "ridge"):
         estimate = estimand(data, selection, arm)
         interval = [percentile(bootstrap(data, selection, arm), .025), percentile(bootstrap(data, selection, arm), .975)]
@@ -145,8 +159,8 @@ def main() -> None:
     parser.add_argument("--targets", type=Path, required=True)
     parser.add_argument("--write", type=Path, help="write analysis JSON only after full validation")
     args = parser.parse_args()
-    data, _, selection = target_rows(args.out, args.targets)
-    result = summarize(data, selection)
+    data, _, selection, target_sha256 = target_rows(args.out, args.targets)
+    result = summarize(data, selection, target_sha256)
     if args.write:
         tmp = args.write.with_suffix(args.write.suffix + ".tmp")
         tmp.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
