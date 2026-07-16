@@ -1,8 +1,8 @@
 //! Exact closed-word resolver for the flow-graph algorithm.
 //!
 //! This module resolves one closed facet word from exact rational flow-graph
-//! data. It is used both by exact exhaustive search and by the f64 wrapper when
-//! a diagnostic f64 word needs exact closed-word resolution.
+//! data. It is used by the current exact exhaustive search, selected-word
+//! diagnostics and regression tests, and the exact visualization producer.
 
 use nalgebra::DMatrix;
 use num_rational::BigRational;
@@ -1300,8 +1300,8 @@ fn solve_singular_fixed_tube(
     // Slow exact callers use this branch to understand singular fixed-point
     // equations, not to turn singular cases into certified capacity values.
     // Length-three structural zero-time cases are handled before this generic
-    // singular branch.  The remaining branch is kept because exact resolution
-    // of f64 error words and exact development checks need to distinguish:
+    // singular branch.  The exact search, selected-word diagnostics and tests,
+    // and exact visualization need to distinguish:
     // - no fixed points in the searched domain;
     // - singular fixed sets whose action is everywhere nonpositive;
     // - singular fixed sets containing positive-action closed candidates.
