@@ -82,7 +82,7 @@ struct ExactTube {
     action_on_start: AffineScalar,
 }
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct ExactClosedTubeMetrics {
     pub polygon_polygon_intersections: u64,
     pub polygon_halfspace_intersections: u64,
@@ -103,6 +103,90 @@ pub struct ExactClosedWordResult {
     pub outcome: ExactClosedWordOutcome,
     pub tube_halfspaces: Option<usize>,
     pub tube_vertices: Option<usize>,
+}
+
+/// Exact local polygon data for visualization consumers.
+///
+/// The coordinates are affine coordinates in the ordered face frame.  They
+/// remain `BigRational` until an owner explicitly serializes them for a
+/// renderer.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ExactHalfspaceSnapshot {
+    pub normal: [BigRational; 2],
+    pub rhs: BigRational,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ExactFacePolygonSnapshot {
+    pub pair: [usize; 2],
+    pub base: [BigRational; 4],
+    pub u: [BigRational; 4],
+    pub v: [BigRational; 4],
+    pub vertices: Vec<[BigRational; 2]>,
+    pub inequalities: Vec<ExactHalfspaceSnapshot>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ExactAffineSnapshot {
+    pub matrix: [[BigRational; 2]; 2],
+    pub offset: [BigRational; 2],
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ExactAffineScalarSnapshot {
+    pub coeff: [BigRational; 2],
+    pub constant: BigRational,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ExactTubeFaceSnapshot {
+    pub pair: [usize; 2],
+    pub polygon: ExactFacePolygonSnapshot,
+    pub role: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ExactTubeFaceFixedPointSnapshot {
+    pub pair: [usize; 2],
+    pub role: String,
+    pub point: Option<[BigRational; 2]>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ExactFixedPointSnapshot {
+    pub status: String,
+    pub point: Option<[BigRational; 2]>,
+    pub action: Option<BigRational>,
+    pub singular_status: Option<String>,
+    pub min_action: Option<BigRational>,
+    pub max_action: Option<BigRational>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ExactClosedOrbitSnapshot {
+    pub facets: Vec<usize>,
+    pub action: BigRational,
+    pub breakpoints: Vec<[BigRational; 4]>,
+    pub segment_times: Vec<BigRational>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ExactTubeVisualizationSnapshot {
+    pub sequence: Vec<usize>,
+    pub start_pair: [usize; 2],
+    pub end_pair: [usize; 2],
+    pub start_polygon: ExactFacePolygonSnapshot,
+    pub end_polygon: ExactFacePolygonSnapshot,
+    pub intermediate_polygons: Vec<ExactTubeFaceSnapshot>,
+    pub fixed_points_on_faces: Vec<ExactTubeFaceFixedPointSnapshot>,
+    pub start_to_end: ExactAffineSnapshot,
+    pub end_to_start: ExactAffineSnapshot,
+    pub action_on_start: ExactAffineScalarSnapshot,
+    pub action_on_end: ExactAffineScalarSnapshot,
+    pub fixed_point: ExactFixedPointSnapshot,
+    pub cutoff: Option<BigRational>,
+    pub closed_orbit: Option<ExactClosedOrbitSnapshot>,
+    pub metrics: ExactClosedTubeMetrics,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -322,6 +406,25 @@ impl ExactPolygon {
                 })
                 .collect(),
         }
+    }
+
+    fn image_under(&self, affine: &Affine2, metrics: &mut ExactClosedTubeMetrics) -> Option<Self> {
+        metrics.images += 1;
+        let inverse_matrix = inverse(&affine.matrix)?;
+        let inverse_offset = [
+            -mat_vec(&inverse_matrix, &affine.offset)[0].clone(),
+            -mat_vec(&inverse_matrix, &affine.offset)[1].clone(),
+        ];
+        Some(Self {
+            halfspaces: self
+                .halfspaces
+                .iter()
+                .map(|halfspace| Halfspace {
+                    normal: mat_transpose_vec(&inverse_matrix, &halfspace.normal),
+                    rhs: &halfspace.rhs - dot2(&halfspace.normal, &inverse_offset),
+                })
+                .collect(),
+        })
     }
 }
 
@@ -690,6 +793,225 @@ pub fn resolve_closed_word_exact(
     sigma: &[usize],
 ) -> Result<(ExactClosedWordResult, ExactClosedTubeMetrics), ExactClosedTubeError> {
     resolve_closed_word_exact_with_action_cutoff(input, sigma, None)
+}
+
+/// Return one exact ordered face section for a visualization producer.
+pub fn face_polygon_snapshot_exact(
+    input: &ExactFlatTubeInput<'_>,
+    first: usize,
+    second: usize,
+) -> Result<ExactFacePolygonSnapshot, ExactClosedTubeError> {
+    validate_exact_input(input)?;
+    if first == second || first >= input.facet_count() || second >= input.facet_count() {
+        return Err(ExactClosedTubeError::InvalidWord);
+    }
+    let frame = face_frame(input.dual_vertices, first, second)
+        .ok_or(ExactClosedTubeError::InternalInconsistentSingularSolve)?;
+    let mut metrics = ExactClosedTubeMetrics::default();
+    let PolygonOutcome::Nonempty(polygon) = face_polygon(input.dual_vertices, &frame, &mut metrics)
+    else {
+        return Err(ExactClosedTubeError::InternalInconsistentSingularSolve);
+    };
+    Ok(exact_polygon_snapshot(
+        [first, second],
+        &frame,
+        &polygon,
+        &mut metrics,
+    ))
+}
+
+/// Resolve a closed word and expose the exact state needed by the retained
+/// tube figures.  This is the visualization boundary: callers receive exact
+/// polygons, affine maps, fixed-point data, and orbit breakpoints and choose
+/// where to perform the eventual `f64` serialization.
+pub fn closed_tube_visualization_snapshot_exact(
+    input: &ExactFlatTubeInput<'_>,
+    sigma: &[usize],
+    action_cutoff: Option<&BigRational>,
+) -> Result<Option<ExactTubeVisualizationSnapshot>, ExactClosedTubeError> {
+    validate_exact_input(input)?;
+    if sigma.len() < 2
+        || sigma.iter().any(|&facet| facet >= input.facet_count())
+        || !all_distinct(sigma)
+    {
+        return Err(ExactClosedTubeError::InvalidWord);
+    }
+
+    let mut word = sigma.to_vec();
+    word.push(sigma[0]);
+    word.push(sigma[1]);
+    let mut metrics = ExactClosedTubeMetrics::default();
+    let tube = match build_tube(
+        input.dual_vertices,
+        input.facet_intersection_is_nonempty,
+        input.omega_signs,
+        &word,
+        &mut metrics,
+    ) {
+        Ok(PolygonOutcomeTube::Empty) => return Ok(None),
+        Err(()) => return Err(ExactClosedTubeError::UnsupportedSingularTransition),
+        Ok(PolygonOutcomeTube::Nonempty(tube)) => tube,
+    };
+    let tube = match restrict_tube_to_action_cutoff(tube, action_cutoff, &mut metrics) {
+        PolygonOutcomeTube::Empty => return Ok(None),
+        PolygonOutcomeTube::Nonempty(tube) => tube,
+    };
+    let classification = solve_closed_tube(input.dual_vertices, &tube, &mut metrics);
+    let outcome = classification.into_public()?;
+    let fixed_point = exact_fixed_point_snapshot(&outcome);
+    let end_pair = [tube.end_frame.first, tube.end_frame.second];
+    let end_polygon = tube
+        .start_polygon
+        .image_under(&tube.start_to_end, &mut metrics)
+        .map(|polygon| {
+            exact_polygon_snapshot(
+                [tube.end_frame.first, tube.end_frame.second],
+                &tube.end_frame,
+                &polygon,
+                &mut metrics,
+            )
+        })
+        .ok_or(ExactClosedTubeError::InternalInconsistentSingularSolve)?;
+
+    let start_pair = [tube.start_frame.first, tube.start_frame.second];
+    let mut intermediate_polygons = Vec::with_capacity(word.len() - 1);
+    let mut fixed_points_on_faces = Vec::with_capacity(word.len() - 1);
+    let start_coords = match &outcome {
+        ExactClosedWordOutcome::PositiveOrbit { start_coords, .. }
+        | ExactClosedWordOutcome::NonStrictNoOrbit { start_coords, .. } => Some(start_coords),
+        ExactClosedWordOutcome::ZeroActionNoOrbit {
+            start_coords: Some(start_coords),
+            ..
+        } => Some(start_coords),
+        _ => None,
+    };
+
+    for index in 0..word.len() - 1 {
+        let pair = [word[index], word[index + 1]];
+        let role = if index == 0 {
+            "start"
+        } else if index == word.len() - 2 {
+            "end"
+        } else {
+            "intermediate"
+        };
+        let polygon = if index == 0 {
+            exact_polygon_snapshot(
+                start_pair,
+                &tube.start_frame,
+                &tube.start_polygon,
+                &mut metrics,
+            )
+        } else if index == word.len() - 2 {
+            end_polygon.clone()
+        } else {
+            let prefix = match build_tube(
+                input.dual_vertices,
+                input.facet_intersection_is_nonempty,
+                input.omega_signs,
+                &word[..index + 2],
+                &mut metrics,
+            ) {
+                Ok(PolygonOutcomeTube::Nonempty(prefix)) => prefix,
+                Ok(PolygonOutcomeTube::Empty) => return Ok(None),
+                Err(()) => return Err(ExactClosedTubeError::UnsupportedSingularTransition),
+            };
+            let prefix = match restrict_tube_to_action_cutoff(prefix, action_cutoff, &mut metrics) {
+                PolygonOutcomeTube::Nonempty(prefix) => prefix,
+                PolygonOutcomeTube::Empty => return Ok(None),
+            };
+            let polygon = tube
+                .start_polygon
+                .image_under(&prefix.start_to_end, &mut metrics)
+                .ok_or(ExactClosedTubeError::InternalInconsistentSingularSolve)?;
+            exact_polygon_snapshot(pair, &prefix.end_frame, &polygon, &mut metrics)
+        };
+        intermediate_polygons.push(ExactTubeFaceSnapshot {
+            pair,
+            polygon,
+            role: role.to_string(),
+        });
+
+        let point = start_coords.map(|start_coords| {
+            if index == 0 {
+                (*start_coords).clone()
+            } else if index == word.len() - 2 {
+                tube.start_to_end.apply(start_coords)
+            } else {
+                build_tube(
+                    input.dual_vertices,
+                    input.facet_intersection_is_nonempty,
+                    input.omega_signs,
+                    &word[..index + 2],
+                    &mut metrics,
+                )
+                .ok()
+                .and_then(|outcome| match outcome {
+                    PolygonOutcomeTube::Nonempty(prefix) => {
+                        match restrict_tube_to_action_cutoff(prefix, action_cutoff, &mut metrics) {
+                            PolygonOutcomeTube::Nonempty(prefix) => {
+                                Some(prefix.start_to_end.apply(start_coords))
+                            }
+                            PolygonOutcomeTube::Empty => None,
+                        }
+                    }
+                    PolygonOutcomeTube::Empty => None,
+                })
+                .expect("exact intermediate tube exists when its polygon was built")
+            }
+        });
+        fixed_points_on_faces.push(ExactTubeFaceFixedPointSnapshot {
+            pair,
+            role: role.to_string(),
+            point,
+        });
+    }
+
+    let inverse = inverse(&tube.start_to_end.matrix)
+        .ok_or(ExactClosedTubeError::InternalInconsistentSingularSolve)?;
+    let end_to_start = Affine2 {
+        matrix: inverse.clone(),
+        offset: [
+            -mat_vec(&inverse, &tube.start_to_end.offset)[0].clone(),
+            -mat_vec(&inverse, &tube.start_to_end.offset)[1].clone(),
+        ],
+    };
+    let action_on_end = compose_scalar_with_affine(&tube.action_on_start, &end_to_start);
+    let closed_orbit = match &outcome {
+        ExactClosedWordOutcome::PositiveOrbit {
+            action,
+            start_coords,
+        } => Some(exact_closed_orbit_snapshot(
+            input.dual_vertices,
+            &tube,
+            start_coords,
+            action.clone(),
+        )?),
+        _ => None,
+    };
+
+    Ok(Some(ExactTubeVisualizationSnapshot {
+        sequence: word.clone(),
+        start_pair,
+        end_pair,
+        start_polygon: exact_polygon_snapshot(
+            start_pair,
+            &tube.start_frame,
+            &tube.start_polygon,
+            &mut metrics,
+        ),
+        end_polygon,
+        intermediate_polygons,
+        fixed_points_on_faces,
+        start_to_end: exact_affine_snapshot(&tube.start_to_end),
+        end_to_start: exact_affine_snapshot(&end_to_start),
+        action_on_start: exact_affine_scalar_snapshot(&tube.action_on_start),
+        action_on_end: exact_affine_scalar_snapshot(&action_on_end),
+        fixed_point,
+        cutoff: action_cutoff.cloned(),
+        closed_orbit,
+        metrics,
+    }))
 }
 
 pub(crate) fn resolve_closed_word_exact_with_action_cutoff(
@@ -1073,6 +1395,168 @@ impl AffineScalar {
     fn evaluate(&self, point: &Vec2) -> R {
         dot2(&self.coeff, point) + &self.constant
     }
+}
+
+impl Affine2 {
+    fn apply(&self, point: &Vec2) -> Vec2 {
+        add2(&mat_vec(&self.matrix, point), &self.offset)
+    }
+}
+
+fn exact_polygon_snapshot(
+    pair: [usize; 2],
+    frame: &FaceFrame,
+    polygon: &ExactPolygon,
+    metrics: &mut ExactClosedTubeMetrics,
+) -> ExactFacePolygonSnapshot {
+    ExactFacePolygonSnapshot {
+        pair,
+        base: frame.base.clone(),
+        u: frame.u.clone(),
+        v: frame.v.clone(),
+        vertices: polygon.vertices(metrics),
+        inequalities: polygon
+            .halfspaces
+            .iter()
+            .map(|halfspace| ExactHalfspaceSnapshot {
+                normal: halfspace.normal.clone(),
+                rhs: halfspace.rhs.clone(),
+            })
+            .collect(),
+    }
+}
+
+fn exact_affine_snapshot(affine: &Affine2) -> ExactAffineSnapshot {
+    ExactAffineSnapshot {
+        matrix: affine.matrix.clone(),
+        offset: affine.offset.clone(),
+    }
+}
+
+fn exact_affine_scalar_snapshot(affine: &AffineScalar) -> ExactAffineScalarSnapshot {
+    ExactAffineScalarSnapshot {
+        coeff: affine.coeff.clone(),
+        constant: affine.constant.clone(),
+    }
+}
+
+fn compose_scalar_with_affine(scalar: &AffineScalar, affine: &Affine2) -> AffineScalar {
+    let coeff = mat_transpose_vec(&affine.matrix, &scalar.coeff);
+    AffineScalar {
+        coeff,
+        constant: dot2(&scalar.coeff, &affine.offset) + &scalar.constant,
+    }
+}
+
+fn exact_fixed_point_snapshot(outcome: &ExactClosedWordOutcome) -> ExactFixedPointSnapshot {
+    match outcome {
+        ExactClosedWordOutcome::EmptyTube => ExactFixedPointSnapshot {
+            status: "empty_tube".to_string(),
+            point: None,
+            action: None,
+            singular_status: None,
+            min_action: None,
+            max_action: None,
+        },
+        ExactClosedWordOutcome::ZeroActionNoOrbit {
+            action,
+            start_coords,
+            singular_status,
+        } => ExactFixedPointSnapshot {
+            status: singular_status
+                .unwrap_or("point_inside_start_polygon")
+                .to_string(),
+            point: start_coords.clone(),
+            action: action.clone(),
+            singular_status: singular_status.map(str::to_string),
+            min_action: None,
+            max_action: None,
+        },
+        ExactClosedWordOutcome::NonStrictNoOrbit {
+            action,
+            start_coords,
+        } => ExactFixedPointSnapshot {
+            status: "point_inside_start_polygon_non_strict_time".to_string(),
+            point: Some(start_coords.clone()),
+            action: Some(action.clone()),
+            singular_status: None,
+            min_action: None,
+            max_action: None,
+        },
+        ExactClosedWordOutcome::PositiveOrbit {
+            action,
+            start_coords,
+        } => ExactFixedPointSnapshot {
+            status: "point_inside_start_polygon".to_string(),
+            point: Some(start_coords.clone()),
+            action: Some(action.clone()),
+            singular_status: None,
+            min_action: None,
+            max_action: None,
+        },
+        ExactClosedWordOutcome::UnsupportedPositiveSingular {
+            singular_status,
+            min_action,
+            max_action,
+        } => ExactFixedPointSnapshot {
+            status: singular_status.to_string(),
+            point: None,
+            action: None,
+            singular_status: Some(singular_status.to_string()),
+            min_action: min_action.clone(),
+            max_action: max_action.clone(),
+        },
+    }
+}
+
+fn exact_closed_orbit_snapshot(
+    duals: &[Vec4],
+    tube: &ExactTube,
+    start_coords: &Vec2,
+    action: R,
+) -> Result<ExactClosedOrbitSnapshot, ExactClosedTubeError> {
+    let cyclic_word = tube
+        .sequence
+        .get(
+            ..tube
+                .sequence
+                .len()
+                .checked_sub(2)
+                .ok_or(ExactClosedTubeError::InternalInconsistentSingularSolve)?,
+        )
+        .ok_or(ExactClosedTubeError::InternalInconsistentSingularSolve)?;
+    let start_point = point_on_frame(&tube.start_frame, start_coords);
+    let mut point = start_point.clone();
+    let mut breakpoints = vec![start_point];
+    let mut segment_times = Vec::with_capacity(cyclic_word.len());
+    for index in 0..cyclic_word.len() {
+        let current = cyclic_word[(index + 1) % cyclic_word.len()];
+        let next = cyclic_word[(index + 2) % cyclic_word.len()];
+        let current_dual = duals
+            .get(current)
+            .ok_or(ExactClosedTubeError::InvalidWord)?;
+        let next_dual = duals.get(next).ok_or(ExactClosedTubeError::InvalidWord)?;
+        let reeb = scale4(&q(2), &j_times(current_dual));
+        let denom = dot4(next_dual, &reeb);
+        if denom.is_zero() {
+            return Err(ExactClosedTubeError::UnsupportedSingularTransition);
+        }
+        let tau = (R::one() - dot4(next_dual, &point)) / denom;
+        segment_times.push(tau.clone());
+        point = add4(&point, &scale4(&tau, &reeb));
+        if index + 1 < cyclic_word.len() {
+            breakpoints.push(point.clone());
+        }
+    }
+    if point != breakpoints[0] || segment_times.iter().any(|time| !time.is_positive()) {
+        return Err(ExactClosedTubeError::InternalInconsistentSingularSolve);
+    }
+    Ok(ExactClosedOrbitSnapshot {
+        facets: cyclic_word.to_vec(),
+        action,
+        breakpoints,
+        segment_times,
+    })
 }
 
 #[cfg(test)]
@@ -1481,6 +1965,34 @@ mod tests {
                 assert!((action_f64 - 9.4722557649991).abs() < 1e-10);
             }
             other => panic!("expected orbit with action > 0, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn exact_visualization_snapshot_exposes_f6_tube_and_orbit() {
+        let case = deterministic_random_exact_case(6, 3);
+        let snapshot =
+            closed_tube_visualization_snapshot_exact(&case.input(), &[1, 2, 4, 5, 3], None)
+                .expect("exact visualization snapshot")
+                .expect("selected exact tube should be nonempty");
+
+        assert_eq!(snapshot.sequence, vec![1, 2, 4, 5, 3, 1, 2]);
+        assert_eq!(snapshot.intermediate_polygons.len(), 6);
+        assert_eq!(snapshot.fixed_points_on_faces.len(), 6);
+        assert_eq!(snapshot.metrics.images, 5);
+        match snapshot.closed_orbit {
+            Some(ExactClosedOrbitSnapshot {
+                action,
+                breakpoints,
+                segment_times,
+                ..
+            }) => {
+                assert!(action.is_positive());
+                assert_eq!(breakpoints.len(), 5);
+                assert_eq!(segment_times.len(), 5);
+                assert!(segment_times.iter().all(R::is_positive));
+            }
+            None => panic!("selected exact tube should expose a positive orbit"),
         }
     }
 
@@ -2135,11 +2647,5 @@ mod tests {
         let mut vertices = polygon.vertices(metrics);
         vertices.sort();
         vertices
-    }
-
-    impl Affine2 {
-        fn apply(&self, point: &Vec2) -> Vec2 {
-            add2(&mat_vec(&self.matrix, point), &self.offset)
-        }
     }
 }
