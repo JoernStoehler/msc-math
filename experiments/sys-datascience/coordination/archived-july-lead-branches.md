@@ -1,0 +1,45 @@
+# Archived July sys-datascience lead branches
+
+Main retains the Git histories below through an archive merge. They are not
+active work, a launch queue, or merge candidates. The consolidation merges used
+the `ours` tree, so inspect an original tip by hash.
+
+Reviewed or selected scientific state lives in the current method owners and
+final research account. The tips below were parked, rejected, superseded, or
+produced during the unauthorized breadth wave. Their former branch refs were
+removed to avoid ownerless active-looking branches.
+
+```text
+7a11d9f9bfed adaptive-hostile-search (rejected)
+f474d35c0e03 generator-alignment-ladder
+19c17b8ebfb6 generator-law-fidelity
+1fc5a47e30a0 generator-variable-f-body-distance
+9641878bc042 generator-conditioning-distortion
+64d773349147 generator-coverage-directed-novelty
+3f09eeebbcaa generator-distribution-atlas-confirmation
+a50e1e930e21 generator-distribution-atlas-next
+81655493937f generator-distribution-contract (parked)
+c44646338e69 generator-distribution-dimension
+bd6881f58755 generator-equivalence-regression
+e6fa67d7ef16 generator-factor-coupling-atlas
+9d8bb3d1b0bd generator-natural-law-expansion
+a92ca3e67e66 generator-orientation-target-pilot (superseded by orientation salvage)
+8ac2fb97e385 generator-pair-similarity
+f195169e4e31 generator-polarity-pushforward
+09436a037d32 generator-support-process-atlas
+f9b97f7781a1 generator-sys-orbit-view-next
+f7f1146497bd generator-target-quotient-distance (parked)
+fd9c3e7df08d generator-transfer parent/status branch
+07a374649e77 generator-two-distribution-quality
+57921ce5e958 generator-type-cone-productness
+1ff678a60a88 generator-within-distribution-quality
+2f9b287dbb29 rare-hit-curves-next
+f35dc0b0cde6 product-bounce-distribution (superseded on Main)
+21b5a96ccd75 convex-operations-next (unreviewed, no named consumer)
+2a7733b4da8d topology-density (unreviewed, no named consumer)
+829c81f49c48 empirical-standard-baseline-gate (superseded process trial)
+846154e8cf9a generator-combinatorial-coverage (unreviewed)
+096623311cef generator-cartan-anisotropy (unreviewed)
+0ab6d173c0ab generator-orbit-perturbation-zoo (unreviewed)
+158709c0ccb4 generic-4d-laws (unreviewed)
+```
