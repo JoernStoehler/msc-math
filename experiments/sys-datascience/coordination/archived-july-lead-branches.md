@@ -1,15 +1,13 @@
 # Archived July sys-datascience lead branches
 
-This branch keeps the Git objects from the stopped generator breadth wave and
-adaptive-hostile packet reachable through one deliberately non-mergeable
-archive ref. It is not active work, a launch queue, or a candidate for Main.
-The archive merge uses the `ours` tree; inspect an original tip by hash.
+Main retains the Git histories below through an archive merge. They are not
+active work, a launch queue, or merge candidates. The consolidation merges used
+the `ours` tree, so inspect an original tip by hash.
 
-The reviewed or selected scientific state lives on Main, in the final research
-account, or on separately named pending-integration branches. The archived tips
-below were parked, rejected, superseded, or produced during the unauthorized
-breadth wave. Their former branch refs were removed to avoid ownerless active-
-looking branches.
+Reviewed or selected scientific state lives in the current method owners and
+final research account. The tips below were parked, rejected, superseded, or
+produced during the unauthorized breadth wave. Their former branch refs were
+removed to avoid ownerless active-looking branches.
 
 ```text
 7a11d9f9bfed adaptive-hostile-search (rejected)
