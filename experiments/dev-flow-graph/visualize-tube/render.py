@@ -6,7 +6,7 @@
 """
 Goal: Render one flow-graph tube visualization JSON file.
 Input Artifacts: JSON from flow-graph-visualize-tube-data.
-Output Artifacts: PDF figure.
+Output Artifacts: Figure in the format selected by the output filename.
 """
 
 import argparse
