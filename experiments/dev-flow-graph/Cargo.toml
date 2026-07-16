@@ -17,16 +17,8 @@ name = "flow-graph-closed-word-spike"
 path = "closed-word-spike/main.rs"
 
 [[bin]]
-name = "flow-graph-discover-e2e"
-path = "discover-e2e/main.rs"
-
-[[bin]]
 name = "flow-graph-visualize-tube-data"
 path = "visualize-tube/main.rs"
-
-[[bin]]
-name = "flow-graph-unresolved-diagnostic"
-path = "unresolved-diagnostic/main.rs"
 
 [lints]
 workspace = true

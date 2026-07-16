@@ -1,14 +1,13 @@
 # Dev Flow-Graph
 
 This package is the active algorithm-development surface for the flow-graph
-algorithm. It contains frontier counts, endpoint and closed-word representation
-spikes, case-finding tools, unresolved-word diagnostics, and tube visualization
-for understanding the current algorithm.
+algorithm. It contains exact-compatible frontier counts, endpoint and
+closed-word representation spikes, and tube visualization for understanding
+the current algorithm.
 
-The current binaries intentionally mix counters, f64 failures, exact
-cross-checks, and HK2017 comparisons when those fields help diagnose the
-changing flow-graph algorithm. Do not treat that mixture as a routing precedent
-for durable evidence packets.
+The current binaries are not a durable evidence packet. The exact flow-graph
+and proof-risk verification surfaces live in the crate and
+`experiments/verification/flow-graph-proof-risk/`.
 
 The boundary is not "mentions numerics" versus "does not mention numerics".
 Keep numerical analysis here when it should move with changing flow-graph
@@ -25,7 +24,8 @@ The algorithm contract and result-control surface live in
 - `flow-graph-frontier`
   - Reads `../combinatorial-cells/polytopes.jsonl` by default.
   - Writes JSONL to stdout, or to `--output PATH`.
-  - Use `--build-f64-tubes` to include f64 tube construction counters.
+  - Reports transition-pruned word-cache and closed-cycle counts, plus the
+    exact structural zero-ω support predicate.
 
 - `flow-graph-endpoint-spike`
   - Reads `../combinatorial-cells/polytopes.jsonl` by default.
@@ -37,11 +37,6 @@ The algorithm contract and result-control surface live in
     polytope/word.
   - This is an exploratory representation spike, not the supported crate
     implementation.
-
-- `flow-graph-discover-e2e`
-  - Searches generated polytopes and buckets them by f64/FG/QP behavior.
-  - Use selected reviewed rows as candidates for fixed crate or verification
-    checks; do not treat discovery output as thesis evidence by itself.
 
 - `flow-graph-visualize-tube-data`
   - Emits one JSON object for a generated polytope and one closed tube word.
@@ -83,11 +78,30 @@ These are explanatory assets.  The local-section axes use unrelated affine
 coordinates, while the global view distorts geometry through radial and
 stereographic projection.  Neither figure is proof or numerical validation.
 
-- `flow-graph-unresolved-diagnostic`
-  - Diagnoses unresolved f64 closed words using exact tube resolution, exact
-    one-sigma QP summaries, and geometric recovery references.
-  - Keep this here while the failure taxonomy is still part of flow-graph
-    algorithm development.
+The retired `flow-graph-discover-e2e` and
+`flow-graph-unresolved-diagnostic` binaries depended on the f64 flow-graph
+implementation to define their observations: the first bucketed approximate
+capacity agreement and numerical rejection modes, and the second selected
+words specifically from f64 unresolved/error outcomes. Neither has a coherent
+exact-only replacement under the current public APIs.
+
+## f64 Retirement Classification
+
+This is the command/field inventory for the migration attempt. “Exact” means
+the active purpose is already exact or survives without f64 flow-graph
+semantics. “Too expensive” means an exact analogue exists but is not a bounded
+replacement for the old broad scan. “f64 failure” means the observation is
+defined by approximate-vs-exact disagreement or an f64 error path.
+
+| Command or output surface | Classification | Migration result |
+| --- | --- | --- |
+| `flow-graph-frontier`: transition edges, half-cache sizes, plus-depth counts, closed-cycle counts, split-missing counts, structural zero-ω predicate | Exact | Preserved in `frontier/main.rs`; the structural predicate now reads exact cache matrices directly. |
+| `flow-graph-frontier`: f64 tube live/empty/error counts, f64 candidate actions, polygon inequality and operation counters | Too expensive | Removed; an exact per-word tube/counter scan is not a bounded replacement for a combinatorial frontier command. |
+| `flow-graph-discover-e2e`: f64/FG/QP buckets, approximate capacities and relative errors, f64 breakpoints/violations, f64 closed-cycle errors, and debug tubes | f64 failure | Retired from Cargo and source; no exact-only command can preserve its question. |
+| `flow-graph-unresolved-diagnostic`: f64 unresolved/error selection and f64 step/error fields, with exact tube/QP follow-up and decimal diagnostics | f64 failure | Retired from Cargo and source; its input population disappears with the f64 resolver. |
+| `flow-graph-endpoint-spike` and `flow-graph-closed-word-spike` | Exact | Already exact representation spikes; left unchanged outside this child’s ownership. |
+| `flow-graph-visualize-tube-data` | f64-specific visualization | Left unchanged for the visualization owner; its snapshot/render contract is an f64 geometric display, not a non-visual experiment consumer. |
+| `flow-graph-proof-risk` rows and exact FG search | Exact | Already consumes public exact FG/tube APIs. Its f64 random-generation/HK candidate plumbing is input/reference infrastructure, not an f64 FG result; no edit was needed here. |
 
 ## Smoke Checks
 
@@ -96,8 +110,6 @@ Use release mode for timing or count interpretation.
 ```bash
 cargo run -p exp-dev-flow-graph --release --bin flow-graph-frontier -- --max-facets 5 --output /tmp/flow-graph-frontier-smoke.jsonl
 cargo run -p exp-dev-flow-graph --release --bin flow-graph-endpoint-spike -- --max-facets 5 --max-rows 1 --output /tmp/flow-graph-endpoint-spike-smoke.jsonl
-cargo run -p exp-dev-flow-graph --release --bin flow-graph-discover-e2e -- --facet-counts 5 --max-attempts-per-f 1 --wanted-per-bucket 1
-cargo run -p exp-dev-flow-graph --release --bin flow-graph-unresolved-diagnostic -- --facet-count 5 --attempts 1 --output /tmp/flow-graph-unresolved-diagnostic-smoke.jsonl
 cargo run -p exp-dev-flow-graph --release --bin flow-graph-visualize-tube-data -- --output /tmp/flow-graph-attempt31-visualization.json
 uv run --script experiments/dev-flow-graph/visualize-tube/render.py --input /tmp/flow-graph-attempt31-visualization.json --output /tmp/flow-graph-attempt31-visualization.png
 ```
@@ -112,15 +124,10 @@ uv run --script experiments/dev-flow-graph/visualize-tube/render.py --input /tmp
 
 ## Current Experiment Families
 
-- `frontier/`: word-frontier and f64 tube count measurements.
+- `frontier/`: exact-compatible word-frontier counts.
 - `endpoint-spike/`: exact endpoint-set representation spike.
 - `closed-word-spike/`: exact closed-word resolver spike for selected generated
   closed words.
-- `discover-e2e/`: case-finding tool for high-value flow-graph examples before
-  selected rows are promoted into fixed checks.
-- `unresolved-diagnostic/`: diagnostic for unresolved f64 closed words using
-  exact tube, exact one-sigma QP, geometric recovery, and HK2017-style
-  references as debugging evidence.
 - `visualize-tube/`: Rust JSON producer plus Python matplotlib renderer for
   tube-debugging and future thesis figures.
 
@@ -174,11 +181,9 @@ after the question has a stable evidence home.
 
 | Surface | Keep here while | Promote or retire when | Destination |
 | --- | --- | --- | --- |
-| `frontier/` | word-frontier, f64 tube counts, and polygon-operation counters still guide search/representation choices | the measured path is stable enough that counts or runtime are the result | `experiments/performance/` |
+| `frontier/` | word-frontier counts still guide search/representation choices | the measured path is stable enough that counts or runtime are the result | `experiments/performance/` |
 | `endpoint-spike/` | exact endpoint-set representation remains useful historical context for the current exact implementation | the crate exact path fully supersedes it and no active diagnostic reads it | git history, or a short note here if future agents still need the clue |
 | `closed-word-spike/` | selected generated words are still being used to understand exact closed-word behavior | a selected word becomes a stable regression or proposition witness | crate tests or `experiments/verification/` |
-| `discover-e2e/` | rows are being searched and bucketed for high-value examples | a row has a reviewed expected label and should stop being rediscovered | crate tests for cheap cases, `experiments/verification/` for slower artifact-backed suites |
-| `unresolved-diagnostic/` | f64 errors, exact tube resolution, exact one-sigma QP, geometric recovery, and HK2017 references are jointly needed for failure taxonomy | the question becomes reusable f64/exact methodology or stable error-path evidence | `experiments/dev-quadratic-program/numerics-audit/` or `experiments/verification/` |
 | `visualize-tube/` | tube geometry needs inspection to debug a word or explain a mismatch | a selected image/data packet supports thesis exposition | owning thesis/topic asset packet |
 ## Promotion Targets
 
