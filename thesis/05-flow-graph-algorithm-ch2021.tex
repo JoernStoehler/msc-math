@@ -132,6 +132,8 @@ the breakpoint of the closed orbit.  The start and return panels use the same
 facet pair, frame, and plot limits.  Thus the
 return-map fixed-point equation is visible as the return of the black cross to
 its initial local coordinates.
+The figure is regenerated from exact rational tube geometry; rationals are
+converted to finite floating-point values only at the JSON/rendering boundary.
 
 \begin{figure}[htbp]
   \centering
@@ -338,14 +340,15 @@ intended to implement the mathematical search on rational inputs satisfying
 both this caller contract and the regularity hypotheses; correspondence is
 tested, not formally verified.
 
-A separate floating-point path is useful for larger searches, but it remains
-approximate.  Its mixed wrapper checks that the exact and floating-point inputs
-encode the same ordered facet data.  Exact fallback then classifies the error
-words recorded by the floating-point run, while directly accepted words remain
-floating-point outputs.  This path is not an exact capacity certificate.
+The earlier binary64 flow-graph prototype was approximate and lacked a sound
+true/false/indeterminate predicate contract. It was retired when project time
+ended, and it supplies no current FG capacity or thesis evidence.
 
-On three deterministic rational reconstructions, exact flow-graph search
-agrees with the current certified Haim--Kislev/QP aggregate.
+On selected deterministic rational F5, F6, and F7 cases, exact flow-graph
+search agrees with the certified Haim--Kislev/QP scalar aggregate. These
+comparisons, the retained exact words, and the targeted resolver tests are
+implementation evidence for the stated rational inputs; they do not prove the
+idealized algorithm or the CH2021 capacity scope.
 Targeted tests also exercise tube construction, fixed-point reconstruction,
 and typed rejection.  These checks are falsification and correspondence
 evidence on selected examples; they do not prove tube semantics or broad input

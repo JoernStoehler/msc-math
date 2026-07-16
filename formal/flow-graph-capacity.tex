@@ -56,11 +56,13 @@ axioms computes the EHZ capacity.  Second, prove that each concrete search
 procedure used by the implementation satisfies those axioms.  This keeps the
 capacity theorem independent of caching and traversal order.
 
-The theorem in this section is an exact mathematical statement.  A numerical
-implementation can use it only after proving that each accepted numerical
-output agrees with the corresponding exact semantic resolver outcome, or after
-falling back to exact resolution for every predicate that can affect the
-returned action set.
+The theorem in this section is an exact mathematical statement.  Any sound
+numerical implementation can use it only after proving that each accepted
+numerical output agrees with the corresponding exact semantic resolver outcome,
+or after falling back to exact resolution for every predicate that can affect
+the returned action set.  This is a general contract, not a description of a
+current FG floating-point implementation; the supported control algorithm is
+the exact rational route.
 
 \begin{unverified}
 \begin{definition}[Closed facet word]\label{def:flow-graph-closed-word}
@@ -184,8 +186,8 @@ following outcomes:
 \end{enumerate}
 The resolver is a semantic object.  It does not specify whether the actions
 are obtained by direct closed-tube construction, cached tube intersections,
-fixed-point solving on endpoint polygons, exact arithmetic, or f64 predicates
-with exact fallback.
+    fixed-point solving on endpoint polygons or exact arithmetic. A numerical
+    frontend is admissible only under the soundness condition stated above.
 
 The \emph{represented trajectory family} of~$\sigma$ is the set of
 closed-word realizations from
@@ -261,10 +263,10 @@ the following hold.
     enumeration.  Retained words above the minimum are implementation output
     unless their exact resolver semantics are part of the accepted contract.
   \item \emph{Numerical path.}
-    f64 predicate decisions are outside this exact contract unless every
-    predicate that can affect the returned action, retained words, rejection
-    decision, or lower-bound certificate agrees with exact semantics or is
-    resolved by exact fallback.
+    Floating-point predicate decisions are outside this exact contract unless
+    every predicate that can affect the returned action, retained words,
+    rejection decision, or lower-bound certificate agrees with exact semantics
+    or is resolved by exact fallback.
 \end{enumerate}
 This definition records the theorem-facing acceptance boundary.  It is not yet
 a proof that the current Rust wrapper satisfies the contract on any broad input

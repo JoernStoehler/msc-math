@@ -3,8 +3,10 @@
 % Status: historical proof-risk ledger with a live implementation boundary.
 % The idealized primitive/tube/completeness chain was subsequently proved in
 % formal/flow-graph-real-algorithm.tex and written into the active thesis.
-% Rust correspondence, singular runtime outcomes, cutoffs, and f64 behavior
-% remain governed by the module README, code, tests, and verification packet.
+% Rust correspondence, singular runtime outcomes, and cutoffs remain governed
+% by the module README, code, tests, and verification packet. The earlier
+% binary64 prototype is retired; its failed numerical contract is recorded
+% below only as historical boundary context.
 %
 % Purpose:
 %   Track the flow-graph/tube claims that must become true, assumed, or omitted
@@ -40,12 +42,14 @@
 This ledger records the route by which the flow-graph proof obligations were
 isolated and the remaining implementation risks are tested.  The idealized
 mathematical claims FG-PR-1 through FG-PR-4, together with direct exhaustive
-search in FG-PR-5, are superseded by the active real-algorithm proof.  Their old status prose below is
-retained only to identify code-correspondence and falsifier obligations; it is
-not the current mathematical status of the active thesis theorem.  Cutoff
-optimization, singular runtime branches, arbitrary-input validation, and f64
-accepted-output semantics remain separate.  A verification suite is evidence
-for those implementation boundaries, not a proof of the idealized theorem.
+search in FG-PR-5, are superseded by the active real-algorithm proof. Their old
+status prose below is retained only to identify code-correspondence and falsifier
+obligations; it is not the current mathematical status of the active thesis
+theorem. Cutoff optimization, singular runtime branches, and arbitrary-input
+validation remain separate. The retired binary64 prototype did not have a
+sound true/false/indeterminate predicate contract and supplies no current FG
+accepted-output evidence. The exact verification suite is implementation
+evidence for its named boundaries, not a proof of the idealized theorem.
 
 \begin{remark}[Milestone success criterion]\label{rem:flow-graph-truth-surface-success}
 For the next FG milestone, every correctness claim needed by the thesis chapter
@@ -112,11 +116,12 @@ no-repeated-facet enumeration domain contains such a realization.
 \end{remark}
 
 \begin{remark}[Historical FG restart order]\label{rem:fg-chapter-restart-order}
-The ordered tasks below predate that proof.  The first three are closed for the
+The ordered tasks below predate that proof. The first three are closed for the
 idealized exact algorithm but remain useful questions when auditing the Rust
-wrapper; the f64 boundary remains live.
-The next session that restarts the FG chapter should not begin by polishing
-prose.  The current ordered blocking tasks are:
+wrapper. The binary64 boundary was not completed; the prototype was retired
+when project time ended.
+The historical restart order was not a prose-polishing task list. Its ordered
+blocking tasks were:
 \begin{description}
   \item[First: supported input contract.]
     Use Definition~\ref{def:flow-graph-exact-accepted-output-contract} as the
@@ -139,10 +144,11 @@ prose.  The current ordered blocking tasks are:
     Decide which search procedure is thesis-facing.  Direct exact enumeration
     is the simplest proof target once resolver semantics are explicit.  Cached
     and cutoff search need checkable equivalence or lower-bound certificates.
-  \item[Fifth: f64 boundary.]
-    For the immediate FG chapter restart, treat f64 accepted-output semantics
-    as outside the exact theorem route unless a minimal exact-agreement
-    contract is written first.
+  \item[Fifth: numerical boundary (historical).]
+    Any numerical frontend would need a sound predicate contract or exact
+    resolution of every output-relevant predicate before its accepted output
+    could enter the exact theorem route. The retired binary64 prototype did not
+    meet that condition and is not a current route.
 \end{description}
 \end{remark}
 
@@ -156,8 +162,8 @@ exact acceptance boundary.  It is still a scaffold: it records the rejection
 cases and certification obligations, but it does not prove that the Rust exact
 wrapper satisfies them on a broad input class.  The remaining work is to turn
 the exact input hypotheses, finite search domain~$D_K$, zero-transition
-rejection, singular fixed-set rejection, cutoff certificates, and f64 fallback
-boundary into checked lemmas or explicit thesis assumptions.  The current
+rejection, singular fixed-set rejection, and cutoff certificates into checked
+lemmas or explicit thesis assumptions.  The current
 verification packet contains a structural hypercube replay for positive-action
 singular rejection, but that is a regression falsifier for the code boundary,
 not a proof that generic generated polytopes exercise the singular stratum.
@@ -206,7 +212,7 @@ and leaving through $F_j\cap F_k$, subject to the stated action cutoff.
 \textbf{Why it matters.}  This is the base case for resolver soundness in
 Definition~\ref{def:flow-graph-capacity-search-axioms}.
 
-\textbf{Targeted falsifiers.}  Crate-local exact and f64 tests check or should check
+\textbf{Targeted falsifiers.}  Crate-local exact tests check or should check
 that primitive maps send start polygons into end polygons, preserve redundant
 forward/backward maps, and agree with direct segment action computations on
 deterministic supported cases.  The current exact private test for this claim is
@@ -402,26 +408,26 @@ compare against full exact FG resolution, not against QP word conventions.
 \end{unverified}
 
 \begin{unverified}
-\begin{remark}[Claim FG-PR-6: f64 accepted output semantics]%
+\begin{remark}[Historical numerical-contract requirement]%
 \label{rem:fg-pr-f64-accepted-output}
-\textbf{Status:} implementation-contract.
+\textbf{Status:} historical boundary, not a current implementation claim.
 
-\textbf{Claim.}  The f64 route may return a theorem-strength accepted capacity
-only when every f64 result that can affect the returned action, retained-word
-set, rejection decision, or lower-bound certificate is known to agree with the
-corresponding exact semantic resolver outcome.  Exact agreement may be obtained
-by exact closed-word arithmetic, exact fallback for output-relevant
-indeterminacies, or a reviewed proof that the f64 predicate cannot affect the
-accepted output.  Otherwise the implementation must reject or report a
-diagnostic outcome rather than return a theorem-strength capacity value.
+\textbf{Claim.}  Any floating-point route may return a theorem-strength accepted
+capacity only when every numerical result that can affect the returned action,
+retained-word set, rejection decision, or lower-bound certificate is known to
+agree with the corresponding exact semantic resolver outcome. Exact agreement
+may be obtained by exact resolution of output-relevant indeterminacies or by a
+reviewed proof that the numerical predicate cannot affect the accepted output.
+Otherwise the implementation must reject or report a diagnostic outcome rather
+than return a theorem-strength capacity value. The earlier binary64 prototype
+did not establish this contract and was retired.
 
 \textbf{Why it matters.}  This is the boundary between the exact mathematical
 theorem and numerical implementation evidence.
 
-\textbf{Targeted falsifiers.}  The current f64 failure taxonomy remains local
-to \texttt{dev-flow-graph}.  It should move to \texttt{numerics} only when the
-question becomes reusable f64/exact methodology rather than FG-specific proof
-risk.
+\textbf{Role.} This general requirement remains useful for reviewing numerical
+implementations, but it is not current FG evidence and does not create a
+future-work commitment.
 \end{remark}
 \end{unverified}
 
@@ -444,8 +450,8 @@ Use three homes for falsifiers.
     public-output JSONL rows keyed by \texttt{claim\_id}.  These rows compare
     exact search outputs against exact resolver and certified HK2017/QP outputs;
     they do not inspect private tube internals.
-  \item \texttt{experiments/dev-flow-graph/} owns f64 failure taxonomy,
-    discovery, and visualization while those questions still move with the FG
+  \item \texttt{experiments/dev-flow-graph/} owns exact representation spikes
+    and active explanatory visualization while those questions move with the FG
     algorithm design.
 \end{enumerate}
 \end{remark}
@@ -479,8 +485,9 @@ The current falsifiers do not cover all proof-risk claims equally.
     exact search without cutoffs.  Cutoff counters only show that cutoff
     intersections occurred; they are not lower-bound certificates.
   \item[FG-PR-6.]
-    Evidence home: \texttt{experiments/dev-flow-graph}.  No durable
-    \texttt{experiments/verification} row by design in this milestone.
+    Historical note: the retired binary64 failure taxonomy had no current
+    evidence home. The active exact verification rows are recorded under
+    FG-PR-3--FG-PR-5.
   \item[FG-PR-7.]
     Evidence home: CH2021 comparison notes and source anchors.  This is a
     navigation guardrail, not an algorithm falsifier.

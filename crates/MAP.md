@@ -62,10 +62,11 @@ homes, and thesis-support evidence routing.
 | `exact` | exact-validation support layer | exact polytope/orbit/derivative helpers used by theorem-facing validation paths |
 | `constants` | shared numeric tolerance layer | cross-module tolerances; check users before changing values |
 
-`algorithms::flow_graph` is a development work surface for the flow-graph
-capacity algorithm. Start at
-`crates/symplectic/src/algorithms/flow_graph/README.md`; current f64 routines
-are development evidence, not exact `c_EHZ` certificates.
+`algorithms::flow_graph` is the exact-rational development and implementation
+surface for the flow-graph capacity algorithm. Start at
+`crates/symplectic/src/algorithms/flow_graph/README.md`; exact F5/F6/F7 checks
+are implementation evidence, not a proof of the idealized theorem or CH2021's
+scope.
 
 ## Algebraic-Numbers Subsystems
 

@@ -10,11 +10,9 @@ and proof-risk verification surfaces live in the crate and
 `experiments/verification/flow-graph-proof-risk/`.
 
 The boundary is not "mentions numerics" versus "does not mention numerics".
-Keep numerical analysis here when it should move with changing flow-graph
-algorithm design, representation choices, supported cases, or failure
-diagnostics. Move or copy it into `experiments/dev-quadratic-program/numerics-audit/` when the important
-thing is reusable f64/exact methodology that should improve together across
-algorithms.
+Keep exact computational analysis here when it should move with changing
+flow-graph algorithm design, representation choices, or supported cases. QP
+numerical methodology has its separate QP owner.
 
 The algorithm contract and result-control surface live in
 `crates/symplectic/src/algorithms/flow_graph/README.md`.
@@ -42,7 +40,9 @@ The algorithm contract and result-control surface live in
   - Emits one JSON object for a generated polytope and one closed tube word.
   - Defaults to the retained thesis example:
     `facet_count=6`, `master_seed=20260605`, `attempt=3`, `sigma=1,2,4,5,3`.
-  - `visualize-tube/render.py` renders that JSON with matplotlib.
+  - `visualize-tube/render.py` renders that JSON with matplotlib. The
+    thesis-facing provenance contract is exact rational tube geometry, with
+    conversion to finite floats only at the JSON/plotting boundary.
   - Two-face panels use ordered local frames, so `F_i cap F_j` and
     `F_j cap F_i` are separate panels when both are needed.
   - `render.py --layout sequence` shows tube-focused crops of the facet-pair
@@ -74,9 +74,22 @@ uv run --script experiments/dev-flow-graph/visualize-tube/render.py \
   --output experiments/dev-flow-graph/visualize-tube/flow-graph-f6-projection.pdf
 ```
 
-These are explanatory assets.  The local-section axes use unrelated affine
-coordinates, while the global view distorts geometry through radial and
-stereographic projection.  Neither figure is proof or numerical validation.
+These are active explanatory assets with reproducible producers; they are not
+orphaned or frozen prototype artifacts. The local-section axes use unrelated
+affine coordinates, while the global view distorts geometry through radial and
+stereographic projection. Neither figure is proof or numerical validation.
+
+### Figure provenance integration boundary
+
+The thesis figure is regenerated from exact rational tube geometry. Rationals
+are converted to finite floating-point values only when the producer writes
+JSON or the renderer constructs plot coordinates. This paragraph records the
+expected contract of the visualization producer being integrated separately;
+the producer source on this documentation branch still imports the retired FG
+f64 API and is therefore not a passing command here. That source is outside
+this child’s ownership. If the separate producer change does not satisfy the
+contract, this paragraph and the thesis caption must follow the producer source
+before integration.
 
 The retired `flow-graph-discover-e2e` and
 `flow-graph-unresolved-diagnostic` binaries depended on the f64 flow-graph
@@ -85,23 +98,22 @@ capacity agreement and numerical rejection modes, and the second selected
 words specifically from f64 unresolved/error outcomes. Neither has a coherent
 exact-only replacement under the current public APIs.
 
-## f64 Retirement Classification
+## Binary64 Prototype Retirement
 
-This is the command/field inventory for the migration attempt. “Exact” means
-the active purpose is already exact or survives without f64 flow-graph
-semantics. “Too expensive” means an exact analogue exists but is not a bounded
-replacement for the old broad scan. “f64 failure” means the observation is
-defined by approximate-vs-exact disagreement or an f64 error path.
+The earlier binary64 flow-graph prototype lacked a sound
+true/false/indeterminate predicate contract and was retired when project time
+ended. The inventory below records what remains current and what was retired;
+it is not a replacement evidence plan for the prototype.
 
 | Command or output surface | Classification | Migration result |
 | --- | --- | --- |
 | `flow-graph-frontier`: transition edges, half-cache sizes, plus-depth counts, closed-cycle counts, split-missing counts, structural zero-ω predicate | Exact | Preserved in `frontier/main.rs`; the structural predicate now reads exact cache matrices directly. |
-| `flow-graph-frontier`: f64 tube live/empty/error counts, f64 candidate actions, polygon inequality and operation counters | Too expensive | Removed; an exact per-word tube/counter scan is not a bounded replacement for a combinatorial frontier command. |
-| `flow-graph-discover-e2e`: f64/FG/QP buckets, approximate capacities and relative errors, f64 breakpoints/violations, f64 closed-cycle errors, and debug tubes | f64 failure | Retired from Cargo and source; no exact-only command can preserve its question. |
-| `flow-graph-unresolved-diagnostic`: f64 unresolved/error selection and f64 step/error fields, with exact tube/QP follow-up and decimal diagnostics | f64 failure | Retired from Cargo and source; its input population disappears with the f64 resolver. |
+| `flow-graph-frontier`: binary64 tube live/empty/error counts, candidate actions, polygon inequalities, and operation counters | Retired prototype surface | Removed; an exact per-word tube/counter scan is not a bounded replacement for a combinatorial frontier command. |
+| `flow-graph-discover-e2e` | Retired prototype binary | Deleted from Cargo and source; its approximate capacity/rejection question is historical only. |
+| `flow-graph-unresolved-diagnostic` | Retired prototype binary | Deleted from Cargo and source; its input population was defined by the retired binary64 resolver. |
 | `flow-graph-endpoint-spike` and `flow-graph-closed-word-spike` | Exact | Already exact representation spikes; left unchanged outside this child’s ownership. |
-| `flow-graph-visualize-tube-data` | f64-specific visualization | Left unchanged for the visualization owner; its snapshot/render contract is an f64 geometric display, not a non-visual experiment consumer. |
-| `flow-graph-proof-risk` rows and exact FG search | Exact | Already consumes public exact FG/tube APIs. Its f64 random-generation/HK candidate plumbing is input/reference infrastructure, not an f64 FG result; no edit was needed here. |
+| `flow-graph-visualize-tube-data` | Active explanatory visualization | The active figure remains reproducible; its producer must use exact tube geometry and convert only at the JSON/rendering boundary. |
+| `flow-graph-proof-risk` rows and exact FG search | Exact | Consumes public exact FG/tube APIs. The retained verifier rows are implementation evidence, not proof of the idealized theorem or CH2021's scope. |
 
 ## Smoke Checks
 
@@ -128,8 +140,9 @@ uv run --script experiments/dev-flow-graph/visualize-tube/render.py --input /tmp
 - `endpoint-spike/`: exact endpoint-set representation spike.
 - `closed-word-spike/`: exact closed-word resolver spike for selected generated
   closed words.
-- `visualize-tube/`: Rust JSON producer plus Python matplotlib renderer for
-  tube-debugging and future thesis figures.
+- `visualize-tube/`: exact-rational tube JSON producer plus Python matplotlib
+  renderer for active explanatory thesis figures; finite floats enter only at
+  the JSON/rendering boundary.
 
 ## Current Analysis Notes
 
@@ -187,9 +200,6 @@ after the question has a stable evidence home.
 | `visualize-tube/` | tube geometry needs inspection to debug a word or explain a mismatch | a selected image/data packet supports thesis exposition | owning thesis/topic asset packet |
 ## Promotion Targets
 
-- Move or copy cleaned f64/exact numerical behavior audits to
-  `experiments/dev-quadratic-program/numerics-audit/` once the question is reusable numerical methodology
-  rather than flow-graph design triage.
 - Move or copy runtime, memory, counter, and profiling targets to
   `experiments/performance/` once the measured algorithm path is stable enough
   that counters or timings are the result.

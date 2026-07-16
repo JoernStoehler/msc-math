@@ -1067,7 +1067,7 @@ Theorem~\ref{thm:fg-real-capacity-correctness}.
 \label{rem:fg-real-missing-work}
 This section is the idealized real-number algorithm surface.  It does not
 prove that the Rust implementation accepts exactly this class, and it does
-not analyze f64 rounding.  It also does not cover the exact Rust singular
+not analyze floating-point rounding.  It also does not cover the exact Rust singular
 fixed-set classifier: the theorem above uses finite-orbit regularity to avoid
 the relevant singular fixed-point equations, while Rust can classify singular
 fixed sets and treat nonpositive-action singular fixed sets as no-orbit
@@ -1090,9 +1090,13 @@ Definition~\ref{def:fg-nondegenerate-facet-presentation}, were reviewed by
 Jörn on 2026-07-01.  The all-pair condition is deliberately stronger than
 necessary, but acceptable for the thesis genericity statement.
 
-Arbitrary bounded-irredundant input validation, broader Rust correspondence,
-and f64 analysis are separate implementation and numerical-analysis
-obligations.
+Arbitrary bounded-irredundant input validation and broader Rust correspondence
+remain separate implementation obligations. The earlier binary64 FG prototype
+did not establish a sound true/false/indeterminate predicate contract and was
+retired; it is not a current implementation route. In general, a numerical
+frontend would need sound predicates or exact resolution of every
+output-relevant predicate before its output could enter this exact theorem
+boundary.
 
 The Rust exact search now mirrors the short-word branch of
 Algorithm~\ref{alg:fg-real-exhaustive-search}: it validates linear

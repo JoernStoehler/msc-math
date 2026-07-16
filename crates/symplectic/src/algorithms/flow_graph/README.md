@@ -23,10 +23,10 @@ proof text can overrule it. When they do, update this file or mark the mismatch.
   predicates stated below. Full algebraic FG capacity search and algebraic
   FG-vs-QP agreement are intentionally out of scope for the thesis-bearing
   implementation claim.
-- The f64 path is the approximate path for larger flow-graph searches. It is
-  not an exact certificate by itself. A future certified f64 claim would need
-  sound predicate contracts, for example true/false/indeterminate predicates
-  where true and false imply the exact predicate result.
+- The earlier binary64 FG prototype was retired when project time ended. It
+  lacked a sound true/false/indeterminate predicate contract, so it did not
+  establish a supported numerical capacity output. No FG f64 API or capacity
+  claim is current.
 - `exact_tube.rs` contains exact rational closed-word/tube resolution for one
   selected word. `exact_search.rs` contains exact exhaustive search. The exact
   search has an explicit action-cutoff policy: disabled for baseline checks,
@@ -68,8 +68,8 @@ Exact implementation scope currently documented here:
 - exact exhaustive search and retained-word semantics for that input class;
 - scalar capacity comparison against certified HK2017/QP as implementation
   evidence, not as a word-level oracle;
-- typed rejection or caveat language for unsupported inputs and unresolved
-  numerical cases.
+- typed rejection or caveat language for unsupported inputs and exact no-orbit
+  outcomes.
 
 Formal-theorem alignment is a separate layer from this runtime contract. The
 active idealized theorem in `formal/flow-graph-real-algorithm.tex` uses global
@@ -94,8 +94,7 @@ Explicit non-goals unless thesis review asks for them:
   the middle facet gives a unique affine map from the entry two-face to the
   exit two-face;
 - implementing CH2021 rotation pruning;
-- treating f64 output as an exact certificate without exact fallback or a
-  proved sound-predicate/error-bound contract;
+- treating the retired binary64 prototype as a current capacity route;
 - proving every dependency inside code or experiment documentation instead of
   putting mathematical proof in formal/thesis text.
 
@@ -114,16 +113,15 @@ Target input:
 - nonnegative exact action threshold;
 - no singular fixed set with a positive-action closed candidate during exact
   closed-word resolution;
-- a numerical rejection policy for nearly zero `omega_0` on geometric
-  transitions in the f64 path.
+- exact rejection or no-orbit semantics for the unsupported cases listed below.
 
 Target output shape:
 
 - the reported flow-graph action;
 - retained cyclic facet words with action at most `reported action + threshold`;
 - the action for each retained word;
-- explicit rejection or undecided status when the input or numerical path is
-  outside the supported case.
+- explicit rejection or no-orbit status when the exact input is outside the
+  supported case.
 
 Core objects:
 
@@ -184,11 +182,9 @@ Path-specific outcome contract:
   fixed sets as no-orbit outcomes, and rejects singular fixed sets with
   positive-action closed candidates as unsupported.
 - The singular fixed-set classifier entered with the initial flow-graph work
-  surface and serves two recorded purposes: singular fixed sets with
-  positive-action closed candidates are explicit non-success outcomes, and the
-  f64 wrapper and unresolved-diagnostic experiment use exact closed-word
-  resolution to classify near-singular f64 closed-word errors. This is not, by
-  itself, proof coverage for a theorem-level exact capacity claim.
+  surface and serves a recorded exact purpose: singular fixed sets with
+  positive-action closed candidates are explicit non-success outcomes. This
+  is not, by itself, proof coverage for a theorem-level exact capacity claim.
 - Current theorem/runtime boundary direction: do not reject all singular fixed
   maps. Deterministic generated polytopes routinely contain length-three
   zero-time singular fixed lines. Exact search accepts that proved structural
@@ -196,34 +192,12 @@ Path-specific outcome contract:
   no-orbit. It rejects positive-action singular fixed sets and any remaining
   intersecting singular no-orbit status until a broader nonpositive-singular
   lemma is proved.
-- f64 accepted output has approximate actions and may include words accepted by
-  f64 predicates directly. It is not covered by the exact strict segment-time
-  contract unless the specific word is also resolved by exact closed-tube
-  arithmetic, or a later numerical-analysis task proves the relevant f64
-  predicates sound against the exact predicates.
-- `capacity_f64` is the current f64 wrapper used by tests and experiments. It
-  computes a diagnostic f64 closed-word search and resolves every f64
-  closed-word error with exact flow-graph closed-word arithmetic. Direct f64
-  positive words remain f64 outputs; the exact resolution boundary applies only
-  to f64 error words that are reclassified exactly. The wrapper returns a value
-  only if exact resolution resolves all such error words without an exact
-  construction error or unsupported singular fixed set with a positive-action
-  closed candidate, and at least one positive orbit remains. Its returned
-  action is the minimum of direct f64 positive words and exact-resolution
-  positive words.
-- `capacity_f64` requires its f64 and exact arguments to be the two arithmetic
-  representations of the same ordered facet presentation. It checks the
-  ordered converted coordinates and equality of the caller-supplied incidence
-  and sign matrices before combining results.
 - `capacity_exact` is the current exact rational search wrapper used by tests
   and experiments.
-- `diagnose_f64_closed_words` is the development/experiment function.
-  It may return a candidate action together with per-word errors. Its output is
-  not accepted capacity output.
-- f64 does not decide `omega_0 = 0`. It rejects when a nonempty directed
-  facet-pair candidate has `omega_0` too close to `0` for the f64 policy.
-- f64 also rejects near-singular fixed-point problems unless earlier cheap
-  checks make the word irrelevant.
+- Any sound floating-point frontend would need true/false/indeterminate
+  predicates whose definite outcomes imply the corresponding exact predicate,
+  or exact resolution of every predicate that can affect output. This is a
+  general numerical contract, not a current FG implementation claim.
 - Counts and timing are not API output. Use `tracing`, profiling, benchmarks,
   or experiment-local output for them.
 
@@ -246,18 +220,17 @@ Status labels:
 | --- | --- | --- | --- |
 | Minimum-action generalized Reeb orbits may be chosen simple. | active thesis theorem `thm:generalized-reeb-simple-minimizer`, sourced to HK2017 Theorem 1.5 / `simple_loop_theorem` | reduces the capacity search to simple Reeb orbits | cite `thm:generalized-reeb-simple-minimizer` in FG thesis prose |
 | A simple minimizer visits each facet direction at most once. | active thesis theorem `thm:generalized-reeb-simple-minimizer`, sourced to HK2017 Theorem 1.5 / `simple_loop_theorem` | justifies searching facet words without repeated facet directions | prove only the FG correspondence between simple Reeb orbits and searched FG words |
-| The Rust exact/f64 input class rejects zero `omega_0` on every nonempty distinct facet-pair candidate. | source-backed by `exact_search.rs::validate_no_geometric_zero_omega_transition`, `f64_tube_search.rs::FlatTubeInput::validate_no_geometric_zero_omega_transitions`, and formalized in `formal/flow-graph-real-algorithm.tex`, `def:fg-nondegenerate-facet-presentation`; this condition implies the local physical-transition nonzero condition used by `lem:fg-local-transition-regularity-positive-sign` | implementation/theorem alignment for the supported path; this may reject more polytopes than the minimal local trajectory condition in `tube-algorithm-legacy-source-note.md` | keep this stronger condition in thesis implementation-scope wording unless validators are deliberately weakened |
-| Empty tube implies every containing tube is empty. | active proof-development label `lem:fg-empty-subtube-pruning`; code path `exact_tube.rs::build_tube` returns empty when a recursive subtube is empty | pruning and cache interpretation | keep this tied to closed search-domain emptiness, not to f64 predicate certainty |
+| The Rust exact input class rejects zero `omega_0` on every nonempty distinct facet-pair candidate. | source-backed by `exact_search.rs::validate_no_geometric_zero_omega_transition` and formalized in `formal/flow-graph-real-algorithm.tex`, `def:fg-nondegenerate-facet-presentation`; this condition implies the local physical-transition nonzero condition used by `lem:fg-local-transition-regularity-positive-sign` | implementation/theorem alignment for the supported path; this may reject more polytopes than the minimal local trajectory condition in `tube-algorithm-legacy-source-note.md` | keep this stronger condition in thesis implementation-scope wording unless the validator is deliberately weakened |
+| Empty tube implies every containing tube is empty. | active proof-development label `lem:fg-empty-subtube-pruning`; code path `exact_tube.rs::build_tube` returns empty when a recursive subtube is empty | pruning and cache interpretation | keep this tied to closed search-domain emptiness |
 | Empty unclosed subtube makes the closed tube empty. | active proof-development label `lem:fg-empty-subtube-pruning`; code path `exact_tube.rs::intersect_tubes` returns empty when the pulled-back gluing domain is empty | closed-word pruning | keep this tied to the gluing-domain formula from `lem:fg-tube-gluing` |
 | Action equals elapsed flow time for the stored Reeb segments. | active proof-development label `lem:fg-action-normalization` | action computation | cite only after the contact-normalization convention is fixed in the surrounding text |
 | Restricting a valid tube by a smaller action cutoff is an affine halfspace restriction that preserves exactly the below-cutoff fixed points; dynamic best-action cutoffs preserve the retained output. | active proof-development labels `lem:fg-action-cutoff-preserves-below-cutoff-fixed-points` and `lem:fg-dynamic-action-cutoffs-preserve-retained-output`; Rust checked against `exact_search.rs` cutoff construction, `exact_tube.rs::restrict_tube_to_action_cutoff`, final retained-output filtering, and cutoff-vs-disabled tests | exact action-cutoff pruning | keep this scoped to exact arithmetic; it does not cover f64 cutoffs or the separate singular-classifier theorem boundary |
 | Rejection for empty facet intersection is sound. | source-backed | transition matrix | keep tests around transition construction |
 | Transition pruning by nonempty facet pair and nonnegative `omega_0` is a necessary condition for physical transitions. | source-backed by `formal/search-pruning-correctness.tex`, `lem:transition-feasibility`; explicitly included in `formal/flow-graph-real-algorithm.tex`, `alg:fg-real-exhaustive-search`; sufficiency needs the blocker-slack condition, and `cor:ridge-sufficiency` gives a ridge/two-face sufficient case | Rust transition matrix may enumerate extra words; exact tube resolution must decide emptiness/fixed points | do not call the transition matrix an exact physical-transition oracle unless the needed ridge/blocker condition is stated |
 | Rejection for forbidden `omega_0` direction is sound. | source-backed for code path; active proof-development labels `def:fg-transition-sign`, `lem:fg-local-transition-regularity-positive-sign`, and `prop:fg-real-search-correctness` | transition matrix and primitive-tube construction | keep sign convention checks tied to `formal/search-pruning-correctness.tex` and `formal/flow-graph-real-algorithm.tex` before theorem-strength thesis use |
-| f64 rejection near small geometric `omega_0` is a numerical policy, not a theorem. | source-backed | input validation | test rejection behavior |
-| Singular closed-tube fixed-point cases are not silently capacity values. | source-backed by `exact_tube.rs::solve_singular_fixed_tube` and `singular_fixed_polygon_result`; active proof-development label `lem:fg-nonpositive-fixed-set-no-strict-orbit` covers the nonpositive-action no-orbit side; f64 near-singular maps remain a numerical policy | exact closed-word resolution | review the positive-action singular rejection/correspondence before theorem-strength thesis use; do not equate the classifier with finite-orbit regularity |
+| Singular closed-tube fixed-point cases are not silently capacity values. | source-backed by `exact_tube.rs::solve_singular_fixed_tube` and `singular_fixed_polygon_result`; active proof-development label `lem:fg-nonpositive-fixed-set-no-strict-orbit` covers the nonpositive-action no-orbit side | exact closed-word resolution | review the positive-action singular rejection/correspondence before theorem-strength thesis use; do not equate the classifier with finite-orbit regularity |
 | The idealized theorem skips all simple words of length at most four under the linear-independence hypothesis. | active proof-development label `lem:fg-short-words-no-positive-orbit`; `exact_search.rs` validates linear independence up to size four and skips short words as no-orbit outcomes; `exact_tube.rs` keeps `length_three_zero_time` as a direct resolver diagnostic | formal/Rust correspondence for the generic theorem route | keep both tests: search-boundary short-word skip and direct length-three zero-time resolver diagnostic |
-| CH2021 rotation pruning is optional future work. | source-backed from legacy note | not in first implementation path | add only behind a flag after formula review |
+| CH2021 rotation pruning is outside the supported implementation path. | source-backed from legacy note | not used by the current exact route | do not attribute it to the exact implementation |
 
 ## Proposition Ledger
 
@@ -275,8 +248,7 @@ Status labels:
 | P1 | On selected generated exact-admissible polytopes, exact exhaustive flow-graph search returns the same scalar capacity as certified QP. | exact implementation evidence plus QP comparison evidence | implementation evidence for F5/F6 default tests and ignored F7 checks | broaden only if thesis asks for stronger empirical coverage |
 | P2 | On selected generated exact-admissible polytopes and chosen action thresholds, exact exhaustive flow-graph search returns the cyclic flow-graph words with action `<= capacity + threshold` that pass exact closed-tube resolution and the strict segment-time filter. | exact implementation evidence | implementation evidence from exact retained-word checks against full flow-graph resolution | keep retained-word checks flow-graph-internal unless an overlap convention with QP is defined |
 | P3 | On the overlap where both conventions apply, exact flow-graph retained words and certified QP gap-window orbits agree. | cross-algorithm sanity check | future | compare only after defining the overlap convention |
-| P4 | Expected-rejected polytopes are rejected for the expected concrete reason. | exact/f64 implementation evidence | implementation evidence for invalid input shapes, exact zero-`omega_0`, f64 near-zero `omega_0`, and selected unsupported cases | maintain separate buckets for future rejection cases |
-| P5 | f64 accepted output agrees with exact or QP after ordinary indeterminate predicates that could affect output are resolved exactly. | f64 implementation evidence plus exact/QP comparison evidence | future | define ordinary predicate fallback scope before adding broad f64 e2e tests |
+| P4 | Expected-rejected polytopes are rejected for the expected concrete reason. | exact implementation evidence | implementation evidence for invalid input shapes, exact zero-`omega_0`, and selected unsupported cases | keep rejection reasons typed and separate |
 
 ## First Exact E2E Suite
 
@@ -285,7 +257,7 @@ Purpose:
 - support P1 and P2;
 - test exact exhaustive search on selected deterministic exact-admissible
   polytopes;
-- avoid f64 behavior and rejection behavior in this suite.
+- keep numerical frontend behavior outside this exact suite.
 
 For each polytope and action threshold:
 
@@ -316,9 +288,6 @@ Separate rejection suite:
 
 Out of scope for this exact e2e suite:
 
-- f64 near-zero `omega_0` rejection;
-- f64 near-singular fixed-point rejection;
-- f64 exact resolution behavior;
 - visualization;
 - profiling;
 - QP retained-word equality outside the convention overlap.
@@ -329,18 +298,14 @@ Code map:
 
 - `mod.rs` owns the public module surface and re-exports;
 - `words.rs` owns combinatorial word enumeration and half-cache helpers;
-- `f64_tube_search.rs` owns f64 input validation, tube geometry, f64 search,
-  exact fallback wrapper, and visualization snapshots;
 - `exact_tube.rs` owns exact rational closed-word/tube resolution for one word;
 - `exact_search.rs` owns exact exhaustive word search, action cutoffs, retained
   orbit aggregation, and exact capacity output.
 
 Current evidence:
 
-- f64 tests live in `tests.rs` and `tests_e2e_prediction.rs` as children of
-  `f64_tube_search.rs`, so they can inspect f64 implementation details without
-  making those fields public.
-- `experiments/dev-flow-graph/frontier` measures word-frontier and f64 tube counts.
+- `experiments/dev-flow-graph/frontier` measures exact-compatible word-frontier
+  counts.
 - `experiments/dev-flow-graph/endpoint-spike` is an exact endpoint-set spike, not a
   supported exact implementation.
 - `exact_tube.rs` has exact rational tests for polygon intersection and selected
@@ -364,33 +329,10 @@ Current evidence:
 - Exact exhaustive search rejects invalid matrix shapes and inputs with a
   nonempty facet-pair zero-omega candidate before enumeration. Full
   bounded-irredundant validation is still a remaining implementation task.
-- `tests_e2e_prediction.rs` now checks deterministic generated polytopes where
-  diagnostic f64 search has closed-word errors: the diagnostic f64 best word
-  exact-resolves to the QP capacity, and every f64 error word exact-resolves to
-  no lower positive action. It also asserts the exact-resolution composition of
-  those diagnostic f64 error words.
-  The current F5/F7 smoke cases have no exact positive diagnostic f64 error word
-  below QP capacity; the F7 case has one exact positive diagnostic f64 error word
-  above capacity. The first two F10 cases also have no exact positive diagnostic
-  f64 error word below QP capacity. This prediction bucket now includes F10
-  polytopes. `capacity_f64` matches QP on the F5/F7 smoke cases and on the first
-  two F10 deliberate cases.
-  The default release flow-graph suite passed on 2026-06-06 in 53.92 seconds.
-- f64 near-singular fixed-point solving now keeps the existing inconsistent
-  linear-system skip and additionally skips the word when
-  `start_polygon cap end_polygon` is definitely empty. On the first two F10
-  discovery attempts this did not reduce the closed-word error count; the
-  remaining F10 errors are still near-singular fixed-point maps and
-  numerically indeterminate polygons.
-- The deliberate Rust `#[ignore]` verification suite contains exact F7 checks,
-  F10 exact closed-word resolution checks, and F10 capacity_f64
-  FG == QP checks. It passed on 2026-06-06 in 141.98 seconds.
-- `experiments/dev-flow-graph/unresolved-diagnostic` emits both per-word records
-  and an aggregate diagnostic f64 error-word summary. The summary separates f64
-  near-singular fixed-point errors, f64 polygon-indeterminate errors, exact
-  empty tubes, exact zero-action no-orbits, exact positive orbits, exact
-  unsupported singular outcomes, and exact positives below or at/above the QP
-  capacity.
+- The deliberate Rust `#[ignore]` verification suite contains exact F7 checks
+  and F10 exact closed-word resolution checks. It passed on 2026-06-06 in
+  141.98 seconds. These are implementation checks, not proof of the idealized
+  theorem or CH2021's scope.
 - On 2026-06-21, exact rejection tests were added for the Lagrangian triangle
   product and Lagrangian triangle-square zero-`omega_0` fixtures.
   `cargo test -p symplectic --release --lib flow_graph` passed with 40 tests
@@ -404,22 +346,18 @@ Current analysis inventory:
 | --- | --- | --- | --- |
 | Exact closed-word/tube arithmetic | polygon intersection tests, selected positive/zero/empty-tube word cases, exact action/fixed-point behavior | `exact_tube.rs` tests | crate regression tests; only promote artifact-backed slower suites to `experiments/verification/` |
 | Exact exhaustive search | exact rejection tests, P1/P2 accepted-polytopes checks, action-cutoff comparison against disabled policy | `exact_search.rs` tests and proposition-style tests in `exact_tube.rs` | crate tests while cheap; `experiments/verification/` for slower fixed suites |
-| f64 tube search and exact resolution | primitive/intersection/fixed-point unit checks, generated f64-error cases exact-resolved against QP scalar capacity | `tests.rs`, `tests_e2e_prediction.rs`, `f64_tube_search.rs` | `experiments/dev-quadratic-program/numerics-audit/` only when the question becomes reusable f64/exact methodology |
-| Word frontier and f64 tube counts | transition-pruned frontier sizes, f64 tube live/empty/unsupported counts, polygon-operation counters | `experiments/dev-flow-graph/frontier` | `experiments/performance/` once the measured algorithm path is stable |
+| Word frontier | transition-pruned frontier sizes and exact structural zero-omega support | `experiments/dev-flow-graph/frontier` | `experiments/performance/` once the measured algorithm path is stable |
 | Endpoint and closed-word spikes | exploratory exact endpoint-set and selected closed-word representation experiments | `experiments/dev-flow-graph/endpoint-spike`, `experiments/dev-flow-graph/closed-word-spike` | retire to git history or keep dev-local notes once the crate exact path supersedes them |
-| Case discovery | bucketed search for high-value FG examples and expected labels | `experiments/dev-flow-graph/discover-e2e` | crate tests for cheap reviewed rows; `experiments/verification/` for slower artifact-backed suites |
-| Unresolved f64 diagnostics | f64 failure taxonomy, exact tube resolution, exact one-sigma QP summaries, geometric recovery references | `experiments/dev-flow-graph/unresolved-diagnostic` | `experiments/dev-quadratic-program/numerics-audit/` for reusable f64/exact behavior; `experiments/verification/` for stable error-path evidence |
-| Tube visualization | JSON snapshots and rendered tube geometry for selected words | `experiments/dev-flow-graph/visualize-tube` | thesis/topic asset packet only for selected exposition figures |
+| Tube visualization | reproducible JSON snapshots and rendered exact-tube geometry for selected words | `experiments/dev-flow-graph/visualize-tube` | active thesis/topic asset packet for selected exposition figures |
 
 Role of HK2017/QP comparison:
 
 - HK2017/QP is not used inside the flow-graph algorithm.
 - For a specific flow-graph word, HK2017/QP is not used to decide whether the
   tube is empty, whether the closed tube has a fixed point, whether the action
-  is positive, whether the word can be pruned, or whether an f64-indeterminate
-  word is resolved.
-- Those word-level decisions belong to flow-graph-specific f64 tube arithmetic,
-  exact tube arithmetic, and flow-graph pruning/stopping lemmas.
+  is positive, or whether the word can be pruned.
+- Those word-level decisions belong to exact tube arithmetic and flow-graph
+  pruning/stopping lemmas.
 - HK2017/QP is used in the verification layer: compare the final scalar
   capacity returned by flow-graph with the final scalar capacity returned by
   HK2017/QP on the same exact-admissible polytope.
@@ -432,29 +370,26 @@ Role of HK2017/QP comparison:
   implementation check, but not a proof of the flow-graph theorem, stopping
   rule, or exact tube arithmetic.
 
-Evidence limits for future thesis wording:
+Evidence limits for thesis wording:
 
 - the exact path is implementation evidence for the stated input class, not a
   standalone proof of the CH2021 capacity theorem, stopping rule, or tube
   arithmetic;
 - arbitrary raw bounded-irredundant input is not fully validated by the
   flow-graph exact path;
-- f64 search output and `capacity_f64` are not exact certificates under the
-  current contract; only individual f64 error words that pass the exact
-  closed-word resolution boundary receive exact closed-word status. A different
-  certified-f64 claim would require explicit sound predicate/error-bound
-  analysis;
-- performance, rotation pruning, and broader F7/F8 action-cutoff profiling are
-  future work unless a later task needs stronger claims.
+- exact F5/F6/F7 agreement and retained-word checks are implementation evidence
+  for selected rational inputs, not a standalone proof of the idealized
+  algorithm or the CH2021 capacity scope;
+- performance, rotation pruning, and broader action-cutoff profiling are not
+  part of the current thesis claim.
 
 ## Decisions
 
 - Use the name `flow_graph` for code and package paths.
 - Keep "tube" as a mathematical object name only when useful.
 - Keep CH2021 rotation pruning out of the first supported implementation path.
-- Keep exact and f64 paths conceptually separate. Do not imply that the f64 path
-  proves exact capacity values by itself unless the relevant f64 predicates or
-  error bounds have been proved sound.
+- Keep the supported control algorithm exact rational. The retired binary64
+  prototype is historical and does not supply current FG evidence.
 - Keep experiments in `experiments/dev-flow-graph/`, not under
   `experiments/combinatorial-cells/`.
 
@@ -469,12 +404,10 @@ Evidence limits for future thesis wording:
   from the contract above.
 - Claims imported only from chat are not durable until recorded here or in a
   proof/source file with status.
-- As of 2026-06-05,
-  `cargo test -p symplectic --release --lib flow_graph` passes after replacing
-  the old random agreement test with an e2e prediction smoke suite. The suite
-  currently has rejection cases, deterministic generated near-equality polytopes
-  with f64 closed-cycle errors, exact closed-word resolution for those f64 error
-  words, and a deterministic generated mismatch polytope.
+- Historical checkpoint (2026-06-05, before binary64 retirement):
+  `cargo test -p symplectic --release --lib flow_graph` passed with the then
+  current prototype and its prediction suite. The checkpoint is retained as
+  history only; it is not current FG evidence or a current API description.
 
 ## Source Ledger
 

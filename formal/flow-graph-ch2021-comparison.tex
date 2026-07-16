@@ -76,9 +76,8 @@ The differences that matter for proof reuse are:
     defined.  The paper
     uses these to test Viterbo-related questions and compute capacity through
     the CH2021 smooth-combinatorial route.  This project's flow-graph route
-    targets full EHZ capacity only after a supported exact theorem scope, or a
-    separate f64 exact-agreement acceptance scope, has been stated explicitly.
-    Its correctness theorem is organized by
+    targets full EHZ capacity only under the supported exact theorem scope
+    stated explicitly in this project. Its correctness theorem is organized by
     Definition~\ref{def:flow-graph-capacity-search-axioms}.
   \item[Capacity proof route.]
     CH2021's capacity corollary uses the smooth-to-combinatorial theorem,
@@ -112,9 +111,9 @@ The differences that matter for proof reuse are:
     search proofs.
   \item[Numerical implementation.]
     CH2021 mentions computer implementation optimizations, but the paper
-    statements are not this repository's exact/f64 API contract.  The Rust paths
-    distinguish exact accepted output, f64 diagnostics, exact fallback, typed
-    rejection, retained words, and profiling/evidence surfaces.
+    statements are not this repository's API contract. The current Rust path
+    distinguishes exact accepted output, typed rejection, retained words, and
+    profiling/evidence surfaces. The earlier binary64 prototype is retired.
 \end{description}
 CH2021's statement that symplectic polytopes are generic is distinct from the
 project's determinant-generic theorem.  In particular, density of the
@@ -148,8 +147,10 @@ The project must prove or explicitly assume the following locally:
     capacity-achieving word;
   \item cached construction and action-cutoff search preserve the lower-bound
     certificates required by Definition~\ref{def:flow-graph-capacity-search-axioms};
-  \item numerical accepted outputs agree with the exact semantic resolver, or
-    all output-relevant numerical predicates are resolved exactly.
+  \item any numerical frontend used for accepted output agrees with the exact
+    semantic resolver, or all output-relevant numerical predicates are resolved
+    exactly. This is a general soundness requirement, not a current FG
+    implementation claim.
 \end{enumerate}
 These are project obligations even when their geometric motivation came from
 CH2021.
