@@ -6,7 +6,7 @@
 """
 Goal: Render one flow-graph tube visualization JSON file.
 Input Artifacts: JSON from flow-graph-visualize-tube-data.
-Output Artifacts: PNG figure.
+Output Artifacts: PDF figure.
 """
 
 import argparse
@@ -44,6 +44,7 @@ def main() -> None:
     args = parse_args()
     with args.input.open() as file:
         data = json.load(file)
+    validate_coordinate_contract(data)
 
     if args.layout == "sequence":
         render_sequence(data, args.output)
@@ -96,6 +97,34 @@ def main() -> None:
     print(args.output)
 
 
+def validate_coordinate_contract(data):
+    """Reject packets whose local polygon fields do not name their charts."""
+    if "arithmetic" not in data or "coordinate_chart" not in data["arithmetic"]:
+        raise ValueError("visualization JSON is missing its coordinate-chart contract")
+    for face in data["all_two_faces"]:
+        validate_face_coordinate_fields(face)
+    tube = data.get("closed_tube")
+    if tube:
+        validate_face_coordinate_fields(tube["start_polygon"])
+        validate_face_coordinate_fields(tube["end_polygon"])
+        for panel in tube["intermediate_polygons"]:
+            validate_face_coordinate_fields(panel["polygon"])
+
+
+def validate_face_coordinate_fields(face):
+    required = (
+        "vertices_plot_f64",
+        "vertices_construction_exact",
+        "inequalities_construction_f64",
+        "inequalities_construction_exact",
+    )
+    missing = [field for field in required if field not in face]
+    if missing:
+        raise ValueError(f"face {face.get('pair')} missing coordinate-contract fields: {missing}")
+    if "vertices" in face or "inequalities" in face:
+        raise ValueError(f"face {face.get('pair')} uses ambiguous coordinate field names")
+
+
 def render_sequence(data, output):
     tube = data.get("closed_tube")
     if not tube:
@@ -129,12 +158,12 @@ def render_sequence(data, output):
             raise ValueError(f"missing ambient facet-pair section {pair}")
 
         draw_polygon_or_points(
-            ax, face["vertices"], FACE_COLOR, 0.35, FACE_COLOR, "full section"
+            ax, face["vertices_plot_f64"], FACE_COLOR, 0.35, FACE_COLOR, "full section"
         )
         color = TUBE_COLORS["intermediate"]
         draw_polygon_or_points(
             ax,
-            panel["polygon"]["vertices"],
+            panel["polygon"]["vertices_plot_f64"],
             color,
             0.55,
             color,
@@ -159,11 +188,11 @@ def render_sequence(data, output):
 
         inset = ax.inset_axes([0.72, 0.04, 0.26, 0.26])
         draw_polygon_or_points(
-            inset, face["vertices"], FACE_COLOR, 0.35, FACE_COLOR, "full section"
+            inset, face["vertices_plot_f64"], FACE_COLOR, 0.35, FACE_COLOR, "full section"
         )
         draw_polygon_or_points(
             inset,
-            panel["polygon"]["vertices"],
+            panel["polygon"]["vertices_plot_f64"],
             color,
             0.7,
             color,
@@ -375,13 +404,15 @@ def set_equal_3d_limits(ax, points):
 def draw_face_panel(ax, face, pair, tube_faces_by_pair, fixed_points_by_pair):
         pair = tuple(face["pair"])
         ax.set_title(f"frame F{pair[0]} ∩ F{pair[1]}", fontsize=FONT_SIZE_SMALL)
-        draw_polygon_or_points(ax, face["vertices"], FACE_COLOR, 0.25, FACE_COLOR, "2-face")
+        draw_polygon_or_points(
+            ax, face["vertices_plot_f64"], FACE_COLOR, 0.25, FACE_COLOR, "2-face"
+        )
 
         for tube_face in tube_faces_by_pair.get(pair, []):
             color = TUBE_COLORS.get(tube_face["role"], "#9467bd")
             draw_polygon_or_points(
                 ax,
-                tube_face["polygon"]["vertices"],
+                tube_face["polygon"]["vertices_plot_f64"],
                 color,
                 0.35,
                 color,
@@ -428,9 +459,9 @@ def order_polygon_vertices(points):
 
 def set_axis_limits(ax, face, tube_faces, fixed_points):
     points = []
-    points.extend(face["vertices"])
+    points.extend(face["vertices_plot_f64"])
     for tube_face in tube_faces:
-        points.extend(tube_face["polygon"]["vertices"])
+        points.extend(tube_face["polygon"]["vertices_plot_f64"])
     for fixed in fixed_points:
         if fixed.get("point") is not None:
             points.append(fixed["point"])
@@ -457,7 +488,7 @@ def set_axis_limits_to_tube(ax, tube_face, fixed_point):
 
 
 def tube_focus_points(tube_face, fixed_point):
-    points = list(tube_face["polygon"]["vertices"])
+    points = list(tube_face["polygon"]["vertices_plot_f64"])
     if fixed_point.get("point") is not None:
         points.append(fixed_point["point"])
     return points

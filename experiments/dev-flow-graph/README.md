@@ -42,7 +42,11 @@ The algorithm contract and result-control surface live in
     `facet_count=6`, `master_seed=20260605`, `attempt=3`, `sigma=1,2,4,5,3`.
   - `visualize-tube/render.py` renders that JSON with matplotlib. The
     thesis-facing provenance contract is exact rational tube geometry, with
-    conversion to finite floats only at the JSON/plotting boundary.
+    conversion to finite floats only at the JSON/plotting boundary. In each
+    local polygon object, `vertices_plot_f64` are Euclidean-orthonormal plotting
+    coordinates, while `vertices_construction_exact` and the explicitly named
+    `inequalities_construction_*` fields share the raw affine construction
+    chart; the renderer uses only the plotting fields.
   - Two-face panels use ordered local frames, so `F_i cap F_j` and
     `F_j cap F_i` are separate panels when both are needed.
   - `render.py --layout sequence` shows tube-focused crops of the facet-pair
@@ -75,9 +79,12 @@ uv run --script experiments/dev-flow-graph/visualize-tube/render.py \
 ```
 
 These are active explanatory assets with reproducible producers; they are not
-orphaned or frozen prototype artifacts. The local-section axes use unrelated
-affine coordinates, while the global view distorts geometry through radial and
-stereographic projection. Neither figure is proof or numerical validation.
+orphaned or frozen prototype artifacts. The local-section axes are independently
+chosen Euclidean-orthonormal plotting frames. The exact construction-chart
+vertices and inequalities are retained in the JSON for provenance and are not
+interchangeable with those plotting coordinates. The global view distorts
+geometry through radial and stereographic projection. Neither figure is proof
+or numerical validation.
 
 ### Figure provenance integration boundary
 
@@ -119,8 +126,8 @@ Use release mode for timing or count interpretation.
 ```bash
 cargo run -p exp-dev-flow-graph --release --bin flow-graph-frontier -- --max-facets 5 --output /tmp/flow-graph-frontier-smoke.jsonl
 cargo run -p exp-dev-flow-graph --release --bin flow-graph-endpoint-spike -- --max-facets 5 --max-rows 1 --output /tmp/flow-graph-endpoint-spike-smoke.jsonl
-cargo run -p exp-dev-flow-graph --release --bin flow-graph-visualize-tube-data -- --output /tmp/flow-graph-attempt31-visualization.json
-uv run --script experiments/dev-flow-graph/visualize-tube/render.py --input /tmp/flow-graph-attempt31-visualization.json --output /tmp/flow-graph-attempt31-visualization.png
+cargo run -p exp-dev-flow-graph --release --bin flow-graph-visualize-tube-data -- --attempt 3 --output /tmp/flow-graph-attempt3-visualization.json
+uv run --script experiments/dev-flow-graph/visualize-tube/render.py --input /tmp/flow-graph-attempt3-visualization.json --output /tmp/flow-graph-attempt3-visualization.pdf
 ```
 
 ## Artifact Policy

@@ -112,10 +112,6 @@ positive capacity word. The figure is regenerated from the exact rational tube
 geometry; rationals are converted to finite floats only at the JSON/rendering
 boundary. It is explanatory rather than proof evidence.
 
-The preceding sentence records the expected visualization-producer contract
-being integrated separately; if the producer source does not satisfy it, this
-provenance statement must be revised before integration.
-
 The owner artifacts and reproduction commands are in
 `experiments/dev-flow-graph/visualize-tube/` and
 `experiments/dev-flow-graph/README.md`. The active PDF is copied deliberately
@@ -123,12 +119,15 @@ to `thesis/figures/flow-graph/` so the thesis build is self-contained. The
 experiment also retains the projection asset for future redesign or diagnostic
 use, but the active thesis does not include it.
 
-- The sequence panel shows only the visited facet-pair charts. Its axes are
-  Euclidean-orthonormal in the corresponding affine two-plane, constructed by
-  Gram--Schmidt from the producer's coordinate split. Affine origins and
-  orientations are chosen independently for distinct sections. Intermediate
-  panels are autoscaled separately, while start and return use the same frame
-  and limits so the fixed-point coordinates are directly comparable.
+- The sequence panel shows only the visited facet-pair charts. Its plotted
+  vertices use Euclidean-orthonormal coordinates in the corresponding affine
+  two-plane, constructed by Gram--Schmidt from the producer's raw affine
+  coordinate split. The JSON names these `vertices_plot_f64`; the exact
+  vertices and inequalities are retained separately as `*_construction_*`
+  fields in the raw construction chart. Affine origins and orientations are
+  chosen independently for distinct sections. Intermediate panels are
+  autoscaled separately, while start and return use the same frame and limits
+  so the fixed-point coordinates are directly comparable.
 - The panel explains the construction. It does not support correctness,
   genericity, or implementation-validation claims.
 

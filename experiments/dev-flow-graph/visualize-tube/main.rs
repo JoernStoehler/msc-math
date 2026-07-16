@@ -3,7 +3,8 @@
 //! The selected input is the deterministic F6 attempt used by the thesis.
 //! The random fixture is converted losslessly to `BigRational` immediately;
 //! exact arithmetic owns all incidence, sign, tube, fixed-point, and orbit
-//! decisions.  `f64` appears only in the serialized plotting fields.
+//! decisions.  `f64` appears only at the JSON serialization and plotting
+//! boundary.
 
 use nalgebra::{DMatrix, Vector4};
 use num_rational::BigRational;
@@ -110,13 +111,13 @@ struct TwoFaceSnapshot {
 #[derive(Debug, Serialize)]
 struct FacePolygonSnapshot {
     pair: [usize; 2],
-    frame_base_exact: [String; 4],
-    frame_u_exact: [String; 4],
-    frame_v_exact: [String; 4],
-    vertices: Vec<[f64; 2]>,
-    vertices_exact: Vec<[String; 2]>,
-    inequalities: Vec<HalfspaceSnapshot>,
-    inequalities_exact: Vec<ExactHalfspaceSnapshotJson>,
+    construction_frame_base_exact: [String; 4],
+    construction_frame_u_exact: [String; 4],
+    construction_frame_v_exact: [String; 4],
+    vertices_plot_f64: Vec<[f64; 2]>,
+    vertices_construction_exact: Vec<[String; 2]>,
+    inequalities_construction_f64: Vec<HalfspaceSnapshot>,
+    inequalities_construction_exact: Vec<ExactHalfspaceSnapshotJson>,
 }
 
 #[derive(Debug, Serialize)]
@@ -266,8 +267,8 @@ fn main() -> Result<(), String> {
         arithmetic: ExactProvenance {
             decision_arithmetic: "BigRational throughout input geometry and tube decisions",
             input_source: "deterministic f64 sample converted losslessly to BigRational before exact decisions",
-            serialization_boundary: "f64 only in JSON plotting fields and Python radial/stereographic projection",
-            coordinate_chart: "plotted face vertices/fixed points use an orthonormalized f64 frame; exact_* fields retain the rational construction chart",
+            serialization_boundary: "f64 only at the JSON serialization and Python plotting boundary; exact_* fields retain rational provenance",
+            coordinate_chart: "vertices_plot_f64 and plotted points use an independent Euclidean-orthonormal f64 frame; vertices_construction_exact, inequalities_construction_f64, inequalities_construction_exact, and construction_frame_*_exact use the raw rational affine construction chart",
             exact_tube_metrics: metrics_snapshot(&exact_tube.metrics),
         },
         dual_vertices_f64: dual_vertices.iter().map(array4_to_f64).collect::<Result<_, _>>()?,
@@ -332,18 +333,19 @@ fn tube_snapshot(
 }
 
 fn face_snapshot(snapshot: &ExactFacePolygonSnapshot) -> Result<FacePolygonSnapshot, String> {
+    validate_construction_chart_contract(snapshot)?;
     Ok(FacePolygonSnapshot {
         pair: snapshot.pair,
-        frame_base_exact: array4_to_string(&snapshot.base),
-        frame_u_exact: array4_to_string(&snapshot.u),
-        frame_v_exact: array4_to_string(&snapshot.v),
-        vertices: snapshot
+        construction_frame_base_exact: array4_to_string(&snapshot.base),
+        construction_frame_u_exact: array4_to_string(&snapshot.u),
+        construction_frame_v_exact: array4_to_string(&snapshot.v),
+        vertices_plot_f64: snapshot
             .vertices
             .iter()
             .map(|point| project_exact_point(snapshot, point))
             .collect::<Result<_, _>>()?,
-        vertices_exact: snapshot.vertices.iter().map(array2_to_string).collect(),
-        inequalities: snapshot
+        vertices_construction_exact: snapshot.vertices.iter().map(array2_to_string).collect(),
+        inequalities_construction_f64: snapshot
             .inequalities
             .iter()
             .map(|halfspace| {
@@ -353,12 +355,27 @@ fn face_snapshot(snapshot: &ExactFacePolygonSnapshot) -> Result<FacePolygonSnaps
                 })
             })
             .collect::<Result<_, String>>()?,
-        inequalities_exact: snapshot
+        inequalities_construction_exact: snapshot
             .inequalities
             .iter()
             .map(halfspace_to_string)
             .collect(),
     })
+}
+
+fn validate_construction_chart_contract(snapshot: &ExactFacePolygonSnapshot) -> Result<(), String> {
+    for (vertex_index, vertex) in snapshot.vertices.iter().enumerate() {
+        for (halfspace_index, halfspace) in snapshot.inequalities.iter().enumerate() {
+            let lhs = &halfspace.normal[0] * &vertex[0] + &halfspace.normal[1] * &vertex[1];
+            if lhs > halfspace.rhs.clone() {
+                return Err(format!(
+                    "face {:?} construction-chart vertex {vertex_index} violates inequality {halfspace_index}: {lhs} > {}",
+                    snapshot.pair, halfspace.rhs
+                ));
+            }
+        }
+    }
+    Ok(())
 }
 
 fn halfspace_to_string(halfspace: &ExactHalfspaceSnapshot) -> ExactHalfspaceSnapshotJson {

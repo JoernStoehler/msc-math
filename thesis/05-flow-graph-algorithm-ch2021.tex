@@ -134,14 +134,19 @@ return-map fixed-point equation is visible as the return of the black cross to
 its initial local coordinates.
 The figure is regenerated from exact rational tube geometry; rationals are
 converted to finite floating-point values only at the JSON/rendering boundary.
+The JSON distinguishes the orthonormalized plotting coordinates from the raw
+affine construction-chart vertices and inequalities; those fields must not be
+read as coordinates in a common chart.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\linewidth]{figures/flow-graph/flow-graph-f6-tube-sequence.pdf}
-  \caption{The same word in successive local sections.  Each panel uses a
+  \caption{The same word in successive local sections.  Each panel plots in a
     Euclidean-orthonormal basis for the corresponding affine two-plane.  The
     affine origins and orientations are chosen independently for distinct
-    sections.  Main panels are tube-focused; each inset locates the colored
+    sections; the underlying exact vertices and inequalities remain in the raw
+    construction chart and are not plotted as if they used the orthonormal
+    coordinates.  Main panels are tube-focused; each inset locates the colored
     tube cross-section inside the full blue section.  The start and return
     panels share a frame and plot limits.  The arrows show the affine passages,
     and the black cross returns to its initial coordinates.}
