@@ -5,8 +5,6 @@
 
 pub mod exact_search;
 pub mod exact_tube;
-mod f64_tube_search;
 mod words;
 
-pub use f64_tube_search::*;
 pub use words::*;

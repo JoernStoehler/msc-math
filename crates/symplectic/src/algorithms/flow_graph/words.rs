@@ -188,3 +188,122 @@ pub fn split_closed_word_into_half_words(
 
     None
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::algorithms::hk2017::for_each_sigma_pruned_by_transition;
+    use nalgebra::DMatrix;
+
+    fn complete_transition_matrix(facet_count: usize) -> DMatrix<bool> {
+        DMatrix::from_fn(facet_count, facet_count, |i, j| i != j)
+    }
+
+    fn closed_raw_word(sigma: &[usize]) -> Vec<usize> {
+        let mut word = sigma.to_vec();
+        word.push(sigma[0]);
+        word.push(sigma[1]);
+        word
+    }
+
+    #[test]
+    fn simple_closable_word_accepts_exactly_the_prefix_shapes_we_use() {
+        assert!(is_simple_closable_word(&[0, 1, 2]));
+        assert!(is_simple_closable_word(&[0, 1, 2, 3]));
+        assert!(is_simple_closable_word(&[0, 1, 2, 0]));
+        assert!(is_simple_closable_word(&[0, 1, 2, 0, 1]));
+
+        assert!(!is_simple_closable_word(&[0]));
+        assert!(!is_simple_closable_word(&[0, 1]));
+        assert!(!is_simple_closable_word(&[0, 0, 1]));
+        assert!(!is_simple_closable_word(&[0, 1, 2, 0, 3]));
+        assert!(!is_simple_closable_word(&[0, 1, 2, 0, 3, 4]));
+        assert!(!is_simple_closable_word(&[0, 1, 2, 1]));
+    }
+
+    #[test]
+    fn complete_graph_counts_include_closure_special_prefixes() {
+        let transition = complete_transition_matrix(5);
+        let words = enumerate_transition_pruned_words(&transition, 2);
+        let counts = counts_by_plus_depth(&words, 2);
+
+        assert_eq!(counts[1], 5 * 4 * 4);
+        assert_eq!(counts[2], 5 * 4 * (3 * 3 + 1));
+    }
+
+    #[test]
+    fn half_cache_splits_every_transition_pruned_closed_word_on_complete_graphs() {
+        for facet_count in 5..=8 {
+            let transition = complete_transition_matrix(facet_count);
+            let half_depth = half_cache_depth(facet_count);
+            let cache = enumerate_transition_pruned_words(&transition, half_depth);
+
+            let mut missing = Vec::new();
+            for_each_sigma_pruned_by_transition(&transition, |sigma| {
+                let closed = closed_raw_word(sigma);
+                let Some((left, right)) = split_closed_word_into_half_words(&closed, half_depth)
+                else {
+                    missing.push(closed);
+                    return;
+                };
+                if !cached_words_contain(&cache, &left) || !cached_words_contain(&cache, &right) {
+                    missing.push(closed);
+                }
+            });
+
+            assert!(
+                missing.is_empty(),
+                "missing half-cache split for F={facet_count}: {missing:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn half_cache_splits_every_transition_pruned_closed_word_on_sparse_graph() {
+        let transition = DMatrix::from_row_slice(
+            6,
+            6,
+            &[
+                false, true, false, false, true, false, //
+                false, false, true, false, false, true, //
+                true, false, false, true, false, false, //
+                false, true, false, false, true, false, //
+                false, false, true, false, false, true, //
+                true, false, false, true, false, false, //
+            ],
+        );
+        let half_depth = half_cache_depth(6);
+        let cache = enumerate_transition_pruned_words(&transition, half_depth);
+
+        let mut checked = 0usize;
+        for_each_sigma_pruned_by_transition(&transition, |sigma| {
+            checked += 1;
+            let closed = closed_raw_word(sigma);
+            assert!(word_has_allowed_transitions(&closed, &transition));
+            let (left, right) = split_closed_word_into_half_words(&closed, half_depth)
+                .expect("transition-pruned closed word should split");
+            assert!(cached_words_contain(&cache, &left), "left={left:?}");
+            assert!(cached_words_contain(&cache, &right), "right={right:?}");
+        });
+        assert!(checked > 0);
+    }
+
+    #[test]
+    fn transition_pruned_words_never_use_forbidden_edges() {
+        let transition = DMatrix::from_row_slice(
+            4,
+            4,
+            &[
+                false, true, false, false, //
+                false, false, true, false, //
+                true, false, false, true, //
+                false, false, false, false, //
+            ],
+        );
+        let words = enumerate_transition_pruned_words(&transition, half_cache_depth(4));
+        assert!(!words.is_empty());
+        for word in words {
+            assert!(word_has_allowed_transitions(&word.facets, &transition));
+        }
+    }
+}
