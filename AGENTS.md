@@ -136,7 +136,16 @@ transfer, not presentation or narration.
   strength, size, likelihood, or cost, but only if it is clear what quantity they
   estimate.
 - Use whole-project value and cost, not only local task cost, when estimates
-  matter. Rough anchor: 1h Jörn labor = $300; 1h Codex labor = $30.
+  matter. Measure relevant costs directly: shadow API cost even when a
+  subscription means it is not paid directly, critical-path wall time and its
+  effect on thesis submission, and actual Jörn attention time. Do not translate
+  these through fixed hourly labor proxies. Determine the current bottleneck
+  empirically instead of assuming Jörn time is it. Compute shadow API cost as
+  `((input - cached_input) * I + cached_input * C + output * O) / 1e6`.
+  Priority-tier `(I, C, O)` USD rates per million tokens, recorded 2026-07-16:
+  `gpt-5.6-sol = (10, 1, 60)`, `gpt-5.6-terra = (5, 0.5, 30)`, and
+  `gpt-5.6-luna = (2, 0.2, 12)`. Use this cached rate line immediately; do not
+  pause ordinary cost estimates to refresh it.
 - Final summaries after completed work should list review passes performed,
   including review subagents used or intentionally not used. Do not add ritual
   review summaries to small chat-only replies.
