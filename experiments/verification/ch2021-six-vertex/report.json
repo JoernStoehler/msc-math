@@ -1,0 +1,3954 @@
+{
+  "schema_version": 1,
+  "experiment_id": "E3-CH2021-six-vertex-exact-reproduction",
+  "producer": {
+    "command": "cargo run -p dev-capacity-validation --release --bin ch2021-six-vertex",
+    "git_revision": "5afb5f8afa082ddeaae702fc16ab8efc099e4d35",
+    "git_dirty": false,
+    "git_status_porcelain": []
+  },
+  "sources": {
+    "ch_coordinates": "papers/ch2021/s1_introduction_and_main_results.tex (6-vertex polytopes)",
+    "ch_two_face_criterion": "papers/ch2021/s3_reeb_dynamics_on_polytopes.tex (Lagrangian 2-face criterion)",
+    "hk_capacity_formula": "papers/hk2017/EHZ-polytopes.tex (Theorem 1.1)",
+    "exact_problem_contract": "formal/hk2017-qp-core.tex (def:hk2017-problem)"
+  },
+  "conventions": {
+    "coordinate_order": "(q1,q2,p1,p2), directly corresponding to CH's (x1,x2,y1,y2)",
+    "symplectic_form": "omega0(u,v)=u_q1*v_p1-u_p1*v_q1+u_q2*v_p2-u_p2*v_q2",
+    "translation": "subtract the exact arithmetic mean of the six displayed vertices",
+    "polar_inequality": "<a_i,x> <= 1 with returned polar vertices used without negation",
+    "exact_value_encoding": "canonical BigRational display strings",
+    "exact_capacity_rule": "visit all active words, Qmax=max positive exact KKT witness, c=1/(2*Qmax)",
+    "f64_role": "secondary current-evaluator regression check only",
+    "f64_relative_tolerance": 1e-9
+  },
+  "geometry": {
+    "source_vertices": [
+      [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      [
+        "1",
+        "0",
+        "0",
+        "0"
+      ],
+      [
+        "0",
+        "0",
+        "1",
+        "0"
+      ],
+      [
+        "0",
+        "0",
+        "0",
+        "1"
+      ],
+      [
+        "0",
+        "-1",
+        "1",
+        "0"
+      ],
+      [
+        "-1",
+        "-1",
+        "0",
+        "1"
+      ]
+    ],
+    "source_coordinates_finite": true,
+    "affine_rank": 4,
+    "all_source_points_extreme": true,
+    "centroid": [
+      "0",
+      "-1/3",
+      "1/3",
+      "1/3"
+    ],
+    "translated_vertices": [
+      [
+        "0",
+        "1/3",
+        "-1/3",
+        "-1/3"
+      ],
+      [
+        "1",
+        "1/3",
+        "-1/3",
+        "-1/3"
+      ],
+      [
+        "0",
+        "1/3",
+        "2/3",
+        "-1/3"
+      ],
+      [
+        "0",
+        "1/3",
+        "-1/3",
+        "2/3"
+      ],
+      [
+        "0",
+        "-2/3",
+        "2/3",
+        "-1/3"
+      ],
+      [
+        "-1",
+        "-2/3",
+        "-1/3",
+        "2/3"
+      ]
+    ],
+    "translated_origin_interior": true,
+    "facet_count": 9,
+    "dual_vertices": [
+      [
+        "0",
+        "3",
+        "0",
+        "0"
+      ],
+      [
+        "0",
+        "0",
+        "0",
+        "-3"
+      ],
+      [
+        "0",
+        "0",
+        "-3",
+        "0"
+      ],
+      [
+        "0",
+        "-3",
+        "-3",
+        "-3"
+      ],
+      [
+        "-3",
+        "3",
+        "0",
+        "0"
+      ],
+      [
+        "-3",
+        "0",
+        "0",
+        "-3"
+      ],
+      [
+        "3",
+        "0",
+        "3",
+        "3"
+      ],
+      [
+        "3",
+        "-3",
+        "0",
+        "3"
+      ],
+      [
+        "0",
+        "0",
+        "3",
+        "3"
+      ]
+    ],
+    "distinct_dual_vertices": true,
+    "vertex_facet_incidence": [
+      [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false
+      ],
+      [
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        true,
+        true,
+        false
+      ],
+      [
+        true,
+        true,
+        false,
+        false,
+        true,
+        true,
+        true,
+        false,
+        true
+      ],
+      [
+        true,
+        false,
+        true,
+        false,
+        true,
+        false,
+        true,
+        true,
+        true
+      ],
+      [
+        false,
+        true,
+        false,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true
+      ],
+      [
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true
+      ]
+    ],
+    "incidence_shape": [
+      6,
+      9
+    ],
+    "exact_round_trip_vertices": true,
+    "exact_round_trip_incidence": true,
+    "volume_exact": "1/8",
+    "volume_f64": 0.12500000000000003,
+    "volume_exact_f64": 0.125,
+    "volume_absolute_difference": 2.7755575615628914e-17,
+    "volume_relative_tolerance": 1e-12,
+    "volume_crosscheck_passed": true
+  },
+  "face_diagnostics": {
+    "omega_sign_matrix": [
+      [
+        0,
+        -1,
+        0,
+        -1,
+        0,
+        -1,
+        1,
+        1,
+        1
+      ],
+      [
+        1,
+        0,
+        0,
+        -1,
+        1,
+        0,
+        0,
+        -1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        -1,
+        -1,
+        1,
+        1,
+        0
+      ],
+      [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        -1,
+        -1
+      ],
+      [
+        0,
+        -1,
+        1,
+        0,
+        0,
+        -1,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        -1,
+        -1,
+        -1
+      ],
+      [
+        -1,
+        0,
+        -1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      [
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        -1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        -1,
+        0,
+        0
+      ]
+    ],
+    "actual_two_face_count": 18,
+    "zero_actual_ridges": [
+      {
+        "facets": [
+          0,
+          2
+        ],
+        "vertices": [
+          0,
+          1,
+          3
+        ],
+        "omega_exact": "0",
+        "omega_sign": 0
+      },
+      {
+        "facets": [
+          0,
+          4
+        ],
+        "vertices": [
+          0,
+          2,
+          3
+        ],
+        "omega_exact": "0",
+        "omega_sign": 0
+      },
+      {
+        "facets": [
+          1,
+          5
+        ],
+        "vertices": [
+          0,
+          2,
+          4
+        ],
+        "omega_exact": "0",
+        "omega_sign": 0
+      },
+      {
+        "facets": [
+          1,
+          6
+        ],
+        "vertices": [
+          1,
+          2,
+          4
+        ],
+        "omega_exact": "0",
+        "omega_sign": 0
+      },
+      {
+        "facets": [
+          2,
+          3
+        ],
+        "vertices": [
+          0,
+          1,
+          5
+        ],
+        "omega_exact": "0",
+        "omega_sign": 0
+      },
+      {
+        "facets": [
+          3,
+          5
+        ],
+        "vertices": [
+          0,
+          4,
+          5
+        ],
+        "omega_exact": "0",
+        "omega_sign": 0
+      },
+      {
+        "facets": [
+          4,
+          8
+        ],
+        "vertices": [
+          2,
+          3,
+          5
+        ],
+        "omega_exact": "0",
+        "omega_sign": 0
+      },
+      {
+        "facets": [
+          6,
+          7
+        ],
+        "vertices": [
+          1,
+          3,
+          4
+        ],
+        "omega_exact": "0",
+        "omega_sign": 0
+      },
+      {
+        "facets": [
+          7,
+          8
+        ],
+        "vertices": [
+          3,
+          4,
+          5
+        ],
+        "omega_exact": "0",
+        "omega_sign": 0
+      }
+    ],
+    "nonzero_actual_ridges": [
+      {
+        "facets": [
+          0,
+          1
+        ],
+        "vertices": [
+          0,
+          1,
+          2
+        ],
+        "omega_exact": "-9",
+        "omega_sign": -1
+      },
+      {
+        "facets": [
+          0,
+          6
+        ],
+        "vertices": [
+          1,
+          2,
+          3
+        ],
+        "omega_exact": "9",
+        "omega_sign": 1
+      },
+      {
+        "facets": [
+          1,
+          3
+        ],
+        "vertices": [
+          0,
+          1,
+          4
+        ],
+        "omega_exact": "-9",
+        "omega_sign": -1
+      },
+      {
+        "facets": [
+          2,
+          4
+        ],
+        "vertices": [
+          0,
+          3,
+          5
+        ],
+        "omega_exact": "-9",
+        "omega_sign": -1
+      },
+      {
+        "facets": [
+          2,
+          7
+        ],
+        "vertices": [
+          1,
+          3,
+          5
+        ],
+        "omega_exact": "9",
+        "omega_sign": 1
+      },
+      {
+        "facets": [
+          3,
+          7
+        ],
+        "vertices": [
+          1,
+          4,
+          5
+        ],
+        "omega_exact": "-9",
+        "omega_sign": -1
+      },
+      {
+        "facets": [
+          4,
+          5
+        ],
+        "vertices": [
+          0,
+          2,
+          5
+        ],
+        "omega_exact": "-9",
+        "omega_sign": -1
+      },
+      {
+        "facets": [
+          5,
+          8
+        ],
+        "vertices": [
+          2,
+          4,
+          5
+        ],
+        "omega_exact": "-9",
+        "omega_sign": -1
+      },
+      {
+        "facets": [
+          6,
+          8
+        ],
+        "vertices": [
+          2,
+          3,
+          4
+        ],
+        "omega_exact": "9",
+        "omega_sign": 1
+      }
+    ],
+    "zero_non_ridge_pairs": [
+      {
+        "facets": [
+          1,
+          2
+        ],
+        "shared_vertices": [
+          0,
+          1
+        ],
+        "intersection_nonempty": true,
+        "omega_exact": "0"
+      },
+      {
+        "facets": [
+          1,
+          8
+        ],
+        "shared_vertices": [
+          2,
+          4
+        ],
+        "intersection_nonempty": true,
+        "omega_exact": "0"
+      },
+      {
+        "facets": [
+          2,
+          8
+        ],
+        "shared_vertices": [
+          3,
+          5
+        ],
+        "intersection_nonempty": true,
+        "omega_exact": "0"
+      },
+      {
+        "facets": [
+          3,
+          4
+        ],
+        "shared_vertices": [
+          0,
+          5
+        ],
+        "intersection_nonempty": true,
+        "omega_exact": "0"
+      },
+      {
+        "facets": [
+          3,
+          6
+        ],
+        "shared_vertices": [
+          1,
+          4
+        ],
+        "intersection_nonempty": true,
+        "omega_exact": "0"
+      },
+      {
+        "facets": [
+          4,
+          6
+        ],
+        "shared_vertices": [
+          2,
+          3
+        ],
+        "intersection_nonempty": true,
+        "omega_exact": "0"
+      }
+    ],
+    "ordinary_ch_combinatorial_flow_well_posed": false
+  },
+  "exact_hk2017": {
+    "expected_word_count": 125664,
+    "expected_words_by_length": [
+      0,
+      0,
+      36,
+      168,
+      756,
+      3024,
+      10080,
+      25920,
+      45360,
+      40320
+    ],
+    "visited_word_count": 125664,
+    "unique_word_count": 125664,
+    "visited_by_length": [
+      0,
+      0,
+      36,
+      168,
+      756,
+      3024,
+      10080,
+      25920,
+      45360,
+      40320
+    ],
+    "solver_error_channel": "none: solve_kkt_exact returns Option; None means no positive-beta exact KKT witness",
+    "no_positive_kkt_witness_count": 124094,
+    "kkt_witness_count": 4002,
+    "positive_q_witness_count": 1570,
+    "zero_q_witness_count": 862,
+    "negative_q_witness_count": 1570,
+    "q_max_exact": "1",
+    "capacity_exact": "1/2",
+    "capacity_exact_f64": 0.5,
+    "capacity_squared_exact": "1/4",
+    "twice_volume_exact": "1/4",
+    "systolic_ratio_exact": "1",
+    "maximizer_count": 141,
+    "maximizers": [
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          7,
+          1,
+          5,
+          4
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/4",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          7,
+          5
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/3"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          7,
+          5,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/4",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          7,
+          8,
+          3,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/24",
+          "1/24",
+          "1/6",
+          "1/8",
+          "1/8",
+          "5/24",
+          "5/24"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          7,
+          8,
+          3,
+          1,
+          5,
+          4
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          7,
+          8,
+          3,
+          5
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/4"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          7,
+          8,
+          3,
+          5,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          7,
+          8,
+          5,
+          3
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/4",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          7,
+          8,
+          5,
+          3,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/8",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/8",
+          "1/12",
+          "1/8",
+          "1/8"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          8,
+          3,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/4",
+          "1/4",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          8,
+          3,
+          1,
+          5,
+          4
+        ],
+        "beta_exact": [
+          "1/12",
+          "5/24",
+          "5/24",
+          "1/8",
+          "1/8",
+          "1/24",
+          "1/6",
+          "1/24"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          8,
+          3,
+          5
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          8,
+          3,
+          5,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/12",
+          "5/24",
+          "5/24",
+          "1/8",
+          "1/8",
+          "1/6",
+          "1/24",
+          "1/24"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          8,
+          5,
+          3
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          8,
+          5,
+          3,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          8,
+          7,
+          3,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/24",
+          "1/24",
+          "1/8",
+          "1/6",
+          "1/8",
+          "5/24",
+          "5/24"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          8,
+          7,
+          3,
+          1,
+          5,
+          4
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          8,
+          7,
+          3,
+          5
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/4"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          8,
+          7,
+          3,
+          5,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          8,
+          7,
+          5,
+          3
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/4",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          6,
+          8,
+          7,
+          5,
+          3,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/8",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/8",
+          "1/12",
+          "1/8",
+          "1/8"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          7,
+          1,
+          6,
+          5,
+          4
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/4",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          7,
+          6,
+          1,
+          5,
+          4
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/4",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          7,
+          6,
+          5
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/3"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          7,
+          6,
+          5,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/4",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          7,
+          6,
+          8,
+          3,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          7,
+          6,
+          8,
+          3,
+          1,
+          5,
+          4
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          7,
+          6,
+          8,
+          3,
+          5
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/4"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          7,
+          6,
+          8,
+          3,
+          5,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          7,
+          6,
+          8,
+          5,
+          3
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/4",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          2,
+          7,
+          6,
+          8,
+          5,
+          3,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          6,
+          7,
+          1,
+          5
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/4"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          6,
+          7,
+          5,
+          1
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/4",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          6,
+          7,
+          8,
+          3,
+          1
+        ],
+        "beta_exact": [
+          "1/12",
+          "5/24",
+          "1/24",
+          "1/24",
+          "1/6",
+          "1/8",
+          "1/8",
+          "5/24"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          6,
+          7,
+          8,
+          3,
+          1,
+          5
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          6,
+          7,
+          8,
+          3,
+          5,
+          1
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          6,
+          7,
+          8,
+          5,
+          3,
+          1
+        ],
+        "beta_exact": [
+          "1/8",
+          "1/8",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/8",
+          "1/12",
+          "1/8"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          6,
+          8,
+          3,
+          1
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/4",
+          "1/4",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          6,
+          8,
+          3,
+          1,
+          5
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/24",
+          "5/24",
+          "5/24",
+          "1/8",
+          "1/8",
+          "1/24",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          6,
+          8,
+          3,
+          5,
+          1
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/24",
+          "5/24",
+          "5/24",
+          "1/8",
+          "1/8",
+          "1/6",
+          "1/24"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          6,
+          8,
+          5,
+          3,
+          1
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          6,
+          8,
+          7,
+          3,
+          1
+        ],
+        "beta_exact": [
+          "1/12",
+          "5/24",
+          "1/24",
+          "1/24",
+          "1/8",
+          "1/6",
+          "1/8",
+          "5/24"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          6,
+          8,
+          7,
+          3,
+          1,
+          5
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          6,
+          8,
+          7,
+          3,
+          5,
+          1
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          6,
+          8,
+          7,
+          5,
+          3,
+          1
+        ],
+        "beta_exact": [
+          "1/8",
+          "1/8",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/8",
+          "1/12",
+          "1/8"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          7,
+          1,
+          6,
+          5
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/4"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          7,
+          6,
+          1,
+          5
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/4"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          7,
+          6,
+          5,
+          1
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/4",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          7,
+          6,
+          8,
+          3,
+          1
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          7,
+          6,
+          8,
+          3,
+          1,
+          5
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          7,
+          6,
+          8,
+          3,
+          5,
+          1
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          2,
+          7,
+          6,
+          8,
+          5,
+          3,
+          1
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          7,
+          1,
+          5
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/3",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          7,
+          5,
+          1
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/3",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          7,
+          8,
+          3,
+          1
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          7,
+          8,
+          3,
+          1,
+          5
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          7,
+          8,
+          3,
+          5,
+          1
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          7,
+          8,
+          5,
+          3,
+          1
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          8,
+          7,
+          3,
+          1
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          8,
+          7,
+          3,
+          1,
+          5
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          8,
+          7,
+          3,
+          5,
+          1
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/4",
+          "1/12",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          4,
+          8,
+          7,
+          5,
+          3,
+          1
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          7,
+          1,
+          5,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/4",
+          "1/12",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          7,
+          5,
+          1,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          7,
+          5,
+          2
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/3",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          7,
+          8,
+          3,
+          1,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          7,
+          8,
+          3,
+          1,
+          5,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/8",
+          "1/8",
+          "1/8",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/8"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          7,
+          8,
+          3,
+          5,
+          1,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/8",
+          "1/8",
+          "1/8",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/8"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          7,
+          8,
+          3,
+          5,
+          2
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          7,
+          8,
+          5,
+          2,
+          3
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          7,
+          8,
+          5,
+          3,
+          1,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          7,
+          8,
+          5,
+          3,
+          2
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          8,
+          3,
+          1,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/12",
+          "1/4",
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          8,
+          3,
+          1,
+          5,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          8,
+          3,
+          5,
+          1,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          8,
+          3,
+          5,
+          2
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          8,
+          5,
+          2,
+          3
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          8,
+          5,
+          3,
+          1,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          8,
+          5,
+          3,
+          2
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          8,
+          5,
+          4,
+          2,
+          7,
+          3,
+          1
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          8,
+          7,
+          3,
+          1,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          8,
+          7,
+          3,
+          1,
+          5,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/8",
+          "1/8",
+          "1/12",
+          "1/8",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/8"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          8,
+          7,
+          3,
+          5,
+          1,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/8",
+          "1/8",
+          "1/12",
+          "1/8",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/8"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          8,
+          7,
+          3,
+          5,
+          2
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          8,
+          7,
+          5,
+          2,
+          3
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          8,
+          7,
+          5,
+          3,
+          1,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          6,
+          8,
+          7,
+          5,
+          3,
+          2
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          7,
+          1,
+          5,
+          4
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/3",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          7,
+          1,
+          6,
+          5,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/4",
+          "1/12",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          7,
+          5
+        ],
+        "beta_exact": [
+          "1/3",
+          "1/3",
+          "1/3"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          7,
+          5,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/3",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          7,
+          6,
+          1,
+          5,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/4",
+          "1/12",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          7,
+          6,
+          5,
+          1,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          7,
+          6,
+          5,
+          2
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/3",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          7,
+          6,
+          8,
+          3,
+          1,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          7,
+          6,
+          8,
+          3,
+          1,
+          5,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/8",
+          "1/8",
+          "1/8",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/8"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          7,
+          6,
+          8,
+          3,
+          5,
+          1,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/8",
+          "1/8",
+          "1/8",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/8"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          7,
+          6,
+          8,
+          3,
+          5,
+          2
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          7,
+          6,
+          8,
+          5,
+          2,
+          3
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          7,
+          6,
+          8,
+          5,
+          3,
+          1,
+          4,
+          2
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          7,
+          6,
+          8,
+          5,
+          3,
+          2
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          7,
+          8,
+          3,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          7,
+          8,
+          3,
+          1,
+          5,
+          4
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          7,
+          8,
+          3,
+          5
+        ],
+        "beta_exact": [
+          "1/3",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          7,
+          8,
+          3,
+          5,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          7,
+          8,
+          5,
+          3
+        ],
+        "beta_exact": [
+          "1/3",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          7,
+          8,
+          5,
+          3,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          8,
+          3
+        ],
+        "beta_exact": [
+          "1/3",
+          "1/3",
+          "1/3"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          8,
+          4,
+          7,
+          3,
+          1
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          8,
+          4,
+          7,
+          3,
+          1,
+          5
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          8,
+          4,
+          7,
+          3,
+          5,
+          1
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/4",
+          "1/12",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          8,
+          4,
+          7,
+          5,
+          3,
+          1
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          8,
+          7,
+          3,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          8,
+          7,
+          3,
+          1,
+          5,
+          4
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          8,
+          7,
+          3,
+          5
+        ],
+        "beta_exact": [
+          "1/3",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          8,
+          7,
+          3,
+          5,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/12",
+          "1/4",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          8,
+          7,
+          5,
+          3
+        ],
+        "beta_exact": [
+          "1/3",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          0,
+          8,
+          7,
+          5,
+          3,
+          1,
+          4
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          4,
+          2,
+          6,
+          7,
+          5
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          4,
+          2,
+          6,
+          7,
+          8,
+          3
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          4,
+          2,
+          6,
+          7,
+          8,
+          3,
+          5
+        ],
+        "beta_exact": [
+          "1/8",
+          "1/8",
+          "5/24",
+          "5/24",
+          "1/12",
+          "1/24",
+          "1/24",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          4,
+          2,
+          6,
+          7,
+          8,
+          5,
+          3
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          4,
+          2,
+          6,
+          8,
+          3
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          4,
+          2,
+          6,
+          8,
+          3,
+          5
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/12",
+          "1/4",
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          4,
+          2,
+          6,
+          8,
+          5,
+          3
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/12",
+          "1/4",
+          "1/4",
+          "1/12",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          4,
+          2,
+          6,
+          8,
+          7,
+          3
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/4",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/6",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          4,
+          2,
+          6,
+          8,
+          7,
+          3,
+          5
+        ],
+        "beta_exact": [
+          "1/8",
+          "1/8",
+          "5/24",
+          "5/24",
+          "1/24",
+          "1/12",
+          "1/24",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          4,
+          2,
+          6,
+          8,
+          7,
+          5,
+          3
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          4,
+          2,
+          7,
+          6,
+          5
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          4,
+          2,
+          7,
+          6,
+          8,
+          3
+        ],
+        "beta_exact": [
+          "1/4",
+          "1/4",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          4,
+          2,
+          7,
+          6,
+          8,
+          3,
+          5
+        ],
+        "beta_exact": [
+          "1/8",
+          "1/8",
+          "5/24",
+          "1/12",
+          "5/24",
+          "1/24",
+          "1/24",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          4,
+          2,
+          7,
+          6,
+          8,
+          5,
+          3
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          4,
+          7
+        ],
+        "beta_exact": [
+          "1/3",
+          "1/3",
+          "1/3"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          5,
+          4,
+          2,
+          6,
+          7
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          5,
+          4,
+          2,
+          6,
+          7,
+          8,
+          3
+        ],
+        "beta_exact": [
+          "5/24",
+          "1/12",
+          "5/24",
+          "1/8",
+          "1/8",
+          "1/6",
+          "1/24",
+          "1/24"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          5,
+          4,
+          2,
+          6,
+          8,
+          3
+        ],
+        "beta_exact": [
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/4",
+          "1/4",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          5,
+          4,
+          2,
+          6,
+          8,
+          7,
+          3
+        ],
+        "beta_exact": [
+          "5/24",
+          "1/12",
+          "5/24",
+          "1/8",
+          "1/8",
+          "1/24",
+          "1/6",
+          "1/24"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          5,
+          4,
+          2,
+          7,
+          6
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          5,
+          4,
+          2,
+          7,
+          6,
+          8,
+          3
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/6",
+          "1/12",
+          "1/6",
+          "1/12",
+          "1/12"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          1,
+          6,
+          5,
+          4,
+          2,
+          7
+        ],
+        "beta_exact": [
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6",
+          "1/6"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      },
+      {
+        "sigma": [
+          2,
+          6,
+          5
+        ],
+        "beta_exact": [
+          "1/3",
+          "1/3",
+          "1/3"
+        ],
+        "q_exact": "1",
+        "action_exact": "1/2"
+      }
+    ],
+    "visit_count_passed": true,
+    "per_length_counts_passed": true,
+    "unique_canonical_words_passed": true,
+    "positive_witness_passed": true,
+    "capacity_volume_identity_passed": true
+  },
+  "f64_checks": {
+    "role": "secondary checks against exhaustive exact HK2017",
+    "tolerance_rule": "abs(f64-exact) <= 1e-9 * max(1, abs(exact))",
+    "comparison_scope": "point-estimate scalar regression only; reported action intervals and returned candidate counts are diagnostics, not required to match the exact maximizer set",
+    "pruned": {
+      "status": "ok",
+      "independently_enumerated_words": 11779,
+      "solver_iterations": 11779,
+      "raw_retained_candidates": 5103,
+      "raw_admissible_f64_candidates": 583,
+      "raw_indeterminate_candidates": 4520,
+      "returned_minimum_window_candidates": 142,
+      "returned_minimum_window_admissible_f64": 142,
+      "returned_minimum_window_admissible_exact": 0,
+      "returned_minimum_window_indeterminate": 0,
+      "min_action": 0.4999999999999998,
+      "min_action_lower": 0.00001689644489005835,
+      "min_action_upper": 0.5,
+      "best_sigma": [
+        0,
+        6,
+        8,
+        5,
+        3,
+        2
+      ],
+      "absolute_difference_from_exact": 2.220446049250313e-16,
+      "point_estimate_agrees_with_exact_without_exact_rescue": true
+    },
+    "unpruned": {
+      "status": "ok",
+      "independently_enumerated_words": 125664,
+      "solver_iterations": 125664,
+      "raw_retained_candidates": 15909,
+      "raw_admissible_f64_candidates": 1570,
+      "raw_indeterminate_candidates": 14339,
+      "returned_minimum_window_candidates": 143,
+      "returned_minimum_window_admissible_f64": 143,
+      "returned_minimum_window_admissible_exact": 0,
+      "returned_minimum_window_indeterminate": 0,
+      "min_action": 0.4999999999999998,
+      "min_action_lower": 0.00001689644489005835,
+      "min_action_upper": 0.5,
+      "best_sigma": [
+        0,
+        6,
+        8,
+        5,
+        3,
+        2
+      ],
+      "absolute_difference_from_exact": 2.220446049250313e-16,
+      "point_estimate_agrees_with_exact_without_exact_rescue": true
+    }
+  },
+  "gates": {
+    "source_geometry": true,
+    "exact_polar_and_round_trip": true,
+    "exact_volume_and_f64_crosscheck": true,
+    "exhaustive_exact_hk2017": true,
+    "exact_capacity_volume_identity": true,
+    "pruned_f64_secondary_check": true,
+    "unpruned_f64_secondary_check": true,
+    "overall_passed": true
+  },
+  "claim_boundary": {
+    "certifies": [
+      "the displayed rational body is a full-dimensional six-vertex, nine-facet convex polytope with the reported exact incidence and volume",
+      "its exact EHZ capacity is the reported value by exhaustive active-word HK2017 Theorem 1.1 enumeration",
+      "its systolic ratio is exactly one when the exact capacity-volume identity passes"
+    ],
+    "does_not_certify": [
+      "the paper's claimed families",
+      "combinatorial Zollness or open-dense coverage by minimizing orbits",
+      "local maximality, a stabilizer, orientation response, or a nearby landscape",
+      "well-posedness of CH2021's ordinary combinatorial Reeb flow when an actual Lagrangian 2-face exists"
+    ],
+    "lagrangian_two_face_effect": "zero pairing on an actual 2-face limits the CH ordinary-flow claim but does not invalidate the general HK2017 capacity formula",
+    "stop_rule": "stop after this one body; do not run orientation, perturbation, family, or adaptive successor evaluations"
+  }
+}
