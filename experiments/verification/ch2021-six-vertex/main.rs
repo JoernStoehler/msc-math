@@ -29,6 +29,8 @@ use symplectic::exact::{
 use symplectic::kkt::rational_solver::solve_kkt_exact;
 
 const EXPECTED_EXACT_WORDS: u64 = 125_664;
+const EXPECTED_WORDS_BY_LENGTH: [u64; 10] =
+    [0, 0, 36, 168, 756, 3_024, 10_080, 25_920, 45_360, 40_320];
 const F64_RELATIVE_TOLERANCE: f64 = 1.0e-9;
 const VOLUME_RELATIVE_TOLERANCE: f64 = 1.0e-12;
 const PRODUCER_COMMAND: &str =
@@ -130,9 +132,11 @@ struct NonRidgeZeroPair {
 #[derive(Serialize)]
 struct ExactEnumeration {
     expected_word_count: u64,
+    expected_words_by_length: Vec<u64>,
     visited_word_count: u64,
+    unique_word_count: u64,
     visited_by_length: Vec<u64>,
-    solver_error_count: u64,
+    solver_error_channel: &'static str,
     no_positive_kkt_witness_count: u64,
     kkt_witness_count: u64,
     positive_q_witness_count: u64,
@@ -147,6 +151,8 @@ struct ExactEnumeration {
     maximizer_count: usize,
     maximizers: Vec<ExactMaximizer>,
     visit_count_passed: bool,
+    per_length_counts_passed: bool,
+    unique_canonical_words_passed: bool,
     positive_witness_passed: bool,
     capacity_volume_identity_passed: bool,
 }
@@ -169,6 +175,7 @@ struct RawExactMaximizer {
 struct F64Checks {
     role: &'static str,
     tolerance_rule: &'static str,
+    comparison_scope: &'static str,
     pruned: F64Route,
     unpruned: F64Route,
 }
@@ -179,16 +186,18 @@ struct F64Route {
     independently_enumerated_words: u64,
     solver_iterations: Option<u64>,
     raw_retained_candidates: Option<usize>,
-    aggregated_retained_candidates: Option<usize>,
-    admissible_f64_candidates: Option<usize>,
-    admissible_exact_candidates: Option<usize>,
-    indeterminate_candidates: Option<usize>,
+    raw_admissible_f64_candidates: Option<usize>,
+    raw_indeterminate_candidates: Option<usize>,
+    returned_minimum_window_candidates: Option<usize>,
+    returned_minimum_window_admissible_f64: Option<usize>,
+    returned_minimum_window_admissible_exact: Option<usize>,
+    returned_minimum_window_indeterminate: Option<usize>,
     min_action: Option<f64>,
     min_action_lower: Option<f64>,
     min_action_upper: Option<f64>,
     best_sigma: Option<Vec<usize>>,
     absolute_difference_from_exact: Option<f64>,
-    agrees_with_exact: bool,
+    point_estimate_agrees_with_exact_without_exact_rescue: bool,
 }
 
 #[derive(Serialize)]
@@ -215,6 +224,11 @@ fn main() {
     let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
     let output_path = manifest_dir.join("ch2021-six-vertex/report.json");
     let producer = git_provenance(manifest_dir);
+    // Never leave a stale success report at the fixed producer path if this
+    // invocation aborts before writing its own complete result.
+    if output_path.exists() {
+        std::fs::remove_file(&output_path).expect("invalidate previous CH report");
+    }
 
     let source_vertices = source_vertices();
     let source_coordinates_finite = source_vertices
@@ -317,11 +331,14 @@ fn main() {
         && exact_round_trip_vertices
         && exact_round_trip_incidence;
     let exact_volume_and_f64_crosscheck = volume_exact.is_positive() && volume_crosscheck_passed;
-    let exhaustive_exact_hk2017 =
-        exact_hk2017.visit_count_passed && exact_hk2017.positive_witness_passed;
+    let exhaustive_exact_hk2017 = exact_hk2017.visit_count_passed
+        && exact_hk2017.per_length_counts_passed
+        && exact_hk2017.unique_canonical_words_passed
+        && exact_hk2017.positive_witness_passed;
     let exact_capacity_volume_identity = exact_hk2017.capacity_volume_identity_passed;
-    let pruned_f64_secondary_check = pruned.agrees_with_exact;
-    let unpruned_f64_secondary_check = unpruned.agrees_with_exact;
+    let pruned_f64_secondary_check = pruned.point_estimate_agrees_with_exact_without_exact_rescue;
+    let unpruned_f64_secondary_check =
+        unpruned.point_estimate_agrees_with_exact_without_exact_rescue;
     let overall_passed = source_geometry
         && exact_polar_and_round_trip
         && exact_volume_and_f64_crosscheck
@@ -384,6 +401,7 @@ fn main() {
         f64_checks: F64Checks {
             role: "secondary checks against exhaustive exact HK2017",
             tolerance_rule: "abs(f64-exact) <= 1e-9 * max(1, abs(exact))",
+            comparison_scope: "point-estimate scalar regression only; reported action intervals and returned candidate counts are diagnostics, not required to match the exact maximizer set",
             pruned,
             unpruned,
         },
@@ -609,10 +627,16 @@ fn exhaustive_exact_hk2017(
     let mut negative_q_witness_count = 0u64;
     let mut q_max: Option<BigRational> = None;
     let mut maximizers = Vec::<RawExactMaximizer>::new();
+    let mut unique_words = BTreeSet::<Vec<usize>>::new();
+    let mut canonical_word_invariants = true;
 
     for_each_sigma_unpruned_facet_count(dual_vertices.len(), |sigma| {
         visited_word_count += 1;
         visited_by_length[sigma.len()] += 1;
+        unique_words.insert(sigma.to_vec());
+        canonical_word_invariants &= (2..=dual_vertices.len()).contains(&sigma.len())
+            && sigma.first() == sigma.iter().min()
+            && sigma.iter().copied().collect::<BTreeSet<_>>().len() == sigma.len();
         let Some(witness) = solve_kkt_exact(dual_vertices, sigma) else {
             return;
         };
@@ -669,6 +693,10 @@ fn exhaustive_exact_hk2017(
     let twice_volume = integer_ratio(2) * volume_exact.clone();
     let systolic_ratio = capacity_squared.clone() / twice_volume.clone();
     let visit_count_passed = visited_word_count == EXPECTED_EXACT_WORDS;
+    let per_length_counts_passed = visited_by_length == EXPECTED_WORDS_BY_LENGTH;
+    let unique_word_count = unique_words.len() as u64;
+    let unique_canonical_words_passed =
+        canonical_word_invariants && unique_word_count == visited_word_count;
     let positive_witness_passed = positive_q_witness_count > 0;
     let capacity_volume_identity_passed = capacity_squared == twice_volume;
     let no_positive_kkt_witness_count = visited_word_count - positive_q_witness_count;
@@ -676,9 +704,11 @@ fn exhaustive_exact_hk2017(
     (
         ExactEnumeration {
             expected_word_count: EXPECTED_EXACT_WORDS,
+            expected_words_by_length: EXPECTED_WORDS_BY_LENGTH.to_vec(),
             visited_word_count,
+            unique_word_count,
             visited_by_length,
-            solver_error_count: 0,
+            solver_error_channel: "none: solve_kkt_exact returns Option; None means no positive-beta exact KKT witness",
             no_positive_kkt_witness_count,
             kkt_witness_count,
             positive_q_witness_count,
@@ -693,6 +723,8 @@ fn exhaustive_exact_hk2017(
             maximizer_count: maximizers.len(),
             maximizers,
             visit_count_passed,
+            per_length_counts_passed,
+            unique_canonical_words_passed,
             positive_witness_passed,
             capacity_volume_identity_passed,
         },
@@ -723,20 +755,40 @@ where
                 independently_enumerated_words,
                 solver_iterations: None,
                 raw_retained_candidates: None,
-                aggregated_retained_candidates: None,
-                admissible_f64_candidates: None,
-                admissible_exact_candidates: None,
-                indeterminate_candidates: None,
+                raw_admissible_f64_candidates: None,
+                raw_indeterminate_candidates: None,
+                returned_minimum_window_candidates: None,
+                returned_minimum_window_admissible_f64: None,
+                returned_minimum_window_admissible_exact: None,
+                returned_minimum_window_indeterminate: None,
                 min_action: None,
                 min_action_lower: None,
                 min_action_upper: None,
                 best_sigma: None,
                 absolute_difference_from_exact: None,
-                agrees_with_exact: false,
+                point_estimate_agrees_with_exact_without_exact_rescue: false,
             };
         }
     };
     let raw_retained_candidates = raw_orbits.len();
+    let raw_admissible_f64_candidates = raw_orbits
+        .iter()
+        .filter(|orbit| {
+            matches!(
+                orbit.admissibility,
+                symplectic::OrbitAdmissibility::AdmissibleF64
+            )
+        })
+        .count();
+    let raw_indeterminate_candidates = raw_orbits
+        .iter()
+        .filter(|orbit| {
+            matches!(
+                orbit.admissibility,
+                symplectic::OrbitAdmissibility::IndeterminateF64
+            )
+        })
+        .count();
     let aggregated = match aggregate_orbits_with_dual_vertices_exact(
         dual_vertices_exact,
         raw_orbits,
@@ -751,21 +803,23 @@ where
                 independently_enumerated_words,
                 solver_iterations: Some(iterations),
                 raw_retained_candidates: Some(raw_retained_candidates),
-                aggregated_retained_candidates: None,
-                admissible_f64_candidates: None,
-                admissible_exact_candidates: None,
-                indeterminate_candidates: None,
+                raw_admissible_f64_candidates: Some(raw_admissible_f64_candidates),
+                raw_indeterminate_candidates: Some(raw_indeterminate_candidates),
+                returned_minimum_window_candidates: None,
+                returned_minimum_window_admissible_f64: None,
+                returned_minimum_window_admissible_exact: None,
+                returned_minimum_window_indeterminate: None,
                 min_action: None,
                 min_action_lower: None,
                 min_action_upper: None,
                 best_sigma: None,
                 absolute_difference_from_exact: None,
-                agrees_with_exact: false,
+                point_estimate_agrees_with_exact_without_exact_rescue: false,
             };
         }
     };
 
-    let admissible_f64_candidates = aggregated
+    let returned_minimum_window_admissible_f64 = aggregated
         .orbits
         .iter()
         .filter(|orbit| {
@@ -775,7 +829,7 @@ where
             )
         })
         .count();
-    let admissible_exact_candidates = aggregated
+    let returned_minimum_window_admissible_exact = aggregated
         .orbits
         .iter()
         .filter(|orbit| {
@@ -785,7 +839,7 @@ where
             )
         })
         .count();
-    let indeterminate_candidates = aggregated
+    let returned_minimum_window_indeterminate = aggregated
         .orbits
         .iter()
         .filter(|orbit| {
@@ -796,11 +850,13 @@ where
         })
         .count();
     let difference = (aggregated.min_action - capacity_exact_f64).abs();
-    let agrees_with_exact = relative_agreement(
+    let point_estimate_agrees_with_exact_without_exact_rescue = relative_agreement(
         aggregated.min_action,
         capacity_exact_f64,
         F64_RELATIVE_TOLERANCE,
-    ) && indeterminate_candidates == 0
+    )
+        && returned_minimum_window_indeterminate == 0
+        && returned_minimum_window_admissible_exact == 0
         && iterations == independently_enumerated_words;
 
     F64Route {
@@ -808,16 +864,18 @@ where
         independently_enumerated_words,
         solver_iterations: Some(iterations),
         raw_retained_candidates: Some(raw_retained_candidates),
-        aggregated_retained_candidates: Some(aggregated.orbits.len()),
-        admissible_f64_candidates: Some(admissible_f64_candidates),
-        admissible_exact_candidates: Some(admissible_exact_candidates),
-        indeterminate_candidates: Some(indeterminate_candidates),
+        raw_admissible_f64_candidates: Some(raw_admissible_f64_candidates),
+        raw_indeterminate_candidates: Some(raw_indeterminate_candidates),
+        returned_minimum_window_candidates: Some(aggregated.orbits.len()),
+        returned_minimum_window_admissible_f64: Some(returned_minimum_window_admissible_f64),
+        returned_minimum_window_admissible_exact: Some(returned_minimum_window_admissible_exact),
+        returned_minimum_window_indeterminate: Some(returned_minimum_window_indeterminate),
         min_action: Some(aggregated.min_action),
         min_action_lower: Some(aggregated.min_action_lower),
         min_action_upper: Some(aggregated.min_action_upper),
         best_sigma: Some(aggregated.best_sigma().to_vec()),
         absolute_difference_from_exact: Some(difference),
-        agrees_with_exact,
+        point_estimate_agrees_with_exact_without_exact_rescue,
     }
 }
 
@@ -896,9 +954,13 @@ fn git_output(manifest_dir: &Path, arguments: &[&str]) -> String {
 }
 
 fn write_report(path: &PathBuf, report: &Report) {
-    let file = File::create(path).expect("create CH report");
+    let temporary_path = path.with_extension(format!("json.{}.tmp", std::process::id()));
+    let file = File::create(&temporary_path).expect("create temporary CH report");
     let mut writer = BufWriter::new(file);
     serde_json::to_writer_pretty(&mut writer, report).expect("serialize CH report");
     writer.write_all(b"\n").expect("terminate CH report");
     writer.flush().expect("flush CH report");
+    let file = writer.into_inner().expect("finish CH report buffer");
+    file.sync_all().expect("sync CH report");
+    std::fs::rename(&temporary_path, path).expect("atomically install CH report");
 }
