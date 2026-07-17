@@ -1,0 +1,40 @@
+{
+  "format": "hko_e2_quotient_ray_launch_v1",
+  "settings": {
+    "seed": 44,
+    "directions": 32,
+    "r_max": 0.5,
+    "bisect_tol": 0.0001,
+    "shells": [0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 0.5],
+    "post_transition_factors": [1.25, 1.5, 2.0, 3.0],
+    "nonlinear_rotated_control_thetas": [0.0, 0.15707963267948966, 0.3141592653589793],
+    "gram_schmidt_tolerance": 1e-11,
+    "sign_threshold": 1e-14,
+    "residual_gate": 2e-10,
+    "gauge_warning_threshold": 1e-6,
+    "gauge_sensitivity_thresholds": [0.0001, 1e-6, 1e-8],
+    "control_tolerance": 2e-9,
+    "maximum_bisection_iterations": 64
+  },
+  "expected_git_commit": "03d8322557af0f4f54c6b5ce9bed431e46d87fc4",
+  "expected_git_tree": "532fc031cbd337ec27d801bbef9ff85e60285e6d",
+  "expected_git_clean": true,
+  "expected_compiled_sampler_source_blake3": "358045dd03037139f44acf0e1d99072c3823075cfe22b1c228638be598d6a6c0",
+  "expected_source_and_dependency_hashes": [
+    {"path":"empirical/neighborhood-sampling/samplers/m10_quotient_ray.rs","blake3":"358045dd03037139f44acf0e1d99072c3823075cfe22b1c228638be598d6a6c0"},
+    {"path":"empirical/neighborhood-sampling/samplers/mod.rs","blake3":"d120b56dba8f70783be448b83713cf73b584acd367fb95c3e00bde4b5cdd2977"},
+    {"path":"empirical/neighborhood-sampling/main.rs","blake3":"60d5a6a98ff3ba8bdab86d765c8964aa83355cdc5a04a0b5b09de785edc31dc1"},
+    {"path":"empirical/neighborhood-sampling/README.md","blake3":"dc8b61c96e522d9ce9d097a66cbc026bc953022f459e729fb94133be2cde7775"},
+    {"path":"src/lib.rs","blake3":"8b4f7c0163539d4dab973787667d3244de227b774091429f05192a8b73af3f2a"},
+    {"path":"src/flat_polytope.rs","blake3":"fab3fe4914c3bd9c57d3f153eb1dc5595d6f13d7a95bc47847f9ea1403935d93"},
+    {"path":"Cargo.toml","blake3":"922a44b50c9516f3deca83b1bfb34690f38df8e760f9dda25d2af14da0cee73f"},
+    {"path":"../../Cargo.toml","blake3":"cdece57049825086f19a6de66e627e9deaaab3f523c0d67917a9f804e887c0e6"},
+    {"path":"../../Cargo.lock","blake3":"d53fcfc1841ea9b0956e9d6c3184a708ad6aea4fa93eb67f320b832dd1df8d84"}
+  ],
+  "expected_local_source_tree_hashes": [
+    {"path":"experiments/hko-local-maximum/src","blake3":"0b88d4bb9b326569763ff54f3c7cfa4e971a8fa53d0e3b9130d1c39bc25622ac","file_count":4},
+    {"path":"crates/symplectic/src","blake3":"92f28bb2dfd1b38595136b2b45d21e2e19eb94591155e0c0f86e3b5fa26939b9","file_count":67},
+    {"path":"crates/euclidean-polytopes/src","blake3":"628dfa814cade07cd529878542d5833ad893d4d3c5b10e4c8845473973ac271d","file_count":8},
+    {"path":"crates/algebraic-numbers/src","blake3":"825e507c24dacd39b84086ad3738218e1ca2d006e1b6dcad1d779f3db1207e8a","file_count":10}
+  ]
+}
