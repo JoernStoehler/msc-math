@@ -12,7 +12,7 @@ use num_rational::BigRational;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::fs::{self, File};
 use std::io::{BufWriter, Write};
@@ -52,6 +52,7 @@ struct Cli {
     bisect_tol: f64,
     smoke: bool,
     frozen_panel: bool,
+    launch_packet: Option<PathBuf>,
 }
 
 #[derive(Clone, Debug)]
@@ -92,13 +93,15 @@ struct BasisArtifact {
     basis: BasisPayload,
 }
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize)]
+#[serde(deny_unknown_fields)]
 struct FileIdentity {
     path: String,
     blake3: String,
 }
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize)]
+#[serde(deny_unknown_fields)]
 struct TreeIdentity {
     path: String,
     blake3: String,
@@ -124,6 +127,51 @@ struct ArtifactBundle {
     format: &'static str,
     artifacts: Vec<FileIdentity>,
     bundle_content_blake3: String,
+}
+
+#[derive(Debug, Serialize)]
+struct ArtifactBundleRoot<'a> {
+    format: &'static str,
+    artifacts: &'a [FileIdentity],
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+struct LaunchSettings {
+    seed: u64,
+    directions: usize,
+    r_max: f64,
+    bisect_tol: f64,
+    shells: Vec<f64>,
+    post_transition_factors: Vec<f64>,
+    nonlinear_rotated_control_thetas: Vec<f64>,
+    gram_schmidt_tolerance: f64,
+    sign_threshold: f64,
+    residual_gate: f64,
+    gauge_warning_threshold: f64,
+    gauge_sensitivity_thresholds: Vec<f64>,
+    control_tolerance: f64,
+    maximum_bisection_iterations: usize,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+struct LaunchPacket {
+    format: String,
+    settings: LaunchSettings,
+    expected_git_commit: String,
+    expected_git_tree: String,
+    expected_git_clean: bool,
+    expected_compiled_sampler_source_blake3: String,
+    expected_source_and_dependency_hashes: Vec<FileIdentity>,
+    expected_local_source_tree_hashes: Vec<TreeIdentity>,
+}
+
+#[derive(Clone, Debug)]
+struct LaunchPacketVerification {
+    path: String,
+    blake3: String,
+    format: String,
 }
 
 #[derive(Debug, Serialize)]
@@ -163,6 +211,10 @@ struct Manifest {
     capacity_routes: Vec<&'static str>,
     smoke: bool,
     frozen_panel_requested: bool,
+    launch_packet_path: Option<String>,
+    launch_packet_blake3: Option<String>,
+    launch_packet_format: Option<String>,
+    launch_packet_verified: bool,
     canonical_target_predicate: bool,
     build_binding_residual: &'static str,
 }
@@ -244,8 +296,8 @@ struct TransitionRow {
 }
 
 #[derive(Clone, Debug, Serialize)]
-struct ChronologyEvent {
-    record_order: usize,
+struct EventLogEntry {
+    event_log_order: usize,
     coarse_interval_index: Option<usize>,
     event_kind: String,
     radius_left: f64,
@@ -274,8 +326,9 @@ struct RayOutcome {
     route_side_indeterminate_observed: bool,
     post_transition_probe_count: usize,
     nominal_reentry_observed: bool,
-    event_chronology: Vec<ChronologyEvent>,
+    event_log: Vec<EventLogEntry>,
     terminal_observation_after_nominal_transition: bool,
+    terminal_observation_label: Option<String>,
     no_reentry_claim: &'static str,
 }
 
@@ -324,7 +377,8 @@ Options:
   --r-max X            Maximum radius (default: 0.5; smoke capped at 3e-4).
   --bisect-tol X       Absolute transition tolerance (default: 1e-4).
   --smoke              Minimal controls/sentinels plus one short random ray.
-  --frozen-panel       Require the exact reviewed 32-ray settings and a clean Git tree.
+  --frozen-panel       Require a reviewed external launch packet for the 32-ray panel.
+  --launch-packet PATH Reviewed packet required by --frozen-panel.
   --help, -h           Show this help."#
     );
 }
@@ -337,6 +391,7 @@ fn parse_args(raw: &[String]) -> Result<Cli, String> {
     let mut bisect_tol = DEFAULT_BISECT_TOL;
     let mut smoke = false;
     let mut frozen_panel = false;
+    let mut launch_packet = None;
     let mut i = 0;
     while i < raw.len() {
         let value = raw.get(i + 1);
@@ -347,6 +402,10 @@ fn parse_args(raw: &[String]) -> Result<Cli, String> {
             }
             "--smoke" => smoke = true,
             "--frozen-panel" => frozen_panel = true,
+            "--launch-packet" => {
+                launch_packet = Some(PathBuf::from(value.ok_or("--launch-packet needs PATH")?));
+                i += 1;
+            }
             "--out-dir" => {
                 out_dir = Some(PathBuf::from(value.ok_or("--out-dir needs PATH")?));
                 i += 1;
@@ -398,14 +457,14 @@ fn parse_args(raw: &[String]) -> Result<Cli, String> {
     if smoke {
         r_max = r_max.min(SMOKE_R_MAX);
     }
-    if frozen_panel
-        && (smoke
-            || seed != DEFAULT_SEED
-            || directions != DEFAULT_DIRECTIONS
-            || r_max != DEFAULT_R_MAX
-            || bisect_tol != DEFAULT_BISECT_TOL)
-    {
-        return Err("--frozen-panel requires non-smoke seed=44, directions=32, r-max=0.5, and bisect-tol=1e-4".into());
+    if frozen_panel && smoke {
+        return Err("--frozen-panel cannot be combined with --smoke".into());
+    }
+    if frozen_panel && launch_packet.is_none() {
+        return Err("--frozen-panel requires --launch-packet PATH".into());
+    }
+    if !frozen_panel && launch_packet.is_some() {
+        return Err("--launch-packet is only valid with --frozen-panel".into());
     }
     Ok(Cli {
         out_dir: out_dir.ok_or("--out-dir is required")?,
@@ -415,6 +474,7 @@ fn parse_args(raw: &[String]) -> Result<Cli, String> {
         bisect_tol,
         smoke,
         frozen_panel,
+        launch_packet,
     })
 }
 
@@ -714,6 +774,61 @@ fn authoritative_nominal_side(
     }
 }
 
+fn action_data_issue(
+    nominal_action: Option<f64>,
+    action_lower: Option<f64>,
+    action_upper: Option<f64>,
+) -> Option<&'static str> {
+    let (Some(action), Some(lower), Some(upper)) = (nominal_action, action_lower, action_upper)
+    else {
+        return Some("missing_action_data");
+    };
+    if !(action.is_finite() && action > 0.0) {
+        return Some("nonpositive_or_nonfinite_nominal_action");
+    }
+    if !(lower.is_finite() && upper.is_finite() && lower >= 0.0 && upper >= lower) {
+        return Some("unusable_action_interval");
+    }
+    if action < lower || action > upper {
+        return Some("nominal_action_outside_action_interval");
+    }
+    None
+}
+
+fn authoritative_route_side(
+    chart: &str,
+    gauge: &str,
+    evaluator: &str,
+    nominal_action: Option<f64>,
+    action_lower: Option<f64>,
+    action_upper: Option<f64>,
+    route_interval: Option<(f64, f64)>,
+) -> &'static str {
+    if chart != "chart_nominal"
+        || gauge != "gauge_nominal"
+        || evaluator != "evaluator_available"
+        || action_data_issue(nominal_action, action_lower, action_upper).is_some()
+    {
+        return "route_side_unavailable";
+    }
+    match route_interval {
+        Some((lower, upper))
+            if lower.is_finite() && upper.is_finite() && lower <= upper && lower > 1.0 =>
+        {
+            "route_above_one"
+        }
+        Some((lower, upper))
+            if lower.is_finite() && upper.is_finite() && lower <= upper && upper <= 1.0 =>
+        {
+            "route_below_or_equal_one"
+        }
+        Some((lower, upper)) if lower.is_finite() && upper.is_finite() && lower <= upper => {
+            "route_side_indeterminate"
+        }
+        _ => "route_side_unavailable",
+    }
+}
+
 fn is_authoritative_nominal_label(label: &str) -> bool {
     matches!(label, "nominal_above_one" | "nominal_below_or_equal_one")
 }
@@ -845,21 +960,29 @@ fn evaluate(
             let upper = hi * hi / (2.0 * v);
             (lower.is_finite() && upper.is_finite() && lower <= upper).then_some((lower, upper))
         });
-    if capacity.is_some() && route_interval.is_none() {
-        evaluator_label = "evaluator_indeterminate".into();
-        evaluator_reasons.push("unusable_action_interval".into());
+    if capacity.is_some() {
+        if let Some(reason) = action_data_issue(nominal_action, action_lower, action_upper) {
+            evaluator_label = "evaluator_indeterminate".into();
+            evaluator_reasons.push(reason.into());
+        } else if route_interval.is_none() {
+            evaluator_label = "evaluator_indeterminate".into();
+            evaluator_reasons.push("unusable_action_interval".into());
+        }
     }
     if raw_sys_nominal.is_some_and(|value| !value.is_finite()) {
         evaluator_label = "evaluator_indeterminate".into();
         evaluator_reasons.push("nonfinite_nominal_sys".into());
     }
     let sys_nominal = raw_sys_nominal.filter(|value| value.is_finite());
-    let route_side = match route_interval {
-        Some((lo, _)) if lo > 1.0 => "route_above_one",
-        Some((_, hi)) if hi <= 1.0 => "route_below_or_equal_one",
-        Some(_) => "route_side_indeterminate",
-        None => "route_side_unavailable",
-    }
+    let route_side = authoritative_route_side(
+        &chart_label,
+        &gauge.label,
+        &evaluator_label,
+        nominal_action,
+        action_lower,
+        action_upper,
+        route_interval,
+    )
     .to_string();
     let nominal_side =
         authoritative_nominal_side(&chart_label, &gauge.label, &evaluator_label, sys_nominal)
@@ -1063,6 +1186,29 @@ fn route_side_indeterminate_from_labels<'a>(labels: impl IntoIterator<Item = &'a
         .any(|label| label == "route_side_indeterminate")
 }
 
+fn competing_risk_or_censor_label(
+    nominal_transition_observed: bool,
+    chart: &str,
+    gauge: &str,
+    evaluator: &str,
+    last_radius: f64,
+    r_max: f64,
+) -> &'static str {
+    if nominal_transition_observed {
+        "nominal_shell_transition_observed"
+    } else if chart != "chart_nominal" {
+        "chart_competing_observation_limit"
+    } else if gauge != "gauge_nominal" {
+        "gauge_competing_observation_limit"
+    } else if evaluator != "evaluator_available" {
+        "evaluator_competing_observation_limit"
+    } else if last_radius == r_max {
+        "nominal_trace_right_censored_at_r_max"
+    } else {
+        "sampling_ended_without_declared_outcome"
+    }
+}
+
 fn plan_post_transition_probes(
     transitions: &[TransitionRow],
     r_max: f64,
@@ -1179,8 +1325,8 @@ fn run_ray(
             if is_qualifying_nominal_transition(&transition) {
                 nominal_transitions.push(transition.clone());
             }
-            chronology.push(ChronologyEvent {
-                record_order: chronology.len(),
+            chronology.push(EventLogEntry {
+                event_log_order: chronology.len(),
                 coarse_interval_index: Some(coarse_interval_index),
                 event_kind: format!("shell_bracketed_{}", transition.transition_kind),
                 radius_left: transition.inside_radius,
@@ -1218,27 +1364,22 @@ fn run_ray(
     }
 
     let last = rows.last().expect("ray has origin evaluation");
-    let competing_risk_or_censor_label = if last.chart_label != "chart_nominal" {
-        "chart_competing_observation_limit"
-    } else if last.gauge.label != "gauge_nominal" {
-        "gauge_competing_observation_limit"
-    } else if last.evaluator_label != "evaluator_available" {
-        "evaluator_competing_observation_limit"
-    } else if !nominal_transitions.is_empty() {
-        "nominal_shell_transition_observed"
-    } else if last.radius == r_max {
-        "nominal_trace_right_censored_at_r_max"
-    } else {
-        "sampling_ended_without_declared_outcome"
-    };
+    let competing_risk_or_censor_label = competing_risk_or_censor_label(
+        !nominal_transitions.is_empty(),
+        &last.chart_label,
+        &last.gauge.label,
+        &last.evaluator_label,
+        last.radius,
+        r_max,
+    );
     let route_side_indeterminate_observed =
         route_side_indeterminate_from_labels(all_rows.iter().map(|row| row.route_side.as_str()));
     let nominal_reentry_witness = nominal_reentry_witness_from_rows(&all_rows);
     let nominal_reentry_observed = nominal_reentry_witness.is_some();
     let terminal = is_terminal(last);
     if let Some((below_radius, above_radius)) = nominal_reentry_witness {
-        chronology.push(ChronologyEvent {
-            record_order: chronology.len(),
+        chronology.push(EventLogEntry {
+            event_log_order: chronology.len(),
             coarse_interval_index: None,
             event_kind: "nominal_reentry_observed".into(),
             radius_left: below_radius,
@@ -1250,8 +1391,8 @@ fn run_ray(
         });
     }
     if terminal {
-        chronology.push(ChronologyEvent {
-            record_order: chronology.len(),
+        chronology.push(EventLogEntry {
+            event_log_order: chronology.len(),
             coarse_interval_index: None,
             event_kind: "terminal_observation_limit".into(),
             radius_left: last.radius,
@@ -1271,8 +1412,9 @@ fn run_ray(
         route_side_indeterminate_observed,
         post_transition_probe_count,
         nominal_reentry_observed,
-        event_chronology: chronology,
+        event_log: chronology,
         terminal_observation_after_nominal_transition: terminal && !nominal_transitions.is_empty(),
+        terminal_observation_label: terminal.then(|| last.primary_stop_label.clone()),
         no_reentry_claim:
             "false means only that no re-entry was directly seen among retained shell, bisection, and declared post-probe evaluations",
     };
@@ -1636,29 +1778,94 @@ fn local_source_tree_hashes() -> Vec<TreeIdentity> {
     .collect()
 }
 
-fn canonical_target_predicate(cli: &Cli, shells: &[f64], git: &GitIdentity) -> bool {
-    cli.frozen_panel
-        && !cli.smoke
-        && cli.seed == DEFAULT_SEED
-        && cli.directions == DEFAULT_DIRECTIONS
-        && cli.r_max == DEFAULT_R_MAX
-        && cli.bisect_tol == DEFAULT_BISECT_TOL
-        && shells == SHELLS
-        && POST_FACTORS == [1.25, 1.5, 2.0, 3.0]
-        && ROTATED_CONTROL_THETAS
+fn launch_settings_match_literal(settings: &LaunchSettings, cli: &Cli, shells: &[f64]) -> bool {
+    settings.seed == 44
+        && settings.directions == 32
+        && settings.r_max == 0.5
+        && settings.bisect_tol == 1.0e-4
+        && settings.shells == [1e-4, 3e-4, 1e-3, 3e-3, 1e-2, 3e-2, 1e-1, 3e-1, 5e-1]
+        && settings.post_transition_factors == [1.25, 1.5, 2.0, 3.0]
+        && settings.nonlinear_rotated_control_thetas
             == [
                 0.0,
                 std::f64::consts::PI / 20.0,
                 std::f64::consts::PI / 10.0,
             ]
-        && GS_TOL == 1.0e-11
-        && SIGN_TOL == 1.0e-14
-        && RESIDUAL_TOL == 2.0e-10
-        && GAUGE_WARNING == 1.0e-6
-        && GAUGE_SENSITIVITY == [1.0e-4, 1.0e-6, 1.0e-8]
-        && CONTROL_TOL == 2.0e-9
-        && MAX_BISECT_ITERS == 64
-        && git.clean
+        && settings.gram_schmidt_tolerance == 1.0e-11
+        && settings.sign_threshold == 1.0e-14
+        && settings.residual_gate == 2.0e-10
+        && settings.gauge_warning_threshold == 1.0e-6
+        && settings.gauge_sensitivity_thresholds == [1.0e-4, 1.0e-6, 1.0e-8]
+        && settings.control_tolerance == 2.0e-9
+        && settings.maximum_bisection_iterations == 64
+        && cli.seed == settings.seed
+        && cli.directions == settings.directions
+        && cli.r_max == settings.r_max
+        && cli.bisect_tol == settings.bisect_tol
+        && shells == settings.shells
+        && POST_FACTORS == settings.post_transition_factors
+        && ROTATED_CONTROL_THETAS == settings.nonlinear_rotated_control_thetas
+        && GS_TOL == settings.gram_schmidt_tolerance
+        && SIGN_TOL == settings.sign_threshold
+        && RESIDUAL_TOL == settings.residual_gate
+        && GAUGE_WARNING == settings.gauge_warning_threshold
+        && GAUGE_SENSITIVITY == settings.gauge_sensitivity_thresholds
+        && CONTROL_TOL == settings.control_tolerance
+        && MAX_BISECT_ITERS == settings.maximum_bisection_iterations
+}
+
+fn verify_launch_packet(
+    cli: &Cli,
+    shells: &[f64],
+    git: &GitIdentity,
+    toolchain: &ToolchainIdentity,
+    compiled_sampler_source_blake3: &str,
+    runtime_sampler_source_blake3: &str,
+    source_identities: &[FileIdentity],
+    source_tree_identities: &[TreeIdentity],
+) -> Result<LaunchPacketVerification, String> {
+    let path = cli
+        .launch_packet
+        .as_ref()
+        .ok_or("frozen panel requires a launch packet")?;
+    let bytes = fs::read(path)
+        .map_err(|error| format!("read launch packet {}: {error}", path.display()))?;
+    let packet: LaunchPacket = serde_json::from_slice(&bytes)
+        .map_err(|error| format!("parse launch packet {}: {error}", path.display()))?;
+    if packet.format != "hko_e2_quotient_ray_launch_v1" {
+        return Err("launch packet format is not hko_e2_quotient_ray_launch_v1".into());
+    }
+    if !launch_settings_match_literal(&packet.settings, cli, shells) {
+        return Err(
+            "launch packet settings do not match the literal reviewed protocol and CLI".into(),
+        );
+    }
+    if !packet.expected_git_clean || !git.clean {
+        return Err("frozen panel requires a clean Git worktree".into());
+    }
+    if packet.expected_git_commit != git.commit || packet.expected_git_tree != git.tree {
+        return Err("launch packet expected Git commit/tree does not match the worktree".into());
+    }
+    if toolchain.build_profile != "release" {
+        return Err("frozen panel requires a release build".into());
+    }
+    if compiled_sampler_source_blake3 != runtime_sampler_source_blake3 {
+        return Err("compiled sampler source differs from checked-out sampler source".into());
+    }
+    if packet.expected_compiled_sampler_source_blake3 != compiled_sampler_source_blake3 {
+        return Err("launch packet sampler hash does not match the compiled sampler source".into());
+    }
+    if packet.expected_source_and_dependency_hashes != source_identities {
+        return Err("launch packet source/dependency identities do not match".into());
+    }
+    if packet.expected_local_source_tree_hashes != source_tree_identities {
+        return Err("launch packet local source-tree identities do not match".into());
+    }
+    Ok(LaunchPacketVerification {
+        path: path.display().to_string(),
+        blake3: blake3::hash(&bytes).to_hex().to_string(),
+        format: packet.format,
+    })
 }
 
 fn write_artifact_bundle(out_dir: &Path) -> ArtifactBundle {
@@ -1678,11 +1885,14 @@ fn write_artifact_bundle(out_dir: &Path) -> ArtifactBundle {
             blake3: hash_file(&out_dir.join(name)),
         })
         .collect::<Vec<_>>();
-    let bundle_content_blake3 = blake3::hash(
-        &serde_json::to_vec(&artifacts).expect("serialize artifact bundle identities"),
-    )
-    .to_hex()
-    .to_string();
+    let root = ArtifactBundleRoot {
+        format: "hko_e2_artifact_bundle_v1",
+        artifacts: &artifacts,
+    };
+    let bundle_content_blake3 =
+        blake3::hash(&serde_json::to_vec(&root).expect("serialize artifact bundle root"))
+            .to_hex()
+            .to_string();
     let bundle = ArtifactBundle {
         format: "hko_e2_artifact_bundle_v1",
         artifacts,
@@ -1794,21 +2004,35 @@ pub fn run(raw_args: &[String]) {
     let git = git_identity(&root);
     let toolchain = toolchain_identity(&root);
     let source_identities = file_identities();
+    let source_tree_identities = local_source_tree_hashes();
     let compiled_sampler_source_blake3 = blake3::hash(COMPILED_SAMPLER_SOURCE).to_hex().to_string();
     let runtime_sampler_source_blake3 = &source_identities[0].blake3;
     let executable = std::env::current_exe().expect("current executable path");
     let executable_blake3 = hash_file(&executable);
-    if cli.frozen_panel {
-        assert!(git.clean, "frozen panel requires a clean Git worktree");
-        assert_eq!(
-            &compiled_sampler_source_blake3, runtime_sampler_source_blake3,
-            "frozen panel compiled sampler source differs from checked-out sampler source"
-        );
-        assert_eq!(
-            toolchain.build_profile, "release",
-            "frozen panel requires a release build"
-        );
+    let mut shells = SHELLS
+        .iter()
+        .copied()
+        .filter(|&radius| radius <= cli.r_max)
+        .collect::<Vec<_>>();
+    if shells.last().copied() != Some(cli.r_max) {
+        shells.push(cli.r_max);
     }
+    let launch_verification = cli.frozen_panel.then(|| {
+        verify_launch_packet(
+            &cli,
+            &shells,
+            &git,
+            &toolchain,
+            &compiled_sampler_source_blake3,
+            runtime_sampler_source_blake3,
+            &source_identities,
+            &source_tree_identities,
+        )
+        .unwrap_or_else(|message| panic!("frozen launch-packet verification failed: {message}"))
+    });
+    let canonical_target = cli.frozen_panel && launch_verification.is_some();
+
+    // Launch-packet verification deliberately precedes all target geometry and capacity calls.
     let known = known_polytopes::hko_pentagon();
     let base_cache =
         HkoPolytopeCache::from_rational_parts(known.dual_vertices.clone(), known.vertices.clone())
@@ -1824,20 +2048,6 @@ pub fn run(raw_args: &[String]) {
 
     let mut output = prepare_output(&cli);
     fs::write(cli.out_dir.join("basis.json"), artifact_bytes).expect("write basis artifact");
-    let mut shells = SHELLS
-        .iter()
-        .copied()
-        .filter(|&radius| radius <= cli.r_max)
-        .collect::<Vec<_>>();
-    if shells.last().copied() != Some(cli.r_max) {
-        shells.push(cli.r_max);
-    }
-    let canonical_target = canonical_target_predicate(&cli, &shells, &git)
-        && toolchain.build_profile == "release"
-        && compiled_sampler_source_blake3.as_str() == runtime_sampler_source_blake3.as_str();
-    if cli.frozen_panel {
-        assert!(canonical_target, "frozen panel canonical predicate failed");
-    }
     let manifest = Manifest {
         format: "hko_e2_quotient_ray_manifest_v1",
         claim_boundary: vec![
@@ -1851,7 +2061,7 @@ pub fn run(raw_args: &[String]) {
         ],
         basis_content_blake3: artifact.basis_content_blake3.clone(),
         source_and_dependency_hashes: source_identities,
-        local_source_tree_hashes: local_source_tree_hashes(),
+        local_source_tree_hashes: source_tree_identities,
         compiled_sampler_source_blake3,
         executable_blake3,
         executable_path: executable.display().to_string(),
@@ -1894,6 +2104,14 @@ pub fn run(raw_args: &[String]) {
         ],
         smoke: cli.smoke,
         frozen_panel_requested: cli.frozen_panel,
+        launch_packet_path: launch_verification.as_ref().map(|value| value.path.clone()),
+        launch_packet_blake3: launch_verification
+            .as_ref()
+            .map(|value| value.blake3.clone()),
+        launch_packet_format: launch_verification
+            .as_ref()
+            .map(|value| value.format.clone()),
+        launch_packet_verified: launch_verification.is_some(),
         canonical_target_predicate: canonical_target,
         build_binding_residual: "the executable hash, compiled sampler-source hash, clean Git commit/tree, local source-tree hashes, toolchain, profile, and exact invocation are retained; Rust does not natively attest that every linked path-dependency object was compiled from those trees",
     };
@@ -2138,6 +2356,92 @@ mod tests {
         }
     }
 
+    #[test]
+    fn route_side_requires_every_authority_gate() {
+        let valid = (
+            "chart_nominal",
+            "gauge_nominal",
+            "evaluator_available",
+            Some(2.0),
+            Some(1.9),
+            Some(2.1),
+            Some((1.2, 1.4)),
+        );
+        assert_eq!(
+            authoritative_route_side(valid.0, valid.1, valid.2, valid.3, valid.4, valid.5, valid.6),
+            "route_above_one"
+        );
+        for (chart, gauge, evaluator) in [
+            ("chart_invalid", "gauge_nominal", "evaluator_available"),
+            (
+                "chart_nominal",
+                "gauge_near_tangency_warning",
+                "evaluator_available",
+            ),
+            (
+                "chart_nominal",
+                "gauge_numeric_rank_event",
+                "evaluator_available",
+            ),
+            ("chart_nominal", "gauge_nominal", "evaluator_indeterminate"),
+            ("chart_nominal", "gauge_nominal", "evaluator_unavailable"),
+        ] {
+            assert_eq!(
+                authoritative_route_side(
+                    chart, gauge, evaluator, valid.3, valid.4, valid.5, valid.6,
+                ),
+                "route_side_unavailable"
+            );
+        }
+    }
+
+    #[test]
+    fn nonpositive_or_interval_inconsistent_actions_are_not_authoritative() {
+        assert_eq!(
+            action_data_issue(Some(-1.0), Some(0.9), Some(1.1)),
+            Some("nonpositive_or_nonfinite_nominal_action")
+        );
+        assert_eq!(
+            action_data_issue(Some(1.2), Some(1.3), Some(1.4)),
+            Some("nominal_action_outside_action_interval")
+        );
+        assert_eq!(
+            action_data_issue(Some(1.2), Some(1.4), Some(1.3)),
+            Some("unusable_action_interval")
+        );
+        assert_eq!(
+            action_data_issue(Some(f64::NAN), Some(0.9), Some(1.1)),
+            Some("nonpositive_or_nonfinite_nominal_action")
+        );
+        assert_eq!(
+            authoritative_route_side(
+                "chart_nominal",
+                "gauge_nominal",
+                "evaluator_available",
+                Some(-1.0),
+                Some(0.9),
+                Some(1.1),
+                Some((0.8, 1.2)),
+            ),
+            "route_side_unavailable"
+        );
+    }
+
+    #[test]
+    fn nominal_transition_wins_over_later_terminal_observation() {
+        assert_eq!(
+            competing_risk_or_censor_label(
+                true,
+                "chart_invalid",
+                "gauge_numeric_rank_event",
+                "evaluator_unavailable",
+                0.3,
+                0.5,
+            ),
+            "nominal_shell_transition_observed"
+        );
+    }
+
     fn transition(index: usize, inside: f64, outside: f64) -> TransitionRow {
         TransitionRow {
             transition_index: index,
@@ -2212,47 +2516,85 @@ mod tests {
     }
 
     #[test]
-    fn canonical_target_predicate_covers_frozen_cli_and_clean_tree() {
+    fn literal_launch_settings_bind_cli_and_runtime_protocol() {
         let cli = Cli {
             out_dir: PathBuf::from("/tmp/canonical"),
-            seed: DEFAULT_SEED,
-            directions: DEFAULT_DIRECTIONS,
-            r_max: DEFAULT_R_MAX,
-            bisect_tol: DEFAULT_BISECT_TOL,
+            seed: 44,
+            directions: 32,
+            r_max: 0.5,
+            bisect_tol: 1.0e-4,
             smoke: false,
             frozen_panel: true,
+            launch_packet: Some(PathBuf::from("/tmp/reviewed.json")),
         };
-        let clean = GitIdentity {
-            commit: "commit".into(),
-            tree: "tree".into(),
-            clean: true,
+        let settings = LaunchSettings {
+            seed: 44,
+            directions: 32,
+            r_max: 0.5,
+            bisect_tol: 1.0e-4,
+            shells: vec![1e-4, 3e-4, 1e-3, 3e-3, 1e-2, 3e-2, 1e-1, 3e-1, 5e-1],
+            post_transition_factors: vec![1.25, 1.5, 2.0, 3.0],
+            nonlinear_rotated_control_thetas: vec![
+                0.0,
+                std::f64::consts::PI / 20.0,
+                std::f64::consts::PI / 10.0,
+            ],
+            gram_schmidt_tolerance: 1.0e-11,
+            sign_threshold: 1.0e-14,
+            residual_gate: 2.0e-10,
+            gauge_warning_threshold: 1.0e-6,
+            gauge_sensitivity_thresholds: vec![1.0e-4, 1.0e-6, 1.0e-8],
+            control_tolerance: 2.0e-9,
+            maximum_bisection_iterations: 64,
         };
-        assert!(canonical_target_predicate(&cli, SHELLS, &clean));
-        let mut not_frozen = cli.clone();
-        not_frozen.frozen_panel = false;
-        assert!(!canonical_target_predicate(&not_frozen, SHELLS, &clean));
+        assert!(launch_settings_match_literal(&settings, &cli, SHELLS));
         let mut wrong_seed = cli.clone();
         wrong_seed.seed += 1;
-        assert!(!canonical_target_predicate(&wrong_seed, SHELLS, &clean));
-        let dirty = GitIdentity {
-            clean: false,
-            ..clean
-        };
-        assert!(!canonical_target_predicate(&cli, SHELLS, &dirty));
+        assert!(!launch_settings_match_literal(
+            &settings,
+            &wrong_seed,
+            SHELLS
+        ));
+        let mut wrong_settings = settings.clone();
+        wrong_settings.maximum_bisection_iterations += 1;
+        assert!(!launch_settings_match_literal(
+            &wrong_settings,
+            &cli,
+            SHELLS
+        ));
 
         assert!(parse_args(&[
             "--out-dir".into(),
             "/tmp/canonical".into(),
             "--frozen-panel".into(),
+            "--launch-packet".into(),
+            "/tmp/reviewed.json".into(),
         ])
         .is_ok());
         assert!(parse_args(&[
             "--out-dir".into(),
             "/tmp/not-canonical".into(),
             "--frozen-panel".into(),
-            "--seed".into(),
-            "45".into(),
         ])
         .is_err());
+    }
+
+    #[test]
+    fn artifact_bundle_root_hash_includes_format() {
+        let artifacts = vec![FileIdentity {
+            path: "one.json".into(),
+            blake3: "abc".into(),
+        }];
+        let first = serde_json::to_vec(&ArtifactBundleRoot {
+            format: "hko_e2_artifact_bundle_v1",
+            artifacts: &artifacts,
+        })
+        .unwrap();
+        let second = serde_json::to_vec(&ArtifactBundleRoot {
+            format: "hko_e2_artifact_bundle_v2",
+            artifacts: &artifacts,
+        })
+        .unwrap();
+        assert_ne!(blake3::hash(&first), blake3::hash(&second));
     }
 }

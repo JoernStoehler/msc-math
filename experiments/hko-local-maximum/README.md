@@ -83,6 +83,10 @@ unless a current local README or generated summary points to a live consequence.
 - `hko-neighborhood-sampling m10-lagrangian-product-probe --smoke` writes
   `empirical/neighborhood-sampling/m10-lagrangian-product/lagrangian-probe-smoke.jsonl`;
   full mode writes `empirical/neighborhood-sampling/m10-lagrangian-product/lagrangian-probe.jsonl`.
+- `hko-neighborhood-sampling m10-quotient-ray --smoke --out-dir <new-empty-dir>`
+  runs the short event-labelled quotient-slice screen. The reviewed 32-ray mode
+  additionally requires `--frozen-panel --launch-packet <reviewed-packet.json>`;
+  see `empirical/neighborhood-sampling/README.md` for its provenance contract.
 - `hko-second-order --smoke` runs the phase-1 probe without writing tracked
   outputs; full mode writes `empirical/second-order/*.jsonl`.
 - `hko-m11-ascent --smoke` writes

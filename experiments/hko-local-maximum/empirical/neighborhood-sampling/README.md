@@ -30,17 +30,21 @@ The canonical retained invocation is:
 ```bash
 cargo run -p exp-hko-local-maximum --release --bin hko-neighborhood-sampling -- \
   m10-quotient-ray --frozen-panel \
+  --launch-packet /path/to/reviewed-launch-packet.json \
   --seed 44 --directions 32 --r-max 0.5 --bisect-tol 1e-4 \
   --out-dir /path/to/new-empty-output-directory
 ```
 
-`--frozen-panel` rejects noncanonical CLI settings, debug builds, a dirty Git
-worktree, or a mismatch between the sampler source compiled into the binary and
-the checked-out sampler source. The manifest retains the exact process
-invocation, clean commit/tree, toolchain and profile, executable hash, compiled
-sampler-source hash, relevant local source-tree hashes, all numerical settings,
-and claim boundaries. After all JSON/JSONL outputs are flushed, the producer
-writes `artifact-bundle.json`, which hashes every other emitted artifact.
+`--frozen-panel` requires a reviewer-created external launch packet. Before any
+target geometry or capacity call, the binary checks its literal protocol
+settings, expected clean Git commit/tree, compiled sampler hash, relevant file
+hashes, and local dependency/source-tree identities. The packet itself is
+Blake3-bound in the manifest. A packet is created only after the reviewed source
+commit is final; it is not a mutable producer default. The manifest also retains
+the exact process invocation, toolchain and profile, executable hash, all
+numerical settings, and claim boundaries. After all JSON/JSONL outputs are
+flushed, the producer writes `artifact-bundle.json`, whose root hash covers both
+the bundle format and every other emitted artifact.
 
 This is a nominal mechanism/readiness screen over 32 seeded directions, not a
 capacity-certified positivity boundary. Radii are ambient 40-dimensional
