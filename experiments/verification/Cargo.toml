@@ -23,6 +23,10 @@ path = "all-minimum/main.rs"
 name = "flow-graph-proof-risk"
 path = "flow-graph-proof-risk/main.rs"
 
+[[bin]]
+name = "ch2021-six-vertex"
+path = "ch2021-six-vertex/main.rs"
+
 [lints]
 workspace = true
 
