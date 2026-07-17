@@ -17,6 +17,7 @@ use std::collections::BTreeMap;
 use std::fs::{self, File};
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
+use std::process::Command;
 use std::time::Instant;
 use symplectic::geom::rational_arithmetic::f64_to_rational;
 use symplectic::{classify_facets_from_dual_vertices, geom::known_polytopes, OrbitSearchResult};
@@ -28,6 +29,11 @@ const DEFAULT_BISECT_TOL: f64 = 1.0e-4;
 const SMOKE_R_MAX: f64 = 3.0e-4;
 const SHELLS: &[f64] = &[1e-4, 3e-4, 1e-3, 3e-3, 1e-2, 3e-2, 1e-1, 3e-1, 5e-1];
 const POST_FACTORS: &[f64] = &[1.25, 1.5, 2.0, 3.0];
+const ROTATED_CONTROL_THETAS: &[f64] = &[
+    0.0,
+    std::f64::consts::PI / 20.0,
+    std::f64::consts::PI / 10.0,
+];
 const GS_TOL: f64 = 1.0e-11;
 const SIGN_TOL: f64 = 1.0e-14;
 const RESIDUAL_TOL: f64 = 2.0e-10;
@@ -35,8 +41,9 @@ const GAUGE_WARNING: f64 = 1.0e-6;
 const GAUGE_SENSITIVITY: &[f64] = &[1.0e-4, 1.0e-6, 1.0e-8];
 const CONTROL_TOL: f64 = 2.0e-9;
 const MAX_BISECT_ITERS: usize = 64;
+const COMPILED_SAMPLER_SOURCE: &[u8] = include_bytes!("m10_quotient_ray.rs");
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 struct Cli {
     out_dir: PathBuf,
     seed: u64,
@@ -44,6 +51,7 @@ struct Cli {
     r_max: f64,
     bisect_tol: f64,
     smoke: bool,
+    frozen_panel: bool,
 }
 
 #[derive(Clone, Debug)]
@@ -90,17 +98,54 @@ struct FileIdentity {
     blake3: String,
 }
 
+#[derive(Clone, Debug, Serialize)]
+struct TreeIdentity {
+    path: String,
+    blake3: String,
+    file_count: usize,
+}
+
+#[derive(Clone, Debug, Serialize)]
+struct GitIdentity {
+    commit: String,
+    tree: String,
+    clean: bool,
+}
+
+#[derive(Clone, Debug, Serialize)]
+struct ToolchainIdentity {
+    rustc_verbose: String,
+    cargo_version: String,
+    build_profile: &'static str,
+}
+
+#[derive(Debug, Serialize)]
+struct ArtifactBundle {
+    format: &'static str,
+    artifacts: Vec<FileIdentity>,
+    bundle_content_blake3: String,
+}
+
 #[derive(Debug, Serialize)]
 struct Manifest {
     format: &'static str,
     claim_boundary: Vec<&'static str>,
     basis_content_blake3: String,
     source_and_dependency_hashes: Vec<FileIdentity>,
+    local_source_tree_hashes: Vec<TreeIdentity>,
+    compiled_sampler_source_blake3: String,
+    executable_blake3: String,
+    executable_path: String,
+    git: GitIdentity,
+    toolchain: ToolchainIdentity,
+    exact_invocation: Vec<String>,
+    working_directory: String,
     coordinate_order: &'static str,
     generator_order: Vec<String>,
     seed: u64,
     random_direction_count: usize,
     deterministic_sentinels: Vec<&'static str>,
+    nonlinear_rotated_control_thetas: &'static [f64],
     shells: Vec<f64>,
     r_max: f64,
     transition_tolerance: f64,
@@ -117,6 +162,9 @@ struct Manifest {
     sampling_continuation_rule: &'static str,
     capacity_routes: Vec<&'static str>,
     smoke: bool,
+    frozen_panel_requested: bool,
+    canonical_target_predicate: bool,
+    build_binding_residual: &'static str,
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -132,12 +180,21 @@ struct GaugeRecord {
 }
 
 #[derive(Clone, Debug, Serialize)]
+struct ProbeBracketRef {
+    transition_index: usize,
+    inside_radius: f64,
+    outside_radius: f64,
+    factor: f64,
+}
+
+#[derive(Clone, Debug, Serialize)]
 struct EvaluationRow {
     evaluation_index: usize,
     ray_id: String,
     ray_kind: String,
     direction_index: Option<usize>,
     phase: String,
+    post_probe_source_brackets: Vec<ProbeBracketRef>,
     radius: f64,
     coefficient_direction_s24: Vec<f64>,
     expanded_direction_40d: Vec<f64>,
@@ -146,6 +203,7 @@ struct EvaluationRow {
     pointwise_exact_rational_geometry: bool,
     chart_label: String,
     chart_validity_reasons: Vec<String>,
+    evaluator_reasons: Vec<String>,
     facet_count: Option<usize>,
     vertex_count: Option<usize>,
     incidence_signature: Option<Vec<String>>,
@@ -173,6 +231,7 @@ struct EvaluationRow {
 
 #[derive(Clone, Debug, Serialize)]
 struct TransitionRow {
+    transition_index: usize,
     ray_id: String,
     transition_kind: String,
     label_inside: String,
@@ -184,6 +243,18 @@ struct TransitionRow {
     classification: &'static str,
 }
 
+#[derive(Clone, Debug, Serialize)]
+struct ChronologyEvent {
+    record_order: usize,
+    coarse_interval_index: Option<usize>,
+    event_kind: String,
+    radius_left: f64,
+    radius_right: f64,
+    label_left: String,
+    label_right: String,
+    ordering_qualification: &'static str,
+}
+
 #[derive(Debug, Serialize)]
 struct ControlRow {
     control_id: String,
@@ -192,7 +263,7 @@ struct ControlRow {
     passed: bool,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Clone, Debug, Serialize)]
 struct RayOutcome {
     ray_id: String,
     ray_kind: String,
@@ -203,6 +274,8 @@ struct RayOutcome {
     route_side_indeterminate_observed: bool,
     post_transition_probe_count: usize,
     nominal_reentry_observed: bool,
+    event_chronology: Vec<ChronologyEvent>,
+    terminal_observation_after_nominal_transition: bool,
     no_reentry_claim: &'static str,
 }
 
@@ -214,9 +287,11 @@ struct Summary {
     transition_count: usize,
     random_directions_completed: usize,
     deterministic_sentinels_completed: usize,
+    nominal_reentry_ray_count: usize,
     output_files: Vec<&'static str>,
     elapsed_seconds: f64,
     target_panel_executed: bool,
+    canonical_target_predicate: bool,
 }
 
 #[derive(Clone, Copy)]
@@ -233,6 +308,7 @@ struct Output {
     next_evaluation: usize,
     capacity_evaluations: usize,
     transition_count: usize,
+    nominal_reentry_rays: usize,
 }
 
 fn print_usage() {
@@ -248,6 +324,7 @@ Options:
   --r-max X            Maximum radius (default: 0.5; smoke capped at 3e-4).
   --bisect-tol X       Absolute transition tolerance (default: 1e-4).
   --smoke              Minimal controls/sentinels plus one short random ray.
+  --frozen-panel       Require the exact reviewed 32-ray settings and a clean Git tree.
   --help, -h           Show this help."#
     );
 }
@@ -259,6 +336,7 @@ fn parse_args(raw: &[String]) -> Result<Cli, String> {
     let mut r_max = DEFAULT_R_MAX;
     let mut bisect_tol = DEFAULT_BISECT_TOL;
     let mut smoke = false;
+    let mut frozen_panel = false;
     let mut i = 0;
     while i < raw.len() {
         let value = raw.get(i + 1);
@@ -268,6 +346,7 @@ fn parse_args(raw: &[String]) -> Result<Cli, String> {
                 std::process::exit(0);
             }
             "--smoke" => smoke = true,
+            "--frozen-panel" => frozen_panel = true,
             "--out-dir" => {
                 out_dir = Some(PathBuf::from(value.ok_or("--out-dir needs PATH")?));
                 i += 1;
@@ -319,6 +398,15 @@ fn parse_args(raw: &[String]) -> Result<Cli, String> {
     if smoke {
         r_max = r_max.min(SMOKE_R_MAX);
     }
+    if frozen_panel
+        && (smoke
+            || seed != DEFAULT_SEED
+            || directions != DEFAULT_DIRECTIONS
+            || r_max != DEFAULT_R_MAX
+            || bisect_tol != DEFAULT_BISECT_TOL)
+    {
+        return Err("--frozen-panel requires non-smoke seed=44, directions=32, r-max=0.5, and bisect-tol=1e-4".into());
+    }
     Ok(Cli {
         out_dir: out_dir.ok_or("--out-dir is required")?,
         seed,
@@ -326,6 +414,7 @@ fn parse_args(raw: &[String]) -> Result<Cli, String> {
         r_max,
         bisect_tol,
         smoke,
+        frozen_panel,
     })
 }
 
@@ -609,6 +698,26 @@ fn primary_label(chart: &str, gauge: &str, evaluator: &str, route: &str, nominal
     }
 }
 
+fn authoritative_nominal_side(
+    chart: &str,
+    gauge: &str,
+    evaluator: &str,
+    sys_nominal: Option<f64>,
+) -> &'static str {
+    if chart != "chart_nominal" || gauge != "gauge_nominal" || evaluator != "evaluator_available" {
+        return "nominal_side_unavailable";
+    }
+    match sys_nominal {
+        Some(value) if value.is_finite() && value > 1.0 => "nominal_above_one",
+        Some(value) if value.is_finite() => "nominal_below_or_equal_one",
+        _ => "nominal_side_unavailable",
+    }
+}
+
+fn is_authoritative_nominal_label(label: &str) -> bool {
+    matches!(label, "nominal_above_one" | "nominal_below_or_equal_one")
+}
+
 #[allow(clippy::too_many_arguments)]
 fn evaluate(
     output: &mut Output,
@@ -616,6 +725,7 @@ fn evaluate(
     ray_kind: &str,
     direction_index: Option<usize>,
     phase: &str,
+    post_probe_source_brackets: &[ProbeBracketRef],
     radius: f64,
     coeffs: &[f64],
     direction: &DVector<f64>,
@@ -627,7 +737,8 @@ fn evaluate(
     let started = Instant::now();
     let gauge = gauge_record(&duals, base_orbit);
     let mut chart_label = "chart_nominal".to_string();
-    let mut reasons = Vec::new();
+    let mut chart_reasons = Vec::new();
+    let mut evaluator_reasons = Vec::new();
     let mut rationalized = None;
     let mut facet_count = None;
     let mut vertex_count = None;
@@ -641,7 +752,7 @@ fn evaluate(
     match exact_rational_geometry(&duals) {
         Err(reason) => {
             chart_label = "chart_invalid".into();
-            reasons.push(reason);
+            chart_reasons.push(reason);
         }
         Ok((polytope, exact)) => {
             rationalized = Some(rationalized_arrays(&exact));
@@ -654,17 +765,17 @@ fn evaluate(
             });
             if observed_signature != base_incidence {
                 chart_label = "chart_invalid".into();
-                reasons.push("labelled_incidence_signature_changed".into());
+                chart_reasons.push("labelled_incidence_signature_changed".into());
             }
             if !all_facets_defining {
                 chart_label = "chart_invalid".into();
-                reasons.push("not_all_facets_defining".into());
+                chart_reasons.push("not_all_facets_defining".into());
             }
             let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
             volume = Some(vol);
             if !(vol.is_finite() && vol > 0.0) {
                 chart_label = "chart_invalid".into();
-                reasons.push("nonpositive_or_nonfinite_volume".into());
+                chart_reasons.push("nonpositive_or_nonfinite_volume".into());
             }
             signature = Some(observed_signature);
             if chart_label == "chart_nominal" {
@@ -702,7 +813,7 @@ fn evaluate(
                         evaluator_label = "evaluator_available".into();
                         capacity = Some(value);
                     }
-                    Err(error) => reasons.push(format!("capacity_error:{error:?}")),
+                    Err(error) => evaluator_reasons.push(format!("capacity_error:{error:?}")),
                 }
             }
         }
@@ -722,18 +833,27 @@ fn evaluate(
                 )
             })
             .unwrap_or((None, None, None, None, None, None));
-    let sys_nominal = nominal_action.zip(volume).map(|(a, v)| a * a / (2.0 * v));
+    let raw_sys_nominal = nominal_action.zip(volume).map(|(a, v)| a * a / (2.0 * v));
     let route_interval = action_lower
         .zip(action_upper)
         .zip(volume)
         .and_then(|((lo, hi), v)| {
-            (lo.is_finite() && hi.is_finite() && lo >= 0.0 && hi >= lo && v > 0.0)
-                .then_some((lo * lo / (2.0 * v), hi * hi / (2.0 * v)))
+            if !(lo.is_finite() && hi.is_finite() && lo >= 0.0 && hi >= lo && v > 0.0) {
+                return None;
+            }
+            let lower = lo * lo / (2.0 * v);
+            let upper = hi * hi / (2.0 * v);
+            (lower.is_finite() && upper.is_finite() && lower <= upper).then_some((lower, upper))
         });
     if capacity.is_some() && route_interval.is_none() {
-        evaluator_label = "evaluator_interval_indeterminate".into();
-        reasons.push("unusable_action_interval".into());
+        evaluator_label = "evaluator_indeterminate".into();
+        evaluator_reasons.push("unusable_action_interval".into());
     }
+    if raw_sys_nominal.is_some_and(|value| !value.is_finite()) {
+        evaluator_label = "evaluator_indeterminate".into();
+        evaluator_reasons.push("nonfinite_nominal_sys".into());
+    }
+    let sys_nominal = raw_sys_nominal.filter(|value| value.is_finite());
     let route_side = match route_interval {
         Some((lo, _)) if lo > 1.0 => "route_above_one",
         Some((_, hi)) if hi <= 1.0 => "route_below_or_equal_one",
@@ -741,12 +861,9 @@ fn evaluate(
         None => "route_side_unavailable",
     }
     .to_string();
-    let nominal_side = match sys_nominal {
-        Some(value) if value > 1.0 => "nominal_above_one",
-        Some(_) => "nominal_below_or_equal_one",
-        None => "nominal_side_unavailable",
-    }
-    .to_string();
+    let nominal_side =
+        authoritative_nominal_side(&chart_label, &gauge.label, &evaluator_label, sys_nominal)
+            .to_string();
     let mut labels = vec![
         chart_label.clone(),
         gauge.label.clone(),
@@ -754,7 +871,12 @@ fn evaluate(
         route_side.clone(),
         nominal_side.clone(),
     ];
-    labels.extend(reasons.iter().map(|x| format!("reason:{x}")));
+    labels.extend(chart_reasons.iter().map(|x| format!("chart_reason:{x}")));
+    labels.extend(
+        evaluator_reasons
+            .iter()
+            .map(|x| format!("evaluator_reason:{x}")),
+    );
     let primary = primary_label(
         &chart_label,
         &gauge.label,
@@ -774,6 +896,7 @@ fn evaluate(
         ray_kind: ray_kind.into(),
         direction_index,
         phase: phase.into(),
+        post_probe_source_brackets: post_probe_source_brackets.to_vec(),
         radius,
         coefficient_direction_s24: coeffs.to_vec(),
         expanded_direction_40d: direction.as_slice().to_vec(),
@@ -781,7 +904,8 @@ fn evaluate(
         rationalized_dual_vertices: rationalized,
         pointwise_exact_rational_geometry: chart_label == "chart_nominal",
         chart_label,
-        chart_validity_reasons: reasons,
+        chart_validity_reasons: chart_reasons,
+        evaluator_reasons,
         facet_count,
         vertex_count,
         incidence_signature: signature,
@@ -790,9 +914,9 @@ fn evaluate(
         gauge,
         evaluator_label,
         resolved_backend: backend,
-        nominal_action,
-        action_lower,
-        action_upper,
+        nominal_action: nominal_action.filter(|value| value.is_finite()),
+        action_lower: action_lower.filter(|value| value.is_finite()),
+        action_upper: action_upper.filter(|value| value.is_finite()),
         sys_nominal,
         sys_route_lower: route_interval.map(|x| x.0),
         sys_route_upper: route_interval.map(|x| x.1),
@@ -851,6 +975,7 @@ fn bisect_transition(
     left: &EvaluationRow,
     right: &EvaluationRow,
     tolerance: f64,
+    all_rows: &mut Vec<EvaluationRow>,
 ) -> TransitionRow {
     let mut inside = left.radius;
     let mut outside = right.radius;
@@ -865,6 +990,7 @@ fn bisect_transition(
             ray_kind,
             direction_index,
             &format!("bisection:{kind}"),
+            &[],
             radius,
             coeffs,
             direction,
@@ -874,6 +1000,7 @@ fn bisect_transition(
             EvaluatorRoute::Auto,
         );
         midpoint_evaluations += 1;
+        all_rows.push(midpoint.clone());
         let label = classification(&midpoint, kind);
         if label == inside_label {
             inside = radius;
@@ -883,6 +1010,7 @@ fn bisect_transition(
         }
     }
     TransitionRow {
+        transition_index: output.transition_count,
         ray_id: ray_id.into(),
         transition_kind: kind.into(),
         label_inside: inside_label,
@@ -893,6 +1021,71 @@ fn bisect_transition(
         midpoint_evaluations,
         classification: "shell_bracketed_transition",
     }
+}
+
+fn is_qualifying_nominal_transition(transition: &TransitionRow) -> bool {
+    transition.transition_kind == "nominal_sys"
+        && is_authoritative_nominal_label(&transition.label_inside)
+        && is_authoritative_nominal_label(&transition.label_outside)
+        && transition.label_inside == "nominal_above_one"
+        && transition.label_outside == "nominal_below_or_equal_one"
+}
+
+fn nominal_reentry_witness_from_observations<'a>(
+    observations: impl IntoIterator<Item = (f64, &'a str)>,
+) -> Option<(f64, f64)> {
+    let mut observations = observations
+        .into_iter()
+        .filter(|(radius, label)| radius.is_finite() && is_authoritative_nominal_label(label))
+        .collect::<Vec<_>>();
+    observations.sort_by(|left, right| left.0.total_cmp(&right.0));
+    let mut below_radius: Option<f64> = None;
+    for (radius, label) in observations {
+        if label == "nominal_below_or_equal_one" {
+            below_radius = Some(below_radius.map_or(radius, |old| old.min(radius)));
+        } else if label == "nominal_above_one" && below_radius.is_some_and(|below| radius > below) {
+            return Some((below_radius.expect("checked below radius"), radius));
+        }
+    }
+    None
+}
+
+fn nominal_reentry_witness_from_rows(rows: &[EvaluationRow]) -> Option<(f64, f64)> {
+    nominal_reentry_witness_from_observations(
+        rows.iter()
+            .map(|row| (row.radius, row.nominal_side.as_str())),
+    )
+}
+
+fn route_side_indeterminate_from_labels<'a>(labels: impl IntoIterator<Item = &'a str>) -> bool {
+    labels
+        .into_iter()
+        .any(|label| label == "route_side_indeterminate")
+}
+
+fn plan_post_transition_probes(
+    transitions: &[TransitionRow],
+    r_max: f64,
+) -> BTreeMap<u64, Vec<ProbeBracketRef>> {
+    let mut radii: BTreeMap<u64, Vec<ProbeBracketRef>> = BTreeMap::new();
+    for transition in transitions {
+        let midpoint = (transition.inside_radius + transition.outside_radius) / 2.0;
+        for &factor in POST_FACTORS {
+            let candidate = (factor * midpoint).min(r_max);
+            if candidate > transition.outside_radius {
+                radii
+                    .entry(candidate.to_bits())
+                    .or_default()
+                    .push(ProbeBracketRef {
+                        transition_index: transition.transition_index,
+                        inside_radius: transition.inside_radius,
+                        outside_radius: transition.outside_radius,
+                        factor,
+                    });
+            }
+        }
+    }
+    radii
 }
 
 fn is_terminal(row: &EvaluationRow) -> bool {
@@ -915,7 +1108,7 @@ fn run_ray(
     shells: &[f64],
     r_max: f64,
     tolerance: f64,
-) {
+) -> RayOutcome {
     let mut rows = Vec::new();
     rows.push(evaluate(
         output,
@@ -923,6 +1116,7 @@ fn run_ray(
         ray_kind,
         direction_index,
         "origin",
+        &[],
         0.0,
         coeffs,
         direction,
@@ -931,6 +1125,7 @@ fn run_ray(
         base_incidence,
         EvaluatorRoute::Auto,
     ));
+    let mut all_rows = rows.clone();
     let mut nominal_below_seen = false;
     for &radius in shells {
         let row = evaluate(
@@ -943,6 +1138,7 @@ fn run_ray(
             } else {
                 "shell"
             },
+            &[],
             radius,
             coeffs,
             direction,
@@ -953,14 +1149,16 @@ fn run_ray(
         );
         let terminal = is_terminal(&row);
         nominal_below_seen |= row.nominal_side == "nominal_below_or_equal_one";
+        all_rows.push(row.clone());
         rows.push(row);
         if terminal {
             break;
         }
     }
 
-    let mut nominal_transition = None;
-    for pair in rows.windows(2) {
+    let mut nominal_transitions = Vec::new();
+    let mut chronology = Vec::new();
+    for (coarse_interval_index, pair) in rows.windows(2).enumerate() {
         for kind in changed_kinds(&pair[0], &pair[1]) {
             let transition = bisect_transition(
                 output,
@@ -976,56 +1174,47 @@ fn run_ray(
                 &pair[0],
                 &pair[1],
                 tolerance,
+                &mut all_rows,
             );
-            if kind == "nominal_sys"
-                && transition.label_inside == "nominal_above_one"
-                && transition.label_outside == "nominal_below_or_equal_one"
-                && nominal_transition.is_none()
-            {
-                nominal_transition = Some((transition.inside_radius, transition.outside_radius));
+            if is_qualifying_nominal_transition(&transition) {
+                nominal_transitions.push(transition.clone());
             }
+            chronology.push(ChronologyEvent {
+                record_order: chronology.len(),
+                coarse_interval_index: Some(coarse_interval_index),
+                event_kind: format!("shell_bracketed_{}", transition.transition_kind),
+                radius_left: transition.inside_radius,
+                radius_right: transition.outside_radius,
+                label_left: transition.label_inside.clone(),
+                label_right: transition.label_outside.clone(),
+                ordering_qualification: "labels changed on this adjacent evaluated pair; events sharing an interval are simultaneous observations and have no inferred within-interval order",
+            });
             write_jsonl(&mut output.transitions, &transition);
             output.transition_count += 1;
         }
     }
 
     let mut post_transition_probe_count = 0;
-    let mut nominal_reentry_observed = false;
-    if let Some((inside, outside)) = nominal_transition {
-        let midpoint = (inside + outside) / 2.0;
-        let mut radii: BTreeMap<u64, Vec<f64>> = BTreeMap::new();
-        for &factor in POST_FACTORS {
-            let candidate = (factor * midpoint).min(r_max);
-            if candidate > outside {
-                radii.entry(candidate.to_bits()).or_default().push(factor);
-            }
-        }
-        for (bits, factors) in radii {
-            let radius = f64::from_bits(bits);
-            let row = evaluate(
-                output,
-                ray_id,
-                ray_kind,
-                direction_index,
-                &format!(
-                    "post_transition_probe:factors={}",
-                    factors
-                        .iter()
-                        .map(|factor| factor.to_string())
-                        .collect::<Vec<_>>()
-                        .join(",")
-                ),
-                radius,
-                coeffs,
-                direction,
-                state_on_ray(base, direction, radius),
-                &basis.orbit,
-                base_incidence,
-                EvaluatorRoute::Auto,
-            );
-            post_transition_probe_count += 1;
-            nominal_reentry_observed |= row.nominal_reentry_observed;
-        }
+    let radii = plan_post_transition_probes(&nominal_transitions, r_max);
+    for (bits, provenance) in radii {
+        let radius = f64::from_bits(bits);
+        let row = evaluate(
+            output,
+            ray_id,
+            ray_kind,
+            direction_index,
+            "post_transition_probe",
+            &provenance,
+            radius,
+            coeffs,
+            direction,
+            state_on_ray(base, direction, radius),
+            &basis.orbit,
+            base_incidence,
+            EvaluatorRoute::Auto,
+        );
+        post_transition_probe_count += 1;
+        all_rows.push(row);
     }
 
     let last = rows.last().expect("ray has origin evaluation");
@@ -1035,32 +1224,63 @@ fn run_ray(
         "gauge_competing_observation_limit"
     } else if last.evaluator_label != "evaluator_available" {
         "evaluator_competing_observation_limit"
-    } else if nominal_transition.is_some() {
+    } else if !nominal_transitions.is_empty() {
         "nominal_shell_transition_observed"
     } else if last.radius == r_max {
         "nominal_trace_right_censored_at_r_max"
     } else {
         "sampling_ended_without_declared_outcome"
     };
-    let route_side_indeterminate_observed = rows
-        .iter()
-        .any(|row| row.route_side == "route_side_indeterminate");
-    write_jsonl(
-        &mut output.ray_outcomes,
-        &RayOutcome {
-            ray_id: ray_id.into(),
-            ray_kind: ray_kind.into(),
-            direction_index,
-            competing_risk_or_censor_label: competing_risk_or_censor_label.into(),
-            last_shell_radius: last.radius,
-            nominal_transition_observed: nominal_transition.is_some(),
-            route_side_indeterminate_observed,
-            post_transition_probe_count,
-            nominal_reentry_observed,
-            no_reentry_claim:
-                "false means only that no re-entry was directly seen at declared finite probes",
-        },
-    );
+    let route_side_indeterminate_observed =
+        route_side_indeterminate_from_labels(all_rows.iter().map(|row| row.route_side.as_str()));
+    let nominal_reentry_witness = nominal_reentry_witness_from_rows(&all_rows);
+    let nominal_reentry_observed = nominal_reentry_witness.is_some();
+    let terminal = is_terminal(last);
+    if let Some((below_radius, above_radius)) = nominal_reentry_witness {
+        chronology.push(ChronologyEvent {
+            record_order: chronology.len(),
+            coarse_interval_index: None,
+            event_kind: "nominal_reentry_observed".into(),
+            radius_left: below_radius,
+            radius_right: above_radius,
+            label_left: "nominal_below_or_equal_one".into(),
+            label_right: "nominal_above_one".into(),
+            ordering_qualification:
+                "derived only from radial ordering of retained authoritative evaluations",
+        });
+    }
+    if terminal {
+        chronology.push(ChronologyEvent {
+            record_order: chronology.len(),
+            coarse_interval_index: None,
+            event_kind: "terminal_observation_limit".into(),
+            radius_left: last.radius,
+            radius_right: last.radius,
+            label_left: last.primary_stop_label.clone(),
+            label_right: last.primary_stop_label.clone(),
+            ordering_qualification: "direct terminal coarse-shell observation; earlier retained transition records remain valid observations",
+        });
+    }
+    let outcome = RayOutcome {
+        ray_id: ray_id.into(),
+        ray_kind: ray_kind.into(),
+        direction_index,
+        competing_risk_or_censor_label: competing_risk_or_censor_label.into(),
+        last_shell_radius: last.radius,
+        nominal_transition_observed: !nominal_transitions.is_empty(),
+        route_side_indeterminate_observed,
+        post_transition_probe_count,
+        nominal_reentry_observed,
+        event_chronology: chronology,
+        terminal_observation_after_nominal_transition: terminal && !nominal_transitions.is_empty(),
+        no_reentry_claim:
+            "false means only that no re-entry was directly seen among retained shell, bisection, and declared post-probe evaluations",
+    };
+    write_jsonl(&mut output.ray_outcomes, &outcome);
+    if outcome.nominal_reentry_observed {
+        output.nominal_reentry_rays += 1;
+    }
+    outcome
 }
 
 fn random_coefficients(rng: &mut ChaCha8Rng, dimension: usize) -> Vec<f64> {
@@ -1132,6 +1352,12 @@ fn write_control(writer: &mut BufWriter<File>, control: ControlRow) {
     );
 }
 
+fn approximately_equal(left: f64, right: f64, tolerance: f64) -> bool {
+    left.is_finite()
+        && right.is_finite()
+        && (left - right).abs() <= tolerance.max(tolerance * left.abs().max(right.abs()))
+}
+
 fn run_controls(
     output: &mut Output,
     base: &[Vector4<f64>],
@@ -1146,6 +1372,7 @@ fn run_controls(
         "control",
         None,
         "control",
+        &[],
         0.0,
         &[],
         &zero,
@@ -1160,6 +1387,7 @@ fn run_controls(
         "control",
         None,
         "control",
+        &[],
         0.0,
         &[],
         &zero,
@@ -1173,8 +1401,8 @@ fn run_controls(
     write_control(
         &mut output.controls,
         ControlRow {
-            control_id: "hko_exact_geometry_and_known_value".into(),
-            expected: format!("chart nominal and sys={expected_hko:.16e} within {CONTROL_TOL}"),
+            control_id: "serialized_rationalized_hko_geometry_and_known_value".into(),
+            expected: format!("serialized rationalized fixture chart nominal and sys={expected_hko:.16e} within {CONTROL_TOL}"),
             observed: format!("chart={}, sys={auto_sys:.16e}", auto.chart_label),
             passed: auto.chart_label == "chart_nominal"
                 && (auto_sys - expected_hko).abs() <= CONTROL_TOL,
@@ -1184,9 +1412,42 @@ fn run_controls(
         &mut output.controls,
         ControlRow {
             control_id: "auto_vs_direct_pruned_at_hko".into(),
-            expected: format!("nominal sys agreement within {CONTROL_TOL}"),
-            observed: format!("auto={auto_sys:.16e}, direct={direct_sys:.16e}"),
-            passed: (auto_sys - direct_sys).abs() <= CONTROL_TOL,
+            expected: format!("backends, nominal sys, action/sys interval endpoints, and route-side label agree within {CONTROL_TOL}"),
+            observed: format!(
+                "auto_backend={:?}, direct_backend={:?}, auto_sys={auto_sys:.16e}, direct_sys={direct_sys:.16e}, auto_action_interval={:?}..{:?}, direct_action_interval={:?}..{:?}, auto_sys_interval={:?}..{:?}, direct_sys_interval={:?}..{:?}, route_sides={}..{}",
+                auto.resolved_backend,
+                direct.resolved_backend,
+                auto.action_lower,
+                auto.action_upper,
+                direct.action_lower,
+                direct.action_upper,
+                auto.sys_route_lower,
+                auto.sys_route_upper,
+                direct.sys_route_lower,
+                direct.sys_route_upper,
+                auto.route_side,
+                direct.route_side,
+            ),
+            passed: auto.resolved_backend.as_deref() == Some("auto:billiard")
+                && direct.resolved_backend.as_deref() == Some("direct:pruned_hk2017")
+                && approximately_equal(auto_sys, direct_sys, CONTROL_TOL)
+                && auto
+                    .action_lower
+                    .zip(direct.action_lower)
+                    .is_some_and(|(left, right)| approximately_equal(left, right, CONTROL_TOL))
+                && auto
+                    .action_upper
+                    .zip(direct.action_upper)
+                    .is_some_and(|(left, right)| approximately_equal(left, right, CONTROL_TOL))
+                && auto
+                    .sys_route_lower
+                    .zip(direct.sys_route_lower)
+                    .is_some_and(|(left, right)| approximately_equal(left, right, CONTROL_TOL))
+                && auto
+                    .sys_route_upper
+                    .zip(direct.sys_route_upper)
+                    .is_some_and(|(left, right)| approximately_equal(left, right, CONTROL_TOL))
+                && auto.route_side == direct.route_side,
         },
     );
 
@@ -1206,6 +1467,7 @@ fn run_controls(
             "control",
             None,
             "control",
+            &[],
             0.0,
             &[],
             &zero,
@@ -1226,11 +1488,7 @@ fn run_controls(
         );
     }
 
-    for theta in [
-        0.0,
-        std::f64::consts::PI / 20.0,
-        std::f64::consts::PI / 10.0,
-    ] {
+    for &theta in ROTATED_CONTROL_THETAS {
         let state = rotated_pentagon(theta);
         let row = evaluate(
             output,
@@ -1238,6 +1496,7 @@ fn run_controls(
             "control",
             None,
             "control",
+            &[],
             theta,
             &[],
             &zero,
@@ -1264,8 +1523,13 @@ fn file_identities() -> Vec<FileIdentity> {
     let root = Path::new(env!("CARGO_MANIFEST_DIR"));
     let candidates = [
         "empirical/neighborhood-sampling/samplers/m10_quotient_ray.rs",
+        "empirical/neighborhood-sampling/samplers/mod.rs",
+        "empirical/neighborhood-sampling/main.rs",
+        "empirical/neighborhood-sampling/README.md",
         "src/lib.rs",
         "src/flat_polytope.rs",
+        "Cargo.toml",
+        "../../Cargo.toml",
         "../../Cargo.lock",
     ];
     candidates
@@ -1275,6 +1539,157 @@ fn file_identities() -> Vec<FileIdentity> {
             blake3: hash_file(&root.join(relative)),
         })
         .collect()
+}
+
+fn repo_root() -> PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../..")
+        .canonicalize()
+        .expect("canonical repository root")
+}
+
+fn command_output(program: &str, args: &[&str], current_dir: &Path) -> String {
+    let output = Command::new(program)
+        .args(args)
+        .current_dir(current_dir)
+        .output()
+        .unwrap_or_else(|error| panic!("run {program}: {error}"));
+    assert!(
+        output.status.success(),
+        "{program} {} failed: {}",
+        args.join(" "),
+        String::from_utf8_lossy(&output.stderr)
+    );
+    String::from_utf8(output.stdout)
+        .expect("command output UTF-8")
+        .trim()
+        .to_string()
+}
+
+fn git_identity(root: &Path) -> GitIdentity {
+    GitIdentity {
+        commit: command_output("git", &["rev-parse", "HEAD"], root),
+        tree: command_output("git", &["rev-parse", "HEAD^{tree}"], root),
+        clean: command_output("git", &["status", "--porcelain"], root).is_empty(),
+    }
+}
+
+fn toolchain_identity(root: &Path) -> ToolchainIdentity {
+    ToolchainIdentity {
+        rustc_verbose: command_output("rustc", &["-Vv"], root),
+        cargo_version: command_output("cargo", &["-V"], root),
+        build_profile: if cfg!(debug_assertions) {
+            "debug"
+        } else {
+            "release"
+        },
+    }
+}
+
+fn collect_tree_files(current: &Path, files: &mut Vec<PathBuf>) {
+    let mut entries = fs::read_dir(current)
+        .unwrap_or_else(|error| panic!("read source tree {}: {error}", current.display()))
+        .map(|entry| entry.expect("source tree entry").path())
+        .collect::<Vec<_>>();
+    entries.sort();
+    for path in entries {
+        if path.is_dir() {
+            collect_tree_files(&path, files);
+        } else if path.is_file() {
+            files.push(path);
+        }
+    }
+}
+
+fn hash_tree(root: &Path, relative: &str) -> TreeIdentity {
+    let tree_root = root.join(relative);
+    let mut files = Vec::new();
+    collect_tree_files(&tree_root, &mut files);
+    let mut hasher = blake3::Hasher::new();
+    for path in &files {
+        let local = path.strip_prefix(&tree_root).expect("tree-relative path");
+        let local_bytes = local.to_string_lossy();
+        let bytes =
+            fs::read(path).unwrap_or_else(|error| panic!("read {}: {error}", path.display()));
+        hasher.update(&(local_bytes.len() as u64).to_le_bytes());
+        hasher.update(local_bytes.as_bytes());
+        hasher.update(&(bytes.len() as u64).to_le_bytes());
+        hasher.update(&bytes);
+    }
+    TreeIdentity {
+        path: relative.into(),
+        blake3: hasher.finalize().to_hex().to_string(),
+        file_count: files.len(),
+    }
+}
+
+fn local_source_tree_hashes() -> Vec<TreeIdentity> {
+    let root = repo_root();
+    [
+        "experiments/hko-local-maximum/src",
+        "crates/symplectic/src",
+        "crates/euclidean-polytopes/src",
+        "crates/algebraic-numbers/src",
+    ]
+    .iter()
+    .map(|relative| hash_tree(&root, relative))
+    .collect()
+}
+
+fn canonical_target_predicate(cli: &Cli, shells: &[f64], git: &GitIdentity) -> bool {
+    cli.frozen_panel
+        && !cli.smoke
+        && cli.seed == DEFAULT_SEED
+        && cli.directions == DEFAULT_DIRECTIONS
+        && cli.r_max == DEFAULT_R_MAX
+        && cli.bisect_tol == DEFAULT_BISECT_TOL
+        && shells == SHELLS
+        && POST_FACTORS == [1.25, 1.5, 2.0, 3.0]
+        && ROTATED_CONTROL_THETAS
+            == [
+                0.0,
+                std::f64::consts::PI / 20.0,
+                std::f64::consts::PI / 10.0,
+            ]
+        && GS_TOL == 1.0e-11
+        && SIGN_TOL == 1.0e-14
+        && RESIDUAL_TOL == 2.0e-10
+        && GAUGE_WARNING == 1.0e-6
+        && GAUGE_SENSITIVITY == [1.0e-4, 1.0e-6, 1.0e-8]
+        && CONTROL_TOL == 2.0e-9
+        && MAX_BISECT_ITERS == 64
+        && git.clean
+}
+
+fn write_artifact_bundle(out_dir: &Path) -> ArtifactBundle {
+    let names = [
+        "basis.json",
+        "manifest.json",
+        "controls.jsonl",
+        "evaluations.jsonl",
+        "transitions.jsonl",
+        "ray-outcomes.jsonl",
+        "summary.json",
+    ];
+    let artifacts = names
+        .iter()
+        .map(|name| FileIdentity {
+            path: (*name).into(),
+            blake3: hash_file(&out_dir.join(name)),
+        })
+        .collect::<Vec<_>>();
+    let bundle_content_blake3 = blake3::hash(
+        &serde_json::to_vec(&artifacts).expect("serialize artifact bundle identities"),
+    )
+    .to_hex()
+    .to_string();
+    let bundle = ArtifactBundle {
+        format: "hko_e2_artifact_bundle_v1",
+        artifacts,
+        bundle_content_blake3,
+    };
+    write_json(out_dir.join("artifact-bundle.json"), &bundle);
+    bundle
 }
 
 fn basis_artifact(base: &[Vector4<f64>], basis: &QuotientBasis) -> BasisArtifact {
@@ -1349,6 +1764,7 @@ fn prepare_output(cli: &Cli) -> Output {
         next_evaluation: 0,
         capacity_evaluations: 0,
         transition_count: 0,
+        nominal_reentry_rays: 0,
     }
 }
 
@@ -1374,6 +1790,25 @@ pub fn run(raw_args: &[String]) {
         std::process::exit(2);
     });
     let started = Instant::now();
+    let root = repo_root();
+    let git = git_identity(&root);
+    let toolchain = toolchain_identity(&root);
+    let source_identities = file_identities();
+    let compiled_sampler_source_blake3 = blake3::hash(COMPILED_SAMPLER_SOURCE).to_hex().to_string();
+    let runtime_sampler_source_blake3 = &source_identities[0].blake3;
+    let executable = std::env::current_exe().expect("current executable path");
+    let executable_blake3 = hash_file(&executable);
+    if cli.frozen_panel {
+        assert!(git.clean, "frozen panel requires a clean Git worktree");
+        assert_eq!(
+            &compiled_sampler_source_blake3, runtime_sampler_source_blake3,
+            "frozen panel compiled sampler source differs from checked-out sampler source"
+        );
+        assert_eq!(
+            toolchain.build_profile, "release",
+            "frozen panel requires a release build"
+        );
+    }
     let known = known_polytopes::hko_pentagon();
     let base_cache =
         HkoPolytopeCache::from_rational_parts(known.dual_vertices.clone(), known.vertices.clone())
@@ -1397,6 +1832,12 @@ pub fn run(raw_args: &[String]) {
     if shells.last().copied() != Some(cli.r_max) {
         shells.push(cli.r_max);
     }
+    let canonical_target = canonical_target_predicate(&cli, &shells, &git)
+        && toolchain.build_profile == "release"
+        && compiled_sampler_source_blake3.as_str() == runtime_sampler_source_blake3.as_str();
+    if cli.frozen_panel {
+        assert!(canonical_target, "frozen panel canonical predicate failed");
+    }
     let manifest = Manifest {
         format: "hko_e2_quotient_ray_manifest_v1",
         claim_boundary: vec![
@@ -1404,14 +1845,29 @@ pub fn run(raw_args: &[String]) {
             "pointwise chart checks do not certify segments",
             "shell-bracketed transitions are not first mathematical exits",
             "no global quotient, monotonicity, trapping, star-shapedness, or thin-tube exclusion",
+            "radii are ambient 40D Euclidean displacements in a fixed labelled-coordinate gauge and are metric dependent",
+            "32 rays are only a mechanism/readiness screen, not a stable radius distribution or population probability",
+            "the screen establishes neither a positivity inradius nor coverage of rare or lower-dimensional directions",
         ],
         basis_content_blake3: artifact.basis_content_blake3.clone(),
-        source_and_dependency_hashes: file_identities(),
+        source_and_dependency_hashes: source_identities,
+        local_source_tree_hashes: local_source_tree_hashes(),
+        compiled_sampler_source_blake3,
+        executable_blake3,
+        executable_path: executable.display().to_string(),
+        git,
+        toolchain,
+        exact_invocation: std::env::args().collect(),
+        working_directory: std::env::current_dir()
+            .expect("current working directory")
+            .display()
+            .to_string(),
         coordinate_order: "(q1,q2,p1,p2), facet-major",
         generator_order: generator_order(),
         seed: cli.seed,
         random_direction_count: cli.directions,
         deterministic_sentinels: vec!["slice_basis_column_0", "projected_rotated_pentagon_tangent"],
+        nonlinear_rotated_control_thetas: ROTATED_CONTROL_THETAS,
         shells: shells.clone(),
         r_max: cli.r_max,
         transition_tolerance: cli.bisect_tol,
@@ -1437,6 +1893,9 @@ pub fn run(raw_args: &[String]) {
             "direct pruned HK2017 base control",
         ],
         smoke: cli.smoke,
+        frozen_panel_requested: cli.frozen_panel,
+        canonical_target_predicate: canonical_target,
+        build_binding_residual: "the executable hash, compiled sampler-source hash, clean Git commit/tree, local source-tree hashes, toolchain, profile, and exact invocation are retained; Rust does not natively attest that every linked path-dependency object was compiled from those trees",
     };
     write_json(cli.out_dir.join("manifest.json"), &manifest);
 
@@ -1490,13 +1949,19 @@ pub fn run(raw_args: &[String]) {
     output.transitions.flush().expect("flush transitions");
     output.controls.flush().expect("flush controls");
     output.ray_outcomes.flush().expect("flush ray outcomes");
+    let evaluation_count = output.next_evaluation;
+    let capacity_evaluation_count = output.capacity_evaluations;
+    let transition_count = output.transition_count;
+    let nominal_reentry_ray_count = output.nominal_reentry_rays;
+    drop(output);
     let summary = Summary {
         controls_passed: true,
-        evaluation_count: output.next_evaluation,
-        capacity_evaluation_count: output.capacity_evaluations,
-        transition_count: output.transition_count,
+        evaluation_count,
+        capacity_evaluation_count,
+        transition_count,
         random_directions_completed: cli.directions,
         deterministic_sentinels_completed: 2,
+        nominal_reentry_ray_count,
         output_files: vec![
             "basis.json",
             "manifest.json",
@@ -1505,18 +1970,22 @@ pub fn run(raw_args: &[String]) {
             "transitions.jsonl",
             "ray-outcomes.jsonl",
             "summary.json",
+            "artifact-bundle.json",
         ],
         elapsed_seconds: started.elapsed().as_secs_f64(),
-        target_panel_executed: !cli.smoke && cli.directions == 32 && cli.r_max == 0.5,
+        target_panel_executed: canonical_target,
+        canonical_target_predicate: canonical_target,
     };
     write_json(cli.out_dir.join("summary.json"), &summary);
+    let bundle = write_artifact_bundle(&cli.out_dir);
     println!(
-        "wrote {} evaluations ({} capacity calls), {} transitions to {} in {:.3}s",
+        "wrote {} evaluations ({} capacity calls), {} transitions to {} in {:.3}s; artifact bundle {}",
         summary.evaluation_count,
         summary.capacity_evaluation_count,
         summary.transition_count,
         cli.out_dir.display(),
-        summary.elapsed_seconds
+        summary.elapsed_seconds,
+        bundle.bundle_content_blake3,
     );
 }
 
@@ -1567,6 +2036,18 @@ mod tests {
     }
 
     #[test]
+    fn local_source_tree_hashes_are_deterministic_and_nonempty() {
+        let first = local_source_tree_hashes();
+        let second = local_source_tree_hashes();
+        assert_eq!(first.len(), 4);
+        assert!(first.iter().all(|tree| tree.file_count > 0));
+        assert!(first
+            .iter()
+            .zip(second)
+            .all(|(left, right)| left.path == right.path && left.blake3 == right.blake3));
+    }
+
+    #[test]
     fn profile_matches_declared_hko_maximum() {
         let theta = std::f64::consts::PI / 10.0;
         assert!((pentagon_profile(theta) - (3.0 + 5.0_f64.sqrt()) / 5.0).abs() < 1e-14);
@@ -1590,5 +2071,188 @@ mod tests {
             parse_args(&["--out-dir".into(), "/tmp/example".into(), "--smoke".into()]).unwrap();
         assert_eq!(cli.directions, 1);
         assert_eq!(cli.r_max, SMOKE_R_MAX);
+    }
+
+    #[test]
+    fn nominal_side_requires_authoritative_finite_state() {
+        assert_eq!(
+            authoritative_nominal_side(
+                "chart_nominal",
+                "gauge_nominal",
+                "evaluator_available",
+                Some(0.9),
+            ),
+            "nominal_below_or_equal_one"
+        );
+        assert_eq!(
+            authoritative_nominal_side(
+                "chart_nominal",
+                "gauge_nominal",
+                "evaluator_available",
+                Some(1.1),
+            ),
+            "nominal_above_one"
+        );
+        for (chart, gauge, evaluator, value) in [
+            (
+                "chart_invalid",
+                "gauge_nominal",
+                "evaluator_available",
+                Some(0.9),
+            ),
+            (
+                "chart_nominal",
+                "gauge_near_tangency_warning",
+                "evaluator_available",
+                Some(0.9),
+            ),
+            (
+                "chart_nominal",
+                "gauge_numeric_rank_event",
+                "evaluator_available",
+                Some(0.9),
+            ),
+            (
+                "chart_nominal",
+                "gauge_nominal",
+                "evaluator_indeterminate",
+                Some(0.9),
+            ),
+            (
+                "chart_nominal",
+                "gauge_nominal",
+                "evaluator_unavailable",
+                Some(0.9),
+            ),
+            (
+                "chart_nominal",
+                "gauge_nominal",
+                "evaluator_available",
+                Some(f64::NAN),
+            ),
+        ] {
+            assert_eq!(
+                authoritative_nominal_side(chart, gauge, evaluator, value),
+                "nominal_side_unavailable"
+            );
+        }
+    }
+
+    fn transition(index: usize, inside: f64, outside: f64) -> TransitionRow {
+        TransitionRow {
+            transition_index: index,
+            ray_id: "synthetic".into(),
+            transition_kind: "nominal_sys".into(),
+            label_inside: "nominal_above_one".into(),
+            label_outside: "nominal_below_or_equal_one".into(),
+            inside_radius: inside,
+            outside_radius: outside,
+            tolerance: DEFAULT_BISECT_TOL,
+            midpoint_evaluations: 0,
+            classification: "shell_bracketed_transition",
+        }
+    }
+
+    #[test]
+    fn only_authoritative_nominal_endpoints_qualify_for_probes() {
+        let valid = transition(0, 0.1, 0.11);
+        assert!(is_qualifying_nominal_transition(&valid));
+        for unavailable in [
+            "nominal_side_unavailable",
+            "gauge_near_tangency_warning",
+            "evaluator_indeterminate",
+        ] {
+            let mut invalid = valid.clone();
+            invalid.label_outside = unavailable.into();
+            assert!(!is_qualifying_nominal_transition(&invalid));
+        }
+    }
+
+    #[test]
+    fn shell_bisection_and_probe_observations_preserve_reentry_and_indeterminacy() {
+        let witness = nominal_reentry_witness_from_observations([
+            (0.0, "nominal_above_one"),
+            (0.08, "nominal_below_or_equal_one"),
+            (0.09, "nominal_side_unavailable"),
+            (0.14, "nominal_above_one"),
+        ]);
+        assert_eq!(witness, Some((0.08, 0.14)));
+        assert!(route_side_indeterminate_from_labels([
+            "route_above_one",
+            "route_side_indeterminate",
+            "route_below_or_equal_one",
+        ]));
+        assert!(nominal_reentry_witness_from_observations([
+            (0.0, "nominal_above_one"),
+            (0.08, "nominal_side_unavailable"),
+            (0.14, "nominal_above_one"),
+        ])
+        .is_none());
+    }
+
+    #[test]
+    fn every_qualifying_bracket_contributes_strict_post_probe_provenance() {
+        let transitions = [transition(4, 0.08, 0.09), transition(9, 0.18, 0.19)];
+        let plan = plan_post_transition_probes(&transitions, DEFAULT_R_MAX);
+        let refs = plan
+            .iter()
+            .flat_map(|(bits, refs)| {
+                let radius = f64::from_bits(*bits);
+                refs.iter().map(move |reference| (radius, reference))
+            })
+            .collect::<Vec<_>>();
+        for transition in &transitions {
+            assert!(refs
+                .iter()
+                .any(|(_, reference)| reference.transition_index == transition.transition_index));
+        }
+        assert!(refs
+            .iter()
+            .all(|(radius, reference)| *radius > reference.outside_radius));
+    }
+
+    #[test]
+    fn canonical_target_predicate_covers_frozen_cli_and_clean_tree() {
+        let cli = Cli {
+            out_dir: PathBuf::from("/tmp/canonical"),
+            seed: DEFAULT_SEED,
+            directions: DEFAULT_DIRECTIONS,
+            r_max: DEFAULT_R_MAX,
+            bisect_tol: DEFAULT_BISECT_TOL,
+            smoke: false,
+            frozen_panel: true,
+        };
+        let clean = GitIdentity {
+            commit: "commit".into(),
+            tree: "tree".into(),
+            clean: true,
+        };
+        assert!(canonical_target_predicate(&cli, SHELLS, &clean));
+        let mut not_frozen = cli.clone();
+        not_frozen.frozen_panel = false;
+        assert!(!canonical_target_predicate(&not_frozen, SHELLS, &clean));
+        let mut wrong_seed = cli.clone();
+        wrong_seed.seed += 1;
+        assert!(!canonical_target_predicate(&wrong_seed, SHELLS, &clean));
+        let dirty = GitIdentity {
+            clean: false,
+            ..clean
+        };
+        assert!(!canonical_target_predicate(&cli, SHELLS, &dirty));
+
+        assert!(parse_args(&[
+            "--out-dir".into(),
+            "/tmp/canonical".into(),
+            "--frozen-panel".into(),
+        ])
+        .is_ok());
+        assert!(parse_args(&[
+            "--out-dir".into(),
+            "/tmp/not-canonical".into(),
+            "--frozen-panel".into(),
+            "--seed".into(),
+            "45".into(),
+        ])
+        .is_err());
     }
 }
