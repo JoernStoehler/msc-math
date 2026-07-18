@@ -26,3 +26,13 @@ Resume and fork lineage may be inferred from session metadata and thread ids.
 Do not claim an explicit resume marker unless one exists. For durable claims,
 record the thread id, rollout path, focused query, and extracted result; keep
 quoted transcript text short.
+
+## Shadow API-cost checkpoints
+
+Use `scripts/session_cost.py ROOT_ROLLOUT_OR_THREAD_ID` when a budget or
+post-session audit needs cumulative token counters converted into charged
+uncached input, cached input, and output deltas. It follows metadata-linked
+subagents recursively and never prints message bodies. For a checkpoint after a
+known time, pass `--since 2026-07-17T17:18:45.308Z`; use `--json` for a durable
+machine-readable result. The default rate cards are dated in the output; select
+`--model` or override all three rates when the applicable card differs.
