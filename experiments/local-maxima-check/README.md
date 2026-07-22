@@ -23,10 +23,65 @@ adding facets or all convex bodies.
 
 ## Line status
 
-This experiment line is closed once this candidate is integrated. Reopen it
-only for a new conjectured local maximum or non-maximum, materially stronger
-local probes or evidence, or branch-aware or exact proof work. Routine reruns
-of the current finite screen do not reopen the line.
+**Decision `LMC-D1`, 2026-07-22:** close the current allocation of research
+effort to the line “start from a known `sys >= 1` body, find that it is not a
+local maximum, and thereby obtain a new `sys > 1` example or family not already
+explained by the rotated-pentagon/HKO family.”  This is a portfolio decision,
+not a mathematical claim that the three conjectural bodies are local maxima
+and not a prohibition on reconsidering the line.
+
+The reasoning is:
+
+1. Result `LMC-R1` is the finite screen documented below.  It finds no material
+   nominal or interval-separated improvement at the triangle--hexagon,
+   square--square, or CH2021 targets.  Its structured probes do recover the
+   known improvement at the rotated-pentagon positive control.  Thus it leaves
+   three cases as conjectural local maxima, but supplies no new `sys > 1`
+   route.
+2. The same control also shows why `LMC-R1` cannot close the mathematical
+   question: the generic quotient-basis and random probes miss a real thin
+   improving set which the theory-derived structured directions find.  More
+   finite misses would therefore remain weak evidence unless a new method
+   addresses branch completeness or supplies a theorem-grade neighborhood
+   argument.
+3. The most immediate continuations do not currently justify their opportunity
+   cost:
+   - Densifying or rerunning the same fixed-facet probes has no identified
+     claim-changing outcome.
+   - Adding-facet probes have no clean negative outcome: failure to sample an
+     improvement would remain inconclusive.  Jörn's planning prior for such a
+     run was 2% for a new `sys > 1` case, 80% for a technically completed but
+     mathematically inconclusive result, and 18% for technical abandonment.
+   - A gap-aware local-linear model already exists under
+     `experiments/dev-sys-prediction/`; replaying these probes through it could
+     help choose a target for exact branch analysis, but would not itself prove
+     local maximality or reliably produce a new positive example.  It is a
+     conditional triage tool, not an unperformed default successor.
+   - Exact branch-aware analysis could turn one conjecture into a theorem and
+     may have direct thesis value, but that is a separately assessed proof
+     project rather than a necessary continuation of this search.
+4. At closeout, these continuations did not beat the available alternatives:
+   reviewing/integrating existing curvature-certificate work, deciding whether
+   the triangle-product theorem should enter the thesis, and thesis
+   readiness/demonstration.  This comparison is time-sensitive; a future agent
+   should redo it against the then-current portfolio rather than inherit its
+   ranking as a permanent fact.
+
+Reconsider `LMC-D1` when new evidence changes the scientific or portfolio
+comparison, for example:
+
+- a new, independently motivated `sys >= 1` candidate has a concrete reason to
+  be non-maximal and its improving continuation would not merely recover the
+  known rotated-pentagon/HKO family;
+- branch data, exact formulas, or a completeness argument make a target's
+  local status resolvable at competitive cost;
+- a method can turn a negative outcome into materially stronger evidence than
+  another finite directional miss; or
+- a named thesis claim makes classification of one target valuable enough to
+  beat the current alternatives.
+
+The mere availability of more samples, another perturbation basis, a routine
+rerun, or a possible implementation does not by itself defeat `LMC-D1`.
 
 ## Question and decision
 
