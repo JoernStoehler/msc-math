@@ -20,15 +20,23 @@ path = "sysext-sigma-line-probe/main.rs"
 name = "dev-sysext-beta-boundary-scan"
 path = "sysext-beta-boundary-scan/main.rs"
 
+[[bin]]
+name = "dev-branch-equality-continuation"
+path = "branch-equality-continuation/main.rs"
+
 [lints]
 workspace = true
 
 [dependencies]
 exp-dev-gradient-ascent = { path = "../dev-gradient-ascent" }
+exp-regular-products = { path = "../regular-products" }
 exp-sys-landscape = { path = "../sys-landscape" }
 good_lp.workspace = true
 nalgebra.workspace = true
 num-rational.workspace = true
+rand.workspace = true
+rand_chacha.workspace = true
+rand_distr.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 symplectic.workspace = true

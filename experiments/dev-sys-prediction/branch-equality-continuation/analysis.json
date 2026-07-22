@@ -1,0 +1,169 @@
+{
+  "all_samples": {
+    "joint_minimizer_count": 31,
+    "joint_minimizer_fraction": 0.45588235294117646,
+    "max_correction_norm": 1.0879730451461404e-05,
+    "max_correction_to_requested_radius": 0.0010879730451461404,
+    "max_equality_relative_residual": 9.274803147718558e-13,
+    "max_joint_minimizer_sys": 0.9709757930076939,
+    "max_pair_relative_gap_above_capacity": 0.007447337530712694,
+    "max_sys": 0.9734350764231675,
+    "mean_capacity_runtime_ms": 76.1206435735294,
+    "median_pair_relative_gap_above_capacity": 3.6375254484077857e-06,
+    "min_sys": 0.9617540878153172,
+    "sample_count": 68
+  },
+  "analyzer": {
+    "path": "/workspaces/msc-math/.worktrees/branch-equality-manifold/experiments/dev-sys-prediction/branch-equality-continuation/analyze.py",
+    "sha256": "49a6131d32f23ff389d2c76ec5644ff5d2dbddd5866c5560605c9b51ec6e709f"
+  },
+  "best_observed_sys": {
+    "best_sigma": [
+      2,
+      7,
+      0,
+      4,
+      5,
+      9
+    ],
+    "delta_from_base": 0.002460030248067846,
+    "pair_joint_minimizer_nominal": false,
+    "pair_relative_gap_above_capacity": 0.00012176363792826272,
+    "requested_radius": 0.01,
+    "sample_kind": "random_tangent_6",
+    "sys": 0.9734350764231675
+  },
+  "by_radius": {
+    "1e-02": {
+      "joint_minimizer_count": 6,
+      "joint_minimizer_fraction": 0.35294117647058826,
+      "max_correction_norm": 1.0879730451461404e-05,
+      "max_correction_to_requested_radius": 0.0010879730451461404,
+      "max_equality_relative_residual": 1.1102230246251565e-15,
+      "max_joint_minimizer_sys": 0.9701299499939495,
+      "max_pair_relative_gap_above_capacity": 0.007447337530712694,
+      "max_sys": 0.9734350764231675,
+      "mean_capacity_runtime_ms": 73.82860629411765,
+      "median_pair_relative_gap_above_capacity": 0.0003930897801307509,
+      "min_sys": 0.9617540878153172,
+      "sample_count": 17
+    },
+    "1e-03": {
+      "joint_minimizer_count": 7,
+      "joint_minimizer_fraction": 0.4117647058823529,
+      "max_correction_norm": 7.711798301737477e-08,
+      "max_correction_to_requested_radius": 7.711798301737476e-05,
+      "max_equality_relative_residual": 8.881784197001252e-16,
+      "max_joint_minimizer_sys": 0.9708141008290274,
+      "max_pair_relative_gap_above_capacity": 0.0008152864916481928,
+      "max_sys": 0.9712005833864343,
+      "mean_capacity_runtime_ms": 73.69836676470588,
+      "median_pair_relative_gap_above_capacity": 4.4318962720613087e-05,
+      "min_sys": 0.9700311452114698,
+      "sample_count": 17
+    },
+    "1e-04": {
+      "joint_minimizer_count": 8,
+      "joint_minimizer_fraction": 0.47058823529411764,
+      "max_correction_norm": 9.907143735716873e-10,
+      "max_correction_to_requested_radius": 9.907143735716873e-06,
+      "max_equality_relative_residual": 1.0402789740737717e-13,
+      "max_joint_minimizer_sys": 0.9709676080471076,
+      "max_pair_relative_gap_above_capacity": 6.151990136649133e-05,
+      "max_sys": 0.9709692993174655,
+      "mean_capacity_runtime_ms": 78.88565411764705,
+      "median_pair_relative_gap_above_capacity": 1.8749563452491458e-05,
+      "min_sys": 0.970886211159507,
+      "sample_count": 17
+    },
+    "1e-05": {
+      "joint_minimizer_count": 10,
+      "joint_minimizer_fraction": 0.5882352941176471,
+      "max_correction_norm": 9.82670500739391e-12,
+      "max_correction_to_requested_radius": 9.82670500739391e-07,
+      "max_equality_relative_residual": 9.274803147718558e-13,
+      "max_joint_minimizer_sys": 0.9709757930076939,
+      "max_pair_relative_gap_above_capacity": 9.039271547939265e-06,
+      "max_sys": 0.9709757930076939,
+      "mean_capacity_runtime_ms": 78.06994711764706,
+      "median_pair_relative_gap_above_capacity": 4.591882429849647e-13,
+      "min_sys": 0.970964502839386,
+      "sample_count": 17
+    }
+  },
+  "exposed_witnesses": {
+    "joint_minimizer_count": 4,
+    "joint_minimizer_fraction": 1.0,
+    "max_correction_norm": 1.607866787618549e-09,
+    "max_correction_to_requested_radius": 1.607866787618549e-07,
+    "max_equality_relative_residual": 1.0402789740737717e-13,
+    "max_joint_minimizer_sys": 0.9709664357982246,
+    "max_pair_relative_gap_above_capacity": 5.262457136723242e-14,
+    "max_sys": 0.9709664357982246,
+    "mean_capacity_runtime_ms": 73.79542825,
+    "median_pair_relative_gap_above_capacity": 8.881784197001252e-16,
+    "min_sys": 0.9624242441465533,
+    "sample_count": 4
+  },
+  "fixture": {
+    "base_sys_exact_formula_f64": 0.9709750461750997,
+    "base_theta_deg": 9.0,
+    "distinct_log_gradient_group_count": 5,
+    "raw_tied_word_count": 20,
+    "selected_exposed_margin_per_unit_step": 0.6177879281926857,
+    "selected_first_sigma": [
+      1,
+      6,
+      3,
+      4,
+      8,
+      9
+    ],
+    "selected_second_sigma": [
+      3,
+      8,
+      0,
+      1,
+      5,
+      6
+    ]
+  },
+  "input": {
+    "path": "experiments/dev-sys-prediction/branch-equality-continuation/pentagon-control.jsonl",
+    "record_count": 70,
+    "sha256": "24e7fa2832b050de47d58868903dcf475cb73cb0e6355025f5d65e18824b7487"
+  },
+  "interpretation": {
+    "capacity_relevance": "mixed by tangent direction; all four exposed witnesses were joint-minimizing, while arbitrary equality points were often dominated",
+    "claim_boundary": "finite local numerical control; no completeness, intrinsic-uniformity, or global quotient claim",
+    "equality_sampler": "passed this local product control",
+    "sys_search": "no sys>1 point; the largest sys occurred where the selected equal pair was dominated, so it is not evidence for a high-sys equality ridge"
+  },
+  "method_decision": {
+    "criterion": "no failures and >=90% reliable equality corrections through radius 1e-3",
+    "failure_count": 0,
+    "small_radius_reliable_count": 51,
+    "small_radius_reliable_fraction": 1.0,
+    "small_radius_sample_count": 51,
+    "status": "passed"
+  },
+  "producer": {
+    "path": "experiments/dev-sys-prediction/branch-equality-continuation/main.rs",
+    "sha256": "a60e8043d3d745b273ae755c913c0192097751c136713d65eab1278d4b818fac"
+  },
+  "random_tangent_proposals": {
+    "joint_minimizer_count": 27,
+    "joint_minimizer_fraction": 0.421875,
+    "max_correction_norm": 1.0879730451461404e-05,
+    "max_correction_to_requested_radius": 0.0010879730451461404,
+    "max_equality_relative_residual": 9.274803147718558e-13,
+    "max_joint_minimizer_sys": 0.9709757930076939,
+    "max_pair_relative_gap_above_capacity": 0.007447337530712694,
+    "max_sys": 0.9734350764231675,
+    "mean_capacity_runtime_ms": 76.26596953125,
+    "median_pair_relative_gap_above_capacity": 8.706756233101132e-06,
+    "min_sys": 0.9617540878153172,
+    "sample_count": 64
+  },
+  "schema_version": "branch-equality-continuation-analysis-v1"
+}

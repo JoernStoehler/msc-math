@@ -587,10 +587,14 @@ name = "exp-dev-sys-prediction"
 version = "0.1.0"
 dependencies = [
  "exp-dev-gradient-ascent",
+ "exp-regular-products",
  "exp-sys-landscape",
  "good_lp",
  "nalgebra",
  "num-rational",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "rand_distr",
  "serde",
  "serde_json",
  "symplectic",

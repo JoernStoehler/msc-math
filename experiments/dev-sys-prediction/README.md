@@ -63,6 +63,12 @@ This packet does not own:
 - reusable QP/KKT route development except for packet-local copy-edited
   instrumentation.
 
+The local equality-set sampler and its retained nonregular pentagon-product
+control live in `branch-equality-continuation/`. That control shows that normal
+Newton correction can reliably hit a fixed pairwise branch-equality set, while
+full capacity recomputation is still needed because many equality points are
+undercut by a third branch. It is a method result, not a new high-`sys` result.
+
 Route optimizer work back to `experiments/dev-gradient-ascent/`. Route reusable
 KKT solver/API design back to `experiments/dev-quadratic-program/` or
 `crates/symplectic/` once it is stable enough to stop being packet-local.
