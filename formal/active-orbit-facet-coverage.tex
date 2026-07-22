@@ -108,39 +108,33 @@ another labelled segment may still lie in an intersection contained in $F_i$.
 \end{lemma}
 
 \begin{proof}
-The relations $\alpha\cdot h_0=1$ and
-$\sum_i\alpha_i n_i=0$ give $T_i\geq0$, $\sum_iT_i=1$, and, for the facet
-velocities $p_i=2J_0n_i/h_{0,i}$,
+Put $a_i=n_i/h_{0,i}$ and set
 \[
-  \sum_iT_i p_i=2J_0\sum_i\alpha_i n_i=0.
+  \beta_i=\frac{b_i h_{0,i}}{b\cdot h_0}
+          =\alpha_i h_{0,i}=T_i.
 \]
-Place the constant velocity equal to $p_{\sigma(k)}$ on an interval of
-length $T_{\sigma(k)}$, in the project active traversal order
-$k=1,\ldots,F$.  The resulting piecewise-affine path closes.  In the project
-convention, its unnormalized dual-action integral has the positive sign
+Then $\beta\geq0$, $\sum_i\beta_i=1$, and
 \[
-  \int\langle-J_0\dot z,z\rangle
-  =4\sum_{1\leq j<k\leq F}
-       \alpha_{\sigma(j)}\alpha_{\sigma(k)}
-       \omega_0(n_{\sigma(j)},n_{\sigma(k)})
-  =4\mathcal Q_\sigma(\alpha)>0.
+  \sum_i\beta_i a_i
+  =\frac{1}{b\cdot h_0}\sum_i b_i n_i=0.
 \]
-The reversed word $\rho(k)=\sigma(F+1-k)$ enters only when translating this
-datum to HK2017's displayed word convention.  Rescaling the positive-action
-loop to the dual-action normalization used in the proof of the Haim--Kislev
-formula gives dual value $A_{\sigma,b}(h_0)/2$.  Because the datum is active,
-this is the minimum dual value.  The dual-action correspondence therefore
-yields an action-minimizing generalized characteristic with these velocity
-intervals.
-
-On an interval with $T_i>0$, its velocity is a positive multiple of
-$J_0n_i$.  The generalized characteristic inclusion then has
-$n_i$ in the normal cone of $K(h_0)$ along that interval, which implies
-$\langle n_i,x\rangle=h_{0,i}$ there.  Hence the curve lies in $F_i$ for a
-positive time.  Conversely $T_i=0$ removes the $i$-labelled interval, without
-excluding incidental contact with $F_i$ during another labelled interval.
-Since $h_{0,i}>0$, \eqref{eq:facet-coverage-dwell-fraction} proves the stated
-equivalence.
+Thus $(\sigma,\beta)$ is feasible for the active-word HK2017 capacity
+problem of Definition~\ref{def:hk2017-problem}.  Moreover its objective is
+\[
+  Q_\sigma(\beta)
+  =\frac{\mathcal Q_\sigma(b)}{(b\cdot h_0)^2}
+  =\frac{1}{2A_{\sigma,b}(h_0)}.
+\]
+Since $(\sigma,b)$ is active, this equals the global maximum
+$1/(2c_{\mathrm{EHZ}}(K(h_0)))$.  Fact~\ref{fact:hk2017} therefore gives the
+claimed minimum-action simple generalized characteristic after deleting the
+zero entries.  Its physical dwell time on facet $i$ is
+$c_{\mathrm{EHZ}}(K(h_0))\beta_i$, so its dwell-time fraction is
+$\beta_i=T_i$.  The proof of Fact~\ref{fact:hk2017} also shows that every
+positive-duration $i$-labelled piece lies on $F_i$.  Finally,
+$h_{0,i}>0$ makes $T_i>0$ equivalent to $\alpha_i>0$.  Reversing the word is
+needed only to translate the project active traversal order to HK2017's
+displayed convention.
 \end{proof}
 
 We therefore say that an active datum or its characteristic \emph{uses} the
