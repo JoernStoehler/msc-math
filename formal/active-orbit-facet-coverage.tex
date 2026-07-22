@@ -92,10 +92,11 @@ $\alpha\cdot h_0=1$.
 
 \begin{lemma}[Attaining HK data and facet dwell]
 \label{lem:facet-coverage-orbit-realization}
-Every datum in $\mathcal A(h_0)$ determines, after reversing the word to the
-HK2017 displayed orientation and deleting zero entries, an action-minimizing
-simple generalized characteristic.  Its dwell-time fraction associated with
-facet $i$ is
+Every datum in $\mathcal A(h_0)$ determines, after deleting zero entries, an
+action-minimizing simple generalized characteristic whose project active
+traversal order is $\sigma$.  Equivalently, the same datum is indexed by the
+reversed word in HK2017's displayed convention.  Its dwell-time fraction
+associated with facet $i$ is
 \begin{equation}\label{eq:facet-coverage-dwell-fraction}
   T_i=\alpha_i h_{0,i}.
 \end{equation}
@@ -113,16 +114,24 @@ velocities $p_i=2J_0n_i/h_{0,i}$,
 \[
   \sum_iT_i p_i=2J_0\sum_i\alpha_i n_i=0.
 \]
-Put $\rho(i)=\sigma(F+1-i)$, the reversal from the project active-word order
-to the HK2017 displayed order.  Place the constant velocity proportional to
-$p_{\rho(i)}$ on an interval of length $T_{\rho(i)}$.  The resulting
-piecewise-affine path closes.  Since
-$\mathcal Q_\sigma(\alpha)>0$, it can be rescaled to the dual-action
-normalization used in the proof of the Haim--Kislev formula.  The calculation
-in that proof gives its dual value
-$A_{\sigma,b}(h_0)/2$.  Because the datum is active, this is the minimum dual
-value.  The dual-action correspondence therefore yields an action-minimizing
-generalized characteristic with these velocity intervals.
+Place the constant velocity proportional to $p_{\sigma(k)}$ on an interval of
+length $T_{\sigma(k)}$, in the project active traversal order
+$k=1,\ldots,F$.  The resulting piecewise-affine path closes.  In the project
+convention, its unnormalized dual-action integral has the positive sign
+\[
+  \int\langle-J_0\dot z,z\rangle
+  =4\sum_{1\leq j<k\leq F}
+       \alpha_{\sigma(j)}\alpha_{\sigma(k)}
+       \omega_0(n_{\sigma(j)},n_{\sigma(k)})
+  =4\mathcal Q_\sigma(\alpha)>0.
+\]
+The reversed word $\rho(k)=\sigma(F+1-k)$ enters only when translating this
+datum to HK2017's displayed word convention.  Rescaling the positive-action
+loop to the dual-action normalization used in the proof of the Haim--Kislev
+formula gives dual value $A_{\sigma,b}(h_0)/2$.  Because the datum is active,
+this is the minimum dual value.  The dual-action correspondence therefore
+yields an action-minimizing generalized characteristic with these velocity
+intervals.
 
 On an interval with $T_i>0$, its velocity is a positive multiple of
 $J_0n_i$.  The generalized characteristic inclusion then has
@@ -347,13 +356,16 @@ condition in this lemma.
 
 \paragraph{Sufficiency boundary.}
 Facet coverage is only a coordinatewise consequence of
-\eqref{eq:facet-coverage-convex-balance} and is not sufficient for local
-maximality.  Even an abstract family containing a row that sees every
-coordinate can have its convex hull strictly separated from zero, producing a
-common increasing direction.  The balance condition itself is not sufficient
-when zero lies on the boundary: first-order flat directions require higher
-order control (the one-function example $f(x)=x^2$ already has zero gradient
-at a local minimum).
+\eqref{eq:facet-coverage-convex-balance}.  It does not imply convex balance and
+therefore does not by itself certify local maximality.  Indeed, an abstract
+lower-envelope family can contain a row that sees every coordinate while its
+row convex hull is strictly separated from zero, producing a common increasing
+direction.  This is a logical counterexample to coverage as a first-order
+certificate; no actual EHZ support-chart polytope with coverage but without
+local maximality is claimed here.  The balance condition itself is not
+sufficient when zero lies on the boundary: first-order flat directions require
+higher order control (the one-function example $f(x)=x^2$ already has zero
+gradient at a local minimum).
 
 A stronger first-order hypothesis can be sufficient.  On a complement to
 $T$, if zero lies in the interior of the convex hull of the active rows
