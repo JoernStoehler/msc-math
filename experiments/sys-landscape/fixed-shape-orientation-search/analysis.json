@@ -1,0 +1,47 @@
+{
+  "schema": "fixed-shape-orientation-search-analysis-v1",
+  "input": "experiments/sys-landscape/fixed-shape-orientation-search/evaluations.jsonl",
+  "evaluation_count": 328,
+  "bodies": [
+    {
+      "source_kind": "generic",
+      "source_name": "random_F10_s3_104",
+      "evaluation_count": 164,
+      "identity_sys": 0.8595596058028344,
+      "best_sys": 0.8595596058028344,
+      "delta": 0.0,
+      "best_theta": 0.0,
+      "best_phi": 0.0,
+      "best_stage": "identity"
+    },
+    {
+      "source_kind": "product",
+      "source_name": "random_5x6_s3_168",
+      "evaluation_count": 164,
+      "identity_sys": 0.86258589584944,
+      "best_sys": 0.8783076408257287,
+      "delta": 0.015721744976288643,
+      "best_theta": 0.4172427743048944,
+      "best_phi": 1.1535535524900022,
+      "best_stage": "refine-2"
+    }
+  ],
+  "source_distributions": [
+    {
+      "path": "experiments/sys-datascience/produce/random.jsonl",
+      "count": 4096,
+      "maximum": 0.8595596058028344,
+      "count_strictly_above_rotated_product": 0
+    },
+    {
+      "path": "experiments/sys-datascience/produce/random-product.jsonl",
+      "count": 10240,
+      "maximum": 0.86258589584944,
+      "count_strictly_above_rotated_product": 0
+    }
+  ],
+  "interpretation": {
+    "observation": "The selected product-source champion improves under a non-symplectic orthogonal rotation and exceeds every retained source row; the selected generic-source champion does not improve.",
+    "claim_boundary": "Post-selection two-body scan; not a population comparison, proposer validation, or exhaustive orientation optimum."
+  }
+}
