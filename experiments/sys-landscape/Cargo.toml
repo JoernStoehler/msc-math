@@ -36,6 +36,10 @@ name = "sys-variable-f-ascent"
 path = "variable-f-ascent/main.rs"
 
 [[bin]]
+name = "sys1-local-maxima"
+path = "sys1-local-maxima/main.rs"
+
+[[bin]]
 name = "sys-dataset-random"
 path = "../sys-datascience/produce/random.rs"
 

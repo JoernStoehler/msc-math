@@ -1,0 +1,297 @@
+{
+  "schema_version": 1,
+  "experiment_id": "sys1-known-equality-local-maxima-v1",
+  "control_passed": true,
+  "base_count": 4,
+  "probe_count": 1482,
+  "all_probes_valid": true,
+  "all_valid_probes_same_incidence": false,
+  "outcomes": [
+    {
+      "seed_id": "pentagon_threshold_control",
+      "role": "expected_positive_control",
+      "status": "empirical_improving_pattern_at_all_tested_scales",
+      "probe_count": 396,
+      "valid_probe_count": 396,
+      "invalid_probe_count": 0,
+      "incidence_change_count": 0,
+      "entered_adjacent_combinatorial_cells": false,
+      "raw_positive_delta_count": 12,
+      "nominal_improving_probe_count": 12,
+      "interval_separated_probe_count": 12,
+      "above_one_lower_bound_probe_count": 12,
+      "best_probe": {
+        "perturbation": "so4_mod_u2_orientation",
+        "radius": 0.01,
+        "direction_index": 8,
+        "sign": 1,
+        "delta_sys": 0.009915205746928502,
+        "perturbed_sys": 1.0099152057469276,
+        "perturbed_sys_lower": 1.0099152057469276,
+        "lower_bound_above_base_upper": true
+      },
+      "perturbation_patterns": [
+        {
+          "perturbation": "product_relative_rotation",
+          "tested_radii": [
+            0.01,
+            0.001,
+            0.0001
+          ],
+          "interval_separated_radii": [
+            0.01,
+            0.001,
+            0.0001
+          ],
+          "lower_bound_above_one_radii": [
+            0.01,
+            0.001,
+            0.0001
+          ],
+          "all_tested_radii_interval_separated": true
+        },
+        {
+          "perturbation": "quotient_basis",
+          "tested_radii": [
+            0.001,
+            0.0001,
+            1e-05
+          ],
+          "interval_separated_radii": [],
+          "lower_bound_above_one_radii": [],
+          "all_tested_radii_interval_separated": false
+        },
+        {
+          "perturbation": "quotient_random_antipodal",
+          "tested_radii": [
+            0.001,
+            0.0001,
+            1e-05
+          ],
+          "interval_separated_radii": [],
+          "lower_bound_above_one_radii": [],
+          "all_tested_radii_interval_separated": false
+        },
+        {
+          "perturbation": "so4_mod_u2_orientation",
+          "tested_radii": [
+            0.01,
+            0.001,
+            0.0001
+          ],
+          "interval_separated_radii": [
+            0.01,
+            0.001,
+            0.0001
+          ],
+          "lower_bound_above_one_radii": [
+            0.01,
+            0.001,
+            0.0001
+          ],
+          "all_tested_radii_interval_separated": true
+        }
+      ]
+    },
+    {
+      "seed_id": "triangle_hexagon_theta0",
+      "role": "target",
+      "status": "no_improvement_observed",
+      "probe_count": 372,
+      "valid_probe_count": 372,
+      "invalid_probe_count": 0,
+      "incidence_change_count": 0,
+      "entered_adjacent_combinatorial_cells": false,
+      "raw_positive_delta_count": 0,
+      "nominal_improving_probe_count": 0,
+      "interval_separated_probe_count": 0,
+      "above_one_lower_bound_probe_count": 0,
+      "best_probe": {
+        "perturbation": "quotient_basis",
+        "radius": 1e-05,
+        "direction_index": 2,
+        "sign": -1,
+        "delta_sys": -1.38889122425212e-10,
+        "perturbed_sys": 0.9999999998611097,
+        "perturbed_sys_lower": 1.188490882866514e-10,
+        "lower_bound_above_base_upper": false
+      },
+      "perturbation_patterns": [
+        {
+          "perturbation": "product_relative_rotation",
+          "tested_radii": [
+            0.01,
+            0.001,
+            0.0001
+          ],
+          "interval_separated_radii": [],
+          "lower_bound_above_one_radii": [],
+          "all_tested_radii_interval_separated": false
+        },
+        {
+          "perturbation": "quotient_basis",
+          "tested_radii": [
+            0.001,
+            0.0001,
+            1e-05
+          ],
+          "interval_separated_radii": [],
+          "lower_bound_above_one_radii": [],
+          "all_tested_radii_interval_separated": false
+        },
+        {
+          "perturbation": "quotient_random_antipodal",
+          "tested_radii": [
+            0.001,
+            0.0001,
+            1e-05
+          ],
+          "interval_separated_radii": [],
+          "lower_bound_above_one_radii": [],
+          "all_tested_radii_interval_separated": false
+        },
+        {
+          "perturbation": "so4_mod_u2_orientation",
+          "tested_radii": [
+            0.01,
+            0.001,
+            0.0001
+          ],
+          "interval_separated_radii": [],
+          "lower_bound_above_one_radii": [],
+          "all_tested_radii_interval_separated": false
+        }
+      ]
+    },
+    {
+      "seed_id": "square_square_pi_over_4",
+      "role": "target",
+      "status": "no_improvement_observed",
+      "probe_count": 348,
+      "valid_probe_count": 348,
+      "invalid_probe_count": 0,
+      "incidence_change_count": 0,
+      "entered_adjacent_combinatorial_cells": false,
+      "raw_positive_delta_count": 11,
+      "nominal_improving_probe_count": 0,
+      "interval_separated_probe_count": 0,
+      "above_one_lower_bound_probe_count": 0,
+      "best_probe": {
+        "perturbation": "quotient_basis",
+        "radius": 0.0001,
+        "direction_index": 5,
+        "sign": 1,
+        "delta_sys": 5.551115123125783e-16,
+        "perturbed_sys": 0.9999999999999996,
+        "perturbed_sys_lower": 0.0011875529401551926,
+        "lower_bound_above_base_upper": false
+      },
+      "perturbation_patterns": [
+        {
+          "perturbation": "product_relative_rotation",
+          "tested_radii": [
+            0.01,
+            0.001,
+            0.0001
+          ],
+          "interval_separated_radii": [],
+          "lower_bound_above_one_radii": [],
+          "all_tested_radii_interval_separated": false
+        },
+        {
+          "perturbation": "quotient_basis",
+          "tested_radii": [
+            0.001,
+            0.0001,
+            1e-05
+          ],
+          "interval_separated_radii": [],
+          "lower_bound_above_one_radii": [],
+          "all_tested_radii_interval_separated": false
+        },
+        {
+          "perturbation": "quotient_random_antipodal",
+          "tested_radii": [
+            0.001,
+            0.0001,
+            1e-05
+          ],
+          "interval_separated_radii": [],
+          "lower_bound_above_one_radii": [],
+          "all_tested_radii_interval_separated": false
+        },
+        {
+          "perturbation": "so4_mod_u2_orientation",
+          "tested_radii": [
+            0.01,
+            0.001,
+            0.0001
+          ],
+          "interval_separated_radii": [],
+          "lower_bound_above_one_radii": [],
+          "all_tested_radii_interval_separated": false
+        }
+      ]
+    },
+    {
+      "seed_id": "ch2021_six_vertex",
+      "role": "target",
+      "status": "no_improvement_observed",
+      "probe_count": 366,
+      "valid_probe_count": 366,
+      "invalid_probe_count": 0,
+      "incidence_change_count": 366,
+      "entered_adjacent_combinatorial_cells": true,
+      "raw_positive_delta_count": 0,
+      "nominal_improving_probe_count": 0,
+      "interval_separated_probe_count": 0,
+      "above_one_lower_bound_probe_count": 0,
+      "best_probe": {
+        "perturbation": "quotient_basis",
+        "radius": 1e-05,
+        "direction_index": 5,
+        "sign": 1,
+        "delta_sys": -1.1099176295159552e-05,
+        "perturbed_sys": 0.999988900823704,
+        "perturbed_sys_lower": 0.9893894656709498,
+        "lower_bound_above_base_upper": false
+      },
+      "perturbation_patterns": [
+        {
+          "perturbation": "quotient_basis",
+          "tested_radii": [
+            0.001,
+            0.0001,
+            1e-05
+          ],
+          "interval_separated_radii": [],
+          "lower_bound_above_one_radii": [],
+          "all_tested_radii_interval_separated": false
+        },
+        {
+          "perturbation": "quotient_random_antipodal",
+          "tested_radii": [
+            0.001,
+            0.0001,
+            1e-05
+          ],
+          "interval_separated_radii": [],
+          "lower_bound_above_one_radii": [],
+          "all_tested_radii_interval_separated": false
+        },
+        {
+          "perturbation": "so4_mod_u2_orientation",
+          "tested_radii": [
+            0.01,
+            0.001,
+            0.0001
+          ],
+          "interval_separated_radii": [],
+          "lower_bound_above_one_radii": [],
+          "all_tested_radii_interval_separated": false
+        }
+      ]
+    }
+  ],
+  "claim_boundary": "Finite fixed-facet screen; target misses are not local-maximality claims."
+}
