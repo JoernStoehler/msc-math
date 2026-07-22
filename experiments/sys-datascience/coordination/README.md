@@ -4,9 +4,10 @@ This directory coordinates the current sys-datascience exploration. It is not
 a second source for experiment metrics.
 
 Current phase: the corrected broad-first exploration/research slice is closed
-after its reviewed July 15 portfolio refresh. Start with
-`final-research-account-2026-07-12.md` and use
-`next-session-candidates.md` for current routing. The next default is
+after its reviewed July 15 portfolio refresh and the July 22 known-seed
+closeout. Start with `research-closeout-2026-07-22.md`; use
+`final-research-account-2026-07-12.md` for the detailed random/product evidence
+it owns and `next-session-candidates.md` for current routing. The next default is
 consumer-driven readiness/demonstration, not automatic empirical reopening. Use
 `research-direction-review-2026-07-11.md` only as the closed-cycle exhaustive
 assessed inventory, not as current authority or a launch queue. Generated
@@ -28,6 +29,9 @@ explicitly readopted.
 
 Reusable experiment and research-line process belongs to
 `$empirical-research`, not this scientific coordination directory.
+`portfolio-review-contract.md` records the additional owner-local anti-anchoring,
+cost, approval, and promotion decisions for this research slice; it does not
+override the shared skill conventions.
 Temporary hypotheses, experiment ideas, value estimates, and active line state
 may live in an isolated `/tmp/` working directory; material prepared for Jörn
 belongs under `/tmp/joern/`. Promote durable scientific observations, code,

@@ -42,3 +42,27 @@ Durable July 15 dispositions:
   population orientation studies, polygon bounce generalization, and further
   optimizer policies are future opportunities only under the explicit reopen
   gates in `next-session-candidates.md`.
+
+July 22 dispositions:
+
+- Generic finite perturbations of the known `sys >= 1` cases are closed under
+  `experiments/local-maxima-check/README.md` decision `LMC-D1`. The known
+  pentagon control shows that another finite miss cannot certify local
+  maximality.
+- `branch-equality-manifold` is stopped as a restricted feasibility prototype,
+  not a selected general sampler or optimization program. Reopen for a named
+  equality-sampling consumer whose value repays chart and branch-completeness
+  work.
+- `fixed-shape-orientation-search` is stopped after a sub-threshold pilot and
+  withdrawn successor. Reopen only through a diverse-shape comparison with a
+  specified decision.
+- More IID HKO rays are rejected as a continuation. A quantitative thesis
+  panel, proof-oriented certified boundary, or adversarial thin-connection
+  search is a different question and needs its own assessment.
+- The regular 3-by-6 four-orientation negative is not selected for standalone
+  thesis promotion. Its complete-supplied-stream exact-solve repair remains a
+  separate correctness candidate.
+
+These decisions are favorable only insofar as they reduce expected total
+project cost. `research-closeout-2026-07-22.md` records avoided cost, delay
+cost, and reversal conditions; the word “parked” is not itself a value claim.

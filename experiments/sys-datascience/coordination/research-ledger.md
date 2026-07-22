@@ -62,6 +62,21 @@ additional FACTSHEET 34.1 data selected for an already fixed role. New rows,
 methods, sources, or proofs do not reopen exploration merely because they are
 feasible.
 
+The July 22 known-seed cycle adds these current decisions:
+
+- the five-case finite local screen found no new positive route and is closed
+  under `experiments/local-maxima-check/README.md` decision `LMC-D1`;
+- the exact Chaidez--Hutchings fixture is durable verification evidence;
+- the fixed-normal convex-balance theorem is promising agent mathematics but
+  remains behind Jörn's mathematical review gate;
+- HKO rays and regular 3-by-6 orientation are unpromoted pilots, not accepted
+  Main evidence; and
+- new empirical work must beat thesis integration or another live line after
+  charging promotion, review, and future reconstruction costs.
+
+See `research-closeout-2026-07-22.md` for sources, claim boundaries, branch
+preservation status, and the current cross-line idea families.
+
 ## Reopen Conditions
 
 - Ridge/scalar work: a second stage must add information beyond lower ridge or
@@ -77,6 +92,13 @@ feasible.
   IID under a small predeclared gate.
 - Broader invariants/generators: a named claim-changing outcome that beats
   demonstration after charging implementation and review debt.
+- Known-seed local probing: a new independently motivated `sys >= 1` seed, a
+  materially stronger local branch model, stronger negative method, or named
+  theorem use.
+- HKO neighborhood sampling: a named quantitative thesis consumer or a
+  proof-oriented/adversarial connection question; not more IID rays.
+- Fixed-shape orientation: a diverse-shape comparison with a specified
+  decision, rather than another search around one frozen product body.
 
 ## Update Rule
 
