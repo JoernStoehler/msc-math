@@ -52,8 +52,9 @@ packet contains the reproducible command and claim boundary.
 
 Kind: agent-proved mathematics; independently agent-reviewed; not Jörn-reviewed.
 
-The unmerged `facet-coverage-lemma` branch derives, in a stable fixed-normal
-support chamber, a directional formula for `c_EHZ` and a convex-balance
+The proposed merge candidate promotes the proof developed on
+`facet-coverage-lemma`. In a stable fixed-normal support chamber, it derives a
+directional formula for `c_EHZ` and a convex-balance
 necessary condition for local maximality of `sys`. Consequences include:
 
 - every facet must occur in at least one minimizing orbit, although the orbit
@@ -66,16 +67,17 @@ necessary condition for local maximality of `sys`. Consequences include:
 
 The scope excludes arbitrary normal perturbations and nonsimple/chamber
 transitions. The independent review repaired a word-action sign error and an
-overstated example claim. The theorem is the strongest unmerged thesis
-candidate from this cycle, but it must remain marked agent mathematics until
-Jörn reviews it. The branch is not a durable accepted owner until promoted.
+overstated example claim. The theorem is the strongest mathematical candidate
+from this cycle, but it must remain marked agent mathematics until Jörn reviews
+it. Merging the formal note preserves the proof; it does not accept it as
+thesis mathematics.
 
 ### SD-HKO-P1: transverse-ray pilot
 
-Kind: technically reviewed pilot; not promoted to Main.
+Kind: technically reviewed pilot; reproducible packet proposed for promotion.
 
-The unmerged `sys-hko-rays-run` branch evaluates 32 frozen directions in one
-concrete 25-dimensional affine slice transverse to the chosen symmetry
+The packet developed on `sys-hko-rays-run` evaluates 32 frozen directions in
+one concrete 25-dimensional affine slice transverse to the chosen symmetry
 directions at HKO. Every sampled ray had a nominal above-to-below transition;
 midpoint radii in the chosen coordinate norm ranged approximately from 0.044
 to 0.112, with median approximately 0.078. No sampled re-entry or chart/gauge
@@ -84,11 +86,10 @@ failure occurred.
 This is finite, coordinate-dependent evidence about typical sampled
 directions. It is not an inradius, a global quotient construction, a
 star-shapedness claim, or evidence against thin or lower-dimensional
-connections. The branch currently contains its producer, frozen basis,
-manifests, evaluations, and summaries. A branch hash alone is not an adequate
-long-term evidence owner: before retiring the branch, either promote a
-reviewable reproduction packet because a named HKO/thesis consumer wants the
-result, or explicitly discard the pilot as not worth maintaining.
+connections. This merge candidate promotes the isolated producer, frozen
+basis, manifests, evaluations, and summaries rather than only citing a branch
+hash. The packet is durable empirical evidence if merged; a reader-facing
+thesis figure remains a separate value and presentation decision.
 
 ### SD-OR-P1: regular 3-by-6 orientation pilot and retention failure
 
@@ -220,7 +221,7 @@ Accordingly:
 | --- | --- | --- | --- |
 | Known-seed finite probing | close | another finite miss adds little after the pentagon false-negative control | reopen for a stronger method, new seed, or theorem use |
 | Fixed-normal theorem | finish review/promotion as a separate candidate | mathematical context and repaired proof are live; losing them would cause expensive reconstruction | Jörn may reject or request repair; do not write theorem-strength thesis prose first |
-| HKO ray pilot | decide consumer before branch retirement | full promotion incurs review/maintenance cost without a fixed reader use; mere hash preservation is insufficient | context and reproduction route decay, so promote promptly if a thesis panel is wanted |
+| HKO ray pilot | promote the reproduction packet; defer thesis presentation | review was already performed and future reproduction is plausible, so preserving producer and data now costs less than reconstructing them later | reopen the thesis-display decision when the HKO chapter needs a quantitative local panel |
 | Exact complete-stream API | defer crate extraction | Main already has an experiment-local exact-all-visited-sigma route; another public API adds review and maintenance before a named consumer | reopen when a crate consumer cannot reasonably use the existing route or needs the certified aggregation types |
 | Equality-manifold prototype | stop | present restricted result did not select a scientific successor; polishing would maintain an unselected chart | reopen only for a named equality-sampling or optimization consumer |
 | Fixed-shape orientation prototype | stop | no positive case and successor lacked portfolio advantage | reopen for a diverse-shape comparison with a specified decision |
@@ -266,8 +267,9 @@ evidence, not a substitute for scientific artifacts.
    `next-session-candidates.md` for current gates.
 3. Follow `portfolio-review-contract.md` before proposing nontrivial new
    experiments.
-4. Treat unpromoted pilot branches as unresolved preservation decisions, not
-   accepted evidence or an implementation queue.
+4. Treat the promoted HKO packet as bounded finite-panel evidence. Treat the
+   remaining unpromoted pilot branches as dispositions, not accepted evidence
+   or an implementation queue.
 5. Ask Jörn about mathematical acceptance, thesis value, or another actual
    stakeholder crux only after locally establishing the evidence and cost
    comparison.

@@ -69,8 +69,9 @@ The July 22 known-seed cycle adds these current decisions:
 - the exact Chaidez--Hutchings fixture is durable verification evidence;
 - the fixed-normal convex-balance theorem is promising agent mathematics but
   remains behind Jörn's mathematical review gate;
-- HKO rays and regular 3-by-6 orientation are unpromoted pilots, not accepted
-  Main evidence; and
+- the HKO ray reproduction packet is proposed for promotion under its finite,
+  coordinate-dependent claim boundary, while the regular 3-by-6 orientation
+  remains an unpromoted pilot; and
 - new empirical work must beat thesis integration or another live line after
   charging promotion, review, and future reconstruction costs.
 

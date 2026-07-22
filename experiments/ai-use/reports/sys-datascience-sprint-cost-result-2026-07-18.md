@@ -73,8 +73,8 @@ context, repair, and review rather than target computation.
   transverse affine slice.
 - Did not establish an invariant radius, star-shapedness, component trapping,
   or absence of thin connections.
-- At this report's date the reproduction packet remained unmerged and therefore
-  required an explicit promote-or-discard decision before branch retirement.
+- The July 22 wrap-up candidate promotes the reproduction packet while leaving
+  its possible thesis presentation as a separate decision.
 
 ### Regular 3-by-6 orientations
 
@@ -118,9 +118,9 @@ charging both pilots for extensive reusable infrastructure.
 The case also shows why deferral is not inherently efficient. Deferring a
 promotion is favorable only when the avoided current review/maintenance cost
 exceeds later reconstruction and context-loss cost. For the HKO packet, a bare
-branch hash would not preserve enough evidence for likely future use, so the
-decision must be promotion of the reproducible packet or explicit discard, not
-indefinite archival language.
+branch hash would not preserve enough evidence for likely future use; the July
+22 candidate therefore promotes the reproducible packet instead of indefinitely
+deferring the decision.
 
 ## Claims Not Supported
 

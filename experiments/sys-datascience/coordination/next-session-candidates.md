@@ -28,6 +28,6 @@ possible generalization exists.
 | Presentation/thesis prose | later session | use selected sources only | outside this exploration closeout |
 | Five-case local-maxima screen | reviewed and closed | consume the bounded comparison and conjectures | reopen under `LMC-D1`, not for more generic finite probes |
 | Fixed-normal convex-balance theorem | agent-reviewed; Jörn review outstanding | review mathematics before thesis adaptation or empirical screening | proof repair, acceptance, or a named fixed-normal application |
-| HKO transverse-ray pilot | technically reviewed but unpromoted | choose a named thesis consumer before promoting or discarding its reproduction packet | no additional IID rays; require a quantitative panel, certified boundary, or adversarial connection question |
+| HKO transverse-ray pilot | reproducible finite panel proposed for promotion | decide separately whether it improves the thesis HKO presentation | no additional IID rays; require a quantitative panel, certified boundary, or adversarial connection question |
 | Complete-supplied-stream exact solve | experiment-local route already exists; crate extraction deferred | direct small audits to `experiments/dev-quadratic-program/src/exact_route/` | extract a public API only for a named crate consumer |
 | New empirical portfolio | unapproved idea families | compare diverse fixed-shape alignment, nonredundant invariants, and capacity-versus-volume response before execution | assessed proposal must beat thesis integration and other lines on expected total project cost |
