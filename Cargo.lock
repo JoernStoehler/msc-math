@@ -601,6 +601,7 @@ name = "exp-hko-local-maximum"
 version = "0.1.0"
 dependencies = [
  "algebraic-numbers",
+ "blake3",
  "euclidean-polytopes",
  "good_lp",
  "nalgebra",
