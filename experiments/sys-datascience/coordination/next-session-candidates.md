@@ -6,7 +6,8 @@ owning packets and `final-research-account-2026-07-12.md`.
 launch authority.
 
 Current default: empirical exploration is closed after the reviewed July 15
-portfolio refresh. The next sys-datascience session should perform
+portfolio refresh and July 22 known-seed closeout. The next sys-datascience
+session should perform
 readiness/demonstration work for an explicit thesis consumer: select source
 roles, choose any additional FACTSHEET 34.1 data for those roles, and verify
 the reproduction path while preserving the recorded claim boundaries. Do not
@@ -25,3 +26,8 @@ possible generalization exists.
 | Adaptive hostile search | failed without scientific comparison | none; the bespoke branch must not merge | first choose candidate-quality versus probability-estimation objective, then compare a thin standard core with IID |
 | Stopped generator breadth wave | parked preservation, not a queue | none beyond the separately salvaged orientation packet | a named packet must change a retained thesis claim and beat demonstration after review debt |
 | Presentation/thesis prose | later session | use selected sources only | outside this exploration closeout |
+| Five-case local-maxima screen | reviewed and closed | consume the bounded comparison and conjectures | reopen under `LMC-D1`, not for more generic finite probes |
+| Fixed-normal convex-balance theorem | agent-reviewed; Jörn review outstanding | review mathematics before thesis adaptation or empirical screening | proof repair, acceptance, or a named fixed-normal application |
+| HKO transverse-ray pilot | reproducible finite panel proposed for promotion | decide separately whether it improves the thesis HKO presentation | no additional IID rays; require a quantitative panel, certified boundary, or adversarial connection question |
+| Complete-supplied-stream exact solve | experiment-local route already exists; crate extraction deferred | direct small audits to `experiments/dev-quadratic-program/src/exact_route/` | extract a public API only for a named crate consumer |
+| New empirical portfolio | unapproved idea families | compare diverse fixed-shape alignment, nonredundant invariants, and capacity-versus-volume response before execution | assessed proposal must beat thesis integration and other lines on expected total project cost |

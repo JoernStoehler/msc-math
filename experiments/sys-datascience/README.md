@@ -91,6 +91,8 @@ uv run --script experiments/sys-datascience/fingerprint-dataset.py \
 
 Read first:
 
+- `coordination/research-closeout-2026-07-22.md` for current routing after the
+  known-seed cycle;
 - `coordination/final-research-account-2026-07-12.md` and
   `coordination/next-session-candidates.md` for current routing and status;
 - `coordination/research-direction-review-2026-07-11.md` for the closed-cycle
@@ -124,6 +126,13 @@ gradient/optimizer results. Bespoke adaptive search produced no scientific
 comparison. Parked routes have named reopen conditions rather than forming a
 queue. FACTSHEET 34.1 still requires later consumer-driven thesis-level data.
 `LICCA.md` classifies retained dormant scripts; none is selected by default.
+
+The July 22 addendum records the later five-case local-maxima screen, exact
+Chaidez--Hutchings fixture, promoted bounded HKO panel, unpromoted
+orientation/equality pilots, first-order theorem review gate, and the current
+cross-line idea shortlist.
+Its stop/defer decisions compare expected total project cost and state what
+evidence would reverse them; “deferred” does not itself mean desirable.
 
 Escalate before unrelated work only when an active method produces a trusted
 new `sys > 1` candidate or source beyond the already-known HKO/rotated-pentagon
