@@ -19,7 +19,6 @@ Samplers:
   m10-lagrangian-product      Fixed-F=10 Lagrangian-product box sweep.
   m10-lagrangian-product-probe
                               Fixed-F=10 Lagrangian-product radial boundary probe.
-  m10-quotient-ray            Event-labelled rays in the 25D HKO local slice.
 
 Use `hko-neighborhood-sampling <sampler> --help` for sampler-specific flags."#
     );
@@ -38,7 +37,6 @@ fn main() {
         "m11" => samplers::m11::run(&args),
         "m10-lagrangian-product" => samplers::m10_lagrangian_product::run(&args),
         "m10-lagrangian-product-probe" => samplers::m10_lagrangian_product_probe::run(&args),
-        "m10-quotient-ray" => samplers::m10_quotient_ray::run(&args),
         other => {
             eprintln!("error: unknown sampler: {other}\n");
             print_usage();

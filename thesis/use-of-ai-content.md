@@ -77,15 +77,6 @@ collecting a large transcript dataset; first join the existing selected cases
 to resource accounting and test whether that changes a thesis-relevant
 conclusion.
 
-The later report
-`experiments/ai-use/reports/sys-datascience-sprint-cost-result-2026-07-18.md`
-now supplies one checkpoint-bounded cost/result case. It records USD 371.25
-shadow API cost to the completed-sprint recap, a USD 280.05 experiment-lineage
-subtotal against the USD 200 allocation, and the distinct retained value/status
-of the exact CH fixture, HKO pilot, and orientation pilot. This addresses one
-instance of missing item 1; it does not provide a representative distribution,
-human counterfactual, or full mathematical-labor frontier.
-
 ## Evidence design
 
 The section uses selected complete episodes plus one structured four-run replay.

@@ -107,7 +107,6 @@ excerpts, and accidental bulk disclosure.
 | `reports/project-efficiency-analysis-2026-07-12.md` | Canonical monthly resource series and qualitative thesis-surface value ledger. |
 | `reports/project-efficiency-checkpoints/` | One concise Git/resource/value checkpoint per available repository month; consumed by the canonical report. |
 | `reports/ai-research-workflow-case-matrix.md` | Selected, stage-separated cases supporting section 13; not a prevalence or productivity estimate. |
-| `reports/sys-datascience-sprint-cost-result-2026-07-18.md` | Checkpoint-bounded cost/result ladder for the July 17--18 research sprint; naturalistic case, not a causal productivity estimate. |
 | `reports/session-log-import-report-2026-07-01.md` | Import/coverage report referenced by the synthesis. |
 | `sign-replay/` | Reproducible mutation replay for one structured four-run production-versus-verification case study. |
 | `prompts/ai-provenance-investigation-prompt.md` | Prompt used to rerun the provenance investigation in a fresh session. |
