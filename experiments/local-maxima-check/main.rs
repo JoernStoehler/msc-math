@@ -262,11 +262,12 @@ fn main() {
         probe_count: probe_rows.len(),
         total_wall_seconds: started.elapsed().as_secs_f64(),
         source_paths: vec![
-            "experiments/sys-landscape/sys1-local-maxima/README.md",
+            "experiments/local-maxima-check/README.md",
             "thesis/09-rotated-regular-polygons-pentagon-profile-theorem.tex",
             "experiments/regular-products/rotated-regular-products/lagrangian-products-3x6-6deg.jsonl",
             "experiments/regular-products/rotated-regular-products/lagrangian-products-4x4-6deg.jsonl",
             "papers/ch2021/s1_introduction_and_main_results.tex",
+            "experiments/verification/ch2021-six-vertex/report.json",
         ],
         claim_boundary: "Finite fixed-facet probes can find improving points but cannot prove local maximality from a miss.",
     };
@@ -711,7 +712,9 @@ fn write_json_atomic<T: Serialize>(path: PathBuf, value: &T) {
 
 fn canonical_output_dir() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("sys1-local-maxima")
+        .parent()
+        .expect("sys-landscape manifest must be below experiments")
+        .join("local-maxima-check")
         .join("artifacts")
 }
 

@@ -123,7 +123,7 @@ fn ch2021_seed() -> Seed {
     Seed {
         id: "ch2021_six_vertex",
         role: "target",
-        source: "papers/ch2021/s1_introduction_and_main_results.tex",
+        source: "experiments/verification/ch2021-six-vertex/report.json",
         expected_sys: 1.0,
         dual_vertices,
         product: None,

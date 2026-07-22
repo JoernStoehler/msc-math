@@ -1,14 +1,29 @@
-# Empirical Local-Maximum Screen at Known `sys = 1` Bodies
+# Five-Case Local-Maxima Check
 
-This experiment asks whether a finite local search finds an increasing
-direction from each currently identified `sys = 1` representative. It belongs
-to `sys-landscape`, rather than `sys-datascience`, because the objects are a
-small theory-selected panel and the output is a local geometric diagnostic,
-not a learned or population-level model.
+This root topic compares five deliberately different evidence statuses.  Its
+producer asks whether a finite local search finds an increasing direction from
+three selected equality candidates and uses the rotated-pentagon crossing as a
+known-positive control. HKO enters through its exact theorem packet, not as
+another probe seed. The selected bodies and their evidence ladder, rather than
+the hostile-search data-science pipeline, organize this packet.
+
+## Five statuses
+
+| Body | Value status | Local status |
+| --- | --- | --- |
+| regular triangle--hexagon, angle `0` | numerical reconstruction gives `sys ≈ 1`; no exact equality proof was recovered | conjectured local maximum in its fixed nine-row labelled chart modulo the `sys` symmetries |
+| regular square--square, angle `pi/4` | numerical reconstruction gives `sys ≈ 1`; no exact equality proof was recovered | conjectured local maximum in its fixed eight-row labelled chart modulo the same symmetries |
+| CH2021 displayed six-vertex body | exact `sys = 1`, certified by `experiments/verification/ch2021-six-vertex/` | conjectured local maximum among fixed-nine-facet nearby bodies, across adjacent combinatorial cells, modulo the same symmetries |
+| HKO | exact `sys = (3+sqrt(5))/5 > 1` with theorem-facing certificate | proved locally maximal in the ten-facet space, with equality on the local symmetry orbit |
+| rotated-pentagon equality crossing | exact `sys = 1` from the proved profile | exactly not locally maximal because the family continues into `sys > 1` |
+
+The relevant symmetries are translations, positive scaling, and the
+identity-component linear symplectic action. None of the conjectures concerns
+adding facets or all convex bodies.
 
 ## Question and decision
 
-For each known equality representative, does a nearby fixed-facet polytope
+For each selected equality representative, does a nearby fixed-facet polytope
 have larger `sys`? A positive result selects a path for exact analysis. A
 negative finite screen only prioritizes a body for branch-aware or exact
 local-maximum work; it does not establish local maximality.
@@ -92,7 +107,7 @@ From the repository root:
 
 ```bash
 cargo run --release -p exp-sys-landscape --bin sys1-local-maxima -- --canonical
-uv run --script experiments/sys-landscape/sys1-local-maxima/analyze.py
+uv run --script experiments/local-maxima-check/analyze.py
 ```
 
 Use `--smoke` for the pentagon control with one quotient basis pair and its two

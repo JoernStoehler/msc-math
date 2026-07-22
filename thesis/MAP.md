@@ -64,8 +64,9 @@ Status: navigation cache for the active thesis surface.
   (Hausdorff/chart and quotient reduction),
   `07-hko-local-maximum-exact-certificate.tex` (finite exact certificate and
   proof close), `07-hko-local-maximum-sage-verifier.tex` (Sage verifier
-  explanation), and `07-hko-local-maximum-empirical-tests.tex` (supporting
-  empirical context).
+  explanation), `07-hko-local-maximum-empirical-tests.tex` (supporting
+  evidence), and `07-hko-local-maximum-five-case-comparison.tex` (comparison
+  of proved, disproved, and conjectured local behavior).
 - `hko-local-maximum-content.md`: section-local content-gathering notes for
   the HKO result packet. Not source truth; use its source pointers before
   relying on claims.

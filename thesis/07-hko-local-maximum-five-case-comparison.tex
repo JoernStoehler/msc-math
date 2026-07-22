@@ -1,0 +1,54 @@
+\subsection{A five-case comparison of local behavior}
+\label{subsec:five-case-local-maxima-comparison}
+
+Equality in Viterbo's bound does not itself imply local maximality: the exact
+rotated-pentagon profile from
+Theorem~\ref{thm:rotated-pentagon-product-formula} crosses
+\(\operatorname{sys}=1\) and then increases above one.  Conversely, HKO has
+value \((3+\sqrt5)/5>1\), and
+Theorem~\ref{thm:hko-ten-facet-local-maximum} proves that it is locally maximal
+in the ten-facet space.  Between these controls lie three equality candidates
+for which the present evidence motivates, but does not prove, local
+maximality.
+
+\begin{center}
+\small
+\begin{tabular}{@{}p{.25\linewidth}p{.19\linewidth}p{.46\linewidth}@{}}
+\toprule
+Body & Systolic ratio & Local status \\
+\midrule
+Regular triangle--hexagon, angle \(0\) & numerically \(\approx1\) & conjectured local maximum in the fixed nine-facet chart \\
+Regular square--square, angle \(\pi/4\) & numerically \(\approx1\) & conjectured local maximum in the fixed eight-facet chart \\
+CH2021 six-vertex body \cite{CH2021} & exactly \(1\) & conjectured local maximum among nearby fixed-nine-facet bodies, across adjacent combinatorial cells \\
+HKO & exactly \((3+\sqrt5)/5>1\) & proved local maximum in the ten-facet space \\
+Rotated-pentagon crossing & exactly \(1\) & proved not locally maximal \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Each fixed-facet conjecture is made in the local labelled dual-vertex chart,
+modulo translations, positive scaling, and the identity component of the
+linear symplectic group.  For the nonsimple CH2021 body, it includes the
+adjacent combinatorial cells reached by nearby fixed-nine-facet bodies.  The
+conjectures neither allow facets to be added nor assert local maximality among
+all convex bodies.  The triangle--hexagon and square--square equality values
+in the table are numerical reconstructions; no exact proof of those two base
+equalities is used here.  In contrast, an exhaustive exact HK2017 calculation
+reproduces \(\operatorname{sys}=1\) for the displayed rational CH2021 body
+\cite{CH2021},
+while making no claim about its neighborhood.
+
+The finite screen recomputes the capacity scalar after perturbing each of the
+three conjectural bases at three radii.  It tests signed directions from an
+orthonormal quotient basis, a sparse antipodal random cover, the
+\(SO(4)/U(2)\) orientation circle, and, for regular products, relative
+rotation.  No target probe produced a material nominal increase, and none
+produced an interval-separated increase.  The target capacity intervals were
+broad, so these misses are nominal-scalar diagnostics only.  This negative
+observation is meaningful only together with the pentagon control:
+the theory-derived relative-rotation and \(SO(4)/U(2)\) probes recover its
+known improvement, whereas the generic signed quotient basis and sparse
+random cover miss it.  Thus a thin improving cone can escape the generic
+screen.  The three misses support the conjectures and motivate branch-aware
+exact analysis; they neither certify local maximality nor exclude untested
+improving germs.

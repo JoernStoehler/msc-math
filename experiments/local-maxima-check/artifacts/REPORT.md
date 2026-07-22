@@ -1,4 +1,14 @@
-# Known `sys = 1` Local Screen Report
+# Five-Case Local-Maxima Check Report
+
+## Mathematical status of the comparison
+
+| Body | Value status | Local status |
+| --- | --- | --- |
+| triangle--hexagon | numerical reconstruction at `sys ≈ 1` | conjectured fixed-nine-facet local maximum modulo symmetries |
+| square--square | numerical reconstruction at `sys ≈ 1` | conjectured fixed-eight-facet local maximum modulo symmetries |
+| CH2021 six-vertex body | exactly `sys = 1` by the exhaustive reproduction packet | conjectured fixed-nine-facet local maximum across adjacent cells modulo symmetries |
+| HKO | exactly `sys = (3+sqrt(5))/5 > 1` | proved ten-facet local maximum modulo symmetries |
+| rotated-pentagon crossing | exactly `sys = 1` | proved not locally maximal because the exact family continues above one |
 
 ## Control gate
 

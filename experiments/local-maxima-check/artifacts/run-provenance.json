@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "experiment_id": "sys1-known-equality-local-maxima-v1",
+  "command_args": [
+    "target/release/sys1-local-maxima",
+    "--canonical"
+  ],
+  "canonical": true,
+  "smoke": false,
+  "git_revision": "fd455e4b8f396f480c37aa004e71688d3e25d29c",
+  "git_status_porcelain": [
+    " M experiments/MAP.md",
+    "RM experiments/sys-landscape/sys1-local-maxima/README.md -> experiments/local-maxima-check/README.md",
+    "RM experiments/sys-landscape/sys1-local-maxima/analyze.py -> experiments/local-maxima-check/analyze.py",
+    "RM experiments/sys-landscape/sys1-local-maxima/artifacts/REPORT.md -> experiments/local-maxima-check/artifacts/REPORT.md",
+    "RM experiments/sys-landscape/sys1-local-maxima/artifacts/bases.jsonl -> experiments/local-maxima-check/artifacts/bases.jsonl",
+    "RM experiments/sys-landscape/sys1-local-maxima/artifacts/probes.jsonl -> experiments/local-maxima-check/artifacts/probes.jsonl",
+    "RM experiments/sys-landscape/sys1-local-maxima/artifacts/radius-summaries.jsonl -> experiments/local-maxima-check/artifacts/radius-summaries.jsonl",
+    "RM experiments/sys-landscape/sys1-local-maxima/artifacts/run-provenance.json -> experiments/local-maxima-check/artifacts/run-provenance.json",
+    "R  experiments/sys-landscape/sys1-local-maxima/artifacts/summary.json -> experiments/local-maxima-check/artifacts/summary.json",
+    "R  experiments/sys-landscape/sys1-local-maxima/directions.rs -> experiments/local-maxima-check/directions.rs",
+    "RM experiments/sys-landscape/sys1-local-maxima/main.rs -> experiments/local-maxima-check/main.rs",
+    "RM experiments/sys-landscape/sys1-local-maxima/seeds.rs -> experiments/local-maxima-check/seeds.rs",
+    " M experiments/sys-landscape/Cargo.toml",
+    " M experiments/sys-landscape/README.md",
+    " M thesis/07-hko-local-maximum.tex",
+    " M thesis/MAP.md",
+    "?? thesis/07-hko-local-maximum-five-case-comparison.tex"
+  ],
+  "master_seed": 1364271142,
+  "row_relative_radii": [
+    0.001,
+    0.0001,
+    0.00001
+  ],
+  "angular_radii": [
+    0.01,
+    0.001,
+    0.0001
+  ],
+  "random_antipodal_pairs": 32,
+  "orientation_directions": 16,
+  "material_delta_sys": 1e-12,
+  "threads": 8,
+  "base_count": 4,
+  "probe_count": 1482,
+  "total_wall_seconds": 312.615275976,
+  "source_paths": [
+    "experiments/local-maxima-check/README.md",
+    "thesis/09-rotated-regular-polygons-pentagon-profile-theorem.tex",
+    "experiments/regular-products/rotated-regular-products/lagrangian-products-3x6-6deg.jsonl",
+    "experiments/regular-products/rotated-regular-products/lagrangian-products-4x4-6deg.jsonl",
+    "papers/ch2021/s1_introduction_and_main_results.tex",
+    "experiments/verification/ch2021-six-vertex/report.json"
+  ],
+  "claim_boundary": "Finite fixed-facet probes can find improving points but cannot prove local maximality from a miss."
+}
