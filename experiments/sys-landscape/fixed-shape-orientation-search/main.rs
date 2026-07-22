@@ -12,11 +12,12 @@ use serde_json::{json, Value};
 use std::f64::consts::{PI, TAU};
 use std::fs::File;
 use std::io::{BufRead, BufReader, BufWriter, Write};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::time::Instant;
 use symplectic::exact::omega_signs_exact;
 
-const OUTPUT: &str = "/tmp/joern/fixed-shape-orientation-search.jsonl";
+const DEFAULT_OUTPUT: &str =
+    "experiments/sys-landscape/fixed-shape-orientation-search/evaluations.jsonl";
 const SOURCES: [(&str, &str); 2] = [
     (
         "generic",
@@ -250,12 +251,31 @@ fn scan_body(
     Ok((best, baseline_sys, evaluations))
 }
 
+fn output_path() -> Result<PathBuf, String> {
+    let mut args = std::env::args().skip(1);
+    match args.next() {
+        None => Ok(PathBuf::from(DEFAULT_OUTPUT)),
+        Some(flag) if flag == "--output" => {
+            let path = args.next().ok_or("--output needs PATH")?;
+            if args.next().is_some() {
+                return Err("unexpected arguments after --output PATH".into());
+            }
+            Ok(PathBuf::from(path))
+        }
+        Some(other) => Err(format!(
+            "unexpected argument {other}; expected --output PATH"
+        )),
+    }
+}
+
 fn main() -> Result<(), String> {
     let bodies = SOURCES
         .iter()
         .map(|(kind, path)| read_best(kind, Path::new(path)))
         .collect::<Result<Vec<_>, _>>()?;
-    let output = File::create(OUTPUT).map_err(|error| format!("create {OUTPUT}: {error}"))?;
+    let output_path = output_path()?;
+    let output = File::create(&output_path)
+        .map_err(|error| format!("create {}: {error}", output_path.display()))?;
     let mut writer = BufWriter::new(output);
     for body in bodies {
         let (best, baseline, evaluations) = scan_body(&body, &mut writer)?;
@@ -273,7 +293,7 @@ fn main() -> Result<(), String> {
     }
     writer
         .flush()
-        .map_err(|error| format!("flush {OUTPUT}: {error}"))?;
-    println!("wrote {OUTPUT}");
+        .map_err(|error| format!("flush {}: {error}", output_path.display()))?;
+    println!("wrote {}", output_path.display());
     Ok(())
 }
