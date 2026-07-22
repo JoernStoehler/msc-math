@@ -43,18 +43,56 @@ strongest sampled exposed-edge witness: a direction where the two linearized
 actions agree and lie below every other gradient group. Raw-word duplicates
 are not allowed to turn floating-point noise into a false exposed-edge margin.
 
-The local parameter chart has eleven coordinates:
+### Product chart and the meaning of “slice”
 
-- five logarithmic support-number changes for the first pentagon;
-- five logarithmic support-number changes for the second pentagon;
-- the relative rotation angle.
+Let `h_* = cos(pi/5)`, let `theta_* = pi/20`, and let `n_i,m_j` be the fixed
+regular-pentagon unit normals. The eleven-dimensional parameter is
 
-At the basepoint, the producer removes the six continuous equivalence
-directions present in this chart: two translations of each factor, common
-dilation, and reciprocal factor scaling. Fixing the orthogonal complement gives
-a five-dimensional local affine slice. This is a local transversal at the
-basepoint, not a global quotient or a claim that every nearby polytope has a
-unique representative.
+```text
+z = (u_1,...,u_5, v_1,...,v_5, phi) in R^11.
+```
+
+It represents the Lagrangian product `K(z)=Q(u) x_L P(v,phi)` with
+
+```text
+Q(u)       = {q : <n_i,q> <= h_* exp(u_i) for every i},
+P(v,phi)   = {p : <R(theta_*+phi)m_j,p> <= h_* exp(v_j) for every j}.
+```
+
+Thus `z=0` is `P_5 x_L R(9 degrees)P_5`. This chart varies all ten support
+numbers and the relative factor angle, but it does not vary the five normal
+angles of each factor independently. It is an eleven-dimensional product
+family, not a chart on all ten-facet four-polytopes.
+
+Six tangent directions at `z=0` change only the representative for `sys`:
+
+```text
+q translation by t:  u_i' = <n_i,t>/h_*,
+p translation by s:  v_j' = <R(theta_*)m_j,s>/h_*,
+common dilation:      (u',v',phi') = (1_5, 1_5,0),
+reciprocal scaling:   (u',v',phi') = (1_5,-1_5,0).
+```
+
+The first four directions come from two translations of each planar factor.
+Common dilation leaves `sys` invariant; reciprocal factor scaling is the
+linear symplectic map `(q,p) -> (lambda q,lambda^-1 p)`. Let `E` be their
+six-dimensional span in `R^11`. The code applies Gram--Schmidt and fixes
+
+```text
+S = E^perp,             dim S = 5,
+z = B y,                y in R^5,
+```
+
+where the columns of `B` are the recorded orthonormal basis of `S`. This is
+what this experiment calls the **local slice**. More precisely, it is a fixed
+affine subspace transverse at the basepoint to the six known equivalence
+directions inside this particular product chart. It is not a constructed
+global quotient, it does not remove symmetries outside this chart, and no
+unique-representative theorem is used. Euclidean orthogonality in the chosen
+`(u,v,phi)` coordinates is also part of the sampling law rather than an
+intrinsic metric on polytopes.
+
+### Pairwise equality manifold and projection sampler
 
 For a chosen branch pair, let
 
@@ -62,18 +100,48 @@ For a chosen branch pair, let
 f(y) = log(action_sigma(y)) - log(action_tau(y))
 ```
 
-on the five-dimensional slice. A proposal direction is sampled from a standard
-Gaussian, projected to `ker Df(0)`, normalized, and scaled to the requested
-radius. Newton correction along the current normal repeatedly applies
+on the five-dimensional slice. While both fixed-word KKT optima remain smooth
+and beta-positive, `f` is smooth. The selected pair satisfies
+`grad f(0) != 0`; hence the implicit-function theorem makes `f^{-1}(0)` a
+four-dimensional submanifold of `S` near the basepoint.
+
+For a requested radius `r`, the implemented proposal law is:
+
+```text
+g ~ N(0,I_5),
+n = grad f(0),
+u = normalize(g - n <n,g>/|n|^2),
+y_0 = r u.
+```
+
+Thus `u` is uniform on the unit three-sphere in `ker Df(0)` for the chosen
+Euclidean coordinates. The code then applies normal Newton correction
 
 ```text
 y <- y - f(y) grad(f)(y) / |grad(f)(y)|^2.
 ```
 
-Thus the random proposals are uniform on the tangent three-sphere before
-correction. Their corrected images are a specified local projection sampler;
-they are not asserted to be uniform for intrinsic surface measure on the
-curved equality manifold.
+until the log-action residual is below tolerance. Geometry construction,
+branch invalidity, loss of transversality, and failure to converge are explicit
+rejection states. The corrected images are therefore a specified local
+projection sampler; they are not asserted to be uniform for intrinsic surface
+measure on the curved equality manifold.
+
+Equality is not enough for capacity relevance. At the regular basepoint, the
+twenty tied raw words are first grouped into five numerical log-action-gradient
+groups. For each pair of groups, the code samples tangent directions `u` with
+equal first-order slope and scores
+
+```text
+margin(u) = min_{k outside the pair}
+              (<g_k,u> - (<g_sigma,u>+<g_tau,u>)/2).
+```
+
+The selected pair/direction has positive sampled margin, so it is an
+expected-positive lower-envelope witness to first order. Every corrected point
+is nevertheless passed through the full minima-safe billiard capacity search.
+That recomputation, not the equality equation, labels whether the pair is
+actually jointly minimizing or is undercut by a third branch.
 
 ## Controls and recorded checks
 

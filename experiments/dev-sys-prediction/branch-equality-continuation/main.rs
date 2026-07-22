@@ -182,7 +182,7 @@ fn main() {
         .expect("no transverse exposed pair found among the twenty tied base words");
     assert!(
         norm(&pair.equality_normal) > TRANSVERSALITY_TOL,
-        "selected pair is not transverse in the quotient slice"
+        "selected pair is not transverse in the local product slice"
     );
 
     let first_sigma = TIED_BASE_SIGMAS[pair.first_index].to_vec();
