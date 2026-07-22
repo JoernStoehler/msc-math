@@ -86,6 +86,7 @@ struct PentagonChart {
 struct BranchEvaluation {
     action: f64,
     beta_margin: f64,
+    kkt_n_zero: usize,
     gradient_slice: Vec<f64>,
 }
 
@@ -130,6 +131,8 @@ struct SampleRow {
     second_action: f64,
     first_beta_margin: f64,
     second_beta_margin: f64,
+    first_kkt_n_zero: usize,
+    second_kkt_n_zero: usize,
     full_capacity: f64,
     pair_relative_gap_above_capacity: f64,
     pair_joint_minimizer_nominal: bool,
@@ -495,6 +498,7 @@ fn evaluate_branch(
     Some(BranchEvaluation {
         action,
         beta_margin,
+        kkt_n_zero: kkt.n_zero,
         gradient_slice,
     })
 }
@@ -645,6 +649,8 @@ fn run_sample(
         second_action: corrected.second.action,
         first_beta_margin: corrected.first.beta_margin,
         second_beta_margin: corrected.second.beta_margin,
+        first_kkt_n_zero: corrected.first.kkt_n_zero,
+        second_kkt_n_zero: corrected.second.kkt_n_zero,
         full_capacity: capacity.min_action,
         pair_relative_gap_above_capacity,
         pair_joint_minimizer_nominal,
@@ -858,6 +864,7 @@ mod tests {
         let (_, slice) = chart.local_slice_basis();
         let base = chart.polytope_at(&vec![0.0; slice.len()], &slice).unwrap();
         let branches = evaluate_fixture_branches(&base, &slice).unwrap();
+        assert!(branches.iter().all(|branch| branch.kkt_n_zero == 0));
         let mut rng = ChaCha8Rng::seed_from_u64(DEFAULT_SEED ^ 0x7465_7374);
         let pair = select_exposed_pair(&branches, &mut rng).unwrap();
         assert!(pair.exposed_margin_per_unit_step > 0.0);

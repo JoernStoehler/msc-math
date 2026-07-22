@@ -71,6 +71,8 @@ def main() -> None:
         if row["equality_relative_residual"] <= 1.0e-10
         and row["first_beta_margin"] > 0.0
         and row["second_beta_margin"] > 0.0
+        and row["first_kkt_n_zero"] == 0
+        and row["second_kkt_n_zero"] == 0
     ]
     witness = [row for row in samples if row["sample_kind"] == "exposed_witness"]
     random_rows = [row for row in samples if row["sample_kind"].startswith("random_")]
@@ -111,7 +113,7 @@ def main() -> None:
         },
         "method_decision": {
             "status": "passed" if method_passed else "failed",
-            "criterion": "no failures and >=90% reliable equality corrections through radius 1e-3",
+            "criterion": "no failures and >=90% equality corrections through radius 1e-3 with residual <=1e-10, positive beta margins, and zero numerical KKT nullity",
             "small_radius_reliable_count": len(small_reliable),
             "small_radius_sample_count": len(small),
             "small_radius_reliable_fraction": len(small_reliable) / len(small),

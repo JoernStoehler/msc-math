@@ -123,7 +123,9 @@ y <- y - f(y) grad(f)(y) / |grad(f)(y)|^2.
 
 until the log-action residual is below tolerance. Geometry construction,
 branch invalidity, loss of transversality, and failure to converge are explicit
-rejection states. The corrected images are therefore a specified local
+rejection states. Numerical KKT nullity is recorded separately rather than
+silently treating every feasible solve as a smooth branch. The corrected
+images are therefore a specified local
 projection sampler; they are not asserted to be uniform for intrinsic surface
 measure on the curved equality manifold.
 
@@ -148,7 +150,7 @@ actually jointly minimizing or is undercut by a third branch.
 Each corrected point records:
 
 - equality residual, Newton iterations, and correction size;
-- both fixed-word actions and beta margins;
+- both fixed-word actions, beta margins, and numerical KKT nullities;
 - the full minima-safe billiard capacity result;
 - the pair's relative gap above the recomputed minimum;
 - whether both exact words are retained in the returned action window;
@@ -195,7 +197,8 @@ The retained panel contains 68 corrected points: one exposed-edge witness and
 sixteen random tangent proposals at each of four radii from `1e-5` through
 `1e-2`. All 68 geometry/branch evaluations and corrections succeeded. All 51
 points through radius `1e-3` had positive beta margins and relative equality
-residual below `1e-10`; the largest residual in the entire panel was
+residual below `1e-10`; their selected KKT systems also had zero recorded
+numerical nullity. The largest residual in the entire panel was
 `9.28e-13`. The largest correction was `0.00109` times its requested radius.
 This passes the stated pre-run local reliability threshold.
 
