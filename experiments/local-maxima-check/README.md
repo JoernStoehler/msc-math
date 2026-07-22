@@ -21,6 +21,13 @@ The relevant symmetries are translations, positive scaling, and the
 identity-component linear symplectic action. None of the conjectures concerns
 adding facets or all convex bodies.
 
+## Line status
+
+This experiment line is closed once this candidate is integrated. Reopen it
+only for a new conjectured local maximum or non-maximum, materially stronger
+local probes or evidence, or branch-aware or exact proof work. Routine reruns
+of the current finite screen do not reopen the line.
+
 ## Question and decision
 
 For each selected equality representative, does a nearby fixed-facet polytope
