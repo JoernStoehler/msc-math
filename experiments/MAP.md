@@ -29,6 +29,10 @@ Map maintenance:
 - Type: subtree navigation cache.
 - Agent question: which experiment topic package, helper crate, artifact
   pattern, or provenance surface should I inspect first?
+- Finding-first route: search `experiments/INDEX.jsonl` when the question is
+  whether a durable result, negative result, completed run, or parked method
+  already exists. Each physical line is one natural-language description with
+  its source paths.
 - Authority: package manifests, experiment entrypoints, local helper crates,
   and owner-local interpretation notes overrule this map.
 - Non-authority: this file does not decide thesis claim strength, canonical data

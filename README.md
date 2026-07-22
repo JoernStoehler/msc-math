@@ -25,15 +25,25 @@ Primary deliverables:
 - `thesis/MAP.md`: active thesis surface and thesis-local content companions.
 - `thesis/central-claim-control.md`: thesis-wide central-claim companion for
   support sources, caveats, and review gates. It is not source truth.
+- `experiments/INDEX.jsonl`: flat, grep-friendly descriptions of durable
+  experiment findings and dispositions with their source paths.
 - `experiments/MAP.md`: experiment routing.
+- `formal/INDEX.jsonl`: flat, grep-friendly descriptions of mathematical
+  results, proof status, counterexamples, and open obligations with their
+  source paths.
 - `crates/MAP.md`: durable crate navigation.
 - `submit/README.md`: official-form cache.
+
+Each `INDEX.jsonl` has one finding per physical line with only `description`
+and `sources`. The description includes useful search terms and the material
+scope and status boundaries. Read the whole file for orientation or grep it
+for likely terms; then inspect the named sources before relying on a claim.
 
 Source truth lives with the owning surface: thesis text and content companions,
 formal notes, experiment READMEs/artifacts, crate documentation/source/tests,
 official submission sources, and accepted Jörn/Kai decisions. Maps and claim
-caches are navigation aids; refresh affected claims from source truth before
-relying on them.
+caches, including the two JSONL indexes, are navigation aids; refresh affected
+claims from source truth before relying on them.
 
 ## Final Readiness
 
