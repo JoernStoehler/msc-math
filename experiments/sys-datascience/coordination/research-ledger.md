@@ -39,6 +39,14 @@ next-session board govern current routing.
   materially on seven of eight frozen bases. The predeclared directional ridge
   mediator gate failed. No population, common-sign, proposer, or causal claim
   follows.
+- A later selected-champion `SO(4)/U(2)` scan held Euclidean shape fixed. The
+  retained generic champion did not improve; the product champion rose from
+  `0.862586` to `0.878308`, above all 14,336 retained source values but below
+  one. This is post-selection two-body evidence, not a population estimate.
+- A retained branch-equality control corrected all 68 proposals in a restricted
+  pentagon-product chart. Full capacity recomputation kept the selected pair
+  jointly minimizing at 31 points, including all four exposed controls. The
+  method works locally; equality alone does not identify the lower envelope.
 - The random-start gradient packet supports bounded finite-step progress but
   not endpoints or maxima. The scheduler ablation selects no default. The
   adaptive-direction ablation finds no incremental near-active-maximin benefit
@@ -71,7 +79,8 @@ The July 22 known-seed cycle adds these current decisions:
   remains behind Jörn's mathematical review gate;
 - the HKO ray reproduction packet is proposed for promotion under its finite,
   coordinate-dependent claim boundary, while the regular 3-by-6 orientation
-  remains an unpromoted pilot; and
+  remains an unpromoted pilot; the branch-equality and selected-champion
+  orientation packets are retained under their finite boundaries; and
 - new empirical work must beat thesis integration or another live line after
   charging promotion, review, and future reconstruction costs.
 
@@ -99,7 +108,10 @@ preservation status, and the current cross-line idea families.
 - HKO neighborhood sampling: a named quantitative thesis consumer or a
   proof-oriented/adversarial connection question; not more IID rays.
 - Fixed-shape orientation: a diverse-shape comparison with a specified
-  decision, rather than another search around one frozen product body.
+  decision, rather than another search around one frozen product body. A
+  `GL(4)/(Sp(4) x R_+)` study changes Euclidean shape as well as alignment and
+  therefore needs its own decision rather than being treated as more
+  `SO(4)/U(2)` samples.
 
 ## Update Rule
 

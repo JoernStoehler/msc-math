@@ -49,13 +49,14 @@ July 22 dispositions:
   `experiments/local-maxima-check/README.md` decision `LMC-D1`. The known
   pentagon control shows that another finite miss cannot certify local
   maximality.
-- `branch-equality-manifold` is stopped as a restricted feasibility prototype,
-  not a selected general sampler or optimization program. Reopen for a named
-  equality-sampling consumer whose value repays chart and branch-completeness
-  work.
-- `fixed-shape-orientation-search` is stopped after a sub-threshold pilot and
-  withdrawn successor. Reopen only through a diverse-shape comparison with a
-  specified decision.
+- The branch-equality packet is retained and closed as a restricted feasibility
+  control, not a selected general sampler or optimization program. Reopen for
+  a named equality-sampling consumer whose value repays chart and
+  branch-completeness work.
+- The selected-champion fixed-shape orientation packet is retained and closed
+  after a sub-threshold product-body improvement. Reopen only through a
+  diverse-shape or broader linear-quotient comparison with a specified
+  decision.
 - More IID HKO rays are rejected as a continuation. A quantitative thesis
   panel, proof-oriented certified boundary, or adversarial thin-connection
   search is a different question and needs its own assessment.

@@ -5,7 +5,7 @@ Date: 2026-07-22.
 Status: current routing addendum to
 `final-research-account-2026-07-12.md`. The earlier account still owns its
 reviewed random/product claims. This file records the later known-seed work,
-unpromoted pilots, portfolio decisions, and current research frontier. It is a
+retained pilots, portfolio decisions, and current research frontier. It is a
 decision and navigation owner, not an experiment-metric owner or launch queue.
 
 The exploration phase is closed for allocation purposes, not because the
@@ -109,22 +109,28 @@ the supplied stream was itself complete. Extracting that API is a separate
 library-correctness decision; it should not be bundled with the negative
 orientation pilot.
 
-### SD-EQ-P1 and SD-FSO-P1: disposable feasibility pilots
+### SD-EQ-P1 and SD-FSO-P1: retained feasibility pilots
 
-Kind: unpromoted exploratory work.
+Kind: reproducible exploratory work; not a new positive result.
 
-- `branch-equality-manifold` demonstrates Newton correction onto equality of
-  two selected candidate actions in one restricted pentagon-product chart.
-  Third candidates frequently undercut the selected pair, and the run found no
-  `sys > 1` case. It is useful implementation experience, not evidence for a
-  broad manifold sampler or a selected optimization program.
-- `fixed-shape-orientation-search` found some orientation-dependent improvement
-  below one but no new positive example. Its proposed successor was withdrawn
-  after portfolio review.
+- `experiments/dev-sys-prediction/branch-equality-continuation/` demonstrates
+  stable Newton correction onto equality of two selected candidate actions in
+  one restricted pentagon-product chart. All 68 corrections succeeded and all
+  51 points through radius `1e-3` passed the predeclared reliability criterion.
+  Only 31/68 corrected points left the selected pair jointly minimizing after
+  full capacity recomputation; all four exposed-cone controls did. This
+  separates equality sampling from lower-envelope relevance. It found no
+  `sys > 1` case and is not evidence for a general manifold sampler.
+- `experiments/sys-landscape/fixed-shape-orientation-search/` scans
+  `SO(4)/U(2)` for the highest-`sys` retained generic and product bodies. The
+  generic champion did not improve. The product champion improved from
+  `0.862586` to `0.878308`, exceeding every one of the 14,336 retained source
+  values while remaining below one. This post-selection two-body comparison
+  shows that Euclidean candidate quality and symplectic alignment contain
+  partly separate information; it is not a population or optimum estimate.
 
-Neither result currently justifies maintenance and review of its exploratory
-implementation. Their scientific dispositions are recorded here; their code
-is not a selected merge dependency.
+Both packets are retained so future consumers can reproduce or extend the
+methods without session archaeology. Neither selects an automatic successor.
 
 ## What The Combined Evidence Changes
 
@@ -171,8 +177,11 @@ Current candidate uses, in priority order:
    the numerical chapter's existing warning easier to understand. The chapter
    already states the conceptual limitation.
 
-The equality-manifold and fixed-shape pilots, four-point 3-by-6 negative, and
-exploratory code volume are not thesis results at current evidence.
+The equality-manifold and selected-champion orientation pilots are retained
+method/witness evidence, not current thesis results. The four-point 3-by-6
+negative and exploratory code volume are also not thesis results. The
+conditional-tail atlas is retained as a set of figure options; publication
+polish should wait until a thesis claim selects a panel.
 
 ## Current Research Frontier
 
@@ -181,7 +190,10 @@ These are assessed idea families, not approved experiments:
 1. **Diverse fixed-shape alignment.** Compare genuinely different Euclidean
    shapes under symplectic orientation, rather than treating one exact product
    shape as the research object. Value would come from distinguishing
-   Euclidean-shape limitations from alignment limitations.
+   Euclidean-shape limitations from alignment limitations. A separate
+   `GL(4)/(Sp(4) x R_+)` search is also mathematically natural: it is a
+   five-dimensional linear-shape-and-alignment quotient, not a replacement for
+   the two-dimensional fixed-Euclidean-shape `SO(4)/U(2)` question.
 2. **New invariant families.** Audit whether all-pairs symplectic Gram data,
    Williamson covariance ratios, or affine baselines add information beyond
    facet/source buckets and ridge summaries. Test at most the first two
@@ -225,9 +237,9 @@ Accordingly:
 | Fixed-normal theorem | finish review/promotion as a separate candidate | mathematical context and repaired proof are live; losing them would cause expensive reconstruction | Jörn may reject or request repair; do not write theorem-strength thesis prose first |
 | HKO ray pilot | promote the reproduction packet; defer thesis presentation | review was already performed and future reproduction is plausible, so preserving producer and data now costs less than reconstructing them later | reopen the thesis-display decision when the HKO chapter needs a quantitative local panel |
 | Exact complete-stream API | defer crate extraction | Main already has an experiment-local exact-all-visited-sigma route; another public API adds review and maintenance before a named consumer | reopen when a crate consumer cannot reasonably use the existing route or needs the certified aggregation types |
-| Equality-manifold prototype | stop | present restricted result did not select a scientific successor; polishing would maintain an unselected chart | reopen only for a named equality-sampling or optimization consumer |
-| Fixed-shape orientation prototype | stop | no positive case and successor lacked portfolio advantage | reopen for a diverse-shape comparison with a specified decision |
-| Quick ridge atlas | do not promote | it mostly reproduces the durable enrichment/hardening conclusion and is cheap to recompute | promote only if a reader-facing plot is selected |
+| Equality-manifold prototype | retain and close | the reproducible packet preserves a working measure-zero sampler without funding an unselected successor | reopen only for a named equality-sampling or optimization consumer |
+| Fixed-shape orientation prototype | retain and close | the product-champion improvement is useful witness evidence, but two selected bodies do not justify a broader run | reopen for a diverse-shape or five-dimensional linear-quotient comparison with a specified decision |
+| Quick ridge atlas | retain exploratory figures; defer publication polish | producer, summaries, and PNG options avoid rediscovery while claim-specific redesign waits for a thesis consumer | polish only when a reader-facing plot is selected |
 | Session-cost script | separate harness review | useful for future budget control, but frozen skill changes require an exact independent gate | delay risks another opaque budget overrun; candidate already exists on `session-cost-script` |
 
 ## Workflow Lessons With Evidence
@@ -269,9 +281,9 @@ evidence, not a substitute for scientific artifacts.
    `next-session-candidates.md` for current gates.
 3. Follow `portfolio-review-contract.md` before proposing nontrivial new
    experiments.
-4. Treat the promoted HKO packet as bounded finite-panel evidence. Treat the
-   remaining unpromoted pilot branches as dispositions, not accepted evidence
-   or an implementation queue.
+4. Treat the promoted HKO, branch-equality, fixed-shape orientation, and tail
+   atlas packets only under their stated finite/exploratory boundaries. They
+   are evidence and reproduction surfaces, not an implementation queue.
 5. Ask Jörn about mathematical acceptance, thesis value, or another actual
    stakeholder crux only after locally establishing the evidence and cost
    comparison.
@@ -284,8 +296,8 @@ evidence, not a substitute for scientific artifacts.
 | `sys-hko-rays-run` | original frozen provenance history and full packet are included; remove the separate worktree/branch after merge |
 | `sys-ds-portfolio-workflow` | superseded by `portfolio-review-contract.md`; do not merge the original wording |
 | `sys-orientation-run` | do not merge wholesale; Main's experiment-local exact route covers the correctness need until a crate consumer appears |
-| `branch-equality-manifold` | retain only while an active external consumer exists; otherwise remove after this disposition is accepted |
-| `fixed-shape-orientation-search` | disposable stopped pilot; do not merge |
+| `branch-equality-manifold` | packet is included in this candidate; remove the superseded worktree/branch after merge |
+| `fixed-shape-orientation-search` | packet is included in this candidate; remove the superseded worktree/branch after merge |
 | `sys-low-facet-sprint` | aggregate branch superseded by the selected CH and HKO promotions plus the orientation disposition; do not merge |
 | `session-cost-script` | keep as a separate harness candidate with its own exact diff and Jörn gate |
 | old broad thesis/data-science integration branches | do not annex into this closeout; assess only against a named current consumer |

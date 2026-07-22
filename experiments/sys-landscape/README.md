@@ -21,6 +21,9 @@ data-science method rows.
   `variable-f-ascent/cache.jsonl`.
 - `sys1-local-maxima` is retained as the binary name, but its root topic,
   documentation, and artifacts are `experiments/local-maxima-check/`.
+- `sys-fixed-shape-orientation-search` owns a retained post-selection scan of
+  the generic/product source champions over `SO(4)/U(2)`; its complete output
+  and claim boundary are in `fixed-shape-orientation-search/README.md`.
 - `sys-rejection-calibration` is a full-output producer without a smoke mode; do
   not run it as a quick command check unless intentionally refreshing tracked
   artifacts.
