@@ -19,6 +19,8 @@ Read first:
 - `random-tail-eda/`: EDA over trusted random/product rows and source/parameter
   filters.
 - `statistical-associations/`: scalar association screening against `sys`.
+- `conditional-tail-atlas/`: exploratory figure options for within-bucket
+  scalar percentiles, upper-`sys` behavior, and cross-bucket sign stability.
 - `projection-structure/`: PCA, clustering, and anomaly diagnostics for
   active invariant scalar features.
 - `prediction-ranking/`: supervised in-table prediction/ranking diagnostics.
