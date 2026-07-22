@@ -95,6 +95,10 @@ path = "../sys-datascience/methods/generator-orientation-smoke/main.rs"
 name = "sys-datascience-generator-orientation-target-pilot"
 path = "../sys-datascience/methods/generator-orientation-target-pilot/main.rs"
 
+[[bin]]
+name = "sys-fixed-shape-orientation-search"
+path = "fixed-shape-orientation-search/main.rs"
+
 [lints]
 workspace = true
 
