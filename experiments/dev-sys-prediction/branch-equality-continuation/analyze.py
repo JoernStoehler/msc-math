@@ -19,6 +19,16 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def repository_relative(path: Path) -> str:
+    resolved = path.resolve()
+    root = next(
+        parent
+        for parent in (resolved.parent, *resolved.parents)
+        if (parent / "Cargo.toml").is_file() and (parent / "experiments").is_dir()
+    )
+    return str(resolved.relative_to(root))
+
+
 def summarize(rows: list[dict]) -> dict:
     ordered_gaps = sorted(row["pair_relative_gap_above_capacity"] for row in rows)
     joint = [row for row in rows if row["pair_joint_minimizer_nominal"]]
@@ -91,7 +101,7 @@ def main() -> None:
             "record_count": len(records),
         },
         "analyzer": {
-            "path": str(Path(__file__)),
+            "path": repository_relative(Path(__file__)),
             "sha256": sha256(Path(__file__)),
         },
         "producer": {

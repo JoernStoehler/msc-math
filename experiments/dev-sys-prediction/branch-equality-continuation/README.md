@@ -1,6 +1,6 @@
 # Branch-Equality Continuation
 
-Status: approved method experiment; the retained run is empirical evidence
+Status: retained method experiment; the run is empirical evidence
 about the sampler and its pentagon-product control, not evidence that a new
 high-`sys` region exists.
 
