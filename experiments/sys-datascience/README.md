@@ -128,8 +128,9 @@ queue. FACTSHEET 34.1 still requires later consumer-driven thesis-level data.
 `LICCA.md` classifies retained dormant scripts; none is selected by default.
 
 The July 22 addendum records the later five-case local-maxima screen, exact
-Chaidez--Hutchings fixture, unpromoted HKO/orientation/equality pilots,
-first-order theorem review gate, and the current cross-line idea shortlist.
+Chaidez--Hutchings fixture, promoted bounded HKO panel, unpromoted
+orientation/equality pilots, first-order theorem review gate, and the current
+cross-line idea shortlist.
 Its stop/defer decisions compare expected total project cost and state what
 evidence would reverse them; “deferred” does not itself mean desirable.
 
