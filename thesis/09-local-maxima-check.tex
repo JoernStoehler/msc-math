@@ -1,15 +1,14 @@
-\subsection{A five-case comparison of local behavior}
-\label{subsec:five-case-local-maxima-comparison}
+\clearpage
+\section{Local-Maxima Checks at Selected Bodies}
+\label{sec:local-maxima-check}
 
-Equality in Viterbo's bound does not itself imply local maximality: the exact
-rotated-pentagon profile from
-Theorem~\ref{thm:rotated-pentagon-product-formula} crosses
-\(\operatorname{sys}=1\) and then increases above one.  Conversely, HKO has
-value \((3+\sqrt5)/5>1\), and
-Theorem~\ref{thm:hko-ten-facet-local-maximum} proves that it is locally maximal
-in the ten-facet space.  Between these controls lie three equality candidates
-for which the present evidence motivates, but does not prove, local
-maximality.
+The preceding search asked whether invariant descriptors of broad random and
+product samples could propose new high-systolic-ratio bodies.  We now ask a
+complementary local question: starting from a small theory-selected panel of
+equality or positive bodies, do nearby fixed-facet perturbations improve the
+systolic ratio?  The five cases below deliberately mix conjecture, theorem,
+and a known non-maximum so that the finite screen can be interpreted against
+proved maximum and non-maximum cases.
 
 \begin{center}
 \small
@@ -20,8 +19,8 @@ Body & Systolic ratio & Local status \\
 Regular triangle--hexagon, angle \(0\) & numerically \(\approx1\) & conjectured local maximum in the fixed nine-facet chart \\
 Regular square--square, angle \(\pi/4\) & numerically \(\approx1\) & conjectured local maximum in the fixed eight-facet chart \\
 CH2021 six-vertex body \cite{CH2021} & exactly \(1\) & conjectured local maximum among nearby fixed-nine-facet bodies, across adjacent combinatorial cells \\
-HKO & exactly \((3+\sqrt5)/5>1\) & proved local maximum in the ten-facet space \\
-Rotated-pentagon crossing & exactly \(1\) & proved not locally maximal \\
+HKO & exactly \((3+\sqrt5)/5>1\) & proved local maximum in the ten-facet space by Theorem~\ref{thm:hko-ten-facet-local-maximum} \\
+Rotated-pentagon crossing & exactly \(1\) & proved not locally maximal by Theorem~\ref{thm:rotated-pentagon-product-formula} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -49,6 +48,12 @@ observation is meaningful only together with the pentagon control:
 the theory-derived relative-rotation and \(SO(4)/U(2)\) probes recover its
 known improvement, whereas the generic signed quotient basis and sparse
 random cover miss it.  Thus a thin improving cone can escape the generic
-screen.  The three misses support the conjectures and motivate branch-aware
-exact analysis; they neither certify local maximality nor exclude untested
-improving germs.
+screen.  The three misses are consistent with the conjectures and motivate
+branch-aware exact analysis; they neither certify local maximality nor exclude
+untested improving germs.
+
+The rotated-pentagon crossing is therefore more than a numerical calibration:
+it is an exactly understood failure of local maximality that the structured
+probes recover and the generic sparse probes miss.  The next section proves
+the full profile of this family, including its continuation from the equality
+crossing to the HKO value above one.

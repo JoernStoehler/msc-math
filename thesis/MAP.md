@@ -64,15 +64,17 @@ Status: navigation cache for the active thesis surface.
   (Hausdorff/chart and quotient reduction),
   `07-hko-local-maximum-exact-certificate.tex` (finite exact certificate and
   proof close), `07-hko-local-maximum-sage-verifier.tex` (Sage verifier
-  explanation), `07-hko-local-maximum-empirical-tests.tex` (supporting
-  evidence), and `07-hko-local-maximum-five-case-comparison.tex` (comparison
-  of proved, disproved, and conjectured local behavior).
+  explanation), and `07-hko-local-maximum-empirical-tests.tex` (supporting
+  evidence).
 - `hko-local-maximum-content.md`: section-local content-gathering notes for
   the HKO result packet. Not source truth; use its source pointers before
   relying on claims.
 - `08-black-box-datascience.tex`: data-science search-result thesis surface.
 - `black-box-datascience-content.md`: section-local data-science search-result
   content notes.
+- `09-local-maxima-check.tex`: complementary theory-selected local search,
+  comparing conjectured, proved, and disproved local behavior before the exact
+  pentagon profile.
 - `09-rotated-regular-polygons.tex`: contains the rotated regular polygon
   `\section`, family overview, and inputs the
   `09-rotated-regular-polygons-*` semantic subfiles.
