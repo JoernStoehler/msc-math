@@ -22,6 +22,24 @@ dual-vertex chart, but it is not a theorem about arbitrary changes of the
 facet normals.  The latter requires the complete smooth-envelope hypothesis
 in Lemma~\ref{lem:facet-coverage-abstract-balance}.
 
+\paragraph{Research relevance.}
+This subsection supplies a cheap necessary-condition mechanism for the search
+for local maxima of \(\operatorname{sys}\).  In a stable fixed-normal chart,
+failure of facet coverage is not merely suggestive: moving an uncovered facet
+inward increases \(\operatorname{sys}\) to first order.  The stronger convex
+balance in Theorem~\ref{thm:facet-coverage-active-weight-balance} can exclude a
+putative local maximum even when every facet is covered separately.  These
+tests can therefore reject candidates or explain improving directions before a
+second-order analysis or a local optimization run.
+
+The result does not by itself turn a numerical orbit list into such a test.
+One must first know that the list represents every active limiting HK datum in
+the chart, or have exact gap/dominance arguments for the omitted data.  This is
+especially important at singular or highly symmetric examples.  The theorem's
+direct thesis value is thus a reusable necessary condition and a precise
+interface between orbit data and local-maximality claims, rather than a new
+classification of local maxima.
+
 Let $n_1,\ldots,n_F\in S^3$ be fixed labelled outward unit normals and put
 \[
   K(h)=\{x\in\mathbb R^4:\langle n_i,x\rangle\leq h_i,
@@ -266,7 +284,9 @@ Taking the $i$th coordinate in
 The quantifier in Corollary~\ref{cor:facet-coverage-active-orbit} is
 facetwise: for every facet there exists a minimizing orbit that uses it.  The
 orbit may depend on the facet.  The argument does not produce one minimizing
-orbit that uses all facets.
+orbit that uses all facets, and no such stronger condition is needed here.
+Jörn has confirmed that the intended research question uses this facetwise
+quantifier.
 
 \paragraph{Quotient interpretation.}
 Within the fixed-normal chart, translations and positive scalings have tangent
