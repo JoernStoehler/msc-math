@@ -52,8 +52,10 @@ must not be substituted for this sprint total.
 
 The three scientific runs themselves took minutes to tens of minutes. The HKO
 producer, the longest retained run, recorded 1,419 seconds for 1,171 capacity
-evaluations. Thus this episode's shadow cost was dominated by agent generation,
-context, repair, and review rather than target computation.
+evaluations. The USD total measures agent-token cost, not compute cost. The
+counters do not cleanly allocate it among design, implementation, repair,
+review, and synthesis, but short target-runtime cannot explain the token-cost
+overrun.
 
 ## Result Ladder
 

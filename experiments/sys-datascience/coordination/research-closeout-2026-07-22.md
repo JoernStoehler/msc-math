@@ -159,9 +159,11 @@ Current candidate uses, in priority order:
    with a concrete cost-versus-result example if it improves the existing
    AI-use discussion. The episode produced useful scientific and correctness
    findings, but its USD 371.25 audited shadow API cost exceeded the
-   experiment-agent allocation; most cost was agent/context/review work rather
-   than computation. A thesis passage must distinguish observation, causal
-   interpretation, and later workflow choice.
+   experiment-agent allocation. Target computation took minutes to tens of
+   minutes, while the USD figure measures agent-token cost; the counters do not
+   causally apportion design, implementation, repair, review, and synthesis. A
+   thesis passage must distinguish observation, causal interpretation, and
+   later workflow choice.
 4. Consider `SD-HKO-P1` only if a small quantitative panel helps the reader
    understand the scale and anisotropy of the chosen local slice. The arbitrary
    coordinate norm and inability to exclude thin connections must be visible.
@@ -273,3 +275,17 @@ evidence, not a substitute for scientific artifacts.
 5. Ask Jörn about mathematical acceptance, thesis value, or another actual
    stakeholder crux only after locally establishing the evidence and cost
    comparison.
+
+## Branch Disposition After This Candidate
+
+| Branch | Disposition |
+| --- | --- |
+| `facet-coverage-lemma` | original history is included in this candidate; remove the separate worktree/branch after merge |
+| `sys-hko-rays-run` | original frozen provenance history and full packet are included; remove the separate worktree/branch after merge |
+| `sys-ds-portfolio-workflow` | superseded by `portfolio-review-contract.md`; do not merge the original wording |
+| `sys-orientation-run` | do not merge wholesale; Main's experiment-local exact route covers the correctness need until a crate consumer appears |
+| `branch-equality-manifold` | retain only while an active external consumer exists; otherwise remove after this disposition is accepted |
+| `fixed-shape-orientation-search` | disposable stopped pilot; do not merge |
+| `sys-low-facet-sprint` | aggregate branch superseded by the selected CH and HKO promotions plus the orientation disposition; do not merge |
+| `session-cost-script` | keep as a separate harness candidate with its own exact diff and Jörn gate |
+| old broad thesis/data-science integration branches | do not annex into this closeout; assess only against a named current consumer |
