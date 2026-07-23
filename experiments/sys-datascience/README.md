@@ -11,14 +11,18 @@ The active thesis question is:
 
 The old fixed-F ascent and continuation runs are not part of this active slice.
 They were confusing for this chapter because endpoint diagnostics showed that
-the retained ascent endpoints should not be treated as local maxima. Use git
-history if an old ascent artifact is needed for archaeology; do not route new
-datascience work through those files.
+the retained ascent endpoints should not be treated as local maxima. Preserved
+live packets and bounded observations are routed from
+`experiments/sys-landscape/README.md`; use Git history only for removed raw
+artifacts. Do not route new random/product method-table work through the legacy
+producers.
 
 Legacy bounded random/ascent/continuation observations that are still worth
-preserving live in `experiments/sys-landscape/legacy-ascent-continuation-debt.md`.
-They are context only. They are not active method-table rows and do not support
-local-maximality, exhaustive-search, or candidate-proposer claims.
+preserving are summarized in
+`experiments/sys-landscape/legacy-ascent-continuation-debt.md`, with packet
+entry points beside their current code and retained artifacts. They are context
+only. They are not active method-table rows and do not support local-maximality,
+exhaustive-search, or candidate-proposer claims.
 
 ## Data Flow
 

@@ -10,7 +10,7 @@ Source surfaces checked for this classification:
 - `experiments/dev-quadratic-program/README.md`
 - `experiments/README.md`
 - `thesis/numerics-content.md`
-- `thesis/quadratic-program-algorithm-hk2019.tex`
+- `thesis/04-haim-kislev-quadratic-program.tex`
 - `experiments/sys-datascience/{README.md,produce/README.md,prepare/README.md,methods/README.md}`
 - `experiments/sys-landscape/src/{lib.rs,datascience_cache.rs,ascent/compute.rs}`
 - `experiments/sys-datascience/prepare/{prepare.rs,load_caches.rs,features.rs}`

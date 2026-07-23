@@ -1,94 +1,71 @@
-Status: thesis-wide content companion for central thesis claims. Not source
-truth.
-Purpose: make the next central thesis writing packet possible without hidden
-overclaim or live chat clarification.
-Overruled by: active thesis files, owner-local notes, experiment artifacts,
-formal proof files, official sources, and accepted Jörn/Kai decisions.
-Origin: copied from `/tmp/central-claim-control-packet.md` on 2026-06-01 after
-review and fixes. The `/tmp` copy is disposable; this file is the durable
-thesis-working surface.
+# Central thesis claim propagation
 
-# Central Claim-Control Packet
+Status: current thesis-wide navigation companion, reconciled 2026-07-23. This
+file is not mathematical or empirical source truth.
 
-Scope: only `abstract`, `introduction`, `hko-local-maximum`,
-`black-box-datascience`, and `conclusion`.
+Purpose: keep the central HKO, data-science, rotated-pentagon, finite-method,
+and AI-use claims consistent where they propagate into the abstract,
+introduction, result chapters, and conclusion.
 
-Stop rule: use this packet to start the central TeX drafting packet plus the
-named prerequisite packets below. Do not expand it into a whole-thesis map.
+Active thesis text, chapter companions, formal notes, experiment artifacts,
+source papers, and accepted Jörn/Kai decisions overrule this view. Follow the
+named source before changing a propagated claim.
 
-Allowed review gates:
-- `none: caveated/status wording`
-- `Jörn math correctness`
-- `Jörn thesis-scope/taste`
-- `advisor/admin external fact`
-- `cut/defer acceptance only if retained wording no longer depends on it`
+Current writing state:
 
-## Claim Rows
+- `00-abstract.tex` is empty and `14-conclusion.tex` contains only its heading.
+  Write them last from the settled result surfaces.
+- `01-introduction.tex`, `07-hko-local-maximum*.tex`,
+  `08-black-box-datascience*.tex`, and `09-rotated-regular-polygons*.tex`
+  contain active drafts.
+- `ai-use-disclosure.tex` is the separate Jörn-accepted factual disclosure.
+  `13-use-of-ai.tex` is the numbered research-process discussion and remains
+  provisional. Do not merge their support or status.
 
-| surface | claim | must-have area | support source | support strength | caveat/fallback | paragraph placement | next action | review gate |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `abstract.tex` | HKO2024 is locally maximal among ten-facet polytopes up to translations, scaling, and linear symplectic maps. | HKO local result | `experiments/hko-local-maximum/README.md`; `experiments/hko-local-maximum/theorem/`; `formal/hko-feasible-section-upper-branches.tex` | exact feasible-section certificate verifies; formal implication line-checked and Jörn quick-reviewed | If later integrated-PDF review changes theorem-strength phrasing, say exact verified certificate plus line-checked implication, not final theorem. | result sentence | Draft from the current HKO chapter wording; revise if integrated-PDF review changes theorem phrasing. | `Jörn math correctness` |
-| `abstract.tex` | Product of two rotated regular pentagons gives the named positive structured `sys>1` result/formula. | pentagon product result | `experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py`; `experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.full.stdout.txt`; endpoint/symmetry sources: `formal/combinatorial-boundary-regularity.tex`, `formal/lagrangian-product-rotation-symmetry.tex`; routing: `experiments/regular-products/README.md`; drafting guide: `thesis/rotated-regular-polygons-content.md` | exact proof packet exists for the open half-domain; endpoint and mirror steps are ordinary thesis-writing arguments | Do not claim global classification beyond the checked pentagon-product decision problem. | result sentence after HKO | Draft from the rotated-regular-polygons companion and proof packet. | `Jörn math correctness` |
-| `abstract.tex` | The closed method table records no new source of `sys > 1` examples and no candidate-proposer for finding one, beyond examples already explained by the HKO2024 construction and its symplectic images or controlled perturbations. | search/data-science result | `experiments/sys-datascience/README.md`; `experiments/sys-datascience/methods/README.md` | bounded empirical support with caveats; wording accepted by Jörn on 2026-06-03 | Do not say no `sys>1` examples. Do not state density/impossibility/exhaustive search. | result sentence after positive examples | Replace stale abstract bullet “did not yield any new polytopes with `sys>1`.” | `none: caveated/status wording` |
-| `abstract.tex` | The thesis uses finite computations for the polytope questions treated here and uses exact/Sage verification where needed. | generalized Reeb orbit and HK2019 foundation; numerics/exactness story | `thesis/generalized-reeb-orbits-polytopes.tex`; `thesis/quadratic-program-algorithm-hk2019.tex`; `thesis/numerics.tex`; `experiments/verification/README.md` | method summary; details elsewhere | Keep abstract-level; do not promise public certified solver or a general reduction for all symplectic capacity questions. | methods sentence | Draft after method sections have support wording. | `none: caveated/status wording` |
-| `abstract.tex` | AI was used for much of the thesis labor. | use-of-AI disclosure | `thesis/use-of-ai.tex`; `thesis/abstract.tex` scaffold | required disclosure, not result | Keep factual and defer details to AI-use section. | final methods/disclosure sentence | Draft concise disclosure sentence. | `none: caveated/status wording` |
-| `introduction.tex` | State Viterbo’s conjecture and systolic ratio, then explain why the thesis studies polytopes in dimension four and low facet counts. | preliminaries needed for readability | `docs/project-facts.md`; `thesis/introduction.tex`; `thesis/preliminaries.tex`; `thesis/README.md` | scaffold-level; needs standard sources | Avoid claiming the restriction is exhaustive or canonical. | opening motivation | Draft after preliminaries notation is fixed enough. | `none: caveated/status wording` |
-| `introduction.tex` | Present HKO2024 as the motivating known/surprising example and the thesis’ local-maximality target. | HKO local result | `thesis/introduction.tex`; `experiments/hko-local-maximum/README.md` | exact certificate and line-checked implication exist | Say local ten-facet question, not raw strict local maximum in ambient coordinates. | motivation/results overview | Tie to HKO section wording. | `Jörn math correctness` |
-| `introduction.tex` | Present the search/data-science result as bounded evidence that the closed method table found no new source of `sys > 1` examples and no candidate-proposer, while acknowledging HKO2024-derived examples and known structured examples. | search/data-science result; pentagon product result | `experiments/sys-datascience/README.md`; `experiments/sys-datascience/methods/README.md`; `thesis/rotated-regular-polygons.tex` | bounded empirical support | Avoid “no `sys>1` examples”; contrast known pentagon-product/HKO-derived geometry with the absence of a new source or candidate-proposer. | results overview | Draft after method-table terminal states are known enough. | `none: caveated/status wording` |
-| `introduction.tex` | Explain the thesis method chain: generalized Reeb orbits, HK2019 finite computation, first-order perturbations, numerics/exactness, and checked code/data. | generalized Reeb orbit and HK2019 foundation; first-order perturbation method; numerics/exactness story; code/data/reproducibility story | active thesis method scaffolds; `formal/sys-first-order-local-behavior.md`; `experiments/dev-quadratic-program/numerics-audit/README.md`; `experiments/verification/README.md` | method roadmap; not all proofs final | Do not overstate first-order theorem beyond generic/caveated route. | structure paragraph | Use as section-by-section reader guide. | `none: caveated/status wording` |
-| `07-hko-local-maximum.tex` | Define the exact local question: HKO2024 among ten-facet polytopes modulo translations, scaling, and linear symplectic maps. | HKO local result | `thesis/07-hko-local-maximum.tex`; `experiments/hko-local-maximum/README.md`; `experiments/hko-local-maximum/theorem/README.md` | source-backed target | Do not claim strict local maximality in raw `R^40`. | decision problem subsection | Draft definitions and symmetry quotient first. | `Jörn math correctness` |
-| `07-hko-local-maximum-sage-verifier.tex` | Exact computation uses quartic field `Q(tan(pi/5))`, exact dual coordinates, symmetry tangent rank 15, and Sage verification surfaces. | HKO local result; numerics/exactness story | `experiments/hko-local-maximum/theorem/`; `experiments/hko-local-maximum/theorem/verification-summary.json` | exact feasible-section certificate verifies | Avoid `Q(sqrt(5))`; use the verifier's ordered `Q(tan(pi/5))` field contract. | Sage computation subsection | Write the exact verification interface from the feasible-section certificate. | `Jörn math correctness` |
-| `07-hko-local-maximum-exact-certificate.tex` | The theorem-facing certificate uses 26 feasible-section rows, exact row rank 25, symmetry tangent rank 15, and a positive exact convex relation summing the rows to 0. | HKO local result; first-order perturbation method | `experiments/hko-local-maximum/README.md`; `experiments/hko-local-maximum/theorem/`; `formal/hko-feasible-section-upper-branches.tex` | exact Sage certificate verifies; formal implication line-checked and Jörn quick-reviewed | If later integrated-PDF review changes theorem-strength phrasing, state the exact certificate and implication status without promoting it to a final theorem. | Sage computation subsection before empirical tests | Draft certificate interface from the feasible-section packet and make any concrete theorem-support gap visible. | `Jörn math correctness` |
-| `07-hko-local-maximum-empirical-tests.tex` | Supporting empirical checks include first-order numerical bookkeeping, second-order checks, neighborhood sampling, and `M_11` ascent checks. | HKO local result | `experiments/hko-local-maximum/README.md`; `experiments/hko-local-maximum/empirical/README.md` | supporting evidence only | State these are sanity/support checks, not substitutes for exact calculation. | empirical tests subsection | Select only checks that support retained wording. | `none: caveated/status wording` |
-| `black-box-datascience.tex` | Search surface includes random generic polytopes, random Lagrangian products, fixed-F gradient ascent, product ascent, variable-F continuation, regular polygon probes, and datascience pipeline. | search/data-science result | `experiments/sys-datascience/README.md`; `experiments/sys-datascience/produce/README.md`; `experiments/sys-datascience/prepare/README.md` | source-backed current surface | Keep HKO-specific packets outside principal hostile-search table unless explicitly used as controls. | opening / rows subsection | Define row families and caveats. | `none: caveated/status wording` |
-| `black-box-datascience.tex` | Random generic/product samples and fixed-F/variable-F ascent did not find a new source of `sys > 1` examples; regular pentagon-product geometry remains the known positive structured contrast. | search/data-science result; pentagon product result | `experiments/sys-datascience/prepare/README.md`; `experiments/sys-datascience/produce/README.md`; `thesis/rotated-regular-polygons.tex` | bounded empirical support | Do not claim no positive examples. Do not claim exhaustive search or density theorem. | result table intro | Draft table text from local dataset/method rows. | `none: caveated/status wording` |
-| `black-box-datascience.tex` | Table-column regression, classification, PCA/clustering, supervised alternatives, and residualized checks record no candidate-proposer, caveat-only diagnostics, or a current redo/abandoned state. | search/data-science result | `experiments/sys-datascience/methods/README.md` | mixed: source-backed method rows plus downgraded caveats | `stat-sanity` is downgraded and must not carry thesis numerical null/permutation claims unless a repo-owned method packet is added later. | methods subsection / appendix pointer | Draft from the closed method table; optional future rows should not block this wording. | `none: caveated/status wording` |
-| `black-box-datascience.tex` | If a method records a validated new `sys > 1` row outside the known HKO2024-derived source or records a candidate-proposer, unrelated method churn stops and the lead is escalated. | search/data-science result | `experiments/sys-datascience/README.md`; `experiments/sys-datascience/methods/README.md` | process/interpretation rule | This is not a thesis result unless such a lead exists. | result-types subsection | Keep as method-policy caveat, not main claim. | `none: caveated/status wording` |
-| `conclusion.tex` | Summarize HKO local result at the support strength actually achieved. | HKO local result | HKO rows above | exact feasible-section certificate verifies | Theorem-strength wording is allowed when source-backed; revise to exact-certificate and implication-status wording if later integrated-PDF review changes theorem-strength phrasing. | first conclusion paragraph | Draft last from HKO source-backed wording. | `Jörn math correctness` |
-| `conclusion.tex` | Summarize pentagon product as positive structured result and search/data-science as finding no new source of `sys > 1` examples and no candidate-proposer beyond the HKO2024-derived source. | pentagon product result; search/data-science result | `thesis/rotated-regular-polygons.tex`; `experiments/sys-datascience/README.md`; `experiments/sys-datascience/methods/README.md` | mixed positive + bounded negative | Keep the distinction explicit: positive known structured examples vs no new source/candidate-proposer. | results summary | Draft from final regular-polygon and method-table wording. | `none: caveated/status wording` |
-| `conclusion.tex` | Summarize algorithmic/support contributions: generalized Reeb-orbit foundation, HK2019 computation, first-order perturbations, numerics/exactness, CH2021/tube status, visualization, code/data, AI-use. | generalized Reeb orbit/HK2019 foundation; first-order perturbation method; numerics/exactness story; code/data/reproducibility story; use-of-AI disclosure; visualization as exploration; CH2021/flow-graph/tube algorithm story | `thesis/generalized-reeb-orbits-polytopes.tex`; `thesis/quadratic-program-algorithm-hk2019.tex`; `thesis/first-order-perturbations.tex`; `thesis/numerics.tex`; `thesis/flow-graph-algorithm-ch2021.tex`; `thesis/visualization-3d.tex`; `thesis/visualization-3d-content.md`; `thesis/published-code-data.tex`; `thesis/use-of-ai.tex`; `formal/sys-first-order-local-behavior.md`; `experiments/dev-quadratic-program/numerics-audit/README.md`; `experiments/visualization/README.md`; `crates/symplectic/src/algorithms/flow_graph/tube-algorithm-legacy-source-note.md`; `experiments/verification/README.md` | mixed; section-dependent | Do not imply every algorithm is finished at full proof/implementation strength. Use status/caveat wording for sections whose support is partial. | methods summary | Fill after supporting section packets settle support strength. | `none: caveated/status wording` |
-| `conclusion.tex` | Future work should include HKO theorem-wording consequences if final review weakens the claim, method-table positive leads if any, and caveated algorithm/numerics extensions. | HKO local result; search/data-science result; CH2021/tube; numerics | HKO and hostile rows above; supporting section companions | depends on final retained wording | Do not move must-have content to future work silently; future work only for pieces not needed by retained claims or explicitly caveated. | final paragraph | Draft after claim-support audit. | `Jörn thesis-scope/taste` |
+This is a claim-propagation view, not a task queue or whole-thesis inventory.
 
-## Immediate Follow-Up Packets
+## Abstract and introduction
 
-1. HKO theorem-control packet.
-   - Input: HKO rows in this file plus `experiments/hko-local-maximum/`.
-   - Output: theorem target, exact subclaims, artifact-to-subclaim map,
-     feasible-section certificate interface, fallback wording.
-   - Current packet surface:
-     `experiments/hko-local-maximum/README.md` and
-     `experiments/hko-local-maximum/theorem/README.md`.
-   - Stop: no broad compute unless final review rejects or changes the
-     feasible-section certificate route.
+| Surface | Propagated claim | Source and support | Boundary and current action |
+| --- | --- | --- | --- |
+| `00-abstract.tex` | HKO2024 is locally maximal among nearby ten-facet polytopes modulo translations, positive scaling, and linear symplectic maps. | `07-hko-local-maximum*.tex`; `experiments/hko-local-maximum/README.md`; `experiments/hko-local-maximum/theorem/README.md`; `formal/hko-feasible-section-upper-branches.tex`. Exact feasible-section certificate plus the mathematical implication. | Do not state raw strict local maximality in ambient coordinates or changing-facet-count maximality. Draft from the active theorem wording; Jörn/Kai review still applies. |
+| `00-abstract.tex` | The rotated regular-pentagon product has the exact named `sys > 1` profile. | `09-rotated-regular-polygons*.tex`; `thesis/rotated-regular-polygons-content.md`; `experiments/regular-products/README.md`; `experiments/regular-products/pentagon-rotation-formula-proof/README.md`; endpoint/symmetry sources. | Do not generalize beyond the checked pentagon-product family or classify all minimizers. |
+| `00-abstract.tex` | The closed named data-science method table found no new source of `sys > 1` examples and no candidate-proposer for finding one beyond the already explained positive family and controlled relatives. | `docs/project-facts.md`, item 34.2; `08-black-box-datascience*.tex`; `experiments/sys-datascience/README.md`; `experiments/sys-datascience/coordination/current-question-map.md`; method packets. Bounded empirical support. | Do not say there are no positive examples, no proposer of any sub-threshold kind, exhaustive search, impossibility, or a population theorem. |
+| `00-abstract.tex` | The thesis uses finite polytope computations and separates f64 search from exact/Sage verification where theorem strength requires it. | `03-generalized-reeb-orbits-polytopes.tex`; `04-haim-kislev-quadratic-program.tex`; `11-numerics.tex`; theorem packets and verification experiments. | Keep abstract-level. Do not promise a universally certified public solver or a finite reduction for every capacity problem. |
+| `01-introduction.tex` | HKO2024 motivates the local ten-facet problem; the thesis probes it through local mathematics, finite computation, bounded search, and one exact structured family. | Active introduction; HKO, data-science, QP/flow-graph, and rotated-pentagon sources below. | The current introduction already states this architecture. Reassess it when a result's support or final thesis emphasis changes. |
+| `01-introduction.tex` | The data-science result is a bounded negative benchmark, contrasted with known HKO/rotated-pentagon positives. | Active data-science chapter and packet sources. | Preserve finite populations, frozen-rule budgets, target-before/after distinctions, and the absence of global rarity or impossibility support. |
+| `01-introduction.tex` | The method chain is generalized Reeb orbits, the Haim--Kislev QP, the project flow-graph route, first-order upper functions, numerics/exactness, and checked code/data. | Active method chapters; `formal/`; relevant crate and experiment entry points. | Keep the arbitrary-polytope first-order caveat and the exact hypotheses of the flow-graph theorem visible. |
 
-2. Hostile method-table closeout packet.
-   - Input: data-science rows in this file plus
-     `experiments/sys-datascience/README.md` and
-     `experiments/sys-datascience/methods/README.md`.
-   - Output: terminal state for each thesis-used method row. Current state:
-     `endpoint-residualized-regression` has no current LICCA evidence packet
-     and must be redone or explicitly abandoned before thesis use;
-     `stat-sanity` is non-load-bearing caveat evidence.
-   - Stop: no method churn beyond thesis-used rows.
+## HKO local result
 
-3. Central TeX drafting packet.
-   - Input: this file after HKO and hostile blocker rows are settled enough.
-   - Output: draft central prose with caveats before details.
-   - Stop: no global polish.
+| Surface | Claim | Source and support | Boundary |
+| --- | --- | --- | --- |
+| `07-hko-local-maximum.tex` | The local question is ten-facet maximality modulo translations, positive scaling, and linear symplectic maps. | Active theorem statement; HKO experiment entry point and theorem packet. | Not strict local maximality in raw `R^40`, not changing-facet-count maximality. |
+| `07-hko-local-maximum-sage-verifier.tex` | Verification uses exact dual coordinates over the ordered quartic field `Q(tan(pi/5))` and checks the theorem-facing predicates. | `experiments/hko-local-maximum/theorem/README.md` and `experiments/hko-local-maximum/theorem/verification-summary.json`. | Do not replace the field by `Q(sqrt(5))`; distinguish witness generation from verification. |
+| `07-hko-local-maximum-exact-certificate.tex` | The certificate has 26 feasible-section derivative rows, row rank 25, symmetry tangent rank 15, and a strictly positive exact convex relation summing the rows to zero. | `experiments/hko-local-maximum/theorem/README.md` and `formal/hko-feasible-section-upper-branches.tex`. | Exact verification plus the mathematical upper-function implication supports the theorem; empirical checks are not proof inputs. |
+| `07-hko-local-maximum-empirical-tests.tex` | First-/second-order numerics, neighborhood sampling, and eleven-facet ascent are supporting checks. | `experiments/hko-local-maximum/README.md` and empirical child packets. | State their finite scopes; they neither replace the exact certificate nor prove broader local maximality. |
 
-4. Rotated-regular-polygons section packet.
-   - Current entry point: `experiments/regular-products/README.md`.
-   - Writing companion: `thesis/rotated-regular-polygons-content.md`.
-   - Exact proof packet:
-     `experiments/regular-products/pentagon-rotation-formula-proof/`.
-   - Output: final supportable wording for the pentagon-product result/formula.
-   - Stop: provide wording usable by abstract/introduction/conclusion; do not
-     broaden to all regular polygon products unless the section evidence
-     supports it.
+## Bounded data-science search
 
-5. Supporting-section status packets.
-   - Input: the surfaces named in the conclusion support row.
-   - Output: support strength and caveated/status wording for CH2021/tube,
-     visualization, code/data, AI-use, numerics, first-order, generalized Reeb
-     orbit, and HK2019 sections.
-   - Stop: enough wording to avoid unsupported promises in the conclusion.
+| Surface | Claim | Source and support | Boundary |
+| --- | --- | --- | --- |
+| `08-black-box-datascience.tex` | The active method-table population is the retained random-polytopes/random-products table, followed by named frozen generated-candidate selector tests. | `experiments/sys-datascience/produce/README.md`; `experiments/sys-datascience/prepare/README.md`; `experiments/sys-datascience/methods/README.md`; active chapter and appendix. | Old fixed-facet ascent, continuation, endpoint, and local-behavior work is separate legacy context routed through `experiments/sys-landscape/README.md`, not an active method-table population. |
+| `08-black-box-datascience.tex` | The 14,336-row retained table contains no `sys > 1` row. In the 100,000-candidate scalar-filter packet, the frozen selected/baseline union of 1,675 evaluated rows also contains no `sys > 1` row. | Active chapter; trusted-table, scan, and `experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/README.md`. | Finite-table and configured-generator evidence only; no exhaustive-search, density, or nonexistence claim. |
+| `08-black-box-datascience.tex` | In-table prediction/association/projection/rule packets recover structure; frozen generated-candidate rules provide bounded sub-threshold enrichment but no threshold-directed proposer. | `experiments/sys-datascience/methods/README.md`, current question map, and packet-local evidence. | Do not turn post-target diagnostics into prospective validation or describe sub-threshold enrichment as a proposer for finding `sys > 1`. |
+| `08-black-box-datascience-local-maxima-check.tex` | The selected-body local screen is a separate theory-selected finite panel with its own controls. | `experiments/local-maxima-check/README.md`; active subsection. | The positive control demonstrates a false-negative mode; misses do not establish local maximality. |
+
+## Conclusion
+
+| Surface | Propagated content | Sources and boundary |
+| --- | --- | --- |
+| `14-conclusion.tex` | State the HKO local theorem at its exact ten-facet/symmetry scope. | Active HKO chapter and theorem packet; preserve the distinction between exact proof support and broader empirical checks. |
+| `14-conclusion.tex` | Contrast the exact rotated-pentagon positive family with the bounded negative data-science search. | Active rotated-pentagon and data-science chapters; do not collapse “known positive family” into “new source found by the search.” |
+| `14-conclusion.tex` | Summarize the generalized-orbit/QP/flow-graph/first-order/numerics/code-data contributions at their actual support strengths. | `03-*` through `06-*`, `10-*` through `13-*`, their companions, `formal/`, crates, experiments, and `docs/reproducibility.md`. Flow-graph and arbitrary-polytope first-order caveats remain material. |
+| `14-conclusion.tex` | Separate established results, bounded empirical findings, limitations, and future work. | Do not move mandatory unfinished support into future work merely to make the current thesis look complete. Final emphasis and future-work selection are Jörn thesis-design decisions. |
+
+## Update rule
+
+When a source result or support boundary changes, search the active thesis for
+every propagated occurrence and update this view only if it still prevents a
+real cross-surface mismatch. Delete resolved task history rather than turning
+this file back into a queue.

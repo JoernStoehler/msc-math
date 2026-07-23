@@ -125,14 +125,14 @@ Known gaps:
 - no fixed-`F` datascience rerun has used the candidate method yet;
 - no reusable algorithm code has been promoted out of this development packet.
 
-Related local-behavior diagnostics in
-`experiments/sys-datascience/methods/local-behavior-prediction/` add a further
-promotion caveat. Before treating near-active prediction as an endpoint
-acceptance or rejection rule, regenerate a retained local-behavior panel and
-inspect `local-behavior-candidate-gradient-summary.csv` plus
-`local-behavior-candidate-gradient-predictions.jsonl`. Those files test the
-candidate-window analytic model with base branch gaps included and with each
-candidate branch differentiated at its own action.
+An earlier version of this packet pointed to
+`experiments/sys-datascience/methods/local-behavior-prediction/` and two
+run-local CSV/JSONL summaries. That packet was deleted when the active
+data-science table was restricted to random/product rows, so those paths are
+not a current promotion dependency or retained evidence. Current development
+surfaces are [`branch-cartography/`](branch-cartography/README.md) and
+[`local-geometry-probe/`](local-geometry-probe/README.md); neither currently
+contains a canonical retained run.
 
 The candidate-window-scored runner is now implemented for comparison. Treat it
 as a development variant, not promotion evidence, until its outputs are

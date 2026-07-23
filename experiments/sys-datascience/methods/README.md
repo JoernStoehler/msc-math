@@ -124,7 +124,10 @@ promoted into the packet directories.
   or more prepared random/product variants exist and are reviewed.
 
 The old ascent endpoint, local-behavior, continuation, and perturbation packets
-are not active in this slice. Use git history for archaeology only.
+are not active in this slice. Start at
+`experiments/sys-landscape/README.md` for the preserved live legacy packets and
+bounded observations; use Git history only for raw artifacts removed from the
+current tree.
 
 ## Method Question
 

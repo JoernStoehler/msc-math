@@ -9,9 +9,13 @@ not thesis evidence by itself.
 This subpacket asks how much information at a base point `a0` remains
 predictive for nearby, semi-local, or effectively unrelated points `a`.
 
-This is a prototype and reference surface for optimizer-facing branch
-cartography. Source-stratified local/semi-local evidence belongs in
-`experiments/sys-datascience/methods/local-behavior-prediction/`.
+This is the current development and reference surface for optimizer-facing
+branch cartography. The former source-stratified
+`experiments/sys-datascience/methods/local-behavior-prediction/` packet was
+deleted when the active data-science table was restricted to random/product
+rows; its run-local outputs are not current evidence. A future
+source-stratified data-science study would be a new retained packet rather than
+an implicit continuation of that deleted surface.
 
 The point shape is:
 
