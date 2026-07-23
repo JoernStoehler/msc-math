@@ -1,0 +1,276 @@
+% product-qp-six-facet-reduction.tex
+%
+% Agent-derived proof development for a product-specific reduction of the
+% Haim--Kislev quadratic program.  A fresh independent GPT-5.6 Sol review on
+% 2026-07-23 reconstructed the argument before reading this proof and found no
+% material gap in either the theorem or its capacity-value corollary.  This has
+% not been reviewed or accepted by Jörn.  Its intended use is capacity
+% computation and recovery of at least one sparse maximizing word, not
+% classification of every maximizing orbit.
+
+\begin{unverified}
+
+\subsection{Setup and factorization}
+\label{subsec:product-qp-six-facet-setup}
+
+Let \(K_q,K_p\subset\mathbb R^2\) be full-dimensional convex polygons
+containing the origin in their interiors.  Write their dual vertices as
+\[
+  u_1,\ldots,u_r\in\mathbb R^2,
+  \qquad
+  v_1,\ldots,v_s\in\mathbb R^2.
+\]
+The corresponding facet dual vertices of the Lagrangian product
+\(K_q\times_LK_p\subset\mathbb R_q^2\oplus\mathbb R_p^2\) are
+\[
+  \widehat u_i=(u_i,0),
+  \qquad
+  \widehat v_j=(0,v_j).
+\]
+We use the active-word Haim--Kislev convention from
+Subsection~\ref{subsec:hk2017-active-word-qp-convention}.
+
+Fix an ordered word \(\sigma\) with distinct facet labels and a feasible
+weight vector \(\beta\).  Let \(I_q\) and \(I_p\) be its sets of \(q\)- and
+\(p\)-positions and put
+\[
+  t=\sum_{k\in I_q}\beta_k.
+\]
+The closure equation splits in the direct sum:
+\[
+  \sum_{k\in I_q}\beta_k u_{\sigma(k)}=0,
+  \qquad
+  \sum_{k\in I_p}\beta_k v_{\sigma(k)}=0.
+\]
+When \(0<t<1\), define normalized factor weights
+\[
+  \alpha_k=\frac{\beta_k}{t}\quad(k\in I_q),
+  \qquad
+  \gamma_k=\frac{\beta_k}{1-t}\quad(k\in I_p).
+\]
+They lie in the normalized factor-closure polytopes
+\[
+  C_q(\sigma)=
+  \left\{
+    \alpha\geq0:
+    \sum_{k\in I_q}\alpha_k=1,\ 
+    \sum_{k\in I_q}\alpha_k u_{\sigma(k)}=0
+  \right\}
+\]
+and
+\[
+  C_p(\sigma)=
+  \left\{
+    \gamma\geq0:
+    \sum_{k\in I_p}\gamma_k=1,\ 
+    \sum_{k\in I_p}\gamma_k v_{\sigma(k)}=0
+  \right\}.
+\]
+
+The symplectic form vanishes on either Lagrangian factor, while
+\[
+  \omega_0(\widehat u_i,\widehat v_j)=\langle u_i,v_j\rangle,
+  \qquad
+  \omega_0(\widehat v_j,\widehat u_i)=-\langle u_i,v_j\rangle.
+\]
+Consequently there is a bilinear functional
+\[
+  B_\sigma:C_q(\sigma)\times C_p(\sigma)\longrightarrow\mathbb R
+\]
+such that
+\begin{equation}
+  Q_\sigma(\beta)
+  =
+  t(1-t)B_\sigma(\alpha,\gamma).
+  \label{eq:product-qp-factorization}
+\end{equation}
+Explicitly, the coefficient of
+\(\alpha_k\gamma_\ell\langle u_{\sigma(k)},v_{\sigma(\ell)}\rangle\)
+is \(+1\) if the \(q\)-position \(k\) precedes the \(p\)-position \(\ell\)
+in the chosen linear representative of \(\sigma\), and \(-1\) otherwise.
+
+\begin{lemma}[Cyclic-cut invariance]
+\label{lem:product-qp-cyclic-cut-invariance}
+On the Haim--Kislev feasible set, \(Q_\sigma\), and hence the factorization
+in~\eqref{eq:product-qp-factorization}, is unchanged by cyclically rotating
+the ordered word and its weights.
+\end{lemma}
+
+\begin{proof}
+It suffices to move the first weighted dual vertex \(a_1\) to the end.
+Only the terms involving \(a_1\) change sign.  The difference between the two
+objectives is
+\[
+  -2\beta_1\sum_{k>1}\beta_k\omega_0(a_1,a_k).
+\]
+Closure gives
+\[
+  \sum_{k>1}\beta_k a_k=-\beta_1a_1,
+\]
+so the displayed difference equals
+\[
+  -2\beta_1\omega_0(a_1,-\beta_1a_1)=0.
+\]
+\end{proof}
+
+\subsection{The six-facet reduction}
+\label{subsec:product-qp-six-facet-theorem}
+
+\begin{lemma}[Support of a planar normalized-closure vertex]
+\label{lem:planar-closure-vertex-support}
+Every vertex of
+\[
+  C=\left\{
+    x\in\mathbb R_{\geq0}^N:
+    \sum_i x_i=1,\ 
+    \sum_i x_iw_i=0
+  \right\},
+  \qquad w_i\in\mathbb R^2,
+\]
+has at most three positive coordinates.
+\end{lemma}
+
+\begin{proof}
+Write the three displayed scalar equalities as \(Ax=b\), where \(A\) has
+three rows.  Suppose a feasible \(x\) has more than
+\(\operatorname{rank}(A)\) positive coordinates.  The columns of \(A\)
+indexed by those coordinates are linearly dependent, so there is a nonzero
+vector \(d\), supported on the positive coordinates of \(x\), with \(Ad=0\).
+For sufficiently small \(\varepsilon>0\), both
+\(x+\varepsilon d\) and \(x-\varepsilon d\) remain nonnegative and feasible.
+Thus \(x\) is not a vertex.  Since \(\operatorname{rank}(A)\leq3\), every
+vertex has support size at most three.
+\end{proof}
+
+\begin{theorem}[Six-facet maximizer for a four-dimensional Lagrangian product]
+\label{thm:product-qp-six-facet-maximizer}
+Let \(K_q,K_p\subset\mathbb R^2\) be full-dimensional convex polygons
+containing the origin in their interiors, and let
+\(K=K_q\times_LK_p\).
+In the complete Haim--Kislev quadratic-program family for \(K\), there exists
+a global maximizer whose active word contains at most three \(q\)-facets and
+at most three \(p\)-facets.  Its total \(q\)-weight and total \(p\)-weight are
+both \(1/2\).
+
+In particular, the capacity value is represented by an active word of length
+at most six.
+\end{theorem}
+
+\begin{proof}
+The complete Haim--Kislev family is finite and each feasible weight polytope is
+compact, so choose a global maximizer \((\sigma,\beta)\).
+Its value \(Q_{\max}\) is positive.  Because the symplectic form vanishes on
+each factor separately, a word supported on only one factor has value zero.
+Thus \(\sigma\) has positive total weight in both factors, and the number
+\(t\) above lies in \((0,1)\).
+
+Fix \(\gamma\).  The map
+\[
+  \alpha\longmapsto B_\sigma(\alpha,\gamma)
+\]
+is linear on the compact polytope \(C_q(\sigma)\), so it has a vertex
+maximizer \(\alpha^\ast\).  Replacing \(\alpha\) by \(\alpha^\ast\), while
+keeping \(t\), \(\gamma\), and the word fixed, cannot decrease \(Q_\sigma\).
+It cannot increase it strictly because \((\sigma,\beta)\) was already a
+global maximizer.  Hence the replacement gives another global maximizer.
+
+Now fix \(\alpha^\ast\) and choose a vertex maximizer
+\(\gamma^\ast\in C_p(\sigma)\) of
+\[
+  \gamma\longmapsto B_\sigma(\alpha^\ast,\gamma).
+\]
+The same argument shows that this second replacement preserves the global
+maximum.  By Lemma~\ref{lem:planar-closure-vertex-support},
+\(\alpha^\ast\) and \(\gamma^\ast\) each have at most three positive
+coordinates.
+
+The resulting bilinear value
+\(B_\sigma(\alpha^\ast,\gamma^\ast)\) is positive, because its product with
+\(t(1-t)>0\) is \(Q_{\max}>0\).  Keeping
+\(\alpha^\ast,\gamma^\ast\) fixed and varying only the total factor mass gives
+the feasible objective
+\[
+  \tau(1-\tau)B_\sigma(\alpha^\ast,\gamma^\ast),
+  \qquad 0\leq\tau\leq1.
+\]
+This is maximized at \(\tau=1/2\).  Global maximality again implies that this
+replacement preserves \(Q_{\max}\).
+
+Finally delete every zero-weight position from \(\sigma\).  Such positions
+contribute neither to normalization and closure nor to any term of
+\(Q_\sigma\).  The relative order of all retained positions is unchanged, so
+the shorter active word has the same objective value.  The complete
+Haim--Kislev family contains every ordered distinct-facet support word.
+The retained word therefore represents \(Q_{\max}\), has at most three facets
+of each type, and has total length at most six.
+\end{proof}
+
+\begin{corollary}[Closure-vertex capacity enumeration]
+\label{cor:product-qp-closure-vertex-enumeration}
+For each factor, enumerate the vertices of its normalized closure polytope.
+For every pair of such vertices, enumerate all cyclic orders of the union of
+their supports and evaluate \(Q_\sigma\) with each factor carrying total
+weight \(1/2\).  The largest value obtained is \(Q_{\max}\), and
+\[
+  c_{\mathrm{EHZ}}(K_q\times_LK_p)=\frac{1}{2Q_{\max}}.
+\]
+Every enumerated support contains at most six facets, so after fixing one
+facet as the cyclic starting point there are at most \(5!=120\) orders for a
+support pair.
+\end{corollary}
+
+\begin{proof}
+Let \(C_q\) and \(C_p\) denote the normalized closure polytopes formed using
+all facets of the respective factors.  The polytope \(C_q(\sigma)\) in the
+proof of Theorem~\ref{thm:product-qp-six-facet-maximizer} is naturally the
+face of \(C_q\) obtained by setting every coordinate omitted from \(\sigma\)
+equal to zero; likewise for \(C_p(\sigma)\).  A vertex of a face is a vertex
+of the ambient polytope.  Thus the enumeration contains the two factor
+vertices selected in the theorem, and enumerating their cyclic orders contains
+the shortened maximizing word.
+
+Conversely, every enumerated candidate is feasible for the complete
+Haim--Kislev family, so none can exceed \(Q_{\max}\).  The capacity formula is
+the Haim--Kislev formula recorded in
+Subsection~\ref{subsec:hk2017-active-word-qp-convention}.
+\end{proof}
+
+\begin{remark}[Scope of the reduction]
+\label{rem:product-qp-six-facet-scope}
+Theorem~\ref{thm:product-qp-six-facet-maximizer} is an existence and
+capacity-value statement.  It does not say that every capacity-minimizing
+orbit or every maximizing Haim--Kislev weight vector has support size at most
+six.  In particular, replacing a solver which returns all maximizing or
+near-maximizing branches by the closure-vertex enumeration requires a separate
+analysis of the consumer's output semantics.
+
+The corollary also does not by itself certify a floating-point implementation.
+A certified implementation must resolve the closure-support predicates, the
+factor weights, the objective evaluations, and comparisons between candidate
+values without making an incorrect sign or ordering decision.
+\end{remark}
+
+\subsection{Adversarial review record}
+\label{subsec:product-qp-six-facet-adversarial-review}
+
+The following stronger or less precise claims are \emph{not} used:
+\begin{itemize}
+  \item The theorem does not follow by replacing the twelve-facet billiard
+    bound with an unsupported six-facet bounce bound.  Its source is bilinear
+    extremality in the two normalized closure polytopes.
+  \item Deleting zero-weight positions need not visibly preserve the syntax of
+    a particular block enumerator.  The proof only needs the complete
+    Haim--Kislev family to contain the shortened word.
+  \item The theorem does not assert that every maximizer is sparse.  The HKO
+    exact witness bank already contains a maximizing word of length seven.
+  \item A vertex chosen in the support-restricted closure polytope must also be
+    found by the proposed full-factor enumeration.  This is why the proof of
+    Corollary~\ref{cor:product-qp-closure-vertex-enumeration} explicitly uses
+    the fact that coordinate restriction defines a face.
+  \item No general-position hypothesis is used.  Rank-deficient closure
+    equations only decrease the support bound in
+    Lemma~\ref{lem:planar-closure-vertex-support}; a certified implementation
+    must nevertheless handle the corresponding zero determinants exactly.
+\end{itemize}
+
+\end{unverified}

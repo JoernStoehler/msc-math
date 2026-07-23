@@ -231,7 +231,8 @@ of `Q`. The reference Haim--Kislev family contains the resulting cyclic word,
 so a capacity maximizer exists with at most three q-facets and three p-facets.
 This argument does not claim that every minimizing orbit has at most six
 facets, or that arbitrary deletion preserves the syntax of the billiard block
-enumerator.
+enumerator. The complete proof and its reviewed scope are in
+`formal/product-qp-six-facet-reduction.tex`.
 
 The corresponding capacity algorithm should enumerate the vertices of the two
 planar closure polytopes (positive closing pairs and triples), pair them,
