@@ -19,7 +19,7 @@ FEATURE_REPORT = ROOT / "artifacts/orientation-feature-manifest.json"
 DESIGN = ROOT / "design.json"
 SELECTION = ROOT / "selection-manifest.json"
 PROTOCOL_HISTORY = ROOT / "protocol-history.json"
-EVALUATOR = ROOT / "src/main.rs"
+EVALUATOR = ROOT / "main.rs"
 SOURCE_SHA = "b5ded0a5e83d41f35ca035660d222326a161ce5001fd18c12f74f0ed9f3bc367"
 SOURCE_REPORT_SHA = "02b7084141c0f2422aaabf1516fa62af501963ce638b9df3ef756c762722d61c"
 FEATURE_SHA = "050859880b55a7063d8b982f3bae7ce0962350862767965e9e4ab7c7c8c10eda"
@@ -245,8 +245,6 @@ def validate_retained_commit(design: dict) -> None:
     except (OSError, subprocess.CalledProcessError):
         warn_stale(False, "retained revision availability")
         return
-    # These are paths in RETAINED_COMMIT, not current checkout paths. Keep the
-    # historical evaluator path here after source-tree moves.
     for label, path, expected in [
         (
             "design",

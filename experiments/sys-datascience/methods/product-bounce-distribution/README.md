@@ -8,7 +8,7 @@ distribution after exact `(product_k, product_m)` bucketing?
 
 This packet has two retained-data components. `analyze.py` is the original
 prepared-table description and performs no capacity or geometry evaluations.
-`src/bin/class-minima.rs` reconstructs the already-retained product rows, runs the
+`class-minima.rs` reconstructs the already-retained product rows, runs the
 existing f64 solved billiard candidate stream, and exactly certifies its
 admissible two- and three-bounce class minima. It is not a generated-candidate
 experiment or an exhaustive global enumeration. In particular, it does

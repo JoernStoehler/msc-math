@@ -20,7 +20,7 @@ cargo run -p exp-sys-datascience --release \
 Source/provenance:
 
 - base geometry comes from `symplectic::geom::known_polytopes::hko_pentagon`;
-- perturbations are generated in `src/main.rs` with fixed `seed = 42`,
+- perturbations are generated in `main.rs` with fixed `seed = 42`,
   `epsilon = 0.01`, and `perturbed_count = 8`;
 - volume, capacity, and `sys` are recomputed through `exp-sys-landscape`
   computation APIs;

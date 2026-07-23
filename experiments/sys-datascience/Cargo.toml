@@ -34,23 +34,23 @@ path = "prepare/feature_cost.rs"
 
 [[bin]]
 name = "sys-datascience-hko-ridge-source-smoke"
-path = "methods/hko-ridge-source-smoke/src/main.rs"
+path = "methods/hko-ridge-source-smoke/main.rs"
 
 [[bin]]
 name = "sys-datascience-product-bounce-class-minima"
-path = "methods/product-bounce-distribution/src/bin/class-minima.rs"
+path = "methods/product-bounce-distribution/class-minima.rs"
 
 [[bin]]
 name = "sys-datascience-product-bounce-null-audit"
-path = "methods/product-bounce-distribution/src/bin/audit-null-availability.rs"
+path = "methods/product-bounce-distribution/audit-null-availability.rs"
 
 [[bin]]
 name = "sys-datascience-generator-orientation-smoke"
-path = "methods/generator-orientation-smoke/src/main.rs"
+path = "methods/generator-orientation-smoke/main.rs"
 
 [[bin]]
 name = "sys-datascience-generator-orientation-target-pilot"
-path = "methods/generator-orientation-target-pilot/src/main.rs"
+path = "methods/generator-orientation-target-pilot/main.rs"
 
 [lints]
 workspace = true
