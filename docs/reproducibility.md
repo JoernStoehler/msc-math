@@ -1,7 +1,7 @@
 # Thesis Code And Data
 
 This is the repository entry point for the code and data claims made by the
-thesis. Detailed producer commands stay with the experiment that owns them; the
+thesis. Detailed producer commands stay with the producing experiment; the
 repository does not maintain a second script that reruns every executable.
 
 ## Build the thesis
@@ -33,8 +33,8 @@ and is not a byte-identical comparison target.
 ## Retained empirical results used by the thesis
 
 - The bounded data-science result and its retained 14,336-row random/product
-  table are owned by `experiments/sys-datascience/README.md`.
-- The twelve-start finite first-order experiment is owned by
+  table have their entry point at `experiments/sys-datascience/README.md`.
+- The twelve-start finite first-order experiment has its entry point at
   `experiments/sys-landscape/gradient-ascent-observed-general/README.md`.
 - Figure-producing experiments keep their source assets and regeneration
   commands beside the producer. Publication copies under `thesis/` remain

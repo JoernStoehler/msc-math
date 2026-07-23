@@ -7,7 +7,7 @@ or temporary reasoning belongs.
   captions, inclusion commands, labels, and necessary local status comments
   in active `thesis/*.tex`.
 - Put chapter-local source routes, interpretations, caveats, fallback wording,
-  open decisions, and review state in the owning companion.
+  open decisions, and review state in the corresponding chapter companion.
 - Put proof development and developer-facing mathematics in `formal/`.
 - Keep producer-generated data and assets attributable to their producer.
   Keep empirical reports and interpretation near the question and evidence

@@ -173,7 +173,7 @@ uv run --script experiments/regular-products/pentagon-rotation-empirics/analyze.
   --input experiments/regular-products/pentagon-rotation-empirics/kkt-branch-landscape.jsonl
 ```
 
-The owner README records the bounded spike and the explicit-input command for
+The packet README records the bounded spike and the explicit-input command for
 the retained legacy figures.
 
 Pentagon orbit viewer:
@@ -193,9 +193,3 @@ Pentagon exact full proof:
 ```bash
 sage -python experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py --progress-every 500
 ```
-
-## Layout Policy
-
-Keep each packet flat while it stays readable. Add subfolders only when tooling
-creates a real bundle, for example a separate frontend package, a separate Rust
-crate, or a large artifact family.

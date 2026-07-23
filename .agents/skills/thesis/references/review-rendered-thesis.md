@@ -21,5 +21,5 @@ freshness, or publication readiness.
 
 After structural reordering or substantial rewriting, reconsider earlier
 reviews whose object or context changed. Preserve expensive, non-obvious
-rendered findings with the owning companion or asset; do not accumulate
+rendered findings with the corresponding companion or asset; do not accumulate
 routine build narration.

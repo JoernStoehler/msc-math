@@ -74,7 +74,7 @@ exact target is used for ranking audit, so this is not independent validation.
 Alternatives considered were (1) commands only, (2) a new Rust wrapper, and
 (3) copying/refactoring the 151 kB producer. The existing audit source already
 emits paired predictions, exact target values, ranks, provenance, and witness
-guards; a Python standard-library analyzer is therefore the smallest owner
+guards; a Python standard-library analyzer is therefore the smallest addition
 that adds the missing ID selection and arithmetic checks. A wrapper or copy
 would duplicate numerical code and create a second source of truth before
 there is evidence of recurrence value. The three-shard layout is a selection

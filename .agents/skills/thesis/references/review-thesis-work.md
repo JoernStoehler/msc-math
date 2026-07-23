@@ -5,7 +5,7 @@ integrated thesis artifact. Choose lenses according to the candidate and its
 downstream decision; this is not a complete finding taxonomy.
 
 - **Correctness:** claims hold under their stated conditions.
-- **Source support:** the owning proof, citation, artifact, or accepted
+- **Source support:** the relevant proof, citation, artifact, or accepted
   decision supports the wording.
 - **Claim strength:** theorem, computation, empirical evidence, conjecture,
   and cited literature remain distinguishable.

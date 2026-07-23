@@ -3,6 +3,9 @@
 This is a compact answer to “what can the repository currently rely on?”
 Every row is a navigation claim. Confirm its scope and current status at the
 named sources before using it in a proof, thesis claim, or experiment decision.
+The table is intentionally selective. Absence of a row is not evidence that
+the repository lacks a capability; use the relevant domain README and search
+the source tree before making a negative claim.
 
 | Capability | Current scope | Confirm at |
 | --- | --- | --- |

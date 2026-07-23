@@ -3,7 +3,7 @@
 Use this reference before distributing substantial preparation, drafting, or
 review work among agents.
 
-Main owns the cross-chapter reader path, explanatory ownership, dependency
+Main owns the cross-chapter reader path, explanatory placement, dependency
 order, source-status decisions, and final synthesis. Delegate bounded work
 whose output main can evaluate without adopting the worker's hidden model of
 the chapter.
@@ -16,7 +16,7 @@ duplicate the general prompt and return contract.
 Parallel preparation is useful when tasks have distinct questions or source
 surfaces: source location, citation checks, proof review, experiment-packet
 assessment, or cold-reader review. Avoid parallel full prose drafts across
-tightly coupled chapters before shared conventions and explanatory ownership
+tightly coupled chapters before shared conventions and explanatory placement
 are stable; they tend to duplicate motivation and create incompatible local
 narratives.
 

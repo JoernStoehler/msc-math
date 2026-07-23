@@ -20,7 +20,7 @@ ready for its decision.
 
 In the rehearsal, ask whether important reader questions are answered to a
 justified degree, including questions the thesis must acknowledge without
-answering. Check whether explanatory ownership and dependencies work across
+answering. Check whether explanatory placement and dependencies work across
 chapter boundaries, not only whether the local passage reads smoothly.
 
 Plan backward from the expected findings and repair cost. A plan that ends
@@ -31,7 +31,7 @@ preserve enough budget and source context to rewrite it if the result is not a
 useful new starting point.
 
 Record chapter-specific readiness judgments, unresolved findings, and reopen
-conditions in the owning companion or review artifact. Preserve a past failure
+conditions in the relevant companion or review artifact. Preserve a past failure
 durably only when it corrects a prior that future work is otherwise likely to
 repeat; state what happened and the scope of the lesson rather than inventing
 a universal prohibition.

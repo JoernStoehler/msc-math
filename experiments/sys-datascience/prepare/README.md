@@ -251,10 +251,11 @@ or state provenance:
   that belongs to a reopened producer design, not to the retained
   random/product prepared schema.
 
-Do not replace this with a single wide table unless there is a current owner
-for the provenance loss and migration cost. Add schema fields when possible.
+Do not replace this with a single wide table unless a concrete consumer
+justifies the provenance loss and migration cost. Add schema fields when
+possible.
 
-## Code Ownership
+## Code map
 
 - `main.rs` orchestrates retained producer-file loading.
 - `prepare.rs` consumes run-local producer directories.

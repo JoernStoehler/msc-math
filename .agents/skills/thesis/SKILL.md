@@ -8,7 +8,7 @@ description: "Use for process, creation, editing, organization, review, or deleg
 Route work to the one-purpose references needed for the live decision. Do not
 load the package as a process checklist or assume its references exhaust the
 ways thesis work can fail. Project facts, chapter state, source truth, and
-current completion state remain with their repo owners.
+current completion state remain in their authoritative local sources.
 
 ## Artifact, Readers, And Surfaces
 
@@ -47,7 +47,7 @@ cannot be resolved from current owners and Git history.
 ## Explanatory Planning And Prose
 
 - Read `references/choose-chapter-purpose.md` when choosing a chapter or
-  passage's role, boundary, or explanatory ownership.
+  passage's role, boundary, or explanatory placement.
 - Read `references/prepare-writer-input.md` when gathering material for a
   later writer.
 - Read `references/draft-thesis-prose.md` before producing a substantial

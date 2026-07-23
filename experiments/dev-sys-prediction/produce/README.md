@@ -70,7 +70,7 @@ perturbation-detail files live under
 `basepoint-event-panel/perturbation-cloud/`; the root-level identity rows are
 copies for quick joins and provenance checks.
 
-Code ownership is deliberately shallow:
+## Code map
 
 - `src/panel.rs`: config parsing, stage orchestration, and summary assembly;
 - `src/basepoints.rs`: geometry-table basepoint selection and provenance rows;

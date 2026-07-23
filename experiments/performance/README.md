@@ -71,7 +71,7 @@ It compares only these two paths:
   `aggregate_orbits_with_dual_vertices_exact(..., MinimaSafe)`.
 
 It deliberately does not include wrappers that differ only by experiment
-ownership, product billiard routing on generic random non-products, unpruned
+call site, product billiard routing on generic random non-products, unpruned
 HK2017, or flow-graph development paths. Use a separate target when those are
 the question.
 

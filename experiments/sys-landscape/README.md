@@ -65,7 +65,7 @@ Where a child still retains full-output JSONL, that file is its evidence
 artifact. Use compile checks or documented smoke/temp modes for local command
 validation.
 
-For the maintained produce -> tables -> methods flow, start at
+For the maintained produce -> prepare -> methods flow, start at
 `experiments/sys-datascience/README.md`. Its producer and preparation binaries
 and several small Rust method executables are registered by
 `experiments/sys-datascience/Cargo.toml`; method packets with an existing
