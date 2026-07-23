@@ -35,18 +35,19 @@ For the left action on dual maps the quotient is written
    was found for the selected generic body. This is post-selection evidence
    that Euclidean candidate quality and symplectic alignment contain partly
    separate information.
-2. **After that orientation scan, does sparse random sampling of global
-   determinant-one linear distortions find a further improvement?** No. All
-   432 sampled noncompact points were worse than the corresponding best sampled
-   compact orientation.
+2. **After that orientation scan, does a sparse fixed-seed random sample of
+   global determinant-one linear distortions find a further improvement?** No.
+   All 432 sampled noncompact points were worse than the corresponding best
+   sampled compact orientation.
 
-The second result only rejects this naive random-transform proposal for these
-two selected bodies. It does not show that the compact stratum contains a local
-or global maximum. Further random global-transform sampling is stopped because
-the negative pilot is sparse but already has low expected value. Reopen this
-route only if there is a targeted optimizer or geometric mechanism, a new body
-for which the comparison matters, or another reason to expect substantially
-better value than additional random quotient samples.
+The second result only rejects this naive fixed-seed random-transform proposal
+for these two selected bodies. The sampled directions and outputs are
+deterministic once the seed is fixed. It does not show that the compact stratum
+contains a local or global maximum. Further random global-transform sampling
+is stopped because the negative pilot is sparse but already has low expected
+value. Reopen this route only if there is a targeted optimizer or geometric
+mechanism, a new body for which the comparison matters, or another reason to
+expect substantially better value than additional random quotient samples.
 
 ## Result
 
