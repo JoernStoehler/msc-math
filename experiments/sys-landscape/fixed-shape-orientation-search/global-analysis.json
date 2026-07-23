@@ -1,0 +1,118 @@
+{
+  "schema": "fixed-shape-linear-search-analysis-v1",
+  "input": "experiments/sys-landscape/fixed-shape-orientation-search/global-evaluations.jsonl",
+  "evaluation_count": 434,
+  "bodies": [
+    {
+      "source_kind": "generic",
+      "source_name": "random_F10_s3_104",
+      "evaluation_count": 217,
+      "compact_best_sys": 0.8595596058028344,
+      "global_best_sys": 0.8595596058028344,
+      "delta": 0.0,
+      "best_stage": "compact-control",
+      "best_radius": 0.0,
+      "best_condition_number": 1.0,
+      "radius_summary": [
+        {
+          "radius": 0.0,
+          "count": 1,
+          "maximum_sys": 0.8595596058028344,
+          "mean_sys": 0.8595596058028344
+        },
+        {
+          "radius": 0.125,
+          "count": 36,
+          "maximum_sys": 0.8040709383884816,
+          "mean_sys": 0.6699304771143345
+        },
+        {
+          "radius": 0.25,
+          "count": 36,
+          "maximum_sys": 0.7251668633756723,
+          "mean_sys": 0.5615291529476357
+        },
+        {
+          "radius": 0.5,
+          "count": 36,
+          "maximum_sys": 0.5580614268524949,
+          "mean_sys": 0.3640474567092806
+        },
+        {
+          "radius": 1.0,
+          "count": 36,
+          "maximum_sys": 0.2211115643546291,
+          "mean_sys": 0.13826610617270682
+        },
+        {
+          "radius": 2.0,
+          "count": 36,
+          "maximum_sys": 0.029088188296412444,
+          "mean_sys": 0.018778761542499207
+        },
+        {
+          "radius": 4.0,
+          "count": 36,
+          "maximum_sys": 0.0005301597891014833,
+          "mean_sys": 0.0003439401304109495
+        }
+      ]
+    },
+    {
+      "source_kind": "product",
+      "source_name": "random_5x6_s3_168",
+      "evaluation_count": 217,
+      "compact_best_sys": 0.8783076408257287,
+      "global_best_sys": 0.8783076408257287,
+      "delta": 0.0,
+      "best_stage": "compact-control",
+      "best_radius": 0.0,
+      "best_condition_number": 1.0,
+      "radius_summary": [
+        {
+          "radius": 0.0,
+          "count": 1,
+          "maximum_sys": 0.8783076408257287,
+          "mean_sys": 0.8783076408257287
+        },
+        {
+          "radius": 0.125,
+          "count": 36,
+          "maximum_sys": 0.8362279072348772,
+          "mean_sys": 0.7044934203523139
+        },
+        {
+          "radius": 0.25,
+          "count": 36,
+          "maximum_sys": 0.7330125948717443,
+          "mean_sys": 0.590416561706628
+        },
+        {
+          "radius": 0.5,
+          "count": 36,
+          "maximum_sys": 0.5045886294868546,
+          "mean_sys": 0.37729872913876195
+        },
+        {
+          "radius": 1.0,
+          "count": 36,
+          "maximum_sys": 0.18411046645418236,
+          "mean_sys": 0.141532760801032
+        },
+        {
+          "radius": 2.0,
+          "count": 36,
+          "maximum_sys": 0.025470339260123175,
+          "mean_sys": 0.01913840619241429
+        },
+        {
+          "radius": 4.0,
+          "count": 36,
+          "maximum_sys": 0.00046544287076956555,
+          "mean_sys": 0.0003502304831697212
+        }
+      ]
+    }
+  ],
+  "claim_boundary": "Deterministic finite multiscale sample of the global normalized determinant-one quotient; not an exhaustive search of its noncompact radial coordinate or four angular coordinates."
+}

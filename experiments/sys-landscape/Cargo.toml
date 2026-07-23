@@ -99,6 +99,10 @@ path = "../sys-datascience/methods/generator-orientation-target-pilot/main.rs"
 name = "sys-fixed-shape-orientation-search"
 path = "fixed-shape-orientation-search/main.rs"
 
+[[bin]]
+name = "sys-fixed-shape-linear-search"
+path = "fixed-shape-orientation-search/global.rs"
+
 [lints]
 workspace = true
 

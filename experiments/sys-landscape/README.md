@@ -24,6 +24,9 @@ data-science method rows.
 - `sys-fixed-shape-orientation-search` owns a retained post-selection scan of
   the generic/product source champions over `SO(4)/U(2)`; its complete output
   and claim boundary are in `fixed-shape-orientation-search/README.md`.
+- `sys-fixed-shape-linear-search` extends that scan over determinant-one linear
+  maps modulo symplectic maps, with the orientation scan as its compact
+  zero-distortion stratum.
 - `sys-rejection-calibration` is a full-output producer without a smoke mode; do
   not run it as a quick command check unless intentionally refreshing tracked
   artifacts.
