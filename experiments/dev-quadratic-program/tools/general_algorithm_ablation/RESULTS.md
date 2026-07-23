@@ -217,18 +217,31 @@ weights. Their closure constraints are independent, while the product QP
 objective is bilinear between the two groups. Writing the total q-weight as
 `s` and normalizing the q- and p-weights separately gives
 `Q = s(1-s) B(alpha, gamma)`. For positive `B`, the mass variable optimizes at
-`s = 1/2`. A bilinear maximum over the two normalized closure polytopes has a
-maximizer at a vertex of each polytope, and a vertex of a planar normalized
-closure polytope uses at most three facets. This suggests that a
-capacity-maximizing product word needs at most three q-facets and three
-p-facets. The remaining proof obligation is that deleting zero-weight facets
-preserves membership in the billiard candidate family used by the code.
+`s = 1/2`.
 
-A cheap HKO check supports the reduction: exact-solving the 1,005 emitted words
-of length at most six found the same best `Q = 0.1453085056010722` as the full
-route. This is not yet a proof of the candidate-family deletion step, but it
-redirects product work from generic near-singular KKT solving to enumerating
-and evaluating pairs of planar closure-polytope vertices.
+This gives a six-facet bound for the capacity value, independently of the
+twelve-facet billiard bound. Start with a global product-QP maximizer. With the
+p-weights fixed, maximize the resulting linear functional over the normalized
+q-closure polytope and choose a vertex maximizer; then do the same for the
+p-weights. A vertex of either planar normalized closure polytope uses at most
+three facets. The value cannot increase strictly because the starting point
+was already globally maximal. Deleting the zero-weight positions preserves
+the closure equations, cyclic order of the retained positions, and every term
+of `Q`. The reference Haim--Kislev family contains the resulting cyclic word,
+so a capacity maximizer exists with at most three q-facets and three p-facets.
+This argument does not claim that every minimizing orbit has at most six
+facets, or that arbitrary deletion preserves the syntax of the billiard block
+enumerator.
+
+The corresponding capacity algorithm should enumerate the vertices of the two
+planar closure polytopes (positive closing pairs and triples), pair them,
+enumerate the at most `5! = 120` cyclic orders of their combined support, and
+evaluate the bilinear objective directly. It needs no KKT solve. A disposable
+HKO check found five closing triples in each factor, hence only
+`5 * 5 * 120 = 3,000` direct objective evaluations, and recovered
+`Q = 0.14530850560107225` and capacity `3.440954801177932`. This independently
+matches the full route. The earlier length-at-most-six check over 1,005
+billiard-emitted words found the same value.
 
 ## Independent review
 
