@@ -5,102 +5,34 @@ algorithm. It contains exact-compatible frontier counts, endpoint and
 closed-word representation spikes, and tube visualization for understanding
 the current algorithm.
 
-The current binaries are not a durable evidence packet. The exact flow-graph
-and proof-risk verification surfaces live in the crate and
-`experiments/verification/flow-graph-proof-risk/`.
+The first three binaries below are development probes, not durable evidence
+packets. The exact flow-graph implementation and proof-risk verification
+surfaces live in the crate and
+`experiments/verification/flow-graph-proof-risk/`; the visualization packet is
+retained for thesis exposition.
 
 The boundary is not "mentions numerics" versus "does not mention numerics".
 Keep exact computational analysis here when it should move with changing
 flow-graph algorithm design, representation choices, or supported cases. QP
-numerical methodology has its separate QP owner.
+numerical methodology has its own package.
 
 The algorithm contract and result-control surface live in
 `crates/symplectic/src/algorithms/flow_graph/README.md`.
 
-## Current Commands
+## Packet Inventory
 
-- `flow-graph-frontier`
-  - Reads `../combinatorial-cells/polytopes.jsonl` by default.
-  - Writes JSONL to stdout, or to `--output PATH`.
-  - Reports transition-pruned word-cache and closed-cycle counts, plus the
-    exact structural zero-ω support predicate.
+Read the relevant child README before its source or artifacts. This is the
+exhaustive current package inventory:
 
-- `flow-graph-endpoint-spike`
-  - Reads `../combinatorial-cells/polytopes.jsonl` by default.
-  - Writes JSONL to stdout, or to `--output PATH`.
-  - This is an exact endpoint-set spike, not a supported exact implementation.
+| Path | Current role |
+| --- | --- |
+| `frontier/` | Exact-compatible word-frontier counts before tube arithmetic. |
+| `endpoint-spike/` | Exploratory exact endpoint-set representation and operation counters. |
+| `closed-word-spike/` | Exact fixed-set/action classifications for selected generated words. |
+| `visualize-tube/` | Exact-rational JSON producer and renderer for active explanatory thesis figures. |
 
-- `flow-graph-closed-word-spike`
-  - Runs an exact closed-word resolver spike on one selected generated
-    polytope/word.
-  - This is an exploratory representation spike, not the supported crate
-    implementation.
-
-- `flow-graph-visualize-tube-data`
-  - Emits one JSON object for a generated polytope and one closed tube word.
-  - Defaults to the retained thesis example:
-    `facet_count=6`, `master_seed=20260605`, `attempt=3`, `sigma=1,2,4,5,3`.
-  - `visualize-tube/render.py` renders that JSON with matplotlib. The
-    thesis-facing provenance contract is exact rational tube geometry, with
-    conversion to finite floats only at the JSON/plotting boundary. In each
-    local polygon object, `vertices_plot_f64` are Euclidean-orthonormal plotting
-    coordinates, while `vertices_construction_exact` and the explicitly named
-    `inequalities_construction_*` fields share the raw affine construction
-    chart; the renderer uses only the plotting fields.
-  - Two-face panels use ordered local frames, so `F_i cap F_j` and
-    `F_j cap F_i` are separate panels when both are needed.
-  - `render.py --layout sequence` shows tube-focused crops of the facet-pair
-    sections visited by the word, with an inset locating each crop in its full
-    section; the start and return crops share a frame and plot limits so their
-    fixed-point coordinates can be compared directly. `--layout projection`
-    shows the same closed orbit in a radial and
-    stereographic projection, with two camera views of the polytope's
-    one-skeleton and schematic translucent face patches.
-
-The retained thesis example uses `facet_count=6`, `attempt=3`, and
-`sigma=1,2,4,5,3`.  Its generated owner artifacts are
-`visualize-tube/flow-graph-f6-tube.json`,
-`visualize-tube/flow-graph-f6-tube-sequence.pdf`, and
-`visualize-tube/flow-graph-f6-projection.pdf`.  Regenerate them from the repo
-root with:
-
-```bash
-cargo run -p exp-dev-flow-graph --release --bin flow-graph-visualize-tube-data -- \
-  --facet-count 6 --attempt 3 --sigma 1,2,4,5,3 \
-  --output experiments/dev-flow-graph/visualize-tube/flow-graph-f6-tube.json
-uv run --script experiments/dev-flow-graph/visualize-tube/render.py \
-  --layout sequence \
-  --input experiments/dev-flow-graph/visualize-tube/flow-graph-f6-tube.json \
-  --output experiments/dev-flow-graph/visualize-tube/flow-graph-f6-tube-sequence.pdf
-uv run --script experiments/dev-flow-graph/visualize-tube/render.py \
-  --layout projection \
-  --input experiments/dev-flow-graph/visualize-tube/flow-graph-f6-tube.json \
-  --output experiments/dev-flow-graph/visualize-tube/flow-graph-f6-projection.pdf
-```
-
-These are active explanatory assets with reproducible producers; they are not
-orphaned or frozen prototype artifacts. The local-section axes are independently
-chosen Euclidean-orthonormal plotting frames. The exact construction-chart
-vertices and inequalities are retained in the JSON for provenance and are not
-interchangeable with those plotting coordinates. The global view distorts
-geometry through radial and stereographic projection. Neither figure is proof
-or numerical validation.
-
-### Figure provenance integration boundary
-
-The thesis figure is regenerated by the integrated
-`flow-graph-visualize-tube-data` producer from exact rational tube geometry.
-Rationals are converted to finite floating-point values only when the producer
-writes JSON or the renderer constructs plot coordinates. The exact producer,
-JSON packet, and renderer are the active visualization path; neither figure is
-an f64 flow-graph diagnostic.
-
-The retired `flow-graph-discover-e2e` and
-`flow-graph-unresolved-diagnostic` binaries depended on the f64 flow-graph
-implementation to define their observations: the first bucketed approximate
-capacity agreement and numerical rejection modes, and the second selected
-words specifically from f64 unresolved/error outcomes. Neither has a coherent
-exact-only replacement under the current public APIs.
+The first three are algorithm-development probes without canonical retained
+outputs. `visualize-tube/` is the retained explanatory artifact packet.
 
 ## Binary64 Prototype Retirement
 
@@ -109,44 +41,30 @@ true/false/indeterminate predicate contract and was retired when project time
 ended. The inventory below records what remains current and what was retired;
 it is not a replacement evidence plan for the prototype.
 
+The retired `flow-graph-discover-e2e` and
+`flow-graph-unresolved-diagnostic` binaries depended on the f64 flow-graph
+implementation to define their observations: the first bucketed approximate
+capacity agreement and numerical rejection modes, and the second selected
+words specifically from f64 unresolved/error outcomes. Neither has a coherent
+exact-only replacement under the current public APIs.
+
 | Command or output surface | Classification | Migration result |
 | --- | --- | --- |
 | `flow-graph-frontier`: transition edges, half-cache sizes, plus-depth counts, closed-cycle counts, split-missing counts, structural zero-ω predicate | Exact | Preserved in `frontier/main.rs`; the structural predicate now reads exact cache matrices directly. |
 | `flow-graph-frontier`: binary64 tube live/empty/error counts, candidate actions, polygon inequalities, and operation counters | Retired prototype surface | Removed; an exact per-word tube/counter scan is not a bounded replacement for a combinatorial frontier command. |
 | `flow-graph-discover-e2e` | Retired prototype binary | Deleted from Cargo and source; its approximate capacity/rejection question is historical only. |
 | `flow-graph-unresolved-diagnostic` | Retired prototype binary | Deleted from Cargo and source; its input population was defined by the retired binary64 resolver. |
-| `flow-graph-endpoint-spike` and `flow-graph-closed-word-spike` | Exact | Already exact representation spikes; left unchanged outside this child’s ownership. |
+| `flow-graph-endpoint-spike` and `flow-graph-closed-word-spike` | Exact | Already exact representation spikes; left in their child directories. |
 | `flow-graph-visualize-tube-data` | Active explanatory visualization | The active figure remains reproducible; its producer must use exact tube geometry and convert only at the JSON/rendering boundary. |
 | `flow-graph-proof-risk` rows and exact FG search | Exact | Consumes public exact FG/tube APIs. The retained verifier rows are implementation evidence, not proof of the idealized theorem or CH2021's scope. |
 
-## Smoke Checks
-
-Use release mode for timing or count interpretation.
-
-```bash
-cargo run -p exp-dev-flow-graph --release --bin flow-graph-frontier -- --max-facets 5 --output /tmp/flow-graph-frontier-smoke.jsonl
-cargo run -p exp-dev-flow-graph --release --bin flow-graph-endpoint-spike -- --max-facets 5 --max-rows 1 --output /tmp/flow-graph-endpoint-spike-smoke.jsonl
-cargo run -p exp-dev-flow-graph --release --bin flow-graph-visualize-tube-data -- --attempt 3 --output /tmp/flow-graph-attempt3-visualization.json
-uv run --script experiments/dev-flow-graph/visualize-tube/render.py --input /tmp/flow-graph-attempt3-visualization.json --output /tmp/flow-graph-attempt3-visualization.pdf
-```
-
 ## Artifact Policy
 
-- Current commands default to stdout unless `--output` is provided.
+- Current Rust producers default to stdout unless `--output` is provided.
 - Do not treat scratch JSONL as thesis evidence until the producing command,
   input path, commit, and interpretation are recorded.
-- The default input dataset is currently owned by
+- The default input dataset's physical home is
   `experiments/combinatorial-cells/polytopes.jsonl`; this package only reads it.
-
-## Current Experiment Families
-
-- `frontier/`: exact-compatible word-frontier counts.
-- `endpoint-spike/`: exact endpoint-set representation spike.
-- `closed-word-spike/`: exact closed-word resolver spike for selected generated
-  closed words.
-- `visualize-tube/`: exact-rational tube JSON producer plus Python matplotlib
-  renderer for active explanatory thesis figures; finite floats enter only at
-  the JSON/rendering boundary.
 
 ## Current Analysis Notes
 
@@ -201,7 +119,8 @@ after the question has a stable evidence home.
 | `frontier/` | word-frontier counts still guide search/representation choices | the measured path is stable enough that counts or runtime are the result | `experiments/performance/` |
 | `endpoint-spike/` | exact endpoint-set representation remains useful historical context for the current exact implementation | the crate exact path fully supersedes it and no active diagnostic reads it | git history, or a short note here if future agents still need the clue |
 | `closed-word-spike/` | selected generated words are still being used to understand exact closed-word behavior | a selected word becomes a stable regression or proposition witness | crate tests or `experiments/verification/` |
-| `visualize-tube/` | tube geometry needs inspection to debug a word or explain a mismatch | a selected image/data packet supports thesis exposition | owning thesis/topic asset packet |
+| `visualize-tube/` | tube geometry needs inspection to debug a word or explain a mismatch | a selected image/data packet supports thesis exposition | relevant thesis/topic asset packet |
+
 ## Promotion Targets
 
 - Move or copy runtime, memory, counter, and profiling targets to
