@@ -1,11 +1,14 @@
 # Sys-Datascience Exploration Completion Contract
 
 Status: exploration/research slice satisfied after the corrected broad-first
-cycle and its reviewed 2026-07-15 portfolio refresh. This is not thesis-level closure
-of the data-science story: FACTSHEET 34.1 still requires more data, whose exact
-design belongs to the later demonstration/integration decision. The recovery-
-era demonstration-readiness judgment was premature; this phase transition
-follows new reviewed evidence and value/cost decisions.
+cycle and its reviewed 2026-07-15 portfolio refresh. This contract closes that
+exploration slice; it does not by itself establish thesis-level closure.
+Project fact 34.1 records that the work was incomplete when the fact was
+written, not a standing requirement for another dataset after later work.
+Current closure must be assessed from the later packets, reproduction state,
+and active thesis claim. The recovery-era demonstration-readiness judgment was
+premature; this phase transition follows new reviewed evidence and value/cost
+decisions.
 
 Exploration is feature-complete only when the following are true or have an
 explicit source-backed value/cost disposition:
@@ -98,6 +101,6 @@ In particular:
 
 Closure was rechecked across code, data, artifact identity, provenance,
 interpretation, review status, and future-session routing. The triangle theorem
-still needs Jörn's mathematical acceptance before thesis use. FACTSHEET 34.1
-still owns later consumer-driven data acquisition. Neither point is authority
-to drain the exploration inventory.
+still needs Jörn's mathematical acceptance before thesis use. Project fact 34.1
+adds no standing later-data requirement. Neither point is authority to drain
+the exploration inventory.

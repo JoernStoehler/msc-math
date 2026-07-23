@@ -4,11 +4,11 @@ Original account: 2026-07-12. Closure refresh: 2026-07-15.
 
 Status: reviewed exploration synthesis for the corrected broad-first cycle,
 refreshed after disposition of the selected later research lines. This closes
-the exploration/research slice, not the thesis-level data-science story:
-FACTSHEET 34.1 still requires more data, to be designed from retained claims
-and demonstration needs rather than launched as unprioritized research.
-Generated artifacts and their producers own detailed metrics; this file owns
-claim boundaries, research decisions, and downstream routing.
+the exploration/research slice, not by itself the thesis-level data-science
+story. Project fact 34.1 records that the work was incomplete when the fact was
+written; it does not independently require another dataset after later work.
+Generated artifacts and their producers establish detailed metrics; this file
+records claim boundaries, research decisions, and downstream routing.
 
 ## Questions And Selection Rationale
 
@@ -335,8 +335,9 @@ search, and Jörn's acceptance of the triangle mathematics. These are explicit
 future opportunities, not an active queue: no cheap unrun packet is likely to
 change a retained claim or the decision to move into readiness/demonstration.
 
-FACTSHEET 34.1 still requires more data before thesis-level data-science
-closure. The next session must choose datasets and budgets for an actual
-consumer, verify reproduction, and preserve these claim boundaries. It becomes
-reopened exploration only if it again searches across methods, sources, or
-objectives to decide what the scientific account should be.
+Project fact 34.1 adds no standing later-data requirement. A later session
+should verify reproduction and preserve these claim boundaries, then identify
+any concrete gap in the current thesis use before choosing another dataset or
+budget. It becomes reopened exploration only if it again searches across
+methods, sources, or objectives to decide what the scientific account should
+be.

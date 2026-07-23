@@ -143,7 +143,9 @@ generator-local bounce structure under their separate review boundaries;
 witness-level orientation relevance with a failed ridge mediator; and bounded
 gradient/optimizer results. Bespoke adaptive search produced no scientific
 comparison. Parked routes have named reopen conditions rather than forming a
-queue. FACTSHEET 34.1 still requires later consumer-driven thesis-level data.
+queue. Project fact 34.1 records that this work was still incomplete when the
+fact was written; it does not impose a standing requirement for another
+dataset. Check the later packets and active thesis claim for current closure.
 `LICCA.md` classifies retained dormant scripts; none is selected by default.
 
 The July 22 addendum records the later five-case local-maxima screen, exact

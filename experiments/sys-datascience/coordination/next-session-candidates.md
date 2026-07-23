@@ -13,14 +13,15 @@ Snapshot default: empirical exploration is closed after the reviewed July 15
 portfolio refresh and July 22 known-seed closeout. The next sys-datascience
 session should perform
 readiness/demonstration work for an explicit thesis consumer: select source
-roles, choose any additional FACTSHEET 34.1 data for those roles, and verify
-the reproduction path while preserving the recorded claim boundaries. Do not
-restart exploration merely because a method, worktree, larger sample, or
-possible generalization exists.
+roles and verify the reproduction path while preserving the recorded claim
+boundaries. Project fact 34.1 does not independently require more data; add a
+dataset only if the current thesis use or reproduction audit exposes a concrete
+gap. Do not restart exploration merely because a method, worktree, larger
+sample, or possible generalization exists.
 
 | Topic | Stance | Next action | Reopen gate |
 | --- | --- | --- | --- |
-| Demonstration/readiness | next default | choose exact packet-local artifacts and any consumer-driven additional data; verify source-to-output reproduction | presentation needs do not widen empirical claims |
+| Demonstration/readiness | next default | choose exact packet-local artifacts and verify source-to-output reproduction; identify any concrete current gap before adding data | presentation needs do not widen empirical claims |
 | Alternative-source ridge/rho proposer | reviewed and closed | may be consumed as bounded operational sub-threshold proposer-transfer evidence | reopen only for a named source-stability or threshold-directed claim |
 | Fixed-shape orientation witness | reviewed and closed after transplant | may be consumed as witness-level evidence that symplectic alignment matters; retain the failed ridge-mediator gate | enlarge only for a necessary population or common-direction claim |
 | Generic ridge hardening | reviewed and closed | retain coarse transfer and failed-hardening result | reopen only for a second stage adding information beyond lower ridge |

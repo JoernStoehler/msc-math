@@ -66,10 +66,10 @@ current experiment status remain in packet-local artifacts and READMEs.
 ## Current Prioritization
 
 Exploration is closed after the July 15 portfolio review. The default next
-phase is readiness/demonstration for a named thesis consumer, including any
-additional FACTSHEET 34.1 data selected for an already fixed role. New rows,
-methods, sources, or proofs do not reopen exploration merely because they are
-feasible.
+phase is readiness/demonstration for a named thesis consumer. Project fact 34.1
+records that work was incomplete when the fact was written and does not
+independently require another dataset. New rows, methods, sources, or proofs do
+not reopen exploration merely because they are feasible.
 
 The July 22 known-seed cycle adds these current decisions:
 

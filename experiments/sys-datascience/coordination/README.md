@@ -26,9 +26,11 @@ empirical reopening.
 exploration-result.md audits and rejects the 2026-07-10 recovery closure as
 phase authority while preserving its bounded retained-table findings.
 feature-completion-contract.md records the corrected stopping condition and its
-scope. Thesis-level data-science closure still requires later data under
-FACTSHEET 34.1; readiness/demonstration must choose it for the actual consumer
-without treating available packets, worktrees, or larger samples as a queue.
+scope. Project fact 34.1 records that the data-science work was incomplete when
+the fact was written; it does not require a new dataset after later work.
+Assess thesis-level closure from the later packets, reproduction state, and
+active thesis claim without treating available packets, worktrees, or larger
+samples as a queue.
 
 recovery-audit-2026-07-10.md records the completed checkpoint audit.
 workflow-evaluations/ contains historical GPT-5.5 process evidence, not current

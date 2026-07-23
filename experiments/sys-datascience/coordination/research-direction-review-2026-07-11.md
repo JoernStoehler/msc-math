@@ -172,7 +172,7 @@ learn that gauge.
 | I3-TAIL-BACKTEST | Bucket-level survival/backtest and sequential stopping. Useful only for a probability/compute-allocation claim. |
 | I4-BLIND-SCALE | Another blind same-generator 1M. Rejected now; likely repeats sub-threshold evidence. |
 | I5-MORE-TABLE-MODELS | More standard estimators on current columns. Rejected as a program; use only inside a named F2 comparison. |
-| I6-GRADIENT-INTEGRATION | Audit the project-level random/gradient story required by FACTSHEET 30. High project value; folder scope cannot settle it. |
+| I6-GRADIENT-INTEGRATION | Audit the project-level random/gradient story required by project fact 30. High project value; folder scope cannot settle it. |
 | I7-HKO-REFERENCE | Correctly normalized HKO ranks and branch anatomy. Potentially valuable, but HKO local maximality stays separately owned. |
 | I8-REBUILD | Repeat full source-to-table/P2 reconstruction. Rejected as redundant given Git identity, hashes, artifacts, and reviewed 2026-07-10 rebuild. |
 | I9-DEMONSTRATION | Determine future table/figure roles and source inputs. Current after empirical closure: readiness/demonstration may select source-backed roles without reopening exploration or drafting thesis prose. |
