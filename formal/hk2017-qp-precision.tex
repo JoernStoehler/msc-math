@@ -9,6 +9,7 @@
 %   lem:q-error-first-order, lem:q-correction-second-order,
 %   rem:runtime-q-bound, lem:pseudoinverse-orthogonality,
 %   lem:kkt-batched-defect-enclosure,
+%   lem:kkt-normwise-defect-enclosure,
 %   lem:kkt-certified-curvature-direction,
 %   lem:kkt-cyclic-obstruction-inheritance,
 %   cor:taylor-structure, cor:exact-correction
@@ -33,7 +34,9 @@ Remark~\ref{rem:runtime-q-bound} is not an error bound for the exact
 binary64-input KKT problem.  Neither may be cited as a numerical certificate.
 The current proved direct certificate is instead the outward inverse-defect
 argument in Lemmas~\ref{lem:kkt-verified-inverse-defect} and
-\ref{lem:kkt-batched-defect-enclosure}.  This note must still be reorganized
+\ref{lem:kkt-batched-defect-enclosure}, with the cheaper normwise
+specialization in Lemma~\ref{lem:kkt-normwise-defect-enclosure}.  This note
+must still be reorganized
 before thesis-facing use.
 \end{remark}
 
@@ -178,14 +181,24 @@ Apply this entrywise to matrix products, and write
  T_x&=\operatorname{updot}(D,|\widehat x|).
  \end{aligned}
 \]
+Let the computed central quantities include the final rounded subtraction:
+\[
+ \widehat C_R
+ =\operatorname{fl}\!\left(I-\operatorname{fl}(\widehat K R)\right),
+ \qquad
+ \widehat c_x
+ =\operatorname{fl}\!\left(
+   \operatorname{fl}(\widehat K\widehat x)-b
+ \right).
+\]
 Then outward evaluation of
 \[
  \begin{aligned}
  E&=
-   |I-\operatorname{fl}(\widehat K R)|
+   |\widehat C_R|
    +\gamma(S_R+I)+\delta\mathbf 1+T_R,\\
  r&=
-   |\operatorname{fl}(\widehat K\widehat x)-b|
+   |\widehat c_x|
    +\gamma(S_x+|b|)+\delta\mathbf 1+T_x
  \end{aligned}
 \]
@@ -209,10 +222,9 @@ Applying~\((*)\) to the signed product and its final subtraction, and using
 the corresponding nonnegative upper product, gives
 \[
  \begin{aligned}
- |I-\operatorname{fl}(\widehat K R)-(I-\widehat K R)|
+ |\widehat C_R-(I-\widehat K R)|
  &\leq\gamma(S_R+I)+\delta\mathbf 1,\\
- |\operatorname{fl}(\widehat K\widehat x)-b
-          -(\widehat K\widehat x-b)|
+ |\widehat c_x-(\widehat K\widehat x-b)|
  &\leq\gamma(S_x+|b|)+\delta\mathbf 1.
  \end{aligned}
 \]
@@ -224,6 +236,95 @@ The triangle inequality now proves the defect enclosure.  Replacing \(R\)
 by \(\widehat x\) gives the residual enclosure.  Outward row sums give the
 claimed infinity-norm bounds.
 \end{proof}
+
+\begin{lemma}[Normwise enclosure of the exact KKT residual and inverse defect]%
+\label{lem:kkt-normwise-defect-enclosure}
+Under the hypotheses and dot-product error model of
+Lemma~\ref{lem:kkt-batched-defect-enclosure}, put
+\[
+ k=\|\widehat K\|_\infty,\quad
+ d=\|D\|_\infty,\quad
+ u=\|R\|_\infty,\quad
+ v=\|\widehat x\|_\infty.
+\]
+Use the fully rounded central quantities
+\(\widehat C_R,\widehat c_x\) defined in
+Lemma~\ref{lem:kkt-batched-defect-enclosure}.
+Then outward evaluation of
+\[
+ \begin{aligned}
+ \overline e_{\mathrm{norm}}
+ &=\|\widehat C_R\|_\infty
+   +\gamma(ku+1)+n\delta+du,\\
+ \overline r_{\mathrm{norm}}
+ &=\|\widehat c_x\|_\infty
+   +\gamma(kv+\|b\|_\infty)+\delta+dv
+ \end{aligned}
+\]
+gives
+\[
+ \|I-KR\|_\infty\leq\overline e_{\mathrm{norm}},\qquad
+ \|K\widehat x-b\|_\infty\leq\overline r_{\mathrm{norm}}.
+\]
+Consequently these quantities may replace the entrywise batched bounds in
+Lemma~\ref{lem:kkt-verified-inverse-defect} whenever
+\(\overline e_{\mathrm{norm}}<1\).
+\end{lemma}
+
+\begin{proof}
+For one entry of the computed inverse defect, the dot-product hypothesis gives
+\[
+ \left|
+ (\widehat C_R)_{ij}
+ -(I-\widehat K R)_{ij}
+ \right|
+ \leq
+ \gamma\left((|\widehat K||R|)_{ij}+I_{ij}\right)+\delta.
+\]
+Summing across row \(i\), then taking the maximum, yields
+\[
+ \|\widehat C_R-(I-\widehat K R)\|_\infty
+ \leq\gamma(ku+1)+n\delta,
+\]
+because
+\(\||\widehat K||R|\|_\infty\leq ku\).
+The input perturbation satisfies
+\(\|(K-\widehat K)R\|_\infty\leq du\).
+The triangle inequality proves the defect bound.  The same argument for the
+single residual column gives a single \(\delta\), while
+\(\||\widehat K||\widehat x|\|_\infty\leq kv\) and
+\(\|(K-\widehat K)\widehat x\|_\infty\leq dv\), proving the residual bound.
+\end{proof}
+
+\begin{remark}[Staged normwise and entrywise evaluation]%
+\label{rem:kkt-staged-defect-enclosure}
+The normwise enclosure avoids the four auxiliary nonnegative matrix products
+in Lemma~\ref{lem:kkt-batched-defect-enclosure}, but may be looser.  After a
+successful finite factorization and under the supported arithmetic contract,
+the development algorithm first evaluates
+Lemma~\ref{lem:kkt-normwise-defect-enclosure}; if it is indeterminate, it
+evaluates the tighter entrywise enclosure; only a second indeterminate result
+causes exact rational fallback.  Factorization failure or an unsupported
+floating-point environment instead causes exact fallback before these stages.
+A determinate result from either stage has the same guarantee from
+Lemma~\ref{lem:kkt-verified-inverse-defect}.
+
+For a word of length \(m\), only the omega block of the binary64-input KKT
+matrix incurs assembly roundoff.  If \(M\) bounds the absolute input
+coordinates, the four-term coordinate formula and the same dot-product model
+give the per-entry bound
+\[
+ |K_{ij}-\widehat K_{ij}|
+ \leq \gamma_4\,4M^2+\delta_4.
+\]
+There are at most \(m-1\) such entries in one row, so the implementation uses
+\[
+ \|D\|_\infty
+ \leq (m-1)(\gamma_4\,4M^2+\delta_4),
+\]
+with every operation rounded upward.  Constraint coordinates, ones, and zeros
+are copied exactly from the binary64 input.
+\end{remark}
 
 \begin{remark}[Binary64 implementation contract for the batched enclosure]%
 \label{rem:kkt-batched-binary64-contract}

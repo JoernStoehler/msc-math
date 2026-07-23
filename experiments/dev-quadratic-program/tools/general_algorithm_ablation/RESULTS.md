@@ -11,7 +11,9 @@ correctness-guaranteed general route combines:
 - exact/outward handling of words shorter than five;
 - all-length `LBL^T` factorization;
 - certified positive-curvature discovery and cyclic-order inheritance;
-- a batched verified inverse-defect enclosure;
+- curvature rejection before constructing an unused solution and inverse;
+- a cheap normwise verified inverse-defect enclosure, followed only when
+  necessary by the tighter batched enclosure;
 - exact rational fallback only when the enclosure is indeterminate; and
 - outward aggregation from candidate `Q` intervals to a capacity interval.
 
@@ -52,7 +54,7 @@ non-product control remained accepted and was audited exactly.
 
 ## Numerical audit
 
-The certified batched general predicate was compared with exact rational
+The staged normwise-then-batched general predicate was compared with exact rational
 arithmetic on 249 systems:
 
 - 97 ordinary generated systems;
@@ -67,8 +69,14 @@ It produced:
 - 15 indeterminate decisions, all resolved exactly;
 - zero beta-radius violations;
 - zero `Q`-radius violations;
-- maximum observed beta-error/radius ratio `0.00384`; and
-- maximum observed `Q`-error/radius ratio `0.00246`.
+- maximum observed beta-error/radius ratio `0.00149`; and
+- maximum observed `Q`-error/radius ratio `0.00081`.
+
+The normwise stage alone became indeterminate on all 27 sampled systems at
+scale `1e3`; resolving those directly in exact arithmetic took about `4.9 s`.
+The tighter second stage decided all 27, so the selected staged route used no
+exact fallback there. The 15 remaining indeterminate systems all belong to the
+deliberately near-singular cohort.
 
 The product numerical control compared 178 sampled systems. It again found no
 wrong determinate decision or radius violation, but returned indeterminate 150
@@ -94,36 +102,39 @@ interleaved rounds.
 
 | Variant | Median | Status |
 | --- | ---: | --- |
-| previous empirical inverse guard | 75.49 ms | heuristic baseline |
-| scalar outward enclosure with all-length pruning | 88.38 ms | certified control |
-| batched enclosure with all-length pruning | 77.10 ms | selected general route |
-| empirical predicate plus lazy exact fallback | 30.50 ms | fast but unsound |
+| previous empirical inverse check | 75.56 ms | heuristic baseline |
+| scalar outward enclosure with all-length pruning | 87.48 ms | verified control |
+| batched enclosure with all-length pruning | 75.96 ms | tighter verified stage |
+| normwise enclosure with all-length pruning | 40.19 ms | cheap verified stage |
+| staged normwise then batched enclosure | 40.43 ms | selected general route |
+| empirical predicate plus lazy exact fallback | 29.82 ms | fast but unsound |
 
-The batched enclosure is `1.15x` faster than the scalar interval
-implementation and about two percent slower than the previous empirical
-baseline on the same long-word cohort. The full general profile, including 350
-short words, took `81.66 ms` for 14,241 words and used no exact fallback.
+The selected route is `1.87x` faster than the previous empirical baseline on
+the same long-word cohort. The full general profile, including 350 short
+words, took `45.33 ms` for 14,241 words and used no exact fallback.
 
 These route timings start after validation and candidate construction. A
 separate nine-round end-to-end profile on the same eight F5--F12 inputs gives:
 
 | Route | Validation | Exact transition and cycles | Candidate processing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| previous empirical inverse guard | 1.25 ms | 20.05 ms | 77.06 ms | 98.32 ms |
-| selected certified route | 1.25 ms | 20.04 ms | 81.60 ms | 103.06 ms |
+| previous empirical inverse check | 1.26 ms | 20.06 ms | 76.51 ms | 97.89 ms |
+| batched verified route | 1.26 ms | 20.12 ms | 80.30 ms | 101.70 ms |
+| selected staged verified route | 1.28 ms | 20.09 ms | 44.64 ms | 65.98 ms |
 
-The selected route is therefore about 4.8% slower end to end on this cohort.
-It also processes 350 short words by one-sided outward rejection, taking about
-4.27 ms; the previous empirical reproduction omits words shorter than five.
+The selected route is therefore `1.48x` faster end to end on this cohort.
+It also processes 350 short words by one-sided outward rejection; the previous
+empirical reproduction omits words shorter than five.
 
 Holding the numerical predicate fixed exposes the combinatorial gain. The
 previous route factors and tests all 13,891 long-word systems. Curvature
 inheritance reduces this to 4,535 factorizations and 3,817 beta/Q guards:
 67.4% of factorizations are skipped. With the old empirical predicate on that
-same pruned route, candidate processing takes 30.50 ms, a 2.48x speedup over
-yesterday's 75.49 ms. The selected certificate spends 46.90 ms on the 3,817
-guards; 34.03 ms is the inverse-defect phase. This certification cost consumes
-the combinatorial saving.
+same pruned route, candidate processing takes 29.82 ms. The selected verified
+check spends about 12.07 ms on the 3,817 survivors: 4.79 ms constructing norm
+bounds, 0.77 ms on residuals, 5.53 ms on inverse defects, and 0.17 ms on final
+decisions. Moving curvature rejection before the solution and inverse avoids
+wasted work on 718 direct obstructions and saves about 1.3 ms.
 
 The empirical control is `2.4x` faster than the selected route, but that is not
 a valid correctness/performance trade: it can make an unrepairable wrong
@@ -133,16 +144,24 @@ Earlier ablations also reject these alternatives:
 
 - allocation-heavy cyclic-subsequence lookup dominated runtime; the retained
   mask-and-position lookup gives the same result without that cost;
-- obstruction cutoffs eight, nine, and all-length were a timing plateau, so
-  the all-length route removes an unnecessary policy and backend split;
+- obstruction cutoffs eight, nine, and all-length remain within about one
+  percent, so the all-length route removes an unnecessary policy and backend
+  split;
 - scalar outward defect evaluation spends most of its time constructing the
   inverse defect; batching removes about one fifth of total time;
+- four auxiliary batched products erased the combinatorial speedup; replacing
+  them by proved induced-norm bounds restores it, while staged retry retains
+  the tighter scale behavior;
+- packing the solution and inverse right-hand sides into one factor solve
+  changed runtime by less than measurement noise and was discarded;
+- a manual small-matrix defect loop raised that phase from about 5.4 ms to
+  22.4 ms and was discarded;
 - unchecked direct solves are faster but have no safe predicate;
 - the symmetric eigensolver is slower and has known scale-dependent errors.
 
-For products, the general control took about `642 ms` over the three fixtures,
+For products, the general control took about `650 ms` over the three fixtures,
 including 698 exact fallbacks. The existing product solver medians were
-approximately `0.16 ms`, `2.06 ms`, and `34.01 ms`. Code uniformity would not
+approximately `0.16 ms`, `2.09 ms`, and `34.44 ms`. Code uniformity would not
 justify that regression.
 
 ## Independent review
@@ -153,7 +172,7 @@ the final evidence run:
 - LLVM had constant-folded away the gradual-underflow check. The route now
   tests flush-to-zero and denormals-are-zero with opaque runtime operands once
   per route. When the arithmetic contract is absent it bypasses short-word,
-  curvature, and batched floating-point certificates and exact-resolves the
+  curvature, normwise, and batched floating-point checks and exact-resolves the
   original candidate stream. Release disassembly was checked for the two
   multiplications and conditional branch.
 - The proof named `nalgebra 0.35.0` as the certified multiplication
@@ -167,6 +186,13 @@ the final evidence run:
   route-agreement, and product-agreement audits now require positive comparison
   counts.
 
+A second read-only review covered the new normwise formula, global omega
+assembly bound, staged fallback, and early curvature rejection. It found no
+runtime soundness error. It did find two formal-description defects, both
+corrected: the central residual and defect now explicitly include their final
+rounded subtraction, and the staging remark now records factorization failure
+and unsupported arithmetic as earlier exact-fallback paths.
+
 The general F5--F7 fixtures contain no exact-positive candidate removed by
 curvature pruning. The product hypercube control contains 128 such candidates,
 so the end-to-end pruning comparison is exercised, but not on the random
@@ -177,7 +203,7 @@ general cohort.
 This packet is ready for adversarial review, not production migration. The
 review should try to falsify:
 
-1. the batched rounding and underflow contract;
+1. the normwise and batched rounding and underflow contracts;
 2. the verified-inverse and `Q = -xi/2` propagation;
 3. certified curvature projection and cyclic inheritance;
 4. maximum-`Q` capacity interval aggregation;

@@ -30,11 +30,13 @@ of that stream is an imported HK/enumeration obligation, not reproved here.
    Bunch--Kaufman `LBL^T`. Its inertia and a numerical null-space vector may
    propose a positive-curvature direction. The proposal is rejected unless an
    outward calculation proves that an exact direction in `ker(C)` has positive
-   curvature. A proved obstruction is cached.
-4. A survivor reuses the same factorization for its solution and approximate
-   inverse. Ordinary binary64 matrix products are enlarged by analytic
-   dot-product, KKT-assembly, subtraction, and underflow terms. A verified
-   inverse-defect argument then encloses every solution component.
+   curvature. A proved obstruction is cached without first constructing the
+   unused solution and inverse.
+4. A survivor reuses the factorization for its solution and approximate
+   inverse. A cheap normwise calculation first encloses the residual and
+   inverse defect. If that is inconclusive, a tighter entrywise calculation is
+   tried. Both enlarge ordinary binary64 products by proved dot-product,
+   KKT-assembly, subtraction, and underflow terms.
 5. The beta signs and `Q` are decided from that enclosure. The identity
    `Q = -xi/2` avoids a second quadratic-form error analysis. Any
    indeterminate case is solved in exact rational arithmetic.
@@ -48,7 +50,9 @@ The proof-to-code labels are:
 | Claim | Formal label | Main implementation |
 | --- | --- | --- |
 | verified inverse and solution radius | `lem:kkt-verified-inverse-defect` | `decision_from_certified_norms` |
+| cheap normwise residual and defect enclosure | `lem:kkt-normwise-defect-enclosure` | `certify_direct_solution_normwise_profiled` |
 | batched residual and defect enclosure | `lem:kkt-batched-defect-enclosure` | `certify_direct_solution_batched_profiled` |
+| normwise, then batched, then exact staging | `rem:kkt-staged-defect-enclosure` | `certify_direct_solution_hybrid_profiled` |
 | beta, `Q = -xi/2`, and action intervals | `cor:kkt-beta-q-from-xi` | `decision_from_certified_norms`, `record_case_capacity_interval` |
 | certified tangent curvature | `lem:kkt-certified-curvature-direction` | `certify_curvature` |
 | cyclic obstruction inheritance | `lem:kkt-cyclic-obstruction-inheritance` | `contains_certified_subword` |
@@ -79,9 +83,9 @@ input and needs an explicit preprocessing contract.
 
 ## What is and is not certified
 
-The batched route, scalar outward control, curvature rejection, exact fallback,
-and final capacity interval are theorem-backed under their stated arithmetic
-and candidate-stream assumptions.
+Both floating-point enclosure stages, the scalar outward control, curvature
+rejection, exact fallback, and final capacity interval are theorem-backed
+under their stated arithmetic and candidate-stream assumptions.
 
 The following are controls only:
 
@@ -117,7 +121,8 @@ It writes:
 - `profile.txt`: interleaved candidate-processing ablations and separate
   product timings;
 - `end-to-end.txt`: validation, exact transition/cycle construction, route,
-  and total timings for the empirical control and selected route.
+  and total timings for the empirical control, tighter entrywise route, and
+  selected staged route.
 
 Focused tests and the formal build:
 

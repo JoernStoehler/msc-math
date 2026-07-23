@@ -1,9 +1,11 @@
 //! Retained four-dimensional QP route experiment.
 //!
-//! The comparison contains scalar-interval and batched inverse-defect
-//! enclosures plus an empirical control. The certified variants implement
-//! Lemmas `lem:kkt-verified-inverse-defect` and
-//! `lem:kkt-batched-defect-enclosure` from `formal/hk2017-qp-precision.tex`.
+//! The comparison contains scalar-interval, batched, normwise, and staged
+//! inverse-defect enclosures plus an empirical control. The verified variants
+//! implement Lemmas `lem:kkt-verified-inverse-defect`,
+//! `lem:kkt-batched-defect-enclosure`, and
+//! `lem:kkt-normwise-defect-enclosure` from
+//! `formal/hk2017-qp-precision.tex`.
 //! Curvature discovery and cyclic inheritance implement
 //! `lem:kkt-certified-curvature-direction` and
 //! `lem:kkt-cyclic-obstruction-inheritance` from the same file.
@@ -81,6 +83,8 @@ enum FactorKind {
 enum GuardKind {
     OutwardCertified,
     BatchedAnalyticEnvelope,
+    NormwiseAnalyticEnvelope,
+    HybridAnalyticEnvelope,
     EmpiricalThenExact,
 }
 
@@ -270,6 +274,14 @@ fn main() {
         run_batched_envelope_audit(&case_words);
         return;
     }
+    if std::env::args().any(|argument| argument == "--normwise-envelope-audit") {
+        run_normwise_envelope_audit(&case_words);
+        return;
+    }
+    if std::env::args().any(|argument| argument == "--hybrid-envelope-audit") {
+        run_hybrid_envelope_audit(&case_words);
+        return;
+    }
     if std::env::args().any(|argument| argument == "--adversarial-predicate-search") {
         run_adversarial_predicate_search();
         return;
@@ -279,36 +291,36 @@ fn main() {
         return;
     }
     if std::env::args().any(|argument| argument == "--known-negative-controls") {
-        run_known_negative_control_audit("batched", GuardKind::BatchedAnalyticEnvelope);
+        run_known_negative_control_audit("hybrid", GuardKind::HybridAnalyticEnvelope);
         run_known_negative_control_audit("empirical", GuardKind::EmpiricalThenExact);
         return;
     }
     if std::env::args().any(|argument| argument == "--verification-packet") {
         let products = product_case_words();
         run_exact_route_agreement_audit(
-            "general_batched",
+            "general_hybrid",
             &case_words,
             Some(7),
-            GuardKind::BatchedAnalyticEnvelope,
+            GuardKind::HybridAnalyticEnvelope,
         );
         run_exact_route_agreement_audit(
-            "product_billiard_batched_control",
+            "product_billiard_hybrid_control",
             &products,
             None,
-            GuardKind::BatchedAnalyticEnvelope,
+            GuardKind::HybridAnalyticEnvelope,
         );
         run_product_enumeration_agreement_audit(&products);
         run_existing_product_solver_agreement_audit(&products);
-        run_known_negative_control_audit("batched", GuardKind::BatchedAnalyticEnvelope);
+        run_known_negative_control_audit("hybrid", GuardKind::HybridAnalyticEnvelope);
         return;
     }
     if std::env::args().any(|argument| argument == "--numerics-packet") {
         let products = product_case_words();
-        run_batched_envelope_audit(&case_words);
+        run_hybrid_envelope_audit(&case_words);
         run_empirical_predicate_audit(&case_words);
-        run_product_predicate_audit("batched", &products, GuardKind::BatchedAnalyticEnvelope);
+        run_product_predicate_audit("hybrid", &products, GuardKind::HybridAnalyticEnvelope);
         run_product_predicate_audit("empirical", &products, GuardKind::EmpiricalThenExact);
-        run_known_negative_control_audit("batched", GuardKind::BatchedAnalyticEnvelope);
+        run_known_negative_control_audit("hybrid", GuardKind::HybridAnalyticEnvelope);
         run_known_negative_control_audit("empirical", GuardKind::EmpiricalThenExact);
         return;
     }
@@ -317,9 +329,9 @@ fn main() {
         run_slowdown_ablation(&case_words);
         run_best_route_benchmark(
             "general",
-            "batched_envelope",
+            "hybrid_envelope",
             &case_words,
-            GuardKind::BatchedAnalyticEnvelope,
+            GuardKind::HybridAnalyticEnvelope,
         );
         run_best_route_benchmark(
             "general",
@@ -329,9 +341,9 @@ fn main() {
         );
         run_best_route_benchmark(
             "product_billiard",
-            "batched_general_control",
+            "hybrid_general_control",
             &products,
-            GuardKind::BatchedAnalyticEnvelope,
+            GuardKind::HybridAnalyticEnvelope,
         );
         run_existing_product_route_benchmark(&products);
         return;
@@ -357,6 +369,14 @@ fn main() {
         (Some(9), FactorKind::Lblt),
         (Some(12), FactorKind::Lblt),
     ];
+    if std::env::args().any(|argument| argument == "--normwise-routes") {
+        run_interleaved_guard_benchmark(
+            &case_words,
+            &variants,
+            GuardKind::NormwiseAnalyticEnvelope,
+        );
+        return;
+    }
     if std::env::args().any(|argument| argument == "--benchmark-only") {
         run_interleaved_benchmark(&case_words, &variants);
         return;
@@ -389,10 +409,13 @@ fn print_usage() {
     println!("  --end-to-end-profile");
     println!("optional falsification:");
     println!("  --batched-envelope-audit");
+    println!("  --normwise-envelope-audit");
+    println!("  --hybrid-envelope-audit");
     println!("  --known-negative-controls");
     println!("  --adversarial-predicate-search");
     println!("  --beta-boundary-search");
     println!("legacy ablations:");
+    println!("  --normwise-routes");
     println!("  --predicate-audit-only");
     println!("  --slowdown-ablation");
     println!("  --aggregation-only");
@@ -442,16 +465,16 @@ fn build_validated_case_words(
 
 fn run_end_to_end_profile(inputs: &[(String, Vec<Vector4<f64>>)]) {
     const ROUNDS: usize = 9;
-    let run = |certified: bool| {
+    let run = |guard_kind: Option<GuardKind>| {
         let started = Instant::now();
         let (cases, validation, candidate_stream) = build_validated_case_words(inputs);
         let route_started = Instant::now();
-        if certified {
+        if let Some(guard_kind) = guard_kind {
             std::hint::black_box(run_route_with_guard(
                 &cases,
                 Some(usize::MAX),
                 FactorKind::Lblt,
-                GuardKind::BatchedAnalyticEnvelope,
+                guard_kind,
             ));
         } else {
             std::hint::black_box(run_empirical_inverse_guard(&cases));
@@ -464,21 +487,25 @@ fn run_end_to_end_profile(inputs: &[(String, Vec<Vector4<f64>>)]) {
         }
     };
 
-    std::hint::black_box(run(false));
-    std::hint::black_box(run(true));
+    std::hint::black_box(run(None));
+    std::hint::black_box(run(Some(GuardKind::BatchedAnalyticEnvelope)));
+    std::hint::black_box(run(Some(GuardKind::HybridAnalyticEnvelope)));
     let mut empirical = Vec::with_capacity(ROUNDS);
-    let mut certified = Vec::with_capacity(ROUNDS);
+    let mut batched = Vec::with_capacity(ROUNDS);
+    let mut hybrid = Vec::with_capacity(ROUNDS);
     for round in 0..ROUNDS {
-        if round % 2 == 0 {
-            empirical.push(run(false));
-            certified.push(run(true));
-        } else {
-            certified.push(run(true));
-            empirical.push(run(false));
+        for offset in 0..3 {
+            match (round + offset) % 3 {
+                0 => empirical.push(run(None)),
+                1 => batched.push(run(Some(GuardKind::BatchedAnalyticEnvelope))),
+                2 => hybrid.push(run(Some(GuardKind::HybridAnalyticEnvelope))),
+                _ => unreachable!(),
+            }
         }
     }
     print_end_to_end_samples("yesterday_empirical_inverse_guard", &empirical);
-    print_end_to_end_samples("certified_batched_route", &certified);
+    print_end_to_end_samples("certified_batched_route", &batched);
+    print_end_to_end_samples("certified_hybrid_route", &hybrid);
 }
 
 fn print_end_to_end_samples(label: &str, samples: &[EndToEndSample]) {
@@ -693,6 +720,18 @@ fn run_slowdown_ablation(cases: &[(String, Vec<Vector4<f64>>, Vec<Vec<usize>>)])
         &long_cases,
         Some(12),
         FactorKind::Lblt,
+        GuardKind::NormwiseAnalyticEnvelope,
+    ));
+    std::hint::black_box(run_route_with_guard(
+        &long_cases,
+        Some(12),
+        FactorKind::Lblt,
+        GuardKind::HybridAnalyticEnvelope,
+    ));
+    std::hint::black_box(run_route_with_guard(
+        &long_cases,
+        Some(12),
+        FactorKind::Lblt,
         GuardKind::EmpiricalThenExact,
     ));
 
@@ -700,10 +739,12 @@ fn run_slowdown_ablation(cases: &[(String, Vec<Vector4<f64>>, Vec<Vec<usize>>)])
     let mut outward_all = Vec::with_capacity(ROUNDS);
     let mut selected = Vec::with_capacity(ROUNDS);
     let mut batched = Vec::with_capacity(ROUNDS);
+    let mut normwise = Vec::with_capacity(ROUNDS);
+    let mut hybrid = Vec::with_capacity(ROUNDS);
     let mut lazy_exact = Vec::with_capacity(ROUNDS);
     for round in 0..ROUNDS {
-        for offset in 0..5 {
-            match (round + offset) % 5 {
+        for offset in 0..7 {
+            match (round + offset) % 7 {
                 0 => empirical.push(run_empirical_inverse_guard(&long_cases)),
                 1 => outward_all.push(run_route(&long_cases, None, FactorKind::Lu).stats),
                 2 => selected.push(run_route(&long_cases, Some(12), FactorKind::Lblt).stats),
@@ -716,7 +757,25 @@ fn run_slowdown_ablation(cases: &[(String, Vec<Vector4<f64>>, Vec<Vec<usize>>)])
                     )
                     .stats,
                 ),
-                4 => lazy_exact.push(
+                4 => normwise.push(
+                    run_route_with_guard(
+                        &long_cases,
+                        Some(12),
+                        FactorKind::Lblt,
+                        GuardKind::NormwiseAnalyticEnvelope,
+                    )
+                    .stats,
+                ),
+                5 => hybrid.push(
+                    run_route_with_guard(
+                        &long_cases,
+                        Some(12),
+                        FactorKind::Lblt,
+                        GuardKind::HybridAnalyticEnvelope,
+                    )
+                    .stats,
+                ),
+                6 => lazy_exact.push(
                     run_route_with_guard(
                         &long_cases,
                         Some(12),
@@ -734,11 +793,15 @@ fn run_slowdown_ablation(cases: &[(String, Vec<Vector4<f64>>, Vec<Vec<usize>>)])
     print_slowdown_route_benchmark("outward_guard_every_word_lu", &outward_all);
     print_slowdown_route_benchmark("all_length_lblt_outward_guard", &selected);
     print_slowdown_route_benchmark("all_length_lblt_batched_envelope", &batched);
+    print_slowdown_route_benchmark("all_length_lblt_normwise_envelope", &normwise);
+    print_slowdown_route_benchmark("all_length_lblt_hybrid_envelope", &hybrid);
     print_slowdown_route_benchmark("all_length_lblt_empirical_then_exact", &lazy_exact);
     let empirical_ms = median_duration_ms(empirical.iter().map(|stats| stats.elapsed));
     let outward_ms = median_duration_ms(outward_all.iter().map(|stats| stats.elapsed));
     let selected_ms = median_duration_ms(selected.iter().map(|stats| stats.elapsed));
     let batched_ms = median_duration_ms(batched.iter().map(|stats| stats.elapsed));
+    let normwise_ms = median_duration_ms(normwise.iter().map(|stats| stats.elapsed));
+    let hybrid_ms = median_duration_ms(hybrid.iter().map(|stats| stats.elapsed));
     let lazy_exact_ms = median_duration_ms(lazy_exact.iter().map(|stats| stats.elapsed));
     println!(
         "slowdown.outward_all_over_empirical={:.6}",
@@ -755,6 +818,18 @@ fn run_slowdown_ablation(cases: &[(String, Vec<Vector4<f64>>, Vec<Vec<usize>>)])
     println!(
         "slowdown.batched_speedup_vs_scalar_interval={:.6}",
         selected_ms / batched_ms
+    );
+    println!(
+        "slowdown.normwise_speedup_vs_batched={:.6}",
+        batched_ms / normwise_ms
+    );
+    println!(
+        "slowdown.normwise_speedup_vs_yesterday={:.6}",
+        empirical_ms / normwise_ms
+    );
+    println!(
+        "slowdown.hybrid_speedup_vs_yesterday={:.6}",
+        empirical_ms / hybrid_ms
     );
     println!(
         "slowdown.lazy_exact_speedup_vs_yesterday={:.6}",
@@ -854,6 +929,12 @@ fn audit_guard_case(
         GuardKind::BatchedAnalyticEnvelope => {
             certify_direct_solution_batched(duals, word, &matrix, factor)
         }
+        GuardKind::NormwiseAnalyticEnvelope => {
+            certify_direct_solution_normwise(duals, word, &matrix, factor)
+        }
+        GuardKind::HybridAnalyticEnvelope => {
+            certify_direct_solution_hybrid(duals, word, &matrix, factor)
+        }
         GuardKind::EmpiricalThenExact => {
             empirical_inverse_radius_decision(&h, &matrix, &rhs, word, factor)
         }
@@ -898,9 +979,10 @@ fn audit_guard_case(
         if let Some(q_radius) = decision.q_radius {
             audit.q_radius_compared += 1;
             let q = match guard_kind {
-                GuardKind::OutwardCertified | GuardKind::BatchedAnalyticEnvelope => {
-                    -0.5 * factor.solution[word.len() + 4]
-                }
+                GuardKind::OutwardCertified
+                | GuardKind::BatchedAnalyticEnvelope
+                | GuardKind::NormwiseAnalyticEnvelope
+                | GuardKind::HybridAnalyticEnvelope => -0.5 * factor.solution[word.len() + 4],
                 GuardKind::EmpiricalThenExact => {
                     let solution = DVector::from_column_slice(&factor.solution);
                     let beta = solution.rows(0, word.len()).into_owned();
@@ -992,6 +1074,22 @@ fn run_empirical_predicate_audit(cases: &[(String, Vec<Vector4<f64>>, Vec<Vec<us
 }
 
 fn run_batched_envelope_audit(cases: &[(String, Vec<Vector4<f64>>, Vec<Vec<usize>>)]) {
+    run_certified_envelope_audit(cases, GuardKind::BatchedAnalyticEnvelope, "batched");
+}
+
+fn run_normwise_envelope_audit(cases: &[(String, Vec<Vector4<f64>>, Vec<Vec<usize>>)]) {
+    run_certified_envelope_audit(cases, GuardKind::NormwiseAnalyticEnvelope, "normwise");
+}
+
+fn run_hybrid_envelope_audit(cases: &[(String, Vec<Vector4<f64>>, Vec<Vec<usize>>)]) {
+    run_certified_envelope_audit(cases, GuardKind::HybridAnalyticEnvelope, "hybrid");
+}
+
+fn run_certified_envelope_audit(
+    cases: &[(String, Vec<Vector4<f64>>, Vec<Vec<usize>>)],
+    guard_kind: GuardKind,
+    label: &str,
+) {
     let mut total = PredicateAudit::default();
     let mut generic = PredicateAudit::default();
     for (_, duals, words) in cases {
@@ -1000,16 +1098,10 @@ fn run_batched_envelope_audit(cases: &[(String, Vec<Vector4<f64>>, Vec<Vec<usize
             if word.len() < 5 || !(duals.len() <= 7 || index % 257 == 0) {
                 continue;
             }
-            audit_guard_case(
-                &mut generic,
-                duals,
-                &exact_duals,
-                word,
-                GuardKind::BatchedAnalyticEnvelope,
-            );
+            audit_guard_case(&mut generic, duals, &exact_duals, word, guard_kind);
         }
     }
-    print_predicate_audit("batched_generic", &generic);
+    print_predicate_audit(&format!("{label}_generic"), &generic);
     total.add(&generic);
 
     for scale in [1e-2, 1.0, 1e2, 1e3] {
@@ -1024,16 +1116,10 @@ fn run_batched_envelope_audit(cases: &[(String, Vec<Vector4<f64>>, Vec<Vec<usize
                 if word.len() < 5 || index % 401 != 0 {
                     continue;
                 }
-                audit_guard_case(
-                    &mut scaled_audit,
-                    &scaled,
-                    &exact_duals,
-                    word,
-                    GuardKind::BatchedAnalyticEnvelope,
-                );
+                audit_guard_case(&mut scaled_audit, &scaled, &exact_duals, word, guard_kind);
             }
         }
-        print_predicate_audit(&format!("batched_scale_{scale:.0e}"), &scaled_audit);
+        print_predicate_audit(&format!("{label}_scale_{scale:.0e}"), &scaled_audit);
         total.add(&scaled_audit);
     }
 
@@ -1051,19 +1137,13 @@ fn run_batched_envelope_audit(cases: &[(String, Vec<Vector4<f64>>, Vec<Vec<usize
         let duals = perturb(&base, epsilon);
         let exact_duals = exact_binary64_dual_vertex_arrays(&duals);
         for word in &words {
-            audit_guard_case(
-                &mut near_singular,
-                &duals,
-                &exact_duals,
-                word,
-                GuardKind::BatchedAnalyticEnvelope,
-            );
+            audit_guard_case(&mut near_singular, &duals, &exact_duals, word, guard_kind);
         }
     }
-    print_predicate_audit("batched_near_singular", &near_singular);
+    print_predicate_audit(&format!("{label}_near_singular"), &near_singular);
     total.add(&near_singular);
-    print_predicate_audit("batched_total", &total);
-    assert_predicate_audit_has_no_wrong_decisions_or_radii("batched_total", &total);
+    print_predicate_audit(&format!("{label}_total"), &total);
+    assert_predicate_audit_has_no_wrong_decisions_or_radii(&format!("{label}_total"), &total);
 
     let scalar = run_route_with_guard(
         cases,
@@ -1071,31 +1151,26 @@ fn run_batched_envelope_audit(cases: &[(String, Vec<Vector4<f64>>, Vec<Vec<usize
         FactorKind::Lblt,
         GuardKind::OutwardCertified,
     );
-    let batched = run_route_with_guard(
-        cases,
-        Some(12),
-        FactorKind::Lblt,
-        GuardKind::BatchedAnalyticEnvelope,
-    );
+    let candidate = run_route_with_guard(cases, Some(12), FactorKind::Lblt, guard_kind);
     let decision_mismatches = scalar
         .decisions
         .iter()
-        .zip(&batched.decisions)
+        .zip(&candidate.decisions)
         .filter(|(left, right)| left != right)
         .count();
-    println!("batched_control.words={}", scalar.decisions.len());
-    println!("batched_control.decision_mismatches={decision_mismatches}");
+    println!("{label}_control.words={}", scalar.decisions.len());
+    println!("{label}_control.decision_mismatches={decision_mismatches}");
     println!(
-        "batched_control.scalar_exact_fallbacks={}",
+        "{label}_control.scalar_exact_fallbacks={}",
         scalar.stats.exact_fallbacks
     );
     println!(
-        "batched_control.batched_exact_fallbacks={}",
-        batched.stats.exact_fallbacks
+        "{label}_control.candidate_exact_fallbacks={}",
+        candidate.stats.exact_fallbacks
     );
     assert_eq!(
         decision_mismatches, 0,
-        "batched and scalar-interval routes disagree"
+        "{label} and scalar-interval routes disagree"
     );
 }
 
@@ -1463,16 +1538,24 @@ fn run_interleaved_benchmark(
     cases: &[(String, Vec<Vector4<f64>>, Vec<Vec<usize>>)],
     variants: &[(Option<usize>, FactorKind)],
 ) {
+    run_interleaved_guard_benchmark(cases, variants, GuardKind::OutwardCertified);
+}
+
+fn run_interleaved_guard_benchmark(
+    cases: &[(String, Vec<Vector4<f64>>, Vec<Vec<usize>>)],
+    variants: &[(Option<usize>, FactorKind)],
+    guard_kind: GuardKind,
+) {
     const ROUNDS: usize = 9;
     for &(cutoff, factor) in variants {
-        std::hint::black_box(run_route(cases, cutoff, factor));
+        std::hint::black_box(run_route_with_guard(cases, cutoff, factor, guard_kind));
     }
     let mut samples = vec![Vec::<f64>::with_capacity(ROUNDS); variants.len()];
     for round in 0..ROUNDS {
         for offset in 0..variants.len() {
             let index = (round + offset) % variants.len();
             let (cutoff, factor) = variants[index];
-            let result = run_route(cases, cutoff, factor);
+            let result = run_route_with_guard(cases, cutoff, factor, guard_kind);
             samples[index].push(result.stats.elapsed.as_secs_f64() * 1e3);
         }
     }
@@ -1632,7 +1715,13 @@ fn run_route_with_guard(
             // rejection and curvature pruning, assumes gradual underflow. If
             // the arithmetic environment lacks it, bypass the entire f64
             // route and exact-resolve the original candidate stream.
-            if matches!(guard_kind, GuardKind::BatchedAnalyticEnvelope) && !gradual_underflow {
+            if matches!(
+                guard_kind,
+                GuardKind::BatchedAnalyticEnvelope
+                    | GuardKind::NormwiseAnalyticEnvelope
+                    | GuardKind::HybridAnalyticEnvelope
+            ) && !gradual_underflow
+            {
                 let phase_started = Instant::now();
                 let decision = exact_decision(&exact_duals, word);
                 stats.exact_time += phase_started.elapsed();
@@ -1678,36 +1767,59 @@ fn run_route_with_guard(
                 FactorKind::Lblt => stats.lblt_factorizations += 1,
             }
             let (matrix, rhs) = build_augmented_system_from_dual_vertices(duals, word);
-            let phase_started = Instant::now();
-            let factor = factor_system(&matrix, &rhs, factor_kind, discover);
-            stats.factor_time += phase_started.elapsed();
+            let factor = if discover {
+                // Inertia needs only the Bunch--Kaufman factorization. Try the
+                // certified curvature rejection before solving for beta and a
+                // full inverse; direct obstructions never use either result.
+                let matrix35 =
+                    DMatrix35::from_column_slice(matrix.nrows(), matrix.ncols(), matrix.as_slice());
+                let rhs35 = DVector35::from_column_slice(rhs.as_slice());
+                let phase_started = Instant::now();
+                let decomposition = matrix35.lblt();
+                let positive = positive_inertia(&decomposition.d());
+                stats.factor_time += phase_started.elapsed();
 
-            let obstruction_started = Instant::now();
-            if discover
-                && factor
-                    .as_ref()
-                    .and_then(|value| value.positive_inertia)
-                    .is_some_and(|positive| positive > 5)
-                && has_certified_rank_five_constraints(duals, word)
-            {
-                stats.obstruction_proposals += 1;
-                if let Some(proposal) = reduced_curvature_proposal(duals, word) {
-                    if certify_curvature(duals, word, &proposal.direction) {
-                        stats.direct_obstructions += 1;
-                        *stats.direct_by_length.entry(word.len()).or_default() += 1;
-                        cache.push(Obstruction {
-                            labels: word.clone(),
-                            mask: label_mask(word),
-                        });
-                        stats.rejected += 1;
-                        case_decisions[index] = rejected_exact_decision();
-                        stats.obstruction_time += obstruction_started.elapsed();
-                        continue;
+                let obstruction_started = Instant::now();
+                if positive > 5 && has_certified_rank_five_constraints(duals, word) {
+                    stats.obstruction_proposals += 1;
+                    if let Some(proposal) = reduced_curvature_proposal(duals, word) {
+                        if certify_curvature(duals, word, &proposal.direction) {
+                            stats.direct_obstructions += 1;
+                            *stats.direct_by_length.entry(word.len()).or_default() += 1;
+                            cache.push(Obstruction {
+                                labels: word.clone(),
+                                mask: label_mask(word),
+                            });
+                            stats.rejected += 1;
+                            case_decisions[index] = rejected_exact_decision();
+                            stats.obstruction_time += obstruction_started.elapsed();
+                            continue;
+                        }
                     }
+                    stats.obstruction_unknown += 1;
                 }
-                stats.obstruction_unknown += 1;
-            }
-            stats.obstruction_time += obstruction_started.elapsed();
+                stats.obstruction_time += obstruction_started.elapsed();
+
+                let phase_started = Instant::now();
+                let factor = decomposition
+                    .solve(&rhs35)
+                    .zip(decomposition.solve(&DMatrix35::identity(matrix.nrows(), matrix.ncols())))
+                    .and_then(|(solution, inverse35)| {
+                        let inverse = DMatrix::from_column_slice(
+                            inverse35.nrows(),
+                            inverse35.ncols(),
+                            inverse35.as_slice(),
+                        );
+                        finite_factor_data(solution.as_slice(), inverse, Some(positive))
+                    });
+                stats.factor_time += phase_started.elapsed();
+                factor
+            } else {
+                let phase_started = Instant::now();
+                let factor = factor_system(&matrix, &rhs, factor_kind, false);
+                stats.factor_time += phase_started.elapsed();
+                factor
+            };
 
             let phase_started = Instant::now();
             let guarded = factor.as_ref().and_then(|data| match guard_kind {
@@ -1719,6 +1831,22 @@ fn run_route_with_guard(
                     &mut stats.guard_phases,
                 ),
                 GuardKind::BatchedAnalyticEnvelope => certify_direct_solution_batched_profiled(
+                    duals,
+                    word,
+                    &matrix,
+                    data,
+                    gradual_underflow,
+                    &mut stats.guard_phases,
+                ),
+                GuardKind::NormwiseAnalyticEnvelope => certify_direct_solution_normwise_profiled(
+                    duals,
+                    word,
+                    &matrix,
+                    data,
+                    gradual_underflow,
+                    &mut stats.guard_phases,
+                ),
+                GuardKind::HybridAnalyticEnvelope => certify_direct_solution_hybrid_profiled(
                     duals,
                     word,
                     &matrix,
@@ -1930,6 +2058,66 @@ fn certify_direct_solution_batched(
     )
 }
 
+fn certify_direct_solution_normwise(
+    duals: &[Vector4<f64>],
+    word: &[usize],
+    matrix: &DMatrix<f64>,
+    factor: &FactorData,
+) -> Option<Decision> {
+    certify_direct_solution_normwise_profiled(
+        duals,
+        word,
+        matrix,
+        factor,
+        gradual_underflow_available(),
+        &mut GuardPhaseStats::default(),
+    )
+}
+
+fn certify_direct_solution_hybrid(
+    duals: &[Vector4<f64>],
+    word: &[usize],
+    matrix: &DMatrix<f64>,
+    factor: &FactorData,
+) -> Option<Decision> {
+    certify_direct_solution_hybrid_profiled(
+        duals,
+        word,
+        matrix,
+        factor,
+        gradual_underflow_available(),
+        &mut GuardPhaseStats::default(),
+    )
+}
+
+fn certify_direct_solution_hybrid_profiled(
+    duals: &[Vector4<f64>],
+    word: &[usize],
+    matrix: &DMatrix<f64>,
+    factor: &FactorData,
+    gradual_underflow: bool,
+    phases: &mut GuardPhaseStats,
+) -> Option<Decision> {
+    certify_direct_solution_normwise_profiled(
+        duals,
+        word,
+        matrix,
+        factor,
+        gradual_underflow,
+        phases,
+    )
+    .or_else(|| {
+        certify_direct_solution_batched_profiled(
+            duals,
+            word,
+            matrix,
+            factor,
+            gradual_underflow,
+            phases,
+        )
+    })
+}
+
 fn certify_direct_solution_profiled(
     duals: &[Vector4<f64>],
     word: &[usize],
@@ -1981,6 +2169,101 @@ fn certify_direct_solution_profiled(
 
     let phase_started = Instant::now();
     let decision = decision_from_certified_norms(word, factor, residual_norm, defect_norm);
+    phases.decision_time += phase_started.elapsed();
+    decision
+}
+
+/// Uses the same inverse-defect theorem as the entrywise batched enclosure,
+/// but bounds the four auxiliary positive products by induced infinity norms.
+///
+/// The central residual and defect are still evaluated as ordinary matrix
+/// products. For nonnegative matrices, submultiplicativity gives
+/// `|| |A| |B| ||_inf <= ||A||_inf ||B||_inf`; outward operations turn this
+/// into a valid upper bound for both rounding magnitudes and input-interval
+/// propagation. This is looser than forming those four products entrywise but
+/// avoids their runtime cost.
+fn certify_direct_solution_normwise_profiled(
+    duals: &[Vector4<f64>],
+    word: &[usize],
+    matrix: &DMatrix<f64>,
+    factor: &FactorData,
+    gradual_underflow: bool,
+    phases: &mut GuardPhaseStats,
+) -> Option<Decision> {
+    if !gradual_underflow {
+        return None;
+    }
+    let size = matrix.nrows();
+    let phase_started = Instant::now();
+    let entry_radius_norm = exact_kkt_entry_radius_inf_norm(duals, word)?;
+    let matrix_norm = matrix_inf_norm_up(matrix);
+    let inverse_norm = matrix_inf_norm_up(&factor.inverse);
+    let solution_norm = factor
+        .solution
+        .iter()
+        .copied()
+        .map(|value| next_up(value.abs()))
+        .fold(0.0, f64::max);
+    if !matrix_norm.is_finite()
+        || !entry_radius_norm.is_finite()
+        || !inverse_norm.is_finite()
+        || !solution_norm.is_finite()
+    {
+        return None;
+    }
+    let (gamma, underflow) = dot_product_error_parameters(size)?;
+    phases.entries_time += phase_started.elapsed();
+
+    let phase_started = Instant::now();
+    let solution = DMatrix::from_column_slice(size, 1, &factor.solution);
+    let mut residual_centre = matrix * &solution;
+    residual_centre[(size - 1, 0)] -= 1.0;
+    let residual_centre_norm = residual_centre
+        .iter()
+        .copied()
+        .map(|value| next_up(value.abs()))
+        .fold(0.0, f64::max);
+    // The final subtraction of b contributes one to the augmented dot-product
+    // magnitude in its single nonzero row.
+    let residual_rounding = add_up(
+        mul_up(gamma, add_up(mul_up(matrix_norm, solution_norm), 1.0)),
+        underflow,
+    );
+    let residual_input = mul_up(entry_radius_norm, solution_norm);
+    let residual_norm = add_up(
+        residual_centre_norm,
+        add_up(residual_rounding, residual_input),
+    );
+    phases.residual_time += phase_started.elapsed();
+    if !residual_norm.is_finite() {
+        return None;
+    }
+
+    let phase_started = Instant::now();
+    let defect_centre = DMatrix::identity(size, size) - matrix * &factor.inverse;
+    let defect_centre_norm = matrix_inf_norm_up(&defect_centre);
+    // Summing the per-entry dot-product bounds across one row contributes
+    // ||K||_inf ||R||_inf. The identity contributes one in that row, and the
+    // per-entry underflow allowance occurs `size` times.
+    let defect_rounding = add_up(
+        mul_up(gamma, add_up(mul_up(matrix_norm, inverse_norm), 1.0)),
+        mul_up(size as f64, underflow),
+    );
+    let defect_input = mul_up(entry_radius_norm, inverse_norm);
+    let defect_norm = add_up(defect_centre_norm, add_up(defect_rounding, defect_input));
+    phases.defect_time += phase_started.elapsed();
+    if !(defect_norm < 1.0) {
+        return None;
+    }
+
+    let phase_started = Instant::now();
+    let decision = decision_from_certified_norms_with_inverse_norm(
+        word,
+        factor,
+        residual_norm,
+        defect_norm,
+        inverse_norm,
+    );
     phases.decision_time += phase_started.elapsed();
     decision
 }
@@ -2150,6 +2433,22 @@ fn decision_from_certified_norms(
     defect_norm: f64,
 ) -> Option<Decision> {
     let inverse_norm = matrix_inf_norm_up(&factor.inverse);
+    decision_from_certified_norms_with_inverse_norm(
+        word,
+        factor,
+        residual_norm,
+        defect_norm,
+        inverse_norm,
+    )
+}
+
+fn decision_from_certified_norms_with_inverse_norm(
+    word: &[usize],
+    factor: &FactorData,
+    residual_norm: f64,
+    defect_norm: f64,
+    inverse_norm: f64,
+) -> Option<Decision> {
     let inverse_bound = next_up(inverse_norm / next_down(1.0 - defect_norm));
     let beta_radius = mul_up(inverse_bound, residual_norm);
     let beta = &factor.solution[..word.len()];
@@ -2424,6 +2723,48 @@ fn exact_kkt_intervals(duals: &[Vector4<f64>], word: &[usize]) -> Vec<Interval> 
         entries[(m + 4) * size + i] = Interval::point(1.0);
     }
     entries
+}
+
+/// Infinity norm of the entrywise distance between the exact binary64-input
+/// KKT matrix and its ordinary f64 assembly.
+///
+/// Constraint, identity, and zero entries are copied exactly. Only the omega
+/// block incurs roundoff. A single bound from the largest coordinate and word
+/// length avoids allocating or scanning a dense interval matrix.
+fn exact_kkt_entry_radius_inf_norm(duals: &[Vector4<f64>], word: &[usize]) -> Option<f64> {
+    let coordinate_bound = word
+        .iter()
+        .flat_map(|&label| duals[label].iter())
+        .copied()
+        .map(|value| next_up(value.abs()))
+        .fold(0.0, f64::max);
+    let pair_magnitude = mul_up(4.0, mul_up(coordinate_bound, coordinate_bound));
+    let (gamma, underflow) = dot_product_error_parameters(4)?;
+    let per_entry = add_up(mul_up(gamma, pair_magnitude), underflow);
+    let row_entries = word.len().saturating_sub(1) as f64;
+    let norm = mul_up(row_entries, per_entry);
+    norm.is_finite().then_some(norm)
+}
+
+/// Roundoff bound for the seven-operation coordinate formula used by
+/// `omega0`. The eight-operation gamma deliberately overcounts by one; fused
+/// multiply-add contraction can only reduce the error. The input coordinates
+/// themselves are exact binary64 values.
+#[cfg(test)]
+fn omega_roundoff_radius(left: &Vector4<f64>, right: &Vector4<f64>) -> Option<f64> {
+    let magnitude = [(0, 2), (2, 0), (1, 3), (3, 1)].into_iter().try_fold(
+        0.0,
+        |sum, (left_index, right_index)| {
+            let product = mul_up(left[left_index].abs(), right[right_index].abs());
+            product
+                .is_finite()
+                .then(|| add_up(sum, product))
+                .filter(|value| value.is_finite())
+        },
+    )?;
+    let (gamma, underflow) = dot_product_error_parameters(4)?;
+    let radius = add_up(mul_up(gamma, magnitude), underflow);
+    radius.is_finite().then_some(radius)
 }
 
 fn beta_dot_h_beta(duals: &[Vector4<f64>], word: &[usize], beta: &[f64]) -> f64 {
@@ -4122,6 +4463,70 @@ mod tests {
             assert!(
                 value <= f64_to_rational(upper),
                 "upper endpoint is below exact rational"
+            );
+        }
+    }
+
+    #[test]
+    fn fused_kkt_entry_radius_norm_encloses_exact_assembly_error() {
+        let duals = hko_pentagon().dual_vertices_f64.clone();
+        let word = vec![0, 1, 6, 7, 3, 4, 5, 9];
+        let (matrix, _) = build_augmented_system_from_dual_vertices(&duals, &word);
+        let bound = exact_kkt_entry_radius_inf_norm(&duals, &word)
+            .expect("finite fixture has a finite assembly bound");
+        let exact_duals = exact_binary64_dual_vertex_arrays(&duals);
+
+        let exact_norm = (0..word.len())
+            .map(|row| {
+                (0..word.len())
+                    .filter(|&col| col != row)
+                    .map(|col| {
+                        let exact = if row < col {
+                            omega_exact(&exact_duals[word[row]], &exact_duals[word[col]])
+                        } else {
+                            omega_exact(&exact_duals[word[col]], &exact_duals[word[row]])
+                        };
+                        (exact - f64_to_rational(matrix[(row, col)])).abs()
+                    })
+                    .fold(BigRational::zero(), |sum, error| sum + error)
+            })
+            .max()
+            .expect("nonempty word");
+        assert!(
+            exact_norm <= f64_to_rational(bound),
+            "fused norm missed exact KKT assembly error"
+        );
+    }
+
+    #[test]
+    fn analytic_omega_roundoff_radius_encloses_exact_formula_error() {
+        let minimum_subnormal = f64::from_bits(1);
+        let pairs = [
+            (
+                Vector4::new(1e3, 1e-3, -1e3, -1e-3),
+                Vector4::new(-1e-3, 1e3, 1e-3, -1e3),
+            ),
+            (
+                Vector4::new(0.1, -0.2, 0.3, -0.4),
+                Vector4::new(-0.5, 0.6, -0.7, 0.8),
+            ),
+            (
+                Vector4::new(minimum_subnormal, 0.0, 0.0, 0.0),
+                Vector4::new(0.0, 0.0, 0.5, 0.0),
+            ),
+        ];
+        for (left, right) in pairs {
+            let left_exact = std::array::from_fn(|index| f64_to_rational(left[index]));
+            let right_exact = std::array::from_fn(|index| f64_to_rational(right[index]));
+            let exact = omega_exact(&left_exact, &right_exact);
+            let computed =
+                left[0] * right[2] - left[2] * right[0] + left[1] * right[3] - left[3] * right[1];
+            let error = (exact - f64_to_rational(computed)).abs();
+            let radius =
+                omega_roundoff_radius(&left, &right).expect("finite inputs have finite bound");
+            assert!(
+                error <= f64_to_rational(radius),
+                "analytic omega roundoff bound missed exact error"
             );
         }
     }
