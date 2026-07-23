@@ -196,9 +196,12 @@ maintenance low. The numbers are stable and can be out of order.
     before row closure. If a positive/conjectured-positive pattern appears, the
     thesis should honestly reflect that.
 
-34.1. More data will be needed before the data-science story can be considered
-      closed at thesis level. The exact datasets, sizes, and producer commands
-      belong in the relevant experiment/research files, not in this fact sheet.
+34.1. At the time this fact was recorded, the data-science story was not closed
+      at thesis level: work remained, and there was no reason to stop instead
+      of gathering more data. This is a historical status statement, not a
+      standing requirement to invent another dataset after later work. The
+      exact datasets, sizes, and producer commands belong in the relevant
+      experiment/research files, not in this fact sheet.
 
 34.2. Jörn accepted the following data-science result wording on 2026-06-03 as
       the working replacement for vague phrases such as "transferable regime"

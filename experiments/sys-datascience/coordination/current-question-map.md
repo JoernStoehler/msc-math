@@ -103,29 +103,12 @@ summary, not an independent source for the experimental facts.
   line as unperformed until its source session/worktree is reconciled. The
   durable warning is also in
   [`next-session-candidates.md`](next-session-candidates.md).
-- FACTSHEET 34.1 requires additional data before thesis-level closure but does
-  not name the consumer, dataset, size, comparison, or stop condition. That is
-  a thesis-stakeholder choice, not a gap that an experiment can resolve by
-  default.
-
-## FACTSHEET 34.1: unresolved consumer choice
-
-Three materially different roles could make “more data” operational:
-
-1. **Bounded negative account:** an additional named producer panel used to
-   strengthen the scope and readability of the finite negative benchmark.
-2. **Method demonstration:** a fresh target-blind selector/proposer comparison
-   used to demonstrate what the data-science method buys, without implying a
-   positive-search guarantee.
-3. **Search-method comparison:** an equal-cost IID versus local/adaptive
-   comparison used to support a claim about search efficiency and trajectory
-   behavior.
-
-These are consumer options, not approved data plans. Dataset choice, size,
-producer command, review gate, and stopping rule should be selected only after
-Jörn chooses the reader-facing role. A reproducibility audit can check existing
-commands in parallel, but should not silently make this scientific/thesis
-choice.
+- Project fact 34.1 records that the data-science work was not finished when
+  the fact was written and should continue rather than stop without further
+  data. It is not a current requirement for another dataset or a
+  thesis-stakeholder choice among possible data roles. Determine current
+  closure from the later packets, method-table state, and retained thesis
+  claims.
 
 ## Update rule
 
