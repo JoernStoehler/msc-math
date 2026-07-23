@@ -21,9 +21,9 @@ def main() -> None:
         selected = [row for row in rows if row["source_kind"] == kind]
         control = next(row for row in selected if row["stage"] == "compact-control")
         best = max(selected, key=lambda row: row["sys"])
-        by_radius = defaultdict(list)
+        by_radius = defaultdict(lambda: defaultdict(list))
         for row in selected:
-            by_radius[row["radius"]].append(row["sys"])
+            by_radius[row["radius"]][row["stage"]].append(row["sys"])
         bodies.append(
             {
                 "source_kind": kind,
@@ -38,11 +38,22 @@ def main() -> None:
                 "radius_summary": [
                     {
                         "radius": radius,
-                        "count": len(values),
-                        "maximum_sys": max(values),
-                        "mean_sys": sum(values) / len(values),
+                        "search_maximum_sys": max(
+                            value
+                            for values in stages.values()
+                            for value in values
+                        ),
+                        "sampling_arms": [
+                            {
+                                "stage": stage,
+                                "count": len(values),
+                                "maximum_sys": max(values),
+                                "mean_sys": sum(values) / len(values),
+                            }
+                            for stage, values in sorted(stages.items())
+                        ],
                     }
-                    for radius, values in sorted(by_radius.items())
+                    for radius, stages in sorted(by_radius.items())
                 ],
             }
         )
@@ -54,7 +65,9 @@ def main() -> None:
         "claim_boundary": (
             "Deterministic finite multiscale sample of the global normalized "
             "determinant-one quotient; not an exhaustive search of its "
-            "noncompact radial coordinate or four angular coordinates."
+            "noncompact radial coordinate or four angular coordinates. Means "
+            "are reported separately for the quotient-wide and compact-U "
+            "sampling arms; their mixture has no population interpretation."
         ),
     }
     args.output.write_text(json.dumps(result, indent=2) + "\n")

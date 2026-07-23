@@ -16,45 +16,123 @@
       "radius_summary": [
         {
           "radius": 0.0,
-          "count": 1,
-          "maximum_sys": 0.8595596058028344,
-          "mean_sys": 0.8595596058028344
+          "search_maximum_sys": 0.8595596058028344,
+          "sampling_arms": [
+            {
+              "stage": "compact-control",
+              "count": 1,
+              "maximum_sys": 0.8595596058028344,
+              "mean_sys": 0.8595596058028344
+            }
+          ]
         },
         {
           "radius": 0.125,
-          "count": 36,
-          "maximum_sys": 0.8040709383884816,
-          "mean_sys": 0.6699304771143345
+          "search_maximum_sys": 0.8040709383884816,
+          "sampling_arms": [
+            {
+              "stage": "compact-u",
+              "count": 12,
+              "maximum_sys": 0.8040709383884816,
+              "mean_sys": 0.7429041763638362
+            },
+            {
+              "stage": "global",
+              "count": 24,
+              "maximum_sys": 0.7881997723909997,
+              "mean_sys": 0.6334436274895836
+            }
+          ]
         },
         {
           "radius": 0.25,
-          "count": 36,
-          "maximum_sys": 0.7251668633756723,
-          "mean_sys": 0.5615291529476357
+          "search_maximum_sys": 0.7251668633756723,
+          "sampling_arms": [
+            {
+              "stage": "compact-u",
+              "count": 12,
+              "maximum_sys": 0.692351035974072,
+              "mean_sys": 0.6095906889350817
+            },
+            {
+              "stage": "global",
+              "count": 24,
+              "maximum_sys": 0.7251668633756723,
+              "mean_sys": 0.5374983849539128
+            }
+          ]
         },
         {
           "radius": 0.5,
-          "count": 36,
-          "maximum_sys": 0.5580614268524949,
-          "mean_sys": 0.3640474567092806
+          "search_maximum_sys": 0.5580614268524949,
+          "sampling_arms": [
+            {
+              "stage": "compact-u",
+              "count": 12,
+              "maximum_sys": 0.45650928397320567,
+              "mean_sys": 0.3897033944902046
+            },
+            {
+              "stage": "global",
+              "count": 24,
+              "maximum_sys": 0.5580614268524949,
+              "mean_sys": 0.3512194878188186
+            }
+          ]
         },
         {
           "radius": 1.0,
-          "count": 36,
-          "maximum_sys": 0.2211115643546291,
-          "mean_sys": 0.13826610617270682
+          "search_maximum_sys": 0.2211115643546291,
+          "sampling_arms": [
+            {
+              "stage": "compact-u",
+              "count": 12,
+              "maximum_sys": 0.18806709376852296,
+              "mean_sys": 0.1483622716125854
+            },
+            {
+              "stage": "global",
+              "count": 24,
+              "maximum_sys": 0.2211115643546291,
+              "mean_sys": 0.13321802345276754
+            }
+          ]
         },
         {
           "radius": 2.0,
-          "count": 36,
-          "maximum_sys": 0.029088188296412444,
-          "mean_sys": 0.018778761542499207
+          "search_maximum_sys": 0.029088188296412444,
+          "sampling_arms": [
+            {
+              "stage": "compact-u",
+              "count": 12,
+              "maximum_sys": 0.026547535520962787,
+              "mean_sys": 0.020201460712425973
+            },
+            {
+              "stage": "global",
+              "count": 24,
+              "maximum_sys": 0.029088188296412444,
+              "mean_sys": 0.018067411957535827
+            }
+          ]
         },
         {
           "radius": 4.0,
-          "count": 36,
-          "maximum_sys": 0.0005301597891014833,
-          "mean_sys": 0.0003439401304109495
+          "search_maximum_sys": 0.0005301597891014833,
+          "sampling_arms": [
+            {
+              "stage": "compact-u",
+              "count": 12,
+              "maximum_sys": 0.00048761904434174627,
+              "mean_sys": 0.00037012323980455244
+            },
+            {
+              "stage": "global",
+              "count": 24,
+              "maximum_sys": 0.0005301597891014833,
+              "mean_sys": 0.0003308485757141481
+            }
+          ]
         }
       ]
     },
@@ -71,48 +149,126 @@
       "radius_summary": [
         {
           "radius": 0.0,
-          "count": 1,
-          "maximum_sys": 0.8783076408257287,
-          "mean_sys": 0.8783076408257287
+          "search_maximum_sys": 0.8783076408257287,
+          "sampling_arms": [
+            {
+              "stage": "compact-control",
+              "count": 1,
+              "maximum_sys": 0.8783076408257287,
+              "mean_sys": 0.8783076408257287
+            }
+          ]
         },
         {
           "radius": 0.125,
-          "count": 36,
-          "maximum_sys": 0.8362279072348772,
-          "mean_sys": 0.7044934203523139
+          "search_maximum_sys": 0.8362279072348772,
+          "sampling_arms": [
+            {
+              "stage": "compact-u",
+              "count": 12,
+              "maximum_sys": 0.8040856865491183,
+              "mean_sys": 0.73524731029016
+            },
+            {
+              "stage": "global",
+              "count": 24,
+              "maximum_sys": 0.8362279072348772,
+              "mean_sys": 0.6891164753833908
+            }
+          ]
         },
         {
           "radius": 0.25,
-          "count": 36,
-          "maximum_sys": 0.7330125948717443,
-          "mean_sys": 0.590416561706628
+          "search_maximum_sys": 0.7330125948717443,
+          "sampling_arms": [
+            {
+              "stage": "compact-u",
+              "count": 12,
+              "maximum_sys": 0.6513369156983099,
+              "mean_sys": 0.5916805734551721
+            },
+            {
+              "stage": "global",
+              "count": 24,
+              "maximum_sys": 0.7330125948717443,
+              "mean_sys": 0.5897845558323561
+            }
+          ]
         },
         {
           "radius": 0.5,
-          "count": 36,
-          "maximum_sys": 0.5045886294868546,
-          "mean_sys": 0.37729872913876195
+          "search_maximum_sys": 0.5045886294868546,
+          "sampling_arms": [
+            {
+              "stage": "compact-u",
+              "count": 12,
+              "maximum_sys": 0.41793694294734385,
+              "mean_sys": 0.36961699772677387
+            },
+            {
+              "stage": "global",
+              "count": 24,
+              "maximum_sys": 0.5045886294868546,
+              "mean_sys": 0.38113959484475596
+            }
+          ]
         },
         {
           "radius": 1.0,
-          "count": 36,
-          "maximum_sys": 0.18411046645418236,
-          "mean_sys": 0.141532760801032
+          "search_maximum_sys": 0.18411046645418236,
+          "sampling_arms": [
+            {
+              "stage": "compact-u",
+              "count": 12,
+              "maximum_sys": 0.158661651599212,
+              "mean_sys": 0.13746233347107775
+            },
+            {
+              "stage": "global",
+              "count": 24,
+              "maximum_sys": 0.18411046645418236,
+              "mean_sys": 0.14356797446600914
+            }
+          ]
         },
         {
           "radius": 2.0,
-          "count": 36,
-          "maximum_sys": 0.025470339260123175,
-          "mean_sys": 0.01913840619241429
+          "search_maximum_sys": 0.025470339260123175,
+          "sampling_arms": [
+            {
+              "stage": "compact-u",
+              "count": 12,
+              "maximum_sys": 0.021754119982206825,
+              "mean_sys": 0.018476517784178987
+            },
+            {
+              "stage": "global",
+              "count": 24,
+              "maximum_sys": 0.025470339260123175,
+              "mean_sys": 0.01946935039653194
+            }
+          ]
         },
         {
           "radius": 4.0,
-          "count": 36,
-          "maximum_sys": 0.00046544287076956555,
-          "mean_sys": 0.0003502304831697212
+          "search_maximum_sys": 0.00046544287076956555,
+          "sampling_arms": [
+            {
+              "stage": "compact-u",
+              "count": 12,
+              "maximum_sys": 0.0003994453390681263,
+              "mean_sys": 0.0003377775171427878
+            },
+            {
+              "stage": "global",
+              "count": 24,
+              "maximum_sys": 0.00046544287076956555,
+              "mean_sys": 0.0003564569661831879
+            }
+          ]
         }
       ]
     }
   ],
-  "claim_boundary": "Deterministic finite multiscale sample of the global normalized determinant-one quotient; not an exhaustive search of its noncompact radial coordinate or four angular coordinates."
+  "claim_boundary": "Deterministic finite multiscale sample of the global normalized determinant-one quotient; not an exhaustive search of its noncompact radial coordinate or four angular coordinates. Means are reported separately for the quotient-wide and compact-U sampling arms; their mixture has no population interpretation."
 }
