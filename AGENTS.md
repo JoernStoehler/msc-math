@@ -73,14 +73,103 @@ Prefer coordinate-free notation when the order is irrelevant.
 - Preserve unrelated user changes in dirty worktrees.
 - Do not ask Jörn to do accessible local work. Ask for mathematical or
   stakeholder cruxes, private context, LICCA access, mail, or admin actions.
-- Continue until the assigned outcome is complete, explicitly paused, or
-  concretely blocked.
-- Use bounded exploration or review agents when their separate context repays
-  the handoff. Main owns target choice, integration, and final judgment.
-- Keep communication plain and low-friction. Ask one crux at a time and put
-  questions needing Jörn's answer in the final message.
-- For a repository or harness diff needing Jörn's review, place the exact diff
-  under `/tmp/joern/` and name its base and candidate.
+
+### Autonomy
+
+Keep thesis work moving without turning agent-doable choices into Jörn-steering
+requests.
+
+- Continue unless the assigned scope is complete, explicitly paused, blocked
+  after local inspection, or waiting on Jörn is worth its attention cost.
+  Incomplete scope plus no blocker/request means continue: inspect, test,
+  delegate, narrow the scope, or state the concrete blocker.
+- Ask Jörn for cruxes, not permission. For next-action choices, decompose
+  outcomes, costs, values, constraints, and stakeholder preferences; estimate
+  locally what the agent can estimate, then ask only the crux where Jörn is
+  likely informative.
+- Use subagents for bounded subtasks that divide cleanly. Choose main, forked
+  subagent, or fresh subagent by context and independence needs. Main owns
+  target choice, dependency order, final synthesis, merge-readiness, and
+  value/cost tradeoffs. Treat model/decomposition choices as empirical, not a
+  fixed Sol/Terra/Luna routing map.
+- After the outcome, reason for delegation, and choice of a fresh recipient are
+  fixed, use `$subagent-prompting` when a bounded assignment must transfer
+  non-obvious context, nontrivial ownership boundaries, completion evidence, or
+  a return contract. Keep direct one-sentence assignments direct.
+- A maintenance or repair request does not by itself authorize redesigning the
+  accepted objective, constraints, or workflow. Change them only when current
+  evidence makes that necessary for the requested outcome.
+
+### Chat with Jörn
+
+Jörn's time should go to expert feedback, not large amounts of handholding or
+session repair. Communication should be low-friction and focused on information
+transfer, not presentation or narration.
+
+- Write plain: ordinary words, existing thesis/repo terms, no metaphors, no
+  analogies, no invented labels.
+- When speaking to Jörn, refer to thesis parts by their content names rather
+  than section numbers; numbers are hard for him to keep associated with the
+  content.
+- Usually, Jörn has multiple Codex sessions open. He switches away when a session
+  becomes async and returns later after other work has displaced this chat from
+  working memory. Communication should make it cheap for Jörn to resume without
+  rereading the transcript, especially by making clear whether the agent is
+  waiting on Jörn. Use the session-resume-packet skill when resuming later
+  would require nontrivial context reload.
+- Use `/tmp/` to polish messages that cannot be written cleanly top to bottom
+  without pausing, revising, reordering, or removing filler. Then send the
+  polished message.
+- Do not bundle unrelated questions or concerns in one request. Go through them
+  one by one. Within one concern, include related alternatives when comparing
+  them makes Jörn's feedback more useful.
+- Give enough context for Jörn's answers. When asking a question or requesting
+  review, state the relevant current state, uncertainty, and what kind of
+  answer helps. For high-leverage or unclear work, discuss the problem
+  model before proposing solutions.
+- When asking Jörn to evaluate a repository or harness diff, put the exact diff
+  in a unique `/tmp/joern/*.diff`, link it, and name its base and candidate.
+- Make questions, review requests, and other requests to Jörn hard to overlook.
+  Usually put them on their own line or at the end of a short list. Re-ask or
+  follow up if a request of yours was missed or only partly answered.
+- Put every question or request that needs Jörn's answer in the final channel;
+  commentary does not ping him and he may not read it. Final answers must be
+  self-contained: do not assume Jörn saw commentary, tool input, tool output,
+  or facts buried in command output.
+- Use line breaks and light structure so Jörn can skip known parts quickly. Use
+  numbers, short labels, or tables only when they make the message easier to
+  read, answer, or refer to.
+- `JOERN.md` is Jörn's paste shelf for current-chat steering prompts. If Jörn
+  pastes or names a snippet from it, apply that snippet to the current chat.
+  Otherwise do not treat `JOERN.md` as active instructions, source truth, or a
+  task queue.
+- Preserve precision that matters for communication. Do not shorten recaps if
+  shortening loses the actual distinction.
+- Make list type clear when ambiguity matters: exhaustive list, examples,
+  current known set, priority order, or another ordinary description.
+- Communicate current state, history summaries, problem models, and useful
+  alternatives. Report phase changes or blockers when they help coordination;
+  do not narrate routine process unless the process itself is the relevant
+  state.
+- Communicate epistemic status when it matters. Bayesian/LessWrong-style here
+  means graded belief, expected value, and clear quantities. English phrases are
+  fine when precision is unimportant. Numbers can reduce ambiguity about
+  strength, size, likelihood, or cost, but only if it is clear what quantity they
+  estimate.
+- Use whole-project value and cost, not only local task cost, when estimates
+  matter. Measure relevant costs directly: shadow API cost even when a
+  subscription means it is not paid directly, critical-path wall time and its
+  effect on thesis submission, and actual Jörn attention time. Do not translate
+  these through fixed hourly labor proxies. Determine the current bottleneck
+  empirically instead of assuming Jörn time is it. Compute shadow API cost as
+  `((input - cached_input) * I + cached_input * C + output * O) / 1e6`.
+  Priority-tier `(I, C, O)` USD rates per million tokens, recorded 2026-07-16:
+  `gpt-5.6-sol = (10, 1, 60)`, `gpt-5.6-terra = (5, 0.5, 30)`, and
+  `gpt-5.6-luna = (2, 0.2, 12)`. Use this cached rate line immediately; do not
+  pause ordinary cost estimates to refresh it.
+- Final summaries after completed work should list review passes performed,
+  including review subagents used or intentionally not used. Do not add ritual
+  review summaries to small chat-only replies.
 
 ## Documentation
 
