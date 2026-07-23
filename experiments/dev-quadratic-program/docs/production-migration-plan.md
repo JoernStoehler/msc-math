@@ -1,7 +1,9 @@
 # Four-dimensional QP production migration
 
 Status: staged plan after selection of the reviewed general and product scalar
-capacity routes. This plan does not authorize a Main merge.
+capacity routes and a caller/ownership architecture review. Public names remain
+provisional until the stage-0 caller spike. This plan does not authorize a Main
+merge.
 
 ## Outcome
 
@@ -41,6 +43,42 @@ numerical correspondence survived.
 
 This gate blocks code movement, not API/consumer planning.
 
+## Architecture comparison
+
+The first version of this plan chose `capacity_4d/` plus one public result enum
+without comparing enough ownership alternatives. The following comparison is
+now part of the migration decision.
+
+| Alternative | Benefit | Long-term cost / failure mode | Decision |
+| --- | --- | --- | --- |
+| Keep the selected route in `dev-quadratic-program` and wrap it from `symplectic` | Experiment code remains easy to edit | Reverses the dependency direction: production would depend on an experiment package | Reject |
+| Copy the selected implementation into `symplectic` and retain a synchronized editable copy in the experiment | Immediately gives both homes a complete implementation | Two purportedly current implementations drift; every numerical fix, proof-condition change, and optimization needs a coordinated edit | Reject |
+| Publish low-level enumeration/KKT pieces and let each experiment assemble its own route | Every caller can instrument anything | This is the current failure pattern: `combinatorial-cells` and `hko-local-maximum` reconstructed searches and now retain old threshold/predicate semantics | Reject as the ordinary path; keep low-level APIs only for genuinely low-level research |
+| Parameterize one kernel by solver, predicate, pruning, observer, and output-policy traits | Can express many ablations without copying | Makes the production proof surface generic, spreads research choices through hot code, and makes ordinary reading harder | Reject until two maintained production consumers demonstrate a real shared variation |
+| Put the kernel in a new internal workspace crate and re-export it from `symplectic` | Production and experiments can share a lower layer | Adds another public dependency/API boundary but does not remove the need to distinguish production semantics from experimental variants | Defer; reconsider only if extraction finds a substantial independently reusable numerical kernel |
+| Use feature-gated diagnostics or a public observer callback in production | Rich counters without route copies | Adds control flow and API combinations to the correctness-critical path; feature combinations become another test matrix | Reject for now |
+| Move the one selected implementation to `symplectic`; keep independent exact oracles, adversarial fixtures, and alternative implementations in the experiment | One production truth, independent correctness witnesses, and no experiment dependency | A true algorithm variant must either wrap the production route or copy the focused module when it intentionally diverges | Select |
+
+The selected ownership model has three distinct artifacts:
+
+1. **Production implementation:** the only maintained implementation of the
+   selected algorithm. Its source is deliberately cohesive and readable enough
+   to be the copy-editable starting point for a new experiment.
+2. **Independent references:** exact enumeration/solves and adversarial
+   fixtures in `dev-quadratic-program`. These must not share the production
+   predicate or pruning code whose correctness they test.
+3. **Experiment variants:** local implementations created only when an actual
+   experiment changes route semantics. A copied variant records its production
+   source commit and the intentional differences; it is not advertised as a
+   synchronized base or production truth.
+
+An experiment that only needs timings or phase counts calls the production
+route and uses `tracing`. An experiment that changes a cutoff, predicate,
+factorization, or pruning rule owns a local variant and compares it against the
+production result and independent exact reference. This avoids both a
+research-framework API in the crate and silent local reconstruction of the
+ordinary route.
+
 ## Intended production surface
 
 Keep the scalar routes together by consumer purpose while preserving their
@@ -49,39 +87,61 @@ different certificates:
 ```text
 crates/symplectic/src/algorithms/
 |-- capacity_4d/
-|   |-- mod.rs                 # explicit dispatch and common scalar access
-|   |-- input.rs               # validated-input boundary and soft errors
-|   |-- general/
-|   |   |-- mod.rs             # exact transition stream + selected route
-|   |   |-- verified_solve.rs  # normwise/batched enclosure + exact fallback
-|   |   |-- curvature.rs       # certified obstruction + cyclic inheritance
-|   |   `-- interval.rs        # outward binary64 operations
-|   `-- product/
-|       |-- mod.rs             # closure-vertex capacity route
-|       `-- interval.rs        # product-specific outward operations
+|   |-- mod.rs                 # public facade, dispatch, and result contracts
+|   |-- input.rs               # validated input and derived exact geometry
+|   |-- general.rs             # selected general route
+|   |-- product.rs             # selected closure-vertex product route
+|   `-- interval.rs            # shared outward arithmetic, if both routes use it
 |-- hk2017/                    # existing enumeration and orbit route
 |-- billiard/                  # existing legacy orbit route/control
 `-- orbit_search.rs            # existing orbit payload/recovery contracts
 ```
 
-This is a target ownership layout, not a demand to split small files
-prematurely. Start with `mod.rs` plus one implementation file per route; split
-only when extraction shows a real single-concern boundary.
+Start flat. Split `general.rs` or `product.rs` only when extraction identifies a
+named mathematical component that can be read and tested independently.
+Avoiding speculative folders matters here because the production source is
+also the intended copy-editable base.
 
-The public result should be an enum rather than one weakened common struct:
+The provisional caller shape is:
 
-```text
-ScalarCapacity4d::General(GeneralCapacity4d)
-ScalarCapacity4d::Product(ProductCapacity4d)
+```rust
+let input = CapacityInput4d::try_from_dual_vertices(&dual_vertices)?;
+let result = input.capacity()?;
+
+match result {
+    Capacity4d::General(result) => use_certified_bounds(result.bounds()),
+    Capacity4d::Product(result) => use_exact_binary64(result.capacity_exact()),
+}
 ```
 
-Both variants expose an f64 scalar and outward interval. The product variant
-also exposes the exact binary64-rational capacity and sparse exact winners.
-Route identity remains visible.
+`CapacityInput4d` owns the small validated input and derived binary64-rational
+geometry so repeated route calls do not repeat validation or ask callers to
+keep parallel f64/rational/incidence arguments consistent. It offers explicit
+general and product methods for verification and route-comparison callers;
+ordinary automatic dispatch uses the exact structural-product classification.
+
+`Capacity4d` is an enum because the certificates really differ:
+
+- `GeneralCapacity4d` exposes certified outward bounds. It does not present an
+  unqualified f64 point as the authoritative answer.
+- `ProductCapacity4d` exposes the exact binary64-rational capacity and sparse
+  exact winners.
+
+The enum provides only operations that preserve both contracts, principally
+outward bounds and route identity. Any midpoint/representative f64 conversion
+must be explicitly named as an approximation. Do not weaken both variants into
+one struct with optional exact fields, and do not give an interval-only result
+a method whose name implies exact scalar capacity.
 
 Do not put profiling counters or fallback counts in the public mathematical
 result. Use opt-in `tracing` for production timing/phase observability. Retain
 detailed counters and exact intermediate audits in the development packet.
+
+Do not add a builder, solver-policy trait, observer trait, or public cutoff
+option in the first API. The selected route has no current production caller
+that needs those choices. The experiment package can adapt the public results
+to a small local comparison row without making that adapter part of the
+production contract.
 
 ### Input boundary
 
@@ -108,6 +168,42 @@ separate changed-input preprocessing operation.
 
 ## Stages
 
+### 0. Compile caller and copy-editability spikes
+
+Before moving the selected kernels, replace the current development-only
+consumer sketch with a small compile-checked sketch of the proposed production
+surface. Cover these real caller shapes:
+
+- validate once, compute the automatically selected scalar certificate, and
+  compute `sys` bounds;
+- force both routes on an exact structural product for agreement testing;
+- report a soft validation error;
+- access exact product witnesses without adding optional fields to the general
+  result; and
+- time one production call with tracing while keeping route counters out of the
+  mathematical result.
+
+Then do one disposable copy-editability spike: copy the extracted focused
+general kernel into a temporary experiment-local module, change one real
+ablation choice such as the obstruction cutoff, and compile it against public
+crate dependencies. Record only the dependency/API friction and delete the
+copy. The target is not a line-count score; it is to discover private helper
+dependencies or generic-policy pressure before the production layout becomes
+expensive to change.
+
+Compare two caller APIs in this spike:
+
+1. validated input plus route-specific result enum (current prediction); and
+2. raw free functions returning one common result with a certificate enum.
+
+Prefer the first unless the compile-checked callers show that the validated
+input is ceremony without reuse or that matching the result enum causes
+repeated conversions. Do not implement both as permanent convenience layers.
+
+Completion evidence is the checked-in caller example plus a short decision
+paragraph here naming the observed friction. Estimated cost after the
+coordination gate: 15--30 minutes.
+
 ### 1. Stabilize the selected code in the development packet
 
 After the coordination gate clears, extract only the selected general kernel
@@ -116,8 +212,14 @@ from the 4,000-line ablation binary into an importable
 variants, producers, counters, and audit logic in the tool.
 
 The product route is already importable in
-`src/product/closure_vertex_capacity.rs`; separate its production kernel from
-audit-only types during the same pass.
+`src/product/closure_vertex_capacity.rs`; separate its selected kernel from its
+independent exact-reference and audit-only types during the same pass.
+
+The extracted modules must be readable as ordinary algorithms, not miniature
+frameworks. Route choices remain concrete. A small private helper shared by
+both selected routes is allowed when it expresses the same arithmetic
+operation and proof contract; a helper used by production and its exact oracle
+is suspect because it can make a shared bug pass differential tests.
 
 Completion evidence:
 
@@ -233,16 +335,31 @@ certificate.
 
 ## Evidence ownership after migration
 
-- `symplectic`: selected kernels, public contracts, focused regression and
-  property tests, ordinary tracing.
+- `symplectic`: the sole selected production kernels, public contracts, focused
+  regression and property tests, ordinary tracing, and the source future
+  experiments copy when they truly need a changed implementation.
 - `experiments/dev-quadratic-program`: exact intermediate audits, adversarial
-  fixtures, ablation variants, profiling counters, producer commands, retained
-  JSONL, and interpretation.
+  fixtures, independent exact references, actual ablation variants, profiling
+  counters, producer commands, retained JSONL, and interpretation. It does not
+  keep a synchronized copy of the selected production implementation.
 - `formal`: proofs and arithmetic contracts.
 - consumer experiment folders: only output-specific agreement/schema tests.
 
 Do not duplicate the ablation study in the crate or erase it after the selected
 kernel moves.
+
+## Deferred architecture questions
+
+- A reusable observer/policy layer is deferred until at least two maintained
+  variants need the same hook. One requested counter is not enough.
+- A separate numerical-kernel crate is deferred until extraction demonstrates
+  a component with consumers beyond this capacity route.
+- Orbit/minimizer-window recovery remains a separate API because its payload
+  and completeness contract differ from scalar capacity.
+- Whether `CapacityInput4d` should reuse a future general polytope value type is
+  deferred. No such public validated type currently exists in the crate, so
+  inventing a project-wide geometry abstraction during this migration would
+  mix unrelated maintenance with the route promotion.
 
 ## Review and stop conditions
 
