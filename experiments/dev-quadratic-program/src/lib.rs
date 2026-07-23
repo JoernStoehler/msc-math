@@ -54,8 +54,12 @@ pub use near_redundant_facet_removal::{
     NearRedundantFacetRemovalStatus,
 };
 pub use product::{
-    ProductBlock, ProductFacetRemoval, ProductFacetRemovalReport, ProductFacetRemovalStatus,
-    ProductRoundingReport, ProductRoundingStatus, PRODUCT_ROUNDING_MAX_MINOR_OVER_MAJOR,
+    audit_product_closure_capacity_binary64, solve_product_closure_capacity_exact_binary64,
+    solve_product_closure_capacity_hybrid, ProductBlock, ProductClosureAuditReport,
+    ProductClosureCapacityReport, ProductClosureError, ProductClosureNumerics, ProductClosureStats,
+    ProductClosureWinner, ProductFacetRemoval, ProductFacetRemovalReport,
+    ProductFacetRemovalStatus, ProductRoundingReport, ProductRoundingStatus,
+    PRODUCT_ROUNDING_MAX_MINOR_OVER_MAJOR,
 };
 pub use rows::ScanRow;
 pub use scan::{

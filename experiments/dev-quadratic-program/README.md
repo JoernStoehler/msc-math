@@ -34,6 +34,12 @@ Immediate directory map:
 | [`performance/`](performance/README.md) | route-specific timing binaries and summarizers |
 | [`numerics-audit/`](numerics-audit/README.md) | separate QP/KKT numerical-error audit crate over retained context banks |
 
+The current product-capacity experiment is
+`tools/product_closure_route/`. It implements the KKT-free consequence of the
+six-facet reduction in `formal/product-qp-six-facet-reduction.tex`, retains
+exact-vs-f64 intermediate audits and performance evidence, and is intentionally
+not yet a production `symplectic` API.
+
 Cross-cutting experiment homes remain useful only when the question has become
 stable enough to move independently of QP method development. Do not move work
 there merely because it has numerical, performance, or verification flavor:

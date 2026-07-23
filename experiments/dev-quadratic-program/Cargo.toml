@@ -43,6 +43,10 @@ path = "tools/candidate_filter_audit/main.rs"
 name = "qp-general-algorithm-ablation"
 path = "tools/general_algorithm_ablation/main.rs"
 
+[[bin]]
+name = "qp-product-closure-route"
+path = "tools/product_closure_route/main.rs"
+
 [lints]
 workspace = true
 

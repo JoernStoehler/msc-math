@@ -244,6 +244,11 @@ HKO check found five closing triples in each factor, hence only
 matches the full route. The earlier length-at-most-six check over 1,005
 billiard-emitted words found the same value.
 
+The retained implementation, exact-vs-f64 intermediate audit, adversarial
+cases, and timings now live in `../product_closure_route/`. On its 88 retained
+cases the hybrid route agrees with complete exact closure-vertex evaluation;
+this supersedes the disposable HKO-only implementation evidence above.
+
 ## Independent review
 
 A fresh read-only adversarial review found four issues, all corrected before
