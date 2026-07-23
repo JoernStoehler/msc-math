@@ -83,6 +83,22 @@ Read first:
   source, exact-feature selection, and one target exposure establishing bounded
   operational sub-threshold ridge/rho proposer transfer. It does not support a
   threshold-directed, population, mechanism, or rho-superiority claim.
+- `canonical-vertex-covariance/`: post-target descriptive association between
+  canonical extreme-vertex covariance eccentricity and retained `sys`; not
+  frozen validation or a proposer.
+- `product-bounce-mechanism/`: existing-row decomposition of the retained
+  two-/three-bounce association into capacity, volume, generator, ridge, and
+  class-balance terms.
+- `product-bounce-width-shortcut/`: exact difference-body width formula for the
+  two-bounce class minimum, with bounded retained checks; the proof owner is
+  `formal/product-two-bounce-class.tex`.
+- `ridge-tail-pressure/`: stratified retained ridge-tail diagnostic and two
+  frozen selection comparisons, with no universal pressure or endpoint claim.
+- `ridge-endpoint-path/`: frozen eight-row endpoint evaluation along two
+  explicit product-equality paths, including the q01 exact-minimizer record.
+- `ridge-symmetry-completion/`: two-point continuation toward the regular
+  triangle--hexagon endpoint; the path inequality is mathematical and further
+  empirical densification is parked.
 
 Exploratory fixed-bucket distribution-shape packets:
 

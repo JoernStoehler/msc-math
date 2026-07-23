@@ -27,6 +27,10 @@ execution authority. Other coordination files are scientific working state or
 planning inputs; their old launch recommendations are not current unless
 explicitly readopted.
 
+`topics/README.md` is the entry point for the cross-packet topic maps. Those
+maps group evidence and hypotheses by research question without changing the
+physical owner of any experiment packet.
+
 Reusable experiment and research-line process belongs to
 `$empirical-research`, not this scientific coordination directory.
 `portfolio-review-contract.md` records the additional owner-local anti-anchoring,

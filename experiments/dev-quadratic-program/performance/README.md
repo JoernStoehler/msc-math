@@ -99,6 +99,20 @@ python3 experiments/dev-quadratic-program/performance/scripts/summarize_decision
   --csv /tmp/perf-f64-decision-compare-smoke/decision-summary.csv
 ```
 
+## `f64-capacity-benchmark`
+
+The older compact benchmark in `benchmark/` repeatedly runs the package's
+f64-only capacity route on retained artifact cases and writes min/median/max
+timings plus route classifications. Inspect its current CLI before using it:
+
+```bash
+cargo run -p exp-dev-quadratic-program --bin f64-capacity-benchmark -- --help
+```
+
+`support/` contains shared argument, JSONL, output-directory, and timing modules
+for `f64-capacity-e2e` and `f64-decision-compare`; it is not a separate
+experiment packet.
+
 ## Output Policy
 
 Generated outputs should usually go under `/tmp`. Commit commands and schemas,

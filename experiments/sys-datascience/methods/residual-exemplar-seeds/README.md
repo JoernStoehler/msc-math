@@ -165,6 +165,8 @@ fourteen exact owner geometries reconstructed, all two-faces ordered, and the
 HK diagnostic recomputed every stored `sys` value with zero reported delta.
 See `artifacts/geometry-branch-inspection/summary.json`, the branch diagnostic
 summary, and the generated `panel-comparison.tsv` for detailed rows.
+`geometry-inspection/` owns the standalone Rust reconstruction and diagnostic
+executable; generated inspection evidence remains under `artifacts/`.
 
 The incidence contract treats each two-face as a node identified by its
 unordered containing-facet pair, weighted by unsigned symplectic area divided

@@ -93,6 +93,14 @@ candidate counts, origin LP residuals, product rounding, and near-redundant
 preprocessing. These capacity events intentionally have no `oracle_kind`,
 `exact`, `abs_error`, or `rel_error` fields.
 
+The separate `f64-capacity-near-singular` binary in `near_singular/` scans
+retained artifact cases for nearly singular four-facet intersections and
+reports least-squares/recovered-vertex diagnostics:
+
+```bash
+cargo run -p exp-dev-quadratic-program --bin f64-capacity-near-singular -- --help
+```
+
 Next useful additions are traced candidate-level variables: action intervals,
 beta margins, q/error bounds, KKT residuals, exact/f64 predicate pairs, and
 exact action ordering inside f64 near-minimum bands.

@@ -16,7 +16,8 @@ grid, including `1e-1`.
 
 The older compact high-`sys` panel remains in `local-decomp-cloud/` and
 `summaries/` as a selected stress comparison. It is not the production
-generation path.
+generation path. `branch-diagnostic/` retains its six-row branch/degeneracy
+diagnostic; it does not certify local maximality.
 
 ## Scope
 
