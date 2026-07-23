@@ -32,6 +32,21 @@ produce/  ->  prepare/  ->  methods/
   prepared tables.
 - `methods/` owns method packets over the prepared random/product tables.
 
+## Rust package boundary
+
+The repository root `Cargo.toml` is the shared workspace for active packages.
+This directory's `Cargo.toml` registers the `produce/`, `prepare/`, and small
+method binaries that use the same dependency surface. Eight method packets
+already have standalone `Cargo.toml` and `Cargo.lock` files and remain
+independently runnable; their READMEs use `--manifest-path` or explicitly run
+Cargo from the method directory. The remaining Rust method executables are
+targets of this directory's package rather than one package per small binary.
+
+These packages depend one-way on the shared `exp-sys-landscape` library for
+capacity, cache, and polytope helpers. `exp-sys-landscape` does not depend on
+the data-science or method packages. Dataset flow is recorded by paths and
+commands, not by a reverse Cargo dependency.
+
 ## Current Random Distributions
 
 Current retained producer contract:

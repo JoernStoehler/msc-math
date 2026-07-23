@@ -19,8 +19,8 @@ data-science method rows.
 - `sys-variable-f-ascent --smoke` writes temp smoke output/cache paths. Full
   mode writes `variable-f-ascent/variable-f-ascent.jsonl` and
   `variable-f-ascent/cache.jsonl`.
-- `sys1-local-maxima` is retained as the binary name, but its root topic,
-  documentation, and artifacts are `experiments/local-maxima-check/`.
+- `sys1-local-maxima` is retained as the binary name, but its source, manifest,
+  documentation, and artifacts are in `experiments/local-maxima-check/`.
 - `sys-fixed-shape-orientation-search` owns a retained post-selection scan of
   the generic/product source champions over `SO(4)/U(2)`; its complete output
   and claim boundary are in `fixed-shape-orientation-search/README.md`.
@@ -32,15 +32,12 @@ data-science method rows.
 - `sys-rejection-calibration` is a full-output producer without a smoke mode; do
   not run it as a quick command check unless intentionally refreshing tracked
   artifacts.
-- `sys-dataset-*` producer commands are documented in
-  `experiments/sys-datascience/produce/README.md`; their default behavior is
-  temp smoke output unless explicit output/cache paths are supplied.
-- `sys-dataset` writes tables to the `--out-dir` path. For method waves, use
-  `experiments/sys-datascience/prepare/`; temp output is only for
-  one-off smoke/scratch runs.
-
 The tracked full-output JSONL files are evidence artifacts. Use compile checks
 or documented smoke/temp modes for local command validation.
 
 For the maintained produce -> tables -> methods flow, start at
-`experiments/sys-datascience/README.md`.
+`experiments/sys-datascience/README.md`. Its producer and preparation binaries
+and several small Rust method executables are registered by
+`experiments/sys-datascience/Cargo.toml`; method packets with an existing
+isolated build keep their local manifests. Those packages depend on the shared
+`exp-sys-landscape` library, not conversely.

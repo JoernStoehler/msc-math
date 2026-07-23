@@ -46,7 +46,7 @@ echo "  prepare dir:    experiments/sys-datascience/prepare"
 echo "  mode:           random/product"
 echo
 
-cargo run -p exp-sys-landscape --release --bin sys-dataset -- \
+cargo run -p exp-sys-datascience --release --bin sys-dataset -- \
     --random-only \
     --out-dir experiments/sys-datascience/prepare
 

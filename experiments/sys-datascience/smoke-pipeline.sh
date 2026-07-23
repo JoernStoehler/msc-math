@@ -14,7 +14,7 @@ mkdir -p "$PRODUCE_DIR" "$TABLES_DIR"
 
 echo "Smoke workspace: $WORKDIR"
 
-cargo run -p exp-sys-landscape --bin sys-datascience-produce -- \
+cargo run -p exp-sys-datascience --bin sys-datascience-produce -- \
   --mode smoke \
   --producers random,random-product \
   --output-dir "$PRODUCE_DIR" \
@@ -26,7 +26,7 @@ uv run --script "$ROOT/experiments/sys-datascience/produce/validate-datascience-
   --mode smoke \
   --producers random,random-product
 
-cargo run -p exp-sys-landscape --bin sys-datascience-prepare -- \
+cargo run -p exp-sys-datascience --bin sys-datascience-prepare -- \
   --produce-dir "$PRODUCE_DIR" \
   --out-dir "$TABLES_DIR"
 

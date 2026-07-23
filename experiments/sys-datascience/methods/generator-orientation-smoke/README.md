@@ -19,7 +19,7 @@ resampled. Both Haar maps are deterministic from the recorded packet/map seeds.
 Run the first-gate smoke without retaining artifacts:
 
 ```bash
-cargo run -p exp-sys-landscape --release \
+cargo run -p exp-sys-datascience --release \
   --bin sys-datascience-generator-orientation-smoke -- \
   --out-dir /tmp/generator-orientation-smoke \
   --rows-per-bucket 1 --buckets 3x3,4x6
@@ -42,7 +42,7 @@ The reviewed panel uses two independent bases in each of the `3x3`, `4x4`,
 `4x6`, and `6x6` buckets, with all five map variants:
 
 ```bash
-cargo run -p exp-sys-landscape --release \
+cargo run -p exp-sys-datascience --release \
   --bin sys-datascience-generator-orientation-smoke -- \
   --out-dir experiments/sys-datascience/methods/generator-orientation-smoke/artifacts/panel-2-per-bucket \
   --seed 20260714 --attempts 128 --rows-per-bucket 2 \

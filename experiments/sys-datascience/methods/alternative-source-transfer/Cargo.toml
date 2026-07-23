@@ -6,6 +6,10 @@ version = "0.1.0"
 publish = false
 edition = "2021"
 
+[[bin]]
+name = "sys-datascience-alternative-source-transfer"
+path = "src/main.rs"
+
 [dependencies]
 blake3 = "1"
 euclidean-polytopes = { path = "../../../../crates/euclidean-polytopes" }

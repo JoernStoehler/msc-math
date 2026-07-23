@@ -23,13 +23,13 @@ performed. The frozen union is at most 96 unique rows.
 From the repository root, target-free production is:
 
 ```text
-cargo run --release --manifest-path experiments/sys-landscape/Cargo.toml \
+cargo run --release --manifest-path experiments/sys-datascience/methods/alternative-source-transfer/Cargo.toml \
   --bin sys-datascience-alternative-source-transfer -- produce OUT
-cargo run --release --manifest-path experiments/sys-landscape/Cargo.toml \
+cargo run --release --manifest-path experiments/sys-datascience/methods/alternative-source-transfer/Cargo.toml \
   --bin sys-datascience-alternative-source-transfer -- features OUT
-cargo run --release --manifest-path experiments/sys-landscape/Cargo.toml \
+cargo run --release --manifest-path experiments/sys-datascience/methods/alternative-source-transfer/Cargo.toml \
   --bin sys-datascience-alternative-source-transfer -- select OUT
-cargo run --release --manifest-path experiments/sys-landscape/Cargo.toml \
+cargo run --release --manifest-path experiments/sys-datascience/methods/alternative-source-transfer/Cargo.toml \
   --bin sys-datascience-alternative-source-transfer -- validate OUT
 python3 experiments/sys-datascience/methods/alternative-source-transfer/validate_packet.py OUT --validate-only
 cargo test --locked --manifest-path \

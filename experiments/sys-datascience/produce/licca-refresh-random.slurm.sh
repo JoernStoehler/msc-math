@@ -61,7 +61,7 @@ else
     : > "$REVIEW_CACHE"
 fi
 
-cargo build --release -p exp-sys-landscape \
+cargo build --release -p exp-sys-datascience \
     --bin sys-dataset-random \
     --bin sys-dataset-random-product
 

@@ -168,7 +168,7 @@ upper-branch certificate or equivalent argument.
 From the repository root:
 
 ```bash
-cargo run --release -p exp-sys-landscape --bin sys1-local-maxima -- --canonical
+cargo run --release -p exp-local-maxima-check --bin sys1-local-maxima -- --canonical
 uv run --script experiments/local-maxima-check/analyze.py
 ```
 

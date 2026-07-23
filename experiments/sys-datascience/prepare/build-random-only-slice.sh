@@ -41,7 +41,7 @@ echo "  produce: $PRODUCE_DIR"
 echo "  out_dir: $OUT_DIR"
 echo
 
-cargo run -p exp-sys-landscape --release --bin sys-dataset -- \
+cargo run -p exp-sys-datascience --release --bin sys-dataset -- \
   --produce-dir "$PRODUCE_DIR" \
   "${SIZE_ARGS[@]}" \
   --out-dir "$OUT_DIR"

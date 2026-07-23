@@ -36,66 +36,6 @@ name = "sys-variable-f-ascent"
 path = "variable-f-ascent/main.rs"
 
 [[bin]]
-name = "sys1-local-maxima"
-path = "../local-maxima-check/src/main.rs"
-
-[[bin]]
-name = "sys-dataset-random"
-path = "../sys-datascience/produce/random.rs"
-
-[[bin]]
-name = "sys-dataset-random-product"
-path = "../sys-datascience/produce/random-product.rs"
-
-[[bin]]
-name = "sys-datascience-produce"
-path = "../sys-datascience/produce/main.rs"
-
-[[bin]]
-name = "sys-dataset"
-path = "../sys-datascience/prepare/main.rs"
-
-[[bin]]
-name = "sys-datascience-prepare"
-path = "../sys-datascience/prepare/prepare.rs"
-
-[[bin]]
-name = "sys-datascience-invariant-feature-check"
-path = "../sys-datascience/prepare/invariant_feature_check.rs"
-
-[[bin]]
-name = "sys-datascience-feature-cost"
-path = "../sys-datascience/prepare/feature_cost.rs"
-
-[[bin]]
-name = "sys-datascience-hko-ridge-source-smoke"
-path = "../sys-datascience/methods/hko-ridge-source-smoke/main.rs"
-
-[[bin]]
-name = "sys-datascience-product-bounce-class-minima"
-path = "../sys-datascience/methods/product-bounce-distribution/class-minima.rs"
-
-[[bin]]
-name = "sys-datascience-product-bounce-null-audit"
-path = "../sys-datascience/methods/product-bounce-distribution/audit-null-availability.rs"
-
-[[bin]]
-name = "sys-datascience-alternative-source-transfer"
-path = "../sys-datascience/methods/alternative-source-transfer/src/main.rs"
-
-[[bin]]
-name = "sys-datascience-alternative-source-transfer-evaluator"
-path = "../sys-datascience/methods/alternative-source-transfer/src/evaluator.rs"
-
-[[bin]]
-name = "sys-datascience-generator-orientation-smoke"
-path = "../sys-datascience/methods/generator-orientation-smoke/main.rs"
-
-[[bin]]
-name = "sys-datascience-generator-orientation-target-pilot"
-path = "../sys-datascience/methods/generator-orientation-target-pilot/main.rs"
-
-[[bin]]
 name = "sys-fixed-shape-orientation-search"
 path = "fixed-shape-orientation-search/main.rs"
 

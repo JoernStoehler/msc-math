@@ -1,0 +1,27 @@
+[package]
+name = "exp-local-maxima-check"
+version = "0.1.0"
+publish = false
+edition = "2021"
+
+[[bin]]
+name = "sys1-local-maxima"
+path = "src/main.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+exp-sys-landscape = { path = "../sys-landscape" }
+euclidean-polytopes.workspace = true
+nalgebra.workspace = true
+num-bigint.workspace = true
+num-rational.workspace = true
+num-traits.workspace = true
+rand.workspace = true
+rand_chacha.workspace = true
+rand_distr.workspace = true
+rayon.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+symplectic.workspace = true

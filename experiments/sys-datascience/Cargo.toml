@@ -1,0 +1,74 @@
+[package]
+name = "exp-sys-datascience"
+version = "0.1.0"
+publish = false
+edition = "2021"
+
+[[bin]]
+name = "sys-dataset-random"
+path = "produce/random.rs"
+
+[[bin]]
+name = "sys-dataset-random-product"
+path = "produce/random-product.rs"
+
+[[bin]]
+name = "sys-datascience-produce"
+path = "produce/main.rs"
+
+[[bin]]
+name = "sys-dataset"
+path = "prepare/main.rs"
+
+[[bin]]
+name = "sys-datascience-prepare"
+path = "prepare/prepare.rs"
+
+[[bin]]
+name = "sys-datascience-invariant-feature-check"
+path = "prepare/invariant_feature_check.rs"
+
+[[bin]]
+name = "sys-datascience-feature-cost"
+path = "prepare/feature_cost.rs"
+
+[[bin]]
+name = "sys-datascience-hko-ridge-source-smoke"
+path = "methods/hko-ridge-source-smoke/main.rs"
+
+[[bin]]
+name = "sys-datascience-product-bounce-class-minima"
+path = "methods/product-bounce-distribution/class-minima.rs"
+
+[[bin]]
+name = "sys-datascience-product-bounce-null-audit"
+path = "methods/product-bounce-distribution/audit-null-availability.rs"
+
+[[bin]]
+name = "sys-datascience-generator-orientation-smoke"
+path = "methods/generator-orientation-smoke/main.rs"
+
+[[bin]]
+name = "sys-datascience-generator-orientation-target-pilot"
+path = "methods/generator-orientation-target-pilot/main.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+exp-sys-landscape = { path = "../sys-landscape" }
+symplectic.workspace = true
+euclidean-polytopes.workspace = true
+nalgebra.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+rand.workspace = true
+rand_chacha.workspace = true
+rand_distr.workspace = true
+num-bigint.workspace = true
+num-rational.workspace = true
+num-traits.workspace = true
+blake3.workspace = true
+good_lp.workspace = true
+rayon.workspace = true
+sha2 = "0.10"

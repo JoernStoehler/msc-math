@@ -46,7 +46,7 @@ Limited presets take deterministic stratified prefixes:
 containing `computed-polytopes.jsonl` plus producer metadata files:
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-datascience-produce -- \
+cargo run -p exp-sys-datascience --release --bin sys-datascience-produce -- \
   --mode smoke \
   --producers random,random-product \
   --output-dir /tmp/ds-produce-smoke-cold \
@@ -58,7 +58,7 @@ uv run --script experiments/sys-datascience/produce/validate-datascience-produce
   --mode smoke \
   --producers random,random-product
 
-cargo run -p exp-sys-landscape --release --bin sys-datascience-prepare -- \
+cargo run -p exp-sys-datascience --release --bin sys-datascience-prepare -- \
   --produce-dir /tmp/ds-produce-smoke-cold \
   --out-dir /tmp/ds-prepare-smoke
 
@@ -69,14 +69,14 @@ uv run --script experiments/sys-datascience/fingerprint-dataset.py \
 For the known HKO reference/holdout row:
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-datascience-produce -- \
+cargo run -p exp-sys-datascience --release --bin sys-datascience-produce -- \
   --mode smoke \
   --producers known-hko-reference \
   --output-dir /tmp/ds-produce-hko \
   --parallelism 1 \
   --base-cache /tmp/ds-produce-hko-cache.jsonl
 
-cargo run -p exp-sys-landscape --release --bin sys-datascience-prepare -- \
+cargo run -p exp-sys-datascience --release --bin sys-datascience-prepare -- \
   --produce-dir /tmp/ds-produce-hko \
   --out-dir /tmp/ds-prepare-hko
 ```
@@ -94,7 +94,7 @@ reassess resources. The script runs only the prebuilt
 ```bash
 cd "$HOME/msc-math"
 export CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target
-cargo build --release -p exp-sys-landscape --bin sys-datascience-prepare
+cargo build --release -p exp-sys-datascience --bin sys-datascience-prepare
 ```
 
 Validate the produce directory before submitting prepare, then fingerprint the
@@ -154,8 +154,8 @@ invariants.
 Check the invariant feature contract with:
 
 ```bash
-cargo test -p exp-sys-landscape invariant_features --release
-cargo run -p exp-sys-landscape --release --bin sys-datascience-invariant-feature-check
+cargo test -p exp-sys-datascience invariant_features --release
+cargo run -p exp-sys-datascience --release --bin sys-datascience-invariant-feature-check
 ```
 
 The report command uses synthetic polytopes and deterministic representatives
@@ -180,7 +180,7 @@ boilerplate.
 Smoke command, independent of retained LFS producer files:
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-datascience-feature-cost -- \
+cargo run -p exp-sys-datascience --release --bin sys-datascience-feature-cost -- \
   --synthetic-smoke \
   --out-dir /tmp/sys-ds-feature-cost-smoke
 ```
@@ -188,7 +188,7 @@ cargo run -p exp-sys-landscape --release --bin sys-datascience-feature-cost -- \
 Retained producer sample command, after hydrating `produce/random*.jsonl`:
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-datascience-feature-cost -- \
+cargo run -p exp-sys-datascience --release --bin sys-datascience-feature-cost -- \
   --random-only-size smoke \
   --max-polytopes 10 \
   --out-dir /tmp/sys-ds-feature-cost-smoke

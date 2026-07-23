@@ -7,6 +7,8 @@ members = [
     "experiments/hko-local-maximum",
     "experiments/regular-products",
     "experiments/sys-landscape",
+    "experiments/sys-datascience",
+    "experiments/local-maxima-check",
     "experiments/combinatorial-cells",
     "experiments/dev-flow-graph",
     "experiments/dev-quadratic-program",

@@ -1,5 +1,5 @@
 # Rust
-/target/
+target/
 /crates/target/
 /crates/library/target/
 **/*.rs.bk

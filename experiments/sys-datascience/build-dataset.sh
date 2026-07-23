@@ -26,7 +26,7 @@ echo "  prepare dir: $TABLES_DIR"
 echo "  mode:        random/product retained"
 echo
 
-cargo run -p exp-sys-landscape --release --bin sys-dataset -- \
+cargo run -p exp-sys-datascience --release --bin sys-dataset -- \
   --random-only \
   --out-dir "$TABLES_DIR"
 

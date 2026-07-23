@@ -48,7 +48,7 @@ prepared table, which intentionally omits dual geometry):
 
 ```bash
 mkdir -p experiments/sys-datascience/methods/product-bounce-distribution/artifacts
-cargo run -p exp-sys-landscape --release \
+cargo run -p exp-sys-datascience --release \
   --bin sys-datascience-product-bounce-class-minima -- \
   --input experiments/sys-datascience/produce/random-product.jsonl \
   --output experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl
@@ -78,7 +78,8 @@ routine rerun.
 To reproduce the bounded audit itself (785 rows only):
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-datascience-product-bounce-null-audit -- \
+cargo run -p exp-sys-datascience --release \
+  --bin sys-datascience-product-bounce-null-audit -- \
   --input experiments/sys-datascience/produce/random-product.jsonl \
   --class-minima experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl \
   --output experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-null-availability.jsonl

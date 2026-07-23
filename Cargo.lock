@@ -621,6 +621,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "exp-local-maxima-check"
+version = "0.1.0"
+dependencies = [
+ "euclidean-polytopes",
+ "exp-sys-landscape",
+ "nalgebra",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "rand_distr",
+ "rayon",
+ "serde",
+ "serde_json",
+ "symplectic",
+]
+
+[[package]]
 name = "exp-performance"
 version = "0.1.0"
 dependencies = [
@@ -664,6 +683,28 @@ dependencies = [
  "num-traits",
  "serde",
  "serde_json",
+ "symplectic",
+]
+
+[[package]]
+name = "exp-sys-datascience"
+version = "0.1.0"
+dependencies = [
+ "blake3",
+ "euclidean-polytopes",
+ "exp-sys-landscape",
+ "good_lp",
+ "nalgebra",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "rand_distr",
+ "rayon",
+ "serde",
+ "serde_json",
+ "sha2",
  "symplectic",
 ]
 

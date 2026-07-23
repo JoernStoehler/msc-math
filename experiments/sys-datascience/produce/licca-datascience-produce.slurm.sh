@@ -81,7 +81,7 @@ if [[ ! -x "$BINARY" ]]; then
   echo "build on the LICCA login node first:" >&2
   echo "  cd \"$REPO_ROOT\"" >&2
   echo "  export CARGO_TARGET_DIR=\"$CARGO_TARGET_DIR\"" >&2
-  echo "  cargo build --release -p exp-sys-landscape --bin sys-datascience-produce" >&2
+  echo "  cargo build --release -p exp-sys-datascience --bin sys-datascience-produce" >&2
   exit 2
 fi
 

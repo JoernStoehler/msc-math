@@ -21,7 +21,9 @@ Transplant inventory:
   `artifacts/target-rows.jsonl`,
   `artifacts/orientation-feature-manifest.json`, and
   `artifacts/orientation-features.jsonl`; plus the two binary registrations in
-  `experiments/sys-landscape/Cargo.toml`;
+  the historical binary registrations in
+  `experiments/sys-landscape/Cargo.toml` (the current registrations are in
+  `experiments/sys-datascience/Cargo.toml`);
 - explicitly excluded: `generator-exact-feature-augmenter/` (apart from its
   bound 40-row snapshot), `generator-tangential-matchability/`,
   `generator-zoo-smoke/`, `generator-quality-atlas/`,
@@ -135,8 +137,8 @@ Target-free, before the freeze commit:
 
 ```bash
 cargo fmt --check
-cargo check -p exp-sys-landscape --bin sys-datascience-generator-orientation-target-pilot
-cargo run -p exp-sys-landscape --bin sys-datascience-generator-orientation-target-pilot -- --validate-only
+cargo check -p exp-sys-datascience --bin sys-datascience-generator-orientation-target-pilot
+cargo run -p exp-sys-datascience --bin sys-datascience-generator-orientation-target-pilot -- --validate-only
 python3 -m unittest discover -s experiments/sys-datascience/methods/generator-orientation-target-pilot -p 'test_*.py'
 python3 analyze.py --self-test
 python3 experiments/sys-datascience/methods/generator-orientation-target-pilot/select.py
@@ -151,7 +153,7 @@ historical command against this worktree or regenerate retained rows.
 For provenance review, the current branch command is:
 
 ```bash
-cargo run -p exp-sys-landscape --bin sys-datascience-generator-orientation-target-pilot -- --validate-only
+cargo run -p exp-sys-datascience --bin sys-datascience-generator-orientation-target-pilot -- --validate-only
 ```
 
 The retained analyzer is the only command that reads the 24-row target

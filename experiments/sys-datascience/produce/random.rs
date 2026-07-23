@@ -7,7 +7,7 @@
 //!         experiments/sys-datascience/produce/shared-cache.jsonl
 //!
 //! Architecture:
-//! 1. Bare `cargo run -p exp-sys-landscape --release --bin sys-dataset-random`
+//! 1. Bare `cargo run -p exp-sys-datascience --release --bin sys-dataset-random`
 //!    is a smoke/default run: it writes temp output + temp cache under `/tmp`.
 //! 2. Canonical refreshes pass explicit repo-owned paths, e.g.
 //!    `--out experiments/sys-datascience/produce/random.jsonl`

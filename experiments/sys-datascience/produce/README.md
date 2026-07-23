@@ -41,7 +41,7 @@ Use this path for producer/prepare iterations that should not mutate canonical
 producer files:
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-datascience-produce -- \
+cargo run -p exp-sys-datascience --release --bin sys-datascience-produce -- \
   --mode smoke \
   --producers random,random-product \
   --output-dir /tmp/ds-produce-smoke-cold \
@@ -108,7 +108,7 @@ python3 experiments/sys-datascience/produce/validate-datascience-produced.py \
 The known HKO pentagon can be emitted as a one-row reference/holdout source:
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-datascience-produce -- \
+cargo run -p exp-sys-datascience --release --bin sys-datascience-produce -- \
   --mode smoke \
   --producers known-hko-reference \
   --output-dir /tmp/ds-produce-hko \
@@ -122,7 +122,7 @@ This writes `reference-samples.jsonl` with source
 Production mode uses the retained row counts above:
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-datascience-produce -- \
+cargo run -p exp-sys-datascience --release --bin sys-datascience-produce -- \
   --mode production \
   --producers random,random-product \
   --output-dir /tmp/ds-produce-production \
@@ -150,7 +150,7 @@ time measures the producer job, not Rust compilation:
 ```bash
 cd "$HOME/msc-math"
 export CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target
-cargo build --release -p exp-sys-landscape --bin sys-datascience-produce
+cargo build --release -p exp-sys-datascience --bin sys-datascience-produce
 ```
 
 No LICCA job is currently selected. After a new named research decision and a reviewed

@@ -49,6 +49,7 @@ def main():
         Path("experiments/sys-datascience/methods/product-bounce-distribution/audit-null-availability.rs"),
         Path("experiments/sys-datascience/methods/product-bounce-distribution/summarize_class_minima.py"),
         Path("experiments/sys-datascience/methods/product-bounce-distribution/write_class_minima_provenance.py"),
+        Path("experiments/sys-datascience/Cargo.toml"),
         Path("experiments/sys-landscape/Cargo.toml"),
     ]
     result = {
@@ -61,7 +62,7 @@ def main():
             "source_files": {str(path): sha256(ROOT / path) for path in sources},
         },
         "producer": {
-            "command": "cargo run -p exp-sys-landscape --release --bin sys-datascience-product-bounce-class-minima -- --input experiments/sys-datascience/produce/random-product.jsonl --output experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl",
+            "command": "cargo run -p exp-sys-datascience --release --bin sys-datascience-product-bounce-class-minima -- --input experiments/sys-datascience/produce/random-product.jsonl --output experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl",
             "summary_command": "python3 experiments/sys-datascience/methods/product-bounce-distribution/summarize_class_minima.py --input experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl --out experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-summary.json",
             "source_revision": command("git", "rev-parse", "HEAD"),
             "source_status": command("git", "status", "--short", "--", *map(str, sources)),
@@ -76,7 +77,7 @@ def main():
         result["paths"]["availability_audit"] = str(audit_path)
         result["sha256"]["availability_audit"] = sha256(ROOT / audit_path)
         result["producer"]["availability_audit_command"] = (
-            "cargo run -p exp-sys-landscape --release --bin "
+            "cargo run -p exp-sys-datascience --release --bin "
             "sys-datascience-product-bounce-null-audit -- "
             "--input experiments/sys-datascience/produce/random-product.jsonl "
             "--class-minima experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl "

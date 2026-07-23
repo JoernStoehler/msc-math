@@ -12,7 +12,8 @@ the perturbations are only a small deterministic smoke sample.
 Run from the repository root:
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-datascience-hko-ridge-source-smoke -- \
+cargo run -p exp-sys-datascience --release \
+  --bin sys-datascience-hko-ridge-source-smoke -- \
   --out-dir experiments/sys-datascience/methods/hko-ridge-source-smoke/artifacts
 ```
 
