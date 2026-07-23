@@ -57,7 +57,7 @@ pub fn smoke_output_path(label: &str, file_name: &str) -> PathBuf {
 /// `"products"`).
 ///
 /// Recognized flags:
-/// `--n`, `--n-start`, `--seed`, `--out`, `--fresh`, `--db-update`,
+/// `--help`, `--n`, `--n-start`, `--seed`, `--out`, `--fresh`, `--db-update`,
 /// `--no-db-update`, `--seed-time-budget-secs`,
 /// `--expensive-computations-cache`.
 pub fn parse_ascent_args(
@@ -87,6 +87,24 @@ pub fn parse_ascent_args(
                 .unwrap_or_else(|| panic!("{arg} requires a value"))
         };
         match arg {
+            "--help" | "-h" => {
+                println!(
+                    "Usage: sys-gradient-ascent-{prefix} [options]\n\
+                     \n\
+                     Options:\n\
+                     \x20 --n N                             seeds to process (default: {default_n})\n\
+                     \x20 --n-start N                       starting global seed index (default: 0)\n\
+                     \x20 --seed N                          base RNG seed (default: {default_seed})\n\
+                     \x20 --out PATH                        summary JSONL path\n\
+                     \x20 --seed-time-budget-secs SECONDS   per-seed wall-clock budget (default: {default_seed_time_budget_secs})\n\
+                     \x20 --expensive-computations-cache PATH  additional read-only cache (repeatable)\n\
+                     \x20 --fresh                           replace outputs instead of resuming\n\
+                     \x20 --db-update                       load and save the shared family cache\n\
+                     \x20 --no-db-update                    do not update the shared family cache (default)\n\
+                     \x20 --help, -h                        show this help and exit"
+                );
+                std::process::exit(0);
+            }
             "--n" => {
                 n = value().parse().expect("--n must be a non-negative integer");
                 i += 2;
