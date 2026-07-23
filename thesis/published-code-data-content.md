@@ -26,7 +26,7 @@ from floating-point evidence. It applies that distinction to availability:
 
 Repository paths, command sequences, packager and manifest implementation,
 Python assertion modes, artifact hashes, detailed comparison procedures, and
-packet-local operational caveats belong in `docs/reproducibility.md` and owner-local
+packet-local operational caveats belong in `docs/reproducibility.md` and packet-local
 READMEs. Mention an implementation distinction only when it changes the
 mathematical trust boundary, as with untrusted HKO witness generation versus
 exact SageMath verification.

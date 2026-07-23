@@ -112,7 +112,7 @@ positive capacity word. The figure is regenerated from the exact rational tube
 geometry; rationals are converted to finite floats only at the JSON/rendering
 boundary. It is explanatory rather than proof evidence.
 
-The owner artifacts and reproduction commands are in
+The producer artifacts and reproduction commands are in
 `experiments/dev-flow-graph/visualize-tube/` and
 `experiments/dev-flow-graph/README.md`. The active PDF is copied deliberately
 to `thesis/figures/flow-graph/` so the thesis build is self-contained. The

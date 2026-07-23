@@ -5,7 +5,7 @@ truth. The active reading surface is `thesis/09-rotated-regular-polygons*.tex`.
 
 Purpose: preserve the source chain, computation boundary, reviewed
 interpretation, and concrete reopen conditions for the rotated-pentagon side
-result without making a later owner reconstruct the proof packet.
+result without making a later maintainer reconstruct the proof packet.
 
 ## Result and proof spine
 
@@ -39,7 +39,7 @@ chapter claims that every minimizing orbit has two or three bounces.
    `thesis/09-rotated-regular-polygons*.tex`.
    The Sage-source subsection contains cleaned proof-facing excerpts for
    comparison with the formulas; it is an audit surface, not a second
-   executable owner.
+   executable source.
 2. Product finite enumeration and QP interface:
    `thesis/04-haim-kislev-quadratic-program.tex`, especially
    `thm:lagrangian-product-finite-enumeration` and the active-word/KKT bridge.
@@ -55,7 +55,7 @@ chapter claims that every minimizing orbit has two or three bounces.
    `formal/lagrangian-product-rotation-symmetry.tex` is useful source;
    `formal/pentagon-rotation-capacity.tex` is explicitly stale and is not proof
    status.
-6. Empirical figure owner:
+6. Empirical figure producer:
    `experiments/regular-products/rotated-regular-products/analyze.py` and
    `lagrangian-products-5x5.jsonl`. The thesis copy is
    `thesis/working/rotated-regular-polygons/lagrangian-products-5x5.png`.

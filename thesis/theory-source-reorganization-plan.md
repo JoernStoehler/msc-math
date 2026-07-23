@@ -4,7 +4,7 @@ Status: implementation plan derived from `theory-authoring-map.md` and the
 active TeX input graph. It records safe source moves and unresolved placement
 decisions; it is not publication prose or mathematical source truth.
 
-Purpose: turn the accepted explanatory ownership into a dependency-safe TeX
+Purpose: turn the accepted explanatory placement into a dependency-safe TeX
 editing sequence. The plan deliberately does not preserve existing files or
 paragraph order merely because they are active.
 
@@ -24,7 +24,7 @@ The early theory should establish this dependency chain:
 7. the Haim--Kislev finite quadratic program;
 8. the separate flow-graph construction and its relation to CH2021.
 
-This order removes the current forward dependency in the Clarke passage. A
+This order removed the former forward dependency in the Clarke passage. A
 reader meets
 
 \[
@@ -45,10 +45,10 @@ referred to it.
 
 ## Preliminaries Source Split
 
-Replace the current mixed ownership with these semantic units. Filenames are
-provisional; purposes and boundaries are the decision.
+The active split uses these semantic units. The purposes and boundaries, not
+the filenames by themselves, are the durable decision.
 
-| Proposed source unit | Owns | Deliberately does not own |
+| Active source unit | Contains | Deliberately excludes |
 |---|---|---|
 | `02-preliminaries-convex-symplectic-notation.tex` | Coordinates, \(J_0\), \(\omega_0\), \(\lambda_0\), action, smooth characteristic/Reeb normalization, and \(A=T\) | Piecewise-affine word action |
 | `02-preliminaries-convex-hamiltonian-language.tex` | Convex bodies containing the origin, support and gauge functions, \(H_K=g_K^2\), convex subdifferentials, the general smooth/nonsmooth Hamiltonian inclusion, and its contact normalization | Polytope algorithms or finite face data |
@@ -57,38 +57,36 @@ provisional; purposes and boundaries are the decision.
 | `02-preliminaries-ehz-capacity.tex` | Least-action EHZ capacity, compact capacity axioms, the four-dimensional systolic ratio, Viterbo's threshold, and only the immediate translation/scaling consequences needed to understand them | HKO quotient machinery, a polygon limit lemma, or the unused symplectic-product formula |
 | `02-preliminaries-clarke-dual-action-principle.tex` | The current detailed free-period, uncentered dual principle and its settled citation/proof boundary | Its finite polytope/QP specialization |
 
-The present `02-preliminaries-polytope-representations-finite-geometry.tex`
-is therefore a source reservoir, not a unit to revise in place. Its opening
-normalized-halfspace discussion feeds the polytope-input unit; its final
-support/gauge/Hamiltonian discussion feeds the convex-Hamiltonian unit; and
-the short geometric core of its Lagrangian-product definition feeds the
+The former
+`02-preliminaries-polytope-representations-finite-geometry.tex` was used as a
+source reservoir during this split and is now recoverable through Git. Its
+opening normalized-halfspace discussion fed the polytope-input unit; its final
+support/gauge/Hamiltonian discussion fed the convex-Hamiltonian unit; and the
+short geometric core of its Lagrangian-product definition fed the
 Lagrangian-product unit.
 
 ## Generalized-Orbit Source
 
-Keep `03-generalized-reeb-orbits-definition.tex` focused on the specialization
+`03-generalized-reeb-orbits-definition.tex` is focused on the specialization
 of the general inclusion to polytopes. It should calculate the active
 subdifferential, obtain the pure facet directions, and explain why the same
 normalization gives action equal to elapsed time.
 
-Rename or reshape
-`03-generalized-reeb-orbits-words-dwell-times-closure.tex` as the finite-word
-data unit. It should own active words, dwell times, closure, cyclic
-redundancy, base-point feasibility, and the piecewise-affine action formula.
-Move the symplectic shoelace lemma and proof out of
-`02-preliminaries-convex-symplectic-notation.tex` into this unit before its
-first substantive use. Preserve the current label during the structural move;
-rename it only in a later cleanup if the reference churn buys clearer
-navigation.
+`03-generalized-reeb-orbits-words-dwell-times-closure.tex` is the finite-word
+data unit. It contains active words, dwell times, closure, cyclic redundancy,
+base-point feasibility, the piecewise-affine action formula, and the relocated
+symplectic shoelace lemma. The former preliminary label was retained to avoid
+reference churn; rename it only if a later cleanup buys clearer navigation.
 
 Keep `03-generalized-reeb-orbits-simple-minimizers.tex` after the finite-word
 unit. It may then use the action formula and base-point condition without
 pulling algorithm-facing material into the preliminaries.
 
-Move `03-generalized-reeb-orbits-ch2021-smoothings-limits.tex` out of this
-reading path. Its hypotheses, Type 1/2/3 distinction, smoothing results, and
-finite-segment statement are specific to the CH2021 comparison, not to the
-general polytope-to-QP reduction.
+The former `03-generalized-reeb-orbits-ch2021-smoothings-limits.tex` is no
+longer in this reading path. Its useful hypotheses, Type 1/2/3 distinction,
+smoothing results, and finite-segment statement moved to
+`05-flow-graph-ch2021-background-comparison.tex`, because they are specific to
+the CH2021 comparison rather than the general polytope-to-QP reduction.
 
 ## Later Consumer Moves
 
@@ -109,7 +107,7 @@ The symplectic-product capacity formula in
 `02-preliminaries-ehz-capacity.tex` has no active consumer. Remove it from the
 publication path rather than relocate it.
 
-## Material Without A Settled Publication Owner
+## Material Without A Settled Publication Location
 
 Do not transplant these paragraphs merely to make the preliminary split
 complete:
@@ -127,34 +125,28 @@ particular, do not repair the incidence rule until its input class is explicit;
 the rule may disappear, become a deliberately restricted pipeline contract,
 or need replacement by an exact face-dimension test.
 
-The relevant current source owners to inspect at that point include
+The relevant implementation and formal sources to inspect at that point include
 `crates/symplectic/src/exact/polytope.rs`,
 `crates/euclidean-polytopes/src/faces.rs`, and
 `formal/random-polytope-boundedness.tex`.
 
 ## Implementation Order And Gates
 
-Status of this sequence: the convex-Hamiltonian seam, mixed preliminary source
-split, shoelace relocation, removal of the unused symplectic-product
-digression, and CH2021 move to the flow-graph comparison are implemented in the
-active source. They have passed a clean build and local rendered inspection
-but not Jörn's integrated review. The remaining numbered items continue to
-describe the intended order.
+The first four stages are implemented in the active source: the
+convex-Hamiltonian seam before Clarke, the mixed preliminary source split, the
+shoelace relocation, and the CH2021 move to the flow-graph comparison. The
+unused symplectic-product digression was also removed. These changes passed a
+clean build and local rendered inspection but not Jörn's integrated review.
+Git and this plan retain the deferred source decisions; there are no `.bak`
+copies.
 
-1. Establish the convex-Hamiltonian seam before Clarke, then read Clarke and
-   the generalized-orbit opening continuously. This is the first pilot because
-   it tests the hardest conceptual dependency.
-2. Split the mixed finite-geometry source. Keep deferred material recoverable
-   through Git and this plan; do not create `.bak` files.
-3. Move the shoelace lemma into the finite-word data unit and recheck the
-   generalized-orbit proof spine and QP references.
-4. Integrate the CH2021 source beside the flow-graph comparison and remove its
-   old input from the generalized-orbit wrapper.
-5. Integrate product-specific geometry while revising the QP material. Do not
+The remaining integration gates are:
+
+1. Integrate product-specific geometry while revising the QP material. Do not
    disturb the current finite theorem spine merely to complete a file move.
-6. Move HKO symmetry material only during an HKO coherence pass, and move the
+2. Move HKO symmetry material only during an HKO coherence pass, and move the
    continuity/product-volume material only during the polygon proof pass.
-7. Leave first-order geometry and the finite-incidence contract deferred until
+3. Leave first-order geometry and the finite-incidence contract deferred until
    their required claims and input classes are settled.
 
 After each structural stage, rebuild the thesis, check labels and references,

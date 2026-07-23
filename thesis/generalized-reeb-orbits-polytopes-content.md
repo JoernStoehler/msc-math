@@ -7,7 +7,7 @@ Purpose: gather the writing inventory for explaining why finite polytope
 computations compute the relevant symplectic quantity.
 
 Use `theory-authoring-map.md` for the cross-chapter reader questions and
-ownership decisions that determine what enters this section.
+placement decisions that determine what enters this section.
 
 Overruled by: `formal/`, source papers, revalidated legacy thesis material,
 active algorithm sections, and Jörn/Kai review.

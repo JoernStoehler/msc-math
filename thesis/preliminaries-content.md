@@ -5,10 +5,10 @@ It is not mathematical source truth.
 
 Purpose: record only the common reader state that the preliminaries should
 establish. Use `theory-authoring-map.md` for the cross-chapter dependency and
-ownership reasoning.
+placement reasoning.
 
 Overruled by: `docs/project-facts.md`, accepted Jörn/Kai decisions, active theorem
-statements, mathematical owners, source papers, and integrated reader review.
+statements, mathematical sources, source papers, and integrated reader review.
 
 ## Intended Reader Change
 
@@ -46,7 +46,7 @@ later proofs depend on their exact signs, factors, and quantifiers.
   `thesis/legacy/basic-definitions.tex` only as fallible explanatory source.
 - General convex Hamiltonian language and generalized characteristics:
   `02-preliminaries-convex-hamiltonian-language.tex`, with the Clarke passage
-  owning the dual correspondence rather than the definition of the primal
+  explaining the dual correspondence rather than defining the primal
   object.
 - Polytope input language: `02-preliminaries-polytope-input-language.tex`,
   standard convex duality, and the accepted boundedness material in
@@ -55,13 +55,13 @@ later proofs depend on their exact signs, factors, and quantifiers.
   citation placement checked against authoritative capacity sources and the
   nonsmooth AAO/HK route.
 - Clarke duality: retain `02-preliminaries-clarke-dual-action-principle.tex`.
-  `docs/project-status.md` owns its settled proof boundary and review status;
-  AAO2014 and HK2017 own the external analytic inputs and correspondence. The
+  `docs/project-status.md` records its settled proof boundary and review status;
+  AAO2014 and HK2017 supply the external analytic inputs and correspondence. The
   active proof uses the conjugate Hamiltonian notation \(H_K^*\) to keep the
   Fenchel and reconstruction steps visible without repeatedly expanding
   \(h_K^2/4\).
 - Lagrangian products: `02-preliminaries-lagrangian-products.tex`, HKO2024 for
-  the central example, and the later QP/polygon owners for specialized
+  the central example, and the later QP/polygon sections for specialized
   enumeration or symmetry.
 - Explanatory figures: `figures/foundations/generate.py` is the thesis-native
   producer for `characteristic-normalization.pdf` and `facet-polarity.pdf`.
@@ -70,7 +70,7 @@ later proofs depend on their exact signs, factors, and quantifiers.
   evidence. Run `uv run --script thesis/figures/foundations/generate.py` from
   the repository root to regenerate all foundation figures.
 
-## Material With A Later Owner
+## Material With A Later Home
 
 Move rather than delete material whose reader purpose is narrow:
 
@@ -80,7 +80,7 @@ Move rather than delete material whose reader purpose is narrow:
   recovery, and simple minimizers remain with generalized orbits.
 - Exact vertex enumeration, incidence extraction/rules, boundedness kernels,
   local fixed-facet charts, volume computations, and label order move to the
-  algorithms or results that consume them.
+  code or result sections that consume them.
 - Systolic continuity and product-volume constancy move to the limiting or
   polygon arguments that use them unless another common use emerges.
 - The unused symplectic-product capacity formula has been cut. Recover it from

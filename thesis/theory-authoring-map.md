@@ -5,7 +5,7 @@ preliminaries through the finite algorithms. It is not mathematical source
 truth and does not prescribe final paragraph order.
 
 Purpose: map the reader's generating questions to the mathematical
-understanding they require, the passage that should own that explanation, and
+understanding they require, the passage that should contain that explanation, and
 the sources an author must inspect. This is the entry point for deciding what
 the early theory covers before drafting prose.
 
@@ -101,35 +101,35 @@ is complete, and why this is a project theorem rather than a restatement of
 CH2021. CH2021's Type 1/2/3 and smoothing material belongs here as comparison
 and motivation, not on the Haim--Kislev dependency spine.
 
-## Explanatory Ownership
+## Explanatory Placement
 
-| Material | Reader purpose | Proposed owner | Main support route |
+| Material | Reader purpose | Proposed thesis location | Main support route |
 |---|---|---|---|
 | Coordinates, symplectic form, primitive, action, smooth Reeb normalization | Fix conventions used everywhere and explain the optimized quantity | Preliminaries | Active convex/symplectic notation; standard background; revalidated legacy definitions |
 | Normalized halfspaces, polar rows, support/gauge, boundedness, irredundancy | Give a stable mathematical input model shared by both algorithms and later row charts | Preliminaries | Active polytope definitions; `formal/random-polytope-boundedness.tex`; standard convex duality |
 | EHZ capacity, compact capacity axioms, systolic ratio, Viterbo threshold | State the thesis target, why it is symplectic, and what comparisons mean | Preliminaries | `02-preliminaries-ehz-capacity.tex`; authoritative capacity sources still need citation placement review |
-| Lagrangian product definition and \(q/p\) factor placement | Make the central HKO example, search family, and polygon family intelligible | Preliminaries | Active definition; HKO2024 and later family owners |
+| Lagrangian product definition and \(q/p\) factor placement | Make the central HKO example, search family, and polygon family intelligible | Preliminaries | Active definition; HKO2024 and the later family sections |
 | Generalized polytope inclusion and \(R_i\) | Explain what replaces the smooth Reeb field | Generalized orbits | Active definition; HK2017 convention translation |
 | Clarke dual principle in free-period, uncentered form | Present the general smooth/nonsmooth convex duality that later makes finite reduction possible | Preliminaries | Keep `02-preliminaries-clarke-dual-action-principle.tex`; `docs/project-status.md` records the settled proof boundary; AAO2014 analytic inputs and HK2017 Lemma 2.1 are the external route |
-| Piecewise-affine action/shoelace identity | Make splitting/merging and the later QP normalization check transparent | Generalized orbits near first use; QP cites it | Current preliminary lemma, to be moved intact unless writing shows a better bridge |
+| Piecewise-affine action/shoelace identity | Make splitting/merging and the later QP normalization check transparent | Generalized orbits near first use; QP cites it | Active lemma in `03-generalized-reeb-orbits-words-dwell-times-closure.tex` |
 | Simple-minimizer theorem and proof | Establish that the capacity search contains a finite pure-facet word | Generalized orbits | Active five-operation proof; HK2017 simple-loop theorem |
 | Words, dwell times, closure, base-point recovery | Define the interface passed to the finite methods and the realizability boundary | Generalized orbits | Active word/base-point material; `formal/reeb-orbit-recovery.tex` |
 | Haim--Kislev objective, word orientation, factor, global formula | Prove the first finite scalar capacity formula | Haim--Kislev material | HK2017 formula proof; `formal/hk2017-qp-conventions.tex`; active QP text |
-| KKT solving, pruning, enumeration, exact/f64 contracts | Explain the project's computational realization, without changing the theorem's input | Haim--Kislev computation/algorithm owner or numerics, according to consumer | `quadratic-program-algorithm-hk2019-content.md`, `formal/ehz-kkt-system.tex`, `formal/capacity-algorithms.tex`, and `crates/symplectic/src/algorithms/hk2017/` |
+| KKT solving, pruning, enumeration, exact/f64 contracts | Explain the project's computational realization, without changing the theorem's input | Haim--Kislev computation material or numerics, according to the explanation's use | `quadratic-program-algorithm-hk2019-content.md`, `formal/ehz-kkt-system.tex`, `formal/capacity-algorithms.tex`, and `crates/symplectic/src/algorithms/hk2017/` |
 | CH2021 types, smoothing limits, and source comparison | Situate the second algorithm and delimit what is imported from the literature | Flow-graph material | Published CH2021 result; `formal/flow-graph-ch2021-comparison.tex` |
-| Flow tubes, return maps, regularity, genericity, exact correctness | Prove the project-original second finite algorithm | Flow-graph material | `formal/flow-graph-real-algorithm.tex` and implementation-evidence owners |
+| Flow tubes, return maps, regularity, genericity, exact correctness | Prove the project-original second finite algorithm | Flow-graph material | `formal/flow-graph-real-algorithm.tex` and the implementation/evidence sources it names |
 | Fixed-facet Hausdorff charts and labelled-row perturbations | Define the local spaces used for HKO and first-order work | First local consumer, with short shared reminders | `formal/hko-feasible-section-upper-branches.tex`, `hko-local-maximum-content.md`, `first-order-perturbations-content.md`, and the preliminary polarity vocabulary |
-| Systolic symmetry group, quotient slice, infinitesimal action | Explain what local optimality means modulo equality directions | HKO local-maximality material | HKO theorem/certificate owners |
+| Systolic symmetry group, quotient slice, infinitesimal action | Explain what local optimality means modulo equality directions | HKO local-maximality material | HKO theorem and certificate sources |
 | Capacity and systolic continuity | Close a limiting argument where it is actually used | Rotated-polygon material unless another general use appears | Move the proposition from `02-preliminaries-ehz-capacity.tex` near `09-rotated-regular-polygons-exact-certificate.tex`; verify its standard source |
 | Product-volume identity and family-specific rotation invariance | Convert exact capacity branches into the polygon systolic formula | Rotated-polygon material | `rotated-regular-polygons-content.md` and `09-rotated-regular-polygons-pentagon-profile-theorem.tex`; ordinary Fubini proof |
-| Vertex enumeration, incidence extraction, boundedness kernels, face tests | State the input/producer contract of algorithms that actually consume this data | Algorithm or data owner; appendix only if a reader-facing audit needs it | `crates/symplectic/src/exact/polytope.rs`, `crates/euclidean-polytopes/src/faces.rs`, `formal/random-polytope-boundedness.tex`, and the consuming flow-graph/HKO/first-order companions |
+| Vertex enumeration, incidence extraction, boundedness kernels, face tests | State the input/producer contract of algorithms that actually consume this data | The consuming algorithm or data-interface section; appendix only if a reader-facing audit needs it | `crates/symplectic/src/exact/polytope.rs`, `crates/euclidean-polytopes/src/faces.rs`, `formal/random-polytope-boundedness.tex`, and the consuming flow-graph/HKO/first-order companions |
 
 ## Material To Remove From The Shared Preliminary Burden
 
 - The four-hyperplane vertex-enumeration procedure, incidence-only edge and
   two-face rules, and triple-kernel boundedness test are not common conceptual
   prerequisites. Their exact hypotheses should be assessed only after their
-  algorithm/data owner is chosen.
+  publication location and consuming interface are known.
 - The symplectic-product capacity formula has no active downstream consumer and
   is easily confused with the Lagrangian products central to the thesis. Cut it
   unless the introduction or a retained result creates a concrete use.
@@ -184,14 +184,14 @@ had deliberately left for later disposition:
   traversal order.
 - Keep existential simple-minimizer claims distinct from classifications of all
   minimizers.
-- Do not decide the incidence-rule statement until it has an owner and an
-  explicit input class. It may disappear from publication prose, become a
+- Do not decide the incidence-rule statement until its publication location
+  and explicit input class are known. It may disappear from publication prose, become a
   restricted algorithm contract, or require an exact face-dimension test.
 - Every global QP maximizer does realize a simple minimum-action generalized
   orbit after zero weights are deleted, but this universal quantifier is a
   consequence of HK2017's constructed dual loop, the scalar capacity equality,
   and Lemma 2.1 rather than an explicitly stated source theorem. Retain the
-  explicit loop/action/dual-functional normalization in the formal owner and do
+  explicit loop/action/dual-functional normalization in the formal source and do
   not attribute the stronger sentence verbatim to HK2017.
 
 ## Questions The Thesis May Acknowledge Without Settling
@@ -209,7 +209,7 @@ had deliberately left for later disposition:
 
 ## Reopen Conditions
 
-Reconsider this ownership map if authoring reveals a repeated explanation, a
+Reconsider this placement map if authoring reveals a repeated explanation, a
 forward dependency, or a later theorem that genuinely needs a supposedly
 local fact earlier. For Clarke, repair the current forward reference by
 introducing the general nonsmooth characteristic/Hamiltonian-inclusion notion

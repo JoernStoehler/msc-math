@@ -98,7 +98,7 @@ The chapter retains only evidence whose role is stable:
   `experiments/dev-gradient-ascent/` remain active development surfaces and are
   not thesis evidence by themselves.
 
-The 2026-07-14 chapter-owner run executed the three named derivative tests in
+The 2026-07-14 chapter review run executed the three named derivative tests in
 release mode, including the ignored fixed-word capacity test; all passed.
 
 ## Deliberate omissions and reopen conditions
