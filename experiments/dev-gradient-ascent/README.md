@@ -22,6 +22,29 @@ for producing object-level diagnostic results that can later be promoted into
 `experiments/verification/`, `experiments/dev-quadratic-program/numerics-audit/`, or a final analysis
 packet.
 
+## Current Directory Inventory
+
+This table covers every immediate child directory. It is a physical
+search surface; status and interpretation remain in the linked README,
+generated report, or source.
+
+| Directory | What is there |
+| --- | --- |
+| `src/` | shared artifact schemas, synthetic smoke support, and branch-diagnostic library code |
+| `smoke/` | synthetic package/schema smoke binary; no real `sys` computation |
+| `branch-diagnostic/` | real-data branch-gap and degeneracy diagnostic producer |
+| `branch-cartography/` | finite perturbation records for branch visibility and branch-domain changes |
+| `local-geometry-probe/` | finite direction/step probes, iterative traces, endpoint scans, and audit rows |
+| `trace-policy-sweep/` | offline relabeling of retained probe deltas under alternative stop thresholds |
+| `aggregate-summaries/` | aggregation of complete split local-geometry run summaries and budgets |
+| `endpoint-scan-report/` | endpoint direction-scan summaries, including positive-below-threshold cases |
+| `run-trace-report/` | trace summaries for accepted/rejected direction behavior |
+| `adaptive-direction-ablation/` | retained comparison of adaptive direction models and screening analysis |
+| `iterative-policy-ablation/` | bounded retained iterative step-policy comparison and review |
+| `literal-naive-gradient/` | literal branch-gradient baseline, multi-start evaluation, and optimizer-suite comparison |
+| `optimizer-score-comparison/` | selected-case paired ranking smoke for near-active versus candidate-window scores |
+| `quotient-endpoint-diagnostic/` | retained quotient-aware derivative-free endpoint diagnostic and review |
+
 ## Thesis Role
 
 The thesis-facing target is a positive method claim:

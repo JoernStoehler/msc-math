@@ -73,6 +73,21 @@ Route optimizer work back to `experiments/dev-gradient-ascent/`. Route reusable
 KKT solver/API design back to `experiments/dev-quadratic-program/` or
 `crates/symplectic/` once it is stable enough to stop being packet-local.
 
+## Current Directory Inventory
+
+This table covers every immediate child directory. It is a physical search
+surface, not a claim that every directory contains retained evidence.
+
+| Directory | What is there |
+| --- | --- |
+| `src/` | shared panel, schema, cache, prediction-cloud, and beta-boundary implementation |
+| `produce/` | deterministic panel configs, producers, commands, and data-flow documentation |
+| `facet-scale-baseline-error/` | retained facet-count/radius and lower-envelope error calibration |
+| `error-model-smoke/` | three-row analyzer-development fixture; not evidence |
+| `branch-equality-continuation/` | fixed pairwise branch-equality continuation and nonregular-product control |
+| `sysext-beta-boundary-scan/` | raw KKT beta-margin scan over selected table rows |
+| `sysext-sigma-line-probe/` | fixed-sigma raw-KKT branch behavior along finite lines |
+
 ## Current Model Families
 
 ### Active Smooth Branch

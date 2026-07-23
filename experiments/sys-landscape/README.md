@@ -8,6 +8,29 @@ Legacy ascent and continuation observations that are still worth preserving are
 summarized in `legacy-ascent-continuation-debt.md`. They are not active
 data-science method rows.
 
+## Current Directory Inventory
+
+This table covers every immediate child directory. Several producer folders
+remain useful as historical method-development packets even though the
+maintained data-science flow has moved elsewhere.
+
+| Directory | What is there |
+| --- | --- |
+| `src/` | reusable landscape cache, active-state, and capacity support used by this package and downstream experiment packages |
+| `random-sample/` | legacy random-body producer outputs and job surface |
+| `random-product-sample/` | legacy random-product producer outputs and job surface |
+| `gradient-ascent-general/` | legacy general-body ascent producer and retained endpoints |
+| `gradient-ascent-observed-general/` | retained fixed panel for the observed multi-direction method candidate |
+| `gradient-ascent-products/` | legacy product-body ascent producer and retained endpoints |
+| `variable-f-ascent/` | variable-facet-count ascent producer and retained outputs |
+| `fixed-shape-orientation-search/` | retained post-selection `SO(4)/U(2)` orientation scan |
+| `rejection-calibration/` | retained rejection/calibration producer and full-output artifacts |
+
+Related method-development code also lives in
+`experiments/sys-datascience/{produce,prepare,methods}/`; that is a semantic
+relationship, not a reason to place those owners under a second directory
+tree.
+
 ## Rust Command Contract
 
 - `sys-random-sample` and `sys-random-product-sample` default to untracked temp

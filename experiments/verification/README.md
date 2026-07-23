@@ -26,7 +26,7 @@ separates fast crate checks from slower, artifact-backed evidence.
 
 ### Scope
 
-The verification package is organized into three roles:
+The following list covers every immediate child directory:
 
 - `correctness/`: validates core capacity implementation properties and current evidence for
   conformality, symplectic invariance, monotonicity, continuity, literature agreement, and
@@ -44,6 +44,12 @@ The verification package is organized into three roles:
   structural hypercube word whose exact singular positive fixed set must be
   typed unsupported rather than accepted as a capacity output. Private tube
   semantics beyond those public outcomes remain crate-local checks.
+- `ch2021-six-vertex/`: exact reconstruction and exhaustive HK2017 reproduction
+  of the displayed Chaidez--Hutchings rational six-vertex example.
+- `sage/`: reusable Sage comparison and validation surfaces after they cease to
+  be topic-local.
+- `src/`: shared target-pool, cache, and packet I/O support for the Rust
+  verification binaries.
 
 Canonical evidence packets currently tracked in checked-in sources are:
 
@@ -54,6 +60,8 @@ Canonical evidence packets currently tracked in checked-in sources are:
 - `experiments/verification/flow-graph-proof-risk/main.rs`, which produces
   mode-specific `flow-graph-proof-risk/*.jsonl` outputs for exact flow-graph
   proof-risk falsifiers.
+- `experiments/verification/ch2021-six-vertex/main.rs` plus its exact
+  `report.json` literature fixture.
 
 Canonical all-minimum and orbit-recovery runs reported:
 
