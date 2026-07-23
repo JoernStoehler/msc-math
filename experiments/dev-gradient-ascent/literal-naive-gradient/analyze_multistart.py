@@ -11,6 +11,7 @@ import argparse
 import hashlib
 import json
 import math
+import sys
 from pathlib import Path
 from statistics import median
 
@@ -642,14 +643,28 @@ def main() -> None:
     repo_root = OWNER.parents[2]
     run = read_json(args.artifacts / "summary.json")
     provenance = read_json(args.artifacts / "run-provenance.json")
-    assert (
+    # Byte identities diagnose possible staleness. Coverage, update semantics,
+    # source-row identity, and numerical reconstruction below remain blocking.
+    if (
         blake3.blake3((OWNER / "main.rs").read_bytes()).hexdigest()
-        == provenance["implementation_blake3"]
-    )
-    assert (
+        != provenance["implementation_blake3"]
+    ):
+        print(
+            "warning: implementation differs from retained provenance; "
+            "continuing with semantic checks. Reassess retained interpretation "
+            "before treating this run as equivalent.",
+            file=sys.stderr,
+        )
+    if (
         blake3.blake3(args.source.read_bytes()).hexdigest()
-        == provenance["input_blake3"]
-    )
+        != provenance["input_blake3"]
+    ):
+        print(
+            "warning: input differs from retained provenance; continuing with "
+            "semantic checks. Reassess retained interpretation before treating "
+            "this run as equivalent.",
+            file=sys.stderr,
+        )
     source_rows = read_jsonl(args.source)
     expected = [
         row

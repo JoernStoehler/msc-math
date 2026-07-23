@@ -26,9 +26,10 @@ The reviewer found two documentation/provenance defects:
    numeric sources, denominators, compute boundary, and prohibited readings.
 2. The smoke artifact predated the final analyzer's association-only metadata,
    while the association artifact recorded ephemeral prepared-table paths.
-   `artifacts/provenance.json` now identifies all hashes, explains the exact
-   source compatibility and non-byte-identical regeneration boundary, and
-   makes fixed hashes/rebuild contracts authoritative over `/tmp` paths.
+   `artifacts/provenance.json` now identifies all hashes and explains the exact
+   source compatibility and non-byte-identical regeneration boundary. Those
+   identities diagnose possible staleness; paths, working directory, run
+   timestamps, and Git history provide the context needed to interpret drift.
 
 The requested smoke regeneration was intentionally not run: aggregate compute
 had approached the packet cap.  This leaves a transparent provenance

@@ -38,9 +38,9 @@ symplectic alignment? The same source bodies are evaluated under exactly one
 in buckets `3x3`, `4x4`, `4x6`, and `6x6`, two bases per bucket. Pairing is only
 by `base_id`; facet order is the source order.
 
-The source panel and report are target-free. The repaired HEAD verifies both
-source hashes, the exact 8×3 grid, statuses, IDs, buckets, implementation
-closure, and absence of target fields before any target path could be opened.
+The source panel and report are target-free. The repaired HEAD warns about
+source or implementation byte drift and verifies the exact 8×3 grid, statuses,
+IDs, buckets, and absence of target fields before any target path could be opened.
 It is validation-only and makes no reconstruction or capacity call. The
 historical evaluator contract (local reconstruction, empty method-local cache,
 and `CapacityBackend::Auto`) is bound to the retained pre-rerun commit
@@ -70,7 +70,7 @@ pre-retained-rerun commit, not the first absolute pre-target freeze; it changed
 only those two provenance/audit lines, not selection, evaluator, formulas,
 gates, or interpretation. The retained full 24-row rerun occurred after
 `a59441c0`; `artifacts/target-rows.jsonl` is its only retained/analyzed target
-artifact and has the immutable SHA-256 recorded in the manifest.
+artifact and has its retained SHA-256 recorded in the manifest as provenance.
 
 The retained rows necessarily carry the evaluator and design hashes from that
 rerun. The repaired producer binds the current evaluator/design hashes for
@@ -84,8 +84,9 @@ scalars, timing, transformed f64 payload, and source/design/evaluator hashes.
 
 ## Analysis
 
-`analyze.py` verifies source, source-report, orientation-feature snapshot,
-design, target, and pre-target commit hashes before reading `sys`. It computes for each base
+`analyze.py` warns when source, source-report, orientation-feature snapshot,
+design, target, or pre-target revision identities drift, then applies blocking
+semantic checks before reading `sys`. It computes for each base
 `delta_so4 = sys(so4-haar)-sys(identity)`, `delta_u2`, and the retained exact
 feature `delta_ridge` from `symplectic_ridge_area_mean`. It reports every pair.
 The generated `generator-orientation-target-pilot-transplant-report-v1` keeps
@@ -115,9 +116,9 @@ witnesses, and the selected ridge mediator fails its predeclared directional
 gate (5/8 opposite signs). It supports no population, common-sign, causal,
 proposer-transfer, or general-generator claim.
 
-`--validate-only` performs the complete target-free producer freeze check,
-including implementation-closure hashes and absence of every forbidden target
-key (even a JSON `null`); it never reconstructs or calls capacity. The analyzer
+`--validate-only` performs the complete target-free producer check, warning on
+implementation-closure byte drift and rejecting every forbidden target key
+(even a JSON `null`); it never reconstructs or calls capacity. The analyzer
 rejects every failed/partial/incomplete manifest and raises on corrupt partial
 or complete artifacts.
 

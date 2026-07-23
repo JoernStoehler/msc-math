@@ -1295,11 +1295,15 @@ def load_landscape(
     universe_payload = json.dumps(
         [branch["sigma"] for branch in branches], separators=(",", ":")
     ).encode()
-    require(
-        hashlib.sha256(universe_payload).hexdigest()
-        == metadata.get("frozen_universe_sha256"),
-        "frozen universe hash mismatch",
-    )
+    # The retained digest is an advisory staleness cue. Consecutive IDs,
+    # uniqueness, counts, and branch semantics above remain blocking.
+    if hashlib.sha256(universe_payload).hexdigest() != metadata.get("frozen_universe_sha256"):
+        print(
+            "warning: frozen-universe bytes differ from retained metadata; "
+            "continuing with semantic checks. Reassess retained interpretation "
+            "before treating this run as equivalent.",
+            file=sys.stderr,
+        )
 
     recomputed_statuses = Counter()
     recomputed_block_counts = Counter()
@@ -1333,10 +1337,13 @@ def load_landscape(
 
     producer_path = EXPERIMENT_DIR.parents[2] / metadata["producer_source"]
     require(producer_path.exists(), f"producer source is missing: {producer_path}")
-    require(
-        sha256(producer_path) == metadata.get("producer_source_sha256"),
-        "current producer source does not match the input artifact",
-    )
+    if sha256(producer_path) != metadata.get("producer_source_sha256"):
+        print(
+            "warning: current producer source differs from the retained input "
+            "artifact; continuing with semantic checks. Reassess retained "
+            "interpretation before treating this run as equivalent.",
+            file=sys.stderr,
+        )
     return metadata, branches, summary
 
 

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import math
+import sys
 import tomllib
 from collections import defaultdict
 from pathlib import Path
@@ -91,6 +92,17 @@ def validate_manifest_contract(path: Path):
 
 
 def validate():
+    # Provenance hashes are advisory staleness signals. Current path existence,
+    # manifest contracts, row structure, and numerical reconstruction below
+    # remain blocking.
+    def warn_changed(label):
+        print(
+            f"warning: {label} differs from the retained bytes; continuing "
+            "with semantic checks. Correlate paths and timestamps with Git "
+            "history before reusing retained interpretation.",
+            file=sys.stderr,
+        )
+
     summary = read_json(ARTIFACTS / "summary.json")
     provenance = read_json(ARTIFACTS / "run-provenance.json")
     states = read_jsonl(ARTIFACTS / "states.jsonl")
@@ -110,20 +122,21 @@ def validate():
     ):
         support_path = Path(provenance[path_key])
         assert support_path.is_file()
-        assert (
-            blake3.blake3(support_path.read_bytes()).hexdigest()
-            == provenance[hash_key]
-        )
+        if blake3.blake3(support_path.read_bytes()).hexdigest() != provenance[hash_key]:
+            warn_changed(path_key)
     manifest_path = Path(provenance["manifest_path"])
     assert manifest_path.is_file()
     current_manifest_blake3 = blake3.blake3(manifest_path.read_bytes()).hexdigest()
     manifest_exact_match = current_manifest_blake3 == provenance["manifest_blake3"]
+    if not manifest_exact_match:
+        warn_changed("generation manifest")
     validate_manifest_contract(manifest_path)
 
     for identity in provenance["input_identities"]:
         path = Path(identity["path"])
         assert path.is_file(), path
-        assert blake3.blake3(path.read_bytes()).hexdigest() == identity["blake3"]
+        if blake3.blake3(path.read_bytes()).hexdigest() != identity["blake3"]:
+            warn_changed(str(path))
 
     state_by_id = {row["state_id"]: row for row in states}
     for state in states:

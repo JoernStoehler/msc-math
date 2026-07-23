@@ -36,8 +36,9 @@ cargo test --locked --manifest-path \
   experiments/sys-datascience/methods/alternative-source-transfer/Cargo.toml
 ```
 
-`validate_packet.py` checks immutable SHA-256 identity, exact JSON field
-schemas, target-field leakage, source and logical-cell uniqueness,
+`validate_packet.py` reports retained and manifest/file SHA-256 drift as a
+staleness warning, then checks exact JSON field schemas, target-field leakage,
+source and logical-cell uniqueness,
 selected/control geometry uniqueness, exact arm and bucket counts, disjoint
 controls, and the 96-row cap. `analyze.py` is the later manifest-gated
 post-target reader: it accepts only a complete target file on the frozen union
@@ -112,7 +113,7 @@ cargo run --release --manifest-path experiments/sys-landscape/Cargo.toml \
 
 This exact command produced the accepted artifact in the detached clean
 worktree reviewed for this packet; it must not be rerun over the preserved
-bytes. It validates the three frozen SHA-256 artifacts, joins only the 91
+bytes. It warns when inputs differ from the reviewed SHA-256 values, joins only the 91
 stored selected IDs to their stored exact geometry, evaluates each unique
 candidate once, and atomically finalizes schema
 `alternative-source-transfer-target-v1`; it refuses to overwrite an existing

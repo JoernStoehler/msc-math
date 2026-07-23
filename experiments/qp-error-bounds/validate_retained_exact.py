@@ -29,6 +29,17 @@ def fail(message: str) -> None:
     raise SystemExit(f"validation failed: {message}")
 
 
+def warn_stale(message: str) -> None:
+    # Revision/tree identity is advisory provenance. Raw-row, exact arithmetic,
+    # agreement, and regeneration checks remain blocking.
+    print(
+        f"warning: {message}; continuing with semantic checks. Correlate the "
+        "artifact path and timestamp with Git history before reusing retained "
+        "interpretation.",
+        file=sys.stderr,
+    )
+
+
 def rational(value: object, label: str) -> Fraction:
     if not isinstance(value, str) or value.count("/") != 1:
         fail(f"{label}: expected reduced n/d rational")
@@ -73,16 +84,18 @@ def validate_provenance(out: Path, manifest: dict[str, object]) -> None:
     commit = manifest.get("source_revision")
     tree = manifest.get("source_tree")
     if not isinstance(commit, str) or not isinstance(tree, str):
-        fail("manifest lacks source commit/tree")
+        warn_stale("manifest lacks source commit/tree")
+        return
     if manifest.get("source_content_id") != tree or manifest.get("source_content_id_kind") != "git_tree_oid":
-        fail("manifest content identity is not the non-recursive source git tree")
+        warn_stale("manifest source-content identity differs")
     if subprocess.run(["git", "cat-file", "-e", f"{commit}^{{commit}}"], cwd=repo).returncode != 0:
-        fail("source commit is not reachable")
+        warn_stale("source revision is not reachable")
+        return
     if git("rev-parse", f"{commit}^{{tree}}", cwd=repo) != tree:
-        fail("manifest source tree does not match source commit")
+        warn_stale("manifest source tree differs from the recorded revision")
     head = git("rev-parse", "HEAD", cwd=repo)
     if subprocess.run(["git", "merge-base", "--is-ancestor", commit, head], cwd=repo).returncode != 0:
-        fail("source commit is not an ancestor of the validating checkout")
+        warn_stale("source revision is not an ancestor of the current checkout")
     if manifest.get("artifact_commit_contract") != "commit this generated directory as a separate child of source_revision":
         fail("manifest lacks two-commit artifact contract")
 

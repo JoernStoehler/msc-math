@@ -61,4 +61,3 @@ num-traits.workspace = true
 blake3.workspace = true
 good_lp.workspace = true
 rayon.workspace = true
-sha2 = "0.10"

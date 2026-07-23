@@ -140,6 +140,15 @@ Generated outputs are not hand-edited. Local commands distinguish:
 - full producers writing disposable output;
 - commands intentionally refreshing tracked evidence.
 
+Recorded hashes and Git revisions are provenance aids, not compatibility
+gates. A validator may warn that current code or input bytes differ from a
+retained run, but byte drift alone must not block semantic validation. Such a
+warning means retained interpretation may be stale: use the printed paths,
+working directory, and run timestamp to inspect the corresponding Git history
+before treating the new run as equivalent. Schemas, population contracts, row
+identities, joins, mathematical checks, completeness, and corruption within an
+artifact bundle may still fail validation.
+
 Generated build trees, temporary outputs, and large raw data are not navigation
 surfaces.
 

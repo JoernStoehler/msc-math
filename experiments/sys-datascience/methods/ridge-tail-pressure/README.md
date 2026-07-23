@@ -31,7 +31,9 @@ snapshot: frozen selection plan, selected-before-target rows, and evaluated
 `sys` cache.  Its manifest records original hashes.  The 2.5 GB full 1M
 feature table is deliberately not required: each selected/evaluated target row
 already records its selection feature value.  Supply it only with
-`--one-m-feature-table PATH` to run the optional identity audit.
+`--one-m-feature-table PATH` to run the optional identity audit. A byte
+difference emits a staleness warning; row identities and feature joins decide
+whether the table is usable.
 
 ## Reproduce
 

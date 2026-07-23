@@ -94,10 +94,10 @@ Do not use this packet as evidence of:
 ## Reproduction and checks
 
 All commands run from this directory. `cargo` resolves repository code through
-the current checkout. The retained-packet check verifies the immutable
-packet-local `Cargo.lock` and uses Git object bytes at
-`capacity-implementation-manifest.json`'s `repo_commit` for the capacity
-implementation closure; that commit must remain available locally. It may
+the current checkout. The retained-packet check reports drift in the
+packet-local `Cargo.lock`, artifact bytes, and the capacity implementation
+closure as staleness warnings. It uses
+`capacity-implementation-manifest.json`'s `repo_commit` when available. It may
 print a non-failing current-checkout drift diagnostic when implementation paths
 have changed since the retained run.
 

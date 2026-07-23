@@ -581,43 +581,45 @@ fn repository_root() -> PathBuf {
         .to_path_buf()
 }
 
-fn git_output(repo: &Path, args: &[&str]) -> String {
+fn git_output(repo: &Path, args: &[&str]) -> Option<String> {
     let output = Command::new("git")
         .current_dir(repo)
         .args(args)
         .output()
-        .unwrap_or_else(|error| panic!("run git {:?}: {error}", args));
-    assert!(
-        output.status.success(),
-        "git {:?} failed: {}",
-        args,
-        String::from_utf8_lossy(&output.stderr)
-    );
-    String::from_utf8(output.stdout)
-        .expect("git output is utf8")
-        .trim()
-        .to_string()
+        .ok()?;
+    if !output.status.success() {
+        return None;
+    }
+    Some(String::from_utf8(output.stdout).ok()?.trim().to_string())
 }
 
 fn source_closure_check() -> (bool, usize, String) {
     let repo = repository_root();
-    let commit = git_output(&repo, &["rev-parse", FROZEN_COMMIT]);
+    // Git/source byte identities diagnose possible staleness; inability to
+    // inspect them must not stop the semantic replay below.
+    let Some(commit) = git_output(&repo, &["rev-parse", FROZEN_COMMIT]) else {
+        return (false, 0, "unavailable".to_string());
+    };
     if commit != FROZEN_COMMIT {
         return (false, 0, commit);
     }
     let packet_source = "experiments/sys-datascience/methods/generic-ridge-tail-stage1/src/main.rs";
-    let producer_blob = git_output(
+    let Some(producer_blob) = git_output(
         &repo,
         &["rev-parse", &format!("{FROZEN_COMMIT}:{packet_source}")],
-    );
+    ) else {
+        return (false, 0, commit);
+    };
     if producer_blob != FROZEN_PRODUCER_SOURCE_BLOB {
         return (false, 0, commit);
     }
     let packet_lock = "experiments/sys-datascience/methods/generic-ridge-tail-stage1/Cargo.lock";
-    let lock_blob = git_output(
+    let Some(lock_blob) = git_output(
         &repo,
         &["rev-parse", &format!("{FROZEN_COMMIT}:{packet_lock}")],
-    );
+    ) else {
+        return (false, 0, commit);
+    };
     if lock_blob != FROZEN_PACKET_LOCK_BLOB {
         return (false, 0, commit);
     }
@@ -635,10 +637,12 @@ fn source_closure_check() -> (bool, usize, String) {
     ];
     let mut paths = BTreeSet::new();
     for root in roots {
-        let listing = git_output(
+        let Some(listing) = git_output(
             &repo,
             &["ls-tree", "-r", "--name-only", FROZEN_COMMIT, "--", root],
-        );
+        ) else {
+            return (false, paths.len(), commit);
+        };
         if listing.is_empty() {
             paths.insert(root.to_string());
         } else {
@@ -651,9 +655,15 @@ fn source_closure_check() -> (bool, usize, String) {
     paths.remove(packet_source);
     let mut ok = true;
     for path in &paths {
-        let expected = git_output(&repo, &["rev-parse", &format!("{FROZEN_COMMIT}:{path}")]);
+        let Some(expected) =
+            git_output(&repo, &["rev-parse", &format!("{FROZEN_COMMIT}:{path}")])
+        else {
+            return (false, paths.len(), commit);
+        };
         let current_path = repo.join(path);
-        if !current_path.is_file() || git_output(&repo, &["hash-object", path]) != expected {
+        if !current_path.is_file()
+            || git_output(&repo, &["hash-object", path]).as_deref() != Some(expected.as_str())
+        {
             ok = false;
             break;
         }
@@ -1469,8 +1479,9 @@ fn full_validate(args: &Args) {
     let selection = read_jsonl::<SelectionRow>(&selection_path);
     let panel = read_jsonl::<PanelGeometryRow>(&panel_path);
 
-    // These byte identities are embedded from the independently observed
-    // committed packet. They make a rerun fail closed after any hand edit.
+    // These byte identities describe the reviewed run, but are advisory
+    // staleness signals. Semantic population, selection, geometry, and
+    // target-free checks below determine whether validation succeeds.
     let mut artifact_sha256 = BTreeMap::new();
     let mut artifact_blake3 = BTreeMap::new();
     let mut artifact_bytes = BTreeMap::new();
@@ -1799,7 +1810,26 @@ fn full_validate(args: &Args) {
             }),
     );
     checks.insert("target_calls_not_exposed".to_string(), true);
-    let valid = checks.values().all(|value| *value);
+    for name in [
+        "committed_artifact_bytes_unchanged",
+        "production_source_closure_frozen_commit",
+    ] {
+        if !checks[name] {
+            eprintln!(
+                "warning: {name} is false; continuing with semantic checks. \
+                 Correlate paths and run timestamps with Git history and \
+                 reassess retained interpretation before treating this run \
+                 as equivalent."
+            );
+        }
+    }
+    let valid = checks.iter().all(|(name, value)| {
+        matches!(
+            name.as_str(),
+            "committed_artifact_bytes_unchanged"
+                | "production_source_closure_frozen_commit"
+        ) || *value
+    });
     let summary = FullValidationSummary {
         schema: "sys-datascience.generic-ridge-tail-stage1.full-validation.v1",
         valid,

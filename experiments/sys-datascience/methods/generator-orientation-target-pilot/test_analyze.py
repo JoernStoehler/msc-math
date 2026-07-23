@@ -1,4 +1,6 @@
 import hashlib
+import contextlib
+import io
 import json
 import tempfile
 import unittest
@@ -62,16 +64,20 @@ class FrozenAnalyzerCalibration(unittest.TestCase):
             with self.assertRaises(analyze.AnalysisError):
                 analyze.validate_inputs(target, manifest)
 
-    def test_target_mutation_with_stale_manifest_hash_rejected(self):
+    def test_target_mutation_with_stale_manifest_hash_warns(self):
         with tempfile.TemporaryDirectory() as directory:
             target, manifest = self._copy_artifacts(directory)
             rows = self._rows(target)
             rows[0]["sys"] += 1e-3
             self._write_rows(target, rows)
-            with self.assertRaisesRegex(analyze.AnalysisError, "target bytes/hash"):
+            analyze._WARNED_STALE.clear()
+            stderr = io.StringIO()
+            with contextlib.redirect_stderr(stderr):
                 analyze.validate_inputs(target, manifest)
+            self.assertIn("manifest/target bytes", stderr.getvalue())
+            self.assertIn("target retained bytes", stderr.getvalue())
 
-    def test_evaluator_provenance_mismatch_rejected(self):
+    def test_evaluator_provenance_mismatch_warns(self):
         with tempfile.TemporaryDirectory() as directory:
             target, manifest = self._copy_artifacts(directory)
             rows = self._rows(target)
@@ -82,9 +88,12 @@ class FrozenAnalyzerCalibration(unittest.TestCase):
             manifest.write_text(json.dumps(data, indent=2) + "\n")
             original_target_hash = analyze.TARGET_SHA
             analyze.TARGET_SHA = data["target_sha256"]
+            analyze._WARNED_STALE.clear()
             try:
-                with self.assertRaisesRegex(analyze.AnalysisError, "retained evaluator"):
+                stderr = io.StringIO()
+                with contextlib.redirect_stderr(stderr):
                     analyze.validate_inputs(target, manifest)
+                self.assertIn("target-row evaluator/design provenance", stderr.getvalue())
             finally:
                 analyze.TARGET_SHA = original_target_hash
 
@@ -103,7 +112,7 @@ class FrozenAnalyzerCalibration(unittest.TestCase):
             with self.assertRaises(analyze.AnalysisError):
                 analyze.analyze(target, manifest)
 
-    def test_feature_snapshot_manifest_rejects_wrong_full_artifact_binding(self):
+    def test_feature_snapshot_manifest_warns_on_wrong_full_artifact_binding(self):
         with tempfile.TemporaryDirectory() as directory:
             target, manifest = self._copy_artifacts(directory)
             snapshot_manifest = Path(directory) / "orientation-feature-manifest.json"
@@ -114,9 +123,12 @@ class FrozenAnalyzerCalibration(unittest.TestCase):
             original_report_sha = analyze.FEATURE_REPORT_SHA
             analyze.FEATURE_REPORT = snapshot_manifest
             analyze.FEATURE_REPORT_SHA = hashlib.sha256(snapshot_manifest.read_bytes()).hexdigest()
+            analyze._WARNED_STALE.clear()
             try:
-                with self.assertRaisesRegex(analyze.AnalysisError, "feature snapshot provenance"):
+                stderr = io.StringIO()
+                with contextlib.redirect_stderr(stderr):
                     analyze.validate_inputs(target, manifest)
+                self.assertIn("feature snapshot provenance", stderr.getvalue())
             finally:
                 analyze.FEATURE_REPORT = original_report
                 analyze.FEATURE_REPORT_SHA = original_report_sha

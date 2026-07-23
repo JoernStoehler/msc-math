@@ -107,9 +107,10 @@ uv run --script \
 ```
 
 Parallelism schedules independent start/rate trajectories only. Each trajectory
-remains deterministic and applies the same literal update. The analyzer fails
-if paired coverage, raw row counts, source identity, update identity, summary
-agreement, or the fixed six-rate/100-update contract disagrees.
+remains deterministic and applies the same literal update. The analyzer warns
+on source/implementation byte drift and fails if paired coverage, raw row
+counts, update semantics, summary agreement, or the fixed
+six-rate/100-update contract disagrees.
 
 The 8/20-prefix practical classification uses a fixed operational threshold: a
 best-so-far gain of at least `1%` of initial `sys`. It was chosen before the full

@@ -37,11 +37,11 @@ cargo run -p exp-hko-local-maximum --release --bin hko-neighborhood-sampling -- 
 
 `--frozen-panel` requires a reviewer-created external launch packet. Before any
 target geometry or capacity call, the binary checks its literal protocol
-settings, expected clean Git commit/tree, compiled sampler hash, relevant file
-hashes, and local dependency/source-tree identities. The packet itself is
-Blake3-bound in the manifest. A packet is created only after the reviewed source
-commit is final; it is not a mutable producer default. The manifest also retains
-the exact process invocation, toolchain and profile, executable hash, all
+settings and release profile. It reports checkout, compiled-source, relevant
+file, and dependency/source-tree drift as staleness warnings. The packet itself
+is Blake3-bound in the manifest. A packet is created only after the reviewed
+source commit is final; it is not a mutable producer default. The manifest also
+retains the exact process invocation, toolchain and profile, executable hash, all
 numerical settings, and claim boundaries. After all JSON/JSONL outputs are
 flushed, the producer writes `artifact-bundle.json`, whose root hash covers both
 the bundle format and every other emitted artifact.

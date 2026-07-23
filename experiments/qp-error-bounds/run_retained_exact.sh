@@ -3,17 +3,22 @@ set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel)"
 cd "$ROOT"
 OUT="experiments/qp-error-bounds/artifacts/retained-exact"
+SOURCE_DIRTY=false
 if [[ -n "$(git status --porcelain --untracked-files=all)" ]]; then
-  echo "retained-exact runner requires a clean producing tree before output deletion" >&2
-  exit 2
+  SOURCE_DIRTY=true
+  # A dirty tree can make the recorded HEAD/tree stale, but this provenance
+  # risk must not prevent a deliberate run.
+  echo "warning: retained-exact producer tree is dirty; continuing. Use the recorded cwd and timestamp with Git history before reusing this run as equivalent." >&2
 fi
 SOURCE_COMMIT="$(git rev-parse HEAD)"
 SOURCE_TREE="$(git rev-parse HEAD^{tree})"
+SOURCE_CWD="$ROOT"
+STARTED_AT_UTC="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 rm -rf "$OUT"
 mkdir -p "$OUT"
 cargo run --release --manifest-path experiments/qp-error-bounds/Cargo.toml \
   --bin qp-retained-exact -- "$OUT"
-SOURCE_COMMIT="$SOURCE_COMMIT" SOURCE_TREE="$SOURCE_TREE" python3 - "$OUT" <<'PY'
+SOURCE_COMMIT="$SOURCE_COMMIT" SOURCE_TREE="$SOURCE_TREE" SOURCE_DIRTY="$SOURCE_DIRTY" SOURCE_CWD="$SOURCE_CWD" STARTED_AT_UTC="$STARTED_AT_UTC" python3 - "$OUT" <<'PY'
 import json, os, sys
 from pathlib import Path
 out = Path(sys.argv[1])
@@ -24,9 +29,12 @@ out = Path(sys.argv[1])
     "schema_version": "qp-retained-exact-v1",
     "source_revision": os.environ["SOURCE_COMMIT"],
     "source_tree": os.environ["SOURCE_TREE"],
+    "source_worktree_dirty": os.environ["SOURCE_DIRTY"] == "true",
+    "source_cwd": os.environ["SOURCE_CWD"],
+    "started_at_utc": os.environ["STARTED_AT_UTC"],
     "source_content_id": os.environ["SOURCE_TREE"],
     "source_content_id_kind": "git_tree_oid",
-    "source_snapshot_contract": "reachable clean source commit/tree captured before output deletion; generated artifact is not recursively hashed",
+    "source_snapshot_contract": "HEAD commit/tree, producing cwd, dirty flag, and UTC start time captured before output deletion; dirty changes are not represented by the tree OID",
     "artifact_commit_contract": "commit this generated directory as a separate child of source_revision",
     "target_input_kind": "stored_binary64_rational; intended algebraic target unavailable",
     "window_definition": "exact [minimum, 21/20 * minimum]",

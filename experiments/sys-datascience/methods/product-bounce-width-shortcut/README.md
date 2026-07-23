@@ -72,11 +72,12 @@ only to quantify the structural decomposition
 2 log(capacity) = 2 log(W2) + 2 log(capacity/W2).
 ```
 
-The prepared-table identities are the fixed hashes in `analyze.py` and the
-reviewed rebuild route in `../product-bounce-mechanism/README.md`.  The retained
+The prepared-table hashes in `analyze.py` identify the reviewed inputs and the
+rebuild route is in `../product-bounce-mechanism/README.md`. Hash drift warns
+but does not block compatible semantic checks. The retained
 association artifact records an ephemeral `/tmp` execution path; that path is
-not an input authority and need not survive.  The hashes and rebuild contract
-are authoritative.
+not an input authority and need not survive. The schemas, joins, population
+contract, and rebuild route determine compatibility.
 
 ## Results
 

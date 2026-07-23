@@ -224,12 +224,29 @@ def main() -> None:
     commit = manifest.get("source_revision")
     tree = manifest.get("source_tree")
     if not isinstance(commit, str) or not isinstance(tree, str):
-        fail("manifest lacks source identity")
-    if subprocess.run(["git", "cat-file", "-e", f"{commit}^{{commit}}"], cwd=repo).returncode != 0:
-        fail("source commit unavailable")
-    actual_tree = subprocess.check_output(["git", "rev-parse", f"{commit}^{{tree}}"], cwd=repo, text=True).strip()
-    if actual_tree != tree:
-        fail("source tree provenance mismatch")
+        print(
+            "warning: manifest lacks source revision/tree; continuing with "
+            "semantic checks. Correlate the artifact path and timestamp with "
+            "Git history before reusing retained interpretation.",
+            file=sys.stderr,
+        )
+        commit = tree = None
+    if commit is not None:
+        if subprocess.run(["git", "cat-file", "-e", f"{commit}^{{commit}}"], cwd=repo).returncode != 0:
+            print(
+                "warning: source revision is unavailable; continuing with "
+                "semantic checks. Reassess retained interpretation.",
+                file=sys.stderr,
+            )
+        else:
+            actual_tree = subprocess.check_output(["git", "rev-parse", f"{commit}^{{tree}}"], cwd=repo, text=True).strip()
+            if actual_tree != tree:
+                print(
+                    "warning: source tree differs from the recorded revision; "
+                    "continuing with semantic checks. Reassess retained "
+                    "interpretation.",
+                    file=sys.stderr,
+                )
     # Reconstruction guard for the intentionally unchecked raw-flag diagnostic.
     def saddle_action(row: dict) -> float | None:
         for center in row["centers"]:

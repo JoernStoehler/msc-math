@@ -231,4 +231,6 @@ producer files remain the geometry owners.
 - a new generator is available and a transfer question is explicitly selected;
 - the geometry/branch inspection identifies a frozen discriminator worth
   testing;
-- an input hash mismatch requires a deliberate packet refresh.
+- changed input bytes emit a staleness warning; the run continues when the
+  table/provenance schemas, population, and joins remain compatible, but the
+  retained interpretation must be reassessed before reuse.

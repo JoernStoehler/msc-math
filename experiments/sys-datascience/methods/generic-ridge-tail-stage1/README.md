@@ -90,7 +90,8 @@ The committed `full-validation.json` is historical output from original line
 commit `4f7adddec513f4abc95dcc905d1299611ff28f28`. Its absolute
 `source_hashes.path` strings identify the production worktree used at the time;
 they are historical aliases, not checkout requirements. The validation code
-resolves the frozen commit and its source closure through Git objects. The
+reports drift from the frozen commit and source closure as a staleness warning
+rather than rejecting a semantically valid replay. The
 ridge-tail integration deliberately retains that original history so the
 closure remains available from a clean checkout of merged Main.
 
@@ -108,9 +109,9 @@ closure remains available from a clean checkout of merged Main.
 - `artifacts/stage1/validation.json`: count, ordering, disjointness,
   deterministic-subset, artifact-hash, and forbidden-target-field checks.
 - `artifacts/stage1/full-validation.json`: the promoted full 10,000-row
-  target-free replay gate. It binds the committed artifact bytes, source
-  closure, complete population/selection/baseline/panel hashes, all row and
-  geometry fields, and the target-free boundary.
+  target-free replay check. It records artifact/source byte identities as
+  advisory provenance and validates the complete population, selection,
+  baseline, panel, row/geometry fields, and target-free boundary.
 
 Historical allowed use before target exposure was independent review of the
 generator, proxy, retained numerical audit, f64 cutoff, baseline, provenance,

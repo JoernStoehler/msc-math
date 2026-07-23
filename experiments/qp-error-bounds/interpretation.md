@@ -168,10 +168,11 @@ For exact rejection, the API exposes only “no admissible positive-Q witness”
 The packet records that narrow unavailable reason without guessing whether the
 cause was a singular/inconsistent system or nonpositive beta/Q.
 
-The runner requires a clean producing tree and records a reachable source
-commit plus full git tree identity. The artifact can be committed afterward as
-a separate child commit; provenance refers to the producing source snapshot,
-not recursively to generated outputs. Row timers exclude compilation,
+The runner warns but continues with a dirty producing tree. It records the HEAD
+commit/tree, producing working directory, dirty flag, and UTC start time.
+Uncommitted changes are not represented by the tree object, so these fields and
+Git history must be used to assess staleness. The artifact can be committed
+afterward as a separate child commit. Row timers exclude compilation,
 fixture/exact-geometry setup, and Python analysis/validation; exact-all timing
 includes complete-stream enumeration, exact solves, and sorting.
 

@@ -7,6 +7,7 @@ import hashlib
 import json
 import math
 import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -50,6 +51,24 @@ RETAINED_IMPLEMENTATION_SHA = {
 
 class AnalysisError(Exception):
     pass
+
+
+_WARNED_STALE: set[str] = set()
+
+
+def warn_stale(condition: bool, label: str) -> None:
+    # Byte and revision identities are advisory provenance. Schemas, complete
+    # row grids, joins, target status, payload equality, and numerical checks
+    # remain blocking.
+    if not condition and label not in _WARNED_STALE:
+        _WARNED_STALE.add(label)
+        print(
+            f"warning: {label} differs from retained provenance; continuing "
+            "with semantic checks. Correlate paths and run timestamps with Git "
+            "history and reassess retained interpretation before treating this "
+            "run as equivalent.",
+            file=sys.stderr,
+        )
 
 
 def digest(path: Path) -> str:
@@ -119,15 +138,15 @@ def primary_disposition(u2_max_abs_delta, abs_so4):
     return "ambiguous"
 
 
-def git_blob(commit: str, path: str) -> bytes:
+def git_blob(commit: str, path: str) -> bytes | None:
     try:
         result = subprocess.run(
             ["git", "-C", str(REPO), "show", f"{commit}:{path}"],
             check=True,
             capture_output=True,
         )
-    except (OSError, subprocess.CalledProcessError) as exc:
-        raise AnalysisError(f"missing retained Git blob {commit}:{path}") from exc
+    except (OSError, subprocess.CalledProcessError):
+        return None
     return result.stdout
 
 
@@ -182,42 +201,86 @@ def validate_source(rows: list[dict]) -> dict[tuple[str, str], dict]:
 def validate_design() -> tuple[dict, str, str]:
     design = json.loads(DESIGN.read_text())
     design_hash = digest(DESIGN)
-    if design.get("source_sha256") != SOURCE_SHA or design.get("source_report_sha256") != SOURCE_REPORT_SHA:
-        raise AnalysisError("design source binding")
-    if design.get("evaluator", {}).get("source_sha256") != digest(EVALUATOR):
-        raise AnalysisError("design evaluator/current source binding")
+    warn_stale(
+        design.get("source_sha256") == SOURCE_SHA
+        and design.get("source_report_sha256") == SOURCE_REPORT_SHA,
+        "design source binding",
+    )
+    warn_stale(
+        design.get("evaluator", {}).get("source_sha256") == digest(EVALUATOR),
+        "design/current evaluator binding",
+    )
     snapshot = design.get("feature_snapshot", {})
-    if snapshot.get("sha256") != FEATURE_SHA or snapshot.get("manifest_sha256") != FEATURE_REPORT_SHA:
-        raise AnalysisError("design feature snapshot binding")
-    if digest(SELECTION) != design.get("selection", {}).get("manifest_sha256"):
-        raise AnalysisError("selection manifest binding")
-    if digest(PROTOCOL_HISTORY) != design.get("protocol_history_sha256"):
-        raise AnalysisError("protocol history binding")
+    warn_stale(
+        snapshot.get("sha256") == FEATURE_SHA
+        and snapshot.get("manifest_sha256") == FEATURE_REPORT_SHA,
+        "design feature-snapshot binding",
+    )
+    warn_stale(
+        digest(SELECTION) == design.get("selection", {}).get("manifest_sha256"),
+        "selection-manifest binding",
+    )
+    warn_stale(
+        digest(PROTOCOL_HISTORY) == design.get("protocol_history_sha256"),
+        "protocol-history binding",
+    )
     for item in design.get("evaluator", {}).get("implementation_files", []):
         path = REPO / item["path"]
-        if not path.is_file() or digest(path) != item.get("sha256"):
-            raise AnalysisError(f"design implementation closure mismatch: {item.get('path')}")
-    if design.get("retained_run", {}).get("commit") != RETAINED_COMMIT:
-        raise AnalysisError("design retained commit binding")
+        if not path.is_file():
+            raise AnalysisError(f"missing implementation path: {item.get('path')}")
+        warn_stale(
+            digest(path) == item.get("sha256"),
+            f"design implementation {item.get('path')}",
+        )
+    warn_stale(
+        design.get("retained_run", {}).get("commit") == RETAINED_COMMIT,
+        "design retained revision",
+    )
     return design, design_hash, digest(PROTOCOL_HISTORY)
 
 
 def validate_retained_commit(design: dict) -> None:
     try:
         subprocess.run(["git", "-C", str(REPO), "cat-file", "-e", f"{RETAINED_COMMIT}^{{commit}}"], check=True, capture_output=True)
-    except (OSError, subprocess.CalledProcessError) as exc:
-        raise AnalysisError("retained commit does not exist") from exc
-    if hashlib.sha256(git_blob(RETAINED_COMMIT, "experiments/sys-datascience/methods/generator-orientation-target-pilot/design.json")).hexdigest() != RETAINED_DESIGN_SHA:
-        raise AnalysisError("retained design hash mismatch")
-    if hashlib.sha256(git_blob(RETAINED_COMMIT, "experiments/sys-datascience/methods/generator-orientation-target-pilot/main.rs")).hexdigest() != RETAINED_EVALUATOR_SHA:
-        raise AnalysisError("retained evaluator hash mismatch")
-    retained_selection = hashlib.sha256(git_blob(RETAINED_COMMIT, "experiments/sys-datascience/methods/generator-orientation-target-pilot/selection-manifest.json")).hexdigest()
-    if retained_selection != RETAINED_SELECTION_SHA:
-        raise AnalysisError("retained selection manifest hash mismatch")
+    except (OSError, subprocess.CalledProcessError):
+        warn_stale(False, "retained revision availability")
+        return
+    for label, path, expected in [
+        (
+            "design",
+            "experiments/sys-datascience/methods/generator-orientation-target-pilot/design.json",
+            RETAINED_DESIGN_SHA,
+        ),
+        (
+            "evaluator",
+            "experiments/sys-datascience/methods/generator-orientation-target-pilot/main.rs",
+            RETAINED_EVALUATOR_SHA,
+        ),
+        (
+            "selection",
+            "experiments/sys-datascience/methods/generator-orientation-target-pilot/selection-manifest.json",
+            RETAINED_SELECTION_SHA,
+        ),
+    ]:
+        blob = git_blob(RETAINED_COMMIT, path)
+        warn_stale(blob is not None, f"{label} availability at retained revision")
+        if blob is not None:
+            warn_stale(
+                hashlib.sha256(blob).hexdigest() == expected,
+                f"{label} at retained revision",
+            )
     for item in design.get("evaluator", {}).get("implementation_files", []):
-        actual = hashlib.sha256(git_blob(RETAINED_COMMIT, item["path"])).hexdigest()
-        if actual != RETAINED_IMPLEMENTATION_SHA.get(item["path"]):
-            raise AnalysisError(f"retained implementation closure mismatch: {item.get('path')}")
+        blob = git_blob(RETAINED_COMMIT, item["path"])
+        warn_stale(
+            blob is not None,
+            f"implementation availability at retained revision: {item.get('path')}",
+        )
+        if blob is not None:
+            warn_stale(
+                hashlib.sha256(blob).hexdigest()
+                == RETAINED_IMPLEMENTATION_SHA.get(item["path"]),
+                f"implementation at retained revision: {item.get('path')}",
+            )
 
 
 def validate_manifest_common(manifest: dict, design_hash: str, target_path: Path) -> None:
@@ -225,24 +288,35 @@ def validate_manifest_common(manifest: dict, design_hash: str, target_path: Path
         raise AnalysisError("manifest schema")
     if manifest.get("expected_rows") != 24 or not isinstance(manifest.get("completed_rows"), int):
         raise AnalysisError("manifest row counts")
-    if manifest.get("source_sha256") != SOURCE_SHA or manifest.get("source_report_sha256") != SOURCE_REPORT_SHA:
-        raise AnalysisError("manifest source provenance")
-    if manifest.get("design_sha256") != design_hash:
-        raise AnalysisError("manifest current design provenance")
-    if manifest.get("evaluator_source_sha256") != digest(EVALUATOR):
-        raise AnalysisError("manifest current evaluator provenance")
-    if manifest.get("retained_design_sha256") != RETAINED_DESIGN_SHA or manifest.get("retained_evaluator_source_sha256") != RETAINED_EVALUATOR_SHA:
-        raise AnalysisError("manifest retained provenance")
+    warn_stale(
+        manifest.get("source_sha256") == SOURCE_SHA
+        and manifest.get("source_report_sha256") == SOURCE_REPORT_SHA,
+        "manifest source provenance",
+    )
+    warn_stale(manifest.get("design_sha256") == design_hash, "manifest/current design")
+    warn_stale(
+        manifest.get("evaluator_source_sha256") == digest(EVALUATOR),
+        "manifest/current evaluator",
+    )
+    warn_stale(
+        manifest.get("retained_design_sha256") == RETAINED_DESIGN_SHA
+        and manifest.get("retained_evaluator_source_sha256") == RETAINED_EVALUATOR_SHA,
+        "manifest retained evaluator/design",
+    )
     if manifest.get("target_schema") != "generator-orientation-target-pilot-row-v1" or manifest.get("backend") != "auto" or manifest.get("method_local_cache") is not True:
         raise AnalysisError("manifest target backend/schema/cache")
-    if manifest.get("protocol_history_sha256") != digest(PROTOCOL_HISTORY):
-        raise AnalysisError("manifest protocol history binding")
+    warn_stale(
+        manifest.get("protocol_history_sha256") == digest(PROTOCOL_HISTORY),
+        "manifest protocol history",
+    )
     listed = manifest.get("provenance", {}).get("implementation_files")
     if not isinstance(listed, list) or {item.get("path") for item in listed} != set(IMPLEMENTATION_PATHS):
         raise AnalysisError("manifest implementation closure paths")
     for item in listed:
-        if digest(REPO / item["path"]) != item.get("sha256"):
-            raise AnalysisError(f"manifest implementation closure hash: {item.get('path')}")
+        warn_stale(
+            digest(REPO / item["path"]) == item.get("sha256"),
+            f"manifest implementation {item.get('path')}",
+        )
     declared = manifest.get("target_path")
     if not isinstance(declared, str):
         raise AnalysisError("manifest target path missing")
@@ -255,23 +329,30 @@ def validate_inputs(target_path: Path, manifest_path: Path):
     for path in (SOURCE, SOURCE_REPORT, FEATURES, FEATURE_REPORT, DESIGN, SELECTION, PROTOCOL_HISTORY, EVALUATOR, target_path, manifest_path):
         if not path.is_file():
             raise AnalysisError(f"missing input {path}")
-    if digest(SOURCE) != SOURCE_SHA or digest(SOURCE_REPORT) != SOURCE_REPORT_SHA:
-        raise AnalysisError("source hash mismatch")
-    if digest(FEATURES) != FEATURE_SHA or digest(FEATURE_REPORT) != FEATURE_REPORT_SHA:
-        raise AnalysisError("feature hash mismatch")
+    warn_stale(
+        digest(SOURCE) == SOURCE_SHA and digest(SOURCE_REPORT) == SOURCE_REPORT_SHA,
+        "source bytes",
+    )
+    warn_stale(
+        digest(FEATURES) == FEATURE_SHA and digest(FEATURE_REPORT) == FEATURE_REPORT_SHA,
+        "feature bytes",
+    )
     feature_manifest = json.loads(FEATURE_REPORT.read_text())
     if (
         feature_manifest.get("schema") != "generator-orientation-feature-snapshot-v1"
-        or feature_manifest.get("snapshot_sha256") != FEATURE_SHA
         or feature_manifest.get("snapshot_rows") != 40
-        or feature_manifest.get("full_feature_sha256") != FULL_FEATURE_SHA
-        or feature_manifest.get("full_feature_report_sha256") != FULL_FEATURE_REPORT_SHA
-        or feature_manifest.get("orientation_source_sha256") != SOURCE_SHA
-        or feature_manifest.get("orientation_source_report_sha256") != SOURCE_REPORT_SHA
         or feature_manifest.get("target_fields_present") is not False
         or feature_manifest.get("target_calls") != 0
     ):
-        raise AnalysisError("feature snapshot provenance")
+        raise AnalysisError("feature snapshot semantic contract")
+    warn_stale(
+        feature_manifest.get("snapshot_sha256") == FEATURE_SHA
+        and feature_manifest.get("full_feature_sha256") == FULL_FEATURE_SHA
+        and feature_manifest.get("full_feature_report_sha256") == FULL_FEATURE_REPORT_SHA
+        and feature_manifest.get("orientation_source_sha256") == SOURCE_SHA
+        and feature_manifest.get("orientation_source_report_sha256") == SOURCE_REPORT_SHA,
+        "feature snapshot provenance",
+    )
     design, design_hash, protocol_hash = validate_design()
     source = validate_source(jsonl(SOURCE))
     manifest = json.loads(manifest_path.read_text())
@@ -280,11 +361,13 @@ def validate_inputs(target_path: Path, manifest_path: Path):
         raise AnalysisError("incomplete/failed target manifest is not interpretable")
     if manifest.get("status") != "complete" or manifest.get("completed_rows") != 24:
         raise AnalysisError("incomplete target manifest")
-    if manifest.get("pre_target_commit") != RETAINED_COMMIT:
-        raise AnalysisError("retained-run commit mismatch")
+    warn_stale(manifest.get("pre_target_commit") == RETAINED_COMMIT, "pre-target revision")
     validate_retained_commit(design)
-    if manifest.get("target_sha256") != digest(target_path) or digest(target_path) != TARGET_SHA:
-        raise AnalysisError("target bytes/hash mismatch")
+    warn_stale(
+        manifest.get("target_sha256") == digest(target_path),
+        "manifest/target bytes",
+    )
+    warn_stale(digest(target_path) == TARGET_SHA, "target retained bytes")
     target = jsonl(target_path)
     if len(target) != 24:
         raise AnalysisError("target row count")
@@ -300,10 +383,16 @@ def validate_inputs(target_path: Path, manifest_path: Path):
             finite(row.get(key), f"target {key}")
         if row.get("backend") != "auto" or row.get("coordinate_order") != "q1,q2,p1,p2":
             raise AnalysisError("target backend/coordinate provenance")
-        if row.get("source_sha256") != SOURCE_SHA or row.get("source_report_sha256") != SOURCE_REPORT_SHA:
-            raise AnalysisError("target source provenance")
-        if row.get("design_sha256") != RETAINED_DESIGN_SHA or row.get("evaluator_source_sha256") != RETAINED_EVALUATOR_SHA:
-            raise AnalysisError("target retained evaluator/design provenance")
+        warn_stale(
+            row.get("source_sha256") == SOURCE_SHA
+            and row.get("source_report_sha256") == SOURCE_REPORT_SHA,
+            "target-row source provenance",
+        )
+        warn_stale(
+            row.get("design_sha256") == RETAINED_DESIGN_SHA
+            and row.get("evaluator_source_sha256") == RETAINED_EVALUATOR_SHA,
+            "target-row evaluator/design provenance",
+        )
     expected_ids = {row["transformed_id"] for row in source.values()}
     if set(target_map) != expected_ids:
         raise AnalysisError("target substituted/missing ID")

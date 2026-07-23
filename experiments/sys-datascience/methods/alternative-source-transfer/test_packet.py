@@ -20,23 +20,23 @@ def _target_rows(tmp: Path, sys_value=0.1):
     return out
 
 class PacketTests(unittest.TestCase):
-  def test_source_feature_fingerprint_mutation_rejected_after_hash_rewrite(self):
+  def test_source_feature_fingerprint_mutation_rejected_semantically(self):
     with tempfile.TemporaryDirectory() as d:
       p=Path(d); _minimal(p); lines=(p/"features.jsonl").read_text().splitlines(); row=json.loads(lines[0]); row["source_geometry_fingerprint"]="wrong"; lines[0]=json.dumps(row); (p/"features.jsonl").write_text("\n".join(lines)+"\n"); m=json.loads((p/"manifest.json").read_text()); m["feature_sha256"]=__import__("hashlib").sha256((p/"features.jsonl").read_bytes()).hexdigest(); (p/"manifest.json").write_text(json.dumps(m))
-      with self.assertRaisesRegex(ValueError,"feature hash"): validate(p)
+      with self.assertRaisesRegex(ValueError,"feature/source source_geometry_fingerprint mismatch"): validate(p)
 
-  def test_selection_source_mutation_rejected_after_hash_rewrite(self):
+  def test_selection_source_mutation_rejected_semantically(self):
     with tempfile.TemporaryDirectory() as d:
       p=Path(d); _minimal(p); lines=(p/"selection.jsonl").read_text().splitlines(); row=json.loads(lines[0]); row["geometry_fingerprint"]="wrong"; lines[0]=json.dumps(row); (p/"selection.jsonl").write_text("\n".join(lines)+"\n"); m=json.loads((p/"manifest.json").read_text()); m["selection_sha256"]=__import__("hashlib").sha256((p/"selection.jsonl").read_bytes()).hexdigest(); (p/"manifest.json").write_text(json.dumps(m))
-      with self.assertRaisesRegex(ValueError,"selection hash"): validate(p)
+      with self.assertRaisesRegex(ValueError,"selection/source geometry_fingerprint mismatch"): validate(p)
 
-  def test_immutable_artifact_hashes_reject_rewritten_manifest(self):
+  def test_identity_mutations_rejected_after_consistent_hash_rewrite(self):
     for name, key in (("source.jsonl", "source_sha256"), ("features.jsonl", "feature_sha256"), ("selection.jsonl", "selection_sha256")):
       with self.subTest(name=name), tempfile.TemporaryDirectory() as d:
         p=Path(d); _minimal(p)
         lines=(p/name).read_text().splitlines(); row=json.loads(lines[0]); row["candidate_id"] += "-mutated"; lines[0]=json.dumps(row); (p/name).write_text("\n".join(lines)+"\n")
         m=json.loads((p/"manifest.json").read_text()); m[key]=__import__("hashlib").sha256((p/name).read_bytes()).hexdigest(); (p/"manifest.json").write_text(json.dumps(m))
-        with self.assertRaisesRegex(ValueError, f"{key.split('_')[0]} hash"): validate(p)
+        with self.assertRaisesRegex(ValueError, "join mismatch|unknown source row"): validate(p)
 
   def test_manifest_constant_mutation_rejected(self):
     with tempfile.TemporaryDirectory() as d:
@@ -66,7 +66,7 @@ class PacketTests(unittest.TestCase):
       tmp_path=Path(d); _minimal(tmp_path)
       rows=(tmp_path/"selection.jsonl").read_text().splitlines(); duplicate=json.loads(rows[1]); duplicate["geometry_fingerprint"]=json.loads(rows[0])["geometry_fingerprint"]; rows[1]=json.dumps(duplicate); (tmp_path/"selection.jsonl").write_text("\n".join(rows)+"\n")
       m=json.loads((tmp_path/"manifest.json").read_text()); m["selection_sha256"]=__import__("hashlib").sha256((tmp_path/"selection.jsonl").read_bytes()).hexdigest(); (tmp_path/"manifest.json").write_text(json.dumps(m))
-      with self.assertRaisesRegex(ValueError,"selection hash"): validate(tmp_path)
+      with self.assertRaisesRegex(ValueError,"duplicate geometry fingerprint"): validate(tmp_path)
 
   def test_incomplete_source_rejected(self):
     with tempfile.TemporaryDirectory() as d:
@@ -89,11 +89,14 @@ class PacketTests(unittest.TestCase):
       m=json.loads((tmp_path/"manifest.json").read_text()); m["feature_sha256"]=__import__("hashlib").sha256((tmp_path/"features.jsonl").read_bytes()).hexdigest(); (tmp_path/"manifest.json").write_text(json.dumps(m))
       with self.assertRaisesRegex(ValueError, "target leakage"): validate(tmp_path)
 
-  def test_manifest_corruption_rejected(self):
+  def test_manifest_hash_drift_warns(self):
     with tempfile.TemporaryDirectory() as d:
       tmp_path=Path(d); _minimal(tmp_path)
       m=json.loads((tmp_path/"manifest.json").read_text()); m["feature_sha256"]="bad"; (tmp_path/"manifest.json").write_text(json.dumps(m))
-      with self.assertRaisesRegex(ValueError, "feature hash"): validate(tmp_path)
+      import contextlib, io
+      stderr=io.StringIO()
+      with contextlib.redirect_stderr(stderr): validate(tmp_path)
+      self.assertIn("feature manifest/file hash differs",stderr.getvalue())
 
   def test_partial_target_rejected(self):
     with tempfile.TemporaryDirectory() as d:
@@ -160,14 +163,14 @@ class PacketTests(unittest.TestCase):
       out=subprocess.run(["python3",str(Path(__file__).parent/"analyze.py"),str(p),"--targets",str(path)],capture_output=True,text=True); self.assertNotEqual(out.returncode,0)
       target=_target_rows(p); target[0]["geometry_fingerprint"]="wrong"; path.write_text("\n".join(json.dumps(x) for x in target)+"\n"); out=subprocess.run(["python3",str(Path(__file__).parent/"analyze.py"),str(p),"--targets",str(path)],capture_output=True,text=True); self.assertNotEqual(out.returncode,0)
 
-  def test_evaluator_refuses_altered_manifest_before_target(self):
+  def test_evaluator_treats_altered_manifest_hash_as_advisory(self):
     root=Path(__file__).parent/"artifacts"/"transfer-v1"; binary=Path(__file__).parents[4]/"target/debug/sys-datascience-alternative-source-transfer-evaluator"
     if not binary.exists(): self.skipTest("evaluator test binary not built")
     with tempfile.TemporaryDirectory() as d:
       p=Path(d)
       for name in ("source.jsonl","features.jsonl","selection.jsonl"): (p/name).symlink_to(root/name)
       m=json.loads((root/"manifest.json").read_text()); m["selection_sha256"]="altered"; (p/"manifest.json").write_text(json.dumps(m)); target=p/"target.jsonl"; import subprocess
-      out=subprocess.run([str(binary),"evaluate",str(p),str(target)],capture_output=True,text=True); self.assertNotEqual(out.returncode,0); self.assertFalse(target.exists())
+      out=subprocess.run([str(binary),"evaluate",str(p),str(target)],capture_output=True,text=True); self.assertEqual(out.returncode,0,out.stderr); self.assertIn("warning:",out.stderr); self.assertTrue(target.exists())
 
   def test_equal_bucket_estimand_and_gate_classification_fixtures(self):
     with tempfile.TemporaryDirectory() as d:

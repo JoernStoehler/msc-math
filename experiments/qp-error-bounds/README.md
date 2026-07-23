@@ -108,11 +108,12 @@ words are candidate words, not proven distinct physical orbits. This packet
 does not provide exact multipliers, derivatives, recovery data, global HK
 candidate recall, or a production-consumer migration.
 
-The runner requires a clean git tree before deleting/regenerating outputs. It
-records the reachable source commit and full git tree object in `manifest.json`;
-the generated artifact may then be committed as a separate child commit. The
-source tree snapshot is the producer provenance and does not recursively hash
-the generated artifact.
+The runner warns but does not abort when the producing tree is dirty. It records
+the HEAD commit/tree, producing working directory, dirty flag, and UTC start
+time in `manifest.json`; uncommitted changes are not represented by the tree
+object. Use those fields with Git history to assess staleness before treating a
+new run as equivalent. The generated artifact may then be committed as a
+separate child commit.
 
 Timing fields are scoped: candidate generation includes route enumeration and
 f64 solves but excludes fixture/exact-geometry setup and compilation;

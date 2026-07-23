@@ -7,9 +7,10 @@ never edited; this keeps the test both hostile to corruption and reproducible.
 from __future__ import annotations
 
 import json
+import io
 import shutil
 import tempfile
-from contextlib import contextmanager
+from contextlib import contextmanager, redirect_stderr
 from pathlib import Path
 
 from validate import PREDICATE_CATEGORIES, validate
@@ -29,7 +30,9 @@ def mutated(directory: Path):
         copy.mkdir()
         for source in directory.iterdir():
             destination = copy / source.name
-            destination.symlink_to(source, target_is_directory=source.is_dir())
+            destination.symlink_to(
+                source.resolve(), target_is_directory=source.is_dir()
+            )
         yield copy
 
 
@@ -191,8 +194,11 @@ def main(directory: Path) -> None:
         target["comparison_id"] = "q_exact"
         next(entry for entry in evaluations if entry["formula_id"] == "qp.assembly_C")["value"] = [[999.0]]
         write_jsonl(copy / "formula_evaluations.jsonl", evaluations)
-        errors = validate(copy)
-        for needle in ("manifest schema identity mismatch", "manifest command/config identity mismatch", "mixed analysis artifact identity", "mixed formula-evaluation run identity", "formula target/row identity mismatch", "formula center mismatch", "proposal Q correction diagnostic center/target mismatch", "proxy formula evaluation value"):
+        stderr = io.StringIO()
+        with redirect_stderr(stderr):
+            errors = validate(copy)
+        assert "retained producer command differs" in stderr.getvalue()
+        for needle in ("manifest schema identity mismatch", "mixed analysis artifact identity", "mixed formula-evaluation run identity", "formula target/row identity mismatch", "formula center mismatch", "proposal Q correction diagnostic center/target mismatch", "proxy formula evaluation value"):
             assert any(needle in error for error in errors), needle
 
     # Keep all f64-ternary/exact-binary categories distinct, including the

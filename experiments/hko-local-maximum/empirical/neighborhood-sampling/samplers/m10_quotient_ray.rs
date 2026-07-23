@@ -1840,26 +1840,47 @@ fn verify_launch_packet(
             "launch packet settings do not match the literal reviewed protocol and CLI".into(),
         );
     }
+    // Checkout/source identity is advisory provenance. The literal protocol,
+    // release profile, dimensions, and numerical checks remain blocking.
     if !packet.expected_git_clean || !git.clean {
-        return Err("frozen panel requires a clean Git worktree".into());
+        eprintln!(
+            "warning: launch packet or current worktree is dirty; continuing. \
+             Correlate the working directory and run timestamp with Git history \
+             before reusing retained interpretation."
+        );
     }
     if packet.expected_git_commit != git.commit || packet.expected_git_tree != git.tree {
-        return Err("launch packet expected Git commit/tree does not match the worktree".into());
+        eprintln!(
+            "warning: checkout differs from the launch packet revision/tree; \
+             continuing with protocol checks. Reassess retained interpretation."
+        );
     }
     if toolchain.build_profile != "release" {
         return Err("frozen panel requires a release build".into());
     }
     if compiled_sampler_source_blake3 != runtime_sampler_source_blake3 {
-        return Err("compiled sampler source differs from checked-out sampler source".into());
+        eprintln!(
+            "warning: compiled sampler source differs from checked-out source; \
+             continuing with protocol checks. Reassess retained interpretation."
+        );
     }
     if packet.expected_compiled_sampler_source_blake3 != compiled_sampler_source_blake3 {
-        return Err("launch packet sampler hash does not match the compiled sampler source".into());
+        eprintln!(
+            "warning: compiled sampler differs from the launch packet bytes; \
+             continuing with protocol checks. Reassess retained interpretation."
+        );
     }
     if packet.expected_source_and_dependency_hashes != source_identities {
-        return Err("launch packet source/dependency identities do not match".into());
+        eprintln!(
+            "warning: source/dependency bytes differ from the launch packet; \
+             continuing with protocol checks. Reassess retained interpretation."
+        );
     }
     if packet.expected_local_source_tree_hashes != source_tree_identities {
-        return Err("launch packet local source-tree identities do not match".into());
+        eprintln!(
+            "warning: local source-tree bytes differ from the launch packet; \
+             continuing with protocol checks. Reassess retained interpretation."
+        );
     }
     Ok(LaunchPacketVerification {
         path: path.display().to_string(),
