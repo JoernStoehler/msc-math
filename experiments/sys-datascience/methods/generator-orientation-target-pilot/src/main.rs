@@ -386,8 +386,9 @@ fn validate_design(
         return Err("design source binding mismatch".into());
     }
     let evaluator = design.get("evaluator").ok_or("design evaluator missing")?;
-    let evaluator_path =
-        Path::new("experiments/sys-datascience/methods/generator-orientation-target-pilot/main.rs");
+    let evaluator_path = Path::new(
+        "experiments/sys-datascience/methods/generator-orientation-target-pilot/src/main.rs",
+    );
     let evaluator_hash = sha256_file(evaluator_path)?;
     if evaluator.get("source").and_then(Value::as_str) != Some(evaluator_path.to_str().unwrap()) {
         return Err("design evaluator source binding mismatch".into());

@@ -5,9 +5,9 @@
 //! volume/capacity/sys through the sys-landscape cache API, and computes
 //! ridge-area feature columns through the shared sys-datascience feature helper.
 
-#[path = "../../prepare/features_face_symplectic.rs"]
+#[path = "../../../prepare/features_face_symplectic.rs"]
 mod features_face_symplectic;
-#[path = "../../prepare/features_helpers.rs"]
+#[path = "../../../prepare/features_helpers.rs"]
 mod features_helpers;
 
 use euclidean_polytopes::two_faces_from_vertex_facet_incidence;

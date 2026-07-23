@@ -11,11 +11,11 @@ re-serializing or recomputing them.
 Transplant inventory:
 
 - retained files: `generator-orientation-smoke/README.md`,
-  `generator-orientation-smoke/main.rs`,
+  `generator-orientation-smoke/src/main.rs`,
   `generator-orientation-smoke/artifacts/panel-2-per-bucket/report.json`,
   `generator-orientation-smoke/artifacts/panel-2-per-bucket/rows.jsonl`;
   `generator-orientation-target-pilot/README.md`, `analyze.py`, `design.json`,
-  `main.rs`, `protocol-history.json`, `select.py`, `selection-manifest.json`,
+  `src/main.rs`, `protocol-history.json`, `select.py`, `selection-manifest.json`,
   `test_analyze.py`, `extract_orientation_features.py`,
   `artifacts/report.json`, `artifacts/target-manifest.json`,
   `artifacts/target-rows.jsonl`,

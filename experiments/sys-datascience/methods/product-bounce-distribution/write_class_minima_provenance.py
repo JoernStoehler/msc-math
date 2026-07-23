@@ -45,8 +45,8 @@ def main():
     audit_path = checked_relative(args.availability_audit) if args.availability_audit else None
     null_path = checked_relative(args.null_availability) if args.null_availability else None
     sources = [
-        Path("experiments/sys-datascience/methods/product-bounce-distribution/class-minima.rs"),
-        Path("experiments/sys-datascience/methods/product-bounce-distribution/audit-null-availability.rs"),
+        Path("experiments/sys-datascience/methods/product-bounce-distribution/src/bin/class-minima.rs"),
+        Path("experiments/sys-datascience/methods/product-bounce-distribution/src/bin/audit-null-availability.rs"),
         Path("experiments/sys-datascience/methods/product-bounce-distribution/summarize_class_minima.py"),
         Path("experiments/sys-datascience/methods/product-bounce-distribution/write_class_minima_provenance.py"),
         Path("experiments/sys-datascience/Cargo.toml"),

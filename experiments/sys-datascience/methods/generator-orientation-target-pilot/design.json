@@ -35,7 +35,7 @@
   },
   "evaluator": {
     "binary": "sys-datascience-generator-orientation-target-pilot",
-    "source": "experiments/sys-datascience/methods/generator-orientation-target-pilot/main.rs",
+    "source": "experiments/sys-datascience/methods/generator-orientation-target-pilot/src/main.rs",
     "source_sha256": "3b0a67fe379c71a102ef44c9e39d491a509ebc5ee7ef09c8853b33a44b5e5f20",
     "implementation_files": [
       {"path": "experiments/sys-landscape/src/datascience_cache.rs", "sha256": "ce15a5a29b6b11053072336421f004c028cb04ffdc40001d291e70298e731569"},
