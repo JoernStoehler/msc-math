@@ -25,19 +25,19 @@ path = "branch-cartography/main.rs"
 
 [[bin]]
 name = "dev-gradient-ascent-trace-policy-sweep"
-path = "trace-policy-sweep/main.rs"
+path = "local-geometry-probe/trace-policy-sweep/main.rs"
 
 [[bin]]
 name = "dev-gradient-ascent-aggregate-summaries"
-path = "aggregate-summaries/main.rs"
+path = "local-geometry-probe/aggregate-summaries/main.rs"
 
 [[bin]]
 name = "dev-gradient-ascent-endpoint-scan-report"
-path = "endpoint-scan-report/main.rs"
+path = "local-geometry-probe/endpoint-scan-report/main.rs"
 
 [[bin]]
 name = "dev-gradient-ascent-run-trace-report"
-path = "run-trace-report/main.rs"
+path = "local-geometry-probe/run-trace-report/main.rs"
 
 [[bin]]
 name = "dev-gradient-ascent-literal-naive-gradient"
