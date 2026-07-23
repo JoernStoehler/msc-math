@@ -13,6 +13,10 @@ final theorem certificate.
 | `neighborhood-sampling/` | Random nearby-polytope samplers for fixed-`F=10`, `F=11` facet-splitting, and fixed-`F=10` Lagrangian-product modes. |
 | `m11-ascent/` | Cut-then-ascent checks starting from `F=11` facet additions. |
 
+Read the relevant child README before its source or retained artifacts. These
+four child entry points are the exhaustive empirical packet inventory; helper
+files within a packet are not separate experiments.
+
 ## Interpretation
 
 The empirical checks are deliberately separate from `theorem/`. They are useful

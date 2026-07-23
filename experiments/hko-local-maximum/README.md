@@ -67,10 +67,10 @@ unless a current local README or generated summary points to a live consequence.
 
 ## Rust Command Contract
 
-- `hko-first-order --smoke` writes
-  `empirical/first-order/hko-neighborhood-sensitivity-smoke.jsonl`; full mode
-  writes the tracked sensitivity/ascent outputs. `--exact-bank` defaults to
-  smoke output; add `--canonical` only when refreshing the tracked exact bank.
+- `hko-first-order --smoke` computes the sensitivity probe and exits without
+  writing. Full mode writes the tracked sensitivity/ascent outputs.
+  `--exact-bank` defaults to an untracked smoke output; add `--canonical` only
+  when refreshing the tracked exact bank.
 - `hko-neighborhood-sampling m10 ...` samples general fixed-`F=10`
   dual-vertex perturbations. The canonical tracked artifact is
   `empirical/neighborhood-sampling/m10/pentagon-perturb.jsonl`.

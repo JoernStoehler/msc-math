@@ -204,7 +204,7 @@ impl CliOptions {
 
 Optional flags:
   --help, -h          Show this help message and exit.
-  --smoke             Run smoke-sized sensitivity and ascent outputs.
+  --smoke             Compute the sensitivity probe without writing outputs.
   --exact-bank        Write exact-bank input rows.
   --canonical         With --exact-bank, refresh the tracked exact-bank artifact."#
         );
