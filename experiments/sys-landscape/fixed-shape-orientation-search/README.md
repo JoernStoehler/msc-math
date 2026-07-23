@@ -104,7 +104,8 @@ uv run --script experiments/sys-landscape/fixed-shape-orientation-search/analyze
   --output experiments/sys-landscape/fixed-shape-orientation-search/global-analysis.json
 ```
 
-- `main.rs` owns selection, orientation, capacity evaluation, and JSONL output.
+- `main.rs` performs selection, orientation, capacity evaluation, and JSONL
+  output.
 - `evaluations.jsonl` retains every evaluated point.
 - `analyze.py` derives `analysis.json` and compares the best rotated value with
   both retained source distributions.

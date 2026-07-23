@@ -2,9 +2,10 @@
 
 Status: dated global synthesis through the July 22 known-seed cycle. It is not
 an authoritative metric source, queue, or complete current question map. Later
-optimizer/prediction packets and the reported determinant-one linear extension
-still require a dedicated reconciliation pass. Detailed measurements and
-current experiment status remain in packet-local artifacts and READMEs.
+optimizer/prediction packets are not exhaustively integrated here. The
+determinant-one linear extension is reconciled at
+`../../sys-landscape/fixed-shape-orientation-search/`. Detailed measurements
+and current experiment status remain in packet-local artifacts and READMEs.
 
 ## Evidence State
 
@@ -44,6 +45,10 @@ current experiment status remain in packet-local artifacts and READMEs.
   retained generic champion did not improve; the product champion rose from
   `0.862586` to `0.878308`, above all 14,336 retained source values but below
   one. This is post-selection two-body evidence, not a population estimate.
+- A deterministic noncompact extension then evaluated 216 determinant-one
+  distortions per selected body. Every sampled noncompact point was worse than
+  the corresponding compact best. This stops more random transforms of the
+  same two bodies; it does not establish a compact local or global maximum.
 - A retained branch-equality control corrected all 68 proposals in a restricted
   pentagon-product chart. Full capacity recomputation kept the selected pair
   jointly minimizing at 31 points, including all four exposed controls. The
@@ -108,14 +113,13 @@ preservation status, and the current cross-line idea families.
   theorem use.
 - HKO neighborhood sampling: a named quantitative thesis consumer or a
   proof-oriented/adversarial connection question; not more IID rays.
-- Fixed-shape orientation: a diverse-shape comparison with a specified
-  decision, rather than another search around one frozen product body. A
-  `GL(4)/(Sp(4) x R_+)` study changes Euclidean shape as well as alignment and
-  therefore needs its own decision rather than being treated as more
-  `SO(4)/U(2)` samples.
+- Fixed-shape transformations: a diverse-shape comparison with a specified
+  decision, a targeted optimizer or geometric mechanism, or a new body for
+  which the comparison matters. More random determinant-one transforms of the
+  same selected bodies are stopped by the retained sparse negative pilot.
 
 ## Update Rule
 
 Update only when evidence, review, or a Jörn/Kai decision changes beliefs,
-priorities, or phase routing. Generated artifacts and producers own detailed
-metrics.
+priorities, or phase routing. Detailed metrics remain in the generated
+artifacts and producer outputs.

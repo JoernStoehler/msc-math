@@ -56,7 +56,7 @@ tree.
 - `sys-fixed-shape-linear-search` extends that scan over determinant-one linear
   maps modulo symplectic maps, with the orientation scan as its compact
   zero-distortion stratum. Its sparse random global-transform route is stopped
-  after a negative two-body pilot; the owner README records what would justify
+  after a negative two-body pilot; the packet README records what would justify
   reopening it.
 - `sys-rejection-calibration` is a full-output producer without a smoke mode; do
   not run it as a quick command check unless intentionally refreshing tracked

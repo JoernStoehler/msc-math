@@ -12,8 +12,10 @@ July 15 portfolio refresh and July 22 known-seed closeout. The dated
 `research-closeout-2026-07-22.md`, `final-research-account-2026-07-12.md`,
 `research-ledger.md`, and `next-session-candidates.md` preserve decisions and
 bounded synthesis, but they are not a complete current question map: later
-packets and one reported linear-extension run have not been reconciled across
-all four views. Check packet-local READMEs, code, artifacts, and reviewed
+packets have not been reconciled across all four dated views. The formerly
+missing determinant-one linear extension is now retained under
+`../../sys-landscape/fixed-shape-orientation-search/`. Check packet-local
+READMEs, code, artifacts, and reviewed
 interpretation before treating a dated omission or “next” item as current.
 `research-direction-review-2026-07-11.md` is a closed-cycle inventory, not
 launch authority.

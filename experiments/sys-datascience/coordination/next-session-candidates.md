@@ -35,13 +35,12 @@ sample, or possible generalization exists.
 | Fixed-normal convex-balance theorem | agent-reviewed; Jörn review outstanding | review mathematics before thesis adaptation or empirical screening | proof repair, acceptance, or a named fixed-normal application |
 | HKO transverse-ray pilot | reproducible finite panel proposed for promotion | decide separately whether it improves the thesis HKO presentation | no additional IID rays; require a quantitative panel, certified boundary, or adversarial connection question |
 | Branch-equality continuation | retained and closed local method control | reuse only for a named equality-sampling or optimization consumer | consumer must repay extension beyond the restricted product chart and branch-completeness work |
-| Selected-champion orientation scan | retained and closed two-body witness | consume as evidence that post-selection non-symplectic rotation can still improve a strong product body | require a specified diverse-shape or population decision before widening |
+| Selected-champion orientation and determinant-one scans | retained and stopped two-body diagnostics | consume as evidence that post-selection non-symplectic rotation can improve the selected product body, while the sparse noncompact extension found no further improvement | require a specified diverse-shape/population decision or a targeted geometric optimizer/mechanism before widening |
 | Conditional-tail atlas | retained exploratory figure options | choose a claim and panel before publication polish | thesis consumer selects the visual role |
 | Complete-supplied-stream exact solve | experiment-local route already exists; crate extraction deferred | direct small audits to `experiments/dev-quadratic-program/src/exact_route/` | extract a public API only for a named crate consumer |
 | New empirical portfolio | unapproved idea families | compare diverse fixed-shape alignment, nonredundant invariants, and capacity-versus-volume response before execution | assessed proposal must beat thesis integration and other lines on expected total project cost |
 
-Navigation TODO (2026-07-23): the repository reorientation audit reports that
-a sparse 216-point determinant-one linear extension ran on two selected bodies
-and was stopped, but this tree has no authoritative packet for that result.
-Do not treat `GL(4)/(Sp(4) x R_+)` as unperformed work or cite the reported
-result until its source session/worktree is reconciled into a durable packet.
+The determinant-one extension is now reconciled at
+`experiments/sys-landscape/fixed-shape-orientation-search/README.md`, with
+source and retained output beside it. This dated board does not duplicate its
+metrics or reopen the stopped random-transform route.

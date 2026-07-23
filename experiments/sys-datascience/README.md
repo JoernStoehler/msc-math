@@ -145,11 +145,15 @@ alternative-source operational sub-threshold ridge/rho proposers; coarse
 generic ridge transfer with failed harder conditioning; exact triangle and
 generator-local bounce structure under their separate review boundaries;
 witness-level orientation relevance with a failed ridge mediator; and bounded
-gradient/optimizer results. Bespoke adaptive search produced no scientific
-comparison. Parked routes have named reopen conditions rather than forming a
-queue. Project fact 34.1 records that this work was still incomplete when the
-fact was written; it does not impose a standing requirement for another
-dataset. Check the later packets and active thesis claim for current closure.
+gradient/optimizer results. The selected-champion compact-orientation scan and
+its sparse determinant-one extension are retained together under
+`experiments/sys-landscape/fixed-shape-orientation-search/`; the noncompact
+extension found no further improvement and is stopped under its two-body
+boundary. Bespoke adaptive search produced no scientific comparison. Parked
+routes have named reopen conditions rather than forming a queue. Project fact
+34.1 records that this work was still incomplete when the fact was written; it
+does not impose a standing requirement for another dataset. Check the later
+packets and active thesis claim for current closure.
 `LICCA.md` classifies retained dormant scripts; none is selected by default.
 
 The July 22 addendum records the later five-case local-maxima screen, exact
