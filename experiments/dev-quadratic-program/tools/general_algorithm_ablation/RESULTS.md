@@ -164,6 +164,47 @@ including 698 exact fallbacks. The existing product solver medians were
 approximately `0.16 ms`, `2.09 ms`, and `34.44 ms`. Code uniformity would not
 justify that regression.
 
+### Product near-singularity follow-up
+
+A disposable follow-up tested whether the product branch could replace the
+full-KKT eigensolver by solving the max-margin linear program directly. It
+lost. On the 4,051 exact-transition HKO product words, Clarabel took about
+`565 ms`, versus `190 ms` for the old KKT eigensolver and `103 ms` for the
+existing constraints-first projected solver. With a `1e-14` dead zone, the LP
+identified the same 300 exact-positive robust words as the projected solver;
+it added no useful positive decisions and still produced 320 exact-false
+positive labels before certification. The exploratory executable was removed.
+
+The more informative comparison used the proved product-feasibility and
+curvature pruning first. It reduced the production-shaped 6,240-word HKO stream
+to 285 survivors. Exact binary64 arithmetic found:
+
+- all 285 KKT matrices were consistent and exactly full-rank;
+- 115 unique solutions had positive beta and positive Q; and
+- 170 unique solutions were inadmissible.
+
+Thus the old solver's problem here is not genuine exact degeneracy. Its strict
+eigenvalue tier treats small but nonzero eigenvalues as a null space and shifts
+beta: it labelled all 285 survivors positive, including all 170 exact-false
+cases. The projected solver labelled 254 positive, including 139 exact-false
+cases.
+
+A plain LU solve took about `0.6 ms` for all 285 survivors and agreed with exact
+arithmetic on 273: 115 positive and 158 negative. It returned indeterminate on
+10 exact-negative systems and made two false-positive decisions. Those two
+systems had exact beta margins of order `-1e15` to `-1e16`; their f64 inverses
+could not be verified. Exact fallback for exactly these 12 diagnostic failures
+cost about `87 ms`.
+
+Neither the uniform verified-inverse radius nor an exploratory componentwise
+Neumann enclosure certified any of the 170 negative systems; both safely
+returned indeterminate. Exact-solving all 170 took about `1.4 s`, and
+exact-solving all 285 survivors took about `2.0 s`. Therefore neither direct LP
+nor ordinary f64 inverse certification is the product solution. The next
+candidate should be adaptive higher precision or a faster exact dyadic
+full-rank solve, with the existing rational null-space solver reserved for
+genuinely singular systems.
+
 ## Independent review
 
 A fresh read-only adversarial review found four issues, all corrected before
