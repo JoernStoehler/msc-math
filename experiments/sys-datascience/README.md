@@ -106,10 +106,14 @@ uv run --script experiments/sys-datascience/fingerprint-dataset.py \
 
 Read first:
 
-- `coordination/research-closeout-2026-07-22.md` for current routing after the
-  known-seed cycle;
+- `coordination/README.md` for the authority and staleness boundary;
+- `methods/README.md` for the physical packet inventory and packet-local
+  source truth;
+- `coordination/research-closeout-2026-07-22.md` for the dated routing snapshot
+  after the known-seed cycle;
 - `coordination/final-research-account-2026-07-12.md` and
-  `coordination/next-session-candidates.md` for current routing and status;
+  `coordination/next-session-candidates.md` for dated synthesis and routing
+  decisions that must be checked against later packet-local evidence;
 - `coordination/research-direction-review-2026-07-11.md` for the closed-cycle
   exhaustive inventory only, not current portfolio or launch authority;
 - `coordination/exploration-result.md` for the audit of the recovery agent's
@@ -117,10 +121,8 @@ Read first:
 - `produce/README.md`
 - `prepare/README.md`
 - `feature-space-coverage-ledger.md`
-- `methods/README.md`
 - `methods/trusted-random-product-closure-summary.md`
 - `methods/trusted-random-product-method-dispositions.md`
-- `coordination/README.md` for the coordination ownership boundary
 - relevant `methods/<method>/README.md`
 
 Current closure status: active packets have been rerun under the invariant

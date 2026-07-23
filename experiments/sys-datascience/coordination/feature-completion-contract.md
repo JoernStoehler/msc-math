@@ -25,16 +25,17 @@ explicit source-backed value/cost disposition:
   important research decision;
 - remaining expensive work has an explicit expected-value/cost disposition;
 - the final account states supported and prohibited claims, failed routes,
-  open uncertainty, and exact owner inputs a future demonstration may consume;
+  open uncertainty, and exact source inputs a future demonstration may consume;
 - project-level random/gradient search requirements are reconciled rather than
   excluded by the sys-datascience folder boundary.
 
 Use `final-research-account-2026-07-12.md` and
-`next-session-candidates.md` for current routing. The closed-cycle
+`next-session-candidates.md` for the dated closeout decisions, then check them
+against later packet-local evidence. The closed-cycle
 `research-direction-review-2026-07-11.md` is an exhaustive historical
 inventory, not a current portfolio or launch authority.
 `exploration-result.md` audits the recovery closure. Generated artifacts and
-producers own detailed metrics.
+their producers are authoritative for detailed metrics.
 
 The 2026-07-10 rebuild already establishes current table identity. Resolve new
 questions with existing artifacts or the cheapest bounded probe first. Do not

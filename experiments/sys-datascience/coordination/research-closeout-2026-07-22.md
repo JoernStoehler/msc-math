@@ -2,11 +2,12 @@
 
 Date: 2026-07-22.
 
-Status: current routing addendum to
+Status: dated routing addendum to
 `final-research-account-2026-07-12.md`. The earlier account still owns its
 reviewed random/product claims. This file records the later known-seed work,
-retained pilots, portfolio decisions, and current research frontier. It is a
-decision and navigation owner, not an experiment-metric owner or launch queue.
+retained pilots, portfolio decisions, and the frontier as of 2026-07-22. Later
+packet-local evidence supersedes it where they disagree. It is not an
+authoritative metric source, complete current question map, or launch queue.
 
 The exploration phase is closed for allocation purposes, not because the
 landscape is understood. New data-science work must beat the current thesis

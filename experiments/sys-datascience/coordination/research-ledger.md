@@ -1,9 +1,10 @@
 # Sys-Datascience Research Ledger
 
-Use: current global belief and routing state. It is not a metric owner or
-queue. Detailed measurements remain in the owning method artifacts. The July
-11 direction review is a historical inventory; the final account and
-next-session board govern current routing.
+Status: dated global synthesis through the July 22 known-seed cycle. It is not
+an authoritative metric source, queue, or complete current question map. Later
+optimizer/prediction packets and the reported determinant-one linear extension
+still require a dedicated reconciliation pass. Detailed measurements and
+current experiment status remain in packet-local artifacts and READMEs.
 
 ## Evidence State
 

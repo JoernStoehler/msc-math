@@ -1,9 +1,9 @@
 # Topic Maps
 
-Each file in this folder is an active research ledger for one topic seed or
-topic-owner session. Agents read these files to recover a topic owner's current
-best guesses, understand the evidence and methodology behind those guesses,
-borrow ideas for other topics, and write or review packet prompts.
+Each file in this folder is a cross-packet map for one topic. A map may record
+an active seed, a closed question, or reopen conditions; presence here is not a
+launch recommendation. Agents use these files to recover current synthesis,
+find source packets, and avoid repeating answered questions.
 
 Each topic owner may choose the file layout that serves its own use case. The
 file should say what use it is optimized for and how it is maintained. For

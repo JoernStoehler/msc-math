@@ -1,11 +1,15 @@
 # Sys-Datascience Next Session Candidates
 
 Use: compact routing board, not a backlog. Evidence and reasoning live in
-owning packets and `final-research-account-2026-07-12.md`.
+packet-local sources and `final-research-account-2026-07-12.md`.
 `research-direction-review-2026-07-11.md` is a historical inventory, not
 launch authority.
 
-Current default: empirical exploration is closed after the reviewed July 15
+Status: July 22 routing snapshot with the explicit July 23 navigation
+correction below. It is not a complete current question map; packet-local
+evidence overrules it.
+
+Snapshot default: empirical exploration is closed after the reviewed July 15
 portfolio refresh and July 22 known-seed closeout. The next sys-datascience
 session should perform
 readiness/demonstration work for an explicit thesis consumer: select source
@@ -16,7 +20,7 @@ possible generalization exists.
 
 | Topic | Stance | Next action | Reopen gate |
 | --- | --- | --- | --- |
-| Demonstration/readiness | next default | choose exact owner artifacts and any consumer-driven additional data; verify source-to-output reproduction | presentation needs do not widen empirical claims |
+| Demonstration/readiness | next default | choose exact packet-local artifacts and any consumer-driven additional data; verify source-to-output reproduction | presentation needs do not widen empirical claims |
 | Alternative-source ridge/rho proposer | reviewed and closed | may be consumed as bounded operational sub-threshold proposer-transfer evidence | reopen only for a named source-stability or threshold-directed claim |
 | Fixed-shape orientation witness | reviewed and closed after transplant | may be consumed as witness-level evidence that symplectic alignment matters; retain the failed ridge-mediator gate | enlarge only for a necessary population or common-direction claim |
 | Generic ridge hardening | reviewed and closed | retain coarse transfer and failed-hardening result | reopen only for a second stage adding information beyond lower ridge |
@@ -30,7 +34,13 @@ possible generalization exists.
 | Fixed-normal convex-balance theorem | agent-reviewed; Jörn review outstanding | review mathematics before thesis adaptation or empirical screening | proof repair, acceptance, or a named fixed-normal application |
 | HKO transverse-ray pilot | reproducible finite panel proposed for promotion | decide separately whether it improves the thesis HKO presentation | no additional IID rays; require a quantitative panel, certified boundary, or adversarial connection question |
 | Branch-equality continuation | retained and closed local method control | reuse only for a named equality-sampling or optimization consumer | consumer must repay extension beyond the restricted product chart and branch-completeness work |
-| Selected-champion orientation scan | retained and closed two-body witness | consume as evidence that post-selection non-symplectic rotation can still improve a strong product body | require a specified diverse-shape, population, or `GL(4)/(Sp(4) x R_+)` decision before widening |
+| Selected-champion orientation scan | retained and closed two-body witness | consume as evidence that post-selection non-symplectic rotation can still improve a strong product body | require a specified diverse-shape or population decision before widening |
 | Conditional-tail atlas | retained exploratory figure options | choose a claim and panel before publication polish | thesis consumer selects the visual role |
 | Complete-supplied-stream exact solve | experiment-local route already exists; crate extraction deferred | direct small audits to `experiments/dev-quadratic-program/src/exact_route/` | extract a public API only for a named crate consumer |
 | New empirical portfolio | unapproved idea families | compare diverse fixed-shape alignment, nonredundant invariants, and capacity-versus-volume response before execution | assessed proposal must beat thesis integration and other lines on expected total project cost |
+
+Navigation TODO (2026-07-23): the repository reorientation audit reports that
+a sparse 216-point determinant-one linear extension ran on two selected bodies
+and was stopped, but this tree has no authoritative packet for that result.
+Do not treat `GL(4)/(Sp(4) x R_+)` as unperformed work or cite the reported
+result until its source session/worktree is reconciled into a durable packet.

@@ -3,9 +3,10 @@
 Status: audited and rejected as current phase authority on 2026-07-11.
 
 The corrected exploration cycle subsequently closed and received a reviewed
-portfolio refresh on 2026-07-15. Its current source-backed synthesis is
-`final-research-account-2026-07-12.md`; that later account, not the recovery
-judgment preserved below, routes future readiness/demonstration work.
+portfolio refresh on 2026-07-15. Its dated source-backed synthesis is
+`final-research-account-2026-07-12.md`; that later account supersedes the
+recovery judgment preserved below, but packet-local evidence may now supersede
+either dated view.
 
 This file previously said exploration was complete and demonstration was next.
 That judgment came from a recovery agent, did not reconcile the higher-authority
@@ -13,10 +14,11 @@ project requirements, and was too narrow in both features and search objects.
 It remains useful only as the bounded account of the retained-table work
 recovered on 2026-07-10.
 
-The final account and next-session board own current routing.
-`research-direction-review-2026-07-11.md` is the closed-cycle exhaustive
-direction inventory, while `research-ledger.md` records current beliefs.
-Detailed metrics remain in their method packets.
+The final account, next-session board, and research ledger are dated
+coordination views, not complete current routing. The coordination README
+states their staleness boundary. `research-direction-review-2026-07-11.md` is
+the closed-cycle exhaustive direction inventory. Detailed metrics remain in
+their method packets.
 
 ## What Survived Audit
 

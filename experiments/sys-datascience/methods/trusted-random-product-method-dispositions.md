@@ -1,14 +1,14 @@
 # Trusted Random/Product Method Dispositions
 
-Purpose: disposition ledger for active checklist families scoped to trusted
+Purpose: maintained disposition ledger for method families scoped to trusted
 random/product rows. This is not a replacement for method packet READMEs or
 artifacts.
 
-Coverage rule: every `open` family in `method-coverage-checklist.md` is named
-below, either as its own row or in a joint row whose methods share the same
-interface and concrete disposition reason. A joint row is not representative-
-family sampling: every named family inherits the recorded status and reopen
-trigger.
+Coverage rule: the tables below are the maintained account of method families
+admitted to the trusted random/product surface. A joint row is not
+representative-family sampling: every named family inherits the recorded
+status and reopen trigger. Generic textbook families that have no current
+question or interface are not an implied backlog.
 
 Epistemic status: current control surface after removing non-invariant active
 features and abandoned ascent/continuation/local-behavior surfaces from the
