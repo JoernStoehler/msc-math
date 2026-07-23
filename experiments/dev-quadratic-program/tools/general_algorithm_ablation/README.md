@@ -66,17 +66,16 @@ word-length change requires that contract to be reviewed again.
 
 ## Product route
 
-Exact Lagrangian products require a separate outer branch. Their exact zero
-blocks select the smaller billiard word family, but also make many augmented
-KKT matrices singular. The general inverse-based route is retained as a
-correctness control on products, not as their performance route.
+Exact Lagrangian products use the separate KKT-free closure-vertex route in
+`../product_closure_route/`. The six-facet reduction proves that a scalar
+capacity maximizer exists with at most three facets from each factor; direct
+closure-vertex enumeration therefore avoids the singular augmented KKT systems
+that made the old product branch difficult to certify.
 
-The existing null-space-capable billiard solver is the retained performance
-control and agrees with exact aggregation on the three fixtures. This packet
-does not upgrade its legacy f64 predicates to a general certificate. A trusted
-production product branch must exact-resolve its output-relevant candidates or
-add a product-specific certified wrapper without discarding its singular-system
-handling.
+The old billiard/KKT solver remains a performance and behavioral control. It is
+not the selected production design. The closure-vertex route returns the exact
+binary64-rational scalar capacity and sparse exact maximizing witnesses; it
+does not classify every minimizing or near-minimizing branch.
 
 Near-products are not silently rounded into products. That would change the
 input and needs an explicit preprocessing contract.

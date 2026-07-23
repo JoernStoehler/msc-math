@@ -71,6 +71,11 @@ consumer -> final output need -> acceptable route contract
          -> internal predicates/bounds -> evidence/proof/performance
 ```
 
+For the selected general and product scalar routes, current production
+migration order, ownership boundaries, the concurrent-worktree gate, and the
+intentional deferral of orbit-sensitive consumers, use
+`docs/production-migration-plan.md`.
+
 Do not optimize a one-sigma f64 predicate or decided-rate metric as if it were
 the route target by itself. Predicate usefulness is downstream of scalar
 capacity/`sys`, near-minimum `(sigma, action)` output, fallback cost, or

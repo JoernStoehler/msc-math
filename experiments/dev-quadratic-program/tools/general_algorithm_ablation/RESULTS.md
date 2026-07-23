@@ -17,11 +17,10 @@ correctness-guaranteed general route combines:
 - exact rational fallback only when the enclosure is indeterminate; and
 - outward aggregation from candidate `Q` intervals to a capacity interval.
 
-The product branch should continue using billiard enumeration and a
-null-space-capable inner solver. Running exact products through the general
-inverse-based route is correct but needlessly expensive. The current product
-solver is a fast fixture-backed control, not newly certified for every product
-input by this packet.
+The product branch should use the separate KKT-free closure-vertex route in
+`../product_closure_route/`. Running exact products through the general
+inverse-based route is correct but needlessly expensive. The old
+billiard/null-space solver remains only a comparison control.
 
 The faster empirical predicate is not the selected algorithm. Its ordinary
 rounded residual and inverse-norm quantity has no sound enclosure theorem, and
@@ -285,17 +284,18 @@ general cohort.
 
 ## Remaining scope
 
-This packet is ready for adversarial review, not production migration. The
-review should try to falsify:
+The two adversarial review passes above are complete and their findings are
+resolved. Together with the separate reviewed product closure-vertex packet,
+the scalar-capacity algorithms are ready for production API design.
 
-1. the normwise and batched rounding and underflow contracts;
-2. the verified-inverse and `Q = -xi/2` propagation;
-3. certified curvature projection and cyclic inheritance;
-4. maximum-`Q` capacity interval aggregation;
-5. exact fallback boundaries and rational conversion; and
-6. the distinction between general and exact-product routes.
+Migration must preserve rather than collapse their different contracts:
 
-After review findings are resolved, the next action is to design the production
-general API and migrate one consumer while preserving this packet as
-verification, numerics, and performance evidence. The product branch separately
-needs output-relevant exact resolution or a certified singular-capable wrapper.
+- the general route returns a certified capacity interval with exact fallback;
+- the product route returns an exact binary64-rational scalar capacity and
+  sparse exact maximizing witnesses; and
+- neither route promises a complete set of minimizing or near-minimizing
+  branches.
+
+The next action is to design the production API and migrate one representative
+scalar-capacity consumer while retaining this packet as verification, numerics,
+and performance evidence.

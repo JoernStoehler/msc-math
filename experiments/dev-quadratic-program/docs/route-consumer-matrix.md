@@ -5,6 +5,12 @@ public API and not thesis prose. It records the current consumer classification
 so route work starts from final-output needs instead of from one internal
 predicate or one folder boundary.
 
+Algorithm-selection and predicate-search snapshots later in this file predate
+the reviewed general and product scalar routes. Use
+`production-migration-plan.md` for current migration decisions; use this file
+for its consumer/output inventory and the historical evidence that motivated
+keeping scalar and orbit-set contracts separate.
+
 Source surfaces checked for this classification:
 
 - `experiments/dev-quadratic-program/README.md`
