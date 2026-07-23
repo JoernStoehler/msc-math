@@ -7,9 +7,55 @@ pub fn edge_fixture_cases() -> Vec<ScanCase> {
     vec![
         duplicate_dual_vertices_case(),
         missing_origin_interior_case(),
+        dual_vertex_norm_out_of_range_case(),
+        primal_vertex_norm_out_of_range_case(),
         drifted_product_case(),
         near_redundant_product_case(),
     ]
+}
+
+fn dual_vertex_norm_out_of_range_case() -> ScanCase {
+    let scale = 1e-4;
+    ScanCase {
+        family: "edge_invalid".to_string(),
+        source_id: "edge:dual_vertex_norm_out_of_range".to_string(),
+        input_source: "edge_fixture".to_string(),
+        generated_attempt: None,
+        generator_seed: None,
+        requested_facet_count: Some(5),
+        dual_vertices: vec![
+            Vector4::new(scale, 0.0, 0.0, 0.0),
+            Vector4::new(0.0, scale, 0.0, 0.0),
+            Vector4::new(0.0, 0.0, scale, 0.0),
+            Vector4::new(0.0, 0.0, 0.0, scale),
+            Vector4::repeat(-scale),
+        ],
+        audit_capacity_label: None,
+        artifact_capacity_label: None,
+        audit_sigma_label: None,
+    }
+}
+
+fn primal_vertex_norm_out_of_range_case() -> ScanCase {
+    let scale = 1e-3;
+    ScanCase {
+        family: "edge_invalid".to_string(),
+        source_id: "edge:primal_vertex_norm_out_of_range".to_string(),
+        input_source: "edge_fixture".to_string(),
+        generated_attempt: None,
+        generator_seed: None,
+        requested_facet_count: Some(5),
+        dual_vertices: vec![
+            Vector4::new(scale, 0.0, 0.0, 0.0),
+            Vector4::new(0.0, scale, 0.0, 0.0),
+            Vector4::new(0.0, 0.0, scale, 0.0),
+            Vector4::new(0.0, 0.0, 0.0, scale),
+            Vector4::repeat(-scale),
+        ],
+        audit_capacity_label: None,
+        artifact_capacity_label: None,
+        audit_sigma_label: None,
+    }
 }
 
 fn duplicate_dual_vertices_case() -> ScanCase {

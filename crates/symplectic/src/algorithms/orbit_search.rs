@@ -36,16 +36,22 @@ pub enum OrbitAdmissibility {
 
 /// Strength of the admissibility guarantee applied before returning a search
 /// result.
+///
+/// Compatibility warning: these legacy modes resolve only candidates labelled
+/// `IndeterminateF64`. They do not recheck `AdmissibleF64`, and the current
+/// f64 action windows come from a residual diagnostic that is not a proved
+/// error bound. Consequently these modes do not currently certify a global
+/// capacity or complete minimizer set. Use
+/// [`aggregate_certified_orbits_with_dual_vertices_exact`] when exact
+/// aggregation over a separately justified candidate stream is required.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum OrbitGuaranteeMode {
-    /// Resolve enough indeterminate candidates that the reported minimum-action
-    /// interval endpoints are justified by admissible orbits.
+    /// Resolve the legacy policy's selected indeterminate endpoint candidates.
     BoundSafe,
-    /// Resolve every indeterminate candidate whose action interval intersects
-    /// the exact-minimum window `[min_action_lower, min_action_upper]`.
+    /// Resolve indeterminate candidates intersecting the legacy numerical
+    /// minimum window.
     MinimaSafe,
-    /// Resolve every indeterminate candidate that remains in the returned
-    /// orbit list.
+    /// Resolve every indeterminate candidate retained by the legacy policy.
     AllSafe,
 }
 
@@ -74,14 +80,20 @@ pub struct OrbitKktData {
     pub beta_margin: f64,
     /// Producer-chosen scalar action summary for ordinary consumers.
     pub action: f64,
-    /// Lower endpoint of the action interval.
+    /// Lower endpoint of a producer-supplied action window. The current f64
+    /// saddle-point producer's window is heuristic, not certified.
     pub action_lower: f64,
-    /// Upper endpoint of the action interval.
+    /// Upper endpoint of a producer-supplied action window. Exact fallback
+    /// collapses the window to the converted exact-rational action.
     pub action_upper: f64,
     /// Public name for the corrected Q value used internally today as
     /// `q_corrected`.
     pub q: f64,
-    /// Absolute error bound for `q`.
+    /// Legacy-named residual diagnostic for `q`.
+    ///
+    /// It is not a proved error bound for the exact binary64-input KKT
+    /// problem; see the falsifying regression and status note in
+    /// `experiments/dev-quadratic-program`.
     pub q_error_bound: f64,
     /// Closure multipliers when the chosen backend/path provides them.
     pub mu: Option<[f64; 4]>,
@@ -307,7 +319,7 @@ fn orbit_from_saddle_point_result(
         crate::kkt::Verdict::False => return Err(OrbitSolveError::Inadmissible),
     };
     let (action_lower, action_upper) =
-        action_bounds_from_q(result.q_corrected, result.q_error_bound);
+        heuristic_action_window_from_q_diagnostic(result.q_corrected, result.q_error_bound);
 
     let mu: [f64; 4] = result
         .mu
@@ -330,10 +342,10 @@ fn orbit_from_saddle_point_result(
     })
 }
 
-fn action_bounds_from_q(q: f64, q_error_bound: f64) -> (f64, f64) {
-    let q_upper = q + q_error_bound;
+fn heuristic_action_window_from_q_diagnostic(q: f64, q_diagnostic: f64) -> (f64, f64) {
+    let q_upper = q + q_diagnostic;
     let action_lower = 0.5 / q_upper;
-    let q_lower = q - q_error_bound;
+    let q_lower = q - q_diagnostic;
     let action_upper = if q_lower > EPS_Q_POSITIVE {
         0.5 / q_lower
     } else {
@@ -356,12 +368,10 @@ fn exact_orbit_from_sigma_with_dual_vertices_exact(
     ) {
         return None;
     }
-    if exact.q_exact_f64 <= EPS_Q_POSITIVE {
-        return None;
-    }
     let beta: Vec<f64> = exact.beta.iter().map(rational_to_f64).collect();
     let beta_margin = beta.iter().copied().fold(f64::INFINITY, f64::min);
-    let action = exact_action_f64_from_q(&exact.q_exact);
+    let action_exact = exact_positive_action_from_q(&exact.q_exact)?;
+    let action = rational_to_f64(&action_exact);
 
     Some(OrbitKktData {
         sigma: sigma.to_vec(),
@@ -385,8 +395,10 @@ fn exact_action_from_q(q_exact: &BigRational) -> BigRational {
     BigRational::one() / (q_exact.clone() + q_exact.clone())
 }
 
-fn exact_action_f64_from_q(q_exact: &BigRational) -> f64 {
-    rational_to_f64(&exact_action_from_q(q_exact))
+fn exact_positive_action_from_q(q_exact: &BigRational) -> Option<BigRational> {
+    // Exact fallback must classify sign before conversion. A positive rational
+    // can underflow to f64 zero even though its exact reciprocal action exists.
+    q_exact.is_positive().then(|| exact_action_from_q(q_exact))
 }
 
 fn certified_orbit_from_sigma_with_dual_vertices_exact(
@@ -401,7 +413,7 @@ fn certified_orbit_from_sigma_with_dual_vertices_exact(
     ) {
         return None;
     }
-    let action_exact = exact_action_from_q(&exact.q_exact);
+    let action_exact = exact_positive_action_from_q(&exact.q_exact)?;
     let action = rational_to_f64(&action_exact);
 
     Some(CertifiedOrbitKktData {

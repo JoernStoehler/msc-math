@@ -39,6 +39,10 @@ path = "tools/kkt_error_audit/main.rs"
 name = "qp-candidate-filter-audit"
 path = "tools/candidate_filter_audit/main.rs"
 
+[[bin]]
+name = "qp-general-algorithm-ablation"
+path = "tools/general_algorithm_ablation/main.rs"
+
 [lints]
 workspace = true
 
@@ -49,6 +53,7 @@ euclidean-polytopes.workspace = true
 exp-sys-landscape = { path = "../sys-landscape" }
 good_lp.workspace = true
 nalgebra.workspace = true
+nalgebra035 = { package = "nalgebra", version = "0.35" }
 num-bigint.workspace = true
 num-rational.workspace = true
 num-traits.workspace = true

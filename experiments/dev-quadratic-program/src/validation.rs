@@ -13,6 +13,9 @@ const EPS_DUPLICATE_RELATIVE: f64 = 1e-10;
 const EPS_LP_ORIGIN_MARGIN: f64 = 1e-10;
 const EPS_LP_RESIDUAL: f64 = 1e-10;
 const EPS_RANK: f64 = 1e-10;
+const MIN_RELEVANT_VERTEX_NORM_INF: f64 = 1e-3;
+const MAX_RELEVANT_VERTEX_NORM_INF: f64 = 1e3;
+const MAX_SUPPORTED_FACETS: usize = 16;
 
 #[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -201,12 +204,26 @@ pub fn validate_f64_polytope_input_with_policy_profiled(
     if combinatorics.omega_indeterminate_count > 0 {
         reasons.push("omega_indeterminate".to_string());
     }
+    let primal_vertex_norms_in_range = combinatorics
+        .minimum_primal_vertex_norm_inf
+        .zip(combinatorics.maximum_primal_vertex_norm_inf)
+        .is_some_and(|(minimum, maximum)| {
+            minimum >= MIN_RELEVANT_VERTEX_NORM_INF && maximum <= MAX_RELEVANT_VERTEX_NORM_INF
+        });
+    if !primal_vertex_norms_in_range && combinatorics.vertex_count > 0 {
+        reasons.push(format!(
+            "primal_vertex_norm_inf_out_of_range:{:?}:{:?}",
+            combinatorics.minimum_primal_vertex_norm_inf,
+            combinatorics.maximum_primal_vertex_norm_inf
+        ));
+    }
 
     let status = validation_status(
         policy,
         &origin_status,
         &facet_extremality_status,
         combinatorics.vertex_count,
+        primal_vertex_norms_in_range,
         &combinatorics,
     );
     timing.classification_ms = started.elapsed().as_secs_f64() * 1000.0;
@@ -363,9 +380,22 @@ fn input_sanity_reasons(dual_vertices: &[Vector4<f64>]) -> Vec<String> {
     if dual_vertices.len() < 5 {
         reasons.push("too_few_dual_vertices".to_string());
     }
+    if dual_vertices.len() > MAX_SUPPORTED_FACETS {
+        reasons.push(format!(
+            "too_many_dual_vertices:{}>{MAX_SUPPORTED_FACETS}",
+            dual_vertices.len()
+        ));
+    }
     for (idx, vertex) in dual_vertices.iter().enumerate() {
         if !vertex.iter().all(|value| value.is_finite()) {
             reasons.push(format!("nonfinite_coordinate:{idx}"));
+        } else {
+            let norm_inf = vertex.iter().copied().map(f64::abs).fold(0.0, f64::max);
+            if !(MIN_RELEVANT_VERTEX_NORM_INF..=MAX_RELEVANT_VERTEX_NORM_INF).contains(&norm_inf) {
+                reasons.push(format!(
+                    "dual_vertex_norm_inf_out_of_range:{idx}:{norm_inf:e}"
+                ));
+            }
         }
         if vertex.norm() < EPS_ZERO_NORM {
             reasons.push(format!("near_zero_dual_vertex:{idx}"));
@@ -400,11 +430,13 @@ fn validation_status(
     origin_status: &F64PredicateStatus,
     facet_extremality_status: &F64PredicateStatus,
     vertex_count: usize,
+    primal_vertex_norms_in_range: bool,
     combinatorics: &crate::geometry::F64Combinatorics,
 ) -> F64ValidationStatus {
     if matches!(origin_status, F64PredicateStatus::False)
         || matches!(facet_extremality_status, F64PredicateStatus::False)
         || vertex_count == 0
+        || !primal_vertex_norms_in_range
     {
         return F64ValidationStatus::Rejected;
     }
@@ -541,6 +573,56 @@ mod tests {
             .reasons
             .iter()
             .any(|reason| reason.starts_with("near_duplicate_dual_vertices")));
+    }
+
+    #[test]
+    fn dual_vertex_norm_outside_relevance_range_is_rejected() {
+        let scale = 1e-4;
+        let dual_vertices = vec![
+            Vector4::new(scale, 0.0, 0.0, 0.0),
+            Vector4::new(0.0, scale, 0.0, 0.0),
+            Vector4::new(0.0, 0.0, scale, 0.0),
+            Vector4::new(0.0, 0.0, 0.0, scale),
+            Vector4::repeat(-scale),
+        ];
+        let report = validate_f64_polytope_input(&dual_vertices);
+        assert_eq!(report.status, F64ValidationStatus::Rejected);
+        assert!(report
+            .reasons
+            .iter()
+            .any(|reason| reason.starts_with("dual_vertex_norm_inf_out_of_range")));
+    }
+
+    #[test]
+    fn more_than_sixteen_facets_are_rejected_before_route_bitmasks() {
+        let dual_vertices = (0..17)
+            .map(|index| {
+                let angle = std::f64::consts::TAU * index as f64 / 17.0;
+                Vector4::new(angle.cos(), angle.sin(), 0.5, -0.5)
+            })
+            .collect::<Vec<_>>();
+        let reasons = input_sanity_reasons(&dual_vertices);
+        assert!(reasons
+            .iter()
+            .any(|reason| reason == "too_many_dual_vertices:17>16"));
+    }
+
+    #[test]
+    fn primal_vertex_norm_outside_relevance_range_is_rejected() {
+        let scale = 1e-3;
+        let dual_vertices = vec![
+            Vector4::new(scale, 0.0, 0.0, 0.0),
+            Vector4::new(0.0, scale, 0.0, 0.0),
+            Vector4::new(0.0, 0.0, scale, 0.0),
+            Vector4::new(0.0, 0.0, 0.0, scale),
+            Vector4::repeat(-scale),
+        ];
+        let report = validate_f64_polytope_input(&dual_vertices);
+        assert_eq!(report.status, F64ValidationStatus::Rejected);
+        assert!(report
+            .reasons
+            .iter()
+            .any(|reason| reason.starts_with("primal_vertex_norm_inf_out_of_range")));
     }
 
     #[test]

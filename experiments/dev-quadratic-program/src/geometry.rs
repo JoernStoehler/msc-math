@@ -34,6 +34,8 @@ pub(crate) struct F64Combinatorics {
     pub(crate) facet_intersection_false_count: usize,
     pub(crate) facet_intersection_indeterminate_count: usize,
     pub(crate) omega_indeterminate_count: usize,
+    pub(crate) minimum_primal_vertex_norm_inf: Option<f64>,
+    pub(crate) maximum_primal_vertex_norm_inf: Option<f64>,
 }
 
 #[derive(Clone, Debug, Default)]
@@ -141,6 +143,17 @@ pub(crate) fn f64_combinatorics_profiled(
     let counts = count_facet_intersections(&facet_intersections);
     timing.count_facet_intersections_ms = started.elapsed().as_secs_f64() * 1000.0;
 
+    let minimum_primal_vertex_norm_inf = vertex_scan
+        .vertices
+        .iter()
+        .map(|vertex| norm_inf(&vertex.point))
+        .min_by(f64::total_cmp);
+    let maximum_primal_vertex_norm_inf = vertex_scan
+        .vertices
+        .iter()
+        .map(|vertex| norm_inf(&vertex.point))
+        .max_by(f64::total_cmp);
+
     Ok((
         F64Combinatorics {
             facet_intersections,
@@ -157,9 +170,15 @@ pub(crate) fn f64_combinatorics_profiled(
             facet_intersection_false_count: counts.false_count,
             facet_intersection_indeterminate_count: counts.indeterminate_count,
             omega_indeterminate_count,
+            minimum_primal_vertex_norm_inf,
+            maximum_primal_vertex_norm_inf,
         },
         timing,
     ))
+}
+
+fn norm_inf(vector: &Vector4<f64>) -> f64 {
+    vector.iter().copied().map(f64::abs).fold(0.0, f64::max)
 }
 
 pub(crate) fn f64_combinatorics_with_lp_transitions(

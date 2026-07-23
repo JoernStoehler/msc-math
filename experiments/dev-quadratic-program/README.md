@@ -93,6 +93,22 @@ enumerated: every positive witness is feasible, and the global maximizer is a
 positive KKT candidate on its support. Revalidate candidate coverage and input
 provenance before relying on a stronger global capacity or minimizer-set claim.
 
+A 2026-07-23 audit found a second exact-boundary defect: the ordinary
+orbit-search wrapper and the provisional general-route experiment classified
+exact `Q` only after converting it to `q_exact_f64`. A positive rational can
+underflow to zero, so this could falsely reject an exact-positive word. The
+active worktree now tests `q_exact.is_positive()` and forms `1/(2Q)` rationally
+before conversion. The underflow regression is
+`exact_positive_action_tests_rational_sign_before_conversion` in
+`crates/symplectic/src/algorithms/test_orbit_search.rs`. Do not reintroduce an
+f64 epsilon or conversion into exact admissibility decisions.
+
+The development validator also enforces the agreed relevance range
+`1e-3 <= ||v||_inf <= 1e3` for every supplied dual vertex and every recovered
+primal vertex. Violations are soft validation errors; downstream `sys`
+consumers may turn an already-rejected input into a hard precondition failure.
+The retained edge fixtures cover both sides of this route boundary.
+
 `q_error_bound` is a code/formal obligation, not a thesis-writing task. The
 current f64 KKT result stores `q_error_bound` and `q_corrected` for auditing,
 but the bound is not a thesis-facing certificate. Regression evidence lives in

@@ -6,7 +6,8 @@
 //! without knowing they come from symplectic geometry. Assembly of (C, d, H) from
 //! dual vertices lives in `qp_assembly`.
 //!
-//! Mathematical correspondence: [lem:kkt], [lem:q-error-bound]
+//! Mathematical correspondence: [lem:kkt]. The current f64 thresholds and
+//! legacy Q diagnostic are not numerical certificates.
 //!
 //! ## Two f64 solver strategies
 //!

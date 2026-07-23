@@ -8,20 +8,20 @@
 //! Key features:
 //! - Two-tier eigenvalue rank detection (permissive then strict)
 //! - Numerical null-space search for beta > 0 when rank-deficient
-//! - Q error bound computation via [lem:q-error-bound]
+//! - A legacy residual-based Q diagnostic (not a certified error bound)
 //! - Inertia reporting for saddle-point structure analysis
 //!
-//! **Near-zero Q candidates:** Some (S,σ) pairs yield Q ≈ 0 (very high action). The error
-//! bound E is valid but may exceed |Q| itself (relative error > 100%). This is harmless:
-//! the capacity algorithm picks max Q, so near-zero Q candidates never win. The absolute
-//! threshold `E < 1e-6` is chosen relative to Q_max ≈ O(1), not relative to each candidate's Q.
+//! **Near-zero Q candidates:** Some (S,σ) pairs yield Q ≈ 0 (very high action).
+//! Their reciprocal actions are ill-conditioned. The legacy Q diagnostic does
+//! not certify their sign or action error.
 //!
 //! **Word convention:** σ is the active Reeb traversal order. With this convention
 //! Q > 0 when consecutive facets follow the positive Reeb direction
 //! (ω₀(n_{σ(k)}, n_{σ(k+1)}) ≥ 0). HK2017's displayed theorem uses the reversed
 //! ordered word.
 //!
-//! Mathematical correspondence: [lem:kkt], [lem:q-error-bound]
+//! Mathematical correspondence: [lem:kkt]. See
+//! `formal/hk2017-qp-precision.tex` for the current numerical proof status.
 
 use super::beta_feasibility;
 use super::qp_assembly::build_augmented_system_from_dual_vertices;
@@ -31,17 +31,17 @@ use nalgebra::{DMatrix, DVector, Vector4};
 
 // ── Public constants ──
 
-/// Minimum beta_i value to consider a solution certified positive.
+/// Minimum beta_i value for the legacy static-margin f64 positive label.
 ///
 /// Used by the accumulator and experiments to classify solution feasibility.
-/// beta_i > EPS_BETA_POSITIVE means the component is unambiguously positive.
+/// This is a heuristic noise filter, not a proved enclosure of exact beta.
 ///
 /// **Why 1e-12:** This filters f64 eigensolver noise. The KKT matrix entries are
 /// O(1) (dual vertices and omega_0 values are O(1)), so eigenvector components
 /// are O(1) and beta values from the pseudoinverse are O(1). Machine epsilon is
 /// ~1e-16; numerical roundoff in eigendecomposition accumulates to ~1e-12 for
 /// (m+5) x (m+5) matrices with m up to 16. A value of 1e-12 is:
-/// - Far above machine epsilon (can't be confused with exact zero)
+/// - Far above machine epsilon
 /// - Far below typical beta values (O(0.1)--O(10)) for real candidates
 /// - 10x tighter than EPS_MARGIN_TRUE (1e-9) so Indeterminate verdicts are
 ///   returned for any solution where beta is ambiguous.
@@ -58,8 +58,8 @@ pub const EPS_BETA_POSITIVE: f64 = 1e-12;
 /// **Why 1e-15:** Q = c_EHZ^{-2} / 2 is O(0.01)--O(10) for our polytopes
 /// (typical c_EHZ ~ 0.3--3). Q < 1e-15 indicates either a degenerate candidate
 /// with astronomically high action or pure f64 noise. In either case, this
-/// candidate cannot be the capacity maximizer. 1e-15 is just above machine epsilon
-/// (~1e-16) to avoid exact-zero false positives from cancellation.
+/// candidate is unlikely to be the capacity maximizer. This threshold is a
+/// legacy route policy, not a sound exact-Q sign predicate.
 pub const EPS_Q_POSITIVE: f64 = 1e-15;
 
 // ── Internal constants ──
@@ -143,16 +143,15 @@ pub(crate) struct EigenInfo {
 
 /// Outcome of the saddle-point KKT solve.
 ///
-/// Every variant corresponds to a mathematical proposition about the orbit.
-/// See `.agents/skills/rust/SKILL.md` error handling convention.
+/// Legacy f64 solver outcome. Threshold-based variants are numerical labels,
+/// not theorem-backed propositions about the exact binary64-input problem.
 #[derive(Clone, Debug)]
 pub enum KktOutcome {
-    /// The word has a feasible positive KKT candidate with Q > 0.
+    /// The computed candidate passed the legacy f64 beta and Q thresholds.
     /// This is not by itself a fixed-word maximum or a physical orbit
     /// certificate.
     Feasible(KktResult),
-    /// The KKT candidate is infeasible: β has a non-positive component, or
-    /// Q ≤ 0.
+    /// The computed candidate failed a legacy f64 beta or Q threshold.
     Infeasible,
     /// The KKT matrix is singular (all eigenvalues ≈ 0).
     SingularMatrix,
@@ -180,7 +179,9 @@ impl KktOutcome {
 /// Feasible KKT solution with diagnostics.
 ///
 /// Contains the solution beta, Lagrange multipliers mu and xi,
-/// residual-corrected Q value with error bound, and inertia of M.
+/// residual-corrected Q value with a legacy residual diagnostic, and inertia
+/// of M. The field named `q_error_bound` is not a verified error bound for the
+/// exact binary64-input problem.
 ///
 /// The augmented system uses a **symmetric** sign convention:
 /// ```text
@@ -196,7 +197,6 @@ impl KktOutcome {
 /// A = 1/(2Q) is: ∂A/∂h_k = −ξ·β_k/(2Q²) in our (symmetric) convention,
 /// equivalently ∂A/∂h_k = ν·β_k/(2Q²) in the asymmetric convention.
 ///
-/// See [lem:q-error-bound]: |Q(beta_0) - q_corrected| <= q_error_bound.
 #[derive(Clone, Debug)]
 pub struct KktResult {
     /// KKT candidate beta vector (all components > -EPS_BETA_POSITIVE).
@@ -216,8 +216,10 @@ pub struct KktResult {
     /// solver's correction atom from a difference reconstructed from unrelated
     /// stored Q values.
     pub q_correction: f64,
-    /// Error bound E on Q_tilde: |Q(beta_0) - Q_tilde| <= E.
-    /// See [lem:q-error-bound].
+    /// Legacy-named residual diagnostic for `q_corrected`.
+    ///
+    /// This quantity has known exact-binary64 coverage counterexamples and
+    /// must not be used as a certificate or action-error bound.
     #[allow(dead_code)]
     pub q_error_bound: f64,
     /// Inertia of M: number of positive eigenvalues.
@@ -610,13 +612,10 @@ fn finalize_result(
         return KktOutcome::Infeasible;
     }
 
-    // Tight bound: E = (9/2) ||r||^2 / |lambda_min|.
-    // 4.5 = 9/2 comes from [lem:q-error-bound]: the KKT block structure
-    // identity delta_beta^T H delta_beta = delta_x^T M delta_x - 2 r2^T delta_mu
-    // - 2 r3 delta_xi removes the ||H||/|lambda_min|^2 term, leaving only the
-    // quadratic term (9/2) ||r||^2 / |lambda_min|. The factor 9 comes from the
-    // Cauchy-Schwarz bound on the two-variable quadratic form in the residual.
-    // See [lem:q-error-bound].
+    // Legacy residual diagnostic retained for comparison with old routes.
+    // It is not a total error bound for the exact binary64-input KKT problem:
+    // the omitted solve, assembly, and rounding errors have produced stored
+    // coverage counterexamples.
     let r_sq = residual_norm * residual_norm;
     let q_error_bound = 4.5 * r_sq / abs_lambda_min;
 

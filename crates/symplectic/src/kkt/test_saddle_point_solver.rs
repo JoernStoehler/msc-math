@@ -13,9 +13,9 @@ use nalgebra::{DMatrix, DVector};
 
 // Tests for saddle_point_solver: eigendecomposition-based KKT solver correctness.
 //
-// Proposition: The saddle-point solver returns beta > 0 satisfying the KKT system
-// M x = b with Q error bound |Q(beta_0) - Q_tilde| <= E.
-// Reference: [lem:kkt], [lem:q-error-bound]
+// These tests check fixture behavior and internal numerical diagnostics. They
+// do not prove that the legacy beta/Q thresholds or q_error_bound field
+// enclose the exact binary64-input solution.
 //
 // Strategy: fixture-based on known polytopes with known-good permutations,
 // plus synthetic tests for edge cases (rank-deficient, degenerate).
@@ -191,11 +191,11 @@ fn solve_kkt_for_dual_vertices_matches_direct() {
     }
 }
 
-// ── Error bound tests ──
+// ── Legacy Q diagnostic tests ──
 
-/// The Q error bound E is always non-negative for all solutions found.
+/// The legacy Q diagnostic is finite and non-negative on this fixture.
 #[test]
-fn q_error_bound_nonnegative_and_small() {
+fn legacy_q_diagnostic_nonnegative_and_finite() {
     let simplex = known_polytopes::simplex();
     let dual_vertices = &simplex.dual_vertices_f64;
     let f = simplex.facet_count();
@@ -208,12 +208,12 @@ fn q_error_bound_nonnegative_and_small() {
             if let KktOutcome::Feasible(result) = solve_saddle_point(&kkt, &rhs) {
                 assert!(
                     result.q_error_bound >= 0.0,
-                    "error bound should be non-negative, got {}",
+                    "legacy Q diagnostic should be non-negative, got {}",
                     result.q_error_bound
                 );
                 assert!(
                     result.q_error_bound.is_finite(),
-                    "error bound should be finite, got {}",
+                    "legacy Q diagnostic should be finite, got {}",
                     result.q_error_bound
                 );
                 checked += 1;
@@ -286,12 +286,12 @@ fn two_facet_permutation() {
     let _result = solve_saddle_point(&kkt, &rhs);
 }
 
-// ── Q error bound panic on perturbed symmetric polytopes ──
+// ── Legacy Q diagnostic regression on perturbed symmetric polytopes ──
 
-/// Perturbed LP(4,4) triggers the Q-error-bound panic on degenerate 4-facet orbits.
+/// Perturbed LP(4,4) used to trigger a legacy-diagnostic panic on degenerate orbits.
 /// The KKT matrix eigenvalues shift from null (at the symmetric point) to small-but-
-/// retained (at the perturbed point), making |λ_min| tiny and the error bound vacuous.
-/// This is a regression test: when the deferred q-error-bound work recorded in
+/// retained (at the perturbed point), making |λ_min| tiny and the diagnostic huge.
+/// This is a regression test: when the deferred numerical-certificate work recorded in
 /// formal/hk2017-qp-precision.tex and experiments/dev-quadratic-program/README.md
 /// is resolved, this test should be updated to expect the new behavior.
 #[test]
@@ -317,7 +317,7 @@ fn perturbed_lp44_degenerate_orbit() {
     // Solve KKT directly for the degenerate 4-facet orbit [1,5,3,7].
     // At the symmetric point this orbit has β = 0.25. Under perturbation,
     // the KKT eigenvalues shift from null to small-but-retained, making
-    // the Q error bound vacuous.
+    // the legacy Q diagnostic huge.
     let outcome = solve_kkt_for_dual_vertices(&perturbed, &[1, 5, 3, 7]);
     // The degenerate orbit should NOT be feasible on the perturbed polytope.
     assert!(

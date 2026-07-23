@@ -84,7 +84,7 @@ fn exact_resolution_upgrades_known_winner() {
 #[test]
 fn exact_action_is_rounded_after_exact_reciprocal() {
     let q = frac(11, 6);
-    let action = exact_action_f64_from_q(&q);
+    let action = rational_to_f64(&exact_action_from_q(&q));
     let round_q_then_divide = 0.5 / rational_to_f64(&q);
 
     assert_eq!(action, rational_to_f64(&frac(3, 11)));
@@ -93,6 +93,23 @@ fn exact_action_is_rounded_after_exact_reciprocal() {
         round_q_then_divide.to_bits(),
         "q = 11/6 distinguishes exact reciprocal conversion from rounding q first"
     );
+}
+
+#[test]
+fn exact_positive_action_tests_rational_sign_before_conversion() {
+    let tiny_positive_q =
+        num_rational::BigRational::new(1.into(), num_bigint::BigInt::from(1u8) << 1075);
+    assert_eq!(
+        rational_to_f64(&tiny_positive_q),
+        0.0,
+        "control: this positive rational underflows when converted to f64"
+    );
+
+    let action = exact_positive_action_from_q(&tiny_positive_q)
+        .expect("positive exact Q must remain admissible despite f64 underflow");
+    assert_eq!(action * (tiny_positive_q.clone() + tiny_positive_q), rat(1));
+    assert!(exact_positive_action_from_q(&rat(0)).is_none());
+    assert!(exact_positive_action_from_q(&rat(-1)).is_none());
 }
 
 #[test]

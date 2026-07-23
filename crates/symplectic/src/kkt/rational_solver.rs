@@ -538,8 +538,11 @@ mod tests {
         let result = pruned_capacity_for_fixture(simplex).expect("simplex should have capacity");
         let perm = result.best_sigma();
         if let Some(exact) = solve_kkt_exact(&simplex.dual_vertices, perm) {
-            let q_exact = exact.q_exact_f64;
-            assert!(q_exact > 0.0, "exact Q should be positive, got {q_exact}");
+            assert!(
+                exact.q_exact.is_positive(),
+                "exact Q should be positive, got {}",
+                exact.q_exact
+            );
         }
     }
 
@@ -555,7 +558,11 @@ mod tests {
                 pruned_capacity_for_fixture(kp).expect("known polytope should have capacity");
             let perm = result.best_sigma();
             if let Some(exact) = solve_kkt_exact(&kp.dual_vertices, perm) {
-                assert!(exact.q_exact_f64 > 0.0, "exact Q should be positive");
+                assert!(
+                    exact.q_exact.is_positive(),
+                    "exact Q should be positive, got {}",
+                    exact.q_exact
+                );
             }
         }
     }

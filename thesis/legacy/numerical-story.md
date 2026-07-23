@@ -1,5 +1,11 @@
 # Numerical Story: Argumentative Chain
 
+> **Obsolete claim warning.** This legacy planning document labels several
+> floating-point beta and Q estimates as proved bounds. That status is false.
+> The active status is in `formal/hk2017-qp-precision.tex` and
+> `experiments/dev-quadratic-program/tools/general_algorithm_ablation/`.
+> Do not reuse the proof-status table or numerical-certification claims below.
+
 Target: a single self-contained .tex file (thesis appendix or chapter) that tells the full story of how we compute c_EHZ numerically, what's proven correct, and what the error bounds are. Later carved into main-body vs appendix pieces.
 
 Filepath: `thesis/numerical-story.tex` (replaces existing draft).
