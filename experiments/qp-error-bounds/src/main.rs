@@ -1854,7 +1854,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "source_content_id":source_content_id(),
         "producer_version":PRODUCER_VERSION,
         "schema_version":SCHEMA_VERSION,
-        "command":"bash experiments/numerics/qp-error-bounds/run.sh",
+        "command":"bash experiments/qp-error-bounds/run.sh",
         "rows":rows.len(),
         "aggregates":aggregates.len(),
         "expected_case_ids":expected_case_ids,

@@ -17,24 +17,25 @@ If the connection to those outcomes is unclear, ask before expanding the work.
 ## Start here
 
 - `README.md`: project overview and first entry points.
-- `ARCHITECTURE.md`: stable repository domains, ownership, and search routes.
+- `ARCHITECTURE.md`: stable repository domains, authority, and search routes.
 - `docs/project-status.md`: current milestones and unresolved gates.
 - `docs/project-facts.md`: Jörn-confirmed project and external facts.
 - `thesis/README.md`, `formal/README.md`, `experiments/README.md`, and
-  `crates/README.md`: owner-specific entry points.
+  `crates/README.md`: domain entry points.
 - `submit/README.md`: submission sources and official-form cache.
 
-Use ordinary text and symbol search after choosing an owner. Read the named
-source before relying on a summary.
+Use ordinary filename, text, symbol, and manifest search after choosing a
+domain. Read the named source before relying on a summary. A failed lexical
+query is weak evidence of absence when related work may use different terms.
 
 ## Authority
 
-Current source files, tests, data, producer outputs, owner-local notes,
+Current source files, tests, data, producer outputs, local notes,
 accepted Jörn/Kai decisions, and active thesis text overrule summaries.
 
 - `docs/project-facts.md` records still-current Jörn-confirmed facts.
 - `docs/project-status.md` records project state, not mathematical truth.
-- `docs/capabilities.md` is a cross-owner view, not independent evidence.
+- `docs/capabilities.md` is a cross-domain view, not independent evidence.
 - `README.md` files are entry points. `DEVELOPMENT.md` files are maintainer
   notes.
 - Generated artifacts must be regenerated from their producer; do not
@@ -42,9 +43,12 @@ accepted Jörn/Kai decisions, and active thesis text overrule summaries.
 - Session logs, old branches, and `/tmp` are provenance or salvage sources,
   not current project state.
 
-Absence from a README or search result does not establish absence from the
-project. Before declaring a project-wide proof, experiment, or implementation
-gap, search the relevant owners and report the searched scope.
+This repository contains many retained experiments, negative results,
+alternative implementations, and superseded routes. Searching for prior work
+therefore has unusually high expected value. Absence from a README or lexical
+search result does not establish absence from the project. Before declaring a
+project-wide proof, experiment, or implementation gap, broaden terminology,
+inspect plausible READMEs, and report the searched scope.
 
 ## Repository boundaries
 
@@ -52,8 +56,10 @@ gap, search the relevant owners and report the searched scope.
   Content companions support writing but are not mathematical source truth.
 - `formal/` is proof development and may contain stronger, weaker, or
   superseded routes not used by the thesis.
-- `experiments/` keeps producer code, inputs, outputs, interpretation, and
-  reproduction instructions with the question they serve.
+- `experiments/` contains empirical questions, data producers, consuming
+  analyses, retained evidence, interpretation, and reproduction instructions.
+  Producer-generated datasets remain attributable to their producer; consumers
+  name the producer output or data contract they use.
 - `crates/` contains reusable Rust libraries. Follow normal Cargo layout.
 - `papers/` contains source papers and paper-specific notes.
 - `submit/` contains submission/admin sources.
@@ -173,11 +179,22 @@ transfer, not presentation or narration.
 
 ## Documentation
 
-Put durable knowledge in the self-contained owner whose question or contract
-makes it interpretable. Record other subjects, methods, consumers, and change
-relationships as explicit links rather than forcing them into the directory
-tree. Split an owner only when the parts can be maintained and interpreted
-independently.
+Use conventional repository and package layouts. Put durable knowledge near
+the code, artifact, question, or contract that makes it interpretable. This is
+local judgment, not a repository-wide split/join algorithm.
+
+Experiment material can be related simultaneously by subject, method,
+implementation, producer, comparison, provenance, and thesis use. The
+directory tree exposes only some of those relations. Preserve the
+repo-specific reasoning and change triggers that later agents need; do not
+replace them with a general placement taxonomy.
+
+Declare dependencies where they are consumed: imports, Cargo manifests,
+scripts/configs, commands, dataset identifiers, or consumer READMEs. Use
+stable, grep-able names so reverse impact can be derived by repository search.
+Do not present a manually maintained producer-side consumer list as exhaustive.
+Similar executable scaffolding or instrumented implementations need not share
+an import merely to reduce edit count.
 
 Document repository-specific facts, decisions, evidence, status, source paths,
 sharp edges, and expensive checks. Do not duplicate generic knowledge.
@@ -186,8 +203,10 @@ Prefer conventional filenames and stable, grep-able terms. Keep active and
 superseded material visibly distinct. When a result's scope or rationale is not
 recoverable from the artifact itself, state it beside the artifact.
 
-Navigation views must say what they cover. A view is not evidence, and an
-incomplete view must not imply a complete inventory.
+Navigation views must say what they cover. A view supports only the claims it
+actually establishes; merely pointing to evidence does not replace that
+evidence. An incomplete semantic/status view must not imply a complete
+inventory.
 
 ## Baseline commands
 
@@ -209,5 +228,6 @@ cd thesis && latexmk && ./check-build.sh
 cd formal && latexmk
 ```
 
-Experiment READMEs own their producer commands and output-safety rules. Read
-the local README before running a command that may overwrite tracked evidence.
+Producer and experiment READMEs document their commands and output-safety
+rules. Read the local README before running a command that may overwrite
+tracked evidence.

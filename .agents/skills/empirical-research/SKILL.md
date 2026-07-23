@@ -17,8 +17,9 @@ suggestions so advice does not silently become authority.
 
 Read `references/experiment-packets.md` when creating, moving, splitting,
 joining, or documenting an experiment packet, or when deciding whether
-experiment code should be copied or shared. The packet contract owns physical
-placement; the conventions below own scientific state and evidence quality.
+experiment code should be copied or shared. The reference preserves
+repo-specific situation, search, provenance, and dependency reasoning; it does
+not decide physical placement without the local files and purpose.
 
 ## Coordination Conventions
 
@@ -105,7 +106,7 @@ A materially changed item gets a new ID linked by `supersedes` or
 `derived_from`; it does not inherit the old item's premises, value, review, or
 authority. Clarification or disposition changes may edit the same item.
 
-Keep current records under Git with the research line or experiment packet
+Keep current records under Git near the research line or experiment material
 whose question makes them interpretable. Topic, method, implementation,
 consumer, and lifecycle relations do not each need another copy of the record.
 Prune items that no longer help current agents; Git retains history. Do not
@@ -118,7 +119,9 @@ Keep a compact frontier view with:
 - unresolved gates;
 - stopped/rejected work and reasons.
 
-Views are navigation, not evidence. Evidence remains with its producer/owner.
+Views do not replace the source evidence they point to. Evidence remains in the
+producer artifacts, code, data, proofs, and reviewed interpretation that
+establish it.
 The orchestrator records assignments, actual cost, pointers, and technical
 disposition. The lead records interpretation, belief/value changes, new ideas,
 and successor proposals. Separate useful and defective parts.
@@ -195,9 +198,9 @@ cost exceeds expected error reduction. Do not create review as ritual.
 
 ## Evidence-Handling Conventions
 
-- Generated artifacts/producers own detailed metrics. Regenerate rather than
-  hand-edit or duplicate metric rows. Identify unexpected tracked changes
-  before evidence use.
+- Detailed metrics remain in generated artifacts and their producers.
+  Regenerate rather than hand-edit or duplicate metric rows. Identify
+  unexpected tracked changes before evidence use.
 - Preserve the command, inputs, parameters, seeds/selection rules,
   non-obvious dependencies, and comparison contract needed for the intended
   claim or rerun. Required sources must be recoverable, not only untracked or
@@ -207,10 +210,10 @@ cost exceeds expected error reduction. Do not create review as ritual.
 - Before irreversible target evaluation, freeze the actual evaluator, source,
   dependencies, and inputs in a recoverable state. Material changes require a
   narrow recheck before exposure.
-- Keep durable evidence and interpretation in the experiment packet whose
-  question and comparison contract give them meaning. Record other consumers
-  and affected implementations as relations; do not relocate evidence merely
-  to classify it by method, subject, or status. Publication-facing assets route
+- Keep durable evidence and interpretation near the experiment question and
+  comparison contract that give them meaning. Record other consumers and
+  affected implementations as relations; do not relocate evidence merely to
+  classify it by method, subject, or status. Publication-facing assets route
   through `$thesis`.
 
 ## Suggestions

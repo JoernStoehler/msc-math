@@ -2,7 +2,7 @@
 set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel)"
 cd "$ROOT"
-OUT="experiments/numerics/qp-error-bounds/artifacts/retained-exact"
+OUT="experiments/qp-error-bounds/artifacts/retained-exact"
 if [[ -n "$(git status --porcelain --untracked-files=all)" ]]; then
   echo "retained-exact runner requires a clean producing tree before output deletion" >&2
   exit 2
@@ -11,14 +11,14 @@ SOURCE_COMMIT="$(git rev-parse HEAD)"
 SOURCE_TREE="$(git rev-parse HEAD^{tree})"
 rm -rf "$OUT"
 mkdir -p "$OUT"
-cargo run --release --manifest-path experiments/numerics/qp-error-bounds/Cargo.toml \
+cargo run --release --manifest-path experiments/qp-error-bounds/Cargo.toml \
   --bin qp-retained-exact -- "$OUT"
 SOURCE_COMMIT="$SOURCE_COMMIT" SOURCE_TREE="$SOURCE_TREE" python3 - "$OUT" <<'PY'
 import json, os, sys
 from pathlib import Path
 out = Path(sys.argv[1])
 (out / "manifest.json").write_text(json.dumps({
-    "command": "bash experiments/numerics/qp-error-bounds/run_retained_exact.sh",
+    "command": "bash experiments/qp-error-bounds/run_retained_exact.sh",
     "producer": "qp-retained-exact",
     "producer_version": "retained-exact-v1",
     "schema_version": "qp-retained-exact-v1",
@@ -39,6 +39,6 @@ out = Path(sys.argv[1])
     },
 }, indent=2) + "\n")
 PY
-python3 experiments/numerics/qp-error-bounds/analyze_retained_exact.py "$OUT"
-python3 experiments/numerics/qp-error-bounds/validate_retained_exact.py "$OUT"
-python3 experiments/numerics/qp-error-bounds/test_retained_exact.py "$OUT"
+python3 experiments/qp-error-bounds/analyze_retained_exact.py "$OUT"
+python3 experiments/qp-error-bounds/validate_retained_exact.py "$OUT"
+python3 experiments/qp-error-bounds/test_retained_exact.py "$OUT"

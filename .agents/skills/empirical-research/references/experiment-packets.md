@@ -1,87 +1,135 @@
-# Structure Experiment Packets
+# Organize Experiment Material
 
-Use this reference when creating, moving, splitting, joining, or documenting an
-experiment packet, or when deciding whether code or methodology should be
-shared between packets.
+Use this reference when creating, moving, splitting, joining, or documenting
+experiment material, or when deciding whether similar code should be copied or
+shared.
 
-## Physical owner
+It records reasoning adapted to this repository. It does not provide a general
+placement algorithm. Inspect the actual question, code, data flow, artifacts,
+interpretation, and consumers before deciding where files belong.
 
-The default physical unit is `experiments/<durable-question>/`. A packet keeps
-together what a future agent needs to reproduce and interpret one empirical
-question:
+## Situation to preserve
 
-- the original question and current decision served;
-- systems or mathematical objects under study and comparison alternatives;
-- producer code and input/selection contract;
-- retained outputs and their identity/provenance;
-- analysis, interpretation, limitations, and reproduction commands.
+This repository contains many retained experiments, negative and mixed results,
+alternative implementations, and superseded routes. Prior work is common
+enough that searching has high expected value, but one experiment can be
+related simultaneously by:
 
-Use a direct child of `experiments/` by default. Do not choose a parent
-directory merely because the packet involves numerics, performance,
-verification, one algorithm, one thesis topic, or active development. Those are
-non-exclusive relations. Do not move a packet merely because its status or
-mainline consumer changes.
+- mathematical object or thesis topic;
+- empirical method;
+- implementation under study;
+- data producer or consumer;
+- comparison set;
+- provenance and evidence role;
+- current status or lifecycle.
 
-Name the directory after a durable question or measured object. Avoid
-lifecycle prefixes and names that become false when a candidate algorithm is
-promoted or retired.
+The directory tree can expose only some of these relations. Do not infer a
+flat or nested taxonomy from the list. Preserve the relations, original
+purpose, and reasons another change should trigger inspection so a later agent
+can finish the local placement decision with the context then available.
 
-## README contract
+## Explore before moving
 
-The beginning of the packet README should make these facts cheap to recover,
-using ordinary prose or labeled fields rather than a mandatory schema:
+Start with the relevant inventory or entry point, then read every plausible
+local README. Follow those into:
 
-- status;
-- original question;
-- current decision or consumer;
-- what the packet owns and does not establish;
-- systems under study and comparisons actually supported;
-- authoritative producer, evidence, and interpretation;
-- relations that make another change likely to require reassessment;
-- safe checks versus commands that refresh evidence.
+- code and manifests;
+- input paths, producer commands, and schemas;
+- retained data and generated artifacts;
+- proofs, certificates, and verification;
+- interpretation, limitations, stopped routes, and current consumers;
+- incoming and outgoing path/import references.
 
-Use exact paths, algorithm names, and stable research terms so ordinary `rg`
-search finds both ends of a relationship. Preserve the original question even
-when the current consumer or comparison set changes. Retained evidence names
-the actual algorithm/configuration/commit it measured; the mutable label
-`mainline` is not sufficient provenance.
+A failed lexical query is weak evidence of absence when related work may use
+different terminology. Broaden terms and inspect nearby conceptual matches
+before claiming a gap.
 
-`experiments/README.md` may expose several views—for example by measured
-system, method, thesis decision, or status. Views are derived navigation and
-must state their scope. The packet remains authoritative.
+Do not move from the README alone when the code, data, or proof determines what
+the material actually does.
 
-## Split and join
+## Producers and consuming experiments
 
-Split a packet when each result can be reproduced, interpreted, reviewed, and
-maintained independently without importing the other packet's hidden context.
-A distinct question, comparison contract, evidence lifecycle, or consumer can
-justify a split.
+A generated dataset remains with or directly attributable to the producer
+program and configuration that fix its population and provenance. A consuming
+experiment may edit that producer when its question requires a new output; the
+change must then inspect affected consumers.
 
-Do not split merely because one packet has several runs, figures, objects,
-algorithms, or methodological labels. Keep those together when their meaning
-depends on a shared selection rule, control, comparison, or interpretation.
+Declare the dependency where it is consumed:
 
-Join packets when neither has a stable interpretation without the other and
-separate maintenance mostly creates duplicated provenance or synchronized
-edits. Links are enough when the packets merely teach one another or share a
-method family.
+- imports and Cargo manifests for code dependencies;
+- scripts, configs, commands, or stable identifiers for data dependencies;
+- a consumer README when a runtime path or scientific role would otherwise be
+  implicit.
 
-## Dependencies and copying
+Use stable, grep-able producer/artifact names so repository search derives the
+reverse relation. Do not maintain a manually curated producer-side list as if
+it exhaustively names consumers. One omitted consumer creates a persuasive
+false negative during refactoring. Explicitly scoped examples or reverse views
+generated from consumer declarations are fine.
 
-Distinguish these relationships:
+An obsolete relationship match is usually a checkable false positive. A
+missing declaration may never be questioned. Favor recall in change-impact
+search without treating stale scientific claims as harmless.
 
-- The implementation being tested is a real dependency. Name its exact API,
-  path, and relevant version or source identity.
-- A methodological or interpretive relationship is a README link, not an
-  import.
-- A small helper may be copied when independent evolution is desirable. Record
-  its source path and copied-at commit near the copy; later divergence is then
-  visible and allowed.
-- Shared code is justified when synchronized semantics are part of the
-  experiment contract. Give it an explicit maintained owner rather than an
-  incidental import from another experiment packet.
+## Similar code and corresponding implementations
 
-Changing a mainline or candidate algorithm does not automatically move the
-packet. Reassess the packet when its declared system-under-study or comparison
-relation matches the change; update the supported comparison set while keeping
-historical evidence identifiable.
+Repeated scaffolding or several instrumented versions of an algorithm do not
+by themselves justify a shared import. Editing several explicit, grep-able
+files can be easier to understand and verify than changing one abstraction
+with hidden behavioral dependents.
+
+Consider:
+
+- whether identical behavior is itself a maintained contract;
+- whether independent evolution or implementation comparison is valuable;
+- whether all corresponding locations are easy to enumerate;
+- whether tests or comparisons expose a missed update;
+- whether sharing would obscure instrumentation, performance, arithmetic, or
+  evidence independence.
+
+Share code when the API is the intended dependency. Copy-edit small executable
+scaffolds when divergence is allowed. Preserve enough local purpose or
+correspondence for a future agent to understand why similar files exist; do not
+require copied-at commits or another provenance mechanism without a concrete
+checking use.
+
+## Local README as triage
+
+The README should help an agent decide whether deeper inspection is warranted,
+not replace the underlying evidence. Depending on the material, preserve:
+
+- original question and current use;
+- important positive, negative, mixed, or superseded result;
+- scope, limitations, and misleading interpretations;
+- producer inputs and downstream consumers;
+- authoritative code, data, proof, artifact, and interpretation paths;
+- stable terms and related implementations likely to be searched;
+- cheap checks versus commands that refresh retained evidence.
+
+These are considerations, not mandatory fields. A clear conventional README
+need not be rewritten into a schema.
+
+## Correct facts while migrating
+
+Structural migration is not a reason to preserve a statement known to be
+wrong. Correct or remove it when the replacement is clear.
+
+If a statement is known false but the replacement is unresolved, remove the
+false assertion and leave a nearby explicit TODO stating what is false and
+what focused check remains. If it is merely uncertain, state the uncertainty
+and evidence needed to resolve it.
+
+Record additions, factual corrections, deletions, deliberate omissions, and
+unresolved TODOs separately from mechanical moves. This does not require a
+complete scientific audit of every migrated area.
+
+## Views and inventories
+
+A conventional domain entry point should make its physical scope visible
+before an agent must guess search terms. Keep any claimed physical inventory
+auditable against the tree.
+
+Topic, method, status, finding, or thesis-use views can support semantic
+discovery. State their scope; do not let omission from a selective view become
+evidence that related work is absent. A view supports only what it actually
+checks or records and does not replace the source evidence it points to.

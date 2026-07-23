@@ -24,7 +24,7 @@ EXPECTED_PRODUCER = "wide-row-rust-v1"
 EXPECTED_INVENTORY_SCHEMA = "qp-formula-inventory-v1"
 EXPECTED_INVENTORY_COUNT = 101
 EXPECTED_INVENTORY_REVISION = "ff3de9f9^"
-EXPECTED_COMMAND = "bash experiments/numerics/qp-error-bounds/run.sh"
+EXPECTED_COMMAND = "bash experiments/qp-error-bounds/run.sh"
 EXACT_STATUSES = {"feasible", "infeasible_or_singular", "algebraic_oracle_unavailable"}
 F64_STATUSES = {"feasible", "infeasible", "singular_matrix", "NumericalFailure", "Unsupported", "TypeCViolation", "ConstraintViolation"}
 TARGETS = {"original_rational", "stored_dyadic"}
@@ -51,13 +51,13 @@ LOCAL_FORMULAS = {
 }
 LOCAL_REGISTRY_REQUIRED_FIELDS = {"expression", "target", "center", "required_atoms", "hypotheses", "arithmetic_model", "consumers", "implementation_status"}
 SOURCE_CONTENT_FILES = (
-    "experiments/numerics/qp-error-bounds/src/main.rs",
-    "experiments/numerics/qp-error-bounds/analyze.py",
-    "experiments/numerics/qp-error-bounds/validate.py",
-    "experiments/numerics/qp-error-bounds/test_wide.py",
-    "experiments/numerics/qp-error-bounds/formula_inventory.json",
-    "experiments/numerics/qp-error-bounds/coverage_ledger.json",
-    "experiments/numerics/qp-error-bounds/README.md",
+    "experiments/qp-error-bounds/src/main.rs",
+    "experiments/qp-error-bounds/analyze.py",
+    "experiments/qp-error-bounds/validate.py",
+    "experiments/qp-error-bounds/test_wide.py",
+    "experiments/qp-error-bounds/formula_inventory.json",
+    "experiments/qp-error-bounds/coverage_ledger.json",
+    "experiments/qp-error-bounds/README.md",
 )
 
 

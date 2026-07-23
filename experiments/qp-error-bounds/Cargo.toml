@@ -21,8 +21,8 @@ workspace = true
 [dependencies]
 algebraic-numbers.workspace = true
 symplectic.workspace = true
-exp-dev-quadratic-program = { path = "../../dev-quadratic-program" }
-exp-sys-landscape = { path = "../../sys-landscape" }
+exp-dev-quadratic-program = { path = "../dev-quadratic-program" }
+exp-sys-landscape = { path = "../sys-landscape" }
 euclidean-polytopes.workspace = true
 nalgebra.workspace = true
 num-rational.workspace = true

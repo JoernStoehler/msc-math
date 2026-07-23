@@ -22,10 +22,11 @@ Method relatives include
 variable/predicate auditing and numerical studies of optimization or volume
 algorithms that may reuse methodology without importing this packet's helpers.
 
-This packet owns its producer, population contracts, retained evidence,
-analysis, and bounded interpretations. It does not prove global f64 soundness,
-exactness over algebraic inputs, complete HK candidate recall, or correctness
-of every consumer route.
+The producer, population contracts, retained evidence, analysis, and bounded
+interpretations are kept together here because each retained result depends on
+this observation boundary and its named populations. This evidence does not
+prove global f64 soundness, exactness over algebraic inputs, complete HK
+candidate recall, or correctness of every consumer route.
 
 The experiment has one observation boundary: Rust `observe(polytope, sigma)`
 produces one wide `RawRow`. It calls the current production KKT saddle solver,
@@ -37,7 +38,7 @@ predicate categories, and reports.
 Run the representative broad packet with:
 
 ```bash
-cd experiments/numerics/qp-error-bounds
+cd experiments/qp-error-bounds
 bash run.sh
 ```
 
@@ -89,7 +90,7 @@ are not retained; a center plus an error scalar is not treated as an interval.
 Run the focused route packet with:
 
 ```bash
-bash experiments/numerics/qp-error-bounds/run_retained_exact.sh
+bash experiments/qp-error-bounds/run_retained_exact.sh
 ```
 
 It writes `artifacts/retained-exact/raw_rows.jsonl` (source evidence),
@@ -125,7 +126,7 @@ Python analysis/validation, and compilation are excluded from all row timers.
 Run the separate v2 surface with:
 
 ```bash
-bash experiments/numerics/qp-error-bounds/run_soundness_v2.sh
+bash experiments/qp-error-bounds/run_soundness_v2.sh
 ```
 
 It writes `artifacts/soundness-v2/`.  Each raw lifecycle row names its solver

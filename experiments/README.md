@@ -1,122 +1,137 @@
 # Experiments
 
-An experiment packet owns one empirical question together with the material
-needed to reproduce and interpret it: producer code, input and comparison
-contracts, retained outputs, analysis, limitations, and current use.
+This directory contains retained empirical work, including negative results,
+alternative implementations, data producers, consuming analyses, exact and
+f64 checks, performance measurements, and thesis-support assets. Existing work
+is common enough that searching here should be an ordinary first step before
+recreating an experiment or declaring a gap.
 
-Read `ARCHITECTURE.md` for the repository-wide packet boundary. Agents changing
-packet structure use
-`.agents/skills/empirical-research/references/experiment-packets.md`.
+Typical exploration:
 
-## Candidate physical layout
+1. scan the directory inventory below;
+2. read every README that is not clearly irrelevant;
+3. follow relevant READMEs into code, manifests, data, proofs, generated
+   artifacts, and detailed interpretation;
+4. broaden terminology when a lexical search returns no useful hit.
 
-Packets are direct children of `experiments/` by default:
+`ARCHITECTURE.md` explains the cross-domain authority boundaries.
+`.agents/skills/empirical-research/references/experiment-packets.md` records
+repo-specific considerations for creating or moving experiment material. It
+does not supply a split/join algorithm.
 
-```text
-experiments/
-|-- README.md
-|-- qp-intermediate-numerics/
-|   |-- README.md
-|   |-- Cargo.toml
-|   |-- src/
-|   |-- retained outputs
-|   `-- analysis/report
-|-- optimizer-intermediate-numerics/
-|-- volume-intermediate-numerics/
-|-- flow-graph-proof-risk/
-|-- hko-local-maximum/
-`-- ...
-```
+## Directory inventory
 
-This is packet-level flattening, not file-level flattening. Each packet keeps
-whatever internal directories make its producers and evidence clear.
+This table covers every current immediate child directory of `experiments/`.
+It is a physical inventory with short search cues, not a finding index or a
+claim that each row is one experiment.
 
-The current repository still contains category owners such as `numerics/`,
-`verification/`, and `performance/`, plus `dev-*` aggregations. This disposable
-prototype does not move their executable paths. Treat them as transitional
-exceptions while evaluating the packet model, not as the target taxonomy.
-
-## Packet entry point
-
-Near the beginning, a packet README should make recoverable:
-
-1. status;
-2. original question;
-3. current decision or consumer;
-4. what the packet owns and does not establish;
-5. systems under study and comparisons actually supported;
-6. authoritative producer, evidence, interpretation, and rerun commands;
-7. relations that make another change likely to require reassessment;
-8. commands that are cheap checks versus commands that refresh evidence.
-
-The original question remains visible when the current consumer, mainline
-algorithm, or comparison set changes. Retained evidence identifies the actual
-algorithm and configuration it measured rather than relying on a mutable
-`mainline` label.
-
-## Relations are not parents
-
-A packet can simultaneously be:
-
-- about a QP implementation;
-- an exact-versus-f64 numerical analysis;
-- a comparison of current and candidate algorithms;
-- evidence for a thesis claim;
-- methodologically related to optimization and volume experiments;
-- inactive but retained for future regression.
-
-Those are independent links. Record exact paths and stable terms in the packet
-README so `rg` can find them. Do not encode one relation as the physical parent
-and make the others implicit.
-
-Useful views in this README may group packets by measured system, method,
-thesis decision, or status. A view states its scope and points to packet
-READMEs; it is navigation, not evidence and not a completeness certificate.
-
-## Current packet views
-
-These are examples of overlapping views over the existing tree, not exclusive
-ownership categories.
-
-### By thesis or mathematical object
-
-| Packet | Current role |
+| Directory | What an initial reader can find there |
 | --- | --- |
-| `hko-local-maximum/` | HKO theorem certificate tooling and supporting empirical checks |
-| `regular-products/` | rotated regular-product sweeps, pentagon figures, and exact formula evidence |
-| `combinatorial-cells/` | boundary/cell exploration and bounded negative results |
-| `crosspolytope/` | crosspolytope computation |
-| `local-maxima-check/` | selected-body comparison of local behavior |
-| `sys-datascience/` | retained hostile-`sys` producers, tables, and thesis search evidence |
-| `sys-landscape/` | legacy hostile-landscape producers and search surfaces |
+| `ai-use/` | session-log-backed AI-use provenance reports, prompts, scripts, and thesis disclosure inputs |
+| `algorithm-comparison/` | routing/reasoning note for comparisons; no active producer or retained evidence |
+| `combinatorial-cells/` | boundary-event producers, shared polytope cache, cell diagnostics, retained negative results |
+| `crosspolytope/` | specialized crosspolytope capacity computation and checkpointed output |
+| `dev-canonization-t-search/` | frozen coordinate-canonization search and evidence |
+| `dev-flow-graph/` | flow-graph algorithm development spikes, diagnostics, and visualization |
+| `dev-gradient-ascent/` | gradient-ascent implementations, traces, policy comparisons, and endpoint diagnostics |
+| `dev-quadratic-program/` | QP route implementation research, f64/exact/fallback behavior, numerics, verification, and benchmarks |
+| `dev-sys-prediction/` | `sys` prediction producers, error models, and branch/parameter probes |
+| `hko-local-maximum/` | HKO theorem certificate tooling, empirical support, validation, and figures |
+| `local-maxima-check/` | selected-body local-behavior comparison and retained artifacts |
+| `performance/` | retained runtime, memory, and capacity-route measurement programs |
+| `qp-error-bounds/` | wide QP intermediate-variable f64/exact evidence, retained-route evaluation, and soundness trials |
+| `regular-products/` | rotated regular-product sweeps, pentagon empirics, figures, and exact formula certificate |
+| `sys-datascience/` | random/product data producers, prepared tables, many consuming method experiments, and research state |
+| `sys-landscape/` | hostile-`sys` search implementations, caches, legacy producers, and selected retained searches |
+| `verification/` | capacity properties, minimum-orbit production, orbit recovery, and flow-graph falsifiers |
+| `visualization/` | 4D-polytope viewer, data exporters, and thesis-support screenshots |
 
-### By implementation under study
+Keep this table auditable against the immediate directory tree. Add a row when
+adding an immediate directory. Do not use omission from a selective semantic
+view as evidence that related work does not exist.
 
-| Current path | Current role |
+## Local README as triage
+
+A useful local README makes it cheap to decide whether deeper reading is
+warranted. Depending on the material, useful cues include:
+
+- original purpose and current use;
+- important positive, negative, mixed, or superseded result;
+- what the evidence does and does not establish;
+- producer-generated inputs and consumers;
+- authoritative code, data, proof, artifact, and interpretation paths;
+- terms or corresponding implementations that another agent may search;
+- cheap checks versus commands that refresh retained evidence.
+
+This is context to preserve, not a mandatory field list. Do not rewrite a clear
+README merely to satisfy a schema.
+
+## Producers, consumers, and similar implementations
+
+Producer-generated datasets remain with or directly attributable to the
+program and configuration that generated them. A consumer states what it reads
+at the point of use: in code, a manifest, script/config, command, dataset
+identifier, or README when a runtime path or scientific role would otherwise
+be implicit.
+
+Use stable names so `rg` can derive reverse dependencies. Do not present a
+manually maintained producer-side consumer list as exhaustive. An obsolete
+match can be checked; an absent dependency declaration may never be
+questioned.
+
+Several experiments may use similar copied scaffolding or corresponding
+instrumented implementations. That alone does not justify a shared import.
+Share a library when the maintained API is itself the intended dependency;
+otherwise keep explicit implementations easy to find and inspect.
+
+## Overlapping semantic views
+
+The inventory above answers what physical directories exist. Additional views
+may group work by mathematical object, method, implementation, thesis use,
+status, or finding. Such views are useful when task terminology does not match
+directory names. They must state their scope because they need not be
+exhaustive and can become stale.
+
+The current examples below route only to active immediate directories and a
+few notable nested experiment paths. They are not a complete finding index.
+
+### Mathematical object or thesis use
+
+| Search terms | Start |
 | --- | --- |
-| `dev-quadratic-program/` | QP route design plus coupled diagnostics |
-| `dev-flow-graph/` | flow-graph design and diagnostic studies |
-| `dev-gradient-ascent/` | gradient-ascent development studies |
-| `dev-sys-prediction/` | prediction experiments over `sys` |
-| `dev-canonization-t-search/` | canonicalization-parameter search |
-| `dev-f64-capacity/` | f64-capacity route development and diagnostics |
+| HKO local maximum, certificate, neighborhood | `hko-local-maximum/` |
+| rotated regular polygons, pentagon formula, Lagrangian products | `regular-products/` |
+| combinatorial boundaries, cells, crossings | `combinatorial-cells/` |
+| crosspolytope capacity | `crosspolytope/` |
+| selected equality bodies, local behavior | `local-maxima-check/` |
+| hostile `sys`, random/product search, data science | `sys-datascience/`, then `sys-landscape/` for older/search implementations |
+| explanatory 4D-polytope figures | `visualization/` |
+| thesis AI-use provenance | `ai-use/` |
 
-### By empirical method
+### Implementation under study
 
-| Current path | Current role |
+| Search terms | Start |
 | --- | --- |
-| `numerics/qp-error-bounds/` | wide QP intermediate-variable numerical evidence |
-| `dev-quadratic-program/numerics-audit/` | QP/KKT exact-versus-f64 audit coupled to route design |
-| `verification/flow-graph-proof-risk/` | exact flow-graph public-output falsifiers |
-| `verification/` | current aggregate package for correctness, minimum-set, recovery, and Sage checks |
-| `performance/` | shared current performance package and measurements |
-| `visualization/` | visualization producers and browser-rendered assets |
-| `algorithm-comparison/` | relation/routing note; no producer or evidence of its own |
-| `ai-use/` | AI-use provenance reports and rerun tooling |
+| QP/HK2017, f64/exact/fallback routes | `dev-quadratic-program/` |
+| flow graph, CH2021, tubes, closed words | `dev-flow-graph/` |
+| gradient ascent, traces, endpoint diagnostics | `dev-gradient-ascent/` |
+| `sys` prediction and branch continuation | `dev-sys-prediction/` |
+| coordinate canonization | `dev-canonization-t-search/` |
+
+### Evidence role
+
+| Search terms | Start |
+| --- | --- |
+| f64/exact intermediate numerics, retained QP soundness | `qp-error-bounds/` and `dev-quadratic-program/numerics-audit/` |
+| correctness, axioms, agreement, minimum orbits, recovery | `verification/` |
+| runtime, memory, counters, profiling | `performance/` |
+| random/product datasets and invariant prepared tables | `sys-datascience/produce/` and `sys-datascience/prepare/` |
+| prediction, tail analysis, source transfer, proposer methods | `sys-datascience/methods/` |
+| algorithm-comparison routing rather than evidence | `algorithm-comparison/` |
 
 ## Artifacts and commands
 
-Generated outputs are not hand-edited. Packet commands distinguish:
+Generated outputs are not hand-edited. Local commands distinguish:
 
 - cheap compile or smoke checks;
 - full producers writing disposable output;
@@ -125,6 +140,7 @@ Generated outputs are not hand-edited. Packet commands distinguish:
 Generated build trees, temporary outputs, and large raw data are not navigation
 surfaces.
 
-Absence from a view or search result does not establish that no experiment
-exists. Search packet READMEs, producer names, exact algorithm paths, and stable
+Absence from a semantic view or lexical search result does not establish that
+no experiment exists. Scan the physical inventory, inspect plausible READMEs,
+and search producer names, exact algorithm paths, symbols, synonyms, and stable
 mathematical terms before making a project-wide negative claim.

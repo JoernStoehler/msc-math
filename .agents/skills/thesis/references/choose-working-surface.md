@@ -9,10 +9,11 @@ or temporary reasoning belongs.
 - Put chapter-local source routes, interpretations, caveats, fallback wording,
   open decisions, and review state in the owning companion.
 - Put proof development and developer-facing mathematics in `formal/`.
-- Keep code, data, producer commands, empirical reports, and generated assets
-  with the self-contained experiment packet whose question makes them
-  interpretable. Record other thesis, method, and implementation relationships
-  as links instead of moving the packet into another category.
+- Keep producer-generated data and assets attributable to their producer.
+  Keep empirical reports and interpretation near the question and evidence
+  that make them intelligible. Decide exact local placement from the concrete
+  files; record thesis, method, implementation, producer, and consumer
+  relationships that the tree does not expose.
 - Treat `thesis/legacy/` as stale source material, never as active prose.
 - Use `/tmp` for disposable reasoning, candidate comparisons, prompts, and
   review packets that do not justify durable maintenance.
@@ -20,9 +21,9 @@ or temporary reasoning belongs.
   state, and `docs/project-facts.md` for still-current accepted project facts.
 
 Keep `thesis/` self-contained at build time. Deliberately copy selected
-publication asset files from their producer owners into the thesis tree; keep
-thesis-native assets with their thesis owner. Do not create build-time links to
-`formal/`, `experiments/`, or `crates/`.
+publication asset files from their producer into the thesis tree; keep
+thesis-native assets in `thesis/`. Do not create build-time links to `formal/`,
+`experiments/`, or `crates/`.
 
 Choose by the future consumer, not by file extension convenience. Do not turn
 active TeX into a planning ledger or a companion into substitute source truth.

@@ -130,7 +130,7 @@ transformed-target comparisons.
 The focused artifact under `artifacts/retained-exact/` evaluates whether
 exact-solving every sigma retained by the current f64 route is usable for
 scalar minima, active-word minimizers, and a fixed exact 5% action window.
-Regenerate it with `bash experiments/numerics/qp-error-bounds/run_retained_exact.sh`;
+Regenerate it with `bash experiments/qp-error-bounds/run_retained_exact.sh`;
 the producer and mutation validator are `src/retained_exact.rs`,
 `validate_retained_exact.py`, and `test_retained_exact.py`.
 
