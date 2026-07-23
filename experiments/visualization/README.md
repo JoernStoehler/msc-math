@@ -1,9 +1,10 @@
 # Visualization
 
-This package owns the interactive viewer and generated assets for the thesis's
-small 4D-polytope visualization side result. The viewer is useful for
-qualitative explanation and manual exploration; it is not proof or search
-evidence.
+This package is the physical home of the interactive viewer and generated
+assets for the thesis's small 4D-polytope visualization side result. The
+viewer is useful for qualitative explanation and manual exploration; it is not
+proof or search evidence. The Rust exporter and geometry/trajectory models are
+in `src/`; the browser application and generated JSON inputs are in `viewer/`.
 
 ## Reproduction
 

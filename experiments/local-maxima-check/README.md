@@ -165,6 +165,10 @@ upper-branch certificate or equivalent argument.
 
 ## Reproduction
 
+The Rust producer is in `src/main.rs`; `src/seeds.rs` constructs the selected
+bodies and positive control, while `src/directions.rs` constructs the quotient
+and structured probe directions.
+
 From the repository root:
 
 ```bash

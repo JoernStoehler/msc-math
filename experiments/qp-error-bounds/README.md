@@ -35,6 +35,10 @@ volume/sys, derivative, and orbit-recovery APIs directly. A grouped aggregate
 row is emitted per case. Python only computes errors, formula coverage,
 predicate categories, and reports.
 
+The three Rust producers are in `src/`: `main.rs` writes the broad packet,
+`retained_exact.rs` evaluates the retained-candidate and exact-all route
+comparison, and `soundness_v2.rs` runs the multi-centre soundness trial.
+
 Run the representative broad packet with:
 
 ```bash

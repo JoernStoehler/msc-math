@@ -39,6 +39,9 @@ packets dependencies of this evidence.
 
 ## Rust Command Contract
 
+- `src/` is the package library: shared boundary-event records, flat-polytope
+  construction, instrumented capacity evaluation, and boundary-stepping code
+  used by the child producer binaries.
 - `cell-omega` is the upstream producer. It reads and updates the package-local
   canonical cache `polytopes.jsonl` and writes
   `omega-hypothesis/omega-obstacle.jsonl`.
