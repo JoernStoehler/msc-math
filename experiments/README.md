@@ -21,9 +21,10 @@ does not supply a split/join algorithm.
 
 ## Directory inventory
 
-This table covers every current immediate child directory of `experiments/`.
-It is a physical inventory with short search cues, not a finding index or a
-claim that each row is one experiment.
+This table covers every repo-tracked immediate research directory under
+`experiments/`. Ignored caches and generated scratch directories are not
+project navigation entries. The table is a physical inventory with short
+search cues, not a finding index or a claim that each row is one experiment.
 
 | Directory | What an initial reader can find there |
 | --- | --- |
@@ -45,9 +46,9 @@ claim that each row is one experiment.
 | `verification/` | capacity properties, minimum-orbit production, orbit recovery, and flow-graph falsifiers |
 | `visualization/` | 4D-polytope viewer, data exporters, and thesis-support screenshots |
 
-Keep this table auditable against the immediate directory tree. Add a row when
-adding an immediate directory. Do not use omission from a selective semantic
-view as evidence that related work does not exist.
+Keep this table auditable against the repo-tracked immediate directory tree.
+Add a row when adding an immediate research directory. Do not use omission from
+a selective semantic view as evidence that related work does not exist.
 
 `FINDINGS.md` is a selective, grep-friendly view of notable bounded results,
 negative results, and dispositions across packets. It supplies semantic search
