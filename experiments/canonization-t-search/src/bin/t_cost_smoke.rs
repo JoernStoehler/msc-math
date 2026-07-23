@@ -1,4 +1,4 @@
-use exp_dev_canonization_t_search::candidates::volume_one_omega_labeled_symplectic_frame;
+use exp_canonization_t_search::candidates::volume_one_omega_labeled_symplectic_frame;
 use nalgebra::Vector4;
 use std::hint::black_box;
 use std::time::Instant;

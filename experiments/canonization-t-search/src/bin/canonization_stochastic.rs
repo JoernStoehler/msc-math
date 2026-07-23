@@ -1,4 +1,4 @@
-use exp_dev_canonization_t_search::{
+use exp_canonization_t_search::{
     accepted_random_cases, candidates, metrics, score_candidate_metric, RESIDUAL_FAILURE_THRESHOLD,
 };
 use rand::SeedableRng;
@@ -29,7 +29,7 @@ struct StochasticReport {
     transform_family_notes: BTreeMap<&'static str, &'static str>,
     candidates: Vec<&'static str>,
     metrics: Vec<&'static str>,
-    candidate_metric_results: Vec<exp_dev_canonization_t_search::CandidateMetricSummary>,
+    candidate_metric_results: Vec<exp_canonization_t_search::CandidateMetricSummary>,
 }
 
 fn main() {
@@ -112,7 +112,7 @@ fn main() {
     let report = StochasticReport {
         schema_version: 2,
         implementation: "rust",
-        package: "exp-dev-canonization-t-search",
+        package: "exp-canonization-t-search",
         profile: if cfg!(debug_assertions) {
             "debug"
         } else {
@@ -145,7 +145,7 @@ fn main() {
     println!("wrote {}", out.display());
 }
 
-fn facet_counts(cases: &[exp_dev_canonization_t_search::Case]) -> BTreeMap<usize, usize> {
+fn facet_counts(cases: &[exp_canonization_t_search::Case]) -> BTreeMap<usize, usize> {
     let mut counts = BTreeMap::new();
     for case in cases {
         *counts.entry(case.duals.len()).or_insert(0) += 1;

@@ -17,7 +17,7 @@ members = [
     "experiments/crosspolytope",
     "experiments/dev-sys-prediction",
     "experiments/visualization",
-    "experiments/dev-canonization-t-search",
+    "experiments/canonization-t-search",
 ]
 resolver = "2"
 

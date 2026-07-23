@@ -37,7 +37,7 @@ path = "variable-f-ascent/main.rs"
 
 [[bin]]
 name = "sys1-local-maxima"
-path = "../local-maxima-check/main.rs"
+path = "../local-maxima-check/src/main.rs"
 
 [[bin]]
 name = "sys-dataset-random"

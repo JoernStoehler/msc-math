@@ -11,16 +11,16 @@ From the repository root, start the full data refresh and viewer:
 
 ```bash
 cd experiments/visualization
-./main/viz/serve.sh 8080
+./viewer/serve.sh 8080
 ```
 
 The script builds `visualization`, regenerates the eight JSON files in
-`main/viz/data/`, embeds them in `main/viz/data.js`, and serves the viewer at
+`viewer/data/`, embeds them in `viewer/data.js`, and serves the viewer at
 `http://localhost:8080`. In another shell, install the pinned screenshot tool
 and regenerate the two selected figures:
 
 ```bash
-cd experiments/visualization/main/viz
+cd experiments/visualization/viewer
 npm install --no-save --no-package-lock playwright@1.61.1
 npx playwright@1.61.1 install --with-deps chromium  # one-time browser setup
 node screenshot-figures.mjs
@@ -33,17 +33,17 @@ cargo run --release --manifest-path experiments/visualization/Cargo.toml \
   --bin visualization -- <known-polytope-name> <output.json>
 ```
 
-`main/viz/embed-data.sh` rebuilds only `data.js` from existing JSON files.
+`viewer/embed-data.sh` rebuilds only `data.js` from existing JSON files.
 JSON, `data.js`, and PNG files are generated artifacts; regenerate rather than
 editing them.
 
 ## Selected Figures
 
-- `main/viz-hypercube-ridges.png` is thesis-ready explanatory material. It
+- `figures/viz-hypercube-ridges.png` is thesis-ready explanatory material. It
   shows the projected edges and interpolated spherical two-face meshes of the
   4-cube. Its purpose is to help a reader form a qualitative picture of a 4D
   polytope boundary; the meshes are not metric or symplectic data.
-- `main/viz-hko-pentagon-min-orbit.png` is thesis-ready explanatory and
+- `figures/viz-hko-pentagon-min-orbit.png` is thesis-ready explanatory and
   empirical material. It shows the projected one-skeleton of the HKO
   Lagrangian product of two regular pentagons together with trajectory index
   zero from `hko_pentagon.json`, a six-segment recovered minimum-action orbit.

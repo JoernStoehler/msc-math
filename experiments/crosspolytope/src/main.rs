@@ -3,7 +3,7 @@
 //! Goal: preserve and, if needed, extend the computation supporting the
 //! crosspolytope capacity recorded in `known_polytopes::crosspolytope()`.
 //! Input Artifacts: Crosspolytope from `known_polytopes::crosspolytope()` (16 facets).
-//! Output Artifacts: `experiments/crosspolytope/main/crosspolytope.jsonl`
+//! Output Artifacts: `experiments/crosspolytope/artifacts/crosspolytope.jsonl`
 //!
 //! Three optimizations over the library capacity search:
 //! 1. backtracking permutation search
@@ -112,7 +112,8 @@ fn main() {
         }
     );
 
-    let output_path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("main/crosspolytope.jsonl");
+    let output_path =
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("artifacts/crosspolytope.jsonl");
     let file = File::create(&output_path).expect("failed to create output file");
     let mut writer = BufWriter::new(file);
 

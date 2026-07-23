@@ -4,10 +4,6 @@ version = "0.1.0"
 publish = false
 edition = "2021"
 
-[[bin]]
-name = "crosspolytope"
-path = "main/main.rs"
-
 [lints]
 workspace = true
 

@@ -6,12 +6,12 @@
 //           and Playwright installed (npm install playwright).
 //
 // Usage:
-//   cd experiments/visualization/main/viz
+//   cd experiments/visualization/viewer
 //   python3 -m http.server 8080 &
 //   node screenshot-figures.mjs
 //   kill %1
 //
-// Output: experiments/visualization/main/viz-*.png
+// Output: experiments/visualization/figures/viz-*.png
 
 import { chromium } from 'playwright';
 import { mkdirSync } from 'fs';
@@ -19,7 +19,7 @@ import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const FIGURES_DIR = resolve(__dirname, '..');
+const FIGURES_DIR = resolve(__dirname, '../figures');
 
 // Viewport matches a thesis-friendly aspect ratio (4:3, 800x600)
 const VIEWPORT = { width: 800, height: 600 };

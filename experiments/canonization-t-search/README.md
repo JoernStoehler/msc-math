@@ -1,8 +1,8 @@
-# Coordinate Canonization `T` Search Packet
+# Coordinate Canonization `T` Search
 
-Status: frozen self-contained development packet as of 2026-06-29.
+Status: frozen self-contained experiment as of 2026-06-29.
 
-This packet found and tested a useful generic coordinate canonizer for random
+This experiment found and tested a useful generic coordinate canonizer for random
 polytope facet-normal rows. It is intentionally not wired into
 `experiments/sys-datascience/prepare`, and future agents should not treat it as
 the next default integration target.
@@ -22,7 +22,7 @@ designed directly as invariants, or Euclidean features after an intrinsic
 quadratic/ellipsoid normalization. Current sys-datascience therefore uses
 direct invariant features rather than this full generic representative.
 
-Keep this packet runnable. Do not extend it unless the new work is specifically
+Keep this experiment runnable. Do not extend it unless the new work is specifically
 about coordinate representatives \(T\), a better \(Sp(4)\) frame choice, or
 reusing its stochastic group-action harness.
 
@@ -125,14 +125,14 @@ canonical row order is stable.
 From this worktree root:
 
 ```bash
-cargo fmt --check -p exp-dev-canonization-t-search
-cargo test -p exp-dev-canonization-t-search
-cargo run -p exp-dev-canonization-t-search --bin canonization_stochastic -- \
+cargo fmt --check -p exp-canonization-t-search
+cargo test -p exp-canonization-t-search
+cargo run -p exp-canonization-t-search --bin canonization_stochastic -- \
   --cases 24 --samples-per-case 4
 ```
 
 The smoke run writes
-`experiments/dev-canonization-t-search/artifacts/stochastic-rust-summary.json`.
+`experiments/canonization-t-search/artifacts/stochastic-rust-summary.json`.
 The JSON report records the command, profile, git revision/tree state,
 facet-count distribution, transform-family notes, residual threshold,
 candidate statuses, all-pair residuals, and `ok/ok` residuals.
@@ -140,17 +140,17 @@ candidate statuses, all-pair residuals, and `ok/ok` residuals.
 Focused current-candidate run:
 
 ```bash
-cargo run -p exp-dev-canonization-t-search --bin canonization_stochastic -- \
+cargo run -p exp-canonization-t-search --bin canonization_stochastic -- \
   --cases 256 --samples-per-case 4 \
   --candidate volume_one_omega_labeled_symplectic_frame \
   --metric nearest_neighbor_rms \
-  --out experiments/dev-canonization-t-search/artifacts/omega-labeled-symplectic-frame-256-summary.json
+  --out experiments/canonization-t-search/artifacts/omega-labeled-symplectic-frame-256-summary.json
 ```
 
 Cost comparison commands:
 
 ```bash
-cargo build -q --release -p exp-dev-canonization-t-search \
+cargo build -q --release -p exp-canonization-t-search \
   --bin t_cost_smoke --bin sys_cost_smoke
 
 hyperfine --warmup 2 -r 10 './target/release/t_cost_smoke 128 6 32'

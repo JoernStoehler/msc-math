@@ -28,10 +28,9 @@ claim that each row is one experiment.
 | Directory | What an initial reader can find there |
 | --- | --- |
 | `ai-use/` | session-log-backed AI-use provenance reports, prompts, scripts, and thesis disclosure inputs |
-| `algorithm-comparison/` | routing/reasoning note for comparisons; no active producer or retained evidence |
+| `canonization-t-search/` | frozen coordinate-canonization search and evidence |
 | `combinatorial-cells/` | boundary-event producers, shared polytope cache, cell diagnostics, retained negative results |
 | `crosspolytope/` | specialized crosspolytope capacity computation and checkpointed output |
-| `dev-canonization-t-search/` | frozen coordinate-canonization search and evidence |
 | `dev-flow-graph/` | flow-graph algorithm development spikes, diagnostics, and visualization |
 | `dev-gradient-ascent/` | gradient-ascent implementations, traces, policy comparisons, and endpoint diagnostics |
 | `dev-quadratic-program/` | QP route implementation research, f64/exact/fallback behavior, numerics, verification, and benchmarks |
@@ -49,6 +48,10 @@ claim that each row is one experiment.
 Keep this table auditable against the immediate directory tree. Add a row when
 adding an immediate directory. Do not use omission from a selective semantic
 view as evidence that related work does not exist.
+
+`algorithm-comparisons.md` is a root-level routing note rather than an
+experiment directory: it relates algorithm units to the experiment that
+actually produces each kind of evidence.
 
 ## Local README as triage
 
@@ -116,7 +119,7 @@ few notable nested experiment paths. They are not a complete finding index.
 | flow graph, CH2021, tubes, closed words | `dev-flow-graph/` |
 | gradient ascent, traces, endpoint diagnostics | `dev-gradient-ascent/` |
 | `sys` prediction and branch continuation | `dev-sys-prediction/` |
-| coordinate canonization | `dev-canonization-t-search/` |
+| coordinate canonization | `canonization-t-search/` |
 
 ### Evidence role
 
@@ -127,7 +130,7 @@ few notable nested experiment paths. They are not a complete finding index.
 | runtime, memory, counters, profiling | `performance/` |
 | random/product datasets and invariant prepared tables | `sys-datascience/produce/` and `sys-datascience/prepare/` |
 | prediction, tail analysis, source transfer, proposer methods | `sys-datascience/methods/` |
-| algorithm-comparison routing rather than evidence | `algorithm-comparison/` |
+| algorithm-comparison routing rather than evidence | `algorithm-comparisons.md` |
 
 ## Artifacts and commands
 

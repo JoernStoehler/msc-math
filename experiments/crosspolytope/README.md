@@ -22,7 +22,7 @@ backtracking. The current binary performs:
 - JSON checkpointing by subset size so interrupted runs can restart from the
   last completed `m`.
 
-The current local output is `main/crosspolytope.jsonl`:
+The current local output is `artifacts/crosspolytope.jsonl`:
 - `facet_count = 16`, `iterations = 31,779,448`;
 - `search_complete_through_m = 13`;
 - `best_subset = [0, 3, 12, 15]`,
@@ -69,7 +69,7 @@ Scope caveat:
   - It demonstrates feasible orbit action `4.0` (`beta = 1/4`) in tests; it does
     not itself prove global optimality without the symmetry-reduced enumeration
     from this experiment.
-- Preserve output only at `main/crosspolytope.jsonl`.
+- Preserve output only at `artifacts/crosspolytope.jsonl`.
   - This is the single durable local artifact used by downstream files.
 
 ## History
@@ -93,9 +93,9 @@ Next work packet:
    - derive a mathematical exclusion argument for `m = 14..16`, or
    - extend this binary and run with a larger cap.
 2. To continue compute:
-   - edit `main/main.rs` (`MAX_SUBSET_SIZE`);
+   - edit `src/main.rs` (`MAX_SUBSET_SIZE`);
    - run `cargo run -p crosspolytope --release --bin crosspolytope`;
-   - verify `main/crosspolytope.jsonl` for
+   - verify `artifacts/crosspolytope.jsonl` for
      `search_complete_through_m`, best orbit, and `time_capacity_ms`.
 3. If the capacity candidate changes:
    - update `crates/symplectic/src/geom/known_polytopes.rs` and

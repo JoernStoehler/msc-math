@@ -100,7 +100,7 @@ status lives in `tools/kkt_error_audit/SEARCH-LEDGER.md`. Source truth is
 changes, update the regression evidence and this route-development note before
 using the result in thesis-facing numerics prose.
 
-Use `experiments/algorithm-comparison/README.md` for cross-algorithm comparison
+Use `experiments/algorithm-comparisons.md` for cross-algorithm comparison
 reasoning that points to performance, numerics, verification/correctness,
 topic, or thesis evidence homes.
 

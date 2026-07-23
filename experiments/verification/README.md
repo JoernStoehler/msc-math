@@ -86,7 +86,7 @@ Canonical all-minimum and orbit-recovery runs reported:
    - `orbit-recovery` owns geometric recovery validation.
    - `correctness` remains the package-level property gate.
    - Algorithm-comparison reasoning lives outside this package, currently in
-     `experiments/algorithm-comparison/README.md`.
+     `experiments/algorithm-comparisons.md`.
 2. Treat local-first diversity as a coverage/reproducibility choice, not an exhaustive proof surface.
 3. Preserve trust boundaries across minima:
    - `all-minimum` computes minima from shared-cache sources and validates by action.

@@ -5,7 +5,7 @@ set -euo pipefail
 
 PORT="${1:-8080}"
 DIR="$(cd "$(dirname "$0")" && pwd)"
-MANIFEST="$DIR/../../Cargo.toml"
+MANIFEST="$DIR/../Cargo.toml"
 
 echo "Building visualization binary..."
 cargo build --release --manifest-path "$MANIFEST" --bin visualization -q
