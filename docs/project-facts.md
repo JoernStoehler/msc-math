@@ -318,7 +318,7 @@ maintenance low. The numbers are stable and can be out of order.
       the repo, because he does not know what feedback is currently recorded in
       the repo. Agents should inspect the repo-recorded feedback context before
       asking a narrower question. A 2026-06-03 scan found no obvious current
-      unprocessed Kai/Elizabeth blocker in `FACTSHEET.md`,
+      unprocessed Kai/Elizabeth blocker in `docs/project-facts.md`,
       `thesis/DEVELOPMENT.md`, direct Kai/Elizabeth/advisor/review hits under
       then-current `thesis/`, `research/`, and `tasks/`, and local hits in
       `thesis/numerics.tex`, `thesis/hko-local-maximum.tex`, and the tube
@@ -358,17 +358,17 @@ maintenance low. The numbers are stable and can be out of order.
 
 82. Facts should stay in their canonical owner file when that location is easy
     to find, predictable, expected, and robust enough. Facts belong in
-    `FACTSHEET.md` when agents keep overlooking the other location, when the
+    `docs/project-facts.md` when agents keep overlooking the other location, when the
     other location is too fragile under maintenance, when no good owner exists,
     or when related information belongs together and has no single
     discoverable robust home.
 
-83. Jörn-confirmed current-state facts may belong in `FACTSHEET.md` when they
+83. Jörn-confirmed current-state facts may belong in `docs/project-facts.md` when they
     are important. If staleness is a concern, mark the item with
     `[potentially stale]` instead of excluding it merely because it may become
     stale.
 
-84. GPT-5.5 agents sometimes make wrong inferences. `FACTSHEET.md` can
+84. GPT-5.5 agents sometimes make wrong inferences. `docs/project-facts.md` can
     therefore include Jörn-confirmed facts that help agents avoid recurring
     wrong inferences or repeated bad questions, even when those facts seem too
     basic to mention.

@@ -1,7 +1,8 @@
 <!--
 Purpose: dated repo-status evidence for cheap future orientation.
 Context: this is supporting material for status and capability tracking (including
-`CAPABILITY_CLAIM_MAP.md`), not a live task file and not a final thesis gate.
+`CAPABILITY_CLAIM_MAP.md`, now replaced by `docs/capabilities.md`), not a live
+task file and not a final thesis gate.
 -->
 
 # Repo Status Smoke And Core Verification 2026-05-31

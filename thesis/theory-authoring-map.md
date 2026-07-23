@@ -10,7 +10,7 @@ the sources an author must inspect. This is the entry point for deciding what
 the early theory covers before drafting prose.
 
 Overruled by: accepted Jörn/Kai decisions, active theorem statements,
-`FACTSHEET.md`, `formal/`, source papers, and later integrated reader review.
+`docs/project-facts.md`, `formal/`, source papers, and later integrated reader review.
 
 ## Root Questions
 
@@ -110,7 +110,7 @@ and motivation, not on the Haim--Kislev dependency spine.
 | EHZ capacity, compact capacity axioms, systolic ratio, Viterbo threshold | State the thesis target, why it is symplectic, and what comparisons mean | Preliminaries | `02-preliminaries-ehz-capacity.tex`; authoritative capacity sources still need citation placement review |
 | Lagrangian product definition and \(q/p\) factor placement | Make the central HKO example, search family, and polygon family intelligible | Preliminaries | Active definition; HKO2024 and later family owners |
 | Generalized polytope inclusion and \(R_i\) | Explain what replaces the smooth Reeb field | Generalized orbits | Active definition; HK2017 convention translation |
-| Clarke dual principle in free-period, uncentered form | Present the general smooth/nonsmooth convex duality that later makes finite reduction possible | Preliminaries | Keep `02-preliminaries-clarke-dual-action-principle.tex`; `PROJECT_COMPLETION.md` records the settled proof boundary; AAO2014 analytic inputs and HK2017 Lemma 2.1 are the external route |
+| Clarke dual principle in free-period, uncentered form | Present the general smooth/nonsmooth convex duality that later makes finite reduction possible | Preliminaries | Keep `02-preliminaries-clarke-dual-action-principle.tex`; `docs/project-status.md` records the settled proof boundary; AAO2014 analytic inputs and HK2017 Lemma 2.1 are the external route |
 | Piecewise-affine action/shoelace identity | Make splitting/merging and the later QP normalization check transparent | Generalized orbits near first use; QP cites it | Current preliminary lemma, to be moved intact unless writing shows a better bridge |
 | Simple-minimizer theorem and proof | Establish that the capacity search contains a finite pure-facet word | Generalized orbits | Active five-operation proof; HK2017 simple-loop theorem |
 | Words, dwell times, closure, base-point recovery | Define the interface passed to the finite methods and the realizability boundary | Generalized orbits | Active word/base-point material; `formal/reeb-orbit-recovery.tex` |
@@ -166,7 +166,7 @@ had deliberately left for later disposition:
   Lemma 5.1, and weak criticality of minimizers is Lemma 5.2. The paper source
   remains external rather than being duplicated in the repository.
 - Preserve the settled Clarke proof boundary recorded in
-  `PROJECT_COMPLETION.md`: cite existence and the nonsmooth multiplier input;
+  `docs/project-status.md`: cite existence and the nonsmooth multiplier input;
   derive the free-period uncentered multiplier equation, its coefficient, the
   Reeb reconstruction, and the characteristic identity \(I_K=T=A\) locally.
   A general free-period minimizer need not have period \(I_K\), because its

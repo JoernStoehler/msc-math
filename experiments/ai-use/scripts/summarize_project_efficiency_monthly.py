@@ -54,13 +54,16 @@ def snapshot_commit(target: str, git_ref: str) -> str | None:
 
 def required_surface_states(commit: str) -> dict[str, int]:
     try:
-        text = run_git("show", f"{commit}:PROJECT_COMPLETION.md")
+        text = run_git("show", f"{commit}:docs/project-status.md")
     except subprocess.CalledProcessError:
-        return {"completion_ledger_unavailable": 1}
+        try:
+            text = run_git("show", f"{commit}:PROJECT_COMPLETION.md")
+        except subprocess.CalledProcessError:
+            return {"completion_ledger_unavailable": 1}
     states: Counter[str] = Counter()
     in_table = False
     for line in text.splitlines():
-        if line == "## Required Surface":
+        if line in {"## Current thesis surface", "## Required Surface"}:
             in_table = True
             continue
         if in_table and line.startswith("## "):
@@ -68,7 +71,7 @@ def required_surface_states(commit: str) -> dict[str, int]:
         if not in_table or not line.startswith("|") or "---" in line:
             continue
         fields = [field.strip() for field in line.strip("|").split("|")]
-        if len(fields) >= 4 and fields[0] != "Surface":
+        if len(fields) >= 3 and fields[0] not in {"Area", "Surface"}:
             states[fields[1]] += 1
     return dict(sorted(states.items()))
 

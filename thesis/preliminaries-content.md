@@ -7,7 +7,7 @@ Purpose: record only the common reader state that the preliminaries should
 establish. Use `theory-authoring-map.md` for the cross-chapter dependency and
 ownership reasoning.
 
-Overruled by: `FACTSHEET.md`, accepted Jörn/Kai decisions, active theorem
+Overruled by: `docs/project-facts.md`, accepted Jörn/Kai decisions, active theorem
 statements, mathematical owners, source papers, and integrated reader review.
 
 ## Intended Reader Change
@@ -55,7 +55,7 @@ later proofs depend on their exact signs, factors, and quantifiers.
   citation placement checked against authoritative capacity sources and the
   nonsmooth AAO/HK route.
 - Clarke duality: retain `02-preliminaries-clarke-dual-action-principle.tex`.
-  `PROJECT_COMPLETION.md` owns its settled proof boundary and review status;
+  `docs/project-status.md` owns its settled proof boundary and review status;
   AAO2014 and HK2017 own the external analytic inputs and correspondence. The
   active proof uses the conjugate Hamiltonian notation \(H_K^*\) to keep the
   Fenchel and reconstruction steps visible without repeatedly expanding

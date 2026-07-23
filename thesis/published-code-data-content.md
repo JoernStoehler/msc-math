@@ -26,7 +26,7 @@ from floating-point evidence. It applies that distinction to availability:
 
 Repository paths, command sequences, packager and manifest implementation,
 Python assertion modes, artifact hashes, detailed comparison procedures, and
-packet-local operational caveats belong in `REPRODUCIBILITY.md` and owner-local
+packet-local operational caveats belong in `docs/reproducibility.md` and owner-local
 READMEs. Mention an implementation distinction only when it changes the
 mathematical trust boundary, as with untrusted HKO witness generation versus
 exact SageMath verification.
@@ -38,9 +38,9 @@ organization and operational detail are superseded.
 
 ## Source and claim map
 
-- Publication and archive outcome: `FACTSHEET.md` items 5, 6, and 6.1;
+- Publication and archive outcome: `docs/project-facts.md` items 5, 6, and 6.1;
   `submit/README.md`; `submit/archive-closure-checklist.md`.
-- General availability and data policy: `REPRODUCIBILITY.md`.
+- General availability and data policy: `docs/reproducibility.md`.
 - Rights and exclusions: `LICENSE.md` and
   `submit/archive-rights-and-exclusions.md`. Final path selection and notices
   remain closure work; do not describe rights review as complete.

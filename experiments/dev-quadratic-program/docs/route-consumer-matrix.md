@@ -8,7 +8,7 @@ predicate or one folder boundary.
 Source surfaces checked for this classification:
 
 - `experiments/dev-quadratic-program/README.md`
-- `experiments/MAP.md`
+- `experiments/README.md`
 - `thesis/numerics-content.md`
 - `thesis/quadratic-program-algorithm-hk2019.tex`
 - `experiments/sys-datascience/{README.md,produce/README.md,prepare/README.md,methods/README.md}`

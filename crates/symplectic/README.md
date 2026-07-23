@@ -2,7 +2,16 @@
 
 Durable Rust crate for symplectic geometry on 4D convex polytopes.
 
-Main code areas:
+This crate owns reusable implementation and cheap regression tests. It does not
+own theorem acceptance, numerical certification of every public path, or
+thesis-level empirical conclusions. Confirm those in `formal/`,
+`experiments/verification/`, and the relevant topic owner.
+
+## Start here
+
+Choose the source owner from this list, then inspect its tests and any linked
+experiment evidence:
+
 - `src/geom/`: flat polytope fixtures, dual-vertex validation, symplectic
   form helpers, and Euclidean geometry reexports used by symplectic algorithms
 - `src/kkt/`: context-free KKT/QP solve machinery

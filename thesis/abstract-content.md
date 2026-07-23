@@ -5,7 +5,7 @@ truth.
 
 Purpose: gather the final abstract inventory before the abstract is written.
 
-Overruled by: `FACTSHEET.md`, final theorem statements, active thesis sections,
+Overruled by: `docs/project-facts.md`, final theorem statements, active thesis sections,
 and Jörn/Kai review.
 
 Lifecycle: keep while the abstract is unwritten. After the abstract is stable,

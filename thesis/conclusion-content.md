@@ -6,7 +6,7 @@ truth.
 Purpose: gather the conclusion inventory before final prose is written.
 
 Overruled by: final thesis sections, retained theorem statements,
-`FACTSHEET.md`, and Jörn/Kai review.
+`docs/project-facts.md`, and Jörn/Kai review.
 
 Lifecycle: keep while the conclusion is unwritten. After the conclusion is
 stable, delete this file or reduce it to a short maintenance note.

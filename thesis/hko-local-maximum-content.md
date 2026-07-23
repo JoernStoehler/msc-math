@@ -6,7 +6,7 @@ Purpose: maintain HKO result-packet source pointers, evidence status, and
 review-risk notes for the current HKO chapter
 `thesis/07-hko-local-maximum.tex`.
 
-Overruled by: `FACTSHEET.md`, exact artifacts and local documentation in
+Overruled by: `docs/project-facts.md`, exact artifacts and local documentation in
 `experiments/hko-local-maximum/`, formal proof files, and Jörn/Kai review.
 
 Lifecycle: keep while these source pointers and review-risk notes are useful.
@@ -77,7 +77,7 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
 
 1. Known result:
    HKO2024 is a counterexample with `sys > 1`.
-   Source pointers: `FACTSHEET.md` item 8.1; `thesis/bibliography.bib`;
+   Source pointers: `docs/project-facts.md` item 8.1; `thesis/bibliography.bib`;
    `experiments/hko-local-maximum/README.md`.
 
 2. Main theorem target:
@@ -98,7 +98,7 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
    internally and checks the exact finite certificate predicate; the
    mathematical writeup proves that the checked predicate implies the theorem
    target.
-   Source pointers: `FACTSHEET.md` items 20--22;
+   Source pointers: `docs/project-facts.md` items 20--22;
    `experiments/hko-local-maximum/theorem/README.md`;
    `experiments/hko-local-maximum/theorem/verification-summary.json`.
 
@@ -118,7 +118,7 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
    interpretation is not proved by the current theorem target.
    Source pointers: `experiments/hko-local-maximum/README.md`;
    `experiments/hko-local-maximum/empirical/README.md`;
-   `CAPABILITY_CLAIM_MAP.md` HKO local-maximum evidence-route row.
+   `docs/capabilities.md` HKO local-maximum evidence-route row.
 
 6. Search/context result:
    Broader search work did not find a better local escape or general
@@ -478,7 +478,7 @@ Core thesis content, not auxiliary assets:
    number field, and LaTeX proves the implication. The theorem should not rely
    on Rust correctness or numerical search correctness.
    Source pointers:
-   `FACTSHEET.md` items 20--22;
+   `docs/project-facts.md` items 20--22;
    `experiments/hko-local-maximum/theorem/README.md`,
    "Architecture".
 
@@ -694,7 +694,7 @@ Do not write:
 ### 1. Known Result
 
 Status:
-- Retained thesis content area: `FACTSHEET.md` item 8.1.
+- Retained thesis content area: `docs/project-facts.md` item 8.1.
 - HKO paper bibliography entry: `thesis/bibliography.bib`.
 
 Missing:
@@ -792,7 +792,7 @@ Status:
 Source pointers:
 - `experiments/hko-local-maximum/README.md`, "Current Status".
 - `experiments/hko-local-maximum/empirical/README.md`.
-- `CAPABILITY_CLAIM_MAP.md`, HKO local-maximum evidence-route row.
+- `docs/capabilities.md`, HKO local-maximum evidence-route row.
 
 Missing:
 - Final thesis wording must keep this distinct from theorem-strength local
@@ -840,7 +840,7 @@ Missing:
 
 4. Incorporate integrated-PDF feedback if it changes HKO wording or proof
    framing.
-   Source pointers: `FACTSHEET.md` item 7.1 and items 20--22.
+   Source pointers: `docs/project-facts.md` item 7.1 and items 20--22.
 
 ## Fallback Branches
 

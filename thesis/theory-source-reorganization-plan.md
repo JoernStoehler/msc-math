@@ -164,7 +164,7 @@ answer the generating question for that passage without importing a later
 algorithm or silently filling a forward dependency.
 
 The active Clarke source may pass through structural moves, but its settled
-proof boundary in `PROJECT_COMPLETION.md` remains fixed. Delete
+proof boundary in `docs/project-status.md` remains fixed. Delete
 `legacy/clarkedual-action-principle.tex` only after the integrated active
 passage has passed Jörn's review and its useful source decisions have been
 absorbed.

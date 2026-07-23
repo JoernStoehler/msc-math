@@ -1,8 +1,24 @@
 # Combinatorial Cells
 
-This package owns combinatorial-boundary exploration outputs and local
+Status: inactive retained exploration with bounded negative and diagnostic
+results. Revive only for a named thesis or method question.
+
+This package owns combinatorial-boundary producers, retained outputs, and local
 interpretation for boundary events and transitions across four-dimensional
 polytopes.
+
+It does not establish global convexity, continuity from sampling, a
+single-boundary model, or monotonicity of repeated `sys` improvements.
+
+## Start here
+
+1. Read `Interpretation And Constraints` below for the usable conclusions.
+2. Use `boundary-characterization/first-boundary-transition-report.md` for the
+   current joined report.
+3. Inspect producer code or JSON summaries only for a concrete quantitative or
+   reproducibility question.
+4. Do not run a producer merely to test its command: the Rust binaries refresh
+   tracked evidence and currently lack smoke modes.
 
 ## Rust Command Contract
 

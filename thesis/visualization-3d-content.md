@@ -6,7 +6,7 @@ require ordinary integrated-thesis review by Jörn/Kai.
 
 ## Thesis Role And Interpretation
 
-Visualization is a small exploratory side result required by `FACTSHEET.md`
+Visualization is a small exploratory side result required by `docs/project-facts.md`
 items 8.9 and 11. It helps readers imagine a 4D polytope boundary and a
 piecewise-linear Reeb orbit. It did not produce a reliable visual hypothesis,
 candidate rule, or proof input. The active section preserves Jörn's 2026-06-11

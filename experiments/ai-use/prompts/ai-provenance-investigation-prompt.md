@@ -15,7 +15,7 @@ Context:
 - Do not rely on git history as source truth for idea provenance.
 - Treat raw Codex and Claude session logs as the main source of truth for
   AI/Jörn interaction provenance.
-- Repo notes such as FACTSHEET.md and thesis/use-of-ai-content.md can guide the
+- Repo notes such as docs/project-facts.md and thesis/use-of-ai-content.md can guide the
   investigation but are downstream evidence, not source truth.
 - Existing scratch hypothesis worksheet, if present:
   /tmp/joern/ai-provenance-interview.md. Treat it as hypotheses to test, not as

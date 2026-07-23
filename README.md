@@ -2,69 +2,45 @@
 
 Master thesis repository for Jörn Stöhler, University of Augsburg.
 
-The project target is a defensible master thesis PDF and the repo state needed
-to support the thesis claims, reproducibility promises, and submission/archive
-promises that remain in the final text.
+The repository produces:
 
-Primary deliverables:
+- `thesis/build/main.pdf`: the thesis;
+- `crates/`: reusable Rust libraries for the mathematical computations;
+- `experiments/`: reproducible producers, retained evidence, and
+  interpretation used by the thesis.
 
-- `thesis/build/main.pdf`: final thesis PDF.
-- `crates/`: durable Rust crates for symplectic geometry and exact arithmetic.
-- `experiments/`: reproducible experiment code, data, reports, and figures
-  used by the thesis.
-- `submit/`: cached official submission forms and submission-source notes.
+## First entry points
 
-## Project Entry Points
+1. Read `ARCHITECTURE.md` to choose the owning part of the repository.
+2. Read that owner's `README.md`.
+3. Inspect the named source, producer, proof note, test, or active thesis file
+   before relying on a summarized claim.
 
-- `PROJECT_COMPLETION.md`: live project-completion objective, consolidated
-  recovery checkpoint, required surface, crux register, and completion gates.
-- `FACTSHEET.md`: Jörn-confirmed project facts and external/Jörn/Kai
-  constraints.
-- `REPRODUCIBILITY.md`: thesis-facing code/data paths and final release route.
-- `AGENTS.md`: Codex operating rules and detailed repo navigation.
-- `thesis/MAP.md`: active thesis surface and thesis-local content companions.
-- `thesis/central-claim-control.md`: thesis-wide central-claim companion for
-  support sources, caveats, and review gates. It is not source truth.
-- `experiments/INDEX.jsonl`: flat, grep-friendly descriptions of durable
-  experiment findings and dispositions with their source paths.
-- `experiments/MAP.md`: experiment routing.
-- `formal/INDEX.jsonl`: flat, grep-friendly descriptions of mathematical
-  results, proof status, counterexamples, and open obligations with their
-  source paths.
-- `crates/MAP.md`: durable crate navigation.
-- `submit/README.md`: official-form cache.
+Project-wide information:
 
-Each `INDEX.jsonl` has one finding per physical line with only `description`
-and `sources`. The description includes useful search terms and the material
-scope and status boundaries. Read the whole file for orientation or grep it
-for likely terms; then inspect the named sources before relying on a claim.
+- `docs/project-status.md`: milestones, current state, and open gates.
+- `docs/project-facts.md`: Jörn-confirmed facts and external decisions.
+- `docs/capabilities.md`: compact view of what the repository can currently
+  support.
+- `docs/reproducibility.md`: code, data, and archive route.
+- `submit/README.md`: submission sources.
 
-Source truth lives with the owning surface: thesis text and content companions,
-formal notes, experiment READMEs/artifacts, crate documentation/source/tests,
-official submission sources, and accepted Jörn/Kai decisions. Maps and claim
-caches, including the two JSONL indexes, are navigation aids; refresh affected
-claims from source truth before relying on them.
+Owner entry points:
 
-## Final Readiness
+- `thesis/README.md`
+- `formal/README.md`
+- `experiments/README.md`
+- `crates/README.md`
+- `papers/`
 
-Jörn decides final thesis readiness. Agents can prepare evidence, run checks,
-find contradictions, and recommend readiness, but they do not replace Jörn/Kai
-acceptance where mathematical, scope, advisor, or submission judgment is
-required.
+`README.md` and `docs/capabilities.md` are navigation views. The owning files,
+tests, data, proof notes, producer outputs, active thesis text, and accepted
+Jörn/Kai decisions are authoritative.
 
-The final thesis is ready only when retained thesis claims have support and
-caveats matching their strength; cuts and future-work moves are valid only when
-retained wording no longer depends on them or Jörn accepts the named caveat as
-non-blocking; the PDF builds, has no silent placeholders, and has passed the
-intended review level; references, figures, tables, datasets, code references,
-and cited artifacts resolve at the level the thesis uses them; claim support
-has been checked for missing proof, missing evidence, stale interpretation, and
-uncaveated overclaim; repo/code/data/archive promises are true or caveated;
-submission requirements have been refreshed from current official sources;
-required university forms, uploads, printed copies, archives, and other
-submission artifacts are completed or ready at the stage where they are
-required; and Jörn says the thesis is ready to submit.
+## Current outcome
 
-Success does not require every interesting side route, broad cleanup program,
-publication-grade extension, or post-thesis dissemination idea unless retained
-thesis wording or repo promises depend on it.
+The final state is not merely a compiling PDF. Retained thesis claims must have
+support and caveats matching their strength; referenced code, figures, data,
+and certificates must resolve; reproduction and archive promises must be true;
+submission requirements must be satisfied; and Jörn must accept the thesis as
+ready. See `docs/project-status.md`.

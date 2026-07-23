@@ -5,11 +5,11 @@ source.
 
 - Use `$thesis` for reusable thesis, formal-mathematics, writing, review,
   figure, table, and asset process knowledge.
-- Use `thesis/MAP.md` for current thesis navigation.
+- Use `thesis/README.md` for current thesis navigation.
 - Use chapter-local `*-content.md` companions for current writing state,
   source routes, interpretations, caveats, and review findings.
-- Use `FACTSHEET.md` for still-current accepted project facts and
-  `PROJECT_COMPLETION.md` for milestone and gate state.
+- Use `docs/project-facts.md` for still-current accepted project facts and
+  `docs/project-status.md` for milestone and gate state.
 - Use active TeX and its owning mathematical, empirical, paper, code, data,
   and asset sources for claims.
 

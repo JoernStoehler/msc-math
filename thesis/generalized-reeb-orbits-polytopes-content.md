@@ -55,7 +55,7 @@ hull of the pure facet directions. The shoelace identity now lives with the
 finite word data, before its use in the simple-minimizer argument.
 
 Preserve the settled proof boundary and status recorded in
-`PROJECT_COMPLETION.md`: cite dual-minimizer existence and the nonsmooth
+`docs/project-status.md`: cite dual-minimizer existence and the nonsmooth
 multiplier/Euler--Lagrange input; derive the free-period uncentered equation,
 its coefficient, translation/rescaling correspondence, and \(I_K=T=A\) in the
 thesis convention. In the active proof, the reconstruction scale satisfies

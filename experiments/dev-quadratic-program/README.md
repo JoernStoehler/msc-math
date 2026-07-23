@@ -120,7 +120,7 @@ owning mathematical convention truth itself.
 
 ## Algorithm Labels
 
-The relevant labels are defined in `experiments/MAP.md`:
+The relevant labels are defined in `experiments/README.md`:
 
 - `QP/enumerate/unpruned`
 - `QP/enumerate/pruned`

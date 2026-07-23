@@ -14,8 +14,8 @@ or temporary reasoning belongs.
 - Treat `thesis/legacy/` as stale source material, never as active prose.
 - Use `/tmp` for disposable reasoning, candidate comparisons, prompts, and
   review packets that do not justify durable maintenance.
-- Use `PROJECT_COMPLETION.md` for current whole-project milestone and gate
-  state, and `FACTSHEET.md` for still-current accepted project facts.
+- Use `docs/project-status.md` for current whole-project milestone and gate
+  state, and `docs/project-facts.md` for still-current accepted project facts.
 
 Keep `thesis/` self-contained at build time. Deliberately copy selected
 publication asset files from their producer owners into the thesis tree; keep

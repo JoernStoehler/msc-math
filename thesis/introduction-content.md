@@ -5,7 +5,7 @@ Status: section-local maintenance and claim-propagation map for
 
 Purpose: preserve the introduction's explanatory hierarchy, source routes,
 claim boundaries, and narrow reopen conditions. Active theorem statements,
-experiment owners, `FACTSHEET.md`, and accepted Jörn/Kai decisions overrule
+experiment owners, `docs/project-facts.md`, and accepted Jörn/Kai decisions overrule
 this file.
 
 ## Explanatory structure

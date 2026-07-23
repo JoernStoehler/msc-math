@@ -11,7 +11,7 @@ reading surface rather than substitutes for it.
 
 Distinguish the current gate. A chapter candidate, a full PDF for Jörn, a PDF
 for Kai, and the handed-in thesis require different evidence. Use
-`PROJECT_COMPLETION.md` for current milestone state; do not copy that mutable
+`docs/project-status.md` for current milestone state; do not copy that mutable
 state into this skill.
 
 Judge local work by its contribution to the intended artifact and gate. A
