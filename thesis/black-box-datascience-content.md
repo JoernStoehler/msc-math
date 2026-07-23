@@ -8,6 +8,8 @@ taxonomy, and open decisions before final prose is written.
 
 Overruled by: `experiments/sys-datascience/`,
 `experiments/sys-datascience/methods/`,
+`experiments/sys-datascience/coordination/current-question-map.md`,
+`experiments/FINDINGS.md`,
 `experiments/sys-landscape/legacy-ascent-continuation-debt.md`,
 generated tables/figures, and Jörn/Kai review.
 
@@ -19,12 +21,19 @@ Update rule: add or change a claim only with a source pointer or an explicit
 
 ## Active Result Shape
 
-Current active slice: random polytopes and random Lagrangian-product polytopes
-only.
+Current active thesis slice: random polytopes and random
+Lagrangian-product polytopes, followed by the separately bounded
+theory-selected local-maxima screen already included in
+`thesis/08-black-box-datascience.tex`. This is a thesis-content choice, not a
+claim that later data-science, orientation, or optimizer packets do not exist.
 
 Source pointers:
 
 - `experiments/sys-datascience/README.md`;
+- `experiments/sys-datascience/coordination/current-question-map.md` for the
+  current answered/open/stopped/acceptance-gated question graph;
+- `experiments/FINDINGS.md` for a selective semantic route across later
+  experiment results;
 - `experiments/sys-datascience/produce/README.md`;
 - `experiments/sys-datascience/prepare/README.md`;
 - `experiments/sys-datascience/methods/README.md`;
@@ -57,11 +66,14 @@ sub-threshold plateau. Source:
 generated scalar-proposer inputs. This is not a mathematical nonexistence
 theorem or a demonstrated route to `sys > 1`.
 
-Exploration closed on 2026-07-10 without selecting another dataset. The dormant
-same-generator replication plan answers no remaining research question.
-Post-target ridge-area concentration/entropy splits remain future-rule seeds,
-not a reason to delay demonstration or writing. Cross-method interpretation and
-the reopening boundary live in
+The original retained-table exploration closed on 2026-07-10 without selecting
+another dataset. Later packets tested frozen scalar filters, alternative-source
+transfer, conditional-tail limitations, selected-shape orientation, and
+optimizer behavior; they do not silently reopen the same retained-table loop.
+The current question map records their bounded answers and the remaining
+questions. The dormant same-generator replication plan answers no current
+research question. Cross-method interpretation and the original reopening
+boundary remain in
 `experiments/sys-datascience/coordination/exploration-result.md`.
 
 ## Active Producers
@@ -88,17 +100,20 @@ Active row families:
 - generated random-product candidates in the scalar-proposer packet only when
   discussing generated-candidate evidence separately from the retained table.
 
-Inactive or out-of-scope for this section unless Jörn explicitly reopens them:
+Inactive or out-of-scope for the current chapter unless a later thesis
+integration decision selects them:
 
-- old fixed-F ascent endpoints;
-- old product ascent endpoints;
-- old variable-F continuation endpoints;
+- legacy fixed-F ascent endpoints;
+- legacy product ascent endpoints;
+- legacy variable-F continuation endpoints;
 - endpoint stability, attractors, basins, local-behavior panels;
 - perturbation panels.
 
-Reason: active sys-datascience notes say the old ascent/continuation surfaces
-are context only and do not support local-maximality, exhaustive-search, or
-candidate-proposer claims.
+Reason: the legacy `sys-landscape` ascent/continuation surfaces are context
+only and do not support local-maximality, exhaustive-search, or
+candidate-proposer claims. This does not classify the newer retained optimizer
+and prediction packets; follow the current question map and their local
+READMEs before deciding whether they belong in the thesis.
 
 ## Active Columns
 
@@ -163,7 +178,9 @@ controls, not as candidate-proposer inputs.
 - Do not claim the retained table validates a generated-candidate proposer.
 - Do not claim the 100k scalar-proposer packet validates a near-counterexample
   source; it found no positive row and max evaluated `sys` was about `0.868`.
-- Do not import old ascent/continuation/local-behavior packets into the active
-  chapter without explicitly reopening and reviewing that separate surface.
+- Do not import legacy `sys-landscape` ascent/continuation/local-behavior
+  packets into the active chapter without explicitly reopening and reviewing
+  that separate surface. This guardrail does not dispose of newer retained
+  optimizer packets.
 - Do not present ridge/concentration mechanism diagnostics as proof of a
   mechanism; they are empirical packet labels and future-rule seeds.

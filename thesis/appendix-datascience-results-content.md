@@ -8,6 +8,8 @@ results.
 
 Overruled by: `experiments/sys-datascience/`,
 `experiments/sys-datascience/methods/`,
+`experiments/sys-datascience/coordination/current-question-map.md`,
+`experiments/FINDINGS.md`,
 `experiments/sys-landscape/legacy-ascent-continuation-debt.md`, generated
 tables/figures, and Jörn/Kai review.
 
@@ -22,6 +24,11 @@ Update rule: add or change a claim only with a source pointer or an explicit
 - Active appendix role: compact support surface for
   `thesis/08-black-box-datascience.tex`, not an independent method-churn
   chapter.
+- Current research navigation is broader than this selected appendix surface.
+  Use `experiments/sys-datascience/coordination/current-question-map.md` for
+  answered/open/stopped questions and `experiments/FINDINGS.md` for a
+  selective semantic route to later packets. Their existence does not decide
+  which results belong in the appendix.
 - Retained input facts:
   - `14336` trusted random/product rows;
   - `4096` generic random rows and `10240` random Lagrangian-product rows;
@@ -53,8 +60,10 @@ Update rule: add or change a claim only with a source pointer or an explicit
   `experiments/sys-datascience/methods/ridge-mechanism-discriminator/README.md`;
   `experiments/sys-datascience/methods/hko-reference-coverage/`;
   `experiments/sys-datascience/methods/hko-ridge-source-smoke/`.
-- Inactive for this appendix unless explicitly reopened: old ascent,
-  continuation, endpoint-stability, local-behavior, and perturbation panels.
+- Inactive for this appendix unless selected by a later thesis-integration
+  decision: legacy `sys-landscape` ascent, continuation, endpoint-stability,
+  local-behavior, and perturbation panels. This statement does not classify
+  newer retained optimizer or prediction packets.
 
 ## Wording Guardrails
 
