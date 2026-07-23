@@ -3,6 +3,10 @@
 This directory coordinates the current sys-datascience exploration. It is not
 a second source for experiment metrics.
 
+Start with [`current-question-map.md`](current-question-map.md) for the current
+source-linked view of bounded answers, open questions, parked lines, and
+acceptance gates. Then follow its links to packet-local evidence.
+
 The corrected broad-first exploration/research slice closed after its reviewed
 July 15 portfolio refresh and July 22 known-seed closeout. The dated
 `research-closeout-2026-07-22.md`, `final-research-account-2026-07-12.md`,

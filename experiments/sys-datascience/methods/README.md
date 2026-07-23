@@ -1,7 +1,7 @@
 # Random-Polytope Datascience Methods
 
-This directory owns current method packets for the random/product
-sys-datascience method table.
+This directory is the physical home of current method packets for the
+random/product sys-datascience method table.
 
 Read first:
 
@@ -32,8 +32,8 @@ Read first:
 - `hko-reference-coverage/`: scores the known HKO reference/holdout row against
   retained random/product invariant-feature support without training on HKO.
 - `hko-ridge-source-smoke/`: source-reproducible fixed-HKO ridge-area smoke
-  packet used as sys-datascience mechanism/reference evidence. It does not own
-  HKO local-maximality claims.
+  packet used as sys-datascience mechanism/reference evidence. HKO
+  local-maximality claims remain in `experiments/hko-local-maximum/`.
 - `extreme-scalar-rejection-proposer/`: generated random-product proposer with
   the original 100k scalar boundary packet and a reviewed independent frozen
   ridge-concentration validation. The latter validates sub-threshold
@@ -69,9 +69,9 @@ Read first:
   common-support enrichment and the exact one-swap class-difference identity;
   not a physical or causal mechanism.
 - `product-triangle-bounce-classification/`: exact falsifier/support packet for
-  the agent-reviewed triangle-product capacity theorem. The proof owner is
-  `formal/product-triangle-bounce-classification.tex`; empirical artifacts are
-  support, not proof premises.
+  the agent-reviewed triangle-product capacity theorem. The authoritative
+  proof draft is `formal/product-triangle-bounce-classification.tex`;
+  empirical artifacts are support, not proof premises.
 - `generator-orientation-smoke/` and
   `generator-orientation-target-pilot/`: frozen fixed-shape orientation witness
   with a retained 40-row orientation-only exact-feature snapshot, Haar-`U(2)`
@@ -90,8 +90,8 @@ Read first:
   two-/three-bounce association into capacity, volume, generator, ridge, and
   class-balance terms.
 - `product-bounce-width-shortcut/`: exact difference-body width formula for the
-  two-bounce class minimum, with bounded retained checks; the proof owner is
-  `formal/product-two-bounce-class.tex`.
+  two-bounce class minimum, with bounded retained checks; the authoritative
+  proof draft is `formal/product-two-bounce-class.tex`.
 - `ridge-tail-pressure/`: stratified retained ridge-tail diagnostic and two
   frozen selection comparisons, with no universal pressure or endpoint claim.
 - `ridge-endpoint-path/`: frozen eight-row endpoint evaluation along two

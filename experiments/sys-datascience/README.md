@@ -26,11 +26,11 @@ local-maximality, exhaustive-search, or candidate-proposer claims.
 produce/  ->  prepare/  ->  methods/
 ```
 
-- `produce/` owns random/product row production and cached expensive
-  polytope/capacity payloads.
-- `prepare/` owns invariant feature computation, provenance joins, and retained
-  prepared tables.
-- `methods/` owns method packets over the prepared random/product tables.
+- `produce/` is the generation surface for random/product rows and cached
+  expensive polytope/capacity payloads.
+- `prepare/` is the generation surface for invariant features, provenance
+  joins, and retained prepared tables.
+- `methods/` contains method packets over the prepared random/product tables.
 
 ## Rust package boundary
 
@@ -107,6 +107,8 @@ uv run --script experiments/sys-datascience/fingerprint-dataset.py \
 Read first:
 
 - `coordination/README.md` for the authority and staleness boundary;
+- `coordination/current-question-map.md` for the current source-linked view of
+  bounded answers, open questions, parked lines, and acceptance gates;
 - `methods/README.md` for the physical packet inventory and packet-local
   source truth;
 - `coordination/research-closeout-2026-07-22.md` for the dated routing snapshot
