@@ -1,8 +1,9 @@
 # Performance Experiments
 
-This directory owns reusable runtime and memory profiling targets. Correctness
-and regression experiments belong in `experiments/verification/`. Numerical
-error-audit runs belong in `experiments/dev-quadratic-program/numerics-audit/`.
+This directory is the physical home of reusable runtime and memory profiling
+targets. Correctness and regression experiments belong in
+`experiments/verification/`. Numerical error-audit runs belong in
+`experiments/dev-quadratic-program/numerics-audit/`.
 
 For datascience-style f64 capacity workflow questions, the workflow-level
 performance packet has moved to
@@ -42,6 +43,16 @@ Do not force one performance tool to answer all capacity-route questions:
   f64-based scalar capacity paths over several random fixtures.
 
 ## Targets
+
+This table is exhaustive for the current Cargo binary targets:
+
+| Target | Question |
+| --- | --- |
+| `capacity-paths-random` | Paired wall-clock and f64-capacity agreement of the ordinary pure-f64 and exact-fallback scalar paths on deterministic random fixtures. |
+| `capacity-profile-one` | Repeated timing and lower-level profiler attribution for one selected capacity path and fixture. |
+| `capacity-route-costs` | Paired exact, exact-fallback, and pure-f64 route cost on shared deterministic fixtures with hardware/load context. |
+| `hk2017-pruned-f64` | End-to-end phase and subphase cost of the transition-pruned HK2017 f64 candidate route. |
+| `hk2017-cycle-enumeration` | Isolated cost of the directed-graph simple-cycle iterator used by transition pruning. |
 
 ### `capacity-paths-random`
 
