@@ -1,4 +1,4 @@
-# Fixed-shape symplectic-orientation scan
+# Fixed-shape symplectic-orientation and linear scan
 
 This exploratory experiment separates two sources of variation that the random
 datasets normally conflate: Euclidean shape and orientation relative to the
@@ -51,21 +51,21 @@ different, five-dimensional question.
 ### Determinant-one linear extension
 
 The retained extension evaluated 216 noncompact points per body: 24 global
-angular directions and 12 directions anchored at the compact optimum, reused
-at each of six radial scales.
+angular directions and 12 directions anchored at the best sampled compact
+orientation, reused at each of six radial scales.
 
 | Selected body | Compact best | Best noncompact at `r=0.125` | Best over all sampled `r>0` |
 | --- | ---: | ---: | ---: |
 | generic `random_F10_s3_104` | 0.859560 | 0.804071 | 0.804071 |
 | product `random_5x6_s3_168` | 0.878308 | 0.836228 | 0.836228 |
 
-No sampled determinant-one distortion improved either compact optimum. The
-sampled maxima decreased further at every larger radial scale, reaching below
-`0.001` at `r=4` (condition number about 55). This is evidence about these two
-selected bodies and this sparse deterministic panel, not evidence that the
-compact stratum contains the global maximum. In particular, the
-four-dimensional angular space was not covered densely and the noncompact
-radial coordinate was only sampled through `r=4`.
+No sampled determinant-one distortion improved either best sampled compact
+orientation. The sampled maxima decreased further at every larger radial
+scale, reaching below `0.001` at `r=4` (condition number about 55). This is
+evidence about these two selected bodies and this sparse deterministic panel,
+not evidence that the compact stratum contains the global maximum. In
+particular, the four-dimensional angular space was not covered densely and the
+noncompact radial coordinate was only sampled through `r=4`.
 
 ## Reproduction
 
@@ -90,6 +90,6 @@ uv run --script experiments/sys-landscape/fixed-shape-orientation-search/analyze
 - `global.rs` retains the compact best as a control, then samples common
   angular directions at radial distortions from `r = 0.125` through `r = 4`.
   It combines a quotient-wide angular panel with a panel anchored at the best
-  compact orientation.
+  sampled compact orientation.
 - `global-evaluations.jsonl` and `global-analysis.json` are the corresponding
   retained global evidence and summary.
