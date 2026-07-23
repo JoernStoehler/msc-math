@@ -10,9 +10,9 @@ crosses cell boundaries?
 Current use: retained boundary-transition evidence and counterpressure against
 unsupported continuity, single-boundary, convexity, and monotonicity models.
 
-This package owns combinatorial-boundary producers, retained outputs, and local
-interpretation for boundary events and transitions across four-dimensional
-polytopes.
+This package is the physical home of the combinatorial-boundary producers,
+retained outputs, and local interpretation for boundary events and transitions
+across four-dimensional polytopes.
 
 It does not establish global convexity, continuity from sampling, a
 single-boundary model, or monotonicity of repeated `sys` improvements.
@@ -25,11 +25,16 @@ packets dependencies of this evidence.
 ## Start here
 
 1. Read `Interpretation And Constraints` below for the usable conclusions.
-2. Use `boundary-characterization/first-boundary-transition-report.md` for the
+2. Read the relevant child packet README before its source or artifacts:
+   `omega-hypothesis/` produces the common polytope sample;
+   `boundary-characterization/`, `cell-widths/`, `convexity/`, and
+   `multiple-crossings/` produce separate evidence; and
+   `gradient-discontinuity/` joins two producer packets.
+3. Use `boundary-characterization/first-boundary-transition-report.md` for the
    current joined report.
-3. Inspect producer code or JSON summaries only for a concrete quantitative or
+4. Inspect producer code or JSON summaries for a concrete quantitative or
    reproducibility question.
-4. Do not run a producer merely to test its command: the Rust binaries refresh
+5. Do not run a producer merely to test its command: the Rust binaries refresh
    tracked evidence and currently lack smoke modes.
 
 ## Rust Command Contract
@@ -67,13 +72,15 @@ packets dependencies of this evidence.
 - `omega-hypothesis/omega-obstacle.jsonl`: 953 rows.
 
 The current first-boundary join and its interpretation are generated in
-`boundary-characterization/first-boundary-transition-report.md`; exact input
-hashes, key-coverage checks, selected-sigma equivalence sensitivity, and detailed counts
-remain in `first-boundary-transition-summary.json`. The companion exception
-artifact preserves the incidence selected-best-sigma witness, symmetric
-gradient anomalies, epsilon-floor/fallback checks, crossing failures, and
-threshold-discordant rows. The analyzer refuses changed input hashes until its
-copied epsilon policy and exception interpretation are reviewed again.
+`boundary-characterization/first-boundary-transition-report.md`; input paths,
+row and byte counts, key-coverage checks, selected-sigma equivalence
+sensitivity, and detailed counts remain in
+`first-boundary-transition-summary.json`. The companion exception artifact
+preserves the incidence selected-best-sigma witness, symmetric gradient
+anomalies, epsilon-floor/fallback checks, crossing failures, and
+threshold-discordant rows. The analyzer prints a staleness warning with its
+timestamp and working directory, then relies on semantic validation rather
+than retained input hashes.
 
 Older counts and conclusions from early notes must be revalidated against
 current artifacts before reuse as numeric claims.

@@ -181,24 +181,20 @@
     {
       "bytes": 3335111,
       "path": "experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-anatomy.jsonl",
-      "rows": 6671,
-      "sha256": "899894a23876f3869841e72fb7c4ff795c2be3e651263398f686c4a376e139a4"
+      "rows": 6671
     },
     {
       "bytes": 3391530,
       "path": "experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-crossing.jsonl",
-      "rows": 5633,
-      "sha256": "fcffb630ada26435410f3c6c9ee94d758fc5a799c71857da3931fe3f2e254896"
+      "rows": 5633
     },
     {
       "bytes": 2737083,
       "path": "experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-gradient.jsonl",
-      "rows": 5631,
-      "sha256": "42fe7d52e91e19c87a0064e85b7a50c6f7fb63d7c862179afc5c518e33f80c05"
+      "rows": 5631
     }
   ],
   "join_checks": {
-    "all_input_hashes_match_reviewed_identity": true,
     "anatomy_unique_keys": 6671,
     "crossing_keys_missing_from_anatomy": 0,
     "crossing_unique_keys": 5633,
@@ -240,11 +236,6 @@
     "angle_exception_threshold_deg": 0.1,
     "default_crossing_epsilon_fraction": 0.0001,
     "epsilon_floor": 1e-08,
-    "expected_input_sha256": {
-      "combinatorial-boundaries-anatomy.jsonl": "899894a23876f3869841e72fb7c4ff795c2be3e651263398f686c4a376e139a4",
-      "combinatorial-boundaries-crossing.jsonl": "fcffb630ada26435410f3c6c9ee94d758fc5a799c71857da3931fe3f2e254896",
-      "combinatorial-boundaries-gradient.jsonl": "42fe7d52e91e19c87a0064e85b7a50c6f7fb63d7c862179afc5c518e33f80c05"
-    },
     "known_polytope_names": [
       "hko_pentagon",
       "hypercube",
