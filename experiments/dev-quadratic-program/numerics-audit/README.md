@@ -7,7 +7,7 @@ This experiment asks one question across multiple objects and sigma contexts:
 
 Use this package for QP/KKT numerical analysis that is still coupled to QP
 route design, supported cases, predicate semantics, or failure taxonomy. This
-is no longer a top-level cross-algorithm numerics owner.
+is no longer a top-level cross-algorithm numerics home.
 
 The f64 capacity numerics packet is
 [`../numerics/README.md`](../numerics/README.md).

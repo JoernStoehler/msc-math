@@ -11,8 +11,9 @@ validates the binary64 input as exact rational geometry, then calls the mixed
 generation before exact action aggregation. The event field
 `exact_geometry_validation_status` preserves the exact geometry-validation fact
 separately; it does not strengthen the capacity label. Retained rows have only
-stored artifact labels. Verification owns the expectation and claim-scope
-check. Numerics owns label-difference and scan diagnostics for the f64 path.
+stored artifact labels. The verification packet defines expectations and
+checks their claim scope; this numerics packet records label differences and
+scan diagnostics for the f64 path.
 
 ## Current Variables
 

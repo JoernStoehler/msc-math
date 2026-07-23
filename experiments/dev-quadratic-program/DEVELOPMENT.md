@@ -1,9 +1,9 @@
 # Dev Quadratic Program Development
 
-This packet owns active QP capacity-route development while route semantics,
-instrumentation, numerics, performance, and verification are still coupled.
-Keep route-changing code local here before promoting stable contracts into
-`crates/symplectic`.
+This is the physical home for active QP capacity-route development while route
+semantics, instrumentation, numerics, performance, and verification are still
+coupled. Keep route-changing code local here before promoting stable contracts
+into `crates/symplectic`.
 
 ## Code Map
 
@@ -32,7 +32,7 @@ Keep route-changing code local here before promoting stable contracts into
 - `tools/candidate_filter_audit/`: exact-all-visited-sigma audit that checks
   whether the f64 single-sigma solve discards exact-admissible positive-`Q`
   sigmas before fallback/certification can see them.
-- `examples/owned_consumers.rs`: caller-shaped examples owned by this dev
+- `examples/owned_consumers.rs`: caller-shaped examples kept in this dev
   packet. They are not downstream evidence; they are cheap API and architecture
   probes for route-result ergonomics, copy-editability, instrumentation
   friction, and status/result clarity while route contracts are still changing.
@@ -50,8 +50,8 @@ Use `docs/route-consumer-matrix.md` as the current route-design anchor. Route
 design is no longer the blocker for this packet; implementation and evidence
 must now be organized by route contract.
 
-The local f64 route currently owns f64 route semantics and instrumentation
-points. It still calls the lower-level f64 KKT eigensolver in
+The local f64 route currently defines the development semantics and
+instrumentation points. It still calls the lower-level f64 KKT eigensolver in
 `crates/symplectic::kkt::saddle_point_solver`. If error-bound work needs to
 alter the KKT solve itself, copy/edit the necessary KKT kernel locally before
 changing semantics.
@@ -65,9 +65,9 @@ Exact one-sigma KKT solving and older fallback aggregation exist in
 - `CertifiedOrbitSetMode`;
 - `exact::solve_orbit_sigma_exact`.
 
-This packet now owns a local fallback aggregation copy in `src/fallback_route/`
-for route-comparison work. Keep route-semantic changes local here until they
-are stable enough to promote back to `crates/symplectic`.
+`src/fallback_route/` is the physical home of a local fallback aggregation
+copy used for route-comparison work. Keep route-semantic changes local here
+until they are stable enough to promote back to `crates/symplectic`.
 
 The remaining route work is split as follows:
 
@@ -77,7 +77,7 @@ The remaining route work is split as follows:
 | retained-candidate f64 predicate/fallback | local fallback aggregation in `src/fallback_route/`; retained-candidate audit in `tools/kkt_error_audit/` | verified-inverse predicate has useful survivor-level evidence but not a production proof | compare exact-resolving more retained capacity-window candidates against proving stronger f64 predicates |
 | candidate-filter safety | no production route; diagnostic audit in `tools/candidate_filter_audit/` | complete small/edge cases measured; HKO only first-500 diagnostic | build targeted/exhaustive/parallel audits before claiming retained-candidate exact certification is complete |
 | exact-all-visited-sigma rational capacity | local transition-pruned exact route in `src/exact_route/`; scalar capacity depends on complete-stream and input-provenance assumptions | small audit measurements exist; cost is case-dependent | preserve the complete-stream contract; use exact witness/action language for generic caller-supplied streams and do not treat returned witness lists as complete physical-orbit sets |
-| algebraic/Sage route | not local Rust code | Sage/theorem packets own this when needed | keep separate unless a Rust/thesis surface confuses binary64 rational exactness with algebraic-object exactness |
+| algebraic/Sage route | not local Rust code | Sage/theorem packets are the evidence home when needed | keep separate unless a Rust/thesis surface confuses binary64 rational exactness with algebraic-object exactness |
 
 Keep crate imports for outside-domain utilities such as retained input loading,
 random generation, generic geometry helpers, and stable data types.

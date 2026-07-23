@@ -1,9 +1,9 @@
 # f64 Capacity Performance
 
-This directory owns f64-capacity-specific performance binaries and summarizers.
-Use it for timing questions that are still coupled to QP/f64 route design,
-validation policy, product routing, fallback policy, or exact-audit boundary
-choices.
+This directory is the physical home of f64-capacity-specific performance
+binaries and summarizers. Use it for timing questions that are still coupled
+to QP/f64 route design, validation policy, product routing, fallback policy,
+or exact-audit boundary choices.
 
 ## `f64-capacity-e2e`
 

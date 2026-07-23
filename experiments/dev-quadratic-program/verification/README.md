@@ -65,6 +65,6 @@ Edge fixtures are code-owned rows in `exp-dev-quadratic-program`; they are not a
 separate status packet.
 
 The former fixed-F generic and product ascent endpoint cases are deliberately
-absent. The sys-datascience owner removed those artifacts from its active
-producer contract and marks them as archaeology-only; this packet does not
-depend on deleted, untracked inputs.
+absent. The sys-datascience producer contract removed those artifacts from its
+active surface and marks them as archaeology-only; this packet does not depend
+on deleted, untracked inputs.

@@ -7,9 +7,11 @@ development shape is local: while QP capacity routes are still being designed,
 keep their implementation experiments, numerical audits, performance probes,
 and route-specific verification together here instead of spreading one coupled
 question across top-level numerics, performance, and verification packets.
+For the detailed code map and current route-status table, continue with
+[`DEVELOPMENT.md`](DEVELOPMENT.md).
 
 The importable implementation surface is still `crates/symplectic/`, but do
-not use the crate as the implementation owner for active QP method development.
+not treat the crate as the physical home for active QP method development.
 While a QP route is being designed, debugged, instrumented, or numerically
 audited, keep the QP route implementation or copy-edited variant local to this
 packet. This applies to one-sigma KKT solves, sigma enumeration,
@@ -19,16 +21,18 @@ helpers, retained input loading, random/polytope generation, and stable utility
 types. Promote stable-enough QP kernels and routes to `crates/symplectic/` only
 when multiple consumers should call them as a library.
 
-This packet now owns the QP development package directly:
+Immediate directory map:
 
-- `src/`: library-like QP route development code and local route variants;
-- `tools/`: generic QP development CLIs such as f64 scan, analysis, and the
-  compact KKT error-bound audit;
-- `verification/`: route-specific expectation manifests and comparison tools;
-- `numerics/`: route-specific numerics producers and diagnostics;
-- `performance/`: route-specific timing binaries and summarizers;
-- `numerics-audit/`: separate generic QP/KKT numerical-error audit over
-  retained context banks.
+| Directory | Role |
+| --- | --- |
+| `src/` | library-like QP route development code, local route variants, fixtures, and route demonstrations |
+| `tools/` | f64 scan and analysis CLIs, retained-candidate error-bound work, and candidate-filter audits |
+| `docs/` | detailed f64-route notes and the route-consumer decision matrix |
+| `examples/` | caller-shaped API and architecture probes; not downstream evidence |
+| [`verification/`](verification/README.md) | route-specific expectation manifest and comparison tools |
+| [`numerics/`](numerics/README.md) | route-specific numerics producer and near-singular diagnostic |
+| [`performance/`](performance/README.md) | route-specific timing binaries and summarizers |
+| [`numerics-audit/`](numerics-audit/README.md) | separate QP/KKT numerical-error audit crate over retained context banks |
 
 Cross-cutting experiment homes remain useful only when the question has become
 stable enough to move independently of QP method development. Do not move work
@@ -48,8 +52,8 @@ than depending on this development packet.
 
 Use this packet when a QP question is still about route naming, reusable API
 shape, route comparison, numerical status, fallback semantics, performance
-tradeoffs, verification scope, or cleanup ownership. In particular, f64 capacity
-is one QP capacity route family, not a separate top-level method owner. Its
+tradeoffs, verification scope, or cleanup placement. In particular, f64 capacity
+is one QP capacity route family, not a separate top-level method home. Its
 development code, numerics, performance, and verification packets stay together
 here while changes to one surface would change the interpretation of the others.
 
@@ -116,22 +120,25 @@ QP orientation, and the comparison with HK2017's reversed displayed word.
 
 This directory remains the coordination packet for QP route, naming, API, and
 cleanup questions. It should point to the formal convention note rather than
-owning mathematical convention truth itself.
+acting as the authoritative source for mathematical conventions.
 
 ## Algorithm Labels
 
-The relevant labels are defined in `experiments/README.md`:
+Use these semantic labels when comparing routes or searching for corresponding
+implementations. They are not required filesystem paths.
 
-- `QP/enumerate/unpruned`
-- `QP/enumerate/pruned`
-- `QP/enumerate/billiard`
-- `QP/solve/kkt/f64`
-- `QP/solve/kkt/exact`
-- `QP/capacity/f64`
-- `QP/capacity/fallback`
-- `QP/capacity/certified`
-- `QP/capacity/exact`
-- `QP/recover-orbit`
+| Label | Meaning and current implementation entry point |
+| --- | --- |
+| `QP/enumerate/unpruned` | General active-word HK2017 traversal without transition pruning; `crates/symplectic/src/algorithms/hk2017/enumeration.rs`, `permutations.rs`, and `combinatorics.rs`. |
+| `QP/enumerate/pruned` | General active-word traversal pruned by facet-intersection and `omega_0` transitions; HK2017 enumeration plus `crates/symplectic/src/algorithms/facet_adjacency.rs`. |
+| `QP/enumerate/billiard` | Product-specialized sigma traversal feeding the same solve/aggregation layer; `crates/symplectic/src/algorithms/billiard/`. |
+| `QP/solve/kkt/f64` | One-sigma f64 KKT solve; `crates/symplectic/src/kkt/` plus instrumented or copy-edited experiment variants. |
+| `QP/solve/kkt/exact` | One-sigma exact rational KKT solve; `crates/symplectic/src/kkt/rational_solver.rs` and `crates/symplectic/src/exact/orbit.rs`. |
+| `QP/capacity/f64` | Heuristic f64 candidate generation, solve, and aggregation; active development variant in `src/f64_route/`. |
+| `QP/capacity/fallback` | f64 candidate fast path with exact resolution required by a selected guarantee policy; active local variant in `src/fallback_route/` and reusable crate aggregation in `crates/symplectic/src/algorithms/orbit_search.rs`. |
+| `QP/capacity/certified` | Exact-certified aggregation over the retained f64 candidate set; candidate-filter safety is a separate question. |
+| `QP/capacity/exact` | Reserved for a full exact/CAS-backed capacity search, not an f64-retained candidate aggregation. |
+| `QP/recover-orbit` | Recovery of geometric trajectory data from KKT output; `crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs` and `crates/symplectic/src/geom/reeb_trajectory.rs`. |
 
 `QP/capacity/exact` is reserved for a full exact/CAS-backed capacity search.
 It is not the ordinary crate path. Current exact crate support includes
@@ -246,7 +253,7 @@ caller-owned adaptations of the shared paths above.
 - Which route-specific evidence is still missing before a route may be used for
   thesis-facing scalar capacity/`sys` claims rather than diagnostics?
 
-## Not Owned Here
+## Outside This Package
 
 - Reusable numerical methodology that is no longer coupled to QP route design
   belongs in repo-local skill/reference material when the value is
