@@ -200,10 +200,35 @@ Neither the uniform verified-inverse radius nor an exploratory componentwise
 Neumann enclosure certified any of the 170 negative systems; both safely
 returned indeterminate. Exact-solving all 170 took about `1.4 s`, and
 exact-solving all 285 survivors took about `2.0 s`. Therefore neither direct LP
-nor ordinary f64 inverse certification is the product solution. The next
-candidate should be adaptive higher precision or a faster exact dyadic
-full-rank solve, with the existing rational null-space solver reserved for
-genuinely singular systems.
+nor ordinary f64 inverse certification is the product solution.
+
+A subsequent fraction-free integer spike solved the full-rank dyadic systems
+exactly with zero classification or solution mismatches and was about seven
+times faster than the generic rational solver. On all 4,051 exact-transition
+HKO words it still took `5.39 s`, versus `38.58 s` for the generic rational
+route, and 772 words were genuinely singular and still required the null-space
+fallback. This remains the wrong runtime scale, so the spike was removed before
+further optimization. The retained research direction is to simplify the QP
+linear algebra using the Lagrangian-product block structure, not to pursue a
+precision ladder or cheaper generic exact arithmetic.
+
+The next product-specific direction comes from separating q- and p-facet
+weights. Their closure constraints are independent, while the product QP
+objective is bilinear between the two groups. Writing the total q-weight as
+`s` and normalizing the q- and p-weights separately gives
+`Q = s(1-s) B(alpha, gamma)`. For positive `B`, the mass variable optimizes at
+`s = 1/2`. A bilinear maximum over the two normalized closure polytopes has a
+maximizer at a vertex of each polytope, and a vertex of a planar normalized
+closure polytope uses at most three facets. This suggests that a
+capacity-maximizing product word needs at most three q-facets and three
+p-facets. The remaining proof obligation is that deleting zero-weight facets
+preserves membership in the billiard candidate family used by the code.
+
+A cheap HKO check supports the reduction: exact-solving the 1,005 emitted words
+of length at most six found the same best `Q = 0.1453085056010722` as the full
+route. This is not yet a proof of the candidate-family deletion step, but it
+redirects product work from generic near-singular KKT solving to enumerating
+and evaluating pairs of planar closure-polytope vertices.
 
 ## Independent review
 
