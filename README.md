@@ -11,8 +11,8 @@ The repository produces:
 
 ## First entry points
 
-1. Read `ARCHITECTURE.md` to choose the owning part of the repository.
-2. Read that owner's `README.md`.
+1. Read `ARCHITECTURE.md` to choose the relevant project domain.
+2. Read that domain's `README.md`.
 3. Inspect the named source, producer, proof note, test, or active thesis file
    before relying on a summarized claim.
 
@@ -25,17 +25,17 @@ Project-wide information:
 - `docs/reproducibility.md`: code, data, and archive route.
 - `submit/README.md`: submission sources.
 
-Owner entry points:
+Domain entry points:
 
 - `thesis/README.md`
 - `formal/README.md`
 - `experiments/README.md`
 - `crates/README.md`
-- `papers/`
+- `papers/README.md`
 
-`README.md` and `docs/capabilities.md` are navigation views. The owning files,
-tests, data, proof notes, producer outputs, active thesis text, and accepted
-Jörn/Kai decisions are authoritative.
+`README.md` and `docs/capabilities.md` are navigation views. The relevant
+source files, tests, data, proof notes, producer outputs, active thesis text,
+and accepted Jörn/Kai decisions are authoritative.
 
 ## Current outcome
 

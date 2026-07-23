@@ -16,17 +16,50 @@ No current hard submission deadline is recorded in the repository.
 
 ## Current thesis surface
 
-| Area | Current state | Owner |
+| Area | Current state | Source routes |
 | --- | --- | --- |
-| Foundations and generalized Reeb orbits | internally reviewed candidate; integrated reader review remains | `thesis/02-*`, `thesis/03-*`, corresponding formal sources |
-| Haim--Kislev quadratic program | substantial draft; convention and finite-enumeration support remain important | `thesis/04-*`, HK2017 formal and crate owners |
-| Flow graph/CH2021 | substantial conditional draft; final theorem/algorithm role must remain honest | `thesis/05-*`, flow-graph formal/crate/experiment owners |
+| Foundations and generalized Reeb orbits | internally reviewed candidate; the Clarke/simple-minimizer proof boundary is settled; integrated reader review remains | `thesis/02-*`, `thesis/03-*`, corresponding formal sources |
+| Haim--Kislev quadratic program | substantial integrated draft; Jörn accepted the product finite-enumeration reduction, while Kai/expert convention review remains appropriate | `thesis/04-*`, `thesis/quadratic-program-algorithm-hk2019-content.md`, HK2017 formal notes and crate sources |
+| Flow graph/CH2021 | substantial conditional draft; final theorem/algorithm role must remain honest | `thesis/05-*`, flow-graph formal, crate, and experiment sources |
 | First-order perturbations | scaffold; arbitrary-polytope boundary remains materially different from the generic story | `thesis/06-*`, `formal/sys-first-order-local-behavior.md` |
 | HKO local maximum | internally reviewed integration candidate; ordinary whole-PDF/Jörn/Kai review remains | `thesis/07-*`, `experiments/hko-local-maximum/` |
-| Data-science search | broad exploration closed with bounded retained results; consumer-selected final data remains | `thesis/08-*`, `experiments/sys-datascience/` |
+| Data-science search | the closed method table has bounded retained wording; current thesis-level closure must be checked against the later packets and active thesis claims | `thesis/08-*`, `experiments/sys-datascience/` |
 | Rotated regular polygons | substantial theorem/certificate draft | `thesis/09-*`, `experiments/regular-products/` |
-| Visualization, numerics, published code/data, AI discussion, conclusion | incomplete thesis surfaces | matching thesis and experiment owners |
+| AI use | the separate factual disclosure page is Jörn-accepted; the numbered research-process discussion remains provisional and materially incomplete | `thesis/ai-use-disclosure-content.md`, `thesis/use-of-ai-content.md`, `experiments/ai-use/` |
+| Visualization, numerics, published code/data, conclusion | incomplete thesis surfaces | matching thesis and experiment sources |
 | Submission and archive | incomplete external state | `submit/`, `docs/reproducibility.md`, Jörn/mail |
+
+## Current cross-domain decisions and gates
+
+- **Clarke/simple-minimizer proof boundary is settled.** Cite the literature for
+  dual attainment and the nonsmooth multiplier input. Retain the local
+  free-period multiplier calculation, coefficient, Reeb reconstruction, and
+  characteristic identity rather than compressing the developed explanation
+  into citations. Jörn accepted this proof-versus-citation boundary; integrated
+  reader review still applies. See `thesis/theory-authoring-map.md` and the
+  active foundation text.
+- **Product finite enumeration is Jörn-accepted, not merely empirical.** The
+  classical two-/three-bounce result plus the simple active-orbit reduction
+  places a capacity minimizer in the enumerated family. The computation
+  corroborates this implication but does not replace it. Kai/expert line review
+  of the project-derived convention lift remains appropriate. See
+  `thesis/quadratic-program-algorithm-hk2019-content.md` and
+  `thesis/rotated-regular-polygons-content.md`.
+- **First-order and flow-graph strength remain open.** Generic smooth-branch
+  first-order behavior does not settle the arbitrary-polytope boundary. The
+  flow-graph chapter must match the hypotheses and support actually established
+  by its formal, implementation, and experiment sources.
+- **Data-science fact 34.1 is historical status, not a request for another
+  dataset.** It said that work was incomplete at the time and should continue.
+  Determine current closure from the later packets, closed method table, and
+  active thesis claim; do not invent a new consumer choice from that fact.
+  Project fact 30 still makes random/gradient search a major novel method for
+  the data-science part. Its final thesis emphasis is a Jörn writing/design
+  decision, distinct from whether the bounded empirical statement is supported.
+- **External closure state remains partly private or time-sensitive.** Current
+  official submission requirements need refreshing. The registration note
+  still needs to be handed to the `Prüfungsamt` unless Jörn reports that action
+  complete. Kai review state comes from Jörn/mail, not repository inference.
 
 ## Project-wide constraints
 
@@ -49,12 +82,14 @@ No current hard submission deadline is recorded in the repository.
 - **Complete:** the surface satisfies its downstream use and no named gate
   remains.
 
-## Deliberately removed from the active status view
+## Deliberately omitted from the active status view
 
 The former file mixed current state with branch-recovery history, old packet
 accounts, detailed crux tables, and operating instructions. Those details are
-not reproduced here. Git history retains them; any still-current constraint
-must be promoted to `docs/project-facts.md`, the relevant owner, or this file.
-
-This omission is intentional in the prototype and must be audited before any
-real migration.
+not reproduced here. The navigation migration compared the former
+`PROJECT_COMPLETION.md` with this status view, `docs/project-facts.md`, the
+active domain entry points, and the named local sources. Still-current
+cross-project decisions and gates are retained above or in
+`docs/project-facts.md`; topic-local detail remains at its source. Git history
+retains dated recovery accounts, branch hashes, superseded dependency order,
+and old crux identifiers.

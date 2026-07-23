@@ -2,7 +2,7 @@
 
 This is a compact answer to “what can the repository currently rely on?”
 Every row is a navigation claim. Confirm its scope and current status at the
-named owner before using it in a proof, thesis claim, or experiment decision.
+named sources before using it in a proof, thesis claim, or experiment decision.
 
 | Capability | Current scope | Confirm at |
 | --- | --- | --- |
@@ -17,7 +17,7 @@ named owner before using it in a proof, thesis claim, or experiment decision.
 | Rotated regular-polygon product result | exact pentagon open-domain executable proof plus endpoint/symmetry mathematical close and empirical exposition assets | `experiments/regular-products/README.md`, active thesis section |
 | Combinatorial-cell exploration | bounded evidence about boundary behavior, widths, convexity failures, crossings, and gradient discontinuity; no global convexity or monotonicity claim | `experiments/combinatorial-cells/README.md` |
 | Crosspolytope computation | retained four-dimensional candidate and bounded search evidence; global optimality depends on the stated search boundary | `experiments/crosspolytope/README.md` |
-| Visualization producers | scripts and browser-rendered assets for selected four-dimensional polytope/orbit views; visualization is explanatory, not theorem evidence | `experiments/visualization/README.md`, topic-local asset owners |
+| Visualization producers | scripts and browser-rendered assets for selected four-dimensional polytope/orbit views; visualization is explanatory, not theorem evidence | `experiments/visualization/README.md`, topic-local asset sources |
 | Formal proof-development document | integrated mathematical statements, derivations, audits, and proof routes; inclusion does not imply thesis use or stakeholder acceptance | `formal/README.md`, `formal/main.tex` |
 | Thesis PDF and native assets | active LaTeX builds and thesis-native figures; build success alone is not mathematical or submission readiness | `thesis/README.md`, `thesis/main.tex`, build checks |
 
@@ -25,5 +25,5 @@ named owner before using it in a proof, thesis claim, or experiment decision.
 
 Keep this table small. Add a row only for a repeated, high-level project
 question whose reconstruction is expensive or commonly overclaimed. When a row
-needs detailed status, commands, metrics, or exclusions, put those details at
-the owner rather than expanding this file.
+needs detailed status, commands, metrics, or exclusions, put those details in
+the named local source rather than expanding this file.

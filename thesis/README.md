@@ -33,12 +33,15 @@ They are not proof or evidence sources. Follow their pointers to `formal/`,
 
 - `central-claim-control.md`: claim placement, support, caveats, and review
   gates; navigation only.
-- `theory-authoring-map.md`: reader questions and explanatory ownership across
+- `theory-authoring-map.md`: reader questions and explanatory placement across
   the early theory.
 - `DEVELOPMENT.md`: maintainer workflow.
 - `preamble.tex`: thesis-local LaTeX setup and definitions.
 - `bibliography.bib`: active bibliography.
 - `figures/`: thesis-owned final assets and their producers.
+- `working/`: thesis-owned candidate assets. Some are active TeX inputs; check
+  the active TeX reference and writing companion rather than inferring use from
+  the directory name.
 
 ## Build
 

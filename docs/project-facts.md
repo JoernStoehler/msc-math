@@ -359,11 +359,11 @@ maintenance low. The numbers are stable and can be out of order.
     actual support. Source files and verbatim Jörn responses overrule agent
     summaries.
 
-82. Facts should stay in their canonical owner file when that location is easy
-    to find, predictable, expected, and robust enough. Facts belong in
-    `docs/project-facts.md` when agents keep overlooking the other location, when the
-    other location is too fragile under maintenance, when no good owner exists,
-    or when related information belongs together and has no single
+82. Facts should stay in their authoritative local file when that location is
+    easy to find, predictable, expected, and robust enough. Facts belong in
+    `docs/project-facts.md` when agents keep overlooking the local file, when
+    that file is too fragile under maintenance, when no suitable local source
+    exists, or when related information belongs together and has no single
     discoverable robust home.
 
 83. Jörn-confirmed current-state facts may belong in `docs/project-facts.md` when they

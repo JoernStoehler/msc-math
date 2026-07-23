@@ -25,7 +25,7 @@ their reasoning without turning them into a global placement algorithm.
 
 ## Cross-domain paths
 
-Some questions cross owners. Follow these routes rather than treating one
+Some questions cross domains. Follow these routes rather than treating one
 directory as the whole project:
 
 | Question | Start | Confirm with |

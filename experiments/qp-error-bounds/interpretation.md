@@ -58,7 +58,7 @@ endpoint atoms.  Population route counts must not be read as per-sigma recall.
 ## Named counterexamples and current signals
 
 The executable demonstrations in
-[`../../dev-quadratic-program/src/route_demonstrations/README.md`](../../dev-quadratic-program/src/route_demonstrations/README.md)
+[`../dev-quadratic-program/src/route_demonstrations/README.md`](../dev-quadratic-program/src/route_demonstrations/README.md)
 are the source-backed names to keep attached to interpretation:
 
 * `beta_margin_indeterminate`: HKO sigma `[0,1,6,7,3,4,5,9]` is exactly
@@ -70,11 +70,11 @@ are the source-backed names to keep attached to interpretation:
   predicate false.  Its large production q/action uncertainty is the intended
   refusal signal, not a certified capacity candidate.  The rank-deficient
   HKO sigma `[1,7,2,8,4,6,5]` is another f64-true/exact-false boundary row.
-* [`q_error_bound_not_certificate.rs`](../../dev-quadratic-program/src/route_demonstrations/q_error_bound_not_certificate.rs)
+* [`q_error_bound_not_certificate.rs`](../dev-quadratic-program/src/route_demonstrations/q_error_bound_not_certificate.rs)
   shows sigma `[0,1,7,3,9,5]`: f64 beta looks comfortably positive, yet the
   exact stored-dyadic q error exceeds the stored `q_error_bound`.  The scalar
   can be close while the bound is not a certificate.
-* [`literal_f64_pruning.rs`](../../dev-quadratic-program/src/route_demonstrations/literal_f64_pruning.rs)
+* [`literal_f64_pruning.rs`](../dev-quadratic-program/src/route_demonstrations/literal_f64_pruning.rs)
   uses the pruning-roundoff fixture: naive literal f64 pruning selects
   `[0,4,3,1,2]`, while the exact reference minimizer is `[0,3,1,4,2]`.
   Conservative retention repairs this particular pruning miss but remains an
