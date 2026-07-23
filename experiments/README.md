@@ -49,6 +49,11 @@ Keep this table auditable against the immediate directory tree. Add a row when
 adding an immediate directory. Do not use omission from a selective semantic
 view as evidence that related work does not exist.
 
+`FINDINGS.md` is a selective, grep-friendly view of notable bounded results,
+negative results, and dispositions across packets. It supplies semantic search
+terms and claim boundaries; it is not an exhaustive experiment inventory or
+source of evidence.
+
 `algorithm-comparisons.md` is a root-level routing note rather than an
 experiment directory: it relates algorithm units to the experiment that
 actually produces each kind of evidence.

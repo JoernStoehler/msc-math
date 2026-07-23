@@ -19,6 +19,10 @@ mean that Jörn or Kai accepted the statement or that the active thesis uses it.
 | Numerical and representation audits | `f64-prefilter-bound.tex`, `f64-orientation-sign-filters.tex`, `f64-near-singular-vertices.tex`, `near-redundant-facet-removal-bounds.tex`, `rational-integer-scaling.tex`, `admissibility-precision-audit.tex` |
 | Search and canonization | `random-polytope-boundedness.tex`, `search-pruning-correctness.tex`, `generic-coordinate-canonization.tex` |
 
+`FINDINGS.md` is a selective, grep-friendly view of notable results,
+counterexamples, status boundaries, and open obligations across these files.
+It is not an exhaustive proof inventory or mathematical source.
+
 ## Status interpretation
 
 Read the statement and its local status markers. Distinguish:
