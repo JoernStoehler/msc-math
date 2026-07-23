@@ -3,12 +3,24 @@
 Status: inactive retained exploration with bounded negative and diagnostic
 results. Revive only for a named thesis or method question.
 
+Original question: can combinatorial-boundary events explain or constrain
+changes in `sys` and the selected minimizing characteristic as a polytope
+crosses cell boundaries?
+
+Current use: retained boundary-transition evidence and counterpressure against
+unsupported continuity, single-boundary, convexity, and monotonicity models.
+
 This package owns combinatorial-boundary producers, retained outputs, and local
 interpretation for boundary events and transitions across four-dimensional
 polytopes.
 
 It does not establish global convexity, continuity from sampling, a
 single-boundary model, or monotonicity of repeated `sys` improvements.
+
+Changes to shared boundary-stepping code or producer-selected sigma semantics
+require reassessing this packet. Numerical-method lessons may inform other
+packets through copied methods or explicit links; they do not make those
+packets dependencies of this evidence.
 
 ## Start here
 

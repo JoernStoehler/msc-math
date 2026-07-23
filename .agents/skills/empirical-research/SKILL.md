@@ -1,6 +1,6 @@
 ---
 name: empirical-research
-description: "Use for empirical, computational, or experiment-supported research: maintaining research questions and experiment ideas; brainstorming or assessing a research frontier; planning, reviewing, executing, or interpreting experiments; coordinating research agents and integration branches; managing data, provenance, and evidence promotion; or improving this research workflow. Do not use for purely mathematical proof work without an empirical surface, publication-facing thesis writing/design, ordinary Rust work, or LICCA commands except to route to the relevant skill."
+description: "Use for empirical, computational, or experiment-supported research: structuring experiment packets and files; maintaining research questions and experiment ideas; brainstorming or assessing a research frontier; planning, reviewing, executing, or interpreting experiments; coordinating research agents and integration branches; managing data, provenance, and evidence promotion; or improving this research workflow. Do not use for purely mathematical proof work without an empirical surface, publication-facing thesis writing/design, ordinary Rust work, or LICCA commands except to route to the relevant skill."
 ---
 
 # Empirical Research
@@ -14,6 +14,11 @@ suggestions so advice does not silently become authority.
   evidence; do not silently weaken them.
 - **Suggestions** promote considerations to attention. They do not grant
   authority, require an architecture, or justify rejecting a sound plan.
+
+Read `references/experiment-packets.md` when creating, moving, splitting,
+joining, or documenting an experiment packet, or when deciding whether
+experiment code should be copied or shared. The packet contract owns physical
+placement; the conventions below own scientific state and evidence quality.
 
 ## Coordination Conventions
 
@@ -100,9 +105,11 @@ A materially changed item gets a new ID linked by `supersedes` or
 `derived_from`; it does not inherit the old item's premises, value, review, or
 authority. Clarification or disposition changes may edit the same item.
 
-Keep current records under Git with the scientific owner. Prune items that no
-longer help current agents; Git retains history. Do not load an append-only
-archive into every session.
+Keep current records under Git with the research line or experiment packet
+whose question makes them interpretable. Topic, method, implementation,
+consumer, and lifecycle relations do not each need another copy of the record.
+Prune items that no longer help current agents; Git retains history. Do not
+load an append-only archive into every session.
 
 Keep a compact frontier view with:
 
@@ -200,8 +207,11 @@ cost exceeds expected error reduction. Do not create review as ritual.
 - Before irreversible target evaluation, freeze the actual evaluator, source,
   dependencies, and inputs in a recoverable state. Material changes require a
   narrow recheck before exposure.
-- Keep durable evidence and interpretation with the narrowest owner future
-  consumers need. Publication-facing assets route through `$thesis`.
+- Keep durable evidence and interpretation in the experiment packet whose
+  question and comparison contract give them meaning. Record other consumers
+  and affected implementations as relations; do not relocate evidence merely
+  to classify it by method, subject, or status. Publication-facing assets route
+  through `$thesis`.
 
 ## Suggestions
 

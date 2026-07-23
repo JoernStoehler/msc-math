@@ -17,7 +17,8 @@ result before explaining implementation. Distinguish:
 
 Explain code through the reader's proof or audit obligation. Include only
 short excerpts, tables, or witness fragments that materially reduce audit
-cost. Keep full source, run manuals, outputs, and artifacts with their owner.
+cost. Keep full source, run manuals, outputs, and artifacts with their
+self-contained experiment packet or code owner.
 
 Do not turn execution success into mathematical evidence beyond the exact
 conditions checked, and do not describe explanatory or empirical assets as

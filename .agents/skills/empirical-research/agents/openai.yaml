@@ -1,4 +1,4 @@
 interface:
   display_name: "Empirical Research"
-  short_description: "Lead, execute, and review empirical research"
-  default_prompt: "Use $empirical-research to choose the right research role, keep the task proportional, and obtain reviewable evidence when needed."
+  short_description: "Structure packets and lead empirical research"
+  default_prompt: "Use $empirical-research to structure experiment packets, choose the right research role, keep the task proportional, and obtain reviewable evidence when needed."

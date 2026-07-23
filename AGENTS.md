@@ -84,7 +84,12 @@ Prefer coordinate-free notation when the order is irrelevant.
 
 ## Documentation
 
-Put durable knowledge with the narrowest owner that future work will inspect.
+Put durable knowledge in the self-contained owner whose question or contract
+makes it interpretable. Record other subjects, methods, consumers, and change
+relationships as explicit links rather than forcing them into the directory
+tree. Split an owner only when the parts can be maintained and interpreted
+independently.
+
 Document repository-specific facts, decisions, evidence, status, source paths,
 sharp edges, and expensive checks. Do not duplicate generic knowledge.
 

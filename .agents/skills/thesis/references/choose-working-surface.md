@@ -10,7 +10,9 @@ or temporary reasoning belongs.
   open decisions, and review state in the owning companion.
 - Put proof development and developer-facing mathematics in `formal/`.
 - Keep code, data, producer commands, empirical reports, and generated assets
-  with their crate or experiment owner.
+  with the self-contained experiment packet whose question makes them
+  interpretable. Record other thesis, method, and implementation relationships
+  as links instead of moving the packet into another category.
 - Treat `thesis/legacy/` as stale source material, never as active prose.
 - Use `/tmp` for disposable reasoning, candidate comparisons, prompts, and
   review packets that do not justify durable maintenance.

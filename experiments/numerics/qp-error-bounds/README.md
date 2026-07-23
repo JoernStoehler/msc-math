@@ -1,5 +1,32 @@
 # QP numerical evidence: wide-row Rust producer
 
+Status: retained multi-surface numerical evidence with active soundness and
+route-evaluation uses.
+
+Original question: how do f64 QP/KKT intermediate quantities, predicates, and
+downstream capacity results differ from exact/reference computations across
+the cases the production route actually encounters?
+
+Current use: compare the production f64 route, retained-exact evaluation, and
+the separate multi-centre soundness trial without treating any one comparison
+as a universal QP guarantee.
+
+Systems under study include the production KKT saddle solver, exact rational
+solver, capacity aggregation routes, derivative/recovery consumers, and named
+stored input populations. Changes to those surfaces require reassessing this
+packet; promotion of another QP algorithm changes the supported comparison set,
+not the packet's original question.
+
+Method relatives include
+`experiments/dev-quadratic-program/numerics-audit/` for route-coupled KKT
+variable/predicate auditing and numerical studies of optimization or volume
+algorithms that may reuse methodology without importing this packet's helpers.
+
+This packet owns its producer, population contracts, retained evidence,
+analysis, and bounded interpretations. It does not prove global f64 soundness,
+exactness over algebraic inputs, complete HK candidate recall, or correctness
+of every consumer route.
+
 The experiment has one observation boundary: Rust `observe(polytope, sigma)`
 produces one wide `RawRow`. It calls the current production KKT saddle solver,
 exact rational solver, geometry/transition construction, capacity route,
