@@ -1,7 +1,7 @@
 # Dev Sys Prediction Panel
 
-This surface owns deterministic local panels for `sys(a0 + t u)` prediction
-audits. The public data flow is:
+This is the generation surface for deterministic local panels used in
+`sys(a0 + t u)` prediction audits. The public data flow is:
 
 ```text
 basepoints -> states -> perturbation events -> observations/reports

@@ -7,11 +7,11 @@ Current guidance back to optimizer work is in `OPTIMIZER-GUIDANCE.md`.
 Facet-count radius and baseline-error calibration is in
 `facet-scale-baseline-error/README.md`.
 
-This packet is separate from `experiments/dev-gradient-ascent/`. The gradient
-ascent packet owns optimizer behavior: how to choose steps that reach good
-local maxima. This packet owns predictive local models: how well we can
-forecast `sys(a0 + da)` on a useful neighborhood of `a0`, before deciding which
-optimizer policy should consume that forecast.
+This package is separate from `experiments/dev-gradient-ascent/`. Gradient
+ascent work asks how to choose steps that reach good local maxima. Work here
+asks how well predictive local models forecast `sys(a0 + da)` on a useful
+neighborhood of `a0`, before deciding which optimizer policy should consume
+that forecast.
 
 The current motivating problem is branch switching near lower-dimensional
 cells. At a point `a0`, a branch can be inactive but close enough that a finite
@@ -44,7 +44,7 @@ fixtures, and caveats are stable.
 
 ## Scope
 
-This packet owns:
+Work kept in this package includes:
 
 - semi-local prediction of `sys(a0 + da)` over finite direction/radius clouds;
 - lower-envelope models with base branch gaps;
@@ -55,7 +55,7 @@ This packet owns:
 - model-error measurement against recomputed actual `sys`;
 - compact fixture panels and smoke producers for prediction diagnostics.
 
-This packet does not own:
+Outside this package:
 
 - optimizer endpoint claims or local-maximum claims;
 - random-start ascent policies;
@@ -85,8 +85,8 @@ surface, not a claim that every directory contains retained evidence.
 | `facet-scale-baseline-error/` | retained facet-count/radius and lower-envelope error calibration |
 | `error-model-smoke/` | three-row analyzer-development fixture; not evidence |
 | `branch-equality-continuation/` | fixed pairwise branch-equality continuation and nonregular-product control |
-| `sysext-beta-boundary-scan/` | raw KKT beta-margin scan over selected table rows |
-| `sysext-sigma-line-probe/` | fixed-sigma raw-KKT branch behavior along finite lines |
+| [`sysext-beta-boundary-scan/`](sysext-beta-boundary-scan/README.md) | standalone raw KKT beta-margin scan; its panel-producer counterpart is copy-edited rather than imported |
+| [`sysext-sigma-line-probe/`](sysext-sigma-line-probe/README.md) | fixed-sigma raw-KKT branch behavior along finite lines; no retained canonical output |
 
 ## Current Model Families
 
@@ -133,11 +133,13 @@ base candidate window.
 Use raw KKT critical branches, including beta-invalid branches, when they are
 near enough to beta-validity to be plausible near-future bottlenecks.
 
-Scratch evidence from `experiments/dev-gradient-ascent/syssmooth-sprint/`
-showed that including all beta-invalid critical branches is destructive:
-far-invalid branches can dominate the LP in irrelevant ways. A beta-margin
-filter or smooth beta gate is required before `sysext` branches should constrain
-directions.
+The unretained checked-run summary in
+[`OPTIMIZER-GUIDANCE.md`](OPTIMIZER-GUIDANCE.md) records that including all
+beta-invalid critical branches is destructive: far-invalid branches can
+dominate value comparisons in irrelevant ways. Regenerate the
+[fixed-sigma line probe](sysext-sigma-line-probe/README.md) before treating
+that summary as evidence. A beta-margin filter or smooth beta gate is required
+before `sysext` branches should constrain directions.
 
 ## First Experiments
 
@@ -232,17 +234,20 @@ far-invalid branches and destroy lower-envelope directions.
 - **Fixture panel:** compact deterministic basepoint table so prediction
   experiments do not need to parse the full retained datascience table.
 
-## Current Scratch Inputs
+## Evidence locations
 
-The exploratory evidence that motivated this packet currently lives in the
-scratch worktree branch `syssmooth-sprint`, especially:
+The path formerly advertised as
+`experiments/dev-gradient-ascent/syssmooth-sprint/SPRINT-RESULTS.md` is absent
+from the current tree and all current Git refs. Do not search for it as the
+authoritative source or cite it as durable evidence.
 
-```text
-experiments/dev-gradient-ascent/syssmooth-sprint/SPRINT-RESULTS.md
-```
-
-Do not cite that scratch packet as durable evidence. Its role is to seed this
-packet with failure modes and initial hypotheses.
+Current retained prediction evidence lives in
+[`facet-scale-baseline-error/`](facet-scale-baseline-error/README.md) and
+[`branch-equality-continuation/`](branch-equality-continuation/README.md).
+[`OPTIMIZER-GUIDANCE.md`](OPTIMIZER-GUIDANCE.md) also preserves
+optimizer-facing conclusions from earlier scratch runs, including the
+fixed-sigma sysext line probe, but those claims are only independently
+checkable where a retained packet supplies their underlying artifacts.
 
 ## Initial Hypotheses
 
