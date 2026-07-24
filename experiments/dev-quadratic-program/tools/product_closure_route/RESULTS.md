@@ -43,6 +43,32 @@ The smallest nonzero exact objective magnitude was `9.43e-50`. The largest
 objective absolute error was `8.33e-17`, or `5.96e-16` relative to that case's
 maximum objective. The largest objective interval width was `5.05e-15`.
 
+### Retained datascience product population
+
+The separate retained sys-datascience population provides a larger
+falsification check for the six-facet existence claim. It contains 10,240
+accepted random products: 1,024 rows in each polygon-pair bucket
+`3x3, 3x4, ..., 6x6`. Matching the producer geometries against the shared
+capacity cache found:
+
+- all 10,240 producer geometries exactly once;
+- a cached literal winning word of length exactly six for every geometry;
+- zero cached winners of length at least seven; and
+- exact equality, as stored binary64 values, between every product record's
+  scalar capacity and its winning sigma action.
+
+Thus the proposed relative-action relaxation was unnecessary on this
+population: a length-six literal winner was already selected in every row.
+The shared cache also contains 100 earlier product-sample rows, ten per bucket;
+their literal winners all have length six as well.
+
+This is empirical support, not a proof of the six-facet theorem and not a claim
+that longer tied minimizers do not exist. The check used the LFS objects
+`66bf82010e...` (`produce/random-product.jsonl`) and `abf6ce2189...`
+(`produce/shared-cache.jsonl`) as retained on 2026-07-24. The producer/cache
+join key was the exact serialized `dual_vertices_rational` array, not a rounded
+geometric identifier.
+
 ## Performance
 
 Times are route-internal totals from one release-mode run on the same machine.

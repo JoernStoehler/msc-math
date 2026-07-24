@@ -46,32 +46,20 @@ This gate blocks code movement, not API/consumer planning.
 ## Mathematical acceptance gate
 
 `formal/product-qp-six-facet-reduction.tex` is agent-derived, independently
-agent-reviewed, and currently enclosed in `unverified`; its header explicitly
-says Jörn has not reviewed or accepted it. Batch 1 must not expose exact
-automatic product-capacity dispatch until that theorem and its capacity-value
-corollary have an accepted mathematical status.
+agent-reviewed, and remains enclosed in `unverified` because Jörn has not
+checked the proof. On 2026-07-24 Jörn nevertheless accepted the theorem for
+production as an explicit risk decision if the retained datascience product
+population supported it. The retained check then found a literal length-six
+cached winner for every one of 10,240 producer geometries, with zero
+length-seven-or-longer winners; see
+`tools/product_closure_route/RESULTS.md`.
 
-Resolve this before Batch 1 in one of two ways:
-
-1. record Jörn's acceptance/review outcome and update the formal status; or
-2. migrate the general route alone while keeping the closure-vertex product
-   route experimental and unavailable through automatic production dispatch.
-
-Do not block the general migration merely because product mathematical
-acceptance is deferred, and do not weaken the product result label to bypass
-the gate.
-
-In the general-only branch:
-
-- production exposes an explicit general-capacity function/result rather than
-  `Capacity4d::Product` or automatic product dispatch;
-- exact structural products use the general route only where its stated input
-  contract and evidence cover them; otherwise existing product consumers stay
-  on the labelled legacy/experimental routes;
-- there is no production product correspondence claim or exact-product cache
-  migration; and
-- all later product API, product consumer, and thesis product-algorithm steps
-  in this plan are omitted until the theorem is accepted.
+This resolves the production decision without mislabelling the proof as
+Jörn-reviewed. Batch 1 may expose exact automatic product-capacity dispatch
+under the theorem's stated hypotheses and the product route's exact
+binary64-input contract. If later mathematical review finds a gap or the
+retained check ceases to reproduce, stop the product migration and retain only
+the general route; do not weaken the product result label to bypass that gate.
 
 ## Architecture comparison
 
