@@ -43,6 +43,36 @@ numerical correspondence survived.
 
 This gate blocks code movement, not API/consumer planning.
 
+## Mathematical acceptance gate
+
+`formal/product-qp-six-facet-reduction.tex` is agent-derived, independently
+agent-reviewed, and currently enclosed in `unverified`; its header explicitly
+says Jörn has not reviewed or accepted it. Batch 1 must not expose exact
+automatic product-capacity dispatch until that theorem and its capacity-value
+corollary have an accepted mathematical status.
+
+Resolve this before Batch 1 in one of two ways:
+
+1. record Jörn's acceptance/review outcome and update the formal status; or
+2. migrate the general route alone while keeping the closure-vertex product
+   route experimental and unavailable through automatic production dispatch.
+
+Do not block the general migration merely because product mathematical
+acceptance is deferred, and do not weaken the product result label to bypass
+the gate.
+
+In the general-only branch:
+
+- production exposes an explicit general-capacity function/result rather than
+  `Capacity4d::Product` or automatic product dispatch;
+- exact structural products use the general route only where its stated input
+  contract and evidence cover them; otherwise existing product consumers stay
+  on the labelled legacy/experimental routes;
+- there is no production product correspondence claim or exact-product cache
+  migration; and
+- all later product API, product consumer, and thesis product-algorithm steps
+  in this plan are omitted until the theorem is accepted.
+
 ## Architecture comparison
 
 The first version of this plan chose `capacity_4d/` plus one public result enum
@@ -137,7 +167,7 @@ crates/symplectic/src/algorithms/
 |   |-- mod.rs                 # public facade, dispatch, and result contracts
 |   |-- input.rs               # validated input and derived exact geometry
 |   |-- general.rs             # selected general route
-|   |-- product.rs             # selected closure-vertex product route
+|   |-- product.rs             # conditional on product theorem acceptance
 |   `-- interval.rs            # shared outward arithmetic, if both routes use it
 |-- hk2017/                    # existing enumeration and orbit route
 |-- billiard/                  # existing legacy orbit route/control
@@ -161,6 +191,11 @@ match result {
     Capacity4d::Product(result) => use_exact_binary64(result.capacity_exact()),
 }
 ```
+
+This enum/automatic-dispatch shape applies only after product theorem
+acceptance. The general-only alternative exposes `GeneralCapacity4d` through an
+explicit general route and does not manufacture an empty/unsupported product
+variant merely to preserve the provisional enum.
 
 `CapacityInput4d` owns the small validated input and derived binary64-rational
 geometry so repeated route calls do not repeat validation or ask callers to
@@ -226,11 +261,12 @@ cannot run. For a fully validated bounded input and complete candidate stream,
 finding no positive capacity candidate contradicts the mathematical contract
 and is an internal invariant failure, not ordinary mathematical non-success.
 
-Automatic dispatch uses exact structural-product classification. A confirmed
-non-product takes the general route. Once an input is classified as an exact
-structural product, a product-route arithmetic or invariant failure is
-reported; it must not silently fall back to the general route and erase the
-failed specialized contract.
+When the product theorem is accepted, automatic dispatch uses exact
+structural-product classification. A confirmed non-product takes the general
+route. Once an input is classified as an exact structural product, a
+product-route arithmetic or invariant failure is reported; it must not silently
+fall back to the general route and erase the failed specialized contract.
+Without product acceptance, no automatic product dispatch exists.
 
 Ordinary `sys` producers may treat failure to construct this token as a hard
 precondition failure after their own soft input-filter stage. The numerical
@@ -259,15 +295,23 @@ of `rem:kkt-batched-binary64-contract` and reruns the general numerical packet.
 The migration should use the compiler and tests as navigation. Do not turn
 every logical dependency into a separate edit/review cycle. After the
 coordination gate clears, use three large coherent batches with one committed
-checkpoint between them.
+checkpoint at each non-commutative boundary.
 
-The only required non-commutative boundaries are:
+The required boundaries/checkpoints are:
 
-1. choose the integration base before editing overlapping route code;
-2. establish the production contract before consumer schemas and thesis prose
-   depend on it; and
-3. stabilize the implementation before recording final performance,
-   complexity, and thesis claims.
+1. product mathematical acceptance or the explicit general-only branch;
+2. chosen integration base before editing overlapping route code;
+3. faithful production contract before optimization or consumer schemas;
+4. accepted evidence harness/negative controls before optimizing the system
+   they judge;
+5. reviewed optimized implementation before consumer migration and final
+   measurements; and
+6. consumer/schema checkpoint before thesis integration.
+
+These boundaries create pre-migration, faithful-production, evidence-harness,
+optimized/evidence, consumer/schema, and thesis checkpoints. They do not split
+the work back into six small implementation stages: Batches 1--3 remain the
+large units of editing and hard feedback.
 
 Within a batch, prefer a broad patch followed by hard feedback:
 
@@ -289,6 +333,21 @@ Start a fresh migration worktree from the chosen integration commit after the
 overlapping worktree has a stable disposition. Record that commit as the
 pre-migration checkpoint.
 
+Before editing, run and retain both canonical packets on the integrated base:
+
+```text
+experiments/dev-quadratic-program/tools/general_algorithm_ablation/run.sh \
+  /tmp/qp-integrated-baseline/general
+cargo run -p exp-dev-quadratic-program --release \
+  --bin qp-product-closure-route -- \
+  --samples=5 --timing-repeats=1 \
+  > /tmp/qp-integrated-baseline/product.jsonl
+```
+
+These are the extraction baseline. A historical packet from an older commit is
+not a substitute because the overlapping validation/geometry work can change
+the measured contract.
+
 Make one coherent implementation patch containing:
 
 - the selected general kernel extracted from the ablation binary into
@@ -305,6 +364,11 @@ Make one coherent implementation patch containing:
 - compile-checked ordinary, forced-route, validation-error, exact-winner, and
   tracing caller examples;
 - focused public tests and crate README/DEVELOPMENT documentation.
+
+The production product implementation, exact-winner public surface, and
+automatic product dispatch are included only if the mathematical acceptance
+gate is satisfied. Otherwise keep the readable experimental product route and
+its controls while completing the general production migration.
 
 The caller examples compare the two serious public shapes inside this batch:
 validated input plus a result enum versus raw free functions plus a certificate
@@ -328,10 +392,23 @@ cargo test -p exp-dev-quadratic-program --release \
   --bin qp-general-algorithm-ablation
 cargo test -p exp-dev-quadratic-program --release \
   --bin qp-product-closure-route
+experiments/dev-quadratic-program/tools/general_algorithm_ablation/run.sh \
+  /tmp/qp-faithful-production/general
+cargo run -p exp-dev-quadratic-program --release \
+  --bin qp-product-closure-route -- \
+  --samples=5 --timing-repeats=1 \
+  > /tmp/qp-faithful-production/product.jsonl
 ```
 
-Compare regenerated evidence fields, not only process exit status. Commit the
-faithful production migration only when this hard feedback passes.
+The post-extraction producers must exercise each migrated readable/production
+pair on the same retained inputs and emit its core capacity/certificate
+correspondence. Compare regenerated fields with the integrated baseline, not
+only process exit status. Commit the faithful production migration only when
+the actual producer packets and required correspondence pass. The binary's
+small unit-test surface is not a substitute for the retained 88-case product
+producer when product production migration is enabled; in the general-only
+branch that producer remains an experimental baseline/control rather than
+production correspondence.
 
 If compilation or the caller examples show that the architecture is wrong,
 do not repair around it. Create a fresh worktree from the pre-migration
@@ -353,7 +430,7 @@ batch that:
   exact binary64 arithmetic;
 - checks candidate-stream retention, capacity, known values, invariances,
   general/product overlap, old-route controls, and FG agreement where the
-  contracts overlap;
+  accepted production contracts overlap;
 - keeps the product exact-all route labelled as a coupled interval-pruning
   audit and uses the independent product controls named above;
 - exercises unavailable gradual underflow and every public validation,
@@ -365,10 +442,20 @@ batch that:
 - uses selected negative controls or mutations to demonstrate that critical
   predicate, rounding, pruning, and fallback regressions are detected.
 
-Profile the faithful production route once broadly, then make one grouped
+First run the new evidence harness against the faithful implementation,
+demonstrate that the selected negative controls fail for the intended reasons,
+and commit the accepted harness/results as an evidence checkpoint. This
+prevents a shared harness/optimization mistake from validating itself.
+
+Then profile the faithful production route once broadly and make one grouped
 optimization patch for measured costs. Re-run the complete affected evidence
 packet after that patch. Keep detailed metrics with their producers rather than
 copying them into prose.
+
+Final performance comparisons use matched input and validation boundaries,
+warmed interleaved repetitions where noise matters, toolchain/dependency
+provenance, and explicit oracle/readable/faithful/optimized route labels.
+Different packet timing scopes must not be presented as direct speed ratios.
 
 Obtain independent proof-to-code, numerical-contract, evidence-scope,
 performance-comparison, and public-API review at the end of this batch. Commit
@@ -392,7 +479,25 @@ Current source inspection already classifies `sys-landscape` computed payloads,
 random-product/datascience producers, and regular-product sweeps as at least
 dual-route. They store best sigmas, orbit scalars, bounce counts, iterations, or
 tied orbit lists. Sparse product winners do not automatically replace those
-contracts.
+contracts. In the general-only branch, no consumer migrates to a new production
+product result; product users retain their explicitly labelled existing route.
+
+Root `cargo check --workspace` does not cover every experiment. Before editing
+consumers, inventory every `Cargo.toml` and capacity/orbit call site, compare
+that inventory with root `cargo metadata`, and explicitly check affected
+standalone manifests with `cargo check --manifest-path`. Currently known
+standalone surfaces requiring explicit compile/semantic disposition include:
+
+- `alternative-source-transfer`;
+- `equal-budget-product-search`;
+- `extreme-scalar-rejection-proposer`;
+- `generic-ridge-tail-stage1-target`;
+- `ridge-endpoint-path`; and
+- `ridge-symmetry-completion`.
+
+Because legacy APIs remain available, successful compilation is not evidence
+that semantic migration is complete. The call-site/schema inventory must state
+which route contract each retained use intentionally consumes.
 
 Make one migration/schema patch that:
 
@@ -401,6 +506,9 @@ Make one migration/schema patch that:
   certificates and legacy orbit payloads;
 - adds one explicit compatibility/regeneration policy for retained caches and
   JSONL instead of per-producer ad hoc fields;
+- adds a route-contract/version fingerprint to resumable-cache eligibility,
+  including the requested backend, rather than accepting a row by `poly_id`
+  alone;
 - establishes exact/outward volume and `sys` composition before any consumer
   claims certified `sys`; otherwise keeps `sys` explicitly approximate;
 - removes duplicated ordinary wrappers made obsolete by the public API; and
@@ -414,7 +522,14 @@ explanation from the final implementation and retained evidence. Do not publish
 pre-optimization measurements as final comparisons.
 
 Run the workspace checks, affected consumer suites, retained schema
-round-trips/regeneration checks, and the final production evidence packet.
+round-trips/regeneration checks, affected standalone-manifest checks, and the
+final production evidence packet. A round-trip alone does not establish cache
+validity: test that backend/version mismatches cannot hit an old row.
+
+Distinguish immutable historical artifacts from resumable compute caches.
+Historical rows retain their original route/provenance labels; resumable caches
+must reject or explicitly migrate legacy rows without the current contract
+fingerprint.
 Obtain final code/API/consumer/thesis-evidence review, then commit the consumer
 and thesis checkpoints separately so either can be reused or redone without
 salvaging the other.
