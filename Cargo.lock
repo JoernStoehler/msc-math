@@ -15,7 +15,7 @@ dependencies = [
 name = "algebraic-numbers"
 version = "0.1.0"
 dependencies = [
- "nalgebra",
+ "nalgebra 0.33.3",
  "num-rational",
  "num-traits",
  "proptest",
@@ -315,7 +315,7 @@ name = "crosspolytope"
 version = "0.1.0"
 dependencies = [
  "euclidean-polytopes",
- "nalgebra",
+ "nalgebra 0.33.3",
  "num-rational",
  "num-traits",
  "serde",
@@ -411,7 +411,7 @@ version = "0.1.0"
 dependencies = [
  "euclidean-polytopes",
  "good_lp",
- "nalgebra",
+ "nalgebra 0.33.3",
  "num-bigint",
  "num-rational",
  "num-traits",
@@ -472,7 +472,7 @@ name = "euclidean-polytopes"
 version = "0.1.0"
 dependencies = [
  "algebraic-numbers",
- "nalgebra",
+ "nalgebra 0.33.3",
  "num-bigint",
  "num-integer",
  "num-rational",
@@ -490,7 +490,7 @@ version = "0.1.0"
 dependencies = [
  "euclidean-polytopes",
  "exp-sys-landscape",
- "nalgebra",
+ "nalgebra 0.33.3",
  "rand 0.8.5",
  "rand_chacha 0.3.1",
  "serde",
@@ -504,7 +504,7 @@ version = "0.1.0"
 dependencies = [
  "euclidean-polytopes",
  "good_lp",
- "nalgebra",
+ "nalgebra 0.33.3",
  "num-bigint",
  "num-rational",
  "num-traits",
@@ -521,7 +521,7 @@ name = "exp-dev-flow-graph"
 version = "0.1.0"
 dependencies = [
  "exp-combinatorial-cells",
- "nalgebra",
+ "nalgebra 0.33.3",
  "num-rational",
  "num-traits",
  "serde",
@@ -537,7 +537,7 @@ dependencies = [
  "blake3",
  "exp-sys-landscape",
  "good_lp",
- "nalgebra",
+ "nalgebra 0.33.3",
  "rand 0.8.5",
  "rand_chacha 0.3.1",
  "rayon",
@@ -550,7 +550,7 @@ dependencies = [
 name = "exp-dev-qp-numerics-audit"
 version = "0.1.0"
 dependencies = [
- "nalgebra",
+ "nalgebra 0.33.3",
  "num-rational",
  "num-traits",
  "serde",
@@ -567,7 +567,8 @@ dependencies = [
  "euclidean-polytopes",
  "exp-sys-landscape",
  "good_lp",
- "nalgebra",
+ "nalgebra 0.33.3",
+ "nalgebra 0.35.0",
  "num-bigint",
  "num-rational",
  "num-traits",
@@ -590,7 +591,7 @@ dependencies = [
  "exp-regular-products",
  "exp-sys-landscape",
  "good_lp",
- "nalgebra",
+ "nalgebra 0.33.3",
  "num-rational",
  "rand 0.8.5",
  "rand_chacha 0.3.1",
@@ -608,7 +609,7 @@ dependencies = [
  "blake3",
  "euclidean-polytopes",
  "good_lp",
- "nalgebra",
+ "nalgebra 0.33.3",
  "num-bigint",
  "num-rational",
  "num-traits",
@@ -626,7 +627,7 @@ version = "0.1.0"
 dependencies = [
  "euclidean-polytopes",
  "exp-sys-landscape",
- "nalgebra",
+ "nalgebra 0.33.3",
  "num-bigint",
  "num-rational",
  "num-traits",
@@ -645,7 +646,7 @@ version = "0.1.0"
 dependencies = [
  "euclidean-polytopes",
  "exp-dev-quadratic-program",
- "nalgebra",
+ "nalgebra 0.33.3",
  "num-rational",
  "rand 0.8.5",
  "rand_chacha 0.3.1",
@@ -664,7 +665,7 @@ dependencies = [
  "euclidean-polytopes",
  "exp-sys-landscape",
  "good_lp",
- "nalgebra",
+ "nalgebra 0.33.3",
  "num-bigint",
  "num-rational",
  "num-traits",
@@ -686,7 +687,7 @@ dependencies = [
  "euclidean-polytopes",
  "exp-sys-landscape",
  "good_lp",
- "nalgebra",
+ "nalgebra 0.33.3",
  "num-bigint",
  "num-rational",
  "num-traits",
@@ -709,7 +710,7 @@ dependencies = [
  "euclidean-polytopes",
  "exp-dev-quadratic-program",
  "exp-sys-landscape",
- "nalgebra",
+ "nalgebra 0.33.3",
  "num-rational",
  "num-traits",
  "serde",
@@ -722,7 +723,7 @@ name = "exp-regular-products"
 version = "0.1.0"
 dependencies = [
  "euclidean-polytopes",
- "nalgebra",
+ "nalgebra 0.33.3",
  "num-rational",
  "num-traits",
  "serde",
@@ -738,7 +739,7 @@ dependencies = [
  "euclidean-polytopes",
  "exp-sys-landscape",
  "good_lp",
- "nalgebra",
+ "nalgebra 0.33.3",
  "num-bigint",
  "num-rational",
  "num-traits",
@@ -759,7 +760,7 @@ dependencies = [
  "blake3",
  "euclidean-polytopes",
  "good_lp",
- "nalgebra",
+ "nalgebra 0.33.3",
  "num-bigint",
  "num-rational",
  "num-traits",
@@ -935,6 +936,30 @@ dependencies = [
  "wasip2",
  "wasip3",
 ]
+
+[[package]]
+name = "glam"
+version = "0.30.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "19fc433e8437a212d1b6f1e68c7824af3aed907da60afa994e7f542d18d12aa9"
+
+[[package]]
+name = "glam"
+version = "0.31.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "556f6b2ea90b8d15a74e0e7bb41671c9bdf38cd9f78c284d750b9ce58a2b5be7"
+
+[[package]]
+name = "glam"
+version = "0.32.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f70749695b063ecbf6b62949ccccde2e733ec3ecbbd71d467dca4e5c6c97cca0"
+
+[[package]]
+name = "glam"
+version = "0.33.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f22fb22f065b308be0d8724e3706c7fa3fc2a6c7d6899df4cad7860e7a75436"
 
 [[package]]
 name = "glob"
@@ -1119,12 +1144,32 @@ checksum = "9d43ddcacf343185dfd6de2ee786d9e8b1c2301622afab66b6c73baf9882abfd"
 dependencies = [
  "approx",
  "matrixmultiply",
- "nalgebra-macros",
+ "nalgebra-macros 0.2.2",
  "num-complex",
  "num-rational",
  "num-traits",
  "serde",
- "simba",
+ "simba 0.9.1",
+ "typenum",
+]
+
+[[package]]
+name = "nalgebra"
+version = "0.35.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "adc43a60c217b0c6ff46e47f26911015ad8d2e5a8be1af668c67e370d99a4346"
+dependencies = [
+ "approx",
+ "glam 0.30.10",
+ "glam 0.31.1",
+ "glam 0.32.1",
+ "glam 0.33.2",
+ "matrixmultiply",
+ "nalgebra-macros 0.3.0",
+ "num-complex",
+ "num-rational",
+ "num-traits",
+ "simba 0.10.0",
  "typenum",
 ]
 
@@ -1133,6 +1178,17 @@ name = "nalgebra-macros"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "254a5372af8fc138e36684761d3c0cdb758a4410e938babcff1c860ce14ddbfc"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.117",
+]
+
+[[package]]
+name = "nalgebra-macros"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "973e7178a678cfd059ccec50887658d482ce16b0aa9da3888ddeab5cd5eb4889"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1554,6 +1610,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "safe_arch"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3a52ec151f024d703f9fd65abb7cbe81e7cdb39f18917a3a37e3014470dc7c59"
+dependencies = [
+ "bytemuck",
+]
+
+[[package]]
 name = "same-file"
 version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1656,7 +1721,19 @@ dependencies = [
  "num-complex",
  "num-traits",
  "paste",
- "wide",
+ "wide 0.7.33",
+]
+
+[[package]]
+name = "simba"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8f45c644a9f3a386f9288625d9f0c1e999e1acf07a37df35d0516c7f199d9cb2"
+dependencies = [
+ "approx",
+ "num-complex",
+ "num-traits",
+ "wide 1.5.0",
 ]
 
 [[package]]
@@ -1687,7 +1764,7 @@ dependencies = [
  "criterion",
  "euclidean-polytopes",
  "good_lp",
- "nalgebra",
+ "nalgebra 0.33.3",
  "num-bigint",
  "num-integer",
  "num-rational",
@@ -1907,7 +1984,7 @@ name = "visualization"
 version = "0.1.0"
 dependencies = [
  "euclidean-polytopes",
- "nalgebra",
+ "nalgebra 0.33.3",
  "num-rational",
  "num-traits",
  "serde",
@@ -2064,7 +2141,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0ce5da8ecb62bcd8ec8b7ea19f69a51275e91299be594ea5cc6ef7819e16cd03"
 dependencies = [
  "bytemuck",
- "safe_arch",
+ "safe_arch 0.7.4",
+]
+
+[[package]]
+name = "wide"
+version = "1.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dfdfe6a32973f2d1b268b8895845a8a96cac2f0191e72c27cc929036060dbf89"
+dependencies = [
+ "bytemuck",
+ "safe_arch 1.1.0",
 ]
 
 [[package]]
