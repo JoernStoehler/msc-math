@@ -156,7 +156,7 @@ def source_parameter_availability(provenance_rows: list[dict[str, object]]) -> d
 def generator_contract() -> dict[str, object]:
     return {
         "source_truth": [
-            "experiments/sys-datascience/produce/main.rs",
+            "experiments/polytope-datasets/main.rs",
             "crates/euclidean-polytopes/src/random.rs",
             "symplectic::geom::polygon::random_polygon_2d",
         ],

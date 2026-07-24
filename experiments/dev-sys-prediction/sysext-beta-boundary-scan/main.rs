@@ -233,7 +233,7 @@ fn solve_raw_sysext_kkt_for_dual_vertices(
 
 fn parse_args() -> Cli {
     let mut cli = Cli {
-        polytope_table: PathBuf::from("experiments/sys-datascience/prepare/polytope-table.jsonl"),
+        polytope_table: PathBuf::from("experiments/polytope-invariant-table/polytope-table.jsonl"),
         out: std::env::temp_dir().join("dev-sysext-beta-boundary-scan.jsonl"),
         capacity_source: None,
         facet_counts: None,

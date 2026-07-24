@@ -9,7 +9,7 @@ mod load_caches;
 mod rows;
 mod write_database;
 
-#[path = "../produce/rows.rs"]
+#[path = "../polytope-datasets/rows.rs"]
 mod producer_rows;
 
 use exp_sys_landscape::ComputedPolytopePayloadRow;

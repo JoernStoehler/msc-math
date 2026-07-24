@@ -12,7 +12,7 @@ Run after preparing a reference directory:
 
 ```bash
 uv run --script experiments/sys-datascience/methods/hko-reference-coverage/analyze.py \
-  --random-tables-dir experiments/sys-datascience/prepare \
+  --random-tables-dir experiments/polytope-invariant-table \
   --reference-tables-dir /tmp/ds-prepare-hko \
   --out-dir /tmp/hko-reference-coverage
 ```

@@ -34,8 +34,8 @@ Source pointers:
   current answered/open/stopped/acceptance-gated question graph;
 - `experiments/FINDINGS.md` for a selective semantic route across later
   experiment results;
-- `experiments/sys-datascience/produce/README.md`;
-- `experiments/sys-datascience/prepare/README.md`;
+- `experiments/polytope-datasets/README.md`;
+- `experiments/polytope-invariant-table/README.md`;
 - `experiments/sys-datascience/methods/README.md`;
 - `experiments/sys-datascience/methods/trusted-random-product-closure-summary.md`;
 - `experiments/sys-datascience/methods/trusted-random-product-method-dispositions.md`;
@@ -78,7 +78,7 @@ boundary remain in
 
 ## Active Producers
 
-Source pointer: `experiments/sys-datascience/produce/README.md`.
+Source pointer: `experiments/polytope-datasets/README.md`.
 
 - Generic random rows: facet counts `F=5..12`, `512` accepted samples per
   facet count, height interval `[0.8, 1.2]`, seed `42`, rejection until valid.
@@ -117,7 +117,7 @@ READMEs before deciding whether they belong in the thesis.
 
 ## Active Columns
 
-Source pointer: `experiments/sys-datascience/prepare/README.md`.
+Source pointer: `experiments/polytope-invariant-table/README.md`.
 
 The method-facing table exports identity/target/source fields and active
 invariant feature columns. Current covariates include:

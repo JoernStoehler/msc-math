@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # /// script
 # requires-python = ">=3.12"
+# dependencies = ["numpy"]
 # ///
 
 """Baseline EDA scan for recorded rows with `sys > 1`."""
@@ -16,7 +17,7 @@ import sys
 
 
 HERE = Path(__file__).resolve().parent
-TABLES_DIR = HERE.parent.parent / "prepare"
+TABLES_DIR = HERE.parents[2] / "polytope-invariant-table"
 sys.path.append(str(HERE.parent / "_shared"))
 from random_only import load_trusted_random_tables  # noqa: E402
 

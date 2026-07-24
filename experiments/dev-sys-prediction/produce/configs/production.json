@@ -1,5 +1,5 @@
 {
-  "polytope_table": "experiments/sys-datascience/produce/random.jsonl",
+  "polytope_table": "experiments/polytope-datasets/random.jsonl",
   "source": "random_sample",
   "buckets": [
     { "facet_count": 6, "basepoints": 8, "beta_boundary_rows": 0 },

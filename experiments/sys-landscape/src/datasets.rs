@@ -2,7 +2,7 @@
 
 use std::path::PathBuf;
 
-pub const RAW_DIR: &str = "../sys-datascience/produce";
+pub const RAW_DIR: &str = "../polytope-datasets";
 pub const CONTINUATION_EXPERIMENT_DIR: &str = "variable-f-ascent";
 pub const GRADIENT_ASCENT_GENERAL_DIR: &str = "gradient-ascent-general";
 pub const SHARED_CACHE_FILE: &str = "shared-cache.jsonl";

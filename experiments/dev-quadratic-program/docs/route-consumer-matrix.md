@@ -13,7 +13,7 @@ Source surfaces checked for this classification:
 - `thesis/04-haim-kislev-quadratic-program.tex`
 - `experiments/sys-datascience/{README.md,produce/README.md,prepare/README.md,methods/README.md}`
 - `experiments/sys-landscape/src/{lib.rs,datascience_cache.rs,ascent/compute.rs}`
-- `experiments/sys-datascience/prepare/{prepare.rs,load_caches.rs,features.rs}`
+- `experiments/polytope-invariant-table/{prepare.rs,load_caches.rs,features.rs}`
 - `crates/symplectic/src/algorithms/{mod.rs,orbit_search.rs}`
 - `crates/symplectic/src/database.rs`
 - `crates/symplectic/src/kkt/mod.rs`

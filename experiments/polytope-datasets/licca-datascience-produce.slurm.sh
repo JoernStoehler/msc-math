@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Status: dormant run-local producer infrastructure. This file is not an active
 # submission handoff. Use only after a new named research decision and job-specific LICCA
-# review; see ../LICCA.md.
+# review; see experiments/sys-datascience/LICCA.md.
 #SBATCH --job-name=ds-produce
 #SBATCH --partition=epyc
 #SBATCH --nodes=1
@@ -23,10 +23,10 @@ else
   SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 fi
 case "$SCRIPT_DIR" in
-  */experiments/sys-datascience/produce) ;;
-  *) echo "submit from experiments/sys-datascience/produce, got: $SCRIPT_DIR" >&2; exit 2 ;;
+  */experiments/polytope-datasets) ;;
+  *) echo "submit from experiments/polytope-datasets, got: $SCRIPT_DIR" >&2; exit 2 ;;
 esac
-REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$REPO_ROOT"
 
 if [[ -z "${DATASCIENCE_MODE:-}" ]]; then
@@ -81,7 +81,7 @@ if [[ ! -x "$BINARY" ]]; then
   echo "build on the LICCA login node first:" >&2
   echo "  cd \"$REPO_ROOT\"" >&2
   echo "  export CARGO_TARGET_DIR=\"$CARGO_TARGET_DIR\"" >&2
-  echo "  cargo build --release -p exp-sys-datascience --bin sys-datascience-produce" >&2
+  echo "  cargo build --release -p exp-polytope-datasets --bin sys-datascience-produce" >&2
   exit 2
 fi
 

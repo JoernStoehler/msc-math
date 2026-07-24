@@ -5,7 +5,7 @@
 This is a read-only mathematical/algorithmic scout for
 `ridge_symp_area_sum_over_volume_sqrt` on random Lagrangian products. The
 feature is defined by
-`experiments/sys-datascience/prepare/features_face_symplectic.rs`; the current
+`experiments/polytope-invariant-table/features_face_symplectic.rs`; the current
 random-product source uses pairs of polygons with `3 <= k <= m <= 6`, uniformly
 random normal angles, and support heights in `[0.8,1.2]`. The relevant current
 tail diagnostic generated 100,000 candidates per bucket (one million total).

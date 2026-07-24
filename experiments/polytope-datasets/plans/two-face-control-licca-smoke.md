@@ -8,7 +8,7 @@ producer plumbing, not research-scale evidence.
 Plan file:
 
 ```text
-experiments/sys-datascience/produce/plans/two-face-control-licca-smoke.json
+experiments/polytope-datasets/plans/two-face-control-licca-smoke.json
 ```
 
 ## Objective
@@ -86,11 +86,11 @@ checks the exact bucket vector. Family totals alone are insufficient.
 Use:
 
 ```bash
-python3 experiments/sys-datascience/produce/validate-datascience-produced.py \
+python3 experiments/polytope-datasets/validate-datascience-produced.py \
   --produce-dir "$SMOKE_DIR" \
   --mode smoke \
   --producers random,random-product \
-  --expected-plan-file experiments/sys-datascience/produce/plans/two-face-control-licca-smoke.json
+  --expected-plan-file experiments/polytope-datasets/plans/two-face-control-licca-smoke.json
 ```
 
 Expected totals derived from the plan:

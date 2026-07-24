@@ -41,7 +41,7 @@ step_smoke() {
 
 step_random_slice() {
   local mode="$1"
-  experiments/sys-datascience/prepare/build-random-only-slice.sh "$mode" "$TABLES_DIR"
+  experiments/polytope-invariant-table/build-random-only-slice.sh "$mode" "$TABLES_DIR"
 }
 
 step_scan_sys_gt_1() {
@@ -52,7 +52,7 @@ step_scan_sys_gt_1() {
 }
 
 step_build_tables() {
-  experiments/sys-datascience/build-dataset.sh
+  experiments/polytope-invariant-table/build-retained-table.sh
 }
 
 case "${1:-}" in

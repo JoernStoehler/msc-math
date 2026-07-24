@@ -22,7 +22,7 @@ import blake3
 
 
 OWNER = Path(__file__).resolve().parent
-DEFAULT_SOURCE = OWNER.parents[1] / "sys-datascience/produce/random.jsonl"
+DEFAULT_SOURCE = OWNER.parents[1] / "polytope-datasets/random.jsonl"
 DEFAULT_ARTIFACTS = OWNER / "artifacts/evaluation"
 DEFAULT_DIAGNOSTIC = OWNER / "artifacts"
 FIGURES = OWNER / "figures"

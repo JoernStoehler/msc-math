@@ -28,13 +28,10 @@ const DEFAULT_SEED: u64 = 0x51_34_4c_34;
 const DEFAULT_SAMPLES: usize = 24;
 const RADII: [f64; 6] = [0.125, 0.25, 0.5, 1.0, 2.0, 4.0];
 const SOURCES: [(&str, &str); 2] = [
-    (
-        "generic",
-        "experiments/sys-datascience/produce/random.jsonl",
-    ),
+    ("generic", "experiments/polytope-datasets/random.jsonl"),
     (
         "product",
-        "experiments/sys-datascience/produce/random-product.jsonl",
+        "experiments/polytope-datasets/random-product.jsonl",
     ),
 ];
 

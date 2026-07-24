@@ -38,7 +38,7 @@ tree.
 
 - `sys-random-sample` and `sys-random-product-sample` default to untracked temp
   smoke outputs and temp cache paths. The active canonical random/product
-  producers and artifacts live under `experiments/sys-datascience/produce/`;
+  producers and artifacts live under `experiments/polytope-datasets/`;
   explicit legacy paths require a deliberate reopened run.
 - `sys-gradient-ascent-general` and `sys-gradient-ascent-products` default to
   untracked temp smoke outputs. Use explicit `--out` and database-update flags

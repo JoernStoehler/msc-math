@@ -3,9 +3,9 @@
 //! This binary deliberately has no capacity call. It uses rational-arithmetic Euclidean
 //! volume only as a reference for the f64 ridge-proxy screen.
 
-#[path = "../../../prepare/features_face_symplectic.rs"]
+#[path = "../../../../polytope-invariant-table/features_face_symplectic.rs"]
 mod features_face_symplectic;
-#[path = "../../../prepare/features_helpers.rs"]
+#[path = "../../../../polytope-invariant-table/features_helpers.rs"]
 mod features_helpers;
 
 use euclidean_polytopes::{
@@ -627,7 +627,7 @@ fn source_closure_check() -> (bool, usize, String) {
         "Cargo.toml",
         "experiments/sys-datascience/methods/generic-ridge-tail-stage1/Cargo.toml",
         packet_lock,
-        "experiments/sys-datascience/prepare",
+        "experiments/polytope-invariant-table",
         "experiments/sys-landscape/Cargo.toml",
         "experiments/sys-landscape/src",
         "crates/euclidean-polytopes/Cargo.toml",

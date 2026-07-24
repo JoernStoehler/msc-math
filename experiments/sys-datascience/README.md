@@ -24,27 +24,31 @@ entry points beside their current code and retained artifacts. They are context
 only. They are not active method-table rows and do not support local-maximality,
 exhaustive-search, or candidate-proposer claims.
 
-## Data Flow
+## Inputs and method packets
 
 ```text
-produce/  ->  prepare/  ->  methods/
+experiments/polytope-datasets/
+    -> experiments/polytope-invariant-table/
+    -> experiments/sys-datascience/methods/
 ```
 
-- `produce/` is the generation surface for random/product rows and cached
-  expensive polytope/capacity payloads.
-- `prepare/` is the generation surface for invariant features, provenance
-  joins, and retained prepared tables.
-- `methods/` contains method packets over the prepared random/product tables.
+- `experiments/polytope-datasets/` contains the source-dataset producers,
+  retained random/product rows, and their shared expensive-computation cache.
+- `experiments/polytope-invariant-table/` is the derived-table producer. It
+  computes invariant feature columns and writes the retained method-facing
+  tables.
+- `methods/` contains the consumer experiments. Each packet states the table
+  or producer artifact it actually reads.
 
 ## Rust package boundary
 
 The repository root `Cargo.toml` is the shared workspace for active packages.
-This directory's `Cargo.toml` registers the `produce/`, `prepare/`, and small
-method binaries that use the same dependency surface. Eight method packets
-already have standalone `Cargo.toml` and `Cargo.lock` files and remain
-independently runnable; their READMEs use `--manifest-path` or explicitly run
-Cargo from the method directory. The remaining Rust method executables are
-targets of this directory's package rather than one package per small binary.
+The source-dataset producers, derived-table producer, and small method binaries
+are separate workspace packages. Eight method packets also have standalone
+`Cargo.toml` and `Cargo.lock` files and remain independently runnable; their
+READMEs use `--manifest-path` or explicitly run Cargo from the method
+directory. The remaining Rust method executables are targets of this
+directory's package.
 
 These packages depend one-way on the shared `exp-sys-landscape` library for
 capacity, cache, and polytope helpers. `exp-sys-landscape` does not depend on
@@ -76,7 +80,7 @@ stopping rule before compute begins.
 Prepared table output path:
 
 ```text
-experiments/sys-datascience/prepare/
+experiments/polytope-invariant-table/
 ```
 
 Active table files:
@@ -88,22 +92,22 @@ Build or refresh the retained random/product tables from canonical producer
 files:
 
 ```bash
-experiments/sys-datascience/build-dataset.sh
+experiments/polytope-invariant-table/build-retained-table.sh
 ```
 
 Build scoped scratch tables:
 
 ```bash
-experiments/sys-datascience/prepare/build-random-only-slice.sh smoke
-experiments/sys-datascience/prepare/build-random-only-slice.sh method
-experiments/sys-datascience/prepare/build-random-only-slice.sh full
+experiments/polytope-invariant-table/build-random-only-slice.sh smoke
+experiments/polytope-invariant-table/build-random-only-slice.sh method
+experiments/polytope-invariant-table/build-random-only-slice.sh full
 ```
 
 Check a prepared table fingerprint:
 
 ```bash
-uv run --script experiments/sys-datascience/fingerprint-dataset.py \
-  experiments/sys-datascience/prepare
+uv run --script experiments/polytope-invariant-table/fingerprint-dataset.py \
+  experiments/polytope-invariant-table
 ```
 
 ## Method Surface
@@ -124,17 +128,18 @@ Read first:
   exhaustive inventory only, not current portfolio or launch authority;
 - `coordination/exploration-result.md` for the audit of the recovery agent's
   premature exploration closure;
-- `produce/README.md`
-- `prepare/README.md`
+- `experiments/polytope-datasets/README.md`
+- `experiments/polytope-invariant-table/README.md`
 - `feature-space-coverage-ledger.md`
 - `methods/trusted-random-product-closure-summary.md`
 - `methods/trusted-random-product-method-dispositions.md`
 - relevant `methods/<method>/README.md`
 
 Current closure status: active packets have been rerun under the invariant
-feature contract. Retained tables live under `prepare/`, and compact generated
-method summaries are tracked under `methods/<method>/artifacts/` when a README
-cites current numbers. Keep durable packet conclusions in
+feature contract. Retained tables live under
+`experiments/polytope-invariant-table/`, and compact generated method summaries
+are tracked under `methods/<method>/artifacts/` when a README cites current
+numbers. Keep durable packet conclusions in
 `methods/<method>/README.md`, not only in `/tmp`.
 
 Current coordination status: the corrected exploration/research slice is

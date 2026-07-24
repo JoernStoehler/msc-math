@@ -13,14 +13,14 @@ non-random/product provenance are excluded.
 
 ## Inputs
 
-- `../../prepare/polytope-table.jsonl`
-- `../../prepare/polytope-provenance-table.jsonl`
+- `experiments/polytope-invariant-table/polytope-table.jsonl`
+- `experiments/polytope-invariant-table/polytope-provenance-table.jsonl`
 
 Source-truth pointers for the retained random producer shapes:
 
-- `../../produce/main.rs`, production mode;
-- `../../produce/README.md`, section "Run-Local Produce Path";
-- `../../produce/random.rs` and `../../produce/random-product.rs` are older
+- `experiments/polytope-datasets/main.rs`, production mode;
+- `experiments/polytope-datasets/README.md`, section "Run-Local Produce Path";
+- `experiments/polytope-datasets/random.rs` and `experiments/polytope-datasets/random-product.rs` are older
   standalone refresh binaries with smaller default plans; do not use their
   smoke defaults as retained-table row-count source truth.
 

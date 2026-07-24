@@ -6,10 +6,10 @@
 #
 # Inputs:
 # - random/product producer files and shared-cache payloads under
-#   experiments/sys-datascience/produce/
+#   experiments/polytope-datasets/
 #
 # Output:
-# - experiments/sys-datascience/prepare/
+# - experiments/polytope-invariant-table/
 # - a table fingerprint printed at the end of the Slurm log
 
 #SBATCH --job-name=ds-table
@@ -42,14 +42,14 @@ echo "  repo:           $(git rev-parse --short HEAD)"
 echo "  cpus:           ${SLURM_CPUS_PER_TASK:-unknown}"
 echo "  rayon threads:  $RAYON_NUM_THREADS"
 echo "  cargo target:   $CARGO_TARGET_DIR"
-echo "  prepare dir:    experiments/sys-datascience/prepare"
+echo "  prepare dir:    experiments/polytope-invariant-table"
 echo "  mode:           random/product"
 echo
 
-cargo run -p exp-sys-datascience --release --bin sys-dataset -- \
+cargo run -p exp-polytope-invariant-table --release --bin sys-dataset -- \
     --random-only \
-    --out-dir experiments/sys-datascience/prepare
+    --out-dir experiments/polytope-invariant-table
 
 echo
-python3 experiments/sys-datascience/fingerprint-dataset.py \
-    experiments/sys-datascience/prepare
+python3 experiments/polytope-invariant-table/fingerprint-dataset.py \
+    experiments/polytope-invariant-table

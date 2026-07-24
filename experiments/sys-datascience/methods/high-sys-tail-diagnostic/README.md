@@ -19,7 +19,7 @@ Command:
 
 ```bash
 uv run --script experiments/sys-datascience/methods/high-sys-tail-diagnostic/analyze.py \
-  --tables-dir experiments/sys-datascience/prepare \
+  --tables-dir experiments/polytope-invariant-table \
   --out-dir /tmp/sys-ds-tail-20260625/high-sys-tail \
   --bootstrap-count 200
 ```

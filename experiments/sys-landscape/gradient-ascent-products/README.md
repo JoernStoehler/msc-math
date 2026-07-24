@@ -19,4 +19,4 @@ bash experiments/sys-landscape/gradient-ascent-products/job-smoke.sh
 This result is limited to the old sampler, projected ascent policy, and seed
 panel. Reopening product optimization requires a new packet and evidence
 policy; active random-product data instead starts at
-`../../sys-datascience/produce/README.md`.
+`../../polytope-datasets/README.md`.

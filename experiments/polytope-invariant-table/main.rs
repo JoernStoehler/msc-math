@@ -1,12 +1,12 @@
 //! Build the sys-landscape datascience tables from producer caches.
 //!
-//! Input Artifacts: producer JSONL files under `experiments/sys-datascience/produce/`
+//! Input Artifacts: producer JSONL files under `experiments/polytope-datasets/`
 //! Output Artifacts: ad hoc output directory passed by `--out-dir`
 
 mod features_trace;
 mod invariant_features;
 mod load_caches;
-#[path = "../produce/rows.rs"]
+#[path = "../polytope-datasets/rows.rs"]
 mod producer_rows;
 mod rows;
 mod write_database;

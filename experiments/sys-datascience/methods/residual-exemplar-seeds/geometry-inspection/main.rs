@@ -1,8 +1,8 @@
 #[allow(dead_code)]
-#[path = "../../../prepare/features_face_symplectic.rs"]
+#[path = "../../../../polytope-invariant-table/features_face_symplectic.rs"]
 mod features_face_symplectic;
 #[allow(dead_code)]
-#[path = "../../../prepare/features_helpers.rs"]
+#[path = "../../../../polytope-invariant-table/features_helpers.rs"]
 mod features_helpers;
 
 use euclidean_polytopes::two_faces_from_vertex_facet_incidence;

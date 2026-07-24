@@ -67,10 +67,10 @@ claim, not schema repair.
 | --- | --- | --- | --- |
 | blind generic random sampling | `current-invariant-run` | `trusted-random-dataset/`, `random-tail-eda/`, `scan-sys-gt-1/` | Current full run included `4096` generic rows and no positives. |
 | blind random Lagrangian-product sampling | `current-invariant-run` | `trusted-random-dataset/`, `random-tail-eda/`, `scan-sys-gt-1/` | Current full run included `10240` product rows and no positives. |
-| producer rejection/acceptance calibration | `current-reviewed-packet` | `../produce/README.md`, producer metadata | Current producers record accepted samples and rejection attempts under their fixed contracts; broader calibration belongs to a new producer-axis question. |
+| producer rejection/acceptance calibration | `current-reviewed-packet` | `experiments/polytope-datasets/README.md`, producer metadata | Current producers record accepted samples and rejection attempts under their fixed contracts; broader calibration belongs to a new producer-axis question. |
 | independent same-distribution reruns | `park-low-value` | none | Useful for stability only after a current fact or claim is named as needing it; another seed does not broaden the producer model. |
 | broader height intervals, facet ranges, product side ranges, or new distributions | `future-work` | none | These could support stronger producer-axis wording only after a new research decision names the distribution and exact claim. |
-| Latin-hypercube and other space-filling designs | `future-work` | `../produce/` | No continuous parameter domain, sampling measure, or claim is fixed. Reopen only through a new producer-axis research decision. |
+| Latin-hypercube and other space-filling designs | `future-work` | `experiments/polytope-datasets/` | No continuous parameter domain, sampling measure, or claim is fixed. Reopen only through a new producer-axis research decision. |
 | rejection sampling with cheap scalar predicates | `current-reviewed-packet` | `extreme-scalar-rejection-proposer/` | Frozen scalar rules were evaluated before `sys`; one independent cascade validates sub-threshold pool-screening enrichment under its named generator, not threshold crossing or a calibrated hit rate. |
 | local pattern/generalized-pattern/MADS and Nelder--Mead search | `future-work` | none | These require a candidate parameterization and generated-candidate evaluation loop; they are not retrospective retained-table methods. |
 | derivative-free trust-region, local interpolation/quadratic search | `future-work` | none | No continuous local candidate interface or validated cheap objective is fixed. |
@@ -126,7 +126,7 @@ claim, not schema repair.
 | --- | --- | --- | --- |
 | Pearson/Spearman rank screening | `current-invariant-run` | `statistical-associations/` | Current scalar screen ran on `29` nonconstant active scalar covariates. |
 | source/facet/product factor tests | `current-invariant-run` | `statistical-associations/` | Current factor tests ran with current provenance fields. |
-| ridge symplectic-area scalar hypotheses | `current-invariant-run` | `../prepare/`, `statistical-associations/` | Active association screen includes invariant ridge symplectic-area features. |
+| ridge symplectic-area scalar hypotheses | `current-invariant-run` | `experiments/polytope-invariant-table/`, `statistical-associations/` | Active association screen includes invariant ridge symplectic-area features. |
 | Kendall rank correlation | `park-low-value` | `statistical-associations/` | Spearman plus a family-maximum permutation check covers current monotone screening; add Kendall only for a promoted scalar effect. |
 | partial correlation | `park-low-value` | `statistical-associations/`, `ridge-mechanism-discriminator/` | Current bucket/control diagnostics already show confounding; a promoted scalar mechanism claim would need a separately specified adjustment set. |
 | t/Welch and Mann--Whitney comparisons | `covered-by-interface` | `statistical-associations/` | Current two-group questions are covered by ANOVA/Kruskal factor tests and a bootstrap mean-difference interval; exact pairwise variants would not change the bounded claim. |
@@ -144,7 +144,7 @@ claim, not schema repair.
 | MCMC/Bayesian posterior families | `reject` | No probabilistic model is currently part of the thesis claim. |
 | multi-fidelity optimization | `reject` | No cheaper faithful proxy for `sys` is established. |
 | distribution-variant sensitivity rows | `future-work` | `distribution-sensitivity/` and `random-axis-diagnostic/` need multiple prepared random/product variants; the active retained table has only the current producer contract. |
-| symmetry, centering, scaling, normalization ablations | `current-invariant-run` | `../prepare/README.md`, invariant-feature checks | The active feature contract is tested under scale, translation, facet permutation, sampled symplectic maps, and their composition. |
+| symmetry, centering, scaling, normalization ablations | `current-invariant-run` | `experiments/polytope-invariant-table/README.md`, invariant-feature checks | The active feature contract is tested under scale, translation, facet permutation, sampled symplectic maps, and their composition. |
 | full symmetry-transverse or HKO positive-region sampling | `future-work` | none | Requires a thesis-facing local-volume or HKO-local claim and belongs to that owner, not retained-table closure. |
 
 ## Exploration Boundaries

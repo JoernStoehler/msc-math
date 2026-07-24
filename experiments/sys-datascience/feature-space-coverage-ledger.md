@@ -14,8 +14,8 @@ current schema and should be recovered from git history only for archaeology.
 
 ### Combinatorial Invariants
 
-- source: `prepare/invariant_features.rs` with skeleton helpers from
-  `prepare/features_skeleton.rs`;
+- source: `experiments/polytope-invariant-table/invariant_features.rs` with skeleton helpers from
+  `experiments/polytope-invariant-table/features_skeleton.rs`;
 - columns: facet/vertex/edge/ridge counts, simplicity, incidence summaries,
   ridge-size summaries, facet-vertex summaries, facet-neighbor summaries, and
   edge density;
@@ -26,8 +26,8 @@ current schema and should be recovered from git history only for archaeology.
 
 ### Symplectic Two-Face Area Invariants
 
-- source: `prepare/features_face_symplectic.rs` and
-  `prepare/invariant_features.rs`;
+- source: `experiments/polytope-invariant-table/features_face_symplectic.rs` and
+  `experiments/polytope-invariant-table/invariant_features.rs`;
 - columns: ordered-face diagnostics plus summary statistics for cyclically
   ordered primal two-face symplectic areas divided by `volume.sqrt()`, and
   dimensionless max/top-3 shares;
@@ -58,5 +58,5 @@ These are intentionally not active method-facing covariates:
 - transition-graph features tied to the deleted pre-invariant omega helpers.
 
 Reopen an excluded family only by first writing its mathematical invariance
-contract and extending `prepare/invariant_feature_check.rs` with a stochastic
+contract and extending `experiments/polytope-invariant-table/invariant_feature_check.rs` with a stochastic
 symmetry test for the new columns.

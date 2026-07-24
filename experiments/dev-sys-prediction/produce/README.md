@@ -33,7 +33,7 @@ cargo run -p exp-dev-sys-prediction --release \
 Run the retained production panel with:
 
 ```bash
-git lfs pull --include='experiments/sys-datascience/produce/random.jsonl'
+git lfs pull --include='experiments/polytope-datasets/random.jsonl'
 
 cargo run -p exp-dev-sys-prediction --release \
   --bin dev-sys-prediction-panel -- \

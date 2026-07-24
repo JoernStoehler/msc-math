@@ -1,36 +1,40 @@
-# Random-Polytope Datascience Prepare
+# Polytope Invariant Table
 
-This directory owns the shared prepare stage for the active
-random/product sys-datascience slice: load producer outputs, compute reusable
-feature columns, and write prepared tables for method packets.
+This directory is the derived-dataset producer for the retained random/product
+invariant table. It loads named source datasets, computes the current
+mathematically coherent invariant feature families, preserves source
+provenance, and writes method-facing tables.
 
 Current active method-facing covariates are invariant-feature columns. Prepare
 does not choose a canonical representative. It computes formulas whose values
 are invariant under `Sp(4) x R_+ x R^4 x Perm(F)`, with metadata kept separate
 from numeric covariates.
 
-The active prepare path is random/product only. Old ascent and continuation
-prepared-table uses are obsolete for this thesis slice.
+The historical executable names still contain `prepare`, but this directory is
+not a general pipeline stage through which unrelated datasets or columns must
+pass. The active producer contract is random/product only. Old ascent and
+continuation table uses are obsolete for this thesis slice.
 
 ## Commands
 
 Build the retained random/product table in place:
 
 ```bash
-experiments/sys-datascience/build-dataset.sh
+experiments/polytope-invariant-table/build-retained-table.sh
 ```
 
-This retained rebuild reads LFS-tracked producer files under `produce/`.
-Hydrate those files first with `git lfs checkout`/`git lfs pull` when working in
-a no-smudge worktree. Use the run-local producer smoke below when the goal is
-to test source/provenance plumbing without retained LFS data.
+This retained rebuild reads LFS-tracked producer files under
+`experiments/polytope-datasets/`. Hydrate those files first with
+`git lfs checkout`/`git lfs pull` when working in a no-smudge worktree. Use the
+run-local producer smoke below when the goal is to test source/provenance
+plumbing without retained LFS data.
 
 Build scratch slices for development or evidence runs:
 
 ```bash
-experiments/sys-datascience/prepare/build-random-only-slice.sh smoke
-experiments/sys-datascience/prepare/build-random-only-slice.sh method
-experiments/sys-datascience/prepare/build-random-only-slice.sh full
+experiments/polytope-invariant-table/build-random-only-slice.sh smoke
+experiments/polytope-invariant-table/build-random-only-slice.sh method
+experiments/polytope-invariant-table/build-random-only-slice.sh full
 ```
 
 The scoped builder calls `sys-dataset --random-only-size <smoke|method|full>`.
@@ -46,37 +50,37 @@ Limited presets take deterministic stratified prefixes:
 containing `computed-polytopes.jsonl` plus producer metadata files:
 
 ```bash
-cargo run -p exp-sys-datascience --release --bin sys-datascience-produce -- \
+cargo run -p exp-polytope-datasets --release --bin sys-datascience-produce -- \
   --mode smoke \
   --producers random,random-product \
   --output-dir /tmp/ds-produce-smoke-cold \
   --parallelism 4 \
   --base-cache /tmp/ds-produce-smoke-cache.jsonl
 
-uv run --script experiments/sys-datascience/produce/validate-datascience-produced.py \
+uv run --script experiments/polytope-datasets/validate-datascience-produced.py \
   --produce-dir /tmp/ds-produce-smoke-cold \
   --mode smoke \
   --producers random,random-product
 
-cargo run -p exp-sys-datascience --release --bin sys-datascience-prepare -- \
+cargo run -p exp-polytope-invariant-table --release --bin sys-datascience-prepare -- \
   --produce-dir /tmp/ds-produce-smoke-cold \
   --out-dir /tmp/ds-prepare-smoke
 
-uv run --script experiments/sys-datascience/fingerprint-dataset.py \
+uv run --script experiments/polytope-invariant-table/fingerprint-dataset.py \
   /tmp/ds-prepare-smoke
 ```
 
 For the known HKO reference/holdout row:
 
 ```bash
-cargo run -p exp-sys-datascience --release --bin sys-datascience-produce -- \
+cargo run -p exp-polytope-datasets --release --bin sys-datascience-produce -- \
   --mode smoke \
   --producers known-hko-reference \
   --output-dir /tmp/ds-produce-hko \
   --parallelism 1 \
   --base-cache /tmp/ds-produce-hko-cache.jsonl
 
-cargo run -p exp-sys-datascience --release --bin sys-datascience-prepare -- \
+cargo run -p exp-polytope-invariant-table --release --bin sys-datascience-prepare -- \
   --produce-dir /tmp/ds-produce-hko \
   --out-dir /tmp/ds-prepare-hko
 ```
@@ -86,15 +90,16 @@ Prepared HKO rows use `capacity_source = known_hko_reference` and provenance
 dataset by default; score it only through reference-aware packets.
 
 `licca-datascience-prepare.slurm.sh` is dormant run-local infrastructure; no
-submission is selected. See `../LICCA.md`. If a selected producer run or a
-distinct reproduction task needs LICCA prepare, a new job-specific handoff must
-reassess resources. The script runs only the prebuilt
+submission is selected. See `experiments/sys-datascience/LICCA.md`. If a
+selected producer run or a distinct reproduction task needs LICCA table
+construction, a new job-specific handoff must reassess resources. The script
+runs only the prebuilt
 `sys-datascience-prepare` binary, so build before any approved submission:
 
 ```bash
 cd "$HOME/msc-math"
 export CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target
-cargo build --release -p exp-sys-datascience --bin sys-datascience-prepare
+cargo build --release -p exp-polytope-invariant-table --bin sys-datascience-prepare
 ```
 
 Validate the produce directory before submitting prepare, then fingerprint the
@@ -154,8 +159,8 @@ invariants.
 Check the invariant feature contract with:
 
 ```bash
-cargo test -p exp-sys-datascience invariant_features --release
-cargo run -p exp-sys-datascience --release --bin sys-datascience-invariant-feature-check
+cargo test -p exp-polytope-invariant-table invariant_features --release
+cargo run -p exp-polytope-invariant-table --release --bin sys-datascience-invariant-feature-check
 ```
 
 The report command uses synthetic polytopes and deterministic representatives
@@ -167,8 +172,8 @@ new column.
 Check prepared outputs with:
 
 ```bash
-uv run --script experiments/sys-datascience/fingerprint-dataset.py \
-  experiments/sys-datascience/prepare
+uv run --script experiments/polytope-invariant-table/fingerprint-dataset.py \
+  experiments/polytope-invariant-table
 ```
 
 ## Feature Cost Profiler
@@ -180,15 +185,16 @@ boilerplate.
 Smoke command, independent of retained LFS producer files:
 
 ```bash
-cargo run -p exp-sys-datascience --release --bin sys-datascience-feature-cost -- \
+cargo run -p exp-polytope-invariant-table --release --bin sys-datascience-feature-cost -- \
   --synthetic-smoke \
   --out-dir /tmp/sys-ds-feature-cost-smoke
 ```
 
-Retained producer sample command, after hydrating `produce/random*.jsonl`:
+Retained producer sample command, after hydrating
+`experiments/polytope-datasets/random*.jsonl`:
 
 ```bash
-cargo run -p exp-sys-datascience --release --bin sys-datascience-feature-cost -- \
+cargo run -p exp-polytope-invariant-table --release --bin sys-datascience-feature-cost -- \
   --random-only-size smoke \
   --max-polytopes 10 \
   --out-dir /tmp/sys-ds-feature-cost-smoke

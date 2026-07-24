@@ -19,13 +19,10 @@ use symplectic::exact::omega_signs_exact;
 const DEFAULT_OUTPUT: &str =
     "experiments/sys-landscape/fixed-shape-orientation-search/evaluations.jsonl";
 const SOURCES: [(&str, &str); 2] = [
-    (
-        "generic",
-        "experiments/sys-datascience/produce/random.jsonl",
-    ),
+    ("generic", "experiments/polytope-datasets/random.jsonl"),
     (
         "product",
-        "experiments/sys-datascience/produce/random-product.jsonl",
+        "experiments/polytope-datasets/random-product.jsonl",
     ),
 ];
 

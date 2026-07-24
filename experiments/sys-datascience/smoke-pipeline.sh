@@ -14,19 +14,19 @@ mkdir -p "$PRODUCE_DIR" "$TABLES_DIR"
 
 echo "Smoke workspace: $WORKDIR"
 
-cargo run -p exp-sys-datascience --bin sys-datascience-produce -- \
+cargo run -p exp-polytope-datasets --bin sys-datascience-produce -- \
   --mode smoke \
   --producers random,random-product \
   --output-dir "$PRODUCE_DIR" \
   --parallelism "${DATASCIENCE_SMOKE_PARALLELISM:-4}" \
   --base-cache "$PRODUCE_DIR/base-cache.jsonl"
 
-uv run --script "$ROOT/experiments/sys-datascience/produce/validate-datascience-produced.py" \
+uv run --script "$ROOT/experiments/polytope-datasets/validate-datascience-produced.py" \
   --produce-dir "$PRODUCE_DIR" \
   --mode smoke \
   --producers random,random-product
 
-cargo run -p exp-sys-datascience --bin sys-datascience-prepare -- \
+cargo run -p exp-polytope-invariant-table --bin sys-datascience-prepare -- \
   --produce-dir "$PRODUCE_DIR" \
   --out-dir "$TABLES_DIR"
 

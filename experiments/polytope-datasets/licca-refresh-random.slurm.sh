@@ -1,7 +1,8 @@
 #!/bin/bash
 # Status: dormant standalone retained-producer refresh helper. It is not a
 # current research or reproduction handoff. Reactivate only after a selected
-# research/reproduction task defines comparison and promotion rules; see ../LICCA.md.
+# research/reproduction task defines comparison and promotion rules; see
+# experiments/sys-datascience/LICCA.md.
 # This job writes review targets, not canonical producer files.
 
 #SBATCH --job-name=ds-random
@@ -26,7 +27,7 @@ cd "$HOME/msc-math"
 export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-/hpc/gpfs2/scratch/u/stoehljo/cargo-target}"
 export RAYON_NUM_THREADS="${SLURM_CPUS_PER_TASK:-32}"
 
-PRODUCE_DIR="experiments/sys-datascience/produce"
+PRODUCE_DIR="experiments/polytope-datasets"
 CANONICAL_CACHE="$PRODUCE_DIR/shared-cache.jsonl"
 REVIEW_CACHE="$PRODUCE_DIR/shared-cache-licca-random-refresh.jsonl"
 RANDOM_OUT="$PRODUCE_DIR/random-licca-refresh.jsonl"
@@ -61,7 +62,7 @@ else
     : > "$REVIEW_CACHE"
 fi
 
-cargo build --release -p exp-sys-datascience \
+cargo build --release -p exp-polytope-datasets \
     --bin sys-dataset-random \
     --bin sys-dataset-random-product
 

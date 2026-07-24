@@ -39,9 +39,11 @@ search cues, not a finding index or a claim that each row is one experiment.
 | `hko-local-maximum/` | HKO theorem certificate tooling, empirical support, validation, and figures |
 | `local-maxima-check/` | selected-body local-behavior comparison and retained artifacts |
 | `performance/` | retained runtime, memory, and capacity-route measurement programs |
+| `polytope-datasets/` | retained random/product source datasets, producer programs, source schemas, and shared expensive-computation cache |
+| `polytope-invariant-table/` | derived random/product invariant-feature and provenance tables, their producer, validation, and cost checks |
 | `qp-error-bounds/` | wide QP intermediate-variable f64/exact evidence, retained-route evaluation, and soundness trials |
 | `regular-products/` | rotated regular-product sweeps, pentagon empirics, figures, and exact formula certificate |
-| `sys-datascience/` | random/product data producers, prepared tables, many consuming method experiments, and research state |
+| `sys-datascience/` | random/product data-science consumer experiments, method packets, and research state |
 | `sys-landscape/` | hostile-`sys` search implementations, caches, legacy producers, and selected retained searches |
 | `verification/` | capacity properties, minimum-orbit production, orbit recovery, and flow-graph falsifiers |
 | `visualization/` | 4D-polytope viewer, data exporters, and thesis-support screenshots |
@@ -113,7 +115,7 @@ few notable nested experiment paths. They are not a complete finding index.
 | combinatorial boundaries, cells, crossings | `combinatorial-cells/` |
 | crosspolytope capacity | `crosspolytope/` |
 | selected equality bodies, local behavior | `local-maxima-check/` |
-| hostile `sys`, random/product search, data science | `sys-datascience/`, then `sys-landscape/` for older/search implementations |
+| hostile `sys`, random/product search, data science | `sys-datascience/`, with source data under `polytope-datasets/` and the retained feature table under `polytope-invariant-table/`; then `sys-landscape/` for older/search implementations |
 | explanatory 4D-polytope figures | `visualization/` |
 | thesis AI-use provenance | `ai-use/` |
 
@@ -134,7 +136,8 @@ few notable nested experiment paths. They are not a complete finding index.
 | f64/exact intermediate numerics, retained QP soundness | `qp-error-bounds/` and `dev-quadratic-program/numerics-audit/` |
 | correctness, axioms, agreement, minimum orbits, recovery | `verification/` |
 | runtime, memory, counters, profiling | `performance/` |
-| random/product datasets and invariant prepared tables | `sys-datascience/produce/` and `sys-datascience/prepare/` |
+| random/product source datasets | `polytope-datasets/` |
+| invariant random/product method table | `polytope-invariant-table/` |
 | prediction, tail analysis, source transfer, proposer methods | `sys-datascience/methods/` |
 | algorithm-comparison routing rather than evidence | `algorithm-comparisons.md` |
 
@@ -145,6 +148,12 @@ Generated outputs are not hand-edited. Local commands distinguish:
 - cheap compile or smoke checks;
 - full producers writing disposable output;
 - commands intentionally refreshing tracked evidence.
+
+Retained artifact provenance created before the July 2026 layout migration may
+record `experiments/sys-datascience/produce/` or
+`experiments/sys-datascience/prepare/`. Those exact historical strings remain
+unchanged. Their current physical homes are `experiments/polytope-datasets/`
+and `experiments/polytope-invariant-table/`, respectively.
 
 Recorded hashes and Git revisions are provenance aids, not compatibility
 gates. A validator may warn that current code or input bytes differ from a

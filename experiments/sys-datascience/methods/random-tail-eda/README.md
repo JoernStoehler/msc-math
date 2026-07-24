@@ -37,8 +37,8 @@ negative and descriptive claims are tied to the actual sampling distributions.
 ## Inputs
 
 - `../trusted-random-dataset/` filter logic
-- `../../prepare/polytope-table.jsonl`
-- `../../prepare/polytope-provenance-table.jsonl`
+- `experiments/polytope-invariant-table/polytope-table.jsonl`
+- `experiments/polytope-invariant-table/polytope-provenance-table.jsonl`
 
 ## Command
 

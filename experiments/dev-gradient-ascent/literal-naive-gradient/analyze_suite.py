@@ -22,7 +22,7 @@ import blake3
 
 OWNER = Path(__file__).resolve().parent
 BASELINE = OWNER / "artifacts/evaluation/analysis.json"
-SOURCE = OWNER.parents[1] / "sys-datascience/produce/random.jsonl"
+SOURCE = OWNER.parents[1] / "polytope-datasets/random.jsonl"
 OUT = OWNER / "artifacts/suite-analysis"
 FIG = OWNER / "figures"
 ETAS = [1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1.0]
@@ -290,7 +290,13 @@ def source_identity(baseline, run):
     for key in ("source_input", "source_input_blake3", "implementation", "implementation_blake3", "command"):
         if not provenance.get(key):
             fail(f"missing provenance identity {key}")
-    if not provenance["source_input"].endswith("experiments/sys-datascience/produce/random.jsonl"):
+    # Retained pre-migration provenance keeps its exact historical input path.
+    if not provenance["source_input"].endswith(
+        (
+            "experiments/polytope-datasets/random.jsonl",
+            "experiments/sys-datascience/produce/random.jsonl",
+        )
+    ):
         fail("provenance source path mismatch")
     source_path = SOURCE
     implementation_path = Path(provenance["implementation"])

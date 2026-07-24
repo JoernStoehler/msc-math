@@ -33,7 +33,7 @@ pub fn load_retained_artifact_cases_filtered(
     family_filter: &[String],
     source_id_filter: &[String],
 ) -> Vec<ScanCase> {
-    let produce = repo_root().join("experiments/sys-datascience/produce");
+    let produce = repo_root().join("experiments/polytope-datasets");
     let mut cases = Vec::new();
     let row_cap = retained_artifact_row_cap(max_rows_per_family, source_id_filter);
 

@@ -21,13 +21,13 @@ The probe consumes:
 - `branch-set-diagnostic.jsonl` from
   `experiments/dev-gradient-ascent/branch-diagnostic/`;
 - the corresponding producer-generated polytope table, defaulting to
-  `experiments/sys-datascience/prepare/polytope-table.jsonl`.
+  `experiments/polytope-invariant-table/polytope-table.jsonl`.
 
 ```bash
 cargo run -p exp-dev-sys-prediction --release \
   --bin dev-sysext-sigma-line-probe -- \
   --diagnostic-dir /tmp/dev-gradient-ascent-branch-diagnostic-check \
-  --polytope-table experiments/sys-datascience/prepare/polytope-table.jsonl \
+  --polytope-table experiments/polytope-invariant-table/polytope-table.jsonl \
   --out-dir /tmp/dev-sysext-sigma-line-check \
   --selection-threshold-relative 0.01 \
   --degeneracy-label high_degeneracy

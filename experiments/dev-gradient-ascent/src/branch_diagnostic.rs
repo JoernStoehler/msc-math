@@ -629,7 +629,7 @@ fn print_usage() {
 }
 
 fn default_tables_dir() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../sys-datascience/prepare")
+    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../polytope-invariant-table")
 }
 
 fn default_output_dir() -> PathBuf {

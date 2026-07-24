@@ -32,8 +32,9 @@ from scipy.spatial import ConvexHull, QhullError
 
 HERE = Path(__file__).resolve().parent
 SYS_DATASCIENCE = HERE.parents[1]
-PRODUCE = SYS_DATASCIENCE / "produce"
-PREPARE = SYS_DATASCIENCE / "prepare"
+EXPERIMENTS = SYS_DATASCIENCE.parent
+PRODUCE = EXPERIMENTS / "polytope-datasets"
+PREPARE = EXPERIMENTS / "polytope-invariant-table"
 
 # Coordinates are (q1, q2, p1, p2), the project-wide convention.
 J = np.array(

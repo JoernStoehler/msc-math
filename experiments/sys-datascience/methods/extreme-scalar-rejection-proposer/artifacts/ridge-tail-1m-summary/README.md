@@ -5,7 +5,7 @@ Status: exploration artifact, not thesis-ready.
 Question: does low volume-normalized ridge symplectic-area sum track high `sys`, and what happens in the generated-candidate lower tail?
 
 Inputs:
-- retained table: `/workspaces/msc-math/.worktrees/thesis-datascience-integration/experiments/sys-datascience/prepare`
+- retained table: `/workspaces/msc-math/.worktrees/thesis-datascience-integration/experiments/polytope-invariant-table`
 - 1M ridge-sum run: `/tmp/sys-ds-extreme-scalar-rejection-proposer-1m-ridge-sum`
 - HKO reference prepare: `/tmp/ds-prepare-hko`
 

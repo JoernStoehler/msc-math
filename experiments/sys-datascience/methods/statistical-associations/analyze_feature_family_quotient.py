@@ -390,7 +390,7 @@ def main() -> None:
         },
         "row_count": len(rows),
         "provenance": {
-            "prepared_table_builder": "../../prepare/build-random-only-slice.sh full <tables-dir>",
+            "prepared_table_builder": "experiments/polytope-invariant-table/build-random-only-slice.sh full <tables-dir>",
             "prepared_table_contract": "../standard-baseline-p2/README.md",
             "selection_overlap_owner": "../ridge-mechanism-discriminator/README.md",
         },

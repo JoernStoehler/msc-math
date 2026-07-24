@@ -8,6 +8,8 @@ members = [
     "experiments/regular-products",
     "experiments/sys-landscape",
     "experiments/sys-datascience",
+    "experiments/polytope-datasets",
+    "experiments/polytope-invariant-table",
     "experiments/local-maxima-check",
     "experiments/combinatorial-cells",
     "experiments/dev-flow-graph",

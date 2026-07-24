@@ -47,8 +47,8 @@ Run from the repository root:
 ```bash
 cargo run --release --manifest-path experiments/sys-datascience/methods/generic-ridge-tail-stage1/Cargo.toml -- \
   smoke \
-  --random-path experiments/sys-datascience/produce/random.jsonl \
-  --table-path experiments/sys-datascience/prepare/polytope-table.jsonl \
+  --random-path experiments/polytope-datasets/random.jsonl \
+  --table-path experiments/polytope-invariant-table/polytope-table.jsonl \
   --out experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/smoke-summary.json \
   --workers 12
 

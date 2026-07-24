@@ -9,9 +9,9 @@ available pre-`sys` ridge selections give evidence of a persistence, saturation,
 or reversal as selection becomes more extreme.
 
 The retained diagnostic is the tracked current prepared table
-`../../prepare/polytope-table.jsonl` (14,336 rows; 10,240
+`experiments/polytope-invariant-table/polytope-table.jsonl` (14,336 rows; 10,240
 `random_product_sample` rows).  Its product rows are joined one-to-one to the
-tracked `produce/random-product.jsonl` using `sys`: both have 10,240 unique
+tracked `experiments/polytope-datasets/random-product.jsonl` using `sys`: both have 10,240 unique
 serialized `sys` values, and every row matches.  This is a checked identity
 recovery for stratification, not a claim that `sys` is generally a safe key.
 

@@ -181,7 +181,7 @@ Findings and edits:
   the checkpoint's `process-learnings.md` entry "Intermediate Artifacts Are
   Not Turn Boundaries."
 - The first high-complexity compute packet commands copied
-  `produce/shared-cache.jsonl` into `--base-cache`. A local actual smoke test
+  `experiments/polytope-datasets/shared-cache.jsonl` into `--base-cache`. A local actual smoke test
   caught that this schema is wrong for `sys-datascience-produce`, which expects
   computed-polytope payload rows with `poly_id`. The packet now uses an empty
   run-local base cache and records a passing local smoke/prepare/fingerprint.

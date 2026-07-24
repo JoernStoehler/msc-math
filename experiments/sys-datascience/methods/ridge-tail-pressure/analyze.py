@@ -45,7 +45,7 @@ def sha256(path: Path) -> str:
 def repo_root(start: Path) -> Path:
     """Find the checkout from this packet path or an explicitly supplied path."""
     for candidate in (start, *start.parents):
-        if (candidate / "experiments/sys-datascience/prepare/polytope-table.jsonl").is_file():
+        if (candidate / "experiments/polytope-invariant-table/polytope-table.jsonl").is_file():
             return candidate
     raise FileNotFoundError("could not find repo root; pass --repo-root")
 
@@ -337,8 +337,8 @@ if __name__ == "__main__":
     p.add_argument("--one-m-feature-table", type=Path, help="optional full 1M feature-table identity audit")
     args = p.parse_args()
     REPO = (args.repo_root or repo_root(SCRIPT_DIR)).resolve()
-    RETAINED = args.retained_table or REPO / "experiments/sys-datascience/prepare/polytope-table.jsonl"
-    PRODUCT = args.product_table or REPO / "experiments/sys-datascience/produce/random-product.jsonl"
+    RETAINED = args.retained_table or REPO / "experiments/polytope-invariant-table/polytope-table.jsonl"
+    PRODUCT = args.product_table or REPO / "experiments/polytope-datasets/random-product.jsonl"
     CONCENTRATION = args.concentration_cache or REPO / "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/sys-evaluation-cache.jsonl"
     CONCENTRATION_PLAN = args.concentration_plan or REPO / "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/selection-plan.json"
     ONE_M_PLAN = args.one_m_snapshot_dir / "selection-plan.json"

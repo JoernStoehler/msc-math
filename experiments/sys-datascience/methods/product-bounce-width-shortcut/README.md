@@ -26,7 +26,7 @@ The reviewed retained inputs are:
 
 - `../product-bounce-distribution/artifacts/class-minima.jsonl`, SHA-256
   `187089804bd17fdac76bdaf51a8d8202e67fb2b14779fe9a418cc8da47c7b4c4`;
-- `../../../produce/random-product.jsonl`, SHA-256
+- `experiments/polytope-datasets/random-product.jsonl`, SHA-256
   `66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736`.
 
 The optional prepared table and provenance inputs reproduce the reviewed
@@ -43,7 +43,7 @@ Run a two-row-per-bucket stratified smoke before the full table:
 
 ```bash
 python3 experiments/sys-datascience/methods/product-bounce-width-shortcut/analyze.py \
-  --raw experiments/sys-datascience/produce/random-product.jsonl \
+  --raw experiments/polytope-datasets/random-product.jsonl \
   --classes experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl \
   --per-bucket-limit 2 \
   --out /tmp/product-bounce-width-smoke.json
@@ -54,9 +54,9 @@ control design:
 
 ```bash
 TABLES_DIR="$(mktemp -d /tmp/sys-ds-product-bounce-width.XXXXXX)"
-experiments/sys-datascience/prepare/build-random-only-slice.sh full "$TABLES_DIR"
+experiments/polytope-invariant-table/build-random-only-slice.sh full "$TABLES_DIR"
 python3 experiments/sys-datascience/methods/product-bounce-width-shortcut/analyze.py \
-  --raw experiments/sys-datascience/produce/random-product.jsonl \
+  --raw experiments/polytope-datasets/random-product.jsonl \
   --classes experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl \
   --table "$TABLES_DIR/polytope-table.jsonl" \
   --provenance "$TABLES_DIR/polytope-provenance-table.jsonl" \

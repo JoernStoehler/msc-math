@@ -26,7 +26,7 @@ generated from validated raw trajectories by `analyze_multistart.py`; it is not
 a second hand-maintained metric table.
 
 The evaluation sample is the first six `F=6` rows in canonical
-`experiments/sys-datascience/produce/random.jsonl` source order after excluding
+`experiments/polytope-datasets/random.jsonl` source order after excluding
 the already-observed `random_F6_s0_1`. The generator uses seed `42` and height
 interval `[0.8,1.2]`. Selection uses neither initial `sys` nor optimizer
 outcomes. Every selected start receives every retained learning rate. This is a
@@ -89,11 +89,11 @@ Regenerate the paired evaluation from the repository root after checking out
 the canonical LFS source:
 
 ```bash
-git lfs pull --include='experiments/sys-datascience/produce/random.jsonl,experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/trajectory-*.jsonl'
+git lfs pull --include='experiments/polytope-datasets/random.jsonl,experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/trajectory-*.jsonl'
 
 cargo run --release -p exp-dev-gradient-ascent \
   --bin dev-gradient-ascent-literal-naive-gradient -- \
-  --polytope-table experiments/sys-datascience/produce/random.jsonl \
+  --polytope-table experiments/polytope-datasets/random.jsonl \
   --facet-count 6 \
   --start-count 6 \
   --exclude-start-ids random_F6_s0_1 \

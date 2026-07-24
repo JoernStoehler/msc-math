@@ -9,7 +9,7 @@ agent resumes.
 It is not a polished report and not a place to launder exploratory observations
 into conclusions. Entries should distinguish:
 - what was being explored;
-- why it matters for thesis success, `produce/` design, method interpretation,
+- why it matters for thesis success, source-dataset producer design, method interpretation,
   or later evidence;
 - what was actually observed;
 - what interpretations are allowed or not allowed;
@@ -19,7 +19,7 @@ Schema note: entries before the invariant-only table migration may mention
 raw Euclidean, omega-matrix, transition, `capacity`, or `volume` method
 features. Those names are historical observations under older prepared-table
 schemas, not active method-facing covariates. The active table contract is in
-`prepare/README.md` and `prepare/invariant_features.rs`.
+`experiments/polytope-invariant-table/README.md` and `experiments/polytope-invariant-table/invariant_features.rs`.
 
 ## 2026-06-25 - Post-milestone-0 next-batch brainstorm
 
@@ -74,7 +74,7 @@ Reasoning: this matches the declared slice most directly. The current research q
 Jörn agrees that looking at distribution sensitivity early is high-leverage.
 
 Reason: if the observed `sys(a)` landscape is sensitive to the random generator,
-then `produce/` design and later method interpretation must treat the generator
+then source-dataset producer design and later method interpretation must treat the generator
 as an experimental variable. Data gathering should cover distributions
 deliberately, method summaries should say which random model produced the data,
 and high-`sys` observations may be conditional on the generator.
@@ -194,7 +194,7 @@ at all.
 ### Questions
 
 1. Empirical materiality: does changing `[h_min,h_max]` change `sys`, engineered
-   features, or high-tail behavior enough to matter for `produce/` design?
+   features, or high-tail behavior enough to matter for source-dataset producer design?
 2. Interpretability: if it changes something, can we describe what geometric
    property changed, or is it only an arbitrary generator knob?
 3. Axis comparison: how does height interval rank against other candidate
@@ -212,7 +212,7 @@ at all.
   interval is worth more attention.
 - End with a ranked list of random-distribution axes worth testing next and a
   clear recommendation for whether height interval should be demoted, retained
-  as a sanity-check axis, or promoted to a serious `produce/` design variable.
+  as a sanity-check axis, or promoted to a serious source-dataset producer design variable.
 
 ### Reporting rule
 
@@ -225,7 +225,7 @@ claims.
 Status: milestone completed for discussion.
 
 Question: is height-interval variation useful enough to guide near-term
-random-polytopes `produce/` design?
+random-polytopes source-dataset producer design?
 
 Input artifacts:
 - previous pilot tables under `/tmp/sys-ds-distribution-sensitivity-20260625`;
@@ -312,7 +312,7 @@ substantially, yet those moved features are not the stable strongest
 `sys`-association features. Existing axes such as bucket/facet-count/product
 structure explain much more `sys` variation.
 
-For near-term `produce/` design, height interval should be demoted: keep it as a
+For near-term source-dataset producer design, height interval should be demoted: keep it as a
 sanity-check or occasional robustness axis, not as a primary data-budget axis.
 If revisiting height interval later, use larger independent samples per
 `(height interval, bucket)` and bootstrap/effect-size summaries; do not design
@@ -328,7 +328,7 @@ the analysis around PRNG seed batches.
 3. Features tied to ridge symplectic-area summaries. Not a random generator
    axis, but currently the strongest target for interpretation and feature work.
 4. Height interval. Useful for robustness checks and shape-dispersion probes,
-   but not currently a primary `produce/` axis.
+   but not currently a primary source-dataset axis.
 5. Untested distribution axes: direction distribution, heavy-tailed/concentrated
    heights, and rejection/admissibility-conditioned effects. These may be more
    meaningful than simple interval widening, but require a separate design.
@@ -388,7 +388,7 @@ failures instead of silently shrinking the family set.
 
 Data source for the current local large random/product table:
 
-- `/workspaces/msc-math/experiments/sys-datascience/prepare`
+- `/workspaces/msc-math/experiments/polytope-invariant-table`
 - `random_sample`: 4096 rows;
 - `random_product_sample`: 10240 rows;
 - total random/product rows: 14336.
@@ -397,7 +397,7 @@ Command:
 
 ```bash
 uv run --script experiments/sys-datascience/methods/sys-distribution-broad-scan/analyze.py \
-  --tables-dir /workspaces/msc-math/experiments/sys-datascience/prepare \
+  --tables-dir /workspaces/msc-math/experiments/polytope-invariant-table \
   --out-dir /tmp/sys-ds-shape-20260625/broad-scan \
   --max-fit-seconds 2
 ```
@@ -486,7 +486,7 @@ Command:
 
 ```bash
 uv run --script experiments/sys-datascience/methods/sys-distribution-mle-likelihood-table/analyze.py \
-  --tables-dir /workspaces/msc-math/experiments/sys-datascience/prepare \
+  --tables-dir /workspaces/msc-math/experiments/polytope-invariant-table \
   --out-dir /tmp/sys-ds-shape-20260625/mle-likelihood-table \
   --max-fit-seconds 3
 ```
@@ -576,7 +576,7 @@ Command:
 
 ```bash
 uv run --script experiments/sys-datascience/methods/sys-distribution-mle-likelihood-table/analyze.py \
-  --tables-dir /workspaces/msc-math/experiments/sys-datascience/prepare \
+  --tables-dir /workspaces/msc-math/experiments/polytope-invariant-table \
   --out-dir /tmp/sys-ds-shape-20260625/mle-transform-table \
   --max-fit-seconds 3
 ```
@@ -631,7 +631,7 @@ pattern than the full marginal body?
 Method:
 
 - fixed bucket groups from
-  `/workspaces/msc-math/experiments/sys-datascience/prepare`;
+  `/workspaces/msc-math/experiments/polytope-invariant-table`;
 - empirical thresholds q80, q90, q95 in each bucket;
 - excess variable `x = sys - u | sys > u`;
 - fit GPD with `loc = 0`;
@@ -644,7 +644,7 @@ Command:
 
 ```bash
 uv run --script experiments/sys-datascience/methods/high-sys-tail-diagnostic/analyze.py \
-  --tables-dir /workspaces/msc-math/experiments/sys-datascience/prepare \
+  --tables-dir /workspaces/msc-math/experiments/polytope-invariant-table \
   --out-dir /tmp/sys-ds-tail-20260625/high-sys-tail \
   --bootstrap-count 200
 ```

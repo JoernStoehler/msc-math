@@ -62,7 +62,7 @@ def main():
             "source_files": {str(path): sha256(ROOT / path) for path in sources},
         },
         "producer": {
-            "command": "cargo run -p exp-sys-datascience --release --bin sys-datascience-product-bounce-class-minima -- --input experiments/sys-datascience/produce/random-product.jsonl --output experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl",
+            "command": "cargo run -p exp-sys-datascience --release --bin sys-datascience-product-bounce-class-minima -- --input experiments/polytope-datasets/random-product.jsonl --output experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl",
             "summary_command": "python3 experiments/sys-datascience/methods/product-bounce-distribution/summarize_class_minima.py --input experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl --out experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-summary.json",
             "source_revision": command("git", "rev-parse", "HEAD"),
             "source_status": command("git", "status", "--short", "--", *map(str, sources)),
@@ -79,7 +79,7 @@ def main():
         result["producer"]["availability_audit_command"] = (
             "cargo run -p exp-sys-datascience --release --bin "
             "sys-datascience-product-bounce-null-audit -- "
-            "--input experiments/sys-datascience/produce/random-product.jsonl "
+            "--input experiments/polytope-datasets/random-product.jsonl "
             "--class-minima experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl "
             "--output experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-null-availability.jsonl"
         )

@@ -26,12 +26,12 @@ def main():
     parser.add_argument(
         "--generic-source",
         type=Path,
-        default=Path("experiments/sys-datascience/produce/random.jsonl"),
+        default=Path("experiments/polytope-datasets/random.jsonl"),
     )
     parser.add_argument(
         "--product-source",
         type=Path,
-        default=Path("experiments/sys-datascience/produce/random-product.jsonl"),
+        default=Path("experiments/polytope-datasets/random-product.jsonl"),
     )
     args = parser.parse_args()
 

@@ -23,7 +23,7 @@ authority:
 
 ```bash
 TABLES_DIR="$(mktemp -d /tmp/sys-ds-product-bounce.XXXXXX)"
-experiments/sys-datascience/prepare/build-random-only-slice.sh full "$TABLES_DIR"
+experiments/polytope-invariant-table/build-random-only-slice.sh full "$TABLES_DIR"
 python3 experiments/sys-datascience/methods/product-bounce-distribution/analyze.py \
   --table "$TABLES_DIR/polytope-table.jsonl" \
   --provenance "$TABLES_DIR/polytope-provenance-table.jsonl" \
@@ -50,13 +50,13 @@ prepared table, which intentionally omits dual geometry):
 mkdir -p experiments/sys-datascience/methods/product-bounce-distribution/artifacts
 cargo run -p exp-sys-datascience --release \
   --bin sys-datascience-product-bounce-class-minima -- \
-  --input experiments/sys-datascience/produce/random-product.jsonl \
+  --input experiments/polytope-datasets/random-product.jsonl \
   --output experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl
 python3 experiments/sys-datascience/methods/product-bounce-distribution/summarize_class_minima.py \
   --input experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl \
   --out experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-summary.json
 python3 experiments/sys-datascience/methods/product-bounce-distribution/write_class_minima_provenance.py \
-  --input experiments/sys-datascience/produce/random-product.jsonl \
+  --input experiments/polytope-datasets/random-product.jsonl \
   --class-minima experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl \
   --summary experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-summary.json \
   --out experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-provenance.json
@@ -80,7 +80,7 @@ To reproduce the bounded audit itself (785 rows only):
 ```bash
 cargo run -p exp-sys-datascience --release \
   --bin sys-datascience-product-bounce-null-audit -- \
-  --input experiments/sys-datascience/produce/random-product.jsonl \
+  --input experiments/polytope-datasets/random-product.jsonl \
   --class-minima experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl \
   --output experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-null-availability.jsonl
 ```

@@ -207,7 +207,7 @@ def obvious_covariate_audit() -> dict[str, object]:
         "principle": (
             "The active method-facing polytope table is invariant-only. Coverage "
             "is judged relative to fields serialized by "
-            "prepare/rows.rs::PolytopeTableRow, not by historical raw Euclidean, "
+            "experiments/polytope-invariant-table/rows.rs::PolytopeTableRow, not by historical raw Euclidean, "
             "omega-matrix, transition, capacity, or volume columns."
         ),
         "conceptual_flow": [
@@ -218,7 +218,7 @@ def obvious_covariate_audit() -> dict[str, object]:
         ],
         "feature_owner": (
             "Current active row fields are defined in "
-            "experiments/sys-datascience/prepare/rows.rs::PolytopeTableRow."
+            "experiments/polytope-invariant-table/rows.rs::PolytopeTableRow."
         ),
         "first_layer_nodes": [
             {

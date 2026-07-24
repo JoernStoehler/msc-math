@@ -13,8 +13,8 @@ counts. Positive evidence would be at least one retained table row with
 
 ## Inputs
 
-- `../../prepare/polytope-table.jsonl`
-- `../../prepare/polytope-provenance-table.jsonl`
+- `experiments/polytope-invariant-table/polytope-table.jsonl`
+- `experiments/polytope-invariant-table/polytope-provenance-table.jsonl`
 
 The script can scan additional producer computed-polytope JSONL files if passed
 explicitly with `--computed-polytopes`, but the active random/product slice does
@@ -43,7 +43,7 @@ artifact by default.
 
 ## Observation
 
-Current retained random/product run against `../../prepare` found:
+Current retained random/product run against `experiments/polytope-invariant-table` found:
 
 - trusted random/product rows: `14336`;
 - `random_sample`: `4096` rows, `0` positives;

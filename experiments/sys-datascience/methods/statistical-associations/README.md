@@ -11,7 +11,7 @@ scalar covariate at a time against the target scalar, then inspect the strongest
 correlations and their scope limits.
 
 The active method-facing `polytope-table.jsonl` is invariant-only, with fields
-defined by `prepare/rows.rs::PolytopeTableRow`. Legacy raw Euclidean,
+defined by `experiments/polytope-invariant-table/rows.rs::PolytopeTableRow`. Legacy raw Euclidean,
 omega-matrix, transition, `capacity`, and `volume` columns are not active
 covariates.
 
@@ -70,7 +70,7 @@ not treated as an intrinsic scalar invariant feature.
 ## Inputs
 
 - trusted random/product rows from `../trusted-random-dataset/`
-- feature columns from `../../prepare/polytope-table.jsonl`
+- feature columns from `experiments/polytope-invariant-table/polytope-table.jsonl`
 
 ## Command
 
@@ -83,7 +83,7 @@ The current quotient artifact uses the same reviewed current-schema rebuild as
 
 ```bash
 TABLES_DIR="$(mktemp -d /tmp/sys-ds-feature-quotient.XXXXXX)"
-experiments/sys-datascience/prepare/build-random-only-slice.sh full \
+experiments/polytope-invariant-table/build-random-only-slice.sh full \
   "$TABLES_DIR"
 uv run --script \
   experiments/sys-datascience/methods/statistical-associations/analyze_feature_family_quotient.py \
@@ -122,7 +122,7 @@ The two TSVs own the detailed rank-pair and frozen-selection overlap rows.
 
 Current integrated full retained run:
 
-- input: retained invariant table under `../../prepare`, `14336` trusted
+- input: retained invariant table under `experiments/polytope-invariant-table`, `14336` trusted
   random/product rows;
 - active polytope fields: `45`, with `0` forbidden legacy fields;
 - eligible scalar covariates: `39`;
@@ -154,7 +154,7 @@ Partially covered or missing work under the active schema:
   `PolytopeTableRow` and its producers.
 
 Missing or separately handled families should be added to
-`prepare/rows.rs::PolytopeTableRow` or its producers only when they are intended
+`experiments/polytope-invariant-table/rows.rs::PolytopeTableRow` or its producers only when they are intended
 to be active invariant method-facing fields.
 
 Interpret the strongest active scalar associations as explanatory signals only.
@@ -208,7 +208,7 @@ validated.
 - Build a small feature-map audit for additional invariant scalars derivable
   from the producer geometry outside the audited ridge-area multiset and
   count summaries, then decide which missing families have enough value to
-  implement in `prepare/invariant_features.rs`.
+  implement in `experiments/polytope-invariant-table/invariant_features.rs`.
 - Promote only associations that are strong, stable, and convertible into a
   pre-evaluation ranking rule.
 

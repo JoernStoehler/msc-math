@@ -16,7 +16,7 @@ degeneracy or endpoint behavior.
 ## Inputs and outputs
 
 By default the producer reads the polytope and provenance tables in
-`experiments/sys-datascience/prepare/`. Most worktrees skip LFS checkout. If
+`experiments/polytope-invariant-table/`. Most worktrees skip LFS checkout. If
 those JSONL files are LFS pointers, check out the two inputs or pass paths to
 real tables explicitly.
 

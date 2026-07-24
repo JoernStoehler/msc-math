@@ -35,7 +35,7 @@ JSON summary is retained in git for the current packet.
 
 Current integrated full retained run:
 
-- input: retained invariant table under `../../prepare`, `14336` trusted
+- input: retained invariant table under `experiments/polytope-invariant-table`, `14336` trusted
   random/product rows;
 - invariant features: `39`;
 - PC1/`sys` correlation: `0.4644434019289053`;

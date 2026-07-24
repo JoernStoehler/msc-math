@@ -19,14 +19,14 @@ prepared table:
 
 ```bash
 git lfs checkout -- \
-  experiments/sys-datascience/produce/random-product.jsonl \
+  experiments/polytope-datasets/random-product.jsonl \
   experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl
 
 TABLES_DIR="$(mktemp -d /tmp/sys-ds-product-bounce-mechanism.XXXXXX)"
-experiments/sys-datascience/prepare/build-random-only-slice.sh full "$TABLES_DIR"
+experiments/polytope-invariant-table/build-random-only-slice.sh full "$TABLES_DIR"
 
 python3 experiments/sys-datascience/methods/product-bounce-mechanism/analyze.py \
-  --raw experiments/sys-datascience/produce/random-product.jsonl \
+  --raw experiments/polytope-datasets/random-product.jsonl \
   --classes experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl \
   --table "$TABLES_DIR/polytope-table.jsonl" \
   --provenance "$TABLES_DIR/polytope-provenance-table.jsonl" \

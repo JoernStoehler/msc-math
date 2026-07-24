@@ -89,8 +89,8 @@ to GPT-5.6 as part of recovery.
 
 The high-complexity packet passed useful local plumbing checks, but later
 exploration found no named research purpose for that dataset. Its durable
-configuration and validation improvements remain under `../produce/plans/`
-and `../produce/`; the direct submission sequence remains historical at
+configuration and validation improvements remain under `experiments/polytope-datasets/plans/`
+and `experiments/polytope-datasets/`; the direct submission sequence remains historical at
 `bb0e538e`.
 
 ## Reopen Conditions

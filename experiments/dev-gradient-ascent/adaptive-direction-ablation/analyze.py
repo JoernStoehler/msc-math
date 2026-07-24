@@ -51,7 +51,13 @@ assert prov["requested_target_budget"] == 6
 manifest = json.loads((root.parent.parent / "inputs" / "generic-start-manifest.json").read_text()) if generic_mode else json.loads((root.parent / "inputs" / "fixture-manifest.json").read_text())
 screening_report = json.loads((screening_root / "screening-report.json").read_text())
 if generic_mode:
-    assert prov["source_input"].endswith("experiments/sys-datascience/produce/random.jsonl")
+    # Retained pre-migration provenance keeps its exact historical input path.
+    assert prov["source_input"].endswith(
+        (
+            "experiments/polytope-datasets/random.jsonl",
+            "experiments/sys-datascience/produce/random.jsonl",
+        )
+    )
     screening = json.loads((screening_root / "screening-report.json").read_text())
     assert {x["id"] for x in manifest["fixtures"]} == set(screening["starts"])
 expected_starts = {x["id"] for x in manifest["fixtures"]}

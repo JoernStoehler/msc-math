@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Status: dormant run-local prepare infrastructure. This file is not an active
 # submission handoff. Use only for a selected producer run or explicit
-# reproduction task after job-specific LICCA review; see ../LICCA.md.
+# reproduction task after job-specific LICCA review; see
+# experiments/sys-datascience/LICCA.md.
 #SBATCH --job-name=ds-prepare
 #SBATCH --partition=epyc
 #SBATCH --nodes=1
@@ -23,10 +24,10 @@ else
   SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 fi
 case "$SCRIPT_DIR" in
-  */experiments/sys-datascience/prepare) ;;
-  *) echo "submit from experiments/sys-datascience/prepare, got: $SCRIPT_DIR" >&2; exit 2 ;;
+  */experiments/polytope-invariant-table) ;;
+  *) echo "submit from experiments/polytope-invariant-table, got: $SCRIPT_DIR" >&2; exit 2 ;;
 esac
-REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$REPO_ROOT"
 
 if [[ -z "${DATASCIENCE_PRODUCE_DIR:-}" ]]; then
@@ -57,7 +58,7 @@ if [[ ! -x "$BINARY" ]]; then
   echo "build on the LICCA login node first:" >&2
   echo "  cd \"$REPO_ROOT\"" >&2
   echo "  export CARGO_TARGET_DIR=\"$CARGO_TARGET_DIR\"" >&2
-  echo "  cargo build --release -p exp-sys-datascience --bin sys-datascience-prepare" >&2
+  echo "  cargo build --release -p exp-polytope-invariant-table --bin sys-datascience-prepare" >&2
   exit 2
 fi
 

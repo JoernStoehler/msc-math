@@ -786,7 +786,7 @@ fn count_statuses(rows: &[LineProbeRow]) -> BTreeMap<String, usize> {
 fn parse_args() -> Cli {
     let mut cli = Cli {
         diagnostic_dir: PathBuf::new(),
-        polytope_table: PathBuf::from("experiments/sys-datascience/prepare/polytope-table.jsonl"),
+        polytope_table: PathBuf::from("experiments/polytope-invariant-table/polytope-table.jsonl"),
         out_dir: default_output_dir(),
         selection_threshold_relative: DEFAULT_SELECTION_THRESHOLD_RELATIVE,
         action_window_relative: DEFAULT_ACTION_WINDOW_RELATIVE,

@@ -6,7 +6,7 @@ random/product sys-datascience method table.
 Read first:
 
 1. `../README.md`
-2. `../prepare/README.md`
+2. `experiments/polytope-invariant-table/README.md`
 3. `trusted-random-product-closure-summary.md`
 4. `trusted-random-product-method-dispositions.md`
 5. the relevant method folder `README.md`
@@ -141,12 +141,12 @@ disposition.
 
 ## Inputs
 
-Ordinary methods read retained tables under `../prepare/` and build
+Ordinary methods read retained tables under `experiments/polytope-invariant-table/` and build
 method-specific matrices inside the method folder. Shared random/product input
 filtering lives in `_shared/random_only.py`.
 
 Current-schema full random/product prepare and method reruns have completed on
-the retained invariant tables under `../prepare/`. Compact generated summaries
+the retained invariant tables under `experiments/polytope-invariant-table/`. Compact generated summaries
 are tracked under each method's `artifacts/` directory when the README cites
 current invariant-schema numbers; regenerate checked artifacts deliberately
 before thesis-facing citation.

@@ -104,7 +104,7 @@ fn smoke_output_dir() -> PathBuf {
 }
 
 fn default_paths() -> DatasetPaths {
-    let produce_dir = package_root().join("../sys-datascience/produce");
+    let produce_dir = package_root().join("../polytope-datasets");
     DatasetPaths {
         max_random_rows: None,
         max_random_product_rows: None,

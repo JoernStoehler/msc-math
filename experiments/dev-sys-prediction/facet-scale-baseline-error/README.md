@@ -84,7 +84,7 @@ New panels use `dev-sys-prediction-panel`; see `../produce/README.md`.
 The retained production panel is reproduced by:
 
 ```bash
-git lfs pull --include='experiments/sys-datascience/produce/random.jsonl'
+git lfs pull --include='experiments/polytope-datasets/random.jsonl'
 
 cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-panel -- \
   --config experiments/dev-sys-prediction/produce/configs/production.json \

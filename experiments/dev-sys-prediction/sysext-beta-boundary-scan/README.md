@@ -18,14 +18,14 @@ branch becomes capacity-minimizing after a perturbation.
 ## Input, output, and command
 
 The default input is the table produced at
-`experiments/sys-datascience/prepare/polytope-table.jsonl`. Most worktrees skip
+`experiments/polytope-invariant-table/polytope-table.jsonl`. Most worktrees skip
 LFS checkout, so pass a materialized table or check out that file before
 running the default command.
 
 ```bash
 cargo run -p exp-dev-sys-prediction --release \
   --bin dev-sysext-beta-boundary-scan -- \
-  --polytope-table experiments/sys-datascience/prepare/polytope-table.jsonl \
+  --polytope-table experiments/polytope-invariant-table/polytope-table.jsonl \
   --out /tmp/dev-sysext-beta-boundary-scan.jsonl \
   --max-rows 1
 ```

@@ -72,7 +72,7 @@ cargo run -p exp-dev-gradient-ascent \
 ```
 
 Most worktrees are created with LFS smudge skipped. If
-`experiments/sys-datascience/prepare/*.jsonl` is an LFS pointer file in the
+`experiments/polytope-invariant-table/*.jsonl` is an LFS pointer file in the
 current worktree, either check out those table files with LFS for this worktree
 or pass `--polytope-table` and `--provenance-table` to the diagnostic command
 using a worktree that has the real table data. Pass the same real

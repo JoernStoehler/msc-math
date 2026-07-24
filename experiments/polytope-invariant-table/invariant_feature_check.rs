@@ -6,7 +6,7 @@
 
 mod invariant_features;
 mod load_caches;
-#[path = "../produce/rows.rs"]
+#[path = "../polytope-datasets/rows.rs"]
 mod producer_rows;
 mod rows;
 

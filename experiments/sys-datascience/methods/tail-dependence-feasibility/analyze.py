@@ -17,9 +17,9 @@ PACKET_DIR = Path(__file__).resolve().parent
 ROOT = PACKET_DIR.parents[3]
 OUT = PACKET_DIR / "artifacts" / "current"
 
-RETAINED_TABLE = ROOT / "experiments/sys-datascience/prepare/polytope-table.jsonl"
+RETAINED_TABLE = ROOT / "experiments/polytope-invariant-table/polytope-table.jsonl"
 RETAINED_PROVENANCE = (
-    ROOT / "experiments/sys-datascience/prepare/polytope-provenance-table.jsonl"
+    ROOT / "experiments/polytope-invariant-table/polytope-provenance-table.jsonl"
 )
 PROPOSER = (
     ROOT

@@ -6,7 +6,7 @@
 
 mod invariant_features;
 mod load_caches;
-#[path = "../produce/rows.rs"]
+#[path = "../polytope-datasets/rows.rs"]
 mod producer_rows;
 mod rows;
 
@@ -118,7 +118,7 @@ fn parse_args() -> Args {
     let mut max_polytopes = Some(10usize);
     let mut max_random_rows = None;
     let mut max_random_product_rows = None;
-    let produce_dir = package_root().join("../sys-datascience/produce");
+    let produce_dir = package_root().join("../polytope-datasets");
     let mut random_sample = produce_dir.join("random.jsonl");
     let mut random_product = produce_dir.join("random-product.jsonl");
 

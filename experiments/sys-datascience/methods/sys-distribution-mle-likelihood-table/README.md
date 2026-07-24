@@ -19,7 +19,7 @@ Command:
 
 ```bash
 uv run --script experiments/sys-datascience/methods/sys-distribution-mle-likelihood-table/analyze.py \
-  --tables-dir experiments/sys-datascience/prepare \
+  --tables-dir experiments/polytope-invariant-table \
   --out-dir /tmp/sys-ds-shape-20260625/mle-transform-table \
   --max-fit-seconds 3
 ```

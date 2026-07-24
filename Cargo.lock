@@ -657,6 +657,50 @@ dependencies = [
 ]
 
 [[package]]
+name = "exp-polytope-datasets"
+version = "0.1.0"
+dependencies = [
+ "blake3",
+ "euclidean-polytopes",
+ "exp-sys-landscape",
+ "good_lp",
+ "nalgebra",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "rand_distr",
+ "rayon",
+ "serde",
+ "serde_json",
+ "sha2",
+ "symplectic",
+]
+
+[[package]]
+name = "exp-polytope-invariant-table"
+version = "0.1.0"
+dependencies = [
+ "blake3",
+ "euclidean-polytopes",
+ "exp-sys-landscape",
+ "good_lp",
+ "nalgebra",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "rand_distr",
+ "rayon",
+ "serde",
+ "serde_json",
+ "sha2",
+ "symplectic",
+]
+
+[[package]]
 name = "exp-qp-error-evidence"
 version = "0.1.0"
 dependencies = [

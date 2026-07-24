@@ -1,7 +1,7 @@
 # random-axis-diagnostic
 
 Purpose: diagnose whether a candidate random-distribution axis is useful enough
-to guide `produce/` design.
+to guide source-dataset producer design.
 
 Current use: height interval `[h_min,h_max]`. The diagnostic compares its effect
 on `sys`, invariant-feature distributions, and bucket/family structure. It also

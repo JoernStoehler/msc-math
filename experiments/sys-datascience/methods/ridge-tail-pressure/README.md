@@ -20,8 +20,8 @@ record the independent review and accepted repairs.
 ## Inputs and provenance
 
 The analyzer consumes the tracked retained prepared table
-`../../prepare/polytope-table.jsonl`, tracked random-product producer
-`../../produce/random-product.jsonl`, and the tracked 100k validation cache and
+`experiments/polytope-invariant-table/polytope-table.jsonl`, tracked random-product producer
+`experiments/polytope-datasets/random-product.jsonl`, and the tracked 100k validation cache and
 selection plan in `../extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/`.
 The retained prepared table is the exact recovered version of the reviewed
 scratch table.

@@ -5,34 +5,6 @@ publish = false
 edition = "2021"
 
 [[bin]]
-name = "sys-dataset-random"
-path = "produce/random.rs"
-
-[[bin]]
-name = "sys-dataset-random-product"
-path = "produce/random-product.rs"
-
-[[bin]]
-name = "sys-datascience-produce"
-path = "produce/main.rs"
-
-[[bin]]
-name = "sys-dataset"
-path = "prepare/main.rs"
-
-[[bin]]
-name = "sys-datascience-prepare"
-path = "prepare/prepare.rs"
-
-[[bin]]
-name = "sys-datascience-invariant-feature-check"
-path = "prepare/invariant_feature_check.rs"
-
-[[bin]]
-name = "sys-datascience-feature-cost"
-path = "prepare/feature_cost.rs"
-
-[[bin]]
 name = "sys-datascience-hko-ridge-source-smoke"
 path = "methods/hko-ridge-source-smoke/main.rs"
 

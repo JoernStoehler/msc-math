@@ -1,10 +1,10 @@
-#[path = "../../../prepare/features_face_symplectic.rs"]
+#[path = "../../../../polytope-invariant-table/features_face_symplectic.rs"]
 mod features_face_symplectic;
 #[allow(dead_code)]
-#[path = "../../../prepare/features_helpers.rs"]
+#[path = "../../../../polytope-invariant-table/features_helpers.rs"]
 mod features_helpers;
 #[allow(dead_code)]
-#[path = "../../../prepare/features_skeleton.rs"]
+#[path = "../../../../polytope-invariant-table/features_skeleton.rs"]
 mod features_skeleton;
 
 use euclidean_polytopes::{

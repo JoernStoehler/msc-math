@@ -30,7 +30,7 @@ From the repository root:
 ```bash
 cargo build --release --manifest-path experiments/sys-datascience/methods/product-bounce-class-degeneration/Cargo.toml
 cargo run --release --manifest-path experiments/sys-datascience/methods/product-bounce-class-degeneration/Cargo.toml -- \
-  --raw experiments/sys-datascience/produce/random-product.jsonl \
+  --raw experiments/polytope-datasets/random-product.jsonl \
   --class experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl \
   --out experiments/sys-datascience/methods/product-bounce-class-degeneration/artifacts
 python3 experiments/sys-datascience/methods/product-bounce-class-degeneration/summarize.py \

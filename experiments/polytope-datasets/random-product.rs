@@ -2,18 +2,18 @@
 //!
 //! Goal: Sample random Lagrangian products across polygon-pair buckets and
 //! record their systolic ratios.
-//! Input Artifacts: experiments/sys-datascience/produce/shared-cache.jsonl
-//! Output Artifacts: experiments/sys-datascience/produce/random-product.jsonl,
-//!         experiments/sys-datascience/produce/shared-cache.jsonl
+//! Input Artifacts: experiments/polytope-datasets/shared-cache.jsonl
+//! Output Artifacts: experiments/polytope-datasets/random-product.jsonl,
+//!         experiments/polytope-datasets/shared-cache.jsonl
 //!
 //! Architecture:
-//! 1. Bare `cargo run -p exp-sys-datascience --release --bin sys-dataset-random-product`
+//! 1. Bare `cargo run -p exp-polytope-datasets --release --bin sys-dataset-random-product`
 //!    is a smoke/default run: it writes temp output + temp cache under `/tmp`.
 //! 2. Canonical refreshes pass explicit repo-owned paths, e.g.
-//!    `--out experiments/sys-datascience/produce/random-product.jsonl`
-//!    and `--cache experiments/sys-datascience/produce/shared-cache.jsonl`.
+//!    `--out experiments/polytope-datasets/random-product.jsonl`
+//!    and `--cache experiments/polytope-datasets/shared-cache.jsonl`.
 //! 3. Polytopes are cached in the sys-landscape family cache. Re-runs skip capacity.
-//! 4. Canonical runs write to `experiments/sys-datascience/produce/random-product.jsonl`.
+//! 4. Canonical runs write to `experiments/polytope-datasets/random-product.jsonl`.
 //!
 //! Dataset design:
 //! - Random 2D polygons with k, m in {3,4,5,6}

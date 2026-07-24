@@ -7,7 +7,7 @@ import analyze
 
 
 ROOT = Path(__file__).parents[4]
-RAW = ROOT / "experiments" / "sys-datascience" / "produce" / "random-product.jsonl"
+RAW = ROOT / "experiments" / "polytope-datasets" / "random-product.jsonl"
 
 
 class ExactTriangleTests(unittest.TestCase):

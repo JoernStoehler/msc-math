@@ -28,10 +28,10 @@ categorical controls. The exact numeric feature tuple is
 `experiments/sys-datascience/methods/_shared/random_only.py`.
 
 The producer definitions for ridge symplectic area fields are in
-`experiments/sys-datascience/prepare/features_face_symplectic.rs`, assembled
+`experiments/polytope-invariant-table/features_face_symplectic.rs`, assembled
 into method-facing rows by
-`experiments/sys-datascience/prepare/invariant_features.rs` and
-`experiments/sys-datascience/prepare/rows.rs`.
+`experiments/polytope-invariant-table/invariant_features.rs` and
+`experiments/polytope-invariant-table/rows.rs`.
 
 Active invariant numeric families:
 
@@ -103,8 +103,8 @@ Outputs:
 Build a current invariant random/product prepared table:
 
 ```bash
-PRODUCE_DIR=/workspaces/msc-math/experiments/sys-datascience/produce \
-  experiments/sys-datascience/prepare/build-random-only-slice.sh full \
+PRODUCE_DIR=/workspaces/msc-math/experiments/polytope-datasets \
+  experiments/polytope-invariant-table/build-random-only-slice.sh full \
   /tmp/sys-ds-tail-invariant-current-full
 ```
 
@@ -141,8 +141,8 @@ Production prepare command run locally:
 
 ```bash
 rm -rf /tmp/sys-ds-tail-invariant-current-full /tmp/sys-ds-tail-invariant-analysis
-PRODUCE_DIR=/workspaces/msc-math/experiments/sys-datascience/produce \
-  experiments/sys-datascience/prepare/build-random-only-slice.sh full \
+PRODUCE_DIR=/workspaces/msc-math/experiments/polytope-datasets \
+  experiments/polytope-invariant-table/build-random-only-slice.sh full \
   /tmp/sys-ds-tail-invariant-current-full
 ```
 

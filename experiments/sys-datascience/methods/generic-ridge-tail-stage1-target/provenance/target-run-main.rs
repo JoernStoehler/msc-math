@@ -4,9 +4,9 @@
 //! capacity backend.  It consumes the immutable 200-row panel and never
 //! generates or reranks candidates.
 
-#[path = "../../../prepare/features_face_symplectic.rs"]
+#[path = "../../../../polytope-invariant-table/features_face_symplectic.rs"]
 mod features_face_symplectic;
-#[path = "../../../prepare/features_helpers.rs"]
+#[path = "../../../../polytope-invariant-table/features_helpers.rs"]
 mod features_helpers;
 
 use euclidean_polytopes::volume_from_incidence_f64;

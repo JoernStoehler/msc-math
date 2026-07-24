@@ -25,7 +25,7 @@ def parse_args():
     parser.add_argument(
         "--global-scale-table",
         type=Path,
-        default=Path("experiments/sys-datascience/produce/random.jsonl"),
+        default=Path("experiments/polytope-datasets/random.jsonl"),
     )
     parser.add_argument("--global-scale-source", default="random_sample")
     parser.add_argument("--global-scale-pairs", type=int, default=20_000)

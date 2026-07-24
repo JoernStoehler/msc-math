@@ -25,7 +25,7 @@ Source/provenance:
 - volume, capacity, and `sys` are recomputed through `exp-sys-landscape`
   computation APIs;
 - ridge-area features call
-  `experiments/sys-datascience/prepare/features_face_symplectic.rs` and use the
+  `experiments/polytope-invariant-table/features_face_symplectic.rs` and use the
   same `/ sqrt(volume)` normalization as the prepared sys-datascience table.
 
 No generated ridge rows from `hko-ridge-area-packet` or

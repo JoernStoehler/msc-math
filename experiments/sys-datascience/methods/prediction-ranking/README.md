@@ -36,7 +36,7 @@ uv run --script experiments/sys-datascience/methods/prediction-ranking/analyze.p
 
 Current integrated full retained run:
 
-- input: retained invariant table under `../../prepare`, `14336` trusted
+- input: retained invariant table under `experiments/polytope-invariant-table`, `14336` trusted
   random/product rows;
 - invariant features: `39`;
 - metadata one-hot features: `27`;

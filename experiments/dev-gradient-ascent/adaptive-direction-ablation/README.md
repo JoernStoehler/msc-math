@@ -56,7 +56,7 @@ cargo run --release -p exp-dev-gradient-ascent \
   --bin dev-gradient-ascent-adaptive-direction-ablation -- \
   --smoke --budget 1 --facet-count 6 --start-count 6 \
   --exclude-start-ids random_F6_s0_1 \
-  --polytope-table experiments/sys-datascience/produce/random.jsonl \
+  --polytope-table experiments/polytope-datasets/random.jsonl \
   --out-dir experiments/dev-gradient-ascent/adaptive-direction-ablation/artifacts/screening
 python3 experiments/dev-gradient-ascent/adaptive-direction-ablation/analyze_screening.py \
   experiments/dev-gradient-ascent/adaptive-direction-ablation/artifacts/screening
@@ -67,7 +67,7 @@ the explicit bounded `--budget 6` above when regenerating this packet.
 
 The separate generic panel uses the same command with `--facet-count 6
 --start-count 6 --exclude-start-ids random_F6_s0_1`, source
-`experiments/sys-datascience/produce/random.jsonl`, and output directory
+`experiments/polytope-datasets/random.jsonl`, and output directory
 `artifacts/generic-panel`; validate it with
 `python3 .../analyze.py artifacts/generic-panel generic`. Its six starts are
 the exact screening IDs recorded in `inputs/generic-start-manifest.json`.
@@ -77,7 +77,7 @@ reproduction with:
 
 ```bash
 git lfs pull --include='experiments/dev-gradient-ascent/adaptive-direction-ablation/inputs/*.jsonl'
-git lfs pull --include='experiments/sys-datascience/produce/random.jsonl'
+git lfs pull --include='experiments/polytope-datasets/random.jsonl'
 ```
 
 The generated trajectory JSONL is also LFS-backed in the working tree; the

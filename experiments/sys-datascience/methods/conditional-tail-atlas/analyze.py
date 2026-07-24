@@ -22,13 +22,13 @@ def parse_args():
     parser.add_argument(
         "--table",
         type=Path,
-        default=ROOT / "experiments/sys-datascience/prepare/polytope-table.jsonl",
+        default=ROOT / "experiments/polytope-invariant-table/polytope-table.jsonl",
     )
     parser.add_argument(
         "--provenance",
         type=Path,
         default=ROOT
-        / "experiments/sys-datascience/prepare/polytope-provenance-table.jsonl",
+        / "experiments/polytope-invariant-table/polytope-provenance-table.jsonl",
     )
     parser.add_argument(
         "--hko-summary",

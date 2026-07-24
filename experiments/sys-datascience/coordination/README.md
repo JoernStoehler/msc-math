@@ -21,7 +21,7 @@ interpretation before treating a dated omission or “next” item as current.
 launch authority.
 
 Generated metrics and packet interpretation remain under `../methods/`;
-producer and table contracts remain under `../produce/` and `../prepare/`.
+producer and table contracts remain under `experiments/polytope-datasets/` and `experiments/polytope-invariant-table/`.
 The next default remains consumer-driven readiness/demonstration, not automatic
 empirical reopening.
 

@@ -46,15 +46,15 @@ The prepared output may be scratch because it is a deterministic derived table:
 
 ```bash
 TABLES_DIR="$(mktemp -d /tmp/sys-ds-p2-current-full.XXXXXX)"
-experiments/sys-datascience/prepare/build-random-only-slice.sh full \
+experiments/polytope-invariant-table/build-random-only-slice.sh full \
   "$TABLES_DIR"
 ```
 
 The recorded input is source-reproducible from these Git LFS producer objects:
 
-- `../../produce/random.jsonl`: sha256
+- `experiments/polytope-datasets/random.jsonl`: sha256
   `a21ac62ba5c9496ef631d3cce74e8b663764516b76e9d4725f1e517d8dd55f9f`;
-- `../../produce/random-product.jsonl`: sha256
+- `experiments/polytope-datasets/random-product.jsonl`: sha256
   `66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736`.
 
 The derived tables must have the hashes recorded under **Current Status**
@@ -69,7 +69,7 @@ OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
   --tables-dir "$TABLES_DIR"
 ```
 
-The default `prepare/` LFS table in this worktree has hash
+The default `experiments/polytope-invariant-table/` LFS table in this worktree has hash
 `607c8731fa03d190d497edc3e8f1b4cca88f7d238260cce527680f568bc33d59` and is
 missing six active invariant ridge columns. Use the rebuilt current-schema
 table above, or refresh the in-place prepared LFS artifact before rerunning P2

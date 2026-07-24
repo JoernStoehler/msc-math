@@ -17,7 +17,7 @@ separate boundary stratum and do not support strictness.
 
 The retained input is the first (and only) 3x3 bucket of the retained product
 stream: 1,024 rows from
-`experiments/sys-datascience/produce/random-product.jsonl`. The exact stored
+`experiments/polytope-datasets/random-product.jsonl`. The exact stored
 class-minimum join is the existing 10,240-row artifact
 `../product-bounce-distribution/artifacts/class-minima.jsonl`; it was not
 regenerated. The three required LFS inputs were hydrated locally before the
@@ -67,7 +67,7 @@ From the repository root:
 ```bash
 python3 -m unittest discover -s experiments/sys-datascience/methods/product-triangle-bounce-classification -p 'test_*.py'
 python3 experiments/sys-datascience/methods/product-triangle-bounce-classification/analyze.py \
-  --input experiments/sys-datascience/produce/random-product.jsonl \
+  --input experiments/polytope-datasets/random-product.jsonl \
   --class-minima experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl \
   --out experiments/sys-datascience/methods/product-triangle-bounce-classification/artifacts \
   --stress-count 20000 --stress-seed 20260714

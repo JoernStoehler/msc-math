@@ -12,8 +12,8 @@ set -euo pipefail
 MODE="${1:-smoke}"
 OUT_DIR="${2:-}"
 
-ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
-PRODUCE_DIR="${PRODUCE_DIR:-$ROOT/experiments/sys-datascience/produce}"
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+PRODUCE_DIR="${PRODUCE_DIR:-$ROOT/experiments/polytope-datasets}"
 if [[ -z "$OUT_DIR" ]]; then
   OUT_DIR="$(mktemp -d "${TMPDIR:-/tmp}/sys-ds-random-only-${MODE}.XXXXXX")"
 fi
@@ -41,12 +41,12 @@ echo "  produce: $PRODUCE_DIR"
 echo "  out_dir: $OUT_DIR"
 echo
 
-cargo run -p exp-sys-datascience --release --bin sys-dataset -- \
+cargo run -p exp-polytope-invariant-table --release --bin sys-dataset -- \
   --produce-dir "$PRODUCE_DIR" \
   "${SIZE_ARGS[@]}" \
   --out-dir "$OUT_DIR"
 
 echo
-uv run --script experiments/sys-datascience/fingerprint-dataset.py "$OUT_DIR"
+uv run --script experiments/polytope-invariant-table/fingerprint-dataset.py "$OUT_DIR"
 echo
 echo "Prepared tables: $OUT_DIR"

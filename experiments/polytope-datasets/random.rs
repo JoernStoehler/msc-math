@@ -2,19 +2,19 @@
 //!
 //! Goal: Compute systolic ratios for random 4D polytopes across facet counts F=5..12,
 //!   to probe whether random generic polytopes approach the Viterbo threshold.
-//! Input Artifacts: experiments/sys-datascience/produce/shared-cache.jsonl
-//! Output Artifacts: experiments/sys-datascience/produce/random.jsonl,
-//!         experiments/sys-datascience/produce/shared-cache.jsonl
+//! Input Artifacts: experiments/polytope-datasets/shared-cache.jsonl
+//! Output Artifacts: experiments/polytope-datasets/random.jsonl,
+//!         experiments/polytope-datasets/shared-cache.jsonl
 //!
 //! Architecture:
-//! 1. Bare `cargo run -p exp-sys-datascience --release --bin sys-dataset-random`
+//! 1. Bare `cargo run -p exp-polytope-datasets --release --bin sys-dataset-random`
 //!    is a smoke/default run: it writes temp output + temp cache under `/tmp`.
 //! 2. Canonical refreshes pass explicit repo-owned paths, e.g.
-//!    `--out experiments/sys-datascience/produce/random.jsonl`
-//!    and `--cache experiments/sys-datascience/produce/shared-cache.jsonl`.
+//!    `--out experiments/polytope-datasets/random.jsonl`
+//!    and `--cache experiments/polytope-datasets/shared-cache.jsonl`.
 //! 3. Random dual vertices are generated with blake3 per-attempt seeding and
 //!    cached in the sys-landscape family cache. Re-runs skip generation + capacity.
-//! 4. Canonical runs write to `experiments/sys-datascience/produce/random.jsonl`.
+//! 4. Canonical runs write to `experiments/polytope-datasets/random.jsonl`.
 //!
 //! Dataset design:
 //! - Random polytopes with facet counts F=5..12

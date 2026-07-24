@@ -62,8 +62,8 @@ weaken it.
 
 Evidence sources:
 
-- `../../prepare/invariant_features.rs`
-- `../../prepare/features_face_symplectic.rs`
+- `experiments/polytope-invariant-table/invariant_features.rs`
+- `experiments/polytope-invariant-table/features_face_symplectic.rs`
 - `../../methods/statistical-associations/`
 - `../../methods/extreme-scalar-rejection-proposer/`
 - `../../methods/ridge-mechanism-discriminator/`

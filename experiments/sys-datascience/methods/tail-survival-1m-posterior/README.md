@@ -24,8 +24,8 @@ at least one `sys > 1` row by a finite accepted-sample budget.
 The script reads the retained trusted random/product tables through the shared
 filter in `../_shared/random_only.py`:
 
-- `../../prepare/polytope-table.jsonl`
-- `../../prepare/polytope-provenance-table.jsonl`
+- `experiments/polytope-invariant-table/polytope-table.jsonl`
+- `experiments/polytope-invariant-table/polytope-provenance-table.jsonl`
 
 It does not produce new random rows.
 

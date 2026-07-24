@@ -1,12 +1,19 @@
-# Random-Polytope Datascience Produce
+# Polytope Datasets
 
-This directory owns producer programs, producer caches, and producer outputs
-for the active random/product sys-datascience slice.
+This directory contains the source-dataset producers and retained inputs used
+by the random/product `sys` data-science experiments. It is a collection of
+separate producer contracts, not one generic production framework.
+
+The canonical generic-random and random-product producers remain together
+because their retained outputs share `shared-cache.jsonl`. The newer run-local
+producer can emit generic-random, random-product, or the named HKO reference
+into a reviewable output directory. A future source does not belong here merely
+because it produces JSONL or may be consumed by data-science methods.
 
 The abandoned fixed-F ascent and continuation files were removed from this
 surface. They should not be used for the current thesis datascience chapter.
 
-## Active Producers
+## Producer contracts
 
 - `sys-datascience-produce`: run-local random/product/reference producer that writes a
   reviewable output directory with `computed-polytopes.jsonl`,
@@ -37,11 +44,11 @@ rejection until a valid polytope is produced.
 
 ## Run-Local Producer
 
-Use this path for producer/prepare iterations that should not mutate canonical
+Use this path for source/table iterations that should not mutate canonical
 producer files:
 
 ```bash
-cargo run -p exp-sys-datascience --release --bin sys-datascience-produce -- \
+cargo run -p exp-polytope-datasets --release --bin sys-datascience-produce -- \
   --mode smoke \
   --producers random,random-product \
   --output-dir /tmp/ds-produce-smoke-cold \
@@ -98,17 +105,17 @@ per-bucket counts make source/bucket/count mixups visible. Validation must then
 use `--expected-plan-file`, not only family totals:
 
 ```bash
-python3 experiments/sys-datascience/produce/validate-datascience-produced.py \
+python3 experiments/polytope-datasets/validate-datascience-produced.py \
   --produce-dir "$SMOKE_DIR" \
   --mode smoke \
   --producers random,random-product \
-  --expected-plan-file experiments/sys-datascience/produce/plans/two-face-control-licca-smoke.json
+  --expected-plan-file experiments/polytope-datasets/plans/two-face-control-licca-smoke.json
 ```
 
 The known HKO pentagon can be emitted as a one-row reference/holdout source:
 
 ```bash
-cargo run -p exp-sys-datascience --release --bin sys-datascience-produce -- \
+cargo run -p exp-polytope-datasets --release --bin sys-datascience-produce -- \
   --mode smoke \
   --producers known-hko-reference \
   --output-dir /tmp/ds-produce-hko \
@@ -122,7 +129,7 @@ This writes `reference-samples.jsonl` with source
 Production mode uses the retained row counts above:
 
 ```bash
-cargo run -p exp-sys-datascience --release --bin sys-datascience-produce -- \
+cargo run -p exp-polytope-datasets --release --bin sys-datascience-produce -- \
   --mode production \
   --producers random,random-product \
   --output-dir /tmp/ds-produce-production \
@@ -133,7 +140,7 @@ cargo run -p exp-sys-datascience --release --bin sys-datascience-produce -- \
 Validate a produced directory before prepare or promotion decisions:
 
 ```bash
-python3 experiments/sys-datascience/produce/validate-datascience-produced.py \
+python3 experiments/polytope-datasets/validate-datascience-produced.py \
   --produce-dir /tmp/ds-produce-smoke-cold \
   --mode smoke \
   --producers random,random-product
@@ -142,15 +149,15 @@ python3 experiments/sys-datascience/produce/validate-datascience-produced.py \
 ## LICCA
 
 `licca-datascience-produce.slurm.sh` is dormant run-local infrastructure; no
-submission is selected. See `../LICCA.md`. If a new research decision selects a
-random/product producer job, the new job-specific handoff must reassess
-resources and build the binary on the login node before submission so Slurm
-time measures the producer job, not Rust compilation:
+submission is selected. See `experiments/sys-datascience/LICCA.md`. If a new
+research decision selects a random/product producer job, the new job-specific
+handoff must reassess resources and build the binary on the login node before
+submission so Slurm time measures the producer job, not Rust compilation:
 
 ```bash
 cd "$HOME/msc-math"
 export CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target
-cargo build --release -p exp-sys-datascience --bin sys-datascience-produce
+cargo build --release -p exp-polytope-datasets --bin sys-datascience-produce
 ```
 
 No LICCA job is currently selected. After a new named research decision and a reviewed

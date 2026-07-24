@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[3]
-DEFAULT_TABLE = ROOT / "experiments" / "sys-datascience" / "prepare" / "polytope-table.jsonl"
+DEFAULT_TABLE = ROOT / "experiments" / "polytope-invariant-table" / "polytope-table.jsonl"
 DEFAULT_OUT = Path(__file__).resolve().parent / "polytope-panel.jsonl"
 
 

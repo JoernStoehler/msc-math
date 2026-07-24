@@ -12,7 +12,7 @@ import numpy as np
 
 METHODS_DIR = Path(__file__).resolve().parents[1]
 SYS_DATASCIENCE_DIR = METHODS_DIR.parent
-TABLES_DIR = SYS_DATASCIENCE_DIR / "prepare"
+TABLES_DIR = SYS_DATASCIENCE_DIR.parent / "polytope-invariant-table"
 
 TRUSTED_DATASETS = {
     "random_sample",

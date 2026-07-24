@@ -53,7 +53,7 @@ Evidence sources:
 - `../../methods/extreme-scalar-rejection-proposer/configs/100k-promising-scalars-durable.json`
 - `../../methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/review.md`
 - `../../methods/extreme-scalar-rejection-proposer/artifacts/covariance-rho-frozen-validation/`
-- `../../prepare/feature_cost.rs`, infrastructure for measuring feature cost
+- `experiments/polytope-invariant-table/feature_cost.rs`, infrastructure for measuring feature cost
 
 Candidate hypotheses:
 
