@@ -87,9 +87,12 @@ The selected ownership model has four distinct artifacts:
    mathematical semantics, not production code structure or runtime.
 2. **Optimized production implementation:** the importable `symplectic`
    implementation used by ordinary consumers.
-3. **Independent references:** exact enumeration/solves and adversarial
-   fixtures in `dev-quadratic-program`. These must not share the production
-   or readable-base predicate/pruning code whose correctness they test.
+3. **Reference and control routes:** the general exact-all-visited-sigma route
+   is independent of the selected f64 predicates. The product exact-all audit
+   is only a coupled interval-pruning control because it shares support and
+   cyclic-order enumeration with the hybrid. Independent product controls are
+   the general exact KKT route, old product route, known values, and
+   mathematical/code review.
 4. **Experiment variants:** local copies made from the readable selected
    implementation when an actual experiment changes route semantics. The
    variant records its source commit and intentional differences.
@@ -103,15 +106,17 @@ requires checking both files and the correspondence suite.
 The correspondence suite compares capacities/certificates across the retained
 general, product, scaling, near-singular, and adversarial cases. Predicate and
 intermediate numerical correctness are checked separately against the
-independent exact audits; agreement between two related implementations is not
-treated as independent correctness evidence.
+applicable exact controls; agreement between two related implementations is
+not treated as independent correctness evidence. In particular,
+hybrid-versus-exact product agreement checks interval pruning, not shared
+support or cyclic-order enumeration.
 
 An experiment that only needs production timings calls the production route
 and uses `tracing`. An experiment that needs detailed counters can use the
 readable selected implementation. An experiment that changes a cutoff,
 predicate, factorization, or pruning rule copies the readable implementation
 locally and compares the variant against both production output and the
-independent exact reference.
+applicable independent controls.
 
 ## Intended production surface
 
@@ -202,12 +207,52 @@ coordinates. It must not silently substitute a caller's algebraic or source
 rational coordinates: both selected certificates concern the exact dyadic
 values represented by the binary64 input.
 
+`CapacityInput4d` must establish these conditions, not merely preserve the
+current f64 validator's `AcceptedAmbiguous` status. Resolve ambiguous geometry
+with exact binary64-rational validation when available; otherwise return a
+validation-indeterminate error. Do not construct the validated token from an
+ambiguous report.
+
+Keep input validation, explicit-route applicability, exact-fallback failure,
+and internal-invariant errors distinguishable. The caller spike should cover at
+least invalid geometry, validation indeterminacy, non-structural product when a
+product route is explicitly requested, exact fallback failure, and internal
+invariant failure.
+
+Unsupported f64 arithmetic assumptions, including unavailable gradual
+underflow, route to complete exact fallback rather than becoming caller-visible
+failure. Report an arithmetic/fallback error only if the required exact route
+cannot run. For a fully validated bounded input and complete candidate stream,
+finding no positive capacity candidate contradicts the mathematical contract
+and is an internal invariant failure, not ordinary mathematical non-success.
+
+Automatic dispatch uses exact structural-product classification. A confirmed
+non-product takes the general route. Once an input is classified as an exact
+structural product, a product-route arithmetic or invariant failure is
+reported; it must not silently fall back to the general route and erase the
+failed specialized contract.
+
 Ordinary `sys` producers may treat failure to construct this token as a hard
 precondition failure after their own soft input-filter stage. The numerical
 route itself should return explicit errors rather than panic on input.
 
 Near-products stay on the general route. Rounding them into exact products is a
 separate changed-input preprocessing operation.
+
+### Arithmetic dependency boundary
+
+The reviewed general numerical theorem assumes pinned `nalgebra 0.33.3` for
+certified products and `nalgebra 0.35.0` for Bunch--Kaufman factorization,
+together with the recorded `matrixmultiply`, dimension, finite-value, and
+gradual-underflow conditions. The development package currently imports
+`nalgebra 0.35` under the `nalgebra035` alias, while `symplectic` has only the
+workspace `nalgebra 0.33` dependency.
+
+Production extraction therefore requires an explicitly pinned aliased 0.35.0
+dependency unless a separate review chooses to change the arithmetic contract.
+Do not replace or upgrade either version incidentally during migration. Any
+dependency, target, compiler-arithmetic, or dimension change triggers review
+of `rem:kkt-batched-binary64-contract` and reruns the general numerical packet.
 
 ## Stages
 
@@ -218,7 +263,8 @@ consumer sketch with a small compile-checked sketch of the proposed production
 surface. Cover these real caller shapes:
 
 - validate once, compute the automatically selected scalar certificate, and
-  compute `sys` bounds;
+  combine it with an ordinary f64 volume only under an explicitly approximate
+  `sys` label;
 - force both routes on an exact structural product for agreement testing;
 - report a soft validation error;
 - access exact product witnesses without adding optional fields to the general
@@ -239,6 +285,12 @@ Completion evidence is the checked-in caller example plus a short decision
 paragraph here naming the observed friction. Estimated cost after the
 coordination gate: 15--30 minutes.
 
+This first API certifies capacity, not volume or `sys`. A certified `sys`
+interval requires a separate exact/outward volume contract and outward
+composition. Do not describe `systolic_ratio(f64, f64)` or current
+exact-volume-to-f64 conversions as certified bounds. Add that contract later
+only when a consumer decision needs it.
+
 ### 1. Stabilize the selected code in the development packet
 
 After the coordination gate clears, extract only the selected general kernel
@@ -248,7 +300,7 @@ variants, producers, counters, and audit logic in the tool.
 
 The product route is already importable in
 `src/product/closure_vertex_capacity.rs`; separate its selected kernel from its
-independent exact-reference and audit-only types during the same pass.
+coupled exact-pruning audit and other audit-only types during the same pass.
 
 These extracted modules become the readable selected implementations. They
 must read as ordinary concrete algorithms, not miniature frameworks. Retain
@@ -279,12 +331,18 @@ without touching production or consumers.
 Estimated critical-path cost after the coordination gate: 1--2 agent hours,
 plus roughly two minutes of retained producer runtime.
 
-### 2. Add corresponding optimized kernels and the scalar production API
+### 2. Add corresponding production kernels and the scalar production API
 
-Implement the corresponding optimized kernels in `capacity_4d/`, starting from
-the readable selected implementations. Keep the readable versions, exact
-reference enumeration, and numerical audits in the experiment packet. Add
-reciprocal correspondence headers before optimizing code structure.
+Begin with correspondence-checked faithful production copies in
+`capacity_4d/`, starting from the readable selected implementations. Keep the
+readable versions, reference/control routes, and numerical audits in the
+experiment packet. Add reciprocal correspondence headers before changing code
+structure. Profile the production path, then optimize only measured costs while
+rerunning correspondence and exact-control checks after each material change.
+
+Pin the reviewed aliased arithmetic dependencies before compiling the general
+route. A dependency consolidation or upgrade is a separate numerical-contract
+change, not migration cleanup.
 
 Add direct public tests for:
 
@@ -314,9 +372,18 @@ their certificates. Run the development library tests separately; if the
 unrelated default artifact scan still sees an unfetched LFS pointer, record
 that environment omission rather than treating it as a route failure.
 
-Estimated cost: 1--2 agent hours. Stop if the concurrent migration changed the
-validation or candidate-stream contract enough that the existing proofs no
-longer apply.
+Update `crates/symplectic/README.md` with the ordinary caller example and
+certificate/error meanings. Update `crates/symplectic/DEVELOPMENT.md` with the
+readable/production counterpart locations, arithmetic pins, evidence ownership,
+and commands plus what each command establishes.
+
+Obtain independent proof-to-code, API-contract, and correspondence review at
+the end of this stage before migrating any caller.
+
+Estimated cost: 2--4 agent hours including faithful production copies, API and
+validation work, focused profiling/optimization, documentation, and review.
+Stop if the concurrent migration changed the validation or candidate-stream
+contract enough that the existing proofs no longer apply.
 
 ### 3. Migrate one scalar-only vertical slice
 
@@ -339,14 +406,31 @@ The vertical slice passes when:
 
 Estimated cost: 30--60 minutes.
 
-### 4. Migrate remaining scalar consumers by risk
+### 4. Classify and migrate remaining consumers by risk
+
+Classify each producer before editing it:
+
+- **Scalar-only:** consumes only the capacity certificate and may migrate
+  directly.
+- **Dual-route:** needs the new scalar certificate plus legacy sigma, orbit,
+  bounce, or iteration payload. Run and provenance-label both routes.
+- **Orbit-sensitive:** its decision depends on orbit completeness or
+  near-minimizer data and must wait for the output extension.
+
+Current source inspection already classifies `sys-landscape` computed payloads,
+random-product/datascience producers, and regular-product sweeps as at least
+dual-route: they store a best sigma, orbit scalars, bounce counts, iterations,
+or tied orbit lists. Do not call them scalar-only merely because they also
+store capacity. Sparse product winners may supply some sigma-derived fields,
+but they do not supply legacy iteration counts or a complete tied-orbit set.
 
 Recommended order:
 
-1. scalar-only verification and regular-product computations;
-2. random/general and random-product producers;
-3. `sys-landscape` scalar computation and cache misses;
-4. other datascience producers and method-local recomputation.
+1. truly scalar verification assertions and scalar-only computations;
+2. dual-route producers whose schemas can cleanly separate certificate and
+   legacy-orbit provenance;
+3. retained caches and datascience producers after explicit schema decisions;
+4. orbit-sensitive consumers only after the separate output extension.
 
 Before changing a retained cache or JSONL producer, add route/certificate
 provenance. Existing fields such as `backend = auto|billiard` and
@@ -354,8 +438,9 @@ provenance. Existing fields such as `backend = auto|billiard` and
 or exact for binary64 input. Treat this as a schema migration with explicit
 old-row compatibility or regeneration, not a field rename.
 
-Estimated cost: 2--4 agent hours depending on cache compatibility. This work
-can be planned now but should wait for the other large code migration to land.
+Estimated cost: 4--8 agent hours depending on how many consumers remain
+dual-route and whether retained schemas need regeneration. This work can be
+planned now but should wait for the other large code migration to land.
 
 ### 5. Defer orbit-sensitive consumers
 
@@ -384,9 +469,10 @@ certificate.
 - `symplectic`: optimized selected production kernels, public contracts,
   focused regression and property tests, and ordinary tracing.
 - `experiments/dev-quadratic-program`: exact intermediate audits, adversarial
-  fixtures, independent exact references, readable selected implementations,
-  correspondence tests, actual ablation variants, profiling counters, producer
-  commands, retained JSONL, and interpretation.
+  fixtures, independent and coupled reference/control routes with their scope
+  stated, readable selected implementations, correspondence tests, actual
+  ablation variants, profiling counters, producer commands, retained JSONL,
+  and interpretation.
 - `formal`: proofs and arithmetic contracts.
 - consumer experiment folders: only output-specific agreement/schema tests.
 
@@ -410,9 +496,10 @@ kernel moves.
 
 ## Review and stop conditions
 
-Obtain independent review after stage 1 extraction and after the first
-production vertical slice. Review the proof-to-code mapping, not only Rust
-style.
+Obtain independent review after stage 1 extraction, after stage 2 production
+implementation/API work, and after the first production vertical slice.
+Stage-2 review is a gate before any caller migration. Review the proof-to-code
+mapping and evidence scope, not only Rust style.
 
 Stop and replan if:
 
