@@ -254,109 +254,74 @@ Do not replace or upgrade either version incidentally during migration. Any
 dependency, target, compiler-arithmetic, or dimension change triggers review
 of `rem:kkt-batched-binary64-contract` and reruns the general numerical packet.
 
-## Stages
+## Execution batches and checkpoints
 
-### 0. Compile the caller API spike
+The migration should use the compiler and tests as navigation. Do not turn
+every logical dependency into a separate edit/review cycle. After the
+coordination gate clears, use three large coherent batches with one committed
+checkpoint between them.
 
-Before moving the selected kernels, replace the current development-only
-consumer sketch with a small compile-checked sketch of the proposed production
-surface. Cover these real caller shapes:
+The only required non-commutative boundaries are:
 
-- validate once, compute the automatically selected scalar certificate, and
-  combine it with an ordinary f64 volume only under an explicitly approximate
-  `sys` label;
-- force both routes on an exact structural product for agreement testing;
-- report a soft validation error;
-- access exact product witnesses without adding optional fields to the general
-  result; and
-- time one production call with tracing while keeping route counters out of the
-  mathematical result.
+1. choose the integration base before editing overlapping route code;
+2. establish the production contract before consumer schemas and thesis prose
+   depend on it; and
+3. stabilize the implementation before recording final performance,
+   complexity, and thesis claims.
 
-Compare two caller APIs in this spike:
-
-1. validated input plus route-specific result enum (current prediction); and
-2. raw free functions returning one common result with a certificate enum.
-
-Prefer the first unless the compile-checked callers show that the validated
-input is ceremony without reuse or that matching the result enum causes
-repeated conversions. Do not implement both as permanent convenience layers.
-
-Completion evidence is the checked-in caller example plus a short decision
-paragraph here naming the observed friction. Estimated cost after the
-coordination gate: 15--30 minutes.
-
-This first API certifies capacity, not volume or `sys`. A certified `sys`
-interval requires a separate exact/outward volume contract and outward
-composition. Do not describe `systolic_ratio(f64, f64)` or current
-exact-volume-to-f64 conversions as certified bounds. Add that contract later
-only when a consumer decision needs it.
-
-### 1. Stabilize the selected code in the development packet
-
-After the coordination gate clears, extract only the selected general kernel
-from the 4,000-line ablation binary into an importable
-`experiments/dev-quadratic-program/src/` module. Keep baselines, losing
-variants, producers, counters, and audit logic in the tool.
-
-The product route is already importable in
-`src/product/closure_vertex_capacity.rs`; separate its selected kernel from its
-coupled exact-pruning audit and other audit-only types during the same pass.
-
-These extracted modules become the readable selected implementations. They
-must read as ordinary concrete algorithms, not miniature frameworks. Retain
-useful counters when they do not obscure the algorithm. A small helper shared
-by the two readable routes is allowed when it expresses the same arithmetic
-operation and proof contract; a helper shared by a selected implementation and
-its exact oracle is suspect because it can make a shared bug pass an audit.
-
-Do one disposable copy-editability check after extraction: copy the focused
-general module into a temporary experiment-local variant, change one real
-ablation choice such as the obstruction cutoff, and compile it. Record only the
-dependency friction, then delete the variant. This checks that the promised
-base is actually easy to adapt before production is built around it.
-
-Completion evidence:
-
-- canonical general packet unchanged in capacity intervals, exact decisions,
-  rejection counts, and fallback counts;
-- product `sample5.jsonl` unchanged in exact outputs and zero-violation fields;
-- one real local variant can be produced by copying a focused readable module
-  without importing an experimental framework;
-- focused package tests and clippy pass; and
-- representative route time has no unexplained material regression.
-
-This is a useful halfway stopping point. It yields readable, reviewed kernels
-without touching production or consumers.
-
-Estimated critical-path cost after the coordination gate: 1--2 agent hours,
-plus roughly two minutes of retained producer runtime.
-
-### 2. Add corresponding production kernels and the scalar production API
-
-Begin with correspondence-checked faithful production copies in
-`capacity_4d/`, starting from the readable selected implementations. Keep the
-readable versions, reference/control routes, and numerical audits in the
-experiment packet. Add reciprocal correspondence headers before changing code
-structure. Profile the production path, then optimize only measured costs while
-rerunning correspondence and exact-control checks after each material change.
-
-Pin the reviewed aliased arithmetic dependencies before compiling the general
-route. A dependency consolidation or upgrade is a separate numerical-contract
-change, not migration cleanup.
-
-Add direct public tests for:
-
-- known capacities and literature fixtures;
-- exact product/general agreement where both routes cheaply apply;
-- facet reordering, cyclic rotation, and power-of-two scaling;
-- invalid/non-product/near-product routing;
-- exact-zero and near-singular cases;
-- every determinate predicate against exact binary64 arithmetic; and
-- unsupported gradual-underflow behavior taking complete exact fallback.
-
-Run:
+Within a batch, prefer a broad patch followed by hard feedback:
 
 ```text
+targeted cargo check
+-> workspace cargo check
+-> focused tests
+-> exact/correspondence/numerical producers
+-> release profiling
+```
+
+Use grep primarily for surfaces the compiler cannot identify: copied
+implementations, JSONL/cache schemas, documentation claims, and semantic
+consumers. Do not polish code that fails because the chosen boundary is wrong.
+
+### Batch 1: readable and faithful production routes
+
+Start a fresh migration worktree from the chosen integration commit after the
+overlapping worktree has a stable disposition. Record that commit as the
+pre-migration checkpoint.
+
+Make one coherent implementation patch containing:
+
+- the selected general kernel extracted from the ablation binary into
+  `src/selected_route/general.rs`;
+- the selected product kernel separated from its coupled exact-pruning audit
+  into `src/selected_route/product.rs`;
+- faithful corresponding implementations under
+  `symplectic::algorithms::capacity_4d`;
+- reciprocal readable/production correspondence headers;
+- the pinned aliased arithmetic dependencies;
+- exact binary64-rational validation, input/applicability/fallback/invariant
+  errors, exact structural-product dispatch, and complete exact fallback;
+- the provisional validated-input and route-specific-result API;
+- compile-checked ordinary, forced-route, validation-error, exact-winner, and
+  tracing caller examples;
+- focused public tests and crate README/DEVELOPMENT documentation.
+
+The caller examples compare the two serious public shapes inside this batch:
+validated input plus a result enum versus raw free functions plus a certificate
+enum. Keep only the clearer compiled shape; do not retain two permanent
+convenience layers.
+
+The first implementation is faithful, not newly optimized. Preserve the
+canonical general capacity intervals/decision/fallback counters and the product
+exact outputs/zero-violation fields. Check copy-editability by making and
+compiling one disposable local cutoff variant, then delete it.
+
+Use build failures to locate missing imports, privacy mistakes, dependency
+boundaries, and caller assumptions. Then run:
+
+```text
+cargo check -p symplectic -p exp-dev-quadratic-program
+cargo check --workspace
 cargo test -p symplectic --release --lib
 cargo test -p symplectic --release --test public_capacity_api
 cargo test -p exp-dev-quadratic-program --release \
@@ -365,104 +330,115 @@ cargo test -p exp-dev-quadratic-program --release \
   --bin qp-product-closure-route
 ```
 
-Then rerun the canonical general and product evidence producers. Compare
-generated results, not only exit status. The experiment packet must run the
-readable and production implementations on the same retained inputs and compare
-their certificates. Run the development library tests separately; if the
-unrelated default artifact scan still sees an unfetched LFS pointer, record
-that environment omission rather than treating it as a route failure.
+Compare regenerated evidence fields, not only process exit status. Commit the
+faithful production migration only when this hard feedback passes.
 
-Update `crates/symplectic/README.md` with the ordinary caller example and
-certificate/error meanings. Update `crates/symplectic/DEVELOPMENT.md` with the
-readable/production counterpart locations, arithmetic pins, evidence ownership,
-and commands plus what each command establishes.
+If compilation or the caller examples show that the architecture is wrong,
+do not repair around it. Create a fresh worktree from the pre-migration
+checkpoint and cherry-pick only independent proven pieces such as tests,
+fixtures, or arithmetic helpers.
 
-Obtain independent proof-to-code, API-contract, and correspondence review at
-the end of this stage before migrating any caller.
+Initial cost prediction: roughly 1--3 agent hours plus the retained producer
+runs. Re-estimate from the first targeted and workspace builds rather than
+defending this estimate.
 
-Estimated cost: 2--4 agent hours including faithful production copies, API and
-validation work, focused profiling/optimization, documentation, and review.
-Stop if the concurrent migration changed the validation or candidate-stream
-contract enough that the existing proofs no longer apply.
+### Batch 2: evidence wiring and measured optimization
 
-### 3. Migrate one scalar-only vertical slice
+Against the committed faithful production route, make one evidence/optimization
+batch that:
 
-Use `experiments/verification` first. It already owns cross-route correctness,
-has no durable cache schema to migrate, and can compare the new scalar result
-with the legacy HK/billiard orbit route on the same fixtures.
+- runs readable-versus-production correspondence across retained general,
+  product, scaling, near-singular, and adversarial cases;
+- checks every determinate f64 predicate and relevant intermediate against
+  exact binary64 arithmetic;
+- checks candidate-stream retention, capacity, known values, invariances,
+  general/product overlap, old-route controls, and FG agreement where the
+  contracts overlap;
+- keeps the product exact-all route labelled as a coupled interval-pruning
+  audit and uses the independent product controls named above;
+- exercises unavailable gradual underflow and every public validation,
+  applicability, fallback, and invariant route;
+- profiles phase times, counts, memory if material, latency/fallback tails,
+  facet-count/conditioning scaling, and representative product/general cases;
+- records the simple/exact/old/faithful/optimized ablation and the review-code
+  surface; and
+- uses selected negative controls or mutations to demonstrate that critical
+  predicate, rounding, pruning, and fallback regressions are detected.
 
-Do not initially delete its old orbit helpers. Add the scalar route beside
-them, migrate scalar assertions, and keep orbit/minimizer assertions on the
-legacy or certified-orbit path.
+Profile the faithful production route once broadly, then make one grouped
+optimization patch for measured costs. Re-run the complete affected evidence
+packet after that patch. Keep detailed metrics with their producers rather than
+copying them into prose.
 
-The vertical slice passes when:
+Obtain independent proof-to-code, numerical-contract, evidence-scope,
+performance-comparison, and public-API review at the end of this batch. Commit
+the optimized/evidence checkpoint only after repair or explicit deferral of
+findings. No consumer schema migration precedes this checkpoint.
 
-- scalar assertions use `Capacity4d`;
-- route selection is visible in failures/output;
-- old and new capacities agree on the overlap fixtures;
-- the new exact/interval contract is asserted, not converted immediately to an
-  unlabelled `f64`; and
-- the verification package and `symplectic` suites pass.
+Initial cost prediction: roughly 1--2 agent hours plus retained runs and review,
+with a stop/replan if a determinate predicate disagrees with exact arithmetic,
+candidate completeness fails, or optimization gives an unexplained regression.
 
-Estimated cost: 30--60 minutes.
+### Batch 3: consumers, durable evidence homes, and thesis
 
-### 4. Classify and migrate remaining consumers by risk
+Use the workspace build plus source inspection to classify all consumers:
 
-Classify each producer before editing it:
-
-- **Scalar-only:** consumes only the capacity certificate and may migrate
-  directly.
+- **Scalar-only:** consumes only the capacity certificate.
 - **Dual-route:** needs the new scalar certificate plus legacy sigma, orbit,
-  bounce, or iteration payload. Run and provenance-label both routes.
-- **Orbit-sensitive:** its decision depends on orbit completeness or
-  near-minimizer data and must wait for the output extension.
+  bounce, iteration, derivative, or trajectory payload.
+- **Orbit-sensitive:** depends on complete minimizer/window/branch semantics.
 
 Current source inspection already classifies `sys-landscape` computed payloads,
 random-product/datascience producers, and regular-product sweeps as at least
-dual-route: they store a best sigma, orbit scalars, bounce counts, iterations,
-or tied orbit lists. Do not call them scalar-only merely because they also
-store capacity. Sparse product winners may supply some sigma-derived fields,
-but they do not supply legacy iteration counts or a complete tied-orbit set.
+dual-route. They store best sigmas, orbit scalars, bounce counts, iterations, or
+tied orbit lists. Sparse product winners do not automatically replace those
+contracts.
 
-Recommended order:
+Make one migration/schema patch that:
 
-1. truly scalar verification assertions and scalar-only computations;
-2. dual-route producers whose schemas can cleanly separate certificate and
-   legacy-orbit provenance;
-3. retained caches and datascience producers after explicit schema decisions;
-4. orbit-sensitive consumers only after the separate output extension.
+- migrates all scalar-only consumers;
+- gives compatible dual-route consumers separately provenance-labelled scalar
+  certificates and legacy orbit payloads;
+- adds one explicit compatibility/regeneration policy for retained caches and
+  JSONL instead of per-producer ad hoc fields;
+- establishes exact/outward volume and `sys` composition before any consumer
+  claims certified `sys`; otherwise keeps `sys` explicitly approximate;
+- removes duplicated ordinary wrappers made obsolete by the public API; and
+- leaves genuinely orbit-sensitive consumers on the explicitly labelled legacy
+  route until a separately proved/tested output extension exists.
 
-Before changing a retained cache or JSONL producer, add route/certificate
-provenance. Existing fields such as `backend = auto|billiard` and
-`capacity_source` do not state whether a value is heuristic, interval-certified,
-or exact for binary64 input. Treat this as a schema migration with explicit
-old-row compatibility or regeneration, not a field rename.
+After the consumer build/test feedback, promote only stable reusable evidence
+to the verification/numerics/performance homes, update formal proof/code
+correspondence, and rewrite the thesis algorithm/numerics/performance-complexity
+explanation from the final implementation and retained evidence. Do not publish
+pre-optimization measurements as final comparisons.
 
-Estimated cost: 4--8 agent hours depending on how many consumers remain
-dual-route and whether retained schemas need regeneration. This work can be
-planned now but should wait for the other large code migration to land.
+Run the workspace checks, affected consumer suites, retained schema
+round-trips/regeneration checks, and the final production evidence packet.
+Obtain final code/API/consumer/thesis-evidence review, then commit the consumer
+and thesis checkpoints separately so either can be reused or redone without
+salvaging the other.
 
-### 5. Defer orbit-sensitive consumers
+Initial cost prediction: roughly 2--4 agent hours depending on schema
+compatibility and how many consumers remain dual-route. Re-estimate after the
+workspace build identifies the actual compile surface.
 
-Do not migrate these by discarding their extra outputs:
+## Recovery policy
 
-- gradient ascent and derivative computation;
-- local/branch behavior and combinatorial-cell experiments;
-- near-active/minimizer-window diagnostics;
-- geometric orbit recovery; and
-- flow-graph comparisons that require an exact candidate set.
+Git commits are experimental checkpoints, not sunk-cost commitments. Prefer a
+fresh worktree from the preceding accepted checkpoint when:
 
-They need a separate output extension:
+- an API boundary requires widespread adapters merely to compile;
+- a migration obscures rather than clarifies the mathematical algorithm;
+- a schema design cannot state provenance without optional-field ambiguity;
+- a performance rewrite changes numerical semantics unexpectedly; or
+- repairing the batch costs more than reapplying its independently useful
+  pieces.
 
-- for products, recover the required KKT/geometric payload only for the sparse
-  exact winners or a requested exact action window;
-- for general inputs, retain capacity-relevant candidates during the certified
-  route and exact-resolve a caller-requested action window.
-
-That extension is a new algorithm/API question with its own exact completeness
-and performance checks. Until it is solved, keep the existing orbit route
-explicitly labelled and avoid claiming those consumers use the new scalar
-certificate.
+Cherry-pick tests, exact controls, fixtures, and documentation only when they
+remain valid independently of the rejected architecture. Git history is enough
+for discarded process; do not preserve a bad implementation as a maintained
+variant.
 
 ## Evidence ownership after migration
 
@@ -496,10 +472,10 @@ kernel moves.
 
 ## Review and stop conditions
 
-Obtain independent review after stage 1 extraction, after stage 2 production
-implementation/API work, and after the first production vertical slice.
-Stage-2 review is a gate before any caller migration. Review the proof-to-code
-mapping and evidence scope, not only Rust style.
+This plan receives independent adversarial review before Batch 1. Obtain
+independent proof-to-code/evidence review after Batch 2 before consumer
+migration, then final code/API/consumer/thesis-evidence review after Batch 3.
+Review the mathematical and evidence contracts, not only Rust style.
 
 Stop and replan if:
 
@@ -510,7 +486,6 @@ Stop and replan if:
 - product dispatch would require approximate block classification;
 - moving the selected kernel causes an unexplained correctness or material
   performance regression; or
-- a chosen consumer actually needs an orbit set rather than a scalar
-  certificate.
+- consumer migration would erase or mislabel an orbit/window/schema contract.
 
-No further algorithm search is a prerequisite for stages 1--3.
+No further algorithm search is a prerequisite for Batches 1--3.
