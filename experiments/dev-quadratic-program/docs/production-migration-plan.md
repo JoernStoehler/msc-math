@@ -47,42 +47,84 @@ This gate blocks code movement, not API/consumer planning.
 
 The first version of this plan chose `capacity_4d/` plus one public result enum
 without comparing enough ownership alternatives. The following comparison is
-now part of the migration decision.
+now part of the migration decision. The initial comparison also overestimated
+the cost of maintaining two explicitly linked implementations.
+
+### Maintenance cost model
+
+The primary maintainers of this code are agents. Reading one additional focused
+Rust file and applying the same local semantic edit in two named places is
+cheap. Reciprocal file-header comments make the relationship discoverable;
+correspondence tests expose many missed updates; and Git history makes a missed
+counterpart edit easy to reconstruct. A human maintainer would pay a more
+noticeable duplicate-read/edit cost, so the correspondence should remain
+limited to one readable base and one optimized production implementation.
+
+For this route, do not apply a generic “duplication must drift” argument. The
+important comparison is:
+
+- explicit duplicated algorithms cost cheap repeated edits; while
+- a configurable shared framework costs abstraction, proof surface, hot-path
+  branches, and copy-edit friction on every future investigation.
+
+The latter is currently more expensive. This cost model is local to the
+selected QP routes, not a repo-wide requirement to duplicate ordinary helpers.
 
 | Alternative | Benefit | Long-term cost / failure mode | Decision |
 | --- | --- | --- | --- |
 | Keep the selected route in `dev-quadratic-program` and wrap it from `symplectic` | Experiment code remains easy to edit | Reverses the dependency direction: production would depend on an experiment package | Reject |
-| Copy the selected implementation into `symplectic` and retain a synchronized editable copy in the experiment | Immediately gives both homes a complete implementation | Two purportedly current implementations drift; every numerical fix, proof-condition change, and optimization needs a coordinated edit | Reject |
-| Publish low-level enumeration/KKT pieces and let each experiment assemble its own route | Every caller can instrument anything | This is the current failure pattern: `combinatorial-cells` and `hko-local-maximum` reconstructed searches and now retain old threshold/predicate semantics | Reject as the ordinary path; keep low-level APIs only for genuinely low-level research |
+| Keep a readable selected implementation in `dev-quadratic-program` and an optimized corresponding implementation in `symplectic` | Gives experiments a stable copy-editable starting point while production remains optimized | Semantic changes must be applied or checked in two cross-linked files | Select |
+| Publish low-level enumeration/KKT pieces and let each consumer independently assemble its ordinary route | Every caller can instrument anything | Ad hoc copies have no named correspondence contract; current `combinatorial-cells` and `hko-local-maximum` helpers demonstrate how old threshold semantics can survive unnoticed | Reject as the ordinary consumer path; deliberate experiment variants remain welcome |
 | Parameterize one kernel by solver, predicate, pruning, observer, and output-policy traits | Can express many ablations without copying | Makes the production proof surface generic, spreads research choices through hot code, and makes ordinary reading harder | Reject until two maintained production consumers demonstrate a real shared variation |
 | Put the kernel in a new internal workspace crate and re-export it from `symplectic` | Production and experiments can share a lower layer | Adds another public dependency/API boundary but does not remove the need to distinguish production semantics from experimental variants | Defer; reconsider only if extraction finds a substantial independently reusable numerical kernel |
 | Use feature-gated diagnostics or a public observer callback in production | Rich counters without route copies | Adds control flow and API combinations to the correctness-critical path; feature combinations become another test matrix | Reject for now |
-| Move the one selected implementation to `symplectic`; keep independent exact oracles, adversarial fixtures, and alternative implementations in the experiment | One production truth, independent correctness witnesses, and no experiment dependency | A true algorithm variant must either wrap the production route or copy the focused module when it intentionally diverges | Select |
 
-The selected ownership model has three distinct artifacts:
+The selected ownership model has four distinct artifacts:
 
-1. **Production implementation:** the only maintained implementation of the
-   selected algorithm. Its source is deliberately cohesive and readable enough
-   to be the copy-editable starting point for a new experiment.
-2. **Independent references:** exact enumeration/solves and adversarial
+1. **Readable selected implementation:** a concrete, instrumentable
+   implementation in `dev-quadratic-program`. It is the preferred
+   copy-editable starting point and is maintained to match production
+   mathematical semantics, not production code structure or runtime.
+2. **Optimized production implementation:** the importable `symplectic`
+   implementation used by ordinary consumers.
+3. **Independent references:** exact enumeration/solves and adversarial
    fixtures in `dev-quadratic-program`. These must not share the production
-   predicate or pruning code whose correctness they test.
-3. **Experiment variants:** local implementations created only when an actual
-   experiment changes route semantics. A copied variant records its production
-   source commit and the intentional differences; it is not advertised as a
-   synchronized base or production truth.
+   or readable-base predicate/pruning code whose correctness they test.
+4. **Experiment variants:** local copies made from the readable selected
+   implementation when an actual experiment changes route semantics. The
+   variant records its source commit and intentional differences.
 
-An experiment that only needs timings or phase counts calls the production
-route and uses `tracing`. An experiment that changes a cutoff, predicate,
-factorization, or pruning rule owns a local variant and compares it against the
-production result and independent exact reference. This avoids both a
-research-framework API in the crate and silent local reconstruction of the
-ordinary route.
+The readable and production files name each other in their headers. Those
+headers state which mathematical outputs and predicates must correspond and
+which differences are intentional, such as storage, batching, instrumentation,
+or factorization reuse. A change to either header-listed semantic contract
+requires checking both files and the correspondence suite.
+
+The correspondence suite compares capacities/certificates across the retained
+general, product, scaling, near-singular, and adversarial cases. Predicate and
+intermediate numerical correctness are checked separately against the
+independent exact audits; agreement between two related implementations is not
+treated as independent correctness evidence.
+
+An experiment that only needs production timings calls the production route
+and uses `tracing`. An experiment that needs detailed counters can use the
+readable selected implementation. An experiment that changes a cutoff,
+predicate, factorization, or pruning rule copies the readable implementation
+locally and compares the variant against both production output and the
+independent exact reference.
 
 ## Intended production surface
 
 Keep the scalar routes together by consumer purpose while preserving their
 different certificates:
+
+```text
+experiments/dev-quadratic-program/src/
+`-- selected_route/
+    |-- mod.rs                 # readable result/counter adapters
+    |-- general.rs             # readable selected general algorithm
+    `-- product.rs             # readable selected product algorithm
+```
 
 ```text
 crates/symplectic/src/algorithms/
@@ -99,8 +141,9 @@ crates/symplectic/src/algorithms/
 
 Start flat. Split `general.rs` or `product.rs` only when extraction identifies a
 named mathematical component that can be read and tested independently.
-Avoiding speculative folders matters here because the production source is
-also the intended copy-editable base.
+Avoiding speculative folders keeps the proof-to-code map local. The production
+implementation may optimize structure independently; the experiment-owned
+readable implementation is the intended copy-editable base.
 
 The provisional caller shape is:
 
@@ -168,7 +211,7 @@ separate changed-input preprocessing operation.
 
 ## Stages
 
-### 0. Compile caller and copy-editability spikes
+### 0. Compile the caller API spike
 
 Before moving the selected kernels, replace the current development-only
 consumer sketch with a small compile-checked sketch of the proposed production
@@ -182,14 +225,6 @@ surface. Cover these real caller shapes:
   result; and
 - time one production call with tracing while keeping route counters out of the
   mathematical result.
-
-Then do one disposable copy-editability spike: copy the extracted focused
-general kernel into a temporary experiment-local module, change one real
-ablation choice such as the obstruction cutoff, and compile it against public
-crate dependencies. Record only the dependency/API friction and delete the
-copy. The target is not a line-count score; it is to discover private helper
-dependencies or generic-policy pressure before the production layout becomes
-expensive to change.
 
 Compare two caller APIs in this spike:
 
@@ -215,17 +250,26 @@ The product route is already importable in
 `src/product/closure_vertex_capacity.rs`; separate its selected kernel from its
 independent exact-reference and audit-only types during the same pass.
 
-The extracted modules must be readable as ordinary algorithms, not miniature
-frameworks. Route choices remain concrete. A small private helper shared by
-both selected routes is allowed when it expresses the same arithmetic
-operation and proof contract; a helper used by production and its exact oracle
-is suspect because it can make a shared bug pass differential tests.
+These extracted modules become the readable selected implementations. They
+must read as ordinary concrete algorithms, not miniature frameworks. Retain
+useful counters when they do not obscure the algorithm. A small helper shared
+by the two readable routes is allowed when it expresses the same arithmetic
+operation and proof contract; a helper shared by a selected implementation and
+its exact oracle is suspect because it can make a shared bug pass an audit.
+
+Do one disposable copy-editability check after extraction: copy the focused
+general module into a temporary experiment-local variant, change one real
+ablation choice such as the obstruction cutoff, and compile it. Record only the
+dependency friction, then delete the variant. This checks that the promised
+base is actually easy to adapt before production is built around it.
 
 Completion evidence:
 
 - canonical general packet unchanged in capacity intervals, exact decisions,
   rejection counts, and fallback counts;
 - product `sample5.jsonl` unchanged in exact outputs and zero-violation fields;
+- one real local variant can be produced by copying a focused readable module
+  without importing an experimental framework;
 - focused package tests and clippy pass; and
 - representative route time has no unexplained material regression.
 
@@ -235,11 +279,12 @@ without touching production or consumers.
 Estimated critical-path cost after the coordination gate: 1--2 agent hours,
 plus roughly two minutes of retained producer runtime.
 
-### 2. Move kernels and add the scalar production API
+### 2. Add corresponding optimized kernels and the scalar production API
 
-Move rather than copy the selected kernels into `capacity_4d/`. Keep exact
-reference enumeration and numerical audits in the experiment packet, now
-calling the production implementation for the system under test.
+Implement the corresponding optimized kernels in `capacity_4d/`, starting from
+the readable selected implementations. Keep the readable versions, exact
+reference enumeration, and numerical audits in the experiment packet. Add
+reciprocal correspondence headers before optimizing code structure.
 
 Add direct public tests for:
 
@@ -263,10 +308,11 @@ cargo test -p exp-dev-quadratic-program --release \
 ```
 
 Then rerun the canonical general and product evidence producers. Compare
-generated results, not only exit status. Run the development library tests
-separately; if the unrelated default artifact scan still sees an unfetched LFS
-pointer, record that environment omission rather than treating it as a route
-failure.
+generated results, not only exit status. The experiment packet must run the
+readable and production implementations on the same retained inputs and compare
+their certificates. Run the development library tests separately; if the
+unrelated default artifact scan still sees an unfetched LFS pointer, record
+that environment omission rather than treating it as a route failure.
 
 Estimated cost: 1--2 agent hours. Stop if the concurrent migration changed the
 validation or candidate-stream contract enough that the existing proofs no
@@ -284,7 +330,7 @@ legacy or certified-orbit path.
 
 The vertical slice passes when:
 
-- scalar assertions use `ScalarCapacity4d`;
+- scalar assertions use `Capacity4d`;
 - route selection is visible in failures/output;
 - old and new capacities agree on the overlap fixtures;
 - the new exact/interval contract is asserted, not converted immediately to an
@@ -335,13 +381,12 @@ certificate.
 
 ## Evidence ownership after migration
 
-- `symplectic`: the sole selected production kernels, public contracts, focused
-  regression and property tests, ordinary tracing, and the source future
-  experiments copy when they truly need a changed implementation.
+- `symplectic`: optimized selected production kernels, public contracts,
+  focused regression and property tests, and ordinary tracing.
 - `experiments/dev-quadratic-program`: exact intermediate audits, adversarial
-  fixtures, independent exact references, actual ablation variants, profiling
-  counters, producer commands, retained JSONL, and interpretation. It does not
-  keep a synchronized copy of the selected production implementation.
+  fixtures, independent exact references, readable selected implementations,
+  correspondence tests, actual ablation variants, profiling counters, producer
+  commands, retained JSONL, and interpretation.
 - `formal`: proofs and arithmetic contracts.
 - consumer experiment folders: only output-specific agreement/schema tests.
 
@@ -350,8 +395,10 @@ kernel moves.
 
 ## Deferred architecture questions
 
-- A reusable observer/policy layer is deferred until at least two maintained
-  variants need the same hook. One requested counter is not enough.
+- A reusable observer/policy layer is deferred until repeated concrete edits
+  show that explicit readable variants are more expensive. Under the current
+  agent-maintenance cost model, two variants needing the same hook is not by
+  itself enough.
 - A separate numerical-kernel crate is deferred until extraction demonstrates
   a component with consumers beyond this capacity route.
 - Orbit/minimizer-window recovery remains a separate API because its payload
