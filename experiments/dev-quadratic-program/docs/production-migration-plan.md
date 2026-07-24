@@ -327,6 +327,12 @@ Use grep primarily for surfaces the compiler cannot identify: copied
 implementations, JSONL/cache schemas, documentation claims, and semantic
 consumers. Do not polish code that fails because the chosen boundary is wrong.
 
+Batch boundaries do not prohibit test-first work. Evidence tests, exact
+comparisons, mutations, and consumer compile witnesses may be written or run in
+Batch 1 and may intentionally begin red. The evidence-harness checkpoint means
+only that the harness must demonstrate its own detection behavior before
+optimization relies on it; it is not a rule to postpone tests until Batch 2.
+
 ### Batch 1: readable and faithful production routes
 
 Start a fresh migration worktree from the chosen integration commit after the
