@@ -1,15 +1,16 @@
 # Four-dimensional QP route review packet
 
-Status: retained development evidence before production migration. This branch
-does not change Main and does not propose a merge.
+Status: retained ablation, verification, numerics, and performance evidence for
+the selected general production route.
 
 Start a review here, then read:
 
 1. `RESULTS.md` for the bounded claims and current measurements.
 2. `formal/hk2017-qp-precision.tex` for the numerical and curvature lemmas.
-3. `main.rs` for the executable correspondence. Its major sections match the
-   algorithm below.
-4. `run.sh` for the canonical build-and-run command.
+3. `../../src/selected_route/general.rs` for the instrumentable selected copy
+   and `crates/symplectic/src/algorithms/capacity_4d/general.rs` for production.
+4. `main.rs` for alternatives, counters, and executable correspondence.
+5. `run.sh` for the canonical build-and-run command.
 
 ## Intended route
 

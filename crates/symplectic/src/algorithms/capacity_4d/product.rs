@@ -1,4 +1,4 @@
-//! Experimental KKT-free capacity route for four-dimensional Lagrangian products.
+//! Production KKT-free capacity route for four-dimensional Lagrangian products.
 //!
 //! Mathematical contract: `formal/product-qp-six-facet-reduction.tex`,
 //! especially `thm:product-qp-six-facet-maximizer` and
@@ -7,16 +7,16 @@
 //! This module computes the scalar capacity and sparse maximizing witnesses.
 //! It does not classify every maximizing or near-maximizing HK branch.
 
+use crate::geom::rational_arithmetic::f64_to_rational;
 use nalgebra::Vector4;
 use num_rational::BigRational;
 use num_traits::{One, Signed, ToPrimitive, Zero};
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 use std::hint::black_box;
 use std::time::Instant;
-use symplectic::geom::rational_arithmetic::f64_to_rational;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum ProductClosureError {
+pub(super) enum ProductClosureError {
     NonFiniteFacet { facet: usize },
     NotStructuralProduct { facet: usize },
     ZeroFacet { facet: usize },
@@ -27,70 +27,37 @@ pub enum ProductClosureError {
 }
 
 #[derive(Clone, Debug, Default)]
-pub struct ProductClosureStats {
-    pub q_closure_vertices: usize,
-    pub p_closure_vertices: usize,
-    pub support_pairs_tested: usize,
-    pub support_triples_tested: usize,
-    pub interval_certified_vertices: usize,
-    pub interval_certified_rejections: usize,
-    pub support_exact_fallbacks: usize,
-    pub support_fallback_vertices: usize,
-    pub support_fallback_rejections: usize,
-    pub cyclic_orders_evaluated: usize,
-    pub exact_winner_contenders: usize,
-    pub gradual_underflow_available: bool,
-    pub full_exact_fallback: bool,
-    pub closure_enumeration_ms: f64,
-    pub objective_enumeration_ms: f64,
-    pub exact_winner_resolution_ms: f64,
-    pub total_ms: f64,
+struct ProductClosureStats {
+    q_closure_vertices: usize,
+    p_closure_vertices: usize,
+    support_pairs_tested: usize,
+    support_triples_tested: usize,
+    interval_certified_vertices: usize,
+    interval_certified_rejections: usize,
+    support_exact_fallbacks: usize,
+    support_fallback_vertices: usize,
+    support_fallback_rejections: usize,
+    cyclic_orders_evaluated: usize,
+    exact_winner_contenders: usize,
+    gradual_underflow_available: bool,
+    full_exact_fallback: bool,
+    closure_enumeration_ms: f64,
+    objective_enumeration_ms: f64,
+    exact_winner_resolution_ms: f64,
+    total_ms: f64,
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct ProductClosureWinner {
-    pub sigma: Vec<usize>,
-    pub beta_exact: Vec<BigRational>,
+pub(super) struct ProductClosureWinner {
+    pub(super) sigma: Vec<usize>,
+    pub(super) beta_exact: Vec<BigRational>,
 }
 
 #[derive(Clone, Debug)]
-pub struct ProductClosureCapacityReport {
-    pub q_max_exact: BigRational,
-    pub capacity_exact: BigRational,
-    pub capacity: f64,
-    pub winners: Vec<ProductClosureWinner>,
-    pub winner_type_patterns: BTreeSet<String>,
-    pub stats: ProductClosureStats,
-}
-
-#[derive(Clone, Debug, Default)]
-pub struct ProductClosureNumerics {
-    pub compared_weights: usize,
-    pub min_positive_exact_weight: f64,
-    pub max_weight_abs_error: f64,
-    pub max_weight_rel_error: f64,
-    pub max_weight_interval_width: f64,
-    pub max_closure_residual_inf: f64,
-    pub weight_interval_violations: usize,
-    pub compared_objectives: usize,
-    pub min_nonzero_abs_exact_q: f64,
-    pub max_q_abs_error: f64,
-    pub max_q_rel_error: f64,
-    pub max_q_interval_width: f64,
-    pub q_interval_violations: usize,
-    pub raw_q_sign_mismatches: usize,
-    pub q_sign_mismatches: usize,
-}
-
-#[derive(Clone, Debug)]
-pub struct ProductClosureAuditReport {
-    pub hybrid: ProductClosureCapacityReport,
-    pub exact_reference: ProductClosureCapacityReport,
-    pub capacity_exact_agrees: bool,
-    pub winner_value_agrees: bool,
-    pub exact_reference_ms: f64,
-    pub numerics: ProductClosureNumerics,
-    pub candidate_type_pattern_counts: BTreeMap<String, usize>,
+pub(super) struct ProductClosureCapacityReport {
+    pub(super) capacity_exact: BigRational,
+    pub(super) winners: Vec<ProductClosureWinner>,
+    stats: ProductClosureStats,
 }
 
 #[derive(Clone, Debug)]
@@ -102,7 +69,6 @@ struct ExactClosureVertex {
 #[derive(Clone, Debug)]
 struct FloatClosureVertex {
     facets: Vec<usize>,
-    weights: Vec<f64>,
     weight_intervals: Vec<Interval>,
 }
 
@@ -111,7 +77,6 @@ struct FloatCandidate {
     sigma: Vec<usize>,
     q_support: Vec<usize>,
     p_support: Vec<usize>,
-    q: f64,
     q_interval: Interval,
 }
 
@@ -194,7 +159,7 @@ enum IntervalSupportDecision {
 /// their interiors. This function validates only finite structural q/p
 /// splitting and the existence of factor closure vertices. It returns the
 /// exact capacity of the binary64 input and sparse exact maximizing witnesses.
-pub fn solve_product_closure_capacity_hybrid(
+pub(super) fn solve_product_closure_capacity_hybrid(
     dual_vertices: &[Vector4<f64>],
 ) -> Result<ProductClosureCapacityReport, ProductClosureError> {
     let total_started = Instant::now();
@@ -206,8 +171,10 @@ pub fn solve_product_closure_capacity_hybrid(
     }
     let (q_indices, p_indices) = split_product_indices_f64(dual_vertices)?;
     let exact_vertices = exact_binary64_vertices(dual_vertices);
-    let mut stats = ProductClosureStats::default();
-    stats.gradual_underflow_available = true;
+    let mut stats = ProductClosureStats {
+        gradual_underflow_available: true,
+        ..ProductClosureStats::default()
+    };
 
     let closure_started = Instant::now();
     let q_vertices = enumerate_float_closure_vertices(
@@ -344,117 +311,6 @@ pub fn solve_product_closure_capacity_exact_binary64(
     report_from_resolved(resolved, stats, total_started)
 }
 
-/// Compare every hybrid intermediate against exact binary64-rational arithmetic.
-///
-/// This is an experiment/reference API, not the ordinary capacity route.
-pub fn audit_product_closure_capacity_binary64(
-    dual_vertices: &[Vector4<f64>],
-) -> Result<ProductClosureAuditReport, ProductClosureError> {
-    let hybrid = solve_product_closure_capacity_hybrid(dual_vertices)?;
-    let exact_started = Instant::now();
-    let exact_reference = solve_product_closure_capacity_exact_binary64(dual_vertices)?;
-    let exact_reference_ms = elapsed_ms(exact_started);
-
-    let exact_vertices = exact_binary64_vertices(dual_vertices);
-    let (q_indices, p_indices) = split_product_indices_exact(&exact_vertices)?;
-    let mut ignored_stats = ProductClosureStats::default();
-    let q_exact =
-        enumerate_exact_closure_vertices(&exact_vertices, &q_indices, true, &mut ignored_stats);
-    let p_exact =
-        enumerate_exact_closure_vertices(&exact_vertices, &p_indices, false, &mut ignored_stats);
-    let mut float_stats = ProductClosureStats::default();
-    let q_float = enumerate_float_closure_vertices(
-        dual_vertices,
-        &exact_vertices,
-        &q_indices,
-        true,
-        &mut float_stats,
-    );
-    let p_float = enumerate_float_closure_vertices(
-        dual_vertices,
-        &exact_vertices,
-        &p_indices,
-        false,
-        &mut float_stats,
-    );
-    if support_keys_exact(&q_exact) != support_keys_float(&q_float)
-        || support_keys_exact(&p_exact) != support_keys_float(&p_float)
-    {
-        return Err(ProductClosureError::InternalSupportMismatch);
-    }
-
-    let mut numerics = ProductClosureNumerics::default();
-    compare_vertex_numerics(
-        dual_vertices,
-        &exact_vertices,
-        &q_exact,
-        &q_float,
-        &mut numerics,
-    );
-    compare_vertex_numerics(
-        dual_vertices,
-        &exact_vertices,
-        &p_exact,
-        &p_float,
-        &mut numerics,
-    );
-
-    let mut pattern_counts = BTreeMap::new();
-    for (q_e, q_f) in q_exact.iter().zip(&q_float) {
-        for (p_e, p_f) in p_exact.iter().zip(&p_float) {
-            let mut labels = q_e.facets.clone();
-            labels.extend_from_slice(&p_e.facets);
-            for_each_cyclic_order(&labels, |sigma| {
-                *pattern_counts
-                    .entry(type_pattern(sigma, &q_indices))
-                    .or_insert(0) += 1;
-                let q_exact_value = exact_q_for_word(&exact_vertices, sigma, q_e, p_e);
-                let (q_float_value, q_interval) = float_q_for_word(dual_vertices, sigma, q_f, p_f);
-                numerics.compared_objectives += 1;
-                let exact_q_f64 = rational_to_f64(&q_exact_value);
-                if !q_exact_value.is_zero() {
-                    if numerics.min_nonzero_abs_exact_q == 0.0 {
-                        numerics.min_nonzero_abs_exact_q = exact_q_f64.abs();
-                    } else {
-                        numerics.min_nonzero_abs_exact_q =
-                            numerics.min_nonzero_abs_exact_q.min(exact_q_f64.abs());
-                    }
-                }
-                numerics.max_q_interval_width = numerics
-                    .max_q_interval_width
-                    .max(q_interval.hi - q_interval.lo);
-                update_error(
-                    q_float_value,
-                    exact_q_f64,
-                    &mut numerics.max_q_abs_error,
-                    &mut numerics.max_q_rel_error,
-                );
-                if !interval_contains_rational(q_interval, &q_exact_value) {
-                    numerics.q_interval_violations += 1;
-                }
-                if (q_float_value > 0.0) != q_exact_value.is_positive() {
-                    numerics.raw_q_sign_mismatches += 1;
-                }
-                if (q_interval.lo > 0.0 && !q_exact_value.is_positive())
-                    || (q_interval.hi <= 0.0 && q_exact_value.is_positive())
-                {
-                    numerics.q_sign_mismatches += 1;
-                }
-            });
-        }
-    }
-
-    Ok(ProductClosureAuditReport {
-        capacity_exact_agrees: hybrid.capacity_exact == exact_reference.capacity_exact,
-        winner_value_agrees: hybrid.q_max_exact == exact_reference.q_max_exact,
-        hybrid,
-        exact_reference,
-        exact_reference_ms,
-        numerics,
-        candidate_type_pattern_counts: pattern_counts,
-    })
-}
-
 fn report_from_resolved(
     resolved: Vec<(
         Vec<usize>,
@@ -473,16 +329,13 @@ fn report_from_resolved(
         .cloned()
         .ok_or(ProductClosureError::NoPositiveCandidate)?;
     let capacity_exact = BigRational::one() / (q_max_exact.clone() + q_max_exact.clone());
-    let capacity = rational_to_f64(&capacity_exact);
 
     let mut winners = Vec::new();
-    let mut patterns = BTreeSet::new();
     for (sigma, q_vertex, p_vertex, q) in resolved {
         if q != q_max_exact {
             continue;
         }
         let beta_exact = beta_for_sigma(&sigma, &q_vertex, &p_vertex);
-        patterns.insert(type_pattern(&sigma, &q_vertex.facets));
         winners.push(ProductClosureWinner { sigma, beta_exact });
     }
     winners.sort_by(|left, right| left.sigma.cmp(&right.sigma));
@@ -490,11 +343,8 @@ fn report_from_resolved(
     stats.total_ms = elapsed_ms(total_started);
 
     Ok(ProductClosureCapacityReport {
-        q_max_exact,
         capacity_exact,
-        capacity,
         winners,
-        winner_type_patterns: patterns,
         stats,
     })
 }
@@ -695,19 +545,8 @@ fn interval_closure_vertex_for_support(
                 return IntervalSupportDecision::Indeterminate;
             }
             if weight_intervals.iter().all(|weight| weight.lo > 0.0) {
-                let raw_numerators = [
-                    cross_float(points[1], points[2]),
-                    cross_float(points[2], points[0]),
-                    cross_float(points[0], points[1]),
-                ];
-                let raw_denominator: f64 = raw_numerators.iter().sum();
-                let weights = raw_numerators
-                    .iter()
-                    .map(|numerator| numerator / raw_denominator)
-                    .collect();
                 IntervalSupportDecision::Vertex(FloatClosureVertex {
                     facets: support.to_vec(),
-                    weights,
                     weight_intervals,
                 })
             } else if weight_intervals.iter().any(|weight| weight.hi <= 0.0) {
@@ -731,12 +570,12 @@ fn enumerate_float_candidates(
             let mut labels = q_vertex.facets.clone();
             labels.extend_from_slice(&p_vertex.facets);
             for_each_cyclic_order(&labels, |sigma| {
-                let (q, q_interval) = float_q_for_word(dual_vertices, sigma, q_vertex, p_vertex);
+                let q_interval =
+                    float_q_interval_for_word(dual_vertices, sigma, q_vertex, p_vertex);
                 candidates.push(FloatCandidate {
                     sigma: sigma.to_vec(),
                     q_support: q_vertex.facets.clone(),
                     p_support: p_vertex.facets.clone(),
-                    q,
                     q_interval,
                 });
             });
@@ -765,30 +604,26 @@ fn exact_q_for_word(
     q
 }
 
-fn float_q_for_word(
+fn float_q_interval_for_word(
     dual_vertices: &[Vector4<f64>],
     sigma: &[usize],
     q_vertex: &FloatClosureVertex,
     p_vertex: &FloatClosureVertex,
-) -> (f64, Interval) {
+) -> Interval {
     let beta = beta_map_float(q_vertex, p_vertex);
-    let mut q = 0.0;
     let mut q_interval = Interval::point(0.0);
     for earlier in 0..sigma.len() {
         for later in earlier + 1..sigma.len() {
             let left = sigma[earlier];
             let right = sigma[later];
-            let omega = omega_float(&dual_vertices[left], &dual_vertices[right]);
-            q += beta[&left].0 * beta[&right].0 * omega;
             q_interval = q_interval.add(
                 beta[&left]
-                    .1
-                    .mul(beta[&right].1)
+                    .mul(beta[&right])
                     .mul(omega_interval(&dual_vertices[left], &dual_vertices[right])),
             );
         }
     }
-    (q, q_interval)
+    q_interval
 }
 
 fn beta_map_exact(
@@ -807,20 +642,13 @@ fn beta_map_exact(
 fn beta_map_float(
     q_vertex: &FloatClosureVertex,
     p_vertex: &FloatClosureVertex,
-) -> BTreeMap<usize, (f64, Interval)> {
+) -> BTreeMap<usize, Interval> {
     q_vertex
         .facets
         .iter()
-        .zip(q_vertex.weights.iter().zip(&q_vertex.weight_intervals))
-        .chain(
-            p_vertex
-                .facets
-                .iter()
-                .zip(p_vertex.weights.iter().zip(&p_vertex.weight_intervals)),
-        )
-        .map(|(&facet, (&weight, &interval))| {
-            (facet, (0.5 * weight, interval.mul(Interval::point(0.5))))
-        })
+        .zip(&q_vertex.weight_intervals)
+        .chain(p_vertex.facets.iter().zip(&p_vertex.weight_intervals))
+        .map(|(&facet, &interval)| (facet, interval.mul(Interval::point(0.5))))
         .collect()
 }
 
@@ -833,79 +661,9 @@ fn beta_for_sigma(
     sigma.iter().map(|facet| beta[facet].clone()).collect()
 }
 
-fn compare_vertex_numerics(
-    dual_vertices: &[Vector4<f64>],
-    exact_vertices: &[[BigRational; 4]],
-    exact: &[ExactClosureVertex],
-    float: &[FloatClosureVertex],
-    numerics: &mut ProductClosureNumerics,
-) {
-    for (exact_vertex, float_vertex) in exact.iter().zip(float) {
-        debug_assert_eq!(exact_vertex.facets, float_vertex.facets);
-        for ((exact_weight, &float_weight), &interval) in exact_vertex
-            .weights
-            .iter()
-            .zip(&float_vertex.weights)
-            .zip(&float_vertex.weight_intervals)
-        {
-            numerics.compared_weights += 1;
-            let exact_weight_f64 = rational_to_f64(exact_weight);
-            if numerics.min_positive_exact_weight == 0.0 {
-                numerics.min_positive_exact_weight = exact_weight_f64;
-            } else {
-                numerics.min_positive_exact_weight =
-                    numerics.min_positive_exact_weight.min(exact_weight_f64);
-            }
-            numerics.max_weight_interval_width = numerics
-                .max_weight_interval_width
-                .max(interval.hi - interval.lo);
-            update_error(
-                float_weight,
-                exact_weight_f64,
-                &mut numerics.max_weight_abs_error,
-                &mut numerics.max_weight_rel_error,
-            );
-            if !interval_contains_rational(interval, exact_weight) {
-                numerics.weight_interval_violations += 1;
-            }
-        }
-        let mut closure = [0.0f64; 4];
-        for (&facet, &weight) in exact_vertex.facets.iter().zip(&float_vertex.weights) {
-            for coordinate in 0..4 {
-                closure[coordinate] += weight * dual_vertices[facet][coordinate];
-            }
-        }
-        numerics.max_closure_residual_inf = numerics
-            .max_closure_residual_inf
-            .max(closure.into_iter().map(f64::abs).fold(0.0, f64::max));
-
-        for coordinate in 0..4 {
-            let exact_residual = exact_vertex.facets.iter().zip(&exact_vertex.weights).fold(
-                BigRational::zero(),
-                |sum, (&facet, weight)| {
-                    sum + weight.clone() * exact_vertices[facet][coordinate].clone()
-                },
-            );
-            debug_assert!(exact_residual.is_zero());
-        }
-    }
-}
-
-fn update_error(approximate: f64, exact: f64, max_abs_error: &mut f64, max_rel_error: &mut f64) {
-    let absolute = (approximate - exact).abs();
-    let relative = if exact == 0.0 {
-        0.0
-    } else {
-        absolute / exact.abs()
-    };
-    *max_abs_error = max_abs_error.max(absolute);
-    *max_rel_error = max_rel_error.max(relative);
-}
-
 fn float_vertex_from_exact(vertex: &ExactClosureVertex) -> FloatClosureVertex {
     FloatClosureVertex {
         facets: vertex.facets.clone(),
-        weights: vertex.weights.iter().map(rational_to_f64).collect(),
         weight_intervals: vertex.weights.iter().map(rational_interval).collect(),
     }
 }
@@ -924,24 +682,6 @@ fn rational_interval(value: &BigRational) -> Interval {
             hi: point,
         },
     }
-}
-
-fn interval_contains_rational(interval: Interval, value: &BigRational) -> bool {
-    let lower_contains = if interval.lo == f64::NEG_INFINITY {
-        true
-    } else if interval.lo.is_finite() {
-        f64_to_rational(interval.lo) <= *value
-    } else {
-        false
-    };
-    let upper_contains = if interval.hi == f64::INFINITY {
-        true
-    } else if interval.hi.is_finite() {
-        *value <= f64_to_rational(interval.hi)
-    } else {
-        false
-    };
-    lower_contains && upper_contains
 }
 
 fn split_product_indices_f64(
@@ -1040,10 +780,6 @@ fn cross_exact(left: &[BigRational; 2], right: &[BigRational; 2]) -> BigRational
     left[0].clone() * right[1].clone() - left[1].clone() * right[0].clone()
 }
 
-fn cross_float(left: [Interval; 2], right: [Interval; 2]) -> f64 {
-    left[0].lo * right[1].lo - left[1].lo * right[0].lo
-}
-
 fn cross_interval(left: [Interval; 2], right: [Interval; 2]) -> Interval {
     left[0].mul(right[1]).sub(left[1].mul(right[0]))
 }
@@ -1052,10 +788,6 @@ fn omega_exact(left: &[BigRational; 4], right: &[BigRational; 4]) -> BigRational
     left[0].clone() * right[2].clone() - left[2].clone() * right[0].clone()
         + left[1].clone() * right[3].clone()
         - left[3].clone() * right[1].clone()
-}
-
-fn omega_float(left: &Vector4<f64>, right: &Vector4<f64>) -> f64 {
-    left[0] * right[2] - left[2] * right[0] + left[1] * right[3] - left[3] * right[1]
 }
 
 fn omega_interval(left: &Vector4<f64>, right: &Vector4<f64>) -> Interval {
@@ -1118,27 +850,6 @@ fn permute(values: &mut [usize], start: usize, visit: &mut impl FnMut(&[usize]))
     }
 }
 
-fn type_pattern(sigma: &[usize], q_facets: &[usize]) -> String {
-    sigma
-        .iter()
-        .map(|facet| if q_facets.contains(facet) { 'Q' } else { 'P' })
-        .collect()
-}
-
-fn support_keys_exact(vertices: &[ExactClosureVertex]) -> Vec<Vec<usize>> {
-    vertices
-        .iter()
-        .map(|vertex| vertex.facets.clone())
-        .collect()
-}
-
-fn support_keys_float(vertices: &[FloatClosureVertex]) -> Vec<Vec<usize>> {
-    vertices
-        .iter()
-        .map(|vertex| vertex.facets.clone())
-        .collect()
-}
-
 fn rational_to_f64(value: &BigRational) -> f64 {
     value.to_f64().unwrap_or(f64::NAN)
 }
@@ -1186,121 +897,4 @@ fn next_down(value: f64) -> f64 {
     }
     let bits = value.to_bits();
     f64::from_bits(if value > 0.0 { bits - 1 } else { bits + 1 })
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use symplectic::geom::known_polytopes;
-
-    #[test]
-    fn known_product_capacities_match_exact_binary64_reference() {
-        for fixture in [
-            known_polytopes::lagrangian_triangle_product(),
-            known_polytopes::lagrangian_triangle_square(),
-            known_polytopes::hko_pentagon(),
-        ] {
-            let audit = audit_product_closure_capacity_binary64(&fixture.dual_vertices_f64)
-                .expect("known product should solve");
-            assert!(audit.capacity_exact_agrees, "{}", fixture.name);
-            assert!(audit.winner_value_agrees, "{}", fixture.name);
-            assert_eq!(audit.numerics.weight_interval_violations, 0);
-            assert_eq!(audit.numerics.q_interval_violations, 0);
-            assert_eq!(audit.numerics.q_sign_mismatches, 0);
-            let relative = (audit.hybrid.capacity - fixture.capacity).abs() / fixture.capacity;
-            assert!(relative < 1e-12, "{}: {relative}", fixture.name);
-        }
-    }
-
-    #[test]
-    fn hybrid_rejects_non_product_input() {
-        let fixture = known_polytopes::simplex();
-        assert!(matches!(
-            solve_product_closure_capacity_hybrid(&fixture.dual_vertices_f64),
-            Err(ProductClosureError::NotStructuralProduct { .. })
-        ));
-    }
-
-    #[test]
-    fn hybrid_rejects_nonfinite_input_before_exact_conversion() {
-        let mut vertices = known_polytopes::lagrangian_triangle_product()
-            .dual_vertices_f64
-            .clone();
-        vertices[0][0] = f64::NAN;
-        assert!(matches!(
-            solve_product_closure_capacity_hybrid(&vertices),
-            Err(ProductClosureError::NonFiniteFacet { facet: 0 })
-        ));
-    }
-
-    #[test]
-    fn audit_handles_overflowing_intervals_without_panicking() {
-        let scale = 1e308;
-        let dual_vertices = vec![
-            Vector4::new(scale, 0.0, 0.0, 0.0),
-            Vector4::new(0.0, scale, 0.0, 0.0),
-            Vector4::new(-scale, 0.0, 0.0, 0.0),
-            Vector4::new(0.0, -scale, 0.0, 0.0),
-            Vector4::new(0.0, 0.0, scale, 0.0),
-            Vector4::new(0.0, 0.0, 0.0, scale),
-            Vector4::new(0.0, 0.0, -scale, 0.0),
-            Vector4::new(0.0, 0.0, 0.0, -scale),
-        ];
-        let audit = audit_product_closure_capacity_binary64(&dual_vertices)
-            .expect("out-of-contract scale should remain diagnosable");
-        assert!(audit.hybrid.stats.full_exact_fallback);
-        assert!(audit.capacity_exact_agrees);
-        assert!(audit.winner_value_agrees);
-    }
-
-    #[test]
-    fn square_factors_exercise_exact_antipodal_fallback() {
-        let dual_vertices = vec![
-            Vector4::new(1.0, 0.0, 0.0, 0.0),
-            Vector4::new(0.0, 1.0, 0.0, 0.0),
-            Vector4::new(-1.0, 0.0, 0.0, 0.0),
-            Vector4::new(0.0, -1.0, 0.0, 0.0),
-            Vector4::new(0.0, 0.0, 1.0, 0.0),
-            Vector4::new(0.0, 0.0, 0.0, 1.0),
-            Vector4::new(0.0, 0.0, -1.0, 0.0),
-            Vector4::new(0.0, 0.0, 0.0, -1.0),
-        ];
-        let audit =
-            audit_product_closure_capacity_binary64(&dual_vertices).expect("square product");
-        assert!(audit.hybrid.stats.support_exact_fallbacks > 0);
-        assert_eq!(audit.hybrid.stats.q_closure_vertices, 2);
-        assert_eq!(audit.hybrid.stats.p_closure_vertices, 2);
-        assert!(audit.capacity_exact_agrees);
-        assert_eq!(audit.numerics.q_interval_violations, 0);
-    }
-
-    #[test]
-    fn capacity_is_invariant_under_facet_reordering() {
-        let fixture = known_polytopes::lagrangian_triangle_square();
-        let original = solve_product_closure_capacity_hybrid(&fixture.dual_vertices_f64)
-            .expect("original ordering");
-        let mut reordered = fixture.dual_vertices_f64.clone();
-        reordered.reverse();
-        let reversed =
-            solve_product_closure_capacity_hybrid(&reordered).expect("reversed ordering");
-        assert_eq!(original.capacity_exact, reversed.capacity_exact);
-    }
-
-    #[test]
-    fn power_of_two_dual_scaling_has_exact_quadratic_capacity_scaling() {
-        let fixture = known_polytopes::lagrangian_triangle_product();
-        let original = solve_product_closure_capacity_hybrid(&fixture.dual_vertices_f64)
-            .expect("unscaled product");
-        let scaled_vertices = fixture
-            .dual_vertices_f64
-            .iter()
-            .map(|vertex| 2.0 * vertex)
-            .collect::<Vec<_>>();
-        let scaled =
-            solve_product_closure_capacity_hybrid(&scaled_vertices).expect("scaled product");
-        assert_eq!(
-            original.capacity_exact,
-            BigRational::from_integer(4.into()) * scaled.capacity_exact
-        );
-    }
 }

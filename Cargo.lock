@@ -1765,6 +1765,7 @@ dependencies = [
  "euclidean-polytopes",
  "good_lp",
  "nalgebra 0.33.3",
+ "nalgebra 0.35.0",
  "num-bigint",
  "num-integer",
  "num-rational",

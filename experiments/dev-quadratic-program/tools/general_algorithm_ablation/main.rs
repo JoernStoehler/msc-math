@@ -21,6 +21,7 @@ use algebraic_numbers::{solve_linear_system, LinearSystemSolution};
 use exp_dev_quadratic_program::{
     capacity_f64_only_with_policy_and_method_profiled, edge_fixture_cases,
     exact_binary64_dual_vertex_arrays, generated_f64_cases,
+    selected_route::general::solve_selected_general,
     try_exact_binary64_transition_matrix_assuming_origin_interior, validate_f64_polytope_input,
     F64CapacityMethod, F64CapacityOutcome, F64ValidationPolicy,
 };
@@ -34,6 +35,7 @@ use std::time::{Duration, Instant};
 use symplectic::algorithms::billiard::{
     facet_classification::classify_facets_from_dual_vertices, for_each_sigma_from_facets,
 };
+use symplectic::algorithms::capacity_4d::CapacityInput4d;
 use symplectic::algorithms::hk2017::SimpleDirectedCyclesCanonical;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::known_polytopes::hko_pentagon;
@@ -297,6 +299,7 @@ fn main() {
     }
     if std::env::args().any(|argument| argument == "--verification-packet") {
         let products = product_case_words();
+        run_selected_production_correspondence(&case_words);
         run_exact_route_agreement_audit(
             "general_hybrid",
             &case_words,
@@ -398,6 +401,39 @@ fn main() {
     run_scaled_audit(&case_words);
     run_near_singular_audit();
     run_factor_microbenchmark(&case_words);
+}
+
+fn run_selected_production_correspondence(cases: &[(String, Vec<Vector4<f64>>, Vec<Vec<usize>>)]) {
+    let mut compared = 0usize;
+    for (source_id, duals, words) in cases {
+        let existing = run_route_with_guard(
+            &[(source_id.clone(), duals.clone(), words.clone())],
+            Some(usize::MAX),
+            FactorKind::Lblt,
+            GuardKind::HybridAnalyticEnvelope,
+        );
+        let existing_bounds = existing
+            .stats
+            .best_action_lower
+            .zip(existing.stats.best_action_upper)
+            .expect("existing selected route returns capacity bounds");
+        let readable = solve_selected_general(duals, words.clone())
+            .expect("readable selected route returns capacity bounds");
+        let input = CapacityInput4d::try_from_dual_vertices(duals)
+            .expect("retained general case passes production validation");
+        let production = input
+            .general_capacity()
+            .expect("production selected route returns capacity bounds");
+        let production_bounds = (production.bounds().lower(), production.bounds().upper());
+        assert_eq!(existing_bounds, readable, "{source_id}: existing/readable");
+        assert_eq!(
+            readable, production_bounds,
+            "{source_id}: readable/production"
+        );
+        compared += 1;
+    }
+    println!("production_correspondence.cases={compared}");
+    println!("production_correspondence.bound_mismatches=0");
 }
 
 fn print_usage() {

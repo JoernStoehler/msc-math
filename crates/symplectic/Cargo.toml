@@ -6,6 +6,10 @@ edition = "2021"
 
 [dependencies]
 nalgebra.workspace = true
+# Pinned separately: the verified general-capacity route uses the pivoted
+# Bunch--Kaufman factorization supplied by nalgebra 0.35.0. Changing either
+# nalgebra version requires rerunning the QP numerical evidence packet.
+nalgebra035 = { package = "nalgebra", version = "=0.35.0" }
 serde.workspace = true
 serde_json.workspace = true
 rand.workspace = true

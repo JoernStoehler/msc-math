@@ -13,6 +13,7 @@ mod near_redundant_facet_removal;
 mod route_demonstrations;
 mod rows;
 mod scan;
+pub mod selected_route;
 mod validation;
 
 pub mod fallback_route;

@@ -1,9 +1,8 @@
 # Four-dimensional QP production migration
 
-Status: staged plan after selection of the reviewed general and product scalar
-capacity routes and a caller/ownership architecture review. Public names remain
-provisional until the stage-0 caller spike. This plan does not authorize a Main
-merge.
+Status: Batch 1 faithful production extraction implemented and locally
+verified in `qp-production-migration`; not merged to Main. Batches 2 and 3
+remain planned.
 
 ## Outcome
 
@@ -24,24 +23,40 @@ Neither selected scalar route currently returns every minimizing or
 near-minimizing orbit. A common `OrbitSearchResult` would therefore misstate
 their contracts.
 
-## Current coordination gate
+## Current progress
 
-`/workspaces/msc-math/.worktrees/qp-certified-curvature-route` currently has
-uncommitted changes to the same development validation, geometry, f64-route,
-performance, and audit files that a direct extraction would touch. Do not edit
-that worktree or start a parallel extraction against its old base.
+The old overlapping-worktree gate was resolved by creating
+`qp-production-migration` from Main `c8b4b1068` and integrating the diagnostic
+research through `0917c4bce`. The stale dirty worktree was not edited.
 
-Wait until that work is committed, abandoned, or otherwise given a stable
-landing commit. Then create a fresh migration worktree from the chosen
-integration commit and integrate `qp-kkt-fallback-diagnostic` (whose algorithm
-checkpoint is `e2430b80`) with the accepted changes from the concurrent
-migration.
+Batch 1 now provides:
 
-Resolve the integration before changing algorithms. Rerun the two canonical
-packets after conflict resolution; a clean compile is not evidence that the
-numerical correspondence survived.
+- `CapacityInput4d` with exact binary64-rational geometry validation, exact
+  product classification, the `[1e-3, 1e3]` primal/dual infinity-norm contract,
+  and a sixteen-facet limit;
+- automatic exact product dispatch and a forced general route;
+- outward general capacity bounds and exact product capacity/winners;
+- reciprocal production/experiment implementation pointers and correspondence
+  tests; and
+- producer-level comparison against exact predicates and the integrated
+  baseline.
 
-This gate blocks code movement, not API/consumer planning.
+Observed extraction checks:
+
+- all 8 public API tests and both selected-route correspondence tests pass;
+- the 363 non-ignored `symplectic` library tests pass;
+- workspace `cargo check` passes;
+- the general verification packet has 8/8 production comparisons with zero
+  bound mismatches and zero exact predicate/radius violations;
+- the 88-case product packet has zero production capacity or winner
+  disagreements, zero wrong determinate signs, and zero objective/weight
+  interval violations; and
+- after removing timing and new correspondence fields, its stable JSON payload
+  equals the integrated pre-extraction baseline.
+
+The next non-commutative action is an adversarial implementation review, then
+the Batch 2 evidence/optimization checkpoint. Consumer migration remains
+deferred until concurrent Main movement is reassessed.
 
 ## Mathematical acceptance gate
 

@@ -1,6 +1,8 @@
 //! EHZ capacity algorithms for 4D convex polytopes.
 //!
 //! Active algorithms:
+//! - `capacity_4d` — validated scalar API with certified general bounds and an
+//!   exact KKT-free product route.
 //! - `hk2017` — general capacity (exponential in #facets).
 //! - `billiard` — Lagrangian product capacity (fast).
 //!
@@ -23,6 +25,7 @@
 //! - `orbit_search` — shared result-layer types for HK2017-family frontends.
 
 pub mod billiard;
+pub mod capacity_4d;
 pub mod facet_adjacency;
 pub mod flow_graph;
 pub mod hk2017;

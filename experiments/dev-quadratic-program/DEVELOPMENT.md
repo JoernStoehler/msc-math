@@ -50,11 +50,12 @@ Use `docs/route-consumer-matrix.md` as the current route-design anchor. Route
 design is no longer the blocker for this packet; implementation and evidence
 must now be organized by route contract.
 
-The local f64 route currently defines the development semantics and
-instrumentation points. It still calls the lower-level f64 KKT eigensolver in
-`crates/symplectic::kkt::saddle_point_solver`. If error-bound work needs to
-alter the KKT solve itself, copy/edit the necessary KKT kernel locally before
-changing semantics.
+The selected scalar routes live in `src/selected_route/`; production copies
+live in `crates/symplectic::algorithms::capacity_4d`. Change experiment copies
+freely, but update production semantics deliberately and rerun
+`tests/selected_route_correspondence.rs` plus the relevant producer. Older
+f64, fallback, and exact routes below remain comparison controls rather than
+the selected API.
 
 Exact one-sigma KKT solving and older fallback aggregation exist in
 `crates/symplectic`:
@@ -73,6 +74,8 @@ The remaining route work is split as follows:
 
 | Route | Current implementation state | Evidence state | Next implementation/evidence step |
 | --- | --- | --- | --- |
+| selected general scalar capacity | instrumentable copy in `src/selected_route/general.rs`; production in `symplectic::algorithms::capacity_4d` | exact predicate/fallback, outward-bound, ablation, and correspondence producer in `tools/general_algorithm_ablation/` | migrate scalar consumers after concurrent code movement is reconciled |
+| selected structural-product scalar capacity | KKT-free copy in `src/selected_route/product.rs`; production in `symplectic::algorithms::capacity_4d` | complete exact intermediate audit, old-route comparison, retained product check, and correspondence producer in `tools/product_closure_route/` | migrate scalar product consumers; retain the older route for branch-sensitive callers |
 | heuristic f64 capacity | local route in `src/f64_route/` | scan/analyze/performance packets exist | keep labels explicitly heuristic; do not promote as certified |
 | retained-candidate f64 predicate/fallback | local fallback aggregation in `src/fallback_route/`; retained-candidate audit in `tools/kkt_error_audit/` | verified-inverse predicate has useful survivor-level evidence but not a production proof | compare exact-resolving more retained capacity-window candidates against proving stronger f64 predicates |
 | candidate-filter safety | no production route; diagnostic audit in `tools/candidate_filter_audit/` | complete small/edge cases measured; HKO only first-500 diagnostic | build targeted/exhaustive/parallel audits before claiming retained-candidate exact certification is complete |
@@ -82,5 +85,6 @@ The remaining route work is split as follows:
 Keep crate imports for outside-domain utilities such as retained input loading,
 random generation, generic geometry helpers, and stable data types.
 
-Do not promote local route changes back into `crates/symplectic` until the
-contract is stable enough that multiple consumers should call it as a library.
+Do not silently alter the selected production contract while changing a local
+comparison route. The correspondence suite checks the promoted scalar routes;
+it does not imply that older branch-sensitive outputs are equivalent.

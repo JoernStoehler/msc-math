@@ -1,6 +1,7 @@
 # Product closure-vertex capacity route
 
-Status: pre-production experiment for four-dimensional Lagrangian products.
+Status: verification, numerics, and performance packet for the selected
+four-dimensional product route.
 
 This route tests the consequence of
 `formal/product-qp-six-facet-reduction.tex`: a product-QP capacity maximizer
@@ -40,10 +41,13 @@ capacity.
 
 ```bash
 cargo test -p exp-dev-quadratic-program --release --lib \
-  product::closure_vertex_capacity
+  selected_route::product
 
 cargo test -p exp-dev-quadratic-program --release \
   --bin qp-product-closure-route
+
+cargo test -p exp-dev-quadratic-program --release \
+  --test selected_route_correspondence
 
 cargo run -p exp-dev-quadratic-program --release \
   --bin qp-product-closure-route -- \
@@ -53,6 +57,7 @@ cargo run -p exp-dev-quadratic-program --release \
 
 The producer compares:
 
+- the production API with the selected experiment copy;
 - the certified hybrid result with complete exact evaluation of every
   closure-vertex candidate;
 - every computed closure weight and objective interval with exact
