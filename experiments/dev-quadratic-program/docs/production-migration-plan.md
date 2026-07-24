@@ -33,7 +33,7 @@ Batch 1 now provides:
 
 - `CapacityInput4d` with exact binary64-rational geometry validation, exact
   product classification, the `[1e-3, 1e3]` primal/dual infinity-norm contract,
-  and a sixteen-facet limit;
+  a sixteen-facet limit, and a 100,000-cycle general-route resource cap;
 - automatic exact product dispatch and a forced general route;
 - outward general capacity bounds and exact product capacity/winners;
 - reciprocal production/experiment implementation pointers and correspondence
@@ -54,9 +54,24 @@ Observed extraction checks:
 - after removing timing and new correspondence fields, its stable JSON payload
   equals the integrated pre-extraction baseline.
 
-The next non-commutative action is an adversarial implementation review, then
-the Batch 2 evidence/optimization checkpoint. Consumer migration remains
-deferred until concurrent Main movement is reassessed.
+The adversarial implementation review found that the original constructor
+accepted a 16-facet crosspolytope whose exact transition graph has
+3,420,783,196 cycles. Eager materialization would require over 82 GB for vector
+headers alone. A length-ordered prefix-pruning spike and a short-support
+shortcut both failed to finish that case within two minutes; exact
+length-six curvature supplied 6,272 obstructions among 52,400 cycles but did
+not cheaply settle the remaining search. Those spikes were discarded.
+Batch 1 therefore soft-rejects a non-product stream after counting 100,001
+cycles without storing it. Forced general evaluation of a structural product
+applies the same cap at the public method boundary, while automatic product
+dispatch bypasses the general stream. This is a resource-safety boundary, not
+a theorem or evidence that larger streams lack an answer. A future general
+algorithm may replace the cap only after a bounded crosspolytope-style
+regression passes.
+
+The next non-commutative action is the Batch 2 evidence/optimization
+checkpoint. Consumer migration remains deferred until concurrent Main movement
+is reassessed.
 
 ## Mathematical acceptance gate
 

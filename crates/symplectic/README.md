@@ -36,7 +36,11 @@ Start with
 interprets each binary64 coordinate as its exact dyadic rational, checks exact
 four-dimensional polytope geometry, allows at most 16 facets, and requires
 every primal and dual vertex infinity norm to lie in the inclusive interval
-`[1e-3, 1e3]`.
+`[1e-3, 1e3]`. A non-product general transition graph is also soft-rejected
+when it has more than 100,000 candidate cycles; this bounds the current
+length-ordered materialization before numerical pruning. Structural products
+do not use that candidate stream under automatic product dispatch. Explicitly
+forcing the general route applies the same cap.
 
 Calling `capacity()` then dispatches exact q/p products to the KKT-free
 six-facet closure-vertex route; other inputs use the certified general QP

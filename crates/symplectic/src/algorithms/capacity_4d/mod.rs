@@ -14,7 +14,8 @@ mod input;
 mod product;
 
 pub use input::{
-    CapacityInput4d, CapacityInputError, MAX_INPUT_FACETS, MAX_INPUT_NORM_INF, MIN_INPUT_NORM_INF,
+    CapacityInput4d, CapacityInputError, MAX_GENERAL_CANDIDATES, MAX_INPUT_FACETS,
+    MAX_INPUT_NORM_INF, MIN_INPUT_NORM_INF,
 };
 
 use crate::algorithms::hk2017::SimpleDirectedCyclesCanonical;
@@ -111,6 +112,7 @@ impl Capacity4d {
 pub enum CapacityError4d {
     ProductRouteRequiresStructuralProduct,
     ProductRouteFailed(ProductRouteFailure4d),
+    GeneralCandidateLimitExceeded { limit: usize },
     NoPositiveGeneralCandidate,
 }
 
@@ -126,6 +128,10 @@ impl std::fmt::Display for CapacityError4d {
                     "validated product-route invariant failed: {error:?}"
                 )
             }
+            Self::GeneralCandidateLimitExceeded { limit } => write!(
+                formatter,
+                "forced general route has more than the supported {limit} candidate cycles"
+            ),
             Self::NoPositiveGeneralCandidate => {
                 formatter.write_str("validated general route found no positive capacity candidate")
             }
@@ -180,8 +186,14 @@ impl CapacityInput4d {
 
     /// Force the certified general route, including for structural products.
     pub fn general_capacity(&self) -> Result<GeneralCapacity4d, CapacityError4d> {
-        let words =
-            SimpleDirectedCyclesCanonical::new(&self.transition_is_allowed).collect::<Vec<_>>();
+        let words = SimpleDirectedCyclesCanonical::new(&self.transition_is_allowed)
+            .take(MAX_GENERAL_CANDIDATES + 1)
+            .collect::<Vec<_>>();
+        if words.len() > MAX_GENERAL_CANDIDATES {
+            return Err(CapacityError4d::GeneralCandidateLimitExceeded {
+                limit: MAX_GENERAL_CANDIDATES,
+            });
+        }
         let (lower, upper) = general::solve_selected_general(&self.dual_vertices, words)
             .ok_or(CapacityError4d::NoPositiveGeneralCandidate)?;
         Ok(GeneralCapacity4d {

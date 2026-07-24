@@ -1,5 +1,6 @@
 use crate::algorithms::billiard::facet_classification::FacetClassification;
 use crate::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
+use crate::algorithms::hk2017::SimpleDirectedCyclesCanonical;
 use crate::exact::{
     exact_vertices_with_incidence, facet_intersection_is_nonempty_exact, omega_signs_exact,
     ExactPolytopeError,
@@ -15,6 +16,8 @@ pub const MIN_INPUT_NORM_INF: f64 = 1e-3;
 pub const MAX_INPUT_NORM_INF: f64 = 1e3;
 /// Maximum facet count accepted by the current four-dimensional route.
 pub const MAX_INPUT_FACETS: usize = 16;
+/// Maximum general-route candidate count accepted before materialization.
+pub const MAX_GENERAL_CANDIDATES: usize = 100_000;
 
 /// A four-dimensional dual-vertex input after exact binary64 validation.
 ///
@@ -34,6 +37,7 @@ pub enum CapacityInputError {
     DualNormOutOfRange { facet: usize },
     InvalidExactPolytope(ExactPolytopeError),
     PrimalNormOutOfRange { vertex: usize },
+    GeneralCandidateLimitExceeded { limit: usize },
 }
 
 impl std::fmt::Display for CapacityInputError {
@@ -56,6 +60,10 @@ impl std::fmt::Display for CapacityInputError {
             Self::PrimalNormOutOfRange { vertex } => write!(
                 formatter,
                 "primal vertex {vertex} has infinity norm outside [{MIN_INPUT_NORM_INF}, {MAX_INPUT_NORM_INF}]"
+            ),
+            Self::GeneralCandidateLimitExceeded { limit } => write!(
+                formatter,
+                "general transition graph has more than the supported {limit} candidate cycles"
             ),
         }
     }
@@ -132,6 +140,16 @@ impl CapacityInput4d {
             &omega_signs,
         );
         let product_facets = classify_exact_product_facets(&dual_vertices_exact);
+        if product_facets.is_none()
+            && SimpleDirectedCyclesCanonical::new(&transition_is_allowed)
+                .take(MAX_GENERAL_CANDIDATES + 1)
+                .count()
+                > MAX_GENERAL_CANDIDATES
+        {
+            return Err(CapacityInputError::GeneralCandidateLimitExceeded {
+                limit: MAX_GENERAL_CANDIDATES,
+            });
+        }
 
         Ok(Self {
             dual_vertices: dual_vertices.to_vec(),

@@ -108,6 +108,39 @@ fn explicit_product_route_rejects_a_valid_non_product() {
 }
 
 #[test]
+fn automatic_product_dispatch_bypasses_the_forced_general_candidate_cap() {
+    let octagon = [
+        (1.0, 0.0),
+        (0.75, 0.75),
+        (0.0, 1.0),
+        (-0.75, 0.75),
+        (-1.0, 0.0),
+        (-0.75, -0.75),
+        (0.0, -1.0),
+        (0.75, -0.75),
+    ];
+    let mut duals = octagon
+        .iter()
+        .map(|&(q1, q2)| Vector4::new(q1, q2, 0.0, 0.0))
+        .collect::<Vec<_>>();
+    duals.extend(
+        octagon
+            .iter()
+            .map(|&(p1, p2)| Vector4::new(0.0, 0.0, p1, p2)),
+    );
+
+    let input = CapacityInput4d::try_from_dual_vertices(&duals)
+        .expect("dyadic octagon product must validate without general enumeration");
+    assert!(matches!(input.capacity(), Ok(Capacity4d::Product(_))));
+    assert_eq!(
+        input.general_capacity(),
+        Err(CapacityError4d::GeneralCandidateLimitExceeded {
+            limit: symplectic::algorithms::capacity_4d::MAX_GENERAL_CANDIDATES,
+        })
+    );
+}
+
+#[test]
 fn automatic_dispatch_returns_bounds_for_a_general_polytope() {
     let fixture = known_polytopes::simplex();
     let input = CapacityInput4d::try_from_dual_vertices(&fixture.dual_vertices_f64)
@@ -127,5 +160,11 @@ fn validation_soft_errors_outside_the_coordinate_contract() {
     assert!(matches!(
         CapacityInput4d::try_from_dual_vertices(&duals),
         Err(CapacityInputError::DualNormOutOfRange { facet: 0 })
+    ));
+
+    let crosspolytope = known_polytopes::crosspolytope();
+    assert!(matches!(
+        CapacityInput4d::try_from_dual_vertices(&crosspolytope.dual_vertices_f64),
+        Err(CapacityInputError::GeneralCandidateLimitExceeded { .. })
     ));
 }
