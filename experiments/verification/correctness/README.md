@@ -18,6 +18,17 @@ rewriting evidence:
 cargo test -p dev-capacity-validation --release --bin axioms-correctness
 ```
 
+`correctness.jsonl` is Git LFS data. A normal no-smudge worktree contains only
+its pointer, which is not runnable test input. Hydrate this one artifact before
+the retained-artifact test:
+
+```bash
+git lfs checkout experiments/verification/correctness/correctness.jsonl
+```
+
+If the LFS object is not already local, fetch that exact path first. Do not
+hydrate every experiment artifact merely to run this packet.
+
 `--help` prints the write contract and exits without changing the artifact.
 
 The six proposition families are finite regression and literature checks on
