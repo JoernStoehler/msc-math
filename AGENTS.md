@@ -93,8 +93,11 @@ requests.
   outcomes, costs, values, constraints, and stakeholder preferences; estimate
   locally what the agent can estimate, then ask only the crux where Jörn is
   likely informative.
-- Use subagents for bounded subtasks that divide cleanly. Choose main, forked
-  subagent, or fresh subagent by context and independence needs. Main owns
+- Use subagents for bounded subtasks that divide cleanly. Set `fork_turns`
+  explicitly to either `none` or `all`; do not use finite-history forks. For
+  `none`, explicitly select the model and reasoning effort. Use `all` only when
+  the child needs the full parent transcript and should inherit its model and
+  effort. Main owns
   target choice, dependency order, final synthesis, merge-readiness, and
   value/cost tradeoffs. Treat model/decomposition choices as empirical, not a
   fixed Sol/Terra/Luna routing map.
