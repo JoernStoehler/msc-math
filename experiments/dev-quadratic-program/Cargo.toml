@@ -44,6 +44,70 @@ name = "qp-general-algorithm-ablation"
 path = "tools/general_algorithm_ablation/main.rs"
 
 [[bin]]
+name = "qp-general-legacy-symmetric-eigen"
+path = "tools/general_algorithm_ablation/legacy_symmetric_eigen.rs"
+
+[[bin]]
+name = "qp-general-unchecked-lu"
+path = "tools/general_algorithm_ablation/unchecked_lu.rs"
+
+[[bin]]
+name = "qp-general-empirical-inverse"
+path = "tools/general_algorithm_ablation/empirical_inverse.rs"
+
+[[bin]]
+name = "qp-general-verified-scalar-lu"
+path = "tools/general_algorithm_ablation/verified_scalar_lu.rs"
+
+[[bin]]
+name = "qp-general-verified-scalar-lblt"
+path = "tools/general_algorithm_ablation/verified_scalar_lblt.rs"
+
+[[bin]]
+name = "qp-general-verified-batched"
+path = "tools/general_algorithm_ablation/verified_batched.rs"
+
+[[bin]]
+name = "qp-general-verified-normwise"
+path = "tools/general_algorithm_ablation/verified_normwise.rs"
+
+[[bin]]
+name = "qp-general-verified-hybrid"
+path = "tools/general_algorithm_ablation/verified_hybrid.rs"
+
+[[bin]]
+name = "qp-general-pruned-empirical"
+path = "tools/general_algorithm_ablation/pruned_empirical.rs"
+
+[[bin]]
+name = "qp-general-algorithm-comparison"
+path = "tools/general_algorithm_ablation/algorithm_comparison.rs"
+
+[[bin]]
+name = "qp-general-selected-verification"
+path = "tools/general_algorithm_ablation/selected_verification.rs"
+
+[[bin]]
+name = "qp-general-selected-numerics"
+path = "tools/general_algorithm_ablation/selected_numerics.rs"
+
+[[bin]]
+name = "qp-general-end-to-end"
+path = "tools/general_algorithm_ablation/end_to_end.rs"
+
+[[bin]]
+name = "qp-product-legacy-billiard-kkt"
+path = "tools/general_algorithm_ablation/product_legacy_billiard_kkt.rs"
+
+[[bin]]
+name = "qp-product-closure-profile"
+path = "tools/product_closure_profile.rs"
+
+[[bin]]
+name = "qp-exact-sigma-comparison"
+path = "tools/exact_sigma_comparison.rs"
+
+[[bin]]
 name = "qp-product-closure-route"
 path = "tools/product_closure_route/main.rs"
 

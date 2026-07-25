@@ -9,8 +9,47 @@ Start a review here, then read:
 2. `formal/hk2017-qp-precision.tex` for the numerical and curvature lemmas.
 3. `../../src/selected_route/general.rs` for the instrumentable selected copy
    and `crates/symplectic/src/algorithms/capacity_4d/general.rs` for production.
-4. `main.rs` for alternatives, counters, and executable correspondence.
+4. The named executable matching the algorithm under review; `harness.rs`
+   supplies their shared cases, exact oracle, counters, and timing machinery.
 5. `run.sh` for the canonical build-and-run command.
+
+## Directly runnable algorithms
+
+Each stable general-route variant has a no-argument executable. The executable
+prints its exact algorithm identity, numerical status, curvature status,
+production status, cohort, work counts, phase timings, and total timing.
+There are no factorization, guard, or cutoff flags to interpret.
+
+| Executable | Numerical decision | Curvature handling |
+| --- | --- | --- |
+| `qp-general-legacy-symmetric-eigen` | known-unsound legacy thresholds | none |
+| `qp-general-unchecked-lu` | unchecked | none |
+| `qp-general-empirical-inverse` | heuristic inverse radius | none |
+| `qp-general-verified-scalar-lu` | certified scalar enclosure | none |
+| `qp-general-verified-scalar-lblt` | certified scalar enclosure | certified pruning |
+| `qp-general-verified-batched` | certified entrywise enclosure | certified pruning |
+| `qp-general-verified-normwise` | certified normwise enclosure | certified pruning |
+| `qp-general-verified-hybrid` | normwise, entrywise, then exact | certified pruning |
+| `qp-general-pruned-empirical` | heuristic inverse radius | certified pruning |
+
+Only `qp-general-verified-hybrid` is the selected production algorithm.
+`qp-general-algorithm-comparison` runs all nine on the matched long-word
+cohort; it interleaves the seven routes that share the common route machinery
+and separately takes seven-round medians for the two legacy baselines. The
+separate no-argument
+`qp-general-selected-verification`, `qp-general-selected-numerics`, and
+`qp-general-end-to-end` executables provide the retained correctness,
+intermediate-error, and whole-route packets.
+
+The algorithms outside the general batch comparison are also direct:
+
+- `qp-product-closure-profile` profiles the selected KKT-free product
+  algorithm on the standard fixtures;
+- `qp-product-closure-route` performs its slower exact and adversarial audit;
+- `qp-product-legacy-billiard-kkt` profiles the old product billiard/KKT
+  control; and
+- `qp-exact-sigma-comparison` compares the fraction-free exact one-word path
+  with the generic exact rank/kernel solver on the same retained word.
 
 ## Intended route
 
@@ -118,8 +157,8 @@ It writes:
   product controls, and invalid-input controls;
 - `numerics.txt`: exact binary64 predicate and enclosure audits on generic,
   scaled, near-singular, product, and edge cohorts;
-- `profile.txt`: interleaved candidate-processing ablations and separate
-  product timings;
+- `algorithms.txt`: interleaved candidate-processing ablations for every
+  stable general-route variant;
 - `end-to-end.txt`: validation, exact transition/cycle construction, route,
   and total timings for the empirical control, tighter entrywise route, and
   selected staged route.
@@ -132,14 +171,17 @@ cargo test -p exp-dev-quadratic-program --release \
 (cd formal && latexmk)
 ```
 
-Use `cargo run`, rather than invoking `target/release` after source changes, for
-one packet:
+Use `cargo run`, rather than invoking `target/release` after source changes:
 
 ```bash
 cargo run -p exp-dev-quadratic-program --release \
-  --bin qp-general-algorithm-ablation -- --verification-packet
+  --bin qp-general-verified-hybrid
+
+cargo run -p exp-dev-quadratic-program --release \
+  --bin qp-general-selected-verification
 ```
 
-Optional older falsification searches remain available as
-`--adversarial-predicate-search` and `--beta-boundary-search`. They target the
-discarded heuristic, so they are not part of the normal reviewer path.
+The older `qp-general-algorithm-ablation` flag interface remains only for
+exploratory falsification searches that do not correspond to a stable
+algorithm, including `--adversarial-predicate-search` and
+`--beta-boundary-search`.

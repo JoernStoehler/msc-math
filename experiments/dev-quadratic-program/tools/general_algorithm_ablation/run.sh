@@ -5,16 +5,18 @@ output_dir="${1:-/tmp/qp-current-route-evidence}"
 mkdir -p "$output_dir"
 
 cargo build -p exp-dev-quadratic-program --release \
-  --bin qp-general-algorithm-ablation
+  --bin qp-general-algorithm-comparison \
+  --bin qp-general-selected-verification \
+  --bin qp-general-selected-numerics \
+  --bin qp-general-end-to-end
 
-binary=target/release/qp-general-algorithm-ablation
-"$binary" --verification-packet >"$output_dir/verification.txt"
-"$binary" --numerics-packet >"$output_dir/numerics.txt"
-"$binary" --profile-packet >"$output_dir/profile.txt"
-"$binary" --end-to-end-profile >"$output_dir/end-to-end.txt"
+target/release/qp-general-selected-verification >"$output_dir/verification.txt"
+target/release/qp-general-selected-numerics >"$output_dir/numerics.txt"
+target/release/qp-general-algorithm-comparison >"$output_dir/algorithms.txt"
+target/release/qp-general-end-to-end >"$output_dir/end-to-end.txt"
 
 printf '%s\n' \
   "$output_dir/verification.txt" \
   "$output_dir/numerics.txt" \
-  "$output_dir/profile.txt" \
+  "$output_dir/algorithms.txt" \
   "$output_dir/end-to-end.txt"

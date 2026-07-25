@@ -101,14 +101,14 @@ interleaved rounds.
 
 | Variant | Median | Status |
 | --- | ---: | --- |
-| previous empirical inverse check | 75.56 ms | heuristic baseline |
-| scalar outward enclosure with all-length pruning | 87.48 ms | verified control |
-| batched enclosure with all-length pruning | 75.96 ms | tighter verified stage |
-| normwise enclosure with all-length pruning | 40.19 ms | cheap verified stage |
-| staged normwise then batched enclosure | 40.43 ms | selected general route |
-| empirical predicate plus lazy exact fallback | 29.82 ms | fast but unsound |
+| `empirical_inverse` | 75.56 ms | heuristic, no curvature check |
+| `verified_scalar_lblt_pruned` | 87.48 ms | certified scalar enclosure |
+| `verified_batched_lblt_pruned` | 75.96 ms | certified entrywise enclosure |
+| `verified_normwise_lblt_pruned` | 40.19 ms | certified normwise enclosure |
+| `verified_hybrid_lblt_pruned` | 40.43 ms | selected general route |
+| `empirical_lblt_pruned` | 29.82 ms | certified pruning, unsound predicate |
 
-The selected route is `1.87x` faster than the previous empirical baseline on
+`verified_hybrid_lblt_pruned` is `1.87x` faster than `empirical_inverse` on
 the same long-word cohort. The full general profile, including 350 short
 words, took `45.33 ms` for 14,241 words and used no exact fallback.
 
@@ -117,16 +117,16 @@ separate nine-round end-to-end profile on the same eight F5--F12 inputs gives:
 
 | Route | Validation | Exact transition and cycles | Candidate processing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| previous empirical inverse check | 1.26 ms | 20.06 ms | 76.51 ms | 97.89 ms |
+| `empirical_inverse` | 1.26 ms | 20.06 ms | 76.51 ms | 97.89 ms |
 | batched verified route | 1.26 ms | 20.12 ms | 80.30 ms | 101.70 ms |
-| selected staged verified route | 1.28 ms | 20.09 ms | 44.64 ms | 65.98 ms |
+| `verified_hybrid_lblt_pruned` | 1.28 ms | 20.09 ms | 44.64 ms | 65.98 ms |
 
-The selected route is therefore `1.48x` faster end to end on this cohort.
-It also processes 350 short words by one-sided outward rejection; the previous
-empirical reproduction omits words shorter than five.
+`verified_hybrid_lblt_pruned` is therefore `1.48x` faster end to end on this
+cohort. It also processes 350 short words by one-sided outward rejection;
+`empirical_inverse` omits words shorter than five.
 
 Holding the numerical predicate fixed exposes the combinatorial gain. The
-previous route factors and tests all 13,891 long-word systems. Curvature
+`empirical_inverse` factors and tests all 13,891 long-word systems. Curvature
 inheritance reduces this to 4,535 factorizations and 3,817 beta/Q guards:
 67.4% of factorizations are skipped. With the old empirical predicate on that
 same pruned route, candidate processing takes 29.82 ms. The selected verified
@@ -135,9 +135,10 @@ bounds, 0.77 ms on residuals, 5.53 ms on inverse defects, and 0.17 ms on final
 decisions. Moving curvature rejection before the solution and inverse avoids
 wasted work on 718 direct obstructions and saves about 1.3 ms.
 
-The empirical control is `2.4x` faster than the selected route, but that is not
-a valid correctness/performance trade: it can make an unrepairable wrong
-determinate decision.
+`empirical_lblt_pruned` is `1.36x` faster than
+`verified_hybrid_lblt_pruned`, but that is not a valid
+correctness/performance trade: it can make an unrepairable wrong determinate
+decision.
 
 Earlier ablations also reject these alternatives:
 
