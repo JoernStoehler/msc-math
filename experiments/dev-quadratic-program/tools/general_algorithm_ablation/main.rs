@@ -155,7 +155,6 @@ struct RouteResult {
     long_factor: FactorKind,
     stats: RouteStats,
     decisions: Vec<DecisionKind>,
-    full_decisions: Vec<Decision>,
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -360,10 +359,6 @@ fn main() {
         run_exact_aggregation_audit(&case_words);
         return;
     }
-    if std::env::args().any(|argument| argument == "--rich-output-spike") {
-        run_rich_output_spike(&case_words);
-        return;
-    }
 
     let variants = [
         (None, FactorKind::Lu),
@@ -460,7 +455,6 @@ fn print_usage() {
     println!("  --predicate-audit-only");
     println!("  --slowdown-ablation");
     println!("  --aggregation-only");
-    println!("  --rich-output-spike");
     println!("  --routes-only");
     println!("  --benchmark-only [--long-words-only] [--seed=U64]");
 }
@@ -1744,7 +1738,6 @@ fn run_route_with_guard(
     let gradual_underflow = gradual_underflow_available();
     let mut stats = RouteStats::default();
     let mut decisions = Vec::new();
-    let mut full_decisions = Vec::new();
     for (_, duals, words) in cases {
         let exact_duals = exact_binary64_dual_vertex_arrays(duals);
         let mut cache = Vec::<Obstruction>::new();
@@ -1925,8 +1918,7 @@ fn run_route_with_guard(
             case_decisions[index] = decision;
         }
         record_case_capacity_interval(&mut stats, &case_decisions, guard_kind);
-        decisions.extend(case_decisions.iter().map(|decision| decision.kind));
-        full_decisions.extend(case_decisions);
+        decisions.extend(case_decisions.into_iter().map(|decision| decision.kind));
     }
     stats.elapsed = started.elapsed();
     RouteResult {
@@ -1934,7 +1926,6 @@ fn run_route_with_guard(
         long_factor,
         stats,
         decisions,
-        full_decisions,
     }
 }
 
@@ -3240,339 +3231,6 @@ fn run_exact_aggregation_audit(cases: &[(String, Vec<Vector4<f64>>, Vec<Vec<usiz
         Some(7),
         GuardKind::BatchedAnalyticEnvelope,
     );
-}
-
-#[derive(Clone, Copy, Debug)]
-enum RichOutputSelection {
-    MinimizersOnly,
-    RelativeWindowElevenTenths,
-    AllAdmissible,
-}
-
-impl RichOutputSelection {
-    fn label(self) -> &'static str {
-        match self {
-            Self::MinimizersOnly => "minimizers",
-            Self::RelativeWindowElevenTenths => "relative_window_11_10",
-            Self::AllAdmissible => "all_admissible",
-        }
-    }
-}
-
-#[derive(Debug)]
-struct RichOutputResolution {
-    records: Vec<(usize, BigRational)>,
-    contenders: usize,
-    exact_solves: usize,
-    exact_time: Duration,
-}
-
-/// Cheap architecture spike for a lean `(sigma, exact action)` search result.
-///
-/// The complete exact solve over every word is the reference only. The route
-/// under test first applies the selected certified f64/exact pruning, then
-/// exact-solves only candidates whose certified action intervals can meet the
-/// requested minimum/window. This packet deliberately starts with the retained
-/// F <= 7 cohort: it is large enough to exercise pruning and exact resolution,
-/// but cheap enough to reject a bad architecture before broader runs.
-fn run_rich_output_spike(cases: &[(String, Vec<Vector4<f64>>, Vec<Vec<usize>>)]) {
-    let selected_cases = cases
-        .iter()
-        .filter(|(_, duals, _)| duals.len() <= 7)
-        .collect::<Vec<_>>();
-    assert!(
-        !selected_cases.is_empty(),
-        "rich-output spike requires at least one F <= 7 case"
-    );
-
-    let mut cases_compared = 0usize;
-    let mut record_mismatches = 0usize;
-    let mut total_words = 0usize;
-    let mut total_accepted = 0usize;
-    let mut total_reference_exact_time = Duration::ZERO;
-    let mut total_route_time = Duration::ZERO;
-    let mut total_resolution_time = [Duration::ZERO; 3];
-    let mut total_resolution_solves = [0usize; 3];
-    let mut total_returned = [0usize; 3];
-
-    for (source_id, duals, words) in selected_cases {
-        let exact_duals = exact_binary64_dual_vertex_arrays(duals);
-        let single_case = vec![(source_id.clone(), duals.clone(), words.clone())];
-        let route = run_route_with_guard(
-            &single_case,
-            Some(usize::MAX),
-            FactorKind::Lblt,
-            GuardKind::HybridAnalyticEnvelope,
-        );
-        assert_eq!(route.full_decisions.len(), words.len());
-
-        let reference_started = Instant::now();
-        let reference_actions = words
-            .iter()
-            .map(|word| exact_action_for_word(&exact_duals, word))
-            .collect::<Vec<_>>();
-        let reference_exact_time = reference_started.elapsed();
-        let exact_positive = reference_actions
-            .iter()
-            .filter(|value| value.is_some())
-            .count();
-        let accepted = route
-            .full_decisions
-            .iter()
-            .filter(|decision| decision.kind == DecisionKind::Accept)
-            .count();
-
-        println!("rich_output.source_id={source_id}");
-        println!("rich_output.words={}", words.len());
-        println!("rich_output.route_accepted={accepted}");
-        println!("rich_output.reference_exact_positive={exact_positive}");
-        println!(
-            "rich_output.route_ms={:.6}",
-            route.stats.elapsed.as_secs_f64() * 1e3
-        );
-        println!(
-            "rich_output.reference_exact_all_ms={:.6}",
-            reference_exact_time.as_secs_f64() * 1e3
-        );
-
-        for (selection_index, selection) in [
-            RichOutputSelection::MinimizersOnly,
-            RichOutputSelection::RelativeWindowElevenTenths,
-            RichOutputSelection::AllAdmissible,
-        ]
-        .into_iter()
-        .enumerate()
-        {
-            let reference = selected_exact_records(words, &reference_actions, selection, None);
-            let resolution =
-                resolve_rich_output(&exact_duals, words, &route.full_decisions, selection);
-            let observed = resolution
-                .records
-                .iter()
-                .map(|(index, action)| (words[*index].clone(), action.clone()))
-                .collect::<Vec<_>>();
-            let matches = observed == reference;
-            record_mismatches += usize::from(!matches);
-            total_resolution_time[selection_index] += resolution.exact_time;
-            total_resolution_solves[selection_index] += resolution.exact_solves;
-            total_returned[selection_index] += resolution.records.len();
-
-            println!("rich_output.mode={}", selection.label());
-            println!("rich_output.contenders={}", resolution.contenders);
-            println!("rich_output.exact_solves={}", resolution.exact_solves);
-            println!("rich_output.returned={}", resolution.records.len());
-            println!(
-                "rich_output.exact_resolution_ms={:.6}",
-                resolution.exact_time.as_secs_f64() * 1e3
-            );
-            println!("rich_output.records_match={matches}");
-        }
-
-        cases_compared += 1;
-        total_words += words.len();
-        total_accepted += accepted;
-        total_reference_exact_time += reference_exact_time;
-        total_route_time += route.stats.elapsed;
-    }
-
-    println!("rich_output.summary_cases={cases_compared}");
-    println!("rich_output.summary_words={total_words}");
-    println!("rich_output.summary_route_accepted={total_accepted}");
-    println!("rich_output.summary_record_mismatches={record_mismatches}");
-    println!(
-        "rich_output.summary_route_ms={:.6}",
-        total_route_time.as_secs_f64() * 1e3
-    );
-    println!(
-        "rich_output.summary_reference_exact_all_ms={:.6}",
-        total_reference_exact_time.as_secs_f64() * 1e3
-    );
-    for (index, selection) in [
-        RichOutputSelection::MinimizersOnly,
-        RichOutputSelection::RelativeWindowElevenTenths,
-        RichOutputSelection::AllAdmissible,
-    ]
-    .into_iter()
-    .enumerate()
-    {
-        println!("rich_output.summary_mode={}", selection.label());
-        println!(
-            "rich_output.summary_exact_solves={}",
-            total_resolution_solves[index]
-        );
-        println!("rich_output.summary_returned={}", total_returned[index]);
-        println!(
-            "rich_output.summary_exact_resolution_ms={:.6}",
-            total_resolution_time[index].as_secs_f64() * 1e3
-        );
-    }
-    assert_eq!(
-        record_mismatches, 0,
-        "certified rich-output records differ from exact-all reference"
-    );
-}
-
-fn resolve_rich_output(
-    exact_duals: &[[BigRational; 4]],
-    words: &[Vec<usize>],
-    decisions: &[Decision],
-    selection: RichOutputSelection,
-) -> RichOutputResolution {
-    let minimum_contenders = minimum_contender_indices(decisions);
-    let mut exact_actions = vec![None; words.len()];
-    let mut exact_solves = 0usize;
-    let mut exact_time = Duration::ZERO;
-    resolve_exact_indices(
-        exact_duals,
-        words,
-        &minimum_contenders,
-        &mut exact_actions,
-        &mut exact_solves,
-        &mut exact_time,
-    );
-    let minimum = minimum_contenders
-        .iter()
-        .filter_map(|&index| exact_actions[index].as_ref())
-        .min()
-        .cloned()
-        .expect("accepted minimum contenders contain an exact-positive word");
-
-    let selected_indices = match selection {
-        RichOutputSelection::MinimizersOnly => minimum_contenders,
-        RichOutputSelection::RelativeWindowElevenTenths => {
-            let threshold = &minimum * BigRational::new(11.into(), 10.into());
-            decisions
-                .iter()
-                .enumerate()
-                .filter(|(_, decision)| decision.kind == DecisionKind::Accept)
-                .filter(|(_, decision)| {
-                    action_interval(**decision).is_none_or(|(lower, _)| {
-                        !lower.is_finite() || f64_to_rational(lower) <= threshold
-                    })
-                })
-                .map(|(index, _)| index)
-                .collect::<Vec<_>>()
-        }
-        RichOutputSelection::AllAdmissible => decisions
-            .iter()
-            .enumerate()
-            .filter(|(_, decision)| decision.kind == DecisionKind::Accept)
-            .map(|(index, _)| index)
-            .collect::<Vec<_>>(),
-    };
-    resolve_exact_indices(
-        exact_duals,
-        words,
-        &selected_indices,
-        &mut exact_actions,
-        &mut exact_solves,
-        &mut exact_time,
-    );
-
-    let mut records = selected_exact_records(words, &exact_actions, selection, Some(&minimum))
-        .into_iter()
-        .map(|(word, action)| {
-            let index = words
-                .iter()
-                .position(|candidate| candidate == &word)
-                .expect("selected word belongs to candidate stream");
-            (index, action)
-        })
-        .collect::<Vec<_>>();
-    records.sort_by_key(|(index, _)| *index);
-
-    RichOutputResolution {
-        records,
-        contenders: selected_indices.len(),
-        exact_solves,
-        exact_time,
-    }
-}
-
-fn resolve_exact_indices(
-    exact_duals: &[[BigRational; 4]],
-    words: &[Vec<usize>],
-    indices: &[usize],
-    exact_actions: &mut [Option<BigRational>],
-    exact_solves: &mut usize,
-    exact_time: &mut Duration,
-) {
-    for &index in indices {
-        if exact_actions[index].is_some() {
-            continue;
-        }
-        let started = Instant::now();
-        let action = exact_action_for_word(exact_duals, &words[index])
-            .expect("certified accepted candidate must be exact-positive");
-        *exact_time += started.elapsed();
-        *exact_solves += 1;
-        exact_actions[index] = Some(action);
-    }
-}
-
-fn minimum_contender_indices(decisions: &[Decision]) -> Vec<usize> {
-    let accepted = decisions
-        .iter()
-        .enumerate()
-        .filter(|(_, decision)| decision.kind == DecisionKind::Accept)
-        .collect::<Vec<_>>();
-    let minimum_upper = accepted
-        .iter()
-        .filter_map(|(_, decision)| action_interval(**decision).map(|(_, upper)| upper))
-        .min_by(f64::total_cmp)
-        .unwrap_or(f64::INFINITY);
-    accepted
-        .into_iter()
-        .filter(|(_, decision)| {
-            action_interval(**decision).is_none_or(|(lower, _)| lower <= minimum_upper)
-        })
-        .map(|(index, _)| index)
-        .collect()
-}
-
-fn action_interval(decision: Decision) -> Option<(f64, f64)> {
-    let (q_lower, q_upper) = decision.q_lower.zip(decision.q_upper)?;
-    if !(q_lower > 0.0 && q_upper >= q_lower) {
-        return None;
-    }
-    Some((next_down(0.5 / q_upper), next_up(0.5 / q_lower)))
-}
-
-fn exact_action_for_word(exact_duals: &[[BigRational; 4]], word: &[usize]) -> Option<BigRational> {
-    solve_kkt_exact(exact_duals, word).and_then(|result| {
-        result
-            .q_exact
-            .is_positive()
-            .then(|| BigRational::one() / (result.q_exact.clone() + result.q_exact))
-    })
-}
-
-fn selected_exact_records(
-    words: &[Vec<usize>],
-    actions: &[Option<BigRational>],
-    selection: RichOutputSelection,
-    known_minimum: Option<&BigRational>,
-) -> Vec<(Vec<usize>, BigRational)> {
-    let minimum = known_minimum
-        .cloned()
-        .or_else(|| actions.iter().filter_map(Option::as_ref).min().cloned());
-    let Some(minimum) = minimum else {
-        return Vec::new();
-    };
-    let relative_threshold = &minimum * BigRational::new(11.into(), 10.into());
-    words
-        .iter()
-        .zip(actions)
-        .filter_map(|(word, action)| {
-            let action = action.as_ref()?;
-            let selected = match selection {
-                RichOutputSelection::MinimizersOnly => action == &minimum,
-                RichOutputSelection::RelativeWindowElevenTenths => action <= &relative_threshold,
-                RichOutputSelection::AllAdmissible => true,
-            };
-            selected.then(|| (word.clone(), action.clone()))
-        })
-        .collect()
 }
 
 fn run_exact_route_agreement_audit(
