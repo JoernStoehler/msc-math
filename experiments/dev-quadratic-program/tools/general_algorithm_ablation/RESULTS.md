@@ -282,6 +282,30 @@ curvature pruning. The product hypercube control contains 128 such candidates,
 so the end-to-end pruning comparison is exercised, but not on the random
 general cohort.
 
+## Exact rich-output architecture spike
+
+The retained `--rich-output-spike` asks whether the fast scalar API should
+literally call an exact minimizer search and discard its word. On the three
+complete F5--F7 streams it observed:
+
+| Quantity | Result |
+| --- | ---: |
+| candidate words | 88 |
+| certified admissible candidates | 11 |
+| selected scalar route | 0.865 ms |
+| complete exact-all reference | 2642 ms |
+| exact minimizers | 3 solves, 143 ms, 3 records |
+| exact `11/10` window | 5 solves, 222 ms, 5 records |
+| exact all-admissible output | 11 solves, 510 ms, 11 records |
+
+All returned `(sigma, action_exact)` records matched the complete exact-all
+reference. The certified action intervals isolated one minimizer contender per
+case. This supports lazy exact rich output, but rejects a scalar wrapper around
+that output: even the minimizer-only resolution cost about 166 times the
+measured scalar route time. Production should share enumeration, pruning, and
+admissibility internally while allowing scalar aggregation to stop at
+certified action bounds.
+
 ## Remaining scope
 
 The two adversarial review passes above are complete and their findings are

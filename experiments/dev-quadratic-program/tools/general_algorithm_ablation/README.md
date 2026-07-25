@@ -140,6 +140,18 @@ cargo run -p exp-dev-quadratic-program --release \
   --bin qp-general-algorithm-ablation -- --verification-packet
 ```
 
+The bounded rich-output architecture spike is:
+
+```bash
+cargo run -p exp-dev-quadratic-program --release \
+  --bin qp-general-algorithm-ablation -- --rich-output-spike
+```
+
+It compares exact minimizers, an exact `11/10` capacity window, and all exact
+admissible records after certified pruning against a complete exact solve of
+the retained F5--F7 streams. It also measures the exact-resolution overhead;
+it is not part of the normal scalar performance packet.
+
 Optional older falsification searches remain available as
 `--adversarial-predicate-search` and `--beta-boundary-search`. They target the
 discarded heuristic, so they are not part of the normal reviewer path.
