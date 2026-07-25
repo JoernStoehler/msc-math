@@ -11,17 +11,171 @@ Move the selected four-dimensional scalar-capacity algorithms from
 without losing their proof, numerical, exact-reference, adversarial, or
 performance evidence.
 
-The migration is intentionally split from orbit-set migration:
+Batch 1 migrated one mathematical output: the scalar capacity of a validated
+four-dimensional input. It did **not** migrate the existing orbit-search
+contract or make `OrbitSearchResult` a wrapper around the new result.
 
-- general non-products: certified capacity interval with exact fallback;
-- exact structural products: exact binary64-rational capacity and sparse exact
-  maximizing witnesses;
-- legacy orbit search: retained for callers that need beta, closure
-  multipliers, derivatives, near-active branches, or a candidate window.
+The two new scalar routes expose exactly:
 
-Neither selected scalar route currently returns every minimizing or
-near-minimizing orbit. A common `OrbitSearchResult` would therefore misstate
-their contracts.
+- `GeneralCapacity4d`: one outward binary64 interval `[c_lower, c_upper]` for
+  the capacity. It exposes no winning `sigma`, `beta`, `q`, multiplier, or
+  search count.
+- `ProductCapacity4d`: the exact rational capacity of the binary64 input, its
+  outward binary64 interval, and every tied maximizing **closure-vertex word**
+  found by the product theorem's support-pair/support-triple enumeration. Each
+  such winner contains `sigma` and exact `beta`. This is not a representation
+  of every KKT solution when a degenerate closure face contains non-vertex
+  solutions, and it contains no non-minimizing action window, `mu`, `xi`, or
+  geometric trajectory.
+
+The existing orbit APIs have different, weaker or conditional guarantees:
+
+- `OrbitSearchResult` contains retained f64 KKT records
+  `(sigma, beta, action interval, q diagnostic, optional mu, optional xi,
+  admissibility)` plus retained-set minima and iteration count.
+  `OrbitGuaranteeMode::{BoundSafe,MinimaSafe,AllSafe}` resolves selected
+  `IndeterminateF64` records but does not recheck `AdmissibleF64`, and its f64
+  action windows are not proved error bounds. It therefore does not currently
+  certify a global capacity, a complete set of minimizers, or a complete
+  action-gap window.
+- `CertifiedOrbitSearchResult` exact-resolves candidates from a caller-supplied
+  stream and can return all exact minimizers or an exact action-gap window
+  **within that stream**. A global claim additionally requires a proof that the
+  supplied stream covers the relevant HK candidate family. Its exact orbit
+  record contains `sigma`, `beta`, `q`, and action, but not `mu`, `xi`, or a
+  recovered trajectory.
+
+Consequently no caller may manufacture an `OrbitSearchResult` from a scalar
+capacity result, label a legacy best word as a certified minimizer merely
+because both computations ran on the same input, or treat product
+closure-vertex winners as a complete physical-orbit set. The orbit-output part
+of this migration must separately specify candidate-family coverage,
+tie/window semantics, KKT fields, degeneracy semantics, and geometric
+recovery.
+
+## End state and merge boundary
+
+The current scalar extraction is an internal checkpoint, not a merge-ready
+half-migration. The migration is not complete merely because `Capacity4d`
+exists and old callers still compile. Proposing that state for merge would
+leave two plausible ordinary capacity architectures, make it unclear which
+result future code should trust, and silently transfer the orbit-output design
+and consumer audit to a future session.
+
+The intended end state for this migration is:
+
+1. `CapacityInput4d` is the ordinary validated entry point.
+2. One certified search operation owns candidate enumeration, theorem-backed
+   pruning, exact admissibility, exact action comparison, and output filtering.
+   It returns lean records `(sigma, action_exact)` for exact minimizers, an
+   exact absolute/relative action window, or all certified admissible discrete
+   candidates.
+3. `capacity`, `general_capacity`, and `product_capacity` are convenience
+   wrappers around this search. They request only minimizers, take the minimum
+   action, and discard `sigma`. They do not implement a second admissibility or
+   minimum algorithm.
+4. Exact one-sigma KKT solving is an on-demand method on the same validated
+   input. Given a returned `sigma`, it returns exact `beta`, `q`, `mu`, and
+   `xi`. Capacity differentiation and geometric recovery consume that payload.
+   Search results do not carry every `beta` merely because an internal f64 or
+   exact solve produced one.
+5. Existing f64 `OrbitSearchResult` searches remain only where the experiment
+   explicitly studies their numerical/branch behavior, or as verification and
+   performance controls. Ordinary consumers do not retain them merely because
+   the new API omitted a needed field.
+6. Every retained old call site states which experiment-specific output
+   requires it. A successful compile with an unchanged old call is not a
+   migration decision.
+
+Consumer inspection settles the meaning of “all minimizers” here. The
+all-minimum verification producer counts and serializes one row per returned
+`sigma`; the ascent code builds one gradient per returned `OrbitKktData`; and
+the pentagon producer dumps a finite list of tied returned records. None asks
+for a parameterization of every positive `beta` or every physical orbit for a
+rank-deficient word. The production search therefore returns all covered
+minimizing discrete words, and the on-demand exact solver selects one exact
+positive KKT witness for a requested word. Continuous within-word solution
+families are YAGNI for this API and remain experiment-local if later studied.
+
+No merge proposal is made until the consumer inventory has classified every
+old call site as migrated, a named experiment/control, or an explicit blocker.
+If external branch coordination ever forces a scalar-first merge, that is a
+deliberate incomplete phase: `docs/project-status.md` must name the unresolved
+orbit-output phase and its affected callers, and the next migration work must
+be scheduled immediately. That exception is not the selected plan for this
+worktree.
+
+### Compared orbit-output architectures
+
+| Approach | Benefit | Cost / failure mode | Decision |
+| --- | --- | --- | --- |
+| Merge the scalar API and keep ordinary callers on `OrbitSearchResult` indefinitely | Cheapest immediate patch | Two ordinary answers with different guarantees; new scalar correctness does not transfer to old winning words or derivatives; every future caller must rediscover the distinction | Reject |
+| Make every scalar call return capacity, all branches, KKT multipliers, derivatives, and trajectories | One apparent entry point | Pays enumeration, exact payload, and recovery costs when only a scalar is needed; product degeneracy cannot honestly be represented as one finite “all orbits” list | Reject |
+| Preserve the existing `OrbitSearchResult` shape but fill it from the new routes | Minimizes consumer edits | General scalar route has no winner payload; product closure winners have no complete physical-orbit semantics, `mu`, `xi`, or legacy iteration meaning; optional/dummy fields would lie | Reject |
+| Expose only capacity plus a low-level one-sigma solve and let every caller build its own minimizer/window search | Small production API | Repeats candidate-coverage, tie, pruning, and fallback logic in consumers; recreates the ad hoc wrappers this migration is meant to remove | Reject for ordinary callers; retain low-level primitives for experiments |
+| One certified search returning lean `(sigma, exact action)` records, scalar wrappers that discard `sigma`, and an on-demand exact one-sigma KKT method | One source of enumeration, admissibility, minimum, and window semantics; scalar callers do not pay to retain full KKT payloads; geometry/derivative callers can afford exact work for few selected words | Exact action/admissibility for returned contenders may still cost more than the current interval-only scalar route | Select, subject to the measured overhead spike below |
+| Separate independently implemented scalar and rich searches | Each can be optimized narrowly | Duplicates the correctness-critical minimum/admissibility logic and recreates two ordinary answers | Reject unless measurement shows an otherwise unavoidable material cost |
+| Keep old full-branch searches only in experiments that intentionally measure non-minimal branches, old thresholds, or old solver behavior | Preserves valuable evidence without presenting it as the production route | Requires explicit naming and retained controls | Select as an exception, not the default consumer path |
+
+### Required spike before completing the richer API
+
+The selected architecture is a prediction, not yet an implemented claim. The
+next bounded development step must test its cost and the two mathematical
+uncertainties before broad consumer edits:
+
+- **Wrapper overhead:** compare the current scalar route with the same search
+  core under `MinimizersOnly`, `RelativeWindow(11/10)`, and
+  `AllAdmissible`. Record candidates before/after filtering, exact one-sigma
+  solves, returned records, and phase/total time. First test whether
+  `capacity()` can literally call `search(MinimizersOnly)` and discard its
+  words. If exact returned actions are materially expensive, try a
+  minimum-only execution mode inside the same core before considering a
+  separate scalar implementation.
+- **General correctness:** retain each accepted candidate's certified action
+  interval, identify every word whose interval can meet the exact minimum or
+  requested gap, and exact-solve only those words before returning
+  `(sigma, action_exact)`. Check against the complete exact all-candidate
+  control on retained general, singular, tied, and adversarial cases. Measure
+  contender count and exact-solve time. If the contender set is routinely
+  large, reconsider the output algorithm instead of silently falling back to
+  the old search.
+- **Product:** determine whether the returned closure-vertex winners are the
+  exact finite certificate set required by product scalar/bounce consumers and
+  whether the on-demand exact one-sigma method returns a consistent
+  `beta, q, mu, xi` for each returned `sigma`. The separate optimizer worktree
+  owns the question whether such witnesses generate the branch set needed by
+  product ascent. This is not a capacity/minimizer-set gate for the present
+  migration: the optimizer intentionally maintains custom positive,
+  transition-blocked, and beta-nonpositive branch models.
+
+The spike succeeds only if determinate predicates agree with exact arithmetic,
+the returned discrete word sets agree with the exact controls, and the added
+cost is measured. A modest cost may be accepted for one simpler source of
+truth; report the measured Pareto comparison rather than applying an unrecorded
+threshold. Its result decides the final richer API; it is not permission to
+merge the scalar checkpoint alone if the spike fails.
+
+### Predicted compute budget
+
+The 2026-07-25 local anchor processed 13,891 retained long words in 40.5 ms with
+the selected route and retained 271 exact-positive candidates. The older
+generic rational control took about 2.0 s to exact-solve 285 product survivors;
+this is only a scale anchor because the matrices/population differ. It implies:
+
+- the first minimizer/window spike should stay below 15 CPU-minutes including
+  compilation, repeated timing, and exact controls;
+- the faithful richer-output plus affected numerical/performance packet should
+  ordinarily stay below one core-hour locally; and
+- stop and inspect rather than launching a broad run if one retained packet
+  exceeds ten wall minutes or the contender filter retains thousands of exact
+  solves unexpectedly.
+
+Do not allocate a 64-core LICCA hour for the first spike. The current producer
+is mostly serial and the local packet is too small to amortize allocation and
+transfer overhead. LICCA becomes useful after the API freezes if full
+datascience-corpus regeneration, a broad exact-all control, or many independent
+adversarial cases require several core-hours. Estimate that stage from the
+measured per-case distribution rather than reserving 64 core-hours in advance.
 
 ## Current progress
 
@@ -69,9 +223,41 @@ a theorem or evidence that larger streams lack an answer. A future general
 algorithm may replace the cap only after a bounded crosspolytope-style
 regression passes.
 
-The next non-commutative action is the Batch 2 evidence/optimization
-checkpoint. Consumer migration remains deferred until concurrent Main movement
-is reassessed.
+The next non-commutative action is the bounded richer-output spike described
+above, followed by either a faithful richer-output checkpoint or an explicit
+architecture replan. Evidence optimization and consumer migration do not start
+from the scalar checkpoint alone.
+
+### Optimizer coordination boundary
+
+The active `optimizer-runs-implementation` worktree owns
+`experiments/dev-gradient-ascent/optimizer-runs` and related optimizer
+experiments. Its branch model currently:
+
+- requests an admissible action window from the shared orbit search;
+- solves named admissible words and differentiates their f64 KKT payloads;
+- deliberately enumerates transition-blocked words; and
+- has an unrestricted f64 KKT route whose beta sign is descriptive rather than
+  an exclusion criterion.
+
+This migration must not refactor those files concurrently. After the
+`CapacityInput4d` search and exact one-sigma API are stable, send the optimizer
+owner a migration map:
+
+1. use the new scalar/search API for physical capacity and admissible discrete
+   candidate windows;
+2. use the exact one-sigma method only where an exact positive branch payload
+   serves the optimizer;
+3. retain the optimizer-local transition-blocked and beta-nonpositive models
+   as explicit heuristics rather than expanding the production API for them;
+4. review rank-deficient within-word derivative semantics in the optimizer's
+   own branch-model contract; and
+5. update evaluator schema/cache provenance before that optimizer branch
+   merges.
+
+The optimizer worktree need not wait idle for this migration, and the QP
+migration need not absorb its custom branch research. The handoff is required
+before the optimizer branch merges against the new QP API.
 
 ## Mathematical acceptance gate
 
@@ -182,11 +368,12 @@ experiments/dev-quadratic-program/src/
 ```text
 crates/symplectic/src/algorithms/
 |-- capacity_4d/
-|   |-- mod.rs                 # public facade, dispatch, and result contracts
+|   |-- mod.rs                 # public facade, search/wrapper result contracts
 |   |-- input.rs               # validated input and derived exact geometry
 |   |-- general.rs             # selected general route
 |   |-- product.rs             # conditional on product theorem acceptance
 |   `-- interval.rs            # shared outward arithmetic, if both routes use it
+|-- exact/orbit.rs             # reusable exact one-sigma KKT solve
 |-- hk2017/                    # existing enumeration and orbit route
 |-- billiard/                  # existing legacy orbit route/control
 `-- orbit_search.rs            # existing orbit payload/recovery contracts
@@ -198,51 +385,72 @@ Avoiding speculative folders keeps the proof-to-code map local. The production
 implementation may optimize structure independently; the experiment-owned
 readable implementation is the intended copy-editable base.
 
-The provisional caller shape is:
+The target caller shape is:
 
 ```rust
 let input = CapacityInput4d::try_from_dual_vertices(&dual_vertices)?;
-let result = input.capacity()?;
-
-match result {
-    Capacity4d::General(result) => use_certified_bounds(result.bounds()),
-    Capacity4d::Product(result) => use_exact_binary64(result.capacity_exact()),
+let search = input.qp_search(QpCandidateSelection4d::MinimizersOnly)?;
+for candidate in search.candidates() {
+    use_sigma_and_exact_action(candidate.sigma(), candidate.action_exact());
 }
+
+let capacity_exact = input.capacity_exact()?;
+let capacity_f64 = input.capacity_f64()?; // explicitly rounded convenience
+
+let orbit = input.solve_sigma_exact(search.candidates()[0].sigma())?;
+use_exact_beta_q_mu_xi(&orbit);
 ```
 
-This enum/automatic-dispatch shape applies only after product theorem
-acceptance. The general-only alternative exposes `GeneralCapacity4d` through an
-explicit general route and does not manufacture an empty/unsupported product
-variant merely to preserve the provisional enum.
+Provisional names aside, the public contracts are:
+
+- `QpCandidateSelection4d::MinimizersOnly`;
+- an exact absolute gap or exact capacity multiple (required to be
+  nonnegative or at least one, respectively);
+- `QpCandidateSelection4d::AllAdmissible`;
+- `CertifiedQpCandidate4d { sigma, action_exact }`, where membership in this
+  type means strict exact `beta > 0` and exact `q > 0`; there is no redundant
+  `admissibility: true` field;
+- a tagged candidate-family/route label distinguishing general HK words from
+  product closure-vertex words; and
+- `solve_sigma_exact`, returning the existing exact one-sigma KKT payload
+  `(sigma, beta, q, mu, xi)`.
+
+The exact output scalar is `BigRational`. Although every supplied binary64
+coordinate is dyadic, divisions in the exact KKT solve produce general
+rationals, so a dyadic result type is insufficient. Algebraic-number output is
+unnecessary for this binary64-rational linear/QP contract.
 
 `CapacityInput4d` owns the small validated input and derived binary64-rational
-geometry so repeated route calls do not repeat validation or ask callers to
-keep parallel f64/rational/incidence arguments consistent. It offers explicit
-general and product methods for verification and route-comparison callers;
-ordinary automatic dispatch uses the exact structural-product classification.
+geometry so repeated search, scalar, and one-sigma calls do not repeat
+validation or ask callers to keep parallel f64/rational/incidence arguments
+consistent. Ordinary automatic dispatch uses exact structural-product
+classification. Explicit general/product methods remain for verification and
+route-comparison callers.
 
-`Capacity4d` is an enum because the certificates really differ:
+The convenient f64 API is either a method on `CapacityInput4d` or a raw-input
+function that performs validation itself. Do not expose a public raw
+`capacity(&[Vector4<f64>])` whose safety depends on an undocumented prior call.
+The validated token is the compile-visible prior check. `capacity_f64` names
+its exact-to-binary64 rounding rule; exact rational capacity and outward bounds
+remain available when the distinction matters.
 
-- `GeneralCapacity4d` exposes certified outward bounds. It does not present an
-  unqualified f64 point as the authoritative answer.
-- `ProductCapacity4d` exposes the exact binary64-rational capacity and sparse
-  exact winners.
-
-The enum provides only operations that preserve both contracts, principally
-outward bounds and route identity. Any midpoint/representative f64 conversion
-must be explicitly named as an approximation. Do not weaken both variants into
-one struct with optional exact fields, and do not give an interval-only result
-a method whose name implies exact scalar capacity.
+Caller-controlled values select returned output, not mathematical validity.
+Strict `beta > 0`, exact `q > 0`, omega/adjacency pruning justified by the
+candidate-coverage proof, and facet-incidence pruning are production
+invariants, not booleans a caller may accidentally disable. Experiments may
+copy the readable route and vary those policies deliberately. The ordinary
+public search exposes only output choices such as an exact action gap,
+capacity multiple, or all admissible discrete candidates.
 
 Do not put profiling counters or fallback counts in the public mathematical
 result. Use opt-in `tracing` for production timing/phase observability. Retain
 detailed counters and exact intermediate audits in the development packet.
 
-Do not add a builder, solver-policy trait, observer trait, or public cutoff
-option in the first API. The selected route has no current production caller
-that needs those choices. The experiment package can adapt the public results
-to a small local comparison row without making that adapter part of the
-production contract.
+Do not add a builder, solver-policy trait, observer trait, or public
+validity/pruning toggle in the first API. The experiment package can adapt the
+public results to a small local comparison row or copy the readable route for a
+policy experiment without making those research choices part of the production
+contract.
 
 ### Input boundary
 
@@ -319,17 +527,20 @@ The required boundaries/checkpoints are:
 
 1. product mathematical acceptance or the explicit general-only branch;
 2. chosen integration base before editing overlapping route code;
-3. faithful production contract before optimization or consumer schemas;
-4. accepted evidence harness/negative controls before optimizing the system
+3. faithful scalar production contract;
+4. accepted richer-output contract, or an explicit replan if its bounded spike
+   fails;
+5. accepted evidence harness/negative controls before optimizing the system
    they judge;
-5. reviewed optimized implementation before consumer migration and final
+6. reviewed optimized implementation before consumer migration and final
    measurements; and
-6. consumer/schema checkpoint before thesis integration.
+7. consumer/schema checkpoint before thesis integration.
 
-These boundaries create pre-migration, faithful-production, evidence-harness,
-optimized/evidence, consumer/schema, and thesis checkpoints. They do not split
-the work back into six small implementation stages: Batches 1--3 remain the
-large units of editing and hard feedback.
+These boundaries create pre-migration, faithful-scalar, faithful-rich-output,
+evidence-harness, optimized/evidence, consumer/schema, and thesis checkpoints.
+They do not require one commit per result type or call site: the coherent
+implementation and migration patches should still be broad enough for compiler
+feedback to locate mistakes cheaply.
 
 Within a batch, prefer a broad patch followed by hard feedback:
 
@@ -443,6 +654,41 @@ Initial cost prediction: roughly 1--3 agent hours plus the retained producer
 runs. Re-estimate from the first targeted and workspace builds rather than
 defending this estimate.
 
+### Batch 1b: richer discrete-certificate routes
+
+Run the bounded general/product spike specified under “Required spike before
+completing the richer API.” If it succeeds, make one faithful extension patch
+with:
+
+- one certified search entry point with output selection
+  (`MinimizersOnly`, an exact absolute/relative action window, or
+  `AllAdmissible`);
+- a lean exact discrete-candidate record containing `sigma` and exact action;
+- a general exact-minimizer result that returns every tied HK word in the
+  enumerated candidate family;
+- a general exact action-gap result with the same candidate-family coverage;
+- product result naming that says “closure-vertex winner”;
+- an on-demand exact one-sigma method returning `beta`, `q`, `mu`, and `xi`
+  for a returned word;
+- no claim to enumerate a continuous family of positive KKT solutions for one
+  rank-deficient word, and no claim that product closure-vertex winners are all
+  physical trajectories;
+- derivative and recovery adapters that consume the exact one-sigma payload
+  without rerunning the global search; and
+- complete exact controls for word-set equality, ties, gap endpoints,
+  rank-deficient words, derivative intermediates, and recovery inputs.
+
+The scalar methods are thin wrappers around this search. A minimum-only
+execution mode may avoid materializing non-contenders, but it must not use
+independent admissibility or minimum logic. The search and one-sigma method
+share `CapacityInput4d` validation and exact binary64-rational input semantics.
+
+If the spike fails, stop before consumer edits. Record which of contender
+isolation, exact KKT payload recovery, product subdifferential coverage, or
+performance failed, compare a changed richer-output design against the
+architectures above, and amend this end-state decision. “Keep all ordinary
+callers on legacy search” is not the fallback.
+
 ### Batch 2: evidence wiring and measured optimization
 
 Against the committed faithful production route, make one evidence/optimization
@@ -492,19 +738,70 @@ candidate completeness fails, or optimization gives an unexplained regression.
 
 ### Batch 3: consumers, durable evidence homes, and thesis
 
-Use the workspace build plus source inspection to classify all consumers:
+Classify each output field, not each crate. One executable may use the new
+capacity for its objective while retaining a deliberately separate orbit
+diagnostic. The following table states Batch 1's current coverage and what
+Batch 1b must add:
 
-- **Scalar-only:** consumes only the capacity certificate.
-- **Dual-route:** needs the new scalar certificate plus legacy sigma, orbit,
-  bounce, iteration, derivative, or trajectory payload.
-- **Orbit-sensitive:** depends on complete minimizer/window/branch semantics.
+| Requested output | General scalar route | Product scalar route | Required disposition |
+| --- | --- | --- | --- |
+| Certified capacity | outward interval | exact rational plus outward interval | migrate |
+| One minimizing word | unavailable | canonical first member of the exact closure-vertex winner list | Batch 1b adds a general exact discrete certificate; product callers may already migrate if one closure-vertex winner suffices |
+| All tied discrete words | unavailable | complete for the product route's enumerated closure-vertex words | Batch 1b adds exact general word-set semantics and preserves the narrower product name |
+| All positive KKT solutions or physical trajectories | unavailable | unavailable under within-word/closure-face degeneracy | no inventoried ordinary consumer requests this object; keep it out of the production API unless a concrete experiment later defines it |
+| All discrete candidates within action gap `delta` | unavailable | unavailable | Batch 1b adds this for the covered general candidate family; a product version is added only if an inventoried ordinary caller needs it |
+| exact `beta` for a chosen word | unavailable | currently returned for closure-vertex winners | Batch 1b provides it through the same on-demand exact one-sigma method for both routes; the common search record remains lean |
+| exact `q`, closure multiplier `mu`, normalization multiplier `xi` | unavailable | unavailable | Batch 1b provides consistent one-sigma exact KKT data where possible; these values remain properties of a chosen word, not the global search result |
+| Capacity derivative for one branch | unavailable | not directly returned | requires `sigma`, `beta`, `q`, and `mu` from one consistent KKT solution |
+| Clarke subgradient / switching model | unavailable | unavailable | requires a complete active-branch set plus one consistent derivative per branch |
+| Breakpoints, dwell times, closure/inside/action residuals | unavailable | unavailable | run geometric recovery from a chosen `sigma`, `beta`, and action; this certifies neither minimizer completeness nor recovery tolerances by itself |
+| Candidate counts, f64 fallback counts, and phase timing | tracing only | tracing only | use tracing or an experiment implementation; do not reinterpret them as `OrbitSearchResult::iterations` |
 
-Current source inspection already classifies `sys-landscape` computed payloads,
-random-product/datascience producers, and regular-product sweeps as at least
-dual-route. They store best sigmas, orbit scalars, bounce counts, iterations, or
-tied orbit lists. Sparse product winners do not automatically replace those
-contracts. In the general-only branch, no consumer migrates to a new production
-product result; product users retain their explicitly labelled existing route.
+The known high-impact consumers then have the following concrete disposition:
+
+| Consumer | Fields/semantics used now | Batch 3 decision |
+| --- | --- | --- |
+| `sys-landscape/src/ascent/compute.rs` | capacity point value; all returned branches tied within `1e-9`; each branch's `sigma`, `beta`, `q`, and `mu`; Clarke/maximin derivative construction | Do not pretend the scalar API covers it. Migrate its word set to Batch 1b's exact search, then call the exact one-sigma method for each selected word. Product migration additionally requires the product-subdifferential claim. Otherwise this is an explicit blocker, not an accepted ordinary legacy caller. |
+| `sys-landscape/gradient-ascent-observed-general` | a caller-chosen action window; every retained near-active branch; derivatives; returned count and iterations | Migrate its mathematical window/derivative input to Batch 1b. Retain old counts/timings only as separately named diagnostics. If the experiment intentionally compares the old heuristic window, that comparison mode remains but is not its ordinary capacity backend. |
+| `sys-landscape/src/datascience_cache.rs` and computed-polytope rows | capacity, volume, `sys`, one `SigmaAction`, and `OrbitScalars` (`iterations`, returned count, beta margin, q diagnostic, multiplier-presence flags, admissibility flags) | Split the schema. Store the new capacity certificate independently and use Batch 1b for a general winner when the producer needs one. Do not fill `OrbitScalars` from the new route. Retain a legacy diagnostic block only when a named analysis consumes those old-route diagnostics. |
+| `sys-landscape/random-product-sample` and regular-product rotated sweeps | capacity, `sys`, one best `sigma`, bounce count derived from that `sigma`, and legacy iteration count | Migrate capacity and the chosen winner/bounce to `ProductCapacity4d`; choose the lexicographically first returned winner deterministically. Drop or rename the old iteration field in regenerated rows unless the analysis needs a legacy-search comparison. Production tracing, not a fabricated iteration count, measures the new route. |
+| `regular-products/pentagon-rotation-empirics` minima mode | all numerically tied returned orbits and per-orbit `sigma`, `beta`, action bounds, `q`, q diagnostic, admissibility, and bounce count | Do not replace with product winners: the producer claims an orbit-branch dataset, not merely closure-vertex maximizers. Run the new product capacity as a scalar cross-check and retain the existing branch producer with its legacy numerical scope stated. |
+| `regular-products/pentagon-rotation-empirics` three-bounce/branch-landscape modes | admissible non-minimal branches and per-sigma solve outcomes | No scalar migration; these modes intentionally study the branch landscape. |
+| `sys-datascience/equal-budget-product-search` | capacity/`sys` for ranking plus counts and support lengths of the returned legacy orbit payload; full `OrbitSearchResult` in cache exports | Use the exact product capacity for ranking. Move returned-word counts/support lengths into an optional, explicitly legacy diagnostic block or omit them from new production runs; they are not properties of the product scalar algorithm. Cache eligibility must include the route/schema fingerprint, so an old `OrbitSearchResult` row cannot satisfy a new exact-product query. |
+| `dev-gradient-ascent/optimizer-runs` on `optimizer-runs-implementation` | admissible action windows and KKT derivatives, plus custom transition-blocked and beta-nonpositive branch models | Do not edit concurrently. After the API freezes, hand off the migration map above. Only its physical capacity/admissible-window calls migrate; its deliberately broader branch heuristics remain optimizer-local. |
+| `hko-local-maximum` and `combinatorial-cells` instrumented helpers | depending on the binary: best word/subset, all accepted f64 branches, uncertain best action, number of valid branches, or best/second-best gap | Migrate capacity/best-word users to the new scalar or Batch 1b certificate. Retain instrumented routes only in binaries whose stated subject is the old acceptance policy, all non-minimal accepted branches, or old best/second-best diagnostics. A crate-level wrapper replacement is forbidden because the binaries have different contracts. |
+| verification and performance packets | independent old/exact controls, intermediate predicates, recovery, candidate counts, or matched timing | Keep both old and new routes under explicit names. These are evidence/control consumers, not migration debt. |
+
+For rows that contain both computations, use two tagged blocks rather than
+shared optional fields:
+
+```text
+capacity_certificate:
+  general { lower, upper, contract_version }
+  product { exact_numerator, exact_denominator, lower, upper,
+            closure_vertex_winners, contract_version }
+
+legacy_orbit_diagnostic:
+  { backend, guarantee_mode, action_gap, OrbitSearchResult, contract_version }
+```
+
+The second block never inherits the word “winner” from the first. If a producer
+needs to assert that a legacy word attains the new capacity, it must exact-solve
+that word and compare its exact action with the exact product capacity, or use a
+Batch 1b certified general winner result. Interval overlap alone is not
+equality.
+
+Historical JSONL remains immutable. A regenerated schema that previously had
+one `capacity: f64` must store the capacity bounds (and the exact product
+rational when applicable). A compatibility `capacity: f64` may remain only
+when its rounding rule and approximate status are named. Likewise:
+
+- with exact positive volume `V`, general `sys` bounds are
+  `[c_lower^2/(2V), c_upper^2/(2V)]`;
+- product `sys` is exact when both product capacity and volume are retained as
+  rationals; and
+- a producer that converts volume or capacity to f64 must label `sys` as an
+  approximation rather than certified.
 
 Root `cargo check --workspace` does not cover every experiment. Before editing
 consumers, inventory every `Cargo.toml` and capacity/orbit call site, compare
@@ -525,9 +822,9 @@ which route contract each retained use intentionally consumes.
 
 Make one migration/schema patch that:
 
-- migrates all scalar-only consumers;
-- gives compatible dual-route consumers separately provenance-labelled scalar
-  certificates and legacy orbit payloads;
+- migrates every field whose contract is covered by the table above;
+- leaves each uncovered orbit field on a separately named legacy or exact
+  producer rather than synthesizing it from the scalar result;
 - adds one explicit compatibility/regeneration policy for retained caches and
   JSONL instead of per-producer ad hoc fields;
 - adds a route-contract/version fingerprint to resumable-cache eligibility,
@@ -535,9 +832,12 @@ Make one migration/schema patch that:
   alone;
 - establishes exact/outward volume and `sys` composition before any consumer
   claims certified `sys`; otherwise keeps `sys` explicitly approximate;
-- removes duplicated ordinary wrappers made obsolete by the public API; and
-- leaves genuinely orbit-sensitive consumers on the explicitly labelled legacy
-  route until a separately proved/tested output extension exists.
+- removes duplicated ordinary wrappers made obsolete by the public API;
+- migrates ordinary active-set, gap-window, and derivative consumers to the
+  Batch 1b result or reports them as blockers before any merge proposal; and
+- retains old branch-landscape or trajectory searches only when that old/full
+  branch object is the stated subject of the experiment, not as an accidental
+  dependency of an ordinary capacity caller.
 
 After the consumer build/test feedback, promote only stable reusable evidence
 to the verification/numerics/performance homes, update formal proof/code
@@ -559,8 +859,9 @@ and thesis checkpoints separately so either can be reused or redone without
 salvaging the other.
 
 Initial cost prediction: roughly 2--4 agent hours depending on schema
-compatibility and how many consumers remain dual-route. Re-estimate after the
-workspace build identifies the actual compile surface.
+compatibility and how many consumers require richer certificates or intentional
+legacy diagnostics. Re-estimate after the workspace build identifies the
+actual compile surface.
 
 ## Recovery policy
 
@@ -602,8 +903,10 @@ kernel moves.
   itself enough.
 - A separate numerical-kernel crate is deferred until extraction demonstrates
   a component with consumers beyond this capacity route.
-- Orbit/minimizer-window recovery remains a separate API because its payload
-  and completeness contract differ from scalar capacity.
+- Exact minimizer and discrete action-window results are part of this
+  migration. Geometric trajectory recovery remains a separate transformation
+  because it has different inputs, costs, non-uniqueness, and tolerance
+  semantics; this is an explicit end-state decision, not deferred migration.
 - Whether `CapacityInput4d` should reuse a future general polytope value type is
   deferred. No such public validated type currently exists in the crate, so
   inventing a project-wide geometry abstraction during this migration would
