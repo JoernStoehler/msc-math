@@ -9,7 +9,7 @@ Start a review here, then read:
 2. `formal/hk2017-qp-precision.tex` for the numerical and curvature lemmas.
 3. `../../src/selected_route/general.rs` for the instrumentable selected copy
    and `crates/symplectic/src/algorithms/capacity_4d/general.rs` for production.
-4. The named executable matching the algorithm under review; `harness.rs`
+4. The named executable matching the algorithm under review; `src/lib.rs`
    supplies their shared cases, exact oracle, counters, and timing machinery.
 5. `run.sh` for the canonical build-and-run command.
 
@@ -19,6 +19,12 @@ Each stable general-route variant has a no-argument executable. The executable
 prints its exact algorithm identity, numerical status, curvature status,
 production status, cohort, work counts, phase timings, and total timing.
 There are no factorization, guard, or cutoff flags to interpret.
+
+This directory is a dedicated experiment crate. Its one library compiles the
+shared machinery once; the small binaries fix one algorithm or evidence packet
+each. Keeping the crate separate prevents this large harness from entering
+unrelated `exp-dev-quadratic-program` library builds. See `RESULTS.md` for the
+measured comparison with per-binary local modules and a parent-library module.
 
 | Executable | Numerical decision | Curvature handling |
 | --- | --- | --- |
@@ -166,18 +172,17 @@ It writes:
 Focused tests and the formal build:
 
 ```bash
-cargo test -p exp-dev-quadratic-program --release \
-  --bin qp-general-algorithm-ablation
+cargo test -p exp-qp-general-algorithms --release --lib
 (cd formal && latexmk)
 ```
 
 Use `cargo run`, rather than invoking `target/release` after source changes:
 
 ```bash
-cargo run -p exp-dev-quadratic-program --release \
+cargo run -p exp-qp-general-algorithms --release \
   --bin qp-general-verified-hybrid
 
-cargo run -p exp-dev-quadratic-program --release \
+cargo run -p exp-qp-general-algorithms --release \
   --bin qp-general-selected-verification
 ```
 

@@ -720,6 +720,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "exp-qp-general-algorithms"
+version = "0.1.0"
+dependencies = [
+ "algebraic-numbers",
+ "exp-dev-quadratic-program",
+ "nalgebra 0.33.3",
+ "nalgebra 0.35.0",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "symplectic",
+]
+
+[[package]]
 name = "exp-regular-products"
 version = "0.1.0"
 dependencies = [

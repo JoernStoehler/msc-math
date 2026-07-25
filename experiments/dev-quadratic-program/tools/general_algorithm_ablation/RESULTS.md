@@ -96,6 +96,38 @@ counterexamples.
 
 ## Performance and alternatives
 
+### Experiment-runner architecture
+
+The stable algorithms use small named binaries backed by one dedicated
+experiment-library crate. A matched architecture profile built the same
+fourteen release binaries into fresh target directories, then repeated the
+build after a comment-only edit to the shared 4,846-line harness:
+
+| Architecture | Clean build | Shared-edit rebuild | Release directory | Typical named binary |
+| --- | ---: | ---: | ---: | ---: |
+| include the harness as a local module in every binary | 93.07 s | 43.37 s | 1.6 GiB | 71.6 MB |
+| put the harness in the parent experiment library | 70.88 s | 13.98 s | 1.7 GiB | 74.2 MB |
+| dedicated evidence library and thin named binaries | 65.96 s | 11.35 s | 1.7 GiB | 76.7 MB |
+| dedicated evidence library and one flag-driven binary | 58.64 s | 7.72 s | 763 MiB | 77.8 MB |
+
+The dedicated crate avoids repeated compilation and does not make unrelated
+users of `exp-dev-quadratic-program` compile the evidence harness. Five
+CPU-pinned selected-route profiles gave medians of `40.55 ms` for local-module
+binaries and `40.25 ms` for the dedicated crate; the semantic outputs were
+identical. Thus the retained architecture improves clean and edit-build time
+without an observed runtime regression. Its cost is roughly five megabytes
+more debug-bearing release binary size per named executable.
+After an evidence-harness edit, rebuilding only the parent experiment library
+remained a no-op (`0.20 s`), confirming the intended dependency direction.
+The single flag-driven binary wins build time and disk space, but recreates the
+failure that motivated this architecture: the filename no longer fixes the
+algorithm, so answering which code and measurements belong together again
+requires interpreting command-line selection. The extra `3.63 s` shared-edit
+build cost buys direct algorithm identity. Copying the full harness into each
+algorithm file has the same repeated-compilation behavior as the local-module
+row while expanding the retained source by more than forty thousand lines, so
+it has no compensating advantage for these parameterized variants.
+
 The comparable long-word cohort contains 13,891 systems. Medians are from nine
 interleaved rounds.
 

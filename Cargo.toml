@@ -14,6 +14,7 @@ members = [
     "experiments/combinatorial-cells",
     "experiments/dev-flow-graph",
     "experiments/dev-quadratic-program",
+    "experiments/dev-quadratic-program/tools/general_algorithm_ablation",
     "experiments/verification",
     "experiments/dev-quadratic-program/numerics-audit",
     "experiments/qp-error-bounds",

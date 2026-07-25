@@ -628,8 +628,7 @@ cargo check -p symplectic -p exp-dev-quadratic-program
 cargo check --workspace
 cargo test -p symplectic --release --lib
 cargo test -p symplectic --release --test public_capacity_api
-cargo test -p exp-dev-quadratic-program --release \
-  --bin qp-general-algorithm-ablation
+cargo test -p exp-qp-general-algorithms --release --lib
 cargo test -p exp-dev-quadratic-program --release \
   --bin qp-product-closure-route
 experiments/dev-quadratic-program/tools/general_algorithm_ablation/run.sh \

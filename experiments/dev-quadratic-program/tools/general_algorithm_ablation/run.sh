@@ -4,7 +4,7 @@ set -euo pipefail
 output_dir="${1:-/tmp/qp-current-route-evidence}"
 mkdir -p "$output_dir"
 
-cargo build -p exp-dev-quadratic-program --release \
+cargo build -p exp-qp-general-algorithms --release \
   --bin qp-general-algorithm-comparison \
   --bin qp-general-selected-verification \
   --bin qp-general-selected-numerics \

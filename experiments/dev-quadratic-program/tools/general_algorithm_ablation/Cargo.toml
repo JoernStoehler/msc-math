@@ -1,0 +1,21 @@
+[package]
+name = "exp-qp-general-algorithms"
+version = "0.1.0"
+publish = false
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+algebraic-numbers.workspace = true
+exp-dev-quadratic-program = { path = "../.." }
+nalgebra.workspace = true
+nalgebra035 = { package = "nalgebra", version = "0.35" }
+num-bigint.workspace = true
+num-rational.workspace = true
+num-traits.workspace = true
+symplectic.workspace = true
