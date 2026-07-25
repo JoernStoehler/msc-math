@@ -65,15 +65,14 @@ and consumer audit to a future session.
 The intended end state for this migration is:
 
 1. `CapacityInput4d` is the ordinary validated entry point.
-2. One certified search operation owns candidate enumeration, theorem-backed
-   pruning, exact admissibility, exact action comparison, and output filtering.
-   It returns lean records `(sigma, action_exact)` for exact minimizers, an
-   exact absolute/relative action window, or all certified admissible discrete
-   candidates.
-3. `capacity`, `general_capacity`, and `product_capacity` are convenience
-   wrappers around this search. They request only minimizers, take the minimum
-   action, and discard `sigma`. They do not implement a second admissibility or
-   minimum algorithm.
+2. `capacity`, `general_capacity`, and `product_capacity` remain fast scalar
+   operations. General capacity returns certified outward binary64 bounds;
+   product capacity also returns the exact rational value already computed by
+   its KKT-free route.
+3. Callers that need minimizing words or an action window use a separate,
+   explicitly richer search. It owns the corresponding candidate-coverage,
+   tie, and window guarantees and may return lean `(sigma, action_exact)`
+   records. Scalar callers never pay for exact words or actions they discard.
 4. Exact one-sigma KKT solving is an on-demand method on the same validated
    input. Given a returned `sigma`, it returns exact `beta`, `q`, `mu`, and
    `xi`. Capacity differentiation and geometric recovery consume that payload.
@@ -113,24 +112,13 @@ worktree.
 | Make every scalar call return capacity, all branches, KKT multipliers, derivatives, and trajectories | One apparent entry point | Pays enumeration, exact payload, and recovery costs when only a scalar is needed; product degeneracy cannot honestly be represented as one finite “all orbits” list | Reject |
 | Preserve the existing `OrbitSearchResult` shape but fill it from the new routes | Minimizes consumer edits | General scalar route has no winner payload; product closure winners have no complete physical-orbit semantics, `mu`, `xi`, or legacy iteration meaning; optional/dummy fields would lie | Reject |
 | Expose only capacity plus a low-level one-sigma solve and let every caller build its own minimizer/window search | Small production API | Repeats candidate-coverage, tie, pruning, and fallback logic in consumers; recreates the ad hoc wrappers this migration is meant to remove | Reject for ordinary callers; retain low-level primitives for experiments |
-| One certified search returning lean `(sigma, exact action)` records, scalar wrappers that discard `sigma`, and an on-demand exact one-sigma KKT method | One source of enumeration, admissibility, minimum, and window semantics; scalar callers do not pay to retain full KKT payloads; geometry/derivative callers can afford exact work for few selected words | Exact action/admissibility for returned contenders may still cost more than the current interval-only scalar route | Select, subject to the measured overhead spike below |
-| Separate independently implemented scalar and rich searches | Each can be optimized narrowly | Duplicates the correctness-critical minimum/admissibility logic and recreates two ordinary answers | Reject unless measurement shows an otherwise unavoidable material cost |
+| Fast scalar capacity plus a separately named rich exact search and on-demand exact one-sigma solve | Scalar callers keep the selected fast route; richer callers explicitly request and pay for stronger output | The two operations need separate contract tests and should reuse established helpers where that is actually useful | Select |
 | Keep old full-branch searches only in experiments that intentionally measure non-minimal branches, old thresholds, or old solver behavior | Preserves valuable evidence without presenting it as the production route | Requires explicit naming and retained controls | Select as an exception, not the default consumer path |
 
-### Required spike before completing the richer API
+### Remaining richer-output checks
 
-The selected architecture is a prediction, not yet an implemented claim. The
-next bounded development step must test its cost and the two mathematical
-uncertainties before broad consumer edits:
+Before broad consumer edits:
 
-- **Wrapper overhead:** compare the current scalar route with the same search
-  core under `MinimizersOnly`, `RelativeWindow(11/10)`, and
-  `AllAdmissible`. Record candidates before/after filtering, exact one-sigma
-  solves, returned records, and phase/total time. First test whether
-  `capacity()` can literally call `search(MinimizersOnly)` and discard its
-  words. If exact returned actions are materially expensive, try a
-  minimum-only execution mode inside the same core before considering a
-  separate scalar implementation.
 - **General correctness:** retain each accepted candidate's certified action
   interval, identify every word whose interval can meet the exact minimum or
   requested gap, and exact-solve only those words before returning
@@ -143,17 +131,10 @@ uncertainties before broad consumer edits:
   exact finite certificate set required by product scalar/bounce consumers and
   whether the on-demand exact one-sigma method returns a consistent
   `beta, q, mu, xi` for each returned `sigma`. The separate optimizer worktree
-  owns the question whether such witnesses generate the branch set needed by
+  owns whether such witnesses generate the branch set needed by
   product ascent. This is not a capacity/minimizer-set gate for the present
   migration: the optimizer intentionally maintains custom positive,
   transition-blocked, and beta-nonpositive branch models.
-
-The spike succeeds only if determinate predicates agree with exact arithmetic,
-the returned discrete word sets agree with the exact controls, and the added
-cost is measured. A modest cost may be accepted for one simpler source of
-truth; report the measured Pareto comparison rather than applying an unrecorded
-threshold. Its result decides the final richer API; it is not permission to
-merge the scalar checkpoint alone if the spike fails.
 
 ### Predicted compute budget
 
@@ -162,20 +143,19 @@ the selected route and retained 271 exact-positive candidates. The older
 generic rational control took about 2.0 s to exact-solve 285 product survivors;
 this is only a scale anchor because the matrices/population differ. It implies:
 
-- the first minimizer/window spike should stay below 15 CPU-minutes including
-  compilation, repeated timing, and exact controls;
 - the faithful richer-output plus affected numerical/performance packet should
   ordinarily stay below one core-hour locally; and
 - stop and inspect rather than launching a broad run if one retained packet
   exceeds ten wall minutes or the contender filter retains thousands of exact
   solves unexpectedly.
 
-Do not allocate a 64-core LICCA hour for the first spike. The current producer
-is mostly serial and the local packet is too small to amortize allocation and
-transfer overhead. LICCA becomes useful after the API freezes if full
-datascience-corpus regeneration, a broad exact-all control, or many independent
-adversarial cases require several core-hours. Estimate that stage from the
-measured per-case distribution rather than reserving 64 core-hours in advance.
+Do not allocate a 64-core LICCA hour for the initial migration checks. The
+current producer is mostly serial and the local packet is too small to amortize
+allocation and transfer overhead. LICCA becomes useful after the API freezes
+if full datascience-corpus regeneration, a broad exact-all control, or many
+independent adversarial cases require several core-hours. Estimate that stage
+from the measured per-case distribution rather than reserving 64 core-hours in
+advance.
 
 ## Current progress
 
@@ -389,13 +369,12 @@ The target caller shape is:
 
 ```rust
 let input = CapacityInput4d::try_from_dual_vertices(&dual_vertices)?;
+let capacity = input.capacity()?; // fast scalar operation
+
 let search = input.qp_search(QpCandidateSelection4d::MinimizersOnly)?;
 for candidate in search.candidates() {
     use_sigma_and_exact_action(candidate.sigma(), candidate.action_exact());
 }
-
-let capacity_exact = input.capacity_exact()?;
-let capacity_f64 = input.capacity_f64()?; // explicitly rounded convenience
 
 let orbit = input.solve_sigma_exact(search.candidates()[0].sigma())?;
 use_exact_beta_q_mu_xi(&orbit);
@@ -427,12 +406,12 @@ consistent. Ordinary automatic dispatch uses exact structural-product
 classification. Explicit general/product methods remain for verification and
 route-comparison callers.
 
-The convenient f64 API is either a method on `CapacityInput4d` or a raw-input
-function that performs validation itself. Do not expose a public raw
+The convenient scalar API is either a method on `CapacityInput4d` or a
+raw-input function that performs validation itself. Do not expose a public raw
 `capacity(&[Vector4<f64>])` whose safety depends on an undocumented prior call.
-The validated token is the compile-visible prior check. `capacity_f64` names
-its exact-to-binary64 rounding rule; exact rational capacity and outward bounds
-remain available when the distinction matters.
+The validated token is the compile-visible prior check. General outward bounds
+and the product route's exact rational capacity remain available when the
+distinction matters.
 
 Caller-controlled values select returned output, not mathematical validity.
 Strict `beta > 0`, exact `q > 0`, omega/adjacency pruning justified by the
@@ -656,9 +635,7 @@ defending this estimate.
 
 ### Batch 1b: richer discrete-certificate routes
 
-Run the bounded general/product spike specified under “Required spike before
-completing the richer API.” If it succeeds, make one faithful extension patch
-with:
+Make one faithful extension patch with:
 
 - one certified search entry point with output selection
   (`MinimizersOnly`, an exact absolute/relative action window, or
@@ -678,16 +655,14 @@ with:
 - complete exact controls for word-set equality, ties, gap endpoints,
   rank-deficient words, derivative intermediates, and recovery inputs.
 
-The scalar methods are thin wrappers around this search. A minimum-only
-execution mode may avoid materializing non-contenders, but it must not use
-independent admissibility or minimum logic. The search and one-sigma method
-share `CapacityInput4d` validation and exact binary64-rational input semantics.
+The fast scalar methods do not call this exact-output search. Both APIs share
+`CapacityInput4d` validation and may reuse established enumeration, pruning,
+and one-sigma helpers without forcing their different output contracts into
+one execution path.
 
-If the spike fails, stop before consumer edits. Record which of contender
-isolation, exact KKT payload recovery, product subdifferential coverage, or
-performance failed, compare a changed richer-output design against the
-architectures above, and amend this end-state decision. “Keep all ordinary
-callers on legacy search” is not the fallback.
+Stop before consumer edits if contender isolation, exact KKT payload recovery,
+candidate coverage, or performance fails its existing checks. “Keep all
+ordinary callers on legacy search” is not the fallback.
 
 ### Batch 2: evidence wiring and measured optimization
 
