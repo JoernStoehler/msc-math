@@ -94,6 +94,23 @@ struct RouteStats {
     guard_phases: GuardPhaseStats,
     exact_time: Duration,
     short_exact_time: Duration,
+    selected_decisions: Vec<Decision>,
+}
+
+pub(super) struct GeneralMinimizer {
+    pub(super) sigma: Vec<usize>,
+    pub(super) action_exact: BigRational,
+}
+
+pub(super) struct GeneralSolveOutput {
+    pub(super) bounds: (f64, f64),
+    pub(super) minimizers: Option<Vec<GeneralMinimizer>>,
+}
+
+#[derive(Clone, Copy)]
+enum GeneralOutputRequest {
+    CapacityOnly,
+    ExactMinimizers,
 }
 
 #[derive(Clone, Debug, Default)]
@@ -160,6 +177,11 @@ impl Interval {
     }
 }
 fn run_selected_route(cases: &[GeneralRouteCase]) -> RouteStats {
+    debug_assert_eq!(
+        cases.len(),
+        1,
+        "the production result retains decisions for exactly one input"
+    );
     let started = Instant::now();
     let gradual_underflow = gradual_underflow_available();
     let mut stats = RouteStats::default();
@@ -302,6 +324,7 @@ fn run_selected_route(cases: &[GeneralRouteCase]) -> RouteStats {
             case_decisions[index] = decision;
         }
         record_case_capacity_interval(&mut stats, &case_decisions);
+        stats.selected_decisions = case_decisions;
     }
     stats.elapsed = started.elapsed();
     stats
@@ -1288,7 +1311,76 @@ pub(crate) fn solve_selected_general(
     duals: &[Vector4<f64>],
     words: Vec<Vec<usize>>,
 ) -> Option<(f64, f64)> {
+    solve_selected_general_requested(duals, words, GeneralOutputRequest::CapacityOnly)
+        .expect("the scalar request never exact-resolves contenders")
+        .map(|output| output.bounds)
+}
+
+pub(super) fn solve_selected_general_minimizers(
+    duals: &[Vector4<f64>],
+    words: Vec<Vec<usize>>,
+) -> Result<Option<GeneralSolveOutput>, Vec<usize>> {
+    solve_selected_general_requested(duals, words, GeneralOutputRequest::ExactMinimizers)
+}
+
+fn solve_selected_general_requested(
+    duals: &[Vector4<f64>],
+    words: Vec<Vec<usize>>,
+    request: GeneralOutputRequest,
+) -> Result<Option<GeneralSolveOutput>, Vec<usize>> {
     let cases = vec![(String::new(), duals.to_vec(), words)];
     let result = run_selected_route(&cases);
-    result.best_action_lower.zip(result.best_action_upper)
+    let Some(bounds) = result.best_action_lower.zip(result.best_action_upper) else {
+        return Ok(None);
+    };
+    if matches!(request, GeneralOutputRequest::CapacityOnly) {
+        return Ok(Some(GeneralSolveOutput {
+            bounds,
+            minimizers: None,
+        }));
+    }
+
+    let words = &cases[0].2;
+    let maximum_lower = result
+        .selected_decisions
+        .iter()
+        .filter(|decision| decision.kind == DecisionKind::Accept)
+        .filter_map(|decision| decision.q_lower)
+        .max_by(f64::total_cmp)
+        .expect("a positive general result has an accepted q interval");
+    let exact_duals = exact_binary64_dual_vertex_arrays(duals);
+    let mut resolved = Vec::new();
+    for (word, decision) in words.iter().zip(&result.selected_decisions) {
+        if decision.kind != DecisionKind::Accept
+            || decision.q_upper.is_none_or(|upper| upper < maximum_lower)
+        {
+            continue;
+        }
+        let Some(exact) = solve_kkt_exact(&exact_duals, word) else {
+            return Err(word.clone());
+        };
+        if !exact.q_exact.is_positive() {
+            return Err(word.clone());
+        }
+        resolved.push((word.clone(), exact.q_exact));
+    }
+    let maximum_q = resolved
+        .iter()
+        .map(|(_, q)| q)
+        .max()
+        .expect("a positive general result has an exact contender")
+        .clone();
+    let action_exact = BigRational::one() / (maximum_q.clone() + maximum_q.clone());
+    let minimizers = resolved
+        .into_iter()
+        .filter(|(_, q)| q == &maximum_q)
+        .map(|(sigma, _)| GeneralMinimizer {
+            sigma,
+            action_exact: action_exact.clone(),
+        })
+        .collect();
+    Ok(Some(GeneralSolveOutput {
+        bounds,
+        minimizers: Some(minimizers),
+    }))
 }

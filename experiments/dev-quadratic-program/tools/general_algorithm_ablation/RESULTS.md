@@ -221,6 +221,14 @@ the generic solver; the raw fraction-free linear solve was approximately
 the generic fallback. These timings justify the one-word fast path, not bulk
 exact enumeration.
 
+The production API split was then measured on the same retained random `F5`
+case after validation. Warm release medians over 21 repetitions were `97 us`
+for scalar capacity and `5.21 ms` for the exact one-minimizer result. Thus the
+shared traversal does not make scalar callers pay for exact output. On the
+triangle product, scalar and two-minimizer calls were both about `1.51 ms`,
+because the KKT-free product route already identifies its exact maximizing
+words while comparing contenders.
+
 The next product-specific direction comes from separating q- and p-facet
 weights. Their closure constraints are independent, while the product QP
 objective is bilinear between the two groups. Writing the total q-weight as

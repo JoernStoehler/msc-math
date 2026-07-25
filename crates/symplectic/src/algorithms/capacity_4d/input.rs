@@ -26,6 +26,7 @@ pub const MAX_GENERAL_CANDIDATES: usize = 100_000;
 #[derive(Clone, Debug)]
 pub struct CapacityInput4d {
     pub(crate) dual_vertices: Vec<Vector4<f64>>,
+    pub(crate) dual_vertices_exact: Vec<Vector4<BigRational>>,
     pub(crate) transition_is_allowed: DMatrix<bool>,
     pub(crate) product_facets: Option<FacetClassification>,
 }
@@ -153,6 +154,7 @@ impl CapacityInput4d {
 
         Ok(Self {
             dual_vertices: dual_vertices.to_vec(),
+            dual_vertices_exact: exact_vectors,
             transition_is_allowed,
             product_facets,
         })

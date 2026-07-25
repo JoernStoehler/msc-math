@@ -46,15 +46,18 @@ fn readable_and_production_product_certificates_match() {
             .expect("production product capacity");
 
         assert_eq!(readable.capacity_exact, *production.capacity_exact());
+        let production = input
+            .product_qp_minimizers()
+            .expect("production product minimizers");
         let readable_winners = readable
             .winners
             .iter()
-            .map(|winner| (winner.sigma.clone(), winner.beta_exact.clone()))
+            .map(|winner| winner.sigma.clone())
             .collect::<Vec<_>>();
         let production_winners = production
-            .winners()
+            .candidates()
             .iter()
-            .map(|winner| (winner.sigma().to_vec(), winner.beta_exact().to_vec()))
+            .map(|winner| winner.sigma().to_vec())
             .collect::<Vec<_>>();
         assert_eq!(readable_winners, production_winners);
     }

@@ -86,22 +86,26 @@ fn known_case(fixture: &symplectic::geom::known_polytopes::KnownPolytope) -> Aud
 fn audit_case(case: &AuditCase, repeats: usize) -> Result<serde_json::Value, String> {
     let audit = audit_product_closure_capacity_binary64(&case.dual_vertices)
         .map_err(|error| format!("closure audit failed: {error:?}"))?;
-    let production = CapacityInput4d::try_from_dual_vertices(&case.dual_vertices)
-        .map_err(|error| format!("production validation failed: {error:?}"))?
+    let input = CapacityInput4d::try_from_dual_vertices(&case.dual_vertices)
+        .map_err(|error| format!("production validation failed: {error:?}"))?;
+    let production = input
         .product_capacity()
         .map_err(|error| format!("production product route failed: {error:?}"))?;
+    let production_minimizers = input
+        .product_qp_minimizers()
+        .map_err(|error| format!("production product minimizers failed: {error:?}"))?;
     let production_capacity_exact_agrees =
         *production.capacity_exact() == audit.hybrid.capacity_exact;
-    let production_winners_agree = production
-        .winners()
+    let production_winner_sigmas_agree = production_minimizers
+        .candidates()
         .iter()
-        .map(|winner| (winner.sigma().to_vec(), winner.beta_exact().to_vec()))
+        .map(|winner| winner.sigma().to_vec())
         .collect::<Vec<_>>()
         == audit
             .hybrid
             .winners
             .iter()
-            .map(|winner| (winner.sigma.clone(), winner.beta_exact.clone()))
+            .map(|winner| winner.sigma.clone())
             .collect::<Vec<_>>();
 
     let mut hybrid_times = Vec::with_capacity(repeats);
@@ -190,7 +194,7 @@ fn audit_case(case: &AuditCase, repeats: usize) -> Result<serde_json::Value, Str
         "capacity_exact_agrees": audit.capacity_exact_agrees,
         "winner_value_agrees": audit.winner_value_agrees,
         "production_capacity_exact_agrees": production_capacity_exact_agrees,
-        "production_winners_agree": production_winners_agree,
+        "production_winner_sigmas_agree": production_winner_sigmas_agree,
         "winner_count": audit.hybrid.winners.len(),
         "winner_type_patterns": audit.hybrid.winner_type_patterns,
         "winner_patterns_allowed": winner_patterns_allowed,

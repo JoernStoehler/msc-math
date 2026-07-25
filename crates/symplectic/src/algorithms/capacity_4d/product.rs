@@ -50,7 +50,6 @@ struct ProductClosureStats {
 #[derive(Clone, Debug, PartialEq)]
 pub(super) struct ProductClosureWinner {
     pub(super) sigma: Vec<usize>,
-    pub(super) beta_exact: Vec<BigRational>,
 }
 
 #[derive(Clone, Debug)]
@@ -158,7 +157,7 @@ enum IntervalSupportDecision {
 /// define two full-dimensional bounded factor polygons with the origin in
 /// their interiors. This function validates only finite structural q/p
 /// splitting and the existence of factor closure vertices. It returns the
-/// exact capacity of the binary64 input and sparse exact maximizing witnesses.
+/// exact capacity of the binary64 input and sparse exact maximizing words.
 pub(super) fn solve_product_closure_capacity_hybrid(
     dual_vertices: &[Vector4<f64>],
 ) -> Result<ProductClosureCapacityReport, ProductClosureError> {
@@ -331,12 +330,11 @@ fn report_from_resolved(
     let capacity_exact = BigRational::one() / (q_max_exact.clone() + q_max_exact.clone());
 
     let mut winners = Vec::new();
-    for (sigma, q_vertex, p_vertex, q) in resolved {
+    for (sigma, _, _, q) in resolved {
         if q != q_max_exact {
             continue;
         }
-        let beta_exact = beta_for_sigma(&sigma, &q_vertex, &p_vertex);
-        winners.push(ProductClosureWinner { sigma, beta_exact });
+        winners.push(ProductClosureWinner { sigma });
     }
     winners.sort_by(|left, right| left.sigma.cmp(&right.sigma));
     winners.dedup_by(|left, right| left.sigma == right.sigma);
@@ -650,15 +648,6 @@ fn beta_map_float(
         .chain(p_vertex.facets.iter().zip(&p_vertex.weight_intervals))
         .map(|(&facet, &interval)| (facet, interval.mul(Interval::point(0.5))))
         .collect()
-}
-
-fn beta_for_sigma(
-    sigma: &[usize],
-    q_vertex: &ExactClosureVertex,
-    p_vertex: &ExactClosureVertex,
-) -> Vec<BigRational> {
-    let beta = beta_map_exact(q_vertex, p_vertex);
-    sigma.iter().map(|facet| beta[facet].clone()).collect()
 }
 
 fn float_vertex_from_exact(vertex: &ExactClosureVertex) -> FloatClosureVertex {

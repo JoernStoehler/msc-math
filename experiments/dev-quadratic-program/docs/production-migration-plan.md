@@ -1,8 +1,9 @@
 # Four-dimensional QP production migration
 
-Status: Batch 1 faithful production extraction implemented and locally
-verified in `qp-production-migration`; not merged to Main. Batches 2 and 3
-remain planned.
+Status: Batch 1 scalar extraction and the Batch 1b exact-minimizer/on-demand
+one-sigma slice are implemented and locally verified in
+`qp-production-migration`; not merged to Main. Action-window support, consumer
+migration, and the remaining evidence/polish batches remain planned.
 
 ## Outcome
 
@@ -15,18 +16,22 @@ Batch 1 migrated one mathematical output: the scalar capacity of a validated
 four-dimensional input. It did **not** migrate the existing orbit-search
 contract or make `OrbitSearchResult` a wrapper around the new result.
 
-The two new scalar routes expose exactly:
+The current production surface exposes exactly:
 
 - `GeneralCapacity4d`: one outward binary64 interval `[c_lower, c_upper]` for
   the capacity. It exposes no winning `sigma`, `beta`, `q`, multiplier, or
   search count.
-- `ProductCapacity4d`: the exact rational capacity of the binary64 input, its
-  outward binary64 interval, and every tied maximizing **closure-vertex word**
-  found by the product theorem's support-pair/support-triple enumeration. Each
-  such winner contains `sigma` and exact `beta`. This is not a representation
-  of every KKT solution when a degenerate closure face contains non-vertex
-  solutions, and it contains no non-minimizing action window, `mu`, `xi`, or
-  geometric trajectory.
+- `ProductCapacity4d`: the exact rational capacity of the binary64 input and
+  its outward binary64 interval.
+- `QpMinimizers4d`: every tied exact minimizing word in either the complete
+  transition-pruned general HK family or the product theorem's
+  **closure-vertex word** family. Each candidate contains `sigma` and exact
+  action. It is not a representation of every KKT solution when a degenerate
+  within-word face contains non-vertex solutions, and it contains no
+  non-minimizing action window, `beta`, `mu`, `xi`, or geometric trajectory.
+- `solve_sigma_exact`: on-demand exact `beta`, `q`, `mu`, and `xi` for one
+  valid requested word, using the dyadic full-rank fast path and the complete
+  rank/kernel fallback.
 
 The existing orbit APIs have different, weaker or conditional guarantees:
 
@@ -72,11 +77,14 @@ The intended end state for this migration is:
 3. `capacity`, `general_capacity`, and `product_capacity` are thin scalar
    wrappers over that core. General capacity returns certified outward
    binary64 bounds; product capacity also returns the exact rational value
-   already computed by its KKT-free route. Scalar requests never pay to
-   construct exact words, actions, or KKT payloads that they discard.
-4. Callers that need minimizing words or an action window use the richer
-   request and receive lean `(sigma, action_exact)` records under its stated
-   candidate-coverage, tie, and window guarantees.
+   already computed by its KKT-free route. The general scalar request does not
+   exact-resolve its winning word. The product route already has the maximizing
+   words while comparing exact contenders, but its scalar result discards
+   them and does not construct KKT payloads.
+4. Callers that need minimizing words use `qp_minimizers` and receive lean
+   `(sigma, action_exact)` records under its stated candidate-family and tie
+   guarantees. Exact action-window support remains a named migration item for
+   the inventoried window consumers; it is not implied by the minimizer API.
 5. Exact one-sigma KKT solving is an on-demand method on the same validated
    input. Given a returned `sigma`, it returns exact `beta`, `q`, `mu`, and
    `xi`. Capacity differentiation and geometric recovery consume that payload.
@@ -167,13 +175,15 @@ The old overlapping-worktree gate was resolved by creating
 `qp-production-migration` from Main `c8b4b1068` and integrating the diagnostic
 research through `0917c4bce`. The stale dirty worktree was not edited.
 
-Batch 1 now provides:
+The current checkpoint provides:
 
 - `CapacityInput4d` with exact binary64-rational geometry validation, exact
   product classification, the `[1e-3, 1e3]` primal/dual infinity-norm contract,
   a sixteen-facet limit, and a 100,000-cycle general-route resource cap;
 - automatic exact product dispatch and a forced general route;
-- outward general capacity bounds and exact product capacity/winners;
+- outward general capacity bounds, exact product capacity, exact tied
+  minimizing words with an explicit family label, and on-demand exact
+  one-sigma KKT payloads;
 - reciprocal production/experiment implementation pointers and correspondence
   tests; and
 - producer-level comparison against exact predicates and the integrated
@@ -181,9 +191,10 @@ Batch 1 now provides:
 
 Observed extraction checks:
 
-- all 8 public API tests and both selected-route correspondence tests pass;
-- the 363 non-ignored `symplectic` library tests pass;
-- workspace `cargo check` passes;
+- all 13 public capacity API tests and both selected-route correspondence tests
+  pass;
+- the 365 non-ignored `symplectic` library tests pass;
+- the release workspace build passes;
 - the general verification packet has 8/8 production comparisons with zero
   bound mismatches and zero exact predicate/radius violations;
 - the 88-case product packet has zero production capacity or winner
@@ -191,6 +202,12 @@ Observed extraction checks:
   interval violations; and
 - after removing timing and new correspondence fields, its stable JSON payload
   equals the integrated pre-extraction baseline.
+
+On the retained random `F5` case, the scalar request takes `97 us` while the
+one-exact-minimizer request takes `5.21 ms`; exact output therefore does not
+regress scalar callers. On the triangle product, scalar and two-minimizer
+requests both take about `1.51 ms`, because the product route already identifies
+its exact maximizing words.
 
 The adversarial implementation review found that the original constructor
 accepted a 16-facet crosspolytope whose exact transition graph has
@@ -207,10 +224,11 @@ a theorem or evidence that larger streams lack an answer. A future general
 algorithm may replace the cap only after a bounded crosspolytope-style
 regression passes.
 
-The next non-commutative action is the bounded richer-output spike described
-above, followed by either a faithful richer-output checkpoint or an explicit
-architecture replan. Evidence optimization and consumer migration do not start
-from the scalar checkpoint alone.
+The next non-commutative action is to specify the smallest exact action-window
+contract required by the inventoried window consumers, then implement and
+test its endpoint and candidate-family semantics before editing those
+consumers. Consumers that need only scalar capacity, exact minimizing words,
+or one exact KKT payload no longer wait on that work.
 
 ### Optimizer coordination boundary
 
@@ -371,34 +389,36 @@ Avoiding speculative folders keeps the proof-to-code map local. The production
 implementation may optimize structure independently; the experiment-owned
 readable implementation is the intended copy-editable base.
 
-The target caller shape is:
+The implemented caller shape is:
 
 ```rust
 let input = CapacityInput4d::try_from_dual_vertices(&dual_vertices)?;
 let capacity = input.capacity()?; // thin scalar request; no exact payloads
 
-let search = input.qp_search(QpCandidateSelection4d::MinimizersOnly)?;
-for candidate in search.candidates() {
+let minimizers = input.qp_minimizers()?;
+for candidate in minimizers.candidates() {
     use_sigma_and_exact_action(candidate.sigma(), candidate.action_exact());
 }
 
-let orbit = input.solve_sigma_exact(search.candidates()[0].sigma())?;
+let orbit = input
+    .solve_sigma_exact(minimizers.candidates()[0].sigma())?
+    .expect("a returned minimizer has a positive exact KKT witness");
 use_exact_beta_q_mu_xi(&orbit);
 ```
 
-Provisional names aside, the public contracts are:
+The current public contracts are:
 
-- `QpCandidateSelection4d::MinimizersOnly`;
-- an exact absolute gap or exact capacity multiple (required to be
-  nonnegative or at least one, respectively);
-- `QpCandidateSelection4d::AllAdmissible`;
 - `CertifiedQpCandidate4d { sigma, action_exact }`, where membership in this
   type means strict exact `beta > 0` and exact `q > 0`; there is no redundant
   `admissibility: true` field;
-- a tagged candidate-family/route label distinguishing general HK words from
-  product closure-vertex words; and
+- `QpCandidateFamily4d`, distinguishing general HK words from product
+  closure-vertex words;
 - `solve_sigma_exact`, returning the existing exact one-sigma KKT payload
   `(sigma, beta, q, mu, xi)`.
+
+Action-window and all-admissible selectors are not implemented merely for API
+symmetry. Add one only with a current consumer and its exact endpoint/coverage
+contract.
 
 The exact output scalar is `BigRational`. Although every supplied binary64
 coordinate is dyadic, divisions in the exact KKT solve produce general
@@ -641,21 +661,23 @@ defending this estimate.
 
 ### Batch 1b: richer discrete-certificate routes
 
-Make one faithful extension patch with:
+Implemented:
 
-- one certified search entry point with output selection
-  (`MinimizersOnly`, an exact absolute/relative action window, or
-  `AllAdmissible`);
 - a lean exact discrete-candidate record containing `sigma` and exact action;
 - a general exact-minimizer result that returns every tied HK word in the
   enumerated candidate family;
-- a general exact action-gap result with the same candidate-family coverage;
 - product result naming that says “closure-vertex winner”;
 - an on-demand exact one-sigma method returning `beta`, `q`, `mu`, and `xi`
   for a returned word;
 - no claim to enumerate a continuous family of positive KKT solutions for one
   rank-deficient word, and no claim that product closure-vertex winners are all
-  physical trajectories;
+  physical trajectories.
+
+Still required in this batch:
+
+- choose and implement the smallest exact action-window contract that covers
+  the inventoried window consumers; do not add `AllAdmissible` merely for
+  symmetry;
 - derivative and recovery adapters that consume the exact one-sigma payload
   without rerunning the global search; and
 - complete exact controls for word-set equality, ties, gap endpoints,
@@ -729,12 +751,12 @@ Batch 1b must add:
 | Requested output | General scalar route | Product scalar route | Required disposition |
 | --- | --- | --- | --- |
 | Certified capacity | outward interval | exact rational plus outward interval | migrate |
-| One minimizing word | unavailable | canonical first member of the exact closure-vertex winner list | Batch 1b adds a general exact discrete certificate; product callers may already migrate if one closure-vertex winner suffices |
-| All tied discrete words | unavailable | complete for the product route's enumerated closure-vertex words | Batch 1b adds exact general word-set semantics and preserves the narrower product name |
+| One minimizing word | exact through `qp_minimizers` | exact closure-vertex word through `qp_minimizers` | migrate callers that need only a discrete word |
+| All tied discrete words | exact for the complete transition-pruned general HK family | complete for the product route's enumerated closure-vertex words | migrate with the returned family label preserved |
 | All positive KKT solutions or physical trajectories | unavailable | unavailable under within-word/closure-face degeneracy | no inventoried ordinary consumer requests this object; keep it out of the production API unless a concrete experiment later defines it |
 | All discrete candidates within action gap `delta` | unavailable | unavailable | Batch 1b adds this for the covered general candidate family; a product version is added only if an inventoried ordinary caller needs it |
-| exact `beta` for a chosen word | unavailable | currently returned for closure-vertex winners | Batch 1b provides it through the same on-demand exact one-sigma method for both routes; the common search record remains lean |
-| exact `q`, closure multiplier `mu`, normalization multiplier `xi` | unavailable | unavailable | Batch 1b provides consistent one-sigma exact KKT data where possible; these values remain properties of a chosen word, not the global search result |
+| exact `beta` for a chosen word | on-demand through `solve_sigma_exact` | on-demand through `solve_sigma_exact` | the common search record remains lean |
+| exact `q`, closure multiplier `mu`, normalization multiplier `xi` | on-demand through `solve_sigma_exact` | on-demand through `solve_sigma_exact` | these values remain properties of a chosen word, not the global search result |
 | Capacity derivative for one branch | unavailable | not directly returned | requires `sigma`, `beta`, `q`, and `mu` from one consistent KKT solution |
 | Clarke subgradient / switching model | unavailable | unavailable | requires a complete active-branch set plus one consistent derivative per branch |
 | Breakpoints, dwell times, closure/inside/action residuals | unavailable | unavailable | run geometric recovery from a chosen `sigma`, `beta`, and action; this certifies neither minimizer completeness nor recovery tolerances by itself |
