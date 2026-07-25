@@ -206,10 +206,20 @@ exactly with zero classification or solution mismatches and was about seven
 times faster than the generic rational solver. On all 4,051 exact-transition
 HKO words it still took `5.39 s`, versus `38.58 s` for the generic rational
 route, and 772 words were genuinely singular and still required the null-space
-fallback. This remains the wrong runtime scale, so the spike was removed before
-further optimization. The retained research direction is to simplify the QP
-linear algebra using the Lagrangian-product block structure, not to pursue a
-precision ladder or cheaper generic exact arithmetic.
+fallback. It therefore remains the wrong product-wide enumeration route. The
+product-capacity direction is to simplify the QP using the Lagrangian-product
+block structure, not to exact-solve every word more quickly.
+
+The same conclusion does not apply to exact output for one already selected
+word. The fraction-free method is now retained narrowly as
+`solve_dyadic_rational_system_full_rank`, with exact residual verification and
+the generic rank/kernel solver as fallback. On the retained random `F5`
+exact-binary64 winner `[0,1,3,2,4]`, warm release medians were approximately
+`5--6 ms` for the specialized complete one-word solve versus `36--39 ms` for
+the generic solver; the raw fraction-free linear solve was approximately
+`2.2 ms`. The results agreed exactly. A singular hypercube control exercises
+the generic fallback. These timings justify the one-word fast path, not bulk
+exact enumeration.
 
 The next product-specific direction comes from separating q- and p-facet
 weights. Their closure constraints are independent, while the product QP

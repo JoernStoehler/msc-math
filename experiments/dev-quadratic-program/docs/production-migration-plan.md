@@ -65,24 +65,28 @@ and consumer audit to a future session.
 The intended end state for this migration is:
 
 1. `CapacityInput4d` is the ordinary validated entry point.
-2. `capacity`, `general_capacity`, and `product_capacity` remain fast scalar
-   operations. General capacity returns certified outward binary64 bounds;
-   product capacity also returns the exact rational value already computed by
-   its KKT-free route.
-3. Callers that need minimizing words or an action window use a separate,
-   explicitly richer search. It owns the corresponding candidate-coverage,
-   tie, and window guarantees and may return lean `(sigma, action_exact)`
-   records. Scalar callers never pay for exact words or actions they discard.
-4. Exact one-sigma KKT solving is an on-demand method on the same validated
+2. One shared search core owns validation, candidate enumeration, pruning, and
+   predicate semantics. A narrow request/output mode determines whether it
+   stops with the capacity certificate or materializes exact candidate
+   records. It is not a generic solver/observer framework.
+3. `capacity`, `general_capacity`, and `product_capacity` are thin scalar
+   wrappers over that core. General capacity returns certified outward
+   binary64 bounds; product capacity also returns the exact rational value
+   already computed by its KKT-free route. Scalar requests never pay to
+   construct exact words, actions, or KKT payloads that they discard.
+4. Callers that need minimizing words or an action window use the richer
+   request and receive lean `(sigma, action_exact)` records under its stated
+   candidate-coverage, tie, and window guarantees.
+5. Exact one-sigma KKT solving is an on-demand method on the same validated
    input. Given a returned `sigma`, it returns exact `beta`, `q`, `mu`, and
    `xi`. Capacity differentiation and geometric recovery consume that payload.
    Search results do not carry every `beta` merely because an internal f64 or
    exact solve produced one.
-5. Existing f64 `OrbitSearchResult` searches remain only where the experiment
+6. Existing f64 `OrbitSearchResult` searches remain only where the experiment
    explicitly studies their numerical/branch behavior, or as verification and
    performance controls. Ordinary consumers do not retain them merely because
    the new API omitted a needed field.
-6. Every retained old call site states which experiment-specific output
+7. Every retained old call site states which experiment-specific output
    requires it. A successful compile with an unchanged old call is not a
    migration decision.
 
@@ -112,7 +116,7 @@ worktree.
 | Make every scalar call return capacity, all branches, KKT multipliers, derivatives, and trajectories | One apparent entry point | Pays enumeration, exact payload, and recovery costs when only a scalar is needed; product degeneracy cannot honestly be represented as one finite “all orbits” list | Reject |
 | Preserve the existing `OrbitSearchResult` shape but fill it from the new routes | Minimizes consumer edits | General scalar route has no winner payload; product closure winners have no complete physical-orbit semantics, `mu`, `xi`, or legacy iteration meaning; optional/dummy fields would lie | Reject |
 | Expose only capacity plus a low-level one-sigma solve and let every caller build its own minimizer/window search | Small production API | Repeats candidate-coverage, tie, pruning, and fallback logic in consumers; recreates the ad hoc wrappers this migration is meant to remove | Reject for ordinary callers; retain low-level primitives for experiments |
-| Fast scalar capacity plus a separately named rich exact search and on-demand exact one-sigma solve | Scalar callers keep the selected fast route; richer callers explicitly request and pay for stronger output | The two operations need separate contract tests and should reuse established helpers where that is actually useful | Select |
+| Shared search core with typed scalar/rich wrappers and on-demand exact one-sigma solve | Enumeration, pruning, and predicate semantics have one owner; each caller requests and pays only for its output | The internal request boundary must keep exact materialization out of scalar mode, and each public result still needs its own contract tests | Select |
 | Keep old full-branch searches only in experiments that intentionally measure non-minimal branches, old thresholds, or old solver behavior | Preserves valuable evidence without presenting it as the production route | Requires explicit naming and retained controls | Select as an exception, not the default consumer path |
 
 ### Remaining richer-output checks
@@ -278,8 +282,9 @@ For this route, do not apply a generic “duplication must drift” argument. Th
 important comparison is:
 
 - explicit duplicated algorithms cost cheap repeated edits; while
-- a configurable shared framework costs abstraction, proof surface, hot-path
-  branches, and copy-edit friction on every future investigation.
+- a framework parameterized over arbitrary solvers, predicates, observers, and
+  output policies costs abstraction, proof surface, hot-path branches, and
+  copy-edit friction on every future investigation.
 
 The latter is currently more expensive. This cost model is local to the
 selected QP routes, not a repo-wide requirement to duplicate ordinary helpers.
@@ -289,7 +294,8 @@ selected QP routes, not a repo-wide requirement to duplicate ordinary helpers.
 | Keep the selected route in `dev-quadratic-program` and wrap it from `symplectic` | Experiment code remains easy to edit | Reverses the dependency direction: production would depend on an experiment package | Reject |
 | Keep a readable selected implementation in `dev-quadratic-program` and an optimized corresponding implementation in `symplectic` | Gives experiments a stable copy-editable starting point while production remains optimized | Semantic changes must be applied or checked in two cross-linked files | Select |
 | Publish low-level enumeration/KKT pieces and let each consumer independently assemble its ordinary route | Every caller can instrument anything | Ad hoc copies have no named correspondence contract; current `combinatorial-cells` and `hko-local-maximum` helpers demonstrate how old threshold semantics can survive unnoticed | Reject as the ordinary consumer path; deliberate experiment variants remain welcome |
-| Parameterize one kernel by solver, predicate, pruning, observer, and output-policy traits | Can express many ablations without copying | Makes the production proof surface generic, spreads research choices through hot code, and makes ordinary reading harder | Reject until two maintained production consumers demonstrate a real shared variation |
+| Give the selected search core one narrow output request and typed wrappers | Keeps enumeration, pruning, and predicate semantics aligned while avoiding discarded exact work | Requires explicit tests that scalar mode does not materialize exact records and that rich mode preserves the same candidate decisions | Select |
+| Parameterize one kernel by arbitrary solver, predicate, pruning, observer, and output-policy traits | Can express many ablations without copying | Makes the production proof surface generic, spreads research choices through hot code, and makes ordinary reading harder | Reject until two maintained production consumers demonstrate a real shared variation |
 | Put the kernel in a new internal workspace crate and re-export it from `symplectic` | Production and experiments can share a lower layer | Adds another public dependency/API boundary but does not remove the need to distinguish production semantics from experimental variants | Defer; reconsider only if extraction finds a substantial independently reusable numerical kernel |
 | Use feature-gated diagnostics or a public observer callback in production | Rich counters without route copies | Adds control flow and API combinations to the correctness-critical path; feature combinations become another test matrix | Reject for now |
 
@@ -369,7 +375,7 @@ The target caller shape is:
 
 ```rust
 let input = CapacityInput4d::try_from_dual_vertices(&dual_vertices)?;
-let capacity = input.capacity()?; // fast scalar operation
+let capacity = input.capacity()?; // thin scalar request; no exact payloads
 
 let search = input.qp_search(QpCandidateSelection4d::MinimizersOnly)?;
 for candidate in search.candidates() {
@@ -655,10 +661,12 @@ Make one faithful extension patch with:
 - complete exact controls for word-set equality, ties, gap endpoints,
   rank-deficient words, derivative intermediates, and recovery inputs.
 
-The fast scalar methods do not call this exact-output search. Both APIs share
-`CapacityInput4d` validation and may reuse established enumeration, pruning,
-and one-sigma helpers without forcing their different output contracts into
-one execution path.
+The scalar and rich methods call the same selected search core with different
+output requests. The scalar request stops after producing its capacity
+certificate and does not exact-materialize candidate records. The rich request
+retains contenders and exact-resolves only the requested output set. Typed
+public wrappers keep their different result guarantees explicit without
+duplicating enumeration, pruning, or predicate semantics.
 
 Stop before consumer edits if contender isolation, exact KKT payload recovery,
 candidate coverage, or performance fails its existing checks. “Keep all

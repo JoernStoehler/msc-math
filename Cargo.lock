@@ -16,6 +16,7 @@ name = "algebraic-numbers"
 version = "0.1.0"
 dependencies = [
  "nalgebra 0.33.3",
+ "num-bigint",
  "num-rational",
  "num-traits",
  "proptest",

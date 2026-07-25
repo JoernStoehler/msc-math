@@ -13,7 +13,7 @@ pub mod orbit;
 pub mod polytope;
 
 pub use derivatives::{capacity_derivatives_a_exact, capacity_derivatives_a_exact_from_orbit};
-pub use orbit::{solve_orbit_sigma_exact, ExactOrbitKktData};
+pub use orbit::{solve_orbit_sigma_exact, solve_orbit_sigma_exact_rational, ExactOrbitKktData};
 pub use polytope::{
     dot4, exact_vertices_with_incidence, facet_intersection_is_nonempty_exact, omega0,
     omega_signs_exact, ExactPolytopeError, ExactVerticesWithIncidence,

@@ -24,7 +24,9 @@
 //! Mathematical correspondence: [lem:kkt], [lem:well-defined]
 
 use crate::geom::rational_arithmetic::{omega0_rational, rational_to_f64};
-use algebraic_numbers::{solve_linear_system, LinearSystemSolution};
+use algebraic_numbers::{
+    solve_dyadic_rational_system_full_rank, solve_linear_system, LinearSystemSolution,
+};
 use nalgebra::{DMatrix, DVector};
 use num_bigint::BigInt;
 use num_rational::BigRational;
@@ -79,25 +81,19 @@ pub fn solve_kkt_exact(
     let m = perm.len();
     let (matrix, rhs) = build_kkt_matrix(dual_vertices, perm);
 
+    if let Some(solution) = solve_dyadic_rational_system_full_rank(&matrix, &rhs) {
+        let beta = solution.iter().take(m).cloned().collect::<Vec<_>>();
+        return exact_result_from_beta(dual_vertices, perm, beta);
+    }
+
     match solve_linear_system(&matrix, &rhs) {
         LinearSystemSolution::Inconsistent => None,
         LinearSystemSolution::Consistent {
             particular,
             kernel_basis,
         } if kernel_basis.ncols() == 0 => {
-            let x: Vec<BigRational> = particular.iter().cloned().collect();
-            let beta: Vec<BigRational> = x[..m].to_vec();
-            // Check beta > 0; if not, the solution is infeasible.
-            if !beta.iter().all(|b| b.is_positive()) {
-                return None;
-            }
-            let q_exact = compute_q_rational(dual_vertices, perm, &beta);
-            let q_exact_f64 = rational_to_f64(&q_exact);
-            Some(ExactKktResult {
-                beta,
-                q_exact,
-                q_exact_f64,
-            })
+            let beta = particular.iter().take(m).cloned().collect();
+            exact_result_from_beta(dual_vertices, perm, beta)
         }
         LinearSystemSolution::Consistent {
             particular,
@@ -111,16 +107,26 @@ pub fn solve_kkt_exact(
             // Search null space for beta > 0 (exact via Fourier-Motzkin).
             let beta = find_positive_beta(&beta0, &null_beta)?;
 
-            // Q is constant along the null space ([lem:well-defined]).
-            let q_exact = compute_q_rational(dual_vertices, perm, &beta);
-            let q_exact_f64 = rational_to_f64(&q_exact);
-            Some(ExactKktResult {
-                beta,
-                q_exact,
-                q_exact_f64,
-            })
+            exact_result_from_beta(dual_vertices, perm, beta)
         }
     }
+}
+
+fn exact_result_from_beta(
+    dual_vertices: &[[BigRational; 4]],
+    perm: &[usize],
+    beta: Vec<BigRational>,
+) -> Option<ExactKktResult> {
+    if !beta.iter().all(BigRational::is_positive) {
+        return None;
+    }
+    let q_exact = compute_q_rational(dual_vertices, perm, &beta);
+    let q_exact_f64 = rational_to_f64(&q_exact);
+    Some(ExactKktResult {
+        beta,
+        q_exact,
+        q_exact_f64,
+    })
 }
 
 // ── KKT matrix construction ──────────────────────────────────────────────

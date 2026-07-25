@@ -22,6 +22,9 @@ Already present:
 - Ordinary nalgebra container syntax such as `Vector4<Algebraic<Sqrt5>>`.
 - Dense row reduction, rank, solve, kernel basis, and negative-definite checks
   over nalgebra `DMatrix<T>` / `DVector<T>`.
+- A verified fraction-free full-rank solve for dyadic `BigRational` systems.
+  This is a narrow fast path for exact binary floating-point inputs; the
+  generic rank/kernel solver remains the complete fallback.
 
 Not present:
 
@@ -107,8 +110,11 @@ Rejected first guesses:
 - f64-assisted pivoting: breaks exactness.
 - Bare `usize` rank only: too little evidence for solve/kernel.
 - Full generic linear-algebra framework: too much before the first callers.
-- Bareiss or other coefficient-growth controls now: premature until real
-  examples produce coefficients large enough to matter.
+- Replacing the generic solver with Bareiss: rejected. Real KKT examples from
+  exact binary64 inputs do exhibit costly coefficient growth, so
+  `solve_dyadic_rational_system_full_rank` now uses Bareiss elimination for the
+  full-rank dyadic case. Singular systems and non-dyadic denominator patterns
+  still require the generic rank/kernel solver.
 
 ### Rank
 
@@ -127,6 +133,13 @@ Why it matters: exact KKT, affine constraints, vertex reconstruction, and
 certificate code need exact solutions to `A x = b`.
 
 Decision state: implemented as `solve_linear_system`.
+
+For square dyadic `BigRational` systems whose caller only needs a unique
+solution, first try `solve_dyadic_rational_system_full_rank`. It row-scales the
+augmented system to integers, uses fraction-free elimination, and verifies the
+result against the original rational system. `None` is not an inconsistency
+certificate: it also covers singular matrices and unsupported denominator
+patterns, so complete callers must fall back to `solve_linear_system`.
 
 Predictable approach: augment `A` with `b`, row-reduce, and return an explicit
 outcome:

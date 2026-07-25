@@ -9,8 +9,11 @@
 //! positivity search path used here.
 
 use crate::exact::polytope::omega0;
-use algebraic_numbers::{solve_linear_system, ExactScalar, LinearSystemSolution};
+use algebraic_numbers::{
+    solve_dyadic_rational_system_full_rank, solve_linear_system, ExactScalar, LinearSystemSolution,
+};
 use nalgebra::{DMatrix, DVector, Vector4};
+use num_rational::BigRational;
 
 /// Exact one-sigma orbit payload.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -58,6 +61,34 @@ pub fn solve_orbit_sigma_exact<F: ExactScalar + 'static>(
         } => choose_positive_solution(&particular, &kernel_basis, m)?,
     };
 
+    orbit_from_solution(dual_vertices, sigma, solution)
+}
+
+/// Exact one-sigma solve specialized for rationalized binary64 inputs.
+///
+/// Full-rank dyadic systems use verified fraction-free integer elimination.
+/// Singular or unsupported systems fall back to [`solve_orbit_sigma_exact`]
+/// so rank-deficient positivity semantics remain unchanged.
+pub fn solve_orbit_sigma_exact_rational(
+    dual_vertices: &[Vector4<BigRational>],
+    sigma: &[usize],
+) -> Option<ExactOrbitKktData<BigRational>> {
+    assert!(is_partial_permutation(sigma, dual_vertices.len()));
+    let (matrix, rhs) = build_kkt_matrix(dual_vertices, sigma);
+    match solve_dyadic_rational_system_full_rank(&matrix, &rhs) {
+        Some(solution) => {
+            orbit_from_solution(dual_vertices, sigma, solution.iter().cloned().collect())
+        }
+        None => solve_orbit_sigma_exact(dual_vertices, sigma),
+    }
+}
+
+fn orbit_from_solution<F: ExactScalar + 'static>(
+    dual_vertices: &[Vector4<F>],
+    sigma: &[usize],
+    solution: Vec<F>,
+) -> Option<ExactOrbitKktData<F>> {
+    let m = sigma.len();
     let beta = solution[..m].to_vec();
     if !beta.iter().all(|entry| entry > &F::zero()) {
         return None;
@@ -303,8 +334,11 @@ fn find_positive_alpha<F: ExactScalar>(beta0: &[F], null_vecs: &[Vec<F>]) -> Opt
 
 #[cfg(test)]
 mod tests {
-    use super::solve_orbit_sigma_exact;
-    use algebraic_numbers::{Algebraic, RealAlgebraicField};
+    use super::{build_kkt_matrix, solve_orbit_sigma_exact, solve_orbit_sigma_exact_rational};
+    use crate::geom::known_polytopes;
+    use algebraic_numbers::{
+        solve_dyadic_rational_system_full_rank, Algebraic, RealAlgebraicField,
+    };
     use nalgebra::Vector4;
     use num_rational::BigRational;
     use num_traits::{One, Zero};
@@ -369,6 +403,49 @@ mod tests {
         let orbit = solve_orbit_sigma_exact(&dual_vertices, &sigma).expect("exact simplex sigma");
         assert!(orbit.beta.iter().all(|entry| entry > &BigRational::zero()));
         assert_eq!(orbit.action(), BigRational::new(1.into(), 4.into()));
+    }
+
+    #[test]
+    fn dyadic_full_rank_fast_path_matches_generic_exact_solver() {
+        let scale = BigRational::new(((1u64 << 52) + 1).into(), (1u64 << 52).into());
+        let dual_vertices = exact_simplex_dual_vertices()
+            .into_iter()
+            .map(|vertex| vertex.map(|entry| entry * &scale))
+            .collect::<Vec<_>>();
+        let sigma = [0usize, 1, 2, 3, 4];
+
+        let generic =
+            solve_orbit_sigma_exact(&dual_vertices, &sigma).expect("generic exact solution");
+        let fast = solve_orbit_sigma_exact_rational(&dual_vertices, &sigma)
+            .expect("fraction-free exact solution");
+        assert_eq!(fast, generic);
+    }
+
+    #[test]
+    fn rational_fast_path_preserves_singular_fallback() {
+        let hypercube = known_polytopes::hypercube();
+        let dual_vertices = hypercube
+            .dual_vertices
+            .iter()
+            .map(|entry| {
+                Vector4::new(
+                    entry[0].clone(),
+                    entry[1].clone(),
+                    entry[2].clone(),
+                    entry[3].clone(),
+                )
+            })
+            .collect::<Vec<_>>();
+        let sigma = [0usize, 2, 4, 6];
+        let (matrix, rhs) = build_kkt_matrix(&dual_vertices, &sigma);
+        assert!(
+            solve_dyadic_rational_system_full_rank(&matrix, &rhs).is_none(),
+            "hypercube control must exercise the singular fallback"
+        );
+        assert_eq!(
+            solve_orbit_sigma_exact_rational(&dual_vertices, &sigma),
+            solve_orbit_sigma_exact(&dual_vertices, &sigma)
+        );
     }
 
     #[test]
