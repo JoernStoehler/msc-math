@@ -13,6 +13,8 @@ historical comparisons remain in the owning result files.
 | production general capacity after geometry | same inputs | `6.53--6.70 ms/input` |
 | complete production pipeline, excluding the optional duplicate diagnostic | same inputs | `11.25--11.44 ms/input` |
 | complete retained legacy pipeline | paired four-point run on the same inputs | `12.29 ms/input` |
+| f64 volume on exact-derived incidence | one cold run-local HKO producer miss | `0.078 ms` |
+| exact-rational volume reference | one accepted generic `F=10` case | `1.049 s` |
 
 Before the 2026-07-26 exact-arithmetic audit, generic exact enumeration and
 generic rational row reduction made geometry alone cost `288--305 ms/input`;
@@ -30,6 +32,9 @@ bit-identical; f64 incidence volume changed by about `7e-15` absolute and
 `sys` by about `5e-16`. The broader retained 512-row volume comparison is
 documented in
 `experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/smoke-summary.json`.
+That paired 512-row audit measured a `16,427x` aggregate worker-time ratio;
+the two single-row timing entries above are cost anchors from different inputs,
+not a paired speedup measurement.
 
 Do not extrapolate only from candidate count when exact fallback is possible.
 On one transformed product-source input, the production general route processed

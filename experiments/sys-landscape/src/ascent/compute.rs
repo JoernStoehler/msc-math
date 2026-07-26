@@ -1,4 +1,5 @@
-use crate::{exact_volume_from_incidence_as_f64, SysLandscapePolytopeCache};
+use crate::SysLandscapePolytopeCache;
+use euclidean_polytopes::volume_from_incidence_f64;
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::Vector4;
 use num_rational::BigRational;
@@ -52,7 +53,7 @@ pub enum AscentMode<'a> {
 pub fn compute_active_sys_state(polytope: &SysLandscapePolytopeCache) -> Option<ActiveSysState> {
     let capacity = compute_capacity_result(polytope)?;
     let vol =
-        exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+        volume_from_incidence_f64(&polytope.vertices_f64, &polytope.vertex_facet_incidence).ok()?;
     if vol <= 0.0 {
         return None;
     }
@@ -81,7 +82,7 @@ pub fn compute_sys_from_capacity(
     capacity: &OrbitSearchResult,
 ) -> Option<f64> {
     let vol =
-        exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+        volume_from_incidence_f64(&polytope.vertices_f64, &polytope.vertex_facet_incidence).ok()?;
     if vol <= 0.0 {
         return None;
     }
@@ -98,7 +99,7 @@ pub fn compute_sys(polytope: &SysLandscapePolytopeCache) -> Option<f64> {
 /// Compute sys and keep the capacity payload for producer audit rows.
 pub fn compute_sys_computation(polytope: &SysLandscapePolytopeCache) -> Option<SysComputation> {
     let vol =
-        exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+        volume_from_incidence_f64(&polytope.vertices_f64, &polytope.vertex_facet_incidence).ok()?;
     if vol <= 0.0 {
         return None;
     }

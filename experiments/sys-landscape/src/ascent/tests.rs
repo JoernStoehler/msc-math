@@ -2,8 +2,11 @@ use super::compute::{
     admissible_active_orbits, compute_capacity_result, compute_sys, compute_sys_from_capacity,
     maximin_subgradient_direction, AscentMode,
 };
+use super::expensive_cache::ExpensiveComputationCache;
 use crate::SysLandscapePolytopeCache;
 use nalgebra::Vector4;
+use std::fs::File;
+use std::io::Write;
 use symplectic::classify_facets_from_dual_vertices;
 use symplectic::derivatives::clarke_directional_derivative_a;
 use symplectic::geom::polygon::regular_polygon_2d;
@@ -29,6 +32,56 @@ fn compute_sys_from_capacity_matches_compute_sys() {
         (cached - direct).abs() < 1e-12,
         "cached={cached}, direct={direct}"
     );
+}
+
+#[test]
+fn expensive_cache_loads_legacy_volume_and_prefers_current_f64_row() {
+    let polytope = triangle_product_cache();
+    let fresh = ExpensiveComputationCache::empty();
+    fresh
+        .compute(&polytope)
+        .expect("triangle product should compute");
+    let current = fresh
+        .used_rows()
+        .into_iter()
+        .next()
+        .expect("fresh cache row");
+    assert_eq!(current.volume_method, "f64-from-exact-derived-incidence-v1");
+
+    let mut legacy = current.clone();
+    legacy.volume_method = "exact-rational-rounded-f64-v1".to_string();
+    legacy.volume = f64::from_bits(legacy.volume.to_bits() + 1);
+    legacy.sys = f64::from_bits(legacy.sys.to_bits() - 1);
+    let mut legacy_value = serde_json::to_value(legacy).expect("serialize legacy row");
+    legacy_value
+        .as_object_mut()
+        .expect("cache row object")
+        .remove("volume_method");
+
+    let path = std::env::temp_dir().join(format!(
+        "expensive-computation-cache-volume-method-{}.jsonl",
+        std::process::id()
+    ));
+    let mut file = File::create(&path).expect("create temporary cache");
+    serde_json::to_writer(&mut file, &legacy_value).expect("write legacy row");
+    writeln!(&mut file).expect("write newline");
+    serde_json::to_writer(&mut file, &current).expect("write current row");
+    writeln!(&mut file).expect("write newline");
+    drop(file);
+
+    let loaded = ExpensiveComputationCache::load(std::slice::from_ref(&path));
+    loaded
+        .compute(&polytope)
+        .expect("loaded triangle product should compute");
+    std::fs::remove_file(&path).expect("remove temporary cache");
+    let selected = loaded
+        .used_rows()
+        .into_iter()
+        .next()
+        .expect("selected cache row");
+    assert_eq!(selected.volume_method, current.volume_method);
+    assert_eq!(selected.volume, current.volume);
+    assert_eq!(selected.sys, current.sys);
 }
 
 #[test]

@@ -1,4 +1,5 @@
-use crate::{exact_volume_from_incidence_as_f64, SysLandscapePolytopeCache};
+use crate::SysLandscapePolytopeCache;
+use euclidean_polytopes::volume_from_incidence_f64;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs::File;
@@ -10,12 +11,22 @@ use symplectic::OrbitSearchResult;
 use super::compute::{compute_capacity_result, SysComputation};
 use super::dual_vertices_rational_strings;
 
+const CURRENT_VOLUME_METHOD: &str = "f64-from-exact-derived-incidence-v1";
+const LEGACY_VOLUME_METHOD: &str = "exact-rational-rounded-f64-v1";
+const DERIVED_VALUE_RELATIVE_TOLERANCE: f64 = 1e-12;
+
+fn legacy_volume_method() -> String {
+    LEGACY_VOLUME_METHOD.to_string()
+}
+
 #[derive(Clone, PartialEq, Serialize, Deserialize)]
 pub struct ExpensiveComputationCacheRow {
     pub polytope_key: String,
     pub dual_vertices_rational: Vec<[String; 4]>,
     pub facet_count: usize,
     pub capacity_result: OrbitSearchResult,
+    #[serde(default = "legacy_volume_method")]
+    pub volume_method: String,
     pub volume: f64,
     pub sys: f64,
 }
@@ -81,10 +92,9 @@ impl ExpensiveComputationCache {
             });
         }
 
-        let volume = exact_volume_from_incidence_as_f64(
-            &polytope.vertices,
-            &polytope.vertex_facet_incidence,
-        );
+        let volume =
+            volume_from_incidence_f64(&polytope.vertices_f64, &polytope.vertex_facet_incidence)
+                .ok()?;
         if volume <= 0.0 {
             return None;
         }
@@ -100,6 +110,7 @@ impl ExpensiveComputationCache {
             dual_vertices_rational: dual_vertices_rational_strings(polytope),
             facet_count: polytope.facet_count(),
             capacity_result: capacity_result.clone(),
+            volume_method: CURRENT_VOLUME_METHOD.to_string(),
             volume,
             sys,
         };
@@ -165,13 +176,51 @@ fn load_rows(path: &Path, rows: &mut HashMap<String, ExpensiveComputationCacheRo
         });
         if let Some(previous) = rows.get(&row.polytope_key) {
             assert!(
-                previous == &row,
+                semantic_row_eq(previous, &row),
                 "conflicting expensive-computation cache row for polytope_key {:?} in {:?}:{}",
                 row.polytope_key,
                 path,
                 line_number + 1
             );
+            if previous.volume_method == CURRENT_VOLUME_METHOD
+                && row.volume_method != CURRENT_VOLUME_METHOD
+            {
+                continue;
+            }
         }
         rows.insert(row.polytope_key.clone(), row);
+    }
+}
+
+fn approximately_equal_derived_value(a: f64, b: f64) -> bool {
+    a == b
+        || ((a - b).abs()
+            <= DERIVED_VALUE_RELATIVE_TOLERANCE * a.abs().max(b.abs()).max(f64::MIN_POSITIVE))
+}
+
+fn semantic_row_eq(a: &ExpensiveComputationCacheRow, b: &ExpensiveComputationCacheRow) -> bool {
+    a.polytope_key == b.polytope_key
+        && a.dual_vertices_rational == b.dual_vertices_rational
+        && a.facet_count == b.facet_count
+        && a.capacity_result == b.capacity_result
+        && approximately_equal_derived_value(a.volume, b.volume)
+        && approximately_equal_derived_value(a.sys, b.sys)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::approximately_equal_derived_value;
+
+    #[test]
+    fn cache_compatibility_accepts_roundoff_but_not_material_change() {
+        let value = 2.0_f64;
+        assert!(approximately_equal_derived_value(
+            value,
+            f64::from_bits(value.to_bits() + 1)
+        ));
+        assert!(!approximately_equal_derived_value(
+            value,
+            value * (1.0 + 1e-8)
+        ));
     }
 }

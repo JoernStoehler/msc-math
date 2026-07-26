@@ -26,6 +26,14 @@ maintained data-science flow has moved elsewhere.
 | `fixed-shape-orientation-search/` | retained post-selection `SO(4)/U(2)` orientation scan |
 | `rejection-calibration/` | retained rejection/calibration producer and full-output artifacts |
 
+Reusable `src/ascent` computations use f64 volume on f64 primal vertices with
+exact-derived incidence. Their serialized expensive-computation cache rows
+record the volume method; legacy rows without the field retain their exact
+rational volume and are accepted only when volume and derived `sys` agree with
+current rows to `1e-12` relative error. The retained 512-row F10 comparison
+supporting that boundary is documented in
+`experiments/sys-datascience/methods/generic-ridge-tail-stage1/README.md`.
+
 Read the relevant child README before source, figures, or commands. A tracked
 figure does not imply that its generating JSONL is still present.
 

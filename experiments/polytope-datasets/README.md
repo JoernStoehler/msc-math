@@ -42,6 +42,19 @@ The current retained random target is:
 Both current producers use height interval `[0.8, 1.2]`, seed `42`, and
 rejection until a valid polytope is produced.
 
+Fresh run-local computed-polytope cache misses use
+`volume_from_incidence_f64` on f64 primal vertices with exact-derived
+incidence. Each payload records this as
+`volume_method = "f64-from-exact-derived-incidence-v1"`. Older cache rows
+without this field deserialize as `exact-rational-rounded-f64-v1` and remain
+valid cache hits. When cache files contain both methods for the same polytope,
+the loader accepts only volume and derived-`sys` differences within `1e-12`
+relative error and prefers the current f64 row. Capacity and orbit data must
+still match exactly. The compatibility tolerance is more than 100 times the
+largest `9.51e-15` relative volume difference in the retained 512-row F10 audit
+documented in
+`experiments/sys-datascience/methods/generic-ridge-tail-stage1/README.md`.
+
 ## Run-Local Producer
 
 Use this path for source/table iterations that should not mutate canonical

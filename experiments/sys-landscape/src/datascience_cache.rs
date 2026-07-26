@@ -4,9 +4,9 @@
 //! point at `poly_id`; this row owns the expensive capacity/orbit payload.
 
 use crate::{
-    capacity_auto, capacity_billiard, exact_volume_from_incidence_as_f64,
-    orbit_scalars_from_result, SysLandscapePolytopeCache,
+    capacity_auto, capacity_billiard, orbit_scalars_from_result, SysLandscapePolytopeCache,
 };
+use euclidean_polytopes::volume_from_incidence_f64;
 use num_rational::BigRational;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -16,6 +16,14 @@ use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
 use symplectic::database::{OrbitScalars, SigmaAction};
+
+const CURRENT_VOLUME_METHOD: &str = "f64-from-exact-derived-incidence-v1";
+const LEGACY_VOLUME_METHOD: &str = "exact-rational-rounded-f64-v1";
+const DERIVED_VALUE_RELATIVE_TOLERANCE: f64 = 1e-12;
+
+fn legacy_volume_method() -> String {
+    LEGACY_VOLUME_METHOD.to_string()
+}
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum CapacityBackend {
@@ -40,6 +48,8 @@ pub struct ComputedPolytopePayloadRow {
     pub vertices_rational: Vec<[String; 4]>,
     pub facet_count: usize,
     pub backend: String,
+    #[serde(default = "legacy_volume_method")]
+    pub volume_method: String,
     pub volume: f64,
     pub capacity: f64,
     pub sys: f64,
@@ -152,10 +162,9 @@ impl ComputedPolytopeCache {
         }
 
         let start_volume = Instant::now();
-        let volume = exact_volume_from_incidence_as_f64(
-            &polytope.vertices,
-            &polytope.vertex_facet_incidence,
-        );
+        let volume =
+            volume_from_incidence_f64(&polytope.vertices_f64, &polytope.vertex_facet_incidence)
+                .ok()?;
         let time_volume_ms = start_volume.elapsed().as_secs_f64() * 1000.0;
         if volume <= 0.0 {
             return None;
@@ -196,6 +205,7 @@ impl ComputedPolytopeCache {
             vertices_rational: rational_vec4_to_strings(&polytope.vertices),
             facet_count: polytope.facet_count(),
             backend: backend.name().to_string(),
+            volume_method: CURRENT_VOLUME_METHOD.to_string(),
             volume,
             capacity,
             sys,
@@ -332,9 +342,20 @@ fn load_payload_rows(path: &Path, rows: &mut HashMap<String, ComputedPolytopePay
                 path,
                 line_number + 1
             );
+            if previous.volume_method == CURRENT_VOLUME_METHOD
+                && row.volume_method != CURRENT_VOLUME_METHOD
+            {
+                continue;
+            }
         }
         rows.insert(row.poly_id.clone(), row);
     }
+}
+
+fn approximately_equal_derived_value(a: f64, b: f64) -> bool {
+    a == b
+        || ((a - b).abs()
+            <= DERIVED_VALUE_RELATIVE_TOLERANCE * a.abs().max(b.abs()).max(f64::MIN_POSITIVE))
 }
 
 fn semantic_payload_eq(a: &ComputedPolytopePayloadRow, b: &ComputedPolytopePayloadRow) -> bool {
@@ -343,9 +364,9 @@ fn semantic_payload_eq(a: &ComputedPolytopePayloadRow, b: &ComputedPolytopePaylo
         && a.dual_vertices_rational == b.dual_vertices_rational
         && a.vertices_rational == b.vertices_rational
         && a.facet_count == b.facet_count
-        && a.volume == b.volume
+        && approximately_equal_derived_value(a.volume, b.volume)
         && a.capacity == b.capacity
-        && a.sys == b.sys
+        && approximately_equal_derived_value(a.sys, b.sys)
         && a.sigma_gap_cutoff == b.sigma_gap_cutoff
         && a.sigmas == b.sigmas
         && a.orbit_scalars == b.orbit_scalars
@@ -405,6 +426,7 @@ mod tests {
             ]],
             facet_count: 1,
             backend: "auto".to_string(),
+            volume_method: CURRENT_VOLUME_METHOD.to_string(),
             volume: 2.0,
             capacity: 1.0,
             sys: 0.25,
@@ -466,6 +488,38 @@ mod tests {
     }
 
     #[test]
+    fn cache_loader_accepts_legacy_exact_volume_and_prefers_current_f64_row() {
+        let mut exact = test_payload();
+        exact.volume_method = LEGACY_VOLUME_METHOD.to_string();
+        exact.volume = f64::from_bits(exact.volume.to_bits() + 1);
+        exact.sys = f64::from_bits(exact.sys.to_bits() - 1);
+        let current = test_payload();
+        let path = write_payloads(&[exact, current.clone()]);
+
+        let cache = ComputedPolytopeCache::load(std::slice::from_ref(&path));
+        std::fs::remove_file(&path).expect("remove temp cache file");
+
+        let loaded = cache.rows.get("poly-a").expect("payload");
+        assert_eq!(loaded.volume_method, CURRENT_VOLUME_METHOD);
+        assert_eq!(loaded.volume, current.volume);
+        assert_eq!(loaded.sys, current.sys);
+    }
+
+    #[test]
+    fn cache_loader_accepts_payload_without_volume_method_as_legacy() {
+        let row = test_payload();
+        let mut value = serde_json::to_value(&row).expect("serialize payload");
+        value
+            .as_object_mut()
+            .expect("payload object")
+            .remove("volume_method");
+
+        let loaded: ComputedPolytopePayloadRow =
+            serde_json::from_value(value).expect("deserialize legacy payload");
+        assert_eq!(loaded.volume_method, LEGACY_VOLUME_METHOD);
+    }
+
+    #[test]
     fn cache_wal_appends_loadable_payload_rows() {
         let path = temp_cache_path();
         let row = test_payload();
@@ -487,6 +541,17 @@ mod tests {
         let a = test_payload();
         let mut b = a.clone();
         b.capacity = 1.25;
+        let path = write_payloads(&[a, b]);
+
+        let _ = ComputedPolytopeCache::load(std::slice::from_ref(&path));
+    }
+
+    #[test]
+    #[should_panic(expected = "conflicting computed-polytope cache row")]
+    fn cache_loader_rejects_material_volume_conflict() {
+        let a = test_payload();
+        let mut b = a.clone();
+        b.volume *= 1.0 + 1e-8;
         let path = write_payloads(&[a, b]);
 
         let _ = ComputedPolytopeCache::load(std::slice::from_ref(&path));
