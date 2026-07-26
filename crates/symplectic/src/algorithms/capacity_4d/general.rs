@@ -7,6 +7,7 @@
 //! LBLT/hybrid route. The correspondence suite must compare capacity bounds
 //! after a semantic change to either file.
 
+use crate::exact::ExactOrbitKktData;
 use crate::geom::rational_arithmetic::f64_to_rational;
 use crate::kkt::qp_assembly::{
     build_augmented_system_from_dual_vertices, build_qp_from_dual_vertices,
@@ -97,20 +98,23 @@ struct RouteStats {
     selected_decisions: Vec<Decision>,
 }
 
-pub(super) struct GeneralMinimizer {
-    pub(super) sigma: Vec<usize>,
-    pub(super) action_exact: BigRational,
+pub(super) struct GeneralExactCandidate {
+    pub(super) witness: ExactOrbitKktData<BigRational>,
+}
+
+pub(super) struct GeneralExactSelection {
+    pub(super) capacity_exact: BigRational,
+    pub(super) candidates: Vec<GeneralExactCandidate>,
 }
 
 pub(super) struct GeneralSolveOutput {
     pub(super) bounds: (f64, f64),
-    pub(super) minimizers: Option<Vec<GeneralMinimizer>>,
+    pub(super) exact_selection: Option<GeneralExactSelection>,
 }
 
-#[derive(Clone, Copy)]
 enum GeneralOutputRequest {
     CapacityOnly,
-    ExactMinimizers,
+    ExactWithinCapacityMultiple(BigRational),
 }
 
 #[derive(Clone, Debug, Default)]
@@ -1320,7 +1324,24 @@ pub(super) fn solve_selected_general_minimizers(
     duals: &[Vector4<f64>],
     words: Vec<Vec<usize>>,
 ) -> Result<Option<GeneralSolveOutput>, Vec<usize>> {
-    solve_selected_general_requested(duals, words, GeneralOutputRequest::ExactMinimizers)
+    solve_selected_general_requested(
+        duals,
+        words,
+        GeneralOutputRequest::ExactWithinCapacityMultiple(BigRational::one()),
+    )
+}
+
+pub(super) fn solve_selected_general_action_window(
+    duals: &[Vector4<f64>],
+    words: Vec<Vec<usize>>,
+    maximum_action_multiple: BigRational,
+) -> Result<Option<GeneralSolveOutput>, Vec<usize>> {
+    debug_assert!(maximum_action_multiple >= BigRational::one());
+    solve_selected_general_requested(
+        duals,
+        words,
+        GeneralOutputRequest::ExactWithinCapacityMultiple(maximum_action_multiple),
+    )
 }
 
 fn solve_selected_general_requested(
@@ -1333,12 +1354,15 @@ fn solve_selected_general_requested(
     let Some(bounds) = result.best_action_lower.zip(result.best_action_upper) else {
         return Ok(None);
     };
-    if matches!(request, GeneralOutputRequest::CapacityOnly) {
-        return Ok(Some(GeneralSolveOutput {
-            bounds,
-            minimizers: None,
-        }));
-    }
+    let maximum_action_multiple = match request {
+        GeneralOutputRequest::CapacityOnly => {
+            return Ok(Some(GeneralSolveOutput {
+                bounds,
+                exact_selection: None,
+            }));
+        }
+        GeneralOutputRequest::ExactWithinCapacityMultiple(value) => value,
+    };
 
     let words = &cases[0].2;
     let maximum_lower = result
@@ -1349,8 +1373,8 @@ fn solve_selected_general_requested(
         .max_by(f64::total_cmp)
         .expect("a positive general result has an accepted q interval");
     let exact_duals = exact_binary64_dual_vertex_arrays(duals);
-    let mut resolved = Vec::new();
-    for (word, decision) in words.iter().zip(&result.selected_decisions) {
+    let mut resolved = vec![None; words.len()];
+    for (index, (word, decision)) in words.iter().zip(&result.selected_decisions).enumerate() {
         if decision.kind != DecisionKind::Accept
             || decision.q_upper.is_none_or(|upper| upper < maximum_lower)
         {
@@ -1362,25 +1386,70 @@ fn solve_selected_general_requested(
         if !exact.q_exact.is_positive() {
             return Err(word.clone());
         }
-        resolved.push((word.clone(), exact.q_exact));
+        resolved[index] = Some(exact);
     }
     let maximum_q = resolved
         .iter()
-        .map(|(_, q)| q)
+        .flatten()
+        .map(|exact| &exact.q_exact)
         .max()
         .expect("a positive general result has an exact contender")
         .clone();
-    let action_exact = BigRational::one() / (maximum_q.clone() + maximum_q.clone());
-    let minimizers = resolved
-        .into_iter()
-        .filter(|(_, q)| q == &maximum_q)
-        .map(|(sigma, _)| GeneralMinimizer {
-            sigma,
-            action_exact: action_exact.clone(),
-        })
-        .collect();
+    let capacity_exact = BigRational::one() / (maximum_q.clone() + maximum_q.clone());
+    let minimum_q_in_window = &maximum_q / maximum_action_multiple;
+
+    let mut candidates = Vec::new();
+    for (index, (word, decision)) in words.iter().zip(&result.selected_decisions).enumerate() {
+        if decision.kind != DecisionKind::Accept
+            || decision.q_upper.is_some_and(|upper| {
+                BigRational::from_float(upper)
+                    .is_some_and(|upper_exact| upper_exact < minimum_q_in_window)
+            })
+        {
+            continue;
+        }
+        let exact = match resolved[index].take() {
+            Some(value) => value,
+            None => {
+                let Some(exact) = solve_kkt_exact(&exact_duals, word) else {
+                    return Err(word.clone());
+                };
+                if !exact.q_exact.is_positive() {
+                    return Err(word.clone());
+                }
+                exact
+            }
+        };
+        if exact.q_exact < minimum_q_in_window {
+            continue;
+        }
+        candidates.push(GeneralExactCandidate {
+            witness: ExactOrbitKktData {
+                sigma: word.clone(),
+                beta: exact.beta,
+                q: exact.q_exact,
+                mu: Vector4::new(
+                    exact.mu[0].clone(),
+                    exact.mu[1].clone(),
+                    exact.mu[2].clone(),
+                    exact.mu[3].clone(),
+                ),
+                xi: exact.xi,
+            },
+        });
+    }
+    candidates.sort_by(|left, right| {
+        left.witness
+            .action()
+            .cmp(&right.witness.action())
+            .then_with(|| left.witness.sigma.cmp(&right.witness.sigma))
+    });
+
     Ok(Some(GeneralSolveOutput {
         bounds,
-        minimizers: Some(minimizers),
+        exact_selection: Some(GeneralExactSelection {
+            capacity_exact,
+            candidates,
+        }),
     }))
 }

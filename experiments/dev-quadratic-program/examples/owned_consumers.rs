@@ -9,8 +9,10 @@ use num_rational::BigRational;
 use num_traits::{ToPrimitive, Zero};
 use symplectic::{
     capacity_4d::{
-        capacity_from_dual_vertices, capacity_value, qp_minimizers_from_dual_vertices,
-        QpCandidateFamily4d,
+        capacity_from_dual_vertices, capacity_value, check_dual_vertex_norm_bounds,
+        check_facet_count, check_finite_dual_vertices, check_primal_vertex_norm_bounds,
+        exact_binary64_polytope_geometry, general_qp_action_window,
+        qp_minimizers_from_dual_vertices, QpCandidateFamily4d,
     },
     solve_orbit_sigma_saddle_point, CertifiedOrbitSetMode, OrbitAdmissibility, OrbitGuaranteeMode,
 };
@@ -34,10 +36,10 @@ fn main() {
         minimizers.family, minimizers.capacity, minimizers.count, minimizers.first_sigma
     );
     println!(
-        "near_minimizer_window capacity={:.12} window_orbits={} exact_admissible={}",
+        "near_minimizer_window capacity={:.12} window_candidates={} exact_reference_agrees={}",
         near_minimizers.capacity,
-        near_minimizers.window_orbit_count,
-        near_minimizers.exact_admissible_count
+        near_minimizers.window_candidate_count,
+        near_minimizers.exact_reference_agrees
     );
     println!(
         "retained_candidate_fallback capacity={:.12} exact_resolutions={} retained_orbits={}",
@@ -98,15 +100,40 @@ fn production_minimizer_consumer(case: &ScanCase) -> ProductionMinimizers {
     }
 }
 
-/// Consumer shape for callers that need near-minimizing `(sigma, action)` rows,
-/// not only the scalar value. The retained exhaustive exact route owns the
-/// gap-window semantics because production has no action-window API yet.
+/// Ordinary consumer shape for exact near-minimizing `(sigma, action)` rows.
+/// The exact-all route below is a correspondence control, not the consumer.
 fn near_minimizer_window_consumer(case: &ScanCase) -> NearMinimizerWindow {
-    let exact = exact_report(case, BigRational::new(1.into(), 100.into()));
+    check_facet_count(case.dual_vertices.len()).expect("capacity facet-count bound");
+    check_finite_dual_vertices(&case.dual_vertices).expect("finite dual vertices");
+    check_dual_vertex_norm_bounds(&case.dual_vertices).expect("dual-vertex norm bounds");
+    let geometry =
+        exact_binary64_polytope_geometry(&case.dual_vertices).expect("exact binary64 geometry");
+    check_primal_vertex_norm_bounds(&geometry).expect("primal-vertex norm bounds");
+    let maximum_action_multiple = BigRational::new(101.into(), 100.into());
+    let window = general_qp_action_window(&geometry, maximum_action_multiple)
+        .expect("owned consumer fixture must have an exact general action window");
+
+    let exact = exact_report(
+        case,
+        window.capacity_exact().clone() * BigRational::new(1.into(), 100.into()),
+    );
+    let observed = window
+        .witnesses()
+        .iter()
+        .map(|witness| (witness.sigma.clone(), witness.action()))
+        .collect::<Vec<_>>();
+    let expected = exact
+        .orbits
+        .iter()
+        .map(|orbit| (orbit.sigma.clone(), orbit.action_exact.clone()))
+        .collect::<Vec<_>>();
     NearMinimizerWindow {
-        capacity: exact.capacity,
-        window_orbit_count: exact.orbits.len(),
-        exact_admissible_count: exact.exact_admissible_count,
+        capacity: window
+            .capacity_exact()
+            .to_f64()
+            .expect("owned consumer capacity fits binary64"),
+        window_candidate_count: window.witnesses().len(),
+        exact_reference_agrees: observed == expected,
     }
 }
 
@@ -244,8 +271,8 @@ struct ProductionMinimizers {
 #[derive(Debug)]
 struct NearMinimizerWindow {
     capacity: f64,
-    window_orbit_count: usize,
-    exact_admissible_count: usize,
+    window_candidate_count: usize,
+    exact_reference_agrees: bool,
 }
 
 #[derive(Debug)]

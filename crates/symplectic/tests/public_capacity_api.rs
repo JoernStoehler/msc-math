@@ -5,10 +5,10 @@ use symplectic::capacity_4d::{
     capacity, capacity_from_dual_vertices, capacity_value, check_dual_vertex_norm_bounds,
     check_facet_count, check_finite_dual_vertices, check_primal_vertex_norm_bounds,
     classify_lagrangian_product, exact_binary64_polytope_geometry, general_capacity,
-    general_qp_minimizers, product_capacity, qp_minimizers, qp_minimizers_from_dual_vertices,
-    solve_sigma_exact, Capacity4d, CapacityError4d, CapacityFromDualVerticesError4d,
-    CapacityInputBoundsError4d, CapacityValueError4d, ExactSigmaInputError4d, PolytopeGeometry4d,
-    PolytopeGeometryError4d, QpCandidateFamily4d,
+    general_qp_action_window, general_qp_minimizers, product_capacity, qp_minimizers,
+    qp_minimizers_from_dual_vertices, solve_sigma_exact, Capacity4d, CapacityError4d,
+    CapacityFromDualVerticesError4d, CapacityInputBoundsError4d, CapacityValueError4d,
+    ExactSigmaInputError4d, PolytopeGeometry4d, PolytopeGeometryError4d, QpCandidateFamily4d,
 };
 use symplectic::{
     aggregate_orbits_with_dual_vertices_exact, known_polytopes, solve_orbit_sigma_saddle_point,
@@ -275,10 +275,10 @@ fn general_minimizers_are_exact_and_support_on_demand_kkt_payloads() {
 }
 
 #[test]
-fn general_minimizers_match_complete_exact_simplex_enumeration() {
-    let fixture = known_polytopes::simplex();
+fn general_window_matches_complete_exact_enumeration() {
+    let fixture = known_polytopes::symplectic_triangle_square();
     let geometry = checked_geometry(&fixture.dual_vertices_f64);
-    let observed = general_qp_minimizers(&geometry).expect("general simplex minimizers");
+    let observed = general_qp_minimizers(&geometry).expect("general minimizers");
 
     let exact = fixture
         .dual_vertices_f64
@@ -308,7 +308,7 @@ fn general_minimizers_match_complete_exact_simplex_enumeration() {
         .iter()
         .map(|(_, q)| q)
         .max()
-        .expect("simplex has an exact positive candidate");
+        .expect("fixture has an exact positive candidate");
     let mut expected_sigmas = resolved
         .iter()
         .filter(|(_, q)| q == maximum_q)
@@ -322,6 +322,49 @@ fn general_minimizers_match_complete_exact_simplex_enumeration() {
     expected_sigmas.sort();
     observed_sigmas.sort();
     assert_eq!(observed_sigmas, expected_sigmas);
+
+    let capacity_exact =
+        BigRational::from_integer(1.into()) / (maximum_q.clone() + maximum_q.clone());
+    let mut exact_candidates = resolved
+        .iter()
+        .map(|(sigma, q)| {
+            (
+                sigma.clone(),
+                BigRational::from_integer(1.into()) / (q.clone() + q.clone()),
+            )
+        })
+        .collect::<Vec<_>>();
+    exact_candidates.sort_by(|left, right| left.1.cmp(&right.1).then_with(|| left.0.cmp(&right.0)));
+    let first_nonminimum_action = exact_candidates
+        .iter()
+        .map(|(_, action)| action)
+        .find(|action| action > &&capacity_exact)
+        .expect("fixture has a non-minimizing exact candidate")
+        .clone();
+    let inclusive_multiple = &first_nonminimum_action / &capacity_exact;
+    let window =
+        general_qp_action_window(&geometry, inclusive_multiple.clone()).expect("exact window");
+    assert_eq!(window.family(), QpCandidateFamily4d::GeneralHk);
+    assert_eq!(window.capacity_exact(), &capacity_exact);
+    assert_eq!(window.maximum_action_multiple(), &inclusive_multiple);
+    let expected_window = exact_candidates
+        .into_iter()
+        .filter(|(_, action)| action <= &first_nonminimum_action)
+        .collect::<Vec<_>>();
+    let observed_window = window
+        .witnesses()
+        .iter()
+        .map(|witness| (witness.sigma.clone(), witness.action()))
+        .collect::<Vec<_>>();
+    assert_eq!(observed_window, expected_window);
+    assert!(observed_window
+        .iter()
+        .any(|(_, action)| action == &first_nonminimum_action));
+
+    assert_eq!(
+        general_qp_action_window(&geometry, BigRational::new(99.into(), 100.into())),
+        Err(CapacityError4d::InvalidMaximumActionMultiple)
+    );
 }
 
 #[test]

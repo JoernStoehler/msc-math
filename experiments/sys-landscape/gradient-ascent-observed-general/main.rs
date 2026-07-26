@@ -3,26 +3,31 @@
 //! This is deliberately a plumbing smoke, not a retained panel or evidence for
 //! endpoint local maximality. It follows the current `dev-gradient-ascent`
 //! near-active candidate and records the exact geometry/provenance needed to
-//! make the wiring inspectable.
+//! make the wiring inspectable. Schema v2 uses the production exact general
+//! action window for basepoint branches and the production scalar route for
+//! finite-step targets; the retained v1 panel remains historical evidence for
+//! its original legacy branch selector.
 
 use exp_sys_landscape::{
     dual_vertices_rational_strings, exact_volume_from_incidence_as_f64, SysLandscapePolytopeCache,
 };
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::Vector4;
+use num_rational::BigRational;
+use num_traits::ToPrimitive;
 use serde::Serialize;
 use std::fs::{self, File};
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
-use symplectic::derivatives::{
-    capacity_subgradients_a, clarke_directional_derivative_a, systolic_ratio_gradient_a,
-    volume_derivatives_a,
+use symplectic::capacity_4d::{
+    capacity, capacity_value, check_dual_vertex_norm_bounds, check_facet_count,
+    check_finite_dual_vertices, check_primal_vertex_norm_bounds, general_qp_action_window,
+    PolytopeGeometry4d,
 };
-use symplectic::{
-    aggregate_orbits_with_dual_vertices_exact, classify_facets_from_dual_vertices,
-    solve_billiard_candidates, solve_pruned_hk2017_candidates, OrbitAdmissibility,
-    OrbitGuaranteeMode, OrbitKktData, OrbitSearchError, OrbitSearchResult,
+use symplectic::derivatives::{
+    capacity_subgradients_a_from_exact_orbits, clarke_directional_derivative_a,
+    systolic_ratio_gradient_a, volume_derivatives_a,
 };
 
 const FACET_COUNT: usize = 10;
@@ -53,8 +58,23 @@ struct GeometrySnapshot {
     volume: f64,
     sys: f64,
     dual_vertices_rational: Vec<[String; 4]>,
-    orbit_iterations: u64,
-    returned_orbit_count: usize,
+    capacity_certificate: CapacityCertificateSnapshot,
+}
+
+#[derive(Clone, Serialize)]
+#[serde(tag = "contract", rename_all = "snake_case")]
+enum CapacityCertificateSnapshot {
+    GeneralExactWindow {
+        capacity_exact: String,
+        maximum_action_multiple: String,
+        returned_window_count: usize,
+        near_active_count: usize,
+    },
+    ScalarBounds {
+        lower: f64,
+        upper: f64,
+        maximum_relative_error: f64,
+    },
 }
 
 #[derive(Serialize)]
@@ -75,7 +95,6 @@ struct DirectionAttempt {
     status: String,
     observed_delta_sys: Option<f64>,
     target_sys: Option<f64>,
-    target_orbit_iterations: Option<u64>,
 }
 
 #[derive(Serialize)]
@@ -112,7 +131,6 @@ struct EndpointResult {
 struct ComputeBudget {
     base_state_evaluations: usize,
     finite_step_evaluations: usize,
-    capacity_orbit_iterations: u64,
     elapsed_ms: f64,
 }
 
@@ -150,7 +168,6 @@ struct SmokeRow {
 #[derive(Clone)]
 struct BaseState {
     polytope: SysLandscapePolytopeCache,
-    capacity: OrbitSearchResult,
     snapshot: GeometrySnapshot,
     sys_gradients: Vec<Vec<Vector4<f64>>>,
 }
@@ -191,7 +208,6 @@ fn run_one(seed: u64, retained_preflight: bool) -> SmokeRow {
     let mut budget = ComputeBudget {
         base_state_evaluations: 0,
         finite_step_evaluations: 0,
-        capacity_orbit_iterations: 0,
         elapsed_ms: 0.0,
     };
     let mut generator = GeneratorIdentity {
@@ -227,7 +243,6 @@ fn run_one(seed: u64, retained_preflight: bool) -> SmokeRow {
         }
     };
     budget.base_state_evaluations += 1;
-    budget.capacity_orbit_iterations += initial.snapshot.orbit_iterations;
     let start_snapshot = initial.snapshot.clone();
     let mut current_polytope = initial.polytope.clone();
     let mut final_snapshot = initial.snapshot.clone();
@@ -240,7 +255,6 @@ fn run_one(seed: u64, retained_preflight: bool) -> SmokeRow {
             match compute_base_state(current_polytope.clone()) {
                 Ok(base) => {
                     budget.base_state_evaluations += 1;
-                    budget.capacity_orbit_iterations += base.snapshot.orbit_iterations;
                     base
                 }
                 Err(err) => {
@@ -290,7 +304,6 @@ fn run_one(seed: u64, retained_preflight: bool) -> SmokeRow {
                     .map(|derivative| derivative * step);
                 if let Some(evaluation) = outcome.evaluation {
                     budget.finite_step_evaluations += 1;
-                    budget.capacity_orbit_iterations += evaluation.snapshot.orbit_iterations;
                     let observed_delta = evaluation.snapshot.sys - base.snapshot.sys;
                     let is_accepted = observed_delta > effective_threshold;
                     attempts.push(DirectionAttempt {
@@ -305,7 +318,6 @@ fn run_one(seed: u64, retained_preflight: bool) -> SmokeRow {
                         .to_string(),
                         observed_delta_sys: Some(observed_delta),
                         target_sys: Some(evaluation.snapshot.sys),
-                        target_orbit_iterations: Some(evaluation.snapshot.orbit_iterations),
                     });
                     if is_accepted {
                         chosen_direction_label = Some(direction.label.to_string());
@@ -323,7 +335,6 @@ fn run_one(seed: u64, retained_preflight: bool) -> SmokeRow {
                         status: outcome.failure.expect("failed evaluation has reason"),
                         observed_delta_sys: None,
                         target_sys: None,
-                        target_orbit_iterations: None,
                     });
                 }
             }
@@ -362,7 +373,7 @@ fn run_one(seed: u64, retained_preflight: bool) -> SmokeRow {
     );
     budget.elapsed_ms = started.elapsed().as_secs_f64() * 1_000.0;
     SmokeRow {
-        schema: "gradient_ascent_observed_general_smoke_v1".to_string(),
+        schema: "gradient_ascent_observed_general_smoke_v2".to_string(),
         run_id: format!("observed-general-smoke-seed-{seed}"),
         purpose: if retained_preflight { "retained_mode_one_seed_preflight" } else { "plumbing_smoke_one_random_F10_start" }.to_string(),
         status: "completed".to_string(),
@@ -414,7 +425,6 @@ fn endpoint_scan(
         }
     };
     budget.base_state_evaluations += 1;
-    budget.capacity_orbit_iterations += base.snapshot.orbit_iterations;
     let threshold = threshold(base.snapshot.sys);
     let mut directions = match candidate_directions(&base) {
         Ok(directions) => directions,
@@ -447,7 +457,6 @@ fn endpoint_scan(
                 .map(|derivative| derivative * step);
             if let Some(evaluation) = outcome.evaluation {
                 budget.finite_step_evaluations += 1;
-                budget.capacity_orbit_iterations += evaluation.snapshot.orbit_iterations;
                 let observed_delta = evaluation.snapshot.sys - base.snapshot.sys;
                 positive |= observed_delta > 0.0;
                 above_threshold |= observed_delta > threshold;
@@ -465,7 +474,6 @@ fn endpoint_scan(
                     .to_string(),
                     observed_delta_sys: Some(observed_delta),
                     target_sys: Some(evaluation.snapshot.sys),
-                    target_orbit_iterations: Some(evaluation.snapshot.orbit_iterations),
                 });
             } else {
                 attempts.push(DirectionAttempt {
@@ -475,7 +483,6 @@ fn endpoint_scan(
                     status: outcome.failure.expect("failed evaluation has reason"),
                     observed_delta_sys: None,
                     target_sys: None,
-                    target_orbit_iterations: None,
                 });
             }
         }
@@ -532,7 +539,7 @@ fn failed_row(
 ) -> SmokeRow {
     budget.elapsed_ms = elapsed_ms;
     SmokeRow {
-        schema: "gradient_ascent_observed_general_smoke_v1".to_string(),
+        schema: "gradient_ascent_observed_general_smoke_v2".to_string(),
         run_id: format!("observed-general-smoke-seed-{seed}"),
         purpose: "plumbing_smoke_one_random_F10_start".to_string(),
         status: "failed".to_string(),
@@ -560,7 +567,7 @@ fn configuration(seed: u64, retained_preflight: bool) -> Configuration {
         }
         .to_string(),
         seeds: vec![seed],
-        method_variant: "iterative_observed_multi_direction_probe".to_string(),
+        method_variant: "iterative_exact_window_multi_direction_probe".to_string(),
         branch_threshold_relative: BRANCH_THRESHOLD_RELATIVE,
         action_window_relative: ACTION_WINDOW_RELATIVE,
         trace_steps: if retained_preflight {
@@ -595,46 +602,62 @@ fn threshold(base_sys: f64) -> f64 {
 }
 
 fn compute_base_state(polytope: SysLandscapePolytopeCache) -> Result<BaseState, String> {
-    let provisional =
-        capacity_auto_with_gap(&polytope, 0.0).map_err(|err| format!("capacity_failed:{err:?}"))?;
-    let capacity =
-        capacity_auto_with_gap(&polytope, provisional.min_action * ACTION_WINDOW_RELATIVE)
-            .map_err(|err| format!("near_active_capacity_failed:{err:?}"))?;
+    let geometry = checked_capacity_geometry(&polytope)?;
+    let maximum_action_multiple = BigRational::new(101.into(), 100.into());
+    let window = general_qp_action_window(&geometry, maximum_action_multiple.clone())
+        .map_err(|err| format!("near_active_capacity_failed:{err:?}"))?;
+    let capacity_exact = window.capacity_exact().clone();
+    let capacity = capacity_exact
+        .to_f64()
+        .filter(|value| value.is_finite() && *value > 0.0)
+        .ok_or_else(|| "capacity_not_representable_as_f64".to_string())?;
     let volume =
         exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if !volume.is_finite() || volume <= 0.0 {
         return Err("volume_failed".to_string());
     }
-    let sys = symplectic::systolic_ratio(capacity.min_action, volume);
+    let sys = symplectic::systolic_ratio(capacity, volume);
     if !sys.is_finite() {
         return Err("sys_failed".to_string());
     }
-    let near_active = near_active_orbits(&capacity, BRANCH_THRESHOLD_RELATIVE);
+    let near_active_multiple = BigRational::new(1001.into(), 1000.into());
+    let near_active_cutoff = &capacity_exact * near_active_multiple;
+    let near_active = window
+        .witnesses()
+        .iter()
+        .filter(|witness| witness.action() <= near_active_cutoff)
+        .cloned()
+        .collect::<Vec<_>>();
+    if near_active.is_empty() {
+        return Err("empty_near_active_window".to_string());
+    }
     let volume_gradients = volume_derivatives_a(
         &polytope.dual_vertices_f64,
         &polytope.vertices_f64,
         &polytope.vertex_facet_incidence,
     )
     .map_err(|err| format!("volume_derivative_failed:{err:?}"))?;
-    let capacity_gradients = capacity_subgradients_a(&polytope.dual_vertices_f64, &near_active)
-        .map_err(|err| format!("capacity_derivative_failed:{err:?}"))?;
+    let capacity_gradients =
+        capacity_subgradients_a_from_exact_orbits(&polytope.dual_vertices_f64, &near_active)
+            .map_err(|err| format!("capacity_derivative_failed:{err:?}"))?;
     let sys_gradients = capacity_gradients
         .iter()
-        .map(|gradient| {
-            systolic_ratio_gradient_a(capacity.min_action, volume, gradient, &volume_gradients)
-        })
+        .map(|gradient| systolic_ratio_gradient_a(capacity, volume, gradient, &volume_gradients))
         .collect();
     Ok(BaseState {
         snapshot: GeometrySnapshot {
-            capacity: capacity.min_action,
+            capacity,
             volume,
             sys,
             dual_vertices_rational: dual_vertices_rational_strings(&polytope),
-            orbit_iterations: provisional.iterations + capacity.iterations,
-            returned_orbit_count: capacity.orbits.len(),
+            capacity_certificate: CapacityCertificateSnapshot::GeneralExactWindow {
+                capacity_exact: capacity_exact.to_string(),
+                maximum_action_multiple: maximum_action_multiple.to_string(),
+                returned_window_count: window.witnesses().len(),
+                near_active_count: near_active.len(),
+            },
         },
         polytope,
-        capacity,
         sys_gradients,
     })
 }
@@ -687,10 +710,16 @@ fn evaluate_step(base: &BaseState, direction: &[Vector4<f64>], step: f64) -> Ste
             failure: Some("target_polytope_construction_failed".to_string()),
         };
     };
-    let capacity = match capacity_auto_with_gap(
-        &polytope,
-        base.capacity.min_action * ACTION_WINDOW_RELATIVE,
-    ) {
+    let geometry = match checked_capacity_geometry(&polytope) {
+        Ok(geometry) => geometry,
+        Err(err) => {
+            return StepOutcome {
+                evaluation: None,
+                failure: Some(format!("target_capacity_geometry_failed:{err}")),
+            }
+        }
+    };
+    let capacity_result = match capacity(&geometry) {
         Ok(capacity) => capacity,
         Err(err) => {
             return StepOutcome {
@@ -699,9 +728,20 @@ fn evaluate_step(base: &BaseState, direction: &[Vector4<f64>], step: f64) -> Ste
             }
         }
     };
+    let maximum_relative_error = 1e-10;
+    let capacity = match capacity_value(&capacity_result, maximum_relative_error) {
+        Ok(value) => value,
+        Err(err) => {
+            return StepOutcome {
+                evaluation: None,
+                failure: Some(format!("target_capacity_bounds_too_wide:{err}")),
+            }
+        }
+    };
+    let bounds = capacity_result.bounds();
     let volume =
         exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
-    let sys = symplectic::systolic_ratio(capacity.min_action, volume);
+    let sys = symplectic::systolic_ratio(capacity, volume);
     if !volume.is_finite() || volume <= 0.0 || !sys.is_finite() {
         return StepOutcome {
             evaluation: None,
@@ -711,12 +751,15 @@ fn evaluate_step(base: &BaseState, direction: &[Vector4<f64>], step: f64) -> Ste
     StepOutcome {
         evaluation: Some(FiniteEvaluation {
             snapshot: GeometrySnapshot {
-                capacity: capacity.min_action,
+                capacity,
                 volume,
                 sys,
                 dual_vertices_rational: dual_vertices_rational_strings(&polytope),
-                orbit_iterations: capacity.iterations,
-                returned_orbit_count: capacity.orbits.len(),
+                capacity_certificate: CapacityCertificateSnapshot::ScalarBounds {
+                    lower: bounds.lower(),
+                    upper: bounds.upper(),
+                    maximum_relative_error,
+                },
             },
             polytope,
         }),
@@ -749,53 +792,37 @@ fn maximin_direction(gradients: &[Vec<Vector4<f64>>]) -> Option<Vec<Vector4<f64>
     normalize(&unflatten(&flat))
 }
 
-fn near_active_orbits(result: &OrbitSearchResult, threshold: f64) -> Vec<OrbitKktData> {
-    let cutoff = result.min_action * (1.0 + threshold.max(0.0));
-    let mut orbits: Vec<_> = result
-        .orbits
-        .iter()
-        .filter(|orbit| {
-            matches!(
-                orbit.admissibility,
-                OrbitAdmissibility::AdmissibleF64 | OrbitAdmissibility::AdmissibleExact
-            )
-        })
-        .filter(|orbit| orbit.action <= cutoff)
-        .cloned()
-        .collect();
-    if orbits.is_empty() {
-        orbits.push(result.best_orbit().clone());
-    }
-    orbits
+fn checked_capacity_geometry(
+    polytope: &SysLandscapePolytopeCache,
+) -> Result<PolytopeGeometry4d, String> {
+    check_facet_count(polytope.dual_vertices_f64.len())
+        .map_err(|error| format!("facet-count check failed: {error}"))?;
+    check_finite_dual_vertices(&polytope.dual_vertices_f64)
+        .map_err(|error| format!("finite-coordinate check failed: {error}"))?;
+    check_dual_vertex_norm_bounds(&polytope.dual_vertices_f64)
+        .map_err(|error| format!("dual-vertex norm check failed: {error}"))?;
+    let geometry = PolytopeGeometry4d {
+        dual_vertices: polytope.dual_vertices_f64.clone(),
+        dual_vertices_exact: vectors_from_arrays(&polytope.dual_vertices),
+        primal_vertices_exact: vectors_from_arrays(&polytope.vertices),
+        vertex_facet_incidence: polytope.vertex_facet_incidence.clone(),
+    };
+    check_primal_vertex_norm_bounds(&geometry)
+        .map_err(|error| format!("primal-vertex norm check failed: {error}"))?;
+    Ok(geometry)
 }
 
-fn capacity_auto_with_gap(
-    polytope: &SysLandscapePolytopeCache,
-    action_gap: f64,
-) -> Result<OrbitSearchResult, OrbitSearchError> {
-    let transitions = symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
-        &polytope.facet_intersection_is_nonempty, &polytope.omega_signs,
-    );
-    let (orbits, iterations) = if let Ok(classification) =
-        classify_facets_from_dual_vertices(&polytope.dual_vertices_f64)
-    {
-        solve_billiard_candidates(
-            &polytope.dual_vertices_f64,
-            &classification.q_indices,
-            &classification.p_indices,
-            &polytope.facet_intersection_is_nonempty,
-            &transitions,
-        )?
-    } else {
-        solve_pruned_hk2017_candidates(&polytope.dual_vertices_f64, &transitions)?
-    };
-    aggregate_orbits_with_dual_vertices_exact(
-        &polytope.dual_vertices,
-        orbits,
-        iterations,
-        action_gap.max(0.0),
-        OrbitGuaranteeMode::AllSafe,
-    )
+fn vectors_from_arrays(data: &[[BigRational; 4]]) -> Vec<Vector4<BigRational>> {
+    data.iter()
+        .map(|row| {
+            Vector4::new(
+                row[0].clone(),
+                row[1].clone(),
+                row[2].clone(),
+                row[3].clone(),
+            )
+        })
+        .collect()
 }
 
 fn flatten(vectors: &[Vector4<f64>]) -> Vec<f64> {

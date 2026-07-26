@@ -1,9 +1,16 @@
 # Observed General Gradient Ascent: Retained Fixed Panel
 
-This packet retains a completed fixed-`F=10` panel for the current
+This packet retains a completed fixed-`F=10` panel for the historical
 `iterative_observed_multi_direction_probe` candidate. It is a method-result
 packet, not a local-maximality certificate or a source of new `sys > 1`
 examples.
+
+The tracked panel is historical schema `v1` evidence for the legacy
+`OrbitSearchResult` branch selection used at its recorded source commit. The
+current producer emits schema `v2`: exact general action-window KKT witnesses
+define basepoint branches, while finite-step targets use certified scalar
+capacity bounds. Do not feed `v2` rows to the retained `v1` analyzer or
+reinterpret the old panel as evidence for the migrated implementation.
 
 ## Retention and validation
 
@@ -28,20 +35,17 @@ aggregate costs. It writes [`artifacts/summary.json`](artifacts/summary.json).
 
 ## Fresh-session reproduction contract
 
-This is a source-to-raw-to-retained procedure.  Run it from a clean checkout
+This is a source-to-raw-to-retained procedure. Run it from a clean checkout
 at the source identity recorded below; do **not** write a fresh run into the
-tracked `artifacts/` directory.  The retained panel was introduced in commit
-`dadf7aa824e3d0cd237f45d666ae894b86c600fe`.  At that commit, and at the
-current version of this packet, the producer and analyzer SHA-256 digests are
-respectively
+tracked `artifacts/` directory. The retained panel was introduced in commit
+`dadf7aa824e3d0cd237f45d666ae894b86c600fe`. At that commit, the producer and
+analyzer SHA-256 digests were respectively
 `2642d4390939ba9d43f6515bfdd0add16263d65564c2a45d4a1fd015220fa9e9` and
 `703212db0d3d501f7bdced290c29e024022b034ca84b335fa6558939ace806cb`.
 
-First record the checkout identity and reject local changes to the producer,
-analyzer, or dependency lockfile.  If the commit is not the retained-panel
-commit, matching the two source hashes above establishes the relevant
-producer/analyzer identity; also retain the recorded `Cargo.lock` hash and
-full commit ID with the new raw directory.
+Run the historical reproduction commands only from that retained-panel
+commit. First record the checkout identity and reject local changes to the
+producer, analyzer, or dependency lockfile.
 
 ```bash
 git rev-parse HEAD
@@ -110,6 +114,22 @@ The required identities are (1) the recorded source/lockfile identity, and
 the analyzer's validation and its resulting statuses—not a byte comparison to
 the historical artifact—to decide whether a fresh panel satisfies the same
 retention contract.
+
+## Current migrated smoke
+
+Run the current `v2` producer only to an untracked path until a separate
+retention decision is made:
+
+```bash
+cargo run -p exp-sys-landscape --release \
+  --bin sys-gradient-ascent-observed-general -- \
+  --seed 42 --out /tmp/observed-general-production-v2-seed-42.jsonl
+jq '{schema,status,failure,method:.configuration.method_variant,
+     start_certificate:.start.capacity_certificate,compute_budget}' \
+  /tmp/observed-general-production-v2-seed-42.jsonl
+```
+
+This is a migration/behavior smoke, not a replacement retained panel.
 
 ## Fixed run parameters
 

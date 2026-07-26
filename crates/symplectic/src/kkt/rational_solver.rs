@@ -7,12 +7,13 @@
 //! solver with null-space handling.
 //!
 //! **Role in the crate:** The exact solver produces exact one-word KKT
-//! witnesses for validating f64 behavior and for exact aggregation. A returned
-//! witness is not by itself a fixed-word maximum or a physical Reeb orbit. A
-//! complete exact HK enumeration may use the values of all such feasible
-//! witnesses to recover the scalar capacity; that outer completeness contract
-//! is separate from this solver. The solver is NOT used in the main f64
-//! capacity enumeration pipeline (too slow for sweeping all permutations).
+//! witnesses for validating f64 behavior, exact aggregation, and lazy
+//! resolution after the numerical capacity route has reduced the candidate
+//! set. A returned witness is not by itself a fixed-word maximum or a physical
+//! Reeb orbit. A complete exact HK enumeration may use the values of all such
+//! feasible witnesses to recover the scalar capacity; that outer completeness
+//! contract is separate from this solver. The scalar production route does not
+//! sweep all permutations with this exact solver.
 //!
 //! **Rank-deficient systems:** When the KKT matrix is exactly rank-deficient
 //! over `Q` (common for polytopes with axis-aligned normals in symplectic
@@ -50,6 +51,10 @@ pub struct ExactKktResult {
     pub q_exact: BigRational,
     /// Q_exact converted to f64 (for convenient comparison with f64 solver).
     pub q_exact_f64: f64,
+    /// Exact closure multiplier from the same selected KKT solution.
+    pub mu: [BigRational; 4],
+    /// Exact normalization multiplier from the same selected KKT solution.
+    pub xi: BigRational,
 }
 
 /// Solve the KKT system exactly for a single (S, sigma) combinatorics.
@@ -82,8 +87,7 @@ pub fn solve_kkt_exact(
     let (matrix, rhs) = build_kkt_matrix(dual_vertices, perm);
 
     if let Some(solution) = solve_dyadic_rational_system_full_rank(&matrix, &rhs) {
-        let beta = solution.iter().take(m).cloned().collect::<Vec<_>>();
-        return exact_result_from_beta(dual_vertices, perm, beta);
+        return exact_result_from_solution(dual_vertices, perm, solution.iter().cloned().collect());
     }
 
     match solve_linear_system(&matrix, &rhs) {
@@ -92,8 +96,7 @@ pub fn solve_kkt_exact(
             particular,
             kernel_basis,
         } if kernel_basis.ncols() == 0 => {
-            let beta = particular.iter().take(m).cloned().collect();
-            exact_result_from_beta(dual_vertices, perm, beta)
+            exact_result_from_solution(dual_vertices, perm, particular.iter().cloned().collect())
         }
         LinearSystemSolution::Consistent {
             particular,
@@ -105,18 +108,28 @@ pub fn solve_kkt_exact(
                 .collect();
 
             // Search null space for beta > 0 (exact via Fourier-Motzkin).
-            let beta = find_positive_beta(&beta0, &null_beta)?;
-
-            exact_result_from_beta(dual_vertices, perm, beta)
+            let (_, alpha) = find_positive_beta_and_coefficients(&beta0, &null_beta)?;
+            let mut solution = particular;
+            for col in 0..kernel_basis.ncols() {
+                for row in 0..solution.len() {
+                    solution[row] += &kernel_basis[(row, col)] * &alpha[col];
+                }
+            }
+            exact_result_from_solution(dual_vertices, perm, solution.iter().cloned().collect())
         }
     }
 }
 
-fn exact_result_from_beta(
+fn exact_result_from_solution(
     dual_vertices: &[[BigRational; 4]],
     perm: &[usize],
-    beta: Vec<BigRational>,
+    solution: Vec<BigRational>,
 ) -> Option<ExactKktResult> {
+    let m = perm.len();
+    if solution.len() != m + 5 {
+        return None;
+    }
+    let beta = solution[..m].to_vec();
     if !beta.iter().all(BigRational::is_positive) {
         return None;
     }
@@ -126,6 +139,13 @@ fn exact_result_from_beta(
         beta,
         q_exact,
         q_exact_f64,
+        mu: [
+            solution[m].clone(),
+            solution[m + 1].clone(),
+            solution[m + 2].clone(),
+            solution[m + 3].clone(),
+        ],
+        xi: solution[m + 4].clone(),
     })
 }
 
@@ -194,15 +214,16 @@ fn build_kkt_matrix(
 ///   beta0[j] + alpha_1 * v_1[j] + ... + alpha_k * v_k[j] > 0  for all j.
 ///
 /// Uses Fourier-Motzkin variable elimination: exact and certifying.
-/// - `Some(beta)`: witness with all beta[j] > 0.
+/// - `Some((beta, alpha))`: positive beta witness and the null-space
+///   coefficients that produced it.
 /// - `None`: no solution exists (certified).
 ///
 /// Complexity: O(m^{2^k}) constraints worst-case, where m = len(beta0),
 /// k = len(null_vecs). For KKT systems (m <= 16, k <= 3): at most ~1000.
-fn find_positive_beta(
+fn find_positive_beta_and_coefficients(
     beta0: &[BigRational],
     null_vecs: &[Vec<BigRational>],
-) -> Option<Vec<BigRational>> {
+) -> Option<(Vec<BigRational>, Vec<BigRational>)> {
     let m = beta0.len();
     let k = null_vecs.len();
 
@@ -348,7 +369,7 @@ fn find_positive_beta(
         beta.iter().all(|b| b.is_positive()),
         "FM back-substitution produced non-positive beta"
     );
-    Some(beta)
+    Some((beta, alpha))
 }
 
 // ── Q computation ────────────────────────────────────────────────────────

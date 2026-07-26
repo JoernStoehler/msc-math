@@ -235,6 +235,8 @@ fn exact_fallback_invariant_rejects_bad_equalities() {
         beta,
         q_exact: rat(1),
         q_exact_f64: 1.0,
+        mu: std::array::from_fn(|_| rat(0)),
+        xi: rat(0),
     };
 
     assert!(

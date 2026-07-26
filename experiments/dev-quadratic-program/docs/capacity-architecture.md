@@ -84,14 +84,16 @@ validated input
       |       - named candidate-family guarantee
       |
       +--> exact action window
-              - all covered words within the requested gap
-              - exact actions
+              - all general-HK words within an exact capacity multiple
+              - exact action and one exact beta, q, mu, xi witness
 ```
 
 Implemented:
 
 - `qp_minimizers_from_dual_vertices` for the ordinary one-shot question;
 - `qp_minimizers(geometry)` for callers retaining intermediate geometry;
+- `general_qp_action_window(geometry, maximum_action_multiple)`, with an
+  inclusive exact endpoint and one exact KKT witness per returned word;
 - `QpCandidateFamily4d::{GeneralHk, ProductClosureVertex}`;
 - exact `sigma` and action for every returned candidate.
 
@@ -101,7 +103,8 @@ degenerate within-word solution family.
 
 Still missing:
 
-- the exact action-window interface and endpoint semantics.
+- a product action-window contract, for which no ordinary migrated consumer
+  has yet established a need.
 
 ### One-word KKT analysis
 

@@ -16,10 +16,13 @@
 //! `formal/capacity-derivatives.tex`.
 
 use crate::algorithms::OrbitKktData;
+use crate::exact::ExactOrbitKktData;
 use crate::geom::symplectic_form::j4;
 use crate::kkt::saddle_point_solver::KktResult;
 use euclidean_polytopes::{facet_volume_and_centroid_from_incidence_f64, F64GeometryError};
 use nalgebra::{DMatrix, Vector4};
+use num_rational::BigRational;
+use num_traits::ToPrimitive;
 
 /// Facet-volume floor below which the volume derivative treats a facet as
 /// degenerate and returns the zero contribution.
@@ -34,6 +37,9 @@ pub enum DerivativeError {
     /// The directional derivative of an empty Clarke-subdifferential is
     /// undefined.
     EmptySubdifferential,
+    /// An exact rational KKT component cannot be represented as finite
+    /// binary64 for the binary64 derivative calculation.
+    ExactKktValueOutsideF64,
 }
 
 /// Compute ∂c/∂a_k for all facets k = 0..f, where c = 1/(2Q).
@@ -281,6 +287,44 @@ pub fn capacity_subgradients_a(
         .collect()
 }
 
+/// Convert exact rational KKT witnesses to binary64 only at the derivative
+/// boundary, then assemble one capacity gradient per witness.
+pub fn capacity_subgradients_a_from_exact_orbits(
+    dual_vertices: &[Vector4<f64>],
+    orbits: &[ExactOrbitKktData<BigRational>],
+) -> Result<Vec<Vec<Vector4<f64>>>, DerivativeError> {
+    orbits
+        .iter()
+        .map(|orbit| {
+            let beta = orbit
+                .beta
+                .iter()
+                .map(finite_f64)
+                .collect::<Result<Vec<_>, _>>()?;
+            let q = finite_f64(&orbit.q)?;
+            let mu = orbit
+                .mu
+                .iter()
+                .map(finite_f64)
+                .collect::<Result<Vec<_>, _>>()?;
+            Ok(capacity_derivatives_a(
+                &beta,
+                q,
+                &mu,
+                &orbit.sigma,
+                dual_vertices,
+            ))
+        })
+        .collect()
+}
+
+fn finite_f64(value: &BigRational) -> Result<f64, DerivativeError> {
+    value
+        .to_f64()
+        .filter(|value| value.is_finite())
+        .ok_or(DerivativeError::ExactKktValueOutsideF64)
+}
+
 /// Directional derivative of one facet-indexed gradient in the perturbation
 /// direction `d`.
 pub fn directional_derivative_a(grad: &[Vector4<f64>], direction: &[Vector4<f64>]) -> f64 {
@@ -496,6 +540,29 @@ mod tests {
         let wrapped = capacity_derivatives_a_from_kkt_result(&kp.dual_vertices_f64, &sigma, &kkt);
 
         assert_eq!(wrapped, direct);
+    }
+
+    #[test]
+    fn exact_orbit_subgradient_boundary_matches_f64_kkt_solution() {
+        let kp = known_polytopes::simplex();
+        let sigma = pruned_capacity_for_fixture(kp)
+            .expect("simplex should have a certified best orbit")
+            .best_sigma()
+            .to_vec();
+        let exact_vertices = exact_vectors_from_dual_vertices_f64(&kp.dual_vertices_f64);
+        let exact = crate::exact::solve_orbit_sigma_exact_rational(&exact_vertices, &sigma)
+            .expect("best simplex orbit should solve exactly");
+        let observed = capacity_subgradients_a_from_exact_orbits(&kp.dual_vertices_f64, &[exact])
+            .expect("exact simplex data fits binary64");
+        let f64_kkt = solve_kkt_for_dual_vertices(&kp.dual_vertices_f64, &sigma)
+            .feasible()
+            .expect("best simplex orbit should solve in binary64");
+        let expected =
+            capacity_derivatives_a_from_kkt_result(&kp.dual_vertices_f64, &sigma, &f64_kkt);
+
+        for (observed, expected) in observed[0].iter().zip(expected) {
+            assert!((observed - expected).norm() < 1e-10);
+        }
     }
 
     /// Orbit-payload helper should fail explicitly when multiplier data is not

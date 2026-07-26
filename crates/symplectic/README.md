@@ -46,6 +46,13 @@ capacity interval certifies the requested relative error. Use
 `qp_minimizers_from_dual_vertices` when the desired output is every tied
 minimizing word and its exact action.
 
+Use
+`general_qp_action_window(&geometry, maximum_action_multiple)` for every
+exactly admissible general-HK word with action at most the supplied exact
+multiple of capacity. It returns one exact `beta`, `q`, `mu`, and `xi` witness
+per word, so derivative consumers do not rerun the KKT solve. The endpoint is
+inclusive. Product action windows are not implemented.
+
 Callers that need intermediate geometry can instead use the named stages
 `check_facet_count`, `check_finite_dual_vertices`,
 `check_dual_vertex_norm_bounds`, `exact_binary64_polytope_geometry`,

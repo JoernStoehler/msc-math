@@ -4,8 +4,10 @@
 //! This API is separate from [`crate::algorithms::orbit_search`]. Scalar
 //! functions return only the capacity certificate. [`qp_minimizers`]
 //! additionally exact-resolves every tied minimizing word in its stated finite
-//! candidate family, and [`solve_sigma_exact`] obtains the full exact KKT
-//! payload for one requested word.
+//! candidate family. [`general_qp_action_window`] returns one full exact KKT
+//! witness for every general-HK word within an exact capacity multiple, and
+//! [`solve_sigma_exact`] obtains the full exact KKT payload for one requested
+//! word.
 //!
 //! Most callers should use [`capacity_from_dual_vertices`]. Callers that need
 //! minimizing words should use [`qp_minimizers_from_dual_vertices`]. Callers
@@ -91,7 +93,7 @@ pub enum QpCandidateFamily4d {
     ProductClosureVertex,
 }
 
-/// One exactly admissible minimizing word for the exact binary64 input.
+/// One exactly admissible word selected by a production QP request.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct CertifiedQpCandidate4d {
     sigma: Vec<usize>,
@@ -127,6 +129,38 @@ impl QpMinimizers4d {
 
     pub fn candidates(&self) -> &[CertifiedQpCandidate4d] {
         &self.candidates
+    }
+}
+
+/// Every exactly admissible general-HK word whose action is at most a
+/// caller-supplied exact multiple of capacity.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct QpActionWindow4d {
+    family: QpCandidateFamily4d,
+    capacity_exact: BigRational,
+    maximum_action_multiple: BigRational,
+    witnesses: Vec<ExactOrbitKktData<BigRational>>,
+}
+
+impl QpActionWindow4d {
+    pub fn family(&self) -> QpCandidateFamily4d {
+        self.family
+    }
+
+    pub fn capacity_exact(&self) -> &BigRational {
+        &self.capacity_exact
+    }
+
+    pub fn maximum_action_multiple(&self) -> &BigRational {
+        &self.maximum_action_multiple
+    }
+
+    /// One exact positive KKT witness for each returned discrete word.
+    ///
+    /// A rank-deficient word may have more than one positive solution; this
+    /// result selects one witness and does not parameterize that family.
+    pub fn witnesses(&self) -> &[ExactOrbitKktData<BigRational>] {
+        &self.witnesses
     }
 }
 
@@ -230,6 +264,7 @@ pub fn capacity_value(
 pub enum CapacityError4d {
     ProductRouteRequiresStructuralProduct,
     ProductRouteFailed(ProductRouteFailure4d),
+    InvalidMaximumActionMultiple,
     GeneralCandidateLimitExceeded { limit: usize },
     NoPositiveGeneralCandidate,
     GeneralExactContenderResolutionFailed { sigma: Vec<usize> },
@@ -246,6 +281,9 @@ impl std::fmt::Display for CapacityError4d {
                     formatter,
                     "validated product-route invariant failed: {error:?}"
                 )
+            }
+            Self::InvalidMaximumActionMultiple => {
+                formatter.write_str("maximum action multiple must be at least one")
             }
             Self::GeneralCandidateLimitExceeded { limit } => write!(
                 formatter,
@@ -480,20 +518,66 @@ fn general_qp_minimizers_assuming_checked(
     let report = general::solve_selected_general_minimizers(&geometry.dual_vertices, words)
         .map_err(|sigma| CapacityError4d::GeneralExactContenderResolutionFailed { sigma })?
         .ok_or(CapacityError4d::NoPositiveGeneralCandidate)?;
+    let selection = report
+        .exact_selection
+        .expect("the rich general request materializes exact candidates");
+    debug_assert!(selection
+        .candidates
+        .iter()
+        .all(|candidate| candidate.witness.action() == selection.capacity_exact));
     Ok(QpMinimizers4d {
         family: QpCandidateFamily4d::GeneralHk,
         bounds: CapacityBounds4d {
             lower: report.bounds.0,
             upper: report.bounds.1,
         },
-        candidates: report
-            .minimizers
-            .expect("the rich general request materializes minimizers")
+        candidates: selection
+            .candidates
             .into_iter()
-            .map(|candidate| CertifiedQpCandidate4d {
-                sigma: candidate.sigma,
-                action_exact: candidate.action_exact,
+            .map(|candidate| {
+                let action_exact = candidate.witness.action();
+                CertifiedQpCandidate4d {
+                    sigma: candidate.witness.sigma,
+                    action_exact,
+                }
             })
+            .collect(),
+    })
+}
+
+/// Return every exactly admissible general-HK word whose exact action is at
+/// most `maximum_action_multiple * capacity`.
+///
+/// The multiple is exact, inclusive, and must be at least one. This forces the
+/// complete transition-pruned general candidate family even when the input is
+/// a structural product.
+pub fn general_qp_action_window(
+    geometry: &PolytopeGeometry4d,
+    maximum_action_multiple: BigRational,
+) -> Result<QpActionWindow4d, CapacityError4d> {
+    assert_capacity_input_bounds(geometry);
+    if maximum_action_multiple < BigRational::from_integer(1.into()) {
+        return Err(CapacityError4d::InvalidMaximumActionMultiple);
+    }
+    let words = general_words(geometry)?;
+    let report = general::solve_selected_general_action_window(
+        &geometry.dual_vertices,
+        words,
+        maximum_action_multiple.clone(),
+    )
+    .map_err(|sigma| CapacityError4d::GeneralExactContenderResolutionFailed { sigma })?
+    .ok_or(CapacityError4d::NoPositiveGeneralCandidate)?;
+    let selection = report
+        .exact_selection
+        .expect("the action-window request materializes exact candidates");
+    Ok(QpActionWindow4d {
+        family: QpCandidateFamily4d::GeneralHk,
+        capacity_exact: selection.capacity_exact,
+        maximum_action_multiple,
+        witnesses: selection
+            .candidates
+            .into_iter()
+            .map(|candidate| candidate.witness)
             .collect(),
     })
 }

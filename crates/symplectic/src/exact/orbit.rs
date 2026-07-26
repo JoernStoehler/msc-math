@@ -9,9 +9,8 @@
 //! positivity search path used here.
 
 use crate::exact::polytope::omega0;
-use algebraic_numbers::{
-    solve_dyadic_rational_system_full_rank, solve_linear_system, ExactScalar, LinearSystemSolution,
-};
+use crate::kkt::rational_solver::solve_kkt_exact;
+use algebraic_numbers::{solve_linear_system, ExactScalar, LinearSystemSolution};
 use nalgebra::{DMatrix, DVector, Vector4};
 use num_rational::BigRational;
 
@@ -74,13 +73,30 @@ pub fn solve_orbit_sigma_exact_rational(
     sigma: &[usize],
 ) -> Option<ExactOrbitKktData<BigRational>> {
     assert!(is_partial_permutation(sigma, dual_vertices.len()));
-    let (matrix, rhs) = build_kkt_matrix(dual_vertices, sigma);
-    match solve_dyadic_rational_system_full_rank(&matrix, &rhs) {
-        Some(solution) => {
-            orbit_from_solution(dual_vertices, sigma, solution.iter().cloned().collect())
-        }
-        None => solve_orbit_sigma_exact(dual_vertices, sigma),
-    }
+    let dual_arrays = dual_vertices
+        .iter()
+        .map(|vertex| {
+            [
+                vertex[0].clone(),
+                vertex[1].clone(),
+                vertex[2].clone(),
+                vertex[3].clone(),
+            ]
+        })
+        .collect::<Vec<_>>();
+    let exact = solve_kkt_exact(&dual_arrays, sigma)?;
+    Some(ExactOrbitKktData {
+        sigma: sigma.to_vec(),
+        beta: exact.beta,
+        q: exact.q_exact,
+        mu: Vector4::new(
+            exact.mu[0].clone(),
+            exact.mu[1].clone(),
+            exact.mu[2].clone(),
+            exact.mu[3].clone(),
+        ),
+        xi: exact.xi,
+    })
 }
 
 fn orbit_from_solution<F: ExactScalar + 'static>(

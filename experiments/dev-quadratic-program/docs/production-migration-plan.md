@@ -1,10 +1,10 @@
 # Four-dimensional QP production migration
 
-Status: Batch 1 scalar extraction, the Batch 1b exact-minimizer/on-demand
-one-sigma slice, and one representative ordinary product-consumer migration
-are implemented and locally verified in `qp-production-migration`; not merged
-to Main. Action-window support, broad consumer migration, and the remaining
-evidence/polish batches remain planned.
+Status: Batch 1 scalar extraction, the Batch 1b exact-minimizer/general-window
+slice, and representative ordinary product and general-window consumer
+migrations are implemented and locally verified in `qp-production-migration`;
+not merged to Main. Broad consumer migration and the remaining evidence/polish
+batches remain planned.
 
 ## Critical path
 
@@ -116,9 +116,11 @@ The intended end state for this migration is:
 5. Callers that need minimizing words use
    `qp_minimizers_from_dual_vertices`, or `qp_minimizers` when they already
    retain geometry, and receive lean `(sigma, action_exact)` records under its
-   stated candidate-family and tie guarantees. Exact action-window support
-   remains a named migration item for the inventoried window consumers; it is
-   not implied by the minimizer API.
+   stated candidate-family and tie guarantees. General consumers needing
+   nearby branches use `general_qp_action_window` with an exact inclusive
+   capacity multiple and receive one exact KKT witness per returned word.
+   Product action-window support remains YAGNI until a concrete ordinary
+   consumer requires it.
 6. Exact one-sigma KKT solving is an on-demand method on the same validated
    input. Given a returned `sigma`, it returns exact `beta`, `q`, `mu`, and
    `xi`. Capacity differentiation and geometric recovery consume that payload.
@@ -265,8 +267,22 @@ The broad regular-product sweep now uses the cached production product route.
 Future rows contain the exact rational capacity, outward bounds, a
 deterministic minimizing word, and an explicitly approximate `sys`. Historical
 JSONL was not rewritten. The copy-editable owned-consumer example now shows
-the ordinary general scalar and exact-minimizer shapes while retaining the old
-exact route only for the still-unsupported near-minimizer action window.
+ordinary general scalar, exact-minimizer, and exact action-window shapes; its
+exhaustive exact route is retained only as a correspondence control.
+
+The first real general-window consumer,
+`sys-landscape/gradient-ascent-observed-general`, now uses exact production
+window witnesses for basepoint derivatives and scalar certified bounds for
+finite-step targets. Its producer schema is `v2`; the tracked `v1` panel and
+analyzer remain historical legacy-route evidence. A seed-42 smoke completed
+with two base evaluations and four finite-step evaluations in `7.25 s`.
+On the retained generated F10 fixture, the general scalar call took `6.65 ms`
+and the exact 0.1%-window call with two full KKT witnesses took `33.96 ms`.
+The weaker retained f64 window call took `9.26 ms`; the migrated consumer
+replaces two such basepoint calls by one exact-window call and uses the cheaper
+scalar route for its finite-step targets. A durable correspondence test finds
+the same two near-active words and per-coordinate derivative differences below
+`1e-10`. The full historical 12-seed panel was not rerun or relabelled.
 
 The adversarial implementation review found that the original constructor
 accepted a 16-facet crosspolytope whose exact transition graph has
@@ -283,11 +299,10 @@ a theorem or evidence that larger streams lack an answer. A future general
 algorithm may replace the cap only after a bounded crosspolytope-style
 regression passes.
 
-The next non-commutative action is to specify the smallest exact action-window
-contract required by the inventoried window consumers, then implement and
-test its endpoint and candidate-family semantics before editing those
-consumers. Consumers that need only scalar capacity, exact minimizing words,
-or one exact KKT payload no longer wait on that work.
+The next non-commutative action is to migrate the next ordinary scalar or
+general-window consumer while preserving its cache/schema provenance. The
+optimizer-owned branch models remain a coordination handoff, not files for
+this worktree to edit concurrently.
 
 ### Optimizer coordination boundary
 
@@ -738,9 +753,6 @@ Implemented:
 
 Still required in this batch:
 
-- choose and implement the smallest exact action-window contract that covers
-  the inventoried window consumers; do not add `AllAdmissible` merely for
-  symmetry;
 - derivative and recovery adapters that consume the exact one-sigma payload
   without rerunning the global search; and
 - complete exact controls for word-set equality, ties, gap endpoints,
@@ -817,7 +829,7 @@ Batch 1b must add:
 | One minimizing word | exact through `qp_minimizers` | exact closure-vertex word through `qp_minimizers` | migrate callers that need only a discrete word |
 | All tied discrete words | exact for the complete transition-pruned general HK family | complete for the product route's enumerated closure-vertex words | migrate with the returned family label preserved |
 | All positive KKT solutions or physical trajectories | unavailable | unavailable under within-word/closure-face degeneracy | no inventoried ordinary consumer requests this object; keep it out of the production API unless a concrete experiment later defines it |
-| All discrete candidates within action gap `delta` | unavailable | unavailable | Batch 1b adds this for the covered general candidate family; a product version is added only if an inventoried ordinary caller needs it |
+| All discrete candidates within an exact capacity multiple | exact for the complete transition-pruned general HK family, with an inclusive endpoint and one exact KKT witness per word | unavailable | use `general_qp_action_window`; add a product version only if an ordinary caller needs it |
 | exact `beta` for a chosen word | on-demand through `solve_sigma_exact` | on-demand through `solve_sigma_exact` | the common search record remains lean |
 | exact `q`, closure multiplier `mu`, normalization multiplier `xi` | on-demand through `solve_sigma_exact` | on-demand through `solve_sigma_exact` | these values remain properties of a chosen word, not the global search result |
 | Capacity derivative for one branch | unavailable | not directly returned | requires `sigma`, `beta`, `q`, and `mu` from one consistent KKT solution |
@@ -830,7 +842,7 @@ The known high-impact consumers then have the following concrete disposition:
 | Consumer | Fields/semantics used now | Batch 3 decision |
 | --- | --- | --- |
 | `sys-landscape/src/ascent/compute.rs` | capacity point value; all returned branches tied within `1e-9`; each branch's `sigma`, `beta`, `q`, and `mu`; Clarke/maximin derivative construction | Do not pretend the scalar API covers it. Migrate its word set to Batch 1b's exact search, then call the exact one-sigma method for each selected word. Product migration additionally requires the product-subdifferential claim. Otherwise this is an explicit blocker, not an accepted ordinary legacy caller. |
-| `sys-landscape/gradient-ascent-observed-general` | a caller-chosen action window; every retained near-active branch; derivatives; returned count and iterations | Migrate its mathematical window/derivative input to Batch 1b. Retain old counts/timings only as separately named diagnostics. If the experiment intentionally compares the old heuristic window, that comparison mode remains but is not its ordinary capacity backend. |
+| `sys-landscape/gradient-ascent-observed-general` | a caller-chosen action window; every retained near-active branch; derivatives; returned count and iterations | Migrated in schema `v2`: exact general-window witnesses drive basepoint derivatives and scalar bounds drive finite-step evaluations. Fabricated legacy iteration counts were removed. The tracked `v1` panel remains immutable historical evidence and is not evidence for `v2`. |
 | `sys-landscape/src/datascience_cache.rs` and computed-polytope rows | capacity, volume, `sys`, one `SigmaAction`, and `OrbitScalars` (`iterations`, returned count, beta margin, q diagnostic, multiplier-presence flags, admissibility flags) | Split the schema. Store the new capacity certificate independently and use Batch 1b for a general winner when the producer needs one. Do not fill `OrbitScalars` from the new route. Retain a legacy diagnostic block only when a named analysis consumes those old-route diagnostics. |
 | `sys-landscape/random-product-sample` and regular-product rotated sweeps | capacity, `sys`, one best `sigma`, bounce count derived from that `sigma`, and legacy iteration count | Migrate capacity and the chosen winner/bounce to `qp_minimizers`; choose the lexicographically first returned winner deterministically. The regular-product rotated sweep is migrated; its historical rows remain unchanged. Drop or rename the old iteration field in other regenerated rows unless the analysis needs a legacy-search comparison. Production tracing, not a fabricated iteration count, measures the new route. |
 | `regular-products/pentagon-rotation-empirics` minima mode | all numerically tied returned orbits and per-orbit `sigma`, `beta`, action bounds, `q`, q diagnostic, admissibility, and bounce count | Do not replace with product winners: the producer claims an orbit-branch dataset, not merely closure-vertex maximizers. Run the new product capacity as a scalar cross-check and retain the existing branch producer with its legacy numerical scope stated. |
@@ -971,8 +983,9 @@ kernel moves.
   itself enough.
 - A separate numerical-kernel crate is deferred until extraction demonstrates
   a component with consumers beyond this capacity route.
-- Exact minimizer and discrete action-window results are part of this
-  migration. Geometric trajectory recovery remains a separate transformation
+- Exact minimizer and general discrete action-window results are implemented.
+  A product window remains YAGNI. Geometric trajectory recovery remains a
+  separate transformation
   because it has different inputs, costs, non-uniqueness, and tolerance
   semantics; this is an explicit end-state decision, not deferred migration.
 - Whether `PolytopeGeometry4d` should later become a project-wide exact
