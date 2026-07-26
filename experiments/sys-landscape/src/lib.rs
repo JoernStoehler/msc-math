@@ -45,7 +45,7 @@ pub use datasets::{
 pub use step_bound::{
     compute_step_bound, compute_step_bound_detailed, BoundaryEvent, EventType, MAX_STEP_SIZE,
 };
-pub use sys_landscape_cache::SysLandscapePolytopeCache;
+pub use sys_landscape_cache::{exact_binary64_geometry_from_cache, SysLandscapePolytopeCache};
 
 // Compatibility for frozen source snapshots; live callers use `reference`.
 #[doc(hidden)]

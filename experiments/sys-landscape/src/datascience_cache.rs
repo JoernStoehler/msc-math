@@ -3,9 +3,8 @@
 //! The cache is keyed by canonical f64 dual-vertex bits. Producer metadata should
 //! point at `poly_id`; this row owns the expensive capacity/minimizer payload.
 
-use crate::SysLandscapePolytopeCache;
+use crate::{exact_binary64_geometry_from_cache, SysLandscapePolytopeCache};
 use euclidean_polytopes::volume_from_incidence_f64;
-use nalgebra::Vector4;
 use num_rational::BigRational;
 use num_traits::ToPrimitive;
 use serde::{Deserialize, Serialize};
@@ -17,8 +16,7 @@ use std::sync::{Arc, Mutex};
 use std::time::Instant;
 use symplectic::capacity_4d::{
     check_dual_vertex_norm_bounds, check_facet_count, check_finite_dual_vertices,
-    check_primal_vertex_norm_bounds, exact_binary64_polytope_geometry, qp_minimizers,
-    PolytopeGeometry4d, QpCandidateFamily4d,
+    check_primal_vertex_norm_bounds, qp_minimizers, PolytopeGeometry4d, QpCandidateFamily4d,
 };
 use symplectic::database::{OrbitScalars, SigmaAction};
 
@@ -336,52 +334,7 @@ fn checked_capacity_geometry(polytope: &SysLandscapePolytopeCache) -> Option<Pol
     check_finite_dual_vertices(&polytope.dual_vertices_f64).ok()?;
     check_dual_vertex_norm_bounds(&polytope.dual_vertices_f64).ok()?;
 
-    let dual_vertices_exact = polytope
-        .dual_vertices_f64
-        .iter()
-        .map(|vertex| {
-            Some(Vector4::new(
-                BigRational::from_float(vertex[0])?,
-                BigRational::from_float(vertex[1])?,
-                BigRational::from_float(vertex[2])?,
-                BigRational::from_float(vertex[3])?,
-            ))
-        })
-        .collect::<Option<Vec<_>>>()?;
-    let cached_dual_vertices_exact = polytope
-        .dual_vertices
-        .iter()
-        .map(|vertex| {
-            Vector4::new(
-                vertex[0].clone(),
-                vertex[1].clone(),
-                vertex[2].clone(),
-                vertex[3].clone(),
-            )
-        })
-        .collect::<Vec<_>>();
-
-    let geometry = if dual_vertices_exact == cached_dual_vertices_exact {
-        PolytopeGeometry4d {
-            dual_vertices: polytope.dual_vertices_f64.clone(),
-            dual_vertices_exact,
-            primal_vertices_exact: polytope
-                .vertices
-                .iter()
-                .map(|vertex| {
-                    Vector4::new(
-                        vertex[0].clone(),
-                        vertex[1].clone(),
-                        vertex[2].clone(),
-                        vertex[3].clone(),
-                    )
-                })
-                .collect(),
-            vertex_facet_incidence: polytope.vertex_facet_incidence.clone(),
-        }
-    } else {
-        exact_binary64_polytope_geometry(&polytope.dual_vertices_f64).ok()?
-    };
+    let geometry = exact_binary64_geometry_from_cache(polytope).ok()?;
     check_primal_vertex_norm_bounds(&geometry).ok()?;
     Some(geometry)
 }

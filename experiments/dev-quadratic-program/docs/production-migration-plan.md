@@ -282,6 +282,16 @@ maximum scalar difference of `7.10e-16` relative, and `211.4 ms` versus
 words were not closure-vertex certificate words, as permitted by the distinct
 candidate-family contract; their capacities agreed.
 
+Fresh target evaluation in
+`sys-datascience/methods/extreme-scalar-rejection-proposer` now uses the same
+validated-geometry production product route. Its `evaluated-target.v3` rows
+record outward bounds, exact rational capacity, candidate family, a
+deterministic minimizing word, and the tied-word count. The accepted v2
+packets remain immutable legacy-route evidence: current code refuses to append
+to or regenerate reports from a v2 cache, so a fresh run must use a new output
+directory. The package's actual evaluator test and all twelve standalone tests
+pass with its refreshed lockfile.
+
 The first real general-window consumer,
 `sys-landscape/gradient-ascent-observed-general`, now uses exact production
 window witnesses for basepoint derivatives and scalar certified bounds for
@@ -322,10 +332,13 @@ a theorem or evidence that larger streams lack an answer. A future general
 algorithm may replace the cap only after a bounded crosspolytope-style
 regression passes.
 
-The next non-commutative action is to migrate the next ordinary scalar or
-general-window consumer while preserving its cache/schema provenance. The
-optimizer-owned branch models remain a coordination handoff, not files for
-this worktree to edit concurrently.
+The next non-commutative action is to finish the source-wide call-site
+classification, then migrate the next active ordinary scalar consumer whose
+contract is already covered. Frozen evidence producers, parked prototypes, and
+intentional branch-landscape controls are dispositions, not ordinary
+migration debt, but each remaining old call site must say which category
+applies. The optimizer-owned branch models remain a coordination handoff, not
+files for this worktree to edit concurrently.
 
 ### Optimizer coordination boundary
 
@@ -613,15 +626,14 @@ separate changed-input preprocessing operation.
 The reviewed general numerical theorem assumes pinned `nalgebra 0.33.3` for
 certified products and `nalgebra 0.35.0` for Bunch--Kaufman factorization,
 together with the recorded `matrixmultiply`, dimension, finite-value, and
-gradual-underflow conditions. The development package currently imports
-`nalgebra 0.35` under the `nalgebra035` alias, while `symplectic` has only the
-workspace `nalgebra 0.33` dependency.
+gradual-underflow conditions. Both the development package and production
+`symplectic` crate now import pinned `nalgebra 0.35.0` under the
+`nalgebra035` alias alongside workspace `nalgebra 0.33`.
 
-Production extraction therefore requires an explicitly pinned aliased 0.35.0
-dependency unless a separate review chooses to change the arithmetic contract.
-Do not replace or upgrade either version incidentally during migration. Any
-dependency, target, compiler-arithmetic, or dimension change triggers review
-of `rem:kkt-batched-binary64-contract` and reruns the general numerical packet.
+Do not replace or upgrade either version incidentally during migration.
+Any dependency, target, compiler-arithmetic, or dimension change triggers
+review of `rem:kkt-batched-binary64-contract` and reruns the general numerical
+packet.
 
 ## Execution batches and checkpoints
 
@@ -866,8 +878,9 @@ The known high-impact consumers then have the following concrete disposition:
 | --- | --- | --- |
 | `sys-landscape/src/ascent/compute.rs` | capacity point value; all returned branches tied within `1e-9`; each branch's `sigma`, `beta`, `q`, and `mu`; Clarke/maximin derivative construction | Do not pretend the scalar API covers it. Migrate its word set to Batch 1b's exact search, then call the exact one-sigma method for each selected word. Product migration additionally requires the product-subdifferential claim. Otherwise this is an explicit blocker, not an accepted ordinary legacy caller. |
 | `sys-landscape/gradient-ascent-observed-general` | a caller-chosen action window; every retained near-active branch; derivatives; returned count and iterations | Migrated in schema `v2`: exact general-window witnesses drive basepoint derivatives and scalar bounds drive finite-step evaluations. Fabricated legacy iteration counts were removed. The tracked `v1` panel remains immutable historical evidence and is not evidence for `v2`. |
-| `sys-landscape/src/datascience_cache.rs` and computed-polytope rows | capacity, volume, `sys`, one `SigmaAction`, and `OrbitScalars` (`iterations`, returned count, beta margin, q diagnostic, multiplier-presence flags, admissibility flags) | Split the schema. Store the new capacity certificate independently and use Batch 1b for a general winner when the producer needs one. Do not fill `OrbitScalars` from the new route. Retain a legacy diagnostic block only when a named analysis consumes those old-route diagnostics. |
+| `sys-landscape/src/datascience_cache.rs` and computed-polytope rows | capacity, volume, `sys`, one `SigmaAction`, and historical `OrbitScalars` (`iterations`, returned count, beta margin, q diagnostic, multiplier-presence flags, admissibility flags) | Migrated: current rows store the production capacity certificate and all exact tied minimizing words, while old rows deserialize only for compatibility comparison and are recomputed. Current rows do not synthesize `OrbitScalars`. |
 | `sys-landscape/random-product-sample` and regular-product rotated sweeps | capacity, `sys`, one best `sigma`, bounce count derived from that `sigma`, and legacy iteration count | Migrate capacity and the chosen winner/bounce to `qp_minimizers`; choose the lexicographically first returned winner deterministically. The regular-product rotated sweep is migrated; its historical rows remain unchanged. Drop or rename the old iteration field in other regenerated rows unless the analysis needs a legacy-search comparison. Production tracing, not a fabricated iteration count, measures the new route. |
+| `sys-datascience/extreme-scalar-rejection-proposer` target evaluator | product capacity, approximate `sys`, one minimizing word, and bounce count; accepted v2 packets used the legacy billiard route | Migrated for fresh runs in `evaluated-target.v3`: exact product capacity, outward bounds, family, deterministic minimizing word, and tied-word count are stored. Current resume/report stages reject v2 caches rather than mixing or relabelling the frozen accepted evidence. |
 | `regular-products/pentagon-rotation-empirics` minima mode | all numerically tied returned orbits and per-orbit `sigma`, `beta`, action bounds, `q`, q diagnostic, admissibility, and bounce count | Do not replace with product winners: the producer claims an orbit-branch dataset, not merely closure-vertex maximizers. Run the new product capacity as a scalar cross-check and retain the existing branch producer with its legacy numerical scope stated. |
 | `regular-products/pentagon-rotation-empirics` three-bounce/branch-landscape modes | admissible non-minimal branches and per-sigma solve outcomes | No scalar migration; these modes intentionally study the branch landscape. |
 | `sys-datascience/equal-budget-product-search` | capacity/`sys` for ranking plus counts and support lengths of the returned legacy orbit payload; full `OrbitSearchResult` in cache exports | Use the exact product capacity for ranking. Move returned-word counts/support lengths into an optional, explicitly legacy diagnostic block or omit them from new production runs; they are not properties of the product scalar algorithm. Cache eligibility must include the route/schema fingerprint, so an old `OrbitSearchResult` row cannot satisfy a new exact-product query. |

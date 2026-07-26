@@ -49,6 +49,15 @@ Stages:
 - `reports`: writes `selection-summary.tsv`, `evaluation-report.json`, and
   `pipeline-summary.json`.
 
+Fresh `sys` stages use the production product QP route and write
+`evaluated-target.v3` rows with outward capacity bounds, exact rational
+capacity, the product-closure candidate-family label, a deterministic exact
+minimizing word, and the tied-minimizer count. The stored scalar is accepted
+only when the bounds certify `1e-10` relative error. A v2 cache from the
+legacy billiard/orbit route remains historical evidence but is not a cache hit
+for current code; use a new output directory rather than appending mixed
+schemas.
+
 Reports read frozen `selection-plan.json` and
 `selected-candidates-before-sys.jsonl` instead of recomputing selection
 semantics from current CLI/config arguments.
@@ -141,6 +150,10 @@ Recorded run date: 2026-07-01.
 - Maximum evaluated `sys`: `0.867546058507634`.
 - Maximum selected `sys`: `0.867546058507634`.
 - No evaluated candidate had `sys > 1`.
+
+These accepted target rows use the historical `evaluated-target.v2` route.
+They are not relabelled as v3 production certificates; their compact packet
+and reports remain frozen.
 
 Interpretation boundary:
 

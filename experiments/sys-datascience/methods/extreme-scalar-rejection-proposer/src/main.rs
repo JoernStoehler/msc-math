@@ -11,7 +11,9 @@ use euclidean_polytopes::{
     edges_from_vertex_facet_incidence, facet_intersection_is_nonempty_from_vertex_facet_incidence,
     two_faces_from_vertex_facet_incidence, vertex_facets_from_vertex_facet_incidence,
 };
-use exp_sys_landscape::{capacity_billiard, poly_id_from_dual_vertices, SysLandscapePolytopeCache};
+use exp_sys_landscape::{
+    exact_binary64_geometry_from_cache, poly_id_from_dual_vertices, SysLandscapePolytopeCache,
+};
 use nalgebra::{DMatrix, Matrix4, SymmetricEigen, Vector2, Vector4};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -22,6 +24,10 @@ use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, BufWriter, Read, Write};
 use std::path::{Path, PathBuf};
 use symplectic::algorithms::billiard::bounce_count_from_sigma_for_facets;
+use symplectic::capacity_4d::{
+    check_dual_vertex_norm_bounds, check_facet_count, check_primal_vertex_norm_bounds,
+    qp_minimizers, QpCandidateFamily4d,
+};
 use symplectic::geom::polygon::{polygon_area, random_polygon_2d};
 use symplectic::{classify_facets_from_dual_vertices, systolic_ratio};
 
@@ -42,6 +48,10 @@ const H_MAX: f64 = 1.2;
 const DEFAULT_SELECTION_FEATURE: ScalarFeature = ScalarFeature::RidgeSympAreaSumOverVolumeSqrt;
 const DEFAULT_SELECTION_DIRECTION: SelectionDirection = SelectionDirection::Low;
 const DEFAULT_CHUNK_ROWS: usize = 1000;
+const CURRENT_EVALUATED_SCHEMA: &str =
+    "sys-datascience.extreme-scalar-rejection-proposer.evaluated-target.v3";
+const CURRENT_CAPACITY_METHOD: &str = "certified-product-qp-minimizers-v1";
+const MAXIMUM_CAPACITY_RELATIVE_ERROR: f64 = 1e-10;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 enum Stage {
@@ -374,8 +384,7 @@ fn run_metadata(baseline_policy: &str) -> RunMetadata {
                 .to_string(),
         baseline_policy: baseline_policy.to_string(),
         sys_cache: SysCacheMetadata {
-            schema: "sys-datascience.extreme-scalar-rejection-proposer.evaluated-target.v2"
-                .to_string(),
+            schema: CURRENT_EVALUATED_SCHEMA.to_string(),
             reuse_key: "candidate_id; poly_id is recorded for human compatibility checks".to_string(),
             reuse_contract: "sys-evaluation-cache.jsonl is append/resume by candidate_id and is intentionally reusable across selection configs that name the same candidate ids".to_string(),
         },
@@ -916,7 +925,21 @@ struct EvaluatedRow {
     selection_feature_value: f64,
     #[serde(default)]
     selection_rule_values: Vec<SelectionRuleValue>,
+    #[serde(default)]
+    capacity_method: String,
     capacity: f64,
+    #[serde(default)]
+    capacity_lower: Option<f64>,
+    #[serde(default)]
+    capacity_upper: Option<f64>,
+    #[serde(default)]
+    capacity_exact: Option<String>,
+    #[serde(default)]
+    candidate_family: Option<String>,
+    #[serde(default)]
+    minimizing_sigma: Vec<usize>,
+    #[serde(default)]
+    minimizer_count: usize,
     sys: f64,
     bounces: usize,
     time_capacity_ms: f64,
@@ -2691,27 +2714,49 @@ fn evaluate_one_selection_row(
     let dual_vertices = arrays_to_vectors(&geometry.dual_vertices);
     let polytope = SysLandscapePolytopeCache::from_f64_dual_vertices(dual_vertices)
         .unwrap_or_else(|| panic!("reconstruct evaluation candidate {}", geometry.candidate_id));
+    check_facet_count(polytope.facet_count())
+        .unwrap_or_else(|error| panic!("facet count for {}: {error}", selected.candidate_id));
+    check_dual_vertex_norm_bounds(&polytope.dual_vertices_f64)
+        .unwrap_or_else(|error| panic!("dual norm for {}: {error}", selected.candidate_id));
+    let capacity_geometry = exact_binary64_geometry_from_cache(&polytope)
+        .unwrap_or_else(|error| panic!("exact geometry for {}: {error}", selected.candidate_id));
+    check_primal_vertex_norm_bounds(&capacity_geometry)
+        .unwrap_or_else(|error| panic!("primal norm for {}: {error}", selected.candidate_id));
     let start = std::time::Instant::now();
-    let capacity_result = capacity_billiard(
-        &polytope.dual_vertices_f64,
-        &polytope.dual_vertices,
-        &polytope.facet_intersection_is_nonempty,
-        &polytope.omega_signs,
-    )
-    .unwrap_or_else(|_| panic!("capacity for {}", selected.candidate_id));
+    let minimizers = qp_minimizers(&capacity_geometry)
+        .unwrap_or_else(|error| panic!("capacity for {}: {error}", selected.candidate_id));
+    assert_eq!(
+        minimizers.family(),
+        QpCandidateFamily4d::ProductClosureVertex,
+        "candidate {} must use the structural-product route",
+        selected.candidate_id
+    );
     let time_capacity_ms = start.elapsed().as_secs_f64() * 1000.0;
-    let capacity = capacity_result.min_action;
+    let bounds = minimizers.bounds();
+    let capacity = bounds
+        .value(MAXIMUM_CAPACITY_RELATIVE_ERROR)
+        .unwrap_or_else(|error| panic!("capacity bounds for {}: {error}", selected.candidate_id));
+    let minimizing_candidate = minimizers
+        .candidates()
+        .iter()
+        .min_by(|left, right| left.sigma().cmp(right.sigma()))
+        .expect("a successful minimizer search returns a candidate");
+    let capacity_exact = minimizing_candidate.action_exact();
+    assert!(minimizers
+        .candidates()
+        .iter()
+        .all(|candidate| candidate.action_exact() == capacity_exact));
     let sys = systolic_ratio(capacity, geometry.volume);
     let classification = classify_facets_from_dual_vertices(&polytope.dual_vertices_f64)
         .unwrap_or_else(|_| panic!("classify facets for {}", selected.candidate_id));
     let bounces = bounce_count_from_sigma_for_facets(
         &classification.q_indices,
         &classification.p_indices,
-        capacity_result.best_sigma(),
+        minimizing_candidate.sigma(),
     )
     .unwrap_or_else(|| panic!("bounce count for {}", selected.candidate_id));
     EvaluatedRow {
-        schema: "sys-datascience.extreme-scalar-rejection-proposer.evaluated-target.v2".to_string(),
+        schema: CURRENT_EVALUATED_SCHEMA.to_string(),
         candidate_id: selected.candidate_id.clone(),
         name: selected.name.clone(),
         poly_id: selected.poly_id.clone(),
@@ -2727,7 +2772,18 @@ fn evaluate_one_selection_row(
         selection_direction: selected.selection_direction.clone(),
         selection_feature_value: selected.selection_feature_value,
         selection_rule_values: selected.selection_rule_values.clone(),
+        capacity_method: CURRENT_CAPACITY_METHOD.to_string(),
         capacity,
+        capacity_lower: Some(bounds.lower()),
+        capacity_upper: Some(bounds.upper()),
+        capacity_exact: Some(format!(
+            "{}/{}",
+            capacity_exact.numer(),
+            capacity_exact.denom()
+        )),
+        candidate_family: Some("product-closure-vertex".to_string()),
+        minimizing_sigma: minimizing_candidate.sigma().to_vec(),
+        minimizer_count: minimizers.candidates().len(),
         sys,
         bounces,
         time_capacity_ms,
@@ -3349,10 +3405,45 @@ fn existing_evaluation_ids(path: &Path) -> BTreeSet<String> {
     if !path.exists() {
         return BTreeSet::new();
     }
-    read_jsonl::<EvaluatedRow>(path)
-        .into_iter()
-        .map(|row| row.candidate_id)
-        .collect()
+    let rows = read_jsonl::<EvaluatedRow>(path);
+    assert_current_evaluation_rows(&rows, "resume");
+    rows.into_iter().map(|row| row.candidate_id).collect()
+}
+
+fn current_evaluation_row_is_valid(row: &EvaluatedRow) -> bool {
+    let bounds_are_valid = match (row.capacity_lower, row.capacity_upper) {
+        (Some(lower), Some(upper)) => {
+            lower.is_finite()
+                && upper.is_finite()
+                && row.capacity.is_finite()
+                && 0.0 < lower
+                && lower <= row.capacity
+                && row.capacity <= upper
+        }
+        _ => false,
+    };
+    row.schema == CURRENT_EVALUATED_SCHEMA
+        && row.capacity_method == CURRENT_CAPACITY_METHOD
+        && bounds_are_valid
+        && row
+            .capacity_exact
+            .as_ref()
+            .is_some_and(|value| !value.is_empty())
+        && row.candidate_family.as_deref() == Some("product-closure-vertex")
+        && !row.minimizing_sigma.is_empty()
+        && row.minimizer_count > 0
+}
+
+fn assert_current_evaluation_rows(rows: &[EvaluatedRow], operation: &str) {
+    if let Some(row) = rows
+        .iter()
+        .find(|row| !current_evaluation_row_is_valid(row))
+    {
+        panic!(
+            "{operation} requires {CURRENT_EVALUATED_SCHEMA} rows; candidate {} has schema {:?} and capacity method {:?}. Preserve the old cache and use a new output directory.",
+            row.candidate_id, row.schema, row.capacity_method
+        );
+    }
 }
 
 fn geometry_for_candidate_ids(
@@ -3443,6 +3534,7 @@ fn run_report_stage(args: &Args) {
     let selection_rows = read_jsonl::<PreTargetSelectionRow>(&selection_path(&args.out_dir));
     validate_selection_artifact_matches_plan(&plan, &selection_rows);
     let evaluated_all = read_jsonl::<EvaluatedRow>(&evaluation_path(&args.out_dir));
+    assert_current_evaluation_rows(&evaluated_all, "report generation");
     let current_ids = selection_rows
         .iter()
         .map(|row| row.candidate_id.clone())
@@ -3488,7 +3580,7 @@ fn run_report_stage(args: &Args) {
         stage_interface: "--config <path> --stage all|geometry|features|selection|sys|reports; CLI flags remain smoke/override conveniences".to_string(),
         deterministic_output_status: "row ordering, candidate ids, selections, baselines, and hashes are deterministic for fixed args; time_*_ms and wall-clock log fields are timing-only and vary with jobs/load".to_string(),
         feature_cache_usage_status: "features use cached vertices, vertex_facet_incidence, and volume from candidate-geometry-cache.jsonl; feature generation does not reconstruct SysLandscapePolytopeCache from dual_vertices".to_string(),
-        sys_cache_status: "sys evaluation must reconstruct SysLandscapePolytopeCache from cached dual_vertices because capacity_billiard requires exact dual vertices, facet-intersection, and omega-sign matrices not stored in the f64 geometry JSONL; reruns skip candidate ids already present in sys-evaluation-cache.jsonl; this cache is intentionally reusable by candidate_id across compatible selection configs".to_string(),
+        sys_cache_status: "sys evaluation reconstructs the validated SysLandscapePolytopeCache from cached dual_vertices, reuses its exact-binary64 geometry, and records certified product capacity bounds plus an exact closure-vertex minimizer; reruns skip candidate ids only in a current evaluated-target.v3 cache, while legacy v2 caches require a new output directory".to_string(),
         seed: plan.seed,
         h_min: H_MIN,
         h_max: H_MAX,
@@ -3718,6 +3810,46 @@ mod tests {
         assert_close(cached.nu1.unwrap(), direct.nu1.unwrap(), 1.0e-14);
         assert_close(cached.nu2.unwrap(), direct.nu2.unwrap(), 1.0e-14);
         assert_close(cached.rho.unwrap(), direct.rho.unwrap(), 1.0e-14);
+    }
+
+    #[test]
+    fn target_evaluator_emits_current_product_capacity_certificate() {
+        let geometry = build_geometry_row(90210, 3, 4, 0);
+        let selected = PreTargetSelectionRow {
+            schema: "test-selection".to_string(),
+            candidate_id: geometry.candidate_id.clone(),
+            name: geometry.name.clone(),
+            poly_id: geometry.poly_id.clone(),
+            producer: geometry.producer.clone(),
+            source: geometry.source.clone(),
+            bucket_id: geometry.bucket_id.clone(),
+            selection_feature: default_selection_feature_string(),
+            selection_direction: default_selection_direction_string(),
+            selection_feature_value: 0.0,
+            selection_rule_values: Vec::new(),
+            selection_ids: vec!["test".to_string()],
+            baseline_ids: Vec::new(),
+            evaluation_roles: vec!["selected".to_string()],
+            stage_order: "selected_before_target_evaluation".to_string(),
+        };
+
+        let row = evaluate_one_selection_row(&geometry, &selected);
+
+        assert!(current_evaluation_row_is_valid(&row));
+        assert_eq!(row.schema, CURRENT_EVALUATED_SCHEMA);
+        assert_eq!(row.capacity_method, CURRENT_CAPACITY_METHOD);
+        assert_eq!(
+            row.candidate_family.as_deref(),
+            Some("product-closure-vertex")
+        );
+        assert!(row
+            .capacity_lower
+            .is_some_and(|lower| lower <= row.capacity));
+        assert!(row
+            .capacity_upper
+            .is_some_and(|upper| row.capacity <= upper));
+        assert!(!row.minimizing_sigma.is_empty());
+        assert!(row.minimizer_count > 0);
     }
 
     #[test]

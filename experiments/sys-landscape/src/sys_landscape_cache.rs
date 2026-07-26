@@ -15,6 +15,9 @@ use num_rational::BigRational;
 use num_traits::ToPrimitive;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
+use symplectic::capacity_4d::{
+    exact_binary64_polytope_geometry, PolytopeGeometry4d, PolytopeGeometryError4d,
+};
 use symplectic::database::PolytopeRecord;
 use symplectic::exact::omega_signs_exact;
 
@@ -30,6 +33,46 @@ pub struct SysLandscapePolytopeCache {
     pub omega_signs: DMatrix<i8>,
     pub dual_vertices_f64: Vec<Vector4<f64>>,
     pub vertices_f64: Vec<Vector4<f64>>,
+}
+
+/// Obtain the production route's exact-binary64 geometry from an already
+/// validated sys-landscape cache.
+///
+/// Generated binary64 caches already store the same dyadic rationals and can
+/// reuse their primal vertices and incidence. Source-rational fixtures may
+/// describe a different exact rational object; those are reconstructed from
+/// their binary64 dual vertices so the production contract remains unchanged.
+///
+/// This function establishes geometry only. Capacity callers still apply
+/// `check_facet_count`, `check_dual_vertex_norm_bounds`, and
+/// `check_primal_vertex_norm_bounds` explicitly.
+pub fn exact_binary64_geometry_from_cache(
+    polytope: &SysLandscapePolytopeCache,
+) -> Result<PolytopeGeometry4d, PolytopeGeometryError4d> {
+    let dual_vertices_exact = polytope
+        .dual_vertices_f64
+        .iter()
+        .map(|vertex| {
+            Some(Vector4::new(
+                BigRational::from_float(vertex[0])?,
+                BigRational::from_float(vertex[1])?,
+                BigRational::from_float(vertex[2])?,
+                BigRational::from_float(vertex[3])?,
+            ))
+        })
+        .collect::<Option<Vec<_>>>();
+    let cached_dual_vertices_exact = vectors_from_arrays(&polytope.dual_vertices);
+
+    if dual_vertices_exact.as_ref() == Some(&cached_dual_vertices_exact) {
+        return Ok(PolytopeGeometry4d {
+            dual_vertices: polytope.dual_vertices_f64.clone(),
+            dual_vertices_exact: cached_dual_vertices_exact,
+            primal_vertices_exact: vectors_from_arrays(&polytope.vertices),
+            vertex_facet_incidence: polytope.vertex_facet_incidence.clone(),
+        });
+    }
+
+    exact_binary64_polytope_geometry(&polytope.dual_vertices_f64)
 }
 
 impl SysLandscapePolytopeCache {
@@ -289,4 +332,37 @@ fn vector_f64_from_array(v: &[BigRational; 4]) -> Option<Vector4<f64>> {
         v[2].to_f64()?,
         v[3].to_f64()?,
     ))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn exact_binary64_geometry_ignores_distinct_source_rationals() {
+        let normals = [
+            Vector2::new(1.0, 0.0),
+            Vector2::new(0.0, 1.0),
+            Vector2::new(-1.0, 0.0),
+            Vector2::new(0.0, -1.0),
+        ];
+        let heights = [1.0; 4];
+        let mut cache = SysLandscapePolytopeCache::from_lagrangian_product(
+            &normals, &heights, &normals, &heights,
+        )
+        .expect("square product");
+        let binary64_coordinate =
+            BigRational::from_float(cache.dual_vertices_f64[0][0]).expect("finite coordinate");
+        cache.dual_vertices[0][0] =
+            &binary64_coordinate + BigRational::new(1.into(), (1_u64 << 60).into());
+
+        let geometry =
+            exact_binary64_geometry_from_cache(&cache).expect("reconstruct binary64 geometry");
+
+        assert_eq!(geometry.dual_vertices_exact[0][0], binary64_coordinate);
+        assert_ne!(
+            geometry.dual_vertices_exact[0][0],
+            cache.dual_vertices[0][0]
+        );
+    }
 }
