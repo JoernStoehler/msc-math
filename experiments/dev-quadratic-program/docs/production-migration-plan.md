@@ -1,9 +1,10 @@
 # Four-dimensional QP production migration
 
-Status: Batch 1 scalar extraction and the Batch 1b exact-minimizer/on-demand
-one-sigma slice are implemented and locally verified in
-`qp-production-migration`; not merged to Main. Action-window support, consumer
-migration, and the remaining evidence/polish batches remain planned.
+Status: Batch 1 scalar extraction, the Batch 1b exact-minimizer/on-demand
+one-sigma slice, and one representative ordinary product-consumer migration
+are implemented and locally verified in `qp-production-migration`; not merged
+to Main. Action-window support, broad consumer migration, and the remaining
+evidence/polish batches remain planned.
 
 ## Critical path
 
@@ -112,20 +113,22 @@ The intended end state for this migration is:
    exact-resolve its winning word. The product route already has the maximizing
    words while comparing exact contenders, but its scalar result discards
    them and does not construct KKT payloads.
-5. Callers that need minimizing words use `qp_minimizers` and receive lean
-   `(sigma, action_exact)` records under its stated candidate-family and tie
-   guarantees. Exact action-window support remains a named migration item for
-   the inventoried window consumers; it is not implied by the minimizer API.
-5. Exact one-sigma KKT solving is an on-demand method on the same validated
+5. Callers that need minimizing words use
+   `qp_minimizers_from_dual_vertices`, or `qp_minimizers` when they already
+   retain geometry, and receive lean `(sigma, action_exact)` records under its
+   stated candidate-family and tie guarantees. Exact action-window support
+   remains a named migration item for the inventoried window consumers; it is
+   not implied by the minimizer API.
+6. Exact one-sigma KKT solving is an on-demand method on the same validated
    input. Given a returned `sigma`, it returns exact `beta`, `q`, `mu`, and
    `xi`. Capacity differentiation and geometric recovery consume that payload.
    Search results do not carry every `beta` merely because an internal f64 or
    exact solve produced one.
-6. Existing f64 `OrbitSearchResult` searches remain only where the experiment
+7. Existing f64 `OrbitSearchResult` searches remain only where the experiment
    explicitly studies their numerical/branch behavior, or as verification and
    performance controls. Ordinary consumers do not retain them merely because
    the new API omitted a needed field.
-7. Every retained old call site states which experiment-specific output
+8. Every retained old call site states which experiment-specific output
    requires it. A successful compile with an unchanged old call is not a
    migration decision.
 
@@ -225,9 +228,9 @@ The current checkpoint provides:
 
 Observed extraction checks:
 
-- all 13 public capacity API tests and both selected-route correspondence tests
+- all 14 public capacity API tests and both selected-route correspondence tests
   pass;
-- the 365 non-ignored `symplectic` library tests pass;
+- the release `symplectic` library suite passes;
 - the release workspace build passes;
 - the general verification packet has 8/8 production comparisons with zero
   bound mismatches and zero exact predicate/radius violations;
@@ -242,6 +245,28 @@ one-exact-minimizer request takes `5.21 ms`; exact output therefore does not
 regress scalar callers. On the triangle product, scalar and two-minimizer
 requests both take about `1.51 ms`, because the product route already identifies
 its exact maximizing words.
+
+The representative consumer trial added the two ordinary conveniences that
+real call sites needed:
+
+- `capacity_value(&capacity, maximum_relative_error)` refuses to collapse an
+  outward interval unless the midpoint meets the caller's requested relative
+  error. The generated `F5` example has bounds
+  `[13.253700672908, 13.253700672967]`: `1e-12` is correctly rejected and
+  `1e-10` is accepted.
+- `qp_minimizers_from_dual_vertices` performs the complete raw-input check and
+  returns exact tied minimizing words. Callers that already cache exact
+  geometry should instead construct the plain `PolytopeGeometry4d` and call
+  `qp_minimizers`; on a regular 7-by-7 product, median release times were
+  `41.5 ms` with cached geometry, `366.5 ms` when reconstructing geometry from
+  raw dual vertices, and `3.36 s` for the retained legacy billiard route.
+
+The broad regular-product sweep now uses the cached production product route.
+Future rows contain the exact rational capacity, outward bounds, a
+deterministic minimizing word, and an explicitly approximate `sys`. Historical
+JSONL was not rewritten. The copy-editable owned-consumer example now shows
+the ordinary general scalar and exact-minimizer shapes while retaining the old
+exact route only for the still-unsupported near-minimizer action window.
 
 The adversarial implementation review found that the original constructor
 accepted a 16-facet crosspolytope whose exact transition graph has
@@ -427,6 +452,8 @@ The implemented caller shape is:
 
 ```rust
 let capacity = capacity_from_dual_vertices(&dual_vertices)?;
+let value = capacity_value(&capacity, 1e-10)?;
+let minimizers = qp_minimizers_from_dual_vertices(&dual_vertices)?;
 
 check_facet_count(dual_vertices.len())?;
 check_finite_dual_vertices(&dual_vertices)?;
@@ -434,7 +461,6 @@ check_dual_vertex_norm_bounds(&dual_vertices)?;
 let geometry = exact_binary64_polytope_geometry(&dual_vertices)?;
 check_primal_vertex_norm_bounds(&geometry)?;
 
-let minimizers = qp_minimizers(&geometry)?;
 for candidate in minimizers.candidates() {
     use_sigma_and_exact_action(candidate.sigma(), candidate.action_exact());
 }
@@ -806,7 +832,7 @@ The known high-impact consumers then have the following concrete disposition:
 | `sys-landscape/src/ascent/compute.rs` | capacity point value; all returned branches tied within `1e-9`; each branch's `sigma`, `beta`, `q`, and `mu`; Clarke/maximin derivative construction | Do not pretend the scalar API covers it. Migrate its word set to Batch 1b's exact search, then call the exact one-sigma method for each selected word. Product migration additionally requires the product-subdifferential claim. Otherwise this is an explicit blocker, not an accepted ordinary legacy caller. |
 | `sys-landscape/gradient-ascent-observed-general` | a caller-chosen action window; every retained near-active branch; derivatives; returned count and iterations | Migrate its mathematical window/derivative input to Batch 1b. Retain old counts/timings only as separately named diagnostics. If the experiment intentionally compares the old heuristic window, that comparison mode remains but is not its ordinary capacity backend. |
 | `sys-landscape/src/datascience_cache.rs` and computed-polytope rows | capacity, volume, `sys`, one `SigmaAction`, and `OrbitScalars` (`iterations`, returned count, beta margin, q diagnostic, multiplier-presence flags, admissibility flags) | Split the schema. Store the new capacity certificate independently and use Batch 1b for a general winner when the producer needs one. Do not fill `OrbitScalars` from the new route. Retain a legacy diagnostic block only when a named analysis consumes those old-route diagnostics. |
-| `sys-landscape/random-product-sample` and regular-product rotated sweeps | capacity, `sys`, one best `sigma`, bounce count derived from that `sigma`, and legacy iteration count | Migrate capacity and the chosen winner/bounce to `ProductCapacity4d`; choose the lexicographically first returned winner deterministically. Drop or rename the old iteration field in regenerated rows unless the analysis needs a legacy-search comparison. Production tracing, not a fabricated iteration count, measures the new route. |
+| `sys-landscape/random-product-sample` and regular-product rotated sweeps | capacity, `sys`, one best `sigma`, bounce count derived from that `sigma`, and legacy iteration count | Migrate capacity and the chosen winner/bounce to `qp_minimizers`; choose the lexicographically first returned winner deterministically. The regular-product rotated sweep is migrated; its historical rows remain unchanged. Drop or rename the old iteration field in other regenerated rows unless the analysis needs a legacy-search comparison. Production tracing, not a fabricated iteration count, measures the new route. |
 | `regular-products/pentagon-rotation-empirics` minima mode | all numerically tied returned orbits and per-orbit `sigma`, `beta`, action bounds, `q`, q diagnostic, admissibility, and bounce count | Do not replace with product winners: the producer claims an orbit-branch dataset, not merely closure-vertex maximizers. Run the new product capacity as a scalar cross-check and retain the existing branch producer with its legacy numerical scope stated. |
 | `regular-products/pentagon-rotation-empirics` three-bounce/branch-landscape modes | admissible non-minimal branches and per-sigma solve outcomes | No scalar migration; these modes intentionally study the branch landscape. |
 | `sys-datascience/equal-budget-product-search` | capacity/`sys` for ranking plus counts and support lengths of the returned legacy orbit payload; full `OrbitSearchResult` in cache exports | Use the exact product capacity for ranking. Move returned-word counts/support lengths into an optional, explicitly legacy diagnostic block or omit them from new production runs; they are not properties of the product scalar algorithm. Cache eligibility must include the route/schema fingerprint, so an old `OrbitSearchResult` row cannot satisfy a new exact-product query. |

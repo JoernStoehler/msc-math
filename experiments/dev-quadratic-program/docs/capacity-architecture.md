@@ -62,16 +62,13 @@ validated dual vertices
 Implemented:
 
 - `capacity_from_dual_vertices` for the ordinary one-shot question;
+- `capacity_value`, which returns a midpoint only when its worst-case relative
+  error against the outward interval meets the caller's bound;
 - `exact_binary64_polytope_geometry`, the explicit input checks, and
   `capacity` for callers that need intermediate geometry;
 - exact product dispatch;
 - an exact rational product capacity and outward binary64 bounds;
 - certified outward binary64 bounds for the general route.
-
-Still missing:
-
-- a convenience operation that returns a representative binary64 value only
-  after checking a caller-supplied relative tolerance.
 
 ### Capacity minimizers and nearby branches
 
@@ -93,7 +90,8 @@ validated input
 
 Implemented:
 
-- `qp_minimizers`;
+- `qp_minimizers_from_dual_vertices` for the ordinary one-shot question;
+- `qp_minimizers(geometry)` for callers retaining intermediate geometry;
 - `QpCandidateFamily4d::{GeneralHk, ProductClosureVertex}`;
 - exact `sigma` and action for every returned candidate.
 
@@ -245,7 +243,7 @@ unchecked midpoint use:
 capacity_certificate(input)
     -> bounds, route/provenance, exact product value when available
 
-capacity_value(input, relative_tolerance)
+capacity_value(certificate, maximum_relative_error)
     -> representative value only if the bounds meet the tolerance
 ```
 

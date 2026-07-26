@@ -32,13 +32,19 @@ Developer-facing math for reusable crate algorithms lives in `formal/`.
 ## Scalar four-dimensional capacity
 
 Start with
-`algorithms::capacity_4d::capacity_from_dual_vertices`. It checks the cheap
+`capacity_4d::capacity_from_dual_vertices`. It checks the cheap
 facet-count and dual-norm limits, constructs exact binary64-rational geometry,
 checks primal norms, and dispatches exact q/p products to the KKT-free
 six-facet closure-vertex route; other inputs use the certified general QP
 route. Product results contain an exact dyadic-rational capacity and sparse
 exact witnesses. General results contain outward binary64 bounds. Neither
 route promises every minimizing or near-minimizing orbit branch.
+
+Use `capacity_value(&result, maximum_relative_error)` when a caller needs one
+binary64 value rather than bounds. It returns a value only when the outward
+capacity interval certifies the requested relative error. Use
+`qp_minimizers_from_dual_vertices` when the desired output is every tied
+minimizing word and its exact action.
 
 Callers that need intermediate geometry can instead use the named stages
 `check_facet_count`, `check_finite_dual_vertices`,

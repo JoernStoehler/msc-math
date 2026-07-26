@@ -1,11 +1,13 @@
 use nalgebra::{DMatrix, Vector4};
+use num_rational::BigRational;
 use num_traits::{Signed, ToPrimitive};
-use symplectic::algorithms::capacity_4d::{
-    capacity, capacity_from_dual_vertices, check_dual_vertex_norm_bounds, check_facet_count,
-    check_finite_dual_vertices, check_primal_vertex_norm_bounds, classify_lagrangian_product,
-    exact_binary64_polytope_geometry, general_capacity, general_qp_minimizers, product_capacity,
-    qp_minimizers, solve_sigma_exact, Capacity4d, CapacityError4d, CapacityFromDualVerticesError4d,
-    CapacityInputBoundsError4d, ExactSigmaInputError4d, PolytopeGeometry4d,
+use symplectic::capacity_4d::{
+    capacity, capacity_from_dual_vertices, capacity_value, check_dual_vertex_norm_bounds,
+    check_facet_count, check_finite_dual_vertices, check_primal_vertex_norm_bounds,
+    classify_lagrangian_product, exact_binary64_polytope_geometry, general_capacity,
+    general_qp_minimizers, product_capacity, qp_minimizers, qp_minimizers_from_dual_vertices,
+    solve_sigma_exact, Capacity4d, CapacityError4d, CapacityFromDualVerticesError4d,
+    CapacityInputBoundsError4d, CapacityValueError4d, ExactSigmaInputError4d, PolytopeGeometry4d,
     PolytopeGeometryError4d, QpCandidateFamily4d,
 };
 use symplectic::{
@@ -124,6 +126,10 @@ fn automatic_dispatch_returns_exact_sparse_product_certificate() {
         .expect("fixture capacity fits binary64");
     assert!(result.bounds().lower() <= exact_as_f64);
     assert!(exact_as_f64 <= result.bounds().upper());
+
+    let one_shot = qp_minimizers_from_dual_vertices(&fixture.dual_vertices_f64)
+        .expect("one-shot product minimizers");
+    assert_eq!(one_shot, minimizers);
 }
 
 #[test]
@@ -214,6 +220,36 @@ fn automatic_dispatch_returns_bounds_for_a_general_polytope() {
     assert!(result.bounds().lower().is_finite());
     assert!(result.bounds().lower() > 0.0);
     assert!(result.bounds().lower() <= result.bounds().upper());
+}
+
+#[test]
+fn scalar_value_requires_the_requested_relative_accuracy() {
+    let fixture = known_polytopes::simplex();
+    let capacity =
+        capacity_from_dual_vertices(&fixture.dual_vertices_f64).expect("simplex capacity");
+    let value = capacity_value(&capacity, 1e-10).expect("simplex bounds meet a loose tolerance");
+    assert!(capacity.bounds().lower() <= value);
+    assert!(value <= capacity.bounds().upper());
+    let minimizers = qp_minimizers_from_dual_vertices(&fixture.dual_vertices_f64)
+        .expect("simplex exact minimizers");
+    let exact_capacity = minimizers.candidates()[0].action_exact();
+    let value_exact = BigRational::from_float(value).expect("finite value is rational");
+    let relative_error = (value_exact - exact_capacity).abs() / exact_capacity;
+    assert!(
+        relative_error <= BigRational::from_float(1e-10).expect("finite tolerance is rational")
+    );
+    assert!(matches!(
+        capacity_value(&capacity, 0.0),
+        Err(CapacityValueError4d::BoundsTooWide { .. })
+    ));
+
+    let hypercube = known_polytopes::hypercube();
+    let exact_product =
+        capacity_from_dual_vertices(&hypercube.dual_vertices_f64).expect("hypercube capacity");
+    assert_eq!(
+        capacity_value(&exact_product, 0.0).expect("exact f64 product capacity"),
+        exact_product.bounds().lower()
+    );
 }
 
 #[test]

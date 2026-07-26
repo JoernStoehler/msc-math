@@ -115,7 +115,8 @@ src/
 Small Rust helpers shared by the regular-product producers:
 
 1. `product_polytope_cache.rs`: neutral product-polytope cache construction.
-2. `capacity.rs`: explicit billiard-capacity wrapper.
+2. `capacity.rs`: production product-minimizer adapter returning exact capacity,
+   outward bounds, and one deterministic minimizing word for bounce counting.
 3. `volume.rs`: exact-incidence volume converted to `f64`.
 4. `paths.rs`: package-relative output paths.
 

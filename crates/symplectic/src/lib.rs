@@ -55,7 +55,11 @@ mod test_lib;
 // Types
 pub use geom::vertex_enumeration::ConstructionError;
 
-// Capacity algorithms
+// Production capacity API
+pub use algorithms::capacity_4d;
+
+// Legacy orbit-producing algorithms retained for controls and branch-sensitive
+// experiments.
 pub use algorithms::billiard::{
     facet_classification::classify_facets_from_dual_vertices, solve_billiard_candidates,
     BilliardError,

@@ -14,14 +14,14 @@
 //!    rotated-regular-products/lagrangian-products-7x7.jsonl, and
 //!    rotated-regular-products/lagrangian-products-<n>x<m>-6deg.jsonl
 //!
-//! Capacity algorithm: explicit billiard. These outputs intentionally keep the
-//! specialized algorithm because the JSONL rows report billiard-native
-//! `iterations` and `bounces`, which the auto-routed capacity helper
-//! wrapper does not expose.
-use exp_regular_products::capacity_billiard;
+//! Capacity algorithm: exact product closure-vertex route. Rows retain the
+//! exact rational capacity, outward binary64 bounds, and a deterministic
+//! minimizing word used for the bounce count.
 use exp_regular_products::euclidean_volume_f64;
 use exp_regular_products::experiment_path;
+use exp_regular_products::product_minimum;
 use exp_regular_products::ProductPolytopeCache;
+use num_traits::ToPrimitive;
 use serde::Serialize;
 use std::env;
 use std::fs::File;
@@ -66,13 +66,19 @@ struct SweepRow {
     angle_deg: f64,
     facet_count: usize,
     volume: f64,
+    /// Nearest binary64 conversion retained for plotting compatibility.
     capacity: f64,
+    capacity_lower: f64,
+    capacity_upper: f64,
+    capacity_exact_numerator: String,
+    capacity_exact_denominator: String,
+    capacity_contract: &'static str,
     sys: f64,
+    sys_contract: &'static str,
     time_capacity_ms: f64,
     area_q: f64,
     area_p: f64,
-    // These fields justify the explicit billiard call sites in this file.
-    iterations: u64,
+    minimizer_sigma: Vec<usize>,
     bounces: usize,
 }
 
@@ -137,18 +143,16 @@ fn generate_heptagon_7x7() {
         let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
 
         let start = Instant::now();
-        let result = capacity_billiard(
-            &polytope.dual_vertices_f64,
-            &polytope.dual_vertices,
-            &polytope.facet_intersection_is_nonempty,
-            &polytope.omega_signs,
-        )
-        .expect("billiard should accept Lagrangian product");
+        let result = product_minimum(&polytope)
+            .expect("production product route should accept Lagrangian product");
         let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
-        let cap = result.min_action;
+        let cap = result
+            .capacity_exact
+            .to_f64()
+            .expect("regular-product capacity fits binary64");
         let sys = cap * cap / (2.0 * vol); // [def:systolic-ratio]: sys = c_EHZ^2 / (2 vol)
-        let Some(bounces) = bounce_count(&polytope, result.best_sigma()) else {
+        let Some(bounces) = bounce_count(&polytope, &result.sigma) else {
             continue;
         };
 
@@ -160,11 +164,17 @@ fn generate_heptagon_7x7() {
             facet_count: 2 * n,
             volume: vol,
             capacity: cap,
+            capacity_lower: result.capacity_bounds.lower(),
+            capacity_upper: result.capacity_bounds.upper(),
+            capacity_exact_numerator: result.capacity_exact.numer().to_string(),
+            capacity_exact_denominator: result.capacity_exact.denom().to_string(),
+            capacity_contract: "product_closure_vertex_v1",
             sys,
+            sys_contract: "approximate_f64_capacity_and_volume",
             time_capacity_ms: time_ms,
             area_q,
             area_p,
-            iterations: result.iterations,
+            minimizer_sigma: result.sigma,
             bounces,
         };
         let line = serde_json::to_string(&row).expect("serialize");
@@ -210,18 +220,16 @@ fn generate_pentagon_5x5() {
         let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
 
         let start = Instant::now();
-        let result = capacity_billiard(
-            &polytope.dual_vertices_f64,
-            &polytope.dual_vertices,
-            &polytope.facet_intersection_is_nonempty,
-            &polytope.omega_signs,
-        )
-        .expect("billiard should accept Lagrangian product");
+        let result = product_minimum(&polytope)
+            .expect("production product route should accept Lagrangian product");
         let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
-        let cap = result.min_action;
+        let cap = result
+            .capacity_exact
+            .to_f64()
+            .expect("regular-product capacity fits binary64");
         let sys = cap * cap / (2.0 * vol); // [def:systolic-ratio]: sys = c_EHZ^2 / (2 vol)
-        let Some(bounces) = bounce_count(&polytope, result.best_sigma()) else {
+        let Some(bounces) = bounce_count(&polytope, &result.sigma) else {
             continue;
         };
 
@@ -233,11 +241,17 @@ fn generate_pentagon_5x5() {
             facet_count: 10,
             volume: vol,
             capacity: cap,
+            capacity_lower: result.capacity_bounds.lower(),
+            capacity_upper: result.capacity_bounds.upper(),
+            capacity_exact_numerator: result.capacity_exact.numer().to_string(),
+            capacity_exact_denominator: result.capacity_exact.denom().to_string(),
+            capacity_contract: "product_closure_vertex_v1",
             sys,
+            sys_contract: "approximate_f64_capacity_and_volume",
             time_capacity_ms: time_ms,
             area_q,
             area_p,
-            iterations: result.iterations,
+            minimizer_sigma: result.sigma,
             bounces,
         };
         let line = serde_json::to_string(&row).expect("serialize");
@@ -283,18 +297,16 @@ fn generate_polygon_pairs() {
             let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
 
             let start = Instant::now();
-            let result = capacity_billiard(
-                &polytope.dual_vertices_f64,
-                &polytope.dual_vertices,
-                &polytope.facet_intersection_is_nonempty,
-                &polytope.omega_signs,
-            )
-            .expect("billiard should accept Lagrangian product");
+            let result = product_minimum(&polytope)
+                .expect("production product route should accept Lagrangian product");
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
-            let cap = result.min_action;
+            let cap = result
+                .capacity_exact
+                .to_f64()
+                .expect("regular-product capacity fits binary64");
             let sys = cap * cap / (2.0 * vol); // [def:systolic-ratio]: sys = c_EHZ^2 / (2 vol)
-            let Some(bounces) = bounce_count(&polytope, result.best_sigma()) else {
+            let Some(bounces) = bounce_count(&polytope, &result.sigma) else {
                 continue;
             };
 
@@ -306,11 +318,17 @@ fn generate_polygon_pairs() {
                 facet_count: n1 + n2,
                 volume: vol,
                 capacity: cap,
+                capacity_lower: result.capacity_bounds.lower(),
+                capacity_upper: result.capacity_bounds.upper(),
+                capacity_exact_numerator: result.capacity_exact.numer().to_string(),
+                capacity_exact_denominator: result.capacity_exact.denom().to_string(),
+                capacity_contract: "product_closure_vertex_v1",
                 sys,
+                sys_contract: "approximate_f64_capacity_and_volume",
                 time_capacity_ms: time_ms,
                 area_q,
                 area_p,
-                iterations: result.iterations,
+                minimizer_sigma: result.sigma,
                 bounces,
             };
             let line = serde_json::to_string(&row).expect("serialize");

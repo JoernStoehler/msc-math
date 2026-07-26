@@ -30,6 +30,12 @@ Refresh the broad sweeps:
 cargo run -p exp-regular-products --release --bin regular-rotated-products
 ```
 
+The current producer records the exact rational product capacity, outward
+binary64 bounds, a deterministic minimizing word, and an explicitly
+approximate `sys` value because volume is converted to binary64. Existing
+tracked JSONL remains historical until a deliberate refresh; older rows still
+contain the retired legacy billiard `iterations` field.
+
 Refresh the plots:
 
 ```bash

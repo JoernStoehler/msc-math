@@ -8,9 +8,11 @@
 //! payload for one requested word.
 //!
 //! Most callers should use [`capacity_from_dual_vertices`]. Callers that need
-//! intermediate geometry can instead use [`exact_binary64_polytope_geometry`],
-//! the explicit input checks, and then [`capacity`]. Product results include an
-//! exact dyadic-rational value; general results include outward binary64 bounds.
+//! minimizing words should use [`qp_minimizers_from_dual_vertices`]. Callers
+//! that need intermediate geometry can instead use
+//! [`exact_binary64_polytope_geometry`], the explicit input checks, and then
+//! [`capacity`] or [`qp_minimizers`]. Product results include an exact
+//! dyadic-rational value; general results include outward binary64 bounds.
 
 mod general;
 mod geometry;
@@ -150,6 +152,80 @@ impl Capacity4d {
     }
 }
 
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum CapacityValueError4d {
+    InvalidRelativeTolerance,
+    InvalidCapacityBounds,
+    BoundsTooWide {
+        certified_relative_error: f64,
+        maximum_relative_error: f64,
+    },
+}
+
+impl std::fmt::Display for CapacityValueError4d {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::InvalidRelativeTolerance => {
+                formatter.write_str("relative tolerance must be finite and nonnegative")
+            }
+            Self::InvalidCapacityBounds => {
+                formatter.write_str("capacity bounds must be finite, positive, and ordered")
+            }
+            Self::BoundsTooWide {
+                certified_relative_error,
+                maximum_relative_error,
+            } => write!(
+                formatter,
+                "certified relative error {certified_relative_error:e} exceeds requested maximum {maximum_relative_error:e}"
+            ),
+        }
+    }
+}
+
+impl std::error::Error for CapacityValueError4d {}
+
+/// Return a representative capacity only when its relative error is certified.
+///
+/// If the exact capacity `c` lies in `[lower, upper]`, the returned midpoint
+/// `value` satisfies
+///
+/// `|value - c| / c <= certified_relative_error <= maximum_relative_error`.
+///
+/// The computed error bound is rounded outward.
+pub fn capacity_value(
+    capacity: &Capacity4d,
+    maximum_relative_error: f64,
+) -> Result<f64, CapacityValueError4d> {
+    if !maximum_relative_error.is_finite() || maximum_relative_error < 0.0 {
+        return Err(CapacityValueError4d::InvalidRelativeTolerance);
+    }
+    let bounds = capacity.bounds();
+    if !bounds.lower.is_finite()
+        || !bounds.upper.is_finite()
+        || bounds.lower <= 0.0
+        || bounds.lower > bounds.upper
+    {
+        return Err(CapacityValueError4d::InvalidCapacityBounds);
+    }
+
+    let value = bounds.lower + (bounds.upper - bounds.lower) * 0.5;
+    let lower_distance = value - bounds.lower;
+    let upper_distance = bounds.upper - value;
+    let maximum_distance = lower_distance.max(upper_distance);
+    let certified_relative_error = if maximum_distance == 0.0 {
+        0.0
+    } else {
+        next_up(next_up(maximum_distance) / bounds.lower)
+    };
+    if certified_relative_error > maximum_relative_error {
+        return Err(CapacityValueError4d::BoundsTooWide {
+            certified_relative_error,
+            maximum_relative_error,
+        });
+    }
+    Ok(value)
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum CapacityError4d {
     ProductRouteRequiresStructuralProduct,
@@ -280,6 +356,22 @@ impl From<product::ProductClosureError> for ProductRouteFailure4d {
 pub fn capacity_from_dual_vertices(
     dual_vertices: &[Vector4<f64>],
 ) -> Result<Capacity4d, CapacityFromDualVerticesError4d> {
+    let geometry = checked_geometry_from_dual_vertices(dual_vertices)?;
+    capacity_assuming_checked(&geometry).map_err(CapacityFromDualVerticesError4d::Capacity)
+}
+
+/// Validate exact binary64 geometry and numerical-size bounds, then return
+/// every tied minimizing word in the automatically selected candidate family.
+pub fn qp_minimizers_from_dual_vertices(
+    dual_vertices: &[Vector4<f64>],
+) -> Result<QpMinimizers4d, CapacityFromDualVerticesError4d> {
+    let geometry = checked_geometry_from_dual_vertices(dual_vertices)?;
+    qp_minimizers_assuming_checked(&geometry).map_err(CapacityFromDualVerticesError4d::Capacity)
+}
+
+fn checked_geometry_from_dual_vertices(
+    dual_vertices: &[Vector4<f64>],
+) -> Result<PolytopeGeometry4d, CapacityFromDualVerticesError4d> {
     check_facet_count(dual_vertices.len()).map_err(CapacityFromDualVerticesError4d::InputBounds)?;
     check_finite_dual_vertices(dual_vertices).map_err(CapacityFromDualVerticesError4d::Geometry)?;
     check_dual_vertex_norm_bounds(dual_vertices)
@@ -288,7 +380,7 @@ pub fn capacity_from_dual_vertices(
         .map_err(CapacityFromDualVerticesError4d::Geometry)?;
     check_primal_vertex_norm_bounds(&geometry)
         .map_err(CapacityFromDualVerticesError4d::InputBounds)?;
-    capacity_assuming_checked(&geometry).map_err(CapacityFromDualVerticesError4d::Capacity)
+    Ok(geometry)
 }
 
 /// Compute the scalar EHZ capacity of checked exact binary64 geometry.
@@ -360,6 +452,12 @@ fn product_capacity_assuming_checked(
 /// candidate family.
 pub fn qp_minimizers(geometry: &PolytopeGeometry4d) -> Result<QpMinimizers4d, CapacityError4d> {
     assert_capacity_input_bounds(geometry);
+    qp_minimizers_assuming_checked(geometry)
+}
+
+fn qp_minimizers_assuming_checked(
+    geometry: &PolytopeGeometry4d,
+) -> Result<QpMinimizers4d, CapacityError4d> {
     if classify_lagrangian_product(geometry).is_some() {
         product_qp_minimizers_assuming_checked(geometry)
     } else {

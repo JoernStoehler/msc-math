@@ -6,26 +6,32 @@ use exp_dev_quadratic_program::{
     F64ValidationPolicy, ScanCase,
 };
 use num_rational::BigRational;
-use num_traits::Zero;
+use num_traits::{ToPrimitive, Zero};
 use symplectic::{
+    capacity_4d::{
+        capacity_from_dual_vertices, capacity_value, qp_minimizers_from_dual_vertices,
+        QpCandidateFamily4d,
+    },
     solve_orbit_sigma_saddle_point, CertifiedOrbitSetMode, OrbitAdmissibility, OrbitGuaranteeMode,
 };
 
 fn main() {
     let case = small_generated_case();
 
-    let certified = certified_scalar_consumer(&case);
+    let certified = production_scalar_consumer(&case);
+    let minimizers = production_minimizer_consumer(&case);
     let near_minimizers = near_minimizer_window_consumer(&case);
     let fallback = retained_candidate_fallback_consumer(&case);
     let heuristic = heuristic_scan_consumer(&case);
     let timing = timing_only_consumer(&case);
 
     println!(
-        "certified_scalar capacity={:.12} minimizers={} exact_admissible={} iterations={}",
-        certified.capacity,
-        certified.minimizer_count,
-        certified.exact_admissible_count,
-        certified.iterations
+        "production_scalar route={} lower={:.12} upper={:.12} maximum_relative_error={:.1e}",
+        certified.route, certified.lower, certified.upper, certified.maximum_relative_error
+    );
+    println!(
+        "production_minimizers family={} capacity={:.12} count={} first_sigma={:?}",
+        minimizers.family, minimizers.capacity, minimizers.count, minimizers.first_sigma
     );
     println!(
         "near_minimizer_window capacity={:.12} window_orbits={} exact_admissible={}",
@@ -52,24 +58,49 @@ fn main() {
     );
 }
 
-/// Consumer shape for callers that need a scalar capacity whose uncertainty is
-/// resolved before use. This deliberately uses the exact route, not f64 labels.
-fn certified_scalar_consumer(case: &ScanCase) -> CertifiedScalar {
-    let exact = exact_report(case, BigRational::zero());
-    assert!(
-        !exact.minimizers.is_empty(),
-        "certified scalar consumer needs an exact minimizer"
-    );
-    CertifiedScalar {
-        capacity: exact.capacity,
-        minimizer_count: exact.minimizers.len(),
-        exact_admissible_count: exact.exact_admissible_count,
-        iterations: exact.iterations,
+/// Ordinary scalar consumer: accept the outward interval only when it is
+/// narrow enough for the downstream calculation.
+fn production_scalar_consumer(case: &ScanCase) -> ProductionScalar {
+    let capacity = capacity_from_dual_vertices(&case.dual_vertices)
+        .expect("owned consumer fixture must satisfy the production input contract");
+    let bounds = capacity.bounds();
+    let maximum_relative_error = 1e-10;
+    let _value = capacity_value(&capacity, maximum_relative_error)
+        .expect("owned consumer requires capacity relative error at most 1e-10");
+    ProductionScalar {
+        route: capacity.route_name(),
+        lower: bounds.lower(),
+        upper: bounds.upper(),
+        maximum_relative_error,
+    }
+}
+
+/// Ordinary minimizer consumer: use exact actions and preserve the candidate
+/// family name rather than treating a word as an unqualified physical orbit.
+fn production_minimizer_consumer(case: &ScanCase) -> ProductionMinimizers {
+    let minimizers = qp_minimizers_from_dual_vertices(&case.dual_vertices)
+        .expect("owned consumer fixture must have production minimizers");
+    let first = minimizers
+        .candidates()
+        .first()
+        .expect("successful minimizer search returns a word");
+    ProductionMinimizers {
+        family: match minimizers.family() {
+            QpCandidateFamily4d::GeneralHk => "general_hk",
+            QpCandidateFamily4d::ProductClosureVertex => "product_closure_vertex",
+        },
+        capacity: first
+            .action_exact()
+            .to_f64()
+            .expect("owned consumer capacity fits binary64"),
+        count: minimizers.candidates().len(),
+        first_sigma: first.sigma().to_vec(),
     }
 }
 
 /// Consumer shape for callers that need near-minimizing `(sigma, action)` rows,
-/// not only the scalar value. The exact route owns the gap-window semantics here.
+/// not only the scalar value. The retained exhaustive exact route owns the
+/// gap-window semantics because production has no action-window API yet.
 fn near_minimizer_window_consumer(case: &ScanCase) -> NearMinimizerWindow {
     let exact = exact_report(case, BigRational::new(1.into(), 100.into()));
     NearMinimizerWindow {
@@ -195,11 +226,19 @@ fn small_generated_case() -> ScanCase {
 }
 
 #[derive(Debug)]
-struct CertifiedScalar {
+struct ProductionScalar {
+    route: &'static str,
+    lower: f64,
+    upper: f64,
+    maximum_relative_error: f64,
+}
+
+#[derive(Debug)]
+struct ProductionMinimizers {
+    family: &'static str,
     capacity: f64,
-    minimizer_count: usize,
-    exact_admissible_count: usize,
-    iterations: u64,
+    count: usize,
+    first_sigma: Vec<usize>,
 }
 
 #[derive(Debug)]
