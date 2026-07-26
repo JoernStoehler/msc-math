@@ -19,14 +19,14 @@ No current hard submission deadline is recorded in the repository.
 | Area | Current state | Source routes |
 | --- | --- | --- |
 | Foundations and generalized Reeb orbits | internally reviewed candidate; the Clarke/simple-minimizer proof boundary is settled; integrated reader review remains | `thesis/02-*`, `thesis/03-*`, corresponding formal sources |
-| Haim--Kislev quadratic program | substantial integrated draft; Jörn accepted the product finite-enumeration reduction, while Kai/expert convention review remains appropriate | `thesis/04-*`, `thesis/quadratic-program-algorithm-hk2019-content.md`, HK2017 formal notes and crate sources |
+| Haim--Kislev quadratic program and numerics | integrated draft now includes the twelve-facet branch family, six-facet product-capacity reduction, certified production algorithms, input contract, and numerical evidence; Kai/expert convention and integrated reader review remain appropriate | `thesis/04-*`, `thesis/11-numerics.tex`, `thesis/quadratic-program-algorithm-hk2019-content.md`, QP formal, crate, and experiment sources |
 | Flow graph/CH2021 | substantial conditional draft; final theorem/algorithm role must remain honest | `thesis/05-*`, flow-graph formal, crate, and experiment sources |
 | First-order perturbations | scaffold; arbitrary-polytope boundary remains materially different from the generic story | `thesis/06-*`, `formal/sys-first-order-local-behavior.md` |
 | HKO local maximum | internally reviewed integration candidate; ordinary whole-PDF/Jörn/Kai review remains | `thesis/07-*`, `experiments/hko-local-maximum/` |
 | Data-science search | the closed method table has bounded retained wording; current thesis-level closure must be checked against the later packets and active thesis claims | `thesis/08-*`, `experiments/sys-datascience/` |
 | Rotated regular polygons | substantial theorem/certificate draft | `thesis/09-*`, `experiments/regular-products/` |
 | AI use | the separate factual disclosure page is Jörn-accepted; the numbered research-process discussion remains provisional and materially incomplete | `thesis/ai-use-disclosure-content.md`, `thesis/use-of-ai-content.md`, `experiments/ai-use/` |
-| Visualization, numerics, published code/data, conclusion | incomplete thesis surfaces | matching thesis and experiment sources |
+| Visualization, published code/data, conclusion | incomplete thesis surfaces | matching thesis and experiment sources |
 | Submission and archive | incomplete external state | `submit/`, `docs/reproducibility.md`, Jörn/mail |
 
 ## Current cross-domain decisions and gates
@@ -45,6 +45,14 @@ No current hard submission deadline is recorded in the repository.
   of the project-derived convention lift remains appropriate. See
   `thesis/quadratic-program-algorithm-hk2019-content.md` and
   `thesis/rotated-regular-polygons-content.md`.
+- **Product capacity has a separate six-facet reduction.** Bilinear extremality
+  in the two planar normalized closure polytopes proves that some capacity
+  maximizer uses at most three facets from each factor. This supports the
+  KKT-free scalar production route but does not replace the twelve-facet block
+  family used for rotated-pentagon branch comparison or classify every
+  minimizing orbit. Jörn accepted the result as a production risk after
+  independent proof review and a 10,240-product falsification check. See
+  `formal/product-qp-six-facet-reduction.tex` and the QP companion.
 - **First-order and flow-graph strength remain open.** Generic smooth-branch
   first-order behavior does not settle the arbitrary-polytope boundary. The
   flow-graph chapter must match the hypotheses and support actually established

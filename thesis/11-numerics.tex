@@ -1,19 +1,187 @@
+\FloatBarrier
 \section{Numerics}\label{sec:numerics}
 
-The computations in this thesis use different arithmetic according to the
-claim they support.  Finite checks that enter a proof are performed with exact
-rational or algebraic arithmetic.  In particular, the HKO certificate and the
-rotated-pentagon certificate are verified in SageMath over ordered algebraic
-fields; floating-point values may help to find candidate data, but the
-verifiers reconstruct the proof-facing objects and decide the required
-equalities, inequalities, and ranks exactly.  By contrast, high-throughput
-search and exploration use binary64 arithmetic.  Selected numerical paths use
-route-local true, false, or indeterminate labels for positivity and related
-branch decisions; an indeterminate case may be rejected, propagated, or have
-its KKT equations and positivity checked exactly where a local fallback is
-implemented.  Such fallback proves neither that the KKT witness is the maximum
-for that fixed word~\(\sigma\) nor that every relevant candidate was retained.
-Conditional error estimates and small exact-versus-floating-point audits provide
-engineering and regression evidence on selected cases, not coverage theorems.
-Thus theorem-level finite claims in this thesis rest on the exact arguments
-and SageMath certificates, not on floating-point acceptance.
+The computations in this thesis support two different kinds of claims.
+Statements used inside the HKO and rotated-pentagon proofs are checked by
+separate SageMath packets over rational or ordered algebraic fields.  The
+ordinary Rust implementation instead computes the EHZ capacity of a
+four-dimensional polytope supplied in binary64 coordinates.  It uses
+floating-point arithmetic for speed, but it does not accept an unverified
+floating-point sign or ordering decision: every such decision is enclosed by
+an outward error bound or resolved in exact rational arithmetic.
+
+\subsection{Input and output contracts}
+
+A finite binary64 number is a dyadic rational.  The numerical capacity
+contract regards the supplied numbers as these exact rationals; it does not
+claim to recover unavailable source coordinates from which they may have been
+rounded.  Before the QP search, exact geometry checks establish that
+\[
+  K=\{x\in\mathbb{R}^4:\langle a_i,x\rangle\leq1\}
+\]
+is bounded, nonempty, full-dimensional, and described without redundant
+facets.  The exact primal vertices and vertex--facet incidence are then
+constructed from the dyadic input.  Floating-point filters may discard a
+subset only when a one-sided bound proves the exact conclusion; an
+indeterminate filter result is resolved exactly.
+
+The production route accepts at most sixteen facets and requires every primal
+and dual vertex to have infinity norm in
+\[
+  [10^{-3},10^3].
+\]
+These bounds are a deliberately narrow applicability policy, not a theorem
+about all polytopes.  They exclude scales for which the current binary64
+enclosures have not been justified and tested.  The general candidate stream
+is additionally limited to \(100\,000\) cyclic words.  Violating any of these
+conditions returns an error rather than an uncertified capacity.
+
+For a general polytope the result is an outward interval
+\([c_{\mathrm L},c_{\mathrm U}]\) containing the exact capacity of the
+dyadic input.  A scalar wrapper returns the midpoint only if this interval
+certifies the relative error requested by the caller.  For a recognized
+Lagrangian product the specialized route returns the exact rational capacity
+of the dyadic input, together with outward binary64 endpoints for convenient
+downstream use.
+
+\subsection{Certified fixed-word decisions}
+
+For a word \(\sigma\), write the equality-constrained stationary system in the
+symmetric form
+\[
+  \mathcal K
+  \binom{\beta}{\lambda}
+  =
+  \begin{pmatrix}H&C^{\mathsf T}\\ C&0\end{pmatrix}
+  \binom{\beta}{\lambda}
+  =
+  \binom{0}{d},
+  \qquad d=(0,0,0,0,1)^{\mathsf T}.
+\]
+Here \(C\beta=d\) is closure plus normalization and \(H\) is twice the
+quadratic form in \eqref{eq:quadratic-program-algorithm-hk2019-q}.  A numerical
+factorization supplies an approximate solution \(\widehat x\) and approximate
+inverse \(R\).  The following standard inverse-defect estimate is the central
+certificate.
+
+\begin{lemma}[Verified inverse defect]\label{lem:numerics-verified-inverse-defect}
+Suppose outward arithmetic establishes
+\[
+  \overline r\geq\|\mathcal K\widehat x-b\|_\infty,\qquad
+  \overline e\geq\|I-\mathcal K R\|_\infty,\qquad
+  \overline e<1.
+\]
+Then \(\mathcal K\) is invertible, and its exact solution \(x^\ast\) satisfies
+\[
+  \|\widehat x-x^\ast\|_\infty
+  \leq
+  \rho:=
+  \frac{\|R\|_\infty\,\overline r}{1-\overline e}.
+\]
+\end{lemma}
+
+\begin{proof}
+The Banach lemma applied to
+\(\mathcal K R=I-(I-\mathcal K R)\) gives
+\(\|\mathcal K^{-1}\|_\infty\leq
+\|R\|_\infty/(1-\overline e)\).  Apply this bound to the residual
+\(\mathcal K\widehat x-b\).
+\end{proof}
+
+Thus \(\widehat\beta_i-\rho>0\) for every \(i\) certifies positive weights,
+while \(\widehat\beta_i+\rho\leq0\) for some \(i\) certifies failure.  If
+\(\xi\) is the multiplier for normalization, stationarity gives
+\[
+  2Q(\beta^\ast)+\xi^\ast=0.
+\]
+Consequently the same radius yields
+\[
+  Q(\beta^\ast)\in
+  \left[-\frac{\widehat\xi+\rho}{2},
+        -\frac{\widehat\xi-\rho}{2}\right].
+\]
+For \(0<q_{\mathrm L}\leq Q\leq q_{\mathrm U}\), monotonicity then gives the
+action enclosure
+\[
+  \frac{1}{2q_{\mathrm U}}
+  \leq\mathcal A\leq
+  \frac{1}{2q_{\mathrm L}}.
+\]
+
+The implementation computes the residual and inverse-defect bounds with
+explicit roundoff and subnormal-error terms.  It first uses a cheap induced
+norm bound and retries an indeterminate system with a tighter entrywise
+bound.  The proof assumes round-to-nearest binary64 arithmetic with gradual
+underflow and the inspected matrix-multiplication evaluation order.  The
+runtime checks gradual underflow; if the contract is unavailable, or if either
+bound remains indeterminate, the decision is made by exact rational
+arithmetic.  A compiler, dependency, target, or arithmetic-contract change
+therefore requires the floating-point certificate tests to be repeated.
+
+\subsection{Complete general and product routes}
+
+The general search constructs the exact transition graph, pruned by facet
+incidence and symplectic signs, then enumerates its simple cyclic words. Candidate
+correctness is not obtained merely by solving every displayed KKT system.  A
+fixed-word maximum must have nonpositive curvature in every tangent direction.
+Conversely, a certified vector \(z\in\ker C_\tau\) with
+\(z^{\mathsf T}H_\tau z>0\) rules out \(\tau\).  If \(\tau\) injects into a
+longer word \(\sigma\) while preserving cyclic order, zero-extending \(z\)
+preserves both its tangent constraints and positive curvature.  Hence
+\(\sigma\) is ruled out as well.  Processing words by length allows these
+proved obstructions to skip many later factorizations.
+
+For every word not excluded in this way, the route uses the verified
+fixed-word decision above, with exact fallback for every indeterminate case.
+The resulting objective intervals are aggregated outwards over the complete
+candidate family, and the reciprocal reverses the endpoints to enclose the
+capacity.  Exact arithmetic is therefore a selective correctness fallback,
+not the default arithmetic for every word.
+
+For a Lagrangian product, the inverse-defect route is correct but frequently
+indeterminate and unnecessarily expensive.  The specialized implementation
+uses Algorithm~\ref{alg:quadratic-program-product-closure-vertices}.  It
+encloses factor-closure weights and bilinear objectives in floating-point
+arithmetic, rejects a support or order only when the intervals prove it cannot
+win, and resolves ambiguous supports and every possible winner exactly.
+Because the final comparison is rational, this route returns the exact
+capacity and every tied sparse winner in the closure-vertex candidate family.
+It intentionally does not enumerate all minimizing geometric branches.
+
+\subsection{Empirical verification and limitations}
+
+The general numerical audit compared the floating-point predicates with exact
+dyadic-rational arithmetic on \(249\) KKT systems: ordinary generated systems,
+scales from \(10^{-2}\) through \(10^3\), and systems approaching singularity
+down to binary64 coincidence.  It found no incorrect determinate decision and
+no violation of a \(\beta\)- or \(Q\)-radius.  Fifteen cases were
+indeterminate and were resolved exactly.  The largest observed ratios of
+actual error to certified radius were \(0.00149\) for \(\beta\) and
+\(0.00081\) for \(Q\).
+
+Complete-route comparisons used \(88\) words from three generated general
+polytopes and \(1271\) words from three product controls.  Exact aggregation
+found no missed capacity and no missed minimizer class; every exact capacity
+lay in the returned interval.  On the general cases, the largest difference
+between the reported midpoint and exact capacity was \(2.31\cdot10^{-14}\).
+These finite comparisons test the implementation and exercise fallback, but
+the soundness claim rests on the preceding error bounds and complete-candidate
+arguments.
+
+The product audit used \(88\) ordinary and adversarial products.  Across
+\(1835\) closure weights and \(173\,496\) objective intervals it found no
+interval violation, no incorrect determinate sign, and no disagreement between
+the hybrid and complete exact closure-vertex computations.  Raw comparison
+with zero disagreed with the exact objective sign \(23\,559\) times, mostly at
+exact zero or tiny values; the certified predicate returned indeterminate
+instead.  A separate retained population of \(10\,240\) random products had a
+literal capacity winner of length six in every case.  This supports the
+implementation and stress-tests
+Theorem~\ref{thm:quadratic-program-product-six-facet}; it is not its proof and
+does not exclude longer tied minimizers.
+
+The guarantees above concern the exact dyadic polytope represented by the
+input.  They do not propagate measurement error or prior rounding uncertainty
+in the coordinates, and they apply only within the stated facet, norm, and
+candidate-count limits.  Proof-facing claims about algebraic parameter
+families therefore continue to use the separate exact SageMath certificates.

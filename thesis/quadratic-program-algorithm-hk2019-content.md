@@ -62,6 +62,49 @@ contradictory statements in `formal/ehz-kkt-system.tex` and
 Update rule: add or change a claim only with a source pointer or an explicit
 `needs source` marker.
 
+## Production algorithm update, 2026-07-26
+
+The chapter now records two product reductions with deliberately different
+contracts.
+
+- The twelve-facet alternating block theorem remains the source for the
+  rotated-pentagon certificate's exhaustive branch comparison. It retains
+  block and adjacency information and must not be replaced by a scalar-only
+  sparsity statement.
+- The newer six-facet theorem states that some global product-QP maximizer
+  uses at most three facets from each factor, with total factor weights
+  \(1/2\). Its proof factors the objective as
+  \(Q=t(1-t)B(\alpha,\gamma)\), chooses vertex maximizers in the two planar
+  normalized closure polytopes, and uses their support bound of three. This is
+  an existence and capacity-value theorem, not a classification of all
+  minimizers. Source: `formal/product-qp-six-facet-reduction.tex`.
+
+An independent Sol review reconstructed the six-facet argument and found no
+gap. Jörn did not line-check it, but accepted its use as a production risk
+after all 10,240 retained random products had a literal winning word of length
+at most six. Source:
+`experiments/dev-quadratic-program/tools/product_closure_route/RESULTS.md`.
+
+The former implementation-status paragraphs were superseded. The production
+general route now has complete transition-pruned candidate coverage, certified
+curvature rejection with cyclic-order inheritance, verified inverse-defect
+enclosures, exact fallback for every indeterminate decision, and outward
+capacity bounds. The production product route uses the six-facet
+closure-vertex enumeration, interval filtering, and exact resolution of every
+possible winner; it returns the exact capacity of the binary64-rational input.
+Sources:
+
+- `crates/symplectic/src/algorithms/capacity_4d/`;
+- `formal/hk2017-qp-precision.tex`;
+- `experiments/dev-quadratic-program/tools/general_algorithm_ablation/RESULTS.md`;
+- `experiments/dev-quadratic-program/tools/product_closure_route/RESULTS.md`.
+
+The active numerics section states the binary64-input interpretation, exact
+geometry validation, applicability limits, fixed-word enclosure theorem,
+fallback policy, route completeness, empirical comparisons, and remaining
+source-coordinate-uncertainty limitation. The Sage theorem packets remain the
+authority for proof-facing algebraic claims.
+
 ## Session Scope
 
 - In scope: the Haim--Kislev quadratic-program statement and the mathematical

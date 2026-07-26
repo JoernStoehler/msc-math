@@ -10,9 +10,11 @@ developed.  The present section supplies the missing scalar objective.  It
 first identifies normalized dwell times with the QP variables and then
 separates fixed-word stationarity from the global maximum which computes the
 capacity.  For Lagrangian products of planar polygons, a billiard argument
-gives a much smaller exhaustive word family; that specialization is needed in
-Section~\ref{sec:rotated-regular-polygons}.  We call the resulting finite
-optimization problem the quadratic program, or QP.
+gives the structured exhaustive word family used in
+Section~\ref{sec:rotated-regular-polygons}.  A separate bilinear argument gives
+an even smaller family when only the capacity value and one minimizing word
+are required.  We call the resulting finite optimization problem the
+quadratic program, or QP.
 
 \subsection{The finite quadratic program}
 \label{subsec:quadratic-program-algorithm-hk2019-general-polytopes}
@@ -425,6 +427,91 @@ corresponding Haim--Kislev quadratic program. The capacity is
 feasible words in this candidate family.
 \end{algorithm}
 
+\subsection{A six-facet reduction for the product capacity}
+\label{subsec:quadratic-program-product-six-facet}
+
+The preceding block family preserves geometric information needed by later
+exact branch comparisons.  The scalar capacity admits a stronger reduction.
+Let \(I_q\) and \(I_p\) be the \(q\)- and \(p\)-positions in a feasible word,
+and put
+\[
+  t=\sum_{k\in I_q}\beta_k,\qquad
+  \alpha_k=\frac{\beta_k}{t}\ (k\in I_q),\qquad
+  \gamma_k=\frac{\beta_k}{1-t}\ (k\in I_p).
+\]
+Positive objective value forces \(0<t<1\).  Closure splits between the two
+factors, so \(\alpha\) and \(\gamma\) belong to the normalized closure
+polytopes
+\begin{align*}
+  C_q&=\left\{\alpha\geq0:\sum\alpha_k=1,\
+    \sum\alpha_k u_k=0\right\},\\
+  C_p&=\left\{\gamma\geq0:\sum\gamma_k=1,\
+    \sum\gamma_k v_k=0\right\},
+\end{align*}
+where \(u_k\) and \(v_k\) are the planar dual vertices selected by the word.
+Because the symplectic form vanishes on each Lagrangian factor, the objective
+factors as
+\begin{equation}\label{eq:quadratic-program-product-factorization}
+  Q_\sigma(\beta)=t(1-t)B_\sigma(\alpha,\gamma),
+\end{equation}
+where \(B_\sigma\) is bilinear.  Its coefficients are the signed pairings
+\(\langle u_k,v_\ell\rangle\), with the sign determined by their order in
+\(\sigma\).
+
+\begin{theorem}[Six-facet product maximizer]
+\label{thm:quadratic-program-product-six-facet}
+For a Lagrangian product \(K_q\times_LK_p\) of nondegenerate planar convex
+polygons containing the origin in their interiors, the complete
+Haim--Kislev family has a global maximizer using at most three \(q\)-facets
+and at most three \(p\)-facets.  The total weight in each factor is \(1/2\).
+Consequently the capacity is represented by a word of length at most six.
+\end{theorem}
+
+\begin{proof}
+Choose a global maximizer.  Its objective is positive, hence both factor
+weights are nonzero and \eqref{eq:quadratic-program-product-factorization}
+applies.  With \(\gamma\) fixed, the bilinear factor is linear in \(\alpha\),
+so it has a maximizer at a vertex of \(C_q\).  Replacing \(\alpha\) by that
+vertex preserves global maximality.  Fixing the new \(\alpha\) and repeating
+the argument in \(C_p\) gives a global maximizer for which both normalized
+factor weights are vertices of their closure polytopes.
+
+A vertex of
+\[
+  \left\{x\geq0:\sum_i x_i=1,\ \sum_i x_iw_i=0\right\},
+  \qquad w_i\in\mathbb{R}^2,
+\]
+has at most three positive coordinates.  Indeed, more than three positive
+columns in the three scalar equality constraints have a nontrivial linear
+dependence, which gives a feasible line through the point and contradicts
+extremality.  Thus each factor uses at most three facets.
+
+For the selected vertices the bilinear value is positive.  Varying only the
+total factor weight gives
+\[
+  \tau(1-\tau)B_\sigma(\alpha,\gamma),\qquad 0\leq\tau\leq1,
+\]
+which is maximal at \(\tau=1/2\).  Delete the remaining zero-weight positions.
+The relative cyclic order and objective are unchanged, and the complete
+Haim--Kislev family contains the resulting word of length at most six.
+\end{proof}
+
+\Needspace{10\baselineskip}
+\begin{algorithm}[Product capacity from closure vertices]
+\label{alg:quadratic-program-product-closure-vertices}
+Enumerate the vertices of \(C_q\) and \(C_p\).  For each pair, enumerate the
+cyclic orders of the union of their supports, give each factor total weight
+\(1/2\), and evaluate \(Q_\sigma\).  The largest value is \(Q_{\max}\).
+Each support union has at most six facets, so fixing one cyclic starting point
+leaves at most \(5!=120\) orders.
+\end{algorithm}
+
+Theorem~\ref{thm:quadratic-program-product-six-facet} is an existence and
+capacity-value result.  It neither classifies all minimizing orbits nor says
+that every maximizer has support at most six.  In particular, it does not
+replace the twelve-facet block family when a later argument must compare a
+specified family of geometric branches.
+
 \subsection{Use in later certificates}
 \label{subsec:quadratic-program-algorithm-hk2019-implementation-status}
 
@@ -436,15 +523,25 @@ Theorem~\ref{thm:lagrangian-product-finite-enumeration}, then checks the exact
 algebraic inequalities needed to compare every surviving branch with the
 displayed one.
 
-The available numerical computation has a narrower evidential role.  It
-enumerates unpruned words, or cycles in a caller-supplied transition graph, and
-applies an f64 saddle-point solver to produce KKT candidates.  Selected
-candidates can be resolved exactly over rational dual rows, but the current f64
-filtering and selective fallback do not certify that every globally relevant
-word was resolved.  An exact returned payload is therefore an exact feasible
-KKT witness for its word, not by itself an exact capacity computation.  The
-theorem-bearing HKO and rotated-pentagon arguments use their separate exact
-SageMath verification packets rather than this f64 route.
+The ordinary implementation uses two certified routes.  For a general
+four-dimensional polytope it enumerates the complete transition-pruned family
+of cyclic words in increasing length.  A positive-curvature obstruction for a
+short word remains an obstruction for every cyclic-order-preserving extension,
+so such extensions are skipped.  On the remaining words a floating-point
+\(LDL^\mathsf{T}\) factorization proposes curvature and a KKT solution.
+Outward residual bounds certify the decisions; an exact rational solve is used
+only when the floating-point certificate is indeterminate.  Outward objective
+intervals are aggregated to a certified capacity interval.
+
+For a recognized Lagrangian product, the implementation instead follows
+Algorithm~\ref{alg:quadratic-program-product-closure-vertices}.  Floating-point
+intervals reject separated closure supports and objective values, while exact
+rational arithmetic resolves ambiguous supports and all possible winners.
+This route returns the exact capacity of the supplied binary64 input and its
+sparse maximizing words without solving KKT systems.  The input contract,
+rounding certificates, fallback policy, and numerical evidence are stated in
+Section~\ref{sec:numerics}.  The theorem-bearing HKO and rotated-pentagon
+arguments still use their separate SageMath verification packets.
 
 The QP is therefore the appropriate language when the global objective value,
 its competing branches, or exact inequalities between them matter.  The next
