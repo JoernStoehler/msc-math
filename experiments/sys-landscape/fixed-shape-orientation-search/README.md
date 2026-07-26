@@ -105,6 +105,23 @@ uv run --script experiments/sys-landscape/fixed-shape-orientation-search/analyze
   --output experiments/sys-landscape/fixed-shape-orientation-search/global-analysis.json
 ```
 
+For a caller-shaped runtime smoke, select one source body and cap the number of
+evaluations. `--profile-stages` additionally enumerates the transition cycles
+once as a separate diagnostic; that diagnostic is not included in
+`capacity_pipeline_runtime_ms`.
+
+```bash
+cargo run -p exp-sys-landscape --release \
+  --bin sys-fixed-shape-orientation-search -- \
+  --source-kind generic \
+  --maximum-evaluations 3 \
+  --capacity-backend production \
+  --profile-stages \
+  --output /tmp/qp-orientation-production-smoke.jsonl
+```
+
+Use `--capacity-backend legacy` for the paired retained-route control.
+
 - `main.rs` performs selection, orientation, capacity evaluation, and JSONL
   output.
 - `evaluations.jsonl` retains every evaluated point.

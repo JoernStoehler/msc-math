@@ -5,6 +5,10 @@ binaries and summarizers. Use it for timing questions that are still coupled
 to QP/f64 route design, validation policy, product routing, fallback policy,
 or exact-audit boundary choices.
 
+For quick experiment cost estimates, start with
+[`CURRENT_COSTS.md`](CURRENT_COSTS.md). It retains a small replace-in-place
+table of current unit costs and the commands that regenerate them.
+
 ## `f64-capacity-e2e`
 
 This target measures candidate f64 methods for producing capacity values inside
