@@ -14,10 +14,28 @@ use num_rational::BigRational;
 use num_traits::Zero;
 use serde_json::json;
 use std::time::Instant;
-use symplectic::algorithms::capacity_4d::CapacityInput4d;
+use symplectic::algorithms::capacity_4d::{
+    check_dual_vertex_norm_bounds, check_facet_count, check_finite_dual_vertices,
+    check_primal_vertex_norm_bounds, exact_binary64_polytope_geometry, product_capacity,
+    product_qp_minimizers, PolytopeGeometry4d,
+};
 use symplectic::geom::known_polytopes;
 
 const DEFAULT_SEED: u64 = 99_599_604;
+
+fn checked_geometry(dual_vertices: &[Vector4<f64>]) -> Result<PolytopeGeometry4d, String> {
+    check_facet_count(dual_vertices.len())
+        .map_err(|error| format!("production facet-count check failed: {error:?}"))?;
+    check_finite_dual_vertices(dual_vertices)
+        .map_err(|error| format!("production finite-coordinate check failed: {error:?}"))?;
+    check_dual_vertex_norm_bounds(dual_vertices)
+        .map_err(|error| format!("production dual-norm check failed: {error:?}"))?;
+    let geometry = exact_binary64_polytope_geometry(dual_vertices)
+        .map_err(|error| format!("production exact geometry failed: {error:?}"))?;
+    check_primal_vertex_norm_bounds(&geometry)
+        .map_err(|error| format!("production primal-norm check failed: {error:?}"))?;
+    Ok(geometry)
+}
 
 fn main() {
     let samples = argument_usize("--samples=").unwrap_or(1);
@@ -86,13 +104,10 @@ fn known_case(fixture: &symplectic::geom::known_polytopes::KnownPolytope) -> Aud
 fn audit_case(case: &AuditCase, repeats: usize) -> Result<serde_json::Value, String> {
     let audit = audit_product_closure_capacity_binary64(&case.dual_vertices)
         .map_err(|error| format!("closure audit failed: {error:?}"))?;
-    let input = CapacityInput4d::try_from_dual_vertices(&case.dual_vertices)
-        .map_err(|error| format!("production validation failed: {error:?}"))?;
-    let production = input
-        .product_capacity()
+    let geometry = checked_geometry(&case.dual_vertices)?;
+    let production = product_capacity(&geometry)
         .map_err(|error| format!("production product route failed: {error:?}"))?;
-    let production_minimizers = input
-        .product_qp_minimizers()
+    let production_minimizers = product_qp_minimizers(&geometry)
         .map_err(|error| format!("production product minimizers failed: {error:?}"))?;
     let production_capacity_exact_agrees =
         *production.capacity_exact() == audit.hybrid.capacity_exact;

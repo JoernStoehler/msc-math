@@ -32,21 +32,27 @@ Developer-facing math for reusable crate algorithms lives in `formal/`.
 ## Scalar four-dimensional capacity
 
 Start with
-`algorithms::capacity_4d::CapacityInput4d::try_from_dual_vertices`. Validation
-interprets each binary64 coordinate as its exact dyadic rational, checks exact
-four-dimensional polytope geometry, allows at most 16 facets, and requires
-every primal and dual vertex infinity norm to lie in the inclusive interval
-`[1e-3, 1e3]`. A non-product general transition graph is also soft-rejected
-when it has more than 100,000 candidate cycles; this bounds the current
-length-ordered materialization before numerical pruning. Structural products
-do not use that candidate stream under automatic product dispatch. Explicitly
-forcing the general route applies the same cap.
-
-Calling `capacity()` then dispatches exact q/p products to the KKT-free
+`algorithms::capacity_4d::capacity_from_dual_vertices`. It checks the cheap
+facet-count and dual-norm limits, constructs exact binary64-rational geometry,
+checks primal norms, and dispatches exact q/p products to the KKT-free
 six-facet closure-vertex route; other inputs use the certified general QP
 route. Product results contain an exact dyadic-rational capacity and sparse
 exact witnesses. General results contain outward binary64 bounds. Neither
 route promises every minimizing or near-minimizing orbit branch.
+
+Callers that need intermediate geometry can instead use the named stages
+`check_facet_count`, `check_finite_dual_vertices`,
+`check_dual_vertex_norm_bounds`, `exact_binary64_polytope_geometry`,
+`check_primal_vertex_norm_bounds`, and `capacity`. `PolytopeGeometry4d` is a
+plain exact-geometry data object, not an opaque prepared search.
+`capacity_transition_graph` and
+`classify_lagrangian_product` expose the two derived combinatorial facts.
+
+The production route allows at most 16 facets and requires every primal and
+dual vertex infinity norm to lie in `[1e-3, 1e3]`. General enumeration is
+soft-rejected above 100,000 candidate cycles. That limit is checked by the
+general route, so exact geometry and automatic product dispatch do not depend
+on materializing the general candidate set.
 
 The copy-editable experiment counterparts and the exact/numerical
 correspondence producers live under

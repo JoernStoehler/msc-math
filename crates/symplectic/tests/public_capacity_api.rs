@@ -1,13 +1,27 @@
 use nalgebra::{DMatrix, Vector4};
 use num_traits::{Signed, ToPrimitive};
 use symplectic::algorithms::capacity_4d::{
-    Capacity4d, CapacityError4d, CapacityInput4d, CapacityInputError, ExactSigmaInputError4d,
-    QpCandidateFamily4d,
+    capacity, capacity_from_dual_vertices, check_dual_vertex_norm_bounds, check_facet_count,
+    check_finite_dual_vertices, check_primal_vertex_norm_bounds, classify_lagrangian_product,
+    exact_binary64_polytope_geometry, general_capacity, general_qp_minimizers, product_capacity,
+    qp_minimizers, solve_sigma_exact, Capacity4d, CapacityError4d, CapacityFromDualVerticesError4d,
+    CapacityInputBoundsError4d, ExactSigmaInputError4d, PolytopeGeometry4d,
+    PolytopeGeometryError4d, QpCandidateFamily4d,
 };
 use symplectic::{
     aggregate_orbits_with_dual_vertices_exact, known_polytopes, solve_orbit_sigma_saddle_point,
     solve_pruned_hk2017_candidates, solve_unpruned_hk2017_candidates, OrbitGuaranteeMode,
 };
+
+fn checked_geometry(dual_vertices: &[Vector4<f64>]) -> PolytopeGeometry4d {
+    check_facet_count(dual_vertices.len()).expect("capacity facet-count bound");
+    check_finite_dual_vertices(dual_vertices).expect("finite dual vertices");
+    check_dual_vertex_norm_bounds(dual_vertices).expect("capacity dual-vertex norm bounds");
+    let geometry =
+        exact_binary64_polytope_geometry(dual_vertices).expect("exact polytope geometry");
+    check_primal_vertex_norm_bounds(&geometry).expect("capacity primal-vertex norm bounds");
+    geometry
+}
 
 #[test]
 fn unpruned_hk2017_candidates_aggregate_from_flat_dual_vertices() {
@@ -76,14 +90,13 @@ fn pruned_hk2017_candidates_reject_mismatched_transition_matrix() {
 #[test]
 fn automatic_dispatch_returns_exact_sparse_product_certificate() {
     let fixture = known_polytopes::lagrangian_triangle_product();
-    let input = CapacityInput4d::try_from_dual_vertices(&fixture.dual_vertices_f64)
-        .expect("known product must validate");
-    assert!(input.is_structural_product());
+    let geometry = checked_geometry(&fixture.dual_vertices_f64);
+    assert!(classify_lagrangian_product(&geometry).is_some());
 
-    let Capacity4d::Product(result) = input.capacity().expect("product capacity") else {
+    let Capacity4d::Product(result) = capacity(&geometry).expect("product capacity") else {
         panic!("structural product must use the product route");
     };
-    let minimizers = input.qp_minimizers().expect("product minimizers");
+    let minimizers = qp_minimizers(&geometry).expect("product minimizers");
     assert_eq!(
         minimizers.family(),
         QpCandidateFamily4d::ProductClosureVertex
@@ -100,8 +113,7 @@ fn automatic_dispatch_returns_exact_sparse_product_certificate() {
             .expect("fixture action fits binary64");
         assert!(minimizers.bounds().lower() <= action_f64);
         assert!(action_f64 <= minimizers.bounds().upper());
-        let orbit = input
-            .solve_sigma_exact(candidate.sigma())
+        let orbit = solve_sigma_exact(&geometry, candidate.sigma())
             .expect("returned product sigma is valid")
             .expect("returned product candidate has a positive exact KKT witness");
         assert_eq!(&orbit.action(), candidate.action_exact());
@@ -117,25 +129,21 @@ fn automatic_dispatch_returns_exact_sparse_product_certificate() {
 #[test]
 fn degenerate_product_minimizers_have_consistent_exact_payloads() {
     let fixture = known_polytopes::hypercube();
-    let input = CapacityInput4d::try_from_dual_vertices(&fixture.dual_vertices_f64)
-        .expect("hypercube must validate");
-    let minimizers = input.qp_minimizers().expect("hypercube minimizers");
+    let geometry = checked_geometry(&fixture.dual_vertices_f64);
+    let minimizers = qp_minimizers(&geometry).expect("hypercube minimizers");
     assert_eq!(
         minimizers.family(),
         QpCandidateFamily4d::ProductClosureVertex
     );
     assert!(minimizers.candidates().len() >= 2);
     for candidate in minimizers.candidates() {
-        let orbit = input
-            .solve_sigma_exact(candidate.sigma())
+        let orbit = solve_sigma_exact(&geometry, candidate.sigma())
             .expect("returned hypercube sigma is valid")
             .expect("returned hypercube candidate has a positive exact witness");
         assert_eq!(&orbit.action(), candidate.action_exact());
     }
 
-    let general = input
-        .general_qp_minimizers()
-        .expect("forced general hypercube minimizers");
+    let general = general_qp_minimizers(&geometry).expect("forced general hypercube minimizers");
     assert_eq!(general.family(), QpCandidateFamily4d::GeneralHk);
     let mut product_sigmas = minimizers
         .candidates()
@@ -155,11 +163,10 @@ fn degenerate_product_minimizers_have_consistent_exact_payloads() {
 #[test]
 fn explicit_product_route_rejects_a_valid_non_product() {
     let fixture = known_polytopes::simplex();
-    let input = CapacityInput4d::try_from_dual_vertices(&fixture.dual_vertices_f64)
-        .expect("simplex must validate");
-    assert!(!input.is_structural_product());
+    let geometry = checked_geometry(&fixture.dual_vertices_f64);
+    assert!(classify_lagrangian_product(&geometry).is_none());
     assert_eq!(
-        input.product_capacity(),
+        product_capacity(&geometry),
         Err(CapacityError4d::ProductRouteRequiresStructuralProduct)
     );
 }
@@ -186,11 +193,10 @@ fn automatic_product_dispatch_bypasses_the_forced_general_candidate_cap() {
             .map(|&(p1, p2)| Vector4::new(0.0, 0.0, p1, p2)),
     );
 
-    let input = CapacityInput4d::try_from_dual_vertices(&duals)
-        .expect("dyadic octagon product must validate without general enumeration");
-    assert!(matches!(input.capacity(), Ok(Capacity4d::Product(_))));
+    let geometry = checked_geometry(&duals);
+    assert!(matches!(capacity(&geometry), Ok(Capacity4d::Product(_))));
     assert_eq!(
-        input.general_capacity(),
+        general_capacity(&geometry),
         Err(CapacityError4d::GeneralCandidateLimitExceeded {
             limit: symplectic::algorithms::capacity_4d::MAX_GENERAL_CANDIDATES,
         })
@@ -200,9 +206,9 @@ fn automatic_product_dispatch_bypasses_the_forced_general_candidate_cap() {
 #[test]
 fn automatic_dispatch_returns_bounds_for_a_general_polytope() {
     let fixture = known_polytopes::simplex();
-    let input = CapacityInput4d::try_from_dual_vertices(&fixture.dual_vertices_f64)
-        .expect("simplex must validate");
-    let Capacity4d::General(result) = input.capacity().expect("general capacity") else {
+    let result =
+        capacity_from_dual_vertices(&fixture.dual_vertices_f64).expect("one-shot simplex capacity");
+    let Capacity4d::General(result) = result else {
         panic!("simplex must use the general route");
     };
     assert!(result.bounds().lower().is_finite());
@@ -213,11 +219,8 @@ fn automatic_dispatch_returns_bounds_for_a_general_polytope() {
 #[test]
 fn general_minimizers_are_exact_and_support_on_demand_kkt_payloads() {
     let fixture = known_polytopes::simplex();
-    let input = CapacityInput4d::try_from_dual_vertices(&fixture.dual_vertices_f64)
-        .expect("simplex must validate");
-    let minimizers = input
-        .general_qp_minimizers()
-        .expect("general simplex minimizers");
+    let geometry = checked_geometry(&fixture.dual_vertices_f64);
+    let minimizers = general_qp_minimizers(&geometry).expect("general simplex minimizers");
     assert_eq!(minimizers.family(), QpCandidateFamily4d::GeneralHk);
     assert!(!minimizers.candidates().is_empty());
 
@@ -228,8 +231,7 @@ fn general_minimizers_are_exact_and_support_on_demand_kkt_payloads() {
             .expect("fixture action fits binary64");
         assert!(minimizers.bounds().lower() <= action_f64);
         assert!(action_f64 <= minimizers.bounds().upper());
-        let orbit = input
-            .solve_sigma_exact(candidate.sigma())
+        let orbit = solve_sigma_exact(&geometry, candidate.sigma())
             .expect("returned sigma is valid")
             .expect("returned candidate has a positive exact KKT witness");
         assert_eq!(&orbit.action(), candidate.action_exact());
@@ -239,11 +241,8 @@ fn general_minimizers_are_exact_and_support_on_demand_kkt_payloads() {
 #[test]
 fn general_minimizers_match_complete_exact_simplex_enumeration() {
     let fixture = known_polytopes::simplex();
-    let input = CapacityInput4d::try_from_dual_vertices(&fixture.dual_vertices_f64)
-        .expect("simplex must validate");
-    let observed = input
-        .general_qp_minimizers()
-        .expect("general simplex minimizers");
+    let geometry = checked_geometry(&fixture.dual_vertices_f64);
+    let observed = general_qp_minimizers(&geometry).expect("general simplex minimizers");
 
     let exact = fixture
         .dual_vertices_f64
@@ -292,18 +291,17 @@ fn general_minimizers_match_complete_exact_simplex_enumeration() {
 #[test]
 fn exact_sigma_validation_is_soft() {
     let fixture = known_polytopes::simplex();
-    let input = CapacityInput4d::try_from_dual_vertices(&fixture.dual_vertices_f64)
-        .expect("simplex must validate");
+    let geometry = checked_geometry(&fixture.dual_vertices_f64);
     assert_eq!(
-        input.solve_sigma_exact(&[]),
+        solve_sigma_exact(&geometry, &[]),
         Err(ExactSigmaInputError4d::Empty)
     );
     assert_eq!(
-        input.solve_sigma_exact(&[0, 0]),
+        solve_sigma_exact(&geometry, &[0, 0]),
         Err(ExactSigmaInputError4d::RepeatedFacet { facet: 0 })
     );
     assert_eq!(
-        input.solve_sigma_exact(&[fixture.dual_vertices_f64.len()]),
+        solve_sigma_exact(&geometry, &[fixture.dual_vertices_f64.len()]),
         Err(ExactSigmaInputError4d::FacetOutOfRange {
             position: 0,
             facet: fixture.dual_vertices_f64.len(),
@@ -314,16 +312,36 @@ fn exact_sigma_validation_is_soft() {
 
 #[test]
 fn validation_soft_errors_outside_the_coordinate_contract() {
+    let mut nonfinite = known_polytopes::simplex().dual_vertices_f64.clone();
+    nonfinite[0][2] = f64::NAN;
+    assert_eq!(
+        check_finite_dual_vertices(&nonfinite),
+        Err(PolytopeGeometryError4d::NonFiniteCoordinate {
+            facet: 0,
+            coordinate: 2,
+        })
+    );
+    assert!(matches!(
+        capacity_from_dual_vertices(&nonfinite),
+        Err(CapacityFromDualVerticesError4d::Geometry(
+            PolytopeGeometryError4d::NonFiniteCoordinate {
+                facet: 0,
+                coordinate: 2,
+            }
+        ))
+    ));
+
     let mut duals = known_polytopes::simplex().dual_vertices_f64.clone();
     duals[0] = Vector4::new(1e4, 0.0, 0.0, 0.0);
     assert!(matches!(
-        CapacityInput4d::try_from_dual_vertices(&duals),
-        Err(CapacityInputError::DualNormOutOfRange { facet: 0 })
+        check_dual_vertex_norm_bounds(&duals),
+        Err(CapacityInputBoundsError4d::DualNormOutOfRange { facet: 0 })
     ));
 
     let crosspolytope = known_polytopes::crosspolytope();
+    let geometry = checked_geometry(&crosspolytope.dual_vertices_f64);
     assert!(matches!(
-        CapacityInput4d::try_from_dual_vertices(&crosspolytope.dual_vertices_f64),
-        Err(CapacityInputError::GeneralCandidateLimitExceeded { .. })
+        general_capacity(&geometry),
+        Err(CapacityError4d::GeneralCandidateLimitExceeded { .. })
     ));
 }

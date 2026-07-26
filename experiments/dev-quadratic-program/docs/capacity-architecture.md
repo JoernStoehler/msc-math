@@ -61,8 +61,9 @@ validated dual vertices
 
 Implemented:
 
-- `CapacityInput4d::try_from_dual_vertices`;
-- `CapacityInput4d::capacity`;
+- `capacity_from_dual_vertices` for the ordinary one-shot question;
+- `exact_binary64_polytope_geometry`, the explicit input checks, and
+  `capacity` for callers that need intermediate geometry;
 - exact product dispatch;
 - an exact rational product capacity and outward binary64 bounds;
 - certified outward binary64 bounds for the general route.
@@ -92,7 +93,7 @@ validated input
 
 Implemented:
 
-- `CapacityInput4d::qp_minimizers`;
+- `qp_minimizers`;
 - `QpCandidateFamily4d::{GeneralHk, ProductClosureVertex}`;
 - exact `sigma` and action for every returned candidate.
 
@@ -133,9 +134,9 @@ It must not depend on:
 
 Implemented:
 
-- `CapacityInput4d::solve_sigma_exact`, returning exact `beta`, `q`, `mu`, and
+- `solve_sigma_exact(geometry, sigma)`, returning exact `beta`, `q`, `mu`, and
   `xi` for one valid requested word when a strictly positive exact solution
-  exists.
+  exists. This exact operation does not require the f64 capacity-size checks.
 
 Still missing:
 
@@ -193,19 +194,41 @@ The certified general predicates include subsequent assembly and arithmetic
 roundoff. They do not currently propagate uncertainty between an intended
 source polytope and its stored approximation.
 
-`CapacityInput4d::try_from_dual_vertices` currently establishes:
+The implemented validation is deliberately a sequence of named facts:
 
-- finite four-dimensional coordinates;
-- at most sixteen facets;
-- exact binary64-rational polytope validity and incidence;
-- origin interior and irredundancy through the exact geometry constructor;
-- primal and dual infinity norms in `[1e-3, 1e3]`;
-- exact transition signs and structural-product classification; and
-- the current general-route candidate resource limit.
+```text
+check_facet_count
+check_finite_dual_vertices
+check_dual_vertex_norm_bounds
+exact_binary64_polytope_geometry
+check_primal_vertex_norm_bounds
+capacity
+```
 
-The type therefore means “valid and supported as a capacity input,” not merely
-“some geometrically valid polytope.” Batch producers validate once, record
-rejections, and then use assuming-valid operations.
+`exact_binary64_polytope_geometry` establishes finite coordinates, exact
+binary64-rational boundedness, vertices, incidence, and facet irredundancy. It
+returns the plain data object `PolytopeGeometry4d`; it does not enumerate QP
+candidates and does not pretend that a production resource limit is a
+geometric property.
+
+The separate checks establish at most sixteen facets and primal and dual
+infinity norms in `[1e-3, 1e3]`. `capacity_from_dual_vertices` performs the
+same sequence as a one-shot convenience operation. Direct `capacity`,
+`general_capacity`, `product_capacity`, and minimizer calls assert that the
+production checks hold. The general candidate-count limit is checked only when
+the general route actually enumerates candidates; it is not part of geometry
+validation and does not block automatic product dispatch.
+
+Transition construction and product recognition are also explicit pure
+operations:
+
+- `capacity_transition_graph(geometry)`;
+- `classify_lagrangian_product(geometry)`.
+
+The current route computes incidence and symplectic signs exactly from the
+stored binary64 rationals. It therefore has no ternary-incidence stage. Add one
+only if a measured fast filter justifies the extra surface; then keep exact
+resolution as a separately named operation.
 
 If a concrete consumer needs source-coordinate uncertainty, add an explicit
 enclosure type and propagate that uncertainty through the relevant output.
@@ -260,12 +283,12 @@ General and product routes share validated input and public result contracts,
 not their mathematical implementation.
 
 ```text
-CapacityInput4d
+PolytopeGeometry4d
       |
-      +--> product.rs
+      +--> classify_lagrangian_product --> product.rs
       |       closure vertices, sparse supports, exact resolution
       |
-      +--> general.rs
+      +--> capacity_transition_graph --> general.rs
               HK words, short-word exact handling
               certified curvature and cyclic inheritance
               guarded binary64 KKT analysis
@@ -385,10 +408,11 @@ subject. Their result types are not the ordinary capacity interface.
 
 ```text
 crates/symplectic/src/algorithms/capacity_4d/mod.rs
-    public capacity, minimizer, and exact-one-sigma facade
+    one-shot and explicit-stage capacity, minimizer, and exact-sigma functions
 
-crates/symplectic/src/algorithms/capacity_4d/input.rs
-    validation, exact transition data, product classification
+crates/symplectic/src/algorithms/capacity_4d/geometry.rs
+    exact binary64 geometry, cheap production checks, transition construction,
+    and exact structural-product recognition
 
 crates/symplectic/src/algorithms/capacity_4d/general.rs
     selected general implementation

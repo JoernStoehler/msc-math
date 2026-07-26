@@ -95,19 +95,24 @@ and consumer audit to a future session.
 
 The intended end state for this migration is:
 
-1. `CapacityInput4d` is the ordinary validated entry point.
-2. One shared search core owns validation, candidate enumeration, pruning, and
-   predicate semantics. A narrow request/output mode determines whether it
-   stops with the capacity certificate or materializes exact candidate
-   records. It is not a generic solver/observer framework.
-3. `capacity`, `general_capacity`, and `product_capacity` are thin scalar
+1. `capacity_from_dual_vertices` is the ordinary one-shot scalar entry point.
+2. Callers needing intermediate results use the named stages
+   `check_facet_count`, `check_finite_dual_vertices`,
+   `check_dual_vertex_norm_bounds`, `exact_binary64_polytope_geometry`, and
+   `check_primal_vertex_norm_bounds`. The result is the plain data object
+   `PolytopeGeometry4d`, not an opaque prepared search.
+3. Shared search code owns candidate enumeration, pruning, and predicate
+   semantics after the geometry boundary. A narrow request/output mode
+   determines whether it stops with the capacity certificate or materializes
+   exact candidate records. It is not a generic solver/observer framework.
+4. `capacity`, `general_capacity`, and `product_capacity` are thin scalar
    wrappers over that core. General capacity returns certified outward
    binary64 bounds; product capacity also returns the exact rational value
    already computed by its KKT-free route. The general scalar request does not
    exact-resolve its winning word. The product route already has the maximizing
    words while comparing exact contenders, but its scalar result discards
    them and does not construct KKT payloads.
-4. Callers that need minimizing words use `qp_minimizers` and receive lean
+5. Callers that need minimizing words use `qp_minimizers` and receive lean
    `(sigma, action_exact)` records under its stated candidate-family and tie
    guarantees. Exact action-window support remains a named migration item for
    the inventoried window consumers; it is not implied by the minimizer API.
@@ -203,9 +208,12 @@ research through `0917c4bce`. The stale dirty worktree was not edited.
 
 The current checkpoint provides:
 
-- `CapacityInput4d` with exact binary64-rational geometry validation, exact
-  product classification, the `[1e-3, 1e3]` primal/dual infinity-norm contract,
-  a sixteen-facet limit, and a 100,000-cycle general-route resource cap;
+- a one-shot scalar wrapper and explicit exact-geometry/input-check functions;
+- plain `PolytopeGeometry4d` data, exact product classification, the
+  `[1e-3, 1e3]` primal/dual infinity-norm contract, and a sixteen-facet
+  production limit;
+- a 100,000-cycle limit applied only when the general route enumerates
+  candidates, rather than during geometry construction;
 - automatic exact product dispatch and a forced general route;
 - outward general capacity bounds, exact product capacity, exact tied
   minimizing words with an explicit family label, and on-demand exact
@@ -269,8 +277,8 @@ experiments. Its branch model currently:
   an exclusion criterion.
 
 This migration must not refactor those files concurrently. After the
-`CapacityInput4d` search and exact one-sigma API are stable, send the optimizer
-owner a migration map:
+capacity/minimizer functions and exact one-sigma API are stable, send the
+optimizer owner a migration map:
 
 1. use the new scalar/search API for physical capacity and admissible discrete
    candidate windows;
@@ -398,8 +406,8 @@ experiments/dev-quadratic-program/src/
 ```text
 crates/symplectic/src/algorithms/
 |-- capacity_4d/
-|   |-- mod.rs                 # public facade, search/wrapper result contracts
-|   |-- input.rs               # validated input and derived exact geometry
+|   |-- mod.rs                 # public functions and result contracts
+|   |-- geometry.rs            # exact geometry and named input checks
 |   |-- general.rs             # selected general route
 |   |-- product.rs             # conditional on product theorem acceptance
 |   `-- interval.rs            # shared outward arithmetic, if both routes use it
@@ -418,16 +426,20 @@ readable implementation is the intended copy-editable base.
 The implemented caller shape is:
 
 ```rust
-let input = CapacityInput4d::try_from_dual_vertices(&dual_vertices)?;
-let capacity = input.capacity()?; // thin scalar request; no exact payloads
+let capacity = capacity_from_dual_vertices(&dual_vertices)?;
 
-let minimizers = input.qp_minimizers()?;
+check_facet_count(dual_vertices.len())?;
+check_finite_dual_vertices(&dual_vertices)?;
+check_dual_vertex_norm_bounds(&dual_vertices)?;
+let geometry = exact_binary64_polytope_geometry(&dual_vertices)?;
+check_primal_vertex_norm_bounds(&geometry)?;
+
+let minimizers = qp_minimizers(&geometry)?;
 for candidate in minimizers.candidates() {
     use_sigma_and_exact_action(candidate.sigma(), candidate.action_exact());
 }
 
-let orbit = input
-    .solve_sigma_exact(minimizers.candidates()[0].sigma())?
+let orbit = solve_sigma_exact(&geometry, minimizers.candidates()[0].sigma())?
     .expect("a returned minimizer has a positive exact KKT witness");
 use_exact_beta_q_mu_xi(&orbit);
 ```
@@ -451,19 +463,19 @@ coordinate is dyadic, divisions in the exact KKT solve produce general
 rationals, so a dyadic result type is insufficient. Algebraic-number output is
 unnecessary for this binary64-rational linear/QP contract.
 
-`CapacityInput4d` owns the small validated input and derived binary64-rational
-geometry so repeated search, scalar, and one-sigma calls do not repeat
-validation or ask callers to keep parallel f64/rational/incidence arguments
-consistent. Ordinary automatic dispatch uses exact structural-product
-classification. Explicit general/product methods remain for verification and
+`PolytopeGeometry4d` owns the f64 dual vertices and corresponding exact
+binary64-rational dual vertices, primal vertices, and incidence. Its public
+fields make the mathematical data explicit; its constructor establishes exact
+geometry but not capacity-specific resource or numerical-size policies.
+Ordinary automatic dispatch uses exact structural-product classification.
+Explicit general/product functions remain for verification and
 route-comparison callers.
 
-The convenient scalar API is either a method on `CapacityInput4d` or a
-raw-input function that performs validation itself. Do not expose a public raw
-`capacity(&[Vector4<f64>])` whose safety depends on an undocumented prior call.
-The validated token is the compile-visible prior check. General outward bounds
-and the product route's exact rational capacity remain available when the
-distinction matters.
+The convenient raw-input scalar operation performs every required check
+itself. The explicit `capacity(&PolytopeGeometry4d)` route has a documented
+prior-check contract and hard-asserts the production facet and norm bounds.
+General outward bounds and the product route's exact rational capacity remain
+available when the distinction matters.
 
 Caller-controlled values select returned output, not mathematical validity.
 Strict `beta > 0`, exact `q > 0`, omega/adjacency pruning justified by the
@@ -499,11 +511,11 @@ coordinates. It must not silently substitute a caller's algebraic or source
 rational coordinates: both selected certificates concern the exact dyadic
 values represented by the binary64 input.
 
-`CapacityInput4d` must establish these conditions, not merely preserve the
-current f64 validator's `AcceptedAmbiguous` status. Resolve ambiguous geometry
-with exact binary64-rational validation when available; otherwise return a
-validation-indeterminate error. Do not construct the validated token from an
-ambiguous report.
+The named checks and exact geometry constructor must establish these
+conditions, not merely preserve the current f64 validator's
+`AcceptedAmbiguous` status. Resolve ambiguous geometry with exact
+binary64-rational validation when available; otherwise return a
+validation-indeterminate error.
 
 Keep input validation, explicit-route applicability, exact-fallback failure,
 and internal-invariant errors distinguishable. The caller spike should cover at
@@ -937,10 +949,10 @@ kernel moves.
   migration. Geometric trajectory recovery remains a separate transformation
   because it has different inputs, costs, non-uniqueness, and tolerance
   semantics; this is an explicit end-state decision, not deferred migration.
-- Whether `CapacityInput4d` should reuse a future general polytope value type is
-  deferred. No such public validated type currently exists in the crate, so
-  inventing a project-wide geometry abstraction during this migration would
-  mix unrelated maintenance with the route promotion.
+- Whether `PolytopeGeometry4d` should later become a project-wide exact
+  polytope data object is deferred. No such public general type currently
+  exists in the crate, so broadening it during this migration would mix
+  unrelated maintenance with route promotion.
 
 ## Review and stop conditions
 

@@ -35,7 +35,11 @@ use std::time::{Duration, Instant};
 use symplectic::algorithms::billiard::{
     facet_classification::classify_facets_from_dual_vertices, for_each_sigma_from_facets,
 };
-use symplectic::algorithms::capacity_4d::CapacityInput4d;
+use symplectic::algorithms::capacity_4d::{
+    check_dual_vertex_norm_bounds, check_facet_count, check_finite_dual_vertices,
+    check_primal_vertex_norm_bounds, exact_binary64_polytope_geometry, general_capacity,
+    PolytopeGeometry4d,
+};
 use symplectic::algorithms::hk2017::SimpleDirectedCyclesCanonical;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::known_polytopes::hko_pentagon;
@@ -51,6 +55,16 @@ use symplectic::solve_pruned_hk2017_candidates;
 
 const DEFAULT_SEED: u64 = 99_599_604;
 const INERTIA_RELATIVE_FLOOR: f64 = 1e-12;
+
+fn checked_production_geometry(dual_vertices: &[Vector4<f64>]) -> PolytopeGeometry4d {
+    check_facet_count(dual_vertices.len()).expect("capacity facet-count bound");
+    check_finite_dual_vertices(dual_vertices).expect("finite dual vertices");
+    check_dual_vertex_norm_bounds(dual_vertices).expect("capacity dual-vertex norm bounds");
+    let geometry =
+        exact_binary64_polytope_geometry(dual_vertices).expect("exact polytope geometry");
+    check_primal_vertex_norm_bounds(&geometry).expect("capacity primal-vertex norm bounds");
+    geometry
+}
 
 // These files form one logical module. Keeping the shared experiment state in
 // one module avoids public visibility plumbing between tightly coupled

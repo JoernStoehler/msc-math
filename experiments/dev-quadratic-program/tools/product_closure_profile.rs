@@ -1,9 +1,24 @@
+use nalgebra::Vector4;
 use std::hint::black_box;
 use std::time::{Duration, Instant};
-use symplectic::algorithms::capacity_4d::CapacityInput4d;
+use symplectic::algorithms::capacity_4d::{
+    check_dual_vertex_norm_bounds, check_facet_count, check_finite_dual_vertices,
+    check_primal_vertex_norm_bounds, exact_binary64_polytope_geometry, product_capacity,
+    product_qp_minimizers, PolytopeGeometry4d,
+};
 use symplectic::geom::known_polytopes;
 
 const ROUNDS: usize = 21;
+
+fn checked_geometry(dual_vertices: &[Vector4<f64>]) -> PolytopeGeometry4d {
+    check_facet_count(dual_vertices.len()).expect("capacity facet-count bound");
+    check_finite_dual_vertices(dual_vertices).expect("finite dual vertices");
+    check_dual_vertex_norm_bounds(dual_vertices).expect("capacity dual-vertex norm bounds");
+    let geometry =
+        exact_binary64_polytope_geometry(dual_vertices).expect("exact polytope geometry");
+    check_primal_vertex_norm_bounds(&geometry).expect("capacity primal-vertex norm bounds");
+    geometry
+}
 
 fn median(mut samples: Vec<Duration>) -> Duration {
     samples.sort_unstable();
@@ -20,26 +35,25 @@ fn main() {
         known_polytopes::lagrangian_triangle_square(),
         known_polytopes::hypercube(),
     ] {
-        let input = CapacityInput4d::try_from_dual_vertices(&fixture.dual_vertices_f64)
-            .expect("known product validates");
-        black_box(input.product_capacity().expect("product capacity"));
-        black_box(input.product_qp_minimizers().expect("product minimizers"));
+        let geometry = checked_geometry(&fixture.dual_vertices_f64);
+        black_box(product_capacity(&geometry).expect("product capacity"));
+        black_box(product_qp_minimizers(&geometry).expect("product minimizers"));
 
         let capacity_samples = (0..ROUNDS)
             .map(|_| {
                 let started = Instant::now();
-                black_box(input.product_capacity().expect("product capacity"));
+                black_box(product_capacity(&geometry).expect("product capacity"));
                 started.elapsed()
             })
             .collect();
         let minimizer_samples = (0..ROUNDS)
             .map(|_| {
                 let started = Instant::now();
-                black_box(input.product_qp_minimizers().expect("product minimizers"));
+                black_box(product_qp_minimizers(&geometry).expect("product minimizers"));
                 started.elapsed()
             })
             .collect();
-        let minimizers = input.product_qp_minimizers().expect("product minimizers");
+        let minimizers = product_qp_minimizers(&geometry).expect("product minimizers");
 
         println!("profile.source_id={}", fixture.name);
         println!("profile.facets={}", fixture.dual_vertices_f64.len());

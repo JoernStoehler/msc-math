@@ -384,11 +384,9 @@ fn run_selected_production_correspondence(cases: &[(String, Vec<Vector4<f64>>, V
             .expect("existing selected route returns capacity bounds");
         let readable = solve_selected_general(duals, words.clone())
             .expect("readable selected route returns capacity bounds");
-        let input = CapacityInput4d::try_from_dual_vertices(duals)
-            .expect("retained general case passes production validation");
-        let production = input
-            .general_capacity()
-            .expect("production selected route returns capacity bounds");
+        let geometry = checked_production_geometry(duals);
+        let production =
+            general_capacity(&geometry).expect("production selected route returns capacity bounds");
         let production_bounds = (production.bounds().lower(), production.bounds().upper());
         assert_eq!(existing_bounds, readable, "{source_id}: existing/readable");
         assert_eq!(

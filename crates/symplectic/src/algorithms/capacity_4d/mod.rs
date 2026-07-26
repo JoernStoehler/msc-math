@@ -2,29 +2,36 @@
 //! four-dimensional polytopes.
 //!
 //! This API is separate from [`crate::algorithms::orbit_search`]. Scalar
-//! methods return only the capacity certificate. [`CapacityInput4d::qp_minimizers`]
+//! functions return only the capacity certificate. [`qp_minimizers`]
 //! additionally exact-resolves every tied minimizing word in its stated finite
-//! candidate family, and [`CapacityInput4d::solve_sigma_exact`] obtains the
-//! full exact KKT payload for one requested word.
+//! candidate family, and [`solve_sigma_exact`] obtains the full exact KKT
+//! payload for one requested word.
 //!
-//! Call [`CapacityInput4d::try_from_dual_vertices`] once, then call
-//! [`CapacityInput4d::capacity`] for exact product dispatch and the certified
-//! general fallback. Product results include an exact dyadic-rational value;
-//! general results include outward binary64 bounds.
+//! Most callers should use [`capacity_from_dual_vertices`]. Callers that need
+//! intermediate geometry can instead use [`exact_binary64_polytope_geometry`],
+//! the explicit input checks, and then [`capacity`]. Product results include an
+//! exact dyadic-rational value; general results include outward binary64 bounds.
 
 mod general;
-mod input;
+mod geometry;
 mod product;
 
-pub use input::{
-    CapacityInput4d, CapacityInputError, MAX_GENERAL_CANDIDATES, MAX_INPUT_FACETS,
-    MAX_INPUT_NORM_INF, MIN_INPUT_NORM_INF,
+pub use geometry::{
+    capacity_transition_graph, check_dual_vertex_norm_bounds, check_facet_count,
+    check_finite_dual_vertices, check_primal_vertex_norm_bounds, classify_lagrangian_product,
+    exact_binary64_polytope_geometry, CapacityInputBoundsError4d, PolytopeGeometry4d,
+    PolytopeGeometryError4d, MAX_INPUT_FACETS, MAX_INPUT_NORM_INF, MIN_INPUT_NORM_INF,
 };
 
 use crate::algorithms::hk2017::SimpleDirectedCyclesCanonical;
 use crate::exact::{solve_orbit_sigma_exact_rational, ExactOrbitKktData};
+use geometry::check_vertex_norm_bounds;
+use nalgebra::Vector4;
 use num_rational::BigRational;
 use num_traits::ToPrimitive;
+
+/// Maximum general-route candidate count accepted before materialization.
+pub const MAX_GENERAL_CANDIDATES: usize = 100_000;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct CapacityBounds4d {
@@ -181,6 +188,26 @@ impl std::fmt::Display for CapacityError4d {
 
 impl std::error::Error for CapacityError4d {}
 
+/// Errors from the one-shot [`capacity_from_dual_vertices`] convenience API.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum CapacityFromDualVerticesError4d {
+    Geometry(PolytopeGeometryError4d),
+    InputBounds(CapacityInputBoundsError4d),
+    Capacity(CapacityError4d),
+}
+
+impl std::fmt::Display for CapacityFromDualVerticesError4d {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Geometry(error) => write!(formatter, "{error}"),
+            Self::InputBounds(error) => write!(formatter, "{error}"),
+            Self::Capacity(error) => write!(formatter, "{error}"),
+        }
+    }
+}
+
+impl std::error::Error for CapacityFromDualVerticesError4d {}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ExactSigmaInputError4d {
     Empty,
@@ -248,126 +275,201 @@ impl From<product::ProductClosureError> for ProductRouteFailure4d {
     }
 }
 
-impl CapacityInput4d {
-    /// Compute the scalar EHZ capacity using exact product dispatch.
-    pub fn capacity(&self) -> Result<Capacity4d, CapacityError4d> {
-        if self.product_facets.is_some() {
-            self.product_capacity().map(Capacity4d::Product)
-        } else {
-            self.general_capacity().map(Capacity4d::General)
-        }
-    }
+/// Validate exact binary64 geometry and numerical-size bounds, then compute the
+/// scalar EHZ capacity using exact product dispatch.
+pub fn capacity_from_dual_vertices(
+    dual_vertices: &[Vector4<f64>],
+) -> Result<Capacity4d, CapacityFromDualVerticesError4d> {
+    check_facet_count(dual_vertices.len()).map_err(CapacityFromDualVerticesError4d::InputBounds)?;
+    check_finite_dual_vertices(dual_vertices).map_err(CapacityFromDualVerticesError4d::Geometry)?;
+    check_dual_vertex_norm_bounds(dual_vertices)
+        .map_err(CapacityFromDualVerticesError4d::InputBounds)?;
+    let geometry = exact_binary64_polytope_geometry(dual_vertices)
+        .map_err(CapacityFromDualVerticesError4d::Geometry)?;
+    check_primal_vertex_norm_bounds(&geometry)
+        .map_err(CapacityFromDualVerticesError4d::InputBounds)?;
+    capacity_assuming_checked(&geometry).map_err(CapacityFromDualVerticesError4d::Capacity)
+}
 
-    /// Force the certified general route, including for structural products.
-    pub fn general_capacity(&self) -> Result<GeneralCapacity4d, CapacityError4d> {
-        let words = self.general_words()?;
-        let (lower, upper) = general::solve_selected_general(&self.dual_vertices, words)
-            .ok_or(CapacityError4d::NoPositiveGeneralCandidate)?;
-        Ok(GeneralCapacity4d {
-            bounds: CapacityBounds4d { lower, upper },
-        })
-    }
+/// Compute the scalar EHZ capacity of checked exact binary64 geometry.
+///
+/// Call [`check_facet_count`], [`check_dual_vertex_norm_bounds`], and
+/// [`check_primal_vertex_norm_bounds`] first. Skipping those checks is a caller
+/// bug and panics.
+pub fn capacity(geometry: &PolytopeGeometry4d) -> Result<Capacity4d, CapacityError4d> {
+    assert_capacity_input_bounds(geometry);
+    capacity_assuming_checked(geometry)
+}
 
-    /// Use the KKT-free product route.
-    ///
-    /// Returns [`CapacityError4d::ProductRouteRequiresStructuralProduct`] when
-    /// exact binary64-rational classification did not establish a q/p product.
-    pub fn product_capacity(&self) -> Result<ProductCapacity4d, CapacityError4d> {
-        if self.product_facets.is_none() {
-            return Err(CapacityError4d::ProductRouteRequiresStructuralProduct);
-        }
-        let report = product::solve_product_closure_capacity_hybrid(&self.dual_vertices)
-            .map_err(|error| CapacityError4d::ProductRouteFailed(error.into()))?;
-        Ok(ProductCapacity4d {
-            bounds: rational_bounds(&report.capacity_exact),
-            capacity_exact: report.capacity_exact,
-        })
+fn capacity_assuming_checked(geometry: &PolytopeGeometry4d) -> Result<Capacity4d, CapacityError4d> {
+    if classify_lagrangian_product(geometry).is_some() {
+        product_capacity_assuming_checked(geometry).map(Capacity4d::Product)
+    } else {
+        general_capacity_assuming_checked(geometry).map(Capacity4d::General)
     }
+}
 
-    /// Return every tied minimizing word in the automatically selected finite
-    /// candidate family.
-    pub fn qp_minimizers(&self) -> Result<QpMinimizers4d, CapacityError4d> {
-        if self.product_facets.is_some() {
-            self.product_qp_minimizers()
-        } else {
-            self.general_qp_minimizers()
-        }
-    }
+/// Force the certified general route, including for structural products.
+///
+/// The production input checks required by [`capacity`] also apply here.
+pub fn general_capacity(
+    geometry: &PolytopeGeometry4d,
+) -> Result<GeneralCapacity4d, CapacityError4d> {
+    assert_capacity_input_bounds(geometry);
+    general_capacity_assuming_checked(geometry)
+}
 
-    /// Force exact minimizer materialization from the general HK family.
-    pub fn general_qp_minimizers(&self) -> Result<QpMinimizers4d, CapacityError4d> {
-        let words = self.general_words()?;
-        let report = general::solve_selected_general_minimizers(&self.dual_vertices, words)
-            .map_err(|sigma| CapacityError4d::GeneralExactContenderResolutionFailed { sigma })?
-            .ok_or(CapacityError4d::NoPositiveGeneralCandidate)?;
-        Ok(QpMinimizers4d {
-            family: QpCandidateFamily4d::GeneralHk,
-            bounds: CapacityBounds4d {
-                lower: report.bounds.0,
-                upper: report.bounds.1,
-            },
-            candidates: report
-                .minimizers
-                .expect("the rich general request materializes minimizers")
-                .into_iter()
-                .map(|candidate| CertifiedQpCandidate4d {
-                    sigma: candidate.sigma,
-                    action_exact: candidate.action_exact,
-                })
-                .collect(),
-        })
-    }
+fn general_capacity_assuming_checked(
+    geometry: &PolytopeGeometry4d,
+) -> Result<GeneralCapacity4d, CapacityError4d> {
+    let words = general_words(geometry)?;
+    let (lower, upper) = general::solve_selected_general(&geometry.dual_vertices, words)
+        .ok_or(CapacityError4d::NoPositiveGeneralCandidate)?;
+    Ok(GeneralCapacity4d {
+        bounds: CapacityBounds4d { lower, upper },
+    })
+}
 
-    /// Return sparse exact closure-vertex minimizers for a structural product.
-    pub fn product_qp_minimizers(&self) -> Result<QpMinimizers4d, CapacityError4d> {
-        if self.product_facets.is_none() {
-            return Err(CapacityError4d::ProductRouteRequiresStructuralProduct);
-        }
-        let report = product::solve_product_closure_capacity_hybrid(&self.dual_vertices)
-            .map_err(|error| CapacityError4d::ProductRouteFailed(error.into()))?;
-        let bounds = rational_bounds(&report.capacity_exact);
-        let action_exact = report.capacity_exact;
-        Ok(QpMinimizers4d {
-            family: QpCandidateFamily4d::ProductClosureVertex,
-            bounds,
-            candidates: report
-                .winners
-                .into_iter()
-                .map(|winner| CertifiedQpCandidate4d {
-                    sigma: winner.sigma,
-                    action_exact: action_exact.clone(),
-                })
-                .collect(),
-        })
-    }
+/// Use the KKT-free product route.
+///
+/// The production input checks required by [`capacity`] also apply here. Returns
+/// [`CapacityError4d::ProductRouteRequiresStructuralProduct`] when exact
+/// binary64-rational classification did not establish a q/p product.
+pub fn product_capacity(
+    geometry: &PolytopeGeometry4d,
+) -> Result<ProductCapacity4d, CapacityError4d> {
+    assert_capacity_input_bounds(geometry);
+    product_capacity_assuming_checked(geometry)
+}
 
-    /// Solve the exact KKT system for one caller-supplied word.
-    ///
-    /// `Ok(None)` means the valid word has no solution with strictly positive
-    /// beta and q. Invalid facet indices or repeated facets are soft input
-    /// errors.
-    pub fn solve_sigma_exact(
-        &self,
-        sigma: &[usize],
-    ) -> Result<Option<ExactOrbitKktData<BigRational>>, ExactSigmaInputError4d> {
-        validate_sigma(sigma, self.dual_vertices.len())?;
-        Ok(solve_orbit_sigma_exact_rational(
-            &self.dual_vertices_exact,
-            sigma,
-        ))
+fn product_capacity_assuming_checked(
+    geometry: &PolytopeGeometry4d,
+) -> Result<ProductCapacity4d, CapacityError4d> {
+    if classify_lagrangian_product(geometry).is_none() {
+        return Err(CapacityError4d::ProductRouteRequiresStructuralProduct);
     }
+    let report = product::solve_product_closure_capacity_hybrid(&geometry.dual_vertices)
+        .map_err(|error| CapacityError4d::ProductRouteFailed(error.into()))?;
+    Ok(ProductCapacity4d {
+        bounds: rational_bounds(&report.capacity_exact),
+        capacity_exact: report.capacity_exact,
+    })
+}
 
-    fn general_words(&self) -> Result<Vec<Vec<usize>>, CapacityError4d> {
-        let words = SimpleDirectedCyclesCanonical::new(&self.transition_is_allowed)
-            .take(MAX_GENERAL_CANDIDATES + 1)
-            .collect::<Vec<_>>();
-        if words.len() > MAX_GENERAL_CANDIDATES {
-            return Err(CapacityError4d::GeneralCandidateLimitExceeded {
-                limit: MAX_GENERAL_CANDIDATES,
-            });
-        }
-        Ok(words)
+/// Return every tied minimizing word in the automatically selected finite
+/// candidate family.
+pub fn qp_minimizers(geometry: &PolytopeGeometry4d) -> Result<QpMinimizers4d, CapacityError4d> {
+    assert_capacity_input_bounds(geometry);
+    if classify_lagrangian_product(geometry).is_some() {
+        product_qp_minimizers_assuming_checked(geometry)
+    } else {
+        general_qp_minimizers_assuming_checked(geometry)
     }
+}
+
+/// Force exact minimizer materialization from the general HK family.
+pub fn general_qp_minimizers(
+    geometry: &PolytopeGeometry4d,
+) -> Result<QpMinimizers4d, CapacityError4d> {
+    assert_capacity_input_bounds(geometry);
+    general_qp_minimizers_assuming_checked(geometry)
+}
+
+fn general_qp_minimizers_assuming_checked(
+    geometry: &PolytopeGeometry4d,
+) -> Result<QpMinimizers4d, CapacityError4d> {
+    let words = general_words(geometry)?;
+    let report = general::solve_selected_general_minimizers(&geometry.dual_vertices, words)
+        .map_err(|sigma| CapacityError4d::GeneralExactContenderResolutionFailed { sigma })?
+        .ok_or(CapacityError4d::NoPositiveGeneralCandidate)?;
+    Ok(QpMinimizers4d {
+        family: QpCandidateFamily4d::GeneralHk,
+        bounds: CapacityBounds4d {
+            lower: report.bounds.0,
+            upper: report.bounds.1,
+        },
+        candidates: report
+            .minimizers
+            .expect("the rich general request materializes minimizers")
+            .into_iter()
+            .map(|candidate| CertifiedQpCandidate4d {
+                sigma: candidate.sigma,
+                action_exact: candidate.action_exact,
+            })
+            .collect(),
+    })
+}
+
+/// Return sparse exact closure-vertex minimizers for a structural product.
+pub fn product_qp_minimizers(
+    geometry: &PolytopeGeometry4d,
+) -> Result<QpMinimizers4d, CapacityError4d> {
+    assert_capacity_input_bounds(geometry);
+    product_qp_minimizers_assuming_checked(geometry)
+}
+
+fn product_qp_minimizers_assuming_checked(
+    geometry: &PolytopeGeometry4d,
+) -> Result<QpMinimizers4d, CapacityError4d> {
+    if classify_lagrangian_product(geometry).is_none() {
+        return Err(CapacityError4d::ProductRouteRequiresStructuralProduct);
+    }
+    let report = product::solve_product_closure_capacity_hybrid(&geometry.dual_vertices)
+        .map_err(|error| CapacityError4d::ProductRouteFailed(error.into()))?;
+    let bounds = rational_bounds(&report.capacity_exact);
+    let action_exact = report.capacity_exact;
+    Ok(QpMinimizers4d {
+        family: QpCandidateFamily4d::ProductClosureVertex,
+        bounds,
+        candidates: report
+            .winners
+            .into_iter()
+            .map(|winner| CertifiedQpCandidate4d {
+                sigma: winner.sigma,
+                action_exact: action_exact.clone(),
+            })
+            .collect(),
+    })
+}
+
+/// Solve the exact KKT system for one caller-supplied word.
+///
+/// `Ok(None)` means the valid word has no solution with strictly positive beta
+/// and q. Invalid facet indices or repeated facets are soft input errors.
+/// Numerical-size bounds are irrelevant because this function is exact.
+pub fn solve_sigma_exact(
+    geometry: &PolytopeGeometry4d,
+    sigma: &[usize],
+) -> Result<Option<ExactOrbitKktData<BigRational>>, ExactSigmaInputError4d> {
+    validate_sigma(sigma, geometry.dual_vertices.len())?;
+    Ok(solve_orbit_sigma_exact_rational(
+        &geometry.dual_vertices_exact,
+        sigma,
+    ))
+}
+
+fn general_words(geometry: &PolytopeGeometry4d) -> Result<Vec<Vec<usize>>, CapacityError4d> {
+    let transition_is_allowed = capacity_transition_graph(geometry);
+    let words = SimpleDirectedCyclesCanonical::new(&transition_is_allowed)
+        .take(MAX_GENERAL_CANDIDATES + 1)
+        .collect::<Vec<_>>();
+    if words.len() > MAX_GENERAL_CANDIDATES {
+        return Err(CapacityError4d::GeneralCandidateLimitExceeded {
+            limit: MAX_GENERAL_CANDIDATES,
+        });
+    }
+    Ok(words)
+}
+
+fn assert_capacity_input_bounds(geometry: &PolytopeGeometry4d) {
+    assert!(
+        check_facet_count(geometry.dual_vertices.len()).is_ok(),
+        "capacity_4d requires a successful check_facet_count call"
+    );
+    assert!(
+        check_vertex_norm_bounds(geometry).is_ok(),
+        "capacity_4d requires successful dual- and primal-vertex norm checks"
+    );
 }
 
 fn validate_sigma(sigma: &[usize], facet_count: usize) -> Result<(), ExactSigmaInputError4d> {
