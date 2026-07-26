@@ -27,7 +27,7 @@ Immediate directory map:
 | --- | --- |
 | `src/` | library-like QP route development code, local route variants, fixtures, and route demonstrations |
 | `tools/` | f64 scan and analysis CLIs, retained-candidate error-bound work, and candidate-filter audits |
-| `docs/` | detailed f64-route notes and the route-consumer decision matrix |
+| `docs/` | outer-to-inner capacity architecture, migration plan, detailed f64-route notes, and the route-consumer decision matrix |
 | `examples/` | caller-shaped API and architecture probes; not downstream evidence |
 | [`verification/`](verification/README.md) | route-specific expectation manifest and comparison tools |
 | [`numerics/`](numerics/README.md) | route-specific numerics producer and near-singular diagnostic |

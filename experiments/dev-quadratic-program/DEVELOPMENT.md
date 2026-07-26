@@ -50,6 +50,10 @@ Use `docs/route-consumer-matrix.md` as the current route-design anchor. Route
 design is no longer the blocker for this packet; implementation and evidence
 must now be organized by route contract.
 
+Use `docs/capacity-architecture.md` for the outer-to-inner interface map:
+systolic ratio, scalar capacity, minimizers, action windows, context-free
+one-word analysis, internal algorithms, and retained evidence.
+
 The selected scalar routes live in `src/selected_route/`; production copies
 live in `crates/symplectic::algorithms::capacity_4d`. Change experiment copies
 freely, but update production semantics deliberately and rerun

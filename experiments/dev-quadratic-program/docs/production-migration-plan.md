@@ -28,6 +28,9 @@ new strand expected to exceed twenty wall minutes or five dollars of shadow
 API cost, record the thesis outcome it can change, the first cheap check, the
 total cap, and the stopping condition.
 
+For the outer-to-inner interface and consumer reading surfaces, see
+`capacity-architecture.md`.
+
 ## Outcome
 
 Move the selected four-dimensional scalar-capacity algorithms from
