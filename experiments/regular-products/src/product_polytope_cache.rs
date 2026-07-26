@@ -135,7 +135,7 @@ fn arrays_from_vectors(data: &[Vector4<BigRational>]) -> Vec<[BigRational; 4]> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::euclidean_volume_f64;
+    use crate::exact_volume_reference_as_f64;
     use symplectic::classify_facets_from_dual_vertices;
     use symplectic::geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
 
@@ -164,11 +164,12 @@ mod tests {
     #[test]
     fn pentagon_product_volume_is_rotation_invariant() {
         let base = pentagon_product(0.0);
-        let base_volume = euclidean_volume_f64(&base.vertices, &base.vertex_facet_incidence);
+        let base_volume =
+            exact_volume_reference_as_f64(&base.vertices, &base.vertex_facet_incidence);
         for theta in [0.1, 0.3, std::f64::consts::PI / 5.0] {
             let rotated = pentagon_product(theta);
             let rotated_volume =
-                euclidean_volume_f64(&rotated.vertices, &rotated.vertex_facet_incidence);
+                exact_volume_reference_as_f64(&rotated.vertices, &rotated.vertex_facet_incidence);
             assert!((base_volume - rotated_volume).abs() <= 1e-9);
         }
     }

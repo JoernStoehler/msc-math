@@ -18,7 +18,8 @@
 use algebraic_numbers::{kernel_basis, rank, solve_linear_system, LinearSystemSolution};
 use exp_hko_local_maximum::exact_bank::PentagonField;
 use exp_hko_local_maximum::{
-    ehz_capacity_instrumented, euclidean_volume_f64, exact_hko_dual_vertices, HkoExactScalar,
+    ehz_capacity_instrumented, exact_hko_dual_vertices, exact_volume_reference_as_f64,
+    HkoExactScalar,
 };
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::{DMatrix, DVector, Matrix4, Vector4};
@@ -1670,7 +1671,7 @@ fn main() {
     let output_path = output_path(options.canonical);
 
     let known = known_polytopes::hko_pentagon();
-    let volume = euclidean_volume_f64(&known.vertices, &known.vertex_facet_incidence);
+    let volume = exact_volume_reference_as_f64(&known.vertices, &known.vertex_facet_incidence);
     let sys = symplectic::systolic_ratio(known.capacity, volume);
     let d_volume = volume_derivatives_a(
         &known.dual_vertices_f64,

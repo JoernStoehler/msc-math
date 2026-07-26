@@ -19,7 +19,7 @@
 //!         experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-gradient.jsonl
 
 use euclidean_polytopes::vertex_facets_from_vertex_facet_incidence;
-use exp_combinatorial_cells::euclidean_volume_f64;
+use exp_combinatorial_cells::exact_volume_reference_as_f64;
 #[path = "../src/flat_polytope.rs"]
 mod flat_polytope;
 
@@ -300,7 +300,7 @@ fn compute_sys(
     Vec<usize>,
     symplectic::kkt::saddle_point_solver::KktResult,
 )> {
-    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let vol = exact_volume_reference_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
@@ -623,7 +623,8 @@ fn main() {
                 &polytope.facet_intersection_is_nonempty,
                 &polytope.omega_signs,
             )?;
-            let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+            let vol =
+                exact_volume_reference_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
             if vol <= 0.0 {
                 return None;
             }

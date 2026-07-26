@@ -11,7 +11,7 @@ mod producer_rows;
 mod rows;
 
 use exp_sys_landscape::{
-    dual_vertices_rational_strings, exact_volume_from_incidence_as_f64, package_root,
+    dual_vertices_rational_strings, package_root, reference::exact_volume_as_f64,
     SysLandscapePolytopeCache,
 };
 use invariant_features::ProfiledInvariantFeatureRow;
@@ -258,10 +258,7 @@ fn synthetic_smoke_caches() -> load_caches::LoadedCaches {
                 )
             })
             .expect("synthetic random polytope");
-        let volume = exact_volume_from_incidence_as_f64(
-            &polytope.vertices,
-            &polytope.vertex_facet_incidence,
-        );
+        let volume = exact_volume_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
         let poly_id = format!("synthetic_random_f{facet_count}_{random_count}");
         polytopes.push(load_caches::LoadedPolytopeRow {
             poly_id: poly_id.clone(),
@@ -288,10 +285,7 @@ fn synthetic_smoke_caches() -> load_caches::LoadedCaches {
         .enumerate()
     {
         let polytope = synthetic_product_polytope(k, m, index);
-        let volume = exact_volume_from_incidence_as_f64(
-            &polytope.vertices,
-            &polytope.vertex_facet_incidence,
-        );
+        let volume = exact_volume_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
         let poly_id = format!("synthetic_product_{k}x{m}_{index}");
         polytopes.push(load_caches::LoadedPolytopeRow {
             poly_id: poly_id.clone(),

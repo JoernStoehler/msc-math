@@ -35,7 +35,7 @@ use euclidean_polytopes::{
     edges_from_vertex_facet_incidence, two_faces_from_vertex_facet_incidence,
     vertex_facets_from_vertex_facet_incidence,
 };
-use exp_sys_landscape::{exact_volume_from_incidence_as_f64, SysLandscapePolytopeCache};
+use exp_sys_landscape::{reference::exact_volume_as_f64, SysLandscapePolytopeCache};
 use nalgebra::Vector4;
 use rayon::prelude::*;
 use std::time::{Duration, Instant};
@@ -256,7 +256,7 @@ pub fn profile_invariant_row_from_loaded_row(
 
     let started = Instant::now();
     let recomputed_volume =
-        exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+        exact_volume_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     timings.volume_recompute_ms = elapsed_ms(started.elapsed());
 
     let started = Instant::now();

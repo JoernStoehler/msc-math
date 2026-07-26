@@ -23,7 +23,7 @@
 //! the crate-level `ehz_capacity` entrypoint would hide that billiard-native data.
 
 use crate::flat_polytope::HkoPolytopeCache;
-use exp_hko_local_maximum::{capacity_billiard, euclidean_volume_f64};
+use exp_hko_local_maximum::{capacity_billiard, exact_volume_reference_as_f64};
 use nalgebra::Vector4;
 use rand::Rng;
 use rand::SeedableRng;
@@ -241,7 +241,7 @@ pub fn run(raw_args: &[String]) {
     let indices = lagrangian_component_indices(&base_duals);
 
     // Compute and write base row (epsilon = 0)
-    let base_vol = euclidean_volume_f64(
+    let base_vol = exact_volume_reference_as_f64(
         &base_polytope.vertices,
         &base_polytope.vertex_facet_incidence,
     );
@@ -338,7 +338,8 @@ pub fn run(raw_args: &[String]) {
             )
             .expect("classification already succeeded");
 
-            let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+            let vol =
+                exact_volume_reference_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
             if vol <= 0.0 {
                 continue;
             }

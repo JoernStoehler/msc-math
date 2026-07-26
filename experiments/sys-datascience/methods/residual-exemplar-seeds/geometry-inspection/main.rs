@@ -7,7 +7,7 @@ mod features_helpers;
 
 use euclidean_polytopes::two_faces_from_vertex_facet_incidence;
 use exp_sys_landscape::{
-    exact_volume_from_incidence_as_f64, poly_id_from_dual_vertices, SysLandscapePolytopeCache,
+    poly_id_from_dual_vertices, reference::exact_volume_as_f64, SysLandscapePolytopeCache,
 };
 use nalgebra::Vector4;
 use serde::{Deserialize, Serialize};
@@ -251,7 +251,7 @@ fn main() {
                 &polytope.vertices_f64,
                 &polytope.vertex_facet_incidence,
             );
-        let volume = exact_volume_from_incidence_as_f64(
+        let volume = exact_volume_as_f64(
             &polytope.vertices,
             &polytope.vertex_facet_incidence,
         );

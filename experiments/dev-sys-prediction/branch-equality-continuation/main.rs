@@ -3,7 +3,7 @@
 //! The first control uses the twenty tied minimizing words of
 //! `P_5 x_L R(9 degrees) P_5` in a five-dimensional local product slice.
 
-use exp_regular_products::{euclidean_volume_f64, ProductPolytopeCache};
+use exp_regular_products::{exact_volume_reference_as_f64, ProductPolytopeCache};
 use nalgebra::{Vector2, Vector4};
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha8Rng;
@@ -626,7 +626,7 @@ fn run_sample(
         .min_by(|left, right| left.total_cmp(right));
     let pair_joint_minimizer_nominal = equality_relative_residual <= EQUALITY_RELATIVE_TOL
         && pair_relative_gap_above_capacity.abs() <= JOINT_MIN_RELATIVE_TOL;
-    let volume = euclidean_volume_f64(
+    let volume = exact_volume_reference_as_f64(
         &corrected.polytope.vertices,
         &corrected.polytope.vertex_facet_incidence,
     );

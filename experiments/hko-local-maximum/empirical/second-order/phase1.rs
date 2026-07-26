@@ -3,7 +3,7 @@
 use crate::flat_polytope::HkoPolytopeCache;
 use crate::{NEAR_OPTIMAL_GAP, SVD_RANK_THRESHOLD};
 use exp_hko_local_maximum::ehz_capacity_instrumented;
-use exp_hko_local_maximum::euclidean_volume_f64;
+use exp_hko_local_maximum::exact_volume_reference_as_f64;
 use nalgebra::{DMatrix, Vector4};
 use serde::Serialize;
 use symplectic::algorithms::OrbitKktData;
@@ -57,7 +57,7 @@ pub(crate) fn run_phase1(polytope: &HkoPolytopeCache) -> (BaseRow, Vec<Vec<f64>>
     let facet_count = polytope.facet_count();
     let dim = facet_count * 4;
 
-    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let vol = exact_volume_reference_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     let instr = ehz_capacity_instrumented(
         &polytope.dual_vertices_f64,
         &polytope.facet_intersection_is_nonempty,

@@ -7,7 +7,7 @@
 //! at `a0`, merely inside the wider candidate window, or apparently created by
 //! a branch-domain/transition change.
 
-use exp_sys_landscape::{exact_volume_from_incidence_as_f64, SysLandscapePolytopeCache};
+use exp_sys_landscape::{reference::exact_volume_as_f64, SysLandscapePolytopeCache};
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::{DMatrix, Vector4};
 use rand::{Rng, SeedableRng};
@@ -794,7 +794,7 @@ fn point_record(
     base: &BaseState,
     status: &str,
 ) -> PointRecord {
-    let volume = exact_volume_from_incidence_as_f64(
+    let volume = exact_volume_as_f64(
         &base.polytope.vertices,
         &base.polytope.vertex_facet_incidence,
     );
@@ -982,8 +982,7 @@ fn compute_base_state_from_polytope(
 ) -> Result<BaseState, String> {
     let capacity = capacity_auto_with_gap(&polytope, action_gap)
         .map_err(|err| format!("base_capacity_failed:{err:?}"))?;
-    let vol =
-        exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let vol = exact_volume_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if !vol.is_finite() || vol <= 0.0 {
         return Err("base_volume_failed".to_string());
     }

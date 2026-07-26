@@ -4,6 +4,15 @@ Status: active development package for `sys(a)` gradient ascent and the HK
 branch behavior that an optimizer must handle. The Cargo package name
 `exp-dev-gradient-ascent` predates the broader branch-behavior scope.
 
+Some retained packet prose and schema fields call a target evaluation
+“exact.” In those evaluators, candidate admissibility/action aggregation uses
+exact binary64-rational geometry and volume is computed by exact rational
+arithmetic, but both capacity and volume are ultimately rounded to f64 before
+forming `sys`. The resulting `sys` is a high-confidence reference value, not
+an exact real or rational output. Current source makes this boundary visible
+through `exp_sys_landscape::reference::exact_volume_as_f64`; ordinary
+production-style `sys` computation uses f64 volume instead.
+
 This package is not thesis evidence by itself. Individual retained packets
 state the question, evidence, result, and claim boundary they own.
 

@@ -25,7 +25,7 @@
 //! 4. Python script reads JSONL, produces figures
 
 use euclidean_polytopes::{two_faces_from_vertex_facet_incidence, TwoFace};
-use exp_combinatorial_cells::euclidean_volume_f64;
+use exp_combinatorial_cells::exact_volume_reference_as_f64;
 #[path = "../src/flat_polytope.rs"]
 mod flat_polytope;
 
@@ -303,7 +303,7 @@ fn process_polytope(
         best_perm = c.best_perm.clone();
     } else {
         // No cache: full EHZ computation
-        vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+        vol = exact_volume_reference_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
         let ehz_result = exp_combinatorial_cells::capacity_auto(
             &polytope.dual_vertices,
             &polytope.dual_vertices_f64,

@@ -26,7 +26,7 @@
 
 use crate::flat_polytope::HkoPolytopeCache;
 use exp_hko_local_maximum::capacity_auto;
-use exp_hko_local_maximum::euclidean_volume_f64;
+use exp_hko_local_maximum::exact_volume_reference_as_f64;
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -124,7 +124,7 @@ fn parse_args(raw_args: &[String]) -> Args {
 
 /// Safely compute sys for a polytope, catching panics from degenerate geometry.
 fn safe_sys(polytope: &HkoPolytopeCache) -> Option<(f64, f64, f64)> {
-    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let vol = exact_volume_reference_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
@@ -221,7 +221,8 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
     let vertices = &polytope.vertices_f64;
 
-    let vol_orig = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let vol_orig =
+        exact_volume_reference_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     let cap_orig = capacity_auto(
         &polytope.dual_vertices,
         &polytope.dual_vertices_f64,

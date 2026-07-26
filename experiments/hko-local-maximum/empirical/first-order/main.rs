@@ -38,8 +38,8 @@ use euclidean_polytopes::{
     two_faces_from_vertex_facet_incidence, vertex_facets_from_vertex_facet_incidence,
 };
 use exp_hko_local_maximum::{
-    capacity_auto, ehz_capacity_instrumented, euclidean_volume_f64, exact_hko_dual_vertices,
-    exact_simplex_dual_vertices, ExactBankEntry, ExactBankTarget, HkoExactScalar,
+    capacity_auto, ehz_capacity_instrumented, exact_hko_dual_vertices, exact_simplex_dual_vertices,
+    exact_volume_reference_as_f64, ExactBankEntry, ExactBankTarget, HkoExactScalar,
     EXACT_BANK_ENTRIES,
 };
 use nalgebra::{Matrix4, Vector4};
@@ -803,7 +803,7 @@ fn compute_step_bound_hn(polytope: &HkoPolytopeCache, g_h: &[f64], g_n: &[Vector
 
 /// Safely compute sys for a polytope, catching panics from degenerate geometry.
 fn safe_sys(polytope: &HkoPolytopeCache) -> Option<(f64, f64, f64)> {
-    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let vol = exact_volume_reference_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
@@ -988,7 +988,7 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
     );
 
     let cap = instrumented.capacity;
-    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let vol = exact_volume_reference_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     let sys = cap * cap / (2.0 * vol);
     println!("  Volume: {vol:.10}");
     println!("  Sys: {sys:.10}");
@@ -1207,7 +1207,7 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
             }
         };
         let cap = instr.capacity;
-        let vol = euclidean_volume_f64(&current.vertices, &current.vertex_facet_incidence);
+        let vol = exact_volume_reference_as_f64(&current.vertices, &current.vertex_facet_incidence);
         let sys_now = cap * cap / (2.0 * vol);
         let best_orbit = &instr.orbits[0];
 

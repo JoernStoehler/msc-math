@@ -6,7 +6,7 @@
 
 use crate::flat_polytope::HkoPolytopeCache;
 use euclidean_polytopes::{all_points_are_extreme_exact, origin_in_interior_of_conv_exact};
-use exp_hko_local_maximum::{capacity_auto, capacity_pruned_hk2017, euclidean_volume_f64};
+use exp_hko_local_maximum::{capacity_auto, capacity_pruned_hk2017, exact_volume_reference_as_f64};
 use nalgebra::{DMatrix, DVector, Matrix4, Vector4};
 use num_rational::BigRational;
 use rand::SeedableRng;
@@ -886,7 +886,8 @@ fn evaluate(
                 chart_label = "chart_invalid".into();
                 chart_reasons.push("not_all_facets_defining".into());
             }
-            let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+            let vol =
+                exact_volume_reference_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
             volume = Some(vol);
             if !(vol.is_finite() && vol > 0.0) {
                 chart_label = "chart_invalid".into();

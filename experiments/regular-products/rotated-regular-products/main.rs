@@ -17,7 +17,7 @@
 //! Capacity algorithm: exact product closure-vertex route. Rows retain the
 //! exact rational capacity, outward binary64 bounds, and a deterministic
 //! minimizing word used for the bounce count.
-use exp_regular_products::euclidean_volume_f64;
+use exp_regular_products::exact_volume_reference_as_f64;
 use exp_regular_products::experiment_path;
 use exp_regular_products::product_minimum;
 use exp_regular_products::ProductPolytopeCache;
@@ -140,7 +140,8 @@ fn generate_heptagon_7x7() {
         let polytope = ProductPolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
             .expect("heptagon product construction failed");
 
-        let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+        let vol =
+            exact_volume_reference_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
 
         let start = Instant::now();
         let result = product_minimum(&polytope)
@@ -217,7 +218,8 @@ fn generate_pentagon_5x5() {
         let polytope = ProductPolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
             .expect("pentagon product construction failed");
 
-        let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+        let vol =
+            exact_volume_reference_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
 
         let start = Instant::now();
         let result = product_minimum(&polytope)
@@ -294,7 +296,8 @@ fn generate_polygon_pairs() {
             let polytope = ProductPolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
                 .expect("polygon product construction failed");
 
-            let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+            let vol =
+                exact_volume_reference_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
 
             let start = Instant::now();
             let result = product_minimum(&polytope)

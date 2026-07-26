@@ -8,7 +8,7 @@
 use crate::schema::{BasepointRow, PerturbationEventRow, StateRow};
 use crate::sysext_cache::{SysextCache, SysextCacheOutcome, TargetSysextError};
 use exp_sys_landscape::{
-    exact_volume_from_incidence_as_f64, poly_id_from_dual_vertices, SysLandscapePolytopeCache,
+    poly_id_from_dual_vertices, reference::exact_volume_as_f64, SysLandscapePolytopeCache,
 };
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::Vector4;
@@ -2274,8 +2274,7 @@ fn compute_base_state_from_polytope(
     let profile_started = Instant::now();
     let capacity = capacity_auto_with_gap(&polytope, action_gap)
         .map_err(|err| format!("base_capacity_failed:{err:?}"))?;
-    let vol =
-        exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let vol = exact_volume_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if !vol.is_finite() || vol <= 0.0 {
         return Err("base_volume_failed".to_string());
     }

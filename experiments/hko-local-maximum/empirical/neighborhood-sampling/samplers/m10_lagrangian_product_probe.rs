@@ -26,7 +26,7 @@
 
 use crate::flat_polytope::HkoPolytopeCache;
 use exp_hko_local_maximum::capacity_auto;
-use exp_hko_local_maximum::euclidean_volume_f64;
+use exp_hko_local_maximum::exact_volume_reference_as_f64;
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -162,7 +162,7 @@ fn eval_sys_at_ray(
         &polytope.omega_signs,
     )
     .ok()?;
-    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let vol = exact_volume_reference_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
@@ -307,7 +307,7 @@ pub fn run(raw_args: &[String]) {
     let d = base_duals.len() * 2; // 20D perturbation space
 
     // Verify base sys
-    let base_vol = euclidean_volume_f64(
+    let base_vol = exact_volume_reference_as_f64(
         &base_polytope.vertices,
         &base_polytope.vertex_facet_incidence,
     );

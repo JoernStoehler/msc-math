@@ -20,7 +20,11 @@ pub use exact_bank::{
 };
 pub use instrumented_search::{ehz_capacity_instrumented, InstrumentedOrbitSearch};
 
-pub fn euclidean_volume_f64(vertices: &[[BigRational; 4]], incidence: &DMatrix<bool>) -> f64 {
+/// Slow exact-volume reference for retained HKO target evaluators.
+pub fn exact_volume_reference_as_f64(
+    vertices: &[[BigRational; 4]],
+    incidence: &DMatrix<bool>,
+) -> f64 {
     let vertices: Vec<Vector4<BigRational>> = vertices
         .iter()
         .map(|v| Vector4::new(v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()))

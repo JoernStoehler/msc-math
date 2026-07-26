@@ -45,7 +45,8 @@ struct CrosspolytopeResult {
     search_complete_through_m: usize,
 }
 
-fn euclidean_volume_f64(vertices: &[[BigRational; 4]], incidence: &DMatrix<bool>) -> f64 {
+/// Slow exact-volume reference used once by this exhaustive retained producer.
+fn exact_volume_reference_as_f64(vertices: &[[BigRational; 4]], incidence: &DMatrix<bool>) -> f64 {
     let vertices: Vec<Vector4<BigRational>> = vertices
         .iter()
         .map(|v| Vector4::new(v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()))
@@ -64,7 +65,7 @@ fn main() {
     println!("Crosspolytope: {facet_count} facets");
 
     let start_vol = Instant::now();
-    let vol = euclidean_volume_f64(&kp.vertices, &kp.vertex_facet_incidence);
+    let vol = exact_volume_reference_as_f64(&kp.vertices, &kp.vertex_facet_incidence);
     let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
     println!("Volume: {vol:.10} ({time_volume_ms:.1} ms)");
 

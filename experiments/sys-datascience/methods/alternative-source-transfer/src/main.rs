@@ -11,10 +11,9 @@ mod features_face_symplectic;
 mod features_helpers;
 
 use euclidean_polytopes::{two_faces_from_vertex_facet_incidence, volume_from_incidence_exact};
-use exp_sys_landscape::{
-    exact_volume_from_incidence_as_f64, rational_vec4_to_strings, SysLandscapePolytopeCache,
-};
+use exp_sys_landscape::{rational_vec4_to_strings, SysLandscapePolytopeCache};
 use nalgebra::{DMatrix, Matrix4, SymmetricEigen, Vector2, Vector4};
+use num_traits::ToPrimitive;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rayon::prelude::*;
@@ -286,7 +285,9 @@ fn source_row(k: usize, m: usize, row: usize) -> Option<SourceRow> {
             .collect();
         let exact_volume =
             volume_from_incidence_exact(&exact_vertices, &poly.vertex_facet_incidence);
-        let vol = exact_volume_from_incidence_as_f64(&poly.vertices, &poly.vertex_facet_incidence);
+        let vol = exact_volume
+            .to_f64()
+            .expect("exact source volume must be representable as f64");
         let mut sr = SourceRow {
             schema: "alternative-source-transfer-source-v1".into(),
             candidate_id: format!(

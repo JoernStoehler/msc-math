@@ -32,7 +32,8 @@ use trajectories::generate_trajectories;
 const EPS_BASIS_DEGENERATE: f64 = 1e-12;
 const EPS_COLLINEAR: f64 = 1e-10;
 
-fn euclidean_volume_f64(vertices: &[[BigRational; 4]], incidence: &DMatrix<bool>) -> f64 {
+/// Slow exact-volume reference retained for reproducible visualization metadata.
+fn exact_volume_reference_as_f64(vertices: &[[BigRational; 4]], incidence: &DMatrix<bool>) -> f64 {
     let vertices: Vec<Vector4<BigRational>> = vertices
         .iter()
         .map(|v| Vector4::new(v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()))
@@ -118,7 +119,7 @@ pub fn export(name: &str, output: &Path) -> Result<(), String> {
     );
 
     let capacity = computed_capacity.unwrap_or(kp.capacity);
-    let vol = euclidean_volume_f64(&kp.vertices, &kp.vertex_facet_incidence);
+    let vol = exact_volume_reference_as_f64(&kp.vertices, &kp.vertex_facet_incidence);
     let systolic_ratio = if vol > 0.0 {
         capacity * capacity / (2.0 * vol)
     } else {

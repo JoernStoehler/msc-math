@@ -11,7 +11,7 @@ use crate::{
 use euclidean_polytopes::{
     two_faces_from_vertex_facet_incidence, vertex_facets_from_vertex_facet_incidence,
 };
-use exp_hko_local_maximum::euclidean_volume_f64;
+use exp_hko_local_maximum::exact_volume_reference_as_f64;
 use nalgebra::{Matrix4, Vector4};
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
@@ -141,7 +141,7 @@ fn compute_step_bound(polytope: &HkoPolytopeCache, direction: &[Vector4<f64>]) -
 }
 
 pub(crate) fn compute_sys(polytope: &HkoPolytopeCache) -> Option<f64> {
-    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let vol = exact_volume_reference_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
@@ -206,7 +206,7 @@ fn gradient_ascent_phase(
         let (cap, best_perm) = compute_capacity_result(&current)?;
         let dual_vertices = &current.dual_vertices_f64;
         let kkt = solve_kkt_for_dual_vertices(dual_vertices, &best_perm).feasible()?;
-        let vol = euclidean_volume_f64(&current.vertices, &current.vertex_facet_incidence);
+        let vol = exact_volume_reference_as_f64(&current.vertices, &current.vertex_facet_incidence);
         if vol <= 0.0 {
             return None;
         }

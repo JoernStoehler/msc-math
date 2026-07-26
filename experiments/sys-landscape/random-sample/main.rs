@@ -31,7 +31,7 @@
 //! - `--cache <path>`          cache JSONL path                       (default: untracked temp)
 
 use exp_sys_landscape::capacity_auto;
-use exp_sys_landscape::exact_volume_from_incidence_as_f64;
+use exp_sys_landscape::reference::exact_volume_as_f64;
 use exp_sys_landscape::{
     orbit_scalars_from_result, rational_vec4_to_strings, smoke_output_path,
     SysLandscapePolytopeCache,
@@ -313,7 +313,7 @@ fn main() {
             };
 
             let start_vol = Instant::now();
-            let vol = exact_volume_from_incidence_as_f64(&p.vertices, &p.vertex_facet_incidence);
+            let vol = exact_volume_as_f64(&p.vertices, &p.vertex_facet_incidence);
             let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
             let start_cap = Instant::now();

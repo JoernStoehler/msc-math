@@ -23,7 +23,11 @@ pub use boundary_events::{compute_step_bound_detailed, BoundaryEvent, EventType}
 pub use instrumented_capacity::{ehz_capacity_instrumented, InstrumentedCapacitySummary};
 pub use records::{name_from_record, source_dataset_from_record};
 
-pub fn euclidean_volume_f64(vertices: &[[BigRational; 4]], incidence: &DMatrix<bool>) -> f64 {
+/// Slow exact-volume reference retained for historical experiment reproduction.
+pub fn exact_volume_reference_as_f64(
+    vertices: &[[BigRational; 4]],
+    incidence: &DMatrix<bool>,
+) -> f64 {
     let vertices: Vec<Vector4<BigRational>> = vertices
         .iter()
         .map(|v| Vector4::new(v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()))

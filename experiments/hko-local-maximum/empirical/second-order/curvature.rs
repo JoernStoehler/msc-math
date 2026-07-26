@@ -3,7 +3,7 @@
 use crate::flat_polytope::HkoPolytopeCache;
 use crate::{EPSILON_GRID, EPSILON_RANDOM, N_RANDOM_DIRECTIONS, RANDOM_SEED};
 use exp_hko_local_maximum::capacity_auto;
-use exp_hko_local_maximum::euclidean_volume_f64;
+use exp_hko_local_maximum::exact_volume_reference_as_f64;
 use nalgebra::Vector4;
 use rand::Rng as _;
 use rand::SeedableRng;
@@ -73,7 +73,7 @@ pub(crate) fn curvature_at_epsilon(
         )
         .ok()?
         .min_action;
-        let vol = euclidean_volume_f64(&poly.vertices, &poly.vertex_facet_incidence);
+        let vol = exact_volume_reference_as_f64(&poly.vertices, &poly.vertex_facet_incidence);
         if vol <= 0.0 {
             return None;
         }
@@ -144,7 +144,7 @@ pub(crate) fn run_phase2(
                     }
                 };
 
-                let vol = euclidean_volume_f64(
+                let vol = exact_volume_reference_as_f64(
                     &perturbed_poly.vertices,
                     &perturbed_poly.vertex_facet_incidence,
                 );

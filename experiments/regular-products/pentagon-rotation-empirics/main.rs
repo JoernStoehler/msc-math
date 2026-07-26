@@ -29,7 +29,7 @@
 //! - The 3-bounce branch dump is the empirical surface for the open proof
 //!   obligation [lem:pentagon-rotation-three-bounce].
 
-use exp_regular_products::{euclidean_volume_f64, ProductPolytopeCache};
+use exp_regular_products::{exact_volume_reference_as_f64, ProductPolytopeCache};
 use serde::Serialize;
 use std::collections::{BTreeMap, BTreeSet};
 use std::env;
@@ -143,7 +143,8 @@ fn main() {
             .expect("pentagon product construction failed");
         let classification = classify_facets_from_dual_vertices(&polytope.dual_vertices_f64)
             .expect("pentagon product should classify as a product");
-        let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+        let vol =
+            exact_volume_reference_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
         match cli.mode {
             SweepMode::Minima => {
                 let result = collect_minima_safe_billiard_result(&polytope)

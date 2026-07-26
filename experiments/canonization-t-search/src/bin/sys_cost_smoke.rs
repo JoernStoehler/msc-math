@@ -1,5 +1,5 @@
 use exp_sys_landscape::{
-    compute_capacity_result, exact_volume_from_incidence_as_f64, SysLandscapePolytopeCache,
+    compute_capacity_result, reference::exact_volume_as_f64, SysLandscapePolytopeCache,
 };
 use nalgebra::Vector4;
 use std::time::Instant;
@@ -26,10 +26,7 @@ fn main() {
         reconstruct_s += reconstruct_start.elapsed().as_secs_f64();
 
         let volume_start = Instant::now();
-        let volume = exact_volume_from_incidence_as_f64(
-            &polytope.vertices,
-            &polytope.vertex_facet_incidence,
-        );
+        let volume = exact_volume_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
         volume_s += volume_start.elapsed().as_secs_f64();
         if volume <= 0.0 {
             continue;

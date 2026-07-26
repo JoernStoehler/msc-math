@@ -4,7 +4,7 @@
 //! therefore transformed by an explicitly computed inverse transpose.
 
 use exp_sys_landscape::{
-    exact_volume_from_incidence_as_f64, rational_vec4_to_strings, SysLandscapePolytopeCache,
+    rational_vec4_to_strings, reference::exact_volume_as_f64, SysLandscapePolytopeCache,
 };
 use nalgebra::{Matrix4, Vector2, Vector4};
 use num_rational::BigRational;
@@ -826,7 +826,7 @@ fn map_failure_row(
         row.base_facet_count = Some(base.facet_count());
         row.base_vertex_count = Some(base.vertices.len());
         row.base_geometry_id = Some(geometry_id(base));
-        row.base_exact_volume_as_f64 = Some(exact_volume_from_incidence_as_f64(
+        row.base_exact_volume_as_f64 = Some(exact_volume_as_f64(
             &base.vertices,
             &base.vertex_facet_incidence,
         ));
@@ -865,8 +865,7 @@ fn evaluate_map(
     let transform_started = Instant::now();
     let transformed_duals = transform_duals(&map.matrix, &base.dual_vertices_f64);
     let transform_ms = transform_started.elapsed().as_secs_f64() * 1000.0;
-    let base_volume =
-        exact_volume_from_incidence_as_f64(&base.vertices, &base.vertex_facet_incidence);
+    let base_volume = exact_volume_as_f64(&base.vertices, &base.vertex_facet_incidence);
     let mut failures = Vec::new();
     if !map.matrix.iter().all(|value| value.is_finite()) {
         failures.push("matrix_nonfinite".to_string());
@@ -984,7 +983,7 @@ fn evaluate_map(
             reconstruction_ms,
         };
     };
-    let exact_volume = exact_volume_from_incidence_as_f64(
+    let exact_volume = exact_volume_as_f64(
         &reconstructed.vertices,
         &reconstructed.vertex_facet_incidence,
     );

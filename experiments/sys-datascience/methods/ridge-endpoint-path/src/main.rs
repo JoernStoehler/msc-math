@@ -1,4 +1,4 @@
-use exp_sys_landscape::{exact_volume_from_incidence_as_f64, poly_id, SysLandscapePolytopeCache};
+use exp_sys_landscape::{poly_id, reference::exact_volume_as_f64, SysLandscapePolytopeCache};
 use nalgebra::Vector2;
 use num_rational::BigRational;
 use num_traits::{One, Signed, ToPrimitive, Zero};
@@ -423,7 +423,7 @@ fn main() {
             .expect("canonical product must construct");
         let poly_id = poly_id(&poly);
         let volume =
-            exact_volume_from_incidence_as_f64(&poly.vertices, &poly.vertex_facet_incidence);
+            exact_volume_as_f64(&poly.vertices, &poly.vertex_facet_incidence);
         let classification = classify_facets_from_dual_vertices(&poly.dual_vertices_f64)
             .expect("frozen candidates are Lagrangian products");
         let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(

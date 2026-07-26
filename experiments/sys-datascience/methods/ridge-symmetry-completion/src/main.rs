@@ -1,5 +1,5 @@
 use euclidean_polytopes::{edges_from_vertex_facet_incidence, two_faces_from_vertex_facet_incidence, vertex_facets_from_vertex_facet_incidence};
-use exp_sys_landscape::{capacity_billiard, exact_volume_from_incidence_as_f64, poly_id, SysLandscapePolytopeCache};
+use exp_sys_landscape::{capacity_billiard, poly_id, reference::exact_volume_as_f64, SysLandscapePolytopeCache};
 use nalgebra::Vector2;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -53,7 +53,7 @@ fn preflight() {
         let vf=vertex_facets_from_vertex_facet_incidence(inc);
         let edges=edges_from_vertex_facet_incidence(inc);
         let faces=two_faces_from_vertex_facet_incidence(inc);
-        let volume=exact_volume_from_incidence_as_f64(&poly.vertices,inc);
+        let volume=exact_volume_as_f64(&poly.vertices,inc);
         let heights=row.q_hrep.iter().chain(&row.p_hrep).map(|x|x.height).collect::<Vec<_>>();
         let min_h=heights.iter().copied().fold(f64::INFINITY,f64::min);
         let max_h=heights.iter().copied().fold(f64::NEG_INFINITY,f64::max);
@@ -82,7 +82,7 @@ fn evaluate(candidate_id:&str) {
         assert!(previous["sys"].as_f64().unwrap()<=1.0,"delta1 crossed one: stop before delta2");
     }
     let row=rows().into_iter().find(|x|x.candidate_id==candidate_id).expect("frozen candidate id");
-    let poly=poly(&row); let volume=exact_volume_from_incidence_as_f64(&poly.vertices,&poly.vertex_facet_incidence);
+    let poly=poly(&row); let volume=exact_volume_as_f64(&poly.vertices,&poly.vertex_facet_incidence);
     let start=Instant::now();
     let result=capacity_billiard(&poly.dual_vertices_f64,&poly.dual_vertices,&poly.facet_intersection_is_nonempty,&poly.omega_signs).unwrap();
     let elapsed=start.elapsed().as_secs_f64()*1000.0;

@@ -6,7 +6,7 @@
 //! full `sys` at every perturbed state; no active-gradient list is assumed complete.
 
 use exp_sys_landscape::{
-    compute_sys_computation, exact_volume_from_incidence_as_f64, SysComputation,
+    compute_sys_computation, reference::exact_volume_as_f64, SysComputation,
     SysLandscapePolytopeCache,
 };
 use nalgebra::{DMatrix, DVector, Matrix4, Vector4};
@@ -364,7 +364,7 @@ fn select_states(cli: &Cli, all_rows: &[LocatedRow]) -> Vec<DiagnosticState> {
     }
 
     let hko = hko_pentagon();
-    let hko_volume = exact_volume_from_incidence_as_f64(&hko.vertices, &hko.vertex_facet_incidence);
+    let hko_volume = exact_volume_as_f64(&hko.vertices, &hko.vertex_facet_incidence);
     states.push(DiagnosticState {
         state_id: "positive_control_hko2024".to_string(),
         control_role: "positive_control_exact_theorem_local_maximum".to_string(),

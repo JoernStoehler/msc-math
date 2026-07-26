@@ -34,6 +34,17 @@ current rows to `1e-12` relative error. The retained 512-row F10 comparison
 supporting that boundary is documented in
 `experiments/sys-datascience/methods/generic-ridge-tail-stage1/README.md`.
 
+The ordinary volume API is
+`euclidean_polytopes::volume_from_incidence_f64`. Slow exact arithmetic rounded
+back to f64 lives under
+`exp_sys_landscape::reference::exact_volume_as_f64`; it is for numerical
+comparisons, exact-target reference evaluators, and historical artifact
+reproduction, not ordinary `sys` computation. A caller that genuinely needs an
+exact result should retain the `BigRational` returned by
+`euclidean_polytopes::volume_from_incidence_exact` instead of converting it to
+f64. The former root-level rounded-exact helper remains only as a hidden,
+deprecated compatibility alias for frozen source snapshots.
+
 Read the relevant child README before source, figures, or commands. A tracked
 figure does not imply that its generating JSONL is still present.
 

@@ -4,7 +4,7 @@
 //! `a <- a + eta * grad_a sys_sigma(a)`.  It does not normalize, project,
 //! select a near-active set, accept/reject, or line-search the update.
 
-use exp_sys_landscape::{exact_volume_from_incidence_as_f64, SysLandscapePolytopeCache};
+use exp_sys_landscape::{reference::exact_volume_as_f64, SysLandscapePolytopeCache};
 use nalgebra::Vector4;
 use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -425,8 +425,7 @@ fn safe_id(value: &str) -> String {
 fn compute_state(duals: &[Vector4<f64>]) -> Result<State, String> {
     let polytope = SysLandscapePolytopeCache::from_f64_dual_vertices(duals.to_vec())
         .ok_or_else(|| "updated_state_invalid_geometry".to_string())?;
-    let volume =
-        exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let volume = exact_volume_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if !volume.is_finite() || volume <= 0.0 {
         return Err("exact_volume_failed".to_string());
     }

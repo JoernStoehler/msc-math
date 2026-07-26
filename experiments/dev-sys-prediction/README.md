@@ -7,6 +7,13 @@ Current guidance back to optimizer work is in `OPTIMIZER-GUIDANCE.md`.
 Facet-count radius and baseline-error calibration is in
 `facet-scale-baseline-error/README.md`.
 
+Reference targets use exact binary64-rational geometry and rational volume
+before rounding capacity and volume to f64 for `sys`. They are reference
+values, not exact real or rational outputs. The slow volume step is therefore
+imported explicitly from
+`exp_sys_landscape::reference::exact_volume_as_f64`; ordinary production-style
+`sys` computations use f64 volume.
+
 This package is separate from `experiments/dev-gradient-ascent/`. Gradient
 ascent work asks how to choose steps that reach good local maxima. Work here
 asks how well predictive local models forecast `sys(a0 + da)` on a useful

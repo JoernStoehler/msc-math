@@ -9,7 +9,7 @@
 //! its original legacy branch selector.
 
 use exp_sys_landscape::{
-    dual_vertices_rational_strings, exact_volume_from_incidence_as_f64, SysLandscapePolytopeCache,
+    dual_vertices_rational_strings, reference::exact_volume_as_f64, SysLandscapePolytopeCache,
 };
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::Vector4;
@@ -611,8 +611,7 @@ fn compute_base_state(polytope: SysLandscapePolytopeCache) -> Result<BaseState, 
         .to_f64()
         .filter(|value| value.is_finite() && *value > 0.0)
         .ok_or_else(|| "capacity_not_representable_as_f64".to_string())?;
-    let volume =
-        exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let volume = exact_volume_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if !volume.is_finite() || volume <= 0.0 {
         return Err("volume_failed".to_string());
     }
@@ -739,8 +738,7 @@ fn evaluate_step(base: &BaseState, direction: &[Vector4<f64>], step: f64) -> Ste
         }
     };
     let bounds = capacity_result.bounds();
-    let volume =
-        exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let volume = exact_volume_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     let sys = symplectic::systolic_ratio(capacity, volume);
     if !volume.is_finite() || volume <= 0.0 || !sys.is_finite() {
         return StepOutcome {

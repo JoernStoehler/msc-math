@@ -6,7 +6,7 @@
 
 use exp_sys_landscape::{
     compute_active_sys_state, compute_step_bound_detailed, compute_sys_from_capacity,
-    dual_vertices_rational_strings, exact_volume_from_incidence_as_f64, poly_id_from_dual_vertices,
+    dual_vertices_rational_strings, poly_id_from_dual_vertices, reference::exact_volume_as_f64,
     EventType, SysLandscapePolytopeCache,
 };
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
@@ -2699,8 +2699,7 @@ fn compute_base_state_from_polytope(
 ) -> Result<BaseState, String> {
     let capacity = capacity_auto_with_gap(&polytope, action_gap)
         .map_err(|err| format!("base_capacity_failed:{err:?}"))?;
-    let vol =
-        exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let vol = exact_volume_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if !vol.is_finite() || vol <= 0.0 {
         return Err("base_volume_failed".to_string());
     }

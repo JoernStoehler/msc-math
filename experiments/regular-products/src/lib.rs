@@ -12,4 +12,4 @@ pub mod volume;
 pub use capacity::{product_minimum, ProductMinimum};
 pub use paths::{experiment_path, package_root};
 pub use product_polytope_cache::ProductPolytopeCache;
-pub use volume::euclidean_volume_f64;
+pub use volume::exact_volume_reference_as_f64;

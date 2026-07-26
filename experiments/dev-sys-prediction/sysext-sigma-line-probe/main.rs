@@ -5,7 +5,7 @@
 //! recomputation: the goal is to inspect individual branch action and beta
 //! margin behavior without enumerating all candidate branches at every sample.
 
-use exp_sys_landscape::{exact_volume_from_incidence_as_f64, SysLandscapePolytopeCache};
+use exp_sys_landscape::{reference::exact_volume_as_f64, SysLandscapePolytopeCache};
 use nalgebra::{DVector, Vector4};
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
@@ -361,7 +361,7 @@ fn line_probe_row(
                 "target_polytope_construction_failed".to_string(),
             );
         };
-        let volume = exact_volume_from_incidence_as_f64(
+        let volume = exact_volume_as_f64(
             &target_polytope.vertices,
             &target_polytope.vertex_facet_incidence,
         );
@@ -621,8 +621,7 @@ fn compute_base_state_from_row(
     let polytope = polytope_from_row(row)?;
     let capacity = capacity_auto_with_gap(&polytope, row.capacity * action_window_relative)
         .map_err(|err| format!("base_capacity_failed:{err:?}"))?;
-    let vol =
-        exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let vol = exact_volume_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if !vol.is_finite() || vol <= 0.0 {
         return Err("base_volume_failed".to_string());
     }
