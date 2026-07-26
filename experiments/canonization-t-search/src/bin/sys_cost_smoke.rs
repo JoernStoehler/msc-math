@@ -1,8 +1,11 @@
-use exp_sys_landscape::{
-    compute_capacity_result, reference::exact_volume_as_f64, SysLandscapePolytopeCache,
-};
+use euclidean_polytopes::volume_from_incidence_f64;
+use exp_sys_landscape::{exact_binary64_geometry_from_cache, SysLandscapePolytopeCache};
 use nalgebra::Vector4;
 use std::time::Instant;
+use symplectic::capacity_4d::{
+    capacity, capacity_value, check_dual_vertex_norm_bounds, check_facet_count,
+    check_primal_vertex_norm_bounds,
+};
 
 fn main() {
     let case_count = std::env::args()
@@ -26,14 +29,23 @@ fn main() {
         reconstruct_s += reconstruct_start.elapsed().as_secs_f64();
 
         let volume_start = Instant::now();
-        let volume = exact_volume_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+        let volume =
+            volume_from_incidence_f64(&polytope.vertices_f64, &polytope.vertex_facet_incidence)
+                .expect("validated cache has positive f64 incidence volume");
         volume_s += volume_start.elapsed().as_secs_f64();
         if volume <= 0.0 {
             continue;
         }
 
         let capacity_start = Instant::now();
-        let capacity = compute_capacity_result(&polytope);
+        let capacity = (|| {
+            check_facet_count(polytope.facet_count()).ok()?;
+            check_dual_vertex_norm_bounds(&polytope.dual_vertices_f64).ok()?;
+            let geometry = exact_binary64_geometry_from_cache(&polytope).ok()?;
+            check_primal_vertex_norm_bounds(&geometry).ok()?;
+            let result = capacity(&geometry).ok()?;
+            capacity_value(&result, 1e-10).ok()
+        })();
         capacity_s += capacity_start.elapsed().as_secs_f64();
         if capacity.is_some() {
             ok += 1;
@@ -41,7 +53,7 @@ fn main() {
     }
     let elapsed = start.elapsed().as_secs_f64();
     println!(
-        "cases={case_count} ok={ok} elapsed_s={elapsed:.6} per_ok_s={:.6} reconstruct_s={reconstruct_s:.6} volume_s={volume_s:.6} capacity_s={capacity_s:.6}",
+        "cases={case_count} ok={ok} elapsed_s={elapsed:.6} per_ok_s={:.6} reconstruct_s={reconstruct_s:.6} volume_s={volume_s:.6} capacity_s={capacity_s:.6} volume_method=f64-from-exact-derived-incidence-v1 capacity_method=certified-production-capacity-v1",
         elapsed / ok.max(1) as f64
     );
 }

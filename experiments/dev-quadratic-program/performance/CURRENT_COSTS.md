@@ -15,6 +15,8 @@ historical comparisons remain in the owning result files.
 | complete retained legacy pipeline | paired four-point run on the same inputs | `12.29 ms/input` |
 | run-local producer certified minimizer stage | 19-row smoke: 8 generic, 10 random products, HKO | `211.4 ms` aggregate worker time |
 | same producer legacy orbit-search stage | same generated rows and seed | `1,133.6 ms` aggregate worker time |
+| noncompact fixed-shape production capacity | paired 26-row deterministic smoke, 2 bodies and `--samples 1` | `27,416 ms` aggregate capacity time |
+| same noncompact smoke, retained legacy route | identical points | `2,965 ms` aggregate capacity time |
 | f64 volume on exact-derived incidence | one cold run-local HKO producer miss | `0.078 ms` |
 | exact-rational volume reference | one accepted generic `F=10` case | `1.049 s` |
 
@@ -50,6 +52,14 @@ value had its own rounding error. Seventeen old winning words were among the
 new exact minimizers. The other two were product billiard words rather than
 members of the new product closure-vertex certificate family; their capacities
 still agreed.
+
+The noncompact fixed-shape smoke is an intentional exception to ordinary
+production migration. The two routes agreed to `3.13e-15` relative on all 26
+capacity values, and production midpoint error bounds were at most
+`1.15e-8` relative. Production was nevertheless `9.25x` slower in aggregate
+because these strongly transformed general inputs repeatedly trigger exact
+fallback. The stopped historical scan therefore keeps its explicitly named
+legacy default, while production remains available for certified spot checks.
 
 Do not extrapolate only from candidate count when exact fallback is possible.
 On one transformed product-source input, the production general route processed

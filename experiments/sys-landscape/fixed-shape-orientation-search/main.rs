@@ -207,7 +207,13 @@ fn evaluate(
         .iter()
         .map(|dual| map * dual)
         .collect::<Vec<_>>();
-    let (capacity_value_observed, timing) = match backend {
+    let (
+        capacity_value_observed,
+        certified_capacity_bounds,
+        legacy_action_diagnostic,
+        capacity_route,
+        timing,
+    ) = match backend {
         CapacityBackend::Legacy => {
             let preparation_started = Instant::now();
             let exact_vectors = duals
@@ -250,6 +256,9 @@ fn evaluate(
             let capacity_ms = capacity_started.elapsed().as_secs_f64() * 1000.0;
             (
                 result.min_action,
+                None,
+                Some((result.min_action_lower, result.min_action_upper)),
+                "legacy-auto",
                 EvaluationTiming {
                     preparation_ms,
                     capacity_ms,
@@ -283,9 +292,14 @@ fn evaluate(
             let capacity_started = Instant::now();
             let result = capacity(&geometry).map_err(|error| error.to_string())?;
             let observed = capacity_value(&result, 1e-10).map_err(|error| error.to_string())?;
+            let bounds = result.bounds();
+            let route = result.route_name();
             let capacity_ms = capacity_started.elapsed().as_secs_f64() * 1000.0;
             (
                 observed,
+                Some((bounds.lower(), bounds.upper())),
+                None,
+                route,
                 EvaluationTiming {
                     preparation_ms,
                     candidate_diagnostic_ms,
@@ -301,18 +315,26 @@ fn evaluate(
     serde_json::to_writer(
         &mut *writer,
         &json!({
-            "schema": "fixed-shape-orientation-search-v1",
+            "schema": match backend {
+                CapacityBackend::Legacy => "fixed-shape-orientation-search-v1",
+                CapacityBackend::Production => "fixed-shape-orientation-search-v2",
+            },
             "source_kind": body.kind,
             "source_name": body.name,
             "source_recorded_sys": body.recorded_sys,
             "facet_count": body.base.dual_vertices_f64.len(),
             "capacity_backend": backend.name(),
+            "capacity_route": capacity_route,
             "stage": stage,
             "theta": theta,
             "phi": phi,
             "sys": sys,
             "delta_from_recomputed_identity": if stage == "identity" { 0.0 } else { sys - baseline_sys },
             "capacity": capacity,
+            "capacity_lower": certified_capacity_bounds.map(|bounds| bounds.0),
+            "capacity_upper": certified_capacity_bounds.map(|bounds| bounds.1),
+            "legacy_action_lower_diagnostic": legacy_action_diagnostic.map(|bounds| bounds.0),
+            "legacy_action_upper_diagnostic": legacy_action_diagnostic.map(|bounds| bounds.1),
             "volume": body.volume,
             "preparation_runtime_ms": timing.preparation_ms,
             "candidate_diagnostic_runtime_ms": timing.candidate_diagnostic_ms,
@@ -418,7 +440,7 @@ fn parse_args() -> Result<Args, String> {
     let mut output = PathBuf::from(DEFAULT_OUTPUT);
     let mut source_kind = None;
     let mut maximum_evaluations = None;
-    let mut backend = CapacityBackend::Legacy;
+    let mut backend = CapacityBackend::Production;
     let mut profile_stages = false;
     let mut args = std::env::args().skip(1);
     while let Some(flag) = args.next() {

@@ -102,16 +102,34 @@ noncompact radial coordinate was only sampled through `r=4`.
 From the repository root:
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-fixed-shape-orientation-search
+cargo run -p exp-sys-landscape --release --bin sys-fixed-shape-orientation-search -- \
+  --capacity-backend production
 uv run --script experiments/sys-landscape/fixed-shape-orientation-search/analyze.py \
   --input experiments/sys-landscape/fixed-shape-orientation-search/evaluations.jsonl \
   --output experiments/sys-landscape/fixed-shape-orientation-search/analysis.json
 
-cargo run -p exp-sys-landscape --release --bin sys-fixed-shape-linear-search
+cargo run -p exp-sys-landscape --release --bin sys-fixed-shape-linear-search -- \
+  --capacity-backend legacy
 uv run --script experiments/sys-landscape/fixed-shape-orientation-search/analyze_global.py \
   --input experiments/sys-landscape/fixed-shape-orientation-search/global-evaluations.jsonl \
   --output experiments/sys-landscape/fixed-shape-orientation-search/global-analysis.json
 ```
+
+Fresh compact-orientation rows default to the production capacity route and
+use schema `fixed-shape-orientation-search-v2`; pass
+`--capacity-backend legacy` only for the named comparison control. The
+retained compact artifact predates that migration and remains historical
+legacy-route evidence.
+
+The stopped noncompact scan deliberately retains its legacy default. On a
+paired deterministic 26-row smoke (`--samples 1`), production capacity agreed
+with legacy to `3.13e-15` relative and certified every midpoint to
+`1.15e-8` relative, but took `27.42 s` of aggregate capacity time versus
+`2.96 s` for legacy. Production rows use
+`fixed-shape-linear-search-v2`, retain outward bounds, and require at most
+`1e-7` certified relative error. Use them for bounded certification checks;
+do not silently turn the full stopped scan into an approximately ninefold
+slower rerun. Historical v1 rows remain unchanged.
 
 For a caller-shaped runtime smoke, select one source body and cap the number of
 evaluations. `--profile-stages` additionally enumerates the transition cycles

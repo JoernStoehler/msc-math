@@ -16,7 +16,10 @@ use std::fs::File;
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
-use symplectic::algorithms::capacity_4d::exact_binary64_polytope_geometry;
+use symplectic::algorithms::capacity_4d::{
+    capacity, capacity_value, check_dual_vertex_norm_bounds, check_facet_count,
+    check_finite_dual_vertices, check_primal_vertex_norm_bounds, exact_binary64_polytope_geometry,
+};
 use symplectic::exact::omega_signs_exact;
 use symplectic::geom::symplectic_form::j4;
 
@@ -26,6 +29,7 @@ const COMPACT_OUTPUT: &str =
     "experiments/sys-landscape/fixed-shape-orientation-search/evaluations.jsonl";
 const DEFAULT_SEED: u64 = 0x51_34_4c_34;
 const DEFAULT_SAMPLES: usize = 24;
+const MAXIMUM_CAPACITY_RELATIVE_ERROR: f64 = 1e-7;
 const RADII: [f64; 6] = [0.125, 0.25, 0.5, 1.0, 2.0, 4.0];
 const SOURCES: [(&str, &str); 2] = [
     ("generic", "experiments/polytope-datasets/random.jsonl"),
@@ -66,10 +70,26 @@ struct Best {
     sys: f64,
 }
 
+#[derive(Clone, Copy, Debug)]
+enum CapacityBackend {
+    Legacy,
+    Production,
+}
+
+impl CapacityBackend {
+    fn name(self) -> &'static str {
+        match self {
+            Self::Legacy => "legacy",
+            Self::Production => "production",
+        }
+    }
+}
+
 struct Args {
     output: PathBuf,
     samples: usize,
     seed: u64,
+    backend: CapacityBackend,
 }
 
 fn read_best(kind: &'static str, path: &Path) -> Result<SourceBody, String> {
@@ -257,6 +277,7 @@ fn evaluate(
     stage: &str,
     point: Point,
     compact_baseline_sys: f64,
+    backend: CapacityBackend,
     writer: &mut BufWriter<File>,
 ) -> Result<Best, String> {
     let (map, pullback_error, determinant_error) = linear_map(point)?;
@@ -266,53 +287,86 @@ fn evaluate(
         .iter()
         .map(|dual| map * dual)
         .collect::<Vec<_>>();
-    let exact_vectors = duals
-        .iter()
-        .map(|dual| {
-            Vector4::new(
-                BigRational::from_float(dual[0]).unwrap(),
-                BigRational::from_float(dual[1]).unwrap(),
-                BigRational::from_float(dual[2]).unwrap(),
-                BigRational::from_float(dual[3]).unwrap(),
-            )
-        })
-        .collect::<Vec<_>>();
-    let exact_arrays = exact_vectors
-        .iter()
-        .map(|dual| {
-            [
-                dual[0].clone(),
-                dual[1].clone(),
-                dual[2].clone(),
-                dual[3].clone(),
-            ]
-        })
-        .collect::<Vec<_>>();
-    let omega_signs = omega_signs_exact(&exact_vectors);
     let capacity_start = Instant::now();
-    let result = capacity_auto(
-        &duals,
-        &exact_arrays,
-        &body.base.facet_intersection_is_nonempty,
-        &omega_signs,
-    )
-    .map_err(|error| {
-        format!(
-            "capacity failed for {} at radius {}: {error:?}",
-            body.name, point.radius
-        )
-    })?;
+    let (capacity, certified_capacity_bounds, legacy_action_diagnostic, capacity_route) =
+        match backend {
+            CapacityBackend::Legacy => {
+                let exact_vectors = duals
+                    .iter()
+                    .map(|dual| {
+                        Vector4::new(
+                            BigRational::from_float(dual[0]).unwrap(),
+                            BigRational::from_float(dual[1]).unwrap(),
+                            BigRational::from_float(dual[2]).unwrap(),
+                            BigRational::from_float(dual[3]).unwrap(),
+                        )
+                    })
+                    .collect::<Vec<_>>();
+                let exact_arrays = exact_vectors
+                    .iter()
+                    .map(|dual| {
+                        [
+                            dual[0].clone(),
+                            dual[1].clone(),
+                            dual[2].clone(),
+                            dual[3].clone(),
+                        ]
+                    })
+                    .collect::<Vec<_>>();
+                let omega_signs = omega_signs_exact(&exact_vectors);
+                let result = capacity_auto(
+                    &duals,
+                    &exact_arrays,
+                    &body.base.facet_intersection_is_nonempty,
+                    &omega_signs,
+                )
+                .map_err(|error| {
+                    format!(
+                        "capacity failed for {} at radius {}: {error:?}",
+                        body.name, point.radius
+                    )
+                })?;
+                (
+                    result.min_action,
+                    None,
+                    Some((result.min_action_lower, result.min_action_upper)),
+                    "legacy-auto",
+                )
+            }
+            CapacityBackend::Production => {
+                check_facet_count(duals.len()).map_err(|error| error.to_string())?;
+                check_finite_dual_vertices(&duals).map_err(|error| error.to_string())?;
+                check_dual_vertex_norm_bounds(&duals).map_err(|error| error.to_string())?;
+                let geometry =
+                    exact_binary64_polytope_geometry(&duals).map_err(|error| error.to_string())?;
+                check_primal_vertex_norm_bounds(&geometry).map_err(|error| error.to_string())?;
+                let result = capacity(&geometry).map_err(|error| error.to_string())?;
+                let observed = capacity_value(&result, MAXIMUM_CAPACITY_RELATIVE_ERROR)
+                    .map_err(|error| error.to_string())?;
+                let bounds = result.bounds();
+                (
+                    observed,
+                    Some((bounds.lower(), bounds.upper())),
+                    None,
+                    result.route_name(),
+                )
+            }
+        };
     let capacity_runtime_ms = capacity_start.elapsed().as_secs_f64() * 1000.0;
-    let capacity = result.min_action;
     let sys = symplectic::systolic_ratio(capacity, body.volume);
     serde_json::to_writer(
         &mut *writer,
         &json!({
-            "schema": "fixed-shape-linear-search-v1",
+            "schema": match backend {
+                CapacityBackend::Legacy => "fixed-shape-linear-search-v1",
+                CapacityBackend::Production => "fixed-shape-linear-search-v2",
+            },
             "source_kind": body.kind,
             "source_name": body.name,
             "source_recorded_sys": body.recorded_sys,
             "facet_count": body.base.dual_vertices_f64.len(),
+            "capacity_backend": backend.name(),
+            "capacity_route": capacity_route,
             "stage": stage,
             "theta": point.theta,
             "phi": point.phi,
@@ -323,6 +377,14 @@ fn evaluate(
             "sys": sys,
             "delta_from_compact_best": sys - compact_baseline_sys,
             "capacity": capacity,
+            "capacity_lower": certified_capacity_bounds.map(|bounds| bounds.0),
+            "capacity_upper": certified_capacity_bounds.map(|bounds| bounds.1),
+            "legacy_action_lower_diagnostic": legacy_action_diagnostic.map(|bounds| bounds.0),
+            "legacy_action_upper_diagnostic": legacy_action_diagnostic.map(|bounds| bounds.1),
+            "maximum_capacity_relative_error": match backend {
+                CapacityBackend::Legacy => Value::Null,
+                CapacityBackend::Production => json!(MAXIMUM_CAPACITY_RELATIVE_ERROR),
+            },
             "volume": body.volume,
             "capacity_runtime_ms": capacity_runtime_ms,
             "pullback_error": pullback_error,
@@ -355,6 +417,7 @@ fn scan_body(
     compact: CompactBest,
     samples: usize,
     seed: u64,
+    backend: CapacityBackend,
     writer: &mut BufWriter<File>,
 ) -> Result<(Best, usize), String> {
     let control_point = Point {
@@ -364,7 +427,14 @@ fn scan_body(
         v_azimuth: 0.0,
         radius: 0.0,
     };
-    let mut best = evaluate(body, "compact-control", control_point, compact.sys, writer)?;
+    let mut best = evaluate(
+        body,
+        "compact-control",
+        control_point,
+        compact.sys,
+        backend,
+        writer,
+    )?;
     if (best.sys - compact.sys).abs() > 2e-10 {
         return Err(format!(
             "{} compact control changed: artifact {}, recomputed {}",
@@ -401,6 +471,7 @@ fn scan_body(
                     radius,
                 },
                 compact.sys,
+                backend,
                 writer,
             )?;
             update_best(&mut best, candidate);
@@ -418,6 +489,7 @@ fn scan_body(
                     radius,
                 },
                 compact.sys,
+                backend,
                 writer,
             )?;
             update_best(&mut best, candidate);
@@ -432,6 +504,10 @@ fn parse_args() -> Result<Args, String> {
     let mut output = PathBuf::from(DEFAULT_OUTPUT);
     let mut samples = DEFAULT_SAMPLES;
     let mut seed = DEFAULT_SEED;
+    // These noncompact transformed inputs trigger production exact fallback
+    // often enough that the stopped retained scan keeps its measured legacy
+    // default. Use `production` for certified spot checks.
+    let mut backend = CapacityBackend::Legacy;
     while let Some(flag) = args.next() {
         match flag.as_str() {
             "--output" => output = PathBuf::from(args.next().ok_or("--output needs PATH")?),
@@ -452,6 +528,13 @@ fn parse_args() -> Result<Args, String> {
                     .parse()
                     .map_err(|_| "--seed must be a u64")?;
             }
+            "--capacity-backend" => {
+                backend = match args.next().as_deref() {
+                    Some("legacy") => CapacityBackend::Legacy,
+                    Some("production") => CapacityBackend::Production,
+                    _ => return Err("--capacity-backend needs legacy or production".into()),
+                };
+            }
             other => return Err(format!("unexpected argument {other}")),
         }
     }
@@ -459,6 +542,7 @@ fn parse_args() -> Result<Args, String> {
         output,
         samples,
         seed,
+        backend,
     })
 }
 
@@ -473,7 +557,14 @@ fn main() -> Result<(), String> {
     let mut writer = BufWriter::new(output);
     for body in bodies {
         let compact = read_compact_best(body.kind, Path::new(COMPACT_OUTPUT))?;
-        let (best, evaluations) = scan_body(&body, compact, args.samples, args.seed, &mut writer)?;
+        let (best, evaluations) = scan_body(
+            &body,
+            compact,
+            args.samples,
+            args.seed,
+            args.backend,
+            &mut writer,
+        )?;
         println!(
             "{} {}: compact={:.12}, best={:.12}, delta={:+.12}, radius={:.3}, condition={:.1}, evaluations={}",
             body.kind,

@@ -306,16 +306,18 @@ scalar route for its finite-step targets. A durable correspondence test finds
 the same two near-active words and per-coordinate derivative differences below
 `1e-10`. The full historical 12-seed panel was not rerun or relabelled.
 
-The retained fixed-shape orientation scans exposed a distinct interface
-boundary. Their legacy route reuses known incidence while evaluating hundreds
-of linear images of the same body. The complete legacy compact scan took
-`21.28 s`. Replacing it with the one-shot raw-dual wrapper was stopped after
-`82 s`, and replacing the generic exact-geometry constructor by the existing
-integer-scaled polar enumerator was still stopped after `52 s`; each stopped
-run had completed only the first of two 164-evaluation bodies. Both exploratory
-patches were discarded. Do not migrate these scans through
-`capacity_from_dual_vertices`: first specify and validate a known-incidence
-geometry boundary, or retain the legacy route with its scope stated.
+The retained fixed-shape scans exposed a distinct performance boundary. After
+the exact-geometry repair, the compact orientation scan's production pipeline
+is slightly faster than legacy on representative transformed generic inputs;
+fresh compact rows now default to production schema v2, while the legacy mode
+remains an explicit paired control. The stronger noncompact transforms behave
+differently: on a deterministic 26-row smoke, production and legacy capacities
+agreed to `3.13e-15` relative and production bounds certified at most
+`1.15e-8` midpoint error, but production capacity took `27.42 s` versus
+`2.96 s`. These cases repeatedly trigger exact fallback. Because the
+noncompact packet is a stopped historical diagnostic, its default remains
+explicitly legacy and production is a certified spot-check mode rather than an
+approximately ninefold full-rerun regression.
 
 The adversarial implementation review found that the original constructor
 accepted a 16-facet crosspolytope whose exact transition graph has
@@ -337,8 +339,10 @@ classification, then migrate the next active ordinary scalar consumer whose
 contract is already covered. Frozen evidence producers, parked prototypes, and
 intentional branch-landscape controls are dispositions, not ordinary
 migration debt, but each remaining old call site must say which category
-applies. The optimizer-owned branch models remain a coordination handoff, not
-files for this worktree to edit concurrently.
+applies. That classification is now recorded in
+`legacy-callsite-inventory.md`: the shared ascent state is the remaining
+ordinary blocker/handoff. The optimizer-owned branch models remain a
+coordination handoff, not files for this worktree to edit concurrently.
 
 ### Optimizer coordination boundary
 
