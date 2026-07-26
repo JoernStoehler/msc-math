@@ -48,6 +48,16 @@ pub use step_bound::{
 };
 pub use sys_landscape_cache::SysLandscapePolytopeCache;
 
+/// Exact-binary64 rational volume reference rounded once to f64.
+///
+/// Use this for reference comparisons or artifacts whose contract explicitly
+/// names rational-arithmetic volume. Ordinary f64 `sys` and feature
+/// computations with exact-derived incidence should call
+/// `euclidean_polytopes::volume_from_incidence_f64` on the cached f64 vertices.
+/// The retained comparison in
+/// `experiments/sys-datascience/methods/generic-ridge-tail-stage1/` measured a
+/// maximum relative volume error of `9.51e-15` across 512 generic F10 rows and
+/// a `16,427x` aggregate worker-time ratio.
 pub fn exact_volume_from_incidence_as_f64(
     vertices: &[[BigRational; 4]],
     incidence: &DMatrix<bool>,

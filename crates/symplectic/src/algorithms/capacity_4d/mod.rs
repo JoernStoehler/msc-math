@@ -18,6 +18,7 @@
 
 mod general;
 mod geometry;
+mod geometry_rank;
 mod product;
 
 pub use geometry::{

@@ -158,6 +158,10 @@ enum IntervalSupportDecision {
 /// their interiors. This function validates only finite structural q/p
 /// splitting and the existence of factor closure vertices. It returns the
 /// exact capacity of the binary64 input and sparse exact maximizing words.
+/// Exact support work is reserved for indeterminate interval predicates; exact
+/// final comparison is required by this exact-output contract. See
+/// `formal/product-qp-six-facet-reduction.tex` and
+/// `experiments/dev-quadratic-program/tools/product_closure_route/RESULTS.md`.
 pub(super) fn solve_product_closure_capacity_hybrid(
     dual_vertices: &[Vector4<f64>],
 ) -> Result<ProductClosureCapacityReport, ProductClosureError> {

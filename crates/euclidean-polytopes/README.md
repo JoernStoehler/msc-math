@@ -45,9 +45,14 @@ facet 3-volume in ambient `R^4`:
 ```rust,ignore
 use algebraic_numbers::ExactScalar;
 use nalgebra::{DMatrix, Vector4};
+use num_rational::BigRational;
 
 pub fn origin_in_interior_of_conv_exact<T: ExactScalar + 'static>(
     points: &[Vector4<T>],
+) -> bool;
+
+pub fn origin_in_interior_of_conv_exact_rational(
+    points: &[Vector4<BigRational>],
 ) -> bool;
 
 pub fn all_points_are_extreme_exact<T: ExactScalar + 'static>(
@@ -78,6 +83,10 @@ pub struct PolarVerticesExact<T: ExactScalar + 'static> {
 pub fn polar_vertices_exact<T: ExactScalar + 'static>(
     vertices: &[Vector4<T>],
 ) -> PolarVerticesExact<T>;
+
+pub fn polar_vertices_exact_rational(
+    vertices: &[Vector4<BigRational>],
+) -> PolarVerticesExact<BigRational>;
 
 pub struct TwoFace {
     pub facets: [usize; 2],
@@ -156,6 +165,10 @@ input. The input does not have to be non-redundant: redundant points only add
 redundant inequalities. Returned vertices are deduplicated by exact equality.
 It returns `PolarVerticesExact { vertices, vertex_facet_incidence }`; rows of
 the incidence matrix are returned polar vertices and columns are input facets.
+The `_rational` variants have the same exact result and contract but use
+integer-scaled determinants and a one-sided f64 rejection filter. The
+comparison tests in `tests/polar_vertices.rs` are the regression boundary for
+that optimization.
 
 `orient4_sign_f64(rows)` is a diagnostic sign filter for exact real values
 represented by normal finite or zero f64 inputs. `Positive` and `Negative`

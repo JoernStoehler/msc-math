@@ -262,7 +262,7 @@ fn origin_in_interior_of_conv_exact_slow<T: ExactScalar + 'static>(points: &[Vec
 /// This is the same exact positive-spanning test as
 /// [`origin_in_interior_of_conv_exact`], specialized by scaling all coordinates
 /// to a common integer denominator before the triple-normal separation pass.
-pub(crate) fn origin_in_interior_of_conv_exact_rational(points: &[Vector4<BigRational>]) -> bool {
+pub fn origin_in_interior_of_conv_exact_rational(points: &[Vector4<BigRational>]) -> bool {
     if points.len() < 5 {
         return false;
     }

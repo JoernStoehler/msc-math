@@ -3,9 +3,8 @@
 //! The Euclidean body is fixed.  The two parameters cover SO(4)/U(2), hence
 //! change only its orientation relative to the standard symplectic form.
 
-use exp_sys_landscape::{
-    capacity_auto, exact_volume_from_incidence_as_f64, SysLandscapePolytopeCache,
-};
+use euclidean_polytopes::volume_from_incidence_f64;
+use exp_sys_landscape::{capacity_auto, SysLandscapePolytopeCache};
 use nalgebra::{Matrix4, Vector4};
 use num_rational::BigRational;
 use serde_json::{json, Value};
@@ -134,9 +133,25 @@ fn read_best(kind: &'static str, path: &Path) -> Result<SourceBody, String> {
             Ok(Vector4::new(x[0], x[1], x[2], x[3]))
         })
         .collect::<Result<Vec<_>, String>>()?;
-    let base = SysLandscapePolytopeCache::from_f64_dual_vertices(duals)
+    // Keep this source-loading path aligned with the production geometry
+    // constructor. The older cache constructor exact-resolves origin and
+    // extremality before repeating polar construction.
+    let geometry = exact_binary64_polytope_geometry(&duals)
+        .map_err(|error| format!("base reconstruction failed: {error}"))?;
+    let dual_vertices = geometry
+        .dual_vertices_exact
+        .iter()
+        .map(|vertex| std::array::from_fn(|coordinate| vertex[coordinate].clone()))
+        .collect();
+    let vertices = geometry
+        .primal_vertices_exact
+        .iter()
+        .map(|vertex| std::array::from_fn(|coordinate| vertex[coordinate].clone()))
+        .collect();
+    let base = SysLandscapePolytopeCache::from_rational_parts(dual_vertices, vertices)
         .ok_or_else(|| format!("base reconstruction failed for {}", path.display()))?;
-    let volume = exact_volume_from_incidence_as_f64(&base.vertices, &base.vertex_facet_incidence);
+    let volume = volume_from_incidence_f64(&base.vertices_f64, &base.vertex_facet_incidence)
+        .map_err(|error| format!("base f64 volume failed: {error:?}"))?;
     Ok(SourceBody {
         kind,
         name: row

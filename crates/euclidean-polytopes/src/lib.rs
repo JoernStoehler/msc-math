@@ -31,7 +31,8 @@ pub use polar::{
 };
 pub use predicates::{
     all_points_are_extreme_exact, orient4_sign_f64, origin_in_interior_of_conv_exact,
-    origin_in_interior_of_conv_f64, CertifiedSign, OriginInteriorF64,
+    origin_in_interior_of_conv_exact_rational, origin_in_interior_of_conv_f64, CertifiedSign,
+    OriginInteriorF64,
 };
 pub use random::sample_random_dual_vertices_f64;
 pub use volume::{

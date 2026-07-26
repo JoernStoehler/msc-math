@@ -8,20 +8,33 @@ historical comparisons remain in the owning result files.
 | Measured unit | Input and count | Current cost |
 | --- | --- | ---: |
 | raw f64 one-word KKT solve | one valid full-length word, `F=5,6,7,8,9,10,11` | `6.58, 6.16, 7.10, 6.13, 6.46, 6.06, 5.62 us` |
-| production validation plus exact geometry | four actual transformed generic `F=10` measurements | `288--305 ms/input` |
-| exact transition graph plus cycle-enumeration diagnostic | same inputs, `892--1,487` cycles | `1.55--2.24 ms/input` |
-| production general capacity after geometry | same inputs | `5.76--10.15 ms/input` |
-| complete production pipeline, excluding the optional duplicate diagnostic | same inputs | `294--315 ms/input` |
-| complete retained legacy pipeline | same inputs | `10.3--17.4 ms/input` |
+| production validation plus certified/exact geometry | twelve actual transformed generic `F=10` measurements in three warm four-point runs | `4.72--4.74 ms/input` |
+| exact transition graph plus cycle-enumeration diagnostic | same inputs, `892--1,487` cycles | `1.53--1.55 ms/input` |
+| production general capacity after geometry | same inputs | `6.53--6.70 ms/input` |
+| complete production pipeline, excluding the optional duplicate diagnostic | same inputs | `11.25--11.44 ms/input` |
+| complete retained legacy pipeline | paired four-point run on the same inputs | `12.29 ms/input` |
 
-The three-point production smoke therefore predicts about `49 s` for the
-164-point generic orientation scan; the previous stopped run took about `52 s`
-through that body. Geometry preparation, not capacity candidate processing,
-explains that generic slowdown.
+Before the 2026-07-26 exact-arithmetic audit, generic exact enumeration and
+generic rational row reduction made geometry alone cost `288--305 ms/input`;
+the complete production pipeline cost `294--315 ms/input`. The current
+caller-shaped result is about `26--28x` faster and predicts about `1.9 s` for
+the 164-point generic orientation scan instead of the previously observed
+roughly `52 s`. All paired smoke outputs retained the same capacity value
+(`delta=0` in the caller output).
+
+The same audit removed exact rational volume and repeated exact source
+reconstruction from the fixed-shape scan's ordinary f64 path. One generic
+one-evaluation process fell from `1.31 s` to `0.12 s`; its volume, capacity,
+and `sys` were bit-identical. The product identity capacity was also
+bit-identical; f64 incidence volume changed by about `7e-15` absolute and
+`sys` by about `5e-16`. The broader retained 512-row volume comparison is
+documented in
+`experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/smoke-summary.json`.
 
 Do not extrapolate only from candidate count when exact fallback is possible.
 On one transformed product-source input, the production general route processed
-3,346 cycles but spent `2.609 s` in capacity. A sampled profile attributed a
+3,346 cycles but spent `2.632 s` in capacity after the geometry repair. A
+sampled profile attributed a
 large share to `general::exact_decision -> solve_kkt_exact`; the public
 production result currently does not expose the exact-fallback count needed for
 a better scaling model.

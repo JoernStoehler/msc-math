@@ -10,6 +10,14 @@ This is a deliberately post-selection diagnostic. It asks whether an already
 strong Euclidean candidate can improve through non-symplectic rotation; it is
 not a prospective proposer or a population estimate.
 
+The scan computes its f64 `sys` output with
+`euclidean_polytopes::volume_from_incidence_f64` on exact-derived incidence.
+The rational-volume comparison retained in
+`experiments/sys-datascience/methods/generic-ridge-tail-stage1/` found maximum
+relative volume error `9.51e-15` across 512 generic F10 rows and an aggregate
+worker-time ratio of `16,427x`; exact rational volume remains a reference
+surface, not part of this f64 producer's call graph.
+
 `global.rs` extends the same diagnostic from the compact orientation quotient
 to determinant-one linear changes modulo symplectic maps. It uses normalized
 nondegenerate skew forms

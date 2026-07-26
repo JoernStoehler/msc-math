@@ -190,6 +190,13 @@ fn run_selected_route(cases: &[GeneralRouteCase]) -> RouteStats {
     let gradual_underflow = gradual_underflow_available();
     let mut stats = RouteStats::default();
     for (_, duals, words) in cases {
+        // Exact dyadic data is a fallback input, not the primary solver.
+        // For long words, exact_decision is reached only after the proved
+        // inverse-defect route is indeterminate (or f64 certificates are
+        // unavailable). See lem:kkt-verified-inverse-defect and
+        // rem:kkt-batched-binary64-contract in
+        // formal/hk2017-qp-precision.tex, plus rem:trinary-beta in
+        // formal/hk2017-qp-core.tex.
         let exact_duals = exact_binary64_dual_vertex_arrays(duals);
         let mut cache = Vec::<Obstruction>::new();
         let mut order = (0..words.len()).collect::<Vec<_>>();
@@ -940,7 +947,10 @@ fn interval_determinant(matrix: &[Vec<Interval>]) -> Interval {
 
 /// For m < 5, full-column-rank C makes the affine feasible set a point.
 /// Solving only C beta = d is therefore sufficient: stationarity multipliers
-/// exist because C^T is onto, and positivity/Q can be decided exactly.
+/// exist because C^T is onto, and positivity/Q can be decided exactly. This is
+/// called only when the one-sided determinant filter cannot prove
+/// inconsistency; retained counts and cost are in
+/// experiments/dev-quadratic-program/tools/general_algorithm_ablation/RESULTS.md.
 fn short_exact_decision(exact_duals: &[[BigRational; 4]], word: &[usize]) -> Decision {
     let m = word.len();
     let matrix = DMatrix::from_fn(5, m, |row, col| {
