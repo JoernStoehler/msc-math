@@ -1,19 +1,20 @@
 # Four-dimensional QP production migration
 
-Status: Batch 1 scalar extraction, the Batch 1b exact-minimizer/general-window
-slice, and representative ordinary product and general-window consumer
-migrations are implemented and locally verified in `qp-production-migration`;
-not merged to Main. Broad consumer migration and the remaining evidence/polish
-batches remain planned.
+Status: the production API, retained correctness/numerics/performance evidence,
+ordinary non-optimizer consumer migrations, exact-arithmetic audit, and thesis
+rewrite are implemented and locally verified in `qp-production-migration`;
+not merged to Main. The remaining ordinary merge gate is the coordinated
+`sys-landscape` ascent/derivative adapter owned by the active optimizer branch,
+followed by integrated review.
 
 ## Critical path
 
 ```text
-current checkpoint
-  -> freeze rich QP API
-  -> correctness and retained-evidence gate
-  -> non-optimizer consumer migration ---+
-  -> optimizer-owner API handoff --------+-> thesis rewrite -> final review
+completed QP/API/evidence/thesis checkpoint
+  -> optimizer-owner ascent adapter
+  -> derivative and cache-schema checks
+  -> integrated review
+  -> Jörn merge decision
 ```
 
 The active optimizer session owns its worktree and custom branch models. This
@@ -31,6 +32,22 @@ total cap, and the stopping condition.
 
 For the outer-to-inner interface and consumer reading surfaces, see
 `capacity-architecture.md`.
+
+## Current merge gate
+
+No scalar-algorithm, production-API, non-optimizer migration, or thesis-writing
+strand remains open merely because legacy calls still exist. The source-wide
+inventory classifies those calls as implementation/control code, retained
+evidence, immutable historical producers, parked experiments, measured
+exceptions, or the one shared-ascent blocker.
+
+Before merge, the optimizer owner must adapt the shared physical
+capacity/admissible-window use to the production outputs, retain its deliberately
+broader branch heuristics under optimizer-local names, and rerun the affected
+derivative and cache-provenance checks. This branch must then integrate that
+result and run the final cross-worktree build/review. Do not edit the dirty
+optimizer worktree from this branch or broaden `capacity_4d` to mimic
+`OrbitSearchResult`.
 
 ## Outcome
 
@@ -163,25 +180,20 @@ worktree.
 | Shared search core with typed scalar/rich wrappers and on-demand exact one-sigma solve | Enumeration, pruning, and predicate semantics have one owner; each caller requests and pays only for its output | The internal request boundary must keep exact materialization out of scalar mode, and each public result still needs its own contract tests | Select |
 | Keep old full-branch searches only in experiments that intentionally measure non-minimal branches, old thresholds, or old solver behavior | Preserves valuable evidence without presenting it as the production route | Requires explicit naming and retained controls | Select as an exception, not the default consumer path |
 
-### Remaining richer-output checks
+### Resolved richer-output checks
 
-Before broad consumer edits:
-
-- **General correctness:** retain each accepted candidate's certified action
-  interval, identify every word whose interval can meet the exact minimum or
-  requested gap, and exact-solve only those words before returning
-  `(sigma, action_exact)`. Check against the complete exact all-candidate
-  control on retained general, singular, tied, and adversarial cases. Measure
-  contender count and exact-solve time. If the contender set is routinely
-  large, reconsider the output algorithm instead of silently falling back to
-  the old search.
-- **Product:** determine whether the returned closure-vertex winners are the
-  exact finite certificate set required by product scalar/bounce consumers and
-  whether the on-demand exact one-sigma method returns a consistent
-  `beta, q, mu, xi` for each returned `sigma`. The separate optimizer worktree
-  owns whether such witnesses generate the branch set needed by
-  product ascent. This is not a capacity/minimizer-set gate for the present
-  migration: the optimizer intentionally maintains custom positive,
+- **General correctness:** the implemented route retains certified action
+  intervals, exact-solves only words that can meet the exact minimum or
+  requested gap, and returns exact `(sigma, action_exact)` records or full
+  window witnesses. Retained exact controls cover general, singular, tied, and
+  adversarial cases; the scalar request remains separate and does not
+  materialize exact records.
+- **Product:** closure-vertex winners are the exact finite certificate set used
+  by scalar/bounce consumers, and the on-demand exact one-sigma method returns
+  a consistent `beta, q, mu, xi` witness for a requested word. Whether those
+  sparse winners generate the branch set needed by product ascent remains an
+  optimizer-owned subdifferential question, not a capacity/minimizer-set gate.
+  The optimizer intentionally maintains custom positive,
   transition-blocked, and beta-nonpositive branch models.
 
 ### Predicted compute budget

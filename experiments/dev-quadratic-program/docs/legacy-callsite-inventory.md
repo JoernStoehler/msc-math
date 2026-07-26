@@ -1,8 +1,8 @@
 # Legacy QP call-site inventory
 
-Status: source-wide migration inventory at `b239e98b6` plus the uncommitted
-fixed-shape/cost-smoke slice. This is a migration gate, not a permanent manual
-dependency map.
+Status: source-wide inventory refreshed after the production API, non-optimizer
+consumer migrations, exact-arithmetic audit, and thesis rewrite. This is the
+current merge gate, not a permanent manual dependency map.
 
 ## Search scope
 
