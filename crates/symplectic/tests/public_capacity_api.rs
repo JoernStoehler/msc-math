@@ -228,6 +228,13 @@ fn scalar_value_requires_the_requested_relative_accuracy() {
     let capacity =
         capacity_from_dual_vertices(&fixture.dual_vertices_f64).expect("simplex capacity");
     let value = capacity_value(&capacity, 1e-10).expect("simplex bounds meet a loose tolerance");
+    assert_eq!(
+        value,
+        capacity
+            .bounds()
+            .value(1e-10)
+            .expect("the same bounds meet the same tolerance")
+    );
     assert!(capacity.bounds().lower() <= value);
     assert!(value <= capacity.bounds().upper());
     let minimizers = qp_minimizers_from_dual_vertices(&fixture.dual_vertices_f64)

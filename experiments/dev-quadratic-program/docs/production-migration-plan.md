@@ -270,6 +270,18 @@ JSONL was not rewritten. The copy-editable owned-consumer example now shows
 ordinary general scalar, exact-minimizer, and exact action-window shapes; its
 exhaustive exact route is retained only as a correspondence control.
 
+The maintained run-local random/product/HKO producer now uses exact production
+minimizers on its already validated cached geometry. New computed-polytope
+rows record the capacity method, outward bounds, exact rational capacity,
+candidate family, and all tied minimizing words. They no longer manufacture
+the unused legacy `OrbitScalars` KKT diagnostic. Old rows remain readable but
+are recomputed rather than treated as current cache hits; their old scalar must
+pass a bounds-compatibility check. A paired 19-row smoke had zero failures, a
+maximum scalar difference of `7.10e-16` relative, and `211.4 ms` versus
+`1,133.6 ms` aggregate capacity worker time. Two old product billiard winning
+words were not closure-vertex certificate words, as permitted by the distinct
+candidate-family contract; their capacities agreed.
+
 The first real general-window consumer,
 `sys-landscape/gradient-ascent-observed-general`, now uses exact production
 window witnesses for basepoint derivatives and scalar certified bounds for

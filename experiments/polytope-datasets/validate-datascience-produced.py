@@ -334,8 +334,32 @@ def validate(
         require(sys == sys, f"computed payload {poly_id} has non-finite sys")
         require(row.get("capacity", 0.0) > 0.0, f"computed payload {poly_id} lacks capacity")
         require(row.get("volume", 0.0) > 0.0, f"computed payload {poly_id} lacks volume")
+        require(
+            row.get("capacity_method") == "certified-qp-minimizers-v1",
+            f"computed payload {poly_id} does not use the current certified capacity method",
+        )
+        lower = float(row.get("capacity_lower", float("nan")))
+        upper = float(row.get("capacity_upper", float("nan")))
+        capacity = float(row["capacity"])
+        require(
+            0.0 < lower <= capacity <= upper,
+            f"computed payload {poly_id} has invalid capacity bounds [{lower}, {upper}] around {capacity}",
+        )
+        require(row.get("capacity_exact"), f"computed payload {poly_id} lacks exact capacity")
+        require(
+            row.get("candidate_family") in {"general-hk", "product-closure-vertex"},
+            f"computed payload {poly_id} lacks a recognized candidate family",
+        )
         require(row.get("sigmas"), f"computed payload {poly_id} lacks sigmas")
-        require(row.get("orbit_scalars"), f"computed payload {poly_id} lacks orbit_scalars")
+        require(
+            all(lower <= float(sigma["action"]) <= upper for sigma in row["sigmas"]),
+            f"computed payload {poly_id} has a minimizing action outside its capacity bounds",
+        )
+        if row.get("backend") == "product":
+            require(
+                row["candidate_family"] == "product-closure-vertex",
+                f"computed payload {poly_id} requested product output but used {row['candidate_family']}",
+            )
 
     for row in sample_rows:
         poly_id = str(row["poly_id"])

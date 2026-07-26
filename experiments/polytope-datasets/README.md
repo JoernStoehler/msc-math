@@ -55,6 +55,20 @@ largest `9.51e-15` relative volume difference in the retained 512-row F10 audit
 documented in
 `experiments/sys-datascience/methods/generic-ridge-tail-stage1/README.md`.
 
+Fresh run-local capacity cache misses use the production
+`capacity_4d::qp_minimizers` route on the already validated
+`SysLandscapePolytopeCache` geometry. Each current payload records
+`capacity_method = "certified-qp-minimizers-v1"`, outward capacity bounds, the
+exact rational capacity, its general-HK or product-closure candidate family,
+and every tied minimizing word. `capacity` is the bounds midpoint after a
+`1e-10` relative-error check; `sys` remains approximate because the volume
+path is binary64. Legacy rows without `capacity_method` deserialize as
+`legacy-orbit-search-v1`, but they are recomputed rather than used as cache
+hits. Recalculation asserts that their old scalar lies within the new
+certificate up to the same `1e-10` compatibility margin. Legacy
+`orbit_scalars` remain readable but current rows do not manufacture that
+unused KKT diagnostic payload.
+
 ## Run-Local Producer
 
 Use this path for source/table iterations that should not mutate canonical

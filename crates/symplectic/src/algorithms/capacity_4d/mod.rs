@@ -52,6 +52,12 @@ impl CapacityBounds4d {
     pub fn upper(self) -> f64 {
         self.upper
     }
+
+    /// Return the midpoint only when these outward bounds certify the
+    /// requested relative error.
+    pub fn value(self, maximum_relative_error: f64) -> Result<f64, CapacityValueError4d> {
+        capacity_value_from_bounds(self, maximum_relative_error)
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -231,10 +237,16 @@ pub fn capacity_value(
     capacity: &Capacity4d,
     maximum_relative_error: f64,
 ) -> Result<f64, CapacityValueError4d> {
+    capacity_value_from_bounds(capacity.bounds(), maximum_relative_error)
+}
+
+fn capacity_value_from_bounds(
+    bounds: CapacityBounds4d,
+    maximum_relative_error: f64,
+) -> Result<f64, CapacityValueError4d> {
     if !maximum_relative_error.is_finite() || maximum_relative_error < 0.0 {
         return Err(CapacityValueError4d::InvalidRelativeTolerance);
     }
-    let bounds = capacity.bounds();
     if !bounds.lower.is_finite()
         || !bounds.upper.is_finite()
         || bounds.lower <= 0.0

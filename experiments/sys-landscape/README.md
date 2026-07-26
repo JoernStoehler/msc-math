@@ -34,6 +34,13 @@ current rows to `1e-12` relative error. The retained 512-row F10 comparison
 supporting that boundary is documented in
 `experiments/sys-datascience/methods/generic-ridge-tail-stage1/README.md`.
 
+The separate run-local data-science computed-polytope cache now records
+certified production capacity bounds, exact capacity text, candidate-family
+provenance, and exact minimizing words. Legacy orbit-search rows remain
+deserializable but are recomputed rather than accepted as current cache hits.
+Current rows leave the old `orbit_scalars` diagnostic empty because no
+downstream run-local producer consumer uses it.
+
 The ordinary volume API is
 `euclidean_polytopes::volume_from_incidence_f64`. Slow exact arithmetic rounded
 back to f64 lives under

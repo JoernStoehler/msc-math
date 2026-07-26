@@ -664,7 +664,7 @@ fn compute_work_unit(
             let (polytope, attempt) =
                 generate_product_polytope(seed, k, m, h_min, h_max, sample_index)?;
             let poly_id = poly_id(&polytope);
-            let payload = cache.compute(&polytope, CapacityBackend::Billiard)?;
+            let payload = cache.compute(&polytope, CapacityBackend::Product)?;
             let classification = classify_facets_from_dual_vertices(&polytope.dual_vertices_f64)
                 .expect("generated Lagrangian product should classify");
             let bounces = bounce_count_from_sigma_for_facets(
@@ -704,7 +704,7 @@ fn compute_work_unit(
             )
             .expect("HKO fixture should build sys-landscape cache");
             let poly_id = poly_id(&polytope);
-            let payload = cache.compute(&polytope, CapacityBackend::Billiard)?;
+            let payload = cache.compute(&polytope, CapacityBackend::Product)?;
             Some(ComputedWorkUnit {
                 producer: Producer::KnownHkoReference,
                 label: format!("{name} fixture=hko_pentagon"),

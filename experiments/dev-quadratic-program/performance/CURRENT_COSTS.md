@@ -13,6 +13,8 @@ historical comparisons remain in the owning result files.
 | production general capacity after geometry | same inputs | `6.53--6.70 ms/input` |
 | complete production pipeline, excluding the optional duplicate diagnostic | same inputs | `11.25--11.44 ms/input` |
 | complete retained legacy pipeline | paired four-point run on the same inputs | `12.29 ms/input` |
+| run-local producer certified minimizer stage | 19-row smoke: 8 generic, 10 random products, HKO | `211.4 ms` aggregate worker time |
+| same producer legacy orbit-search stage | same generated rows and seed | `1,133.6 ms` aggregate worker time |
 | f64 volume on exact-derived incidence | one cold run-local HKO producer miss | `0.078 ms` |
 | exact-rational volume reference | one accepted generic `F=10` case | `1.049 s` |
 
@@ -35,6 +37,19 @@ documented in
 That paired 512-row audit measured a `16,427x` aggregate worker-time ratio;
 the two single-row timing entries above are cost anchors from different inputs,
 not a paired speedup measurement.
+
+The paired 19-row producer smoke used separate release binaries at
+`994d62506` and the current source. The certified exact-minimizer stage used
+`18.6%` of the legacy capacity worker time. End-to-end wall times were
+`2.12 s` current versus `1.75 s` legacy, so this tiny parallel smoke does not
+support an end-to-end speedup claim: geometry generation, scheduling, and
+process noise dominate. The largest scalar-capacity difference was
+`7.10e-16` relative. All old scalars passed the new `1e-10` compatibility
+check; seven lay just outside the literal outward interval because the old f64
+value had its own rounding error. Seventeen old winning words were among the
+new exact minimizers. The other two were product billiard words rather than
+members of the new product closure-vertex certificate family; their capacities
+still agreed.
 
 Do not extrapolate only from candidate count when exact fallback is possible.
 On one transformed product-source input, the production general route processed
