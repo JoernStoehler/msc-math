@@ -284,6 +284,17 @@ scalar route for its finite-step targets. A durable correspondence test finds
 the same two near-active words and per-coordinate derivative differences below
 `1e-10`. The full historical 12-seed panel was not rerun or relabelled.
 
+The retained fixed-shape orientation scans exposed a distinct interface
+boundary. Their legacy route reuses known incidence while evaluating hundreds
+of linear images of the same body. The complete legacy compact scan took
+`21.28 s`. Replacing it with the one-shot raw-dual wrapper was stopped after
+`82 s`, and replacing the generic exact-geometry constructor by the existing
+integer-scaled polar enumerator was still stopped after `52 s`; each stopped
+run had completed only the first of two 164-evaluation bodies. Both exploratory
+patches were discarded. Do not migrate these scans through
+`capacity_from_dual_vertices`: first specify and validate a known-incidence
+geometry boundary, or retain the legacy route with its scope stated.
+
 The adversarial implementation review found that the original constructor
 accepted a 16-facet crosspolytope whose exact transition graph has
 3,420,783,196 cycles. Eager materialization would require over 82 GB for vector
