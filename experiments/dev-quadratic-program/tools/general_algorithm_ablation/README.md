@@ -9,8 +9,14 @@ Start a review here, then read:
 2. `formal/hk2017-qp-precision.tex` for the numerical and curvature lemmas.
 3. `../../src/selected_route/general.rs` for the instrumentable selected copy
    and `crates/symplectic/src/algorithms/capacity_4d/general.rs` for production.
-4. The named executable matching the algorithm under review; `src/lib.rs`
-   supplies their shared cases, exact oracle, counters, and timing machinery.
+4. The named executable matching the algorithm under review. `src/lib.rs` is
+   the short index for the shared harness:
+   - `src/harness/general_route.rs`: selected algorithm and certified numerics;
+   - `src/harness/numerical_audits.rs` and `exact_agreement.rs`: exact checks;
+   - `src/harness/benchmarks.rs`: matched timing and ablations;
+   - `src/harness/adversarial.rs`: optional falsification searches;
+   - `src/harness/commands.rs`: cohorts and executable entry points; and
+   - `src/harness/shared.rs` and `tests.rs`: common data and focused regressions.
 5. `run.sh` for the canonical build-and-run command.
 
 ## Directly runnable algorithms

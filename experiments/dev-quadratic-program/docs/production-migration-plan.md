@@ -5,6 +5,29 @@ one-sigma slice are implemented and locally verified in
 `qp-production-migration`; not merged to Main. Action-window support, consumer
 migration, and the remaining evidence/polish batches remain planned.
 
+## Critical path
+
+```text
+current checkpoint
+  -> freeze rich QP API
+  -> correctness and retained-evidence gate
+  -> non-optimizer consumer migration ---+
+  -> optimizer-owner API handoff --------+-> thesis rewrite -> final review
+```
+
+The active optimizer session owns its worktree and custom branch models. This
+branch owns the QP production API, its retained QP evidence, non-optimizer
+consumer migration, and the eventual QP thesis rewrite. Do not edit optimizer
+files concurrently.
+
+Evidence organization is part of the correctness gate, not an independent
+polish project. Build-time optimization and approximately one-percent runtime
+differences are not open work: reconsider either only if a measured
+dataset-scale or iteration-critical cost becomes material. Before opening a
+new strand expected to exceed twenty wall minutes or five dollars of shadow
+API cost, record the thesis outcome it can change, the first cheap check, the
+total cap, and the stopping condition.
+
 ## Outcome
 
 Move the selected four-dimensional scalar-capacity algorithms from
