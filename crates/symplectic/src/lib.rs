@@ -11,9 +11,9 @@
 //!   polygon/Lagrangian-product constructors, and named flat polytope fixtures.
 //! - `kkt` — context-free constrained QP solvers (saddle-point and
 //!   projection variants) + exact rational fallback.
-//! - `algorithms` — finite-word capacity routes: `hk2017` (general,
-//!   exponential), `billiard` (Lagrangian products), and the conditional
-//!   exact flow-graph work surface. Each module documents its own input and
+//! - `algorithms` — the production `capacity_4d` API, retained
+//!   orbit-producing HK/billiard controls, and the conditional exact
+//!   flow-graph work surface. Each module documents its own input and
 //!   guarantee boundary.
 //! - `constants` — cross-module numerical tolerance constants.
 //! - `dataset` — JSONL row schemas (`PolytopeRow`, `AcceptanceRow`) for

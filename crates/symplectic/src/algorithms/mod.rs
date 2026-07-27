@@ -1,10 +1,13 @@
 //! EHZ capacity algorithms for 4D convex polytopes.
 //!
-//! Active algorithms:
+//! Production capacity:
 //! - `capacity_4d` — validated scalar API with certified general bounds and an
 //!   exact KKT-free product route.
-//! - `hk2017` — general capacity (exponential in #facets).
-//! - `billiard` — Lagrangian product capacity (fast).
+//!
+//! Retained orbit/control frontends:
+//! - `hk2017` — general HK candidate enumeration and orbit-producing controls.
+//! - `billiard` — product-specific candidate enumeration and orbit-producing
+//!   controls.
 //!
 //! The flow-graph algorithm work surface lives under `flow_graph/`. Its local
 //! README is the current algorithm contract/status surface; the old tube notes
@@ -12,12 +15,10 @@
 //!
 //! # Correctness invariant
 //!
-//! Where domains overlap (notably hypercube and Lagrangian products, which
-//! both `hk2017` and `billiard` accept), the algorithms must agree on the
-//! computed capacity within numerical tolerance. Cross-algorithm agreement
-//! tests live in `billiard::tests::agrees_with_hk2017_*`. This is the
-//! primary external correctness check and the reason multiple algorithms
-//! coexist rather than being consolidated.
+//! Where domains overlap, retained controls must agree with `capacity_4d` or
+//! with independently known values under the guarantee claimed by the test.
+//! The older `hk2017`/`billiard` cross-checks remain useful independent
+//! controls; they are not alternative production scalar APIs.
 //!
 //! Shared utilities:
 //! - `facet_adjacency` — facet-intersection and directed (omega_0-aware)

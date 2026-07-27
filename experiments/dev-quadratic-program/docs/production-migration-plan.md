@@ -2,25 +2,25 @@
 
 Status: the production API, retained correctness/numerics/performance evidence,
 ordinary non-optimizer consumer migrations, exact-arithmetic audit, and thesis
-rewrite are implemented and locally verified in `qp-production-migration`;
-not merged to Main. The remaining ordinary merge gate is the coordinated
-`sys-landscape` ascent/derivative adapter owned by the active optimizer branch,
-followed by integrated review.
+rewrite were merged to Main at `3ccc06061`. The remaining migration is the
+coordinated `sys-landscape` ascent/derivative adapter owned by the active
+optimizer branch, followed by fresh-worktree reconciliation, legacy-facade
+cleanup, and integrated review.
 
 ## Critical path
 
 ```text
-completed QP/API/evidence/thesis checkpoint
+merged QP/API/evidence/thesis checkpoint
   -> optimizer-owner ascent adapter
+  -> fresh-worktree reconciliation and legacy cleanup
   -> derivative and cache-schema checks
   -> integrated review
   -> Jörn merge decision
 ```
 
-The active optimizer session owns its worktree and custom branch models. This
-branch owns the QP production API, its retained QP evidence, non-optimizer
-consumer migration, and the eventual QP thesis rewrite. Do not edit optimizer
-files concurrently.
+The active optimizer session owns its worktree and custom branch models. Main
+owns the QP production API, retained QP evidence, non-optimizer consumer
+migration, and QP thesis rewrite. Do not edit optimizer files concurrently.
 
 Evidence organization is part of the correctness gate, not an independent
 polish project. Build-time optimization and approximately one-percent runtime
@@ -33,7 +33,7 @@ total cap, and the stopping condition.
 For the outer-to-inner interface and consumer reading surfaces, see
 `capacity-architecture.md`.
 
-## Current merge gate
+## Remaining integration gate
 
 No scalar-algorithm, production-API, non-optimizer migration, or thesis-writing
 strand remains open merely because legacy calls still exist. The source-wide
@@ -41,12 +41,12 @@ inventory classifies those calls as implementation/control code, retained
 evidence, immutable historical producers, parked experiments, measured
 exceptions, or the one shared-ascent blocker.
 
-Before merge, the optimizer owner must adapt the shared physical
-capacity/admissible-window use to the production outputs, retain its deliberately
+After the optimizer investigation reaches a clean checkpoint, a fresh
+reconciliation worktree must adapt the shared physical
+capacity/admissible-window use to the production outputs, retain deliberately
 broader branch heuristics under optimizer-local names, and rerun the affected
-derivative and cache-provenance checks. This branch must then integrate that
-result and run the final cross-worktree build/review. Do not edit the dirty
-optimizer worktree from this branch or broaden `capacity_4d` to mimic
+derivative and cache-provenance checks. Do not edit the dirty optimizer
+worktree from this branch or broaden `capacity_4d` to mimic
 `OrbitSearchResult`.
 
 ## Outcome
@@ -220,8 +220,9 @@ advance.
 ## Current progress
 
 The old overlapping-worktree gate was resolved by creating
-`qp-production-migration` from Main `c8b4b1068` and integrating the diagnostic
-research through `0917c4bce`. The stale dirty worktree was not edited.
+`qp-production-migration` from Main `c8b4b1068`, integrating the diagnostic
+research through `0917c4bce`, and merging the completed QP checkpoint to Main
+at `3ccc06061`. The dirty optimizer worktree was not edited.
 
 The current checkpoint provides:
 

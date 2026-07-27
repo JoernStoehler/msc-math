@@ -1,8 +1,9 @@
 # Legacy QP call-site inventory
 
 Status: source-wide inventory refreshed after the production API, non-optimizer
-consumer migrations, exact-arithmetic audit, and thesis rewrite. This is the
-current merge gate, not a permanent manual dependency map.
+consumer migrations, exact-arithmetic audit, and thesis rewrite were merged to
+Main. This is the reconciliation checklist for the remaining optimizer-owned
+surface, not a permanent manual dependency map.
 
 ## Search scope
 
@@ -48,7 +49,8 @@ over later source.
 
 The remaining ordinary architectural issue is the shared ascent state, not an
 unclassified scalar caller. It crosses an optimizer-owned branch and requires
-field-by-field migration rather than a wrapper substitution. Before merge,
+field-by-field migration rather than a wrapper substitution. Before deleting
+the shared legacy facade or declaring the optimizer integration complete,
 either:
 
 1. land the coordinated ascent/optimizer adapter and rerun its derivative and

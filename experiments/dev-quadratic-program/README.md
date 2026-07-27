@@ -1,25 +1,19 @@
 # Dev Quadratic Program
 
-Status: coordination and incubator packet for unresolved QP/HK2017 route,
-library-surface, numerics, performance, verification, and cleanup questions
-while those questions are still coupled to QP method development. The intended
-development shape is local: while QP capacity routes are still being designed,
-keep their implementation experiments, numerical audits, performance probes,
-and route-specific verification together here instead of spreading one coupled
-question across top-level numerics, performance, and verification packets.
+Status: retained development and evidence packet for the QP/HK2017 routes now
+selected in `crates/symplectic/src/algorithms/capacity_4d/`. It keeps the
+copy-editable implementations, rejected alternatives, numerical audits,
+performance probes, and route-specific verification needed to understand and
+regression-test the production code. New route research belongs here only
+while its implementation and evidence still need to change together.
 For the detailed code map and current route-status table, continue with
 [`DEVELOPMENT.md`](DEVELOPMENT.md).
 
-The importable implementation surface is still `crates/symplectic/`, but do
-not treat the crate as the physical home for active QP method development.
-While a QP route is being designed, debugged, instrumented, or numerically
-audited, keep the QP route implementation or copy-edited variant local to this
-packet. This applies to one-sigma KKT solves, sigma enumeration,
-fallback/certification, predicate logic, and route instrumentation. Library use
-is still fine for code outside the dev-packet domain, such as generic geometry
-helpers, retained input loading, random/polytope generation, and stable utility
-types. Promote stable-enough QP kernels and routes to `crates/symplectic/` only
-when multiple consumers should call them as a library.
+The importable production implementation is `crates/symplectic/`. Keep
+instrumented, copy-edited, or deliberately incomplete variants in this packet;
+do not make downstream consumers import them. Promote a new kernel only when
+multiple callers need the same contract, and keep experimental variants here
+when sharing code would obscure the comparison.
 
 Immediate directory map:
 
@@ -175,10 +169,12 @@ It is not the ordinary crate path. Current exact crate support includes
 one-sigma exact KKT solving and f64-candidate fast paths with exact fallback or
 certified exact aggregation.
 
-## Shared Capacity Code Paths
+## Retained Capacity Code Paths
 
-Status: proposed coordination list, not an approved API. This list records the
-current route split after checking the main consumers: `crates/symplectic`,
+Status: development and control inventory, not the production API. The
+production API is `symplectic::algorithms::capacity_4d`; the list below records
+the route split needed to interpret retained experiments and independent
+controls after checking the main consumers: `crates/symplectic`,
 this packet, `numerics-audit/`, `experiments/verification`,
 `experiments/performance`, `experiments/sys-datascience`,
 `experiments/hko-local-maximum`, `experiments/combinatorial-cells`,
@@ -266,22 +262,20 @@ separate capacity path. Policy simulators, numerics audits, HKO custom
 branches, and combinatorial-cell instrumentation are analysis artifacts or
 caller-owned adaptations of the shared paths above.
 
-## Open Work For This Packet
+## Remaining Maintenance Boundary
 
-- Extend local route code only when owned consumers, audits, or the route
-  matrix identify a consumer/evidence need that the current dev-QP route cannot
-  answer.
-- Which expert controls should remain public for experiments, and which deep
-  module paths are accidental imports?
-- Which route names and result fields should become stable public crate API
-  after the dev packet has enough implementation/evidence for multiple
-  consumers to call them?
-- What result semantics should the library promise for minimizers, gap-window
-  orbit sets, rejected ambiguities, and exact fallback counts?
-- Which remaining QP-coupled artifacts in top-level performance or
-  verification should migrate here so future work has one packet to inspect?
-- Which route-specific evidence is still missing before a route may be used for
-  thesis-facing scalar capacity/`sys` claims rather than diagnostics?
+The selected scalar routes and their production API are settled. The remaining
+known migration is the optimizer-owned branch/window integration recorded in
+`docs/production-migration-plan.md`; that work may expose a need for an
+additional product active-branch contract, but it must not reinterpret sparse
+product capacity witnesses as the complete active set.
+
+After that integration, use compiler errors and
+`docs/legacy-callsite-inventory.md` to remove or rename shared legacy facades.
+Retain independent algorithm controls and evidence unless their replacement
+provides the same regression signal. Reopen route design only for a wrong
+determinate predicate, missed candidate, incorrect product branch assumption,
+or material caller-shaped performance regression.
 
 ## Outside This Package
 
