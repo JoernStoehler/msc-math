@@ -80,7 +80,9 @@ contracts.
   minimizers. Source: `formal/product-qp-six-facet-reduction.tex`.
 
 An independent Sol review reconstructed the six-facet argument and found no
-gap. Jörn did not line-check it, but accepted its use as a production risk
+gap. On 2026-07-28 Jörn reviewed and accepted the proof, including its
+degenerate cases; the closure polytopes are closed and no genericity assumption
+is needed. Before that review he had accepted its use as a production risk
 after all 10,240 retained random products had a literal winning word of length
 at most six. Source:
 `experiments/dev-quadratic-program/tools/product_closure_route/RESULTS.md`.

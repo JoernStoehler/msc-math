@@ -50,7 +50,7 @@ data-science methods find a new source of polytopes with systolic ratio larger
 than $1$, or at least a reproducible rule for proposing such candidates?  A
 third question concerns method: how can the relevant boundary dynamics be
 reduced to finite calculations whose hypotheses and evidence boundaries
-remain visible?  The exact profile of a structured one-parameter
+remain visible?  The proved profile of a structured one-parameter
 pentagon family provides a smaller test of the same finite machinery.
 
 The restrictions are deliberate.  Dimension four is the first symplectic
@@ -62,7 +62,7 @@ chosen with a finite word of distinct facet directions.  Haim--Kislev's formula
 then expresses the capacity as a global finite optimization over such words
 \cite{HK2017}.  This finite formula was also one of the computational routes
 used in the HKO work; the thesis continues that route while separating
-numerical discovery from exact proof.  Low facet counts keep the search
+numerical discovery from proof.  Low facet counts keep the search
 accessible, while the ten-facet HKO body and Lagrangian products retain the
 non-generic structures that motivate the investigation.  The thesis does not
 claim that these restrictions capture all nearby convex bodies or all possible
@@ -80,7 +80,7 @@ the natural symmetries, but it is a theorem about the ten-facet stratum; it
 does not assert local maximality when the facet count changes or among all
 nearby convex bodies.
 
-The proof combines a local chart with a finite exact certificate.  Nearby
+The proof combines a local chart with a finite algebraic certificate.  Nearby
 ten-facet polytopes are represented by their labelled polar vertices, and a
 $25$-dimensional slice removes the $15$ infinitesimal symmetry directions.
 For $26$ selected facet words, smooth strictly positive feasible choices with
@@ -100,7 +100,8 @@ Two finite descriptions of the capacity supply the common computational
 foundation.  The first is the Haim--Kislev quadratic program, presented with a
 careful distinction between a feasible word, a stationary candidate, a
 fixed-word maximum, and the global maximum that computes the capacity.  The
-second is an exact flow-graph algorithm developed from affine passages through
+second is a rational-arithmetic flow-graph algorithm developed from affine
+passages through
 facet-pair sections.  For normalized facet data satisfying explicit
 nondegeneracy conditions on transitions, short row lists, and return maps, an
 exhaustive distinct-facet word search returns the EHZ capacity.  A stronger
@@ -134,8 +135,8 @@ not show that random search cannot succeed, exhaust the data-science
 repertoire, or establish a general nonexistence statement.
 
 \Needspace{12\baselineskip}
-As a side result, the same finite capacity machinery determines an exact
-one-parameter family.  If
+As a side result, the same finite capacity machinery determines a formula for
+a one-parameter family.  If
 \(K_\theta=P_5\times_L R(\theta)P_5\) and
 \(d(\theta)\) is the distance from \(\theta\) to the nearest multiple of
 \(\pi/5\), then
@@ -145,9 +146,10 @@ one-parameter family.  If
 \]
 The maximum in this family is exactly the HKO value.  The capacity comparison
 is exhaustive: for this Lagrangian product, it suffices to consider words with
-two or three blocks of each factor type.  An exact SageMath classification
+two or three blocks of each factor type.  A SageMath classification over an
+ordered number field
 shows that no competing branch has smaller action, and continuity fills the
-finitely many exceptional parameters.  This is an exact profile for the
+finitely many exceptional parameters.  This is the resulting profile for the
 rotated-pentagon family, not a classification of general polygon products or
 of all minimizing orbits.
 

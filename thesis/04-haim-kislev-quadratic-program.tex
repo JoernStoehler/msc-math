@@ -194,13 +194,13 @@ formula yields
 
 For a fixed active word, the KKT system is a stationarity condition on the
 relative interior of the corresponding support face.  A solution with
-positive coordinates is therefore an exact feasible stationary witness; it is
+positive coordinates is therefore a feasible stationary witness; it is
 not, by itself, a certificate that this fixed word maximizes \(Q_\sigma\), nor
 that its dual curve can be translated onto \(\partial K\).  A global maximizer
 is different: Proposition~\ref{prop:quadratic-program-global-maximizer-realization}
 shows that it is a dual minimizer and hence reconstructs a simple
 minimum-action orbit.  Every global maximizer becomes a positive KKT solution
-after its zero coordinates are deleted, so exact KKT candidates suffice when
+after its zero coordinates are deleted, so KKT candidates suffice when
 the complete word family and all support faces are covered.  Feasibility or
 KKT stationarity without global optimality does not provide the same
 conclusion.
@@ -223,7 +223,7 @@ finite certificates use this fixed problem.
 The Haim--Kislev theorem supplies the finite optimization problem, but it does
 not prescribe a single proof layout for later finite checks. In this thesis,
 later arguments separate three choices: which words are still under
-consideration, what is checked for one fixed active word, and which exact
+consideration, what is checked for one fixed active word, and which
 assertions are needed to turn the finite list into a theorem.
 
 The reference word family is the unpruned Haim--Kislev family: all ordered
@@ -265,12 +265,12 @@ Fixed-word optimization can be reduced to KKT systems on its support faces.
 A positive KKT solution for one support is only a stationary candidate; the
 fixed-word maximum requires comparison of all relevant support faces or
 another valid global argument.
-For theorem-bearing finite certificates, the load-bearing claims are exact
+For theorem-bearing finite certificates, the load-bearing claims are
 algebraic assertions: feasibility, positivity, branch formulas, sign decisions,
 rank statements, or inequalities. Numerical searches may suggest the finite
 list or the expected branch, but they are not used as proof unless replaced by
-such exact assertions. The numerical issues are discussed in
-Section~\ref{sec:numerics}.  The exact certificates and their trust boundaries are
+such algebraic checks. The numerical issues are discussed in
+Section~\ref{sec:numerics}.  The SageMath certificates and their trust boundaries are
 described with the HKO argument in
 Section~\ref{subsec:hko-local-maximum-computation-with-sagemath} and with the
 rotated-pentagon argument in Section~\ref{sec:rotated-regular-polygons}.
@@ -430,33 +430,23 @@ feasible words in this candidate family.
 \subsection{A six-facet reduction for the product capacity}
 \label{subsec:quadratic-program-product-six-facet}
 
-The preceding block family preserves geometric information needed by later
-exact branch comparisons.  The scalar capacity admits a stronger reduction.
-Let \(I_q\) and \(I_p\) be the \(q\)- and \(p\)-positions in a feasible word,
-and put
-\[
-  t=\sum_{k\in I_q}\beta_k,\qquad
-  \alpha_k=\frac{\beta_k}{t}\ (k\in I_q),\qquad
-  \gamma_k=\frac{\beta_k}{1-t}\ (k\in I_p).
-\]
-Positive objective value forces \(0<t<1\).  Closure splits between the two
-factors, so \(\alpha\) and \(\gamma\) belong to the normalized closure
+The product structure gives a reduction that is unavailable for a general
+polytope.  The \(q\)- and \(p\)-coordinate planes are Lagrangian, so pairings
+between two \(q\)-facets or two \(p\)-facets vanish.  After separating the
+total weight in each factor from its normalized distribution, the objective
+is therefore linear in either distribution when the other is fixed.
+Maximizing these two linear functions at vertices is the mechanism behind
+both the six-facet bound and the following algorithm.
+
+Let \(u_1,\ldots,u_r\) be the planar dual vertices of \(K_q\), and let
+\(v_1,\ldots,v_s\) be those of \(K_p\).  Define the normalized closure
 polytopes
 \begin{align*}
-  C_q&=\left\{\alpha\geq0:\sum\alpha_k=1,\
-    \sum\alpha_k u_k=0\right\},\\
-  C_p&=\left\{\gamma\geq0:\sum\gamma_k=1,\
-    \sum\gamma_k v_k=0\right\},
+  C_q&=\left\{\alpha\in\mathbb R_{\geq0}^{r}:
+    \sum_i\alpha_i=1,\ \sum_i\alpha_i u_i=0\right\},\\
+  C_p&=\left\{\gamma\in\mathbb R_{\geq0}^{s}:
+    \sum_j\gamma_j=1,\ \sum_j\gamma_j v_j=0\right\}.
 \end{align*}
-where \(u_k\) and \(v_k\) are the planar dual vertices selected by the word.
-Because the symplectic form vanishes on each Lagrangian factor, the objective
-factors as
-\begin{equation}\label{eq:quadratic-program-product-factorization}
-  Q_\sigma(\beta)=t(1-t)B_\sigma(\alpha,\gamma),
-\end{equation}
-where \(B_\sigma\) is bilinear.  Its coefficients are the signed pairings
-\(\langle u_k,v_\ell\rangle\), with the sign determined by their order in
-\(\sigma\).
 
 \begin{theorem}[Six-facet product maximizer]
 \label{thm:quadratic-program-product-six-facet}
@@ -467,14 +457,70 @@ and at most three \(p\)-facets.  The total weight in each factor is \(1/2\).
 Consequently the capacity is represented by a word of length at most six.
 \end{theorem}
 
+\begin{algorithm}[Product capacity from closure vertices]
+\label{alg:quadratic-program-product-closure-vertices}
+Enumerate the vertices of \(C_q\) and \(C_p\).  For each pair, enumerate the
+cyclic orders of the union of their supports, give each factor total weight
+\(1/2\), and evaluate \(Q_\sigma\).  The largest value is \(Q_{\max}\).
+Each support union has at most six facets, so fixing one cyclic starting point
+leaves at most \(5!=120\) orders.
+\end{algorithm}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tabular}{c}
+    an arbitrary global maximizer \((\sigma,\beta)\)\\[2pt]
+    \(\displaystyle\downarrow\quad
+      \text{fix \(\gamma\), maximize the linear function in \(\alpha\)}\)\\[2pt]
+    \(\alpha\) is a vertex of \(C_q\), hence
+      \(\lvert\operatorname{supp}\alpha\rvert\leq3\)\\[2pt]
+    \(\displaystyle\downarrow\quad
+      \text{fix \(\alpha\), maximize the linear function in \(\gamma\)}\)\\[2pt]
+    \(\gamma\) is a vertex of \(C_p\), hence
+      \(\lvert\operatorname{supp}\gamma\rvert\leq3\)\\[2pt]
+    \(\displaystyle\downarrow\quad
+      \text{maximize \(t(1-t)\) and delete zero weights}\)\\[2pt]
+    a global maximizer with \(t=\tfrac12\) and at most six facets
+  \end{tabular}
+  \caption{The proof mechanism for the six-facet reduction.  Linearity in
+  each factor distribution is the product-specific step.}
+  \label{fig:quadratic-program-product-six-facet-proof}
+\end{figure}
+
 \begin{proof}
-Choose a global maximizer.  Its objective is positive, hence both factor
-weights are nonzero and \eqref{eq:quadratic-program-product-factorization}
-applies.  With \(\gamma\) fixed, the bilinear factor is linear in \(\alpha\),
-so it has a maximizer at a vertex of \(C_q\).  Replacing \(\alpha\) by that
-vertex preserves global maximality.  Fixing the new \(\alpha\) and repeating
-the argument in \(C_p\) gives a global maximizer for which both normalized
-factor weights are vertices of their closure polytopes.
+Choose a global maximizer and let \(I_q\) and \(I_p\) be its \(q\)- and
+\(p\)-positions.  Its objective is positive, hence both factor weights are
+nonzero.  Put
+\[
+  t=\sum_{k\in I_q}\beta_k,\qquad
+  \alpha_k=\frac{\beta_k}{t}\ (k\in I_q),\qquad
+  \gamma_k=\frac{\beta_k}{1-t}\ (k\in I_p).
+\]
+Closure splits between the factors, so the zero-extended vectors \(\alpha\)
+and \(\gamma\) lie in the faces
+\[
+  C_q(\sigma)=\{\alpha\in C_q:\alpha_i=0
+    \text{ if \(q\)-facet \(i\) is omitted from \(\sigma\)}\},
+\]
+and likewise \(C_p(\sigma)\subset C_p\).  Since the symplectic form vanishes
+on each factor, there is a bilinear function
+\[
+  B_\sigma:C_q(\sigma)\times C_p(\sigma)\longrightarrow\mathbb R
+\]
+such that
+\begin{equation}\label{eq:quadratic-program-product-factorization}
+  Q_\sigma(\beta)=t(1-t)B_\sigma(\alpha,\gamma).
+\end{equation}
+Its coefficients are the signed pairings
+\(\langle u_i,v_j\rangle\), with signs determined by the order in \(\sigma\).
+
+With \(\gamma\) fixed, the bilinear factor is linear in \(\alpha\),
+so it has a maximizer at a vertex of \(C_q(\sigma)\).  Replacing \(\alpha\)
+by that vertex preserves global maximality.  Fixing the new \(\alpha\) and
+repeating the argument in \(C_p(\sigma)\) gives a global maximizer for which
+both normalized factor weights are vertices of the support-restricted closure
+polytopes.  Coordinate restrictions define faces of \(C_q\) and \(C_p\), and
+a vertex of a face is a vertex of the ambient polytope.
 
 A vertex of
 \[
@@ -494,32 +540,38 @@ total factor weight gives
 which is maximal at \(\tau=1/2\).  Delete the remaining zero-weight positions.
 The relative cyclic order and objective are unchanged, and the complete
 Haim--Kislev family contains the resulting word of length at most six.
+
+The same argument proves
+Algorithm~\ref{alg:quadratic-program-product-closure-vertices}: the selected
+vertices occur in the enumeration, while every enumerated candidate is
+feasible for the complete Haim--Kislev family and therefore cannot exceed
+\(Q_{\max}\).
 \end{proof}
 
-\Needspace{10\baselineskip}
-\begin{algorithm}[Product capacity from closure vertices]
-\label{alg:quadratic-program-product-closure-vertices}
-Enumerate the vertices of \(C_q\) and \(C_p\).  For each pair, enumerate the
-cyclic orders of the union of their supports, give each factor total weight
-\(1/2\), and evaluate \(Q_\sigma\).  The largest value is \(Q_{\max}\).
-Each support union has at most six facets, so fixing one cyclic starting point
-leaves at most \(5!=120\) orders.
-\end{algorithm}
+\begin{remark}[Why the reduction is product-specific]
+The argument does not extend directly to a general polytope.  It uses that
+each factor is Lagrangian: same-factor pairings vanish, leaving a bilinear
+function which is linear in one normalized closure distribution after the
+other is fixed.  Without such a splitting, the objective remains quadratic in
+the full weight vector, and moving to a vertex of the closure polytope need not
+preserve or improve it.
 
-Theorem~\ref{thm:quadratic-program-product-six-facet} is an existence and
-capacity-value result.  It neither classifies all minimizing orbits nor says
-that every maximizer has support at most six.  In particular, it does not
-replace the twelve-facet block family when a later argument must compare a
-specified family of geometric branches.
+The theorem asserts the existence of one sparse capacity maximizer.  It neither
+classifies all minimizing orbits nor says that every maximizer has support at
+most six.  The preceding twelve-facet block family remains useful when an
+argument must compare a specified family of geometric branches.  No
+genericity assumption is needed: the closure polytopes are closed, and
+degeneracy can only lower the rank used in the support bound.
+\end{remark}
 
 \subsection{Use in later certificates}
 \label{subsec:quadratic-program-algorithm-hk2019-implementation-status}
 
-The later exact certificates use this section as a mathematical interface. The
-HKO local-maximum certificate uses selected active words to build exact upper
+The later SageMath certificates use this section as a mathematical interface.
+The HKO local-maximum certificate uses selected active words to build upper
 branches. The rotated-pentagon certificate uses the specialized
 Lagrangian-product enumeration from
-Theorem~\ref{thm:lagrangian-product-finite-enumeration}, then checks the exact
+Theorem~\ref{thm:lagrangian-product-finite-enumeration}, then checks the
 algebraic inequalities needed to compare every surviving branch with the
 displayed one.
 
@@ -544,7 +596,7 @@ Section~\ref{sec:numerics}.  The theorem-bearing HKO and rotated-pentagon
 arguments still use their separate SageMath verification packets.
 
 The QP is therefore the appropriate language when the global objective value,
-its competing branches, or exact inequalities between them matter.  The next
+its competing branches, or inequalities between them matter.  The next
 section keeps the same simple facet words but asks a different geometric
 question: it propagates actual breakpoints through facet-pair sections and
 detects a closed orbit as a fixed point of an affine return map.  This second

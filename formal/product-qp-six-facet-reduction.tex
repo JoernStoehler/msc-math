@@ -3,16 +3,14 @@
 % Agent-derived proof development for a product-specific reduction of the
 % Haim--Kislev quadratic program.  A fresh independent GPT-5.6 Sol review on
 % 2026-07-23 reconstructed the argument before reading this proof and found no
-% material gap in either the theorem or its capacity-value corollary.  Jörn has
-% not checked the proof, so it remains enclosed in `unverified`.  On 2026-07-24
-% he accepted the theorem as a production risk decision after the retained
+% material gap in either the theorem or its capacity-value corollary.  On
+% 2026-07-28 Jörn reviewed and accepted the proof.  Before that review, on
+% 2026-07-24, he accepted the theorem as a production risk decision after the retained
 % 10,240-row datascience product population had a literal length-six cached
 % winner in every row.  That empirical result is supporting evidence, not a
 % proof; see dev-quadratic-program/tools/product_closure_route/RESULTS.md.
 % The intended use is capacity computation and recovery of at least one sparse
 % maximizing word, not classification of every maximizing orbit.
-
-\begin{unverified}
 
 \subsection{Setup and factorization}
 \label{subsec:product-qp-six-facet-setup}
@@ -254,6 +252,16 @@ factor weights, the objective evaluations, and comparisons between candidate
 values without making an incorrect sign or ordering decision.
 \end{remark}
 
+\begin{remark}[Why the argument is product-specific]
+The proof uses more than low dimension.  The two factors are Lagrangian, so
+same-factor symplectic pairings vanish and
+\(Q_\sigma=t(1-t)B_\sigma(\alpha,\gamma)\) is linear in either normalized
+factor distribution when the other is fixed.  For a general four-dimensional
+polytope there is no such splitting: the objective remains quadratic in the
+full closure weights, and replacing a feasible point by a vertex of its
+closure polytope need not preserve or increase the objective.
+\end{remark}
+
 \subsection{Adversarial review record}
 \label{subsec:product-qp-six-facet-adversarial-review}
 
@@ -276,5 +284,3 @@ The following stronger or less precise claims are \emph{not} used:
     Lemma~\ref{lem:planar-closure-vertex-support}; a certified implementation
     must nevertheless handle the corresponding zero determinants exactly.
 \end{itemize}
-
-\end{unverified}

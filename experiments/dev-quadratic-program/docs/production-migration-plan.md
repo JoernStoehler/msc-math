@@ -389,17 +389,15 @@ before the optimizer branch merges against the new QP API.
 
 ## Mathematical acceptance gate
 
-`formal/product-qp-six-facet-reduction.tex` is agent-derived, independently
-agent-reviewed, and remains enclosed in `unverified` because Jörn has not
-checked the proof. On 2026-07-24 Jörn nevertheless accepted the theorem for
-production as an explicit risk decision if the retained datascience product
-population supported it. The retained check then found a literal length-six
-cached winner for every one of 10,240 producer geometries, with zero
-length-seven-or-longer winners; see
+`formal/product-qp-six-facet-reduction.tex` is agent-derived and was
+independently reconstructed by a review agent. On 2026-07-28 Jörn reviewed and
+accepted the proof, including its treatment of degenerate closure polytopes.
+The earlier production-risk decision was supported by a retained check which
+found a literal length-six cached winner for every one of 10,240 producer
+geometries, with zero length-seven-or-longer winners; see
 `tools/product_closure_route/RESULTS.md`.
 
-This resolves the production decision without mislabelling the proof as
-Jörn-reviewed. Batch 1 may expose exact automatic product-capacity dispatch
+Batch 1 may expose exact automatic product-capacity dispatch
 under the theorem's stated hypotheses and the product route's exact
 binary64-input contract. If later mathematical review finds a gap or the
 retained check ceases to reproduce, stop the product migration and retain only

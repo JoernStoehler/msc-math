@@ -50,8 +50,9 @@ No current hard submission deadline is recorded in the repository.
   maximizer uses at most three facets from each factor. This supports the
   KKT-free scalar production route but does not replace the twelve-facet block
   family used for rotated-pentagon branch comparison or classify every
-  minimizing orbit. Jörn accepted the result as a production risk after
-  independent proof review and a 10,240-product falsification check. See
+  minimizing orbit. Jörn reviewed and accepted the proof on 2026-07-28; the
+  earlier independent review and 10,240-product falsification check remain
+  supporting evidence. See
   `formal/product-qp-six-facet-reduction.tex` and the QP companion.
 - **First-order and flow-graph strength remain open.** Generic smooth-branch
   first-order behavior does not settle the arbitrary-polytope boundary. The

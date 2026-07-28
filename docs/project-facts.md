@@ -375,3 +375,11 @@ maintenance low. The numbers are stable and can be out of order.
     therefore include Jörn-confirmed facts that help agents avoid recurring
     wrong inferences or repeated bad questions, even when those facts seem too
     basic to mention.
+
+85. On 2026-07-28 Jörn reviewed and accepted the product-QP six-facet proof in
+    `formal/product-qp-six-facet-reduction.tex`. He found no hidden genericity
+    or completeness assumption: the closure polytopes are closed, and
+    degeneracy does not invalidate the vertex-support argument. He requested
+    that the exposition explain why the proof is product-specific, state the
+    theorem and algorithm before their proof, and postpone scope/use caveats
+    until after the main statements.

@@ -29,6 +29,12 @@ Writing companions collect sources, caveats, decisions, and missing exposition.
 They are not proof or evidence sources. Follow their pointers to `formal/`,
 `experiments/`, `crates/`, papers, or accepted decisions.
 
+In publication prose, use “exact” only when it distinguishes arithmetic or
+representation from numerical approximation, or when it is part of a standard
+term such as “exact form.” Mathematics is otherwise understood literally:
+do not use “exact” as a synonym for proved, rigorous, complete, or fully
+specified.
+
 ## Cross-cutting writing controls
 
 - `central-claim-control.md`: claim placement, support, caveats, and review

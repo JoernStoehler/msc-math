@@ -1,4 +1,4 @@
-\section{An Exact Flow-Graph Algorithm}
+\section{A Rational-Arithmetic Flow-Graph Algorithm}
 \label{sec:flow-graph-algorithm-ch2021}
 
 This section develops a second finite algorithm for
@@ -15,7 +15,7 @@ exhaustive tube search contains such a minimizer.
 The search regards a distinct-facet QP word up to cyclic choice of its starting
 segment and enumerates each resulting simple cyclic word once.
 
-We first prove correctness for an idealized exact-arithmetic search under
+We first prove correctness for a rational-arithmetic search under
 explicit regularity hypotheses, then prove that these hypotheses hold on an
 open dense subset of each presentation chamber.  The implementation uses
 rational arithmetic and has a separate input and rejection boundary,
@@ -209,11 +209,12 @@ active word \((s_1,\ldots,s_k)\) satisfies
 \]
 If \(k\leq4\), this contradicts the linear independence in condition~2.
 
-\begin{theorem}[Exact flow-graph correctness]
+\begin{theorem}[Rational flow-graph correctness]
 \label{thm:exact-flow-graph-correctness}
 Let \(K\subset\mathbb R^4\) be a bounded full-dimensional convex polytope
 with \(0\in\operatorname{int}K\), equipped with a flow-graph regular ordered
-normalized irredundant facet presentation.  Then the exhaustive exact-arithmetic
+normalized irredundant facet presentation.  Then the exhaustive
+rational-arithmetic
 flow-graph algorithm returns
 \[
   c_{\mathrm{EHZ}}(K).
@@ -292,7 +293,7 @@ To see that this rational function is nonzero for every \(k\geq5\), use
  D&=(4,-1,1,1),& E&=(-4,2,-4,-4).
 \end{aligned}
 \]
-All pairings needed below are nonzero.  Direct exact substitution gives
+All pairings needed below are nonzero.  Direct substitution gives
 \[
   \det(I-M_{ABCDE})=-\frac{10643}{600},
   \qquad
@@ -327,19 +328,19 @@ have no Type~2 orbit below an action bound.
 \subsection{Rational implementation and evidence}
 \label{subsec:flow-graph-algorithm-ch2021-implementation}
 
-The exact implementation represents the normals and all tube arithmetic by
+The implementation represents the normals and all tube arithmetic by
 rational numbers.  It enumerates transition-pruned simple directed cycles,
 checks the short-word independence hypothesis, constructs and composes affine
-tubes, solves fixed-point equations exactly, and accepts an orbit only after
+tubes, solves fixed-point equations in rational arithmetic, and accepts an orbit only after
 reconstructing strictly positive segment times.
 
 This implementation does not validate an arbitrary raw halfspace description.
 It assumes that the caller supplies a bounded irredundant presentation in
-dimension four, together with matching exact matrices for facet intersections
+dimension four, together with matching rational matrices for facet intersections
 and symplectic signs.  It rejects a caller-marked nonempty distinct facet pair
 with zero symplectic pairing, failure of the short-word independence
 hypothesis, and unsupported singular fixed sets.  An inconsistent singular
-fixed equation, or one whose fixed set misses the tube, is instead an exact
+fixed equation, or one whose fixed set misses the tube, is instead a certified
 no-orbit outcome.  Thus the Rust wrapper is
 intended to implement the mathematical search on rational inputs satisfying
 both this caller contract and the regularity hypotheses; correspondence is
@@ -349,9 +350,9 @@ The earlier binary64 flow-graph prototype was approximate and lacked a sound
 true/false/indeterminate predicate contract. It was retired when project time
 ended, and it supplies no current FG capacity or thesis evidence.
 
-On selected deterministic rational F5, F6, and F7 cases, exact flow-graph
+On selected deterministic rational F5, F6, and F7 cases, rational flow-graph
 search agrees with the certified Haim--Kislev/QP scalar aggregate. These
-comparisons, the retained exact words, and the targeted resolver tests are
+comparisons, the retained words, and the targeted resolver tests are
 implementation evidence for the stated rational inputs; they do not prove the
 idealized algorithm or the CH2021 capacity scope.
 Targeted tests also exercise tube construction, fixed-point reconstruction,

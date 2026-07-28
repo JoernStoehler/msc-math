@@ -64,7 +64,7 @@ four-run case study of a historical bug in the reduced gradient of a projection
 routine.  Four fresh agents received the same pre-fix code and reconstructed
 task contracts for the same mathematical discrepancy, without being given the
 historical fixture or answer.  The cases crossed model generation with a minimal
-or verifier-first contract.  The exact original prompt text is not recoverable,
+or verifier-first contract.  The original prompt text is not recoverable,
 so this design cannot identify a causal effect of either factor.
 
 \begin{table}[htbp]
@@ -93,7 +93,7 @@ when the bad sign was restored.  Its output therefore looked more thoroughly
 tested without supplying evidence for the repair at issue.  Both verifier-first
 runs demonstrated fail-before/pass-after behavior.  Independent replay later
 showed that the minimal GPT-5.5 regression also failed under mutation.  With one
-run per cell, no randomization, and no exact prompt record, this does not
+run per cell, no randomization, and no verbatim prompt record, this does not
 establish a model or prompting effect.  It does show concretely why
 fail-before/pass-after mutation evidence is stronger than an ordinary passing
 suite.
@@ -191,7 +191,8 @@ The project led me to the following working principles.
   \item Design a discriminating check before optimizing for the desired result,
   especially for numerical code, proof search, and experiments whose apparent
   success is easy to fake accidentally.  Independent mutation, alternative
-  derivations, exact special cases, and adversarial inputs were more informative
+  derivations, symbolically tractable special cases, and adversarial inputs
+  were more informative
   than additional agreeable reviews.
 
   \item Keep a record of failures and of what the contemporary review did or
