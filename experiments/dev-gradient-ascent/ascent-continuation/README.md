@@ -35,6 +35,10 @@ cargo run --release -p exp-dev-gradient-ascent \
   --mode full --out-dir /tmp/ascent-continuation-full
 ```
 
+Because the retained packet predates the removal of redundant model
+construction, this is a semantic rerun route, not a byte-for-byte or
+runtime-identical regeneration command.
+
 The four fixed states are one endpoint known to improve under a larger budget,
 the later version of that endpoint with a remaining positive basis slope, one
 endpoint whose basis slopes remain negative across three radii, and HKO as a

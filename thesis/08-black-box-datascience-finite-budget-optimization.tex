@@ -108,7 +108,7 @@ the same \(64\) starts.}
 
 The branch-history method has the largest held-out median.  On matched starts,
 its median advantage over transition prediction is \(0.00333\), with bootstrap
-interval \(0.000073\)--\(0.00824\).  The more elaborate transition rule had
+95\% interval \(0.000073\)--\(0.00824\).  The more elaborate transition rule had
 improved the development population, but did not generalize as an overall
 replacement.  The finite-gap model remains a strong independent baseline.
 Both single-branch gradients, CMA-ES, and coordinate search are substantially
@@ -126,8 +126,8 @@ improving direction.  Repeating the same starts with a five-second ceiling
 changed seven endpoint values and reduced the count to two, so five failures
 were ordinary insufficient-depth failures.
 
-Passing this finite basis poll is only a necessary-condition check: ascent may
-lie between the basis axes.  Indeed, a separate diagnostic followed a
+Passing this restricted finite basis poll does not establish stationarity:
+ascent may lie between the basis axes.  Indeed, a separate diagnostic followed a
 branch-informed improving path from each of three deliberately selected
 endpoints for ten validated steps, stopping only at the imposed step cap.  One
 of these endpoints had no improving basis-axis probe, yet gained \(0.00223\)
