@@ -49,7 +49,7 @@ pub use f64_route::{
     F64FailureReason, MINIMIZING_SIGMA_SET_ACTION_TOLERANCE,
 };
 pub use generated_cases::{generated_f64_cases, generated_f64_cases_with_source_filter};
-pub use geometry::F64CombinatoricsTiming;
+pub use geometry::{f64_geometry_payload, F64CombinatoricsTiming, F64GeometryPayload};
 pub use near_redundant_facet_removal::{
     NearRedundantFacetRemoval, NearRedundantFacetRemovalPolicy, NearRedundantFacetRemovalReport,
     NearRedundantFacetRemovalStatus,

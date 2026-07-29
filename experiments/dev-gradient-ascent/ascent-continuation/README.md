@@ -57,6 +57,19 @@ still gained `0.00223027` along a branch-informed path of normalized length
 `0.01`, with positive tested slope at the step cap. This establishes only that
 the selected finite-budget endpoint had a sustained untested ascent path.
 
+The HKO development calibration is retained under
+`artifacts/hko-one-step-development-panel-20260729/`. It tests four
+predeclared directions at four distances, with HKO as a false-positive
+control. Every perturbation improved and recovered `0.934`--`1.000` of its
+known gap in one validated move; HKO accepted no move. This is four-direction
+development evidence, not a miss-rate estimate.
+
+The outcome-selected top-eight check is retained under
+`artifacts/top8-tuning-endpoints-one-step-20260729/`. Five of eight endpoints
+improved, none crossed `sys = 1`, and the cohort exposed systematic
+finite-distance affine failures. The causal decomposition of three proposals
+belongs to [`../endpoint-model-audit/`](../endpoint-model-audit/).
+
 Post-process a raw output directory with:
 
 ```bash
@@ -67,5 +80,5 @@ uv run --script experiments/dev-gradient-ascent/ascent-continuation/analyze.py \
 The analysis writes a reader-facing report, CSV summaries, and plots of
 cumulative gain against path length, slope by accepted step, candidate gain by
 distance, and measured runtime components. The retained helper
-`analyze_optimizer_endpoints.py` can consume compatible endpoint packets, but
-no such additional packet is retained in this closeout.
+`analyze_optimizer_endpoints.py` owns the top-eight packet, while
+`analyze_hko_calibration.py` owns the HKO control panel.

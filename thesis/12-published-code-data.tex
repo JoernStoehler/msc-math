@@ -30,7 +30,10 @@ together with row provenance and the derived feature table.  It also contains
 the selected and evaluated rows from the frozen generated-candidate
 experiment.  It also contains the frozen \(64\)-start local-optimizer
 comparison, its per-evaluation traces, and the endpoint and continuation
-diagnostics used to delimit the finite-budget conclusion.  Keeping these data
+diagnostics used to delimit the finite-budget conclusion.  The retained
+predictor replay, HKO perturbation control, and directional KKT audit preserve
+the evidence used to distinguish missing branches, affine-model error, and
+remaining endpoint ascent.  Keeping these data
 allows another researcher to inspect individual examples, repeat the reported
 analyses, compare alternative methods on the same inputs, or use the samples
 as a starting point for a broader search without first repeating the expensive

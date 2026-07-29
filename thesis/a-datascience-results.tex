@@ -24,6 +24,19 @@ with no improving basis direction can retain appreciable ascent between the
 tested axes.  These observations diagnose insufficient finite budgets; they
 do not estimate the distance to a local maximum.
 
+The accompanying control and mechanism packets delimit this conclusion.
+On \(16\) known perturbations along four development directions from HKO, the
+multi-branch continuation accepted no move at HKO, improved every
+perturbation, and recovered \(93.4\%\)--\(100\%\) of the known objective gap.
+An on-trajectory replay found that only \(296/420\) future winning branches
+were transition-feasible at their anchor; directly re-solving a represented
+winner at the target was exact in the retained controls, while frozen affine
+prediction had large domain and linearization tails.  Finally, a
+three-proposal audit traced two finite-step affine failures to KKT
+perturbations crossing a zero eigenvalue, while a positive control did not.
+These are selected diagnostics, not population error rates or a convergence
+theorem.
+
 \subsection{Retained random/product input}
 
 All retained-table method packets use the same trusted random/product input

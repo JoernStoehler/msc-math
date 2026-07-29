@@ -394,8 +394,11 @@ fn kkt_audit(duals: &[Vector4<f64>], sigma: &[usize]) -> KktAudit {
         .copied()
         .min_by(|left, right| left.abs().total_cmp(&right.abs()))
         .unwrap_or(f64::NAN);
-    let raw_negative_eigenvalue_count =
-        eigen.eigenvalues.iter().filter(|value| **value < 0.0).count();
+    let raw_negative_eigenvalue_count = eigen
+        .eigenvalues
+        .iter()
+        .filter(|value| **value < 0.0)
+        .count();
     let retained = eigen
         .eigenvalues
         .iter()

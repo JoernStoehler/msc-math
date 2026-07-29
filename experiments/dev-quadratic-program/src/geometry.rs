@@ -38,7 +38,7 @@ pub(crate) struct F64Combinatorics {
     pub(crate) maximum_primal_vertex_norm_inf: Option<f64>,
 }
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize)]
 pub struct F64CombinatoricsTiming {
     pub input_check_ms: f64,
     pub vertex_scan_ms: f64,
@@ -50,6 +50,93 @@ pub struct F64CombinatoricsTiming {
     pub lp_facet_intersections_ms: f64,
     pub lp_omega_recompute_ms: f64,
     pub lp_count_facet_intersections_ms: f64,
+}
+
+/// Heuristic primal geometry reconstructed entirely from f64 dual vertices.
+///
+/// Indeterminate vertex incidences and facet intersections are retained
+/// conservatively as present. Consumers must inspect the counters before
+/// treating this as more than an optimization heuristic.
+#[derive(Clone, Debug)]
+pub struct F64GeometryPayload {
+    pub vertices: Vec<Vector4<f64>>,
+    pub vertex_facet_incidence: DMatrix<bool>,
+    pub facet_intersection_is_nonempty: DMatrix<bool>,
+    pub omega_signs: DMatrix<i8>,
+    pub vertex_indeterminate_count: usize,
+    pub bounded_near_singular_vertex_count: usize,
+    pub ambiguous_vertex_incidence_count: usize,
+    pub facet_intersection_indeterminate_count: usize,
+    pub omega_indeterminate_count: usize,
+    pub timing: F64CombinatoricsTiming,
+}
+
+/// Reconstruct a usable heuristic primal payload without exact arithmetic.
+///
+/// Returns `Err(())` for malformed inputs, no recovered vertices, or a facet
+/// that has no possible recovered vertex. Possible/indeterminate incidence is
+/// treated as incidence so optimization can continue across numerical
+/// boundaries; the returned counters expose when that happened.
+pub fn f64_geometry_payload(dual_vertices: &[Vector4<f64>]) -> Result<F64GeometryPayload, ()> {
+    let mut timing = F64CombinatoricsTiming::default();
+    let started = Instant::now();
+    if dual_vertices.len() < 5
+        || dual_vertices
+            .iter()
+            .any(|v| !v.iter().all(|entry| entry.is_finite()))
+    {
+        return Err(());
+    }
+    timing.input_check_ms = started.elapsed().as_secs_f64() * 1000.0;
+
+    let started = Instant::now();
+    let vertex_scan = enumerate_vertex_witnesses(dual_vertices);
+    timing.vertex_scan_ms = started.elapsed().as_secs_f64() * 1000.0;
+    let started = Instant::now();
+    let facet_coverage = facet_coverage(dual_vertices.len(), &vertex_scan);
+    timing.facet_coverage_ms = started.elapsed().as_secs_f64() * 1000.0;
+    if vertex_scan.vertices.is_empty() || facet_coverage.possible_count != dual_vertices.len() {
+        return Err(());
+    }
+    let started = Instant::now();
+    let facet_intersections =
+        facet_intersections_from_vertex_scan(dual_vertices.len(), &vertex_scan);
+    timing.facet_intersections_ms = started.elapsed().as_secs_f64() * 1000.0;
+    let started = Instant::now();
+    let (omega_signs, omega_indeterminate_count) =
+        omega_signs_f64(dual_vertices, &facet_intersections);
+    timing.omega_signs_ms = started.elapsed().as_secs_f64() * 1000.0;
+    let started = Instant::now();
+    let intersection_counts = count_facet_intersections(&facet_intersections);
+    timing.count_facet_intersections_ms = started.elapsed().as_secs_f64() * 1000.0;
+
+    let vertices = vertex_scan
+        .vertices
+        .iter()
+        .map(|witness| witness.point)
+        .collect::<Vec<_>>();
+    let vertex_facet_incidence =
+        DMatrix::from_fn(vertices.len(), dual_vertices.len(), |vertex, facet| {
+            vertex_scan.vertices[vertex]
+                .possible_incident
+                .contains(&facet)
+        });
+    let facet_intersection_is_nonempty =
+        DMatrix::from_fn(dual_vertices.len(), dual_vertices.len(), |left, right| {
+            left != right && facet_intersections[(left, right)] != F64Predicate::False
+        });
+    Ok(F64GeometryPayload {
+        vertices,
+        vertex_facet_incidence,
+        facet_intersection_is_nonempty,
+        omega_signs,
+        vertex_indeterminate_count: vertex_scan.indeterminate_count(),
+        bounded_near_singular_vertex_count: vertex_scan.bounded_near_singular_vertex_count,
+        ambiguous_vertex_incidence_count: vertex_scan.ambiguous_vertex_incidence_count,
+        facet_intersection_indeterminate_count: intersection_counts.indeterminate_count,
+        omega_indeterminate_count,
+        timing,
+    })
 }
 
 #[derive(Clone, Debug)]

@@ -55,10 +55,12 @@ finite-gap affine model
   values, and maximize the minimum affine value on a local ball.  Fully
   evaluate the proposal and use the same expand-or-halve distance rule.\\
 four-anchor branch history
-& Union candidate words from the four most recent full searches.  At a nearby
-  point, re-solve the named KKT branches, retain the admissible ones, linearize
-  their new values, and maximize their affine minimum.  Take at most two such
-  internal moves before the next full evaluation.\\
+& Union candidate words from the four most recent full searches, using a
+  \(30\%\) action window and normalized beta allowance \(0.3\).  At a nearby
+  point, re-solve the named KKT branches, discard transition-infeasible and
+  beta-inadmissible solutions, linearize the remaining values, and maximize
+  their affine minimum.  Take at most two such internal moves before the next
+  full evaluation.\\
 history with transition prediction
 & Use the preceding method, but for a normalized internal move of length at
   least \(0.08\), also predict newly feasible transitions in the move
@@ -113,7 +115,75 @@ improved the development population, but did not generalize as an overall
 replacement.  The finite-gap model remains a strong independent baseline.
 Both single-branch gradients, CMA-ES, and coordinate search are substantially
 weaker at this budget.  No held-out run reached
-\(\operatorname{sys}\geq1\).
+\(\operatorname{sys}\geq1\).  That negative result is not interpretable on its
+own: it could reflect the landscape, insufficient compute, or a defective
+local model.  The following controls separate failures that the retained
+evidence can distinguish.
+
+\paragraph{Controlled ability to recover ascent.}
+The held-out ranking alone does not show that the branch model recognizes
+useful directions.  We therefore calibrated the same finite-step machinery on
+HKO, whose local-maximality theorem supplies a known target.  The development
+panel used four predeclared directions---two sentinels and two random
+directions---at distances \(10^{-4},10^{-3},10^{-2},10^{-1}\), giving \(16\)
+perturbations.  HKO itself was the false-positive control.  It accepted no
+move, whereas every perturbation admitted a fully re-evaluated improving
+branch-model move.  One step recovered \(93.4\%\)--\(100\%\) of the known
+systolic-ratio gap and removed \(77.9\%\)--\(100\%\) of the distance to HKO.
+The gradient of one current minimizing branch recovered only
+\(-22.1\%\)--\(41.4\%\) of the gap.  This supports the multi-branch direction
+on these four development directions, but does not estimate its miss
+probability on arbitrary endpoints.  In particular, it rules out a gross
+failure to recognize known ascent on this panel, not failure on other local
+geometries.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]
+  {../experiments/dev-gradient-ascent/ascent-continuation/artifacts/hko-one-step-development-panel-20260729/analysis/recovery-by-source-distance.png}
+\caption{One-step calibration on known perturbations of HKO.  The left panel
+shows recovered objective gap, the center panel removed distance, and the
+right panel the residual objective gap.  The four directions are a development
+panel, not a random held-out sample.}
+\label{fig:black-box-datascience-hko-optimizer-calibration}
+\end{figure}
+
+\paragraph{Where the cheap model loses trust.}
+An on-trajectory replay separated candidate omission from finite-distance
+linearization error.  It replayed \(144\) selected moves from \(48\)
+development runs at half, equal, and twice their recorded displacement,
+yielding \(420\) usable target evaluations.  When a named set contained the
+target's full-evaluator winner, directly re-solving those named branches at
+the target reproduced the full scalar in every retained control row.  But the
+future winner belonged to the anchor's transition-feasible universe in only
+\(296/420\) cases: \(123\) winners were transition-blocked at the anchor and
+one raw KKT solve failed.  Moreover, \(76/420\) future winners had nonpositive
+normalized beta at the anchor.  Thus neither a wider action window nor a hard
+positive-beta cutoff can by itself make an anchor candidate set complete at a
+finite distance.
+
+Direct coverage rose from \(56.7\%\) for a \(1\%\) action window to \(69.1\%\)
+for a \(100\%\) window.  The corresponding median measured cost rose from
+\(0.211\) to \(0.550\) times one full evaluation.  Keeping every anchor germ
+reached only \(70.5\%\) coverage at cost \(0.692\).  Frozen affine
+prediction has a second failure: adding more affine branches can worsen the
+envelope because a branch extrapolated outside its target physical domain can
+become spuriously minimal.  Figure
+\ref{fig:black-box-datascience-affine-failure-causes} displays these two
+mechanisms.  They explain why the implemented methods use cheap prediction to
+propose moves but still refresh branch state and fully recompute the scalar
+before acceptance.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]
+  {../experiments/dev-gradient-ascent/optimizer-atoms/artifacts/development-f10-16-replay-evidence/affine-failure-causes.png}
+\caption{On-trajectory affine-predictor outcomes.  The left panel separates
+the branch selected by the affine envelope; the right panel shows its
+90th-percentile absolute error.  More anchor branches improve direct
+candidate coverage but can worsen a frozen affine envelope.}
+\label{fig:black-box-datascience-affine-failure-causes}
+\end{figure}
 
 The objective curves alone do not establish convergence.  CMA-ES, literal
 gradient, and coordinate search are still visibly improving at the budget
@@ -135,9 +205,52 @@ over normalized path length \(0.01\) and still had positive tested slope
 \(0.0620\).  These paths are lower bounds on remaining improvement, not
 estimates of an eventual maximum.
 
+\paragraph{Why some branch-model proposals fail.}
+We also applied one continuation step to the eight highest four-anchor
+endpoints from the \(128\)-start tuning population.  Five improved, by
+\(1.57\cdot10^{-6}\) to \(4.61\cdot10^{-5}\), and none crossed \(1\).  The
+highest endpoint, at \(0.999962478\), had no improvement among the two
+multi-branch models, five current-branch gradient moves, or \(50\) signed basis
+probes.  More importantly, \(52/80\) multi-branch proposals decreased the
+recomputed scalar even though the target winner was represented and its
+affine prediction was positive; \(40\) such losses retained determinate,
+unchanged geometry.  All \(40\) current-branch gradient proposals decreased.
+This is outcome-selected diagnostic evidence, not a prevalence estimate.
+
+A three-proposal audit then compared two failures with one positive control.
+At normalized radius \(10^{-5}\), the failures perturbed their named KKT
+matrices by \(218\) and \(67\) times the smallest base eigenvalue magnitude
+and crossed a zero eigenvalue; the control had ratio \(1.53\), did not cross
+zero, and kept the correct sign.  At the diagnostic radius \(10^{-8}\), finite
+differences converged to the implemented analytic derivative.  Binary64 and
+exact-arithmetic geometry reconstruction agreed at all \(39\) audited points,
+and relative volume discrepancies were below \(10^{-15}\).  For these cases,
+the error is therefore finite-distance nonlinearity of an ill-conditioned KKT
+branch, not a missing target word, geometry predicate, volume derivative, or
+sign error in the infinitesimal formula.  Euclidean distance alone is not an
+adequate trust scale; the KKT spectral gap supplies a mechanistic warning,
+although this three-case audit does not calibrate a universal cutoff.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]
+  {../experiments/dev-gradient-ascent/endpoint-model-audit/artifacts/directional-decomposition-20260729/analysis/derivative-and-kkt-scale.png}
+\caption{Finite differences for two failed affine proposals and one positive
+control.  Prediction changes regime when the KKT perturbation becomes large
+relative to the smallest source eigenvalue magnitude (right).  Dotted lines
+are the analytic derivatives.}
+\label{fig:black-box-datascience-kkt-trust-scale}
+\end{figure}
+
 We therefore select four-anchor branch history only as the strongest tested
 finite-budget method for this random \(F=10\) population and one-second
 budget.  The experiment neither proves convergence to a local maximum nor
 transfers the ranking to another facet count, starting distribution, or
-budget.  It also leaves open whether any other fixed-\(F\) local maximum has
-systolic ratio larger than \(1\).
+budget.  The completed diagnostics support a more specific engineering
+conclusion: multi-branch models can identify useful oblique ascent, but their
+finite-distance predictions need candidate refresh, branch re-solving, a
+conditioning-aware trust check, and full validation.  They also leave open
+whether any other fixed-\(F\) local maximum has systolic ratio larger than
+\(1\).  Thus the missing local-maximum classification cannot be assigned
+solely to the geometry of \(\operatorname{sys}\): ordinary insufficient depth
+and identified model failures both occur in the retained runs.

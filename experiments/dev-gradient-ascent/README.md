@@ -36,6 +36,10 @@ Read according to the task:
   and compares its datasets.
 - [`ascent-continuation/`](ascent-continuation/README.md) tests whether selected
   recorded endpoints still admit sustained validated improvement.
+- [`optimizer-atoms/`](optimizer-atoms/README.md) replays individual predictor
+  approximations on recorded trajectories.
+- [`endpoint-model-audit/`](endpoint-model-audit/README.md) decomposes
+  finite-distance affine failures into KKT, action, volume, and geometry terms.
 - For a completed comparison or diagnostic, start with that directory's
   README rather than reconstructing its purpose from the executable.
 
@@ -59,7 +63,9 @@ This is the exhaustive set of immediate child directories:
 | [`quotient-endpoint-diagnostic/`](quotient-endpoint-diagnostic/README.md) | retained quotient-aware derivative-free endpoint diagnostic |
 | [`optimizer-runs/`](optimizer-runs/README.md) | manifest-driven full-`sys` optimizer runner, trace schemas, and retained frozen F10 datasets |
 | [`optimizer-comparison/`](optimizer-comparison/README.md) | strict runner-dataset validation and matched trajectory comparison |
+| [`optimizer-atoms/`](optimizer-atoms/README.md) | on-trajectory candidate-set, affine-error, lifetime, and rollback replay |
 | [`ascent-continuation/`](ascent-continuation/README.md) | repeated validated continuation from selected optimizer endpoints |
+| [`endpoint-model-audit/`](endpoint-model-audit/README.md) | three-case derivative and KKT-conditioning decomposition |
 
 The local-geometry directory owns these consumers of its output:
 

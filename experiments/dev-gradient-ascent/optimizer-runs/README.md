@@ -41,6 +41,12 @@ historical schema-1 evidence, not outputs of the clean evaluator below:
 - `artifacts/heldout-f10-64-finalists-19a8b4dfd/`;
 - `artifacts/history-f10-16-compute-depth-426ec7a7c/`.
 
+The closeout also promotes the companion `../optimizer-atoms/`,
+`../ascent-continuation/`, and `../endpoint-model-audit/` packets that explain
+candidate omission, affine error, and remaining endpoint ascent. Those packets
+consume or replay named runner outputs; they do not change the historical
+schema-1 comparison values.
+
 The corresponding frozen manifests are retained beside the smoke manifest.
 Reproducing those values requires their recorded archive source and heuristic
 f64 evaluator; running the manifest with this clean evaluator would be a new
