@@ -62,11 +62,12 @@ No current hard submission deadline is recorded in the repository.
   dataset.** It said that work was incomplete at the time and should continue.
   The current integration candidate combines the later packets, closed method
   table, held-out optimizer comparison, endpoint continuation, HKO control, and
-  branch-model failure audits.  These support bounded empirical statements,
-  not convergence or local-maximality claims.  Project fact 30 still makes
-  random/gradient search a major novel method for the data-science part. Its
-  final thesis emphasis is a Jörn writing/design decision, distinct from
-  whether the bounded empirical statements are supported.
+  branch-model failure audits.  The optimizer results support bounded
+  statements about their recorded historical evaluator field, not a certified
+  mathematical capacity, convergence, or local maximality.  Project fact 30
+  still makes random/gradient search a major novel method for the data-science
+  part. Its final thesis emphasis is a Jörn writing/design decision, distinct
+  from whether the bounded empirical statements are supported.
 - **External closure state remains partly private or time-sensitive.** Current
   official submission requirements need refreshing. The registration note
   still needs to be handed to the `Prüfungsamt` unless Jörn reports that action
