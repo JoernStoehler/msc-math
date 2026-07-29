@@ -189,9 +189,32 @@ class IntegrationTests(unittest.TestCase):
         )
         states = [row for row in rows if row["row_type"] == "state"]
         self.assertTrue(states[0]["outcome_selected"])
+        self.assertEqual(states[0]["selection_kind"], "outcome_selected_control")
         self.assertEqual(
             states[0]["expected_finite_classification"],
             "explicit_improvement_found",
+        )
+
+    def test_quotient_selection_semantics_are_role_based(self):
+        self.assertEqual(
+            ADAPT.QUOTIENT_SELECTION_BY_ROLE[
+                "positive_control_exact_theorem_local_maximum"
+            ],
+            ("predeclared_control", False),
+        )
+        self.assertEqual(
+            ADAPT.QUOTIENT_SELECTION_BY_ROLE["unknown_frozen_high_best_so_far"],
+            ("global_best_so_far", True),
+        )
+        self.assertEqual(
+            ADAPT.QUOTIENT_SELECTION_BY_ROLE[
+                "unknown_frozen_terminal_best_so_far"
+            ],
+            ("terminal_best_so_far", True),
+        )
+        self.assertEqual(
+            ADAPT.QUOTIENT_SELECTION_BY_ROLE["held_out_optimizer_endpoint"],
+            ("outcome_selected_checkpoint", True),
         )
 
 

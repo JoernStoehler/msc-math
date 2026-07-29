@@ -84,6 +84,11 @@ python3 experiments/local-maxima-check/endpoint-evidence/adapt.py \
   --out /tmp/g1-endpoint-input.jsonl
 ```
 
+The quotient adapter assigns structured selection provenance from the
+producer's declared `control_role`; it does not infer scientific strata from
+free-text selection descriptions. Its inputs are complete outputs from the
+named producer packet, not an untrusted interchange format.
+
 Git LFS pointer text is rejected with a specific error instead of being parsed
 as scientific data.
 

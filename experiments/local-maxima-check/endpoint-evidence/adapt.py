@@ -21,6 +21,21 @@ def probe_id(family: str, direction: int, sign: int, radius: float) -> str:
     return f"{family}:d{direction}:s{sign}:r{radius:.17g}"
 
 
+QUOTIENT_SELECTION_BY_ROLE = {
+    "positive_control_exact_theorem_local_maximum": (
+        "predeclared_control",
+        False,
+    ),
+    "negative_control_known_later_literal_improvement": (
+        "outcome_selected_control",
+        True,
+    ),
+    "unknown_frozen_high_best_so_far": ("global_best_so_far", True),
+    "unknown_frozen_terminal_best_so_far": ("terminal_best_so_far", True),
+    "held_out_optimizer_endpoint": ("outcome_selected_checkpoint", True),
+}
+
+
 def write_rows(path: Path, rows: list[dict[str, Any]]) -> None:
     if path.exists():
         raise ValueError(f"output already exists: {path}")
@@ -115,6 +130,15 @@ def adapt_quotient(states_path: Path, probes_path: Path) -> list[dict[str, Any]]
     output: list[dict[str, Any]] = []
     for state in source_states:
         state_id = state["state_id"]
+        try:
+            selection_kind, outcome_selected = QUOTIENT_SELECTION_BY_ROLE[
+                state["control_role"]
+            ]
+        except KeyError as error:
+            raise ValueError(
+                f"state {state_id}: quotient adapter has no declared selection "
+                f"semantics for role {state['control_role']!r}"
+            ) from error
         rows = grouped.get(state_id, [])
         ids = [
             probe_id(
@@ -137,8 +161,8 @@ def adapt_quotient(states_path: Path, probes_path: Path) -> list[dict[str, Any]]
                 "state_id": state_id,
                 "source": state["source_path"],
                 "control_role": state["control_role"],
-                "selection_kind": state["selection_rule"],
-                "outcome_selected": "best" in state["selection_rule"],
+                "selection_kind": selection_kind,
+                "outcome_selected": outcome_selected,
                 "state_valid": True,
                 "suite_id": "signed-quotient-poll-v1",
                 "expected_probe_ids": ids,
@@ -209,4 +233,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
