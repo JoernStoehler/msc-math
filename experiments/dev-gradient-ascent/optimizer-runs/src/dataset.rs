@@ -238,7 +238,10 @@ mod tests {
             "stop_reason": "budget_exhausted", "wall_ms": 1.0
         });
         let rows = load_run(value.take()).expect("legacy run should load");
-        assert_eq!(rows[0].final_algorithm_state, AlgorithmStateRow::NoSingleCurrentState);
+        assert_eq!(
+            rows[0].final_algorithm_state,
+            AlgorithmStateRow::NoSingleCurrentState
+        );
     }
 
     #[test]
@@ -256,7 +259,12 @@ mod tests {
             "stop_reason": "budget_exhausted", "wall_ms": 1.0
         });
         let rows = load_run(value).expect("valid run state should load");
-        assert_eq!(rows[0].final_algorithm_state, AlgorithmStateRow::EvaluatedPoint { evaluation_id: "e0".into() });
+        assert_eq!(
+            rows[0].final_algorithm_state,
+            AlgorithmStateRow::EvaluatedPoint {
+                evaluation_id: "e0".into()
+            }
+        );
     }
 
     #[test]
@@ -279,8 +287,11 @@ mod tests {
     fn load_run(value: serde_json::Value) -> Result<Vec<RunRow>, String> {
         let directory = tempfile::tempdir().map_err(|error| error.to_string())?;
         let path = directory.path().join("runs.jsonl");
-        fs::write(path, serde_json::to_string(&value).map_err(|error| error.to_string())?)
-            .map_err(|error| error.to_string())?;
+        fs::write(
+            path,
+            serde_json::to_string(&value).map_err(|error| error.to_string())?,
+        )
+        .map_err(|error| error.to_string())?;
         load_jsonl(&directory.path().join("runs.jsonl"))
     }
 }
