@@ -14,6 +14,12 @@ panel. Its pilot report also audits archived optimizer states, the unresolved
 historical fixed-`F` “local maxima” label, and named facet-addition evidence.
 It does not reopen the generic finite-probe allocation closed by `LMC-D1`.
 
+The reusable [`endpoint-evidence/`](endpoint-evidence/README.md) consumer
+normalizes finite probes and optimizer continuations into explicit improvement,
+invalid/indeterminate, or named finite-suite-survival evidence. It preserves
+positive fixed-`F` and facet-addition evidence separately and never emits a
+Boolean local-maximality decision.
+
 ## Five statuses
 
 | Body | Value status | Local status |
