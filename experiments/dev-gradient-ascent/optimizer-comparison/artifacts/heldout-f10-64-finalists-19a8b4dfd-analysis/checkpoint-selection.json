@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "source_artifact_dir": "/workspaces/msc-math/.worktrees/sys-optimizer-completion/experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd",
+  "source_artifact_dir": "/workspaces/msc-math/.worktrees/sys-optimizer-final-closeout/experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd",
   "radii": [
     0.0003,
     0.003,

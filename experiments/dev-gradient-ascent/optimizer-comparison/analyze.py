@@ -1446,7 +1446,7 @@ def plot_curves(
             axis.plot(x, median, label=display_algorithm(algorithm_id), color=color)
             axis.fill_between(x, low, high, color=color, alpha=0.12)
         axis.set_xlabel(x_label)
-        axis.set_ylabel("best systolic ratio so far")
+        axis.set_ylabel("best recorded evaluator value")
         axis.grid(alpha=0.25)
         axis.legend(fontsize=7, ncol=2)
         figure.tight_layout()
@@ -1462,7 +1462,7 @@ def plot_curves(
         tick_labels=[display_algorithm(label) for label in labels],
         showfliers=True,
     )
-    axis.set_ylabel("final best systolic ratio")
+    axis.set_ylabel("final best evaluator value")
     axis.tick_params(axis="x", labelrotation=55)
     axis.grid(axis="y", alpha=0.25)
     figure.tight_layout()
@@ -1501,7 +1501,7 @@ def plot_facet_call_curves(
                 color=color_map(algorithm_index % 20),
             )
         axis.set_title(f"F={facet_count}")
-        axis.set_ylabel("median best systolic ratio")
+        axis.set_ylabel("median best evaluator value")
         axis.grid(alpha=0.25)
     axes[-1, 0].set_xlabel("charged objective calls")
     axes[0, 0].legend(fontsize=6, ncol=3)
@@ -1529,6 +1529,12 @@ def summary_markdown(
             f"{diagnostics['evaluation_count']} evaluations, "
             f"{diagnostics['proposal_count']} proposals, and "
             f"{diagnostics['round_count']} rounds."
+        ),
+        "",
+        (
+            "`sys` in the tables and filenames below is the recorded field of "
+            "this dataset's configured evaluator. It is not, by this analysis "
+            "alone, a certified value of the mathematical systolic ratio."
         ),
         "",
         "Facet-count-specific results are primary. The pooled table below is "

@@ -41,3 +41,8 @@ trajectory-geometry directory describes matched paths, while
 `../quotient-endpoint-diagnostic/` and `../ascent-continuation/` retain the
 finite probes and continued improvements that rule out interpreting the
 one-second plateaus as established local maxima.
+
+In this historical packet, `sys` names the recorded heuristic evaluator field.
+It is not a certified mathematical capacity value; the active thesis denotes
+it by `hat(sys)`. The ranking and threshold counts are statements about that
+field and evaluator contract.
