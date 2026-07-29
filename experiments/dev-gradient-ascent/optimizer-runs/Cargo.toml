@@ -1,0 +1,27 @@
+[package]
+name = "optimizer-runs"
+version = "0.1.0"
+publish = false
+edition = "2021"
+
+[lints]
+workspace = true
+
+[dependencies]
+blake3.workspace = true
+clarabel = "0.11.1"
+euclidean-polytopes.workspace = true
+exp-dev-quadratic-program = { path = "../../dev-quadratic-program" }
+exp-sys-landscape = { path = "../../sys-landscape" }
+good_lp.workspace = true
+nalgebra.workspace = true
+rand.workspace = true
+rand_chacha.workspace = true
+rand_distr.workspace = true
+rayon.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+symplectic.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

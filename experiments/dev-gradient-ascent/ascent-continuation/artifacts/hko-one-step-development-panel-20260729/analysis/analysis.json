@@ -1,0 +1,19 @@
+{
+  "state_count": 16,
+  "hko_control_accepted_steps": 0,
+  "complete_miss_count": 0,
+  "under_half_gap_recovery_count": 0,
+  "minimum_gap_recovery_fraction": 0.9339957463139372,
+  "minimum_reference_distance_contraction": 0.77884658850906,
+  "wide_minus_narrow_recovery_range": [
+    -0.0021581719340753036,
+    5.241595377736274e-07
+  ],
+  "current_branch_gradient_recovery_range": [
+    -0.2211149373640726,
+    0.41410149234177684
+  ],
+  "full_sys_evaluations": 214,
+  "run_wall_seconds": 140.125477838,
+  "claim_boundary": "Development directions only; no population miss-rate estimate."
+}

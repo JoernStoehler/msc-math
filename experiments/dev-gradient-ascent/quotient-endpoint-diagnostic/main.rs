@@ -10,6 +10,7 @@ use exp_sys_landscape::{
     SysLandscapePolytopeCache,
 };
 use nalgebra::{DMatrix, DVector, Matrix4, Vector4};
+use optimizer_runs::{reconstruct_geometry_and_volume, EvaluatorConfig};
 use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::fs::{self, File};
@@ -27,8 +28,26 @@ const ORTHONORMAL_TOLERANCE: f64 = 2.0e-10;
 struct Cli {
     out_dir: PathBuf,
     trajectory_root: PathBuf,
+    checkpoint_selection: Option<PathBuf>,
+    algorithm_id: Option<String>,
+    checkpoint_call: Option<usize>,
     smoke: bool,
     threads: usize,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+struct CheckpointPacket {
+    selection_strategy: String,
+    checkpoints: Vec<CheckpointRow>,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+struct CheckpointRow {
+    checkpoint_id: String,
+    algorithm_id: String,
+    checkpoint_call: usize,
+    base_sys: f64,
+    dual_flat: Vec<f64>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -196,14 +215,21 @@ struct RunProvenance {
 fn main() {
     let cli = parse_args(std::env::args().skip(1));
     fs::create_dir_all(&cli.out_dir).expect("create output directory");
-    let all_rows = load_all_trajectory_rows(&cli.trajectory_root);
+    let all_rows = if cli.checkpoint_selection.is_none() {
+        load_all_trajectory_rows(&cli.trajectory_root)
+    } else {
+        Vec::new()
+    };
     let states = select_states(&cli, &all_rows);
     let radii = if cli.smoke {
         vec![1.0e-4]
     } else {
         FULL_RADII.to_vec()
     };
-    let selection_inputs = trajectory_input_paths(&all_rows);
+    let selection_inputs = cli
+        .checkpoint_selection
+        .clone()
+        .map_or_else(|| trajectory_input_paths(&all_rows), |path| vec![path]);
     write_provenance(&cli, &selection_inputs);
 
     let started = Instant::now();
@@ -215,7 +241,8 @@ fn main() {
     let mut all_poll_rows = Vec::new();
 
     for state in &states {
-        let (base_polytope, base_computation) = compute_state(&state.dual_vertices)
+        let fast_geometry = cli.checkpoint_selection.is_some();
+        let (base_polytope, base_computation) = compute_state(&state.dual_vertices, fast_geometry)
             .unwrap_or_else(|failure| panic!("base state {} failed: {failure}", state.state_id));
         let quotient = quotient_basis(&state.dual_vertices);
         validate_quotient_basis(&quotient, state.dual_vertices.len());
@@ -260,6 +287,7 @@ fn main() {
                         sign,
                         &direction,
                         &orbit_basis,
+                        fast_geometry,
                     )
                 })
                 .collect::<Vec<_>>()
@@ -297,6 +325,56 @@ fn main() {
 }
 
 fn select_states(cli: &Cli, all_rows: &[LocatedRow]) -> Vec<DiagnosticState> {
+    if let Some(path) = &cli.checkpoint_selection {
+        let packet: CheckpointPacket =
+            serde_json::from_reader(File::open(path).expect("open checkpoint selection"))
+                .expect("parse checkpoint selection");
+        let algorithm_id = cli
+            .algorithm_id
+            .as_deref()
+            .expect("--algorithm-id is required with --checkpoint-selection");
+        let checkpoint_call = cli
+            .checkpoint_call
+            .expect("--checkpoint-call is required with --checkpoint-selection");
+        let states = packet
+            .checkpoints
+            .into_iter()
+            .filter(|row| {
+                row.algorithm_id == algorithm_id && row.checkpoint_call == checkpoint_call
+            })
+            .map(|row| {
+                assert_eq!(
+                    row.dual_flat.len() % 4,
+                    0,
+                    "checkpoint dual coordinates must have four coordinates per facet"
+                );
+                DiagnosticState {
+                    state_id: row.checkpoint_id,
+                    control_role: "held_out_optimizer_endpoint".to_string(),
+                    selection_rule: format!(
+                        "{}; algorithm={algorithm_id}; checkpoint_call={checkpoint_call}",
+                        packet.selection_strategy
+                    ),
+                    source_path: path.display().to_string(),
+                    source_iteration: Some(checkpoint_call),
+                    source_eta: None,
+                    recorded_sys: Some(row.base_sys),
+                    recorded_next_full_sys_delta: None,
+                    dual_vertices: row
+                        .dual_flat
+                        .chunks_exact(4)
+                        .map(|chunk| Vector4::new(chunk[0], chunk[1], chunk[2], chunk[3]))
+                        .collect(),
+                }
+            })
+            .collect::<Vec<_>>();
+        assert!(
+            !states.is_empty(),
+            "no checkpoints match algorithm={algorithm_id}, call={checkpoint_call}"
+        );
+        return states;
+    }
+
     let negative_initial_path = cli
         .trajectory_root
         .join("random_F6_s0_0/trajectory-eta-1e-4.jsonl");
@@ -582,6 +660,7 @@ fn poll_direction(
     sign: i8,
     direction: &DVector<f64>,
     orbit_basis: &[DVector<f64>],
+    fast_geometry: bool,
 ) -> PollRow {
     let started = Instant::now();
     let absolute_radius = relative_radius * dual_norm;
@@ -594,7 +673,7 @@ fn poll_direction(
         .collect();
     let direction_norm = direction.norm();
     let orbit_projection_norm = projection_norm(direction, orbit_basis);
-    match compute_state(&perturbed) {
+    match compute_state(&perturbed, fast_geometry) {
         Ok((polytope, computation)) => {
             let signature = incidence_signature(&polytope.vertex_facet_incidence);
             let delta = computation.sys - base_sys;
@@ -664,9 +743,19 @@ fn poll_direction(
 
 fn compute_state(
     dual_vertices: &[Vector4<f64>],
+    fast_geometry: bool,
 ) -> Result<(SysLandscapePolytopeCache, SysComputation), String> {
-    let polytope = SysLandscapePolytopeCache::from_f64_dual_vertices(dual_vertices.to_vec())
-        .ok_or_else(|| "invalid_geometry_or_redundant_facet".to_string())?;
+    let polytope = if fast_geometry {
+        let config = EvaluatorConfig {
+            exact_geometry_fallback: false,
+            ..EvaluatorConfig::default()
+        };
+        reconstruct_geometry_and_volume(dual_vertices, &config)
+            .map(|(polytope, _volume)| polytope)?
+    } else {
+        SysLandscapePolytopeCache::from_f64_dual_vertices(dual_vertices.to_vec())
+            .ok_or_else(|| "invalid_geometry_or_redundant_facet".to_string())?
+    };
     let computation = compute_sys_computation(&polytope)
         .ok_or_else(|| "full_sys_computation_failed".to_string())?;
     Ok((polytope, computation))
@@ -784,8 +873,11 @@ fn trajectory_input_paths(rows: &[LocatedRow]) -> Vec<PathBuf> {
 fn write_provenance(cli: &Cli, input_paths: &[PathBuf]) {
     let implementation_path =
         PathBuf::from("experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/main.rs");
-    let analyzer_path =
-        PathBuf::from("experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/analyze.py");
+    let analyzer_path = PathBuf::from(if cli.checkpoint_selection.is_some() {
+        "experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/analyze_population.py"
+    } else {
+        "experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/analyze.py"
+    });
     let manifest_path = PathBuf::from("experiments/dev-gradient-ascent/Cargo.toml");
     let provenance = RunProvenance {
         command: std::env::args().collect(),
@@ -804,19 +896,30 @@ fn write_provenance(cli: &Cli, input_paths: &[PathBuf]) {
                 blake3: hash_file(path),
             })
             .collect(),
-        selection_contract: vec![
-            "negative controls are two fixed retained states with a verified positive next literal update".to_string(),
-            "unknown_global_best_so_far is the highest valid sys row among all 3142 frozen trajectory rows".to_string(),
-            "unknown_terminal_best_so_far is the highest valid iteration-100 row whose best_iteration is 100".to_string(),
-            "HKO2024 is a fixed theorem-authorized positive control and is not selected from generic outcomes".to_string(),
-        ],
+        selection_contract: if cli.checkpoint_selection.is_some() {
+            vec![
+                "states are the checkpoint packet's population-stratified start selection for the requested algorithm and call".to_string(),
+                "the checkpoint packet was generated before endpoint-poll outcomes".to_string(),
+            ]
+        } else {
+            vec![
+                "negative controls are two fixed retained states with a verified positive next literal update".to_string(),
+                "unknown_global_best_so_far is the highest valid sys row among all 3142 frozen trajectory rows".to_string(),
+                "unknown_terminal_best_so_far is the highest valid iteration-100 row whose best_iteration is 100".to_string(),
+                "HKO2024 is a fixed theorem-authorized positive control and is not selected from generic outcomes".to_string(),
+            ]
+        },
         quotient_contract: "at each base a, use the Euclidean orthogonal complement of the rank-15 tangent span of translations, positive scaling, and sp(4,R); poll every signed orthonormal basis vector".to_string(),
         radius_contract: if cli.smoke {
             "smoke: relative radius 1e-4; absolute step norm = relative radius * ||a||_2".to_string()
         } else {
             "full: relative radii 1e-3,1e-4,1e-5; absolute step norm = relative radius * ||a||_2".to_string()
         },
-        sys_contract: "reconstruct every f64 state as exact rationals, require all dual points extreme, recompute exact incidence/volume, and use the current minimum-safe full capacity route; compare incidence signatures to the base".to_string(),
+        sys_contract: if cli.checkpoint_selection.is_some() {
+            "use the optimizer evaluator's f64 geometry and volume reconstruction without rational-arithmetic geometry fallback, use the current minimum-safe full capacity route, and compare incidence signatures to the base".to_string()
+        } else {
+            "reconstruct every f64 state as exact rationals, require all dual points extreme, recompute exact incidence/volume, and use the current minimum-safe full capacity route; compare incidence signatures to the base".to_string()
+        },
         threads: cli.threads,
         smoke: cli.smoke,
     };
@@ -941,6 +1044,9 @@ fn git_output(args: &[&str]) -> Option<String> {
 fn parse_args(args: impl Iterator<Item = String>) -> Cli {
     let mut out_dir = None;
     let mut trajectory_root = None;
+    let mut checkpoint_selection = None;
+    let mut algorithm_id = None;
+    let mut checkpoint_call = None;
     let mut smoke = false;
     let mut threads = 8usize;
     let mut args = args.peekable();
@@ -949,6 +1055,20 @@ fn parse_args(args: impl Iterator<Item = String>) -> Cli {
             "--out-dir" => out_dir = Some(PathBuf::from(args.next().expect("--out-dir value"))),
             "--trajectory-root" => {
                 trajectory_root = Some(PathBuf::from(args.next().expect("--trajectory-root value")))
+            }
+            "--checkpoint-selection" => {
+                checkpoint_selection = Some(PathBuf::from(
+                    args.next().expect("--checkpoint-selection value"),
+                ))
+            }
+            "--algorithm-id" => algorithm_id = Some(args.next().expect("--algorithm-id value")),
+            "--checkpoint-call" => {
+                checkpoint_call = Some(
+                    args.next()
+                        .expect("--checkpoint-call value")
+                        .parse()
+                        .expect("--checkpoint-call integer"),
+                )
             }
             "--smoke" => smoke = true,
             "--threads" => {
@@ -970,6 +1090,9 @@ fn parse_args(args: impl Iterator<Item = String>) -> Cli {
                 "experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/evaluation/trajectories",
             )
         }),
+        checkpoint_selection,
+        algorithm_id,
+        checkpoint_call,
         smoke,
         threads,
     }
@@ -977,7 +1100,7 @@ fn parse_args(args: impl Iterator<Item = String>) -> Cli {
 
 fn usage_and_exit() -> ! {
     eprintln!(
-        "Usage: dev-gradient-ascent-quotient-endpoint-diagnostic --out-dir PATH [--trajectory-root PATH] [--smoke] [--threads N]"
+        "Usage: dev-gradient-ascent-quotient-endpoint-diagnostic --out-dir PATH [--trajectory-root PATH | --checkpoint-selection PATH --algorithm-id ID --checkpoint-call N] [--smoke] [--threads N]"
     );
     std::process::exit(0)
 }

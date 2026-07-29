@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "analysis_mode": "development",
+  "analyzer": "/workspaces/msc-math/.worktrees/sys-optimizer-final-closeout/experiments/dev-gradient-ascent/optimizer-comparison/analyze.py",
+  "analyzer_sha256": "38c96fb7be0314018f9e30b608b5ac62851595ccda3b34b0813c0194219c0c02",
+  "input_sha256": {
+    "resolved-plan.json": "ceb019c99951457f8a18147a7113bc36ddc10bc7b4621038ae9a4375169320cf",
+    "run-provenance.json": "60d70e33bbe9d6b74ef6d49725af2e246fee61393b6da633b470ed6cad371d93",
+    "runs.jsonl": "877bd86bec5d5ac73b723541285cef0c95d1a759b567ca7635fb7b1f986fd1fe",
+    "rounds.jsonl": "14d4c8431e7008cca769cbada564f95d3f8fb08b043b67391c34e528f4f65bbf",
+    "proposals.jsonl": "cd410a36eb1acdf315b31d18c68342899417d7c6307492d11a0c748477c0f77b",
+    "evaluations.jsonl": "f12eb6eb23c72bc9444fb6f2357296873eb811ea0c7a6899ea25e11ad2ea40ee"
+  }
+}

@@ -11,9 +11,14 @@ table, none of the \(14336\) rows has systolic ratio larger than \(1\).  The
 method packets applied to this table do recover structure in the already
 computed values of the systolic ratio, but they do not validate a new source of
 counterexamples.  A separate frozen scalar-filter run over generated
-random-product candidates also stayed below the threshold.  Thus the result is
-not a theorem that random search cannot succeed; it is evidence that this
-black-box route did not produce a new source of examples.
+random-product candidates also stayed below the threshold.  A held-out
+comparison of seven local optimizers on random ten-facet polytopes reached
+historical evaluator values close to \(1\), but none above it.  Those values
+are heuristic binary64 orbit-search outputs, as defined in the optimizer
+comparison below, rather than certified mathematical capacities.  Thus the
+result is not a theorem
+that random or local search cannot succeed; it is evidence that these bounded
+routes did not produce a new source of examples.
 The contribution is a controlled negative benchmark: it separates explanation
 of already computed values from evidence for a new way to find counterexamples.
 
@@ -121,14 +126,16 @@ were found only after target values were known, so their proper role is to seed
 a possible future frozen rule, not to serve as evidence that a valid proposer
 already exists.
 
-The old fixed-facet ascent, continuation, endpoint-stability, and
-local-behavior surfaces are not part of this active method table.  They are
-kept as historical context for future work.  The present account does not use
-them as evidence for local maximality, exhaustive search, or a candidate
-proposer.  The newly reviewed selected-body screen below is separate: it starts
-from a frozen theory-selected panel, retains its own probes and controls, and
-supports only the explicitly bounded local interpretation stated there.
+Older experiments on fixed-facet ascent and its endpoints remain historical
+context.  The finite-budget comparison below is a
+separately frozen experiment with disjoint tuning and held-out starts.  It
+does not provide evidence for exhaustive search or local maximality.  The
+selected-body screen that follows is separate again: it starts from a frozen
+theory-selected panel, retains its own probes and controls, and supports only
+the explicitly bounded local interpretation stated there.
 Appendix~\ref{app:datascience-results} records the method groups and caveats
 behind the black-box summary.
+
+\input{08-black-box-datascience-finite-budget-optimization}
 
 \input{08-black-box-datascience-local-maxima-check}

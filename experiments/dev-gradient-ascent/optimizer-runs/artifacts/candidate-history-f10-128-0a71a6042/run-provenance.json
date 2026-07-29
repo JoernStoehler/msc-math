@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "manifest_path": "/tmp/candidate-history-f64-current.tY9hve.json",
+  "manifest_blake3": "5f7537e3b46c4700565626afb536d563c1c8673fee562510cdc31ee9f83073f2",
+  "resolved_plan_hash": "0a71a6042fe5212f8ad7f325f52b4ad28ef0eaa6cab7bee8347c7586bd2b6574",
+  "git_commit": "85109bfe9ec136c587c99101707b7eb66607d3c8",
+  "git_dirty": true,
+  "executable": "optimizer-runs",
+  "executable_blake3": "c4e558216aba7cf991eec7ad12def135953c30dc619218ed5bb36170ea57b84c",
+  "started_unix_ms": 1785346998407
+}

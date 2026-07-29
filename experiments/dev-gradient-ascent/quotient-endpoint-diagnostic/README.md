@@ -14,6 +14,10 @@ avoids assuming that a base active-sigma list contains all right-active or
 singular branch germs. It is a finite heuristic diagnostic, not a
 local-maximality proof. HKO's exact theorem packet under
 `experiments/hko-local-maximum/theorem/` remains the authority for that control.
+The cached HKO certificate-slope calibration under
+`experiments/hko-local-maximum/empirical/certificate-slope-calibration/`
+shows why slope magnitude is not a distance-to-maximum proxy for this sharp
+nonsmooth control.
 
 Retained outputs:
 
@@ -31,6 +35,18 @@ Retained outputs:
 The producer's `--smoke` mode evaluates one signed quotient-basis pair at
 relative radius `1e-4` for one negative control and HKO. Smoke output is
 plumbing evidence only and is not retained.
+
+The same producer can consume an optimizer comparison's
+`checkpoint-selection.json` with `--checkpoint-selection`, `--algorithm-id`,
+and `--checkpoint-call`. In this mode it uses the optimizer evaluator's f64
+geometry and volume route without rational-arithmetic fallback. The companion
+`analyze_population.py` validates and summarizes an endpoint population. The
+retained held-out F=10 branch-history result is under
+`artifacts/heldout-f10-64-history-endpoints-19a8b4dfd{,-analysis}/`.
+The same 16 starts after a five-second-ceiling history run are under
+`artifacts/history-f10-16-compute-depth-endpoints-426ec7a7c{,-analysis}/`;
+the latter report compares endpoint values, stopping reasons, and signed basis
+slopes directly.
 
 Reproduction commands and the Git LFS input boundary are in the generated
 discussion report. Unit tests check the `sp(4)` Lie-algebra basis and the

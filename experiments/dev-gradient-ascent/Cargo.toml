@@ -48,6 +48,14 @@ name = "dev-gradient-ascent-quotient-endpoint-diagnostic"
 path = "quotient-endpoint-diagnostic/main.rs"
 
 [[bin]]
+name = "dev-gradient-ascent-ascent-continuation"
+path = "ascent-continuation/main.rs"
+
+[[bin]]
+name = "dev-gradient-ascent-endpoint-model-audit"
+path = "endpoint-model-audit/main.rs"
+
+[[bin]]
 name = "dev-gradient-ascent-optimizer-suite"
 path = "literal-naive-gradient/optimizer_suite.rs"
 
@@ -60,9 +68,12 @@ workspace = true
 
 [dependencies]
 blake3.workspace = true
+exp-dev-quadratic-program = { path = "../dev-quadratic-program" }
 exp-sys-landscape = { path = "../sys-landscape" }
+euclidean-polytopes.workspace = true
 good_lp.workspace = true
 nalgebra.workspace = true
+optimizer-runs = { path = "optimizer-runs" }
 rand.workspace = true
 rand_chacha.workspace = true
 rayon.workspace = true

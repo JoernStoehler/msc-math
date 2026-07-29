@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "manifest_path": "experiments/dev-gradient-ascent/optimizer-runs/manifests/history-f10-16-compute-depth.json",
+  "manifest_blake3": "844220b02a77046cbfd752972179dae61ab0bc2a59706ffbc99606a8f5bac651",
+  "resolved_plan_hash": "557a43aa98ee586eca0343edb9c0fca264754ffa55585e9d51d5e14f8284a4fe",
+  "git_commit": "426ec7a7c7bf94dedb06ed288f316d83394f4c5a",
+  "git_dirty": false,
+  "executable": "optimizer-runs",
+  "executable_blake3": "9ab35b6e17757c04edda5ac2cc51bf4f0fa17b125f02165ee1c9c02e8ad80dd1",
+  "started_unix_ms": 1785254091360
+}

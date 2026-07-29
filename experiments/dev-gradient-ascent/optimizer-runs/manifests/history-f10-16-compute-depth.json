@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "study_id": "history-f10-16-compute-depth",
+  "dataset_role": "development",
+  "source": "experiments/polytope-datasets/random.jsonl",
+  "facet_count": 10,
+  "starts": {
+    "ids": [
+      "random_F10_s0_41",
+      "random_F10_s0_34",
+      "random_F10_s3_42",
+      "random_F10_s1_37",
+      "random_F10_s3_43",
+      "random_F10_s0_44",
+      "random_F10_s1_38",
+      "random_F10_s2_47",
+      "random_F10_s1_48",
+      "random_F10_s2_35",
+      "random_F10_s3_34",
+      "random_F10_s1_36",
+      "random_F10_s1_43",
+      "random_F10_s0_47",
+      "random_F10_s0_49",
+      "random_F10_s2_44"
+    ]
+  },
+  "budget": 640,
+  "compute_budget_ms": 5000.0,
+  "stop_sys_threshold": 1.0,
+  "charge_initial": false,
+  "master_seed": 2026072801,
+  "parallelism": 1,
+  "evaluator": {
+    "geometry_mode": "f64",
+    "volume_mode": "f64",
+    "accept_indeterminate_geometry": true,
+    "exact_geometry_fallback": false,
+    "cache_within_run": false
+  },
+  "algorithms": [
+    {
+      "kind": "nonlinear_candidate_relinearized",
+      "id": "history-baseline",
+      "candidate_window_relative": 0.3,
+      "beta_allowance": 0.3,
+      "history_depth": 4,
+      "acceptance": {
+        "kind": "any_usable"
+      },
+      "inner_steps": 2,
+      "initial_distance": 0.1,
+      "expansion": 1.25,
+      "contraction": 0.5,
+      "minimum_distance": 0.000001
+    }
+  ],
+  "checkpoints": [
+    8,
+    16,
+    32,
+    64,
+    128,
+    256,
+    512,
+    640
+  ],
+  "probe_start_count": 16
+}

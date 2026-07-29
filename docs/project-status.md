@@ -23,7 +23,7 @@ No current hard submission deadline is recorded in the repository.
 | Flow graph/CH2021 | substantial conditional draft; final theorem/algorithm role must remain honest | `thesis/05-*`, flow-graph formal, crate, and experiment sources |
 | First-order perturbations | scaffold; arbitrary-polytope boundary remains materially different from the generic story | `thesis/06-*`, `formal/sys-first-order-local-behavior.md` |
 | HKO local maximum | internally reviewed integration candidate; ordinary whole-PDF/Jörn/Kai review remains | `thesis/07-*`, `experiments/hko-local-maximum/` |
-| Data-science search | the closed method table has bounded retained wording; current thesis-level closure must be checked against the later packets and active thesis claims | `thesis/08-*`, `experiments/sys-datascience/` |
+| Data-science search | internally reviewed integration candidate: the bounded random/product method table, held-out ten-facet optimizer comparison, convergence diagnostics, and predictor controls are integrated; ordinary whole-PDF/Jörn/Kai review remains | `thesis/08-*`, `experiments/sys-datascience/`, `experiments/dev-gradient-ascent/` |
 | Rotated regular polygons | substantial theorem/certificate draft | `thesis/09-*`, `experiments/regular-products/` |
 | AI use | the separate factual disclosure page is Jörn-accepted; the numbered research-process discussion remains provisional and materially incomplete | `thesis/ai-use-disclosure-content.md`, `thesis/use-of-ai-content.md`, `experiments/ai-use/` |
 | Visualization, published code/data, conclusion | incomplete thesis surfaces | matching thesis and experiment sources |
@@ -60,11 +60,14 @@ No current hard submission deadline is recorded in the repository.
   by its formal, implementation, and experiment sources.
 - **Data-science fact 34.1 is historical status, not a request for another
   dataset.** It said that work was incomplete at the time and should continue.
-  Determine current closure from the later packets, closed method table, and
-  active thesis claim; do not invent a new consumer choice from that fact.
-  Project fact 30 still makes random/gradient search a major novel method for
-  the data-science part. Its final thesis emphasis is a Jörn writing/design
-  decision, distinct from whether the bounded empirical statement is supported.
+  The current integration candidate combines the later packets, closed method
+  table, held-out optimizer comparison, endpoint continuation, HKO control, and
+  branch-model failure audits.  The optimizer results support bounded
+  statements about their recorded historical evaluator field, not a certified
+  mathematical capacity, convergence, or local maximality.  Project fact 30
+  still makes random/gradient search a major novel method for the data-science
+  part. Its final thesis emphasis is a Jörn writing/design decision, distinct
+  from whether the bounded empirical statements are supported.
 - **External closure state remains partly private or time-sensitive.** Current
   official submission requirements need refreshing. The registration note
   still needs to be handed to the `Prüfungsamt` unless Jörn reports that action

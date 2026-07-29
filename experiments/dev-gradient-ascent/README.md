@@ -29,6 +29,15 @@ Read according to the task:
 - [`METHOD-CANDIDATE.md`](METHOD-CANDIDATE.md) records the current ascent
   candidate. [`PROMOTION-READINESS.md`](PROMOTION-READINESS.md) records its
   evidence gaps and the decision that would be needed before promotion.
+- [`optimizer-runs/`](optimizer-runs/README.md) is the clean traced runner for
+  matched local-optimizer development and owns the retained frozen comparison
+  datasets.
+  [`optimizer-comparison/`](optimizer-comparison/README.md) strictly validates
+  and compares its datasets.
+- [`ascent-continuation/`](ascent-continuation/README.md) tests whether selected
+  recorded endpoints still admit sustained validated improvement.
+- [`endpoint-model-audit/`](endpoint-model-audit/README.md) decomposes
+  finite-distance affine failures into KKT, action, volume, and geometry terms.
 - For a completed comparison or diagnostic, start with that directory's
   README rather than reconstructing its purpose from the executable.
 
@@ -50,6 +59,10 @@ This is the exhaustive set of immediate child directories:
 | [`literal-naive-gradient/`](literal-naive-gradient/README.md) | literal branch-gradient baseline and multi-start optimizer comparison |
 | [`optimizer-score-comparison/`](optimizer-score-comparison/README.md) | selected-case ranking smoke for near-active and candidate-window scores |
 | [`quotient-endpoint-diagnostic/`](quotient-endpoint-diagnostic/README.md) | retained quotient-aware derivative-free endpoint diagnostic |
+| [`optimizer-runs/`](optimizer-runs/README.md) | manifest-driven full-`sys` optimizer runner, trace schemas, and retained frozen F10 datasets |
+| [`optimizer-comparison/`](optimizer-comparison/README.md) | strict runner-dataset validation and matched trajectory comparison |
+| [`ascent-continuation/`](ascent-continuation/README.md) | repeated validated continuation from selected optimizer endpoints |
+| [`endpoint-model-audit/`](endpoint-model-audit/README.md) | three-case derivative and KKT-conditioning decomposition |
 
 The local-geometry directory owns these consumers of its output:
 
@@ -74,6 +87,11 @@ cargo run -p exp-dev-gradient-ascent --bin dev-gradient-ascent-smoke -- \
 
 It must not be cited as a method result. Real-data producers and their input
 requirements are documented in their local READMEs.
+
+The optimizer-runner plumbing smoke is documented separately in
+[`optimizer-runs/README.md`](optimizer-runs/README.md). It exercises the
+registered algorithm families for two charged calls on a checked-in fixture;
+it is likewise not method evidence.
 
 ## Evidence and downstream boundaries
 

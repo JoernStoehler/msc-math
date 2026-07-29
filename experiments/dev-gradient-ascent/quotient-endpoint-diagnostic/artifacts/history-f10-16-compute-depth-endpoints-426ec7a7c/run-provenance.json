@@ -1,0 +1,38 @@
+{
+  "command": [
+    "target/release/dev-gradient-ascent-quotient-endpoint-diagnostic",
+    "--out-dir",
+    "experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/artifacts/history-f10-16-compute-depth-endpoints-426ec7a7c",
+    "--checkpoint-selection",
+    "experiments/dev-gradient-ascent/optimizer-comparison/artifacts/history-f10-16-compute-depth-426ec7a7c-analysis/checkpoint-selection.json",
+    "--algorithm-id",
+    "history-baseline",
+    "--checkpoint-call",
+    "640",
+    "--threads",
+    "16"
+  ],
+  "source_repo_head": "426ec7a7c7bf94dedb06ed288f316d83394f4c5a",
+  "required_base_commit": "e1fbe217ed6a6b181eb80c3bc9afe97b7052632e",
+  "implementation_path": "experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/main.rs",
+  "implementation_blake3": "82f18e217ff4f42ec5d93ab4a79a0ca34bfc33a834f67ac93dd04d231cd0a872",
+  "analyzer_path": "experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/analyze_population.py",
+  "analyzer_blake3": "cee0ef7f093b5427c1330de1dc366998f2108fa62f01fcfa19fd4f95c291ad72",
+  "manifest_path": "experiments/dev-gradient-ascent/Cargo.toml",
+  "manifest_blake3": "f77d2a627063651cc5fa1cc7403a77381000d5086cc52d45e5d821a419e08077",
+  "input_identities": [
+    {
+      "path": "experiments/dev-gradient-ascent/optimizer-comparison/artifacts/history-f10-16-compute-depth-426ec7a7c-analysis/checkpoint-selection.json",
+      "blake3": "5c177467243efd845706b6aeffdec2338ebf718e51bd4a19e31713d1b1212623"
+    }
+  ],
+  "selection_contract": [
+    "states are the checkpoint packet's population-stratified start selection for the requested algorithm and call",
+    "the checkpoint packet was generated before endpoint-poll outcomes"
+  ],
+  "quotient_contract": "at each base a, use the Euclidean orthogonal complement of the rank-15 tangent span of translations, positive scaling, and sp(4,R); poll every signed orthonormal basis vector",
+  "radius_contract": "full: relative radii 1e-3,1e-4,1e-5; absolute step norm = relative radius * ||a||_2",
+  "sys_contract": "use the optimizer evaluator's f64 geometry and volume reconstruction without rational-arithmetic geometry fallback, use the current minimum-safe full capacity route, and compare incidence signatures to the base",
+  "threads": 16,
+  "smoke": false
+}
