@@ -1,3 +1,2 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5acf9fe86c7374efa4efcb5c9bed1af4f05f25ad3868683c20fd191b41f11ed1
-size 667
+{"policy":"monotone_backtracking","start_id":"random_F6_s0_0","nominal_eta":0.001,"iteration":0,"attempt":0,"rate":0.0,"target_evaluations":0,"target_valid":true,"target_sys":0.12632372241189316,"delta":null,"accepted":true,"reason":"initial","best_sys":0.12632372241189316,"best_iteration":0,"radius":null,"direction":null}
+{"policy":"monotone_backtracking","start_id":"random_F6_s0_0","nominal_eta":0.001,"iteration":1,"attempt":0,"rate":0.001,"target_evaluations":1,"target_valid":true,"target_sys":0.12670497528182456,"delta":0.0003812528699314033,"accepted":true,"reason":"valid","best_sys":0.12632372241189316,"best_iteration":0,"radius":null,"direction":null}

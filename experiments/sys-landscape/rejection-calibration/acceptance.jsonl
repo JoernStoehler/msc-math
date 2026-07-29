@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c2674db9bed55a680fb8af66e34891fc3ee7d2ce22e82f4bd150abffa76f39b3
-size 3294
+{"facet_count":5,"h_min":0.5,"h_max":2.0,"n_total":1000,"n_accepted":57,"acceptance_ratio":0.057,"avg_time_accepted_ms":1.3646491228070177,"avg_time_rejected_ms":0.08115270413573701}
+{"facet_count":5,"h_min":0.1,"h_max":5.0,"n_total":1000,"n_accepted":57,"acceptance_ratio":0.057,"avg_time_accepted_ms":1.3925964912280702,"avg_time_rejected_ms":0.1354326617179215}
+{"facet_count":5,"h_min":0.8,"h_max":1.2,"n_total":1000,"n_accepted":57,"acceptance_ratio":0.057,"avg_time_accepted_ms":1.5990350877192983,"avg_time_rejected_ms":0.14441251325556734}
+{"facet_count":6,"h_min":0.5,"h_max":2.0,"n_total":1000,"n_accepted":168,"acceptance_ratio":0.168,"avg_time_accepted_ms":1.6874940476190476,"avg_time_rejected_ms":0.09248557692307692}
+{"facet_count":6,"h_min":0.1,"h_max":5.0,"n_total":1000,"n_accepted":162,"acceptance_ratio":0.162,"avg_time_accepted_ms":1.6545925925925926,"avg_time_rejected_ms":0.09180190930787589}
+{"facet_count":6,"h_min":0.8,"h_max":1.2,"n_total":1000,"n_accepted":170,"acceptance_ratio":0.17,"avg_time_accepted_ms":1.7954117647058825,"avg_time_rejected_ms":0.08685421686746987}
+{"facet_count":7,"h_min":0.5,"h_max":2.0,"n_total":1000,"n_accepted":334,"acceptance_ratio":0.334,"avg_time_accepted_ms":2.685188622754491,"avg_time_rejected_ms":0.12474324324324325}
+{"facet_count":7,"h_min":0.1,"h_max":5.0,"n_total":1000,"n_accepted":305,"acceptance_ratio":0.305,"avg_time_accepted_ms":2.802367213114754,"avg_time_rejected_ms":0.17097410071942445}
+{"facet_count":7,"h_min":0.8,"h_max":1.2,"n_total":1000,"n_accepted":344,"acceptance_ratio":0.344,"avg_time_accepted_ms":3.0674156976744182,"avg_time_rejected_ms":0.12389329268292683}
+{"facet_count":8,"h_min":0.5,"h_max":2.0,"n_total":1000,"n_accepted":450,"acceptance_ratio":0.45,"avg_time_accepted_ms":4.046911111111111,"avg_time_rejected_ms":0.30286545454545455}
+{"facet_count":8,"h_min":0.1,"h_max":5.0,"n_total":1000,"n_accepted":371,"acceptance_ratio":0.371,"avg_time_accepted_ms":3.6066361185983826,"avg_time_rejected_ms":0.3574451510333863}
+{"facet_count":8,"h_min":0.8,"h_max":1.2,"n_total":1000,"n_accepted":506,"acceptance_ratio":0.506,"avg_time_accepted_ms":3.650075098814229,"avg_time_rejected_ms":0.14209919028340082}
+{"facet_count":9,"h_min":0.5,"h_max":2.0,"n_total":1000,"n_accepted":489,"acceptance_ratio":0.489,"avg_time_accepted_ms":4.625114519427403,"avg_time_rejected_ms":0.49834246575342467}
+{"facet_count":9,"h_min":0.1,"h_max":5.0,"n_total":1000,"n_accepted":332,"acceptance_ratio":0.332,"avg_time_accepted_ms":4.28046686746988,"avg_time_rejected_ms":0.7214311377245509}
+{"facet_count":9,"h_min":0.8,"h_max":1.2,"n_total":1000,"n_accepted":602,"acceptance_ratio":0.602,"avg_time_accepted_ms":4.464147840531561,"avg_time_rejected_ms":0.20761306532663318}
+{"facet_count":10,"h_min":0.5,"h_max":2.0,"n_total":1000,"n_accepted":504,"acceptance_ratio":0.504,"avg_time_accepted_ms":5.205323412698412,"avg_time_rejected_ms":1.0333346774193548}
+{"facet_count":10,"h_min":0.1,"h_max":5.0,"n_total":1000,"n_accepted":283,"acceptance_ratio":0.283,"avg_time_accepted_ms":5.781183745583039,"avg_time_rejected_ms":1.3393165969316596}
+{"facet_count":10,"h_min":0.8,"h_max":1.2,"n_total":1000,"n_accepted":729,"acceptance_ratio":0.729,"avg_time_accepted_ms":5.584327846364883,"avg_time_rejected_ms":0.28639852398523985}

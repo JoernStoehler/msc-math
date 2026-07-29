@@ -1,3 +1,7 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ad0c7c996b72c7855bbed7118eaf357779262a8f069ed214cc1c3689f414baaf
-size 1810
+{"control_id":"serialized_rationalized_hko_geometry_and_known_value","expected":"serialized rationalized fixture chart nominal and sys=1.0472135954999580e0 within 0.000000002","observed":"chart=chart_nominal, sys=1.0472135954999569e0","passed":true}
+{"control_id":"auto_vs_direct_pruned_at_hko","expected":"backends, nominal sys, action/sys interval endpoints, and route-side label agree within 0.000000002","observed":"auto_backend=Some(\"auto:billiard\"), direct_backend=Some(\"direct:pruned_hk2017\"), auto_sys=1.0472135954999569e0, direct_sys=1.0472135954999569e0, auto_action_interval=Some(2.6522598727123295e-279)..Some(3.440954801177932), direct_action_interval=Some(1.2794057699917796e-279)..Some(3.4409548011779316), auto_sys_interval=Some(0.0)..Some(1.047213595499957), direct_sys_interval=Some(0.0)..Some(1.0472135954999569), route_sides=route_side_indeterminate..route_side_indeterminate","passed":true}
+{"control_id":"exact_finite_symmetry_central_inversion","expected":"nominal sys=1.0472135954999569e0 within 0.000000002","observed":"sys=1.0472135954999569e0","passed":true}
+{"control_id":"exact_finite_symmetry_simultaneous_quarter_turn","expected":"nominal sys=1.0472135954999569e0 within 0.000000002","observed":"sys=1.0472135954999569e0","passed":true}
+{"control_id":"nonlinear_rotated_pentagon_theta_0.00000000","expected":"profile sys=9.4721359549995798e-1 within 0.000000002","observed":"sys=9.4721359549995732e-1","passed":true}
+{"control_id":"nonlinear_rotated_pentagon_theta_0.15707963","expected":"profile sys=9.7097504617509967e-1 within 0.000000002","observed":"sys=9.7097504617509878e-1","passed":true}
+{"control_id":"nonlinear_rotated_pentagon_theta_0.31415927","expected":"profile sys=1.0472135954999582e0 within 0.000000002","observed":"sys=1.0472135954999569e0","passed":true}

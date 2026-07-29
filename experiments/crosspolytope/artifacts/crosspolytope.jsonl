@@ -1,3 +1,1 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9d9f60f0351549e421cb71952ba50e1189b9c3670b03d46fbbeb38f334671a6b
-size 506
+{"name":"crosspolytope_4d","facet_count":16,"volume":10.666667,"capacity":3.9999999999999964,"capacity_uncertain":3.9999999999999964,"numerical_gap":0.0,"sys":0.7499999765624994,"iterations":31779448,"best_subset":[0,3,12,15],"best_permutation":[0,12,15,3],"best_beta":[0.25000000000000006,0.2500000000000004,0.24999999999999992,0.25000000000000017],"time_volume_ms":2.476658,"time_capacity_ms":1146163.9925089998,"symmetry_group_order":32,"hyperoctahedral_group_order":384,"search_complete_through_m":13}

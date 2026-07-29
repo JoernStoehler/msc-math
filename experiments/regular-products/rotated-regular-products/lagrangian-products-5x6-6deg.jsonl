@@ -1,3 +1,2 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b336d19fc479fb80b34d68a0e7440442347e16c07e92e0a0f5237cb8c14604ab
-size 523
+{"family":"polygon_pair","n1":5,"n2":6,"angle_deg":0.0,"facet_count":11,"volume":6.1772933,"capacity":3.1333093460129504,"sys":0.7946544692812387,"time_capacity_ms":304.491532,"area_q":2.377641290737884,"area_p":2.5980762113533165,"iterations":8148,"bounces":2}
+{"family":"polygon_pair","n1":5,"n2":6,"angle_deg":6.0,"facet_count":11,"volume":6.1772933,"capacity":3.150568489849769,"sys":0.8034329379531207,"time_capacity_ms":327.279737,"area_q":2.377641290737884,"area_p":2.5980762113533165,"iterations":8042,"bounces":2}

@@ -1,3 +1,2 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e362d637e6a9429ab188cc45f0f8e0cbb44a15870bc8c67c6d99afa17d3052ad
-size 899
+{"candidate_id":"ridge-symmetry-3x6-delta1","facet_count":9,"vertex_count":18,"edge_count":36,"ridge_count":27,"volume":18.000000000000004,"edge_formula_r":11.308405050452055,"min_support_height":0.9999999999999994,"max_support_height":1.0000000000000004,"passed":true,"candidates_sha256":"8c61a68c9262c736afc7b869d7046ae20c90309a10aabf3dadda03ef4c36642d","evaluator_source_sha256":"b5dba28ef03e9eacfc4948f72d7281bf555c6c5696c136c0e4edb6cbd668e7dd"}
+{"candidate_id":"ridge-symmetry-3x6-delta2","facet_count":9,"vertex_count":18,"edge_count":36,"ridge_count":27,"volume":18.000000000000007,"edge_formula_r":11.31238255915308,"min_support_height":0.9999999999999994,"max_support_height":1.0000000000000004,"passed":true,"candidates_sha256":"8c61a68c9262c736afc7b869d7046ae20c90309a10aabf3dadda03ef4c36642d","evaluator_source_sha256":"b5dba28ef03e9eacfc4948f72d7281bf555c6c5696c136c0e4edb6cbd668e7dd"}

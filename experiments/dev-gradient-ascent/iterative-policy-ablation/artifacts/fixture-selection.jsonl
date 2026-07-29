@@ -1,3 +1,2 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1ef621ea02a200fa3312b83377175f8a2eca39e8cde85c3c0f509832cd7824cc
-size 684
+{"poly_id":"f6be75d99a357735276fc4b6eb36b0549c823dd75faeedb4fc7506903da2f1b8","degeneracy_label":"narrow_gap","selection_rank_within_label":0,"threshold_relative":0.001,"selection_buckets":["gradient_ascent_products","top_sys"],"datasets":["gradient_ascent_products"],"input_facet_count":10,"input_sys":0.9750768559799221,"near_active_count":2}
+{"poly_id":"43d2432913e3f665557c74ae146711b03fbbdb4182479852672cf1db98dec8cc","degeneracy_label":"narrow_gap","selection_rank_within_label":1,"threshold_relative":0.001,"selection_buckets":["random_product_sample","top_sys"],"datasets":["random_product_sample"],"input_facet_count":12,"input_sys":0.8536118881702471,"near_active_count":4}
