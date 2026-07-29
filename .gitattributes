@@ -1,1 +1,18 @@
-*.jsonl filter=lfs diff=lfs merge=lfs -text
+# Git LFS is opt-in. Keep small fixtures, traces, and ordinary experiment
+# outputs in Git so a normal checkout is usable without LFS materialization.
+# These retained datasets exceed 10 MB and justify LFS storage.
+experiments/combinatorial-cells/cell-widths/combinatorial-boundaries-profiling.jsonl filter=lfs diff=lfs merge=lfs -text
+experiments/dev-sys-prediction/facet-scale-baseline-error/runs/production/sysext-cache.jsonl filter=lfs diff=lfs merge=lfs -text
+experiments/polytope-datasets/random-product.jsonl filter=lfs diff=lfs merge=lfs -text
+experiments/polytope-datasets/random.jsonl filter=lfs diff=lfs merge=lfs -text
+experiments/polytope-datasets/shared-cache.jsonl filter=lfs diff=lfs merge=lfs -text
+experiments/polytope-invariant-table/polytope-table.jsonl filter=lfs diff=lfs merge=lfs -text
+experiments/qp-error-bounds/artifacts/broad/formula_evaluations.jsonl filter=lfs diff=lfs merge=lfs -text
+experiments/qp-error-bounds/artifacts/broad/raw_rows.jsonl filter=lfs diff=lfs merge=lfs -text
+experiments/qp-error-bounds/artifacts/soundness-v2/formula_evaluations.jsonl filter=lfs diff=lfs merge=lfs -text
+experiments/qp-error-bounds/artifacts/soundness-v2/raw_rows.jsonl filter=lfs diff=lfs merge=lfs -text
+experiments/regular-products/pentagon-rotation-empirics/kkt-branch-landscape.jsonl filter=lfs diff=lfs merge=lfs -text
+experiments/sys-datascience/methods/alternative-source-transfer/artifacts/transfer-v1/source.jsonl filter=lfs diff=lfs merge=lfs -text
+experiments/sys-datascience/methods/product-bounce-class-degeneration/artifacts/degeneration-pairs.jsonl filter=lfs diff=lfs merge=lfs -text
+experiments/sys-datascience/methods/product-bounce-class-degeneration/artifacts/degeneration-rows.jsonl filter=lfs diff=lfs merge=lfs -text
+experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl filter=lfs diff=lfs merge=lfs -text

@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d30a483de75702e34f73307dbdd201c1c5f2f76ee81670ad1a10e8b1a7d54414
-size 2018
+{"family":"polygon_pair","n1":4,"n2":4,"angle_deg":0.0,"facet_count":8,"volume":4.0,"capacity":2.0000000000000004,"sys":0.5000000000000002,"time_capacity_ms":5.284196,"area_q":2.0,"area_p":2.0,"iterations":240,"bounces":2}
+{"family":"polygon_pair","n1":4,"n2":4,"angle_deg":6.0,"facet_count":8,"volume":4.0,"capacity":2.011016559127033,"sys":0.5055234501353914,"time_capacity_ms":5.770509,"area_q":2.0,"area_p":2.0,"iterations":404,"bounces":2}
+{"family":"polygon_pair","n1":4,"n2":4,"angle_deg":12.0,"facet_count":8,"volume":4.0,"capacity":2.0446811897300585,"sys":0.5225901459544909,"time_capacity_ms":5.150366,"area_q":2.0,"area_p":2.0,"iterations":404,"bounces":2}
+{"family":"polygon_pair","n1":4,"n2":4,"angle_deg":18.0,"facet_count":8,"volume":4.0,"capacity":2.102924448476535,"sys":0.5527864045000422,"time_capacity_ms":5.920822,"area_q":2.0,"area_p":2.0,"iterations":404,"bounces":2}
+{"family":"polygon_pair","n1":4,"n2":4,"angle_deg":24.0,"facet_count":8,"volume":4.0,"capacity":2.189272557012094,"sys":0.5991142911107841,"time_capacity_ms":5.414772,"area_q":2.0,"area_p":2.0,"iterations":404,"bounces":2}
+{"family":"polygon_pair","n1":4,"n2":4,"angle_deg":30.0,"facet_count":8,"volume":4.0,"capacity":2.3094010767585034,"sys":0.6666666666666669,"time_capacity_ms":5.441362,"area_q":2.0,"area_p":2.0,"iterations":404,"bounces":2}
+{"family":"polygon_pair","n1":4,"n2":4,"angle_deg":36.0,"facet_count":8,"volume":4.0,"capacity":2.47213595499958,"sys":0.7639320225002108,"time_capacity_ms":5.219555,"area_q":2.0,"area_p":2.0,"iterations":404,"bounces":2}
+{"family":"polygon_pair","n1":4,"n2":4,"angle_deg":42.0,"facet_count":8,"volume":4.0,"capacity":2.6912654592127527,"sys":0.9053637214939536,"time_capacity_ms":6.130305,"area_q":2.0,"area_p":2.0,"iterations":404,"bounces":2}
+{"family":"polygon_pair","n1":4,"n2":4,"angle_deg":45.0,"facet_count":8,"volume":4.0,"capacity":2.828427124746189,"sys":0.9999999999999992,"time_capacity_ms":10.779518999999999,"area_q":2.0,"area_p":2.0,"iterations":404,"bounces":2}

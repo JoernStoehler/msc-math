@@ -1,3 +1,24 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:39093564bdeb67b078edc854f7538d2642bd1bf49da33e4de5f8e6168ef8ba48
-size 4148
+{"poly_id":"random_F6_s1_127","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_0","seed_index":0,"best_strategy":null}
+{"poly_id":"random_F6_s1_126","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_1","seed_index":1,"best_strategy":null}
+{"poly_id":"random_F6_s1_125","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_2","seed_index":2,"best_strategy":null}
+{"poly_id":"random_F6_s1_124","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_3","seed_index":3,"best_strategy":null}
+{"poly_id":"random_F6_s1_123","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_4","seed_index":4,"best_strategy":null}
+{"poly_id":"random_F6_s1_122","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_5","seed_index":5,"best_strategy":null}
+{"poly_id":"random_F6_s1_121","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_6","seed_index":6,"best_strategy":null}
+{"poly_id":"random_F6_s1_120","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_7","seed_index":7,"best_strategy":null}
+{"poly_id":"random_F10_s3_1","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_8","seed_index":8,"best_strategy":null}
+{"poly_id":"random_F10_s3_0","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_9","seed_index":9,"best_strategy":null}
+{"poly_id":"random_F10_s3_3","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_10","seed_index":10,"best_strategy":null}
+{"poly_id":"random_F10_s3_2","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_11","seed_index":11,"best_strategy":null}
+{"poly_id":"random_F10_s3_5","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_12","seed_index":12,"best_strategy":null}
+{"poly_id":"random_F10_s3_4","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_13","seed_index":13,"best_strategy":null}
+{"poly_id":"random_F10_s3_7","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_14","seed_index":14,"best_strategy":null}
+{"poly_id":"random_F10_s3_6","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_15","seed_index":15,"best_strategy":null}
+{"poly_id":"random_F12_s0_40","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_16","seed_index":16,"best_strategy":null}
+{"poly_id":"random_F12_s0_41","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_17","seed_index":17,"best_strategy":null}
+{"poly_id":"random_F12_s0_42","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_18","seed_index":18,"best_strategy":null}
+{"poly_id":"random_F12_s0_43","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_19","seed_index":19,"best_strategy":null}
+{"poly_id":"random_F12_s0_44","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_20","seed_index":20,"best_strategy":null}
+{"poly_id":"random_F12_s0_45","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_21","seed_index":21,"best_strategy":null}
+{"poly_id":"random_F12_s0_46","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_22","seed_index":22,"best_strategy":null}
+{"poly_id":"random_F12_s0_47","dataset":"random_sample","role":"prediction_basepoint","source_name":"random_sample_prediction_panel_23","seed_index":23,"best_strategy":null}

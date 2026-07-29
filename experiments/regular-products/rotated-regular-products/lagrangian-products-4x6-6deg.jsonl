@@ -1,3 +1,4 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6c8ee8441c540135bb15b7fe06bbddfbbe18135cb4002ae31417cc19ef2f1050
-size 997
+{"family":"polygon_pair","n1":4,"n2":6,"angle_deg":0.0,"facet_count":10,"volume":5.1961524,"capacity":2.449489742783178,"sys":0.5773502717125848,"time_capacity_ms":75.592683,"area_q":2.0,"area_p":2.5980762113533165,"iterations":2175,"bounces":2}
+{"family":"polygon_pair","n1":4,"n2":6,"angle_deg":6.0,"facet_count":10,"volume":5.1961524,"capacity":2.4629822170743942,"sys":0.5837282025855034,"time_capacity_ms":65.26649499999999,"area_q":2.0,"area_p":2.5980762113533165,"iterations":2324,"bounces":2}
+{"family":"polygon_pair","n1":4,"n2":6,"angle_deg":12.0,"facet_count":10,"volume":5.1961524,"capacity":2.5042128007527413,"sys":0.6034351255222893,"time_capacity_ms":72.716475,"area_q":2.0,"area_p":2.5980762113533165,"iterations":2324,"bounces":2}
+{"family":"polygon_pair","n1":4,"n2":6,"angle_deg":15.0,"facet_count":10,"volume":5.1961524,"capacity":2.5358983848622447,"sys":0.6188021562211052,"time_capacity_ms":75.779474,"area_q":2.0,"area_p":2.5980762113533165,"iterations":2324,"bounces":2}
