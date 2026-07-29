@@ -1,3 +1,4 @@
+use euclidean_polytopes::volume_from_incidence_f64;
 use exp_dev_quadratic_program::f64_geometry_payload;
 use nalgebra::{DMatrix, DVector, Vector4};
 use optimizer_runs::evaluator::{
@@ -235,18 +236,21 @@ fn audit_case(role: &str, state: &InputState, source: &CandidateRow) -> Result<C
         .delta_sys
         .ok_or_else(|| format!("{} lacks source delta", state.state_id))?;
 
-    let f64_config = config(GeometryMode::F64, VolumeMode::F64);
     let exact_config = config(GeometryMode::Exact, VolumeMode::Exact);
-    let (base_polytope, base_f64_volume) = reconstruct_geometry_and_volume(&base, &f64_config)?;
+    let base_payload =
+        f64_geometry_payload(&base).map_err(|_| "base f64 geometry payload failed".to_string())?;
+    let base_f64_volume =
+        volume_from_incidence_f64(&base_payload.vertices, &base_payload.vertex_facet_incidence)
+            .map_err(|error| format!("base f64 volume failed: {error:?}"))?;
     let (_, base_exact_volume) = reconstruct_geometry_and_volume(&base, &exact_config)?;
     let base_orbit = solve_orbit_sigma_saddle_point(&base, &sigma)
         .map_err(|error| format!("base named orbit failed for {}: {error:?}", state.state_id))?;
     let d_action = capacity_derivatives_a_from_orbit(&base, &base_orbit)
         .map_err(|error| format!("base action derivative failed: {error:?}"))?;
     let d_volume = volume_derivatives_a(
-        &base_polytope.dual_vertices_f64,
-        &base_polytope.vertices_f64,
-        &base_polytope.vertex_facet_incidence,
+        &base,
+        &base_payload.vertices,
+        &base_payload.vertex_facet_incidence,
     )
     .map_err(|error| format!("base volume derivative failed: {error:?}"))?;
     let d_ratio =
@@ -334,11 +338,11 @@ fn audit_point(
     sign: i8,
     normalized_radius: f64,
 ) -> Result<PointAudit, String> {
-    let f64_config = config(GeometryMode::F64, VolumeMode::F64);
     let exact_config = config(GeometryMode::Exact, VolumeMode::Exact);
     let payload =
         f64_geometry_payload(duals).map_err(|_| "f64 geometry payload failed".to_string())?;
-    let (f64_polytope, f64_volume) = reconstruct_geometry_and_volume(duals, &f64_config)?;
+    let f64_volume = volume_from_incidence_f64(&payload.vertices, &payload.vertex_facet_incidence)
+        .map_err(|error| format!("f64 volume failed: {error:?}"))?;
     let (exact_polytope, exact_volume) = reconstruct_geometry_and_volume(duals, &exact_config)?;
     let orbit = solve_orbit_sigma_saddle_point(duals, sigma).ok();
     let branch_ratio = orbit
@@ -359,12 +363,12 @@ fn audit_point(
         f64_volume,
         exact_volume,
         f64_vs_exact_volume_relative_error: relative_error(f64_volume, exact_volume),
-        f64_exact_incidence_agree: canonical_incidence(&f64_polytope.vertex_facet_incidence)
+        f64_exact_incidence_agree: canonical_incidence(&payload.vertex_facet_incidence)
             == canonical_incidence(&exact_polytope.vertex_facet_incidence),
-        f64_exact_facet_intersections_agree: f64_polytope.facet_intersection_is_nonempty
+        f64_exact_facet_intersections_agree: payload.facet_intersection_is_nonempty
             == exact_polytope.facet_intersection_is_nonempty,
-        f64_exact_omega_signs_agree: f64_polytope.omega_signs == exact_polytope.omega_signs,
-        f64_vertex_count: f64_polytope.vertices_f64.len(),
+        f64_exact_omega_signs_agree: payload.omega_signs == exact_polytope.omega_signs,
+        f64_vertex_count: payload.vertices.len(),
         exact_vertex_count: exact_polytope.vertices_f64.len(),
         vertex_indeterminate_count: payload.vertex_indeterminate_count,
         bounded_near_singular_vertex_count: payload.bounded_near_singular_vertex_count,
