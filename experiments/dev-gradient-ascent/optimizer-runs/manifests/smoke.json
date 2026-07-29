@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "study_id": "local-optimizer-runner-smoke-f6",
+  "dataset_role": "development",
+  "source": "experiments/dev-gradient-ascent/optimizer-runs/fixtures/local-optimizer-source.jsonl",
+  "facet_count": 6,
+  "starts": {
+    "ids": [
+      "local_optimizer_smoke_F6"
+    ]
+  },
+  "budget": 2,
+  "charge_initial": false,
+  "master_seed": 2026072901,
+  "parallelism": 1,
+  "evaluator": {
+    "geometry_mode": "exact",
+    "volume_mode": "f64",
+    "accept_indeterminate_geometry": false,
+    "exact_geometry_fallback": false,
+    "cache_within_run": false
+  },
+  "algorithms": [
+    {
+      "kind": "online_source",
+      "id": "online-source-b2",
+      "batch_size": 2,
+      "facet_count": 6,
+      "height_min": 0.8,
+      "height_max": 1.2
+    },
+    {
+      "kind": "iid_source",
+      "id": "iid-source-b2",
+      "batch_size": 2
+    },
+    {
+      "kind": "direct_search",
+      "id": "direct-r3e-2",
+      "initial_radius": 0.03,
+      "expansion": 2.0,
+      "contraction": 0.5,
+      "minimum_radius": 0.000001
+    },
+    {
+      "kind": "cma_es",
+      "id": "cma-s3e-2-l4",
+      "initial_sigma": 0.03,
+      "population_size": 4,
+      "minimum_sigma": 0.000001,
+      "maximum_sigma": 1.0,
+      "scale_mode": "normalized_rms_distance"
+    },
+    {
+      "kind": "literal_gradient",
+      "id": "literal-eta1e-3",
+      "rate": 0.001
+    },
+    {
+      "kind": "safeguarded_gradient",
+      "id": "safeguarded-r1e-2",
+      "schedule": {
+        "kind": "adaptive",
+        "initial_distance": 0.01,
+        "expansion": 1.25,
+        "contraction": 0.5,
+        "minimum_distance": 1e-8
+      },
+      "slice_mode": "symmetry_transverse"
+    },
+    {
+      "kind": "gap_model",
+      "id": "gap-w1e-2-r1e-2",
+      "candidate_window_relative": 0.01,
+      "extension_mode": "none",
+      "extension_reachability_scale": 1.0,
+      "schedule": {
+        "kind": "adaptive",
+        "initial_distance": 0.01,
+        "expansion": 1.25,
+        "contraction": 0.5,
+        "minimum_distance": 1e-8
+      },
+      "slice_mode": "symmetry_transverse",
+      "norm_mode": "euclidean_l2",
+      "require_positive_prediction": true
+    },
+    {
+      "kind": "nonlinear_candidate_cma",
+      "id": "fixed-candidate-cma-smoke",
+      "candidate_window_relative": 0.1,
+      "inner_generations": 1,
+      "population_size": 4,
+      "initial_sigma": 0.03,
+      "minimum_sigma": 0.000001,
+      "maximum_sigma": 1.0
+    },
+    {
+      "kind": "nonlinear_candidate_relinearized",
+      "id": "branch-history-smoke",
+      "candidate_window_relative": 0.3,
+      "beta_allowance": 0.3,
+      "history_depth": 4,
+      "acceptance": {
+        "kind": "any_usable"
+      },
+      "directional_transition": {
+        "kind": "none"
+      },
+      "remember_validated_winner": false,
+      "inner_steps": 1,
+      "initial_distance": 0.03,
+      "expansion": 1.25,
+      "contraction": 0.5,
+      "minimum_distance": 0.000001
+    }
+  ],
+  "checkpoints": [
+    2
+  ],
+  "probe_start_count": 1
+}

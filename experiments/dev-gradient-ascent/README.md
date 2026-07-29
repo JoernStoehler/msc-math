@@ -29,6 +29,10 @@ Read according to the task:
 - [`METHOD-CANDIDATE.md`](METHOD-CANDIDATE.md) records the current ascent
   candidate. [`PROMOTION-READINESS.md`](PROMOTION-READINESS.md) records its
   evidence gaps and the decision that would be needed before promotion.
+- [`optimizer-runs/`](optimizer-runs/README.md) is the clean traced runner for
+  matched local-optimizer development.
+  [`optimizer-comparison/`](optimizer-comparison/README.md) strictly validates
+  and compares its datasets.
 - For a completed comparison or diagnostic, start with that directory's
   README rather than reconstructing its purpose from the executable.
 
@@ -50,6 +54,8 @@ This is the exhaustive set of immediate child directories:
 | [`literal-naive-gradient/`](literal-naive-gradient/README.md) | literal branch-gradient baseline and multi-start optimizer comparison |
 | [`optimizer-score-comparison/`](optimizer-score-comparison/README.md) | selected-case ranking smoke for near-active and candidate-window scores |
 | [`quotient-endpoint-diagnostic/`](quotient-endpoint-diagnostic/README.md) | retained quotient-aware derivative-free endpoint diagnostic |
+| [`optimizer-runs/`](optimizer-runs/README.md) | manifest-driven full-`sys` optimizer runner and trace schemas; the clean foundation contains no retained production output |
+| [`optimizer-comparison/`](optimizer-comparison/README.md) | strict runner-dataset validation and matched trajectory comparison |
 
 The local-geometry directory owns these consumers of its output:
 
@@ -74,6 +80,11 @@ cargo run -p exp-dev-gradient-ascent --bin dev-gradient-ascent-smoke -- \
 
 It must not be cited as a method result. Real-data producers and their input
 requirements are documented in their local READMEs.
+
+The optimizer-runner plumbing smoke is documented separately in
+[`optimizer-runs/README.md`](optimizer-runs/README.md). It exercises the
+registered algorithm families for two charged calls on a checked-in fixture;
+it is likewise not method evidence.
 
 ## Evidence and downstream boundaries
 
