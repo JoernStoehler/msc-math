@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "experiment_id": "local-maxima-control-calibration-v1",
+  "command_args": [
+    "target/release/local-maxima-control-calibration",
+    "--canonical"
+  ],
+  "canonical": true,
+  "smoke": false,
+  "git_revision": "8c09591b0210dccbc21f2a95f1b3f0e1051d9d4d",
+  "git_status_porcelain": [
+    "M experiments/local-maxima-check/Cargo.toml",
+    "?? experiments/local-maxima-check/control-calibration/README.md",
+    "?? experiments/local-maxima-check/src/bin/control_calibration.rs"
+  ],
+  "material_delta_sys": 1e-12,
+  "quotient_radius": 0.0001,
+  "hko_perturbation_radius": 0.001,
+  "hko_return_fractions": [
+    0.1,
+    0.01,
+    0.001
+  ],
+  "crossing_radii": [
+    0.01,
+    0.001,
+    0.0001
+  ],
+  "improving_side_offset": 0.01,
+  "improving_side_steps": [
+    0.001,
+    0.0001,
+    0.00001
+  ],
+  "random_master_seed": 20260729,
+  "random_attempt": 3,
+  "random_facet_count": 6,
+  "probe_count": 83,
+  "total_wall_seconds": 13.968934266,
+  "source_paths": [
+    "experiments/local-maxima-check/control-calibration/README.md",
+    "experiments/local-maxima-check/src/bin/control_calibration.rs",
+    "experiments/local-maxima-check/src/directions.rs",
+    "experiments/hko-local-maximum/theorem/README.md",
+    "thesis/09-rotated-regular-polygons-pentagon-profile-theorem.tex",
+    "experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/artifacts/DISCUSSION.md"
+  ]
+}

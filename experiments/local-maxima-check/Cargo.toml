@@ -8,6 +8,10 @@ edition = "2021"
 name = "sys1-local-maxima"
 path = "src/main.rs"
 
+[[bin]]
+name = "local-maxima-control-calibration"
+path = "src/bin/control_calibration.rs"
+
 [lints]
 workspace = true
 

@@ -7,6 +7,13 @@ known-positive control. HKO enters through its exact theorem packet, not as
 another probe seed. The selected bodies and their evidence ladder, rather than
 the hostile-search data-science pipeline, organize this packet.
 
+The bounded successor
+[`control-calibration/`](control-calibration/README.md) adds a matched HKO,
+controlled-perturbation, rotated-pentagon, and ordinary-random calibration
+panel. Its pilot report also audits archived optimizer states, the unresolved
+historical fixed-`F` “local maxima” label, and named facet-addition evidence.
+It does not reopen the generic finite-probe allocation closed by `LMC-D1`.
+
 ## Five statuses
 
 | Body | Value status | Local status |

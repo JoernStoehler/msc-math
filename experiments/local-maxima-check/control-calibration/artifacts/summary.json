@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "experiment_id": "local-maxima-control-calibration-v1",
+  "smoke": false,
+  "all_probes_valid": true,
+  "case_count": 6,
+  "probe_count": 83,
+  "cases": [
+    {
+      "case_id": "hko_perturb_q0_r1e-3",
+      "case_role": "controlled_hko_perturbation",
+      "source": "constructed from the HKO reference along a deterministic quotient-basis direction",
+      "probe_count": 3,
+      "valid_probe_count": 3,
+      "incidence_change_count": 0,
+      "nominal_improvement_count": 3,
+      "interval_separated_improvement_count": 0,
+      "max_delta_sys": 0.00037441645640923227,
+      "finite_classification": "finite_return_improvement_observed",
+      "claim_boundary": "The finite return steps are empirical germ evidence, not a proof of non-local-maximality."
+    },
+    {
+      "case_id": "hko_perturb_q1_r1e-3",
+      "case_role": "controlled_hko_perturbation",
+      "source": "constructed from the HKO reference along a deterministic quotient-basis direction",
+      "probe_count": 3,
+      "valid_probe_count": 3,
+      "incidence_change_count": 0,
+      "nominal_improvement_count": 3,
+      "interval_separated_improvement_count": 0,
+      "max_delta_sys": 0.0003813759527440119,
+      "finite_classification": "finite_return_improvement_observed",
+      "claim_boundary": "The finite return steps are empirical germ evidence, not a proof of non-local-maximality."
+    },
+    {
+      "case_id": "hko_reference",
+      "case_role": "proved_fixed_f_positive_control",
+      "source": "symplectic::known_polytopes::hko_pentagon; theorem authority: experiments/hko-local-maximum/theorem/README.md",
+      "probe_count": 50,
+      "valid_probe_count": 50,
+      "incidence_change_count": 0,
+      "nominal_improvement_count": 0,
+      "interval_separated_improvement_count": 0,
+      "max_delta_sys": -0.00007443116198868616,
+      "finite_classification": "survives_declared_finite_signed_basis_suite",
+      "claim_boundary": "The separate exact HKO packet proves fixed-F local maximality; this finite miss is not proof evidence."
+    },
+    {
+      "case_id": "ordinary_random_f6",
+      "case_role": "ordinary_random_negative_control",
+      "source": "SysLandscapePolytopeCache::generate_random(F=6, h=[0.8,1.2], master_seed=20260729, attempt=3)",
+      "probe_count": 18,
+      "valid_probe_count": 18,
+      "incidence_change_count": 0,
+      "nominal_improvement_count": 9,
+      "interval_separated_improvement_count": 9,
+      "max_delta_sys": 0.00007844283995364632,
+      "finite_classification": "finite_quotient_improvement_observed",
+      "claim_boundary": "The found finite point rejects this state under the declared poll but does not prove an arbitrarily small improving germ."
+    },
+    {
+      "case_id": "pentagon_equality_crossing",
+      "case_role": "exact_nonmaximum_control",
+      "source": "thesis/09-rotated-regular-polygons-pentagon-profile-theorem.tex",
+      "probe_count": 6,
+      "valid_probe_count": 6,
+      "incidence_change_count": 0,
+      "nominal_improvement_count": 3,
+      "interval_separated_improvement_count": 3,
+      "max_delta_sys": 0.004838769787604336,
+      "finite_classification": "exactly_not_local_maximum_in_named_rotation_family",
+      "claim_boundary": "The exact theorem supplies the germ; the rows only check that the numerical detector recovers it."
+    },
+    {
+      "case_id": "pentagon_improving_side",
+      "case_role": "exact_increasing_family_control",
+      "source": "thesis/09-rotated-regular-polygons-pentagon-profile-theorem.tex",
+      "probe_count": 3,
+      "valid_probe_count": 3,
+      "incidence_change_count": 0,
+      "nominal_improvement_count": 3,
+      "interval_separated_improvement_count": 3,
+      "max_delta_sys": 0.0004968771111864001,
+      "finite_classification": "exactly_not_local_maximum_in_named_rotation_family",
+      "claim_boundary": "The exact profile is strictly increasing toward pi/10; the finite rows are calibration."
+    }
+  ],
+  "exact_control_source": "thesis/09-rotated-regular-polygons-pentagon-profile-theorem.tex",
+  "overall_claim_boundary": "Finite recomputed probes can find improving points or record a declared miss. Only the cited exact pentagon profile proves a non-local-maximum germ; finite misses and f64 HKO behavior are not local-maximality certificates."
+}
