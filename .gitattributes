@@ -3,6 +3,9 @@
 # These retained datasets exceed 10 MB and justify LFS storage.
 experiments/combinatorial-cells/cell-widths/combinatorial-boundaries-profiling.jsonl filter=lfs diff=lfs merge=lfs -text
 experiments/dev-sys-prediction/facet-scale-baseline-error/runs/production/sysext-cache.jsonl filter=lfs diff=lfs merge=lfs -text
+experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd/evaluations.jsonl filter=lfs diff=lfs merge=lfs -text
+experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd/proposals.jsonl filter=lfs diff=lfs merge=lfs -text
+experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd/rounds.jsonl filter=lfs diff=lfs merge=lfs -text
 experiments/polytope-datasets/random-product.jsonl filter=lfs diff=lfs merge=lfs -text
 experiments/polytope-datasets/random.jsonl filter=lfs diff=lfs merge=lfs -text
 experiments/polytope-datasets/shared-cache.jsonl filter=lfs diff=lfs merge=lfs -text
