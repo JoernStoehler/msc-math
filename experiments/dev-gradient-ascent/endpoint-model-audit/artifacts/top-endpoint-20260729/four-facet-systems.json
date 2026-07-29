@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "input": "experiments/dev-gradient-ascent/ascent-continuation/artifacts/top8-tuning-endpoints-one-step-20260729/input.json",
+  "input_sha256": "e25000d0dfcaeddbc32ae72a90e6d934140925666476793a0f5ac87f02098072",
+  "state_index": 0,
+  "state_id": "rank-001--random_F10_s0_12",
+  "facet_count": 10,
+  "four_facet_system_count": 210,
+  "thresholds_reproduced": {
+    "abs_determinant_at_most": 1e-12,
+    "bounded_candidate_residual_at_most": 1e-08,
+    "bounded_candidate_coordinate_abs_at_most": 1000.0,
+    "polytope_inequality_gap_at_most": 1e-09
+  },
+  "near_singular_system_count": 1,
+  "approximately_bounded_candidate_count": 0,
+  "near_singular_systems": [
+    {
+      "facets": [
+        0,
+        1,
+        2,
+        8
+      ],
+      "determinant": 7.591603732665786e-18,
+      "abs_determinant": 7.591603732665786e-18,
+      "svd_rank_at_rcond": 4,
+      "singular_values": [
+        2.4979952392342692,
+        1.938534937773257,
+        7.269219218888215e-09,
+        2.1566541540062581e-10
+      ],
+      "condition_number": 11582734462.055155,
+      "least_squares_solution": [
+        4540866455.750507,
+        3009065105.596041,
+        2205352726.2284107,
+        -293657359.49907064
+      ],
+      "solution_norm_inf": 4540866455.750507,
+      "residual_l2": 1.7192608239479013e-06,
+      "maximum_polytope_inequality_gap": 10592776502.38796,
+      "maximum_gap_facet": 7,
+      "passes_approximate_bounded_candidate_test": false
+    }
+  ],
+  "claim_boundary": "This f64 NumPy audit explains the retained counter. The Rust geometry producer remains authoritative."
+}

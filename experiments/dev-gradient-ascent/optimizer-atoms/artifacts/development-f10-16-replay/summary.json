@@ -1,0 +1,12 @@
+{
+  "schema_version": 2,
+  "selected_pairs": 144,
+  "realized_pair_targets": 432,
+  "atom_rows": 6720,
+  "winner_mechanism_rows": 420,
+  "candidate_lifetime_rows": 9660,
+  "rollback_rows": 1932,
+  "skipped_targets": 12,
+  "elapsed_ms": 74898.578441,
+  "claim_boundary": "development replay on selected recorded proposals; not a complete optimizer comparison"
+}

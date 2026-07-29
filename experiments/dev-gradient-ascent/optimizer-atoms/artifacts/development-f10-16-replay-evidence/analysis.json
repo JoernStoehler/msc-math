@@ -1,0 +1,30 @@
+{
+  "schema_version": 2,
+  "dataset": "experiments/dev-gradient-ascent/optimizer-atoms/artifacts/development-f10-16-replay",
+  "inputs": {
+    "pairs.jsonl": {
+      "rows": 432,
+      "sha256": "ddd4ef1c7e28c85eda8b5a834ae30044952e480e1ddfcaf92eff9d35f94cc8ca"
+    },
+    "atoms.jsonl": {
+      "rows": 6720,
+      "sha256": "889431684e8e340f8441dc6b0d7b262ff1f888f2c1de0f7091fb44cf63519db6"
+    },
+    "winner-mechanisms.jsonl": {
+      "rows": 420,
+      "sha256": "e7159dc830c88f09fe0117bad964d0dfe0cca7cddc0fbcbc37fd58eb8d52c044"
+    },
+    "candidate-lifetimes.jsonl": {
+      "rows": 9660,
+      "sha256": "3d4b2637b1b7e5e9a36d0106a8720a1bc460b8a710e5d16eed87784fcb9e55bf"
+    },
+    "rollbacks.jsonl": {
+      "rows": 1932,
+      "sha256": "3b1570021d7d4367e5f88fb03874dca671d178cc3478b0ad1290867beabaab22"
+    }
+  },
+  "material_error_threshold": 0.01,
+  "lifetime_error_threshold": 0.001,
+  "gain_ratio_floor": 0.001,
+  "claim_boundary": "Selected development trajectories from 16 starts and three optimizers; predictor mechanisms, not full optimizer performance."
+}

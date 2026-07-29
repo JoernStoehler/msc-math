@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "source_dataset": "/tmp/optimizer-runs-smoke",
+  "pairs_per_run": 1,
+  "action_windows": [0.01, 0.1],
+  "distance_scales": [1.0],
+  "max_runs": 1
+}

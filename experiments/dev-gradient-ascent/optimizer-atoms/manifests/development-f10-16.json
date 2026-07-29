@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "source_dataset": "experiments/dev-gradient-ascent/optimizer-runs/artifacts/development-f10-16-equal-compute-81c3055a",
+  "algorithm_ids": [
+    "safeguarded-adaptive-d1e-1",
+    "gap-w1e-1-adaptive-d1e-1",
+    "branch-history-w3e-1-beta3e-1-h4-n2-d1e-1"
+  ],
+  "pairs_per_run": 3,
+  "action_windows": [0.01, 0.1, 0.3, 1.0],
+  "distance_scales": [0.5, 1.0, 2.0]
+}

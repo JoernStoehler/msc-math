@@ -1,0 +1,5 @@
+field,targets,material_errors,rank_correlation_with_material_error,auc_for_material_error
+normalized_distance,420,69,0.5255363212709446,0.909430612329163
+symmetry_transverse_normalized_distance,420,69,0.5288225266260759,0.9119905859036294
+candidate_count,420,69,-0.11404177194359273,0.4111647879763822
+anchor_sys,420,69,-0.3278247835247466,0.24462199099880258

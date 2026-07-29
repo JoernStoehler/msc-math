@@ -1,0 +1,15 @@
+{
+  "dataset": "experiments/dev-gradient-ascent/optimizer-atoms/artifacts/development-f10-16-replay",
+  "atom_rows": 6720,
+  "algorithms": [
+    "branch-history-w3e-1-beta3e-1-h4-n2-d1e-1",
+    "gap-w1e-1-adaptive-d1e-1",
+    "safeguarded-adaptive-d1e-1"
+  ],
+  "distance_scales": [
+    0.5,
+    1.0,
+    2.0
+  ],
+  "claim_boundary": "Matched replay diagnoses predictor components at saved states; it does not establish full-trajectory performance."
+}

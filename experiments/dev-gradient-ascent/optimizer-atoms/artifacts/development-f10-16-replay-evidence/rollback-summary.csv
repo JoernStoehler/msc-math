@@ -1,0 +1,5 @@
+algorithm_id,future_targets,previous_step_admissible,previous_step_within_1e_2,previous_step_within_1e_3,median_admissible_lead_steps,median_within_1e_2_lead_steps,median_within_1e_3_lead_steps,median_winner_identity_lead_steps
+pooled,1932,0.7013457556935818,0.5864389233954451,0.4083850931677019,8.0,7.0,6.0,4.0
+branch-history-w3e-1-beta3e-1-h4-n2-d1e-1,601,0.5108153078202995,0.4475873544093178,0.3793677204658902,6.0,5.0,4.0,2.0
+gap-w1e-1-adaptive-d1e-1,482,0.45435684647302904,0.33402489626556015,0.2551867219917012,6.0,4.0,3.0,2.0
+safeguarded-adaptive-d1e-1,849,0.9764428739693758,0.8280329799764429,0.5159010600706714,13.0,12.0,10.0,10.0

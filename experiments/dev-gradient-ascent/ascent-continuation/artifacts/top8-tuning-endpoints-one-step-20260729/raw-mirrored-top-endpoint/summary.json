@@ -1,0 +1,48 @@
+{
+  "claim_boundary": "Stopping means that the tested finite-step models and signed basis scan found no improvement. It does not establish local maximality.",
+  "default_maximum_accepted_steps": 1,
+  "default_model_radii": [
+    0.001,
+    0.0001
+  ],
+  "diagnostic": "repeated validated ascent continuation",
+  "evaluator": {
+    "accept_indeterminate_geometry": true,
+    "cache_within_run": false,
+    "exact_geometry_fallback": false,
+    "geometry_mode": "f64",
+    "volume_mode": "f64"
+  },
+  "external_state_packet": true,
+  "fallback": "signed symmetry-transverse basis at relative radius 1e-5, used only when all model proposals fail",
+  "minimum_accepted_gain": 1e-12,
+  "run_mode": "debug",
+  "schema_version": 1,
+  "states": [
+    {
+      "accepted_steps": 0,
+      "cumulative_gain": 0.0,
+      "cumulative_normalized_path_length": 0.0,
+      "cumulative_path_length": 0.0,
+      "direction_class": "retained_optimizer_endpoint",
+      "final_reference_distance": 7.193010181404521,
+      "final_step_slope": null,
+      "final_sys": 0.9999624776406894,
+      "full_sys_evaluations": 76,
+      "initial_minus_recorded": 0.0,
+      "initial_reference_distance": 7.193010181404521,
+      "initial_reference_gap": 0.0472511178592675,
+      "recomputed_initial_sys": 0.9999624776406894,
+      "recorded_sys": 0.9999624776406894,
+      "recovered_gap_fraction": 0.0,
+      "reference_distance_contraction": 0.0,
+      "reference_id": "hko2024_proved_local_maximum",
+      "reference_sys": 1.0472135954999569,
+      "role": "retained_optimizer_endpoint",
+      "source_distance": 7.193010181404521,
+      "state_id": "rank-001--random_F10_s0_12",
+      "stop_reason": "no_validated_improvement_in_models_or_signed_basis"
+    }
+  ],
+  "wall_seconds": 2.524178472
+}

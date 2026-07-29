@@ -105,7 +105,96 @@ fn load_jsonl<T: DeserializeOwned>(path: &Path) -> Result<Vec<T>, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::schema::AlgorithmStateRow;
     use std::fs;
+
+    fn round_value() -> serde_json::Value {
+        serde_json::json!({
+            "schema_version": 1,
+            "run_id": "run",
+            "round_id": "run--r00000",
+            "round_index": 0,
+            "charged_calls_before": 0,
+            "charged_calls_after": 1,
+            "charged_compute_ms_before": 0.0,
+            "charged_compute_ms_after": 1.0,
+            "best_evaluation_id_before": "run--e000000",
+            "best_evaluation_id_after": "run--e000001",
+            "best_sys_before": 0.1,
+            "best_sys_after": 0.2,
+            "algorithm_state_before": {
+                "kind": "evaluated_point",
+                "evaluation_id": "run--e000000"
+            },
+            "algorithm_state_after": {
+                "kind": "evaluated_population",
+                "evaluation_ids": ["run--e000001"]
+            },
+            "geometric_reference_kind": null,
+            "geometric_reference_dual_flat": null,
+            "ask_ms": 0.1,
+            "tell_ms": 0.2,
+            "proposal_ids": [],
+            "selected": [],
+            "stop_reason": null,
+            "algorithm_fields": {}
+        })
+    }
+
+    fn load_round(value: serde_json::Value) -> Result<Vec<RoundRow>, String> {
+        let directory = tempfile::tempdir().map_err(|error| error.to_string())?;
+        let path = directory.path().join("rounds.jsonl");
+        fs::write(
+            path,
+            serde_json::to_string(&value).map_err(|error| error.to_string())?,
+        )
+        .map_err(|error| error.to_string())?;
+        load_jsonl(&directory.path().join("rounds.jsonl"))
+    }
+
+    #[test]
+    fn legacy_round_without_state_fields_loads_as_no_single_current_state() {
+        let mut value = round_value();
+        let object = value.as_object_mut().expect("round fixture is an object");
+        object.remove("algorithm_state_before");
+        object.remove("algorithm_state_after");
+
+        let rows = load_round(value).expect("legacy round should remain readable");
+        assert_eq!(rows.len(), 1);
+        assert_eq!(
+            rows[0].algorithm_state_before,
+            AlgorithmStateRow::NoSingleCurrentState
+        );
+        assert_eq!(
+            rows[0].algorithm_state_after,
+            AlgorithmStateRow::NoSingleCurrentState
+        );
+    }
+
+    #[test]
+    fn current_round_preserves_recorded_algorithm_states() {
+        let rows = load_round(round_value()).expect("current round should load");
+        assert_eq!(
+            rows[0].algorithm_state_before,
+            AlgorithmStateRow::EvaluatedPoint {
+                evaluation_id: "run--e000000".to_string()
+            }
+        );
+        assert_eq!(
+            rows[0].algorithm_state_after,
+            AlgorithmStateRow::EvaluatedPopulation {
+                evaluation_ids: vec!["run--e000001".to_string()]
+            }
+        );
+    }
+
+    #[test]
+    fn present_invalid_algorithm_state_remains_rejected() {
+        let mut value = round_value();
+        value["algorithm_state_before"] = serde_json::json!({"kind": "unknown"});
+
+        assert!(load_round(value).is_err());
+    }
 
     #[test]
     fn best_at_checkpoint_uses_only_reached_calls() {
