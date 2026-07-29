@@ -9,6 +9,13 @@ best-so-far curves by charged call, evaluator time, and measured
 evaluator-plus-optimizer time; paired-start comparisons; proposal behavior;
 compute profiles; and checkpoint selections.
 
+Schema-1 packets written before current-state recording was added remain
+supported as an explicit legacy case: the analyzer validates every check
+supported by their recorded fields without inferring an algorithm state. New
+packets must record both current-state fields on every round and a final state
+on the run; those fields are validated for continuity, usable evaluation
+references, and selected-state changes.
+
 Use `--mode development` for the smoke and new method development. Tuning and
 held-out modes require correspondingly declared manifest roles. A generated
 summary is evidence only for its exact producer, source population, manifest,

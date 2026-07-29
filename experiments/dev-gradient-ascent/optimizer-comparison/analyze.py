@@ -28,6 +28,7 @@ import numpy as np
 SCHEMA_VERSION = 1
 BOOTSTRAP_REPLICATES = 4000
 BOOTSTRAP_SEED = 2026072303
+ALGORITHM_STATE_FIELDS = ("algorithm_state_before", "algorithm_state_after")
 
 
 def display_algorithm(algorithm_id: str) -> str:
@@ -193,6 +194,26 @@ def validate_packet(
         best_sys = initial["sys"]
         calls_before = int(run["charge_initial"])
         previous_algorithm_state = None
+        round_state_presence = [
+            tuple(field in round_row for field in ALGORITHM_STATE_FIELDS)
+            for round_row in run_rounds
+        ]
+        if any(any(presence) for presence in round_state_presence) and not all(
+            all(presence) for presence in round_state_presence
+        ):
+            raise ValueError(
+                f"{run_id}: incomplete current-state fields in round trace"
+            )
+        has_final_algorithm_state = "final_algorithm_state" in run
+        has_round_algorithm_state = (
+            has_final_algorithm_state
+            if not run_rounds
+            else all(all(presence) for presence in round_state_presence)
+        )
+        if has_round_algorithm_state != has_final_algorithm_state:
+            raise ValueError(
+                f"{run_id}: current-state fields are incomplete across run trace"
+            )
         for round_row in run_rounds:
             if round_row["charged_calls_before"] != calls_before:
                 raise ValueError(f"{run_id}: round call boundary mismatch")
@@ -230,29 +251,36 @@ def validate_packet(
             selected_ids = {row["proposal_id"] for row in round_row["selected"]}
             if not selected_ids.issubset(proposal_ids):
                 raise ValueError(f"{run_id}: selected proposal absent from round")
-            selected_evaluation_ids = {
-                proposal_by_id[proposal_id]["evaluation_id"]
-                for proposal_id in selected_ids
-            }
-            state_before = round_row["algorithm_state_before"]
-            state_after = round_row["algorithm_state_after"]
-            before_ids = state_evaluation_ids(state_before, run_id, evaluation_by_id)
-            after_ids = state_evaluation_ids(state_after, run_id, evaluation_by_id)
-            if previous_algorithm_state is None:
-                if (
-                    state_before["kind"] == "evaluated_point"
-                    and before_ids != [initial["evaluation_id"]]
-                ):
-                    raise ValueError(f"{run_id}: initial current state is not the start")
-            elif state_before != previous_algorithm_state:
-                raise ValueError(f"{run_id}: discontinuous algorithm state")
-            if state_after != state_before:
-                changed_ids = set(after_ids) - set(before_ids)
-                if not changed_ids.issubset(selected_evaluation_ids):
-                    raise ValueError(
-                        f"{run_id}: current state changed to an unselected evaluation"
-                    )
-            previous_algorithm_state = state_after
+            if has_round_algorithm_state:
+                selected_evaluation_ids = {
+                    proposal_by_id[proposal_id]["evaluation_id"]
+                    for proposal_id in selected_ids
+                }
+                state_before = round_row["algorithm_state_before"]
+                state_after = round_row["algorithm_state_after"]
+                before_ids = state_evaluation_ids(
+                    state_before, run_id, evaluation_by_id
+                )
+                after_ids = state_evaluation_ids(
+                    state_after, run_id, evaluation_by_id
+                )
+                if previous_algorithm_state is None:
+                    if (
+                        state_before["kind"] == "evaluated_point"
+                        and before_ids != [initial["evaluation_id"]]
+                    ):
+                        raise ValueError(
+                            f"{run_id}: initial current state is not the start"
+                        )
+                elif state_before != previous_algorithm_state:
+                    raise ValueError(f"{run_id}: discontinuous algorithm state")
+                if state_after != state_before:
+                    changed_ids = set(after_ids) - set(before_ids)
+                    if not changed_ids.issubset(selected_evaluation_ids):
+                        raise ValueError(
+                            f"{run_id}: current state changed to an unselected evaluation"
+                        )
+                previous_algorithm_state = state_after
             calls_before += len(proposal_ids)
             if round_row["charged_calls_after"] != calls_before:
                 raise ValueError(f"{run_id}: round call-after mismatch")
@@ -266,14 +294,15 @@ def validate_packet(
         if best_id != run["best_evaluation_id"]:
             raise ValueError(f"{run_id}: final best id mismatch")
         assert_close(best_sys, run["best_sys"], f"{run_id}: final best sys")
-        state_evaluation_ids(
-            run["final_algorithm_state"], run_id, evaluation_by_id
-        )
-        if (
-            previous_algorithm_state is not None
-            and run["final_algorithm_state"] != previous_algorithm_state
-        ):
-            raise ValueError(f"{run_id}: final algorithm state mismatch")
+        if has_final_algorithm_state:
+            state_evaluation_ids(
+                run["final_algorithm_state"], run_id, evaluation_by_id
+            )
+            if (
+                previous_algorithm_state is not None
+                and run["final_algorithm_state"] != previous_algorithm_state
+            ):
+                raise ValueError(f"{run_id}: final algorithm state mismatch")
         expected_physical = sum(row["cache_status"] == "miss" for row in run_evaluations)
         if expected_physical != run["physical_evaluations"]:
             raise ValueError(f"{run_id}: physical evaluation count mismatch")
