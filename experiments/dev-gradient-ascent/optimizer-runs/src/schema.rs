@@ -142,6 +142,10 @@ pub struct RunRow {
     pub initial_sys: f64,
     pub best_evaluation_id: String,
     pub best_sys: f64,
+    // Historical schema-1 runs predate final-state recording.  Absence means
+    // that no single current state was retained; a present value is still
+    // parsed strictly so malformed evidence cannot be hidden by the default.
+    #[serde(default = "default_no_single_current_state")]
     pub final_algorithm_state: AlgorithmStateRow,
     pub charged_calls: usize,
     #[serde(default)]

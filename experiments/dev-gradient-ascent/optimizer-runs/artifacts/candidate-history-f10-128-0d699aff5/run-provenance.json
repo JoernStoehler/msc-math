@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "manifest_path": "experiments/dev-gradient-ascent/optimizer-runs/manifests/candidate-history-f10-128.json",
+  "manifest_blake3": "c26f2e9ee8803a73670565ea9e127e935277e294eb9bec7d67b4fdd1605d5a21",
+  "resolved_plan_hash": "7870c2c7bfe840745d58c27dd09ab09e0564975486a10f5e9995346f29877767",
+  "git_commit": "0d699aff5c9676ebab3aa866d69838b94215e8a5",
+  "git_dirty": true,
+  "executable": "optimizer-runs",
+  "executable_blake3": "e3191e39bb190e45085ecd524a939bb940151ecbeca6131fa12735cbf10cb848",
+  "started_unix_ms": 1784969288728
+}

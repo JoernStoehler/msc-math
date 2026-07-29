@@ -223,4 +223,64 @@ mod tests {
             "e1"
         );
     }
+
+    #[test]
+    fn legacy_run_without_final_state_loads_as_no_single_current_state() {
+        let mut value = serde_json::json!({
+            "schema_version": 1, "run_id": "r", "start_id": "s",
+            "algorithm_id": "a", "algorithm_kind": "k", "seed": 1,
+            "budget": 2, "charge_initial": false,
+            "initial_evaluation_id": "e0", "initial_sys": 1.0,
+            "best_evaluation_id": "e0", "best_sys": 1.0,
+            "charged_calls": 0, "physical_evaluations": 1,
+            "invalid_evaluations": 0, "indeterminate_evaluations": 0,
+            "exact_fallback_evaluations": 0, "rounds": 0,
+            "stop_reason": "budget_exhausted", "wall_ms": 1.0
+        });
+        let rows = load_run(value.take()).expect("legacy run should load");
+        assert_eq!(rows[0].final_algorithm_state, AlgorithmStateRow::NoSingleCurrentState);
+    }
+
+    #[test]
+    fn present_valid_run_state_is_preserved() {
+        let value = serde_json::json!({
+            "schema_version": 1, "run_id": "r", "start_id": "s",
+            "algorithm_id": "a", "algorithm_kind": "k", "seed": 1,
+            "budget": 2, "charge_initial": false,
+            "initial_evaluation_id": "e0", "initial_sys": 1.0,
+            "best_evaluation_id": "e0", "best_sys": 1.0,
+            "final_algorithm_state": {"kind":"evaluated_point", "evaluation_id":"e0"},
+            "charged_calls": 0, "physical_evaluations": 1,
+            "invalid_evaluations": 0, "indeterminate_evaluations": 0,
+            "exact_fallback_evaluations": 0, "rounds": 0,
+            "stop_reason": "budget_exhausted", "wall_ms": 1.0
+        });
+        let rows = load_run(value).expect("valid run state should load");
+        assert_eq!(rows[0].final_algorithm_state, AlgorithmStateRow::EvaluatedPoint { evaluation_id: "e0".into() });
+    }
+
+    #[test]
+    fn present_malformed_run_state_is_rejected() {
+        let value = serde_json::json!({
+            "schema_version": 1, "run_id": "r", "start_id": "s",
+            "algorithm_id": "a", "algorithm_kind": "k", "seed": 1,
+            "budget": 2, "charge_initial": false,
+            "initial_evaluation_id": "e0", "initial_sys": 1.0,
+            "best_evaluation_id": "e0", "best_sys": 1.0,
+            "final_algorithm_state": {"kind":"unknown"},
+            "charged_calls": 0, "physical_evaluations": 1,
+            "invalid_evaluations": 0, "indeterminate_evaluations": 0,
+            "exact_fallback_evaluations": 0, "rounds": 0,
+            "stop_reason": "budget_exhausted", "wall_ms": 1.0
+        });
+        assert!(load_run(value).is_err());
+    }
+
+    fn load_run(value: serde_json::Value) -> Result<Vec<RunRow>, String> {
+        let directory = tempfile::tempdir().map_err(|error| error.to_string())?;
+        let path = directory.path().join("runs.jsonl");
+        fs::write(path, serde_json::to_string(&value).map_err(|error| error.to_string())?)
+            .map_err(|error| error.to_string())?;
+        load_jsonl(&directory.path().join("runs.jsonl"))
+    }
 }
