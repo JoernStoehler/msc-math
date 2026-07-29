@@ -12,12 +12,65 @@ context only for this chapter.
 The optimizer packet freezes \(64\) held-out random ten-facet starts, seven
 methods, a \(1000\)\,ms measured serial-compute budget, and a cap of \(128\)
 full historical-evaluator calls per run.  Its \(448\) traces contain \(28824\)
-full calls.  Here \(\widehat{\operatorname{sys}}\) denotes the trace field
-returned by the historical heuristic binary64 orbit search, not a certified
-mathematical capacity.  Four-anchor branch history has the largest held-out
-median best value, \(0.9848\), followed by transition prediction at \(0.9816\)
-and the finite-gap affine model at \(0.9772\).  No run reaches
+full calls.  With the notation and trust boundary of
+Section~\ref{subsec:black-box-datascience-finite-budget-optimization},
+four-anchor branch history has the largest held-out median best value,
+\(0.9848\), followed by transition prediction at \(0.9816\) and the
+finite-gap affine model at \(0.9772\).  No run reaches
 \(\widehat{\operatorname{sys}}=1\).
+
+\paragraph{Frozen optimizer steps.}
+All local methods propose in the \(25\)-dimensional Euclidean slice transverse
+to translations, common scaling, and the linear symplectic action.  Every
+outer proposal is checked by a fresh geometry reconstruction and the
+configured full orbit-word search.  The implementations below are frozen
+comparison points; their parameters are not claimed to optimize the
+corresponding algorithm families.
+
+\begingroup
+\small
+\begin{longtable}{@{}p{0.24\linewidth}p{0.67\linewidth}@{}}
+\caption{One outer iteration of each held-out optimizer.}
+\label{tab:black-box-datascience-f10-optimizer-steps}\\
+\toprule
+method & implemented step\\
+\midrule
+\endfirsthead
+\toprule
+method & implemented step\\
+\midrule
+\endhead
+literal and safeguarded branch gradients
+& Differentiate one currently minimizing branch.  The literal method takes
+  \(a^+=a+0.01D_as_\sigma(a)\) even after a decrease.  The safeguarded method
+  projects and normalizes this gradient, accepts only a fully evaluated
+  improvement, and expands or halves its distance after acceptance or
+  rejection.\\
+finite-gap affine model
+& Keep the current branch gaps in a \(10\%\) action window, linearize their
+  values, and maximize the minimum affine value on a local ball.  Fully
+  evaluate the proposal and use the same expand-or-halve distance rule.\\
+four-anchor branch history
+& Union candidate words from the four most recent full searches, using a
+  \(30\%\) action window and normalized beta allowance \(0.3\).  At a nearby
+  point, re-solve the named KKT branches, discard transition-infeasible and
+  beta-inadmissible solutions, linearize the remaining values, and maximize
+  their affine minimum.  Take at most two internal moves before the next full
+  evaluation.\\
+history with transition prediction
+& Use the preceding method, but for a normalized internal move of length at
+  least \(0.08\), also predict newly feasible transitions in the move
+  direction and evaluate the words thereby generated.\\
+CMA-ES
+& Fully evaluate a population of eight Gaussian perturbations, then update
+  the mean, covariance, and normalized scale from their ranking.\\
+coordinate direct search
+& Poll both signs of the \(25\) transverse basis axes.  Move to the best
+  improvement and double the radius, or halve the radius if no poll point
+  improves.\\
+\bottomrule
+\end{longtable}
+\endgroup
 
 The companion endpoint packet does not test local maximality.  Signed polls
 along the transverse basis find an improving direction at seven of \(16\)
@@ -27,14 +80,56 @@ with no improving basis direction can retain appreciable ascent between the
 tested axes.  These observations diagnose insufficient finite budgets; they
 do not estimate the distance to a local maximum.
 
-The accompanying control and mechanism packets delimit this conclusion.
+\paragraph{Detailed HKO calibration.}
 On \(16\) known perturbations along four development directions from HKO, the
-multi-branch continuation accepted no move at HKO, improved every
-perturbation, and recovered \(93.4\%\)--\(100\%\) of the known evaluator gap.
-Finally, a three-proposal audit traced two finite-step affine failures to KKT
-perturbations crossing a zero eigenvalue, while a positive control did not.
-These are selected diagnostics, not population error rates or a convergence
-theorem.
+multi-branch continuation accepted no move at HKO and improved every
+perturbation.  One step recovered \(93.4\%\)--\(100\%\) of the known evaluator
+gap and removed \(77.9\%\)--\(100\%\) of the distance to HKO.  In contrast,
+the gradient of one current minimizing branch recovered
+\(-22.1\%\)--\(41.4\%\) of the gap.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]
+  {../experiments/dev-gradient-ascent/ascent-continuation/artifacts/hko-one-step-development-panel-20260729/analysis/recovery-by-source-distance.png}
+\caption{One-step calibration on known perturbations of HKO.  The left panel
+shows recovered evaluator gap, the center removed distance, and the right the
+residual evaluator gap.}
+\label{fig:black-box-datascience-hko-optimizer-calibration}
+\end{figure}
+
+\paragraph{Selected finite-step failure audit.}
+At the eight highest four-anchor tuning endpoints, five admitted one validated
+improvement, by \(1.57\cdot10^{-6}\) to \(4.61\cdot10^{-5}\).  Across the
+\(80\) multi-branch proposals, \(52\) decreased the recomputed evaluator value
+despite a represented target winner and positive affine prediction; \(40\) of
+these losses retained determinate, unchanged geometry.  All \(40\)
+current-branch gradient proposals decreased.
+
+The three-proposal audit compared two such failures with one positive control.
+At normalized radius \(10^{-5}\), the failures perturbed their named KKT
+matrices by \(218\) and \(67\) times the smallest base eigenvalue magnitude
+and crossed zero; the control had ratio \(1.53\), did not cross zero, and kept
+the correct sign.  At radius \(10^{-8}\), finite differences converged to the
+implemented analytic derivative.  Binary64 and exact-arithmetic geometry
+reconstruction agreed at all \(39\) audited points, and relative volume
+discrepancies were below \(10^{-15}\).  For these selected cases the observed
+failure is finite-distance nonlinearity of an ill-conditioned KKT branch.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]
+  {../experiments/dev-gradient-ascent/endpoint-model-audit/artifacts/directional-decomposition-20260729/analysis/derivative-and-kkt-scale.png}
+\caption{Finite differences for two failed affine proposals and one positive
+control.  Prediction changes regime when the KKT perturbation becomes large
+relative to the smallest source eigenvalue magnitude (right).  Dotted lines
+are the analytic derivatives.}
+\label{fig:black-box-datascience-kkt-trust-scale}
+\end{figure}
+
+These diagnostics use selected controls rather than population samples.  They
+do not provide a convergence theorem, a population error rate, or a universal
+conditioning cutoff.
 
 \subsection{Retained random/product input}
 

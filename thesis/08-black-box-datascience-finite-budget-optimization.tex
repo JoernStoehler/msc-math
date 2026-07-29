@@ -1,91 +1,48 @@
 \subsection{Finite-budget local optimization at ten facets}
 \label{subsec:black-box-datascience-finite-budget-optimization}
 
-The random-table scan does not ask how far a local method can improve one
-polytope.  We therefore compared seven iterative optimizers on \(64\)
-previously unused random ten-facet starting points.  The starts were disjoint
-from the development and tuning populations.  Every run received the same
-\(1000\)\,ms measured serial-compute budget, including full evaluations of the
-historical evaluator and the optimizer's own work, together with a cap of
-\(128\) full evaluator calls.  The manifest fixed all methods and
+The random-table scan may have failed simply because it did not locally refine
+its high-valued candidates.  We therefore ask whether standard and
+branch-aware local methods can improve random ten-facet polytopes under a
+common finite budget.  On \(64\) previously unused matched starts,
+four-anchor branch history attained the largest median final value,
+\(0.9848\); transition prediction followed at \(0.9816\), and the finite-gap
+model at \(0.9772\).  None of the \(64\) runs of any method reached the
+recorded threshold \(1\).  Endpoint controls below show why this is neither a
+convergence result nor evidence that the endpoints are local maxima.
+
+Every run received the same \(1000\)\,ms measured serial-compute budget,
+including full evaluations and optimizer work, together with a cap of \(128\)
+full evaluator calls.  The starts were disjoint from the development and
+tuning populations, and the manifest fixed the seven methods and their
 hyperparameters before the held-out outcomes were computed.
 
-The methods are standard gradient, derivative-free, and population ideas
-\cite{NocedalWright2006}, adapted to the lower-envelope structure
+The retained runs use one common historical binary64 evaluator: it
+reconstructs the polytope and executes its configured legacy orbit search.
+Write \(\widehat{\operatorname{sys}}(a)\) for the JSON field called
+\texttt{sys} in those traces.  Its candidate-family completeness is untested,
+so \(\widehat{\operatorname{sys}}\) is not a certified value of the
+mathematical \(\operatorname{sys}\).  Nevertheless, applying the same
+evaluator to every proposal on matched starts and charging its measured cost
+gives a controlled comparison of the optimizer implementations; uncertainty
+in the absolute objective is shared rather than method-specific.
+
+The methods adapt standard gradient, derivative-free, and population ideas
+\cite{NocedalWright2006} to the lower-envelope structure
 \[
   \operatorname{sys}(a)=\min_\sigma s_\sigma(a).
 \]
-Here \(s_\sigma\) is a smooth KKT branch only on its branch domain, and the
-minimizing word and admissible branch set can change with \(a\).  Thus the
-gradient of one minimizing branch need not ascend the lower envelope.  The
-model \(f(x,y)=y-|x|\) already shows the issue: at its ridge, either selected
-branch gradient points away from the ridge, while balancing both branches
-gives the ascending direction along it.
-
-The retained historical runs use a binary64 evaluator that reconstructs the
-polytope and executes its configured legacy orbit search.  Write
-\(\widehat{\operatorname{sys}}(a)\) for the JSON field called \texttt{sys} in
-those traces.  Its action windows and admissibility decisions do not certify
-that the returned orbit family realizes the complete mathematical capacity
-envelope, so the empirical comparisons below concern
-\(\widehat{\operatorname{sys}}\), not a verified value of
-\(\operatorname{sys}\).  Completeness of the historical evaluator's candidate
-family remains untested.
-
-All local methods propose in the \(25\)-dimensional Euclidean slice transverse
-to translations, common scaling, and the linear symplectic action.  Every
-proposed outer step is then checked by a fresh geometry reconstruction and
-the evaluator's full configured orbit-word search for
-\(\widehat{\operatorname{sys}}\).  Table
-\ref{tab:black-box-datascience-f10-optimizer-steps} states the actual frozen
-steps; it does not claim that the chosen parameters are optimal for their
-algorithm families.
-
-\begingroup
-\small
-\begin{longtable}{@{}p{0.24\linewidth}p{0.67\linewidth}@{}}
-\caption{One outer iteration of each held-out optimizer.}
-\label{tab:black-box-datascience-f10-optimizer-steps}\\
-\toprule
-method & implemented step\\
-\midrule
-\endfirsthead
-\toprule
-method & implemented step\\
-\midrule
-\endhead
-literal and safeguarded
-branch gradients
-& Differentiate one currently minimizing branch.  The literal method takes
-  the fixed update \(a^+=a+0.01D_as_\sigma(a)\) and continues even after a
-  decrease.  The safeguarded method projects and normalizes this gradient,
-  accepts only a fully evaluated improvement, and expands or halves its
-  distance after acceptance or rejection.\\
-finite-gap affine model
-& Keep the current branch gaps in a \(10\%\) action window, linearize their
-  values, and maximize the minimum affine value on a local ball.  Fully
-  evaluate the proposal and use the same expand-or-halve distance rule.\\
-four-anchor branch history
-& Union candidate words from the four most recent full searches, using a
-  \(30\%\) action window and normalized beta allowance \(0.3\).  At a nearby
-  point, re-solve the named KKT branches, discard transition-infeasible and
-  beta-inadmissible solutions, linearize the remaining values, and maximize
-  their affine minimum.  Take at most two such internal moves before the next
-  full evaluation.\\
-history with transition prediction
-& Use the preceding method, but for a normalized internal move of length at
-  least \(0.08\), also predict newly feasible transitions in the move
-  direction and evaluate the words thereby generated.\\
-CMA-ES
-& Fully evaluate a population of eight Gaussian perturbations, then update
-  the mean, covariance, and normalized scale from their ranking.\\
-coordinate direct search
-& Poll both signs of the \(25\) transverse basis axes.  Move to the best
-  improvement and double the radius, or halve the radius if no poll point
-  improves.\\
-\bottomrule
-\end{longtable}
-\endgroup
+Two methods follow one currently minimizing branch, two maximize an affine
+minimum of several nearby branches, and the four-anchor method additionally
+retains candidate words from recent full searches; its transition variant
+predicts newly feasible words on longer internal moves.  CMA-ES supplies a
+population baseline and coordinate search polls both signs of the \(25\)
+symmetry-transverse basis axes.  The ridge \(f(x,y)=y-|x|\) explains the
+multi-branch motivation: either selected branch gradient leaves the ridge,
+whereas balancing both branches identifies its ascending direction.  The
+frozen outer steps are recorded in
+Table~\ref{tab:black-box-datascience-f10-optimizer-steps} in the data-science
+appendix.
 
 \begin{table}[htbp]
 \centering
@@ -119,117 +76,45 @@ the same \(64\) starts.}
 \label{fig:black-box-datascience-f10-optimizer-compute}
 \end{figure}
 
-The branch-history method has the largest held-out median.  On matched starts,
-its median advantage over transition prediction is \(0.00333\), with bootstrap
-95\% interval \(0.000073\)--\(0.00824\).  The more elaborate transition rule had
-improved the development population, but did not generalize as an overall
-replacement.  The finite-gap model remains a strong independent baseline.
-Both single-branch gradients, CMA-ES, and coordinate search are substantially
-weaker at this budget.  No held-out run reached
-\(\widehat{\operatorname{sys}}\geq1\).  That negative result is not
-interpretable on its
-own: it could reflect the landscape, insufficient compute, or a defective
-local model.  The following controls separate failures that the retained
-evidence can distinguish.
+On matched starts, the median advantage of four-anchor history over transition
+prediction was \(0.00333\), with bootstrap \(95\%\) interval
+\(0.000073\)--\(0.00824\).  Transition prediction had improved the development
+population but ranked second on held-out starts.  Relative to four-anchor
+history, the other median values were lower by \(0.00762\) for the finite-gap
+model, \(0.1034\) for literal branch gradients, \(0.1297\) for safeguarded
+branch gradients, \(0.1665\) for CMA-ES, and \(0.3838\) for coordinate search.
 
-\paragraph{Controlled ability to recover ascent.}
-The held-out ranking alone does not show that the branch model recognizes
-useful directions.  We therefore calibrated the same finite-step machinery on
-HKO, whose local-maximality theorem supplies a known target.  The development
-panel used four predeclared directions---two sentinels and two random
-directions---at distances \(10^{-4},10^{-3},10^{-2},10^{-1}\), giving \(16\)
-perturbations.  HKO itself was the false-positive control.  It accepted no
-move, whereas every perturbation admitted a fully re-evaluated improving
-branch-model move.  One step recovered \(93.4\%\)--\(100\%\) of the known
-evaluator gap to HKO and removed \(77.9\%\)--\(100\%\) of the distance to HKO.
-The gradient of one current minimizing branch recovered only
-\(-22.1\%\)--\(41.4\%\) of the gap.  This supports the multi-branch direction
-on these four development directions, but does not estimate its miss
-probability on arbitrary endpoints.  In particular, it rules out a gross
-failure to recognize known ascent on this panel, not failure on other local
-geometries.
+The compute curves alone do not establish convergence.  A signed basis poll
+found a fully re-evaluated improvement at \(7/16\) one-second branch-history
+endpoints; after rerunning the same starts for five seconds, this fell to
+\(2/16\).  Moreover, one endpoint that passed the basis poll still admitted a
+validated oblique path with gain \(0.00223\) over normalized path length
+\(0.01\), ending with tested slope \(0.0620\).  Thus both insufficient compute
+and directions missed by a coordinate poll occur in the retained population.
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\linewidth]
-  {../experiments/dev-gradient-ascent/ascent-continuation/artifacts/hko-one-step-development-panel-20260729/analysis/recovery-by-source-distance.png}
-\caption{One-step calibration on known perturbations of HKO.  The left panel
-shows recovered objective gap, the center panel removed distance, and the
-right panel the residual objective gap.  The four directions are a development
-panel, not a random held-out sample.}
-\label{fig:black-box-datascience-hko-optimizer-calibration}
-\end{figure}
+Two controls check whether the branch model can recover known ascent and why
+some proposals fail.  At HKO it accepted no move, while it improved all \(16\)
+predeclared perturbations and recovered \(93.4\%\)--\(100\%\) of their known
+evaluator gap in one step.  At the eight highest tuning endpoints, \(5/8\)
+admitted a validated branch-model improvement, but \(52/80\) proposed moves
+decreased the recomputed evaluator value despite a represented target winner
+and positive affine prediction.  A selected three-proposal audit found that
+the two failures crossed a zero eigenvalue after KKT perturbations \(218\) and
+\(67\) times the smallest source eigenvalue magnitude; the positive control
+had ratio \(1.53\) and did not cross zero.  The detailed calibration and audit
+are in the data-science appendix.
 
-The objective curves alone do not establish convergence.  CMA-ES, literal
-gradient, and coordinate search are still visibly improving at the budget
-boundary, while a branch-aware method can stop because its local model returns
-no proposal or its internal distance becomes too small.  We therefore tested
-\(16\) population-stratified branch-history endpoints in both signs of all
-\(25\) transverse basis axes, at relative radii \(10^{-3}\), \(10^{-4}\), and
-\(10^{-5}\).  Seven one-second endpoints had an explicit fully recomputed
-improving direction.  Repeating the same starts with a five-second ceiling
-changed seven endpoint values and reduced the count to two, so five failures
-were ordinary insufficient-depth failures.
+These controls have deliberately limited scopes: the HKO directions form a
+four-direction development panel, the endpoint poll uses selected axes and
+radii, and the KKT audit contains two failures and one positive control.
+Consequently they diagnose observed failures but estimate neither a
+population miss rate nor a universal trust cutoff.
 
-Passing this restricted finite basis poll does not establish stationarity:
-ascent may lie between the basis axes.  Indeed, a separate diagnostic followed a
-branch-informed improving path from each of three deliberately selected
-endpoints for ten validated steps, stopping only at the imposed step cap.  One
-of these endpoints had no improving basis-axis probe, yet gained \(0.00223\)
-over normalized path length \(0.01\) and still had positive tested slope
-\(0.0620\).  These paths are lower bounds on remaining improvement, not
-estimates of an eventual maximum.
-
-\paragraph{Why some branch-model proposals fail.}
-We also applied one continuation step to the eight highest four-anchor
-endpoints from the \(128\)-start tuning population.  Five improved, by
-\(1.57\cdot10^{-6}\) to \(4.61\cdot10^{-5}\), and none crossed
-\(\widehat{\operatorname{sys}}=1\).  The
-highest endpoint, at \(0.999962478\), had no improvement among the two
-multi-branch models, five current-branch gradient moves, or \(50\) signed basis
-probes.  More importantly, \(52/80\) multi-branch proposals decreased the
-recomputed \(\widehat{\operatorname{sys}}\) even though the evaluator's target
-winner was represented and its affine prediction was positive; \(40\) such
-losses retained determinate, unchanged geometry.  All \(40\) current-branch
-gradient proposals decreased.  This is outcome-selected diagnostic evidence,
-not a prevalence estimate.
-
-A three-proposal audit then compared two failures with one positive control.
-At normalized radius \(10^{-5}\), the failures perturbed their named KKT
-matrices by \(218\) and \(67\) times the smallest base eigenvalue magnitude
-and crossed a zero eigenvalue; the control had ratio \(1.53\), did not cross
-zero, and kept the correct sign.  At the diagnostic radius \(10^{-8}\), finite
-differences converged to the implemented analytic derivative.  Binary64 and
-exact-arithmetic geometry reconstruction agreed at all \(39\) audited points,
-and relative volume discrepancies were below \(10^{-15}\).  For these cases,
-the error is therefore finite-distance nonlinearity of an ill-conditioned KKT
-branch, not omission of the evaluator's target-winning word, a geometry
-predicate, the volume derivative, or a sign error in the infinitesimal
-formula.  Euclidean distance alone is not an adequate trust scale; the KKT
-spectral gap supplies a mechanistic warning, although this three-case audit
-does not calibrate a universal cutoff.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\linewidth]
-  {../experiments/dev-gradient-ascent/endpoint-model-audit/artifacts/directional-decomposition-20260729/analysis/derivative-and-kkt-scale.png}
-\caption{Finite differences for two failed affine proposals and one positive
-control.  Prediction changes regime when the KKT perturbation becomes large
-relative to the smallest source eigenvalue magnitude (right).  Dotted lines
-are the analytic derivatives.}
-\label{fig:black-box-datascience-kkt-trust-scale}
-\end{figure}
-
-We therefore select four-anchor branch history only as the strongest tested
-finite-budget method for this random \(F=10\) population and one-second
-budget.  The experiment neither proves convergence to a local maximum nor
-transfers the ranking to another facet count, starting distribution, or
-budget.  The completed diagnostics support a more specific engineering
-conclusion: multi-branch models can identify useful oblique ascent, but their
-finite-distance predictions need candidate refresh, branch re-solving, a
-conditioning-aware trust check, and full validation.  They also leave open
-whether any other fixed-\(F\) local maximum has systolic ratio larger than
-\(1\).  Thus the missing local-maximum classification cannot be assigned
-solely to the geometry of the mathematical \(\operatorname{sys}\): ordinary
-insufficient depth and identified model failures both occur in the retained
-runs.
+We therefore select four-anchor branch history only as the best of the seven
+tested implementations for this random \(F=10\) population and one-second
+budget.  The ranking does not transfer without new evidence to another facet
+count, starting distribution, budget, or certified capacity evaluator, and
+the experiment does not establish convergence or local maximality.  It does
+show that local refinement raises many random starts close to the evaluator
+threshold, while ordinary insufficient depth, missed oblique ascent, and
+ill-conditioned finite-step branch models all remain observable obstacles.
