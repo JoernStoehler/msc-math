@@ -3,6 +3,7 @@ use crate::branch_model::{winning_gradient, SliceMode};
 use crate::evaluator::Evaluation;
 use crate::quotient::{add_flat_direction, flatten, l2_norm, quotient_basis};
 use crate::schedule::{DistanceSchedule, DistanceScheduleSpec};
+use crate::schema::AlgorithmStateRow;
 use nalgebra::DVector;
 use serde_json::json;
 use std::time::Instant;
@@ -119,5 +120,11 @@ impl Optimizer for SafeguardedGradient {
 
     fn is_done(&self) -> Option<String> {
         self.done.clone()
+    }
+
+    fn algorithm_state(&self) -> AlgorithmStateRow {
+        AlgorithmStateRow::EvaluatedPoint {
+            evaluation_id: self.current.row.evaluation_id.clone(),
+        }
     }
 }

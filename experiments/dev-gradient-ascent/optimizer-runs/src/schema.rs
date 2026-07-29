@@ -1,5 +1,14 @@
 use serde::{Deserialize, Serialize};
 
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum AlgorithmStateRow {
+    EvaluatedPoint { evaluation_id: String },
+    EvaluatedPopulation { evaluation_ids: Vec<String> },
+    UnevaluatedModelOrDistribution,
+    NoSingleCurrentState,
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SourcePoint {
     pub name: String,
@@ -88,6 +97,8 @@ pub struct RoundRow {
     pub best_evaluation_id_after: String,
     pub best_sys_before: f64,
     pub best_sys_after: f64,
+    pub algorithm_state_before: AlgorithmStateRow,
+    pub algorithm_state_after: AlgorithmStateRow,
     pub geometric_reference_kind: Option<String>,
     pub geometric_reference_dual_flat: Option<Vec<f64>>,
     pub ask_ms: f64,
@@ -122,6 +133,7 @@ pub struct RunRow {
     pub initial_sys: f64,
     pub best_evaluation_id: String,
     pub best_sys: f64,
+    pub final_algorithm_state: AlgorithmStateRow,
     pub charged_calls: usize,
     #[serde(default)]
     pub evaluator_compute_ms: f64,

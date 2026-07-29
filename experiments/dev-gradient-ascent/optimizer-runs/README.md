@@ -96,6 +96,20 @@ Proposal rows report
 point supplies `a_ref`; a best-so-far curve alone does not identify the path or
 show convergence. Invalid proposed polytopes remain charged observations.
 
+Every round also records the algorithm state before and after `tell`, and each
+run records its final state. The state is one of:
+
+- one named, fully evaluated point;
+- a named, fully evaluated population;
+- an unevaluated model or sampling distribution;
+- no single current state.
+
+This distinction prevents analyses from treating the retained best point as the
+trajectory of every method. In particular, CMA-ES reports its unevaluated
+sampling distribution rather than inventing a current evaluated point. The
+comparison analyzer rejects absent or unusable evaluation references,
+discontinuous states, and evaluated-state changes to unselected proposals.
+
 ### Symmetry
 
 `quotient.rs` constructs a local Euclidean slice transverse to the 15

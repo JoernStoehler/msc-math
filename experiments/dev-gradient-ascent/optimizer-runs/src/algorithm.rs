@@ -1,4 +1,5 @@
 use crate::evaluator::Evaluation;
+use crate::schema::AlgorithmStateRow;
 use nalgebra::Vector4;
 use serde_json::Value;
 
@@ -28,4 +29,8 @@ pub trait Optimizer {
     fn ask(&mut self, remaining_budget: usize) -> Result<Vec<Proposal>, String>;
     fn tell(&mut self, observations: &[EvaluatedProposal]) -> Result<TellOutcome, String>;
     fn is_done(&self) -> Option<String>;
+
+    fn algorithm_state(&self) -> AlgorithmStateRow {
+        AlgorithmStateRow::NoSingleCurrentState
+    }
 }

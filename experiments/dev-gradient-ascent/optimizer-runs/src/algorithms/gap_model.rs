@@ -5,6 +5,7 @@ use crate::branch_model::{
 use crate::evaluator::Evaluation;
 use crate::quotient::{add_flat_direction, l2_norm};
 use crate::schedule::{DistanceSchedule, DistanceScheduleSpec};
+use crate::schema::AlgorithmStateRow;
 use serde_json::json;
 
 pub struct GapModel {
@@ -203,5 +204,11 @@ impl Optimizer for GapModel {
 
     fn is_done(&self) -> Option<String> {
         self.done.clone()
+    }
+
+    fn algorithm_state(&self) -> AlgorithmStateRow {
+        AlgorithmStateRow::EvaluatedPoint {
+            evaluation_id: self.current.row.evaluation_id.clone(),
+        }
     }
 }

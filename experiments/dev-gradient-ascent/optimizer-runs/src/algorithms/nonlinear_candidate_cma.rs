@@ -4,6 +4,7 @@ use crate::branch_model::{solve_raw_sysext_kkt, BranchModel, SliceMode};
 use crate::evaluator::{build_geometry, compute_volume, Evaluation, EvaluatorConfig};
 use crate::manifest::{CandidateAcceptancePolicy, CmaScaleMode, DirectionalTransitionPolicy};
 use crate::quotient::flatten;
+use crate::schema::AlgorithmStateRow;
 use nalgebra::{DMatrix, Vector4};
 use serde_json::json;
 use std::collections::{HashSet, VecDeque};
@@ -431,6 +432,12 @@ impl Optimizer for NonlinearCandidateCma {
     fn is_done(&self) -> Option<String> {
         self.done.clone()
     }
+
+    fn algorithm_state(&self) -> AlgorithmStateRow {
+        AlgorithmStateRow::EvaluatedPoint {
+            evaluation_id: self.current.row.evaluation_id.clone(),
+        }
+    }
 }
 
 impl NonlinearCandidateRelinearized {
@@ -776,6 +783,12 @@ impl Optimizer for NonlinearCandidateRelinearized {
 
     fn is_done(&self) -> Option<String> {
         self.done.clone()
+    }
+
+    fn algorithm_state(&self) -> AlgorithmStateRow {
+        AlgorithmStateRow::EvaluatedPoint {
+            evaluation_id: self.current.row.evaluation_id.clone(),
+        }
     }
 }
 

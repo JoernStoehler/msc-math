@@ -90,6 +90,33 @@ def assert_close(left: float, right: float, context: str) -> None:
         raise ValueError(f"{context}: {left} != {right}")
 
 
+def state_evaluation_ids(
+    state: dict[str, Any],
+    run_id: str,
+    evaluation_by_id: dict[str, dict[str, Any]],
+) -> list[str]:
+    kind = state.get("kind")
+    if kind == "evaluated_point":
+        ids = [state.get("evaluation_id")]
+    elif kind == "evaluated_population":
+        ids = state.get("evaluation_ids")
+        if not isinstance(ids, list) or not ids:
+            raise ValueError(f"{run_id}: evaluated population is empty or malformed")
+        if len(ids) != len(set(ids)):
+            raise ValueError(f"{run_id}: duplicate evaluated population member")
+    elif kind in {"unevaluated_model_or_distribution", "no_single_current_state"}:
+        return []
+    else:
+        raise ValueError(f"{run_id}: unknown algorithm state kind {kind!r}")
+    for evaluation_id in ids:
+        evaluation = evaluation_by_id.get(evaluation_id)
+        if evaluation is None or evaluation["run_id"] != run_id:
+            raise ValueError(f"{run_id}: algorithm state references absent evaluation")
+        if not evaluation["usable_by_optimizer"] or evaluation["sys"] is None:
+            raise ValueError(f"{run_id}: algorithm state references unusable evaluation")
+    return ids
+
+
 def validate_packet(
     plan: dict[str, Any],
     runs: list[dict[str, Any]],
@@ -165,6 +192,7 @@ def validate_packet(
         best_id = initial["evaluation_id"]
         best_sys = initial["sys"]
         calls_before = int(run["charge_initial"])
+        previous_algorithm_state = None
         for round_row in run_rounds:
             if round_row["charged_calls_before"] != calls_before:
                 raise ValueError(f"{run_id}: round call boundary mismatch")
@@ -202,6 +230,29 @@ def validate_packet(
             selected_ids = {row["proposal_id"] for row in round_row["selected"]}
             if not selected_ids.issubset(proposal_ids):
                 raise ValueError(f"{run_id}: selected proposal absent from round")
+            selected_evaluation_ids = {
+                proposal_by_id[proposal_id]["evaluation_id"]
+                for proposal_id in selected_ids
+            }
+            state_before = round_row["algorithm_state_before"]
+            state_after = round_row["algorithm_state_after"]
+            before_ids = state_evaluation_ids(state_before, run_id, evaluation_by_id)
+            after_ids = state_evaluation_ids(state_after, run_id, evaluation_by_id)
+            if previous_algorithm_state is None:
+                if (
+                    state_before["kind"] == "evaluated_point"
+                    and before_ids != [initial["evaluation_id"]]
+                ):
+                    raise ValueError(f"{run_id}: initial current state is not the start")
+            elif state_before != previous_algorithm_state:
+                raise ValueError(f"{run_id}: discontinuous algorithm state")
+            if state_after != state_before:
+                changed_ids = set(after_ids) - set(before_ids)
+                if not changed_ids.issubset(selected_evaluation_ids):
+                    raise ValueError(
+                        f"{run_id}: current state changed to an unselected evaluation"
+                    )
+            previous_algorithm_state = state_after
             calls_before += len(proposal_ids)
             if round_row["charged_calls_after"] != calls_before:
                 raise ValueError(f"{run_id}: round call-after mismatch")
@@ -215,6 +266,14 @@ def validate_packet(
         if best_id != run["best_evaluation_id"]:
             raise ValueError(f"{run_id}: final best id mismatch")
         assert_close(best_sys, run["best_sys"], f"{run_id}: final best sys")
+        state_evaluation_ids(
+            run["final_algorithm_state"], run_id, evaluation_by_id
+        )
+        if (
+            previous_algorithm_state is not None
+            and run["final_algorithm_state"] != previous_algorithm_state
+        ):
+            raise ValueError(f"{run_id}: final algorithm state mismatch")
         expected_physical = sum(row["cache_status"] == "miss" for row in run_evaluations)
         if expected_physical != run["physical_evaluations"]:
             raise ValueError(f"{run_id}: physical evaluation count mismatch")

@@ -2,6 +2,7 @@ use crate::algorithm::{EvaluatedProposal, Optimizer, Proposal, TellOutcome};
 use crate::evaluator::Evaluation;
 use crate::manifest::CmaScaleMode;
 use crate::quotient::{add_flat_direction, l2_norm, quotient_basis, QuotientBasis};
+use crate::schema::AlgorithmStateRow;
 use nalgebra::{DMatrix, DVector, SymmetricEigen};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -281,5 +282,9 @@ impl Optimizer for CmaEs {
 
     fn is_done(&self) -> Option<String> {
         self.done.clone()
+    }
+
+    fn algorithm_state(&self) -> AlgorithmStateRow {
+        AlgorithmStateRow::UnevaluatedModelOrDistribution
     }
 }

@@ -1,6 +1,7 @@
 use crate::algorithm::{EvaluatedProposal, Optimizer, Proposal, TellOutcome};
 use crate::branch_model::winning_gradient;
 use crate::evaluator::Evaluation;
+use crate::schema::AlgorithmStateRow;
 use serde_json::json;
 use std::time::Instant;
 
@@ -88,5 +89,11 @@ impl Optimizer for LiteralGradient {
 
     fn is_done(&self) -> Option<String> {
         self.done.clone()
+    }
+
+    fn algorithm_state(&self) -> AlgorithmStateRow {
+        AlgorithmStateRow::EvaluatedPoint {
+            evaluation_id: self.current.row.evaluation_id.clone(),
+        }
     }
 }

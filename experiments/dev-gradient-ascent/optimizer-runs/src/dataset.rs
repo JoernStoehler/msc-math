@@ -112,7 +112,7 @@ mod tests {
         let directory = tempfile::tempdir().unwrap();
         fs::write(
             directory.path().join("runs.jsonl"),
-            r#"{"schema_version":1,"run_id":"r","start_id":"s","algorithm_id":"a","algorithm_kind":"k","seed":1,"budget":2,"charge_initial":false,"initial_evaluation_id":"e0","initial_sys":1.0,"best_evaluation_id":"e2","best_sys":3.0,"charged_calls":2,"physical_evaluations":3,"invalid_evaluations":0,"indeterminate_evaluations":0,"exact_fallback_evaluations":0,"rounds":2,"stop_reason":"budget_exhausted","wall_ms":1.0}
+            r#"{"schema_version":1,"run_id":"r","start_id":"s","algorithm_id":"a","algorithm_kind":"k","seed":1,"budget":2,"charge_initial":false,"initial_evaluation_id":"e0","initial_sys":1.0,"best_evaluation_id":"e2","best_sys":3.0,"final_algorithm_state":{"kind":"evaluated_point","evaluation_id":"e2"},"charged_calls":2,"physical_evaluations":3,"invalid_evaluations":0,"indeterminate_evaluations":0,"exact_fallback_evaluations":0,"rounds":2,"stop_reason":"budget_exhausted","wall_ms":1.0}
 "#,
         )
         .unwrap();

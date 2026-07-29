@@ -179,6 +179,7 @@ fn run_one(
             ));
         }
         let round_id = format!("{}--r{:05}", run.run_id, round_index);
+        let algorithm_state_before = optimizer.algorithm_state();
         let best_before = best.clone();
         let calls_before = charged_calls;
         let compute_before = evaluator_compute_ms + optimizer_compute_ms - ask_ms;
@@ -265,6 +266,7 @@ fn run_one(
         }
         let tell_started = Instant::now();
         let outcome = optimizer.tell(&observations)?;
+        let algorithm_state_after = optimizer.algorithm_state();
         let tell_ms = tell_started.elapsed().as_secs_f64() * 1000.0;
         optimizer_compute_ms += tell_ms;
         let selected = outcome
@@ -302,6 +304,8 @@ fn run_one(
             best_evaluation_id_after: best.row.evaluation_id.clone(),
             best_sys_before: best_before.row.sys.expect("best has sys"),
             best_sys_after: best.row.sys.expect("best has sys"),
+            algorithm_state_before,
+            algorithm_state_after,
             geometric_reference_kind,
             geometric_reference_dual_flat: geometric_reference_duals
                 .as_deref()
@@ -348,6 +352,7 @@ fn run_one(
         initial_sys,
         best_evaluation_id: best.row.evaluation_id,
         best_sys: best.row.sys.expect("best has sys"),
+        final_algorithm_state: optimizer.algorithm_state(),
         charged_calls,
         evaluator_compute_ms,
         optimizer_compute_ms,
