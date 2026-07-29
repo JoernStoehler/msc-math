@@ -6,9 +6,9 @@ polytope.  We therefore compared seven iterative optimizers on \(64\)
 previously unused random ten-facet starting points.  The starts were disjoint
 from the development and tuning populations.  Every run received the same
 \(1000\)\,ms measured serial-compute budget, including full evaluations of the
-systolic ratio and the optimizer's own work, together with a cap of \(128\)
-full evaluations.  The manifest fixed all methods and hyperparameters before
-the held-out outcomes were computed.
+historical evaluator and the optimizer's own work, together with a cap of
+\(128\) full evaluator calls.  The manifest fixed all methods and
+hyperparameters before the held-out outcomes were computed.
 
 The methods are standard gradient, derivative-free, and population ideas
 \cite{NocedalWright2006}, adapted to the lower-envelope structure
@@ -22,10 +22,21 @@ model \(f(x,y)=y-|x|\) already shows the issue: at its ridge, either selected
 branch gradient points away from the ridge, while balancing both branches
 gives the ascending direction along it.
 
+The retained historical runs use a binary64 evaluator that reconstructs the
+polytope and executes its configured legacy orbit search.  Write
+\(\widehat{\operatorname{sys}}(a)\) for the JSON field called \texttt{sys} in
+those traces.  Its action windows and admissibility decisions do not certify
+that the returned orbit family realizes the complete mathematical capacity
+envelope, so the empirical comparisons below concern
+\(\widehat{\operatorname{sys}}\), not a verified value of
+\(\operatorname{sys}\).  Completeness of the historical evaluator's candidate
+family remains untested.
+
 All local methods propose in the \(25\)-dimensional Euclidean slice transverse
 to translations, common scaling, and the linear symplectic action.  Every
 proposed outer step is then checked by a fresh geometry reconstruction and
-global orbit-word search for \(\operatorname{sys}\).  Table
+the evaluator's full configured orbit-word search for
+\(\widehat{\operatorname{sys}}\).  Table
 \ref{tab:black-box-datascience-f10-optimizer-steps} states the actual frozen
 steps; it does not claim that the chosen parameters are optimal for their
 algorithm families.
@@ -81,7 +92,7 @@ coordinate direct search
 \scriptsize
 \begin{tabular}{lrrr}
 \toprule
-method & median best \(\operatorname{sys}\) & 10--90\% across starts & maximum\\
+method & median best \(\widehat{\operatorname{sys}}\) & 10--90\% across starts & maximum\\
 \midrule
 four-anchor branch history & \(0.9848\) & \(0.9570\)--\(0.9985\) & \(0.999826\)\\
 history with transition prediction & \(0.9816\) & \(0.9559\)--\(0.9940\) & \(0.999711\)\\
@@ -102,7 +113,7 @@ points, not uncertainty about the median.}
 \centering
 \includegraphics[width=0.96\linewidth]
   {../experiments/dev-gradient-ascent/optimizer-comparison/artifacts/heldout-f10-64-finalists-19a8b4dfd-analysis/figures/best-sys-by-measured-compute.png}
-\caption{Median best systolic ratio against measured
+\caption{Median best historical evaluator value against measured
 evaluator-plus-optimizer time.  Shaded bands show the 10--90\% range across
 the same \(64\) starts.}
 \label{fig:black-box-datascience-f10-optimizer-compute}
@@ -115,7 +126,8 @@ improved the development population, but did not generalize as an overall
 replacement.  The finite-gap model remains a strong independent baseline.
 Both single-branch gradients, CMA-ES, and coordinate search are substantially
 weaker at this budget.  No held-out run reached
-\(\operatorname{sys}\geq1\).  That negative result is not interpretable on its
+\(\widehat{\operatorname{sys}}\geq1\).  That negative result is not
+interpretable on its
 own: it could reflect the landscape, insufficient compute, or a defective
 local model.  The following controls separate failures that the retained
 evidence can distinguish.
@@ -129,7 +141,7 @@ directions---at distances \(10^{-4},10^{-3},10^{-2},10^{-1}\), giving \(16\)
 perturbations.  HKO itself was the false-positive control.  It accepted no
 move, whereas every perturbation admitted a fully re-evaluated improving
 branch-model move.  One step recovered \(93.4\%\)--\(100\%\) of the known
-systolic-ratio gap and removed \(77.9\%\)--\(100\%\) of the distance to HKO.
+evaluator gap to HKO and removed \(77.9\%\)--\(100\%\) of the distance to HKO.
 The gradient of one current minimizing branch recovered only
 \(-22.1\%\)--\(41.4\%\) of the gap.  This supports the multi-branch direction
 on these four development directions, but does not estimate its miss
@@ -154,7 +166,8 @@ linearization error.  It replayed \(144\) selected moves from \(48\)
 development runs at half, equal, and twice their recorded displacement,
 yielding \(420\) usable target evaluations.  When a named set contained the
 target's full-evaluator winner, directly re-solving those named branches at
-the target reproduced the full scalar in every retained control row.  But the
+the target reproduced \(\widehat{\operatorname{sys}}\) with zero recorded
+error in every retained control row.  But the
 future winner belonged to the anchor's transition-feasible universe in only
 \(296/420\) cases: \(123\) winners were transition-blocked at the anchor and
 one raw KKT solve failed.  Moreover, \(76/420\) future winners had nonpositive
@@ -172,7 +185,7 @@ become spuriously minimal.  Figure
 \ref{fig:black-box-datascience-affine-failure-causes} displays these two
 mechanisms.  They explain why the implemented methods use cheap prediction to
 propose moves but still refresh branch state and fully recompute the scalar
-before acceptance.
+\(\widehat{\operatorname{sys}}\) before acceptance.
 
 \begin{figure}[htbp]
 \centering
@@ -208,14 +221,16 @@ estimates of an eventual maximum.
 \paragraph{Why some branch-model proposals fail.}
 We also applied one continuation step to the eight highest four-anchor
 endpoints from the \(128\)-start tuning population.  Five improved, by
-\(1.57\cdot10^{-6}\) to \(4.61\cdot10^{-5}\), and none crossed \(1\).  The
+\(1.57\cdot10^{-6}\) to \(4.61\cdot10^{-5}\), and none crossed
+\(\widehat{\operatorname{sys}}=1\).  The
 highest endpoint, at \(0.999962478\), had no improvement among the two
 multi-branch models, five current-branch gradient moves, or \(50\) signed basis
 probes.  More importantly, \(52/80\) multi-branch proposals decreased the
-recomputed scalar even though the target winner was represented and its
-affine prediction was positive; \(40\) such losses retained determinate,
-unchanged geometry.  All \(40\) current-branch gradient proposals decreased.
-This is outcome-selected diagnostic evidence, not a prevalence estimate.
+recomputed \(\widehat{\operatorname{sys}}\) even though the evaluator's target
+winner was represented and its affine prediction was positive; \(40\) such
+losses retained determinate, unchanged geometry.  All \(40\) current-branch
+gradient proposals decreased.  This is outcome-selected diagnostic evidence,
+not a prevalence estimate.
 
 A three-proposal audit then compared two failures with one positive control.
 At normalized radius \(10^{-5}\), the failures perturbed their named KKT
@@ -226,10 +241,11 @@ differences converged to the implemented analytic derivative.  Binary64 and
 exact-arithmetic geometry reconstruction agreed at all \(39\) audited points,
 and relative volume discrepancies were below \(10^{-15}\).  For these cases,
 the error is therefore finite-distance nonlinearity of an ill-conditioned KKT
-branch, not a missing target word, geometry predicate, volume derivative, or
-sign error in the infinitesimal formula.  Euclidean distance alone is not an
-adequate trust scale; the KKT spectral gap supplies a mechanistic warning,
-although this three-case audit does not calibrate a universal cutoff.
+branch, not omission of the evaluator's target-winning word, a geometry
+predicate, the volume derivative, or a sign error in the infinitesimal
+formula.  Euclidean distance alone is not an adequate trust scale; the KKT
+spectral gap supplies a mechanistic warning, although this three-case audit
+does not calibrate a universal cutoff.
 
 \begin{figure}[htbp]
 \centering
@@ -252,5 +268,6 @@ finite-distance predictions need candidate refresh, branch re-solving, a
 conditioning-aware trust check, and full validation.  They also leave open
 whether any other fixed-\(F\) local maximum has systolic ratio larger than
 \(1\).  Thus the missing local-maximum classification cannot be assigned
-solely to the geometry of \(\operatorname{sys}\): ordinary insufficient depth
-and identified model failures both occur in the retained runs.
+solely to the geometry of the mathematical \(\operatorname{sys}\): ordinary
+insufficient depth and identified model failures both occur in the retained
+runs.

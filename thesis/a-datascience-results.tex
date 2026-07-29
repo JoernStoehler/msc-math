@@ -11,10 +11,13 @@ context only for this chapter.
 
 The optimizer packet freezes \(64\) held-out random ten-facet starts, seven
 methods, a \(1000\)\,ms measured serial-compute budget, and a cap of \(128\)
-full systolic-ratio evaluations per run.  Its \(448\) traces contain \(28824\)
-full evaluations.  Four-anchor branch history has the largest held-out median
-best value, \(0.9848\), followed by transition prediction at \(0.9816\) and
-the finite-gap affine model at \(0.9772\).  No run reaches \(1\).
+full historical-evaluator calls per run.  Its \(448\) traces contain \(28824\)
+full calls.  Here \(\widehat{\operatorname{sys}}\) denotes the trace field
+returned by the historical heuristic binary64 orbit search, not a certified
+mathematical capacity.  Four-anchor branch history has the largest held-out
+median best value, \(0.9848\), followed by transition prediction at \(0.9816\)
+and the finite-gap affine model at \(0.9772\).  No run reaches
+\(\widehat{\operatorname{sys}}=1\).
 
 The companion endpoint packet does not test local maximality.  Signed polls
 along the transverse basis find an improving direction at seven of \(16\)
@@ -27,11 +30,12 @@ do not estimate the distance to a local maximum.
 The accompanying control and mechanism packets delimit this conclusion.
 On \(16\) known perturbations along four development directions from HKO, the
 multi-branch continuation accepted no move at HKO, improved every
-perturbation, and recovered \(93.4\%\)--\(100\%\) of the known objective gap.
-An on-trajectory replay found that only \(296/420\) future winning branches
-were transition-feasible at their anchor; directly re-solving a represented
-winner at the target had zero recorded error in the retained controls, while frozen affine
-prediction had large domain and linearization tails.  Finally, a
+perturbation, and recovered \(93.4\%\)--\(100\%\) of the known evaluator gap.
+An on-trajectory replay found that only \(296/420\) future evaluator-winning
+branches were transition-feasible at their anchor; directly re-solving a
+represented winner at the target had zero recorded error in the retained
+controls, while frozen affine prediction had large domain and linearization
+tails.  Finally, a
 three-proposal audit traced two finite-step affine failures to KKT
 perturbations crossing a zero eigenvalue, while a positive control did not.
 These are selected diagnostics, not population error rates or a convergence
