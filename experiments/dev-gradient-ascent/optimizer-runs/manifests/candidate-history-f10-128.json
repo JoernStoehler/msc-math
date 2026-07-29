@@ -19,7 +19,7 @@
   "budget": 32,
   "charge_initial": false,
   "master_seed": 2026072502,
-  "parallelism": 1,
+  "parallelism": 8,
   "evaluator": {
     "geometry_mode": "f64",
     "volume_mode": "f64",

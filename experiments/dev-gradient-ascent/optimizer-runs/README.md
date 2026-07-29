@@ -66,16 +66,16 @@ not promote an archive winner to a final optimizer.
 
 Every charged proposal is evaluated by `evaluator.rs`:
 
-1. reconstruct exact geometry for the binary64 dual vertices;
+1. reconstruct geometry by the manifest-selected heuristic f64 or exact route;
 2. compute volume in the manifest-selected exact or f64 mode;
 3. run the complete legacy orbit-candidate search with minima-safe exact
    aggregation;
 4. form the f64 systolic ratio and retain the winning orbit context.
 
-The result is a high-confidence binary64 computation, not an exact real
-number. `geometry_mode: "f64"` is intentionally rejected during manifest
-validation because the archived heuristic implementation is not part of this
-foundation. Near-threshold scientific use still needs a separate numerical
+The f64 geometry route records indeterminate-predicate counts; the exact route
+reconstructs geometry exactly from the binary64 coordinates. In both cases,
+the reported systolic-ratio field is a binary64 evaluator output, not an exact
+real number. Near-threshold scientific use still needs a separate numerical
 audit against the current production capacity route.
 
 Structure-aware algorithms may perform named-branch KKT solves and surrogate
