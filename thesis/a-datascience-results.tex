@@ -2,10 +2,27 @@
 
 This appendix records the experiment packets behind
 Section~\ref{sec:black-box-datascience}.  It is not a separate search surface.
-The active scope is the retained random/product data-science slice and the
-bounded generated scalar-proposer follow-up.  The old ascent, continuation,
-endpoint-stability, and local-behavior packets are historical context only for
-this chapter.
+The active scope is the retained random/product data-science slice, the
+bounded generated scalar-proposer follow-up, and the frozen ten-facet local
+optimizer comparison.  Other ascent and local-behavior packets are historical
+context only for this chapter.
+
+\subsection{Finite-budget local optimizer comparison}
+
+The optimizer packet freezes \(64\) held-out random ten-facet starts, seven
+methods, a \(1000\)\,ms measured serial-compute budget, and a cap of \(128\)
+full systolic-ratio evaluations per run.  Its \(448\) traces contain \(28824\)
+full evaluations.  Four-anchor branch history has the largest held-out median
+best value, \(0.9848\), followed by transition prediction at \(0.9816\) and
+the finite-gap affine model at \(0.9772\).  No run reaches \(1\).
+
+The companion endpoint packet does not test local maximality.  Signed polls
+along the transverse basis find an improving direction at seven of \(16\)
+one-second branch-history endpoints and two of the corresponding five-second
+endpoints.  Separate validated continuation paths show that even an endpoint
+with no improving basis direction can retain appreciable ascent between the
+tested axes.  These observations diagnose insufficient finite budgets; they
+do not estimate the distance to a local maximum.
 
 \subsection{Retained random/product input}
 

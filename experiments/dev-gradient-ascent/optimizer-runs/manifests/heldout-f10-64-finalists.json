@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "study_id": "optimizer-heldout-f10-64-finalists",
+  "dataset_role": "held_out",
+  "source": "experiments/polytope-datasets/random.jsonl",
+  "facet_count": 10,
+  "starts": {
+    "prefixes": [
+      "random_F10_s0_",
+      "random_F10_s1_",
+      "random_F10_s2_",
+      "random_F10_s3_"
+    ],
+    "offset_per_prefix": 34,
+    "per_prefix": 16
+  },
+  "budget": 128,
+  "compute_budget_ms": 1000.0,
+  "stop_sys_threshold": 1.0,
+  "charge_initial": false,
+  "master_seed": 2026072801,
+  "parallelism": 1,
+  "evaluator": {
+    "geometry_mode": "f64",
+    "volume_mode": "f64",
+    "accept_indeterminate_geometry": true,
+    "exact_geometry_fallback": false,
+    "cache_within_run": false
+  },
+  "algorithms": [
+    {
+      "kind": "literal_gradient",
+      "id": "literal-eta1e-2",
+      "rate": 0.01
+    },
+    {
+      "kind": "safeguarded_gradient",
+      "id": "safeguarded-adaptive-d1e-1",
+      "schedule": {
+        "kind": "adaptive",
+        "initial_distance": 0.1,
+        "expansion": 1.25,
+        "contraction": 0.5,
+        "minimum_distance": 0.000001
+      },
+      "slice_mode": "symmetry_transverse"
+    },
+    {
+      "kind": "gap_model",
+      "id": "gap-w1e-1-adaptive-d1e-1",
+      "candidate_window_relative": 0.1,
+      "extension_mode": "none",
+      "extension_reachability_scale": 1.0,
+      "schedule": {
+        "kind": "adaptive",
+        "initial_distance": 0.1,
+        "expansion": 1.25,
+        "contraction": 0.5,
+        "minimum_distance": 0.000001
+      },
+      "slice_mode": "symmetry_transverse",
+      "norm_mode": "euclidean_l2",
+      "require_positive_prediction": true
+    },
+    {
+      "kind": "nonlinear_candidate_relinearized",
+      "id": "history-baseline",
+      "candidate_window_relative": 0.3,
+      "beta_allowance": 0.3,
+      "history_depth": 4,
+      "acceptance": {
+        "kind": "any_usable"
+      },
+      "inner_steps": 2,
+      "initial_distance": 0.1,
+      "expansion": 1.25,
+      "contraction": 0.5,
+      "minimum_distance": 0.000001
+    },
+    {
+      "kind": "nonlinear_candidate_relinearized",
+      "id": "directional-above-8e-2",
+      "candidate_window_relative": 0.3,
+      "beta_allowance": 0.3,
+      "history_depth": 4,
+      "acceptance": {
+        "kind": "any_usable"
+      },
+      "directional_transition": {
+        "kind": "unfiltered_above_distance",
+        "minimum_normalized_distance": 0.08
+      },
+      "inner_steps": 2,
+      "initial_distance": 0.1,
+      "expansion": 1.25,
+      "contraction": 0.5,
+      "minimum_distance": 0.000001
+    },
+    {
+      "kind": "cma_es",
+      "id": "cma-s1e-1-l8",
+      "initial_sigma": 0.1,
+      "population_size": 8,
+      "minimum_sigma": 0.000001,
+      "maximum_sigma": 1.0,
+      "scale_mode": "normalized_rms_distance"
+    },
+    {
+      "kind": "direct_search",
+      "id": "pattern-r3e-2",
+      "initial_radius": 0.03,
+      "expansion": 2.0,
+      "contraction": 0.5,
+      "minimum_radius": 0.000001
+    }
+  ],
+  "checkpoints": [8, 16, 32, 64, 128],
+  "probe_start_count": 16
+}

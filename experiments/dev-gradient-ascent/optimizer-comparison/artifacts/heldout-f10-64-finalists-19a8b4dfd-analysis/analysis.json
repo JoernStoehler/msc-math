@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "analysis_mode": "final",
+  "dataset": "/workspaces/msc-math/.worktrees/sys-optimizer-completion/experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd",
+  "validation": {
+    "run_count": 448,
+    "evaluation_count": 28824,
+    "proposal_count": 28376,
+    "round_count": 16338,
+    "source_reference_comparison": {
+      "count": 64,
+      "max_absolute_difference": 4.440892098500626e-16,
+      "max_relative_difference": 2.611233505261425e-15,
+      "relative_difference_over_1e-8_count": 0
+    }
+  },
+  "best_median_final_algorithm": "history-baseline",
+  "common_compute_curve_maximum_ms": 1019.093524,
+  "checkpoint_count": 560
+}

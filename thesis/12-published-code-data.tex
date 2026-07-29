@@ -28,20 +28,23 @@ The empirical material is retained for a different reason.  The release
 contains the random/product data underlying the bounded data-science search,
 together with row provenance and the derived feature table.  It also contains
 the selected and evaluated rows from the frozen generated-candidate
-experiment, and the twelve-run panel used to assess the first-order ascent
-method.  Keeping these data allows another researcher to inspect individual
-examples, repeat the reported analyses, compare alternative methods on the
-same inputs, or use the samples as a starting point for a broader search
-without first repeating the expensive production runs.
+experiment.  It also contains the frozen \(64\)-start local-optimizer
+comparison, its per-evaluation traces, and the endpoint and continuation
+diagnostics used to delimit the finite-budget conclusion.  Keeping these data
+allows another researcher to inspect individual examples, repeat the reported
+analyses, compare alternative methods on the same inputs, or use the samples
+as a starting point for a broader search without first repeating the expensive
+production runs.
 
 Availability does not strengthen the conclusions drawn from these data.  The
 random/product table remains a finite sample from the distributions specified
 in Section~\ref{sec:black-box-datascience}; it does not represent all random
 polytopes or all Lagrangian products.  The generated-candidate records support
 the stated experiment for one generator and frozen rule set, not a general
-candidate-selection theorem.  The first-order panel records finite-step
-improvement on twelve fixed starts, while its unfinished trajectories provide
-no endpoint or local-maximality evidence.  Where a project-owned thesis figure
+candidate-selection theorem.  The optimizer comparison ranks frozen
+implementations only at the stated ten-facet input distribution and compute
+budget; its continuation traces show that its endpoints are not
+local-maximality evidence.  Where a project-owned thesis figure
 comes from an experiment, its source data and producer are retained so that the
 figure can be inspected or regenerated.  This does not make an exploratory
 figure part of a proof.

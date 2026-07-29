@@ -1,0 +1,8 @@
+algorithm_id,n,median_charged_calls,q10_charged_calls,q90_charged_calls,maximum_best_sys,reached_sys_1_count,stop_reason_counts
+cma-s1e-1-l8,64,97.5,72.0,128.0,0.9320688207738098,0,budget_exhausted=13; compute_budget_exhausted=51
+directional-above-8e-2,64,17.0,12.0,24.0,0.9997113872737474,0,compute_budget_exhausted=39; minimum_inner_distance=4; optimizer_returned_no_proposals=21
+gap-w1e-1-adaptive-d1e-1,64,40.0,32.0,58.7,0.997275561978979,0,compute_budget_exhausted=48; distance_schedule_finished=16
+history-baseline,64,20.5,14.0,34.10000000000001,0.9998262444739155,0,compute_budget_exhausted=41; minimum_inner_distance=5; optimizer_returned_no_proposals=18
+literal-eta1e-2,64,93.5,65.3,128.0,0.9482141064551919,0,budget_exhausted=8; compute_budget_exhausted=56
+pattern-r3e-2,64,103.5,74.6,128.0,0.8425387555350555,0,budget_exhausted=17; compute_budget_exhausted=47
+safeguarded-adaptive-d1e-1,64,57.5,37.0,87.0,0.9374746183672675,0,budget_exhausted=1; compute_budget_exhausted=19; distance_schedule_finished=44

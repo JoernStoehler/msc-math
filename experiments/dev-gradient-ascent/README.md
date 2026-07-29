@@ -30,9 +30,12 @@ Read according to the task:
   candidate. [`PROMOTION-READINESS.md`](PROMOTION-READINESS.md) records its
   evidence gaps and the decision that would be needed before promotion.
 - [`optimizer-runs/`](optimizer-runs/README.md) is the clean traced runner for
-  matched local-optimizer development.
+  matched local-optimizer development and owns the retained frozen comparison
+  datasets.
   [`optimizer-comparison/`](optimizer-comparison/README.md) strictly validates
   and compares its datasets.
+- [`ascent-continuation/`](ascent-continuation/README.md) tests whether selected
+  recorded endpoints still admit sustained validated improvement.
 - For a completed comparison or diagnostic, start with that directory's
   README rather than reconstructing its purpose from the executable.
 
@@ -54,8 +57,9 @@ This is the exhaustive set of immediate child directories:
 | [`literal-naive-gradient/`](literal-naive-gradient/README.md) | literal branch-gradient baseline and multi-start optimizer comparison |
 | [`optimizer-score-comparison/`](optimizer-score-comparison/README.md) | selected-case ranking smoke for near-active and candidate-window scores |
 | [`quotient-endpoint-diagnostic/`](quotient-endpoint-diagnostic/README.md) | retained quotient-aware derivative-free endpoint diagnostic |
-| [`optimizer-runs/`](optimizer-runs/README.md) | manifest-driven full-`sys` optimizer runner and trace schemas; the clean foundation contains no retained production output |
+| [`optimizer-runs/`](optimizer-runs/README.md) | manifest-driven full-`sys` optimizer runner, trace schemas, and retained frozen F10 datasets |
 | [`optimizer-comparison/`](optimizer-comparison/README.md) | strict runner-dataset validation and matched trajectory comparison |
+| [`ascent-continuation/`](ascent-continuation/README.md) | repeated validated continuation from selected optimizer endpoints |
 
 The local-geometry directory owns these consumers of its output:
 

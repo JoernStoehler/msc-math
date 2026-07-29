@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "analysis_mode": "development",
+  "dataset": "/workspaces/msc-math/.worktrees/sys-optimizer-completion/experiments/dev-gradient-ascent/optimizer-runs/artifacts/history-f10-16-compute-depth-426ec7a7c",
+  "validation": {
+    "run_count": 16,
+    "evaluation_count": 506,
+    "proposal_count": 490,
+    "round_count": 490,
+    "source_reference_comparison": {
+      "count": 16,
+      "max_absolute_difference": 4.440892098500626e-16,
+      "max_relative_difference": 8.151737490771185e-16,
+      "relative_difference_over_1e-8_count": 0
+    }
+  },
+  "best_median_final_algorithm": "history-baseline",
+  "common_compute_curve_maximum_ms": 1444.8284489999999,
+  "checkpoint_count": 128
+}

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "manifest_path": "experiments/dev-gradient-ascent/optimizer-runs/manifests/heldout-f10-64-finalists.json",
+  "manifest_blake3": "15f0cdd80ac93b10fd42ee8c244e5f1a50fe94eb4f2d517def8701e22ae8eee3",
+  "resolved_plan_hash": "2680adee816e0842809a4f4f496ee669518224b9f256d28e919989c381a9c58a",
+  "git_commit": "19a8b4dfd988779e4b29f759710565b0b57edb65",
+  "git_dirty": false,
+  "executable": "optimizer-runs",
+  "executable_blake3": "9ab35b6e17757c04edda5ac2cc51bf4f0fa17b125f02165ee1c9c02e8ad80dd1",
+  "started_unix_ms": 1785230435528
+}

@@ -1,7 +1,8 @@
 # Traced local-optimizer runner
 
-Status: clean implementation foundation. The smoke proves plumbing and trace
-validation only; it is not optimizer evidence and does not select a method.
+Status: clean implementation foundation plus retained archive evidence. The
+smoke proves plumbing only; the separately identified held-out packet below
+supports the bounded optimizer comparison.
 
 This package runs manifest-declared optimizers against one instrumented
 `sys(a)` evaluator. Its purpose is to compare local step rules, trajectories,
@@ -22,7 +23,7 @@ Imported from the archive head:
 - `../optimizer-comparison/analyze.py`, without retained datasets, plots, or
   specialized follow-up analyzers.
 
-Deliberately not imported:
+Initially not imported:
 
 - archive `artifacts/` trees and production/tuning manifests;
 - `optimizer-atoms/`, predictor replays, fitted triggers, endpoint
@@ -31,6 +32,19 @@ Deliberately not imported:
   artifacts that are not present here;
 - the archive-only heuristic f64 geometry export from
   `experiments/dev-quadratic-program/`.
+
+The later closeout imports only the frozen F=10 held-out and matched
+larger-budget datasets used by the thesis. Their provenance identifies the
+archive executable, source commit, manifest, and evaluator contract. They are
+historical schema-1 evidence, not outputs of the clean evaluator below:
+
+- `artifacts/heldout-f10-64-finalists-19a8b4dfd/`;
+- `artifacts/history-f10-16-compute-depth-426ec7a7c/`.
+
+The corresponding frozen manifests are retained beside the smoke manifest.
+Reproducing those values requires their recorded archive source and heuristic
+f64 evaluator; running the manifest with this clean evaluator would be a new
+experiment, not regeneration of the retained packet.
 
 The clean runner instead uses the current
 `exp_sys_landscape::SysLandscapePolytopeCache` exact geometry of the binary64

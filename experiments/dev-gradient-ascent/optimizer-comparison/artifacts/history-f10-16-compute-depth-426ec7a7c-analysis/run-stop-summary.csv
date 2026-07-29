@@ -1,0 +1,2 @@
+algorithm_id,n,median_charged_calls,q10_charged_calls,q90_charged_calls,maximum_best_sys,reached_sys_1_count,stop_reason_counts
+history-baseline,16,19.5,15.0,72.5,0.9998268454089747,0,compute_budget_exhausted=2; minimum_inner_distance=3; optimizer_returned_no_proposals=11

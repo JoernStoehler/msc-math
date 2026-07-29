@@ -1,0 +1,131 @@
+{
+  "source": "experiments/dev-gradient-ascent/ascent-continuation/artifacts/four-state-full-20260729/raw",
+  "state_count": 4,
+  "candidate_count": 505,
+  "accepted_step_count": 30,
+  "family_comparison": [
+    {
+      "state": "one-second endpoint",
+      "family": "gap-window-0.1",
+      "accepted_step_opportunities": 10,
+      "positive_best_radius_count": 10,
+      "selected_count": 5,
+      "median_best_delta": 6.358433752928772e-05,
+      "maximum_best_delta": 0.00030946663285658094
+    },
+    {
+      "state": "one-second endpoint",
+      "family": "gap-window-1.0",
+      "accepted_step_opportunities": 10,
+      "positive_best_radius_count": 10,
+      "selected_count": 5,
+      "median_best_delta": 6.358409169576751e-05,
+      "maximum_best_delta": 0.0003094666200419427
+    },
+    {
+      "state": "one-second endpoint",
+      "family": "winning-branch-gradient",
+      "accepted_step_opportunities": 10,
+      "positive_best_radius_count": 4,
+      "selected_count": 0,
+      "median_best_delta": -2.290737013133093e-06,
+      "maximum_best_delta": 3.935947346478397e-05
+    },
+    {
+      "state": "later endpoint",
+      "family": "gap-window-0.1",
+      "accepted_step_opportunities": 10,
+      "positive_best_radius_count": 10,
+      "selected_count": 5,
+      "median_best_delta": 0.00012695014161490104,
+      "maximum_best_delta": 0.0002965777029959593
+    },
+    {
+      "state": "later endpoint",
+      "family": "gap-window-1.0",
+      "accepted_step_opportunities": 10,
+      "positive_best_radius_count": 10,
+      "selected_count": 5,
+      "median_best_delta": 0.0001269503712566511,
+      "maximum_best_delta": 0.0002965777491761301
+    },
+    {
+      "state": "later endpoint",
+      "family": "winning-branch-gradient",
+      "accepted_step_opportunities": 10,
+      "positive_best_radius_count": 2,
+      "selected_count": 0,
+      "median_best_delta": -3.6751530840484214e-05,
+      "maximum_best_delta": 5.295804002303228e-05
+    },
+    {
+      "state": "axis-negative endpoint",
+      "family": "gap-window-0.1",
+      "accepted_step_opportunities": 10,
+      "positive_best_radius_count": 10,
+      "selected_count": 5,
+      "median_best_delta": 0.0002224730311723988,
+      "maximum_best_delta": 0.00023084037963716497
+    },
+    {
+      "state": "axis-negative endpoint",
+      "family": "gap-window-1.0",
+      "accepted_step_opportunities": 10,
+      "positive_best_radius_count": 10,
+      "selected_count": 5,
+      "median_best_delta": 0.00022247301272804165,
+      "maximum_best_delta": 0.00023084037870335639
+    },
+    {
+      "state": "axis-negative endpoint",
+      "family": "winning-branch-gradient",
+      "accepted_step_opportunities": 10,
+      "positive_best_radius_count": 0,
+      "selected_count": 0,
+      "median_best_delta": -4.051024747142584e-05,
+      "maximum_best_delta": -2.118012124385782e-05
+    }
+  ],
+  "compute_breakdown": [
+    {
+      "state": "one-second endpoint",
+      "full_sys_evaluations": 151,
+      "evaluator_seconds": 2.420196849,
+      "transition_extension_seconds": 168.55526826199994,
+      "candidate_search_seconds": 1.6166644429999995,
+      "branch_derivative_seconds": 0.014370853000000003,
+      "model_solve_seconds": 0.3876156930000003,
+      "gradient_direction_seconds": 0.013334426
+    },
+    {
+      "state": "later endpoint",
+      "full_sys_evaluations": 151,
+      "evaluator_seconds": 2.426112787,
+      "transition_extension_seconds": 169.56878125299988,
+      "candidate_search_seconds": 1.6062304639999991,
+      "branch_derivative_seconds": 0.014374044999999998,
+      "model_solve_seconds": 0.39027736600000007,
+      "gradient_direction_seconds": 0.012687355
+    },
+    {
+      "state": "axis-negative endpoint",
+      "full_sys_evaluations": 151,
+      "evaluator_seconds": 1.0674828319999998,
+      "transition_extension_seconds": 88.53464863700002,
+      "candidate_search_seconds": 0.6829867909999998,
+      "branch_derivative_seconds": 0.011488144999999998,
+      "model_solve_seconds": 0.2507235220000001,
+      "gradient_direction_seconds": 0.012013275000000002
+    },
+    {
+      "state": "HKO control",
+      "full_sys_evaluations": 56,
+      "evaluator_seconds": 9.700838899,
+      "transition_extension_seconds": 0.0,
+      "candidate_search_seconds": 0.0,
+      "branch_derivative_seconds": 0.0,
+      "model_solve_seconds": 0.0,
+      "gradient_direction_seconds": 0.0011884220000000002
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+algorithm_id,call,n,mean_fraction_of_observed_available_gain,median_fraction_of_observed_available_gain,mean_oracle_regret,maximum_facet_mean_score_gap,facet_mean_scores_json
+history-baseline,8,16,1.0,1.0,0.0,0.0,"{""10"": 1.0}"
+history-baseline,16,16,1.0,1.0,0.0,0.0,"{""10"": 1.0}"
+history-baseline,32,16,1.0,1.0,0.0,0.0,"{""10"": 1.0}"
+history-baseline,64,16,1.0,1.0,0.0,0.0,"{""10"": 1.0}"
+history-baseline,128,16,1.0,1.0,0.0,0.0,"{""10"": 1.0}"
+history-baseline,256,16,1.0,1.0,0.0,0.0,"{""10"": 1.0}"
+history-baseline,512,16,1.0,1.0,0.0,0.0,"{""10"": 1.0}"
+history-baseline,640,16,1.0,1.0,0.0,0.0,"{""10"": 1.0}"

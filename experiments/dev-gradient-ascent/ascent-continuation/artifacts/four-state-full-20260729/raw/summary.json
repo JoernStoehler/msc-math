@@ -1,0 +1,85 @@
+{
+  "claim_boundary": "Stopping means that the tested finite-step models and signed basis scan found no improvement. It does not establish local maximality.",
+  "diagnostic": "repeated validated ascent continuation",
+  "evaluator": {
+    "accept_indeterminate_geometry": true,
+    "cache_within_run": false,
+    "exact_geometry_fallback": false,
+    "geometry_mode": "f64",
+    "volume_mode": "f64"
+  },
+  "fallback": "signed symmetry-transverse basis at relative radius 1e-5, used only when all model proposals fail",
+  "maximum_accepted_steps": 10,
+  "minimum_accepted_gain": 1e-12,
+  "model_radii": [
+    0.001,
+    0.0003,
+    0.0001,
+    0.00003,
+    0.00001
+  ],
+  "schema_version": 1,
+  "states": [
+    {
+      "accepted_steps": 10,
+      "cumulative_gain": 0.0012043498264612262,
+      "cumulative_normalized_path_length": 0.005400000000124354,
+      "cumulative_path_length": 0.018796769103635265,
+      "final_step_slope": 0.37127322861872913,
+      "final_sys": 0.9852798111847839,
+      "full_sys_evaluations": 151,
+      "initial_minus_recorded": 0.0,
+      "recomputed_initial_sys": 0.9840754613583227,
+      "recorded_sys": 0.9840754613583227,
+      "role": "known_improvable_one_second_endpoint",
+      "state_id": "random_F10_s0_34--history-baseline--c000128",
+      "stop_reason": "accepted_step_cap"
+    },
+    {
+      "accepted_steps": 10,
+      "cumulative_gain": 0.0013017551316130138,
+      "cumulative_normalized_path_length": 0.006079999999973523,
+      "cumulative_path_length": 0.021163792670085037,
+      "final_step_slope": 0.05031762594562616,
+      "final_sys": 0.987693289061916,
+      "full_sys_evaluations": 151,
+      "initial_minus_recorded": 0.0,
+      "recomputed_initial_sys": 0.986391533930303,
+      "recorded_sys": 0.986391533930303,
+      "role": "residual_positive_basis_slope_endpoint",
+      "state_id": "random_F10_s0_34--history-baseline--c000640",
+      "stop_reason": "accepted_step_cap"
+    },
+    {
+      "accepted_steps": 10,
+      "cumulative_gain": 0.0022302739157268325,
+      "cumulative_normalized_path_length": 0.009999999998656528,
+      "cumulative_path_length": 0.03481078485932652,
+      "final_step_slope": 0.061982948558797886,
+      "final_sys": 0.9585739293589391,
+      "full_sys_evaluations": 151,
+      "initial_minus_recorded": 0.0,
+      "recomputed_initial_sys": 0.9563436554432123,
+      "recorded_sys": 0.9563436554432123,
+      "role": "stable_negative_basis_slope_endpoint",
+      "state_id": "random_F10_s0_44--history-baseline--c000640",
+      "stop_reason": "accepted_step_cap"
+    },
+    {
+      "accepted_steps": 0,
+      "cumulative_gain": 0.0,
+      "cumulative_normalized_path_length": 0.0,
+      "cumulative_path_length": 0.0,
+      "final_step_slope": null,
+      "final_sys": 1.0472135954999542,
+      "full_sys_evaluations": 56,
+      "initial_minus_recorded": null,
+      "recomputed_initial_sys": 1.0472135954999542,
+      "recorded_sys": null,
+      "role": "theorem_local_maximum_control",
+      "state_id": "positive_control_hko2024",
+      "stop_reason": "no_validated_improvement_in_models_or_signed_basis"
+    }
+  ],
+  "wall_seconds": 553.606916934
+}

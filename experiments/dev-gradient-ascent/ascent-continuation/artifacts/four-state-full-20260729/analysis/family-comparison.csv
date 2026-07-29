@@ -1,0 +1,10 @@
+state,family,accepted_step_opportunities,positive_best_radius_count,selected_count,median_best_delta,maximum_best_delta
+one-second endpoint,gap-window-0.1,10,10,5,6.358433752928772e-05,0.00030946663285658094
+one-second endpoint,gap-window-1.0,10,10,5,6.358409169576751e-05,0.0003094666200419427
+one-second endpoint,winning-branch-gradient,10,4,0,-2.290737013133093e-06,3.935947346478397e-05
+later endpoint,gap-window-0.1,10,10,5,0.00012695014161490104,0.0002965777029959593
+later endpoint,gap-window-1.0,10,10,5,0.0001269503712566511,0.0002965777491761301
+later endpoint,winning-branch-gradient,10,2,0,-3.6751530840484214e-05,5.295804002303228e-05
+axis-negative endpoint,gap-window-0.1,10,10,5,0.0002224730311723988,0.00023084037963716497
+axis-negative endpoint,gap-window-1.0,10,10,5,0.00022247301272804165,0.00023084037870335639
+axis-negative endpoint,winning-branch-gradient,10,0,0,-4.051024747142584e-05,-2.118012124385782e-05
