@@ -23,7 +23,7 @@ No current hard submission deadline is recorded in the repository.
 | Flow graph/CH2021 | substantial conditional draft; final theorem/algorithm role must remain honest | `thesis/05-*`, flow-graph formal, crate, and experiment sources |
 | First-order perturbations | scaffold; arbitrary-polytope boundary remains materially different from the generic story | `thesis/06-*`, `formal/sys-first-order-local-behavior.md` |
 | HKO local maximum | internally reviewed integration candidate; ordinary whole-PDF/Jörn/Kai review remains | `thesis/07-*`, `experiments/hko-local-maximum/` |
-| Data-science search | integration candidate: the bounded random/product method table, held-out ten-facet optimizer comparison, convergence diagnostics, and predictor controls are integrated; independent closeout and ordinary whole-PDF/Jörn/Kai review remain | `thesis/08-*`, `experiments/sys-datascience/`, `experiments/dev-gradient-ascent/` |
+| Data-science search | internally reviewed integration candidate: the bounded random/product method table, held-out ten-facet optimizer comparison, convergence diagnostics, and predictor controls are integrated; ordinary whole-PDF/Jörn/Kai review remains | `thesis/08-*`, `experiments/sys-datascience/`, `experiments/dev-gradient-ascent/` |
 | Rotated regular polygons | substantial theorem/certificate draft | `thesis/09-*`, `experiments/regular-products/` |
 | AI use | the separate factual disclosure page is Jörn-accepted; the numbered research-process discussion remains provisional and materially incomplete | `thesis/ai-use-disclosure-content.md`, `thesis/use-of-ai-content.md`, `experiments/ai-use/` |
 | Visualization, published code/data, conclusion | incomplete thesis surfaces | matching thesis and experiment sources |
