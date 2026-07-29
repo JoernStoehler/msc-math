@@ -1,3 +1,0 @@
-value_model,targets,median_error_over_gain_floor_1e_3,q90_error_over_gain_floor_1e_3,fraction_error_larger_than_gain_floor_1e_3,false_improvement_fraction,false_rejection_fraction
-named_branch_kkt_at_target,413,0.0,1.6776035965844678,0.14285714285714285,0.15254237288135594,0.0
-affine_named_branches_at_anchor,420,0.06223414792966647,2.9879049995335136,0.25,0.22380952380952382,0.0

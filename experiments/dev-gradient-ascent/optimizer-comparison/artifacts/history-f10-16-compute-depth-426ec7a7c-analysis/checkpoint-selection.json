@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "source_artifact_dir": "/workspaces/msc-math/.worktrees/sys-optimizer-completion/experiments/dev-gradient-ascent/optimizer-runs/artifacts/history-f10-16-compute-depth-426ec7a7c",
+  "source_artifact_dir": "/workspaces/msc-math/.worktrees/sys-optimizer-final-closeout/experiments/dev-gradient-ascent/optimizer-runs/artifacts/history-f10-16-compute-depth-426ec7a7c",
   "radii": [
     0.0003,
     0.003,

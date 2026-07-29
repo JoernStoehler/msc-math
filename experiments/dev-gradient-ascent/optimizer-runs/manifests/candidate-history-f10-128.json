@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "study_id": "candidate-history-f10-128",
+  "dataset_role": "tuning",
+  "source": "experiments/polytope-datasets/random.jsonl",
+  "facet_counts": [
+    10
+  ],
+  "starts": {
+    "prefixes": [
+      "random_F10_s0_",
+      "random_F10_s1_",
+      "random_F10_s2_",
+      "random_F10_s3_"
+    ],
+    "offset_per_prefix": 2,
+    "per_prefix": 32
+  },
+  "budget": 32,
+  "charge_initial": false,
+  "master_seed": 2026072502,
+  "parallelism": 1,
+  "evaluator": {
+    "geometry_mode": "f64",
+    "volume_mode": "f64",
+    "accept_indeterminate_geometry": true,
+    "exact_geometry_fallback": true,
+    "cache_within_run": false
+  },
+  "algorithms": [
+    {
+      "kind": "gap_model",
+      "id": "gap-w1e-1-euclidean-transverse-adaptive-d1e-1",
+      "candidate_window_relative": 0.1,
+      "extension_mode": "none",
+      "extension_reachability_scale": 1.0,
+      "schedule": {
+        "kind": "adaptive",
+        "initial_distance": 0.1,
+        "expansion": 1.25,
+        "contraction": 0.5,
+        "minimum_distance": 0.000001
+      },
+      "slice_mode": "symmetry_transverse",
+      "norm_mode": "euclidean_l2",
+      "require_positive_prediction": true
+    },
+    {
+      "kind": "cma_es",
+      "id": "cma-s1e-1-l8",
+      "initial_sigma": 0.1,
+      "population_size": 8,
+      "minimum_sigma": 0.000001,
+      "maximum_sigma": 1.0,
+      "scale_mode": "normalized_rms_distance"
+    },
+    {
+      "kind": "nonlinear_candidate_relinearized",
+      "id": "nonlinear-linearized-w1e-1-n2-d1e-1",
+      "candidate_window_relative": 0.1,
+      "acceptance": {
+        "kind": "any_usable"
+      },
+      "inner_steps": 2,
+      "initial_distance": 0.1,
+      "expansion": 1.25,
+      "contraction": 0.5,
+      "minimum_distance": 0.000001
+    },
+    {
+      "kind": "nonlinear_candidate_relinearized",
+      "id": "nonlinear-linearized-w3e-1-beta3e-1-h4-n2-d1e-1",
+      "candidate_window_relative": 0.3,
+      "beta_allowance": 0.3,
+      "history_depth": 4,
+      "acceptance": {
+        "kind": "any_usable"
+      },
+      "inner_steps": 2,
+      "initial_distance": 0.1,
+      "expansion": 1.25,
+      "contraction": 0.5,
+      "minimum_distance": 0.000001
+    }
+  ],
+  "checkpoints": [
+    8,
+    16,
+    32
+  ],
+  "probe_start_count": 32
+}

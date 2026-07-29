@@ -1,5 +1,5 @@
 use crate::branch_model::{BranchExtensionMode, NormMode, SliceMode};
-use crate::evaluator::{EvaluatorConfig, GeometryMode};
+use crate::evaluator::EvaluatorConfig;
 use crate::quotient::flatten;
 use crate::schedule::DistanceScheduleSpec;
 use crate::schema::SourcePoint;
@@ -609,13 +609,6 @@ fn validate_manifest(manifest: &Manifest) -> Result<(), String> {
     }
     if manifest.parallelism == 0 {
         return Err("parallelism must be positive".to_string());
-    }
-    if manifest.evaluator.geometry_mode == GeometryMode::F64 {
-        return Err(
-            "geometry_mode=f64 belongs to the archived heuristic evaluator; \
-             the clean runner requires geometry_mode=exact"
-                .to_string(),
-        );
     }
     if manifest.algorithms.is_empty() {
         return Err("at least one algorithm is required".to_string());

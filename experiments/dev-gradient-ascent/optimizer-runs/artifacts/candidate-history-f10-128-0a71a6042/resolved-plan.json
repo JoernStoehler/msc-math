@@ -2,7 +2,7 @@
   "schema_version": 1,
   "study_id": "candidate-history-f10-128",
   "dataset_role": "tuning",
-  "source": "experiments/sys-datascience/produce/random.jsonl",
+  "source": "experiments/polytope-datasets/random.jsonl",
   "source_pool_count": 512,
   "source_pool_hash": "1be239ab57f0d906018c230f4b327bc2f9b5bd2393bbc213c799b59c3117787b",
   "facet_counts": [
@@ -6027,9 +6027,11 @@
     }
   ],
   "budget": 32,
+  "compute_budget_ms": null,
+  "stop_sys_threshold": null,
   "charge_initial": false,
   "master_seed": 2026072502,
-  "parallelism": 1,
+  "parallelism": 8,
   "evaluator": {
     "geometry_mode": "f64",
     "volume_mode": "f64",
@@ -6070,6 +6072,13 @@
       "candidate_window_relative": 0.1,
       "beta_allowance": null,
       "history_depth": 1,
+      "acceptance": {
+        "kind": "any_usable"
+      },
+      "directional_transition": {
+        "kind": "none"
+      },
+      "remember_validated_winner": false,
       "inner_steps": 2,
       "initial_distance": 0.1,
       "expansion": 1.25,
@@ -6082,6 +6091,13 @@
       "candidate_window_relative": 0.3,
       "beta_allowance": 0.3,
       "history_depth": 4,
+      "acceptance": {
+        "kind": "any_usable"
+      },
+      "directional_transition": {
+        "kind": "none"
+      },
+      "remember_validated_winner": false,
       "inner_steps": 2,
       "initial_distance": 0.1,
       "expansion": 1.25,

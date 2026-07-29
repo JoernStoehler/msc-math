@@ -2,6 +2,8 @@
 
 Strict validation passed for 16 runs, 506 evaluations, 490 proposals, and 490 rounds.
 
+`sys` in the tables and filenames below is the recorded field of this dataset's configured evaluator. It is not, by this analysis alone, a certified value of the mathematical systolic ratio.
+
 Facet-count-specific results are primary. The pooled table below is descriptive only: it must not override a reversal or failure at any individual facet count.
 
 ## Best median by facet count

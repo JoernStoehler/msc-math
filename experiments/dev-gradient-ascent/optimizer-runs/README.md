@@ -26,8 +26,8 @@ Imported from the archive head:
 Initially not imported:
 
 - archive `artifacts/` trees and production/tuning manifests;
-- `optimizer-atoms/`, predictor replays, fitted triggers, endpoint
-  classification, and trajectory-geometry analyses;
+- predictor replays, fitted triggers, endpoint classification, and
+  trajectory-geometry analyses;
 - the archive method ledger, because most of its numerical rows point to
   artifacts that are not present here;
 - the archive-only heuristic f64 geometry export from
@@ -41,22 +41,17 @@ historical schema-1 evidence, not outputs of the clean evaluator below:
 - `artifacts/heldout-f10-64-finalists-19a8b4dfd/`;
 - `artifacts/history-f10-16-compute-depth-426ec7a7c/`.
 
-The closeout also promotes the companion `../optimizer-atoms/`,
-`../ascent-continuation/`, and `../endpoint-model-audit/` packets that explain
-candidate omission, affine error, and remaining endpoint ascent. Those packets
-consume or replay named runner outputs; they do not change the historical
-schema-1 comparison values.
+The closeout also promotes the companion `../ascent-continuation/` and
+`../endpoint-model-audit/` packets that diagnose remaining endpoint ascent.
 
 The corresponding frozen manifests are retained beside the smoke manifest.
 Reproducing those values requires their recorded archive source and heuristic
 f64 evaluator; running the manifest with this clean evaluator would be a new
 experiment, not regeneration of the retained packet.
 
-The clean runner instead uses the current
-`exp_sys_landscape::SysLandscapePolytopeCache` exact geometry of the binary64
-input coordinates. This keeps the imported foundation inside
-`dev-gradient-ascent` and prevents an unavailable branch-predictor dependency
-from silently defining the objective.
+The runner supports both the documented heuristic binary64 geometry route and
+exact geometry of the binary64 input coordinates. Retained manifests state
+which route defines their evaluator.
 
 The archive `OPTIMIZER-METHODS.md` supplies planning context, not evidence
 owned by this branch: branch history was the best tested one-second F10 method,

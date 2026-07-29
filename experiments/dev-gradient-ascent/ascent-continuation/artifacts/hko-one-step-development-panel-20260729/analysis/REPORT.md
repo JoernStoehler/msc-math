@@ -1,5 +1,9 @@
 # HKO perturbation calibration
 
+Here `sys` denotes the binary64 heuristic evaluator field used by this
+diagnostic. It is not, by this report alone, a certified value of the
+mathematical systolic ratio.
+
 ## Direct answer
 
 The continuation diagnostic was tested on `16` known perturbations of

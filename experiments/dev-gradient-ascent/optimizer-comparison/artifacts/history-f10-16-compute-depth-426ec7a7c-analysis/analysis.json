@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "analysis_mode": "development",
-  "dataset": "/workspaces/msc-math/.worktrees/sys-optimizer-completion/experiments/dev-gradient-ascent/optimizer-runs/artifacts/history-f10-16-compute-depth-426ec7a7c",
+  "dataset": "/workspaces/msc-math/.worktrees/sys-optimizer-final-closeout/experiments/dev-gradient-ascent/optimizer-runs/artifacts/history-f10-16-compute-depth-426ec7a7c",
   "validation": {
     "run_count": 16,
     "evaluation_count": 506,

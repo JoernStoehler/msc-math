@@ -1287,23 +1287,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d6790f58c7ff633d8771f42965289203411a5e5c68388703c06e14f24770b41e"
 
 [[package]]
-name = "optimizer-atoms"
-version = "0.1.0"
-dependencies = [
- "blake3",
- "nalgebra 0.33.3",
- "optimizer-runs",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "optimizer-runs"
 version = "0.1.0"
 dependencies = [
  "blake3",
  "clarabel",
  "euclidean-polytopes",
+ "exp-dev-quadratic-program",
  "exp-sys-landscape",
  "good_lp",
  "nalgebra 0.33.3",

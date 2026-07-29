@@ -1,5 +1,10 @@
 # One-step continuation of the eight highest retained endpoints
 
+Here `sys` denotes the binary64 heuristic evaluator field used by this
+diagnostic. It is not, by this report alone, a certified value of the
+mathematical systolic ratio; “crossing one” refers only to that recorded
+field.
+
 ## Direct answer
 
 The highest endpoint had `sys = 0.999962478`. Neither finite-gap

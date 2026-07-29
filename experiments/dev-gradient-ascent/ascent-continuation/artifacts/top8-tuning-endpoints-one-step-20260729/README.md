@@ -3,6 +3,10 @@
 Status: retained outcome-selected discovery check. This is not a held-out
 optimizer comparison or local-maximality classification.
 
+Here `sys` denotes the binary64 heuristic evaluator field used by the retained
+run. It is not, by this packet alone, a certified value of the mathematical
+systolic ratio; “crossing one” refers only to that recorded field.
+
 ## Question
 
 Do the eight highest four-anchor branch-history endpoints from the retained
@@ -45,7 +49,7 @@ From the repository root:
 ```bash
 uv run --script \
   experiments/dev-gradient-ascent/ascent-continuation/make_optimizer_endpoint_packet.py \
-  experiments/dev-gradient-ascent/optimizer-runs/artifacts/candidate-history-f10-128-0d699aff5 \
+  experiments/dev-gradient-ascent/optimizer-runs/artifacts/candidate-history-f10-128-0a71a6042 \
   experiments/hko-local-maximum/empirical/neighborhood-sampling/m10-quotient-ray/evaluations.jsonl \
   /tmp/top8-endpoint-input.json \
   --algorithm nonlinear-linearized-w3e-1-beta3e-1-h4-n2-d1e-1 \
@@ -62,7 +66,7 @@ cargo run --release -p exp-dev-gradient-ascent \
 # Separate diagnostic for both signs of the top endpoint's model direction.
 uv run --script \
   experiments/dev-gradient-ascent/ascent-continuation/make_optimizer_endpoint_packet.py \
-  experiments/dev-gradient-ascent/optimizer-runs/artifacts/candidate-history-f10-128-0d699aff5 \
+  experiments/dev-gradient-ascent/optimizer-runs/artifacts/candidate-history-f10-128-0a71a6042 \
   experiments/hko-local-maximum/empirical/neighborhood-sampling/m10-quotient-ray/evaluations.jsonl \
   /tmp/top1-endpoint-input.json \
   --algorithm nonlinear-linearized-w3e-1-beta3e-1-h4-n2-d1e-1 \

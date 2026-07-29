@@ -1,6 +1,9 @@
 use crate::quotient::flatten;
 use crate::schema::EvaluationRow;
 use euclidean_polytopes::volume_from_incidence_f64;
+use exp_dev_quadratic_program::{
+    exact_binary64_dual_vertex_arrays, f64_geometry_payload, F64GeometryPayload,
+};
 use exp_sys_landscape::{reference::exact_volume_as_f64, SysLandscapePolytopeCache};
 use nalgebra::Vector4;
 use serde::{Deserialize, Serialize};
@@ -19,8 +22,7 @@ const SCHEMA_VERSION: u32 = 1;
 #[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum GeometryMode {
-    /// Retained in schema version 1 so old manifests fail with a focused
-    /// validation error instead of silently changing evaluator semantics.
+    /// Heuristic binary64 geometry with explicit indeterminate-predicate counts.
     F64,
     /// Exact geometry of the binary64 input coordinates.
     Exact,
@@ -419,9 +421,37 @@ pub(crate) fn build_geometry(
             .map(|polytope| (polytope, PredicateCounts::default()))
             .ok_or_else(|| "invalid_exact_geometry".to_string()),
         GeometryMode::F64 => {
-            Err("f64_geometry_is_not_available_in_the_clean_runner; use exact geometry".to_string())
+            let payload =
+                f64_geometry_payload(duals).map_err(|_| "invalid_f64_geometry".to_string())?;
+            build_from_f64_payload(duals, payload)
         }
     }
+}
+
+fn build_from_f64_payload(
+    duals: &[Vector4<f64>],
+    payload: F64GeometryPayload,
+) -> Result<(SysLandscapePolytopeCache, PredicateCounts), String> {
+    let counts = PredicateCounts {
+        vertex: payload.vertex_indeterminate_count,
+        near_singular: payload.bounded_near_singular_vertex_count,
+        incidence: payload.ambiguous_vertex_incidence_count,
+        intersection: payload.facet_intersection_indeterminate_count,
+        omega: payload.omega_indeterminate_count,
+    };
+    let exact_duals = exact_binary64_dual_vertex_arrays(duals);
+    let exact_vertices = exact_binary64_dual_vertex_arrays(&payload.vertices);
+    let polytope = SysLandscapePolytopeCache::from_trusted_parts(
+        exact_duals,
+        exact_vertices,
+        payload.vertex_facet_incidence,
+        payload.facet_intersection_is_nonempty,
+        payload.omega_signs,
+        duals.to_vec(),
+        payload.vertices,
+    )
+    .ok_or_else(|| "invalid_f64_geometry_payload_shape".to_string())?;
+    Ok((polytope, counts))
 }
 
 pub(crate) fn compute_volume(

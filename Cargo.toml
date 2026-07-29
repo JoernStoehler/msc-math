@@ -4,7 +4,6 @@ members = [
     "crates/algebraic-numbers",
     "crates/euclidean-polytopes",
     "experiments/dev-gradient-ascent",
-    "experiments/dev-gradient-ascent/optimizer-atoms",
     "experiments/dev-gradient-ascent/optimizer-runs",
     "experiments/hko-local-maximum",
     "experiments/regular-products",

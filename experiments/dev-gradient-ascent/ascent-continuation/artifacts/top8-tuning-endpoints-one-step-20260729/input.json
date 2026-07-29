@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "dataset_id": "optimizer-endpoint-continuation",
-  "source": "experiments/dev-gradient-ascent/optimizer-runs/artifacts/candidate-history-f10-128-0d699aff5",
+  "source": "experiments/dev-gradient-ascent/optimizer-runs/artifacts/candidate-history-f10-128-0a71a6042",
   "selection": {
     "algorithm": "nonlinear-linearized-w3e-1-beta3e-1-h4-n2-d1e-1",
     "order": "descending_best_sys",

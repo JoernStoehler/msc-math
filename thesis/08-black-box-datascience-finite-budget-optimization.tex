@@ -160,44 +160,6 @@ panel, not a random held-out sample.}
 \label{fig:black-box-datascience-hko-optimizer-calibration}
 \end{figure}
 
-\paragraph{Where the cheap model loses trust.}
-An on-trajectory replay separated candidate omission from finite-distance
-linearization error.  It replayed \(144\) selected moves from \(48\)
-development runs at half, equal, and twice their recorded displacement,
-yielding \(420\) usable target evaluations.  When a named set contained the
-target's full-evaluator winner, directly re-solving those named branches at
-the target reproduced \(\widehat{\operatorname{sys}}\) with zero recorded
-error in every retained control row.  But the
-future winner belonged to the anchor's transition-feasible universe in only
-\(296/420\) cases: \(123\) winners were transition-blocked at the anchor and
-one raw KKT solve failed.  Moreover, \(76/420\) future winners had nonpositive
-normalized beta at the anchor.  Thus neither a wider action window nor a hard
-positive-beta cutoff can by itself make an anchor candidate set complete at a
-finite distance.
-
-Direct coverage rose from \(56.7\%\) for a \(1\%\) action window to \(69.1\%\)
-for a \(100\%\) window.  The corresponding median measured cost rose from
-\(0.211\) to \(0.550\) times one full evaluation.  Keeping every anchor germ
-reached only \(70.5\%\) coverage at cost \(0.692\).  Frozen affine
-prediction has a second failure: adding more affine branches can worsen the
-envelope because a branch extrapolated outside its target physical domain can
-become spuriously minimal.  Figure
-\ref{fig:black-box-datascience-affine-failure-causes} displays these two
-mechanisms.  They explain why the implemented methods use cheap prediction to
-propose moves but still refresh branch state and fully recompute the scalar
-\(\widehat{\operatorname{sys}}\) before acceptance.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\linewidth]
-  {../experiments/dev-gradient-ascent/optimizer-atoms/artifacts/development-f10-16-replay-evidence/affine-failure-causes.png}
-\caption{On-trajectory affine-predictor outcomes.  The left panel separates
-the branch selected by the affine envelope; the right panel shows its
-90th-percentile absolute error.  More anchor branches improve direct
-candidate coverage but can worsen a frozen affine envelope.}
-\label{fig:black-box-datascience-affine-failure-causes}
-\end{figure}
-
 The objective curves alone do not establish convergence.  CMA-ES, literal
 gradient, and coordinate search are still visibly improving at the budget
 boundary, while a branch-aware method can stop because its local model returns

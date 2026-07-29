@@ -97,12 +97,7 @@ pub struct RoundRow {
     pub best_evaluation_id_after: String,
     pub best_sys_before: f64,
     pub best_sys_after: f64,
-    // State recording was added after the first retained schema-1 rounds. A
-    // missing field means that no state was recorded, not that the best
-    // evaluation was the algorithm's exact current state.
-    #[serde(default = "default_no_single_current_state")]
     pub algorithm_state_before: AlgorithmStateRow,
-    #[serde(default = "default_no_single_current_state")]
     pub algorithm_state_after: AlgorithmStateRow,
     pub geometric_reference_kind: Option<String>,
     pub geometric_reference_dual_flat: Option<Vec<f64>>,
@@ -112,10 +107,6 @@ pub struct RoundRow {
     pub selected: Vec<SelectedProposal>,
     pub stop_reason: Option<String>,
     pub algorithm_fields: serde_json::Value,
-}
-
-fn default_no_single_current_state() -> AlgorithmStateRow {
-    AlgorithmStateRow::NoSingleCurrentState
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -142,10 +133,6 @@ pub struct RunRow {
     pub initial_sys: f64,
     pub best_evaluation_id: String,
     pub best_sys: f64,
-    // Historical schema-1 runs predate final-state recording.  Absence means
-    // that no single current state was retained; a present value is still
-    // parsed strictly so malformed evidence cannot be hidden by the default.
-    #[serde(default = "default_no_single_current_state")]
     pub final_algorithm_state: AlgorithmStateRow,
     pub charged_calls: usize,
     #[serde(default)]

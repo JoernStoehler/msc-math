@@ -153,25 +153,6 @@ mod tests {
     }
 
     #[test]
-    fn legacy_round_without_state_fields_loads_as_no_single_current_state() {
-        let mut value = round_value();
-        let object = value.as_object_mut().expect("round fixture is an object");
-        object.remove("algorithm_state_before");
-        object.remove("algorithm_state_after");
-
-        let rows = load_round(value).expect("legacy round should remain readable");
-        assert_eq!(rows.len(), 1);
-        assert_eq!(
-            rows[0].algorithm_state_before,
-            AlgorithmStateRow::NoSingleCurrentState
-        );
-        assert_eq!(
-            rows[0].algorithm_state_after,
-            AlgorithmStateRow::NoSingleCurrentState
-        );
-    }
-
-    #[test]
     fn current_round_preserves_recorded_algorithm_states() {
         let rows = load_round(round_value()).expect("current round should load");
         assert_eq!(
@@ -221,26 +202,6 @@ mod tests {
         assert_eq!(
             dataset.best_at_or_before("r", 1).unwrap().evaluation_id,
             "e1"
-        );
-    }
-
-    #[test]
-    fn legacy_run_without_final_state_loads_as_no_single_current_state() {
-        let mut value = serde_json::json!({
-            "schema_version": 1, "run_id": "r", "start_id": "s",
-            "algorithm_id": "a", "algorithm_kind": "k", "seed": 1,
-            "budget": 2, "charge_initial": false,
-            "initial_evaluation_id": "e0", "initial_sys": 1.0,
-            "best_evaluation_id": "e0", "best_sys": 1.0,
-            "charged_calls": 0, "physical_evaluations": 1,
-            "invalid_evaluations": 0, "indeterminate_evaluations": 0,
-            "exact_fallback_evaluations": 0, "rounds": 0,
-            "stop_reason": "budget_exhausted", "wall_ms": 1.0
-        });
-        let rows = load_run(value.take()).expect("legacy run should load");
-        assert_eq!(
-            rows[0].final_algorithm_state,
-            AlgorithmStateRow::NoSingleCurrentState
         );
     }
 
