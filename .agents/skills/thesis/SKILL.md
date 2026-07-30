@@ -5,10 +5,11 @@ description: "Use when the task produces or judges thesis material or its mathem
 
 # Thesis
 
-Route work to the one-purpose references needed for the live decision. Do not
-load the package as a process checklist or assume its references exhaust the
-ways thesis work can fail. Project facts, chapter state, source truth, and
-current completion state remain in their authoritative local sources.
+Before acting, scan the routes below and read the reference for each decision
+the task actually requires; several may apply. Do not load a reference merely
+because its topic is adjacent, use the routes as a process checklist, or assume
+they exhaust the ways thesis work can fail. Project facts, chapter state, source
+truth, and current completion state remain in their authoritative local sources.
 
 ## Artifact, Readers, And Surfaces
 
