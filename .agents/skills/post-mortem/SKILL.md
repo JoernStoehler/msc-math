@@ -21,6 +21,9 @@ outcome. Inspect the actual artifact and relevant current repo state before
 making claims about them; distinguish problems that occurred from problems
 still present at the end. Use `$codex-session-log-parsing` when exact chronology,
 tool actions, compaction, or subagent lineage matters.
+Use `$gpt-56-harness` when evaluating durable harness behavior or recommending
+changes to AGENTS.md, skills, Codex configuration or agents, or reusable prompts.
+This route does not expand the postmortem's no-edit authority.
 
 Look for process learning. Useful questions can include:
 

@@ -22,8 +22,11 @@ capable current model cannot otherwise recover cheaply.
 - Codex already supplies `default`, `worker`, and `explorer`. Add a custom role
   only for a recurring project-specific need.
 
-For current product/model claims, read
-`references/official-openai-sources.md` and fetch the live pages. Treat copied
+When creating or updating a skill, also use `$skill-creator`.
+
+For current OpenAI/Codex product, model, configuration, agent, skill-discovery,
+or prompting claims, also use `$openai-docs`, read
+`references/official-openai-sources.md`, and fetch the live pages. Treat copied
 claims as dated caches.
 
 For behavior evaluation, state the prediction and possible side effects, then

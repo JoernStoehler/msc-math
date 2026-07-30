@@ -42,4 +42,5 @@ session or artifact at resumption time.
 When replacing an inadequate earlier message, make the packet self-contained;
 do not ask Jörn to mentally patch the old message with scattered corrections.
 
-Read `references/design-notes.md` only when editing or diagnosing this skill.
+Read `references/design-notes.md` when updating, reviewing, or diagnosing this
+skill or session-resume-related AGENTS/chat-convention guidance.

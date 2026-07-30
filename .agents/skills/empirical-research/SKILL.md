@@ -324,6 +324,8 @@ Jörn's exact review before Main merge.
 
 ## Adjacent Skills
 
+- Use `$paper-conventions` when work consults source papers under `papers/` or
+  checks published numbering.
 - Use `$subagent-prompting` when a fresh bounded assignment needs non-obvious
   context, ownership, or a return contract after its outcome and delegation
   reason are selected.

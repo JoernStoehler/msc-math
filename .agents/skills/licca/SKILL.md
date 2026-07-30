@@ -6,9 +6,9 @@ description: Use before writing any command Jörn should run on, to, or from LIC
 # LICCA
 
 Agents do not receive unrestricted LICCA access. Prepare simple, typo-resistant
-commands or reviewed scripts; Jörn skims and runs them. Read
-`references/current-facts.md` for connection and environment facts and
-`references/slurm-sharp-edges.md` when preparing Slurm work.
+commands or reviewed scripts; Jörn skims and runs them. Before writing any LICCA
+command, read `references/current-facts.md`. Also read
+`references/slurm-sharp-edges.md` for Slurm submission or monitoring work.
 
 ## Handoffs
 

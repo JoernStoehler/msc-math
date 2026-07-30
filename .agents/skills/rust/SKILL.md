@@ -48,5 +48,7 @@ Use a consumer `README.md` and maintainer `DEVELOPMENT.md` once a reusable
 crate's API or architecture decisions are nontrivial. README should support
 ordinary use without opening `src/`; DEVELOPMENT should preserve current scope,
 API rationale, edit locations, important rejected/deferred approaches, and the
-meaning of verification witnesses. For focused review, read
-`references/crate-documentation-review.md`.
+meaning of verification witnesses. Before substantively reviewing or materially
+updating a reusable crate's README or DEVELOPMENT documentation, read
+`references/crate-documentation-review.md`. Ordinary implementation work need
+not load it.
