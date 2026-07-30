@@ -1,6 +1,6 @@
 ---
 name: subagent-prompting
-description: Use when a subagent will own a substantial bounded task and needs a carefully designed prompt to receive the right context, boundaries, completion evidence, and return contract. This includes producing an artifact, taking context-heavy intermediate work out of the main session, giving an independent review for a consequential decision, or repairing an assignment that has already produced misunderstandings or unusable results. The outcome and reason to delegate must already be decided. This skill currently applies only to fresh subagents with zero inherited conversation turns. Skip this skill when the whole assignment can be stated clearly in one or two sentences, when the work is open-ended session ownership, or when there is only spare capacity but no established task.
+description: Use when a fresh subagent with zero inherited conversation turns will own a bounded assignment that needs non-obvious context, ownership boundaries, completion evidence, or a return contract; this includes consequential independent review and repair after failed delegation. The outcome and reason for delegation must already be decided. Skip assignments expressible clearly in one or two sentences and open-ended session ownership.
 ---
 
 # Subagent Prompting
