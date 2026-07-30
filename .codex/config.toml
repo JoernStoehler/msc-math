@@ -1,0 +1,7 @@
+# Baseline for codex-cli 0.146.0 with GPT-5.6 Sol, Terra, and Luna.
+# This applies to every selected model; do not use other model families with it.
+# Source: installed `codex debug models` `base_instructions`; not protocol `default.md`.
+# File SHA-256: cbefa6b0bede0e332d957fca70ccacf9f12f4c0ecdf81b819e5cbe1a3b16e265
+# Codex trims the file, so the effective prompt omits the catalog's final newline.
+# On each Codex update, recheck all three model entries before refreshing.
+model_instructions_file = "base-instructions.md"
