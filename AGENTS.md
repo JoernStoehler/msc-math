@@ -1,216 +1,159 @@
 # AGENTS.md
 
-## Objective
+## Purpose
 
-This repository supports Jörn Stöhler's master thesis, *Probing Viterbo's
-Conjecture*, supervised by Kai Cieliebak and Elizabeth Gaar.
+This repository exists to produce Jörn Stöhler's published master thesis,
+*Probing Viterbo's Conjecture*, supervised by Kai Cieliebak and Elizabeth Gaar.
+The terminal deliverable is the printed-quality thesis at
+`thesis/build/main.pdf`. Code, formal work, experiments, and retained evidence
+are durable sources for that thesis, not terminal value by themselves.
 
-Every session should improve one of the three deliverables:
+Prefer work by its expected contribution to the published thesis. Ask before
+expanding work whose contribution is unclear.
 
-1. the printed-quality thesis at `thesis/build/main.pdf`;
-2. the durable Rust crates under `crates/`;
-3. the reproducible experiment pipeline and retained evidence under
-   `experiments/`.
+## Find the relevant work
 
-If the connection to those outcomes is unclear, ask before expanding the work.
+Use this intentionally incomplete map to choose a search domain, not as a
+reading list:
 
-## Start here
+```text
+/workspaces/msc-math/
+├── ARCHITECTURE.md    stable domain and authority map
+├── docs/              project status, confirmed facts, cross-domain views
+├── thesis/            publication text; main.tex controls the active PDF
+├── formal/            statements, proofs, audits, unresolved obligations
+├── experiments/       producers, evidence, analyses, interpretation
+├── crates/            reusable Rust libraries and tests
+├── papers/            source papers and paper-specific notes
+├── submit/            submission and administrative sources
+├── .agents/skills/    conditional task workflows
+└── .worktrees/        isolated checkouts; not project content
+```
 
-- `README.md`: project overview and first entry points.
-- `ARCHITECTURE.md`: stable repository domains, authority, and search routes.
-- `docs/project-status.md`: current milestones and unresolved gates.
-- `docs/project-facts.md`: Jörn-confirmed project and external facts.
-- `thesis/README.md`, `formal/README.md`, `experiments/README.md`, and
-  `crates/README.md`: domain entry points.
-- `submit/README.md`: submission sources and official-form cache.
+Open a named source directly. Otherwise choose the smallest plausible domain,
+then use its README only if orientation is needed. Search filenames, text,
+symbols, and manifests; read sources before relying on summaries. A lexical
+miss is weak evidence of absence because related work may use other terms.
 
-Use ordinary filename, text, symbol, and manifest search after choosing a
-domain. Read the named source before relying on a summary. A failed lexical
-query is weak evidence of absence when related work may use different terms.
+Route thesis and formal work through `$thesis`, experiments through
+`$empirical-research`, source-paper work through `$paper-conventions`, and Rust
+work through `$rust` when its project-specific contracts matter. The active
+skill catalog and skill frontmatter own exact trigger boundaries; read every
+matching skill before acting.
 
-## Authority
+## Evidence and authority
 
-Current source files, tests, data, producer outputs, local notes,
-accepted Jörn/Kai decisions, and active thesis text overrule summaries.
+Current sources, tests, data, producer outputs, local notes, accepted Jörn/Kai
+decisions, and active thesis text overrule summaries.
 
 - `docs/project-facts.md` records still-current Jörn-confirmed facts.
 - `docs/project-status.md` records project state, not mathematical truth.
 - `docs/capabilities.md` is a cross-domain view, not independent evidence.
-- `README.md` files are entry points. `DEVELOPMENT.md` files are maintainer
-  notes.
-- Generated artifacts must be regenerated from their producer; do not
-  hand-edit them.
-- Session logs, old branches, and `/tmp` are provenance or salvage sources,
-  not current project state.
+- `DEVELOPMENT.md` files contain maintainer notes; a README has only the
+  authority of the sources behind its claims.
+- Regenerate generated artifacts from their producer; do not hand-edit them.
+- Session logs, old branches, and `/tmp` are provenance or salvage sources, not
+  current project state. Use `$codex-session-log-parsing` for local Codex logs.
 
-This repository contains many retained experiments, negative results,
-alternative implementations, and superseded routes. Searching for prior work
-therefore has unusually high expected value. Absence from a README or lexical
-search result does not establish absence from the project. Before declaring a
-project-wide proof, experiment, or implementation gap, broaden terminology,
-inspect plausible READMEs, and report the searched scope.
+The repository deliberately retains negative results, alternatives, and
+superseded routes. Before declaring a project-wide proof, experiment, or
+implementation gap, broaden terminology, inspect plausible domain READMEs, and
+report the searched scope.
 
-## Repository boundaries
+Formal work may be stronger, weaker, or superseded relative to the active
+thesis. Producer-generated datasets remain attributable to their producer;
+consumers name the producer output or data contract they use.
 
-- `thesis/` is publication text. `thesis/main.tex` defines the active PDF.
-  Content companions support writing but are not mathematical source truth.
-- `formal/` is proof development and may contain stronger, weaker, or
-  superseded routes not used by the thesis.
-- `experiments/` contains empirical questions, data producers, consuming
-  analyses, retained evidence, interpretation, and reproduction instructions.
-  Producer-generated datasets remain attributable to their producer; consumers
-  name the producer output or data contract they use.
-- `crates/` contains reusable Rust libraries. Follow normal Cargo layout.
-- `papers/` contains source papers and paper-specific notes.
-- `submit/` contains submission/admin sources.
-- `.worktrees/` contains isolated local worktrees and is not project content.
-- `/tmp/` is disposable scratch.
+Four-dimensional coordinates use `(q1, q2, p1, p2)`. Prefer coordinate-free
+notation when their order is irrelevant.
 
-Across the project, four-dimensional coordinates use `(q1, q2, p1, p2)`.
-Prefer coordinate-free notation when the order is irrelevant.
+## Keep the work moving
 
-## Working rules
+- Continue until the current scope is complete, explicitly paused, locally
+  blocked, or waiting on Jörn is worth its attention cost. Incomplete scope
+  without a blocker means continue.
+- Do not ask what should be done when the agent can generate the options,
+  predict consequences, and compare them against known goals. Choose locally.
+  Ask only for a missing fact, option, prediction, constraint, or preference
+  likely to change the choice.
+- Treat incoming messages as information or coordination unless they clearly
+  request action; do not infer a task. Feedback constrains the active
+  work unless it explicitly replaces it. Interpret explicit requests to record
+  something for later or interrupt the work literally.
+- A repair request does not authorize redesigning accepted objectives,
+  constraints, or workflow unless current evidence makes redesign necessary.
+- Do accessible local work. Ask Jörn for mathematical or stakeholder cruxes,
+  private context, LICCA access, mail, or administrative actions.
 
-- Main is read-only unless Jörn explicitly requests that exact Main edit.
-  Ordinary changes use a worktree and reach Main only after review and Jörn's
-  merge approval.
-- Harness files (`AGENTS.md`, `.agents/skills/**`, `.codex/agents/**`) are
-  frozen unless Jörn explicitly requests harness work.
+### Worktrees, Main, and harness changes
+
+- Main is read-only unless Jörn requests that exact Main edit. Ordinary changes
+  use a worktree. Do not merge an exact candidate into Main before Jörn approves
+  it; after approval, perform the merge unless he assigns it elsewhere or asks
+  to leave it unmerged.
+- Harness files (`AGENTS.md`, `.agents/skills/**`, `.codex/agents/**`) are frozen
+  unless Jörn requests harness work. Use `$gpt-56-harness`; also use
+  `$skill-creator` when changing a skill.
 - Preserve unrelated user changes in dirty worktrees.
-- Do not ask Jörn to do accessible local work. Ask for mathematical or
-  stakeholder cruxes, private context, LICCA access, mail, or admin actions.
 
-### Autonomy
+### Subagents
 
-Keep thesis work moving without turning agent-doable choices into Jörn-steering
-requests.
+- Delegate bounded work that divides cleanly, especially when parallelism cuts
+  critical-path wall time. The root retains dependency order, synthesis,
+  merge-readiness, and value/cost decisions.
+- For every fresh subagent, set `fork_turns="none"` and explicitly choose its
+  model and reasoning effort.
+- If delegation needs non-obvious context, ownership boundaries, completion
+  evidence, or a return contract, use `$subagent-prompting`; write and
+  self-review its prompt in `/tmp/prompts/`. Keep a genuinely one-sentence
+  assignment inline.
+- Treat decomposition and model choice as empirical rather than a fixed routing
+  table.
 
-- Continue unless the assigned scope is complete, explicitly paused, blocked
-  after local inspection, or waiting on Jörn is worth its attention cost.
-  Incomplete scope plus no blocker/request means continue: inspect, test,
-  delegate, narrow the scope, or state the concrete blocker.
-- Ask Jörn for cruxes, not permission. For next-action choices, decompose
-  outcomes, costs, values, constraints, and stakeholder preferences; estimate
-  locally what the agent can estimate, then ask only the crux where Jörn is
-  likely informative.
-- Use subagents for bounded subtasks that divide cleanly. Always set
-  `fork_turns` explicitly to `none`; full-history and finite-history forks are
-  forbidden. Explicitly select the model and reasoning effort for every fresh
-  subagent. Main owns
-  target choice, dependency order, final synthesis, merge-readiness, and
-  value/cost tradeoffs. Treat model/decomposition choices as empirical, not a
-  fixed Sol/Terra/Luna routing map.
-- After the outcome, reason for delegation, and choice of a fresh recipient are
-  fixed, use `$subagent-prompting` when a bounded assignment must transfer
-  non-obvious context, nontrivial ownership boundaries, completion evidence, or
-  a return contract. Keep direct one-sentence assignments direct.
-- A maintenance or repair request does not by itself authorize redesigning the
-  accepted objective, constraints, or workflow. Change them only when current
-  evidence makes that necessary for the requested outcome.
+### Cross-session work
 
-### Chat with Jörn
+Perform a handoff or prepare an exact relay when a known person, root session,
+or agent depends on the result; do not invent dependencies.
 
-Jörn's time should go to expert feedback, not large amounts of handholding or
-session repair. Communication should be low-friction and focused on information
-transfer, not presentation or narration.
+Root sessions handle routine coordination themselves: check known owners and
+dependencies, route information, claim work, delegate bounded pieces, or record
+work for later. Ask Jörn only when ownership depends on private priorities or
+stakeholder judgment.
 
-- Write plain: ordinary words, existing thesis/repo terms, no metaphors, no
-  analogies, no invented labels.
-- When speaking to Jörn, refer to thesis parts by their content names rather
-  than section numbers; numbers are hard for him to keep associated with the
-  content.
-- Usually, Jörn has multiple Codex sessions open. He switches away when a session
-  becomes async and returns later after other work has displaced this chat from
-  working memory. Communication should make it cheap for Jörn to resume without
-  rereading the transcript, especially by making clear whether the agent is
-  waiting on Jörn. Use the session-resume-packet skill when resuming later
-  would require nontrivial context reload.
-- Use `/tmp/` to polish messages that cannot be written cleanly top to bottom
-  without pausing, revising, reordering, or removing filler. Then send the
-  polished message.
-- Do not bundle unrelated questions or concerns in one request. Go through them
-  one by one. Within one concern, include related alternatives when comparing
-  them makes Jörn's feedback more useful.
-- Give enough context for Jörn's answers. When asking a question or requesting
-  review, state the relevant current state, uncertainty, and what kind of
-  answer helps. For high-leverage or unclear work, discuss the problem
-  model before proposing solutions.
-- When asking Jörn to evaluate a repository or harness diff, put the exact diff
-  in a unique `/tmp/joern/*.diff`, link it, and name its base and candidate.
-- Make questions, review requests, and other requests to Jörn hard to overlook.
-  Usually put them on their own line or at the end of a short list. Re-ask or
-  follow up if a request of yours was missed or only partly answered.
-- Put every question or request that needs Jörn's answer in the final channel;
-  commentary does not ping him and he may not read it. Final answers must be
-  self-contained: do not assume Jörn saw commentary, tool input, tool output,
-  or facts buried in command output.
-- Use line breaks and light structure so Jörn can skip known parts quickly. Use
-  numbers, short labels, or tables only when they make the message easier to
-  read, answer, or refer to.
-- `JOERN.md` is Jörn's paste shelf for current-chat steering prompts. If Jörn
-  pastes or names a snippet from it, apply that snippet to the current chat.
-  Otherwise do not treat `JOERN.md` as active instructions, source truth, or a
-  task queue.
-- Preserve precision that matters for communication. Do not shorten recaps if
-  shortening loses the actual distinction.
-- Make list type clear when ambiguity matters: exhaustive list, examples,
-  current known set, priority order, or another ordinary description.
-- Communicate current state, history summaries, problem models, and useful
-  alternatives. Report phase changes or blockers when they help coordination;
-  do not narrate routine process unless the process itself is the relevant
-  state.
-- Communicate epistemic status when it matters. Bayesian/LessWrong-style here
-  means graded belief, expected value, and clear quantities. English phrases are
-  fine when precision is unimportant. Numbers can reduce ambiguity about
-  strength, size, likelihood, or cost, but only if it is clear what quantity they
-  estimate.
-- Use whole-project value and cost, not only local task cost, when estimates
-  matter. Measure relevant costs directly: shadow API cost even when a
-  subscription means it is not paid directly, critical-path wall time and its
-  effect on thesis submission, and actual Jörn attention time. Do not translate
-  these through fixed hourly labor proxies. Determine the current bottleneck
-  empirically instead of assuming Jörn time is it. Compute shadow API cost as
-  `((input - cached_input) * I + cached_input * C + output * O) / 1e6`.
-  Priority-tier `(I, C, O)` USD rates per million tokens, recorded 2026-07-16:
-  `gpt-5.6-sol = (10, 1, 60)`, `gpt-5.6-terra = (5, 0.5, 30)`, and
-  `gpt-5.6-luna = (2, 0.2, 12)`. Use this cached rate line immediately; do not
-  pause ordinary cost estimates to refresh it.
-- Final summaries after completed work should list review passes performed,
-  including review subagents used or intentionally not used. Do not add ritual
-  review summaries to small chat-only replies.
+The current thesis-completion backlog is documented at
+`/tmp/msc-math-thesis-backlog/README.md` and stored in
+`/tmp/msc-math-thesis-backlog/backlog.jsonl`. Read its README before use. It is
+only cross-session operational state: root sessions update it, subagents report
+through their root, and it is not mathematical, empirical, or project source
+truth. This rule becomes inert when either file is removed.
+
+## Communicate with Jörn
+
+- Write plainly in existing project terms. Transfer useful state, evidence,
+  uncertainty, blockers, and decisions; omit routine narration.
+- Do agent-doable option generation and comparison first. Ask only for a real
+  crux, with enough context to answer it. Separate unrelated concerns, batch
+  related questions, and make every request explicit in a self-contained final
+  message.
+- Do not end the turn while useful agent-doable work remains. When waiting is
+  necessary, say exactly what depends on Jörn. Make cold resumption cheap.
+- For review, link the complete artifact and an exact full-context diff in a
+  unique `/tmp/joern/*.diff`; name its base and candidate.
 
 ## Documentation
 
-Use conventional repository and package layouts. Put durable knowledge near
-the code, artifact, question, or contract that makes it interpretable. This is
-local judgment, not a repository-wide split/join algorithm.
+Put durable repository-specific facts, decisions, evidence, status, sharp
+edges, and expensive checks beside the code, artifact, question, or contract
+that makes them interpretable. Use conventional layouts and stable,
+grep-friendly names. Declare dependencies where consumed; do not imply that a
+manually maintained producer-side consumer list is exhaustive.
 
-Experiment material can be related simultaneously by subject, method,
-implementation, producer, comparison, provenance, and thesis use. The
-directory tree exposes only some of those relations. Preserve the
-repo-specific reasoning and change triggers that later agents need; do not
-replace them with a general placement taxonomy.
-
-Declare dependencies where they are consumed: imports, Cargo manifests,
-scripts/configs, commands, dataset identifiers, or consumer READMEs. Use
-stable, grep-able names so reverse impact can be derived by repository search.
-Do not present a manually maintained producer-side consumer list as exhaustive.
-Similar executable scaffolding or instrumented implementations need not share
-an import merely to reduce edit count.
-
-Document repository-specific facts, decisions, evidence, status, source paths,
-sharp edges, and expensive checks. Do not duplicate generic knowledge.
-
-Prefer conventional filenames and stable, grep-able terms. Keep active and
-superseded material visibly distinct. When a result's scope or rationale is not
-recoverable from the artifact itself, state it beside the artifact.
-
-Navigation views must say what they cover. A view supports only the claims it
-actually establishes; merely pointing to evidence does not replace that
-evidence. An incomplete semantic/status view must not imply a complete
-inventory.
+Keep active and superseded material visibly distinct. Navigation views state
+their coverage and support only the claims they establish.
 
 ## Baseline commands
+
+Before writing any command Jörn should run on, to, or from LICCA, use `$licca`.
 
 ```bash
 # Worktree
@@ -230,6 +173,6 @@ cd thesis && latexmk && ./check-build.sh
 cd formal && latexmk
 ```
 
-Producer and experiment READMEs document their commands and output-safety
-rules. Read the local README before running a command that may overwrite
-tracked evidence.
+Producer and experiment READMEs own their commands and output-safety rules.
+Read the local README before running anything that may overwrite tracked
+evidence.

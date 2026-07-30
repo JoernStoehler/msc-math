@@ -109,7 +109,6 @@ frontier here.
 - `papers/`, including downloaded/cached article sources and article figures;
 - downloaded official forms and their conversions under `submit/`;
 - raw Codex/Claude session logs and ignored `experiments/ai-use/artifacts/`;
-- `JOERN.md`, which is a live chat paste shelf rather than project source;
 - credentials, `.env`, user configuration, editor state, local worktrees,
   caches, build directories, and submission administration;
 - any later-discovered third-party asset without clear redistribution rights.
