@@ -1,6 +1,6 @@
 ---
 name: gpt-56-harness
-description: Use when designing, editing, reviewing, diagnosing, or evaluating durable agent-facing instructions for GPT-5.6, including AGENTS.md, repo-local skills, Codex configuration ownership, custom agents, reusable instruction systems, cold-start prompts intended to replace missing session context for a new autonomous session, and model-family migrations. For a durable bounded-subagent prompt, also use subagent-prompting. Do not use for ordinary one-off task prompts, ordinary delegation, or domain work merely because Codex performs it.
+description: Use for durable GPT-5.6 harness work: AGENTS.md, repo-local skills, Codex configuration or agents, reusable or cold-start prompts, model migrations, and behavior evaluation. Skill edits also require skill-creator and current official guidance; durable bounded-subagent prompts also require subagent-prompting. Skip one-off prompts, ordinary delegation, and domain work.
 ---
 
 # GPT-5.6 Harness

@@ -1,6 +1,6 @@
 ---
 name: thesis
-description: "Use for process, creation, editing, organization, review, or delegation work that contributes to the thesis or its mathematical support: publication-facing prose and LaTeX under `thesis/`; chapter companions and source maps; mathematical statements, proofs, proof notes, and status under `formal/` or elsewhere in the repo; thesis-facing or experiment-support figures, plots, diagrams, tables, listings, and compact displays that require reader-facing design judgment; rendered-PDF and readiness review; or agent workflows intended to produce these artifacts. Do not use for pure LaTeX/build debugging, mechanical file edits, or domain work whose result has no thesis-facing, mathematical-writing, or reader-facing presentation decision."
+description: "Use when the task produces or judges thesis material or its mathematical support: prose, claims or proofs, figures, tables, rendered-PDF quality, or readiness; also use when delegating that work. Skip merely consulting thesis material for another task, build-only PDF or LaTeX work, and mechanical edits."
 ---
 
 # Thesis
