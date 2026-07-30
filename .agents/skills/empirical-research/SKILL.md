@@ -1,6 +1,6 @@
 ---
 name: empirical-research
-description: "Use for empirical, computational, or experiment-supported research: structuring experiment packets and files; maintaining research questions and experiment ideas; brainstorming or assessing a research frontier; planning, reviewing, executing, or interpreting experiments; coordinating research agents and integration branches; managing data, provenance, and evidence promotion; or improving this research workflow. Do not use for purely mathematical proof work without an empirical surface, publication-facing thesis writing/design, ordinary Rust work, or LICCA commands except to route to the relevant skill."
+description: "Use for empirical, computational, or experiment-supported research: questions, ideas, and frontier assessment; experiment planning, execution, review, and interpretation; experiment packets/files, data, provenance, and evidence promotion; research-agent or integration-branch coordination; and research-workflow improvement. Skip proof work without an empirical surface, publication-facing thesis writing or design, ordinary Rust maintenance, and LICCA commands."
 ---
 
 # Empirical Research
