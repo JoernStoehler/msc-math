@@ -159,6 +159,10 @@ Before writing any command Jörn should run on, to, or from LICCA, use `$licca`.
 # Worktree
 GIT_LFS_SKIP_SMUDGE=1 git worktree add .worktrees/<name> -b <branch> main
 
+# Python
+uv run --script thesis/figures/foundations/generate.py
+# Wrong: python3 thesis/figures/foundations/generate.py  # bare Python lacks declared dependencies
+
 # Rust
 cargo fmt --check
 cargo test -p symplectic --release --lib
