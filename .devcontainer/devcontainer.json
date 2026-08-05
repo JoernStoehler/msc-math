@@ -40,11 +40,10 @@
   // Bind mounts: Jörn's specific host paths for cache persistence.
   "mounts": [
     "source=/srv/devhome/.claude,target=/home/vscode/.claude,type=bind,consistency=cached",
-    // Codex CLI auth + runtime state (mirrors the ~/.claude pattern).
-    // Keeps auth.json, history.jsonl, sessions/, and log/ outside any git tree
-    // so they can't be accidentally committed. User/IDE settings stay in the
-    // mounted ~/.codex/config.toml; project agents and reusable skills live in
-    // `.codex/agents/` and `.agents/skills/`.
+    // Codex CLI auth + runtime and machine/user state (mirrors ~/.claude).
+    // Keeps auth.json, history.jsonl, sessions/, log/, trust bootstrap, and UI
+    // choices outside any git tree. Tracked project policy, agents, and skills
+    // live in `.codex/`, `.codex/agents/`, and `.agents/skills/`.
     "source=/srv/devhome/.codex,target=/home/vscode/.codex,type=bind,consistency=cached",
     "source=/srv/devhome/.config/gh,target=/home/vscode/.config/gh,type=bind,consistency=cached",
     "source=/srv/devhome/.cache/uv,target=/home/vscode/.cache/uv,type=bind,consistency=cached",

@@ -1,7 +1,81 @@
-# Baseline for codex-cli 0.146.0 with GPT-5.6 Sol, Terra, and Luna.
-# This applies to every selected model; do not use other model families with it.
-# Source: installed `codex debug models` `base_instructions`; not protocol `default.md`.
-# File SHA-256: cbefa6b0bede0e332d957fca70ccacf9f12f4c0ecdf81b819e5cbe1a3b16e265
-# Codex trims the file, so the effective prompt omits the catalog's final newline.
-# On each Codex update, recheck all three model entries before refreshing.
+# Tracked msc-math policy. ~/.codex/config.toml retains machine/user state such
+# as trust bootstrap, UI/history choices, and absolute machine paths.
+#
+# base-instructions.md began as the codex-cli 0.146.0 GPT-5.6 Sol/Terra/Luna
+# catalog prompt (SHA-256
+# cbefa6b0bede0e332d957fca70ccacf9f12f4c0ecdf81b819e5cbe1a3b16e265).
+# Local deltas are intentional. On each Codex update, compare all three catalog
+# entries and review the delta before refreshing the baseline.
+model = "gpt-5.6-sol"
+model_reasoning_effort = "high"
+model_reasoning_summary = "concise"
 model_instructions_file = "base-instructions.md"
+personality = "pragmatic"
+
+sandbox_mode = "danger-full-access"
+approval_policy = "never"
+web_search = "live"
+
+project_doc_max_bytes = 65536
+service_tier = "default"
+
+[features]
+apps = false
+shell_snapshot = true
+goals = true
+memories = true
+
+# Force MultiAgent V2 independently of the selected parent model.
+[features.multi_agent_v2]
+enabled = true
+expose_spawn_agent_model_overrides = true
+hide_spawn_agent_metadata = false
+tool_namespace = "agents"
+# Backstop for an omitted timeout. The prompt still requires an explicit,
+# duration-sized timeout; four minutes avoids a 30-second polling chain.
+default_wait_timeout_ms = 240000
+
+# Experimental no-fork wait primitive. This feature also injects current time
+# once per context window; a long interval suppresses further routine reminders.
+[features.current_time_reminder]
+enabled = true
+sleep_tool = true
+reminder_interval_seconds = 86400
+clock_source = "system"
+delivery_mode = "after_user_or_tool_output"
+
+[agents]
+# High capacity for intentional parallel work, not a decomposition target.
+# Completed agents remain resident until closed and count against this ceiling.
+max_concurrent_threads_per_session = 99
+default_subagent_model = "gpt-5.6-luna"
+default_subagent_reasoning_effort = "high"
+
+[memories]
+# Avoid learning from sessions whose context includes potentially hostile or
+# stale external material. Repo files and local tool output do not trigger this.
+disable_on_external_context = true
+generate_memories = true
+use_memories = true
+# Memory work is background maintenance: do not spend scarce quota on it.
+min_rate_limit_remaining_percent = 50
+extract_model = "gpt-5.6-luna"
+consolidation_model = "gpt-5.6-luna"
+
+# Force Git subprocesses to stay non-interactive.
+[shell_environment_policy.set]
+GCM_INTERACTIVE = "Never"
+GIT_ASKPASS = "/bin/true"
+GIT_EDITOR = "true"
+GIT_PAGER = "cat"
+GIT_SSH_COMMAND = "ssh -oBatchMode=yes"
+GIT_TERMINAL_PROMPT = "0"
+
+[mcp_servers.openaiDeveloperDocs]
+url = "https://developers.openai.com/mcp"
+
+[mcp_servers.openaiDeveloperDocs.tools.fetch_openai_doc]
+approval_mode = "approve"
+
+[mcp_servers.openaiDeveloperDocs.tools.search_openai_docs]
+approval_mode = "approve"

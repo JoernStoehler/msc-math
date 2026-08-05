@@ -151,6 +151,12 @@ manually maintained producer-side consumer list is exhaustive.
 Keep active and superseded material visibly distinct. Navigation views state
 their coverage and support only the claims they establish.
 
+Place a helper owned by a conditional workflow in
+`.agents/skills/<owning-skill>/scripts/`, a standalone repository-wide
+deterministic helper in repository-root `scripts/`, and a producer
+transformation beside its producer. Keep one-off probes in `/tmp`; promote one
+only after it has recurring value and a clear owner.
+
 ## Baseline commands
 
 Before writing any command Jörn should run on, to, or from LICCA, use `$licca`.

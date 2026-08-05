@@ -1,6 +1,6 @@
 ---
 name: gpt-56-harness
-description: Use for durable GPT-5.6 harness work: AGENTS.md, repo-local skills, Codex configuration or agents, reusable or cold-start prompts, model migrations, and behavior evaluation. Skill edits also require skill-creator and current official guidance; durable bounded-subagent prompts also require subagent-prompting. Skip one-off prompts, ordinary delegation, and domain work.
+description: "Use for durable GPT-5.6 harness work: AGENTS.md, repo-local skills, Codex configuration or agents, reusable or cold-start prompts, model migrations, and behavior evaluation. Skill edits also require skill-creator and current official guidance; durable bounded-subagent prompts also require subagent-prompting. Skip one-off prompts, ordinary delegation, and domain work."
 ---
 
 # GPT-5.6 Harness
@@ -16,9 +16,13 @@ capable current model cannot otherwise recover cheaply.
 - Put project-wide invariants in `AGENTS.md`, conditional task knowledge in
   skills, details in routed references, and topic-specific knowledge beside its
   owner. A reference is not active merely because it exists.
-- Keep user/IDE model, effort, verbosity, and concurrency settings in
-  `~/.codex/config.toml`. Do not add repo overrides that make later IDE GUI
-  writes ineffective.
+- Keep deliberate msc-math model, effort, permission, feature, agent, memory,
+  shell-policy, and project-specific integration choices in tracked
+  `.codex/config.toml`. Keep only machine/user state in
+  `~/.codex/config.toml`, including trust bootstrap, UI/history preferences,
+  trusted-hook state, other-project trust, and absolute machine paths. Do not
+  duplicate a setting across layers without documenting the intended
+  precedence.
 - Codex already supplies `default`, `worker`, and `explorer`. Add a custom role
   only for a recurring project-specific need.
 

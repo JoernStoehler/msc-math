@@ -35,11 +35,10 @@ if command -v npm >/dev/null 2>&1; then
   npm config set cache "${HOME}/.cache/npm"
   # pyright LSP for Claude Code code intelligence plugin
   npm install -g pyright
-  # Codex CLI (OpenAI). Runtime state (auth.json, history, sessions, log)
-  # lives in ~/.codex, which is bind-mounted from /srv/devhome/.codex so it
-  # persists across rebuilds and stays outside any git tree. This project's
-  # IDE-owned settings remain there; repo-local skills and optional custom
-  # agents live in their tracked project directories.
+  # Codex CLI (OpenAI). Runtime and machine/user state (auth.json, history,
+  # sessions, log, trust bootstrap, and UI choices) lives in ~/.codex, which is
+  # bind-mounted from /srv/devhome/.codex. Project policy, skills, and optional
+  # custom agents live in tracked project directories.
   npm install -g @openai/codex
 fi
 
