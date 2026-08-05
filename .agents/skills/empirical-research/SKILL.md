@@ -318,7 +318,7 @@ One pass supports only that configured case.
 
 Prune or replace obsolete process knowledge instead of appending episode
 history. Keep model-specific results, raw telemetry, and detailed evaluations
-in their empirical/session owners. Use `$gpt-56-harness` for durable instruction
+in their empirical/session owners. Use `$harness-engineering` for durable instruction
 design and behavior-evaluation integrity. Keep a skill diff separate and obtain
 Jörn's exact review before Main merge.
 
@@ -336,6 +336,6 @@ Jörn's exact review before Main merge.
 - Use `$thesis` when the main consumer is publication-facing prose, proof,
   figure/table design, or integrated thesis review. Investigation evidence
   becoming a thesis asset is a new consumer transition.
-- Use `$gpt-56-harness` for durable skill/AGENTS/custom-agent design and
+- Use `$harness-engineering` for durable skill/AGENTS/custom-agent design and
   behavior evaluation. This skill owns empirical outcome measures, not a
   duplicate general harness protocol.

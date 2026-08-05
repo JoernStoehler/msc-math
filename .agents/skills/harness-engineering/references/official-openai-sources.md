@@ -1,4 +1,4 @@
-# Official OpenAI sources for GPT-5.6 and Codex
+# Official OpenAI sources for harness engineering
 
 Fetch live pages when a current model role, identifier, default, limit,
 configuration field, feature, or prompting recommendation affects a decision.

@@ -21,7 +21,7 @@ companion maintenance, builds, rendered inspection, and revision after review.
 Do not constrain the recipient to a writer role when the desired outcome
 requires those activities.
 
-Use `$gpt-56-harness` for the cold-start prompt. State context before task
+Use `$harness-engineering` for the cold-start prompt. State context before task
 details, including:
 
 - what thesis and reader decision the chapter serves;

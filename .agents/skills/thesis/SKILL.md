@@ -102,6 +102,6 @@ length, prior review, or writing cost.
 - Read `references/learn-from-writing-trials.md` when a writing trial may
   change later routing.
 
-Use `$gpt-56-harness` for evaluation integrity and reusable agent-facing
+Use `$harness-engineering` for evaluation integrity and reusable agent-facing
 instructions. Preserve writing-specific outcome measures here, not a duplicate
 evaluation protocol.

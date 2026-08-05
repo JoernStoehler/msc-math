@@ -92,7 +92,7 @@ notation when their order is irrelevant.
   it; after approval, perform the merge unless he assigns it elsewhere or asks
   to leave it unmerged.
 - Harness files (`AGENTS.md`, `.agents/skills/**`, `.codex/agents/**`) are frozen
-  unless Jörn requests harness work. Use `$gpt-56-harness`; also use
+  unless Jörn requests harness work. Use `$harness-engineering`; also use
   `$skill-creator` when changing a skill.
 - Preserve unrelated user changes in dirty worktrees.
 

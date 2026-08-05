@@ -3,7 +3,7 @@
 Use this reference when a writing, review, model-routing, or delegation trial
 may change future work.
 
-Use `$gpt-56-harness` for evaluation integrity and reusable agent-facing
+Use `$harness-engineering` for evaluation integrity and reusable agent-facing
 instructions. This reference supplies only the writing-specific outcomes by
 which that evaluation should be judged.
 
@@ -23,4 +23,4 @@ priors.
 Preserve a writing-specific lesson durably only when its observed behavior and
 repair cost are likely to change future routing enough to repay maintenance
 and context cost. Otherwise keep the evaluation packet in scratch as directed
-by `$gpt-56-harness`.
+by `$harness-engineering`.
