@@ -1,0 +1,16 @@
+{
+  "description": "Wake an idle root after a thread-spawned child stops.",
+  "hooks": {
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$(git rev-parse --show-toplevel)/scripts/subagent-stop-wake.mjs\" hook",
+            "timeout": 3
+          }
+        ]
+      }
+    ]
+  }
+}
