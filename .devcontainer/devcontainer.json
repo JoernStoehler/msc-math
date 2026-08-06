@@ -25,6 +25,7 @@
   // --cap-add=SYS_ADMIN: needed for perf, strace, and other profiling tools inside the container.
   "runArgs": ["--memory=10g", "--memory-swap=12g", "--cap-add=SYS_ADMIN"],
   "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postStartCommand": "bash .devcontainer/start-codex-gui.sh",
   "containerEnv": {
     "TERM": "xterm-256color",
     "LANG": "en_US.UTF-8",

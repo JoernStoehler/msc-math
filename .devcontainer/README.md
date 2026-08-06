@@ -19,6 +19,8 @@ is the security boundary, not Codex's in-tool sandbox rules).
 - bash sessions (entered via `devcontainer exec` from host, or VSCode terminal)
 - tmux (session persistence across disconnects; `set -g mouse on` for scroll)
 - Codex CLI processes
+- the Codex mobile companion and its loopback app-server, when the sibling
+  `/workspaces/codex-gui` checkout and its dependencies are present
 - Everything Codex spawns: shell commands, cargo, python, latexmk, etc.
 - SageMath via a baked Miniforge/conda-forge install, exposed as `sage`
 
@@ -93,6 +95,25 @@ codex
 Access methods (see Architecture section above):
 - Chrome on Ubuntu desktop (vscode.dev tunnel)
 - Termux on Android (`ssh joern@<tailscale-ip>`)
+
+## Codex mobile companion
+
+On each container start, `postStartCommand` runs
+`.devcontainer/start-codex-gui.sh`. When `/workspaces/codex-gui` and its
+`node_modules` are present, the script idempotently starts both the HMR server
+and the loopback Codex app-server in their detached tmux sessions.
+
+Run the same startup explicitly from the `msc-math` entry point with:
+
+```bash
+bash .devcontainer/start-codex-gui.sh
+```
+
+The hook prints a warning and leaves the container usable when the companion
+checkout or dependencies are absent. After a devcontainer recreation, clone
+the private `codex-gui` repository into `/workspaces/codex-gui`, run `npm ci`
+there, and rerun the startup script. Inspect or stop the services with the
+`npm run dev:*` and `npm run app-server:*` commands in that checkout.
 
 ## Host scripts
 
