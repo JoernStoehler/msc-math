@@ -126,9 +126,11 @@ Clients have two supported routes:
 - host: connect to `ws://127.0.0.1:4500`.
 
 Docker publishes only loopback. Tailscale, SSH, Cloudflare, or another trusted
-host mechanism owns deliberate external exposure and TLS. The native
-capability-token file lives under `$CODEX_HOME`; a client that bind-mounts that
-single file must be recreated after atomic token rotation.
+host mechanism owns deliberate external exposure and TLS. Every app-server in
+the fixed deployment uses the same token. This repository reads its ignored
+mode-`0600` `.app-server-token`; `codex-gui` owns an identical repo-local copy.
+Normal lifecycle commands never regenerate or rotate it. Emergency replacement
+requires updating both copies and restarting both app-servers and GUI backends.
 
 ## Rejected architectures
 

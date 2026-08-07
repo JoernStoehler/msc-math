@@ -55,7 +55,9 @@ enter:
 
 # Perform one-time authentication and repository hook setup.
 bootstrap:
-    docker compose exec -T workspace bash -lc 'umask 077; test -s "$CODEX_HOME/app-server-token" || openssl rand -hex 32 >"$CODEX_HOME/app-server-token"; chmod 600 "$CODEX_HOME/app-server-token"'
+    test -s .app-server-token
+    test "$(stat -c %a .app-server-token)" = 600
+    git check-ignore -q .app-server-token
     docker compose exec workspace bash -lc 'codex login status || codex login'
     docker compose exec workspace bash -lc 'gh auth status || gh auth login'
     docker compose exec -T workspace git lfs install --local
@@ -64,13 +66,15 @@ bootstrap:
 
 # Start the authenticated Codex app-server in detached tmux.
 app-server-up:
-    docker compose exec -T workspace bash -lc 'test -s "$CODEX_HOME/app-server-token"; \
+    test -s .app-server-token
+    test "$(stat -c %a .app-server-token)" = 600
+    docker compose exec -T workspace bash -lc 'test -s /workspaces/msc-math/.app-server-token; \
       if tmux has-session -t codex-app-server 2>/dev/null; then \
         curl --fail --silent --max-time 1 http://127.0.0.1:4500/readyz >/dev/null && exit 0; \
         tmux kill-session -t codex-app-server; \
       fi; \
       tmux new-session -d -s codex-app-server \
-      "exec codex app-server --listen ws://0.0.0.0:4500 --ws-auth capability-token --ws-token-file $CODEX_HOME/app-server-token"; \
+      "exec codex app-server --listen ws://0.0.0.0:4500 --ws-auth capability-token --ws-token-file /workspaces/msc-math/.app-server-token"; \
       for _ in {1..60}; do curl --fail --silent --max-time 1 http://127.0.0.1:4500/readyz >/dev/null && exit 0; sleep 0.5; done; \
       tmux capture-pane -pt codex-app-server -S -80 >&2 || true; exit 1'
 
@@ -86,16 +90,9 @@ app-server-logs:
 app-server-down:
     docker compose exec -T workspace bash -lc 'tmux kill-session -t codex-app-server 2>/dev/null || true'
 
-# Replace the app-server bearer token.
-rotate-app-server-token:
-    docker compose exec -T workspace bash -lc 'tmux kill-session -t codex-app-server 2>/dev/null || true; \
-      umask 077; token="$CODEX_HOME/.app-server-token.new"; openssl rand -hex 32 >"$token"; \
-      mv "$token" "$CODEX_HOME/app-server-token"'
-    @echo "Token rotated. Recreate clients that bind-mounted the old token file."
-
 # Inspect the running environment.
 doctor:
-    docker compose exec -T workspace bash -lc 'test -w /workspaces/msc-math; \
+    docker compose exec -T workspace bash -lc 'test -w /workspaces/msc-math; test -s /workspaces/msc-math/.app-server-token; \
       test -w "$CODEX_HOME"; test -w "$HOME/.config/gh"; \
       touch "$HOME/.doctor-write"; rm "$HOME/.doctor-write"; \
       sudo -n touch /usr/local/share/.doctor-write; sudo -n rm /usr/local/share/.doctor-write; \
