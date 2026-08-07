@@ -1,0 +1,91 @@
+name: msc-math
+
+services:
+  workspace:
+    image: "${WORKSPACE_IMAGE:-msc-math-workspace:local}"
+    platform: linux/amd64
+    pull_policy: never
+    build:
+      context: .
+      dockerfile: container/Dockerfile
+      args:
+        DEVELOPER_UID: "${DEVELOPER_UID:-1000}"
+        DEVELOPER_GID: "${DEVELOPER_GID:-1000}"
+
+    init: true
+    tty: true
+    stdin_open: true
+    restart: "no"
+    stop_grace_period: 30s
+    command: ["sleep", "infinity"]
+    user: "${DEVELOPER_UID:-1000}:${DEVELOPER_GID:-1000}"
+    working_dir: /workspaces/msc-math
+
+    environment:
+      HOME: /home/developer
+      USER: developer
+      LOGNAME: developer
+      CODEX_HOME: /home/developer/.codex
+      CARGO_HOME: /home/developer/.cargo
+      RUSTUP_HOME: /opt/rustup
+      UV_CACHE_DIR: /home/developer/.cache/uv
+      NPM_CONFIG_CACHE: /home/developer/.cache/npm
+      XDG_RUNTIME_DIR: "/run/user/${DEVELOPER_UID:-1000}"
+      CARGO_BUILD_JOBS: "${CARGO_BUILD_JOBS:-4}"
+      LANG: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+      TZ: Europe/Berlin
+      TERM: xterm-256color
+
+    volumes:
+      - type: bind
+        source: .
+        target: /workspaces/msc-math
+        bind:
+          propagation: rprivate
+          create_host_path: false
+      - type: bind
+        source: "${CODEX_HOME_HOST:?set CODEX_HOME_HOST in .env}"
+        target: /home/developer/.codex
+        bind:
+          propagation: rprivate
+          create_host_path: false
+      - type: bind
+        source: "${GH_HOME_HOST:?set GH_HOME_HOST in .env}"
+        target: /home/developer/.config/gh
+        bind:
+          propagation: rprivate
+          create_host_path: false
+
+    read_only: true
+    tmpfs:
+      - "/home/developer:rw,nosuid,nodev,exec,size=2g,uid=${DEVELOPER_UID:-1000},gid=${DEVELOPER_GID:-1000},mode=0700"
+      - /tmp:rw,nosuid,nodev,exec,size=4g,mode=1777
+      - /var/tmp:rw,nosuid,nodev,exec,size=1g,mode=1777
+      - /run:rw,nosuid,nodev,noexec,size=64m,mode=0755
+      - "/run/user/${DEVELOPER_UID:-1000}:rw,nosuid,nodev,noexec,size=64m,uid=${DEVELOPER_UID:-1000},gid=${DEVELOPER_GID:-1000},mode=0700"
+
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: "${WORKSPACE_RAM_LIMIT:-10g}"
+    memswap_limit: "${WORKSPACE_RAM_PLUS_SWAP_LIMIT:-10g}"
+    pids_limit: "${WORKSPACE_PIDS_LIMIT:-16384}"
+
+    ports:
+      - "127.0.0.1:${CODEX_APP_SERVER_HOST_PORT:-4500}:4500"
+
+    networks:
+      default: {}
+      gui:
+        aliases:
+          - msc-math
+
+networks:
+  default: {}
+  gui:
+    name: msc-math-dev
+    internal: true
+    labels:
+      io.joern.msc-math.owner: msc-math
