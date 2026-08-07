@@ -8,11 +8,14 @@ default:
 # Check host inputs and render the Compose configuration.
 validate:
     test "$(uname -m)" = x86_64
+    /lib64/ld-linux-x86-64.so.2 --help | grep -Fq 'x86-64-v3 (supported, searched)'
     test -f .env
     test "$(stat -c %a .env)" = 600
     git check-ignore -q .env
     test "$DEVELOPER_UID" = "$(id -u)"
     test "$DEVELOPER_GID" = "$(id -g)"
+    test "$DEVELOPER_UID" -ge 1000
+    test "$DEVELOPER_GID" -ge 1000
     command -v docker >/dev/null
     command -v git >/dev/null
     command -v jq >/dev/null
@@ -23,19 +26,19 @@ validate:
 
 # Build with the dedicated constrained Buildx builder.
 build: validate
-    @if docker buildx inspect "$BUILDX_BUILDER" >/dev/null 2>&1; then \
-      options="$(docker buildx inspect "$BUILDX_BUILDER" | sed -n 's/^Driver Options:[[:space:]]*//p')"; \
-      grep -Fq "memory=\"$WORKSPACE_RAM_LIMIT\"" <<<"$options"; \
-      grep -Fq "memory-swap=\"$WORKSPACE_RAM_PLUS_SWAP_LIMIT\"" <<<"$options"; \
+    @if docker buildx inspect msc-math-builder >/dev/null 2>&1; then \
+      options="$(docker buildx inspect msc-math-builder | sed -n 's/^Driver Options:[[:space:]]*//p')"; \
+      grep -Fq 'memory="10g"' <<<"$options"; \
+      grep -Fq 'memory-swap="10g"' <<<"$options"; \
     else \
-      docker buildx create --name "$BUILDX_BUILDER" --driver docker-container \
-        --driver-opt "memory=$WORKSPACE_RAM_LIMIT,memory-swap=$WORKSPACE_RAM_PLUS_SWAP_LIMIT" --use; \
+      docker buildx create --name msc-math-builder --driver docker-container \
+        --driver-opt memory=10g --driver-opt memory-swap=10g --use; \
     fi
-    docker compose build --builder "$BUILDX_BUILDER" --build-arg "DEVELOPER_UID=$DEVELOPER_UID" --build-arg "DEVELOPER_GID=$DEVELOPER_GID" --build-arg "WORKSPACE_REVISION=$(git rev-parse HEAD)" workspace
+    docker compose build --builder msc-math-builder --build-arg "DEVELOPER_UID=$DEVELOPER_UID" --build-arg "DEVELOPER_GID=$DEVELOPER_GID" --build-arg "WORKSPACE_REVISION=$(git rev-parse HEAD)" workspace
     docker run --rm --read-only \
       --tmpfs "/home/developer:rw,nosuid,nodev,exec,size=2g,uid=$DEVELOPER_UID,gid=$DEVELOPER_GID,mode=0700" \
       --tmpfs /tmp:rw,nosuid,nodev,exec,size=4g,mode=1777 \
-      --entrypoint /bin/bash "$WORKSPACE_IMAGE" -lc 'rustc --version && sage --version && latexmk --version >/dev/null && pre-commit --version'
+      --entrypoint /bin/bash msc-math-workspace:local -lc 'rustc --version && sage --version && latexmk --version >/dev/null && pre-commit --version'
 
 # Start the idle workspace, then install current vendor Codex.
 up: validate
@@ -44,7 +47,7 @@ up: validate
 
 # Install or update current vendor Codex in ephemeral home.
 install-codex:
-    docker compose exec -T workspace bash -lc 'npm install --global --prefix "$HOME/.local" @openai/codex@latest && codex --version'
+    docker compose exec -T workspace bash -lc 'flock "$HOME/.codex-install.lock" npm install --global --prefix "$HOME/.local" @openai/codex@latest && codex --version'
 
 # Enter the workspace with an interactive login shell.
 enter:
@@ -104,7 +107,7 @@ doctor:
 status:
     docker compose ps
     @docker network inspect msc-math-dev 2>/dev/null | jq '.[0].Containers' || true
-    @docker buildx inspect "$BUILDX_BUILDER" 2>/dev/null || true
+    @docker buildx inspect msc-math-builder 2>/dev/null || true
     @df -h .
     @docker system df
 
@@ -114,9 +117,9 @@ stop:
 
 # Show replaceable BuildKit cache usage.
 cache-usage:
-    docker buildx du --builder "$BUILDX_BUILDER"
+    docker buildx du --builder msc-math-builder
 
 # Interactively prune replaceable BuildKit cache.
 cache-prune:
-    docker buildx du --builder "$BUILDX_BUILDER"
-    docker buildx prune --builder "$BUILDX_BUILDER"
+    docker buildx du --builder msc-math-builder
+    docker buildx prune --builder msc-math-builder

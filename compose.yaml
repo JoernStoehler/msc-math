@@ -2,7 +2,7 @@ name: msc-math
 
 services:
   workspace:
-    image: "${WORKSPACE_IMAGE:-msc-math-workspace:local}"
+    image: msc-math-workspace:local
     platform: linux/amd64
     pull_policy: never
     build:
@@ -31,7 +31,7 @@ services:
       UV_CACHE_DIR: /home/developer/.cache/uv
       NPM_CONFIG_CACHE: /home/developer/.cache/npm
       XDG_RUNTIME_DIR: "/run/user/${DEVELOPER_UID:-1000}"
-      CARGO_BUILD_JOBS: "${CARGO_BUILD_JOBS:-4}"
+      CARGO_BUILD_JOBS: "4"
       LANG: en_US.UTF-8
       LC_ALL: en_US.UTF-8
       TZ: Europe/Berlin
@@ -69,12 +69,12 @@ services:
       - ALL
     security_opt:
       - no-new-privileges:true
-    mem_limit: "${WORKSPACE_RAM_LIMIT:-10g}"
-    memswap_limit: "${WORKSPACE_RAM_PLUS_SWAP_LIMIT:-10g}"
-    pids_limit: "${WORKSPACE_PIDS_LIMIT:-16384}"
+    mem_limit: 10g
+    memswap_limit: 10g
+    pids_limit: 16384
 
     ports:
-      - "127.0.0.1:${CODEX_APP_SERVER_HOST_PORT:-4500}:4500"
+      - "127.0.0.1:4500:4500"
 
     networks:
       default: {}
