@@ -1,3 +1,4 @@
+# Runtime declaration; design rationale and ownership map: container/README.md
 name: msc-math
 
 services:
@@ -57,18 +58,12 @@ services:
           propagation: rprivate
           create_host_path: false
 
-    read_only: true
     tmpfs:
-      - "/home/developer:rw,nosuid,nodev,exec,size=2g,uid=${DEVELOPER_UID:-1000},gid=${DEVELOPER_GID:-1000},mode=0700"
       - /tmp:rw,nosuid,nodev,exec,size=4g,mode=1777
       - /var/tmp:rw,nosuid,nodev,exec,size=1g,mode=1777
       - /run:rw,nosuid,nodev,noexec,size=64m,mode=0755
       - "/run/user/${DEVELOPER_UID:-1000}:rw,nosuid,nodev,noexec,size=64m,uid=${DEVELOPER_UID:-1000},gid=${DEVELOPER_GID:-1000},mode=0700"
 
-    cap_drop:
-      - ALL
-    security_opt:
-      - no-new-privileges:true
     mem_limit: 10g
     memswap_limit: 10g
     pids_limit: 16384

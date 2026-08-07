@@ -1,4 +1,5 @@
 # syntax=docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+# Environment declaration; design rationale and ownership map: README.md
 
 # Stability: changed only for an intentional Ubuntu base refresh.
 # Invalidated by: the pinned base digest.
@@ -108,6 +109,14 @@ RUN set -eux; \
     uv pip sync --python /opt/pre-commit/bin/python --require-hashes /opt/locks/pre-commit.txt; \
     /opt/pre-commit/bin/pre-commit --version
 
+# Stability: small development-runtime privilege boundary.
+# Invalidated by: the base archive or sudo package.
+# Correlation: intentionally late so changing developer ergonomics does not
+# rebuild the large mathematical and language toolchains.
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
+    apt-get update && apt-get install -y --no-install-recommends sudo
+
 # Stability: host identity and small system conventions.
 # Invalidated by: UID/GID or copied tmux configuration.
 # Correlation: kept after heavyweight toolchains because machine identity varies.
@@ -120,9 +129,14 @@ RUN set -eux; \
     test -z "${existing_group}" || groupdel "${existing_group}"; \
     groupadd --gid "${DEVELOPER_GID}" developer; \
     useradd --uid "${DEVELOPER_UID}" --gid "${DEVELOPER_GID}" --create-home --shell /bin/bash developer; \
+    echo 'developer ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/developer; \
+    chmod 0440 /etc/sudoers.d/developer; \
+    visudo --check --file=/etc/sudoers.d/developer; \
     install -d -o developer -g developer -m 0700 /home/developer/.codex; \
     install -d -o developer -g developer -m 0700 /home/developer/.config/gh; \
-    install -d -o developer -g developer -m 0755 /home/developer/.cache /home/developer/.cargo /home/developer/.local/bin
+    install -d -o developer -g developer -m 0755 \
+      /home/developer/.cache /home/developer/.cargo \
+      /home/developer/.local /home/developer/.local/bin
 COPY --chmod=0644 container/tmux.conf /etc/tmux.conf
 RUN git lfs install --system \
     && git config --system init.defaultBranch main \

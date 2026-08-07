@@ -1,3 +1,5 @@
+# Lifecycle interface; design rationale and source ownership: container/README.md
+
 set dotenv-load := true
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
@@ -35,17 +37,15 @@ build: validate
         --driver-opt memory=10g --driver-opt memory-swap=10g --use; \
     fi
     docker compose build --builder msc-math-builder --build-arg "DEVELOPER_UID=$DEVELOPER_UID" --build-arg "DEVELOPER_GID=$DEVELOPER_GID" --build-arg "WORKSPACE_REVISION=$(git rev-parse HEAD)" workspace
-    docker run --rm --read-only \
-      --tmpfs "/home/developer:rw,nosuid,nodev,exec,size=2g,uid=$DEVELOPER_UID,gid=$DEVELOPER_GID,mode=0700" \
-      --tmpfs /tmp:rw,nosuid,nodev,exec,size=4g,mode=1777 \
-      --entrypoint /bin/bash msc-math-workspace:local -lc 'rustc --version && sage --version && latexmk --version >/dev/null && pre-commit --version'
+    docker run --rm \
+      --entrypoint /bin/bash msc-math-workspace:local -lc 'sudo -n true && rustc --version && sage --version && latexmk --version >/dev/null && pre-commit --version'
 
 # Start the idle workspace, then install current vendor Codex.
 up: validate
     docker compose up -d --no-build --pull never workspace
     just install-codex
 
-# Install or update current vendor Codex in ephemeral home.
+# Install or update current vendor Codex in container-overlay home.
 install-codex:
     docker compose exec -T workspace bash -lc 'flock "$HOME/.codex-install.lock" npm install --global --prefix "$HOME/.local" @openai/codex@latest && codex --version'
 
@@ -98,9 +98,10 @@ doctor:
     docker compose exec -T workspace bash -lc 'test -w /workspaces/msc-math; \
       test -w "$CODEX_HOME"; test -w "$HOME/.config/gh"; \
       touch "$HOME/.doctor-write"; rm "$HOME/.doctor-write"; \
-      ! touch /usr/.doctor-write 2>/dev/null; codex --version; rustc --version; \
+      sudo -n touch /usr/local/share/.doctor-write; sudo -n rm /usr/local/share/.doctor-write; \
+      codex --version; rustc --version; \
       sage --version; latexmk --version | head -1; pre-commit --version'
-    docker inspect "$(docker compose ps -q workspace)" | jq -e '.[0].HostConfig | .Memory == 10737418240 and .MemorySwap == 10737418240 and .ReadonlyRootfs == true and .PidsLimit == 16384'
+    docker inspect "$(docker compose ps -q workspace)" | jq -e '.[0].HostConfig | .Memory == 10737418240 and .MemorySwap == 10737418240 and .ReadonlyRootfs == false and .PidsLimit == 16384'
     docker port "$(docker compose ps -q workspace)" 4500/tcp
 
 # Report Compose, builder, network, and disk state.
