@@ -370,7 +370,7 @@ app_server_up_impl() {
      fi
      tmux new-session -d -s codex-app-server \
        "tmux set-option -p remain-on-exit on; exec codex app-server --listen ws://0.0.0.0:4500 --ws-auth capability-token --ws-token-file /workspaces/msc-math/.app-server-token"
-     for _ in {1..60}; do
+     for _ in {1..120}; do
        test "$(tmux list-panes -t codex-app-server -F "#{pane_dead}")" = 0 || break
        if curl --fail --silent --max-time 1 http://127.0.0.1:4500/readyz >/dev/null; then
          exit 0
