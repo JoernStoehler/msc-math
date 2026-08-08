@@ -35,6 +35,7 @@
  *   CODEX_APP_SERVER_URL              default ws://127.0.0.1:4500
  *   CODEX_SUBAGENT_WAKE_GRACE_MS      default 5000
  *   CODEX_SUBAGENT_WAKE_STATE_DIR     default OS temp directory
+ *   app-server capability token       /workspaces/msc-math/.app-server-token
  */
 
 import { spawn } from "node:child_process";
@@ -56,6 +57,7 @@ import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const DEFAULT_APP_SERVER_URL = "ws://127.0.0.1:4500";
+const DEFAULT_APP_SERVER_TOKEN_FILE = "/workspaces/msc-math/.app-server-token";
 const DEFAULT_GRACE_MS = 5_000;
 const RPC_TIMEOUT_MS = 10_000;
 const STALE_LOCK_MS = 60_000;
@@ -288,6 +290,12 @@ async function waitForQuiet(parentDir, graceMs) {
   }
 }
 
+function appServerWebSocket(url, capabilityToken) {
+  return new WebSocket(url, {
+    headers: { Authorization: `Bearer ${capabilityToken}` },
+  });
+}
+
 class AppServerClient {
   constructor(url) {
     this.url = url;
@@ -297,7 +305,8 @@ class AppServerClient {
   }
 
   async connect() {
-    const socket = new WebSocket(this.url);
+    const capabilityToken = readFileSync(DEFAULT_APP_SERVER_TOKEN_FILE, "utf8").trim();
+    const socket = appServerWebSocket(this.url, capabilityToken);
     this.socket = socket;
     socket.addEventListener("message", (event) => this.#onMessage(event.data));
     await new Promise((resolvePromise, reject) => {
@@ -477,6 +486,7 @@ async function relayMain(parentId) {
 }
 
 export {
+  appServerWebSocket,
   eventId,
   parentThreadId,
   recordEvent,

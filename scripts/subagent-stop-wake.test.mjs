@@ -5,6 +5,7 @@ import { join } from "node:path";
 import test from "node:test";
 
 import {
+  appServerWebSocket,
   eventId,
   parentThreadId,
   recordEvent,
@@ -13,6 +14,25 @@ import {
 } from "./subagent-stop-wake.mjs";
 
 const PARENT_ID = "019fd664-6b92-7f41-9834-4d6eaefff155";
+
+test("sends the app-server capability token during WebSocket authentication", () => {
+  const originalWebSocket = globalThis.WebSocket;
+  let actual = null;
+  globalThis.WebSocket = class {
+    constructor(url, options) {
+      actual = { url, options };
+    }
+  };
+  try {
+    appServerWebSocket("ws://127.0.0.1:4500", "test-token");
+    assert.deepEqual(actual, {
+      url: "ws://127.0.0.1:4500",
+      options: { headers: { Authorization: "Bearer test-token" } },
+    });
+  } finally {
+    globalThis.WebSocket = originalWebSocket;
+  }
+});
 
 function payload() {
   return {
