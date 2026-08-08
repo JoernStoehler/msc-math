@@ -3,177 +3,222 @@
 This directory owns the msc-math development image. The surrounding files own
 different parts of the executable declaration:
 
-- [`../compose.yaml`](../compose.yaml) owns runtime mounts, limits, networking,
+- [`../compose.yaml`](../compose.yaml) owns mounts, limits, networking,
   process identity, and temporary filesystems.
 - [`Dockerfile`](Dockerfile) owns system packages and toolchains. Its layer
-  comments state the expected change frequency, invalidators, and why related
-  installs share a layer.
-- [`locks/`](locks/) owns exact package graphs where exact resolution has enough
-  value to justify maintaining a lock.
-- [`../Justfile`](../Justfile) owns lifecycle operations that Compose cannot
-  express by itself: host validation, the constrained builder, smoke tests,
-  authentication bootstrap, and the optional Codex app-server.
-- [`../.env.example`](../.env.example) owns the small set of machine-local
-  inputs. The ignored `.env` is not a secret store.
+  comments state the expected change frequency and cache invalidators.
+- [`locks/`](locks/) owns exact package inputs and realizations.
+- [`workspace.sh`](workspace.sh) owns guarded host lifecycle transitions.
+- [`../Justfile`](../Justfile) is the small public command index.
+- [`../.env.example`](../.env.example) owns the four machine-local inputs.
 
-Read those files for current behavior. This document records why the pieces
-exist, which alternatives were rejected, and where the reasoning should be
-rechecked. It is a navigation and decision aid, not authority over a
-contradicting executable configuration or runtime observation.
+Executable files and observed runtime state overrule this rationale if they
+disagree. Update both when an accepted decision changes.
 
-## Intended workflow
+## Host contract and normal workflow
 
-The host supplies Docker, persistent storage, and external connectivity. Agents
-develop inside one shared container at `/workspaces/msc-math`; they do not treat
-the host as a second development environment.
+The host supplies a local Unix-socket Docker Engine, the Compose and Buildx
+plugins, `just`, Git, `jq`, `flock`, `realpath`, persistent storage, and external
+connectivity. Docker and its socket are deliberately absent inside the
+workspace. The host CPU must be x86-64-v3 because the current Sage lock uses
+that target.
 
-The runtime user is the host-matching, non-root `developer`. The container has a
-writable overlay and passwordless `sudo` so an agent can follow the normal
-development loop:
+Create mode-`0600` `.env` from `.env.example`; its two credential-state
+directories must be absolute, canonical, mode-private, owned by the configured
+UID/GID, and already exist. Lifecycle commands fix the Compose project, file,
+env file, and machine inputs; they also disable ambient orphan removal.
 
-1. install a missing system tool experimentally;
+The ordinary sequence is:
+
+1. `just validate` checks the host inputs and renders the Compose model.
+2. `just build` builds a per-invocation candidate tag with the constrained
+   builder, smoke-tests that immutable image ID, and only then promotes
+   `msc-math-workspace:local`. It never replaces the running workspace.
+3. `just up` starts an existing stopped container, or creates one only when no
+   workspace container exists. It never reconciles or recreates an existing
+   container. It then installs current vendor Codex from `@latest`; a registry
+   failure can fail the command after the independently useful workspace has
+   started.
+4. `just agent-up` additionally starts and authenticates the app-server used by
+   the tracked SubagentStop wake hook.
+5. `just enter` opens an interactive login shell.
+
+`just replace` is the explicit destructive transition after an accepted image
+or Compose change. It stops the app-server, force-recreates the workspace,
+discards its writable overlay, installs current vendor Codex, and runs the
+core doctor. Run it only after inspecting the existing container and deciding
+that its replaceable overlay contains nothing to promote.
+
+The builder is a dedicated `docker-container` builder with 10 GiB memory and no
+extra swap. Every project operation names it explicitly; creating it does not
+change Docker's globally selected builder. Build, promotion, lifecycle, Codex
+installation, app-server, and cache-prune mutations share one host lock.
+
+## Runtime boundary
+
+Agents develop inside one shared container at `/workspaces/msc-math`; the host
+is not a second development environment. The image's `developer` UID/GID is the
+single runtime identity authority. Labels record the baked values, and start
+fails if either the image or an existing container disagrees with `.env`.
+
+The container has a writable overlay and passwordless `sudo` for the normal
+install–try–promote loop:
+
+1. install a missing tool experimentally;
 2. use it to complete or diagnose the task;
-3. add the package to the appropriate Dockerfile layer;
-4. rebuild when durable reproduction is needed.
+3. add it to the appropriate late Dockerfile layer;
+4. rebuild only when durable reproduction is worth the cost.
 
-Experimental root changes survive container stop/start but disappear when the
-container is replaced. A package is not part of the declared environment until
-the Dockerfile contains it.
+Experimental root changes survive stop/start and disappear on replacement. A
+package is declared only when the Dockerfile contains it. Docker remains the
+outer isolation boundary: the container has no Docker socket, mounts only the
+project and two state directories, and retains Docker's ordinary unprivileged
+seccomp/capability boundary.
 
-Docker remains the outer isolation boundary. Codex's inner Linux sandbox is
-disabled deliberately: the container exposes only the project and two explicit
-state directories, does not mount the Docker socket, and retains Docker's
-ordinary unprivileged seccomp/capability boundary. Passwordless root inside this
-container is not host root.
+## Persistence and recovery
 
-## Persistence model
-
-| Material | Storage | Lifetime and reason |
+| Material | Storage | Lifetime |
 |---|---|---|
-| Repository, project data, nested worktrees, durable notes, build outputs | Host bind at `/workspaces/msc-math` | Valuable project state; visible to host backup |
-| Codex sessions, configuration, and OAuth | Narrow host bind at `$CODEX_HOME` | Sessions are the highest-value operational record |
-| GitHub CLI authentication | Narrow host bind at `~/.config/gh` | Small but annoying to recreate |
-| Ordinary home state and caches | Container writable layer | Useful across stop/start; intentionally discarded on replacement |
-| System-package experiments | Container writable layer | Promote useful changes to the Dockerfile |
-| `/tmp` and `/var/tmp` | Size-bounded tmpfs | Immediate disposable work; never a durable evidence location |
-| `/run` and per-user runtime state | Small tmpfs | Process-lifetime state |
-| Docker build cache | BuildKit-managed cache | Replaceable acceleration, inspected/pruned explicitly |
+| Repository, `.git`, nested `.worktrees`, durable artifacts | Host bind at `/workspaces/msc-math` | Survives stop, replacement, rebuild, and host reboot |
+| Codex sessions, configuration, OAuth, SQLite state | Narrow host bind at `$CODEX_HOME` | Survives replacement; highest-value operational record |
+| GitHub CLI authentication | Narrow host bind at `~/.config/gh` | Survives replacement |
+| Ordinary home, `.local`, caches, package experiments | Container writable layer | Survives stop/start; discarded on replacement |
+| `/tmp`, `/var/tmp`, `/run` | Size-bounded tmpfs | Process/container-lifetime disposable state |
+| Build cache | BuildKit-managed | Replaceable acceleration |
 
-There are no named volumes. No selected state needs Docker-managed portability
-or sharing, while the valuable state benefits from direct host inspection and
-backup.
+The recoverable machine state is the repository, Codex-state directory, and
+GitHub-state directory named by `.env`. Back up all three together.
+A clone is not equivalent: it omits local-only Git history, ignored `.env` and
+token files, Codex sessions, GitHub auth, and dirty/untracked worktree state.
+Verify off-machine backup coverage and perform a read-only restore/listing test;
+"host-visible" alone does not prove disaster recovery.
 
-Do not invent separate `data`, `notes`, `repos`, or `worktrees` filesystems
-without a concrete ownership or lifecycle requirement. Repository-local data
-often needs to vary with a worktree, and one filesystem keeps Git operations,
-relative paths, and agent navigation compositional. Use `/tmp` for disposable
-notes and the relevant repository/worktree for durable ones.
+Back up the repository root, `.git`, and `.worktrees` as one unit. `.worktrees`
+is ignored but may contain valuable dirty checkouts, while `.git/worktrees`
+contains their reciprocal administration. Restoring at a different host path is
+supported while Compose still binds it to `/workspaces/msc-math`, ownership
+matches `.env`, and Git's linked-worktree metadata is repaired as described
+below.
 
-## Worktrees and concurrency
+Worktrees are created and used inside the container. A worktree created outside
+the repository bind is invisible and cannot be repaired from the container. If
+a visible worktree was created or moved on the host, quiesce every agent using
+it and repair from the healthy primary checkout, not the broken worktree:
 
-Worktrees live under `.worktrees/` and are created and used inside the
-container. Git records absolute paths in worktree metadata; host-created
-worktrees therefore require a one-time `git worktree repair` from inside the
-container. Host-side worktree usability is not a requirement.
-
-Agents share the container because per-agent containers would add startup,
-copying, and communication cost without protecting valuable state from agents
-that already need repository access. Git worktrees provide source-change
-isolation; the shared process namespace and resource budget are deliberate.
-
-The 10 GiB memory/no-extra-swap and PID limits protect the host. They are policy,
-not machine-local tuning knobs. The dedicated Buildx `docker-container` builder
-applies the same memory policy to image builds; Compose runtime limits do not
-constrain BuildKit.
+```bash
+git -C /workspaces/msc-math worktree repair \
+  /workspaces/msc-math/.worktrees/<name>
+git -C /workspaces/msc-math worktree list --porcelain
+git -C /workspaces/msc-math/.worktrees/<name> rev-parse \
+  --show-toplevel --git-dir --git-common-dir
+```
 
 ## Toolchain and rebuild policy
 
 Pinning follows expected value rather than one universal rule:
 
-- The Ubuntu base is digest-pinned.
-- Ubuntu packages use the ordinary live 24.04 archive. Pinning every APT
-  package is brittle; the attempted dated-snapshot route failed at repository
-  trust/bootstrap. Preserve an image digest if an exact built realization is
-  needed.
-- Standalone downloaded tools are version- and checksum-pinned.
-- Rust follows the repository toolchain pin.
-- Pre-commit uses a hash lock.
-- Sage 10.9/Python 3.12 uses an explicit Conda package lock because its large,
-  expensive dependency graph benefits from exact resolution.
-- Vendor Codex intentionally follows `@latest` and is installed by `just up`.
-  Its fast release cadence makes an image pin counterproductive; sessions and
-  authentication persist independently under `$CODEX_HOME`.
+- Ubuntu is digest-pinned; APT packages use the live Ubuntu 24.04 archive.
+- Standalone downloads are version- and checksum-pinned.
+- Rust follows `rust-toolchain.toml` and exact Cargo-tool versions.
+- Pre-commit has a source constraint and hash lock.
+- Sage 10.9/Python 3.12 has source constraints plus an explicit Conda
+  realization because resolving it is expensive.
+- Codex follows current vendor `@latest` and is installed into replaceable
+  overlay home rather than baked into the image.
 
-Large, stable layers precede small or frequently changed layers. The sudo/user
-configuration is intentionally after Sage, Rust, and pre-commit so development
-ergonomics and host UID changes do not rebuild expensive toolchains.
+The existing TeX, standalone-CLI, and Sage layer keys stay stable across this
+migration. General `PATH` is reset immediately after Sage, so Rust and
+pre-commit rebuild without inheriting the Conda toolchain; small diagnostics and
+the explicit tool symlinks remain late. The Sage and pre-commit environments
+are not put on general `PATH`: only `sage`, `conda`, `mamba`, and `pre-commit`
+are exposed. Ordinary Python, compilers, `pkg-config`, `curl`, and `pandoc`
+therefore remain the Ubuntu tools.
 
-The current image is Linux/AMD64 and the Sage lock requires x86-64-v3.
-`just validate` fails early on an incompatible host. Regenerate the lock only
-when supporting such a host is an actual requirement; doing so invalidates the
-large Sage layer and everything after it.
+The source files beside the generated locks own refresh recipes. Conda-forge
+and Ubuntu are live repositories, so regeneration is an intentional reviewable
+update, not a promise to reconstruct a past solve byte-for-byte.
+
+### Codex upgrades
+
+`just up` and `just install-codex` intentionally resolve `@latest`. If the
+installed version changes while this helper owns a running app-server, it
+restarts that process and requires listener readiness. Vendor
+changes are normally loud and easy to repair, so avoiding routine upgrades has
+less value here than staying current.
+
+Routine upgrades need no ceremony beyond ordinary use and the app-server
+restart when that process was already running. When a concrete
+regression or schema/configuration change appears, use `codex doctor --json`, a
+SubagentStop wake integration, and any affected GUI handshake to localize it.
+Refresh the live model catalog or base-instruction comparison only when those
+surfaces changed, and obtain exact review before replacing prompt-bearing/user
+configuration. Reinstall a prior explicit npm version only when a concrete
+regression makes rollback cheaper than immediate follow-up repair.
+
+App-server WebSocket transport and generated schemas are version-specific.
+`just app-server-status` deliberately checks process and listener readiness,
+not a synthetic RPC. The relay and app-server read the same repository token;
+the relay's focused test covers its authorization header, and an actual
+SubagentStop completion is the end-to-end wake-path check.
+
+The relocation left many derived `state_5.sqlite` rollout locators rooted at
+the old home. Rollout JSONL, history, logs, memories, and snapshots remain
+unchanged, and current GUI/session use is healthy. Leave the stale derived rows
+alone unless a focused resume failure demonstrates a repair is needed; do not
+rewrite source history or rebuild the healthy database merely to normalize
+paths.
 
 ## Codex app-server
 
-The app-server is optional and explicitly started in tmux by
-`just app-server-up`. Automatic startup would add hidden process state to every
-workspace lifecycle even when no client needs it.
+The app-server is optional for a plain shell but required for the tracked root
+wake harness. `just agent-up` is the normal agent-ready path. The server runs in
+detached tmux inside the workspace; failure leaves a retained pane for
+`just app-server-logs`. Stop and workspace-stop paths send it an interrupt and
+wait for readiness to disappear before container shutdown.
+The tracked relay wakes an idle root after one of its direct children stops.
+Codex 0.147 multi-agent v2 intentionally rejects direct input to spawned
+subagent threads, so a nested child cannot use this route to wake its immediate
+subagent parent; nested owners must remain active while waiting for descendants.
 
-Clients have two supported routes:
+Clients have two routes:
 
-- peer container: join external network `msc-math-dev` and connect to
-  `ws://msc-math:4500`;
-- host: connect to `ws://127.0.0.1:4500`.
+- a peer container joins the Compose-owned named network `msc-math-dev` and
+  connects to `ws://msc-math:4500`;
+- a host client connects to `ws://127.0.0.1:4500`.
 
-Docker publishes only loopback. Tailscale, SSH, Cloudflare, or another trusted
-host mechanism owns deliberate external exposure and TLS. Every app-server in
-the fixed deployment uses the same token. This repository reads its ignored
-mode-`0600` `.app-server-token`; `codex-gui` owns an identical repo-local copy.
-Normal lifecycle commands never regenerate or rotate it. Emergency replacement
-requires updating both copies and restarting both app-servers and GUI backends.
+Both WebSocket upgrades send the bearer capability token; `/readyz` alone is an
+unauthenticated listener check. Docker publishes only loopback. Another trusted
+host mechanism owns deliberate external exposure and TLS. The wake relay uses
+its fixed loopback endpoint, so configuration cannot redirect the capability
+token.
 
-## Rejected architectures
+This repository reads its ignored mode-`0600` `.app-server-token`; `codex-gui`
+currently owns an identical ignored copy. General bootstrap and core doctor do
+not require that optional secret. Token replacement is coordinated maintenance:
+update every consumer copy, restart app-servers and GUI backends, and prove an
+authenticated handshake without printing the token. A future shared host
+secret mount is preferable only when both repository deployments can adopt one
+executable contract together.
 
-- **Dev Containers, Codespaces, and VS Code tunnel:** they add an editor control
-  plane not used by the normal SSH/container/tmux workflow. They can be
-  reintroduced later as a thin consumer of this environment.
-- **Host development:** it loses package-manager, process, filesystem, and
-  resource isolation.
-- **A VM:** it adds startup and synchronization cost without improving the
-  selected persistence boundary.
-- **One container per agent:** it makes lifecycle and communication expensive
-  while Git worktrees already isolate source changes.
-- **A persistent full home:** it promotes uncontrolled state from every tool
-  into backup-worthy state.
-- **A tmpfs full home and read-only root:** it made the environment clean but
-  reversed the normal install-try-promote development loop and spent RAM on
-  ordinary caches.
-- **Named volumes for credentials, tools, caches, data, or notes:** they either
-  obscure valuable state from host backup or add lifecycle machinery for
+## Rejected alternatives and reassessment
+
+- Dev Containers, Codespaces, and VS Code tunnel add an unused editor control
+  plane. They may return later only as a thin consumer of this Compose setup.
+- Host development loses package, process, filesystem, and resource isolation.
+- A VM adds startup/synchronization cost without improving selected state.
+- One container per agent adds lifecycle and communication cost while Git
+  worktrees already isolate source.
+- A full-home bind promotes uncontrolled tool state into backup-worthy state.
+- A read-only root/tmpfs home blocks the normal install–try–promote loop.
+- Named volumes obscure valuable state from host backup or add machinery for
   replaceable state.
-- **Baking Codex or maintaining a Codex binary volume:** both add rebuild or
-  seeding/version-switch machinery to an installation that takes seconds.
-- **An app-server Compose service or startup daemon:** it creates another
-  lifecycle for an optional process already operable through the shared
-  container and tmux.
-- **A synthetic multi-repository workspace:** Codex and Codex GUI are external
-  tools developed elsewhere; this image belongs to msc-math alone.
+- Baking Codex or persisting all of `.local` couples fast vendor releases to
+  image rebuilds or uncontrolled executable state.
+- Making the optional app-server PID 1 would couple its crash to every shell;
+  a second Compose service would need a separate Codex installation lifecycle.
 
-## How to reassess this design
-
-Do not trust these conclusions merely because they are documented. When a
-requirement changes or a sharp edge appears:
-
-1. identify the concrete actor and workflow being helped or blocked;
-2. inspect the executable owner above and the observed container state;
-3. compare the smallest standard alternatives, including maintenance,
-   rebuild, wall-time, persistence, and recovery costs;
-4. test the highest-risk lifecycle boundary before polishing secondary details;
-5. update the executable declaration and then update this reasoning if the
-   decision changed.
-
-Use `just validate` before building, `just doctor` after starting, and
-`just status` for the container, builder, network, cache, and disk overview.
-Do not treat a passing static render as proof that worktrees, sudo, Codex,
-authentication, or app-server networking work; those require their runtime
-checks.
+Reassess a choice only after identifying a concrete blocked actor/workflow,
+observing the executable owner and runtime, and comparing the smallest standard
+alternatives by submission wall time, recovery, rebuild cost, and maintenance.
+Use `just status` for stopped as well as running state; do not mistake static
+Compose rendering or `/readyz` for an end-to-end acceptance test.

@@ -10,8 +10,8 @@ services:
       context: .
       dockerfile: container/Dockerfile
       args:
-        DEVELOPER_UID: "${DEVELOPER_UID:-1000}"
-        DEVELOPER_GID: "${DEVELOPER_GID:-1000}"
+        DEVELOPER_UID: "${DEVELOPER_UID:?set DEVELOPER_UID in .env}"
+        DEVELOPER_GID: "${DEVELOPER_GID:?set DEVELOPER_GID in .env}"
 
     init: true
     tty: true
@@ -19,7 +19,6 @@ services:
     restart: "no"
     stop_grace_period: 30s
     command: ["sleep", "infinity"]
-    user: "${DEVELOPER_UID:-1000}:${DEVELOPER_GID:-1000}"
     working_dir: /workspaces/msc-math
 
     environment:
@@ -31,7 +30,8 @@ services:
       RUSTUP_HOME: /opt/rustup
       UV_CACHE_DIR: /home/developer/.cache/uv
       NPM_CONFIG_CACHE: /home/developer/.cache/npm
-      XDG_RUNTIME_DIR: "/run/user/${DEVELOPER_UID:-1000}"
+      NPM_CONFIG_PREFIX: /home/developer/.local
+      XDG_RUNTIME_DIR: "/run/user/${DEVELOPER_UID:?set DEVELOPER_UID in .env}"
       CARGO_BUILD_JOBS: "4"
       LANG: en_US.UTF-8
       LC_ALL: en_US.UTF-8
@@ -62,7 +62,7 @@ services:
       - /tmp:rw,nosuid,nodev,exec,size=4g,mode=1777
       - /var/tmp:rw,nosuid,nodev,exec,size=1g,mode=1777
       - /run:rw,nosuid,nodev,noexec,size=64m,mode=0755
-      - "/run/user/${DEVELOPER_UID:-1000}:rw,nosuid,nodev,noexec,size=64m,uid=${DEVELOPER_UID:-1000},gid=${DEVELOPER_GID:-1000},mode=0700"
+      - "/run/user/${DEVELOPER_UID:?set DEVELOPER_UID in .env}:rw,nosuid,nodev,noexec,size=64m,uid=${DEVELOPER_UID:?set DEVELOPER_UID in .env},gid=${DEVELOPER_GID:?set DEVELOPER_GID in .env},mode=0700"
 
     mem_limit: 10g
     memswap_limit: 10g

@@ -1,6 +1,5 @@
-# Lifecycle interface; design rationale and source ownership: container/README.md
+# Lifecycle interface; implementation and design rationale: container/
 
-set dotenv-load := true
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
 # List the development-environment commands.
@@ -9,115 +8,72 @@ default:
 
 # Check host inputs and render the Compose configuration.
 validate:
-    test "$(uname -m)" = x86_64
-    /lib64/ld-linux-x86-64.so.2 --help | grep -Fq 'x86-64-v3 (supported, searched)'
-    test -f .env
-    test "$(stat -c %a .env)" = 600
-    git check-ignore -q .env
-    test "$DEVELOPER_UID" = "$(id -u)"
-    test "$DEVELOPER_GID" = "$(id -g)"
-    test "$DEVELOPER_UID" -ge 1000
-    test "$DEVELOPER_GID" -ge 1000
-    command -v docker >/dev/null
-    command -v git >/dev/null
-    command -v jq >/dev/null
-    docker compose version >/dev/null
-    test -d "$CODEX_HOME_HOST" && test -w "$CODEX_HOME_HOST"
-    test -d "$GH_HOME_HOST" && test -w "$GH_HOME_HOST"
-    docker compose config -q
+    @container/workspace.sh validate
 
-# Build with the dedicated constrained Buildx builder.
-build: validate
-    @if docker buildx inspect msc-math-builder >/dev/null 2>&1; then \
-      options="$(docker buildx inspect msc-math-builder | sed -n 's/^Driver Options:[[:space:]]*//p')"; \
-      grep -Fq 'memory="10g"' <<<"$options"; \
-      grep -Fq 'memory-swap="10g"' <<<"$options"; \
-    else \
-      docker buildx create --name msc-math-builder --driver docker-container \
-        --driver-opt memory=10g --driver-opt memory-swap=10g --use; \
-    fi
-    docker compose build --builder msc-math-builder --build-arg "DEVELOPER_UID=$DEVELOPER_UID" --build-arg "DEVELOPER_GID=$DEVELOPER_GID" --build-arg "WORKSPACE_REVISION=$(git rev-parse HEAD)" workspace
-    docker run --rm \
-      --entrypoint /bin/bash msc-math-workspace:local -lc 'sudo -n true && rustc --version && sage --version && latexmk --version >/dev/null && pre-commit --version'
+# Build, smoke-test, and only then promote the local image tag.
+build:
+    @container/workspace.sh build
 
-# Start the idle workspace, then install current vendor Codex.
-up: validate
-    docker compose up -d --no-build --pull never workspace
-    just install-codex
+# Safely start an existing workspace, or create one without replacing it.
+up:
+    @container/workspace.sh up
 
-# Install or update current vendor Codex in container-overlay home.
-install-codex:
-    docker compose exec -T workspace bash -lc 'flock "$HOME/.codex-install.lock" npm install --global --prefix "$HOME/.local" @openai/codex@latest && codex --version'
+# Explicitly replace the workspace container and its writable overlay.
+replace:
+    @container/workspace.sh replace
 
 # Enter the workspace with an interactive login shell.
 enter:
-    docker compose exec workspace bash -l
+    @container/workspace.sh enter
+
+# Install or update current vendor Codex in container-overlay home.
+install-codex:
+    @container/workspace.sh install-codex
 
 # Perform one-time authentication and repository hook setup.
 bootstrap:
-    test -s .app-server-token
-    test "$(stat -c %a .app-server-token)" = 600
-    git check-ignore -q .app-server-token
-    docker compose exec workspace bash -lc 'codex login status || codex login'
-    docker compose exec workspace bash -lc 'gh auth status || gh auth login'
-    docker compose exec -T workspace git lfs install --local
-    docker compose exec -T workspace pre-commit install
-    just doctor
+    @container/workspace.sh bootstrap
 
 # Start the authenticated Codex app-server in detached tmux.
 app-server-up:
-    test -s .app-server-token
-    test "$(stat -c %a .app-server-token)" = 600
-    docker compose exec -T workspace bash -lc 'test -s /workspaces/msc-math/.app-server-token; \
-      if tmux has-session -t codex-app-server 2>/dev/null; then \
-        curl --fail --silent --max-time 1 http://127.0.0.1:4500/readyz >/dev/null && exit 0; \
-        tmux kill-session -t codex-app-server; \
-      fi; \
-      tmux new-session -d -s codex-app-server \
-      "exec codex app-server --listen ws://0.0.0.0:4500 --ws-auth capability-token --ws-token-file /workspaces/msc-math/.app-server-token"; \
-      for _ in {1..60}; do curl --fail --silent --max-time 1 http://127.0.0.1:4500/readyz >/dev/null && exit 0; sleep 0.5; done; \
-      tmux capture-pane -pt codex-app-server -S -80 >&2 || true; exit 1'
+    @container/workspace.sh app-server-up
 
-# Show app-server process and readiness.
+# Prove app-server process and listener readiness.
 app-server-status:
-    docker compose exec -T workspace bash -lc 'tmux has-session -t codex-app-server && curl --fail --silent --show-error http://127.0.0.1:4500/readyz'
+    @container/workspace.sh app-server-status
 
-# Show recent app-server output.
+# Show recent app-server output, including a retained failed pane.
 app-server-logs:
-    docker compose exec -T workspace tmux capture-pane -pt codex-app-server -S -200
+    @container/workspace.sh app-server-logs
 
 # Stop only the app-server process.
 app-server-down:
-    docker compose exec -T workspace bash -lc 'tmux kill-session -t codex-app-server 2>/dev/null || true'
+    @container/workspace.sh app-server-down
 
-# Inspect the running environment.
+# Start the workspace, current vendor Codex, and app-server.
+agent-up:
+    @container/workspace.sh agent-up
+
+# Inspect the running core environment.
 doctor:
-    docker compose exec -T workspace bash -lc 'test -w /workspaces/msc-math; test -s /workspaces/msc-math/.app-server-token; \
-      test -w "$CODEX_HOME"; test -w "$HOME/.config/gh"; \
-      touch "$HOME/.doctor-write"; rm "$HOME/.doctor-write"; \
-      sudo -n touch /usr/local/share/.doctor-write; sudo -n rm /usr/local/share/.doctor-write; \
-      codex --version; rustc --version; \
-      sage --version; latexmk --version | head -1; pre-commit --version'
-    docker inspect "$(docker compose ps -q workspace)" | jq -e '.[0].HostConfig | .Memory == 10737418240 and .MemorySwap == 10737418240 and .ReadonlyRootfs == false and .PidsLimit == 16384'
-    docker port "$(docker compose ps -q workspace)" 4500/tcp
+    @container/workspace.sh doctor
 
-# Report Compose, builder, network, and disk state.
+# Inspect the app-server process, readiness, and loopback publication.
+agent-doctor:
+    @container/workspace.sh agent-doctor
+
+# Report Compose, builder, network, image, and disk state.
 status:
-    docker compose ps
-    @docker network inspect msc-math-dev 2>/dev/null | jq '.[0].Containers' || true
-    @docker buildx inspect msc-math-builder 2>/dev/null || true
-    @df -h .
-    @docker system df
+    @container/workspace.sh status
 
-# Stop without deleting containers, networks, or host data.
+# Stop gracefully without deleting containers, networks, or host data.
 stop:
-    docker compose stop workspace
+    @container/workspace.sh stop
 
 # Show replaceable BuildKit cache usage.
 cache-usage:
-    docker buildx du --builder msc-math-builder
+    @container/workspace.sh cache-usage
 
 # Interactively prune replaceable BuildKit cache.
 cache-prune:
-    docker buildx du --builder msc-math-builder
-    docker buildx prune --builder msc-math-builder
+    @container/workspace.sh cache-prune

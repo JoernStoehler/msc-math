@@ -32,7 +32,6 @@
  *   Codex/app-server upgrade.
  *
  * Configuration:
- *   CODEX_APP_SERVER_URL              default ws://127.0.0.1:4500
  *   CODEX_SUBAGENT_WAKE_GRACE_MS      default 5000
  *   CODEX_SUBAGENT_WAKE_STATE_DIR     default OS temp directory
  *   app-server capability token       /workspaces/msc-math/.app-server-token
@@ -290,15 +289,14 @@ async function waitForQuiet(parentDir, graceMs) {
   }
 }
 
-function appServerWebSocket(url, capabilityToken) {
-  return new WebSocket(url, {
+function appServerWebSocket(capabilityToken) {
+  return new WebSocket(DEFAULT_APP_SERVER_URL, {
     headers: { Authorization: `Bearer ${capabilityToken}` },
   });
 }
 
 class AppServerClient {
-  constructor(url) {
-    this.url = url;
+  constructor() {
     this.socket = null;
     this.nextId = 1;
     this.pending = new Map();
@@ -306,7 +304,7 @@ class AppServerClient {
 
   async connect() {
     const capabilityToken = readFileSync(DEFAULT_APP_SERVER_TOKEN_FILE, "utf8").trim();
-    const socket = appServerWebSocket(this.url, capabilityToken);
+    const socket = appServerWebSocket(capabilityToken);
     this.socket = socket;
     socket.addEventListener("message", (event) => this.#onMessage(event.data));
     await new Promise((resolvePromise, reject) => {
@@ -404,8 +402,6 @@ async function processOneBatch(parentId, parentDir) {
     "CODEX_SUBAGENT_WAKE_GRACE_MS",
     DEFAULT_GRACE_MS,
   );
-  const url = process.env.CODEX_APP_SERVER_URL ?? DEFAULT_APP_SERVER_URL;
-
   await waitForQuiet(parentDir, graceMs);
   // Require at least one event to receive the full mailbox-delivery grace
   // before starting a wake. A sibling arriving after this quiet check may be
@@ -413,7 +409,7 @@ async function processOneBatch(parentId, parentDir) {
   const captured = settledEventFiles(parentDir, graceMs);
   if (captured.length === 0) return;
 
-  const client = new AppServerClient(url);
+  const client = new AppServerClient();
   try {
     await client.connect();
     const read = await client.request("thread/read", {

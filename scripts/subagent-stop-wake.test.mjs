@@ -15,7 +15,7 @@ import {
 
 const PARENT_ID = "019fd664-6b92-7f41-9834-4d6eaefff155";
 
-test("sends the app-server capability token during WebSocket authentication", () => {
+test("uses loopback and sends the app-server capability token", () => {
   const originalWebSocket = globalThis.WebSocket;
   let actual = null;
   globalThis.WebSocket = class {
@@ -24,7 +24,7 @@ test("sends the app-server capability token during WebSocket authentication", ()
     }
   };
   try {
-    appServerWebSocket("ws://127.0.0.1:4500", "test-token");
+    appServerWebSocket("test-token");
     assert.deepEqual(actual, {
       url: "ws://127.0.0.1:4500",
       options: { headers: { Authorization: "Bearer test-token" } },

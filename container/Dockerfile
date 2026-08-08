@@ -81,6 +81,10 @@ RUN set -eux; \
     "${MINIFORGE_DIR}/bin/conda" clean -afy; \
     "${MINIFORGE_DIR}/envs/sage/bin/sage" --version
 
+# Sage stays explicitly invocable, but its environment must not contaminate
+# later compiler/tool builds or ordinary runtime commands.
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
 # Stability: follows the repository Rust pin and explicit Cargo tool versions.
 # Invalidated by: rust-toolchain.toml or Rust/Cargo-tool pins.
 # Correlation: Rust components and their Cargo tools share one toolchain.
@@ -109,13 +113,17 @@ RUN set -eux; \
     uv pip sync --python /opt/pre-commit/bin/python --require-hashes /opt/locks/pre-commit.txt; \
     /opt/pre-commit/bin/pre-commit --version
 
-# Stability: small development-runtime privilege boundary.
-# Invalidated by: the base archive or sudo package.
-# Correlation: intentionally late so changing developer ergonomics does not
-# rebuild the large mathematical and language toolchains.
+# Stability: small development-runtime privilege and executable boundary.
+# Invalidated by: this explicit package set and exposed-tool list.
+# Correlation: intentionally late so these additions do not rebuild TeX or Sage.
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
-    apt-get update && apt-get install -y --no-install-recommends sudo
+    apt-get update && apt-get install -y --no-install-recommends \
+      hyperfine sudo valgrind \
+    && ln -s /opt/miniforge/envs/sage/bin/sage /usr/local/bin/sage \
+    && ln -s /opt/miniforge/bin/conda /usr/local/bin/conda \
+    && ln -s /opt/miniforge/bin/mamba /usr/local/bin/mamba \
+    && ln -s /opt/pre-commit/bin/pre-commit /usr/local/bin/pre-commit
 
 # Stability: host identity and small system conventions.
 # Invalidated by: UID/GID or copied tmux configuration.
@@ -148,7 +156,9 @@ RUN git lfs install --system \
 # Correlation: last so it cannot invalidate heavyweight layers.
 ARG WORKSPACE_REVISION=uncommitted
 LABEL org.opencontainers.image.title="msc-math development workspace" \
-      org.opencontainers.image.revision="${WORKSPACE_REVISION}"
+      org.opencontainers.image.revision="${WORKSPACE_REVISION}" \
+      io.joern.msc-math.developer-uid="${DEVELOPER_UID}" \
+      io.joern.msc-math.developer-gid="${DEVELOPER_GID}"
 
 ENV HOME=/home/developer \
     USER=developer \
@@ -158,7 +168,8 @@ ENV HOME=/home/developer \
     CARGO_HOME=/home/developer/.cargo \
     UV_CACHE_DIR=/home/developer/.cache/uv \
     NPM_CONFIG_CACHE=/home/developer/.cache/npm \
-    PATH=/home/developer/.local/bin:/home/developer/.cargo/bin:/opt/cargo/bin:/opt/pre-commit/bin:/opt/miniforge/envs/sage/bin:/opt/miniforge/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    NPM_CONFIG_PREFIX=/home/developer/.local \
+    PATH=/home/developer/.local/bin:/home/developer/.cargo/bin:/opt/cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 USER developer
 WORKDIR /workspaces/msc-math
