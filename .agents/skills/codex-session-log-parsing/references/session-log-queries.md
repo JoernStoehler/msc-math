@@ -8,14 +8,15 @@ rollout before assuming that a schema detail remains current.
 ```bash
 printf '%s\n' "$CODEX_THREAD_ID"
 thread=${CODEX_THREAD_ID:?}
-find /home/vscode/.codex/sessions /home/vscode/.codex/archived_sessions \
+codex_home=${CODEX_HOME:-"$HOME/.codex"}
+find "$codex_home/sessions" "$codex_home/archived_sessions" \
   -type f -name "rollout-*-${thread}.jsonl" -print
-tail -n 20 /home/vscode/.codex/session_index.jsonl | jq -c '.'
+tail -n 20 "$codex_home/session_index.jsonl" | jq -c '.'
 ```
 
-Rollouts normally live below
-`/home/vscode/.codex/sessions/YYYY/MM/DD/` or
-`/home/vscode/.codex/archived_sessions/`. Index rows contain `.id`,
+Rollouts normally live below `$CODEX_HOME/sessions/YYYY/MM/DD/` or
+`$CODEX_HOME/archived_sessions/` (with `~/.codex` as the default Codex home).
+Index rows contain `.id`,
 `.thread_name`, and `.updated_at`, not rollout paths.
 
 Set `ROLL=/path/to/rollout.jsonl`, then inspect its shape:

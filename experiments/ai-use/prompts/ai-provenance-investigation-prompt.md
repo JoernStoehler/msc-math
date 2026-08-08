@@ -28,13 +28,16 @@ provided, and where provenance is uncertain.
 Suggested pipeline:
 1. Read /workspaces/msc-math/.agents/skills/codex-session-log-parsing/SKILL.md
    and follow it for Codex logs.
-2. Inspect /home/vscode/.codex/session_index.jsonl and rollout JSONL logs to
-   identify sessions relevant to /workspaces/msc-math, this thesis,
-   PaperOrchestra, HKO, pentagon products, data science, experiments, proofs,
-   code, writing, and orchestration.
-3. Inspect visible Claude logs under /home/vscode/.claude/projects/ and
-   imported session-log folders when present, especially paths matching
-   msc-math or msc-viterbo.
+2. Inspect `$CODEX_HOME/session_index.jsonl` and rollout JSONL logs below
+   `$CODEX_HOME/sessions`, `$CODEX_HOME/archived_sessions`, and any declared
+   imported-session root to identify sessions relevant to
+   /workspaces/msc-math, this thesis, PaperOrchestra, HKO, pentagon products,
+   data science, experiments, proofs, code, writing, and orchestration.
+3. Inspect Claude logs only when an explicit staged Claude root was provided,
+   especially paths below it matching msc-math or msc-viterbo. The Compose
+   workspace deliberately does not mount Claude state; a missing root is not
+   evidence that no relevant Claude history exists. Follow the staging and
+   `--claude-root` contract in `experiments/ai-use/README.md`.
 4. For each relevant session, inspect the rollout/transcript enough to classify
    chat-level provenance:
    - user messages,
