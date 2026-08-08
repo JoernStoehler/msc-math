@@ -59,7 +59,7 @@ line/region path:
 cargo llvm-cov -p symplectic --lib --summary-only -- TEST_FILTER
 ```
 
-In the local devcontainer, `cargo-llvm-cov` is installed with the Rust
+In the local Compose workspace, `cargo-llvm-cov` is installed with the Rust
 `llvm-tools-preview` component. Stable Rust gives useful line, function, and
 region coverage. `cargo llvm-cov --branch` requires nightly at the time this
 note was written, so do not present stable coverage output as branch coverage.

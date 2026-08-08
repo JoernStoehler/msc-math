@@ -241,9 +241,10 @@ maintenance low. The numbers are stable and can be out of order.
       and experiment outputs to thesis figures and the final PDF. This includes
       copy steps such as commands that copy generated figures into `thesis/`.
 
-38.2. The obvious long-horizon reproduction route is the devcontainer or a
-      documented local environment. When practical, run even long executables
-      there, because reproduction matters more than performance.
+38.2. The obvious long-horizon reproduction route is the declared Docker
+      Compose workspace or another documented local environment. When
+      practical, run even long executables there, because reproduction matters
+      more than performance.
 
 38.3. The reproducibility playbook should also document how the original runs
       were done on LICCA. LICCA access may no longer be possible two years

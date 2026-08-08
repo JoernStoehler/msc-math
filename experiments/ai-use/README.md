@@ -86,8 +86,8 @@ excerpts, and accidental bulk disclosure.
 
 ## Trust Boundary
 
-- Raw session logs under `/home/vscode/.codex` and `/home/vscode/.claude` are
-  the source evidence.
+- Raw Codex logs under `$CODEX_HOME` and explicitly staged Claude log roots are
+  the source evidence. The Compose workspace does not mount Claude state.
 - The report is an LLM-authored synthesis from those logs, not a deterministic
   derivation.
 - The scripts in `scripts/` inventory available logs and check that cited
@@ -137,6 +137,16 @@ python3 experiments/ai-use/scripts/collect_log_inventory.py \
   --out experiments/ai-use/artifacts/log-inventory.json
 ```
 
+This defaults to the native Codex roots below `$CODEX_HOME`; absent optional
+default roots are recorded in the inventory. Add one or more
+`--claude-root /absolute/staged/path` arguments only after deliberately making
+the relevant Claude archive visible. Every explicitly supplied Codex or Claude
+root must exist and contain at least one matching log; a scan with no Codex
+rollouts is an error rather than an empty inventory. Both log producers reject
+repeated or nested roots after symlink resolution so the same physical file
+cannot inflate a scan. Per-root counts make the coverage boundary explicit in
+the generated artifact.
+
 Check the current report's cited evidence paths:
 
 ```bash
@@ -164,9 +174,9 @@ For the full visible archive, add the imported root and use monthly plotting:
 ```bash
 uv run --script experiments/ai-use/scripts/analyze_token_usage.py \
   --start 2025-09-01 --end 2026-07-12 \
-  --root /home/vscode/.codex/sessions \
-  --root /home/vscode/.codex/archived_sessions \
-  --root /home/vscode/.codex/imported_session_logs \
+  --root "$CODEX_HOME/sessions" \
+  --root "$CODEX_HOME/archived_sessions" \
+  --root "$CODEX_HOME/imported_session_logs" \
   --out-dir /tmp/codex-token-usage-lifetime \
   --plot --plot-bucket month
 ```
@@ -205,14 +215,15 @@ assessments live in the canonical report and are not inferred from line count.
 Build a private structural process dataset for a dated coverage window:
 
 ```bash
+export CLAUDE_LOG_ROOT=/absolute/path/to/staged/.claude
 mkdir -p experiments/ai-use/artifacts
 umask 077
 openssl rand 32 > experiments/ai-use/artifacts/process-events.hmac-key
 python3 experiments/ai-use/scripts/collect_process_events.py \
-  --codex-root /home/vscode/.codex/sessions \
-  --codex-root /home/vscode/.codex/archived_sessions \
-  --claude-root /home/vscode/.claude/projects/-workspaces-msc-math \
-  --claude-root /home/vscode/.claude/projects/-workspaces-msc-viterbo \
+  --codex-root "$CODEX_HOME/sessions" \
+  --codex-root "$CODEX_HOME/archived_sessions" \
+  --claude-root "$CLAUDE_LOG_ROOT/projects/-workspaces-msc-math" \
+  --claude-root "$CLAUDE_LOG_ROOT/projects/-workspaces-msc-viterbo" \
   --key-file experiments/ai-use/artifacts/process-events.hmac-key \
   --start 2026-01-01T00:00:00Z \
   --out experiments/ai-use/artifacts/process-events.jsonl
@@ -235,11 +246,12 @@ Prefilter candidate labor tasks from the same private logs (direct user prompts 
 the default; add `--include-agent-outputs` only when assistant labor is in scope):
 
 ```bash
+export CLAUDE_LOG_ROOT=/absolute/path/to/staged/.claude
 python3 experiments/ai-use/scripts/prefilter_labor_tasks.py \
-  --codex-root /home/vscode/.codex/sessions \
-  --codex-root /home/vscode/.codex/archived_sessions \
-  --claude-root /home/vscode/.claude/projects/-workspaces-msc-math \
-  --claude-root /home/vscode/.claude/projects/-workspaces-msc-viterbo \
+  --codex-root "$CODEX_HOME/sessions" \
+  --codex-root "$CODEX_HOME/archived_sessions" \
+  --claude-root "$CLAUDE_LOG_ROOT/projects/-workspaces-msc-math" \
+  --claude-root "$CLAUDE_LOG_ROOT/projects/-workspaces-msc-viterbo" \
   --key-file experiments/ai-use/artifacts/process-events.hmac-key \
   --start 2026-01-01T00:00:00Z \
   --out experiments/ai-use/artifacts/labor-candidates.jsonl
@@ -318,9 +330,11 @@ the repo.
 
 Use this workflow when the provenance model needs to be updated:
 
-1. Ensure the relevant Codex/Claude logs are visible in `/home/vscode/.codex`
-   and `/home/vscode/.claude`. If logs were copied in from the host, update the
-   import report or add a new dated import report.
+1. Confirm the relevant Codex logs below `$CODEX_HOME`. If Claude logs are
+   needed, stage only the relevant archive at an explicit path outside the
+   repository and pass it with `--claude-root`; the Compose workspace does not
+   expose Claude state by default. Record any import in the existing report or
+   a new dated import report.
 2. Run `collect_log_inventory.py` to record local coverage in ignored
    `artifacts/` or `/tmp`.
 3. Start a new Codex session with

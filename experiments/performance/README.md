@@ -421,10 +421,10 @@ cargo flamegraph -p exp-performance --release --bin hk2017-pruned-f64 -- \
 ```
 
 If `cargo flamegraph` fails before running the binary, check `perf --version`.
-The devcontainer pins userland, but `perf` also depends on the host kernel. A
-typical failure is `/usr/bin/perf` pointing at linux-tools for a different
-kernel than the running host kernel. Refresh the apt index and install the
-matching tools inside the container when this happens:
+The Compose workspace image pins userland, but `perf` also depends on the host
+kernel. A typical failure is `/usr/bin/perf` pointing at linux-tools for a
+different kernel than the running host kernel. Refresh the apt index and install
+the matching tools inside the container when this happens:
 
 ```bash
 sudo apt-get update

@@ -105,7 +105,7 @@ tar -czf "$HOME/sys-ds-feature-closure-prepare-${table_jid}.tgz" \
 sha256sum "$HOME/sys-ds-feature-closure-prepare-${table_jid}.tgz"
 ```
 
-From the local devcontainer:
+From the local Compose workspace:
 
 ```bash
 table_jid=<jobid>

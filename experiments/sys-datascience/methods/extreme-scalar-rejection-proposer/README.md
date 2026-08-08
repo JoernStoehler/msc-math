@@ -82,8 +82,17 @@ product populations. Run only `geometry`, `features`, and `selection` before
 portfolio review; do not use `all`, because `all` continues into capacity
 evaluation. `assemble_covariance_rho_frozen_manifest.py` verifies and combines
 the two per-seed selection artifacts, including exact per-stratum arm counts and
-the shared control's disjointness. The large caches and combined manifest live
-under `/tmp/joern/covariance-line/frozen-packet`, not in Git.
+the shared control's disjointness. The source run wrote its large caches under
+`/tmp/joern/covariance-line/frozen-packet`. The four omitted caches were
+recovered from the old container during the Compose migration, and their four
+SHA-256 identities were rechecked against the retained manifest. The complete
+local packet now lives at ignored
+`artifacts/local/covariance-rho-frozen-packet/` on the repository bind.
+The frozen config bytes are part of the retained packet's identity and therefore
+keep their historical default. For a future rerun, use its documented
+`--out-dir` override with a fresh directory below ignored `artifacts/local/`;
+the repository bind makes those caches survive workspace replacement without
+pretending they belong in Git.
 
 After a separately authorized capacity run has written fresh evaluation cache
 files, `analyze_covariance_rho_validation.py` is the only reader for the frozen
@@ -120,8 +129,8 @@ Omitted generated caches:
 
 The omitted caches are not required to read the compact result reports. They are
 required to rerun the exact three-file target-field audit recorded in
-`target-field-audit.txt`. The artifact README records the local `/tmp` cache
-location used as non-required provenance if those files still exist.
+`target-field-audit.txt`. The artifact README records the old `/tmp` cache
+location as source-run provenance, not as a current recovery location.
 
 ## Current Evidence
 

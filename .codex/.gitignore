@@ -1,9 +1,8 @@
 # Safety net. Runtime state (auth.json, history.jsonl, log/, sessions/)
 # should never land here: Codex reads and writes runtime state under
-# ~/.codex (bind-mounted from /srv/devhome/.codex), not in this repo dir.
-# This repo may track project-specific agent definitions. User and IDE settings
-# remain in ~/.codex/config.toml: repo-local values would override later writes
-# from the VS Code settings GUI.
+# $CODEX_HOME (bound from CODEX_HOME_HOST in .env), not in this repo directory.
+# This repo intentionally tracks project policy, instructions, hooks, and agent
+# definitions under .codex; machine/user state remains under $CODEX_HOME.
 # If any runtime-state file nevertheless appears here, this .gitignore keeps
 # it out of commits — treat its presence as a bug and investigate why Codex
 # wrote here instead of ~/.codex.

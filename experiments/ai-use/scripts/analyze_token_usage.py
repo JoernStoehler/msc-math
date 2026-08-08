@@ -28,6 +28,7 @@ import argparse
 import csv
 import hashlib
 import json
+import os
 import sys
 from collections import defaultdict
 from dataclasses import dataclass
@@ -43,10 +44,8 @@ USAGE_KEYS = (
     "output_tokens",
     "reasoning_output_tokens",
 )
-DEFAULT_ROOTS = (
-    "/home/vscode/.codex/sessions",
-    "/home/vscode/.codex/archived_sessions",
-)
+CODEX_HOME = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex"))
+DEFAULT_ROOTS = (CODEX_HOME / "sessions", CODEX_HOME / "archived_sessions")
 SHADOW_PRICES = {
     "gpt-5.4": (2.50, 0.25, 15.00),
     "gpt-5.5": (5.00, 0.50, 30.00),
@@ -69,6 +68,22 @@ class UsageEvent:
     source: str
     depth: str
     usage: tuple[int, ...]
+
+
+def require_disjoint_roots(
+    parser: argparse.ArgumentParser, roots: list[Path]
+) -> None:
+    resolved = [(root, root.resolve(strict=True)) for root in roots if root.is_dir()]
+    for index, (left, left_resolved) in enumerate(resolved):
+        for right, right_resolved in resolved[index + 1 :]:
+            if (
+                left_resolved == right_resolved
+                or left_resolved in right_resolved.parents
+                or right_resolved in left_resolved.parents
+            ):
+                parser.error(
+                    f"rollout roots must not repeat or overlap: {left}, {right}"
+                )
 
 
 def parse_args() -> argparse.Namespace:
@@ -112,7 +127,35 @@ def parse_args() -> argparse.Namespace:
             datetime.fromisoformat(args.cutoff)
         except ValueError as exc:
             parser.error(f"invalid --cutoff timestamp: {exc}")
+    explicit_roots = args.roots is not None
     args.roots = [Path(root) for root in (args.roots or DEFAULT_ROOTS)]
+    missing_roots = [root for root in args.roots if not root.is_dir()]
+    if explicit_roots and missing_roots:
+        parser.error(
+            "explicit rollout roots do not exist: "
+            + ", ".join(str(root) for root in missing_roots)
+        )
+    if len(missing_roots) == len(args.roots):
+        parser.error(
+            "none of the rollout roots exists; set CODEX_HOME or pass one or more --root values"
+        )
+    require_disjoint_roots(parser, args.roots)
+    args.root_file_counts = {
+        str(root): sum(1 for _ in root.rglob("rollout-*.jsonl"))
+        for root in args.roots
+        if root.is_dir()
+    }
+    empty_explicit_roots = [
+        root
+        for root in args.roots
+        if explicit_roots and args.root_file_counts[str(root)] == 0
+    ]
+    if empty_explicit_roots:
+        parser.error(
+            "explicit rollout roots contain no rollout files: "
+            + ", ".join(str(root) for root in empty_explicit_roots)
+        )
+    args.missing_default_roots = missing_roots if not explicit_roots else []
     return args
 
 
@@ -479,6 +522,8 @@ def plot_overview(groups: dict[str, list[dict[str, Any]]], out_path: Path, bucke
 def main() -> None:
     args = parse_args()
     events, stats = collect_events(args.roots, args.start, args.end, args.cutoff, set(args.exclude_thread_id))
+    if stats.get("files_scanned", 0) == 0:
+        raise SystemExit("error: no rollout files found below the available roots")
     groups = aggregate(events)
     cost_rows = shadow_cost_rows(events)
     args.out_dir.mkdir(parents=True, exist_ok=True)
@@ -490,6 +535,9 @@ def main() -> None:
     metadata = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "roots": [str(root) for root in args.roots],
+        "roots_scanned": [str(root) for root in args.roots if root.is_dir()],
+        "root_rollout_file_counts": args.root_file_counts,
+        "missing_default_roots": [str(root) for root in args.missing_default_roots],
         "start": args.start,
         "end": args.end,
         "cutoff": args.cutoff,

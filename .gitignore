@@ -97,6 +97,9 @@ package-lock.json
 # Local AI-use provenance checks may contain absolute session-log paths
 experiments/ai-use/artifacts/
 
+# Large recoverable producer caches retained on the repository bind
+experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/
+
 # Profiling artifacts
 perf*.data
 perf*.data.old

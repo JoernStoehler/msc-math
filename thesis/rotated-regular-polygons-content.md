@@ -141,7 +141,7 @@ attention cost. Their producer artifacts remain available under
   retained transcript; the wording was repaired and the current unlimited run
   replaced the transcript with matching source digest and 3340/3340 success.
 - That retained run records the installed SageMath 10.7, while the current
-  devcontainer Dockerfile pins 10.8.  On 2026-07-14 Jörn classified this as a
+  Compose workspace image pins 10.9.  On 2026-07-14 Jörn classified this as a
   nonblocking reproducibility follow-up, not a mathematics or Kai-review gate.
   The later reproducibility pass may either rerun under the release image or
   align the Dockerfile with the retained environment.
