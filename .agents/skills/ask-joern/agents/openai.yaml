@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ask Jörn"
+  short_description: "Send a one-way project inbox message to Jörn"
+  default_prompt: "Use $ask-joern to send Jörn a concise inbox message while continuing useful work."
