@@ -151,6 +151,13 @@ RUN git lfs install --system \
     && git config --system core.autocrlf false \
     && git config --system credential.https://github.com.helper '!gh auth git-credential'
 
+# Stability: pinned agent/app-server protocol; intentionally cheap to update.
+# Invalidated by: CODEX_VERSION only.
+ARG CODEX_VERSION=0.147.0
+RUN --mount=type=cache,target=/root/.npm,sharing=locked \
+    npm install --global "@openai/codex@${CODEX_VERSION}" \
+    && test "$(codex --version)" = "codex-cli ${CODEX_VERSION}"
+
 # Stability: metadata-only; changes on every source revision.
 # Invalidated by: explicit revision argument.
 # Correlation: last so it cannot invalidate heavyweight layers.

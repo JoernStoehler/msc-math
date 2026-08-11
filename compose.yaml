@@ -12,6 +12,7 @@ services:
       args:
         DEVELOPER_UID: "${DEVELOPER_UID:?set DEVELOPER_UID in .env}"
         DEVELOPER_GID: "${DEVELOPER_GID:?set DEVELOPER_GID in .env}"
+        CODEX_VERSION: "${CODEX_VERSION:?set CODEX_VERSION in .env}"
 
     init: true
     tty: true
@@ -73,14 +74,12 @@ services:
 
     networks:
       default: {}
-      gui:
+      dev:
         aliases:
           - msc-math
 
 networks:
   default: {}
-  gui:
-    name: msc-math-dev
-    internal: true
-    labels:
-      io.joern.msc-math.owner: msc-math
+  dev:
+    name: joern-dev
+    external: true

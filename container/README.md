@@ -8,7 +8,9 @@ different parts of the executable declaration:
 - [`Dockerfile`](Dockerfile) owns system packages and toolchains. Its layer
   comments state the expected change frequency and cache invalidators.
 - [`locks/`](locks/) owns exact package inputs and realizations.
-- [`workspace.sh`](workspace.sh) owns guarded host lifecycle transitions.
+- [`common.sh`](common.sh), [`image.sh`](image.sh),
+  [`lifecycle.sh`](lifecycle.sh), and [`app-server.sh`](app-server.sh) own the
+  narrow host guards that Compose cannot express safely.
 - [`../Justfile`](../Justfile) is the small public command index.
 - [`../.env.example`](../.env.example) owns the four machine-local inputs.
 
@@ -17,8 +19,8 @@ disagree. Update both when an accepted decision changes.
 
 ## Host contract and normal workflow
 
-The host supplies a local Unix-socket Docker Engine, the Compose and Buildx
-plugins, `just`, Git, `jq`, `flock`, `realpath`, persistent storage, and external
+The host supplies a local Unix-socket Docker Engine, Compose, `just`, Git,
+`jq`, `flock`, `realpath`, persistent storage, and external
 connectivity. Docker and its socket are deliberately absent inside the
 workspace. The host CPU must be x86-64-v3 because the current Sage lock uses
 that target.
@@ -31,28 +33,23 @@ env file, and machine inputs; they also disable ambient orphan removal.
 The ordinary sequence is:
 
 1. `just validate` checks the host inputs and renders the Compose model.
-2. `just build` builds a per-invocation candidate tag with the constrained
-   builder, smoke-tests that immutable image ID, and only then promotes
+2. `just image-build` builds a per-invocation candidate with Docker's default
+   BuildKit backend, smoke-tests that immutable image ID, and only then promotes
    `msc-math-workspace:local`. It never replaces the running workspace.
-3. `just up` starts an existing stopped container, or creates one only when no
+3. `just dev-start` starts an existing stopped container, or creates one only when no
    workspace container exists. It never reconciles or recreates an existing
-   container. It then installs current vendor Codex from `@latest`; a registry
-   failure can fail the command after the independently useful workspace has
-   started.
-4. `just agent-up` additionally starts and authenticates the app-server used by
-   the tracked SubagentStop wake hook.
-5. `just enter` opens an interactive login shell.
+   container, then starts the pinned app-server used by the tracked
+   SubagentStop wake hook.
+4. `just dev-status` proves the container and app-server contract.
+5. `just shell` opens an interactive login shell.
 
-`just replace` is the explicit destructive transition after an accepted image
+`just container-recreate` is the explicit destructive transition after an accepted image
 or Compose change. It stops the app-server, force-recreates the workspace,
-discards its writable overlay, installs current vendor Codex, and runs the
-core doctor. Run it only after inspecting the existing container and deciding
+and discards its writable overlay. Run it only after inspecting the existing container and deciding
 that its replaceable overlay contains nothing to promote.
 
-The builder is a dedicated `docker-container` builder with 10 GiB memory and no
-extra swap. Every project operation names it explicitly; creating it does not
-change Docker's globally selected builder. Build, promotion, lifecycle, Codex
-installation, app-server, and cache-prune mutations share one host lock.
+Normal lifecycle does not own or start a persistent builder container. Image
+promotion and lifecycle mutations share one host lock.
 
 ## Runtime boundary
 
@@ -123,8 +120,8 @@ Pinning follows expected value rather than one universal rule:
 - Pre-commit has a source constraint and hash lock.
 - Sage 10.9/Python 3.12 has source constraints plus an explicit Conda
   realization because resolving it is expensive.
-- Codex follows current vendor `@latest` and is installed into replaceable
-  overlay home rather than baked into the image.
+- Codex is explicitly pinned by `CODEX_VERSION` and baked into a late,
+  inexpensive image layer shared with the GUI/app-server protocol.
 
 The existing TeX, standalone-CLI, and Sage layer keys stay stable across this
 migration. General `PATH` is reset immediately after Sage, so Rust and
@@ -140,23 +137,18 @@ update, not a promise to reconstruct a past solve byte-for-byte.
 
 ### Codex upgrades
 
-`just up` and `just install-codex` intentionally resolve `@latest`. If the
-installed version changes while this helper owns a running app-server, it
-restarts that process and requires listener readiness. Vendor
-changes are normally loud and easy to repair, so avoiding routine upgrades has
-less value here than staying current.
-
-Routine upgrades need no ceremony beyond ordinary use and the app-server
-restart when that process was already running. When a concrete
-regression or schema/configuration change appears, use `codex doctor --json`, a
-SubagentStop wake integration, and any affected GUI handshake to localize it.
+Change `CODEX_VERSION` deliberately, rebuild and smoke-test the image, then
+test the app-server and every affected GUI target before explicitly recreating
+the container. When a concrete regression or schema/configuration change
+appears, use `codex doctor --json`, a SubagentStop wake integration, and an
+affected GUI handshake to localize it.
 Refresh the live model catalog or base-instruction comparison only when those
 surfaces changed, and obtain exact review before replacing prompt-bearing/user
 configuration. Reinstall a prior explicit npm version only when a concrete
 regression makes rollback cheaper than immediate follow-up repair.
 
 App-server WebSocket transport and generated schemas are version-specific.
-`just app-server-status` deliberately checks process and listener readiness,
+`just dev-status` deliberately checks process and listener readiness,
 not a synthetic RPC. The relay and app-server read the same repository token;
 the relay's focused test covers its authorization header, and an actual
 SubagentStop completion is the end-to-end wake-path check.
@@ -171,7 +163,7 @@ paths.
 ## Codex app-server
 
 The app-server is optional for a plain shell but required for the tracked root
-wake harness. `just agent-up` is the normal agent-ready path. The server runs in
+wake harness. `just dev-start` is the normal agent-ready path. The server runs in
 detached tmux inside the workspace; failure leaves a retained pane for
 `just app-server-logs`. Stop and workspace-stop paths send it an interrupt and
 wait for readiness to disappear before container shutdown.
@@ -182,7 +174,7 @@ subagent parent; nested owners must remain active while waiting for descendants.
 
 Clients have two routes:
 
-- a peer container joins the Compose-owned named network `msc-math-dev` and
+- a peer container joins the shared `joern-dev` bridge and
   connects to `ws://msc-math:4500`;
 - a host client connects to `ws://127.0.0.1:4500`.
 
@@ -195,10 +187,9 @@ token.
 This repository reads its ignored mode-`0600` `.app-server-token`; `codex-gui`
 currently owns an identical ignored copy. General bootstrap and core doctor do
 not require that optional secret. Token replacement is coordinated maintenance:
-update every consumer copy, restart app-servers and GUI backends, and prove an
-authenticated handshake without printing the token. A future shared host
-secret mount is preferable only when both repository deployments can adopt one
-executable contract together.
+stage and verify every consumer copy, replace them with rollback available,
+restart app-servers and GUI backends, and prove an authenticated handshake
+without printing the token.
 
 ## Rejected alternatives and reassessment
 
@@ -212,13 +203,13 @@ executable contract together.
 - A read-only root/tmpfs home blocks the normal install–try–promote loop.
 - Named volumes obscure valuable state from host backup or add machinery for
   replaceable state.
-- Baking Codex or persisting all of `.local` couples fast vendor releases to
-  image rebuilds or uncontrolled executable state.
+- Installing unpinned Codex into the writable overlay makes app-server protocol
+  compatibility depend on whichever startup last contacted npm.
 - Making the optional app-server PID 1 would couple its crash to every shell;
   a second Compose service would need a separate Codex installation lifecycle.
 
 Reassess a choice only after identifying a concrete blocked actor/workflow,
 observing the executable owner and runtime, and comparing the smallest standard
 alternatives by submission wall time, recovery, rebuild cost, and maintenance.
-Use `just status` for stopped as well as running state; do not mistake static
+Use `just image-status` for stopped as well as running state; do not mistake static
 Compose rendering or `/readyz` for an end-to-end acceptance test.

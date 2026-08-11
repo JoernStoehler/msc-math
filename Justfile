@@ -1,79 +1,70 @@
-# Lifecycle interface; implementation and design rationale: container/
+# Public host interface. Compose handles normal lifecycle; narrow helpers live under container/.
 
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
-# List the development-environment commands.
 default:
     @just --list
 
-# Check host inputs and render the Compose configuration.
+# Normal: check host inputs without changing runtime state.
 validate:
-    @container/workspace.sh validate
+    @bash -c 'source container/common.sh; validate'
 
-# Build, smoke-test, and only then promote the local image tag.
-build:
-    @container/workspace.sh build
+# Normal: start the container and authenticated app-server without rebuilding or recreating.
+dev-start:
+    @container/lifecycle.sh start
+    @container/app-server.sh start
+    @container/app-server.sh status
 
-# Safely start an existing workspace, or create one without replacing it.
-up:
-    @container/workspace.sh up
+# Normal: stop processes and container while preserving durable state and the overlay.
+dev-stop:
+    @container/lifecycle.sh stop
 
-# Explicitly replace the workspace container and its writable overlay.
-replace:
-    @container/workspace.sh replace
+# Normal: prove container, app-server, publication, and core environment health.
+dev-status:
+    @container/lifecycle.sh status
+    @container/app-server.sh status
+    @container/doctor.sh
 
-# Enter the workspace with an interactive login shell.
-enter:
-    @container/workspace.sh enter
+# Normal: enter the running development container.
+shell:
+    @bash -c 'source container/common.sh; validate; compose exec workspace bash -l'
 
-# Install or update current vendor Codex in container-overlay home.
-install-codex:
-    @container/workspace.sh install-codex
+# Setup: authenticate this deployment's independent Codex and GitHub state.
+auth-bootstrap:
+    @bash -c 'source container/common.sh; validate; compose exec workspace bash -lc "codex login status || codex login"; compose exec workspace bash -lc "gh auth status || gh auth login"; compose exec -T workspace git lfs install --local; compose exec -T workspace pre-commit install'
 
-# Perform one-time authentication and repository hook setup.
-bootstrap:
-    @container/workspace.sh bootstrap
-
-# Start the authenticated Codex app-server in detached tmux.
-app-server-up:
-    @container/workspace.sh app-server-up
-
-# Prove app-server process and listener readiness.
-app-server-status:
-    @container/workspace.sh app-server-status
-
-# Show recent app-server output, including a retained failed pane.
-app-server-logs:
-    @container/workspace.sh app-server-logs
-
-# Stop only the app-server process.
-app-server-down:
-    @container/workspace.sh app-server-down
-
-# Start the workspace, current vendor Codex, and app-server.
-agent-up:
-    @container/workspace.sh agent-up
-
-# Inspect the running core environment.
+# Diagnostic: inspect the running core environment.
 doctor:
-    @container/workspace.sh doctor
+    @container/doctor.sh
 
-# Inspect the app-server process, readiness, and loopback publication.
-agent-doctor:
-    @container/workspace.sh agent-doctor
+# Diagnostic: show recent app-server output, including a retained failed pane.
+app-server-logs:
+    @container/app-server.sh logs
 
-# Report Compose, builder, network, image, and disk state.
-status:
-    @container/workspace.sh status
+# Advanced: start only the app-server in an already-running container.
+app-server-start:
+    @container/app-server.sh start
 
-# Stop gracefully without deleting containers, networks, or host data.
-stop:
-    @container/workspace.sh stop
+# Advanced: stop only the app-server.
+app-server-stop:
+    @container/app-server.sh stop
 
-# Show replaceable BuildKit cache usage.
+# Maintenance: build and smoke-test an image without replacing the container.
+image-build:
+    @container/image.sh build
+
+# Maintenance: report container, image, builder, network, and disk state.
+image-status:
+    @container/lifecycle.sh status
+
+# Destructive: replace the container and discard only its writable overlay.
+container-recreate:
+    @container/lifecycle.sh recreate
+
+# Maintenance: show replaceable BuildKit cache usage.
 cache-usage:
-    @container/workspace.sh cache-usage
+    @container/image.sh cache-usage
 
-# Interactively prune replaceable BuildKit cache.
+# Destructive: interactively prune replaceable BuildKit cache.
 cache-prune:
-    @container/workspace.sh cache-prune
+    @container/image.sh cache-prune
