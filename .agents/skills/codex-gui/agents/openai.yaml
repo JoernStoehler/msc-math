@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex GUI Tasks"
+  short_description: "Coordinate durable work through Tasks"
+  default_prompt: "Use $codex-gui to read or publish durable task coordination."
