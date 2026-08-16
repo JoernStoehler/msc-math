@@ -43,7 +43,7 @@ stop() {
   local id
   id="$(container_id)"
   [[ -n "${id}" ]] && container_running "${id}" || exit 0
-  docker exec "${id}" bash -lc \
+  docker exec "${id}" bash -c \
     'set -euo pipefail
      tmux has-session -t codex-app-server 2>/dev/null || exit 0
      tmux send-keys -t codex-app-server C-c

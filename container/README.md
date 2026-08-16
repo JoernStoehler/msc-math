@@ -68,39 +68,43 @@ install–try–promote loop:
 
 Experimental root changes survive stop/start and disappear on replacement. A
 package is declared only when the Dockerfile contains it. Docker remains the
-outer isolation boundary: the container has no Docker socket, mounts only the
-project and two state directories, and retains Docker's ordinary unprivileged
-seccomp/capability boundary.
+outer isolation boundary: the container has no Docker socket, mounts the
+durable workspace parent and two state directories, and retains Docker's
+ordinary unprivileged seccomp/capability boundary.
 
 ## Persistence and recovery
 
 | Material | Storage | Lifetime |
 |---|---|---|
-| Repository, `.git`, nested `.worktrees`, durable artifacts | Host bind at `/workspaces/msc-math` | Survives stop, replacement, rebuild, and host reboot |
+| Repository, `.git`, sibling worktrees, durable artifacts | Host `mnt-workspaces` bind at `/workspaces` | Survives stop, replacement, rebuild, and host reboot |
 | Codex sessions, configuration, OAuth, SQLite state | Narrow host bind at `$CODEX_HOME` | Survives replacement; highest-value operational record |
 | GitHub CLI authentication | Narrow host bind at `~/.config/gh` | Survives replacement |
 | Ordinary home, `.local`, caches, package experiments | Container writable layer | Survives stop/start; discarded on replacement |
 | `/tmp`, `/var/tmp`, `/run` | Size-bounded tmpfs | Process/container-lifetime disposable state |
 | Build cache | BuildKit-managed | Replaceable acceleration |
 
-The recoverable machine state is the repository, Codex-state directory, and
-GitHub-state directory named by `.env`. Back up all three together.
+The recoverable machine state is the workspace-parent directory, Codex-state
+directory, and GitHub-state directory named by `.env`. Back up all three
+together.
 A clone is not equivalent: it omits local-only Git history, ignored `.env` and
 token files, Codex sessions, GitHub auth, and dirty/untracked worktree state.
 Verify off-machine backup coverage and perform a read-only restore/listing test;
 "host-visible" alone does not prove disaster recovery.
 
-Back up the repository root, `.git`, and `.worktrees` as one unit. `.worktrees`
-is ignored but may contain valuable dirty checkouts, while `.git/worktrees`
-contains their reciprocal administration. Restoring at a different host path is
-supported while Compose still binds it to `/workspaces/msc-math`, ownership
+Back up `mnt-workspaces` as one unit, including the repository root, `.git`,
+in-repository `.worktrees`, and any sibling worktrees. `.worktrees` is ignored
+but may contain valuable dirty checkouts, while `.git/worktrees` contains their
+reciprocal administration. Restoring at a different host path is supported
+while Compose still binds the restored parent at `/workspaces`, ownership
 matches `.env`, and Git's linked-worktree metadata is repaired as described
 below.
 
 Worktrees are created and used inside the container. A worktree created outside
-the repository bind is invisible and cannot be repaired from the container. If
-a visible worktree was created or moved on the host, quiesce every agent using
-it and repair from the healthy primary checkout, not the broken worktree:
+the `/workspaces` bind is invisible and cannot be repaired from the container.
+Host-side `prunable` output for recorded `/workspaces/...` paths is a namespace
+artifact, not evidence that the container-visible worktree is broken.
+If a visible worktree was created or moved on the host, quiesce every agent
+using it and repair from the healthy primary checkout, not the broken worktree:
 
 ```bash
 git -C /workspaces/msc-math worktree repair \

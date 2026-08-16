@@ -41,8 +41,8 @@ services:
 
     volumes:
       - type: bind
-        source: .
-        target: /workspaces/msc-math
+        source: ..
+        target: /workspaces
         bind:
           propagation: rprivate
           create_host_path: false
