@@ -24,6 +24,7 @@ Project-wide information:
   support.
 - `docs/reproducibility.md`: code, data, and archive route.
 - `docs/artifacts.md`: materializing and publishing shared R2 snapshots.
+- `docs/cloud-development.md`: fresh Codex Cloud setup and secret contract.
 - `submit/README.md`: submission sources.
 
 Domain entry points:

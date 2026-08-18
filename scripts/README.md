@@ -8,6 +8,7 @@ Small repo helper commands.
 | --- | --- |
 | `build-release.py` | closure-only builder for the reviewed tracked tree, checked thesis PDF, and verified Zenodo ZIP |
 | `artifacts.py` | publish and materialize immutable shared R2 artifact snapshots |
+| `bootstrap-cloud.sh` | install and verify the normal Codex Cloud development environment |
 | `repo-status-summary.sh` | read-only applicability summary for dated build/test evidence |
 | `repo-status/` | dated command/result records consumed by the status helper |
 
@@ -60,3 +61,10 @@ This is the transparent `rclone` boundary for bulk data. It publishes immutable
 directory snapshots, verifies remote bytes, materializes content-addressed
 caches, and links the registered files at their existing ignored paths. See
 `docs/artifacts.md` for configuration and the release workflow.
+
+## `bootstrap-cloud.sh`
+
+Use this as the Codex Cloud environment setup command. It installs normal
+Rust/Python/LaTeX and artifact tooling, persists the setup-only R2 secrets in a
+private ephemeral-container rclone config, and verifies remote access. The
+configuration contract is in `docs/cloud-development.md`.

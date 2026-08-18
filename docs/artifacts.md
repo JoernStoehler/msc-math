@@ -16,8 +16,9 @@ published snapshot, and publishing changed bytes creates a different prefix.
 
 The development image includes pinned `rclone`. Configure a remote named
 `mscmath` with a bucket-scoped R2 object read/write token. On persistent
-machines, keep the secret in the ordinary private rclone configuration. In a
-fresh Codex Cloud environment, inject these secret environment variables:
+machines, keep the secret in the ordinary private rclone configuration. A
+generic ephemeral shell can instead configure the remote from environment
+variables:
 
 ```text
 RCLONE_CONFIG_MSCMATH_TYPE=s3
@@ -31,6 +32,12 @@ The helper always passes an empty S3 ACL because R2 does not implement object
 ACLs, and disables bucket creation/checking so a bucket-scoped token can
 transfer objects without account-level bucket-list or bucket-create
 permission. Neither key belongs in Git.
+
+Codex Cloud removes secrets after its setup phase, so do not use the generic
+environment-variable arrangement there. Follow
+[`docs/cloud-development.md`](cloud-development.md): configure the two setup
+secrets it names and run `scripts/bootstrap-cloud.sh`, which writes the private
+rclone configuration needed by subsequent agent commands.
 
 ## Consume an artifact
 
