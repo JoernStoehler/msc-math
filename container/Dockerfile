@@ -49,7 +49,7 @@ ARG UV_VERSION=0.12.2
 ARG UV_SHA256=d66e96b5f1ca3b99806eee283a8125d33a0bd669e6e6d9bc4ab7ffda63c41bf4
 ARG DUCKDB_VERSION=1.5.4
 ARG DUCKDB_SHA256=1f2fa724fb054b3dbe1a9cbd13de5b76997d850e7087ec762ba88db04e0180cf
-ARG RCLONE_VERSION=1.75.0
+ARG RCLONE_RELEASE_VERSION=1.75.0
 ARG RCLONE_SHA256=aa2804e08f48250e71009c727124b6341cd0288465804a9a09d14663cabafbaa
 RUN set -eux; \
     work="$(mktemp -d)"; \
@@ -63,10 +63,10 @@ RUN set -eux; \
     curl -fsSL "https://github.com/duckdb/duckdb/releases/download/v${DUCKDB_VERSION}/duckdb_cli-linux-amd64.zip" -o "${work}/duckdb.zip"; \
     echo "${DUCKDB_SHA256}  ${work}/duckdb.zip" | sha256sum -c -; \
     unzip -q "${work}/duckdb.zip" -d "${work}/duckdb"; install -m 0755 "${work}/duckdb/duckdb" /usr/local/bin/; \
-    curl -fsSL "https://downloads.rclone.org/v${RCLONE_VERSION}/rclone-v${RCLONE_VERSION}-linux-amd64.zip" -o "${work}/rclone.zip"; \
+    curl -fsSL "https://downloads.rclone.org/v${RCLONE_RELEASE_VERSION}/rclone-v${RCLONE_RELEASE_VERSION}-linux-amd64.zip" -o "${work}/rclone.zip"; \
     echo "${RCLONE_SHA256}  ${work}/rclone.zip" | sha256sum -c -; \
     unzip -q "${work}/rclone.zip" -d "${work}/rclone"; \
-    install -m 0755 "${work}/rclone/rclone-v${RCLONE_VERSION}-linux-amd64/rclone" /usr/local/bin/; \
+    install -m 0755 "${work}/rclone/rclone-v${RCLONE_RELEASE_VERSION}-linux-amd64/rclone" /usr/local/bin/; \
     rm -rf "${work}"; \
     node --version; npm --version; uv --version; duckdb --version; rclone version
 

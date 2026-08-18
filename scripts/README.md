@@ -9,6 +9,7 @@ Small repo helper commands.
 | `build-release.py` | closure-only builder for the reviewed tracked tree, checked thesis PDF, and verified Zenodo ZIP |
 | `artifacts.py` | publish and materialize immutable shared R2 artifact snapshots |
 | `bootstrap-cloud.sh` | install and verify the normal Codex Cloud development environment |
+| `maintain-cloud.sh` | refresh repository-dependent caches when a cloud environment resumes |
 | `repo-status-summary.sh` | read-only applicability summary for dated build/test evidence |
 | `repo-status/` | dated command/result records consumed by the status helper |
 
@@ -65,6 +66,13 @@ caches, and links the registered files at their existing ignored paths. See
 ## `bootstrap-cloud.sh`
 
 Use this as the Codex Cloud environment setup command. It installs normal
-Rust/Python/LaTeX and artifact tooling, persists the setup-only R2 secrets in a
-private ephemeral-container rclone config, and verifies remote access. The
+LaTeX and artifact tooling missing from the universal image, verifies the
+selected Rust/Python runtimes, persists the setup-only R2 secrets in a private
+ephemeral-container rclone config, and verifies remote access. The
 configuration contract is in `docs/cloud-development.md`.
+
+## `maintain-cloud.sh`
+
+Use this as the Codex Cloud maintenance command. It runs after the requested
+branch is checked out in a resumed cached environment and fetches the current
+locked Cargo dependency graph without setup-only secrets.

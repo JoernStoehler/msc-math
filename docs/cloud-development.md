@@ -1,19 +1,32 @@
 # Codex Cloud Development
 
 Codex Cloud checks out the selected Git commit and then runs the setup script
-configured for its environment. Configure the `msc-math` cloud environment to
-run this repository command:
+configured for its environment. Select Python `3.12` and Rust `1.94.0` through
+the environment's supported package-version settings, then configure the
+`msc-math` cloud environment to run this repository setup command:
 
 ```bash
 scripts/bootstrap-cloud.sh
 ```
 
-The script installs checksum-pinned `rclone` and `uv`, the repository's pinned
-Rust toolchain, and the normal LaTeX/system dependencies. Python scripts keep
-their dependencies in PEP 723 metadata and are resolved by `uv` when run. The
-full persistent-machine image remains declared by `container/Dockerfile`; the
-cloud setup deliberately does not launch Docker or an expensive scientific
-producer.
+Configure its maintenance command separately:
+
+```bash
+scripts/maintain-cloud.sh
+```
+
+The universal image supplies Python, `uv`, Rust, and ordinary build tools. The
+setup script verifies the selected runtimes, installs only the normal LaTeX and
+artifact dependencies missing from that image, configures R2, and fetches the
+locked Cargo dependency graph. The maintenance script refreshes that
+repository-dependent Cargo cache after a cached environment checks out a newer
+revision; it does not need setup-only secrets or reinstall stable system
+packages.
+
+Python scripts keep their dependencies in PEP 723 metadata and are resolved by
+`uv` when run. The full persistent-machine image remains declared by
+`container/Dockerfile`; the cloud setup deliberately does not launch Docker or
+an expensive scientific producer.
 
 Add these two values as Codex Cloud **secrets**:
 
