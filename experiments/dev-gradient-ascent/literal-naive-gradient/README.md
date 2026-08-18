@@ -85,11 +85,12 @@ updates. The `eta=1` failure trajectory contains the initial row and its first
 failed update. `run-provenance.json` records source, input, implementation, and
 command identity.
 
-Regenerate the paired evaluation from the repository root after checking out
-the canonical LFS source:
+Regenerate the paired evaluation from the repository root after materializing
+the canonical shared source. The retained compact trajectories are ordinary
+tracked files:
 
 ```bash
-git lfs pull --include='experiments/polytope-datasets/random.jsonl,experiments/dev-gradient-ascent/literal-naive-gradient/artifacts/trajectory-*.jsonl'
+scripts/artifacts.py materialize polytope-datasets
 
 cargo run --release -p exp-dev-gradient-ascent \
   --bin dev-gradient-ascent-literal-naive-gradient -- \

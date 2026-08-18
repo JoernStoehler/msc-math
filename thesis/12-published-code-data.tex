@@ -62,9 +62,10 @@ living continuation repository and may change after submission:
   \url{https://github.com/JoernStoehler/msc-math}.
 \end{center}
 Its frozen counterpart is a single Zenodo archive containing the reviewed
-release state together with the checked thesis PDF.  Large data stored through
-Git LFS appear in that archive as ordinary hydrated files, so access to the
-frozen data does not depend on retrieving separate LFS objects.
+release state together with the checked thesis PDF.  Large data are maintained
+as content-addressed external snapshots during development and materialized as
+ordinary files in that archive, so access to the frozen published data does not
+depend on the external object store.
 
 The archive is deliberately selective rather than a complete record of every
 computation or of the research process.  It excludes private material, raw

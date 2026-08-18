@@ -7,6 +7,7 @@ Small repo helper commands.
 | Path | Purpose |
 | --- | --- |
 | `build-release.py` | closure-only builder for the reviewed tracked tree, checked thesis PDF, and verified Zenodo ZIP |
+| `artifacts.py` | publish and materialize immutable shared R2 artifact snapshots |
 | `repo-status-summary.sh` | read-only applicability summary for dated build/test evidence |
 | `repo-status/` | dated command/result records consumed by the status helper |
 
@@ -14,9 +15,9 @@ Small repo helper commands.
 
 This is a final-closure command, not an ordinary build or experiment command.
 It requires the exact reviewed commit, a clean tracked tree, completed
-third-party cleanup, hydrated LFS data, and a new output path. It rebuilds and
-checks the thesis, packages the tracked tree plus PDF, and verifies the ZIP
-manifest.
+third-party cleanup, and a new output path. It rebuilds and checks the thesis,
+packages the tracked tree plus PDF, and verifies the ZIP manifest. Shared R2
+snapshots have their own reviewed inventory in `artifacts/registry.json`.
 
 The full closure contract and invocation live in
 `docs/reproducibility.md`. The commit argument records which reviewed tree is
@@ -35,7 +36,7 @@ It reports:
 - changed or uncommitted paths that affect task, map, harness, or helper
   orientation;
 - the tracked-data freshness caveat and high-risk artifact-refresh areas;
-- Git LFS payload presence.
+- registered external-artifact availability is not checked.
 
 Use it before asking whether old test/build results still apply:
 
@@ -52,3 +53,10 @@ scripts/repo-status-summary.sh scripts/repo-status/repo-status-smoke-and-core-20
 
 This is a read-only summary. It does not run tests, refresh datasets, or prove
 that tracked generated artifacts are fresh.
+
+## `artifacts.py`
+
+This is the transparent `rclone` boundary for bulk data. It publishes immutable
+directory snapshots, verifies remote bytes, materializes content-addressed
+caches, and links the registered files at their existing ignored paths. See
+`docs/artifacts.md` for configuration and the release workflow.

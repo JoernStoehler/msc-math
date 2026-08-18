@@ -34,13 +34,10 @@ The committed `artifacts/input/` files are the deterministic input snapshot;
 the product snapshot contains only the 142 retained `5x5` rows from the two
 frozen covariance seeds. `artifacts/input/provenance.json` records source paths,
 hashes, row identities, and the pre-target/evaluation boundary. Re-run the
-analysis without any external cache:
+analysis without any external cache; its compact inputs are ordinary tracked
+files:
 
 ```bash
-git lfs checkout -- \
-  experiments/sys-datascience/methods/ridge-tail-anatomy/artifacts/input/generic-input.jsonl \
-  experiments/sys-datascience/methods/ridge-tail-anatomy/artifacts/input/product-5x5-input.jsonl
-
 python3 experiments/sys-datascience/methods/ridge-tail-anatomy/analyze.py \
   --input-dir experiments/sys-datascience/methods/ridge-tail-anatomy/artifacts/input \
   --out-dir /tmp/ridge-tail-anatomy-current

@@ -17,13 +17,7 @@ already generated product target panels; it contains no geometry, capacity, or
 From the repository root:
 
 ```bash
-git lfs checkout -- \
-  experiments/polytope-invariant-table/polytope-table.jsonl \
-  experiments/polytope-invariant-table/polytope-provenance-table.jsonl \
-  experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/selected-candidates-before-sys.jsonl \
-  experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/sys-evaluation-cache.jsonl \
-  experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-promising-scalars/selected-candidates-before-sys.jsonl \
-  experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-promising-scalars/sys-evaluation-cache.jsonl
+scripts/artifacts.py materialize polytope-invariant-table
 
 python3 experiments/sys-datascience/methods/ridge-tail-source-comparison/analyze.py
 ```

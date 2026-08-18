@@ -50,7 +50,8 @@ experiments/polytope-invariant-table/build-random-only-slice.sh full \
   "$TABLES_DIR"
 ```
 
-The recorded input is source-reproducible from these Git LFS producer objects:
+The recorded input is source-reproducible from these registered shared
+producer objects:
 
 - `experiments/polytope-datasets/random.jsonl`: sha256
   `a21ac62ba5c9496ef631d3cce74e8b663764516b76e9d4725f1e517d8dd55f9f`;
@@ -69,11 +70,11 @@ OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
   --tables-dir "$TABLES_DIR"
 ```
 
-The default `experiments/polytope-invariant-table/` LFS table in this worktree has hash
+The registered `experiments/polytope-invariant-table/` table has hash
 `607c8731fa03d190d497edc3e8f1b4cca88f7d238260cce527680f568bc33d59` and is
 missing six active invariant ridge columns. Use the rebuilt current-schema
-table above, or refresh the in-place prepared LFS artifact before rerunning P2
-without `--tables-dir`.
+table above, or publish and register a refreshed prepared-table snapshot before
+rerunning P2 without `--tables-dir`.
 
 ## Artifacts
 

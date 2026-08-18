@@ -219,7 +219,7 @@ fn read_jsonl<T: DeserializeOwned>(path: &Path) -> Vec<T> {
             } else {
                 if line_idx == 0 && line.starts_with("version https://git-lfs.github.com/spec/") {
                     panic!(
-                        "{} is a Git LFS pointer; hydrate retained producer data with git lfs checkout/pull or use the run-local producer path",
+                        "{} is a legacy Git LFS pointer; materialize the registered shared artifact or use the run-local producer path",
                         path.display()
                     );
                 }

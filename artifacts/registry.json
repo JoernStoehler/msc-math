@@ -1,0 +1,164 @@
+{
+  "artifacts": {
+    "alternative-source-transfer-v1": {
+      "description": "Frozen source table for the reviewed alternative-source transfer packet.",
+      "links": {
+        "source.jsonl": "experiments/sys-datascience/methods/alternative-source-transfer/artifacts/transfer-v1/source.jsonl"
+      },
+      "migrated_from_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55",
+      "producer": "experiments/sys-datascience/methods/alternative-source-transfer/README.md",
+      "release": true,
+      "snapshot": "8c1802d647e612cf6f58513db517a90972f68fb5ca5c9ce4c1bc02ea88d2a1d1"
+    },
+    "combinatorial-cell-widths": {
+      "description": "Retained sampled combinatorial-cell boundary profiling rows.",
+      "links": {
+        "combinatorial-boundaries-profiling.jsonl": "experiments/combinatorial-cells/cell-widths/combinatorial-boundaries-profiling.jsonl"
+      },
+      "migrated_from_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55",
+      "producer": "experiments/combinatorial-cells/cell-widths/README.md",
+      "release": true,
+      "snapshot": "a524396d6ad0522d7a33f16f0038b9f63bcf895e045019b3363ea1683ce11bd4"
+    },
+    "covariance-rho-frozen-packet": {
+      "description": "Recovered immutable pre-target geometry and feature caches for row-level covariance-rho audit.",
+      "links": {
+        "assembly-output.json": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/assembly-output.json",
+        "frozen-manifest-summary.json": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/frozen-manifest-summary.json",
+        "frozen-selected-candidates-before-sys.jsonl": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/frozen-selected-candidates-before-sys.jsonl",
+        "seed-2026071201-refresh-output.txt": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201-refresh-output.txt",
+        "seed-2026071201/candidate-feature-table.jsonl": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201/candidate-feature-table.jsonl",
+        "seed-2026071201/candidate-geometry-cache.jsonl": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201/candidate-geometry-cache.jsonl",
+        "seed-2026071201/resolved-run-config.json": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201/resolved-run-config.json",
+        "seed-2026071201/selected-candidates-before-sys.jsonl": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201/selected-candidates-before-sys.jsonl",
+        "seed-2026071201/selection-plan.json": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201/selection-plan.json",
+        "seed-2026071202-command-output.txt": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202-command-output.txt",
+        "seed-2026071202-refresh-output.txt": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202-refresh-output.txt",
+        "seed-2026071202-resource.txt": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202-resource.txt",
+        "seed-2026071202/candidate-feature-table.jsonl": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202/candidate-feature-table.jsonl",
+        "seed-2026071202/candidate-geometry-cache.jsonl": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202/candidate-geometry-cache.jsonl",
+        "seed-2026071202/resolved-run-config.json": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202/resolved-run-config.json",
+        "seed-2026071202/selected-candidates-before-sys.jsonl": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202/selected-candidates-before-sys.jsonl",
+        "seed-2026071202/selection-plan.json": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202/selection-plan.json",
+        "target-field-audit.txt": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/target-field-audit.txt"
+      },
+      "migrated_from_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55",
+      "producer": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/README.md",
+      "release": false,
+      "snapshot": "72566e80cc331ab235c5fbdbe4ef0a4924e7f669c613b36987f82c42ad3aab61"
+    },
+    "facet-scale-production-cache": {
+      "description": "Retained sysext cache for the production facet-scale prediction panel.",
+      "links": {
+        "sysext-cache.jsonl": "experiments/dev-sys-prediction/facet-scale-baseline-error/runs/production/sysext-cache.jsonl"
+      },
+      "migrated_from_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55",
+      "producer": "experiments/dev-sys-prediction/facet-scale-baseline-error/README.md",
+      "release": true,
+      "snapshot": "c28d83e1e51e9d53133ce24ee4eac39eb3acd541b252caca71bdc4ebab2813cb"
+    },
+    "optimizer-candidate-history-f10-128": {
+      "description": "Frozen F=10 tuning trajectories for the optimizer comparison.",
+      "links": {
+        "evaluations.jsonl": "experiments/dev-gradient-ascent/optimizer-runs/artifacts/candidate-history-f10-128-0a71a6042/evaluations.jsonl",
+        "proposals.jsonl": "experiments/dev-gradient-ascent/optimizer-runs/artifacts/candidate-history-f10-128-0a71a6042/proposals.jsonl",
+        "rounds.jsonl": "experiments/dev-gradient-ascent/optimizer-runs/artifacts/candidate-history-f10-128-0a71a6042/rounds.jsonl"
+      },
+      "migrated_from_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55",
+      "producer": "experiments/dev-gradient-ascent/optimizer-runs/README.md",
+      "release": true,
+      "snapshot": "9da8fc4af42ac234a2584b159ddec0fed06c3f05940fa1bc0fae6221207158bc"
+    },
+    "optimizer-heldout-f10-64-finalists": {
+      "description": "Frozen F=10 held-out finalist trajectories for the optimizer comparison.",
+      "links": {
+        "evaluations.jsonl": "experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd/evaluations.jsonl",
+        "proposals.jsonl": "experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd/proposals.jsonl",
+        "rounds.jsonl": "experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd/rounds.jsonl"
+      },
+      "migrated_from_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55",
+      "producer": "experiments/dev-gradient-ascent/optimizer-runs/README.md",
+      "release": true,
+      "snapshot": "0620d37457aa0f756ff3aa663416dc083e5b6b9aef0f29027cc2e9a65a353990"
+    },
+    "pentagon-kkt-branch-landscape": {
+      "description": "Frozen canonical sampled KKT branch landscape for rotated pentagons.",
+      "links": {
+        "kkt-branch-landscape.jsonl": "experiments/regular-products/pentagon-rotation-empirics/kkt-branch-landscape.jsonl"
+      },
+      "migrated_from_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55",
+      "producer": "experiments/regular-products/pentagon-rotation-empirics/README.md",
+      "release": true,
+      "snapshot": "d2e8d96ca3a99979d01545f7f1effd8123bbd27a2781ab452594ff3717a42dae"
+    },
+    "polytope-datasets": {
+      "description": "Retained random, random-product, and shared producer-cache datasets.",
+      "links": {
+        "random-product.jsonl": "experiments/polytope-datasets/random-product.jsonl",
+        "random.jsonl": "experiments/polytope-datasets/random.jsonl",
+        "shared-cache.jsonl": "experiments/polytope-datasets/shared-cache.jsonl"
+      },
+      "migrated_from_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55",
+      "producer": "experiments/polytope-datasets/README.md",
+      "release": true,
+      "snapshot": "f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96"
+    },
+    "polytope-invariant-table": {
+      "description": "Retained random/product invariant feature table.",
+      "links": {
+        "polytope-table.jsonl": "experiments/polytope-invariant-table/polytope-table.jsonl"
+      },
+      "migrated_from_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55",
+      "producer": "experiments/polytope-invariant-table/README.md",
+      "release": true,
+      "snapshot": "c3042846723dbb89db17f2f39d88004d937e1e790949ff6880188fa89fc1900a"
+    },
+    "product-bounce-class-degeneration": {
+      "description": "Retained exact class-degeneration row and pair tables.",
+      "links": {
+        "degeneration-pairs.jsonl": "experiments/sys-datascience/methods/product-bounce-class-degeneration/artifacts/degeneration-pairs.jsonl",
+        "degeneration-rows.jsonl": "experiments/sys-datascience/methods/product-bounce-class-degeneration/artifacts/degeneration-rows.jsonl"
+      },
+      "migrated_from_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55",
+      "producer": "experiments/sys-datascience/methods/product-bounce-class-degeneration/README.md",
+      "release": true,
+      "snapshot": "174a90d4445c719c286f138a7e421407e3a34616bc5fd0f4448c51e1a0d0f048"
+    },
+    "product-bounce-distribution": {
+      "description": "Retained exact two- and three-bounce class minima for random-product rows.",
+      "links": {
+        "class-minima.jsonl": "experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl"
+      },
+      "migrated_from_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55",
+      "producer": "experiments/sys-datascience/methods/product-bounce-distribution/README.md",
+      "release": true,
+      "snapshot": "a336e8301eae3986a04cb717f29e447a576776d240997851478a795d48c215c4"
+    },
+    "qp-error-bounds-broad": {
+      "description": "Retained broad QP error-bound raw rows and formula evaluations.",
+      "links": {
+        "formula_evaluations.jsonl": "experiments/qp-error-bounds/artifacts/broad/formula_evaluations.jsonl",
+        "raw_rows.jsonl": "experiments/qp-error-bounds/artifacts/broad/raw_rows.jsonl"
+      },
+      "migrated_from_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55",
+      "producer": "experiments/qp-error-bounds/README.md",
+      "release": true,
+      "snapshot": "7bbca91151b65cc3bb5ed58abfb27d80fb6581e1a0933c7ecfc22062e8c603e9"
+    },
+    "qp-error-bounds-soundness-v2": {
+      "description": "Retained QP soundness-v2 raw rows and formula evaluations.",
+      "links": {
+        "formula_evaluations.jsonl": "experiments/qp-error-bounds/artifacts/soundness-v2/formula_evaluations.jsonl",
+        "raw_rows.jsonl": "experiments/qp-error-bounds/artifacts/soundness-v2/raw_rows.jsonl"
+      },
+      "migrated_from_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55",
+      "producer": "experiments/qp-error-bounds/README.md",
+      "release": true,
+      "snapshot": "b83f8b086f62fe4dad4d9aef7922a4294a6bfffa89d8942edd46de2405a72201"
+    }
+  },
+  "bucket": "msc-math-artifacts",
+  "default_remote": "mscmath",
+  "prefix": "snapshots",
+  "schema_version": 1
+}

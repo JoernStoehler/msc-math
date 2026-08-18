@@ -81,8 +81,8 @@ def load_jsonl(path: Path) -> list[dict[str, Any]]:
                 continue
             if line_number == 1 and line.startswith("version https://git-lfs.github.com/spec/"):
                 raise SystemExit(
-                    f"{path} is a Git LFS pointer; hydrate retained experiment data with "
-                    "git lfs checkout/pull or pass a run-local tables directory"
+                    f"{path} is a legacy Git LFS pointer; materialize the registered "
+                    "shared artifact or pass a run-local tables directory"
                 )
             row = json.loads(line)
             if not isinstance(row, dict):
@@ -98,8 +98,8 @@ def iter_jsonl(path: Path) -> Iterable[dict[str, Any]]:
                 continue
             if line_number == 1 and line.startswith("version https://git-lfs.github.com/spec/"):
                 raise SystemExit(
-                    f"{path} is a Git LFS pointer; hydrate retained experiment data with "
-                    "git lfs checkout/pull or pass a run-local tables directory"
+                    f"{path} is a legacy Git LFS pointer; materialize the registered "
+                    "shared artifact or pass a run-local tables directory"
                 )
             row = json.loads(line)
             if not isinstance(row, dict):

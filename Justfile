@@ -31,7 +31,7 @@ shell:
 
 # Setup: authenticate this deployment's independent Codex and GitHub state.
 auth-bootstrap:
-    @bash -c 'source container/common.sh; validate; compose exec workspace bash -lc "codex login status || codex login"; compose exec workspace bash -lc "gh auth status || gh auth login"; compose exec -T workspace git lfs install --local; compose exec -T workspace pre-commit install'
+    @bash -c 'source container/common.sh; validate; compose exec workspace bash -lc "codex login status || codex login"; compose exec workspace bash -lc "gh auth status || gh auth login"; compose exec -T workspace pre-commit install'
 
 # Diagnostic: inspect the running core environment.
 doctor:

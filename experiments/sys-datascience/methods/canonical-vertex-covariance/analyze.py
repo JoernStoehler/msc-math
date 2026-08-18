@@ -61,7 +61,10 @@ def read_jsonl(path: Path) -> Iterable[dict[str, Any]]:
             if not line.strip():
                 continue
             if number == 1 and line.startswith("version https://git-lfs.github.com/spec/"):
-                raise VertexContractError(f"{path} is an unhydrated Git LFS pointer")
+                raise VertexContractError(
+                    f"{path} is a legacy Git LFS pointer; materialize the "
+                    "registered shared artifact"
+                )
             row = json.loads(line)
             if not isinstance(row, dict):
                 raise VertexContractError(f"expected JSON object in {path}:{number}")
@@ -305,16 +308,18 @@ def repo_command(*args: str) -> str:
     return subprocess.check_output(["git", "-C", str(root), *args], text=True).strip()
 
 
-def tracked_lfs_identity(relative_path: str) -> dict[str, str] | None:
-    try:
-        text = repo_command("show", f"HEAD:{relative_path}")
-    except subprocess.CalledProcessError:
-        return None
-    lines = dict(line.split(" ", 1) for line in text.splitlines() if " " in line)
-    oid = lines.get("oid", "")
-    if not oid.startswith("sha256:"):
-        return None
-    return {"oid_sha256": oid.removeprefix("sha256:"), "size": lines.get("size", "unknown")}
+def registered_artifact_identity(relative_path: str) -> dict[str, str] | None:
+    root = HERE.parents[3]
+    registry = json.loads((root / "artifacts" / "registry.json").read_text())
+    for artifact, entry in registry["artifacts"].items():
+        for source, target in entry.get("links", {}).items():
+            if target == relative_path:
+                return {
+                    "artifact": artifact,
+                    "snapshot": entry["snapshot"],
+                    "snapshot_path": source,
+                }
+    return None
 
 
 def input_identity(path: Path) -> dict[str, Any]:
@@ -325,7 +330,7 @@ def input_identity(path: Path) -> dict[str, Any]:
         "path": relative,
         "sha256": sha256_file(path),
         "hydrated": not first.startswith("version https://git-lfs.github.com/spec/"),
-        "tracked_lfs": tracked_lfs_identity(relative),
+        "registered_artifact": registered_artifact_identity(relative),
     }
 
 
@@ -351,7 +356,8 @@ def provenance(inputs: list[Path], out_dir: Path) -> dict[str, Any]:
         "source_revision": repo_command("rev-parse", "HEAD"),
         "source_input_status": repo_command("status", "--porcelain", "--", *relative_inputs),
         "inputs": [input_identity(path) for path in inputs],
-        "reproducibility_boundary": "All four retained inputs must be hydrated rather than Git-LFS pointer files. If any is a pointer, the script stops before treating it as evidence.",
+        "reproducibility_boundary": "All four retained inputs must be materialized. "
+        "If any is a legacy Git-LFS pointer, the script stops before treating it as evidence.",
         "artifacts": {
             "per_polytope.jsonl_sha256": sha256_file(out_dir / "per_polytope.jsonl"),
             "report.json_sha256": sha256_file(out_dir / "report.json"),

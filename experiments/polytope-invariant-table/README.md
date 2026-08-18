@@ -23,11 +23,15 @@ Build the retained random/product table in place:
 experiments/polytope-invariant-table/build-retained-table.sh
 ```
 
-This retained rebuild reads LFS-tracked producer files under
-`experiments/polytope-datasets/`. Hydrate those files first with
-`git lfs checkout`/`git lfs pull` when working in a no-smudge worktree. Use the
-run-local producer smoke below when the goal is to test source/provenance
-plumbing without retained LFS data.
+This retained rebuild reads the shared producer files under
+`experiments/polytope-datasets/`. Materialize them first in a fresh worktree:
+
+```bash
+scripts/artifacts.py materialize polytope-datasets
+```
+
+Use the run-local producer smoke below when the goal is to test
+source/provenance plumbing without the retained full data.
 
 Build scratch slices for development or evidence runs:
 

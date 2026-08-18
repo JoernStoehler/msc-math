@@ -12,7 +12,7 @@ different parts of the executable declaration:
   [`lifecycle.sh`](lifecycle.sh), and [`app-server.sh`](app-server.sh) own the
   narrow host guards that Compose cannot express safely.
 - [`../Justfile`](../Justfile) is the small public command index.
-- [`../.env.example`](../.env.example) owns the four machine-local inputs.
+- [`../.env.example`](../.env.example) owns the machine-local inputs.
 
 Executable files and observed runtime state overrule this rationale if they
 disagree. Update both when an accepted decision changes.
@@ -25,10 +25,12 @@ connectivity. Docker and its socket are deliberately absent inside the
 workspace. The host CPU must be x86-64-v3 because the current Sage lock uses
 that target.
 
-Create mode-`0600` `.env` from `.env.example`; its two credential-state
+Create mode-`0600` `.env` from `.env.example`. Its two credential-state
 directories must be absolute, canonical, mode-private, owned by the configured
-UID/GID, and already exist. Lifecycle commands fix the Compose project, file,
-env file, and machine inputs; they also disable ambient orphan removal.
+UID/GID, and already exist. `DATA_HOME_HOST` is an absolute, canonical,
+writable host directory with the same owner; it is the shared non-secret data
+root mounted at `/data`. Lifecycle commands fix the Compose project, file, env
+file, and machine inputs; they also disable ambient orphan removal.
 
 The ordinary sequence is:
 
@@ -76,16 +78,18 @@ ordinary unprivileged seccomp/capability boundary.
 
 | Material | Storage | Lifetime |
 |---|---|---|
-| Repository, `.git`, sibling worktrees, durable artifacts | Host `mnt-workspaces` bind at `/workspaces` | Survives stop, replacement, rebuild, and host reboot |
+| Repository, `.git`, sibling worktrees | Host `mnt-workspaces` bind at `/workspaces` | Survives stop, replacement, rebuild, and host reboot |
+| Mutable pipeline data and shared artifact cache | Host `DATA_HOME_HOST` bind at `/data` | Survives replacement and is reused by worktrees |
 | Codex sessions, configuration, OAuth, SQLite state | Narrow host bind at `$CODEX_HOME` | Survives replacement; highest-value operational record |
 | GitHub CLI authentication | Narrow host bind at `~/.config/gh` | Survives replacement |
 | Ordinary home, `.local`, caches, package experiments | Container writable layer | Survives stop/start; discarded on replacement |
 | `/tmp`, `/var/tmp`, `/run` | Size-bounded tmpfs | Process/container-lifetime disposable state |
 | Build cache | BuildKit-managed | Replaceable acceleration |
 
-The recoverable machine state is the workspace-parent directory, Codex-state
-directory, and GitHub-state directory named by `.env`. Back up all three
-together.
+The recoverable machine state is the workspace-parent directory, data
+directory, Codex-state directory, and GitHub-state directory named by `.env`.
+Back up all four together. R2 snapshots are a shared transfer copy, not a
+substitute for backing up unpublished mutable work under `/data/work`.
 A clone is not equivalent: it omits local-only Git history, ignored `.env` and
 token files, Codex sessions, GitHub auth, and dirty/untracked worktree state.
 Verify off-machine backup coverage and perform a read-only restore/listing test;

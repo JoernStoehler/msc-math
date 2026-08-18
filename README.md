@@ -23,6 +23,7 @@ Project-wide information:
 - `docs/capabilities.md`: compact view of what the repository can currently
   support.
 - `docs/reproducibility.md`: code, data, and archive route.
+- `docs/artifacts.md`: materializing and publishing shared R2 snapshots.
 - `submit/README.md`: submission sources.
 
 Domain entry points:

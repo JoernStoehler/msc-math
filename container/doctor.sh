@@ -13,6 +13,10 @@ compose exec -T "${SERVICE}" bash -lc \
    test -w /workspaces/msc-math
    test -w "$CODEX_HOME"
    test -w "$HOME/.config/gh"
+   test -w /data
+   install -d /data/work /data/cache
+   test -w /data/work
+   test -w /data/cache
    test ! -S /var/run/docker.sock
    ! command -v docker >/dev/null
    probe="$HOME/.doctor-write-$$"
@@ -25,6 +29,7 @@ compose exec -T "${SERVICE}" bash -lc \
    sage --version
    latexmk --version >/dev/null
    pre-commit --version
+   rclone version >/dev/null
    hyperfine --version
    valgrind --version'
 

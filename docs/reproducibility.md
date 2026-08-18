@@ -44,26 +44,26 @@ These artifacts make the thesis results immediately inspectable. A smoke run
 demonstrates plumbing only; it is not a replacement for retained full data or
 theorem-facing verification.
 
-## Final data policy
+## Shared data policy
 
-At closure, commit data useful for immediate interpretation, validation, or
-continuation, especially when regeneration is expensive. Remove disposable
-smoke output, superseded intermediates, and cheap caches without a consumer.
-Use ordinary Git for small, inspectable data and Git LFS for large or poorly
-diffing data. The final Zenodo ZIP contains hydrated payloads, never pointers.
+At closure, commit small data useful for immediate interpretation, validation,
+or continuation. Put bulk generated data and expensive producer caches in
+immutable R2 snapshots registered by `artifacts/registry.json`. Remove
+disposable smoke output, superseded intermediates, and cheap caches without a
+consumer. See `docs/artifacts.md` for explicit materialization and publication.
 
-Selection happens while curating the final reviewed commit, not through a
-second archive-only filter. After required third-party cleanup, the packager
-includes every path tracked by that commit, replaces each LFS pointer with its
-verified hydrated payload, and adds the checked thesis PDF. The Zenodo ZIP is
-therefore a near-mirror of the final tracked `HEAD`, not a separate hand-picked
-data bundle.
+Selection happens while curating the final reviewed commit and artifact
+registry. After required third-party cleanup, the packager includes every path
+tracked by that commit, materializes registry entries marked for release at
+their established repository paths, and adds the checked thesis PDF. The
+Zenodo ZIP therefore records both the final source tree and the reviewed bulk
+data selection rather than depending on Git LFS.
 
 See `submit/archive-closure-checklist.md` for cleanup and publication gates.
 
 ## Build the Zenodo ZIP
 
-After final cleanup, LFS hydration, and review of the exact commit:
+After final cleanup and review of the exact commit and artifact registry:
 
 ```bash
 REVIEWED_COMMIT=0000000000000000000000000000000000000000  # literal closure record
@@ -72,7 +72,8 @@ python3 scripts/build-release.py \
   --output /tmp/joern/msc-math-release.zip
 ```
 
-The packager uses committed contents, verifies hydrated LFS payloads, forces a
-checked thesis build, adds the PDF, and verifies the ZIP inventory and hashes.
-It does not decide which data are valuable or whether third-party material may
-be redistributed; those are final-tree cleanup decisions.
+The packager uses committed contents, materializes and hash-checks every
+registered release snapshot, forces a checked thesis build, adds the PDF, and
+verifies the ZIP inventory and hashes. It does not decide which data are
+valuable or whether third-party material may be redistributed; those are
+final-tree and registry cleanup decisions.

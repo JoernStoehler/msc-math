@@ -35,7 +35,7 @@ host_only() {
 compose() {
   env -u COMPOSE_FILE -u COMPOSE_PROJECT_NAME -u COMPOSE_PROFILES \
     -u COMPOSE_ENV_FILES -u DEVELOPER_UID -u DEVELOPER_GID \
-    -u CODEX_HOME_HOST -u GH_HOME_HOST COMPOSE_REMOVE_ORPHANS=0 \
+    -u CODEX_HOME_HOST -u GH_HOME_HOST -u DATA_HOME_HOST COMPOSE_REMOVE_ORPHANS=0 \
     docker compose \
       --project-name "${PROJECT}" \
       --project-directory "${REPO_ROOT}" \
@@ -63,6 +63,18 @@ private_directory() {
     die "${label} must be owned by ${expected_uid}:${expected_gid}"
   (( (8#${mode} & 077) == 0 )) ||
     die "${label} must not be accessible by group/others (mode ${mode})"
+}
+
+persistent_directory() {
+  local label="$1" path="$2" expected_uid="$3" expected_gid="$4"
+  local owner_uid owner_gid canonical
+  [[ "${path}" = /* ]] || die "${label} must be absolute: ${path}"
+  canonical="$(realpath -e -- "${path}")"
+  [[ "${canonical}" == "${path}" ]] || die "${label} must be canonical: ${path}"
+  [[ -d "${path}" && -w "${path}" ]] || die "${label} is not writable: ${path}"
+  read -r owner_uid owner_gid < <(stat -c '%u %g' -- "${path}")
+  [[ "${owner_uid}:${owner_gid}" == "${expected_uid}:${expected_gid}" ]] ||
+    die "${label} must be owned by ${expected_uid}:${expected_gid}"
 }
 
 require_local_docker() {
@@ -104,6 +116,7 @@ validate() {
     die "configured developer identity must match host $(id -u):$(id -g)"
   private_directory CODEX_HOME_HOST "$(env_value CODEX_HOME_HOST)" "${developer_uid}" "${developer_gid}"
   private_directory GH_HOME_HOST "$(env_value GH_HOME_HOST)" "${developer_uid}" "${developer_gid}"
+  persistent_directory DATA_HOME_HOST "$(env_value DATA_HOME_HOST)" "${developer_uid}" "${developer_gid}"
   docker compose version >/dev/null
   docker info >/dev/null
   compose config -q

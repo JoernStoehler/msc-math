@@ -72,13 +72,12 @@ The separate generic panel uses the same command with `--facet-count 6
 `python3 .../analyze.py artifacts/generic-panel generic`. Its six starts are
 the exact screening IDs recorded in `inputs/generic-start-manifest.json`.
 
-The retained JSONL inputs are Git-LFS material. Materialize them before
-reproduction with:
+The compact ablation inputs are ordinary tracked files. Materialize the shared
+random source before reproduction with:
 
 ```bash
-git lfs pull --include='experiments/dev-gradient-ascent/adaptive-direction-ablation/inputs/*.jsonl'
-git lfs pull --include='experiments/polytope-datasets/random.jsonl'
+scripts/artifacts.py materialize polytope-datasets
 ```
 
-The generated trajectory JSONL is also LFS-backed in the working tree; the
-producer writes it under `artifacts/` and the analyzers consume it directly.
+The retained compact trajectory JSONL is tracked normally; new producer output
+is written under `artifacts/` and consumed there by the analyzers.

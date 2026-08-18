@@ -48,6 +48,6 @@ The same 16 starts after a five-second-ceiling history run are under
 the latter report compares endpoint values, stopping reasons, and signed basis
 slopes directly.
 
-Reproduction commands and the Git LFS input boundary are in the generated
-discussion report. Unit tests check the `sp(4)` Lie-algebra basis and the
+Reproduction commands and tracked input paths are in the generated discussion
+report. Unit tests check the `sp(4)` Lie-algebra basis and the
 expected six-facet and HKO quotient dimensions.

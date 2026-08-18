@@ -34,6 +34,7 @@ image_build() {
      rustc --version
      latexmk --version >/dev/null
      pre-commit --version
+     rclone version >/dev/null
      hyperfine --version
      valgrind --version'
   docker tag "${candidate_id}" "${IMAGE}"

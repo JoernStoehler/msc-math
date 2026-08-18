@@ -38,7 +38,7 @@ def load_jsonl(path: Path) -> list[dict[str, Any]]:
                 continue
             if line_number == 1 and line.startswith("version https://git-lfs.github.com/spec/"):
                 raise SystemExit(
-                    f"{path} is a Git LFS pointer; hydrate retained experiment data with git lfs checkout/pull"
+                    f"{path} is a legacy Git LFS pointer; materialize the registered shared artifact"
                 )
             rows.append(json.loads(line))
         return rows

@@ -29,13 +29,13 @@ remaining work; it does not authorize publication or expensive recomputation.
 - [ ] Delete or ignore smoke outputs, superseded intermediates, duplicate
       encodings without a consumer, disposable caches, and cheaply regenerated
       data with no immediate interpretive value.
-- [ ] Commit every final/useful artifact. Use ordinary Git for small,
-      inspectable, diff-friendly data and Git LFS for large or poorly diffing
-      data. Size determines storage mechanism; regeneration cost and downstream
-      value determine retention.
-- [ ] Hydrate every LFS object in the final tracked tree and verify that no LFS
-      pointer enters the Zenodo ZIP. Historical LFS objects absent from the final
-      tree need not be copied into Zenodo.
+- [ ] Commit small, inspectable, diff-friendly final data. Publish bulk useful
+      data as immutable R2 snapshots and review their registry entries. Size
+      determines storage mechanism; regeneration cost and downstream value
+      determine retention.
+- [ ] Materialize every registry entry marked for release from an empty cache
+      and verify that the Zenodo ZIP contains ordinary files at the documented
+      paths. Unregistered historical objects need not be copied into Zenodo.
 - [ ] Recheck the final thesis claims against retained artifacts after the
       data-science and first-order wording closes. Smoke success is plumbing,
       not thesis evidence.

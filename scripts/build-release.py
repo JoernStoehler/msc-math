@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the final tracked repository state plus checked thesis PDF."""
+"""Build the final source, registered release data, and checked thesis PDF."""
 
 from __future__ import annotations
 
@@ -8,15 +8,12 @@ import hashlib
 import json
 import re
 import subprocess
+import sys
 import tempfile
 import zipfile
 from pathlib import Path
 
 
-LFS_PATTERN = re.compile(
-    rb"\Aversion https://git-lfs.github.com/spec/v1\n"
-    rb"oid sha256:([0-9a-f]{64})\nsize ([0-9]+)\n?\Z"
-)
 DOWNLOADED_SUBMIT_PREFIXES = (
     "submit/anmeldung-",
     "submit/erklaerung-",
@@ -32,13 +29,6 @@ def tracked_paths(root: Path) -> list[str]:
     return sorted(
         item.decode() for item in git(root, "ls-files", "-z").split(b"\0") if item
     )
-
-
-def lfs_identity(data: bytes) -> tuple[str, int] | None:
-    match = LFS_PATTERN.fullmatch(data)
-    if match is None:
-        return None
-    return match.group(1).decode(), int(match.group(2))
 
 
 def digest(data: bytes) -> str:
@@ -88,27 +78,51 @@ def main() -> int:
 
     payloads: list[tuple[str, bytes, dict[str, object]]] = []
     for path in paths:
-        committed = git(root, "show", f"HEAD:{path}")
-        identity = lfs_identity(committed)
-        if identity is None:
-            data = committed
-            lfs_oid = None
-            lfs_size = None
-        else:
-            lfs_oid, lfs_size = identity
-            data = (root / path).read_bytes()
-            if lfs_identity(data) is not None:
-                raise ValueError(f"Git LFS file is not hydrated: {path}")
-            if len(data) != lfs_size or digest(data) != lfs_oid:
-                raise ValueError(f"Git LFS payload does not match HEAD: {path}")
+        data = git(root, "show", f"HEAD:{path}")
         entry = {
             "path": path,
             "bytes": len(data),
             "sha256": digest(data),
-            "lfs_oid": lfs_oid,
-            "lfs_size": lfs_size,
         }
         payloads.append((path, data, entry))
+
+    registry = json.loads((root / "artifacts/registry.json").read_text())
+    for artifact, artifact_entry in sorted(registry["artifacts"].items()):
+        if not artifact_entry.get("release", False):
+            continue
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(root / "scripts/artifacts.py"),
+                "materialize",
+                artifact,
+                "--no-link",
+            ],
+            cwd=root,
+            text=True,
+            stdout=subprocess.PIPE,
+            check=True,
+        )
+        materialized = json.loads(result.stdout)
+        files_directory = Path(materialized["directory"]) / "files"
+        snapshot = artifact_entry["snapshot"]
+        for source, target in sorted(artifact_entry.get("links", {}).items()):
+            if target in paths or any(name == target for name, _, _ in payloads):
+                raise ValueError(f"external artifact target collides in archive: {target}")
+            data = (files_directory / source).read_bytes()
+            payloads.append(
+                (
+                    target,
+                    data,
+                    {
+                        "artifact": artifact,
+                        "artifact_snapshot": snapshot,
+                        "bytes": len(data),
+                        "path": target,
+                        "sha256": digest(data),
+                    },
+                )
+            )
 
     subprocess.run(["latexmk", "-g"], cwd=root / "thesis", check=True)
     subprocess.run(["./check-build.sh"], cwd=root / "thesis", check=True)

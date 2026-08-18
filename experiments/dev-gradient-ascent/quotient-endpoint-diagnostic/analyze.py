@@ -529,7 +529,7 @@ Stop treating these two frozen high states as endpoint candidates. The next usef
 
 ## Reproduction
 
-From the repository root, after checking out the frozen raw trajectories from Git LFS:
+From the repository root; the frozen compact trajectories are ordinary tracked files:
 
 ```bash
 cargo run --release -p exp-dev-gradient-ascent \\

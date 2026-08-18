@@ -14,12 +14,7 @@ fixed pseudo-random controls. Do not interpret current panels as iid samples
 from an independent law on `(F, a0, u)`.
 
 The smoke config uses the compact retained panel from
-`facet-scale-baseline-error/`, so hydrate that LFS file before running it in a
-fresh worktree:
-
-```bash
-git lfs pull --include='experiments/dev-sys-prediction/facet-scale-baseline-error/polytope-panel.jsonl'
-```
+`facet-scale-baseline-error/`. It remains small and tracked in Git.
 
 Run a smoke panel with:
 
@@ -33,7 +28,7 @@ cargo run -p exp-dev-sys-prediction --release \
 Run the retained production panel with:
 
 ```bash
-git lfs pull --include='experiments/polytope-datasets/random.jsonl'
+scripts/artifacts.py materialize polytope-datasets
 
 cargo run -p exp-dev-sys-prediction --release \
   --bin dev-sys-prediction-panel -- \

@@ -1,5 +1,10 @@
 # LICCA Post-Feature Rebuild Gate
 
+Status: historical pre-migration packet for the named
+`sys-ds-feature-closure` branch. Its Git-LFS checkout commands describe that
+branch and must not be used as current `main` setup; current shared-data access
+is documented in `docs/artifacts.md`.
+
 Purpose: rebuild the random/product sys-datascience tables after the
 feature-space closure branch adds new prepare columns, then rerun the
 random/product method packets against those rebuilt tables.

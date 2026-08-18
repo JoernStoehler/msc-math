@@ -17,7 +17,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt-get update && apt-get install -y --no-install-recommends \
       bash-completion bat bc btop bubblewrap build-essential ca-certificates \
       chktex clang cmake curl dc entr fd-find file fzf gh ghostscript git \
-      git-lfs gnuplot-nox heaptrack htop imagemagick inotify-tools jq lacheck \
+      gnuplot-nox heaptrack htop imagemagick inotify-tools jq lacheck \
       latexmk less libcap-dev libclang-dev librsvg2-bin libseccomp-dev \
       libsqlite3-dev libssl-dev libzstd-dev llvm locales lsof ltrace make \
       netcat-openbsd ninja-build openssh-client openssl pandoc parallel \
@@ -49,6 +49,8 @@ ARG UV_VERSION=0.12.2
 ARG UV_SHA256=d66e96b5f1ca3b99806eee283a8125d33a0bd669e6e6d9bc4ab7ffda63c41bf4
 ARG DUCKDB_VERSION=1.5.4
 ARG DUCKDB_SHA256=1f2fa724fb054b3dbe1a9cbd13de5b76997d850e7087ec762ba88db04e0180cf
+ARG RCLONE_VERSION=1.75.0
+ARG RCLONE_SHA256=aa2804e08f48250e71009c727124b6341cd0288465804a9a09d14663cabafbaa
 RUN set -eux; \
     work="$(mktemp -d)"; \
     curl -fsSL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" -o "${work}/node.tar.xz"; \
@@ -61,8 +63,12 @@ RUN set -eux; \
     curl -fsSL "https://github.com/duckdb/duckdb/releases/download/v${DUCKDB_VERSION}/duckdb_cli-linux-amd64.zip" -o "${work}/duckdb.zip"; \
     echo "${DUCKDB_SHA256}  ${work}/duckdb.zip" | sha256sum -c -; \
     unzip -q "${work}/duckdb.zip" -d "${work}/duckdb"; install -m 0755 "${work}/duckdb/duckdb" /usr/local/bin/; \
+    curl -fsSL "https://downloads.rclone.org/v${RCLONE_VERSION}/rclone-v${RCLONE_VERSION}-linux-amd64.zip" -o "${work}/rclone.zip"; \
+    echo "${RCLONE_SHA256}  ${work}/rclone.zip" | sha256sum -c -; \
+    unzip -q "${work}/rclone.zip" -d "${work}/rclone"; \
+    install -m 0755 "${work}/rclone/rclone-v${RCLONE_VERSION}-linux-amd64/rclone" /usr/local/bin/; \
     rm -rf "${work}"; \
-    node --version; npm --version; uv --version; duckdb --version
+    node --version; npm --version; uv --version; duckdb --version; rclone version
 
 # Stability: large mathematical environment, changed only by its explicit lock.
 # Invalidated by: Miniforge pin or Sage lock.
@@ -146,8 +152,7 @@ RUN set -eux; \
       /home/developer/.cache /home/developer/.cargo \
       /home/developer/.local /home/developer/.local/bin
 COPY --chmod=0644 container/tmux.conf /etc/tmux.conf
-RUN git lfs install --system \
-    && git config --system init.defaultBranch main \
+RUN git config --system init.defaultBranch main \
     && git config --system core.autocrlf false \
     && git config --system credential.https://github.com.helper '!gh auth git-credential'
 

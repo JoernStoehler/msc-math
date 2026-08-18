@@ -4,15 +4,8 @@ This sibling packet is the only stage-one component that evaluates targets. It
 consumes exactly the frozen 200-row panel after the target-free full gate and
 does not generate, substitute, or rerank candidates.
 
-The target evaluation is complete. Before reproducing target-free checks or
-analysis, hydrate its LFS inputs from the repository root:
-
-```bash
-git lfs checkout -- \
-  experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/stage1/selection.jsonl \
-  experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/stage1/panel-geometries.jsonl \
-  experiments/sys-datascience/methods/generic-ridge-tail-stage1/artifacts/stage1/target-rows.jsonl
-```
+The target evaluation is complete. Its compact target-free inputs are tracked
+as ordinary files and need no external materialization before analysis.
 
 The following preflight is target-free and remains safe to reproduce:
 

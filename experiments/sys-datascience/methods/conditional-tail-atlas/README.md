@@ -42,9 +42,10 @@ count for that use rather than polishing all three pre-emptively.
 
 ## Reproduction
 
-From the repository root, with LFS-backed prepared tables checked out:
+From the repository root, with the shared prepared table materialized:
 
 ```bash
+scripts/artifacts.py materialize polytope-invariant-table
 uv run --script experiments/sys-datascience/methods/conditional-tail-atlas/analyze.py
 ```
 

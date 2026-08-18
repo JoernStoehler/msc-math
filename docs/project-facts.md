@@ -253,10 +253,10 @@ maintenance low. The numbers are stable and can be out of order.
 38.4. The reproducibility playbook should record approximate timings for each
       step on the original machine, together with machine specs.
 
-39. Git and Git LFS are useful for worktrees, checkouts, and partial reruns
-    without paying for full reruns of expensive computations. For full
-    reproducibility, tracking outputs is not what matters; the producer flow
-    and its verification matter.
+39. Git plus explicitly materialized shared artifacts are useful for worktrees,
+    checkouts, and partial reruns without paying for full reruns of expensive
+    computations. For full reproducibility, tracking outputs is not what
+    matters; the producer flow and its verification matter.
 
 39.1. Expensive experiment outputs should not automatically be treated as data
       that must be preserved instead of regenerated. Saved data can still be

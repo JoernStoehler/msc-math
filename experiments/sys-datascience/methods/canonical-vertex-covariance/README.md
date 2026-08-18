@@ -24,10 +24,10 @@ uv run --script experiments/sys-datascience/methods/canonical-vertex-covariance/
 ```
 
 Artifacts in `artifacts/current/` are generated, not hand edited.
-`provenance.json` records input content hashes, tracked LFS object identities,
+`provenance.json` records input content hashes, registered snapshot identities,
 source revision/input status, commands, and output hashes. All four retained
-inputs must be hydrated rather than Git-LFS pointer files; otherwise the
-analysis stops rather than treating a pointer as evidence.
+inputs must be materialized; a legacy Git-LFS pointer is rejected rather than
+treated as evidence.
 
 Selection protocol and claim boundary: ρ was selected post-target, after the
 retained `sys` values were already available. Every association in the report

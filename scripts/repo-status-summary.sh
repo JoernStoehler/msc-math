@@ -13,8 +13,8 @@ Usage: scripts/repo-status-summary.sh [scripts/repo-status/repo-status-*.md]
 Read-only orientation helper. It compares current HEAD and working tree state
 against a dated repo-status reference, reports check-affecting and
 orientation-affecting changed paths, repeats the generated-data freshness
-caveat and high-risk artifact-refresh areas, and summarizes Git LFS payload
-presence.
+caveat and high-risk artifact-refresh areas, and lists registered shared
+artifacts.
 
 With no argument, uses the newest scripts/repo-status/repo-status-*.md file by
 filename.
@@ -218,22 +218,6 @@ echo "- experiments/crosspolytope/ and experiments/visualization/"
 echo "- submit/"
 echo
 
-echo "LFS payloads:"
-if git lfs version >/dev/null 2>&1; then
-  LFS_LIST="$(git lfs ls-files)"
-  if [[ -z "$LFS_LIST" ]]; then
-    echo "no LFS-tracked files reported"
-  else
-    LFS_TOTAL="$(printf '%s\n' "$LFS_LIST" | awk 'NF {count++} END {print count + 0}')"
-    LFS_PRESENT="$(printf '%s\n' "$LFS_LIST" | awk '$2 == "*" {count++} END {print count + 0}')"
-    LFS_MISSING="$(printf '%s\n' "$LFS_LIST" | awk '$2 == "-" {count++} END {print count + 0}')"
-    echo "$LFS_PRESENT present, $LFS_MISSING missing, $LFS_TOTAL tracked"
-    if [[ "$LFS_MISSING" != "0" ]]; then
-      printf '%s\n' "$LFS_LIST" |
-        awk '$2 == "-" {for (i = 3; i <= NF; i++) printf "%s%s", $i, (i == NF ? ORS : OFS)}'
-      echo "Run targeted git lfs pull only for files needed by the task."
-    fi
-  fi
-else
-  echo "git lfs is not available in this environment"
-fi
+echo "Shared artifacts:"
+scripts/artifacts.py list
+echo "Materialization is explicit; this status command does not contact R2."

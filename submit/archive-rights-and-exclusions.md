@@ -19,8 +19,9 @@ advice, and does not authorize publication.
   These classes must not be covered by one undifferentiated license statement.
 - Git reports almost all commits under Jörn's identities, plus commits named
   `Claude`. Commit attribution is provenance, not proof of copyright ownership.
-- There are 104 tracked Git LFS JSONL paths. A closure bundle must hydrate and
-  verify the selected objects; a GitHub source archive is not sufficient.
+- Bulk generated JSONL is selected in `artifacts/registry.json` rather than
+  Git LFS. A closure bundle must materialize and verify registry entries marked
+  for release; a GitHub source archive alone is not sufficient.
 - `experiments/ai-use/` contains retained research reports, scripts, and
   figures, but its ignored artifacts and source session logs are not tracked.
   The retained reports still need focused privacy and quotation review.

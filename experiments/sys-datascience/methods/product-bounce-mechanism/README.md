@@ -14,13 +14,12 @@ minima are post-target and target-derived, so every result here is descriptive.
 
 ## Inputs and command
 
-Hydrate the two reviewed LFS inputs and rebuild the reviewed current-schema
-prepared table:
+Materialize the two reviewed shared inputs and rebuild the reviewed
+current-schema prepared table:
 
 ```bash
-git lfs checkout -- \
-  experiments/polytope-datasets/random-product.jsonl \
-  experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl
+scripts/artifacts.py materialize polytope-datasets
+scripts/artifacts.py materialize product-bounce-distribution
 
 TABLES_DIR="$(mktemp -d /tmp/sys-ds-product-bounce-mechanism.XXXXXX)"
 experiments/polytope-invariant-table/build-random-only-slice.sh full "$TABLES_DIR"

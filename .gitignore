@@ -69,6 +69,29 @@ experiments/**/*smoke*.jsonl
 experiments/**/*smoke*.png
 experiments/**/*smoke*.tex
 
+# Materialized shared artifacts; canonical snapshots are in R2.
+experiments/combinatorial-cells/cell-widths/combinatorial-boundaries-profiling.jsonl
+experiments/dev-gradient-ascent/optimizer-runs/artifacts/candidate-history-f10-128-0a71a6042/evaluations.jsonl
+experiments/dev-gradient-ascent/optimizer-runs/artifacts/candidate-history-f10-128-0a71a6042/proposals.jsonl
+experiments/dev-gradient-ascent/optimizer-runs/artifacts/candidate-history-f10-128-0a71a6042/rounds.jsonl
+experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd/evaluations.jsonl
+experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd/proposals.jsonl
+experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd/rounds.jsonl
+experiments/dev-sys-prediction/facet-scale-baseline-error/runs/production/sysext-cache.jsonl
+experiments/polytope-datasets/random-product.jsonl
+experiments/polytope-datasets/random.jsonl
+experiments/polytope-datasets/shared-cache.jsonl
+experiments/polytope-invariant-table/polytope-table.jsonl
+experiments/qp-error-bounds/artifacts/broad/formula_evaluations.jsonl
+experiments/qp-error-bounds/artifacts/broad/raw_rows.jsonl
+experiments/qp-error-bounds/artifacts/soundness-v2/formula_evaluations.jsonl
+experiments/qp-error-bounds/artifacts/soundness-v2/raw_rows.jsonl
+experiments/regular-products/pentagon-rotation-empirics/kkt-branch-landscape.jsonl
+experiments/sys-datascience/methods/alternative-source-transfer/artifacts/transfer-v1/source.jsonl
+experiments/sys-datascience/methods/product-bounce-class-degeneration/artifacts/degeneration-pairs.jsonl
+experiments/sys-datascience/methods/product-bounce-class-degeneration/artifacts/degeneration-rows.jsonl
+experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl
+
 # LICCA slurm stdout/stderr (regenerated each run, per-job)
 crates/**/logs/
 

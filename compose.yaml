@@ -58,6 +58,12 @@ services:
         bind:
           propagation: rprivate
           create_host_path: false
+      - type: bind
+        source: "${DATA_HOME_HOST:?set DATA_HOME_HOST in .env}"
+        target: /data
+        bind:
+          propagation: rprivate
+          create_host_path: false
 
     tmpfs:
       - /tmp:rw,nosuid,nodev,exec,size=4g,mode=1777

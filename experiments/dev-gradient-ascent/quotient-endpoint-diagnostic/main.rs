@@ -1003,7 +1003,7 @@ fn l2_norm(vectors: &[Vector4<f64>]) -> f64 {
 fn load_jsonl<T: for<'de> Deserialize<'de>>(path: &Path) -> Vec<T> {
     BufReader::new(File::open(path).unwrap_or_else(|err| {
         panic!(
-            "open {}: {err}; canonical raw trajectories must be checked out from Git LFS",
+            "open {}: {err}; canonical compact trajectories must exist in the tracked tree",
             path.display()
         )
     }))
