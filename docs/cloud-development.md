@@ -61,3 +61,8 @@ for specific exact-verification tasks; the full Compose image declares that
 environment. A cloud task that specifically needs Sage should install the
 checked `container/locks/sage-10.9-python-3.12-linux-64.explicit` environment
 during setup rather than silently replacing Sage verification with Python.
+
+For a secret-safe deterministic environment snapshot plus a fixed internal
+Codex interpretation contract, use `scripts/environment-health.sh` and
+`ENVIRONMENT_HEALTH.md`. Apply its supported-surface and prior-art gate before
+provisioning integrations or running live canaries.

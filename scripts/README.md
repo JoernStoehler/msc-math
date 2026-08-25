@@ -10,6 +10,7 @@ Small repo helper commands.
 | `artifacts.py` | publish and materialize immutable shared R2 artifact snapshots |
 | `bootstrap-cloud.sh` | install and verify the normal Codex Cloud development environment |
 | `maintain-cloud.sh` | refresh repository-dependent caches when a cloud environment resumes |
+| `environment-health.sh` | emit a secret-safe, read-only environment health snapshot for actor interpretation |
 | `repo-status-summary.sh` | read-only applicability summary for dated build/test evidence |
 | `repo-status/` | dated command/result records consumed by the status helper |
 
@@ -76,3 +77,16 @@ configuration contract is in `docs/cloud-development.md`.
 Use this as the Codex Cloud maintenance command. It runs after the requested
 branch is checked out in a resumed cached environment and fetches the current
 locked Cargo dependency graph without setup-only secrets.
+
+## `environment-health.sh`
+
+Use this to produce a deterministic JSON snapshot of repository identity,
+runtime availability, setup-secret removal, and read-only GitHub/R2 access:
+
+```bash
+bash scripts/environment-health.sh
+bash scripts/environment-health.sh --offline
+```
+
+The actor-owned validation prompt, supported-surface/prior-art gate, response
+contract, and mutation restrictions are in `ENVIRONMENT_HEALTH.md`.
