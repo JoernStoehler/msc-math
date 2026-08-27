@@ -115,15 +115,19 @@ Current source routes for the changed optimizer passage are:
   `experiments/dev-gradient-ascent/endpoint-model-audit/artifacts/directional-decomposition-20260729/analysis/REPORT.md`
   for the selected directional KKT audit.
 
-The active prose also says that a retained "predictor replay" is available.
-The former `experiments/dev-gradient-ascent/optimizer-atoms/` replay packet was
-deleted in commit `6c7a34cf` when the optimizer evidence was regenerated, and
-no current source route for that availability claim was found. Mark this phrase
-`needs source or active-prose repair`; do not use the deleted historical packet
-as current release evidence.
+The active prose is intentionally narrower than the 2026-07-29 intermediate
+draft. The former `experiments/dev-gradient-ascent/optimizer-atoms/` predictor
+replay was deleted in commit `6c7a34cf` when the optimizer evidence was
+regenerated, so it is not claimed as retained release material. The current
+paragraph names only what the surviving packets preserve: ascent from selected
+known HKO perturbations versus the no-move HKO control, repeated ascent from
+three selected optimizer endpoints, and two selected finite-distance failures
+of affine models for named KKT branches together with one positive control. Do
+not reintroduce a predictor-replay or missing-branch availability claim without
+a current recoverable source.
 
 Reopen review when the current optimizer passage is to be presented as
-reader-reviewed or rendered-reviewed, when the unsupported predictor-replay
-availability claim is resolved, if operational explanation again occupies more
-of the chapter than the future-researcher availability account, or if final
-archive selection makes any stated availability or exclusion false.
+reader-reviewed or rendered-reviewed, if the selected surviving packet surface
+or its archive availability changes, if operational explanation again occupies
+more of the chapter than the future-researcher availability account, or if
+final archive selection makes any stated availability or exclusion false.
