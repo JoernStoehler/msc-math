@@ -1,186 +1,194 @@
 # Black-Box Data-Science Content Notes
 
-Status: section-local content companion for `thesis/08-black-box-datascience.tex`.
-Not source truth.
+Status: writer companion for `thesis/08-black-box-datascience.tex` and its two
+included subsection files. This file routes current source truth; it is not an
+experiment result or mathematical authority.
 
-Purpose: gather the data-science search-result writing inventory, result
-taxonomy, and open decisions before final prose is written.
+## Current passage purpose and selected shape
 
-Overruled by: `experiments/sys-datascience/`,
-`experiments/sys-datascience/methods/`,
-`experiments/sys-datascience/coordination/current-question-map.md`,
-`experiments/FINDINGS.md`,
-`experiments/sys-landscape/legacy-ascent-continuation-debt.md`,
-generated tables/figures, and Jörn/Kai review.
+The section gives a controlled negative benchmark, not a nonexistence result.
+It asks whether several bounded search interfaces found either a new body above
+the threshold or a reproducible route worth using to seek one. Its current
+shape has three distinct evidence strata:
 
-Lifecycle: keep while the section is being assembled. After the section is
-stable, delete this file or reduce it to a short maintenance index.
+1. the retained random/product table, its in-table diagnostics, and the frozen
+   generated-candidate scalar-filter follow-up;
+2. the held-out seven-optimizer comparison on random ten-facet starts, followed
+   by endpoint, continuation, HKO-calibration, and finite-step failure
+   diagnostics; and
+3. the separate five-case, theory-selected fixed-facet local screen.
 
-Update rule: add or change a claim only with a source pointer or an explicit
-`needs source` marker.
+The optimizer and selected-body material is already active. Earlier planning
+that treated ascent, continuation, endpoint behavior, or the local-maxima
+screen as inactive pending another thesis-integration decision is superseded.
+The old `experiments/sys-landscape/` ascent/continuation packets remain
+historical context; they are not substitutes for the frozen optimizer packets
+selected here.
 
-## Active Result Shape
+Active prose routes:
 
-Current active thesis slice: random polytopes and random
-Lagrangian-product polytopes, followed by the separately bounded
-theory-selected local-maxima screen already included in
-`thesis/08-black-box-datascience.tex`. This is a thesis-content choice, not a
-claim that later data-science, orientation, or optimizer packets do not exist.
+- `thesis/08-black-box-datascience.tex` owns the section-level question,
+  retained-table result types, and bounded synthesis;
+- `thesis/08-black-box-datascience-finite-budget-optimization.tex` owns the
+  held-out optimizer comparison and its concise diagnostics;
+- `thesis/08-black-box-datascience-local-maxima-check.tex` owns the selected
+  five-case local screen; and
+- `thesis/a-datascience-results.tex` owns method detail and the optimizer
+  steps, controls, and audits that would overload the main section.
 
-Source pointers:
+Do not turn this companion into a second results appendix. Selected numbers
+belong in the active TeX; full metric tables remain with the generated packet
+artifacts.
 
-- `experiments/sys-datascience/README.md`;
-- `experiments/sys-datascience/coordination/current-question-map.md` for the
-  current answered/open/stopped/acceptance-gated question graph;
-- `experiments/FINDINGS.md` for a selective semantic route across later
-  experiment results;
-- `experiments/polytope-datasets/README.md`;
-- `experiments/polytope-invariant-table/README.md`;
-- `experiments/sys-datascience/methods/README.md`;
-- `experiments/sys-datascience/methods/trusted-random-product-closure-summary.md`;
-- `experiments/sys-datascience/methods/trusted-random-product-method-dispositions.md`;
-- relevant method-packet READMEs.
+## Source routes and relevance
 
-The thesis-facing claim should be bounded:
+### Retained and generated random/product search
 
-- retained random/product table: `14336` rows, `0` rows with `sys > 1`;
-- generic random rows: `4096` rows, `0` positives;
-- random Lagrangian-product rows: `10240` rows, `0` positives;
-- retained in-table EDA, scalar associations, projections, supervised
-  prediction, and tail-rule diagnostics found structure but no validated new
-  `sys > 1` row;
-- frozen scalar generated-candidate packet over `100000` random-product
-  candidates evaluated `1675` selected-or-baseline rows after selection was
-  frozen, and found no evaluated candidate with `sys > 1`;
-- ridge/mechanism diagnostics give empirical hints for future frozen rules, but
-  post-`sys` diagnostic splits are not candidate-proposer claims.
+- `experiments/polytope-datasets/README.md`: producer populations, seeds,
+  bucket plans, and retained-row provenance.
+- `experiments/polytope-invariant-table/README.md`: derived invariant-feature
+  and provenance tables consumed by the ordinary data-science methods.
+- `experiments/sys-datascience/README.md`: active random/product question and
+  the boundary from historical `sys-landscape` work.
+- `experiments/sys-datascience/coordination/current-question-map.md`: current
+  routing and reopen state; it is a navigation view, so linked packet sources
+  overrule it.
+- `experiments/sys-datascience/methods/trusted-random-dataset/README.md`: exact
+  trusted row filter and finite-table negative result.
+- `experiments/sys-datascience/methods/trusted-random-product-method-dispositions.md`:
+  named ordinary method surface and dispositions.
+- `experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/README.md`:
+  selection-before-target contract and bounded generated-candidate evidence.
+- `experiments/sys-datascience/methods/ridge-mechanism-discriminator/README.md`:
+  ridge-area interpretation and the boundary between pre-target rules and
+  post-target diagnostics.
 
-Current chapter role: report a controlled failure mode of ordinary random search
-and data-science wrappers, together with the strongest positive structure they
-did recover. The main transferable pattern is bucket-local: low total or mean
-symplectic area of the primal two-faces, normalized by `sqrt(volume)`, selects
-generated random-product candidates with higher mean `sys` than matched
-baselines. It does not lift the selected maximum beyond the observed
-sub-threshold plateau. Source:
-`experiments/sys-datascience/methods/ridge-mechanism-discriminator/` and its
-generated scalar-proposer inputs. This is not a mathematical nonexistence
-theorem or a demonstrated route to `sys > 1`.
+Use method-local READMEs and their cited generated artifacts for any method
+claim. Do not infer a packet result from the coordination map alone.
 
-The original retained-table exploration closed on 2026-07-10 without selecting
-another dataset. Later packets tested frozen scalar filters, alternative-source
-transfer, conditional-tail limitations, selected-shape orientation, and
-optimizer behavior; they do not silently reopen the same retained-table loop.
-The current question map records their bounded answers and the remaining
-questions. The dormant same-generator replication plan answers no current
-research question. Cross-method interpretation and the original reopening
-boundary remain in
-`experiments/sys-datascience/coordination/exploration-result.md`.
+### Held-out optimizer comparison and historical evaluator
 
-## Active Producers
+- `experiments/dev-gradient-ascent/optimizer-runs/README.md`: runner, frozen
+  dataset provenance, compute accounting, and the historical-evaluator trust
+  boundary. The retained comparison is historical schema-1 evidence; running
+  the current clean evaluator would be a new experiment.
+- `experiments/dev-gradient-ascent/optimizer-runs/manifests/heldout-f10-64-finalists.json`:
+  frozen population, methods, hyperparameters, budget, and evaluator contract.
+- `experiments/dev-gradient-ascent/optimizer-comparison/README.md`: strict
+  analysis contract and the exact population to which the ranking applies.
+- `experiments/dev-gradient-ascent/optimizer-comparison/artifacts/heldout-f10-64-finalists-19a8b4dfd-analysis/SUMMARY.md`:
+  generated held-out outcomes, paired comparisons, compute profiles, and
+  threshold counts used by the TeX.
 
-Source pointer: `experiments/polytope-datasets/README.md`.
+All optimizer values concern the JSON field produced by the common historical
+heuristic binary64 orbit-search evaluator, denoted
+`\widehat{\operatorname{sys}}` in the TeX. Candidate-family completeness is
+untested. The comparison supports a ranking of the seven frozen
+implementations on the matched random `F=10` starts and stated one-second
+measured-compute budget. It does not certify mathematical capacity, transfer
+the ranking to another population, facet count, budget, or evaluator, or show
+convergence or local maximality.
 
-- Generic random rows: facet counts `F=5..12`, `512` accepted samples per
-  facet count, height interval `[0.8, 1.2]`, seed `42`, rejection until valid.
-- Random Lagrangian-product rows: polygon-pair buckets `3 <= k <= m <= 6`,
-  `1024` accepted samples per bucket, height interval `[0.8, 1.2]`, seed `42`,
-  rejection until valid.
-- Total retained random/product rows: `14336`.
-- Known HKO reference rows are reference/holdout rows, not part of the retained
-  random/product production counts.
+### Endpoint and continuation diagnostics
 
-## Active Rows
+- `experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/README.md`:
+  finite signed-basis poll and its symmetry-transverse selection contract.
+- `experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/artifacts/heldout-f10-64-history-endpoints-19a8b4dfd-analysis/REPORT.md`:
+  population-stratified one-second endpoint panel selected before its poll
+  outcomes were computed.
+- `experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/artifacts/history-f10-16-compute-depth-endpoints-426ec7a7c-analysis/REPORT.md`:
+  same-start larger-budget comparison.
+- `experiments/dev-gradient-ascent/ascent-continuation/README.md`: repeated
+  branch-informed continuation contract and its finite-direction limitations.
+- `experiments/dev-gradient-ascent/ascent-continuation/artifacts/four-state-full-20260729/analysis/REPORT.md`:
+  three deliberately selected optimizer endpoints plus HKO, including the
+  oblique path missed by a signed-basis poll.
+- `experiments/dev-gradient-ascent/ascent-continuation/artifacts/hko-one-step-development-panel-20260729/analysis/REPORT.md`:
+  four predeclared directions at four distances from HKO, with HKO as the
+  false-positive control.
+- `experiments/dev-gradient-ascent/ascent-continuation/artifacts/top8-tuning-endpoints-one-step-20260729/analysis/REPORT.md`:
+  outcome-selected top-eight tuning endpoints and the systematic finite-step
+  model failures that motivated the audit.
+- `experiments/dev-gradient-ascent/endpoint-model-audit/README.md` and
+  `experiments/dev-gradient-ascent/endpoint-model-audit/artifacts/directional-decomposition-20260729/analysis/REPORT.md`:
+  two selected failures and one positive control, localizing those failures to
+  finite-distance nonlinearity of ill-conditioned named KKT branches.
 
-Define rows as retained polytopes in the random/product prepared table.
+Keep the selections distinct. The held-out ranking, population-stratified
+endpoint poll, deliberately selected continuation states, development HKO
+directions, outcome-selected tuning endpoints, and three-proposal KKT audit
+are not one population. The diagnostics establish observed improvements and
+failure mechanisms only on their named cases. They estimate neither a
+population miss rate nor a universal KKT trust cutoff.
 
-Active row families:
+### Theory-selected local screen
 
-- generic random polytopes from the retained finite production run;
-- random Lagrangian products from the retained finite production run;
-- generated random-product candidates in the scalar-proposer packet only when
-  discussing generated-candidate evidence separately from the retained table.
+- `experiments/local-maxima-check/README.md`: five evidence statuses, frozen
+  probes, claim boundary, decision `LMC-D1`, and concrete reopen conditions.
+- `experiments/local-maxima-check/artifacts/REPORT.md`: generated control and
+  target outcomes. The rotated-pentagon structured probes succeed while the
+  generic quotient/random probes miss that known thin improving family.
+- `experiments/verification/ch2021-six-vertex/README.md`: exact value of the
+  displayed CH2021 body, not a neighborhood theorem.
+- `experiments/hko-local-maximum/README.md`: theorem-strength HKO local
+  maximality; the finite screen is not its authority.
+- `experiments/regular-products/pentagon-rotation-formula-proof/README.md`:
+  exact rotated-pentagon profile and the known non-maximum control.
 
-Inactive or out-of-scope for the current chapter unless a later thesis
-integration decision selects them:
+The target misses are fixed-facet, basis-, sample-, radius-, and
+evaluator-dependent nominal-scalar diagnostics with broad capacity intervals.
+They do not certify local maximality, exclude thin improving germs, or cover
+facet additions. The conjectural and proved statuses in the five-case table
+must remain visibly different.
 
-- legacy fixed-F ascent endpoints;
-- legacy product ascent endpoints;
-- legacy variable-F continuation endpoints;
-- endpoint stability, attractors, basins, local-behavior panels;
-- perturbation panels.
+## Claim and wording boundaries
 
-Reason: the legacy `sys-landscape` ascent/continuation surfaces are context
-only and do not support local-maximality, exhaustive-search, or
-candidate-proposer claims. This does not classify the newer retained optimizer
-and prediction packets; follow the current question map and their local
-READMEs before deciding whether they belong in the thesis.
+- Preserve finite-table, generator, population, facet-count, budget,
+  selection-timing, and evaluator scope wherever the prose summarizes a
+  negative result.
+- Retained-table association, prediction, and post-target splits explain
+  already evaluated rows; they are not generated-candidate validation.
+- A rule counts as a generated proposer only when selection is frozen before
+  target evaluation. Sub-threshold enrichment is not validation of a route to
+  `sys > 1`.
+- Do not identify historical optimizer `sys` fields with certified
+  mathematical systolic ratio or capacity.
+- A fully reevaluated finite improvement is evidence of ascent for that state
+  under that evaluator. A failed poll or stopped continuation is not
+  stationarity, convergence, or local maximality evidence.
+- The HKO calibration is a selected development panel, not an estimated
+  false-negative rate. The KKT audit diagnoses three proposals, not a
+  population conditioning law.
+- Do not claim exhaustive search, random-model impossibility, absence of
+  `sys > 1` bodies, or exhaustion of useful invariant features or optimizer
+  families.
 
-## Active Columns
+## Review state
 
-Source pointer: `experiments/polytope-invariant-table/README.md`.
+`docs/project-status.md` classifies the data-science surface as an internally
+reviewed integration candidate. The bounded random/product table, held-out
+optimizer comparison, continuation diagnostics, and failure audits are
+integrated; ordinary whole-PDF, Jörn, and Kai review remains. This companion
+repair checks current source routing and stale planning only. It is not a new
+scientific, mathematical, reader, or rendered-page review.
 
-The method-facing table exports identity/target/source fields and active
-invariant feature columns. Current covariates include:
+## Reopen triggers
 
-- identity/target/metadata: `poly_id`, `sys`, `capacity_source`;
-- combinatorial invariants from the face lattice;
-- symplectic two-face area invariants, normalized by `volume.sqrt()`;
-- source/provenance metadata kept separate for leakage and provenance checks.
+Reopen this companion when:
 
-The v1 active table intentionally excludes raw dual vertices, capacity, volume,
-Euclidean representative features, omega magnitudes of normalized dual rows,
-transition features, and cutoff/sign features from the method-facing covariates.
+- any of the four active TeX routes above changes its selected purpose or
+  result surface;
+- a retained producer/table is rebuilt, a frozen packet is replaced, or an
+  evaluator contract changes in a way that affects a displayed claim;
+- a new independently evaluated population changes the optimizer ranking or
+  supports transfer beyond the current `F=10`/budget/evaluator contract;
+- a stationarity, convergence, certified-capacity, or local-maximality result
+  replaces one of the present empirical boundaries; or
+- `LMC-D1` is reopened for one of its named reasons: a new independently
+  motivated candidate, branch-complete or exact evidence, a stronger
+  informative negative method, or a concrete thesis need that changes the
+  value comparison.
 
-Important thesis wording: a method may learn source/provenance rather than
-geometry. Treat metadata-only baselines and provenance overlays as caveats and
-controls, not as candidate-proposer inputs.
-
-## Result Types
-
-- `not applicable`: the method does not fit the available data or search
-  interface.
-- `not run within the stated bound`: implementation, runtime, or data
-  requirements exceeded the stated thesis bound.
-- `implementation bug; no method verdict`: a run artifact exists but is not
-  interpretable as method evidence.
-- `ran with no candidate-proposer and no new validated row`: the method ran but
-  recorded neither a candidate-proposer nor a validated new `sys > 1` row.
-- `candidate-proposer`: a reproducible rule proposes candidate polytopes or
-  rows before their `sys` values are evaluated. For retained-table diagnostics,
-  it must not use post-hoc target information or provenance leakage. A generated
-  proposer may be explicitly scoped to a predeclared generator or bucket
-  contract, as long as selection is frozen before `sys` evaluation.
-- `validated candidate`: a run produced a new row with verified `sys > 1`.
-- `generated-candidate evidence`: a rule freezes generated candidates before
-  `sys` evaluation and then evaluates those candidates. This is stronger than
-  retained-table ranking, but it is still scoped to its generator, rule set, and
-  candidate budget.
-- If a real positive result appears, report it honestly and escalate to Jörn. It
-  may falsify the current negative main result and justify follow-up.
-- Filter obvious false positives, for example a model finding a within-table
-  association because `sys` was regressed against `sys`.
-
-## Methods
-
-- Batch attempted methods by role: direct scan, descriptive tail diagnostics,
-  scalar association/projection/ranking/rule diagnostics, generated-candidate
-  scalar proposer, and mechanism/reference diagnostics.
-- Put detailed figures, parameters, and method-specific rows in the
-  data-science appendix or method READMEs, not in the main text.
-- Methods come from the current random/product method packets, not old
-  ascent/continuation archaeology.
-
-## Forbidden Or Risky Wording
-
-- Do not claim no `sys > 1` polytopes exist.
-- Do not claim no random distribution can produce `sys > 1`.
-- Do not claim exhaustive search.
-- Do not claim the retained table validates a generated-candidate proposer.
-- Do not claim the 100k scalar-proposer packet validates a near-counterexample
-  source; it found no positive row and max evaluated `sys` was about `0.868`.
-- Do not import legacy `sys-landscape` ascent/continuation/local-behavior
-  packets into the active chapter without explicitly reopening and reviewing
-  that separate surface. This guardrail does not dispose of newer retained
-  optimizer packets.
-- Do not present ridge/concentration mechanism diagnostics as proof of a
-  mechanism; they are empirical packet labels and future-rule seeds.
+More rows, another ordinary retained-table model, another routine basis poll,
+or another seed alone is not a reopen reason under the current packet
+decisions.

@@ -71,7 +71,8 @@ the thesis.
 
 ## Review status
 
-The clean-sheet availability draft was reviewed on 2026-07-15:
+The clean-sheet availability draft at commit `490978a3` was reviewed on
+2026-07-15:
 
 - `latexmk` and `check-build.sh` completed cleanly;
 - candidate PDF pages 70--72 were inspected with Numerics and the opening of
@@ -82,6 +83,47 @@ The clean-sheet availability draft was reviewed on 2026-07-15:
 - the reviewer found no material source-strength, adjacent-chapter duplication,
   operational-clutter, reader-understanding, or rendered-presentation issue.
 
-Reopen the purpose if operational explanation again occupies more of the
-chapter than the future-researcher availability account, or if final archive
-selection makes any stated availability or exclusion false.
+That record is historical and passage-scoped, not a review of the whole current
+file. The empirical-material and claim-boundary paragraphs were later rewritten
+to replace the twelve-run first-order panel with the frozen ten-facet optimizer
+comparison and its endpoint, continuation, and failure diagnostics (principally
+commits `5133ca86` and `20c93d3f`). The 2026-07-15 reader and rendered-page
+verdict therefore does not cover that optimizer passage or its current page
+flow. This companion update does not rerun or simulate that review. The old
+review remains useful for the unchanged availability purpose and for unchanged
+text from its candidate; no broader later-review claim follows.
+
+Current source routes for the changed optimizer passage are:
+
+- `experiments/dev-gradient-ascent/optimizer-runs/README.md` and
+  `experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd/`
+  for the historical-evaluator traces and provenance;
+- `experiments/dev-gradient-ascent/optimizer-comparison/README.md` and
+  `experiments/dev-gradient-ascent/optimizer-comparison/artifacts/heldout-f10-64-finalists-19a8b4dfd-analysis/SUMMARY.md`
+  for the frozen comparison and its population/budget boundary;
+- `experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/README.md`,
+  `experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/artifacts/heldout-f10-64-history-endpoints-19a8b4dfd-analysis/REPORT.md`, and
+  `experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/artifacts/history-f10-16-compute-depth-endpoints-426ec7a7c-analysis/REPORT.md`
+  for finite endpoint polls and the same-start larger-budget comparison;
+- `experiments/dev-gradient-ascent/ascent-continuation/README.md`,
+  `experiments/dev-gradient-ascent/ascent-continuation/artifacts/four-state-full-20260729/analysis/REPORT.md`,
+  `experiments/dev-gradient-ascent/ascent-continuation/artifacts/hko-one-step-development-panel-20260729/analysis/REPORT.md`, and
+  `experiments/dev-gradient-ascent/ascent-continuation/artifacts/top8-tuning-endpoints-one-step-20260729/analysis/REPORT.md`
+  for remaining endpoint ascent, HKO calibration, and selected failure
+  controls; and
+- `experiments/dev-gradient-ascent/endpoint-model-audit/README.md` and
+  `experiments/dev-gradient-ascent/endpoint-model-audit/artifacts/directional-decomposition-20260729/analysis/REPORT.md`
+  for the selected directional KKT audit.
+
+The active prose also says that a retained "predictor replay" is available.
+The former `experiments/dev-gradient-ascent/optimizer-atoms/` replay packet was
+deleted in commit `6c7a34cf` when the optimizer evidence was regenerated, and
+no current source route for that availability claim was found. Mark this phrase
+`needs source or active-prose repair`; do not use the deleted historical packet
+as current release evidence.
+
+Reopen review when the current optimizer passage is to be presented as
+reader-reviewed or rendered-reviewed, when the unsupported predictor-replay
+availability claim is resolved, if operational explanation again occupies more
+of the chapter than the future-researcher availability account, or if final
+archive selection makes any stated availability or exclusion false.
