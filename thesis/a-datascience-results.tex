@@ -102,9 +102,9 @@ the gradient of one current minimizing branch recovered
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]
-  {../experiments/dev-gradient-ascent/ascent-continuation/artifacts/hko-one-step-development-panel-20260729/analysis/recovery-by-source-distance.png}
-\caption{One-step calibration on known perturbations of HKO.  The left panel
-shows recovered evaluator gap, the center removed distance, and the right the
+  {figures/datascience/hko-recovery-by-source-distance.pdf}
+\caption{One-step calibration on known perturbations of HKO.  From top to
+bottom, the panels show recovered evaluator gap, removed distance, and
 residual evaluator gap.}
 \label{fig:black-box-datascience-hko-optimizer-calibration}
 \end{figure}
@@ -130,11 +130,11 @@ failure is finite-distance nonlinearity of an ill-conditioned KKT branch.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]
-  {../experiments/dev-gradient-ascent/endpoint-model-audit/artifacts/directional-decomposition-20260729/analysis/derivative-and-kkt-scale.png}
+  {figures/datascience/derivative-and-kkt-scale.pdf}
 \caption{Finite differences for two failed affine proposals and one positive
 control.  Prediction changes regime when the KKT perturbation becomes large
-relative to the smallest source eigenvalue magnitude (right).  Dotted lines
-are the analytic derivatives.}
+relative to the smallest source eigenvalue magnitude (bottom).  Dotted lines
+in the top two panels are the analytic derivatives.}
 \label{fig:black-box-datascience-kkt-trust-scale}
 \end{figure}
 

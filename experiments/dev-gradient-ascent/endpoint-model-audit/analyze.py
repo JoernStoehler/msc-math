@@ -11,10 +11,12 @@ import json
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+from matplotlib.ticker import NullFormatter
 
 
 def fmt(value: float | None) -> str:
     return "--" if value is None else f"{value:.6g}"
+
 
 def inertia_changes(case: dict, radius: dict) -> bool:
     base = case["base"]["kkt"]["raw_negative_eigenvalue_count"]
@@ -70,61 +72,93 @@ def main() -> None:
             }
         )
 
-    fig, axes = plt.subplots(1, 3, figsize=(12.8, 3.8), sharex=True)
-    for case in data["cases"]:
-        radii = [row["normalized_radius"] for row in case["radii"]]
-        axes[0].plot(
-            radii,
-            [row["action"]["central"] for row in case["radii"]],
-            marker="o",
-            label=case["role"],
+    publication_style = {
+        "font.size": 11,
+        "axes.titlesize": 12,
+        "axes.labelsize": 11,
+        "xtick.labelsize": 10,
+        "ytick.labelsize": 10,
+        "legend.fontsize": 10,
+        "lines.linewidth": 1.6,
+        "lines.markersize": 5.5,
+    }
+    role_label = {
+        "top_failure": "top failure",
+        "positive_control": "positive control",
+        "clean_failure": "clean failure",
+    }
+    with plt.rc_context(publication_style):
+        fig, axes = plt.subplots(3, 1, figsize=(6.8, 7.8), sharex=True)
+        for case in data["cases"]:
+            radii = [row["normalized_radius"] for row in case["radii"]]
+            axes[0].plot(
+                radii,
+                [row["action"]["central"] for row in case["radii"]],
+                marker="o",
+                label=role_label[case["role"]],
+            )
+            axes[0].axhline(
+                case["analytic_action_directional"],
+                color=axes[0].lines[-1].get_color(),
+                linestyle=":",
+                alpha=0.75,
+            )
+            axes[1].plot(
+                radii,
+                [
+                    row["branch_ratio_f64_volume"]["central"]
+                    for row in case["radii"]
+                ],
+                marker="o",
+                label=role_label[case["role"]],
+            )
+            axes[1].axhline(
+                case["analytic_branch_ratio_directional"],
+                color=axes[1].lines[-1].get_color(),
+                linestyle=":",
+                alpha=0.75,
+            )
+            axes[2].plot(
+                radii,
+                [
+                    row["kkt_frobenius_perturbation_over_base_eigen_gap"]
+                    for row in case["radii"]
+                ],
+                marker="o",
+                label=role_label[case["role"]],
+            )
+        axes[0].set_title("Named action derivative")
+        axes[0].set_ylabel("central finite difference")
+        axes[1].set_title("Named branch-ratio derivative")
+        axes[1].set_ylabel("central finite difference")
+        axes[2].set_title("KKT perturbation relative to eigenvalue gap")
+        axes[2].set_yscale("log")
+        axes[2].axhline(1.0, color="black", linestyle="--", linewidth=1)
+        axes[2].set_ylabel("Frobenius norm ratio")
+        for axis in axes:
+            axis.set_xscale("log")
+            axis.grid(alpha=0.25)
+        axes[-1].set_xticks([1.0e-8, 1.0e-7, 1.0e-6, 1.0e-5])
+        axes[-1].xaxis.set_minor_formatter(NullFormatter())
+        axes[-1].set_xlabel("normalized radius")
+        handles, legend_labels = axes[0].get_legend_handles_labels()
+        fig.legend(
+            handles,
+            legend_labels,
+            loc="upper center",
+            bbox_to_anchor=(0.5, 0.99),
+            ncol=2,
         )
-        axes[0].axhline(
-            case["analytic_action_directional"],
-            color=axes[0].lines[-1].get_color(),
-            linestyle=":",
-            alpha=0.55,
+        fig.subplots_adjust(
+            left=0.16,
+            right=0.98,
+            bottom=0.08,
+            top=0.87,
+            hspace=0.36,
         )
-        axes[1].plot(
-            radii,
-            [
-                row["branch_ratio_f64_volume"]["central"]
-                for row in case["radii"]
-            ],
-            marker="o",
-            label=case["role"],
-        )
-        axes[1].axhline(
-            case["analytic_branch_ratio_directional"],
-            color=axes[1].lines[-1].get_color(),
-            linestyle=":",
-            alpha=0.55,
-        )
-        axes[2].plot(
-            radii,
-            [
-                row["kkt_frobenius_perturbation_over_base_eigen_gap"]
-                for row in case["radii"]
-            ],
-            marker="o",
-            label=case["role"],
-        )
-    axes[0].set_title("named action derivative")
-    axes[0].set_ylabel("central finite difference")
-    axes[1].set_title("named branch-ratio derivative")
-    axes[1].set_ylabel("central finite difference")
-    axes[2].set_title("KKT perturbation / eigenvalue gap")
-    axes[2].set_yscale("log")
-    axes[2].axhline(1.0, color="black", linestyle="--", linewidth=1)
-    axes[2].set_ylabel("Frobenius norm ratio")
-    for axis in axes:
-        axis.set_xscale("log")
-        axis.set_xlabel("normalized radius")
-        axis.grid(alpha=0.25)
-    axes[-1].legend()
-    fig.tight_layout()
-    fig.savefig(args.out / "derivative-and-kkt-scale.png", dpi=180)
-    plt.close(fig)
+        fig.savefig(args.out / "derivative-and-kkt-scale.png", dpi=180)
+        fig.savefig(args.out / "derivative-and-kkt-scale.pdf")
+        plt.close(fig)
 
     source_table = [
         "| role | evaluator delta | predicted named-branch delta | actual named-branch delta | action derivative error | volume derivative error | KKT perturbation / gap | eigenvalue changes sign |",
