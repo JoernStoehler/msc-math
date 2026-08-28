@@ -1,0 +1,35 @@
+Viterbo's conjecture predicted that the normalized
+Ekeland--Hofer--Zehnder capacity of a four-dimensional convex body satisfies
+\(\operatorname{sys}(K)\leq 1\).  The Lagrangian product of two suitably
+rotated regular pentagons found by Haim--Kislev and Ostrover disproves this
+bound.  This thesis asks whether that body can be improved locally and whether
+finite computation reveals further examples.
+
+For polytopes, the investigation combines the Haim--Kislev finite quadratic
+program for the capacity with first-order variation in normalized facet
+coordinates and exact algebraic certificates.  The main theorem shows that
+the HKO body is a Hausdorff-local maximizer among polytopes with exactly ten
+facets.  In a sufficiently small neighborhood, equality occurs precisely
+under translations, positive scalings, and linear symplectic transformations.
+The proof uses \(26\) feasible capacity upper functions whose exact derivative
+certificate forces decrease in all \(25\) transverse directions.
+
+For the one-parameter family
+\(K_\theta=P_5\times_L R(\theta)P_5\), the same finite machinery gives the
+exact profile
+\[
+  \operatorname{sys}(K_\theta)
+  =\frac{5+2\sqrt5}{10}\sec^2 d(\theta),
+\]
+where \(d(\theta)\) is the distance to the nearest multiple of \(\pi/5\).
+Its maximum is exactly the HKO value \((3+\sqrt5)/5\).  A complementary
+rational flow-graph algorithm is proved correct under explicit regularity
+hypotheses.
+
+The computational search gives a bounded negative result: no recorded value
+exceeds \(1\) in a retained sample of \(14336\) random polytopes and random
+Lagrangian products, nor among the \(1675\) selected-or-baseline rows evaluated
+after a frozen screen of \(100000\) generated random products.  These finite
+outcomes do not imply nonexistence.  Together, the results establish local
+rigidity and an exact structured-family profile while keeping theorem,
+computation, and empirical evidence distinct.
