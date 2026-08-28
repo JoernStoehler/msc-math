@@ -22,7 +22,7 @@ and regenerate the two selected figures:
 
 ```bash
 cd experiments/visualization/viewer
-npm install --no-save --no-package-lock playwright@1.61.1
+npm install --no-save --no-package-lock playwright@1.61.1 three@0.128.0
 npx playwright@1.61.1 install --with-deps chromium  # one-time browser setup
 node screenshot-figures.mjs
 ```
@@ -40,20 +40,22 @@ editing them.
 
 ## Selected Figures
 
-- `figures/viz-hypercube-ridges.png` is thesis-ready explanatory material. It
-  shows the projected edges and interpolated spherical two-face meshes of the
-  4-cube. Its purpose is to help a reader form a qualitative picture of a 4D
-  polytope boundary; the meshes are not metric or symplectic data.
-- `figures/viz-hko-pentagon-min-orbit.png` is thesis-ready explanatory and
+- `figures/viz-hypercube-ridges.png` is publication-candidate explanatory
+  material. It shows the projected edges over lightly coloured interpolated
+  spherical two-face meshes of the 4-cube. Its purpose is to help a reader form
+  a qualitative picture of a 4D polytope boundary; the meshes are not metric or
+  symplectic data.
+- `figures/viz-hko-pentagon-min-orbit.png` is publication-candidate explanatory and
   empirical material. It shows the projected one-skeleton of the HKO
   Lagrangian product of two regular pentagons together with trajectory index
   zero from `hko_pentagon.json`, a six-segment recovered minimum-action orbit.
-  The structure is muted and the orbit purple so their roles remain readable
-  at thesis width.
+  The structure is muted and the orbit has an orange core with a dark outline,
+  so their roles remain separable in colour and grayscale at thesis width.
 
-Both screenshots use the north pole `e4`, clipping radius `6`, and an
-`800 x 600` viewport. The 4-cube camera is `(2.6,1.95,3.25)` and the HKO
-camera is `(3.2,2.4,4.0)`. The thesis copies them deliberately to
+Both screenshots render from an `800 x 600` viewport and use producer-owned
+content crops: `660 x 560` for the 4-cube and `450 x 510` for the HKO panel.
+Both use the north pole `e4` and clipping radius `6`. The 4-cube camera is
+`(2.6,1.95,3.25)` and the HKO camera is `(3.2,2.4,4.0)`. The thesis copies them deliberately to
 `thesis/figures/visualization/`; that directory is self-contained and is not a
 build-time link to this experiment.
 
