@@ -130,6 +130,9 @@ validate a threshold-crossing route.
   computation.
 - Across-start ranges are population variation, not uncertainty intervals for
   a median.
+- The optimizer comparison shares a `1000 ms` start-new-work cutoff, not
+  identical realized compute. Terminal values may lie to its right because
+  atomic work begun below the cutoff is allowed to finish.
 - The held-out optimizer ranking and outcome-selected diagnostic panels answer
   different questions; never use the latter to strengthen held-out frequency
   claims.

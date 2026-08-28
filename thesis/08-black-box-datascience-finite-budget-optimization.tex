@@ -11,11 +11,12 @@ model at \(0.9772\).  None of the \(64\) runs of any method reached the
 recorded threshold \(1\).  Endpoint controls below show why this is neither a
 convergence result nor evidence that the endpoints are local maxima.
 
-Every run received the same \(1000\)\,ms measured serial-compute budget,
-including full evaluations and optimizer work, together with a cap of \(128\)
-full evaluator calls.  The starts were disjoint from the development and
-tuning populations, and the manifest fixed the seven methods and their
-hyperparameters before the held-out outcomes were computed.
+Every run used the same \(1000\)\,ms measured serial
+evaluator-plus-optimizer start-new-work cutoff and a \(128\)-call cap.  Work
+begun below the cutoff was retained on completion, with no separate terminal
+evaluation: the endpoints share an atomic stopping rule, not identical realized
+times.  The starts were disjoint from the development and tuning populations,
+and the seven methods were fixed before the held-out outcomes were computed.
 
 The retained runs use one common historical binary64 evaluator: it
 reconstructs the polytope and executes its configured legacy orbit search.
@@ -60,9 +61,10 @@ CMA-ES & \(0.8183\) & \(0.7184\)--\(0.8692\) & \(0.932069\)\\
 coordinate direct search & \(0.6010\) & \(0.3583\)--\(0.7866\) & \(0.842539\)\\
 \bottomrule
 \end{tabular}
-\caption{Held-out outcomes on \(64\) matched random ten-facet starts at equal
-measured serial compute.  The intervals describe variation across starting
-points, not uncertainty about the median.}
+\caption{Held-out terminal outcomes on \(64\) matched random ten-facet starts
+under the common \(1000\)\,ms start-new-work cutoff, atomic-overrun rule, and
+\(128\)-call cap.  The intervals describe variation across starting points,
+not uncertainty about the median.}
 \label{tab:black-box-datascience-f10-optimizer-comparison}
 \end{table}
 
@@ -71,8 +73,11 @@ points, not uncertainty about the median.}
 \includegraphics[width=0.96\linewidth]
   {../experiments/dev-gradient-ascent/optimizer-comparison/artifacts/heldout-f10-64-finalists-19a8b4dfd-analysis/figures/best-sys-by-measured-compute.png}
 \caption{Median best historical evaluator value against measured
-evaluator-plus-optimizer time.  Shaded bands show the 10--90\% range across
-the same \(64\) starts.}
+evaluator-plus-optimizer time; shaded bands show the 10--90\% range across the
+same \(64\) starts.  The shared-axis upper panel isolates the three highest
+terminal medians.  The dashed line marks the \(1000\)\,ms start-new-work cutoff;
+values to its right finish atomic work begun below it, with earlier endpoints
+carried forward.}
 \label{fig:black-box-datascience-f10-optimizer-compute}
 \end{figure}
 

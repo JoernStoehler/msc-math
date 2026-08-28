@@ -10,9 +10,14 @@ context only for this chapter.
 \subsection{Finite-budget local optimizer comparison}
 
 The optimizer packet freezes \(64\) held-out random ten-facet starts, seven
-methods, a \(1000\)\,ms measured serial-compute budget, and a cap of \(128\)
-full historical-evaluator calls per run.  Its \(448\) traces contain \(28824\)
-full calls.  With the notation and trust boundary of
+methods, a \(1000\)\,ms measured serial-compute start-new-work cutoff, and a
+cap of \(128\) full historical-evaluator calls per run.  A round begun below
+the cutoff is completed atomically, so the terminal values include its
+possible overrun rather than imposing a strict \(1000\)\,ms truncation; there
+is no extra terminal evaluation.  Of the \(448\) traces, \(310\) have terminal
+compute above the cutoff (at most \(67.525\)\,ms above), and all \(305\) traces
+with an evaluated overrun round began that round below the cutoff.  The traces
+contain \(28824\) full calls.  With the notation and trust boundary of
 Section~\ref{subsec:black-box-datascience-finite-budget-optimization},
 four-anchor branch history has the largest held-out median best value,
 \(0.9848\), followed by transition prediction at \(0.9816\) and the

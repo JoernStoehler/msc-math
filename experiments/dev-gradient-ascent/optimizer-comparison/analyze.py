@@ -30,6 +30,16 @@ BOOTSTRAP_REPLICATES = 4000
 BOOTSTRAP_SEED = 2026072303
 ALGORITHM_STATE_FIELDS = ("algorithm_state_before", "algorithm_state_after")
 
+ALGORITHM_STYLES = {
+    "history-baseline": ("#0072B2", "-", "o"),
+    "directional-above-8e-2": ("#D55E00", "--", "s"),
+    "gap-w1e-1-adaptive-d1e-1": ("#009E73", "-.", "D"),
+    "literal-eta1e-2": ("#CC79A7", ":", "^"),
+    "safeguarded-adaptive-d1e-1": ("#E69F00", (0, (5, 1, 1, 1)), "v"),
+    "cma-s1e-1-l8": ("#56B4E9", (0, (3, 1)), "P"),
+    "pattern-r3e-2": ("#000000", (0, (1, 1)), "X"),
+}
+
 
 def display_algorithm(algorithm_id: str) -> str:
     return {
@@ -703,9 +713,25 @@ def measured_compute_curve_rows(
                 evaluation_ms + round_row["ask_ms"] + round_row["tell_ms"]
             )
             trace.append((cumulative, round_row["best_sys_after"]))
+        terminal_compute = float(run.get("charged_compute_ms", cumulative))
+        if terminal_compute + 1e-9 < cumulative:
+            raise ValueError(
+                f"{run['run_id']}: terminal compute precedes completed rounds"
+            )
+        if terminal_compute > cumulative:
+            # A final ask may return no proposals, so it is charged to optimizer
+            # compute without creating a round.  Preserve that measured time as
+            # a terminal plateau rather than making the run appear to stop early.
+            trace.append((terminal_compute, run["best_sys"]))
         traces[run["run_id"]] = trace
     common_maximum = max(trace[-1][0] for trace in traces.values())
-    grid = np.linspace(0.0, common_maximum, 101)
+    grid_values = list(np.linspace(0.0, common_maximum, 101))
+    grid_values.extend(
+        float(run["compute_budget_ms"])
+        for run in runs
+        if run.get("compute_budget_ms") is not None
+    )
+    grid = sorted(set(grid_values))
     by_algorithm: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for run in runs:
         by_algorithm[run["algorithm_id"]].append(run)
@@ -1435,6 +1461,12 @@ def plot_curves(
             "measured evaluator + optimizer time (ms)",
         ),
     ]:
+        if (
+            x_name == "measured_compute_ms"
+            and set(algorithms) == set(ALGORITHM_STYLES)
+        ):
+            plot_measured_compute_curves(figures / filename, rows, runs)
+            continue
         figure, axis = plt.subplots(figsize=(10, 6))
         for index, algorithm_id in enumerate(algorithms):
             subset = [row for row in rows if row["algorithm_id"] == algorithm_id]
@@ -1468,6 +1500,100 @@ def plot_curves(
     figure.tight_layout()
     figure.savefig(figures / "final-best-sys.png", dpi=160)
     plt.close(figure)
+
+
+def plot_measured_compute_curves(
+    path: Path,
+    rows: list[dict[str, Any]],
+    runs: list[dict[str, Any]],
+) -> None:
+    """Render the thesis comparison with print-scale and monochrome encodings."""
+    algorithms = sorted({row["algorithm_id"] for row in rows})
+    terminal_medians = {
+        algorithm_id: float(
+            np.median(
+                [run["best_sys"] for run in runs if run["algorithm_id"] == algorithm_id]
+            )
+        )
+        for algorithm_id in algorithms
+    }
+    ranked = sorted(algorithms, key=terminal_medians.get, reverse=True)
+    panels = (ranked[:3], ranked[3:])
+    budgets = {
+        float(run["compute_budget_ms"])
+        for run in runs
+        if run.get("compute_budget_ms") is not None
+    }
+    if len(budgets) > 1:
+        raise ValueError(f"mixed measured-compute budgets: {sorted(budgets)}")
+    cutoff = next(iter(budgets), None)
+    maximum = max(row["measured_compute_ms"] for row in rows)
+
+    with plt.rc_context(
+        {
+            "font.size": 10.5,
+            "axes.labelsize": 10.5,
+            "axes.titlesize": 10.5,
+            "legend.fontsize": 9.5,
+            "xtick.labelsize": 9.5,
+            "ytick.labelsize": 9.5,
+        }
+    ):
+        figure, axes = plt.subplots(
+            2, 1, figsize=(7.2, 5.2), sharex=True, sharey=True
+        )
+        for axis, panel_algorithms, title in zip(
+            axes,
+            panels,
+            ("Three highest terminal medians", "Other four methods"),
+            strict=True,
+        ):
+            for algorithm_id in panel_algorithms:
+                subset = [row for row in rows if row["algorithm_id"] == algorithm_id]
+                x = np.asarray([row["measured_compute_ms"] for row in subset])
+                median = np.asarray([row["median_best_sys"] for row in subset])
+                low = np.asarray([row["q10_best_sys"] for row in subset])
+                high = np.asarray([row["q90_best_sys"] for row in subset])
+                color, line_style, marker = ALGORITHM_STYLES.get(
+                    algorithm_id, ("#000000", "-", None)
+                )
+                axis.fill_between(x, low, high, color=color, alpha=0.055, linewidth=0)
+                axis.plot(
+                    x,
+                    median,
+                    label=display_algorithm(algorithm_id),
+                    color=color,
+                    linestyle=line_style,
+                    linewidth=2.0,
+                    marker=marker,
+                    markersize=4.2,
+                    markerfacecolor="white",
+                    markeredgewidth=1.0,
+                    markevery=10,
+                )
+            if cutoff is not None:
+                axis.axvspan(cutoff, maximum, color="0.92", alpha=0.65, zorder=-2)
+                axis.axvline(cutoff, color="0.25", linewidth=1.25, linestyle="--")
+            axis.set_title(title, loc="left", fontweight="bold")
+            axis.set_ylabel("best recorded evaluator value")
+            axis.grid(alpha=0.22, linewidth=0.6)
+            axis.legend(loc="lower right", framealpha=0.95, ncol=1)
+        if cutoff is not None:
+            axes[0].text(
+                cutoff,
+                0.98,
+                "1000 ms cutoff  ",
+                transform=axes[0].get_xaxis_transform(),
+                ha="right",
+                va="top",
+                color="0.20",
+                fontsize=9.5,
+            )
+        axes[-1].set_xlabel("measured evaluator + optimizer time (ms)")
+        axes[-1].set_xlim(0.0, maximum)
+        figure.tight_layout(h_pad=1.0)
+        figure.savefig(path, dpi=220)
+        plt.close(figure)
 
 
 def plot_facet_call_curves(
