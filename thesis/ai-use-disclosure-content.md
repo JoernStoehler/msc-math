@@ -4,13 +4,21 @@ Status: content companion for the unnumbered front-matter disclosure in
 `thesis/ai-use-disclosure.tex`. Not source truth.
 
 Purpose: let a thesis reader understand the extent and character of AI use, the
-candidate's own relationship to the submitted work, and how that combination
-should affect interpretation of provenance, authorship, and trust. In
-particular, it replaces the ordinary but false assumption that AI was peripheral
-or merely executed human intellectual work without replacing it by the opposite
-false assumption that Jörn did not read, understand, or check the submitted
-thesis. This factual purpose is separate from section 13's analysis of
-research-process effects and lessons.
+candidate's own relationship to the work, and how that combination should
+affect interpretation of provenance, authorship, and trust. In particular, it
+replaces the ordinary but false assumption that AI was peripheral or merely
+executed human intellectual work, while stating only the human review that has
+actually been established. This factual purpose is separate from section 13's
+analysis of research-process evidence.
+
+## Current review status
+
+Jörn accepted the disclosure prose on 2026-07-13 and confirmed that he had
+proofread the then-current thesis and worked to verify its claims and overall
+message. The thesis changed substantially afterwards. The final paragraph has
+therefore been narrowed to the dated review that is established and expressly
+does not claim final review of the current candidate. Jörn has not yet reviewed
+or accepted that revised paragraph.
 
 ## Reader questions
 
@@ -20,8 +28,8 @@ The disclosure must let a reader answer:
    peripheral or material throughout the thesis?
 2. What kinds of intellectual and production work did agents perform?
 3. What kinds of work did Jörn perform, and was any category reserved to him?
-4. Did Jörn personally read the final thesis and work to verify its claims and
-   overall message?
+4. What human review had Jörn completed by 2026-07-13, and what does the
+   disclosure not claim about the current candidate?
 5. Was the disclosed breadth of AI use approved by his advisor?
 6. Given overlapping contributions, what should named authorship and the
    thesis's claims communicate about Jörn's competence and relationship to the
@@ -33,8 +41,8 @@ The main reader interests behind these questions are:
 
 - **academic legitimacy:** whether the use was permitted and disclosed rather
   than concealed;
-- **assessment of the candidate:** whether Jörn understands and has checked the
-  thesis submitted for his degree;
+- **assessment of the candidate:** what personal checking Jörn has actually
+  confirmed, without silently extending it to later revisions;
 - **epistemic trust:** what human and agent review occurred, without treating
   either review or disclosure as a correctness proof;
 - **provenance and credit:** what work agents performed, what Jörn performed,
@@ -53,11 +61,12 @@ After reading the page, the reader should understand:
   can identify was also delegated to agents at some point. This concerns the
   range of delegated work, not equal labor shares or identical contributions to
   every result.
-- Jörn personally proofread the final thesis and worked to verify its retained
-  mathematical and factual claims and its overall message. Agents also
-  contributed to review and verification, so this is a statement about work
-  Jörn performed, not a human-exclusive labor category or a correctness
-  guarantee.
+- By 2026-07-13, Jörn had proofread the then-current thesis and worked to verify
+  its mathematical and factual claims and overall message. This does not
+  establish final review of the substantially revised current candidate.
+  Agents also contributed to review and verification, so the dated statement
+  describes work Jörn performed, not a human-exclusive labor category or a
+  correctness guarantee.
 - Much of the thesis therefore has mixed human--AI provenance. A task list or
   Git history cannot allocate first origin or intellectual authorship reliably.
 - Jörn's named authorship must not be interpreted as asserting sole production,
@@ -81,7 +90,10 @@ After reading the page, the reader should understand:
 - Jörn clarification, 2026-07-13: he proofread the thesis and put in the work to
   verify its claims and overall message.
 - Jörn publication review, 2026-07-13: the resulting disclosure prose was
-  accepted as accurate and suitable in its current form.
+  accepted as accurate and suitable at that time.
+- Direct Git history after that review: substantial later changes affect the
+  thesis, so the 2026-07-13 confirmation cannot establish review of the current
+  candidate.
 
 ## Boundaries
 
@@ -98,6 +110,7 @@ After reading the page, the reader should understand:
   on the disclosure page.
 - Verification methods, log-analysis methodology, and mathematical correctness
   are not the disclosure's subject.
-- Jörn's personal final review does not imply sole verification or guarantee
-  correctness; do not infer item-by-item origin or a human-exclusive review
-  role from it.
+- The disclosure must not claim that Jörn has reviewed the final candidate
+  until he confirms that review. Any later confirmation would not imply sole
+  verification or guarantee correctness; do not infer item-by-item origin or a
+  human-exclusive review role from it.

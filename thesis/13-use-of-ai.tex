@@ -1,217 +1,88 @@
-% Publication status (2026-07-13): provisional and not accepted by Jörn as
-% final prose. See use-of-ai-content.md for known missing analyses and review.
+% Publication status (2026-08-28): evidence-bounded revision prepared after
+% support audit; not yet reviewed or accepted by Jörn as final prose.
 \section{AI in the Research Process}\label{sec:use-of-ai}
 
-The disclosure preceding the table of contents records which parts of this
-thesis involved AI and clarifies how its authorship should be understood.  This
-section has a different purpose: it considers what this project suggests about
-using coding agents in mathematical research.  The uses considered here were
-not isolated requests for prose or code.  They were workflows in which an agent
-produced an artifact, a test or reviewer tried to expose its defects, and the
-result was revised, retained, or discarded through repeated human--agent and
-agent--agent handoffs.
+The disclosure preceding the table of contents records the extent and
+provenance of AI use in this thesis.  This section has a narrower purpose: it
+examines what one retained case shows about the evidence needed to accept an
+agent-produced code repair.  It does not estimate how much AI contributed,
+whether AI accelerated the project, or who first originated particular ideas.
 
-This account is based on the project's Git history, recorded agent sessions,
-and the surviving code, tests, and experiment artifacts.  These sources show
-what was requested, executed, reviewed, and retained.  They do not record all
-offline work, and Git records retained artifact states rather than the origin
-of every idea.  The examples below therefore support claims about observed
-workflows, not a causal estimate of how quickly the thesis would have developed
-without AI.  The first-person retrospective judgments state my present
-assessment rather than sole idea origin; the process record is used to check
-them against what actually happened.
+\subsection{Evidence boundary}
 
-\subsection{Moving sooner from a specification to an artifact}
+The case below is supported by an inspectable Git state and a retained replay
+packet with an executable mutation contract.  Git identifies the defective
+source state and the later repair, but it does not measure active working time,
+establish mathematical correctness by itself, or record semantic acceptance.
+The replay reconstructs the mathematical fixtures and regressions recorded for
+four repair runs; the original prompt text is not recoverable.  These limits
+rule out timing, productivity, model-ranking, and causal claims.
 
-In retrospect, an important benefit was a change in the order of work.  An
-agent could implement from reference code or a sufficiently explicit contract
-while I was still learning the underlying method.  I could then test, criticize,
-and learn from an executable artifact before I was ready to write that
-implementation myself.  This is not a measured comparison with a human-only
-completion time.
+\subsection{A regression that can distinguish the defect}
 
-Early in the project, an agent translated a public MATLAB implementation of the
-algorithm of Haim-Kislev~\cite{HK2017} into Rust.  According to my
-reconstruction, this yielded, within a few days, a program that ran roughly two
-orders of magnitude faster than the MATLAB code and made experiments possible
-while I was still learning the algorithm in detail.  It was not a trustworthy
-implementation: it returned wrong results in some cases, had poor code quality,
-and omitted important pruning.  Considerable later work was needed to obtain
-the implementation used in this thesis.
+A projection solver for a constrained quadratic problem contained the
+historical sign defect.  Write a feasible point as
+\(\beta=\beta_0+V\alpha\).  Stationarity in the retained modes then requires
+\[
+  H'\alpha=-V^{\mathsf T}H\beta_0.
+\]
+The frozen source state used the opposite sign.  Four isolated repair runs were
+given this known defect.  Two received a minimal repair contract; two were also
+required to construct a regression that failed before the repair and passed
+afterwards.  The exact prompts are unavailable, so these descriptions are
+reconstructed task contracts rather than verbatim prompt records.
 
-A smaller example shows the same change in the order of work more cleanly.  In
-a search involving crosspolytopes, an agent produced a running program and a
-correct volume smoke test within minutes, and committed an initial version
-shortly afterwards.  The long search still required redesign, backtracking,
-symmetry reduction, checkpointing, and verification.  The early artifact was
-valuable because it converted an abstract proposal into something that could
-be tested and criticized; it was not evidence that the task was complete.
-
-These examples suggest a conditional change in workflow rather than a general
-speedup: when a reference or explicit contract and relevant infrastructure
-exist, implementation and testing need not wait for me to master every detail
-needed to write the artifact myself.  The resulting artifact should be treated
-as a question made executable, not as an answer certified by the cost or speed
-with which it was produced.
-
-\subsection{Production and verification are different tasks}
-
-A recurring failure mode in the observed episodes was plausible work that
-satisfied an incomplete proxy for the intended mathematical goal.  Tests and
-reviews helped only when they were capable of distinguishing the relevant error
-from a correct implementation.  This distinction was examined in a structured
-four-run case study of a historical bug in the reduced gradient of a projection
-routine.  Four fresh agents received the same pre-fix code and reconstructed
-task contracts for the same mathematical discrepancy, without being given the
-historical fixture or answer.  The cases crossed model generation with a minimal
-or verifier-first contract.  The original prompt text is not recoverable,
-so this design cannot identify a causal effect of either factor.
+The retained replay injects each reconstructed regression into the frozen
+source, runs it once with the erroneous positive sign and once with the correct
+negative sign, and records whether the test passes.  Table
+\ref{tab:ai-sign-replay} gives the reproduced outcomes.
 
 \begin{table}[htbp]
   \centering
-  \caption{Four-run replay of a sign error.  A regression was counted as
-  discriminating only if an independent mutation restoring the erroneous sign
-  made it fail.  ``Verifier first'' separated construction of that check from
-  repair of the implementation.  These are four observations on one bug,
-  not a ranking of model generations.}
+  \caption{Mutation replay of four regressions for one known sign defect.  A
+  discriminating regression fails when the bad sign is restored and passes
+  with the correct sign.  The rows reproduce test behavior, not the original
+  prompts or complete diffs.}
   \label{tab:ai-sign-replay}
   \begin{tabular}{@{}lll@{}}
     \toprule
-    Model & Prompt structure & Discriminating regression \\
+    Recorded condition & Bad sign restored & Correct sign \\
     \midrule
-    GPT-5.5 & minimal        & yes \\
-    GPT-5.5 & verifier first & yes \\
-    GPT-5.6-sol & minimal        & no  \\
-    GPT-5.6-sol & verifier first & yes \\
+    GPT-5.5, minimal        & fail & pass \\
+    GPT-5.5, verifier first & fail & pass \\
+    GPT-5.6-sol, minimal        & pass & pass \\
+    GPT-5.6-sol, verifier first & fail & pass \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-All four agents repaired the production sign.  However, the minimal
-\mbox{GPT-5.6-sol} run merely strengthened an existing symmetric test; that test still passed
-when the bad sign was restored.  Its output therefore looked more thoroughly
-tested without supplying evidence for the repair at issue.  Both verifier-first
-runs demonstrated fail-before/pass-after behavior.  Independent replay later
-showed that the minimal GPT-5.5 regression also failed under mutation.  With one
-run per cell, no randomization, and no verbatim prompt record, this does not
-establish a model or prompting effect.  It does show concretely why
-fail-before/pass-after mutation evidence is stronger than an ordinary passing
-suite.
+Thus all four regressions passed with the corrected sign, but one also passed
+when the defect was restored.  That test made the repaired implementation look
+checked without distinguishing it from the defective implementation.  In this
+case, the informative evidence was not an additional green test; it was the
+demonstration that the test became red under the specific mutation it was
+supposed to exclude.
 
-In practice, I obtained more reliable results by separating two roles.  One
-role maximizes a stated goal: implement the algorithm, find an example, or
-improve performance.  The other asks whether the stated goal is the right
-proxy and constructs adversarial checks before accepting an apparent success.
-For mathematical software, a test suite is therefore not valuable merely
-because it exists.  It is evidence only for failures that its fixtures and
-oracles could detect.
+This is one known-defect task with one run per condition, no randomization or
+within-condition replication, and no verbatim prompt record.  The agents were
+told the defect category.  The table therefore establishes neither an effect
+of model generation nor an effect of the verifier-first instruction.  It also
+does not estimate performance on bug discovery, proof development, or
+open-ended mathematical work.  It establishes only the mutation sensitivity
+of these four reconstructed regressions on the frozen source state.
 
-\subsection{Different tasks exposed different limits}
+\subsection{Bounded conclusion}
 
-The record does not support one score for ``mathematical reasoning.''  In one
-source-anchored review of a proposed flow-graph theorem, an agent found
-consequential mismatches between the cited paper, the formal statement, the
-Rust implementation, and the thesis claim.  The resulting corrections were
-merged and narrowed the theorem's hypotheses and implementation boundary.  The
-same episode did not prove the theorem, which remained explicitly unverified.
-This is evidence that review found valuable defects in that case, not that
-review is generally more reliable than proof generation.
+The case supports a local distinction between production and verification.  A
+correct edit and a passing test are separate artifacts, and the test is
+evidence for the repair only to the extent that it can detect the relevant
+failure.  Here that ability was checked directly by restoring the bad sign.
 
-One later episode produced a stronger mathematical artifact.  An agent wrote an
-explicit generalized three-bounce-billiard argument for the regular
-triangle--hexagon rotation path.  Conditional on the cited
-capacity--billiard interface, the argument derives
-\(\frac34\sec^2(\delta)\leq 1\) for the systolic ratio on the fundamental
-interval, with a separate range-norm argument for equality at the endpoint.  A
-fresh agent then checked the coordinates, normal-cone conditions, action,
-endpoint argument, and theorem boundary against the source material.  The
-argument and review were retained as research state; they have not yet been
-reviewed or approved by me, and the stronger claim of equality with this branch
-at every interior angle remains unproved.  This is a substantive agent-derived
-proof candidate, not merely a proof plan or numerical observation.
-
-Other selected difficult proof-development episodes had a different outcome.
-An attempt to understand local behavior of the systolic ratio produced an
-executable transition diagnostic for one failure mechanism, but not the sought
-finite-neighborhood theorem.  A convergence-validity investigation showed that
-computed endpoints could remain improvable, undermining their interpretation
-as converged local maxima; it did not produce a replacement theorem or proof.
-Thus agents also helped turn informal concerns into obligations, counterchecks,
-and empirical falsifications.  The cases were selected retrospectively for
-explanatory and outcome diversity; they do not estimate how often an agent can
-prove a theorem or rank kinds of mathematical labor.  Their heterogeneity is
-the result: similar proof-facing work ranged from bounded diagnostics to a
-retained proof candidate.
-
-Candidate generation showed a similar distinction.  A data-science proposer
-exported actual polytope candidates and enriched the upper tail of the observed
-systolic ratios after a control bug was corrected.  It produced neither a new
-ratio above one nor a new mathematical conjecture.  The development branch was
-abandoned; a separate maintained proposer remained sub-threshold.
-Generating candidates under an executable proxy was useful; deciding whether
-the proxy answered the research question and whether the result deserved
-integration remained a separate step.
-
-\subsection{Breadth makes selection and integration more important}
-
-Agents increased the number of computational or mathematical leads that could
-be pursued in parallel.  A recorded data-science episode near the end of the
-project, for example, branched into roughly nine object-level lines of work and thirty
-structurally linked descendant sessions.  It produced thousands of lines of
-candidate implementation together with no-go results, repairs, and several
-preserved commits.  This work was later integrated as bounded research state,
-but the principal forward experiment had not been run on its real target.
-Thus output volume would badly overstate the empirical conclusion reached.
-
-The same issue appeared at smaller scale in profiling work: technically useful
-measurements were accompanied by an overconfident recommendation and a
-contaminated handoff, so the factual artifact had to be separated from its
-interpretation and reviewed afresh.  These episodes changed what needed scarce
-attention.  As producing another implementation, search, or analysis became
-easier, the important choices were increasingly which question to pursue, what
-would discriminate success from a convincing failure, and whether the result
-deserved the human work required for review and integration.
-
-This does not imply that breadth is undesirable.  It supports a breadth-first
-research strategy when probes are cheap, provided that stopping rules are set
-and unfinished branches are not mistaken for results.  Cost of production is a
-poor proxy for value in such a workflow: the relevant accounting includes my
-time spent specifying, checking, correcting, and deciding what enters the
-thesis.
-
-\subsection{Lessons for future mathematical work}
-
-The project led me to the following working principles.
-
-\begin{enumerate}
-  \item Delegate work once the mathematical contract and the observable success
-  condition are clear enough to inspect.  An early artifact can be useful even
-  when it is expected to be wrong.
-
-  \item Design a discriminating check before optimizing for the desired result,
-  especially for numerical code, proof search, and experiments whose apparent
-  success is easy to fake accidentally.  Independent mutation, alternative
-  derivations, symbolically tractable special cases, and adversarial inputs
-  were more informative
-  than additional agreeable reviews.
-
-  \item Keep a record of failures and of what the contemporary review did or
-  did not catch.  When a session's reasoning or worktree becomes contaminated,
-  preserve independently valid artifacts and a short account of the failure,
-  then restart when repairing the trajectory would cost more than a clean
-  attempt.
-
-  \item Evaluate a portfolio by retained evidence and human attention, not by
-  generated code, session count, or apparent labor saved.  Increased breadth is
-  valuable only when weak lines are stopped and promising ones are integrated.
-
-  \item Re-test workflow assumptions after a model change.  Tactics for reducing
-  friction may become obsolete quickly, whereas separating production from
-  discriminating verification remained useful across both model generations in
-  the case study above.
-\end{enumerate}
-
-Taken together, these cases do not yield one verdict on the value of AI in
-mathematical research or one capability or productivity score.  They show
-different effects at different stages of the work.  Production, verification,
-interpretation, and integration should therefore be assessed separately.
+Nothing in this case quantifies labor saved, development speed, cost, or net
+productivity.  Commit counts, changed lines, session counts, and artifact
+volume would not supply those missing comparisons.  The wider project record
+contains heterogeneous selected episodes rather than a representative sample
+or a human-only counterfactual.  Accordingly, this section offers no global
+score for AI in mathematical research.  Its narrower conclusion is that an
+acceptance criterion should itself be tested against the defect it is meant to
+exclude.
