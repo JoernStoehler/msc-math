@@ -132,7 +132,7 @@ from git. The tracked pipeline outputs in this folder are `witness.json` and
 Verify the exact certificate predicate:
 
 ```bash
-sage -python experiments/hko-local-maximum/theorem/verify.sage.py
+sage experiments/hko-local-maximum/theorem/verify.sage.py
 ```
 
 Current verifier summary:
