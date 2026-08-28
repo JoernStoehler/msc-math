@@ -7,17 +7,19 @@ mathematical evidence.
 ## Intended Thesis Role
 
 The section presents a second finite algorithm for the four-dimensional EHZ
-capacity. Its two thesis-facing mathematical results are:
+capacity. Its thesis-facing mathematical results are:
 
-1. Under the explicit flow-graph regularity conditions, exhaustive exact tube
-   search returns `c_EHZ`.
+1. Under the explicit flow-graph regularity conditions, the idealized finite
+   search with exact operations over real facet data returns `c_EHZ`.
 2. For fixed facet count, those regularity conditions hold on an open dense
    subset of every nonempty Euclidean-open chamber of ordered normalized
    irredundant facet presentations.
+3. If the facet rows are rational, the idealized construction closes over the
+   rationals and gives a finite exact rational-arithmetic algorithm.
 
-Jörn confirmed on 2026-07-11 that both proved results should be retained; the
-genericity result is what makes the conditional correctness theorem broadly
-useful.
+Jörn confirmed on 2026-07-11 that the correctness and genericity results should
+be retained; the genericity result is what makes the conditional correctness
+theorem broadly useful.
 
 The correctness proof uses the simple-minimizer theorem from Section 3. It does
 not use the CH2021 Type 1/2/3 capacity theorem as a black box.
@@ -64,6 +66,17 @@ Dynamics publication and DOI. Reopen this chapter if Jörn/Kai changes the
 conditional theorem role, if the Rust caller contract broadens, or if a
 singular positive-action branch is admitted rather than rejected.
 
+## Final Domain Repair, 2026-08-28
+
+A final audit found that the active correctness theorem quantified over
+arbitrary real facet rows while calling the procedure rational arithmetic.
+The chapter now states the proved idealized real-arithmetic theorem separately,
+derives exact rational arithmetic only when every facet row lies in
+`\mathbb Q^4`, and makes clear that chamber genericity supplies the real
+theorem rather than executable coverage of arbitrary real presentations. The
+Rust boundary is unchanged: it targets the rational-input corollary under its
+caller contract, with tested rather than formally verified correspondence.
+
 ## Proof Sources
 
 - `formal/flow-graph-real-algorithm.tex`: transition signs, affine primitive
@@ -82,9 +95,12 @@ singular positive-action branch is admitted rather than rejected.
 
 ## Claim Boundary
 
-The theorem concerns an idealized exact-arithmetic exhaustive search on a
-bounded full-dimensional four-polytope with an ordered normalized irredundant
-facet presentation. Its regularity hypotheses are stated in the thesis.
+The theorem concerns an idealized exhaustive search with exact real operations
+on a bounded full-dimensional four-polytope with an ordered normalized
+irredundant facet presentation. Its regularity hypotheses are stated in the
+thesis. The executable corollary additionally requires every facet row to be
+rational; the open-dense real genericity proposition does not remove that
+input-domain restriction.
 
 The genericity proposition is chamber-relative genericity of presentations.
 It is not the CH2021 conjecture that generic polytopes have no Type 2 orbit
