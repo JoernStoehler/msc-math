@@ -4,19 +4,27 @@
 The random-table scan may have failed simply because it did not locally refine
 its high-valued candidates.  We therefore ask whether standard and
 branch-aware local methods can improve random ten-facet polytopes under a
-common finite budget.  On \(64\) previously unused matched starts,
-four-anchor branch history attained the largest median final value,
-\(0.9848\); transition prediction followed at \(0.9816\), and the finite-gap
-model at \(0.9772\).  None of the \(64\) runs of any method reached the
-recorded threshold \(1\).  Endpoint controls below show why this is neither a
-convergence result nor evidence that the endpoints are local maxima.
+common finite allocation rule.  On \(64\) matched starts from a manifest block
+labelled held out, four-anchor branch history attained the largest median final
+value, \(0.9848\); transition prediction followed at \(0.9816\), and the
+finite-gap model at \(0.9772\).  None of the \(64\) runs of any method reached
+the recorded threshold \(1\).  Endpoint controls below show why this is neither
+a convergence result nor evidence that the endpoints are local maxima.
 
-Every run used the same \(1000\)\,ms measured serial
-evaluator-plus-optimizer start-new-work cutoff and a \(128\)-call cap.  Work
-begun below the cutoff was retained on completion, with no separate terminal
-evaluation: the endpoints share an atomic stopping rule, not identical realized
-times.  The starts were disjoint from the development and tuning populations,
-and the seven methods were fixed before the held-out outcomes were computed.
+Every run used the same compute-allocation rule.  Before starting new work, the
+runner compared charged full-evaluator plus optimizer time with a nominal
+\(1000\)\,ms cutoff.  Work already under way completed atomically and could
+overrun that cutoff; a cap of \(128\) full evaluator calls also applied, and
+methods could terminate earlier for method-specific reasons.  Realized charged
+compute was therefore not equal across runs.
+
+The retained manifest labels the start block held out and fixes the \(64\)
+starts and seven configurations for this run; the clean run provenance hashes
+the manifest and resolved plan.  These records do not establish that the block
+was disjoint from every development or tuning use, or how the configurations
+were selected before the run.  A later manifest labelled development reuses
+\(16\) of these starts.  This later reuse does not by itself show that the
+comparison outcomes influenced configuration selection.
 
 The retained runs use one common historical binary64 evaluator: it
 reconstructs the polytope and executes its configured legacy orbit search.
@@ -61,10 +69,11 @@ CMA-ES & \(0.8183\) & \(0.7184\)--\(0.8692\) & \(0.932069\)\\
 coordinate direct search & \(0.6010\) & \(0.3583\)--\(0.7866\) & \(0.842539\)\\
 \bottomrule
 \end{tabular}
-\caption{Held-out terminal outcomes on \(64\) matched random ten-facet starts
-under the common \(1000\)\,ms start-new-work cutoff, atomic-overrun rule, and
-\(128\)-call cap.  The intervals describe variation across starting points,
-not uncertainty about the median.}
+\caption{Outcomes on the \(64\)-start block labelled held out, under the same
+nominal \(1000\)\,ms start-new-work cutoff and \(128\)-call cap.  In-progress
+work may overrun the cutoff and methods may stop early, so realized compute is
+not equal.  The intervals describe variation across starting points, not
+uncertainty about the median.}
 \label{tab:black-box-datascience-f10-optimizer-comparison}
 \end{table}
 
@@ -83,11 +92,11 @@ carried forward.}
 
 On matched starts, the median advantage of four-anchor history over transition
 prediction was \(0.00333\), with bootstrap \(95\%\) interval
-\(0.000073\)--\(0.00824\).  Transition prediction had improved the development
-population but ranked second on held-out starts.  Relative to four-anchor
-history, the other median values were lower by \(0.00762\) for the finite-gap
-model, \(0.1034\) for literal branch gradients, \(0.1297\) for safeguarded
-branch gradients, \(0.1665\) for CMA-ES, and \(0.3838\) for coordinate search.
+\(0.000073\)--\(0.00824\).  Transition prediction ranked second on this
+comparison block.  Relative to four-anchor history, the other median values
+were lower by \(0.00762\) for the finite-gap model, \(0.1034\) for literal
+branch gradients, \(0.1297\) for safeguarded branch gradients, \(0.1665\) for
+CMA-ES, and \(0.3838\) for coordinate search.
 
 The compute curves alone do not establish convergence.  A signed basis poll
 found a fully re-evaluated improvement at \(7/16\) one-second branch-history
@@ -117,9 +126,10 @@ population miss rate nor a universal trust cutoff.
 
 We therefore select four-anchor branch history only as the best of the seven
 tested implementations for this random \(F=10\) population and one-second
-budget.  The ranking does not transfer without new evidence to another facet
-count, starting distribution, budget, or certified capacity evaluator, and
-the experiment does not establish convergence or local maximality.  It does
-show that local refinement raises many random starts close to the evaluator
-threshold, while ordinary insufficient depth, missed oblique ascent, and
-ill-conditioned finite-step branch models all remain observable obstacles.
+allocation rule.  The ranking does not transfer without new evidence to another
+facet count, starting distribution, allocation rule, or certified capacity
+evaluator, and the experiment does not establish convergence or local
+maximality.  It does show that local refinement raises many random starts close
+to the evaluator threshold, while ordinary insufficient depth, missed oblique
+ascent, and ill-conditioned finite-step branch models all remain observable
+obstacles.

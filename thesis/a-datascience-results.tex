@@ -9,19 +9,24 @@ context only for this chapter.
 
 \subsection{Finite-budget local optimizer comparison}
 
-The optimizer packet freezes \(64\) held-out random ten-facet starts, seven
-methods, a \(1000\)\,ms measured serial-compute start-new-work cutoff, and a
-cap of \(128\) full historical-evaluator calls per run.  A round begun below
-the cutoff is completed atomically, so the terminal values include its
-possible overrun rather than imposing a strict \(1000\)\,ms truncation; there
-is no extra terminal evaluation.  Of the \(448\) traces, \(310\) have terminal
-compute above the cutoff (at most \(67.525\)\,ms above), and all \(305\) traces
-with an evaluated overrun round began that round below the cutoff.  The traces
-contain \(28824\) full calls.  With the notation and trust boundary of
+The optimizer manifest labels a block of \(64\) random ten-facet starts held
+out and fixes seven configurations for the retained run.  The clean run
+provenance hashes that manifest and its resolved plan.  It does not establish
+that the starts were disjoint from every development or tuning use, or recover
+how the configurations were selected before the run; a later manifest labelled
+development reuses \(16\) of the starts.  This is a provenance gap, not evidence
+that outcomes were used for selection.
+
+Every run used the same allocation rule: a nominal \(1000\)\,ms
+start-new-work cutoff for charged full-evaluator plus optimizer time and a cap
+of \(128\) full historical-evaluator calls.  In-progress work could complete
+atomically past the cutoff, and methods could terminate early, so realized
+compute differs across runs.  The \(448\) traces contain \(28824\) full calls.
+With the notation and trust boundary of
 Section~\ref{subsec:black-box-datascience-finite-budget-optimization},
-four-anchor branch history has the largest held-out median best value,
-\(0.9848\), followed by transition prediction at \(0.9816\) and the
-finite-gap affine model at \(0.9772\).  No run reaches
+four-anchor branch history has the largest comparison-block median best value,
+\(0.9848\), followed by transition prediction at \(0.9816\) and the finite-gap
+affine model at \(0.9772\).  No run reaches
 \(\widehat{\operatorname{sys}}=1\).
 
 \paragraph{Frozen optimizer steps.}
@@ -35,7 +40,8 @@ corresponding algorithm families.
 \begingroup
 \small
 \begin{longtable}{@{}p{0.24\linewidth}p{0.67\linewidth}@{}}
-\caption{One outer iteration of each held-out optimizer.}
+\caption{One outer iteration of each optimizer in the manifest-frozen
+comparison.}
 \label{tab:black-box-datascience-f10-optimizer-steps}\\
 \toprule
 method & implemented step\\
