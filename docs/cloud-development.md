@@ -24,9 +24,8 @@ revision; it does not need setup-only secrets or reinstall stable system
 packages.
 
 Python scripts keep their dependencies in PEP 723 metadata and are resolved by
-`uv` when run. The full persistent-machine image remains declared by
-`container/Dockerfile`; the cloud setup deliberately does not launch Docker or
-an expensive scientific producer.
+`uv` when run. The cloud setup deliberately does not launch Docker or an
+expensive scientific producer.
 
 Add these two values as Codex Cloud **secrets**:
 
