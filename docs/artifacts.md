@@ -14,11 +14,10 @@ published snapshot, and publishing changed bytes creates a different prefix.
 
 ## Configure R2
 
-The development image includes pinned `rclone`. Configure a remote named
-`mscmath` with a bucket-scoped R2 object read/write token. On persistent
-machines, keep the secret in the ordinary private rclone configuration. A
-generic ephemeral shell can instead configure the remote from environment
-variables:
+The artifact helper requires `rclone`. Configure a remote named `mscmath` with
+a bucket-scoped R2 object read/write token. Keep persistent credentials in the
+environment's ordinary private rclone configuration. A generic ephemeral shell
+can instead configure the remote from environment variables:
 
 ```text
 RCLONE_CONFIG_MSCMATH_TYPE=s3
@@ -35,9 +34,9 @@ permission. Neither key belongs in Git.
 
 Codex Cloud removes secrets after its setup phase, so do not use the generic
 environment-variable arrangement there. Follow
-[`docs/cloud-development.md`](cloud-development.md): configure the two setup
-secrets it names and run `scripts/bootstrap-cloud.sh`, which writes the private
-rclone configuration needed by subsequent agent commands.
+[`development-environments.md`](development-environments.md): configure the two
+setup secrets it names and run `scripts/bootstrap-cloud.sh`, which writes the
+private rclone configuration needed by subsequent agent commands.
 
 ## Consume an artifact
 
@@ -48,12 +47,10 @@ scripts/artifacts.py list
 scripts/artifacts.py materialize polytope-datasets
 ```
 
-On the persistent development machine, Compose mounts one host directory at
-`/data`; materialized snapshots default to `/data/cache/msc-math`. All
-worktrees therefore reuse the same verified bytes. Mutable or newly generated
-work belongs under `/data/work`. In an ephemeral environment without `/data`,
-the cache defaults to `~/.cache/msc-math/artifacts`. Override either case with
-`MSC_MATH_CACHE_ROOT` or `--cache-root`.
+The accepted local data/cache layout across the three development environments
+is not yet settled. Use `MSC_MATH_CACHE_ROOT` or `--cache-root` when a task
+requires an explicit cache location, and do not infer persistence or sharing
+from an environment-local path.
 
 Materialization refuses to replace an existing file or a different symlink.
 It downloads into a temporary directory, checks the exact file inventory,
@@ -67,7 +64,7 @@ the producer into a fresh mutable directory, perform its declared cheap checks,
 and decide which outputs form the durable packet. Then publish that directory:
 
 ```bash
-scripts/artifacts.py publish my-artifact /data/work/my-final-packet
+scripts/artifacts.py publish my-artifact path/to/my-final-packet
 ```
 
 The command uploads file payloads immutably, performs a byte-level remote

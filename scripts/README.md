@@ -69,7 +69,7 @@ Use this as the Codex Cloud environment setup command. It installs normal
 LaTeX and artifact tooling missing from the universal image, verifies the
 selected Rust/Python runtimes, persists the setup-only R2 secrets in a private
 ephemeral-container rclone config, and verifies remote access. The
-configuration contract is in `docs/cloud-development.md`.
+configuration contract is in `docs/development-environments.md`.
 
 ## `maintain-cloud.sh`
 

@@ -69,6 +69,8 @@ ORIENTATION_PATHS=(
   '.codex/agents/**'
   'docs/README.md'
   'docs/capabilities.md'
+  'docs/development-environments.md'
+  'docs/artifacts.md'
   'docs/project-facts.md'
   'docs/project-status.md'
   'docs/reproducibility.md'
