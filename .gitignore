@@ -115,7 +115,6 @@ package-lock.json
 
 # Local secrets (machine-specific, not shared)
 .env
-.app-server-token
 
 # Local AI-use provenance checks may contain absolute session-log paths
 experiments/ai-use/artifacts/
