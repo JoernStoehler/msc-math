@@ -49,14 +49,6 @@ scripts/artifacts.py list
 scripts/artifacts.py materialize polytope-datasets
 ```
 
-Cloud environments have no `/data` bind, so snapshots default to
-`~/.cache/msc-math/artifacts`. Persistent Compose workspaces instead share the
-host-mounted `/data/cache` across worktrees. Both expose the same established
-repo-relative data paths to producers and consumers.
-
-The normal validation commands are in `AGENTS.md`. Sage is intentionally not a
-default cloud install because its locked environment is large and only needed
-for specific exact-verification tasks; the full Compose image declares that
-environment. A cloud task that specifically needs Sage should install the
-checked `container/locks/sage-10.9-python-3.12-linux-64.explicit` environment
-during setup rather than silently replacing Sage verification with Python.
+The local data and cache layout across development environments is not yet
+settled. Until it is, do not infer a shared mount or persistence guarantee from
+an environment-local path.

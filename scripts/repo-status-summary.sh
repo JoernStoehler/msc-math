@@ -54,7 +54,6 @@ CHECK_PATHS=(
   'formal/bibliography.bib'
   'formal/.latexmkrc'
   'submit/**/*.pdf'
-  'container/**'
   '.codex/config.toml'
   '.codex/base-instructions.md'
   'scripts/**'

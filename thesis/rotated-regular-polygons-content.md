@@ -140,11 +140,10 @@ attention cost. Their producer artifacts remain available under
   continuity close.  It found a blocks-per-factor wording error and the stale
   retained transcript; the wording was repaired and the current unlimited run
   replaced the transcript with matching source digest and 3340/3340 success.
-- That retained run records the installed SageMath 10.7, while the current
-  Compose workspace image pins 10.9.  On 2026-07-14 Jörn classified this as a
-  nonblocking reproducibility follow-up, not a mathematics or Kai-review gate.
-  The later reproducibility pass may either rerun under the release image or
-  align the Dockerfile with the retained environment.
+- That retained run records the installed SageMath 10.7.  On 2026-07-14 Jörn
+  classified reproducing that software environment as a nonblocking follow-up,
+  not a mathematics or Kai-review gate.  A later reproducibility pass should
+  record the environment it actually uses.
 - Read-only inspection of the active bounce-mechanism, active-resampling,
   width-shortcut, bounce-distribution, and alternative-generator worktrees
   found no accepted theorem evidence that changes this chapter. The
