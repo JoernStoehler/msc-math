@@ -96,7 +96,7 @@ The fingerprint must show the expected trusted random/product counts before
 method reruns are interpreted. If `sys > 1` appears, stop ordinary cleanup and
 escalate the positive row.
 
-## Local Retrieval From Devcontainer
+## Local Retrieval
 
 Use this only after the LICCA validation looks plausible.
 
@@ -110,7 +110,7 @@ tar -czf "$HOME/sys-ds-feature-closure-prepare-${table_jid}.tgz" \
 sha256sum "$HOME/sys-ds-feature-closure-prepare-${table_jid}.tgz"
 ```
 
-From the local Compose workspace:
+From the host or Docker Sandbox checkout:
 
 ```bash
 table_jid=<jobid>

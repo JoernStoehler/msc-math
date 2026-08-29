@@ -33,8 +33,8 @@ the work-system intervention, not the domain judgment.
 
 1. State the desired change in work, the actors and work stages it should
    affect, and the surface through which it could do so. For Codex product work,
-   identify the affected client: core/app-server, CLI TUI, IDE, GUI, or several
-   of them.
+   identify the affected runtime surface (core/app-server) and any affected
+   client: Codex TUI, ChatGPT Desktop, Paseo, or several of them.
 2. Inspect the active owner files, applicable instruction and configuration
    layers, skill and custom-agent discovery, hooks and trust state, installed
    build, relevant Git history, and focused session evidence. Do not print

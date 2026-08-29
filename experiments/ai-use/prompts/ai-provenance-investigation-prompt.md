@@ -34,10 +34,10 @@ Suggested pipeline:
    /workspaces/msc-math, this thesis, PaperOrchestra, HKO, pentagon products,
    data science, experiments, proofs, code, writing, and orchestration.
 3. Inspect Claude logs only when an explicit staged Claude root was provided,
-   especially paths below it matching msc-math or msc-viterbo. The Compose
-   workspace deliberately does not mount Claude state; a missing root is not
-   evidence that no relevant Claude history exists. Follow the staging and
-   `--claude-root` contract in `experiments/ai-use/README.md`.
+   especially paths below it matching msc-math or msc-viterbo. Do not assume
+   that the active execution environment exposes Claude state; a missing root
+   is not evidence that no relevant Claude history exists. Follow the staging
+   and `--claude-root` contract in `experiments/ai-use/README.md`.
 4. For each relevant session, inspect the rollout/transcript enough to classify
    chat-level provenance:
    - user messages,

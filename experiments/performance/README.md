@@ -421,15 +421,9 @@ cargo flamegraph -p exp-performance --release --bin hk2017-pruned-f64 -- \
 ```
 
 If `cargo flamegraph` fails before running the binary, check `perf --version`.
-The Compose workspace image pins userland, but `perf` also depends on the host
-kernel. A typical failure is `/usr/bin/perf` pointing at linux-tools for a
-different kernel than the running host kernel. Refresh the apt index and install
-the matching tools inside the container when this happens:
-
-```bash
-sudo apt-get update
-sudo apt-get install -y linux-tools-$(uname -r) linux-cloud-tools-$(uname -r)
-```
+`perf` must be compatible with the running kernel, and installed tools can
+differ between execution environments. Resolve any mismatch through the active
+environment's package and toolchain setup before retrying.
 
 If `perf_event_paranoid` blocks unprivileged profiling, use `--root`:
 

@@ -20,9 +20,11 @@ The no-pubkey options avoid too many authentication failures from offered SSH
 keys. The route prompts for the password at the gateway and again at LICCA.
 
 For `scp`, reuse the same options and `ProxyCommand`. Match the local destination
-to the shell running `scp`; the Compose workspace checkout is `/workspaces/msc-math/`.
+to the shell running `scp`. The host and current Docker Sandbox checkout use
+`/workspaces/msc-math/`; verify the active checkout before retrieval.
 
-Example retrieval from a shell inside the Compose workspace:
+Example retrieval from the host, or from Docker Sandbox after verifying LICCA
+reachability:
 
 ```bash
 scp \

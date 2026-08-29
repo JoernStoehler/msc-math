@@ -87,7 +87,8 @@ excerpts, and accidental bulk disclosure.
 ## Trust Boundary
 
 - Raw Codex logs under `$CODEX_HOME` and explicitly staged Claude log roots are
-  the source evidence. The Compose workspace does not mount Claude state.
+  the source evidence. Do not assume that one execution environment exposes
+  another environment's Codex logs or any Claude state.
 - The report is an LLM-authored synthesis from those logs, not a deterministic
   derivation.
 - The scripts in `scripts/` inventory available logs and check that cited
@@ -332,9 +333,9 @@ Use this workflow when the provenance model needs to be updated:
 
 1. Confirm the relevant Codex logs below `$CODEX_HOME`. If Claude logs are
    needed, stage only the relevant archive at an explicit path outside the
-   repository and pass it with `--claude-root`; the Compose workspace does not
-   expose Claude state by default. Record any import in the existing report or
-   a new dated import report.
+   repository and pass it with `--claude-root`; do not assume that the active
+   execution environment exposes the needed Claude state. Record any import in
+   the existing report or a new dated import report.
 2. Run `collect_log_inventory.py` to record local coverage in ignored
    `artifacts/` or `/tmp`.
 3. Start a new Codex session with

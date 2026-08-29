@@ -12,10 +12,10 @@ An execution environment owns the processes, filesystem view, installed
 software, network boundary, and runtime state for a thread. A Codex app-server
 runs in that environment and serves the thread.
 
-Codex TUI, ChatGPT Desktop, and Paseo are clients through which Jörn can create
-or connect to threads. All three clients can connect to or run threads in all
-three environments. The client therefore does not identify the execution
-environment.
+Codex TUI, ChatGPT Desktop, and Paseo are clients through which Jörn reaches
+threads. Each can be used with threads whose app-server runs in any of the
+three environments. Thread execution occurs in the app-server environment; the
+client therefore does not identify the execution environment.
 
 ## Tools and project contracts
 
@@ -59,14 +59,13 @@ entry command is:
 sbx run codex
 ```
 
-The Codex app-server and agent commands then run inside the sandbox. The
-repository workspace is mounted into that environment, while its installed
-packages, home directory, credentials, policies, and other VM-private state can
-differ from the host.
+The Codex app-server runs inside the sandbox, and its agent actions and commands
+execute there. The repository workspace is mounted into that environment,
+while its installed packages, home directory, credentials, policies, and other
+VM-private state can differ from the host.
 
-The host runbook named above owns sandbox setup and recovery. In particular,
-network allow rules are persistent host-local policy, not repository
-configuration; inspect the effective policy rather than assuming that host
+The host runbook named above owns sandbox setup and recovery. Sandbox network
+policy and reachability can differ from the host; do not assume that host
 network access proves sandbox access.
 
 Paseo installation, connectivity, port publication, lifecycle, and
