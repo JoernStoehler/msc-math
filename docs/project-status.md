@@ -30,8 +30,8 @@ publication may follow later.
 | Rotated regular polygons | internally reviewed exact theorem/certificate integration candidate; Jörn accepted the finite-enumeration dependency, while writing review and Kai review remain | `thesis/09-*`, `experiments/regular-products/` |
 | AI use | the separate factual disclosure page is Jörn-accepted; the numbered research-process discussion remains provisional and materially incomplete | `thesis/ai-use-disclosure-content.md`, `thesis/use-of-ai-content.md`, `experiments/ai-use/` |
 | Visualization | integrated side-result candidate with regenerated thesis assets and a bounded qualitative/negative interpretation; ordinary rendered whole-PDF/Jörn/Kai review remains | `thesis/10-*`, `thesis/visualization-3d-content.md`, `experiments/visualization/` |
-| Published code/data | internally reviewed availability-chapter candidate; final archive publication and the Zenodo DOI/record placeholder remain external closure work | `thesis/12-*`, `thesis/published-code-data-content.md`, `docs/reproducibility.md`, `submit/` |
-| Conclusion | unwritten active section; the companion contains only a short sourced inventory | `thesis/14-conclusion.tex`, `thesis/conclusion-content.md` |
+| Published code/data | internally reviewed availability-chapter candidate; no live Zenodo placeholder or frozen-release claim remains in the thesis, while external archive publication remains post-PDF closure work; ordinary whole-PDF/Jörn/Kai review remains | `thesis/12-*`, `thesis/published-code-data-content.md`, `docs/reproducibility.md`, `submit/` |
+| Abstract and conclusion | integrated full-thesis candidate; ordinary whole-PDF/Jörn/Kai review remains | `thesis/00-abstract.tex`, `thesis/14-conclusion.tex`, matching companions |
 | Submission and archive | incomplete external state | `submit/`, `docs/reproducibility.md`, Jörn/mail |
 
 ## Current cross-domain decisions and gates
