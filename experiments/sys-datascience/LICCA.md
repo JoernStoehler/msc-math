@@ -17,6 +17,6 @@ sequence are not current instructions. Do not run it without satisfying a
 reactivation gate above and preparing a new job-specific handoff.
 
 When a gate above is satisfied, prepare a new job-specific handoff using the
-repo LICCA conventions. Recheck the current commit, hydrated inputs, execution
+repo LICCA conventions. Recheck the current commit, materialized inputs, execution
 model, resource estimate, output destination, validation, retrieval, and
 promotion boundary. The presence of a Slurm script does not authorize a job.

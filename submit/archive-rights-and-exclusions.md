@@ -135,5 +135,5 @@ downloaded forms.
 3. Review the current Git history before asking Software Heritage to ingest it.
 4. Check the implemented license files and scope notice, and prepare
    `CITATION.cff` once final citation metadata is stable.
-5. Build an unlicensed dry-run closure bundle and verify extraction, LFS object
-   identity, privacy exclusions, and a cold agent start.
+5. Build an unlicensed dry-run closure bundle and verify extraction, registered
+   artifact identity, privacy exclusions, and a cold agent start.

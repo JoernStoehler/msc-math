@@ -186,7 +186,7 @@ Use `sys-datascience-feature-cost` when a method packet needs per-polytope cost
 for the current invariant feature families before adding method-local timing
 boilerplate.
 
-Smoke command, independent of retained LFS producer files:
+Smoke command, independent of retained producer files:
 
 ```bash
 cargo run -p exp-polytope-invariant-table --release --bin sys-datascience-feature-cost -- \
@@ -194,8 +194,8 @@ cargo run -p exp-polytope-invariant-table --release --bin sys-datascience-featur
   --out-dir /tmp/sys-ds-feature-cost-smoke
 ```
 
-Retained producer sample command, after hydrating
-`experiments/polytope-datasets/random*.jsonl`:
+Retained producer sample command, after materializing `polytope-datasets` as
+described above:
 
 ```bash
 cargo run -p exp-polytope-invariant-table --release --bin sys-datascience-feature-cost -- \
