@@ -16,6 +16,49 @@ SPEC.loader.exec_module(artifacts)
 
 
 class ArtifactTests(unittest.TestCase):
+    def test_default_cache_uses_xdg_cache_home(self) -> None:
+        with mock.patch.dict(
+            artifacts.os.environ,
+            {"XDG_CACHE_HOME": "/environment/cache"},
+            clear=True,
+        ):
+            self.assertEqual(
+                artifacts.default_cache_root(),
+                Path("/environment/cache/msc-math/artifacts"),
+            )
+
+    def test_default_cache_falls_back_to_home_cache(self) -> None:
+        with (
+            mock.patch.object(
+                artifacts.Path,
+                "home",
+                return_value=Path("/environment/home"),
+            ),
+            mock.patch.dict(
+                artifacts.os.environ,
+                {"XDG_CACHE_HOME": "relative-is-invalid"},
+                clear=True,
+            ),
+        ):
+            self.assertEqual(
+                artifacts.default_cache_root(),
+                Path("/environment/home/.cache/msc-math/artifacts"),
+            )
+
+    def test_explicit_cache_root_overrides_xdg_default(self) -> None:
+        with mock.patch.dict(
+            artifacts.os.environ,
+            {
+                "MSC_MATH_CACHE_ROOT": "/explicit/cache",
+                "XDG_CACHE_HOME": "/environment/cache",
+            },
+            clear=True,
+        ):
+            self.assertEqual(
+                artifacts.default_cache_root(),
+                Path("/explicit/cache"),
+            )
+
     def test_snapshot_identity_is_order_independent(self) -> None:
         first = {"path": "a", "sha256": "0" * 64, "size": 1}
         second = {"path": "nested/b", "sha256": "f" * 64, "size": 2}

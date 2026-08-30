@@ -33,6 +33,7 @@ CHECK_PATHS=(
   '**/Cargo.toml'
   'Cargo.toml'
   'Cargo.lock'
+  'rust-toolchain.toml'
   'experiments/**/*.jsonl'
   'experiments/**/*.json'
   'experiments/**/*.png'

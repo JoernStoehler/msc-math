@@ -10,7 +10,8 @@ agents.
 
 The fact sheet was created by questioning Jörn in session:
 - thread id: `019e8451-792d-7c60-b2e7-dd3c9524bfea`
-- local transcript:
+- former-devcontainer transcript path retained as provenance, not as a current
+  recovery location:
   `/home/vscode/.codex/sessions/2026/06/01/rollout-2026-06-01T17-53-12-019e8451-792d-7c60-b2e7-dd3c9524bfea.jsonl`
 
 The file is grouped by interaction/topic between items to make it easier for
@@ -20,9 +21,12 @@ maintenance low. The numbers are stable and can be out of order.
 
 ## Thesis Submission
 
-1. The previous June 2026 dates for sending the finished PDF to Kai are stale
-   and are not active planning constraints. Jörn confirmed this on 2026-07-10;
-   no replacement hard deadline is currently recorded here.
+1. The thesis PDF must be handed in by **2026-08-30 at 18:00
+   Europe/Berlin**. Jörn reported this deadline from current email on
+   2026-08-30; the information was not available the previous day. The deadline
+   applies to the PDF, not to later GitHub, Zenodo, or comparable repository
+   publication. It supersedes the stale June 2026 dates and the earlier record
+   that no replacement deadline was known.
 
 2. Official submission facts need to be refreshed from current MNTF sources
    before relying on 2026-04-24 downloaded forms or old deadline text.

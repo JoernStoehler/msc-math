@@ -49,10 +49,18 @@ scripts/artifacts.py list
 scripts/artifacts.py materialize polytope-datasets
 ```
 
-The accepted local data/cache layout across the three development environments
-is not yet settled. Use `MSC_MATH_CACHE_ROOT` or `--cache-root` when a task
-requires an explicit cache location, and do not infer persistence or sharing
-from an environment-local path.
+By default, each execution environment uses its standard
+`$XDG_CACHE_HOME/msc-math/artifacts/` cache, falling back to
+`~/.cache/msc-math/artifacts/`. All worktrees in that environment therefore
+share immutable downloaded snapshots. Host and Docker Sandbox have different
+home directories and may each cache the same snapshot; that bounded duplication
+is intentional. Use `MSC_MATH_CACHE_ROOT` or `--cache-root` for an explicit
+override.
+
+Materialized consumer links point into the cache of the environment that
+created them. Do not assume that a materialized link in one worktree is usable
+from another environment. R2, not any environment cache, is the durable layer.
+Codex Cloud cache reuse is opportunistic and must not be assumed across tasks.
 
 Materialization refuses to replace an existing file or a different symlink.
 It downloads into a temporary directory, checks the exact file inventory,
@@ -61,9 +69,11 @@ consumer needs the cache directory but not the established worktree paths.
 
 ## Publish a finalized snapshot
 
-Publishing is a release step, not part of an ordinary producer run. First run
-the producer into a fresh mutable directory, perform its declared cheap checks,
-and decide which outputs form the durable packet. Then publish that directory:
+Publishing is a deliberate retention step, not part of an ordinary producer
+run. Use `/tmp` for disposable debugging and quick iteration. Use a
+producer-owned ignored directory only when mutable output should remain with the
+active workspace. After performing the producer's declared checks, decide which
+outputs deserve a durable packet and publish only that directory:
 
 ```bash
 scripts/artifacts.py publish my-artifact path/to/my-final-packet

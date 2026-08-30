@@ -60,8 +60,9 @@ that tracked generated artifacts are fresh.
 
 This is the transparent `rclone` boundary for bulk data. It publishes immutable
 directory snapshots, verifies remote bytes, materializes content-addressed
-caches, and links the registered files at their existing ignored paths. See
-`docs/artifacts.md` for configuration and the release workflow.
+caches in the environment's standard XDG cache, and links the registered files
+at their existing ignored paths. See `docs/artifacts.md` for configuration,
+cache overrides, and the release workflow.
 
 ## `bootstrap-cloud.sh`
 

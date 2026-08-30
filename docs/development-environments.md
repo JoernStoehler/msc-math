@@ -108,10 +108,10 @@ for setup, maintenance, caching, environment-variable, and secret lifecycle.
 ## Data and historical environments
 
 The shared R2 bucket and its artifact registry remain current; see
-[`artifacts.md`](artifacts.md). The desired local data and cache layout across
-host, Docker Sandbox, and Codex Cloud is not yet settled. Do not infer a shared
-mount, cross-environment cache, or persistence guarantee from an
-environment-local path.
+[`artifacts.md`](artifacts.md). Each environment uses its standard XDG cache by
+default, shared by all worktrees in that environment. Host and Docker Sandbox
+may retain separate copies of the same R2 snapshot. Codex Cloud cache reuse is
+opportunistic; only R2 provides durable cross-environment recovery.
 
 Dated reports and benchmark records can accurately name a former devcontainer
 or Compose environment as provenance for an old run. They do not define the

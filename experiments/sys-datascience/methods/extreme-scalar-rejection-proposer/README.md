@@ -86,13 +86,14 @@ the shared control's disjointness. The source run wrote its large caches under
 `/tmp/joern/covariance-line/frozen-packet`. The four omitted caches were
 recovered from the old container during the Compose migration, and their four
 SHA-256 identities were rechecked against the retained manifest. The complete
-local packet now lives at ignored
-`artifacts/local/covariance-rho-frozen-packet/` on the repository bind.
+packet is registered in R2 and materializes at the ignored
+`artifacts/local/covariance-rho-frozen-packet/` path in this method directory.
 The frozen config bytes are part of the retained packet's identity and therefore
 keep their historical default. For a future rerun, use its documented
-`--out-dir` override with a fresh directory below ignored `artifacts/local/`;
-the repository bind makes those caches survive workspace replacement without
-pretending they belong in Git.
+`--out-dir` override with a fresh `/tmp` directory for disposable iteration, or
+a fresh directory below this method's ignored `artifacts/local/` when mutable
+output should remain with the active workspace. Deliberately publish a reviewed
+R2 snapshot only when the packet deserves durable cross-environment recovery.
 
 After a separately authorized capacity run has written fresh evaluation cache
 files, `analyze_covariance_rho_validation.py` is the only reader for the frozen

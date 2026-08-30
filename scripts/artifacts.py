@@ -179,10 +179,14 @@ def default_cache_root() -> Path:
     configured = os.environ.get("MSC_MATH_CACHE_ROOT")
     if configured:
         return Path(configured).expanduser()
-    data_cache = Path("/data/cache")
-    if data_cache.is_dir() and os.access(data_cache, os.W_OK):
-        return data_cache / "msc-math"
-    xdg_cache = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache"))
+    configured_xdg = os.environ.get("XDG_CACHE_HOME")
+    xdg_cache = (
+        Path(configured_xdg).expanduser()
+        if configured_xdg
+        else Path.home() / ".cache"
+    )
+    if not xdg_cache.is_absolute():
+        xdg_cache = Path.home() / ".cache"
     return xdg_cache / "msc-math" / "artifacts"
 
 

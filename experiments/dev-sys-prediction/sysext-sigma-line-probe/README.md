@@ -18,7 +18,8 @@ low-action branches.
 
 The probe consumes:
 
-- `branch-set-diagnostic.jsonl` from
+- `branch-set-diagnostic.jsonl` from a caller-generated diagnostic output
+  directory produced by
   `experiments/dev-gradient-ascent/branch-diagnostic/`;
 - the corresponding producer-generated polytope table, defaulting to
   `experiments/polytope-invariant-table/polytope-table.jsonl`.

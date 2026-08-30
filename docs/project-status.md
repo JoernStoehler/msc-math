@@ -12,7 +12,10 @@ truth.
 3. **Project complete:** the thesis is handed in and accepted code, data, and
    archive actions are complete.
 
-No current hard submission deadline is recorded in the repository.
+**Hard deadline:** the thesis PDF must be handed in by **2026-08-30 at 18:00
+Europe/Berlin**, according to current email reported by Jörn on 2026-08-30.
+This deadline applies to the PDF. GitHub, Zenodo, or comparable repository
+publication may follow later.
 
 ## Current thesis surface
 
