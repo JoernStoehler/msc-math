@@ -67,12 +67,14 @@ caches, and links the registered files at their existing ignored paths. See
 
 Use this as the Codex Cloud environment setup command. It installs normal
 LaTeX and artifact tooling missing from the universal image, verifies the
-selected Rust/Python runtimes, persists the setup-only R2 secrets in a private
-ephemeral-container rclone config, and verifies remote access. The
-configuration contract is in `docs/development-environments.md`.
+selected Rust/Python runtimes, copies the setup-secret R2 credentials into a
+private rclone config available to agent commands and cached resumes, and
+verifies remote access. The configuration and credential-lifetime contract is
+in `docs/development-environments.md` and `docs/artifacts.md`.
 
 ## `maintain-cloud.sh`
 
 Use this as the Codex Cloud maintenance command. It runs after the requested
-branch is checked out in a resumed cached environment and fetches the current
-locked Cargo dependency graph without setup-only secrets.
+branch is checked out in a resumed cached environment and fetches the locked
+root-workspace Cargo dependency graph without the setup-secret environment
+variables.

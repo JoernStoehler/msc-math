@@ -29,8 +29,9 @@ the effective tool surface visible to a thread remains authoritative.
 Project sources shared across environments own the task-level toolchain
 contracts:
 
-- `rust-toolchain.toml` and `Cargo.lock` own the Rust version and dependency
-  graph;
+- `rust-toolchain.toml` owns the Rust version; the root `Cargo.lock` owns the
+  root-workspace dependency graph, while standalone nested workspaces own their
+  adjacent lockfiles;
 - Python scripts with PEP 723 metadata run through `uv`;
 - `AGENTS.md` owns baseline build and validation commands; and
 - domain and producer READMEs own additional tools, commands, and output

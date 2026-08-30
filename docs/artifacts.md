@@ -32,11 +32,13 @@ ACLs, and disables bucket creation/checking so a bucket-scoped token can
 transfer objects without account-level bucket-list or bucket-create
 permission. Neither key belongs in Git.
 
-Codex Cloud removes secrets after its setup phase, so do not use the generic
-environment-variable arrangement there. Follow
-[`development-environments.md`](development-environments.md): configure the two
-setup secrets it names and run `scripts/bootstrap-cloud.sh`, which writes the
-private rclone configuration needed by subsequent agent commands.
+Codex Cloud removes the configured secret environment variables after its setup
+phase, so do not use the generic environment-variable arrangement there.
+Follow [`development-environments.md`](development-environments.md): configure
+the two setup secrets it names and run `scripts/bootstrap-cloud.sh`. The script
+copies their values into a private rclone configuration. That file remains
+available to agent commands and cached resumes until the Cloud container is
+discarded; setup-secret removal does not revoke the stored R2 credential.
 
 ## Consume an artifact
 
