@@ -11,12 +11,12 @@ table, none of the \(14336\) rows has systolic ratio larger than \(1\).  The
 method packets applied to this table do recover structure in the already
 computed values of the systolic ratio, but they do not validate a new source of
 counterexamples.  A separate frozen scalar-filter run over generated
-random-product candidates also stayed below the threshold.  A held-out
-comparison of seven local optimizers on random ten-facet polytopes reached
-historical evaluator values close to \(1\), but none above it.  Those values
-are heuristic binary64 orbit-search outputs, as defined in the optimizer
-comparison below, rather than certified mathematical capacities.  Thus the
-result is not a theorem
+random-product candidates also stayed below the threshold.  A manifest-frozen
+comparison of seven local optimizers on a random ten-facet start block labelled
+held out reached historical evaluator values close to \(1\), but none above
+it.  Those values are heuristic binary64 orbit-search outputs, as defined in
+the optimizer comparison below, rather than certified mathematical capacities.
+Thus the result is not a theorem
 that random or local search cannot succeed; it is evidence that these bounded
 routes did not produce a new source of examples.
 The contribution is a controlled negative benchmark: it separates explanation
@@ -127,11 +127,18 @@ a possible future frozen rule, not to serve as evidence that a valid proposer
 already exists.
 
 Older experiments on fixed-facet ascent and its endpoints remain historical
-context.  The finite-budget comparison below is a
-separately frozen experiment with disjoint tuning and held-out starts.  It
-does not provide evidence for exhaustive search or local maximality.  The
-selected-body screen that follows is separate again: it starts from a frozen
-theory-selected panel, retains its own probes and controls, and supports only
+context.  The finite-budget comparison below has a retained manifest and clean
+run provenance that fix its \(64\)-start block and seven configurations for
+that run.  The manifest labels the block held out, but the retained lineage
+does not establish that it was disjoint from every development or tuning use,
+nor how the configurations were selected before the run.  In particular, a
+later manifest labelled development reuses \(16\) of the starts; that later
+reuse is a lineage limitation, not evidence that held-out outcomes affected
+selection.  The comparison does not provide evidence for exhaustive search or
+local maximality.  The selected-body screen that follows is separate again: it
+starts from a frozen theory-selected panel and retains its probes and controls.
+Those finite rows reconcile, but the recorded dirty producer state lacks the
+source hashes or patch needed for exact reproduction.  The screen supports only
 the explicitly bounded local interpretation stated there.
 Appendix~\ref{app:datascience-results} records the method groups and caveats
 behind the black-box summary.

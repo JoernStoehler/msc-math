@@ -1,93 +1,64 @@
 \section{Availability of Code and Data}\label{sec:published-code-data}
 
-Several results in this thesis depend on computation, but not all in the same
-way.  For a future researcher, the important question is therefore not how the
-project repository is organized.  It is which mathematical evidence remains
-available after completion of the thesis, what can be checked or developed
-from it, and which parts of the research process are not preserved.  The
-published material is intended to support three uses: auditing the exact finite
-calculations, re-examining the empirical observations, and continuing the
-computational investigation.
-
-For the theorem-bearing calculations, the release contains the complete
-SageMath verifiers and their recorded outputs for the HKO local-maximum result
-and the rotated-pentagon formula.  The HKO material also contains the finite
-witness input.  A retained Rust program produces these finite choices, while
-the SageMath verifier reconstructs the proof-facing algebraic objects and
-checks the exact certificate.  The theorem therefore does not require trusting
-the search procedure that found those choices.  For the rotated-pentagon
-result, the retained SageMath program performs the exact finite classification
-left after the mathematical reduction in
-Section~\ref{sec:rotated-regular-polygons}.  These programs and their recorded
-outputs do not replace the arguments in the thesis: the mathematical meaning
-of the checked predicates and their implication for the theorems are given in
-the corresponding result sections.  They make the finite parts of those
-arguments available for direct re-execution and inspection.
-
-The empirical material is retained for a different reason.  The release
-contains the random/product data underlying the bounded data-science search,
-together with row provenance and the derived feature table.  It also contains
-the selected and evaluated rows from the frozen generated-candidate
-experiment.  It also contains the frozen \(64\)-start local-optimizer
-comparison, its per-evaluation traces, and the endpoint and continuation
-diagnostics used to delimit the finite-budget conclusion.  The retained
-predictor replay, HKO perturbation control, and directional KKT audit preserve
-the evidence used to distinguish missing branches, affine-model error, and
-remaining endpoint ascent.  Keeping these data
-allows another researcher to inspect individual examples, repeat the reported
-analyses, compare alternative methods on the same inputs, or use the samples
-as a starting point for a broader search without first repeating the expensive
-production runs.
-
-Availability does not strengthen the conclusions drawn from these data.  The
-random/product table remains a finite sample from the distributions specified
-in Section~\ref{sec:black-box-datascience}; it does not represent all random
-polytopes or all Lagrangian products.  The generated-candidate records support
-the stated experiment for one generator and frozen rule set, not a general
-candidate-selection theorem.  The optimizer comparison ranks frozen
-implementations only at the stated ten-facet input distribution and compute
-budget; its continuation traces show that its endpoints are not
-local-maximality evidence.  Where a project-owned thesis figure
-comes from an experiment, its source data and producer are retained so that the
-figure can be inspected or regenerated.  This does not make an exploratory
-figure part of a proof.
-
-The release also preserves the Rust libraries, experiment producers and
-analyzers, thesis sources, formal notes, documentation, and environment
-definitions.  These materials go beyond checking the displayed
-results: they allow later work to change an analysis, extend a sample, test a
-new search method, or rebuild the thesis from its sources.  GitHub is the
-living continuation repository and may change after submission:
+At the time of writing, the public development repository for this thesis is
 \begin{center}
   \url{https://github.com/JoernStoehler/msc-math}.
 \end{center}
-Its frozen counterpart is a single Zenodo archive containing the reviewed
-release state together with the checked thesis PDF.  Large data are maintained
-as content-addressed external snapshots during development and materialized as
-ordinary files in that archive, so access to the frozen published data does not
-depend on the external object store.
+This is a living Git repository rather than a frozen archival release, and its
+contents may change after submission.  The claims below therefore describe
+material tracked in the repository at submission time; the URL is not a
+permanent snapshot or a DOI.
 
-The archive is deliberately selective rather than a complete record of every
-computation or of the research process.  It excludes private material, raw
-agent sessions, disposable outputs, and third-party material that cannot be
-redistributed.  Some large intermediate caches are also omitted when they have
-no independent interpretive value and can be regenerated from the retained
-source and inputs.  Project software is made available under Apache-2.0, while
-Jörn-owned thesis and research text, original figures, documentation, and
-project-generated data are made available under CC BY~4.0.  These licenses do
-not relicense third-party material.
+The strongest computation-bearing results have proof-facing packets in the
+tracked tree.  The HKO packet in
+\path{experiments/hko-local-maximum/theorem/} contains the finite witness, the
+exact SageMath verifier, its recorded verification summary, and the Rust
+programs used to select the witness.  Rust supplies finite choices; it is not
+trusted for theorem correctness.  SageMath reconstructs the algebraic objects
+and checks the exact predicates stated in
+Section~\ref{subsec:hko-local-maximum-computation-with-sagemath}.  Those
+predicates imply the theorem only together with the mathematical
+upper-function and slice argument given there.
 
-Finally, availability is weaker than a promise of identical execution in every
-future environment.  Exact verifier reruns are compared through the predicates
-they check.  Retained datasets have explicit identities, whereas empirical
-outputs containing timings or environment-dependent fields need not reproduce
-byte for byte.  A small smoke run can show that a computational route still
-connects, but it cannot replace either a full retained dataset or an exact
-certificate.  Detailed access, build, and rerun instructions are kept with the
-repository and the experiment that owns each result rather than repeated in
-the thesis.
+The rotated-pentagon packet is stored under
+\begin{center}
+  \small\path{experiments/regular-products/}\\[-0.2em]
+  \path{pentagon-rotation-formula-proof/}.
+\end{center}
+It contains the exact SageMath classifier and the recorded full-run transcript
+for all \(3340\) finite words left after the mathematical reduction.  Here too,
+the program does not replace the proof: the enumeration theorem, the
+translation from checked signs to action comparisons, and the continuity
+argument remain mathematical inputs.  The repository exposes the finite
+computation and its output for inspection, with SageMath's exact arithmetic
+and root isolation inside the software trust boundary.
 
-\begin{quote}
-\textbf{Frozen release.}  Zenodo DOI and record URL:
-\textbf{TODO at archive publication}.
-\end{quote}
+Selected non-proof evidence is also tracked as ordinary repository files.  In
+particular, the product-capacity implementation audit retains its \(88\)-row
+numerical packet, and the historical first-order experiment retains its
+\(12\)-run finite-step panel.  The bounded generated-candidate experiment
+retains \(1675\) rows selected before the systolic ratio was computed, the
+corresponding \(1675\) evaluated rows, its frozen configuration, and compact
+reports.  These records support only the finite experiments described in the
+corresponding chapters.  They neither prove a population statement nor supply
+evidence for local maximality.
+
+The repository is not a self-contained copy of every dataset used during the
+project.  Its artifact registry identifies twelve external snapshots through
+twenty-one intended release paths, but those files are not present at those
+paths in a plain checkout at the time of writing.  For example, the
+\(14336\)-row random/product provenance table is tracked, while the source
+random/product datasets and the method-facing invariant table are not.
+Consequently, cloning the repository alone does not provide every input needed
+to repeat all empirical analyses, regenerate every figure, or reproduce every
+reported run.  Packet-local instructions describe available producers and
+checks, but compatible software, dependencies, compute resources, and
+untracked inputs may still be required; timing and other
+environment-dependent fields need not reproduce byte for byte.
+
+No frozen release, public Zenodo record, or DOI for this thesis is claimed
+here.  Any archival deposit created later would be a separate, immutable
+object whose own public record, inventory, and hashes would have to establish
+its contents.  Until such an object exists, the GitHub URL above provides
+access only to the living repository and to the finite material actually
+tracked there.

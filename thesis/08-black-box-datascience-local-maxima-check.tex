@@ -51,6 +51,17 @@ screen.  The three misses are consistent with the conjectures and motivate
 branch-aware analysis; they neither certify local maximality nor exclude
 untested improving germs.
 
+The retained raw packet contains \(1482\) valid finite-probe rows over the
+three targets and the pentagon control, and those rows reconcile with the
+generated summaries: the targets have no material nominal or
+interval-separated improvement, while the control has \(12\) of each.  Exact
+producer-state reproduction is nevertheless unavailable.  The run provenance
+records a dirty worktree with renamed and modified producer and analyzer files,
+but records neither source hashes nor a patch for those dirty files.  The
+recorded base revision therefore does not reconstruct the executable source
+that produced the rows.  This provenance limitation does not discard the
+bounded finite-output observation above.
+
 The rotated-pentagon crossing is therefore more than a numerical calibration:
 it is an exactly understood failure of local maximality that the structured
 probes recover and the generic sparse probes miss.  The next section proves the

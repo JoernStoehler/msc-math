@@ -12,8 +12,8 @@ const TRAJ_SAMPLES = 96;
 const VERTEX_RADIUS = 0.05;
 const VERTEX_SEGMENTS = 14;
 var EDGE_OPACITY = 0.7; // screenshot producer may override for figure-specific emphasis
-const RIDGE_FILL_OPACITY = 0.18;
-const RIDGE_WIRE_OPACITY = 0.12;
+var RIDGE_FILL_OPACITY = 0.18;
+var RIDGE_WIRE_OPACITY = 0.12;
 const ARROW_COLOR = 0x24292f;
 const ARROW_HEAD_LENGTH = 0.08;
 const ARROW_HEAD_WIDTH = 0.04;
@@ -21,6 +21,12 @@ const FACET_SATURATION = 0.65;
 const FACET_LIGHTNESS = 0.42;
 var STRUCTURE_COLOR_OVERRIDE = null;
 var TRAJECTORY_COLOR_OVERRIDE = null;
+// WebGL ignores LineBasicMaterial.linewidth on most platforms. Screenshot
+// producers can therefore request a tube (with an optional outline) when a
+// trajectory must remain distinct after print scaling or grayscale conversion.
+var TRAJECTORY_TUBE_RADIUS = 0;
+var TRAJECTORY_OUTLINE_RADIUS = 0;
+var TRAJECTORY_OUTLINE_COLOR = null;
 
 // ---- State ----
 let scene, camera, renderer, controls;
@@ -437,8 +443,40 @@ function rebuildScene() {
             }
         }
 
-        // Create one LineSegments per color
+        // Create one line or tube per color. The interactive viewer keeps the
+        // cheap line default; publication screenshots can opt into tubes.
         for (const [colorKey, { color, segments }] of trajsByColor) {
+            if (TRAJECTORY_TUBE_RADIUS > 0) {
+                for (const pts of segments) {
+                    const curve = new THREE.CatmullRomCurve3(
+                        pts.map(p => new THREE.Vector3(p[0], p[1], p[2])),
+                        false,
+                        'centripetal'
+                    );
+                    const tubularSegments = Math.max(pts.length - 1, 8);
+
+                    if (TRAJECTORY_OUTLINE_RADIUS > TRAJECTORY_TUBE_RADIUS) {
+                        const outlineGeometry = new THREE.TubeGeometry(
+                            curve, tubularSegments, TRAJECTORY_OUTLINE_RADIUS, 8, false
+                        );
+                        const outlineMaterial = new THREE.MeshBasicMaterial({
+                            color: TRAJECTORY_OUTLINE_COLOR === null
+                                ? 0x111827
+                                : TRAJECTORY_OUTLINE_COLOR,
+                            side: THREE.BackSide,
+                        });
+                        trajectoryGroup.add(new THREE.Mesh(outlineGeometry, outlineMaterial));
+                    }
+
+                    const tubeGeometry = new THREE.TubeGeometry(
+                        curve, tubularSegments, TRAJECTORY_TUBE_RADIUS, 8, false
+                    );
+                    const tubeMaterial = new THREE.MeshBasicMaterial({ color });
+                    trajectoryGroup.add(new THREE.Mesh(tubeGeometry, tubeMaterial));
+                }
+                continue;
+            }
+
             const positions = [];
             for (const pts of segments) {
                 for (let i = 0; i < pts.length - 1; i++) {

@@ -1,1 +1,115 @@
 \section{Conclusion}\label{sec:conclusion}
+
+The counterexample of Haim--Kislev and Ostrover changes the question posed by
+Viterbo's conjecture.  The universal inequality
+\(\operatorname{sys}(K)\leq1\) is false, but the geometry behind its failure
+is not thereby understood.  The motivating problem of this thesis was
+therefore to determine whether the known pentagon product is easily improved,
+to identify finite descriptions of the dynamics that make this question
+tractable, and to test whether broader computational searches expose another
+source of bodies above the former bound.  The answer obtained here is
+deliberately partial: the HKO example is locally rigid in the ten-facet
+stratum and optimal in the rotated-pentagon family, while the tested broader
+searches produced no new counterexample.
+
+The strongest conclusion is
+Theorem~\ref{thm:hko-ten-facet-local-maximum}.  In the Hausdorff space of
+polytopes with exactly ten facets, \(K_{\mathrm{HKO}}\) is locally maximal for
+the systolic ratio.  After the neighborhood is made smaller, the nearby
+equality set consists exactly of translations, positive scalings, and linear
+symplectic images of \(K_{\mathrm{HKO}}\).  Thus the maximum is strict after
+quotienting by transformations that leave the ratio unchanged.  The proof
+passes to a labelled dual-vertex chart, removes the \(15\) symmetry
+directions, and uses \(26\) smooth feasible upper functions.  Their exact
+derivative rows span the \(25\)-dimensional transverse cotangent space and
+have a strictly positive convex relation summing to zero.  Consequently at
+least one upper function decreases to first order in every nonzero transverse
+direction, which forces the true ratio to decrease locally.
+
+The rotated-pentagon theorem supplies a different kind of rigidity.  For the
+specific family
+\[
+  K_\theta=P_5\times_LR(\theta)P_5,
+\]
+Theorem~\ref{thm:rotated-pentagon-product-formula} determines the complete
+profile
+\[
+  \operatorname{sys}(K_\theta)
+  =\frac{5+2\sqrt5}{10}\sec^2 d(\theta).
+\]
+The HKO relative position is therefore a global maximizer within this
+one-parameter family, and the maximal value is
+\((3+\sqrt5)/5\).  This conclusion comes from an exhaustive comparison of the
+finite product-word family over an ordered number field, with continuity used
+only to fill the finitely many exceptional parameters.  It is stronger than
+the sampled curve that suggested the formula, but it is not a statement about
+arbitrary polygon products or arbitrary deformations of the two factors.
+
+Both the local theorem and the family profile depend on converting boundary
+dynamics into finite data.  Haim--Kislev's quadratic-program formula
+\cite{HK2017} provides the global capacity value through ordered facet words
+and feasible weights.  The simple-minimizer argument explains why this finite
+family contains a capacity minimizer without classifying every minimizing
+generalized Reeb orbit.  For Lagrangian products of planar polygons, the
+billiard reduction further yields an exhaustive two- or three-block family,
+and bilinearity shows that some capacity maximizer uses at most three facets
+from each factor.  These results make exact branch comparison possible while
+preserving the difference between a feasible word, a stationary branch, and a
+global capacity maximizer.
+
+The flow-graph and first-order constructions answer complementary
+computational questions.  Under the stated flow-graph regularity hypotheses,
+affine passages through facet-pair sections and a rational fixed-point search
+recover the capacity; outside that regular class, the algorithm is allowed to
+reject rather than claim completeness.  In normalized facet coordinates, the
+volume variation and nondegenerate fixed-word derivatives give practical
+local models.  At the singular HKO data, feasible sections provide the weaker
+upper functions actually needed for proof.  This separation is important:
+binary64 exploration can discover words and directions, while the two
+theorem-bearing conclusions use exact algebraic predicates and the
+mathematical arguments that interpret them.
+
+The empirical search gives a bounded answer to the broader discovery
+question.  None of the \(14336\) rows in the retained random-polytope and
+random-product table has recorded systolic ratio above \(1\).  Models built
+from invariant descriptors explain substantial variation within that table,
+but those rows already had their target values and hence do not validate a
+candidate proposer.  In the separate pre-evaluation test, frozen scalar rules
+screened \(100000\) generated random products; the selected and baseline union
+contained \(1675\) evaluated rows, again with no recorded value above \(1\).
+These observations are finite benchmarks for the specified samples,
+generator, rules, and evaluator.  They neither show that random search cannot
+succeed nor validate a new source of counterexamples.
+
+Taken together, the strands narrow the search without resolving the global
+extremal problem.  There is no improvement inside a sufficiently small
+ten-facet neighborhood transverse to the natural symmetries, no improvement
+within the full relative-rotation family of two regular pentagons, and no
+row above \(1\) in the stated random and frozen-proposer experiments.  None
+of these conclusions implies that HKO is locally maximal when facets may
+appear or disappear, that it is globally maximal among four-dimensional
+convex bodies, or that another structured family cannot exceed its value.
+
+Three next questions follow directly from these boundaries.
+\begin{enumerate}
+  \item Can the local theorem be extended across adjacent facet-count strata?
+    A first step would be to analyze controlled facet splitting and
+    facet-addition germs at \(K_{\mathrm{HKO}}\), where the present labelled
+    ten-facet slice no longer supplies a complete chart.
+  \item Can one construct a complete one-sided first-order theory at singular
+    Haim--Kislev data?  Such a theory would need to organize appearing
+    supports, singular optimizer sets, and competing branch germs rather than
+    assuming a persistent nondegenerate catalogue.
+  \item Which other polygon-product families admit exhaustive exact profiles,
+    and do their minimizing-word transitions suggest deformations not sampled
+    by the present random generators?  Extending the product enumeration from
+    a numerical proposer to a symbolic family comparison offers a direct route
+    to this question.
+\end{enumerate}
+
+The principal contribution is therefore not a replacement global conjecture.
+It is a precise local theorem around the known counterexample, an exact profile
+for the family that contains it, and finite computational tools whose
+hypotheses and evidential roles remain explicit.  This identifies where the
+HKO example is demonstrably rigid and, just as importantly, where the search
+for larger systolic ratio must still remain open.

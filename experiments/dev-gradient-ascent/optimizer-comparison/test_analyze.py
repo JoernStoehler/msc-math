@@ -131,5 +131,47 @@ class ValidatePacketTests(unittest.TestCase):
             ANALYZE.validate_packet(plan, runs, rounds, proposals, evaluations)
 
 
+class MeasuredComputeCurveTests(unittest.TestCase):
+    def test_cutoff_and_unrounded_terminal_compute_are_retained(self) -> None:
+        runs = [
+            {
+                "run_id": "run",
+                "algorithm_id": "algorithm",
+                "initial_sys": 0.5,
+                "best_sys": 0.8,
+                "compute_budget_ms": 1000.0,
+                # The last ask returned no proposals and therefore has no round.
+                "charged_compute_ms": 1030.0,
+            }
+        ]
+        rounds = [
+            {
+                "run_id": "run",
+                "round_index": 0,
+                "charged_calls_before": 0,
+                "charged_calls_after": 1,
+                "ask_ms": 15.0,
+                "tell_ms": 5.0,
+                "best_sys_after": 0.8,
+            }
+        ]
+        evaluations = [
+            {
+                "run_id": "run",
+                "charged": True,
+                "logical_call": 1,
+                "total_ms": 990.0,
+            }
+        ]
+
+        rows = ANALYZE.measured_compute_curve_rows(runs, rounds, evaluations)
+        by_time = {row["measured_compute_ms"]: row for row in rows}
+
+        self.assertIn(1000.0, by_time)
+        self.assertEqual(by_time[1000.0]["median_best_sys"], 0.5)
+        self.assertEqual(by_time[1030.0]["median_best_sys"], 0.8)
+        self.assertEqual(by_time[1030.0]["terminal_carry_forward_fraction"], 0.0)
+
+
 if __name__ == "__main__":
     unittest.main()

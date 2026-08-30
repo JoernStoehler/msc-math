@@ -100,13 +100,15 @@ Two finite descriptions of the capacity supply the common computational
 foundation.  The first is the Haim--Kislev quadratic program, presented with a
 careful distinction between a feasible word, a stationary candidate, a
 fixed-word maximum, and the global maximum that computes the capacity.  The
-second is a rational-arithmetic flow-graph algorithm developed from affine
-passages through
-facet-pair sections.  For normalized facet data satisfying explicit
-nondegeneracy conditions on transitions, short row lists, and return maps, an
-exhaustive distinct-facet word search returns the EHZ capacity.  A stronger
-collection of these conditions holds on an open dense subset of every fixed
-presentation chamber.  This theorem uses the local flow-map geometry of
+second is an idealized exact real-arithmetic flow-graph search developed from
+affine passages through facet-pair sections.  For normalized real facet data
+satisfying explicit nondegeneracy conditions on transitions, short row lists,
+and return maps, an exhaustive distinct-facet word search returns the EHZ
+capacity.  A stronger collection of these conditions holds on an open dense
+subset of every fixed real presentation chamber.  When the facet rows are
+rational, the construction is an exact rational-arithmetic algorithm; the
+current Rust implementation targets this rational-input corollary under an
+additional caller contract.  The theorem uses the local flow-map geometry of
 Chaidez--Hutchings \cite{CH2021}, while completeness follows from the
 simple-minimizer theorem.  It is not an algorithm for every polytope, and it is
 not identified with the full Chaidez--Hutchings Type~1/Type~2 analysis.

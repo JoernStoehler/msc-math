@@ -19,6 +19,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.ticker import NullFormatter
 
 
 def read_json(path: Path):
@@ -47,34 +48,73 @@ def label(direction: str) -> str:
 
 
 def plot_summary(out: Path, rows: list[dict]) -> None:
-    fig, axes = plt.subplots(1, 3, figsize=(13.2, 4.2), sharex=True)
-    for direction in sorted({row["direction_class"] for row in rows}):
-        group = sorted(
-            (row for row in rows if row["direction_class"] == direction),
-            key=lambda row: row["source_distance"],
+    publication_style = {
+        "font.size": 11,
+        "axes.titlesize": 12,
+        "axes.labelsize": 11,
+        "xtick.labelsize": 10,
+        "ytick.labelsize": 10,
+        "legend.fontsize": 10,
+        "lines.linewidth": 1.6,
+        "lines.markersize": 5.5,
+    }
+    with plt.rc_context(publication_style):
+        fig, axes = plt.subplots(3, 1, figsize=(6.8, 8.4), sharex=True)
+        for direction in sorted({row["direction_class"] for row in rows}):
+            group = sorted(
+                (row for row in rows if row["direction_class"] == direction),
+                key=lambda row: row["source_distance"],
+            )
+            x = [row["source_distance"] for row in group]
+            axes[0].plot(
+                x,
+                [row["recovered_gap_fraction"] for row in group],
+                "o-",
+                label=label(direction),
+            )
+            axes[1].plot(
+                x,
+                [row["reference_distance_contraction"] for row in group],
+                "o-",
+            )
+            axes[2].plot(
+                x,
+                [row["reference_sys"] - row["final_sys"] for row in group],
+                "o-",
+            )
+        for ax in axes:
+            ax.set_xscale("log")
+            ax.grid(alpha=0.25)
+        axes[-1].set_xticks([1.0e-4, 1.0e-3, 1.0e-2, 1.0e-1])
+        axes[-1].xaxis.set_minor_formatter(NullFormatter())
+        axes[-1].set_xlabel("source distance from HKO")
+        axes[0].axhline(1.0, color="black", linewidth=0.9)
+        axes[1].axhline(1.0, color="black", linewidth=0.9)
+        axes[0].set_title("Known evaluator-gap recovery")
+        axes[0].set_ylabel("fraction recovered")
+        axes[1].set_title("Distance removed")
+        axes[1].set_ylabel("fraction removed")
+        axes[2].set_title("Residual evaluator gap")
+        axes[2].set_yscale("log")
+        axes[2].set_ylabel("gap to HKO")
+        handles, legend_labels = axes[0].get_legend_handles_labels()
+        fig.legend(
+            handles,
+            legend_labels,
+            loc="upper center",
+            bbox_to_anchor=(0.5, 0.99),
+            ncol=2,
         )
-        x = [row["source_distance"] for row in group]
-        axes[0].plot(x, [row["recovered_gap_fraction"] for row in group], "o-", label=label(direction))
-        axes[1].plot(x, [row["reference_distance_contraction"] for row in group], "o-")
-        axes[2].plot(
-            x,
-            [row["reference_sys"] - row["final_sys"] for row in group],
-            "o-",
+        fig.subplots_adjust(
+            left=0.16,
+            right=0.98,
+            bottom=0.08,
+            top=0.87,
+            hspace=0.42,
         )
-    for ax in axes:
-        ax.set_xscale("log")
-        ax.set_xlabel("source distance from HKO")
-        ax.grid(alpha=0.25)
-    axes[0].axhline(1.0, color="black", linewidth=0.7)
-    axes[1].axhline(1.0, color="black", linewidth=0.7)
-    axes[0].set_ylabel("fraction of known sys gap recovered")
-    axes[1].set_ylabel("fraction of HKO distance removed")
-    axes[2].set_yscale("log")
-    axes[2].set_ylabel("remaining sys gap to HKO")
-    axes[0].legend(fontsize=8)
-    fig.tight_layout()
-    fig.savefig(out / "recovery-by-source-distance.png", dpi=180)
-    plt.close(fig)
+        fig.savefig(out / "recovery-by-source-distance.png", dpi=180)
+        fig.savefig(out / "recovery-by-source-distance.pdf")
+        plt.close(fig)
 
 
 def plot_paths(out: Path, summaries: list[dict], steps: list[dict]) -> None:
