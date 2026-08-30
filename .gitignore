@@ -104,9 +104,6 @@ package-lock.json
 .claude/worktrees/
 .worktrees/
 
-# Local persisted agent state
-.codex/persisted/
-
 # Legacy local agent memory (session-specific, not shared)
 **/.claude/agent-memory/
 

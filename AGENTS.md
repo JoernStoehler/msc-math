@@ -163,7 +163,7 @@ Before writing any command Jörn should run on, to, or from LICCA, use `$licca`.
 
 ```bash
 # Worktree
-GIT_LFS_SKIP_SMUDGE=1 git worktree add .worktrees/<name> -b <branch> main
+git worktree add .worktrees/<name> -b <branch> main
 
 # Python
 uv run --script thesis/figures/foundations/generate.py
