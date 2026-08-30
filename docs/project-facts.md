@@ -127,10 +127,18 @@ maintenance low. The numbers are stable and can be out of order.
 11. The 3d visualization is a side result that generates nice pictures and
     helps a bit with imagining what a 4d polytope looks like.
 
-12. Tube/CH2021 is a retained content area, but it is unfinished right now and
-    will change before thesis completion. The thesis needs the final
-    Tube/CH2021 role to match the support available in the relevant thesis,
-    research, and source files.
+12. Tube/CH2021 is a retained content area, and its final role must match the
+    support available in the relevant thesis, research, and source files. The
+    earlier statement that it was "unfinished right now" records the state when
+    this scope decision was made; it is not the current chapter status. The
+    active thesis and owner sources now present an internally reviewed
+    conditional candidate: exact exhaustive flow-graph search is proved under
+    explicit regularity hypotheses, those hypotheses are proved
+    chamber-generically, and the rational implementation supplies bounded
+    correspondence evidence. Jörn confirmed retention of both mathematical
+    results. Final line-by-line mathematical, writing, and Kai review remain;
+    neither this current candidate status nor the historical scope decision
+    records Kai's acceptance.
 
 13. Thesis success does not require completing every possible side effort, such
     as interesting side routes, broad cleanup programs, publication-grade
@@ -139,9 +147,16 @@ maintenance low. The numbers are stable and can be out of order.
 
 ## HKO Proof Support
 
-20. The needed HKO form must close. The theorem is known true in project
-    context; the work is to satisfy Kai's wish for a proper proof instead of a
-    quick handwavy computation.
+20. The instruction that the needed HKO form "must close" recorded the
+    non-negotiable theorem-support target when the proof route was still open:
+    Kai wanted a proper proof rather than a quick handwavy computation. It is
+    not a live unfinished-work imperative. The current HKO owner sources
+    identify a theorem-strength integration candidate in which SageMath checks
+    the exact finite feasible-section certificate and the written mathematics
+    proves its local-maximality implication. Jörn quick-reviewed the rebuilt
+    formal PDF on 2026-06-05 and spotted no gaps. Ordinary integrated-PDF,
+    Jörn, and Kai review remain; candidate closure does not imply Kai's
+    acceptance.
 
 21. For HKO proof support, SageMath is used for verification, Rust is used for
     generation, LaTeX proves the correctness of the simple algebra algorithms
@@ -177,15 +192,27 @@ maintenance low. The numbers are stable and can be out of order.
     and a measured cost profile on its named fixed-`F` panel; it does not
     support endpoint or local-maximality claims.
 
-31. For data-science method coverage, do not weaken the standard-method
-    expectation to merely representative families. Exhaust everything known
-    from the standard repertoire where feasible. If a known applicable method
-    is not executed, explicitly record that it was skipped because of time,
-    cost, and low promise at a glance, or record the actual reason.
+31. During data-science method planning, Jörn's scope expectation was not to
+    substitute a few representative families for the known standard
+    repertoire. Feasible applicable methods were to be executed, and skipped
+    methods were to receive an explicit time, cost, promise, redundancy, or
+    other actual disposition. This historical scope decision explains the
+    maintained method-disposition ledger; it is not a standing imperative to
+    reopen method execution after the current owners close a bounded method
+    surface.
 
 31.1. The data-science "standard repertoire" means the known data-science
-      method/tool repertoire, on the order of 100 methods/tools. It does not
-      mean proving exhaustion over every possible data-science method.
+      method/tool repertoire, on the order of 100 methods/tools. It did not
+      mean proving exhaustion over every possible data-science method. Current
+      owner sources say that the named retained-table standard-baseline gap and
+      method table are closed, with executed, interface-covered, parked,
+      future-work, rejected, and out-of-scope dispositions. They do not
+      establish clearly enough whether the original roughly-100-method
+      expectation was satisfied in Jörn's intended sense. Treat that overall
+      completion classification as uncertain pending Jörn rather than
+      claiming exhaustive satisfaction or scheduling more methods. The
+      currently supported thesis claim remains bounded to the named closed
+      method table and its recorded contracts.
 
 32. A sudden positive or conjectured-positive data-science lead does not
     automatically force full follow-up before submission. It may be escalated

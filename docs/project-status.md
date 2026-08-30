@@ -23,13 +23,15 @@ publication may follow later.
 | --- | --- | --- |
 | Foundations and generalized Reeb orbits | internally reviewed candidate; the Clarke/simple-minimizer proof boundary is settled; integrated reader review remains | `thesis/02-*`, `thesis/03-*`, corresponding formal sources |
 | Haim--Kislev quadratic program and numerics | integrated draft now includes the twelve-facet branch family, six-facet product-capacity reduction, certified production algorithms, input contract, and numerical evidence; Kai/expert convention and integrated reader review remain appropriate | `thesis/04-*`, `thesis/11-numerics.tex`, `thesis/quadratic-program-algorithm-hk2019-content.md`, QP formal, crate, and experiment sources |
-| Flow graph/CH2021 | substantial conditional draft; final theorem/algorithm role must remain honest | `thesis/05-*`, flow-graph formal, crate, and experiment sources |
-| First-order perturbations | scaffold; arbitrary-polytope boundary remains materially different from the generic story | `thesis/06-*`, `formal/sys-first-order-local-behavior.md` |
+| Flow graph/CH2021 | internally reviewed conditional integration candidate: exact exhaustive search is proved under the displayed flow-graph regularity hypotheses, and those hypotheses are proved chamber-generically; Jörn confirmed retention of both results, while final line-by-line mathematical, writing, and Kai review remain | `thesis/05-*`, flow-graph formal, crate, and experiment sources |
+| First-order perturbations | internally reviewed integration candidate: the nondegenerate branch theory, finite-envelope boundary, and feasible-upper-function bridge to HKO are integrated; a complete arbitrary non-generic theory is explicitly outside the proved scope; ordinary whole-PDF/Jörn/Kai review remains | `thesis/06-*`, `formal/sys-first-order-local-behavior.md` |
 | HKO local maximum | internally reviewed integration candidate; ordinary whole-PDF/Jörn/Kai review remains | `thesis/07-*`, `experiments/hko-local-maximum/` |
 | Data-science search | internally reviewed integration candidate: the bounded random/product method table, held-out ten-facet optimizer comparison, convergence diagnostics, and predictor controls are integrated; ordinary whole-PDF/Jörn/Kai review remains | `thesis/08-*`, `experiments/sys-datascience/`, `experiments/dev-gradient-ascent/` |
-| Rotated regular polygons | substantial theorem/certificate draft | `thesis/09-*`, `experiments/regular-products/` |
+| Rotated regular polygons | internally reviewed exact theorem/certificate integration candidate; Jörn accepted the finite-enumeration dependency, while writing review and Kai review remain | `thesis/09-*`, `experiments/regular-products/` |
 | AI use | the separate factual disclosure page is Jörn-accepted; the numbered research-process discussion remains provisional and materially incomplete | `thesis/ai-use-disclosure-content.md`, `thesis/use-of-ai-content.md`, `experiments/ai-use/` |
-| Visualization, published code/data, conclusion | incomplete thesis surfaces | matching thesis and experiment sources |
+| Visualization | integrated side-result candidate with regenerated thesis assets and a bounded qualitative/negative interpretation; ordinary rendered whole-PDF/Jörn/Kai review remains | `thesis/10-*`, `thesis/visualization-3d-content.md`, `experiments/visualization/` |
+| Published code/data | internally reviewed availability-chapter candidate; final archive publication and the Zenodo DOI/record placeholder remain external closure work | `thesis/12-*`, `thesis/published-code-data-content.md`, `docs/reproducibility.md`, `submit/` |
+| Conclusion | unwritten active section; the companion contains only a short sourced inventory | `thesis/14-conclusion.tex`, `thesis/conclusion-content.md` |
 | Submission and archive | incomplete external state | `submit/`, `docs/reproducibility.md`, Jörn/mail |
 
 ## Current cross-domain decisions and gates
@@ -57,10 +59,14 @@ publication may follow later.
   earlier independent review and 10,240-product falsification check remain
   supporting evidence. See
   `formal/product-qp-six-facet-reduction.tex` and the QP companion.
-- **First-order and flow-graph strength remain open.** Generic smooth-branch
-  first-order behavior does not settle the arbitrary-polytope boundary. The
-  flow-graph chapter must match the hypotheses and support actually established
-  by its formal, implementation, and experiment sources.
+- **First-order and flow-graph scope boundaries are explicit.** The reviewed
+  first-order candidate proves its nondegenerate branch and feasible-upper-
+  function results without claiming a complete arbitrary-polytope directional
+  theory. The reviewed flow-graph candidate proves conditional exact-search
+  correctness and chamber genericity under its displayed regularity
+  hypotheses; it does not establish correctness for arbitrary raw halfspace
+  input or the broader conjectural CH2021 Type 2 scope. Final human review
+  remains a gate for both candidates.
 - **Data-science fact 34.1 is historical status, not a request for another
   dataset.** It said that work was incomplete at the time and should continue.
   The current integration candidate combines the later packets, closed method
