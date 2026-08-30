@@ -27,6 +27,8 @@ Source-truth pointers for the retained random producer shapes:
 ## Command
 
 ```bash
+scripts/artifacts.py materialize polytope-invariant-table
+
 uv run --script experiments/sys-datascience/methods/trusted-random-dataset/analyze.py
 ```
 
@@ -48,7 +50,7 @@ because they duplicate the retained table data.
 
 ## Observation
 
-Current run on hydrated retained tables:
+Current run on materialized retained tables:
 
 - trusted polytope rows: `14336`;
 - trusted provenance rows: `14336`;

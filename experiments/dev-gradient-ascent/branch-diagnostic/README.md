@@ -16,9 +16,8 @@ degeneracy or endpoint behavior.
 ## Inputs and outputs
 
 By default the producer reads the polytope and provenance tables in
-`experiments/polytope-invariant-table/`. Most worktrees skip LFS checkout. If
-those JSONL files are LFS pointers, check out the two inputs or pass paths to
-real tables explicitly.
+`experiments/polytope-invariant-table/`. The polytope table is R2-backed; the
+provenance table is tracked in Git.
 
 The output directory contains:
 
@@ -31,6 +30,8 @@ The output directory contains:
 ## Command
 
 ```bash
+scripts/artifacts.py materialize polytope-invariant-table
+
 cargo run -p exp-dev-gradient-ascent \
   --bin dev-gradient-ascent-branch-diagnostic -- \
   --out-dir /tmp/dev-gradient-ascent-branch-diagnostic-check \

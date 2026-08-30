@@ -51,8 +51,8 @@ Run notes:
 - Selection happened before `sys`: geometry/features/selection artifacts were produced first, then `sys` was computed only for the frozen selected-or-baseline union.
 - Target-field audit passed: `checked 3 pre-target JSONL artifact(s): no forbidden keys`.
 - Retention decision: keep compact tracked provenance and result artifacts here;
-  do not track the full 653 MB generated cache bundle unless future row-level
-  analysis needs it enough to justify the LFS cost.
+  do not publish the full 653 MB generated cache bundle to R2 unless future
+  row-level analysis needs it enough to justify a separately reviewed snapshot.
 
 Interpretation boundary:
 - This is 100k generated random-product candidate evidence for the configured `promising-scalars` rule set, not a theorem and not evidence outside this generator/configuration.

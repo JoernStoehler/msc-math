@@ -243,9 +243,10 @@ compute is not a reason to continue.
 
 ## Command and artifacts
 
-Hydrate the six LFS inputs named by the script, then run:
+Materialize the R2-backed retained invariant table, then run:
 
 ```bash
+scripts/artifacts.py materialize polytope-invariant-table
 python3 experiments/sys-datascience/methods/tail-dependence-feasibility/analyze.py
 ```
 

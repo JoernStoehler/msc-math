@@ -18,11 +18,11 @@ branch becomes capacity-minimizing after a perturbation.
 ## Input, output, and command
 
 The default input is the table produced at
-`experiments/polytope-invariant-table/polytope-table.jsonl`. Most worktrees skip
-LFS checkout, so pass a materialized table or check out that file before
-running the default command.
+`experiments/polytope-invariant-table/polytope-table.jsonl`.
 
 ```bash
+scripts/artifacts.py materialize polytope-invariant-table
+
 cargo run -p exp-dev-sys-prediction --release \
   --bin dev-sysext-beta-boundary-scan -- \
   --polytope-table experiments/polytope-invariant-table/polytope-table.jsonl \

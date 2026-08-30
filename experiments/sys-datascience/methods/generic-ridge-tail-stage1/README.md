@@ -45,6 +45,9 @@ that same f64 volume. Production computes no rational-arithmetic volumes.
 Run from the repository root:
 
 ```bash
+scripts/artifacts.py materialize polytope-datasets
+scripts/artifacts.py materialize polytope-invariant-table
+
 cargo run --release --manifest-path experiments/sys-datascience/methods/generic-ridge-tail-stage1/Cargo.toml -- \
   smoke \
   --random-path experiments/polytope-datasets/random.jsonl \
@@ -74,8 +77,8 @@ cargo run --release --manifest-path experiments/sys-datascience/methods/generic-
   --workers 12
 ```
 
-The smoke inputs are LFS files and must be hydrated before the first command.
-Do not hand-edit generated JSON or JSONL.
+The two materialization commands install the R2-backed smoke inputs at their
+established repository paths. Do not hand-edit generated JSON or JSONL.
 
 The `produce` and `full-validate` commands above document the completed run;
 they are not a current execution queue. An exact full replay belongs in a

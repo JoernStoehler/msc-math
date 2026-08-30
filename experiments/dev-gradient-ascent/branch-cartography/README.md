@@ -57,6 +57,8 @@ The initial checked runs only test small finite steps (`1e-4`, sometimes
 Run after a branch degeneracy diagnostic:
 
 ```bash
+scripts/artifacts.py materialize polytope-invariant-table
+
 cargo run -p exp-dev-gradient-ascent \
   --bin dev-gradient-ascent-branch-diagnostic -- \
   --out-dir /tmp/dev-gradient-ascent-branch-diagnostic-check \
@@ -71,12 +73,10 @@ cargo run -p exp-dev-gradient-ascent \
   --random-directions 1
 ```
 
-Most worktrees are created with LFS smudge skipped. If
-`experiments/polytope-invariant-table/*.jsonl` is an LFS pointer file in the
-current worktree, either check out those table files with LFS for this worktree
-or pass `--polytope-table` and `--provenance-table` to the diagnostic command
-using a worktree that has the real table data. Pass the same real
-`--polytope-table` path to the cartography command.
+The materialization installs the R2-backed polytope table; its provenance table
+is tracked in Git. When overriding those defaults, pass
+`--polytope-table` and `--provenance-table` to the diagnostic command and the
+same `--polytope-table` path to the cartography command.
 
 Defaults:
 
