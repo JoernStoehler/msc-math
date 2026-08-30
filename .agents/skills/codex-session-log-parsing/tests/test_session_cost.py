@@ -62,6 +62,18 @@ class SessionCostTests(unittest.TestCase):
         self.assertEqual(report["sessions"][0]["model"], "gpt-5.6-luna")
         self.assertEqual(report["sessions"][0]["cost_usd"], 0.000176)
 
+    def test_unknown_model_requires_an_explicit_rate_choice(self):
+        with tempfile.TemporaryDirectory() as directory:
+            write_rollout(directory, "root", [meta("2026-01-01T00:00:00Z", "root", model="gpt-future"), token("2026-01-01T00:00:01Z", 100, 80, 10)])
+            with self.assertRaisesRegex(ValueError, "no rate card for model 'gpt-future'"):
+                session_cost.build_report("root", [Path(directory)], None, None, None)
+
+    def test_missing_model_requires_an_explicit_rate_choice(self):
+        with tempfile.TemporaryDirectory() as directory:
+            write_rollout(directory, "root", [meta("2026-01-01T00:00:00Z", "root"), token("2026-01-01T00:00:01Z", 100, 80, 10)])
+            with self.assertRaisesRegex(ValueError, "no rate card for model missing"):
+                session_cost.build_report("root", [Path(directory)], None, None, None)
+
     def test_recursive_descendants_are_included(self):
         with tempfile.TemporaryDirectory() as directory:
             write_rollout(directory, "root", [meta("2026-01-01T00:00:00Z", "root"), token("2026-01-01T00:00:01Z", 10, 0, 1)])

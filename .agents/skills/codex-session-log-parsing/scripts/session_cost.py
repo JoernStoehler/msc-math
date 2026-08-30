@@ -380,7 +380,10 @@ def rate_card(model: str | None, model_override: str | None, override_rates: tup
         return (model_override or model or "custom", override_rates)
     selected = model_override or model
     if selected not in DEFAULT_RATES:
-        selected = "gpt-5.6-sol"
+        observed = repr(selected) if selected is not None else "missing"
+        raise ValueError(
+            f"no rate card for model {observed}; pass --model or all three explicit rates"
+        )
     return selected, DEFAULT_RATES[selected]
 
 
