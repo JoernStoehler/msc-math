@@ -53,7 +53,7 @@ chapter claims that every minimizing orbit has two or three bounces.
    continuity. Cached paper sources are immutable.
 5. Symmetry and older derivation material:
    `formal/lagrangian-product-rotation-symmetry.tex` is useful source;
-   `formal/pentagon-rotation-capacity.tex` is explicitly stale and is not proof
+   `formal/legacy/pentagon-rotation-capacity.tex` is explicitly stale and is not proof
    status.
 6. Empirical figure producer:
    `experiments/regular-products/rotated-regular-products/analyze.py` and

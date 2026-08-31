@@ -39,7 +39,7 @@ Related proof material may be theorem-local under `experiments/`, active under
 
 Known examples requiring care:
 
-- `pentagon-rotation-capacity.tex` is retained for calculations but is not the
+- `legacy/pentagon-rotation-capacity.tex` is retained for calculations but is not the
   current theorem-facing proof source; start at
   `experiments/regular-products/README.md`.
 - Flow-graph comparison/risk notes do not replace the project's current

@@ -28,7 +28,7 @@ Read only the row that matches your task.
 | Inspect the proof code | `pentagon-rotation-formula-proof/README.md`, then `pentagon-rotation-formula-proof/executable_proof.sage.py` | generated artifacts |
 | Choose figures | `pentagon-rotation-empirics/README.md`, then the ranked figure list in `thesis/rotated-regular-polygons-content.md` | exact proof source |
 | Understand broad regular-product context | `rotated-regular-products/README.md` | pentagon proof internals |
-| Recover old calculation details | `formal/pentagon-rotation-capacity.tex` | unless a current guide points to a specific calculation |
+| Recover old calculation details | `formal/legacy/pentagon-rotation-capacity.tex` | unless a current guide points to a specific calculation |
 
 Default order for a new agent:
 
@@ -43,7 +43,7 @@ These files are useful, but they usually cost more context than they save:
 
 1. generated JSONL, PNG, and HTML artifacts;
 2. `pentagon-rotation-formula-proof/executable_proof.sage.py`;
-3. `formal/pentagon-rotation-capacity.tex`;
+3. `formal/legacy/pentagon-rotation-capacity.tex`;
 4. broad sweep data files in `rotated-regular-products/`.
 
 Open them only when a README or thesis companion points to a specific detail.
@@ -62,7 +62,7 @@ Open them only when a README or thesis companion points to a specific detail.
 | `src/` | Shared Rust helpers | Product cache, capacity wrapper, volume helper, package paths | Ordinary code source; keep comments near code |
 | `formal/lagrangian-product-rotation-symmetry.tex` | Formal symmetry source | Current rotation/reflection and factor-swap lemmas | Developer-facing proof text, not thesis prose |
 | `formal/combinatorial-boundary-regularity.tex` | Formal continuity source | Current preferred endpoint route via EHZ Hausdorff continuity | Broader than this slice |
-| `formal/pentagon-rotation-capacity.tex` | Old formal proof draft | Useful for notation and active-branch derivation | Stale body text includes old paths and deleted `cas_witnesses.py` references; no longer input by `formal/main.tex` |
+| `formal/legacy/pentagon-rotation-capacity.tex` | Old formal proof draft | Useful for notation and active-branch derivation | Stale body text includes old paths and deleted `cas_witnesses.py` references; no longer input by `formal/main.tex` |
 | `experiments/sys-datascience/README.md` and `experiments/sys-datascience/methods/README.md` | Search/data-science context | Explain regular products as structured contrast in the hostile-search story | Do not use it as a proof source for the formula |
 
 ## Current Proof Status
@@ -140,7 +140,7 @@ Use this split while writing:
 
 1. **Best current entry point:** this README for inventory, then
    `thesis/rotated-regular-polygons-content.md` for writing.
-2. **Most stale current file:** `formal/pentagon-rotation-capacity.tex`.
+2. **Most stale current file:** `formal/legacy/pentagon-rotation-capacity.tex`.
    Its header marks it stale, but the body still contains historical labels,
    old `experiments/sys-landscape/...` paths, and deleted
    `cas_witnesses.py` references. It is retained only because the thesis

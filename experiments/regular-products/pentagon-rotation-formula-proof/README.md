@@ -56,7 +56,7 @@ Use these files for different questions:
 | What is the executable proof? | `executable_proof.sage.py` |
 | What did the full proof run print? | `executable_proof.full.stdout.txt` |
 | How should the thesis explain the proof architecture? | `thesis/rotated-regular-polygons-content.md` |
-| Where is older formal source material? | `formal/pentagon-rotation-capacity.tex`, treated as stale source material |
+| Where is older formal source material? | `formal/legacy/pentagon-rotation-capacity.tex`, treated as stale source material |
 | Where are empirical figures and viewer artifacts? | `../rotated-regular-products/` for the profile sweep; `../pentagon-rotation-empirics/` for orbit and branch diagnostics |
 
 The formal file is useful for earlier notation and active-branch material, but
