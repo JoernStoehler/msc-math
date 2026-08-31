@@ -26,7 +26,10 @@ maintenance low. The numbers are stable and can be out of order.
    2026-08-30; the information was not available the previous day. The deadline
    applies to the PDF, not to later GitHub, Zenodo, or comparable repository
    publication. It supersedes the stale June 2026 dates and the earlier record
-   that no replacement deadline was known.
+   that no replacement deadline was known. **This deadline has now passed.**
+   This fact sheet does not record whether submission occurred, so do not treat
+   submission as an open task or infer that it was missed without a current
+   status from Jörn or the official MNTF process.
 
 2. Official submission facts need to be refreshed from current MNTF sources
    before relying on 2026-04-24 downloaded forms or old deadline text.
@@ -59,7 +62,11 @@ maintenance low. The numbers are stable and can be out of order.
    terms. Do not split
    software and data into separate Zenodo records unless the final artifacts
    acquire a clear independent citation use. Jörn created the Zenodo account
-   successfully through GitHub sign-up on 2026-07-14.
+   successfully through GitHub sign-up on 2026-07-14. This is an accepted
+   archive direction, not an existing archive record: record creation, DOI
+   reservation, upload, and publication remain unchecked closure actions in
+   `submit/archive-closure-checklist.md`. Do not cite a DOI or describe the
+   bundle as published until those actions are externally confirmed.
 
 6.1. Jörn accepted permissive reuse on 2026-07-14: Apache License 2.0 for
      project software and Creative Commons Attribution 4.0 International for
@@ -138,7 +145,10 @@ maintenance low. The numbers are stable and can be out of order.
     correspondence evidence. Jörn confirmed retention of both mathematical
     results. Final line-by-line mathematical, writing, and Kai review remain;
     neither this current candidate status nor the historical scope decision
-    records Kai's acceptance.
+    records Kai's acceptance. The idealized conditional theorem also does not
+    establish a verified capacity contract for the optimized production Rust
+    implementation; its regression packets are bounded falsifier evidence, not
+    proof of implementation-to-theorem correspondence.
 
 13. Thesis success does not require completing every possible side effort, such
     as interesting side routes, broad cleanup programs, publication-grade
