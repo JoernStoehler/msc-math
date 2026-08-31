@@ -21,10 +21,10 @@ project_doc_max_bytes = 65536
 service_tier = "default"
 
 [features]
-apps = false
-shell_snapshot = true
-goals = true
-memories = true
+#apps = true
+#shell_snapshot = true
+#goals = true
+#memories = false
 
 # Force MultiAgent V2 independently of the selected parent model.
 [features.multi_agent_v2]
@@ -55,13 +55,13 @@ default_subagent_reasoning_effort = "high"
 [memories]
 # Avoid learning from sessions whose context includes potentially hostile or
 # stale external material. Repo files and local tool output do not trigger this.
-disable_on_external_context = true
-generate_memories = true
-use_memories = true
+#disable_on_external_context = true
+#generate_memories = true
+#use_memories = true
 # Memory work is background maintenance: do not spend scarce quota on it.
-min_rate_limit_remaining_percent = 50
-extract_model = "gpt-5.6-luna"
-consolidation_model = "gpt-5.6-luna"
+#min_rate_limit_remaining_percent = 50
+#extract_model = "gpt-5.6-luna"
+#consolidation_model = "gpt-5.6-luna"
 
 # Force Git subprocesses to stay non-interactive.
 [shell_environment_policy.set]
