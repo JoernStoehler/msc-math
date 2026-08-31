@@ -50,9 +50,7 @@ anatomy = load_jsonl(BOUNDARY_CHAR_DIR / "combinatorial-boundaries-anatomy.jsonl
 
 # Load profiling data from cell-widths experiment for gradient-cell alignment
 profiling_path = CELL_WIDTHS_DIR / "combinatorial-boundaries-profiling.jsonl"
-profiling = []
-if profiling_path.exists():
-    profiling = load_jsonl(profiling_path)
+profiling = load_jsonl(profiling_path)
 
 print(f"Loaded: {len(gradient)} gradient, {len(anatomy)} anatomy, "
       f"{len(profiling)} profiling rows")
