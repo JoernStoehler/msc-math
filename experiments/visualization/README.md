@@ -89,4 +89,4 @@ Manual exploration of these projections did not yield a reliable geometric
 hypothesis, candidate rule, or proof input. The selected figures serve only to
 help readers imagine the objects and the piecewise-linear Reeb dynamics.
 Thesis-facing wording and copy provenance live in
-`thesis/10-visualization-3d.tex` and `thesis/visualization-3d-content.md`.
+`thesis/10-visualization-3d.tex` and `thesis/legacy/non-current-planning-companions/visualization-3d-content.md`.

@@ -75,7 +75,6 @@ ORIENTATION_PATHS=(
   'docs/project-facts.md'
   'docs/project-status.md'
   'docs/reproducibility.md'
-  'thesis/central-claim-control.md'
   'experiments/README.md'
   'crates/README.md'
   'thesis/README.md'

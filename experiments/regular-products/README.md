@@ -23,17 +23,17 @@ Read only the row that matches your task.
 
 | Task | Minimum read path | Stop before opening |
 | --- | --- | --- |
-| Write the thesis section | `thesis/rotated-regular-polygons-content.md`, then `thesis/09-rotated-regular-polygons.tex` | Sage source, generated JSONL/PNG/HTML, stale formal draft |
+| Write the thesis section | `thesis/legacy/non-current-planning-companions/rotated-regular-polygons-content.md`, then `thesis/09-rotated-regular-polygons.tex` | Sage source, generated JSONL/PNG/HTML, stale formal draft |
 | Check the exact proof result | `pentagon-rotation-formula-proof/README.md`, then `pentagon-rotation-formula-proof/executable_proof.full.stdout.txt` | empirical folders |
 | Inspect the proof code | `pentagon-rotation-formula-proof/README.md`, then `pentagon-rotation-formula-proof/executable_proof.sage.py` | generated artifacts |
-| Choose figures | `pentagon-rotation-empirics/README.md`, then the ranked figure list in `thesis/rotated-regular-polygons-content.md` | exact proof source |
+| Choose figures | `pentagon-rotation-empirics/README.md`, then the ranked figure list in `thesis/legacy/non-current-planning-companions/rotated-regular-polygons-content.md` | exact proof source |
 | Understand broad regular-product context | `rotated-regular-products/README.md` | pentagon proof internals |
 | Recover old calculation details | `formal/legacy/pentagon-rotation-capacity.tex` | unless a current guide points to a specific calculation |
 
 Default order for a new agent:
 
 1. Read this README.
-2. If writing, read `thesis/rotated-regular-polygons-content.md`.
+2. If writing, read `thesis/legacy/non-current-planning-companions/rotated-regular-polygons-content.md`.
 3. If verifying the proof, read `pentagon-rotation-formula-proof/README.md`.
 4. Stop until a concrete question requires a narrower file.
 
@@ -53,7 +53,7 @@ Open them only when a README or thesis companion points to a specific detail.
 | File or folder | Role | Current value | Maintenance risk |
 | --- | --- | --- | --- |
 | `thesis/09-rotated-regular-polygons.tex` | Active thesis section | Contains the current theorem/proof draft for the pentagon formula and selected empirical figures | Needs final Jörn/Kai mathematical and presentation review |
-| `thesis/rotated-regular-polygons-content.md` | Thesis writing companion | Best current human/agent guide to theorem, proof route, figures, and wording risks | Not source truth; delete or shrink after prose stabilizes |
+| `thesis/legacy/non-current-planning-companions/rotated-regular-polygons-content.md` | Thesis writing companion | Best current human/agent guide to theorem, proof route, figures, and wording risks | Not source truth; delete or shrink after prose stabilizes |
 | `pentagon-rotation-formula-proof/executable_proof.sage.py` | Exact proof source | Source truth for the open half-domain executable certificate | If edited, rerun the full proof and refresh stdout |
 | `pentagon-rotation-formula-proof/executable_proof.full.stdout.txt` | Full proof run output | Source truth for exact run output, status counts, and runtime | Do not hand-edit |
 | `pentagon-rotation-formula-proof/README.md` | Proof packet runbook | Best entry point for proof reproduction | Keep short and routing-focused |
@@ -139,7 +139,7 @@ Use this split while writing:
 ## Knowledge-Base Notes
 
 1. **Best current entry point:** this README for inventory, then
-   `thesis/rotated-regular-polygons-content.md` for writing.
+   `thesis/legacy/non-current-planning-companions/rotated-regular-polygons-content.md` for writing.
 2. **Most stale current file:** `formal/legacy/pentagon-rotation-capacity.tex`.
    Its header marks it stale, but the body still contains historical labels,
    old `experiments/sys-landscape/...` paths, and deleted
@@ -148,7 +148,7 @@ Use this split while writing:
 3. **Avoid hidden source truth:** if a claim is about code behavior, check the
    producer script or exact proof script. If a claim is about final thesis
    wording, check `thesis/09-rotated-regular-polygons.tex`; use
-   `thesis/rotated-regular-polygons-content.md` for drafting guidance.
+   `thesis/legacy/non-current-planning-companions/rotated-regular-polygons-content.md` for drafting guidance.
 4. **Generated artifacts:** do not patch-edit JSONL, HTML, or PNG outputs.
    Regenerate them with the commands below when source behavior changes.
 

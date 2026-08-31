@@ -22,15 +22,15 @@ publication may follow later.
 | Area | Current state | Source routes |
 | --- | --- | --- |
 | Foundations and generalized Reeb orbits | internally reviewed candidate; the Clarke/simple-minimizer proof boundary is settled; integrated reader review remains | `thesis/02-*`, `thesis/03-*`, corresponding formal sources |
-| Haim--Kislev quadratic program and numerics | integrated draft now includes the twelve-facet branch family, six-facet product-capacity reduction, certified production algorithms, input contract, and numerical evidence; Kai/expert convention and integrated reader review remain appropriate | `thesis/04-*`, `thesis/11-numerics.tex`, `thesis/quadratic-program-algorithm-hk2019-content.md`, QP formal, crate, and experiment sources |
+| Haim--Kislev quadratic program and numerics | integrated draft now includes the twelve-facet branch family, six-facet product-capacity reduction, certified production algorithms, input contract, and numerical evidence; Kai/expert convention and integrated reader review remain appropriate | `thesis/04-*`, `thesis/11-numerics.tex`, `thesis/legacy/non-current-planning-companions/quadratic-program-algorithm-hk2019-content.md`, QP formal, crate, and experiment sources |
 | Flow graph/CH2021 | internally reviewed conditional integration candidate: exact exhaustive search is proved under the displayed flow-graph regularity hypotheses, and those hypotheses are proved chamber-generically; Jörn confirmed retention of both results, while final line-by-line mathematical, writing, and Kai review remain | `thesis/05-*`, flow-graph formal, crate, and experiment sources |
 | First-order perturbations | internally reviewed integration candidate: the nondegenerate branch theory, finite-envelope boundary, and feasible-upper-function bridge to HKO are integrated; a complete arbitrary non-generic theory is explicitly outside the proved scope; ordinary whole-PDF/Jörn/Kai review remains | `thesis/06-*`, `formal/sys-first-order-local-behavior.md` |
 | HKO local maximum | internally reviewed integration candidate; ordinary whole-PDF/Jörn/Kai review remains | `thesis/07-*`, `experiments/hko-local-maximum/` |
 | Data-science search | internally reviewed integration candidate: the bounded random/product method table, held-out ten-facet optimizer comparison, convergence diagnostics, and predictor controls are integrated; ordinary whole-PDF/Jörn/Kai review remains | `thesis/08-*`, `experiments/sys-datascience/`, `experiments/dev-gradient-ascent/` |
 | Rotated regular polygons | internally reviewed exact theorem/certificate integration candidate; Jörn accepted the finite-enumeration dependency, while writing review and Kai review remain | `thesis/09-*`, `experiments/regular-products/` |
-| AI use | the separate factual disclosure page is Jörn-accepted; the numbered research-process discussion remains provisional and materially incomplete | `thesis/ai-use-disclosure-content.md`, `thesis/use-of-ai-content.md`, `experiments/ai-use/` |
-| Visualization | integrated side-result candidate with regenerated thesis assets and a bounded qualitative/negative interpretation; ordinary rendered whole-PDF/Jörn/Kai review remains | `thesis/10-*`, `thesis/visualization-3d-content.md`, `experiments/visualization/` |
-| Published code/data | internally reviewed availability-chapter candidate; no live Zenodo placeholder or frozen-release claim remains in the thesis, while external archive publication remains post-PDF closure work; ordinary whole-PDF/Jörn/Kai review remains | `thesis/12-*`, `thesis/published-code-data-content.md`, `docs/reproducibility.md`, `submit/` |
+| AI use | the separate factual disclosure page is Jörn-accepted; the numbered research-process discussion remains provisional and materially incomplete | `thesis/legacy/non-current-planning-companions/ai-use-disclosure-content.md`, `thesis/legacy/non-current-planning-companions/use-of-ai-content.md`, `experiments/ai-use/` |
+| Visualization | integrated side-result candidate with regenerated thesis assets and a bounded qualitative/negative interpretation; ordinary rendered whole-PDF/Jörn/Kai review remains | `thesis/10-*`, `thesis/legacy/non-current-planning-companions/visualization-3d-content.md`, `experiments/visualization/` |
+| Published code/data | internally reviewed availability-chapter candidate; no live Zenodo placeholder or frozen-release claim remains in the thesis, while external archive publication remains post-PDF closure work; ordinary whole-PDF/Jörn/Kai review remains | `thesis/12-*`, `thesis/legacy/non-current-planning-companions/published-code-data-content.md`, `docs/reproducibility.md`, `submit/` |
 | Abstract and conclusion | integrated full-thesis candidate; ordinary whole-PDF/Jörn/Kai review remains | `thesis/00-abstract.tex`, `thesis/14-conclusion.tex`, matching companions |
 | Submission and archive | incomplete external state | `submit/`, `docs/reproducibility.md`, Jörn/mail |
 
@@ -41,15 +41,15 @@ publication may follow later.
   free-period multiplier calculation, coefficient, Reeb reconstruction, and
   characteristic identity rather than compressing the developed explanation
   into citations. Jörn accepted this proof-versus-citation boundary; integrated
-  reader review still applies. See `thesis/theory-authoring-map.md` and the
+  reader review still applies. See `thesis/legacy/non-current-planning-companions/theory-authoring-map.md` and the
   active foundation text.
 - **Product finite enumeration is Jörn-accepted, not merely empirical.** The
   classical two-/three-bounce result plus the simple active-orbit reduction
   places a capacity minimizer in the enumerated family. The computation
   corroborates this implication but does not replace it. Kai/expert line review
   of the project-derived convention lift remains appropriate. See
-  `thesis/quadratic-program-algorithm-hk2019-content.md` and
-  `thesis/rotated-regular-polygons-content.md`.
+  `thesis/legacy/non-current-planning-companions/quadratic-program-algorithm-hk2019-content.md` and
+  `thesis/legacy/non-current-planning-companions/rotated-regular-polygons-content.md`.
 - **Product capacity has a separate six-facet reduction.** Bilinear extremality
   in the two planar normalized closure polytopes proves that some capacity
   maximizer uses at most three facets from each factor. This supports the
