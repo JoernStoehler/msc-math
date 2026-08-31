@@ -515,8 +515,8 @@ def set_axis_limits_to_points(ax, points, pad_fraction):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", type=Path, default=EXPERIMENT_DIR / "tube-visualization.json")
-    parser.add_argument("--output", type=Path, default=EXPERIMENT_DIR / "tube-visualization.png")
+    parser.add_argument("--input", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--layout", choices=("grid", "sequence", "projection"), default="grid")
     return parser.parse_args()
 
