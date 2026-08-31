@@ -17,8 +17,9 @@ after the rebuilt tables are available.
 
 - LICCA checkout has the exact committed branch intended for this worktree.
   Running the job from an older commit is worse than not running it.
-- Canonical producer LFS files under `experiments/polytope-datasets/`
-  are hydrated on LICCA.
+- This historical packet expected canonical producer files to be hydrated via
+  Git LFS. Current `main` removed those paths from Git and registers the
+  retained data in R2; do not reuse the old checkout procedure.
 - Do not retry the all-source retained-table rebuild locally by default. A local
   2026-06-22 rebuild loaded the canonical producer caches and was interrupted
   during table construction after the local compute/memory guard fired.
@@ -33,27 +34,18 @@ after the rebuilt tables are available.
 - first production request: `32` CPUs, `32G`, `2h` on `epyc`.
 - expected active Jörn time: one submission plus bounded status/log checks.
 - cancel/resubmit condition: if `sacct` or the log shows immediate setup
-  failure with tiny `MaxRSS`, inspect paths/LFS/checkout before resubmitting;
+  failure with tiny `MaxRSS`, inspect checkout and artifact materialization
+  before resubmitting;
   if it runs for a substantial fraction of the timeout with high memory
   pressure, compare continuing versus a larger memory request before canceling.
 
-## LICCA Login Node: Checkout And LFS
+## Historical LICCA checkout boundary
 
-Run only after this branch has been pushed or otherwise made available to the
-LICCA checkout.
-
-```bash
-cd "$HOME/msc-math"
-git fetch origin sys-ds-feature-closure
-git switch sys-ds-feature-closure || git switch --track origin/sys-ds-feature-closure
-git pull --ff-only origin sys-ds-feature-closure
-git status --short
-git lfs pull --include 'experiments/polytope-datasets/*.jsonl'
-```
-
-`git status --short` should not show local changes that affect the build. If
-`git switch` or `git lfs pull` reports a specific blocker, resolve that exact
-path rather than cleaning broad data directories.
+The executable checkout recipe has been removed because its branch and Git LFS
+storage contract are obsolete. It is not a current `main` recovery path. Use
+the active R2 owner documentation in `docs/artifacts.md` when designing any new
+LICCA materialization flow; do not infer cluster credentials or cache placement
+from this historical packet.
 
 ## LICCA Slurm Submission
 
