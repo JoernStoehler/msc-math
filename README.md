@@ -18,10 +18,7 @@ The repository produces:
 
 Project-wide information:
 
-- `docs/project-status.md`: milestones, current state, and open gates.
 - `docs/project-facts.md`: Jörn-confirmed facts and external decisions.
-- `docs/capabilities.md`: compact view of what the repository can currently
-  support.
 - `docs/reproducibility.md`: code, data, and archive route.
 - `docs/artifacts.md`: materializing and publishing shared R2 snapshots.
 - `docs/development-environments.md`: execution environments, clients,
@@ -36,9 +33,9 @@ Domain entry points:
 - `crates/README.md`
 - `papers/README.md`
 
-`README.md` and `docs/capabilities.md` are navigation views. The relevant
-source files, tests, data, proof notes, producer outputs, active thesis text,
-and accepted Jörn/Kai decisions are authoritative.
+`README.md` is a navigation view. The relevant source files, tests, data,
+proof notes, producer outputs, active thesis text, and accepted Jörn/Kai
+decisions are authoritative.
 
 ## Current outcome
 
@@ -46,4 +43,4 @@ The final state is not merely a compiling PDF. Retained thesis claims must have
 support and caveats matching their strength; referenced code, figures, data,
 and certificates must resolve; reproduction and archive promises must be true;
 submission requirements must be satisfied; and Jörn must accept the thesis as
-ready. See `docs/project-status.md`.
+ready.

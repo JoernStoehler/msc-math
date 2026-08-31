@@ -14,7 +14,7 @@ detailed file inventories and does not prescribe local file placement.
 | `experiments/` | Empirical questions, data producers, consuming analyses, retained outputs, interpretation, and reproduction commands | one exhaustive subject/method/status taxonomy or ordinary reusable library APIs |
 | `papers/` | Source papers, extracted passages, and paper-specific notes | project conclusions not established by the source |
 | `submit/` | Official forms, submission requirements, and administrative source notes | thesis mathematical content |
-| `docs/` | Project-wide facts, current status, cross-domain capabilities, and reproduction policy | topic-local evidence or proofs |
+| `docs/` | Project-wide facts, reproduction and artifact policy, and execution-environment contracts | topic-local evidence or proofs |
 | `scripts/` | Repository-wide maintenance and reporting utilities | scientific results |
 
 Use conventional layouts and decide local placement from the actual files and
@@ -35,8 +35,6 @@ directory as the whole project:
 | Has an experiment already tested this? | `experiments/README.md`, then topic READMEs | producer, retained output, and interpretation |
 | Can the implementation do this? | `crates/README.md`, then crate README/source/tests | public API, tests, and relevant verification experiments |
 | Why was a route rejected or superseded? | current local README and nearby decision/status note | source commit/history only when the current documentation points there |
-| What blocks thesis completion? | `docs/project-status.md` | named work area and stakeholder source |
-| What may the repository currently rely on? | `docs/capabilities.md` | every named authoritative source |
 
 ## Authority across domains
 
