@@ -102,9 +102,11 @@ MSC_MATH_R2_SECRET_ACCESS_KEY
 ```
 
 The script stores the required private rclone configuration without writing
-credentials into Git. The current script paths and secrets were confirmed in
-the Cloud environment settings on 2026-08-29; shell syntax was checked locally,
-but a fresh end-to-end setup was not rerun during this documentation pass.
+credentials into Git. The script paths and secret names were confirmed in the
+Cloud environment settings on 2026-08-29. That dated check does not establish
+that the external settings remain unchanged: recheck them before diagnosing or
+changing setup. Shell syntax was checked locally, but a fresh credentialed,
+end-to-end setup was not rerun during this documentation pass.
 
 See the [official Codex Cloud environment
 documentation](https://learn.chatgpt.com/docs/environments/cloud-environment)
