@@ -7,6 +7,13 @@ PORT="${1:-8080}"
 DIR="$(cd "$(dirname "$0")" && pwd)"
 MANIFEST="$DIR/../Cargo.toml"
 
+# Do not disturb a process that this script does not own.
+if lsof -nP -tiTCP:"$PORT" -sTCP:LISTEN >/dev/null 2>&1; then
+    echo "Error: port $PORT is already in use; refusing to stop the existing process." >&2
+    echo "Choose another port: ./serve.sh <port>" >&2
+    exit 1
+fi
+
 echo "Building visualization binary..."
 cargo build --release --manifest-path "$MANIFEST" --bin visualization -q
 
@@ -22,13 +29,6 @@ done
 
 echo "Embedding data into viewer..."
 bash "$DIR/embed-data.sh" > "$DIR/data.js"
-
-# Kill any stale server on this port
-if lsof -ti:"$PORT" >/dev/null 2>&1; then
-    echo "Killing stale process on port $PORT..."
-    lsof -ti:"$PORT" | xargs kill 2>/dev/null
-    sleep 0.5
-fi
 
 echo ""
 echo "Serving at http://localhost:$PORT"
