@@ -224,6 +224,10 @@ maintenance low. The numbers are stable and can be out of order.
       currently supported thesis claim remains bounded to the named closed
       method table and its recorded contracts.
 
+      The approximate count is historical scope context, not an auditable
+      inventory or a numeric completion gate. Do not compare the current
+      ledger's row count with 100 to infer either completion or a shortfall.
+
 32. A sudden positive or conjectured-positive data-science lead does not
     automatically force full follow-up before submission. It may be escalated
     or put in future work depending on importance and timing.

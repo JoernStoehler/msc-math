@@ -17,6 +17,11 @@ threads. Each can be used with threads whose app-server runs in any of the
 three environments. Thread execution occurs in the app-server environment; the
 client therefore does not identify the execution environment.
 
+This table is a topology inventory, not evidence that every environment is
+available to a particular thread. Infer the active environment only from
+explicit runtime or operator-provided facts. If those facts are absent, report
+the uncertainty before giving environment-specific setup or recovery advice.
+
 ## Tools and project contracts
 
 The app-server advertises the function calls, tools, and MCP tools available to

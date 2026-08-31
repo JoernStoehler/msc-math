@@ -12,8 +12,10 @@ latexmk -g
 ./check-build.sh
 ```
 
-The checked output is `thesis/build/main.pdf`. It is deliberately Git-ignored
-and is added to the final Zenodo ZIP by the release packager.
+The checked build output is `thesis/build/main.pdf`. It is deliberately
+Git-ignored. The release packager adds those bytes to the final Zenodo ZIP as
+`Stoehler-Probing-Viterbos-Conjecture.pdf`; the build path is not the archive
+member name.
 
 ## Exact certificate packets
 
