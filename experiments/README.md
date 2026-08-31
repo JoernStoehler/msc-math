@@ -15,9 +15,6 @@ Typical exploration:
 4. broaden terminology when a lexical search returns no useful hit.
 
 `ARCHITECTURE.md` explains the cross-domain authority boundaries.
-`.agents/skills/empirical-research/references/experiment-packets.md` records
-repo-specific considerations for creating or moving experiment material. It
-does not supply a split/join algorithm.
 
 ## Directory inventory
 

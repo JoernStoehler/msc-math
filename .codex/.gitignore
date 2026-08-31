@@ -1,8 +1,8 @@
 # Safety net. Runtime state (auth.json, history.jsonl, log/, sessions/)
 # should never land here: the active Codex runtime reads and writes it under
 # its configured $CODEX_HOME, not in this repo directory.
-# This repo intentionally tracks project policy, instructions, and agent
-# definitions under .codex; machine/user state remains under $CODEX_HOME.
+# Former project policy, instructions, and agent definitions are quarantined
+# under legacy-steering/ and are not active Codex configuration.
 # If any runtime-state file nevertheless appears here, this .gitignore keeps
 # it out of commits — treat its presence as a bug and investigate why Codex
 # used the project configuration directory as runtime state.
