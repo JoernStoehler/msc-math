@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 OUT="$ROOT/experiments/qp-error-bounds/artifacts/broad"
 REVISION="$(git -C "$ROOT" rev-parse HEAD)"
 if [[ -n "$(git -C "$ROOT" status --porcelain)" ]]; then
