@@ -107,29 +107,31 @@ fallback policy, route completeness, empirical comparisons, and remaining
 source-coordinate-uncertainty limitation. The Sage theorem packets remain the
 authority for proof-facing algebraic claims.
 
-## Session Scope
+## Current chapter role
 
-- In scope: the Haim--Kislev quadratic-program statement and the mathematical
-  reason it computes the EHZ capacity/minimum action for polytopes.
-- In scope after the 2026-06-25 review: a compact bridge from the HK theorem to
-  the project computation layers that later sections use: unpruned word
-  enumeration, transition pruning, product enumeration, active-word KKT solves,
-  and the distinction between f64 exploration and exact/Sage theorem evidence.
-- In scope: notation choices and conversion notes needed to state the standard
-  result in the thesis convention.
-- Out of scope here: detailed algorithms for solving the quadratic programs.
-  Leave KKT solver internals, exact arithmetic implementation, f64 error
-  analysis, performance optimization, and implementation tests to later
-  algorithm/numerics sections.
-- Out of scope: project-original improvements or insights on top of the HK
-  finite formulation, except where a small convention is needed to make the
-  standard result readable.
+The active chapter no longer has the narrow session scope recorded in the
+former planning block. It now owns the translated Haim--Kislev finite formula,
+the fixed-word/global-maximizer boundary, the twelve-facet alternating product
+family used by the rotated-pentagon proof, and the separate six-facet
+capacity-value reduction and closure-vertex algorithm. It gives the
+reader-facing bridge to the certified production routes; detailed binary64
+enclosures, exact fallback behavior, applicability limits, and audit evidence
+belong to `thesis/11-numerics.tex` and its companion.
+
+Reopen this division only if the active chapter structure, one of the two
+product theorems, or the production route's mathematical completeness argument
+changes. Implementation metrics and tuning remain with their experiment
+packets.
 
 ## Purpose And Naming
 
 - Present the standard finite quadratic-program formulation for the minimizer
-  search. This is Haim--Kislev's work; the thesis work in this section is
-  explanatory and not a new algorithmic contribution.
+  search as Haim--Kislev's work; the thesis's translation and explanation of
+  that formula are not new algorithmic contributions. Keep that attribution
+  distinct from the project-specific twelve-facet search reduction, six-facet
+  capacity theorem, closure-vertex algorithm, and certified production
+  realization described above and owned by their active formal, crate, and
+  experiment sources.
 - The reader-facing section title is "The Haim--Kislev Quadratic Program".
   After first attribution, use "the quadratic program" or "QP" when the
   antecedent is clear.
@@ -221,13 +223,3 @@ authority for proof-facing algebraic claims.
   order throughout the project and thesis. HK2017's displayed theorem uses the
   reversed ordered word; active prose marks the reversal explicitly and uses
   deletion of zero-weight facets as the enumeration convention.
-
-## Deferred Algorithmic Material
-
-- Partial-word enumeration, pruning/admissibility checks, KKT solving,
-  repeated/tied minimizer handling, accumulator/certainty status, and empirical
-  tests belong to a later session about our algorithmic work.
-- The active subsection
-  `subsec:quadratic-program-algorithm-hk2019-computation-layers` is intended to
-  be the high-level reader bridge, not the detailed solver story. It should not
-  grow into a software manual.

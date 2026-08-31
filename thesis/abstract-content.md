@@ -1,29 +1,27 @@
 # Abstract Content Notes
 
-Status: section-local content companion for `thesis/00-abstract.tex`. Not source
-truth.
+Status: maintenance companion for the integrated candidate in
+`thesis/00-abstract.tex`. The active prose remains subject to ordinary
+whole-thesis, Jörn, and Kai review.
 
-Purpose: gather the final abstract inventory before the abstract is written.
+The abstract is a claim-propagation surface, not a second inventory of thesis
+topics. Start from `thesis/central-claim-control.md`, then follow each named
+result to its active theorem chapter, formal or empirical owner, and retained
+evidence packet. Those owners and accepted Jörn/Kai decisions overrule the
+central map; `docs/project-facts.md` supplies only its explicitly recorded
+confirmed facts.
 
-Overruled by: `docs/project-facts.md`, final theorem statements, active thesis sections,
-and Jörn/Kai review.
+Then scan the current result owners and accepted project facts for later
+central results or limitations that the map does not yet name. Record each as
+included, deliberately excluded, or awaiting Jörn's emphasis decision; do not
+let the map's reconciliation date silently omit later accepted work.
 
-Lifecycle: keep while the abstract is unwritten. After the abstract is stable,
-delete this file or reduce it to a short maintenance note.
+Preserve the exact epistemic category and scope of every propagated result.
+In particular, do not turn a bounded empirical finding into a theorem, a
+binary64-input capacity contract into a claim about unavailable source
+coordinates, or an existence result into a classification of all minimizers.
 
-Update rule: add or change a claim only with a source pointer or an explicit
-`needs source` marker.
-
-## Content Inventory
-
-- Write the abstract last.
-- Standard shape: motivation, problem, methods, results, and significance.
-- Main result candidate: HKO2024 is a local maximum among ten-facet polytopes
-  up to symmetry.
-- Side result candidate: exact formula for the systolic ratio of
-  `P_5 x_L R(theta)P_5` on its rotation fundamental domain.
-- Negative search result candidate: black-box data-science tools and related
-  search methods did not yield new polytopes with `sys > 1`.
-- Main method candidates: reduce to computable problems; develop, improve,
-  test, and numerically analyze algorithms; use AI for much of the thesis
-  labor.
+Reopen this companion when the active abstract is revised, when a mapped owner
+changes its claim strength or review status, or when Jörn/Kai changes the
+abstract's stakeholder scope. After accepted prose carries these boundaries,
+reduce or retire this file rather than preserving drafting chronology.

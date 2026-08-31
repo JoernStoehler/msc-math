@@ -1,23 +1,26 @@
 # Conclusion Content Notes
 
-Status: section-local content companion for `thesis/14-conclusion.tex`. Not source
-truth.
+Status: maintenance companion for the integrated candidate in
+`thesis/14-conclusion.tex`. The active prose remains subject to ordinary
+whole-thesis, Jörn, and Kai review.
 
-Purpose: gather the conclusion inventory before final prose is written.
+The conclusion is a claim-propagation surface, not a second topic inventory.
+Use the conclusion rows in `thesis/central-claim-control.md`, then follow each
+claim to its active result chapter and mathematical or empirical owner. Those
+owners and accepted Jörn/Kai decisions overrule the central map.
 
-Overruled by: final thesis sections, retained theorem statements,
-`docs/project-facts.md`, and Jörn/Kai review.
+Then scan the current result owners and accepted project facts for later
+central results or limitations that the map does not yet name. Record each as
+included, deliberately excluded, or awaiting Jörn's emphasis decision; do not
+let the map's reconciliation date silently omit later accepted work.
 
-Lifecycle: keep while the conclusion is unwritten. After the conclusion is
-stable, delete this file or reduce it to a short maintenance note.
+The final account must keep established results, bounded empirical findings,
+limitations, and future work distinct. Do not move an unfinished support
+obligation into future work, generalize a theorem beyond its owner, or present
+implementation evidence as proof. Final emphasis and future-work selection
+remain Jörn thesis-design decisions.
 
-Update rule: add or change a claim only with a source pointer or an explicit
-`needs source` marker.
-
-## Content Inventory
-
-- HKO2024 local maximality among ten-facet polytopes up to symmetry.
-- Negative result for black-box data-science and related search tools.
-- Algorithmic contributions.
-- Side results.
-- Future work.
+Reopen this companion when the active conclusion is revised, when a mapped result or
+limitation changes, or when Jörn/Kai settles the final contribution emphasis.
+After accepted prose carries these boundaries, reduce or retire this file
+rather than preserving drafting chronology.
