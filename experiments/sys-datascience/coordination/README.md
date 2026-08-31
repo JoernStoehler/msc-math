@@ -34,11 +34,11 @@ Assess thesis-level closure from the later packets, reproduction state, and
 active thesis claim without treating available packets, worktrees, or larger
 samples as a queue.
 
-recovery-audit-2026-07-10.md records the completed checkpoint audit.
-workflow-evaluations/ contains historical GPT-5.5 process evidence, not current
-execution authority. Other coordination files are scientific working state or
-planning inputs; their old launch recommendations are not current unless
-explicitly readopted.
+`../legacy/recovery-audit-2026-07-10.md` records the completed checkpoint audit.
+`../legacy/workflow-evaluations/` contains historical GPT-5.5 process evidence,
+not current execution authority. Other coordination files are scientific
+working state or planning inputs; their old launch recommendations are not
+current unless explicitly readopted.
 
 `topics/README.md` is the entry point for the cross-packet topic maps. Those
 maps group evidence and hypotheses by research question without changing the

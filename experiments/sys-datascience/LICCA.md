@@ -11,7 +11,7 @@ infrastructure, not execution handoffs and not evidence.
 | `experiments/polytope-invariant-table/licca-build-retained-table.slurm.sh` | dormant legacy in-place table rebuild helper | an explicit retained-table reproduction/schema-refresh task; prefer the run-local table-construction script for new work |
 | `experiments/polytope-datasets/plans/` | dormant producer designs | status and gates are recorded in `experiments/polytope-datasets/plans/README.md` |
 
-The older `licca-post-feature-rebuild.md` handoff is preserved from `main` as a
+The older `legacy/licca-post-feature-rebuild.md` handoff is preserved as a
 historical plan. Its branch, worktree, archive names, and direct submission
 sequence are not current instructions. Do not run it without satisfying a
 reactivation gate above and preparing a new job-specific handoff.
