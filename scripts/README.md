@@ -8,7 +8,6 @@ Small repo helper commands.
 | --- | --- |
 | `build-release.py` | closure-only builder for the reviewed tracked tree, checked thesis PDF, and verified Zenodo ZIP |
 | `artifacts.py` | publish and materialize immutable shared R2 artifact snapshots |
-| `check_no_git_lfs.py` | reject active Git LFS attributes or pointer files in the tracked tree |
 | `bootstrap-cloud.sh` | install and verify the normal Codex Cloud development environment |
 | `maintain-cloud.sh` | refresh repository-dependent caches when a cloud environment resumes |
 | `repo-status-summary.sh` | read-only applicability summary for dated build/test evidence |
@@ -64,19 +63,6 @@ directory snapshots, verifies remote bytes, materializes content-addressed
 caches in the environment's standard XDG cache, and links the registered files
 at their existing ignored paths. See `docs/artifacts.md` for configuration,
 cache overrides, and the release workflow.
-
-## `check_no_git_lfs.py`
-
-Git LFS is retired in favor of the registered R2 artifact workflow. Run this
-check after changing artifact storage or tracked data:
-
-```bash
-scripts/check_no_git_lfs.py
-```
-
-The final release builder runs it automatically. Historical prose and tests
-may still name legacy Git LFS pointers; the check rejects only active
-attributes and files whose contents are actual pointer records.
 
 ## `bootstrap-cloud.sh`
 

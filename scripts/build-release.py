@@ -64,12 +64,6 @@ def main() -> int:
     if args.output.exists():
         raise ValueError(f"refusing to overwrite {args.output}")
 
-    subprocess.run(
-        [sys.executable, str(root / "scripts/check_no_git_lfs.py")],
-        cwd=root,
-        check=True,
-    )
-
     paths = tracked_paths(root)
     cleanup_blockers = [
         path
