@@ -5,7 +5,7 @@ Status: maintenance companion for the integrated candidate in
 whole-thesis, Jörn, and Kai review.
 
 The abstract is a claim-propagation surface, not a second inventory of thesis
-topics. Start from `thesis/central-claim-control.md`, then follow each named
+topics. Start from `thesis/legacy/non-current-planning-companions/central-claim-control.md`, then follow each named
 result to its active theorem chapter, formal or empirical owner, and retained
 evidence packet. Those owners and accepted Jörn/Kai decisions overrule the
 central map; `docs/project-facts.md` supplies only its explicitly recorded

@@ -88,5 +88,5 @@ candidate coverage, fallback semantics, arithmetic environment, or retained
 evidence packet changes. A dependency, compiler, target, matrix-evaluation, or
 underflow-contract change also reopens the floating-point certificate checks
 named in the active section and formal precision note. Reassess propagated
-summary wording through `thesis/central-claim-control.md`; do not add an
+summary wording through `thesis/legacy/non-current-planning-companions/central-claim-control.md`; do not add an
 independent abstract or conclusion inventory here.

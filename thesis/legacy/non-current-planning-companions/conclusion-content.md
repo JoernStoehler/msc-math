@@ -5,7 +5,7 @@ Status: maintenance companion for the integrated candidate in
 whole-thesis, Jörn, and Kai review.
 
 The conclusion is a claim-propagation surface, not a second topic inventory.
-Use the conclusion rows in `thesis/central-claim-control.md`, then follow each
+Use the conclusion rows in `thesis/legacy/non-current-planning-companions/central-claim-control.md`, then follow each
 claim to its active result chapter and mathematical or empirical owner. Those
 owners and accepted Jörn/Kai decisions overrule the central map.
 
