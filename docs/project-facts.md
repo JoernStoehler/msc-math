@@ -22,7 +22,8 @@ maintenance low. The numbers are stable and can be out of order.
 ## Thesis Submission
 
 1. Historical deadline: **2026-08-30 at 18:00 Europe/Berlin**.
-   The host estate inventory (`/workspaces/ESTATE.md`, reviewed 2026-09-05)
+   The host estate inventory (reviewed 2026-09-05; now canonically at
+   `/home/joern/.dotfiles/memories/host-estate.md`, per the DevOps handoff)
    records this deadline as exceeded and retracted. No replacement deadline or
    submission status was established in the current migration discussion.
    Jörn originally reported this deadline from current email on

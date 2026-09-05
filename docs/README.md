@@ -8,7 +8,7 @@ implementation details, and thesis prose remain with their topic.
 | `project-facts.md` | Jörn-confirmed project facts and accepted external constraints | current unless newer Jörn/Kai/source truth contradicts it |
 | `reproducibility.md` | thesis-facing code/data/archive route | policy and entry point; exact commands and artifacts remain producer-local |
 | `artifacts.md` | shared R2 materialization and publication contract | current artifact workflow and per-environment XDG cache contract |
-| `development-environments.md` | host, Docker Sandbox, and Codex Cloud execution model; clients and shared toolchain contracts | dated verification and remaining gaps; host `ESTATE.md` owns sandbox operations |
+| `development-environments.md` | host, Docker Sandbox, and Codex Cloud execution model; clients and shared toolchain contracts | dated verification and remaining gaps; host `~/.dotfiles/memories/host-estate.md` owns sandbox operations |
 
 ## Historical agent guidance
 

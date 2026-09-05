@@ -3,7 +3,8 @@
 Start here for host or Docker Sandbox setup. Run project commands from the
 repository root. The current sandbox is reached with `ssh codex-msc-math.sbx`;
 its project mount is `/workspaces/msc-math`. Host-side sandbox lifecycle and
-credentials belong to `/workspaces/ESTATE.md`.
+credentials belong to the host's `~/.dotfiles/memories/host-estate.md`
+(`/home/joern/.dotfiles/memories/host-estate.md`), not an in-sandbox path.
 
 ## Current state
 

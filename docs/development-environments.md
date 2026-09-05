@@ -57,7 +57,8 @@ another environment. It also owns Docker Sandbox creation, authentication,
 policy, lifecycle, preservation, and recovery.
 
 The cross-project host runbook is the Docker sandbox operations section of
-`/workspaces/ESTATE.md`, outside this repository. Read it before changing a sandbox.
+`/home/joern/.dotfiles/memories/host-estate.md`, outside this repository and
+on the host. Read it before changing a sandbox.
 Host-local sandbox state is not tracked project configuration.
 
 ## Docker Sandbox
