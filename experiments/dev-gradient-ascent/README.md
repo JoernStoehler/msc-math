@@ -30,8 +30,8 @@ Read according to the task:
 - [`local-geometry-probe/`](local-geometry-probe/README.md) is the entry point
   for finite probes, ascent traces, endpoint scans, and their reporting tools.
 - [`METHOD-CANDIDATE.md`](METHOD-CANDIDATE.md) records the named development
-  candidate. [`PROMOTION-READINESS.md`](PROMOTION-READINESS.md) records its
-  evidence gaps and the decision that would be needed before promotion.
+  candidate, its finite endpoint condition and limitations, and recovery notes
+  for the earlier numerical claims and removed promotion packet.
 - [`optimizer-runs/`](optimizer-runs/README.md) is the clean traced runner for
   matched local-optimizer development and owns the retained frozen comparison
   datasets.

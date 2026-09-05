@@ -174,5 +174,4 @@ all nearby directions or branches, and it is weaker than local maximality.
 Here it is not even evaluable, because every run exhausted cap 8 while finite
 above-threshold moves remained. See
 [`../../dev-gradient-ascent/METHOD-CANDIDATE.md`](../../dev-gradient-ascent/METHOD-CANDIDATE.md)
-and [`../../dev-gradient-ascent/PROMOTION-READINESS.md`](../../dev-gradient-ascent/PROMOTION-READINESS.md)
 for the broader candidate limits.

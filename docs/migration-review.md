@@ -117,6 +117,11 @@ it was not a line-by-line audit of every nested research packet.
 No unresolved assignment conflict was found in the reviewed routes after these
 repairs. Jörn subsequently approved removing the old gradient charter; it was
 removed and its live links repaired. The package README records Git recovery.
-The algorithm description and historical evidence limitations remain. Clearly
+The subsequent approved cleanup also removed the promotion packet and its live
+links. The algorithm description retains the finite endpoint definition and
+precise historical recovery pointers; unsupported numerical success/cost claims
+were removed. Source and inputs in Git were distinguished from the still
+unrecovered complete execution/output chain. No historical code was rerun.
+Clearly
 frozen experiments, algorithm/source descriptions and conditional final-release
 checklists were left alone; they are not assignments merely by existing.

@@ -35,8 +35,10 @@ July closure, promotion and next-session documents do not decide them.
 
 ## Completed or owned elsewhere
 
-- Gradient charter removed with Jörn's approval; algorithm description and
-  historical evidence limitations retained. The
+- Gradient charter and promotion packet removed with Jörn's approval;
+  [algorithm description](../experiments/dev-gradient-ascent/METHOD-CANDIDATE.md)
+  retains the finite endpoint definition and recovery/support limits, not
+  unsupported numerical success claims. The
   [package README](../experiments/dev-gradient-ascent/README.md#directory-map)
   owns the Git recovery reference. The preservation question is resolved.
 - Navigation/obsolete-guidance cleanup and scratch preservation/removal:

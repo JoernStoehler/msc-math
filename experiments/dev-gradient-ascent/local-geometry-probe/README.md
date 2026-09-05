@@ -12,10 +12,9 @@ improving after exact recomputation, and what endpoint condition does the
 implemented finite scan support?
 
 The probe serves the development method described below, not an assigned run.
-[`../METHOD-CANDIDATE.md`](../METHOD-CANDIDATE.md) records the current
-candidate algorithm, and
-[`../PROMOTION-READINESS.md`](../PROMOTION-READINESS.md) records what must be
-missing from that historical promotion proposal; it does not assign regeneration.
+[`../METHOD-CANDIDATE.md`](../METHOD-CANDIDATE.md) records the candidate
+algorithm, finite endpoint condition, limitations, and recovery notes for the
+earlier numerical claims.
 
 ## Producer
 
@@ -77,6 +76,9 @@ Audit modes:
 - `--write-step-ranking-audit` exhaustively recomputes every generated
   direction/step pair at each traced state. It writes
   `step-ranking-audit.jsonl` and can be expensive.
+  Rows record the branch/orbit attaining the candidate-window lower envelope
+  to help investigate prediction disagreements; witness checks are described
+  in [`../optimizer-score-comparison/`](../optimizer-score-comparison/README.md).
 - `--audit-iterations 0,4,8` audits named trace bases instead of producing the
   normal probe and endpoint files. It also writes `states.jsonl`, including
   intervening lineage states, and `audit-state-status.jsonl`, including
@@ -152,5 +154,6 @@ preserving them.
 
 `run-provenance.json` records CLI parameters, input and source identities, and
 the observed paths. These identities document a run; they are not staleness
-gates. Regenerate and inspect retained outputs before quoting fixture counts,
-trace behavior, endpoint status, or compute cost.
+gates. Inspect recovered or regenerated outputs with their source, input, and
+command provenance before quoting fixture counts, trace behavior, endpoint
+status, or compute cost.
