@@ -1,5 +1,10 @@
 # Random-Polytope Sys-Datascience
 
+Current scope status (Jörn, 2026-09-05): data science is moderately incomplete.
+Which gaps to finish and which to report as unfinished remains unresolved;
+repository cleanup precedes that decision. Closed individual packets or method
+tables below do not imply that this overall scope question is settled.
+
 This folder supports the thesis data-science/search slice, currently restricted
 to random polytopes and random Lagrangian-product polytopes.
 

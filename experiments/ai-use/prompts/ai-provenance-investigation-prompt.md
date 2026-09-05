@@ -26,8 +26,9 @@ Build a log-backed summary of what AI was used for in this project, what Jörn
 provided, and where provenance is uncertain.
 
 Suggested pipeline:
-1. Read /workspaces/msc-math/.agents/skills/codex-session-log-parsing/SKILL.md
-   and follow it for Codex logs.
+1. Read `/workspaces/msc-math/experiments/ai-use/README.md` for log locations,
+   staging, privacy, and script contracts. Use the available session-log
+   parsing skill when inspecting Codex logs.
 2. Inspect `$CODEX_HOME/session_index.jsonl` and rollout JSONL logs below
    `$CODEX_HOME/sessions`, `$CODEX_HOME/archived_sessions`, and any declared
    imported-session root to identify sessions relevant to

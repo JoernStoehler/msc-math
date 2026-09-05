@@ -1,5 +1,5 @@
 ---
-source_pdf: ../pdf/hinweis-bachelor-masterarbeit-mntf.pdf
+source_pdf: hinweis-bachelor-masterarbeit-mntf.pdf
 source_url: https://assets.uni-augsburg.de/media/filer_public/f0/b9/f0b923c7-1698-4136-af89-4810469d26e8/hinweis_bachelor-_masterarbeit-_mntf.pdf
 retrieved: 2026-04-24
 purpose: Hinweise zur Anmeldung und Abgabe der Bachelor-/Masterarbeit an der MNTF.

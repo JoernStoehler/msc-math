@@ -124,7 +124,6 @@ def main() -> int:
                 )
             )
 
-    subprocess.run(["latexmk", "-g"], cwd=root / "thesis", check=True)
     subprocess.run(["./check-build.sh"], cwd=root / "thesis", check=True)
     pdf = (root / "thesis/build/main.pdf").read_bytes()
     if not pdf.startswith(b"%PDF-"):

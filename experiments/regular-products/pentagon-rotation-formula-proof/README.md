@@ -43,8 +43,8 @@ stdout file before using it as evidence.
 1. To check the proof result, read this README and
    `executable_proof.full.stdout.txt`.
 2. To inspect the proof code, read `executable_proof.sage.py`.
-3. To write thesis prose, use
-   `thesis/legacy/non-current-planning-companions/rotated-regular-polygons-content.md`.
+3. For current thesis prose, start at
+   `thesis/09-rotated-regular-polygons.tex` and follow its included TeX files.
 4. Do not open empirical JSONL/PNG/HTML artifacts for proof verification.
 
 ## Proof Surface Routing
@@ -55,7 +55,7 @@ Use these files for different questions:
 | --- | --- |
 | What is the executable proof? | `executable_proof.sage.py` |
 | What did the full proof run print? | `executable_proof.full.stdout.txt` |
-| How should the thesis explain the proof architecture? | `thesis/legacy/non-current-planning-companions/rotated-regular-polygons-content.md` |
+| Where does the thesis explain the proof architecture? | `thesis/09-rotated-regular-polygons-pentagon-profile-theorem.tex`, `thesis/09-rotated-regular-polygons-exact-certificate.tex` |
 | Where is older formal source material? | `formal/legacy/pentagon-rotation-capacity.tex`, treated as stale source material |
 | Where are empirical figures and viewer artifacts? | `../rotated-regular-products/` for the profile sweep; `../pentagon-rotation-empirics/` for orbit and branch diagnostics |
 

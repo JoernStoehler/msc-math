@@ -1,5 +1,5 @@
 ---
-source_pdf: ../pdf/erklaerung-einsichtnahme-dritter.pdf
+source_pdf: erklaerung-einsichtnahme-dritter.pdf
 source_url: https://assets.uni-augsburg.de/media/filer_public/43/24/4324dafc-253b-4741-9d62-10398bbc4599/erklarung_zur_einsichtnahme_dritter-prufungsamt.pdf
 retrieved: 2026-04-24
 purpose: Erklaerung zur Einsichtnahme Dritter in die archivierte Pruefungsarbeit.

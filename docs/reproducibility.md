@@ -8,7 +8,6 @@ repository does not maintain a second script that reruns every executable.
 
 ```bash
 cd thesis
-latexmk -g
 ./check-build.sh
 ```
 

@@ -1,5 +1,5 @@
 ---
-source_pdf: ../pdf/erklaerung-abgabe-abschlussarbeit-mntf.pdf
+source_pdf: erklaerung-abgabe-abschlussarbeit-mntf.pdf
 source_url: https://assets.uni-augsburg.de/media/filer_public/1f/5d/1f5d67ea-6121-488d-8f0e-a1bdcef414a8/1erklarung_abgabe_abschlussarbeit_mntf_mit_freiwilliger_cd-1.pdf
 retrieved: 2026-04-24
 purpose: Erklaerung zur Abgabe der Abschlussarbeit an der MNTF.

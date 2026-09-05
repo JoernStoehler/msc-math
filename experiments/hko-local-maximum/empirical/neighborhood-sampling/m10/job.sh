@@ -6,14 +6,14 @@
 #SBATCH --mem=4G
 #SBATCH --output=logs/%x-%j.out
 
-# Resource justification (per .agents/skills/slurm/SKILL.md):
+# Resource justification for this retained LICCA job:
 # | flag          | value    | why                                                       |
 # |---------------|----------|-----------------------------------------------------------|
 # | partition     | epyc     | long-form sweep; single task, no queue pressure          |
 # | time          | 00:30:00 | 10k * 3 buckets * ~31 ms mean (pentagon-perturb.jsonl     |
 # |               |          | 2026-04-12, n=101) ~= 930 s; 2x cushion + build startup  |
 # | cpus-per-task | 1        | Single-threaded; hk2017 is inherently sequential per     |
-# |               |          | polytope (rust.md forbids rayon inside algorithms)       |
+# |               |          | polytope in the implementation used for this run        |
 # | mem           | 4G       | Existing runs <50 MB RSS                                 |
 # |               |          |                                                          |
 # | (no --array)  |          | 3 eps buckets run sequentially in one task; total wall   |

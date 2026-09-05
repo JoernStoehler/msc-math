@@ -15,7 +15,7 @@ mean that Jörn or Kai accepted the statement or that the active thesis uses it.
 | Flow graph | `flow-graph-real-algorithm.tex`, `flow-graph-capacity.tex`, `flow-graph-ch2021-comparison.tex`, `flow-graph-proof-risk.tex` |
 | First-order behavior | `capacity-derivatives.tex`, `capacity-smoothness-classification.tex`, `capacity-boundary-subdifferential.tex`, `active-orbit-facet-coverage.tex`, `sys-first-order-local-behavior.md` |
 | HKO local maximality | `hko-symmetry-gradient-structure.tex`, `hko-feasible-section-upper-branches.tex`, `hko-local-maximality-conditions.tex` |
-| Lagrangian products | `lagrangian-product-rotation-symmetry.tex`, `product-two-bounce-class.tex`, `product-triangle-bounce-classification.tex`, `pentagon-rotation-capacity.tex` |
+| Lagrangian products | `lagrangian-product-rotation-symmetry.tex`, `product-two-bounce-class.tex`, `product-triangle-bounce-classification.tex`; current pentagon certificate: `experiments/regular-products/pentagon-rotation-formula-proof/README.md` (repo-root relative) |
 | Numerical and representation audits | `f64-prefilter-bound.tex`, `f64-orientation-sign-filters.tex`, `f64-near-singular-vertices.tex`, `near-redundant-facet-removal-bounds.tex`, `rational-integer-scaling.tex`, `admissibility-precision-audit.tex` |
 | Search and canonization | `random-polytope-boundedness.tex`, `search-pruning-correctness.tex`, `generic-coordinate-canonization.tex` |
 

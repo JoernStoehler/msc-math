@@ -88,5 +88,7 @@ metric geometry.
 Manual exploration of these projections did not yield a reliable geometric
 hypothesis, candidate rule, or proof input. The selected figures serve only to
 help readers imagine the objects and the piecewise-linear Reeb dynamics.
-Thesis-facing wording and copy provenance live in
-`thesis/10-visualization-3d.tex` and `thesis/legacy/non-current-planning-companions/visualization-3d-content.md`.
+Current thesis wording lives in `thesis/10-visualization-3d.tex`.
+`thesis/legacy/non-current-planning-companions/visualization-3d-content.md`
+retains historical copy provenance; compare it against current files before
+relying on it. It is not current thesis state or drafting guidance.

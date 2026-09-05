@@ -1,32 +1,42 @@
 #!/usr/bin/env bash
-# check-build.sh — post-compilation check for layout and reference warnings
+# check-build.sh — force a fresh thesis build, then check its PDF and log
 #
-# Usage: cd thesis/ && latexmk && ./check-build.sh
-# Exit code: 0 if clean, 1 if significant warnings found
+# Usage: cd thesis/ && ./check-build.sh
+# Exit code: 0 if compilation succeeds and the selected checks are clean
 #
 # Checks:
 #   - Overfull hboxes > THRESHOLD pt (default 1pt, matching \hfuzz in main.tex)
 #   - Undefined references
 
-set -uo pipefail
+set -euo pipefail
+
+cd "$(dirname "$0")"
+latexmk -g
 
 LOG="build/main.log"
+PDF="build/main.pdf"
 THRESHOLD="${OVERFULL_THRESHOLD:-1}"
 
-if [[ ! -f "$LOG" ]]; then
-    echo "ERROR: $LOG not found. Run latexmk first."
+if [[ ! -s "$LOG" ]]; then
+    echo "ERROR: fresh build did not produce a nonempty $LOG" >&2
+    exit 1
+fi
+
+if [[ ! -s "$PDF" ]] || [[ "$(head -c 5 "$PDF")" != "%PDF-" ]]; then
+    echo "ERROR: fresh build did not produce a valid-looking $PDF" >&2
     exit 1
 fi
 
 TMPFILE=$(mktemp)
 trap 'rm -f "$TMPFILE"' EXIT
 
-# Collect overfull hboxes exceeding threshold
-grep "Overfull.*hbox.*(.*pt too wide)" "$LOG" \
-    | sort -u \
-    | awk -v threshold="$THRESHOLD" \
-        'match($0, /\([0-9]+\.[0-9]+pt/) { pt = substr($0, RSTART+1, RLENGTH-3)+0; if (pt > threshold+0) print }' \
-    > "$TMPFILE"
+# Collect overfull hboxes exceeding threshold. Starting with awk keeps a clean
+# log (no matching lines) from tripping `set -e`.
+awk -v threshold="$THRESHOLD" \
+    '/Overfull.*hbox.*\(.*pt too wide\)/ && match($0, /\([0-9]+\.[0-9]+pt/) {
+        pt = substr($0, RSTART+1, RLENGTH-3)+0
+        if (pt > threshold+0) print
+    }' "$LOG" | sort -u > "$TMPFILE"
 
 EXIT=0
 
@@ -46,7 +56,7 @@ if [[ "$undef_count" -gt 0 ]]; then
 fi
 
 if [[ "$EXIT" -eq 0 ]]; then
-    echo "Build clean."
+    echo "Fresh build passed the selected PDF, overfull-box, and reference checks."
 fi
 
 exit $EXIT

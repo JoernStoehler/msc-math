@@ -14,8 +14,9 @@ pentagon figures are supporting context, not proof input.
 
 This package is separate from `experiments/sys-landscape/` because it has a
 different thesis role. `experiments/regular-products/` owns the structured
-regular-product side result; `experiments/sys-landscape/` owns hostile-search
-and data-science evidence.
+regular-product side result; `experiments/sys-datascience/` owns current
+random/product data-science consumer work, and `experiments/sys-landscape/`
+contains retained search implementations and historical context.
 
 ## Start Here
 
@@ -23,17 +24,17 @@ Read only the row that matches your task.
 
 | Task | Minimum read path | Stop before opening |
 | --- | --- | --- |
-| Write the thesis section | `thesis/legacy/non-current-planning-companions/rotated-regular-polygons-content.md`, then `thesis/09-rotated-regular-polygons.tex` | Sage source, generated JSONL/PNG/HTML, stale formal draft |
+| Read or update the thesis section | `thesis/09-rotated-regular-polygons.tex`, then its included TeX files | Sage source, generated JSONL/PNG/HTML, stale formal draft |
 | Check the exact proof result | `pentagon-rotation-formula-proof/README.md`, then `pentagon-rotation-formula-proof/executable_proof.full.stdout.txt` | empirical folders |
 | Inspect the proof code | `pentagon-rotation-formula-proof/README.md`, then `pentagon-rotation-formula-proof/executable_proof.sage.py` | generated artifacts |
-| Choose figures | `pentagon-rotation-empirics/README.md`, then the ranked figure list in `thesis/legacy/non-current-planning-companions/rotated-regular-polygons-content.md` | exact proof source |
+| Choose figures | `thesis/09-rotated-regular-polygons-empirical-curves.tex`, then `rotated-regular-products/README.md` or `pentagon-rotation-empirics/README.md` | exact proof source |
 | Understand broad regular-product context | `rotated-regular-products/README.md` | pentagon proof internals |
 | Recover old calculation details | `formal/legacy/pentagon-rotation-capacity.tex` | unless a current guide points to a specific calculation |
 
 Default order for a new agent:
 
 1. Read this README.
-2. If writing, read `thesis/legacy/non-current-planning-companions/rotated-regular-polygons-content.md`.
+2. For thesis wording, read `thesis/09-rotated-regular-polygons.tex` and its included TeX files.
 3. If verifying the proof, read `pentagon-rotation-formula-proof/README.md`.
 4. Stop until a concrete question requires a narrower file.
 
@@ -46,14 +47,15 @@ These files are useful, but they usually cost more context than they save:
 3. `formal/legacy/pentagon-rotation-capacity.tex`;
 4. broad sweep data files in `rotated-regular-products/`.
 
-Open them only when a README or thesis companion points to a specific detail.
+Open them when a current README, active thesis reference, or concrete question
+points to a specific detail.
 
 ## Who Says What
 
 | File or folder | Role | Current value | Maintenance risk |
 | --- | --- | --- | --- |
 | `thesis/09-rotated-regular-polygons.tex` | Active thesis section | Contains the current theorem/proof draft for the pentagon formula and selected empirical figures | Needs final Jörn/Kai mathematical and presentation review |
-| `thesis/legacy/non-current-planning-companions/rotated-regular-polygons-content.md` | Thesis writing companion | Best current human/agent guide to theorem, proof route, figures, and wording risks | Not source truth; delete or shrink after prose stabilizes |
+| `thesis/legacy/non-current-planning-companions/rotated-regular-polygons-content.md` | Historical writing companion | Fallible recovery material for earlier choices and calculations | Not current state or drafting instructions; compare recovered details against active sources |
 | `pentagon-rotation-formula-proof/executable_proof.sage.py` | Exact proof source | Source truth for the open half-domain executable certificate | If edited, rerun the full proof and refresh stdout |
 | `pentagon-rotation-formula-proof/executable_proof.full.stdout.txt` | Full proof run output | Source truth for exact run output, status counts, and runtime | Do not hand-edit |
 | `pentagon-rotation-formula-proof/README.md` | Proof packet runbook | Best entry point for proof reproduction | Keep short and routing-focused |
@@ -138,17 +140,16 @@ Use this split while writing:
 
 ## Knowledge-Base Notes
 
-1. **Best current entry point:** this README for inventory, then
-   `thesis/legacy/non-current-planning-companions/rotated-regular-polygons-content.md` for writing.
+1. **Current entry point:** this README for inventory, then
+   `thesis/09-rotated-regular-polygons.tex` and its included files for thesis wording.
 2. **Most stale current file:** `formal/legacy/pentagon-rotation-capacity.tex`.
    Its header marks it stale, but the body still contains historical labels,
    old `experiments/sys-landscape/...` paths, and deleted
-   `cas_witnesses.py` references. It is retained only because the thesis
-   companion still points to specific calculations in it.
+   `cas_witnesses.py` references. Use it only to recover specific historical
+   calculations, checking them against current sources.
 3. **Avoid hidden source truth:** if a claim is about code behavior, check the
    producer script or exact proof script. If a claim is about final thesis
-   wording, check `thesis/09-rotated-regular-polygons.tex`; use
-   `thesis/legacy/non-current-planning-companions/rotated-regular-polygons-content.md` for drafting guidance.
+   wording, check `thesis/09-rotated-regular-polygons.tex` and its included files.
 4. **Generated artifacts:** do not patch-edit JSONL, HTML, or PNG outputs.
    Regenerate them with the commands below when source behavior changes.
 

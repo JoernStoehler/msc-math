@@ -8,7 +8,7 @@ implementation details, and thesis prose remain with their topic.
 | `project-facts.md` | Jörn-confirmed project facts and accepted external constraints | current unless newer Jörn/Kai/source truth contradicts it |
 | `reproducibility.md` | thesis-facing code/data/archive route | policy and entry point; exact commands and artifacts remain producer-local |
 | `artifacts.md` | shared R2 materialization and publication contract | current artifact workflow and per-environment XDG cache contract |
-| `development-environments.md` | host, Docker Sandbox, and Codex Cloud execution model; clients and shared toolchain contracts | current operational model; sibling host runbooks own sandbox and Paseo administration |
+| `development-environments.md` | host, Docker Sandbox, and Codex Cloud execution model; clients and shared toolchain contracts | dated verification and remaining gaps; host `ESTATE.md` owns sandbox operations |
 
 ## Historical agent guidance
 
@@ -25,6 +25,12 @@ git show 892fc9ab:.agents/legacy-skills/README.md
 
 Use `git show <commit>:<path>` to read an individual historical file. These
 files are fallible recovery material, not current instructions.
+
+The former `.worktrees/migration-scratch` proposals are preserved separately on
+branch `archive/migration-scratch-2026-09-05`, commit `c14e33c8`. Useful repairs
+were transferred individually; the archive's AGENTS.md and model policies were
+not adopted. Its old PDF/log and remaining generated files are preserved at
+`/home/joern/.local/share/msc-math-recovery/migration-scratch-2026-09-05.qeW9jF/`.
 
 Add a project-wide file only when the project itself owns the fact or policy.
 Do not choose a home merely because it is the narrowest directory containing

@@ -21,12 +21,15 @@ maintenance low. The numbers are stable and can be out of order.
 
 ## Thesis Submission
 
-1. The thesis PDF must be handed in by **2026-08-30 at 18:00
-   Europe/Berlin**. Jörn reported this deadline from current email on
+1. Historical deadline: **2026-08-30 at 18:00 Europe/Berlin**.
+   The host estate inventory (`/workspaces/ESTATE.md`, reviewed 2026-09-05)
+   records this deadline as exceeded and retracted. No replacement deadline or
+   submission status was established in the current migration discussion.
+   Jörn originally reported this deadline from current email on
    2026-08-30; the information was not available the previous day. The deadline
    applies to the PDF, not to later GitHub, Zenodo, or comparable repository
    publication. It supersedes the stale June 2026 dates and the earlier record
-   that no replacement deadline was known. **This deadline has now passed.**
+   that no replacement deadline was known.
    This fact sheet does not record whether submission occurred, so do not treat
    submission as an open task or infer that it was missed without a current
    status from Jörn or the official MNTF process.
@@ -83,6 +86,13 @@ maintenance low. The numbers are stable and can be out of order.
      version.
 
 ## Thesis Scope And Results
+
+Current clarification from Jörn on 2026-09-05 during migration: HKO local
+maximality and the rotated-pentagon result are established theorems; flow graph
+also has proofs. Data science is moderately incomplete, and which remaining
+work to finish versus report as unfinished is unresolved. Repository cleanup
+precedes that scope decision. These updates supersede older completion
+summaries below; they do not certify every manuscript formulation or artifact.
 
 8. The thesis has to cover the following content areas. Treat this as a scope
    fact; exact theorem and prose wording still comes from the thesis and source

@@ -30,11 +30,11 @@ specified.
 
 ```bash
 cd thesis
-latexmk
 ./check-build.sh
 ```
 
-The build checks compilation and selected structural conditions. It does not
+For a faster unchecked edit-build, run `latexmk`. `./check-build.sh` forces a
+fresh build and checks selected structural conditions. It does not
 establish proof correctness, source adequacy, or Jörn/Kai acceptance.
 
 ## Legacy

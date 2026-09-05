@@ -1,5 +1,5 @@
 ---
-source_pdf: ../pdf/anmeldung-bachelor-masterarbeit-mntf.pdf
+source_pdf: anmeldung-bachelor-masterarbeit-mntf.pdf
 source_url: https://assets.uni-augsburg.de/media/filer_public/bc/7f/bc7fa7ba-6648-4f37-9530-206a4bfb7904/protokoll_mntf_2026.pdf
 retrieved: 2026-04-24
 purpose: Anmeldeformular fuer Bachelor-/Masterarbeiten der MNTF.

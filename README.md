@@ -18,6 +18,7 @@ The repository produces:
 
 Project-wide information:
 
+- `INSTALL.md`: project toolchain setup, including Sage commands and sources.
 - `docs/project-facts.md`: Jörn-confirmed facts and external decisions.
 - `docs/reproducibility.md`: code, data, and archive route.
 - `docs/artifacts.md`: materializing and publishing shared R2 snapshots.
