@@ -29,7 +29,11 @@ batch.
 
 The frozen held-out packet
 `artifacts/heldout-f10-64-finalists-19a8b4dfd-analysis/` compares seven fixed
-policies on 64 matched, previously unused random ten-facet starts. Each run had
+policies on 64 matched random ten-facet starts labelled held out in the
+manifest. The retained provenance does not establish disjointness from every
+development or tuning use, or how the configurations were selected; see the
+[thesis account](../../../thesis/08-black-box-datascience-finite-budget-optimization.tex).
+Each run had
 a 1,000 ms measured serial evaluator-plus-optimizer ceiling and a 128-call cap.
 The analyzer validated 448 runs. Four-anchor branch history had the largest
 median best `sys`, `0.984783` (10--90% across starts

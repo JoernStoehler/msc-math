@@ -13,13 +13,14 @@ Checked on 2026-09-05:
   Micro commenting, LaTeX/Biber and authenticated R2 access.
 - Host and sandbox thesis builds passed. The sandbox passed 27 geometry-crate
   tests and downloaded/hash-verified one registered R2 snapshot.
-- **Sage is not installed in the current sandbox.** Its recommended route
-  below has not yet been tested there.
+- Sage 10.9 passed exact arithmetic in a fresh SSH shell, the full HKO
+  verifier and a 50-case pentagon prefix (not the full pentagon certificate).
 
 [Environment details](docs/development-environments.md) records versions,
 configuration locations and diagnostic findings. Global skill/docs/memory
-distribution is owned by DevOps and paused pending its design discussion with
-Jörn; do not independently install another global system from this project.
+distribution is owned by DevOps. Its agreed sandbox installation is reported
+complete; see the environment details for locations and update semantics. Do
+not independently install another global system from this project.
 
 ## Ordinary language tools
 
@@ -62,52 +63,103 @@ the selected layout/reference checks are also required.
 
 ## SageMath
 
-**Recommended:** install Sage in a separate Miniforge/conda-forge environment,
-following the [official Sage instructions](https://doc.sagemath.org/html/en/installation/conda.html).
-This is upstream-supported; the project also has retained successful
-Sage computations (the pentagon certificate records Sage 10.7). Neither fact
-establishes that a fresh solve of the commands below works in today's sandbox.
+**Verified in `codex-msc-math` on 2026-09-05:** Miniforge/conda-forge installed
+Sage 10.9 with its own Python 3.13.15, following the
+[official Sage route](https://doc.sagemath.org/html/en/installation/conda.html).
+Ordinary Python remains 3.12.13. No Conda activation or compiler/Python PATH
+changes are needed.
 
-On Linux x86-64, if Miniforge is not already installed:
+The VM-private disk has only about 2.2 GB free. The tested installation uses
+the ignored shared directory `.local-environments/`, consuming about 9.4 GB
+including Miniforge, Sage, package caches and setup logs. About 154 GB remained
+free on the shared mount after verification. Check current space first.
+
+For a fresh Linux x86-64 installation, allow the package host from the host:
 
 ```bash
-df -h "$HOME"
-sage_setup_dir=$(mktemp -d)
-sage_prefix="$HOME/.local/share/msc-math/miniforge"
+sbx policy allow network --sandbox codex-msc-math conda.anaconda.org:443
+```
+
+Run installation commands inside the sandbox. Use an attached `sbx exec`
+for long commands so the sandbox remains running. The current installation
+already exists; do not rerun the installer over it.
+
+```bash
+df -h / /workspaces/msc-math
+sage_setup_dir=/workspaces/msc-math/.local-environments/sage-setup
+sage_prefix=/workspaces/msc-math/.local-environments/miniforge
+mkdir -p "$sage_setup_dir/tmp"
+export TMPDIR="$sage_setup_dir/tmp"
 curl -fsSL \
   https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh \
   -o "$sage_setup_dir/miniforge.sh"
 bash "$sage_setup_dir/miniforge.sh" -b -p "$sage_prefix"
+"$sage_prefix/bin/mamba" create -y -n sage --channel conda-forge \
+  --strict-channel-priority --ssl-verify /etc/ssl/certs/ca-certificates.crt sage
+"$sage_prefix/envs/sage/bin/sage" --version
 ```
 
-Use a fresh prefix, or set `sage_prefix` to an existing Miniforge installation
-and skip its installer. Then create the environment and check it:
+Miniforge's bundled CA trust initially rejected the sandbox proxy certificate.
+The explicit system CA bundle fixes this with TLS verification enabled. Without
+the network allow rule, the proxy returned HTTP 403, surfaced by mamba as a
+ZSTD decompression error. An SSH-only installation also exited 137 without a
+diagnostic; the attached `sbx exec` installation succeeded in 184 seconds.
+
+The installed Sage 10.9 launcher does not accept the legacy `-python` option
+used by project commands; directly passing the HKO `.py` file also returned
+silently without running its main entry point. Dispatch both forms to the
+environment's Python. Create executable `/home/agent/.local/bin/sage`
+with this content (inspect any existing file before replacing it):
+
+```sh
+#!/bin/sh
+sage_env=/workspaces/msc-math/.local-environments/miniforge/envs/sage
+if [ "${1-}" = -python ]; then
+    shift
+    exec "$sage_env/bin/python" "$@"
+fi
+case "${1-}" in
+    *.py) exec "$sage_env/bin/python" "$@" ;;
+esac
+exec "$sage_env/bin/sage" "$@"
+```
+
+Ensure `~/.local/bin` is on PATH. This wrapper is already installed in the
+current sandbox. In a fresh SSH shell, check:
 
 ```bash
-"$sage_prefix/bin/mamba" create -n sage --channel conda-forge \
-  --strict-channel-priority sage
-"$sage_prefix/envs/sage/bin/sage" --version
-"$sage_prefix/envs/sage/bin/sage" -python -c \
-  'from sage.all import QQ, matrix; assert matrix(QQ, [[1,2],[3,4]]).det() == -2; print("Sage arithmetic OK")'
-mkdir -p "$HOME/.local/bin"
-ln -s "$sage_prefix/envs/sage/bin/sage" "$HOME/.local/bin/sage"
 sage --version
+sage -python -c \
+  'from sage.all import QQ, matrix; assert matrix(QQ, [[1,2],[3,4]]).det() == -2; print("Sage arithmetic OK")'
 ```
 
-The symlink command deliberately refuses to overwrite an existing `sage`.
-Ensure `~/.local/bin` is on PATH. Expose only `sage`, rather than the entire
-Conda environment, so ordinary Python and compiler commands keep their meaning.
+Verification at source commit `33f5fe148ae2de5eb2fd5ba70a2a53c06753d6e8` passed:
+exact rational and number-field arithmetic; the complete HKO verifier in a
+temporary copy of `verify.sage.py` and `witness.json` (4.40 seconds, ranks 25
+and 15); and the README's pentagon `--limit 50` command (16.52 seconds wall
+time, `LIMITED PREFIX PASSED`). The prefix checks installation compatibility;
+it is not a new full pentagon certificate. Canonical packet outputs were not
+overwritten. Python, Rust, Micro, Codex and Herdr still resolved at their
+previous paths and versions.
 
 Record the installed Sage version with each verification run. The arithmetic
 check establishes basic operation; run the relevant certificate to check
-project compatibility. No current Sage version pin has been established for
-this new environment.
+project compatibility. The successful solve was unpinned; future solves can
+select other versions. Local installation and verification logs, the temporary
+HKO packet, and an explicit package export are retained in
+`.local-environments/sage-setup/`.
+
+This is disposable environment data, not research source or a Git backup.
+It survives sandbox removal because it is on the host mount, but contains
+absolute prefixes and sandbox Linux binaries: do not assume it is relocatable
+or usable on the host. The wrapper and network policy are sandbox state and
+must be restored separately after recreation. Reinstall at a new path rather
+than moving the prefix. Deleting this directory removes the local Sage setup,
+caches and logs; it does not remove tracked research results.
 
 **Does not work here:** the sandbox's apt index offered no `sagemath` candidate
 on 2026-09-05. **Not evaluated:** source builds and other distributions; they
-have not been ruled out. The sandbox had about 2.2 GB free on its private disk,
-so check space before this large installation. An environment installation
-has not been attempted there yet.
+have not been ruled out.
 
 ## R2 data
 

@@ -49,13 +49,34 @@ These checks establish the named operations, not thesis readiness.
 ## Remaining work and ownership
 
 [INSTALL.md](../INSTALL.md) documents the Sage setup commands, sources,
-verification and alternative-route constraints. Sage is not installed in the
-current sandbox; no new full certificate run has been performed.
+verification and alternative-route constraints. Sage 10.9 is installed in the
+current sandbox. Fresh-SSH exact arithmetic, the full HKO verifier and a
+50-case pentagon prefix passed; the full pentagon certificate was not rerun.
 
-Global skills, documentation and memory migration belongs to DevOps and is
-paused pending its design discussion with Jörn. This project will not install
-an independent global system.
+Global skills, documentation and memory migration belongs to DevOps. Its
+2026-09-05 handoff reports the agreed sandbox installation complete, with no
+consumer-side action needed. [Environment details](development-environments.md)
+record the installed locations and update semantics. This project will not
+install an independent global system.
 
 After cleanup, recover concrete data-science gaps and recommend which to close
 or report as unfinished. Administrative status and prose quality have not been
 reassessed in this migration.
+
+The first source review distinguishes three issues, not one acceptance gate:
+
+- P2's registered prepared table lacks six active ridge columns. Its README
+  supplies a rebuild route; that route still needs verification. This is a
+  reproduction-path issue, not evidence that the retained result is false.
+- The historical optimizer comparison ranks seven implementations on 64 F10
+  starts under a nominal one-second allocation rule and a heuristic evaluator.
+  Complete tuning/holdout separation is not established by the retained
+  provenance. A clean comparison would test transfer of the ranking; whether
+  that is worth doing is a research-scope question, separate from reproduction.
+- The local-maxima screen retains reconciled rows but not the exact dirty
+  producer state. The thesis already discloses this. A new run would be new
+  evidence, not recovery of the missing source state.
+
+Four stale claims that generated-candidate infrastructure is absent were
+corrected in the [method ledger](../experiments/sys-datascience/methods/trusted-random-product-method-dispositions.md).
+Infrastructure availability does not complete the corresponding comparisons.

@@ -10,7 +10,16 @@ representative-family sampling: every named family inherits the recorded
 status and reopen trigger. Generic textbook families that have no current
 question or interface are not an implied backlog.
 
-Epistemic status: current control surface after removing non-invariant active
+2026-09-05 scope correction: Jörn describes data science as moderately
+incomplete; which gaps to finish versus report remains unresolved. The ledger's
+older closure judgments are not a decision on that scope. Nearby optimizer
+infrastructure now exists, as distinguished below from completed comparisons.
+The [P2 reproduction contract](standard-baseline-p2/README.md) also requires
+rebuilding the prepared table: the registered snapshot lacks six active ridge
+columns. Retained current-schema results do not establish that the default
+downloaded table can reproduce them unchanged.
+
+Historical epistemic status: control surface after removing non-invariant active
 features and abandoned ascent/continuation/local-behavior surfaces from the
 active datascience slice. The retained random/product tables and active method
 artifacts have been regenerated under the invariant schema; method READMEs
@@ -29,8 +38,9 @@ claim, not schema repair.
   claim-relevant interface.
 - `park-low-value`: feasible, but skipped after an explicit low-promise or
   redundancy judgment under the current retained-table claim.
-- `future-work`: applicable only after a named new candidate-generation,
-  producer, probability-model, or thesis-claim interface is fixed.
+- `future-work`: a named method or scientific comparison remains unfinished;
+  the row distinguishes missing infrastructure from missing implementation or
+  evidence. This label does not itself authorize more experiments.
 - `reject`: not useful for this random/product table unless assumptions change.
 - `out-of-scope`: not part of the current random-polytope slice.
 
@@ -72,10 +82,10 @@ claim, not schema repair.
 | broader height intervals, facet ranges, product side ranges, or new distributions | `future-work` | none | These could support stronger producer-axis wording only after a new research decision names the distribution and exact claim. |
 | Latin-hypercube and other space-filling designs | `future-work` | `experiments/polytope-datasets/` | No continuous parameter domain, sampling measure, or claim is fixed. Reopen only through a new producer-axis research decision. |
 | rejection sampling with cheap scalar predicates | `current-reviewed-packet` | `extreme-scalar-rejection-proposer/` | Frozen scalar rules were evaluated before `sys`; one independent cascade validates sub-threshold pool-screening enrichment under its named generator, not threshold crossing or a calibrated hit rate. |
-| local pattern/generalized-pattern/MADS and Nelder--Mead search | `future-work` | none | These require a candidate parameterization and generated-candidate evaluation loop; they are not retrospective retained-table methods. |
-| derivative-free trust-region, local interpolation/quadratic search | `future-work` | none | No continuous local candidate interface or validated cheap objective is fixed. |
-| stochastic global, hybrid local/global, constrained black-box search | `future-work` | none | Requires a named candidate domain, constraints, budget, and selection-before-`sys` review gate. |
-| Bayesian/surrogate-guided, batch, constrained, or high-dimensional optimization | `future-work` | none | No calibrated surrogate or generated-candidate interface exists; multi-fidelity variants also lack a faithful cheap proxy. |
+| local pattern/generalized-pattern/MADS and Nelder--Mead search | `future-work` | [optimizer runner](../../dev-gradient-ascent/optimizer-runs/README.md) | Local coordinates, budgeted generated-candidate evaluation and signed-coordinate direct search exist. The latter is not full MADS; named MADS/Nelder--Mead implementations and scoped comparisons remain unfinished. |
+| derivative-free trust-region, local interpolation/quadratic search | `future-work` | [optimizer runner](../../dev-gradient-ascent/optimizer-runs/README.md) | A continuous local candidate interface exists, but full trust-region methods and their comparisons remain unfinished. Interface availability does not establish a validated cheap objective. |
+| stochastic global, hybrid local/global, constrained black-box search | `future-work` | [optimizer runner](../../dev-gradient-ascent/optimizer-runs/README.md), [historical comparison](../../dev-gradient-ascent/optimizer-comparison/README.md) | Nonlocal source baselines, population CMA-ES, explicit domains and budgets, and a historical finite-budget comparison exist. These do not complete the named constrained/hybrid methods or establish trusted-random/product scientific coverage. |
+| Bayesian/surrogate-guided, batch, constrained, or high-dimensional optimization | `future-work` | [optimizer runner](../../dev-gradient-ascent/optimizer-runs/README.md) | Generated-candidate evaluation, population batches, 25-dimensional F10 local coordinates and named-branch envelope methods exist. Calibrated Bayesian surrogates and faithful multi-fidelity proxies remain absent; nearby infrastructure is not evidence that these method families were evaluated. |
 | deterministic branch-and-bound black-box search | `park-low-value` | none | No bounding function or finite candidate partition is available, so the standard interface is absent. |
 
 ## Supervised Prediction And Rules

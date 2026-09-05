@@ -8,6 +8,8 @@ target/
 __pycache__/
 *.pyc
 .venv/
+# Sandbox-specific Sage environment and installation logs (not portable).
+/.local-environments/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/

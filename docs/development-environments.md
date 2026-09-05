@@ -109,17 +109,31 @@ entry), `/home/agent/.profile` (login setup), `/etc/sandbox-persistent.sh` (Rust
 PATH), `/home/agent/.config/micro/`, and `/home/agent/.codex/config.toml`.
 They are persistent sandbox state, not files supplied by the Git checkout.
 
-Global skills, documentation and memory migration is deferred to the DevOps
-agent, per Jörn on 2026-09-05. Do not independently distribute another global
-system from this project. DevOps subsequently paused consumer migration pending
-its design discussion with Jörn. The sandbox currently has shared Herdr and
-Herdr-messaging skills; broader shared guidance awaits that migration. Project
-facts and operational checks remain owned by this repository.
+Global skills, documentation and memory are owned by DevOps. Its 2026-09-05
+handoff reports the agreed migration installed, with no consumer action needed:
 
-Remaining limits: Sage is not installed on the tested PATH and the current apt
-index offers no `sagemath` candidate. The VM-private disk had about 2.2 GB
-free; check space before installing large packages. The shared project mount
-had about 153 GB free. Host work remains supported while these gaps are resolved.
+- `/home/agent/.agents/skills`: Docker's shared cross-sandbox mount, a clean
+  `agent-skills` checkout at `efcf72a500665734e1c5294856b2c2511d8e7d99`.
+- `/home/agent/.agents/memories`: VM-local clean `agent-memory` clone at
+  `d9a825fa3cf351aedfb56a8234dd0e8b286ffcb9`.
+
+Updates are manual `git pull --ff-only`. Direct edits to the shared skills
+checkout immediately affect other projects; do not use `sbx skills import`
+or create another global copy. Project-owned facts and skills remain in this
+repository. These installation facts are attributed to the DevOps handoff,
+not a separate consumer-side verification.
+
+Sage 10.9 is installed with Miniforge/conda-forge in the ignored shared path
+`/workspaces/msc-math/.local-environments/miniforge/envs/sage`. Its separate
+Python is 3.13.15; ordinary Python remains 3.12.13. The VM-local
+`/home/agent/.local/bin/sage` wrapper supports the project's legacy `-python`
+commands without activating Conda. Fresh SSH exact arithmetic, the full HKO
+verifier in a temporary packet (4.40 seconds), and the pentagon 50-case prefix
+(16.52 seconds) passed on 2026-09-05. The prefix is compatibility evidence,
+not a full pentagon certificate rerun. Canonical outputs were preserved.
+The setup occupies about 9.4 GB on the shared mount, with about 154 GB free;
+VM-private free space remains about 2.2 GB. See [`INSTALL.md`](../INSTALL.md#sagemath)
+for the tested commands, CA/network prerequisites and lifecycle constraints.
 
 The host thesis build passed after regenerating bibliography intermediates
 from another TeX version. When switching TeX environments, stale `build/`
