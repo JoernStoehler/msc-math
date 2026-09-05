@@ -94,6 +94,13 @@ work to finish versus report as unfinished is unresolved. Repository cleanup
 precedes that scope decision. These updates supersede older completion
 summaries below; they do not certify every manuscript formulation or artifact.
 
+Further scope decision from Jörn on 2026-09-05: testing whether branch-aware
+optimization outperforms relevant nonsmooth alternatives is relevant, but not
+interesting enough as a result to delay thesis submission by even an hour.
+Do not treat that additional comparison as thesis work to complete. This is
+a value/scope decision, not a claim that the comparison exists or is irrelevant,
+and does not settle the other data-science gaps.
+
 8. The thesis has to cover the following content areas. Treat this as a scope
    fact; exact theorem and prose wording still comes from the thesis and source
    files.

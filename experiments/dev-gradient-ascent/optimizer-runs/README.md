@@ -4,6 +4,12 @@ Status: clean implementation foundation plus retained archive evidence. The
 smoke proves plumbing only; the separately identified held-out packet below
 supports the bounded optimizer comparison.
 
+Thesis scope, Jörn 2026-09-05: comparing branch-aware optimization with the
+missing nonsmooth alternatives is relevant, but the result is not interesting
+enough to delay submission by even an hour. The missing-method discussion below
+is therefore not a thesis completion task; retain the evidence limits without
+launching that comparison for submission.
+
 This package runs manifest-declared optimizers against one instrumented
 `sys(a)` evaluator. Its purpose is to compare local step rules, trajectories,
 and credible fixed-facet endpoints under the same accounting contract.

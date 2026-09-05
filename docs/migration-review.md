@@ -80,3 +80,9 @@ The first source review distinguishes three issues, not one acceptance gate:
 Four stale claims that generated-candidate infrastructure is absent were
 corrected in the [method ledger](../experiments/sys-datascience/methods/trusted-random-product-method-dispositions.md).
 Infrastructure availability does not complete the corresponding comparisons.
+
+Resolved scope decision, Jörn 2026-09-05: the proposed comparison of branch-aware
+optimization against relevant nonsmooth alternatives is relevant but not
+interesting enough to delay submission by even an hour. Report this gap rather
+than completing that comparison for the thesis. Other data-science scope
+questions remain separate.
