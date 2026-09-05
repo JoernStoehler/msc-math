@@ -1,4 +1,0 @@
-interface:
-  display_name: "Engineer the Harness"
-  short_description: "Design and validate Jörn's durable work harness"
-  default_prompt: "Use $harness-engineering to inspect and improve this work harness."

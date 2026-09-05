@@ -10,6 +10,22 @@ implementation details, and thesis prose remain with their topic.
 | `artifacts.md` | shared R2 materialization and publication contract | current artifact workflow and per-environment XDG cache contract |
 | `development-environments.md` | host, Docker Sandbox, and Codex Cloud execution model; clients and shared toolchain contracts | current operational model; sibling host runbooks own sandbox and Paseo administration |
 
+## Historical agent guidance
+
+Former project skills and steering were removed from the working tree because
+they were already quarantined, had no identified active consumer, and added
+obsolete guidance to searches. Their complete tracked contents are available
+at commit `892fc9ab3b3c242cd961cfa469f6d81cef0d626d` under
+`.agents/legacy-skills/` and `.codex/legacy-steering/`.
+
+```bash
+git ls-tree -r --name-only 892fc9ab -- .agents/legacy-skills .codex/legacy-steering
+git show 892fc9ab:.agents/legacy-skills/README.md
+```
+
+Use `git show <commit>:<path>` to read an individual historical file. These
+files are fallible recovery material, not current instructions.
+
 Add a project-wide file only when the project itself owns the fact or policy.
 Do not choose a home merely because it is the narrowest directory containing
 one classification of the material. Prefer updating or deleting an existing
