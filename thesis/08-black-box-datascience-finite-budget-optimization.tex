@@ -33,8 +33,10 @@ Write \(\widehat{\operatorname{sys}}(a)\) for the JSON field called
 so \(\widehat{\operatorname{sys}}\) is not a certified value of the
 mathematical \(\operatorname{sys}\).  Nevertheless, applying the same
 evaluator to every proposal on matched starts and charging its measured cost
-gives a controlled comparison of the optimizer implementations; uncertainty
-in the absolute objective is shared rather than method-specific.
+gives a comparison of the optimizer implementations on that recorded
+objective.  A common evaluator does not ensure equal error across the
+different points visited by each method, so this comparison alone does not
+establish the ranking for the mathematical \(\operatorname{sys}\).
 
 The methods adapt standard gradient, derivative-free, and population ideas
 \cite{NocedalWright2006} to the lower-envelope structure

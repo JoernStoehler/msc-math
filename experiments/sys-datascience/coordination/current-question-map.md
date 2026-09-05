@@ -1,6 +1,7 @@
 # Current Sys-Datascience Question Map
 
-Status: current source-linked routing view, reconciled 2026-07-23. This is not
+Status: source-linked routing view, reconciled 2026-07-23, with a scope
+correction on 2026-09-05. This is not
 an evidence artifact, metric source, experiment approval, or launch queue.
 
 Use this file to learn which broad questions have bounded answers, remain open,
@@ -13,6 +14,13 @@ For the exhaustive physical method-packet inventory, use
 question map is not evidence that no relevant packet exists.
 
 ## Current overall state
+
+Jörn's 2026-09-05 assessment is that data science is moderately incomplete;
+which gaps to finish versus report remains unresolved. The older closure and
+parking judgments below are context for that discussion, not a settled scope
+decision. The later [optimizer comparison](../../dev-gradient-ascent/optimizer-comparison/README.md)
+also provides finite-budget evidence beyond the twelve-run gradient panel
+listed below; this map is not yet a complete reconciliation of later packets.
 
 The named random and random-product populations, ordinary retained-table
 methods, and frozen generated-candidate selectors have found no new source of
@@ -101,9 +109,9 @@ summary, not an independent source for the experimental facts.
 - Project fact 34.1 records that the data-science work was not finished when
   the fact was written and should continue rather than stop without further
   data. It is not a current requirement for another dataset or a
-  thesis-stakeholder choice among possible data roles. Determine current
-  closure from the later packets, method-table state, and retained thesis
-  claims.
+  thesis-stakeholder choice among possible data roles. Later packets,
+  method-table state, and retained thesis claims inform the discussion but do
+  not override Jörn's current assessment or settle what work is worth finishing.
 
 ## Update rule
 
