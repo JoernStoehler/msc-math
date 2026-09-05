@@ -21,7 +21,26 @@ records the concrete conflicts and review boundary. Documentation only; no
 research runs, builds, installations or proof audits. No successor task is
 automatically activated by completing A.
 
-## Assigned now: reusable project understanding
+## Current scope: navigation, not author-summary expansion
+
+Later discussion with Jörn deferred a detailed author memory/summary layer.
+Its shape should evolve with actual writing and feedback needs, not precede
+them as a project-wide framework. The two pilot entries remain examples, not
+a template or rollout queue. There is no trusted automated review gate; Jörn's
+final reading is distinct from adaptable feedback reviews used during writing.
+
+Navigation is not assumed good because README/link hierarchies exist. Use
+task-directed search and relevant source retrieval; identify concrete obstacles
+before proposing repairs. A bounded search-based check located the supported
+scalar capacity API and distinguished historical optimizer evaluators and the
+exact flow-graph route without finding a concrete navigation obstruction or
+conflicting current-status claim. It reached the crate README and API source,
+optimizer runner/comparison READMEs, and flow-graph README/exact-search source.
+No navigation repair was indicated for this case. This does not establish
+repository-wide navigation quality. The check is complete; no builds,
+experiments or broad audit were run or assigned.
+
+## Earlier exploration and pilot
 
 Jörn assigned exploration and planning for author/reviewer memory after finding
 the proposed contribution-level map insufficiently developed. The labels B.0
@@ -65,11 +84,10 @@ Completed bounded pilot:
   and correctly explained why newer code does not invalidate a frozen result.
   This is one bounded retrieval trial, not a general success guarantee.
 
-No agents or computations remain running for the pilot. The main agent owns
-the next coverage proposal and discussion with Jörn. Broader population of
-chapter memory, global skill redesign, automation and evidence certification
-are not assigned by this pilot. Use demonstrated retrieval needs to select the
-next slice rather than imposing an exhaustive schema or corpus-wide crawl.
+The pilot is complete. Broader population of chapter memory is deferred;
+global skill redesign, automation and evidence certification are not assigned
+by this pilot. Use demonstrated retrieval needs rather than imposing an
+exhaustive schema or corpus-wide crawl.
 
 Data science is moderately incomplete (Jörn). Which remaining gaps to finish
 versus report is unresolved. No individual experiment or repair is assigned
