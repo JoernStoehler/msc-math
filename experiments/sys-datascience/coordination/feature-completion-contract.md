@@ -1,4 +1,9 @@
-# Sys-Datascience Exploration Completion Contract
+# Historical Sys-Datascience Exploration Completion Contract
+
+This records a July exploration assessment, not a current completion gate or
+assignment. Jörn's 2026-09-05 assessment is that data science is moderately
+incomplete. [Current work and ownership](../../../memories/todos.md) distinguishes
+the live migration assignment from research proposals.
 
 Status: exploration/research slice satisfied after the corrected broad-first
 cycle and its reviewed 2026-07-15 portfolio refresh. This contract closes that

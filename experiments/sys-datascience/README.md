@@ -4,6 +4,7 @@ Current scope status (Jörn, 2026-09-05): data science is moderately incomplete.
 Which gaps to finish and which to report as unfinished remains unresolved;
 repository cleanup precedes that decision. Closed individual packets or method
 tables below do not imply that this overall scope question is settled.
+Actual assignments are recorded in [current work and ownership](../../memories/todos.md).
 
 This folder supports the thesis data-science/search slice, currently restricted
 to random polytopes and random Lagrangian-product polytopes.
@@ -140,16 +141,18 @@ Read first:
 - `methods/trusted-random-product-method-dispositions.md`
 - relevant `methods/<method>/README.md`
 
-Current closure status: active packets have been rerun under the invariant
+Retained-table status reported by the packet summaries: active packets were
+rerun under the invariant
 feature contract. Retained tables live under
 `experiments/polytope-invariant-table/`, and compact generated method summaries
 are tracked under `methods/<method>/artifacts/` when a README cites current
 numbers. Keep durable packet conclusions in
 `methods/<method>/README.md`, not only in `/tmp`.
 
-Current coordination status: the corrected exploration/research slice is
-feature-complete under the July 15 refresh of
-`coordination/final-research-account-2026-07-12.md`. Existing evidence supports
+Historical coordination assessment: the July 15 refresh of
+`coordination/final-research-account-2026-07-12.md` called its exploration slice
+feature-complete. This is not the current overall scope decision. That account
+reports
 a controlled negative hostile-search benchmark; bounded same-source and
 alternative-source operational sub-threshold ridge/rho proposers; coarse
 generic ridge transfer with failed harder conditioning; exact triangle and
@@ -163,13 +166,14 @@ boundary. Bespoke adaptive search produced no scientific comparison. Parked
 routes have named reopen conditions rather than forming a queue. Project fact
 34.1 records that this work was still incomplete when the fact was written; it
 does not impose a standing requirement for another dataset. Check the later
-packets and active thesis claim for current closure.
+packets and active thesis claims to inform the unresolved scope discussion;
+they do not establish which further work Jörn wants completed.
 `LICCA.md` classifies retained dormant scripts; none is selected by default.
 
 The July 22 addendum records the later five-case local-maxima screen, exact
 Chaidez--Hutchings fixture, promoted bounded HKO panel, retained
 orientation/equality pilots, exploratory conditional-tail figures,
-first-order theorem review gate, and the current cross-line idea shortlist.
+first-order theorem review gate, and its then-current cross-line idea shortlist.
 Its stop/defer decisions compare expected total project cost and state what
 evidence would reverse them; “deferred” does not itself mean desirable.
 

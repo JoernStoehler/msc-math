@@ -38,8 +38,10 @@ maintenance low. The numbers are stable and can be out of order.
 2. Official submission facts need to be refreshed from current MNTF sources
    before relying on 2026-04-24 downloaded forms or old deadline text.
 
-3. Elizabeth approved the registration form. The pending action is to hand in
-   the registration note to the `Prüfungsamt`.
+3. Elizabeth approved the registration form. At the time this fact was
+   recorded, handing the registration note to the `Prüfungsamt` was pending.
+   Its present completion status has not been established in this migration;
+   this historical note is not a current administrative assignment.
 
 4. The `Einsichtnahme Dritter` choice is a Jörn decision unless a current
    official rule makes it mandatory. Jörn said this decision costs him about

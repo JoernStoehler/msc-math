@@ -1,6 +1,9 @@
 # Dev Gradient Ascent Charter
 
-Status: objective charter for `experiments/dev-gradient-ascent/`.
+Status: retained research charter for `experiments/dev-gradient-ascent/`.
+Its objectives, priorities and proposed experiments are development history,
+not current assignments or thesis completion requirements. For today's scope
+and ownership, see [current work](../../memories/todos.md).
 
 Current scope note: after this charter was first written, the active question
 broadened from only "develop/promote a gradient-ascent method" to "study
@@ -295,17 +298,9 @@ prediction is negative, and accepts only after recomputed `sys` improves above
 the effective threshold
 `max(min_observed_delta, min_observed_relative_delta * abs(base_sys))`.
 
-The current retained panel has two fixtures in each degeneracy regime
-(`large_gap`, `narrow_gap`, `high_degeneracy`). It found no above-threshold
-post-stop endpoint direction-scan row at relative threshold `1e-3`, but it did
-find positive-below-threshold rows. The largest positive row is about `0.756`
-of the effective endpoint threshold. This supports the current finite endpoint
-condition on a small retained panel; it is not a local-maximality certificate.
-
-The current promotion decision packet is
-[PROMOTION-READINESS.md](PROMOTION-READINESS.md). It states the retained
-candidate, endpoint condition, evidence, caveats, unresolved risks, downstream
-integration points, and the decision reserved for Jörn/Kai. Its conclusion is:
-ready to ask for a promotion decision, not ready to mark this charter complete.
-It is not the current scope controller for branch-cartography or the
-local-to-global branch-behavior study.
+The candidate's evidence limitations are owned by
+[PROMOTION-READINESS.md](PROMOTION-READINESS.md). It says that the earlier
+setup-pass outputs are not retained here and that the packet is not ready for
+a promotion decision. This supersedes this charter's former claim of a retained
+supporting panel and readiness to ask for promotion. It does not assign evidence
+regeneration: no promotion work is currently selected.

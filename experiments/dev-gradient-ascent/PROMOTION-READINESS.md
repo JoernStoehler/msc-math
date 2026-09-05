@@ -1,7 +1,10 @@
-# Promotion Readiness Packet
+# Retained Promotion Readiness Packet
 
-Status: decision packet for the current development candidate. This is not an
-approval to promote the method or use it as thesis evidence.
+Status: evidence limitations and historical promotion proposal for the named
+development candidate. This is not an approval to promote the method or use
+it as thesis evidence. The proposed regeneration, replay, panel growth and
+integration below are not current assignments; see
+[current work and ownership](../../memories/todos.md).
 
 Scope note: this packet records the state of one gradient-ascent candidate. It
 is not the current scope controller for branch-cartography or for studying
@@ -60,7 +63,7 @@ broader computation, or a different diagnostic.
 The condition is not a certificate that no smaller step, ungenerated
 direction, omitted branch, or nearby branch-domain effect improves `sys`.
 
-## Counterfactual Next Paths
+## Historical Counterfactual Next Paths
 
 This packet should not force the next decision into only accepting or rejecting
 the finite endpoint condition. Current plausible next paths include:
@@ -141,7 +144,7 @@ finite-step-indexed candidate-window direction generator and to lower-threshold
 replays: session scratch runs are useful for choosing the next retained
 experiment, but they should not be cited from this tracked packet.
 
-The next discriminating retained test is a matched exhaustive replay/ranking
+The proposed discriminating retained test was a matched exhaustive replay/ranking
 audit of generated direction/step pairs at hard trace states, comparing
 near-active and candidate-window rankings against recomputed observed
 improvements. The audit code records the branch/orbit witness attaining the
@@ -149,7 +152,7 @@ candidate-window lower-envelope prediction, which is needed to distinguish
 numerical derivative pathologies, branch-domain/model invalidity, and ordinary
 pessimism from using a wide candidate window.
 
-## Promotion Question
+## Historical Promotion Question
 
 Decision for Jörn/Kai:
 
@@ -160,7 +163,7 @@ remaining positive-below-threshold rows, and the compute cost of growing the
 panel?
 ```
 
-If yes, the next work is promotion/integration:
+The proposal's positive-answer branch was promotion/integration:
 
 - move reusable implementation pieces into `exp-sys-landscape` or durable crate
   code;
@@ -169,7 +172,7 @@ If yes, the next work is promotion/integration:
   condition, caveats, and small ablations/failure-mode evidence;
 - keep this development packet as history, not thesis-facing evidence.
 
-If no, the next work should be one of:
+Its negative-answer alternatives were:
 
 - tighten or replace the endpoint condition;
 - add adaptive continuation for positive-below-threshold endpoint scan rows;

@@ -4,6 +4,9 @@ Updated 2026-09-05. This is a working review surface for Jörn, not agent
 instructions. Add comments with Ctrl+K, then save with Ctrl+S. Durable facts and
 procedures live at the linked owners below.
 
+For the actual current assignment and proposal status, read
+[current work and ownership](../memories/todos.md). This review is not a queue.
+
 ## Aim and scope
 
 Make the project navigable and its expected tools predictable, with enough
@@ -46,7 +49,7 @@ Both host and sandbox thesis builds passed their selected mechanical checks.
 These checks establish the named operations, not thesis readiness.
 [Environment details and limits](development-environments.md) own the evidence.
 
-## Remaining work and ownership
+## Setup completion and known research limitations
 
 [INSTALL.md](../INSTALL.md) documents the Sage setup commands, sources,
 verification and alternative-route constraints. Sage 10.9 is installed in the
@@ -59,9 +62,9 @@ consumer-side action needed. [Environment details](development-environments.md)
 record the installed locations and update semantics. This project will not
 install an independent global system.
 
-After cleanup, recover concrete data-science gaps and recommend which to close
-or report as unfinished. Administrative status and prose quality have not been
-reassessed in this migration.
+Data-science scope remains unresolved beyond the specific decision below.
+The proposed contribution-level map is not yet assigned. Administrative status
+and prose quality have not been reassessed in this migration.
 
 The first source review distinguishes three issues, not one acceptance gate:
 
@@ -89,3 +92,29 @@ optimization against relevant nonsmooth alternatives is relevant but not
 interesting enough to delay submission by even an hour. Report this gap rather
 than completing that comparison for the thesis. Other data-science scope
 questions remain separate.
+
+## Assignment clarity review
+
+Completed 2026-09-05 under Jörn's explicit assignment A. The review followed
+the root/domain entry points and their data-science/gradient planning links;
+it was not a line-by-line audit of every nested research packet.
+
+- Added one discoverable [assignment record](../memories/todos.md), separating
+  assigned A, proposed B, completed checks, DevOps ownership and unassigned
+  research/administrative work.
+- Removed competing live "feature-complete" / "next default" interpretations
+  from the data-science entry points; July closure/recommendations remain
+  historical, not today's work queue.
+- Corrected the gradient charter's claim that its candidate was ready for
+  promotion: its own linked packet says the setup-pass evidence is not retained
+  and the packet is not ready. Kept algorithm description separate from proposed
+  regeneration, promotion and integration work.
+- Removed the coordination entry point's dependency on the removed
+  `empirical-research` skill.
+- Marked the old registration-note pending action as historical; its current
+  completion status is unknown, not an assigned administrative task.
+
+No unresolved assignment conflict was found in the reviewed routes after these
+repairs. The optional charter-deletion question remains with Jörn. Clearly
+frozen experiments, algorithm/source descriptions and conditional final-release
+checklists were left alone; they are not assignments merely by existing.

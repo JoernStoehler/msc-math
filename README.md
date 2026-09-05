@@ -18,6 +18,8 @@ The repository produces:
 
 Project-wide information:
 
+- [Current work and ownership](memories/todos.md): live assignments, proposals
+  and known scope decisions; historical research plans are not the task queue.
 - `INSTALL.md`: environment setup and reproduction entry point; known working
   tools, current gaps, Sage, LaTeX, R2 and Micro configuration.
 - `docs/project-facts.md`: Jörn-confirmed facts and external decisions.

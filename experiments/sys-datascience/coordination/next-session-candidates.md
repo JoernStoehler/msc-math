@@ -1,4 +1,9 @@
-# Sys-Datascience Next Session Candidates
+# Historical Sys-Datascience Next Session Candidates
+
+Assignment status, 2026-09-05: no row below is an active assignment merely
+because this file calls it "next". The July recommendations are preserved as
+decision history. Current data-science scope remains unresolved; see
+[current work and ownership](../../../memories/todos.md).
 
 Use: compact routing board, not a backlog. Evidence and reasoning live in
 packet-local sources and `final-research-account-2026-07-12.md`.
@@ -10,8 +15,8 @@ correction below. It is not a complete current question map; packet-local
 evidence overrules it.
 
 Snapshot default: empirical exploration is closed after the reviewed July 15
-portfolio refresh and July 22 known-seed closeout. The next sys-datascience
-session should perform
+portfolio refresh and July 22 known-seed closeout. The recommendation then was
+for the next sys-datascience session to perform
 readiness/demonstration work for an explicit thesis consumer: select source
 roles and verify the reproduction path while preserving the recorded claim
 boundaries. Project fact 34.1 does not independently require more data; add a

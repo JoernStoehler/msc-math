@@ -3,6 +3,10 @@
 This directory contains project-wide information. Topic-local proofs, evidence,
 implementation details, and thesis prose remain with their topic.
 
+[Current work and ownership](../memories/todos.md) records the live assignment
+and distinguishes proposals from accepted work. [Migration review](migration-review.md)
+holds the supporting review notes, not a separate queue.
+
 | File | Purpose | Authority |
 | --- | --- | --- |
 | `project-facts.md` | Jörn-confirmed project facts and accepted external constraints | current unless newer Jörn/Kai/source truth contradicts it |

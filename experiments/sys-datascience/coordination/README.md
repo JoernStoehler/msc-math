@@ -1,14 +1,16 @@
 # Sys-Datascience Coordination
 
-This directory coordinates the current sys-datascience exploration. It is not
-a second source for experiment metrics.
+This directory contains research question maps and historical coordination
+records. It is not a current assignment queue or a second source for metrics.
+Jörn describes data science as moderately incomplete as of 2026-09-05.
+See [current work and ownership](../../../memories/todos.md) for assignments.
 
 Start with [`current-question-map.md`](current-question-map.md) for the current
 source-linked view of bounded answers, open questions, parked lines, and
 acceptance gates. Then follow its links to packet-local evidence.
 
-The corrected broad-first exploration/research slice closed after its reviewed
-July 15 portfolio refresh and July 22 known-seed closeout. The dated
+The July 15 portfolio refresh and July 22 known-seed closeout recorded closure
+of their exploration slice, not today's overall scope decision. The dated
 `research-closeout-2026-07-22.md`, `final-research-account-2026-07-12.md`,
 `research-ledger.md`, and `next-session-candidates.md` preserve decisions and
 bounded synthesis, but they are not a complete current question map: later
@@ -22,8 +24,8 @@ launch authority.
 
 Generated metrics and packet interpretation remain under `../methods/`;
 producer and table contracts remain under `experiments/polytope-datasets/` and `experiments/polytope-invariant-table/`.
-The next default remains consumer-driven readiness/demonstration, not automatic
-empirical reopening.
+Consumer-driven readiness/demonstration was the historical next recommendation;
+neither that work nor empirical reopening is automatically assigned now.
 
 exploration-result.md audits and rejects the 2026-07-10 recovery closure as
 phase authority while preserving its bounded retained-table findings.
@@ -44,12 +46,9 @@ current unless explicitly readopted.
 maps group evidence and hypotheses by research question without changing the
 physical home of any experiment packet.
 
-Reusable experiment and research-line process belongs to
-`$empirical-research`, not this scientific coordination directory.
-`portfolio-review-contract.md` records the additional slice-local anti-anchoring,
-cost, approval, and promotion decisions for this research slice; it does not
-override the shared skill conventions.
-Temporary hypotheses, experiment ideas, value estimates, and active line state
-may live in an isolated `/tmp/` working directory; material prepared for Jörn
-belongs under `/tmp/joern/`. Promote durable scientific observations, code,
-data, proofs, provenance, and interpretation to their relevant repository paths.
+`portfolio-review-contract.md` preserves historical slice-local process
+decisions; it does not install a shared skill or assign work. The former
+`empirical-research` skill was removed with obsolete project guidance. Current
+shared skills are owned by the global system, not by these coordination notes.
+Keep durable scientific observations, code, data, proofs, provenance and
+interpretation with their project sources.

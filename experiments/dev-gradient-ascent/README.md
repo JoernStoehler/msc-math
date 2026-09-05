@@ -1,8 +1,13 @@
 # Gradient-Ascent and Branch-Behavior Development
 
-Status: active development package for `sys(a)` gradient ascent and the HK
+Status: retained development package for `sys(a)` gradient ascent and the HK
 branch behavior that an optimizer must handle. The Cargo package name
 `exp-dev-gradient-ascent` predates the broader branch-behavior scope.
+
+Package availability is not an active development assignment. See
+[current work and ownership](../../memories/todos.md). The charter and
+promotion notes below preserve research context; they do not assign further
+runs, method promotion or thesis integration.
 
 Some retained packet prose and schema fields call a target evaluation
 “exact.” In those evaluators, candidate admissibility/action aggregation uses
@@ -20,13 +25,13 @@ state the question, evidence, result, and claim boundary they own.
 
 Read according to the task:
 
-- [`CHARTER.md`](CHARTER.md) defines the package objective, research question
-  model, artifact roles, and readiness conditions.
+- [`CHARTER.md`](CHARTER.md) preserves the earlier research objectives and
+  promotion criteria, not the current project task or completion gate.
 - [`branch-cartography/`](branch-cartography/README.md) is the entry point for
   local, semi-local, and effectively global perturbation behavior.
 - [`local-geometry-probe/`](local-geometry-probe/README.md) is the entry point
   for finite probes, ascent traces, endpoint scans, and their reporting tools.
-- [`METHOD-CANDIDATE.md`](METHOD-CANDIDATE.md) records the current ascent
+- [`METHOD-CANDIDATE.md`](METHOD-CANDIDATE.md) records the named development
   candidate. [`PROMOTION-READINESS.md`](PROMOTION-READINESS.md) records its
   evidence gaps and the decision that would be needed before promotion.
 - [`optimizer-runs/`](optimizer-runs/README.md) is the clean traced runner for

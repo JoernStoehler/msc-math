@@ -1,7 +1,11 @@
 # Candidate Observed Multi-Direction Ascent
 
-Status: current development candidate, not promoted library code and not thesis
+Status: named development candidate, not promoted library code and not thesis
 evidence by itself.
+
+This is an algorithm description, not a current assignment to develop or
+promote it. [Current work and ownership](../../memories/todos.md) records the
+live scope; the linked charter and promotion packet preserve development context.
 
 Scope note: this note is about one ascent candidate. It does not supersede the
 newer branch-cartography/local-to-global branch-behavior question; see
