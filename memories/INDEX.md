@@ -1,5 +1,15 @@
 # Project memory
 
+Pilot reference entries (source-grounded understanding, not independent audits):
+
+- [HKO author context](hko-author-context.md): how the finite certificate fits
+  the local-maximality proof; feasible upper functions versus optimizing branches.
+- [Optimizer claim review route](optimizer-review-route.md): how to trace the
+  thesis's seven-policy/64-start comparison to its summaries and provenance,
+  including allocation, evaluator and held-out limitations.
+
+Current work and project context:
+
 - [Current work and ownership](todos.md): current migration assignment,
   completed work, proposals and unassigned scope questions.
 - [Project facts](../docs/project-facts.md): attributed user decisions and

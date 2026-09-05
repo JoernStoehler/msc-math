@@ -21,12 +21,55 @@ records the concrete conflicts and review boundary. Documentation only; no
 research runs, builds, installations or proof audits. No successor task is
 automatically activated by completing A.
 
-## Proposed, not assigned
+## Assigned now: reusable project understanding
 
-**B — Contribution-level map:** connect retained thesis claims to their proof,
-implementation and evidence owners, distinguishing known limitations from
-suspected defects. Proposed by the agent; Jörn has approved A only so far.
-Unblocked as a read-only investigation, but not an active assignment.
+Jörn assigned exploration and planning for author/reviewer memory after finding
+the proposed contribution-level map insufficiently developed. The labels B.0
+and B.-1 are discussion aids, not sequential gates on independent useful work.
+
+Shared goal brief for this work:
+
+- Project outcome: a scientifically sound, clear and relevant thesis on probing
+  Viterbo's conjecture, with usable support; not exhaustive research completion.
+- Session outcome remains fresh-agent readiness as stated above. The present
+  gap is reusable understanding: authors should not repeatedly crawl and
+  reinterpret the codebase; reviewers also need to trace active thesis text
+  backwards to its actual support.
+- Memory should preserve useful source-grounded understanding and reasoning,
+  not just a file inventory or inherited "verified" assertions. Distinguish
+  user-confirmed facts, source assertions, inspected evidence and open gaps.
+- Code/data absent from HEAD can be recovered by precise Git/input/command
+  pointers. Unknown reproduction is a support gap; "historical" is not evidence.
+- HKO local maximality and rotated pentagons are established theorems; flow
+  graph has proofs. Do not infer a theorem is false from a written-proof defect.
+- Current activity is bounded read-only source investigation and planning,
+  with small project-memory updates. No builds, producers, downloads, broad
+  audits or new research experiments. Broader approaches, criteria and costly
+  work need discussion; small reversible edits within agreed scope do not need
+  a separate approval each time.
+- Delegate independent context-heavy work; the main agent owns integration
+  and can wait rather than duplicating inspection. Findings should remain
+  useful even if the final memory organization changes.
+
+Completed bounded pilot:
+
+- [HKO author context](hko-author-context.md): connected proof architecture,
+  source anchors, scope and targeted change dependencies.
+- [Optimizer review route](optimizer-review-route.md): one thesis claim traced
+  to compact summaries, configurations and declared provenance; no raw-data,
+  hash, algorithm or mathematical verification implied.
+- Independent design review found no material issue in those entries.
+- A fresh reader answered the author/reviewer questions from the index and
+  two entries, reopening only the two active thesis passages. It preserved the
+  feasible-section distinction and summary-check versus reproduction boundary,
+  and correctly explained why newer code does not invalidate a frozen result.
+  This is one bounded retrieval trial, not a general success guarantee.
+
+No agents or computations remain running for the pilot. The main agent owns
+the next coverage proposal and discussion with Jörn. Broader population of
+chapter memory, global skill redesign, automation and evidence certification
+are not assigned by this pilot. Use demonstrated retrieval needs to select the
+next slice rather than imposing an exhaustive schema or corpus-wide crawl.
 
 Data science is moderately incomplete (Jörn). Which remaining gaps to finish
 versus report is unresolved. No individual experiment or repair is assigned
