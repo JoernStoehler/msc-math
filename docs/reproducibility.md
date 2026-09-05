@@ -4,6 +4,10 @@ This is the repository entry point for the code and data claims made by the
 thesis. Detailed producer commands stay with the producing experiment; the
 repository does not maintain a second script that reruns every executable.
 
+Start with [INSTALL.md](../INSTALL.md) for environment setup and the initial
+reproduction checks. This file maps thesis results to their producing sources
+and describes the release bundle.
+
 ## Build the thesis
 
 ```bash

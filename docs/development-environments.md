@@ -24,8 +24,8 @@ the uncertainty before giving environment-specific setup or recovery advice.
 
 ## Tools and project contracts
 
-[`INSTALL.md`](../INSTALL.md) owns installation commands, including the Sage
-route and its upstream and historical sources. This document records environment
+[`INSTALL.md`](../INSTALL.md) is the setup and reproduction entry point,
+including Sage's recommended route and known limitations. This document records environment
 ownership, access and dated verification.
 
 The app-server advertises the function calls, tools, and MCP tools available to

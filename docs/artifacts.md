@@ -12,33 +12,11 @@ of its sorted file names, sizes, and SHA-256 values. The remote completion
 manifest is uploaded last. A prefix without a valid `manifest.json` is not a
 published snapshot, and publishing changed bytes creates a different prefix.
 
-## Configure R2
+## Setup
 
-The artifact helper requires `rclone`. Configure a remote named `mscmath` with
-a bucket-scoped R2 object read/write token. Keep persistent credentials in the
-environment's ordinary private rclone configuration. A generic ephemeral shell
-can instead configure the remote from environment variables:
-
-```text
-RCLONE_CONFIG_MSCMATH_TYPE=s3
-RCLONE_CONFIG_MSCMATH_PROVIDER=Cloudflare
-RCLONE_CONFIG_MSCMATH_ACCESS_KEY_ID=<R2 access key id>
-RCLONE_CONFIG_MSCMATH_SECRET_ACCESS_KEY=<R2 secret access key>
-RCLONE_CONFIG_MSCMATH_ENDPOINT=https://ef19d5c4c89e0b61a5a1560041679e2d.r2.cloudflarestorage.com
-```
-
-The helper always passes an empty S3 ACL because R2 does not implement object
-ACLs, and disables bucket creation/checking so a bucket-scoped token can
-transfer objects without account-level bucket-list or bucket-create
-permission. Neither key belongs in Git.
-
-Codex Cloud removes the configured secret environment variables after its setup
-phase, so do not use the generic environment-variable arrangement there.
-Follow [`development-environments.md`](development-environments.md): configure
-the two setup secrets it names and run `scripts/bootstrap-cloud.sh`. The script
-copies their values into a private rclone configuration. That file remains
-available to agent commands and cached resumes until the Cloud container is
-discarded; setup-secret removal does not revoke the stored R2 credential.
+[INSTALL.md](../INSTALL.md#r2-data) owns rclone installation, private R2
+configuration and the initial download check. This file owns artifact storage,
+materialization and publication contracts.
 
 ## Consume an artifact
 
