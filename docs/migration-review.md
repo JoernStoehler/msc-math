@@ -115,6 +115,8 @@ it was not a line-by-line audit of every nested research packet.
   completion status is unknown, not an assigned administrative task.
 
 No unresolved assignment conflict was found in the reviewed routes after these
-repairs. The optional charter-deletion question remains with Jörn. Clearly
+repairs. Jörn subsequently approved removing the old gradient charter; it was
+removed and its live links repaired. The package README records Git recovery.
+The algorithm description and historical evidence limitations remain. Clearly
 frozen experiments, algorithm/source descriptions and conditional final-release
 checklists were left alone; they are not assignments merely by existing.

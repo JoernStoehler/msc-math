@@ -9,11 +9,12 @@ integration below are not current assignments; see
 Scope note: this packet records the state of one gradient-ascent candidate. It
 is not the current scope controller for branch-cartography or for studying
 `sys(a)` and HK branch behavior across local, semi-local, and effectively
-global perturbation scales. See [CHARTER.md](CHARTER.md) and
+global perturbation scales. See
 [branch-cartography/README.md](branch-cartography/README.md) before treating
 promotion as the next action.
 
-Source charter: [CHARTER.md](CHARTER.md).
+The source charter was removed; [package README](README.md#directory-map)
+provides its Git recovery reference. Its criteria below are historical.
 Current candidate: [METHOD-CANDIDATE.md](METHOD-CANDIDATE.md).
 
 ## Candidate
@@ -182,7 +183,7 @@ Its negative-answer alternatives were:
 
 ## Readiness Against Charter
 
-Current status against [CHARTER.md](CHARTER.md) promotion-readiness bullets:
+Recorded status against the removed charter's promotion-readiness criteria:
 
 | Charter readiness item | Current status |
 | --- | --- |

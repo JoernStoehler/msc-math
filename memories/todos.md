@@ -23,11 +23,6 @@ automatically activated by completing A.
 
 ## Proposed, not assigned
 
-An async question to Jörn remains open: remove the retained gradient charter
-from the working tree (keeping Git recovery), or keep its historical labeling?
-Its false promotion-readiness summary is already corrected, so this is a
-preservation choice, not unresolved assignment authority. No deletion performed.
-
 **B — Contribution-level map:** connect retained thesis claims to their proof,
 implementation and evidence owners, distinguishing known limitations from
 suspected defects. Proposed by the agent; Jörn has approved A only so far.
@@ -40,6 +35,10 @@ July closure, promotion and next-session documents do not decide them.
 
 ## Completed or owned elsewhere
 
+- Gradient charter removed with Jörn's approval; algorithm description and
+  historical evidence limitations retained. The
+  [package README](../experiments/dev-gradient-ascent/README.md#directory-map)
+  owns the Git recovery reference. The preservation question is resolved.
 - Navigation/obsolete-guidance cleanup and scratch preservation/removal:
   completed work and recovery pointers in [migration review](../docs/migration-review.md).
 - Named environment checks and Sage setup: completed; [INSTALL](../INSTALL.md)

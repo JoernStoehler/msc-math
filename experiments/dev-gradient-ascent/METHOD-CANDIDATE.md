@@ -5,7 +5,7 @@ evidence by itself.
 
 This is an algorithm description, not a current assignment to develop or
 promote it. [Current work and ownership](../../memories/todos.md) records the
-live scope; the linked charter and promotion packet preserve development context.
+live scope; the promotion packet preserves evidence limitations and development context.
 
 Scope note: this note is about one ascent candidate. It does not supersede the
 newer branch-cartography/local-to-global branch-behavior question; see
@@ -14,8 +14,7 @@ perturbation-scale behavior rather than method promotion.
 
 This note names the current method candidate so later work can review or change
 it without reconstructing the algorithm and checked evidence from JSONL files.
-The objective remains the one in [CHARTER.md](CHARTER.md).
-The current promotion decision packet is
+The retained evidence-limitations and historical promotion packet is
 [PROMOTION-READINESS.md](PROMOTION-READINESS.md).
 
 ## Algorithm

@@ -5,8 +5,8 @@ branch behavior that an optimizer must handle. The Cargo package name
 `exp-dev-gradient-ascent` predates the broader branch-behavior scope.
 
 Package availability is not an active development assignment. See
-[current work and ownership](../../memories/todos.md). The charter and
-promotion notes below preserve research context; they do not assign further
+[current work and ownership](../../memories/todos.md). The retained
+promotion notes preserve research context; they do not assign further
 runs, method promotion or thesis integration.
 
 Some retained packet prose and schema fields call a target evaluation
@@ -25,8 +25,6 @@ state the question, evidence, result, and claim boundary they own.
 
 Read according to the task:
 
-- [`CHARTER.md`](CHARTER.md) preserves the earlier research objectives and
-  promotion criteria, not the current project task or completion gate.
 - [`branch-cartography/`](branch-cartography/README.md) is the entry point for
   local, semi-local, and effectively global perturbation behavior.
 - [`local-geometry-probe/`](local-geometry-probe/README.md) is the entry point
@@ -49,6 +47,14 @@ Read according to the task:
 Source files and retained artifacts overrule these navigation summaries.
 
 ## Directory map
+
+The old `CHARTER.md` was removed with Jörn's approval on 2026-09-05 because it
+mixed superseded objectives, workflow advice and contradictory promotion
+status. For historical recovery only:
+
+```bash
+git show 291991ac8bec543dd947a8aa61a89d7a8b5455ae:experiments/dev-gradient-ascent/CHARTER.md
+```
 
 This is the exhaustive set of immediate child directories:
 

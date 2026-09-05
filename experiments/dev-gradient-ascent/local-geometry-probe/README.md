@@ -11,11 +11,11 @@ branch-derived perturbations behave, which proposed ascent steps are actually
 improving after exact recomputation, and what endpoint condition does the
 implemented finite scan support?
 
-The probe serves method development in [`../CHARTER.md`](../CHARTER.md).
+The probe serves the development method described below, not an assigned run.
 [`../METHOD-CANDIDATE.md`](../METHOD-CANDIDATE.md) records the current
 candidate algorithm, and
 [`../PROMOTION-READINESS.md`](../PROMOTION-READINESS.md) records what must be
-regenerated before a promotion decision.
+missing from that historical promotion proposal; it does not assign regeneration.
 
 ## Producer
 
