@@ -66,8 +66,11 @@ reassessed in this migration.
 The first source review distinguishes three issues, not one acceptance gate:
 
 - P2's registered prepared table lacks six active ridge columns. Its README
-  supplies a rebuild route; that route still needs verification. This is a
-  reproduction-path issue, not evidence that the retained result is false.
+  supplies a rebuild route. The 2026-09-05 rebuild matched both expected hashes
+  using an existing hash-verified source cache; fresh R2 retrieval was not
+  tested. It consumed about 11 cores for six minutes without Jörn's permission.
+  It finished before the attempted stop; further execution was cancelled.
+  This check is complete and must not be rerun for migration verification.
 - The historical optimizer comparison ranks seven implementations on 64 F10
   starts under a nominal one-second allocation rule and a heuristic evaluator.
   Complete tuning/holdout separation is not established by the retained

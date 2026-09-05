@@ -41,6 +41,15 @@ Feature-family ablations fit the same gradient boosting models on:
 
 ## Command
 
+Resource warning (observed 2026-09-05): the full rebuild below used about
+11 host CPU cores for six minutes. Jörn objected to that unauthorized load.
+Do not treat it as a lightweight documentation check or rerun it as part of
+migration verification. The completed check below already establishes the
+recorded input hashes; any further run needs an agreed resource budget.
+The helper now defaults to one Rayon worker and one Cargo build job, while
+respecting explicitly supplied `RAYON_NUM_THREADS` and `CARGO_BUILD_JOBS`.
+These are concurrency defaults, not a hard CPU quota or permission to rerun.
+
 Build the current-schema input from the tracked canonical producer artifacts.
 The prepared output may be scratch because it is a deterministic derived table:
 
@@ -91,6 +100,15 @@ rerunning P2 without `--tables-dir`.
 
 P2 has a reviewed current-schema full retained-table run. A fresh rebuild from
 the tracked producer objects was checked during Phase 0 normalization.
+
+On 2026-09-05, a delegated host rebuild from the hash-verified registered
+snapshot already materialized in an archived cache produced both expected
+hashes below and 14,336 rows per table. It exited normally after 364.92 seconds
+wall time; no analyzer ran and canonical outputs were untouched. This checked
+the derived-table rebuild, not fresh R2 retrieval. Output was retained at
+`/tmp/sys-ds-p2-current-full.verify.bVbiYw`. The excessive CPU use prompted
+Jörn's objection; the process finished before the attempted stop, and further
+execution was cancelled.
 
 Prepared table:
 

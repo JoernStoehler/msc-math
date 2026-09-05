@@ -9,6 +9,11 @@
 
 set -euo pipefail
 
+# Host-safe defaults: this route previously saturated about 11 CPU cores.
+# Higher parallelism requires an agreed resource budget, not just a full run.
+export RAYON_NUM_THREADS="${RAYON_NUM_THREADS:-1}"
+export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-1}"
+
 MODE="${1:-smoke}"
 OUT_DIR="${2:-}"
 
@@ -39,6 +44,7 @@ echo "Building random/product sys-datascience prepare slice"
 echo "  mode:    $MODE"
 echo "  produce: $PRODUCE_DIR"
 echo "  out_dir: $OUT_DIR"
+echo "  rayon threads: $RAYON_NUM_THREADS; cargo jobs: $CARGO_BUILD_JOBS"
 echo
 
 cargo run -p exp-polytope-invariant-table --release --bin sys-dataset -- \
