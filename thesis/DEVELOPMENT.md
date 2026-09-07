@@ -8,6 +8,9 @@ source.
   verify them against their owning sources.
 - Use active TeX and its owning mathematical, empirical, paper, code, data,
   and asset sources for claims.
+- `memories/authoring-workflow.md` records concrete writing concerns and a
+  proposed bounded case for discovering useful authoring feedback. It is not
+  an established writing procedure or a final-review gate.
 
 Former writing companions and workflow material are quarantined under
 `legacy/non-current-planning-companions/`. They are fallible recovery material,

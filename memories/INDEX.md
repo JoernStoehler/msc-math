@@ -10,6 +10,9 @@ Pilot reference entries (source-grounded understanding, not independent audits):
 
 Current work and project context:
 
+- [Authoring workflow starting experiment](authoring-workflow.md): recovered
+  writing concerns and a bounded HKO proof-bridge case for developing feedback;
+  proposed, not a validated workflow or review gate.
 - [Current work and ownership](todos.md): current migration assignment,
   completed work, proposals and unassigned scope questions.
 - [Planning context](planning-context.md): user decisions, the observed scope
