@@ -29,6 +29,12 @@ are reflected above. The main agent owns follow-on selection; the completed
 subagent tasks do not assign anyone the remaining thesis work. No research run
 or comprehensive audit is queued.
 
+The unlimited-budget sprint is finished; normal-budget work has resumed.
+All implementation commits were integrated. Branches `migration/20260907-*`
+retain the worker histories after removal of their clean scratch checkouts.
+The unmerged process-handoff packet is superseded by global memory, not pending
+integration. The changed TeX has not been rebuilt or inspected as a PDF.
+
 The migration purpose is predictable tools, useful navigation and enough
 accurate context for fresh agents to avoid costly wrong work. It does not
 certify the thesis or settle every research question.

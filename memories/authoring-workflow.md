@@ -30,7 +30,7 @@ the main statements. Item 9 also rejects forcing the thesis's different
 research questions into one tight narrative. These are more useful starting
 points than inventing a universal style checklist.
 
-## Bounded case available now
+## Case used for the first authoring comparison
 
 Inspected 2026-09-07 at `921f3c02efefbfb3919fb2c35545686459123fff`:
 
@@ -46,8 +46,8 @@ Inspected 2026-09-07 at `921f3c02efefbfb3919fb2c35545686459123fff`:
 - `memories/hko-author-context.md`: already-inspected support route and the
   distinction between feasible upper functions and optimizing branches.
 
-This is a proposed workflow-development case, not an identified manuscript
-error. It is small, central to the main theorem and tests exactly the kind of
+This case was selected for workflow development, not because a mathematical
+error had been identified. It is small, central to the main theorem and tests the kind of
 reader bridge Jörn described. It needs no new experiment, witness search or
 full verifier run. The theorem's established status is not in question.
 
@@ -62,7 +62,7 @@ with that margin. Their touching inequalities give strict decrease of the true
 ratio. This is the inspection agent's reconstruction, not an independent audit
 of the upper-function hypotheses or the surrounding chart proof.
 
-## First reader observation and next authoring attempt
+## Reader observation, alternatives and selected revision
 
 On 2026-09-07 a no-history subagent (`sprint_authoring/hko_reader`) read only
 the first two TeX files above, without this memory or its supplied reconstruction.
