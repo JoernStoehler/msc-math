@@ -13,6 +13,12 @@ instrumental to passing his full-PDF review, ideally once. He has no trusted
 automated final gate; his current gate is “jörn reads the whole damn thing”.
 That review is costly and ideally happens on a PDF that passes and is submitted.
 
+After the sprint, Jörn rejected further opportunistic thesis-content evaluation
+as the next priority without a credible review/authoring workflow: the outcome
+could simply be his finding bad text with too many defects to enumerate. The
+HKO trial remains reference, not a reason to keep reviewing that passage.
+Choosing a new content trial needs a consequential workflow question it can answer.
+
 Reviews during authoring serve a different purpose: feedback about what is
 wrong or could be better, not certification that writing is finished. No fixed
 set of those reviews is known. Agents can adapt them without asking Jörn to

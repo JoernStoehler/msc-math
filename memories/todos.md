@@ -10,7 +10,7 @@ conjecture that passes Jörn's full-PDF review, ideally on its first attempt.
 
 | Branch | State | Useful next decision or investigation |
 | --- | --- | --- |
-| Authoring-workflow discovery | Open; one HKO source-level authoring comparison completed | [Two variants and topic-split reviews](authoring-workflow.md) led to a small sign-argument clarification. Next: judge the revised passage in chapter context, including the remaining compressed uniformity step. Human readability is untested. |
+| Authoring-workflow discovery | Open; HKO comparison retained as limited reference | Establish a credible route to a candidate worth Jörn's costly final review. Further passage checks are not the default next task: a trial needs to resolve a consequential workflow uncertainty. See [planning context](planning-context.md#writing-and-review). |
 | Folder layout | Bounded assessment completed; no physical moves justified | HKO proof, pentagon proof/active figures and scalar API routes were inspected. Misleading traversal restrictions and missing routes were repaired. Broader changes need concrete friction, not another blanket layout audit. |
 | Tools and navigation | Named setup checks and substantial cleanup completed | Existing evidence and limits are linked below; investigate concrete remaining obstacles, not an exhaustive cleanup programme. |
 | Author summaries/memory | Detailed design deferred | Revisit as actual writing and feedback reveal useful shapes. Two pilots exist; they are not a rollout template. |
