@@ -99,10 +99,10 @@ more explicit uniformity argument remains untested. Child task names for this
 comparison were `sprint_authoring/variant_a`, `variant_b`, `meaning_review`, and
 `flow_review`. No build or certificate run was part of the comparison.
 
-A useful next check is reading the revised passage in its chapter context,
-especially whether the uniformity sentence remains too compressed. It does not
-require repeating candidate generation. Rendered-page feedback belongs when
-layout is affected, not as evidence for the proof.
+Whether the uniformity sentence remains too compressed was left unresolved.
+Jörn subsequently rejected further opportunistic passage checks as the next
+priority. This trial is reference for workflow discovery, not a queued task;
+see [current planning context](planning-context.md#writing-and-review).
 
 The reusable output is the justified revision, if any, and the few observations
 that change the next writing decision: where readers got stuck, which repair

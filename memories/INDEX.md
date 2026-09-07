@@ -10,6 +10,10 @@ Pilot reference entries (source-grounded understanding, not independent audits):
 
 Current work and project context:
 
+- [Proposed session split](team-plan.md): concrete authoring, execution,
+  mathematical-code, data-science and process-feedback outcomes and dependencies;
+  investigated proposals, not active agent assignments.
+
 - [Authoring workflow starting experiment](authoring-workflow.md): recovered
   writing concerns, two HKO proof-bridge variants and topic-split review findings;
   one small revision, not a validated workflow or review gate.
