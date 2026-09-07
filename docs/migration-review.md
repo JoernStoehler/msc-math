@@ -1,6 +1,7 @@
 # Migration review
 
-Updated 2026-09-05. This is a working review surface for Jörn, not agent
+Setup/cleanup evidence from 2026-09-05; scope clarified 2026-09-07.
+This is a working review surface for Jörn, not agent
 instructions. Add comments with Ctrl+K, then save with Ctrl+S. Durable facts and
 procedures live at the linked owners below.
 
@@ -9,9 +10,12 @@ For the actual current assignment and proposal status, read
 
 ## Aim and scope
 
-Make the project navigable and its expected tools predictable, with enough
-reliable context to avoid costly wrong turns. Producing a passing thesis or
-designing a chapter-writing workflow is not this migration's completion gate.
+The wider outcome is a good thesis that passes Jörn's full-PDF review, ideally
+once. Predictable tools, useful layout/navigation and authoring-workflow
+discovery support that outcome. Completing the setup checks below does not
+complete authoring-workflow discovery. Detailed summary-layer design is deferred
+until writing and feedback needs inform it; see the
+[planning context](../memories/planning-context.md).
 
 ## Research status confirmed by Jörn
 
@@ -63,8 +67,7 @@ record the installed locations and update semantics. This project will not
 install an independent global system.
 
 Data-science scope remains unresolved beyond the specific decision below.
-The proposed contribution-level map is not yet assigned. Administrative status
-and prose quality have not been reassessed in this migration.
+Administrative status and thesis-wide prose quality have not been reassessed.
 
 The first source review distinguishes three issues, not one acceptance gate:
 
@@ -122,6 +125,5 @@ links. The algorithm description retains the finite endpoint definition and
 precise historical recovery pointers; unsupported numerical success/cost claims
 were removed. Source and inputs in Git were distinguished from the still
 unrecovered complete execution/output chain. No historical code was rerun.
-Clearly
-frozen experiments, algorithm/source descriptions and conditional final-release
+Clearly frozen experiments, algorithm/source descriptions and conditional final-release
 checklists were left alone; they are not assignments merely by existing.
