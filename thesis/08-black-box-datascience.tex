@@ -107,14 +107,15 @@ it is not yet a candidate-proposer claim: the ranked rows already had their
 systolic ratios computed.
 
 The generated-candidate follow-up is closer to the desired search interface.
-In the current scalar-filter packet, the selection rules were frozen before
-systolic ratios were computed.  The run generated \(100000\) random-product
+In the retained scalar-filter packet, the selection rules were frozen before
+the systolic-ratio evaluator was run.  The run generated \(100000\) random-product
 candidates and then evaluated the candidates selected by the frozen rules
-together with a baseline comparison set, \(1675\) rows in total.  No evaluated
-candidate had systolic ratio larger than \(1\); the largest evaluated value was
-about \(0.868\).  This supports the same bounded conclusion for that generator
-and rule set, not a theorem about all scalar rules or all random-product
-generators.
+together with a baseline comparison set, \(1675\) rows in total.  These frozen
+values come from the historical billiard/orbit evaluator and do not carry
+capacity certificates.  No recorded evaluator value
+exceeded \(1\); the largest was about \(0.868\).  This supports a bounded
+negative result for that generator, rule set, and evaluator, not a theorem
+about all scalar rules or all random-product generators.
 
 Mechanism diagnostics give empirical evidence about which ridge-area
 explanations are currently most plausible.  Ridge symplectic-area descriptors

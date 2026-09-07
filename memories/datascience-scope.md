@@ -23,16 +23,15 @@ a scope choice, separate from whether its particular claims are supported.
 
 ## Candidate retained-claim checks
 
-**Generated-proposer numerical qualification: concrete wording gap.** The
+**Generated-proposer numerical qualification: wording repaired.** The
 chapter's generated-candidate paragraph and the appendix's “Generated-candidate
-scalar proposer” call the 1675 target values systolic ratios without explicitly
-identifying their historical evaluator. The
+scalar proposer” now identify the 1675 targets as historical evaluator values,
+not current production capacity certificates. The
 [scalar-filter README](../experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/README.md)
 explicitly identifies these frozen accepted targets as `evaluated-target.v2`,
-not current v3 production certificates. The chapter's opening heuristic-value
-qualification refers to the optimizer comparison, not this run. An explicit
-historical-evaluator boundary would align the thesis with the packet; this
-does not establish that any value or mathematical conclusion is false.
+not current v3 production certificates. Previously the chapter's heuristic-value
+qualification referred only to the optimizer comparison. This is a source-based
+wording repair, not a numerical recheck or evidence that a value is wrong.
 
 **Retained-table evaluator lineage: still unknown here.** The
 [trusted-input packet](../experiments/sys-datascience/methods/trusted-random-dataset/README.md)

@@ -217,14 +217,16 @@ features exhaust the useful invariants of the input polytopes.''
 
 The generated scalar-proposer packet tests a stronger interface.  It generates
 random Lagrangian-product candidates, computes cheap scalar features, freezes
-selected candidates and a matched baseline before evaluating the systolic
-ratio, and then evaluates only that selected-or-baseline union.
+selected candidates and a matched baseline before running the systolic-ratio
+evaluator, and then evaluates only that selected-or-baseline union.
 
-In the current \(100000\)-candidate packet, the frozen rule set produced
+In the retained \(100000\)-candidate packet, the frozen rule set produced
 \(485\) unique selected rows and \(1195\) unique baseline rows, for \(1675\)
-unique selected-or-baseline rows.  No evaluated candidate had systolic ratio
-larger than \(1\).  The maximum evaluated value, and the maximum selected
-value, was about \(0.868\).
+unique selected-or-baseline rows.  Their target values were computed by the
+historical billiard/orbit evaluator and do not carry capacity certificates.
+No recorded evaluator value exceeded \(1\).
+The maximum evaluated value, and the maximum selected value, was about
+\(0.868\).
 
 This is real pre-evaluation evidence for the configured random-product
 generator and scalar rule set.  It does not validate a proposer for finding
