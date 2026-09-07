@@ -2,6 +2,9 @@
 
 Updated 2026-09-07. Non-authoritative planning view; the reasons and user
 decisions behind it live in [planning context](planning-context.md).
+[Outcome coverage](outcome-coverage.md) retains whole-thesis composition, long
+proofs, eventual delivery and new discovery findings beyond the proposed session
+portfolio. It is not an exhaustive graph or additional assignment queue.
 
 ## Outcome and open work
 
@@ -13,7 +16,7 @@ conjecture that passes Jörn's full-PDF review, ideally on its first attempt.
 | Authoring-workflow discovery | Open; HKO comparison retained as limited reference | Establish a credible route to a candidate worth Jörn's costly final review. Further passage checks are not the default next task: a trial needs to resolve a consequential workflow uncertainty. See [planning context](planning-context.md#writing-and-review). |
 | Folder layout | Bounded assessment completed; no physical moves justified | HKO proof, pentagon proof/active figures and scalar API routes were inspected. Misleading traversal restrictions and missing routes were repaired. Broader changes need concrete friction, not another blanket layout audit. |
 | Tools and navigation | Named setup checks and substantial cleanup completed | Existing evidence and limits are linked below; investigate concrete remaining obstacles, not an exhaustive cleanup programme. |
-| Mathematical code architecture and execution reliability | Concrete source-level candidates identified; not implemented | [Proposed sessions](team-plan.md) separate geometry-contract investigation from launcher/cache reliability, with bounded tests before refactoring. Prior navigation checks did not settle these code questions. |
+| Mathematical code architecture and execution reliability | Concrete source-level candidates identified; not implemented | [Proposed sessions](team-plan.md) separate broad stable-code architecture/migration from launcher/cache reliability, with scientific contract checks before refactoring. Prior navigation checks did not settle these code questions. |
 | Author summaries/memory | Detailed design deferred | Revisit as actual writing and feedback reveal useful shapes. Two pilots exist; they are not a rollout template. |
 | Data-science scope | Finish-versus-report decisions unresolved; one historical-evaluator wording gap repaired | [Scope/evidence note](datascience-scope.md) separates unresolved frozen-table lineage and unchecked appendix diagnostics from new research. Additional branch-aware versus nonsmooth comparison is excluded by Jörn's value judgment. |
 

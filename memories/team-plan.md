@@ -6,6 +6,11 @@ underneath. This plan separates concrete outcomes rather than assigning an
 unbounded subtree to an authoring or code lead. Overall purpose and feedback
 constraints are in [planning context](planning-context.md).
 
+This is a candidate session portfolio, not the full outcome graph.
+[Broader outcome discovery](outcome-coverage.md) preserves composition, long
+proofs and delivery obligations plus new concrete opportunities; their absence
+as separate peers does not defer or erase them.
+
 ## HKO presentation and authoring feedback
 
 First outcome: one substantive central-result presentation, self-reviewed and
@@ -19,6 +24,10 @@ alternatives, semantic review and reader reconstruction. Alternatives use the
 recovered context; review follows candidates. Figure ideas can overlap with
 drafting; implement them when they have an explanatory purpose. Local supporting
 code/research belongs to this outcome, not an artificial separate phase.
+Source-study and contextual annotation support can develop through actual use;
+the citation index and review locator have concrete limitations recorded in the
+broader discovery note. Whole-thesis prerequisite/coherence needs and later long
+proof exposition remain outside this initial unit, not outside the goal.
 
 ## Predictable execution and artifacts
 
@@ -60,6 +69,9 @@ migration depends on its own contract checks, not the entire inventory. These
 are proposals, not active assignments; no test execution occurred in the
 planning investigation. Historical evaluator semantics and meaningful variant
 differences must survive import/layout changes.
+Scientific change impact includes rounding/underflow assumptions, operation and
+candidate ordering, exclusion/completeness and fallback contracts described in
+`thesis/11-numerics.tex`; API compatibility alone does not cover these.
 
 ## Data-science contribution development
 

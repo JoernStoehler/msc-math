@@ -10,6 +10,9 @@ Pilot reference entries (source-grounded understanding, not independent audits):
 
 Current work and project context:
 
+- [Outcome coverage](outcome-coverage.md): broader composition/proof/delivery
+  obligations and newly surfaced evidence, source-study and maintenance
+  opportunities beyond the candidate session portfolio; bounded discovery.
 - [Proposed session split](team-plan.md): concrete authoring, execution,
   mathematical-code, data-science and process-feedback outcomes and dependencies;
   investigated proposals, not active agent assignments.
