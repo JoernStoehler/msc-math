@@ -1,8 +1,35 @@
 # Current work and ownership
 
-Updated 2026-09-05 from the live migration discussion with Jörn.
-This records assignments; it does not turn research ideas or documentation
-into permission to execute them. New direct instructions supersede this record.
+Updated 2026-09-06 from the live discussion with Jörn.
+This is a non-authoritative working task map, not an exhaustive decomposition
+or permission to execute its branches. Actual assignments are distinguished
+from hypotheses; new instructions and evidence can change the map.
+
+## Wider outcome and open branches
+
+Jörn clarified on 2026-09-06: the intended outcome is a good thesis that passes
+his full-PDF review, ideally on the first attempt. Discovering an effective
+authoring workflow is instrumental work toward that outcome, not a completed
+consequence of repairing the tools. See [planning context](planning-context.md)
+for the reasoning and evidence limits behind this map.
+
+- Authoring-workflow discovery: open; concrete workflow and next writing case
+  not yet selected. Writing, feedback and revision need investigation, not an
+  invented fixed review framework.
+  - Detailed author-summary design: deferred until actual writing/feedback
+    needs inform it. The two completed pilots are examples, not a rollout.
+- Supporting readiness: named tool checks and substantial state/navigation
+  cleanup completed; folder-layout assessment remains open and unassigned to
+  a child agent. Existing architecture documentation does not establish fit.
+- Data-science finish-versus-report decisions: unresolved; no new experiment
+  authorized by their presence here.
+- Current main-agent task: preserve this context and repair the working map.
+  Earlier investigation agents have completed their assignments; none owns
+  authoring-workflow or layout investigation yet.
+
+Current planning hypothesis: layout assessment and authoring-workflow discovery
+can begin independently and inform each other. Neither requires a comprehensive
+cleanup or summary layer first. This is not a proven dependency structure.
 
 ## Session outcome
 
@@ -21,7 +48,7 @@ records the concrete conflicts and review boundary. Documentation only; no
 research runs, builds, installations or proof audits. No successor task is
 automatically activated by completing A.
 
-## Current scope: navigation, not author-summary expansion
+## Navigation checks and deferred author-summary expansion
 
 Later discussion with Jörn deferred a detailed author memory/summary layer.
 Its shape should evolve with actual writing and feedback needs, not precede
@@ -46,11 +73,11 @@ Jörn assigned exploration and planning for author/reviewer memory after finding
 the proposed contribution-level map insufficiently developed. The labels B.0
 and B.-1 are discussion aids, not sequential gates on independent useful work.
 
-Shared goal brief for this work:
+Historical brief for the completed pilot (not the current assignment):
 
 - Project outcome: a scientifically sound, clear and relevant thesis on probing
   Viterbo's conjecture, with usable support; not exhaustive research completion.
-- Session outcome remains fresh-agent readiness as stated above. The present
+- Session outcome was fresh-agent readiness as stated above. The investigated
   gap is reusable understanding: authors should not repeatedly crawl and
   reinterpret the codebase; reviewers also need to trace active thesis text
   backwards to its actual support.
@@ -61,7 +88,7 @@ Shared goal brief for this work:
   pointers. Unknown reproduction is a support gap; "historical" is not evidence.
 - HKO local maximality and rotated pentagons are established theorems; flow
   graph has proofs. Do not infer a theorem is false from a written-proof defect.
-- Current activity is bounded read-only source investigation and planning,
+- Pilot activity was bounded read-only source investigation and planning,
   with small project-memory updates. No builds, producers, downloads, broad
   audits or new research experiments. Broader approaches, criteria and costly
   work need discussion; small reversible edits within agreed scope do not need

@@ -12,6 +12,9 @@ Current work and project context:
 
 - [Current work and ownership](todos.md): current migration assignment,
   completed work, proposals and unassigned scope questions.
+- [Planning context](planning-context.md): user decisions, the observed scope
+  omission, and provisional reasoning behind authoring/layout work and summary
+  deferral; supports the task map without making it authoritative.
 - [Project facts](../docs/project-facts.md): attributed user decisions and
   project context; dated facts are not automatically current assignments.
 - [Migration review](../docs/migration-review.md): setup/cleanup evidence and
