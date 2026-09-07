@@ -74,7 +74,7 @@ Every charged proposal is evaluated by `evaluator.rs`:
 
 1. reconstruct geometry by the manifest-selected heuristic f64 or exact route;
 2. compute volume in the manifest-selected exact or f64 mode;
-3. run the complete legacy orbit-candidate search with minima-safe exact
+3. run the configured legacy orbit-candidate search with minima-safe exact
    aggregation;
 4. form the f64 systolic ratio and retain the winning orbit context.
 
@@ -83,6 +83,12 @@ reconstructs geometry exactly from the binary64 coordinates. In both cases,
 the reported systolic-ratio field is a binary64 evaluator output, not an exact
 real number. Near-threshold scientific use still needs a separate numerical
 audit against the current production capacity route.
+
+Here a "full" evaluator call means running `capacity_search` rather than a
+named-branch surrogate. It uses the transition-matrix-pruned HK2017 or billiard
+candidate generator and exact aggregation of its output. That aggregation does
+not establish completeness of the candidate generator; the retained comparison
+does not test candidate-family completeness.
 
 Structure-aware algorithms may perform named-branch KKT solves and surrogate
 queries inside `ask`. Those are not counted as full-`sys` calls, but their wall
