@@ -74,20 +74,35 @@ finite-dimensional linear algebra, compactness and differentiability, not
 specialized nonsmooth analysis. This is one agent-reader observation, not
 evidence that Jörn or the intended human reader would find the passage adequate.
 
-The reader proposed a small expansion: explicitly exclude all-nonnegative row
+The first reader proposed an expansion: explicitly exclude all-nonnegative row
 evaluations; define `m(h) = min_sigma r_sigma(h)` on the unit sphere and give
 `m(h) <= -c`; then state a simultaneous remainder bound
 `|U_sigma(a_0+s)-U_sigma(a_0)-r_sigma(s)| <= (c/2)||s||`. This provides a concrete
-next authoring candidate without changing the theorem or rerunning its
-certificate. The open judgment is whether that expansion earns its space for
-the intended reader. No manuscript edit has been made from this suggestion.
+authoring candidate without changing the theorem or rerunning its certificate.
 
-An author can now draft that expansion and compare it with the original in
-chapter context. Mathematical meaning and explanatory continuity can be
-reviewed in parallel; the reviewer testing readability need not receive the
-author's explanation of why the edit is good. Feedback may recommend keeping
-the original. Rendered-page feedback belongs when layout is affected, not as
-evidence for the proof.
+Two no-history authors then proposed alternatives. Variant A ended with an
+explicit linear decrease bound using a direction-dependent row; B used the
+minimum over the upper functions and a uniform `-ct+o(t)` estimate. Separate
+math-meaning and reader-flow reviewers inspected the original and candidate
+arguments. The mathematical reviewer found both correct under the existing
+smooth touching-upper-function hypotheses and preferred A's explicit bound.
+The flow reviewer preferred the original plus the missing sign argument:
+the constants and remainder notation in A/B expanded a routine step more than
+the reader needed. This disagreement is useful evidence about the tradeoff,
+not a correctness vote.
+
+The integrated edit therefore adds only the sign argument after the spanning
+sentence. It fixes the shared concrete omission without introducing new
+notation. The original compactness/Taylor sentence remains. That selection is
+the integrating agent's judgment; whether the intended human reader needs the
+more explicit uniformity argument remains untested. Child task names for this
+comparison were `sprint_authoring/variant_a`, `variant_b`, `meaning_review`, and
+`flow_review`. No build or certificate run was part of the comparison.
+
+A useful next check is reading the revised passage in its chapter context,
+especially whether the uniformity sentence remains too compressed. It does not
+require repeating candidate generation. Rendered-page feedback belongs when
+layout is affected, not as evidence for the proof.
 
 The reusable output is the justified revision, if any, and the few observations
 that change the next writing decision: where readers got stuck, which repair
@@ -97,5 +112,6 @@ needed in advance.
 
 This local attempt cannot establish whole-chapter coherence, an effective
 empirical-results workflow, or final-PDF readiness. Those remain open parts of
-authoring-workflow discovery, not prerequisites to trying this case. No revised
-passage or before/after comparison has yet been tested.
+authoring-workflow discovery, not prerequisites to trying this case. The
+comparison above is one source-level authoring attempt, not a human-reader
+before/after test or evidence that a whole-thesis workflow succeeds.
