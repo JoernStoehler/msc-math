@@ -15,6 +15,7 @@ detailed file inventories and does not prescribe local file placement.
 | `papers/` | Source papers, extracted passages, and paper-specific notes | project conclusions not established by the source |
 | `submit/` | Official forms, submission requirements, and administrative source notes | thesis mathematical content |
 | `docs/` | Project-wide facts, reproduction and artifact policy, and execution-environment contracts | topic-local evidence or proofs |
+| `memories/` | Recoverable decisions, investigation findings, reasoning, and the provisional task/assignment map | a substitute for mathematical evidence or an authoritative execution plan |
 | `scripts/` | Repository-wide maintenance and reporting utilities | scientific results |
 
 Use conventional layouts and decide local placement from the actual files and
@@ -25,8 +26,8 @@ their reasoning without turning them into a global placement algorithm.
 
 ## Cross-domain paths
 
-Some questions cross domains. Follow these routes rather than treating one
-directory as the whole project:
+Some questions cross domains. These are search entry points, not required
+reading sequences:
 
 | Question | Start | Confirm with |
 | --- | --- | --- |
@@ -34,7 +35,7 @@ directory as the whole project:
 | Is a mathematical result established? | `formal/README.md` and the relevant thesis/experiment entry point | exact statement, proof source, certificate, and active thesis wording |
 | Has an experiment already tested this? | `experiments/README.md`, then topic READMEs | producer, retained output, and interpretation |
 | Can the implementation do this? | `crates/README.md`, then crate README/source/tests | public API, tests, and relevant verification experiments |
-| Why was a route rejected or superseded? | current local README and nearby decision/status note | source commit/history only when the current documentation points there |
+| Why was a route rejected or superseded? | local decision/status notes, `memories/`, or Git history for the relevant path/symbol | source and rationale at the relevant revision; current documentation may omit the history |
 
 ## Authority across domains
 
@@ -85,23 +86,18 @@ global taxonomy.
 
 ## Search behavior
 
-Typical exploration is progressively disclosed:
-
-1. scan the relevant domain inventory or entry point;
-2. read the READMEs that are not clearly irrelevant;
-3. follow promising READMEs into code, manifests, data, proofs, artifacts, and
-   detailed interpretation;
-4. broaden terms or use reasoning-assisted exploration when lexical search
-   misses plausible synonyms;
-5. search across domains before making a project-wide negative claim.
+Search by the question's terms, symbols, labels or artifact paths across the
+relevant domains. Inventories and READMEs help when names are unfamiliar; they
+are not a prerequisite for opening a known source. Related results can be read
+together rather than traversing one README link at a time. Broaden terms and
+domains before interpreting a missing lexical hit as missing work.
 
 An inventory should be exhaustive for the physical scope it claims. Selective
 topic, method, status, or finding views state their scope and do not make
 omission evidence of absence.
 
-Generated, vendored, build, worktree, and legacy trees are not normal
-orientation surfaces. Open them only when a current entry point or concrete
-task points there.
+Generated, vendored, build, worktree, and legacy trees are usually poor broad
+orientation surfaces, but can contain the specific evidence a task needs.
 
 ## Stable implementation layout
 

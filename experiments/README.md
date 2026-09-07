@@ -6,13 +6,10 @@ f64 checks, performance measurements, and thesis-support assets. Existing work
 is common enough that searching here should be an ordinary first step before
 recreating an experiment or declaring a gap.
 
-Typical exploration:
-
-1. scan the directory inventory below;
-2. read every README that is not clearly irrelevant;
-3. follow relevant READMEs into code, manifests, data, proofs, generated
-   artifacts, and detailed interpretation;
-4. broaden terminology when a lexical search returns no useful hit.
+Search the relevant topic, producer, symbol or artifact path directly. The
+inventory and semantic views below supply alternative terms when the directory
+names are unfamiliar; they do not require reading every plausible README before
+opening the source or evidence needed for the question.
 
 `ARCHITECTURE.md` explains the cross-domain authority boundaries.
 

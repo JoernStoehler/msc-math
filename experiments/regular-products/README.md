@@ -20,35 +20,21 @@ contains retained search implementations and historical context.
 
 ## Start Here
 
-Read only the row that matches your task.
+Paths beginning `thesis/`, `formal/` or `experiments/` are repository-root
+relative; other paths below are relative to this directory.
 
-| Task | Minimum read path | Stop before opening |
-| --- | --- | --- |
-| Read or update the thesis section | `thesis/09-rotated-regular-polygons.tex`, then its included TeX files | Sage source, generated JSONL/PNG/HTML, stale formal draft |
-| Check the exact proof result | `pentagon-rotation-formula-proof/README.md`, then `pentagon-rotation-formula-proof/executable_proof.full.stdout.txt` | empirical folders |
-| Inspect the proof code | `pentagon-rotation-formula-proof/README.md`, then `pentagon-rotation-formula-proof/executable_proof.sage.py` | generated artifacts |
-| Choose figures | `thesis/09-rotated-regular-polygons-empirical-curves.tex`, then `rotated-regular-products/README.md` or `pentagon-rotation-empirics/README.md` | exact proof source |
-| Understand broad regular-product context | `rotated-regular-products/README.md` | pentagon proof internals |
-| Recover old calculation details | `formal/legacy/pentagon-rotation-capacity.tex` | unless a current guide points to a specific calculation |
+| Task | Relevant sources |
+| --- | --- |
+| Read or update the thesis section | `thesis/09-rotated-regular-polygons.tex` and its included TeX files |
+| Inspect the recorded certificate run | `pentagon-rotation-formula-proof/README.md` and `pentagon-rotation-formula-proof/executable_proof.full.stdout.txt` |
+| Review the executable certificate | `pentagon-rotation-formula-proof/executable_proof.sage.py`, with the packet README and mathematical implication in the thesis |
+| Choose figures | `thesis/09-rotated-regular-polygons-empirical-curves.tex`, `rotated-regular-products/README.md`, `pentagon-rotation-empirics/README.md` |
+| Understand broad regular-product context | `rotated-regular-products/README.md` |
+| Recover old calculation details | `formal/legacy/pentagon-rotation-capacity.tex` and relevant Git history; see its limitations below |
 
-Default order for a new agent:
-
-1. Read this README.
-2. For thesis wording, read `thesis/09-rotated-regular-polygons.tex` and its included TeX files.
-3. If verifying the proof, read `pentagon-rotation-formula-proof/README.md`.
-4. Stop until a concrete question requires a narrower file.
-
-## Do Not Open By Default
-
-These files are useful, but they usually cost more context than they save:
-
-1. generated JSONL, PNG, and HTML artifacts;
-2. `pentagon-rotation-formula-proof/executable_proof.sage.py`;
-3. `formal/legacy/pentagon-rotation-capacity.tex`;
-4. broad sweep data files in `rotated-regular-products/`.
-
-Open them when a current README, active thesis reference, or concrete question
-points to a specific detail.
+These routes overlap: revising a proof claim can require reading the Sage
+source, while a figure-only change may not. A successful recorded run is not
+by itself a review of what the program proves.
 
 ## Who Says What
 

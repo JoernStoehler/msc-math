@@ -11,10 +11,10 @@ The repository produces:
 
 ## First entry points
 
-1. Read `ARCHITECTURE.md` to choose the relevant project domain.
-2. Read that domain's `README.md`.
-3. Inspect the named source, producer, proof note, test, or active thesis file
-   before relying on a summarized claim.
+`ARCHITECTURE.md` maps the domains; their READMEs provide search cues and local
+context. Start from the question: search a claim, symbol, artifact path or topic
+across relevant domains, or use an entry point when the terminology is unfamiliar.
+The entries below are alternatives, not a required reading sequence.
 
 Project-wide information:
 
@@ -37,9 +37,9 @@ Domain entry points:
 - `crates/README.md`
 - `papers/README.md`
 
-`README.md` is a navigation view. The relevant source files, tests, data,
-proof notes, producer outputs, active thesis text, and accepted Jörn/Kai
-decisions are authoritative.
+`README.md` is a navigation view. Follow claims to their source files, proof
+arguments, producer outputs or attributed decisions; a summary or path alone
+does not establish correctness.
 
 ## Current outcome
 
