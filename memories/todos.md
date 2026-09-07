@@ -10,23 +10,24 @@ conjecture that passes Jörn's full-PDF review, ideally on its first attempt.
 
 | Branch | State | Useful next decision or investigation |
 | --- | --- | --- |
-| Authoring-workflow discovery | Open; no established workflow or trusted automated final gate | Learn through a bounded real writing/revision task and its feedback needs. The next case has not been selected. |
-| Folder layout | Assessment open | Test whether the layout supports concrete author/reviewer activities; identify retrieval or ownership friction before choosing moves. |
+| Authoring-workflow discovery | Open; one HKO source-level authoring comparison completed | [Two variants and topic-split reviews](authoring-workflow.md) led to a small sign-argument clarification. Next: judge the revised passage in chapter context, including the remaining compressed uniformity step. Human readability is untested. |
+| Folder layout | Bounded assessment completed; no physical moves justified | HKO proof, pentagon proof/active figures and scalar API routes were inspected. Misleading traversal restrictions and missing routes were repaired. Broader changes need concrete friction, not another blanket layout audit. |
 | Tools and navigation | Named setup checks and substantial cleanup completed | Existing evidence and limits are linked below; investigate concrete remaining obstacles, not an exhaustive cleanup programme. |
 | Author summaries/memory | Detailed design deferred | Revisit as actual writing and feedback reveal useful shapes. Two pilots exist; they are not a rollout template. |
-| Data-science scope | Finish-versus-report decisions unresolved | Determine which gaps matter to retained thesis claims. Additional branch-aware versus nonsmooth comparison is excluded by Jörn's value judgment. |
+| Data-science scope | Finish-versus-report decisions unresolved; one historical-evaluator wording gap repaired | [Scope/evidence note](datascience-scope.md) separates unresolved frozen-table lineage and unchecked appendix diagnostics from new research. Additional branch-aware versus nonsmooth comparison is excluded by Jörn's value judgment. |
 
 Layout and authoring investigation can plausibly overlap; this is an agent
 planning hypothesis, not an established dependency. Tool readiness does not
 complete authoring-workflow discovery. Deferring summaries did not defer that
 parent problem.
 
-## Current assignment
+## Sprint disposition and next ownership
 
 On 2026-09-07 Jörn authorized a roughly 15-minute parallel repo-improvement
-sprint, with isolated worktrees and one integration worktree. The main agent
-owns integration and the final disposition of proposed commits. Detailed
-assignments belong to the live sprint, not an enduring list of implied owners.
+sprint, with isolated worktrees and one integration worktree. Integrated results
+are reflected above. The main agent owns follow-on selection; the completed
+subagent tasks do not assign anyone the remaining thesis work. No research run
+or comprehensive audit is queued.
 
 The migration purpose is predictable tools, useful navigation and enough
 accurate context for fresh agents to avoid costly wrong work. It does not
@@ -48,8 +49,11 @@ certify the thesis or settle every research question.
 - [P2 packet](../experiments/sys-datascience/methods/standard-baseline-p2/README.md):
   completed input reconstruction with matching hashes, including unauthorized
   CPU-load incident and resource warning. No rerun queued.
-- Global skills/memory installation: DevOps reported complete; it owns system
-  migration and distribution. This sprint does not independently migrate globals.
+- Global installation/distribution remains DevOps-owned. Jörn separately
+  authorized this sprint's live shared-skill edits: memory/skill-design writing
+  guidance was refined, not reorganized into a new framework. The remaining
+  cross-skill design question lives in global memory
+  `~/.agents/memories/process-knowledge-design.md`.
 
 ## Not assigned by this map
 

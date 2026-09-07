@@ -11,8 +11,11 @@ Pilot reference entries (source-grounded understanding, not independent audits):
 Current work and project context:
 
 - [Authoring workflow starting experiment](authoring-workflow.md): recovered
-  writing concerns and a bounded HKO proof-bridge case for developing feedback;
-  proposed, not a validated workflow or review gate.
+  writing concerns, two HKO proof-bridge variants and topic-split review findings;
+  one small revision, not a validated workflow or review gate.
+- [Data-science scope/evidence](datascience-scope.md): repaired historical-evaluator
+  wording, unresolved frozen-table lineage and appendix-check boundaries;
+  distinguishes retained-claim support from optional new research.
 - [Current work and ownership](todos.md): current migration assignment,
   completed work, proposals and unassigned scope questions.
 - [Planning context](planning-context.md): user decisions, the observed scope
