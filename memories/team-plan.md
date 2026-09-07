@@ -43,16 +43,18 @@ Shell tests, cache-race fixtures and command-contract review can run in parallel
 
 ## Mathematical code architecture
 
-First outcome: characterize a specific overlapping geometry boundary and make
-one justified consolidation/contract repair, or retain deliberate differences
-with tests. No presumption that a shared polytope type is desirable.
+First outcome: characterize a specific overlapping geometry boundary and decide
+whether a consolidation, contract repair or characterization test earns its
+cost. Understandable deliberate differences may justify no change. No presumption
+that a shared polytope type is desirable.
 
 `crates/symplectic/src/geom/vertex_enumeration/enumerate.rs` retains rational
 construction with f64 prefilters; `crates/euclidean-polytopes/src/polar.rs`
 supplies exact enumeration with different redundant-input/error behavior.
 `capacity_4d/geometry.rs` uses the newer route, while `symplectic/src/random.rs`
 and `geom/known_polytopes.rs` still call the older route. Experiment-local
-`flat_polytope.rs` in HKO and combinatorial-cells also differ in validation.
+`flat_polytope.rs` in HKO and combinatorial-cells also differ in validation;
+that is a possible follow-on, not part of the initial enumeration boundary.
 
 Delegate caller/contract analysis, tiny characterization-fixture design and
 compatibility alternatives in parallel. A refactor depends on those results;
@@ -84,7 +86,9 @@ needed context from peers; peers need not write periodic postmortems.
 
 ## Dependencies and coordination
 
-All five first investigations can start independently. Numerical API changes
+All five first investigations can start independently; that does not establish
+five sustained workloads. Process-feedback work may finish or wait after its
+initial evidence check while other sessions continue. Numerical API changes
 require coordination with concrete callers; artifact tools own byte recovery,
 not scientific interpretation. Authoring decides a figure's purpose; engineering
 can help make its execution reliable. No session waits for a global skill merge.
