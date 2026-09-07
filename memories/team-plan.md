@@ -41,25 +41,25 @@ Independent initial tasks:
 These are source findings, not reproduced bugs or permission for costly runs.
 Shell tests, cache-race fixtures and command-contract review can run in parallel.
 
-## Mathematical code architecture
+## Codebase architecture and migration
 
-First outcome: characterize a specific overlapping geometry boundary and decide
-whether a consolidation, contract repair or characterization test earns its
-cost. Understandable deliberate differences may justify no change. No presumption
-that a shared polytope type is desirable.
+Session outcome: predictable stable reusable implementations, appropriate
+experimental/instrumented variants, understandable relationships and effective
+tooling, with justified migrations carried out. The earlier geometry overlap
+is one input, not the scope boundary. The existing three crates and selected
+capacity/instrumented-copy arrangement already realize part of this design.
 
-`crates/symplectic/src/geom/vertex_enumeration/enumerate.rs` retains rational
-construction with f64 prefilters; `crates/euclidean-polytopes/src/polar.rs`
-supplies exact enumeration with different redundant-input/error behavior.
-`capacity_4d/geometry.rs` uses the newer route, while `symplectic/src/random.rs`
-and `geom/known_polytopes.rs` still call the older route. Experiment-local
-`flat_polytope.rs` in HKO and combinatorial-cells also differ in validation;
-that is a possible follow-on, not part of the initial enumeration boundary.
+[Architecture migration findings](architecture-migration.md) preserve concrete
+consumers, semantic differences and four proposed work packages: ordinary
+geometry; exact theorem-independent support; production/control/instrumentation
+boundaries; deformation and flow-graph contracts.
 
-Delegate caller/contract analysis, tiny characterization-fixture design and
-compatibility alternatives in parallel. A refactor depends on those results;
-duplication alone establishes neither a defect nor a worthwhile consolidation.
-Tests need explicit small scope, not a full-workspace or research run.
+First parallel work can characterize Euclidean components, extract shared exact
+KKT assembly, and characterize instrumented traversal/correspondence. Each
+migration depends on its own contract checks, not the entire inventory. These
+are proposals, not active assignments; no test execution occurred in the
+planning investigation. Historical evaluator semantics and meaningful variant
+differences must survive import/layout changes.
 
 ## Data-science contribution development
 
