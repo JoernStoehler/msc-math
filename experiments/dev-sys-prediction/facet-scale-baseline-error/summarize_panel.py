@@ -545,9 +545,10 @@ linearization, inside-window branch-selection, and window-miss terms.
 Interpretation notes for this panel:
 
 - `median_inside_window` is zero in every `(F,t)` bucket: the predicted branch
-  is also the exact best branch inside the base candidate window on these rows.
+  matches the lowest accepted f64 branch value inside the base window on these rows.
 - `target_best_missed` is a membership diagnostic, not an effect size. Use
-  `window_miss` to measure the error contribution from missed target behavior.
+  `window_miss` for the f64 window-envelope difference from recomputed target
+  `sys`; this can also include numerical acceptance/evaluation differences.
 - Some buckets can have target-best membership misses but near-zero window-miss
   at small radii, so membership misses should not be read as large prediction
   failures by themselves.

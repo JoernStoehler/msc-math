@@ -58,11 +58,13 @@ Common terms:
 - `fixed-sigma linearization error`: error from linearly approximating the
   predicted winning branch itself.
 - `inside-window selection error`: error from choosing the predicted winning
-  branch instead of the exact best branch inside the base candidate window.
-- `window-miss error`: difference between the exact best `sys` inside the
-  base branch window and the recomputed target `sys`; nonzero values mean the
-  base window missed the target behavior even if fixed-branch linearization was
-  good.
+  branch instead of the lowest accepted f64 reevaluation inside the base
+  candidate window.
+- `window-miss error`: difference between that f64 window minimum and the
+  recomputed target `sys`. The legacy KKT solver omits words it does not accept,
+  so this term can include numerical acceptance/evaluation differences as well
+  as missing target branches. A nonzero value alone does not establish a
+  target minimizer outside the window.
 - `capacity/volume/interaction errors`: split the fixed-sigma linearization
   error using `sys_sigma(a)=c_sigma(a)^2/(2 vol(a))`.
 - `target_best_not_in_base_window`: count of valid rows where the target
@@ -77,6 +79,11 @@ Do not read this packet as evidence that one facet count is intrinsically
 easier or harder than another. In this selected high-`sys` panel, facet count
 is confounded with degeneracy regime: `F=6` rows are large-gap, `F=10` rows are
 high-degeneracy, and `F=12` rows are narrow-gap.
+
+The retained generated `SUMMARY.md` files predate the evaluator clarification
+above and still use “exact best branch” wording. Their numeric tables and
+manifests are preserved as historical artifacts; the active summary producer
+now uses the f64 interpretation. See [the decomposition contract](../prediction-decomposition.md).
 
 ## Regeneration
 

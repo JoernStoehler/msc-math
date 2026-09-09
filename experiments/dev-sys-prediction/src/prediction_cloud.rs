@@ -1529,6 +1529,7 @@ struct FixedWinnerDecomposition {
     sys_error_interaction_residual: f64,
 }
 
+// Algebraic identity and evaluator limits: ../prediction-decomposition.md.
 fn candidate_window_decomposition(
     base: &BaseState,
     target_duals: &[Vector4<f64>],
@@ -1543,7 +1544,8 @@ fn candidate_window_decomposition(
     let predicted_sys = base.sys + witness.predicted_delta;
     let total_prediction_error = predicted_sys - actual_sys;
 
-    let base_window_exact_sys = exact_base_window_sys_at_target(base, target_duals, target_volume);
+    let base_window_exact_sys =
+        reevaluated_base_window_sys_at_target(base, target_duals, target_volume);
     let linearization_error = base_window_exact_sys.map(|exact| predicted_sys - exact);
     let sigma_set_error = base_window_exact_sys.map(|exact| exact - actual_sys);
     let sum_error = linearization_error
@@ -1587,7 +1589,10 @@ fn candidate_window_decomposition(
     out
 }
 
-fn exact_base_window_sys_at_target(
+// Historical "exact" names in serialized fields and profiler keys are retained.
+// This is a legacy f64 reevaluation: rejected words are omitted, and neither
+// acceptance nor the minimum is certified for the exact input problem.
+fn reevaluated_base_window_sys_at_target(
     base: &BaseState,
     target_duals: &[Vector4<f64>],
     target_volume: f64,

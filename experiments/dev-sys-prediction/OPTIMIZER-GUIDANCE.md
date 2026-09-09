@@ -88,11 +88,13 @@ The current decomposition supports an empirical error model:
   error was explained inside the base candidate window; the target minimizer
   was still visible there;
 - at `t = 1e-2`, one tested direction had a much larger error dominated by
-  window-miss loss: the exact envelope over the base candidate window was
-  higher than the true target `sys`.
+  the reported window-miss term: the f64 reevaluated envelope over the base
+  candidate window was higher than the recomputed target `sys`. This term also
+  admits numerical acceptance/evaluation differences; it does not alone
+  identify a missing branch.
 
-So the optimizer should distinguish fixed-sigma Taylor error, exact branch
-selection inside the known window, and target winners outside the known window.
+So the optimizer should distinguish fixed-sigma Taylor error, numerical branch
+selection inside the known window, and target-winner membership outside it.
 The first argues for smaller steps or second-order correction; the last argues
 for recomputing/expanding the branch window and treating the current radius as
 outside the single-anchor model's reliable region.

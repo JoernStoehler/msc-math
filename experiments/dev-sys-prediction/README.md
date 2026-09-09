@@ -131,9 +131,15 @@ stay inside the current cell.
 The natural nonlinear fixed-window comparator is not a new model: evaluate the
 same base candidate sigmas at the target and take
 `min_sigma sys_sigma(a0 + d)`. The decomposition reports this as the
-base-window exact envelope. Its remaining error against true `sys(a0 + d)` is
-the window-miss error: the amount explained by a target minimizer outside the
-base candidate window.
+base-window reevaluated envelope. The current implementation uses the legacy
+f64 KKT solver and omits words it does not accept; it is not an exact envelope.
+The historical `decomposition_base_window_exact_sys` field retains this
+numerical value. Its difference from recomputed target `sys` is reported as
+`window_miss_error`, but can include solver acceptance and numerical evaluation
+differences as well as missing target branches. Target-winner membership is a
+separate diagnostic. Neither field alone certifies the cause of the error.
+[Decomposition contract](prediction-decomposition.md) gives the identities,
+evaluation boundaries and missing-value semantics.
 
 ### Sysext Lower Envelope
 
