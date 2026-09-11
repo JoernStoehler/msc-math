@@ -18,7 +18,9 @@ questions/results use async questions or self-contained finals, not commentary.
 Current PM work is the unresolved communication repair, not choosing another
 thesis workstream. The previous recovery pass cleaned notes and proposed a crate
 launch while dropping that task. Both launch requests have been withdrawn in
-conversation; the crate inbox item's cancellation is being investigated separately.
+conversation. The remaining crate inbox item was removed using the TUI skip
+action, without answering; its absence was checked in the live pane. The verified
+route is in global memory `agent-coordination.md`.
 No launch or next-work priority is approved.
 
 The PDF was refreshed after the September 7 prose changes and September 11
