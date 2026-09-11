@@ -26,8 +26,8 @@ Current work and project context:
 - [Data-science scope/evidence](datascience-scope.md): repaired historical-evaluator
   wording, unresolved frozen-table lineage, checked appendix aggregates and integrated qualifications;
   distinguishes retained-claim support from optional new research.
-- [Current work and ownership](todos.md): September 11 PM context,
-  proposed authoring launch, completed work and unassigned scope questions.
+- [Current work and ownership](todos.md): provisional route graph with evidence and
+  conditional dependencies, completed work and unassigned scope questions.
 - [Planning context](planning-context.md): user decisions, the observed scope
   omission, and provisional reasoning behind authoring/layout work and summary
   deferral; supports the task map without making it authoritative.

@@ -127,8 +127,9 @@ relevant, not urgent assignments.
 
 ## Retained uncertainties that do not justify new work by themselves
 
-The changed TeX remains unbuilt, already recorded in the task map. It is not a
-new reason to request Jörn's final review. The pentagon certificate discussion
+The changed TeX was rebuilt on September 11, with the selected checks recorded
+in the task map. That is not evidence of full-manuscript quality or a reason by
+itself to request Jörn's final review. The pentagon certificate discussion
 and empirical README disclose that equal Rust/Sage word counts do not establish
 equal families. A cheap word-set comparison could clarify their relationship if
 a consumer needs it; this is not a demonstrated gap in the exact proof.
