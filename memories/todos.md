@@ -15,6 +15,12 @@ belongs to subagents. Herdr top-level launches require his approval of the actua
 prompt, because he must understand and converse with those agents. Consequential
 questions/results use async questions or self-contained finals, not commentary.
 
+Current PM work is the unresolved communication repair, not choosing another
+thesis workstream. The previous recovery pass cleaned notes and proposed a crate
+launch while dropping that task. Both launch requests have been withdrawn in
+conversation; the crate inbox item's cancellation is being investigated separately.
+No launch or next-work priority is approved.
+
 The PDF was refreshed after the September 7 prose changes and September 11
 evidence qualifications. `./thesis/check-build.sh` passed its selected PDF,
 overfull-box and reference checks; rendered page 104 was also inspected.
@@ -32,8 +38,8 @@ authorized. Historical session proposals are not current launch instructions.
 Authoring remains open. A single-crate quality calibration is also a current
 user proposal: `algebraic-numbers` is a bounded candidate, not a demonstrated
 bottleneck. Its [pilot prompt](/tmp/msc-math-prompts.JXv7AM/crate-quality-session-prompt.md) is prepared
-as an unapproved draft. The PM recommends this next for its concrete calibration
-question; its contribution to manuscript quality remains uncertain. Read-only assessment found repeated
+as an unapproved draft. The PM withdrew the crate-first recommendation pending
+the unresolved communication and priority discussion. Read-only assessment found repeated
 solver elimination, incomplete generated nullspace checks, documentation drift,
 and an endpoint-rounding conversion panic inferred from source and an independent
 binary64 calculation (not a Rust regression); these are scoped candidates,
