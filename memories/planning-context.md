@@ -19,15 +19,12 @@ could simply be his finding bad text with too many defects to enumerate. The
 HKO trial remains reference, not a reason to keep reviewing that passage.
 Choosing a new content trial needs a consequential workflow question it can answer.
 
-Jörn then proposed cheaper formative feedback: read a section with surrounding
-context and annotate its problems. Agents should first use existing knowledge
-and their own checks, rather than spend his typing on already-known defects.
-His suggested first unit was a central theorem's motivation, statement, sketch,
-figures/explanation and importance, initially excluding its long proof. Workflow
-discovery may require trial/error, parallel attempts and feedback-driven new
-approaches; confident prediction of a successful workflow is not established.
-Do not request the full-thesis PASS/FAIL review unless a strong proxy is known
-and passes. No such proxy has been established here.
+Agents should first use existing knowledge and their own checks, rather than
+spend Jörn's typing on already-known defects. Workflow discovery may require
+trial/error, parallel attempts and feedback-driven new approaches; confident
+prediction of a successful workflow is not established. Do not request the
+full-thesis PASS/FAIL review unless a strong proxy is known and passes. No such
+proxy has been established here.
 
 Content development includes supporting code, experiments, figures and text;
 their ordering follows concrete dependencies, not a fixed research-then-writing

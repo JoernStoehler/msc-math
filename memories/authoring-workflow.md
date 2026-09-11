@@ -1,4 +1,4 @@
-# Authoring workflow: a concrete starting experiment
+# Authoring workflow: September 7 comparison and unresolved questions
 
 The authoring workflow is still being discovered. Jörn's September 2026
 discussion makes his full-PDF review the costly final gate, ideally passed on
@@ -104,14 +104,14 @@ Jörn subsequently rejected further opportunistic passage checks as the next
 priority. This trial is reference for workflow discovery, not a queued task;
 see [current planning context](planning-context.md#writing-and-review).
 
-The reusable output is the justified revision, if any, and the few observations
-that change the next writing decision: where readers got stuck, which repair
-helped, or which apparently helpful edit caused loss or distraction. Useful
-source/context notes can grow from that work; no fixed summary schema is
-needed in advance.
+This comparison retained a revision and reviewer observations; it did not
+establish a repeatable authoring method. Jörn clarified on September 11 that
+roughly 99% of the proposed experiment's value is learning how to produce
+improvements at low cost; retaining its particular chapter is incidental.
+A successful local attempt alone would not establish transfer to other
+chapters or whole-thesis coherence.
 
-This local attempt cannot establish whole-chapter coherence, an effective
-empirical-results workflow, or final-PDF readiness. Those remain open parts of
-authoring-workflow discovery, not prerequisites to trying this case. The
-comparison above is one source-level authoring attempt, not a human-reader
-before/after test or evidence that a whole-thesis workflow succeeds.
+The comparison above is one source-level authoring attempt, not a human-reader
+before/after test or evidence that a whole-thesis workflow succeeds. Its
+mathematical and reviewer observations remain reference material; it is not
+a queued experiment.

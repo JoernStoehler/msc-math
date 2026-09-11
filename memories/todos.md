@@ -15,34 +15,25 @@ belongs to subagents. Herdr top-level launches require his approval of the actua
 prompt, because he must understand and converse with those agents. Consequential
 questions/results use async questions or self-contained finals, not commentary.
 
-Read-only orientation found no other live thesis Herdr agent and no tracked
-changes at `a3f06cb4`. The PDF was refreshed after September 7 prose changes and September 11
-evidence qualifications; `./thesis/check-build.sh` passed its selected PDF,
-overfull-box and reference checks. Full visual/scientific review remains open. Pre-existing `tmp/` remains
-untouched. The [authoring launch prompt](/tmp/msc-math-prompts.JXv7AM/authoring-session-prompt.md) is a
-retracted launch proposal, not an active approval request or assignment. Jörn
-needs the substantive proposal and expected outcomes to assess the prompt.
+The PDF was refreshed after the September 7 prose changes and September 11
+evidence qualifications. `./thesis/check-build.sh` passed its selected PDF,
+overfull-box and reference checks; rendered page 104 was also inspected.
+Full-manuscript visual/scientific review remains open. Pre-existing `tmp/` is
+untouched.
+
 Jörn clarified that roughly 99% of the proposed experiment's value is learning
 whether a repeatable low-cost operation produces useful thesis content; retaining
 the particular revised chapter is incidental and its worktree can be discarded.
-“Tell a fresh agent to improve HKO” is already a candidate operation. HKO-only
-success does not establish transfer to other chapters or whole-thesis coherence.
-The PM's HKO-first recommendation is withdrawn: no known HKO PASS bottleneck or
-specific cheaper diagnostic of the whole-thesis operation has been established.
-
-Further read-only review recovered that the earlier central-theorem unit was
-suggested for cheaper formative reading. Generation scope and evaluation scope
-need not match. The PM now proposes considering one whole-thesis candidate attempt
-with selective initial evaluation; this is an agent proposal, not Jörn's decision,
-a validated method or a reason to demand a full-PDF reading. One good sample would
-remain partial evidence. The temporary HKO prompt is superseded discussion
-material. No Herdr launch is authorized. September 7 session briefs retain
-historical reasoning but are not current launch instructions.
+No authoring experiment or launch prompt is currently agreed. The PM withdraws
+both its HKO-first and subsequent whole-thesis-attempt recommendations: it has
+not justified their expected learning relative to cost. No Herdr launch is
+authorized. Historical session proposals are not current launch instructions.
 
 Authoring remains open. A single-crate quality calibration is also a current
 user proposal: `algebraic-numbers` is a bounded candidate, not a demonstrated
 bottleneck. Its [pilot prompt](/tmp/msc-math-prompts.JXv7AM/crate-quality-session-prompt.md) is prepared
-as an alternative, awaiting launch approval. Read-only assessment found repeated
+as an unapproved draft. The PM recommends this next for its concrete calibration
+question; its contribution to manuscript quality remains uncertain. Read-only assessment found repeated
 solver elimination, incomplete generated nullspace checks, documentation drift,
 and an endpoint-rounding conversion panic inferred from source and an independent
 binary64 calculation (not a Rust regression); these are scoped candidates,
@@ -55,8 +46,8 @@ and attempt desperate actions, with claimed three-day work taking ten minutes.
 This is his observed planning failure, not measured general model performance.
 No new deadline was supplied. Sequence bounded work by its contribution and
 observed cost; unsupported duration estimates do not justify defeat or shortcuts.
-The launch drafts above are temporary active review artifacts under `/tmp`, not
-project documentation; their paths may expire after the launch decision.
+The remaining launch draft is temporary material under `/tmp`, not project
+documentation; its path may expire after the launch decision.
 
 ## Outcome and open work
 

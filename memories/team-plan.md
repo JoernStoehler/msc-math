@@ -1,6 +1,8 @@
-# Proposed user-facing sessions
+# Historical proposed sessions
 
-Source investigations 2026-09-07; planning, not active assignments. The user
+Source investigations 2026-09-07; not the current launch plan. The HKO session
+below has not been selected; current authoring scope and experiment remain
+unresolved. See [current work map](todos.md). The user
 prefers separate Herdr chats for work involving him, with bounded subagents
 underneath. This plan separates concrete outcomes rather than assigning an
 unbounded subtree to an authoring or code lead. Overall purpose and feedback
@@ -11,7 +13,7 @@ This is a candidate session portfolio, not the full outcome graph.
 proofs and delivery obligations plus new concrete opportunities; their absence
 as separate peers does not defer or erase them.
 
-## HKO presentation and authoring feedback
+## Historical HKO presentation proposal
 
 First outcome: one substantive central-result presentation, self-reviewed and
 ready for informative section annotations, not the final PASS/FAIL review.
