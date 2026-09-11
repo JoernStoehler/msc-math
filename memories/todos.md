@@ -1,10 +1,32 @@
 # Current work map
 
-Updated 2026-09-07. Non-authoritative planning view; the reasons and user
+Updated 2026-09-11. Non-authoritative planning view; the reasons and user
 decisions behind it live in [planning context](planning-context.md).
 [Outcome coverage](outcome-coverage.md) retains whole-thesis composition, long
 proofs, eventual delivery and new discovery findings beyond the proposed session
 portfolio. It is not an exhaustive graph or additional assignment queue.
+
+## September 11 PM session
+
+Jörn requests continuous delegation-led project management. Completion proxy:
+explicit approval from him after reading the thesis PDF that he thinks it earns
+a PASS. The PM coordinates and owns small integration writes; bounded exploration
+belongs to subagents. Herdr top-level launches require his approval of the actual
+prompt, because he must understand and converse with those agents. Consequential
+questions/results use async questions or self-contained finals, not commentary.
+
+Read-only orientation found no other live thesis Herdr agent and no tracked
+changes at `a3f06cb4`. The existing September 5 PDF predates September 7 prose
+changes; source compilation has not yet been checked. Pre-existing `tmp/` remains
+untouched. The [authoring launch prompt](../docs/authoring-session-prompt.md) is a
+proposal awaiting Jörn's approval, not an active assignment. September 7 session
+briefs retain historical reasoning but are not current launch instructions.
+
+Authoring remains open. A single-crate quality calibration is also a current
+user proposal: `algebraic-numbers` is a bounded candidate, not a demonstrated
+bottleneck. Broad refactoring and shared-skill revisions have not been established
+as prerequisites for passing. Unknown current deadline/submission constraints
+need Jörn's context if they change sequencing.
 
 ## Outcome and open work
 
