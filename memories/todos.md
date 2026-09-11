@@ -19,21 +19,28 @@ Read-only orientation found no other live thesis Herdr agent and no tracked
 changes at `a3f06cb4`. The PDF was refreshed after September 7 prose changes and September 11
 evidence qualifications; `./thesis/check-build.sh` passed its selected PDF,
 overfull-box and reference checks. Full visual/scientific review remains open. Pre-existing `tmp/` remains
-untouched. The [authoring launch prompt](../docs/authoring-session-prompt.md) is a
+untouched. The [authoring launch prompt](/tmp/msc-math-prompts.JXv7AM/authoring-session-prompt.md) is a
 proposal awaiting Jörn's approval, not an active assignment. September 7 session
 briefs retain historical reasoning but are not current launch instructions.
 
 Authoring remains open. A single-crate quality calibration is also a current
 user proposal: `algebraic-numbers` is a bounded candidate, not a demonstrated
-bottleneck. Its [pilot prompt](../docs/crate-quality-session-prompt.md) is prepared
+bottleneck. Its [pilot prompt](/tmp/msc-math-prompts.JXv7AM/crate-quality-session-prompt.md) is prepared
 as an alternative, awaiting launch approval. Read-only assessment found repeated
 solver elimination, incomplete generated nullspace checks, documentation drift,
 and an endpoint-rounding conversion panic inferred from source and an independent
 binary64 calculation (not a Rust regression); these are scoped candidates,
 not an instruction to implement all of them. Broad refactoring and shared-skill
 revisions have not been established
-as prerequisites for passing. Unknown current deadline/submission constraints
-need Jörn's context if they change sequencing.
+as prerequisites for passing.
+
+Jörn reports that even realistic timelines have led agents to declare defeat
+and attempt desperate actions, with claimed three-day work taking ten minutes.
+This is his observed planning failure, not measured general model performance.
+No new deadline was supplied. Sequence bounded work by its contribution and
+observed cost; unsupported duration estimates do not justify defeat or shortcuts.
+The launch drafts above are temporary active review artifacts under `/tmp`, not
+project documentation; their paths may expire after the launch decision.
 
 ## Outcome and open work
 
