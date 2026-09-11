@@ -25,7 +25,13 @@ briefs retain historical reasoning but are not current launch instructions.
 
 Authoring remains open. A single-crate quality calibration is also a current
 user proposal: `algebraic-numbers` is a bounded candidate, not a demonstrated
-bottleneck. Broad refactoring and shared-skill revisions have not been established
+bottleneck. Its [pilot prompt](../docs/crate-quality-session-prompt.md) is prepared
+as an alternative, awaiting launch approval. Read-only assessment found repeated
+solver elimination, incomplete generated nullspace checks, documentation drift,
+and an endpoint-rounding conversion panic inferred from source and an independent
+binary64 calculation (not a Rust regression); these are scoped candidates,
+not an instruction to implement all of them. Broad refactoring and shared-skill
+revisions have not been established
 as prerequisites for passing. Unknown current deadline/submission constraints
 need Jörn's context if they change sequencing.
 
@@ -60,7 +66,8 @@ The unlimited-budget sprint is finished; normal-budget work has resumed.
 All implementation commits were integrated. Branches `migration/20260907-*`
 retain the worker histories after removal of their clean scratch checkouts.
 The unmerged process-handoff packet is superseded by global memory, not pending
-integration. The changed TeX has not been rebuilt or inspected as a PDF.
+integration. The changed TeX was subsequently rebuilt on September 11; full visual review
+remains open.
 
 The migration purpose is predictable tools, useful navigation and enough
 accurate context for fresh agents to avoid costly wrong work. It does not
