@@ -24,7 +24,7 @@ Current work and project context:
   writing concerns, two HKO proof-bridge variants and topic-split review findings;
   one small revision, not a validated workflow or review gate.
 - [Data-science scope/evidence](datascience-scope.md): repaired historical-evaluator
-  wording, unresolved frozen-table lineage, checked appendix aggregates and pending qualifications;
+  wording, unresolved frozen-table lineage, checked appendix aggregates and integrated qualifications;
   distinguishes retained-claim support from optional new research.
 - [Current work and ownership](todos.md): September 11 PM context,
   proposed authoring launch, completed work and unassigned scope questions.

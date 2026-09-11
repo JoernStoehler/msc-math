@@ -16,8 +16,9 @@ prompt, because he must understand and converse with those agents. Consequential
 questions/results use async questions or self-contained finals, not commentary.
 
 Read-only orientation found no other live thesis Herdr agent and no tracked
-changes at `a3f06cb4`. The existing September 5 PDF predates September 7 prose
-changes; source compilation has not yet been checked. Pre-existing `tmp/` remains
+changes at `a3f06cb4`. The PDF was refreshed after September 7 prose changes and September 11
+evidence qualifications; `./thesis/check-build.sh` passed its selected PDF,
+overfull-box and reference checks. Full visual/scientific review remains open. Pre-existing `tmp/` remains
 untouched. The [authoring launch prompt](../docs/authoring-session-prompt.md) is a
 proposal awaiting Jörn's approval, not an active assignment. September 7 session
 briefs retain historical reasoning but are not current launch instructions.
@@ -40,7 +41,7 @@ conjecture that passes Jörn's full-PDF review, ideally on its first attempt.
 | Tools and navigation | Named setup checks and substantial cleanup completed | Existing evidence and limits are linked below; investigate concrete remaining obstacles, not an exhaustive cleanup programme. |
 | Mathematical code architecture and execution reliability | Concrete source-level candidates identified; not implemented | [Proposed sessions](team-plan.md) separate broad stable-code architecture/migration from launcher/cache reliability, with scientific contract checks before refactoring. Prior navigation checks did not settle these code questions. |
 | Author summaries/memory | Detailed design deferred | Revisit as actual writing and feedback reveal useful shapes. Two pilots exist; they are not a rollout template. |
-| Data-science scope | Finish-versus-report decisions unresolved; one historical-evaluator wording gap repaired | [Scope/evidence note](datascience-scope.md) separates unresolved frozen-table lineage, checked appendix aggregates and pending wording qualifications from new research. Additional branch-aware versus nonsmooth comparison is excluded by Jörn's value judgment. |
+| Data-science scope | Finish-versus-report decisions unresolved; one historical-evaluator wording gap repaired | [Scope/evidence note](datascience-scope.md) separates unresolved frozen-table lineage, checked appendix aggregates and integrated wording qualifications from new research. Additional branch-aware versus nonsmooth comparison is excluded by Jörn's value judgment. |
 
 Layout and authoring investigation can plausibly overlap; this is an agent
 planning hypothesis, not an established dependency. Tool readiness does not

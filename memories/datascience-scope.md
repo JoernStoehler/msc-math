@@ -69,14 +69,16 @@ summary and analysis CSVs, `ascent-continuation/artifacts/`'s
 `endpoint-model-audit/artifacts/directional-decomposition-20260729/raw/audit.json`.
 These checks support the aggregates, not producer correctness or causal claims.
 
-**Editorial qualifications pending authoring.** Finite differences at tested
+**Editorial qualifications integrated September 11.** Finite differences at tested
 radius 1e−8 approached the implemented derivative; finite samples do not establish
 asymptotic convergence. The top failure still has about 0.99% action and 1.88%
-branch-ratio relative errors. Replace unqualified “converged” with agreement at
-the tested scale and these limits. For the frozen table, “maximum recorded
-systolic-ratio value” would match the abstract/conclusion's qualification better
-than “maximum observed systolic ratio”; filtering establishes membership, not
+branch-ratio relative errors. The appendix now states agreement at
+the tested scale and these limits. For the frozen table, Its table statistics are now consistently described as recorded values,
+matching the abstract/conclusion; filtering establishes membership, not
 numerical certification. No evidence here establishes that the maximum is wrong.
+`./thesis/check-build.sh` passed after these edits, refreshing the current PDF.
+This checks PDF production, selected overfull boxes and references, not full
+visual or scientific review.
 
 ## Already disclosed or resolved, not fresh research blockers
 

@@ -15,9 +15,10 @@ your useful output is thesis progress and a conversation Jörn can follow.
 ## Starting context
 
 The thesis is *Probing Viterbo's Conjecture*. The active manuscript is rooted at
-`thesis/main.tex`. On September 11, the existing `thesis/build/main.pdf` still
-predated September 7 prose changes. Refresh it using the documented build route
-before treating it as the current manuscript.
+`thesis/main.tex`. On September 11, `thesis/build/main.pdf` was refreshed after the September 7
+prose changes and two evidence-based appendix qualifications. The documented
+`./thesis/check-build.sh` passed its selected PDF, overfull-box and reference
+checks; this is not a full visual or scientific review.
 
 Jörn's recorded position treats the HKO local-maximality and rotated-pentagon
 results as established, and says the flow graph has proofs. A written proof can

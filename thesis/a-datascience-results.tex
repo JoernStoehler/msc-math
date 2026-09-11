@@ -121,8 +121,10 @@ The three-proposal audit compared two such failures with one positive control.
 At normalized radius \(10^{-5}\), the failures perturbed their named KKT
 matrices by \(218\) and \(67\) times the smallest base eigenvalue magnitude
 and crossed zero; the control had ratio \(1.53\), did not cross zero, and kept
-the correct sign.  At radius \(10^{-8}\), finite differences converged to the
-implemented analytic derivative.  Binary64 and exact-arithmetic geometry
+the correct sign.  At the smallest tested radius, \(10^{-8}\), central
+differences approximated the implemented analytic derivatives with relative
+errors below \(1\%\) for the named action and \(1.9\%\) for the named branch
+ratio.  Binary64 and exact-arithmetic geometry
 reconstruction agreed at all \(39\) audited points, and relative volume
 discrepancies were below \(10^{-15}\).  For these selected cases the observed
 failure is finite-distance nonlinearity of an ill-conditioned KKT branch.
@@ -147,10 +149,9 @@ conditioning cutoff.
 All retained-table method packets use the same trusted random/product input
 filter.  The retained table has \(14336\) trusted rows: \(4096\) generic random
 polytopes and \(10240\) random Lagrangian products.  It has no duplicate
-polytope rows, no excluded-label hits, maximum observed systolic ratio about
-\(0.863\), and no row with systolic ratio larger than \(1\).  Its median
-systolic ratio is about \(0.311\), and its \(99\)th percentile is about
-\(0.752\).
+polytope rows and no excluded-label hits.  Its recorded systolic-ratio values
+have maximum about \(0.863\), median about \(0.311\), and \(99\)th percentile
+about \(0.752\); none exceeds \(1\).
 
 The generic random rows use facet counts \(F=5,\ldots,12\), with \(512\)
 accepted samples for each facet count.  The random Lagrangian-product rows use
