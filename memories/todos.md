@@ -40,7 +40,7 @@ conjecture that passes Jörn's full-PDF review, ideally on its first attempt.
 | Tools and navigation | Named setup checks and substantial cleanup completed | Existing evidence and limits are linked below; investigate concrete remaining obstacles, not an exhaustive cleanup programme. |
 | Mathematical code architecture and execution reliability | Concrete source-level candidates identified; not implemented | [Proposed sessions](team-plan.md) separate broad stable-code architecture/migration from launcher/cache reliability, with scientific contract checks before refactoring. Prior navigation checks did not settle these code questions. |
 | Author summaries/memory | Detailed design deferred | Revisit as actual writing and feedback reveal useful shapes. Two pilots exist; they are not a rollout template. |
-| Data-science scope | Finish-versus-report decisions unresolved; one historical-evaluator wording gap repaired | [Scope/evidence note](datascience-scope.md) separates unresolved frozen-table lineage and unchecked appendix diagnostics from new research. Additional branch-aware versus nonsmooth comparison is excluded by Jörn's value judgment. |
+| Data-science scope | Finish-versus-report decisions unresolved; one historical-evaluator wording gap repaired | [Scope/evidence note](datascience-scope.md) separates unresolved frozen-table lineage, checked appendix aggregates and pending wording qualifications from new research. Additional branch-aware versus nonsmooth comparison is excluded by Jörn's value judgment. |
 
 Layout and authoring investigation can plausibly overlap; this is an agent
 planning hypothesis, not an established dependency. Tool readiness does not

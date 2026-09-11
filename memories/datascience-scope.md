@@ -1,9 +1,10 @@
 # Data-science scope: evidence questions before new research
 
-Source-reading orientation, 2026-09-07, baseline `921f3c02`.
+Source-reading orientation, 2026-09-07, baseline `921f3c02`; bounded retained-data
+checks added 2026-09-11 at `2e36e9ca`.
 This separates candidate work by what it would accomplish; it does not decide
-what Jörn should accept or certify the retained results. No experiments or
-data validation were performed for this note.
+what Jörn should accept or certify the retained results. No new experiments were run. September 11 checks compare reported aggregates
+with retained records; they do not validate producer correctness or capacity.
 
 ## Scope already decided
 
@@ -33,30 +34,49 @@ not current v3 production certificates. Previously the chapter's heuristic-value
 qualification referred only to the optimizer comparison. This is a source-based
 wording repair, not a numerical recheck or evidence that a value is wrong.
 
-**Retained-table evaluator lineage: still unknown here.** The
-[trusted-input packet](../experiments/sys-datascience/methods/trusted-random-dataset/README.md)
-and appendix expressly say the row audit does not validate capacity or volume.
-The [producer README](../experiments/polytope-datasets/README.md) distinguishes
-fresh certified capacity values from legacy orbit-search values and says
-`sys` remains approximate through binary64 volume. That current contract does
-not establish the guarantees of the exact frozen 14336 rows. The useful next
-check is retained provenance and numerical interpretation, not recomputing the
-samples. Unlike the proposer case, these sources do not yet establish which
-additional qualification, if any, is needed.
+**Retained-table evaluator lineage: partially unresolved.** September 11
+read-only inspection counted 14,336 provenance rows in
+`experiments/polytope-invariant-table/polytope-provenance-table.jsonl`: 4,096
+`random_sample` rows labeled `ehz_capacity` and 10,240 `random_product_sample`
+rows labeled `ehz_capacity_billiard`. Current `load_caches.rs` inserts these
+labels; they do not establish historical solver or certification semantics.
+The rows contain neither producer revision nor capacity-method/certificate
+fields. Scalar tables were absent at inspected local paths. The trusted-filter
+summary records maximum 0.86258589584944 and zero values above one, but expressly
+does not validate capacity/volume. Current certified-versus-legacy contracts in
+the producer README cannot establish the frozen table's historical contract.
+Recover actual scalar/producer payload and matching provenance to narrow this
+further; no sample recomputation is implied.
 
-**Appendix diagnostics beyond the seven-method table.** The
-[appendix](../thesis/a-datascience-results.tex), paragraphs “Detailed HKO
-calibration” and “Selected finite-step failure audit”, contains recovery
-percentages, 80-proposal failure counts and three-case KKT conditioning
-conclusions. Their routes are
-[ascent continuation](../experiments/dev-gradient-ascent/ascent-continuation/README.md)
-and [endpoint model audit](../experiments/dev-gradient-ascent/endpoint-model-audit/README.md),
-especially “Directional decomposition result”. Those READMEs describe matching
-claims; this pass did not verify their aggregates or causal interpretation.
-The [earlier optimizer pilot](optimizer-review-route.md) did not inspect these
-diagnostics, so its summary agreement cannot stand in for their review. A
-targeted check of these retained claims is different from a new optimizer
-comparison.
+**Appendix diagnostic aggregates checked against retained records.** A bounded
+subagent recomputed these on September 11 for “Detailed HKO calibration” and
+“Selected finite-step failure audit” in `thesis/a-datascience-results.tex`:
+
+- 16 HKO perturbations: gap recovery 0.9339957463–0.9999999922 and distance
+  reduction 0.7788465885–0.9999744166; single-branch recovery
+  −0.2211149374–0.4141014923. HKO control has zero accepted steps/gain.
+- Five of eight endpoints improve, with stated gain range 1.57e−6–4.61e−5.
+  Recounted 80 proposals, 52 losses with represented winner and positive
+  prediction, and 40 with determinate unchanged geometry.
+- KKT ratios 217.8466, 67.4055, 1.526416 round to the manuscript's values.
+  All three recorded geometry comparisons agree at all 39 points; maximum
+  relative volume discrepancy is 8.4091e−16.
+
+Evidence: under `experiments/dev-gradient-ascent/`, the
+`ascent-continuation/artifacts/hko-one-step-development-panel-20260729/` raw
+summary and analysis CSVs, `ascent-continuation/artifacts/`'s
+`top8-tuning-endpoints-one-step-20260729/raw/candidates.jsonl`, and
+`endpoint-model-audit/artifacts/directional-decomposition-20260729/raw/audit.json`.
+These checks support the aggregates, not producer correctness or causal claims.
+
+**Editorial qualifications pending authoring.** Finite differences at tested
+radius 1e−8 approached the implemented derivative; finite samples do not establish
+asymptotic convergence. The top failure still has about 0.99% action and 1.88%
+branch-ratio relative errors. Replace unqualified “converged” with agreement at
+the tested scale and these limits. For the frozen table, “maximum recorded
+systolic-ratio value” would match the abstract/conclusion's qualification better
+than “maximum observed systolic ratio”; filtering establishes membership, not
+numerical certification. No evidence here establishes that the maximum is wrong.
 
 ## Already disclosed or resolved, not fresh research blockers
 
