@@ -77,7 +77,9 @@ the tested scale and these limits. For the frozen table, Its table statistics ar
 matching the abstract/conclusion; filtering establishes membership, not
 numerical certification. No evidence here establishes that the maximum is wrong.
 `./thesis/check-build.sh` passed after these edits, refreshing the current PDF.
-This checks PDF production, selected overfull boxes and references, not full
+This checks PDF production, selected overfull boxes and references. A read-only
+visual check of rendered PDF page 104 (both changed passages) found intact math
+glyphs and no clipping, overlap or spacing defects. This is not full-manuscript
 visual or scientific review.
 
 ## Already disclosed or resolved, not fresh research blockers
