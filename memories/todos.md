@@ -58,48 +58,90 @@ observed cost; unsupported duration estimates do not justify defeat or shortcuts
 The remaining launch draft is temporary material under `/tmp`, not project
 documentation; its path may expire after the launch decision.
 
-## Provisional outcome and route graph
+## Provisional routes to a finished passing thesis
 
 Project goal: finish the thesis with a passing grade. The user-selected operational
-proxy is Jörn explicitly judging PASS after reading the PDF. That proxy is not an
-assertion about the university's eventual grade. The current candidate already
-exists; this map does not assume another revision must precede its evaluation.
+proxy is Jörn explicitly judging PASS after reading the PDF; this is evidence for
+the goal, not a logical guarantee of the university's grade. No route or launch
+is selected. The map must include a complete success story and compare proposed
+steps with their omission, not merely list things that might help.
 
-The graph shows candidate routes currently under discussion, not all possible
-routes or an AND-decomposition of the goal. Solid arrows express the chosen
-proxy's observation sequence. Dashed arrows are possible effects or feedback,
-not established benefits, required dependencies, or assignments.
+### Direct manuscript route as a comparator
+
+This is a possible successful route, not a claim of fastest sequencing or an
+exhaustive decomposition. The arrows describe what happens in this story if the
+operations work. A complete 110-page draft and supporting repository exist.
 
 ```mermaid
-flowchart LR
-  PDF["Current or revised candidate PDF"] -->|"read and judge"| J["Jörn's verdict"]
-  J -->|"if PASS"| P["Chosen completion proxy met"]
-  O["Try a candidate authoring or repair operation"] -.->|"may produce a useful candidate"| PDF
-  O -.->|"observations in the tested setting"| K["Knowledge of operation quality and cost"]
-  K -.->|"inform what to try or reuse"| O
-  J -.->|"feedback when available"| K
-  E["Investigate specific scientific or support questions"] -.->|"may change claims or supporting material"| PDF
-  C["Code, tool, or prompt interventions"] -.->|"may make an operation cheaper or more reliable"| O
+flowchart TD
+  D["Current complete draft and supporting repository"] --> A["Ask a fresh author for a whole candidate for PASS review"]
+  A -->|"candidate produced"| C["Check changed claims and rendered candidate; repair concrete defects"]
+  A -.->|"unable: investigate the reason"| F
+  D -.->|"shorter route if current draft is adequate"| R["Jörn reads the whole candidate"]
+  C --> R
+  R -->|"judges PASS: chosen proxy"| P["Finished candidate judged passing"]
+  R -->|"does not pass"| F["Use actual deficiencies to revise the operation or choose targeted work"]
+  F -.->|"when a useful correction is identified"| A
+  P --> S["Any still-required formal completion and submission"]
+  S --> X["Examiner assesses the thesis"]
+  X -->|"passing assessment"| T["THESIS FINISHED AND RECEIVES PASS"]
 ```
 
-These are current options and open questions. A row is not an obligation to run
-that work; a particular attempt may combine rows or reveal a better route.
+The last steps are conditional on actual current requirements and status, which
+have not been established; this does not reactivate old administrative tasks.
+Jörn's final reading is a future decision, not assigned by drawing the arrow.
 
-| Candidate work | Evidence making it a live option | Argument for shortening the route, and what remains unestablished |
+The story could work if remaining defects are identifiable and repairable using
+the current material, the author/checkers can make those repairs without larger
+regressions, and the finished work meets the actual assessment requirements.
+The complete draft and successful bounded evidence repairs support feasibility;
+they do not establish those authoring abilities, current manuscript adequacy,
+convergence under feedback, or total cost. An unexplained failure does not justify
+indefinitely repeating the same operation. It may call for a targeted diagnostic,
+a different authoring approach, or direct human contribution instead.
+
+### Omission comparisons
+
+The comparison concerns impact on success and total effort, not whether both
+versions have some imaginable successful outcome. These judgments apply to this
+comparator route, not all possible routes.
+
+| Proposed insertion | Downstream consumer / intended causal effect | What changes when omitted? |
 | --- | --- | --- |
-| Assess a candidate and choose useful feedback | A current PDF and build route exist. Build/reference checks, page 104 visual inspection and selected empirical aggregates have passed; full-manuscript quality is unestablished. | Targeted checks may save Jörn reading an already-defective candidate. No automated final-quality proxy is established. A good checked excerpt cannot certify unrelated chapters. This map does not itself request a full-PDF reading. |
-| Try an authoring operation and learn whether to reuse it | A fresh-agent HKO revision or whole-thesis attempt are concrete candidate operations. Prior HKO work produced a local correction and conflicting exposition judgments, without a human before/after assessment. | Reliable inexpensive production would reduce later authoring cost. Neither repeatability, cost, nor transfer has been established for the proposed operations. HKO is not a proven PASS bottleneck; wider scope alone does not establish value. No experiment is selected. |
-| Resolve a specific scientific/content/support question | Frozen-table historical evaluator lineage is unresolved; current prose describes recorded values. Appendix aggregates were checked and two qualifications integrated. Whole-thesis explanation, long-proof readability, conventions, figures and interpretation remain incompletely assessed, not demonstrated defective. | Existing evidence may support an accurate account without new research. Depending on the actual claim, recovery, correction, qualification, omission, or no change may suffice. The completed checks do not validate all producers or prove that more experiments would help. See [data evidence](datascience-scope.md) and [broader discovery](outcome-coverage.md). |
-| Calibrate ordinary code quality on one crate; perform targeted migration where useful | `algebraic-numbers` has concrete source-level opportunities: repeated elimination, incomplete generated nullspace checks, documentation drift and an inferred conversion panic. Other migration candidates and scientific differences are documented. | Jörn's hypothesis is that learning an efficient multi-dimensional quality process can reduce future mistakes, search and implementation effort. Current code findings make it concrete, but no measured authoring benefit or cross-crate reliability follows. No blanket refactor-before-writing dependency is established. See [architecture evidence](architecture-migration.md). |
-| Repair costly prompt/skill/coordination failures | This session exhibited changed meaning, unsupported historical attribution, task substitution and inaccurate action-status reporting. Global communication guidance was corrected; those edits alone did not stop subsequent failures. | A successful narrow intervention could reduce repeated waste across project work. A particular skill's causal contribution and the benefit of broad instruction redesign are unestablished. Current response review is a local check, not proof of a durable cure. |
-| Close actual delivery and reproduction obligations when relevant | Current manuscript disclaims full plain-checkout reproduction and a frozen DOI. Archive actions remain unverified. Recorded advisor/submission sequence is dated context, not current status. | Check actual retained promises and current requirements before doing closure work. Full archive publication is not established as a prerequisite to the chosen PASS proxy. Do not reactivate old deadlines or administrative tasks from the graph. |
+| Fresh authoring attempt | Full reading receives a candidate with defects repaired before Jörn spends his attention. Its observed behavior informs whether to reuse/change that operation. | Jörn could read the existing PDF instead. We have not established whether authoring saves more reading/repair effort than it costs or introduces. This is an unresolved comparison, not an automatic authoring-first priority. |
+| Candidate checking | Repairs found build/rendering problems and consequential changed-claim errors before full reading. | Saves checking effort but can pass introduced defects to Jörn. Build checks and specific record-to-claim checks have concrete local evidence; broad agent review as a predictor of Jörn's judgment remains unvalidated. Scope checks to what they can actually detect. |
+| HKO-only method experiment | Could supply a cheap operation for a needed HKO repair, or diagnose a failure affecting the larger operation. | The whole-candidate operation remains executable without it. No current HKO bottleneck or specific diagnostic saving establishes its place in this route. That does not imply HKO learning has no value in another supported route. |
+| Single-crate quality calibration / subsequent migration | Could improve future code comprehension, evidence/figure implementation, or scientific checking, reducing manuscript-work cost and errors. | We already recovered support and made bounded wording repairs without it. Concrete code issues exist, but no effect large enough to favor inserting calibration here has been established. Count scientific regression checks and Jörn's calibration effort as costs too. Expected broad savings could justify it; an observed blockage is not the only possible justification. |
+| Broad prompt/skill redesign | Could reduce failures in later work selection, authoring and feedback incorporation. | A direct authoring route remains plausible. No particular skill has been shown to cause the observed failures, and previous instruction edits did not stop recurrence. Broad redesign needs a benefit argument beyond those failures existing. |
+| Narrow communication/coordination repair | Can prevent observed wrong task selection, changed user meaning, and inaccurate action-status reports from wasting later work. | This session supplies actual examples of the waste. An effective intervention or bypass could reduce it; effectiveness of the current temporary response check is not established by one reviewed reply. |
+| Full reading by Jörn | Supplies the explicitly chosen PASS proxy and potentially identifies remaining deficiencies. | The selected proxy remains unobserved. Neither generated text nor agent consensus replaces it. |
+| Any still-required formal completion | Makes an acceptable manuscript a formally completed thesis receiving an actual grade. | A private acceptable PDF might meet the operational proxy without completing the project externally. Whether any particular formal step remains is presently unknown. |
 
-The inspected evidence does not rank HKO-first, whole-thesis-first and crate-first
-by expected total effort to PASS. Concreteness or ease of testing alone is not
-that ranking. An argument for selecting one should explain the useful result or
-learning it is expected to buy, the effort/intervention it consumes, and how that
-changes the remaining route. This does not require an exhaustive probability or
-evidence derivation from Jörn.
+Candidate operations may produce reusable learning as well as a draft. For the
+proposed authoring experiments, Jörn identifies the former as roughly 99% of the
+value. Preserve the actual operation/context and consequential interventions when
+that learning is the point. Local observations do not automatically establish
+cross-chapter transfer. A candidate that already achieves the goal does not need
+additional method-generalization research merely to satisfy this map.
+
+Evidence owners for the comparisons:
+
+- [Data evidence](datascience-scope.md): retained-record checks enabled two precise
+  qualifications without rerunning producers. Historical frozen-table numerical
+  guarantees remain unresolved; qualification or other scientific choices may
+  suffice depending on the retained claim.
+- [Authoring comparison](authoring-workflow.md): a local correction and conflicting
+  exposition judgments, not evidence of human-acceptable repeatable authorship.
+- [Architecture evidence](architecture-migration.md): concrete opportunities and
+  scientific-contract differences, not measured savings for remaining thesis work.
+- [Broader discovery](outcome-coverage.md): whole-thesis composition, long proofs,
+  interpretation, source/figure maintenance and publication questions. These can
+  change the route when they matter to actual remaining work.
+
+The inspected evidence does not rank the comparator and its insertions by expected
+total effort to PASS. Its decisive unresolved comparison is whether authoring and
+checking save more human reading/repair effort than they consume or introduce.
+That uncertainty is exposed here, not resolved by drawing a complete story.
 
 Conditional dependencies that can actually guide work:
 
