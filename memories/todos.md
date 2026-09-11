@@ -22,15 +22,22 @@ overfull-box and reference checks. Full visual/scientific review remains open. P
 untouched. The [authoring launch prompt](/tmp/msc-math-prompts.JXv7AM/authoring-session-prompt.md) is a
 retracted launch proposal, not an active approval request or assignment. Jörn
 needs the substantive proposal and expected outcomes to assess the prompt.
-Read-only preparation selected the complete HKO theorem presentation through its
-proof-spine box, with the actual §6.6 upper-function prerequisite, as a proposed
-first attempt. Existing repetition/convention detail suggests an exposition
-question, not a proven defect. The temporary prompt now proposes one coherent
-candidate, source/reader checks, and formative feedback with baseline and
-consequential findings retained. Expected return is local improvement or useful
-feedback, not immediate whole-thesis PASS or a validated general workflow. No Herdr
-launch is authorized. September 7 session
-briefs retain historical reasoning but are not current launch instructions.
+Jörn clarified that roughly 99% of the proposed experiment's value is learning
+whether a repeatable low-cost operation produces useful thesis content; retaining
+the particular revised chapter is incidental and its worktree can be discarded.
+“Tell a fresh agent to improve HKO” is already a candidate operation. HKO-only
+success does not establish transfer to other chapters or whole-thesis coherence.
+The PM's HKO-first recommendation is withdrawn: no known HKO PASS bottleneck or
+specific cheaper diagnostic of the whole-thesis operation has been established.
+
+Further read-only review recovered that the earlier central-theorem unit was
+suggested for cheaper formative reading. Generation scope and evaluation scope
+need not match. The PM now proposes considering one whole-thesis candidate attempt
+with selective initial evaluation; this is an agent proposal, not Jörn's decision,
+a validated method or a reason to demand a full-PDF reading. One good sample would
+remain partial evidence. The temporary HKO prompt is superseded discussion
+material. No Herdr launch is authorized. September 7 session briefs retain
+historical reasoning but are not current launch instructions.
 
 Authoring remains open. A single-crate quality calibration is also a current
 user proposal: `algebraic-numbers` is a bounded candidate, not a demonstrated
