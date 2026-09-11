@@ -20,7 +20,16 @@ changes at `a3f06cb4`. The PDF was refreshed after September 7 prose changes and
 evidence qualifications; `./thesis/check-build.sh` passed its selected PDF,
 overfull-box and reference checks. Full visual/scientific review remains open. Pre-existing `tmp/` remains
 untouched. The [authoring launch prompt](/tmp/msc-math-prompts.JXv7AM/authoring-session-prompt.md) is a
-proposal awaiting Jörn's approval, not an active assignment. September 7 session
+retracted launch proposal, not an active approval request or assignment. Jörn
+needs the substantive proposal and expected outcomes to assess the prompt.
+Read-only preparation selected the complete HKO theorem presentation through its
+proof-spine box, with the actual §6.6 upper-function prerequisite, as a proposed
+first attempt. Existing repetition/convention detail suggests an exposition
+question, not a proven defect. The temporary prompt now proposes one coherent
+candidate, source/reader checks, and formative feedback with baseline and
+consequential findings retained. Expected return is local improvement or useful
+feedback, not immediate whole-thesis PASS or a validated general workflow. No Herdr
+launch is authorized. September 7 session
 briefs retain historical reasoning but are not current launch instructions.
 
 Authoring remains open. A single-crate quality calibration is also a current
