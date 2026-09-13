@@ -466,11 +466,15 @@ which differences are intentional, such as storage, batching, instrumentation,
 or factorization reuse. A change to either header-listed semantic contract
 requires checking both files and the correspondence suite.
 
-The correspondence suite compares capacities/certificates across the retained
-general, product, scaling, near-singular, and adversarial cases. Predicate and
-intermediate numerical correctness are checked separately against the
-applicable exact controls; agreement between two related implementations is
-not treated as independent correctness evidence. In particular,
+The dedicated readable-versus-production correspondence suite compares general
+bounds on the simplex and hypercube, exact action-window output on retained
+generated F5/F10 cases, and product certificates on three named product
+fixtures. Scaling and adversarial checks also exist in route-local tests, but
+they are not all cross-implementation comparisons; no current dedicated
+near-singular correspondence case was found in the bounded 2026-09-14 audit.
+Predicate and intermediate numerical correctness are checked separately
+against the applicable exact controls; agreement between two related
+implementations is not independent correctness evidence. In particular,
 hybrid-versus-exact product agreement checks interval pruning, not shared
 support or cyclic-order enumeration.
 
