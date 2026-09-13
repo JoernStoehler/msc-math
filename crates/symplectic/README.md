@@ -28,6 +28,9 @@ performance suites belong in `experiments/verification/` or the relevant
 experiment's benchmark directory.
 
 Developer-facing math for reusable crate algorithms lives in `formal/`.
+For a cross-repository comparison of arithmetic, candidate coverage, failure
+semantics, provenance, cost, and intended use, see
+`../../docs/capacity-calculation-map.md`.
 
 ## Scalar four-dimensional capacity
 
