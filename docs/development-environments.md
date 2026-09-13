@@ -70,6 +70,18 @@ sbx ls --json
 ssh codex-msc-math.sbx
 ```
 
+VM existence and Herdr visibility are separate checks. `sbx ls --json` proves
+only that the sandbox exists; `herdr machine list` must also contain an enabled
+entry for `codex-msc-math.sbx` before reporting that the VM is available in
+Herdr.
+
+Rechecked on 2026-09-13: sandbox `396e73ec-ab29-45e6-92ce-6a4cd1d54a6a`
+started successfully with the expected workspace, Codex 0.153.4 and Cargo
+1.94.0. Herdr 0.9.0 is installed in the VM, its default-session server reports
+a compatible protocol endpoint, and the host has the enabled Herdr machine
+entry `msc-math` for `codex-msc-math.sbx`. The sandbox was left running so the
+Herdr client can connect to it.
+
 Interactive Bash now enters the mounted project. For noninteractive commands,
 specify the directory explicitly:
 
@@ -86,7 +98,8 @@ Verified on 2026-09-05 after in-place repair:
 - Rust/Cargo 1.94.0 resolve in interactive and noninteractive Bash. All 24
   Cargo workspace packages resolve offline; the geometry crate's 27 library
   tests passed in the sandbox.
-- Herdr 0.8.2, Micro 2.0.15, Python 3.12.13, uv 0.12.2, rclone and latexmk
+- Herdr 0.8.2 (subsequently updated as recorded above), Micro 2.0.15, Python
+  3.12.13, uv 0.12.2, rclone and latexmk
   resolve. Micro has the host theme, Markdown syntax and Ctrl+K comment binding;
   Ctrl+K, text entry and Ctrl+S saved `{>>migration check<<}` over SSH.
 - GitHub API authentication returned the expected account, `JoernStoehler`.
