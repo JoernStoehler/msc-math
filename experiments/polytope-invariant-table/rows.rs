@@ -6,7 +6,15 @@ use serde::Serialize;
 pub struct PolytopeTableRow {
     pub poly_id: String,
     pub facet_count: usize,
+    /// Dataset-origin label retained under its historical field name. This is
+    /// not an evaluator or arithmetic route.
     pub capacity_source: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub capacity_method: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub capacity_candidate_family: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub volume_method: Option<String>,
     pub sys: f64,
     pub vertex_count: usize,
     pub edge_count: usize,

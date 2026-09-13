@@ -41,6 +41,12 @@ current schema and should be recovered from git history only for archaeology.
 ## Active Metadata / Controls
 
 - `poly_id`, `sys`, and `capacity_source` remain in `polytope-table.jsonl`.
+  Despite its historical name, `capacity_source` identifies dataset origin,
+  not an evaluator route.
+- Fresh run-local tables additionally retain `capacity_method`,
+  `capacity_candidate_family`, and `volume_method` as non-feature numerical
+  provenance. The registered retained table predates these fields; missing
+  values do not establish a route.
 - `capacity_source`, `facet_count`, product bucket, product bounce count, and
   sample height range are used as categorical controls in method packets.
 - Metadata controls are not numeric geometry covariates. They test whether

@@ -135,7 +135,9 @@ are joined by `poly_id` only when source inspection is needed.
 
 The active columns are:
 
-- identity/target/metadata: `poly_id`, `sys`, `capacity_source`;
+- identity/target/metadata: `poly_id`, `sys`, `capacity_source`, and, for fresh
+  run-local prepares, `capacity_method`, `capacity_candidate_family`, and
+  `volume_method`;
 - combinatorial invariants: facet/vertex/edge/ridge counts, simplicity,
   vertex-incidence summaries, vertex-degree summaries, ridge-size summaries,
   facet-vertex summaries, and facet-neighbor summaries;
@@ -152,6 +154,16 @@ facts are:
 - under primal scaling `x -> lambda x`, two-face symplectic area scales by
   `lambda^2`, while 4D volume scales by `lambda^4`, so division by
   `volume.sqrt()` removes scale.
+
+`capacity_source` is a historical name for dataset origin (for example,
+`random_sample`), not the capacity evaluator. The provenance-table `backend`
+is the producer's requested `auto`/`product` mode, not proof of the route that
+ran. Fresh run-local method-table rows therefore copy the evaluator's actual
+candidate family and its capacity/volume method labels from
+`computed-polytopes.jsonl`. Those labels describe numerical provenance; they
+do not turn approximate `sys` values into theorem-level exact values. The
+registered retained table predates these projected fields, so their absence
+must remain "unrecorded", not be inferred from source code or backend aliases.
 
 In the normalized inequality representation, a translated polytope can be
 represented again as `<a_i, x> <= 1` only when the translated origin is

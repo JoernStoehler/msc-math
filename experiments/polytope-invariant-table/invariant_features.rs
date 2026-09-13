@@ -97,6 +97,9 @@ fn polytope_table_row_from_parts(
         poly_id,
         facet_count,
         capacity_source,
+        capacity_method: None,
+        capacity_candidate_family: None,
+        volume_method: None,
         sys,
         vertex_count: skeleton_fields.vertex_count,
         edge_count: skeleton_fields.edge_count,
@@ -232,6 +235,9 @@ fn invariant_row_from_loaded_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
         row.sys,
     );
     output.capacity_source = row.capacity_source.clone();
+    output.capacity_method = row.capacity_method.clone();
+    output.capacity_candidate_family = row.capacity_candidate_family.clone();
+    output.volume_method = row.volume_method.clone();
     output
 }
 
@@ -601,5 +607,39 @@ mod tests {
             );
             assert_rows_close(&base, &full);
         }
+    }
+
+    #[test]
+    fn loaded_evaluator_metadata_survives_method_table_projection() {
+        let row = LoadedPolytopeRow {
+            poly_id: "simplex".to_string(),
+            dual_vertices_rational: simplex_duals()
+                .iter()
+                .map(|vertex| std::array::from_fn(|index| format!("{}/1", vertex[index] as i64)))
+                .collect(),
+            facet_count: 5,
+            capacity: 1.0,
+            volume: 0.25,
+            sys: 0.5,
+            capacity_source: "random_sample".to_string(),
+            capacity_method: Some("certified-qp-minimizers-v1".to_string()),
+            capacity_candidate_family: Some("general-hk".to_string()),
+            volume_method: Some("f64-from-exact-derived-incidence-v1".to_string()),
+        };
+
+        let projected = invariant_row_from_loaded_row(&row);
+        assert_eq!(projected.capacity_source, "random_sample");
+        assert_eq!(
+            projected.capacity_method.as_deref(),
+            Some("certified-qp-minimizers-v1")
+        );
+        assert_eq!(
+            projected.capacity_candidate_family.as_deref(),
+            Some("general-hk")
+        );
+        assert_eq!(
+            projected.volume_method.as_deref(),
+            Some("f64-from-exact-derived-incidence-v1")
+        );
     }
 }

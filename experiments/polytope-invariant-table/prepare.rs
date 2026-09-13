@@ -93,6 +93,10 @@ Inputs in <dir>:
   computed-polytopes.jsonl
   random-samples.jsonl and/or random-product-samples.jsonl
   reference-samples.jsonl
+
+Output target metadata distinguishes dataset origin (`capacity_source`), the
+requested producer backend, the actual capacity candidate family, and the
+capacity/volume arithmetic methods. It does not certify historical inputs.
 "
     );
 }
@@ -170,6 +174,9 @@ fn ensure_polytope(
                 volume: payload.volume,
                 sys: payload.sys,
                 capacity_source: capacity_source.to_string(),
+                capacity_method: Some(payload.capacity_method.clone()),
+                capacity_candidate_family: payload.candidate_family.clone(),
+                volume_method: Some(payload.volume_method.clone()),
             },
         );
     }

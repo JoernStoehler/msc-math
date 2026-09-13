@@ -15,6 +15,15 @@ The active thesis question is:
 > data-science methods, do we see a `sys > 1` example, a credible
 > candidate-proposer for finding one, or thesis-useful structure?
 
+Here `sys` is a stored numerical target, not by itself a certified capacity
+statement. In table rows, `capacity_source` names the dataset origin rather
+than the capacity evaluator, and provenance-table `backend` records the
+producer's requested mode rather than the route proved to have run. Fresh
+run-local prepares expose `capacity_method`, `capacity_candidate_family`, and
+`volume_method`; the registered retained table predates those fields. See the
+[retained numerical lineage account](../polytope-datasets/retained-lineage.md)
+before making thesis-facing claims from retained values.
+
 The old fixed-F ascent and continuation runs are not part of this active slice.
 They were confusing for this chapter because endpoint diagnostics showed that
 the retained ascent endpoints should not be treated as local maxima. Preserved

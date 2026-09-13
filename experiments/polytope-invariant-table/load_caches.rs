@@ -19,6 +19,14 @@ pub struct LoadedPolytopeRow {
     pub volume: f64,
     pub sys: f64,
     pub capacity_source: String,
+    /// Evaluator contract recorded by the computed-payload producer. Absent
+    /// for historical source rows that did not retain it.
+    pub capacity_method: Option<String>,
+    /// Actual finite candidate family selected by the evaluator, not the
+    /// producer's requested `auto`/`product` backend label.
+    pub capacity_candidate_family: Option<String>,
+    /// Arithmetic route used for the volume in the stored `sys` value.
+    pub volume_method: Option<String>,
 }
 
 #[derive(Clone)]
@@ -260,6 +268,9 @@ fn ensure_polytope(
             volume,
             sys,
             capacity_source: capacity_source.to_string(),
+            capacity_method: None,
+            capacity_candidate_family: None,
+            volume_method: None,
         });
     poly_id
 }

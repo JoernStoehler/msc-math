@@ -268,6 +268,9 @@ fn synthetic_smoke_caches() -> load_caches::LoadedCaches {
             volume,
             sys: 0.0,
             capacity_source: "synthetic_random_sample".to_string(),
+            capacity_method: None,
+            capacity_candidate_family: None,
+            volume_method: None,
         });
         provenance_rows.push(synthetic_provenance(
             &poly_id,
@@ -295,6 +298,9 @@ fn synthetic_smoke_caches() -> load_caches::LoadedCaches {
             volume,
             sys: 0.0,
             capacity_source: "synthetic_random_product_sample".to_string(),
+            capacity_method: None,
+            capacity_candidate_family: None,
+            volume_method: None,
         });
         provenance_rows.push(synthetic_provenance(
             &poly_id,
