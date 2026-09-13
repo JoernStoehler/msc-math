@@ -55,6 +55,11 @@ source of evidence.
 experiment directory: it relates algorithm units to the experiment that
 actually produces each kind of evidence.
 
+`../docs/capacity-calculation-map.md` is the repository-wide chooser and
+contract map for capacity and `sys` calculations. It separates arithmetic,
+candidate coverage, refusal/error behavior, provenance, intended use, cost,
+and reader auditability rather than assigning one “verified” label.
+
 ## Local README as triage
 
 A useful local README makes it cheap to decide whether deeper reading is
