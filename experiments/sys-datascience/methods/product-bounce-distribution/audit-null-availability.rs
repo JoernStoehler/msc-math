@@ -1,6 +1,8 @@
-//! Bounded, exact audit of the rows whose retained class-minimum artifact has
-//! no three-bounce value. This deliberately does not regenerate the full
-//! class-minimum artifact.
+//! Bounded audit of the rows whose retained class-minimum artifact has no
+//! three-bounce value.  The exact fallback covers every sigma which passes
+//! transition pruning and is then rejected by the f64 solver as inadmissible;
+//! it does not inspect sigmas excluded by the transition filter.  This
+//! deliberately does not regenerate the full class-minimum artifact.
 
 use exp_sys_landscape::SysLandscapePolytopeCache;
 use num_rational::BigRational;

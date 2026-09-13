@@ -28,11 +28,13 @@ Verdict: Luna accepted this as a descriptive retained-random-product packet.
   `artifacts/class-minima-null-availability.jsonl` and summarized in
   `artifacts/class-minima-availability-audit.json`: 470 rows had no
   transition-feasible three-bounce sigma, while 315 generated such sigmas but
-  all were f64-inadmissible. Exact certification of every f64-rejected
-  three-bounce sigma found zero exact-admissible rejections; the candidate path
-  reported no numerical failures. This closes the numerical-false-negative
-  concern for these rows under the existing stream contract, but does not turn
-  the result into a theorem of global three-bounce infeasibility.
+  all were f64-inadmissible. Every sigma that passed transition pruning and was
+  then rejected by the f64 solver as inadmissible was submitted to exact KKT
+  certification, which found zero exact-admissible rejections; the candidate
+  path reported no numerical failures. This closes that solver-stage
+  numerical-false-negative concern for these rows, but does not certify sigmas
+  excluded by transition pruning or turn the result into a theorem of global
+  three-bounce infeasibility.
 
 The packet may support only the descriptive association stated in `README.md`.
 It may not be used as a proposer, causal, capacity-branch, or geometric

@@ -66,11 +66,14 @@ The bounded availability audit is retained in
 `artifacts/class-minima-null-availability.jsonl`, with aggregate counts in
 `artifacts/class-minima-availability-audit.json`. It selects the 785 rows
 whose main artifact has a null A3, re-runs the existing transition-filtered
-stream, and exactly certifies every f64-rejected three-bounce sigma. The audit
-found 470 rows with no transition-feasible three-bounce sigma and 315 rows
-whose generated three-bounce sigmas were all f64-inadmissible; no numerical
-failures and no exact-admissible f64 rejections occurred. The audit is a
-stream-contract check, not a proof of global mathematical infeasibility. The
+stream, and sends every three-bounce sigma that reaches the f64 solver and is
+rejected as inadmissible through exact KKT certification. Sigmas excluded by
+the transition filter are counted separately and are not exact-KKT checked by
+this audit. It found 470 rows with no transition-feasible three-bounce sigma
+and 315 rows whose transition-filtered three-bounce sigmas were all
+f64-inadmissible; no numerical failures and no exact-admissible f64 rejections
+occurred. The audit is a stream-contract check, not a proof of global
+mathematical infeasibility. The
 bounded solver command and input/artifact hashes are recorded in the
 provenance note; the retained checker above validates the result without a
 routine rerun.
