@@ -4,7 +4,9 @@
 //! capacity/orbit data, and records how many admissible sigmas are close to
 //! the minimum action under several relative windows.
 
-use exp_sys_landscape::{compute_sys_from_capacity, SysLandscapePolytopeCache};
+use exp_sys_landscape::{
+    capacity_auto_with_gap, compute_sys_from_capacity, SysLandscapePolytopeCache,
+};
 use nalgebra::Vector4;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
@@ -12,11 +14,7 @@ use std::fs::{self, File};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
-use symplectic::{
-    aggregate_orbits_with_dual_vertices_exact, classify_facets_from_dual_vertices,
-    solve_billiard_candidates, solve_pruned_hk2017_candidates, OrbitAdmissibility,
-    OrbitGuaranteeMode, OrbitSearchError, OrbitSearchResult,
-};
+use symplectic::OrbitAdmissibility;
 
 const DEFAULT_MAX_ROWS: usize = 24;
 const DEFAULT_THRESHOLDS: &[f64] = &[1.0e-12, 1.0e-9, 1.0e-6, 1.0e-3, 1.0e-2];
@@ -258,50 +256,6 @@ fn recompute_state(
         orbit_iterations: capacity.iterations,
         admissible_actions_and_sigmas,
     })
-}
-
-fn capacity_auto_with_gap(
-    polytope: &SysLandscapePolytopeCache,
-    action_gap: f64,
-) -> Result<OrbitSearchResult, OrbitSearchError> {
-    if classify_facets_from_dual_vertices(&polytope.dual_vertices_f64).is_ok() {
-        let classification = classify_facets_from_dual_vertices(&polytope.dual_vertices_f64)
-            .map_err(|_| OrbitSearchError::NumericalFailure)?;
-        let transition_is_allowed =
-            symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
-                &polytope.facet_intersection_is_nonempty,
-                &polytope.omega_signs,
-            );
-        let (orbits, iterations) = solve_billiard_candidates(
-            &polytope.dual_vertices_f64,
-            &classification.q_indices,
-            &classification.p_indices,
-            &polytope.facet_intersection_is_nonempty,
-            &transition_is_allowed,
-        )?;
-        return aggregate_orbits_with_dual_vertices_exact(
-            &polytope.dual_vertices,
-            orbits,
-            iterations,
-            action_gap,
-            OrbitGuaranteeMode::AllSafe,
-        );
-    }
-
-    let transition_is_allowed =
-        symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
-            &polytope.facet_intersection_is_nonempty,
-            &polytope.omega_signs,
-        );
-    let (orbits, iterations) =
-        solve_pruned_hk2017_candidates(&polytope.dual_vertices_f64, &transition_is_allowed)?;
-    aggregate_orbits_with_dual_vertices_exact(
-        &polytope.dual_vertices,
-        orbits,
-        iterations,
-        action_gap,
-        OrbitGuaranteeMode::AllSafe,
-    )
 }
 
 fn branch_diagnostic_row(

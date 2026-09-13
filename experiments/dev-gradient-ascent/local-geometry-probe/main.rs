@@ -5,9 +5,9 @@
 //! finite steps of `sys(a0 + t d)` along branch-derived directions.
 
 use exp_sys_landscape::{
-    compute_active_sys_state, compute_step_bound_detailed, compute_sys_from_capacity,
-    dual_vertices_rational_strings, poly_id_from_dual_vertices, reference::exact_volume_as_f64,
-    EventType, SysLandscapePolytopeCache,
+    capacity_auto_with_gap, compute_active_sys_state, compute_step_bound_detailed,
+    compute_sys_from_capacity, dual_vertices_rational_strings, poly_id_from_dual_vertices,
+    reference::exact_volume_as_f64, EventType, SysLandscapePolytopeCache,
 };
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::Vector4;
@@ -22,11 +22,7 @@ use symplectic::derivatives::{
     capacity_subgradients_a, clarke_directional_derivative_a, systolic_ratio_gradient_a,
     volume_derivatives_a,
 };
-use symplectic::{
-    aggregate_orbits_with_dual_vertices_exact, classify_facets_from_dual_vertices,
-    solve_billiard_candidates, solve_pruned_hk2017_candidates, OrbitAdmissibility,
-    OrbitGuaranteeMode, OrbitKktData, OrbitSearchError, OrbitSearchResult,
-};
+use symplectic::{OrbitAdmissibility, OrbitKktData, OrbitSearchResult};
 
 const DEFAULT_SELECTION_THRESHOLD_RELATIVE: f64 = 1.0e-3;
 const DEFAULT_ACTION_WINDOW_RELATIVE: f64 = 1.0e-2;
@@ -3129,48 +3125,6 @@ fn candidate_window_orbits(result: &OrbitSearchResult, action_gap: f64) -> Vec<O
         .filter(|orbit| orbit.action.is_finite() && orbit.action <= cutoff + tolerance)
         .cloned()
         .collect()
-}
-
-fn capacity_auto_with_gap(
-    polytope: &SysLandscapePolytopeCache,
-    action_gap: f64,
-) -> Result<OrbitSearchResult, OrbitSearchError> {
-    if let Ok(classification) = classify_facets_from_dual_vertices(&polytope.dual_vertices_f64) {
-        let transition_is_allowed =
-            symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
-                &polytope.facet_intersection_is_nonempty,
-                &polytope.omega_signs,
-            );
-        let (orbits, iterations) = solve_billiard_candidates(
-            &polytope.dual_vertices_f64,
-            &classification.q_indices,
-            &classification.p_indices,
-            &polytope.facet_intersection_is_nonempty,
-            &transition_is_allowed,
-        )?;
-        return aggregate_orbits_with_dual_vertices_exact(
-            &polytope.dual_vertices,
-            orbits,
-            iterations,
-            action_gap.max(0.0),
-            OrbitGuaranteeMode::AllSafe,
-        );
-    }
-
-    let transition_is_allowed =
-        symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
-            &polytope.facet_intersection_is_nonempty,
-            &polytope.omega_signs,
-        );
-    let (orbits, iterations) =
-        solve_pruned_hk2017_candidates(&polytope.dual_vertices_f64, &transition_is_allowed)?;
-    aggregate_orbits_with_dual_vertices_exact(
-        &polytope.dual_vertices,
-        orbits,
-        iterations,
-        action_gap.max(0.0),
-        OrbitGuaranteeMode::AllSafe,
-    )
 }
 
 fn polytope_from_row(row: &PolytopeRow) -> Result<SysLandscapePolytopeCache, String> {

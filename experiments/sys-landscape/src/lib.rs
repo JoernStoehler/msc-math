@@ -139,3 +139,142 @@ pub fn capacity_auto(
         omega_signs,
     )
 }
+
+/// Retained orbit-producing frontend for branch-sensitive experiments.
+///
+/// Product classification selects billiard candidates; classification failure
+/// selects pruned HK candidates. The supplied action window is clamped to zero
+/// for negative and NaN values before `AllSafe` aggregation. This legacy
+/// experiment contract is distinct from the production scalar `capacity_4d`
+/// API and does not certify candidate completeness.
+pub fn capacity_auto_with_gap(
+    polytope: &SysLandscapePolytopeCache,
+    action_gap: f64,
+) -> Result<OrbitSearchResult, OrbitSearchError> {
+    let action_gap = action_gap.max(0.0);
+    let transition_is_allowed =
+        symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
+            &polytope.facet_intersection_is_nonempty,
+            &polytope.omega_signs,
+        );
+
+    let (orbits, iterations) = if let Ok(classification) =
+        classify_facets_from_dual_vertices(&polytope.dual_vertices_f64)
+    {
+        solve_billiard_candidates(
+            &polytope.dual_vertices_f64,
+            &classification.q_indices,
+            &classification.p_indices,
+            &polytope.facet_intersection_is_nonempty,
+            &transition_is_allowed,
+        )?
+    } else {
+        solve_pruned_hk2017_candidates(&polytope.dual_vertices_f64, &transition_is_allowed)?
+    };
+
+    aggregate_orbits_with_dual_vertices_exact(
+        &polytope.dual_vertices,
+        orbits,
+        iterations,
+        action_gap,
+        OrbitGuaranteeMode::AllSafe,
+    )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use symplectic::known_polytopes::{self, KnownPolytope};
+
+    fn cache(p: &KnownPolytope) -> SysLandscapePolytopeCache {
+        SysLandscapePolytopeCache {
+            dual_vertices: p.dual_vertices.clone(),
+            vertices: p.vertices.clone(),
+            vertex_facet_incidence: p.vertex_facet_incidence.clone(),
+            facet_intersection_is_nonempty: p.facet_intersection_is_nonempty.clone(),
+            omega_signs: p.omega_signs.clone(),
+            dual_vertices_f64: p.dual_vertices_f64.clone(),
+            vertices_f64: p.vertices_f64.clone(),
+        }
+    }
+
+    fn explicit_allsafe_composition(
+        polytope: &SysLandscapePolytopeCache,
+        action_gap: f64,
+    ) -> Result<OrbitSearchResult, OrbitSearchError> {
+        let transitions =
+            symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
+                &polytope.facet_intersection_is_nonempty,
+                &polytope.omega_signs,
+            );
+        let (orbits, iterations) = if let Ok(classification) =
+            classify_facets_from_dual_vertices(&polytope.dual_vertices_f64)
+        {
+            solve_billiard_candidates(
+                &polytope.dual_vertices_f64,
+                &classification.q_indices,
+                &classification.p_indices,
+                &polytope.facet_intersection_is_nonempty,
+                &transitions,
+            )?
+        } else {
+            solve_pruned_hk2017_candidates(&polytope.dual_vertices_f64, &transitions)?
+        };
+        aggregate_orbits_with_dual_vertices_exact(
+            &polytope.dual_vertices,
+            orbits,
+            iterations,
+            action_gap,
+            OrbitGuaranteeMode::AllSafe,
+        )
+    }
+
+    #[test]
+    fn action_window_nonproduct_uses_pruned_hk_and_allsafe_aggregation() {
+        let polytope = cache(known_polytopes::simplex());
+        assert!(classify_facets_from_dual_vertices(&polytope.dual_vertices_f64).is_err());
+        let expected = explicit_allsafe_composition(&polytope, 0.25).unwrap();
+        assert_eq!(capacity_auto_with_gap(&polytope, 0.25).unwrap(), expected);
+    }
+
+    #[test]
+    fn action_window_product_uses_billiards_and_allsafe_aggregation() {
+        let polytope = cache(known_polytopes::lagrangian_triangle_product());
+        assert!(classify_facets_from_dual_vertices(&polytope.dual_vertices_f64).is_ok());
+        let expected = explicit_allsafe_composition(&polytope, 0.25).unwrap();
+        assert_eq!(capacity_auto_with_gap(&polytope, 0.25).unwrap(), expected);
+    }
+
+    #[test]
+    fn action_window_clamps_negative_infinity_and_nan_to_zero() {
+        for fixture in [
+            known_polytopes::simplex(),
+            known_polytopes::lagrangian_triangle_product(),
+        ] {
+            let polytope = cache(fixture);
+            let zero = capacity_auto_with_gap(&polytope, 0.0).unwrap();
+            for gap in [-1.0, f64::NEG_INFINITY, f64::NAN] {
+                assert_eq!(capacity_auto_with_gap(&polytope, gap).unwrap(), zero);
+            }
+        }
+    }
+
+    #[test]
+    fn action_window_propagates_empty_candidate_errors_on_both_routes() {
+        for fixture in [
+            known_polytopes::simplex(),
+            known_polytopes::lagrangian_triangle_product(),
+        ] {
+            let mut polytope = cache(fixture);
+            polytope.facet_intersection_is_nonempty = DMatrix::from_element(
+                polytope.dual_vertices.len(),
+                polytope.dual_vertices.len(),
+                false,
+            );
+            assert!(matches!(
+                capacity_auto_with_gap(&polytope, 0.25),
+                Err(OrbitSearchError::NoAdmissibleOrbit)
+            ));
+        }
+    }
+}
