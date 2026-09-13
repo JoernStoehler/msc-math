@@ -86,6 +86,11 @@ silently restricted to valid `beta>0` sys branches. Gradients, direction
 choices, prediction windows, and summary tables are derived outputs, not cache
 state.
 
+The current cache has no evaluator/volume-method identity. Its geometry-only
+key therefore does not establish that stored values match the current producer;
+see [cache provenance](../cache-provenance.md) before changing evaluation or
+reusing a cache across evaluator changes.
+
 The cache is an acceleration artifact, not dataset identity. The default
 output cache is also loaded as an input, and cache misses append immediately,
 so rerunning the same output directory reuses prior expensive target searches.

@@ -7,12 +7,15 @@ Current guidance back to optimizer work is in `OPTIMIZER-GUIDANCE.md`.
 Facet-count radius and baseline-error calibration is in
 `facet-scale-baseline-error/README.md`.
 
-Reference targets use exact binary64-rational geometry and rational volume
-before rounding capacity and volume to f64 for `sys`. They are reference
-values, not exact real or rational outputs. The slow volume step is therefore
-imported explicitly from
-`exp_sys_landscape::reference::exact_volume_as_f64`; ordinary production-style
-`sys` computations use f64 volume.
+The current producer has different volume boundaries: base states explicitly
+use rational volume rounded to f64 through
+`exp_sys_landscape::reference::exact_volume_as_f64`, while target-cache misses
+call the production `compute_sys_computation` helper, which uses f64 volume.
+Cache hits use stored values without a volume-method label. Consequently, a
+fresh run is not uniformly an exact-volume reference evaluation, and loading
+a historical cache can change which volume path supplies target values. See
+[cache provenance and evaluator boundaries](cache-provenance.md). Neither route
+returns exact real or rational `sys` values.
 
 This package is separate from `experiments/dev-gradient-ascent/`. Gradient
 ascent work asks how to choose steps that reach good local maxima. Work here
