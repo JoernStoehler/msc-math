@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Contract regressions for the retained A3-null availability checker."""
 import importlib.util
+import io
+from contextlib import redirect_stderr
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -26,6 +29,14 @@ def row(*, enumerated=2, solved=0, inadmissible=2, failures=0):
 
 
 class AvailabilityContractTest(unittest.TestCase):
+    def test_missing_advisory_input_does_not_block_semantic_check(self):
+        with tempfile.TemporaryDirectory() as directory:
+            missing = Path(directory) / "class-minima.jsonl"
+            stderr = io.StringIO()
+            with redirect_stderr(stderr):
+                CHECKER.check_advisory_input_identity(missing, "unused")
+            self.assertIn("byte identity was not", stderr.getvalue())
+
     def test_classifies_fully_accounted_solver_rejections(self):
         self.assertEqual(
             CHECKER.classify_a3_null_row(row()),

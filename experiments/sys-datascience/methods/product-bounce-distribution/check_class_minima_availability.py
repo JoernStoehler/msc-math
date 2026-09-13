@@ -8,6 +8,24 @@ from collections import Counter
 from pathlib import Path
 
 
+def check_advisory_input_identity(path, expected_sha256):
+    """Warn when the large source artifact is absent or differs."""
+    if not path.exists():
+        print(
+            "warning: class-minima artifact is unavailable; retained audit "
+            "semantics were checked, but input byte identity was not",
+            file=sys.stderr,
+        )
+        return
+    if hashlib.sha256(path.read_bytes()).hexdigest() != expected_sha256:
+        print(
+            "warning: class-minima bytes differ from the retained audit input; "
+            "continuing with semantic checks. Reassess retained interpretation "
+            "before treating this run as equivalent.",
+            file=sys.stderr,
+        )
+
+
 def classify_a3_null_row(row):
     """Validate and classify one row under the historical audit contract."""
     for bounce in ("2", "3"):
@@ -84,13 +102,7 @@ def main():
     path = Path(args.class_minima)
     # Byte identity is advisory; row counts and availability semantics above
     # remain blocking.
-    if hashlib.sha256(path.read_bytes()).hexdigest() != audit["input_artifact_sha256"]:
-        print(
-            "warning: class-minima bytes differ from the retained audit input; "
-            "continuing with semantic checks. Reassess retained interpretation "
-            "before treating this run as equivalent.",
-            file=sys.stderr,
-        )
+    check_advisory_input_identity(path, audit["input_artifact_sha256"])
     print(
         f"A3 availability audit OK: {len(rows)} null rows; {dict(causes)}; "
         "all transition-filtered sigmas accounted for by the f64 solver"
