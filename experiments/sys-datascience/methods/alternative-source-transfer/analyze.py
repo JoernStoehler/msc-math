@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Manifest-gated post-target analyzer for the frozen 91-row union.
 
-This command is intentionally not run during the target-free repair. It only
-reads a complete authorized evaluator artifact and writes an analysis report.
+Reads a complete evaluator artifact and writes an analysis report; it never
+calls capacity. The full packet validator requires source.jsonl as well as
+the Git-retained selection, features and targets.
 """
 from __future__ import annotations
 
@@ -160,8 +161,18 @@ def permutation(data: list[dict], selection: dict, arm: str) -> dict:
     return {"observed": observed, "null_ge_abs_observed": sum(abs(x) >= abs(observed) for x in null) / len(null)}
 
 
+def recorded_evaluator_identity(data: list[dict]) -> dict:
+    """Return the single evaluator identity shared by all target rows."""
+    if not data:
+        raise ValueError("empty target artifact")
+    identity = {key: data[0][key] for key in EVALUATOR_IDENTITY}
+    if any({key: row[key] for key in EVALUATOR_IDENTITY} != identity for row in data):
+        raise ValueError("mixed target evaluator identities")
+    return identity
+
+
 def summarize(data: list[dict], selection: dict, target_sha256: str) -> dict:
-    result = {"schema": "alternative-source-transfer-analysis-v1", "target_sha256": target_sha256, "evaluator_identity": EVALUATOR_IDENTITY, "bootstrap_seed": BOOTSTRAP_SEED, "bootstrap_repetitions": BOOTSTRAP_REPETITIONS, "permutation_seed": PERMUTATION_SEED, "permutation_repetitions": PERMUTATION_REPETITIONS, "all_sys_gt_1": [row for row in data if row["sys"] > 1], "selectors": {}}
+    result = {"schema": "alternative-source-transfer-analysis-v1", "target_sha256": target_sha256, "evaluator_identity": recorded_evaluator_identity(data), "bootstrap_seed": BOOTSTRAP_SEED, "bootstrap_repetitions": BOOTSTRAP_REPETITIONS, "permutation_seed": PERMUTATION_SEED, "permutation_repetitions": PERMUTATION_REPETITIONS, "all_sys_gt_1": [row for row in data if row["sys"] > 1], "selectors": {}}
     for arm in ("rho", "ridge"):
         estimate = estimand(data, selection, arm)
         interval = [percentile(bootstrap(data, selection, arm), .025), percentile(bootstrap(data, selection, arm), .975)]

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Target-free and post-target packet checks.
 
-The current checked-out route is ``--validate-only``.  The target evaluator
-never invokes capacity; a later authorized runner may provide a JSONL target
-file to ``analyze.py`` after this manifest has passed independent review.
+The current checked-out route is ``--validate-only``. This validator never
+invokes capacity; the separate Rust target evaluator does. ``analyze.py``
+reads the resulting JSONL target file without recomputing capacities.
 Semantic inconsistencies fail validation; drift from retained byte identities
 prints a warning and continues.
 """

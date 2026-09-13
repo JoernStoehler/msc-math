@@ -44,8 +44,10 @@ controls, and the 96-row cap. `analyze.py` is the later manifest-gated
 post-target reader: it accepts only a complete target file on the frozen union
 and does not produce targets or call capacity. Empty, partial, mismatched,
 boolean/nonfinite, or formula-inconsistent target artifacts fail closed.
-The checked target identity enforces `capacity > 0`, `sys >= 0`, and
-`sys = capacity^2/(2 volume)` to relative tolerance `1e-10`.
+The numeric checks enforce `capacity > 0`, `sys >= 0`, and
+`sys = capacity^2/(2 volume)` to relative tolerance `1e-10`. Evaluator drift
+is advisory, but all target rows must share one evaluator identity and the
+analysis records that actual identity rather than relabelling it as retained.
 
 ## Evidence boundary
 
@@ -122,6 +124,8 @@ each row records an identity made from the compile-time evaluator source
 digest, root `Cargo.lock` digest, the digest of the three capacity-backend
 source files, the actual repository `HEAD`, and a clean-checkout flag. The
 exact detached worktree build above is commit
-`5a5736687dcd8ad10f4a682266fa24d1fe067efc`; `analyze.py` accepts only that
-reviewed identity and records the target-file SHA-256 in its analysis JSON. It
-has no resume or cache path and never regenerates source/selection.
+`5a5736687dcd8ad10f4a682266fa24d1fe067efc`; `analyze.py` warns on identity
+drift, records the actual uniform row identity and target-file SHA-256 in its
+analysis JSON, and rejects mixed evaluator identities. These checks do not
+establish equivalence to the retained result. The Rust evaluator has no resume
+or cache path and never regenerates source/selection.
