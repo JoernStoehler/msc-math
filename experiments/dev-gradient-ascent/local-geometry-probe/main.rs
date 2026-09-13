@@ -3059,6 +3059,12 @@ fn steps_match(left: f64, right: f64) -> bool {
 
 fn maximin_direction(sys_gradients: &[Vec<Vector4<f64>>]) -> Option<Vec<Vector4<f64>>> {
     let facet_count = sys_gradients.first()?.len();
+    if sys_gradients
+        .iter()
+        .any(|gradient| gradient.len() != facet_count)
+    {
+        return None;
+    }
     let dim = facet_count * 4;
     let mut vars = variables!();
     let direction_vars: Vec<_> = (0..dim)
@@ -3832,6 +3838,14 @@ mod tests {
             mu: Some([0.0; 4]),
             xi: Some(0.0),
             admissibility,
+        }
+    }
+
+    #[test]
+    fn maximin_direction_rejects_mismatched_gradient_dimensions() {
+        for malformed in [vec![], vec![Vector4::repeat(1.0); 2]] {
+            let gradients = vec![vec![Vector4::repeat(1.0)], malformed];
+            assert!(maximin_direction(&gradients).is_none());
         }
     }
 

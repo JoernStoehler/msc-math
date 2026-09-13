@@ -327,7 +327,15 @@ fn finite_f64(value: &BigRational) -> Result<f64, DerivativeError> {
 
 /// Directional derivative of one facet-indexed gradient in the perturbation
 /// direction `d`.
+///
+/// # Panics
+/// Panics if the gradient and direction have different facet counts.
 pub fn directional_derivative_a(grad: &[Vector4<f64>], direction: &[Vector4<f64>]) -> f64 {
+    assert_eq!(
+        grad.len(),
+        direction.len(),
+        "directional_derivative_a requires gradient and direction with matching facet counts"
+    );
     grad.iter()
         .zip(direction.iter())
         .map(|(gk, dk)| gk.dot(dk))
@@ -335,6 +343,9 @@ pub fn directional_derivative_a(grad: &[Vector4<f64>], direction: &[Vector4<f64>
 }
 
 /// Clarke directional derivative `min_i <g_i, d>` for a primitive gradient set.
+///
+/// # Panics
+/// Panics if any supplied gradient and the direction have different facet counts.
 pub fn clarke_directional_derivative_a(
     subdiff: &[Vec<Vector4<f64>>],
     direction: &[Vector4<f64>],
@@ -665,6 +676,25 @@ mod tests {
         let value = clarke_directional_derivative_a(&subdiff, &direction)
             .expect("nonempty subdifferential should have directional derivative");
         assert_eq!(value, -3.0);
+    }
+
+    #[test]
+    #[should_panic(expected = "matching facet counts")]
+    fn directional_derivative_rejects_short_direction() {
+        directional_derivative_a(&[Vector4::repeat(1.0); 2], &[Vector4::repeat(1.0)]);
+    }
+
+    #[test]
+    #[should_panic(expected = "matching facet counts")]
+    fn directional_derivative_rejects_long_direction() {
+        directional_derivative_a(&[Vector4::repeat(1.0)], &[Vector4::repeat(1.0); 2]);
+    }
+
+    #[test]
+    #[should_panic(expected = "matching facet counts")]
+    fn clarke_directional_derivative_rejects_malformed_later_gradient() {
+        let gradients = vec![vec![Vector4::repeat(-1.0)], vec![Vector4::repeat(1.0); 2]];
+        let _ = clarke_directional_derivative_a(&gradients, &[Vector4::repeat(1.0)]);
     }
 
     /// Analytical ∂c/∂a_k matches per-orbit FD central difference.
