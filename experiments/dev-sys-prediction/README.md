@@ -11,10 +11,11 @@ The current producer has different volume boundaries: base states explicitly
 use rational volume rounded to f64 through
 `exp_sys_landscape::reference::exact_volume_as_f64`, while target-cache misses
 call the production `compute_sys_computation` helper, which uses f64 volume.
-Cache hits use stored values without a volume-method label. Consequently, a
-fresh run is not uniformly an exact-volume reference evaluation, and loading
-a historical cache can change which volume path supplies target values. See
-[cache provenance and evaluator boundaries](cache-provenance.md). Neither route
+Cache hits require matching capacity- and volume-method labels. Historical
+unlabelled rows load as unknown and cannot supply current scalar hits, though
+their geometry can still support reconstruction. A fresh run is not uniformly
+an exact-volume reference evaluation. See [cache provenance and evaluator
+boundaries](cache-provenance.md). Neither route
 returns exact real or rational `sys` values.
 
 This package is separate from `experiments/dev-gradient-ascent/`. Gradient

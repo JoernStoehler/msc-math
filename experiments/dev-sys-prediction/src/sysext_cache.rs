@@ -10,10 +10,22 @@ use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 
+const CURRENT_CAPACITY_METHOD: &str = "legacy-orbit-search-v1";
+const CURRENT_VOLUME_METHOD: &str = "f64-from-exact-derived-incidence-v1";
+const UNKNOWN_METHOD: &str = "unknown";
+
+fn unknown_method() -> String {
+    UNKNOWN_METHOD.to_string()
+}
+
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub(crate) struct SysextCacheRow {
     pub(crate) polytope_key: String,
     pub(crate) facet_count: usize,
+    #[serde(default = "unknown_method")]
+    pub(crate) capacity_method: String,
+    #[serde(default = "unknown_method")]
+    pub(crate) volume_method: String,
     #[serde(default)]
     pub(crate) geometry: Option<CachedPolytopeGeometry>,
     pub(crate) volume: f64,
@@ -97,10 +109,35 @@ impl CachedSysextState {
 }
 
 pub(crate) struct SysextCache {
-    rows: Mutex<HashMap<String, SysextCacheRow>>,
-    used_keys: Mutex<HashSet<String>>,
+    rows: Mutex<HashMap<SysextCacheKey, SysextCacheRow>>,
+    used_keys: Mutex<HashSet<SysextCacheKey>>,
     writer: Mutex<Option<BufWriter<File>>>,
     stats: Mutex<SysextCacheStats>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+struct SysextCacheKey {
+    polytope_key: String,
+    capacity_method: String,
+    volume_method: String,
+}
+
+impl SysextCacheKey {
+    fn current(polytope_key: String) -> Self {
+        Self {
+            polytope_key,
+            capacity_method: CURRENT_CAPACITY_METHOD.to_string(),
+            volume_method: CURRENT_VOLUME_METHOD.to_string(),
+        }
+    }
+
+    fn from_row(row: &SysextCacheRow) -> Self {
+        Self {
+            polytope_key: row.polytope_key.clone(),
+            capacity_method: row.capacity_method.clone(),
+            volume_method: row.volume_method.clone(),
+        }
+    }
 }
 
 impl SysextCache {
@@ -125,7 +162,8 @@ impl SysextCache {
         &self,
         polytope: &SysLandscapePolytopeCache,
     ) -> Option<CachedSysextState> {
-        let key = polytope_key(polytope);
+        let polytope_key = polytope_key(polytope);
+        let key = SysextCacheKey::current(polytope_key.clone());
         if let Some(row) = self
             .rows
             .lock()
@@ -137,7 +175,7 @@ impl SysextCache {
         }
 
         let computation = compute_sys_computation(polytope)?;
-        let row = row_from_computation(key.clone(), polytope, computation);
+        let row = row_from_computation(polytope_key, polytope, computation);
         self.append_new_row(&row);
         self.rows
             .lock()
@@ -158,9 +196,10 @@ impl SysextCache {
         &self,
         dual_vertices: &[Vector4<f64>],
     ) -> Result<CachedSysextLookup, TargetSysextError> {
-        let Some(key) = polytope_key_from_f64_dual_vertices(dual_vertices) else {
+        let Some(polytope_key) = polytope_key_from_f64_dual_vertices(dual_vertices) else {
             return Err(TargetSysextError::ConstructionFailed);
         };
+        let key = SysextCacheKey::current(polytope_key);
         if let Some(row) = self
             .rows
             .lock()
@@ -192,17 +231,21 @@ impl SysextCache {
         &self,
         dual_vertices: &[Vector4<f64>],
     ) -> Option<SysLandscapePolytopeCache> {
-        let key = polytope_key_from_f64_dual_vertices(dual_vertices)?;
-        if let Some(row) = self
-            .rows
-            .lock()
-            .expect("sysext cache rows poisoned")
-            .get(&key)
-        {
-            if let Some(geometry) = &row.geometry {
-                return polytope_from_geometry(geometry);
-            }
+        let polytope_key = polytope_key_from_f64_dual_vertices(dual_vertices)?;
+        let rows = self.rows.lock().expect("sysext cache rows poisoned");
+        let current_key = SysextCacheKey::current(polytope_key.clone());
+        let geometry = rows
+            .get(&current_key)
+            .and_then(|row| row.geometry.as_ref())
+            .or_else(|| {
+                rows.values()
+                    .find(|row| row.polytope_key == polytope_key && row.geometry.is_some())
+                    .and_then(|row| row.geometry.as_ref())
+            });
+        if let Some(geometry) = geometry {
+            return polytope_from_geometry(geometry);
         }
+        drop(rows);
         SysLandscapePolytopeCache::from_f64_dual_vertices(dual_vertices.to_vec())
     }
 
@@ -220,15 +263,21 @@ impl SysextCache {
             .iter()
             .filter_map(|key| rows.get(key).cloned())
             .collect::<Vec<_>>();
-        out.sort_by(|a, b| a.polytope_key.cmp(&b.polytope_key));
+        out.sort_by(|a, b| {
+            (&a.polytope_key, &a.capacity_method, &a.volume_method).cmp(&(
+                &b.polytope_key,
+                &b.capacity_method,
+                &b.volume_method,
+            ))
+        });
         out
     }
 
-    fn record_hit(&self, key: &str) {
+    fn record_hit(&self, key: &SysextCacheKey) {
         self.used_keys
             .lock()
             .expect("sysext cache used keys poisoned")
-            .insert(key.to_string());
+            .insert(key.clone());
         self.stats.lock().expect("sysext cache stats poisoned").hits += 1;
     }
 
@@ -257,6 +306,8 @@ fn row_from_computation(
     SysextCacheRow {
         polytope_key,
         facet_count: polytope.facet_count(),
+        capacity_method: CURRENT_CAPACITY_METHOD.to_string(),
+        volume_method: CURRENT_VOLUME_METHOD.to_string(),
         geometry: Some(geometry_from_polytope(polytope)),
         volume: computation.vol,
         min_action: computation.capacity.min_action,
@@ -369,20 +420,24 @@ fn open_append_writer(path: &Path) -> BufWriter<File> {
     BufWriter::new(file)
 }
 
-fn load_existing_rows(path: &Path, rows: &mut HashMap<String, SysextCacheRow>) {
+fn load_existing_rows(path: &Path, rows: &mut HashMap<SysextCacheKey, SysextCacheRow>) {
     let file = File::open(path)
         .unwrap_or_else(|err| panic!("failed to open sysext cache {}: {err}", path.display()));
     load_rows_from_file(path, file, rows);
 }
 
-fn load_optional_rows(path: &Path, rows: &mut HashMap<String, SysextCacheRow>) {
+fn load_optional_rows(path: &Path, rows: &mut HashMap<SysextCacheKey, SysextCacheRow>) {
     let Ok(file) = File::open(path) else {
         return;
     };
     load_rows_from_file(path, file, rows);
 }
 
-fn load_rows_from_file(path: &Path, file: File, rows: &mut HashMap<String, SysextCacheRow>) {
+fn load_rows_from_file(
+    path: &Path,
+    file: File,
+    rows: &mut HashMap<SysextCacheKey, SysextCacheRow>,
+) {
     let reader = BufReader::new(file);
     for (line_number, line) in reader.lines().enumerate() {
         let line = line.unwrap_or_else(|err| {
@@ -403,14 +458,10 @@ fn load_rows_from_file(path: &Path, file: File, rows: &mut HashMap<String, Sysex
                 line_number + 1
             )
         });
-        if let Some(previous) = rows.get(&row.polytope_key) {
-            assert!(
-                rows_match_except_geometry(previous, &row),
-                "conflicting sysext cache row for polytope_key {:?} in {:?}:{}",
-                row.polytope_key,
-                path,
-                line_number + 1
-            );
+        for previous in rows
+            .values()
+            .filter(|previous| previous.polytope_key == row.polytope_key)
+        {
             if let (Some(previous_geometry), Some(row_geometry)) =
                 (&previous.geometry, &row.geometry)
             {
@@ -424,7 +475,17 @@ fn load_rows_from_file(path: &Path, file: File, rows: &mut HashMap<String, Sysex
                 );
             }
         }
-        rows.entry(row.polytope_key.clone())
+        let key = SysextCacheKey::from_row(&row);
+        if let Some(previous) = rows.get(&key) {
+            assert!(
+                rows_match_except_geometry(previous, &row),
+                "conflicting sysext cache row for key {:?} in {:?}:{}",
+                key,
+                path,
+                line_number + 1
+            );
+        }
+        rows.entry(key)
             .and_modify(|previous| {
                 if previous.geometry.is_none() && row.geometry.is_some() {
                     *previous = row.clone();
@@ -437,9 +498,93 @@ fn load_rows_from_file(path: &Path, file: File, rows: &mut HashMap<String, Sysex
 fn rows_match_except_geometry(left: &SysextCacheRow, right: &SysextCacheRow) -> bool {
     left.polytope_key == right.polytope_key
         && left.facet_count == right.facet_count
+        && left.capacity_method == right.capacity_method
+        && left.volume_method == right.volume_method
         && left.volume == right.volume
         && left.min_action == right.min_action
         && left.sys == right.sys
         && left.iterations == right.iterations
         && left.sigma_results == right.sigma_results
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::sync::atomic::{AtomicUsize, Ordering};
+
+    static TEMP_COUNTER: AtomicUsize = AtomicUsize::new(0);
+
+    fn row(polytope_key: &str, capacity_method: &str, volume_method: &str) -> SysextCacheRow {
+        SysextCacheRow {
+            polytope_key: polytope_key.to_string(),
+            facet_count: 4,
+            capacity_method: capacity_method.to_string(),
+            volume_method: volume_method.to_string(),
+            geometry: None,
+            volume: 2.0,
+            min_action: 1.0,
+            sys: 0.25,
+            iterations: 3,
+            sigma_results: Vec::new(),
+        }
+    }
+
+    fn temp_path(label: &str) -> PathBuf {
+        let serial = TEMP_COUNTER.fetch_add(1, Ordering::Relaxed);
+        std::env::temp_dir().join(format!(
+            "dev-sys-prediction-sysext-cache-{label}-{}-{serial}.jsonl",
+            std::process::id()
+        ))
+    }
+
+    #[test]
+    fn unlabeled_rows_deserialize_with_unknown_method_identity() {
+        let value = serde_json::json!({
+            "polytope_key": "geometry",
+            "facet_count": 4,
+            "volume": 2.0,
+            "min_action": 1.0,
+            "sys": 0.25,
+            "iterations": 3,
+            "sigma_results": []
+        });
+        let row: SysextCacheRow = serde_json::from_value(value).unwrap();
+
+        assert_eq!(row.capacity_method, UNKNOWN_METHOD);
+        assert_eq!(row.volume_method, UNKNOWN_METHOD);
+        assert_ne!(
+            SysextCacheKey::from_row(&row),
+            SysextCacheKey::current(row.polytope_key.clone())
+        );
+    }
+
+    #[test]
+    fn loader_keeps_legacy_unknown_and_current_rows_in_separate_namespaces() {
+        let path = temp_path("method-namespaces");
+        let legacy = row("geometry", UNKNOWN_METHOD, UNKNOWN_METHOD);
+        let mut current = row("geometry", CURRENT_CAPACITY_METHOD, CURRENT_VOLUME_METHOD);
+        current.volume = 2.5;
+        current.sys = 0.2;
+        let contents = format!(
+            "{}\n{}\n",
+            serde_json::to_string(&legacy).unwrap(),
+            serde_json::to_string(&current).unwrap()
+        );
+        fs::write(&path, contents).unwrap();
+
+        let mut rows = HashMap::new();
+        load_existing_rows(&path, &mut rows);
+        fs::remove_file(&path).unwrap();
+
+        assert_eq!(rows.len(), 2);
+        assert_eq!(
+            rows.get(&SysextCacheKey::current("geometry".to_string()))
+                .unwrap(),
+            &current
+        );
+        assert_eq!(
+            rows.get(&SysextCacheKey::from_row(&legacy)).unwrap(),
+            &legacy
+        );
+    }
 }
