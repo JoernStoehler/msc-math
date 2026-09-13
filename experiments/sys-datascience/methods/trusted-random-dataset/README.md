@@ -16,13 +16,11 @@ non-random/product provenance are excluded.
 - `experiments/polytope-invariant-table/polytope-table.jsonl`
 - `experiments/polytope-invariant-table/polytope-provenance-table.jsonl`
 
-Source-truth pointers for the retained random producer shapes:
-
-- `experiments/polytope-datasets/main.rs`, production mode;
-- `experiments/polytope-datasets/README.md`, section "Run-Local Produce Path";
-- `experiments/polytope-datasets/random.rs` and `experiments/polytope-datasets/random-product.rs` are older
-  standalone refresh binaries with smaller default plans; do not use their
-  smoke defaults as retained-table row-count source truth.
+The [retained numerical lineage](../../../polytope-datasets/retained-lineage.md)
+identifies the frozen source and table bytes. The current run-local producer is
+the contract for new runs, not evidence that its certified capacity contract
+applies retroactively to these targets. Standalone producer smoke defaults are
+also not evidence of the retained row counts.
 
 ## Command
 

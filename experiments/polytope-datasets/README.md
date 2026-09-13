@@ -4,6 +4,11 @@ This directory contains the source-dataset producers and retained inputs used
 by the random/product `sys` data-science experiments. It is a collection of
 separate producer contracts, not one generic production framework.
 
+The retained 14,336-row inputs predate the certified run-local producer.
+[Retained numerical lineage](retained-lineage.md) records their byte identities,
+the source-era evidence, and the missing execution provenance. The guarantees
+for fresh production below do not retroactively certify those stored targets.
+
 The canonical generic-random and random-product producers remain together
 because their retained outputs share `shared-cache.jsonl`. The newer run-local
 producer can emit generic-random, random-product, or the named HKO reference

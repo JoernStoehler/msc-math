@@ -5,6 +5,11 @@ invariant table. It loads named source datasets, computes the current
 mathematically coherent invariant feature families, preserves source
 provenance, and writes method-facing tables.
 
+For the retained 14,336-row inputs, preparation copies stored capacity, volume,
+and systolic-ratio targets; it does not recompute or certify them. The
+[retained numerical lineage](../polytope-datasets/retained-lineage.md) records
+the source/table byte identities and the remaining execution-provenance gap.
+
 Current active method-facing covariates are invariant-feature columns. Prepare
 does not choose a canonical representative. It computes formulas whose values
 are invariant under `Sp(4) x R_+ x R^4 x Perm(F)`, with metadata kept separate
