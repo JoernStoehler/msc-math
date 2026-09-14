@@ -20,16 +20,53 @@ graph_dir="$(git rev-parse --path-format=absolute --git-common-dir)/codex/task-g
 mkdir -p "$graph_dir"
 ```
 
-Use `$graph_dir/tasks.dot` as the source and `$graph_dir/tasks.svg` as the
-rendered view. The Git common directory is shared by all worktrees and does not
-create perpetual working-tree changes. Recover an existing graph; never
-replace it merely because a new agent session started.
+Use `$graph_dir/tasks.dot` as the portfolio overview. When one graph would hide
+important outcomes or become awkward in a terminal, add ordered component
+sources such as `10-thesis.dot` and `20-software.dot`; do not make the overview
+a duplicate of every detail. Render each source beside it as `.svg`. The Git
+common directory is shared by all worktrees and does not create perpetual
+working-tree changes. Recover existing graphs; never replace them merely
+because a new agent session started.
+
+For a multi-hour execution window, use `00-now.dot` as a small disposable
+overlay containing only the selected live portfolio, owners, timeboxes, hedges,
+kill/fan-in conditions, and reserved integration capacity. It is not another
+backlog. Keep durable domain outcomes in the later component files.
 
 ## Model
 
 Use Graphviz DOT with stable node identifiers. Point edges from prerequisite
 to dependent. Use labeled outgoing edges from a diamond for outcomes that
 change downstream work. Use dashed edges for non-blocking influence.
+
+Do not encode a merely hoped-for result as an ordinary prerequisite edge. When
+an operation may plausibly produce materially different results, make it a
+crux and show the consequential branches. Cover at least success, useful
+partial information, and failure or evidence that invalidates the planned
+route when those outcomes imply different next work. By default, downstream
+work belongs only on the branch that justifies it. An explicit `HEDGE` may
+start before the crux resolves when its cost is bounded, parallel capacity is
+genuinely spare, and buying the option now reduces deadline risk more than
+waiting. Give each hedge a kill or fan-in condition; do not let speculative
+work silently become permanent scope.
+
+For a non-routine operation in the live overlay, account for four dispositions
+when material: intended result, useful partial result, evidence that invalidates
+the route, and timeout. A failed attempt can unlock a different route; it is not
+automatically a dead end or permission to repeat the same strategy.
+
+Distinguish robustly instrumental work from plan-contingent work. A robust task
+is worth doing early because its output remains useful across most plausible
+outcomes; show its influence on those branches. When a chain contains several
+uncertain steps, expose the uncertainty instead of presenting their joint
+success as the plan. Add probabilities only when they are decision-relevant
+and evidence supports the estimate; otherwise use plain confidence language
+such as `routine`, `uncertain`, or `speculative`. Treat coordinator attention
+as a limited resource too: prompts, message triage, branch review, and
+integration compete with direct work. When fan-out would saturate that
+attention, prefer fewer bounded assignments with compact return contracts and
+preserve capacity for fan-in rather than launching work that cannot be
+evaluated in time.
 
 Prefer outcome nodes over activity narration. A live node should communicate:
 
@@ -58,7 +95,9 @@ file for routine progress messages.
 After each patch, validate and render:
 
 ```bash
-dot -Tsvg "$graph_dir/tasks.dot" -o "$graph_dir/tasks.svg"
+for source in "$graph_dir"/*.dot; do
+  dot -Tsvg "$source" -o "${source%.dot}.svg"
+done
 ```
 
 Treat a failed render as a broken task map and repair it immediately.
@@ -73,9 +112,16 @@ in the Herdr session's environment, prefer a dedicated terminal pane with
 scrollable, event-driven box-art:
 
 ```bash
-graph-easy --from=dot --as=boxart "$graph_dir/tasks.dot"
-while inotifywait -qq -e close_write,moved_to "$graph_dir/tasks.dot"; do
-  graph-easy --from=dot --as=boxart "$graph_dir/tasks.dot"
+show_graphs() {
+  for source in "$graph_dir/tasks.dot" "$graph_dir"/[0-9][0-9]-*.dot; do
+    [ -f "$source" ] || continue
+    printf '\n===== %s =====\n\n' "${source##*/}"
+    graph-easy --from=dot --as=boxart "$source"
+  done
+}
+show_graphs
+while inotifywait -qq -e close_write,moved_to --include='\.dot$' "$graph_dir"; do
+  show_graphs
 done
 ```
 
