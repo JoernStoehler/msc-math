@@ -1,0 +1,215 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+open_browser=true
+local_only=false
+sandbox_mode=false
+files=()
+
+usage() {
+    printf 'usage: review-open [--print-only] [--local] [--sandbox] FILE...\n' >&2
+}
+
+while (($#)); do
+    case $1 in
+        --print-only)
+            open_browser=false
+            ;;
+        --local)
+            local_only=true
+            ;;
+        --sandbox)
+            sandbox_mode=true
+            open_browser=false
+            ;;
+        --help|-h)
+            usage
+            exit 0
+            ;;
+        --)
+            shift
+            files+=("$@")
+            break
+            ;;
+        -*)
+            printf 'review-open: unknown option: %s\n' "$1" >&2
+            usage
+            exit 2
+            ;;
+        *)
+            files+=("$1")
+            ;;
+    esac
+    shift
+done
+
+if ((${#files[@]} == 0)); then
+    usage
+    exit 2
+fi
+
+for index in "${!files[@]}"; do
+    if [[ ! -f ${files[$index]} ]]; then
+        printf 'review-open: not a regular file: %s\n' "${files[$index]}" >&2
+        exit 1
+    fi
+    files[$index]=$(realpath -- "${files[$index]}")
+done
+
+script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+server=$script_dir/review-server
+for dependency in python3 curl; do
+    if ! command -v "$dependency" >/dev/null; then
+        printf 'review-open: required command is unavailable: %s\n' "$dependency" >&2
+        exit 127
+    fi
+done
+
+if [[ $sandbox_mode == true ]]; then
+    if [[ $local_only == true ]]; then
+        printf 'review-open: --local and --sandbox cannot be combined\n' >&2
+        exit 2
+    fi
+    public_base=${REVIEW_FILES_PUBLIC_BASE_URL:-}
+    sandbox_port=${REVIEW_FILES_SANDBOX_PORT:-}
+    if [[ -z $public_base ]] && command -v git >/dev/null; then
+        public_base=$(git config --get review-files.publicBase 2>/dev/null || true)
+    fi
+    if [[ -z $sandbox_port ]] && command -v git >/dev/null; then
+        sandbox_port=$(git config --get review-files.sandboxPort 2>/dev/null || true)
+    fi
+    sandbox_port=${sandbox_port:-8765}
+    if [[ ! $sandbox_port =~ ^[0-9]+$ ]] || ((sandbox_port < 1 || sandbox_port > 65535)); then
+        printf 'review-open: invalid sandbox port: %s\n' "$sandbox_port" >&2
+        exit 2
+    fi
+    if [[ ! $public_base =~ ^https?://[^/]+(:[0-9]+)?$ ]]; then
+        printf '%s\n' 'review-open: sandbox public URL is unavailable or invalid' >&2
+        printf '%s\n' 'ask a host agent to follow the sandbox artifact review setup in dotfiles INSTALL.md' >&2
+        exit 1
+    fi
+
+    state_dir=${XDG_RUNTIME_DIR:-/tmp}/review-files-$UID-$sandbox_port
+    public_dir=$state_dir/public
+    install -d -m 700 -- "$public_dir"
+    pid_file=$state_dir/server.pid
+    if [[ -f $pid_file ]]; then
+        old_pid=$(<"$pid_file")
+        if [[ $old_pid =~ ^[0-9]+$ ]] && kill -0 "$old_pid" 2>/dev/null; then
+            old_command=$(tr '\0' ' ' <"/proc/$old_pid/cmdline" 2>/dev/null || true)
+            if [[ $old_command != *"python3 -m http.server $sandbox_port"* || $old_command != *"$public_dir"* ]]; then
+                printf 'review-open: port owner does not match the prior review server; inspect PID %s\n' "$old_pid" >&2
+                exit 1
+            fi
+            kill "$old_pid"
+            for _ in {1..50}; do
+                kill -0 "$old_pid" 2>/dev/null || break
+                sleep 0.02
+            done
+        fi
+    fi
+
+    find "$public_dir" -mindepth 1 -maxdepth 1 -type l -delete
+    token=$(python3 -c 'import secrets; print(secrets.token_urlsafe(18))')
+    names=()
+    for index in "${!files[@]}"; do
+        suffix=${files[$index]##*.}
+        if [[ ${files[$index]} == "$suffix" ]]; then
+            suffix=bin
+        fi
+        name=$token-$index.$suffix
+        ln -s -- "${files[$index]}" "$public_dir/$name"
+        names+=("$name")
+    done
+
+    nohup timeout 8h python3 -m http.server "$sandbox_port" \
+        --bind 0.0.0.0 --directory "$public_dir" \
+        </dev/null >"$state_dir/server.log" 2>&1 &
+    printf '%s\n' "$!" >"$pid_file"
+    for attempt in {1..100}; do
+        if curl --noproxy '*' --head --fail --silent --output /dev/null \
+            "http://127.0.0.1:$sandbox_port/${names[0]}"; then
+            break
+        fi
+        if ((attempt == 100)); then
+            printf 'review-open: sandbox review server did not become ready; inspect %s\n' "$state_dir/server.log" >&2
+            exit 1
+        fi
+        sleep 0.05
+    done
+
+    public_base=${public_base%/}
+    for index in "${!files[@]}"; do
+        printf '%s\t%s\n' "$public_base/${names[$index]}" "${files[$index]}"
+    done
+    exit 0
+fi
+
+for dependency in pandoc systemd-run; do
+    if ! command -v "$dependency" >/dev/null; then
+        printf 'review-open: required command is unavailable: %s\n' "$dependency" >&2
+        exit 127
+    fi
+done
+if [[ ! -x $server ]]; then
+    printf 'review-open: server helper is unavailable: %s\n' "$server" >&2
+    exit 127
+fi
+
+bind_address=127.0.0.1
+if [[ $local_only == false ]] && command -v tailscale >/dev/null; then
+    tailscale_ip=$(tailscale ip -4 2>/dev/null | head -n 1 || true)
+    if [[ $tailscale_ip =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        bind_address=$tailscale_ip
+    fi
+fi
+
+port=$(python3 -c 'import socket, sys; s=socket.socket(); s.bind((sys.argv[1], 0)); print(s.getsockname()[1]); s.close()' "$bind_address")
+token=$(python3 -c 'import secrets; print(secrets.token_urlsafe(18))')
+unit="review-open-$(date +%s)-$$"
+
+systemd-run \
+    --user \
+    --quiet \
+    --collect \
+    --unit="$unit" \
+    --property=Type=exec \
+    --property=RuntimeMaxSec=8h \
+    --description='Ephemeral artifact review server' \
+    -- \
+    "$server" "$bind_address" "$port" "$token" "${files[@]}"
+
+base_url="http://$bind_address:$port/$token"
+for attempt in {1..100}; do
+    if curl --noproxy '*' --fail --silent --output /dev/null "$base_url/health"; then
+        break
+    fi
+    if ((attempt == 100)); then
+        printf 'review-open: server did not become ready (unit %s)\n' "$unit" >&2
+        exit 1
+    fi
+    sleep 0.05
+done
+
+urls=()
+for index in "${!files[@]}"; do
+    urls+=("$base_url/$index")
+    printf '%s\t%s\n' "${urls[$index]}" "${files[$index]}"
+done
+
+if [[ $open_browser == true ]]; then
+    chrome=/usr/bin/google-chrome
+    if [[ ! -x $chrome ]]; then
+        printf 'review-open: Google Chrome is unavailable; URLs are printed above\n' >&2
+        exit 127
+    fi
+    systemd-run \
+        --user \
+        --quiet \
+        --collect \
+        --property=Type=exec \
+        --description='Open artifact review tabs in Chrome' \
+        -- \
+        "$chrome" --new-tab "${urls[@]}"
+fi

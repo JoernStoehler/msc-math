@@ -214,6 +214,19 @@ Ctrl+K, type a comment, Ctrl+S, then read the saved file. Expected text is
 2026-09-14 repair rechecked file hashes and Micro 2.0.15, not the interactive
 keystrokes or clipboard path.
 
+## Browser review from the sandbox
+
+The repository-owned `review-files` skill can present an explicitly named
+artifact through the host's Tailscale-only port mapping:
+
+```bash
+.agents/skills/review-files/scripts/review-open --sandbox FILE...
+```
+
+Host setup for the mapping and repository-local URL belongs to dotfiles
+`INSTALL.md`. It does not require sandbox recreation or give the VM Tailscale
+credentials. A new invocation replaces the previous sandbox review session.
+
 ## Reproduce a result
 
 Setup checks establish tools, not scientific results. Use the producer or

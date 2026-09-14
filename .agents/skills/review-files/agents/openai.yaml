@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Files"
+  short_description: "Open files for Jörn's browser review"
+  default_prompt: "Use $review-files to open the requested files for my review."
