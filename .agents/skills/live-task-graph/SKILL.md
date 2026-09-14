@@ -121,6 +121,12 @@ When Jörn is working in Herdr and `graph-easy` and `inotifywait` are installed
 in the Herdr session's environment, prefer a dedicated terminal pane with
 scrollable, event-driven box-art:
 
+Soft wrapping corrupts box-art topology. Before handoff, inspect the target
+pane width and measure the longest rendered line of every component. Keep a
+small margin (normally four or more columns). If a component is too wide,
+shorten labels or split it by crux; do not rely on horizontal scrolling or call
+wrapped output valid merely because Graphviz accepted the DOT.
+
 ```bash
 show_graphs() {
   for source in "$graph_dir/tasks.dot" "$graph_dir"/[0-9][0-9]-*.dot; do
