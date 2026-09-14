@@ -164,10 +164,10 @@ families are YAGNI for this API and remain experiment-local if later studied.
 No merge proposal is made until the consumer inventory has classified every
 old call site as migrated, a named experiment/control, or an explicit blocker.
 If external branch coordination ever forces a scalar-first merge, that is a
-deliberate incomplete phase: `docs/project-status.md` must name the unresolved
-orbit-output phase and its affected callers, and the next migration work must
-be scheduled immediately. That exception is not the selected plan for this
-worktree.
+deliberate incomplete phase: `legacy-callsite-inventory.md` and this plan must
+name the unresolved orbit-output phase and its affected callers, and the next
+migration work must be scheduled immediately. That exception is not the
+selected plan for this worktree.
 
 ### Compared orbit-output architectures
 
@@ -243,7 +243,7 @@ The current checkpoint provides:
 
 Observed extraction checks:
 
-- all 14 public capacity API tests and both selected-route correspondence tests
+- all 14 public capacity API tests and all four selected-route correspondence tests
   pass;
 - the release `symplectic` library suite passes;
 - the release workspace build passes;

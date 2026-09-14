@@ -23,6 +23,8 @@ Project-wide information:
 - `INSTALL.md`: environment setup and reproduction entry point; known working
   tools, current gaps, Sage, LaTeX, R2 and Micro configuration.
 - `docs/project-facts.md`: Jörn-confirmed facts and external decisions.
+- [`docs/algorithm-testing.md`](docs/algorithm-testing.md): fast development
+  checks, slower confidence layers, command side effects, and current gaps.
 - `docs/reproducibility.md`: code, data, and archive route.
 - `docs/artifacts.md`: materializing and publishing shared R2 snapshots.
 - `docs/development-environments.md`: execution environments, clients,

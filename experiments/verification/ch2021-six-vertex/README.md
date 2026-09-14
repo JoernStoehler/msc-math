@@ -12,7 +12,9 @@ Run from the repository root:
 cargo run -p dev-capacity-validation --release --bin ch2021-six-vertex
 ```
 
-The command writes `report.json` in this directory. A release build is
+The command invalidates the tracked `report.json` before computation and writes
+its replacement only after every gate passes. Run it only for an intentional
+artifact refresh; a failed run can leave the report absent. A release build is
 required for the exhaustive run. Exact geometry should take well below a
 second; the 125,664 exact KKT solves are expected to take seconds to a few
 minutes depending on the machine and build cache. The current pruned and

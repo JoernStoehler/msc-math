@@ -59,7 +59,7 @@ experiments/polytope-datasets/
 
 The repository root `Cargo.toml` is the shared workspace for active packages.
 The source-dataset producers, derived-table producer, and small method binaries
-are separate workspace packages. Eight method packets also have standalone
+are separate workspace packages. Nine method packets also have standalone
 `Cargo.toml` and `Cargo.lock` files and remain independently runnable; their
 READMEs use `--manifest-path` or explicitly run Cargo from the method
 directory. The remaining Rust method executables are targets of this

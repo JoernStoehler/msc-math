@@ -166,7 +166,7 @@ fn pruned_matches_unpruned_simplex() {
 /// non-adjacent permutations).
 ///
 /// Why #[ignore]: F=8 unpruned is slow in debug mode (~16s). Run in release:
-/// `cargo test --release pruned_matches_unpruned -- --ignored`
+/// `cargo test -p symplectic --release --lib algorithms::hk2017::tests_pruning::pruned_matches_unpruned -- --exact --ignored`
 #[test]
 #[ignore] // ~16s debug, ~0.2s release
 fn pruned_matches_unpruned() {
@@ -196,7 +196,7 @@ fn pruned_matches_unpruned() {
 /// Why #[ignore]: broad randomized agreement belongs in validation runs, not
 /// the default library smoke suite.
 ///
-/// `cargo test --release pruned_matches_unpruned_random -- --ignored`
+/// `cargo test -p symplectic --release --lib algorithms::hk2017::tests_pruning::pruned_matches_unpruned_random -- --exact --ignored`
 #[test]
 #[ignore]
 fn pruned_matches_unpruned_random() {

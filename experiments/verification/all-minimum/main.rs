@@ -1,10 +1,12 @@
 //! All-minimum orbit validation on a diverse local-first target pool.
 //!
-//! Goal: validate the sigma/KKT side of the shared result layer: which minimum
-//! simple orbits are returned for each selected polytope, and does the reported
-//! minimum action agree with the root scalar route?
+//! Goal: validate the sigma/KKT side of the shared result layer: which simple
+//! orbits fall within the packet's `MINIMUM_ACTION_GAP_TOL` of the reported
+//! minimum for each selected polytope, and does that action agree with the
+//! packet-local legacy `capacity_auto` route?
 //!
-//! Input Artifacts: None (builds the target pool internally).
+//! Required input: correctness/correctness.jsonl. The internally assembled
+//! target pool may also use the optional catalogs documented in the README.
 //! Output Artifacts: experiments/verification/all-minimum/all-minimum.jsonl,
 //!                   experiments/verification/all-minimum/all-minimum-orbits.jsonl,
 //!                   experiments/verification/all-minimum/smoke-all-minimum.jsonl,

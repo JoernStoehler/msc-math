@@ -33,8 +33,8 @@
 //!
 //! Capacity routing is intentionally explicit in this file because the dataset
 //! compares pruned, unpruned, and billiard outputs on the same verification
-//! fixtures. The crate-level `ehz_capacity` entrypoint would hide those
-//! per-algorithm checks.
+//! fixtures. The production `capacity_4d::capacity_from_dual_vertices`
+//! automatic dispatcher would hide those per-algorithm checks.
 
 use dev_capacity_validation::{
     capacity_billiard, capacity_pruned_hk2017, capacity_unpruned_hk2017, VerificationPolytopeCache,

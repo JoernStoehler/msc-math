@@ -17,9 +17,11 @@ Source surfaces checked for this classification:
 - `experiments/README.md`
 - `thesis/legacy/non-current-planning-companions/numerics-content.md`
 - `thesis/04-haim-kislev-quadratic-program.tex`
-- `experiments/sys-datascience/{README.md,produce/README.md,prepare/README.md,methods/README.md}`
+- `experiments/sys-datascience/{README.md,methods/README.md}`
+- `experiments/polytope-datasets/README.md`
 - `experiments/sys-landscape/src/{lib.rs,datascience_cache.rs,ascent/compute.rs}`
-- `experiments/polytope-invariant-table/{prepare.rs,load_caches.rs,features.rs}`
+- `experiments/polytope-invariant-table/README.md`
+- `experiments/polytope-invariant-table/{prepare.rs,load_caches.rs,invariant_features.rs,features_*.rs}`
 - `crates/symplectic/src/algorithms/{mod.rs,orbit_search.rs}`
 - `crates/symplectic/src/database.rs`
 - `crates/symplectic/src/kkt/mod.rs`

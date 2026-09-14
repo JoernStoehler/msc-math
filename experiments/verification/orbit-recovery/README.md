@@ -1,7 +1,8 @@
 # Minimum-Orbit Recovery
 
-Question: can each trusted minimum row from `../all-minimum/` be rebuilt from
-its one-sigma KKT data and recovered as a geometrically valid closed orbit?
+Question: can each trusted near-minimum row selected within the producer's
+absolute `1e-12` action window in `../all-minimum/` be rebuilt from its
+one-sigma KKT data and recovered as a geometrically valid closed orbit?
 
 `main.rs` consumes:
 

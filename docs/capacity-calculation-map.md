@@ -79,6 +79,7 @@ polytopes or the prevalence of `sys > 1`.
 
 ## Evidence entry points
 
+- Test roles and runnable confidence layers: `docs/algorithm-testing.md`.
 - Public production contract: `crates/symplectic/README.md` and
   `experiments/dev-quadratic-program/docs/capacity-architecture.md`.
 - Numerical and runtime evidence:

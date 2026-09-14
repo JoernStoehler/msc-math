@@ -23,9 +23,12 @@ linked experiment evidence:
 - `src/database.rs`, `src/dataset.rs`, `src/derivatives.rs`, `src/random.rs`:
   persistence, row schemas, derivatives, and sampling support
 
-Local tests are smoke/unit/regression checks only. Larger validation or
-performance suites belong in `experiments/verification/` or the relevant
-experiment's benchmark directory.
+Local tests are the core development-regression layer. Cross-route
+correspondence, invariants and known values, orbit reconstruction, and
+theorem-specific certificates supply different kinds of evidence; see
+[`../../docs/algorithm-testing.md`](../../docs/algorithm-testing.md). Larger
+validation or performance suites belong in `experiments/verification/` or the
+relevant experiment's benchmark directory.
 
 Developer-facing math for reusable crate algorithms lives in `formal/`.
 For a cross-repository comparison of arithmetic, candidate coverage, failure
@@ -54,7 +57,8 @@ Use
 exactly admissible general-HK word with action at most the supplied exact
 multiple of capacity. It returns one exact `beta`, `q`, `mu`, and `xi` witness
 per word, so derivative consumers do not rerun the KKT solve. The endpoint is
-inclusive. Product action windows are not implemented.
+inclusive, and `maximum_action_multiple` must be at least one. Product action
+windows are not implemented.
 
 Callers that need intermediate geometry can instead use the named stages
 `check_facet_count`, `check_finite_dual_vertices`,

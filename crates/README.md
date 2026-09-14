@@ -25,7 +25,15 @@ Code existence does not imply a settled public API, exact proof, acceptable
 numerical behavior, or thesis use. Confirm those separately at the relevant
 source.
 
-## Baseline checks
+## Core crate checks
+
+These are the core development-regression layer. On the current machine with a
+warm build cache the four commands take roughly one to two minutes together;
+focused filters are faster during an edit. They catch local regressions but do
+not replace cross-route, invariant, known-value, reconstruction, or
+theorem-specific evidence. See
+[Algorithm testing and evidence](../docs/algorithm-testing.md) for the
+confidence layers and capacity-specific commands.
 
 ```bash
 cargo test -p algebraic-numbers --release

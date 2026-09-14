@@ -17,6 +17,9 @@ Run the full packet:
 cargo run -p dev-capacity-validation --release --bin flow-graph-proof-risk -- --full
 ```
 
+The default command writes disposable smoke output. `--full` overwrites the
+tracked full-run evidence; use it only for an intentional refresh.
+
 Outputs are written under this directory:
 
 - `smoke-flow-graph-proof-risk.jsonl`

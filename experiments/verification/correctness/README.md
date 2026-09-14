@@ -1,8 +1,11 @@
 # Capacity Correctness
 
-Question: do the current capacity implementations satisfy the checked
-conformality, symplectic-invariance, monotonicity, continuity, literature, and
-cross-implementation agreement properties on this retained suite?
+Question: do the retained legacy/research pruned and unpruned HK2017 and
+billiard capacity implementations satisfy the checked conformality,
+symplectic-invariance, monotonicity, continuity, literature, and
+cross-implementation agreement properties on this retained suite? This packet
+does not currently exercise those properties end to end through the production
+`capacity_4d` dispatcher.
 
 The Rust producer is `main.rs`. A full run refreshes the tracked
 `correctness.jsonl`; it is not a disposable smoke command:
