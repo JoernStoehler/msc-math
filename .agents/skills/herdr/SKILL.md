@@ -69,9 +69,9 @@ Resolve the recipient from live state rather than guessing. Do not ask Jörn to 
 Wait for and inspect an agent without focusing it:
 
 ```bash
-herdr agent wait reviewer --timeout 120000
-herdr agent get reviewer
-herdr agent read reviewer --source recent-unwrapped --lines 120
+herdr agent wait "$target_pane" --timeout 120000
+herdr agent get "$target_pane"
+herdr agent read "$target_pane" --source recent-unwrapped --lines 120
 ```
 
 If an agent is `blocked`, read its UI before sending input. Do not answer an approval dialog without Jörn's authorization. Use `--until` only when a particular state is the intended event.
