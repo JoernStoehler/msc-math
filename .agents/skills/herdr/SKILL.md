@@ -101,7 +101,7 @@ Honor a direction requested by the user. Otherwise inspect the caller pane:
 herdr pane layout --pane "$HERDR_PANE_ID"
 ```
 
-Split a wide pane to the right and a narrow or tall pane down. Avoid repeated same-direction splits that create unusably narrow columns or short rows. Keep the user's focus in the calling pane and explicitly preserve the caller's working directory:
+Split a wide pane to the right and a narrow or tall pane down. Avoid repeated same-direction splits that create unusably narrow columns or short rows. Leave the shared UI focus unchanged and explicitly preserve the caller's working directory:
 
 ```bash
 herdr pane split --current --direction right --cwd "$PWD" --no-focus
