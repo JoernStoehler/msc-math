@@ -1,0 +1,50 @@
+# Shared sandbox skills are intentionally disabled. This repository discovers
+# only the skills it owns below .agents/skills.
+
+[[skills.config]]
+path = "/home/agent/.agents/skills/codex-session-log-parsing/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/home/agent/.agents/skills/delegate-chatgpt-pro/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/home/agent/.agents/skills/gpt-prompting/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/home/agent/.agents/skills/herdr/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/home/agent/.agents/skills/herdr-messaging/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/home/agent/.agents/skills/host-estate/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/home/agent/.agents/skills/memory/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/home/agent/.agents/skills/post-mortem/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/home/agent/.agents/skills/process-correction/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/home/agent/.agents/skills/session-resume-packet/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/home/agent/.agents/skills/skill-design/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/home/agent/.agents/skills/subagent-prompting/SKILL.md"
+enabled = false

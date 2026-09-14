@@ -144,6 +144,19 @@ or create another global copy. Project-owned facts and skills remain in this
 repository. These installation facts are attributed to the DevOps handoff,
 not a separate consumer-side verification.
 
+This shared-skills arrangement is retired for new Codex sessions. The project
+config disables every known `/home/agent/.agents/skills` entry and discovers
+only repository-owned skills under `.agents/skills`. The live VirtioFS mount
+was detached on 2026-09-14, but `sbx` will attach it again after a VM restart
+until the sandbox is safely recreated with skill sharing off. Do not edit it if
+it reappears.
+
+Make a reusable repository-owned skill correction as a focused commit. A host
+coordinator can enumerate other repository consumers, fetch the source commit,
+and apply it with `git cherry-pick -x` after checking each target's local skill
+contract. A sandbox agent must not infer that it can see or update consumers in
+other VMs.
+
 Sage 10.9 is installed with Miniforge/conda-forge in the ignored shared path
 `/workspaces/msc-math/.local-environments/miniforge/envs/sage`. Its separate
 Python is 3.13.15; ordinary Python remains 3.12.13. The VM-local
