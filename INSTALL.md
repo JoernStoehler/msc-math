@@ -18,10 +18,11 @@ Checked on 2026-09-05:
   verifier and a 50-case pentagon prefix (not the full pentagon certificate).
 
 [Environment details](docs/development-environments.md) records versions,
-configuration locations and diagnostic findings. Global skill/docs/memory
-distribution is owned by DevOps. Its agreed sandbox installation is reported
-complete; see the environment details for locations and update semantics. Do
-not independently install another global system from this project.
+configuration locations and diagnostic findings. Project skills live under
+`.agents/skills`; the host estate coordinates deliberate copies between
+repositories. Global memories remain separately maintained VM-local clones.
+See the environment details for locations and update semantics; do not install
+a competing shared skill store from this project.
 
 ## Ordinary language tools
 
