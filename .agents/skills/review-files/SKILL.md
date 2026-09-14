@@ -33,14 +33,15 @@ sandbox Taildrop credentials or mount the host Tailscale socket.
 
 ## From joern-pc
 
-Start the eight-hour review server with:
+From the repository root containing this skill, start the eight-hour review
+server with:
 
 ```bash
-scripts/review-open --print-only FILE...
+.agents/skills/review-files/scripts/review-open --print-only FILE...
 ```
 
-Resolve `scripts/` relative to this `SKILL.md`. The command prints one URL and
-absolute path per line. It binds only to `joern-pc`'s Tailscale IPv4 address
+The command prints one URL and absolute path per line. It binds only to
+`joern-pc`'s Tailscale IPv4 address
 when Tailscale is running, so the same unguessable URL works from the host and
 other permitted tailnet devices. Pass `--local` to restrict it to `127.0.0.1`.
 
