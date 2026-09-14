@@ -65,9 +65,10 @@ pub fn solve_orbit_sigma_exact<F: ExactScalar + 'static>(
 
 /// Exact one-sigma solve specialized for rationalized binary64 inputs.
 ///
-/// Full-rank dyadic systems use verified fraction-free integer elimination.
-/// Singular or unsupported systems fall back to [`solve_orbit_sigma_exact`]
-/// so rank-deficient positivity semantics remain unchanged.
+/// The rational KKT kernel uses verified fraction-free integer elimination for
+/// full-rank dyadic systems and exact elimination with a positive-beta search
+/// for singular systems. Nonpositive `q` is rejected to preserve the orbit
+/// contract of [`solve_orbit_sigma_exact`].
 pub fn solve_orbit_sigma_exact_rational(
     dual_vertices: &[Vector4<BigRational>],
     sigma: &[usize],
@@ -85,6 +86,11 @@ pub fn solve_orbit_sigma_exact_rational(
         })
         .collect::<Vec<_>>();
     let exact = solve_kkt_exact(&dual_arrays, sigma)?;
+    // Stationary KKT values may be nonpositive, but orbit actions must be
+    // positive. In particular, action() would divide by zero when q is zero.
+    if exact.q_exact <= BigRational::from_integer(0.into()) {
+        return None;
+    }
     Some(ExactOrbitKktData {
         sigma: sigma.to_vec(),
         beta: exact.beta,
@@ -435,6 +441,32 @@ mod tests {
         let fast = solve_orbit_sigma_exact_rational(&dual_vertices, &sigma)
             .expect("fraction-free exact solution");
         assert_eq!(fast, generic);
+    }
+
+    #[test]
+    fn rational_orbit_requires_positive_q() {
+        let dual_vertices = vec![
+            Vector4::new(q(1), q(0), q(0), q(0)),
+            Vector4::new(q(0), q(0), q(1), q(0)),
+            Vector4::new(q(-1), q(0), q(0), q(0)),
+            Vector4::new(q(0), q(0), q(-1), q(0)),
+        ];
+        // The square has beta=(1/4,...), q=1/8 and action=4, despite
+        // the singular KKT system from unused q2/p2 multiplier columns.
+        let orbit = solve_orbit_sigma_exact_rational(&dual_vertices, &[0, 1, 2, 3])
+            .expect("positive stationary square must remain accepted");
+        assert_eq!(orbit.beta, vec![BigRational::new(1.into(), 4.into()); 4]);
+        assert_eq!(orbit.q, BigRational::new(1.into(), 8.into()));
+        assert_eq!(orbit.action(), q(4));
+
+        // Opposite normals give q=0; reversing the square gives q=-1/8.
+        for sigma in [&[0, 2][..], &[0, 3, 2, 1][..]] {
+            assert!(solve_orbit_sigma_exact(&dual_vertices, sigma).is_none());
+            assert!(
+                solve_orbit_sigma_exact_rational(&dual_vertices, sigma).is_none(),
+                "nonpositive stationary q is not an orbit: {sigma:?}"
+            );
+        }
     }
 
     #[test]
