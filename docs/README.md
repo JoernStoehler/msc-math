@@ -10,6 +10,7 @@ holds the supporting review notes, not a separate queue.
 | File | Purpose | Authority |
 | --- | --- | --- |
 | `project-facts.md` | Jörn-confirmed project facts and accepted external constraints | current unless newer Jörn/Kai/source truth contradicts it |
+| [`thesis-assessment-2026-09-14.md`](thesis-assessment-2026-09-14.md) | Diagnosis of the identified 110-page thesis PDF, including human reading effort, mathematical exposition, empirical reporting and unresolved checks | assessment draft; incorporates Jörn's reader/style criteria, but findings await his review |
 | `capacity-calculation-map.md` | repository-wide map of materially distinct EHZ-capacity and `sys` calculation contracts | routing aid; source and owner docs remain authoritative |
 | `algorithm-testing.md` | evidence ladder from fast development tests through correspondence, invariants, anchors, reconstruction, and theorem-specific checks | test-routing aid; packet-local contracts define scope and artifact side effects |
 | `reproducibility.md` | thesis-facing code/data/archive route | policy and entry point; exact commands and artifacts remain producer-local |
