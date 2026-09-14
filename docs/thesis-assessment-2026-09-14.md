@@ -1,6 +1,6 @@
 # Assessment of the current thesis PDF
 
-Date: 14 September 2026. Status: **partly reviewed assessment draft; Jörn broadly agrees with the main diagnosis, with the research-versus-prose correction below. Detailed findings, including F7a, remain under review. This is not a PASS judgment.**
+Date: 14 September 2026. Status: **partly reviewed assessment draft; Jörn broadly agrees with the main diagnosis and recognizes F7a's examples as defects, without endorsing their completeness. HKO proof-presentation and AI-reflection scope judgments remain pending. Other detailed findings remain agent assessments. This is not a PASS judgment.**
 
 ## Purpose and assessed object
 
@@ -201,6 +201,8 @@ These mechanisms can combine within two pages. Their total cost is not captured 
 
 **Limit:** The close reading supports a serious style diagnosis. It does not measure the predicted fivefold slowdown, establish an exact frequency of defects, or prove that a particular rewrite would fix the experience. A short human calibration can discriminate those possibilities if later workflow work needs it, but this report does not require Jörn to perform that test now.
 
+**Jörn's review and disposition:** Jörn agrees that F7a lists defects, but is not convinced that it lists everything wrong with the writing. He does not see a clear benefit in further analyzing GPT-5.6 Sol's writing and proposes switching prose-writing tasks to **GPT-6 Astra**. Accordingly, this assessment does not pursue a more exhaustive style taxonomy. Astra is the selected direction for future prose-writing tasks, not a model whose PASS-level performance has been established here. This report does not claim that Sol authored every assessed passage or that a controlled model comparison was performed.
+
 ### F8. The manuscript repeats its architecture without proportionately developing its main result
 
 **Evidence:** The HKO mechanism appears in the abstract, pp. 6–7, pp. 57–58, p. 60, pp. 62–65 and the conclusion. Some repetition is appropriate, but multiple accounts restate the same dimension/rank/positive-relation structure. Meanwhile Section 7 occupies about eight pages, while the pentagon section spans pp. 75–91, including a roughly six-page code exposition and an empirical branch landscape inside the theorem's proof.
@@ -333,16 +335,17 @@ The following distinctions are important input to later workflow choices. “Rew
 | Topic replacement | No evidence that it is required | A final guarantee of examiner approval or novelty |
 | Workflow design | This report supplies failure modes and observable outcomes for it | That a deliberately designed workflow is needed if straightforward writing succeeds |
 
+For future prose-writing tasks, follow Jörn's stated preference for GPT-6 Astra and fresh composition from the research. Do not turn F7a into an ongoing investigation of Sol's writing or an exhaustive defect checklist. The replacement must still pass human review; model choice alone is not evidence of that outcome.
+
 A passing replacement should let the intended reader explain the main proof mechanisms, understand what was actually sampled and measured, distinguish contributions from prerequisites, and see what the investigations taught. It must also be tolerable to read in sequence, at a reasonable pace for the mathematics, without relying on Jörn to translate repository status language into mathematics. Those outcomes are a more useful success test than fewer caveats, a clean build, or agent agreement that the prose is improved.
 
 ## Agreement still needed
 
-Jörn has confirmed the intended reader and explicitly required a separate writing-style/reading-effort criterion. He has read the main diagnosis and said it sounds about right, while correcting its failure to distinguish the research's value from the lack of value in salvaging the current prose. He reports that the TOC was discussed with Kai and found to fit a good narrative, and proposes writing afresh from the research with that structure as a possible starting point. Those corrections are incorporated above. **F7a and the other detailed findings have not yet been endorsed.** The report should not be cited by other agents as “Jörn agrees that these are all the defects.”
+Jörn has confirmed the intended reader and explicitly required a separate writing-style/reading-effort criterion. He has read the main diagnosis and said it sounds about right, while correcting its failure to distinguish the research's value from the lack of value in salvaging the current prose. He reports that the TOC was discussed with Kai and found to fit a good narrative, and proposes writing afresh from the research with that structure as a possible starting point. He subsequently read F7a, recognized its examples as defects, questioned its completeness, and proposed using GPT-6 Astra for prose-writing rather than analyzing Sol's defects further. Those corrections are incorporated above. **This is not endorsement of every detailed finding or of an exhaustive diagnosis.** The report should not be cited by other agents as “Jörn agrees that these are all the defects.”
 
-The most consequential judgments to calibrate are:
+The remaining requested judgments are:
 
-1. Does F7a correctly identify the concrete mechanisms behind the costly prose, or does it miss or misdescribe them? Jörn broadly accepts the main diagnosis; the detailed style analysis is his next review step.
-2. For the central HKO theorem, is the proposed minimum of displayed specialized geometry plus a representative calculation and stable full supplement enough for the reader, or does Jörn require a more self-contained proof presentation?
-3. Does the one-case AI reflection meet the intended scope, or should supported broader research-process reflection be restored?
+1. For the central HKO theorem, is a PDF explanation of the specialized geometry and its connection to the checked equations, with a representative calculation and an identified full witness/executable supplement, the right division for PASS? Or is more of the computational proof required inside the PDF? F1 provides the evidence for the current deficiency; the question concerns the intended replacement's presentation, not approval of unwritten text.
+2. Does the one-case AI reflection meet the intended scope, or should supported broader research-process reflection be restored? F11 identifies what the current chapter actually covers. The recommendation is a few supported experiences, not a new productivity study or experiments.
 
-These are judgments about concrete findings, not requests that Jörn discover the defects himself. They need not all be settled before an ordinary writing attempt, but the first two materially affect what such an attempt should aim to produce. The report remains revisable, and agreement on it is separate from eventual PASS on a replacement thesis.
+These were submitted through the async question tool, with enough context to answer without rereading the thesis. A full line-by-line review of this report is not requested: the other findings can remain explicitly attributed to the assessor, with their evidence and uncertainty. These scope judgments affect what replacement authors should aim to produce. The report remains revisable, and agreement on it is separate from eventual PASS on a replacement thesis.
