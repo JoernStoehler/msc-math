@@ -16,7 +16,7 @@ If it fails, do not inspect or control another Herdr client's focused session. T
 **Focus invariant:** The focused workspace, tab, and pane are Jörn's interactive state. Never run a workspace, tab, pane, or agent focus command unless he explicitly requested that exact focus change. Use `--no-focus` whenever a creation, split, or move supports it. Do not restore an earlier focus afterward; Jörn may have moved while the command ran.
 **Prevents:** stealing focus while Jörn types, redirecting his keystrokes, or reversing a focus change he made during background work.
 
-Use `--current` only for the calling pane. Otherwise use an explicit pane ID or unique live agent name; an omitted target may resolve through the UI focus. Parse returned IDs from JSON instead of deriving them from layout order. Common IDs look like `w1`, `w1:t1`, and `w1:p1`, but treat them as opaque.
+Use `--current` only for the calling pane. Otherwise use an explicit pane ID; an omitted target may resolve through the UI focus. Parse returned IDs from JSON instead of deriving them from layout order. Common IDs look like `w1`, `w1:t1`, and `w1:p1`, but treat them as opaque.
 
 ```bash
 herdr workspace list
@@ -28,7 +28,11 @@ herdr agent list
 
 Use pane commands for shells, ordinary commands, and layout. Use agent commands for a recognized coding agent and its lifecycle. `agent start` needs an existing shell pane at an interactive prompt; it does not create layout.
 
-Agent targets are unique live names or pane IDs hosting agents. `idle` means ready and already seen in the focused UI; `done` means ready with unseen completed work; `working` and `blocked` have their ordinary meanings; `unknown` does not establish completion. Reads do not mark work seen.
+Agent commands accept a pane ID hosting a live agent or an assigned `display_agent` name. Prefer the pane ID: obtain it from `herdr agent list`, or retain the ID returned when creating the pane, then verify the intended record with `herdr agent get "$target_pane"`. Match the recipient using known context such as its workspace, tab, working directory, and assigned display name; do not infer identity from layout position, focus, terminal title, or `agent: "codex"` alone. If the records do not identify exactly one intended recipient, stop rather than guess.
+
+`agent_session.value` is the agent's durable session identity—for Codex, its thread UUID—and is useful for provenance but is not a Herdr command target. The `agent` field identifies the implementation kind, not an agent name. An assigned display name is only safe after `herdr agent get <name>` resolves to the expected pane; names can be absent or ambiguous.
+
+`idle` means ready and already seen in the focused UI; `done` means ready with unseen completed work; `working` and `blocked` have their ordinary meanings; `unknown` does not establish completion. Reads do not mark work seen.
 
 To start an agent in a sibling pane, inspect the caller's geometry, split without changing focus, and use the returned pane ID:
 
@@ -40,13 +44,23 @@ herdr agent start reviewer --kind codex --pane <returned-pane-id>
 
 Use `down` instead of `right` when the current geometry makes that more usable. Preserve the requested agent kind and pass its native arguments only after `--`.
 
-Send agent-authored or relayed messages through this skill's helper, addressed by its absolute path from the loaded skill directory:
+Send agent-authored or relayed messages through this skill's helper. From a repository root containing the skill:
 
 ```bash
-herdr_message="<skill-directory>/scripts/herdr-message"
-"$herdr_message" reviewer -- 'Review the current diff and report actionable findings.'
-"$herdr_message" reviewer --file /tmp/message.md
+target_pane=$(herdr agent list | jq -er '
+  [.result.agents[] | select(
+    .workspace_id == "w1P" and .cwd == "/workspaces/msc-math"
+  )]
+  | if length == 1 then .[0].pane_id
+    else error("recipient is absent or ambiguous") end
+')
+herdr agent get "$target_pane"
+.agents/skills/herdr/scripts/herdr-message "$target_pane" -- \
+  'Review the current diff and report actionable findings.'
+.agents/skills/herdr/scripts/herdr-message "$target_pane" --file /tmp/message.md
 ```
+
+Adapt the `jq` selectors to facts already known about the intended recipient and require `jq -e` to yield exactly one pane ID. If the skill is loaded from another location, invoke `scripts/herdr-message` by its absolute path from that loaded skill directory.
 
 The helper derives the sender's durable session identity, wraps the payload in `<agent-message source="..." via="...">`, and calls `herdr agent prompt`. Do not replace it with raw prompt, send-text, or key injection for agent-authored text: unwrapped input is treated as directly authored by Jörn. Use a file for substantial Markdown.
 
