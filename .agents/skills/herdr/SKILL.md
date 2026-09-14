@@ -28,7 +28,7 @@ herdr agent list
 
 Use pane commands for shells, ordinary commands, and layout. Use agent commands for a recognized coding agent and its lifecycle. `agent start` needs an existing shell pane at an interactive prompt; it does not create layout.
 
-Agent commands accept a pane ID hosting a live agent or an assigned `display_agent` name. Prefer the pane ID: obtain it from `herdr agent list`, or retain the ID returned when creating the pane, then verify the intended record with `herdr agent get "$target_pane"`. Match the recipient using known context such as its workspace, tab, working directory, and assigned display name; do not infer identity from layout position, focus, terminal title, or `agent: "codex"` alone. If the records do not identify exactly one intended recipient, stop rather than guess.
+Agent commands accept a pane ID hosting a live agent or an assigned `display_agent` name. Prefer a pane ID retained when creating the pane. For an existing agent, print the small live inventory and identify the intended row from all available context: machine, workspace, tab, full title, working directory, status, display name, and session UUID. No single clue such as focus, layout position, title, cwd, or `agent: "codex"` establishes identity by itself. If the evidence does not distinguish the intended recipient, inspect further or ask rather than guess.
 
 `agent_session.value` is the agent's durable session identity—for Codex, its thread UUID—and is useful for provenance but is not a Herdr command target. The `agent` field identifies the implementation kind, not an agent name. An assigned display name is only safe after `herdr agent get <name>` resolves to the expected pane; names can be absent or ambiguous.
 
@@ -44,23 +44,20 @@ herdr agent start reviewer --kind codex --pane <returned-pane-id>
 
 Use `down` instead of `right` when the current geometry makes that more usable. Preserve the requested agent kind and pass its native arguments only after `--`.
 
+Herdr commands address the server connected to the calling process. A CLI in a host pane still targets the host even if Jörn's UI is displaying a saved remote machine. Run the inventory inside the relevant machine's agent pane; its machine and session columns describe that command context.
+
 Send agent-authored or relayed messages through this skill's helper. From a repository root containing the skill:
 
 ```bash
-target_pane=$(herdr agent list | jq -er '
-  [.result.agents[] | select(
-    .workspace_id == "w1P" and .cwd == "/workspaces/msc-math"
-  )]
-  | if length == 1 then .[0].pane_id
-    else error("recipient is absent or ambiguous") end
-')
+.agents/skills/herdr/scripts/herdr-agent-table
+target_pane='w1P:p1' # replace with the pane ID selected from the current table
 herdr agent get "$target_pane"
 .agents/skills/herdr/scripts/herdr-message "$target_pane" -- \
   'Review the current diff and report actionable findings.'
 .agents/skills/herdr/scripts/herdr-message "$target_pane" --file /tmp/message.md
 ```
 
-Adapt the `jq` selectors to facts already known about the intended recipient and require `jq -e` to yield exactly one pane ID. If the skill is loaded from another location, invoke `scripts/herdr-message` by its absolute path from that loaded skill directory.
+Invoke both helpers by absolute paths from the loaded skill directory when it is elsewhere. Re-run `herdr agent get "$target_pane"` immediately before a consequential command when the inventory may have gone stale.
 
 The helper derives the sender's durable session identity, wraps the payload in `<agent-message source="..." via="...">`, and calls `herdr agent prompt`. Do not replace it with raw prompt, send-text, or key injection for agent-authored text: unwrapped input is treated as directly authored by Jörn. Use a file for substantial Markdown.
 

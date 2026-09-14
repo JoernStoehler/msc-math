@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+[[ ${HERDR_ENV:-} == 1 ]] || {
+  printf 'herdr-agent-table: not running inside a Herdr pane\n' >&2
+  exit 1
+}
+command -v herdr >/dev/null || {
+  printf 'herdr-agent-table: herdr is not in PATH\n' >&2
+  exit 1
+}
+command -v jq >/dev/null || {
+  printf 'herdr-agent-table: jq is not in PATH\n' >&2
+  exit 1
+}
+
+machine=$(hostname -s)
+session=${HERDR_SESSION:-default}
+
+render() {
+  jq -s -r --arg machine "$machine" --arg session "$session" '
+    (.[0].result.workspaces
+      | map({key: .workspace_id, value: (.label // .workspace_id)})
+      | from_entries) as $workspaces
+    | ["MACHINE", "SESSION", "WORKSPACE", "TAB", "PANE", "STATUS", "NAME", "CWD", "TITLE", "AGENT UUID"],
+      (.[1].result.agents[] | [
+        $machine,
+        $session,
+        ($workspaces[.workspace_id] // .workspace_id),
+        .tab_id,
+        .pane_id,
+        .agent_status,
+        (.display_agent // ""),
+        (.cwd // ""),
+        (.terminal_title_stripped // .terminal_title // ""),
+        (.agent_session.value // "")
+      ])
+    | @tsv
+  ' <(herdr workspace list) <(herdr agent list)
+}
+
+if command -v column >/dev/null; then
+  render | column -t -s $'\t'
+else
+  render
+fi
