@@ -130,26 +130,16 @@ entry), `/home/agent/.profile` (login setup), `/etc/sandbox-persistent.sh` (Rust
 PATH), `/home/agent/.config/micro/`, and `/home/agent/.codex/config.toml`.
 They are persistent sandbox state, not files supplied by the Git checkout.
 
-Global skills, documentation and memory are owned by DevOps. Its 2026-09-05
-handoff reports the agreed migration installed, with no consumer action needed:
+Codex skills are project-owned software under `.agents/skills`. The repository
+contains its own byte-identical copy of the host-tested Herdr skill, so VM agents
+can discover the CLI workflow without a global or cross-sandbox skills store.
+Global memory remains a separate VM-local clone at `~/.agents/memories`.
 
-- `/home/agent/.agents/skills`: Docker's shared cross-sandbox mount, a clean
-  `agent-skills` checkout at `efcf72a500665734e1c5294856b2c2511d8e7d99`.
-- `/home/agent/.agents/memories`: VM-local clean `agent-memory` clone at
-  `d9a825fa3cf351aedfb56a8234dd0e8b286ffcb9`.
-
-Updates are manual `git pull --ff-only`. Direct edits to the shared skills
-checkout immediately affect other projects; do not use `sbx skills import`
-or create another global copy. Project-owned facts and skills remain in this
-repository. These installation facts are attributed to the DevOps handoff,
-not a separate consumer-side verification.
-
-This shared-skills arrangement is retired for new Codex sessions. The project
-config disables every known `/home/agent/.agents/skills` entry and discovers
-only repository-owned skills under `.agents/skills`. The live VirtioFS mount
-was detached on 2026-09-14, but `sbx` will attach it again after a VM restart
-until the sandbox is safely recreated with skill sharing off. Do not edit it if
-it reappears.
+The project config disables every known `/home/agent/.agents/skills` entry. The
+retired shared VirtioFS mount was detached on 2026-09-14, but `sbx` will attach
+it again after a VM restart until the sandbox is safely recreated with skill
+sharing off. Do not edit it if it reappears. Always ask Jörn before recreating
+this sandbox because recreation deletes VM-private state.
 
 Make a reusable repository-owned skill correction as a focused commit. A host
 coordinator can enumerate other repository consumers, fetch the source commit,
