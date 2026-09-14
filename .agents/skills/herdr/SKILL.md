@@ -1,6 +1,6 @@
 ---
 name: herdr
-description: "Operate an existing Herdr session: inspect or change terminal layout, run commands, coordinate live coding agents, read their output, and send provenance-preserving messages. Use when the task requires Herdr session state or Herdr-mediated interaction. Requires HERDR_ENV=1 for session control."
+description: "Operate Herdr, the terminal multiplexer Jörn uses for coding-agent work. Use when a task depends on Herdr's workspaces, tabs, panes, terminal commands, live agents, output, or provenance-preserving messaging. HERDR_ENV=1 means the agent shares Jörn's interactive session and must preserve his focus."
 ---
 
 Herdr organizes terminals into workspaces, tabs, and panes. A pane may contain a shell, an ordinary process, or a recognized coding agent.
