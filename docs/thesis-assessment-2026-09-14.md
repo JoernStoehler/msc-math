@@ -1,6 +1,6 @@
 # Assessment of the current thesis PDF
 
-Date: 14 September 2026. Status: **assessment draft for Jörn's review; not yet an agreed diagnosis or a PASS judgment**.
+Date: 14 September 2026. Status: **partly reviewed assessment draft; Jörn broadly agrees with the main diagnosis, with the research-versus-prose correction below. Detailed findings, including F7a, remain under review. This is not a PASS judgment.**
 
 ## Purpose and assessed object
 
@@ -44,15 +44,30 @@ These are assessment dimensions, not an additive grading formula. Jörn supplied
 
 ## Main diagnosis
 
-**There is credible thesis substance here. The assessed PDF does not establish that the topic is failing or that a new main research result is needed.** The ten-facet HKO local-maximality theorem, the rotated-pentagon profile, the finite algorithms and reductions, and the search investigations form a plausible master's-thesis portfolio. The manuscript states meaningful, limited answers to recognizable questions. Repository context also records Jörn's confirmation that the HKO and pentagon results are established theorems; that is background evidence about the research, not certification of every sentence in this PDF.
+**The research has credible thesis substance; that does not make the current prose worth salvaging. The assessed PDF does not establish that the topic is failing or that a new main research result is needed.** The ten-facet HKO local-maximality theorem, the rotated-pentagon profile, the finite algorithms and reductions, and the search investigations form a plausible master's-thesis portfolio. The manuscript allows those findings to be identified, but is not thereby a useful prose base for their replacement presentation. Repository context also records Jörn's confirmation that the HKO and pentagon results are established theorems; that is background evidence about the research, not certification of every sentence in this PDF.
 
 **The problem is substantially more than proofreading.** Some sentences need rewriting, but other passages omit the objects, methods or derivations that those sentences are supposed to explain. Smoother language cannot supply an unnamed statistical feature, identify an unspecified sampling distribution, or connect an undisplayed HKO formula to the geometry.
 
-**The prose presents a serious independent obstacle, even where its meaning can be reconstructed.** It repeatedly uses indirect descriptions, compressed technical noun phrases and delayed explanations that impose avoidable work on a sequential reader. This assessment initially described the writing as uneven and recoverable; Jörn correctly identified that recoverability misses the human reading-cost criterion. The revised judgment is that a passing replacement needs sustained style work, not occasional polishing. There are useful explanations to preserve—the simple-minimizer operations, the closure-versus-placement counterexample, the six-facet bilinear reduction, and the worked pentagon competitor—but those do not establish tolerable prose across their surrounding chapters. No human reading-speed measurement was made.
+**The prose presents a serious independent obstacle, even where its meaning can be reconstructed.** It repeatedly uses indirect descriptions, compressed technical noun phrases and delayed explanations that impose avoidable work on a sequential reader. This assessment initially described the writing as uneven and recoverable; Jörn identified that recoverability misses the human reading-cost criterion. The simple-minimizer operations, closure-versus-placement counterexample, six-facet bilinear reduction and pentagon competitor identify mathematical ideas that can be explained in the replacement. They are not recommendations to preserve their current wording. No useful return from searching this manuscript for reusable phrasing has been demonstrated; Jörn judges that effort essentially worthless. No human reading-speed measurement was made.
 
-**The narrative exists, but its allocation of attention is poor.** The common questions are visible, and multiple strands are legitimate. Nevertheless, the manuscript repeatedly restates its proof architecture, spends extensive space on a side result's implementation and exploratory classifications, and gives too little concrete content for parts of its central result and empirical investigation. This is a selection and integration problem, not simply a missing transition sentence.
+**The TOC is a plausible retained structure; the prose does not realize that structure well.** Jörn reports that he and Kai discussed the TOC and found that it fits a good narrative. That is a positive reason to use it as the starting structure for a replacement. The criticism here concerns the manuscript's execution: repeated proof architecture, extensive space for a side result's implementation and exploratory classifications, and too little concrete content for parts of the central result and empirical investigation. It does not establish a need to redesign the agreed chapter structure.
 
 **Content-level work is needed in at least two senses:** recovering and explaining existing mathematical/experimental material, and resolving the strength of selected empirical claims. **New research is not yet shown necessary.** Whether some missing support requires new computation or proof work remains unresolved; this report identifies those points instead of pretending that prose repair alone will close them.
+
+### What is worth carrying into the replacement
+
+On reviewing the main diagnosis, Jörn said it sounded about right but did not clearly distinguish valuable research from prose that adds problems. His proposed starting point is to discard the current PDF as a writing base, potentially keep the TOC because of the discussion with Kai, and write the thesis afresh from the research findings. This report adopts that distinction. It is input to replacement work, not authorization here to delete files or launch a rewrite.
+
+| Material | Value for a replacement |
+| --- | --- |
+| Research questions, established results, mathematical constructions and proof ideas | These are the substantive base. Recover their precise statements and support from the research, source papers, derivations and certificates. Their value does not depend on retaining their current sentences. |
+| TOC / broad chapter structure | A reasonable starting structure, supported by Jörn's report that he and Kai discussed it and found it narratively suitable. Defects in the present chapter contents do not by themselves argue against that structure. |
+| Data, experiment definitions, code and computational witnesses | Potential substantive support, subject to the claim-specific limitations in this report. “Use the research” does not mean trusting every repository summary or historical result without checking its meaning. |
+| Current manuscript wording | No demonstrated salvage value that justifies an effort to extract useful phrases. Do not turn favorable comments about a mathematical example into an assignment to mine or polish its prose. |
+| Existing figures and tables | Separate assets to consider if they communicate the intended content accurately. A legible figure need not be redrawn merely because the prose is replaced; no blanket reuse recommendation follows from the visual survey. |
+| Current PDF as a record | Useful for locating the assessed claims and understanding the diagnosed failures. Retaining that record is compatible with abandoning it as the base for writing. |
+
+The report's proposed repair outcomes specify what the replacement must communicate. They should not be interpreted as instructions to patch the current paragraphs one by one. The case for writing afresh rests on Jörn's assessment of the prose and the diagnosed burdens; no controlled cost comparison of rewriting versus salvage was performed.
 
 ## Findings
 
@@ -304,7 +319,7 @@ No complete certificate rerun, full empirical reconstruction, full software corr
 
 ## What this diagnosis implies for replacement work
 
-The following distinctions are important input to later workflow choices:
+The following distinctions are important input to later workflow choices. “Rewriting” here includes fresh composition from research findings; it does not presume that the existing prose is a useful intermediate artifact.
 
 | Kind of work | Established need | What is not established |
 | --- | --- | --- |
@@ -312,7 +327,7 @@ The following distinctions are important input to later workflow choices:
 | Mathematical exposition | Yes: teach the optimization interface and exhibit the HKO specialization | That the HKO theorem needs to be rediscovered or weakened |
 | Recovering empirical content | Yes: sampling distributions, descriptor definitions, rules, validation and comparison results | That every packet needs rerunning or every historical method needs inclusion |
 | Scientific verification | Targeted unresolved needs: measurement reliability, actual claim support, selected proof/algorithm interfaces | That a blanket proof/software audit is a prerequisite to every writing attempt |
-| Whole-manuscript editing | Yes: contribution hierarchy, continuous proofs, reader progression and synthesis | That one tight narrative or a specific page count is necessary |
+| Whole-manuscript composition | Yes: realize the contribution hierarchy, continuous proofs, reader progression and synthesis in fresh text | That the TOC discussed with Kai must be redesigned, one tight narrative imposed, or a specific page count met |
 | New mathematical research | Not shown necessary by the assessed PDF | That no hidden support problem can require it |
 | New experiments | Possibly needed for selected retained claims after evidence recovery | A mandate for a new comprehensive optimizer comparison or broad search campaign |
 | Topic replacement | No evidence that it is required | A final guarantee of examiner approval or novelty |
@@ -322,11 +337,11 @@ A passing replacement should let the intended reader explain the main proof mech
 
 ## Agreement still needed
 
-Jörn has confirmed the intended reader and explicitly required a separate writing-style/reading-effort criterion. He has **not yet endorsed this report's judgments**. The report should not be cited by other agents as “Jörn agrees that these are all the defects.”
+Jörn has confirmed the intended reader and explicitly required a separate writing-style/reading-effort criterion. He has read the main diagnosis and said it sounds about right, while correcting its failure to distinguish the research's value from the lack of value in salvaging the current prose. He reports that the TOC was discussed with Kai and found to fit a good narrative, and proposes writing afresh from the research with that structure as a possible starting point. Those corrections are incorporated above. **F7a and the other detailed findings have not yet been endorsed.** The report should not be cited by other agents as “Jörn agrees that these are all the defects.”
 
 The most consequential judgments to calibrate are:
 
-1. Is the diagnosis of serious reading-cost problems plus inadequate explanation/reporting broadly right, or does it still underestimate a deeper failure of style or mathematical content?
+1. Does F7a correctly identify the concrete mechanisms behind the costly prose, or does it miss or misdescribe them? Jörn broadly accepts the main diagnosis; the detailed style analysis is his next review step.
 2. For the central HKO theorem, is the proposed minimum of displayed specialized geometry plus a representative calculation and stable full supplement enough for the reader, or does Jörn require a more self-contained proof presentation?
 3. Does the one-case AI reflection meet the intended scope, or should supported broader research-process reflection be restored?
 
