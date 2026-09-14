@@ -65,13 +65,37 @@ Treat a failed render as a broken task map and repair it immediately.
 
 ## Jörn's view
 
-When the `review-files` skill is available, use it to open `tasks.svg` in one
-read-only Chrome tab. Re-render into the same path after updates; the existing
-review URL remains the viewing surface and Jörn can reload it. If Chrome
-control is available, reload the tab after rendering. Otherwise give Jörn the
-same review URL and mention that it needs a reload.
+Publish a narrow review URL reachable from Jörn's current device; do not assume
+that the agent and Jörn share a desktop or Chrome instance.
 
-Do not introduce a custom server or watcher until manual reload is shown to be
-a real burden. DOT plus Graphviz and the existing narrow review server are the
+When Jörn is working in Herdr and `graph-easy` is installed in the Herdr
+session's environment, prefer a dedicated terminal pane with live box-art:
+
+```bash
+watch -n 1 "graph-easy --from=dot --as=boxart \"$graph_dir/tasks.dot\""
+```
+
+This needs no listener, works through remote Herdr/SSH, and leaves Ctrl+C as the
+ordinary way to stop the viewer. Herdr itself does not supply a graph renderer;
+`graph-easy` is an optional environment dependency. Do not install it or
+change pane layout without the authority normally required for those actions.
+
+When the `review-files` skill is available in the current environment, use its
+`--print-only` route for `tasks.svg` and give Jörn the returned Tailscale URL.
+Re-render into the same path after updates; the URL remains the viewing surface
+for the server lifetime and Jörn can reload it from a Chromebook, phone, or the
+host. Open a desktop-local tab only when Jörn explicitly says that is useful.
+
+A sandbox agent must not infer that it can bind a host listener, configure
+Tailscale, or use an offered port-forwarding feature. If the checkout is
+host-mounted and a host coordinator is reachable, render the graph in the
+shared Git directory and hand that coordinator the exact SVG path for
+publication. If no such route exists, report the rendered path and the missing
+publishing capability instead of starting a broad HTTP server or inventing
+network setup.
+
+Do not introduce a custom server, watcher, or port forward until manual reload
+is shown to be a real burden and the environment owning the listener is known.
+DOT plus Graphviz and the existing narrow Tailscale review server are the
 smallest predictable stack. The DOT source remains readable in Micro when a
 terminal-only view is preferable.
