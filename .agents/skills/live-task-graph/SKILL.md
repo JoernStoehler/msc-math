@@ -68,17 +68,24 @@ Treat a failed render as a broken task map and repair it immediately.
 Publish a narrow review URL reachable from Jörn's current device; do not assume
 that the agent and Jörn share a desktop or Chrome instance.
 
-When Jörn is working in Herdr and `graph-easy` is installed in the Herdr
-session's environment, prefer a dedicated terminal pane with live box-art:
+When Jörn is working in Herdr and `graph-easy` and `inotifywait` are installed
+in the Herdr session's environment, prefer a dedicated terminal pane with
+scrollable, event-driven box-art:
 
 ```bash
-watch -n 1 "graph-easy --from=dot --as=boxart \"$graph_dir/tasks.dot\""
+graph-easy --from=dot --as=boxart "$graph_dir/tasks.dot"
+while inotifywait -qq -e close_write,moved_to "$graph_dir/tasks.dot"; do
+  graph-easy --from=dot --as=boxart "$graph_dir/tasks.dot"
+done
 ```
 
-This needs no listener, works through remote Herdr/SSH, and leaves Ctrl+C as the
-ordinary way to stop the viewer. Herdr itself does not supply a graph renderer;
-`graph-easy` is an optional environment dependency. Do not install it or
-change pane layout without the authority normally required for those actions.
+This needs no listener, works through remote Herdr/SSH, appends a new complete
+snapshot only after an update, and leaves Ctrl+C as the ordinary way to stop
+the viewer. Do not use `watch`: its alternate screen prevents Herdr from
+retaining a graph taller than the viewport in scrollback. Herdr itself does not
+supply a graph renderer; `graph-easy` and `inotifywait` are optional environment
+dependencies. Do not install them or change pane layout without the authority
+normally required for those actions.
 
 When the `review-files` skill is available in the current environment, use its
 `--print-only` route for `tasks.svg` and give Jörn the returned Tailscale URL.
