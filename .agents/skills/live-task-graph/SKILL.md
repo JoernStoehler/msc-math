@@ -117,6 +117,13 @@ Treat a failed render as a broken task map and repair it immediately.
 Publish a narrow review URL reachable from Jörn's current device; do not assume
 that the agent and Jörn share a desktop or Chrome instance.
 
+When the repository provides `scripts/view-graph.sh`, use it for manual review
+of one component instead of making Jörn reconstruct the Git-common-dir path:
+
+```bash
+scripts/view-graph.sh 00-now.dot
+```
+
 When Jörn is working in Herdr and `graph-easy` and `inotifywait` are installed
 in the Herdr session's environment, prefer a dedicated terminal pane with
 scrollable, event-driven box-art:

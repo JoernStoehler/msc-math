@@ -11,6 +11,7 @@ Small repo helper commands.
 | `bootstrap-cloud.sh` | install and verify the normal Codex Cloud development environment |
 | `maintain-cloud.sh` | refresh repository-dependent caches when a cloud environment resumes |
 | `repo-status-summary.sh` | read-only applicability summary for dated build/test evidence |
+| `view-graph.sh` | render one live task-graph component in a non-wrapping terminal pager |
 | `repo-status/` | dated command/result records consumed by the status helper |
 
 ## `build-release.py`
@@ -55,6 +56,20 @@ scripts/repo-status-summary.sh scripts/repo-status/repo-status-smoke-and-core-20
 
 This is a read-only summary. It does not run tests, refresh datasets, or prove
 that tracked generated artifacts are fresh.
+
+## `view-graph.sh`
+
+View the project overview or one component from any worktree:
+
+```bash
+scripts/view-graph.sh
+scripts/view-graph.sh 00-now.dot
+scripts/view-graph.sh --list
+```
+
+`codex/task-graph/00-now.dot` is also accepted as a stable virtual path to the
+live graph stored under the shared Git directory. The helper uses `less -S` in
+an interactive terminal so box-art lines do not wrap.
 
 ## `artifacts.py`
 
