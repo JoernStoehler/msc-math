@@ -82,6 +82,13 @@ a compatible protocol endpoint, and the host has the enabled Herdr machine
 entry `msc-math` for `codex-msc-math.sbx`. The sandbox was left running so the
 Herdr client can connect to it.
 
+On 2026-09-14, Micro was normalized to the checksum-verified host 2.0.15
+binary in `/home/agent/.local/bin`. All five authored files under
+`/home/agent/.config/micro/` were refreshed and hash-checked against the host,
+including the terminal clipboard settings. Herdr remains 0.9.0 with Codex
+integration v8 and the enabled host machine profile `msc-math`; its working
+configuration was not otherwise changed.
+
 Interactive Bash now enters the mounted project. For noninteractive commands,
 specify the directory explicitly:
 

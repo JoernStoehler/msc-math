@@ -206,9 +206,13 @@ working host configuration is `~/.config/micro/`: `init.lua`, `bindings.json`,
 relative paths, into the target user's Micro configuration when provisioning
 the same interface; compare existing customizations before replacing them.
 
-The current sandbox already has these files. Verify in a disposable Markdown
-file: Ctrl+K, type a comment, Ctrl+S, then read the saved file. Expected text
-is `{>>comment<<}`. This exact interaction passed over SSH.
+The current sandbox has exact copies of all five files. Its settings therefore
+also use the host's terminal clipboard backend and disable primary-selection
+clipboard replacement. Verify commenting in a disposable Markdown file:
+Ctrl+K, type a comment, Ctrl+S, then read the saved file. Expected text is
+`{>>comment<<}`. This exact interaction previously passed over SSH; the
+2026-09-14 repair rechecked file hashes and Micro 2.0.15, not the interactive
+keystrokes or clipboard path.
 
 ## Reproduce a result
 
