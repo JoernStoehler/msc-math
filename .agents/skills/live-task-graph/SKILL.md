@@ -68,6 +68,16 @@ attention, prefer fewer bounded assignments with compact return contracts and
 preserve capacity for fan-in rather than launching work that cannot be
 evaluated in time.
 
+Do not multiply marginal success or failure probabilities unless causal
+independence is actually justified. Project outcomes usually share causes:
+source quality, mathematical premises, manuscript state, environment, reviewer
+criteria, or integration capacity. Represent a material shared cause as its own
+node or scenario branch and connect everything it can move. Correlation can be
+helpful too: one sound theorem, dataset, or interface may unlock several
+downstream outcomes together. Calling parallel work a hedge requires a
+meaningfully different failure mechanism; several agents repeating the same
+approach are capacity replication, not diversification.
+
 Prefer outcome nodes over activity narration. A live node should communicate:
 
 - status: `ready`, `running`, `blocked`, `crux`, `done`, or `dropped`;
