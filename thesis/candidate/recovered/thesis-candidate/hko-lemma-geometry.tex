@@ -1,0 +1,135 @@
+\subsection{The proof strategy}
+The ten supporting hyperplanes may move in all four coordinate directions,
+so the nearby bodies include polytopes that are no longer products.
+Write
+\[
+ K(a)=\{x\in\mathbb R^4:a_i\cdot x\leq1,\ i=1,\ldots,10\},
+ \qquad a=(a_1,\ldots,a_{10}),
+\]
+and let $a_0$ be the row list of $K_0$.
+
+We construct twenty-six smooth upper bounds $U_j$ for the systolic ratio,
+all equal to it at $a_0$. If one of these bounds decreases, the ratio
+decreases with it. Different bounds handle different directions.
+The proof first identifies their derivatives and the symmetry directions.
+A linear-algebra lemma then gives a uniform negative slope transverse to
+symmetry. Only at the end do we pass from these derivatives to a finite
+neighborhood and recover the equality cases.
+
+\subsection{Local coordinates and volume}
+\begin{lemma}[A simple row neighborhood]\label{lem:hko-row-neighborhood}
+There is a neighborhood $\mathcal N$ of $a_0$ in $(\mathbb R^4)^{10}$
+on which $K(a)$ is bounded and simple, with the same vertex--facet
+incidences as $K_0$. Every sufficiently Hausdorff-close ten-facet polytope
+has a labelled presentation with $a\in\mathcal N$, and its rows tend to
+$a_0$ as the body tends to $K_0$.
+\end{lemma}
+\begin{proof}
+The origin stays in the interior under sufficiently small Hausdorff
+perturbations of $K_0=K(a_0)$. One way to see this is through support
+functions: $h_K(u)=\max_{x\in K}u\cdot x$. Write $B$ for the Euclidean
+unit ball. If $rB\subset K_0$ and the Hausdorff distance from $K$ to $K_0$
+is less than $\epsilon<r$, then
+$h_K(u)\geq h_{K_0}(u)-\epsilon\geq r-\epsilon$ for every unit vector
+$u$. Thus $(r-\epsilon)B\subset K$. On such a neighborhood polarity is
+continuous: the radial function, the distance from zero to the boundary
+along a unit direction, of $K^\circ$ is $1/h_K$ on the unit
+sphere, and the common positive lower bound on $h_K$ makes these reciprocals
+converge uniformly. The polars are uniformly bounded convex bodies, so this
+also gives Hausdorff convergence.
+
+The polar $K_0^\circ$ has the ten vertices $a_{0,i}$. Choose disjoint small
+balls about them. Each vertex is uniquely exposed by some linear functional
+$\ell_i$. For polars sufficiently close to $K_0^\circ$, every maximizer
+of $\ell_i$ lies in the corresponding ball. Otherwise a convergent sequence
+of maximizers outside that ball would limit to a maximizer on $K_0^\circ$
+different from $a_{0,i}$. A maximizing face contains a vertex. A polytope
+$K$ with exactly ten facets has a polar with exactly ten vertices; hence
+there is exactly one polar vertex in each ball and none elsewhere. Labelling
+these vertices $a_i$ gives
+\[
+ K=\{x:a_i\cdot x\leq1,\ i=1,\ldots,10\},\qquad a_i\longrightarrow a_{0,i}
+ \quad\text{as }K\longrightarrow K_0.
+\]
+
+For completeness, the face structure is stable in this neighbourhood.
+The base body is a product of two polygons and is simple: precisely four
+facets meet at each vertex, with independent normals. Their four equations
+therefore determine a smoothly varying intersection under a small change
+of $a$. All the remaining inequalities have strict slack at that
+intersection, so it remains a vertex with exactly those incident facets.
+
+No new vertex can appear. The convex hull of the base normals contains a
+ball about zero; the convex hull of sufficiently close normals contains a
+smaller common ball. Consequently the bodies $K(a)$ are uniformly bounded.
+If arbitrarily close parameters had a new vertex, choose four independent
+active constraints there. There are finitely many four-element subsets,
+so along a subsequence the same subset is active and the vertices converge
+to a point of $K_0$ where those four constraints are equalities. Simplicity
+forces them to be the incident facets of one of the original vertices.
+Their intersection is the continuation already constructed, contradicting
+newness. This argument also excludes a new vertex arising from a subset
+whose normals are dependent at the base point; no invertibility assumption
+for such a subset is needed.
+
+The vertex--facet incidences therefore remain unchanged. In particular
+each inequality still defines a facet. Conversely,
+small changes of the ten normals give Hausdorff-small changes of $K(a)$:
+their convex hulls converge, contain a common ball about zero, and polarity
+is continuous there.
+
+\end{proof}
+
+\begin{lemma}[Smooth volume and its derivative]\label{lem:hko-smooth-volume}
+On a sufficiently small neighborhood $\mathcal N$ as above, $V(a)=
+\operatorname{vol}_4K(a)$ is smooth and positive. If $F_i(a)$ has centroid
+$\bar x_i(a)$, then
+\[
+ DV(a)[h]=-\sum_{i=1}^{10}
+ \frac{\operatorname{vol}_3(F_i(a))}{\|a_i\|}
+ \langle h_i,\bar x_i(a)\rangle.
+\]
+\end{lemma}
+\begin{proof}
+The fixed incidences express each vertex smoothly in the rows. A fixed
+boundary triangulation then expresses volume smoothly in those vertices.
+On the moving facet, differentiating
+$\langle a_i+\epsilon h_i,x(\epsilon)\rangle=1$ gives outward normal
+velocity $-\langle h_i,x\rangle/\|a_i\|$. Integrating this velocity over
+the facets and using their centroids gives the formula.
+\end{proof}
+
+\subsection*{The concrete base point and its volume}
+Put $t=\tan(\pi/5)$, $s=(5-t^2)/2=\sqrt5$, and
+\[
+ t^4-10t^2+5=0,\quad 0<t<1,\qquad
+ \alpha=(3-s)/2,\quad b=t(1+s)/2,\quad d=s-1.
+\]
+The selected root is unique in $(0,1)$: the polynomial is strictly decreasing
+there and changes sign. For the circumradius-one pentagon with vertex $(1,0)$,
+the edge normals have arguments $(2k+1)\pi/5$ and lengths $\sec(\pi/5)=d$.
+Rotating the second factor by $-\pi/2$ gives the following ten rows $a_{0,i}$, in
+$(q_1,q_2,p_1,p_2)$ order:
+\[
+\begin{pmatrix}
+1&t&0&0\\ -\alpha&b&0&0\\-d&0&0&0\\-\alpha&-b&0&0\\1&-t&0&0\\
+0&0&t&-1\\0&0&b&\alpha\\0&0&0&d\\0&0&-b&\alpha\\0&0&-t&-1
+\end{pmatrix}.
+\]
+These rows give the normalized facet presentation of $K_0$.
+Writing $\theta=\pi/5$, the area of one pentagon is the sum of five
+triangles with central angle $2\theta$, hence
+$B=\frac52\sin(2\theta)=5\sin\theta\cos\theta$.
+Fubini therefore gives
+\[
+ V_0=B^2=25\sin^2\theta\cos^2\theta
+ =\frac{25(5+s)}{32}=\frac{25(15-t^2)}{64}.
+\]
+To specialize Lemma~\ref{lem:hko-smooth-volume}, observe that $F_i$ is an edge times the other centered pentagon. Its centroid is
+$\bar x_i=a_{0,i}/\|a_{0,i}\|^2$, its three-volume is $2\sin\theta\,B$,
+and $\|a_{0,i}\|=\sec\theta$. Consequently
+\[
+ DV_0[h]=-\mu\sum_{i=1}^{10}a_{0,i}\cdot h_i,\qquad
+ \mu=10\sin^2\theta\cos^4\theta=\frac{25}{32}+\frac{5s}{16}.
+\]
+This gives the volume derivative for every row perturbation at the base point.

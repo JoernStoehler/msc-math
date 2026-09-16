@@ -9,6 +9,8 @@ holds the supporting review notes, not a separate queue.
 
 | File | Purpose | Authority |
 | --- | --- | --- |
+| [`source-recovery/README.md`](source-recovery/README.md) | recovered candidate entry, dependency hashes, isolated build and frozen-PDF comparison | source recovery only; no new thesis approval or integration of pending revisions |
+| [`review-evidence/README.md`](review-evidence/README.md) | preserved Pro package, frozen self-reviews/comparison, and human reading feedback | unchanged attributed review records; not new review results or approval |
 | `project-facts.md` | Jörn-confirmed project facts and accepted external constraints | current unless newer Jörn/Kai/source truth contradicts it |
 | [`thesis-assessment-2026-09-14.md`](thesis-assessment-2026-09-14.md) | Diagnosis of the identified 110-page thesis PDF, including human reading effort, mathematical exposition, empirical reporting and unresolved checks | incorporates Jörn's broad agreement and corrections on prose reuse, style, HKO incompleteness and the AI example's inadequate value; detailed agent findings are not represented as individually endorsed |
 | `capacity-calculation-map.md` | repository-wide map of materially distinct EHZ-capacity and `sys` calculation contracts | routing aid; source and owner docs remain authoritative |

@@ -4,7 +4,7 @@ Master thesis repository for Jörn Stöhler, University of Augsburg.
 
 The repository produces:
 
-- `thesis/build/main.pdf`: the thesis;
+- `thesis/candidate/build/main.pdf`: the recovered working thesis candidate;
 - `crates/`: reusable Rust libraries for the mathematical computations;
 - `experiments/`: reproducible producers, retained evidence, and
   interpretation used by the thesis.
@@ -18,6 +18,9 @@ The entries below are alternatives, not a required reading sequence.
 
 Project-wide information:
 
+- [Recovered thesis source](thesis/candidate/README.md): canonical candidate
+  entry and build command; the frozen 86-page review baseline, with later
+  literature and pentagon revisions still pending integration.
 - [Current work and ownership](memories/todos.md): live assignments, proposals
   and known scope decisions; historical research plans are not the task queue.
 - `INSTALL.md`: environment setup and reproduction entry point; known working

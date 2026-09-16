@@ -1,0 +1,12 @@
+Indexed sessions: 9
+Metadata closure before cutoff: 9
+Missing IDs: set()
+01a09fd9-2ffe-7681-850d-139298baf0c3 {'custom_tool_call': 171, 'function_call': 145, 'internal': 65, 'internal_with_encrypted_content': 43}
+01a09fe1-e0d5-7c20-b517-d055e0bcc0de {'internal': 15, 'internal_with_encrypted_content': 15, 'custom_tool_call': 60, 'function_call': 18}
+01a09fe2-1ca7-7a80-afc1-997a33c5c9da {'internal': 10, 'internal_with_encrypted_content': 10, 'custom_tool_call': 39, 'function_call': 18}
+01a09fe2-53e1-70c3-ba7a-8f571c37210a {'internal': 13, 'internal_with_encrypted_content': 13, 'custom_tool_call': 56, 'function_call': 16}
+01a0a005-b934-7423-944a-89c925c26b4a {'internal': 13, 'internal_with_encrypted_content': 13, 'custom_tool_call': 40, 'function_call': 11}
+01a0a005-e58b-76f3-9df5-73c3edab3e2d {'internal': 14, 'internal_with_encrypted_content': 14, 'custom_tool_call': 42, 'function_call': 19}
+01a0a021-b283-7fa3-9e16-aec87ce950df {'custom_tool_call': 376, 'function_call': 83, 'internal': 29, 'internal_with_encrypted_content': 0}
+01a0a028-7013-7a52-a22f-bef8b17b3988 {'internal': 15, 'internal_with_encrypted_content': 15, 'custom_tool_call': 109}
+01a0a028-8c8c-7b10-9f75-d0d06482fbb5 {'internal': 21, 'internal_with_encrypted_content': 21, 'custom_tool_call': 103}

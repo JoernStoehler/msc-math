@@ -1,0 +1,53 @@
+\clearpage
+\section{Conclusion}\label{sec:conclusion}
+
+Is the HKO body a local maximum of the systolic ratio among convex bodies?
+Our main theorem gives a partial answer: it is a local maximum among
+ten-facet polytopes. Every sufficiently
+nearby body has ratio at most $(3+\sqrt5)/5$, and equality occurs precisely
+under translations, positive dilations and linear symplectic maps. The
+restriction to ten facets is essential to the coordinate neighborhood used
+in the proof.
+
+The argument also gives a useful way to work at a singular optimization
+problem. One can continue feasible choices and use their values as upper
+bounds, without continuing stationary optimizers. At HKO, finitely many
+such bounds suffice: after the symmetry directions are removed, their
+derivatives force a strict decrease in every direction. The algebraic
+calculation establishes the finite conditions, while the geometric proof
+identifies the upper bounds and relates their coordinates to nearby bodies.
+
+The empirical work approached the problem from another direction. It used
+geometric measurements and standard data-science methods to look for patterns
+that might lead back to mathematical explanations. We found patterns below
+systolic ratio one and confirmed some of their usefulness on fresh samples,
+but did not establish an extension to ratios above one. A geometric
+calculation expresses the ridge-area
+measurement on products through edge lengths and widths of the factors.
+It clarifies what the descriptor measures without explaining its association
+with capacity. Turning that association into a theorem remains unfinished,
+and the exploratory samples produced no new ratio above one.
+
+We implemented, optimized and extended two methods for computing capacity:
+the Haim--Kislev quadratic program and the Chaidez--Hutchings flow graph.
+The expanded variational proof explains why the first problem is finite;
+the second method gives an alternative for cross-checking computations.
+For products of planar polygons, we proved reductions that make the finite
+search smaller. An exhaustive exact calculation then proves the separate
+theorem giving the capacity throughout the relative-rotation family of two
+regular pentagons, with the HKO body a global maximizer of the systolic ratio
+within that family.
+
+Two directions remain particularly close to the questions studied here.
+First, the local theorem could be tested against deformations that change
+the facet count. Adding or splitting facets leaves the forty-dimensional
+chart used in the proof, so it requires a new argument. Second, the
+statistical associations invite geometric interpretation. A useful next
+conjecture would explain an association on a clearly specified family and
+survive attempts to break it by changing the sampling distribution.
+
+The results therefore give a local theorem around the known counterexample,
+finite methods for investigating nearby and sampled polytopes, and measured
+successes and failures of several search ideas. The larger question of how
+capacity and volume constrain one another remains open beyond these families
+and neighborhoods.

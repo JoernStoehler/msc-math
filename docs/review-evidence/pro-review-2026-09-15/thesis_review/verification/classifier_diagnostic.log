@@ -1,0 +1,4 @@
+raw 50400 Counter({8: 16400, 9: 14400, 7: 9600, 10: 4800, 6: 3800, 5: 1200, 4: 200}) pruned 3340 3340
+ranks Counter({(9, np.int64(0), np.int64(0)): 820, (7, np.int64(0), np.int64(0)): 700, (8, np.int64(0), np.int64(0)): 695, (6, np.int64(0), np.int64(0)): 300, (8, np.int64(-1), np.int64(0)): 260, (10, np.int64(0), np.int64(0)): 170, (5, np.int64(0), np.int64(0)): 160, (6, np.int64(-1), np.int64(0)): 110, (10, np.int64(-1), np.int64(0)): 100, (4, np.int64(-1), np.int64(1)): 25}) singularconsistent 470
+singular nonzeroq Counter()
+seconds 0.4232029914855957

@@ -1,0 +1,16 @@
+digraph archive {
+  graph [rankdir=BT, label="42 / archive and continuation outcomes", labelloc=t];
+  node [shape=box];
+  release [label="RIGHTS-CLEAN RELEASE\n+ continuation surface"];
+  audit [label="CRUX: archive readiness", shape=diamond];
+  publish [label="VERIFIED ZIP/METADATA/DOI"];
+  caveat [label="BOUNDED ARCHIVE\nwith exclusions"];
+  defer [label="DEFER\ndoes not block grade"];
+  inputs [label="rights; data; inventory; build;\nprovenance; metadata"];
+  inputs -> audit;
+  audit -> publish;
+  audit -> caveat;
+  audit -> defer;
+  publish -> release;
+  caveat -> release;
+}

@@ -1,0 +1,18 @@
+digraph claims {
+  graph [rankdir=BT, label="21 / claim-support audit outcomes", labelloc=t];
+  node [shape=box];
+  audit [label="CRUX: a thesis claim", shape=diamond];
+  keep [label="RETAIN"];
+  narrow [label="NARROW/CAVEAT"];
+  work [label="BOUNDED PROOF/RUN"];
+  drop [label="REPLACE/RETRACT"];
+  final [label="HONEST SUPPORTED TEXT"];
+  audit -> keep [label="supported"];
+  audit -> narrow [label="overstated"];
+  audit -> work [label="valuable gap"];
+  audit -> drop [label="false/not worth cost"];
+  keep -> final;
+  narrow -> final;
+  work -> final [label="if successful"];
+  drop -> final;
+}

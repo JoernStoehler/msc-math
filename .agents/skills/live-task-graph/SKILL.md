@@ -12,21 +12,23 @@ editing the graph concurrently.
 
 ## Storage
 
-Keep the skill in the repository, but keep live state outside tracked
-worktrees. Resolve the shared location with:
+Keep graph sources and their rendered views in ordinary project storage.
+Resolve the location from the current checkout with:
 
 ```bash
-graph_dir="$(git rev-parse --path-format=absolute --git-common-dir)/codex/task-graph"
+graph_dir="$(git rev-parse --show-toplevel)/docs/task-graph"
 mkdir -p "$graph_dir"
 ```
 
 Use `$graph_dir/tasks.dot` as the portfolio overview. When one graph would hide
 important outcomes or become awkward in a terminal, add ordered component
 sources such as `10-thesis.dot` and `20-software.dot`; do not make the overview
-a duplicate of every detail. Render each source beside it as `.svg`. The Git
-common directory is shared by all worktrees and does not create perpetual
-working-tree changes. Recover existing graphs; never replace them merely
-because a new agent session started.
+a duplicate of every detail. Render each source beside it as `.svg`. These
+files belong to the project and follow its normal version-control workflow;
+different worktrees do not implicitly share updates. Recover existing graphs;
+never replace them merely because a new agent session started. When a completed
+execution window leaves stale assignments or deadlines, preserve its components
+under a dated `history/` directory and update the live overview and overlay.
 
 For a multi-hour execution window, use `00-now.dot` as a small disposable
 overlay containing only the selected live portfolio, owners, timeboxes, hedges,
@@ -118,7 +120,7 @@ Publish a narrow review URL reachable from Jörn's current device; do not assume
 that the agent and Jörn share a desktop or Chrome instance.
 
 When the repository provides `scripts/view-graph.sh`, use it for manual review
-of one component instead of making Jörn reconstruct the Git-common-dir path:
+of one component instead of making Jörn locate its source path:
 
 ```bash
 scripts/view-graph.sh 00-now.dot
@@ -165,7 +167,7 @@ host. Open a desktop-local tab only when Jörn explicitly says that is useful.
 A sandbox agent must not infer that it can bind a host listener, configure
 Tailscale, or use an offered port-forwarding feature. If the checkout is
 host-mounted and a host coordinator is reachable, render the graph in the
-shared Git directory and hand that coordinator the exact SVG path for
+ordinary project directory and hand that coordinator the exact SVG path for
 publication. If no such route exists, report the rendered path and the missing
 publishing capability instead of starting a broad HTTP server or inventing
 network setup.

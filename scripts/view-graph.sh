@@ -6,14 +6,14 @@ usage() {
 Usage: scripts/view-graph.sh [FILE]
        scripts/view-graph.sh --list
 
-FILE defaults to tasks.dot. A basename or codex/task-graph/FILE resolves in
+FILE defaults to tasks.dot. A basename or docs/task-graph/FILE resolves in
 the live graph directory; an existing path is used directly.
+The old codex/task-graph/FILE spelling is accepted as a compatibility alias.
 EOF
 }
 
 repo_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
-git_common=$(git -C "$repo_root" rev-parse --path-format=absolute --git-common-dir)
-graph_dir="$git_common/codex/task-graph"
+graph_dir="$repo_root/docs/task-graph"
 
 case "${1:-}" in
   -h|--help)
@@ -34,6 +34,8 @@ fi
 requested=${1:-tasks.dot}
 if [[ -f "$requested" ]]; then
   source_file=$requested
+elif [[ "$requested" == docs/task-graph/* ]]; then
+  source_file="$graph_dir/${requested#docs/task-graph/}"
 elif [[ "$requested" == codex/task-graph/* ]]; then
   source_file="$graph_dir/${requested#codex/task-graph/}"
 elif [[ "$requested" != */* ]]; then

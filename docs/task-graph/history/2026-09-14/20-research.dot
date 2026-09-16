@@ -1,0 +1,9 @@
+digraph research {
+  graph [rankdir=BT, label="20 / retained research portfolio", labelloc=t];
+  node [shape=box];
+  support [label="OUTCOME: claim/support map\nready for manuscript audit"];
+  audit [label="CRUX: evidence correspondence\nsee 21-claims", shape=diamond];
+  portfolio [label="RETAINED PORTFOLIO:\nHKO rigidity; pentagon profile; conditional flow;\nbounded search/enrichment; explicit open limits"];
+  portfolio -> audit;
+  audit -> support;
+}

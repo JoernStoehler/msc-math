@@ -1,0 +1,387 @@
+\section{Computing closed trajectories with a flow graph}
+\label{sec:flow-graph-algorithm-ch2021}
+
+The quadratic program computes capacity by comparing possible facet orders
+and weights. A second approach follows trajectories through the facets
+themselves. In the relative interior of a facet, the contact-normalized
+velocity is constant. Following a chosen facet direction carries a
+point on an incoming two-dimensional section to an outgoing section by an
+affine map. Composing these maps around a facet word produces a return map;
+a fixed point gives a closed trajectory.
+
+We use the local passage geometry of Chaidez and Hutchings~\cite{CH2021}.
+The exhaustive search below is justified by the simple-minimizer theorem:
+some capacity-minimizing trajectory uses each of its facet directions once.
+It is therefore enough to search finitely many cyclic words, retaining the
+conditions that make each passage possible. We state the regularity
+hypotheses before the correctness theorem and discuss the rational
+implementation after its proof.
+
+\subsection{Affine tubes}
+\label{subsec:flow-graph-algorithm-ch2021-definition}
+
+Let
+\[
+  K=\{x\in\mathbb R^4:\langle a_i,x\rangle\leq1,
+  \ i=1,\ldots,F\}
+\]
+be a bounded full-dimensional polytope with \(0\in\operatorname{int}K\), and
+assume that all listed inequalities define genuine facets \(F_i\).  Put
+\[
+  R_i=2J_0a_i .
+\]
+As in Section~\ref{sec:generalized-reeb-orbits-polytopes}, a trajectory on
+\(F_i\) with velocity \(R_i\) has action equal to its elapsed time.
+
+For each ordered pair \((i,j)\) for which \(a_i,a_j\) are linearly
+independent, choose affine coordinates
+\[
+  \psi_{ij}:\mathbb R^2\longrightarrow
+  H_i\cap H_j,
+  \qquad H_i=\{x:\langle a_i,x\rangle=1\},
+\]
+and let
+\[
+  P_{ij}=\{u\in\mathbb R^2:\psi_{ij}(u)\in K\}.
+\]
+The set \(P_{ij}\) is allowed to be empty or lower-dimensional.  Thus the
+construction also permits a breakpoint to lie on additional facets; it does
+not assume that every breakpoint lies in the relative interior of a
+two-face.
+
+Consider a passage from facet $F_p$ along $F_i$ to $F_n$, with three
+distinct facet labels. We consider the case where the incoming direction
+approaches $H_i$ and the direction along $F_i$ approaches $H_n$:
+\[
+  \langle R_p,a_i\rangle>0,
+  \qquad
+  \langle R_i,a_n\rangle>0.
+\]
+For \(x\in F_p\cap F_i\), the time at which the line
+\(x+tR_i\) reaches \(H_n\) is
+\begin{equation}\label{eq:fg-primitive-time}
+  \tau_{pin}(x)
+  =\frac{1-\langle a_n,x\rangle}{\langle a_n,R_i\rangle}.
+\end{equation}
+The denominator is positive.  Restrict the starting section to those points
+for which \(x\in K\), \(x+\tau_{pin}(x)R_i\in K\), and
+\(\tau_{pin}(x)\geq0\).  On this closed polygonal domain, the endpoint map
+\[
+  \varphi_{pin}(x)=x+\tau_{pin}(x)R_i
+\]
+and the action contribution \(\tau_{pin}\) are affine.  Convexity of \(K\)
+ensures that the whole segment lies in \(K\cap H_i\).
+
+We describe a tube by a closed starting polygon \(P\), an affine endpoint map
+\(\Phi\), and an affine total-action function \(A\).  If
+\((P_1,\Phi_1,A_1)\) and \((P_2,\Phi_2,A_2)\) are consecutive tubes in
+matching coordinates, their concatenation is
+\begin{equation}\label{eq:fg-tube-composition}
+  \bigl(P_1\cap\Phi_1^{-1}(P_2),
+  \ \Phi_2\circ\Phi_1,
+  \ A_1+A_2\circ\Phi_1\bigr).
+\end{equation}
+Thus an empty intermediate intersection excludes every longer word containing
+that partial tube.
+
+A \emph{simple cyclic facet word} is a cyclic word
+\(w=[s_1,\ldots,s_k]\) with distinct entries.  To close it, concatenate the
+primitive tubes for
+\[
+  (s_1,\ldots,s_k,s_1,s_2).
+\]
+Write the resulting data as \((P_w,\Phi_w,A_w)\).  A point
+\(u\in P_w\) is a closed search candidate precisely when
+\(\Phi_w(u)=u\).  It represents the displayed word as a strict generalized
+Reeb orbit precisely when every reconstructed segment time is positive.  In
+that case its action is \(A_w(u)\).
+
+\begin{lemma}[Tube semantics]\label{lem:flow-graph-tube-semantics}
+For every simple cyclic word whose primitive denominators are positive, the
+fixed points of \(\Phi_w\) in \(P_w\) are exactly its closed nonnegative-time
+tube realizations.  The fixed points with all segment times positive are
+exactly the strict closed generalized Reeb orbits represented by \(w\), and
+their action is \(A_w\).
+\end{lemma}
+
+\begin{proof}
+Equation~\eqref{eq:fg-primitive-time} gives the unique next breakpoint and
+elapsed time for one passage.  The endpoint and the elapsed time are affine,
+and the domain inequalities state exactly that the endpoints and the passage
+belong to \(K\).  Formula~\eqref{eq:fg-tube-composition} says that two passages
+can be concatenated exactly when their common breakpoint agrees; it also
+composes their endpoint maps and adds their elapsed times.  Induction over the
+word proves the assertion for the closed tube.  Its starting and ending
+sections have the same coordinates, so closure is equivalent to
+\(\Phi_w(u)=u\).  Finally, the closed tube was defined with nonnegative times,
+whereas the active word records exactly the positive-duration pieces.  This
+gives the strict-time condition.  Since
+\(\lambda_0(R_i)=1\) on \(F_i\), the sum of the elapsed times is the Reeb
+action.
+\end{proof}
+
+Figure~\ref{fig:flow-graph-tube-sequence} follows one word through the
+two-dimensional polygons \(P_{ij}\).  Within each panel, the coordinate axes
+are orthonormal for the Euclidean metric induced from \(\mathbb R^4\).  Their
+affine origins and orientations are chosen independently for distinct
+sections.  Each main panel is cropped to the surviving tube cross-section; its
+inset shows that crop inside the full section \(P_{ij}\).  The black cross is
+the breakpoint of the closed orbit.  The start and return panels use the same
+facet pair, frame, and plot limits.  Thus the
+return-map fixed-point equation is visible as the return of the black cross to
+its initial local coordinates.
+The figure is regenerated from exact rational tube geometry; rationals are
+converted to finite floating-point values only at the JSON/rendering boundary.
+The JSON distinguishes the orthonormalized plotting coordinates from the raw
+affine construction-chart vertices and inequalities; those fields must not be
+read as coordinates in a common chart.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figures/flow-graph/flow-graph-f6-tube-sequence.pdf}
+  \caption{The same word in successive local sections.  Each panel plots in a
+    Euclidean-orthonormal basis for the corresponding affine two-plane.  The
+    affine origins and orientations are chosen independently for distinct
+    sections; the underlying exact vertices and inequalities remain in the raw
+    construction chart and are not plotted as if they used the orthonormal
+    coordinates.  Main panels are tube-focused; each inset locates the colored
+    tube cross-section inside the full blue section.  The start and return
+    panels share a frame and plot limits.  The arrows show the affine passages,
+    and the black cross returns to its initial coordinates.}
+  \label{fig:flow-graph-tube-sequence}
+\end{figure}
+
+\FloatBarrier
+\subsection{Exhaustive search and correctness}
+\label{subsec:flow-graph-algorithm-ch2021-correctness}
+
+We now state the regularity boundary of the algorithm.
+
+\begin{definition}[Flow-graph regular presentation]
+\label{def:flow-graph-regular-presentation}
+The facet presentation above is \emph{flow-graph regular} if:
+\begin{enumerate}
+  \item for distinct \(i,j\),
+    \(F_i\cap F_j\ne\varnothing\) implies
+    \(\omega_0(a_i,a_j)\ne0\);
+  \item every sublist of at most four of the vectors
+    \(a_1,\ldots,a_F\) is linearly independent; and
+  \item for every simple cyclic word of length at least five which survives
+    the facet-intersection and positive-transition tests and has nonempty
+    closed tube domain, the linear part \(M_w\) of \(\Phi_w\) satisfies
+    \(\det(I-M_w)\ne0\).
+\end{enumerate}
+The last condition is called \emph{finite-orbit regularity}.
+\end{definition}
+
+\begin{algorithm}[Idealized exhaustive flow-graph search]
+\label{alg:idealized-exhaustive-flow-graph-search}
+Enumerate every simple cyclic facet word once.  For each word:
+\begin{enumerate}
+  \item discard it if an adjacent facet intersection is empty or an adjacent
+    transition sign is not positive;
+  \item discard it if its length is at most four: under the regularity
+    hypothesis, these facet directions are linearly independent and cannot
+    form a closed positive-time path;
+  \item construct its closed tube \((P_w,\Phi_w,A_w)\); discard the word
+    if \(P_w=\varnothing\), and otherwise solve \(\Phi_w(u)=u\);
+  \item reject a singular fixed-point equation as outside the regular case,
+    and otherwise record the unique solution only if it lies in \(P_w\) and
+    every reconstructed segment time is positive.
+\end{enumerate}
+Return the least positive recorded action.
+\end{algorithm}
+
+We justify both pruning steps.  If a strict trajectory changes from \(R_i\) to
+\(R_j\) at \(x\in F_i\cap F_j\), then the inequalities
+for \(K\) immediately before the breakpoint give
+\[
+  \langle a_j,R_i\rangle\geq0.
+\]
+The first condition in
+Definition~\ref{def:flow-graph-regular-presentation} excludes equality.  Thus
+every trajectory transition has the positive sign used by the search, even
+when \(x\) lies on additional facets.  Second, a strict closed orbit with
+active word \((s_1,\ldots,s_k)\) satisfies
+\[
+  \sum_{r=1}^k\tau_rR_{s_r}=0,
+  \qquad \tau_r>0.
+\]
+If \(k\leq4\), this contradicts the linear independence in condition~2.
+
+\begin{theorem}[Idealized real-arithmetic flow-graph correctness]
+\label{thm:exact-flow-graph-correctness}
+Let \(K\subset\mathbb R^4\) be a bounded full-dimensional convex polytope
+with \(0\in\operatorname{int}K\), equipped with a flow-graph regular ordered
+normalized irredundant facet presentation.  Then the finite procedure in
+Algorithm~\ref{alg:idealized-exhaustive-flow-graph-search}, with its algebraic
+and order operations performed exactly over \(\mathbb R\), returns
+\[
+  c_{\mathrm{EHZ}}(K).
+\]
+\end{theorem}
+
+\begin{proof}
+There are finitely many simple cyclic words.  By
+Lemma~\ref{lem:flow-graph-tube-semantics}, every recorded point is a strict
+closed generalized Reeb orbit with the recorded action.  The two arguments
+preceding the theorem show that the transition and short-word pruning cannot
+remove such an orbit. Empty tubes contain no orbit and are discarded before
+solving a fixed-point equation. Finite-orbit regularity makes every remaining
+fixed-point equation nonsingular, so no long word reaches the rejection
+branch and each word has at most one fixed point.
+
+By Theorem~\ref{thm:generalized-reeb-simple-minimizer}, a capacity-minimizing
+orbit can be chosen with an active cyclic word in which every used facet
+direction occurs in one positive-duration interval.  Its breakpoints lie in
+the corresponding facet-pair sections, its transitions have the required
+positive signs, and its passages satisfy the primitive tube equations.
+Lemma~\ref{lem:flow-graph-tube-semantics} therefore represents it by a strict
+fixed point with action \(c_{\mathrm{EHZ}}(K)\).  The returned minimum is no
+larger than this action, while soundness of every recorded orbit makes it no
+smaller.
+\end{proof}
+
+\begin{corollary}[Exact rational-arithmetic flow-graph correctness]
+\label{cor:rational-flow-graph-correctness}
+Under the hypotheses of
+Theorem~\ref{thm:exact-flow-graph-correctness}, assume in addition that
+\(a_i\in\mathbb Q^4\) for every facet row.  Then rational affine coordinates
+can be chosen for every facet-pair plane, and
+Algorithm~\ref{alg:idealized-exhaustive-flow-graph-search} is a finite exact
+rational-arithmetic algorithm returning \(c_{\mathrm{EHZ}}(K)\).
+\end{corollary}
+
+\begin{proof}
+Rational Gaussian elimination gives a rational base point and basis for every
+facet-pair plane.  In these coordinates, the section inequalities, primitive
+times and maps, tube intersections and compositions, and nonsingular
+fixed-point systems all have rational coefficients.  Their feasibility, signs,
+solutions, and action comparisons can therefore be decided in exact rational
+arithmetic.  The conclusion follows from
+Theorem~\ref{thm:exact-flow-graph-correctness}.
+\end{proof}
+
+\subsection{Why the regular class is generic}
+\label{subsec:flow-graph-algorithm-ch2021-genericity}
+
+The regularity assumptions are explicit algebraic nonvanishing conditions.
+For fixed facet count there are only finitely many of them.  Pairwise
+symplectic degeneracy and short-word dependence are ordinary polynomial
+conditions.  The only non-immediate point is that the long-word determinant is
+not the zero rational function.
+
+When all cyclic primitive denominators of a word are nonzero, let
+\(M_w^{\mathrm{alg}}\) denote the composition of the primitive linear maps,
+regardless of their signs or whether the geometric tube domain is nonempty.
+For a searched tube, this is the linear part \(M_w\) of its affine return map.
+
+\begin{proposition}[Presentation-chamber genericity]
+\label{prop:flow-graph-presentation-chamber-genericity}
+Fix \(F\), and let \(\mathcal C\subset(\mathbb R^4)^F\) be a nonempty
+Euclidean-open set of ordered normalized dual-row lists defining bounded
+full-dimensional polytopes with \(0\) in the interior and all \(F\)
+inequalities irredundant.  An open dense subset of \(\mathcal C\) satisfies
+the stronger conditions
+\begin{enumerate}
+  \item \(\omega_0(a_i,a_j)\ne0\) for every \(i\ne j\);
+  \item every sublist of at most four rows is linearly independent; and
+  \item \(\det(I-M_w^{\mathrm{alg}})\ne0\) for every simple cyclic word \(w\)
+    of length at least five.
+\end{enumerate}
+Consequently every presentation in this subset satisfies the idealized
+real-arithmetic Theorem~\ref{thm:exact-flow-graph-correctness}.  A presentation
+in this subset with rational facet rows also satisfies
+Corollary~\ref{cor:rational-flow-graph-correctness}; the open-dense statement
+itself does not assert rational representability or executable coverage for
+arbitrary real rows.
+\end{proposition}
+
+\begin{proof}
+The first two families are finite collections of nonzero polynomial
+conditions.  For a fixed word \(w=(s_1,\ldots,s_k)\), each primitive linear
+map is
+\[
+  \xi\longmapsto
+  \xi-
+  \frac{\langle a_{s_{r+2}},\xi\rangle}
+       {\langle a_{s_{r+2}},2J_0a_{s_{r+1}}\rangle}
+  2J_0a_{s_{r+1}}.
+\]
+On the domain where the denominators are nonzero, coordinate bases for the
+facet-pair planes and hence \(\det(I-M_w)\) depend rationally on the rows.
+
+To see that this rational function is nonzero for every \(k\geq5\), use
+\[
+\begin{aligned}
+ A&=(2,3,-4,-3),& B&=(0,1,2,-1),& C&=(-4,-3,0,-1),\\
+ D&=(4,-1,1,1),& E&=(-4,2,-4,-4).
+\end{aligned}
+\]
+All pairings needed below are nonzero.  Direct substitution gives
+\[
+  \det(I-M_{ABCDE})=-\frac{10643}{600},
+  \qquad
+  \det(I-M_{ACDE})=\frac1{168}.
+\]
+At the linear-map level, replacing a cyclic subword
+\(x,A,B,A,y\) by \(x,A,y\) leaves the surrounding return map unchanged: the
+middle transition is the identity on \(\ker a_A\), and the two flows in the
+\(A\)-direction combine algebraically.  Hence the specializations
+\((A,B)^m,C,D,E\) cover every odd length at least five, while
+\((A,B)^m,A,C,D,E\) reduce every even length at least six to the second
+displayed value.  Thus no long-word determinant is identically zero.
+
+The common denominator domain is a nonempty Zariski-open subset of an
+irreducible affine parameter space.  Thus a nonzero rational function remains
+nonzero on every nonempty coordinate-minor chart.  The complement of each
+nonvanishing condition is therefore a proper algebraic set.  There are only
+finitely many sublists and simple words for fixed \(F\), so their common
+nonzero locus is open dense.  Intersecting it with the Euclidean-open chamber
+\(\mathcal C\) preserves density.  The all-pairs condition is stronger than
+the nonempty-pair condition in
+Definition~\ref{def:flow-graph-regular-presentation}, and the remaining
+conditions imply finite-orbit regularity.
+\end{proof}
+
+This is chamber-relative genericity for ordered normalized irredundant
+presentations.  It is not the conjectural CH2021 claim that generic polytopes
+have no Type~2 orbit below an action bound.
+
+\input{05-flow-graph-ch2021-background-comparison}
+
+\subsection{Rational implementation and evidence}
+\label{subsec:flow-graph-algorithm-ch2021-implementation}
+
+The current executable implementation targets
+Corollary~\ref{cor:rational-flow-graph-correctness}: it represents the normals
+and all tube arithmetic by rational numbers.  It enumerates transition-pruned
+simple directed cycles,
+checks the short-word independence hypothesis, constructs and composes affine
+tubes, solves fixed-point equations in rational arithmetic, and accepts an orbit only after
+reconstructing strictly positive segment times.
+
+This implementation does not validate an arbitrary raw halfspace description.
+It assumes that the caller supplies a bounded irredundant presentation in
+dimension four, together with matching rational matrices for facet intersections
+and symplectic signs.  It rejects a caller-marked nonempty distinct facet pair
+with zero symplectic pairing, failure of the short-word independence
+hypothesis, and unsupported singular fixed sets.  An inconsistent singular
+fixed equation, or one whose fixed set misses the tube, is instead a certified
+no-orbit outcome. Thus the implementation is intended to realize the corollary
+on rational inputs satisfying both these input requirements and the regularity
+hypotheses; correspondence is tested, not formally verified.
+
+The earlier binary64 flow-graph prototype was approximate and lacked a sound
+way to distinguish predicates proved true, proved false, or left undecided.
+It was retired and supplies no current flow-graph capacity evidence.
+
+On selected deterministic rational F5, F6, and F7 cases, rational flow-graph
+search agrees with the certified Haim--Kislev/QP scalar aggregate. These
+comparisons, the retained words, and the targeted resolver tests are
+implementation evidence for the stated rational inputs; they do not prove the
+idealized algorithm or the CH2021 capacity scope.
+Targeted tests also exercise tube construction, fixed-point reconstruction,
+and rejection of unsupported inputs. These checks are falsification and correspondence
+evidence on selected examples; they do not prove tube semantics or broad input
+coverage.

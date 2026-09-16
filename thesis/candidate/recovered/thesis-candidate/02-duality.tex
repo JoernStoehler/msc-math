@@ -1,0 +1,171 @@
+\subsection{Clarke's dual action principle}
+\label{subsec:preliminaries-clarke-dual-action-principle}
+
+A curve constrained to lie on $\partial K$ is difficult to modify: changing
+one velocity can move the rest of it off the boundary. We will instead work
+with closed curves in $\mathbb R^4$ and a functional that depends only on
+velocity. The dual action principle says that minimizing this functional
+recovers the capacity, and that a minimizer can be placed back on the
+boundary. This is the freedom used in the next section to rearrange facet
+velocities.
+
+Recall $H_K=g_K^2$, and define its convex conjugate by
+$H_K^*(y)=\sup_x(\langle x,y\rangle-H_K(x))$. For a closed curve
+$z\in W^{1,2}([0,T],\mathbb R^4)$ put
+\begin{equation}\label{eq:preliminaries-dual-functional}
+ I_K(z)=\int_0^T H_K^*(-J_0\dot z(t))\,dt
+       =\frac14\int_0^T h_K(-J_0\dot z(t))^2\,dt.
+\end{equation}
+The last identity will be proved below. Our normalization is
+\begin{equation}\label{eq:preliminaries-dual-problem}
+ d(K)=\inf\{I_K(z):T>0,\ z(0)=z(T),\ A(z)=T\}.
+\end{equation}
+The infimum is over Sobolev curves as above. Their positions are unrestricted;
+the action constraint fixes their size relative to their period.
+
+\begin{theorem}[Dual action principle]
+\label{thm:preliminaries-clarke-dual-action}
+For a convex body $K\subset\mathbb R^4$ with $0\in\operatorname{int}K$,
+the infimum in \eqref{eq:preliminaries-dual-problem} is attained and
+\[
+ d(K)=c_{\rm EHZ}(K)
+     =\min_{\gamma\subset\partial K}A(\gamma),
+\]
+where the last minimum is over contact-normalized generalized
+characteristics. Every such characteristic satisfies $I_K(\gamma)=A(\gamma)$.
+Every dual minimizer can be rescaled and translated into a minimizing
+generalized characteristic, without changing its value of $I_K$.
+If a dual minimizer already has $I_K(z)=T$, only a translation is needed.
+\end{theorem}
+
+We use the nonsmooth variational results underlying Clarke's principle
+\cite[Proposition~2.5 and Lemmas~5.1--5.2]{AAO2014}; for polytopes the
+correspondence is also stated in \cite[Lemma~2.1]{HK2017}. The following
+argument explains the conjugacy, normalization and reconstruction used here.
+
+\paragraph{The conjugate and its equality condition.}
+\begin{lemma}\label{lem:preliminaries-fenchel-duality}
+One has $H_K^*(y)=h_K(y)^2/4$, and
+\[
+ H_K(x)+H_K^*(y)\geq\langle x,y\rangle.
+\]
+Equality holds exactly when $y\in\partial H_K(x)$, equivalently
+$x\in\partial H_K^*(y)$.
+\end{lemma}
+\begin{proof}
+Write $x=ru$ with $r\geq0$ and $g_K(u)=1$. For a fixed $r$, the largest
+value of $\langle x,y\rangle$ is $r h_K(y)$. Thus
+\[
+ H_K^*(y)=\sup_{r\geq0}(r h_K(y)-r^2)=\tfrac14h_K(y)^2.
+\]
+The inequality follows from the definition of the supremum. Equality says
+that $x$ maximizes $\langle x,y\rangle-H_K(x)$, which is precisely the
+subgradient inequality defining $y\in\partial H_K(x)$. Applying conjugacy
+in the other direction gives the equivalent condition.
+\end{proof}
+
+\paragraph{The variational equation.}
+A minimizer satisfies a weak Euler--Lagrange equation. Its useful form is
+\begin{equation}\label{eq:preliminaries-dual-euler-lagrange}
+ \nu z(t)+b\in\partial H_K^*(-J_0\dot z(t))
+ \quad\text{for almost every }t,
+\end{equation}
+for a constant vector $b$ and a real multiplier $\nu$.
+\begin{definition}[Weak dual critical curve]
+\label{def:preliminaries-weak-dual-critical}
+A feasible curve
+satisfying this equation is called \emph{weak dual critical}.
+\end{definition}
+The constant $b$ reflects the freedom to translate the curve. Conjugacy
+rewrites the same equation as
+$-J_0\dot z\in\partial H_K(\nu z+b)$, bringing it close to the
+characteristic equation.
+
+To see the form of the variational equation, choose
+$p(t)\in\partial H_K^*(-J_0\dot z(t))$. The derivative of action in a
+periodic variation $v$ is $DA(z)[v]=\int\langle-J_0\dot z,v\rangle$.
+The cited nonsmooth multiplier theorem provides a measurable $L^2$ choice
+of $p$ such that, for every smooth periodic variation $v$,
+\[
+ \int_0^T\langle p,-J_0\dot v\rangle\,dt
+ =\nu\int_0^T\langle-J_0\dot z,v\rangle\,dt.
+\]
+The left side pairs the chosen subgradient with the change in velocity;
+the right side is the variation of the action constraint.
+Integration by parts gives
+$-J_0\dot p=-\nu J_0\dot z$ in distributions, hence
+$\dot p=\nu\dot z$ and $p=\nu z+b$. The action constraint is regular
+because $DA(z)[z]=2T\ne0$. These are the variational assertions invoked
+from the cited nonsmooth theorem; the calculation fixes their signs and
+constants in our convention.
+
+For any weak critical curve, the multiplier is determined by its value.
+The two-homogeneity of $H_K^*$ gives
+$\langle p,y\rangle=2H_K^*(y)$ when $p\in\partial H_K^*(y)$.
+Pairing \eqref{eq:preliminaries-dual-euler-lagrange} with $-J_0\dot z$
+and integrating, the constant vector contributes zero because the curve
+is closed. We obtain
+\begin{equation}\label{eq:preliminaries-dual-multiplier-value}
+ 2I_K(z)=2\nu A(z)=2\nu T,
+ \qquad \nu=\frac{I_K(z)}{T}>0.
+\end{equation}
+Positivity follows since a feasible curve has positive action and is
+nonconstant, while $H_K^*$ is positive away from zero.
+
+\paragraph{Reconstructing a boundary curve.}
+Let $z$ be weak critical and set $x=\nu z+b$ and $y=-J_0\dot z$.
+Then $y\in\partial H_K(x)$. The convex chain rule gives
+\[
+ \frac{d}{dt}H_K(x(t))=\langle y(t),\dot x(t)\rangle
+ =\nu\langle-J_0\dot z(t),\dot z(t)\rangle=0.
+\]
+Thus $H_K(x)$ is constant. Since $y\in\partial H_K(x)$, Fenchel equality gives
+$H_K(x)+H_K^*(y)=\langle x,y\rangle$. Two-homogeneity gives
+$\langle x,y\rangle=2H_K(x)$, so $H_K^*(y)=H_K(x)$ almost everywhere.
+Integrating the constant value yields
+\[
+ I_K(z)=\int_0^T H_K^*(y)\,dt=T H_K(x),
+ \qquad H_K(x)=I_K(z)/T=\nu.
+\]
+Put $c=\sqrt\nu$ and define
+\[
+ \gamma(t)=c\,z(t/c^2)+b/c,\qquad 0\leq t\leq c^2T.
+\]
+Since $\gamma=x(t/c^2)/c$, it satisfies $H_K(\gamma)=1$.
+Subgradient homogeneity also gives
+\[
+ -J_0\dot\gamma(t)=y(t/c^2)/c\in\partial H_K(\gamma(t)).
+\]
+This is the contact-normalized characteristic equation. Its period and
+action are $c^2T=I_K(z)$. Direct substitution in
+\eqref{eq:preliminaries-dual-functional} gives $I_K(\gamma)=I_K(z)$.
+In particular, when $I_K(z)=T$ we have $c=1$, so reconstruction only
+translates the curve.
+
+Conversely, a contact-normalized characteristic satisfies
+$H_K(\gamma)=1$ and $-J_0\dot\gamma\in\partial H_K(\gamma)$.
+Fenchel equality therefore gives $H_K^*(-J_0\dot\gamma)=1$ almost
+everywhere. Consequently $I_K(\gamma)=T=A(\gamma)$, and it is a feasible
+dual curve. An attained dual minimum reconstructs to a characteristic
+with the same value; every characteristic supplies a feasible dual value.
+This proves equality of the minima and, by the least-action
+characterization, their equality with capacity.
+
+\paragraph{Period convention and attainment.}
+The cited fixed-period formulation uses $w:[0,1]\to\mathbb R^4$ with
+$A(w)=1/2$. If $z$ is feasible in our convention, then
+\[
+ w(s)=\frac{z(Ts)}{\sqrt{2T}},\qquad I_K(w)=\tfrac12 I_K(z).
+\]
+Conversely, $z(t)=\sqrt{2T}\,w(t/T)$ is feasible for any chosen $T>0$
+and has $I_K(z)=2I_K(w)$. If the fixed-period formulation imposes mean zero,
+subtract the mean of $w$; translation changes neither its action nor $I_K$.
+Thus the fixed-period attainment theorem applies
+to our infimum, with its factor of two accounted for. Choosing
+$T=2I_K(w)$ gives an attained representative with $I_K(z)=T$.
+
+The distinction needed below is now concrete. Feasibility allows us to
+compare functional values, but does not place a curve on the boundary.
+Once a modified curve is shown to minimize $I_K$, the variational equation
+and reconstruction justify placing it there. This is why rearranging
+velocities will be done in the dual problem first.

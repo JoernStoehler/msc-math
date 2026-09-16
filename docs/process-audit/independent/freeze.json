@@ -1,0 +1,12 @@
+{
+  "frozen_at_utc": "2026-09-15T17:07:32.810148+00:00",
+  "prior_audit_read": false,
+  "files": {
+    "initial-findings.md": "51f358bf161fe7ca30ad3ce25ec9aa011831850d865eda9d25a42216eee60f06",
+    "method.md": "16738d02264d7a2ca7c4c034cb7db43942ea64be444eed6c8144c0d090b8ee96",
+    "ds-findings.md": "d6fd3cac3eb73ca141c0832ec70433a5a3efc187d82947c4470f330470778099",
+    "outcome-findings.md": "181680e938827d0322bf808ddd5d40197f286f42d53810b680a9b4cc2f18e320",
+    "coverage.txt": "0101aa124c1c4b781b473a7495abba59ac2688a73bfb598118226207f8e4d625",
+    "coordinator-evidence.jsonl": "17565cbc100798de6d41b115fec82ab58d4b775ff14f09efdfa798e2758a33cb"
+  }
+}

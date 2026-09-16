@@ -1,0 +1,17 @@
+digraph content {
+  graph [rankdir=BT, label="11 / manuscript content outcomes", labelloc=t];
+  node [shape=box];
+  audit [label="CRUX: composition", shape=diamond];
+  ready [label="COHERENT + SUPPORTED"];
+  local [label="LOCAL REPAIRS"];
+  broad [label="SYSTEMIC GAP\nchange method"];
+  math [label="CORE MATH\nfoundations/results"];
+  empirical [label="RESEARCH STORY\ndata/visualization"];
+  trust [label="TRUST + CONTEXT\nnumerics/repro/AI"];
+  math -> audit;
+  empirical -> audit;
+  trust -> audit;
+  audit -> ready [label="works"];
+  audit -> local [label="specific gaps"];
+  audit -> broad [label="not enumerable"];
+}

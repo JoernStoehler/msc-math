@@ -1,0 +1,138 @@
+L28 2026-09-14T13:05:24.817Z developer 
+<multi_agent_role>You are an agent in a team of agents collaborating to complete a task.
+
+You can spawn sub-agents to handle subtasks, and those sub-agents can spawn their own sub-agents. All agents in the team, including the agents that you can assign tasks to, are equally intelligent and capable, and have access to the same set of tools.
+
+You can use `spawn_agent` to create a new agent, `followup_task` to give an existing agent a new task and trigger a turn, and `send_message` to pass a message to a running agent.
+`send_message` calls may be read by a human, so ensure they are legible. Always put proper spaces between words and/or numbers.
+Child agents can also spawn their own sub-agents.
+
+When you provide a response in the final channel, that content is immediately delivered back to your parent agent.
+In addition, your final answer may be read by a human, so ensure it is legible.
+
+You will receive messages in the analysis channel in the form:
+```
+Message Type: NEW_TASK | MESSAGE | FINAL_ANSWER
+Task name: <recipient>
+Sender: <author>
+Payload:
+<payload text>
+```
+You may also see them addressed as to=/root/..., which indicates your identity is /root/...
+
+Note that collaboration tools cannot be called from inside `functions.exec`. Call `spawn_agent`, `send_message`, `followup_task`, `wait_agent`, `interrupt_agent`, and `list_agents` only as direct tool calls using the recipient shown in their tool definitions, such as `to=functions.collaboration.spawn_agent`, since they are intentionally absent from the `functions.exec` `tools.*` namespace. Available tools in `functions.exec` are explicitly described with a `tools` namespace in the developer message.
+
+All agents share the same directory. In detail:
+- All agents have access to the same container and filesystem as you.
+- A
+
+L35 2026-09-14T13:05:24.893Z INTERNAL /root -> /root/cem_resume encrypted=True
+
+L59 2026-09-14T13:06:34.138Z INTERNAL /root/cem_review -> /root/cem_resume encrypted=True
+
+L61 2026-09-14T13:06:34.140Z INTERNAL /root/cem_review -> /root/cem_resume encrypted=True
+
+L116 2026-09-14T13:07:59.450Z INTERNAL /root/cem_review -> /root/cem_resume encrypted=True
+
+L194 2026-09-14T13:11:54.066Z assistant final_answer
+Completed supported-v2 in **215.797 s**: **1344/1344 successful evaluations**, 1536 charged, no target errors. CEM beat IID on maximum and top-eight median in all three seeds; no sys exceeded 1.
+
+| Seed suffix | IID max | CEM max | IID top8 median | CEM top8 median |
+|---|---:|---:|---:|---:|
+| 301 | .759574 | .798513 | .728815 | .782274 |
+| 302 | .810904 | .831348 | .753788 | .776334 |
+| 303 | .760068 | .855655 | .722310 | .813742 |
+
+Actual unique process costs: generation **182.245 s**, updates **0.053 s**, evaluator processes **32.915 s** (individual request clocks **26.805 s**). Preserved 4407 construction attempts, including 3063 rejections and two evaluator-admission rejects.
+
+All paths under `experiments/sys-datascience/methods/diagonal-cem-pilot/`:
+
+- `supported-v2-report.md`: results, all six per-arm cost breakdowns, limitations.
+- `artifacts-supported-v2/analysis.json`: all paired metrics and full top-eight values.
+- `artifacts-supported-v2/`: frozen identities, complete inputs/results, construction attempts, updates, timing.
+- `src/main.rs`, `run.py`, `analyze.py`: corrected runner.
+- `source-v1/`, `artifacts/`, `v1-record.md`: preserved original source bytes, results, procedural failure record.
+
+Analyzer checks passed. Both arms now apply the unchanged evaluator’s admission policy; prior exposure and changed acceptance source are explicit. Reviewer notified; no commits or merges.
+
+L201 2026-09-14T13:14:04.739Z INTERNAL /root/cem_review -> /root/cem_resume encrypted=True
+
+L203 2026-09-14T13:14:04.742Z INTERNAL /root -> /root/cem_resume encrypted=True
+
+L216 2026-09-14T13:14:17.433Z INTERNAL /root -> /root/cem_resume encrypted=True
+
+L254 2026-09-14T13:15:44.012Z INTERNAL /root -> /root/cem_resume encrypted=True
+
+L271 2026-09-14T13:17:38.067Z INTERNAL /root/cem_review -> /root/cem_resume encrypted=True
+
+L273 2026-09-14T13:17:38.070Z INTERNAL /root -> /root/cem_resume encrypted=True
+
+L296 2026-09-14T13:18:21.892Z INTERNAL /root/cem_review -> /root/cem_resume encrypted=True
+
+L322 2026-09-14T13:19:31.816Z assistant final_answer
+Completed in `.git/codex/hko-writing-input/`:
+
+- **`mathematical-input.tex`**: ten dual rows; geometric base-volume and full forty-coordinate volume derivative; actual singular seven-facet section; invertible minor; exact beta, action and mixed-coordinate derivative; complete row-generation formulas and finite predicates.
+- **`exact-sections-table.tex`**: actual exact fixed choices for all 26 sections.
+- **`README.md`**: source map, checks and trust boundaries.
+
+Recovered all fixed values in **0.6997 s**, checking positivity, closure and \(Q=t/5\). Fully checked the worked entry’s derivative equations and symmetry annihilation. Its closure minor has determinant \(10(1-t^2)>0\), despite the stationary Hessian being singular.
+
+No new mathematical support gap found. Full rank/positive-kernel verification retains existing theorem-packet status; no full rerun or tracked writes occurred.
+
+L327 2026-09-14T13:45:58.900Z developer 
+<skills_instructions>
+## Skills
+A skill is a set of local instructions to follow that is stored in a `SKILL.md` file. Below is the list of skills that can be used. Each entry includes a name, description, and a short path that can be expanded into an absolute path using the skill roots table.
+### Skill roots
+- `r0` = `/home/agent/.agents/skills`
+- `r1` = `/home/agent/.codex/skills/.system`
+- `r2` = `/home/agent/.codex/plugins/cache/openai-bundled/sites/0.1.66/skills`
+- `r3` = `/home/agent/.codex/plugins/cache/openai-bundled`
+- `r4` = `/workspaces/msc-math/.agents/skills`
+### Available skills
+- imagegen: Generate or edit raster images when the task benefits from AI-created bitmap visuals such as photos, illustrations, textures, sprites, mockups, or transparent-background cutouts. Use when Codex should create a brand-new image, transform an existing image, or derive visual variants from references, and the output should be a bitmap asset rather than repo-native code or vector. Do not use when the task is better handled by editing existing SVG/vector/code-native assets, extending an established icon or logo system, or building the visual directly in HTML/CSS/canvas. (file: r1/imagegen/SKILL.md)
+- openai-docs: Use for Codex models/pricing, scheduled tasks, skills, settings, setup, troubleshooting, customization, automations, and self-knowledge—including 'you,' 'your,' 'this app,' or 'this coding agent' when they refer to Codex—and for OpenAI APIs/products and ChatGPT Work. Also use for model choice/migration, prompting, SDKs, Responses, Realtime, agents, evals, and Chat/Work/Codex comparisons. Do not use for generic app/software tasks that merely mention Codex. (file: r1/openai-docs/SKILL.md)
+- plugin-creator: Create and scaffold plugin directories for Codex with a required
+
+L331 2026-09-14T13:45:58.913Z INTERNAL /root -> /root/cem_resume encrypted=True
+
+L333 2026-09-14T13:46:04.110Z assistant commentary
+I’ll extract the actual sampling coordinates and CEM update from the source, including the admission condition added in supported-v2.
+
+L352 2026-09-14T13:47:10.970Z assistant final_answer
+The actual supported-v2 definition is:
+
+1. **IID source.** Independently for each planar factor, draw five angles uniformly on \([0,2\pi)\), sort them, and draw five independent support heights uniformly on \([0.8,1.2)\). Form
+   \[
+   P=\{x:(\cos\theta_i,\sin\theta_i)\cdot x\le h_i,\ i=1,\ldots,5\},
+   \qquad K=P_q\times P_p.
+   \]
+   Retry unsuccessful constructions. This is a rejection-conditioned source, not uniform sampling of pentagons. See [polygon.rs:84](/workspaces/msc-math/crates/symplectic/src/geom/polygon.rs:84) and [chart.rs:232](/workspaces/msc-math/experiments/sys-datascience/methods/equal-budget-product-search/src/chart.rs:232).
+
+2. **Seventeen coordinates.** For each factor, let \(g_i>0\) be cyclic angular gaps, summing to \(2\pi\), and \(r_i=\|n_i\|/h_i\) its dual radii. Use
+   \[
+   \ell_i=\log(g_i/g_5)\quad(i=1,\ldots,4),\qquad
+   z_i=\log r_i-\frac15\sum_j\log r_j.
+   \]
+   Store four \(\ell_i\), four \(z_i\), and recover \(z_5=-\sum_{i=1}^4z_i\). Two factors give sixteen coordinates; the seventeenth is their relative phase \(\phi\in[0,2\pi)\). IID encoding chooses each factor’s cyclic origin by lexicographically minimizing its sequence of \((g_i,z_i)\) pairs. Reconstruction uses
+   \[
+   g_i=2\pi\,\frac{e^{\ell_i}}{1+\sum_{j=1}^4e^{\ell_j}},\quad
+   g_5=\frac{2\pi}{1+\sum_{j=1}^4e^{\ell_j}},\qquad h_i=e^{-z_i},
+   \]
+   with the first \(q\)-normal at angle zero and the first \(p\)-normal at \(\phi\). See [chart.rs:67](/workspaces/msc-math/experiments/sys-datascience/methods/equal-budget-product-search/src/chart.rs:67), [chart.rs:280](/workspaces/msc-math/experiments/sys-datascience/methods/equal-budget-product-search/src/chart.rs:280), and [chart.rs:389](/workspaces/msc-math/experiments/sys-datascience/methods/equal-budget-product-search/src/chart.
+
+L361 2026-09-14T13:58:36.311Z INTERNAL /root -> /root/cem_resume encrypted=True
+
+L363 2026-09-14T13:58:41.279Z assistant commentary
+I’ll check which computed quantities depend on Euclidean geometry or coordinates, and distinguish the original 39 features from later diagnostics.
+
+L394 2026-09-14T14:00:07.208Z assistant final_answer
+**Concrete retained non-invariant quantities exist, but they were not part of the reported 39-feature random-forest fit.**
+
+| Quantity actually computed | Evidence and role |
+|---|---|
+| **Euclidean area \(E(F)\) of each planar ridge**, plus sums, means and division by \(\sqrt V\) | [ridge-tail-anatomy/analyze.py:89](/workspaces/msc-math/experiments/sys-datascience/methods/ridge-tail-anatomy/analyze.py:89) computes area; [line 142](/workspaces/msc-math/experiments/sys-datascience/methods/ridge-tail-anatomy/analyze.py:142) forms summaries. Actual retained outputs: `experiments/sys-datascience/methods/ridge-tail-anatomy/artifacts/current/per_face.jsonl` and `per_polytope.jsonl`. Used in later descriptive comparisons and rank associations, **not the original 39 features**. |
+| **\(\kappa(F)=A_\omega(F)/E(F)\)**, its quantiles, maximum, mean and Euclidean-area-weighted mean | Explicitly computed at [analyze.py:212](/workspaces/msc-math/experiments/sys-datascience/methods/ridge-tail-anatomy/analyze.py:212), summarized at line 142, and retained in those same files. A concrete measure of the face plane’s relation to the symplectic structure **relative to the Euclidean metric**. Later anatomy analysis, not original features. |
+| **Covariance between Euclidean face area and \(\kappa\)** | `euclidean_kappa_covariance`, computed at [analyze.py:158](/workspaces/msc-math/experiments/sys-datascience/methods/ridge-tail-anatomy/analyze.py:158), with corresponding product mixed-face summaries in retained `per_polytope.jsonl`. Later decomposition diagnostic, not original features. |
+| **Angular gaps, centered logarithms of dual radii, relative phase** | Actual 17-coordinate CEM representation: [chart.rs:67](/workspaces/msc-math/experiments/sys-datascience/methods/equal-budget-product-sea

@@ -1,0 +1,263 @@
+L3 2026-09-14T13:43:19.997Z developer 
+<skills_instructions>
+## Skills
+A skill is a set of local instructions to follow that is stored in a `SKILL.md` file. Below is the list of skills that can be used. Each entry includes a name, description, and a short path that can be expanded into an absolute path using the skill roots table.
+### Skill roots
+- `r0` = `/home/agent/.agents/skills`
+- `r1` = `/home/agent/.codex/skills/.system`
+- `r2` = `/home/agent/.codex/plugins/cache/openai-bundled/sites/0.1.66/skills`
+- `r3` = `/home/agent/.codex/plugins/cache/openai-bundled`
+- `r4` = `/workspaces/msc-math/.agents/skills`
+### Available skills
+- imagegen: Generate or edit raster images when the task benefits from AI-created bitmap visuals such as photos, illustrations, textures, sprites, mockups, or transparent-background cutouts. Use when Codex should create a brand-new image, transform an existing image, or derive visual variants from references, and the output should be a bitmap asset rather than repo-native code or vector. Do not use when the task is better handled by editing existing SVG/vector/code-native assets, extending an established icon or logo system, or building the visual directly in HTML/CSS/canvas. (file: r1/imagegen/SKILL.md)
+- openai-docs: Use for Codex models/pricing, scheduled tasks, skills, settings, setup, troubleshooting, customization, automations, and self-knowledge—including 'you,' 'your,' 'this app,' or 'this coding agent' when they refer to Codex—and for OpenAI APIs/products and ChatGPT Work. Also use for model choice/migration, prompting, SDKs, Responses, Realtime, agents, evals, and Chat/Work/Codex comparisons. Do not use for generic app/software tasks that merely mention Codex. (file: r1/openai-docs/SKILL.md)
+- plugin-creator: Create and scaffold plugin directories for Codex with a required
+
+L4 2026-09-14T13:43:19.997Z developer 
+You are an agent in a team of agents collaborating to complete a task.
+
+You can spawn sub-agents to handle subtasks, and those sub-agents can spawn their own sub-agents. All agents in the team, including the agents that you can assign tasks to, are equally intelligent and capable, and have access to the same set of tools.
+
+You can use `spawn_agent` to create a new agent, `followup_task` to give an existing agent a new task and trigger a turn, and `send_message` to pass a message to a running agent.
+Child agents can also spawn their own sub-agents.
+
+When you provide a response in the final channel, that content is immediately delivered back to your parent agent.
+
+You will receive messages in the analysis channel in the form:
+```
+Message Type: NEW_TASK | MESSAGE | FINAL_ANSWER
+Task name: <recipient>
+Sender: <author>
+Payload:
+<payload text>
+```
+You may also see them addressed as to=/root/..., which indicates your identity is /root/...
+
+Note that collaboration tools cannot be called from inside `functions.exec`. Call `spawn_agent`, `send_message`, `followup_task`, `wait_agent`, `interrupt_agent`, and `list_agents` only as direct tool calls using the recipient shown in their tool definitions, such as `to=functions.collaboration.spawn_agent`, since they are intentionally absent from the `functions.exec` `tools.*` namespace. Available tools in `functions.exec` are explicitly described with a `tools` namespace in the developer message.
+
+All agents share the same directory. In detail:
+- All agents have access to the same container and filesystem as you.
+- All agents use the same current working directory.
+- As a result, edits made by one agent are immediately visible to all other agents.
+
+When calling `wait_agent`, prefer longer waits (minutes) to avoid busy polling.
+
+There are 
+
+L10 2026-09-14T13:43:20.039Z INTERNAL /root -> /root/thesis_map encrypted=True
+
+L14 2026-09-14T13:43:24.192Z assistant commentary
+I’m inspecting the assessment, thesis source/build files, and replacement-draft artifacts read-only, then I’ll report exact-path evidence and separate explicit judgments from my inferences.
+
+L77 2026-09-14T13:44:12.933Z INTERNAL /root -> /root/thesis_map encrypted=True
+
+L102 2026-09-14T13:44:53.243Z assistant final_answer
+Read-only map (14 Sep 2026):
+
+- Assessed/current candidate is exactly [thesis/build/main.pdf](/workspaces/msc-math/thesis/build/main.pdf), SHA-256 `5f799da…57ead`, 110 pp. The active source is [thesis/main.tex](/workspaces/msc-math/thesis/main.tex), loading sections 00–14; source files are dated mostly 20 Aug, with `13-use-of-ai.tex` 31 Aug. Assessment says the selected build/reference/overfull checks pass, but this is not proof/content validation.
+- Proof support exists and is concrete:
+  - HKO: [experiments/hko-local-maximum/theorem/README.md](/workspaces/msc-math/experiments/hko-local-maximum/theorem/README.md), `witness.json`, `verify.sage.py`, `verification-summary.json`; summary says verified, 26 rows, rank 25, symmetry rank 15.
+  - Pentagon: [experiments/regular-products/pentagon-rotation-formula-proof/README.md](/workspaces/msc-math/experiments/regular-products/pentagon-rotation-formula-proof/README.md), Sage source + full stdout; retained result is 3340 words and certificate passed.
+  - Formal derivations: [formal/](/workspaces/msc-math/formal/); mapping/reproducibility: [docs/reproducibility.md](/workspaces/msc-math/docs/reproducibility.md), [artifacts/registry.json](/workspaces/msc-math/artifacts/registry.json).
+
+Current replacement-draft status:
+
+- No tracked `draft/`, `replacement/`, `codex/`, or replacement manuscript artifact exists (`git ls-files` confirms none). `codex/hko-writing-input/`, `codex/hko-writing/`, and `codex/ds-first-wave/writing/sample.pdf` mentioned in `memories/todos.md` are absent in this checkout; only old review PNGs under `tmp/pdfs/review-hko-polygons/` exist. This is a stale-memory/current-files discrepancy, not evidence those previews never existed.
+- Worktree changes are DS-focused (`experiments/sys-datascience/...`, `memories/..
+
+L109 2026-09-14T13:49:02.688Z INTERNAL /root -> /root/thesis_map encrypted=True
+
+L111 2026-09-14T13:49:02.690Z INTERNAL /root -> /root/thesis_map encrypted=True
+
+L115 2026-09-14T13:49:06.164Z assistant commentary
+I’ll inspect the newly assembled HKO preview and its included source chain, focusing only on the four requested proof/exposition interfaces and reporting concrete reader-blocking defects.
+
+L138 2026-09-14T13:49:49.599Z assistant final_answer
+Targeted read of `.git/codex/hko-writing/chapter-preview.tex` plus included `proof-opening.tex`, `mathematical-input.tex`, and `chart-completion.tex`:
+
+- Overall: no high-severity mathematical gap found in the requested four interfaces. The seven-page argument is substantially followable, and the singular/nonface concern is explicitly handled.
+- Hausdorff → labelled chart: sound. The support-function lower bound keeps the origin interior; polarity continuity labels exactly one polar vertex in each of ten disjoint neighborhoods. The “no new vertex” subsequence argument correctly handles tuples whose limiting normals are dependent: a limiting fourfold active set lies at a simple HKO vertex, hence equals its incident facets and contradicts newness (`chart-completion.tex:41–52`).
+- Face stability/smooth volume: adequate at exposition level. Incident four-facet intersections vary smoothly; nonincident inequalities retain strict slack; fixed boundary triangulation gives smooth volume (`:34–39`, `:54–60`). This is a concise argument, not an evident defect.
+- Equality via slice: sound conditional on the preceding rank/certificate facts. The text states 15 independent symmetry columns, complement dimension 25, inverse-function-theorem slice, and equality iff slice point is HKO (`proof-opening.tex:64–80`, `chart-completion.tex:62–75`).
+- Smooth volume/first variation: concrete full-chart formula and centroid/facet-volume calculation are present in `.git/codex/hko-writing-input/mathematical-input.tex` (roughly lines 15–47); no missing cross-coordinate coefficients apparent.
+- Seven-facet singular example: explicitly says the Hessian is singular, then correctly explains that a feasible fixed-weight section—not a continuing optimizer branch—is sufficient (`mathematical-input.tex`, s
+
+L147 2026-09-14T14:06:34.129Z INTERNAL /root -> /root/thesis_map encrypted=True
+
+L151 2026-09-14T14:06:36.996Z assistant commentary
+I’m comparing the candidate duality chapter line-by-line with the active chapter and the cited primary source, checking only mathematical/interface defects (not prose preferences).
+
+L176 2026-09-14T14:07:24.100Z assistant final_answer
+Targeted comparison result:
+
+I found no factor/sign error in the candidate duality chapter. The free-period conversion is consistent with HK2017’s convention: their constraint \(\int\langle-J\dot w,w\rangle=1\) is \(A(w)=1/2\), and the candidate’s \(w(s)=z(Ts)/\sqrt{2T}\) gives \(A(w)=1/2\), \(I(w)=I(z)/2\). Reconstruction scale \(c=\sqrt{I(z)/T}\), period \(c^2T=I(z)\), and \(I(\gamma)=I(z)\) are also consistent.
+
+Concrete issues:
+
+- Low severity, exposition: the fixed-period attainment comparison (`.git/codex/thesis-candidate/02-duality.tex:138–147`) does not mention the mean-zero condition in the cited fixed-period space. Since the candidate allows unrestricted positions, add one sentence that translation/centering supplies mean zero without changing action or \(I_K\). This is not a mathematical obstruction.
+- Low severity, exposition: the weak Euler–Lagrange derivation (`:81–90`) jumps from “the nonsmooth multiplier theorem provides a choice \(p\)” to distributional integration by parts without stating the regularity/selection result that makes \(p\) an admissible distributional primitive. The original chapter similarly relies on the cited theorem but makes the multiplier lemma explicit. Add a citation/phrase that the cited nonsmooth result supplies the required measurable \(p\) and distributional equation.
+- Low severity, interface: `:75` places `\label{def:preliminaries-weak-dual-critical}` outside a definition environment. LaTeX may still register it, but structurally it is fragile; the downstream `\ref` in the candidate build resolves according to `.aux`, so not currently a broken reference.
+- Low severity, self-containedness: support function \(h_K\), action \(A\), \(J_0\), and “contact-normalized generalized characteristic” are assumed from earlier candidate c
+
+L183 2026-09-14T14:14:08.144Z INTERNAL /root -> /root/thesis_map encrypted=True
+
+L187 2026-09-14T14:14:11.734Z assistant commentary
+I’m auditing only the fixed candidate PNG snapshot pages 43–83 for visual/layout defects, using contact sheets followed by focused inspection of suspects.
+
+L282 2026-09-14T14:15:59.658Z assistant final_answer
+Layout audit of fixed snapshot pages 43–83 (SHA `b0a9036…300c71`), including contact sheets and focused views of pages 46, 59–60, 64–66, 73–82:
+
+- One clear actionable defect: page 74 contains only the appendix heading **“B Pentagon computation: source and exploratory plots”**, with no following content. The appendix begins on page 75. This is a genuinely stranded heading; force a page break before the heading or keep the heading with its first subsection.
+- No clipping, overlap, unreadable figure/table, or disconnected caption found. Page 81’s large figure and caption remain together; page 82’s two tables and caption remain together.
+- Section headings at pages 46 (Section 8), 60 (Section 10), 61 (Section 11), 64 (Section 12), and 65 (Section 13) all have enough following text and are not stranded.
+- Pages 73 and 80 have substantial whitespace, but are ordinary paragraph continuations; per the requested criterion I do not classify them as defects.
+- Code on pages 75–79 is dense but legible at full resolution; no visual unreadability or boundary clipping observed.
+
+L289 2026-09-14T14:19:44.111Z INTERNAL /root -> /root/thesis_map encrypted=True
+
+L293 2026-09-14T14:19:53.385Z assistant commentary
+I’m reviewing the generalized-Reeb-orbits chapter for reader-blocking mathematical exposition gaps only, limiting the report to at most three concrete issues with minimal fixes.
+
+L311 2026-09-14T14:20:44.192Z assistant final_answer
+Reader-level review of `thesis/03-generalized-reeb-orbits-polytopes.tex` and its three included files:
+
+I found no material exposition gap that blocks a mathematically mature master’s reader from following the chapter’s purpose, finite reduction, or simple-minimizer proof. The chapter’s key distinctions are unusually clear: velocity closure versus base-point/facet realizability (`03-generalized-reeb-orbits-words-dwell-times-closure.tex:17–25`), and pure-velocity dual loops versus actual boundary orbits (`03-generalized-reeb-orbits-simple-minimizers.tex:49–53`).
+
+Two limited improvements are worth noting, but neither is a substantive defect:
+
+1. Low severity: `03-generalized-reeb-orbits-polytopes-definition.tex:61–64` says “general normalization already shows” \(A(\gamma)=T\), without restating why convex combinations of active \(R_i\) retain contact normalization. One sentence would suffice: on a face containing \(x\), every active \(R_i\) has \(\lambda_0(R_i)=1\), hence so does their convex hull.
+2. Low severity: the final theorem proof (`03-generalized-reeb-orbits-simple-minimizers.tex:267–280`) postpones the argument that a reconstructed pure velocity \(R_i\) forces facet \(F_i\) to be active. It is correct (extremality of irredundant polar row \(a_i\)); a brief forward reference at the theorem statement or at the start of reconstruction would reduce the delayed dependency.
+
+No sign/factor issue, missing base-point condition, or unjustified closure-to-orbit identification was found. The explicit base-point lemma (`words-dwell-times-closure.tex:106–171`) and the final reconstruction argument close those interfaces.
+
+L318 2026-09-14T14:26:44.037Z INTERNAL /root -> /root/thesis_map encrypted=True
+
+L329 2026-09-14T14:27:20.776Z assistant final_answer
+The four-facet example is mathematically consistent.
+
+- With coordinate order \((q_1,q_2,p_1,p_2)\), the rows \((e_1,e_3,-e_1,-e_3)\) give pairings summing to \(Q=2xy\) for weights \((x,y,x,y)\); closure and normalization correctly yield \(x+y=\tfrac12\).
+- \(Q=2x(\tfrac12-x)\), derivative \(1-4x\), and second derivative \(-4\) give the stationary maximum \(x=y=\tfrac14\), \(Q=\tfrac18\), hence \(1/(2Q)=4\).
+- Although \(K=[-1,1]^4\) has eight facets, the example explicitly uses an ordered four-facet word, not a four-facet H-representation. That is valid for illustrating one fixed-word program; it should remain clear that the omitted cube facets still enter the global word comparison.
+- The final warning is exactly right: this establishes the optimum for that word only, not the cube’s capacity without comparing all admissible facet words or supplying a matching lower-bound argument.
+
+L336 2026-09-14T14:31:03.273Z INTERNAL /root -> /root/thesis_map encrypted=True
+
+L340 2026-09-14T14:31:15.723Z assistant commentary
+I’m checking only the specified latest rendered pages for concrete visual defects, without altering the fixed renders.
+
+L359 2026-09-14T14:32:02.693Z assistant final_answer
+Visual audit of the specified latest renders (`qp-checked-23`–`25`, `appendix-checked-67`–`71`):
+
+- No clipping, overlap, unreadable figure/table, or disconnected caption found.
+- No truly stranded heading found. The appendix heading at the bottom of page 68 has following text; section headings on pages 23–25 and 69–71 have adequate content.
+- Tables and Figure 9 remain legible and contained within their page boundaries.
+- Large whitespace on pages 67–68 and 70–71 is compositional/flow whitespace only, not classified as a defect under the stated criterion.
+
+L366 2026-09-14T14:55:39.881Z INTERNAL /root -> /root/thesis_map encrypted=True
+
+L370 2026-09-14T14:55:48.909Z assistant commentary
+I’m checking the planned HKO dependency chain in the candidate-only files, with emphasis on whether the finite derivative certificate legitimately yields a uniform neighborhood result after the chart and slice steps.
+
+L386 2026-09-14T14:56:35.395Z assistant final_answer
+Dependency order checks out; no hidden mathematical issue found in the candidate HKO chain.
+
+- The chart lemma must precede volume differentiation and the feasible-section construction. The candidate does this: polarity labels the ten rows, simple incidence persists, and the subsequence argument rules out new vertices even when a limiting four-tuple is singular. This supplies the fixed smooth \(40\)-coordinate chart.
+- The feasible-section lemma correctly supplies \(U_\sigma\) independently of KKT nonsingularity. Positivity, invertible five-column minors, and smooth \(V(a)\) make each bound valid on one common shrunken chart neighborhood.
+- The exact certificate data are sufficient for the slice step: rank \(R=25\), \(R|_T=0\), and a strictly positive relation imply the rows span \(S^*\) for any complement \(S\) of the 15-dimensional symmetry tangent \(T\).
+- The compactness/Taylor argument is correctly applied only after restriction to \(a_0+S\): finitely many smooth \(U_j\), uniform \(\eta>0\) on the unit sphere of \(S\), and a common remainder neighborhood yield strict decrease for every nonzero slice displacement.
+- The symmetry inverse-function-theorem step then upgrades the slice result to the full chart. The local action map needs to be understood as \(\Phi(g,s)=g\cdot(a_0+s)\), whose derivative has the independent \(T\oplus S\) columns; the candidate text’s “apply a small symmetry to this slice” conveys this, but one explicit \(\Phi\) sentence would make the dependency airtight.
+- Equality logic is valid: strict slice decrease forces \(s=0\); the remaining points are exactly the local symmetry orbit, and conversely symmetries preserve the ratio.
+
+Only a low-severity exposition recommendation: explicitly state that the certificate’s row annihilation of \(T\) is t
+
+L393 2026-09-14T14:58:57.210Z INTERNAL /root -> /root/thesis_map encrypted=True
+
+L397 2026-09-14T14:59:12.037Z assistant commentary
+I’m using the existing HKO Sage verifier and witness as the source of truth, and will write only the requested appendix directory with annotated, publication-oriented excerpts plus provenance. I’ll avoid candidate/main files and avoid a full rerun.
+
+L474 2026-09-14T15:03:21.451Z assistant final_answer
+Created only:
+
+- [.git/codex/hko-cas-appendix/hko-cas-appendix.tex](/workspaces/msc-math/.git/codex/hko-cas-appendix/hko-cas-appendix.tex)
+- [.git/codex/hko-cas-appendix/README.md](/workspaces/msc-math/.git/codex/hko-cas-appendix/README.md)
+
+The appendix contains:
+
+- exact number-field/HKO dual-vertex construction;
+- closure matrix, quadratic objective, and feasible-section solve;
+- all 26 explicit \((\sigma,I,J,u)\) witness assignments;
+- differentiated section, \(DQ\), action, and systolic-ratio row construction;
+- 15 symmetry columns and exact \(\mathfrak{sp}(4)\) condition;
+- exact rank-25, one-dimensional left-kernel, positivity, and zero-combination predicates;
+- explicit separation between CAS-verified predicates and the mathematical chart, smooth-volume, slope, Taylor, and IFT lemmas.
+
+The README records source hashes, runnable-owner paths, omitted routine/diagnostic code, and trust boundaries. I checked that all 26 assignment rows are present and that the three pinned source hashes match the tracked verifier, witness, and summary. No full verifier rerun was performed; no candidate/main file or served PDF was modified.
+
+L481 2026-09-14T15:04:35.474Z INTERNAL /root -> /root/thesis_map encrypted=True
+
+L544 2026-09-14T15:09:32.447Z assistant final_answer
+We are a child agent `/root/thesis_map` collaborating with parent `/root` in `/workspaces/msc-math`.
+
+Current user task (latest): own ONLY `.git/codex/hko-cas-appendix/`; do not edit candidate/main or served PDFs. Replace an earlier non-runnable CAS appendix with an actual executable Sage core based on existing HKO verifier, explicit all-26 assignments, helper bodies, exact assertions. Parent found prior appendix issues: incorrectly called rows `D sys` vs actual derivative rows (correct is `D sys`), pseudocode omitted essential helpers/undefined names, invalid Python (`lambda`, `normalize`), table math outside math mode. Need report artifacts and checks; no public/source changes.
+
+Work completed before latest task:
+- Read and mapped thesis assessment, sources/build, HKO theorem packet, pentagon packet, DS artifacts, candidate previews.
+- Layout audits:
+  - Fixed old candidate pages 43–83: only clear defect was stranded appendix heading on p74 (“B Pentagon computation…” alone); no clipping/overlap/caption issues.
+  - Latest selected renders qp-checked-23..25 and appendix-checked-67..71: no concrete visual defects.
+- Reader/exposition math reviews:
+  - Candidate duality chapter: no factor/sign defect; only low-severity exposition notes (mean-zero centering and nonsmooth selection regularity).
+  - Generalized Reeb chapter: no material gap; minor possible sentence clarifications.
+  - Cube example in candidate 04-quadratic-program.tex: Q=2xy, max Q=1/8, bound 4 correct; clarify four rows are one word from 8-facet cube, not full representation.
+  - HKO chain: dependency order sound (chart → smooth volume → feasible upper bounds → exact rank/positive kernel → uniform slopes on complement → Taylor → symmetry IFT); only suggest explicitly naming local action map.
+- Parent correc
+
+L556 2026-09-14T15:09:36.647Z assistant commentary
+I’m finishing the bounded Sage-core check inside `.git/codex/hko-cas-appendix/`, then I’ll inspect the appendix fragment for any remaining formatting defects and report the exact artifacts and trust boundaries.
+
+L774 2026-09-14T15:13:30.259Z INTERNAL /root -> /root/thesis_map encrypted=True
+
+L803 2026-09-14T15:13:58.857Z assistant commentary
+The standalone core now executes successfully. I also corrected the appendix pseudocode to match `sage -python` syntax, made the kernel normalization explicit, clarified the table’s zero-based source row index versus one-based facet data, and recorded the bounded run in the README.
+
+L819 2026-09-14T15:14:11.707Z assistant final_answer
+Completed the requested work under `.git/codex/hko-cas-appendix/` only.
+
+Artifacts:
+
+- `hko_core.py`: self-contained executable Sage core with all 26 assignments, exact feasibility/positivity checks, derivative rows, symmetry checks, rank 25, and positive kernel.
+- `hko-cas-appendix.tex`: corrected publication-oriented appendix fragment.
+- `README.md`: updated hashes, scope, trust boundaries, and verification status.
+
+Check performed:
+
+```text
+HKO appendix core passed: rows=26 rank=25 symmetry-rank=15
+```
+
+No candidate files, source files, or served PDFs were modified.
+
+L826 2026-09-14T15:14:39.770Z INTERNAL /root -> /root/thesis_map encrypted=True
+
+L830 2026-09-14T15:14:45.446Z assistant commentary
+I’m replacing the stale pseudocode appendix with `listings` inclusions of the actual `hko_core.py`, keeping the finite assignment data directly visible via a source block and removing undefined names and non-runnable syntax. Then I’ll run a minimal LaTeX compile check with the fragment.
+
+L891 2026-09-14T15:15:59.364Z INTERNAL /root -> /root/thesis_map encrypted=True
+
+L927 2026-09-14T15:16:50.150Z assistant final_answer
+Fixed the appendix fragment as requested.
+
+Changes in `.git/codex/hko-cas-appendix/`:
+
+- Replaced all stale pseudocode with direct `\lstinputlisting` blocks from the actual `hko_core.py`.
+- Included the complete 26-row assignment object (`firstline=12,lastline=39`).
+- Removed undefined `K`/`omega` snippets, invalid Sage preparser syntax, `R=D sys`, and fake `normalize`.
+- Added determinant and cardinality/kernel-dimension assertions to the executable core.
+
+Checks:
+
+```text
+HKO appendix core passed: rows=26 rank=25 symmetry-rank=15
+```
+
+A minimal standalone `pdflatex` test succeeded. The only remaining warning was the intentional dummy unresolved reference to `lem:hko-exact-bounds` in the temporary test harness. `rg` confirms the old defective fragments are gone.

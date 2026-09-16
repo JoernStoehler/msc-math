@@ -59,7 +59,7 @@ that tracked generated artifacts are fresh.
 
 ## `view-graph.sh`
 
-View the project overview or one component from any worktree:
+View the project overview or one component in the current checkout:
 
 ```bash
 scripts/view-graph.sh
@@ -67,9 +67,11 @@ scripts/view-graph.sh 00-now.dot
 scripts/view-graph.sh --list
 ```
 
-`codex/task-graph/00-now.dot` is also accepted as a stable virtual path to the
-live graph stored under the shared Git directory. The helper uses `less -S` in
-an interactive terminal so box-art lines do not wrap.
+The live source is `docs/task-graph/`; the old spelling
+`codex/task-graph/00-now.dot` remains a compatibility alias to that ordinary
+directory. Earlier portfolio components are preserved under its dated
+`history/` directory. The helper uses `less -S` in an interactive terminal so
+box-art lines do not wrap.
 
 ## `artifacts.py`
 

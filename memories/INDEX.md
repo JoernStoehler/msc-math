@@ -10,6 +10,9 @@ Pilot reference entries (source-grounded understanding, not independent audits):
 
 Current work and project context:
 
+- [Recovered thesis source](../docs/source-recovery/README.md): canonical
+  `thesis/candidate/main.tex`, frozen-baseline dependency recovery and isolated
+  PDF comparison; pending literature/pentagon revisions are not integrated.
 - [Outcome coverage](outcome-coverage.md): broader composition/proof/delivery
   obligations and newly surfaced evidence, source-study and maintenance
   opportunities beyond the candidate session portfolio; bounded discovery.
@@ -26,8 +29,10 @@ Current work and project context:
 - [Data-science scope/evidence](datascience-scope.md): repaired historical-evaluator
   wording, unresolved frozen-table lineage, checked appendix aggregates and integrated qualifications;
   distinguishes retained-claim support from optional new research.
-- [Current work and ownership](todos.md): provisional route graph with evidence and
-  conditional dependencies, completed work and unassigned scope questions.
+- [Current work and ownership](todos.md): September 16 recovered baseline,
+  completed replacement drafts, approval boundaries and second-run preparation.
+- [Second-run kickoff](../docs/sprint-two/KICKOFF.md): starting artifacts,
+  substantive priorities, resource constraints and Jörn's attention budget.
 - [Planning context](planning-context.md): user decisions, the observed scope
   omission, and provisional reasoning behind authoring/layout work and summary
   deferral; supports the task map without making it authoritative.

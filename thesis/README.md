@@ -1,12 +1,17 @@
 # Thesis
 
-`main.tex` defines the active publication surface. Files under `legacy/` are
-source material only and are not part of the thesis unless deliberately copied
-into active text.
+[`candidate/main.tex`](candidate/main.tex) is the recovered working candidate
+entry. See [`candidate/README.md`](candidate/README.md) for its independent
+build and frozen-baseline scope. It has not incorporated the pending literature
+corrections or pentagon rewrite and is not an approved thesis.
+
+The original `main.tex` and its sources are preserved as the earlier thesis
+version. Files under `legacy/` are historical source material; the candidate's
+separate `candidate/legacy/` contains only its recorded build inputs.
 
 ## Active structure
 
-The numbered TeX files loaded by `main.tex` are the active thesis. Former
+The candidate's `main.tex` determines its actual input files. Former
 writing companions and cross-cutting plans are quarantined under
 `legacy/non-current-planning-companions/`; use them only as fallible recovery
 material, not as current thesis state or instructions.
@@ -30,12 +35,13 @@ specified.
 
 ```bash
 cd thesis
-./check-build.sh
+sh candidate/build.sh
 ```
 
-For a faster unchecked edit-build, run `latexmk`. `./check-build.sh` forces a
-fresh build and checks selected structural conditions. It does not
-establish proof correctness, source adequacy, or Jörn/Kai acceptance.
+The older `./check-build.sh` still builds the original `main.tex`; it is not
+the candidate build command. The candidate's isolated reproduction check is
+documented in `docs/source-recovery/README.md`. Neither build establishes proof
+correctness, source adequacy, or Jörn/Kai acceptance.
 
 ## Legacy
 

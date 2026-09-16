@@ -1,0 +1,11 @@
+{
+  "original_pdf": "wp7quh5znokdF5RTowDBfQrM-0.pdf",
+  "original_pdf_sha256": "d7dae9a78dffc87fe89f3005bed9b6b51d28728fa90e1a5c811bc09b236e1695",
+  "review_date": "2026-09-14",
+  "python_version": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "sympy_version": "1.14.0",
+  "numpy_version": "2.3.5",
+  "repository_head_queried": "1bec30637070effe7ab8b0a022ae62e83f6bbcab",
+  "classifier_blob_inspected": "01bc62dc0691574efaf86149bcc22cabe4593aa2",
+  "note": "The repository HEAD is an observed external version, not claimed to be the submitted PDF source revision."
+}

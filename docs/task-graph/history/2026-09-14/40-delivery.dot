@@ -1,0 +1,14 @@
+digraph delivery {
+  graph [rankdir=BT, label="40 / official-status outcomes", labelloc=t];
+  node [shape=box];
+  status [label="CRUX: current official state\nunknown", shape=diamond];
+  submitted [label="OUTCOME: already submitted"];
+  pending [label="OUTCOME: submission pending\nresolve forms/deadline"];
+  inactive [label="NO ACTIVE ROUTE\nrefresh requirements"];
+  assess [label="READY: examiner route\nsee 41-assessment"];
+  status -> submitted;
+  status -> pending;
+  status -> inactive;
+  submitted -> assess;
+  pending -> assess;
+}

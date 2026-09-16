@@ -1,0 +1,72 @@
+\subsection{Sampled stationary branches}
+Figure~\ref{fig:rotated-pentagon-branch-landscape} places this example
+competitor in
+the larger stationary-branch problem.  An independent floating-point producer
+freezes \(3340\) raw two- and three-block words at the generic angle
+\(\theta=\pi/20\), then solves the same words at \(73\) angles from \(0\) to
+\(\pi/10\).  Its word count agrees with the exact certificate's count; the two
+word sets were not compared independently.  This is an empirical explanation
+of the finite classification, not another input to the proof.
+
+Many raw words give numerically indistinguishable data on this grid.  To avoid
+drawing the same curve on top of itself hundreds of times, the plot collapses
+two words only when their statuses agree at all \(73\) angles and their sampled
+actions agree after rounding to ten decimal places.  It then draws one complete
+\(73\)-angle sequence for that group.  Thus every curve follows one word across
+the whole grid; it is never assembled by selecting different words at different
+angles.
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=0.98\linewidth]{working/rotated-regular-polygons/enumerated-kkt-branch-landscape.pdf}
+  \caption{Sampled enumerated KKT-branch landscape.  Black marks the active
+  branch and blue the example competitor \(\tau\), whose formula was calculated
+  above.  Each gray curve is one of the
+  other distinct sampled profiles defined in the preceding paragraph; the
+  panel headings report the total number of distinct sampled profiles and the
+  number of raw words they summarize.  A profile with no admissible sample
+  produces no visible curve.  Only consecutive admissible samples are joined.
+  Triangles just below the upper boundary mark curves continuing above the
+  fixed cutoff \(6\); a gap means that the corresponding word was not
+  numerically admissible at the missing samples.  The grid neither certifies
+  feasibility sets nor proves the lower envelope.}
+  \label{fig:rotated-pentagon-branch-landscape}
+\end{figure}
+
+\begin{table}[p]
+\centering
+\small
+\textbf{Admissibility over the full 73-angle grid}\par\smallskip
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+sampled presence & two-block & three-block & all\\
+\midrule
+no admissible sample & \(795\) & \(1820\) & \(2615\)\\
+admissible at every sample & \(50\) & \(155\) & \(205\)\\
+one contiguous sampled run & \(105\) & \(414\) & \(519\)\\
+multiple sampled runs & \(0\) & \(1\) & \(1\)\\
+\bottomrule
+\end{tabular}
+
+\vspace{1.5em}
+\textbf{Status at the right endpoint \(\theta=\pi/10\)}\par\smallskip
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+sampled status & two-block & three-block & all\\
+\midrule
+admissible & \(110\) & \(425\) & \(535\)\\
+numerically inadmissible & \(770\) & \(1746\) & \(2516\)\\
+indeterminate & \(70\) & \(219\) & \(289\)\\
+solve failure & \(0\) & \(0\) & \(0\)\\
+\bottomrule
+\end{tabular}
+\caption{Raw-word classification on the sampled grid.  The upper part
+distinguishes words that are nowhere admissible on the grid, admissible
+throughout, or admissible on one or more sampled runs; these classes are not
+claims about feasibility-set topology.  The sole multiple-run word has
+one numerically inadmissible grid point separating its two sampled admissible
+runs.  The lower part records the producer's four-way status at
+\(\theta=\pi/10\).  No solve failure occurred at any sampled angle.}
+\label{tab:rotated-pentagon-sampled-presence}
+\end{table}
+\FloatBarrier

@@ -1,0 +1,15 @@
+digraph fanin {
+  graph [rankdir=BT, label="1 / non-routine operation outcomes", labelloc=t];
+  node [shape=box];
+  crux [label="CRUX: finding type", shape=diamond];
+  clean [label="NO BLOCKER\nfreeze"];
+  local [label="LOCAL DEFECTS\nparallel repair"];
+  support [label="SUPPORT GAP\nprove/run/narrow/drop"];
+  systemic [label="SYSTEMIC\nswitch/minimal closure"];
+  timeout [label="TIMEOUT\nretain partial + baseline"];
+  crux -> clean;
+  crux -> local;
+  crux -> support;
+  crux -> systemic;
+  crux -> timeout;
+}

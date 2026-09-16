@@ -1,0 +1,899 @@
+{
+  "frozen_pdf_sha256": "d7dae9a78dffc87fe89f3005bed9b6b51d28728fa90e1a5c811bc09b236e1695",
+  "recorded_working_directory": "/workspaces/msc-math/thesis",
+  "direct_build_input_count": 55,
+  "direct_build_input_bytes_before_rewrite": 1098782,
+  "migration": "Only TeX dependency command arguments changed; all other bytes preserved.",
+  "records": {
+    "frozen-main.fls": "35625135e37304d095c91d0b42a2f28971a9370a472d78304137ab2b2eaa4c76",
+    "frozen-main.fdb_latexmk": "5ccf9d6feece722aa683e8b4fe951930ebc2c2c5fe6e6f9aef54f526d74b9699",
+    "frozen.pdf": "d7dae9a78dffc87fe89f3005bed9b6b51d28728fa90e1a5c811bc09b236e1695"
+  },
+  "files": [
+    {
+      "old": ".git/codex/ai-writing/chapter.tex",
+      "new": "thesis/candidate/recovered/ai-writing/chapter.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 6141,
+      "recorded_md5": "f1b7062d5c24dce1aec8768feb2a1f30",
+      "current_md5_matches_record": true,
+      "old_sha256": "e15fb5243e721bc85c1f946fc50a95d9abd252b69bfa48c1c984621e35e369db",
+      "new_sha256": "e15fb5243e721bc85c1f946fc50a95d9abd252b69bfa48c1c984621e35e369db",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/ds-first-wave/writing/chapter-opening-v2.tex",
+      "new": "thesis/candidate/recovered/ds-first-wave/writing/chapter-opening-v2.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 35707,
+      "recorded_md5": "f54e608b0824590aee70709da3bc2288",
+      "current_md5_matches_record": true,
+      "old_sha256": "230a3e304be2860d489a3b8529f19eb6885adef72eeec140c7414ea2557ff2e7",
+      "new_sha256": "230a3e304be2860d489a3b8529f19eb6885adef72eeec140c7414ea2557ff2e7",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/hko-cas-appendix/hko-cas-appendix.tex",
+      "new": "thesis/candidate/recovered/hko-cas-appendix/hko-cas-appendix.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 3731,
+      "recorded_md5": "52992538dffe1652582cc88d035fb06a",
+      "current_md5_matches_record": true,
+      "old_sha256": "79a08da27cec010d8512919d0feb674de7914c8cecfa54bad12679b34a59d68b",
+      "new_sha256": "1824fef3f0885029e9a7f73f5535bc281bf4ffc56068f5e82a8e72c020f05c38",
+      "path_rewrites": [
+        {
+          "old": ".git/codex/hko-cas-appendix/hko_core.py",
+          "new": "recovered/hko-cas-appendix/hko_core.py"
+        },
+        {
+          "old": ".git/codex/hko-cas-appendix/hko_core.py",
+          "new": "recovered/hko-cas-appendix/hko_core.py"
+        },
+        {
+          "old": ".git/codex/hko-cas-appendix/hko_core.py",
+          "new": "recovered/hko-cas-appendix/hko_core.py"
+        },
+        {
+          "old": ".git/codex/hko-cas-appendix/hko_core.py",
+          "new": "recovered/hko-cas-appendix/hko_core.py"
+        }
+      ]
+    },
+    {
+      "old": ".git/codex/hko-cas-appendix/hko_core.py",
+      "new": "thesis/candidate/recovered/hko-cas-appendix/hko_core.py",
+      "category": "listed-cas-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 5269,
+      "recorded_md5": "9b425179219a20bdc904a66c0d271ea7",
+      "current_md5_matches_record": true,
+      "old_sha256": "475196efdf33d1f281a724b90069ec08a2335552ddc4362332e2b975866f10f5",
+      "new_sha256": "475196efdf33d1f281a724b90069ec08a2335552ddc4362332e2b975866f10f5",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/hko-figures/symmetry-extension.pdf",
+      "new": "thesis/candidate/recovered/hko-figures/symmetry-extension.pdf",
+      "category": "figure",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 147020,
+      "recorded_md5": "81707b6510f00b48b2983951f0c7b10c",
+      "current_md5_matches_record": true,
+      "old_sha256": "65e8d54ab27eafbc6793ead32ad536ffe65e4af79952649fb8445b3ad87e09f6",
+      "new_sha256": "65e8d54ab27eafbc6793ead32ad536ffe65e4af79952649fb8445b3ad87e09f6",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/hko-figures/upper-bound-mechanisms.pdf",
+      "new": "thesis/candidate/recovered/hko-figures/upper-bound-mechanisms.pdf",
+      "category": "figure",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 45956,
+      "recorded_md5": "a1978c36d7e2d060f8ea0c904a7c9f64",
+      "current_md5_matches_record": true,
+      "old_sha256": "faca0c4193580223e5c0d468583d550002c49f20b4ba2d3b5137514edf86fb66",
+      "new_sha256": "faca0c4193580223e5c0d468583d550002c49f20b4ba2d3b5137514edf86fb66",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/hko-writing/sections-readable.tex",
+      "new": "thesis/candidate/recovered/hko-writing/sections-readable.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 1736,
+      "recorded_md5": "a3bbe192f59b2579c3425090a2593fbb",
+      "current_md5_matches_record": true,
+      "old_sha256": "d35f3b2e19cea1743d9c675b7e62c79269faaf0638b3e08c51b8442dfe159e69",
+      "new_sha256": "d35f3b2e19cea1743d9c675b7e62c79269faaf0638b3e08c51b8442dfe159e69",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/thesis-candidate/00-abstract.tex",
+      "new": "thesis/candidate/recovered/thesis-candidate/00-abstract.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 1381,
+      "recorded_md5": "2baef0d3a01968124fc7cec715c56fab",
+      "current_md5_matches_record": true,
+      "old_sha256": "a455c75b761a199b0a548442018ea2a89c11ae03d1446c75fde8dcb00efa1da8",
+      "new_sha256": "a455c75b761a199b0a548442018ea2a89c11ae03d1446c75fde8dcb00efa1da8",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/thesis-candidate/01-introduction.tex",
+      "new": "thesis/candidate/recovered/thesis-candidate/01-introduction.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 9533,
+      "recorded_md5": "d6d6d24936fe082ae04675fe88d2c822",
+      "current_md5_matches_record": true,
+      "old_sha256": "f8cd0acb45abe03ac9b782eea09832f1799d634bce819e3bfa3daa380b772bcb",
+      "new_sha256": "f8cd0acb45abe03ac9b782eea09832f1799d634bce819e3bfa3daa380b772bcb",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/thesis-candidate/02-duality.tex",
+      "new": "thesis/candidate/recovered/thesis-candidate/02-duality.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 7694,
+      "recorded_md5": "04e6ae4cb9c25db36d0ae3ae03b486a4",
+      "current_md5_matches_record": true,
+      "old_sha256": "a6e9a2e9a9d512a60d62a405aca19fa1f2858c0a13d74f08f092e80581d81f15",
+      "new_sha256": "a6e9a2e9a9d512a60d62a405aca19fa1f2858c0a13d74f08f092e80581d81f15",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/thesis-candidate/02-preliminaries-convex-symplectic-notation.tex",
+      "new": "thesis/candidate/recovered/thesis-candidate/02-preliminaries-convex-symplectic-notation.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 2394,
+      "recorded_md5": "cdf02a1a592aa1830afe6373a40692b9",
+      "current_md5_matches_record": true,
+      "old_sha256": "79e3e0915f8c80638797b4fc3768f1b44f3487a01ba589b5c87b7933b717fcd1",
+      "new_sha256": "79e3e0915f8c80638797b4fc3768f1b44f3487a01ba589b5c87b7933b717fcd1",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/thesis-candidate/02-preliminaries-ehz-capacity.tex",
+      "new": "thesis/candidate/recovered/thesis-candidate/02-preliminaries-ehz-capacity.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 4525,
+      "recorded_md5": "5031fff9dacee6b3c6855d22299eb87c",
+      "current_md5_matches_record": true,
+      "old_sha256": "8d1299c5929932ebab0e7e695bcb663d0703195171408885922699453c653ceb",
+      "new_sha256": "8d1299c5929932ebab0e7e695bcb663d0703195171408885922699453c653ceb",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/thesis-candidate/02-preliminaries.tex",
+      "new": "thesis/candidate/recovered/thesis-candidate/02-preliminaries.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 931,
+      "recorded_md5": "b0132ef98413f05164ac82e43bedffc3",
+      "current_md5_matches_record": true,
+      "old_sha256": "ea4e01f0c71959653c14956381284eed2c5c54af90670394dc8eb53e93ed3801",
+      "new_sha256": "fb69b125f7bc4a5a4398603bf22371b3187c0d0b30e51656084b03f064839866",
+      "path_rewrites": [
+        {
+          "old": ".git/codex/thesis-candidate/02-preliminaries-convex-symplectic-notation.tex",
+          "new": "recovered/thesis-candidate/02-preliminaries-convex-symplectic-notation.tex"
+        },
+        {
+          "old": ".git/codex/thesis-candidate/02-preliminaries-ehz-capacity.tex",
+          "new": "recovered/thesis-candidate/02-preliminaries-ehz-capacity.tex"
+        },
+        {
+          "old": ".git/codex/thesis-candidate/02-duality.tex",
+          "new": "recovered/thesis-candidate/02-duality.tex"
+        }
+      ]
+    },
+    {
+      "old": ".git/codex/thesis-candidate/04-quadratic-program.tex",
+      "new": "thesis/candidate/recovered/thesis-candidate/04-quadratic-program.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 27081,
+      "recorded_md5": "5dc48f990c6783bc221a56c5293b54d3",
+      "current_md5_matches_record": true,
+      "old_sha256": "4966ae102ecd014695b8aa9c60ce92daf1bf928f2c7a02ea31b1065774435262",
+      "new_sha256": "4966ae102ecd014695b8aa9c60ce92daf1bf928f2c7a02ea31b1065774435262",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/thesis-candidate/05-flow-graph.tex",
+      "new": "thesis/candidate/recovered/thesis-candidate/05-flow-graph.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 18375,
+      "recorded_md5": "0186d4eea8d3d0b04cd0563a835ab230",
+      "current_md5_matches_record": true,
+      "old_sha256": "7d5cab9527cfc54c1b293c66ac82bd5ffe2f8388574abdd5f7f466c4d4c6d044",
+      "new_sha256": "7d5cab9527cfc54c1b293c66ac82bd5ffe2f8388574abdd5f7f466c4d4c6d044",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/thesis-candidate/06-variation.tex",
+      "new": "thesis/candidate/recovered/thesis-candidate/06-variation.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 15716,
+      "recorded_md5": "a065c0e2f8a243c469e389c2ee07bb3f",
+      "current_md5_matches_record": true,
+      "old_sha256": "d84a787432466062e127df0e0a1193001ec2b1d64c7fb193936c6d30d8485261",
+      "new_sha256": "d84a787432466062e127df0e0a1193001ec2b1d64c7fb193936c6d30d8485261",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/thesis-candidate/07-hko.tex",
+      "new": "thesis/candidate/recovered/thesis-candidate/07-hko.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 1837,
+      "recorded_md5": "0f7c8c772d65bfb61f6b49601ef1f111",
+      "current_md5_matches_record": true,
+      "old_sha256": "30248f872a1bee69adfeefca128246fb49642bfefb6d08b33dea3c83b499452c",
+      "new_sha256": "2f41a94f9274fb1d4df5820289b798a328f7616bc79063888389c5d5d985996a",
+      "path_rewrites": [
+        {
+          "old": ".git/codex/thesis-candidate/hko-lemma-geometry.tex",
+          "new": "recovered/thesis-candidate/hko-lemma-geometry.tex"
+        },
+        {
+          "old": ".git/codex/thesis-candidate/hko-lemma-bounds.tex",
+          "new": "recovered/thesis-candidate/hko-lemma-bounds.tex"
+        },
+        {
+          "old": ".git/codex/thesis-candidate/hko-lemma-conclusion.tex",
+          "new": "recovered/thesis-candidate/hko-lemma-conclusion.tex"
+        },
+        {
+          "old": ".git/codex/hko-writing/sections-readable.tex",
+          "new": "recovered/hko-writing/sections-readable.tex"
+        }
+      ]
+    },
+    {
+      "old": ".git/codex/thesis-candidate/09-certificate.tex",
+      "new": "thesis/candidate/recovered/thesis-candidate/09-certificate.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 8777,
+      "recorded_md5": "55397f7831a0408da3db49318d3a29e4",
+      "current_md5_matches_record": true,
+      "old_sha256": "51208eaa09822ec2f10c06ad2bfd57d96ca9ba0151c4a18d093652e0d9715137",
+      "new_sha256": "51208eaa09822ec2f10c06ad2bfd57d96ca9ba0151c4a18d093652e0d9715137",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/thesis-candidate/09-pentagon.tex",
+      "new": "thesis/candidate/recovered/thesis-candidate/09-pentagon.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 1252,
+      "recorded_md5": "a2cdcdbfdb58df74df528ec31b2bda60",
+      "current_md5_matches_record": true,
+      "old_sha256": "271b9b1464185302f5c5bc5b4c019c7f7d5e654c92b13d9d5291eb310730eeee",
+      "new_sha256": "8a64d94bf7f1e874f8dcc749d861b4ebad316e8a391d9d8e43f4eff8623a3482",
+      "path_rewrites": [
+        {
+          "old": ".git/codex/thesis-candidate/09-certificate.tex",
+          "new": "recovered/thesis-candidate/09-certificate.tex"
+        }
+      ]
+    },
+    {
+      "old": ".git/codex/thesis-candidate/14-conclusion.tex",
+      "new": "thesis/candidate/recovered/thesis-candidate/14-conclusion.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 3118,
+      "recorded_md5": "15c7cd190e696682cbdc9ab7b8a6b459",
+      "current_md5_matches_record": true,
+      "old_sha256": "fefd759143ea2cec78a810e87499cd5bb7e135464cc74c6778496e6a58ec8926",
+      "new_sha256": "fefd759143ea2cec78a810e87499cd5bb7e135464cc74c6778496e6a58ec8926",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/thesis-candidate/a-datascience-results.tex",
+      "new": "thesis/candidate/recovered/thesis-candidate/a-datascience-results.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 7380,
+      "recorded_md5": "a020d7d5a55b8cff5e11316d302dbd18",
+      "current_md5_matches_record": true,
+      "old_sha256": "b4f44657adfb1357627aa5c927bdd6098503246f5571e4b7015712c28cbb697e",
+      "new_sha256": "b4f44657adfb1357627aa5c927bdd6098503246f5571e4b7015712c28cbb697e",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/thesis-candidate/additional.bib",
+      "new": "thesis/candidate/recovered/thesis-candidate/additional.bib",
+      "category": "bibliography",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 2011,
+      "recorded_md5": "464a2e6e178473907cff53919090381e",
+      "current_md5_matches_record": true,
+      "old_sha256": "5128cde0a8704aec083f3c678a666b99ae493d96b5799dcbeef42eb71fe315db",
+      "new_sha256": "5128cde0a8704aec083f3c678a666b99ae493d96b5799dcbeef42eb71fe315db",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/thesis-candidate/hko-lemma-bounds.tex",
+      "new": "thesis/candidate/recovered/thesis-candidate/hko-lemma-bounds.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 7572,
+      "recorded_md5": "c6f9e0697612da63b4fafaad888e9d82",
+      "current_md5_matches_record": true,
+      "old_sha256": "245dbcf45eaacf8b7a04163011765feac42652c4b0c9caddb12f6a1287648c4b",
+      "new_sha256": "245dbcf45eaacf8b7a04163011765feac42652c4b0c9caddb12f6a1287648c4b",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/thesis-candidate/hko-lemma-conclusion.tex",
+      "new": "thesis/candidate/recovered/thesis-candidate/hko-lemma-conclusion.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 5156,
+      "recorded_md5": "2f9e5a7b03ebbcc45a8bb01e2fcf738e",
+      "current_md5_matches_record": true,
+      "old_sha256": "647033239f33d380153d924a0e7a689e483b7b348c3bd0609676e1e3cf9debeb",
+      "new_sha256": "6b2a3c659bf9d129f0b6ff183ab37e39dcb45a09a37d1faef8afdf3a9980c423",
+      "path_rewrites": [
+        {
+          "old": ".git/codex/hko-figures/upper-bound-mechanisms.pdf",
+          "new": "recovered/hko-figures/upper-bound-mechanisms.pdf"
+        },
+        {
+          "old": ".git/codex/hko-figures/symmetry-extension.pdf",
+          "new": "recovered/hko-figures/symmetry-extension.pdf"
+        }
+      ]
+    },
+    {
+      "old": ".git/codex/thesis-candidate/hko-lemma-geometry.tex",
+      "new": "thesis/candidate/recovered/thesis-candidate/hko-lemma-geometry.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 6577,
+      "recorded_md5": "f71631b3e09be13d72b082b42f880380",
+      "current_md5_matches_record": true,
+      "old_sha256": "ff101a2e12ca0c38a3484f7b170ec35f7ddd71e3af7f9db1903db482e7c2a10b",
+      "new_sha256": "ff101a2e12ca0c38a3484f7b170ec35f7ddd71e3af7f9db1903db482e7c2a10b",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/thesis-candidate/main.tex",
+      "new": "thesis/candidate/main.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 2577,
+      "recorded_md5": "6b1287fca4ab6538438e8f5e52db6370",
+      "current_md5_matches_record": true,
+      "old_sha256": "540013ba3f163fd59730c2a54cf815bc3aad172d1d04d5949e9e6bc328e7e5fc",
+      "new_sha256": "9c308461c6ffa674f7255cce66a8f4a7ca976ff10cda6f05be0adc556082924a",
+      "path_rewrites": [
+        {
+          "old": "/workspaces/msc-math/.git/codex/thesis-candidate/additional.bib",
+          "new": "recovered/thesis-candidate/additional.bib"
+        },
+        {
+          "old": ".git/codex/thesis-candidate/00-abstract.tex",
+          "new": "recovered/thesis-candidate/00-abstract.tex"
+        },
+        {
+          "old": ".git/codex/thesis-candidate/01-introduction.tex",
+          "new": "recovered/thesis-candidate/01-introduction.tex"
+        },
+        {
+          "old": ".git/codex/thesis-candidate/02-preliminaries.tex",
+          "new": "recovered/thesis-candidate/02-preliminaries.tex"
+        },
+        {
+          "old": ".git/codex/thesis-candidate/04-quadratic-program.tex",
+          "new": "recovered/thesis-candidate/04-quadratic-program.tex"
+        },
+        {
+          "old": ".git/codex/thesis-candidate/05-flow-graph.tex",
+          "new": "recovered/thesis-candidate/05-flow-graph.tex"
+        },
+        {
+          "old": ".git/codex/thesis-candidate/06-variation.tex",
+          "new": "recovered/thesis-candidate/06-variation.tex"
+        },
+        {
+          "old": ".git/codex/thesis-candidate/07-hko.tex",
+          "new": "recovered/thesis-candidate/07-hko.tex"
+        },
+        {
+          "old": ".git/codex/ds-first-wave/writing/chapter-opening-v2.tex",
+          "new": "recovered/ds-first-wave/writing/chapter-opening-v2.tex"
+        },
+        {
+          "old": ".git/codex/thesis-candidate/09-pentagon.tex",
+          "new": "recovered/thesis-candidate/09-pentagon.tex"
+        },
+        {
+          "old": ".git/codex/ai-writing/chapter.tex",
+          "new": "recovered/ai-writing/chapter.tex"
+        },
+        {
+          "old": ".git/codex/thesis-candidate/14-conclusion.tex",
+          "new": "recovered/thesis-candidate/14-conclusion.tex"
+        },
+        {
+          "old": ".git/codex/thesis-candidate/a-datascience-results.tex",
+          "new": "recovered/thesis-candidate/a-datascience-results.tex"
+        },
+        {
+          "old": ".git/codex/thesis-candidate/pentagon-source.tex",
+          "new": "recovered/thesis-candidate/pentagon-source.tex"
+        },
+        {
+          "old": ".git/codex/thesis-candidate/pentagon-diagnostics.tex",
+          "new": "recovered/thesis-candidate/pentagon-diagnostics.tex"
+        },
+        {
+          "old": ".git/codex/hko-cas-appendix/hko-cas-appendix.tex",
+          "new": "recovered/hko-cas-appendix/hko-cas-appendix.tex"
+        }
+      ]
+    },
+    {
+      "old": ".git/codex/thesis-candidate/pentagon-diagnostics.tex",
+      "new": "thesis/candidate/recovered/thesis-candidate/pentagon-diagnostics.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 3443,
+      "recorded_md5": "c0c2ada18ecdb4b79239b6d8cbb30dc2",
+      "current_md5_matches_record": true,
+      "old_sha256": "6fc43721a1c798ffb4539b03668e087e3250f9aae6234a9316f86c0bc8eccb36",
+      "new_sha256": "6fc43721a1c798ffb4539b03668e087e3250f9aae6234a9316f86c0bc8eccb36",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/thesis-candidate/pentagon-source.tex",
+      "new": "thesis/candidate/recovered/thesis-candidate/pentagon-source.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": false,
+      "bytes_before": 10844,
+      "recorded_md5": "80e5987a47a1cf8b18c14f6cf63c135d",
+      "current_md5_matches_record": true,
+      "old_sha256": "2fa4d5bda5e680e6f568c5e307e1c4ba56ca678cec5622b9aacd3e023eb17455",
+      "new_sha256": "2fa4d5bda5e680e6f568c5e307e1c4ba56ca678cec5622b9aacd3e023eb17455",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/02-preliminaries-convex-hamiltonian-language.tex",
+      "new": "thesis/candidate/legacy/02-preliminaries-convex-hamiltonian-language.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 2951,
+      "recorded_md5": "4d5d3bf25c5b2983ae050a41adac68be",
+      "current_md5_matches_record": true,
+      "old_sha256": "57e102e544ca8525dafea8d4d0e0986cac653e9000b9765c7b3ca22253b44823",
+      "new_sha256": "57e102e544ca8525dafea8d4d0e0986cac653e9000b9765c7b3ca22253b44823",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/02-preliminaries-lagrangian-products.tex",
+      "new": "thesis/candidate/legacy/02-preliminaries-lagrangian-products.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 1539,
+      "recorded_md5": "1bb7007dae4a5c6d98110c76d9631a69",
+      "current_md5_matches_record": true,
+      "old_sha256": "5c3a5d5c8e5fa672f7fcf28d32a2710593369b1ef816013c631205757b2b9ad4",
+      "new_sha256": "5c3a5d5c8e5fa672f7fcf28d32a2710593369b1ef816013c631205757b2b9ad4",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/02-preliminaries-polytope-input-language.tex",
+      "new": "thesis/candidate/legacy/02-preliminaries-polytope-input-language.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 1885,
+      "recorded_md5": "8f8b876852a04174221d7311f8c060a8",
+      "current_md5_matches_record": true,
+      "old_sha256": "10660d042d029b2a14a8a7edb9aa04c2eb1e74071c1799298876e3521ccddb49",
+      "new_sha256": "10660d042d029b2a14a8a7edb9aa04c2eb1e74071c1799298876e3521ccddb49",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/03-generalized-reeb-orbits-definition.tex",
+      "new": "thesis/candidate/legacy/03-generalized-reeb-orbits-definition.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 2834,
+      "recorded_md5": "4342d89d553266d584783cde27926a4d",
+      "current_md5_matches_record": true,
+      "old_sha256": "d8894c6ee56bc2bf47b4f820766cb2df88be080d37baa9767ac6f2413a8234ef",
+      "new_sha256": "d8894c6ee56bc2bf47b4f820766cb2df88be080d37baa9767ac6f2413a8234ef",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/03-generalized-reeb-orbits-polytopes.tex",
+      "new": "thesis/candidate/legacy/03-generalized-reeb-orbits-polytopes.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 892,
+      "recorded_md5": "e517f411c3ef711ce6f28d075cc2105f",
+      "current_md5_matches_record": true,
+      "old_sha256": "005f7db7d41335e3db63ef2220b49a98c4bc1285ae554f60dd7461f95103e77c",
+      "new_sha256": "005f7db7d41335e3db63ef2220b49a98c4bc1285ae554f60dd7461f95103e77c",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/03-generalized-reeb-orbits-simple-minimizers.tex",
+      "new": "thesis/candidate/legacy/03-generalized-reeb-orbits-simple-minimizers.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 12520,
+      "recorded_md5": "009c2c53d19c840db9d0ce643a00e0f0",
+      "current_md5_matches_record": true,
+      "old_sha256": "e7f2f9dcc7da162e13841814ed5c8f1fb540c05b7c04cf7d09b95776039056a9",
+      "new_sha256": "e7f2f9dcc7da162e13841814ed5c8f1fb540c05b7c04cf7d09b95776039056a9",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/03-generalized-reeb-orbits-words-dwell-times-closure.tex",
+      "new": "thesis/candidate/legacy/03-generalized-reeb-orbits-words-dwell-times-closure.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 7542,
+      "recorded_md5": "4b93e28608df2464678a84d9d826e0a5",
+      "current_md5_matches_record": true,
+      "old_sha256": "d0ad3e5768c96e963f8e23406185153f115213b6a56fa74284261242f0f602fa",
+      "new_sha256": "d0ad3e5768c96e963f8e23406185153f115213b6a56fa74284261242f0f602fa",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/05-flow-graph-ch2021-background-comparison.tex",
+      "new": "thesis/candidate/legacy/05-flow-graph-ch2021-background-comparison.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 1819,
+      "recorded_md5": "4bd95b9cf6b65a24c86f018a89c6163b",
+      "current_md5_matches_record": true,
+      "old_sha256": "d9f2931d32aa2011eb119be13efc30d0608f591317ea29e78e47a4eef4e0cbaf",
+      "new_sha256": "d9f2931d32aa2011eb119be13efc30d0608f591317ea29e78e47a4eef4e0cbaf",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/09-rotated-regular-polygons-empirical-curves.tex",
+      "new": "thesis/candidate/legacy/09-rotated-regular-polygons-empirical-curves.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 1214,
+      "recorded_md5": "52f9d835fdb7765f40a1eda17b55b0af",
+      "current_md5_matches_record": true,
+      "old_sha256": "a8adbddf3db2bd53f29fc7d4a0d24fc293ad1c3622ef2ac7b5f54d9995af4b89",
+      "new_sha256": "a8adbddf3db2bd53f29fc7d4a0d24fc293ad1c3622ef2ac7b5f54d9995af4b89",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/09-rotated-regular-polygons-pentagon-profile-theorem.tex",
+      "new": "thesis/candidate/legacy/09-rotated-regular-polygons-pentagon-profile-theorem.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 3231,
+      "recorded_md5": "621ddc60e7fd1e4af2434fcf1faec649",
+      "current_md5_matches_record": true,
+      "old_sha256": "9f225a43d4b3f3d2913d5425069f9aad70014739298b8f226180816d8bf7ba41",
+      "new_sha256": "9f225a43d4b3f3d2913d5425069f9aad70014739298b8f226180816d8bf7ba41",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/10-visualization-3d.tex",
+      "new": "thesis/candidate/legacy/10-visualization-3d.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 2874,
+      "recorded_md5": "7efebe16ee0b8fd0c603a37429c9edff",
+      "current_md5_matches_record": true,
+      "old_sha256": "007d86dfdedc34bc3a94f551fb4420b7a0d699710221480e77ddfd9900a8c750",
+      "new_sha256": "007d86dfdedc34bc3a94f551fb4420b7a0d699710221480e77ddfd9900a8c750",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/11-numerics.tex",
+      "new": "thesis/candidate/legacy/11-numerics.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 8990,
+      "recorded_md5": "e613f64fb5824863712ca5bf81159bca",
+      "current_md5_matches_record": true,
+      "old_sha256": "9c9d8aba825672cfd768524d4de0e286496a5986d9eb34c040fe682062a86713",
+      "new_sha256": "9c9d8aba825672cfd768524d4de0e286496a5986d9eb34c040fe682062a86713",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/12-published-code-data.tex",
+      "new": "thesis/candidate/legacy/12-published-code-data.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 3697,
+      "recorded_md5": "4c6e33a86589f38fc37c55790d673b9f",
+      "current_md5_matches_record": true,
+      "old_sha256": "1ce07d5904049e466795dd47a40dc906d05cb77e01a95b2e5c94b2ebc9bd09dc",
+      "new_sha256": "1ce07d5904049e466795dd47a40dc906d05cb77e01a95b2e5c94b2ebc9bd09dc",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/ai-use-disclosure.tex",
+      "new": "thesis/candidate/legacy/ai-use-disclosure.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 1694,
+      "recorded_md5": "e46e6f093b96033acb7170243736bd02",
+      "current_md5_matches_record": true,
+      "old_sha256": "3919ea6c8a7dd2f925c165472876176b5e9fa4161ac336767c4799dea7e1ce2b",
+      "new_sha256": "3919ea6c8a7dd2f925c165472876176b5e9fa4161ac336767c4799dea7e1ce2b",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/bibliography.bib",
+      "new": "thesis/candidate/legacy/bibliography.bib",
+      "category": "bibliography",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 5453,
+      "recorded_md5": "a8665d128f27248706b2eca8df735ebc",
+      "current_md5_matches_record": true,
+      "old_sha256": "c98ae0d18c67d51f7f32969487f7086c79af75a79a99cd44a6dbd50fc93a88f3",
+      "new_sha256": "c98ae0d18c67d51f7f32969487f7086c79af75a79a99cd44a6dbd50fc93a88f3",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/figures/datascience/derivative-and-kkt-scale.pdf",
+      "new": "thesis/candidate/legacy/figures/datascience/derivative-and-kkt-scale.pdf",
+      "category": "figure",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 21375,
+      "recorded_md5": "e5657eca1ec0fea98999620e4c641fcf",
+      "current_md5_matches_record": true,
+      "old_sha256": "5e34bb8153986657a76525d78d8f9f142da4b8f06702bed143661773698c67da",
+      "new_sha256": "5e34bb8153986657a76525d78d8f9f142da4b8f06702bed143661773698c67da",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/figures/datascience/hko-recovery-by-source-distance.pdf",
+      "new": "thesis/candidate/legacy/figures/datascience/hko-recovery-by-source-distance.pdf",
+      "category": "figure",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 23260,
+      "recorded_md5": "35e41927875b0b3fef8bbcbb1a722d9a",
+      "current_md5_matches_record": true,
+      "old_sha256": "86b8204c9ddd2b6a4817c694675bffcdf726860d77420846e6d09f07e2132477",
+      "new_sha256": "86b8204c9ddd2b6a4817c694675bffcdf726860d77420846e6d09f07e2132477",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/figures/flow-graph/flow-graph-f6-tube-sequence.pdf",
+      "new": "thesis/candidate/legacy/figures/flow-graph/flow-graph-f6-tube-sequence.pdf",
+      "category": "figure",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 22292,
+      "recorded_md5": "a0ecaff7a722dfb26cb966bf98bc0903",
+      "current_md5_matches_record": true,
+      "old_sha256": "6cc41de40e349accf46342d873422041656b19c0f091266c0747430d3a2851d4",
+      "new_sha256": "6cc41de40e349accf46342d873422041656b19c0f091266c0747430d3a2851d4",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/figures/foundations/characteristic-normalization.pdf",
+      "new": "thesis/candidate/legacy/figures/foundations/characteristic-normalization.pdf",
+      "category": "figure",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 25460,
+      "recorded_md5": "d92635572bf1c7a5d4f343ae6fbe21ef",
+      "current_md5_matches_record": true,
+      "old_sha256": "7dbfab3a3851060baa55b55d54bfaa6d57861a8ef3defe02ad4e5ecdab668cee",
+      "new_sha256": "7dbfab3a3851060baa55b55d54bfaa6d57861a8ef3defe02ad4e5ecdab668cee",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/figures/foundations/facet-polarity.pdf",
+      "new": "thesis/candidate/legacy/figures/foundations/facet-polarity.pdf",
+      "category": "figure",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 45000,
+      "recorded_md5": "1c66b892d949974137a09ff58b120856",
+      "current_md5_matches_record": true,
+      "old_sha256": "676ca38e254b1ca5e4841fa285bd097baeccd3462d5789f1639642c73e1bc9a6",
+      "new_sha256": "676ca38e254b1ca5e4841fa285bd097baeccd3462d5789f1639642c73e1bc9a6",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/figures/foundations/simple-minimizer-pipeline.pdf",
+      "new": "thesis/candidate/legacy/figures/foundations/simple-minimizer-pipeline.pdf",
+      "category": "figure",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 69139,
+      "recorded_md5": "f6548db6f2dd4eebfa26407daf8107e1",
+      "current_md5_matches_record": true,
+      "old_sha256": "4041f32e8962206a880d186f90eed2ec4179138f9c7ee631cdbf81c4f2b2727c",
+      "new_sha256": "4041f32e8962206a880d186f90eed2ec4179138f9c7ee631cdbf81c4f2b2727c",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/figures/foundations/word-closure-basepoint.pdf",
+      "new": "thesis/candidate/legacy/figures/foundations/word-closure-basepoint.pdf",
+      "category": "figure",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 37123,
+      "recorded_md5": "48b68b691edfd1817cacddf9e2c17842",
+      "current_md5_matches_record": true,
+      "old_sha256": "0472dcfc7b99016319065f45d6dcda102916084356b20739e46f283d56cd2df5",
+      "new_sha256": "0472dcfc7b99016319065f45d6dcda102916084356b20739e46f283d56cd2df5",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/figures/visualization/viz-hko-pentagon-min-orbit.png",
+      "new": "thesis/candidate/legacy/figures/visualization/viz-hko-pentagon-min-orbit.png",
+      "category": "figure",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 22832,
+      "recorded_md5": "dae2b14bdedef5718f9697e369fe3ba6",
+      "current_md5_matches_record": true,
+      "old_sha256": "6f6ec2b8173e454c45827ec0e340b470cbf3150355517284e3156889b2e5473f",
+      "new_sha256": "6f6ec2b8173e454c45827ec0e340b470cbf3150355517284e3156889b2e5473f",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/figures/visualization/viz-hypercube-ridges.png",
+      "new": "thesis/candidate/legacy/figures/visualization/viz-hypercube-ridges.png",
+      "category": "figure",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 285012,
+      "recorded_md5": "1ac0835ddc2dc52b2040d362f70352a3",
+      "current_md5_matches_record": true,
+      "old_sha256": "b3d9b189c0796274b074bac92e4c55d012fa208240d90327241471fceb429c03",
+      "new_sha256": "b3d9b189c0796274b074bac92e4c55d012fa208240d90327241471fceb429c03",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/preamble.tex",
+      "new": "thesis/candidate/legacy/preamble.tex",
+      "category": "latex-source",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 1114,
+      "recorded_md5": "893ad56dae7ddae4f7b4246d9fcc3d12",
+      "current_md5_matches_record": true,
+      "old_sha256": "3dd932fb29bd8a7c44f5f7a8fef28453caca276755925e43129e097ff97fc566",
+      "new_sha256": "3dd932fb29bd8a7c44f5f7a8fef28453caca276755925e43129e097ff97fc566",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/working/rotated-regular-polygons/enumerated-kkt-branch-landscape.pdf",
+      "new": "thesis/candidate/legacy/working/rotated-regular-polygons/enumerated-kkt-branch-landscape.pdf",
+      "category": "figure",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 40169,
+      "recorded_md5": "08f84cbd30461e6a321aade29f2a5830",
+      "current_md5_matches_record": true,
+      "old_sha256": "1e2f6c7f666ebf178d693201c41027b7c3669f250a9b15208bce29aac00b843f",
+      "new_sha256": "1e2f6c7f666ebf178d693201c41027b7c3669f250a9b15208bce29aac00b843f",
+      "path_rewrites": []
+    },
+    {
+      "old": "thesis/working/rotated-regular-polygons/lagrangian-products-5x5.png",
+      "new": "thesis/candidate/legacy/working/rotated-regular-polygons/lagrangian-products-5x5.png",
+      "category": "figure",
+      "needed_for_pdf_build": true,
+      "old_tracked": true,
+      "bytes_before": 53137,
+      "recorded_md5": "2f21b7203e811a5cd10c947172646706",
+      "current_md5_matches_record": true,
+      "old_sha256": "dd9e6b8eb06545f4b2e5d5cc552f2bede021ea4a9ddcecb673fe25cd34152e99",
+      "new_sha256": "dd9e6b8eb06545f4b2e5d5cc552f2bede021ea4a9ddcecb673fe25cd34152e99",
+      "path_rewrites": []
+    },
+    {
+      "old": ".git/codex/hko-figures/make_figures.py",
+      "new": "thesis/candidate/support/hko-figures/make_figures.py",
+      "category": "historical-generator-or-provenance",
+      "needed_for_pdf_build": false,
+      "old_tracked": false,
+      "old_sha256": "471a221bcaf7228de78f6e7a85362ccd9845a9c04737f3438a9c1b812c0df0de",
+      "new_sha256": "471a221bcaf7228de78f6e7a85362ccd9845a9c04737f3438a9c1b812c0df0de",
+      "recorded_md5": null,
+      "note": "Not a recorded PDF input; not freeze-verified or executed."
+    },
+    {
+      "old": ".git/codex/hko-figures/README.md",
+      "new": "thesis/candidate/support/hko-figures/README.md",
+      "category": "historical-generator-or-provenance",
+      "needed_for_pdf_build": false,
+      "old_tracked": false,
+      "old_sha256": "d65cc437700769e849f5a946ad3c00bfc54b4c8461afdda723071eb9511451db",
+      "new_sha256": "d65cc437700769e849f5a946ad3c00bfc54b4c8461afdda723071eb9511451db",
+      "recorded_md5": null,
+      "note": "Not a recorded PDF input; not freeze-verified or executed."
+    },
+    {
+      "old": ".git/codex/hko-cas-appendix/README.md",
+      "new": "thesis/candidate/support/hko-cas-appendix/README.md",
+      "category": "historical-generator-or-provenance",
+      "needed_for_pdf_build": false,
+      "old_tracked": false,
+      "old_sha256": "409f5b39b52818bd38127157dd9a37506d4d1bdd19bbf4f2df55285fa781f679",
+      "new_sha256": "409f5b39b52818bd38127157dd9a37506d4d1bdd19bbf4f2df55285fa781f679",
+      "recorded_md5": null,
+      "note": "Not a recorded PDF input; not freeze-verified or executed."
+    },
+    {
+      "old": ".git/codex/hko-writing-input/exact-fixed-values.json",
+      "new": "thesis/candidate/support/hko-writing-input/exact-fixed-values.json",
+      "category": "historical-generator-or-provenance",
+      "needed_for_pdf_build": false,
+      "old_tracked": false,
+      "old_sha256": "1db66192285eb3d7406aaaa1f3f321f65abf02c56b7c939724546561518b3900",
+      "new_sha256": "1db66192285eb3d7406aaaa1f3f321f65abf02c56b7c939724546561518b3900",
+      "recorded_md5": null,
+      "note": "Not a recorded PDF input; not freeze-verified or executed."
+    }
+  ]
+}

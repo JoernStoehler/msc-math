@@ -1,0 +1,92 @@
+L15 2026-09-14T12:26:30.969Z developer 
+<multi_agent_role>You are an agent in a team of agents collaborating to complete a task.
+
+You can spawn sub-agents to handle subtasks, and those sub-agents can spawn their own sub-agents. All agents in the team, including the agents that you can assign tasks to, are equally intelligent and capable, and have access to the same set of tools.
+
+You can use `spawn_agent` to create a new agent, `followup_task` to give an existing agent a new task and trigger a turn, and `send_message` to pass a message to a running agent.
+`send_message` calls may be read by a human, so ensure they are legible. Always put proper spaces between words and/or numbers.
+Child agents can also spawn their own sub-agents.
+
+When you provide a response in the final channel, that content is immediately delivered back to your parent agent.
+In addition, your final answer may be read by a human, so ensure it is legible.
+
+You will receive messages in the analysis channel in the form:
+```
+Message Type: NEW_TASK | MESSAGE | FINAL_ANSWER
+Task name: <recipient>
+Sender: <author>
+Payload:
+<payload text>
+```
+You may also see them addressed as to=/root/..., which indicates your identity is /root/...
+
+Note that collaboration tools cannot be called from inside `functions.exec`. Call `spawn_agent`, `send_message`, `followup_task`, `wait_agent`, `interrupt_agent`, and `list_agents` only as direct tool calls using the recipient shown in their tool definitions, such as `to=functions.collaboration.spawn_agent`, since they are intentionally absent from the `functions.exec` `tools.*` namespace. Available tools in `functions.exec` are explicitly described with a `tools` namespace in the developer message.
+
+All agents share the same directory. In detail:
+- All agents have access to the same container and filesystem as you.
+- A
+
+L22 2026-09-14T12:26:31.018Z INTERNAL /root -> /root/ds_opportunities encrypted=True
+
+L85 2026-09-14T12:27:47.584Z INTERNAL /root/ds_readiness -> /root/ds_opportunities encrypted=True
+
+L122 2026-09-14T12:31:19.265Z INTERNAL /root/ds_readiness -> /root/ds_opportunities encrypted=True
+
+L139 2026-09-14T12:32:04.554Z assistant final_answer
+Report: [.git/codex/ds-first-wave/opportunities/report.md](/workspaces/msc-math/.git/codex/ds-first-wave/opportunities/report.md).
+
+Ranked candidates:
+
+1. **Paired tangentialization:** baseline/q/p/both intervention; 64-target ceiling.
+2. **Orientation versus fresh IID allocation:** prospective search comparison; 128-target ceiling.
+3. **Diagonal CEM versus IID:** worthwhile execution-incomplete redo; 1,536-target ceiling.
+
+Reserves cover a new centered-vertex symplectic representation and wider support-height sampling. Each includes inputs, enablement, comparator, stopping rule and retained outputs.
+
+Key finding: the retained AMS adapter uses independent proposals; cloning cannot improve best-found quality over evaluating the same IID stream. It adds no independent candidate-search bet.
+
+Readiness measurements are incorporated. Arbitrary-body evaluation remains the shared blocker for the first two candidates. No targets, fits, tracked edits or launches performed.
+
+L146 2026-09-14T12:37:45.316Z INTERNAL /root -> /root/ds_opportunities encrypted=True
+
+L195 2026-09-14T12:41:18.562Z assistant final_answer
+Completed [review-and-launch-contracts.md](/workspaces/msc-math/.git/codex/ds-first-wave/opportunities/review-and-launch-contracts.md).
+
+Neither pilot was invalidated. Contracts now freeze seeds, geometry panels, conditioning, normalization, budget accounting and completion requirements.
+
+Synthesis review found no material error in checked numerical definitions. Main corrections: preserve broad AI-assisted exploration, remove unsupported runtime framing, and identify the P2 ablation’s actual estimator.
+
+No scientific calls, fits or sibling edits.
+
+L202 2026-09-14T12:42:01.495Z INTERNAL /root -> /root/ds_opportunities encrypted=True
+
+L226 2026-09-14T12:42:23.591Z INTERNAL /root/ds_readiness -> /root/ds_opportunities encrypted=True
+
+L272 2026-09-14T12:44:54.472Z assistant final_answer
+[Adapter review complete](/workspaces/msc-math/.git/codex/ds-first-wave/opportunities/adapter-review.md). No blocking defect found.
+
+Pilot consumers must enforce complete result grids, charge failed requests and full evaluator time, verify geometric controls, and distinguish certified capacity bounds from the numerical ratio.
+
+No builds or target calls performed.
+
+L279 2026-09-14T12:52:12.517Z INTERNAL /root -> /root/ds_opportunities encrypted=True
+
+L289 2026-09-14T12:52:38.424Z INTERNAL /root/ds_synthesis -> /root/ds_opportunities encrypted=True
+
+L310 2026-09-14T12:54:42.146Z INTERNAL /root/ds_synthesis -> /root/ds_opportunities encrypted=True
+
+L398 2026-09-14T12:59:10.422Z assistant final_answer
+Completed [orientation allocation pilot](/workspaces/msc-math/experiments/sys-datascience/methods/orientation-allocation/README.md): **124/124 targets valid**, 128 charged memberships, all controls passed.
+
+| Block | IID best | Orientation best | Difference |
+|---|---:|---:|---:|
+| 3x3-0 | .507761 | .477545 | −.030215 |
+| 3x3-1 | .610268 | .563753 | −.046515 |
+| 4x4-0 | .773536 | .529285 | −.244251 |
+| 4x4-1 | .636202 | .377470 | −.258732 |
+
+Orientation improved three starting bodies, but IID won every allocation comparison and cost less. This is a bounded negative for the frozen policy.
+
+Generation took **.57s**; serialized evaluation **13.29s**, without failures or timeouts. Commands, accounting, controls and retained artifacts are linked from the README. Sibling review is pending; no further evaluations planned.
+
+L405 2026-09-14T12:59:12.159Z INTERNAL /root -> /root/ds_opportunities encrypted=True

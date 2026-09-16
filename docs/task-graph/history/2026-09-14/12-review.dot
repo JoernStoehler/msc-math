@@ -1,0 +1,13 @@
+digraph review {
+  graph [rankdir=BT, label="12 / candidate review outcomes", labelloc=t];
+  node [shape=box];
+  review [label="CRUX: candidate review", shape=diamond];
+  accept [label="PASS-READY"];
+  repair [label="LOCAL DEFECTS"];
+  support [label="SUPPORT FAILURE"];
+  method [label="SYSTEMIC FAILURE\nswitch method"];
+  review -> accept [label="acceptable"];
+  review -> repair [label="local"];
+  review -> support [label="scientific"];
+  review -> method [label="systemic"];
+}

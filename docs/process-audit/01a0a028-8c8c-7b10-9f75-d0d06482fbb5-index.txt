@@ -1,0 +1,446 @@
+L3 2026-09-14T13:43:27.265Z developer 
+<skills_instructions>
+## Skills
+A skill is a set of local instructions to follow that is stored in a `SKILL.md` file. Below is the list of skills that can be used. Each entry includes a name, description, and a short path that can be expanded into an absolute path using the skill roots table.
+### Skill roots
+- `r0` = `/home/agent/.agents/skills`
+- `r1` = `/home/agent/.codex/skills/.system`
+- `r2` = `/home/agent/.codex/plugins/cache/openai-bundled/sites/0.1.66/skills`
+- `r3` = `/home/agent/.codex/plugins/cache/openai-bundled`
+- `r4` = `/workspaces/msc-math/.agents/skills`
+### Available skills
+- imagegen: Generate or edit raster images when the task benefits from AI-created bitmap visuals such as photos, illustrations, textures, sprites, mockups, or transparent-background cutouts. Use when Codex should create a brand-new image, transform an existing image, or derive visual variants from references, and the output should be a bitmap asset rather than repo-native code or vector. Do not use when the task is better handled by editing existing SVG/vector/code-native assets, extending an established icon or logo system, or building the visual directly in HTML/CSS/canvas. (file: r1/imagegen/SKILL.md)
+- openai-docs: Use for Codex models/pricing, scheduled tasks, skills, settings, setup, troubleshooting, customization, automations, and self-knowledge—including 'you,' 'your,' 'this app,' or 'this coding agent' when they refer to Codex—and for OpenAI APIs/products and ChatGPT Work. Also use for model choice/migration, prompting, SDKs, Responses, Realtime, agents, evals, and Chat/Work/Codex comparisons. Do not use for generic app/software tasks that merely mention Codex. (file: r1/openai-docs/SKILL.md)
+- plugin-creator: Create and scaffold plugin directories for Codex with a required
+
+L4 2026-09-14T13:43:27.266Z developer 
+You are an agent in a team of agents collaborating to complete a task.
+
+You can spawn sub-agents to handle subtasks, and those sub-agents can spawn their own sub-agents. All agents in the team, including the agents that you can assign tasks to, are equally intelligent and capable, and have access to the same set of tools.
+
+You can use `spawn_agent` to create a new agent, `followup_task` to give an existing agent a new task and trigger a turn, and `send_message` to pass a message to a running agent.
+Child agents can also spawn their own sub-agents.
+
+When you provide a response in the final channel, that content is immediately delivered back to your parent agent.
+
+You will receive messages in the analysis channel in the form:
+```
+Message Type: NEW_TASK | MESSAGE | FINAL_ANSWER
+Task name: <recipient>
+Sender: <author>
+Payload:
+<payload text>
+```
+You may also see them addressed as to=/root/..., which indicates your identity is /root/...
+
+Note that collaboration tools cannot be called from inside `functions.exec`. Call `spawn_agent`, `send_message`, `followup_task`, `wait_agent`, `interrupt_agent`, and `list_agents` only as direct tool calls using the recipient shown in their tool definitions, such as `to=functions.collaboration.spawn_agent`, since they are intentionally absent from the `functions.exec` `tools.*` namespace. Available tools in `functions.exec` are explicitly described with a `tools` namespace in the developer message.
+
+All agents share the same directory. In detail:
+- All agents have access to the same container and filesystem as you.
+- All agents use the same current working directory.
+- As a result, edits made by one agent are immediately visible to all other agents.
+
+When calling `wait_agent`, prefer longer waits (minutes) to avoid busy polling.
+
+There are 
+
+L10 2026-09-14T13:43:27.315Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L14 2026-09-14T13:43:32.199Z assistant commentary
+I’ll inspect the repository for authoring/review evidence and read the project memory instructions first, then report exact paths and calibration/leakage conclusions without modifying files.
+
+L59 2026-09-14T13:44:08.898Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L112 2026-09-14T13:45:19.599Z assistant final_answer
+Findings for `/root`:
+
+- `memories/authoring-workflow.md` is explicit that the workflow is exploratory, not validated. Its HKO case preserves source locations and one integrated revision, but has no human before/after reading test or final-gate evidence.
+- Frozen authoring pair on branch `archive/hko-authoring-trial-20260907`:
+  - `authoring-trial-evidence/hko-questions-candidate.md`
+  - `authoring-trial-evidence/hko-obstruction-candidate.md`
+  - `authoring-trial-evidence/hko-mechanism-candidate.md`
+  - These are generated candidate texts with source notes; original source text is not preserved byte-for-byte alongside each candidate, only source paths/commit references.
+  - The archive README states Jörn’s formative annotations had not returned. Thus no independent human labels.
+  - Semantic/flow/math reviews were agent reviews; they are not independent proof audits or human reviews. The archive records one real normalization defect (missing squared action), corrected before delivery.
+- Version identity is strongest for `authoring-trial-evidence/revised-preview/`: PDF SHA-256 plus `hko-revised-preview-provenance.json`, source commit `a2e613...`, auxiliary commit, and source-file hashes. It explicitly says the TeX supports construction inspection but does not claim byte-identical rebuilding.
+- Current HKO artifacts in `.git/codex/hko-writing*`:
+  - `.git/codex/hko-writing/opening-preview.pdf`, `opening-review.md`
+  - `.git/codex/hko-writing-input/input-preview.pdf`, `review.md`, `source-hashes.json`
+  - These preserve fresh prose/input artifacts and source hashes. Reviews are bounded internal agent checks; no human labels. The HKO opening review says no theorem rerun or independent finite-certificate certification.
+- Current fresh prose sample:
+  - `.git/codex/ds-first-w
+
+L119 2026-09-14T13:46:55.913Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L123 2026-09-14T13:46:59.718Z assistant commentary
+I’ll inspect the fixed sample’s two rendered pages and TeX source, then write only the requested bounded layout review with artifact hash and explicit limits.
+
+L159 2026-09-14T13:47:45.156Z assistant final_answer
+Created [ds-sample-layout-luna.md](/workspaces/msc-math/.git/codex/review-calibration/ds-sample-layout-luna.md).
+
+Review result: both pages render cleanly—no clipping, overlap, missing glyphs, margin intrusion, or TeX warnings. Page 2 has a large intentional-looking blank lower half (low–moderate layout concern for a polished handout, but no change recommended while the fixed two-page target stands). The report records PDF SHA-256 and explicitly limits conclusions to blind layout inspection, without inferring Jörn’s reaction or PASS readiness.
+
+L166 2026-09-14T13:50:38.455Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L170 2026-09-14T13:50:42.123Z assistant commentary
+I’ll inspect the assembled HKO chapter pages and build log read-only, then report page-specific layout defects and limits without editing or assessing mathematical correctness.
+
+L192 2026-09-14T13:51:03.877Z assistant final_answer
+Visual/layout review of `.git/codex/hko-writing/chapter-page-*.png` and `chapter-preview.log`:
+
+- **Page 1 — low severity:** clean rendering; no clipping/overlap. The proof ends with “at most \(-\eta\)” and continues on page 2, creating a mildly awkward split in the uniform-decrease argument.
+- **Page 2 — moderate:** starts with the dangling continuation “everywhere on that sphere.” More importantly, it ends mid-sentence after “edge normals have arguments”; page 3 begins with the continuation. Keep the paragraph/formula block together if feasible.
+- **Page 3 — low:** clean equations and spacing; no unreadable content or clipping.
+- **Page 4 — low:** dense but legible. The long derivative column vector and adjacent equations fit within margins without overlap.
+- **Page 5 — moderate:** ends mid-sentence at “A maximizing face”; page 6 starts “contains a vertex.” Avoid splitting this proof paragraph across pages if possible.
+- **Page 6 — low/moderate:** proof ends around the upper/middle page, leaving a large blank lower region before the table on page 7. Not a rendering defect, but visually unfinished; rebalance or intentionally start the table earlier only if the fixed chapter pagination allows.
+- **Page 7 — moderate readability:** all 26 table rows fit and appear non-overlapping, but long exact rational entries (especially rows 7–8 and 19–25) are very small and multiline. Consider a landscape/wider table or moving exact values to an appendix while retaining a readable summary; do not silently round values.
+
+The log showed no overfull/underfull, undefined-reference, fatal, or other warning lines. This is layout/rendering inspection only: no mathematical correctness, source provenance, prose quality, or prediction of Jörn’s reaction.
+
+L201 2026-09-14T14:13:59.462Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L205 2026-09-14T14:14:05.635Z assistant commentary
+I’ll audit the fixed pages 1–42 via a temporary contact sheet, inspect any suspect pages at full resolution, and report only concrete layout defects under the stated exclusions.
+
+L299 2026-09-14T14:16:21.011Z assistant final_answer
+Layout audit update (PDF SHA-256 remains `b0a9036b…`):
+
+- Pages 1–41: contact-sheet review found no concrete clipping, overlap, unreadable entries, disconnected captions, or stranded headings. Dense equations/figures remain within margins.
+- Page 42: PDF-rendered page is clean and matches the surrounding pages; no layout defect.
+- Important artifact note: while making a temporary contact sheet, an `xargs montage` invocation accidentally overwrote `page-42.png` with the contact sheet. I immediately regenerated page 42 from the fixed PDF at the same 778×1100 dimensions and restored the file. The PDF itself was never changed.
+- `chapter-preview.log` showed no overfull/underfull, undefined-reference, fatal, or other warning lines.
+
+Limits: visual/layout only; ordinary page continuations and final-page whitespace excluded per instruction; no mathematical, prose, provenance, or human-acceptance judgment.
+
+L306 2026-09-14T14:23:10.355Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L310 2026-09-14T14:23:19.333Z assistant commentary
+I’ll compare the introduction, conclusion, and AI-writing draft for at most three analogous “material distraction” cases, focusing only on reader-task obstruction and any clear mismatch with the two-frame DS design.
+
+L342 2026-09-14T14:24:19.097Z assistant final_answer
+Bounded check findings:
+
+1. `01-introduction.tex`, flow-graph paragraph (“We also develop a flow-graph method…”): this introduces a second algorithm, external attribution, exhaustive-search qualification, rational-arithmetic qualification, and implementation hypotheses while the reader is still trying to understand the primary dual/QP reduction. It diverts the reader from the central capacity-reduction task; retain only a one-sentence signpost here and defer operational qualifications to the flow-graph chapter.
+
+2. `.git/codex/ai-writing/chapter.tex`, opening paragraph: “models became more capable,” “increasingly useful research ideas,” and “longer tasks with fewer interruptions” foreground broad capability/progress claims before the reader knows the chapter’s project-specific lesson. They obstruct the task of understanding what an assessable research outcome is. This is not a claim that the statements are false; they are contextually premature and need evidence or compression.
+
+3. `.git/codex/ai-writing/chapter.tex`, final “connection with training on verifiable outcomes” subsection: the DeepSeek-R1-Zero/R1 training comparison and citation shift attention from the project’s own delegation/checking evidence to external ML history. It obstructs the reader’s task of extracting the practical AI-use conclusion, while adding no project-specific observation beyond the already stated criterion-alignment analogy. Strong candidate for reduction to a brief analogy or removal.
+
+Mismatch with the actual two-frame DS approach: the introduction and conclusion accurately mention proxy selection, interventions, fresh sampling, and adaptive sampling outcomes, but they do not explicitly distinguish Jörn’s originating exploratory “pattern → geometric interpretation/conjecture” frame from 
+
+L349 2026-09-14T14:27:55.553Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L353 2026-09-14T14:28:01.743Z assistant commentary
+I’ll compare the legacy thesis data-science chapter and included files against the revised DS opening, tracing only material stale/conflicting claims and appendix conclusions; no edits or experiment reruns.
+
+L383 2026-09-14T14:29:09.084Z assistant final_answer
+Consistency findings (read-only; no experiment reruns):
+
+1. **Appendix scope is stale relative to the revised chapter frame.**  
+   `thesis/a-datascience-results.tex:3–8` calls the frozen ten-facet local-optimizer comparison part of the “active scope,” and `:10–145` gives it extensive detail. The revised opening (`.git/codex/ds-first-wave/writing/chapter-opening-v2.tex:1–35`, then the selection/geometry storyline) frames the chapter around the two DS frames and the newer selection/intervention/allocation pilots; its source map explicitly says the optimizer companion is omitted. If the appendix remains included (`.git/codex/thesis-candidate/main.tex:68`), readers receive an unexplained older active strand that the revised main text does not introduce or consume. Either label it historical/supplementary or add an explicit bridge and current status.
+
+2. **Sampling interval notation conflicts.**  
+   Appendix `thesis/a-datascience-results.tex:156–160` says the shared height interval is `[0.8,1.2]`; revised opening `.git/codex/ds-first-wave/writing/chapter-opening-v2.tex:35–43` says `[0.8,1.2)`. This changes the sampling law at the endpoint (even if measure-zero), so one canonical notation should be used.
+
+3. **Association direction is lost in the appendix.**  
+   Appendix `thesis/a-datascience-results.tex:180–185` reports only “strongest absolute Spearman … about \(0.938\).” Revised opening `.git/codex/ds-first-wave/writing/chapter-opening-v2.tex:109–116` reports the signed value \(-0.938\) and interprets smaller \(S\) as accompanying larger ratios. If both remain, the appendix should state the signed association (and clarify “absolute” only if comparing multiple features), otherwise a reader cannot connect the appendix result to the revised interpretation.
+
+4. **Historical
+
+L390 2026-09-14T14:57:25.011Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L392 2026-09-14T14:57:25.015Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L396 2026-09-14T14:57:32.834Z assistant commentary
+I’ll build the three explanatory toy schematics in `.git/codex/hko-figures/`, with vector PDFs and PNG previews plus captions/formula notes, then inspect the generated previews for legibility and verify the stated positive relations/maxima algebraically.
+
+L532 2026-09-14T15:02:15.008Z assistant final_answer
+Created `.git/codex/hko-figures/` with:
+
+- `upper-bound-mechanisms.pdf` (vector PDF, SHA-256 `58b324c8…`) and `upper-bound-mechanisms.png` (1850×791): clear 1D envelope plus 2D contour of the three-plane lower envelope, with separated gradient arrows/labels.
+- `symmetry-extension.pdf` (vector PDF, SHA-256 `fc472a10…`) and `symmetry-extension.png` (991×954): \(f(u,v)=1-|u|\), symmetry ridge, transverse slice, and labelled axes/legend.
+- `captions.tex`: concise proposed captions.
+- `README.md`: formulas, positive-relation/maxima checks, \(T=15\)/\(S=25\) boundary, and toy-figure limitations.
+- `make_figures.py`: reproducible generator.
+
+Verified visually after generation. Algebraically verified the 2D gradients sum to \((0,0)\); the envelope is strictly below 1 in every nonzero direction, and both 1D/symmetry toy maxima are at value 1. These are explanatory upper-bound analogies, not actual systolic-ratio plots or equalities.
+
+L539 2026-09-14T15:02:51.275Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L543 2026-09-14T15:03:03.844Z assistant commentary
+I’ll adjust only the figure generator: add an explicit upper-bound colorbar to the contour panel and lift the symmetry/transverse guide lines slightly above the surface so they remain visible, then rerender and recheck.
+
+L565 2026-09-14T15:03:45.065Z assistant final_answer
+Updated and rerendered the same filenames.
+
+- `upper-bound-mechanisms.pdf/.png`: right panel now has a labelled colorbar (“lower-envelope upper bound”), making decrease direction explicit; gradient labels/arrows remain separated and readable.
+- `symmetry-extension.pdf/.png`: green \(v=0\) transverse-slice guide is now visibly drawn above the surface; README documents the tiny display-only height offset. Black symmetry ridge remains visible.
+- Final PNG dimensions: 1850×791 and 991×954.
+- Final PDF hashes: `upper-bound-mechanisms.pdf` `2afc5ba8…`; `symmetry-extension.pdf` `3461adb1…`.
+- Rechecked both previews visually; formulas and toy-function interpretation unchanged.
+
+L572 2026-09-14T15:07:08.574Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L576 2026-09-14T15:07:17.534Z assistant commentary
+I’ll inspect the three new HKO lemma files and their neighboring definitions/references for dependency, assumption, notation, and accidental-math changes, without editing or rerunning certificates.
+
+L601 2026-09-14T15:08:15.719Z assistant final_answer
+Read-only integration result: no material accidental mathematical change or broken lemma dependency found.
+
+- `07-hko.tex:16–25` defines Theorem 1 first, then inputs geometry → bounds → conclusion in the correct order.
+- `hko-lemma-geometry.tex` establishes the needed origin-interior/Hausdorff-to-labelled-row chart before smooth volume; its \(a_0\), \(a\), and \(K(a)\) usage is consistent.
+- `hko-lemma-bounds.tex` correctly uses \(T\) as the 15-dimensional symmetry tangent space, with 26 ambient derivative rows of rank 25; the rows’ vanishing on \(T\) plus positive relation are used consistently. The worked section fixes \(a_0\)-weights while differentiating in variable \(a\), and the stated seven-facet word/minor matches prior HKO material.
+- `hko-lemma-conclusion.tex` correctly selects \(S\) with \((\mathbb R^4)^{10}=T\oplus S\), \(\dim S=25\); rank/nullity and compactness yield the uniform negative slope. The IFT symmetry decomposition then correctly supplies equality cases.
+- Toy figure captions explicitly preserve the distinction between illustrative upper-bound functions and the actual systolic ratio.
+
+One presentational caveat (not a math defect): the exact \(26\times40\) finite calculation is asserted as an input/result of the computer-algebra check; no independent rerun or certificate audit was performed here.
+
+L608 2026-09-14T15:08:43.665Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L612 2026-09-14T15:08:52.013Z assistant commentary
+I’ll run the already-patched generator under Sage’s Python, verify the green slice follows the exact \(1-|u|\) V-shape and that the ridge is \(z=1\), then update only the README’s visibility/generation note as requested.
+
+L641 2026-09-14T15:09:35.136Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L645 2026-09-14T15:09:47.648Z assistant commentary
+The exact V-shaped slice now renders correctly. I’ll make the figure typography print-size robust by raising base/axis/legend fonts before the parent scales the PDFs into thesis width, then rerender and inspect both previews once more.
+
+L665 2026-09-14T15:10:34.007Z assistant final_answer
+Regenerated with the parent’s corrected exact geometry and print-size typography.
+
+- `symmetry-extension.png`: 1045×964; green guide is the exact V-shaped slice \(z=1-|u|\), black ridge is exact \(z=1\); visibility uses drawing order/translucent surface only.
+- `upper-bound-mechanisms.png`: 1936×770; right contour now includes a labelled colorbar and enlarged labels/arrows.
+- Vector PDF hashes:
+  - `symmetry-extension.pdf`: `65e8d54a…`
+  - `upper-bound-mechanisms.pdf`: `faca0c41…`
+- `README.md` now documents exact regeneration command (`sage -python .../make_figures.py`) and explicitly states that no mathematical height offset is used.
+- Visually rechecked both previews; labels remain legible after expected thesis scaling.
+
+L672 2026-09-14T15:16:43.920Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L676 2026-09-14T15:16:51.663Z assistant commentary
+I’ll compare the CAS appendix core against the original verifier and candidate lemma at the formula/data-contract level, focusing on derivative factors, volume rows, assignments, and symmetry columns; no rerun or edits.
+
+L692 2026-09-14T15:17:31.800Z assistant final_answer
+Comparison result: formulas and assignments match the original verifier in the inspected scope.
+
+- Exact field/rows agree (`t`, \(\sqrt5\), \(\alpha,\beta,d\)); hard-coded 26 words/fixed values match the source witness layout, including entry 22’s alternate minor.
+- Volume \(V=25(5+s)/32\), volume row \(-\mu a_{0,i}\), \(\mu=25/32+5s/16\), and \(DU\) factors match `volume_data`, `d_action`, and `d_sys` in `verify.py`.
+- `drow`’s closure RHS is correctly \(-\beta_{\sigma^{-1}(i)}e_k\), fixed weights have zero derivative, and its \(DQ\) product-rule terms match `d_q_row`.
+- Translation, dilation, and ten \(\mathfrak{sp}(4)\) generators match `symmetry_basis`; the 15-column rank and row annihilation checks are present. The candidate’s \(T^{15}\)/\(S^{25}\) interpretation is consistent.
+
+Material finite-gate gaps in the current `hko_core.py`:
+
+1. It does not explicitly assert differentiated closure \(C\,D\beta+(DC)\beta=0\) for all 40 directions. The solve construction implies it for the hard-coded equations, but the lemma’s finite predicate should gate it explicitly (as the original `verify_d_beta` does).
+2. It does not explicitly validate word labels are distinct and in range \(0,\ldots,9\), nor that minor/fixed positions are complementary/unique. Hard-coded rows visibly satisfy this, but those are source-level certificate predicates and should be checked.
+3. It trusts the hard-coded volume formula/row rather than independently checking the geometric specialization; this matches the original verifier’s trust boundary, so it is not a new error but must remain stated as an assumption/input.
+
+No derivative sign/factor, row assignment, or symmetry-construction discrepancy was found.
+
+L699 2026-09-14T15:21:26.620Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L703 2026-09-14T15:21:36.673Z assistant commentary
+I’ll read the preliminaries and generalized-orbit chapter for only high-impact sequential followability issues—undefined prerequisites, inference jumps, or false claims—and return at most three actionable findings without edits.
+
+L719 2026-09-14T15:22:24.070Z assistant final_answer
+## Current progress
+
+- Completed several read-only evidence/review tasks for `/root`:
+  - Audited authoring/review evidence and concluded there are no independent human labels for historical authoring candidates; agent reviews and Jörn’s diagnosis are not equivalent to human prose acceptance.
+  - Audited DS sample/chapter layouts and HKO assembled chapter pages; found mostly clean rendering, with page-continuation/table-readability observations.
+  - Compared revised DS prose with appendix; identified sampling interval notation conflict (`[0.8,1.2]` vs `[0.8,1.2)`), signed-vs-absolute Spearman ambiguity, and historical evaluator qualification/narrative bridge issues.
+  - Reviewed HKO lemma files for dependencies and notation; found no material math discrepancy.
+  - Reviewed CAS `hko_core.py` against original verifier; formulas/data/symmetry columns match, but recommended explicit differentiated-closure and word/minor partition guards.
+- Created `.git/codex/hko-figures/` with:
+  - `make_figures.py`
+  - `upper-bound-mechanisms.pdf/.png`
+  - `symmetry-extension.pdf/.png`
+  - `captions.tex`, `README.md`
+  - Figures are vector PDFs plus PNG previews; corrected exact V-shaped symmetry slice and added contour colorbar. Typography enlarged for thesis print scaling. README documents exact `sage -python .../make_figures.py` command and no mathematical visibility offset.
+- Important accidental event: a temporary contact-sheet command overwrote HKO candidate `page-42.png`; immediately regenerated/restored it from the fixed PDF at 778×1100. PDF unchanged.
+
+## Current active task
+
+Parent asked for a bounded preflight of:
+- `.git/codex/thesis-candidate/02-preliminaries.tex` and included files
+- `thesis/03-generalized-reeb-orbits-polytopes.tex` and included files
+
+Focus: high-impact seq
+
+L731 2026-09-14T15:22:26.916Z assistant commentary
+I’m checking the two chapter paths and the mixed-velocity argument for a concrete followability failure, keeping the report to only high-impact issues.
+
+L768 2026-09-14T15:23:06.912Z assistant final_answer
+Preflight result: no high-impact sequential followability defect found in the inspected scope.
+
+The apparent risks were checked:
+
+- `thesis/03-generalized-reeb-orbits-simple-minimizers.tex`: the mixed-velocity splitting argument is valid; reversing the inserted order negates only the internal cross-term contribution, while external terms remain unchanged.
+- The merging, rescaling, compactness, and base-point recovery arguments are logically followable and consistent.
+- `.git/codex/thesis-candidate/02-duality.tex`: conjugacy, multiplier scaling, reconstruction, and period normalization are internally consistent.
+- The candidate `02-preliminaries.tex` includes the shared preliminary files from `thesis/`; this is a build-path arrangement, not a reader-facing undefined prerequisite.
+
+No correction is recommended.
+
+L775 2026-09-14T15:26:02.836Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L779 2026-09-14T15:26:06.811Z assistant commentary
+I’m checking the primary literature for the exact scope of any recent \(c_{\mathrm{EHZ}}=c_{\mathrm{cyl}}\) theorem, with special attention to convex bodies and dimension four.
+
+L835 2026-09-14T15:27:04.671Z assistant final_answer
+Primary-source check confirms the recollection is not a global theorem.
+
+- Haim–Kislev–Ostrover, “A Counterexample to Viterbo’s Conjecture,” Annals of Mathematics 203 (2026), 603–622, [arXiv:2405.16513](https://arxiv.org/abs/2405.16513), explicitly states in Remark 1.4(v) that in \(\mathbb R^4\) there are a priori three capacities for convex domains: \(c_G\), \(c_{\mathrm{EHZ}}\), and \(c_Z\); it says that whether \(c_{\mathrm{EHZ}}=c_Z\) for convex domains remains open. The paper’s Theorem 1.2 only proves that capacities differ by showing \(c_G\ne c_{\mathrm{EHZ}}\) somewhere (indeed for every \(n\ge2\)); it does not separate EHZ from cylindrical capacity.
+
+- Edtmair, “Disk-like Surfaces of Section and Symplectic Capacities,” GAFA (2024), [DOI](https://doi.org/10.1007/s00039-024-00689-4), proves \(c_Z\) equals the least disk-like global-surface-of-section area for dynamically convex domains in \(\mathbb R^4\), and proves all normalized capacities agree only for convex domains \(C^3\)-close to the round ball (Theorem 1.11). This is local, not global.
+
+- The later Abbondandolo–Benedetti–Edtmair result extends the near-ball coincidence to arbitrary dimension and a \(C^2\)-neighborhood, as noted in Edtmair’s Remark 1.12; still local.
+
+- Special classes do have equality: monotone toric domains in dimension four (Gutt–Hutchings–Ramos, [arXiv:2003.10854](https://arxiv.org/abs/2003.10854)); \(S^1\)-invariant/dynamically convex settings identify first ECH with \(c_Z\), not \(c_{\mathrm{EHZ}}\) globally.
+
+Conclusion: as of the current literature, global \(c_{\mathrm{EHZ}}=c_Z\) on all convex bodies in \(\mathbb R^4\) is not proved; Haim–Kislev–Ostrover explicitly list it as open.
+
+L842 2026-09-14T15:28:32.563Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L846 2026-09-14T15:28:36.144Z assistant commentary
+I’m reviewing the new introduction subsection against the cited primary sources, focusing only on theorem scope and any materially misleading wording.
+
+L874 2026-09-14T15:29:19.382Z assistant final_answer
+Two scope/wording points are worth correcting; otherwise the subsection’s claims match the sources.
+
+1. Edtmair’s surface-of-section theorem needs its geometric hypotheses made explicit. The result concerns smooth star-shaped domains in \(\mathbb R^4\) whose boundary contact form is dynamically convex (convex domains are a special case). “On dynamically convex domains in \(\mathbb R^4\)” is slightly too broad. Cite Edtmair’s theorem with “smooth star-shaped/dynamically convex.”
+
+2. The definition sentence for a global surface of section (lines 67–69) should specify the standard directional condition: every trajectory not equal to the boundary orbit intersects the interior in both forward and backward time (equivalently, the return map is defined on the interior). The current “is met by every trajectory” is underspecified, though not mathematically contradictory.
+
+The Mahler paragraph is correct: AKO prove \(c_{\rm EHZ}(L\times L^\circ)=4\) for centrally symmetric \(L\), and the restricted Viterbo inequality is exactly \(\operatorname{vol}(L)\operatorname{vol}(L^\circ)\ge 4^n/n!\), i.e. symmetric Mahler. Edtmair/Abbondandolo–Benedetti are correctly presented as local near-ball results, and HKO’s open-status statement for global \(c_{\rm EHZ}=c_Z\) is accurate.
+
+L881 2026-09-14T15:34:29.846Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L885 2026-09-14T15:34:33.226Z assistant commentary
+I’m doing a sequential prose review of Section 2 and its five shared inputs plus the candidate duality file, looking for reader-blocking compression or misleading framing—not just mathematical correctness.
+
+L908 2026-09-14T15:35:13.636Z assistant final_answer
+I read all of Section 2: `thesis/02-preliminaries-convex-symplectic-notation.tex`, `...convex-hamiltonian-language.tex`, `...ehz-capacity.tex`, `...polytope-input-language.tex`, `...lagrangian-products.tex`, plus `.git/codex/thesis-candidate/02-duality.tex`. I did not edit or inspect later sections.
+
+Strongest prose/readability issues:
+
+1. The EHZ opening is imprecise and anthropomorphic:
+
+> “The common value is the least action needed to close up a characteristic trajectory on the boundary.”
+
+“Needed to close up” sounds like an algorithmic process and obscures the minimization domain.
+
+Suggested replacement:
+
+> “The common value is the minimum action among closed characteristics on the boundary.”
+
+2. The smooth/nonsmooth transition compresses a substantial change of object into one paragraph:
+
+> “For nonsmooth convex bodies, and in particular for polytopes, the same capacity is obtained by approximation and by minimizing over the generalized characteristics…”
+
+A master’s reader needs the role of approximation made explicit, especially since ordinary closed characteristics no longer apply.
+
+Suggested replacement:
+
+> “For a nonsmooth convex body, ordinary characteristic vector fields need not exist at singular boundary points. The EHZ capacity is instead defined by \(C^0\)-continuity from smooth convex approximations; for polytopes, the equivalent variational description uses the generalized characteristics defined above.”
+
+3. The duality section promises an explanation but then delegates the key variational step too opaquely:
+
+> “The cited nonsmooth multiplier theorem provides a measurable \(L^2\) choice of \(p\) and the distributional equation expressing that the first variation of \(I_K-\nu A\) vanishes.”
+
+This is the central bridge from minimization to reconstruction
+
+L915 2026-09-14T15:35:51.586Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L919 2026-09-14T15:35:54.158Z assistant commentary
+I’m reviewing Chapter 4’s candidate QP chapter and its included source files for audience-facing conceptual gaps and ordering problems, before incorporating any later human feedback.
+
+L937 2026-09-14T15:36:26.434Z assistant final_answer
+I read the complete candidate Chapter 4 file `.git/codex/thesis-candidate/04-quadratic-program.tex` (QP definition, proposition, KKT section, 12-facet and six-facet reductions, algorithms, and implementation-status subsection). No edits.
+
+Strongest audience-facing issues:
+
+1. The opening theorem introduces the central QP as a formula before giving an intuitive variable interpretation:
+
+> “The constraints then become \(\beta_i\ge0,\ \sum_i\beta_i=1,\ \sum_i\beta_i a_i=0\).”
+
+A mathematically mature reader still needs one sentence saying that \(\beta_i\) are normalized dwell times, \(\sum\beta_i a_i=0\) is closure, and the word gives traversal order.
+
+Suggested replacement:
+
+> “The variable \(\beta_i\) is the fraction of the orbit period spent moving in the facet direction \(a_i\). Thus \(\sum_i\beta_i=1\) normalizes the total period, while \(\sum_i\beta_i a_i=0\) is exactly the closure condition for the velocity polygon.”
+
+2. The direction of the capacity bound is easy to misread:
+
+> “A feasible positive value \(q\) always gives the capacity upper bound \(1/(2q)\) through the dual curve constructed above.”
+
+The reason is not stated, and “dual curve” can suggest a lower-bound certificate. Add:
+
+> “The constructed curve has dual value \(1/(2q)\). Since the capacity is the infimum of dual values, this gives \(c_{\mathrm{EHZ}}(K)\le 1/(2q)\). Equality requires proving that \(q\) is the global maximum \(Q_{\max}\).”
+
+3. The twelve-facet theorem uses unexplained notation in its headline formula:
+
+> “words of the form \(\bigl([Q\mid QQ]\,[P\mid PP]\bigr)^k\)”
+
+Although the prose explains blocks afterward, the notation is visually cryptic on first encounter.
+
+Suggested replacement:
+
+> “words formed by \(k\) alternating \(q\)-blocks and \(p\)-blocks, with \(k\in\{2,3\}\), where e
+
+L944 2026-09-14T15:42:39.466Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L948 2026-09-14T15:42:41.884Z assistant commentary
+I’m reading candidate Chapter 5 and its included inputs sequentially, focusing on conceptual motivation and overcompressed explanations for a mathematically mature master’s reader.
+
+L964 2026-09-14T15:43:11.374Z assistant final_answer
+I read all of `.git/codex/thesis-candidate/05-flow-graph.tex`, including the embedded CH2021 comparison and rational-implementation sections. No edits.
+
+Highest-impact issues:
+
+1. The opening overstates the dynamics:
+
+> “Motion inside one facet has constant velocity.”
+
+At nonsmooth points, the active normal cone permits convex combinations, so this is only true for a chosen pure-facet passage.
+
+Suggested replacement:
+
+> “For a passage assigned to one facet direction \(R_i\), the velocity is constant while the trajectory remains on that facet. This makes the passage from one facet-pair section to the next an affine map.”
+
+2. The primitive tube construction introduces the sign conditions without explaining their geometric role:
+
+> “Consider three distinct facet labels \((p,i,n)\) satisfying \(\langle R_p,a_i\rangle>0,\ \langle R_i,a_n\rangle>0\).”
+
+Suggested replacement:
+
+> “A passage \(p\to i\to n\) first requires the incoming direction \(R_p\) to enter the hyperplane \(H_i\), and then the direction \(R_i\) to enter \(H_n\). In our sign convention these are respectively \(\langle a_i,R_p\rangle>0\) and \(\langle a_n,R_i\rangle>0\).”
+
+3. The correctness algorithm discards all words of length at most four before the reason is available:
+
+> “discard it if its length is at most four”
+
+This is a conceptual pruning rule, not an obvious algorithmic step. Add a parenthetical explanation:
+
+> “discard it if its length is at most four (under the regularity hypothesis, the facet rows are linearly independent in every such sublist, so a positive closed velocity combination is impossible).”
+
+4. The CH2021 comparison is too compressed for readers who have not read that paper:
+
+> “Their smoothing theory relates this model to Reeb orbits on smooth convex approximations and yields a capac
+
+L971 2026-09-14T15:52:46.793Z INTERNAL /root -> /root/review_evidence encrypted=True
+
+L975 2026-09-14T15:52:50.288Z assistant commentary
+I’m checking only the three revised passages for mathematical sign and scope consistency, without broadening the review.
+
+L993 2026-09-14T15:53:16.151Z assistant final_answer
+One material scope issue remains in the revised Chapter 4 passage:
+
+> “For a contact-normalized orbit, \(\beta_i\) is the fraction of its period spent with velocity \(2J_0a_i\).”
+
+This is true only for a pure/simple orbit (or the finite pure-velocity representation), not for an arbitrary generalized Reeb orbit, whose velocity may be a convex combination at nonsmooth points. Since the paragraph is introducing the QP before the realization proposition, qualify it:
+
+> “For a contact-normalized simple orbit represented by a pure facet word, \(\beta_i\) is the fraction of its period spent with velocity \(2J_0a_i\).”
+
+The added weak multiplier equation in `02-duality.tex` has the correct signs: its right side is \( \nu\,DA(z)[v]\), integration by parts yields \(-J_0\dot p=-\nu J_0\dot z\), and hence \(p=\nu z+b\). The Chapter 5 sign lead-in is also consistent.
