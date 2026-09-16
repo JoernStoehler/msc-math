@@ -12,7 +12,7 @@ Status: starting packet prepared on September 16; not an instruction to launch a
 - `docs/sprint-two/integration.md` maps both replacements into the recovered paths, including overview, bibliography and obsolete-appendix changes.
 - `docs/task-graph/` is the current rendered task map. The old graph files are preserved as history, not active running-state evidence.
 
-The outgoing coordinator is making a scoped local preparation checkpoint; its hash will be recorded in the handoff. Preserve unrelated dirty work. No push or reset is part of preparation.
+Preparation checkpoint: `3b180fb2` (source/evidence recovery, completed drafts, graph routing and handoff). Preserve unrelated dirty work. No push or reset is part of preparation.
 
 ## Outcome and user budget
 
@@ -43,6 +43,7 @@ At an expensive research decision, consider whether a different route or a conne
 ## Production and review responsibilities
 
 **Observed resource constraint:** this session exposes four internal agent slots including the root. A Sol spawn was blocked while root, Sol, recovery and an interrupted worker occupied the tree. The reason/configurability of that limit has not been established; its presence must not be silently treated as an optimal resource allocation. Check actual capacity when planning parallel work, surface a binding limit and its consequences, and investigate a justified configuration change if needed. No measured attribution of the first sprint's failure to this limit exists.
+**Documented control, not yet tested here:** official Codex documentation on September 16 names `agents.max_concurrent_threads_per_session` (excluding the primary thread), with `agents.max_threads` as a legacy alias: https://learn.chatgpt.com/docs/agent-configuration/subagents . Neither spelling was found in the inspected user/repository config files. The documented count semantics differ from the four-slot description exposed in this session. Effective runtime source, overrides, and a fresh-session test remain unresolved; do not claim a config edit has increased capacity without observing it.
 **Resource decisions:** Jörn explicitly objects to silently abandoning a valuable approach because the current environment lacks resources. For a binding RAM/compute/concurrency constraint, estimate the demand, alternatives, cost and expected benefit, and bring him a concrete resource/bounty decision before discarding the approach on that basis. His example of a proof needing 32 GB/cloud RAM was hypothetical, not an established project incident. This does not require approval for every ordinary bounded computation or authorize provisioning paid resources without consent.
 **User boundary:** Jörn objected to opening a Herdr pane merely to bypass that internal limit. Background-agent requests do not authorize changing his pane layout. The unrequested Luna pane was closed after its completed files were preserved. Do not repeat that workaround without his permission.
 
@@ -65,3 +66,5 @@ Source leads already checked in prior work include Abbondandolo–Edtmair–Kang
 Read the recovered candidate README, current literature handoff and pentagon-v2 integration note. Identify the highest remaining thesis risk and assign bounded work while integration proceeds; do not spend the opening hour recrawling process logs. Establish and communicate a scope-based delivery estimate rather than asking Jörn to supply it. Use honest checkpoints and raise deadline risk early.
 
 Completion requires a fixed assembled PDF and Jörn's explicit whole-thesis judgment. Report residual limitations and exact artifact identity; do not retroactively convert narrow approval or mathematical proof acceptance into chapter/writeup PASS. No new sprint has been started by this preparation packet.
+
+Preparation environment change: the graph worker installed Graphviz and graph-easy to validate the migrated viewer. Original hidden files were preserved; graph source/consumer paths changed together. Current skill validation and rendering passed, but this does not establish that the broader workflow will produce human-approved prose.

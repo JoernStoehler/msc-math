@@ -60,5 +60,8 @@ The frozen PDF SHA-256 is
 `d7dae9a78dffc87fe89f3005bed9b6b51d28728fa90e1a5c811bc09b236e1695`.
 Original Git-internal artifacts are not deleted. `docs/review-evidence/` contains
 ordinary-path copies of essential review evidence. Uncommitted
-research/config changes remain preserved; a scoped local preparation checkpoint
-is being made, with no reset or push.
+research/config changes remain preserved; scoped local preparation checkpoint
+`3b180fb2` was made, with no reset or push. The four-agent runtime constraint is
+not yet resolved: official docs expose a configurable concurrency key, but its
+effective source and a fresh-session behavior test remain outstanding. See the
+kickoff packet for exact evidence and Jörn's resource-escalation preference.
