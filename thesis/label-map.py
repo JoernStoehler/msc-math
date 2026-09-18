@@ -2,8 +2,8 @@
 """Generate a PDF-number → LaTeX-label mapping from the .aux file.
 
 Usage:
-    python label-map.py              # after latexmk has run
-    python label-map.py --build      # run latexmk -f first, then generate
+    python label-map.py              # after sh thesis/build.sh has run
+    python label-map.py --build      # run the selected build.sh first, then generate
 
 Reads build/main.aux for \newlabel entries, cross-references with .tex
 sources to extract a short quote of each environment's opening text.
@@ -87,15 +87,15 @@ def find_quote(label: str, tex_files: list[Path]) -> str:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--build", action="store_true", help="Run latexmk -f first")
+    parser.add_argument("--build", action="store_true", help="Run the selected build.sh first; abort if it fails")
     args = parser.parse_args()
 
     if args.build:
-        print("Running latexmk -f ...", file=sys.stderr)
+        print("Running selected thesis build.sh ...", file=sys.stderr)
         subprocess.run(["sh", "build.sh"], cwd=THESIS_DIR, check=True)
 
     if not AUX_FILE.exists():
-        print(f"Error: {AUX_FILE} not found. Run latexmk first.", file=sys.stderr)
+        print(f"Error: {AUX_FILE} not found. Run sh thesis/build.sh first.", file=sys.stderr)
         sys.exit(1)
 
     # Collect all .tex files
