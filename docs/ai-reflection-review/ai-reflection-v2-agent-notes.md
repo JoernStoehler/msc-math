@@ -1,8 +1,8 @@
 # AI reflection v2: independent agent marks
 
 **Artifact:** `ai-reflection-v2.pdf`, three pages, source `5c33e117`.
-**Reviewer:** `/root/ds_editorial_review`, reading the PDF, source, author-intent
-record and all ten human annotations from v1. These are agent findings, not
+**Review scope:** independent reading of the PDF, source, author-intent record
+and all ten human annotations from v1. These are agent findings, not
 Jörn's annotations or a human acceptance verdict.
 
 The main conceptual correction is present: understanding an objective is distinct
