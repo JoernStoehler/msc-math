@@ -192,15 +192,28 @@ either low ridge scores or high computed ratios. Its success as a coarse
 predictor leaves open how to improve a body already selected for a promising
 score.
 
-The distinction has a geometric counterpart. An edge--width formula explains
-what the ridge measurement records on Lagrangian products. For rotated
-regular pentagons it has an exact inverse-square relation to the systolic
-ratio; see equation~\ref{eq:ds-pentagon-ridge-capacity}. Yet the cube has a
-lower ridge score than HKO and a lower systolic ratio, which refutes a
-universal inverse ordering. The empirical question is therefore why the
-association is strong in the sampled populations, and which restrictions
-could turn it into a mathematical statement. The search experiments test
-its practical value alongside deformations and adaptive sampling.
+Affine shape variation of the factors contributes to the broad association.
+Area-preserving linear maps that make each factor's vertex covariance
+isotropic raise the computed ratio in 314 of 320 tested products and
+substantially weaken the ridge--ratio correlation. This identifies a useful
+shape deformation, although its effects cannot be attributed to covariance
+imbalance alone: the maps change several geometric features together.
+
+Exact family laws further constrain the explanation. An edge--width formula
+describes the ridge measurement on Lagrangian products. Under relative
+rotation of regular pentagon factors, it has an inverse-square relation to
+the systolic ratio; under relative rotation of equilateral-triangle factors,
+the two quantities have the same strict ordering; see
+\eqref{eq:ds-pentagon-ridge-capacity} and~\eqref{eq:ds-triangle-profile}.
+A general explanation must therefore account
+for the shapes and relative positions of the factors.
+
+Direct local search gives a separate positive result. In the comparison of
+fixed implementations from the same 64 starting bodies, retaining previously
+active capacity branches attains larger median best ratios than literal
+gradient ascent under the same evaluation limits. This connects the
+first-order branch model to practical improvement; the finite searches still
+do not establish local maximality.
 
 \subsection{How to read the thesis}
 

@@ -45,25 +45,40 @@ samples. The pooled inverse rank association weakens substantially when the
 original data are restricted within each sampling group to low ridge scores
 or high computed ratios, with ranks recomputed in the retained groups.
 Thus a strong ordering across the broad population becomes much weaker
-among selected candidates. The distinction between prediction and ascent
-is also visible in exact examples: the cube has both a lower ridge score and a lower systolic ratio
-than HKO. A universal inverse ordering is therefore false. At the same
-time, equation~\ref{eq:ds-pentagon-ridge-capacity} proves an inverse-square
-law throughout the regular-pentagon rotation family, so the descriptor does
-capture a precise relation on a restricted family.
+among selected candidates. Restricting the range can itself attenuate
+correlation, so this observation alone does not identify a geometric cause.
 
-The broader association still needs an explanation. One possibility is that
-typical geometric perturbations in the sampled populations move the two
-quantities in opposite directions. Another is that ridge area is a noisy
-proxy for a different geometric relation. The experiments do not separate
-these hypotheses; restricting the range can itself attenuate correlation.
-The search comparisons also show that selection,
-deformation and adaptation answer different questions: improving a starting
-body need not outperform spending the same evaluations on fresh samples.
-None of the exploratory searches produced a new numerical ratio above one.
+The balancing experiment goes further by changing the shapes. Applying
+determinant-one maps that make each factor's vertex covariance isotropic
+raises the mean numerical ratio from $0.342$ to $0.654$ in 320 paired
+products, with 314 increases and six decreases. The pooled within-group
+rank correlation weakens from $-0.929$ to $-0.249$. Affine changes in factor
+shape therefore contribute materially to the broad association in this
+sample. The intervention changes several geometric features together, so
+it does not identify covariance imbalance as the sole cause or give a
+universal improvement rule.
+
+The residual relationship depends on the family. Relative rotations of
+regular pentagon factors satisfy the inverse-square law
+\eqref{eq:ds-pentagon-ridge-capacity}, whereas relative rotations of
+equilateral-triangle factors give the same strict ordering by ridge sum and
+systolic ratio, as proved in~\eqref{eq:ds-triangle-profile}. Ideal covariance
+balancing makes triangles equilateral, which explains the opposite ordering
+in that balanced family. These exact laws show that even the direction of
+the relationship depends on geometric restrictions.
+
+The local-search comparison supplies another practical conclusion. On the
+same 64 starts under common evaluation limits, the four-anchor history
+implementation attained median best ratio $0.985$, compared with $0.881$
+for literal gradient ascent. Retaining previously active branches was useful
+in this finite comparison. Endpoint tests nevertheless found ascent
+directions missed by simpler probes, so high terminal values did not certify
+local maxima. None of the exploratory searches produced a new numerical
+ratio above one.
 
 Two mathematical questions follow directly. Does HKO remain locally maximal
-when the facet count changes? Which geometric restrictions explain the ridge
-association, and do they survive a change of sampling distribution? The
+when the facet count changes? Which geometric features explain the residual
+ridge association after factor balancing, and how does that relation depend
+on the sampling distribution? The
 first asks how far the proved local extremality extends. The second asks
-how a useful statistical signal can become a statement about capacity.
+which capacity laws extend beyond the solved rotation families.
