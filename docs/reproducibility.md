@@ -11,14 +11,15 @@ and describes the release bundle.
 ## Build the thesis
 
 ```bash
-cd thesis
-./check-build.sh
+sh thesis/candidate/build.sh
 ```
 
-The checked build output is `thesis/build/main.pdf`. It is deliberately
-Git-ignored. The release packager adds those bytes to the final Zenodo ZIP as
-`Stoehler-Probing-Viterbos-Conjecture.pdf`; the build path is not the archive
-member name.
+The recovered candidate output is `thesis/candidate/build/main.pdf` and is
+Git-ignored. This command compiles the selected candidate; it does not establish
+mathematical correctness or prose acceptance. The older `thesis/check-build.sh`
+and release packager use a different entry point. Align that separate release
+route with the final selected assembly before using it; the current task is PDF
+review delivery only.
 
 ## Exact certificate packets
 

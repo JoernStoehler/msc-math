@@ -1,9 +1,13 @@
-# Recovered thesis candidate
+# Integrated candidate for review
 
-`main.tex` is the canonical entry for the recovered working candidate. This
-is the frozen 86-page review baseline from September 14, 2026, with dependency
-paths relocated into ordinary project storage. Scientific content is unchanged.
-It is not an approved thesis or an integration of later revisions.
+This worktree contains a proposed integration of the interrupted thesis sources
+and reviewed technical patches, including the analytic rotation proof and the
+independent-linear-deformation extension. It is **not an accepted thesis**, a
+selected permanent release checkout, or a claim of prose PASS. The original
+86-page recovered baseline and interrupted checkout remain unchanged elsewhere.
+
+The [integration ledger](../../docs/candidate-assembly-integration/README.md)
+records adopted and deferred changes, exact input identities, and checks.
 
 Build from the repository root:
 
@@ -25,11 +29,7 @@ that are not PDF build dependencies. Their historical paths and commands are
 preserved verbatim; they are not portable build commands. The dependency
 manifest records each origin, checksum, and path rewrite.
 
-The pentagon rewrite under `docs/pentagon-chapter-v2/` and the literature
-corrections from the subsequent review remain separate pending work. This
-baseline deliberately retains the old pentagon proof and existing claims.
-Future integration should edit this candidate, not the hidden recovery source.
-
-The recovered files have not been committed. Until the new source and assets
-are added to Git, a fresh checkout will not contain this candidate. Building
-the PDF does not reproduce the experiments or certify the mathematical claims.
+The selected recovered preliminaries and complete DS chapter remain in place.
+The standalone revised DS subsection and optional further polygon results have
+not been silently substituted. Reader-facing summaries have only received
+bounded consistency edits and still require a substantive final synthesis.

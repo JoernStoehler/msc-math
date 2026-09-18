@@ -1,0 +1,43 @@
+{
+  "bucket_counts": {
+    "lp_3x3": 1024,
+    "lp_3x4": 1024,
+    "lp_3x5": 1024,
+    "lp_3x6": 1024,
+    "lp_4x4": 1024,
+    "lp_4x5": 1024,
+    "lp_4x6": 1024,
+    "lp_5x5": 1024,
+    "lp_5x6": 1024,
+    "lp_6x6": 1024,
+    "random_sample": 4096
+  },
+  "capacity_certified": false,
+  "current_capacity_execution": false,
+  "files": {
+    "polytope-provenance-table.jsonl": "6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2",
+    "polytope-table.jsonl": "607c8731fa03d190d497edc3e8f1b4cca88f7d238260cce527680f568bc33d59",
+    "random-product.jsonl": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+    "random.jsonl": "a21ac62ba5c9496ef631d3cce74e8b663764516b76e9d4725f1e517d8dd55f9f"
+  },
+  "historical_capacity_timing_field_present": 14336,
+  "historical_execution_revision": null,
+  "legacy_source_geometry_verified": true,
+  "max_stored_sys_formula_absolute_error": 2.220446049250313e-16,
+  "rows": 14336,
+  "schema": "legacy-retrospective-verification-v1",
+  "verification_wall_seconds": 2.0603068950003944,
+  "verified": [
+    "immutable table/provenance hashes",
+    "complete unique table/provenance join",
+    "finite positive stored sys",
+    "dataset labels agree",
+    "source payload hashes",
+    "all source names map uniquely",
+    "binary64 geometry hashes match poly_id",
+    "stored source sys equals table sys"
+  ],
+  "verified_at_utc": "2026-09-18T12:47:17.216791+00:00",
+  "verifier_sha256": "f57bcc4f61c6207c22a6c4fbf06f335fe052011f0e0148284e04ccb2ae5eb4f7",
+  "volume_certified": false
+}

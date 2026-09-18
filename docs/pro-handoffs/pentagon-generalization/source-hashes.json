@@ -1,0 +1,36 @@
+[
+  {
+    "original_repository_path": "docs/pentagon-proof/fresh-proof.tex",
+    "packet_path": "math/rotated-pentagon-proof.tex",
+    "sha256": "e41574584039911ceb25cc7cd508544df6e8028c2dad6eee32c39532e2efba15"
+  },
+  {
+    "original_repository_path": "formal/product-qp-six-facet-reduction.tex",
+    "packet_path": "math/product-six-facet-reduction.tex",
+    "sha256": "f74325caef85829b5a6595f414d17e0e0b4ab60a5b17fae8ca78ae6eacbccf82"
+  },
+  {
+    "original_repository_path": "docs/pentagon-proof/analytic-proof.tex",
+    "packet_path": null,
+    "sha256": "625595f6d9548b0b269ef4bf05e0106ebcbc420b44ee0ebd494c63b8f8ea3af2",
+    "included": false
+  },
+  {
+    "original_repository_path": "docs/pentagon-chapter-v2/chapter.tex",
+    "packet_path": null,
+    "sha256": "7e57b85d7e62a0b38982ba7075dd9250f01a7a8b09a5b2a4e6eac6965b911bcf",
+    "included": false
+  },
+  {
+    "original_repository_path": "docs/pentagon-chapter-v2/README.md",
+    "packet_path": null,
+    "sha256": "d3991a6dba95f0414c55f7eded08b0cd0f7ab5c1e267e628f64e35ebfd7eb866",
+    "included": false
+  },
+  {
+    "original_repository_path": "formal/hk2017-qp-conventions.tex",
+    "packet_path": null,
+    "sha256": "5c0e62f84260414556aaccde9a29b89b725785a15be42eaff7b008534d7dbfb8",
+    "included": false
+  }
+]

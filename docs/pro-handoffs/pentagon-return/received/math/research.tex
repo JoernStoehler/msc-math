@@ -1,0 +1,527 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,array,booktabs}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+\newcommand{\R}{\mathbb R}
+\newcommand{\C}{\mathbb C}
+\newcommand{\conv}{\operatorname{conv}}
+\newcommand{\area}{\operatorname{area}}
+\newcommand{\sys}{\operatorname{sys}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\capc}{c_{\mathrm{EHZ}}}
+\newcommand{\Sym}{\operatorname{Sym}}
+\newcommand{\Tfour}{\mathcal T_4}
+\newcommand{\Tsix}{\mathcal T_6}
+\newcommand{\Hfour}{\mathcal H_4}
+\newcommand{\Hsix}{\mathcal H_6}
+\newcommand{\ip}[2]{\langle #1,#2\rangle}
+\DeclareMathOperator{\dist}{dist}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\title{Beyond rotation: affine pentagon products\\and the four-block obstruction}
+\author{Mathematical research handoff}
+\date{18 September 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+The principal result is an exact capacity formula for the product of any two independently affinely regular pentagons. Two explicit convex-combination identities for rank-one matrices replace endpoint interpolation and remain valid under arbitrary independent linear changes of the factors. An area-containment argument then shows that the Haim--Kislev--Ostrover ratio is the sharp maximum throughout this entire affine class. A general decomposition identifies the four-block part of the capacity with the polars of the difference bodies, and isolates the remaining obstruction in paired normalized-closure triangles. Further applications give exact regular heptagon and pentagon--heptagon rotation profiles, with strict bounds that persist in open families of nonregular polygons.
+
+All stated theorems below have proofs. The only non-elementary input needed for the principal formula and its systolic bound is the Haim--Kislev capacity formula. The supplied six-facet reduction is recalled with its proof. The known symmetric-product formula is used only for a geometric interpretation. Novelty relative to the entire literature is not asserted.
+\end{abstract}
+\tableofcontents
+
+\section{Principal results}
+For every integer $n\ge3$, put
+\[
+ n_i^{(n)}=(\cos(2\pi i/n),\sin(2\pi i/n)),\qquad
+ h_n=\cos(\pi/n),\qquad
+ P_n=\{q:\ip{n_i^{(n)}}q\le h_n\ \text{for all }i\}.
+\]
+Thus $P_n$ has circumradius one and a facet normal in the direction $(1,0)$. Throughout, $R_\theta$ is counterclockwise rotation, $J=R_{\pi/2}$, and
+\[
+ \omega_0((q,p),(q',p'))=q\cdot p'-p\cdot q',\qquad
+ \sys(A\times B)=\frac{\capc(A\times B)^2}{2\area(A)\area(B)}.
+\]
+For pentagons abbreviate $h=h_5$, $w=1+h$, $n_i=n_i^{(5)}$, and $S=\area(P_5)=\frac52\sin(2\pi/5)$.
+
+\begin{theorem}[Independent affine pentagons]\label{thm:affine}
+Let $G,H\in GL(2,\R)$ and let $A=a+GP_5$, $B=b+HP_5$, where $a,b\in\R^2$ are arbitrary translations. Define
+\[
+ M=G^{-1}H^{-T},\qquad
+ m(M)=\max_{0\le i,j<5}|n_i^T M n_j|.
+\]
+Then
+\begin{equation}\label{eq:affine}
+ \boxed{\displaystyle \capc(A\times B)=\frac{(1+\cos(\pi/5))^2}{m(M)}.}
+\end{equation}
+In particular, independently shearing, stretching, scaling, or reflecting the two factors does not require any new triangle-support optimization: twenty-five absolute pairings suffice.
+\end{theorem}
+Translations are harmless by translation invariance of capacity. The hypotheses require nonsingular $G,H$; lower-dimensional factors are not included.
+
+\begin{theorem}[Sharp systolic bound in the entire affine class]\label{thm:sys}
+Under the same hypotheses,
+\begin{equation}\label{eq:sys}
+ \boxed{\displaystyle \sys(A\times B)\le\frac{3+\sqrt5}{5}.}
+\end{equation}
+Let $D=\conv\{\pm n_0,\ldots,\pm n_4\}$, the regular decagon of circumradius one, and $\alpha=\pi/10$. Equality holds precisely when
+\begin{equation}\label{eq:equality}
+ \frac{M}{m(M)}D=D^\circ,
+ \quad\text{equivalently}\quad
+ M=tR_\alpha U\quad\text{for some }t>0,\ U\in\Sym(D).
+\end{equation}
+Here $\Sym(D)$ is the orthogonal dihedral symmetry group of the decagon. Thus the bound is not merely for rotations of equal pentagons, and no independent affine deformation of this pair can improve the known HKO ratio.
+\end{theorem}
+
+The proofs of Theorems~\ref{thm:affine} and \ref{thm:sys} are in Sections~\ref{sec:pent} and \ref{sec:sys}. The following additional results are proved in Sections~\ref{sec:hept}--\ref{sec:stable}. Write
+\[
+ d_L(\theta)=\min_{k\in\mathbb Z}|\theta-k\pi/L|.
+\]
+\begin{theorem}[Two further complete angular profiles]\label{thm:hept-main}
+For every real $\theta$,
+\begin{align}
+ \capc(P_7\times R_\theta P_7)&=(1+h_7)^2\sec d_7(\theta),\label{eq:77}\\
+ \capc(P_5\times R_\theta P_7)&=(1+h_5)(1+h_7)\sec d_{35}(\theta).\label{eq:57}
+\end{align}
+These include all branch-switching angles. Moreover, in the spaces of labelled seven-facet and five-facet polygons, there are open neighborhoods of $(P_7,P_7)$ and $(P_5,P_7)$ on which the capacity at every relative rotation is determined entirely by the two difference bodies, through formula~\eqref{eq:width-cap} below. The regular secant formulas themselves need not persist under nonregular perturbations.
+\end{theorem}
+
+\section{The finite reduction and a matrix representation}\label{sec:reduction}
+Let $A,B$ be full-dimensional planar polygons containing the origin in their interiors. Their dual vertices $u_i,v_j$ are defined by the irredundant inequalities $u_i\cdot q\le1$, $v_j\cdot p\le1$. In particular they are support-normalized covectors, not unit normals.
+
+A candidate is a word of distinct product facets with nonnegative weights $\beta$, total weight one, and weighted sum zero. With the earlier entry as the first argument of $\omega_0$, let
+\[
+ Q=\sum_{j<k}\beta_j\beta_k\omega_0(a_{\sigma_j},a_{\sigma_k}).
+\]
+The Haim--Kislev formula, in the packet's word convention, is \cite[Theorem 1.1]{HK}
+\begin{equation}\label{eq:HK}
+ \capc(A\times B)=\frac1{2Q_{\max}}.
+\end{equation}
+Deleting zero weights, or extending a subset word by zero weights, preserves the feasible objective. Reversing a word negates its objective; we never reverse a fixed witness without accounting for this sign.
+
+\begin{lemma}[The supplied sparse reduction, recalled]\label{lem:sparse}
+Some global maximizer uses a vertex of each normalized closure polytope
+\[
+ C_A=\{\gamma\ge0:\sum_i\gamma_i=1,\ \sum_i\gamma_i u_i=0\},
+ \qquad C_B=\{\eta\ge0:\sum_j\eta_j=1,\ \sum_j\eta_jv_j=0\}.
+\]
+It gives each factor mass $1/2$ and uses at most three facets from each factor.
+\end{lemma}
+\begin{proof}
+For a fixed word separate the factor masses $t,1-t$ and normalize their weights. Same-factor pairings vanish, so $Q=t(1-t)B_\sigma(\gamma,\eta)$, with $B_\sigma$ bilinear. Starting at a positive global maximum, maximize first over $\gamma$ and then over $\eta$, choosing a vertex of the relevant closure polytope each time. Neither replacement decreases the value, so both preserve the global maximum. The support-restricted closure polytope is a coordinate face of the full one, so its vertices are full-polytope vertices. A vertex has support at most three: otherwise the corresponding columns in the three equality constraints are linearly dependent and admit a two-sided feasible perturbation. Finally $B_\sigma>0$, so maximizing $t(1-t)$ gives $t=1/2$. Remove zero entries. This is an existence statement, not a classification of all maximizers.
+\end{proof}
+
+Cyclically moving the first weighted covector to the end changes $Q$ by
+\[
+ -2\beta_1\sum_{k>1}\beta_k\omega_0(a_1,a_k)
+ =-2\beta_1\omega_0(a_1,-\beta_1a_1)=0.
+\]
+Consecutive same-factor entries can therefore be grouped cyclically without changing $Q$. A sparse word has two, four, or six alternating blocks. Two blocks have value zero. A six-block word has exactly three individual entries from each factor.
+
+For a closure vertex define its \emph{normalized steps} $x_i=\gamma_i u_i$, so $\sum x_i=0$ and $\sum\gamma_i=1$; define $y_j$ similarly. Actual product weights are half these factor weights. An alternating order
+\[
+ x_1,y_1,x_2,y_2,x_3,y_3
+\]
+then has
+\begin{equation}\label{eq:six}
+ Q(\theta)=\frac12\bigl(x_1\cdot R_\theta y_1-x_3\cdot R_\theta y_2\bigr).
+\end{equation}
+Indeed the sum is twice the pairing of each $p$-step with the preceding $q$-prefix, multiplied by $1/4$; the prefixes are $x_1,-x_3,0$.
+
+Use the Frobenius pairing $\ip TR=\tr(T^TR)$. Since $\ip{xy^T}R=x\cdot Ry$, the matrix representing~\eqref{eq:six} is
+\begin{equation}\label{eq:six-tensor}
+ T=\frac12(x_1y_1^T-x_3y_2^T).
+\end{equation}
+Fixing one $q$-step as the cyclic first entry leaves two orders of its other steps and six orders of the $p$-steps: exactly twelve possible six-block orders per triple pair. No planar general-position hypothesis is needed for Lemma~\ref{lem:sparse}; genuine triples below always mean positive three-point closure vertices.
+
+\section{Difference bodies and the exact remaining obstruction}\label{sec:width}
+Let
+\[
+ W_A=(A-A)^\circ=\{x:h_A(x)+h_A(-x)\le1\},
+ \qquad W_B=(B-B)^\circ,
+\]
+where $h_A$ is the support function. These bodies do not depend on the translation used to place the origin inside the factors.
+
+\begin{lemma}[The geometric hull of individual closure steps]\label{lem:width}
+The convex hull of all $\pm\gamma_i u_i$, as $\gamma$ ranges over closure vertices, is exactly $W_A$.
+\end{lemma}
+\begin{proof}
+For $x=\gamma_i u_i$, positive homogeneity and subadditivity give
+\[
+ h_A(x)=\gamma_i,\qquad
+ h_A(-x)=h_A\Bigl(\sum_{k\ne i}\gamma_k u_k\Bigr)\le1-\gamma_i.
+\]
+Thus every such step and its negative belong to $W_A$.
+
+Conversely, every edge-normal direction of $A-A$ is an edge-normal direction of $A$ or $-A$: the exposed face in direction $n$ is $F_A(n)-F_A(-n)$, which is an edge precisely when at least one of those faces is an edge. Consequently every vertex of $W_A$ has the form
+\[
+ \pm\frac{n}{h_A(n)+h_A(-n)},
+\]
+where $n$ is an outward unit facet normal of $A$. Put $h_+=h_A(n)$, $h_-=h_A(-n)$ and $u_i=n/h_+$. The point $-n/h_-$ lies on the boundary of $A^\circ$. It is either a dual vertex or a convex combination of the two endpoints of a dual edge. This face cannot contain $u_i$: a primal point supporting that polar face has scalar product $-h_-$ with $n$, so its scalar product with $u_i$ is negative, not one.
+
+Combine $u_i$ with this opposite boundary point using masses $h_+/(h_++h_-)$ and $h_-/(h_++h_-)$. The resulting closure distribution has two or three positive entries, and its singled-out step is $n/(h_++h_-)$. In the two-point case it is the unique distribution on an opposite pair. In the three-point case the three points are affinely independent, and the positive closure is a closure-polytope vertex. If a boundary coefficient vanishes, use the two-point case. Thus every vertex of $W_A$ is obtained.
+\end{proof}
+
+Define a compact centrally symmetric convex body in the four-dimensional matrix space by
+\begin{equation}\label{eq:Tfour}
+ \Tfour(A,B)=\conv\{\tfrac12xy^T:x\in W_A,\ y\in W_B\}.
+\end{equation}
+Products of vertices suffice in this convex hull. Let $\Tsix(A,B)$ be the finite set of matrices~\eqref{eq:six-tensor}, using every pair of genuine closure triples and all twelve cyclic alternating orders; it can be empty.
+
+\begin{theorem}[Four blocks plus paired triangles]\label{thm:decomp}
+For every angle,
+\begin{equation}\label{eq:decomp}
+ Q_{\max}(\theta)=h_{\conv(\Tfour\cup\Tsix)}(R_\theta).
+\end{equation}
+In particular, the condition $\Tsix\subseteq\Tfour$ implies
+\begin{equation}\label{eq:width-cap}
+ \boxed{\displaystyle
+ \capc(A\times R_\theta B)
+ =\frac{1}{\max_{x\in(A-A)^\circ,\ y\in(B-B)^\circ}x\cdot R_\theta y}}
+ \quad\text{for all }\theta.
+\end{equation}
+Tensor containment is preserved under independent nonsingular linear transformations of the two factors.
+\end{theorem}
+\begin{proof}
+A four-block word has grouped normalized steps $x,y,-x,-y$, and value $\frac12x\cdot R_\theta y$. For a sparse closure with at most three entries, any proper nonempty grouped sum equals an individual step or its negative. Lemma~\ref{lem:width} therefore identifies the convex hull of all sparse four-block matrices with~\eqref{eq:Tfour}; bilinearity allows the two convex combinations to be expanded independently. Conversely, the vertices of each width body are attained by singled-out steps of closure vertices, and the four groups can be put in either sign of alternating order. Thus every required generating matrix is feasible.
+
+Lemma~\ref{lem:sparse} and the two/four/six block classification prove~\eqref{eq:decomp}. If $A$ is replaced by $GA$ and $B$ by $HB$, closure weights are unchanged, steps become $G^{-T}x,H^{-T}y$, and both matrix sets transform by $T\mapsto G^{-T}TH^{-1}$. This preserves containment. Taking the reciprocal in~\eqref{eq:HK} proves~\eqref{eq:width-cap}.
+\end{proof}
+
+For the purely angular problem, full matrix containment is stronger than necessary. Let
+\[
+ \Pi(T)=(\ip TI,\ip TJ),\qquad
+ \Hfour=\Pi(\Tfour),\quad \Hsix=\Pi(\Tsix),\quad
+ \mathcal H=\conv(\Hfour\cup\Hsix).
+\]
+Then $Q_{\max}(\theta)=h_{\mathcal H}(\cos\theta,\sin\theta)$, and width-body equality at every angle is equivalent to $\Hsix\subseteq\Hfour$. In complex notation the generators are $\frac12x\overline y$ and $\frac12(x_1\overline{y_1}-x_3\overline{y_2})$, respectively. This convention gives $\Re(ze^{-i\theta})=Q(\theta)$.
+
+\begin{remark}[Interpretation, using an imported symmetric result]
+For origin-symmetric $C,E$, the known formula of Artstein--Avidan, Karasev and Ostrover \cite[Eq. (1.4.3), Remark 4.2]{AAKO} is
+\[
+ \capc(C\times E)=\frac4{\max_{u\in C^\circ,v\in E^\circ}u\cdot v}.
+\]
+Hence~\eqref{eq:width-cap} says that simultaneously replacing $A,B$ by their central symmetrals $(A-A)/2,(B-B)/2$ leaves capacity unchanged. The six-block set is an exact obstruction to that equality for planar polygon products. This interpretation is not needed to prove Theorem~\ref{thm:affine}.
+\end{remark}
+
+The normalized-step triangles are also precisely triangles whose sides follow facet-normal directions and whose support-function perimeter is one. This matches the normal-triangle language of \cite[Definition 3.2]{BMP}; our use of a pair of such triangles and its rank-one matrix is a different representation, not a claim that the underlying triangle reduction is new.
+
+\section{Two exact identities prove the affine pentagon formula}\label{sec:pent}
+Put
+\[
+ \lambda=\frac1{2h}=\frac{\sqrt5-1}{2},\qquad
+ \lambda^2+\lambda=1,\qquad s=\frac1{1+h},\qquad \rho=\frac{s^2}{2}.
+\]
+Every positive closure triple for the regular pentagon is a rotation of $\{n_0,n_2,n_3\}$. To see completeness, list the three positive cyclic index gaps. Their sum is five, and containment of the origin requires each angular gap to be less than $\pi$, so each index gap is at most two. The only possibility is $(1,2,2)$, giving exactly five triples. No opposite pairs exist.
+
+For the displayed triple the normalized steps are
+\[
+ s e,\quad s a,\quad s b,\qquad
+ e=n_0=(1,0),\quad a=\lambda n_2,\quad b=\lambda n_3,
+ \quad e+a+b=0.
+\]
+Indeed its factor weights are $h/(1+h),1/[2(1+h)],1/[2(1+h)]$. Also
+\[
+ a=(-1/2,\tfrac12\tan(\pi/5)),\qquad
+ b=(-1/2,-\tfrac12\tan(\pi/5)).
+\]
+Let
+\[
+ \mathcal D=\conv\{\pm n_i n_j^T:0\le i,j<5\}.
+\]
+The width body is $W_{P_5}=sD$, so $\Tfour(P_5,P_5)=\rho\mathcal D$.
+
+\begin{lemma}[Pentagon tensor identities]\label{lem:identities}
+The matrices
+\[
+ T_1=ee^T-aa^T,\qquad T_2=eb^T-ae^T
+\]
+belong to $\mathcal D$. More explicitly,
+\begin{align}
+ T_1&=\lambda^2 ee^T-\lambda^2 e n_3^T-\lambda^3 n_1n_2^T,\label{eq:id1}\\
+ T_2&=\lambda^2 n_1n_3^T-\lambda^2 n_2n_4^T.\label{eq:id2}
+\end{align}
+The positive coefficients in~\eqref{eq:id1} sum to one; those in~\eqref{eq:id2} sum to $2\lambda^2<1$, so its remaining mass may be placed at $0\in\mathcal D$.
+\end{lemma}
+\begin{proof}
+The elementary normal identities needed are
+\[
+ n_2+n_3=-\lambda^{-1}e,\qquad
+ \lambda n_1=e+n_2,\qquad \lambda n_4=e+n_3.
+\]
+Substituting $\lambda n_1=e+n_2$ in the right side of~\eqref{eq:id1} gives
+\[
+ \lambda^2 ee^T-\lambda^2e(n_2+n_3)^T-\lambda^2 n_2n_2^T
+ =(\lambda^2+\lambda)ee^T-\lambda^2 n_2n_2^T=T_1.
+\]
+For~\eqref{eq:id2}, use the last two normal identities to obtain
+\[
+ \lambda(e+n_2)n_3^T-\lambda n_2(e+n_3)^T
+ =\lambda(en_3^T-n_2e^T)=T_2.
+\]
+Finally $2\lambda^2+\lambda^3=1$, and all coefficients are positive. Each signed rank-one term is a defining vertex of $\mathcal D$.
+\end{proof}
+
+\begin{lemma}[These two matrices cover every six-block order]\label{lem:allorders}
+$\Tsix(P_5,P_5)\subseteq\rho\mathcal D$.
+\end{lemma}
+\begin{proof}
+Rotate the closure triples independently to the representative above and cut cyclically at their distinguished $q$-step $se$. After division by $\rho$, every matrix has the form
+\[
+ ev^T-wz^T,\qquad w\in\{a,b\},\quad v,z\in\{e,a,b\},\quad v\ne z.
+\]
+Let $F=\operatorname{diag}(1,-1)$. Left multiplication by $F$ exchanges $a,b$ and fixes $e$, so it suffices to use $w=a$. The six possibilities are exactly
+\[
+\begin{array}{c|cccccc}
+(v,z)&(e,a)&(e,b)&(a,e)&(b,e)&(a,b)&(b,a)\\\hline
+ ev^T-az^T&T_1&T_1F&T_2F&T_2&-FT_1F&-FT_1
+\end{array}
+\]
+where the last two identities also follow immediately from $e+a+b=0$. The body $\mathcal D$ is invariant under sign, independent left/right multiplication by $F$, and independent pentagon rotations. Lemma~\ref{lem:identities} therefore treats all twelve orders for every pair of the five closure triples. This is an exhaustive symbolic argument, not a numerical support search.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:affine}]
+Theorem~\ref{thm:decomp} and Lemma~\ref{lem:allorders} give width-body equality, and the tensor containment survives arbitrary independent $G,H$. The vertices of the two width bodies are $\pm sG^{-T}n_i$ and $\pm sH^{-T}n_j$. Therefore
+\[
+ Q_{\max}=\frac{s^2}{2}\max_{i,j}|n_i^TG^{-1}H^{-T}n_j|.
+\]
+Formula~\eqref{eq:HK} proves~\eqref{eq:affine}. For a maximizing pair and sign, a feasible witness is obtained by taking the two closure triples with those singled-out steps and arranging them into $q,p,q,p$ groups. Each group opposite the singled-out step consists of its two remaining facets. Thus a sparse six-facet witness exists even though its cyclic block count is only four.
+\end{proof}
+
+Setting $G=I$, $H=R_\theta$ recovers the entire supplied rotated-pentagon formula: the signed pairings have phase spacing $\pi/5$, so $m(R_\theta)=\cos d_5(\theta)$. In particular, this proof also supplies the endpoint capacity; it does not import the HKO endpoint calculation.
+
+\section{The sharp affine-class systolic ratio}\label{sec:sys}
+\begin{proof}[Proof of Theorem~\ref{thm:sys}]
+Areas transform by absolute determinants, so Theorem~\ref{thm:affine} gives
+\begin{equation}\label{eq:sys-matrix}
+ \sys(A\times B)=\frac{w^4}{2S^2}\frac{|\det M|}{m(M)^2}.
+\end{equation}
+Let $L=M/m(M)$. The definition of $m$ and bilinearity imply $LD\subseteq D^\circ$. The polar of the unit-circumradius regular decagon is
+\[
+ D^\circ=\sec\alpha\,R_\alpha D,\qquad \alpha=\pi/10.
+\]
+Comparing areas of the two nested polygons yields
+\[
+ \frac{|\det M|}{m(M)^2}=|\det L|
+ \le\frac{\area(D^\circ)}{\area(D)}=\sec^2\alpha.
+\]
+The elementary pentagon identities give
+\[
+ \frac{w^4}{2S^2}=\frac{5+2\sqrt5}{10},\qquad
+ \frac{5+2\sqrt5}{10}\sec^2(\pi/10)=\frac{3+\sqrt5}{5},
+\]
+proving~\eqref{eq:sys}.
+
+Equality of areas in $LD\subseteq D^\circ$ is equivalent to equality of the convex bodies. Thus $\cos\alpha\,R_{-\alpha}L$ is a linear automorphism of $D$. Such an automorphism permutes vertices and preserves or reverses cyclic adjacency. Its images on two adjacent vertices determine it, so it is one of the orthogonal dihedral symmetries of the regular decagon. This proves~\eqref{eq:equality}, including orientation-reversing $G,H$. Conversely, any matrix in~\eqref{eq:equality} attains equality. For example $M=R_\alpha$ gives $m(M)=\cos\alpha$, so the bound is attained.
+\end{proof}
+
+The numerical value of the sharp constant is the known HKO benchmark \cite{HKO}. The contribution here is a proof of its optimality among \emph{all pairs of affinely regular pentagons}; it is not an upper bound for arbitrary polygon products.
+
+\section{Angular structure, endpoint sharpness, and a genuine obstruction}\label{sec:angular}
+\subsection{All independently affine pentagon rotation profiles}
+For fixed $G,H$ set
+\[
+ A_{ij}=n_i^TG^{-1}H^{-T}n_j,\qquad
+ B_{ij}=n_i^TG^{-1}JH^{-T}n_j.
+\]
+Theorem~\ref{thm:affine} gives the complete profile
+\begin{equation}\label{eq:affine-profile}
+ \capc(GP_5\times R_\theta HP_5)
+ =\frac{w^2}{\max_{i,j}|A_{ij}\cos\theta+B_{ij}\sin\theta|}.
+\end{equation}
+Thus the relevant planar hull has at most fifty generating coefficient pairs $\pm(A_{ij},B_{ij})$. Its exposed vertices give the actual branches. A switch between two signed pairs occurs only where their difference has zero scalar product with $(\cos\theta,\sin\theta)$, and is a genuine switch only when both are exposed there. This also handles coincident pairs and multiple ties. At least one denominator is positive at every angle, since the normal sets span the plane and the relative matrix is invertible. No branch arising from any omitted support can improve~\eqref{eq:affine-profile}.
+
+\subsection{Exactly when endpoint interpolation is sharp}
+For any polygons let $f(\theta)=Q_{\max}(\theta)=h_{\mathcal H}(e^{i\theta})$. If $0<b-a<\pi$, each fixed coefficient $z$ satisfies
+\[
+ \Re(ze^{-i\theta})
+ =\frac{\sin(b-\theta)}{\sin(b-a)}\Re(ze^{-ia})
+ +\frac{\sin(\theta-a)}{\sin(b-a)}\Re(ze^{-ib}).
+\]
+Taking endpoint upper bounds gives
+\begin{equation}\label{eq:interp}
+ f(\theta)\le\frac{\sin(b-\theta)f(a)+\sin(\theta-a)f(b)}{\sin(b-a)}.
+\end{equation}
+\begin{proposition}[Exact sharpness criterion]\label{prop:interpolation}
+Equality in~\eqref{eq:interp} at one strict interior angle holds if and only if one feasible coefficient is maximizing at both endpoints. In that case equality holds throughout $[a,b]$. Equivalently, the two exposed faces of $\mathcal H$ have a common point, or both endpoint directions lie in one closed vertex normal cone of $\mathcal H$.
+\end{proposition}
+\begin{proof}
+At an interior angle both interpolation coefficients are strictly positive. Choose an enumerated candidate attaining $f(\theta)$. Equality forces both its endpoint deficits to vanish. Conversely a candidate with both endpoint deficits zero attains the bound everywhere. A common point of the two faces is a convex combination of generating candidates, all of whose positive-mass terms must belong to both faces, so it also supplies an actual candidate. Faces with nonempty intersection share a vertex. At the endpoints themselves one interpolation coefficient is zero, so this strict-interior conclusion cannot be inferred from endpoint equality alone.
+\end{proof}
+
+\subsection{Why pentagon switch points are not strictly four-block}
+Let $\tau=\tan(\pi/5)$ and take the normalized pentagon triples from Section~\ref{sec:pent}. Use the alternating word whose $q$-steps are $se,sb,sa$ and whose $p$-steps are $se,sb,sa$. Formula~\eqref{eq:six} gives its complex coefficient
+\[
+ z=\rho\left(\frac{3+\tau^2}{4}+\frac{i\tau}{2}\right)
+   =\rho\left((1-\lambda)+\lambda e^{i\pi/5}\right).
+\]
+The second equality uses $\lambda=1/(2h)$ and the pentagon identities. Thus $z$ lies in the relative interior of the edge joining two consecutive vertices of the four-block decagon. It maximizes at $\theta=\pi/10$. Accordingly, fully alternating six-block sparse maximizers do exist at the pentagon's angular switches. One must not claim that every pentagon optimizer reduces to four blocks. The tensor proof controls their value without excluding them.
+
+\subsection{Triangles show that the width-body rule is not universal}
+For $P_3$ the unique normalized closure has three equal weights. Its steps are $(2/3)e^{2\pi i k/3}$. The four-block hull is a regular hexagon of circumradius $2/9$. Directly using the twelve alternating orders gives a regular hexagon of circumradius $2/(3\sqrt3)$ with vertex directions $\pi/6+k\pi/3$. Its inradius is $1/3>2/9$, so it strictly contains the entire four-block hull. Therefore
+\begin{equation}\label{eq:triangle}
+ \boxed{\displaystyle
+ \capc(P_3\times R_\theta P_3)
+ =\frac{3\sqrt3}{4}\sec\left(\min_{k\in\mathbb Z}|\theta-\pi/6-k\pi/3|\right).}
+\end{equation}
+There is only one closure pair, so this exhausts all supports. In particular $\capc(P_3\times P_3)=3/2$, whereas the four-block-only value there is $9/4$. This is an exact counterexample to a universal extension of the difference-body formula, not a novelty claim about the triangle capacity itself.
+
+\section{Heptagons and unequal regular factors}\label{sec:hept}
+This section supplies a second, different mechanism: a strict angular margin. It does not assert tensor containment for all affine heptagon pairs.
+
+\subsection{The four-block hull for odd regular factors}
+For odd $n$, the difference body $P_n-P_n$ has facet normals $\pm n_i^{(n)}$ and support height $1+h_n$ in those directions. Hence $W_{P_n}$ is the regular $2n$-gon of circumradius $s_n=(1+h_n)^{-1}$. For odd $n,m$, put
+\[
+ L=\operatorname{lcm}(n,m),\qquad \rho_{nm}=\frac{s_ns_m}{2}.
+\]
+Its complex four-block coefficient hull is exactly
+\begin{equation}\label{eq:regular-H4}
+ \Hfour(P_n,P_m)=\rho_{nm}\conv\{e^{ik\pi/L}:0\le k<2L\}.
+\end{equation}
+Indeed products of width-body vertex phases give every multiple of $\pi/L$ and no other phase. Thus its support function is $\rho_{nm}\cos d_L(\theta)$, and its inradius is $\rho_{nm}\cos(\pi/(2L))$.
+
+\subsection{Exhaustive closure types for seven facets}
+Write $a=\pi/7$, $h=\cos a$, $k=\cos3a$. In this subsection the symbols $a,h$ are local heptagon parameters. A closure triple has three positive cyclic index gaps summing to seven; every gap is at most three. The only unordered possibilities are $(1,3,3)$ and $(2,2,3)$. Both are isosceles, with seven rotations each, so there are exactly fourteen closure vertices. No two-facet closure exists.
+
+Up to rotation, the corresponding normalized-step triples are
+\begin{equation}\label{eq:iso}
+ X(s,t)=s\left(1,\frac{-1+it}{2},\frac{-1-it}{2}\right),
+\end{equation}
+with the two parameter pairs
+\[
+ (s_1,t_1)=\left(\frac1{1+h},\tan a\right),\qquad
+ (s_3,t_3)=\left(\frac{k}{h(1+k)},\tan3a\right).
+\]
+Representatives have normal indices $\{0,3,4\}$ and $\{0,2,5\}$, respectively. This follows by solving the two equal-weight sides against the axial side. For the pentagon the single type has $(s_5,t_5)=((1+h_5)^{-1},\tan(\pi/5))$.
+
+\begin{lemma}[All alternating isosceles-pair magnitudes]\label{lem:iso}
+For two triples $X(s,t),X(r,u)$ with $s,r>0$, $t,u\ge0$, the largest modulus among their twelve six-block coefficients is
+\begin{equation}\label{eq:F}
+ \frac{sr}{2}F(t,u),\qquad
+ F(t,u)=\max\left\{
+ \frac{\sqrt{(3+tu)^2+(t+u)^2}}4,\ \frac{t+u}{2}\right\}.
+\end{equation}
+Independent rotations of the triples do not change this maximum.
+\end{lemma}
+\begin{proof}
+Cut at the first axial step and insert~\eqref{eq:iso} into~\eqref{eq:six}. Dividing by $sr/2$, the twelve coefficients have moduli among
+\[
+ \frac{\sqrt{(3+tu)^2+(t+u)^2}}4,\quad
+ \frac{\sqrt{(3-tu)^2+(t-u)^2}}4,\quad
+ \frac{t+u}{2},\quad \frac{|t-u|}{2}.
+\]
+For example the first axial $p$-step followed by its negative-imaginary step gives $(3+tu+i(t+u))/4$, while placing that axial step second gives $-i(t+u)/2$. These realize both terms in~\eqref{eq:F}. The remaining choices and the other order of the $q$-steps give the displayed smaller alternatives. Rotation multiplies a complex coefficient by a unit complex number.
+\end{proof}
+The first entry in the maximum~\eqref{eq:F} is at least as large as the second precisely when $(t-\sqrt3)(u-\sqrt3)\ge0$. Consequently the low/low and high/high pairs use the square-root entry, and a low/high pair uses $(t+u)/2$.
+
+\subsection{Exact rational exclusion of every six-block competitor}
+Set $r=s_3/s_1$. The following rational bounds suffice:
+\begin{equation}\label{eq:rational}
+ t_1<\frac{49}{100},\quad t_3<\frac{22}{5},\quad
+ t_5<\frac{73}{100},\quad r<r_0:=\frac{4237}{11007}.
+\end{equation}
+They do not come from floating-point certification. Here is an elementary verification. The numbers $\cos(\pi/7)$ and $\cos(3\pi/7)$ are the large and small positive roots of
+\[
+ f(x)=8x^3-4x^2-4x+1.
+\]
+Factoring $\cos(7a)+1$ or using the seventh roots of unity proves this polynomial identity. Its monotonicity on the relevant root intervals, and direct rational substitution, give
+\[
+ h>9/10,\qquad 111/500<k<223/1000.
+\]
+For the small root use $f(111/500)>0>f(223/1000)$ and that $f$ decreases on $(0,1/2)$; for the large root use $f(9/10)<0$ and the increasing branch containing $\cos(\pi/7)>\sqrt3/2$. These inequalities imply
+\[
+ t_1^2<19/81<(49/100)^2,
+ \qquad t_3^2<237679/12321<(22/5)^2,
+\]
+\[
+ r=\frac{k}{1+k}\frac{1+h}{h}
+ <\frac{223}{1223}\frac{19}{9}=r_0.
+\]
+Finally $t_5^2=5-2\sqrt5<(73/100)^2$, checked by squaring the positive rational lower bound $\sqrt5>447/200$.
+
+Let $T=49/100$, $U=22/5$, $V=73/100$. Dividing each squared six-block modulus by the appropriate $\rho_{nm}^2$, Lemma~\ref{lem:iso} and monotonicity give the following strict upper bounds. All numbers in the second column are rational expressions, and the comparisons in the third column follow by multiplying positive denominators.
+\[
+\begin{array}{c|c|c}
+\text{pair of types}&\text{upper bound for squared normalized modulus}&\text{comparison}\\\hline
+7_1,7_1&((3+T^2)^2+4T^2)/16&<361/400\\
+7_1,7_3&r_0^2(T+U)^2/4&<361/400\\
+7_3,7_3&r_0^4((3+U^2)^2+4U^2)/16&<361/400\\\hline
+5_1,7_1&((3+VT)^2+(V+T)^2)/16&<9801/10000\\
+5_1,7_3&r_0^2(V+U)^2/4&<9801/10000
+\end{array}
+\]
+For transparency, these five rational upper bounds are, respectively,
+\[
+ \frac{1145864801}{1600000000},\quad
+ \frac{476971178161}{538462440000},\quad
+ \frac{116304862857201778241}{146783035890944010000},\quad
+ \frac{1276254929}{1600000000},\quad
+ \frac{58326597081}{59829160000}.
+\]
+It follows that every six-block coefficient has modulus less than $\frac{19}{20}\rho_{77}$ in the heptagon pair, and less than $\frac{99}{100}\rho_{57}$ in the unequal pair.
+
+But
+\[
+ \cos(\pi/14)=\sqrt{(1+h)/2}>\sqrt{19/20}>19/20,
+\]
+while $\pi<4$ and $\cos x\ge1-x^2/2$ give
+\[
+ \cos(\pi/70)>1-2/1225>99/100.
+\]
+Thus in both cases every six-block coefficient lies strictly inside the incircle of the four-block hull. The exhaustive closure-type classification and twelve-order lemma exclude every possible sparse competitor, hence every competitor by Lemma~\ref{lem:sparse}. Equations~\eqref{eq:77} and~\eqref{eq:57} now follow from~\eqref{eq:regular-H4} and~\eqref{eq:HK}.
+
+The formulas are global. At $\theta=k\pi/L$ a single hull vertex is exposed; at $\theta=(k+1/2)\pi/L$ two adjacent vertices tie. These assertions concern exposed coefficient vectors, not uniqueness of facet words or of capacity-minimizing orbits. The strict six-block bounds hold at the switches as well.
+
+Their maximal systolic ratios are exactly
+\[
+ \frac{(1+h_n)^2(1+h_m)^2}
+ {2\area(P_n)\area(P_m)\cos^2(\pi/(2L))},
+ \quad (n,m,L)=(7,7,7),(5,7,35),
+\]
+approximately $0.9174081964$ and $0.9106527968$, respectively. These decimal evaluations are illustrations, not proof inputs or claims of a new extremal ratio.
+
+\section{An open nonregular family}\label{sec:stable}
+\begin{proposition}[Strict width dominance is stable]\label{prop:stable}
+Suppose two labelled polygons have no opposite pair of dual vertices, no three collinear dual vertices, and no zero barycentric coordinate of the origin in any dual-vertex triple. If $\Hsix$ is strictly contained in the interior of $\Hfour$, then the width-body formula~\eqref{eq:width-cap} holds at every relative angle throughout some open neighborhood of this pair, with the same numbers of labelled facets.
+\end{proposition}
+\begin{proof}
+For sufficiently small changes of the dual vertices, all triple barycentric coordinates remain nonzero with unchanged signs, and all relevant determinants remain nonzero. Thus the list of feasible positive closure triples is unchanged and their weights vary continuously. There are no two-point closures. Every member of the finite six-block coefficient set therefore varies continuously.
+
+The vertices of each width body are obtained from the finitely many signed facet normals by dividing by the corresponding positive width. Support functions, widths, and these generating points vary continuously. Hence the four-block hull and its support function vary continuously, uniformly in angle. At the original pair strict containment gives a positive minimum support gap on the compact circle. Uniform continuity preserves a positive gap after sufficiently small perturbations. Theorem~\ref{thm:decomp} proves the conclusion.
+\end{proof}
+
+Odd regular pentagons and heptagons satisfy the nondegeneracy hypotheses: their dual vertices lie on a circle, no two are opposite, and the origin lies on no line through two of them. Section~\ref{sec:hept} gives strict containment for $(P_7,P_7)$ and $(P_5,P_7)$, proving the neighborhood assertion in Theorem~\ref{thm:hept-main}. No explicit norm-radius for these neighborhoods is claimed.
+
+A directly checkable sufficient condition, also covering arbitrary polygon pairs, is
+\[
+ \max_{z\in\Hsix}|z|<\min_{\theta}h_{\Hfour}(e^{i\theta}).
+\]
+For an empty six-block set this is interpreted as automatic. The two sides are a finite maximum and the origin-centered inradius of an explicit planar polygon. More generally, exact containment can hold even when this stronger radial test fails, as the pentagon's edge-contact example shows.
+
+\section{Status, relation to sources, and a remaining question}\label{sec:status}
+\textbf{Proved here from the stated inputs.} The main affine-pentagon formula, its sharp systolic bound and equality classification, the width/tensor decomposition, the two heptagon-related angular profiles, and their open nonregular neighborhoods have complete proofs above. The two tensor identities, not numerical hull computations or imported endpoint values, are the decisive input for the main result.
+
+\textbf{Imported or already supplied.} The Haim--Kislev formula is imported from \cite{HK}. Lemma~\ref{lem:sparse} is the accepted reduction supplied in the input packet and is not claimed as a contribution of this handoff. The original rotated-pentagon profile was supplied; its independent recovery here is a consistency check and an application of the stronger theorem. The HKO value is a known benchmark \cite{HKO}. The symmetric-product interpretation uses \cite{AAKO}. The normal-triangle approach and the quadrilateral/affinely regular hexagon Viterbo results in \cite{BMP} are neighboring work, not results established here.
+
+\textbf{Novelty qualification.} The named primary sources and their relevant statements were checked, together with a limited targeted search. I did not locate the independent-affine-pentagon formula or the affine-class extremal statement in those sources. This is not an exhaustive literature review, and no priority or publication-readiness claim is made. The proofs should receive independent mathematical review before incorporation as a project theorem.
+
+\textbf{A specific unresolved extension.} For odd regular $P_n,P_m$ with $n,m\ge5$, the natural candidate is
+\[
+ \capc(P_n\times R_\theta P_m)
+ \stackrel{?}{=}(1+h_n)(1+h_m)\sec d_{\operatorname{lcm}(n,m)}(\theta).
+\]
+Outside the cases proved above, this remains a conjectural extension in this handoff. Ordinary floating-point checks of additional regular polygons motivated it, but are not a proof. The exact missing step is to show that every paired closure-triangle coefficient lies in the regular four-block polygon~\eqref{eq:regular-H4}. The still stronger matrix containment would extend such a result to independent affine images; angular or radial containment alone does not imply that matrix statement. No additional project data are needed to formulate this obstruction. A proof or an exact counterexample to this finite geometric containment is the useful next mathematical target, rather than a larger numerical campaign.
+
+\begin{thebibliography}{9}
+\bibitem{HK} P. Haim--Kislev, \emph{On the symplectic size of convex polytopes}, Geom. Funct. Anal. 29 (2019), 440--463. Theorem 1.1. \href{https://arxiv.org/html/1712.03494v3}{arXiv:1712.03494v3}; DOI 10.1007/s00039-019-00486-4.
+\bibitem{HKO} P. Haim--Kislev and Y. Ostrover, \emph{A counterexample to Viterbo's conjecture}, Ann. of Math. 203 (2026), 603--622. \href{https://arxiv.org/html/2405.16513v3}{arXiv:2405.16513v3}. The main proof in this handoff does not use its endpoint-capacity calculation.
+\bibitem{AAKO} S. Artstein--Avidan, R. Karasev and Y. Ostrover, \emph{From symplectic measurements to the Mahler conjecture}, Duke Math. J. 163 (2014), 2003--2022. Eq. (1.4.3) and Remark 4.2. \href{https://arxiv.org/html/1303.4197v2}{arXiv:1303.4197v2}; DOI 10.1215/00127094-2794999.
+\bibitem{BMP} A. Balitskiy, I. Mitrofanov and A. Polyanskii, \emph{Triangle covering problems and the Viterbo inequality in the plane}, 12 March 2026. Definition 3.2, Theorem 3.3, Theorem 1.2, and Sections 6--7. \href{https://arxiv.org/html/2603.12495v1}{arXiv:2603.12495v1}.
+\end{thebibliography}
+\end{document}

@@ -58,9 +58,11 @@ The conjecture that all normalized capacities agree on convex domains was
 stronger than Viterbo's volume bound. Indeed, the Gromov width satisfies
 that bound directly by volume preservation. The HKO example therefore
 also separates the EHZ capacity from the Gromov width
-\cite{HaimKislevOstrover2024}. The equality of EHZ and cylindrical capacity
-on general convex domains in four dimensions is still listed as open in
-\cite[Remark~1.4(v)]{HaimKislevOstrover2024}. Edtmair instead characterizes
+\cite{HaimKislevOstrover2024}. Abbondandolo, Edtmair and Kang prove that EHZ and cylindrical capacity
+coincide on every convex body in four dimensions
+\cite[Corollary~1]{AbbondandoloEdtmairKang2024}. Thus the capacity computed
+in this thesis also determines cylindrical capacity. Their proof builds on
+Edtmair's earlier work, which characterizes
 cylindrical capacity on smooth star-shaped domains in $\mathbb R^4$ with
 dynamically convex boundary by the
 least area of a disk-like global surface of section, and proves coincidence
@@ -139,9 +141,11 @@ $P_5\times R(\theta)P_5$: its systolic ratio is
  \frac{5+2\sqrt5}{10}\sec^2 d(\theta),
 \]
 where $d(\theta)$ is the distance to the nearest multiple of $\pi/5$.
-An exhaustive comparison proves the formula, and its maximum is the HKO
-value. This determines the whole relative-rotation profile while keeping
-both factors regular.
+A short analytic comparison proves the formula, whose maximum is the HKO
+value. A separate matrix-containment argument extends the capacity formula
+and sharp systolic bound to independent linear deformations of both regular
+pentagons; see Section~\ref{sec:pentagon-affine}. This family is larger
+than the rotation family but does not include arbitrary pentagons.
 
 \subsection{Looking for mathematical structure in data}
 
@@ -155,19 +159,19 @@ remains open.
 
 \subsection{How to read the thesis}
 
-The order follows the passage from geometry to computation and then to
-applications. Sections 2--4 explain how nonsmooth boundary dynamics become
-a finite quadratic program. Section 5 presents the alternative flow-graph
-method, and Section 6 develops first-order variation. These foundations
-prepare the local theorem in Section 7 and the further investigations in
-Sections 8 and 9.
+The foundations in Sections~\ref{sec:preliminaries}--\ref{sec:quadratic-program-algorithm-hk2019}
+explain how nonsmooth boundary dynamics become a finite quadratic program.
+Section~\ref{sec:flow-graph-algorithm-ch2021} presents the alternative flow-graph
+method, and Section~\ref{sec:first-order-perturbations} develops first-order variation.
 
 A reader primarily interested in the HKO theorem can start with its statement
-and proof strategy in Section 7, returning to Sections 2--4 for the capacity
-formula and to Section 6 for variation. The flow-graph and data-science
-chapters are not prerequisites for that proof. Section 8 describes the
-empirical investigation and can be read independently of the HKO certificate;
-Section 9 gives the separate theorem for rotated pentagons. The later
-sections document visualizations, numerical methods, code and data, and
-reflect on the use of AI. The appendices contain computational detail that
-can be consulted when checking or reproducing the results.
+and proof strategy in Section~\ref{sec:hko-local-maximum}, returning to the
+foundations for the capacity formula and to
+Section~\ref{sec:first-order-perturbations} for variation. The flow-graph and
+data-science chapters are not prerequisites for that proof.
+Section~\ref{sec:black-box-datascience} describes the empirical investigation.
+Sections~\ref{sec:rotated-regular-polygons} and~\ref{sec:pentagon-affine} give
+the rotation profile and its extension to independently deformed pentagons.
+The later sections document visualizations, numerical methods, code and data,
+and reflect on the use of AI. The appendices contain computational detail
+for checking or reproducing the results.

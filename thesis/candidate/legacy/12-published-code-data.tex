@@ -26,12 +26,15 @@ The rotated-pentagon packet is stored under
   \path{pentagon-rotation-formula-proof/}.
 \end{center}
 It contains the exact SageMath classifier and the recorded full-run transcript
-for all \(3340\) finite words left after the mathematical reduction.  Here too,
-the program does not replace the proof: the enumeration theorem, the
+for all \(3340\) finite words left after the mathematical reduction.  This is the original computational proof route; the analytic rotation and
+independent-linear-deformation proofs presented here do not use it. In the
+computational route, the enumeration theorem, the
 translation from checked signs to action comparisons, and the continuity
 argument remain mathematical inputs.  The repository exposes the finite
 computation and its output for inspection, with SageMath's exact arithmetic
-and root isolation inside the software trust boundary.
+and root isolation inside the software trust boundary. The maintained
+affine-pentagon argument and its source-convention check are in
+\path{formal/pentagon-affine-products/}.
 
 Selected non-proof evidence is also tracked as ordinary repository files.  In
 particular, the product-capacity implementation audit retains its \(88\)-row
@@ -48,7 +51,13 @@ project.  Its artifact registry identifies twelve external snapshots through
 twenty-one intended release paths, but those files are not present at those
 paths in a plain checkout at the time of writing.  For example, the
 \(14336\)-row random/product provenance table is tracked, while the source
-random/product datasets and the method-facing invariant table are not.
+random/product datasets and the method-facing invariant table are not tracked
+at those paths. The original source geometries have been recovered locally
+from the registered snapshot and matched against all \(14336\) table rows.
+They can be materialized through the \texttt{polytope-datasets} artifact;
+this recovery does not supply missing historical execution receipts or
+retroactively certify the numerical targets. The recovery receipt is in
+\path{docs/ds-retrospective-revalidation/source-verification.json}.
 Consequently, cloning the repository alone does not provide every input needed
 to repeat all empirical analyses, regenerate every figure, or reproduce every
 reported run.  Packet-local instructions describe available producers and

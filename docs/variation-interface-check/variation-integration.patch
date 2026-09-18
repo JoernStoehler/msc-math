@@ -1,0 +1,24 @@
+--- a/thesis/candidate/recovered/thesis-candidate/06-variation.tex
++++ b/thesis/candidate/recovered/thesis-candidate/06-variation.tex
+@@ -309,9 +309,18 @@
+ but all runs stopped at their iteration cap and every endpoint scan still
+ found a further above-threshold move.  Thus the evidence supports finite-step
+ progress and a measured computation cost on that panel, not endpoint local
+-maximality.  The branch-window model has not yet received a corresponding
+-reproducible
+-finite-distance validation and is not used as thesis evidence here.
++maximality.  A later comparison tests seven fixed policies on sixty-four matched starts,
++including policies based on finite-gap and branch-history models. This is a
++separate experiment on a historical numerical objective, not an enlargement
++of the twelve-start panel.
++
++A retained three-case diagnostic also explains a failure of the affine
++branch-window prediction. At the tested finite step, two named KKT branches
++change too rapidly for their base-point derivatives to predict even the sign
++of the action change. Smaller-step differences approach the analytical
++slopes, while the volume calculation remains consistent. Thus a small
++Euclidean step alone need not make the branch model accurate; its useful
++scale also depends on the conditioning of the KKT system.
+ 
+ \subsection{The non-generic boundary}
+ \label{subsec:first-order-nongeneric-boundary}

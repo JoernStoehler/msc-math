@@ -2,9 +2,9 @@
 \section{Numerics}\label{sec:numerics}
 
 The computations in this thesis support two different kinds of claims.
-Statements used inside the HKO and rotated-pentagon proofs are checked by
-separate SageMath packets over rational or ordered algebraic fields.  The
-ordinary Rust implementation instead computes the EHZ capacity of a
+The HKO proof uses a separate SageMath packet over rational or ordered
+algebraic fields; the rotated-pentagon chapter uses an analytic proof.  The
+Rust \texttt{capacity\_4d} implementation computes the EHZ capacity of a
 four-dimensional polytope supplied in binary64 coordinates.  It uses
 floating-point arithmetic for speed, but it does not accept an unverified
 floating-point sign or ordering decision: every such decision is enclosed by
@@ -150,7 +150,7 @@ It intentionally does not enumerate all minimizing geometric branches.
 
 \subsection{Empirical verification and limitations}
 
-The general numerical audit compared the floating-point predicates with exact
+The selected development route's numerical audit compared the floating-point predicates with exact
 dyadic-rational arithmetic on \(249\) KKT systems: ordinary generated systems,
 scales from \(10^{-2}\) through \(10^3\), and systems approaching singularity
 down to binary64 coincidence.  It found no incorrect determinate decision and
@@ -159,16 +159,16 @@ indeterminate and were resolved exactly.  The largest observed ratios of
 actual error to certified radius were \(0.00149\) for \(\beta\) and
 \(0.00081\) for \(Q\).
 
-Complete-route comparisons used \(88\) words from three generated general
+Complete selected-development-route comparisons used \(88\) words from three generated general
 polytopes and \(1271\) words from three product controls.  Exact aggregation
 found no missed capacity and no missed minimizer class; every exact capacity
 lay in the returned interval.  On the general cases, the largest difference
-between the reported midpoint and exact capacity was \(2.31\cdot10^{-14}\).
+between the printed central value and exact capacity was \(2.31\cdot10^{-14}\).
 These finite comparisons test the implementation and exercise fallback, but
 the soundness claim rests on the preceding error bounds and complete-candidate
 arguments.
 
-The product audit used \(88\) ordinary and adversarial products.  Across
+The selected product-development-route audit used \(88\) ordinary and adversarial products.  Across
 \(1835\) closure weights and \(173\,496\) objective intervals it found no
 interval violation, no incorrect determinate sign, and no disagreement between
 the hybrid and complete exact closure-vertex computations.  Raw comparison
@@ -180,8 +180,18 @@ implementation and stress-tests
 Theorem~\ref{thm:quadratic-program-product-six-facet}; it is not its proof and
 does not exclude longer tied minimizers.
 
+A four-test correspondence check compares the selected development routes
+with the production implementation on fixed fixtures: general capacity bounds,
+an exact action window, derivatives of the retained words, and product capacities
+with their sparse winning words. All four tests pass; this is finite regression
+evidence, not all-input equivalence. The test source is
+\path{experiments/dev-quadratic-program/tests/selected_route_correspondence.rs};
+its execution and fixture scope are recorded in
+\path{docs/numerics-correspondence-check/README.md}.
+
 The guarantees above concern the exact dyadic polytope represented by the
 input.  They do not propagate measurement error or prior rounding uncertainty
 in the coordinates, and they apply only within the stated facet, norm, and
-candidate-count limits.  Proof-facing claims about algebraic parameter
-families therefore continue to use the separate exact SageMath certificates.
+candidate-count limits.  The HKO certificate instead represents its algebraic input in an exact
+ordered field.  The analytic rotated-pentagon proof does not depend on
+these binary64 computations.

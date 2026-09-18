@@ -1,0 +1,152 @@
+{
+  "cache_duplicate_keys": 0,
+  "cache_field_counts": {
+    "capacity": 14528,
+    "capacity_err": 14528,
+    "dual_vertices_rational": 14550,
+    "orbit_scalars": 14528,
+    "sigma_gap_cutoff": 14528,
+    "sigmas": 14528,
+    "source": 14506,
+    "vertices_rational": 14550,
+    "volume": 14528,
+    "volume_err": 14528
+  },
+  "cache_rows": 14550,
+  "cache_sha256": "abf6ce2189c785d156df10266ee896e8748f6d2fc5b0afcbf05290597fcde326",
+  "cache_sources": {
+    "lagrangian_product": 10240,
+    "random": 4096
+  },
+  "historical_capacity_timings_ms": {
+    "generic-10": {
+      "maximum": 41.574221,
+      "median": 12.7448965,
+      "n": 512,
+      "sum": 6670.827085
+    },
+    "generic-11": {
+      "maximum": 115.067722,
+      "median": 32.231539,
+      "n": 512,
+      "sum": 17886.821278
+    },
+    "generic-12": {
+      "maximum": 584.215202,
+      "median": 88.242343,
+      "n": 512,
+      "sum": 49694.034767
+    },
+    "generic-5": {
+      "maximum": 0.286848,
+      "median": 0.0706025,
+      "n": 512,
+      "sum": 36.733409
+    },
+    "generic-6": {
+      "maximum": 0.30703600000000003,
+      "median": 0.194635,
+      "n": 512,
+      "sum": 99.14048
+    },
+    "generic-7": {
+      "maximum": 1.132653,
+      "median": 0.526054,
+      "n": 512,
+      "sum": 275.795239
+    },
+    "generic-8": {
+      "maximum": 3.624375,
+      "median": 1.45485,
+      "n": 512,
+      "sum": 764.659905
+    },
+    "generic-9": {
+      "maximum": 12.840581,
+      "median": 3.9790885000000005,
+      "n": 512,
+      "sum": 2204.437431
+    },
+    "product-3x3": {
+      "maximum": 0.457123,
+      "median": 0.21891300000000002,
+      "n": 1024,
+      "sum": 225.434777
+    },
+    "product-3x4": {
+      "maximum": 2.064374,
+      "median": 1.2597065,
+      "n": 1024,
+      "sum": 1170.609114
+    },
+    "product-3x5": {
+      "maximum": 6.044992,
+      "median": 3.5466245,
+      "n": 1024,
+      "sum": 3486.209212
+    },
+    "product-3x6": {
+      "maximum": 15.626781999999999,
+      "median": 7.8957405000000005,
+      "n": 1024,
+      "sum": 8041.714405
+    },
+    "product-4x4": {
+      "maximum": 6.642079000000001,
+      "median": 3.6167315,
+      "n": 1024,
+      "sum": 3765.157443
+    },
+    "product-4x5": {
+      "maximum": 19.556889,
+      "median": 11.514937,
+      "n": 1024,
+      "sum": 11761.969392
+    },
+    "product-4x6": {
+      "maximum": 61.556227,
+      "median": 34.969651999999996,
+      "n": 1024,
+      "sum": 35871.368534
+    },
+    "product-5x5": {
+      "maximum": 70.778478,
+      "median": 43.294764,
+      "n": 1024,
+      "sum": 44081.12022
+    },
+    "product-5x6": {
+      "maximum": 233.27515,
+      "median": 134.63573449999998,
+      "n": 1024,
+      "sum": 135278.199959
+    },
+    "product-6x6": {
+      "maximum": 664.8771919999999,
+      "median": 407.18244400000003,
+      "n": 1024,
+      "sum": 411257.562721
+    }
+  },
+  "mismatch_counts": {},
+  "rows": 14336,
+  "source_field_counts": {
+    "bounces": 10240,
+    "capacity": 14336,
+    "dual_vertices": 14336,
+    "dual_vertices_rational": 14336,
+    "facet_count": 14336,
+    "h_max": 14336,
+    "h_min": 14336,
+    "iterations": 14336,
+    "k": 10240,
+    "m": 10240,
+    "name": 14336,
+    "sys": 14336,
+    "time_capacity_ms": 14336,
+    "time_volume_ms": 14336,
+    "vertices_rational": 14336,
+    "volume": 14336
+  },
+  "wall_seconds": 8.668352976994356
+}
