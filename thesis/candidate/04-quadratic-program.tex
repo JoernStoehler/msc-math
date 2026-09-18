@@ -356,13 +356,20 @@ Its length is
   =\sum_j h_{K_p}(q_{j+1}-q_j)
   =\sum_j\langle p_j,q_{j+1}-q_j\rangle.
 \]
+Here the support function uses the Euclidean pairing between the \(p\)-plane
+and the \(q\)-plane: \(h_{K_p}(u)=\max_{p\in K_p}\langle p,u\rangle\).
 The last equality follows from the first normal-cone relation and
-\(p_j\in\partial K_p\). These relations say precisely
-that the alternating broken line through
+\(p_j\in\partial K_p\). Consider the alternating broken line through
 \[
   (q_j,p_j),\ (q_{j+1},p_j),\ (q_{j+1},p_{j+1})
 \]
-is a generalized characteristic for Rudolf's complex-structure convention.
+On a \(q\)-leg, the fixed coordinate \(p_j\) lies on \(\partial K_p\),
+and convexity keeps the moving coordinate inside \(K_q\); the corresponding
+statement holds on a \(p\)-leg. Thus the entire line lies on the product
+boundary. Its two leg velocities have the forms
+\((u,0)=-J_0(0,u)\) and \((0,-v)=-J_0(v,0)\), with
+\(u\in N_{K_p}(p_j)\) and \(v\in N_{K_q}(q_{j+1})\).
+It is therefore a generalized characteristic for Rudolf's complex-structure convention.
 That convention is opposite to ours, so reverse the loop. Since \(\lambda_0\)
 differs from \(-p\,dq\) by an exact form, its action in our convention is
 \[
