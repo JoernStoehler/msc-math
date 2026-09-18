@@ -106,8 +106,9 @@ selection, so this comparison does not exclude range restriction as a
 contributor. The construction is in Appendix~\ref{app:ds-selection}.
 
 Ridge measurements also contain predictive information beyond face counts
-and incidences. Under a common training/test split, ridge-area features
-alone gave test $R^2=0.887$, whereas combinatorial counts alone gave
+and incidences. With gradient-boosted regression trees and a common
+training/test split, ridge-area features alone gave test $R^2=0.887$,
+whereas combinatorial counts alone gave
 $0.043$. Here $R^2$ compares squared prediction error with prediction by
 the test-set mean. The feature lists, additional models and split
 definitions are in Appendix~\ref{app:ds-prediction}.
@@ -269,8 +270,8 @@ When the total symplectic ridge area is positive, define
 \]
 This is the share of the total carried by the largest ridge; like $R$,
 it is invariant under translation, common dilation and linear symplectic
-maps. Among products already in the lowest one percent by $R$, the half
-with lower $C$ had a further mean advantage of $0.034$ over the other
+maps. In a separate fresh pool, among products in the lowest one percent
+by $R$, the half with lower $C$ had a mean advantage of $0.034$ over the other
 half, positive in eight of ten groups. Thus largest-ridge dominance
 contains information even when the total ridge area is small.
 
@@ -485,9 +486,10 @@ compares procedures that differ in both sampling and admission. The
 fitted coordinates, updates and admission rules are in
 Appendix~\ref{app:ds-adaptive}.
 
-The prescribed ambient rotations $K\mapsto UK$, $U\in SO(4)$, also
-lost to fresh sampling under equal evaluation budgets. These limited
-comparisons are recorded in Appendix~\ref{app:ds-deformations}.
+In the tested finite schedules, rotating a fixed starting product by
+$K\mapsto UK$, $U\in SO(4)$, attained a smaller maximum numerical ratio
+than fresh product sampling at the same evaluation budget
+(Appendix~\ref{app:ds-deformations}).
 
 \subsection{Competing branches in local search}
 \label{subsec:black-box-datascience-finite-budget-optimization}
@@ -504,11 +506,12 @@ numerically chosen branch window contains every relevant branch.
 Seven fixed implementations started from the same 64 generic ten-facet
 bodies, under a common cap of 128 full evaluations and a nominal one-second
 accumulated evaluator-plus-optimizer budget. The implementations retaining
-branches from earlier points attained the largest median terminal values:
+branches from earlier points attained the largest median best-so-far
+numerical ratios:
 \begin{center}
 \begin{tabular}{lrr}
 \hline
-Implementation & Median best value & Across-start $10$--$90\%$ range\\
+Implementation & Median best ratio & Across-start $10$--$90\%$ range\\
 \hline
 Four-anchor history & .985 & .957--.999\\
 History with transition prediction & .982 & .956--.994\\
@@ -527,9 +530,9 @@ supply population and direct-search comparisons. These are rankings of
 the fixed implementations under this allocation, not of optimally tuned
 algorithm families. The historical numerical objective uses floating-point
 geometry and volume, and not every original executable or proposal trace
-was recovered. Appendix~\ref{app:datascience-results} gives the retained
+was recovered. Appendix~\ref{app:ds-local-optimization} gives the retained
 steps, provenance and budget interpretation. The ranges in the table
-show variation across starting bodies; all 448 terminal values are below one.
+show variation across starting bodies; all 448 best-so-far ratios are below one.
 
 \subsection{A failed probe does not establish a local maximum}
 
@@ -544,11 +547,9 @@ theorem; the finite test supplies a consistent control observation.
 A regular-pentagon control on a known increasing rotation path illustrates
 the same problem independently. In a suite of basis, random and prescribed
 rotation probes, its only positive changes were the twelve rotation
-probes; the generic directions missed the available increase. The regular
-triangle--hexagon product, rotated square--square product and CH2021
-example had no nominal gain above $10^{-12}$ in that suite. Their misses
-do not exclude untested directions or changes in facet count. The probe
-design and numerical limitations are in Appendix~\ref{app:ds-probes}.
+probes; the generic directions missed the available increase. The other
+controls, probe design and numerical limitations are in
+Appendix~\ref{app:ds-probes}.
 
 The chapter therefore supports a strong coarse association, opposite
 exact laws on two rotation families, and useful finite search improvements. It does
