@@ -3,20 +3,29 @@
 \label{sec:fresh-data-search}
 \label{sec:black-box-datascience}
 
-Do the symplectic areas of a four-dimensional polytope's two-dimensional
-faces help explain the size of its systolic ratio? Such a relationship
-could also help identify promising bodies before evaluating capacity. An association across a broad collection of
-polytopes is only a first test: for the search, it matters whether the
-relationship still holds among bodies with large ratios.
+We sample random polytopes and compute a broad range of readily available
+geometric quantities, including symplectic invariants and measurements
+that can change under symplectic transformations. We look for statistical
+patterns relating these quantities to the systolic ratio, then ask what
+geometry might explain them. Such patterns can suggest a conjecture, but
+an explanation must also account for the bodies on which the pattern fails.
 
-We focus on the symplectic areas of two-dimensional faces. These can be
-computed from the vertices without solving the capacity problem, and
-they are preserved by linear symplectic maps. Their total, normalized
-by volume, will be compared with the systolic ratio in random samples,
-in selected parts of those samples, and along geometric deformations.
-For products of equilateral triangles and regular pentagons, exact
-rotation formulas allow a sharper comparison than a statistical
-association alone.
+A strong association concerns the total symplectic area of the
+two-dimensional faces, normalized by volume. In the broad samples,
+bodies with smaller normalized area tend to have larger systolic ratios.
+This ordering weakens substantially when we restrict attention to small
+values of this normalized sum or large ratios. Changes to the shapes of polygon factors
+support a geometric contribution to the broad association, without
+establishing its cause. Exact rotation formulas sharpen the distinction:
+regular pentagon products obey an inverse-square law, whereas equilateral
+triangle products have the opposite ordering.
+
+These findings also distinguish two tasks in the search for large systolic
+ratios. A geometric measurement can select a population with larger ratios
+on average without indicating how to improve a body already in that
+population. The final part of the chapter examines search procedures that
+use capacity evaluations to propose further improvements, and the limits
+of numerical tests for local optimality.
 
 \subsection{Symplectic ridge area}
 \label{subsec:ds-sampling}
@@ -44,7 +53,7 @@ translation vector cancel around the closed polygon. A linear symplectic
 map preserves each $A_\omega(F)$ and the four-dimensional volume.
 Thus any relation between $R$ and the ratio respects these symmetries.
 
-\subsection{Association in the sampled polytopes}
+\subsection{A strong inverse association weakens under selection}
 
 For numerical evaluations we write
 $\widehat{\operatorname{sys}}=c_{\mathrm{num}}^2/(2V_{\mathrm{num}})$.
@@ -52,10 +61,11 @@ Its normalization agrees with $\operatorname{sys}$; its volume is computed
 in floating-point arithmetic. The empirical results below concern this
 numerical ratio.
 
-The exploratory sample contains 4,096 generic four-dimensional polytopes,
-with 512 at each facet count $F=5,\ldots,12$, and 10,240 Lagrangian products
-$P\times Q$, with 1,024 at each pair $3\leq k\leq m\leq6$ of factor side
-counts. In coordinates $(q_1,q_2,p_1,p_2)$, $P$ lies in the $q$-plane and
+The exploratory sample consists of generic four-dimensional polytopes
+with facet counts $F=5,\ldots,12$ and Lagrangian products $P\times Q$
+with factor side counts $3\leq k\leq m\leq6$. Each facet count has the
+same number of generic bodies, and each side-count pair has the same
+number of products. In coordinates $(q_1,q_2,p_1,p_2)$, $P$ lies in the $q$-plane and
 $Q$ in the $p$-plane. A fixed facet count or pair of side counts defines a
 sample group.
 
@@ -129,12 +139,78 @@ by factor side counts. Each group contains 1,024 bodies.}
 \end{figure}
 
 \FloatBarrier
+\subsection{Coarse selection succeeds; stronger selection need not}
+
+Selecting products with small $R$ raises the mean numerical systolic
+ratio, but further restriction within that selection need not raise it
+again. In a fresh population of Lagrangian products, the lowest-$R$
+selection had mean ratio $0.626$, compared with $0.316$ for comparison
+bodies. Selection used only geometry, before capacity was evaluated.
+Each factor-side-count group contributed equally, and the comparison
+bodies were chosen by a fixed hash order excluding the selected bodies.
+
+The distribution of area among the ridges supplies a second comparison.
+When the total symplectic ridge area is positive, define
+\[
+ C(K)=\frac{\max_F A_\omega(F)}{\sum_F A_\omega(F)}.
+\]
+This is the share of the total carried by the largest ridge; like $R$,
+it is invariant under translation, common dilation and linear symplectic
+maps. Among products in the
+lowest one percent by $R$ in a separate fresh sample, the half with lower
+$C$ had a mean advantage of $0.034$ over the other half, positive in eight
+of ten groups. Thus largest-ridge dominance distinguishes mean ratios within this
+selected pool, even when the total ridge area is small.
+
+The strong ordering in the broad samples is not retained within the
+low-$R$ panels themselves. Across 1,000 evaluated products in the lowest
+one percent by $R$, correlations within the ten side-count groups range
+from $-0.315$ to $+0.301$; pooling ranks computed within each group gives
+$+0.032$. The most extreme tenth has a larger mean ratio than the rest
+in only two groups. Small $R$ distinguishes this population from the
+comparison bodies, but does not reliably order the ratios within it.
+
+For generic ten-facet bodies, the related score $R/N_2$, where $N_2$ is
+the number of ridges, measures normalized area per ridge. Unlike products
+at fixed side counts, these bodies can have different ridge counts.
+Selecting the lowest one percent by $R/N_2$ from a fresh pool of 10,000
+bodies gave mean ratio $0.626$, against $0.339$ for 100 disjoint,
+deterministically selected comparison bodies. Within that selected panel, however,
+the ten most extreme scores had a mean ratio $0.032$ below the remaining
+ninety. This is a failure to obtain further gain in that sample, not an
+established deterioration under every stronger filter. The comparison
+rules and conditional resampling summaries are retained in
+Appendix~\ref{app:ds-selection}.
+
+The two geometric components of $R/N_2$ also behave differently under
+stronger selection. Let $E(F)$ be Euclidean ridge area and
+$\kappa(F)=A_\omega(F)/E(F)$, the alignment of its plane with the
+symplectic form relative to the Euclidean metric. Define the body-level
+quantities
+\[
+ \overline E(K)=\frac{\sum_F E(F)}{N_2\sqrt{\operatorname{vol}_4(K)}},
+ \qquad
+ \overline\kappa_E(K)=\frac{\sum_F E(F)\kappa(F)}{\sum_F E(F)}.
+\]
+Then $R(K)/N_2=\overline E(K)\overline\kappa_E(K)$ exactly. Neither
+factor is invariant under all linear symplectic maps. In the generic
+selection both population means are smaller than in the comparison panel.
+Within the selected panel, however, the ten lowest scores have slightly
+larger $\overline E$ and smaller $\overline\kappa_E$ than the other
+ninety, without a larger mean ratio. Thus smaller alignment alone does
+not order these selected bodies by ratio. Appendix~\ref{app:ds-selection}
+gives the population means; the identity above holds for each body and
+does not equate a mean product with the product of means.
+
 \subsection{Exact geometry: two families with opposite ordering}
 
-A universal inverse relation between ridge sum and systolic ratio is
-false, but it can hold exactly on a restricted family. The product edge
-formula explains both statements and identifies the smallest possible
-ridge sum among polygon products.
+The broad inverse association has an exact counterpart in the rotated
+regular-pentagon products: their systolic ratio is proportional to
+$R^{-2}$. It is not a universal ordering. Equilateral triangle products
+have the opposite ordering, and the cube minimizes $R$ among polygon
+products without maximizing the systolic ratio. These exact statements
+constrain a proposed explanation of the statistical association; the
+counterexamples alone do not explain it.
 
 For products the descriptor has an elementary edge formula. Let $u_i$ and $v_j$ be
 the counterclockwise boundary edge vectors of $P$ and $Q$. A ridge lying entirely in a $q$-
@@ -156,6 +232,52 @@ so
 The descriptor therefore combines the edge lengths of one factor with the
 widths of the other in the edge directions.
 
+
+For rotated regular pentagons, there is an exact inverse-square law. Let
+$K_\theta=P_5\times\operatorname{Rot}(\theta)P_5$, where $P_5$ has
+circumradius one, and let $d(\theta)=\operatorname{dist}(\theta,(\pi/5)\mathbb Z)$.
+Then
+\begin{equation}\label{eq:ds-pentagon-ridge-capacity}
+ \operatorname{sys}(K_\theta)R(K_\theta)^2=16(3+\sqrt5).
+\end{equation}
+Thus distinct ridge sums within this family have strictly reversed
+systolic ratios. More precisely, $R$ strictly decreases and
+$\operatorname{sys}$ strictly increases as $d$ runs from $0$ to $\pi/10$.
+Periodicity and reflection symmetry prevent strict monotonicity in the
+unrestricted angle $\theta$.
+
+For the proof, the area of each pentagon is $5\sin(\pi/5)\cos(\pi/5)$.
+Its edges have length $2\sin(\pi/5)$, so the mixed-edge formula gives
+\[
+ R(K_\theta)=4\tan(\pi/5)\sum_{k=0}^4|\cos(\theta+2\pi k/5)|
+           =16\sin(\pi/5)\cos d(\theta).
+\]
+For the second equality, the absolute-cosine sum is even and has period
+$\pi/5$. On $[-\pi/10,\pi/10]$, the terms indexed by $0,1,4$ are
+nonnegative and those indexed by $2,3$ are nonpositive. Pairing opposite
+indices reduces the sum to
+$[1+2\cos(2\pi/5)-2\cos(4\pi/5)]\cos\theta
+=4\cos(\pi/5)\cos\theta$. Combining this with the capacity profile in
+Theorem~\ref{thm:rotated-pentagon-product-formula} proves
+\eqref{eq:ds-pentagon-ridge-capacity}.
+
+Equilateral triangles give the opposite exact ordering. Let
+$T_\theta=P_3\times\operatorname{Rot}(\theta)P_3$, where $P_3$ has
+circumradius one, and put
+$d_3=\operatorname{dist}(\theta,(\pi/3)\mathbb Z)\in[0,\pi/6]$. Then
+\begin{equation}\label{eq:ds-triangle-profile}
+ R(T_\theta)=8\sqrt3\cos d_3,
+ \qquad
+ \operatorname{sys}(T_\theta)=\tfrac12\sec^2(\pi/6-d_3).
+\end{equation}
+Both quantities strictly decrease with $d_3$, from $(8\sqrt3,2/3)$ to
+$(12,1/2)$. Thus the ridge sum and ratio have the same strict ordering
+throughout this rotation family. Appendix~\ref{app:ds-triangle-profile}
+proves the capacity formula by classifying the six-facet words in the
+quadratic program, and derives the ridge sum directly. Thus even the direction of a strict relation depends on the family.
+The pentagon law supplies exact positive evidence for an inverse relation
+on one family; the triangle law prevents extending that relation to all
+polygon products.
 
 \paragraph{The minimum ridge sum for polygon products.}
 Let $P,Q$ be convex polygons with nonempty interior, set $D=P-P$, and write
@@ -201,149 +323,9 @@ the two $p_j$ rows, with $\sum_{j=1}^2(x_j+y_j)=1/2$. The order of the four
 rows in a coordinate pair gives a contribution at most $8x_jy_j$ to $Q$.
 Thus $Q\leq8\sum_jx_jy_j\leq1/2$. A cyclic word on one coordinate pair
 with its four weights equal to $1/4$ attains $Q=1/2$, giving $c=1/(2Q)=1$.} HKO has the larger ridge
-score $8.944$ and a ratio greater than one. Thus a universal claim that
-a smaller ridge score forces a larger systolic ratio is false. The strong
-negative association in the sampled distributions needs a more specific
-explanation.
+score $8.944$ and a ratio greater than one. This disproves a universal inverse ordering, while leaving the
+statistical association in the sampled distributions unexplained.
 
-
-For rotated regular pentagons, there is an exact inverse-square law. Let
-$K_\theta=P_5\times\operatorname{Rot}(\theta)P_5$, where $P_5$ has
-circumradius one, and let $d(\theta)=\operatorname{dist}(\theta,(\pi/5)\mathbb Z)$.
-Then
-\begin{equation}\label{eq:ds-pentagon-ridge-capacity}
- \operatorname{sys}(K_\theta)R(K_\theta)^2=16(3+\sqrt5).
-\end{equation}
-Thus distinct ridge sums within this family have strictly reversed
-systolic ratios. More precisely, $R$ strictly decreases and
-$\operatorname{sys}$ strictly increases as $d$ runs from $0$ to $\pi/10$.
-Periodicity and reflection symmetry prevent strict monotonicity in the
-unrestricted angle $\theta$.
-
-For the proof, the area of each pentagon is $5\sin(\pi/5)\cos(\pi/5)$.
-Its edges have length $2\sin(\pi/5)$, so the mixed-edge formula gives
-\[
- R(K_\theta)=4\tan(\pi/5)\sum_{k=0}^4|\cos(\theta+2\pi k/5)|
-           =16\sin(\pi/5)\cos d(\theta).
-\]
-For the second equality, the absolute-cosine sum is even and has period
-$\pi/5$. On $[-\pi/10,\pi/10]$, the terms indexed by $0,1,4$ are
-nonnegative and those indexed by $2,3$ are nonpositive. Pairing opposite
-indices reduces the sum to
-$[1+2\cos(2\pi/5)-2\cos(4\pi/5)]\cos\theta
-=4\cos(\pi/5)\cos\theta$. Combining this with the capacity profile in
-Theorem~\ref{thm:rotated-pentagon-product-formula} proves
-\eqref{eq:ds-pentagon-ridge-capacity}.
-
-Equilateral triangles give the opposite exact ordering. Let
-$T_\theta=P_3\times\operatorname{Rot}(\theta)P_3$, where $P_3$ has
-circumradius one, and put
-$d_3=\operatorname{dist}(\theta,(\pi/3)\mathbb Z)\in[0,\pi/6]$. Then
-\begin{equation}\label{eq:ds-triangle-profile}
- R(T_\theta)=8\sqrt3\cos d_3,
- \qquad
- \operatorname{sys}(T_\theta)=\tfrac12\sec^2(\pi/6-d_3).
-\end{equation}
-Both quantities strictly decrease with $d_3$, from $(8\sqrt3,2/3)$ to
-$(12,1/2)$. Thus the ridge sum and ratio have the same strict ordering
-throughout this rotation family. Appendix~\ref{app:ds-triangle-profile}
-proves the capacity formula by classifying the six-facet words in the
-quadratic program, and derives the ridge sum directly. The conflict
-between the two exact family laws is stronger than a failure of global
-monotonicity at a few sampled points: even the direction of a strict
-relation depends on the family.
-
-\subsection{Coarse selection succeeds; stronger selection need not}
-
-The bulk association has a practical consequence: geometry alone can
-identify fresh populations with larger numerical ratios before capacity
-is evaluated. From a fresh pool of 100,000 Lagrangian products, selecting
-the ten lowest-$R$ bodies in each factor-side-count group gave mean ratio $0.626$,
-compared with $0.316$ for ten comparison bodies per group. The comparison
-bodies were chosen by a fixed hash order excluding the selected bodies.
-
-The distribution of area among the ridges supplies a second comparison.
-When the total symplectic ridge area is positive, define
-\[
- C(K)=\frac{\max_F A_\omega(F)}{\sum_F A_\omega(F)}.
-\]
-This is the share of the total carried by the largest ridge; like $R$,
-it is invariant under translation, common dilation and linear symplectic
-maps. In a separate fresh pool of 100,000 products, among those in the
-lowest one percent by $R$, the half with lower $C$ had a mean advantage of $0.034$ over the other
-half, positive in eight of ten groups. Thus largest-ridge dominance
-contains information even when the total ridge area is small.
-
-The strong ordering in the broad samples is not retained within the
-low-$R$ panels themselves. Across 1,000 evaluated products in the lowest
-one percent by $R$, correlations within the ten side-count groups range
-from $-0.315$ to $+0.301$; pooling ranks computed within each group gives
-$+0.032$. The most extreme tenth has a larger mean ratio than the rest
-in only two groups. Coarse enrichment over comparison bodies and loss of
-the inverse ordering within the selected population are therefore both
-visible in these broad and selected populations.
-
-For generic ten-facet bodies, the related score $R/N_2$, where $N_2$ is
-the number of ridges, measures normalized area per ridge. Unlike products
-at fixed side counts, these bodies can have different ridge counts.
-Selecting the lowest one percent by $R/N_2$ from a fresh pool of 10,000
-bodies gave mean ratio $0.626$, against $0.339$ for 100 disjoint,
-deterministically selected comparison bodies. Within that selected panel, however,
-the ten most extreme scores had a mean ratio $0.032$ below the remaining
-ninety. This is a failure to obtain further gain in that sample, not an
-established deterioration under every stronger filter. The comparison
-rules and conditional resampling summaries are retained in
-Appendix~\ref{app:ds-selection}.
-
-The two geometric components of $R/N_2$ also behave differently under
-stronger selection. Let $E(F)$ be Euclidean ridge area and
-$\kappa(F)=A_\omega(F)/E(F)$, the alignment of its plane with the
-symplectic form relative to the Euclidean metric. Define the body-level
-quantities
-\[
- \overline E(K)=\frac{\sum_F E(F)}{N_2\sqrt{\operatorname{vol}_4(K)}},
- \qquad
- \overline\kappa_E(K)=\frac{\sum_F E(F)\kappa(F)}{\sum_F E(F)}.
-\]
-Then $R(K)/N_2=\overline E(K)\overline\kappa_E(K)$ exactly. Neither
-factor is invariant under all linear symplectic maps. In the generic
-selection both population means are smaller than in the comparison panel.
-Within the selected panel, however, the ten lowest scores have slightly
-larger $\overline E$ and smaller $\overline\kappa_E$ than the other
-ninety, without a larger mean ratio. Thus smaller alignment alone does
-not order these selected bodies by ratio. Appendix~\ref{app:ds-selection}
-gives the population means; the identity above holds for each body and
-does not equate a mean product with the product of means.
-
-\subsection{The inverse direction survives a controlled change of shape}
-
-The attenuation under selection does not mean that the inverse relation
-is confined to comparisons of unrelated bodies. We compared sixteen
-Lagrangian products with changed versions, eight in the $4\times4$ group
-and eight in the $4\times6$ group. Keeping polygon normals
-fixed and setting both factors' support heights to one gives opposite
-changes in $R$ and the numerical systolic ratio in fifteen of sixteen
-pairs. In ten pairs $R$ decreased and the ratio increased; in five the
-reverse happened. Both quantities increased in the remaining pair.
-Thus the sign relation persists for most of these controlled changes,
-even though making the factors tangential does not always raise the ratio.
-
-Separate normalization of the factors preserves the ratio: for $a,b>0$,
-\[
- \operatorname{diag}(aI_2,bI_2)
- =\sqrt{ab}\,\operatorname{diag}(\sqrt{a/b}\,I_2,\sqrt{b/a}\,I_2)
-\]
-is a dilation followed by a symplectic map. Thus replacing unequal support
-heights is the geometric change being tested.
-
-The evidence is stronger for direction than for size of effect. The
-Spearman correlation between the two changes is $-0.55$ overall and only
-$-0.095$ in the $4\times6$ group. All tested ratios are at most $0.742$,
-so this is not a deformation test of the high-ratio tail. It is consistent
-with shared geometric variation producing the bulk association, but does
-not isolate a causal role for ridge area or explain the whole pattern.
-The paired constructions and checks are in
-Appendix~\ref{app:ds-deformations}.
 
 \subsection{Covariance balance gives a second geometric signal}
 
@@ -384,7 +366,7 @@ lower half by $C$, its mean advantage was only $0.014$, and the differences
 changed sign across groups. Both geometric summaries therefore support
 selection in the tested populations; neither was uniformly better there.
 
-Their usefulness also survived one change of sampling law. For tangential
+Both selections also raised mean ratios under one change of sampling law. For tangential
 factors obtained by setting the support heights to one, the mean gains
 were $0.259$ for covariance selection and $0.225$ for ridge selection,
 averaged equally over the $4\times6$ and $6\times6$ groups. This is one
@@ -421,30 +403,59 @@ exact geometric explanation. A triangle with isotropic vertex covariance
 is equilateral (Appendix~\ref{app:ds-triangle-profile}), so ideal balancing
 places triangle products in the family with the same-order relation
 \eqref{eq:ds-triangle-profile}. The transformation changes
-several geometric properties together. It therefore identifies a useful
-shape deformation, not covariance imbalance as the sole cause of the
-bulk association. Nor do its six decreases permit a universal improvement
+several geometric properties together. The paired changes support a contribution from affine factor shape
+to the bulk association, but do not identify covariance imbalance as its
+sole cause. Nor do its six decreases permit a universal improvement
 rule. The selection of original bodies without using their ratios, complete
 paired evaluations and numerical checks are in Appendix~\ref{app:ds-balance}.
 
+\subsection{Opposite changes under a support-height deformation}
+
+A second deformation gives predominantly opposite changes in ridge
+area and systolic ratio in a small paired sample. Keeping polygon normals fixed and setting both
+factors' support heights to one does so in fifteen of sixteen tested
+products, drawn equally from the $4\times4$ and $4\times6$ groups. In ten pairs $R$ decreased and the ratio increased; in five the
+reverse happened. Both quantities increased in the remaining pair.
+Making the factors tangential therefore does not always raise the ratio.
+
+Separate normalization of the factors preserves the ratio: for $a,b>0$,
+\[
+ \operatorname{diag}(aI_2,bI_2)
+ =\sqrt{ab}\,\operatorname{diag}(\sqrt{a/b}\,I_2,\sqrt{b/a}\,I_2)
+\]
+is a dilation followed by a symplectic map. Thus replacing unequal support
+heights is the geometric change being tested.
+
+The evidence is stronger for direction than for size of effect. The
+Spearman correlation between the two changes is $-0.55$ overall and only
+$-0.095$ in the $4\times6$ group. All tested ratios are at most $0.742$,
+so this is not a deformation test of the high-ratio tail. It is consistent
+with shared geometric variation producing the bulk association, but does
+not isolate a causal role for ridge area or explain the whole pattern.
+The paired constructions and checks are in
+Appendix~\ref{app:ds-deformations}.
+
 \subsection{What could explain the bulk association?}
 
-The controlled changes give substance to one possible explanation of the
-bulk pattern. Many original products leave a large improvement available
-under factor balancing, and removing that shape variation weakens the
-association. Common perturbations of relatively inefficient shapes could
-therefore account for much of the broad inverse ordering, while other
-features govern differences among the better bodies. The height changes
-supply a second concrete deformation with a mostly inverse direction.
-Neither experiment measures geometric distance to a local optimum or
-establishes an additive-noise model.
+One possible explanation is that much of the broad association comes
+from shape variations that lower the systolic ratio and raise ridge area
+together. Reversing such variations would then improve many bodies in
+the bulk of the sample, while offering less scope for improvement among
+bodies already selected for large ratios or small ridge area. Factor
+balancing supports this possibility: it substantially raises most ratios
+and weakens the inverse association. The support-height deformation
+supplies a second example of predominantly opposite changes. Neither
+experiment, however, measures distance to a local optimum or establishes
+that this mechanism explains the attenuation under selection.
 
 A different explanation is an underlying relation involving a geometric
 quantity that $R$ measures only imperfectly. Extreme $R$ can then reflect
 both favorable geometry and deviations specific to the proxy. Here noise
 would mean differences between bodies not captured by the relation, not
-numerical error in a fixed-body evaluation. The residual associations
-after balancing leave room for such a relation; they do not identify it.
+numerical error in a fixed-body evaluation. Selection for extreme $R$ would then select partly for these deviations,
+weakening its association with the ratio. This account is compatible with
+the residual associations after balancing, but no such underlying
+quantity or law has been identified.
 
 These explanations are compatible, and the results do not choose between
 them. The observed attenuation is stronger than in the fitted Gaussian
@@ -504,15 +515,14 @@ supplies a more local source of proposed improvements. Its lower-envelope
 structure explains why increasing one currently minimizing branch can
 expose another as the new minimum. The
 finite-gap model therefore retains nearby branches, and history-based
-variants also retain previously active ones. The following comparison
-supports their finite-search usefulness; it does not establish that a
-numerically chosen branch window contains every relevant branch.
+variants also retain previously active ones. A numerically chosen branch
+window is not guaranteed to contain every relevant branch.
 
-Seven fixed implementations started from the same 64 generic ten-facet
-bodies, under a common cap of 128 full evaluations and a nominal one-second
-accumulated evaluator-plus-optimizer budget. The implementations retaining
-branches from earlier points attained the largest median best-so-far
-numerical ratios:
+Retaining branches from earlier points gave the largest median
+best-so-far numerical ratios in the comparison. Seven fixed
+implementations shared the same generic ten-facet starting bodies, a cap
+of 128 full evaluations and a nominal one-second accumulated
+evaluator-plus-optimizer budget:
 \begin{center}
 \begin{tabular}{lrr}
 \hline
@@ -557,7 +567,7 @@ controls, probe design and numerical limitations are in
 Appendix~\ref{app:ds-probes}.
 
 The chapter therefore supports a strong coarse association, opposite
-exact laws on two rotation families, and useful finite search improvements. It does
+exact laws on two rotation families, and improvements under fixed search budgets. It does
 not supply a universal capacity law or a general route to local optimality.
 None of the random samples or search comparisons produced a numerical
 ratio above one. For products with a triangle or quadrilateral factor,
