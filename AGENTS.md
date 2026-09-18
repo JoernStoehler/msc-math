@@ -20,7 +20,8 @@ Start from the task, then retrieve only the context it needs:
   contains proof development, `crates/` reusable Rust, and `experiments/` producers,
   retained evidence and interpretation.
 - `docs/project-facts.md` records Jörn-confirmed facts and scope decisions;
-  `memories/todos.md` records current work and ownership. Dated plans and old deadlines
+  `docs/WORK_REMAINING.md` records current work. `RESUME.md` records the current
+  handoff; `docs/history/` contains superseded plans. Dated plans and old deadlines
   are not current assignments.
 - `INSTALL.md` owns tool setup. Topic READMEs own reproduction commands and local caveats;
   `papers/` owns source literature and `submit/` release/admin.
@@ -54,7 +55,7 @@ scripts/repo-status-summary.sh  # whether dated checks still apply
 cargo fmt --all -- --check      # Rust formatting
 cargo check --workspace         # root-workspace compile smoke
 uv run path/to/script.py        # ordinary Python with inline dependencies
-sh thesis/candidate/build.sh     # recovered thesis candidate
+sh thesis/build.sh               # selected thesis
 (cd formal && latexmk)           # proof-development document
 ```
 

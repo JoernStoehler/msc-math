@@ -16,7 +16,7 @@ Status terms used below:
 - **Unknown** means acceptance or adequacy has not been established. Unknown is
   not itself a manuscript defect.
 
-## Required source work
+## Remaining source decisions and repairs
 
 ### 1. Foundations and the quadratic-program reduction
 
@@ -25,7 +25,7 @@ reported false. Source: `docs/history/coordination/whole-exposition-assessment.m
 
 **Selected sources:**
 
-- `thesis/chapters/02-preliminaries.tex`
+- `thesis/chapters/02-preliminaries-lagrangian-products.tex`
 - `thesis/chapters/04-quadratic-program.tex`
 
 **Exact remaining work:**
@@ -36,11 +36,9 @@ reported false. Source: `docs/history/coordination/whole-exposition-assessment.m
 2. In Chapter 4's Lagrangian-product reduction, give a compact local definition
    of the minimizing Minkowski billiard/dual polygon and state the exact usable
    input and output of Rudolf's theorem.
-3. Define `\ell_{K_p}(q)` and explain the support-function identification used
-   for a `q`-displacement under the `q/p` pairing.
-4. Before invoking the splitting--merging--rescaling portion of Theorem 3.4,
+3. Before invoking the splitting--merging--rescaling portion of Theorem 3.4,
    state the cyclic-word operation in one sentence.
-5. In the dependence/vertex-replacement argument, explicitly connect positive
+4. In the dependence/vertex-replacement argument, explicitly connect positive
    objective value with nonzero mass in both factors, state why a sufficiently
    small dependence perturbation preserves nonnegativity, and state why both
    vertex replacements preserve the positive global maximum.
@@ -159,7 +157,10 @@ Human acceptance of the selected chapter is **unknown**. Jörn's explicit
 “Needs revision before acceptable” verdict applied to the different ridge-only
 sample retained at
 `experiments/writing-quality/human-review/responses/20260918-root-contemporary-ds-reader.md`,
-not to the complete selected chapter.
+not to the complete selected chapter. Jörn also rejected pages 7–9 of an
+  earlier complete DS draft; that version-level verdict is retained in
+  `docs/history/coordination-map-review/ds-review-20260918.md`. Later revisions
+  supersede that draft without supplying a new human acceptance verdict.
 
 **Selected sources:**
 
@@ -262,7 +263,9 @@ regresses them:
   convention in Chapter 4 are repaired. Commit `ac8da690`.
 - The Chapter 4 boundary and normal-cone bridge that realizes the dual curve as
   a generalized characteristic is repaired. Commit `4b3a8af1`. This does not
-  close the distinct local-definition and length-notation items in §1 above.
+  close the separate question whether the imported billiard theorem needs a
+  fuller local statement. The displayed length definition and explicit support-
+  function pairing are present; do not retain them as missing notation.
 - The Chapter 5 tube closure, zero-time omission, artifact reference, named
   pruning arguments, repeated-section contraction, algebraic-witness status,
   parameter space, denominator domain, pairing table, and genericity proof are

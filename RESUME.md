@@ -1,117 +1,66 @@
-# Resume the thesis here
+# Resume here
 
-**Use branch `thesis/resume-20260918`.** Its existing checkout is
+Use branch **`thesis/resume-20260918`**, currently checked out at
 `/workspaces/msc-math/.worktrees/candidate-assembly-integration`.
-This is the single selected manuscript and consolidated evidence tree. Do not
-resume from dirty `main`, an older review checkout, or another research branch.
-The directory name is retained because the review server and an idle agent still
-refer to it; it does not denote a second candidate.
+The directory name is retained for the idle agent and current review service;
+there is no competing integration branch. `main` is retained with Jörn's
+uncommitted work untouched.
 
-## State and authorization
+## Start points
 
-The thesis is **not accepted and has not been submitted for final grading**.
-Jörn authorized consolidation after rejecting a scattered handback. The completion
-attempt was stopped; this handoff is not authorization for a new autonomous run.
-The previous deadline was 2026-09-18 22:00 UTC. The last reported account quota was
-6% at 16:59:57 UTC; this is a dated observation, not current availability or a dollar
-balance. The additional shadow-API ceiling was $3,000, not permission to spend it
-without a justified plan. Earlier 2% and 5% completion forecasts were unsupported
-and retracted. No reliable writing-to-PASS workflow was established.
+- **Current obligations:** [docs/WORK_REMAINING.md](docs/WORK_REMAINING.md).
+  This is the single reconciled work list, including repaired/withdrawn findings
+  and unresolved scientific selection. Historical plans are not assignments.
+- **Selected manuscript:** [thesis/main.tex](thesis/main.tex).
+  Build `sh thesis/build.sh`; read `thesis/build/main.pdf`.
+  There are no candidate/recovered/legacy manuscript alternatives in the live tree.
+- **Scientific support and human feedback:** [docs/README.md](docs/README.md).
+- **Frozen handoff PDF:** `docs/resume/thesis-resume.pdf` (diagnostic only).
+  `docs/resume/build-verification.json` records its inputs and hash;
+  `python3 docs/resume/verify.py` checks retained evidence and those inputs.
 
-PASS means submission-ready, with only minor issues Kai might leave for Jörn to
-fix in approximately two hours. Borderline is FAIL. Final grading is one-time;
-diagnostic feedback is separate. No university submission or public release is
-authorized. Jörn's last reliable availability window ended at 17:00 UTC; his later
-brief presence was not an extension. Use the async queue for necessary questions;
-make each self-contained, identify the exact judgment/consequence and give your
-expectation. Do not ask him to reconstruct facts available here. Ending a routine
-status turn does not execute background work.
+## Acceptance, resources and interaction
 
-## Manuscript and build
+The thesis is unfinished and has not been submitted for final grading. PASS means
+submission-ready with only minor issues Kai could leave Jörn to fix in about two
+hours. Borderline is FAIL. Final grading is one-time; diagnostic feedback is
+separate. No university submission or public release is authorized.
 
-Build from this checkout with `sh thesis/candidate/build.sh`.
-`thesis/candidate/main.tex` selects the active sources, including intentional
-`legacy/` fallback for visualization and availability. No other worktree is a
-LaTeX input. The consolidation validation and frozen current draft are recorded
-in `docs/resume/build-verification.json` and `docs/resume/thesis-resume.pdf`.
-The clean build has 94 pages and no warnings. Run `python3 docs/resume/verify.py`
-to verify retained versions, source hashes and the PDF. That PDF is a resume
-artifact, **not a grading submission**.
+The completion attempt was stopped. Consolidation and cleanup were subsequently
+authorized; they do not authorize a new autonomous run. The former deadline was
+2026-09-18 22:00 UTC. The last observed quota was 6% at 16:59:57 UTC, not a current
+balance. The additional shadow-API ceiling was $3,000, not permission to exhaust
+it. Neither the prior 2% nor 5% completion estimate was supported; both were
+retracted. No reliable authoring/reviewer workflow was established.
 
-The preceding diagnostic is `docs/whole-review/thesis-v3-writing.pdf`, SHA256
-`249f597a4094add726f077b83538301ce7394cd42d62420e3970aee4fd683fda` (93 pages).
-Since that freeze, commits `ac8da690`, `44372a61`, `54143c6d`, and `4b3a8af1`
-clarified notation, framing, the flow genericity proof and the billiard lift.
-These changes have no human acceptance. Their records are in
-`docs/coordination/{repair-framing,flow-exposition-repair}.md`.
+Jörn reads the async queue. Necessary requests must stand alone, identify the
+artifact and exact judgment/consequence, and state the agent's expectation.
+His last reliable availability cutoff was 17:00 UTC; later brief presence was
+not an extension. Check current availability rather than assuming another review
+window. The current handoff is not a final grading submission.
 
-## Where to continue assessing unfinished work
+## Sessions and recovery
 
-- `docs/coordination/whole-exposition-assessment.md`: source-corrected assessment
-  of chapters outside DS/AI. Abstract and flow repairs were subsequently made;
-  remaining suggestions are not all independently verified defects. Four of five
-  initially alleged proof gaps were downgraded; do not resurrect them as facts.
-- `docs/whole-review/thesis-v3-writing-changes.md`: latest DS/AI changes and checks.
-  `docs/ai-reflection-review/` retains exact human annotations and revised drafts.
-- `experiments/writing-quality/human-review/responses/` and
-  `docs/reviewer-trial/human/`: exact scoped human feedback. The earlier DS sample
-  was rejected; local positive judgments do not accept the whole chapter.
-  `docs/reviewer-trial/evaluation/qualification-utility.md` supersedes the overly
-  negative initial assessment of the qualification flagger.
-- `docs/ds-retrospective-revalidation/README.md`: 14,335 current capacity intervals
-  among 14,336 original bodies, one unresolved numerical-policy case. Volume/sys
-  remain numerical. `docs/ds-evidence-closure/` and the DS chapter's cited experiment
-  directories retain the original analysis and later empirical results.
-- `docs/empirical-viterbo-design/desk/root-review/README.md`: reviewed research
-  packets, including the fixed-pentagon/symmetric-partner bound. Their presence
-  does not mean manuscript integration or novelty is established. The selected
-  product-position result is already in the manuscript. Zonotope bound remains
-  conjectural. No further research campaign is running.
-- `docs/open-thesis-literature/`, `docs/imported-theorem-contracts/`, and the named
-  technical-review directories contain source checks. `docs/candidate-assembly-integration/README.md`
-  is a chronological adoption ledger; its earlier counts and open items are not
-  current instructions. Later entries supersede earlier ones.
+[docs/resume/sessions.json](docs/resume/sessions.json) records exact UUIDs, local
+session-log paths and last observed panes. Main coordinator:
+`01a0b153-5091-7333-935c-f08856210097`; replacement:
+`01a0b4e9-b856-7de2-b42a-39d3526743b9` (last observed idle at w26:p8).
+Empirical, reviewer and human-review desk UUIDs are included. Inspect current
+Herdr identity before messaging; panes are not durable identities.
 
-## Consolidation and provenance
+The selected manuscript's old-to-new path map is
+`docs/resume/layout-migration.json`. Superseded manuscript trees are in Git at
+`35f29db4:thesis/`, not alternate edit targets. Attributed review records and old
+plans are explicitly historical under `docs/history/`.
 
-`docs/resume/branch-inventory.json` accounts for the changed tracked files on all
-38 retained research/quarantine branches: source commit, source blob, owning
-thread UUIDs from commit trailers, and the retained path of each version.
-442 previously absent paths were imported. Existing active files were preserved;
-68 differing historical versions were stored under `docs/resume/historical-variants/`
-with `.snapshot` suffixes. This is deliberate evidence retention, not adoption
-of old prose or old plans. No pending branch merge is required to read these packets.
-
-`docs/resume/dirty-source-inventory.json` accounts for 288 dirty-file observations
-from main and the interrupted review checkout. Matching bytes already in this tree
-are identified; 53 differing files are retained as unselected snapshots. Main and
-the original review checkout were not modified. Machine-local `.codex/config.toml`
-was deliberately not imported. The current project `AGENTS.md` is copied unchanged from main so a standalone
-checkout retains its guidance. Do not install other archived startup instructions.
-Only main and this resume worktree remain. The other 39 worktrees and 41 branch
-names were removed after preservation and consumer checks. Original histories
-and 108 untracked/generated files are recoverable from
+Only main and the resume branch/worktree remain. Full original branch history
+and 108 untracked/generated files are preserved at
 `/workspaces/archived/workspaces-root/msc-math-session-20260918/`.
-See `docs/resume/cleanup-result.json` and the archive README for hashes and recovery.
-The standalone bundle was restored successfully with all 43 original branch heads.
-The 11 obsolete review servers were stopped; their old URLs no longer serve.
-The current resume checkout and its service were retained.
+Its standalone bundle restore recovered all 43 exact original heads. Eleven
+obsolete review servers were stopped; old URLs should not be reused.
+`docs/resume/cleanup-result.json` records recovery hashes and removed paths.
 
-## Sessions and non-repository material
-
-`docs/resume/sessions.json` gives exact thread UUIDs, observed live panes and local
-session-log paths. Main coordinator: `01a0b153-5091-7333-935c-f08856210097`;
-replacement: `01a0b4e9-b856-7de2-b42a-39d3526743b9` (idle w26:p8).
-Empirical, reviewer and human-review desk identities are also recorded. Inspect
-live Herdr identity before messaging; old pane numbers are not durable identities.
-Logs live in `~/.codex/sessions/`, not `/tmp`; they supplement committed records.
-
-Large historical raw geometry is a registered external artifact, not a temporary
-file: snapshot `f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96`
-under the `polytope-datasets` artifact registration and standard host cache.
-See `docs/resume/external-dependencies.md` for concrete recovery and dependency
-checks. Historical reports retain original absolute command/output paths as
-provenance; those are not instructions to use the old checkout. For a path beneath
-an old worktree, first use the same repository-relative path here, then consult
-the branch inventory for an explicitly archived variant. No handoff document or
-selected PDF depends on a temporary message file or expiring review URL.
+[External dependencies](docs/resume/external-dependencies.md) documents registered
+raw datasets and the older ridge-analysis replay whose caches must be regenerated.
+The thesis build requires no old worktree or retained temporary input. Session
+logs live in `~/.codex/sessions/`; the handoff itself depends on no temporary file.

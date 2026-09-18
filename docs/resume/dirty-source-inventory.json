@@ -10,7 +10,7 @@
     "path": ".gitignore",
     "status": " M",
     "sha256": "da78b5a2af89daea4c9d6cef43780b562ad779454d22aae9ace72997914e223f",
-    "retained_path": "docs/resume/dirty-snapshots/main/.gitignore.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/.gitignore.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -18,7 +18,7 @@
     "path": "PROJECT-STATUS-BRIEF.md",
     "status": " M",
     "sha256": "276810fe8a27c53f05f69ad773bfd2b6b0c633bf1a0dd6d449c8eb9e55667e38",
-    "retained_path": "docs/resume/dirty-snapshots/main/PROJECT-STATUS-BRIEF.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/PROJECT-STATUS-BRIEF.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -26,7 +26,7 @@
     "path": "docs/pentagon-chapter-v2/README.md",
     "status": " M",
     "sha256": "d3991a6dba95f0414c55f7eded08b0cd0f7ab5c1e267e628f64e35ebfd7eb866",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/pentagon-chapter-v2/README.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter-v2/README.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -34,7 +34,7 @@
     "path": "docs/pentagon-chapter-v2/chapter.tex",
     "status": " M",
     "sha256": "7e57b85d7e62a0b38982ba7075dd9250f01a7a8b09a5b2a4e6eac6965b911bcf",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/pentagon-chapter-v2/chapter.tex.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter-v2/chapter.tex.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -42,7 +42,7 @@
     "path": "docs/pentagon-chapter-v2/review.md",
     "status": " M",
     "sha256": "a95d5effa1a4d53f70923ebdc79e429737a995e1bbd9b24e2db0c3506f37efb0",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/pentagon-chapter-v2/review.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter-v2/review.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -50,7 +50,7 @@
     "path": "docs/pentagon-chapter/user-reading-feedback.md",
     "status": " M",
     "sha256": "c554e4e8e94b1366d3c9e333129cdda7dde1b39fd93afdfb81aef7ea36703550",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/pentagon-chapter/user-reading-feedback.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter/user-reading-feedback.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -58,7 +58,7 @@
     "path": "docs/process-audit/corpus.json",
     "status": " M",
     "sha256": "ffca78b8ec7495d7ec4099c9a9cd688f203aef28525b6411d271f5bc30c82232",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/process-audit/corpus.json.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/process-audit/corpus.json.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -66,7 +66,7 @@
     "path": "docs/process-audit/extract.py",
     "status": " M",
     "sha256": "2e5b9fadac92593190fee8ff09b60c26fed83884e29cfc17d2464ce4047f54d6",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/process-audit/extract.py.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/process-audit/extract.py.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -74,7 +74,7 @@
     "path": "docs/project-facts.md",
     "status": " M",
     "sha256": "d28b05cc7e889aa91b3068e24936ba97fc505831b49c5f45c7ebeab028be9d30",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/project-facts.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/project-facts.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -82,7 +82,7 @@
     "path": "docs/review-evidence/README.md",
     "status": " M",
     "sha256": "1004edeb61ff15935c7cbde6cc8a031a13c39a91a06b68fb358ef875ceaeb24a",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/review-evidence/README.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/README.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -90,7 +90,7 @@
     "path": "docs/source-recovery/README.md",
     "status": " M",
     "sha256": "fe5faa7ba748f60d12a7e7bcdf3a3914f6f4fffaf4ba440dfe1ddeb5c824d472",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/source-recovery/README.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/source-recovery/README.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -98,7 +98,7 @@
     "path": "docs/source-recovery/preserve_review_evidence.py",
     "status": " M",
     "sha256": "83d25fb646675125ddf0e2db5fec2d079316442cfb463ca0c6bd867c99c11145",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/source-recovery/preserve_review_evidence.py.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/source-recovery/preserve_review_evidence.py.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -106,7 +106,7 @@
     "path": "docs/source-recovery/recover.py",
     "status": " M",
     "sha256": "b36e8d79cd67ab9bfc8d9906293fe572d2ff2d98140de0f6ad7059f20424176c",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/source-recovery/recover.py.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/source-recovery/recover.py.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -114,7 +114,7 @@
     "path": "docs/sprint-two/KICKOFF.md",
     "status": " M",
     "sha256": "b5bc77b4177c42d5501defdb2d56002d2cfcc4909211ee25739d04e0727b45ca",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/sprint-two/KICKOFF.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/sprint-two/KICKOFF.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -122,7 +122,7 @@
     "path": "docs/task-graph/README.md",
     "status": " M",
     "sha256": "512e02bebb55536b9e47a44ba1fd9e1911c08f7c51891358c7433c01f3f95b37",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/task-graph/README.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/task-graph/README.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -130,7 +130,7 @@
     "path": "experiments/sys-datascience/methods/conditional-tail-atlas/analyze.py",
     "status": " M",
     "sha256": "2fbf7442e2946c54e95050bb614a1757047b09c713128a866d6ae84304e87729",
-    "retained_path": "docs/resume/dirty-snapshots/main/experiments/sys-datascience/methods/conditional-tail-atlas/analyze.py.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/experiments/sys-datascience/methods/conditional-tail-atlas/analyze.py.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -138,7 +138,7 @@
     "path": "experiments/sys-datascience/methods/conditional-tail-atlas/artifacts/analysis.md",
     "status": " M",
     "sha256": "f1bcb0246bd436e59d4059292462a913e7bc62f030801619b9a7596c4da50def",
-    "retained_path": "docs/resume/dirty-snapshots/main/experiments/sys-datascience/methods/conditional-tail-atlas/artifacts/analysis.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/experiments/sys-datascience/methods/conditional-tail-atlas/artifacts/analysis.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -146,7 +146,7 @@
     "path": "memories/archive/sprint-one-todos-2026-09-16.md",
     "status": " M",
     "sha256": "2fafcb023823c43d5515b266f05d8d1eb8d59916a1ad652c3291ef9650f23fce",
-    "retained_path": "docs/resume/dirty-snapshots/main/memories/archive/sprint-one-todos-2026-09-16.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/memories/archive/sprint-one-todos-2026-09-16.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -154,7 +154,7 @@
     "path": "memories/authoring-workflow.md",
     "status": " M",
     "sha256": "8fff2d9365f978e24c8da76c73e249fa010b6451fb4a2d1cf003e87f45fe8712",
-    "retained_path": "docs/resume/dirty-snapshots/main/memories/authoring-workflow.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/memories/authoring-workflow.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -162,7 +162,7 @@
     "path": "memories/planning-context.md",
     "status": " M",
     "sha256": "d82994546e3cb76881514a94ddc7f041ba0ea59ce62ad44186276fab617ca35f",
-    "retained_path": "docs/resume/dirty-snapshots/main/memories/planning-context.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/memories/planning-context.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -170,7 +170,7 @@
     "path": "memories/todos.md",
     "status": " M",
     "sha256": "422c1e77c00e9a1777730fe3c44edb454c5b8c31b727b56c2ae6089ad4ddd3de",
-    "retained_path": "docs/resume/dirty-snapshots/main/memories/todos.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/memories/todos.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -178,7 +178,7 @@
     "path": "AGENTS.md",
     "status": "??",
     "sha256": "0b4fb89fdb17c2a917cd19de2babd2b09c7a3096cb783df2dc8456d8ce08e8fb",
-    "retained_path": "docs/resume/dirty-snapshots/main/AGENTS.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/AGENTS.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -186,7 +186,7 @@
     "path": "docs/pentagon-chapter/README.md",
     "status": "??",
     "sha256": "7b960c1e620f7a8bce945501330d4301f1d57995626c1273b7ae4d0786996119",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/pentagon-chapter/README.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter/README.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -194,7 +194,7 @@
     "path": "docs/pentagon-chapter/assets/rotation-profile.png",
     "status": "??",
     "sha256": "dd9e6b8eb06545f4b2e5d5cc552f2bede021ea4a9ddcecb673fe25cd34152e99",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/pentagon-chapter/assets/rotation-profile.png.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter/assets/rotation-profile.png.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -202,7 +202,7 @@
     "path": "docs/pentagon-chapter/chapter.tex",
     "status": "??",
     "sha256": "aa2efcfe501559a30e535465915b2a8f9e8149d9e7620bb6407a7cd83be7f672",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/pentagon-chapter/chapter.tex.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter/chapter.tex.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -210,7 +210,7 @@
     "path": "docs/pentagon-chapter/references.bib",
     "status": "??",
     "sha256": "d3ce463213baee957f9972e2a63852575e96fe9bb6204452d5c9798dc7862c4b",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/pentagon-chapter/references.bib.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter/references.bib.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -218,7 +218,7 @@
     "path": "docs/pentagon-chapter/standalone.tex",
     "status": "??",
     "sha256": "1bd87e6ed7fc336eec7be5c5a7880a53f9b3770fa264638c42fdc3531c650912",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/pentagon-chapter/standalone.tex.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter/standalone.tex.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -226,7 +226,7 @@
     "path": "docs/pentagon-proof/analytic-proof.tex",
     "status": "??",
     "sha256": "625595f6d9548b0b269ef4bf05e0106ebcbc420b44ee0ebd494c63b8f8ea3af2",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/pentagon-proof/analytic-proof.tex.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-proof/analytic-proof.tex.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -234,7 +234,7 @@
     "path": "docs/pentagon-proof/fresh-proof.tex",
     "status": "??",
     "sha256": "e41574584039911ceb25cc7cd508544df6e8028c2dad6eee32c39532e2efba15",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/pentagon-proof/fresh-proof.tex.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-proof/fresh-proof.tex.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -242,7 +242,7 @@
     "path": "docs/resumption-goal-and-constraints.md",
     "status": "??",
     "sha256": "25dbd0055f0959f2e2bb690dcc83fcf6e63a683e1181e46adacd3cc187c310ed",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/resumption-goal-and-constraints.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/resumption-goal-and-constraints.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -250,7 +250,7 @@
     "path": "docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/README.md",
     "status": "??",
     "sha256": "e745ccf0ad6549f6b69df517dcd62ad4a9ec93a227b25764197f8044539db324",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/README.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/README.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -258,7 +258,7 @@
     "path": "docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/hko-mechanism-candidate.md",
     "status": "??",
     "sha256": "801062444375df46f7679eb8ab417a58a1759c897a9cca8c516356d6093cce7f",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/hko-mechanism-candidate.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/hko-mechanism-candidate.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -266,7 +266,7 @@
     "path": "docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/hko-obstruction-candidate.md",
     "status": "??",
     "sha256": "03061d19aa2f4d4eaf96226de9c9c075ee348471194330ee6043709c4bfbf456",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/hko-obstruction-candidate.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/hko-obstruction-candidate.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -274,7 +274,7 @@
     "path": "docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/hko-questions-candidate.md",
     "status": "??",
     "sha256": "a4e5f0ff0fa86b9f7f93abb43b8f88e6a56c6c8db4170363caa04328cf91924d",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/hko-questions-candidate.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/hko-questions-candidate.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -282,7 +282,7 @@
     "path": "docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/repaired-preview/hko-repaired-preview.md",
     "status": "??",
     "sha256": "c011c794182b211500cd00e94cd15e7826ff2367cbecfa76785b04f83c2d7009",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/repaired-preview/hko-repaired-preview.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/repaired-preview/hko-repaired-preview.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -290,7 +290,7 @@
     "path": "docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/repaired-preview/hko-repaired-preview.pdf",
     "status": "??",
     "sha256": "a62f84dd8de88b0e12e6d9ce2c23fa1ccf49910b4b5ab822d0ef6ebab689ce45",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/repaired-preview/hko-repaired-preview.pdf.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/repaired-preview/hko-repaired-preview.pdf.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -298,7 +298,7 @@
     "path": "docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/repaired-preview/hko-repaired-preview.tex",
     "status": "??",
     "sha256": "58d0e41f279724e99c355f82e5eb3ec78b0964ba04a051b2700a668964e44788",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/repaired-preview/hko-repaired-preview.tex.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/repaired-preview/hko-repaired-preview.tex.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -306,7 +306,7 @@
     "path": "docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/revised-preview/hko-revised-preview-provenance.json",
     "status": "??",
     "sha256": "422d7045d0717c4109c4a80cffa1dc0726dd5e3ad3ff661cfc6fa140567e5dd5",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/revised-preview/hko-revised-preview-provenance.json.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/revised-preview/hko-revised-preview-provenance.json.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -314,7 +314,7 @@
     "path": "docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/revised-preview/hko-revised-preview.pdf",
     "status": "??",
     "sha256": "759d8f6357e5694edf1401434c5ee6bedcc28cf12e13326a4da89fb7ad0cf536",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/revised-preview/hko-revised-preview.pdf.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/revised-preview/hko-revised-preview.pdf.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -322,7 +322,7 @@
     "path": "docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/revised-preview/hko-revised-preview.tex",
     "status": "??",
     "sha256": "c9766ad108f1e11b64b590fddfe0f8e5d1b253aec4903035a33153e589c2ebc1",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/revised-preview/hko-revised-preview.tex.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/revised-preview/hko-revised-preview.tex.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -330,7 +330,7 @@
     "path": "docs/sprint-two/readiness.md",
     "status": "??",
     "sha256": "9e2a50e304296364c202b5cb40bcfef06983daa742bb4cf80d463782ce0cf77d",
-    "retained_path": "docs/resume/dirty-snapshots/main/docs/sprint-two/readiness.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/sprint-two/readiness.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -338,7 +338,7 @@
     "path": "experiments/sys-datascience/coordination/exploration-wave-2026-09-14.md",
     "status": "??",
     "sha256": "cd21f4a9eb70187d6f5806e0e282fc3abb116f8e3746ffc74a2ad16b427f0088",
-    "retained_path": "docs/resume/dirty-snapshots/main/experiments/sys-datascience/coordination/exploration-wave-2026-09-14.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/experiments/sys-datascience/coordination/exploration-wave-2026-09-14.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -2082,7 +2082,7 @@
     "path": "scripts/subtree-usage.md",
     "status": "??",
     "sha256": "9d4f9e709b6bc65c224ec1433f194d036ec37370c0faae9e4bba4d440cf1ab78",
-    "retained_path": "docs/resume/dirty-snapshots/main/scripts/subtree-usage.md.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/scripts/subtree-usage.md.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -2090,7 +2090,7 @@
     "path": "scripts/subtree-usage.py",
     "status": "??",
     "sha256": "12f00811ee34d999b47c3056d465d834a577cca6b1efe95f8be2d769aa2144bb",
-    "retained_path": "docs/resume/dirty-snapshots/main/scripts/subtree-usage.py.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/scripts/subtree-usage.py.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -2098,7 +2098,7 @@
     "path": "scripts/test_subtree_usage.py",
     "status": "??",
     "sha256": "e7121b406dcb46e0c19caec21673e6e88f414a56e629291a6bdfdf5fd9f6eded",
-    "retained_path": "docs/resume/dirty-snapshots/main/scripts/test_subtree_usage.py.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/main/scripts/test_subtree_usage.py.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -2106,7 +2106,7 @@
     "path": "thesis/candidate/main.tex",
     "status": " M",
     "sha256": "c0436abe3e50916e52adbdf5a7d882e91975535492536c5ab919976499f5ffcf",
-    "retained_path": "docs/resume/dirty-snapshots/interrupted-review/thesis/candidate/main.tex.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/interrupted-review/thesis/candidate/main.tex.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -2114,7 +2114,7 @@
     "path": "docs/task-graph/17-review-delivery.dot",
     "status": "??",
     "sha256": "6425c64b51fcc0f4b8ca477da9f18321d5717d54a02070701829809d776af3bc",
-    "retained_path": "docs/resume/dirty-snapshots/interrupted-review/docs/task-graph/17-review-delivery.dot.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/interrupted-review/docs/task-graph/17-review-delivery.dot.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -2122,7 +2122,7 @@
     "path": "docs/task-graph/17-review-delivery.svg",
     "status": "??",
     "sha256": "88d53a10563d35ca8c67d1a9cb3b8dd13a4b3c8a7f311320f15b326cd3b34b45",
-    "retained_path": "docs/resume/dirty-snapshots/interrupted-review/docs/task-graph/17-review-delivery.svg.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/interrupted-review/docs/task-graph/17-review-delivery.svg.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -2242,7 +2242,7 @@
     "path": "thesis/candidate/02-preliminaries.tex",
     "status": "??",
     "sha256": "077297903d97ca356165cee6537c9fc17430690b38c08a8b85faf179b08cf149",
-    "retained_path": "thesis/candidate/02-preliminaries.tex",
+    "retained_path": "docs/history/source-snapshots/077297903d97ca356165cee6537c9fc17430690b38c08a8b85faf179b08cf149.snapshot",
     "disposition": "canonical-bytes"
   },
   {
@@ -2250,7 +2250,7 @@
     "path": "thesis/candidate/03-generalized-reeb-orbits-polytopes.tex",
     "status": "??",
     "sha256": "87c179d993c92c12764ee4b5660a345c741703f913ddd9c7167c09b13b97a0d7",
-    "retained_path": "docs/resume/dirty-snapshots/interrupted-review/thesis/candidate/03-generalized-reeb-orbits-polytopes.tex.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/interrupted-review/thesis/candidate/03-generalized-reeb-orbits-polytopes.tex.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -2258,7 +2258,7 @@
     "path": "thesis/candidate/04-quadratic-program.tex",
     "status": "??",
     "sha256": "7a3306308b8a63cdff8ceb964af27906339a9e08c66f0ef0614f2ec22158f3c1",
-    "retained_path": "docs/resume/dirty-snapshots/interrupted-review/thesis/candidate/04-quadratic-program.tex.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/interrupted-review/thesis/candidate/04-quadratic-program.tex.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -2266,7 +2266,7 @@
     "path": "thesis/candidate/05-flow-graph.tex",
     "status": "??",
     "sha256": "173a5bb26254e6ded5f99fb6b4da4cac34b802a896b96bdc243d84eddcd97e92",
-    "retained_path": "docs/resume/dirty-snapshots/interrupted-review/thesis/candidate/05-flow-graph.tex.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/interrupted-review/thesis/candidate/05-flow-graph.tex.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -2274,7 +2274,7 @@
     "path": "thesis/candidate/09-rotated-regular-polygons.tex",
     "status": "??",
     "sha256": "0941c800cb2e33aeb585ad1ffc65d1b590c84972efad4d458f4aba8e8a571ab8",
-    "retained_path": "thesis/candidate/09-rotated-regular-polygons.tex",
+    "retained_path": "docs/history/source-snapshots/0941c800cb2e33aeb585ad1ffc65d1b590c84972efad4d458f4aba8e8a571ab8.snapshot",
     "disposition": "canonical-bytes"
   },
   {
@@ -2282,7 +2282,7 @@
     "path": "thesis/candidate/11-numerics.tex",
     "status": "??",
     "sha256": "9c9d8aba825672cfd768524d4de0e286496a5986d9eb34c040fe682062a86713",
-    "retained_path": "docs/resume/dirty-snapshots/interrupted-review/thesis/candidate/11-numerics.tex.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/interrupted-review/thesis/candidate/11-numerics.tex.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -2290,7 +2290,7 @@
     "path": "thesis/candidate/ai-use-disclosure.tex",
     "status": "??",
     "sha256": "734524831d33dd380d9870ca2692d2d99c8681c934c317ec2b25ce774fc663bd",
-    "retained_path": "docs/resume/dirty-snapshots/interrupted-review/thesis/candidate/ai-use-disclosure.tex.snapshot",
+    "retained_path": "docs/history/dirty-snapshots/interrupted-review/thesis/candidate/ai-use-disclosure.tex.snapshot",
     "disposition": "preserved-unselected"
   },
   {
@@ -2298,7 +2298,7 @@
     "path": "thesis/candidate/figures/rotation-profile.png",
     "status": "??",
     "sha256": "dd9e6b8eb06545f4b2e5d5cc552f2bede021ea4a9ddcecb673fe25cd34152e99",
-    "retained_path": "thesis/candidate/figures/rotation-profile.png",
+    "retained_path": "docs/history/source-snapshots/dd9e6b8eb06545f4b2e5d5cc552f2bede021ea4a9ddcecb673fe25cd34152e99.snapshot",
     "disposition": "canonical-bytes"
   }
 ]

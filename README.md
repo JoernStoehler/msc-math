@@ -1,57 +1,25 @@
-> **Current thesis resumption:** see [RESUME.md](RESUME.md) on `thesis/resume-20260918`. Earlier dated coordination documents are historical.
+# Probing Viterbo's conjecture
 
-# Probing Viterbo's Conjecture
+Jörn Stöhler's MSc thesis combines mathematical proofs, computational symplectic
+geometry and empirical investigations. The manuscript is unfinished and has not
+been submitted for final grading.
 
-Master thesis repository for Jörn Stöhler, University of Augsburg.
+- **Continue the work:** [docs/WORK_REMAINING.md](docs/WORK_REMAINING.md) is the
+  single current work list. [RESUME.md](RESUME.md) records the handoff, session
+  identities, acceptance constraints and resource state.
+- **Read or edit the thesis:** [thesis/README.md](thesis/README.md).
+  Build with `sh thesis/build.sh`; output is `thesis/build/main.pdf`.
+- **Find mathematical and computational support:** [formal/](formal/README.md),
+  [experiments/](experiments/README.md), [crates/](crates/README.md),
+  [papers/](papers/README.md), and the [evidence index](docs/README.md).
+- **Set up or reproduce:** [INSTALL.md](INSTALL.md),
+  [artifact contracts](docs/artifacts.md), and [test scope](docs/algorithm-testing.md).
 
-The repository produces:
+`thesis/` contains only the selected manuscript and its build inputs. Superseded
+manuscripts remain in Git history, not alongside the active chapters.
+`docs/history/` contains dated plans, authoring trials and review records; none
+is a current assignment. The current work list distinguishes findings still open
+from findings already repaired or withdrawn.
 
-- `thesis/candidate/build/main.pdf`: the recovered working thesis candidate;
-- `crates/`: reusable Rust libraries for the mathematical computations;
-- `experiments/`: reproducible producers, retained evidence, and
-  interpretation used by the thesis.
-
-## First entry points
-
-`ARCHITECTURE.md` maps the domains; their READMEs provide search cues and local
-context. Start from the question: search a claim, symbol, artifact path or topic
-across relevant domains, or use an entry point when the terminology is unfamiliar.
-The entries below are alternatives, not a required reading sequence.
-
-Project-wide information:
-
-- [Recovered thesis source](thesis/candidate/README.md): canonical candidate
-  entry and build command; the frozen 86-page review baseline, with later
-  literature and pentagon revisions still pending integration.
-- [Current work and ownership](memories/todos.md): live assignments, proposals
-  and known scope decisions; historical research plans are not the task queue.
-- `INSTALL.md`: environment setup and reproduction entry point; known working
-  tools, current gaps, Sage, LaTeX, R2 and Micro configuration.
-- `docs/project-facts.md`: Jörn-confirmed facts and external decisions.
-- [`docs/algorithm-testing.md`](docs/algorithm-testing.md): fast development
-  checks, slower confidence layers, command side effects, and current gaps.
-- `docs/reproducibility.md`: code, data, and archive route.
-- `docs/artifacts.md`: materializing and publishing shared R2 snapshots.
-- `docs/development-environments.md`: execution environments, clients,
-  toolchain contracts, and current setup boundaries.
-- `submit/README.md`: submission sources.
-
-Domain entry points:
-
-- `thesis/README.md`
-- `formal/README.md`
-- `experiments/README.md`
-- `crates/README.md`
-- `papers/README.md`
-
-`README.md` is a navigation view. Follow claims to their source files, proof
-arguments, producer outputs or attributed decisions; a summary or path alone
-does not establish correctness.
-
-## Current outcome
-
-The final state is not merely a compiling PDF. Retained thesis claims must have
-support and caveats matching their strength; referenced code, figures, data,
-and certificates must resolve; reproduction and archive promises must be true;
-submission requirements must be satisfied; and Jörn must accept the thesis as
-ready.
+[ARCHITECTURE.md](ARCHITECTURE.md) maps domain ownership. Passing a build or test
+does not establish mathematical validity, adequate exposition or thesis acceptance.

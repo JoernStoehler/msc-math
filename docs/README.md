@@ -1,47 +1,39 @@
-# Project documentation
+# Documentation and evidence
 
-This directory contains project-wide information. Topic-local proofs, evidence,
-implementation details, and thesis prose remain with their topic.
+**Current work:** [WORK_REMAINING.md](WORK_REMAINING.md).
+**Handoff and constraints:** [../RESUME.md](../RESUME.md).
+These are the current continuation surfaces; evidence packets below are not
+independent task queues.
 
-[Current work and ownership](../memories/todos.md) records the live assignment
-and distinguishes proposals from accepted work. [Migration review](migration-review.md)
-holds the supporting review notes, not a separate queue.
+## Mathematical and computational support
 
-| File | Purpose | Authority |
-| --- | --- | --- |
-| [`source-recovery/README.md`](source-recovery/README.md) | recovered candidate entry, dependency hashes, isolated build and frozen-PDF comparison | source recovery only; no new thesis approval or integration of pending revisions |
-| [`review-evidence/README.md`](review-evidence/README.md) | preserved Pro package, frozen self-reviews/comparison, and human reading feedback | unchanged attributed review records; not new review results or approval |
-| `project-facts.md` | Jörn-confirmed project facts and accepted external constraints | current unless newer Jörn/Kai/source truth contradicts it |
-| [`thesis-assessment-2026-09-14.md`](thesis-assessment-2026-09-14.md) | Diagnosis of the identified 110-page thesis PDF, including human reading effort, mathematical exposition, empirical reporting and unresolved checks | incorporates Jörn's broad agreement and corrections on prose reuse, style, HKO incompleteness and the AI example's inadequate value; detailed agent findings are not represented as individually endorsed |
-| `capacity-calculation-map.md` | repository-wide map of materially distinct EHZ-capacity and `sys` calculation contracts | routing aid; source and owner docs remain authoritative |
-| `algorithm-testing.md` | evidence ladder from fast development tests through correspondence, invariants, anchors, reconstruction, and theorem-specific checks | test-routing aid; packet-local contracts define scope and artifact side effects |
-| `reproducibility.md` | thesis-facing code/data/archive route | policy and entry point; exact commands and artifacts remain producer-local |
-| `artifacts.md` | shared R2 materialization and publication contract | current artifact workflow and per-environment XDG cache contract |
-| `development-environments.md` | host, Docker Sandbox, and Codex Cloud execution model; clients and shared toolchain contracts | dated verification and remaining gaps; host `~/.dotfiles/memories/host-estate.md` owns sandbox operations |
+| Topic | Evidence entry |
+|---|---|
+| Literature and imported theorem scope | [open-thesis-literature](open-thesis-literature/README.md), [contracts](imported-theorem-contracts/README.md), [algorithm prior art](algorithm-prior-art-closure/README.md) |
+| Quadratic-program derivation and implementation correspondence | [QP review](qp-derivation-review/README.md), [integration record](qp-flow-integration/README.md) |
+| Flow graph | [runtime correspondence](flow-runtime-closure/README.md) |
+| Numerics and variation | [numerics](numerics-correspondence-check/README.md), [variation](variation-interface-check/README.md) |
+| Historical DS data and current interval recomputation | [restoration](ds-retrospective-revalidation/README.md), [analysis](ds-evidence-closure/README.md), [family theorem mapping](ds-family-theorem-mapping/README.md) |
+| Additional empirical mathematics | [root scientific review](empirical-viterbo-design/desk/root-review/README.md); selection status is in the current work list |
+| Pro pentagon handoff | [retained package](pro-handoffs/); maintained proofs are under `formal/pentagon-affine-products/` |
+| Code/data availability | [source check](availability-claim-closure/README.md), [reproduction contract](reproducibility.md) |
 
-## Historical agent guidance
+These records retain original inputs, dates, source revisions and limitations.
+Their old proposed next steps are historical unless adopted in WORK_REMAINING.md.
+The current manuscript paths are in `resume/layout-migration.json`; a recorded
+check of an earlier source hash is not automatically a check of the current text.
 
-Former project skills and steering were removed from the working tree because
-they were already quarantined, had no identified active consumer, and added
-obsolete guidance to searches. Their complete tracked contents are available
-at commit `892fc9ab3b3c242cd961cfa469f6d81cef0d626d` under
-`.agents/legacy-skills/` and `.codex/legacy-steering/`.
+## Project contracts
 
-```bash
-git ls-tree -r --name-only 892fc9ab -- .agents/legacy-skills .codex/legacy-steering
-git show 892fc9ab:.agents/legacy-skills/README.md
-```
+[Project facts](project-facts.md) are attributed decisions, with dated scope.
+[Architecture](../ARCHITECTURE.md), [algorithm testing](algorithm-testing.md),
+[capacity contracts](capacity-calculation-map.md), [artifact storage](artifacts.md)
+and [environments](development-environments.md) describe maintained interfaces.
 
-Use `git show <commit>:<path>` to read an individual historical file. These
-files are fallible recovery material, not current instructions.
+## Historical material and recovery
 
-The former `.worktrees/migration-scratch` proposals are preserved separately on
-branch `archive/migration-scratch-2026-09-05`, commit `c14e33c8`. Useful repairs
-were transferred individually; the archive's AGENTS.md and model policies were
-not adopted. Its old PDF/log and remaining generated files are preserved at
-`/home/joern/.local/share/msc-math-recovery/migration-scratch-2026-09-05.qeW9jF/`.
-
-Add a project-wide file only when the project itself owns the fact or policy.
-Do not choose a home merely because it is the narrowest directory containing
-one classification of the material. Prefer updating or deleting an existing
-file over adding another overlapping summary.
+[history/README.md](history/README.md) routes prior human feedback, reviewer
+experiments and superseded plans. Exact feedback remains evidence about the exact
+text reviewed; it is not erased by later repairs. It is also not a current work
+list. `resume/` owns consolidation manifests, session identities, the frozen
+current PDF, and integrity checks.

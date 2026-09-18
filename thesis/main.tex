@@ -1,19 +1,27 @@
-\documentclass[a4paper,12pt]{article}
+\documentclass[a4paper,11pt]{article}
+\usepackage[margin=26mm]{geometry}
 
 % Suppress trivial overfull warnings (<1pt); significant ones caught by check-build.sh
 \hfuzz=1pt
 
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{booktabs}
-\usepackage{longtable}
+\usepackage{longtable,array,microtype}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
 \usepackage{mathtools}
 \usepackage{graphicx}
 \usepackage{needspace}
 \usepackage{placeins}
 \usepackage{xcolor}
+\usepackage{listings}
+\lstset{showstringspaces=false,keepspaces=true}
 \usepackage[hidelinks]{hyperref}
 \usepackage[style=alphabetic,backend=biber]{biblatex}
-\addbibresource{bibliography.bib}
+\addbibresource{references/main.bib}
+\addbibresource{references/additional.bib}
+\addbibresource{references/data-science.bib}
+\addbibresource{references/ai.bib}
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
@@ -33,40 +41,54 @@
 \title{Probing Viterbo's Conjecture}
 \author{J\"orn St\"ohler}
 \date{2026}
+\hypersetup{
+  pdftitle={Probing Viterbo's Conjecture},
+  pdfauthor={J\"orn St\"ohler}
+}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-\input{00-abstract}
+\input{chapters/00-abstract.tex}
 \end{abstract}
 
 \input{ai-use-disclosure}
 
+\begingroup
+\small
 \tableofcontents
+\endgroup
+\clearpage
 
-\input{01-introduction}
-\input{02-preliminaries}
-\input{03-generalized-reeb-orbits-polytopes}
-\input{04-haim-kislev-quadratic-program}
-\input{05-flow-graph-algorithm-ch2021}
-\input{06-first-order-perturbations}
-\input{07-hko-local-maximum}
-\input{08-black-box-datascience}
-\input{09-rotated-regular-polygons}
-\input{10-visualization-3d}
-\input{11-numerics}
-\input{12-published-code-data}
-\input{13-use-of-ai}
-\input{14-conclusion}
+\input{chapters/01-introduction.tex}
+\input{chapters/02-preliminaries.tex}
+\input{chapters/03-generalized-reeb-orbits-polytopes}
+\input{chapters/04-quadratic-program}
+\input{chapters/05-flow-graph}
+\input{chapters/06-variation.tex}
+\input{chapters/07-hko.tex}
+\input{chapters/08-data-science.tex}
+\input{chapters/09-rotated-regular-polygons}
+\input{chapters/10-affine-pentagons.tex}
+\input{chapters/11-product-position.tex}
+\input{chapters/12-visualization}
+\input{chapters/13-numerics}
+\input{chapters/14-code-data}
+\input{chapters/15-ai-reflection.tex}
+\input{chapters/16-conclusion.tex}
 
 \appendix
-\input{a-datascience-results}
+\input{appendices/data-science.tex}
+
+\clearpage
+\section{HKO computation: an annotated exact program}
+\input{appendices/hko-certificate.tex}
 
 \FloatBarrier
 \begingroup
 \emergencystretch=3em
-\printbibliography
+\printbibliography[heading=bibintoc]
 \endgroup
 
 \end{document}

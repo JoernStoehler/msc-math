@@ -11,15 +11,14 @@ and describes the release bundle.
 ## Build the thesis
 
 ```bash
-sh thesis/candidate/build.sh
+sh thesis/build.sh
 ```
 
-The recovered candidate output is `thesis/candidate/build/main.pdf` and is
+The selected manuscript output is `thesis/build/main.pdf` and is
 Git-ignored. This command compiles the selected candidate; it does not establish
-mathematical correctness or prose acceptance. The older `thesis/check-build.sh`
-and release packager use a different entry point. Align that separate release
-route with the final selected assembly before using it; the current task is PDF
-review delivery only.
+mathematical correctness or prose acceptance. The release packager uses
+`thesis/check-build.sh`, which checks this same entry point. Publication remains
+unauthorized; the current task is a resumable working tree and diagnostic PDF.
 
 ## Exact certificate packets
 
