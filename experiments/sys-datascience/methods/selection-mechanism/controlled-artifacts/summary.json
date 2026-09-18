@@ -1,0 +1,195 @@
+{
+  "purpose": "Exploratory within-body ridge/sys check on retained paired tangentialization; no new capacity calls",
+  "sources": {
+    "paired-tangentialization/artifacts/inputs.jsonl": "9cd70daadc64e47baee0bedb91b219182d14626bfcfdbf6eb0d16aeb46982fa5",
+    "paired-tangentialization/artifacts/results.jsonl": "990dbcca921081f53ae2443c56e6071b57a41440bf008b7833aefe509247b9fe",
+    "ridge-endpoint-path/artifacts/candidates.jsonl": "889fd728923465269e2cb0587c834ef253d84edc6af8ed9eaa070360852c7c61",
+    "ridge-endpoint-path/artifacts/api-verification.jsonl": "eae432539d71f1ea82c426933d551108fbbc255eccd21ccbde4504438ee1a1bc",
+    "ridge-endpoint-path/artifacts/target-evaluation.jsonl": "402cc1d4c2dd95ac841cfa7c88a403b4bd978d79fa8de49f9354d8039874435c"
+  },
+  "numerical_checks": {
+    "max_unit_area_error": 6.661338147750939e-16,
+    "max_volume_reconstruction_error": 2.220446049250313e-15
+  },
+  "primary_both_factors": {
+    "count": 16,
+    "opposite_signs": 15,
+    "same_signs": 1,
+    "delta_R_delta_sys_spearman": -0.55,
+    "mean_delta_R": -0.17960089628591047,
+    "mean_delta_sys": 0.015268496216149875,
+    "smallest_absolute_delta_R": 0.04399612820293797,
+    "smallest_absolute_delta_sys": 0.0015794255342323482
+  },
+  "by_arm": {
+    "10": {
+      "count": 16,
+      "opposite_signs": 13,
+      "same_signs": 3,
+      "delta_R_delta_sys_spearman": -0.5264705882352941,
+      "mean_delta_R": -0.02207861230717334,
+      "mean_delta_sys": 0.0012506355127698205,
+      "smallest_absolute_delta_R": 0.005464049116026715,
+      "smallest_absolute_delta_sys": 0.0011089822917354913
+    },
+    "01": {
+      "count": 16,
+      "opposite_signs": 14,
+      "same_signs": 2,
+      "delta_R_delta_sys_spearman": -0.6705882352941177,
+      "mean_delta_R": -0.15944820201031995,
+      "mean_delta_sys": 0.010443392559404909,
+      "smallest_absolute_delta_R": 0.009968203296569556,
+      "smallest_absolute_delta_sys": 0.0001575045476246706
+    },
+    "11": {
+      "count": 16,
+      "opposite_signs": 15,
+      "same_signs": 1,
+      "delta_R_delta_sys_spearman": -0.55,
+      "mean_delta_R": -0.17960089628591047,
+      "mean_delta_sys": 0.015268496216149875,
+      "smallest_absolute_delta_R": 0.04399612820293797,
+      "smallest_absolute_delta_sys": 0.0015794255342323482
+    }
+  },
+  "by_bucket_and_arm": {
+    "4x4": {
+      "10": {
+        "count": 8,
+        "opposite_signs": 6,
+        "same_signs": 2,
+        "delta_R_delta_sys_spearman": -0.3571428571428572,
+        "mean_delta_R": -0.005222901227816434,
+        "mean_delta_sys": -0.005240909803048151,
+        "smallest_absolute_delta_R": 0.005464049116026715,
+        "smallest_absolute_delta_sys": 0.0014238955568599138
+      },
+      "01": {
+        "count": 8,
+        "opposite_signs": 8,
+        "same_signs": 0,
+        "delta_R_delta_sys_spearman": -0.9523809523809524,
+        "mean_delta_R": 0.011055715538335287,
+        "mean_delta_sys": 0.0021108254058994497,
+        "smallest_absolute_delta_R": 0.009968203296569556,
+        "smallest_absolute_delta_sys": 0.0001575045476246706
+      },
+      "11": {
+        "count": 8,
+        "opposite_signs": 8,
+        "same_signs": 0,
+        "delta_R_delta_sys_spearman": -0.6190476190476191,
+        "mean_delta_R": 0.004366295856894187,
+        "mean_delta_sys": 0.00398142680603644,
+        "smallest_absolute_delta_R": 0.04399612820293797,
+        "smallest_absolute_delta_sys": 0.0015794255342323482
+      }
+    },
+    "4x6": {
+      "10": {
+        "count": 8,
+        "opposite_signs": 7,
+        "same_signs": 1,
+        "delta_R_delta_sys_spearman": -0.5476190476190477,
+        "mean_delta_R": -0.038934323386530245,
+        "mean_delta_sys": 0.007742180828587792,
+        "smallest_absolute_delta_R": 0.009003837414734761,
+        "smallest_absolute_delta_sys": 0.0011089822917354913
+      },
+      "01": {
+        "count": 8,
+        "opposite_signs": 6,
+        "same_signs": 2,
+        "delta_R_delta_sys_spearman": -0.3333333333333334,
+        "mean_delta_R": -0.3299521195589752,
+        "mean_delta_sys": 0.018775959712910368,
+        "smallest_absolute_delta_R": 0.021782976856348668,
+        "smallest_absolute_delta_sys": 0.001321689617802102
+      },
+      "11": {
+        "count": 8,
+        "opposite_signs": 7,
+        "same_signs": 1,
+        "delta_R_delta_sys_spearman": -0.09523809523809526,
+        "mean_delta_R": -0.36356808842871513,
+        "mean_delta_sys": 0.02655556562626331,
+        "smallest_absolute_delta_R": 0.14447495641613628,
+        "smallest_absolute_delta_sys": 0.009481501971349462
+      }
+    }
+  },
+  "same_sign_primary_pairs": [
+    {
+      "bucket": "4x6",
+      "row": 3,
+      "arm": "11",
+      "baseline_id": "ds-tangentialization-v1|seed=202609140101|bucket=4x6|row=3|attempt=6|arm=00",
+      "target_id": "ds-tangentialization-v1|seed=202609140101|bucket=4x6|row=3|attempt=6|arm=11",
+      "R_baseline": 11.073699085022708,
+      "R_target": 11.218174041438845,
+      "sys_baseline": 0.418711801591863,
+      "sys_target": 0.4363063472592556,
+      "delta_R": 0.14447495641613628,
+      "delta_sys": 0.017594545667392603
+    }
+  ],
+  "endpoint_paths": [
+    {
+      "id": "ridge-endpoint-3x6-q01",
+      "bucket": "3x6",
+      "path_label": "q01",
+      "R": 11.301776905190875,
+      "sys": 0.9509718381225976
+    },
+    {
+      "id": "ridge-endpoint-3x6-q001",
+      "bucket": "3x6",
+      "path_label": "q001",
+      "R": 10.955292837190571,
+      "sys": 0.8079913642465192
+    },
+    {
+      "id": "ridge-endpoint-3x6-q0001",
+      "bucket": "3x6",
+      "path_label": "q0001",
+      "R": 10.726592837214973,
+      "sys": 0.7808270790040204
+    },
+    {
+      "id": "ridge-endpoint-3x6-endpoint",
+      "bucket": "3x6",
+      "path_label": "endpoint",
+      "R": 9.797958971132713,
+      "sys": 0.7499999999999997
+    },
+    {
+      "id": "ridge-endpoint-4x4-q01",
+      "bucket": "4x4",
+      "path_label": "q01",
+      "R": 10.920458917858735,
+      "sys": 0.66464990561482
+    },
+    {
+      "id": "ridge-endpoint-4x4-q001",
+      "bucket": "4x4",
+      "path_label": "q001",
+      "R": 10.000093522258801,
+      "sys": 0.54741207094783
+    },
+    {
+      "id": "ridge-endpoint-4x4-q0001",
+      "bucket": "4x4",
+      "path_label": "q0001",
+      "R": 9.33513422859976,
+      "sys": 0.5175128405669648
+    },
+    {
+      "id": "ridge-endpoint-4x4-endpoint",
+      "bucket": "4x4",
+      "path_label": "endpoint",
+      "R": 8.0,
+      "sys": 0.5000000000000001
+    }
+  ]
+}
