@@ -18,11 +18,9 @@ for branch in json.loads((HERE / 'branch-inventory.json').read_text()):
             continue
         blob = item['blob']
         assert subprocess.run(['git', 'cat-file', '-e', blob], cwd=ROOT).returncode == 0, (branch['branch'], item['path'], blob)
-        retained = item['retained_path']
-        if retained.startswith('docs/history/'):
-            data = (ROOT / retained).read_bytes()
-            actual = hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
-            assert actual == blob, (branch['branch'], item['path'])
+        data = subprocess.check_output(['git', 'show', f"{branch['head']}:{item['path']}"], cwd=ROOT)
+        actual = hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
+        assert actual == blob, (branch['branch'], item['path'])
         count += 1
 for item in json.loads((HERE / 'dirty-source-inventory.json').read_text()):
     if 'retained_path' in item:

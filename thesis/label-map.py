@@ -92,14 +92,14 @@ def main():
 
     if args.build:
         print("Running latexmk -f ...", file=sys.stderr)
-        subprocess.run(["latexmk", "-f"], cwd=THESIS_DIR, capture_output=True)
+        subprocess.run(["sh", "build.sh"], cwd=THESIS_DIR, check=True)
 
     if not AUX_FILE.exists():
         print(f"Error: {AUX_FILE} not found. Run latexmk first.", file=sys.stderr)
         sys.exit(1)
 
     # Collect all .tex files
-    tex_files = sorted(THESIS_DIR.glob("*.tex"))
+    tex_files = sorted(THESIS_DIR.rglob("*.tex"))
 
     entries = parse_aux(AUX_FILE)
 
