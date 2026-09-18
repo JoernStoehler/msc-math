@@ -2,8 +2,9 @@
 
 Use branch **`thesis/resume-20260918`**, currently checked out at
 `/workspaces/msc-math/.worktrees/candidate-assembly-integration`.
-The directory name is retained for the idle agent and current review service;
-there is no competing integration branch. `main` is retained with Jörn's
+The directory name is retained for the idle agent; there is no competing
+integration branch. The prior local review service is unavailable, so use the
+durable PDF named below. `main` is retained with Jörn's
 uncommitted work untouched.
 
 ## Start points

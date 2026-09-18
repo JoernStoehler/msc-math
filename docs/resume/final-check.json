@@ -42,41 +42,21 @@
     "detail": "connection refused; service was not relaunched"
   },
   "dirty_main_source_comparison": {
-    "status": "changes_observed",
-    "inventory_entries": 288,
-    "sha_entries_checked": 287,
+    "status": "pass",
+    "inventory_entries": 263,
+    "sha_entries_checked": 262,
     "excluded": [
       ".codex/config.toml"
     ],
-    "changed_or_missing_count": 25,
-    "changed_or_missing": [
-      "thesis/candidate/main.tex",
-      "docs/task-graph/17-review-delivery.dot",
-      "docs/task-graph/17-review-delivery.svg",
-      "experiments/sys-datascience/methods/current-body-evaluator/Cargo.lock",
-      "experiments/sys-datascience/methods/current-body-evaluator/Cargo.toml",
-      "experiments/sys-datascience/methods/current-body-evaluator/README.md",
-      "experiments/sys-datascience/methods/current-body-evaluator/build.py",
-      "experiments/sys-datascience/methods/current-body-evaluator/controls/build-receipt.json",
-      "experiments/sys-datascience/methods/current-body-evaluator/controls/check.py",
-      "experiments/sys-datascience/methods/current-body-evaluator/controls/failure-inputs.jsonl",
-      "experiments/sys-datascience/methods/current-body-evaluator/controls/failure-results.jsonl",
-      "experiments/sys-datascience/methods/current-body-evaluator/controls/inputs.jsonl",
-      "experiments/sys-datascience/methods/current-body-evaluator/controls/make_panel.py",
-      "experiments/sys-datascience/methods/current-body-evaluator/controls/results.jsonl",
-      "experiments/sys-datascience/methods/current-body-evaluator/controls/run.time",
-      "experiments/sys-datascience/methods/current-body-evaluator/evaluate.py",
-      "experiments/sys-datascience/methods/current-body-evaluator/src/main.rs",
-      "thesis/candidate/02-preliminaries.tex",
-      "thesis/candidate/03-generalized-reeb-orbits-polytopes.tex",
-      "thesis/candidate/04-quadratic-program.tex",
-      "thesis/candidate/05-flow-graph.tex",
-      "thesis/candidate/09-rotated-regular-polygons.tex",
-      "thesis/candidate/11-numerics.tex",
-      "thesis/candidate/ai-use-disclosure.tex",
-      "thesis/candidate/figures/rotation-profile.png"
-    ],
-    "change_kind": "missing_from_source_worktree",
+    "changed_or_missing_count": 0,
+    "changed_or_missing": [],
     "source_overwritten": false
+  },
+  "removed_review_worktree_source_comparison": {
+    "status": "expected_absence",
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "inventory_entries": 25,
+    "missing_count": 25,
+    "retained_snapshots_verified_by_resume_verifier": true
   }
 }
