@@ -3,11 +3,9 @@
 \label{sec:fresh-data-search}
 \label{sec:black-box-datascience}
 
-The algorithms developed above make it possible to compare systolic ratios
-across large collections of polytopes. Here we ask whether
-measurements of a polytope's faces help explain the size of its systolic
-ratio. Such a relationship could also help identify promising bodies
-before evaluating capacity. An association across a broad collection of
+Do the symplectic areas of a four-dimensional polytope's two-dimensional
+faces help explain the size of its systolic ratio? Such a relationship
+could also help identify promising bodies before evaluating capacity. An association across a broad collection of
 polytopes is only a first test: for the search, it matters whether the
 relationship still holds among bodies with large ratios.
 
@@ -106,10 +104,10 @@ selection, so this comparison does not exclude range restriction as a
 contributor. The construction is in Appendix~\ref{app:ds-selection}.
 
 Ridge measurements also contain predictive information beyond face counts
-and incidences. With gradient-boosted regression trees and a common
-training/test split, ridge-area features alone gave test $R^2=0.887$,
-whereas combinatorial counts alone gave
-$0.043$. Here $R^2$ compares squared prediction error with prediction by
+and incidences. When predicting the numerical systolic ratio with
+gradient-boosted regression trees under a common training/test split,
+ridge-area features alone gave test $R^2=0.887$, whereas combinatorial
+counts alone gave $0.043$. Here $R^2$ compares squared prediction error with prediction by
 the test-set mean. The feature lists, additional models and split
 definitions are in Appendix~\ref{app:ds-prediction}.
 
@@ -259,9 +257,10 @@ relation depends on the family.
 
 The bulk association has a practical consequence: geometry alone can
 identify fresh populations with larger numerical ratios before capacity
-is evaluated. Within fixed factor-side-count groups, selection for low
-$R$ gave mean ratio $0.626$, compared with $0.316$ for comparison bodies
-from the same source.
+is evaluated. From a fresh pool of 100,000 Lagrangian products, selecting
+the ten lowest-$R$ bodies in each factor-side-count group gave mean ratio $0.626$,
+compared with $0.316$ for ten comparison bodies per group. The comparison
+bodies were chosen by a fixed hash order excluding the selected bodies.
 
 The distribution of area among the ridges supplies a second comparison.
 When the total symplectic ridge area is positive, define
@@ -270,8 +269,8 @@ When the total symplectic ridge area is positive, define
 \]
 This is the share of the total carried by the largest ridge; like $R$,
 it is invariant under translation, common dilation and linear symplectic
-maps. In a separate fresh pool, among products in the lowest one percent
-by $R$, the half with lower $C$ had a mean advantage of $0.034$ over the other
+maps. In a separate fresh pool of 100,000 products, among those in the
+lowest one percent by $R$, the half with lower $C$ had a mean advantage of $0.034$ over the other
 half, positive in eight of ten groups. Thus largest-ridge dominance
 contains information even when the total ridge area is small.
 
@@ -287,8 +286,9 @@ visible in these broad and selected populations.
 For generic ten-facet bodies, the related score $R/N_2$, where $N_2$ is
 the number of ridges, measures normalized area per ridge. Unlike products
 at fixed side counts, these bodies can have different ridge counts.
-Selecting the lowest one percent by $R/N_2$ gave mean ratio $0.626$,
-against $0.339$ for comparison bodies. Within that selected panel, however,
+Selecting the lowest one percent by $R/N_2$ from a fresh pool of 10,000
+bodies gave mean ratio $0.626$, against $0.339$ for 100 disjoint,
+deterministically selected comparison bodies. Within that selected panel, however,
 the ten most extreme scores had a mean ratio $0.032$ below the remaining
 ninety. This is a failure to obtain further gain in that sample, not an
 established deterioration under every stronger filter. The comparison
@@ -318,7 +318,9 @@ does not equate a mean product with the product of means.
 \subsection{The inverse direction survives a controlled change of shape}
 
 The attenuation under selection does not mean that the inverse relation
-is confined to comparisons of unrelated bodies. Keeping polygon normals
+is confined to comparisons of unrelated bodies. We compared sixteen
+Lagrangian products with changed versions, eight in the $4\times4$ group
+and eight in the $4\times6$ group. Keeping polygon normals
 fixed and setting both factors' support heights to one gives opposite
 changes in $R$ and the numerical systolic ratio in fifteen of sixteen
 pairs. In ten pairs $R$ decreased and the ratio increased; in five the
@@ -372,10 +374,13 @@ covariances $A,B$, moreover, $\Gamma=\operatorname{diag}(A,B)$ and
 $(J\Gamma)^2=\operatorname{diag}(-BA,-AB)$; thus $\nu_1^2,\nu_2^2$ are
 the eigenvalues of $AB$.
 
-Low $\rho$ selected larger mean ratios in every side-count group in each
-of two fresh pools. The twenty gains over comparison bodies ranged from
-$0.260$ to $0.440$, with mean $0.333$. Against the combined low-$R$,
-low-$C$ selector, its mean advantage was only $0.014$, and the differences
+Selecting the lowest $0.5\%$ by $\rho$ within each side-count group
+gave larger mean ratios than comparison bodies in every group in each
+of two fresh pools of 50,000 products. Each group supplied 25 comparison bodies, chosen by
+fixed hash order after excluding both geometric selections. The twenty
+gains over comparison bodies ranged from $0.260$ to $0.440$, with mean
+$0.333$. Against selection of the lowest $1\%$ by $R$ followed by its
+lower half by $C$, its mean advantage was only $0.014$, and the differences
 changed sign across groups. Both geometric summaries therefore support
 selection in the tested populations; neither was uniformly better there.
 
@@ -391,8 +396,8 @@ sampling distribution. Details are in Appendix~\ref{app:ds-selection}.
 
 Removing the planar vertex-covariance anisotropy of both factors raises
 the mean numerical ratio from $0.342$ to $0.654$ in a matched comparison
-of 320 products, with increases in 314 and decreases in six. At the same
-time, the pooled within-group rank correlation between $R$ and the ratio
+of 320 products, 32 from each side-count group, with increases in 314
+and decreases in six. At the same time, the pooled within-group rank correlation between $R$ and the ratio
 weakens from $-0.929$ to $-0.249$. Thus affine shape variation of the
 factors contributes materially to the broad association in this sample.
 
