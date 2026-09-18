@@ -14,21 +14,22 @@ disclosure records the extent and provenance of AI use in the thesis.
 
 The local maximality proof illustrates how much could be delegated without
 specifying a procedure. I asked a GPT-5-series model to develop a local
-maximality argument for HKO in facet coordinates. I suggested looking for several upper bounds and
-somehow showing that together they control a neighborhood after quotienting
-out the symmetries. I had neither specified a finite certificate nor worked
-out how to construct the upper bounds.
+maximality argument for HKO in facet coordinates. I suggested looking for
+several upper bounds and somehow showing that together they control a
+neighborhood after quotienting out the symmetries. I had neither specified a
+finite certificate nor worked out how to construct the upper bounds.
 
 The model developed essentially the entire argument from that starting
 point. It identified a sufficient configuration of twenty-six upper bounds
 in the twenty-five transverse dimensions. An initial derivative-based
-approach had provided only twenty-five nonsingular cases. The model then
-used the weights $\beta$ in the quadratic objective to construct feasible
-sections: an invertible $5\times5$ closure minor lets five weights depend
-smoothly on the facet parameters while the remaining weights stay fixed.
-This supplied upper bounds even where the initial approach failed. It also
-completed proof steps involving the volume and wrote the SageMath code for
-the exact computations.
+approach had provided only twenty-five nonsingular branches, too few for the
+certificate. The model then used the weights $\beta$ in the quadratic
+objective to construct feasible sections: an invertible $5\times5$ closure
+minor lets five weights depend smoothly on the facet parameters while the
+remaining weights stay fixed. This also supplied upper bounds from singular
+optimizer sets that the initial approach could not treat. The model completed
+proof steps involving the volume and wrote the SageMath code for the exact
+computations.
 
 \subsection{A pursued criterion of success}
 
@@ -67,23 +68,22 @@ agent pursues must also produce a useful end result for me. The goals need
 not coincide. A clear objective makes completion evaluable: what result is
 needed, why it is needed, which constraints matter, and what would leave the
 task unfinished. It does not require prescribing
-every intermediate action. The HKO example was effective precisely because
-the mathematical objective constrained the result while allowing the agent
-to invent the method. I found it useful to think of prompts as both cueing
+every intermediate action. This way of specifying the HKO task was effective
+because the mathematical objective constrained the result while allowing the
+agent to invent the method. I found it useful to think of prompts as both cueing
 learned behavior through their wording and supplying context for deliberate
 reasoning.
 
 \subsection{Keeping the whole task in view}
 
 Long conversations made the distinction between a useful answer and a
-completed task increasingly important. The checkpoint I want in such a task
-asks whether the current reasoning,
-evidence, and actions are advancing the right whole goal within the available
-budget. It should expose a change of destination: delivering only a first
-step, solving an easier related problem, or replacing completion by repeated
-planning. The same question belongs at the end. A successful evaluation of
-several components does not answer whether the requested result has been
-delivered.
+completed task increasingly important. At checkpoints during such a task, I
+want to ask whether the current reasoning, evidence, and actions are advancing
+the intended goal as a whole within the available budget. This question should
+expose a change of destination: delivering only a first step, solving an easier
+related problem, or replacing completion by repeated planning. The same
+question belongs at the end. A successful evaluation of several components
+does not answer whether the requested result has been delivered.
 
 The budget is part of that judgment. An investigation can produce useful
 information and still be a poor choice if it consumes the time needed to
