@@ -412,5 +412,7 @@ also exercise tube composition, positive-time reconstruction, and unsupported
 inputs.  These comparisons check the correspondence between the rational
 program and the theorem on particular inputs.  They do not establish a
 performance advantage over the quadratic program; no common-input benchmark
-is claimed here.  The input data and test entry points are listed with the
-other computational material in Section~\ref{sec:published-code-data}.
+is claimed here.\footnote{The exact search and its regression tests are in
+\path{crates/symplectic/src/algorithms/flow_graph/exact_search.rs};
+the worked example and its input are in
+\path{experiments/dev-flow-graph/visualize-tube/}.}

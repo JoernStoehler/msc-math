@@ -20,8 +20,8 @@
       "bytes": 2508
     },
     "thesis/candidate/recovered/thesis-candidate/01-introduction.tex": {
-      "sha256": "c8fc8dca21196d655d7fa652ae837c62fe2f4b4c9b6f926e3034866bc5f99f50",
-      "bytes": 10584
+      "sha256": "fbf0cd9d793c061fef5ebc8ca0d670be7df1bfe4d72d906a4c5d1aaf559f0aeb",
+      "bytes": 10561
     },
     "thesis/candidate/recovered/thesis-candidate/02-preliminaries.tex": {
       "sha256": "fb69b125f7bc4a5a4398603bf22371b3187c0d0b30e51656084b03f064839866",
@@ -68,8 +68,8 @@
       "bytes": 28455
     },
     "thesis/candidate/05-flow-graph.tex": {
-      "sha256": "75326a33e53123aefa94e1890f2f717405be12b022f37092a434d0088dbc5192",
-      "bytes": 18933
+      "sha256": "d348fbd0eb3e271a684b81dbd89f59b0c69de8a12d095520251c93062494ff46",
+      "bytes": 19022
     },
     "thesis/candidate/legacy/figures/flow-graph/flow-graph-f6-tube-sequence.pdf": {
       "sha256": "6cc41de40e349accf46342d873422041656b19c0f091266c0747430d3a2851d4",
@@ -80,8 +80,8 @@
       "bytes": 1819
     },
     "thesis/candidate/recovered/thesis-candidate/06-variation.tex": {
-      "sha256": "dee93e67fae922588cb2ce9e3104d06ba7a2044a4b15614873dc52bf4a0cca65",
-      "bytes": 17052
+      "sha256": "05d0bc747ee57d92f27cdd8bdd03a15a4d92241764ff5a15996f521508fa2cac",
+      "bytes": 17157
     },
     "thesis/candidate/recovered/thesis-candidate/07-hko.tex": {
       "sha256": "2f41a94f9274fb1d4df5820289b798a328f7616bc79063888389c5d5d985996a",
@@ -136,8 +136,8 @@
       "bytes": 9935
     },
     "thesis/candidate/product-rotation-draft/section.tex": {
-      "sha256": "6b4a0ed9dd7a494e38e1f2cd78fbbc2aa58626548ab00e61fd3719b96c88ff38",
-      "bytes": 5487
+      "sha256": "58f31464589c17a8f8fd45ab03468b32db02c2acb828c12f9727a3f5e49e0090",
+      "bytes": 5712
     },
     "thesis/candidate/legacy/10-visualization-3d.tex": {
       "sha256": "007d86dfdedc34bc3a94f551fb4420b7a0d699710221480e77ddfd9900a8c750",
@@ -152,8 +152,8 @@
       "bytes": 22832
     },
     "thesis/candidate/11-numerics.tex": {
-      "sha256": "d50448a61a17f12de2afcf310367426ecd84727a0a38c1cb813f762f7f099414",
-      "bytes": 9669
+      "sha256": "e42955ec58c6a615f1ad323d24c2b8092ce2d0cd09e5b046dfc7ad34a7e2e41a",
+      "bytes": 9679
     },
     "thesis/candidate/legacy/12-published-code-data.tex": {
       "sha256": "3d3809be0047a12b6661ea5a13d70b67d853d7e2bfa9dca0877b70fb56b85068",
@@ -164,8 +164,8 @@
       "bytes": 6141
     },
     "thesis/candidate/recovered/thesis-candidate/14-conclusion.tex": {
-      "sha256": "c3b6055a35ac32aa8f39dcd77e754a3073c9fd94f946c4d869e042e08b9679cb",
-      "bytes": 3737
+      "sha256": "814a08b22d05baf06815f3c53fa3259b58f1e8dddcf06997778b388278e8f893",
+      "bytes": 3788
     },
     "thesis/candidate/ds-complete-draft/appendix.tex": {
       "sha256": "f21c63fcf3ea8acaa3ef1db1f5214f368684d86761e3e73d108d868de5152b2e",
@@ -190,8 +190,8 @@
   },
   "pdf": {
     "path": "/workspaces/msc-math/.worktrees/candidate-assembly-integration/thesis/candidate/build/main.pdf",
-    "sha256": "7574f8961765f2064462356779ba38518e2965a2ba6a9d40f3dfec70f4b044dc",
-    "bytes": 1655743,
+    "sha256": "4770e071acc4b835899bd4445396244febf162235760c568d8687d54efe20446",
+    "bytes": 1659545,
     "pages": 87
   },
   "checks": {
@@ -202,7 +202,8 @@
     "ridge_followup": "Identity added in Section8.4, equation35, page53; full rebuild81pages with no warnings; pages52\u201354 rendered/inspected, no clipping.",
     "prior_art_availability": "Full rebuild81pages, no warnings; pages26,35,70,80 rendered/inspected; public commit uses short linked hash to avoid overflow.",
     "product_position": "83page full rebuild, no warnings. New section pages66\u201367 and adjacent65/68 rendered/inspected; contents4,introduction7,availability71,conclusion75 inspected. Initial81page full contact-sheet pass remains preceding-version evidence.",
-    "complete_DS": "Final87page full rebuild, no warnings. All88pages before TOC-only compaction rendered/inspected in contact sheets; final2pageTOC and productfigure at readable resolution inspected. All evidence-index paths resolve; DS final hashes independently reviewed."
+    "complete_DS": "Final87page full rebuild, no warnings. All88pages before TOC-only compaction rendered/inspected in contact sheets; final2pageTOC and productfigure at readable resolution inspected. All evidence-index paths resolve; DS final hashes independently reviewed.",
+    "known_defect_repair": "No warnings/undefined references/overfull boxes; changed pages6,7,35,38,39,66,67,68,72,76 rendered and inspected. Original87page checkpoint separately frozen; no authoring PASS inference."
   },
   "baseline_pdf": {
     "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/build/main.pdf",

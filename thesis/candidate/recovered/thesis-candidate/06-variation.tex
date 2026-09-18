@@ -317,11 +317,12 @@ method accepted a positive move at each of eight configured trace iterations,
 but all runs stopped at their iteration cap and every endpoint scan still
 found a further above-threshold move.  Thus the evidence supports finite-step
 progress and a measured computation cost on that panel, not endpoint local
-maximality.  A later comparison tests seven fixed policies on sixty-four matched starts,
-including policies based on finite-gap and branch-history models. This is a
-separate experiment on a historical numerical objective, not an enlargement
-of the twelve-start panel. Its inputs and results are recorded in
-\path{experiments/dev-gradient-ascent/optimizer-comparison/}.
+maximality.  A separate comparison on sixty-four matched starts found larger median
+terminal best-so-far values for methods using several competing branches
+than for either single-branch gradient implementation. All 448 terminal
+values remained below one. Section~\ref{subsec:black-box-datascience-finite-budget-optimization}
+gives the results and the limits of this comparison on a historical numerical
+objective; its starts are separate from the twelve-start panel above.
 
 A retained three-case diagnostic also explains a failure of the affine
 branch-window prediction. At the tested finite step, two named KKT branches

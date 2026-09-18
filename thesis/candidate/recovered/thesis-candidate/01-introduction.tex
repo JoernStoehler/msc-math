@@ -118,22 +118,21 @@ the normals of the facets they meet. Haim--Kislev's theorem makes the
 capacity computable by a finite optimization over facet orders and
 nonnegative weights~\cite{HK2017}.
 
-We expand the proof in Haim--Kislev's original paper into a self-contained
-presentation for a master's-level reader. We explain the dual action
-principle and the existence of a minimizing curve with a finite list of
-distinct facet directions.
+We derive the finite formula from the dual action principle, expanding
+Haim--Kislev's argument for a master's-level reader. We state the imported
+variational results and explain the existence of a minimizing curve with a
+finite list of distinct facet directions.
 
 For Lagrangian products, we derive a further reduction from the bilinear
 structure of the objective: some maximizing word uses at most three facets
 from each factor. This gives a smaller finite search for the capacity,
 without classifying every minimizing orbit.
 
-We pursued the flow-graph method of Chaidez and Hutchings~\cite{CH2021}
-as an alternative way to compute capacity. Its performance in our tests
-made it less useful for large searches, but it provides a reference
-implementation for cross-checking the quadratic-program method. Agreement
-between the two gives additional evidence that the implementations compute
-the intended quantity.
+Using the local passage geometry of Chaidez and Hutchings~\cite{CH2021},
+we develop a flow-graph algorithm with a finite search justified by the
+simple-minimizer theorem. Its implementation provides an independent
+cross-check of the quadratic-program method on selected rational inputs
+satisfying the flow algorithm's regularity hypotheses.
 
 The same finite methods yield a side result for the family
 $P_5\times R(\theta)P_5$: its systolic ratio is

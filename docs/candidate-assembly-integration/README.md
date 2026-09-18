@@ -187,3 +187,15 @@ numerical limitation: one original body lacks current capacity coverage; the
 text names it accurately, so completion does not require concealing or solving
 that case. Optional further empirical/Pro results remain unselected. No new
 scientific decision was forced by this integration. Root retains those choices.
+
+## Finite known-defect checkpoint after 476facfd
+
+The exact 87-page review PDF is preserved at `review-freeze/candidate-476facfd-87pages.pdf`; its hash is in the adjacent manifest. Existing DS preview review artifacts were not modified.
+
+Adopted from narrow-flagger inventory c7f742b7: VR1 now reports the matched-start finding (multi-branch implementations had larger median terminal values; all 448 below one), links the integrated DS subsection, and preserves historical-objective/separate-panel scope. NR3 moves two source paths into a footnote without losing fixture scope. IR2 removed the unsupported flow performance comparison; the replacement accurately describes local passage geometry and the conditional finite-search cross-check.
+
+Independent whole-manuscript audit ea283d24: corrected the introduction's self-contained-proof promise, explicitly restricted the conclusion quantifier to ten-facet polytopes, renamed product-position matrices to avoid the global J_0 collision, and replaced the flow chapter's false availability destination with existing source/test/example paths in a footnote. The conclusion also distinguishes our flow search from literal implementation of the whole Chaidez–Hutchings construction.
+
+Not adopted: IR1, IQ1/IQ2, NR1/NR2, NQ1/NQ2/NQ3, VQ1/VQ2 blanket removals/relocations. These are unvalidated presentation suggestions; the current framing, arithmetic assumptions, branch-coverage warning and scope limits have legitimate roles. No new science or authoring workflow test was performed.
+
+Remaining: the scoped HKO nonsmooth cutting-literature comparison identified by the independent audit is not integrated; current smooth Zoll comparison alone is incomplete related-work coverage (see `open-thesis-literature` extrema report). Whole-thesis prose acceptance remains unvalidated; empirical accounting detail and inherited sparse pages remain. The exact reviewed DS repairs do not establish a general authoring workflow. No research or producer is running under this task.
