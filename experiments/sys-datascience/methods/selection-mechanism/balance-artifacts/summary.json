@@ -1,0 +1,112 @@
+{
+  "requests": 640,
+  "statuses": {
+    "ok": 640
+  },
+  "summed_request_wall_seconds": 8.372798919532215,
+  "largest_request_wall_seconds": 0.02888414799235761,
+  "analysis_sha256": "f80166054f92d9fd151c466e1444c63cde7d663a5f59fa1bd271dc31f2a5e435",
+  "arms": {
+    "baseline": {
+      "n": 320,
+      "pooled_within_group_spearman": -0.9289222873900295,
+      "R": {
+        "n": 320,
+        "mean": 23.73883344910216,
+        "median": 15.613598281289779,
+        "minimum": 9.07025962831472,
+        "maximum": 292.83793087746335,
+        "positive": 320,
+        "negative": 0,
+        "zero": 0
+      },
+      "sys": {
+        "n": 320,
+        "mean": 0.34188786313328423,
+        "median": 0.34309114847765,
+        "minimum": 0.0014877940493297779,
+        "maximum": 0.8309527767863076,
+        "positive": 320,
+        "negative": 0,
+        "zero": 0
+      },
+      "covariance_rho": {
+        "n": 320,
+        "mean": 21.559341684814207,
+        "median": 3.694212756332853,
+        "minimum": 1.0707361175042913,
+        "maximum": 1711.908129297167,
+        "positive": 320,
+        "negative": 0,
+        "zero": 0
+      }
+    },
+    "balanced": {
+      "n": 320,
+      "pooled_within_group_spearman": -0.24868035190615836,
+      "R": {
+        "n": 320,
+        "mean": 11.65234667285234,
+        "median": 11.589872915583243,
+        "minimum": 9.01013315904091,
+        "maximum": 13.855886643943238,
+        "positive": 320,
+        "negative": 0,
+        "zero": 0
+      },
+      "sys": {
+        "n": 320,
+        "mean": 0.6536831816055665,
+        "median": 0.6593602956435807,
+        "minimum": 0.5000093217166574,
+        "maximum": 0.8398283952019704,
+        "positive": 320,
+        "negative": 0,
+        "zero": 0
+      },
+      "covariance_rho": {
+        "n": 320,
+        "mean": 1.000000000000006,
+        "median": 1.0000000000000004,
+        "minimum": 1.0,
+        "maximum": 1.0000000000005043,
+        "positive": 320,
+        "negative": 0,
+        "zero": 0
+      }
+    }
+  },
+  "paired": {
+    "delta_R": {
+      "n": 320,
+      "mean": -12.086486776249819,
+      "median": -3.856429048329198,
+      "minimum": -279.224840008832,
+      "maximum": 0.23819032534555085,
+      "positive": 14,
+      "negative": 306,
+      "zero": 0
+    },
+    "delta_sys": {
+      "n": 320,
+      "mean": 0.31179531847228237,
+      "median": 0.3095721518792339,
+      "minimum": -0.08684503873616822,
+      "maximum": 0.776321838191065,
+      "positive": 314,
+      "negative": 6,
+      "zero": 0
+    },
+    "opposite_signs": 306,
+    "both_positive": 11,
+    "both_negative": 3
+  },
+  "checks": {
+    "maximum_relative_volume_error_vs_exact_factor_areas": 5.329070518200751e-15,
+    "max_balanced_covariance_rho_error": 5.042632977847461e-13,
+    "max_relative_factor_area_change": 3.1874503036988244e-13,
+    "one_evaluator_identity": true,
+    "all_product_route": true,
+    "complete_paired_grid": true
+  }
+}
