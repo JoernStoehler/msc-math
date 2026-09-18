@@ -61,8 +61,8 @@ Its normalization agrees with $\operatorname{sys}$; its volume is computed
 in floating-point arithmetic. The empirical results below concern this
 numerical ratio.
 
-The exploratory sample consists of generic four-dimensional polytopes
-with facet counts $F=5,\ldots,12$ and Lagrangian products $P\times Q$
+The exploratory sample consists of 4,096 generic four-dimensional polytopes
+with facet counts $F=5,\ldots,12$ and 10,240 Lagrangian products $P\times Q$
 with factor side counts $3\leq k\leq m\leq6$. Each facet count has the
 same number of generic bodies, and each side-count pair has the same
 number of products. In coordinates $(q_1,q_2,p_1,p_2)$, $P$ lies in the $q$-plane and
@@ -143,9 +143,9 @@ by factor side counts. Each group contains 1,024 bodies.}
 
 Selecting products with small $R$ raises the mean numerical systolic
 ratio, but further restriction within that selection need not raise it
-again. In a fresh population of Lagrangian products, the lowest-$R$
-selection had mean ratio $0.626$, compared with $0.316$ for comparison
-bodies. Selection used only geometry, before capacity was evaluated.
+again. In a fresh pool of 100,000 Lagrangian products, selecting the ten
+lowest-$R$ bodies per side-count group gave mean ratio $0.626$, compared
+with $0.316$ for the same number of comparison bodies. Selection used only geometry, before capacity was evaluated.
 Each factor-side-count group contributed equally, and the comparison
 bodies were chosen by a fixed hash order excluding the selected bodies.
 
@@ -462,7 +462,7 @@ them. The observed attenuation is stronger than in the fitted Gaussian
 reference, but other dependence structures can behave differently under
 selection. Neither convenient account need describe the full phenomenon.
 The opposite exact laws for pentagons and triangles, the global
-counterexample and the controlled shape changes constrain any broader
+counterexample and the paired shape changes constrain any broader
 explanation.
 
 \subsection{Using evaluated ratios to guide search}
@@ -520,7 +520,7 @@ window is not guaranteed to contain every relevant branch.
 
 Retaining branches from earlier points gave the largest median
 best-so-far numerical ratios in the comparison. Seven fixed
-implementations shared the same generic ten-facet starting bodies, a cap
+implementations shared the same 64 generic ten-facet starting bodies, a cap
 of 128 full evaluations and a nominal one-second accumulated
 evaluator-plus-optimizer budget:
 \begin{center}
