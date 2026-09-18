@@ -1,0 +1,652 @@
+[
+  {
+    "actions": [],
+    "mentions": [],
+    "moderation_status": "APPROVED",
+    "id": "p3p3HrN0EfGkVNOpVXAkFg",
+    "created": "2026-09-18T15:21:43.217465+00:00",
+    "updated": "2026-09-18T15:21:54.376432+00:00",
+    "user": "acct:JoernStoehler@hypothes.is",
+    "uri": "http://100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+    "text": "rewrite / omit -- this feels a bit redundant and low in content and sloppily written",
+    "tags": [],
+    "group": "__world__",
+    "permissions": {
+      "read": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "admin": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "update": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "delete": [
+        "acct:JoernStoehler@hypothes.is"
+      ]
+    },
+    "target": [
+      {
+        "source": "http://100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+        "selector": [
+          {
+            "end": 2256,
+            "type": "TextPositionSelector",
+            "start": 1701
+          },
+          {
+            "type": "TextQuoteSelector",
+            "exact": "The desired result was clear enough to guide this work even though the route to it wasunknown. A proof had to establish the local inequality, including directions that did not preservethe product structure. The model was free to discover what finite statement would suffice. Inparticular, the twenty-six derivative conditions were part of its solution, not a test suite that Isupplied in advance. The resulting ten-facet theorem in this thesis shows the value of giving anagent a mathematical objective while leaving substantial freedom over the argument.",
+            "prefix": " code for theexact computations.",
+            "suffix": "15.2 An inferred criterion of su"
+          },
+          {
+            "type": "PageSelector",
+            "index": 0,
+            "label": "1"
+          }
+        ]
+      }
+    ],
+    "document": {
+      "title": [
+        "ai-reflection-v1.pdf"
+      ]
+    },
+    "links": {
+      "html": "https://hypothes.is/a/p3p3HrN0EfGkVNOpVXAkFg",
+      "incontext": "https://hyp.is/p3p3HrN0EfGkVNOpVXAkFg/100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+      "json": "https://hypothes.is/api/annotations/p3p3HrN0EfGkVNOpVXAkFg"
+    },
+    "user_info": {
+      "display_name": null
+    },
+    "flagged": false,
+    "hidden": false
+  },
+  {
+    "id": "NIgB7rN1EfGSAnf4EXHhjQ",
+    "created": "2026-09-18T15:25:39.880895+00:00",
+    "updated": "2026-09-18T15:25:39.880895+00:00",
+    "user": "acct:JoernStoehler@hypothes.is",
+    "uri": "http://100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+    "text": "This is wrong. The point is that the actively pursued criterion is overlapping with what I actually want enough to deliver a useful end-result. It is not necessary, nor is it likely, that the agent actually pursues the same goal as I described. It is also demonstratedly true that agents can describe what goal I described, and yet still pursue something else. So wrong inference of a goal is not the issue, it is \"wrong picking of a goal\". This is standard alignment theory, and apparently now manifests for ambitious goals in an observable manner in publicly released models. ",
+    "tags": [],
+    "group": "__world__",
+    "moderation_status": null,
+    "permissions": {
+      "read": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "admin": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "update": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "delete": [
+        "acct:JoernStoehler@hypothes.is"
+      ]
+    },
+    "target": [
+      {
+        "source": "http://100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+        "selector": [
+          {
+            "end": 4204,
+            "type": "TextPositionSelector",
+            "start": 4108
+          },
+          {
+            "type": "TextQuoteSelector",
+            "exact": "A clear objective makes the inferred criterion more likely to coincide with what I actuallywant.",
+            "prefix": "only part of theintended result.",
+            "suffix": " Here clarity means enough speci"
+          },
+          {
+            "type": "PageSelector",
+            "index": 1,
+            "label": "2"
+          }
+        ]
+      }
+    ],
+    "document": {
+      "title": [
+        "ai-reflection-v1.pdf"
+      ]
+    },
+    "links": {
+      "html": "https://hypothes.is/a/NIgB7rN1EfGSAnf4EXHhjQ",
+      "incontext": "https://hyp.is/NIgB7rN1EfGSAnf4EXHhjQ/100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+      "json": "https://hypothes.is/api/annotations/NIgB7rN1EfGSAnf4EXHhjQ"
+    },
+    "actions": [],
+    "mentions": [],
+    "user_info": {
+      "display_name": null
+    },
+    "flagged": false,
+    "hidden": false
+  },
+  {
+    "id": "S6Pb3LN1EfGHl48ThBKfGw",
+    "created": "2026-09-18T15:26:18.613131+00:00",
+    "updated": "2026-09-18T15:26:18.613131+00:00",
+    "user": "acct:JoernStoehler@hypothes.is",
+    "uri": "http://100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+    "text": "delete, slop / addresses a misunderstanding that does not come up",
+    "tags": [],
+    "group": "__world__",
+    "moderation_status": null,
+    "permissions": {
+      "read": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "admin": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "update": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "delete": [
+        "acct:JoernStoehler@hypothes.is"
+      ]
+    },
+    "target": [
+      {
+        "source": "http://100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+        "selector": [
+          {
+            "end": 4623,
+            "type": "TextPositionSelector",
+            "start": 4576
+          },
+          {
+            "type": "TextQuoteSelector",
+            "exact": "A prompt does not update the model’s parameters",
+            "prefix": " the agent to inventthe method. ",
+            "suffix": "; it supplies the context inwhic"
+          },
+          {
+            "type": "PageSelector",
+            "index": 1,
+            "label": "2"
+          }
+        ]
+      }
+    ],
+    "document": {
+      "title": [
+        "ai-reflection-v1.pdf"
+      ]
+    },
+    "links": {
+      "html": "https://hypothes.is/a/S6Pb3LN1EfGHl48ThBKfGw",
+      "incontext": "https://hyp.is/S6Pb3LN1EfGHl48ThBKfGw/100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+      "json": "https://hypothes.is/api/annotations/S6Pb3LN1EfGHl48ThBKfGw"
+    },
+    "actions": [],
+    "mentions": [],
+    "user_info": {
+      "display_name": null
+    },
+    "flagged": false,
+    "hidden": false
+  },
+  {
+    "id": "mIDJVrN1EfGtBGdY4CB29A",
+    "created": "2026-09-18T15:28:27.600150+00:00",
+    "updated": "2026-09-18T15:28:27.600150+00:00",
+    "user": "acct:JoernStoehler@hypothes.is",
+    "uri": "http://100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+    "text": "better maybe: The prompts do not change the model's trained behavior, but they change what behavior triggers from low-level cues in the text, and they supply high-level information the model takes into account on a deliberate reasoning level.",
+    "tags": [],
+    "group": "__world__",
+    "moderation_status": null,
+    "permissions": {
+      "read": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "admin": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "update": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "delete": [
+        "acct:JoernStoehler@hypothes.is"
+      ]
+    },
+    "target": [
+      {
+        "source": "http://100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+        "selector": [
+          {
+            "end": 4693,
+            "type": "TextPositionSelector",
+            "start": 4625
+          },
+          {
+            "type": "TextQuoteSelector",
+            "exact": "it supplies the context inwhich these learned capabilities are used.",
+            "prefix": " update the model’s parameters; ",
+            "suffix": "15.3 Keeping the whole task in v"
+          },
+          {
+            "type": "PageSelector",
+            "index": 1,
+            "label": "2"
+          }
+        ]
+      }
+    ],
+    "document": {
+      "title": [
+        "ai-reflection-v1.pdf"
+      ]
+    },
+    "links": {
+      "html": "https://hypothes.is/a/mIDJVrN1EfGtBGdY4CB29A",
+      "incontext": "https://hyp.is/mIDJVrN1EfGtBGdY4CB29A/100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+      "json": "https://hypothes.is/api/annotations/mIDJVrN1EfGtBGdY4CB29A"
+    },
+    "actions": [],
+    "mentions": [],
+    "user_info": {
+      "display_name": null
+    },
+    "flagged": false,
+    "hidden": false
+  },
+  {
+    "id": "qwH7BLN1EfGg2vf6uzI3Bg",
+    "created": "2026-09-18T15:28:58.650758+00:00",
+    "updated": "2026-09-18T15:28:58.650758+00:00",
+    "user": "acct:JoernStoehler@hypothes.is",
+    "uri": "http://100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+    "text": "Irrelevant data / a figure with thread length distribution would be far mor einformative.",
+    "tags": [],
+    "group": "__world__",
+    "moderation_status": null,
+    "permissions": {
+      "read": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "admin": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "update": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "delete": [
+        "acct:JoernStoehler@hypothes.is"
+      ]
+    },
+    "target": [
+      {
+        "source": "http://100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+        "selector": [
+          {
+            "end": 4889,
+            "type": "TextPositionSelector",
+            "start": 4839
+          },
+          {
+            "type": "TextQuoteSelector",
+            "exact": "ome of my threads extended beyond a hundred turns.",
+            "prefix": " task increas-ingly important. S",
+            "suffix": " Habits inherited fromshort, fas"
+          },
+          {
+            "type": "PageSelector",
+            "index": 1,
+            "label": "2"
+          }
+        ]
+      }
+    ],
+    "document": {
+      "title": [
+        "ai-reflection-v1.pdf"
+      ]
+    },
+    "links": {
+      "html": "https://hypothes.is/a/qwH7BLN1EfGg2vf6uzI3Bg",
+      "incontext": "https://hyp.is/qwH7BLN1EfGg2vf6uzI3Bg/100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+      "json": "https://hypothes.is/api/annotations/qwH7BLN1EfGg2vf6uzI3Bg"
+    },
+    "actions": [],
+    "mentions": [],
+    "user_info": {
+      "display_name": null
+    },
+    "flagged": false,
+    "hidden": false
+  },
+  {
+    "id": "tJhBjLN1EfGhMKMGDzjxEQ",
+    "created": "2026-09-18T15:29:14.739896+00:00",
+    "updated": "2026-09-18T15:29:14.739896+00:00",
+    "user": "acct:JoernStoehler@hypothes.is",
+    "uri": "http://100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+    "text": "bad writing quality, slop",
+    "tags": [],
+    "group": "__world__",
+    "moderation_status": null,
+    "permissions": {
+      "read": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "admin": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "update": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "delete": [
+        "acct:JoernStoehler@hypothes.is"
+      ]
+    },
+    "target": [
+      {
+        "source": "http://100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+        "selector": [
+          {
+            "end": 5096,
+            "type": "TextPositionSelector",
+            "start": 4953
+          },
+          {
+            "type": "TextQuoteSelector",
+            "exact": "ach new message could receive a plausible responsewhile earlier constraints, unresolved work, and the reason for the project receded from view.",
+            "prefix": "t exchanges became a poor fit: e",
+            "suffix": "Missing context or a confused de"
+          },
+          {
+            "type": "PageSelector",
+            "index": 1,
+            "label": "2"
+          }
+        ]
+      }
+    ],
+    "document": {
+      "title": [
+        "ai-reflection-v1.pdf"
+      ]
+    },
+    "links": {
+      "html": "https://hypothes.is/a/tJhBjLN1EfGhMKMGDzjxEQ",
+      "incontext": "https://hyp.is/tJhBjLN1EfGhMKMGDzjxEQ/100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+      "json": "https://hypothes.is/api/annotations/tJhBjLN1EfGhMKMGDzjxEQ"
+    },
+    "actions": [],
+    "mentions": [],
+    "user_info": {
+      "display_name": null
+    },
+    "flagged": false,
+    "hidden": false
+  },
+  {
+    "id": "yy7QZLN1EfGxQhuMBQsS8g",
+    "created": "2026-09-18T15:29:52.635740+00:00",
+    "updated": "2026-09-18T15:29:52.635740+00:00",
+    "user": "acct:JoernStoehler@hypothes.is",
+    "uri": "http://100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+    "text": "this is not the known established causal pahtway, so afaict this is made up and has no evidence -- e.g. there's no evidence in the writuep",
+    "tags": [],
+    "group": "__world__",
+    "moderation_status": null,
+    "permissions": {
+      "read": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "admin": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "update": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "delete": [
+        "acct:JoernStoehler@hypothes.is"
+      ]
+    },
+    "target": [
+      {
+        "source": "http://100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+        "selector": [
+          {
+            "end": 5196,
+            "type": "TextPositionSelector",
+            "start": 5096
+          },
+          {
+            "type": "TextQuoteSelector",
+            "exact": "Missing context or a confused description of the goal could leave an otherwise capable agentpassive,",
+            "prefix": "r the project receded from view.",
+            "suffix": " or busy with work that no longe"
+          },
+          {
+            "type": "PageSelector",
+            "index": 1,
+            "label": "2"
+          }
+        ]
+      }
+    ],
+    "document": {
+      "title": [
+        "ai-reflection-v1.pdf"
+      ]
+    },
+    "links": {
+      "html": "https://hypothes.is/a/yy7QZLN1EfGxQhuMBQsS8g",
+      "incontext": "https://hyp.is/yy7QZLN1EfGxQhuMBQsS8g/100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+      "json": "https://hypothes.is/api/annotations/yy7QZLN1EfGxQhuMBQsS8g"
+    },
+    "actions": [],
+    "mentions": [],
+    "user_info": {
+      "display_name": null
+    },
+    "flagged": false,
+    "hidden": false
+  },
+  {
+    "id": "8ERAMrN1EfGC8BOlbjr6vQ",
+    "created": "2026-09-18T15:30:54.855605+00:00",
+    "updated": "2026-09-18T15:30:54.855605+00:00",
+    "user": "acct:JoernStoehler@hypothes.is",
+    "uri": "http://100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+    "text": "A bad definition and also not needed. Master students & Kai know how scientific writing works.",
+    "tags": [],
+    "group": "__world__",
+    "moderation_status": null,
+    "permissions": {
+      "read": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "admin": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "update": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "delete": [
+        "acct:JoernStoehler@hypothes.is"
+      ]
+    },
+    "target": [
+      {
+        "source": "http://100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+        "selector": [
+          {
+            "end": 7788,
+            "type": "TextPositionSelector",
+            "start": 7646
+          },
+          {
+            "type": "TextQuoteSelector",
+            "exact": "Scientific exposition instead needs toshow what is being claimed, what makes it true, and why that claim belongs at this point inthe argument.",
+            "prefix": "AI slop in the present context. ",
+            "suffix": " An agent’s ability to decipher "
+          },
+          {
+            "type": "PageSelector",
+            "index": 1,
+            "label": "2"
+          }
+        ]
+      }
+    ],
+    "document": {
+      "title": [
+        "ai-reflection-v1.pdf"
+      ]
+    },
+    "links": {
+      "html": "https://hypothes.is/a/8ERAMrN1EfGC8BOlbjr6vQ",
+      "incontext": "https://hyp.is/8ERAMrN1EfGC8BOlbjr6vQ/100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+      "json": "https://hypothes.is/api/annotations/8ERAMrN1EfGC8BOlbjr6vQ"
+    },
+    "actions": [],
+    "mentions": [],
+    "user_info": {
+      "display_name": null
+    },
+    "flagged": false,
+    "hidden": false
+  },
+  {
+    "actions": [],
+    "mentions": [],
+    "moderation_status": null,
+    "id": "AgC95rN2EfGrILfz7lt6xA",
+    "created": "2026-09-18T15:31:24.581400+00:00",
+    "updated": "2026-09-18T15:31:31.352251+00:00",
+    "user": "acct:JoernStoehler@hypothes.is",
+    "uri": "http://100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+    "text": "i'd also add forward and backward references across multiple pages, as sth agents can do but humans struggle with due to the different memory models",
+    "tags": [],
+    "group": "__world__",
+    "permissions": {
+      "read": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "admin": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "update": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "delete": [
+        "acct:JoernStoehler@hypothes.is"
+      ]
+    },
+    "target": [
+      {
+        "source": "http://100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+        "selector": [
+          {
+            "end": 7892,
+            "type": "TextPositionSelector",
+            "start": 7789
+          },
+          {
+            "type": "TextQuoteSelector",
+            "exact": "An agent’s ability to decipher a dense paragraph did not show that a readercould comfortably follow it.",
+            "prefix": "s at this point inthe argument. ",
+            "suffix": "2"
+          },
+          {
+            "type": "PageSelector",
+            "index": 1,
+            "label": "2"
+          }
+        ]
+      }
+    ],
+    "document": {
+      "title": [
+        "ai-reflection-v1.pdf"
+      ]
+    },
+    "links": {
+      "html": "https://hypothes.is/a/AgC95rN2EfGrILfz7lt6xA",
+      "incontext": "https://hyp.is/AgC95rN2EfGrILfz7lt6xA/100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+      "json": "https://hypothes.is/api/annotations/AgC95rN2EfGrILfz7lt6xA"
+    },
+    "user_info": {
+      "display_name": null
+    },
+    "flagged": false,
+    "hidden": false
+  },
+  {
+    "id": "FUVLVrN2EfGM0gP3uy0qBQ",
+    "created": "2026-09-18T15:31:56.922856+00:00",
+    "updated": "2026-09-18T15:31:56.922856+00:00",
+    "user": "acct:JoernStoehler@hypothes.is",
+    "uri": "http://100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+    "text": "Unsure whether a recap is needed for such a small chapter",
+    "tags": [],
+    "group": "__world__",
+    "moderation_status": null,
+    "permissions": {
+      "read": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "admin": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "update": [
+        "acct:JoernStoehler@hypothes.is"
+      ],
+      "delete": [
+        "acct:JoernStoehler@hypothes.is"
+      ]
+    },
+    "target": [
+      {
+        "source": "http://100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+        "selector": [
+          {
+            "end": 9498,
+            "type": "TextPositionSelector",
+            "start": 9462
+          },
+          {
+            "type": "TextQuoteSelector",
+            "exact": "15.5 The changing human contribution",
+            "prefix": "matics remained demanding tasks.",
+            "suffix": "The human work therefore shifted"
+          },
+          {
+            "type": "PageSelector",
+            "index": 2,
+            "label": "3"
+          }
+        ]
+      }
+    ],
+    "document": {
+      "title": [
+        "ai-reflection-v1.pdf"
+      ]
+    },
+    "links": {
+      "html": "https://hypothes.is/a/FUVLVrN2EfGM0gP3uy0qBQ",
+      "incontext": "https://hyp.is/FUVLVrN2EfGM0gP3uy0qBQ/100.70.188.20:56741/files/90d2fbaf34e6/ai-reflection-v1.pdf",
+      "json": "https://hypothes.is/api/annotations/FUVLVrN2EfGM0gP3uy0qBQ"
+    },
+    "actions": [],
+    "mentions": [],
+    "user_info": {
+      "display_name": null
+    },
+    "flagged": false,
+    "hidden": false
+  }
+]
