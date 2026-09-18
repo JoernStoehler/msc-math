@@ -1,81 +1,18 @@
-# Frozen thesis source recovery
+# Frozen baseline recovery evidence
 
-The recovered entry point is [`thesis/candidate/main.tex`](../../thesis/candidate/main.tex).
-It builds the frozen 86-page review baseline without `.git/codex/` or any
-original thesis source directory. No scientific content was revised, and no
-new prose, proof, literature correction, or pentagon rewrite was integrated.
+This packet records the recovery of the rejected 86-page baseline. It is not the current build route. Build the selected manuscript with `sh thesis/build.sh`.
 
-```sh
-sh thesis/candidate/build.sh
-```
-
-## Recovery evidence
-
-The reference PDF is `evidence/frozen.pdf`, copied from
-`.git/codex/thesis-review-1800/main.pdf`, with SHA-256
-`d7dae9a78dffc87fe89f3005bed9b6b51d28728fa90e1a5c811bc09b236e1695`.
-The recorded candidate PDF had the same hash.
-
-The recorded `.fls` and `.fdb_latexmk` identify 55 project inputs: 39 TeX
-sources, two bibliographies, 13 figures, and the directly listed HKO CAS
-source. Their total original size is 1,098,782 bytes. All 55 current source
-checksums matched the original build's recorded MD5s before recovery.
-The bibliography dependencies were obtained from Biber's build records,
-not inferred from the LaTeX recorder alone.
-
-[`dependency-manifest.json`](dependency-manifest.json) maps every old path to
-its recovered path, records old/new SHA-256 values, original tracking status,
-and the exact dependency-path substitutions. Six TeX files needed path
-changes; all other direct input bytes were preserved. The original build
-records are retained in `evidence/`. Four small hidden generator/provenance
-files were also preserved with checksums under `support/`; they are separately
-classified and were not inputs to the frozen PDF build.
-
-## Clean-build comparison
-
-Run from the repository root:
+The original recovery programs are Git-only because their root-relative paths refer to the original layout. Inspect or replay them in a disposable export of **`3b180fb2d27f0ecad44008e607ab835691730573`**:
 
 ```sh
-python docs/source-recovery/verify.py
+replay_dir=$(mktemp -d)
+git archive 3b180fb2d27f0ecad44008e607ab835691730573 | tar -x -C "$replay_dir"
+(cd "$replay_dir" && python3 docs/source-recovery/verify.py)
+# Remove the disposable export after inspecting its report.
 ```
 
-The verifier copies the ordinary candidate into a new temporary directory,
-excluding existing build products. Bubblewrap exposes only that copy and
-installed system tools to the compiler; the original checkout and `.git/`
-are not mounted, and networking is disabled. It builds from scratch and
-checks the recorder for leaked original paths.
+The export command and input closure were checked during consolidation: all 59 manifest input hashes match that commit, and the three programs parse. The expensive 86-page build/render comparison was **not rerun**. Its original report remains [verification.json](verification.json). Replay needs the TeX/Biber, bubblewrap and Poppler dependencies documented in the original README at that commit.
 
-The completed check found:
+`recover.py` and `preserve_review_evidence.py` are one-time migration programs, not regeneration commands. They additionally depend on old `.git/codex/` inputs; a Git export alone does not supply those. Their historical availability does not establish that they can now run. Use retained recovered artifacts instead.
 
-- 86 pages, matching the frozen reference;
-- byte-identical `pdftotext -layout` output;
-- byte-identical RGB renderings of all 86 pages at 96 dpi;
-- no undefined references/citations or overfull boxes; the same existing
-  underfull-box notice remains (badness 1038);
-- different PDF bytes, with different creation/modification timestamps.
-  No text or rendered-page difference was found; binary identity is not claimed.
-
-[`verification.json`](verification.json) retains the output hashes, per-page
-render hashes, tool versions, and comparison results. The compiled PDF and
-build logs are in ignored `verification-output/`. The environment used
-TeX Live 2025/Debian, pdfTeX 1.40.28, latexmk 4.87, and Biber 2.21; the verifier
-also requires Python 3, bubblewrap, and Poppler. This checks document recovery,
-not thesis approval or proof correctness.
-
-## Remaining boundaries
-
-The recovery worker returned new source, support and audit files without
-staging them; the coordinator includes them in the scoped preparation
-checkpoint. The two generated-output directories are ignored. Existing dirty
-files outside preparation are preserved and excluded from that checkpoint.
-
-The original sources and frozen artifacts under `.git/` remain untouched.
-`recover.py` documents the one-time migration and intentionally requires those
-old inputs; ordinary builds and the isolated verifier do not. It refuses to
-overwrite a recovered input whose bytes have since been edited.
-
-[Research dependency boundaries](research-dependencies.md) distinguish the
-complete PDF input closure from unexecuted generators, evidence, and absent
-datasets. This recovery is not a complete archive of the research project.
-The bounded [review-evidence recovery](../review-evidence/README.md) separately
-preserves the Pro package, self-reviews, comparison, and human reading records.
+[dependency-manifest.json](dependency-manifest.json) records exact inputs and path substitutions; `evidence/` retains original build records/frozen PDF and `support/` retains generator/provenance material. [Research dependencies](research-dependencies.md) records research inputs outside PDF closure. Current missing-cache limitations are in [external dependencies](../../resume/external-dependencies.md).

@@ -30,10 +30,11 @@ check of an earlier source hash is not automatically a check of the current text
 [capacity contracts](capacity-calculation-map.md), [artifact storage](artifacts.md)
 and [environments](development-environments.md) describe maintained interfaces.
 
-## Historical material and recovery
+## Interpretation, review evidence and recovery
 
-[history/README.md](history/README.md) routes prior human feedback, reviewer
-experiments and superseded plans. Exact feedback remains evidence about the exact
+[knowledge/README.md](knowledge/README.md) surfaces reusable mathematical and
+review interpretation. [history/README.md](history/README.md) routes exact human
+feedback and reviewer experiments, plus pinned Git recovery of superseded plans. Exact feedback remains evidence about the exact
 text reviewed; it is not erased by later repairs. It is also not a current work
 list. `resume/` owns consolidation manifests, session identities, the frozen
 current PDF, and integrity checks.

@@ -25,7 +25,7 @@ Each topic note contains source links, exact editions where checked, theorem/sec
 
 ## Relation to existing project work
 
-This map extends [literature closure](../history/literature-closure-plan/README.md), whose introduction correction is already committed in this branch's ancestry. It does not replace the technical audits, [project facts](../project-facts.md), or accepted proof sources. The currently developed affine-pentagon theorem is maintained in `formal/pentagon-affine-products/`; its convention audit and proof ownership remain there. The empirical research desk owns active experiments, including P5 × arbitrary polygon K. Paths in older planning notes may identify other active worktrees rather than sources included in this checkout.
+This map extends [literature closure](../history/retired-findings.md), whose introduction correction is already committed in this branch's ancestry. It does not replace the technical audits, [project facts](../project-facts.md), or accepted proof sources. The currently developed affine-pentagon theorem is maintained in `formal/pentagon-affine-products/`; its convention audit and proof ownership remain there. The empirical research desk previously investigated P5 × arbitrary polygon K; its stopped-state handoff and current selection are recorded in `docs/WORK_REMAINING.md`. Paths in older planning notes may identify retired worktrees rather than current sources.
 
 The inherited family-to-generator mapping and capacity normalization audit should be reused. Current readers should not infer that all old planning follow-ups remain undone merely because the older plan says so.
 

@@ -14,8 +14,8 @@ detailed file inventories and does not prescribe local file placement.
 | `experiments/` | Empirical questions, data producers, consuming analyses, retained outputs, interpretation, and reproduction commands | one exhaustive subject/method/status taxonomy or ordinary reusable library APIs |
 | `papers/` | Source papers, extracted passages, and paper-specific notes | project conclusions not established by the source |
 | `submit/` | Official forms, submission requirements, and administrative source notes | thesis mathematical content |
-| `docs/` | Project-wide facts, reproduction and artifact policy, and execution-environment contracts | topic-local evidence or proofs |
-| `docs/history/` | Attributed historical decisions, reviews, trials and superseded plans | current task ownership or alternative active manuscript |
+| `docs/` | Project contracts, scientific support/audit packets, reusable interpretation, and reproduction policy; see `docs/README.md` | sole authority for a theorem merely because an audit mentions it |
+| `docs/history/` | Exact reviews and matched inputs, experiment/recovery evidence, and a pinned Git index for retired plans | superseded task queues as maintained fulltexts, current task ownership, or alternative active manuscript |
 | `scripts/` | Repository-wide maintenance and reporting utilities | scientific results |
 
 Use conventional layouts and decide local placement from the actual files and

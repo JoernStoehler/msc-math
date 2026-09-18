@@ -1,27 +1,22 @@
-# Historical records, not current instructions
+# Retained review and recovery evidence
 
-Current work is reconciled in [../WORK_REMAINING.md](../WORK_REMAINING.md).
-Current manuscript source is `thesis/main.tex` and `thesis/chapters/`.
+Current assignments belong only to [WORK_REMAINING](../WORK_REMAINING.md). This directory retains exact reviewed texts, feedback, result packets and recovery evidence needed to interpret current obligations. Old proposed next steps inside evidence are statements from that experiment, not renewed assignments.
 
-Read historical material only to answer a particular provenance or review question:
+## Read by question
 
-- `ai-reflection-review/`: Jörn's annotations and successive reflection versions.
-- `reviewer-trial/human/` and the repository's
-  `experiments/writing-quality/human-review/responses/`: exact human judgments.
-- `whole-review/`: frozen whole-thesis PDFs and scoped agent reviews.
-- `coordination/whole-exposition-assessment.md`: corrected assessment before the
-  latest repairs. Use the current work list to see which findings remain open.
-- `reviewer-trial/`, `review-workflow-design/`, `scientific-writing-solutions/`,
-  and `writing-quality-research/`: writing/review experiments and their limitations.
-- `candidate-assembly-integration/`, `source-recovery/`, and `assembly-source-map/`:
-  source recovery and adoption chronology.
-- `coordination/`, `coordination-map-review/`, `task-graph/`, `sprint-two/`, and
-  `memories/`: superseded plans and snapshots. Dates, budgets, ownership and
-  proposed next steps here are not current assignments.
-- `historical-variants/`, `dirty-snapshots/`, and `source-snapshots/`: exact bytes
-  retained for provenance. They are not alternative active manuscripts.
+- Human writing judgments: `review-evidence/human-feedback/`, `reviewer-trial/human/`, `ds-result-trial/human-feedback.md`, `ds-full-review/`, `ai-reflection-review/`, and `pentagon-chapter/user-reading-feedback.md`; matched reviewed inputs/PDFs remain alongside them. Also see `experiments/writing-quality/human-review/responses/`.
+- Corrected whole-thesis assessment: `coordination/whole-exposition-assessment.md`; exact frozen PDFs and scoped agent findings: `whole-review/`. Current dispositions are in WORK_REMAINING.
+- Reusable interpretation and observed interaction methods: [knowledge index](../knowledge/README.md). These are not discarded as obsolete plans.
+- Review/authoring experiments: `reviewer-trial/`, `review-workflow-design/`, `scientific-writing-solutions/`, `writing-quality-research/`. They retain failed approaches and evidential limitations; none establishes a PASS gate.
+- Source adoption evidence: `assembly-source-map/`, `candidate-assembly-integration/`; baseline replay boundaries: [source-recovery](source-recovery/README.md).
 
-Historical records remain byte-preserved, including old relative/absolute paths.
-`../resume/layout-migration.json` maps relocations; `../resume/branch-inventory.json`
-maps branch-specific versions. Former manuscript trees are recoverable from Git
-at `35f29db4:thesis/`. Do not reconstruct a current plan by combining old plans.
+## Git-only retired material
+
+[retired-paths.json](retired-paths.json) records each removed path, immutable commit, blob and reason. Superseded task queues, status cards, launch briefs and duplicate preservation snapshots need no fulltext in HEAD. Retrieve any entry with:
+
+```sh
+git show <entry-commit>:<entry-path>
+git grep -n 'search terms' <entry-commit> -- docs/history
+```
+
+Those commits are ancestors of the resume branch; normal repository history retains them. For original pre-migration path interpretation, use `35f29db4` and `docs/resume/layout-migration.json`. Exact transcripts and source copies deliberately preserve their original references; an old absolute worktree or temporary path is historical provenance, not a promise that the path remains live. The original baseline replay route is documented separately above.

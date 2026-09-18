@@ -86,8 +86,8 @@ sufficient. This is the agent's synthesis of the correction.
 
 ## Bounded checks
 
-- The [HKO pilot](hko-author-context.md) and
-  [optimizer pilot](optimizer-review-route.md) connect named author/reviewer
+- The [HKO pilot](../../knowledge/hko-author-context.md) and
+  [optimizer pilot](../../knowledge/optimizer-review-route.md) connect named author/reviewer
   questions to source passages and support limits. An independent design review
   reported no material issue. A fresh reader answered those questions using
   the index, two entries and two active thesis passages, preserving the feasible

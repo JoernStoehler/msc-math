@@ -1,3 +1,6 @@
+> Optional human habit card, not agent instructions or a validated workflow.
+> Retained from `ee282e065004adc1ccd64e51140edccd075845de:docs/history/JOERN.md`; no new authority is implied.
+
 # Working card for Jörn
 
 Keep this open as a glanceable habit aid. It is not project authority or agent

@@ -1,3 +1,6 @@
+> Retained source-interpretation knowledge, not a current assignment or fresh audit.
+> Original text: `ee282e065004adc1ccd64e51140edccd075845de:docs/history/memories/hko-author-context.md`. Original source routes below describe the September 5 source state; current selected source is `thesis/chapters/07-hko.tex` (HKO) or `thesis/chapters/08-data-science.tex` (DS).
+
 # HKO author context — pilot
 
 This pilot preserves source-derived understanding for writing and tracing the

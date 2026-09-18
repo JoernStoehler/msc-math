@@ -1,0 +1,502 @@
+{
+  "entries": [
+    {
+      "path": "docs/history/JOERN.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "fd569d7eb69bccd9a29318b68580e7334354a42d",
+      "reason": "promoted optional human habit card, not obsolete"
+    },
+    {
+      "path": "docs/history/PROJECT-STATUS-BRIEF.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "459373b96fcb30f4311f7e1d8fc160f030044834",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/fresh-start.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "fd32a75589cb850b5a918ac702173e6e58e5789b",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/session-briefs.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "eb1a2bb5e599cf610f31b9f8a566b32868817fdf",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/memories/INDEX.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "bb7cac7fc4dfa702b3382cf02c0fb41e5314ba96",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/memories/todos.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "3ffaa4bbe8e9053ca933c2ee9a43e5c20017408d",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/memories/team-plan.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "32d4ee1fe7255c09d1b93de764cc6c7c9c9489a0",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/memories/hko-author-context.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "7c1b3139dccf8c757af4b227e3c1b9b3a6186824",
+      "reason": "promoted source interpretation"
+    },
+    {
+      "path": "docs/history/memories/optimizer-review-route.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "25281e5edeeec0541dce0b605350d792c5037a94",
+      "reason": "promoted source interpretation"
+    },
+    {
+      "path": "docs/history/sprint-two/KICKOFF.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "34859c90cee75d323b904d19490609875c942532",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/sprint-two/integration.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "3afac39cdd36d0ce533a9f893fdead79a5b40d71",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/00-now.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "733097da162205c179dfbdcb154a46ab93031df2",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/00-now.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "b5d5d6203c398684f09eebd3c7314e32f228faae",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/25-empirical-research.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "33e1efd0c6bedbfedd023072e49711d5a7866b30",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/25-empirical-research.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "47f1c381380408cc003dedf82476255e476adb47",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/README.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "9407af65ab28926ac4bdc519fb9bca7f91495bd2",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/00-now.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "5f85de7fd4df981f59642f34a0a76c728c04a1fc",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/00-now.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "a4f13c4c2732fce729dab81a539ce78e1c55bcbb",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/01-fan-in.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "23315f4627c00cf1aafc7d45a719d07024df1145",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/01-fan-in.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "47b77af18e23521770edd367643e32dc1aa4b779",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/02-common-risks.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "c9f61c4a5335ddb3a7d48a5004a91a4502c49f1a",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/02-common-risks.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "8561903e5e82d8737ddace72c5606378afffd201",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/10-thesis.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "44905ef87b14c26d3debda1c7be5ed2521943548",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/10-thesis.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "acc6afad307277ae762ada453476593a04202a99",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/11-content.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "1b356cef0eceec35e7f92ef89cd6c594d8f287b3",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/11-content.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "292917b0d14f68273b3ac3732788daa4a41e928c",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/12-review.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "35e7aac2148f17c077145cedc8ee9ae057bdb062",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/12-review.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "bf47c18353bd241a6870832a8762dcd9521350a6",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/20-research.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "a4b1271d3cefe13641a6a11f6b59aca956930bc8",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/20-research.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "7ba5a1f574443e9b07468d7aa5d4193704d57c69",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/21-claims.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "ea5570b907c333e0a142dd10c489ead24c1f68fd",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/21-claims.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "08dfeee397f1e32309b9185a4bac24f98e85893a",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/22-datascience.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "f4e40f204a9e40b618e84180afdf082d7e4d755b",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/22-datascience.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "df2e8bbba1b7cfcf15722abd2fe2599633db18b7",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/22-next-actions.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "ec7bba666e58ec3e53e911d1c5b40638c5a0c235",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/23-datascience-starts.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "de398089c353eb37665656d7486961d6845b18b5",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/23-datascience-starts.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "fffd06da7a71d95c18052943064fb39a009c47aa",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/30-software.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "43cbca399e5849f47814bc6925dd4f634939ea94",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/30-software.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "1c0e063b5ef20e5039e16ad5432bd142340c5ec5",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/31-branches.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "830b2d72fdc46347117ed0e963e97cecc0cf07e3",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/31-branches.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "818bb0a11432a93787cfcf3365b305f78b2dacbc",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/32-trust.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "7dd6760e9c7b109f93d19e11f85c0dfb23162363",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/32-trust.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "fa089cc437c2f8e54929ea6338800c73d7df5b35",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/35-reproducibility.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "85ab96e0909ddcf0fb7ba456387c7091aae5ebd8",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/35-reproducibility.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "72c765124f782e40098f3b7b2f0a5c63cc69eefe",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/40-delivery.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "e013eb0861fc783d586f14ac66c1ce490aa77c87",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/40-delivery.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "ff697dddac90ab8a6725ad5c33871b3e8f47d206",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/41-assessment.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "a911581f6ef3cf3a8219f8bdb38eb550892dbadc",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/41-assessment.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "ac747c7c0882b8dab7c44fa9245300bab0f47038",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/42-archive.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "ef5716c733fb6e6914e7d0e017929c109e657da4",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/42-archive.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "3d11299800fef9ec2c772692c4cce547b909d692",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/tasks.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "40d24894b67fe32682959f34d83cab9c20850918",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/tasks.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "00f7fe1b5ed3eae4ad8b060a402b14fce639adf8",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-18-preparation/00-now.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "1dc3de077caf140c1f66fddd5f205a2f5c5cea3d",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-18-preparation/00-now.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "6a34732ee82c85b7a3ffeed0aca3121d9b41a2d9",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-18-preparation/tasks.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "5763b34d6ada3a85295b87ebc3f32b2d71d8053f",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-18-preparation/tasks.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "03651a6705ec924258a47b5b5f0ba668c50b356b",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/tasks.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "3979400d7ab96d5335fde0fac10853b4ef94c193",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/tasks.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "7634443cfdad484f3902f8ce2d1316ef6ce42e02",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination-map-review/project-overview.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "24c6e5277169e0204195384fdf4fb43134aa17a6",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination-map-review/root-checkpoint.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "c2667cd9d071bd312991a4b28995d243dfd5b17c",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination/current-status.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "c357c436e88cd9afd41cf2369a970329d3905c17",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination/restart-state.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "ef964adccfedfc3d06610ff66d8c7f69111c91b2",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination/status-1547.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "c357c436e88cd9afd41cf2369a970329d3905c17",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination/status-1547.html",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "ce9ac7f279452c3d5a157f5da6b9c96487028035",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination/execution-plan-v3.html",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "537c261bbf773be0edb517c0cee5287d245b06e3",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination/roadmap-v2.html",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "ea4d3499973631b71bbb0e8d3cd05029491e855a",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination/roadmap-v3.html",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "278716b11c4b921fa271d01707ec17852120ee03",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination/completion-case.html",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "53b67385622e123e6f55081364d0b56327555122",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination/completion-case-v2.html",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "1b8b6957bce940337a0eb4b51b7088892ca3e0d7",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/process-audit/2026-09-15-assignment.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "10cfd9d219c0f41e06d7a9b3923f0ea213f186dd",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/process-audit/independent-assignment.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "313ee119ad36569e86e99b35de25e739a60844c7",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/process-audit/sprint-two-preparation-draft.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "24ecabf1ae7266f505a04ef2c0f097a3ee36a4f5",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/reviewer-trial/BRIEF.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "6df85fe7477d066e0ee092697c6a4112eef098c8",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/reviewer-trial/RUN.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "651dd2c0239abbaa7013f5b985642748ae93a440",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/literature-rewrite/luna-assignment.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "f9e3aae64795ba533c784eb66731d40f3bab82ec",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/source-recovery/recover.py",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "d3e3de19a533c5eeca6be2377d4958b782ee93d3",
+      "reason": "one-time recovery/replay program; use original immutable checkout layout"
+    },
+    {
+      "path": "docs/history/source-recovery/verify.py",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "4fbf5f704548a7c129be9e3a9c08a78566be08bc",
+      "reason": "one-time recovery/replay program; use original immutable checkout layout"
+    },
+    {
+      "path": "docs/history/source-recovery/preserve_review_evidence.py",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "56826c7c1862aea06cf049412dad148508630de2",
+      "reason": "one-time recovery/replay program; use original immutable checkout layout"
+    },
+    {
+      "path": "docs/history/technical-closure-plan/README.md",
+      "commit": "6ab9d8303d33d0a8b89cf0bd3639a714430e92a0",
+      "blob": "49c5bb1f8166546bf9c08b540566ab1307db0f3e",
+      "reason": "superseded diagnostic assignment; supported findings routed in retired-findings.md"
+    },
+    {
+      "path": "docs/history/literature-closure-plan/README.md",
+      "commit": "6ab9d8303d33d0a8b89cf0bd3639a714430e92a0",
+      "blob": "2c2e6036e45bae947f3628779a841ea3af31d2ad",
+      "reason": "superseded diagnostic assignment; supported findings routed in retired-findings.md"
+    },
+    {
+      "path": "docs/history/remaining-chapter-obligations/README.md",
+      "commit": "6ab9d8303d33d0a8b89cf0bd3639a714430e92a0",
+      "blob": "8c40c0b8974dbaf65d41046e51812c561330598d",
+      "reason": "superseded diagnostic assignment; supported findings routed in retired-findings.md"
+    },
+    {
+      "path": "docs/history/remaining-chapter-obligations/build-routing-proposal.patch",
+      "commit": "6ab9d8303d33d0a8b89cf0bd3639a714430e92a0",
+      "blob": "34e7c72b77aece99e6b55c9a8dfabd03a0653346",
+      "reason": "superseded diagnostic assignment; supported findings routed in retired-findings.md"
+    }
+  ]
+}

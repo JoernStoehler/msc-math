@@ -1,3 +1,6 @@
+> Retained source-interpretation knowledge, not a current assignment or fresh audit.
+> Original text: `ee282e065004adc1ccd64e51140edccd075845de:docs/history/memories/optimizer-review-route.md`. Original source routes below describe the September 5 source state; current selected source is `thesis/chapters/07-hko.tex` (HKO) or `thesis/chapters/08-data-science.tex` (DS).
+
 # Pilot: reviewing the seven-policy optimizer comparison
 
 This pilot preserves a bounded source-to-thesis interpretation for authors and
@@ -6,11 +9,11 @@ reviewers, not an independent validation of the experiment. Inspected
 the working-tree source text was read, so HEAD is a recovery baseline, not a
 claim that every inspected byte was committed. Current sources override this
 entry. The task boundary and Jörn's exclusion of additional optimizer
-comparisons are owned by [current work](todos.md).
+comparisons are owned by [current work](../WORK_REMAINING.md).
 
 ## Claim and shortest useful route
 
-Start with [the active finite-budget subsection](../thesis/08-black-box-datascience-finite-budget-optimization.tex),
+Start with [the active finite-budget subsection](../../thesis/chapters/08-data-science.tex),
 label `subsec:black-box-datascience-finite-budget-optimization`, opening
 paragraph and table `tab:black-box-datascience-f10-optimizer-comparison`.
 The claim is that four-anchor history had the largest terminal median on 64
@@ -18,7 +21,7 @@ matched F=10 starts among seven fixed implementations; no recorded run reached
 the evaluator threshold 1. It is explicitly limited to this population,
 allocation rule and historical evaluator.
 
-The [comparison README](../experiments/dev-gradient-ascent/optimizer-comparison/README.md)
+The [comparison README](../../experiments/dev-gradient-ascent/optimizer-comparison/README.md)
 owns the retained-packet route and stopping/evaluator explanation. Within
 `experiments/dev-gradient-ascent/optimizer-comparison/artifacts/heldout-f10-64-finalists-19a8b4dfd-analysis/`:
 
@@ -36,7 +39,7 @@ history; `directional-above-8e-2` → history with transition prediction;
 `pattern-r3e-2`, corresponding to the literal gradient, safeguarded gradient,
 CMA-ES and coordinate-search rows.
 
-The [held-out manifest](../experiments/dev-gradient-ascent/optimizer-runs/manifests/heldout-f10-64-finalists.json)
+The [held-out manifest](../../experiments/dev-gradient-ascent/optimizer-runs/manifests/heldout-f10-64-finalists.json)
 owns exact configurations and start-selection instructions: four random F=10
 prefixes, offset 34 and 16 starts per prefix; 128 charged calls, 1000 ms,
 threshold 1, uncharged initial evaluation, serial execution and evaluator
@@ -84,7 +87,7 @@ result. No raw packets, code, full datasets, builds, scripts, tests,
 computations or hash validation were performed. Endpoint controls,
 convergence diagnostics and independence were not audited.
 
-The retained [producer provenance](../experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd/run-provenance.json)
+The retained [producer provenance](../../experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd/run-provenance.json)
 declares clean producer commit `19a8b4dfd988779e4b29f759710565b0b57edb65`,
 executable BLAKE3, manifest BLAKE3 and resolved-plan hash. Analysis provenance
 records analyzer SHA256

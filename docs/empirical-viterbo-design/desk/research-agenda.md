@@ -12,11 +12,10 @@ currently justify the line, and a substantial structural payoff has not been
 identified. The earlier candidate ordering should not be read as the active
 queue. The pentagon-partner owner remains in place.
 
-**Background research activated:** five scientific owners now operate under
+**Historical activation record:** five scientific owners operated under
 [the scoped ownership charter](research-owners.md), with the coordinator
-maintaining [the live graph](../../history/task-graph/25-empirical-research.svg).
-The first dispatched window is 45–60 minutes per owner; interpreted findings
-and changed premises return incrementally, without a global preparation barrier.
+maintaining the then-current graph (`git show ee282e065004adc1ccd64e51140edccd075845de:docs/history/task-graph/25-empirical-research.svg`); current assignments belong to `docs/WORK_REMAINING.md`.
+The first dispatched window was 45–60 minutes per owner. This records the earlier campaign, not running workers.
 
 **Current checkpoint:** first windows, root review and four selected follow-ups
 are complete. [Root judgments and validation](root-review/README.md) supersede

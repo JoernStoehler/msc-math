@@ -51,8 +51,9 @@ Herdr identity before messaging; panes are not durable identities.
 
 The selected manuscript's old-to-new path map is
 `docs/resume/layout-migration.json`. Superseded manuscript trees are in Git at
-`35f29db4:thesis/`, not alternate edit targets. Attributed review records and old
-plans are explicitly historical under `docs/history/`.
+`35f29db4:thesis/`, not alternate edit targets. Exact review records remain under `docs/history/`; superseded plan fulltexts
+are Git-only, indexed by `docs/history/retired-paths.json`. Reusable mathematical
+and interaction knowledge is surfaced by `docs/knowledge/README.md`.
 
 Only main and the resume branch/worktree remain. Full original branch history
 and 108 untracked/generated files are preserved at
@@ -65,3 +66,7 @@ obsolete review servers were stopped; old URLs should not be reused.
 raw datasets and the older ridge-analysis replay whose caches must be regenerated.
 The thesis build requires no old worktree or retained temporary input. Session
 logs live in `~/.codex/sessions/`; the handoff itself depends on no temporary file.
+
+Preservation limitation: 3,606 excluded `target/` and `__pycache__` files lack
+individual pre-deletion inventories. Their disposability has not been verified;
+archive/file checks do not resolve that gap.
