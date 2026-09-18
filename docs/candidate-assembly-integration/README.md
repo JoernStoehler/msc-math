@@ -199,3 +199,28 @@ Independent whole-manuscript audit ea283d24: corrected the introduction's self-c
 Not adopted: IR1, IQ1/IQ2, NR1/NR2, NQ1/NQ2/NQ3, VQ1/VQ2 blanket removals/relocations. These are unvalidated presentation suggestions; the current framing, arithmetic assumptions, branch-coverage warning and scope limits have legitimate roles. No new science or authoring workflow test was performed.
 
 Remaining: the scoped HKO nonsmooth cutting-literature comparison identified by the independent audit is not integrated; current smooth Zoll comparison alone is incomplete related-work coverage (see `open-thesis-literature` extrema report). Whole-thesis prose acceptance remains unvalidated; empirical accounting detail and inherited sparse pages remain. The exact reviewed DS repairs do not establish a general authoring workflow. No research or producer is running under this task.
+
+## Independent coordination checkpoint, 18 September after 14:27 UTC
+
+The following bounded repairs supersede the corresponding open items above:
+
+- `5a970ca7`: primary-source-checked Haim--Kislev cutting comparison and the
+  introduction's restriction to transverse directions.
+- `9224c8eb`: explicit bilinear-form convention in the product-position result.
+- `628b33ee`: geometric interpretation of the affine equality class, independently
+  checked; development/production distinction before numerical audit counts.
+- `279ad991`: verified access dates for five active bibliography entries.
+
+The integrated build remains 87 pages and has no warnings, undefined references
+or overfull boxes. Changed introduction, affine equality, product-position and
+numerics pages were rendered and inspected. These are integration checks, not
+whole-thesis acceptance.
+
+The separately authored DS trial at `thesis/candidate/ds-result-trial/` is
+**not selected** by `main.tex`. Its fixed review PDF and received human feedback
+are in `docs/ds-result-trial/`. It has a bounded scientific review and is being
+evaluated as exposition, not treated as an accepted writing workflow.
+
+Jörn clarified the acceptance standard: ready for submission, with only minor
+problems expected from Kai that Jörn could fix in about two hours by hand;
+borderline cases fail. No university submission or publication is authorized.
