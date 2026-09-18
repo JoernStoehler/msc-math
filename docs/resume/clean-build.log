@@ -101,8 +101,7 @@ For additional information on amsmath, use the `?' option.
 (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def))
 (/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-case-expl3.sty
 (/usr/share/texlive/texmf-dist/tex/latex/l3packages/xparse/xparse.sty)))
-(legacy/preamble.tex
-(/usr/share/texlive/texmf-dist/tex/latex/mdframed/mdframed.sty
+(./preamble.tex (/usr/share/texlive/texmf-dist/tex/latex/mdframed/mdframed.sty
 (/usr/share/texlive/texmf-dist/tex/latex/zref/zref-abspage.sty
 (/usr/share/texlive/texmf-dist/tex/latex/zref/zref-base.sty
 (/usr/share/texlive/texmf-dist/tex/generic/etexcmds/etexcmds.sty)))
@@ -125,11 +124,10 @@ No file main.bbl.
 (/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msa.cfg)
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd)
 (/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msb.cfg)
-(./recovered/thesis-candidate/00-abstract.tex) (./ai-use-disclosure.tex
-[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/en
-c/dvips/lm/lm-ec.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share
-/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm
--mathit.enc}]
+(./chapters/00-abstract.tex) (./ai-use-disclosure.tex [1{/var/lib/texmf/fonts/m
+ap/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/us
+r/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts/enc/dvips/lm
+/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}]
 
 LaTeX Warning: Reference `sec:rotated-regular-polygons' on page 2 undefined on 
 input line 26.
@@ -144,7 +142,7 @@ e 34.
 
 [2])
 No file main.toc.
-[3] (./recovered/thesis-candidate/01-introduction.tex
+[3] (./chapters/01-introduction.tex
 
 LaTeX Warning: Citation 'Viterbo2000' on page 4 undefined on input line 5.
 
@@ -253,14 +251,14 @@ e 232.
 LaTeX Warning: Reference `sec:product-rotation' on page 7 undefined on input li
 ne 234.
 
-) (./recovered/thesis-candidate/02-preliminaries.tex
-(./recovered/thesis-candidate/02-preliminaries-convex-symplectic-notation.tex
-[7]) (legacy/02-preliminaries-convex-hamiltonian-language.tex
+) (./chapters/02-preliminaries.tex
+(./chapters/02-preliminaries-convex-symplectic-notation.tex [7])
+(./chapters/02-preliminaries-convex-hamiltonian-language.tex
 
 LaTeX Warning: Reference `eq:preliminaries-generalized-characteristic' on page 
 8 undefined on input line 37.
 
-) (./recovered/thesis-candidate/02-preliminaries-ehz-capacity.tex [8]
+) (./chapters/02-preliminaries-ehz-capacity.tex [8]
 
 LaTeX Warning: Citation 'AAO2014' on page 9 undefined on input line 13.
 
@@ -278,7 +276,7 @@ fined on input line 29.
 
 LaTeX Warning: Citation 'Viterbo2000' on page 9 undefined on input line 61.
 
-[9 <legacy/figures/foundations/characteristic-normalization.pdf>]
+[9 <./figures/foundations/characteristic-normalization.pdf>]
 
 LaTeX Warning: Reference `eq:preliminaries-systolic-ratio' on page 10 undefined
  on input line 96.
@@ -290,10 +288,9 @@ LaTeX Warning: Citation 'CH2021' on page 10 undefined on input line 108.
 LaTeX Warning: Reference `eq:preliminaries-systolic-ratio' on page 10 undefined
  on input line 110.
 
-) (legacy/02-preliminaries-polytope-input-language.tex)
-(legacy/02-preliminaries-lagrangian-products.tex [10])
-(./recovered/thesis-candidate/02-duality.tex [11 <legacy/figures/foundations/fa
-cet-polarity.pdf>]
+) (./chapters/02-preliminaries-polytope-input-language.tex)
+(./chapters/02-preliminaries-lagrangian-products.tex [10])
+(./chapters/02-duality.tex [11 <./figures/foundations/facet-polarity.pdf>]
 
 LaTeX Warning: Reference `eq:preliminaries-dual-problem' on page 12 undefined o
 n input line 29.
@@ -313,7 +310,7 @@ fined on input line 105.
 LaTeX Warning: Reference `eq:preliminaries-dual-functional' on page 13 undefine
 d on input line 141.
 
-[13])) (./03-generalized-reeb-orbits-polytopes.tex
+[13])) (./chapters/03-generalized-reeb-orbits-polytopes.tex
 
 LaTeX Warning: Reference `def:preliminaries-generalized-characteristic' on page
  14 undefined on input line 39.
@@ -412,7 +409,7 @@ defined on input line 496.
 LaTeX Warning: Reference `lem:generalized-reeb-base-point-recovery' on page 20 
 undefined on input line 509.
 
-) (./04-quadratic-program.tex
+) (./chapters/04-quadratic-program.tex
 
 LaTeX Warning: Citation 'HK2017' on page 20 undefined on input line 7.
 
@@ -493,7 +490,7 @@ ge 27 undefined on input line 621.
 LaTeX Warning: Reference `sec:numerics' on page 27 undefined on input line 626.
 
 
-[27]) (./05-flow-graph.tex
+[27]) (./chapters/05-flow-graph.tex
 
 LaTeX Warning: Citation 'CH2021' on page 28 undefined on input line 12.
 
@@ -527,7 +524,7 @@ ut line 192.
 LaTeX Warning: Reference `ex:flow-graph-return-map' on page 30 undefined on inp
 ut line 192.
 
-[30] [31 <legacy/figures/flow-graph/flow-graph-f6-tube-sequence.pdf>]
+[30] [31 <./figures/flow-graph/flow-graph-f6-tube-sequence.pdf>]
 
 LaTeX Warning: Reference `def:flow-graph-regular-presentation' on page 32 undef
 ined on input line 246.
@@ -574,7 +571,7 @@ ined on input line 339.
 LaTeX Warning: Reference `def:flow-graph-regular-presentation' on page 34 undef
 ined on input line 434.
 
-(legacy/05-flow-graph-ch2021-background-comparison.tex
+(./chapters/05-flow-graph-ch2021-background-comparison.tex
 
 LaTeX Warning: Citation 'CH2021' on page 34 undefined on input line 6.
 
@@ -594,7 +591,7 @@ ined on input line 450.
 LaTeX Warning: Reference `sec:quadratic-program-algorithm-hk2019' on page 35 un
 defined on input line 453.
 
-) (./recovered/thesis-candidate/06-variation.tex [35]
+) (./chapters/06-variation.tex [35]
 
 LaTeX Warning: Citation 'Leipold2026' on page 36 undefined on input line 18.
 
@@ -671,17 +668,17 @@ line 373.
 LaTeX Warning: Reference `sec:hko-local-maximum' on page 40 undefined on input 
 line 394.
 
-) (./recovered/thesis-candidate/07-hko.tex [40]
+) (./chapters/07-hko.tex [40]
 
 LaTeX Warning: Citation 'HaimKislevOstrover2024' on page 41 undefined on input 
 line 8.
 
-(./recovered/thesis-candidate/hko-lemma-geometry.tex [41] [42]
+(./chapters/hko-lemma-geometry.tex [41] [42]
 
 LaTeX Warning: Reference `lem:hko-smooth-volume' on page 43 undefined on input 
 line 128.
 
-) (./recovered/thesis-candidate/hko-lemma-bounds.tex
+) (./chapters/hko-lemma-bounds.tex
 
 LaTeX Warning: Reference `app:hko-cas' on page 43 undefined on input line 47.
 
@@ -694,7 +691,7 @@ LaTeX Warning: Reference `page:hko-exact-choices' on page 45 undefined on input
 LaTeX Warning: Reference `lem:hko-exact-bounds' on page 45 undefined on input l
 ine 181.
 
-) (./recovered/thesis-candidate/hko-lemma-conclusion.tex
+) (./chapters/hko-lemma-conclusion.tex
 
 LaTeX Warning: Reference `lem:hko-exact-bounds' on page 45 undefined on input l
 ine 4.
@@ -708,7 +705,7 @@ t line 30.
 LaTeX Warning: Reference `lem:hko-negative-slopes' on page 46 undefined on inpu
 t line 67.
 
-[46 <./recovered/hko-figures/upper-bound-mechanisms.pdf>]
+[46 <./figures/upper-bound-mechanisms.pdf>]
 
 LaTeX Warning: Reference `lem:hko-exact-bounds' on page 47 undefined on input l
 ine 96.
@@ -733,9 +730,8 @@ on input line 116.
 LaTeX Warning: Reference `lem:hko-slice-decrease' on page 47 undefined on input
  line 118.
 
-[47 <./recovered/hko-figures/symmetry-extension.pdf>]) [48]
-(./recovered/hko-writing/sections-readable.tex))
-(./ds-complete-draft/chapter.tex [49]
+[47 <./figures/symmetry-extension.pdf>]) [48] (./chapters/hko-sections.tex))
+(./chapters/08-data-science.tex [49]
 
 LaTeX Warning: Reference `app:ds-generation' on page 50 undefined on input line
  76.
@@ -773,9 +769,8 @@ LaTeX Warning: Reference `app:ds-evaluation' on page 51 undefined on input line
 LaTeX Warning: Reference `app:ds-evaluation' on page 51 undefined on input line
  130.
 
-[51 <./ds-complete-draft/figures/conditional-ridge-correlation.pdf>] [52 <./ds-
-complete-draft/figures/association-generic.pdf>] [53 <./ds-complete-draft/figur
-es/association-products.pdf>]
+[51 <./figures/conditional-ridge-correlation.pdf>] [52 <./figures/association-g
+eneric.pdf>] [53 <./figures/association-products.pdf>]
 
 LaTeX Warning: Reference `app:ds-selection' on page 54 undefined on input line 
 183.
@@ -854,7 +849,7 @@ LaTeX Warning: Reference `app:ds-probes' on page 59 undefined on input line 567
 
 LaTeX Warning: Citation 'dsBMP2026' on page 59 undefined on input line 574.
 
-) (./09-rotated-regular-polygons.tex [59]
+) (./chapters/09-rotated-regular-polygons.tex [59]
 
 LaTeX Warning: Reference `fig:rotated-pentagons-curve' on page 60 undefined on 
 input line 27.
@@ -901,7 +896,7 @@ LaTeX Warning: Reference `eq:pentagon-capacity-profile' on page 63 undefined on
 LaTeX Warning: Reference `thm:rotated-pentagon-product-formula' on page 63 unde
 fined on input line 259.
 
-) (./pentagon-affine-draft/section.tex [63]
+) (./chapters/10-affine-pentagons.tex [63]
 
 LaTeX Warning: Citation 'HK2017' on page 64 undefined on input line 57.
 
@@ -914,7 +909,7 @@ on input line 166.
 LaTeX Warning: Reference `thm:pentagon-affine-capacity' on page 65 undefined on
  input line 171.
 
-[65]) (./product-rotation-draft/section.tex [66]
+[65]) (./chapters/11-product-position.tex [66]
 
 LaTeX Warning: Citation 'HK2017' on page 67 undefined on input line 52.
 
@@ -923,7 +918,7 @@ LaTeX Warning: Citation 'HK2017' on page 67 undefined on input line 52.
 LaTeX Warning: Reference `thm:product-initial-rotation' on page 68 undefined on
  input line 134.
 
-) (legacy/10-visualization-3d.tex
+) (./chapters/12-visualization.tex
 
 LaTeX Warning: Reference `fig:visualization-projections' on page 68 undefined o
 n input line 19.
@@ -932,9 +927,9 @@ n input line 19.
 LaTeX Warning: Reference `sec:hko-local-maximum' on page 68 undefined on input 
 line 21.
 
-) (./11-numerics.tex [68] [69 <legacy/figures/visualization/viz-hypercube-ridge
-s.png (PNG copy)> <legacy/figures/visualization/viz-hko-pentagon-min-orbit.png 
-(PNG copy)>]
+) (./chapters/13-numerics.tex [68] [69 <./figures/visualization/viz-hypercube-r
+idges.png (PNG copy)> <./figures/visualization/viz-hko-pentagon-min-orbit.png (
+PNG copy)>]
 
 LaTeX Warning: Reference `eq:quadratic-program-algorithm-hk2019-q' on page 70 u
 ndefined on input line 62.
@@ -949,12 +944,12 @@ ge 71 undefined on input line 143.
 LaTeX Warning: Reference `thm:quadratic-program-product-six-facet' on page 72 u
 ndefined on input line 185.
 
-) (legacy/12-published-code-data.tex
+) (./chapters/14-code-data.tex
 
 LaTeX Warning: Reference `subsec:hko-local-maximum-computation-with-sagemath' o
 n page 72 undefined on input line 20.
 
-[72]) (./recovered/ai-writing/chapter.tex [73]
+[72]) (./chapters/15-ai-reflection.tex [73]
 
 LaTeX Warning: Citation 'aiGuo2025' on page 74 undefined on input line 51.
 
@@ -962,7 +957,7 @@ LaTeX Warning: Citation 'aiGuo2025' on page 74 undefined on input line 51.
 
 LaTeX Warning: Citation 'aiOuyang2022' on page 75 undefined on input line 129.
 
-[75]) (./recovered/thesis-candidate/14-conclusion.tex [76]
+[75]) (./chapters/16-conclusion.tex [76]
 
 LaTeX Warning: Reference `eq:ds-pentagon-ridge-capacity' on page 77 undefined o
 n input line 62.
@@ -971,7 +966,7 @@ n input line 62.
 LaTeX Warning: Reference `eq:ds-triangle-profile' on page 77 undefined on input
  line 64.
 
-[77]) (./ds-complete-draft/appendix.tex
+[77]) (./appendices/data-science.tex
 
 LaTeX Warning: Reference `sec:black-box-datascience' on page 78 undefined on in
 put line 4.
@@ -1006,25 +1001,24 @@ line 206.
 LaTeX Warning: Reference `subsec:black-box-datascience-finite-budget-optimizati
 on' on page 83 undefined on input line 385.
 
-[83] [84] [85 <./ds-complete-draft/figures/hko-recovery-by-source-distance.pdf>
-] [86] [87 <./ds-complete-draft/figures/derivative-and-kkt-scale.pdf>]
+[83] [84] [85 <./figures/hko-recovery-by-source-distance.pdf>] [86] [87 <./figu
+res/derivative-and-kkt-scale.pdf>]
 
 LaTeX Warning: Reference `tab:ds-evidence-index' on page 88 undefined on input 
 line 641.
 
-[88]) [89] (./recovered/hko-cas-appendix/hko-cas-appendix.tex
+[88]) [89] (./appendices/hko-certificate.tex
 
 LaTeX Warning: Reference `lem:hko-exact-bounds' on page 90 undefined on input l
 ine 7.
 
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty)
-(./recovered/hko-cas-appendix/hko_core.py)
-(./recovered/hko-cas-appendix/hko_core.py [90])
+(./appendices/hko_core.py) (./appendices/hko_core.py [90])
 
 LaTeX Warning: Reference `lem:hko-smooth-volume' on page 91 undefined on input 
 line 38.
 
-(./recovered/hko-cas-appendix/hko_core.py)
+(./appendices/hko_core.py)
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/ueuf.fd)
 (/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-euf.cfg)
 
@@ -1035,7 +1029,7 @@ ine 52.
 LaTeX Warning: Reference `lem:hko-negative-slopes' on page 91 undefined on inpu
 t line 53.
 
-(./recovered/hko-cas-appendix/hko_core.py [91])
+(./appendices/hko_core.py [91])
 
 LaTeX Warning: Reference `lem:hko-row-neighborhood' on page 92 undefined on inp
 ut line 63.
@@ -1092,7 +1086,7 @@ pe1/public/lm/lmsy9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></us
 r/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/pu
 blic/lm/lmtt9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtti10.pfb></usr/sha
 re/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on build/main.pdf (92 pages, 1667537 bytes).
+Output written on build/main.pdf (92 pages, 1667383 bytes).
 Transcript written on build/main.log.
 Latexmk: Missing bbl file 'build/main.bbl' in following:
  No file main.bbl.
@@ -1105,10 +1099,10 @@ Latexmk: References changed.
 Latexmk: References changed.
 Latexmk: Log file says output to 'build/main.pdf'
 Latexmk: Bibliography file(s) from .bcf file:
-  ds-complete-draft/references.bib
-  legacy/bibliography.bib
-  recovered/ai-writing/references.bib
-  recovered/thesis-candidate/additional.bib
+  references/additional.bib
+  references/ai.bib
+  references/data-science.bib
+  references/main.bib
 Latexmk: applying rule 'biber build/main'...
 Rule 'biber build/main':  Reasons for rerun
 Category 'other':
@@ -1126,25 +1120,25 @@ INFO - Logfile is 'build/main.blg'
 INFO - Reading 'build/main.bcf'
 INFO - Found 21 citekeys in bib section 0
 INFO - Processing section 0
-INFO - Looking for bibtex file 'bibliography.bib' for section 0
+INFO - Looking for bibtex file 'references/main.bib' for section 0
 INFO - LaTeX decoding ...
-INFO - Found BibTeX data source 'legacy/bibliography.bib'
-INFO - Looking for bibtex file 'recovered/thesis-candidate/additional.bib' for section 0
+INFO - Found BibTeX data source 'references/main.bib'
+INFO - Looking for bibtex file 'references/additional.bib' for section 0
 INFO - LaTeX decoding ...
-INFO - Found BibTeX data source 'recovered/thesis-candidate/additional.bib'
-INFO - Looking for bibtex file 'ds-complete-draft/references.bib' for section 0
+INFO - Found BibTeX data source 'references/additional.bib'
+INFO - Looking for bibtex file 'references/data-science.bib' for section 0
 INFO - LaTeX decoding ...
-INFO - Found BibTeX data source 'ds-complete-draft/references.bib'
-INFO - Looking for bibtex file 'recovered/ai-writing/references.bib' for section 0
+INFO - Found BibTeX data source 'references/data-science.bib'
+INFO - Looking for bibtex file 'references/ai.bib' for section 0
 INFO - LaTeX decoding ...
-INFO - Found BibTeX data source 'recovered/ai-writing/references.bib'
+INFO - Found BibTeX data source 'references/ai.bib'
 INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
 INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
 INFO - Sorting list 'anyt/global//global/global' of type 'entry' with template 'anyt' and locale 'en-US'
 INFO - No sort tailoring available for locale 'en-US'
 INFO - Writing 'build/main.bbl' with encoding 'UTF-8'
 INFO - Output to build/main.bbl
-Latexmk: Found biber source file(s) [build/main.bcf, ds-complete-draft/references.bib, legacy/bibliography.bib, recovered/ai-writing/references.bib, recovered/thesis-candidate/additional.bib]
+Latexmk: Found biber source file(s) [build/main.bcf, references/additional.bib, references/ai.bib, references/data-science.bib, references/main.bib]
 Latexmk: applying rule 'pdflatex'...
 Rule 'pdflatex':  Reasons for rerun
 Changed files or newly in use/created:
@@ -1245,8 +1239,7 @@ For additional information on amsmath, use the `?' option.
 (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def))
 (/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-case-expl3.sty
 (/usr/share/texlive/texmf-dist/tex/latex/l3packages/xparse/xparse.sty)))
-(legacy/preamble.tex
-(/usr/share/texlive/texmf-dist/tex/latex/mdframed/mdframed.sty
+(./preamble.tex (/usr/share/texlive/texmf-dist/tex/latex/mdframed/mdframed.sty
 (/usr/share/texlive/texmf-dist/tex/latex/zref/zref-abspage.sty
 (/usr/share/texlive/texmf-dist/tex/latex/zref/zref-base.sty
 (/usr/share/texlive/texmf-dist/tex/generic/etexcmds/etexcmds.sty)))
@@ -1269,57 +1262,51 @@ For additional information on amsmath, use the `?' option.
 (/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msa.cfg)
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd)
 (/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msb.cfg)
-(./recovered/thesis-candidate/00-abstract.tex) (./ai-use-disclosure.tex
-[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/en
-c/dvips/lm/lm-ec.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share
-/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm
--mathit.enc}] [2]) (build/main.toc [3]) [4]
-(./recovered/thesis-candidate/01-introduction.tex [5] [6{/usr/share/texmf/fonts
-/enc/dvips/lm/lm-mathex.enc}] [7])
-(./recovered/thesis-candidate/02-preliminaries.tex
-(./recovered/thesis-candidate/02-preliminaries-convex-symplectic-notation.tex
-[8]) (legacy/02-preliminaries-convex-hamiltonian-language.tex)
-(./recovered/thesis-candidate/02-preliminaries-ehz-capacity.tex [9] [10 <legacy
-/figures/foundations/characteristic-normalization.pdf>])
-(legacy/02-preliminaries-polytope-input-language.tex)
-(legacy/02-preliminaries-lagrangian-products.tex [11])
-(./recovered/thesis-candidate/02-duality.tex [12 <legacy/figures/foundations/fa
-cet-polarity.pdf>] [13] [14])) (./03-generalized-reeb-orbits-polytopes.tex
-[15] [16] (/usr/share/texmf/tex/latex/lm/ot1lmss.fd) [17] [18] [19] [20])
-(./04-quadratic-program.tex [21] [22] [23] [24] [25] [26] [27] [28])
-(./05-flow-graph.tex [29] [30] (/usr/share/texmf/tex/latex/lm/t1lmtt.fd)
-[31] [32 <legacy/figures/flow-graph/flow-graph-f6-tube-sequence.pdf>] [33]
-[34] (legacy/05-flow-graph-ch2021-background-comparison.tex [35]))
-(./recovered/thesis-candidate/06-variation.tex [36] [37] [38] [39]
+(./chapters/00-abstract.tex) (./ai-use-disclosure.tex [1{/var/lib/texmf/fonts/m
+ap/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/us
+r/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts/enc/dvips/lm
+/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}] [2])
+(build/main.toc [3]) [4] (./chapters/01-introduction.tex [5] [6{/usr/share/texm
+f/fonts/enc/dvips/lm/lm-mathex.enc}] [7]) (./chapters/02-preliminaries.tex
+(./chapters/02-preliminaries-convex-symplectic-notation.tex [8])
+(./chapters/02-preliminaries-convex-hamiltonian-language.tex)
+(./chapters/02-preliminaries-ehz-capacity.tex [9] [10 <./figures/foundations/ch
+aracteristic-normalization.pdf>])
+(./chapters/02-preliminaries-polytope-input-language.tex)
+(./chapters/02-preliminaries-lagrangian-products.tex [11])
+(./chapters/02-duality.tex [12 <./figures/foundations/facet-polarity.pdf>]
+[13] [14])) (./chapters/03-generalized-reeb-orbits-polytopes.tex [15] [16]
+(/usr/share/texmf/tex/latex/lm/ot1lmss.fd) [17] [18] [19] [20])
+(./chapters/04-quadratic-program.tex [21] [22] [23] [24] [25] [26] [27]
+[28]) (./chapters/05-flow-graph.tex [29] [30]
+(/usr/share/texmf/tex/latex/lm/t1lmtt.fd) [31] [32 <./figures/flow-graph/flow-g
+raph-f6-tube-sequence.pdf>] [33] [34]
+(./chapters/05-flow-graph-ch2021-background-comparison.tex [35]))
+(./chapters/06-variation.tex [36] [37] [38] [39]
 (/usr/share/texmf/tex/latex/lm/ts1lmr.fd) [40{/usr/share/texmf/fonts/enc/dvips/
-lm/lm-ts1.enc}]) (./recovered/thesis-candidate/07-hko.tex [41]
-(./recovered/thesis-candidate/hko-lemma-geometry.tex [42] [43])
-(./recovered/thesis-candidate/hko-lemma-bounds.tex [44] [45])
-(./recovered/thesis-candidate/hko-lemma-conclusion.tex [46] [47 <./recovered/hk
-o-figures/upper-bound-mechanisms.pdf>] [48 <./recovered/hko-figures/symmetry-ex
-tension.pdf>]) [49] (./recovered/hko-writing/sections-readable.tex))
-(./ds-complete-draft/chapter.tex [50] [51] [52 <./ds-complete-draft/figures/con
-ditional-ridge-correlation.pdf>] [53 <./ds-complete-draft/figures/association-g
-eneric.pdf>] [54 <./ds-complete-draft/figures/association-products.pdf>]
-[55] [56] [57] [58] [59]) (./09-rotated-regular-polygons.tex [60] [61 <./figure
-s/rotation-profile.png>] [62] [63]) (./pentagon-affine-draft/section.tex
-[64] [65] [66]) (./product-rotation-draft/section.tex [67] [68])
-(legacy/10-visualization-3d.tex) (./11-numerics.tex [69] [70 <legacy/figures/vi
-sualization/viz-hypercube-ridges.png (PNG copy)> <legacy/figures/visualization/
-viz-hko-pentagon-min-orbit.png (PNG copy)>] [71] [72])
-(legacy/12-published-code-data.tex [73]) (./recovered/ai-writing/chapter.tex
-[74] [75] [76]) (./recovered/thesis-candidate/14-conclusion.tex [77] [78])
-(./ds-complete-draft/appendix.tex [79] [80] [81] [82] [83] [84] [85] [86 <./ds-
-complete-draft/figures/hko-recovery-by-source-distance.pdf>] [87] [88 <./ds-com
-plete-draft/figures/derivative-and-kkt-scale.pdf>] [89]) [90]
-(./recovered/hko-cas-appendix/hko-cas-appendix.tex
+lm/lm-ts1.enc}]) (./chapters/07-hko.tex [41] (./chapters/hko-lemma-geometry.tex
+ [42] [43]) (./chapters/hko-lemma-bounds.tex [44] [45])
+(./chapters/hko-lemma-conclusion.tex [46] [47 <./figures/upper-bound-mechanisms
+.pdf>] [48 <./figures/symmetry-extension.pdf>]) [49]
+(./chapters/hko-sections.tex)) (./chapters/08-data-science.tex [50] [51]
+[52 <./figures/conditional-ridge-correlation.pdf>] [53 <./figures/association-g
+eneric.pdf>] [54 <./figures/association-products.pdf>] [55] [56] [57] [58]
+[59]) (./chapters/09-rotated-regular-polygons.tex [60] [61 <./figures/rotation-
+profile.png>] [62] [63]) (./chapters/10-affine-pentagons.tex [64] [65] [66])
+(./chapters/11-product-position.tex [67] [68]) (./chapters/12-visualization.tex
+) (./chapters/13-numerics.tex [69] [70 <./figures/visualization/viz-hypercube-r
+idges.png (PNG copy)> <./figures/visualization/viz-hko-pentagon-min-orbit.png (
+PNG copy)>] [71] [72]) (./chapters/14-code-data.tex [73])
+(./chapters/15-ai-reflection.tex [74] [75] [76]) (./chapters/16-conclusion.tex
+[77] [78]) (./appendices/data-science.tex [79] [80] [81] [82] [83] [84]
+[85] [86 <./figures/hko-recovery-by-source-distance.pdf>] [87] [88 <./figures/d
+erivative-and-kkt-scale.pdf>] [89]) [90] (./appendices/hko-certificate.tex
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty)
-(./recovered/hko-cas-appendix/hko_core.py)
-(./recovered/hko-cas-appendix/hko_core.py [91])
-(./recovered/hko-cas-appendix/hko_core.py)
+(./appendices/hko_core.py) (./appendices/hko_core.py [91])
+(./appendices/hko_core.py)
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/ueuf.fd)
 (/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-euf.cfg)
-(./recovered/hko-cas-appendix/hko_core.py [92])) [93] [94] (build/main.aux)
+(./appendices/hko_core.py [92])) [93] [94] (build/main.aux)
 
 LaTeX Warning: There were undefined references.
 
@@ -1352,7 +1339,7 @@ type1/public/lm/lmsy9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></
 usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/
 public/lm/lmtt9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtti10.pfb></usr/s
 hare/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on build/main.pdf (94 pages, 1720727 bytes).
+Output written on build/main.pdf (94 pages, 1720557 bytes).
 Transcript written on build/main.log.
 Latexmk: Getting log file 'build/main.log'
 Latexmk: Examining 'build/main.fls'
@@ -1362,10 +1349,10 @@ Latexmk: References changed.
 Latexmk: References changed.
 Latexmk: Log file says output to 'build/main.pdf'
 Latexmk: Bibliography file(s) from .bcf file:
-  ds-complete-draft/references.bib
-  legacy/bibliography.bib
-  recovered/ai-writing/references.bib
-  recovered/thesis-candidate/additional.bib
+  references/additional.bib
+  references/ai.bib
+  references/data-science.bib
+  references/main.bib
 Latexmk: applying rule 'pdflatex'...
 Rule 'pdflatex':  Reasons for rerun
 Changed files or newly in use/created:
@@ -1466,8 +1453,7 @@ For additional information on amsmath, use the `?' option.
 (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def))
 (/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-case-expl3.sty
 (/usr/share/texlive/texmf-dist/tex/latex/l3packages/xparse/xparse.sty)))
-(legacy/preamble.tex
-(/usr/share/texlive/texmf-dist/tex/latex/mdframed/mdframed.sty
+(./preamble.tex (/usr/share/texlive/texmf-dist/tex/latex/mdframed/mdframed.sty
 (/usr/share/texlive/texmf-dist/tex/latex/zref/zref-abspage.sty
 (/usr/share/texlive/texmf-dist/tex/latex/zref/zref-base.sty
 (/usr/share/texlive/texmf-dist/tex/generic/etexcmds/etexcmds.sty)))
@@ -1490,76 +1476,70 @@ For additional information on amsmath, use the `?' option.
 (/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msa.cfg)
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd)
 (/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msb.cfg)
-(./recovered/thesis-candidate/00-abstract.tex) (./ai-use-disclosure.tex
-[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/en
-c/dvips/lm/lm-ec.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share
-/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm
--mathit.enc}] [2]) (build/main.toc [3]) [4]
-(./recovered/thesis-candidate/01-introduction.tex [5] [6{/usr/share/texmf/fonts
-/enc/dvips/lm/lm-mathex.enc}] [7])
-(./recovered/thesis-candidate/02-preliminaries.tex
-(./recovered/thesis-candidate/02-preliminaries-convex-symplectic-notation.tex
-[8]) (legacy/02-preliminaries-convex-hamiltonian-language.tex)
-(./recovered/thesis-candidate/02-preliminaries-ehz-capacity.tex [9] [10 <legacy
-/figures/foundations/characteristic-normalization.pdf>])
-(legacy/02-preliminaries-polytope-input-language.tex)
-(legacy/02-preliminaries-lagrangian-products.tex [11])
-(./recovered/thesis-candidate/02-duality.tex [12 <legacy/figures/foundations/fa
-cet-polarity.pdf>] [13] [14])) (./03-generalized-reeb-orbits-polytopes.tex
-[15] [16] (/usr/share/texmf/tex/latex/lm/ot1lmss.fd) [17] [18] [19] [20])
-(./04-quadratic-program.tex [21] [22] [23] [24] [25] [26] [27] [28])
-(./05-flow-graph.tex [29] [30] (/usr/share/texmf/tex/latex/lm/t1lmtt.fd)
-[31] [32 <legacy/figures/flow-graph/flow-graph-f6-tube-sequence.pdf>] [33]
-[34] (legacy/05-flow-graph-ch2021-background-comparison.tex [35]))
-(./recovered/thesis-candidate/06-variation.tex [36] [37] [38] [39]
+(./chapters/00-abstract.tex) (./ai-use-disclosure.tex [1{/var/lib/texmf/fonts/m
+ap/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/us
+r/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts/enc/dvips/lm
+/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}] [2])
+(build/main.toc [3]) [4] (./chapters/01-introduction.tex [5] [6{/usr/share/texm
+f/fonts/enc/dvips/lm/lm-mathex.enc}] [7]) (./chapters/02-preliminaries.tex
+(./chapters/02-preliminaries-convex-symplectic-notation.tex [8])
+(./chapters/02-preliminaries-convex-hamiltonian-language.tex)
+(./chapters/02-preliminaries-ehz-capacity.tex [9] [10 <./figures/foundations/ch
+aracteristic-normalization.pdf>])
+(./chapters/02-preliminaries-polytope-input-language.tex)
+(./chapters/02-preliminaries-lagrangian-products.tex [11])
+(./chapters/02-duality.tex [12 <./figures/foundations/facet-polarity.pdf>]
+[13] [14])) (./chapters/03-generalized-reeb-orbits-polytopes.tex [15] [16]
+(/usr/share/texmf/tex/latex/lm/ot1lmss.fd) [17] [18] [19] [20])
+(./chapters/04-quadratic-program.tex [21] [22] [23] [24] [25] [26] [27]
+[28]) (./chapters/05-flow-graph.tex [29] [30]
+(/usr/share/texmf/tex/latex/lm/t1lmtt.fd) [31] [32 <./figures/flow-graph/flow-g
+raph-f6-tube-sequence.pdf>] [33] [34]
+(./chapters/05-flow-graph-ch2021-background-comparison.tex [35]))
+(./chapters/06-variation.tex [36] [37] [38] [39]
 (/usr/share/texmf/tex/latex/lm/ts1lmr.fd) [40{/usr/share/texmf/fonts/enc/dvips/
-lm/lm-ts1.enc}]) (./recovered/thesis-candidate/07-hko.tex [41]
-(./recovered/thesis-candidate/hko-lemma-geometry.tex [42] [43])
-(./recovered/thesis-candidate/hko-lemma-bounds.tex [44] [45])
-(./recovered/thesis-candidate/hko-lemma-conclusion.tex [46] [47 <./recovered/hk
-o-figures/upper-bound-mechanisms.pdf>] [48 <./recovered/hko-figures/symmetry-ex
-tension.pdf>]) [49] (./recovered/hko-writing/sections-readable.tex))
-(./ds-complete-draft/chapter.tex [50] [51] [52 <./ds-complete-draft/figures/con
-ditional-ridge-correlation.pdf>] [53 <./ds-complete-draft/figures/association-g
-eneric.pdf>] [54 <./ds-complete-draft/figures/association-products.pdf>]
-[55] [56] [57] [58] [59]) (./09-rotated-regular-polygons.tex [60] [61 <./figure
-s/rotation-profile.png>] [62] [63]) (./pentagon-affine-draft/section.tex
-[64] [65] [66]) (./product-rotation-draft/section.tex [67] [68])
-(legacy/10-visualization-3d.tex) (./11-numerics.tex [69] [70 <legacy/figures/vi
-sualization/viz-hypercube-ridges.png (PNG copy)> <legacy/figures/visualization/
-viz-hko-pentagon-min-orbit.png (PNG copy)>] [71] [72])
-(legacy/12-published-code-data.tex [73]) (./recovered/ai-writing/chapter.tex
-[74] [75] [76]) (./recovered/thesis-candidate/14-conclusion.tex [77] [78])
-(./ds-complete-draft/appendix.tex [79] [80] [81] [82] [83] [84] [85] [86 <./ds-
-complete-draft/figures/hko-recovery-by-source-distance.pdf>] [87] [88 <./ds-com
-plete-draft/figures/derivative-and-kkt-scale.pdf>] [89]) [90]
-(./recovered/hko-cas-appendix/hko-cas-appendix.tex
+lm/lm-ts1.enc}]) (./chapters/07-hko.tex [41] (./chapters/hko-lemma-geometry.tex
+ [42] [43]) (./chapters/hko-lemma-bounds.tex [44] [45])
+(./chapters/hko-lemma-conclusion.tex [46] [47 <./figures/upper-bound-mechanisms
+.pdf>] [48 <./figures/symmetry-extension.pdf>]) [49]
+(./chapters/hko-sections.tex)) (./chapters/08-data-science.tex [50] [51]
+[52 <./figures/conditional-ridge-correlation.pdf>] [53 <./figures/association-g
+eneric.pdf>] [54 <./figures/association-products.pdf>] [55] [56] [57] [58]
+[59]) (./chapters/09-rotated-regular-polygons.tex [60] [61 <./figures/rotation-
+profile.png>] [62] [63]) (./chapters/10-affine-pentagons.tex [64] [65] [66])
+(./chapters/11-product-position.tex [67] [68]) (./chapters/12-visualization.tex
+) (./chapters/13-numerics.tex [69] [70 <./figures/visualization/viz-hypercube-r
+idges.png (PNG copy)> <./figures/visualization/viz-hko-pentagon-min-orbit.png (
+PNG copy)>] [71] [72]) (./chapters/14-code-data.tex [73])
+(./chapters/15-ai-reflection.tex [74] [75] [76]) (./chapters/16-conclusion.tex
+[77] [78]) (./appendices/data-science.tex [79] [80] [81] [82] [83] [84]
+[85] [86 <./figures/hko-recovery-by-source-distance.pdf>] [87] [88 <./figures/d
+erivative-and-kkt-scale.pdf>] [89]) [90] (./appendices/hko-certificate.tex
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty)
-(./recovered/hko-cas-appendix/hko_core.py)
-(./recovered/hko-cas-appendix/hko_core.py [91])
-(./recovered/hko-cas-appendix/hko_core.py)
+(./appendices/hko_core.py) (./appendices/hko_core.py [91])
+(./appendices/hko_core.py)
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/ueuf.fd)
 (/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-euf.cfg)
-(./recovered/hko-cas-appendix/hko_core.py [92])) [93] [94] (build/main.aux) )</
-usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/euler/eufm10.pfb></usr
-/share/texmf/fonts/type1/public/lm/lmbx10.pfb></usr/share/texmf/fonts/type1/pub
-lic/lm/lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmcsc10.pfb></usr/sha
-re/texmf/fonts/type1/public/lm/lmex10.pfb></usr/share/texmf/fonts/type1/public/
-lm/lmmi10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi6.pfb></usr/share/tex
-mf/fonts/type1/public/lm/lmmi7.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi
-8.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi9.pfb></usr/share/texmf/fonts
-/type1/public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></
-usr/share/texmf/fonts/type1/public/lm/lmr17.pfb></usr/share/texmf/fonts/type1/p
-ublic/lm/lmr6.pfb></usr/share/texmf/fonts/type1/public/lm/lmr7.pfb></usr/share/
-texmf/fonts/type1/public/lm/lmr8.pfb></usr/share/texmf/fonts/type1/public/lm/lm
-r9.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf/fon
-ts/type1/public/lm/lmss8.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb
-></usr/share/texmf/fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type
-1/public/lm/lmsy9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></usr/
-share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/publ
-ic/lm/lmtt9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtti10.pfb></usr/share
-/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on build/main.pdf (94 pages, 1720601 bytes).
+(./appendices/hko_core.py [92])) [93] [94] (build/main.aux) )</usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/euler/eufm10.pfb></usr/share/texmf/fon
+ts/type1/public/lm/lmbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmbx12.pf
+b></usr/share/texmf/fonts/type1/public/lm/lmcsc10.pfb></usr/share/texmf/fonts/t
+ype1/public/lm/lmex10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi10.pfb></
+usr/share/texmf/fonts/type1/public/lm/lmmi6.pfb></usr/share/texmf/fonts/type1/p
+ublic/lm/lmmi7.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi8.pfb></usr/shar
+e/texmf/fonts/type1/public/lm/lmmi9.pfb></usr/share/texmf/fonts/type1/public/lm
+/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/
+fonts/type1/public/lm/lmr17.pfb></usr/share/texmf/fonts/type1/public/lm/lmr6.pf
+b></usr/share/texmf/fonts/type1/public/lm/lmr7.pfb></usr/share/texmf/fonts/type
+1/public/lm/lmr8.pfb></usr/share/texmf/fonts/type1/public/lm/lmr9.pfb></usr/sha
+re/texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/
+lm/lmss8.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/tex
+mf/fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy
+9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></usr/share/texmf/font
+s/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt9.pfb>
+</usr/share/texmf/fonts/type1/public/lm/lmtti10.pfb></usr/share/texlive/texmf-d
+ist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on build/main.pdf (94 pages, 1720440 bytes).
 Transcript written on build/main.log.
 Latexmk: Getting log file 'build/main.log'
 Latexmk: Examining 'build/main.fls'
@@ -1567,10 +1547,10 @@ Latexmk: Examining 'build/main.log'
 Latexmk: Found input bbl file 'build/main.bbl'
 Latexmk: Log file says output to 'build/main.pdf'
 Latexmk: Bibliography file(s) from .bcf file:
-  ds-complete-draft/references.bib
-  legacy/bibliography.bib
-  recovered/ai-writing/references.bib
-  recovered/thesis-candidate/additional.bib
+  references/additional.bib
+  references/ai.bib
+  references/data-science.bib
+  references/main.bib
 Latexmk: applying rule 'pdflatex'...
 Rule 'pdflatex':  Reasons for rerun
 Changed files or newly in use/created:
@@ -1668,8 +1648,7 @@ For additional information on amsmath, use the `?' option.
 (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def))
 (/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-case-expl3.sty
 (/usr/share/texlive/texmf-dist/tex/latex/l3packages/xparse/xparse.sty)))
-(legacy/preamble.tex
-(/usr/share/texlive/texmf-dist/tex/latex/mdframed/mdframed.sty
+(./preamble.tex (/usr/share/texlive/texmf-dist/tex/latex/mdframed/mdframed.sty
 (/usr/share/texlive/texmf-dist/tex/latex/zref/zref-abspage.sty
 (/usr/share/texlive/texmf-dist/tex/latex/zref/zref-base.sty
 (/usr/share/texlive/texmf-dist/tex/generic/etexcmds/etexcmds.sty)))
@@ -1692,76 +1671,70 @@ For additional information on amsmath, use the `?' option.
 (/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msa.cfg)
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd)
 (/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msb.cfg)
-(./recovered/thesis-candidate/00-abstract.tex) (./ai-use-disclosure.tex
-[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/en
-c/dvips/lm/lm-ec.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share
-/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm
--mathit.enc}] [2]) (build/main.toc [3]) [4]
-(./recovered/thesis-candidate/01-introduction.tex [5] [6{/usr/share/texmf/fonts
-/enc/dvips/lm/lm-mathex.enc}] [7])
-(./recovered/thesis-candidate/02-preliminaries.tex
-(./recovered/thesis-candidate/02-preliminaries-convex-symplectic-notation.tex
-[8]) (legacy/02-preliminaries-convex-hamiltonian-language.tex)
-(./recovered/thesis-candidate/02-preliminaries-ehz-capacity.tex [9] [10 <legacy
-/figures/foundations/characteristic-normalization.pdf>])
-(legacy/02-preliminaries-polytope-input-language.tex)
-(legacy/02-preliminaries-lagrangian-products.tex [11])
-(./recovered/thesis-candidate/02-duality.tex [12 <legacy/figures/foundations/fa
-cet-polarity.pdf>] [13] [14])) (./03-generalized-reeb-orbits-polytopes.tex
-[15] [16] (/usr/share/texmf/tex/latex/lm/ot1lmss.fd) [17] [18] [19] [20])
-(./04-quadratic-program.tex [21] [22] [23] [24] [25] [26] [27] [28])
-(./05-flow-graph.tex [29] [30] (/usr/share/texmf/tex/latex/lm/t1lmtt.fd)
-[31] [32 <legacy/figures/flow-graph/flow-graph-f6-tube-sequence.pdf>] [33]
-[34] (legacy/05-flow-graph-ch2021-background-comparison.tex [35]))
-(./recovered/thesis-candidate/06-variation.tex [36] [37] [38] [39]
+(./chapters/00-abstract.tex) (./ai-use-disclosure.tex [1{/var/lib/texmf/fonts/m
+ap/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/us
+r/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts/enc/dvips/lm
+/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}] [2])
+(build/main.toc [3]) [4] (./chapters/01-introduction.tex [5] [6{/usr/share/texm
+f/fonts/enc/dvips/lm/lm-mathex.enc}] [7]) (./chapters/02-preliminaries.tex
+(./chapters/02-preliminaries-convex-symplectic-notation.tex [8])
+(./chapters/02-preliminaries-convex-hamiltonian-language.tex)
+(./chapters/02-preliminaries-ehz-capacity.tex [9] [10 <./figures/foundations/ch
+aracteristic-normalization.pdf>])
+(./chapters/02-preliminaries-polytope-input-language.tex)
+(./chapters/02-preliminaries-lagrangian-products.tex [11])
+(./chapters/02-duality.tex [12 <./figures/foundations/facet-polarity.pdf>]
+[13] [14])) (./chapters/03-generalized-reeb-orbits-polytopes.tex [15] [16]
+(/usr/share/texmf/tex/latex/lm/ot1lmss.fd) [17] [18] [19] [20])
+(./chapters/04-quadratic-program.tex [21] [22] [23] [24] [25] [26] [27]
+[28]) (./chapters/05-flow-graph.tex [29] [30]
+(/usr/share/texmf/tex/latex/lm/t1lmtt.fd) [31] [32 <./figures/flow-graph/flow-g
+raph-f6-tube-sequence.pdf>] [33] [34]
+(./chapters/05-flow-graph-ch2021-background-comparison.tex [35]))
+(./chapters/06-variation.tex [36] [37] [38] [39]
 (/usr/share/texmf/tex/latex/lm/ts1lmr.fd) [40{/usr/share/texmf/fonts/enc/dvips/
-lm/lm-ts1.enc}]) (./recovered/thesis-candidate/07-hko.tex [41]
-(./recovered/thesis-candidate/hko-lemma-geometry.tex [42] [43])
-(./recovered/thesis-candidate/hko-lemma-bounds.tex [44] [45])
-(./recovered/thesis-candidate/hko-lemma-conclusion.tex [46] [47 <./recovered/hk
-o-figures/upper-bound-mechanisms.pdf>] [48 <./recovered/hko-figures/symmetry-ex
-tension.pdf>]) [49] (./recovered/hko-writing/sections-readable.tex))
-(./ds-complete-draft/chapter.tex [50] [51] [52 <./ds-complete-draft/figures/con
-ditional-ridge-correlation.pdf>] [53 <./ds-complete-draft/figures/association-g
-eneric.pdf>] [54 <./ds-complete-draft/figures/association-products.pdf>]
-[55] [56] [57] [58] [59]) (./09-rotated-regular-polygons.tex [60] [61 <./figure
-s/rotation-profile.png>] [62] [63]) (./pentagon-affine-draft/section.tex
-[64] [65] [66]) (./product-rotation-draft/section.tex [67] [68])
-(legacy/10-visualization-3d.tex) (./11-numerics.tex [69] [70 <legacy/figures/vi
-sualization/viz-hypercube-ridges.png (PNG copy)> <legacy/figures/visualization/
-viz-hko-pentagon-min-orbit.png (PNG copy)>] [71] [72])
-(legacy/12-published-code-data.tex [73]) (./recovered/ai-writing/chapter.tex
-[74] [75] [76]) (./recovered/thesis-candidate/14-conclusion.tex [77] [78])
-(./ds-complete-draft/appendix.tex [79] [80] [81] [82] [83] [84] [85] [86 <./ds-
-complete-draft/figures/hko-recovery-by-source-distance.pdf>] [87] [88 <./ds-com
-plete-draft/figures/derivative-and-kkt-scale.pdf>] [89]) [90]
-(./recovered/hko-cas-appendix/hko-cas-appendix.tex
+lm/lm-ts1.enc}]) (./chapters/07-hko.tex [41] (./chapters/hko-lemma-geometry.tex
+ [42] [43]) (./chapters/hko-lemma-bounds.tex [44] [45])
+(./chapters/hko-lemma-conclusion.tex [46] [47 <./figures/upper-bound-mechanisms
+.pdf>] [48 <./figures/symmetry-extension.pdf>]) [49]
+(./chapters/hko-sections.tex)) (./chapters/08-data-science.tex [50] [51]
+[52 <./figures/conditional-ridge-correlation.pdf>] [53 <./figures/association-g
+eneric.pdf>] [54 <./figures/association-products.pdf>] [55] [56] [57] [58]
+[59]) (./chapters/09-rotated-regular-polygons.tex [60] [61 <./figures/rotation-
+profile.png>] [62] [63]) (./chapters/10-affine-pentagons.tex [64] [65] [66])
+(./chapters/11-product-position.tex [67] [68]) (./chapters/12-visualization.tex
+) (./chapters/13-numerics.tex [69] [70 <./figures/visualization/viz-hypercube-r
+idges.png (PNG copy)> <./figures/visualization/viz-hko-pentagon-min-orbit.png (
+PNG copy)>] [71] [72]) (./chapters/14-code-data.tex [73])
+(./chapters/15-ai-reflection.tex [74] [75] [76]) (./chapters/16-conclusion.tex
+[77] [78]) (./appendices/data-science.tex [79] [80] [81] [82] [83] [84]
+[85] [86 <./figures/hko-recovery-by-source-distance.pdf>] [87] [88 <./figures/d
+erivative-and-kkt-scale.pdf>] [89]) [90] (./appendices/hko-certificate.tex
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty)
-(./recovered/hko-cas-appendix/hko_core.py)
-(./recovered/hko-cas-appendix/hko_core.py [91])
-(./recovered/hko-cas-appendix/hko_core.py)
+(./appendices/hko_core.py) (./appendices/hko_core.py [91])
+(./appendices/hko_core.py)
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/ueuf.fd)
 (/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-euf.cfg)
-(./recovered/hko-cas-appendix/hko_core.py [92])) [93] [94] (build/main.aux) )</
-usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/euler/eufm10.pfb></usr
-/share/texmf/fonts/type1/public/lm/lmbx10.pfb></usr/share/texmf/fonts/type1/pub
-lic/lm/lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmcsc10.pfb></usr/sha
-re/texmf/fonts/type1/public/lm/lmex10.pfb></usr/share/texmf/fonts/type1/public/
-lm/lmmi10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi6.pfb></usr/share/tex
-mf/fonts/type1/public/lm/lmmi7.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi
-8.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi9.pfb></usr/share/texmf/fonts
-/type1/public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></
-usr/share/texmf/fonts/type1/public/lm/lmr17.pfb></usr/share/texmf/fonts/type1/p
-ublic/lm/lmr6.pfb></usr/share/texmf/fonts/type1/public/lm/lmr7.pfb></usr/share/
-texmf/fonts/type1/public/lm/lmr8.pfb></usr/share/texmf/fonts/type1/public/lm/lm
-r9.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf/fon
-ts/type1/public/lm/lmss8.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb
-></usr/share/texmf/fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type
-1/public/lm/lmsy9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></usr/
-share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/publ
-ic/lm/lmtt9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtti10.pfb></usr/share
-/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on build/main.pdf (94 pages, 1720601 bytes).
+(./appendices/hko_core.py [92])) [93] [94] (build/main.aux) )</usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/euler/eufm10.pfb></usr/share/texmf/fon
+ts/type1/public/lm/lmbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmbx12.pf
+b></usr/share/texmf/fonts/type1/public/lm/lmcsc10.pfb></usr/share/texmf/fonts/t
+ype1/public/lm/lmex10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi10.pfb></
+usr/share/texmf/fonts/type1/public/lm/lmmi6.pfb></usr/share/texmf/fonts/type1/p
+ublic/lm/lmmi7.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi8.pfb></usr/shar
+e/texmf/fonts/type1/public/lm/lmmi9.pfb></usr/share/texmf/fonts/type1/public/lm
+/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/
+fonts/type1/public/lm/lmr17.pfb></usr/share/texmf/fonts/type1/public/lm/lmr6.pf
+b></usr/share/texmf/fonts/type1/public/lm/lmr7.pfb></usr/share/texmf/fonts/type
+1/public/lm/lmr8.pfb></usr/share/texmf/fonts/type1/public/lm/lmr9.pfb></usr/sha
+re/texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/
+lm/lmss8.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/tex
+mf/fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy
+9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></usr/share/texmf/font
+s/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt9.pfb>
+</usr/share/texmf/fonts/type1/public/lm/lmtti10.pfb></usr/share/texlive/texmf-d
+ist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on build/main.pdf (94 pages, 1720440 bytes).
 Transcript written on build/main.log.
 Latexmk: Getting log file 'build/main.log'
 Latexmk: Examining 'build/main.fls'
@@ -1769,9 +1742,9 @@ Latexmk: Examining 'build/main.log'
 Latexmk: Found input bbl file 'build/main.bbl'
 Latexmk: Log file says output to 'build/main.pdf'
 Latexmk: Bibliography file(s) from .bcf file:
-  ds-complete-draft/references.bib
-  legacy/bibliography.bib
-  recovered/ai-writing/references.bib
-  recovered/thesis-candidate/additional.bib
+  references/additional.bib
+  references/ai.bib
+  references/data-science.bib
+  references/main.bib
 Latexmk: All targets (build/main.pdf) are up-to-date
 

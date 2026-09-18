@@ -1,200 +1,217 @@
 {
-  "source_commit": "1a3c2fef90d45d7bfe2bb95c081a30fca4628013",
-  "method": "git archive HEAD into fresh disposable directory; build.sh",
+  "source_commit": "e3615f32c1c8b497f3615cbaf3bb335a8d005ad5",
+  "method": "git archive HEAD into fresh disposable directory; sh thesis/build.sh",
   "build_exit": 0,
   "pages": 94,
-  "pdf_sha256": "62ece6afd3442c28be4d150e04a6db1c0cb8b4c9e0e72e1f2df289e192492def",
+  "pdf_sha256": "5b487580ee5bed7473e7de3233ea3ccaacbb3c7400d685883b99a081aa582fea",
   "warnings": [],
   "unexpected_external_inputs": [],
   "source_inputs": [
     {
-      "path": "thesis/candidate/03-generalized-reeb-orbits-polytopes.tex",
-      "sha256": "c84033755b9c3633e2fb14dab240a686bcae8bd71aac32d433e0fdc75800d258"
-    },
-    {
-      "path": "thesis/candidate/04-quadratic-program.tex",
-      "sha256": "fff6ff77c34d7b8e6fadfa2c2126b19d501a116880118efd8e856a806f8bfe18"
-    },
-    {
-      "path": "thesis/candidate/05-flow-graph.tex",
-      "sha256": "3ccf588be2719cb2ab47a5d9423431e1197339800a5b8cbb28bb2e9611dd20f2"
-    },
-    {
-      "path": "thesis/candidate/09-rotated-regular-polygons.tex",
-      "sha256": "0941c800cb2e33aeb585ad1ffc65d1b590c84972efad4d458f4aba8e8a571ab8"
-    },
-    {
-      "path": "thesis/candidate/11-numerics.tex",
-      "sha256": "721af5ac15f08de0c5932e6fb488ddf13f479a11de56d74bcdd2f21b77d0164a"
-    },
-    {
-      "path": "thesis/candidate/ai-use-disclosure.tex",
+      "path": "thesis/ai-use-disclosure.tex",
       "sha256": "0b5d6aefa450fadfcabec1232eb55bdbe674a60d034a9dacd65653610bcbfd31"
     },
     {
-      "path": "thesis/candidate/ds-complete-draft/appendix.tex",
-      "sha256": "45781a1354e8cebd8389770f6320d42780ae258a306a18abd27959bd372c900c"
+      "path": "thesis/appendices/data-science.tex",
+      "sha256": "6f36c7e917e3a49a27c15a717027573cf07b0f2e02d03a70faa291b08d728725"
     },
     {
-      "path": "thesis/candidate/ds-complete-draft/chapter.tex",
-      "sha256": "8ee39b7ee0876827c0871c1347a51894a540519ecc1cd622dcab1a7295d2569e"
+      "path": "thesis/appendices/hko-certificate.tex",
+      "sha256": "9ee891dffa9884650f43f8aae778dd753522d97004c6efe89fb37014a4108a9d"
     },
     {
-      "path": "thesis/candidate/ds-complete-draft/figures/association-generic.pdf",
-      "sha256": "85898c620583f52a1d28b056dfc60faffb81e73a9a8a86ba7d517c3d586154f4"
-    },
-    {
-      "path": "thesis/candidate/ds-complete-draft/figures/association-products.pdf",
-      "sha256": "fbbe2c12b98d5c93764a6dbf949a6f30402190c01c31dab552063bd00f85b572"
-    },
-    {
-      "path": "thesis/candidate/ds-complete-draft/figures/conditional-ridge-correlation.pdf",
-      "sha256": "912e9bef768cff74c26a09d453e6ab4c56a56af2fca4152919aa5f72e6b4bdff"
-    },
-    {
-      "path": "thesis/candidate/ds-complete-draft/figures/derivative-and-kkt-scale.pdf",
-      "sha256": "5e34bb8153986657a76525d78d8f9f142da4b8f06702bed143661773698c67da"
-    },
-    {
-      "path": "thesis/candidate/ds-complete-draft/figures/hko-recovery-by-source-distance.pdf",
-      "sha256": "86b8204c9ddd2b6a4817c694675bffcdf726860d77420846e6d09f07e2132477"
-    },
-    {
-      "path": "thesis/candidate/figures/rotation-profile.png",
-      "sha256": "dd9e6b8eb06545f4b2e5d5cc552f2bede021ea4a9ddcecb673fe25cd34152e99"
-    },
-    {
-      "path": "thesis/candidate/legacy/02-preliminaries-convex-hamiltonian-language.tex",
-      "sha256": "57e102e544ca8525dafea8d4d0e0986cac653e9000b9765c7b3ca22253b44823"
-    },
-    {
-      "path": "thesis/candidate/legacy/02-preliminaries-lagrangian-products.tex",
-      "sha256": "5c3a5d5c8e5fa672f7fcf28d32a2710593369b1ef816013c631205757b2b9ad4"
-    },
-    {
-      "path": "thesis/candidate/legacy/02-preliminaries-polytope-input-language.tex",
-      "sha256": "10660d042d029b2a14a8a7edb9aa04c2eb1e74071c1799298876e3521ccddb49"
-    },
-    {
-      "path": "thesis/candidate/legacy/05-flow-graph-ch2021-background-comparison.tex",
-      "sha256": "d9f2931d32aa2011eb119be13efc30d0608f591317ea29e78e47a4eef4e0cbaf"
-    },
-    {
-      "path": "thesis/candidate/legacy/10-visualization-3d.tex",
-      "sha256": "007d86dfdedc34bc3a94f551fb4420b7a0d699710221480e77ddfd9900a8c750"
-    },
-    {
-      "path": "thesis/candidate/legacy/12-published-code-data.tex",
-      "sha256": "3d3809be0047a12b6661ea5a13d70b67d853d7e2bfa9dca0877b70fb56b85068"
-    },
-    {
-      "path": "thesis/candidate/legacy/figures/flow-graph/flow-graph-f6-tube-sequence.pdf",
-      "sha256": "6cc41de40e349accf46342d873422041656b19c0f091266c0747430d3a2851d4"
-    },
-    {
-      "path": "thesis/candidate/legacy/figures/foundations/characteristic-normalization.pdf",
-      "sha256": "7dbfab3a3851060baa55b55d54bfaa6d57861a8ef3defe02ad4e5ecdab668cee"
-    },
-    {
-      "path": "thesis/candidate/legacy/figures/foundations/facet-polarity.pdf",
-      "sha256": "676ca38e254b1ca5e4841fa285bd097baeccd3462d5789f1639642c73e1bc9a6"
-    },
-    {
-      "path": "thesis/candidate/legacy/figures/visualization/viz-hko-pentagon-min-orbit.png",
-      "sha256": "6f6ec2b8173e454c45827ec0e340b470cbf3150355517284e3156889b2e5473f"
-    },
-    {
-      "path": "thesis/candidate/legacy/figures/visualization/viz-hypercube-ridges.png",
-      "sha256": "b3d9b189c0796274b074bac92e4c55d012fa208240d90327241471fceb429c03"
-    },
-    {
-      "path": "thesis/candidate/legacy/preamble.tex",
-      "sha256": "3dd932fb29bd8a7c44f5f7a8fef28453caca276755925e43129e097ff97fc566"
-    },
-    {
-      "path": "thesis/candidate/main.tex",
-      "sha256": "cc74563fdafbfbd8464d97a79369191acd9498870fb48fc9da09f1d59c1d81bb"
-    },
-    {
-      "path": "thesis/candidate/pentagon-affine-draft/section.tex",
-      "sha256": "c4d0a12d095e43546223a8fa96cd35d9c5a91330bfa42f9a2b7225327c5f6726"
-    },
-    {
-      "path": "thesis/candidate/product-rotation-draft/section.tex",
-      "sha256": "5c1e84489e7b022388aa74b09a08d7cc97001a0ec5136b2b17428a6f0459d374"
-    },
-    {
-      "path": "thesis/candidate/recovered/ai-writing/chapter.tex",
-      "sha256": "6c3d357577137d9b364420e157fb600096251aa1c8735ba833a231c00bc795c4"
-    },
-    {
-      "path": "thesis/candidate/recovered/hko-cas-appendix/hko-cas-appendix.tex",
-      "sha256": "2452af3842562c00079e34cb5081644996c112a5accc94bf9650c4b04cf39211"
-    },
-    {
-      "path": "thesis/candidate/recovered/hko-cas-appendix/hko_core.py",
+      "path": "thesis/appendices/hko_core.py",
       "sha256": "475196efdf33d1f281a724b90069ec08a2335552ddc4362332e2b975866f10f5"
     },
     {
-      "path": "thesis/candidate/recovered/hko-figures/symmetry-extension.pdf",
-      "sha256": "65e8d54ab27eafbc6793ead32ad536ffe65e4af79952649fb8445b3ad87e09f6"
-    },
-    {
-      "path": "thesis/candidate/recovered/hko-figures/upper-bound-mechanisms.pdf",
-      "sha256": "faca0c4193580223e5c0d468583d550002c49f20b4ba2d3b5137514edf86fb66"
-    },
-    {
-      "path": "thesis/candidate/recovered/hko-writing/sections-readable.tex",
-      "sha256": "d35f3b2e19cea1743d9c675b7e62c79269faaf0638b3e08c51b8442dfe159e69"
-    },
-    {
-      "path": "thesis/candidate/recovered/thesis-candidate/00-abstract.tex",
+      "path": "thesis/chapters/00-abstract.tex",
       "sha256": "5a0a03832fa224ffd46fcb14ddff56c759fc430c9637dc1f0147b5694fff9558"
     },
     {
-      "path": "thesis/candidate/recovered/thesis-candidate/01-introduction.tex",
+      "path": "thesis/chapters/01-introduction.tex",
       "sha256": "d2058f0872e134e1c74cc6c2ed9a9250339a21d8a021401e9c87b2ff0623794d"
     },
     {
-      "path": "thesis/candidate/recovered/thesis-candidate/02-duality.tex",
+      "path": "thesis/chapters/02-duality.tex",
       "sha256": "a6e9a2e9a9d512a60d62a405aca19fa1f2858c0a13d74f08f092e80581d81f15"
     },
     {
-      "path": "thesis/candidate/recovered/thesis-candidate/02-preliminaries-convex-symplectic-notation.tex",
+      "path": "thesis/chapters/02-preliminaries-convex-hamiltonian-language.tex",
+      "sha256": "57e102e544ca8525dafea8d4d0e0986cac653e9000b9765c7b3ca22253b44823"
+    },
+    {
+      "path": "thesis/chapters/02-preliminaries-convex-symplectic-notation.tex",
       "sha256": "79e3e0915f8c80638797b4fc3768f1b44f3487a01ba589b5c87b7933b717fcd1"
     },
     {
-      "path": "thesis/candidate/recovered/thesis-candidate/02-preliminaries-ehz-capacity.tex",
+      "path": "thesis/chapters/02-preliminaries-ehz-capacity.tex",
       "sha256": "1e1f84fae40e2ad0888efcb6678ea8354b8d11bdd75e76e5808ebdeb07efdc9f"
     },
     {
-      "path": "thesis/candidate/recovered/thesis-candidate/02-preliminaries.tex",
-      "sha256": "fb69b125f7bc4a5a4398603bf22371b3187c0d0b30e51656084b03f064839866"
+      "path": "thesis/chapters/02-preliminaries-lagrangian-products.tex",
+      "sha256": "5c3a5d5c8e5fa672f7fcf28d32a2710593369b1ef816013c631205757b2b9ad4"
     },
     {
-      "path": "thesis/candidate/recovered/thesis-candidate/06-variation.tex",
+      "path": "thesis/chapters/02-preliminaries-polytope-input-language.tex",
+      "sha256": "10660d042d029b2a14a8a7edb9aa04c2eb1e74071c1799298876e3521ccddb49"
+    },
+    {
+      "path": "thesis/chapters/02-preliminaries.tex",
+      "sha256": "21ae62de0bcbb0359c07c690c10e32a2fbef2bbeab7360ef93dc3183e59d2c63"
+    },
+    {
+      "path": "thesis/chapters/03-generalized-reeb-orbits-polytopes.tex",
+      "sha256": "c84033755b9c3633e2fb14dab240a686bcae8bd71aac32d433e0fdc75800d258"
+    },
+    {
+      "path": "thesis/chapters/04-quadratic-program.tex",
+      "sha256": "fff6ff77c34d7b8e6fadfa2c2126b19d501a116880118efd8e856a806f8bfe18"
+    },
+    {
+      "path": "thesis/chapters/05-flow-graph-ch2021-background-comparison.tex",
+      "sha256": "d9f2931d32aa2011eb119be13efc30d0608f591317ea29e78e47a4eef4e0cbaf"
+    },
+    {
+      "path": "thesis/chapters/05-flow-graph.tex",
+      "sha256": "509dcc77594b8a495e569abf871fe8c44644ffcbb1dc727cbaed4e8e357cc27a"
+    },
+    {
+      "path": "thesis/chapters/06-variation.tex",
       "sha256": "05d0bc747ee57d92f27cdd8bdd03a15a4d92241764ff5a15996f521508fa2cac"
     },
     {
-      "path": "thesis/candidate/recovered/thesis-candidate/07-hko.tex",
-      "sha256": "2684ce0ed442984776b920d2759bd5c583d9c2fe5a5bca530cdcdb297be976a9"
+      "path": "thesis/chapters/07-hko.tex",
+      "sha256": "5e09d29fb03f59b1b61844c1bdd8221d614814bcf1757cd466233c29ce5f0e25"
     },
     {
-      "path": "thesis/candidate/recovered/thesis-candidate/14-conclusion.tex",
+      "path": "thesis/chapters/08-data-science.tex",
+      "sha256": "4db37ee428539eb68033b53d838d401e3b522517cd1a3ee8a28e221f6961e2d2"
+    },
+    {
+      "path": "thesis/chapters/09-rotated-regular-polygons.tex",
+      "sha256": "0941c800cb2e33aeb585ad1ffc65d1b590c84972efad4d458f4aba8e8a571ab8"
+    },
+    {
+      "path": "thesis/chapters/10-affine-pentagons.tex",
+      "sha256": "c4d0a12d095e43546223a8fa96cd35d9c5a91330bfa42f9a2b7225327c5f6726"
+    },
+    {
+      "path": "thesis/chapters/11-product-position.tex",
+      "sha256": "5c1e84489e7b022388aa74b09a08d7cc97001a0ec5136b2b17428a6f0459d374"
+    },
+    {
+      "path": "thesis/chapters/12-visualization.tex",
+      "sha256": "007d86dfdedc34bc3a94f551fb4420b7a0d699710221480e77ddfd9900a8c750"
+    },
+    {
+      "path": "thesis/chapters/13-numerics.tex",
+      "sha256": "721af5ac15f08de0c5932e6fb488ddf13f479a11de56d74bcdd2f21b77d0164a"
+    },
+    {
+      "path": "thesis/chapters/14-code-data.tex",
+      "sha256": "3d3809be0047a12b6661ea5a13d70b67d853d7e2bfa9dca0877b70fb56b85068"
+    },
+    {
+      "path": "thesis/chapters/15-ai-reflection.tex",
+      "sha256": "6c3d357577137d9b364420e157fb600096251aa1c8735ba833a231c00bc795c4"
+    },
+    {
+      "path": "thesis/chapters/16-conclusion.tex",
       "sha256": "81f29ff8cfb966f77a4cfa780751f45009683b186fbe9f6c9ab7f3c19ac358d3"
     },
     {
-      "path": "thesis/candidate/recovered/thesis-candidate/hko-lemma-bounds.tex",
+      "path": "thesis/chapters/hko-lemma-bounds.tex",
       "sha256": "0531c0a8b2469bc9e70a6fa60bccf764ab36e18a94389e75d646a8b79d1f191a"
     },
     {
-      "path": "thesis/candidate/recovered/thesis-candidate/hko-lemma-conclusion.tex",
-      "sha256": "6b2a3c659bf9d129f0b6ff183ab37e39dcb45a09a37d1faef8afdf3a9980c423"
+      "path": "thesis/chapters/hko-lemma-conclusion.tex",
+      "sha256": "eb1f60832f4b94bf24d3b992a48c22d999f87f9d84058300e47b587dc1be79d6"
     },
     {
-      "path": "thesis/candidate/recovered/thesis-candidate/hko-lemma-geometry.tex",
+      "path": "thesis/chapters/hko-lemma-geometry.tex",
       "sha256": "ff101a2e12ca0c38a3484f7b170ec35f7ddd71e3af7f9db1903db482e7c2a10b"
+    },
+    {
+      "path": "thesis/chapters/hko-sections.tex",
+      "sha256": "d35f3b2e19cea1743d9c675b7e62c79269faaf0638b3e08c51b8442dfe159e69"
+    },
+    {
+      "path": "thesis/figures/association-generic.pdf",
+      "sha256": "85898c620583f52a1d28b056dfc60faffb81e73a9a8a86ba7d517c3d586154f4"
+    },
+    {
+      "path": "thesis/figures/association-products.pdf",
+      "sha256": "fbbe2c12b98d5c93764a6dbf949a6f30402190c01c31dab552063bd00f85b572"
+    },
+    {
+      "path": "thesis/figures/conditional-ridge-correlation.pdf",
+      "sha256": "912e9bef768cff74c26a09d453e6ab4c56a56af2fca4152919aa5f72e6b4bdff"
+    },
+    {
+      "path": "thesis/figures/derivative-and-kkt-scale.pdf",
+      "sha256": "5e34bb8153986657a76525d78d8f9f142da4b8f06702bed143661773698c67da"
+    },
+    {
+      "path": "thesis/figures/flow-graph/flow-graph-f6-tube-sequence.pdf",
+      "sha256": "6cc41de40e349accf46342d873422041656b19c0f091266c0747430d3a2851d4"
+    },
+    {
+      "path": "thesis/figures/foundations/characteristic-normalization.pdf",
+      "sha256": "7dbfab3a3851060baa55b55d54bfaa6d57861a8ef3defe02ad4e5ecdab668cee"
+    },
+    {
+      "path": "thesis/figures/foundations/facet-polarity.pdf",
+      "sha256": "676ca38e254b1ca5e4841fa285bd097baeccd3462d5789f1639642c73e1bc9a6"
+    },
+    {
+      "path": "thesis/figures/hko-recovery-by-source-distance.pdf",
+      "sha256": "86b8204c9ddd2b6a4817c694675bffcdf726860d77420846e6d09f07e2132477"
+    },
+    {
+      "path": "thesis/figures/rotation-profile.png",
+      "sha256": "dd9e6b8eb06545f4b2e5d5cc552f2bede021ea4a9ddcecb673fe25cd34152e99"
+    },
+    {
+      "path": "thesis/figures/symmetry-extension.pdf",
+      "sha256": "65e8d54ab27eafbc6793ead32ad536ffe65e4af79952649fb8445b3ad87e09f6"
+    },
+    {
+      "path": "thesis/figures/upper-bound-mechanisms.pdf",
+      "sha256": "faca0c4193580223e5c0d468583d550002c49f20b4ba2d3b5137514edf86fb66"
+    },
+    {
+      "path": "thesis/figures/visualization/viz-hko-pentagon-min-orbit.png",
+      "sha256": "6f6ec2b8173e454c45827ec0e340b470cbf3150355517284e3156889b2e5473f"
+    },
+    {
+      "path": "thesis/figures/visualization/viz-hypercube-ridges.png",
+      "sha256": "b3d9b189c0796274b074bac92e4c55d012fa208240d90327241471fceb429c03"
+    },
+    {
+      "path": "thesis/main.tex",
+      "sha256": "fede5525da8703d64ad391c3862b40e8a95ebb4781a8d53d9321639d93525225"
+    },
+    {
+      "path": "thesis/preamble.tex",
+      "sha256": "3dd932fb29bd8a7c44f5f7a8fef28453caca276755925e43129e097ff97fc566"
+    },
+    {
+      "path": "thesis/references/additional.bib",
+      "sha256": "720756062d9e994ac915c8d2149d59d2dda0483bddd188a4859f99523363f3a9"
+    },
+    {
+      "path": "thesis/references/ai.bib",
+      "sha256": "229ebfb782a8afca9198cf3f81c31b561b4bf5b041315f76aceb7a79b96e5342"
+    },
+    {
+      "path": "thesis/references/data-science.bib",
+      "sha256": "a4aec4018ff328c4f8348c982785709a491d346b60ad43db5670bcc212219c77"
+    },
+    {
+      "path": "thesis/references/main.bib",
+      "sha256": "c98ae0d18c67d51f7f32969487f7086c79af75a79a99cd44a6dbd50fc93a88f3"
     }
   ],
-  "meaning": "Build dependency check only; not prose/mathematics acceptance; not final submission"
+  "meaning": "Structure/build verification, not prose/mathematics acceptance or submission",
+  "text_comparison": "Previous PDF text differs only in relocated HKO-program printed path and resulting paragraph wrapping"
 }

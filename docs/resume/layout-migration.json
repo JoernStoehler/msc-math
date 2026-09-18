@@ -95,5 +95,10 @@
     "PROJECT-STATUS-BRIEF.md": "docs/history/PROJECT-STATUS-BRIEF.md",
     "JOERN.md": "docs/history/JOERN.md"
   },
-  "old_manuscripts": "Recover from previous_commit:thesis; not active alternatives"
+  "old_manuscripts": "Recover from previous_commit:thesis; not active alternatives",
+  "retained_figure_producers": {
+    "thesis/candidate/ds-complete-draft/figures/plot_association.py": "thesis/figures/plot_association.py",
+    "thesis/candidate/support/hko-figures/make_figures.py": "thesis/figures/make_hko_figures.py",
+    "thesis/figures/foundations/generate.py": "thesis/figures/foundations/generate.py"
+  }
 }
