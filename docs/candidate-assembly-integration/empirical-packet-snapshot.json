@@ -1043,16 +1043,6 @@
       "bytes": 384
     },
     {
-      "path": "experiments/sys-datascience/methods/current-body-evaluator/__pycache__/evaluate.cpython-312.pyc",
-      "sha256": "b4298bfebd5ed35160a7452669c8fb5e004dee41bfabbbbc793c7b7de51d3a7b",
-      "bytes": 7019
-    },
-    {
-      "path": "experiments/sys-datascience/methods/current-body-evaluator/__pycache__/build.cpython-312.pyc",
-      "sha256": "41d0849ed118e8247aa41e957b47607700976cd1f66cbd1d78e773cf41b556dd",
-      "bytes": 3230
-    },
-    {
       "path": "experiments/sys-datascience/methods/current-body-evaluator/controls/run.time",
       "sha256": "d549200e84d350e83c9dc11b10a1e42b302b5e5cd321eef24fbdd2876a3f086f",
       "bytes": 1195
