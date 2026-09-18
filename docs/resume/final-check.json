@@ -1,0 +1,82 @@
+{
+  "checked_at_utc": "2026-09-18T17:44:00Z",
+  "resume_verifier": {
+    "status": "pass",
+    "summary": "3370 branch records, dirty snapshots, PDF and 51 selected build inputs"
+  },
+  "markdown_local_links": {
+    "status": "pass",
+    "files": [
+      "README.md",
+      "RESUME.md",
+      "docs/README.md",
+      "docs/WORK_REMAINING.md",
+      "thesis/README.md"
+    ],
+    "links_checked": 42,
+    "broken": []
+  },
+  "repository_topology": {
+    "status": "pass",
+    "branches": [
+      "main",
+      "thesis/resume-20260918"
+    ],
+    "worktrees": [
+      "/workspaces/msc-math",
+      "/workspaces/msc-math/.worktrees/candidate-assembly-integration"
+    ]
+  },
+  "archive": {
+    "status": "pass",
+    "path": "/workspaces/archived/workspaces-root/msc-math-session-20260918",
+    "bundle_sha256": "8b948452f1fc34cf48460bffdd277283f00ad99147e326b40f0659af44287b98",
+    "payload_sha256": "317cee7b212220f8c764d641802033bf00edfe313e9202031d0241f2a33ae816",
+    "matches_cleanup_result": true,
+    "restore_check_repeated": false
+  },
+  "local_review_service": {
+    "url": "http://127.0.0.1:56741/docs/whole-review/",
+    "status": "stale",
+    "observed_http_status": "000",
+    "detail": "connection refused; service was not relaunched"
+  },
+  "dirty_main_source_comparison": {
+    "status": "changes_observed",
+    "inventory_entries": 288,
+    "sha_entries_checked": 287,
+    "excluded": [
+      ".codex/config.toml"
+    ],
+    "changed_or_missing_count": 25,
+    "changed_or_missing": [
+      "thesis/candidate/main.tex",
+      "docs/task-graph/17-review-delivery.dot",
+      "docs/task-graph/17-review-delivery.svg",
+      "experiments/sys-datascience/methods/current-body-evaluator/Cargo.lock",
+      "experiments/sys-datascience/methods/current-body-evaluator/Cargo.toml",
+      "experiments/sys-datascience/methods/current-body-evaluator/README.md",
+      "experiments/sys-datascience/methods/current-body-evaluator/build.py",
+      "experiments/sys-datascience/methods/current-body-evaluator/controls/build-receipt.json",
+      "experiments/sys-datascience/methods/current-body-evaluator/controls/check.py",
+      "experiments/sys-datascience/methods/current-body-evaluator/controls/failure-inputs.jsonl",
+      "experiments/sys-datascience/methods/current-body-evaluator/controls/failure-results.jsonl",
+      "experiments/sys-datascience/methods/current-body-evaluator/controls/inputs.jsonl",
+      "experiments/sys-datascience/methods/current-body-evaluator/controls/make_panel.py",
+      "experiments/sys-datascience/methods/current-body-evaluator/controls/results.jsonl",
+      "experiments/sys-datascience/methods/current-body-evaluator/controls/run.time",
+      "experiments/sys-datascience/methods/current-body-evaluator/evaluate.py",
+      "experiments/sys-datascience/methods/current-body-evaluator/src/main.rs",
+      "thesis/candidate/02-preliminaries.tex",
+      "thesis/candidate/03-generalized-reeb-orbits-polytopes.tex",
+      "thesis/candidate/04-quadratic-program.tex",
+      "thesis/candidate/05-flow-graph.tex",
+      "thesis/candidate/09-rotated-regular-polygons.tex",
+      "thesis/candidate/11-numerics.tex",
+      "thesis/candidate/ai-use-disclosure.tex",
+      "thesis/candidate/figures/rotation-profile.png"
+    ],
+    "change_kind": "missing_from_source_worktree",
+    "source_overwritten": false
+  }
+}
