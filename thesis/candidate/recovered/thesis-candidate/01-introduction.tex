@@ -90,6 +90,31 @@ the ball. The HKO body presents a different setting: it has corners and a
 ratio larger than the ball's. Our local theorem studies how such a
 nonsmooth example behaves under perturbations of its supporting facets.
 
+Haim--Kislev studies the HKO body through hyperplane cuts. A convex body is
+a \emph{cuts extremizer} if every cut into two pieces with nonempty interior
+strictly decreases the EHZ capacity on each piece. Numerical experiments
+suggest this property for HKO, while also suggesting that its capacity is
+not always the sum of the capacities of the pieces
+\cite[Definitions~1.1--1.2 and Example~1.12]{HaimKislev2025Zoll}.
+For sufficiently shallow cuts in certain directions, including all normals
+supported in one pentagon factor, Haim--Kislev proves this additivity identity
+\cite[Proposition~1.13]{HaimKislev2025Zoll}.
+
+These cuts give a complementary way to perturb the counterexample. Cutting
+off a small cap typically adds a facet, whereas our theorem varies the ten
+existing facets. The systolic ratio also compares capacity with volume: for
+a retained piece $K'$, the inequality
+$\operatorname{sys}(K')\leq\operatorname{sys}(K_{\rm HKO})$ is equivalent to
+\[
+ \frac{c_{\rm EHZ}(K')}{c_{\rm EHZ}(K_{\rm HKO})}
+ \leq
+ \left(\frac{\operatorname{vol}_4 K'}
+ {\operatorname{vol}_4 K_{\rm HKO}}\right)^{1/2}.
+\]
+Thus the capacity decrease must be large enough to compensate for the lost
+volume. The theorem below establishes this balance throughout a neighborhood
+in the space of ten-facet polytopes.
+
 \subsection{A local theorem around the counterexample}
 
 Our main result partially answers the first question: every sufficiently
@@ -102,8 +127,10 @@ Allowing facets to appear or disappear is a different local problem, which
 the theorem leaves open.
 
 The proof uses upper bounds that agree with the systolic ratio at HKO.
-For each nearby direction, at least one of these bounds decreases. It follows
-that the ratio itself decreases. The finite task is to construct enough
+For every nonzero direction transverse to the symmetries, at least one of
+these bounds has negative derivative. A uniform estimate then gives strict
+decrease away from HKO on a sufficiently small transverse slice.
+The finite task is to construct enough
 such bounds and check their derivatives. Feasible weights in Haim--Kislev's
 capacity formula provide the bounds. An algebraic computation establishes the derivative
 conditions; the proof explains why those conditions imply the geometric
