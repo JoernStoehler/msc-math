@@ -18,7 +18,7 @@ The invariant table and provenance table have their own registry entries.
 
 On a configured host, use `python3 scripts/artifacts.py materialize
 polytope-datasets --no-link`; repeat for the table artifacts as needed. Consult
-`scripts/artifacts.py --help` and `artifacts/README.md` for the configured source
+`scripts/artifacts.py --help` and `docs/artifacts.md` for the configured source
 transport. The recorded recovery used the authenticated sandbox transport;
 credentials are not included in this handoff. This consolidation did not read
 credential contents, rerun capacity producers, or test remote redownload.
@@ -38,3 +38,21 @@ are not deleted: an idle tab, running review server, and historical path consume
 may still refer to them. Their unique tracked work and project-related dirty bytes
 are accounted for in this branch. Removing the old directories is a separate
 cleanup operation requiring path-consumer checks, not a prerequisite to resume.
+
+## Discovered historical replay limitation
+
+The older `ridge-mechanism-discriminator/analyze.py` defaults to two `/tmp`
+inputs. Both are absent on the host at consolidation: tail-rule diagnostics and
+the 100k generated feature cache. Its tracked compact results remain available,
+but a full replay is not currently ready. Its README documents regeneration
+from `tail-rule-mining` and `extreme-scalar-rejection-proposer/configs/100k-promising-scalars-durable.json`.
+Use explicit durable input/output paths; do not run the config's `stage=all`
+blindly because that can launch capacities and replace retained outputs. This
+consolidation did not regenerate those caches or claim their reproduction tested.
+This is a pre-existing research replay limitation, not a dependency of the thesis
+PDF build. It is surfaced here so a successor does not assume every historical
+experiment is executable merely because all its tracked records were consolidated.
+
+The three `scripts/subtree-usage*` accounting files were also promoted byte-for-byte
+from main's retained dirty snapshots into their canonical script locations. They
+operate on durable Codex session logs, not ephemeral handoff files.

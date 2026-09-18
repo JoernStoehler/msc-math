@@ -34,7 +34,9 @@ Build from this checkout with `sh thesis/candidate/build.sh`.
 `legacy/` fallback for visualization and availability. No other worktree is a
 LaTeX input. The consolidation validation and frozen current draft are recorded
 in `docs/resume/build-verification.json` and `docs/resume/thesis-resume.pdf`.
-That PDF is a resume artifact, **not a grading submission**.
+The clean build has 94 pages and no warnings. Run `python3 docs/resume/verify.py`
+to verify retained versions, source hashes and the PDF. That PDF is a resume
+artifact, **not a grading submission**.
 
 The preceding diagnostic is `docs/whole-review/thesis-v3-writing.pdf`, SHA256
 `249f597a4094add726f077b83538301ce7394cd42d62420e3970aee4fd683fda` (93 pages).
@@ -84,7 +86,8 @@ of old prose or old plans. No pending branch merge is required to read these pac
 from main and the interrupted review checkout. Matching bytes already in this tree
 are identified; 53 differing files are retained as unselected snapshots. Main and
 the original review checkout were not modified. Machine-local `.codex/config.toml`
-was deliberately not imported. Do not install archived startup instructions.
+was deliberately not imported. The current project `AGENTS.md` is copied unchanged from main so a standalone
+checkout retains its guidance. Do not install other archived startup instructions.
 Other worktrees are retained for existing path consumers and rollback; they are
 not required to build this manuscript or read the consolidated tracked evidence.
 

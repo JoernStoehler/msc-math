@@ -1,3 +1,5 @@
+> Current consolidated draft and handoff: [../RESUME.md](../RESUME.md).
+
 # Thesis
 
 [`candidate/main.tex`](candidate/main.tex) is the recovered working candidate
