@@ -31,9 +31,12 @@ that the completion forecast is reliable.
    minutes. It did not validate prose success, cost forecasts, human review
    duration or the conditional completion forecast. The exact reply and scope
    are in `roadmap-v2-reader-check.md`.
-3. **Current failure-branch review:** a fresh independent PM review has been
-   assigned by root. Its result is not yet available. It will be published as a
-   separate review, not inferred from the two earlier checks.
+3. **Current failure-branch review by `chapter_opening_review`:** now published
+   as `roadmap-v2-independent-review.md`. Verdict: useful status map, not yet a
+   defensible completion forecast. It identifies the unread complete DS chapter,
+   the exact AI rollback constraint, future integration checks, human-review
+   coverage and timing arithmetic as unresolved. Read its concrete findings;
+   they are not an approval inherited from either earlier check.
 
 The completed local checks remain useful evidence about their specific subjects.
 The red flags above remain open until the corresponding outcome is established.
