@@ -1,0 +1,167 @@
+\section{Geometric information about large systolic ratios}
+
+Within the sampled product distributions, low normalized ridge area and
+balanced symplectic vertex covariance each identify populations with
+larger mean numerical systolic ratios. These give two different geometric
+descriptions of promising bodies: one through their two-dimensional faces,
+the other through their extreme points. Both respect affine symplectic
+changes of coordinates and can be evaluated before capacity. The evidence
+supports geometric selection; the square--HKO comparison above shows why
+it cannot turn small ridge area into a universal rule for increasing the
+ratio of an individual body.
+
+The covariance condition makes the second description precise. For
+vertices $v_1,\ldots,v_N$, put
+\[
+ \overline v=\frac1N\sum_{i=1}^Nv_i,
+ \qquad \Gamma=\frac1N\sum_{i=1}^N(v_i-\overline v)(v_i-\overline v)^T.
+\]
+In suitable symplectic coordinates, this matrix has Williamson normal
+form $\operatorname{diag}(\nu_1,\nu_2,\nu_1,\nu_2)$, with
+$0<\nu_1\leq\nu_2$. The ratio $\rho(K)=\nu_2/\nu_1$
+measures the imbalance between the covariance scales of the two
+symplectic coordinate planes. It equals one when those scales agree.
+
+This score is invariant under affine symplectic maps and common dilation.
+Indeed, centering removes translations, and a symplectic map $S$ gives
+$\Gamma(SK)=S\Gamma(K)S^T$. With
+$J=\left(\begin{smallmatrix}0&I_2\\-I_2&0\end{smallmatrix}\right)$,
+\[
+ J\Gamma(SK)=S^{-T}\bigl(J\Gamma(K)\bigr)S^T.
+\]
+Thus the eigenvalues $\pm i\nu_1,\pm i\nu_2$ of $J\Gamma$ are unchanged.
+A dilation multiplies both $\nu_j$ by the same squared scale factor,
+preserving their ratio.
+
+For a product, if $A$ and $B$ are the planar vertex covariance matrices
+of its factors, then $\Gamma=\operatorname{diag}(A,B)$. Consequently
+$(J\Gamma)^2=\operatorname{diag}(-BA,-AB)$, so $\nu_1^2,\nu_2^2$ are
+the eigenvalues of $AB$.
+
+\begin{samepage}
+The following contrasts give the empirical support for these conditions.
+Each compares selections within the same generated population and
+factor-side-count groups; the bodies were selected from their geometry
+before their ratios were evaluated.
+\begin{center}
+\begin{tabular}{lrr}
+\toprule
+Selection & Compared with & Mean difference\\
+\midrule
+Low $R$ & Comparison bodies & $+0.311$\\
+Lower $C$ at low $R$ & Higher $C$ at low $R$ & $+0.034$\\
+Low $\rho$ & Comparison bodies & $+0.333$\\
+Low $\rho$ & Low $R$, then lower $C$ & $+0.015$\\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{samepage}
+The first contrast has selected and comparison means $0.626$ and $0.316$.
+The second splits the lowest one percent by $R$ into halves according to
+$C$; its difference is positive in eight of ten side-count groups. Thus
+the dominance of the largest ridge adds information even when total ridge
+area is already small.
+
+The two covariance contrasts come from a separate comparison on two
+fresh pools, motivated by an exploratory inverse association between
+$\rho$ and the ratio. Their descriptive $95\%$ Student-$t$ intervals,
+using the twenty pool-by-group differences, are $[0.310,0.356]$ and
+$[-0.015,0.044]$. These contrasts support both selection criteria,
+without resolving which yields larger mean ratios. The geometric reason
+for their association with capacity remains open.
+
+\subsection{Changing the population and strengthening the filter}
+
+Ridge area also helped select generic ten-facet polytopes. Here the number
+of ridges varies even though the number of facets is fixed. To compare the
+area per ridge, we used $R$ divided by the ridge count. The lowest one
+percent by this quantity had mean systolic ratio $0.626$, compared with
+$0.339$ for comparison bodies from the same pool. More severe filtering
+gave no further improvement in this sample: the lowest tenth of the
+selected group had a mean ratio $0.032$ below the remaining selected bodies.
+The descriptive $95\%$ interval from resampling these selected bodies
+was $[-0.095,0.033]$, which spans zero. This interval conditions
+on the realized selection; it does not include variation from generating
+and selecting a new pool.
+
+The product filters also remained useful when the factors were tangential
+polygons. These polygons have every side tangent to a circle. We obtained
+them by keeping the sampled unit normals and setting every support height
+to one, retaining pairs for which both the original and the changed
+polygons were valid. For products with side counts $4\times6$ and
+$6\times6$, selection by small $\rho$ increased the mean ratio by $0.259$
+relative to comparison bodies; ridge selection increased it by $0.225$.
+These are averages of the two group differences in one pool. Together
+with the original product experiment, they show that the usefulness of
+both filters survived this particular change of sampling distribution.
+
+\section{Changing a body or changing the sampling distribution}
+
+Selection uses geometry to choose among sampled bodies. We can also ask
+whether changing that geometry raises the ratio of an individual body,
+or whether the successful samples suggest a better sampling distribution.
+
+\subsection{Making the factors tangential}
+
+Replacing both factors by tangential polygons sometimes raised and
+sometimes lowered the systolic ratio. With the normals fixed, setting
+all support heights to one gave a mean numerical increase of $0.015$
+among the tested $4\times4$ and $4\times6$ products, with changes of both
+signs. Thus a useful selection rule for tangential products does not
+supply a rule for improving every product by making its factors tangential.
+
+This comparison changes the support heights, then scales each factor to
+area one. The latter normalization preserves the systolic ratio: for
+$a,b>0$,
+\[
+ \operatorname{diag}(aI_2,bI_2)
+ =\sqrt{ab}\,\operatorname{diag}(\sqrt{a/b}\,I_2,\sqrt{b/a}\,I_2),
+\]
+a common dilation followed by a symplectic map. The comparison concerns
+products for which the original factors and both height replacements
+remain admissible; it measures the change of shape within that family.
+
+The tested ambient rotations $K\mapsto UK$, $U\in SO(4)$, also gave
+smaller search maxima than fresh sampling at equal evaluation budgets
+(Appendix~\ref{app:trial-ambient}).
+
+\begin{samepage}
+\subsection{Learning a sampling distribution}
+
+Adapting the sampling distribution improved the search for pentagon
+products in each of three comparisons. The cross-entropy
+method~\cite{dsDeBoer2005} repeatedly fits a distribution to the best part
+of the current population and draws a new population from it. Under the
+same number of capacity evaluations, it attained both a larger maximum
+systolic ratio and a larger median among the eight best distinct bodies:
+\begin{center}
+\begin{tabular}{crrrr}
+\toprule
+ & \multicolumn{2}{c}{Maximum} & \multicolumn{2}{c}{Median of best eight}\\
+Run & Independent & Adaptive & Independent & Adaptive\\
+\midrule
+1 & $0.760$ & $0.799$ & $0.729$ & $0.782$\\
+2 & $0.811$ & $0.831$ & $0.754$ & $0.776$\\
+3 & $0.760$ & $0.856$ & $0.722$ & $0.814$\\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{samepage}
+The gain therefore extended beyond a single best observation in each run.
+
+The sampler described each factor by log ratios of its normal-angle gaps
+and centered logarithmic lengths of its dual normals, together with the
+relative angle between the factors. These coordinates remove separate
+factor scales and simultaneous planar rotation, which preserve the
+systolic ratio. Independent Gaussian coordinates described gaps and
+lengths; the relative angle used a wrapped Gaussian with a circular mean
+update. Each update shifted the distribution's moments towards those of
+the quarter of the population with largest ratios.
+
+The comparison also includes the numerical evaluator's input restrictions.
+It accepts only bodies within a prescribed coordinate range. Independent
+sampling uses the original coordinates, whereas the adaptive method
+reconstructs a normalized representation, so this restriction affects
+the two distributions differently. The observed gain belongs to the
+implemented combination of adaptation and admission. All recorded ratios
+remained below one.
