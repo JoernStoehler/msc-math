@@ -41,10 +41,12 @@ provides a second capacity algorithm under explicit regularity assumptions.
 
 In those populations, symplectic ridge area gives a strong coarse predictive
 signal for computed systolic ratios. Geometric selection enriched fresh
-samples, but stronger ridge filtering did not establish a further gain in
-the tested panel. The
-distinction between prediction and ascent is already visible in exact
-examples: the cube has both a lower ridge score and a lower systolic ratio
+samples. The pooled inverse rank association weakens substantially when the
+original data are restricted within each sampling group to low ridge scores
+or high computed ratios, with ranks recomputed in the retained groups.
+Thus a strong ordering across the broad population becomes much weaker
+among selected candidates. The distinction between prediction and ascent
+is also visible in exact examples: the cube has both a lower ridge score and a lower systolic ratio
 than HKO. A universal inverse ordering is therefore false. At the same
 time, equation~\ref{eq:ds-pentagon-ridge-capacity} proves an inverse-square
 law throughout the regular-pentagon rotation family, so the descriptor does
@@ -54,7 +56,8 @@ The broader association still needs an explanation. One possibility is that
 typical geometric perturbations in the sampled populations move the two
 quantities in opposite directions. Another is that ridge area is a noisy
 proxy for a different geometric relation. The experiments do not separate
-these hypotheses. The search comparisons also show that selection,
+these hypotheses; restricting the range can itself attenuate correlation.
+The search comparisons also show that selection,
 deformation and adaptation answer different questions: improving a starting
 body need not outperform spending the same evaluations on fresh samples.
 None of the exploratory searches produced a new numerical ratio above one.
