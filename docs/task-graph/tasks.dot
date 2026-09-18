@@ -3,8 +3,8 @@ digraph tasks {
  node [shape=box,style="rounded,filled",fillcolor="#edf4fa",fontname="Helvetica",fontsize=11]; edge [fontname="Helvetica",fontsize=10];
  science [label="DONE: science required for current claims\nIndependent checks complete",fillcolor="#e7f4e7"];
  chapters [label="AI v2 review/revision separate\nDS v2 desk-rejected at opening",fillcolor="#e7f4e7"];
- joins [label="RUNNING: summaries + chapter consistency\nhko_context / submission_surface\nfinal delta ~10m after fixed PDF"];
- assembly [label="RUNNING: fixed whole PDF + guide\ncandidate_integrator\nPDF frozen; checks → ~16:10
+ joins [label="DONE: summaries + chapter consistency\nhko_context / submission_surface\nFinal fixed-PDF delta checked"];
+ assembly [label="Fixed whole PDF published; guide follows\ncandidate_integrator\nVisual + synthesis checks complete
 No chapter-PASS dependency"];
  publish [label="Delivery owner: pm_review\nPublish within 2 min of freeze"];
  chapter_read [shape=diamond,label="FAILED GATE: DS opening rejected\nNew concrete checkpoint 16:20",fillcolor="#fff0d2"];
