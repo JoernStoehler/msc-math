@@ -114,8 +114,8 @@ $\operatorname{sys}(K')\leq\operatorname{sys}(K_{\rm HKO})$ is equivalent to
  {\operatorname{vol}_4 K_{\rm HKO}}\right)^{1/2}.
 \]
 Thus the capacity decrease must be large enough to compensate for the lost
-volume. The theorem below establishes this balance throughout a neighborhood
-in the space of ten-facet polytopes.
+volume. Theorem~\ref{thm:hko-ten-facet-local-maximum} establishes this
+balance throughout a neighborhood in the space of ten-facet polytopes.
 
 \subsection{A local theorem around the counterexample}
 
@@ -186,18 +186,19 @@ see Section~\ref{sec:product-rotation}.
 
 Symplectic ridge area gives a strong inverse association with the computed
 systolic ratio in the sampled populations. Selection based on geometric
-measurements also enriches fresh samples. Yet the overall rank association
-is substantially weaker in subsets selected within each sampling group for
+measurements also raises mean computed ratios in fresh samples. Yet the
+overall rank association is substantially weaker in subsets selected within each sampling group for
 either low ridge scores or high computed ratios. Its success as a coarse
 predictor leaves open how to improve a body already selected for a promising
 score.
 
-Affine shape variation of the factors contributes to the broad association.
 Area-preserving linear maps that make each factor's vertex covariance
 isotropic raise the computed ratio in 314 of 320 tested products and
-substantially weaken the ridge--ratio correlation. This identifies a useful
-shape deformation, although its effects cannot be attributed to covariance
-imbalance alone: the maps change several geometric features together.
+substantially weaken the ridge--ratio correlation. These paired changes
+support a contribution from affine factor shape to the broad association
+in this sample. Their effects cannot
+be attributed to covariance imbalance alone: the maps change several
+geometric features together.
 
 Exact family laws further constrain the explanation. An edge--width formula
 describes the ridge measurement on Lagrangian products. Under relative
@@ -208,12 +209,12 @@ the two quantities have the same strict ordering; see
 A general explanation must therefore account
 for the shapes and relative positions of the factors.
 
-Direct local search gives a separate positive result. In the comparison of
-fixed implementations from the same 64 starting bodies, retaining previously
-active capacity branches attains larger median best ratios than literal
+In a comparison of fixed local-search implementations from the same
+64 starting bodies, retaining previously active capacity branches attains larger median best ratios than literal
 gradient ascent under the same evaluation limits. This connects the
 first-order branch model to practical improvement; the finite searches still
-do not establish local maximality.
+do not establish local maximality. None of the exploratory searches produced
+a new numerical ratio above one.
 
 \subsection{How to read the thesis}
 
