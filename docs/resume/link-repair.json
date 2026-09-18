@@ -1,0 +1,10 @@
+{
+  "source": "cleanup-caused-maintained-markdown-audit",
+  "commit": "9a976751",
+  "checked_links": 383,
+  "remaining_failures": 0,
+  "historical_excluded": "docs/history/**",
+  "changed_files": 15,
+  "repaired_links": 21,
+  "notes": "Targets follow docs/resume/layout-migration.json: active ownership, thesis chapters, retained DS packets, and explicitly historical records."
+}
