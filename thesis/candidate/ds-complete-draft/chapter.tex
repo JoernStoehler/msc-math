@@ -1,39 +1,41 @@
-% Fresh chapter candidate revised after Jörn's narrative/research-frame feedback.
+% Chapter organized by the strength and limits of the geometric evidence.
 \section{Finding mathematical patterns with data science}
 \label{sec:fresh-data-search}
 \label{sec:black-box-datascience}
 
-We use data science to look for geometric relationships involving symplectic
-capacity. We sample random polytopes and compute a broad range of readily
-available geometric quantities, including symplectic invariants and
-measurements that can change under symplectic transformations. The sampling
-distributions are specified in Section~\ref{subsec:ds-sampling}.
+The normalized sum of symplectic ridge areas is a useful coarse indicator
+of systolic ratio, but does not reliably order the bodies selected for
+small ridge sums. Its strong inverse association in the broad sample
+weakens markedly after restriction to either low ridge sums or high
+ratios. Fresh low-ridge selections still have larger mean ratios than
+comparison bodies, even where stronger filtering gives no further gain.
+The distinction is between identifying a promising population and finding
+an improving direction within it.
 
-We then look for simple statistical patterns without requiring a geometric
-explanation in advance. When a pattern emerges, we return to the definitions
-and try to understand why the quantities might be related. This can suggest
-a tentative conjecture, which further examples may help sharpen or refute.
-The aim is to formulate a precise statement and find a proof that explains
-the observed relationship.
+Affine shape variation of the polygon factors contributes materially to
+this pattern. Balancing their vertex covariances raises the mean numerical
+ratio from $0.342$ to $0.654$ in a matched sample of 320 products, while
+the pooled correlation of within-group ranks weakens from $-0.929$ to $-0.249$.
+This supplies a concrete geometric source of variation in the broad
+sample. It does not explain all of the remaining association or turn
+balancing into a universal improvement rule.
 
-The experiments reported below carried out parts of this program. They
-found a strong association between symplectic ridge area and the numerical
-systolic ratio. Examining the descriptor geometrically clarified what it
-measures, but did not establish a general relation to capacity. The pattern
-also served a complementary aim: finding bodies with large ratios.
-Selection rules based on it improved the results of fresh sampling before
-we had an explanation for their success. The chapter follows this signal
-from its statistical discovery through geometric interpretation and search
-tests, then considers search methods that change the bodies themselves.
+Exact geometry imposes complementary limits on any explanation. Among
+polygon products the normalized ridge sum is at least eight, and the cube
+attains that minimum with systolic ratio only $1/2$. Minimizing ridge area
+therefore cannot maximize the ratio universally. Yet rotated regular
+pentagon products satisfy an exact inverse-square relation between the
+two quantities. A broader account must accommodate both this strict
+family relation and its failure outside that family.
 
-\subsection{Ridge area and systolic ratio}
+\subsection{The geometric quantities and the sampled populations}
+\label{subsec:ds-sampling}
 
-The initial sample contains generic four-dimensional polytopes and
-Lagrangian products of planar polygons. We compare their systolic ratios
-with measurements of face structure and geometry. For numerical evaluations
-we write $\widehat{\operatorname{sys}}=c_{\mathrm{num}}^2/(2V_{\mathrm{num}})$;
-the normalization is the same as for $\operatorname{sys}$, but volume is
-computed in floating-point arithmetic.
+For numerical evaluations we write
+$\widehat{\operatorname{sys}}=c_{\mathrm{num}}^2/(2V_{\mathrm{num}})$.
+Its normalization agrees with $\operatorname{sys}$; its volume is computed
+in floating-point arithmetic. The empirical results below concern this
+numerical ratio.
 
 A two-dimensional face of a four-dimensional polytope is called a ridge.
 For a ridge $F$ with cyclically ordered vertices $v_0,\ldots,v_{r-1}$, define
@@ -58,9 +60,64 @@ positive. Both are unchanged by translation, common dilation and linear
 symplectic maps. The area formula is translation invariant because the terms involving the
 translation vector cancel around the closed polygon.
 
-\subsection{Looking for patterns in the measurements}
+
+The exploratory sample contains 4,096 generic four-dimensional polytopes,
+with 512 at each facet count $F=5,\ldots,12$, and 10,240 Lagrangian products
+$P\times Q$, with 1,024 at each pair $3\leq k\leq m\leq6$ of factor side
+counts. In coordinates $(q_1,q_2,p_1,p_2)$, $P$ lies in the $q$-plane and
+$Q$ in the $p$-plane. A fixed facet count or pair of side counts defines a
+sample group.
+
+The unit facet normals are independent and uniform on the appropriate
+sphere, and the support heights are independent and uniform in
+$[0.8,1.2)$. Boundedness and the presence of every proposed facet are
+required. Thus these are specified distributions of bodies; the precise
+admission rules are in Appendix~\ref{app:ds-generation}. The largest
+numerical ratio in the exploratory sample is $0.863$. Its retained values
+and current reevaluation are described in Appendix~\ref{app:ds-evaluation}.
+
+\subsection{A strong bulk association weakens under selection}
+
 
 The pooled rank correlation between $R$ and the numerical systolic ratio is about $-0.94$. Rank correlation compares the orderings of the bodies by the two quantities; a value of $-1$ would mean exactly reversed orderings. The ordinary linear correlation is much weaker, about $-0.21$. Thus the principal observation concerns which bodies have larger systolic ratio, rather than how much the systolic ratio changes per unit of ridge area. The inverse association also occurs within every sampled facet-count or polygon-size group: the rank correlations range from about $-0.84$ to $-1.00$. Thus it is not solely a consequence of pooling these groups. Figures~\ref{fig:ds-ridge-association} and~\ref{fig:ds-ridge-products} show the separate populations.
+
+Conditioning the original sample on either low $R$ or high numerical
+systolic ratio weakens this association. If the lowest ten percent by $R$
+are retained within each group, the pooled correlation of within-group
+ranks is $-0.222$; retaining the highest ten percent by ratio gives
+$-0.286$, compared with $-0.944$ before restriction. Figure~\ref{fig:ds-conditional-ranks}
+shows the progressive attenuation. At the five-percent cutoff the
+high-ratio panel still has a negative association, so attenuation should
+not be confused with independence. The smallest panels contain only six
+generic or eleven product bodies per group.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=.94\linewidth]{ds-complete-draft/figures/conditional-ridge-correlation.pdf}
+\caption{Restricting the original sample by either ridge sum or systolic
+ratio weakens their inverse association. Within each facet-count or
+factor-side-count group, retain the indicated fraction, rerank both
+quantities within that retained group, and compute the pooled Spearman
+correlation of the group-relative ranks. This is a descriptive conditional
+analysis of the original data. It does not evaluate a fresh selection
+rule or identify a geometric cause.}
+\label{fig:ds-conditional-ranks}
+\end{figure}
+
+The attenuation is substantially stronger than in a Gaussian reference
+fitted separately to each group's full-sample rank correlation. At the
+five-percent cutoff, that reference gives mean correlation $-0.695$ for
+either selection, versus the observed $-0.239$ for high ratios and
+$-0.113$ for low $R$. This reference does not reproduce the conditional
+pattern; it does not exclude range-restriction effects under other
+dependence structures. Its construction is in Appendix~\ref{app:ds-selection}.
+
+Ridge measurements also contain predictive information beyond face counts
+and incidences. Under a common training/test split, ridge-area features
+alone gave test $R^2=0.887$, whereas combinatorial counts alone gave
+$0.043$. Here $R^2$ compares squared prediction error with prediction by
+the test-set mean. The feature lists, additional models and split
+definitions are in Appendix~\ref{app:ds-prediction}.
 
 \begin{figure}[p]
 \centering
@@ -79,90 +136,16 @@ by factor side counts. Each group contains 1,024 bodies.}
 \label{fig:ds-ridge-products}
 \end{figure}
 
-\subsection{The sampled bodies and the measured ratio}
-\label{subsec:ds-sampling}
+\FloatBarrier
+\subsection{Exact geometry: a special law and its limits}
 
-We sampled generic polytopes with prescribed facet counts, and Lagrangian
-products of planar polygons. In both constructions we drew independent unit
-facet normals and support heights in $[0.8,1.2)$, retaining bounded bodies
-with every proposed facet present. The detailed generation and rejection
-rules are given in Appendix~\ref{app:ds-generation}. Thus the experiment
-studies these particular distributions of bodies.
+A universal inverse relation between ridge sum and systolic ratio is
+false, but it can hold exactly on a restricted family. The product edge
+formula explains both statements and identifies the smallest possible
+ridge sum among polygon products.
 
-The second family consisted of Lagrangian products $P\times Q$. In coordinates
-$(q_1,q_2,p_1,p_2)$, each factor was a planar polygon constructed in the same
-way, using independent uniform angles for its unit normals. A $k\times m$
-product has $k$ sides in its first factor and $m$ in its second. We call a
-fixed choice of these side counts, or of $F$ in the generic family, a sample
-group. The retained exploratory data contained the following groups.
-\begin{center}
-\begin{tabular}{lrrr}
-\hline
-Family & Groups & Bodies per group & Total\\
-\hline
-Generic, $F=5,\ldots,12$ & 8 & 512 & 4,096\\
-Products, $3\leq k\leq m\leq6$ & 10 & 1,024 & 10,240\\
-\hline
-\end{tabular}
-\end{center}
-
-Seven of the ten product groups have a triangle or quadrilateral factor.
-For these products, the Viterbo inequality is already known
-\cite[Theorem~1.2 and Section~4]{dsBMP2026}. They can reveal geometric
-patterns and near-equality behavior, but cannot supply counterexamples.
-The remaining groups are $5\times5$, $5\times6$ and $6\times6$; their
-side counts alone do not imply the same bound. In particular, the theorem
-for an affinely regular hexagonal factor does not cover an arbitrary hexagon.
-
-The largest numerical ratio in this sample was $0.863$, and none exceeded
-one. Appendix~\ref{app:ds-evaluation} records the recovered geometry,
-rebuilt descriptors and current capacity reevaluation. All but one of the
-14,336 bodies now have current capacity intervals; the original numerical
-values are retained for the statistical analyses reported here.
-
-\subsection{Predictive information in ridge area}
-
-Prediction experiments gave another view of the signal. A random forest~\cite{dsBreiman2001},
-which averages predictions from many decision trees, used 39 descriptors:
-27 describing face counts and incidences, and 12 summarizing ridge areas.
-The test split held out groups defined by capacity-source label and facet
-count, leaving 8,192 training rows and 6,144 test rows. Its test coefficient
-of determination was $R^2=0.885$. Here
-\[
- R^2=1-\frac{\sum_{i\in\mathrm{test}}(s_i-\widehat s_i)^2}
-                   {\sum_{i\in\mathrm{test}}(s_i-\overline s_{\mathrm{test}})^2}
-\]
-compares squared prediction error with prediction by the test-set mean.
-Here $s_i$ is the observed numerical systolic ratio and $\widehat s_i$
-is the model prediction.
-The mean absolute error was $0.0495$. This was one group split, not repeated
-cross-validation across independent datasets.
-
-A separate feature-family comparison used histogram-based gradient-boosted
-regression~\cite{dsSklearnHGB}, which successively fits trees to improve the prediction. Under
-its common training/test split, ridge-area features alone gave $R^2=0.887$,
-whereas combinatorial counts alone gave $0.043$. The comparison points to
-information in the ridge areas beyond those counts. Its split and feature
-list differ from the random-forest experiment, so the two scores do not rank
-the learning algorithms against each other.
-
-\subsection{Returning from a pattern to geometry}
-
-The ridge result suggests a first, deliberately imprecise idea: reducing
-symplectic area on the two-dimensional faces might favor a large systolic
-ratio. This is a starting point for interpretation. It leaves open what
-should be held fixed, whether a statement concerns individual bodies or a
-sampling distribution, and how face areas could constrain capacity.
-
-The HKO body supplies a useful reference. Its normalized ridge sum is
-$8.944$, close to the low end of the retained sample. However, the sample
-minimum is smaller, $8.926$. Thus even this particularly successful body
-does not give a separating rule of the form ``smaller ridge sum than every
-ordinary example.'' The observed association motivates selection; it does
-not establish a monotone geometric law relating $R$ to capacity.
-
-Products allow us to unpack the descriptor further. Let $u_i$ and $v_j$ be
-the oriented edge vectors of $P$ and $Q$. A ridge lying entirely in a $q$-
+For products the descriptor has an elementary edge formula. Let $u_i$ and $v_j$ be
+the counterclockwise boundary edge vectors of $P$ and $Q$. A ridge lying entirely in a $q$-
 or $p$-plane has zero symplectic area. A mixed ridge is the rectangle formed
 from one edge in each factor, and its symplectic area is $|u_i\cdot v_j|$.
 Consequently
@@ -183,7 +166,42 @@ widths of the other in the edge directions. This gives concrete geometry
 to investigate instead of treating the successful column as an unexplained
 score.
 
-It also helps test the scope of the tentative idea. For two aligned unit
+
+\paragraph{The minimum ridge sum for polygon products.}
+Let $P,Q$ be convex polygons with nonempty interior, set $D=P-P$, and write
+$A_P,A_Q$ for their areas. Let $J_2(x,y)=(-y,x)$, and normalize mixed area, for $t\geq0$, by
+\[
+ \operatorname{area}(K+tL)=\operatorname{area}(K)+2tV(K,L)
+                         +t^2\operatorname{area}(L).
+\]
+Then
+\begin{equation}\label{eq:ds-product-ridge-minimum}
+ R(P\times Q)=\frac{4V(D,J_2Q)}{\sqrt{A_PA_Q}}\geq8.
+\end{equation}
+Equality holds precisely when $P$ is centrally symmetric and $J_2Q$ is
+positively homothetic to $D$, allowing translation.
+
+\begin{proof}
+Let $h_D$ be the support function of $D$. The boundary-projection identity
+gives $\sum_i|u_i\cdot v_j|=2h_D(v_j)$. The outward unit normal to the
+counterclockwise edge $J_2v_j$ is $v_j/\|v_j\|$. The polygon mixed-area
+formula therefore gives
+\[
+ 2V(D,J_2Q)=\sum_j\|v_j\|h_D(v_j/\|v_j\|)
+          =\sum_j h_D(v_j),
+\]
+which proves the identity. Brunn--Minkowski and its equality case
+\cite[Sections~3 and~5]{dsGardner2002} imply
+\[
+ V(D,J_2Q)^2\geq\operatorname{area}(D)A_Q,
+ \qquad \operatorname{area}(D)\geq4A_P.
+\]
+The first inequality is an equality exactly when $D$ and $J_2Q$ are
+positively homothetic. The second is an equality exactly when $P$ is
+centrally symmetric. Substitution proves the bound and equality statement.
+\end{proof}
+
+For two aligned unit
 squares, eight edge pairs have absolute scalar product one and the rest
 zero, so $R=8$. Their product is the unit four-dimensional cube, whose
 capacity is one and whose systolic ratio is $1/2$.\footnote{For the centered
@@ -198,29 +216,11 @@ a smaller ridge score forces a larger systolic ratio is false. The strong
 negative association in the sampled distributions needs a more specific
 explanation.
 
-Later analyses added ordinary Euclidean ridge area $E(F)$ and the ratio
-$\kappa(F)=A_\omega(F)/E(F)$ for a ridge of positive area. These separate
-its size from the alignment of its plane with the symplectic form, relative
-to the Euclidean metric. They need not survive a nonorthogonal symplectic
-transformation. Normalizing $E(F)$ by the square root of volume removes
-common scaling, but does not give symplectic invariance. Thus the broader
-collection contained both invariants and non-invariants. These later
-measurements were used to interpret the ridge signal; they were not inputs
-to the original 39-feature prediction experiment.
 
-The factorization
-\[
- A_\omega(F)=E(F)\kappa(F)
-\]
-separates these two contributions. In the generic ten-facet selection described below, the low-ridge panel had
-smaller mean normalized Euclidean ridge area than controls ($0.917$ versus
-$1.365$), and smaller Euclidean-area-weighted alignment factor ($0.377$
-versus $0.503$). Both components therefore moved with the coarse filter.
-Within the selected panel, however, the ten most extreme ridge scores had
-slightly larger ordinary area and smaller alignment factor than the other
-ninety, without a larger mean ratio. This decomposition does not isolate a
-cause. It explains why the next question cannot simply be which component
-to drive lower without considering the rest of the shape.
+In particular, the cube attains the global minimum of $R$ among polygon
+products without attaining a large systolic ratio. The HKO value is also
+not separated from ordinary sampled bodies by $R$: its value $8.944$
+exceeds the exploratory sample minimum $8.926$.
 
 For rotated regular pentagons, the descriptor does have an exact relation
 to capacity. Let $K_\theta=P_5\times\operatorname{Rot}(\theta)P_5$, with circumradius one,
@@ -247,185 +247,206 @@ Thus smaller normalized total unsigned ridge area means larger systolic
 ratio within this rotation family. This supplies a geometric explanation
 for one instance of the observed inverse association.
 
-Other rotation families behave differently. In products with side counts
-$3\times6$ and $4\times4$, both $R$ and the numerical systolic ratio
-decrease across the four sampled positions in each family. Together with
-the square--HKO comparison, these examples show why reducing ridge area
-cannot serve as a universal ascent rule. We next test a weaker possibility:
-using ridge area to select promising new bodies from a population.
 
-\subsection{Testing whether a pattern can guide fresh selection}
+More precisely, $R$ strictly decreases and $\operatorname{sys}$ strictly
+increases as $d$ runs from $0$ to $\pi/10$. Throughout this rotation
+family, distinct ridge sums therefore have strictly reversed systolic
+ratios. The periodicity and reflection symmetry prevent strict
+monotonicity in the unrestricted angle $\theta$.
 
-Alongside geometric interpretation, we tested the signal as a search rule.
-A predictor can describe an existing dataset without helping on new bodies. We
-therefore changed the order of computation: generate fresh geometry, compute
-its descriptors, fix the selected bodies and comparison bodies, and only then
-evaluate their ratios. Selection cannot use the systolic ratios at this stage.
+The exact relation is special to this family. Along sampled rotation
+paths of $3\times6$ and $4\times4$ products, both $R$ and the numerical
+ratio decrease at the four recorded positions. These observations do not
+establish monotonicity between those positions. Together with the exact
+cube--HKO comparison, they show why a relationship visible in one family
+cannot be extrapolated to every deformation or product.
 
-An initial pool of 100,000 product candidates tested thirty scalar selection
-sets. These included low ridge sums and other ridge summaries, as well as
-high face counts, selecting globally or separately within side-count groups.
-For example, the per-group low-sum rule selected the ten smallest values of
-$R$ in each group. The union of all selections and their baselines required
-1,675 evaluations, not 100,000. Its maximum recorded ratio was $0.868$.
-Several rules selected the same bodies; their outcomes cannot be added as
-independent repetitions. The next experiments isolated more specific rules.
+\subsection{Coarse selection succeeds; stronger selection need not}
 
-The concentration experiment generated a new pool of 100,000 candidates.
-Within each side-count group, it first retained the lowest one percent by
-$R$. It then divided this tail into two equally sized parts according to
-$C$. The question was whether spreading the already small total symplectic
-area more evenly would select better bodies. The half with smaller $C$ had a
-mean recorded ratio larger by $0.0340$ than the other half. The difference
-was positive in eight of the ten groups. The run evaluated 2,490 bodies and reached a maximum numerical ratio of
-$0.902$. Appendix~\ref{app:ds-selection} records the selection and
-continuation rules.
+The bulk association has a practical consequence: geometry alone can
+identify fresh populations with larger numerical ratios before capacity
+is evaluated. Within fixed factor-side-count groups, selection for low
+$R$ gave mean ratio $0.626$, compared with $0.316$ for comparison bodies
+from the same source. Among products already in the lowest one percent
+by $R$, the half with lower $C$ had a further mean advantage of $0.034$
+over the other half, positive in eight of ten groups. Thus the dominance
+of the largest ridge contains information even when the total ridge area
+is small. This concerns largest-ridge dominance, rather than every notion
+of how evenly area is distributed.
 
-A different descriptor came from the primal vertices. Let $\Gamma$ be their
-population covariance matrix: subtract the mean vertex and average the outer
-products of the centered vectors. Its two Williamson eigenvalues
-$0<\nu_1\leq\nu_2$ describe its symplectic scales. Equivalently, the eigenvalues
-of $J\Gamma$ are $\pm i\nu_1,\pm i\nu_2$, where
-$J=\begin{pmatrix}0&I_2\\-I_2&0\end{pmatrix}$.
-We used
+The strong ordering in the broad samples is not retained within the
+low-$R$ panels themselves. Across 1,000 evaluated products in the lowest
+one percent by $R$, correlations within the ten side-count groups range
+from $-0.315$ to $+0.301$; pooling ranks computed within each group gives
+$+0.032$. The most extreme tenth has a larger mean ratio than the rest
+in only two groups. Coarse enrichment over comparison bodies and loss of
+the inverse ordering within the selected population are therefore both
+visible in the same research program.
+
+For generic ten-facet bodies, the related score $R/N_2$, where $N_2$ is
+the number of ridges, measures normalized area per ridge. Unlike products
+at fixed side counts, these bodies can have different ridge counts.
+Selecting the lowest one percent by $R/N_2$ gave mean ratio $0.626$,
+against $0.339$ for comparison bodies. Within that selected panel, however,
+the ten most extreme scores had a mean ratio $0.032$ below the remaining
+ninety. This is a failure to obtain further gain in that sample, not an
+established deterioration under every stronger filter. The comparison
+rules and conditional resampling summaries are retained in
+Appendix~\ref{app:ds-selection}.
+
+The area decomposition supplies a geometric view of the same limitation.
+For Euclidean ridge area $E(F)>0$, write
 \[
- \rho(K)=\nu_2/\nu_1
+ A_\omega(F)=E(F)\kappa(F),\qquad
+ \kappa(F)=A_\omega(F)/E(F).
 \]
-to favor bodies whose vertex covariance has similar scales in the two
-symplectic directions. This uses geometry alone. It is unchanged by common
-dilation and linear symplectic transformations, as well as translation
-because the covariance is centered.
+Here $\kappa$ measures the alignment of the ridge plane with the symplectic
+form relative to the Euclidean metric. Neither factor is invariant under
+all linear symplectic maps. In the generic selection, both mean normalized
+Euclidean ridge area and Euclidean-area-weighted $\kappa$ were smaller
+than in the comparison panel: $0.917$ versus $1.365$, and $0.377$ versus
+$0.503$. Within the selected panel, the ten lowest ridge scores instead
+had slightly larger ordinary area and smaller alignment factor than the
+other ninety, without a larger mean ratio. Lowering one component is
+therefore not enough to explain or guarantee improvement.
 
-Two independently seeded pools of 50,000 products compared three selections
-in every side-count group: the lowest $0.5\%$ by $\rho$, the ridge rule above
-(lowest $1\%$ by $R$, then its lower half by $C$), and 25 disjoint controls.
-There were 500 memberships in each selection across the two pools. Because
-64 bodies belonged to both geometric selections, 1,436 distinct bodies
-were evaluated.
+\subsection{The inverse direction survives a controlled change of shape}
 
-The mean difference between the covariance selection and controls was
-$0.333$, with an interval $[0.310,0.356]$. Against the ridge selection, the
-difference was $0.0145$, with interval $[-0.0149,0.0439]$. These intervals
-use the twenty seed-by-group differences and a Student-$t$ calculation with
-nineteen degrees of freedom. They do not represent twenty independent seeds.
-The covariance rule selected much larger recorded ratios than controls,
-while this comparison did not establish an advantage over ridge selection.
-No recorded value above one was found in these selection experiments.
+The attenuation under selection does not mean that the inverse relation
+is confined to comparisons of unrelated bodies. Keeping polygon normals
+fixed and setting both factors' support heights to one gives opposite
+changes in $R$ and the numerical systolic ratio in fifteen of sixteen
+pairs. In ten pairs $R$ decreased and the ratio increased; in five the
+reverse happened. Both quantities increased in the remaining pair.
+Thus the sign relation persists for most of these controlled changes,
+even though making the factors tangential does not always raise the ratio.
 
-\subsection{Transfer and the limit of a stronger filter}
-
-The ridge observation first came from a mixture of generic polytopes and
-products. To test a concrete selection rule on generic ten-facet bodies, we
-generated 10,000 fresh candidates and selected the lowest one percent by
-\emph{mean} normalized ridge area, $R(K)$ divided by the ridge count.
-Generic bodies with the same facet count can have different ridge counts,
-so this differs from selecting by the sum. The 100 selected bodies had mean
-recorded ratio $0.626$, compared with $0.339$ for 100 disjoint controls.
-The difference was $0.287$, with a percentile-bootstrap interval
-$[0.250,0.324]$ from 20,000 resamples of the realized panels.
-
-The same experiment asked whether a more extreme filter would help further.
-The ten bodies in the lowest $0.1\%$ were compared with the other ninety
-selected bodies. Their mean difference was $-0.0318$, with interval
-$[-0.0946,0.0331]$. This failed the criterion for expanding that particular
-search to a larger pool. It did not establish that stronger filtering is
-harmful: the interval permits effects of either sign. The useful contrast
-is that a coarse geometric filter worked well while the next restriction
-did not show an additional gain.
-
-We also changed the product sampling law. Starting from the original random
-normals and heights, we replaced every support height in both factors by
-one. Each side of the resulting polygon lies on a tangent line to the unit
-circle. We required both the original factors and the changed factors to
-be admissible, and then separately normalized the two changed factors to
-area one. This produces a conditioned family of tangential polygons.
-
-On one fresh pool with 3,200 eligible bodies in each of the $4\times6$ and
-$6\times6$ groups, ridge and covariance selection were compared with shared,
-disjoint controls. Each selection had sixteen memberships per group; five
-selected bodies overlapped, giving 91 actual evaluations. Averaging the two
-group effects equally, relative to controls, covariance selection gained $0.259$
-and ridge selection gained $0.225$. Their respective resampling intervals were
-$[0.192,0.329]$ and $[0.160,0.296]$. These intervals condition on the realized
-panels; one seed and two side-count groups do not measure variation across
-arbitrary source laws. The shared controls also make the comparisons
-dependent. The experiment nevertheless gives a concrete instance in which
-both rules remained useful after changing how bodies were generated.
-
-\subsection{Changing support heights and symplectic alignment}
-
-The transfer experiment selected among tangential products. It did not
-isolate the effect of making a particular polygon tangential. For that
-question we kept the normals fixed and compared the original product with
-three changes: equalize the first factor's heights, equalize the second
-factor's heights, or equalize both. Sixteen independently generated pairs,
-eight of type $4\times4$ and eight of type $4\times6$, supplied 64 bodies.
-We accepted a pair only if all four constructions were valid, before
-evaluating any ratio. The paired result therefore concerns this jointly
-admissible source.
-
-Each factor was then scaled to area one. Separate factor dilations preserve
-the mathematical ratio, since
+Separate normalization of the factors preserves the ratio: for $a,b>0$,
 \[
  \operatorname{diag}(aI_2,bI_2)
  =\sqrt{ab}\,\operatorname{diag}(\sqrt{a/b}\,I_2,\sqrt{b/a}\,I_2)
 \]
-is a common dilation followed by a symplectic map. Replacing unequal support
-heights is the shape change being tested. Changing both factors raised the
-mean numerical ratio by $0.0153$: eleven pairs improved and five declined.
-The mean changes were $0.0040$ for $4\times4$ and $0.0266$ for $4\times6$.
-All 64 evaluations succeeded. An average improvement therefore did not give
-a rule that equalizing the heights helps every body.
+is a dilation followed by a symplectic map. Thus replacing unequal support
+heights is the geometric change being tested.
 
-Rotation changes a different aspect of the geometry. An orthogonal map
-preserves Euclidean shape but need not preserve $\omega_0$. A rotated
-Lagrangian product can consequently have a different capacity and need no
-longer be a Lagrangian product for the fixed symplectic form.
+The evidence is stronger for direction than for size of effect. The
+Spearman correlation between the two changes is $-0.55$ overall and only
+$-0.095$ in the $4\times6$ group. All tested ratios are at most $0.742$,
+so this is not a deformation test of the high-ratio tail. It is consistent
+with shared geometric variation producing the bulk association, but does
+not isolate a causal role for ridge area or explain the whole pattern.
+The paired constructions and checks are in
+Appendix~\ref{app:ds-deformations}.
 
-We compared two allocations of sixteen evaluations. One evaluated a fresh
-product, a symplectic rotation as a control, and fourteen prescribed
-orthogonal rotations. The other evaluated sixteen fresh products, sharing
-the first body with the rotation allocation. We repeated the comparison
-four times, twice for $3\times3$ and twice for $4\times4$. The rotation
-schedule and all source bodies were fixed before target evaluation. Shared
-starts gave 124 distinct requests and 128 charged memberships. The
-symplectic controls preserved the numerical ratios within $4\cdot10^{-16}$.
+\subsection{Covariance balance gives a second geometric signal}
 
-Rotation improved three of the four starting bodies. Fresh sampling still
-produced the larger maximum in every comparison. In one $4\times4$ case,
-rotation raised the ratio from $0.328$ to $0.529$, while fresh sampling
-reached $0.774$. The rotation evaluations also took longer. For these four
-starts and this prescribed schedule, the same number of evaluations was
-more effective when spent on fresh bodies.
+Ridge area is not the only summary associated with the ratio. In an
+exploratory analysis, more nearly equal symplectic covariance scales of
+the vertex set were associated with larger ratios. For vertices
+$v_1,\ldots,v_N$, define
+\[
+ \overline v=\frac1N\sum_i v_i,\qquad
+ \Gamma=\frac1N\sum_i(v_i-\overline v)(v_i-\overline v)^T.
+\]
+In Williamson normal form, $\Gamma$ has diagonal
+$(\nu_1,\nu_2,\nu_1,\nu_2)$, with $0<\nu_1\leq\nu_2$.
+The ratio $\rho=\nu_2/\nu_1$ measures the imbalance between the two
+symplectic covariance scales.
 
-\subsection{Adapting the sampling distribution}
+Like $R$, this score is invariant under affine symplectic maps and common
+dilation. Centering removes translations. For symplectic $S$,
+$\Gamma(SK)=S\Gamma(K)S^T$, so with
+$J=\left(\begin{smallmatrix}0&I_2\\-I_2&0\end{smallmatrix}\right)$,
+\[
+ J\Gamma(SK)=S^{-T}(J\Gamma(K))S^T.
+\]
+The eigenvalues $\pm i\nu_1,\pm i\nu_2$ are unchanged. Dilation multiplies
+both $\nu_j$ by the same square factor. For a product with planar vertex
+covariances $A,B$, moreover, $\Gamma=\operatorname{diag}(A,B)$ and
+$(J\Gamma)^2=\operatorname{diag}(-BA,-AB)$; thus $\nu_1^2,\nu_2^2$ are
+the eigenvalues of $AB$.
 
-Fresh sampling won the rotation comparison, but it repeatedly draws from the
-same law. A further experiment tested whether evaluated bodies could improve that law.
-The cross-entropy method~\cite{dsDeBoer2005} used here repeatedly fits a simple distribution to
-the best part of a population, then samples another population from it.
+Low $\rho$ selected larger mean ratios in every side-count group in each
+of two fresh pools. The twenty gains over comparison bodies ranged from
+$0.260$ to $0.440$, with mean $0.333$. Against the combined low-$R$,
+low-$C$ selector, its mean advantage was only $0.014$, and the differences
+changed sign across groups. Both geometric summaries therefore support
+selection in the tested populations; neither was uniformly better there.
 
-This experiment used $5\times5$ products. We described each pentagon by the
-cyclic gaps between its five normal angles and the relative lengths of its
-five dual normals. There are four independent angular-gap coordinates and
-four independent logarithmic lengths per factor. One relative angle between
-the factors gives seventeen coordinates altogether. Separate factor scales
-and a simultaneous planar rotation do not change the mathematical ratio,
-which allows their removal from this description. Appendix~\ref{app:ds-adaptive} specifies the coordinates and update.
+Their usefulness also survived one change of sampling law. For tangential
+factors obtained by setting the support heights to one, the mean gains
+were $0.259$ for covariance selection and $0.225$ for ridge selection,
+averaged equally over the $4\times6$ and $6\times6$ groups. This is one
+conditioned source, requiring both original and changed polygons to be
+valid. It establishes a particular transfer, not independence from the
+sampling distribution. Details are in Appendix~\ref{app:ds-selection}.
 
-Both arms began with the same 64 independent products from the original
-angle-and-height source. The adaptive arm fitted a diagonal Gaussian in these
-coordinates, then moved its mean and coordinate variances halfway toward
-those of the sixteen bodies with largest numerical ratio. It drew another
-64 bodies, evaluated them, and repeated this update. Each arm had four
-populations including initialization, for 256 charged evaluations. The
-comparison arm continued independent sampling throughout. A variance floor
-kept the adaptive sampler from eliminating a coordinate's variation entirely.
+\subsection{Balancing the factors improves most tested products}
 
-Three seeds produced the following results. The top-eight statistic is the
-median of the eight highest ratios after removing repeated, exactly equal
-dual-vertex arrays in an arm; different bodies with equal scores remain. It tests
-whether improvement extends beyond a single best observation.
+Removing the planar vertex-covariance anisotropy of both factors raises
+the mean numerical ratio from $0.342$ to $0.654$ in a matched comparison
+of 320 products, with increases in 314 and decreases in six. At the same
+time, the pooled within-group rank correlation between $R$ and the ratio
+weakens from $-0.929$ to $-0.249$. Thus affine shape variation of the
+factors contributes materially to the broad association in this sample.
+
+The transformation has a precise geometric meaning. For a factor with
+vertex covariance $A$, set
+\[
+ L_A=(\det A)^{1/4}A^{-1/2}.
+\]
+Then $\det L_A=1$ and
+$L_A A L_A^T=\sqrt{\det A}\,I_2$. Applying $L_A$ and $L_B$ to the two
+factors preserves their areas and combinatorics and makes both vertex
+covariances scalar matrices. The product therefore has $\rho=1$.
+These independent factor maps need not combine to a symplectic map, so
+capacity can change even though volume is preserved.
+
+The mean ridge sum falls from $23.739$ to $11.652$, decreasing in 306 of
+the 320 products. The remaining relation depends on the side counts:
+the balanced $3\times3$ group has positive rank correlation, while the
+other nine groups retain negative correlations. The transformation changes
+several geometric properties together. It therefore identifies a useful
+shape deformation, not covariance imbalance as the sole cause of the
+bulk association. Nor do its six decreases permit a universal improvement
+rule. The target-blind choice of original bodies, complete paired
+evaluations and numerical checks are in Appendix~\ref{app:ds-balance}.
+
+\subsection{What could explain the bulk association?}
+
+The controlled changes give substance to one possible explanation of the
+bulk pattern. Many original products leave a large improvement available
+under factor balancing, and removing that shape variation weakens the
+association. Common perturbations of relatively inefficient shapes could
+therefore account for much of the broad inverse ordering, while other
+features govern differences among the better bodies. The height changes
+supply a second concrete deformation with a mostly inverse direction.
+Neither experiment measures geometric distance to a local optimum or
+establishes an additive-noise model.
+
+A different explanation is an underlying relation involving a geometric
+quantity that $R$ measures only imperfectly. Extreme $R$ can then reflect
+both favorable geometry and deviations specific to the proxy. Here noise
+would mean differences between bodies not captured by the relation, not
+numerical error in a fixed-body evaluation. The residual associations
+after balancing leave room for such a relation; they do not identify it.
+
+These explanations are compatible, and the results do not choose between
+them. The observed attenuation is stronger than in the fitted Gaussian
+reference, but other dependence structures can behave differently under
+selection. Neither convenient account need describe the full phenomenon.
+The exact pentagon identity, the global counterexample and the controlled
+shape changes provide constraints that a broader explanation must respect.
+
+\subsection{Using evaluated ratios to guide search}
+
+A weak explanation of the ridge signal need not prevent practical search.
+Adapting the product sampling law to evaluated ratios improved both the
+maximum and the quality of several leading bodies in three paired runs.
+For $5\times5$ products, the cross-entropy method~\cite{dsDeBoer2005}
+shifts a fitted distribution towards the quarter of the current population
+with largest ratios, then samples again. Under equal evaluation counts,
+the results were:
 \begin{center}
 \begin{tabular}{crrrr}
 \hline
@@ -438,51 +459,36 @@ Seed & IID & Adaptive & IID & Adaptive\\
 \hline
 \end{tabular}
 \end{center}
-The adaptive arm was better on both statistics for all three seeds.
-The shared initial populations account for 1,344 actual evaluations versus
-1,536 charged arm memberships. All actual requests succeeded and none gave
-a numerical ratio above one. Three paired runs give a useful small
-comparison, without establishing superiority across other generators or
-choices of population size and update rule.
+The top-eight statistic is the median of the eight highest ratios after
+removing repeated exact dual-vertex arrays. Both arms share their initial
+population. The fitted coordinates describe log ratios of normal-angle
+gaps, centered logarithmic dual-normal lengths and a relative angle;
+the latter uses a circular mean update. The coordinate-dependent evaluator
+admission condition acts differently on the original sampling coordinates
+and the adaptive normalized representation. The observed advantage
+therefore concerns this implemented combination of adaptation and
+admission. Appendix~\ref{app:ds-adaptive} records the update, budgets and
+admission history.
 
-Both arms rejected bodies outside the evaluator's supported coordinate
-range. Because the adaptive arm reconstructs a normalized representation,
-this condition acts differently on its proposals and the original IID
-coordinates; the reported comparison includes that conditioning. The complete
-run took 216 seconds, most of it in construction and admission checks.
-Appendix~\ref{app:ds-adaptive} gives the admission rule, its revision after
-an initial failed run, and the measured costs.
+The prescribed ambient rotations $K\mapsto UK$, $U\in SO(4)$, also
+lost to fresh sampling under equal evaluation budgets. These limited
+comparisons are recorded in Appendix~\ref{app:ds-deformations}.
 
-\subsection{Local search from matched starting bodies}
+\subsection{Competing branches in local search}
 \label{subsec:black-box-datascience-finite-budget-optimization}
 
-The adaptive sampler changes a distribution over products. A separate,
-earlier experiment changed the dual normals of generic ten-facet bodies
-directly. Seven fixed implementations started from the same 64 bodies.
-Each run allowed at most 128 charged full evaluations and a one-second
-accumulated evaluator-plus-optimizer time ceiling, excluding the initial
-evaluation. Invalid proposals still consumed calls. Work begun below the
-time ceiling was allowed to finish, so terminal results can include a small
-overrun; they are not values available at exactly one second.
+The local-search comparison favors methods that account for several
+competing branches of the capacity calculation. A single selected branch
+can point uphill while the minimum of the branches decreases. For example,
+$\min\{x,-x\}$ decreases in either direction from zero although each
+individual branch has an increasing direction. The corresponding search
+question is whether retaining nearby or previously active branches helps
+the numerical systolic ratio increase.
 
-The capacity calculation suggests local branch functions, each associated
-with a particular candidate in the variational problem. When several smooth
-functions compete through their minimum, following the gradient of one
-selected function can fail to increase the minimum. For example, the minimum
-of $x$ and $-x$ decreases in both directions away from zero, although either
-individual function has a direction of increase. This motivates methods
-that include more than the currently selected branch.
-
-We compared a literal single-branch gradient, an improvement-only version
-of that gradient, and three methods that model several competing branches.
-The finite-gap method uses branches close to the current minimum; the two
-history methods also retain branches encountered at earlier points. One
-history method predicts additional branches from transitions. CMA-ES
-\cite{dsHansen2016}, which adapts a Gaussian search population, and a poll
-along coordinate directions provide two further comparisons. The precise
-steps, symmetry directions removed, and acceptance rules are recorded in
-Appendix~\ref{app:datascience-results}.
-
+Seven fixed implementations started from the same 64 generic ten-facet
+bodies, under a common cap of 128 full evaluations and a nominal one-second
+accumulated evaluator-plus-optimizer budget. The implementations retaining
+branches from earlier points attained the largest median terminal values:
 \begin{center}
 \begin{tabular}{lrr}
 \hline
@@ -498,89 +504,43 @@ Coordinate poll & .601 & .358--.787\\
 \hline
 \end{tabular}
 \end{center}
+The finite-gap method models branches near the current minimum. The two
+history methods also retain earlier branches; one predicts additional
+branches from transitions. CMA-ES~\cite{dsHansen2016} and coordinate polling
+supply population and direct-search comparisons. These are rankings of
+the fixed implementations under this allocation, not of optimally tuned
+algorithm families. The historical numerical objective uses floating-point
+geometry and volume, and not every original executable or proposal trace
+was recovered. Appendix~\ref{app:datascience-results} gives the retained
+steps, provenance and budget interpretation. The ranges in the table
+show variation across starting bodies; all 448 terminal values are below one.
 
-Each entry summarizes 64 terminal best-so-far recorded values. The ranges
-show variation across starts, not confidence intervals for the medians.
-All 448 values remained below one. Comparing methods within the same start,
-the median history-minus-finite-gap difference was $0.00883$, with an existing
-percentile-bootstrap interval $[0.00335,0.01533]$. The bootstrap resampled the
-64 matched starts 4,000 times. This paired median is not the difference of
-the two medians in the table.
+\subsection{A failed probe does not establish a local maximum}
 
-The table ranks these implementations under the recorded allocation and
-historical evaluator. Its resampling does not account for configuration
-selection, untested starting distributions or evaluator error. The original
-producer tree and the individual proposal/evaluation trace tables are not
-locally available; retained run records and analysis identities support the
-reported aggregates, rather than a replay of the executable. The historical
-objective used floating-point geometry and volume. These limits prevent
-interpreting the table as a certified ordering of mathematical capacities
-or as a comparison of optimally tuned algorithm families.
+The endpoint diagnostics show that a high terminal ratio need not mean
+local convergence. One optimizer endpoint decreased along every tested
+signed basis direction, yet a continuation increased its ratio by
+$0.00223$ along oblique moves of total normalized path length $0.01$.
+All three selected endpoints in that continuation accepted ten improving
+steps, while HKO accepted none. HKO's local status is established by its
+theorem; the finite test supplies a consistent control observation.
 
-\subsection{What a failed local probe tells us}
+A regular-pentagon control on a known increasing rotation path illustrates
+the same problem independently. In a suite of basis, random and prescribed
+rotation probes, its only positive changes were the twelve rotation
+probes; the generic directions missed the available increase. The regular
+triangle--hexagon product, rotated square--square product and CH2021
+example had no nominal gain above $10^{-12}$ in that suite. Their misses
+do not exclude untested directions or changes in facet count. The probe
+design and numerical limitations are in Appendix~\ref{app:ds-probes}.
 
-A large terminal value also raises a geometric question: has search arrived
-at a local maximum? Evaluating a finite set of nearby points can discover an
-improvement, but failing to find one does not prove local maximality.
-The endpoint diagnostics gave concrete examples of this distinction.
-
-Sixteen endpoints of the history method were chosen across the observed
-performance range of the common starts. At each, we evaluated both signs of
-twenty-five transverse basis directions at relative radii $10^{-3}$,
-$10^{-4}$ and $10^{-5}$: 150 probes per endpoint. Seven endpoints had at least
-one raw positive change and nine had none. The sixteen endpoints were
-selected by outcome ranks, so these fractions do not estimate a population
-convergence probability.
-
-After allowing a larger search budget on those starts, a further continuation
-experiment examined three selected optimizer endpoints and HKO. It tested
-branch-model and selected-gradient proposals at five decreasing step lengths,
-falling back to a signed basis poll, and allowed at most ten accepted
-improvements. All three optimizer endpoints took ten improving steps. One
-had previously decreased along every tested signed basis direction, yet
-improved by $0.00223$ along a sequence of oblique moves with total normalized
-path length $0.01$. HKO accepted no move. The theorem establishes HKO's local
-status; the finite search supplies a control observation consistent with it.
-
-Another fixed suite probed a regular triangle--hexagon product, a rotated
-square--square product and the CH2021 example, together with a regular
-pentagon product chosen on a known increasing rotation path. It combined
-signed transverse basis directions, projected random directions and
-prescribed rotations at three radii. All 1,482 probes were valid. None of
-the three target bodies had a nominal gain above $10^{-12}$, while the
-pentagon control had twelve, all in the rotation probes. Its generic basis
-and random probes found none. Even this control therefore shows that a
-finite collection of generic directions can miss an available increase.
-The target misses remain numerical diagnostics; they do not exclude
-untested directions or changes in facet count. The historical run also has
-incomplete source provenance, and its broad capacity-derived bounds do not
-turn the nominal target misses into a proof.
-
-\subsection{What remains unexplained}
-
-Ridge area was useful in two different ways. It exposed a strong association
-in the initial sample, and selection based on it enriched fresh pools.
-For regular pentagon products, the edge formula and capacity profile explain
-an inverse-square relationship. The sampled population is much broader:
-its association persists within every group, but the square--HKO comparison
-and opposing rotation paths rule out a universal monotonicity explanation.
-An explanation for the population pattern must account for the distribution
-of shapes as well as the symplectic areas of their faces.
-
-The search experiments also distinguish selection from deformation.
-A stronger filter did not always give a better selection. Equalizing support
-heights improved some bodies and harmed others. Rotations improved individual
-bodies but lost to fresh sampling under the tested allocation. Adapting the
-product distribution and retaining several local branches both helped in
-their respective comparisons. The endpoint tests show what the latter
-methods still missed: a basis poll could report no improvement even when
-nearby oblique directions allowed further ascent.
-
-None of the random samples, prospective selections, adaptive runs or
-matched-start optimizer runs produced a numerical ratio above one.
-The deliberately supplied HKO and pentagon controls are separate.
-For future above-one search, products with a triangle or quadrilateral
-factor are ruled out unless the deformation leaves the class covered by
-the theorem. The remaining product families and generic polytopes still
-present both questions pursued here: which geometric quantities explain
-capacity, and which changes in a body can increase its systolic ratio?
+The chapter therefore supports a strong coarse association, an exact law
+on one rotation family, and useful finite search improvements. It does
+not supply a universal capacity law or a general route to local optimality.
+None of the random samples or search comparisons produced a numerical
+ratio above one. For products with a triangle or quadrilateral factor,
+the Viterbo inequality is already known~\cite[Theorem~1.2 and Section~4]{dsBMP2026};
+such products can illuminate the pattern but cannot yield counterexamples
+while remaining in that class. The remaining product families and generic
+polytopes leave open both questions: what geometric relation explains the
+signal, and what search directions remain effective near large ratios?

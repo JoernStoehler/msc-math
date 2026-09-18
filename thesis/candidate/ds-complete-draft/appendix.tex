@@ -1,10 +1,8 @@
 \section{Data-science methods and additional results}\label{app:datascience-results}
 
-This appendix gives the optimizer steps and additional failure diagnostics
-for the local-search comparison in
-Section~\ref{subsec:black-box-datascience-finite-budget-optimization}.
-Sampling definitions and statistical results are presented with their
-interpretation in Section~\ref{sec:black-box-datascience}.
+This appendix records the population, prediction, selection and search
+methods supporting Section~\ref{sec:black-box-datascience}, together with
+the additional numerical diagnostics and their interpretation limits.
 
 \subsection{Sampling and retained data}\label{app:ds-generation}
 
@@ -62,6 +60,34 @@ on its successful bodies; it does not certify the original execution or the
 complete ratio. Prospective selection experiments and optimizer traces have
 their own evidence records and are not validated by this baseline comparison.
 
+\subsection{Prediction models and feature families}\label{app:ds-prediction}
+
+
+Prediction experiments gave another view of the signal. A random forest~\cite{dsBreiman2001},
+which averages predictions from many decision trees, used 39 descriptors:
+27 describing face counts and incidences, and 12 summarizing ridge areas.
+The test split held out groups defined by capacity-source label and facet
+count, leaving 8,192 training rows and 6,144 test rows. Its test coefficient
+of determination was $R^2=0.885$. Here
+\[
+ R^2=1-\frac{\sum_{i\in\mathrm{test}}(s_i-\widehat s_i)^2}
+                   {\sum_{i\in\mathrm{test}}(s_i-\overline s_{\mathrm{test}})^2}
+\]
+compares squared prediction error with prediction by the test-set mean.
+Here $s_i$ is the observed numerical systolic ratio and $\widehat s_i$
+is the model prediction.
+The mean absolute error was $0.0495$. This was one group split, not repeated
+cross-validation across independent datasets.
+
+A separate feature-family comparison used histogram-based gradient-boosted
+regression~\cite{dsSklearnHGB}, which successively fits trees to improve the prediction. Under
+its common training/test split, ridge-area features alone gave $R^2=0.887$,
+whereas combinatorial counts alone gave $0.043$. The comparison points to
+information in the ridge areas beyond those counts. Its split and feature
+list differ from the random-forest experiment, so the two scores do not rank
+the learning algorithms against each other.
+
+
 \subsection{Selection and comparison rules}\label{app:ds-selection}
 
 The 100,000-product concentration experiment specified a positive aggregate
@@ -79,6 +105,175 @@ The opposing $3\times6$ and $4\times4$ rotation paths contain four recorded
 positions each. Their simultaneous decrease in ridge score and numerical
 ratio is a finite observation; monotonicity at every intermediate angle
 was not established.
+
+\paragraph{Initial ridge selection.}
+The preliminary pool contained 100,000 products. Thirty scalar selection
+sets and their baselines required 1,675 distinct evaluations; their union
+had maximum recorded ratio $0.868$. The low-$R$ rule selecting ten bodies
+per side-count group gave mean $0.6261166821$, against $0.3155039434$ for
+ten comparison bodies from each group. Comparison bodies were selected by
+a rule-specific fixed hash order excluding the selected set. Overlapping
+rules are not independent repetitions.
+
+\paragraph{Restriction to the low-ridge tail.}
+The conditional comparison uses 1,000 evaluated products from the lowest
+one percent by $R$, with 100 in each side-count group. Spearman
+correlations within groups range from $-0.315$ to $+0.301$; pooling ranks
+computed separately within each group gives $+0.03197$. Selecting the
+most extreme tenth increases the mean in only two of ten groups. The
+broad and conditional panels are different generated samples, so their
+comparison concerns a change in population and score range. The retained
+analysis is in \path{tail-dependence-feasibility/artifacts/current/},
+under the methods directory in Table~\ref{tab:ds-evidence-index}.
+
+\paragraph{Conditioning the original dataset.}
+A separate analysis retains the lowest-$R$ or highest-ratio fraction within
+each of the eighteen original sample groups. At retained fractions
+$100\%,20\%,10\%,5\%,1\%$, both arms contain respectively
+14,336, 2,874, 1,446, 728 and 158 bodies. There are no ties across these
+cutoffs. Each retained group is reranked independently; its two rank
+columns are divided by the group's retained size, then pooled for a
+Spearman correlation. Thus the summary weights bodies rather than giving
+each group equal weight. The low-$R$ values are
+$-0.944,-0.434,-0.222,-0.113,+0.035$, and the high-ratio values are
+$-0.944,-0.496,-0.286,-0.239,-0.036$. The smallest panels contain only
+six generic or eleven product bodies per group. These are descriptive
+statistics under conditioning, not evidence of independence, systematic
+reversal, or the effect of a shape intervention. Row identities, cutoffs
+and a second rank calculation were independently checked; the reproducible
+packet is \path{experiments/sys-datascience/methods/selection-mechanism/}.
+
+\paragraph{Gaussian rank reference.}
+Each original sample group is assigned a bivariate Gaussian reference
+with Pearson correlation $2\sin(\pi r_s/6)$, where $r_s$ is its observed
+full-sample Spearman correlation. One thousand simulations preserve all
+eighteen group sizes and apply the same conditional ranking statistic.
+At the five-percent cutoff, the reference means are $-0.695$ for both
+selection directions. The central simulation intervals are
+$[-0.738,-0.649]$ for high-ratio selection and $[-0.736,-0.647]$ for
+low-$R$ selection, against observed values $-0.239$ and $-0.113$.
+These are pointwise simulation references with fitted parameters held
+fixed. The model was considered after seeing the attenuation; this is
+not a prespecified model test or a confidence interval for the observed
+correlation. The reference, reproducible simulation and input hashes are
+in the same packet's \path{gaussian-result.md} and
+\path{gaussian-artifacts/}.
+
+\paragraph{Covariance selection.}
+Two fresh pools of 50,000 candidates compared the lowest $0.5\%$ by
+$\rho$, the lowest $1\%$ by $R$ followed by its lower half by $C$, and
+25 comparison bodies per side-count group. An ordinary covariance
+conditioning cutoff excluded three candidates across the two pools.
+Controls were selected by fixed hash order from the eligible bodies after
+removing both geometric selections. There were 500 memberships in each
+selection and 1,436 distinct evaluations. All twenty covariance-minus-
+control group effects were positive, ranging from $0.259639$ to $0.440029$.
+The mean effect was $0.333123$, while the mean covariance-minus-ridge
+effect was $0.014488$; thirteen of the latter twenty effects were positive.
+
+The retained analysis also gives nominal Student-$t$ intervals. They are
+$[0.310,0.356]$ for covariance versus controls and $[-0.0149,0.0439]$
+for covariance versus ridge selection, using the twenty group effects
+and nineteen degrees of freedom. The groups have fixed, different side
+counts, and no common-mean sampling model or calibrated coverage for
+repeating the complete selection procedure was established. The main text
+therefore reports the observed consistency across groups.
+
+\paragraph{Generic and tangential transfer.}
+The generic ten-facet experiment selected 100 of 10,000 bodies by lowest
+mean normalized ridge area, with 100 disjoint, deterministically selected
+comparison bodies. The mean contrast was $0.287$, with a percentile
+interval $[0.250,0.324]$ from 20,000 resamples. The ten most extreme
+scores minus the other ninety had mean contrast $-0.0318$ and interval
+$[-0.0946,0.0331]$. These resamples hold the selected panels fixed; they
+do not regenerate the pool, rerank its bodies or reselect its tail.
+The selected-panel rank correlation between mean ridge area and ratio
+was $+0.149$.
+
+The tangential-source comparison required both original and changed
+factors to be admissible and normalized the changed factors separately to
+area one. One pool supplied 3,200 eligible bodies in each of the
+$4\times6$ and $6\times6$ groups. Each selection had sixteen memberships
+per group. Five overlapping selections gave 91 distinct evaluations.
+The equally weighted group effects were $0.259$ for covariance versus
+controls and $0.225$ for ridge versus controls; their within-panel
+resampling intervals were $[0.192,0.329]$ and $[0.160,0.296]$.
+These condition on the observed panels. Shared controls make the two
+comparisons dependent.
+
+\subsection{Paired height changes and ambient rotations}
+\label{app:ds-deformations}
+
+The paired support-height experiment used sixteen independently generated
+pairs of polygons, eight $4\times4$ and eight $4\times6$. For each,
+the original product was compared with equalizing heights in the first
+factor, the second, or both; all four constructions had to be valid before
+any ratio was evaluated. Each factor was scaled to area one. All 64
+evaluations succeeded. Changing both factors improved eleven pairs and
+worsened five, with mean numerical change $0.0153$. The group means were
+$0.0040$ and $0.0266$ respectively. This is the jointly admissible source,
+not an unconditioned statement about all polygon pairs.
+
+Recomputing $R$ from the retained paired geometries gives opposite signs
+of $\Delta R$ and $\Delta\widehat{\operatorname{sys}}$ in fifteen of
+sixteen both-factor changes. The one exception has $R$ increasing from
+$11.074$ to $11.218$ while the numerical ratio increases from $0.419$
+to $0.436$. The one-factor comparisons have opposite signs in thirteen
+and fourteen of sixteen pairs. All 64 bodies have $R\geq11.065$ and
+numerical ratio at most $0.742$. These results reuse the retained capacity
+evaluations; no new capacity calls enter the comparison. Reconstruction,
+row identity and hash checks are recorded in
+\path{experiments/sys-datascience/methods/selection-mechanism/controlled-result.md}.
+
+For ambient rotations, the action is
+\[
+ P\times Q\longmapsto U(P\times Q),\qquad U\in SO(4).
+\]
+It preserves Euclidean shape and volume. A nonsymplectic $U$ can change
+capacity, and the image need no longer be a Lagrangian product for the
+fixed symplectic form. One allocation evaluated a source product, a
+symplectic rotation control and fourteen prescribed orthogonal rotations;
+the other evaluated sixteen fresh products, sharing the source body.
+There were four comparisons, two each for $3\times3$ and $4\times4$.
+The schedule used fourteen fixed matrices, not uniform sampling over
+$SO(4)$. The shared starts gave 124 distinct requests and 128 memberships;
+symplectic controls preserved numerical ratios within $4\cdot10^{-16}$.
+
+Rotation improved three starts, but fresh sampling attained a larger
+maximum in all four comparisons. In one quadrilateral example, rotation
+raised $0.328$ to $0.529$, while fresh sampling reached $0.774$.
+Rotation evaluations also took longer. These are observations about the
+prescribed schedules and starts, not a comparison of all ambient rotations
+with all products from the source law.
+
+\subsection{Factor covariance balancing}\label{app:ds-balance}
+
+The paired comparison uses 32 original products from each of the ten
+side-count groups. The selection is fixed by hashes of row identifiers,
+without using the target ratios. For planar vertex covariances $A,B$, the
+maps $(\det A)^{1/4}A^{-1/2}$ and $(\det B)^{1/4}B^{-1/2}$ have determinant
+one and make each covariance scalar. There is one original and one
+transformed body for every selected row, evaluated through the same
+current product-capacity route. All 640 evaluations succeeded.
+
+The mean numerical ratio changes from $0.341888$ to $0.653683$; 314
+paired changes are positive and six are negative. The mean $R$ changes
+from $23.738833$ to $11.652347$, with 306 decreases and fourteen
+increases. The pooled within-group rank correlation changes from
+$-0.928922$ to $-0.248680$. The balanced triangle-product group has
+correlation $+1$; the other nine groups range from $-0.571$ to $-0.098$.
+Thus the pooled weakening does not mean that every transformed group has
+negligible or negative dependence.
+
+The transformed covariance ratios differ from one by at most
+$5.1\cdot10^{-13}$, and relative factor-area changes are below
+$3.2\cdot10^{-13}$. The original current evaluations agree with their
+retained historical numerical ratios within $1.3\cdot10^{-15}$.
+These are paired transformations of retained source bodies, not a new
+independent population or a test isolating the scalar $\rho$ from other
+changed geometric properties. The producer, frozen inputs, evaluator
+identity and complete paired results are retained in
+\path{experiments/sys-datascience/methods/selection-mechanism/balance-artifacts/}.
 
 \subsection{Finite-budget local optimizer comparison}
 
@@ -114,7 +309,7 @@ corresponding algorithm families.
 
 \begingroup
 \small
-\begin{longtable}{@{}p{0.24\linewidth}p{0.67\linewidth}@{}}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}p{0.67\linewidth}@{}}
 \caption{One outer iteration of each optimizer in the recorded
 comparison.}
 \label{tab:black-box-datascience-f10-optimizer-steps}\\
@@ -191,6 +386,7 @@ residual evaluator gap.}
 \label{fig:black-box-datascience-hko-optimizer-calibration}
 \end{figure}
 
+\FloatBarrier
 \paragraph{Selected finite-step failure audit.}
 At the eight highest four-anchor tuning endpoints, five admitted one validated
 improvement, by \(1.57\cdot10^{-6}\) to \(4.61\cdot10^{-5}\).  Across the
@@ -226,7 +422,40 @@ These diagnostics use selected controls rather than population samples.  They
 do not provide a convergence theorem, a population error rate, or a universal
 conditioning cutoff.
 
+\subsection{Endpoint probes and continuation}\label{app:ds-probes}
+
+Sixteen history-method endpoints were chosen across the observed terminal
+performance range. Each received both signs of 25 transverse basis
+directions at relative radii $10^{-3}$, $10^{-4}$ and $10^{-5}$, giving
+150 probes per endpoint. Seven endpoints had a raw positive change and
+nine had none. Rank-based endpoint selection prevents interpreting these
+fractions as a population convergence probability.
+
+After a larger budget on those starts, continuation examined three
+selected endpoints and HKO. It tested branch-model and selected-gradient
+proposals at five decreasing step lengths, with fallback signed basis
+polling, and allowed ten accepted improvements. All three endpoints took
+ten improving steps; HKO took none. One endpoint with no improving signed
+basis direction gained $0.00223$ along oblique moves of total normalized
+path length $0.01$.
+
+The separate triangle--hexagon, square--square, CH2021 and pentagon-control
+suite used basis, projected random and prescribed rotation directions at
+three radii. All 1,482 probes were valid. The three targets had no nominal
+gain above $10^{-12}$; the pentagon control had twelve, all from rotations.
+Incomplete historical source provenance and broad capacity-derived bounds
+prevent interpreting the nominal misses as certified local maximality.
+
+\FloatBarrier
 \subsection{Adaptive product sampling}\label{app:ds-adaptive}
+
+Both arms began with the same 64 independently generated products. Four
+populations including initialization gave 256 charged evaluations per arm.
+The adaptive update used the sixteen bodies with largest ratios. Across
+three runs, shared initial populations gave 1,344 actual evaluations and
+1,536 arm memberships; all actual evaluations succeeded and all recorded
+ratios were below one. The top-eight statistic removes repeated exact
+dual-vertex arrays, retaining different arrays with equal scores.
 
 For reproducibility, let $g_1,\ldots,g_5>0$ be the cyclic normal-angle gaps
 of a factor and let $r_i$ be its dual-normal lengths. Set
@@ -310,6 +539,8 @@ Paired support heights & \path{experiments/sys-datascience/methods/paired-tangen
 Orientation allocation & \path{experiments/sys-datascience/methods/orientation-allocation/}\\
 Adaptive product sampling & \path{experiments/sys-datascience/methods/diagonal-cem-pilot/}\\
 Local optimization and diagnostics & \path{experiments/dev-gradient-ascent/optimizer-comparison/}; \path{docs/ds-evidence-closure/search-account.md}\\
+Conditional and controlled ridge analyses & \path{experiments/sys-datascience/methods/selection-mechanism/}\\
+Conditional ridge correlations & \path{experiments/sys-datascience/methods/tail-dependence-feasibility/}\\
 Product ridge geometry & \path{docs/ds-evidence-closure/ridge-mathematics.md}; \path{experiments/sys-datascience/methods/ridge-endpoint-path/}\\
 \bottomrule
 \end{longtable}
