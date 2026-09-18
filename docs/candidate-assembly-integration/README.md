@@ -1,6 +1,6 @@
 # Proposed candidate assembly — 18 September 2026
 
-**An 83-page integration draft is built and reviewable. It is not a prose PASS,
+**An 87-page integration draft is built and reviewable. It is not a prose PASS,
 a release, or an authoritative coordination/ownership map.** No main merge,
 publication, or alteration of the original interrupted checkout occurred.
 
@@ -50,12 +50,12 @@ proof and removal of the old pentagon appendix already selected in interrupted
 
 ## Deferred work and decisions
 
-- **DS:** complete recovered chapter and appendix remain selected. The reviewed
-  subsection revision is not a whole-chapter replacement. A bounded follow-up
-  adds the established rotated-pentagon ridge identity and elementary cosine-sum
-  derivation in Section 8.4, using the chapter's existing descriptor S. It removes
-  the contradictory absence claims in Section 8.11, introduction and conclusion;
-  full DS revision and selected contemporary content remain pending.
+- **DS:** the complete chapter and appendix from `b2c5db9c` plus `b2ba0638`
+  are now selected. This is feedback-guided repair of the existing full chapter,
+  not an independent lean-context authoring trial. All selected scientific
+  strands remain; methods and detailed provenance partly move to the appendix.
+  Final prose quality, emphasis and remaining experimental-accounting density
+  are unvalidated. No further empirical results are silently selected.
 - **Preliminaries:** existing recovered version remains selected. New top-level
   alternative is preserved but is not assumed superior or activated.
 - **New empirical deductions:** not imported automatically. Scientific selection
@@ -160,3 +160,30 @@ evaluator, copied without changes from main. `empirical-packet-snapshot.json`
 records every copied hash. Only the old compiled CEM executable under a nested
 `.git` directory was omitted (hash recorded); its source and raw results are
 preserved. This is evidence preservation, not a new computation or public release.
+
+## Complete DS integration checkpoint
+
+Selected the full chapter and appendix, rather than the previously reviewed
+ridge-only subsection, from `b2c5db9c` with source-order fix `b2ba0638`. Added
+only its new bibliography resource, preserving the assembled baseline resources.
+Its two readable ridge figures contain all historical observations. The existing
+restricted-identity label is preserved, so introduction, conclusion and disclosure
+remain resolvable. Availability reflects completed interval recovery, separate
+from historical values and numerical volume.
+
+[Independent checkpoint](ds-independent-check.md) records final source hashes
+and the second review's disposition of concrete human-feedback and coverage
+findings. No source/contract integration blocker remained in that bounded review.
+This is not a human prose verdict or evidence of autonomous authoring success.
+
+Final PDF is **87 pages**. Build has no warnings, undefined references/citations
+or overfull boxes. All chapter/appendix evidence paths resolve locally. Complete
+render inspected before a TOC-only compaction; final TOC is two pages rather than
+a third page holding only two entries. Final figure render remains readable.
+
+Remaining required work: reader-facing review and correction of unacceptable
+prose, final whole-document synthesis, and final delivery selection. Known
+numerical limitation: one original body lacks current capacity coverage; the
+text names it accurately, so completion does not require concealing or solving
+that case. Optional further empirical/Pro results remain unselected. No new
+scientific decision was forced by this integration. Root retains those choices.

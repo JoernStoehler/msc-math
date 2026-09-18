@@ -20,6 +20,7 @@
 \usepackage[style=alphabetic,backend=biber]{biblatex}
 \addbibresource{bibliography.bib}
 \addbibresource{recovered/thesis-candidate/additional.bib}
+\addbibresource{ds-complete-draft/references.bib}
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
@@ -49,7 +50,10 @@
 
 \input{ai-use-disclosure}
 
+\begingroup
+\small
 \tableofcontents
+\endgroup
 \clearpage
 
 \input{recovered/thesis-candidate/01-introduction.tex}
@@ -59,7 +63,7 @@
 \input{05-flow-graph}
 \input{recovered/thesis-candidate/06-variation.tex}
 \input{recovered/thesis-candidate/07-hko.tex}
-\input{recovered/ds-first-wave/writing/chapter-opening-v2.tex}
+\input{ds-complete-draft/chapter.tex}
 \input{09-rotated-regular-polygons}
 \input{pentagon-affine-draft/section.tex}
 \input{product-rotation-draft/section.tex}
@@ -70,7 +74,7 @@
 \input{recovered/thesis-candidate/14-conclusion.tex}
 
 \appendix
-\input{recovered/thesis-candidate/a-datascience-results.tex}
+\input{ds-complete-draft/appendix.tex}
 
 \clearpage
 \section{HKO computation: an annotated exact program}

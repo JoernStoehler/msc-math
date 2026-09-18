@@ -1,0 +1,128 @@
+[
+  {
+    "path": "docs/ds-evidence-closure/README.md",
+    "found": true,
+    "example": [
+      "/workspaces/msc-math/.worktrees/candidate-assembly-integration/docs/ds-evidence-closure/README.md"
+    ]
+  },
+  {
+    "path": "experiments/polytope-datasets/retained-lineage.md",
+    "found": true,
+    "example": [
+      "/workspaces/msc-math/experiments/polytope-datasets/retained-lineage.md"
+    ]
+  },
+  {
+    "path": "docs/ds-retrospective-revalidation/geometry-full/README.md",
+    "found": true,
+    "example": [
+      "/workspaces/msc-math/.worktrees/candidate-assembly-integration/docs/ds-retrospective-revalidation/geometry-full/README.md"
+    ]
+  },
+  {
+    "path": "docs/ds-retrospective-revalidation/target-full/README.md",
+    "found": true,
+    "example": [
+      "/workspaces/msc-math/.worktrees/candidate-assembly-integration/docs/ds-retrospective-revalidation/target-full/README.md"
+    ]
+  },
+  {
+    "path": "docs/ds-retrospective-revalidation/repair/README.md",
+    "found": true,
+    "example": [
+      "/workspaces/msc-math/.worktrees/candidate-assembly-integration/docs/ds-retrospective-revalidation/repair/README.md"
+    ]
+  },
+  {
+    "path": "experiments/sys-datascience/methods/prediction-ranking/",
+    "found": true,
+    "example": [
+      "/workspaces/msc-math/experiments/sys-datascience/methods/prediction-ranking"
+    ]
+  },
+  {
+    "path": "experiments/sys-datascience/methods/standard-baseline-p2/",
+    "found": true,
+    "example": [
+      "/workspaces/msc-math/experiments/sys-datascience/methods/standard-baseline-p2"
+    ]
+  },
+  {
+    "path": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/",
+    "found": true,
+    "example": [
+      "/workspaces/msc-math/experiments/sys-datascience/methods/extreme-scalar-rejection-proposer"
+    ]
+  },
+  {
+    "path": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/covariance-rho-frozen-validation/",
+    "found": true,
+    "example": [
+      "/workspaces/msc-math/experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/covariance-rho-frozen-validation"
+    ]
+  },
+  {
+    "path": "experiments/sys-datascience/methods/alternative-source-transfer/",
+    "found": true,
+    "example": [
+      "/workspaces/msc-math/experiments/sys-datascience/methods/alternative-source-transfer"
+    ]
+  },
+  {
+    "path": "experiments/sys-datascience/methods/generic-ridge-tail-stage1-target/",
+    "found": true,
+    "example": [
+      "/workspaces/msc-math/experiments/sys-datascience/methods/generic-ridge-tail-stage1-target"
+    ]
+  },
+  {
+    "path": "experiments/sys-datascience/methods/paired-tangentialization/",
+    "found": true,
+    "example": [
+      "/workspaces/msc-math/experiments/sys-datascience/methods/paired-tangentialization"
+    ]
+  },
+  {
+    "path": "experiments/sys-datascience/methods/orientation-allocation/",
+    "found": true,
+    "example": [
+      "/workspaces/msc-math/experiments/sys-datascience/methods/orientation-allocation"
+    ]
+  },
+  {
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/",
+    "found": true,
+    "example": [
+      "/workspaces/msc-math/experiments/sys-datascience/methods/diagonal-cem-pilot"
+    ]
+  },
+  {
+    "path": "experiments/dev-gradient-ascent/optimizer-comparison/",
+    "found": true,
+    "example": [
+      "/workspaces/msc-math/experiments/dev-gradient-ascent/optimizer-comparison"
+    ]
+  },
+  {
+    "path": "docs/ds-evidence-closure/search-account.md",
+    "found": true,
+    "example": [
+      "/workspaces/msc-math/.worktrees/candidate-assembly-integration/docs/ds-evidence-closure/search-account.md"
+    ]
+  },
+  {
+    "path": "docs/ds-evidence-closure/ridge-mathematics.md",
+    "found": true,
+    "example": [
+      "/workspaces/msc-math/.worktrees/candidate-assembly-integration/docs/ds-evidence-closure/ridge-mathematics.md"
+    ]
+  },
+  {
+    "path": "experiments/sys-datascience/methods/ridge-endpoint-path/",
+    "found": true,
+    "example": [
+      "/workspaces/msc-math/experiments/sys-datascience/methods/ridge-endpoint-path"
+    ]
+  }
+]

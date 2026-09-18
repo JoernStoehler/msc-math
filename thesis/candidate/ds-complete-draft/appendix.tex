@@ -1,0 +1,315 @@
+\section{Data-science methods and additional results}\label{app:datascience-results}
+
+This appendix gives the optimizer steps and additional failure diagnostics
+for the local-search comparison in
+Section~\ref{subsec:black-box-datascience-finite-budget-optimization}.
+Sampling definitions and statistical results are presented with their
+interpretation in Section~\ref{sec:black-box-datascience}.
+
+\subsection{Sampling and retained data}\label{app:ds-generation}
+
+A polytope was specified by inequalities
+\[
+ K=\{x:\langle n_i,x\rangle\leq h_i,\quad i=1,\ldots,F\}.
+\]
+For the generic family, each $n_i$ was independent and uniform on the unit
+sphere in $\mathbb R^4$: we normalized a vector of four independent standard
+Gaussian coordinates. The heights were independent and uniform on
+$[0.8,1.2)$. A proposed body was retained only if it was bounded and every
+proposed inequality defined a facet. The construction also rejected zero or
+near-duplicate normals. These conditions are part of the sampling law;
+``random polytope'' here does not mean a uniform choice from all convex bodies.
+
+The original population contains 512 bodies for each generic facet count
+and 1,024 for each product side-count pair. The retained generator records
+identify seed 42; product seed/attempt metadata cannot be independently
+reconstructed from the recovered cache. The source geometries, row identifiers
+and stored numerical values are nevertheless matched for every body.
+The reproduction records are listed in Table~\ref{tab:ds-evidence-index}.
+
+\subsection{Numerical evaluation and retrospective checks}\label{app:ds-evaluation}
+
+The complete historical source geometry was recovered and matched to all
+14,336 table rows. A geometry-only rebuild restored six later descriptors;
+all 645,120 overlapping table cells agreed. This retained the historical
+volume normalization and did not evaluate capacity.
+
+A separate current-evaluator run attempted every body. It returned 14,245
+successful evaluations, 54 input-policy failures and 37 scalar-tolerance
+failures. Among successful rows, the largest relative differences were
+$1.06\cdot10^{-14}$ in capacity, $3.14\cdot10^{-14}$ in volume and
+$3.23\cdot10^{-14}$ in the ratio. No row is dropped from the original
+statistical analysis. The original failures are retained alongside the separate follow-up below.
+
+A subsequent interval-preserving evaluation recovered results for 90 of
+those refusals. The 37 scalar-tolerance refusals yielded capacity intervals
+without changing their input bodies. Exact power-of-two rescaling brought
+53 of the 54 norm-policy failures into the admitted range; fresh geometry
+checks preceded evaluation, and homogeneity transferred their interval
+endpoints back to the original bodies. Across both runs, 14,289 bodies have
+accepted capacity scalars at tolerance $10^{-10}$ and another 46 have wider
+capacity intervals. One body, \texttt{random\_F8\_s3\_45}, remains unresolved.
+No policy or tolerance was relaxed. The complete sample, including this
+body, remains in the historical statistical analysis.
+
+The current evaluator reconstructs the geometry of the stored binary64 input
+and returns rational product capacities or outward capacity bounds. Its
+volume calculation remains floating-point. Agreement of central values does
+not mean that a narrow new interval contains an independently rounded old
+value: 5,583 old capacity scalars lie outside the new intervals despite the
+small differences above. The initial reevaluation corroborates the numerical values
+on its successful bodies; it does not certify the original execution or the
+complete ratio. Prospective selection experiments and optimizer traces have
+their own evidence records and are not validated by this baseline comparison.
+
+\subsection{Selection and comparison rules}\label{app:ds-selection}
+
+The 100,000-product concentration experiment specified a positive aggregate
+mean difference and positive differences in at least seven of ten groups
+as its continuation criterion. It found eight positive groups and a mean
+difference of about $0.034$. This is the descriptive design criterion;
+no significance claim is attached to passing it.
+
+For the tangential-generator comparison, controls were selected by a fixed
+hash order, before capacity evaluation, from the eligible pool after removing
+the union of the ridge and covariance selections. They are unselected
+same-generator comparisons, not an asserted random sample of the full pool.
+
+The opposing $3\times6$ and $4\times4$ rotation paths contain four recorded
+positions each. Their simultaneous decrease in ridge score and numerical
+ratio is a finite observation; monotonicity at every intermediate angle
+was not established.
+
+\subsection{Finite-budget local optimizer comparison}
+
+The run configuration labels the \(64\) starting bodies as held out.
+The saved hashes identify the seven configurations used, but do not establish
+that these bodies were absent from earlier development or tuning. A later
+development configuration reuses \(16\) starts. Their earlier selection history
+is therefore unresolved; this does not show that the reported outcomes were
+used to select the configurations.
+
+Every run used the same allocation rule: a nominal \(1000\)\,ms
+start-new-work cutoff for charged full-evaluator plus optimizer time and a cap
+of \(128\) full historical-evaluator calls.  In-progress work could complete
+atomically past the cutoff, and methods could terminate early, so realized
+compute differs across runs.  The \(448\) traces contain \(28824\) full calls.
+Using the historical numerical objective described in
+Section~\ref{subsec:black-box-datascience-finite-budget-optimization},
+four-anchor branch history has the largest comparison-block median best value,
+\(0.9848\), followed by transition prediction at \(0.9816\) and the finite-gap
+affine model at \(0.9772\).  No run reaches
+a recorded numerical ratio of one.
+
+\paragraph{The implemented optimizer steps.}
+Except for the literal gradient, the methods remove the fifteen infinitesimal
+symmetry directions from the forty dual-normal coordinates. The local models
+and coordinate poll recompute this transverse space at their anchors;
+CMA-ES keeps its initial space. The literal gradient uses the ambient
+coordinates.  Every
+outer proposal is checked by a fresh geometry reconstruction and the
+configured full orbit-word search.  The implementations below are frozen
+comparison points; their parameters are not claimed to optimize the
+corresponding algorithm families.
+
+\begingroup
+\small
+\begin{longtable}{@{}p{0.24\linewidth}p{0.67\linewidth}@{}}
+\caption{One outer iteration of each optimizer in the recorded
+comparison.}
+\label{tab:black-box-datascience-f10-optimizer-steps}\\
+\toprule
+method & implemented step\\
+\midrule
+\endfirsthead
+\toprule
+method & implemented step\\
+\midrule
+\endhead
+literal and safeguarded branch gradients
+& Differentiate one currently minimizing branch.  The literal method takes
+  \(a^+=a+0.01D_as_\sigma(a)\) even after a decrease.  The safeguarded method
+  projects and normalizes this gradient, accepts only a fully evaluated
+  improvement, and expands or halves its distance after acceptance or
+  rejection.\\
+finite-gap affine model
+& Keep the current branch gaps in a \(10\%\) action window, linearize their
+  values, and maximize the minimum affine value on a local ball.  Fully
+  evaluate the proposal and use the same expand-or-halve distance rule.\\
+four-anchor branch history
+& Union candidate words from the four most recent full searches, using a
+  \(30\%\) action window and normalized beta allowance \(0.3\).  At a nearby
+  point, re-solve the named KKT branches, discard transition-infeasible and
+  beta-inadmissible solutions, linearize the remaining values, and maximize
+  their affine minimum.  Take at most two internal moves before the next full
+  evaluation.\\
+history with transition prediction
+& Use the preceding method, but for a normalized internal move of length at
+  least \(0.08\), also predict newly feasible transitions in the move
+  direction and evaluate the words thereby generated.\\
+CMA-ES
+& Fully evaluate a population of eight Gaussian perturbations, then update
+  the mean, covariance, and normalized scale from their ranking.\\
+coordinate direct search
+& Poll both signs of the \(25\) transverse basis axes.  Move to the best
+  improvement and double the radius, or halve the radius if no poll point
+  improves.\\
+\bottomrule
+\end{longtable}
+\endgroup
+
+The two history methods accept any usable outer evaluation, including a
+decrease; their reported best-so-far value therefore differs from their
+current iterate. The safeguarded gradient and finite-gap method accept only
+improvements, multiplying the relative step length by $1.25$ on success
+and by $0.5$ on failure. The history methods use up to two internal model
+steps between full evaluations.
+
+The companion endpoint packet does not test local maximality.  Signed polls
+along the transverse basis find an improving direction at seven of \(16\)
+one-second branch-history endpoints and two of the corresponding five-second
+endpoints.  Separate validated continuation paths show that even an endpoint
+with no improving basis direction can retain appreciable ascent between the
+tested axes.  These observations diagnose insufficient finite budgets; they
+do not estimate the distance to a local maximum.
+
+\paragraph{Detailed HKO calibration.}
+On \(16\) known perturbations along four development directions from HKO, the
+multi-branch continuation accepted no move at HKO and improved every
+perturbation.  One step recovered \(93.4\%\)--\(100\%\) of the known evaluator
+gap and removed \(77.9\%\)--\(100\%\) of the distance to HKO.  In contrast,
+the gradient of one current minimizing branch recovered
+\(-22.1\%\)--\(41.4\%\) of the gap.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]
+  {ds-complete-draft/figures/hko-recovery-by-source-distance.pdf}
+\caption{One-step calibration on known perturbations of HKO.  From top to
+bottom, the panels show recovered evaluator gap, removed distance, and
+residual evaluator gap.}
+\label{fig:black-box-datascience-hko-optimizer-calibration}
+\end{figure}
+
+\paragraph{Selected finite-step failure audit.}
+At the eight highest four-anchor tuning endpoints, five admitted one validated
+improvement, by \(1.57\cdot10^{-6}\) to \(4.61\cdot10^{-5}\).  Across the
+\(80\) multi-branch proposals, \(52\) decreased the recomputed evaluator value
+despite a represented target winner and positive affine prediction; \(40\) of
+these losses retained determinate, unchanged geometry.  All \(40\)
+current-branch gradient proposals decreased.
+
+The three-proposal audit compared two such failures with one positive control.
+At normalized radius \(10^{-5}\), the failures perturbed their named KKT
+matrices by \(218\) and \(67\) times the smallest base eigenvalue magnitude
+and crossed zero; the control had ratio \(1.53\), did not cross zero, and kept
+the correct sign.  At the smallest tested radius, \(10^{-8}\), central
+differences approximated the implemented analytic derivatives with relative
+errors below \(1\%\) for the named action and \(1.9\%\) for the named branch
+ratio.  Binary64 and exact-arithmetic geometry
+reconstruction agreed at all \(39\) audited points, and relative volume
+discrepancies were below \(10^{-15}\).  For these selected cases the observed
+failure is finite-distance nonlinearity of an ill-conditioned KKT branch.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]
+  {ds-complete-draft/figures/derivative-and-kkt-scale.pdf}
+\caption{Finite differences for two failed affine proposals and one positive
+control.  Prediction changes regime when the KKT perturbation becomes large
+relative to the smallest source eigenvalue magnitude (bottom).  Dotted lines
+in the top two panels are the analytic derivatives.}
+\label{fig:black-box-datascience-kkt-trust-scale}
+\end{figure}
+
+These diagnostics use selected controls rather than population samples.  They
+do not provide a convergence theorem, a population error rate, or a universal
+conditioning cutoff.
+
+\subsection{Adaptive product sampling}\label{app:ds-adaptive}
+
+For reproducibility, let $g_1,\ldots,g_5>0$ be the cyclic normal-angle gaps
+of a factor and let $r_i$ be its dual-normal lengths. Set
+\[
+ \ell_i=\log(g_i/g_5)\quad(i=1,\ldots,4),\qquad
+ z_i=\log r_i-\frac15\sum_{j=1}^5\log r_j.
+\]
+We store the first four $z_i$ and recover $z_5=-\sum_{i=1}^4z_i$.
+Reconstruction uses
+\[
+ g_i=\frac{2\pi e^{\ell_i}}{1+\sum_{j=1}^4e^{\ell_j}},\qquad
+ g_5=\frac{2\pi}{1+\sum_{j=1}^4e^{\ell_j}},\qquad h_i=e^{-z_i}.
+\]
+The first normal angle is zero in the first factor and $\phi$ in the second.
+The initial IID encoding chooses a cyclic origin by lexicographically
+minimizing the sequence of gap/length pairs. Sampled adaptive coordinates
+are retained for the updates without another cyclic relabelling.
+
+For an ordinary coordinate $j$, write $\widehat\mu_{E,j}$ and
+$\widehat v_{E,j}$ for the mean and population variance of the sixteen elites.
+The update is
+\[
+ \mu_j^+=\tfrac12\mu_j+\tfrac12\widehat\mu_{E,j},\qquad
+ v_j^+=\max\{\tfrac12v_j+\tfrac12\widehat v_{E,j},\;0.05v_{0,j}\}.
+\]
+Initialization uses the population moments of the shared 64 bodies.
+Coordinates are drawn independently with these Gaussian moments. The phase
+uses circular means, a unit-vector blend of old and elite means, and variance
+of angular deviations wrapped into $[-\pi,\pi)$. Samples are wrapped modulo
+$2\pi$. A vanishing resultant retains the previous mean; initial fallback
+uses the smallest-ID candidate's phase. Ties in elite selection are broken
+by candidate ID.
+
+Each population permits at most 640 construction attempts for 64 accepted
+bodies. Failed geometry and unsupported evaluator inputs are rejected before
+target evaluation; an incomplete population does not trigger an update.
+The evaluator admission includes finite, nonredundant bounded geometry and
+primal and dual infinity-norm bounds between $10^{-3}$ and $10^3$.
+The three seeds are 202609140301, 202609140302 and 202609140303. The retained
+report records the stopped first version and the subsequent supported
+version separately.
+
+The source restriction needs particular care. An initial version stopped
+when one body exceeded the evaluator's admitted primal-vertex infinity-norm range.
+The completed version applied the evaluator's existing admission conditions
+to both proposal arms before accepting a body for evaluation. This was a
+procedural revision after seeing the failure. Both arms reject unsupported
+inputs, but the admission test acts on the actual coordinate representation:
+IID bodies retain their original representation and adaptive bodies use the
+normalized reconstruction. It is not a symmetry-invariant condition on all
+pentagon products. The result is therefore for this implemented,
+admission-conditioned comparison.
+
+The complete run took $215.8$ seconds: $182.2$ seconds for construction and
+admission checks, $32.9$ seconds in evaluator processes, and $0.053$ seconds
+for distribution updates. Including construction and charging initialization
+to each arm, the adaptive runs used about $35$--$36$ seconds per seed and IID
+about $46$--$51$ seconds. Equal evaluation counts did not imply equal cost.
+These measured costs favor the adaptive arm in this run; they are not the
+outcome of a separate equal-wall-time experiment.
+
+
+\subsection{Evidence and reproduction index}
+
+Paths in Table~\ref{tab:ds-evidence-index} are relative to the accompanying
+repository. Each packet identifies its inputs and analysis; the original
+historical optimizer executable and full proposal traces were not recovered.
+
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{.24\linewidth}>{\raggedright\arraybackslash}p{.70\linewidth}@{}}
+\caption{Source packets for the chapter.}\label{tab:ds-evidence-index}\\
+\toprule Result & Repository source \\\midrule
+\endfirsthead
+\toprule Result & Repository source \\\midrule
+\endhead
+Historical population and replay & \path{docs/ds-evidence-closure/README.md}; \path{experiments/polytope-datasets/retained-lineage.md}\\
+Restored features and reevaluation & \path{docs/ds-retrospective-revalidation/geometry-full/README.md}; \path{docs/ds-retrospective-revalidation/target-full/README.md}; \path{docs/ds-retrospective-revalidation/repair/README.md}\\
+Feature models & \path{experiments/sys-datascience/methods/prediction-ranking/}; \path{experiments/sys-datascience/methods/standard-baseline-p2/}\\
+Fresh selection & \path{experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/}; \path{experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/covariance-rho-frozen-validation/}\\
+Transfer & \path{experiments/sys-datascience/methods/alternative-source-transfer/}; \path{experiments/sys-datascience/methods/generic-ridge-tail-stage1-target/}\\
+Paired support heights & \path{experiments/sys-datascience/methods/paired-tangentialization/}\\
+Orientation allocation & \path{experiments/sys-datascience/methods/orientation-allocation/}\\
+Adaptive product sampling & \path{experiments/sys-datascience/methods/diagonal-cem-pilot/}\\
+Local optimization and diagnostics & \path{experiments/dev-gradient-ascent/optimizer-comparison/}; \path{docs/ds-evidence-closure/search-account.md}\\
+Product ridge geometry & \path{docs/ds-evidence-closure/ridge-mathematics.md}; \path{experiments/sys-datascience/methods/ridge-endpoint-path/}\\
+\bottomrule
+\end{longtable}

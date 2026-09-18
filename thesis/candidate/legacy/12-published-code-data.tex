@@ -55,9 +55,13 @@ random/product datasets and the method-facing invariant table are not tracked
 at those paths. The original source geometries have been recovered locally
 from the registered snapshot and matched against all \(14336\) table rows.
 They can be materialized through the \texttt{polytope-datasets} artifact;
-this recovery does not supply missing historical execution receipts or
-retroactively certify the numerical targets. The recovery receipt is in
-\path{docs/ds-retrospective-revalidation/source-verification.json}.
+this recovery does not supply missing historical execution receipts.
+Separate current computations restored the feature schema for all bodies and
+returned capacity intervals for 14,335 of the 14,336 original geometries;
+one body remains outside the input-size policy. These new intervals do not
+certify the historical numerical ratios, whose volumes are floating-point
+values. Recovery and reevaluation receipts are in
+\path{docs/ds-retrospective-revalidation/}.
 Consequently, cloning the repository alone does not provide every input needed
 to repeat all empirical analyses, regenerate every figure, or reproduce every
 reported run.  Packet-local instructions describe available producers and

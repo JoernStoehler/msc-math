@@ -4,8 +4,8 @@
   "snapshot_commit": "8aff3321",
   "candidate_inputs": {
     "thesis/candidate/main.tex": {
-      "sha256": "17eb7d56d9b0ae9e7a70eb2f861357fb035a6bbb7c7fab6d3eb71807ddf1771c",
-      "bytes": 2434
+      "sha256": "38760d271a6964d7f5bbda201a22d8f3a3e50690baedc0602b94fdd188b41ade",
+      "bytes": 2466
     },
     "thesis/candidate/legacy/preamble.tex": {
       "sha256": "3dd932fb29bd8a7c44f5f7a8fef28453caca276755925e43129e097ff97fc566",
@@ -111,9 +111,17 @@
       "sha256": "d35f3b2e19cea1743d9c675b7e62c79269faaf0638b3e08c51b8442dfe159e69",
       "bytes": 1736
     },
-    "thesis/candidate/recovered/ds-first-wave/writing/chapter-opening-v2.tex": {
-      "sha256": "71848c3c5d01e6008fbbe6862ca093c7280682b4392dc2c71d42c1e81d9e9b9e",
-      "bytes": 36854
+    "thesis/candidate/ds-complete-draft/chapter.tex": {
+      "sha256": "3d91efc760129bbe32daaaef4d54183f648428a8ba3ecc4b0e5c449db13f4eb0",
+      "bytes": 32996
+    },
+    "thesis/candidate/ds-complete-draft/figures/association-generic.pdf": {
+      "sha256": "85898c620583f52a1d28b056dfc60faffb81e73a9a8a86ba7d517c3d586154f4",
+      "bytes": 74233
+    },
+    "thesis/candidate/ds-complete-draft/figures/association-products.pdf": {
+      "sha256": "fbbe2c12b98d5c93764a6dbf949a6f30402190c01c31dab552063bd00f85b572",
+      "bytes": 82057
     },
     "thesis/candidate/09-rotated-regular-polygons.tex": {
       "sha256": "0941c800cb2e33aeb585ad1ffc65d1b590c84972efad4d458f4aba8e8a571ab8",
@@ -148,8 +156,8 @@
       "bytes": 9669
     },
     "thesis/candidate/legacy/12-published-code-data.tex": {
-      "sha256": "d734b8e24ec6c21935604370d5c0a6886132424d2a7cf5179390526670c6661b",
-      "bytes": 4529
+      "sha256": "3d3809be0047a12b6661ea5a13d70b67d853d7e2bfa9dca0877b70fb56b85068",
+      "bytes": 4781
     },
     "thesis/candidate/recovered/ai-writing/chapter.tex": {
       "sha256": "e15fb5243e721bc85c1f946fc50a95d9abd252b69bfa48c1c984621e35e369db",
@@ -159,15 +167,15 @@
       "sha256": "c3b6055a35ac32aa8f39dcd77e754a3073c9fd94f946c4d869e042e08b9679cb",
       "bytes": 3737
     },
-    "thesis/candidate/recovered/thesis-candidate/a-datascience-results.tex": {
-      "sha256": "b4f44657adfb1357627aa5c927bdd6098503246f5571e4b7015712c28cbb697e",
-      "bytes": 7380
+    "thesis/candidate/ds-complete-draft/appendix.tex": {
+      "sha256": "f21c63fcf3ea8acaa3ef1db1f5214f368684d86761e3e73d108d868de5152b2e",
+      "bytes": 17505
     },
-    "thesis/candidate/legacy/figures/datascience/hko-recovery-by-source-distance.pdf": {
+    "thesis/candidate/ds-complete-draft/figures/hko-recovery-by-source-distance.pdf": {
       "sha256": "86b8204c9ddd2b6a4817c694675bffcdf726860d77420846e6d09f07e2132477",
       "bytes": 23260
     },
-    "thesis/candidate/legacy/figures/datascience/derivative-and-kkt-scale.pdf": {
+    "thesis/candidate/ds-complete-draft/figures/derivative-and-kkt-scale.pdf": {
       "sha256": "5e34bb8153986657a76525d78d8f9f142da4b8f06702bed143661773698c67da",
       "bytes": 21375
     },
@@ -182,18 +190,19 @@
   },
   "pdf": {
     "path": "/workspaces/msc-math/.worktrees/candidate-assembly-integration/thesis/candidate/build/main.pdf",
-    "sha256": "c36f0ad48baca67585b251230c4d2c17fd5b766dea195c96e8c346be4b80d35d",
-    "bytes": 1497809,
-    "pages": 83
+    "sha256": "7574f8961765f2064462356779ba38518e2965a2ba6a9d40f3dfec70f4b044dc",
+    "bytes": 1655743,
+    "pages": 87
   },
   "checks": {
-    "source_inputs": 44,
+    "source_inputs": 46,
     "latex_warnings": [],
-    "rendered_pages": 81,
-    "visual_check": "All81 pages inspected at contact-sheet scale; affine/QP/variation/source-attribution areas further inspected. No clipping or overlap noticed. Sparse page40 and48 persist; final layout/prose acceptance is not asserted.",
+    "rendered_pages": 87,
+    "visual_check": "Complete DS predecessor88page render inspected; finalTOC-only change removes near-empty page and finalTOC/productfigure inspected. No clipping/overlap found. Prose acceptance unestablished; sparse inherited pages remain.",
     "ridge_followup": "Identity added in Section8.4, equation35, page53; full rebuild81pages with no warnings; pages52\u201354 rendered/inspected, no clipping.",
     "prior_art_availability": "Full rebuild81pages, no warnings; pages26,35,70,80 rendered/inspected; public commit uses short linked hash to avoid overflow.",
-    "product_position": "83page full rebuild, no warnings. New section pages66\u201367 and adjacent65/68 rendered/inspected; contents4,introduction7,availability71,conclusion75 inspected. Initial81page full contact-sheet pass remains preceding-version evidence."
+    "product_position": "83page full rebuild, no warnings. New section pages66\u201367 and adjacent65/68 rendered/inspected; contents4,introduction7,availability71,conclusion75 inspected. Initial81page full contact-sheet pass remains preceding-version evidence.",
+    "complete_DS": "Final87page full rebuild, no warnings. All88pages before TOC-only compaction rendered/inspected in contact sheets; final2pageTOC and productfigure at readable resolution inspected. All evidence-index paths resolve; DS final hashes independently reviewed."
   },
   "baseline_pdf": {
     "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/build/main.pdf",

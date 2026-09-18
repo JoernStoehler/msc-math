@@ -29,7 +29,8 @@ that are not PDF build dependencies. Their historical paths and commands are
 preserved verbatim; they are not portable build commands. The dependency
 manifest records each origin, checksum, and path rewrite.
 
-The selected recovered preliminaries and complete DS chapter remain in place.
-The standalone revised DS subsection and optional further polygon results have
-not been silently substituted. Reader-facing summaries have only received
+The selected recovered preliminaries remain in place. The complete DS chapter
+and companion appendix now use the reviewed full-chapter candidate, including
+the original strands rather than substituting a ridge-only subsection.
+Optional further polygon results have not been silently substituted. Reader-facing summaries have only received
 bounded consistency edits and still require a substantive final synthesis.
