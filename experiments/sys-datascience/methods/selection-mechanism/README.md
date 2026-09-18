@@ -68,3 +68,23 @@ Independent review on 18 September verified identities, grouping, cutoffs,
 weighting, all summary/group-count correspondence and the two 5% coefficients
 using a different rank implementation. Those values agreed to 3e−17. This is
 an exploratory analysis of known targets, not a prospective selector test.
+
+## Controlled follow-ups
+
+Two additional calculations sharpen the interpretation rather than leaving the
+population attenuation as the sole evidence:
+
+- [Factor covariance balancing](balance-result.md) applies a specified
+  determinant-one deformation to 320 products, with 640 fresh baseline and
+  transformed capacity evaluations. The within-group R/sys coefficient changes
+  from −.929 to −.249 and 314/320 ratios improve. This tests one concrete source
+  of bulk shape variation; it does not isolate a unique causal mechanism.
+- [Fixed-normal tangentialization](controlled-result.md) reconstructs R for an
+  existing paired experiment. R and sys change in opposite directions in 15/16
+  both-factor interventions, showing that inverse behavior also occurs under
+  within-body deformation in this moderate-ratio panel.
+
+A [Gaussian-copula reference](gaussian-result.md), fitted separately to each
+original group's full-sample rank correlation, exhibits much slower conditional
+attenuation than the data. This makes the generic range-restriction caveat more
+specific without purporting to identify a geometric mechanism.
