@@ -33,11 +33,13 @@ this tree. Review browser URLs may expire; their underlying PDFs, annotation
 records and source packets are retained here.
 
 The only deliberately unimported dirty file is main's machine-local
-`.codex/config.toml`. It is not a manuscript/evidence dependency. Old checkouts
-are not deleted: an idle tab, running review server, and historical path consumers
-may still refer to them. Their unique tracked work and project-related dirty bytes
-are accounted for in this branch. Removing the old directories is a separate
-cleanup operation requiring path-consumer checks, not a prerequisite to resume.
+`.codex/config.toml`. It is not a manuscript/evidence dependency. The obsolete checkouts were subsequently removed after archiving their history
+and non-rebuildable ignored files and retiring their review servers. Only main
+and the resume checkout remain. Recovery is described in
+`/workspaces/archived/workspaces-root/msc-math-session-20260918/README.md`.
+The archive includes the downloaded/normalized external writing datasets previously
+ignored under writing-detector-data; extract those members deliberately if needed.
+
 
 ## Discovered historical replay limitation
 

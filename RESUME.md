@@ -88,8 +88,14 @@ are identified; 53 differing files are retained as unselected snapshots. Main an
 the original review checkout were not modified. Machine-local `.codex/config.toml`
 was deliberately not imported. The current project `AGENTS.md` is copied unchanged from main so a standalone
 checkout retains its guidance. Do not install other archived startup instructions.
-Other worktrees are retained for existing path consumers and rollback; they are
-not required to build this manuscript or read the consolidated tracked evidence.
+Only main and this resume worktree remain. The other 39 worktrees and 41 branch
+names were removed after preservation and consumer checks. Original histories
+and 108 untracked/generated files are recoverable from
+`/workspaces/archived/workspaces-root/msc-math-session-20260918/`.
+See `docs/resume/cleanup-result.json` and the archive README for hashes and recovery.
+The standalone bundle was restored successfully with all 43 original branch heads.
+The 11 obsolete review servers were stopped; their old URLs no longer serve.
+The current resume checkout and its service were retained.
 
 ## Sessions and non-repository material
 
