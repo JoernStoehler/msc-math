@@ -15,7 +15,9 @@ comparisons are owned by [current work](../WORK_REMAINING.md).
 
 Start with [the active finite-budget subsection](../../thesis/chapters/08-data-science.tex),
 label `subsec:black-box-datascience-finite-budget-optimization`, opening
-paragraph and table `tab:black-box-datascience-f10-optimizer-comparison`.
+paragraph and its inline comparison table. The historical table label was
+`tab:black-box-datascience-f10-optimizer-comparison`; that label is absent from
+the current selected chapter.
 The claim is that four-anchor history had the largest terminal median on 64
 matched F=10 starts among seven fixed implementations; no recorded run reached
 the evaluator threshold 1. It is explicitly limited to this population,
