@@ -1,0 +1,28 @@
+{
+  "seed": 2026091801,
+  "replicates": 1000,
+  "numpy_version": "1.26.4",
+  "sources": {
+    "artifacts/conditional-ranks-by-group.tsv": "31a9ae12fdedd8fafe7847ee7162f8792cdbf54ff15918a92bb2f03e7c32558b",
+    "artifacts/conditional-ranks.tsv": "86c0629667782b72c85b0efc0ab2fcc26d2ca928943e80fe2dcac9cd9ba7db61",
+    "analyze.py": "e7cbd5cbb09c03277dfbd447752e2d9de15b28392d62f88e49f1f8b1e48e2c21"
+  },
+  "script_sha256": "170fba2b2b059c37244aae95cbe7b621b18abe7fd653ee1fc0afab911df7dafa",
+  "fractions": [
+    1.0,
+    0.5,
+    0.2,
+    0.1,
+    0.05,
+    0.02,
+    0.01
+  ],
+  "model": "Within each of 18 original groups: iid bivariate normal ranks with Pearson r = 2 sin(pi * observed full-group Spearman / 6); groups independent",
+  "calibration": "Separate fitted rank correlation per original group, preserving observed heterogeneity and 512/1024 sample sizes; parameters held fixed, no refitting within replicates",
+  "statistic": "Exactly analyze.py: select ceil(fraction*n) within each group; re-rank each retained coordinate; divide by group count; pool all rows; compute Spearman with average ranks for ties",
+  "maximum_direct_statistic_check_error": 1.1102230246251565e-16,
+  "envelope": "Pointwise empirical 2.5% and 97.5% quantiles of 1000 simulated replications; not simultaneous; does not include fitted-parameter uncertainty",
+  "interpretation": "Descriptive fitted-model benchmark using observed data for calibration; not an independent validation, formal model test, or identification of a geometric or causal mechanism",
+  "historical_packet_check": "tail-dependence-feasibility/analyze.py and README inspect tail overlaps/selected panels but do not contain this Gaussian benchmark",
+  "runtime_seconds": 6.754555506980978
+}
