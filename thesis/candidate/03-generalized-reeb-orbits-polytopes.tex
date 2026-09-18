@@ -1,0 +1,516 @@
+\section{Generalized Reeb orbits on polytopes}
+\label{sec:generalized-reeb-orbits-polytopes}
+
+On the interior of a polytope facet, the Reeb velocity is constant. At an
+intersection of facets, the generalized characteristic equation permits
+convex combinations of their velocities. Haim--Kislev's theorem nevertheless
+guarantees a capacity minimizer that uses only the individual facet
+velocities, each at most once. Its action is therefore determined by a finite
+ordered list of facets and the time spent in each direction.
+
+We first derive this finite description and distinguish closure of the curve
+from its placement on the boundary. We then prove the existence theorem by
+rearranging curves in the dual variational problem.
+
+
+\subsection{Facet velocities}\label{subsec:generalized-reeb-orbits-polytopes-definition}
+
+Let
+\[
+  K=\{x\in\mathbb{R}^4:\langle a_i,x\rangle\leq 1,\; i=1,\ldots,F\}
+\]
+be a full-dimensional polytope with \(0\in\operatorname{int}(K)\). We assume
+that the halfspace description is irredundant, so the facet corresponding to
+\(a_i\) is
+\[
+  F_i=\{x\in K:\langle a_i,x\rangle=1\}.
+\]
+The normalized halfspace description gives
+\[
+  g_K(x)=\max_{1\leq i\leq F}\langle a_i,x\rangle.
+\]
+If \(x\in\partial K\), let
+\(I(x)=\{i:x\in F_i\}\) be its active facets.  The subdifferential rules for a
+finite maximum and for the square on the level set \(g_K=1\) give
+\begin{equation}\label{eq:generalized-reeb-polytope-subdifferential}
+  \partial H_K(x)
+  =2\operatorname{conv}\{a_i:i\in I(x)\}.
+\end{equation}
+Thus Definition~\ref{def:preliminaries-generalized-characteristic} becomes a
+finite differential inclusion.  In this normalization the pure
+contact-normalized Reeb direction on \(F_i\) is
+\begin{equation}\label{eq:generalized-reeb-facet-vector}
+  R_i=2J_0a_i.
+\end{equation}
+Indeed \(R_i\) is tangent to \(F_i\), because
+\(\langle a_i,J_0a_i\rangle=0\), and for \(x\in F_i\),
+\[
+  \lambda_0|_x(R_i)
+  =\frac{1}{2}\langle -J_0R_i,x\rangle
+  =\langle a_i,x\rangle
+  =1.
+\]
+
+For a Lagrangian product, this formula makes the exchange between the two
+factors explicit.  A row \(a_i=(u,0)\) from a facet of the \(q\)-factor and a
+row \(a_j=(0,v)\) from a facet of the \(p\)-factor give
+\[
+  R_i=2J_0(u,0)=(0,2u),
+  \qquad
+  R_j=2J_0(0,v)=(-2v,0).
+\]
+Thus a segment on a \(q\)-facet moves only in the \(p\)-coordinates, while a
+segment on a \(p\)-facet moves only in the \(q\)-coordinates.
+
+A \emph{generalized Reeb orbit} on \(K\) is a contact-normalized generalized
+characteristic in the sense of
+Definition~\ref{def:preliminaries-generalized-characteristic}.  By
+\eqref{eq:generalized-reeb-polytope-subdifferential}, this means precisely that
+\(\gamma\in W^{1,2}([0,T],\mathbb{R}^4)\) is closed, has image in
+\(\partial K\), and satisfies
+\begin{equation}\label{eq:generalized-reeb-inclusion}
+  \dot{\gamma}(t)
+  \in \operatorname{conv}\{R_i:\gamma(t)\in F_i\}
+  \quad\text{for a.e. }t\in[0,T].
+\end{equation}
+The general normalization already shows that such an orbit has
+\[
+  A(\gamma)=T.
+\]
+
+We call such an orbit \emph{simple} if, after choosing its starting point
+at a velocity change, it consists of finitely many segments with velocities
+$R_i$, and each $R_i$ occurs in at most one segment. Here simplicity refers
+to the use of facet directions. In particular, it includes the requirement
+that the velocities be individual $R_i$, rather than nontrivial convex
+combinations of them.
+
+\subsection{Words, dwell times, and closure}
+\label{subsec:generalized-reeb-orbits-polytopes-words}
+
+A simple orbit is described by the ordered facet labels it uses, the time
+spent in each direction, and a starting point. The \emph{active word}
+contains only directions used for positive time. A cyclic word
+\[
+  \sigma=(\sigma_1,\ldots,\sigma_m)
+\]
+with distinct entries, together with dwell times \(\tau_k>0\) and a base point
+\(b=\gamma(0)\), describes the velocity data
+\[
+  \dot{\gamma}(t)=R_{\sigma_k}
+  \quad\text{for a time interval of length }\tau_k.
+\]
+Such data can represent a closed orbit only if the closing equation holds:
+\begin{equation}\label{eq:generalized-reeb-closure}
+  \sum_{k=1}^m \tau_k R_{\sigma_k}=0.
+\end{equation}
+This equation closes the broken path. A further condition is needed to
+place each segment on its prescribed facet: there must be a suitable
+starting point $b$. Lemma~\ref{lem:generalized-reeb-base-point-recovery}
+expresses that condition by linear equalities and inequalities.
+
+
+For example, closure alone fails to give an orbit in the
+planar square \([-1,1]^2\), the right and left facet rows give opposite
+directions \(R_r=(0,2)\) and \(R_\ell=(0,-2)\).  Equal dwell times satisfy
+\(\tau R_r+\tau R_\ell=0\), but the breakpoint between the two segments would
+have to lie in the disjoint facets \(F_r\) and \(F_\ell\).  No translation can
+realize this closed two-segment path on the prescribed facets.
+
+The period and action of a closed pure-word orbit are
+\[
+  T=\sum_{k=1}^m \tau_k,
+  \qquad
+  A(\gamma)=T.
+\]
+
+
+Cyclically shifting the facet--duration pairs and moving the starting point
+to the corresponding breakpoint describes the same orbit. We therefore regard
+the word as cyclic. A zero duration, when allowed in a limiting argument,
+is simply deleted from the active word.
+
+The action of a finite word can be calculated directly from its velocities and
+dwell times.
+
+\begin{lemma}[Symplectic shoelace formula]\label{lem:preliminaries-shoelace}
+Let \(z\colon[0,T]\to\mathbb{R}^4\) be a closed piecewise affine curve. Suppose
+that \(z\) has constant velocity \(w_k\) on consecutive intervals of length
+\(\ell_k\), for \(k=1,\ldots,m\). Then
+\begin{equation}\label{eq:preliminaries-shoelace}
+  2A(z)
+  =
+  \sum_{1\leq j<k\leq m}
+    \ell_j\ell_k\,\omega_0(w_j,w_k).
+\end{equation}
+In particular, the action of a closed pure-word Reeb orbit depends only on the
+cyclic velocity word and the dwell times, not on the base point.
+\end{lemma}
+
+\begin{proof}
+Write \(t_k=\sum_{j<k}\ell_j\). On the \(k\)-th interval,
+\[
+  z(t)=z(0)+\sum_{j<k}\ell_jw_j+(t-t_k)w_k.
+\]
+The contribution of \(z(0)\) to
+\(\int_0^T\langle -J_0\dot z,z\rangle\,dt\) vanishes because \(z\) is closed,
+so \(\sum_k\ell_kw_k=0\). The self-term
+\(\langle -J_0w_k,w_k\rangle\) vanishes by skew-symmetry. Hence
+\[
+  2A(z)
+  =
+  \sum_k
+    \ell_k\left\langle -J_0w_k,\sum_{j<k}\ell_jw_j\right\rangle
+  =
+  \sum_{j<k}\ell_j\ell_k\,\omega_0(w_j,w_k),
+\]
+using \(\omega_0(u,v)=\langle J_0u,v\rangle\).
+\end{proof}
+
+Breakpoints of \(\dot{\gamma}\) are velocity changes, not necessarily changes
+in the minimal face containing \(\gamma(t)\): an orbit may move inside a
+nonsmooth face while switching from one active facet direction to another.
+
+\begin{lemma}[Base-point recovery]\label{lem:generalized-reeb-base-point-recovery}
+Fix an active word \(\sigma=(\sigma_1,\ldots,\sigma_m)\) and dwell times
+\(\tau_k>0\) satisfying the closure equation
+\eqref{eq:generalized-reeb-closure}. Put
+\[
+  v_1=0,
+  \qquad
+  v_k=\sum_{j=1}^{k-1}\tau_jR_{\sigma_j}
+  \quad (k=2,\ldots,m+1).
+\]
+Then \(v_{m+1}=0\). A point \(b\in\mathbb{R}^4\) recovers a simple generalized Reeb orbit
+with these velocity data, by
+\[
+  \gamma(t)=b+v_k+sR_{\sigma_k},
+  \qquad 0\leq s\leq \tau_k
+\]
+on the \(k\)-th segment, if and only if
+\begin{equation}\label{eq:generalized-reeb-base-point-equalities}
+  \langle a_{\sigma_k}, b+v_k\rangle=1
+  \quad\text{for }k=1,\ldots,m,
+\end{equation}
+and
+\begin{equation}\label{eq:generalized-reeb-base-point-inequalities}
+  \langle a_i,b+v_k\rangle\leq 1
+  \quad\text{for }i=1,\ldots,F\text{ and }k=1,\ldots,m.
+\end{equation}
+Equivalently, the equalities have the form
+\[
+  N_\sigma b = r_\sigma,
+  \qquad
+  (N_\sigma)_{k\bullet}=a_{\sigma_k}^{\mathsf T},
+  \qquad
+  (r_\sigma)_k=1-\langle a_{\sigma_k},v_k\rangle .
+\]
+When this system is nonempty, its solution space is an affine space of
+dimension \(4-\operatorname{rank}N_\sigma\). The inequalities cut out the
+valid base points as a convex polytope inside this affine space. In particular,
+the set of valid base points is bounded, because \(v_1=0\) and
+\eqref{eq:generalized-reeb-base-point-inequalities} imply \(b\in K\).
+\end{lemma}
+
+\begin{proof}
+On the \(k\)-th segment, the prescribed facet equation is
+\[
+  \langle a_{\sigma_k}, b+v_k+sR_{\sigma_k}\rangle=1.
+\]
+The \(s\)-term vanishes because
+\(\langle a_{\sigma_k},R_{\sigma_k}\rangle
+=2\langle a_{\sigma_k},J_0a_{\sigma_k}\rangle=0\). Hence the whole segment
+lies on \(F_{\sigma_k}\) exactly when
+\eqref{eq:generalized-reeb-base-point-equalities} holds.
+
+The segment lies in \(K\) exactly when
+\[
+  \langle a_i,b+v_k+sR_{\sigma_k}\rangle\leq 1
+  \quad\text{for all }i\text{ and all }s\in[0,\tau_k].
+\]
+For fixed \(i,k\) this expression is affine in \(s\), so it is enough to check
+the endpoints. The endpoint at \(s=0\) is \(b+v_k\), and the endpoint at
+\(s=\tau_k\) is \(b+v_{k+1}\). As \(k\) runs cyclically and \(v_{m+1}=v_1=0\),
+these endpoint checks are exactly
+\eqref{eq:generalized-reeb-base-point-inequalities}. With these equalities and
+inequalities, the resulting closed broken path lies on \(\partial K\) and has
+velocity \(R_{\sigma_k}\) on the \(k\)-th segment, hence is a simple Reeb orbit
+with the prescribed data.
+\end{proof}
+
+\begin{remark}[Non-uniqueness and computation]
+The base point is not part of the finite action data. If
+\(\operatorname{rank}N_\sigma=4\), the facet equations determine it uniquely
+when they are consistent. If \(\operatorname{rank}N_\sigma<4\), the inequalities
+may leave a positive-dimensional set of base points. This non-uniqueness does
+not affect the action, which is determined by the closed velocity polygon via
+Lemma~\ref{lem:preliminaries-shoelace}. Computationally, base-point recovery is
+therefore a finite linear feasibility check after the word and dwell times have
+been chosen.
+\end{remark}
+
+\subsection{Existence of simple minimizers}
+\label{subsec:generalized-reeb-orbits-polytopes-existence-of-simple-minimizers}
+
+The next theorem is the reason a finite search can compute capacity.
+It is Haim--Kislev's simple-minimizer theorem~\cite[Theorem~1.5]{HK2017},
+written with the contact-normalized velocities $R_i=2J_0a_i$.
+
+\begin{theorem}[Simple minimizer]\label{thm:generalized-reeb-simple-minimizer}
+Let \(K\subset\mathbb{R}^4\) be a full-dimensional convex polytope with
+\(0\in\operatorname{int}(K)\). Among all generalized Reeb orbits on
+\(\partial K\), there exists a minimum-action orbit that is simple in the
+contact-normalized convention above. Hence
+\[
+  c_{\mathrm{EHZ}}(K)
+  =
+  \min\{A(\gamma):\gamma
+  \text{ is a simple Reeb orbit on }\partial K\}.
+\]
+\end{theorem}
+
+The difficulty is that splitting or rearranging velocities need not leave
+a curve on $\partial K$. We make those changes to closed curves in the dual
+problem instead. The changes preserve the total time and can be chosen to
+increase action. Shortening all durations then restores the constraint
+$A(z)=T$ and lowers the dual value. Starting near the minimum forces this
+improvement to tend to zero, and the resulting curves have a convergent
+subsequence with the desired finite form.
+
+During the proof, a \emph{simple pure-velocity dual loop} means a closed
+piecewise affine curve using each $R_i$ on at most one cyclic interval.
+It need not lie on the boundary. The next five lemmas give the approximation,
+rearrangement and compactness steps.
+
+\begin{lemma}[Piecewise affine approximation]\label{lem:generalized-reeb-pw-affine-approx}
+Let \(z\in W^{1,2}([0,T],\mathbb{R}^4)\) be closed and satisfy
+\[
+  \dot z(t)\in\operatorname{conv}\{R_1,\ldots,R_F\}
+  \quad\text{for a.e. }t.
+\]
+For every \(\varepsilon>0\), there is a closed piecewise affine curve \(z'\)
+with
+\[
+  \dot z'(t)\in\operatorname{conv}\{R_1,\ldots,R_F\}
+\]
+on each affine piece and \(\|z'-z\|_{W^{1,2}}<\varepsilon\). Consequently
+\(A(z')\to A(z)\) and \(I_K(z')\to I_K(z)\) as \(\varepsilon\to0\).
+\end{lemma}
+
+\begin{proof}
+Let \(C=\operatorname{conv}\{R_1,\ldots,R_F\}\). Averages over intervals of refining uniform partitions converge to
+\(\dot z\) in \(L^2\). Choose a partition \(0=t_0<\cdots<t_m=T\) so that the conditional averages of
+\(\dot z\) on the partition intervals are \(L^2\)-close to \(\dot z\). On
+\([t_k,t_{k+1}]\), put
+\[
+  w_k=\frac{1}{t_{k+1}-t_k}\int_{t_k}^{t_{k+1}}\dot z(s)\,ds.
+\]
+Because \(C\) is convex and closed, each \(w_k\) lies in \(C\). Define \(z'\)
+by \(z'(0)=z(0)\) and \(\dot z'=w_k\) on \([t_k,t_{k+1}]\). Then
+\[
+  z'(T)-z'(0)=\int_0^T\dot z'(t)\,dt=\int_0^T\dot z(t)\,dt=0,
+\]
+so \(z'\) is closed. Since \(\dot z'\to\dot z\) in \(L^2\), integration gives
+\(z'\to z\) uniformly, hence in \(W^{1,2}\). The convergence of \(A\) follows
+from bilinearity in \((z,\dot z)\). Both \(-J_0\dot z'\) and
+\(-J_0\dot z\) take values in the compact set \(-J_0C\), on which
+\(h_K^2\) is Lipschitz; hence the
+\(L^2\)-convergence also gives \(I_K(z')\to I_K(z)\).
+\end{proof}
+
+\begin{lemma}[Splitting mixed velocities]\label{lem:generalized-reeb-splitting}
+Let \(z\) be a closed piecewise affine curve of period \(T\) whose velocities
+lie in \(\operatorname{conv}\{R_1,\ldots,R_F\}\). Then there is a closed
+piecewise affine curve \(z'\), with the same period, whose velocity on each
+segment is one pure Reeb vector \(R_i\), such that \(A(z')\geq A(z)\) and
+\[
+  I_K(z')=T.
+\]
+\end{lemma}
+
+\begin{proof}
+On a segment with velocity \(v=\sum_i\theta_iR_i\), \(\theta_i\ge0\) and
+\(\sum_i\theta_i=1\), replace the segment by subsegments with velocities
+\(R_i\) and lengths \(\theta_i\) times the original length. The total
+displacement and period are unchanged. The only change in the action is the
+sum of the new internal cross-terms from
+Lemma~\ref{lem:preliminaries-shoelace}. Reversing the order of the inserted
+subsegments changes the sign of this internal contribution, so one of the two
+orders does not decrease the action.
+
+For a pure Reeb velocity \(R_i=2J_0a_i\),
+\[
+  -J_0R_i=2a_i,
+  \qquad
+  h_K(-J_0R_i)=2h_K(a_i)=2,
+\]
+because \(F_i\neq\varnothing\) and \(\max_{x\in K}\langle a_i,x\rangle=1\).
+Thus \(h_K^2(-J_0R_i)=4\) on every pure segment, and
+\[
+  I_K(z')=\frac14\int_0^T4\,dt=T.
+\]
+\end{proof}
+
+\begin{lemma}[Merging repeated velocities]\label{lem:generalized-reeb-merging}
+Let \(z\) be a closed piecewise affine curve whose velocity on each segment is
+one of the \(R_i\). If some \(R_i\) occurs in two non-adjacent segments, then
+there is a rearrangement \(z'\) that merges those two occurrences into one
+contiguous segment and satisfies
+\[
+  A(z')\geq A(z),
+  \qquad
+  I_K(z')=I_K(z).
+\]
+Repeating this operation, and merging adjacent equal-velocity intervals,
+gives a closed piecewise affine curve in which each pure Reeb vector occurs in
+at most one interval. Here adjacency is understood cyclically, since the curve
+is closed.
+\end{lemma}
+
+\begin{proof}
+Suppose a velocity \(v\) occurs in two segments \(I_r\) and \(I_s\), with
+middle segments \(M=\{r+1,\ldots,s-1\}\). Merging \(I_s\) forward into \(I_r\)
+changes only the action terms involving \(v\) and the middle velocities, and
+the change is
+\[
+  \Delta A_{\mathrm{fwd}}
+  =
+  |I_s|\sum_{i\in M}|I_i|\,\omega_0(v,w_i).
+\]
+Merging \(I_r\) backward into \(I_s\) gives
+\[
+  \Delta A_{\mathrm{bwd}}
+  =
+  -|I_r|\sum_{i\in M}|I_i|\,\omega_0(v,w_i).
+\]
+The two changes have opposite signs, or both vanish, so one merge has
+nonnegative action change. Closure is preserved because the total duration assigned to each
+velocity is unchanged, and \(I_K\) is unchanged because it
+depends only on the velocities and their durations.
+\end{proof}
+
+\begin{lemma}[Rescaling]\label{lem:generalized-reeb-rescaling}
+Let \(z\) be a closed piecewise affine curve with pure Reeb velocities and
+period \(T\). If all durations are multiplied by \(\beta>0\), the resulting
+curve \(z'\) satisfies
+\[
+  A(z')=\beta^2A(z),
+  \qquad
+  I_K(z')=\beta I_K(z).
+\]
+\end{lemma}
+
+\begin{proof}
+In Lemma~\ref{lem:preliminaries-shoelace}, every action term contains a
+product of two durations, so \(A\) scales by \(\beta^2\). The integrand in
+\(I_K\) is unchanged and the time intervals are all multiplied by \(\beta\), so
+\(I_K\) scales by \(\beta\).
+\end{proof}
+
+\begin{lemma}[Compactness of simple pure-velocity dual loops]\label{lem:generalized-reeb-compactness}
+Let \(z_n\) be simple pure-velocity dual loops whose periods satisfy
+\(T_n\to T>0\). After translating the curves and passing to a subsequence,
+\(z_n\) converges to a simple pure-velocity dual loop \(z_*\) with period
+\(T\), and
+\[
+  A(z_*)=\lim_n A(z_n),
+  \qquad
+  I_K(z_*)=T.
+\]
+\end{lemma}
+
+\begin{proof}
+Choose the initial point of each periodic curve at a breakpoint, and insert
+zero dwell times for unused facet directions. Each curve is then determined up
+to translation by a permutation of the finitely many facet directions and a
+nonnegative dwell-time vector of total mass \(T_n\). Pass first to a
+subsequence with a fixed permutation. Since \(T_n\to T\), the dwell-time
+vectors lie in a common compact set and have a convergent subsequence whose
+entries sum to \(T\). Translating the starting points gives uniform convergence
+after identifying each domain with \([0,1]\) by linear time rescaling. Closure
+passes to the limit because \(\sum_i\tau_iR_{\sigma(i)}=0\) for every curve.
+Some limiting dwell times may be zero; deleting those zero-duration entries
+recovers the active word of the limiting simple curve. The action is continuous in the dwell-time data by
+Lemma~\ref{lem:preliminaries-shoelace}. Since the remaining positive-duration
+segments still have pure Reeb velocities, the same computation as in
+Lemma~\ref{lem:generalized-reeb-splitting} gives \(I_K(z_*)=T\).
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:generalized-reeb-simple-minimizer}]
+Choose a capacity-realizing generalized Reeb orbit \(\gamma\). By
+Theorem~\ref{thm:preliminaries-clarke-dual-action}, \(\gamma\) is also a dual
+minimizer in the thesis convention, with
+\[
+  I_K(\gamma)=A(\gamma)=T=c_{\mathrm{EHZ}}(K).
+\]
+Moreover \(\dot\gamma(t)\in\operatorname{conv}\{R_1,\ldots,R_F\}\) for almost
+every \(t\).
+
+Choose, by Lemma~\ref{lem:generalized-reeb-pw-affine-approx}, a sequence of
+closed piecewise affine curves \(z_{1,n}\to\gamma\) in \(W^{1,2}\), with
+velocities in the convex hull of the \(R_i\). Apply
+Lemma~\ref{lem:generalized-reeb-splitting} to obtain closed pure-velocity
+curves \(z_{2,n}\), and then Lemma~\ref{lem:generalized-reeb-merging} to obtain
+closed simple pure-velocity curves \(z_{3,n}\), such that
+\[
+  A(z_{3,n})\geq A(z_{2,n})\geq A(z_{1,n}),
+  \qquad
+  I_K(z_{3,n})=T.
+\]
+Since \(A(z_{1,n})\to A(\gamma)=T\), discard finitely many terms so that
+\(A(z_{3,n})>0\). Rescale all durations of \(z_{3,n}\) by
+\[
+  \beta_n=\frac{T}{A(z_{3,n})},
+\]
+and denote the resulting curve by \(z_{4,n}\). It satisfies
+\[
+  A(z_{4,n})=\frac{T^2}{A(z_{3,n})},
+  \qquad
+  I_K(z_{4,n})=\frac{T^2}{A(z_{3,n})}.
+\]
+Thus \(z_{4,n}\) is feasible for the dual problem, with period
+\(T^2/A(z_{3,n})\). Since \(\gamma\) is a dual minimizer,
+\(I_K(z_{4,n})\geq T\), and therefore \(A(z_{3,n})\leq T\). Together with
+\(A(z_{3,n})\geq A(z_{1,n})\to T\), this gives
+\[
+  A(z_{3,n})\to T,
+  \qquad \beta_n\to1,
+  \qquad \operatorname{period}(z_{4,n})\to T.
+\]
+
+By Lemma~\ref{lem:generalized-reeb-compactness}, a subsequence of the \(z_{4,n}\)
+converges up to translation to a simple pure-velocity dual loop \(z_*\)
+with \(A(z_*)=T\) and \(I_K(z_*)=T\). This curve is a dual minimizer. Applying
+Theorem~\ref{thm:preliminaries-clarke-dual-action} again gives a
+contact-normalized generalized Reeb orbit on \(\partial K\) in the same
+translate/rescale family. In the reconstruction part of that theorem, the
+corresponding characteristic has the form
+\[
+  t\longmapsto c\,z_*(t/c^2)+b/c
+\]
+for some \(c>0\), with
+\[
+  c^2=\nu=\frac{I_K(z_*)}{T}=1
+\]
+by \eqref{eq:preliminaries-dual-multiplier-value}. Thus the reconstruction
+only translates \(z_*\). Its velocities
+remain the pure facet directions \(R_i\), each used in one connected interval,
+so the resulting orbit is simple and has minimum action.  The translation also
+recovers the prescribed facet labels.  Indeed, on an interval with
+\(\dot\gamma=R_i\), the reconstructed inclusion gives
+\[
+  2a_i=-J_0R_i
+  \in 2\operatorname{conv}\{a_j:\gamma(t)\in F_j\}.
+\]
+Because the irredundant row \(a_i\) is an extreme point of \(K^\circ\), this
+forces \(F_i\) to be active along that interval.  The reconstructed curve lies
+in \(K\), so its starting point \(\gamma(0)\) is a valid base point in
+Lemma~\ref{lem:generalized-reeb-base-point-recovery}; closure supplies the
+remaining displacement equation.
+\end{proof}
+
+The theorem supplies one simple capacity minimizer, which is enough to
+compute the capacity by a finite optimization. It does not require every
+minimizer to be simple. The next section expresses the action in terms of
+the word and normalized dwell times, obtaining Haim--Kislev's quadratic
+program.
