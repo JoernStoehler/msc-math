@@ -3,41 +3,25 @@
 \label{sec:fresh-data-search}
 \label{sec:black-box-datascience}
 
-The normalized sum of symplectic ridge areas is a useful coarse indicator
-of systolic ratio, but does not reliably order the bodies selected for
-small ridge sums. Its strong inverse association in the broad sample
-weakens markedly after restriction to either low ridge sums or high
-ratios. Fresh low-ridge selections still have larger mean ratios than
-comparison bodies, even where stronger filtering gives no further gain.
-The distinction is between identifying a promising population and finding
-an improving direction within it.
+The algorithms developed above make it possible to compare systolic ratios
+across large collections of polytopes. Here we ask whether
+measurements of a polytope's faces help explain the size of its systolic
+ratio. Such a relationship could also help identify promising bodies
+before evaluating capacity. An association across a broad collection of
+polytopes is only a first test: for the search, it matters whether the
+relationship still holds among bodies with large ratios.
 
-Affine shape variation of the polygon factors contributes materially to
-this pattern. Balancing their vertex covariances raises the mean numerical
-ratio from $0.342$ to $0.654$ in a matched sample of 320 products, while
-the pooled correlation of within-group ranks weakens from $-0.929$ to $-0.249$.
-This supplies a concrete geometric source of variation in the broad
-sample. It does not explain all of the remaining association or turn
-balancing into a universal improvement rule.
+We focus on the symplectic areas of two-dimensional faces. These can be
+computed from the vertices without solving the capacity problem, and
+they are preserved by linear symplectic maps. Their total, normalized
+by volume, will be compared with the systolic ratio in random samples,
+in selected parts of those samples, and along geometric deformations.
+For products of equilateral triangles and regular pentagons, exact
+rotation formulas allow a sharper comparison than a statistical
+association alone.
 
-Exact geometry imposes complementary limits on any explanation. Among
-polygon products the normalized ridge sum is at least eight, and the cube
-attains that minimum with systolic ratio only $1/2$. Minimizing ridge area
-therefore cannot maximize the ratio universally. Yet rotated regular
-pentagon products satisfy an exact inverse-square relation, while rotated
-equilateral-triangle products have the same strict ordering by both
-quantities. A broader account must accommodate these opposite family
-laws. For search, direct ratio evaluations and local branch models can
-guide improvement beyond what geometric selection alone establishes.
-
-\subsection{The geometric quantities and the sampled populations}
+\subsection{Symplectic ridge area}
 \label{subsec:ds-sampling}
-
-For numerical evaluations we write
-$\widehat{\operatorname{sys}}=c_{\mathrm{num}}^2/(2V_{\mathrm{num}})$.
-Its normalization agrees with $\operatorname{sys}$; its volume is computed
-in floating-point arithmetic. The empirical results below concern this
-numerical ratio.
 
 A two-dimensional face of a four-dimensional polytope is called a ridge.
 For a ridge $F$ with cyclically ordered vertices $v_0,\ldots,v_{r-1}$, define
@@ -47,21 +31,28 @@ its absolute symplectic area by
  \qquad v_r=v_0,\qquad
  \omega_0=dq_1\wedge dp_1+dq_2\wedge dp_2.
 \]
-This is the polygonal area formula with the symplectic pairing in place of
-the planar determinant. It measures the area seen by $\omega_0$; a ridge can
-have positive Euclidean area and zero symplectic area. Two summaries proved
-useful:
+This is the polygonal area formula with the symplectic pairing in place
+of the planar determinant. It measures the area seen by $\omega_0$; a
+ridge can have positive Euclidean area and zero symplectic area. We
+normalize the sum over all ridges by
 \[
- R(K)=\frac{\sum_F A_\omega(F)}{\sqrt{\operatorname{vol}_4(K)}},
- \qquad
- C(K)=\frac{\max_F A_\omega(F)}{\sum_F A_\omega(F)}.
+ R(K)=\frac{\sum_F A_\omega(F)}{\sqrt{\operatorname{vol}_4(K)}}.
 \]
-The first records total symplectic ridge area relative to volume. The second
-records the fraction concentrated on the largest ridge, when the total is
-positive. Both are unchanged by translation, common dilation and linear
-symplectic maps. The area formula is translation invariant because the terms involving the
-translation vector cancel around the closed polygon.
+The square root makes $R$ unchanged by common dilation: both numerator
+and denominator scale as length squared. It is also unchanged by
+translation and linear symplectic maps, as is the systolic ratio.
+Translation invariance follows because the terms involving the
+translation vector cancel around the closed polygon. A linear symplectic
+map preserves each $A_\omega(F)$ and the four-dimensional volume.
+Thus any relation between $R$ and the ratio respects these symmetries.
 
+\subsection{Association in the sampled polytopes}
+
+For numerical evaluations we write
+$\widehat{\operatorname{sys}}=c_{\mathrm{num}}^2/(2V_{\mathrm{num}})$.
+Its normalization agrees with $\operatorname{sys}$; its volume is computed
+in floating-point arithmetic. The empirical results below concern this
+numerical ratio.
 
 The exploratory sample contains 4,096 generic four-dimensional polytopes,
 with 512 at each facet count $F=5,\ldots,12$, and 10,240 Lagrangian products
@@ -77,9 +68,6 @@ required. Thus these are specified distributions of bodies; the precise
 admission rules are in Appendix~\ref{app:ds-generation}. The largest
 numerical ratio in the exploratory sample is $0.863$. Its retained values
 and current reevaluation are described in Appendix~\ref{app:ds-evaluation}.
-
-\subsection{A strong bulk association weakens under selection}
-
 
 The pooled rank correlation between $R$ and the numerical systolic ratio is about $-0.94$. Rank correlation compares the orderings of the bodies by the two quantities; a value of $-1$ would mean exactly reversed orderings. The ordinary linear correlation is much weaker, about $-0.21$. Thus the principal observation concerns which bodies have larger systolic ratio, rather than how much the systolic ratio changes per unit of ridge area. The inverse association also occurs within every sampled facet-count or polygon-size group: the rank correlations range from about $-0.84$ to $-1.00$. Thus it is not solely a consequence of pooling these groups. Figures~\ref{fig:ds-ridge-association} and~\ref{fig:ds-ridge-products} show the separate populations.
 
@@ -106,13 +94,16 @@ rule or identify a geometric cause.}
 \label{fig:ds-conditional-ranks}
 \end{figure}
 
-The attenuation is substantially stronger than in a Gaussian reference
-fitted separately to each group's full-sample rank correlation. At the
-five-percent cutoff, that reference gives mean correlation $-0.695$ for
-either selection, versus the observed $-0.239$ for high ratios and
-$-0.113$ for low $R$. This reference does not reproduce the conditional
-pattern; it does not exclude range-restriction effects under other
-dependence structures. Its construction is in Appendix~\ref{app:ds-selection}.
+Restricting the range of a variable can itself weaken a correlation.
+To assess this effect in a simple model, replace each group's measurements
+by pairs drawn from a bivariate Gaussian with the same full-sample rank
+correlation, then apply the same selections. At the five-percent cutoff,
+this reference gives mean correlation $-0.695$ for either selection,
+versus the observed $-0.239$ for high ratios and $-0.113$ for low $R$.
+The attenuation in the data is substantially stronger than in this
+reference. Other dependence structures can behave differently under
+selection, so this comparison does not exclude range restriction as a
+contributor. The construction is in Appendix~\ref{app:ds-selection}.
 
 Ridge measurements also contain predictive information beyond face counts
 and incidences. Under a common training/test split, ridge-area features
@@ -269,12 +260,19 @@ The bulk association has a practical consequence: geometry alone can
 identify fresh populations with larger numerical ratios before capacity
 is evaluated. Within fixed factor-side-count groups, selection for low
 $R$ gave mean ratio $0.626$, compared with $0.316$ for comparison bodies
-from the same source. Among products already in the lowest one percent
-by $R$, the half with lower $C$ had a further mean advantage of $0.034$
-over the other half, positive in eight of ten groups. Thus the dominance
-of the largest ridge contains information even when the total ridge area
-is small. This concerns largest-ridge dominance, rather than every notion
-of how evenly area is distributed.
+from the same source.
+
+The distribution of area among the ridges supplies a second comparison.
+When the total symplectic ridge area is positive, define
+\[
+ C(K)=\frac{\max_F A_\omega(F)}{\sum_F A_\omega(F)}.
+\]
+This is the share of the total carried by the largest ridge; like $R$,
+it is invariant under translation, common dilation and linear symplectic
+maps. Among products already in the lowest one percent by $R$, the half
+with lower $C$ had a further mean advantage of $0.034$ over the other
+half, positive in eight of ten groups. Thus largest-ridge dominance
+contains information even when the total ridge area is small.
 
 The strong ordering in the broad samples is not retained within the
 low-$R$ panels themselves. Across 1,000 evaluated products in the lowest
