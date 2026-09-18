@@ -4,6 +4,85 @@ This appendix records the population, prediction, selection and search
 methods supporting Section~\ref{sec:black-box-datascience}, together with
 the additional numerical diagnostics and their interpretation limits.
 
+\subsection{Exact profile of equilateral-triangle products}
+\label{app:ds-triangle-profile}
+
+For the family in \eqref{eq:ds-triangle-profile}, the capacity is
+\[
+ c_{\mathrm{EHZ}}(T_\theta)=\frac{3\sqrt3}{4\cos(\pi/6-d_3)}.
+\]
+Here is a direct proof in the manuscript's quadratic-program convention.
+Choose the outward normals
+$n_i=(\cos(2\pi i/3),\sin(2\pi i/3))$, $i=0,1,2$, so
+$P_3=\{q:n_i\cdot q\leq1/2\}$, and write
+$m_j=\operatorname{Rot}(\theta)n_j$. The six dual rows are
+$a_{q_i}=(2n_i,0)$ and $a_{p_j}=(0,2m_j)$.
+
+Closure forces a common weight $x$ on the three $q$ rows and a common
+weight $y$ on the three $p$ rows, with $x+y=1/3$. Indeed, the kernel of
+the three-normal matrix is spanned by $(1,1,1)$. A positive quadratic
+objective requires $x,y>0$, so all six rows occur. For their order,
+\[
+ Q=4xyS,\qquad
+ S=\sum_{i,j}\epsilon_{ij}n_i\cdot m_j,
+\]
+where $\epsilon_{ij}=1$ if $q_i$ precedes $p_j$ and $-1$ otherwise.
+Cyclically moving the first row to the end preserves $S$, since both
+normal sums vanish. Classify the cyclic words by their number of $q$
+runs, equal to their number of $p$ runs.
+
+With one run, $S=0$. With two runs, the two $q$ block sums are $u,-u$
+with $u=\pm n_i$, and the two $p$ sums are $v,-v$ with $v=\pm m_j$.
+The reduced word $u,v,-u,-v$ gives $S=2u\cdot v\leq2$. With three
+runs the word alternates, say $q_a,p_b,q_c,p_d,q_e,p_f$, and
+\[
+ S=2\bigl(n_a\cdot m_b+(n_a+n_c)\cdot m_d\bigr)
+  =2(n_a\cdot m_b-n_e\cdot m_d).
+\]
+Set $c_k=\cos(\theta+2\pi k/3)$. On $0\leq\theta\leq\pi/6$ we have
+$c_0\geq c_2\geq c_1$, so all words satisfy
+\[
+ S\leq2(c_0-c_1)=3\cos\theta+\sqrt3\sin\theta.
+\]
+The bound is at least three, so it covers the two-run case too. Equality
+is attained by $q_0,p_0,q_2,p_2,q_1,p_1$. Since $xy\leq1/36$, with
+equality at $x=y=1/6$, we obtain
+\[
+ Q_{\max}=\frac{3\cos\theta+\sqrt3\sin\theta}{9}
+         =\frac{2\sqrt3}{9}\cos(\pi/6-\theta).
+\]
+The capacity formula follows from $c=1/(2Q_{\max})$. As
+$\operatorname{area}(P_3)=3\sqrt3/4$ and
+$\operatorname{vol}_4(T_\theta)=27/16$, the ratio is
+$\tfrac12\sec^2(\pi/6-\theta)$.
+
+All edges have length $\sqrt3$, and their directions differ from the
+corresponding normals by a common quarter-turn. The mixed-edge sum is
+therefore $9\sum_{k=0}^2|c_k|$. On this sector $c_0\geq0$,
+$c_1,c_2\leq0$ and $\sum_k c_k=0$, giving $18\cos\theta$.
+Dividing by $3\sqrt3/4$ yields $R=8\sqrt3\cos\theta$.
+
+To reduce other angles, both quantities are even under simultaneous
+reflection in the factor planes and have period $2\pi/3$ by triangle
+symmetry. The symplectic factor exchange $(q,p)\mapsto(p,-q)$, followed
+by rotation through $-\theta$ in both planes, sends $T_\theta$ to
+$T_{\pi-\theta}=T_{\pi/3-\theta}$. Together with evenness this gives
+period $\pi/3$, proving the formulas with $d_3$. Both expressions
+strictly decrease as $d_3$ runs from zero to $\pi/6$.
+
+The connection to covariance balancing is also exact. For a centered
+triangle with vertex matrix $X\in\mathbb R^{2\times3}$, isotropic vertex
+covariance means $XX^T=3\alpha I_2$, and $X\mathbf1=0$. Hence
+\[
+ X^TX=3\alpha(I_3-\mathbf1\mathbf1^T/3).
+\]
+All squared distances between different vertices equal $6\alpha$, so
+the triangle is equilateral. Independent factor dilations preserve both
+$R$ and $\operatorname{sys}$; thus ideal balancing of two triangles
+places their product in the family above. The rounded numerical outputs
+are close to this family, not asserted to have exactly equilateral
+binary64 coordinates.
+
 \subsection{Sampling and retained data}\label{app:ds-generation}
 
 A polytope was specified by inequalities
@@ -201,6 +280,18 @@ resampling intervals were $[0.192,0.329]$ and $[0.160,0.296]$.
 These condition on the observed panels. Shared controls make the two
 comparisons dependent.
 
+\paragraph{Euclidean area and alignment.}
+For the generic selected and comparison panels, the respective means of
+$\overline E$ are $0.9167$ and $1.3653$, and the means of
+$\overline\kappa_E$ are $0.3769$ and $0.5029$. Within the selected
+panel, the ten lowest $R/N_2$ values have mean $\overline E=0.9419$
+and mean $\overline\kappa_E=0.3400$, compared with $0.9139$ and
+$0.3810$ for the other ninety bodies. These are means of body-level
+quantities; they do not assert a factorization of the population mean
+of $R/N_2$. Definitions, per-ridge values and the decomposition check
+are retained in
+\path{experiments/sys-datascience/methods/ridge-tail-anatomy/}.
+
 \subsection{Paired height changes and ambient rotations}
 \label{app:ds-deformations}
 
@@ -376,7 +467,7 @@ gap and removed \(77.9\%\)--\(100\%\) of the distance to HKO.  In contrast,
 the gradient of one current minimizing branch recovered
 \(-22.1\%\)--\(41.4\%\) of the gap.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=\linewidth]
   {ds-complete-draft/figures/hko-recovery-by-source-distance.pdf}
@@ -386,7 +477,6 @@ residual evaluator gap.}
 \label{fig:black-box-datascience-hko-optimizer-calibration}
 \end{figure}
 
-\FloatBarrier
 \paragraph{Selected finite-step failure audit.}
 At the eight highest four-anchor tuning endpoints, five admitted one validated
 improvement, by \(1.57\cdot10^{-6}\) to \(4.61\cdot10^{-5}\).  Across the
@@ -541,6 +631,7 @@ Adaptive product sampling & \path{experiments/sys-datascience/methods/diagonal-c
 Local optimization and diagnostics & \path{experiments/dev-gradient-ascent/optimizer-comparison/}; \path{docs/ds-evidence-closure/search-account.md}\\
 Conditional and controlled ridge analyses & \path{experiments/sys-datascience/methods/selection-mechanism/}\\
 Conditional ridge correlations & \path{experiments/sys-datascience/methods/tail-dependence-feasibility/}\\
-Product ridge geometry & \path{docs/ds-evidence-closure/ridge-mathematics.md}; \path{experiments/sys-datascience/methods/ridge-endpoint-path/}\\
+Product ridge geometry & \path{docs/ds-evidence-closure/ridge-mathematics.md};
+\path{docs/ds-evidence-closure/triangle-profile.md}; \path{experiments/sys-datascience/methods/ridge-endpoint-path/}\\
 \bottomrule
 \end{longtable}

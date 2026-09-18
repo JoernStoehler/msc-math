@@ -24,9 +24,11 @@ Exact geometry imposes complementary limits on any explanation. Among
 polygon products the normalized ridge sum is at least eight, and the cube
 attains that minimum with systolic ratio only $1/2$. Minimizing ridge area
 therefore cannot maximize the ratio universally. Yet rotated regular
-pentagon products satisfy an exact inverse-square relation between the
-two quantities. A broader account must accommodate both this strict
-family relation and its failure outside that family.
+pentagon products satisfy an exact inverse-square relation, while rotated
+equilateral-triangle products have the same strict ordering by both
+quantities. A broader account must accommodate these opposite family
+laws. For search, direct ratio evaluations and local branch models can
+guide improvement beyond what geometric selection alone establishes.
 
 \subsection{The geometric quantities and the sampled populations}
 \label{subsec:ds-sampling}
@@ -137,7 +139,7 @@ by factor side counts. Each group contains 1,024 bodies.}
 \end{figure}
 
 \FloatBarrier
-\subsection{Exact geometry: a special law and its limits}
+\subsection{Exact geometry: two families with opposite ordering}
 
 A universal inverse relation between ridge sum and systolic ratio is
 false, but it can hold exactly on a restricted family. The product edge
@@ -162,41 +164,39 @@ so
  =2\|u_i\|\,\operatorname{width}_Q(u_i/\|u_i\|).
 \]
 The descriptor therefore combines the edge lengths of one factor with the
-widths of the other in the edge directions. This gives concrete geometry
-to investigate instead of treating the successful column as an unexplained
-score.
+widths of the other in the edge directions.
 
 
 \paragraph{The minimum ridge sum for polygon products.}
 Let $P,Q$ be convex polygons with nonempty interior, set $D=P-P$, and write
-$A_P,A_Q$ for their areas. Let $J_2(x,y)=(-y,x)$, and normalize mixed area, for $t\geq0$, by
+$A_P,A_Q$ for their areas. Let $J_{\mathrm{ccw}}(x,y)=(-y,x)$, and normalize mixed area, for $t\geq0$, by
 \[
  \operatorname{area}(K+tL)=\operatorname{area}(K)+2tV(K,L)
                          +t^2\operatorname{area}(L).
 \]
 Then
 \begin{equation}\label{eq:ds-product-ridge-minimum}
- R(P\times Q)=\frac{4V(D,J_2Q)}{\sqrt{A_PA_Q}}\geq8.
+ R(P\times Q)=\frac{4V(D,J_{\mathrm{ccw}}Q)}{\sqrt{A_PA_Q}}\geq8.
 \end{equation}
-Equality holds precisely when $P$ is centrally symmetric and $J_2Q$ is
+Equality holds precisely when $P$ is centrally symmetric and $J_{\mathrm{ccw}}Q$ is
 positively homothetic to $D$, allowing translation.
 
 \begin{proof}
 Let $h_D$ be the support function of $D$. The boundary-projection identity
 gives $\sum_i|u_i\cdot v_j|=2h_D(v_j)$. The outward unit normal to the
-counterclockwise edge $J_2v_j$ is $v_j/\|v_j\|$. The polygon mixed-area
+counterclockwise edge $J_{\mathrm{ccw}}v_j$ is $v_j/\|v_j\|$. The polygon mixed-area
 formula therefore gives
 \[
- 2V(D,J_2Q)=\sum_j\|v_j\|h_D(v_j/\|v_j\|)
+ 2V(D,J_{\mathrm{ccw}}Q)=\sum_j\|v_j\|h_D(v_j/\|v_j\|)
           =\sum_j h_D(v_j),
 \]
 which proves the identity. Brunn--Minkowski and its equality case
 \cite[Sections~3 and~5]{dsGardner2002} imply
 \[
- V(D,J_2Q)^2\geq\operatorname{area}(D)A_Q,
+ V(D,J_{\mathrm{ccw}}Q)^2\geq\operatorname{area}(D)A_Q,
  \qquad \operatorname{area}(D)\geq4A_P.
 \]
-The first inequality is an equality exactly when $D$ and $J_2Q$ are
+The first inequality is an equality exactly when $D$ and $J_{\mathrm{ccw}}Q$ are
 positively homothetic. The second is an equality exactly when $P$ is
 centrally symmetric. Substitution proves the bound and equality statement.
 \end{proof}
@@ -217,49 +217,51 @@ negative association in the sampled distributions needs a more specific
 explanation.
 
 
-In particular, the cube attains the global minimum of $R$ among polygon
-products without attaining a large systolic ratio. The HKO value is also
-not separated from ordinary sampled bodies by $R$: its value $8.944$
-exceeds the exploratory sample minimum $8.926$.
+For rotated regular pentagons, there is an exact inverse-square law. Let
+$K_\theta=P_5\times\operatorname{Rot}(\theta)P_5$, where $P_5$ has
+circumradius one, and let $d(\theta)=\operatorname{dist}(\theta,(\pi/5)\mathbb Z)$.
+Then
+\begin{equation}\label{eq:ds-pentagon-ridge-capacity}
+ \operatorname{sys}(K_\theta)R(K_\theta)^2=16(3+\sqrt5).
+\end{equation}
+Thus distinct ridge sums within this family have strictly reversed
+systolic ratios. More precisely, $R$ strictly decreases and
+$\operatorname{sys}$ strictly increases as $d$ runs from $0$ to $\pi/10$.
+Periodicity and reflection symmetry prevent strict monotonicity in the
+unrestricted angle $\theta$.
 
-For rotated regular pentagons, the descriptor does have an exact relation
-to capacity. Let $K_\theta=P_5\times\operatorname{Rot}(\theta)P_5$, with circumradius one,
-and let $d(\theta)=\min_{k\in\mathbb Z}|\theta-k\pi/5|$.
-Each edge has length $2\sin(\pi/5)$ and each factor has area
-$5\sin(\pi/5)\cos(\pi/5)$. The mixed-edge formula therefore gives
+For the proof, the area of each pentagon is $5\sin(\pi/5)\cos(\pi/5)$.
+Its edges have length $2\sin(\pi/5)$, so the mixed-edge formula gives
 \[
- R(K_\theta)=4\tan(\pi/5)
-       \sum_{k=0}^4|\cos(\theta+2\pi k/5)|
-     =16\sin(\pi/5)\cos d(\theta).
+ R(K_\theta)=4\tan(\pi/5)\sum_{k=0}^4|\cos(\theta+2\pi k/5)|
+           =16\sin(\pi/5)\cos d(\theta).
 \]
 For the second equality, the absolute-cosine sum is even and has period
 $\pi/5$. On $[-\pi/10,\pi/10]$, the terms indexed by $0,1,4$ are
 nonnegative and those indexed by $2,3$ are nonpositive. Pairing opposite
 indices reduces the sum to
 $[1+2\cos(2\pi/5)-2\cos(4\pi/5)]\cos\theta
-=4\cos(\pi/5)\cos\theta$.
-Combining this with the capacity profile proved in
-Theorem~\ref{thm:rotated-pentagon-product-formula} yields
-\begin{equation}\label{eq:ds-pentagon-ridge-capacity}
- \operatorname{sys}(K_\theta)R(K_\theta)^2=16(3+\sqrt5).
+=4\cos(\pi/5)\cos\theta$. Combining this with the capacity profile in
+Theorem~\ref{thm:rotated-pentagon-product-formula} proves
+\eqref{eq:ds-pentagon-ridge-capacity}.
+
+Equilateral triangles give the opposite exact ordering. Let
+$T_\theta=P_3\times\operatorname{Rot}(\theta)P_3$, where $P_3$ has
+circumradius one, and put
+$d_3=\operatorname{dist}(\theta,(\pi/3)\mathbb Z)\in[0,\pi/6]$. Then
+\begin{equation}\label{eq:ds-triangle-profile}
+ R(T_\theta)=8\sqrt3\cos d_3,
+ \qquad
+ \operatorname{sys}(T_\theta)=\tfrac12\sec^2(\pi/6-d_3).
 \end{equation}
-Thus smaller normalized total unsigned ridge area means larger systolic
-ratio within this rotation family. This supplies a geometric explanation
-for one instance of the observed inverse association.
-
-
-More precisely, $R$ strictly decreases and $\operatorname{sys}$ strictly
-increases as $d$ runs from $0$ to $\pi/10$. Throughout this rotation
-family, distinct ridge sums therefore have strictly reversed systolic
-ratios. The periodicity and reflection symmetry prevent strict
-monotonicity in the unrestricted angle $\theta$.
-
-The exact relation is special to this family. Along sampled rotation
-paths of $3\times6$ and $4\times4$ products, both $R$ and the numerical
-ratio decrease at the four recorded positions. These observations do not
-establish monotonicity between those positions. Together with the exact
-cube--HKO comparison, they show why a relationship visible in one family
-cannot be extrapolated to every deformation or product.
+Both quantities strictly decrease with $d_3$, from $(8\sqrt3,2/3)$ to
+$(12,1/2)$. Thus the ridge sum and ratio have the same strict ordering
+throughout this rotation family. Appendix~\ref{app:ds-triangle-profile}
+proves the capacity formula by classifying the six-facet words in the
+quadratic program, and derives the ridge sum directly. The conflict
+between the two exact family laws is stronger than a failure of global
+monotonicity at a few sampled points: even the direction of a strict
+relation depends on the family.
 
 \subsection{Coarse selection succeeds; stronger selection need not}
 
@@ -281,7 +283,7 @@ from $-0.315$ to $+0.301$; pooling ranks computed within each group gives
 $+0.032$. The most extreme tenth has a larger mean ratio than the rest
 in only two groups. Coarse enrichment over comparison bodies and loss of
 the inverse ordering within the selected population are therefore both
-visible in the same research program.
+visible in these broad and selected populations.
 
 For generic ten-facet bodies, the related score $R/N_2$, where $N_2$ is
 the number of ridges, measures normalized area per ridge. Unlike products
@@ -294,21 +296,25 @@ established deterioration under every stronger filter. The comparison
 rules and conditional resampling summaries are retained in
 Appendix~\ref{app:ds-selection}.
 
-The area decomposition supplies a geometric view of the same limitation.
-For Euclidean ridge area $E(F)>0$, write
+The two geometric components of $R/N_2$ also behave differently under
+stronger selection. Let $E(F)$ be Euclidean ridge area and
+$\kappa(F)=A_\omega(F)/E(F)$, the alignment of its plane with the
+symplectic form relative to the Euclidean metric. Define the body-level
+quantities
 \[
- A_\omega(F)=E(F)\kappa(F),\qquad
- \kappa(F)=A_\omega(F)/E(F).
+ \overline E(K)=\frac{\sum_F E(F)}{N_2\sqrt{\operatorname{vol}_4(K)}},
+ \qquad
+ \overline\kappa_E(K)=\frac{\sum_F E(F)\kappa(F)}{\sum_F E(F)}.
 \]
-Here $\kappa$ measures the alignment of the ridge plane with the symplectic
-form relative to the Euclidean metric. Neither factor is invariant under
-all linear symplectic maps. In the generic selection, both mean normalized
-Euclidean ridge area and Euclidean-area-weighted $\kappa$ were smaller
-than in the comparison panel: $0.917$ versus $1.365$, and $0.377$ versus
-$0.503$. Within the selected panel, the ten lowest ridge scores instead
-had slightly larger ordinary area and smaller alignment factor than the
-other ninety, without a larger mean ratio. Lowering one component is
-therefore not enough to explain or guarantee improvement.
+Then $R(K)/N_2=\overline E(K)\overline\kappa_E(K)$ exactly. Neither
+factor is invariant under all linear symplectic maps. In the generic
+selection both population means are smaller than in the comparison panel.
+Within the selected panel, however, the ten lowest scores have slightly
+larger $\overline E$ and smaller $\overline\kappa_E$ than the other
+ninety, without a larger mean ratio. Thus smaller alignment alone does
+not order these selected bodies by ratio. Appendix~\ref{app:ds-selection}
+gives the population means; the identity above holds for each body and
+does not equate a mean product with the product of means.
 
 \subsection{The inverse direction survives a controlled change of shape}
 
@@ -348,8 +354,9 @@ $v_1,\ldots,v_N$, define
  \overline v=\frac1N\sum_i v_i,\qquad
  \Gamma=\frac1N\sum_i(v_i-\overline v)(v_i-\overline v)^T.
 \]
-In Williamson normal form, $\Gamma$ has diagonal
-$(\nu_1,\nu_2,\nu_1,\nu_2)$, with $0<\nu_1\leq\nu_2$.
+By Williamson normal form, a symplectic change of coordinates sends
+$\Gamma$ to $\operatorname{diag}(\nu_1,\nu_2,\nu_1,\nu_2)$, with
+$0<\nu_1\leq\nu_2$.
 The ratio $\rho=\nu_2/\nu_1$ measures the imbalance between the two
 symplectic covariance scales.
 
@@ -405,12 +412,16 @@ capacity can change even though volume is preserved.
 The mean ridge sum falls from $23.739$ to $11.652$, decreasing in 306 of
 the 320 products. The remaining relation depends on the side counts:
 the balanced $3\times3$ group has positive rank correlation, while the
-other nine groups retain negative correlations. The transformation changes
+other nine groups retain negative correlations. This reversal has an
+exact geometric explanation. A triangle with isotropic vertex covariance
+is equilateral (Appendix~\ref{app:ds-triangle-profile}), so ideal balancing
+places triangle products in the family with the same-order relation
+\eqref{eq:ds-triangle-profile}. The transformation changes
 several geometric properties together. It therefore identifies a useful
 shape deformation, not covariance imbalance as the sole cause of the
 bulk association. Nor do its six decreases permit a universal improvement
-rule. The target-blind choice of original bodies, complete paired
-evaluations and numerical checks are in Appendix~\ref{app:ds-balance}.
+rule. The selection of original bodies without using their ratios, complete
+paired evaluations and numerical checks are in Appendix~\ref{app:ds-balance}.
 
 \subsection{What could explain the bulk association?}
 
@@ -435,14 +446,20 @@ These explanations are compatible, and the results do not choose between
 them. The observed attenuation is stronger than in the fitted Gaussian
 reference, but other dependence structures can behave differently under
 selection. Neither convenient account need describe the full phenomenon.
-The exact pentagon identity, the global counterexample and the controlled
-shape changes provide constraints that a broader explanation must respect.
+The opposite exact laws for pentagons and triangles, the global
+counterexample and the controlled shape changes constrain any broader
+explanation.
 
 \subsection{Using evaluated ratios to guide search}
 
-A weak explanation of the ridge signal need not prevent practical search.
-Adapting the product sampling law to evaluated ratios improved both the
-maximum and the quality of several leading bodies in three paired runs.
+Geometric selection and subsequent improvement are separate search tasks.
+The ridge descriptors identify promising initial populations, but they do
+not supply a general ascent direction. Direct evaluations can instead
+guide changes to the sampling distribution or local proposals, while
+endpoint probes test whether a search has missed further improvements.
+
+The tested adaptive sampling procedure attained larger maxima and
+higher top-eight medians than independent sampling in three paired runs.
 For $5\times5$ products, the cross-entropy method~\cite{dsDeBoer2005}
 shifts a fitted distribution towards the quarter of the current population
 with largest ratios, then samples again. Under equal evaluation counts,
@@ -461,14 +478,14 @@ Seed & IID & Adaptive & IID & Adaptive\\
 \end{center}
 The top-eight statistic is the median of the eight highest ratios after
 removing repeated exact dual-vertex arrays. Both arms share their initial
-population. The fitted coordinates describe log ratios of normal-angle
-gaps, centered logarithmic dual-normal lengths and a relative angle;
-the latter uses a circular mean update. The coordinate-dependent evaluator
-admission condition acts differently on the original sampling coordinates
-and the adaptive normalized representation. The observed advantage
-therefore concerns this implemented combination of adaptation and
-admission. Appendix~\ref{app:ds-adaptive} records the update, budgets and
-admission history.
+population. The comparison does not isolate the benefit of adaptation:
+a coordinate-dependent acceptance condition filters the two
+representations differently. Independent samples retain their original
+coordinates, while adaptive proposals use a normalized representation;
+the evaluator imposes coordinate-size bounds on both. Thus the table
+compares procedures that differ in both sampling and admission. The
+fitted coordinates, updates and admission rules are in
+Appendix~\ref{app:ds-adaptive}.
 
 The prescribed ambient rotations $K\mapsto UK$, $U\in SO(4)$, also
 lost to fresh sampling under equal evaluation budgets. These limited
@@ -477,13 +494,14 @@ comparisons are recorded in Appendix~\ref{app:ds-deformations}.
 \subsection{Competing branches in local search}
 \label{subsec:black-box-datascience-finite-budget-optimization}
 
-The local-search comparison favors methods that account for several
-competing branches of the capacity calculation. A single selected branch
-can point uphill while the minimum of the branches decreases. For example,
-$\min\{x,-x\}$ decreases in either direction from zero although each
-individual branch has an increasing direction. The corresponding search
-question is whether retaining nearby or previously active branches helps
-the numerical systolic ratio increase.
+The branch model in Section~\ref{subsec:first-order-search-model}
+supplies a more local source of proposed improvements. Its lower-envelope
+structure explains why increasing one currently minimizing branch can
+expose another as the new minimum. The
+finite-gap model therefore retains nearby branches, and history-based
+variants also retain previously active ones. The following comparison
+supports their finite-search usefulness; it does not establish that a
+numerically chosen branch window contains every relevant branch.
 
 Seven fixed implementations started from the same 64 generic ten-facet
 bodies, under a common cap of 128 full evaluations and a nominal one-second
@@ -534,8 +552,8 @@ example had no nominal gain above $10^{-12}$ in that suite. Their misses
 do not exclude untested directions or changes in facet count. The probe
 design and numerical limitations are in Appendix~\ref{app:ds-probes}.
 
-The chapter therefore supports a strong coarse association, an exact law
-on one rotation family, and useful finite search improvements. It does
+The chapter therefore supports a strong coarse association, opposite
+exact laws on two rotation families, and useful finite search improvements. It does
 not supply a universal capacity law or a general route to local optimality.
 None of the random samples or search comparisons produced a numerical
 ratio above one. For products with a triangle or quadrilateral factor,
