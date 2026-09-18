@@ -1,24 +1,31 @@
 Haim--Kislev and Ostrover disproved Viterbo's conjecture with a Lagrangian
-product of two regular pentagons. We investigate the geometry near their
-example and use finite computation to look for further structure in the
-systolic ratio of four-dimensional convex polytopes.
+product of two regular pentagons. We identify geometric restrictions on
+improving its systolic ratio and investigate patterns in broader populations
+of four-dimensional convex polytopes.
 
-Our main theorem shows that the HKO body is a local maximizer among
+Our main theorem proves that the HKO body is a local maximizer among
 polytopes with exactly ten facets. Nearby equality occurs precisely under
 translations, positive dilations and linear symplectic transformations.
+We also prove an explicit capacity formula and the sharp bound
+$(3+\sqrt5)/5$ for products of two independently linearly deformed regular
+pentagons. Thus neither sufficiently small ten-facet perturbations nor
+arbitrary deformations within this product family improve the HKO ratio.
 
-We implement, optimize and extend two capacity algorithms, based on the
-quadratic program of Haim--Kislev and the flow graph of Chaidez and Hutchings.
-We also study the first-order variation of capacity. As a side theorem,
-we prove an explicit capacity formula for the relative-rotation family of
-two regular pentagons. A short analytic proof shows that the HKO body is a global maximizer
-of the systolic ratio in this family. We then extend the capacity formula
-and sharp bound to products of two independently linearly deformed regular
-pentagons.
+The placement of product planes supplies another source of variation:
+every symplectic product of two full-dimensional planar convex bodies admits
+a capacity-increasing rigid rotation, while the Lagrangian endpoint can
+have smaller capacity. The proofs and computations use finite capacity
+formulas, their first-order variation, and an implementation of
+Haim--Kislev's quadratic program. A flow-graph algorithm using the local
+passage geometry of Chaidez and Hutchings gives a second method under
+explicit regularity assumptions.
 
-An empirical investigation looks for statistical patterns in geometric
-measurements of sampled polytopes, with the aim of turning those patterns
-into mathematical conjectures. We find patterns among bodies with systolic
-ratio below one, but do not establish that these patterns extend to the regime
-above one. This leaves open whether further progress requires different
-statistical methods or new geometrically motivated measurements.
+Empirically, symplectic ridge area has a strong inverse association with
+the computed systolic ratio in the sampled populations, and geometric
+selection enriches fresh samples. More extreme filtering did not establish
+a further gain in the tested panel. An exact inverse-square relation holds
+for rotated regular pentagon products, but the cube--HKO comparison rules
+out a universal inverse ordering.
+The evidence therefore supports a useful coarse predictor while leaving its
+broader geometric explanation unresolved. None of the exploratory searches
+produced a new numerical ratio above one.

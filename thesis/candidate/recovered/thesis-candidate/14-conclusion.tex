@@ -1,63 +1,66 @@
 \clearpage
 \section{Conclusion}\label{sec:conclusion}
 
-Is the HKO body a local maximum of the systolic ratio among convex bodies?
-Our main theorem gives a partial answer: it is a local maximum among
-ten-facet polytopes. Every sufficiently
-nearby ten-facet polytope has ratio at most $(3+\sqrt5)/5$, and equality occurs precisely
-under translations, positive dilations and linear symplectic maps. The
-restriction to ten facets is essential to the coordinate neighborhood used
-in the proof.
+The HKO body is a local maximum of the systolic ratio among ten-facet
+polytopes. Every sufficiently nearby body in this space has ratio at most
+$(3+\sqrt5)/5$, and equality occurs precisely under translations, positive
+dilations and linear symplectic maps. This answers the local-improvement
+question within the fixed-facet space. Deformations that introduce new
+facets require a different local model.
 
-The argument also gives a useful way to work at a singular optimization
+A global result gives the same sharp bound for products of independently
+linearly deformed regular pentagons. Its equality cases are positive dilates
+of linear symplectic images of HKO. Together, the two theorems rule out
+improvement by sufficiently small ten-facet perturbations and by arbitrary
+deformations within this family of affinely regular products. The latter
+can be large, while the former can destroy the product structure.
+
+The placement of the factor planes matters even when the Euclidean product
+shape is fixed. Every symplectic product of full-dimensional planar convex
+bodies admits a capacity-increasing rigid rotation. The Lagrangian endpoint
+can nevertheless have smaller capacity; in the triangle example the maximum
+along the path lies strictly between the endpoints. Thus the familiar
+symplectic and Lagrangian arrangements need not contain the best position
+of a given product.
+
+The local proof also gives a useful way to work at a singular optimization
 problem. One can continue feasible choices and use their values as upper
 bounds, without continuing stationary optimizers. At HKO, finitely many
-such bounds suffice: after the symmetry directions are removed, their
-derivatives force a strict decrease in every direction. The algebraic
+such bounds suffice: their derivatives force a strict decrease in every
+nonzero direction transverse to the symmetries. The algebraic
 calculation establishes the finite conditions, while the geometric proof
 identifies the upper bounds and relates their coordinates to nearby bodies.
 
-The empirical work approached the problem from another direction. It used
-geometric measurements and standard data-science methods to look for patterns
-that might lead back to mathematical explanations. We found patterns below
-systolic ratio one and confirmed some of their usefulness on fresh samples,
-but did not establish an extension to ratios above one. A geometric
-calculation expresses the ridge-area
-measurement on products through edge lengths and widths of the factors.
-For rotated regular pentagons, equation~\ref{eq:ds-pentagon-ridge-capacity}
-proves an exact inverse-square relation between this descriptor and the
-systolic ratio. This explains the association on that restricted family,
-not on the sampled population as a whole. The exploratory samples produced
-no new ratio above one.
+The finite methods also support computation beyond these proofs. The
+Haim--Kislev formula gives a finite capacity problem for convex polytopes,
+and the product reduction shows that some maximizing word uses at most three
+facet directions from each planar factor. Its implementation supplies the
+capacity evaluations used to investigate broader populations. Our flow-graph
+construction uses the local passage geometry of Chaidez and Hutchings and
+provides a second capacity algorithm under explicit regularity assumptions.
 
-We implemented, optimized and extended two methods for computing capacity:
-the Haim--Kislev quadratic program and a flow graph using the local passage
-geometry of Chaidez and Hutchings.
-The expanded variational proof explains why the first problem is finite;
-the second method gives an alternative for cross-checking computations.
-For products of planar polygons, we proved reductions that make the finite
-search smaller. A short analytic proof gives the capacity throughout the relative-rotation
-family of two regular pentagons. The matrix argument in
-Section~\ref{sec:pentagon-affine} extends the formula to independently
-linearly deformed regular pentagons and proves that HKO attains the sharp
-systolic bound throughout this larger family. The original exhaustive
-SageMath rotation proof remains available as computational provenance.
-A separate product-position argument shows that every symplectic product
-of two full-dimensional planar convex bodies admits a capacity-increasing
-rigid rotation, although the Lagrangian endpoint can have smaller capacity.
-The relative placement of the factor planes thus supplies another geometric
-direction to investigate.
+In those populations, symplectic ridge area gives a strong coarse predictive
+signal for computed systolic ratios. Geometric selection enriched fresh
+samples, but stronger ridge filtering did not establish a further gain in
+the tested panel. The
+distinction between prediction and ascent is already visible in exact
+examples: the cube has both a lower ridge score and a lower systolic ratio
+than HKO. A universal inverse ordering is therefore false. At the same
+time, equation~\ref{eq:ds-pentagon-ridge-capacity} proves an inverse-square
+law throughout the regular-pentagon rotation family, so the descriptor does
+capture a precise relation on a restricted family.
 
-Two directions remain particularly close to the questions studied here.
-First, the local theorem could be tested against deformations that change
-the facet count. Adding or splitting facets leaves the forty-dimensional
-chart used in the proof, so it requires a new argument. Second, the
-statistical associations invite geometric interpretation. A useful next
-conjecture would explain an association on a clearly specified family and
-survive attempts to break it by changing the sampling distribution.
+The broader association still needs an explanation. One possibility is that
+typical geometric perturbations in the sampled populations move the two
+quantities in opposite directions. Another is that ridge area is a noisy
+proxy for a different geometric relation. The experiments do not separate
+these hypotheses. The search comparisons also show that selection,
+deformation and adaptation answer different questions: improving a starting
+body need not outperform spending the same evaluations on fresh samples.
+None of the exploratory searches produced a new numerical ratio above one.
 
-The results therefore give a local theorem around the known counterexample,
-finite methods for investigating nearby and sampled polytopes, and measured
-successes and failures of several search ideas. The larger question of how
-capacity and volume constrain one another remains open beyond these families
-and neighborhoods.
+Two mathematical questions follow directly. Does HKO remain locally maximal
+when the facet count changes? Which geometric restrictions explain the ridge
+association, and do they survive a change of sampling distribution? The
+first asks how far the proved local extremality extends. The second asks
+how a useful statistical signal can become a statement about capacity.

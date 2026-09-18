@@ -35,12 +35,14 @@ data science. This is the sense in which we continue to probe Viterbo's
 conjecture: although its proposed bound is false, the geometric relationship
 between symplectic capacity and volume remains to be understood.
 
-The contributions grew out of a broad computational investigation. We
-developed methods for evaluating capacity and used them to explore examples,
-following up on questions that the computations suggested. This led to
-several separate results, from a local maximality theorem to algorithms and
-statistical observations. The following overview explains what each part
-contributes to that investigation.
+The mathematical results identify two ways of changing the counterexample
+that cannot improve its ratio: sufficiently small ten-facet perturbations
+and arbitrary independent linear deformations of its regular-pentagon
+factors. These are different restrictions, one local in the full ten-facet
+space and one global within a product family. Finite capacity formulas make
+both questions accessible to proof. The empirical investigation asks whether
+geometric measurements can explain capacity in broader populations and guide
+the search for further examples.
 
 \subsection{Capacities, dynamics and convex geometry}
 
@@ -161,8 +163,9 @@ simple-minimizer theorem. Its implementation provides an independent
 cross-check of the quadratic-program method on selected rational inputs
 satisfying the flow algorithm's regularity hypotheses.
 
-The same finite methods yield a side result for the family
-$P_5\times R(\theta)P_5$: its systolic ratio is
+For regular pentagon products, the finite formula also gives the complete
+relative-rotation profile. The systolic ratio of
+$P_5\times R(\theta)P_5$ is
 \[
  \frac{5+2\sqrt5}{10}\sec^2 d(\theta),
 \]
@@ -181,15 +184,21 @@ see Section~\ref{sec:product-rotation}.
 
 \subsection{Looking for mathematical structure in data}
 
-We also use data science to seek geometric relationships involving capacity.
-The aim is to discover statistical patterns, interpret them geometrically,
-and turn them into conjectures that can be proved or refuted. The experiments
-find patterns below systolic ratio one, but do not establish their extension
-above one. One geometric interpretation yields an exact edge--width formula
-for a measured quantity on Lagrangian products. On rotated regular pentagon
-products, this descriptor has an exact inverse-square relation to the systolic
-ratio; see equation~\ref{eq:ds-pentagon-ridge-capacity}. The relation does not
-extend to arbitrary products.
+Symplectic ridge area gives a strong inverse association with the computed
+systolic ratio in the sampled populations. Selection based on geometric
+measurements also enriches fresh samples, but a more extreme ridge filter did not
+establish an additional gain. These observations support a coarse predictor;
+they do not yet give a reliable rule for improving a selected body.
+
+The distinction has a geometric counterpart. An edge--width formula explains
+what the ridge measurement records on Lagrangian products. For rotated
+regular pentagons it has an exact inverse-square relation to the systolic
+ratio; see equation~\ref{eq:ds-pentagon-ridge-capacity}. Yet the cube has a
+lower ridge score than HKO and a lower systolic ratio, which refutes a
+universal inverse ordering. The empirical question is therefore why the
+association is strong in the sampled populations, and which restrictions
+could turn it into a mathematical statement. The search experiments test
+its practical value alongside deformations and adaptive sampling.
 
 \subsection{How to read the thesis}
 
