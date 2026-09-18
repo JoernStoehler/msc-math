@@ -1,0 +1,76 @@
+# Project status and content tree
+
+Research orientation, consolidated September 17, 2026. This is a conceptual
+map, not a second status log. [Current state and work](memories/todos.md) owns
+the recovered candidate, review outcomes, pending integration and sprint status.
+[Thesis sources](thesis/README.md) owns the reader-facing entry and build.
+
+## Human-facing content tree
+
+This is a conceptual map of the retained research, not a completion claim about
+the current manuscript. Status key: `[THEOREM]`, `[EMPIRICAL]`, `[METHOD]`,
+`[CONTEXT]`, `[OPEN]`.
+
+```text
+Probing Viterbo's Conjecture
+|
+|-- 1. Why this project exists [CONTEXT]
+|   |-- Viterbo predicted normalized capacity <= 1.
+|   |-- Haim--Kislev--Ostrover found a pentagon-product counterexample.
+|   `-- New question: how special, rigid, or improvable is it?
+|
+|-- 2. Make the geometry finitely computable [METHOD]
+|   |-- Generalized Reeb orbits on polytopes
+|   |-- Haim--Kislev finite quadratic program
+|   |-- Simple minimizing orbit / finite word reduction
+|   `-- First-order variation in facet coordinates
+|
+|-- 3. Main achievement: local rigidity of HKO [THEOREM]
+|   |-- HKO is locally maximal among nearby 10-facet polytopes.
+|   |-- Equality is exactly translation, scaling, and linear-symplectic motion.
+|   `-- Exact certificate: 26 upper functions control 25 transverse directions.
+|
+|-- 4. Additional exact results [THEOREM]
+|   |-- Capacity profile for two relatively rotated regular pentagons
+|   |-- HKO is globally maximal inside that one-parameter family
+|   `-- Exact flow-graph capacity search under explicit regularity hypotheses
+|
+|-- 5. Broader computational search [EMPIRICAL]
+|   |-- Retained random-polytope/product and targeted-search results
+|   |-- No additional retained body above 1
+|   `-- Honest limit: bounded negative evidence, not nonexistence
+|
+|-- 6. How to trust and interpret the work [METHOD]
+|   |-- Binary64 exploration versus exact SageMath certificates
+|   |-- Rust libraries, tests, retained data, and reproduction boundaries
+|   |-- 3-D visualization as intuition, not proof
+|   `-- Factual AI-use disclosure and research-process case study
+|
+`-- 7. What remains mathematically open [OPEN]
+    |-- Local maximality when facets may appear or disappear
+    |-- Complete first-order theory at singular optimizer data
+    `-- Other structured polygon-product families and better counterexamples
+```
+
+For a supervisor or examiner, the defensible content-level account is that the
+project starts from the HKO counterexample, turns the relevant polytope dynamics
+into finite optimization problems, and uses exact certificates to establish
+local rigidity in the ten-facet stratum. It also determines a rotated-pentagon
+family and develops a conditional exact flow-graph method. Broader computation
+found no new counterexample in the retained searches. The current writing does
+not yet present that portfolio at whole-thesis PASS quality.
+
+## Evidence and current-work routes
+
+- Reader-facing baseline and build scope: `thesis/README.md` and
+  `thesis/candidate/README.md`
+- Current work and approval state: `memories/todos.md`
+- Formal statements and proof status: `formal/README.md`
+- Experiments, producers, and retained evidence: `experiments/README.md`
+- Replacement integration: `thesis/candidate/integration.md`
+- Human and agent review evidence: `docs/review-evidence/README.md`
+- Authoring feedback and its limits: `memories/authoring-workflow.md`
+- Submission and archive decisions: `docs/project-facts.md` and `submit/`
+
+These layers have different authority. A passing build, experiment, proof note,
+or chapter review does not imply whole-thesis acceptance.

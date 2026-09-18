@@ -1,3 +1,5 @@
+> **Current thesis resumption:** see [RESUME.md](RESUME.md) on `thesis/resume-20260918`. Earlier dated coordination documents are historical.
+
 # Probing Viterbo's Conjecture
 
 Master thesis repository for Jörn Stöhler, University of Augsburg.

@@ -1,0 +1,19 @@
+{
+  "checkout_HEAD": "e33c3f0f348985c375a35496b64d4c13f4ed7975",
+  "acquisition": "Source pointer followed after reader-01 question; no producer rerun.",
+  "same_input_comparison": false,
+  "sources": [
+    {
+      "retained_copy": "concentration-README.md",
+      "source": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/README.md",
+      "sha256": "54320b681e96828d881bd742acafb4e17f86b9cd8b2ee0836cee6cbce29a7341",
+      "last_source_commit": "7bf53abdd2fa17b9f153b8bb42fc69fb2f28de9f"
+    },
+    {
+      "retained_copy": "concentration-validation-verdict.json",
+      "source": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/validation-verdict.json",
+      "sha256": "ee63877852882d53d839dc081daa903397290158b9d3393ea90cc7be3b32f5b5",
+      "last_source_commit": "7bf53abdd2fa17b9f153b8bb42fc69fb2f28de9f"
+    }
+  ]
+}

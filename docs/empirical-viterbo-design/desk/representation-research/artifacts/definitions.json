@@ -1,0 +1,92 @@
+{
+  "body_count": 15,
+  "dual_reciprocal": "1/max_ij |a_i^T Omega a_j|; centered polar a_i, divided by sqrt(volume); called c_J only on centrally symmetric bodies",
+  "form_basis": [
+    [
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        -1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        -1.0,
+        0.0,
+        0.0
+      ]
+    ],
+    [
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        -1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        -1.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ]
+    ],
+    [
+      [
+        0.0,
+        0.0,
+        0.0,
+        -1.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        -1.0,
+        0.0,
+        0.0
+      ],
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ]
+  ],
+  "orientation_contract": "Omega(u)=sum u_i forms_i, |u|=1; represents R^T J R in SO(4)/U(2); geometry and covariance stay fixed",
+  "orientation_seed": 2026091802,
+  "pair_measure": "independent uniform-volume X,Y; exact polynomial simplex integration in f64",
+  "row_count": 1920,
+  "source_seed": 2026091801,
+  "version": "volume-pairing-and-dual-v1",
+  "vertex_pair_measure": "independent uniform distinct-extreme-vertex draws, centered at volume centroid",
+  "whitening_contract": "non-symplectic generally; source bodies and map retained; not capacity preserving"
+}

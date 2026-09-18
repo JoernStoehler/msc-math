@@ -1,0 +1,112 @@
+# Frozen HKO authoring trial, 2026-09-07
+
+This is the ordinary evidence home for the first HKO authoring comparison
+described in `memories/authoring-workflow.md`.  The nine artifact files were
+copied byte-for-byte from former local branch
+`archive/hko-authoring-trial-20260907` at
+`7872093e483fb9f0438d4ccb39356a8b0a3bbff1`; this README consolidates and
+clarifies that branch's provenance and review limits.  The branch was removed
+after the copy and hashes were verified, so the evidence no longer depends on
+a hidden or searchable branch ref.
+
+This is frozen calibration evidence, not a maintained workflow or proposed
+thesis revision.  The three top-level candidate Markdown files preserve the
+compared explanations.  `revised-preview/` is the exact second human-reading
+input plus its generated TeX and provenance record.  `repaired-preview/` is a
+later unrequested PDF/source snapshot.  The distinctions and review limits are
+recorded below; none of these artifacts is an approved current thesis source.
+
+Source baseline: `a3f06cb4`. The unchanged source worktree was
+`/tmp/msc-math-unlimited-20260907.IvqpRR/authoring`.
+
+The authoring owner reports that `hko-mechanism-candidate.md` was delivered to
+Jörn for formative annotations. Its SHA-256 is
+`801062444375df46f7679eb8ab417a58a1759c897a9cca8c516356d6093cce7f`.
+This archive does not establish whether or how much he read. Human annotations
+had not returned when this snapshot was prepared.
+
+`hko-questions-candidate.md` and `hko-obstruction-candidate.md` are the original
+parallel pair: reader questions versus proof obstructions as organizing prompts.
+The third, delivered candidate uses a one-variable upper-envelope mechanism
+before the geometric bookkeeping. The authoring owner reports that the first
+pair produced nearly the same causal structure, whereas the third made a
+materially different presentation. These are case observations, not controlled
+estimates of prompt effects. Exact prompts and agent execution remain in the
+Codex sessions; this directory preserves the compared outputs rather than a
+duplicate transcript.
+
+The shortened temporary `hko-for-jorn.md` was not the delivered input and is
+not archived as such. No user-imposed word limit was established.
+
+## Review evidence relayed by the authoring owner
+
+The semantic reviewer compared the active chapter 07 sources and chapter 06
+criterion, not an independent proof audit. Its exact return for the third
+candidate, relayed by `sprint_authoring_loop`:
+
+> One mathematical precision correction in the third candidate: Line47: 'each upper function comes from a smoothly varying feasible action …, divided by the appropriate volume normalization.' Problem: read literally, this omits squaring the action. An action divided by volume has the wrong scaling and is not the stated systolic upper bound. Correction: 'For a smooth feasible action A_i(a), the upper function is U_i(a)=A_i(a)^2/(2 vol_4 K(a)). Feasibility gives c_EHZ(K(a))<=A_i(a).' No material errors found in the toy inequality or its higher-dimensional generalization.
+
+The preserved third candidate contains the correction, applied before delivery.
+The full pre-correction candidate is not retained here; the quoted offending
+sentence is the available evidence for that defect.
+
+The original pair was reported source-consistent by the semantic review.
+The blind reader was a no-history agent given the drafts, not the source or
+workflow notes, and used a mathematics-graduate/basic-background reader frame.
+Its exact excerpt, relayed by the authoring owner:
+
+> Mechanism makes one real explanatory improvement: the passage f(x)<=s0+x, f(x)<=s0-x => f(x)<=s0-|x| lets me see why several individually increasing/decreasing upper bounds can collectively force a maximum. In the previous pair I had to reconstruct that relationship from the abstract derivative argument. Here I understand, before encountering covectors, why the bound may change with direction and why none must remain sharp.
+
+> The tradeoff is geometric specificity. Mechanism never constructs the HKO body, omits the polar-coordinate inequality defining K(a), and replaces the explicit action-to-ratio formula with 'divided by the appropriate volume normalization.'
+
+The HKO definition and squared-action formula were added before delivery. The
+other context tradeoff was not thereby demonstrated resolved. Agent reader
+judgments are not evidence of human comprehension or final-gate readiness.
+
+## Later chapter-context finding (separate from the frozen human input)
+
+The authoring owner relayed `chapter_context_review`'s finding: chapter 06
+already contained the finite-criterion proof at lines 358–409. The integrated
+candidate `4163f3ea`, chapter 07 lines 106–126, repeated it without citation;
+the following exact-certificate section, lines 49–70, repeated it again.
+The reviewer recommended retaining the toy example, citing the prior lemma,
+and compressing the repeated compactness/Taylor argument. This is a parent
+summary of the review, not its verbatim return or an independent check here.
+
+After repair `5e206511`, the context worker's exact admission, relayed by the
+authoring owner, was:
+
+> The review exposed a real retrieval miss: my initial chapter-06 reading covered its opening and feasible-section lemma, but not the already-present finite-upper-function criterion near its end.
+
+The frozen delivered input above was not changed by this later integration
+review or repair. The admission establishes what this worker reports missing,
+not a general rule that reading every file is necessary.
+
+## Revised two-page PDF delivered for a second reading
+
+The sprint root reported that Jörn was reading
+`revised-preview/hko-revised-preview.pdf`; feedback was pending at archival
+time. This is a new input, not a replacement for the first Markdown candidate.
+The PDF's SHA-256 is
+`759d8f6357e5694edf1401434c5ee6bedcc28cf12e13326a4da89fb7ad0cf536`.
+
+The accompanying generated TeX and provenance JSON are preserved byte-for-byte.
+The JSON identifies source revision `a2e613569926450d0bbd72b1e5920dd0c23da5b2`,
+external-reference auxiliary baseline `ceffb6b5`, selected source-file hashes,
+excerpt omissions and formatting. External reference labels and the native
+figure are embedded in the generated TeX; no auxiliary or log directory was
+copied. The PDF is the exact human input; the retained TeX and source pointers
+support inspecting its construction, not a claim of byte-identical rebuilding.
+The human's temporary file was neither edited nor replaced.
+
+## Repaired preview, not requested for human review
+
+`repaired-preview/` preserves the next PDF, generated TeX and Markdown exactly.
+Its PDF SHA-256 is
+`a62f84dd8de88b0e12e6d9ce2c23fa1ccf49910b4b5ab822d0ef6ebab689ce45`.
+The authoring owner reports three pages, 11pt type and 25mm margins, fixed
+figure placement, restored first-candidate orientation, and added explicit
+construction and smooth-volume bridge. No human-review request was made.
+A fresh PDF-only reader was still running at archival time; this snapshot
+makes no claim about its result. The original and withdrawn inputs remain
+unchanged in their separate directories.

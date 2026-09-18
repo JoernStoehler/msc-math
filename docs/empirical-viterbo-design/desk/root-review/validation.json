@@ -1,0 +1,69 @@
+{
+  "status": "passed",
+  "method": "root read source and reran independent scripts in disposable copied packets; owners original artifacts unchanged",
+  "checks": [
+    {
+      "check": "exact endpoint certificate",
+      "script": "product-position-research/exact_endpoint_collision.py",
+      "source_sha256": "f744caeb157c0f71de96bef8b69254877932bc869f38ee018210345eb583e5ec",
+      "exit_code": 0,
+      "seconds": 0.07174981597927399,
+      "stdout": "[\n  {\n    \"body_id\": \"right_triangle_product_shear_0\",\n    \"factor_a_vertices\": [\n      [\n        \"-1\",\n        \"-1\"\n      ],\n      [\n        \"2\",\n        \"-1\"\n      ],\n      [\n        \"-1\",\n        \"2\"\n      ]\n    ],\n    \"factor_b_vertices\": [\n      [\n        \"-2\",\n        \"-1/2\"\n      ],\n      [\n        \"4\",\n        \"-1/2\"\n      ],\n      [\n        \"-2\",\n        \"1\"\n      ]\n    ],\n    \"area_a\": \"9/2\",\n    \"area_b\": \"9/2\",\n    \"capacity0\": \"9/2\",\n    \"capacity_l\": \"18/5\",\n    \"capacity_mid_over_sqrt2\": \"18/7\"\n  },\n  {\n    \"body_id\": \"right_triangle_product_shear_1/2\",\n    \"factor_a_vertices\": [\n      [\n        \"-1\",\n        \"-1\"\n      ],\n      [\n        \"2\",\n        \"-1\"\n      ],\n      [\n        \"-1\",\n        \"2\"\n      ]\n    ],\n    \"factor_b_vertices\": [\n      [\n        \"-5/2\",\n        \"-1/2\"\n      ],\n      [\n        \"7/2\",\n        \"-1/2\"\n      ],\n      [\n        \"-1\",\n        \"1\"\n      ]\n    ],\n    \"area_a\": \"9/2\",\n    \"area_b\": \"9/2\",\n    \"capacity0\": \"9/2\",\n    \"capacity_l\": \"18/5\",\n    \"capacity_mid_over_sqrt2\": \"3\"\n  }\n]\n",
+      "stderr": ""
+    },
+    {
+      "check": "partner collection validation",
+      "script": "pentagon-arbitrary-partner/validate_collection.py",
+      "source_sha256": "f65aafeb3edab2f9680fd3d62c09d07a8981feeb938b02bb7afcee6542de3d62",
+      "exit_code": 0,
+      "seconds": 1.602190055011306,
+      "stdout": "{\n  \"status\": \"passed_float_checks_not_rigorous_certificate\",\n  \"row_count\": 143,\n  \"symmetric_count\": 38,\n  \"checks\": [\n    {\n      \"check\": \"two_bounce_fixture_0\",\n      \"error\": 0.0\n    },\n    {\n      \"check\": \"two_bounce_fixture_1\",\n      \"error\": 0.0\n    },\n    {\n      \"check\": \"capacity_upper_ceiling\",\n      \"error\": 6.661338147750939e-16\n    },\n    {\n      \"check\": \"LP_primal_dual_residuals\",\n      \"error\": 3.1308289294429414e-14\n    },\n    {\n      \"check\": \"fixed_width_paths_A2\",\n      \"error\": 4.440892098500626e-16\n    },\n    {\n      \"check\": \"fixed_width_paths_directional_widths\",\n      \"error\": 8.881784197001252e-16\n    },\n    {\n      \"check\": \"symmetrization_area_identity\",\n      \"error\": 1.3322676295501878e-15\n    },\n    {\n      \"check\": \"symmetric_partner_lemma\",\n      \"error\": 6.661338147750939e-16\n    },\n    {\n      \"check\": \"central_sys_bound\",\n      \"error\": 0\n    },\n    {\n      \"check\": \"affine_affine_skew_tensor_norm2\",\n      \"error\": 4.440892098500626e-16\n    },\n    {\n      \"check\": \"affine_affine_radial_fourth_moment\",\n      \"error\": 1.7763568394002505e-15\n    },\n    {\n      \"check\": \"affine_centroid_polar_area_product\",\n      \"error\": 8.881784197001252e-16\n    },\n    {\n      \"check\": \"affine_difference_area_excess\",\n      \"error\": 0.0\n    }\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "check": "zonotope integer replay",
+      "script": "zonotope-research/validate.py",
+      "source_sha256": "15d525f3aef89899d3b7439ffef04cf0d0d74910dfd656ce40f6664f55281e0c",
+      "exit_code": 0,
+      "seconds": 1.567788557993481,
+      "stdout": "{\n  \"status\": \"passed\",\n  \"path_polynomials_checked_with_integer_determinants\": 351,\n  \"all_parameter_sufficient_certificates_verified\": 326,\n  \"integer_samples_checked_independently\": 4000,\n  \"rank_deficient_integer_controls\": 4,\n  \"source_volumes_original_convention\": [\n    14,\n    30,\n    26,\n    56\n  ],\n  \"universal_conjecture_proved\": false,\n  \"wall_seconds\": 1.5189451440237463\n}\n",
+      "stderr": ""
+    },
+    {
+      "check": "exact representation identities",
+      "script": "representation-research/derive_calibrations.py",
+      "source_sha256": "866c7e053fae5084985df9013c9b3e5ee6950b90d02153831607d7c98197a7bb",
+      "exit_code": 0,
+      "seconds": 4.357646032993216,
+      "stdout": "{\n  \"cell24_covariance_diagonal\": \"13/60\",\n  \"cell24_fourth_diagonal\": \"3/28\",\n  \"cell24_fourth_mixed\": \"1/28\",\n  \"cell24_isotropic_fourth_tensor_coefficient\": \"900/1183\",\n  \"cell24_pairing_kurtosis\": \"3645000/1399489\",\n  \"cell24_volume\": \"8\",\n  \"cube_equal_kurtosis_contrast\": {\n    \"common_kurtosis\": \"72/25\",\n    \"normalized_dual_reciprocals\": [\n      \"sqrt(2)/4\",\n      \"sqrt(3/2)/4\"\n    ],\n    \"orientations\": [\n      \"(1/sqrt(2),1/sqrt(2),0)\",\n      \"(sqrt(2/3),1/sqrt(6),1/sqrt(6))\"\n    ]\n  },\n  \"cube_normalized_dual_reciprocal\": \"1/(4 max(|a|,|b|,|c|))\",\n  \"cube_normalized_ridge_sum\": \"8*(|a|+|b|+|c|)\",\n  \"cube_pairing_kurtosis_on_unit_sphere\": \"27/10 + (9/25)*(a^4+b^4+c^4)\",\n  \"cube_pairing_kurtosis_range\": [\n    \"141/50\",\n    \"153/50\"\n  ],\n  \"simplex_pairing_fourth\": \"6723/98\",\n  \"simplex_pairing_kurtosis\": \"6723/1568\",\n  \"simplex_vertex_pairing_fourth_sum\": \"1166400*(a**2 + b**2 + c**2)**2\",\n  \"status\": \"exact symbolic/rational identities; not capacity statements\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "check": "representation transformation checks",
+      "script": "representation-research/validate_and_summarize.py",
+      "source_sha256": "c71a0e31345b5e1250c94e5979cca414c8bb103d466bc8ea45bde56c9f38ddab",
+      "exit_code": 0,
+      "seconds": 3.2544479590142146,
+      "stdout": "{\n  \"cube_kurtosis\": 3.1086244689504383e-15,\n  \"cube_dual\": 2.7755575615628914e-16,\n  \"cube_ridge\": 7.105427357601002e-15,\n  \"simplex_kurtosis\": 7.105427357601002e-15,\n  \"cell24_kurtosis\": 6.661338147750939e-15\n}\nsimplex {'volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt': None, 'volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt': None, 'vertex_pairing_kurtosis__volume_pairing_kurtosis': None}\ncube {'volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt': -0.9813463956737227, 'volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt': -0.9577526849043078, 'vertex_pairing_kurtosis__volume_pairing_kurtosis': 0.9999985694001853}\ncrosspolytope {'volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt': -0.7916738197424892, 'volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt': 0.7916738197424892, 'vertex_pairing_kurtosis__volume_pairing_kurtosis': 1.0}\n24cell {'volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt': None, 'volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt': None, 'vertex_pairing_kurtosis__volume_pairing_kurtosis': None}\ngaussian_hull_8_0 {'volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt': 0.5747344808643106, 'volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt': 0.5304889214429591, 'vertex_pairing_kurtosis__volume_pairing_kurtosis': 0.9988326313861928}\ngaussian_hull_8_1 {'volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt': -0.0036795000915583226, 'volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt': 0.21976286394433256, 'vertex_pairing_kurtosis__volume_pairing_kurtosis': 0.996618064457059}\ngaussian_hull_12_0 {'volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt': 0.2530900933894891, 'volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt': 0.36716031862296283, 'vertex_pairing_kurtosis__volume_pairing_kurtosis': 0.8836350943050724}\ngaussian_hull_12_1 {'volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt': 0.564199551364219, 'volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt': 0.11205594213514006, 'vertex_pairing_kurtosis__volume_pairing_kurtosis': 0.9114745467863028}\ngaussian_hull_18_0 {'volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt': 0.4894994048709027, 'volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt': 0.26380241713971797, 'vertex_pairing_kurtosis__volume_pairing_kurtosis': 0.9613509430507232}\ngaussian_hull_18_1 {'volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt': 0.21531084050540192, 'volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt': 0.25574528474638347, 'vertex_pairing_kurtosis__volume_pairing_kurtosis': 0.9677085240798388}\nsymmetric_hull_16 {'volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt': -0.7750812580113532, 'volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt': 0.3988166086797289, 'vertex_pairing_kurtosis__volume_pairing_kurtosis': 0.9920000915583226}\nsymmetric_hull_24 {'volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt': -0.4829129280351584, 'volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt': 0.006466306537264237, 'vertex_pairing_kurtosis__volume_pairing_kurtosis': 0.8781644845266434}\nfacet_intersection_12 {'volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt': -0.46618064457059144, 'volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt': -0.677811984984435, 'vertex_pairing_kurtosis__volume_pairing_kurtosis': 0.881288912287127}\nfacet_intersection_16 {'volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt': -0.10811893426112432, 'volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt': -0.34365844167734844, 'vertex_pairing_kurtosis__volume_pairing_kurtosis': 0.9349306445705914}\nasymmetrically_cut_cube {'volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt': -0.9278405969602637, 'volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt': -0.9048480131843984, 'vertex_pairing_kurtosis__volume_pairing_kurtosis': 0.9676856344991759}\n",
+      "stderr": ""
+    },
+    {
+      "check": "moment adverse example",
+      "script": "relation-discovery/moment_frontier.py",
+      "source_sha256": "f8575252332c37ddce2f0586253c1548c681471af6106af4e705d1aaa9d3c321",
+      "exit_code": 0,
+      "seconds": 1.7609382310183719,
+      "stdout": "{\n  \"collection_minimum_slack\": 9.859261657041429e-05,\n  \"exact_counterexample\": {\n    \"a\": \"1/20\",\n    \"beta4_exact\": \"1273344060960/237582271087\",\n    \"beta3_norm2_exact\": \"1726983315971136/43769544220086923\",\n    \"slack_exact\": \"-852161933360/18758376094322967\",\n    \"beta4\": 5.359592090496161,\n    \"beta3_norm2\": 0.039456278257944045,\n    \"slack\": -4.542834246818935e-05,\n    \"curvature_numerator_lower_bound_exact\": \"19/40\"\n  },\n  \"polygon_checks\": [\n    {\n      \"body_id\": \"1161f3b84dfd205295de6914fb815d39bd3c39ad2b52a9bcd8f9fdfc5514667a\",\n      \"construction\": \"r=1+(1/20)cos(3theta), theta=2pi*j/n\",\n      \"n\": 96,\n      \"beta4\": 5.3594287030511865,\n      \"beta3_norm2\": 0.039209130442260105,\n      \"slack\": -4.40505769866463e-05,\n      \"beta4_error_vs_smooth\": 0.000163387444974461,\n      \"beta3_error_vs_smooth\": 0.0002471478156839402\n    },\n    {\n      \"body_id\": \"97dfaed8eff7452ce5a285731b8db8bd76845345e573dfeeff10cc95c69341c0\",\n      \"construction\": \"r=1+(1/20)cos(3theta), theta=2pi*j/n\",\n      \"n\": 384,\n      \"beta4\": 5.359581809715981,\n      \"beta3_norm2\": 0.039440788790544176,\n      \"slack\": -4.538281104829456e-05,\n      \"beta4_error_vs_smooth\": 1.0280780180060844e-05,\n      \"beta3_error_vs_smooth\": 1.5489467399869283e-05\n    },\n    {\n      \"body_id\": \"2336dca5afd0589e4c0cdc4ca43ecf15f993202b24e93001be4d210389784b4d\",\n      \"construction\": \"r=1+(1/20)cos(3theta), theta=2pi*j/n\",\n      \"n\": 1536,\n      \"beta4\": 5.359591447677497,\n      \"beta3_norm2\": 0.039455309999070064,\n      \"slack\": -4.542565521623368e-05,\n      \"beta4_error_vs_smooth\": 6.428186640761169e-07,\n      \"beta3_error_vs_smooth\": 9.682588739817755e-07\n    }\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "check": "ridge circulation historical replay",
+      "script": "relation-discovery/ridge_circulation.py",
+      "source_sha256": "883b124dfe71f5d0e9a46e4f8de1fe74d305082573e5e1107550c9100826ee29",
+      "exit_code": 0,
+      "seconds": 0.43417525599943474,
+      "stdout": "{\n  \"generic\": {\n    \"rows\": 4096,\n    \"universal_infimum\": 3,\n    \"minimum_inverse_simpson_witness\": {\n      \"poly_id\": \"c3e675f38a39d9aa3ee74b391a30fd5ba425d5b813c55fde90fccf9a92bd763e\",\n      \"inverse_simpson_count\": 3.2118763117376083,\n      \"max_share\": 0.3269521378565022\n    },\n    \"maximum_share_witness\": {\n      \"poly_id\": \"4ab390657ba9bde151d076a3a1ad6e1a1e454a84c430b819e417040646526fd7\",\n      \"inverse_simpson_count\": 3.369185364802373,\n      \"max_share\": 0.33220038512742306\n    },\n    \"inverse_simpson_violations\": 0,\n    \"max_share_violations\": 0\n  },\n  \"product\": {\n    \"rows\": 10240,\n    \"universal_infimum\": 4,\n    \"minimum_inverse_simpson_witness\": {\n      \"poly_id\": \"71fa561451b6fea28c40ee923aba93d9b27bff4630ddd0763a0cfb00582924e8\",\n      \"inverse_simpson_count\": 4.0596706589901705,\n      \"max_share\": 0.24991176571993118\n    },\n    \"maximum_share_witness\": {\n      \"poly_id\": \"bf952349b835e69d7cdddafeeb9a75beea943955831a3e93cdb1790cd9547242\",\n      \"inverse_simpson_count\": 5.64826962962048,\n      \"max_share\": 0.2500000000000001\n    },\n    \"inverse_simpson_violations\": 0,\n    \"max_share_violations\": 0\n  }\n}\n",
+      "stderr": ""
+    }
+  ]
+}

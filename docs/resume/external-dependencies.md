@@ -1,0 +1,40 @@
+# Dependencies of the consolidated handoff
+
+The manuscript's clean-export build is checked in `build-verification.json`.
+All selected LaTeX, bibliography and figure inputs are tracked in this branch.
+The clean build uses the installed TeX distribution, `latexmk`, and `biber`; it
+requires neither another worktree nor a `/tmp` input retained from a past run.
+The scratch directory used for validation is disposable and removed afterwards.
+
+Research data can exceed what belongs in Git. The canonical registry is
+`artifacts/registry.json`; `scripts/artifacts.py` materializes registered snapshots.
+The historical source geometry snapshot is
+`f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96` for
+`polytope-datasets`. At consolidation it is present under
+`/home/joern/.cache/msc-math/artifacts/polytope-datasets/`.
+The recovered geometry consists of random.jsonl, random-product.jsonl and
+shared-cache.jsonl. It is not stored in `/tmp` or owned by a disposable worktree.
+The invariant table and provenance table have their own registry entries.
+
+On a configured host, use `python3 scripts/artifacts.py materialize
+polytope-datasets --no-link`; repeat for the table artifacts as needed. Consult
+`scripts/artifacts.py --help` and `artifacts/README.md` for the configured source
+transport. The recorded recovery used the authenticated sandbox transport;
+credentials are not included in this handoff. This consolidation did not read
+credential contents, rerun capacity producers, or test remote redownload.
+
+Compressed revalidation outputs and their receipts are tracked under
+`docs/ds-retrospective-revalidation/`. Restore raw derivatives by the documented
+local decompression commands before replaying an analysis. A historical log
+naming `/tmp/...` as an output location is not a dependency if the retained output
+is tracked at the location given by its report. Historical absolute worktree paths
+are preserved as provenance; `branch-inventory.json` maps their changed files to
+this tree. Review browser URLs may expire; their underlying PDFs, annotation
+records and source packets are retained here.
+
+The only deliberately unimported dirty file is main's machine-local
+`.codex/config.toml`. It is not a manuscript/evidence dependency. Old checkouts
+are not deleted: an idle tab, running review server, and historical path consumers
+may still refer to them. Their unique tracked work and project-related dirty bytes
+are accounted for in this branch. Removing the old directories is a separate
+cleanup operation requiring path-consumer checks, not a prerequisite to resume.

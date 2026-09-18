@@ -1,0 +1,37 @@
+{
+  "frozen_utc": "2026-09-18T12:23:55.188061+00:00",
+  "files": [
+    {
+      "path": "development/precision-prompt.md",
+      "sha256": "d7093200d19c07b27c6580492e50a8b95da1b993973edb432eff2fea68644742"
+    },
+    {
+      "path": "development/baseline-prompt.md",
+      "sha256": "f95990ce23d5e69edc2fe76d715bdbcc71f72bbe9002f1cf4250f7c5ae4fb113"
+    },
+    {
+      "path": "development/relevance-prompt.md",
+      "sha256": "dcb6b324bba08c65b78183a638d04b29e898592d34778dfcdd8ff6dfdc6f8e3a"
+    },
+    {
+      "path": "evaluation/baseline-transfer.md",
+      "sha256": "7c9ac545aa0427a54ff26828202b1ded1eba284a9876d2c7ada98a066a352237"
+    },
+    {
+      "path": "evaluation/relevance-topic-transfer.md",
+      "sha256": "2c5661e52c6460d8f8d382a6196878751642fcd0b84b65bd8bfd9f6b133fe96b"
+    },
+    {
+      "path": "evaluation/precision-transfer.md",
+      "sha256": "fc218d7ad99f28491a0d65513e2e75a267f23e104484ce60cf0b58a9ce561711"
+    },
+    {
+      "path": "evaluation/baseline-topic-transfer.md",
+      "sha256": "4a49ad53e731e577a3923a4315445e8fae89f1bc8216d3c36a8331d602db115f"
+    },
+    {
+      "path": "evaluation/relevance-transfer.md",
+      "sha256": "9a4aac0f7f47454848939426a85d653aa955fcb6baff1d0657eada73bb879410"
+    }
+  ]
+}

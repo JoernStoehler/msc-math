@@ -1,0 +1,78 @@
+# Replacement rotated-pentagon chapter
+
+`chapter.tex` is the integration-ready chapter. `standalone.tex` provides its
+own preamble and bibliography; `build-revised/standalone.pdf` is the five-page review
+copy, including references. The main thesis has not been edited.
+
+Build from this directory:
+
+```sh
+latexmk -pdf -interaction=nonstopmode -halt-on-error -outdir=build-revised standalone.tex
+```
+
+The local figure is copied unchanged from
+`thesis/working/rotated-regular-polygons/lagrangian-products-5x5.png`.
+The two entries in `references.bib` use the same keys and publication metadata
+as `thesis/bibliography.bib`; no new bibliography entries are needed when
+integrating into the thesis.
+
+## Integration
+
+For the recovered candidate thesis, follow `docs/sprint-two/integration.md`:
+add the replacement under `thesis/candidate/` and replace the input of
+`recovered/thesis-candidate/09-pentagon.tex`.
+For the original thesis, replace the input of `09-rotated-regular-polygons`.
+Do not also input the old empirical/theorem/certificate files: this chapter
+contains the full replacement and preserves the principal section, theorem,
+and figure labels.
+
+For a build whose working directory is `thesis/`, the replacement input is:
+
+```tex
+\providecommand{\pentagonassetpath}{../docs/pentagon-chapter/assets/}
+\input{../docs/pentagon-chapter/chapter.tex}
+```
+
+When building from the repository root, use
+`\input{docs/pentagon-chapter/chapter.tex}`; the asset path defaults accordingly.
+The thesis already supplies `amsmath`, `amssymb`, `amsthm`, `graphicx`,
+`biblatex`, and the `theorem` environment. Do not input the
+standalone wrapper or its bibliography into the thesis.
+
+The candidate main file also has a separate appendix titled “Pentagon
+computation: source and exploratory plots”, with `pentagon-source.tex` and
+`pentagon-diagnostics.tex` inputs. To deliver a thesis without the old
+computational proof, omit that appendix block as well. Its files can remain
+in the repository as historical material. Two candidate overview passages
+also need updating at integration: `01-introduction.tex` currently says
+“An exhaustive comparison proves the formula”; replace this with
+“Positive interpolation of the known endpoint capacity, together with an
+explicit attaining candidate, proves the formula.” In `14-conclusion.tex`,
+replace “An exhaustive exact calculation then proves the separate theorem”
+with “An analytic interpolation argument then proves the separate theorem”.
+The corresponding overview prose in the original thesis also describes
+exact computation and should be aligned if that version is the integration
+target. Check the table of contents after integration; no full-thesis
+integration build has been performed here.
+
+## Scope and provenance
+
+The chapter retains the circumradius-one normalization and the existing
+explicit six-facet candidate. It proves the full rotation profile by a common
+feasible set, first harmonics, and positive interpolation of the independently
+known Haim–Kislev–Ostrover endpoint capacity. Its scope is the empirical
+motivation, capacity and systolic profile, family maximum, and analytic proof.
+The proof does not use the former enumeration certificate.
+
+The endpoint interpolation came from section 2 of the September 2026
+AI-assisted thesis review; the chapter
+acknowledges that provenance in a footnote. The historical thesis files supply
+the numerical plot and explicit word. Scholarly inputs are cited to the
+published Haim–Kislev and Haim–Kislev–Ostrover papers, not to the review.
+
+The standalone document was compiled with resolved references and citations,
+and every page was visually inspected. Separate fresh-context mathematical
+and sequential-reader reviews found no material defects. These checks accept
+the published capacity theorems as inputs and do not independently reproduce
+the historical floating-point samples. No mathematical issue is currently
+unresolved.

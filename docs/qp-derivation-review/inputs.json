@@ -1,0 +1,34 @@
+[
+  {
+    "path": "/workspaces/msc-math/.worktrees/qp-derivation-review/docs/qp-flow-integration/proposed/04-quadratic-program.tex",
+    "sha256": "28ea35b9d9d877225dfac7e1d72ca6e28b910b513cbcabaabeddcda7f37df6ee"
+  },
+  {
+    "path": "/workspaces/msc-math/.worktrees/qp-derivation-review/docs/qp-flow-integration/proposed/main.tex",
+    "sha256": "073a819a3f1a1ed204e8e333f4b4ac5eb4d067d5845b0bac03e99e1fe706d08b"
+  },
+  {
+    "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/02-preliminaries.tex",
+    "sha256": "fb69b125f7bc4a5a4398603bf22371b3187c0d0b30e51656084b03f064839866"
+  },
+  {
+    "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/02-preliminaries-convex-symplectic-notation.tex",
+    "sha256": "79e3e0915f8c80638797b4fc3768f1b44f3487a01ba589b5c87b7933b717fcd1"
+  },
+  {
+    "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/02-duality.tex",
+    "sha256": "a6e9a2e9a9d512a60d62a405aca19fa1f2858c0a13d74f08f092e80581d81f15"
+  },
+  {
+    "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/03-generalized-reeb-orbits-polytopes.tex",
+    "sha256": "87c179d993c92c12764ee4b5660a345c741703f913ddd9c7167c09b13b97a0d7"
+  },
+  {
+    "path": "/workspaces/msc-math/.worktrees/qp-derivation-review/papers/hk2017/EHZ-polytopes.tex",
+    "sha256": "a6d8b0a1d198b658f9c909c44842a706fb89f5e3f5ebd9f7286830773490c0e6"
+  },
+  {
+    "path": "/workspaces/msc-math/.worktrees/pentagon-affine-integration/formal/pentagon-affine-products/source-contract.md",
+    "sha256": "e09deb819c6cca3480ab17f62fc004ea7b5b1fd07c7e3b0a27c403f63b1b5689"
+  }
+]

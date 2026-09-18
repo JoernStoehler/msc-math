@@ -1,0 +1,24 @@
+{
+  "source_commit": "a2e613569926450d0bbd72b1e5920dd0c23da5b2",
+  "external_reference_aux_commit": "ceffb6b5",
+  "sources": [
+    {
+      "path": "thesis/07-hko-local-maximum.tex",
+      "sha256": "080076faff6665632ee9c25baa8cd1505b566cbd1f91b134daef5d2c7fd51bcd"
+    },
+    {
+      "path": "thesis/07-hko-local-maximum-exact-certificate.tex",
+      "sha256": "a34816205cf085876e177268a5ef88614502f9494dcb8b37ac17fa3efeba3831"
+    },
+    {
+      "path": "thesis/06-first-order-perturbations.tex",
+      "sha256": "b82f2c7203bc384bc1ab704c910e127191f7b73a0fc5448f3192ae12022832bc"
+    },
+    {
+      "path": "thesis/figures/hko-touching-upper-bounds.tex",
+      "sha256": "24aac87e4aecb6fbaab2c78b1abddaa45a2f90ed8a132f5ff075b2038224f1e0"
+    }
+  ],
+  "selection": "Opening motivation, body definition, theorem, all strategy with native figure; Section 6 row/Q/volume definitions; certificate through explicit beta/action/upper-function construction and local justification. Long convention comparison, derivative equations, full theorem proof omitted.",
+  "formatting": "10pt A4 18mm margins; native TikZ picture scaled geometrically to 75%; wording unchanged; editorial excerpt headings added."
+}

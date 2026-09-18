@@ -1,0 +1,56 @@
+[
+  {
+    "role": "Returning coordinator",
+    "thread_uuid": "01a0b153-5091-7333-935c-f08856210097",
+    "pane_at_consolidation": "w27:p1",
+    "status": "formerly w26:p1",
+    "local_session_logs": [
+      "/home/joern/.codex/sessions/2026/09/17/rollout-2026-09-17T23-43-42-01a0b153-5091-7333-935c-f08856210097.jsonl"
+    ]
+  },
+  {
+    "role": "Replacement coordinator",
+    "thread_uuid": "01a0b4e9-b856-7de2-b42a-39d3526743b9",
+    "pane_at_consolidation": "w26:p8",
+    "status": "idle at consolidation",
+    "local_session_logs": [
+      "/home/joern/.codex/sessions/2026/09/18/rollout-2026-09-18T16-26-51-01a0b4e9-b856-7de2-b42a-39d3526743b9.jsonl"
+    ]
+  },
+  {
+    "role": "Empirical desk",
+    "thread_uuid": "01a0b433-385c-7ed3-8f0f-f76e0a9883ac",
+    "pane_at_consolidation": null,
+    "status": "paused; not in live Herdr inventory",
+    "local_session_logs": [
+      "/home/joern/.codex/sessions/2026/09/18/rollout-2026-09-18T13-07-30-01a0b433-385c-7ed3-8f0f-f76e0a9883ac.jsonl"
+    ]
+  },
+  {
+    "role": "Reviewer trial",
+    "thread_uuid": "01a0b475-3ecd-7021-be3f-34bce8004b81",
+    "pane_at_consolidation": null,
+    "status": "paused; not in live Herdr inventory",
+    "local_session_logs": [
+      "/home/joern/.codex/sessions/2026/09/18/rollout-2026-09-18T14-19-37-01a0b475-3ecd-7021-be3f-34bce8004b81.jsonl"
+    ]
+  },
+  {
+    "role": "Human review desk",
+    "thread_uuid": "01a0b3d2-5ce0-7c63-ae27-05e876b98ae3",
+    "pane_at_consolidation": null,
+    "status": "not in live Herdr inventory",
+    "local_session_logs": [
+      "/home/joern/.codex/sessions/2026/09/18/rollout-2026-09-18T11-21-43-01a0b3d2-5ce0-7c63-ae27-05e876b98ae3.jsonl"
+    ]
+  },
+  {
+    "role": "Empirical predecessor",
+    "thread_uuid": "01a0b409-e534-71b3-a9d8-4ce2234440da",
+    "pane_at_consolidation": null,
+    "status": "superseded",
+    "local_session_logs": [
+      "/home/joern/.codex/sessions/2026/09/18/rollout-2026-09-18T12-22-22-01a0b409-e534-71b3-a9d8-4ce2234440da.jsonl"
+    ]
+  }
+]

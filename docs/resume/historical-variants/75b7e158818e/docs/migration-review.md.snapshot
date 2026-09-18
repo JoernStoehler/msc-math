@@ -1,0 +1,78 @@
+# Historical migration checks — September 5–7, 2026
+
+This is evidence of bounded checks and repairs during that migration, not a
+current setup report, task queue or instruction to repeat the checks.
+[Current work](../memories/todos.md), [project decisions](project-facts.md),
+[INSTALL.md](../INSTALL.md) and [environment evidence](development-environments.md)
+own their respective subjects.
+
+## Checks and their limits
+
+The migration checked host/sandbox builds, Rust/Python tooling, SSH, GitHub and
+R2 listing. Sage 10.9 in the then-current sandbox passed fresh-SSH exact
+arithmetic, the full HKO verifier and a 50-case pentagon prefix; the full pentagon
+certificate was not rerun. These observations do not establish present setup,
+mathematical correctness or thesis readiness. Environment details remain in the
+linked evidence above.
+
+P2's prepared table lacked six active ridge columns. The September 5 rebuild
+matched both expected hashes using an existing hash-verified source cache;
+fresh R2 retrieval was not tested. It consumed about eleven cores for six
+minutes without Jörn's permission and finished before an attempted stop.
+Further execution was cancelled. This is a completed historical check, not a
+reason to rerun the producer for housekeeping.
+
+The source review also found incomplete tuning/holdout provenance for the
+seven-policy, 64-start optimizer comparison and a missing exact dirty producer
+state for the local-maxima screen. Their scientific interpretation and recovery
+routes belong in [data-science scope](../memories/datascience-scope.md) and the
+[optimizer review route](../memories/optimizer-review-route.md). A new run cannot
+recover that missing historical state. Jörn's decision not to delay submission
+for another optimizer comparison is in project facts.
+
+The initial briefing understated known theorem status. Jörn corrected it: HKO
+local maximality and rotated pentagons are established theorems, and flow graph
+has proofs. This did not audit every manuscript formulation. A defect in one
+written proof does not establish that its theorem is false.
+
+## Cleanup provenance
+
+The migration removed then-obsolete guidance and an empty AGENTS.md; that is
+not a claim that the repository has no AGENTS.md today. Scratch proposals were
+preserved on an archive branch, generated outputs copied and compared, and the
+old checkout removed. Recovery routes belong in [the docs index](README.md).
+Four stale claims that generated-candidate infrastructure was absent were
+corrected in the [method ledger](../experiments/sys-datascience/methods/trusted-random-product-method-dispositions.md).
+Infrastructure availability did not complete the corresponding comparisons.
+
+## Assignment clarity review
+
+Completed 2026-09-05 under Jörn's explicit assignment A. The review followed
+the root/domain entry points and their data-science/gradient planning links;
+it was not a line-by-line audit of every nested research packet.
+
+- Added one discoverable [assignment record](../memories/todos.md), separating
+  assigned A, proposed B, completed checks, DevOps ownership and unassigned
+  research/administrative work.
+- Removed competing live "feature-complete" / "next default" interpretations
+  from the data-science entry points; July closure/recommendations remain
+  historical, not today's work queue.
+- Corrected the gradient charter's claim that its candidate was ready for
+  promotion: its own linked packet says the setup-pass evidence is not retained
+  and the packet is not ready. Kept algorithm description separate from proposed
+  regeneration, promotion and integration work.
+- Removed the coordination entry point's dependency on the removed
+  `empirical-research` skill.
+- Marked the old registration-note pending action as historical; its current
+  completion status is unknown, not an assigned administrative task.
+
+No unresolved assignment conflict was found in the reviewed routes after these
+repairs. Jörn subsequently approved removing the old gradient charter; it was
+removed and its live links repaired. The package README records Git recovery.
+The subsequent approved cleanup also removed the promotion packet and its live
+links. The algorithm description retains the finite endpoint definition and
+precise historical recovery pointers; unsupported numerical success/cost claims
+were removed. Source and inputs in Git were distinguished from the still
+unrecovered complete execution/output chain. No historical code was rerun.
+Clearly frozen experiments, algorithm/source descriptions and conditional final-release
+checklists were left alone; they are not assignments merely by existing.

@@ -1,0 +1,452 @@
+4     The Haim–Kislev Quadratic Program
+The preceding section showed that some capacity-minimizing generalized Reeb orbit uses a
+finite list of distinct facet directions. We now express its action in terms of that list and its
+dwell times. Haim–Kislev’s formula turns the result into a finite quadratic program [Hai19].
+    The chapter has two tasks. First, it explains the variables and how to compute the global
+optimum by solving linear stationarity systems and comparing their values. Second, it proves
+reductions for Lagrangian products of planar polygons. Those reductions make the later family
+calculations practical.
+
+4.1   The finite quadratic program
+Let
+                            K = {x ∈ R4 : ⟨ai , x⟩ ≤ 1, i = 1, . . . , F }
+be a full-dimensional polytope with 0 ∈ int(K), written as in Section 3. Thus ai = ni /hi if ni is
+the outward unit normal to the i-th facet and hi = hK (ni ) > 0 is its height. Haim–Kislev state
+their formula in the (ni , hi )-variables. We use the equivalent dual-vertex variables
+
+                                          βihere = βiHK hi .
+
+
+                                                   21
+The constraints then become
+
+                             βi ≥ 0,            βi = 1,               βi ai = 0.
+                                          X                      X
+
+                                            i                     i
+
+   For an ordered facet word σ = (σ1 , . . . , σm ) with distinct entries, define
+                                                m               m
+                                (                                                  )
+                         Mσ =          ≥0 :           βk = 1,         βk aσk = 0 .
+                                                X               X
+                                  β ∈ Rm
+                                                k=1             k=1
+
+The quadratic objective for this active word is
+
+                               Qσ (β) =                βj βk ω0 (aσj , aσk ).                  (19)
+                                                X
+
+                                          1≤j<k≤m
+
+Here σ is written in the Reeb traversal order used in Section 3. Haim–Kislev’s displayed
+formula uses the reversed ordered word after translating their symplectic convention to ω0 .
+Since word reversal is a bijection on the ordered candidate family, the maximum is unchanged;
+the convention matters only when a single fixed word is interpreted.
+   Let
+                                    Qmax = max max Qσ (β),
+                                                 σ     β∈Mσ
+
+where σ ranges over ordered words with distinct facets and Mσ ̸= ∅. Equivalently, one may
+range over all permutations of all facets and allow zero weights; the zero-weight entries are then
+deleted to recover the active word. This is only an enumeration convention: HK’s theorem
+is the full-permutation statement, and the active-word form is obtained by deleting unused
+zero-weight facets and reindexing the remaining entries. This formulation intentionally permits
+duplicates of the same geometric orbit, for example from changing the starting segment.
+
+Theorem 4.1 (Haim–Kislev quadratic program). For a full-dimensional convex polytope
+K ⊂ R4 with 0 ∈ int(K), written in the facet normalization above, Qmax > 0 and
+                                                             1
+                                        cEHZ (K) =               .
+                                                           2Qmax
+
+Proof. This is Haim–Kislev’s finite capacity formula [Hai19, Theorem 1.1], rewritten from unit
+normals and heights to the dual vertices ai = ni /hi . The variable change above sends
+
+                                     βiHK hi = 1,               βiHK ni = 0
+                                X                          X
+
+                                 i                          i
+
+to the constraints defining Mσ . Their displayed objective uses the opposite word orientation
+from (19); replacing each ordered word by its reverse sends it to Qσ . Since reversal is a bijection
+on the words in the maximum, their formula reads
+
+                                          1                −1
+                                                                       
+                               cEHZ (K) =   max max Qσ (β)    .
+                                          2 σ β∈Mσ
+
+
+
+   The following construction explains what the finite variables represent and where global
+optimality enters.
+
+
+
+
+                                                      22
+Proposition 4.2 (From finite weights to a dual curve). Let β ∈ Mσ and put q = Qσ (β). If
+q > 0, define
+                                      1
+                                T = ,        τk = T βk .
+                                     2q
+Traversing the velocities Rσk for the durations τk , and deleting zero-duration pieces, gives a
+closed simple dual curve z with
+                                      A(z) = IK (z) = T.
+If (σ, β) attains Qmax across all words, then T = cEHZ (K), and a translation of z is a minimum-
+action simple generalized Reeb orbit on ∂K, with the active word obtained from σ by deleting its
+zero-weight entries.
+    Conversely, if a simple generalized Reeb orbit has period T , active word σ, and positive
+dwell times τk , then βk = τk /T lies in Mσ and Qσ (β) = 1/(2T ).
+
+Proof. The closure constraint gives
+
+                                         τk Rσk = 2T J0       βk aσk = 0,
+                                    X                     X
+
+                                     k                    k
+
+while    k τk = T . The shoelace formula gives
+        P
+
+
+                                         2A(z) = 4T 2 Qσ (β) = 2T.
+
+Every positive-duration piece has velocity Ri , for which
+
+                                      ∗            1
+                                     HK (−J0 Ri ) = h2K (2ai ) = 1.
+                                                   4
+Hence IK (z) = T , and z is feasible for the free-period dual problem.
+    If (σ, β) attains Qmax , the Haim–Kislev formula gives T = 1/(2Qmax ) = cEHZ (K). Thus
+z is a dual minimizer. Its multiplier in (11) is ν = IK (z)/T = 1. The reconstruction in
+Theorem 2.6 therefore has scale one: it only translates z onto ∂K. Translation preserves the
+ordered pure-velocity pieces. On a piece with velocity Ri , the reconstructed inclusion is
+
+                    2ai = −J0 Ri ∈ ∂HK (γ) = 2 conv{aj : Fj is active at γ}.
+
+The irredundant rows ai are extreme points of K ◦ , so this convex combination forces Fi to
+be active there. Thus, after zero durations are deleted, the resulting minimum-action orbit is
+simple and has the reduced active word.
+   For the converse, closure of the orbit gives k βk aσk = 0, and positivity and k βk = 1 are
+                                               P                                P
+
+immediate. Since A(γ) = T , the shoelace formula yields
+                                τr τs                                                           1
+            2T = 4T 2                 ω0 (aσr , aσs ) = 4T 2 Qσ (β),        so      Qσ (β) =
+                          X
+                                                                                                  .
+                        1≤r<s≤m
+                                T  T                                                           2T
+
+
+
+
+4.2     Solving one word and comparing the results
+For a fixed word, the constraints are linear and the objective is quadratic. Write
+                                         !
+                    aσ1      · · · aσm
+             Cσ =                      ,       e = (0, 0, 0, 0, 1)T ,       Qσ (β) = 12 β T Hσ β.
+                     1       ··· 1
+
+Here Hσ is symmetric with zero diagonal and, for j < k, (Hσ )jk = (Hσ )kj = ω0 (aσj , aσk ). Thus
+the problem is to maximize this quadratic form subject to Cσ β = e and β ≥ 0.
+
+                                                     23
+    First suppose that the maximizing weights are all positive. Small perturbations in ker Cσ
+remain feasible, so the first derivative must vanish on that kernel. Equivalently, there is a vector
+of multipliers λ such that
+                                     Hσ β = CσT λ,    Cσ β = e.
+These are the equality-constrained Karush–Kuhn–Tucker (KKT) equations:
+                                                     !        !         !
+                                         Hσ −CσT          β            0
+                                                                  =      .                               (20)
+                                         Cσ  0            λ            e
+
+They are a linear system even though the objective is quadratic. After solving it, one checks
+whether the weights are positive and evaluates Q. A stationary point can be a minimum or a
+saddle, so this calculation does not yet identify the maximum.
+
+Example 4.3 (A four-facet calculation). Take K = [−1, 1]4 and the ordered facet rows
+(e1 , e3 , −e1 , −e3 ), where the coordinate order is (q1 , q2 , p1 , p2 ). Closure forces the weights to have
+the form (x, y, x, y), and normalization gives x + y = 1/2. The ordered symplectic pairings give
+
+                              Q = 2xy = 2x(1/2 − x),                  0 ≤ x ≤ 1/2.
+
+Thus stationarity reduces to 1 − 4x = 0. The second derivative is −4, so x = y = 1/4 maximizes
+this word, with Q = 1/8; both boundary choices have value zero. The corresponding capacity
+upper bound is 4. Identifying the capacity still requires a global comparison or another argument
+giving the matching lower bound.
+
+    If a maximum has zero weights, delete those entries from the word. The remaining weights
+are positive, and deleting zeros changes neither closure nor the objective. It follows that solving
+all active words covers maxima on every face of the nonnegative feasible set. Conversely, a
+shorter word can be padded with zero weights to recover a full-facet permutation. Comparing
+the feasible stationary values over this complete family therefore gives the global maximum in
+Haim–Kislev’s formula.
+    A singular system requires care, but not a search over infinitely many objective values.
+Suppose (β, λ) and (β + z, λ + µ) solve (20). Then Cσ z = 0 and Hσ z = CσT µ, whence
+
+                Qσ (β + z) − Qσ (β) = z T Hσ β + 21 z T Hσ z = λT Cσ z + 12 µT Cσ z = 0.
+
+Thus all solutions of the same stationary system have the same quadratic value. One must still
+decide whether that affine solution set contains positive weights. A singular matrix by itself
+means neither infeasibility nor failure of the capacity formula. This observation will also be
+used in the pentagon classification.
+   A feasible positive value q always gives the capacity upper bound 1/(2q) through the dual
+curve constructed above. Once it is proved to be the largest value across all words, that curve is
+a dual minimizer and can be translated onto the boundary. For a nonglobal candidate, boundary
+placement instead requires the conditions in Lemma 3.2.
+   The full enumeration can be reduced when a geometric argument proves that a smaller
+family still contains a capacity minimizer. For example, an actual transition from facet Fi to
+Fj requires an intersection of those facets and the directed sign ω0 (ai , aj ) ≥ 0. These necessary
+conditions can exclude words before solving their systems. They need not hold for every feasible
+dual curve; what makes them valid for computing capacity is the existence of a boundary-realized
+global minimizer. A stronger reduction for Lagrangian products is proved next.
+
+
+
+
+                                                     24
+4.3    Finite enumeration for Lagrangian products
+Let Kq , Kp ⊂ R2 be nondegenerate convex polygons containing the origin in their interiors, and
+let
+                                K = Kq ×L Kp ⊂ R2q ⊕ R2p
+be their Lagrangian product. A facet of K is either a q-facet, coming from an edge of Kq , or a
+p-facet, coming from an edge of Kp . We call a single facet a one-facet block, and an ordered
+adjacent pair of facets of the same type a two-facet block.
+
+Theorem 4.4 (Finite enumeration for Lagrangian products). For a Lagrangian product K =
+Kq ×L Kp of nondegenerate planar convex polygons containing the origin in their interiors,
+cEHZ (K) is obtained by maximizing Qσ over the Haim–Kislev quadratic programs associated to
+cyclic words of the form
+                                                k
+                             [Q | QQ] [P | P P ] ,  k ∈ {2, 3},
+where each Q-block is a one- or two-facet block in Kq , each P -block is a one- or two-facet block
+in Kp , distinct blocks use disjoint facets, and a two-facet block must use adjacent polygon edges.
+Thus every word in the family uses at most twelve facets. This is an exhaustive candidate
+family for the capacity value; it may contain overcounting or infeasible words, and it is not a
+classification of all minimum-action simple Reeb orbits.
+
+Proof. Put T = cEHZ (K). Rudolf’s nonsmooth billiard theorem gives a strong minimizing
+Minkowski billiard in Kq , together with its polygonal dual in Kp , having at most three bounce
+points and length T [Rud24, Theorem 1]. Write its vertices as qj and its dual vertices as pj ,
+with indices understood cyclically. In the notation needed here, write
+
+                             NC (x) = {u : ⟨u, y − x⟩ ≤ 0 for every y ∈ C}
+
+for the outward normal cone. The strong billiard relations and length are
+
+                        qj+1 − qj ∈ NKp (pj ),                pj+1 − pj ∈ −NKq (qj+1 ),
+
+                            ℓKp (q) =           hKp (qj+1 − qj ) =
+                                        X                            X
+                                                                         ⟨pj , qj+1 − qj ⟩.
+                                            j                        j
+
+The last equality follows from the first normal-cone relation and pj ∈ ∂Kp . These relations say
+precisely that the alternating broken line through
+
+                                       (qj , pj ), (qj+1 , pj ), (qj+1 , pj+1 )
+
+is a generalized characteristic for Rudolf’s complex-structure convention. That convention is
+opposite to ours, so reverse the loop. Since λ0 differs from −p dq by an exact form, its action in
+our convention is
+                        I               I
+                              p dq =            p dq =       ⟨pj , qj+1 − qj ⟩ = ℓKp (q) = T.
+                                                         X
+                    −
+                        rev              orig            j
+
+Thus the reversed lift is a capacity-realizing generalized characteristic on ∂(Kq ×L Kp ) whose
+legs alternately move only one factor. Parametrize it in the contact normalization. Its period is
+then T , and, as a dual curve z, it satisfies
+
+                                                 A(z) = IK (z) = T.
+
+   The following surgery is performed on z as a competitor in the dual variational problem,
+not as an orbit already constrained to ∂K. In particular, splitting a normal-cone direction into
+pure facet directions does not assert that the corresponding broken path, drawn directly in
+
+                                                             25
+Kq or Kp , would remain inside that polygon. Boundary placement is recovered only after the
+surgery has been shown to preserve dual minimality.
+     Apply the splitting–merging–rescaling part of the proof of Theorem 3.4 to z. Approximation
+and compactness are unnecessary here because the billiard lift is already a finite broken line.
+The only extra point to retain from the billiard is its block bound. On each leg, the polygonal
+normal cone is generated by one facet normal or by the two adjacent normals at a vertex, so
+splitting replaces that leg by one or two pure directions inside the same block. When a repeated
+direction is merged, it is removed from one same-type block and absorbed into another block
+that already contains it. Thus merging cannot increase the number of blocks of either factor,
+although it may decrease them. If the source block is a singleton, deleting it coalesces its two
+neighboring opposite-type blocks and reduces both block counts by one. This possible loss is
+harmless: only the inherited upper bound of three blocks of each type is needed below.
+     The rescaling argument in the cited proof uses dual minimality to show that the resulting
+distinct-facet curve is again a dual minimizer. Indeed, write A′ ≥ T for its action before
+rescaling; its dual value is still T . Multiplying every duration by T /A′ gives a dual-feasible
+curve with
+                                                      T2
+                                           A = IK = ′ .
+                                                      A
+The dual minimum is T , so T 2 /A′ ≥ T , hence A′ ≤ T . Therefore A′ = T : no rescaling is needed,
+and the distinct-facet curve z ′ is a dual minimizer with A(z ′ ) = IK (z ′ ) = T . By the preceding
+observations, its cyclic word still has at most three blocks of each type.
+     Only now do we return to the primal problem. Normalize the positive dwell times of z ′
+by their sum. The resulting finite weights have QP value 1/(2T ) = Qmax , so Proposition 4.2
+translates z ′ to a simple generalized Reeb orbit with the same active word on ∂(Kq ×L Kp ). Its
+factor coordinates therefore remain in Kq and Kp ; this containment comes from dual-minimizer
+reconstruction, not from the splitting operation. A simple orbit cannot contain three consecutive
+facets of the same type. Indeed, along three consecutive q-facet segments the q-coordinate
+is fixed; the two breakpoints would place it at both endpoints of the middle edge of Kq , a
+contradiction. The same holds for p-facets. Hence every maximal block in the final word has
+length one or two, and a two-facet block uses adjacent edges.
+     If only one factor type occurred, the whole word would be a single block of length at
+most two, whose positive closure equation would require one outward normal, or a positive
+combination of two adjacent outward normals, to vanish. This is impossible. Thus both types
+occur. Their maximal blocks alternate cyclically, so there is a common number k ≤ 3 of q- and
+p-blocks. One q-block and one p-block cannot close, by the same argument in each factor, so
+k ̸= 1. Hence k ∈ {2, 3}. Since each block contains at most two facets, the resulting simple
+word uses at most 4k ≤ 12 distinct facets. This proves that the restricted family contains a
+capacity maximizer. It does not exclude other minimum-action orbits with more blocks.
+
+Algorithm 4.5 (Lagrangian-product capacity enumeration). For each factor, enumerate all
+one-facet blocks and all ordered adjacent two-facet blocks. For k = 2, 3, choose k non-overlapping
+q-blocks and k non-overlapping p-blocks, order them cyclically in the alternating pattern
+                                                          k
+                                       [Q | QQ] [P | P P ] ,
+flatten the blocks to a facet word, discard infeasible words, and solve the corresponding Haim–
+Kislev quadratic program. The capacity is 1/(2Qmax ), where Qmax is the largest objective value
+among the feasible words in this candidate family.
+
+4.4   A six-facet reduction for the product capacity
+The product structure gives a reduction that is unavailable for a general polytope. The q- and
+p-coordinate planes are Lagrangian, so pairings between two q-facets or two p-facets vanish.
+
+                                                26
+After separating the total weight in each factor from its normalized distribution, the objective
+is therefore linear in either distribution when the other is fixed. Maximizing these two linear
+functions at vertices is the mechanism behind both the six-facet bound and the following
+algorithm.
+    Let u1 , . . . , ur be the planar dual vertices of Kq , and let v1 , . . . , vs be those of Kp . Define
+the normalized closure polytopes
+                                       (                                             )
+                             Cq =          α ∈ Rr≥0 :       αi = 1,        αi ui = 0 ,
+                                                        X             X
+
+                                                        i             i
+                                                                                   
+                                                                                   
+                             Cp =          γ ∈ Rs≥0 :       γj = 1,        γj vj = 0 .
+                                                        X             X
+                                                                                   
+                                                        j             j
+
+Theorem 4.6 (Six-facet product maximizer). For a Lagrangian product Kq ×L Kp of nondegen-
+erate planar convex polygons containing the origin in their interiors, the complete Haim–Kislev
+family has a global maximizer using at most three q-facets and at most three p-facets. The total
+weight in each factor is 1/2. Consequently the capacity is represented by a word of length at
+most six.
+Algorithm 4.7 (Product capacity from closure vertices). Enumerate the vertices of Cq and
+Cp . For each pair, enumerate the cyclic orders of the union of their supports, give each factor
+total weight 1/2, and evaluate Qσ . The largest value is Qmax . Each support union has at most
+six facets, so fixing one cyclic starting point leaves at most 5! = 120 orders.
+
+                                an arbitrary global maximizer (σ, β)
+                            ↓ fix γ, maximize the linear function in α
+                              α is a vertex of Cq , hence |supp α| ≤ 3
+                            ↓ fix α, maximize the linear function in γ
+                              γ is a vertex of Cp , hence |supp γ| ≤ 3
+                           ↓ maximize t(1 − t) and delete zero weights
+                       a global maximizer with t = 21 and at most six facets
+
+Figure 5: The proof mechanism for the six-facet reduction. Linearity in each factor distribution
+is the product-specific step.
+
+
+Proof. Choose a global maximizer and let Iq and Ip be its q- and p-positions. Its objective is
+positive, hence both factor weights are nonzero. Put
+                                                   βk                             βk
+                    t=                      αk =      (k ∈ Iq ),          γk =       (k ∈ Ip ).
+                         X
+                                βk ,
+                         k∈Iq
+                                                    t                            1−t
+
+Closure splits between the factors, so the zero-extended vectors α and γ lie in the faces
+
+                     Cq (σ) = {α ∈ Cq : αi = 0 if q-facet i is omitted from σ},
+
+and likewise Cp (σ) ⊂ Cp . Since the symplectic form vanishes on each factor, there is a bilinear
+function
+                                   Bσ : Cq (σ) × Cp (σ) −→ R
+such that
+                                            Qσ (β) = t(1 − t)Bσ (α, γ).                               (21)
+Its coefficients are the signed pairings ⟨ui , vj ⟩, with signs determined by the order in σ.
+
+                                                            27
+   With γ fixed, the bilinear factor is linear in α, so it has a maximizer at a vertex of Cq (σ).
+Replacing α by that vertex preserves global maximality. Fixing the new α and repeating the
+argument in Cp (σ) gives a global maximizer for which both normalized factor weights are
+vertices of the support-restricted closure polytopes. Coordinate restrictions define faces of Cq
+and Cp , and a vertex of a face is a vertex of the ambient polytope.
+    A vertex of        (                                  )
+                          x≥0:         xi = 1,       x i wi = 0 ,
+                                  X              X
+                                                                    wi ∈ R2 ,
+                                   i             i
+
+has at most three positive coordinates. Indeed, more than three positive columns in the three
+scalar equality constraints have a nontrivial linear dependence, which gives a feasible line
+through the point and contradicts extremality. Thus each factor uses at most three facets.
+    For the selected vertices the bilinear value is positive. Varying only the total factor weight
+gives
+                                τ (1 − τ )Bσ (α, γ),    0 ≤ τ ≤ 1,
+which is maximal at τ = 1/2. Delete the remaining zero-weight positions. The relative cyclic
+order and objective are unchanged, and the complete Haim–Kislev family contains the resulting
+word of length at most six.
+   The same argument proves Algorithm 4.7: the selected vertices occur in the enumeration,
+while every enumerated candidate is feasible for the complete Haim–Kislev family and therefore
+cannot exceed Qmax .
+
+Remark 4.8 (Why the reduction is product-specific). The argument does not extend directly to
+a general polytope. It uses that each factor is Lagrangian: same-factor pairings vanish, leaving
+a bilinear function which is linear in one normalized closure distribution after the other is fixed.
+Without such a splitting, the objective remains quadratic in the full weight vector, and moving
+to a vertex of the closure polytope need not preserve or improve it.
+    The theorem asserts the existence of one sparse capacity maximizer. It neither classifies
+all minimizing orbits nor says that every maximizer has support at most six. The preceding
+twelve-facet block family remains useful when an argument must compare a specified family of
+geometric branches. No genericity assumption is needed: the closure polytopes are closed, and
+degeneracy can only lower the rank used in the support bound.
+
+4.5    Use in later certificates
+The later SageMath certificates use this section as a mathematical interface. The HKO local-
+maximum certificate uses selected active words to build upper branches. The rotated-pentagon
+certificate uses the specialized Lagrangian-product enumeration from Theorem 4.4, then checks
+the algebraic inequalities needed to compare every surviving branch with the displayed one.
+    The ordinary implementation uses two certified routes. For a general four-dimensional
+polytope it enumerates the complete transition-pruned family of cyclic words in increasing
+length. A positive-curvature obstruction for a short word remains an obstruction for every
+cyclic-order-preserving extension, so such extensions are skipped. On the remaining words a
+floating-point LDLT factorization proposes curvature and a KKT solution. Outward residual
+bounds certify the decisions; an exact rational solve is used only when the floating-point
+certificate is indeterminate. Outward objective intervals are aggregated to a certified capacity
+interval.
+    For a recognized Lagrangian product, the implementation instead follows Algorithm 4.7.
+Floating-point intervals reject separated closure supports and objective values, while exact
+rational arithmetic resolves ambiguous supports and all possible winners. This route returns
+the exact capacity of the supplied binary64 input and its sparse maximizing words without
+solving KKT systems. The input contract, rounding certificates, fallback policy, and numerical
+
+                                                     28
+evidence are stated in Section 11. The theorem-bearing HKO and rotated-pentagon arguments
+still use their separate SageMath verification packets.
+     The QP is therefore the appropriate language when the global objective value, its competing
+branches, or inequalities between them matter. The next section keeps the same simple facet
+words but asks a different geometric question: it propagates actual breakpoints through facet-
+pair sections and detects a closed orbit as a fixed point of an affine return map. This second
+route is conditional on explicit regularity assumptions, but it exposes the trajectory geometry
+and provides an independent implementation comparison.
+

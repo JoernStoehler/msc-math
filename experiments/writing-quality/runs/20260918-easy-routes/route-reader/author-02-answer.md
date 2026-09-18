@@ -1,0 +1,5 @@
+The rho selector uses a covariance descriptor, not the largest-ridge share. The initial prose introduced a second selector without explaining it, although the section's argument needs only the ridge selector's transfer result. The shared search-account packet independently supports mean enrichment of that ridge selector in both named buckets.
+
+I checked the name with `rg -n 'rho|ρ'` in the alternative-source-transfer README.md and POST-TARGET-ACCOUNT.md. The README calls it covariance rho. I did not reconstruct the definition, add a covariance result, or ask the reader to learn another feature to finish this ridge-focused account.
+
+Revision: omit the unexplained rho selector from the narrative; state the ridge selector's transfer finding alone. Say explicitly that 91 is the transfer study's total across selectors and controls, not a ridge-only sample count. This is a consequential scope omission recorded in route-notes.md, not evidence that the other selector failed. The two-iteration cap is now reached; no fresh reader has inspected final.md.

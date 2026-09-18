@@ -1,0 +1,29 @@
+# Historical session launch prompts — September 7, 2026
+
+The former three-peer launch plan (`msc-context`, `msc-migration`,
+`msc-authoring`) is retired. Its read-only first checkpoint and instruction to
+wait for resumption belonged to that launch; they do not govern later work.
+The full prompts are recoverable with:
+
+```bash
+git show 774c3286:docs/session-briefs.md
+```
+
+Use [current work](../memories/todos.md) for assignments. Useful findings and
+rationale from that planning work have these owners:
+
+- [Planning context](../memories/planning-context.md): user corrections,
+  authoring expectations, deferred summary design and limits of retrieval trials.
+- [Architecture migration](../memories/architecture-migration.md): concrete
+  code candidates, consumers, semantic differences and proposed checks.
+- [Outcome coverage](../memories/outcome-coverage.md): omitted composition,
+  proof and delivery work, plus bounded source discoveries.
+- [Authoring evidence](../memories/authoring-workflow.md) and
+  [data-science evidence](../memories/datascience-scope.md): findings for those domains.
+- [Former portfolio](../memories/team-plan.md): execution-reliability leads
+  and rationale retained from the superseded five-peer proposal.
+
+The old prompts also recorded an unauthorized expensive table rebuild. Its
+cost and reproduction limits are retained in [migration review](migration-review.md).
+Old host/sandbox and shared-skill paths are historical; current setup belongs
+in [INSTALL.md](../INSTALL.md), not a launch prompt.

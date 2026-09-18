@@ -1,0 +1,12 @@
+digraph now {
+  graph [rankdir=LR, label="Repository consolidation — September 17, 2026", labelloc=t];
+  node [shape=box];
+  project [label="DONE: one current state owner\nproject_notes: memories + project context"];
+  research [label="DONE: grounded research documentation\nresearch_notes: experiments, formal, crates, papers"];
+  thesis [label="DONE: source and review routing\nthesis_notes: thesis + writing records"];
+  guidance [label="DONE: assess guidance usefulness\nguidance_review: evidence and callers"];
+  integrate [label="DONE: shared decisions and integration\nroot: indexes, ownership, links"];
+  verify [label="DONE: changed claims and links checked\nunique evidence and existing edits preserved"];
+  project -> integrate; research -> integrate; thesis -> integrate; guidance -> integrate;
+  integrate -> verify;
+}

@@ -1,0 +1,26 @@
+{
+  "boundary": "Generated-candidate evidence for this frozen random-product rule only; not a mechanism, arbitrary-generator result, or calibrated hit rate.",
+  "concentration_add_on_descriptively_validated": true,
+  "criteria_frozen_before_sys": {
+    "minimum_positive_product_buckets": 7,
+    "overall_cascade_minus_complement_mean_sys_positive": true,
+    "target_escalation": "any evaluated sys > 1"
+  },
+  "input_sha256": {
+    "selected_candidates_before_sys": "58ba9b40889335271d7002a11de2eabada7f5b9a93f6be40ab25fed0e8ebaec7",
+    "selection_plan": "3f87a89b8d0e54a4580c20a1df04a5f2ddc9a786041b671bce57cbb417bb7c8a",
+    "sys_evaluation_cache": "a938349e24603710a61964875e276417f418cfdd4f95e042a58dcb4b69f6f413"
+  },
+  "observed": {
+    "evaluated_sys_gt_1": 0,
+    "maximum_evaluated_sys": 0.9023838838805844,
+    "overall_cascade_minus_complement_mean_sys": 0.03399246962136249,
+    "positive_product_buckets": 8
+  },
+  "question": "Does low ridge-area max share add independent pre-target enrichment inside a frozen low ridge-sum tail on a new generated sample?",
+  "schema": "sys-datascience.ridge-concentration-validation.v1",
+  "selection_ids": {
+    "cascade": "per_bucket_low_ridge_symp_area_sum_over_volume_sqrt_fraction_0p010000_then_low_ridge_symp_area_max_share_fraction_0p500000",
+    "stage_1": "per_bucket_low_ridge_symp_area_sum_over_volume_sqrt_fraction_0p010000"
+  }
+}

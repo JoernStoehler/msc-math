@@ -1,0 +1,57 @@
+[
+  {
+    "file": "route-copy/final.md",
+    "sha256": "8588f09d7b3c73f4a657fc96ec68a50fea959758250c72f3408c6da1d038a93f",
+    "whitespace_words": 884
+  },
+  {
+    "file": "route-dialogue/final.md",
+    "sha256": "4dbedb00a687f179886d9ae4d1e2853818ac7b4b692fedcd00ca895dd0336158",
+    "whitespace_words": 898
+  },
+  {
+    "file": "route-reader/final.md",
+    "sha256": "dc2f268875887cf8bfad3f513a68d3294f5652d5d689be7406a301d9ed335a36",
+    "whitespace_words": 1013
+  },
+  {
+    "file": "route-subtraction/final.md",
+    "sha256": "a94e2390fc6deb583c331b21618b36209675ca6540069dc50e1144c875b8916f",
+    "whitespace_words": 863
+  },
+  {
+    "file": "route-dialogue/display-ready.md",
+    "sha256": "9f4858df8f7c6207ad25cdfff387cac147a66af50072a32960bf7f84035670c0",
+    "whitespace_words": 898
+  },
+  {
+    "file": "evaluation/A.md",
+    "sha256": "76158eb0993be2cf1d4a6b3e0145aeaecbcede2a93c6bcb1de6feb483a7ded74",
+    "whitespace_words": 843
+  },
+  {
+    "file": "evaluation/A2.md",
+    "sha256": "a94e2390fc6deb583c331b21618b36209675ca6540069dc50e1144c875b8916f",
+    "whitespace_words": 863
+  },
+  {
+    "file": "evaluation/B.md",
+    "sha256": "8588f09d7b3c73f4a657fc96ec68a50fea959758250c72f3408c6da1d038a93f",
+    "whitespace_words": 884
+  },
+  {
+    "file": "evaluation/C.md",
+    "sha256": "4dbedb00a687f179886d9ae4d1e2853818ac7b4b692fedcd00ca895dd0336158",
+    "whitespace_words": 898
+  },
+  {
+    "file": "evaluation/C2.md",
+    "sha256": "9f4858df8f7c6207ad25cdfff387cac147a66af50072a32960bf7f84035670c0",
+    "whitespace_words": 898
+  },
+  {
+    "file": "evaluation/D.md",
+    "sha256": "dc2f268875887cf8bfad3f513a68d3294f5652d5d689be7406a301d9ed335a36",
+    "whitespace_words": 1013
+  }
+]

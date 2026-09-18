@@ -1,0 +1,21 @@
+# Final-review task prompts
+
+These are the task message bodies supplied to fresh no-history reviewers. Runtime system/developer/repository instructions were inherited separately; the tasks do not control those. Author agents inherited coordinator context. Final-review agents did not.
+
+## Baseline reader
+
+You are a fresh mathematical reader reviewing an experimental MSc thesis section. Worktree /workspaces/msc-math/.worktrees/easy-routes-followup. Read ONLY experiments/writing-quality/runs/20260918-easy-followup/baseline.md initially. Audience knows symplectic capacity and systolic ratio but not these experiments. Intended purpose: explain population ridge observation, geometric interpretation, restricted exact example and candidate-search implications; larger thesis covers optimizer and capacity proof. Do not inspect prior reviews or human labels. Write exact-span prospective comprehension review to experiments/writing-quality/runs/20260918-easy-followup/evaluation/baseline-reader.md. Separate concrete comprehension/inference obstacles, conditional context dependencies, and mere preferences. Quote span for each, explain obstacle and uncertainty. Record concise reconstruction of what you think this section establishes. No error quota and no overall PASS or perfect claims. No source-fidelity audit required. Freeze review without revisions. You are not alone; edit only owned file. No commit needed parent commits. ~5min.
+
+## Global reader
+
+Read ONLY /workspaces/msc-math/.worktrees/easy-routes-followup/experiments/writing-quality/runs/20260918-easy-followup/global/final.md as a mathematical reader of an MSc section. Audience knows symplectic capacity and systolic ratio but not these experiments; intended purpose population observation→geometric understanding and candidate-search implications (not prescribed order). Larger thesis supplies pentagon proof and optimizer. Do not inspect other reviews/prompts. Own evaluation/global-reader.md under same easy-followup run only. Record candidate sha256, concise reconstruction, exact quoted spans for concrete reader/inference obstacles, separately context dependencies and aesthetic preferences. No quota or overall PASS/perfection judgment. No repairs. ~5min. Not alone preserve others; no commit.
+
+## Incremental reader
+
+Read ONLY /workspaces/msc-math/.worktrees/easy-routes-followup/experiments/writing-quality/runs/20260918-easy-followup/incremental/final.md as a mathematical MSc reader. Audience knows symplectic capacity and systolic ratio but not these experiments. Intended purpose population observation, geometric understanding, candidate-search implications (no prescribed narrative order); larger thesis supplies pentagon proof and optimizer. Do not inspect previous reviews/prompts. Own easy-followup/evaluation/incremental-reader.md only. Record SHA256, reconstruction, exact quoted spans for concrete comprehension/inference obstacles; separate conditional context dependencies and preferences. No quota no PASS/perfection no repairs. ~5min. Not alone preserve others no commit.
+
+## Source reviewer
+
+Audit final writing candidate source fidelity. Worktree /workspaces/msc-math/.worktrees/easy-routes-followup. Start experiments/writing-quality/runs/20260918-easy-followup/global/final.md against frozen source inputs/*.md and route-reader/supplemental-source under 20260918-easy-routes. Own easy-followup/evaluation/source-review.md only. Another incremental final will be provided for second pass shortly. Record each candidate sha256 and exact spans of unsupported changes/omissions/scope ambiguities, distinguish definite contradiction from absent supporting evidence and legitimate compression. No overall writing quality or PASS verdict. ~8min. Preserve others no commit. Review should not change final candidates.
+
+Source reviewer subsequently received incremental final path/hash, instruction to inspect its supplemental snapshots, and reminders to distinguish the dataset-membership support gap from contradiction. Coordinator mentioned the author’s numerical-path qualification and the final reader's source-name observation; therefore source review is independent of authorship but not fully blinded to those observations. All source-review judgments remain separate from reader inventories.

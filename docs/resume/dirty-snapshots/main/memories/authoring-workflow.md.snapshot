@@ -1,0 +1,255 @@
+# Authoring workflow: September 7 comparison and unresolved questions
+
+## September 14 prospective sample calibration
+
+Jörn reviewed the fixed two-page Astra data-science sample (PDF SHA-256
+`01d63be3d72999230e98c0b5fb6f89dcba33d532188d83894f4ad01a9f62c58c`)
+and found the prose comfortable and its writing quality good/passing, while
+finding the narrative too chaotic and insufficiently structured. His exact
+feedback and revision history are preserved at
+[`docs/review-evidence/human-feedback/ds-reading-2026-09-14.md`](../docs/review-evidence/human-feedback/ds-reading-2026-09-14.md).
+The direct message and both later coordinator relays originate in root thread
+`01a0a021-b283-7fa3-9e16-aec87ce950df`.
+This is specific prose feedback, not full-chapter or thesis PASS.
+
+The chapter's intended story is: sample varied polytopes and geometric
+measurements; temporarily set semantics aside to find statistical patterns;
+interpret those patterns geometrically; formulate conjectures and seek proofs
+that yield mathematical insight. Method and sampling details must serve that
+story. Distinguish this intended route from what the experiments achieved.
+
+Jörn further clarified to the DS agent that this originating context must
+guide research prioritization, not only prose. He permits both this discovery
+frame and a search/allocation frame, or a better superseding approach when
+supported by evidence. This does not invalidate the recent experiments.
+The DS agent acknowledged that its recent operational frame had been mainly
+high-ratio search/allocation, without establishing that it superseded the
+original mathematical-discovery aim. The recovered feedback record preserves
+that correction's practical consequence: current DS triage must assess both the
+discovery route and high-ratio search against the evidence actually retained.
+Existing ridge-area/alignment anatomy and a product-width derivation were
+identified as semantic-reconstruction leads; whether either earns space in the
+assembled chapter remains a current editorial/scientific decision.
+
+The coordinator froze an Astra reading review and a Luna layout review before
+the feedback; ordinary copies are under
+[`docs/review-evidence/calibration/`](../docs/review-evidence/calibration/).
+Astra predicted reduced decoding burden and some local placement issues but
+missed the major narrative objection. The
+[`DS sample comparison`](../docs/review-evidence/calibration/ds-sample-comparison.md)
+records that miss without retroactively improving predictions. There is no
+validated substitute for human narrative review. Checking section sequence
+against the research purpose is a retained review hypothesis, not a proven gate.
+
+On the revised ten-page chapter's opening, Jörn found the first sentence
+confusing and objected to unnecessary example lists, specifically “A strong
+ordering, a successful prediction or a small collection of informative
+features”: no special attention to strong ordering was needed there. He also
+queried “our approach was” versus “is”, without prescribing a tense. This is
+additional negative prose evidence despite the earlier sample's comfortable
+prose. The DS author owns the revision. The current repair hypothesis is to
+state the approach directly and omit enumerations that add no needed
+distinction; it is not a ban on mathematically necessary lists or a validated
+general writing rule.
+
+On the next inline revision, Jörn explicitly liked the new first sentence,
+“We use data science to look for geometric relationships involving symplectic
+capacity.” He then stopped at “compute quantities” to ask which quantities
+and whether selection was broad/opportunistic. He requested joining the
+clarification with a comma so it is read before that pause. This is concrete
+sequential-reading evidence: splitting sentences can introduce an avoidable
+question, not only reduce reading effort. It approves the first sentence,
+not the full paragraph or chapter. The preserved feedback record linked above
+gives the exact wording and revision history. The useful cross-case lesson is
+about supplying information before the reader needs to stop and ask for it; it
+is not a universal preference for long sentences.
+
+## September 14 HKO reading
+
+The fixed seven-page HKO PDF and its SHA-256 are identified in the preserved
+[`HKO reading feedback`](../docs/review-evidence/calibration/hko-reading-feedback.md).
+The direct comments originate in root thread
+`01a0a021-b283-7fa3-9e16-aec87ce950df`. Jörn reported that
+the computer-algebra attribution was the first point worth annotating and
+praised the reading so far, then continued. Subsequent annotations identify
+premature witness identifiers, missing motivation for the worked example,
+unnecessary negative alternatives, a skipped inference about leaving product
+deformations, and coordinates introduced before their geometric meaning.
+Those comments have candidate-only revisions; the served PDF is unchanged.
+Jörn subsequently finished that fixed draft and judged it already PASSing.
+This is HKO approval, not whole-thesis approval.
+
+The preserved
+[`HKO reading prediction`](../docs/review-evidence/calibration/hko-reading-prediction.md)
+was written before these comments arrived but after the PDF was opened. It is
+not blind: the coordinator helped author the text. It identified the
+witness-reference issue, but did not identify the other specific annotations.
+Predicted issues the reader has not addressed remain unadjudicated. This
+provides a second text/review comparison, not a validated replacement for human
+exposition review.
+
+## September 14 preliminaries readiness failure
+
+After the abstract/introduction corrections, Jörn immediately rejected the
+preliminaries opener as sloppy, then the sentence ending “without further
+comment”, and skipped to Chapter 4 because of the error rate. The preceding
+agent preflight had been explicitly limited to mathematical prerequisites and
+inference gaps, with a style inventory excluded. Calling that enough to send
+him onward confused a narrow check with prose readiness. These direct comments
+also originate in root thread `01a0a021-b283-7fa3-9e16-aec87ce950df`.
+
+The active review prompt was changed, not merely an apology recorded: a
+sequential prose pass now asks about sentence purpose, clear referents,
+unnecessary abstraction/detail, and intended mathematical audience. Prior human
+annotations are examples, not a closed checklist. Its new findings include an
+imprecise EHZ description and compressed dual-variation explanation. Parent
+integration still checks mathematical meaning: one suggested QP rewrite called
+the normal a velocity, and one nonsmooth suggestion used an unjustified ordinary
+derivative notation. Those suggestions were corrected before integration.
+Forward evidence is recorded in
+[`docs/review-evidence/calibration/`](../docs/review-evidence/calibration/);
+effectiveness as a substitute for Jörn's review is not established. Future work
+should not label prose ready merely because an earlier mathematical preflight
+passed.
+
+## September 16 rotated-pentagon reading
+
+The replacement chapter became a direct separation test between mathematical
+and expository review. Jörn rejected an implementation-led opening, unnecessary
+new terminology and vague transitions, and stopped reading when the exposition
+fell below his worthwhile-review threshold. He later read the proof and accepted
+the argument while still rejecting its writeup. The subject-local record at
+[`docs/pentagon-chapter/user-reading-feedback.md`](../docs/pentagon-chapter/user-reading-feedback.md)
+preserves the concrete triggers, response and artifact caveat; the messages
+originate in root thread `01a0a021-b283-7fa3-9e16-aec87ce950df`.
+
+The resulting decision is to preserve the analytic argument, replace the poor
+presentation, and keep the ridge–capacity relation out of that chapter. This
+case shows why proof acceptance cannot stand in for prose acceptance and why a
+review should inspect what the reader is asked to understand before treating a
+mathematically correct passage as ready. It does not establish a closed style
+checklist or human approval of the completed `docs/pentagon-chapter-v2/` rewrite.
+
+The earlier sections below retain prior evidence and unresolved comparisons.
+
+The authoring workflow is still being discovered. Jörn's September 2026
+discussion makes his full-PDF review the costly final gate, ideally passed on
+the first candidate; it does not supply a trusted automated substitute. He
+distinguished adaptable feedback during writing from that gate. Detailed
+summary infrastructure is deferred until writing and feedback reveal its needs
+([decision context](planning-context.md)).
+
+## Knowledge that changes the approach
+
+`docs/project-facts.md` items 40–44 record Jörn's experience: default model prose
+is often overconfident, nonsensical or excessively dense, and producing useful
+phrasing and deciding what belongs where are much harder than a successful
+LaTeX build. Those are attributed observations, not a measurement of today's
+model. Legacy prose needs revalidation under changed claims or structure even
+if previously approved.
+
+In the live discussion Jörn singled out proof jumps a human reader cannot
+fill. The useful distinction is between an invalid intended bridge and a valid
+bridge whose exposition needs intermediate steps. Proving the destination by
+an unrelated route does not vindicate the written transition. His willingness
+to investigate those distinctions is not an offer to repeatedly review whole
+drafts during authoring.
+
+One concrete prior preference is recorded in `docs/project-facts.md` item 85:
+for the product-QP six-facet proof, explain why the proof is product-specific,
+state theorem and algorithm before their proof, and put scope/use caveats after
+the main statements. Item 9 also rejects forcing the thesis's different
+research questions into one tight narrative. These are more useful starting
+points than inventing a universal style checklist.
+
+## Case used for the first authoring comparison
+
+Inspected 2026-09-07 at `921f3c02efefbfb3919fb2c35545686459123fff`:
+
+- `thesis/07-hko-local-maximum-exact-certificate.tex`, paragraph beginning
+  “The finite first-order criterion”: positive relation and row rank imply a
+  uniform strict decrease on the transverse slice.
+- `thesis/07-hko-local-maximum.tex`, theorem
+  `thm:hko-ten-facet-local-maximum` and “Proof spine”: the result the reader
+  needs that step to establish.
+- `thesis/07-hko-local-maximum-chart-reduction.tex`, final slice construction:
+  how the slice conclusion returns to the geometric neighborhood and equality
+  set.
+- `memories/hko-author-context.md`: already-inspected support route and the
+  distinction between feasible upper functions and optimizing branches.
+
+This case was selected for workflow development, not because a mathematical
+error had been identified. It is small, central to the main theorem and tests the kind of
+reader bridge Jörn described. It needs no new experiment, witness search or
+full verifier run. The theorem's established status is not in question.
+
+For a reviewer checking this particular implication, the intended reasoning is:
+rank and annihilation make the restricted rows span the slice dual; if every
+row evaluated nonnegatively on a nonzero direction, the strictly positive zero
+relation would force all evaluations to vanish, contradicting spanning.
+The finite minimum of these linear evaluations is continuous and negative on
+the unit sphere, hence bounded above by a negative constant. The finitely many
+smooth upper functions have a uniform first-order remainder small compared
+with that margin. Their touching inequalities give strict decrease of the true
+ratio. This is the inspection agent's reconstruction, not an independent audit
+of the upper-function hypotheses or the surrounding chart proof.
+
+## Reader observation, alternatives and selected revision
+
+The exact compared candidates and rendered inputs recovered from the former
+authoring-trial branch are preserved in the
+[`HKO authoring trial evidence`](../docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/README.md).
+That packet supports inspection of this case; it is frozen calibration evidence,
+not a maintained workflow or an approved thesis source.
+
+On 2026-09-07 a no-history subagent (`sprint_authoring/hko_reader`) read only
+the first two TeX files above, without this memory or its supplied reconstruction.
+It recovered the implication and identified two fillable but compressed steps:
+the all-nonnegative contradiction from the positive relation, and the uniform
+neighborhood obtained from the finite minimum on the unit sphere and a common
+Taylor remainder. Its reconstruction agreed with the one above. It required
+finite-dimensional linear algebra, compactness and differentiability, not
+specialized nonsmooth analysis. This is one agent-reader observation, not
+evidence that Jörn or the intended human reader would find the passage adequate.
+
+The first reader proposed an expansion: explicitly exclude all-nonnegative row
+evaluations; define `m(h) = min_sigma r_sigma(h)` on the unit sphere and give
+`m(h) <= -c`; then state a simultaneous remainder bound
+`|U_sigma(a_0+s)-U_sigma(a_0)-r_sigma(s)| <= (c/2)||s||`. This provides a concrete
+authoring candidate without changing the theorem or rerunning its certificate.
+
+Two no-history authors then proposed alternatives. Variant A ended with an
+explicit linear decrease bound using a direction-dependent row; B used the
+minimum over the upper functions and a uniform `-ct+o(t)` estimate. Separate
+math-meaning and reader-flow reviewers inspected the original and candidate
+arguments. The mathematical reviewer found both correct under the existing
+smooth touching-upper-function hypotheses and preferred A's explicit bound.
+The flow reviewer preferred the original plus the missing sign argument:
+the constants and remainder notation in A/B expanded a routine step more than
+the reader needed. This disagreement is useful evidence about the tradeoff,
+not a correctness vote.
+
+The integrated edit therefore adds only the sign argument after the spanning
+sentence. It fixes the shared concrete omission without introducing new
+notation. The original compactness/Taylor sentence remains. That selection is
+the integrating agent's judgment; whether the intended human reader needs the
+more explicit uniformity argument remains untested. Child task names for this
+comparison were `sprint_authoring/variant_a`, `variant_b`, `meaning_review`, and
+`flow_review`. No build or certificate run was part of the comparison.
+
+Whether the uniformity sentence remains too compressed was left unresolved.
+Jörn subsequently rejected further opportunistic passage checks as the next
+priority. This trial is reference for workflow discovery, not a queued task;
+see [current planning context](planning-context.md#writing-and-review).
+
+This comparison retained a revision and reviewer observations; it did not
+establish a repeatable authoring method. Jörn clarified on September 11 that
+roughly 99% of the proposed experiment's value is learning how to produce
+improvements at low cost; retaining its particular chapter is incidental.
+A successful local attempt alone would not establish transfer to other
+chapters or whole-thesis coherence.
+
+The comparison above is one source-level authoring attempt, not a human-reader
+before/after test or evidence that a whole-thesis workflow succeeds. Its
+mathematical and reviewer observations remain reference material; it is not
+a queued experiment.

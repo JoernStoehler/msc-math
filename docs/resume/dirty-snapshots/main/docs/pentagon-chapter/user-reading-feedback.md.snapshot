@@ -1,0 +1,20 @@
+# Jörn's replacement-chapter reading, September 16
+
+Direct user feedback, recorded by coordinator. The messages originate in root
+thread `01a0a021-b283-7fa3-9e16-aec87ce950df`; this file is the durable
+subject-local synthesis. This is not whole-chapter PASS.
+
+- Rejected including the ridge-area relationship in the rotated-pentagon chapter. Scope revision removes it; potential DS integration remains separate.
+- Rejected implementation-first opening “Floating-point evaluations”.
+- Rejected unnecessary/vague statements “every angle is equivalent to d(θ) in that interval” and “The endpoint values come from the Haim–Kislev–Ostrover example”.
+- Rejected suddenly introducing “first harmonic” instead of continuing with the displayed objective formula.
+- Initially stopped reading because exposition was below the worthwhile-review threshold.
+- Subsequently read the proof and explicitly judged: “ok i read the proof and it indeed works, nice, but its writeup is shit”.
+
+Current boundary: analytic proof accepted by Jörn; exposition rejected. Preserve
+the mathematical argument, improve presentation, and check for rewrite
+regressions rather than reopening proof discovery. A completed replacement is
+now under `docs/pentagon-chapter-v2/`; it has agent review but no human prose
+approval. The main thesis has not been integrated.
+
+Delivery caveat: an earlier scope rebuild overwrote the initially served six-page PDF with a five-page scope revision; later style work uses a separate output. Do not retrospectively attach all feedback to one immutable six-page artifact.

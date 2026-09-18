@@ -1,0 +1,146 @@
+# Random-Polytope Sys-Datascience
+
+Current scope status (Jörn, 2026-09-05): data science is moderately incomplete.
+Which gaps to finish and which to report as unfinished remains unresolved;
+repository cleanup precedes that decision. Closed individual packets or method
+tables below do not imply that this overall scope question is settled.
+Actual assignments are recorded in [current work and ownership](../../memories/todos.md).
+
+This folder supports the thesis data-science/search slice, currently restricted
+to random polytopes and random Lagrangian-product polytopes.
+
+The active thesis question is:
+
+> On the retained and named extension random/product samples and ordinary
+> data-science methods, do we see a `sys > 1` example, a credible
+> candidate-proposer for finding one, or thesis-useful structure?
+
+Here `sys` is a stored numerical target, not by itself a certified capacity
+statement. In table rows, `capacity_source` names the dataset origin rather
+than the capacity evaluator, and provenance-table `backend` records the
+producer's requested mode rather than the route proved to have run. Fresh
+run-local prepares expose `capacity_method`, `capacity_candidate_family`, and
+`volume_method`; the registered retained table predates those fields. See the
+[retained numerical lineage account](../polytope-datasets/retained-lineage.md)
+before making thesis-facing claims from retained values.
+
+The old fixed-F ascent and continuation runs are not part of this active slice.
+They were confusing for this chapter because endpoint diagnostics showed that
+the retained ascent endpoints should not be treated as local maxima. Preserved
+live packets and bounded observations are routed from
+`experiments/sys-landscape/README.md`; use Git history only for removed raw
+artifacts. Do not route new random/product method-table work through the legacy
+producers.
+
+Legacy bounded random/ascent/continuation observations that are still worth
+preserving are summarized in
+`experiments/sys-landscape/legacy-ascent-continuation-debt.md`, with packet
+entry points beside their current code and retained artifacts. They are context
+only. They are not active method-table rows and do not support local-maximality,
+exhaustive-search, or candidate-proposer claims.
+
+## Inputs and method packets
+
+```text
+experiments/polytope-datasets/
+    -> experiments/polytope-invariant-table/
+    -> experiments/sys-datascience/methods/
+```
+
+- `experiments/polytope-datasets/` contains the source-dataset producers,
+  retained random/product rows, and their shared expensive-computation cache.
+- `experiments/polytope-invariant-table/` is the derived-table producer. It
+  computes invariant feature columns and writes the retained method-facing
+  tables.
+- `methods/` contains the consumer experiments. Each packet states the table
+  or producer artifact it actually reads.
+
+## Rust package boundary
+
+The repository root `Cargo.toml` is the shared workspace for active packages.
+The source-dataset producers, derived-table producer, and small method binaries
+are separate workspace packages. Nine method packets also have standalone
+`Cargo.toml` and `Cargo.lock` files and remain independently runnable; their
+READMEs use `--manifest-path` or explicitly run Cargo from the method
+directory. The remaining Rust method executables are targets of this
+directory's package.
+
+These packages depend one-way on the shared `exp-sys-landscape` library for
+capacity, cache, and polytope helpers. `exp-sys-landscape` does not depend on
+the data-science or method packages. Dataset flow is recorded by paths and
+commands, not by a reverse Cargo dependency.
+
+## Current Random Distributions
+
+Current retained producer contract:
+
+- generic random rows: facet counts `F=5..12`, `512` accepted samples per `F`;
+- random Lagrangian-product rows: polygon-pair buckets `3 <= k <= m <= 6`,
+  `1024` accepted samples per bucket;
+- both use seed `42`, height interval `[0.8, 1.2]`, and rejection until a
+  valid polytope is produced.
+
+This is a finite sample from these distributions, not a universal random-model
+claim. A separate method-local `factorial-both` source under
+`methods/alternative-source-transfer/` supplied one frozen prospective
+ridge/rho transfer test; it does not extend or replace these retained tables.
+These retained populations are distinct from later method-local samples. The
+[September exploration wave](coordination/exploration-wave-2026-09-14.md) records
+paired support-height changes, orientation allocation, and a small CEM-versus-IID
+comparison; those packets do not replace the retained tables.
+
+## Retained Tables
+
+Prepared table output path:
+
+```text
+experiments/polytope-invariant-table/
+```
+
+Active table files:
+
+- `polytope-table.jsonl`: one row per retained random/product polytope;
+- `polytope-provenance-table.jsonl`: producer/source metadata for those rows.
+
+Build or refresh the retained random/product tables from canonical producer
+files:
+
+```bash
+experiments/polytope-invariant-table/build-retained-table.sh
+```
+
+Build scoped scratch tables:
+
+```bash
+experiments/polytope-invariant-table/build-random-only-slice.sh smoke
+experiments/polytope-invariant-table/build-random-only-slice.sh method
+experiments/polytope-invariant-table/build-random-only-slice.sh full
+```
+
+Check a prepared table fingerprint:
+
+```bash
+uv run --script experiments/polytope-invariant-table/fingerprint-dataset.py \
+  experiments/polytope-invariant-table
+```
+
+## Findings and research state
+
+- [Question map](coordination/current-question-map.md): bounded answers and open
+  questions, with links to their evidence.
+- [Method inventory](methods/README.md): physical packet discovery and local
+  reproduction commands.
+- [September evidence review](coordination/datascience-review-2026-09-14.md) and
+  [completed exploration wave](coordination/exploration-wave-2026-09-14.md): later
+  review and small experiments beyond the July portfolio.
+- [Coordination records](coordination/README.md): dated decisions and older
+  research accounts.
+- [Feature coverage](feature-space-coverage-ledger.md) and
+  [retained-table dispositions](methods/trusted-random-product-method-dispositions.md):
+  feature and method coverage of the named retained populations.
+- [Dormant scripts](LICCA.md): inventory of scripts outside the selected method
+  surface.
+
+Packet READMEs and their cited artifacts own numerical conclusions. A closed
+packet or the July portfolio's completion claim does not settle the overall
+thesis scope. The [current work record](../../memories/todos.md) owns assignments.

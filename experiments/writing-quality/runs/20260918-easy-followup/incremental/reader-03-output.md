@@ -1,0 +1,28 @@
+# Reader reconstruction after prefix 03
+
+The earlier material now supplies a clear sequence: an empirical negative rank association in a mixed population; an exact inverse-square relationship on rotated regular pentagon products; and two numerical paths warning that decreasing R need not improve a target. The theorem reference identifies the dependency of the exact argument, the named counterexample explains the value above one, and the path paragraph separates independently derived endpoint ratios from numerical intermediate observations.
+
+The new material tests the more limited idea of using geometry to choose which bodies deserve costly target evaluations. I understand four pieces of empirical evidence:
+
+1. Predictive models with feature ablations suggest that ridge-area features account for much of the signal on held-out data. No model, split, score, or ablation comparison is specified here, so I understand this as a summary of another analysis.
+2. A large proposal pool contains 100,000 product candidates. Geometry is used to choose some candidates, and only 1,675 distinct bodies in the union of selected and control groups receive target evaluations. The maximum stored target is about 0.868, still below one. This establishes the scale of the proposal pool and actual evaluation effort, but the stated maximum alone does not tell me how selection compares with controls.
+3. A separate fresh pool tests an explicitly fixed refinement of low-R selection. First retain the lowest one percent by R in each polygon-size bucket. Then compare candidates with relatively smaller largest-ridge shares against the complementary half of that retained tail. The prechosen success condition requires the former to have a higher mean target overall and in at least seven buckets. The observed difference of about 0.034 overall and positive differences in eight buckets satisfy that condition. This supports this extra selection criterion for that pool, without asserting statistical significance or a required practical effect size.
+4. A transfer experiment changes the source to one with separate area normalization. A fixed ridge selector improves mean targets relative to disjoint controls in each of two buckets, 4 by 6 and 6 by 6. Across the tested selectors and controls, 91 distinct targets were evaluated. This supplies a small finite example of enrichment on another source, although I cannot reconstruct the selection rule or normalization from this paragraph alone.
+
+These findings concern choosing candidates before capacity evaluation, not using the ridge descriptor as a differentiable or monotone objective while modifying an individual body. The final paragraph makes that distinction explicit and sends the latter problem to the optimizer study.
+
+# Questions remaining after the complete section
+
+- In the first 100,000-candidate test, which geometric selection rule was used, how were controls chosen, and what was the selected-versus-control outcome? The maximum and union size do not themselves exhibit enrichment. A short comparison and a reference to the detailed protocol would make this test's contribution identifiable.
+- In the fresh refinement test, is the largest-ridge-share split performed separately within each bucket or once on the pooled low-R tail? “Within each product bucket” clearly applies to the one-percent filter but does not unambiguously apply to the subsequent halves. This changes the groups whose bucket means and overall difference are compared. Also, is the overall difference a pooled-body mean difference or an equally weighted average of bucket differences?
+- What exactly is the transferred “frozen ridge selector,” and what is separately area-normalized? I suspect each polygon factor is normalized to a prescribed area, but that is an inference. The rule and normalization matter for understanding what has transferred between sources; a protocol reference could carry the details. An effect magnitude for the two buckets would also clarify how much enrichment the reported positive direction represents.
+- Where can I find the predictive-model analysis and the empirical protocols/results summarized here? The exact calculation now has a theorem reference, but the statistical and search claims have no corresponding locator in this standalone section. I do not need all their tables reproduced, but without a locator I cannot connect the summarized comparisons to their definitions or retained evidence.
+
+# Points I can resolve directly without additional information
+
+- The two 100,000-candidate experiments are distinct: the second is explicitly fresh and tests an additional concentration-based criterion.
+- “Largest-ridge share” naturally means the largest individual absolute symplectic face-area contribution divided by the sum of such contributions. The preceding definition of R and discussion of ridge area are sufficient for that reading; I do not interpret it as Euclidean area.
+- The numerical target language continues the opening's distinction from certified mathematical sys. I do not read the later stored-target comparisons as new exact capacity theorems.
+- The refinement satisfies its stated success condition: eight positive buckets exceed the required seven, and the overall difference is positive. I do not need a significance test to understand the explicitly finite claim.
+- The pentagon counterexample and both random-table maxima concern different collections, so their values do not conflict.
+- The descriptor's usefulness for selection does not imply that decreasing it along every path increases capacity. That distinction is now supported by the sequence of examples and explicitly stated.

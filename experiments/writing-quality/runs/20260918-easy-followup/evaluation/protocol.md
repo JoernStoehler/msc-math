@@ -1,0 +1,5 @@
+# Prospective final evaluation
+
+Freeze complete candidates before requesting final review. Source fidelity and reader obstacles are distinct jobs. A reader receives anonymous byte-identical candidate files and audience/purpose, but no prior verdicts, operation names, intermediate repairs or hypothesis preferences. They record exact spans plus why an actual reader might fail to recover an inference, scope, definition, contrast or purpose. Preferences and context assumptions are labeled separately. No quota, ordinal winner or human-PASS prediction.
+
+The source reviewer receives the same candidates plus frozen scientific packet and supplemental concentration source. They report unsupported changes, consequential omissions and precisely scoped verified statements. Review reports carry candidate SHA256. If repair is necessary preserve reviewed bytes and issue a new version plus explicit delta review. Compare final artifact differences only after both independent tasks; preserve disagreement rather than majority voting.

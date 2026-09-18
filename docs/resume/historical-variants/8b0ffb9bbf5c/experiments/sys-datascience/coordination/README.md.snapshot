@@ -1,0 +1,36 @@
+# Sys-datascience research records
+
+Start with the [question map](current-question-map.md) for bounded answers and
+open questions, or the [method inventory](../methods/README.md) for packets and
+reproduction commands. [Current work](../../../memories/todos.md) owns assignments.
+
+## Later review and experiments
+
+- [September 14 review](datascience-review-2026-09-14.md) assesses the existing
+  evidence and research gaps.
+- [September 14 exploration wave](exploration-wave-2026-09-14.md) records the
+  paired support-height, orientation-allocation, and small CEM-versus-IID results.
+- [Topic maps](topics/README.md) connect earlier packets by research question;
+  they predate some of the later experiments.
+
+## Dated decision history
+
+The July closure judgments concern their named exploration slices. They do not
+settle Jörn's September assessment that data science is moderately incomplete.
+Their proposed next steps and process contracts describe those sessions, not
+standing assignments or restrictions on future research.
+
+| Record | What it preserves |
+| --- | --- |
+| [July final account](final-research-account-2026-07-12.md) | Bounded cross-packet findings and July 15 refresh |
+| [July 22 closeout](research-closeout-2026-07-22.md) | Known-seed cycle and then-current portfolio decisions |
+| [Research ledger](research-ledger.md) | Decision chronology |
+| [Next-session snapshot](next-session-candidates.md) and [parked lines](parked-and-rejected.md) | Historical priorities and reasons for stopping |
+| [July direction review](research-direction-review-2026-07-11.md) | Closed-cycle inventory |
+| [Recovery assessment](exploration-result.md) | Why the July 10 recovery closure was premature |
+| [Completion contract](feature-completion-contract.md) and [portfolio contract](portfolio-review-contract.md) | Historical definitions and process decisions for that slice |
+
+The earlier [June research ledger](../research-ledger.md) includes scratch-output
+paths and exploratory observations. Retained packet artifacts, rather than those
+scratch paths or copied metrics, support current numerical claims. Historical
+workflow evaluations and recovery audits remain in [legacy](../legacy/README.md).

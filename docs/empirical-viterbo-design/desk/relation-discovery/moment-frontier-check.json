@@ -1,0 +1,429 @@
+{
+  "schema": "moment-frontier-adverse-example-v1",
+  "candidate": "beta4 >= 16/3 + (2/3)*beta3_norm2",
+  "candidate_status": "FALSE, despite surviving the supplied finite collection",
+  "candidate_origin": "exploratory cross-view inequality; coefficient suggested by third-harmonic disk perturbation, not predeclared",
+  "collection_path": "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/collection-v1.jsonl",
+  "collection_sha256": "31c654cd75391c7cfa15c04952d7c5b740a81e5e6120c124768edd15e5c2c941",
+  "moment_code_sha256": "47bb3a7329848dc2c37940038448af853c59fa3f2508e0efa3e7f8fc1fa13e18",
+  "moment_code_path": "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/collection.py",
+  "collection_count": 49,
+  "base_count": 33,
+  "collection_minimum_slack": 9.859261657041429e-05,
+  "collection_violations": 0,
+  "finite_maximum_slope_witness": {
+    "body_id": "569dc99c224a16d37183",
+    "name": "smooth_36_sym_0.125",
+    "slope": 0.6904229217769415
+  },
+  "slope_frontier_note": "finite upperlimit for alpha in beta4>=16/3+alpha*beta3; rows with beta3<=1e-12 excluded from division",
+  "collection_checks": [
+    {
+      "body_id": "c0adf374f1a0f3a014f3",
+      "name": "disk_8",
+      "parent_id": null,
+      "slack": 0.1756152492835369
+    },
+    {
+      "body_id": "83d45302f481476a1ac4",
+      "name": "disk_16",
+      "parent_id": null,
+      "slack": 0.04676459954211336
+    },
+    {
+      "body_id": "f0365d2160e08e347471",
+      "name": "disk_36",
+      "parent_id": null,
+      "slack": 0.03305680831695057
+    },
+    {
+      "body_id": "19246c9fcacff862ffcf",
+      "name": "disk_80",
+      "parent_id": null,
+      "slack": 0.029564962285836986
+    },
+    {
+      "body_id": "18c994d3f29456716496",
+      "name": "gaussian_8",
+      "parent_id": null,
+      "slack": 0.10687790103271827
+    },
+    {
+      "body_id": "047ae93a499289e9e471",
+      "name": "gaussian_16",
+      "parent_id": null,
+      "slack": 0.055029502880886094
+    },
+    {
+      "body_id": "36ee9960299e5b61dcf4",
+      "name": "gaussian_36",
+      "parent_id": null,
+      "slack": 0.07973210624032664
+    },
+    {
+      "body_id": "34c5c1e00e1af3a2f6ee",
+      "name": "gaussian_80",
+      "parent_id": null,
+      "slack": 0.08515904830443449
+    },
+    {
+      "body_id": "4aebe05daf79eff842b1",
+      "name": "halfplanes_5",
+      "parent_id": null,
+      "slack": 0.11637308845234903
+    },
+    {
+      "body_id": "9c4fee392e6a3aa1c828",
+      "name": "halfplanes_7",
+      "parent_id": null,
+      "slack": 0.031825169507009504
+    },
+    {
+      "body_id": "23e82c9c6c6b01aee422",
+      "name": "halfplanes_10",
+      "parent_id": null,
+      "slack": 0.02513818272016865
+    },
+    {
+      "body_id": "b6f8430f15ad594505ab",
+      "name": "halfplanes_14",
+      "parent_id": null,
+      "slack": 0.016735572206853094
+    },
+    {
+      "body_id": "df331837f195b22e03da",
+      "name": "halfplanes_20",
+      "parent_id": null,
+      "slack": 0.1011106150136202
+    },
+    {
+      "body_id": "69f5827ad4424778e5d5",
+      "name": "halfplanes_28",
+      "parent_id": null,
+      "slack": 0.031348868842558913
+    },
+    {
+      "body_id": "fa2c1202f3fc0c9b7f0e",
+      "name": "halfplanes_40",
+      "parent_id": null,
+      "slack": 0.04528975170808686
+    },
+    {
+      "body_id": "2c85d746f7fb192bb7e0",
+      "name": "halfplanes_60",
+      "parent_id": null,
+      "slack": 0.010714287403515347
+    },
+    {
+      "body_id": "0734cc6ac991ac821f62",
+      "name": "zonotope_3",
+      "parent_id": null,
+      "slack": 0.10692413627912067
+    },
+    {
+      "body_id": "45109420e90d138f578b",
+      "name": "zonotope_5",
+      "parent_id": null,
+      "slack": 0.03426730088575969
+    },
+    {
+      "body_id": "0304f50ef17abd62a049",
+      "name": "zonotope_8",
+      "parent_id": null,
+      "slack": 0.020362514050574987
+    },
+    {
+      "body_id": "d95ded1a89959f45077d",
+      "name": "zonotope_12",
+      "parent_id": null,
+      "slack": 0.022923899169939865
+    },
+    {
+      "body_id": "6edadc5188b7438b538e",
+      "name": "smooth_24",
+      "parent_id": null,
+      "slack": 0.0021211534589541357
+    },
+    {
+      "body_id": "b5e044906ef9b0bc3698",
+      "name": "smooth_36",
+      "parent_id": null,
+      "slack": 0.0013439354325366984
+    },
+    {
+      "body_id": "5b60707663645f786b7f",
+      "name": "smooth_60",
+      "parent_id": null,
+      "slack": 0.003084114687026865
+    },
+    {
+      "body_id": "7b9c1c78895028c7fd4f",
+      "name": "smooth_90",
+      "parent_id": null,
+      "slack": 0.0027992996482201007
+    },
+    {
+      "body_id": "0056205da7c6b84c8733",
+      "name": "cover_0",
+      "parent_id": null,
+      "slack": 0.10061196191824953
+    },
+    {
+      "body_id": "775fded3c44c709aad6a",
+      "name": "cover_1",
+      "parent_id": null,
+      "slack": 0.09121105572956767
+    },
+    {
+      "body_id": "eb8c98f609459c6b868e",
+      "name": "cover_2",
+      "parent_id": null,
+      "slack": 0.10350989048532899
+    },
+    {
+      "body_id": "f22d77f0616f46e35f75",
+      "name": "cover_3",
+      "parent_id": null,
+      "slack": 0.1316585256169581
+    },
+    {
+      "body_id": "bebf7af4d2dc0147936f",
+      "name": "regular_3_0.1700",
+      "parent_id": null,
+      "slack": 0.2133333333333346
+    },
+    {
+      "body_id": "a1a665cbd621a2e842c9",
+      "name": "regular_4_0.1700",
+      "parent_id": null,
+      "slack": 0.26666666666666483
+    },
+    {
+      "body_id": "a3f596b96fae9f1c97b7",
+      "name": "regular_5_0.0000",
+      "parent_id": null,
+      "slack": 0.09552327360892843
+    },
+    {
+      "body_id": "8ed9ac4924e5b7de4eb3",
+      "name": "regular_5_0.3142",
+      "parent_id": null,
+      "slack": 0.09552327360892754
+    },
+    {
+      "body_id": "f4489a22e3a0966d8156",
+      "name": "regular_7_0.1700",
+      "parent_id": null,
+      "slack": 0.021969665818608597
+    },
+    {
+      "body_id": "3868d93e3fa2db1e5165",
+      "name": "disk_16_sym_0.125",
+      "parent_id": "83d45302f481476a1ac4",
+      "slack": 0.03651433584877058
+    },
+    {
+      "body_id": "01714c2b7c53edce7bff",
+      "name": "disk_16_sym_0.25",
+      "parent_id": "83d45302f481476a1ac4",
+      "slack": 0.025652789440723044
+    },
+    {
+      "body_id": "f63874f1ccb274fa0812",
+      "name": "disk_16_sym_0.375",
+      "parent_id": "83d45302f481476a1ac4",
+      "slack": 0.01948292355758182
+    },
+    {
+      "body_id": "e3c69b3c22351e28934a",
+      "name": "disk_16_sym_0.5",
+      "parent_id": "83d45302f481476a1ac4",
+      "slack": 0.01762143139139294
+    },
+    {
+      "body_id": "2331a873f21f39cc2351",
+      "name": "halfplanes_14_sym_0.125",
+      "parent_id": "b6f8430f15ad594505ab",
+      "slack": 0.016284722324952698
+    },
+    {
+      "body_id": "abf50f2148b59384355b",
+      "name": "halfplanes_14_sym_0.25",
+      "parent_id": "b6f8430f15ad594505ab",
+      "slack": 0.015897635784806165
+    },
+    {
+      "body_id": "32b65f9256a483ae21f5",
+      "name": "halfplanes_14_sym_0.375",
+      "parent_id": "b6f8430f15ad594505ab",
+      "slack": 0.015820364273678996
+    },
+    {
+      "body_id": "4c00c7181ee0a968bc6c",
+      "name": "halfplanes_14_sym_0.5",
+      "parent_id": "b6f8430f15ad594505ab",
+      "slack": 0.015836314170991628
+    },
+    {
+      "body_id": "569dc99c224a16d37183",
+      "name": "smooth_36_sym_0.125",
+      "parent_id": "b5e044906ef9b0bc3698",
+      "slack": 0.0006717162560054418
+    },
+    {
+      "body_id": "2a9fa1de2a98acf11522",
+      "name": "smooth_36_sym_0.25",
+      "parent_id": "b5e044906ef9b0bc3698",
+      "slack": 0.0003097389405451456
+    },
+    {
+      "body_id": "fd6c9d62e2d4c1f2ddfe",
+      "name": "smooth_36_sym_0.375",
+      "parent_id": "b5e044906ef9b0bc3698",
+      "slack": 0.00014453974602523546
+    },
+    {
+      "body_id": "63c435ac15372d57cb49",
+      "name": "smooth_36_sym_0.5",
+      "parent_id": "b5e044906ef9b0bc3698",
+      "slack": 9.859261657041429e-05
+    },
+    {
+      "body_id": "69b37d5a7abe3ba5d3f6",
+      "name": "regular_5_0.3142_sym_0.125",
+      "parent_id": "8ed9ac4924e5b7de4eb3",
+      "slack": 0.07371705194526523
+    },
+    {
+      "body_id": "25261932242275da51c4",
+      "name": "regular_5_0.3142_sym_0.25",
+      "parent_id": "8ed9ac4924e5b7de4eb3",
+      "slack": 0.03930864905301856
+    },
+    {
+      "body_id": "b78d21db7b233821ee89",
+      "name": "regular_5_0.3142_sym_0.375",
+      "parent_id": "8ed9ac4924e5b7de4eb3",
+      "slack": 0.013964575214340691
+    },
+    {
+      "body_id": "4fe2db5654ff6c6f9625",
+      "name": "regular_5_0.3142_sym_0.5",
+      "parent_id": "8ed9ac4924e5b7de4eb3",
+      "slack": 0.004930709747030804
+    }
+  ],
+  "exact_smooth_counterexamples": [
+    {
+      "a": "1/100",
+      "beta4_exact": "3416064320010666720/640384062401440009",
+      "beta3_norm2_exact": "819486752769331216640064/512460944017280540006480027",
+      "slack_exact": "-112701440614402560080/1537382832051841620019440081",
+      "beta4": 5.33439934029655,
+      "beta3_norm2": 0.0015991204058307662,
+      "slack": -7.330733651031313e-08,
+      "curvature_numerator_lower_bound_exact": "891/1000"
+    },
+    {
+      "a": "1/40",
+      "beta4_exact": "2248155137706720/421004861670409",
+      "beta3_norm2_exact": "86087384991009382464/8638347416712705036827",
+      "slack_exact": "-74071424369049680/25915042250138115110481",
+      "beta4": 5.339974291001721,
+      "beta3_norm2": 0.009965723863392572,
+      "slack": -2.858240540536063e-06,
+      "curvature_numerator_lower_bound_exact": "117/160"
+    },
+    {
+      "a": "1/20",
+      "beta4_exact": "1273344060960/237582271087",
+      "beta3_norm2_exact": "1726983315971136/43769544220086923",
+      "slack_exact": "-852161933360/18758376094322967",
+      "beta4": 5.359592090496161,
+      "beta3_norm2": 0.039456278257944045,
+      "slack": -4.542834246818935e-05,
+      "curvature_numerator_lower_bound_exact": "19/40"
+    },
+    {
+      "a": "1/11",
+      "beta4_exact": "78052354272/14408401225",
+      "beta3_norm2_exact": "218683725780672/1729512441042875",
+      "slack_exact": "-2523473128784/5188537323128625",
+      "beta4": 5.41714191971358,
+      "beta3_norm2": 0.1264424126656229,
+      "slack": -0.00048635539683510964,
+      "curvature_numerator_lower_bound_exact": "10/121"
+    }
+  ],
+  "polygon_approximation_checks": [
+    {
+      "body_id": "1161f3b84dfd205295de6914fb815d39bd3c39ad2b52a9bcd8f9fdfc5514667a",
+      "construction": "r=1+(1/20)cos(3theta), theta=2pi*j/n",
+      "n": 96,
+      "beta4": 5.3594287030511865,
+      "beta3_norm2": 0.039209130442260105,
+      "slack": -4.40505769866463e-05,
+      "beta4_error_vs_smooth": 0.000163387444974461,
+      "beta3_error_vs_smooth": 0.0002471478156839402
+    },
+    {
+      "body_id": "97dfaed8eff7452ce5a285731b8db8bd76845345e573dfeeff10cc95c69341c0",
+      "construction": "r=1+(1/20)cos(3theta), theta=2pi*j/n",
+      "n": 384,
+      "beta4": 5.359581809715981,
+      "beta3_norm2": 0.039440788790544176,
+      "slack": -4.538281104829456e-05,
+      "beta4_error_vs_smooth": 1.0280780180060844e-05,
+      "beta3_error_vs_smooth": 1.5489467399869283e-05
+    },
+    {
+      "body_id": "2336dca5afd0589e4c0cdc4ca43ecf15f993202b24e93001be4d210389784b4d",
+      "construction": "r=1+(1/20)cos(3theta), theta=2pi*j/n",
+      "n": 1536,
+      "beta4": 5.359591447677497,
+      "beta3_norm2": 0.039455309999070064,
+      "slack": -4.542565521623368e-05,
+      "beta4_error_vs_smooth": 6.428186640761169e-07,
+      "beta3_error_vs_smooth": 9.682588739817755e-07
+    }
+  ],
+  "zero_third_moment_noncentral_examples": [
+    {
+      "body_id": "a3f596b96fae9f1c97b7",
+      "name": "regular_5_0.0000",
+      "skew_norm2": 5.554027119306004e-32,
+      "difference_area_excess": 0.1180339887498949
+    },
+    {
+      "body_id": "8ed9ac4924e5b7de4eb3",
+      "name": "regular_5_0.3142",
+      "skew_norm2": 1.2270525031024894e-31,
+      "difference_area_excess": 0.1180339887498949
+    },
+    {
+      "body_id": "f4489a22e3a0966d8156",
+      "name": "regular_7_0.1700",
+      "skew_norm2": 3.419058859818471e-32,
+      "difference_area_excess": 0.0549581320873711
+    },
+    {
+      "body_id": "69b37d5a7abe3ba5d3f6",
+      "name": "regular_5_0.3142_sym_0.125",
+      "skew_norm2": 3.3032647605836583e-32,
+      "difference_area_excess": 0.06313389265746139
+    },
+    {
+      "body_id": "25261932242275da51c4",
+      "name": "regular_5_0.3142_sym_0.25",
+      "skew_norm2": 2.0787533935421603e-31,
+      "difference_area_excess": 0.027108687317114466
+    },
+    {
+      "body_id": "b78d21db7b233821ee89",
+      "name": "regular_5_0.3142_sym_0.375",
+      "skew_norm2": 1.6353493749706062e-31,
+      "difference_area_excess": 0.006642127314903545
+    }
+  ],
+  "capacity_calls": 0
+}

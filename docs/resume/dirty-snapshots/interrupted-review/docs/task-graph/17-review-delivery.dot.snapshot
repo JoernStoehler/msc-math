@@ -1,0 +1,22 @@
+digraph review_delivery {
+  graph [rankdir=BT, label="17 September: thesis review delivery (8-hour limit)", labelloc=t];
+  node [shape=box];
+  baseline [label="RUNNING: independent baseline build\nroot; thesis/review-20260917"];
+  context [label="DONE: prior review defects recovered\nHKO accepted; whole thesis rejected"];
+  setup [shape=diamond,label="CRUX: setup answers pending\nparallel work and final review criteria"];
+  author [label="READY: repair reader-facing chapters\nretain all agreed research areas"];
+  evidence [shape=diamond,label="CRUX: DS evidence replay\ninspect inputs; bounded reproduction\nrecover / narrow unsupported claims"];
+  math [label="READY: verify mathematical transitions\nliterature, flow, QP, numerics"];
+  integration [label="READY: assembled PDF + source checkpoint\nreserve final two hours"];
+  verify [label="READY: full prose and rendered-page review\nreferences, artifacts, reproducibility"];
+  deliver [label="OUTCOME: fixed PDF delivered to Jorn\nPASS/FAIL belongs to his review"];
+  context -> author;
+  baseline -> author;
+  setup -> author [label="parallel if authorized; serial otherwise"];
+  evidence -> author [label="supported account"];
+  evidence -> integration [label="timeout: explicit remaining limits"];
+  math -> integration;
+  author -> integration;
+  integration -> verify;
+  verify -> deliver;
+}

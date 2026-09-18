@@ -1,0 +1,588 @@
+# Historical assessment of the 110-page thesis
+
+Historical review evidence for the hashed artifact below, not a current task
+list or an assessment of the recovered 86-page candidate. Current source
+navigation is in [thesis/README.md](../thesis/README.md). Findings remain
+attributed to this assessment and may have been superseded.
+
+Date: 2026-09-14  
+Artifact assessed: `thesis/build/main.pdf`  
+Artifact SHA-256: `5f799da24818861cd0aeb54964a65b4fb3df7e87a27c4fc31d8ef80fbfa57ead`  
+Source revision inspected: `add4f51bd7024bd7f3826a87445a69d31a9bbd32`  
+Length: 110 pages  
+Working title: *Probing Viterbo's Conjecture*
+
+## Executive verdict
+
+**Recommendation: FAIL / return for major revision as a submission artifact. Do not submit this PDF as-is.**
+
+This is not a verdict that the topic fails, that the project lacks mathematics,
+or that a replacement research topic is needed. The opposite is more likely:
+the HKO local-maximality theorem, if it survives expert audit, is a strong and
+appropriate central result for a master's thesis, and the rotated-pentagon
+profile is a credible second result. I found no elementary contradiction in
+the main proof architecture during this assessment.
+
+The present PDF nevertheless fails as a finished thesis for four cumulative
+reasons:
+
+1. **It explicitly disclaims final human review and makes authorial
+   responsibility difficult to establish.** Page 2 says that the manuscript was substantially revised
+   after the author's last personal verification and that the statement does
+   not assert final review of the current candidate. It also says that the
+   author cannot reliably identify who originated every idea, passage,
+   program, or decision. Whatever the permissibility of the underlying AI
+   workflow, this wording asks an examiner to accept a thesis that its author
+   says he has not finally checked. That is an immediate submission blocker.
+2. **The headline theorem is not yet sufficiently auditable from the thesis
+   artifact.** Its logic is plausible and its exact certificate is present in
+   the repository, but the decisive computation depends on hand-supplied
+   geometric and derivative formulas whose correspondence is outside the Sage
+   check. The PDF itself acknowledges this boundary. An expert still has to
+   audit those formulas, the local chart/slice argument, and the executable
+   correspondence. The living repository is not a frozen scholarly object.
+3. **The thesis does not establish its scholarly position well enough.** A
+   110-page research thesis renders only ten bibliography entries. The novel
+   claims are not set against a serious related-work account, and standard
+   numerical, optimization, statistical, and computer-assisted-proof methods
+   are mostly uncited. The unused bibliography even contains a directly
+   relevant paper on local maximizers, but the thesis never discusses it.
+4. **The narrative treats a strong mathematical thesis as a project
+   portfolio.** The main result starts only on page 59. Conditional algorithms,
+   weak negative experiments, implementation assurance, repository state,
+   visualization, and an AI regression case compete with the mathematical
+   contribution instead of supporting it. The sentence-level prose is usually
+   grammatical, but its audit-log vocabulary and repeated caveats make the
+   manuscript laborious and obscure the intellectual point.
+
+My confidence is about 90% that this PDF should not be handed to an examiner
+unchanged. My confidence is also about 80% that the topic and most of the
+mathematical core should be retained rather than replaced. New mathematical
+research is not the first prescription; verification, positioning, selection,
+and rewriting are.
+
+## What a final review should judge
+
+The following review surface is broader than “find one fatal defect.” A
+replacement workflow must close every row that matters to passing.
+
+| Review dimension | Pass question | Current assessment |
+|---|---|---|
+| Formal admissibility | Is this recognizably a final master's-thesis submission with the required front matter, declarations, metadata, and archive? | **Fail / unknown.** The title page does not identify the university, program, degree, supervisor, or thesis type; the PDF metadata has blank title and author fields; no frozen release is identified. |
+| Authorship and academic integrity | Can the author truthfully take responsibility for every submitted claim, and is the disclosed AI use permitted? | **Hard fail in the current wording.** Page 2 explicitly withholds final review of the current candidate and blurs intellectual origin. Institutional permissibility remains unverified. |
+| Topic and research question | Is the topic mathematically substantive, bounded, and suitable for the degree? | **Pass.** Rigidity of the HKO counterexample and finite computation of EHZ capacity form a strong topic. |
+| Original contribution | Is it explicit which results are new, nontrivial, and the author's? | **Promising but not established.** The local theorem and pentagon profile appear to be the contributions, but novelty and authorial ownership are not adequately documented. |
+| Correctness | Are definitions, theorems, proofs, computations, and empirical claims correct? | **Not certified by this review.** No obvious collapse was found, but the two computer-assisted theorems need an expert trust-chain audit. |
+| Proof completeness | Can a qualified reader follow why every headline conclusion follows, including the computer-assisted steps? | **Major revision.** The high-level implication is explained, but key formula-to-code and certificate-to-geometry obligations live outside the PDF. |
+| Use of sources | Are imported results attributed accurately and is relevant literature covered? | **Fail.** Ten rendered references are not credible coverage for the breadth claimed. Related-work and method citations are missing. |
+| Narrative | Does every chapter advance one intelligible thesis-level argument? | **Fail.** There is a recoverable spine, but the current whole is a portfolio with multiple weak side stories. |
+| Exposition | Can the intended mathematical reader understand motivation, definitions, proof strategy, and significance without reconstructing the repository? | **Major revision.** Local explanations are often careful; global cognitive load is too high. |
+| Sentence-level writing | Is the prose correct, direct, and readable? | **Borderline pass locally; fail globally.** Grammar is usually good, but the voice is bureaucratic, repetitive, and overqualified. |
+| Empirical methodology | Do experiments support appropriately stated conclusions with reproducible provenance? | **Honest but weak.** The claims are bounded correctly, yet several experiments use uncertified historical evaluators or incomplete provenance and cannot carry the thesis. |
+| Reproducibility | Are proof and data artifacts stable, available, and sufficient to repeat the claims? | **Fail for final release.** The PDF says the repository is living, inputs are missing, some producer states are unreconstructable, and there is no frozen DOI/archive. |
+| Visual and typographic quality | Is the PDF polished and easy to navigate? | **Mixed.** Figures and equations are generally clean; front matter, pagination, section starts, and code placement are not submission quality. |
+| Proportion and degree fit | Is the amount and kind of material appropriate for a master's thesis rather than a lab notebook or software report? | **Fail in present selection.** There is enough strong material, but too much secondary material and operational detail. |
+
+## The diagnosis in detail
+
+### 1. The topic is not failing
+
+The title is broad, but the best underlying question is precise and worthwhile:
+is the Haim--Kislev--Ostrover pentagon product locally maximal for the
+normalized EHZ capacity once natural symmetries are removed? A theorem showing
+local maximality in the ten-facet stratum would be a substantial master's-level
+contribution. The exact rotated-pentagon profile is a natural, intelligible
+companion result. The finite reduction to facet words gives the project a
+coherent technical language.
+
+This matters operationally: agents should **not** respond to the present FAIL
+by inventing a new topic or by adding more experiments. The first question is
+whether the existing central theorem is correct and presentable. If it is, the
+project already has enough mathematical substance.
+
+### 2. The authorship disclosure blocks submission before mathematics is judged
+
+Page 2 contains two different disclosures:
+
+- AI agents participated in choosing questions and methods and in developing
+  arguments, software, experiments, prose, interpretation, criticism, and
+  review.
+- The author cannot reliably say who first originated every idea, passage,
+  program, or decision and does not claim sole intellectual origin of every
+  part.
+- The author personally verified a July version, the manuscript was revised
+  substantially later, and the disclosure expressly does not say that the
+  current candidate received final review.
+
+The third point is unambiguously fatal for a final candidate. The first two may
+or may not be permissible under the applicable examination rules and the
+advisor's approval, but they create a serious degree-authorship risk. Advisor
+approval of broad AI use is not automatically equivalent to the examination
+board accepting delegated intellectual production.
+
+Required closure is not cosmetic rewriting. Before submission, Jörn must
+personally review and be able to defend the complete final text, the institution
+must permit the disclosed workflow, and the disclosure must say exactly what
+responsibility he accepts. If those conditions cannot be met, the thesis has a
+fundamental authorship problem regardless of mathematical quality.
+
+The separate “AI in the Research Process” chapter on pages 97–99 does not solve
+this problem. It analyzes one reconstructed code-repair episode with one run
+per condition and unavailable original prompts. Its conclusion—that a test
+should distinguish the defect it purports to catch—is sensible but slight,
+not integrated with the symplectic-geometric thesis, and not evidence of human
+mastery of the mathematical claims. Unless explicitly required, it should be
+removed or reduced to an appendix note.
+
+### 3. The mathematical core is plausible, but the current trust chain is not closed
+
+#### 3.1 HKO local maximality, pages 59–66
+
+The proof architecture is mathematically intelligible:
+
+1. nearby ten-facet polytopes are placed in a 40-dimensional labelled
+   polar-vertex chart;
+2. the 15-dimensional translation/scaling/symplectic orbit is split off;
+3. 26 smooth feasible sections give upper functions touching the systolic
+   ratio at HKO;
+4. their derivative rows annihilate the orbit directions, span the
+   25-dimensional quotient cotangent space, and have a strictly positive
+   convex relation summing to zero;
+5. compactness of the unit sphere and uniform Taylor control give strict
+   first-order decrease on the transverse slice.
+
+That implication is credible. The certificate packet also records 26 rows,
+rank 25, symmetry rank 15, positive coefficients, and exact annihilation.
+
+What remains insufficiently established for a final thesis is the boundary
+between the hand proof and the executable check. Page 65 correctly admits that
+exact substitution does not prove that the hand-supplied HKO geometry,
+volume-variation formulas, and derivative formulas represent the intended
+polytope. The verifier also does not prove the Hausdorff-local chart, local
+group slice, upper-function implication, or Taylor argument. These are normal
+limitations of a computer-assisted proof, but the thesis needs a recorded
+expert audit of precisely those interfaces. At present the reader is directed
+to a mutable repository packet rather than given a frozen certificate with a
+stable citation and a compact independent verification protocol.
+
+This review found no simple counterexample to the upper-function argument. It
+did **not** independently rederive all 40-coordinate derivatives, audit every
+Sage predicate against the geometry, or validate the local group action. The
+proper status is therefore “strong theorem candidate requiring focused expert
+verification,” not either “known false” or “already safe.”
+
+#### 3.2 Rotated-pentagon profile, pages 75–90
+
+This result has a clearer reader-facing proof: symmetry reduces the parameter
+range; a displayed six-facet branch supplies one inequality; a finite block
+enumeration supplies a competitor family; the exact classifier proves action
+gaps on the open cells; continuity closes exceptional parameters. One
+competitor is worked by hand, which materially improves credibility.
+
+The remaining risk is again correspondence and archival stability. The proof
+relies on a 3340-word Sage classification and on the correctness of the
+generator/pruning interface. The document says that a floating-point producer
+and exact certificate agree on the word count but that their word sets were not
+independently compared. That does not itself break the proof, because the
+floating-point producer is said not to be a proof input, but it is a needless
+reader alarm. The exact generator and its mathematical coverage are what must
+be audited and frozen.
+
+Six pages of cleaned Sage excerpts (pages 85–90) are the wrong compromise: too
+long for readers who trust the certificate, yet not enough to make the proof
+independent of the full source. Move the full executable and explained listing
+to a stable supplement. Keep only pseudocode, the mathematical predicates, a
+hash/version, outcome counts, and reproduction instructions in the thesis.
+
+#### 3.3 Conditional flow-graph algorithm, pages 42–51
+
+The chapter states an idealized exact real-arithmetic theorem under explicit
+regularity hypotheses and a rational corollary. This is honest and potentially
+useful, but it is not needed for either headline theorem. Its chamber-genericity
+argument and fixed-point semantics are novel enough to deserve specialist
+review, while its present role in the story is merely “a complementary
+algorithm.” It therefore incurs high proof and reading cost for low narrative
+return.
+
+Unless the algorithm is independently important to the degree claim, move it
+to an appendix or a separate paper. If retained as a main contribution, give it
+a motivating example, compare it more explicitly with Chaidez–Hutchings and
+the Haim–Kislev route, and obtain expert review of the genericity proof.
+
+#### 3.4 Foundations and finite reduction, pages 10–58
+
+The order—preliminaries, generalized Reeb orbits, Haim–Kislev QP,
+first-order variation—is broadly sensible. The text is unusually careful about
+distinguishing dual curves, boundary orbits, feasible words, KKT stationary
+points, fixed-word maxima, and global maxima. That is a strength.
+
+The cost is 49 pages before the main theorem. Some of this material reproves or
+repackages published results. The thesis must distinguish clearly between:
+
+- standard definitions and cited facts;
+- reproofs included for convention checking;
+- genuinely new lemmas needed by the headline theorem;
+- implementation contracts that belong in documentation rather than the
+  mathematical narrative.
+
+Without this distinction, length looks like contribution and a reader cannot
+tell what is being examined.
+
+### 4. Novelty and literature positioning are inadequate
+
+The rendered bibliography occupies only parts of pages 109–110 and contains
+ten items. For a thesis spanning symplectic capacities, generalized Reeb
+orbits, nonsmooth convex analysis, Minkowski billiards, local extremality,
+quadratic programming, verified floating-point computation, data science, and
+computer-assisted proof, this is not enough.
+
+Specific gaps include:
+
+- no serious related-work subsection for local maximizers of capacity ratios;
+- no discussion of the directly relevant Baracco–Bernardi–Lange–Mazzucchelli
+  item already present but uncited in `bibliography.bib`;
+- little historical sourcing for Ekeland–Hofer–Zehnder capacity and generalized
+  characteristics;
+- almost no citations for CMA-ES, bootstrap intervals, PCA, clustering,
+  random forests, interval arithmetic, verified linear algebra, or
+  computer-assisted proof practice;
+- no explicit novelty table saying which theorem/algorithm/experiment is new,
+  which is an adaptation, and which is imported.
+
+This is content-level work. Adding citations mechanically is not enough. The
+introduction must explain what was known, what exact gap the thesis closes, why
+the result is nontrivial, and how it compares in strength and scope with nearby
+literature.
+
+### 5. The narrative has a strong spine that the current structure obscures
+
+The recoverable core story is:
+
+> HKO disproved Viterbo's conjecture with a pentagon product. Finite facet-word
+> descriptions make its capacity tractable. First-order feasible upper
+> functions then prove local rigidity in the ten-facet stratum, while an exact
+> one-parameter computation shows global optimality within the rotated regular
+> pentagon family.
+
+The current table of contents dilutes that story:
+
+- the headline theorem starts on page 59;
+- a conditional flow-graph algorithm occupies pages 42–51 without feeding the
+  theorem;
+- the bounded negative data-science chapter occupies pages 67–74 and a
+  substantial appendix;
+- six pages of Sage code interrupt the pentagon theorem;
+- visualization gets its own chapter for one figure and a negative result;
+- numerics and repository availability read like software assurance reports;
+- an unrelated AI testing case receives a standalone chapter immediately
+  before the conclusion.
+
+The introduction says the project “probes” the counterexample from several
+directions. That accurately describes a portfolio, but a thesis needs a
+hierarchy, not equal billing for every completed workstream. The main theorem
+and exact family result should dominate; everything else should be prerequisite,
+evidence, limitation, appendix, or omitted.
+
+A plausible replacement structure is:
+
+1. Introduction, related work, and explicit contributions.
+2. Minimal symplectic/convex preliminaries and the finite facet-word capacity
+   formula.
+3. First-order upper functions in facet coordinates.
+4. Main theorem: HKO local maximality, including the computer-assisted proof
+   protocol.
+5. Exact rotated-pentagon profile.
+6. Short computational perspective: what was searched, what was not found,
+   and what the exact results imply.
+7. Conclusion and precise open problems.
+8. Appendices/supplement: flow graph, numerical contracts, code excerpts,
+   data tables, AI-process material if required.
+
+This is not a demand for a shorter thesis at all costs. It is a demand that
+page allocation express intellectual importance.
+
+### 6. The writing is locally competent but globally exhausting
+
+The draft is generally grammatical, mathematically literate, and careful with
+scope. Definitions are usually introduced before use, claims are often bounded
+honestly, and the prose avoids obvious hype. The abstract does identify the
+main results.
+
+The dominant weakness is that the voice resembles an internal audit or agent
+handoff rather than a mathematical thesis. Examples of recurring vocabulary
+are “proof-facing packet,” “retained manifest,” “living repository,” “candidate
+source,” “typed rejection,” “bounded negative result,” and “evidence boundary.”
+An automatic count over the active TeX found approximately 30,000 words, with
+163 uses of “finite,” 99 of “exact,” 55 of “retained,” 34 of “evidence,” and
+207 of “not.” Counts are not defects by themselves, but they match the reading
+experience: the text repeatedly tells the reader what it does not prove instead
+of developing the central mathematical idea.
+
+The qualification is often scientifically responsible. The problem is its
+placement and repetition. State a clean theorem or empirical question first;
+give the key reason and result; collect limitations once at the end of the
+section. Do not force every paragraph to carry provenance, trust-boundary, and
+non-claim language.
+
+Other writing problems:
+
+- long sentences frequently contain four or more logical qualifications;
+- abstract and introduction enumerate too many secondary results;
+- implementation state is written in the present tense (“current
+  implementation,” “at the time of writing”), making the thesis age like a
+  status report;
+- first-person plural appears in empirical chapters without a stable account
+  of who “we” denotes;
+- significance is often replaced by process precision: the reader learns how
+  evidence is classified before learning why the result matters.
+
+This is not “bad English.” It is a genre and information-design failure.
+Sentence polishing alone will not repair it; selection and paragraph-level
+rewriting must come first.
+
+### 7. The empirical chapters are honest but cannot carry much degree value
+
+The thesis is commendably explicit that the random and data-science searches
+do not prove nonexistence. However, the main negative table uses one seed, one
+height interval, fixed facet-count ranges, and a maximum around 0.863—far from
+the HKO value around 1.047. The generated-candidate experiment evaluates 1675
+selected-or-baseline rows with a historical, uncertified evaluator. The local
+optimizer comparison also uses that evaluator, unequal realized compute, and
+imperfectly established holdout lineage. One selected-body screen cannot be
+exactly reproduced because its dirty producer state was not retained.
+
+These limitations are disclosed correctly, but disclosure does not create a
+scientific contribution. The useful empirical conclusions are modest:
+
+- the specified generators did not rediscover or improve HKO;
+- invariant descriptors explain some within-table variation;
+- one finite-budget branch-history method outperformed six alternatives on a
+  named historical objective;
+- sparse local probes can miss thin improving cones.
+
+That can support a short “computational search and lessons” section. It should
+not compete with the local theorem. More generic machine learning is unlikely
+to improve the thesis unless it is driven by a precise mathematical hypothesis
+and evaluated prospectively with a certified capacity route.
+
+### 8. Reproducibility is described honestly but is not final-release quality
+
+Pages 96–97 say that the public repository is living, not an immutable release;
+that twelve external snapshots are absent from intended release paths; that a
+plain clone cannot repeat every empirical analysis or regenerate every figure;
+and that there is no Zenodo record or DOI. Pages 73–74 also state that one
+producer's dirty source state cannot be reconstructed.
+
+Honesty is good, but the final artifact needs a stable evidentiary target. At a
+minimum:
+
+- freeze the exact source revision used for the PDF;
+- archive the two theorem-bearing verifier packets and their outputs;
+- record software versions, commands, hashes, and expected success summaries;
+- either archive empirical inputs needed for claims or reduce/remove claims
+  that cannot be reproduced;
+- cite the frozen object from the thesis.
+
+The thesis need not preserve every experiment ever run. It must preserve the
+inputs and checks needed for claims that survive into the final text.
+
+### 9. Visual presentation is clean in detail but not in composition
+
+The build is technically clean: a fresh build passes the repository's selected
+PDF, overfull-box, and reference checks. Equations and figures are generally
+sharp, fonts are consistent, and no overlapping or clipped content was found in
+the full-page visual scan.
+
+Submission-level defects remain:
+
+- page 1 combines a minimal title block with the entire abstract and begins
+  Arabic page numbering;
+- the title page lacks institutional and degree information;
+- PDF title and author metadata are blank, and the PDF is untagged;
+- page 9 contains only the final sentence of the introduction;
+- section 5 begins at the bottom of page 42 after the end of section 4;
+- section 10 begins immediately below the end of a code listing on page 91;
+- section 13 begins at the bottom of page 97;
+- the long section-5 title breaks awkwardly in the table of contents;
+- several figure/table-only or low-content pages create an uneven rhythm;
+- code listings occupy pages that should present mathematics, not source
+  transcription.
+
+These are readily repairable after the structure is fixed. They should not be
+fixed first, because re-pagination of the present structure would be wasted
+work.
+
+## What content-level work is actually needed
+
+Content-level work is needed, but “do more research” is not yet justified.
+
+### Mandatory mathematical work
+
+1. **Independent audit of the HKO theorem interfaces.** Re-derive or verify the
+   HKO dual vertices, volume and first variation, feasible-section derivatives,
+   orbit tangent rank, quotient slice, and the exact formula-to-Sage mapping.
+2. **Independent audit of the pentagon enumeration.** Verify that the exact
+   generator covers the mathematically proved block family, that every pruning
+   predicate is necessary on the open domain, and that exceptional parameters
+   are closed correctly by continuity.
+3. **Novelty review.** Compare the headline results with HKO, Haim–Kislev,
+   Chaidez–Hutchings, Rudolf, and the local-maximizer literature. State exactly
+   what is new.
+4. **Claim freeze.** Decide which of the flow-graph theorem, numerical
+   implementation theorem, and empirical results are degree contributions and
+   which are appendices or external project outputs.
+
+### Mandatory authoring work
+
+1. Rewrite the introduction around one central question and a ranked
+   contribution list.
+2. Cut, move, or compress material that does not advance that question.
+3. Replace repository/process language with mathematical exposition.
+4. Add a proper related-work discussion and source every imported method.
+5. Make the computer-assisted proof protocol self-contained enough to audit
+   and cite a frozen supplement.
+6. Rewrite the conclusion to interpret the mathematics rather than inventory
+   workstreams.
+7. Only then repair front matter, section breaks, metadata, and page layout.
+
+### Work that should not be started by default
+
+- a new thesis topic;
+- more undirected random search;
+- a larger collection of machine-learning methods;
+- more code excerpts in the PDF;
+- line-editing all 110 pages before deciding what survives;
+- typography-only repairs to chapters likely to move to appendices.
+
+## A pass-oriented workflow and gates
+
+The following sequence is designed to prevent an agent from fixing one visible
+problem while leaving the next failure untouched.
+
+### Gate 0: admissibility and responsibility
+
+Owner: Jörn plus the relevant institutional authority.  
+Pass evidence:
+
+- the AI workflow and disclosure are permitted;
+- Jörn has personally reviewed the exact final candidate and accepts
+  responsibility for every claim;
+- required title-page, declaration, and submission elements are known.
+
+If this gate fails, no amount of prose improvement makes the document
+submittable. Mathematical auditing can still proceed because it is useful
+under either outcome.
+
+### Gate 1: theorem truth and novelty
+
+Owner: mathematically qualified reviewer independent of the producing agents.  
+Pass evidence:
+
+- a written obligation-by-obligation audit of both headline theorems;
+- successful reruns of frozen certificates;
+- explicit comparison with the relevant literature;
+- a stable statement of what is original.
+
+If a headline theorem fails here, weaken or remove it before redesigning the
+narrative. If both survive, do not add a new headline result.
+
+### Gate 2: scope selection
+
+Owner: Jörn as final internal judge.  
+Pass evidence:
+
+- a one-page thesis claim map with one main result, at most two secondary
+  contributions, prerequisites, and appendices;
+- a decision for every current chapter: keep, compress, move, or remove;
+- a target reader and assumed prerequisites.
+
+Expected recommendation: keep HKO local maximality as the center; keep the
+pentagon profile; retain only the finite machinery those results need; compress
+the empirical search; move flow graph, detailed numerics, code, data tables,
+and AI-process discussion out of the main line unless the examiner explicitly
+values them.
+
+### Gate 3: structural rewrite
+
+Pass evidence:
+
+- the introduction states the problem, state of the art, gap, contribution,
+  significance, and limitations;
+- every main-line chapter is necessary for a headline claim;
+- the main theorem appears early enough that the reader knows what the
+  foundations are building toward;
+- each chapter opens with purpose and closes with the mathematical takeaway,
+  not a provenance inventory.
+
+### Gate 4: proof exposition and reproducibility
+
+Pass evidence:
+
+- a reader can trace every theorem premise to a definition, lemma, citation,
+  or finite certificate;
+- certificate inputs, source hashes, software versions, commands, and outputs
+  are frozen and cited;
+- no empirical claim relies on unavailable inputs or an unreconstructable
+  producer state;
+- code in the main body is limited to the smallest pseudocode needed to
+  understand a proof obligation.
+
+### Gate 5: sentence and page quality
+
+Pass evidence:
+
+- a cold mathematical reader can summarize each section after one read;
+- qualifications are consolidated and repetition removed;
+- notation, citations, figures, captions, and cross-references are checked;
+- front matter and declarations meet the actual rules;
+- no orphan pages or bottom-of-page major section starts remain;
+- PDF metadata, bookmarks/accessibility expectations, and archive links are
+  correct.
+
+### Gate 6: final human acceptance
+
+Pass evidence:
+
+- Jörn reads the frozen PDF, not only changed fragments;
+- he records concrete acceptance or defects against this review matrix;
+- any further change invalidates that acceptance until its affected scope is
+  reviewed again;
+- the final examiner-facing artifact and its frozen supplement are identical
+  to the accepted versions.
+
+## Minimum credible route to PASS
+
+Assuming the two headline theorems survive expert audit, the minimum credible
+route is a substantial rewrite rather than a replacement thesis:
+
+1. resolve AI/admissibility and personal-responsibility language;
+2. obtain a focused independent proof and novelty audit;
+3. restructure around HKO local rigidity and the pentagon profile;
+4. reduce the data-science, implementation, visualization, repository, and AI
+   material to supporting roles;
+5. freeze and cite the theorem-bearing artifacts;
+6. complete an examiner-style full read and formal submission check.
+
+That route changes content selection, claims, citations, and exposition. It is
+not a proofreading pass. It also does not require a new topic unless the proof
+audit defeats the local theorem.
+
+## Limits of this assessment
+
+This assessment included a complete page-level visual scan, text extraction,
+source inspection across all active chapters, a fresh clean thesis build, an
+inventory of theorem and citation surfaces, and inspection of the two exact
+certificate packets and recorded outputs. It did not:
+
+- independently rederive every theorem or execute the 44-minute pentagon
+  certificate;
+- complete a line-by-line source-to-Sage correspondence proof;
+- verify current university regulations or advisor/examination-board approval
+  of the AI workflow;
+- establish priority or novelty from a comprehensive external literature
+  search;
+- judge oral defensibility by interviewing the author.
+
+Accordingly, “no elementary contradiction found” must not be promoted to
+“mathematically verified,” and “submission blocker” must not be misread as
+“research topic rejected.”

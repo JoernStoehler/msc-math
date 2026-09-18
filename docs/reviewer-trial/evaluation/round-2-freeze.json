@@ -1,0 +1,33 @@
+{
+  "frozen_utc": "2026-09-18T12:29:30.958320+00:00",
+  "files": [
+    {
+      "path": "evaluation/baseline-narrative.md",
+      "sha256": "5d61df1f7c885a124d717b896c3b00a1e26cc08ebbc17f56ecf7b5060ea7b794"
+    },
+    {
+      "path": "evaluation/reader-question-narrative.md",
+      "sha256": "fb1df961b6bf57a8e999bca346b0c248b3992802d419d7db7bacdeb8de37ef9d"
+    },
+    {
+      "path": "evaluation/baseline-pentagon-transfer.md",
+      "sha256": "f2047911d07878ce81eba1ee922853c77f08cc73e845b23e8c6ac5f25f6979c1"
+    },
+    {
+      "path": "evaluation/qualifications-pentagon.md",
+      "sha256": "bd727b210a2888d28b439a3cc89aebeb99fea3b41cc6c9b23d6a8ecc93069193"
+    },
+    {
+      "path": "evaluation/qualifications-ds.md",
+      "sha256": "458378fa2795d845141a4a8cca5ec55303d7dc5376c2f5f2befdf5d49e338039"
+    },
+    {
+      "path": "development/reader-question-prompt.md",
+      "sha256": "7f0342d696e0829248c5194e229f134a94baf86abb8f6624bcecff10050a861c"
+    },
+    {
+      "path": "development/qualifications-prompt.md",
+      "sha256": "f686476bd1710db927927f900cb2b53b2e708d64d41fbcf936be46fb0ad196ef"
+    }
+  ]
+}

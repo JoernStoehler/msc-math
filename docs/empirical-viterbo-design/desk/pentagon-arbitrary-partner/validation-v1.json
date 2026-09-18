@@ -1,0 +1,59 @@
+{
+  "status": "passed_float_checks_not_rigorous_certificate",
+  "row_count": 143,
+  "symmetric_count": 38,
+  "checks": [
+    {
+      "check": "two_bounce_fixture_0",
+      "error": 0.0
+    },
+    {
+      "check": "two_bounce_fixture_1",
+      "error": 0.0
+    },
+    {
+      "check": "capacity_upper_ceiling",
+      "error": 6.661338147750939e-16
+    },
+    {
+      "check": "LP_primal_dual_residuals",
+      "error": 3.1308289294429414e-14
+    },
+    {
+      "check": "fixed_width_paths_A2",
+      "error": 4.440892098500626e-16
+    },
+    {
+      "check": "fixed_width_paths_directional_widths",
+      "error": 8.881784197001252e-16
+    },
+    {
+      "check": "symmetrization_area_identity",
+      "error": 1.3322676295501878e-15
+    },
+    {
+      "check": "symmetric_partner_lemma",
+      "error": 6.661338147750939e-16
+    },
+    {
+      "check": "central_sys_bound",
+      "error": 0
+    },
+    {
+      "check": "affine_affine_skew_tensor_norm2",
+      "error": 4.440892098500626e-16
+    },
+    {
+      "check": "affine_affine_radial_fourth_moment",
+      "error": 1.7763568394002505e-15
+    },
+    {
+      "check": "affine_centroid_polar_area_product",
+      "error": 8.881784197001252e-16
+    },
+    {
+      "check": "affine_difference_area_excess",
+      "error": 0.0
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "frozen_utc": "2026-09-18T12:37:45.852559+00:00",
+  "files": [
+    {
+      "path": "development/reproduction-detail-prompt.md",
+      "sha256": "4272fb2802d237768c47a063f2e58233a34d82ac90d3fcfe9274fb16366f7fe5"
+    },
+    {
+      "path": "evaluation/reproduction-detail-alternate.md",
+      "sha256": "ef9d72d6c4777da4a750e78e9fbc217a4e7e4b7c495dcf98aeb79300050be7eb"
+    },
+    {
+      "path": "evaluation/qualifications-alternate.md",
+      "sha256": "7c393c24481b402c3eb14deeb49996bfb72e44642e313a2928007988341d5a1f"
+    },
+    {
+      "path": "evaluation/baseline-alternate.md",
+      "sha256": "5d7b8a4bcf66ee6bfa976796e5a3b900ef692c4c59817e9488ec39ab00f3b01a"
+    }
+  ]
+}

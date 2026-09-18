@@ -1,0 +1,142 @@
+# Rust
+target/
+/crates/target/
+/crates/library/target/
+**/*.rs.bk
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+# Sandbox-specific Sage environment and installation logs (not portable).
+/.local-environments/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# LaTeX (thesis)
+thesis/build/
+thesis/*.aux
+thesis/*.log
+thesis/*.out
+thesis/*.toc
+thesis/*.bbl
+thesis/*.blg
+thesis/*.fdb_latexmk
+thesis/*.fls
+thesis/*.synctex.gz
+thesis/*.pdf
+
+# Generated standalone review builds
+/docs/pentagon-chapter/build/
+/docs/pentagon-chapter/build-revised/
+/docs/pentagon-proof/build/
+/docs/pentagon-proof/build-fresh/
+
+# LaTeX (crate math docs)
+crates/main.aux
+crates/main.bbl
+crates/main.bcf
+crates/main.blg
+crates/main.fdb_latexmk
+crates/main.fls
+crates/main.log
+crates/main.out
+crates/main.pdf
+crates/main.run.xml
+crates/main.synctex(busy)
+crates/main.synctex.gz
+crates/main.toc
+crates/library/src/*.aux
+crates/library/src/*.log
+crates/library/src/*.out
+crates/library/src/*.toc
+crates/library/src/*.pdf
+crates/library/src/**/*.aux
+crates/library/src/**/*.log
+crates/library/src/**/*.out
+
+# LaTeX (formal math docs)
+formal/**/main.aux
+formal/**/main.bbl
+formal/**/main.bcf
+formal/**/main.blg
+formal/**/main.fdb_latexmk
+formal/**/main.fls
+formal/**/main.log
+formal/**/main.out
+formal/**/main.pdf
+formal/**/main.run.xml
+formal/**/main.synctex.gz
+formal/**/main.toc
+
+# Data
+# crates/visualization/viz/data/ stores generated polytope JSON (tracked)
+experiments/verification/orbit-recovery/smoke-*.jsonl
+experiments/**/*smoke*.jsonl
+experiments/**/*smoke*.png
+experiments/**/*smoke*.tex
+
+# Materialized shared artifacts; canonical snapshots are in R2.
+experiments/combinatorial-cells/cell-widths/combinatorial-boundaries-profiling.jsonl
+experiments/dev-gradient-ascent/optimizer-runs/artifacts/candidate-history-f10-128-0a71a6042/evaluations.jsonl
+experiments/dev-gradient-ascent/optimizer-runs/artifacts/candidate-history-f10-128-0a71a6042/proposals.jsonl
+experiments/dev-gradient-ascent/optimizer-runs/artifacts/candidate-history-f10-128-0a71a6042/rounds.jsonl
+experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd/evaluations.jsonl
+experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd/proposals.jsonl
+experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd/rounds.jsonl
+experiments/dev-sys-prediction/facet-scale-baseline-error/runs/production/sysext-cache.jsonl
+experiments/polytope-datasets/random-product.jsonl
+experiments/polytope-datasets/random.jsonl
+experiments/polytope-datasets/shared-cache.jsonl
+experiments/polytope-invariant-table/polytope-table.jsonl
+experiments/qp-error-bounds/artifacts/broad/formula_evaluations.jsonl
+experiments/qp-error-bounds/artifacts/broad/raw_rows.jsonl
+experiments/qp-error-bounds/artifacts/soundness-v2/formula_evaluations.jsonl
+experiments/qp-error-bounds/artifacts/soundness-v2/raw_rows.jsonl
+experiments/regular-products/pentagon-rotation-empirics/kkt-branch-landscape.jsonl
+experiments/sys-datascience/methods/alternative-source-transfer/artifacts/transfer-v1/source.jsonl
+experiments/sys-datascience/methods/product-bounce-class-degeneration/artifacts/degeneration-pairs.jsonl
+experiments/sys-datascience/methods/product-bounce-class-degeneration/artifacts/degeneration-rows.jsonl
+experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl
+
+# LICCA slurm stdout/stderr (regenerated each run, per-job)
+crates/**/logs/
+
+# Node (Playwright screenshots, dev tooling)
+node_modules/
+package.json
+package-lock.json
+
+# Local nested agent worktrees
+.claude/worktrees/
+.worktrees/
+
+# Legacy local agent memory (session-specific, not shared)
+**/.claude/agent-memory/
+
+# Legacy local agent settings (machine-specific, not shared)
+.claude/settings.local.json
+
+# Local secrets (machine-specific, not shared)
+.env
+
+# Local AI-use provenance checks may contain absolute session-log paths
+experiments/ai-use/artifacts/
+
+# Large recoverable producer caches retained on the repository bind
+experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/
+
+# Profiling artifacts
+perf*.data
+perf*.data.old
+
+# Editor
+*.swp
+math.aux
+math.log
+math.out
+math.pdf
+math.toc
+.Trash-*/
+**/checkpoint.json

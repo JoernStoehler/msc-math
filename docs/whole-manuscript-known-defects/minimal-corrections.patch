@@ -1,0 +1,75 @@
+--- a/thesis/candidate/recovered/thesis-candidate/01-introduction.tex
++++ b/thesis/candidate/recovered/thesis-candidate/01-introduction.tex
+@@ -118,10 +118,10 @@
+ capacity computable by a finite optimization over facet orders and
+ nonnegative weights~\cite{HK2017}.
+ 
+-We expand the proof in Haim--Kislev's original paper into a self-contained
+-presentation for a master's-level reader. We explain the dual action
+-principle and the existence of a minimizing curve with a finite list of
+-distinct facet directions.
++We derive the finite capacity formula from the dual action principle,
++explaining its normalization and the existence of a minimizing curve with
++a finite list of distinct facet directions. The underlying nonsmooth
++variational theorems are taken from the literature.
+ 
+ For Lagrangian products, we derive a further reduction from the bilinear
+ structure of the objective: some maximizing word uses at most three facets
+--- a/thesis/candidate/recovered/thesis-candidate/14-conclusion.tex
++++ b/thesis/candidate/recovered/thesis-candidate/14-conclusion.tex
+@@ -4,7 +4,7 @@
+ Is the HKO body a local maximum of the systolic ratio among convex bodies?
+ Our main theorem gives a partial answer: it is a local maximum among
+ ten-facet polytopes. Every sufficiently
+-nearby body has ratio at most $(3+\sqrt5)/5$, and equality occurs precisely
++nearby ten-facet polytope has ratio at most $(3+\sqrt5)/5$, and equality occurs precisely
+ under translations, positive dilations and linear symplectic maps. The
+ restriction to ten facets is essential to the coordinate neighborhood used
+ in the proof.
+--- a/thesis/candidate/product-rotation-draft/section.tex
++++ b/thesis/candidate/product-rotation-draft/section.tex
+@@ -10,7 +10,9 @@
+ Let $A,B\subset\mathbb R^2$ be convex bodies with nonempty interiors, with
+ areas $a\le b$. We keep the Euclidean body $A\times B$ fixed and vary the
+ symplectic structure. This is equivalent to rotating the body while keeping
+-the symplectic structure fixed. With
++the symplectic structure fixed. In this section the two coordinate blocks are the factor planes; we use
++$J_{\mathrm{sym}}$ for their initial symplectic structure, separately from
++the fixed standard-coordinate matrix $J_0$ in the preliminaries. With
+ \[
+  J_2=\begin{pmatrix}0&1\\-1&0\end{pmatrix},\qquad
+  J_\theta=
+@@ -53,7 +55,7 @@
+ a feasible planar configuration, so their contribution to reciprocal
+ capacity is at most $t^2/a$. The corresponding bound for $B$ is
+ $(1-t)^2/b$. Reversing a planar order accommodates the opposite sign in
+-the second diagonal block of $J_0$.
++the second diagonal block of $J_{\mathrm{sym}}:=J_{\theta}|_{\theta=0}$.
+ 
+ For the mixed contribution, divide the $A$ weights by $2t$ and the $B$
+ weights by $2(1-t)$. The resulting weights have total mass one, satisfy
+@@ -93,9 +95,9 @@
+ \]
+ Since $K^T=-K$ and $K^2=-I_4$, the matrix $R_\theta$ is orthogonal with
+ determinant one. Direct multiplication gives
+-$J_\theta=R_\theta J_0R_\theta^T$. Thus $c_\theta$ is the capacity of
+-$R_\theta^T(A\times B)$ with respect to $J_0$. This rotation is not
+-symplectic with respect to $J_0$ for positive $\theta$ in the displayed
++$J_\theta=R_\theta J_{\mathrm{sym}}R_\theta^T$. Thus $c_\theta$ is the capacity of
++$R_\theta^T(A\times B)$ with respect to $J_{\mathrm{sym}}$. This rotation is not
++symplectic with respect to $J_{\mathrm{sym}}$ for positive $\theta$ in the displayed
+ interval; symplectic rotations would preserve capacity.
+ 
+ \begin{example}\label{ex:product-endpoints}
+--- a/thesis/candidate/05-flow-graph.tex
++++ b/thesis/candidate/05-flow-graph.tex
+@@ -412,5 +412,7 @@
+ inputs.  These comparisons check the correspondence between the rational
+ program and the theorem on particular inputs.  They do not establish a
+ performance advantage over the quadratic program; no common-input benchmark
+-is claimed here.  The input data and test entry points are listed with the
+-other computational material in Section~\ref{sec:published-code-data}.
++is claimed here.  The exact search and its regression tests are in
++\path{crates/symplectic/src/algorithms/flow_graph/exact_search.rs};
++the worked example and its input are in
++\path{experiments/dev-flow-graph/visualize-tube/}.

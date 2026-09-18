@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "path_polynomials_checked_with_integer_determinants": 351,
+  "all_parameter_sufficient_certificates_verified": 326,
+  "integer_samples_checked_independently": 4000,
+  "rank_deficient_integer_controls": 4,
+  "source_volumes_original_convention": [
+    14,
+    30,
+    26,
+    56
+  ],
+  "universal_conjecture_proved": false,
+  "wall_seconds": 1.512585037999088
+}

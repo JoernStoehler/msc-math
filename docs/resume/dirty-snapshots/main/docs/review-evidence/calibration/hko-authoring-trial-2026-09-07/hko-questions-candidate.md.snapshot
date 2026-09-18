@@ -1,0 +1,125 @@
+# HKO local maximality
+
+## Can a small perturbation improve the HKO counterexample?
+
+The Haim–Kislev–Ostrover example gives a convex body in four dimensions whose systolic ratio
+\[
+\operatorname{sys}(K)
+=\frac{c_{\mathrm{EHZ}}(K)^2}{2\operatorname{vol}_4(K)}
+\]
+exceeds the conjectured bound \(1\). This leaves a local question: can its facets be moved slightly to obtain a still larger ratio?
+
+Let \(P_5\) be the centered regular pentagon of circumradius \(1\), with a vertex at \((1,0)\), and write
+\[
+K_0=P_5\times_L R(-\pi/2)P_5.
+\]
+Here the two planar factors occupy the \(q\)- and \(p\)-coordinate planes, and \(R(\theta)\) is counterclockwise rotation. With the symplectic convention of this thesis, \(K_0\) is symplectically equivalent to the HKO counterexample. Its ratio is
+\[
+\operatorname{sys}(K_0)=\frac{3+\sqrt5}{5}>1.
+\]
+The result below shows that moving these ten facets cannot give a nearby improvement. More precisely, every sufficiently small perturbation that is not obtained through a ratio-preserving symmetry strictly decreases the ratio.
+
+## What does “locally best” mean here?
+
+Translations, positive scalings and linear symplectic transformations preserve the systolic ratio. Consequently, a strict maximum among individual bodies is impossible: translating \(K_0\) slightly already gives a different nearby body with the same value. The relevant distinction is between these symmetry motions and changes transverse to them.
+
+Let
+\[
+G_{\mathrm{sys}}
+=\{x\mapsto b+\rho Mx:
+ b\in\mathbb R^4,\ \rho>0,\ M\in\operatorname{Sp}(4,\mathbb R)\},
+\]
+and let \(\mathcal P_{10}\) be the space of convex four-dimensional polytopes with exactly ten facets, equipped with the Hausdorff metric.
+
+**Theorem.** There is a neighborhood \(\mathcal U\) of \(K_0\) in \(\mathcal P_{10}\) such that
+\[
+\operatorname{sys}(K)\leq\operatorname{sys}(K_0)
+\qquad(K\in\mathcal U),
+\]
+with equality precisely when
+\[
+K\in G_{\mathrm{sys}}\cdot K_0.
+\]
+
+The facet count is part of the assertion, not a computational convenience that can be dropped afterward. The theorem covers arbitrary sufficiently small ten-facet perturbations, not only products of pentagons. It does not address perturbations that introduce further facets, and it does not assert global optimality among ten-facet polytopes.
+
+## How can finitely many computations control every small perturbation?
+
+There are two reductions. First, nearby ten-facet polytopes can be written uniquely, using the local facet labelling, as
+\[
+K(a)=\{x:\langle a_i,x\rangle\leq1,\ i=1,\dots,10\}.
+\]
+The vectors \(a_i\) are the vertices of the polar body. Thus the local geometric problem has \(40\) real coordinates. Establishing this chart requires the Hausdorff-local argument: it is what ensures that the coordinate calculation covers all nearby bodies in the theorem.
+
+Second, at the HKO point \(a_0\), the symmetry motions have \(15\) independent tangent directions. A transverse slice therefore has dimension \(40-15=25\). Locally, every nearby body is obtained from a point on this slice by a symmetry. It remains to show strict decrease away from \(a_0\) on the slice.
+
+Instead of computing the capacity exactly at every nearby point, the proof constructs \(26\) smooth upper bounds \(U_j\) satisfying
+\[
+\operatorname{sys}(K(a))\leq U_j(a),
+\qquad
+U_j(a_0)=\operatorname{sys}(K_0).
+\]
+Each comes from a cyclic facet sequence and a smoothly varying feasible choice of weights in the Haim–Kislev formula. If the resulting action bound is \(A_j(a)\), then
+\[
+U_j(a)=\frac{A_j(a)^2}{2\operatorname{vol}_4(K(a))}.
+\]
+Feasibility gives the upper bound; equality at \(a_0\) makes a decrease of \(U_j\) useful for proving a decrease of the true ratio.
+
+Let \(r_j=DU_j(a_0)|_S\) be the derivative restricted to the transverse slice \(S\). The certificate verifies that these rows span \(S^*\) and that
+\[
+\sum_{j=1}^{26}\lambda_jr_j=0,
+\qquad
+\lambda_j>0,
+\qquad
+\sum_{j=1}^{26}\lambda_j=1.
+\]
+These two facts force a negative upper slope in every nonzero slice direction \(v\). Indeed, spanning means that not all \(r_j(v)\) vanish. Their strictly positive weighted sum is zero, so they cannot all be nonnegative. At least one bound decreases.
+
+The bound that decreases may depend on the direction. This causes no problem: on the unit sphere of \(S\), the continuous function
+\[
+v\longmapsto\min_j r_j(v)
+\]
+is strictly negative and hence bounded above by some \(-\delta<0\). Taylor expansion of the finitely many smooth upper functions then gives
+\[
+\operatorname{sys}(K(a_0+s))
+\leq \operatorname{sys}(K_0)-\delta\|s\|+O(\|s\|^2).
+\]
+For sufficiently small nonzero \(s\), the linear decrease dominates the remainder. This proves the strict slice maximum; symmetry invariance gives the theorem and its equality statement.
+
+## What is the role of the exact certificate?
+
+The upper functions need not remain optimizing branches nearby. This distinction matters: nonsingular six-facet data alone do not span the \(25\)-dimensional slice. The certificate also uses singular seven-facet data. Smooth feasible weights are constructed by fixing some coordinates and solving the remaining closure and normalization equations through an invertible minor, without solving for a nearby optimizer.
+
+Rust finds candidate witness data. Sage reconstructs and checks the required algebraic values exactly, including feasibility, derivative identities, ranks and the positive relation above. The geometric chart, symmetry reduction and upper-bound argument remain mathematical parts of the proof; exact arithmetic does not establish them by itself.
+
+The conclusion is stronger than a failed search for improving perturbations: it excludes every sufficiently small nonsymmetry perturbation in the stated ten-facet space. It also explains why this exclusion can be certified without a complete description of the capacity’s nearby optimizing branches.
+
+---
+
+# Source and workflow notes — not reader-facing draft
+
+## Reader questions used
+
+1. The example already violates the conjecture; what new question is being answered?
+2. Which perturbations are allowed, and why can the maximum not be literally strict?
+3. Does the conclusion cover all ten-facet perturbations or just pentagon products?
+4. How does a finite calculation cover an entire geometric neighborhood?
+5. Why does decreasing an upper bound prove what we need?
+6. How do the rank and positive-relation checks force a negative direction-dependent slope?
+7. Why does directional negativity yield one neighborhood valid in every direction?
+8. Must the selected data remain optimizing branches?
+9. What does the computer establish, and what is supplied by the mathematical argument?
+10. What does this add beyond numerical testing, and what remains outside its scope?
+
+## Source anchors and limits
+
+Paths below are relative to `/tmp/msc-math-unlimited-20260907.IvqpRR/authoring`.
+
+- `thesis/02-preliminaries-ehz-capacity.tex`, `eq:preliminaries-systolic-ratio`, `def:preliminaries-systolic-ratio-symmetries`: normalization, group and invariance.
+- `thesis/07-hko-local-maximum.tex`, opening through `thm:hko-ten-facet-local-maximum`: representative, convention equivalence, exact value, scope and equality set.
+- `thesis/07-hko-local-maximum-chart-reduction.tex`, `lem:hko-hausdorff-local-ten-facet-chart` and following slice construction: geometric coverage and dimensions.
+- `thesis/06-first-order-perturbations.tex`, `lem:first-order-feasible-section-upper-function`, `lem:first-order-finite-upper-function-criterion`: inequality direction and compactness/Taylor implication.
+- `thesis/07-hko-local-maximum-exact-certificate.tex`, first four explanatory paragraphs and finite predicate: 26 sections, singular/nonsingular distinction, exact acceptance facts.
+- `thesis/07-hko-local-maximum-sage-verifier.tex`, `tab:hko-verification-interface` and concluding trust-boundary paragraph: division of mathematical and computational obligations.
+
+This is a source-grounded exposition candidate, not an independent proof audit. No builds run or other candidate read. The prior HKO counterexample and value are attributed in the active source to Haim–Kislev–Ostrover; this draft does not claim their discovery as this thesis's contribution. No explicit neighborhood radius is claimed. No figure is included, and no equality between the systolic ratio and the minimum of the selected upper bounds is claimed away from the center.

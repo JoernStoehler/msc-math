@@ -1,0 +1,1118 @@
+{
+  "body_count": 15,
+  "capacity_evaluations": 0,
+  "interpretation": "controlled covariance-blind orientation responses, not independent random bodies; ranges are sampled except exact named controls",
+  "orientation_count_per_body": 128,
+  "summary": [
+    {
+      "body_name": "simplex",
+      "population": "exact-shape-control",
+      "ranges": {
+        "dual_reciprocal_over_volume_sqrt": {
+          "fractional_span": 0.20438359001039852,
+          "max": 0.20375689571782046,
+          "max_orientation_id": 54,
+          "min": 0.16917940215049032,
+          "min_orientation_id": 3
+        },
+        "primal_pairing_max_over_volume_sqrt": {
+          "fractional_span": 0.20438359001039985,
+          "max": 2.537691032257355,
+          "max_orientation_id": 3,
+          "min": 2.1070455071838383,
+          "min_orientation_id": 54
+        },
+        "ridge_area_max_share": {
+          "fractional_span": 0.12695665308689552,
+          "max": 0.1909830056250527,
+          "max_orientation_id": 115,
+          "min": 0.1694679250545466,
+          "min_orientation_id": 54
+        },
+        "ridge_area_sum_over_volume_sqrt": {
+          "fractional_span": 0.09124856364875922,
+          "max": 14.85590206167197,
+          "max_orientation_id": 3,
+          "min": 13.613673874629397,
+          "min_orientation_id": 100
+        },
+        "vertex_covariance_nu1_over_volume_sqrt": {
+          "fractional_span": 4.6629367034256575e-15,
+          "max": 0.6552290070501776,
+          "max_orientation_id": 77,
+          "min": 0.6552290070501746,
+          "min_orientation_id": 120
+        },
+        "vertex_covariance_nu2_over_volume_sqrt": {
+          "fractional_span": 3.3306690738754696e-15,
+          "max": 0.6552290070501777,
+          "max_orientation_id": 77,
+          "min": 0.6552290070501755,
+          "min_orientation_id": 29
+        },
+        "vertex_covariance_rho": {
+          "fractional_span": 3.774758283725532e-15,
+          "max": 1.0000000000000038,
+          "max_orientation_id": 32,
+          "min": 1.0,
+          "min_orientation_id": 8
+        },
+        "vertex_pairing_kurtosis": {
+          "fractional_span": 8.881784197001252e-16,
+          "max": 2.250000000000001,
+          "max_orientation_id": 6,
+          "min": 2.2499999999999987,
+          "min_orientation_id": 15
+        },
+        "volume_pairing_kurtosis": {
+          "fractional_span": 2.220446049250313e-15,
+          "max": 4.287627551020416,
+          "max_orientation_id": 98,
+          "min": 4.287627551020406,
+          "min_orientation_id": 102
+        }
+      },
+      "within_body_spearman": {
+        "vertex_pairing_kurtosis__volume_pairing_kurtosis": null,
+        "volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt": null,
+        "volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt": null
+      }
+    },
+    {
+      "body_name": "cube",
+      "population": "exact-shape-control",
+      "ranges": {
+        "dual_reciprocal_over_volume_sqrt": {
+          "fractional_span": 0.7320508075688772,
+          "max": 0.433012701892219,
+          "max_orientation_id": 3,
+          "min": 0.24999999999999983,
+          "min_orientation_id": 1
+        },
+        "primal_pairing_max_over_volume_sqrt": {
+          "fractional_span": 0.34276960712373916,
+          "max": 0.9999999999999997,
+          "max_orientation_id": 1,
+          "min": 0.744729397131676,
+          "min_orientation_id": 46
+        },
+        "ridge_area_max_share": {
+          "fractional_span": 2.0,
+          "max": 0.12500000000000003,
+          "max_orientation_id": 1,
+          "min": 0.04166666666666668,
+          "min_orientation_id": 3
+        },
+        "ridge_area_sum_over_volume_sqrt": {
+          "fractional_span": 0.7320508075688776,
+          "max": 13.856406460551016,
+          "max_orientation_id": 3,
+          "min": 7.999999999999997,
+          "min_orientation_id": 0
+        },
+        "vertex_covariance_nu1_over_volume_sqrt": {
+          "fractional_span": 2.886579864025407e-15,
+          "max": 0.2500000000000002,
+          "max_orientation_id": 104,
+          "min": 0.24999999999999953,
+          "min_orientation_id": 14
+        },
+        "vertex_covariance_nu2_over_volume_sqrt": {
+          "fractional_span": 4.218847493575595e-15,
+          "max": 0.25000000000000056,
+          "max_orientation_id": 3,
+          "min": 0.24999999999999953,
+          "min_orientation_id": 14
+        },
+        "vertex_covariance_rho": {
+          "fractional_span": 1.9984014443252818e-15,
+          "max": 1.000000000000002,
+          "max_orientation_id": 3,
+          "min": 1.0,
+          "min_orientation_id": 13
+        },
+        "vertex_pairing_kurtosis": {
+          "fractional_span": 0.36363636363636354,
+          "max": 2.4999999999999996,
+          "max_orientation_id": 1,
+          "min": 1.8333333333333333,
+          "min_orientation_id": 3
+        },
+        "volume_pairing_kurtosis": {
+          "fractional_span": 0.0851063829787233,
+          "max": 3.0600000000000023,
+          "max_orientation_id": 0,
+          "min": 2.8200000000000025,
+          "min_orientation_id": 3
+        }
+      },
+      "within_body_spearman": {
+        "vertex_pairing_kurtosis__volume_pairing_kurtosis": 0.9999985694001853,
+        "volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt": -0.9813463956737227,
+        "volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt": -0.9577526849043078
+      }
+    },
+    {
+      "body_name": "crosspolytope",
+      "population": "exact-shape-control",
+      "ranges": {
+        "dual_reciprocal_over_volume_sqrt": {
+          "fractional_span": 0.34276960712373916,
+          "max": 0.4111375474463246,
+          "max_orientation_id": 46,
+          "min": 0.30618621784789724,
+          "min_orientation_id": 0
+        },
+        "primal_pairing_max_over_volume_sqrt": {
+          "fractional_span": 0.732050807568877,
+          "max": 1.224744871391589,
+          "max_orientation_id": 0,
+          "min": 0.7071067811865476,
+          "min_orientation_id": 3
+        },
+        "ridge_area_max_share": {
+          "fractional_span": 1.0000000000000004,
+          "max": 0.06250000000000001,
+          "max_orientation_id": 70,
+          "min": 0.03125,
+          "min_orientation_id": 0
+        },
+        "ridge_area_sum_over_volume_sqrt": {
+          "fractional_span": 0.3427696071237394,
+          "max": 19.595917942265423,
+          "max_orientation_id": 0,
+          "min": 14.593656155385123,
+          "min_orientation_id": 46
+        },
+        "vertex_covariance_nu1_over_volume_sqrt": {
+          "fractional_span": 2.6645352591003757e-15,
+          "max": 0.30618621784789773,
+          "max_orientation_id": 77,
+          "min": 0.3061862178478969,
+          "min_orientation_id": 24
+        },
+        "vertex_covariance_nu2_over_volume_sqrt": {
+          "fractional_span": 2.4424906541753444e-15,
+          "max": 0.30618621784789785,
+          "max_orientation_id": 51,
+          "min": 0.30618621784789707,
+          "min_orientation_id": 75
+        },
+        "vertex_covariance_rho": {
+          "fractional_span": 2.4424906541753444e-15,
+          "max": 1.0000000000000024,
+          "max_orientation_id": 22,
+          "min": 1.0,
+          "min_orientation_id": 0
+        },
+        "vertex_pairing_kurtosis": {
+          "fractional_span": 2.0000000000000004,
+          "max": 3.9999999999999996,
+          "max_orientation_id": 0,
+          "min": 1.333333333333333,
+          "min_orientation_id": 3
+        },
+        "volume_pairing_kurtosis": {
+          "fractional_span": 0.1538461538461533,
+          "max": 3.228635204081634,
+          "max_orientation_id": 0,
+          "min": 2.798150510204084,
+          "min_orientation_id": 3
+        }
+      },
+      "within_body_spearman": {
+        "vertex_pairing_kurtosis__volume_pairing_kurtosis": 1.0,
+        "volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt": -0.7916738197424892,
+        "volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt": 0.7916738197424892
+      }
+    },
+    {
+      "body_name": "24cell",
+      "population": "higher-symmetry-control",
+      "ranges": {
+        "dual_reciprocal_over_volume_sqrt": {
+          "fractional_span": 0.34276960712373983,
+          "max": 0.4747407473841961,
+          "max_orientation_id": 46,
+          "min": 0.35355339059327356,
+          "min_orientation_id": 0
+        },
+        "primal_pairing_max_over_volume_sqrt": {
+          "fractional_span": 0.3427696071237396,
+          "max": 0.7071067811865477,
+          "max_orientation_id": 0,
+          "min": 0.5266032068607776,
+          "min_orientation_id": 46
+        },
+        "ridge_area_max_share": {
+          "fractional_span": 1.0,
+          "max": 0.020833333333333343,
+          "max_orientation_id": 15,
+          "min": 0.010416666666666671,
+          "min_orientation_id": 1
+        },
+        "ridge_area_sum_over_volume_sqrt": {
+          "fractional_span": 0.34276960712373983,
+          "max": 16.970562748477143,
+          "max_orientation_id": 0,
+          "min": 12.63847696465866,
+          "min_orientation_id": 46
+        },
+        "vertex_covariance_nu1_over_volume_sqrt": {
+          "fractional_span": 3.552713678800501e-15,
+          "max": 0.17677669529663703,
+          "max_orientation_id": 93,
+          "min": 0.17677669529663642,
+          "min_orientation_id": 110
+        },
+        "vertex_covariance_nu2_over_volume_sqrt": {
+          "fractional_span": 3.9968028886505635e-15,
+          "max": 0.17677669529663737,
+          "max_orientation_id": 116,
+          "min": 0.17677669529663667,
+          "min_orientation_id": 41
+        },
+        "vertex_covariance_rho": {
+          "fractional_span": 3.552713678800501e-15,
+          "max": 1.0000000000000036,
+          "max_orientation_id": 116,
+          "min": 1.0,
+          "min_orientation_id": 2
+        },
+        "vertex_pairing_kurtosis": {
+          "fractional_span": 8.881784197001252e-16,
+          "max": 2.0000000000000004,
+          "max_orientation_id": 1,
+          "min": 1.999999999999999,
+          "min_orientation_id": 34
+        },
+        "volume_pairing_kurtosis": {
+          "fractional_span": 8.881784197001252e-16,
+          "max": 2.6045220791303176,
+          "max_orientation_id": 13,
+          "min": 2.6045220791303154,
+          "min_orientation_id": 107
+        }
+      },
+      "within_body_spearman": {
+        "vertex_pairing_kurtosis__volume_pairing_kurtosis": null,
+        "volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt": null,
+        "volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt": null
+      }
+    },
+    {
+      "body_name": "gaussian_hull_8_0",
+      "population": "generic-vertex-hull",
+      "ranges": {
+        "dual_reciprocal_over_volume_sqrt": {
+          "fractional_span": 0.25271077723124535,
+          "max": 0.272258978214871,
+          "max_orientation_id": 117,
+          "min": 0.2173358632841179,
+          "min_orientation_id": 23
+        },
+        "primal_pairing_max_over_volume_sqrt": {
+          "fractional_span": 0.4244304552414768,
+          "max": 1.8616826245142328,
+          "max_orientation_id": 87,
+          "min": 1.306966316020413,
+          "min_orientation_id": 62
+        },
+        "ridge_area_max_share": {
+          "fractional_span": 0.5580892631576653,
+          "max": 0.10395433679568747,
+          "max_orientation_id": 90,
+          "min": 0.06671911504287684,
+          "min_orientation_id": 80
+        },
+        "ridge_area_sum_over_volume_sqrt": {
+          "fractional_span": 0.2665302217795651,
+          "max": 21.80170175956785,
+          "max_orientation_id": 33,
+          "min": 17.213724066477393,
+          "min_orientation_id": 19
+        },
+        "vertex_covariance_nu1_over_volume_sqrt": {
+          "fractional_span": 0.03390725325015942,
+          "max": 0.3576796750639362,
+          "max_orientation_id": 117,
+          "min": 0.3459494784851787,
+          "min_orientation_id": 93
+        },
+        "vertex_covariance_nu2_over_volume_sqrt": {
+          "fractional_span": 0.03390725325015986,
+          "max": 0.3804219632636436,
+          "max_orientation_id": 93,
+          "min": 0.36794592751696104,
+          "min_orientation_id": 117
+        },
+        "vertex_covariance_rho": {
+          "fractional_span": 0.06896420832328953,
+          "max": 1.0996460088028193,
+          "max_orientation_id": 93,
+          "min": 1.0287023646260853,
+          "min_orientation_id": 117
+        },
+        "vertex_pairing_kurtosis": {
+          "fractional_span": 0.9053577696543074,
+          "max": 3.5246053256818386,
+          "max_orientation_id": 47,
+          "min": 1.8498391125364946,
+          "min_orientation_id": 62
+        },
+        "volume_pairing_kurtosis": {
+          "fractional_span": 0.10799804798267432,
+          "max": 3.6327833560240945,
+          "max_orientation_id": 47,
+          "min": 3.278691115601045,
+          "min_orientation_id": 62
+        }
+      },
+      "within_body_spearman": {
+        "vertex_pairing_kurtosis__volume_pairing_kurtosis": 0.9988326313861928,
+        "volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt": 0.5747344808643106,
+        "volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt": 0.5304889214429591
+      }
+    },
+    {
+      "body_name": "gaussian_hull_8_1",
+      "population": "generic-vertex-hull",
+      "ranges": {
+        "dual_reciprocal_over_volume_sqrt": {
+          "fractional_span": 0.22761470547672658,
+          "max": 0.2745754762552847,
+          "max_orientation_id": 126,
+          "min": 0.22366584159535405,
+          "min_orientation_id": 23
+        },
+        "primal_pairing_max_over_volume_sqrt": {
+          "fractional_span": 0.26080149392128926,
+          "max": 1.5587776393814787,
+          "max_orientation_id": 32,
+          "min": 1.2363386678210835,
+          "min_orientation_id": 127
+        },
+        "ridge_area_max_share": {
+          "fractional_span": 0.42109464072431413,
+          "max": 0.07819552609422878,
+          "max_orientation_id": 102,
+          "min": 0.05502485468129941,
+          "min_orientation_id": 54
+        },
+        "ridge_area_sum_over_volume_sqrt": {
+          "fractional_span": 0.4698877408713884,
+          "max": 23.257398013536864,
+          "max_orientation_id": 75,
+          "min": 15.822567511005476,
+          "min_orientation_id": 102
+        },
+        "vertex_covariance_nu1_over_volume_sqrt": {
+          "fractional_span": 0.05976824005829151,
+          "max": 0.35228109126745016,
+          "max_orientation_id": 84,
+          "min": 0.33241333147337315,
+          "min_orientation_id": 7
+        },
+        "vertex_covariance_nu2_over_volume_sqrt": {
+          "fractional_span": 0.059768240058289734,
+          "max": 0.3805262693929015,
+          "max_orientation_id": 7,
+          "min": 0.3590655532118717,
+          "min_orientation_id": 84
+        },
+        "vertex_covariance_rho": {
+          "fractional_span": 0.12310872263624661,
+          "max": 1.144738292252825,
+          "max_orientation_id": 7,
+          "min": 1.0192586605202458,
+          "min_orientation_id": 84
+        },
+        "vertex_pairing_kurtosis": {
+          "fractional_span": 0.23612780964039226,
+          "max": 2.4704043537525764,
+          "max_orientation_id": 69,
+          "min": 1.9985023672198212,
+          "min_orientation_id": 84
+        },
+        "volume_pairing_kurtosis": {
+          "fractional_span": 0.032452207347671624,
+          "max": 3.304261431769447,
+          "max_orientation_id": 69,
+          "min": 3.200401343765793,
+          "min_orientation_id": 84
+        }
+      },
+      "within_body_spearman": {
+        "vertex_pairing_kurtosis__volume_pairing_kurtosis": 0.996618064457059,
+        "volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt": -0.0036795000915583226,
+        "volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt": 0.21976286394433256
+      }
+    },
+    {
+      "body_name": "gaussian_hull_12_0",
+      "population": "generic-vertex-hull",
+      "ranges": {
+        "dual_reciprocal_over_volume_sqrt": {
+          "fractional_span": 0.24727794309499385,
+          "max": 0.25937657025710553,
+          "max_orientation_id": 0,
+          "min": 0.20795410653497878,
+          "min_orientation_id": 119
+        },
+        "primal_pairing_max_over_volume_sqrt": {
+          "fractional_span": 0.40137290221548527,
+          "max": 1.9139038107986823,
+          "max_orientation_id": 49,
+          "min": 1.3657348502835447,
+          "min_orientation_id": 21
+        },
+        "ridge_area_max_share": {
+          "fractional_span": 0.509234325161614,
+          "max": 0.0942530883773347,
+          "max_orientation_id": 68,
+          "min": 0.06245093078388723,
+          "min_orientation_id": 117
+        },
+        "ridge_area_sum_over_volume_sqrt": {
+          "fractional_span": 0.34471314272526143,
+          "max": 25.67129898598593,
+          "max_orientation_id": 99,
+          "min": 19.09053921638575,
+          "min_orientation_id": 110
+        },
+        "vertex_covariance_nu1_over_volume_sqrt": {
+          "fractional_span": 0.09443902857013242,
+          "max": 0.3448322748988935,
+          "max_orientation_id": 40,
+          "min": 0.31507673419634125,
+          "min_orientation_id": 4
+        },
+        "vertex_covariance_nu2_over_volume_sqrt": {
+          "fractional_span": 0.09443902857013109,
+          "max": 0.3943039547472526,
+          "max_orientation_id": 4,
+          "min": 0.36027950799817976,
+          "min_orientation_id": 40
+        },
+        "vertex_covariance_rho": {
+          "fractional_span": 0.1977967872575337,
+          "max": 1.2514537315901613,
+          "max_orientation_id": 4,
+          "min": 1.044796366882466,
+          "min_orientation_id": 40
+        },
+        "vertex_pairing_kurtosis": {
+          "fractional_span": 0.37438250213065993,
+          "max": 2.9397360902468623,
+          "max_orientation_id": 102,
+          "min": 2.1389504637096923,
+          "min_orientation_id": 2
+        },
+        "volume_pairing_kurtosis": {
+          "fractional_span": 0.043153168096558225,
+          "max": 3.5148096549726286,
+          "max_orientation_id": 102,
+          "min": 3.3694089827538005,
+          "min_orientation_id": 2
+        }
+      },
+      "within_body_spearman": {
+        "vertex_pairing_kurtosis__volume_pairing_kurtosis": 0.8836350943050724,
+        "volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt": 0.2530900933894891,
+        "volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt": 0.36716031862296283
+      }
+    },
+    {
+      "body_name": "gaussian_hull_12_1",
+      "population": "generic-vertex-hull",
+      "ranges": {
+        "dual_reciprocal_over_volume_sqrt": {
+          "fractional_span": 0.37822973067172017,
+          "max": 0.28592197570398725,
+          "max_orientation_id": 88,
+          "min": 0.20745596277670988,
+          "min_orientation_id": 32
+        },
+        "primal_pairing_max_over_volume_sqrt": {
+          "fractional_span": 0.42514147172703765,
+          "max": 1.7980567767672582,
+          "max_orientation_id": 124,
+          "min": 1.2616689728271737,
+          "min_orientation_id": 38
+        },
+        "ridge_area_max_share": {
+          "fractional_span": 0.6610864483900498,
+          "max": 0.06395546310122206,
+          "max_orientation_id": 112,
+          "min": 0.038502188229401706,
+          "min_orientation_id": 102
+        },
+        "ridge_area_sum_over_volume_sqrt": {
+          "fractional_span": 0.228523388599704,
+          "max": 29.26418858076975,
+          "max_orientation_id": 27,
+          "min": 23.820619820779864,
+          "min_orientation_id": 59
+        },
+        "vertex_covariance_nu1_over_volume_sqrt": {
+          "fractional_span": 0.14540972937298058,
+          "max": 0.28446886996368126,
+          "max_orientation_id": 45,
+          "min": 0.24835555580569849,
+          "min_orientation_id": 25
+        },
+        "vertex_covariance_nu2_over_volume_sqrt": {
+          "fractional_span": 0.14540972937297947,
+          "max": 0.3404996106906034,
+          "max_orientation_id": 25,
+          "min": 0.2972731957471671,
+          "min_orientation_id": 45
+        },
+        "vertex_covariance_rho": {
+          "fractional_span": 0.3119634481422835,
+          "max": 1.371016684470687,
+          "max_orientation_id": 25,
+          "min": 1.0450113426650887,
+          "min_orientation_id": 45
+        },
+        "vertex_pairing_kurtosis": {
+          "fractional_span": 0.32282936885108016,
+          "max": 3.028804838516781,
+          "max_orientation_id": 20,
+          "min": 2.2896413625495744,
+          "min_orientation_id": 32
+        },
+        "volume_pairing_kurtosis": {
+          "fractional_span": 0.055526193002680024,
+          "max": 3.412203943349914,
+          "max_orientation_id": 33,
+          "min": 3.2327041867555537,
+          "min_orientation_id": 38
+        }
+      },
+      "within_body_spearman": {
+        "vertex_pairing_kurtosis__volume_pairing_kurtosis": 0.9114745467863028,
+        "volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt": 0.564199551364219,
+        "volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt": 0.11205594213514006
+      }
+    },
+    {
+      "body_name": "gaussian_hull_18_0",
+      "population": "generic-vertex-hull",
+      "ranges": {
+        "dual_reciprocal_over_volume_sqrt": {
+          "fractional_span": 0.23803679228040275,
+          "max": 0.2860738030050438,
+          "max_orientation_id": 117,
+          "min": 0.23107051808865062,
+          "min_orientation_id": 51
+        },
+        "primal_pairing_max_over_volume_sqrt": {
+          "fractional_span": 0.40421716986153333,
+          "max": 1.5652625793957158,
+          "max_orientation_id": 76,
+          "min": 1.1146869679353535,
+          "min_orientation_id": 80
+        },
+        "ridge_area_max_share": {
+          "fractional_span": 1.0444343165281698,
+          "max": 0.056198195917144755,
+          "max_orientation_id": 13,
+          "min": 0.027488384176890437,
+          "min_orientation_id": 84
+        },
+        "ridge_area_sum_over_volume_sqrt": {
+          "fractional_span": 0.21892957632877708,
+          "max": 31.73786495454191,
+          "max_orientation_id": 90,
+          "min": 26.037488605479027,
+          "min_orientation_id": 2
+        },
+        "vertex_covariance_nu1_over_volume_sqrt": {
+          "fractional_span": 0.07911753448086789,
+          "max": 0.218018931926837,
+          "max_orientation_id": 21,
+          "min": 0.20203446330961491,
+          "min_orientation_id": 30
+        },
+        "vertex_covariance_nu2_over_volume_sqrt": {
+          "fractional_span": 0.07911753448086767,
+          "max": 0.2441904587612232,
+          "max_orientation_id": 30,
+          "min": 0.22628717536194626,
+          "min_orientation_id": 21
+        },
+        "vertex_covariance_rho": {
+          "fractional_span": 0.16449465322406676,
+          "max": 1.208657447650428,
+          "max_orientation_id": 30,
+          "min": 1.037924428681652,
+          "min_orientation_id": 21
+        },
+        "vertex_pairing_kurtosis": {
+          "fractional_span": 0.2874015784455397,
+          "max": 3.527429829532077,
+          "max_orientation_id": 18,
+          "min": 2.7399607772667465,
+          "min_orientation_id": 34
+        },
+        "volume_pairing_kurtosis": {
+          "fractional_span": 0.04667638775852545,
+          "max": 3.177968123859471,
+          "max_orientation_id": 118,
+          "min": 3.0362470779197968,
+          "min_orientation_id": 34
+        }
+      },
+      "within_body_spearman": {
+        "vertex_pairing_kurtosis__volume_pairing_kurtosis": 0.9613509430507232,
+        "volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt": 0.4894994048709027,
+        "volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt": 0.26380241713971797
+      }
+    },
+    {
+      "body_name": "gaussian_hull_18_1",
+      "population": "generic-vertex-hull",
+      "ranges": {
+        "dual_reciprocal_over_volume_sqrt": {
+          "fractional_span": 0.3220880930715282,
+          "max": 0.2770730964043755,
+          "max_orientation_id": 72,
+          "min": 0.20957234079664702,
+          "min_orientation_id": 93
+        },
+        "primal_pairing_max_over_volume_sqrt": {
+          "fractional_span": 0.489835517388284,
+          "max": 1.7382779603955727,
+          "max_orientation_id": 103,
+          "min": 1.1667583032540492,
+          "min_orientation_id": 56
+        },
+        "ridge_area_max_share": {
+          "fractional_span": 0.5738169215921607,
+          "max": 0.056070434744596526,
+          "max_orientation_id": 23,
+          "min": 0.03562703766577408,
+          "min_orientation_id": 0
+        },
+        "ridge_area_sum_over_volume_sqrt": {
+          "fractional_span": 0.1928278361600777,
+          "max": 32.87008309477967,
+          "max_orientation_id": 75,
+          "min": 27.556435303014258,
+          "min_orientation_id": 38
+        },
+        "vertex_covariance_nu1_over_volume_sqrt": {
+          "fractional_span": 0.13236420664483806,
+          "max": 0.23499704298697097,
+          "max_orientation_id": 82,
+          "min": 0.20752779150734577,
+          "min_orientation_id": 52
+        },
+        "vertex_covariance_nu2_over_volume_sqrt": {
+          "fractional_span": 0.13236420664483828,
+          "max": 0.2708443934228369,
+          "max_orientation_id": 52,
+          "min": 0.2391848769446191,
+          "min_orientation_id": 82
+        },
+        "vertex_covariance_rho": {
+          "fractional_span": 0.2822486964903941,
+          "max": 1.3050993867163567,
+          "max_orientation_id": 52,
+          "min": 1.0178207942722084,
+          "min_orientation_id": 82
+        },
+        "vertex_pairing_kurtosis": {
+          "fractional_span": 0.5264734078389914,
+          "max": 4.072541418458345,
+          "max_orientation_id": 118,
+          "min": 2.667941280564978,
+          "min_orientation_id": 23
+        },
+        "volume_pairing_kurtosis": {
+          "fractional_span": 0.07390067132499434,
+          "max": 3.355590245757827,
+          "max_orientation_id": 54,
+          "min": 3.1246746885982017,
+          "min_orientation_id": 23
+        }
+      },
+      "within_body_spearman": {
+        "vertex_pairing_kurtosis__volume_pairing_kurtosis": 0.9677085240798388,
+        "volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt": 0.21531084050540192,
+        "volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt": 0.25574528474638347
+      }
+    },
+    {
+      "body_name": "symmetric_hull_16",
+      "population": "symmetric-nonproduct",
+      "ranges": {
+        "dual_reciprocal_over_volume_sqrt": {
+          "fractional_span": 0.23548710284610563,
+          "max": 0.3744552003490836,
+          "max_orientation_id": 62,
+          "min": 0.3030830507954937,
+          "min_orientation_id": 47
+        },
+        "primal_pairing_max_over_volume_sqrt": {
+          "fractional_span": 0.5800794963567353,
+          "max": 1.1712644975638746,
+          "max_orientation_id": 47,
+          "min": 0.7412693476907428,
+          "min_orientation_id": 70
+        },
+        "ridge_area_max_share": {
+          "fractional_span": 0.8308088081645681,
+          "max": 0.04577621279409946,
+          "max_orientation_id": 32,
+          "min": 0.02500327319267776,
+          "min_orientation_id": 47
+        },
+        "ridge_area_sum_over_volume_sqrt": {
+          "fractional_span": 0.3594159070086611,
+          "max": 26.51553645957906,
+          "max_orientation_id": 0,
+          "min": 19.50509503594482,
+          "min_orientation_id": 69
+        },
+        "vertex_covariance_nu1_over_volume_sqrt": {
+          "fractional_span": 0.1201155027464973,
+          "max": 0.23855338541015156,
+          "max_orientation_id": 36,
+          "min": 0.21297213084295696,
+          "min_orientation_id": 116
+        },
+        "vertex_covariance_nu2_over_volume_sqrt": {
+          "fractional_span": 0.1201155027464973,
+          "max": 0.2707467480204758,
+          "max_orientation_id": 116,
+          "min": 0.2417132406047511,
+          "min_orientation_id": 36
+        },
+        "vertex_covariance_rho": {
+          "fractional_span": 0.2546587394930384,
+          "max": 1.2712778284597301,
+          "max_orientation_id": 116,
+          "min": 1.0132459038012256,
+          "min_orientation_id": 36
+        },
+        "vertex_pairing_kurtosis": {
+          "fractional_span": 0.9962623331202338,
+          "max": 3.551694306281291,
+          "max_orientation_id": 47,
+          "min": 1.7791721295115848,
+          "min_orientation_id": 40
+        },
+        "volume_pairing_kurtosis": {
+          "fractional_span": 0.10132963676852746,
+          "max": 3.023343333918922,
+          "max_orientation_id": 47,
+          "min": 2.745175679454048,
+          "min_orientation_id": 95
+        }
+      },
+      "within_body_spearman": {
+        "vertex_pairing_kurtosis__volume_pairing_kurtosis": 0.9920000915583226,
+        "volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt": -0.7750812580113532,
+        "volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt": 0.3988166086797289
+      }
+    },
+    {
+      "body_name": "symmetric_hull_24",
+      "population": "symmetric-nonproduct",
+      "ranges": {
+        "dual_reciprocal_over_volume_sqrt": {
+          "fractional_span": 0.13887876111497444,
+          "max": 0.3497047784695734,
+          "max_orientation_id": 98,
+          "min": 0.3070605848573457,
+          "min_orientation_id": 69
+        },
+        "primal_pairing_max_over_volume_sqrt": {
+          "fractional_span": 0.3506164617176524,
+          "max": 1.012568352499853,
+          "max_orientation_id": 107,
+          "min": 0.7497082859571509,
+          "min_orientation_id": 20
+        },
+        "ridge_area_max_share": {
+          "fractional_span": 0.44456819703609773,
+          "max": 0.024722382569500736,
+          "max_orientation_id": 101,
+          "min": 0.017114029382776837,
+          "min_orientation_id": 37
+        },
+        "ridge_area_sum_over_volume_sqrt": {
+          "fractional_span": 0.26474461289741424,
+          "max": 34.87612373671688,
+          "max_orientation_id": 89,
+          "min": 27.575625451227555,
+          "min_orientation_id": 23
+        },
+        "vertex_covariance_nu1_over_volume_sqrt": {
+          "fractional_span": 0.09620470608152898,
+          "max": 0.18795505200020363,
+          "max_orientation_id": 62,
+          "min": 0.17145981125374285,
+          "min_orientation_id": 70
+        },
+        "vertex_covariance_nu2_over_volume_sqrt": {
+          "fractional_span": 0.09620470608152965,
+          "max": 0.23944555815183338,
+          "max_orientation_id": 70,
+          "min": 0.21843142692549683,
+          "min_orientation_id": 62
+        },
+        "vertex_covariance_rho": {
+          "fractional_span": 0.20166475763529212,
+          "max": 1.3965112664067887,
+          "max_orientation_id": 70,
+          "min": 1.1621471442292501,
+          "min_orientation_id": 62
+        },
+        "vertex_pairing_kurtosis": {
+          "fractional_span": 0.3830811018435185,
+          "max": 2.8461622716885913,
+          "max_orientation_id": 59,
+          "min": 2.057841921124453,
+          "min_orientation_id": 66
+        },
+        "volume_pairing_kurtosis": {
+          "fractional_span": 0.04758472106837175,
+          "max": 2.850553985612456,
+          "max_orientation_id": 59,
+          "min": 2.721072509252845,
+          "min_orientation_id": 66
+        }
+      },
+      "within_body_spearman": {
+        "vertex_pairing_kurtosis__volume_pairing_kurtosis": 0.8781644845266434,
+        "volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt": -0.4829129280351584,
+        "volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt": 0.006466306537264237
+      }
+    },
+    {
+      "body_name": "facet_intersection_12",
+      "population": "generic-halfspace",
+      "ranges": {
+        "dual_reciprocal_over_volume_sqrt": {
+          "fractional_span": 0.24766963227931704,
+          "max": 0.3213889543522113,
+          "max_orientation_id": 46,
+          "min": 0.25759138960934624,
+          "min_orientation_id": 76
+        },
+        "primal_pairing_max_over_volume_sqrt": {
+          "fractional_span": 0.17497663690137344,
+          "max": 1.0122211191948247,
+          "max_orientation_id": 125,
+          "min": 0.8614819115588846,
+          "min_orientation_id": 63
+        },
+        "ridge_area_max_share": {
+          "fractional_span": 0.4792272168073499,
+          "max": 0.08913109003105771,
+          "max_orientation_id": 35,
+          "min": 0.060255171766938814,
+          "min_orientation_id": 119
+        },
+        "ridge_area_sum_over_volume_sqrt": {
+          "fractional_span": 0.2612029210772171,
+          "max": 14.868508514926337,
+          "max_orientation_id": 29,
+          "min": 11.789148491843696,
+          "min_orientation_id": 37
+        },
+        "vertex_covariance_nu1_over_volume_sqrt": {
+          "fractional_span": 0.04603239787883684,
+          "max": 0.20939016931247853,
+          "max_orientation_id": 114,
+          "min": 0.20017560616390434,
+          "min_orientation_id": 80
+        },
+        "vertex_covariance_nu2_over_volume_sqrt": {
+          "fractional_span": 0.04603239787883662,
+          "max": 0.23299847461120354,
+          "max_orientation_id": 80,
+          "min": 0.22274498866735107,
+          "min_orientation_id": 114
+        },
+        "vertex_covariance_rho": {
+          "fractional_span": 0.094183777412149,
+          "max": 1.1639703711970966,
+          "max_orientation_id": 80,
+          "min": 1.0637795909842491,
+          "min_orientation_id": 114
+        },
+        "vertex_pairing_kurtosis": {
+          "fractional_span": 0.26644401204025936,
+          "max": 2.3823563552904266,
+          "max_orientation_id": 100,
+          "min": 1.881138315346777,
+          "min_orientation_id": 106
+        },
+        "volume_pairing_kurtosis": {
+          "fractional_span": 0.04304090788764103,
+          "max": 2.949227373837878,
+          "max_orientation_id": 126,
+          "min": 2.8275280015724715,
+          "min_orientation_id": 106
+        }
+      },
+      "within_body_spearman": {
+        "vertex_pairing_kurtosis__volume_pairing_kurtosis": 0.881288912287127,
+        "volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt": -0.46618064457059144,
+        "volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt": -0.677811984984435
+      }
+    },
+    {
+      "body_name": "facet_intersection_16",
+      "population": "generic-halfspace",
+      "ranges": {
+        "dual_reciprocal_over_volume_sqrt": {
+          "fractional_span": 0.25636847651921024,
+          "max": 0.31894743541473586,
+          "max_orientation_id": 38,
+          "min": 0.25386456392028,
+          "min_orientation_id": 76
+        },
+        "primal_pairing_max_over_volume_sqrt": {
+          "fractional_span": 0.17460090151284535,
+          "max": 1.0108993331943341,
+          "max_orientation_id": 109,
+          "min": 0.8606321788892982,
+          "min_orientation_id": 92
+        },
+        "ridge_area_max_share": {
+          "fractional_span": 0.7255358164030976,
+          "max": 0.07237891504421598,
+          "max_orientation_id": 51,
+          "min": 0.04194576221262726,
+          "min_orientation_id": 96
+        },
+        "ridge_area_sum_over_volume_sqrt": {
+          "fractional_span": 0.21161612845182498,
+          "max": 16.32475578145824,
+          "max_orientation_id": 105,
+          "min": 13.473537862456185,
+          "min_orientation_id": 117
+        },
+        "vertex_covariance_nu1_over_volume_sqrt": {
+          "fractional_span": 0.12030462874492276,
+          "max": 0.2048178888777418,
+          "max_orientation_id": 55,
+          "min": 0.18282338894484376,
+          "min_orientation_id": 124
+        },
+        "vertex_covariance_nu2_over_volume_sqrt": {
+          "fractional_span": 0.12030462874492298,
+          "max": 0.2316632220628824,
+          "max_orientation_id": 124,
+          "min": 0.206785918864242,
+          "min_orientation_id": 55
+        },
+        "vertex_covariance_rho": {
+          "fractional_span": 0.25508246118729927,
+          "max": 1.2671421495899147,
+          "max_orientation_id": 124,
+          "min": 1.0096086821189478,
+          "min_orientation_id": 55
+        },
+        "vertex_pairing_kurtosis": {
+          "fractional_span": 0.3048935145722951,
+          "max": 2.438455757063217,
+          "max_orientation_id": 53,
+          "min": 1.8687009551599076,
+          "min_orientation_id": 97
+        },
+        "volume_pairing_kurtosis": {
+          "fractional_span": 0.040306767953236955,
+          "max": 2.9236080023986104,
+          "max_orientation_id": 53,
+          "min": 2.8103325792551512,
+          "min_orientation_id": 97
+        }
+      },
+      "within_body_spearman": {
+        "vertex_pairing_kurtosis__volume_pairing_kurtosis": 0.9349306445705914,
+        "volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt": -0.10811893426112432,
+        "volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt": -0.34365844167734844
+      }
+    },
+    {
+      "body_name": "asymmetrically_cut_cube",
+      "population": "controlled-truncation",
+      "ranges": {
+        "dual_reciprocal_over_volume_sqrt": {
+          "fractional_span": 0.414362208042546,
+          "max": 0.32671834333449684,
+          "max_orientation_id": 75,
+          "min": 0.2310004760284635,
+          "min_orientation_id": 122
+        },
+        "primal_pairing_max_over_volume_sqrt": {
+          "fractional_span": 0.2928644474294233,
+          "max": 1.0759713728594142,
+          "max_orientation_id": 2,
+          "min": 0.8322383487292475,
+          "min_orientation_id": 75
+        },
+        "ridge_area_max_share": {
+          "fractional_span": 0.9213389625827328,
+          "max": 0.10138997065455817,
+          "max_orientation_id": 0,
+          "min": 0.05277047550124426,
+          "min_orientation_id": 99
+        },
+        "ridge_area_sum_over_volume_sqrt": {
+          "fractional_span": 0.3801063508031477,
+          "max": 14.446972261981163,
+          "max_orientation_id": 112,
+          "min": 10.46801375384861,
+          "min_orientation_id": 0
+        },
+        "vertex_covariance_nu1_over_volume_sqrt": {
+          "fractional_span": 0.10512999711221416,
+          "max": 0.2194869185869834,
+          "max_orientation_id": 46,
+          "min": 0.19860733050457308,
+          "min_orientation_id": 59
+        },
+        "vertex_covariance_nu2_over_volume_sqrt": {
+          "fractional_span": 0.10512999711221482,
+          "max": 0.2520582394536359,
+          "max_orientation_id": 59,
+          "min": 0.22808017166512762,
+          "min_orientation_id": 46
+        },
+        "vertex_covariance_rho": {
+          "fractional_span": 0.2213123105172432,
+          "max": 1.2691285805678363,
+          "max_orientation_id": 59,
+          "min": 1.0391515500489323,
+          "min_orientation_id": 46
+        },
+        "vertex_pairing_kurtosis": {
+          "fractional_span": 0.34840258258124357,
+          "max": 2.518992829837155,
+          "max_orientation_id": 122,
+          "min": 1.8681311222461867,
+          "min_orientation_id": 112
+        },
+        "volume_pairing_kurtosis": {
+          "fractional_span": 0.07090173065314098,
+          "max": 3.021208993428857,
+          "max_orientation_id": 1,
+          "min": 2.821182286806304,
+          "min_orientation_id": 108
+        }
+      },
+      "within_body_spearman": {
+        "vertex_pairing_kurtosis__volume_pairing_kurtosis": 0.9676856344991759,
+        "volume_pairing_kurtosis__dual_reciprocal_over_volume_sqrt": -0.9278405969602637,
+        "volume_pairing_kurtosis__ridge_area_sum_over_volume_sqrt": -0.9048480131843984
+      }
+    }
+  ]
+}

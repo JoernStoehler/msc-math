@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ridge geometry — review sample</title>
+<style>body{max-width:46rem;margin:3rem auto;padding:0 2rem 5rem;font:18px/1.65 Georgia,serif;color:#202124;background:#fff}h1,h2{line-height:1.25}h1{font-size:1.8rem}h2{font-size:1.3rem;margin-top:2rem}aside{font:15px/1.5 system-ui,sans-serif;border-bottom:1px solid #ddd;padding-bottom:1.2rem;margin-bottom:2rem;color:#454545}math[display="block"]{overflow-x:auto;margin:1.3rem 0} @media(max-width:700px){body{margin:1.5rem auto;padding:0 1rem 4rem}}</style>
+<script src="https://hypothes.is/embed.js" async></script></head><body>
+<aside><strong>Contemporary DS review sample</strong><p>This proposed subsection assumes basic capacity and Lagrangian-product context. The pentagon capacity proof and optimizer account belong to companion sections.</p><p>Is its exposition acceptable for that scope? Mark any obstacles you notice; explanations are optional. Give your overall reaction at the end. This first reading contains no agent issue list; any comparison can follow afterward.</p></aside>
+<main><h1 id="ridge-geometry-as-a-guide-to-candidate-search">Ridge geometry as
+a guide to candidate search</h1>
+<p>Random sampling can do more than return the largest systolic ratio
+encountered. By measuring geometry alongside capacity, it can reveal
+patterns that suggest where to look next and which geometric questions
+deserve an explanation. The experiments considered here use this
+approach to search for bodies with large systolic ratio. Their principal
+observation concerns a sum of symplectic areas of two-dimensional faces.
+An exact calculation for rotated pentagon products explains the observed
+direction on one family; further experiments show both the usefulness
+and the limits of using that observation for search.</p>
+<p>The initial population comprised 4,096 generic four-dimensional
+polytopes, with 512 at each facet count from five to twelve, and 10,240
+Lagrangian products of polygons. The latter contributed 1,024 bodies in
+each of the ten polygon-size buckets with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3</mn><mo>≤</mo><mi>k</mi><mo>≤</mo><mi>m</mi><mo>≤</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">3\leq k\leq m\leq6</annotation></semantics></math>.
+Generation used seed 42 and support heights in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0.8</mn><mo>,</mo><mn>1.2</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0.8,1.2]</annotation></semantics></math>,
+retaining accepted geometries. Thus the population represents particular
+generation procedures and their acceptance conditions, rather than a
+uniform sample of convex bodies. Its largest stored systolic-ratio value
+was approximately
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.862586</mn><annotation encoding="application/x-tex">0.862586</annotation></semantics></math>,
+with none above one. These are historical numerical evaluator
+observations: the original computation records do not establish that
+they satisfy the guarantees of the current certified capacity
+implementation. We write their target as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mo>sys</mo><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\widehat{\operatorname{sys}}</annotation></semantics></math>,
+reserving
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>sys</mo><mo>=</mo><msubsup><mi>c</mi><mrow><mi mathvariant="normal">E</mi><mi mathvariant="normal">H</mi><mi mathvariant="normal">Z</mi></mrow><mn>2</mn></msubsup><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><msub><mo>vol</mo><mn>4</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\operatorname{sys}=c_{\mathrm{EHZ}}^2/(2\operatorname{vol}_4)</annotation></semantics></math>
+for the mathematical quantity.</p>
+<p>For a four-dimensional polytope
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>,
+define the ridge descriptor
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mn>1</mn><msqrt><mrow><msub><mo>vol</mo><mn>4</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msqrt></mfrac><munder><mo>∑</mo><mrow><mi>F</mi><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> a two-face of </mtext><mspace width="0.333em"></mspace></mrow><mi>K</mi></mrow></munder><mrow><mo stretchy="true" form="prefix">|</mo><msub><mo>∫</mo><mi>F</mi></msub><msub><mi>ω</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">|</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+ R(K)=\frac{1}{\sqrt{\operatorname{vol}_4(K)}}
+       \sum_{F\text{ a two-face of }K}\left|\int_F\omega_0\right|.
+</annotation></semantics></math> Here
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ω</mi><mn>0</mn></msub><annotation encoding="application/x-tex">\omega_0</annotation></semantics></math>
+is the standard symplectic form. Absolute values are taken face by face:
+cancellation between differently oriented faces is not allowed. This
+measures symplectic rather than Euclidean area. Its normalization
+removes common scale, since both the face integrals and the square root
+of four-dimensional volume scale quadratically.</p>
+<p>Smaller
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+strongly accompanied larger stored targets in this population. The
+Spearman rank correlation was
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>0.938437</mn></mrow><annotation encoding="application/x-tex">-0.938437</annotation></semantics></math>,
+whereas the Pearson correlation was only
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>0.205039</mn></mrow><annotation encoding="application/x-tex">-0.205039</annotation></semantics></math>.
+The finding is therefore much better described as an ordering tendency
+than as a linear relationship. It also belongs to a mixture of sources:
+products had a mean target about
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.0491</mn><annotation encoding="application/x-tex">0.0491</annotation></semantics></math>
+above generic polytopes. A correlation over the mixture does not
+establish the same relationship within every component, still less for
+all convex bodies. The useful question is whether the descriptor carries
+geometric information that can help select candidates beyond the rows in
+which it was observed.</p>
+<p>Products make that information more concrete. Put
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>
+in the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>-plane
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math>
+in the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>-plane,
+and let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>a</mi><mi>i</mi></msub><mo>,</mo><msub><mi>b</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">a_i,b_j</annotation></semantics></math>
+denote their cyclic edge vectors. For
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi><mo>=</mo><mi>P</mi><msub><mo>×</mo><mi>L</mi></msub><mi>Q</mi></mrow><annotation encoding="application/x-tex">K=P\times_LQ</annotation></semantics></math>,
+the factor faces lie in Lagrangian planes and contribute zero. Each
+mixed rectangle, formed from one edge of each factor, contributes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>a</mi><mi>i</mi></msub><mo>⋅</mo><msub><mi>b</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">|</mo></mrow><annotation encoding="application/x-tex">|a_i\cdot b_j|</annotation></semantics></math>.
+Consequently
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><msub><mo>×</mo><mi>L</mi></msub><mi>Q</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><munder><mo>∑</mo><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></munder><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>a</mi><mi>i</mi></msub><mo>⋅</mo><msub><mi>b</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">|</mo></mrow></mrow><msqrt><mrow><msub><mi>A</mi><mi>P</mi></msub><msub><mi>A</mi><mi>Q</mi></msub></mrow></msqrt></mfrac><mo>,</mo></mrow><annotation encoding="application/x-tex">
+ R(P\times_LQ)=\frac{\sum_{i,j}|a_i\cdot b_j|}{\sqrt{A_PA_Q}},
+</annotation></semantics></math> where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>P</mi></msub><mo>,</mo><msub><mi>A</mi><mi>Q</mi></msub></mrow><annotation encoding="application/x-tex">A_P,A_Q</annotation></semantics></math>
+are the polygon areas. The descriptor measures the total absolute
+pairing of edge directions and lengths. Relative rotation can change it
+while leaving volume and combinatorial type unchanged.</p>
+<p>Consider in particular a regular pentagon
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mn>5</mn></msub><annotation encoding="application/x-tex">P_5</annotation></semantics></math>
+of circumradius one and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>K</mi><mi>θ</mi></msub><mo>=</mo><msub><mi>P</mi><mn>5</mn></msub><msub><mo>×</mo><mi>L</mi></msub><mo>Rot</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>P</mi><mn>5</mn></msub></mrow><annotation encoding="application/x-tex">K_\theta=P_5\times_L\operatorname{Rot}(\theta)P_5</annotation></semantics></math>.
+Reduce the rotation to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mo>min</mo><mrow><mi>k</mi><mo>∈</mo><mi>ℤ</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">|</mo><mi>θ</mi><mo>−</mo><mi>k</mi><mi>π</mi><mi>/</mi><mn>5</mn><mo stretchy="true" form="postfix">|</mo></mrow><mo>∈</mo><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mi>π</mi><mi>/</mi><mn>10</mn><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">d(\theta)=\min_{k\in\mathbb Z}|\theta-k\pi/5|\in[0,\pi/10]</annotation></semantics></math>.
+Writing
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mo>=</mo><mo>sin</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>π</mi><mi>/</mi><mn>5</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">s=\sin(\pi/5)</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo>=</mo><mo>cos</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>π</mi><mi>/</mi><mn>5</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">h=\cos(\pi/5)</annotation></semantics></math>,
+each edge has length
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mi>s</mi></mrow><annotation encoding="application/x-tex">2s</annotation></semantics></math>
+and each polygon area
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>5</mn><mi>s</mi><mi>h</mi></mrow><annotation encoding="application/x-tex">5sh</annotation></semantics></math>.
+The preceding expression becomes
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>K</mi><mi>θ</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><mn>4</mn><mi>s</mi></mrow><mi>h</mi></mfrac><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>0</mn></mrow><mn>4</mn></munderover><mrow><mo stretchy="true" form="prefix">|</mo><mo>cos</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo>+</mo><mn>2</mn><mi>π</mi><mi>j</mi><mi>/</mi><mn>5</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">|</mo></mrow><mo>=</mo><mn>16</mn><mi>s</mi><mo>cos</mo><mi>d</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+ R(K_\theta)=\frac{4s}{h}\sum_{j=0}^{4}|\cos(\theta+2\pi j/5)|
+            =16s\cos d(\theta).
+</annotation></semantics></math> The last equality follows by pairing
+the cosine terms on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mo>−</mo><mi>π</mi><mi>/</mi><mn>10</mn><mo>,</mo><mi>π</mi><mi>/</mi><mn>10</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[-\pi/10,\pi/10]</annotation></semantics></math>,
+where their signs are fixed, then using the evenness and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>π</mi><mi>/</mi><mn>5</mn></mrow><annotation encoding="application/x-tex">\pi/5</annotation></semantics></math>
+periodicity of the absolute-cosine sum. The capacity profile proved in
+the pentagon analysis gives
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>sys</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>K</mi><mi>θ</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><mn>5</mn><mo>+</mo><mn>2</mn><msqrt><mn>5</mn></msqrt></mrow><mn>10</mn></mfrac><msup><mo>sec</mo><mn>2</mn></msup><mi>d</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+ \operatorname{sys}(K_\theta)=\frac{5+2\sqrt5}{10}\sec^2d(\theta).
+</annotation></semantics></math> Combining the two yields the exact
+relation
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>sys</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>K</mi><mi>θ</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>R</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>K</mi><mi>θ</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>=</mo><mn>16</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>3</mn><mo>+</mo><msqrt><mn>5</mn></msqrt><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+ \operatorname{sys}(K_\theta)R(K_\theta)^2=16(3+\sqrt5).
+</annotation></semantics></math> Thus, within this family, decreasing
+the ridge descriptor is precisely equivalent to increasing systolic
+ratio. Alignment has ratio approximately
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.947214</mn><annotation encoding="application/x-tex">0.947214</annotation></semantics></math>;
+at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>=</mo><mi>π</mi><mi>/</mi><mn>10</mn></mrow><annotation encoding="application/x-tex">d=\pi/10</annotation></semantics></math>,
+the ratio is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>3</mn><mo>+</mo><msqrt><mn>5</mn></msqrt><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mn>5</mn><mo>≈</mo><mn>1.047214</mn></mrow><annotation encoding="application/x-tex">(3+\sqrt5)/5\approx1.047214</annotation></semantics></math>.
+This is an analytic example outside the finite random table, so its
+value above one does not conflict with that table’s recorded maximum.
+The identity supplies a later geometric interpretation, not a claim that
+the exploratory sampling was designed to test it.</p>
+<p>The restriction to this family is essential. On two retained designed
+product paths, of types
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3</mn><mo>×</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">3\times6</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>×</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">4\times4</annotation></semantics></math>,
+decreasing
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+also decreased the numerical systolic ratio at every retained step,
+ending at ratios
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3</mn><mi>/</mi><mn>4</mn></mrow><annotation encoding="application/x-tex">3/4</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">1/2</annotation></semantics></math>,
+respectively. Small ridge sum is therefore not a universal ascent
+objective. A population association can still be useful for choosing a
+promising starting point without prescribing a direction of improvement
+from that point.</p>
+<p>Candidate-selection experiments address that more limited use.
+Predictive models and feature ablations found that ridge-area features
+carried much of the held-out signal. A more direct search test generated
+100,000 product candidates, selected bodies using geometric features
+before evaluating their targets, and then evaluated a selected/control
+union of 1,675 bodies. The distinction matters: generating inexpensive
+candidates did not require 100,000 capacity evaluations. The largest
+stored target was approximately
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.867546</mn><annotation encoding="application/x-tex">0.867546</annotation></semantics></math>,
+and none exceeded one. A separate fresh 100,000-candidate experiment
+tested a refinement: after retaining the lowest 1% by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+within each product bucket, prefer bodies whose total ridge area is less
+concentrated in their largest ridge. The selected tail was split into
+halves by that largest-ridge share. Before target evaluation, success
+was defined as a larger mean target in the less concentrated half than
+in its complement, both overall and in at least seven of ten buckets; no
+minimum effect size was required. The observed overall difference was
+about
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.034</mn><annotation encoding="application/x-tex">0.034</annotation></semantics></math>,
+with positive differences in eight buckets. This is a concrete
+additional selection benefit under the frozen design, not a significance
+test. A transfer study on a separately area-normalized source also found
+that a frozen ridge selector increased mean target against disjoint
+controls in both
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>×</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">4\times6</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>6</mn><mo>×</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">6\times6</annotation></semantics></math>
+buckets. That study evaluated 91 distinct targets across its selectors
+and controls. These findings support finite enrichment under the tested
+designs; they do not identify a universally best selection rule.</p>
+<p>Geometry-guided selection and local refinement consequently answer
+different questions. The former allocates expensive evaluations among
+proposed bodies; the latter tries to improve a chosen body. The
+companion optimizer study develops the latter using capacity’s branch
+structure. Here the ridge observation supplies a concrete connection
+between population statistics, an exact family calculation, and
+candidate selection. Its positive content survives the failure of a
+universal ridge objective: the descriptor helps organize search, while
+the pentagon identity and opposing paths delimit what that organization
+can explain.</p>
+</main></body></html>

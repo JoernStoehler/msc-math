@@ -1,0 +1,10 @@
+# Supplied repair criteria
+Historical human observations, not new judgments. HKO was judged overall PASS despite these local issues; DS prose comfortable but narrative rejected. This experiment selects two known problematic units, not a representative sample.
+
+## HKO
+Human annotation 6: geometric intention should precede coordinates: vary first momentum component of the second q-facet NORMAL, then display h2 and hi. Annotation 5: concluding claim about forty-coordinate calculation skips an inference: varying factors keeps q-facet normals in q-plane, whereas this perturbation adds a p1 component. Explain that step. Preserve upper-bound derivative vs actual capacity derivative distinction. Context K(a)={x:a_i dot x <=1}, base is polygon product, a_i normals in R4 coordinates (q1,q2,p1,p2). U is a smooth feasible-section upper bound for systolic ratio. All displayed formulas must remain mathematically unchanged; rewrite only prose around them. Existing formula PDF extraction is awkward; preserve extracted formulas verbatim by using prose replacement slots keyed opening and conclusion, with untouched middle reproduced by coordinator.
+
+## DS
+Human observation on original two-page sample: comfortable prose but narrative chaotic/lacking structure. Desired motivating route: sample varied random polytopes and readily available symplectic/non-symplectic measurements; temporarily set meanings aside to find statistical patterns; interpret geometrically, formulate tentative conjectures, seek rigorous explanations. Put distribution details after purpose. Do not invent achieved conjectures or proofs: the actual sample reports descriptor association, shape-change and rotation experiments. Preserve numerical facts/caveats or explicitly track any omitted material; no new research.
+
+Sources: local/evidence/docs/review-evidence/calibration/hko-reading-feedback.md annotations 5/6; local/evidence/docs/review-evidence/human-feedback/ds-reading-2026-09-14.md original-sample feedback only. Do not use later revised-opening feedback as baseline labels.

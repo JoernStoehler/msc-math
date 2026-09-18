@@ -1,0 +1,35 @@
+# Supplied-objection repair probe
+
+## Finding
+
+Giving a writer the actual objection produced concrete local repairs in minutes. It did not establish that the repaired text would receive Jörn's PASS, or that an autonomous detector could supply equivalent objections. Two distinct author operations converged considerably; this small trial does not establish that reconstruction beats narrow editing.
+
+The probe uses two objection-bearing units from frozen human-reviewed artifacts: the HKO worked-coordinate subsection (within an overall passing chapter), and the original two-page DS sample (comfortable prose, rejected narrative structure). It compares a narrow edit with reconstruction from reader/mathematical dependencies. Authors received the human objections explicitly; later repaired versions were withheld. Exact inputs, prompts, drafts, anonymous comparison packet, candidate key and checks are in [the run directory](../../experiments/writing-quality/runs/20260918-repair/).
+
+## Concrete changes, independent of reviewer preference
+
+**HKO:** both candidates put the geometric intention before the vector, identify the perturbed object as a facet normal, and supply the missing inference: changing polygon factors keeps q-facet normals in the q-plane, whereas this perturbation adds a p1 component. Both retain the original numerical coefficient and leave all middle formulas untouched. Both also retain the distracting zero-based verifier coordinate and add an unsolicited negative capacity-derivative disclaimer. The latter protects meaning but resembles a neighboring kind of prose Jörn previously objected to. Supplied-criterion compliance can coexist with new or retained reader friction.
+
+**DS narrow edit:** adds the discovery-to-interpretation research route before technical detail, inserts headings, and adds a caveat that selection success does not explain the association. It preserves the original paragraph order.
+
+**DS reconstruction:** gives the desired research route, distinguishes ambitions from achieved empirical stages, moves the reported association before geometric interpretation of the descriptor, and separates selection from height/rotation interventions. It adds a closing account of what the experiments establish. Despite the different prompt, much of the source order and wording survives.
+
+Manual comparison against the frozen sample and its retained TeX found the original distribution, admission rules, scaling/invariance statements, numerical error caveat, sample/evaluation counts and reported values preserved in both DS drafts. The awkward PDF-extracted absolute-value and square-root formulas were transcribed consistently with the retained source. This is a meaning-preservation check, not fresh validation of the underlying experiments.
+
+## Independent, condition-blind review
+
+The reviewer received anonymized candidates including the unchanged baseline, raw baseline text and explicit requested criteria. It did not receive author identities, methods or historical overall judgments. It found both HKO repairs satisfy the supplied local criteria; for DS it preferred reconstruction (P) over narrow editing (M), while noting that the latter largely layers the desired route over the old structure. It independently flagged retained storage/branch jargon, a delayed reason for choosing the HKO direction, and the absence of a concrete conjecture-generating geometric interpretation in DS. No empirical numbers were reported lost.
+
+This is NEW agent assessment, not human acceptance. The reviewer explicitly separated baseline-verifiable empirical facts from the broader methodological history supplied by the repair brief. The report is [preserved verbatim](../../experiments/writing-quality/runs/20260918-repair/blind-review.md). Its criterion-conditioned ability to distinguish the original DS structure from the repaired versions is useful but does not show the same reviewer would have noticed the problem without those criteria.
+
+## Interpretation
+
+The useful positive result is narrow: explicit human objections can drive specific repairs without substantial authoring latency. It supports running editing probes separately from detector development. The unresolved question is whether such repairs cross the human acceptance threshold, particularly for DS structure rather than the small HKO ordering defect.
+
+The operations were only weakly separated in their outputs. A larger reconstruction instruction did not by itself produce an entirely different account. If a stronger intervention is needed, vary the permitted writing operation or intermediate representation more substantially rather than merely repeating these labels.
+
+This probe deliberately supplied detailed repair criteria, in places including the missing explanatory inference itself. It therefore tests execution of informed editorial direction, not independent discovery of the right explanation. The independent review also receives explicit criteria; its verdict cannot validate unguided detection or human agreement.
+
+## Verification and limits
+
+`verification.json` confirms exact frozen PDF hashes, exact DS baseline text, exact HKO subsection extraction, and unchanged input/criterion hashes. Experimental prose only; no thesis source changes, active prompt changes, rendering, or new human evaluation. One sample per operation and text type, no random sampling, no claim of a general workflow victory. Final quantitative cost is supplied by root's session accounting; no estimate is represented as observed cost.

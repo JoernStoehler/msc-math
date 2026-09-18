@@ -1,0 +1,257 @@
+{
+  "baseline_commit": "c9d7ded94ad8302cd4f97263f5308fae324e906d",
+  "original_head": "c05535c00f6d12c788f90fa9d8e6498d232a3ce6",
+  "backup": "/tmp/msc-math-quarantine-20260917T152449Z",
+  "paths": [
+    {
+      "path": ".agents/skills/live-task-graph/SKILL.md",
+      "before_sha256": "2bed1241a2194b33d1d113682e53bde9228c4f74afa9073120deeaf4a3d7364b",
+      "quarantined_sha256": "98ad9d9ee3ea820fd3e3536589df8d852d9ed4ad397878e743ed51971a924f83"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "before_sha256": "cdc8715d8e97e1ac20ed9555ea7ff61e879b790d866c8deb91ebfa23e53700c8",
+      "quarantined_sha256": "d581c4712e45f2ee795ad73455f25020286a883cf9f94efc2a7af9fa23cdd77e"
+    },
+    {
+      "path": "INSTALL.md",
+      "before_sha256": "674d5b6e851b926a732dc9ab84a445b450206929f3f6515992db4421bd1907b6",
+      "quarantined_sha256": "0be24a192923430f4446bf5a9f698275a6ad21c3cd6ce4c9efdfaafa14535c1a"
+    },
+    {
+      "path": "JOERN.md",
+      "before_sha256": "c439e7dc33959c69551a01ce51adcc56ce8beb14c28598bd826c46251cd40f47",
+      "quarantined_sha256": "ebe1736e20786dcce96e22ec2632dbee638b4bddcf7b9ce18ab41f01607da51c"
+    },
+    {
+      "path": "PROJECT-STATUS-BRIEF.md",
+      "before_sha256": "276810fe8a27c53f05f69ad773bfd2b6b0c633bf1a0dd6d449c8eb9e55667e38",
+      "quarantined_sha256": "3af0f8c088b75cbd09e808b4a251b4804dc6565382a10cc002a80ad73b99c32e"
+    },
+    {
+      "path": "README.md",
+      "before_sha256": "500f690dd8ff68ff963dfb2e0e5dc982ce35f861b2d4d441c54cb05b08a186b7",
+      "quarantined_sha256": "6e1494c9b457fed9a69ea1e1aa21cff8cb6d0f719ed72fcb429356dcf52d8457"
+    },
+    {
+      "path": "crates/algebraic-numbers/DEVELOPMENT.md",
+      "before_sha256": "a4cb1a4910321404f8272e60898d0e3a1630c5313c4a9cd7815e56cfdcf4e5ce",
+      "quarantined_sha256": "aa7b2b43cffcedd5759d7bbc18f88da8571b14b9130f52d6d9983dd5e81019f2"
+    },
+    {
+      "path": "crates/algebraic-numbers/LINEAR_ALGEBRA_FEATURES.md",
+      "before_sha256": "974d2507f7be9c73f229690ae86db495e5678923c0000af1c0766ba107aab750",
+      "quarantined_sha256": null
+    },
+    {
+      "path": "crates/algebraic-numbers/README.md",
+      "before_sha256": "924c1be000ba8661c559c9d6296b6a00a4912a3f1df1d4765aed58f324c4c907",
+      "quarantined_sha256": "280aac75fcd0e0d8c781d68dcd4ebdc28e19eedd56ffd0c926082f2defa6b597"
+    },
+    {
+      "path": "crates/euclidean-polytopes/DEVELOPMENT.md",
+      "before_sha256": "44c0ea61c96e37879ee618b34fef45199bb2ccb29a3d50466a3958c3c4e655ea",
+      "quarantined_sha256": "23ff6b8ada35502cb70445278c76bd383e7f8c31bc26f85a36e0124225e983b3"
+    },
+    {
+      "path": "docs/README.md",
+      "before_sha256": "980ddba60d190a53adc1058f8e1bfd4d3d5c02d87b8e76ac25a5d101190a9ebb",
+      "quarantined_sha256": "65c53c08c83662b9f1201b559f1dc7ffaf96c927ecc94484282a0b69393c52bb"
+    },
+    {
+      "path": "docs/current-thesis-assessment-2026-09-14.md",
+      "before_sha256": "36c5b0e19c7fdc84b392bcaef92ba64bae83b851b044074bcf5452767cfbd123",
+      "quarantined_sha256": "2126abbd9bdb929092fe4cee303715fc9b4d09bf06fb70f58730ec2b47662840"
+    },
+    {
+      "path": "docs/literature-rewrite/luna-assignment.md",
+      "before_sha256": "af79badb11752a282d3a1f0b1a3cc2abaaf5198fc3a730323c10a2f26482cab1",
+      "quarantined_sha256": null
+    },
+    {
+      "path": "docs/migration-review.md",
+      "before_sha256": "56d9511e8d5f684302d3c829201c053a51dc4770b4f31469415d15234eb88aab",
+      "quarantined_sha256": "f0c14fcd032b54270d6b622aa00e1dbc71f30613ef9e121393eb2bb42b2a7c4c"
+    },
+    {
+      "path": "docs/pentagon-chapter-v2/README.md",
+      "before_sha256": "d3991a6dba95f0414c55f7eded08b0cd0f7ab5c1e267e628f64e35ebfd7eb866",
+      "quarantined_sha256": "290354d14da3d1b44e68ba8fbe67e06d974db9e4874ae2d41cdebf0803603804"
+    },
+    {
+      "path": "docs/pentagon-chapter/README.md",
+      "before_sha256": "7b960c1e620f7a8bce945501330d4301f1d57995626c1273b7ae4d0786996119",
+      "quarantined_sha256": "e2ecb4dd0afbfeeabc7000ae45cc4aac5f7daccf7e59e78fc8ca7c878ced2d77"
+    },
+    {
+      "path": "docs/process-audit/sprint-two-preparation-draft.md",
+      "before_sha256": "2b78f64e1bfd36a4a03c6657e51be57e543f6ef6e9d6f26db39453b2ffcdb0e3",
+      "quarantined_sha256": "5ae77df19bddf578451ea528ed6daa21ff353ca8db3e49f7464ac835c7dc923b"
+    },
+    {
+      "path": "docs/project-facts.md",
+      "before_sha256": "d28b05cc7e889aa91b3068e24936ba97fc505831b49c5f45c7ebeab028be9d30",
+      "quarantined_sha256": "6bf7b17f4c38641b2fb3bef856349a0c937e5151da8459164a74074b7f80b56f"
+    },
+    {
+      "path": "docs/reproducibility.md",
+      "before_sha256": "dcce15df14e097d6041082324e8d197cb6a53457242dad8bcd3e32e437d77681",
+      "quarantined_sha256": "5fb626706b72ec76738aeae8282956290f0c970abaa9dd9436f0bc8585ae5936"
+    },
+    {
+      "path": "docs/resumption-goal-and-constraints.md",
+      "before_sha256": "25dbd0055f0959f2e2bb690dcc83fcf6e63a683e1181e46adacd3cc187c310ed",
+      "quarantined_sha256": "e899e367dcfc0e1dac9ce3a01c846aa6795d126bef694c1c7e484edff4334621"
+    },
+    {
+      "path": "docs/session-briefs.md",
+      "before_sha256": "46c88754bb3924647641cafe50006276546ec790b82580426563f0fc9d10188b",
+      "quarantined_sha256": "7660152e83dd5c523021ba49e6aefbfbbd1f13d1f5004e643b50b4413c65cee2"
+    },
+    {
+      "path": "docs/source-recovery/README.md",
+      "before_sha256": "fe5faa7ba748f60d12a7e7bcdf3a3914f6f4fffaf4ba440dfe1ddeb5c824d472",
+      "quarantined_sha256": "520cd7e4d885f3d11746615c47c8b0b1cf22736c78825163de6537257df38faf"
+    },
+    {
+      "path": "docs/sprint-two/KICKOFF.md",
+      "before_sha256": "b5bc77b4177c42d5501defdb2d56002d2cfcc4909211ee25739d04e0727b45ca",
+      "quarantined_sha256": "60c30900d2c42e908c297ca408f321eb2fdf439285d7273613069826330a61b9"
+    },
+    {
+      "path": "docs/sprint-two/integration.md",
+      "before_sha256": "6b4751a7570154c8f35b77f2978155857c0cc485d29a5cf713dd36eaca7e295f",
+      "quarantined_sha256": null
+    },
+    {
+      "path": "docs/sprint-two/readiness.md",
+      "before_sha256": "9e2a50e304296364c202b5cb40bcfef06983daa742bb4cf80d463782ce0cf77d",
+      "quarantined_sha256": "82cc24a27e96486910f5db17350461ad6c2dc1c08e01ef1dfd3fff6721c0ae2b"
+    },
+    {
+      "path": "docs/task-graph/00-now.dot",
+      "before_sha256": "5a97eb463d6d7fa6021b6b7b665ded6beb21c2aa5e51815fc0528ec8d1238594",
+      "quarantined_sha256": "826123ae53b963bee86379378090e3380f1d79494fa515c77378bcddd19a5b71"
+    },
+    {
+      "path": "docs/task-graph/00-now.svg",
+      "before_sha256": "40c4ae044edef62ecb0c44ad0c39e81045b8076074d6b3664ffbdbeff08345f5",
+      "quarantined_sha256": "8bcae6e73f09128f940c3e6db46a264982a1360db94d1a288946e28b86eab183"
+    },
+    {
+      "path": "docs/task-graph/README.md",
+      "before_sha256": "512e02bebb55536b9e47a44ba1fd9e1911c08f7c51891358c7433c01f3f95b37",
+      "quarantined_sha256": "fb6838edcfd003e472a990285bc68bc452cd9d19db32a35800ed52867a5e89b3"
+    },
+    {
+      "path": "docs/task-graph/tasks.dot",
+      "before_sha256": "d101112f8d5da9254c0f1acaf101f5298c2102d11f9b50c888dcee8b0d6582ce",
+      "quarantined_sha256": "27e07dbbbc7d865ec13b736f17dc0a411657f0fe5632d38ff97ab465fcf58b63"
+    },
+    {
+      "path": "docs/task-graph/tasks.svg",
+      "before_sha256": "ce5af522c274c9d99ddb843974cb6cfdef6ba0b34852fed416771c607ef931fc",
+      "quarantined_sha256": "7fd0087b7c5746e7f54e09c2246a7ae628ce6f26e996bc078faea73eb695969b"
+    },
+    {
+      "path": "docs/thesis-assessment-2026-09-14.md",
+      "before_sha256": "230a49fede63d26219a3391451124e16a571d7696f1e9ebf6f390dff6e06fbfa",
+      "quarantined_sha256": "f2527ff19215899b1e1c813efdaf8a32ad92e49063bd046cd9b3ba3e838a351a"
+    },
+    {
+      "path": "experiments/README.md",
+      "before_sha256": "d63c23692eec0473bba1969667a4e5e901e7b8c0890f0eda0af2cda224dd6bef",
+      "quarantined_sha256": "51dc21d6c28b7c183ccd73a6d65f3691f72e947052b7154e2cbf345e851b38b1"
+    },
+    {
+      "path": "experiments/dev-quadratic-program/README.md",
+      "before_sha256": "b5849874e4e9fa0e6cead8962ea903e7af08b74b4dd8e81457a023d36ad408ae",
+      "quarantined_sha256": "45a67ac3d96a723300406964b46418b965b1504193a75dc71a8ad4572c543d73"
+    },
+    {
+      "path": "experiments/dev-quadratic-program/docs/capacity-architecture.md",
+      "before_sha256": "96c4688a2799f906b75e0cf917b094e1ba0a1a23c87ec51a12e89c1d7c770c5c",
+      "quarantined_sha256": "cf77ecbbd7cc2c51d03f78b6c7ae5f766a6609a5caa462d3661540e7908da9c0"
+    },
+    {
+      "path": "experiments/dev-quadratic-program/docs/production-migration-plan.md",
+      "before_sha256": "1eec745bfe5be8496e624cac4cd91221d8fffeb8d4b857ac496622603fbf1c3e",
+      "quarantined_sha256": "a04b7a25d61be449b6f3d1432cdb4b58f6960f88ce49a45baa8ccd10c283256f"
+    },
+    {
+      "path": "experiments/dev-quadratic-program/docs/route-consumer-matrix.md",
+      "before_sha256": "e0aff9a9cdd819632787e86b8fd95182802cfc6e6fbdf266c1255602319adbb3",
+      "quarantined_sha256": "fd4dfd7758036ff4a17b4d2f53ef6d46655c7fbea6087d524e5bb5a5cd2c0b83"
+    },
+    {
+      "path": "experiments/sys-datascience/README.md",
+      "before_sha256": "667af1e37ec9d8b67aeac0a55622ac994383966d33ae0e0327feb46bd2b815dc",
+      "quarantined_sha256": "9817f314aa0646769b0cfb802395722a6f2a0a359af1c2a3f11fc01bd087debd"
+    },
+    {
+      "path": "experiments/sys-datascience/coordination/README.md",
+      "before_sha256": "1e8e7a52572d52269fc90937c8d618ba70ee02965d561b11c70021b7866b1e66",
+      "quarantined_sha256": "61d81d8c7cb14944b72ff96c223c2e31f44132c5587f2c6d16e61746751cc718"
+    },
+    {
+      "path": "experiments/sys-datascience/coordination/active-work.md",
+      "before_sha256": "7338ef62107d3533a74943da579e8ef3d23caee0f3bb4cdb0916a0a312261a24",
+      "quarantined_sha256": null
+    },
+    {
+      "path": "experiments/sys-datascience/coordination/current-question-map.md",
+      "before_sha256": "3b22172d34397dc8a6200f2164f50b0dfc19c87439ac94374ec760786a259451",
+      "quarantined_sha256": "de0ba773fae08b7b7e76e85d2e490b6db42c51f3e82624e4a14275fd6b3aafb7"
+    },
+    {
+      "path": "memories/INDEX.md",
+      "before_sha256": "504ac8557e45082cf7634b341a598267d92e4eabe1e5fc326b26ec2e4282ef35",
+      "quarantined_sha256": "d04cfee56fd919ea58e7118a029da829f6774f9653f3ddd14f4a5116ca3c1c7e"
+    },
+    {
+      "path": "memories/outcome-coverage.md",
+      "before_sha256": "289675e379e544c6f9d9bc3c9f82f992cb079f77eb5af5b1c0c684adab642a7e",
+      "quarantined_sha256": "5ccf4b2397f99bea23367d893f98674b10a5a73666e69fa7da31fab3aa6d6fd4"
+    },
+    {
+      "path": "memories/team-plan.md",
+      "before_sha256": "5e1c6f6d3596bbc3877d4f89faae325c17ea334420c9304f1461d6a3fa987097",
+      "quarantined_sha256": "1aed3af2334ae08487068156ceeb98c343e0c0742a8b247b37bb36d1c4acd277"
+    },
+    {
+      "path": "memories/todos.md",
+      "before_sha256": "422c1e77c00e9a1777730fe3c44edb454c5b8c31b727b56c2ae6089ad4ddd3de",
+      "quarantined_sha256": "c3b2d6968c7dcb1f717e41541b6f277fb4d8dc660706569f31d4cdc51cee2ee1"
+    },
+    {
+      "path": "scripts/README.md",
+      "before_sha256": "ec2d3256aa2a3c8c2b93bd2d6fc9ac4db6d8369c4ea3ed74d1e322a4442597ce",
+      "quarantined_sha256": "09a4f32f01416b2b371e061f83d6e0943cd5703d41145916e891ba1aba83a87c"
+    },
+    {
+      "path": "submit/archive-closure-checklist.md",
+      "before_sha256": "1ddfb0324c6c38ae9e7852443fa4c4e91ddc6f3a0442a42bcc971fc15d476404",
+      "quarantined_sha256": "8c73d1440d442ae684b3ee03387e715f34bd827430478779ba9722665c739a6d"
+    },
+    {
+      "path": "thesis/DEVELOPMENT.md",
+      "before_sha256": "244839b4f81c924ee2c3a1f1eb374c9ee8c79e03d850ed8f1ded704ce6cc41df",
+      "quarantined_sha256": null
+    },
+    {
+      "path": "thesis/README.md",
+      "before_sha256": "d968eb73928507382c7aa11afe1aeff310c769cef2013f3b41815bc479f2f7bb",
+      "quarantined_sha256": "07f592e07d2485a77af7a324026f90fd9562aed7c0f932f9b68370f08114799b"
+    },
+    {
+      "path": "thesis/candidate/README.md",
+      "before_sha256": "cf8dead9e40564451860e7b43c4611f82cd0e6bf093824a9a44bb2f8bf2bf8e9",
+      "quarantined_sha256": "d80fff36edf6047739aa4f52e8360f9ade0d4c04dfef84f54404785ba214fb64"
+    },
+    {
+      "path": "thesis/candidate/integration.md",
+      "before_sha256": null,
+      "quarantined_sha256": "a662eeb904d32040c07bd0902d9e4abf87af7199dadb6a44125c7132ad47d7a1"
+    }
+  ]
+}

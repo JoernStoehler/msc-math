@@ -1,0 +1,29 @@
+# Reader-question evaluation: narrative transfer
+
+The route is largely accessible to an MSc mathematician. Its principal interruptions concern why particular geometric quantities and operations are introduced, rather than unfamiliar statistical language. This assessment concerns only the supplied excerpt; preceding capacity/systolic-ratio background is assumed, and extraction artifacts are excluded.
+
+## Compact route map
+
+| Passage | Live question before it | Concrete answer | Natural next question |
+|---|---|---|---|
+| Opening: two approaches | What is this exploration trying to do? | Find large ratios by selecting bodies or modifying existing ones. | What counts as improvement, and which bodies are searched? |
+| Ratio and dilation | What is the target, and can size help? | Seek ratios above 1; common dilation changes nothing. | Which shape parameters remain available? |
+| Polygon products and sampling | What examples and numerical evidence are used? | Products of randomly supported polygons, with an explicit rejection rule and qualified numerical calculations. | Which cheap geometric information helps select them? |
+| Ridge descriptor | Why examine ridge geometry? | Defines symplectic ridge area and its invariant normalized sum. **Mechanics precede the answer to why this descriptor matters.** | Does this quantity actually track large ratios? |
+| Association and selection | Does the descriptor help? | Low values accompanied larger ratios, also within side-count groups; fresh selection tests improved ratios relative to controls. | Can a useful change to an individual body be identified? |
+| Heights replaced by 1 | Which change, and why this one? | Equalize support heights to obtain tangent polygons; gives a paired, jointly admissible experiment. **Answers what and how, but leaves why this operation was selected unresolved.** | Does that shape change help? |
+| Area normalization and paired results | Is the effect a normalization artifact, and what happened? | Separate factor scaling preserves the ratio; both-factor modification yielded an average gain with individual losses. | What other freedom could improve a fixed body? |
+| Rotation rationale | How can rotation matter to a geometric invariant? | Orthogonal rotation can change symplectic alignment while preserving Euclidean shape. | Is exploiting that freedom useful in a search? |
+| Equal-budget rotation test | Useful compared with what? | Compare rotations with fresh sampling at sixteen evaluations each; include a symplectic control. | Which allocation finds the better maximum? |
+| Rotation outcomes | Which allocation worked? | Fresh sampling won all four comparisons; rotation could still improve a starting body. | How broadly does this finding extend? The final sentence appropriately limits it to these bodies and rotations. |
+
+## Consequential obstacles
+
+1. **The descriptor's purpose arrives after its construction.** Exact quotations: “A useful descriptor emerged from the two-dimensional faces of these bodies” and, in the following paragraph, “In the original samples, smaller values of S tended to accompany larger ratios.” The opening promises cheap geometric selection, so the reader knows the general purpose of a descriptor. It does not yet explain why ridge areas deserve the ensuing definition, normalization, and invariance discussion. The later association supplies precisely that missing local motive. This is a modest ordering obstacle, not a missing definition of “ridge,” which the text immediately explains. **Confidence: high.** Minimal structural remedy: announce the observed low-ridge-area association before developing the descriptor, then retain the definition and return to selection evidence. No theoretical derivation of the association is required.
+
+2. **The change to tangent polygons lacks a stated reason for choosing it.** Exact quotations: “It did not yet tell us which change to make to a given body” followed by “One concrete change is to replace all support heights of a polygon by 1, keeping its normals fixed.” The previous paragraph earns the move from selection to modification. The next paragraph identifies a precise operation and explains its tangent-circle geometry, but never says what made that operation a plausible experiment. The sampling and normalization details therefore arrive while the reader is still asking why this particular change is under investigation. Basic capacity background does not supply a connection between equal support heights and improved ratios, and the observed association with S does not establish one. This need not be a claim that such a connection exists: an exploratory geometric heuristic would be a sufficient motive. **Confidence: medium-high**, qualified by possible motivation outside the supplied excerpt. Minimal structural remedy: place the actual reason for testing equal heights immediately before the experimental design; explicitly identify it as an independent heuristic if it did not arise from the descriptor. Keep the present result and its exceptions afterward.
+
+## Two transitions to retain
+
+- **Selection success → modification question:** “That success supplied a way to choose examples. It did not yet tell us which change to make to a given body.” This states exactly what the preceding evidence accomplished and what it leaves open. Preserve it even if the following operation gains a clearer motive.
+- **Rotation rationale → search-budget comparison:** “This gives a way to explore symplectic alignment without changing the body’s Euclidean geometry” leads to “To test whether that freedom was worth using in a search, we compared two allocations of sixteen evaluations.” The conceptual possibility earns the practical question; the equal-budget design then serves an already clear purpose, and the outcomes answer it without overstating their scope.

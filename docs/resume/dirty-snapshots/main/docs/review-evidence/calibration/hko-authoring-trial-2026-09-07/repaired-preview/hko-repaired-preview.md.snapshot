@@ -1,0 +1,120 @@
+# A local obstruction to improving the HKO example
+
+Let \(P_5\) be the centered regular pentagon of circumradius one with a vertex at \((1,0)\), and let \(R(\theta)\) denote counterclockwise rotation. In coordinates \((q,p)\in\mathbb R^2\times\mathbb R^2\), we use the representative
+\[
+K_{\mathrm{HKO}}=P_5\times_L R(-\pi/2)P_5
+=\{(q,p):q\in P_5,\ p\in R(-\pi/2)P_5\}.
+\]
+The subscript \(L\) emphasizes that the two factors occupy the Lagrangian \(q\)- and \(p\)-planes.
+
+The Haim-Kislev–Ostrover example disproves Viterbo's proposed bound: its systolic ratio is
+\[
+s_0=\operatorname{sys}(K_{\mathrm{HKO}})
+   =\frac{3+\sqrt5}{5}>1.
+\]
+Here the systolic ratio is the scale-invariant quantity
+\(\operatorname{sys}(K)=c_{\mathrm{EHZ}}(K)^2/(2\operatorname{vol}_4 K)\),
+where \(c_{\mathrm{EHZ}}\) denotes the Ekeland–Hofer–Zehnder capacity.
+Finding one counterexample leaves a natural question: can a small change to this example increase the ratio further? Among polytopes with the same number of facets, the answer is no.
+
+**Theorem.** Let \(K_{\mathrm{HKO}}\) be the ten-facet HKO body. There is a neighborhood \(\mathcal U\) of this body, in the Hausdorff topology on polytopes with exactly ten facets, such that
+\[
+\operatorname{sys}(K)\le s_0\qquad(K\in\mathcal U).
+\]
+Equality holds precisely for those bodies in \(\mathcal U\) obtained from \(K_{\mathrm{HKO}}\) by translation, positive scaling and a linear symplectic transformation.
+
+Thus a nearby improvement requires leaving this ten-facet neighborhood. The theorem does not exclude improvements farther away, or by perturbations that change the number of facets. The equality clause matters: the ratio cannot decrease under every perturbation, because the transformations just listed preserve it. Strict decrease concerns changes remaining after these symmetries are removed.
+
+## Choosing bounds that detect every perturbation
+
+After removing the symmetry directions, we seek a finite collection of smooth upper bounds for the systolic ratio. Each must agree with the ratio at HKO. To force a strict maximum, the collection must also detect every nonzero remaining direction: in each direction at least one bound must have negative derivative. A bound useful in one direction can increase in another; this is why we select a collection rather than a single bound.
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[x=1.8cm,y=1.2cm]
+    \fill[black!8] (-1.8,-0.35) -- (-1.8,0.2) -- (0,2)
+      -- (1.8,0.2) -- (1.8,-0.35) -- cycle;
+    \draw[->,black!55] (-2.05,0) -- (2.1,0) node[right] {$x$};
+    \draw[->,black!55] (0,-0.45) -- (0,4.1);
+    \node[below left] at (0,0) {$0$};
+    \draw[dashed,thick] (-1.8,3.8) -- (0,2);
+    \draw[dashed,thick] (0,2) -- (1.8,3.8);
+    \draw[very thick] (-1.8,0.2) -- (0,2) -- (1.8,0.2);
+    \fill (0,2) circle (1.8pt);
+    \node[anchor=east,fill=white,inner sep=2pt] at (-0.07,2) {$s_0$};
+    \node[above] at (-1.8,3.95) {$s_0-x$};
+    \node[above] at (1.8,3.95) {$s_0+x$};
+    \node[anchor=west,fill=white,inner sep=2pt] at (0.9,1.25)
+      {$s_0-|x|$};
+  \end{tikzpicture}
+  \caption{Two touching upper bounds in one variable. Suppose
+  \(f(0)=s_0\), \(f(x)\leq s_0+x\), and \(f(x)\leq s_0-x\).
+  For \(x>0\) the second bound decreases; for \(x<0\) the first does.
+  Thus \(f(x)\leq s_0-|x|<f(0)\) whenever \(x\ne0\).
+  The bold line is the lower envelope of the two bounds, not the graph of
+  \(f\); the shaded region lies below both bounds.}
+\end{figure}
+
+To construct and compare such bounds, we use the labelled polar vertices of nearby ten-facet bodies as coordinates:
+\[
+K(a)=\{x\in\mathbb R^4:\langle a_i,x\rangle\le1,\ i=1,\ldots,10\},
+\qquad a=(a_1,\ldots,a_{10}).
+\]
+Write \(a_0=a_{\mathrm{HKO}}\) for the HKO point and \(V(a)=\operatorname{vol}_4(K(a))\). The local chart theorem ensures that these 40 coordinates cover all sufficiently close ten-facet bodies. The HKO body is simple; sufficiently small labelled perturbations retain its face lattice, so \(V(a)\) is positive and smooth in this chart. The symmetry orbit has tangent dimension 15. A transverse slice \(a_0+S\), with \(\dim S=25\), removes those directions; locally, every nearby body is a symmetry transform of a point on the slice. We therefore need bounds whose derivatives detect every nonzero direction in \(S\).
+
+## Constructing one touching upper bound
+
+The Haim–Kislev formula supplies upper bounds from feasible weights. Fix an ordered list \(\sigma=(\sigma_1,\ldots,\sigma_m)\) of distinct facets. A weight vector \(\beta\) is feasible when
+\[
+\beta_k\ge0,\qquad \sum_k\beta_k=1,\qquad
+\sum_k\beta_k a_{\sigma_k}=0.
+\]
+For these weights put
+\[
+Q_\sigma(a,\beta)=\sum_{1\le j<k\le m}
+\beta_j\beta_k\,\omega_0(a_{\sigma_j},a_{\sigma_k}),
+\]
+where \(\omega_0\) is the standard symplectic form. The capacity formula is the reciprocal of twice the largest feasible value of \(Q\), over the ordered facet lists and their feasible weights. Thus any feasible choice with \(Q_\sigma(a,\beta)>0\) gives
+\[
+c_{\mathrm{EHZ}}(K(a))\le\frac{1}{2Q_\sigma(a,\beta)}.
+\]
+We want the weights to vary smoothly with \(a\), while attaining the capacity at \(a_0\), so that this bound touches at HKO.
+
+The witness for one bound consists of its list \(\sigma\), strictly positive base weights \(\beta^0\), and five indices \(I\) specifying which weights to solve for. Let \(C_\sigma(a)\) be the \(5\times m\) matrix with columns \((a_{\sigma_k},1)\), and put \(e=(0,0,0,0,1)^{\mathsf T}\). Then \(C_\sigma(a)\beta=e\) is exactly the closure and normalization condition above. The base checks are
+\[
+\begin{gathered}
+C_\sigma(a_0)\beta^0=e,\qquad \det C_{\sigma,I}(a_0)\ne0,\\
+Q_\sigma(a_0,\beta^0)=\frac{1}{2c_{\mathrm{EHZ}}(K_{\mathrm{HKO}})}.
+\end{gathered}
+\]
+Here \(C_{\sigma,I}\) denotes the submatrix of the five selected columns. Let \(J\) be the complementary indices and set \(b=\beta^0_J\). Keep these remaining weights fixed and solve the five equations for the selected five:
+\[
+\beta_{\sigma,J}(a)=b,\qquad
+\beta_{\sigma,I}(a)=C_{\sigma,I}(a)^{-1}
+\bigl(e-C_{\sigma,J}(a)b\bigr).
+\]
+The determinant stays nonzero near \(a_0\), so this formula is smooth. Substitution gives \(C_\sigma(a)\beta_\sigma(a)=e\); uniqueness of the five-variable solve gives \(\beta_\sigma(a_0)=\beta^0\). Consequently all weights remain positive in a sufficiently small neighborhood. The selected lists have length six or seven, so this construction holds one or two weights fixed.
+
+Shrinking the neighborhood if necessary, define
+\[
+\begin{aligned}
+q_\sigma(a)&=Q_\sigma(a,\beta_\sigma(a))>0,
+&A_\sigma(a)&=\frac{1}{2q_\sigma(a)},\\
+U_\sigma(a)&=\frac{A_\sigma(a)^2}{2V(a)}
+=\frac{1}{8V(a)q_\sigma(a)^2}.
+\end{aligned}
+\]
+Feasibility gives \(c_{\mathrm{EHZ}}(K(a))\le A_\sigma(a)\); squaring and dividing by twice the volume gives \(\operatorname{sys}(K(a))\le U_\sigma(a)\). The base value of \(Q_\sigma\) gives equality at \(a_0\). This constructs the required smooth touching upper bound from finite data.
+
+## Why the selected bounds suffice
+
+The certificate selects 26 such bounds. Write \(r_\sigma=DU_\sigma(a_0)|_S\) for their derivatives restricted to the transverse slice. Exact checks establish that these covectors span \(S^*\) and satisfy
+\[
+\sum_{\sigma\in\Sigma}\lambda_\sigma r_\sigma=0,
+\qquad\lambda_\sigma>0,\qquad
+\sum_{\sigma\in\Sigma}\lambda_\sigma=1,
+\qquad |\Sigma|=26.
+\]
+Take a nonzero direction \(h\in S\). Spanning ensures that not every \(r_\sigma(h)\) is zero. Their positive weighted sum is zero, so at least one must be negative. Thus the selected bounds detect every transverse direction in precisely the way we sought.
+
+To obtain a neighborhood statement, consider the continuous function \(h\mapsto\min_\sigma r_\sigma(h)\) on the unit sphere in \(S\). It is strictly negative, so compactness bounds it above by a fixed negative number. The Taylor remainders of the finitely many smooth upper functions are smaller than this linear decrease for all sufficiently small perturbations. Hence the systolic ratio strictly decreases off the origin of the slice. Every nearby body is a symmetry transform of a slice point, and the ratio is invariant under those transformations. This proves both local maximality and the equality clause.

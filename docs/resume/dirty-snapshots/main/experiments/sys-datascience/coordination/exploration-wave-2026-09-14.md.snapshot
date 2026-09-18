@@ -1,0 +1,104 @@
+# Small exploration wave, 14 September 2026
+
+Three small experiments completed and passed focused independent review. Equalizing polygon support heights produced a small, heterogeneous paired
+gain. A fixed rotation policy improved several starting bodies but lost to drawing
+fresh shapes under the tested allocation. The first thin CEM-versus-IID run
+stopped on unsupported input geometry. A separately frozen compatibility-corrected
+run completed and CEM beat IID on both reported quality measures in all three seeds.
+
+These are additions to the [reviewed existing evidence](datascience-review-2026-09-14.md),
+not a replacement for that evidence or a determination that exploration should stop.
+The question remains whether AI-assisted exploration helps choose or change bodies
+in ways that advance the mathematical search. Methods supply evidence about that
+attempt; their count is not its measure of success.
+
+## Completed results
+
+| Experiment | Complete design | Finding | Measured machine cost |
+| --- | --- | --- | --- |
+| [Paired support-height changes](../methods/paired-tangentialization/README.md) | Eight latent pairs each in 4×4 and 4×6; baseline/q-only/p-only/both, 64 successful evaluations | Both-minus-baseline mean +0.0152685; 11/16 positive. Bucket means +0.0039814 and +0.0265556. Negative effects remain. | Cached build 2.14s; complete construction 1.91s; evaluator 1.41s; evaluator peak RSS about 35MiB. |
+| [Rotation versus fresh shapes](../methods/orientation-allocation/README.md) | Two blocks each in 3×3 and 4×4; 16 requests per arm, shared starts; 124 unique evaluations / 128 charged memberships | IID wins all four final-max comparisons. Orientation-minus-IID mean −0.144928; rotation improves three starting bodies but costs more in every block. | Cached build 3.19s; generation .57s; evaluator 13.29s; evaluator peak RSS about 35MiB. |
+
+The first experiment tests a geometric intervention, not competing best-of-budget
+policies. It conditions on all four arm geometries being admissible before target
+evaluation. It does not establish universal benefit from tangentialization. Its
+maximum recorded ratio is .741470.
+
+The second tests one fixed orientation allocation on four fresh bases. It includes
+the cost of a U(2) control in each orientation arm. It does not test an optimized
+or adaptive orientation policy, or a population distribution over all shapes.
+All geometric and U(2) controls passed. Its maximum recorded ratio is .773536.
+Neither experiment found a value above one.
+
+The [supported-v2 CEM comparison](../methods/diagonal-cem-pilot/supported-v2-report.md)
+used 256 charged calls per arm in each of three seeds. Each seed shared its first
+64 IID candidates between arms; later CEM populations used the existing diagonal
+update, with population 64, 16 elites, four generations, smoothing .5 and variance
+floor .05. All 1,344 actual requests succeeded, representing 1,536 charged calls.
+
+| Seed suffix | IID maximum | CEM maximum | IID best-eight median | CEM best-eight median | IID / CEM measured arm seconds |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 301 | .759574 | .798513 | .728815 | .782274 | 50.62 / 35.29 |
+| 302 | .810904 | .831348 | .753788 | .776334 | 47.41 / 35.45 |
+| 303 | .760068 | .855655 | .722310 | .813742 | 46.21 / 36.45 |
+
+Arm seconds include generation, updates and evaluator processes, with shared
+initialization charged to both arms. CEM achieved better terminal values in less
+measured process time in each pair. This is not an equal-wall-budget design or a
+general optimizer ranking. The corrected run was exposed to v1 and is explicitly
+not an untouched confirmatory replication.
+
+The complete v2 run took 215.797 seconds: 182.245 seconds generating bodies,
+.053 seconds updating CEM, and 32.915 seconds in evaluator processes. The latter
+includes 26.805 seconds of individual request clocks. All 4,407 construction
+attempts and 3,063 rejections are preserved. Two proposals failed the new
+target-free evaluator-admission check. No target failed or exceeded one.
+
+Independent review reconciled all 21 batches, nine updates (including circular
+phase), frozen identities, population/elite links, costs and final metrics. The
+original failed run and its matching source/binary bytes remain separately
+preserved. This supplies an actual small adaptive-search result where the older
+prototype supplied only implementation and failed-execution evidence.
+
+Both use the [current arbitrary-body evaluator](../methods/current-body-evaluator/README.md):
+exact stored binary64 geometry, capacity bounds from the current production API,
+and numerical volume from that same reconstructed geometry. The resulting ratio
+remains numerical. Historical tables are not retroactively upgraded by these runs.
+
+## What was checked
+
+The independent reviewer checked all paired factor/normal relationships,
+normalization, input/result joins, complete memberships, transformed coordinates,
+controls, source/input identities, scalar formulas, cost accounting and reported
+contrasts. No material experiment-logic defect was found. There were no failed or
+dropped evaluations. The reviewer did not rerun capacity computations or audit the
+capacity library's mathematical correctness.
+
+Orientation dispatch followed actual geometry. Some non-symplectic rotations
+preserve coordinate-product form; the actual route mix was 72 product and 52
+general requests. Reporting all rotated bodies as general would be incorrect.
+The timing comparison uses full request and proposal costs, including shared-start
+cost charged to both arms, rather than only the capacity subroutine's time.
+
+## Execution and next use
+
+Implementations were developed in parallel. Evaluator batches ran serially under
+a shared lock with two-thread limits, preserving interpretable request timings.
+Inputs and designs were fixed before targets. Each packet retains source,
+commands, construction failures, geometry, results, validation and actual costs.
+
+Jörn corrected the coordinator's initial use of long stop ceilings in place of
+resource estimates, and its unnecessary approval/serial-planning step for these
+small tasks. The observed work fit a small edit/run/write-up operation. Machine
+costs above are measured; model-token costs and exact authoring/review elapsed
+cost were not instrumented. Future small tasks should receive brief substantive
+assessment, use parallelism where helpful, and escalate concrete constraints or
+scope expansion rather than acquire a default approval gate.
+
+The first wave now supplies three distinct observations: a heterogeneous paired
+shape effect, an unfavorable fixed rotation allocation, and a favorable small
+adaptive product-search comparison. None resolves the global threshold search
+or establishes that further exploration should stop. The fresh two-page prose
+sample is built and remains fixed while Jörn reviews its reading experience.
+The next mathematical writing input being recovered is the missing concrete HKO
+geometry, volume derivative and a worked feasible-section certificate row.

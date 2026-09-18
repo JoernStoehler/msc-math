@@ -1,0 +1,7 @@
+Floating-point evaluations
+
+every angle is equivalent to d(θ) in that interval
+
+The endpoint values come from the Haim–Kislev–Ostrover example
+
+first harmonic

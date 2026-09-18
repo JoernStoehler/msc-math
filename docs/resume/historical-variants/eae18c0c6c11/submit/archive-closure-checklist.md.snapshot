@@ -1,0 +1,59 @@
+# Archive Closure Checklist
+
+Use this at final repository/Zenodo closure. It records accepted direction and
+remaining work; it does not authorize publication or expensive recomputation.
+
+## Final repository state
+
+- [ ] Preserve the useful closure-time repository state as the continuation
+      surface, including agent infrastructure and ordinary project context.
+- [ ] Remove raw session logs, credentials/authentication state, and genuinely
+      private correspondence.
+- [ ] Remove downloaded papers, publisher figures, university forms after they
+      are no longer needed for submission, copied vendor text, and other
+      third-party material without clear redistribution permission. Retain or
+      relocate project-authored notes, bibliography metadata, source maps, and
+      original assets from mixed directories.
+- [ ] Retain applicable third-party license notices.
+- [ ] Do not rewrite Git history merely for the Zenodo snapshot. Do not submit
+      inherited history to Software Heritage while unclear third-party material
+      remains reachable; omit Software Heritage unless a clean origin has a
+      concrete preservation benefit.
+
+## Final data state
+
+- [ ] Beside each experiment producer, classify current artifacts as
+      final/useful or disposable. Preserve data that lets a future agent inspect,
+      interpret, validate, or continue a result without first repeating
+      expensive computation.
+- [ ] Delete or ignore smoke outputs, superseded intermediates, duplicate
+      encodings without a consumer, disposable caches, and cheaply regenerated
+      data with no immediate interpretive value.
+- [ ] Commit small, inspectable, diff-friendly final data. Publish bulk useful
+      data as immutable R2 snapshots and review their registry entries. Size
+      determines storage mechanism; regeneration cost and downstream value
+      determine retention.
+- [ ] Materialize every registry entry marked for release from an empty cache
+      and verify that the Zenodo ZIP contains ordinary files at the documented
+      paths. Unregistered historical objects need not be copied into Zenodo.
+- [ ] Recheck the final thesis claims against retained artifacts after the
+      data-science and first-order wording closes. Smoke success is plumbing,
+      not thesis evidence.
+
+## Final release
+
+- [ ] Run the clean documented environment and record material version drift.
+- [ ] Align `scripts/build-release.py` with the accepted thesis assembly: it
+      currently builds the earlier `thesis/main.tex`, while the working source
+      is `thesis/candidate/main.tex`. See [reproduction](../docs/reproducibility.md).
+- [ ] Build and check the accepted PDF from the exact release commit. The PDF
+      remains generated/Git-ignored and is added to the release ZIP.
+- [ ] Independently review and externally record the literal full release commit
+      SHA. The packaging command must compare this value with `HEAD`.
+- [ ] Build the ZIP, reopen it, extract it without `.git`, and verify its exact
+      file inventory and hashes.
+- [ ] Complete the final figure/font/third-party-rights review.
+- [ ] Prepare `CITATION.cff` and Zenodo metadata when the final title, authorship,
+      identifiers, commit, and payload are stable.
+- [ ] Jörn reviews the prepared Zenodo draft and performs the exterior publish
+      action. Record the DOI and final URLs afterward.

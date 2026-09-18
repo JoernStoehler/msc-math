@@ -1,0 +1,191 @@
+{
+  "status": "exact rational feasible-HK upper bound plus strict geometric containment",
+  "parameter_interval": "1 < k <= 21/20 gives area(A)<area(B)",
+  "proof": "coefficient k-dependence and interval inequalities in lift-persistence.md",
+  "cases": [
+    {
+      "k": "1",
+      "vertices_a": [
+        [
+          "2",
+          "0"
+        ],
+        [
+          "-1",
+          "2"
+        ],
+        [
+          "-1",
+          "-2"
+        ]
+      ],
+      "vertices_b": [
+        [
+          "8/5",
+          "6/5"
+        ],
+        [
+          "-2",
+          "1"
+        ],
+        [
+          "2/5",
+          "-11/5"
+        ]
+      ],
+      "area_a": "6",
+      "area_b": "6",
+      "tangent_theta": "4/5",
+      "fit_radius": "24/25",
+      "fit_translation": [
+        "-16/125",
+        "64/375"
+      ],
+      "translated_lift_vertices": [
+        [
+          "-16/125",
+          "-536/375"
+        ],
+        [
+          "184/125",
+          "364/375"
+        ],
+        [
+          "-216/125",
+          "364/375"
+        ]
+      ],
+      "fit_facet_values": [
+        [
+          "-32/25",
+          "4/5",
+          "24/25"
+        ],
+        [
+          "24/25",
+          "-44/25",
+          "4/5"
+        ],
+        [
+          "8/25",
+          "24/25",
+          "-44/25"
+        ]
+      ],
+      "hk_word": [
+        0,
+        3,
+        2,
+        5,
+        1,
+        4
+      ],
+      "hk_weights": [
+        "1/15",
+        "1/15",
+        "1/15",
+        "4/15",
+        "4/15",
+        "4/15"
+      ],
+      "within_a": "-1/6",
+      "within_b": "1/6",
+      "cross": "2/3",
+      "inverse_action_divided_by_cos": "139/750",
+      "pure_a_inverse_divided_by_cos": "1/6",
+      "relative_inverse_action_gain": "14/125"
+    },
+    {
+      "k": "21/20",
+      "vertices_a": [
+        [
+          "2",
+          "0"
+        ],
+        [
+          "-1",
+          "2"
+        ],
+        [
+          "-1",
+          "-2"
+        ]
+      ],
+      "vertices_b": [
+        [
+          "42/25",
+          "63/50"
+        ],
+        [
+          "-21/10",
+          "21/20"
+        ],
+        [
+          "21/50",
+          "-231/100"
+        ]
+      ],
+      "area_a": "6",
+      "area_b": "1323/200",
+      "tangent_theta": "4/5",
+      "fit_radius": "32/35",
+      "fit_translation": [
+        "-16/125",
+        "64/375"
+      ],
+      "translated_lift_vertices": [
+        [
+          "-16/125",
+          "-536/375"
+        ],
+        [
+          "184/125",
+          "364/375"
+        ],
+        [
+          "-216/125",
+          "364/375"
+        ]
+      ],
+      "fit_facet_values": [
+        [
+          "-128/105",
+          "16/21",
+          "32/35"
+        ],
+        [
+          "32/35",
+          "-176/105",
+          "16/21"
+        ],
+        [
+          "32/105",
+          "32/35",
+          "-176/105"
+        ]
+      ],
+      "hk_word": [
+        0,
+        3,
+        2,
+        5,
+        1,
+        4
+      ],
+      "hk_weights": [
+        "1/15",
+        "1/15",
+        "1/15",
+        "4/15",
+        "4/15",
+        "4/15"
+      ],
+      "within_a": "-1/6",
+      "within_b": "200/1323",
+      "cross": "40/63",
+      "inverse_action_divided_by_cos": "2267/13230",
+      "pure_a_inverse_divided_by_cos": "1/6",
+      "relative_inverse_action_gain": "62/2205"
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "frozen_at": "2026-09-18T13:05:36.465699+00:00",
+  "files": [
+    {
+      "source": "/workspaces/msc-math/.worktrees/candidate-assembly-integration/thesis/candidate/recovered/thesis-candidate/01-introduction.tex",
+      "frozen": "inputs/introduction.tex",
+      "sha256": "5561acee661845aad17aedfc6ac1056cafd71b570ae2284df0894dc1a792adac",
+      "whitespace_tokens": 1327
+    },
+    {
+      "source": "/workspaces/msc-math/.worktrees/candidate-assembly-integration/thesis/candidate/recovered/thesis-candidate/06-variation.tex",
+      "frozen": "inputs/variation.tex",
+      "sha256": "f277d4bfdf865ee4edb340dda96a841810ef474525798fd46e5f7d7303534511",
+      "whitespace_tokens": 1893
+    },
+    {
+      "source": "/workspaces/msc-math/.worktrees/candidate-assembly-integration/thesis/candidate/11-numerics.tex",
+      "frozen": "inputs/numerics.tex",
+      "sha256": "d50448a61a17f12de2afcf310367426ecd84727a0a38c1cb813f762f7f099414",
+      "whitespace_tokens": 1226
+    },
+    {
+      "source": "/workspaces/msc-math/.worktrees/candidate-assembly-integration/thesis/candidate/main.tex",
+      "frozen": "inputs/main.tex",
+      "sha256": "15761808d8757e590d9c4ae85e81a2b0c2757910aa25da38acc8750ed0a6e70e",
+      "whitespace_tokens": 96
+    },
+    {
+      "source": "/workspaces/msc-math/.worktrees/candidate-assembly-integration/thesis/candidate/legacy/preamble.tex",
+      "frozen": "inputs/preamble.tex",
+      "sha256": "3dd932fb29bd8a7c44f5f7a8fef28453caca276755925e43129e097ff97fc566",
+      "whitespace_tokens": 107
+    },
+    {
+      "source": "/workspaces/msc-math/.worktrees/reviewer-trial/docs/reviewer-trial/development/reproduction-detail-prompt.md",
+      "frozen": "prompts/reproduction-detail-prompt.md",
+      "sha256": "4272fb2802d237768c47a063f2e58233a34d82ac90d3fcfe9274fb16366f7fe5"
+    },
+    {
+      "source": "/workspaces/msc-math/.worktrees/reviewer-trial/docs/reviewer-trial/development/qualifications-prompt.md",
+      "frozen": "prompts/qualifications-prompt.md",
+      "sha256": "f686476bd1710db927927f900cb2b53b2e708d64d41fbcf936be46fb0ad196ef"
+    }
+  ],
+  "runs": [
+    {
+      "raw": "raw/introduction-reproduction.md",
+      "sha256": "a5ca948d13fc3fffc9d906351c818d17af650b844f8208e10dcdfec77f8c4aee",
+      "flags": 2
+    },
+    {
+      "raw": "raw/introduction-qualifications.md",
+      "sha256": "a14ae3adb4ee175e91e5d43a50d23719bbe9ecdb6a47b966fbbd68ac48c61e4a",
+      "flags": 2
+    },
+    {
+      "raw": "raw/numerics-reproduction.md",
+      "sha256": "b0f6278b9678186f291b6df20b9e57fe8be1ada2966326a3c03fc69466c94a3d",
+      "flags": 3
+    },
+    {
+      "raw": "raw/numerics-qualifications.md",
+      "sha256": "51bd55aaba8cfe817caba3965005690b12039f753007e73a856c32c7bd248057",
+      "flags": 3
+    },
+    {
+      "raw": "raw/variation-reproduction.md",
+      "sha256": "e67f5c1bac95f5c8eba9aa64742a3d7612a72124661f3360a1959f33db0b68a0",
+      "flags": 1
+    },
+    {
+      "raw": "raw/variation-qualifications.md",
+      "sha256": "156810beb272d14042f1073078cb55b6d8344f4a6d9196d8200a415d31f3ca04",
+      "flags": 2
+    }
+  ],
+  "inventory_completed_at": "2026-09-18T13:08:34.598677+00:00",
+  "total_flags": 13,
+  "human_adjudications": 0
+}

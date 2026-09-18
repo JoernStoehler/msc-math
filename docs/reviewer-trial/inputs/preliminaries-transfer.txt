@@ -1,0 +1,396 @@
+2     Preliminaries
+The later computations replace a boundary-dynamics problem by finite data from the facets of
+a polytope. This section fixes the common language needed for that passage: action and contact
+normalization, the EHZ capacity and systolic ratio, normalized facet data and Lagrangian
+products, and finally Clarke’s position-free dual problem. The next section will specialize these
+objects to polytopes and prove that the capacity problem contains a finite pure-facet minimizer.
+    All convex bodies below are compact convex subsets of R4 with non-empty interior. Unless
+stated otherwise, the origin lies in the interior.
+
+2.1   Convex and symplectic notation
+We write R4 with coordinates (q1 , q2 , p1 , p2 ). The standard complex structure is
+                                                             !
+                                               0 −I2
+                                        J0 =         ,
+                                               I2 0
+
+and the standard symplectic form is
+                                                     2
+                           ω0 (u, v) = ⟨J0 u, v⟩ =         (uqi vpi − upi vqi ).
+                                                     X
+
+                                                     i=1
+
+We will use J02 = −I, J0T = −J0 , and ω0 (J0 u, J0 v) = ω0 (u, v) without further comment. We
+use the standard primitive
+                                          2
+                                       1X
+                                  λ0 =       (qi dpi − pi dqi ).
+                                       2 i=1
+
+                                                 7
+Thus dλ0 = ω0 and λ0 |x (v) = 12 ⟨−J0 v, x⟩. Thus, for an absolutely continuous closed curve
+γ : [0, T ] → R4 , its action is
+
+                                              1
+                                      Z              Z T
+                            A(γ) :=      λ0 =              ⟨−J0 γ̇(t), γ(t)⟩ dt.                (1)
+                                       γ      2       0
+
+This action is invariant under orientation-preserving reparametrization. If γ bounds a smooth
+map u : D2 → R4 , then Stokes’ theorem gives
+                                                     Z
+                                          A(γ) =            u∗ ω0 .
+                                                      D2
+
+Thus action is the signed symplectic area enclosed by the curve. For Reeb orbits this is the
+quantity that the EHZ capacity minimizes.
+   Let K ⊂ R4 be a smooth convex body with 0 ∈ int(K). At x ∈ ∂K, the restriction of ω0 to
+the three-dimensional space Tx ∂K has a one-dimensional kernel,
+
+                       ℓx = {v ∈ Tx ∂K : ω0 (v, w) = 0 for all w ∈ Tx ∂K}.
+
+This is the characteristic line. A closed characteristic is a closed curve on ∂K whose velocity lies
+in the positive characteristic direction. We choose the positive direction by requiring λ0 (γ̇) > 0.
+    The restriction α = λ0 |∂K is a contact form. Its Reeb vector field R is the contact-normalized
+characteristic direction,
+
+                        α(Rx ) = 1,       ω0 (Rx , v) = 0        for all v ∈ Tx ∂K.
+
+A Reeb orbit is a periodic integral curve of R. It is the same geometric object as a closed
+characteristic, with the parametrization fixed by λ0 (γ̇) = 1. Consequently, if γ is a Reeb orbit
+on [0, T ], then
+                                              Z T
+                                     A(γ) =         λ0 (γ̇(t)) dt = T.
+                                               0
+This is the sense in which the action of a contact-normalized Reeb orbit is also its period.
+
+2.2   Convex Hamiltonians
+The smooth characteristic line field has a convex-analytic formulation that continues to make
+sense when ∂K is not smooth. For a convex body K containing the origin, its support and
+gauge functions are
+
+                     hK (y) := max⟨x, y⟩,           gK (x) := inf{r > 0 : x ∈ rK}.
+                               x∈K
+
+The boundary is the level set gK = 1. We use the convex, 2-homogeneous Hamiltonian
+
+                                          HK (x) := gK (x)2 .
+
+For a convex function H, its subdifferential at x is
+
+                      ∂H(x) = {y : H(z) ≥ H(x) + ⟨y, z − x⟩ for every z}.
+
+When H is differentiable, this set consists only of ∇H(x).
+
+Definition 2.1 (Contact-normalized generalized characteristic). A contact-normalized general-
+ized characteristic on ∂K is a curve γ ∈ W 1,2 ([0, T ], R4 ), with T > 0 and γ(0) = γ(T ), whose
+image lies in ∂K and which satisfies
+
+                       −J0 γ̇(t) ∈ ∂HK (γ(t))        for almost every t ∈ [0, T ].              (2)
+
+                                                     8
+                                                        rHK (x)
+                                                                         ¡J0 Rx = rHK (x)
+                                                                                ¸0 (Rx ) = 1
+
+                                                              `x = ker(!0 j Tx ∂K )
+                                                                           Z T
+                                             x                          x ∂K ¸0 (°)
+                                                                   A(°)T=        _ dt = T
+                                                                              0
+
+              Rx = J0 rHK (x)
+
+Figure 1: The characteristic and contact normalizations at a smooth boundary point. This
+is a dimension-reduced tangent-space schematic: it records that Rx = J0 ∇HK (x) spans the
+characteristic line inside Tx ∂K, but projected angles and lengths carry no meaning. The contact
+condition λ0 (Rx ) = 1 turns elapsed time into action.
+
+
+    For smooth K, the subdifferential in (2) is the singleton {∇HK }. The resulting Hamiltonian
+vector is tangent to the characteristic line on ∂K. Thus the definition recovers the Reeb orbits
+described above, including their parametrization.
+    The normalization also persists without smoothness. Indeed, if y ∈ ∂HK (x), then the
+2-homogeneity of HK gives
+                                         ⟨y, x⟩ = 2HK (x).
+Along a generalized characteristic, HK (γ) = 1, and hence
+                                     1
+                   λ0 |γ(t) (γ̇(t)) = ⟨−J0 γ̇(t), γ(t)⟩ = 1    for almost every t.
+                                     2
+Consequently every contact-normalized generalized characteristic satisfies
+
+                                             A(γ) = T.                                         (3)
+
+    This formulation separates the general nonsmooth dynamical object from its finite description
+on a polytope. The latter will follow by calculating the subdifferential of HK from the active
+facets.
+
+2.3   EHZ capacity
+For smooth convex bodies, the Ekeland–Hofer and Hofer–Zehnder capacities coincide. The
+common value is the least action needed to close up a characteristic trajectory on the boundary.
+We use the resulting EHZ capacity in the form
+
+                  cEHZ (K) = min{A(γ) : γ is a closed characteristic on ∂K}.                   (4)
+
+This is the smooth least-action characterization of [AO14, Theorem 2.2]. Equivalently, the mini-
+mum may be taken over Reeb orbits. The contact normalization only chooses the parametrization
+of each characteristic, while the action is a line integral and is invariant under orientation-
+preserving reparametrization. For a contact-normalized representative, A(γ) is also the period.
+The same least-action theorem gives a positive attained minimum. For nonsmooth convex
+bodies, and in particular for polytopes, the same capacity is obtained by approximation and by
+
+
+                                                  9
+minimizing over the generalized characteristics of Definition 2.1 [AO14, Proposition 2.7]. Their
+finite facet description on a polytope is derived in Section 3.
+    As a symplectic capacity on convex bodies, cEHZ is monotone under inclusion, invariant
+under symplectomorphisms, and conformal:
+
+                                 cEHZ (λK) = λ2 cEHZ (K)      (λ > 0).
+
+It is normalized by
+                                 cEHZ (B 4 (r)) = cEHZ (Z 4 (r)) = πr2 ,
+where B 4 (r) is the radius-r ball and Z 4 (r) = B 2 (r) × R2 is the symplectic cylinder. These
+axioms are used only as background; the finite computations below use the minimum-action
+and quadratic-program descriptions.
+   Throughout the thesis, vol4 denotes four-dimensional Lebesgue measure in the coordinate
+order (q1 , q2 , p1 , p2 ). In dimension four we measure the normalized capacity-to-volume ratio by
+
+                                                    cEHZ (K)2
+                                        sys(K) :=              .                                     (5)
+                                                    2 vol4 (K)
+With this normalization, Viterbo’s conjecture for four-dimensional convex bodies says
+
+                      sys(K) ≤ 1,       equivalently      cEHZ (K)2 ≤ 2 vol4 (K)
+
+[Vit00]. Later sections use sys for this ratio for polytopes as well, via the same capacity value
+discussed above.
+
+Definition 2.2 (Systolic-ratio symmetries). Let
+
+                      Gsys = {x 7→ b + ρM x : b ∈ R4 , ρ > 0, M ∈ Sp(4, R)}.
+
+This is the group of affine transformations generated by translations, positive scalings, and linear
+symplectic transformations.
+
+Lemma 2.3 (Systolic-ratio invariance). For every convex body K ⊂ R4 and every g ∈ Gsys ,
+
+                                          sys(gK) = sys(K).
+
+Proof. Translations and linear symplectic transformations are symplectomorphisms, so they
+preserve cEHZ . They also preserve four-dimensional volume, because translations do not change
+volume and every symplectic matrix has determinant 1. A positive scaling by ρ gives
+
+                       cEHZ (ρK) = ρ2 cEHZ (K),         vol4 (ρK) = ρ4 vol4 (K).
+
+Substituting these identities in (5) shows that the ratio is unchanged.
+
+    This is a geometric symmetry group acting on unlabelled convex bodies. In a labelled
+coordinate chart, the same unlabelled body may also be represented after relabelling facets or
+inequalities; that relabelling ambiguity is a coordinate issue, not an additional element of Gsys .
+
+Proposition 2.4 (Continuity). Let Kt be a family of four-dimensional convex bodies which
+is continuous in the Hausdorff topology. Then cEHZ (Kt ) is continuous in t. If, moreover,
+t 7→ vol4 (Kt ) is positive, finite, and continuous, then the systolic ratio of the family is continuous.
+
+Proof. The EHZ capacity is C 0 -continuous on convex bodies with respect to the Hausdorff metric
+[CH21]. The assertion for sys is then ordinary continuity of the quotient in (5). In the applications
+below the volume hypothesis is usually automatic, since four-volume is continuous under
+Hausdorff convergence of convex bodies; for the rotated-polygon family it is even constant.
+
+                                                   10
+2.4     Polytope input language
+The finite methods represent polytopes by normalized halfspaces. Let K ⊂ R4 be full-dimensional
+with 0 ∈ int(K). We write
+                              K = {x ∈ R4 : ⟨ai , x⟩ ≤ 1, i = 1, . . . , F }.                   (6)
+If ni is the outward unit normal to the corresponding supporting hyperplane and hi = hK (ni ) > 0
+is its height, then
+                                                   ni
+                                              ai = .
+                                                   hi
+For an irredundant description, the vectors ai are precisely the vertices of the polar body
+                                        K ◦ = conv{a1 , . . . , aF }.
+
+
+                 facet of K                                             polar vertex
+                                         ni
+
+                                                                                  ai = ni =hi
+                              Fi
+                         hi
+
+
+
+
+                                                                            ©           ª
+                                                                  K ± = conv a1 ; …; aF
+
+
+Figure 2: Facet normalization and polarity in a planar model. The supporting line ⟨ni , x⟩ = hi
+becomes ⟨ai , x⟩ = 1 after setting ai = ni /hi , and that row is a vertex of the polar polygon. The
+same facet–polar-vertex correspondence holds in four dimensions; the planar metric proportions
+are specific to this example and are not part of the duality statement.
+
+   Conversely, the normalized halfspaces define a bounded full-dimensional polytope containing
+the origin in its interior exactly when 0 ∈ int conv{ai }. The description is irredundant exactly
+when the listed vectors are pairwise distinct and every ai is an extreme point of this convex hull.
+   The ordered list (a1 , . . . , aF ) is a labelled presentation. Relabelling the same inequalities
+does not change the unlabelled convex body, but labels matter when an algorithm records facet
+words or when a local calculation uses the ai as coordinates.
+
+2.5     Lagrangian products
+Write
+                                   R4 = R2q ⊕ R2p = {(q1 , q2 , p1 , p2 )}.
+Definition 2.5 (Lagrangian product). For planar convex bodies Kq , Kp ⊂ R2 , their Lagrangian
+product is
+                 Kq ×L Kp = {(q1 , q2 , p1 , p2 ) : (q1 , q2 ) ∈ Kq , (p1 , p2 ) ∈ Kp }.   (7)
+Thus Kq occupies the Lagrangian q-plane and Kp occupies the Lagrangian p-plane. This is
+different from taking a product of planar domains in the symplectic coordinate planes (q1 , p1 )
+and (q2 , p2 ).
+
+                                                     11
+   The two decompositions pair the same four coordinates in different ways:
+
+           (q1 , q2 )   (p1 , p2 )         versus            (q1 , p1 )                  (q2 , p2 )         .
+           | {z }       | {z }                               | {z }                      | {z }
+              Kq           Kp                         first symplectic plane      second symplectic plane
+
+In block notation J0 (u, v) = (−v, u). Consequently, the Reeb direction associated later with a
+supporting row in one Lagrangian factor moves in the other factor. This exchange, rather than
+a Cartesian-product decoupling of the dynamics, is what makes Lagrangian products useful
+here.
+    The central examples of the thesis are Lagrangian products of polygons; their lifted facet rows
+and the resulting restricted word enumeration are introduced with the Haim–Kislev formula,
+where they are first used.
+
+2.6   Clarke’s dual action principle
+A curve constrained to lie on ∂K is difficult to modify: changing one velocity can move the
+rest of it off the boundary. We will instead work with closed curves in R4 and a functional
+that depends only on velocity. The dual action principle says that minimizing this functional
+recovers the capacity, and that a minimizer can be placed back on the boundary. This is the
+freedom used in the next section to rearrange facet velocities.
+    Recall HK = gK  2 , and define its convex conjugate by H ∗ (y) = sup (⟨x, y⟩ − H (x)). For a
+                                                            K           x           K
+closed curve z ∈ W 1,2 ([0, T ], R4 ) put
+
+                                                               1
+                                     Z T                             Z T
+                                            ∗
+                        IK (z) =           HK (−J0 ż(t)) dt =             hK (−J0 ż(t))2 dt.                  (8)
+                                      0                          4    0
+
+The last identity will be proved below. Our normalization is
+
+                        d(K) = inf{IK (z) : T > 0, z(0) = z(T ), A(z) = T }.                                    (9)
+
+The infimum is over Sobolev curves as above. Their positions are unrestricted; the action
+constraint fixes their size relative to their period.
+
+Theorem 2.6 (Dual action principle). For a convex body K ⊂ R4 with 0 ∈ int K, the infimum
+in (9) is attained and
+                             d(K) = cEHZ (K) = min A(γ),
+                                                                γ⊂∂K
+
+where the last minimum is over contact-normalized generalized characteristics. Every such
+characteristic satisfies IK (γ) = A(γ). Every dual minimizer can be rescaled and translated into
+a minimizing generalized characteristic, without changing its value of IK . If a dual minimizer
+already has IK (z) = T , only a translation is needed.
+
+   We use the nonsmooth variational results underlying Clarke’s principle [AO14, Proposition 2.5
+and Lemmas 5.1–5.2]; for polytopes the correspondence is also stated in [Hai19, Lemma 2.1].
+The following argument explains the conjugacy, normalization and reconstruction used here.
+
+The conjugate and its equality condition.
+                    ∗ (y) = h (y)2 /4, and
+Lemma 2.7. One has HK        K
+
+                                                      ∗
+                                            HK (x) + HK (y) ≥ ⟨x, y⟩.
+
+Equality holds exactly when y ∈ ∂HK (x), equivalently x ∈ ∂HK
+                                                            ∗ (y).
+
+
+
+
+                                                        12
+Proof. Write x = ru with r ≥ 0 and gK (u) = 1. For a fixed r, the largest value of ⟨x, y⟩ is
+rhK (y). Thus
+                           ∗
+                         HK  (y) = sup(rhK (y) − r2 ) = 41 hK (y)2 .
+                                       r≥0
+The inequality follows from the definition of the supremum. Equality says that x maximizes
+⟨x, y⟩ − HK (x), which is precisely the subgradient inequality defining y ∈ ∂HK (x). Applying
+conjugacy in the other direction gives the equivalent condition.
+
+The variational equation. A minimizer satisfies a weak Euler–Lagrange equation. Its useful
+form is
+                                  ∗
+                    νz(t) + b ∈ ∂HK (−J0 ż(t)) for almost every t,                   (10)
+for a constant vector b and a real multiplier ν.
+Definition 2.8 (Weak dual critical curve). A feasible curve satisfying this equation is called
+weak dual critical.
+     The constant b reflects the freedom to translate the curve. Conjugacy rewrites the same
+equation as −J0 ż ∈ ∂HK (νz + b), bringing it close to the characteristic equation.
+     To see the form of the variational equation, choose    p(t) ∈ ∂HK∗ (−J ż(t)). The derivative
+                                                                             0
+of action in a periodic variation v is DA(z)[v] = ⟨−J0 ż, v⟩. The cited nonsmooth multiplier
+                                                     R
+
+theorem provides a measurable L2 choice of p and the distributional equation expressing that the
+first variation of IK − νA vanishes. Integration by parts gives −J0 ṗ = −νJ0 ż in distributions,
+hence ṗ = ν ż and p = νz + b. The action constraint is regular because DA(z)[z] = 2T =      ̸ 0.
+These are the variational assertions invoked from the cited nonsmooth theorem; the calculation
+fixes their signs and constants in our convention.
+     For any weak critical curve, the multiplier is determined by its value. The two-homogeneity
+of HK ∗ gives ⟨p, y⟩ = 2H ∗ (y) when p ∈ ∂H ∗ (y). Pairing (10) with −J ż and integrating, the
+                          K                   K                            0
+constant vector contributes zero because the curve is closed. We obtain
+                                                              IK (z)
+                          2IK (z) = 2νA(z) = 2νT,         ν=         > 0.                      (11)
+                                                                 T
+Positivity follows since a feasible curve has positive action and is nonconstant, while HK     ∗ is
+
+positive away from zero.
+
+Reconstructing a boundary curve. Let z be weak critical and set x = νz + b and y = −J0 ż.
+Then y ∈ ∂HK (x). The convex chain rule gives
+                       d
+                         HK (x(t)) = ⟨y(t), ẋ(t)⟩ = ν⟨−J0 ż(t), ż(t)⟩ = 0.
+                      dt
+Thus HK (x) is constant. Fenchel equality and two-homogeneity give HK         ∗ (y) = H (x), so
+                                                                                       K
+                                                                  √
+integration shows that this constant is IK (z)/T = ν. Put c = ν and define
+                            γ(t) = c z(t/c2 ) + b/c,    0 ≤ t ≤ c2 T.
+Since γ = x(t/c2 )/c, it satisfies HK (γ) = 1. Subgradient homogeneity also gives
+                               −J0 γ̇(t) = y(t/c2 )/c ∈ ∂HK (γ(t)).
+This is the contact-normalized characteristic equation. Its period and action are c2 T = IK (z).
+Direct substitution in (8) gives IK (γ) = IK (z). In particular, when IK (z) = T we have c = 1,
+so reconstruction only translates the curve.
+    Conversely, a contact-normalized characteristic satisfies HK (γ) = 1 and −J0 γ̇ ∈ ∂HK (γ).
+Fenchel equality therefore gives HK ∗ (−J γ̇) = 1 almost everywhere. Consequently I (γ) = T =
+                                         0                                          K
+A(γ), and it is a feasible dual curve. An attained dual minimum reconstructs to a characteristic
+with the same value; every characteristic supplies a feasible dual value. This proves equality of
+the minima and, by the least-action characterization, their equality with capacity.
+
+                                                13
+Period convention and attainment. The cited fixed-period formulation uses w : [0, 1] → R4
+with A(w) = 1/2. If z is feasible in our convention, then
+
+                                      z(T s)
+                               w(s) = √      ,         IK (w) = 12 IK (z).
+                                        2T
+                     √
+Conversely, z(t) = 2T w(t/T ) is feasible for any chosen T > 0 and has IK (z) = 2IK (w). If
+the fixed-period formulation imposes mean zero, subtract the mean of w; translation changes
+neither its action nor IK . Thus the fixed-period attainment theorem applies to our infimum,
+with its factor of two accounted for. Choosing T = 2IK (w) gives an attained representative
+with IK (z) = T .
+    The distinction needed below is now concrete. Feasibility allows us to compare functional
+values, but does not place a curve on the boundary. Once a modified curve is shown to minimize
+IK , the variational equation and reconstruction justify placing it there. This is why rearranging
+velocities will be done in the dual problem first.
+

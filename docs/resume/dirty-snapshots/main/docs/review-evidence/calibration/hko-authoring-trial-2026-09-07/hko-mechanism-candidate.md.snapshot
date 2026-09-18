@@ -1,0 +1,71 @@
+# A local obstruction to improving the HKO example
+
+Let \(P_5\) be the centered regular pentagon of circumradius one with a vertex at \((1,0)\), and let \(R(\theta)\) denote counterclockwise rotation. In coordinates \((q,p)\in\mathbb R^2\times\mathbb R^2\), we use the representative
+\[
+K_{\mathrm{HKO}}=P_5\times_L R(-\pi/2)P_5
+=\{(q,p):q\in P_5,\ p\in R(-\pi/2)P_5\}.
+\]
+The subscript \(L\) emphasizes that the two factors occupy the Lagrangian \(q\)- and \(p\)-planes.
+
+The Haim-Kislev–Ostrover example disproves Viterbo's proposed bound: its systolic ratio is
+\[
+s_0=\operatorname{sys}(K_{\mathrm{HKO}})
+   =\frac{3+\sqrt5}{5}>1.
+\]
+Here the systolic ratio is the scale-invariant quantity
+\(\operatorname{sys}(K)=c_{\mathrm{EHZ}}(K)^2/(2\operatorname{vol}_4 K)\).
+Finding one counterexample leaves a natural question: can a small change to this example increase the ratio further? Among polytopes with the same number of facets, the answer is no.
+
+**Theorem.** Let \(K_{\mathrm{HKO}}\) be the ten-facet HKO body. There is a neighborhood \(\mathcal U\) of this body, in the Hausdorff topology on polytopes with exactly ten facets, such that
+\[
+\operatorname{sys}(K)\le s_0\qquad(K\in\mathcal U).
+\]
+Equality holds precisely for those bodies in \(\mathcal U\) obtained from \(K_{\mathrm{HKO}}\) by translation, positive scaling and a linear symplectic transformation.
+
+Thus a nearby improvement requires leaving this ten-facet neighborhood. The theorem does not exclude improvements farther away, or by perturbations that change the number of facets. The equality clause matters: the ratio cannot decrease under every perturbation, because the transformations just listed preserve it. Strict decrease concerns changes remaining after these symmetries are removed.
+
+## How upper bounds can force a maximum
+
+The proof does not need a formula for the capacity of every nearby polytope. Its mechanism is already visible in one variable. Suppose \(f(0)=s_0\) and, near zero,
+\[
+ f(x)\le s_0+x,\qquad f(x)\le s_0-x.
+\]
+Both upper bounds touch \(f\) at zero. Each rises in one direction, but their minimum gives
+\[
+ f(x)\le s_0-|x|<s_0\qquad(x\ne0).
+\]
+We need not know which bound is sharp away from zero, or whether either is sharp there at all. Nor have we asserted that \(f\) equals their minimum. The two inequalities alone force the maximum.
+
+For HKO there are 26 touching smooth upper functions. Their first derivatives play the role of the slopes \(+1\) and \(-1\), now on a 25-dimensional space of perturbations transverse to the symmetries. Write these derivatives as covectors \(r_1,\ldots,r_{26}\). The certificate establishes that they span the dual space and satisfy
+\[
+\sum_{i=1}^{26}\lambda_i r_i=0,
+\qquad\lambda_i>0,\qquad\sum_{i=1}^{26}\lambda_i=1.
+\]
+These conditions make the rows positively spanning. To see the consequence, take a nonzero transverse direction \(h\). Spanning ensures that not every \(r_i(h)\) is zero. Their positive weighted sum is zero, so at least one must be negative. Some touching upper bound therefore decreases in every direction, although the choice of bound can depend on that direction.
+
+This directional statement must hold uniformly to prove a neighborhood theorem. On the unit sphere of transverse directions, the continuous function \(h\mapsto\min_i r_i(h)\) is strictly negative. Compactness bounds it above by a fixed negative number. The Taylor remainders of the finitely many smooth upper functions are smaller than this linear decrease for all sufficiently small perturbations. Consequently the systolic ratio strictly decreases off the origin of the transverse slice. This is the higher-dimensional mechanism behind the theorem, not a claim that the one-dimensional example models the actual capacity function.
+
+## Connecting the mechanism to polytopes
+
+Three ingredients give that argument its geometric meaning. First, nearby ten-facet bodies admit uniquely labelled polar vertices. These ten vectors in \(\mathbb R^4\) provide a local chart with 40 coordinates. The chart reduction ensures that the certificate covers every sufficiently close ten-facet body, rather than only a chosen family of examples.
+
+Second, the translation, scaling and symplectic orbit has tangent dimension 15. A transverse 25-dimensional slice removes these ratio-preserving directions. Locally, every nearby body is a symmetry transform of a point on the slice. A strict maximum on the slice therefore yields the theorem and its equality clause.
+
+Third, a smoothly varying feasible action \(A_i(a)\) in the finite capacity formulation gives the upper function
+\[
+U_i(a)=\frac{A_i(a)^2}{2\operatorname{vol}_4 K(a)}.
+\]
+Feasibility supplies the bound; equality with the HKO action makes it touch at the base point. These are not assumed to be optimizing branches nearby. That distinction permits the certificate to use singular seven-facet data as well as nonsingular six-facet data: the latter alone do not supply the required rank.
+
+Rust finds the finite witness; SageMath checks its algebraic equations, inequalities and ranks exactly. The chart, feasible-action and uniform-decrease arguments explain why those checks imply the geometric theorem. The search that found the witness is not itself part of that implication.
+
+---
+
+## Source notes — not part of the proposed thesis passage
+
+- Draft derived from the sprint authoring worktree at `/tmp/msc-math-unlimited-20260907.IvqpRR/authoring`; no external-source verification or computational rerun performed.
+- `thesis/07-hko-local-maximum.tex`: theorem scope, Hausdorff topology, ratio value, equality orbit, HKO representative and convention reconciliation. The compact definition here uses that reconciled representative; the full source explains its relation to the opposite symplectic-form convention in the HKO paper.
+- `thesis/07-hko-local-maximum-chart-reduction.tex`: local polar-vertex chart, 40 coordinates, 15-dimensional symmetry orbit and local transverse slice.
+- `thesis/07-hko-local-maximum-exact-certificate.tex`: normalized feasible upper functions; 26 rows, quotient rank 25, positive relation; necessity of singular seven-facet data; exact verifier and Rust witness roles.
+- The one-dimensional bound example is elementary explanatory material introduced for this candidate, not a figure or model reported by the HKO source. A possible schematic would draw only the two lines and their lower envelope; a hypothetical `f` curve is unnecessary and could imply unsupported equality.
+- Intended comparison: importance/theorem first, then a minimal mechanism, with coordinate bookkeeping deferred until its role is apparent. This is an exploratory alternative, not a controlled causal experiment isolating one variable.
