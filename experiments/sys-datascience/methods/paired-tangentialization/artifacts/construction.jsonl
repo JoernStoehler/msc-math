@@ -1,0 +1,63 @@
+{"attempt":0,"bucket":"4x4","reason":"factor 1: inactive/nonpositive area","row":0,"status":"rejected"}
+{"attempt":1,"bucket":"4x4","row":0,"status":"accepted"}
+{"attempt":0,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":0,"status":"rejected"}
+{"attempt":1,"bucket":"4x6","reason":"factor 1: inactive/nonpositive area","row":0,"status":"rejected"}
+{"attempt":2,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":0,"status":"rejected"}
+{"attempt":3,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":0,"status":"rejected"}
+{"attempt":4,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":0,"status":"rejected"}
+{"attempt":5,"bucket":"4x6","row":0,"status":"accepted"}
+{"attempt":0,"bucket":"4x4","reason":"factor 1: inactive/nonpositive area","row":1,"status":"rejected"}
+{"attempt":1,"bucket":"4x4","reason":"factor 0: inactive/nonpositive area","row":1,"status":"rejected"}
+{"attempt":2,"bucket":"4x4","row":1,"status":"accepted"}
+{"attempt":0,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":1,"status":"rejected"}
+{"attempt":1,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":1,"status":"rejected"}
+{"attempt":2,"bucket":"4x6","reason":"factor 1: inactive/nonpositive area","row":1,"status":"rejected"}
+{"attempt":3,"bucket":"4x6","reason":"factor 1: inactive/nonpositive area","row":1,"status":"rejected"}
+{"attempt":4,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":1,"status":"rejected"}
+{"attempt":5,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":1,"status":"rejected"}
+{"attempt":6,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":1,"status":"rejected"}
+{"attempt":7,"bucket":"4x6","row":1,"status":"accepted"}
+{"attempt":0,"bucket":"4x4","reason":"factor 0: inactive/nonpositive area","row":2,"status":"rejected"}
+{"attempt":1,"bucket":"4x4","row":2,"status":"accepted"}
+{"attempt":0,"bucket":"4x6","row":2,"status":"accepted"}
+{"attempt":0,"bucket":"4x4","row":3,"status":"accepted"}
+{"attempt":0,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":3,"status":"rejected"}
+{"attempt":1,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":3,"status":"rejected"}
+{"attempt":2,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":3,"status":"rejected"}
+{"attempt":3,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":3,"status":"rejected"}
+{"attempt":4,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":3,"status":"rejected"}
+{"attempt":5,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":3,"status":"rejected"}
+{"attempt":6,"bucket":"4x6","row":3,"status":"accepted"}
+{"attempt":0,"bucket":"4x4","reason":"factor 0: inactive/nonpositive area","row":4,"status":"rejected"}
+{"attempt":1,"bucket":"4x4","reason":"factor 0: inactive/nonpositive area","row":4,"status":"rejected"}
+{"attempt":2,"bucket":"4x4","row":4,"status":"accepted"}
+{"attempt":0,"bucket":"4x6","reason":"factor 1: inactive/nonpositive area","row":4,"status":"rejected"}
+{"attempt":1,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":4,"status":"rejected"}
+{"attempt":2,"bucket":"4x6","reason":"factor 1: inactive/nonpositive area","row":4,"status":"rejected"}
+{"attempt":3,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":4,"status":"rejected"}
+{"attempt":4,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":4,"status":"rejected"}
+{"attempt":5,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":4,"status":"rejected"}
+{"attempt":6,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":4,"status":"rejected"}
+{"attempt":7,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":4,"status":"rejected"}
+{"attempt":8,"bucket":"4x6","row":4,"status":"accepted"}
+{"attempt":0,"bucket":"4x4","reason":"factor 0: inactive/nonpositive area","row":5,"status":"rejected"}
+{"attempt":1,"bucket":"4x4","reason":"factor 0: inactive/nonpositive area","row":5,"status":"rejected"}
+{"attempt":2,"bucket":"4x4","reason":"factor 0: inactive/nonpositive area","row":5,"status":"rejected"}
+{"attempt":3,"bucket":"4x4","reason":"factor 0: inactive/nonpositive area","row":5,"status":"rejected"}
+{"attempt":4,"bucket":"4x4","reason":"factor 1: inactive/nonpositive area","row":5,"status":"rejected"}
+{"attempt":5,"bucket":"4x4","row":5,"status":"accepted"}
+{"attempt":0,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":5,"status":"rejected"}
+{"attempt":1,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":5,"status":"rejected"}
+{"attempt":2,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":5,"status":"rejected"}
+{"attempt":3,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":5,"status":"rejected"}
+{"attempt":4,"bucket":"4x6","row":5,"status":"accepted"}
+{"attempt":0,"bucket":"4x4","reason":"factor 1: inactive/nonpositive area","row":6,"status":"rejected"}
+{"attempt":1,"bucket":"4x4","row":6,"status":"accepted"}
+{"attempt":0,"bucket":"4x6","row":6,"status":"accepted"}
+{"attempt":0,"bucket":"4x4","reason":"factor 0: inactive/nonpositive area","row":7,"status":"rejected"}
+{"attempt":1,"bucket":"4x4","reason":"factor 1: inactive/nonpositive area","row":7,"status":"rejected"}
+{"attempt":2,"bucket":"4x4","reason":"factor 0: inactive/nonpositive area","row":7,"status":"rejected"}
+{"attempt":3,"bucket":"4x4","reason":"factor 0: inactive/nonpositive area","row":7,"status":"rejected"}
+{"attempt":4,"bucket":"4x4","row":7,"status":"accepted"}
+{"attempt":0,"bucket":"4x6","reason":"factor 0: inactive/nonpositive area","row":7,"status":"rejected"}
+{"attempt":1,"bucket":"4x6","row":7,"status":"accepted"}

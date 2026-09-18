@@ -1,0 +1,18 @@
+[workspace]
+
+[package]
+name = "current-body-evaluator"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+symplectic = { path = "../../../../crates/symplectic" }
+euclidean-polytopes = { path = "../../../../crates/euclidean-polytopes" }
+nalgebra = "0.33"
+num-traits = "0.2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+debug = 1

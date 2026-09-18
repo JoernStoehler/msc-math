@@ -1,0 +1,59 @@
+{
+  "note": "Descriptive batch process clock; shared initialization construction/evaluation charged to both arms. CEM updates charged only CEM. Omits driver/file overhead. Partial batches absent from cost files cannot support total-arm comparisons.",
+  "arms": [
+    {
+      "seed": 202609140301,
+      "arm": "iid",
+      "completed_batches": 3,
+      "generation_process_ms": 29137.893624999833,
+      "evaluation_process_ms": 4667.992118000257,
+      "distribution_update_process_ms": 0.0,
+      "accounted_wall_ms": 33805.88574300009
+    },
+    {
+      "seed": 202609140301,
+      "arm": "cem",
+      "completed_batches": 2,
+      "generation_process_ms": 17393.954162000227,
+      "evaluation_process_ms": 3529.2635800001335,
+      "distribution_update_process_ms": 16.506087999914598,
+      "accounted_wall_ms": 20939.723830000275
+    },
+    {
+      "seed": 202609140302,
+      "arm": "iid",
+      "completed_batches": 0,
+      "generation_process_ms": 0.0,
+      "evaluation_process_ms": 0.0,
+      "distribution_update_process_ms": 0.0,
+      "accounted_wall_ms": 0.0
+    },
+    {
+      "seed": 202609140302,
+      "arm": "cem",
+      "completed_batches": 0,
+      "generation_process_ms": 0.0,
+      "evaluation_process_ms": 0.0,
+      "distribution_update_process_ms": 0.0,
+      "accounted_wall_ms": 0.0
+    },
+    {
+      "seed": 202609140303,
+      "arm": "iid",
+      "completed_batches": 0,
+      "generation_process_ms": 0.0,
+      "evaluation_process_ms": 0.0,
+      "distribution_update_process_ms": 0.0,
+      "accounted_wall_ms": 0.0
+    },
+    {
+      "seed": 202609140303,
+      "arm": "cem",
+      "completed_batches": 0,
+      "generation_process_ms": 0.0,
+      "evaluation_process_ms": 0.0,
+      "distribution_update_process_ms": 0.0,
+      "accounted_wall_ms": 0.0
+    }
+  ]
+}

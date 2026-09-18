@@ -1,0 +1,5 @@
+{
+  "rule": "Two lexicographically smallest poly_id per each of 18 facet/product buckets; no target-dependent selection",
+  "rows": 36,
+  "sha256": "dd0b05a8503af7327a70a2994f046398f8c404177feff350de5f457c006e1e58"
+}

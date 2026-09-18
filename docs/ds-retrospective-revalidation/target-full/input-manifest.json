@@ -1,0 +1,9 @@
+{
+  "rows": 14336,
+  "ordering": "poly_id ascending; all rows",
+  "sha256": "cb88c02fc26d98cb2aaff4f5e291ac6fa8e6b98154bbc35f0ee77a42486cf081",
+  "source_sha256": {
+    "random.jsonl": "a21ac62ba5c9496ef631d3cce74e8b663764516b76e9d4725f1e517d8dd55f9f",
+    "random-product.jsonl": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "recorded_at_utc": "2026-09-18T13:07:13.732130+00:00",
+  "exit_code": 0,
+  "outer_timeout_seconds": 900,
+  "per_request_timeout_seconds": 5,
+  "complete_request_coverage": true,
+  "capacity_calls_successful": 14245,
+  "requests": 14336,
+  "wall_seconds": 175.28
+}

@@ -1,0 +1,14 @@
+{
+  "inputs.jsonl": {
+    "raw_bytes": 12175166,
+    "raw_sha256": "cb88c02fc26d98cb2aaff4f5e291ac6fa8e6b98154bbc35f0ee77a42486cf081",
+    "gzip_bytes": 4470921,
+    "gzip_sha256": "515df136b6f6e7e44dd783de16cd6fad571eb59e79ebb3163672970b12868e44"
+  },
+  "results.jsonl": {
+    "raw_bytes": 234829267,
+    "raw_sha256": "e8798450e3ab2fc40959c2ad9b20f7a1442075c2e5fe92787b66d37d4b190bcc",
+    "gzip_bytes": 10697846,
+    "gzip_sha256": "3f776b8e5be6125cc1eedb86c8e1801c67d5ffee662b9afd7ec363c2b3a5a9e3"
+  }
+}

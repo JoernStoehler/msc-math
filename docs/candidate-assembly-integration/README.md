@@ -142,3 +142,21 @@ Latest product-position build: **83 pages**, no warnings, undefined references
 or overfull boxes. The new section is on pages 66–67; those and adjacent pages,
 contents, introduction, availability and conclusion were rendered/inspected.
 Earlier 81-page checks above remain dated integration-stage evidence.
+
+## Completed historical DS restoration
+
+Adopted revalidation head `6656ff7a`, including the separate interval adapter
+and all tracked source/feature/current-computation receipts. The scalar adapter
+snapshot matches `3022f15d`. Current capacity coverage is 14,335/14,336:
+14,289 accepted scalars at requested tolerance and 46 wider intervals; one
+body remains outside the ordinary size policy. Numerical volume does not
+supply certified systolic-ratio intervals. Full feature restoration covers
+all 14,336 bodies and preserves the common historical table cells.
+
+The full DS appendix points to previously untracked method packets. To make
+those references resolve, this candidate retains the paired-tangentialization,
+orientation-allocation and diagonal-CEM evidence, plus their existing scalar
+evaluator, copied without changes from main. `empirical-packet-snapshot.json`
+records every copied hash. Only the old compiled CEM executable under a nested
+`.git` directory was omitted (hash recorded); its source and raw results are
+preserved. This is evidence preservation, not a new computation or public release.

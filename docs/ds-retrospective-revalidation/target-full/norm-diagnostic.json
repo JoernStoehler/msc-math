@@ -1,0 +1,912 @@
+{
+  "scope": "Uses retained rational primal vertices as diagnostic; they are not newly certified complete here. Current evaluator must reconstruct scaled geometry and enforce bounds before any acceptance.",
+  "rows": [
+    {
+      "id": "8fbd1f5fd566a0aa5f087e18ecd7c1c5d3f676409709c7ab4cb994d58fa6db7c",
+      "min_primal_norm": 1.1862040644770133,
+      "max_primal_norm": 1338.115954968721,
+      "min_dual_norm": 0.5917709630056819,
+      "max_dual_norm": 0.8201409330810401,
+      "feasible_primal_dilation_pow2_exponents": [
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "eac80891766e996daebafc074d5d28d7adb448007fd38d478c6a2fbf2de1747f",
+      "min_primal_norm": 2.7556338482225438,
+      "max_primal_norm": 1297.4205564450242,
+      "min_dual_norm": 0.5785044195404828,
+      "max_dual_norm": 1.1559040825953666,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "723731c07c4ddae3ccb0b2610d69efad7801e79a2cf4502fdc21b9712ad5cf9d",
+      "min_primal_norm": 2.7542306263583414,
+      "max_primal_norm": 3403.0322106086974,
+      "min_dual_norm": 0.6471708248040395,
+      "max_dual_norm": 1.1488534385233407,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2
+      ]
+    },
+    {
+      "id": "52e096af08b8b5af534e2c935a94ce3136685dc8253dfea983ae988f38b56730",
+      "min_primal_norm": 1.8916974482355051,
+      "max_primal_norm": 1305.5967758415302,
+      "min_dual_norm": 0.6767258383189518,
+      "max_dual_norm": 0.9897603997432801,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "b6fe3584ec0c18d40d146e0e82712d39543d26cdeee206d1bae3b0ac5a13d8ed",
+      "min_primal_norm": 1.3617446257904628,
+      "max_primal_norm": 2364.057463221543,
+      "min_dual_norm": 0.6185898377214757,
+      "max_dual_norm": 0.8666459220345728,
+      "feasible_primal_dilation_pow2_exponents": [
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2
+      ]
+    },
+    {
+      "id": "aa6bdd730fac21c0e17fb5573657fce1722b3523a3e3293231c71657ab22e698",
+      "min_primal_norm": 2.193344344099829,
+      "max_primal_norm": 1487.7620500525884,
+      "min_dual_norm": 0.6125503896928159,
+      "max_dual_norm": 1.011319124146943,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "4b34f78ea0cb7e46eea00407d70771c6cdea44023a7dfbba7e8637812b6587b6",
+      "min_primal_norm": 1.5502763483733721,
+      "max_primal_norm": 3237.7128222890506,
+      "min_dual_norm": 0.6595866318289622,
+      "max_dual_norm": 0.9037278404960196,
+      "feasible_primal_dilation_pow2_exponents": [
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2
+      ]
+    },
+    {
+      "id": "e3587371e7c144a1ed48da5176516f73a9d61d502b90aaf7f8cc0ecd895b5e8d",
+      "min_primal_norm": 7.6602312619409485,
+      "max_primal_norm": 1491.6627244289928,
+      "min_dual_norm": 0.7135506057539691,
+      "max_dual_norm": 0.9480797203930084,
+      "feasible_primal_dilation_pow2_exponents": [
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "02f23d62b31587cb1b7d8df1eef2fab9a70dd9fa95f0165750e93bcd1d955321",
+      "min_primal_norm": 3.4294938447780585,
+      "max_primal_norm": 2169.0620857119807,
+      "min_dual_norm": 0.6344296618317237,
+      "max_dual_norm": 0.976263725627123,
+      "feasible_primal_dilation_pow2_exponents": [
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2
+      ]
+    },
+    {
+      "id": "0da0e6d3d69acf09567150bfb4bb447b96af4b7a4945ae343db9af2460148776",
+      "min_primal_norm": 1.1936586445398145,
+      "max_primal_norm": 4360.604191994146,
+      "min_dual_norm": 0.5184612511662018,
+      "max_dual_norm": 1.0058568605605613,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3
+      ]
+    },
+    {
+      "id": "73d2d31b84d2543fed1eac792b7749ffde307c5e7185deb2c6154da5a53016cf",
+      "min_primal_norm": 1.3384094563957252,
+      "max_primal_norm": 2395.6624301853094,
+      "min_dual_norm": 0.7057510722550904,
+      "max_dual_norm": 0.9249577687909505,
+      "feasible_primal_dilation_pow2_exponents": [
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2
+      ]
+    },
+    {
+      "id": "bec4924a5fa1ed1daa47c6bc6dabb8cbdea0b9adc6620b4682f99553e9111700",
+      "min_primal_norm": 1.20846506503819,
+      "max_primal_norm": 1052.0293583201078,
+      "min_dual_norm": 0.7043541292334329,
+      "max_dual_norm": 0.9477543518461804,
+      "feasible_primal_dilation_pow2_exponents": [
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "f719b2e4c97d22a5109a1840312baa062c91c840f05a02dc31af82b86a424244",
+      "min_primal_norm": 1.4268782961752613,
+      "max_primal_norm": 16418.963466796493,
+      "min_dual_norm": 0.6442062879125451,
+      "max_dual_norm": 0.9606972072602966,
+      "feasible_primal_dilation_pow2_exponents": [
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5
+      ]
+    },
+    {
+      "id": "897109ae97f506f11fba26d6277022b6f29c201fb246c49581dec7b4d615ce73",
+      "min_primal_norm": 1.5605294673024472,
+      "max_primal_norm": 1101.971913878564,
+      "min_dual_norm": 0.5264254903592847,
+      "max_dual_norm": 0.9822889147632956,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "d0b85d9ac32f5399142325c1eb20f4674ccdab90e72ecdee427bb25595c74ef4",
+      "min_primal_norm": 1.4340718084585113,
+      "max_primal_norm": 1296.0730738844811,
+      "min_dual_norm": 0.5715678921523163,
+      "max_dual_norm": 1.072812682226379,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "2b12133dd66ef2bf0dd8f46337738eb0e77c4564ed4f5120c7deb580c21f1cd7",
+      "min_primal_norm": 2.1885867878263525,
+      "max_primal_norm": 2065.860165064964,
+      "min_dual_norm": 0.6071760484531727,
+      "max_dual_norm": 1.1270902606805724,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2
+      ]
+    },
+    {
+      "id": "9347bac50434e8018c0ffa5df9cdd776963615925a7967281d4cdf00f1f2c9b0",
+      "min_primal_norm": 0.8946723371767857,
+      "max_primal_norm": 1517.4690050526606,
+      "min_dual_norm": 0.655530021904953,
+      "max_dual_norm": 1.0997653370598266,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "1c6ec52ab5baf930e3c0cd29a6f68dbba84f3110840f0c3812987d6f0028fadf",
+      "min_primal_norm": 1.2807914698159804,
+      "max_primal_norm": 2026.4115699239003,
+      "min_dual_norm": 0.5875336052320397,
+      "max_dual_norm": 1.0152234205849127,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2
+      ]
+    },
+    {
+      "id": "ce1fb2b8915782aae7eb37e27c724f72202e9d0f0de87835953c155358b5b4ef",
+      "min_primal_norm": 1.4388283923803986,
+      "max_primal_norm": 9501.121485990356,
+      "min_dual_norm": 0.7399540839591371,
+      "max_dual_norm": 0.9756413327793341,
+      "feasible_primal_dilation_pow2_exponents": [
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4
+      ]
+    },
+    {
+      "id": "8a23c23b93b965d4f71c69fbd57f3f2c41cad88b422d3a7e42436bb867bcdded",
+      "min_primal_norm": 0.9360820221349696,
+      "max_primal_norm": 1554.1893433404423,
+      "min_dual_norm": 0.7234758831346784,
+      "max_dual_norm": 1.0745330165208729,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "4ab390657ba9bde151d076a3a1ad6e1a1e454a84c430b819e417040646526fd7",
+      "min_primal_norm": 1.006671171048649,
+      "max_primal_norm": 1607236.0565440317,
+      "min_dual_norm": 0.6454062366598357,
+      "max_dual_norm": 0.8789620245716508,
+      "feasible_primal_dilation_pow2_exponents": []
+    },
+    {
+      "id": "86a7f0a971fb6447b836df670799c387d6a0757143ca2999fed9e5c0a3d032af",
+      "min_primal_norm": 0.9974990970179535,
+      "max_primal_norm": 6764.570724290855,
+      "min_dual_norm": 0.5378509393613552,
+      "max_dual_norm": 0.9250473153170351,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3
+      ]
+    },
+    {
+      "id": "db6c438bdefa1c0f352c58564c1f7da4841e5e8fb0d8ae9e9bda32c30bc3ce6a",
+      "min_primal_norm": 0.9836721351937757,
+      "max_primal_norm": 1792.8703942957284,
+      "min_dual_norm": 0.6020930462992481,
+      "max_dual_norm": 0.9885222164229286,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "aba5e81ef055b8d19d1ff967ac55db13ad090778937c0548ea38db989f7ae3ab",
+      "min_primal_norm": 0.9163937786628613,
+      "max_primal_norm": 1082.5644213073988,
+      "min_dual_norm": 0.5849736435604245,
+      "max_dual_norm": 0.9999126568953592,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "ee403b527d4396f5fdd8f1efbc46b65e253ecd1aa9bf444eb0574c9c4c546548",
+      "min_primal_norm": 0.9467564134229757,
+      "max_primal_norm": 3326.2521617549965,
+      "min_dual_norm": 0.5354365719337596,
+      "max_dual_norm": 0.9862223971877498,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2
+      ]
+    },
+    {
+      "id": "94e79c0b227b36bcdd27e3e4cbeca52c9b6ca8b216263f4eccc6d23bb16229d3",
+      "min_primal_norm": 0.61210738089156,
+      "max_primal_norm": 251419.75641260072,
+      "min_dual_norm": 0.64213433374057,
+      "max_dual_norm": 1.0749120590843242,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8
+      ]
+    },
+    {
+      "id": "c4d495e064668cf62a49e9a466c0562f1d08fe6cb579b2af4cdf772d31214106",
+      "min_primal_norm": 1.0776111190778188,
+      "max_primal_norm": 2616.436865221315,
+      "min_dual_norm": 0.7992113461940695,
+      "max_dual_norm": 1.150411599097801,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2
+      ]
+    },
+    {
+      "id": "c95d5e6754dc11e01a7ac63caf4c1c8587084790c9aa44ac88135af8e4d4d617",
+      "min_primal_norm": 1.226275337173385,
+      "max_primal_norm": 1398.7288686889276,
+      "min_dual_norm": 0.8461783797622232,
+      "max_dual_norm": 1.1869612792725612,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "32ee274648c5a9fa142e27119d75d8681775dc68298c216eabb1ff7bcd6dd29e",
+      "min_primal_norm": 1.2377735305212718,
+      "max_primal_norm": 2306.4462597737297,
+      "min_dual_norm": 0.6815923876833913,
+      "max_dual_norm": 1.1377520176153013,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2
+      ]
+    },
+    {
+      "id": "38346ccdcbcdb702944cd570a35017d9904208c91afa92df3cc3511892ba0987",
+      "min_primal_norm": 1.0005149658756796,
+      "max_primal_norm": 37007.7950743395,
+      "min_dual_norm": 0.7315385913317689,
+      "max_dual_norm": 1.1845828732466714,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6
+      ]
+    },
+    {
+      "id": "87510740943581687d5e4378c59b5c877a51f52578df7cd02c21bcf5f48cc0b9",
+      "min_primal_norm": 1.463247805782226,
+      "max_primal_norm": 1498.5273038386692,
+      "min_dual_norm": 0.6575053828453494,
+      "max_dual_norm": 1.1071107645280749,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "eed78e497e2a2a3e8680ec92b5cc93a91f19a2cc3eb594028d74cf9793377c91",
+      "min_primal_norm": 1.0218849994215349,
+      "max_primal_norm": 1890.3664800340853,
+      "min_dual_norm": 0.8571326941451545,
+      "max_dual_norm": 1.1813810927461896,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "623848369548ca5551bae6a3173de1fd3385267939e96c41025a64846404bdf4",
+      "min_primal_norm": 1.1556058908940594,
+      "max_primal_norm": 2444.0557297155947,
+      "min_dual_norm": 0.6860103343154134,
+      "max_dual_norm": 1.0584364033527063,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2
+      ]
+    },
+    {
+      "id": "ddf68e8a9749ae01a8269452d314a040e5a7894bae6b6c3e0b871847e939946f",
+      "min_primal_norm": 1.5484033420711047,
+      "max_primal_norm": 5116.656881504204,
+      "min_dual_norm": 0.6980913352955127,
+      "max_dual_norm": 1.0460346041289361,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3
+      ]
+    },
+    {
+      "id": "8d9c8475c452facbcf16afa99a0f6b8675442ba8adf9fae7ac8ffbb71c20e93a",
+      "min_primal_norm": 1.1155218315156161,
+      "max_primal_norm": 6781.824057315247,
+      "min_dual_norm": 0.6835148751904279,
+      "max_dual_norm": 0.9954416139723808,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3
+      ]
+    },
+    {
+      "id": "170ff5ba86bf132739ab592f0a6acdf118b48e0c5db20bac1f9067a54dc4b506",
+      "min_primal_norm": 1.4290548631216315,
+      "max_primal_norm": 2189.9694469686174,
+      "min_dual_norm": 0.6312358887895287,
+      "max_dual_norm": 1.0332085635135428,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2
+      ]
+    },
+    {
+      "id": "dc43bb4d98c1da5d8cf611a62c1c2826a8a6b3052dff2d586f5039b2be36018c",
+      "min_primal_norm": 1.0335656090585768,
+      "max_primal_norm": 1274.8364843229258,
+      "min_dual_norm": 0.8786412464788641,
+      "max_dual_norm": 1.2186679933940647,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "023b737b247879d5fd3b6720026ae5775fec9c658db12bb1d96d30abe26c0a24",
+      "min_primal_norm": 1.4947935312806344,
+      "max_primal_norm": 6969.699548237674,
+      "min_dual_norm": 0.7187316052281226,
+      "max_dual_norm": 1.1391417486285935,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3
+      ]
+    },
+    {
+      "id": "c73e61f7e0dfde41a35010d19927f0ce660daecf0c6762ad8bfa2ad050eb1745",
+      "min_primal_norm": 1.0131397933802833,
+      "max_primal_norm": 1113.1281000024655,
+      "min_dual_norm": 0.7852657829031884,
+      "max_dual_norm": 1.1229559813735521,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "0d324329ec52a5d76630c4ac43f484d0798ab16a82fc1fb30e96ca1611463c39",
+      "min_primal_norm": 1.1717186074986183,
+      "max_primal_norm": 9911.950547629789,
+      "min_dual_norm": 0.7451210002186717,
+      "max_dual_norm": 1.1179845543591074,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4
+      ]
+    },
+    {
+      "id": "9fa4ede54117956dd2e438335d35c2ebfd72edb00ce7cfd37613db44a5231b33",
+      "min_primal_norm": 1.15801772272841,
+      "max_primal_norm": 16330.286017172537,
+      "min_dual_norm": 0.8155944394351924,
+      "max_dual_norm": 1.1692782276388405,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5
+      ]
+    },
+    {
+      "id": "1b9e61a5afced221eda16326b1d189a04ed4102e704c57539b84ed3b4831340e",
+      "min_primal_norm": 0.8309282895509231,
+      "max_primal_norm": 1004.7888696521429,
+      "min_dual_norm": 0.8855580398205922,
+      "max_dual_norm": 1.1358754068567836,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "3cb30206d6c395bd6bf294941c88cd0494ea83241d1895bed8c8d4b73c39d930",
+      "min_primal_norm": 1.1968381447329761,
+      "max_primal_norm": 10543.573535899035,
+      "min_dual_norm": 0.7716473835993477,
+      "max_dual_norm": 1.0999794445545354,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4
+      ]
+    },
+    {
+      "id": "b84c2664136937e08ea0820b6f8180afbf04495a5ee7c9c91b27bad6475478f6",
+      "min_primal_norm": 0.8257610422888136,
+      "max_primal_norm": 90353.33758145527,
+      "min_dual_norm": 0.813983944007498,
+      "max_dual_norm": 1.088472760111357,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7
+      ]
+    },
+    {
+      "id": "483224b2ca4a6c412d286633297d65987d8716fa82ccbc2698098d976625bb0e",
+      "min_primal_norm": 1.068667256632421,
+      "max_primal_norm": 2557.5429178236773,
+      "min_dual_norm": 0.7255475223754885,
+      "max_dual_norm": 1.2343251788172511,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2
+      ]
+    },
+    {
+      "id": "bb2b1910cb9033ca8d7d132b381b177593523978c1148e0b523bd7ca0cc558d5",
+      "min_primal_norm": 1.0031238927635058,
+      "max_primal_norm": 1758.9115185549315,
+      "min_dual_norm": 0.7648519458170291,
+      "max_dual_norm": 1.1552099772817128,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "43a6ddc8e5608ed4f25d5a5780b4f589abf99c4c8cec3150c47a42c9694ed25e",
+      "min_primal_norm": 1.092901856545532,
+      "max_primal_norm": 3272.8975867659533,
+      "min_dual_norm": 0.6559799556504678,
+      "max_dual_norm": 0.9543644815263694,
+      "feasible_primal_dilation_pow2_exponents": [
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2
+      ]
+    },
+    {
+      "id": "282c5f3f4fe907c5a863ec594f35b1410459b5c58268323dba9a97ee0cb3cf36",
+      "min_primal_norm": 0.9627144497706279,
+      "max_primal_norm": 1752.941834587908,
+      "min_dual_norm": 0.8142042892266361,
+      "max_dual_norm": 1.2040300916048394,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "480c2c14938dc547e8f20ab78b3dd44c81bca181db12e4237917d7175aecad67",
+      "min_primal_norm": 1.047639313799062,
+      "max_primal_norm": 1584.8323081156711,
+      "min_dual_norm": 0.6833352926950949,
+      "max_dual_norm": 1.081413191863887,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "ce6c2acc745d9fd5aa1e6a0215be744a67df86503366d5013a031aba5579db4f",
+      "min_primal_norm": 1.0795183918770397,
+      "max_primal_norm": 19647.034933709183,
+      "min_dual_norm": 0.7366908109663068,
+      "max_dual_norm": 1.1780115224502432,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5
+      ]
+    },
+    {
+      "id": "f4db042a547be9a8b4a501fdff981d827f138726898af7f743be956380667784",
+      "min_primal_norm": 1.0264820907630063,
+      "max_primal_norm": 4730.138354043379,
+      "min_dual_norm": 0.718554873561753,
+      "max_dual_norm": 1.0862532252412749,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3
+      ]
+    },
+    {
+      "id": "0843236526288af51410578bd6e46ea15eb088774dcef5028cb8e8597bc1de4f",
+      "min_primal_norm": 0.8727447331157315,
+      "max_primal_norm": 1599.7087741075222,
+      "min_dual_norm": 0.7481977748961569,
+      "max_dual_norm": 1.2168484595771216,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "778c6410cdb04634a7706168e29af5212cd1c79bb902665ca4d1ab6898fade89",
+      "min_primal_norm": 0.8625101541893728,
+      "max_primal_norm": 1672.5410518324811,
+      "min_dual_norm": 0.70395928724222,
+      "max_dual_norm": 1.1733604321834799,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    {
+      "id": "ed26208666be6d9d35f45dad5e514410ce1f9f9590a958e8618595d034add6dd",
+      "min_primal_norm": 0.9183951040551119,
+      "max_primal_norm": 2518.480194939469,
+      "min_dual_norm": 0.6594886505493288,
+      "max_dual_norm": 1.0397351949911349,
+      "feasible_primal_dilation_pow2_exponents": [
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2
+      ]
+    }
+  ],
+  "all_have_candidate_scale": false
+}

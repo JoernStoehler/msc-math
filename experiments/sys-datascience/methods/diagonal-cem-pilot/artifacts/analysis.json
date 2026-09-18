@@ -1,0 +1,15 @@
+{
+  "schema": "diagonal-cem-analysis-v1",
+  "complete": false,
+  "run_status": {
+    "complete": false,
+    "error": "RuntimeError('202609140301-iid-2: target failure; no update')",
+    "wall_ms": 44647.290776000315
+  },
+  "actual_requests": 256,
+  "successes": 255,
+  "actual_request_wall_ms": 5350.002646999656,
+  "construction_attempts": 981,
+  "construction_rejections": 725,
+  "generation_process_ms": 37816.20774000021
+}

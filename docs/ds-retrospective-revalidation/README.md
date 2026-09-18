@@ -1,98 +1,97 @@
-# Historical DS restoration: source recovery completed
+# Historical DS restoration: current status
 
-2026-09-18. Zero capacity calls; zero feature rebuilds. Continues the
-[DS evidence account](../ds-evidence-closure/README.md) and reviewer-trial issue
-`docs/reviewer-trial/issue-reports/historical-ds-provenance.md` (12869c30).
+Updated 2026-09-18. **Source geometry and feature schema are restored for all
+14,336 historical bodies. Current capacity intervals cover 14,335; one body
+remains unresolved.** No main merge or thesis edit has occurred.
 
-## Result
+| Deliverable | Result | Evidence |
+| --- | --- | --- |
+| Source recovery and identity | All source hashes, geometry IDs and original target joins verified | `source-verification.json`, `cache-inventory.json` |
+| Full feature-schema rebuild | Six missing columns restored; all 645,120 overlapping cells exactly unchanged; provenance bytes unchanged | [Geometry migration](geometry-full/README.md) |
+| Unchanged current evaluator | All 14,336 requests accounted for; 14,245 successes and 91 typed refusals | [Full target comparison](target-full/README.md) |
+| Bounded failure repair | 37 intervals preserved without scalar conversion; 53 exact rescalings passed fresh geometry/policy checks | [Repair](repair/README.md) |
+| Remaining case | `random_F8_s3_45`: no positive uniform scale satisfies numerical-size policy; bounded diagonal-symplectic screen found no candidate | [Norm investigation](repair/norm/README.md) |
 
-Registered source snapshot `f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96`
-was downloaded using the standard artifact tool in `codex-msc-math.sbx`, then
-copied to the host standard cache. Source files (53MB generic, 74MB product,
-126MB shared cache) are recovered; no population regeneration is necessary.
-No repository links were changed or secret contents read.
+Current coverage is **14,289 accepted 1e-10 capacity scalars, 46 wider capacity
+intervals and one unresolved body**. Numerical volume is not certified; therefore
+no certified sys intervals are claimed. This is new retrospective computation,
+not reconstruction of an undocumented historical execution environment.
 
-`source-verification.json` records new retrospective verification:
+## Source and historical evidence
 
-- Both source hashes match the lineage owner.
-- All 14,336 source names join uniquely to table/provenance.
+The registered snapshot
+`f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96`
+is now in standard host and sandbox caches. It contains the 53MB generic source,
+74MB product source and 126MB shared cache. Registered retrieval sufficed; no
+population regeneration was needed. No secrets were read.
+
+- All 14,336 source names uniquely join table/provenance rows.
 - BLAKE3 identities of ordered binary64 dual coordinates match every poly_id.
-- Stored source sys equals table sys exactly; scalar formula residual at most 2.22e-16.
 - Rational dual coordinates equal exact binary64 coordinates throughout.
-- All source bodies match shared cache by rational geometry; capacity and volume agree exactly. Cache has 14,550 distinct bodies, no duplicate keys.
+- Stored source sys equals historical table sys exactly; scalar-formula residual
+  is at most 2.22e-16.
+- Every source body matches shared-cache rational geometry, capacity and volume.
+  The cache contains 14,550 unique bodies, including 214 additional bodies.
+- Generic cache entries restore recorded master_seed, attempt and facet/height
+  parameters. Product cache entries do not restore seed/attempt. These remain
+  legacy assertions, not newly certified generation history.
 
-Full hash/geometry-ID/target verification took 2.06 seconds; rational/cache
-inventory about 9 seconds. These are verification times, not evaluator timings.
-Scripts and machine-readable receipts are retained here. Payloads are in the
-standard host cache under `/home/joern/.cache/msc-math/artifacts/polytope-datasets/`.
+The original 39-feature statistical analysis already reproduces; see the
+[DS evidence account](../ds-evidence-closure/README.md). Full schema migration
+preserves old sys and old normalization volume while adding six geometry
+features. Current targets remain separate, so downstream code cannot accidentally
+interpret inherited values as fresh certified outputs.
 
-## Restore without recomputation versus remaining work
+Historical execution revision, build state and cache freshness are unrecorded.
+Retained winning words/orbit scalars are not completeness certificates; historical
+zero error fields are not exactness proofs. New computations now supply direct
+matched-body evidence instead of requiring those missing historical facts.
 
-| Obligation | Current evidence and next action |
-| --- | --- |
-| Exact input body and target row | Fully recovered for all 14,336; no recomputation needed for identity |
-| Generation selection | Generic cache recovers master_seed, attempt, requested facets/heights. Product cache retains family/size placeholders, no seed/attempt; source datasets have no seed/attempt. Import these as legacy assertions, not reconstructed execution |
-| Historic execution | Actual revision/build/cache freshness not recorded. Re-running creates new reproducible evidence, never a historic receipt |
-| Capacity certification | Cache has nonempty sigmas/orbit_scalars for 14,528 bodies, zero error/cutoff fields, no current method/revision/bound/exact-capacity fields. Winning words can establish upper bounds but not completeness; no demonstrated no-minimization certification route |
-| Certified sys | Capacity and volume must both be justified. Current scalar adapter uses f64 volume; certified capacity alone does not certify ratio |
-| Current 45-feature schema | Six missing fields need ridge areas and volume: three threshold fractions plus entropy/effective count/normalized entropy. Compute from geometry, not capacity. Existing quantiles do not determine these fields |
-| Original statistical result | Historical 39-feature analyzer already reproduces; no reason to rerun it for this import |
-| Later panels/optimizer | Separate contracts and populations; baseline restoration does not validate their targets or optimizer rankings |
+## What the new calculations establish
 
-Zero-valued historical error fields do not prove exactness. Current cache
-migration performs fresh minimization; its mismatch panic should not be used
-for an audit that must preserve discrepancies.
+The untouched current scalar evaluator corroborated 14,245 bodies to at most
+1.06e-14 relative capacity difference. Some historical scalars fall outside very
+narrow current intervals despite tiny central differences; all inclusion flags
+and differences remain available. The interval adapter repaired 90 refusals
+without relaxing policy or requesting looser accepted scalars. Exact dyadic
+rescalings transfer interval endpoints back to the original bodies as rational
+numbers. Those rational endpoints are not themselves exact capacity values.
 
-## Concrete next actions
+Full feature rebuilding took 586 seconds on four threads. Full original-body
+requests took 175 seconds; repair requests took 1.42 seconds plus a 65-second
+adapter build. These are measured runs, replacing the earlier pilot estimates.
+All receipts retain actual source/binary/input identities, outcomes and timing.
 
-1. Create a run-local imported derivative retaining snapshots/hashes, source
-   names, poly_id, geometry, original targets, recovered generation assertions,
-   and the new verification receipt. Do not fabricate the fields required by
-   the current producer's certified payload schema. These scripts validate an
-   import; they do not themselves implement a production migration.
-2. Geometry-only schema repair: use existing face-descriptor code on a frozen
-   pilot of two smallest-poly_id bodies per bucket (36 bodies across 18 buckets).
-   Compare overlapping features and measure costs before full migration.
-   Retained rational primal vertices may avoid enumeration only after their
-   incidence and completeness are verified.
-3. Current-target pilot on those same frozen 36 bodies: current scalar evaluator,
-   five-second per-request timeout, four-minute outer evaluation deadline, build
-   separate. Maximum waiting is 180 seconds plus startup/receipt overhead, not a
-   prediction of successful runtime. Retain old/new capacity, volume, sys,
-   bounds, timing, failures and discrepancies; do not panic or erase old targets.
-   Benchmark all strata before estimating a full rerun.
+## Remaining actions
 
-No pilot was run. Historical capacity timing sums to 732.57 seconds; generic-12
-median 88ms and product-6x6 median 407ms. These are recorded legacy values, not
-current-code estimates. Prior current controls range from milliseconds on tiny
-products to 0.5s on a rotated square product, not representative of generic
-12-facet bodies. A defensible full-run estimate requires the stratified pilot.
+1. Integrate the restored feature derivative and its receipts deliberately; point
+   consumers at the selected immutable artifact. Do not overwrite old evidence.
+2. Preserve separate legacy values, current intervals and refusal/repair status
+   in any unified downstream table. Historical association and current target
+   corroboration are distinct results.
+3. Decide whether to pursue exact symplectic preconditioning for the single
+   remaining body. No policy bypass or unbounded rerun is authorized by these
+   records. Alternatively retain its precise unresolved status.
+4. Volume certification is separate if a mathematical sys interval is needed.
+   Later 64/124 panels and optimizer trajectories have separate owners/contracts;
+   this baseline restoration does not validate their targets or rankings.
 
-A pilot supports only its matched-body comparison. To replace full-table targets,
-reevaluate all relevant rows, or narrow the claimed population and address
-selection. If targets differ, rerun association with the new column and retain
-both results. Fresh sampling addresses transfer rather than legacy accuracy.
+## Reproduction and historical stages
 
-## Reproduction
-
-Retrieval, using authenticated rclone already available in the sandbox:
+Current full outputs are retained as deterministic gzip files with raw/compressed
+hashes. Their local raw forms are gitignored. Follow the linked full-run reports
+for restoration and checks. Source retrieval uses the authenticated sandbox:
 
 ```sh
 ssh codex-msc-math.sbx 'python3 /workspaces/msc-math/scripts/artifacts.py materialize polytope-datasets --no-link'
 ```
 
-Copy the verified snapshot to host if needed. Set `source_dir` to its `files`
-directory and `table` to the recovered invariant table:
+`verify_import.py` rechecks pinned source/table/provenance hashes and complete
+joins; `inventory.py` checks cache correspondence. Their original timestamped
+receipts record only that stage's checks. They are not a summary of later work.
 
-```sh
-uv run docs/ds-retrospective-revalidation/verify_import.py \
-  --table "$table" \
-  --provenance experiments/polytope-invariant-table/polytope-provenance-table.jsonl \
-  --source-dir "$source_dir" --output /tmp/new-source-verification.json
-python3 docs/ds-retrospective-revalidation/inventory.py \
-  "$source_dir" /tmp/new-cache-inventory.json
-```
-
-Verifier pins original hashes, refuses overwrite, and records its own timestamp
-and script hash. Inventory must be run on the hash-verified source directory.
-Neither script evaluates capacities. No manuscript or live producer was edited.
+The [36-body geometry pilot](geometry-pilot/README.md) and
+[36-body target pilot](target-pilot/README.md) are **historical pilot records**.
+Their proposed full runs have now completed; their old runtime projections and
+then-pending next steps are superseded by the full-run reports above. The original
+issue is reviewer-trial `historical-ds-provenance.md`, commit `12869c30`.

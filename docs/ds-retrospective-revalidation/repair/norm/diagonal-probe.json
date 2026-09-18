@@ -1,0 +1,11 @@
+{
+  "status": "no_diagonal_candidate",
+  "a_b_search": [
+    -12,
+    12
+  ],
+  "k_search": [
+    -24,
+    24
+  ]
+}
