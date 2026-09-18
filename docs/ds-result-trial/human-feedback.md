@@ -73,3 +73,32 @@ Jörn corrected “ready for the next review by Kai” to:
 This concerns the whole thesis, not merely a local passage or a clean build.
 The user's estimate is an acceptance standard, not an instruction to count
 repair minutes mechanically.
+
+## Argument order and the role of exact examples
+
+Jörn's response to the proposed ridge-minimum theorem was a chapter-level
+instruction: lead with the scientific conclusions, then group the observations
+and arguments supporting them. The broad ridge–ratio association and its
+weakening under selection are the central empirical issue. Nonmonotone exact
+examples disprove a universal ordering; the exact inverse relation in the
+rotated-pentagon family establishes a stronger positive statement on that
+family. These play different roles and should not be presented as a discovery
+diary.
+
+He proposed two possible interpretations: a shared source of geometric
+variation in the bulk of bodies far from optimality, or an imperfect proxy
+for an undiscovered geometric relation whose deviations also enter extreme
+selection. Neither explanation is established, and neither need be correct.
+The current evidence check supports attenuation within low-ridge-area panels;
+it has not located a separate test conditioned directly on high systolic ratio.
+
+## Review delivery and availability
+
+The frozen three-page trial has **not received a content verdict**. Jörn could
+not open or copy the wrapped URL and requested a short index address with
+named artifacts and ages. Repairing delivery must not be mistaken for revising
+a rejected artifact.
+
+At approximately 15:05 UTC he reported continuous availability for the next
+hour and more than 120 minutes of total active review time before the deadline;
+after that hour, interruptions may last up to fifteen minutes.
