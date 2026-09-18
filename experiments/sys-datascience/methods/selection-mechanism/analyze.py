@@ -44,7 +44,7 @@ def spearman(x, y):
 
 def write_tsv(path, rows):
     with path.open("w") as output:
-        writer = csv.DictWriter(output, fieldnames=list(rows[0]), delimiter="\t")
+        writer = csv.DictWriter(output, fieldnames=list(rows[0]), delimiter="\t", lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
