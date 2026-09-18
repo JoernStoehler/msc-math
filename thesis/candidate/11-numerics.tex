@@ -150,8 +150,12 @@ It intentionally does not enumerate all minimizing geometric branches.
 
 \subsection{Empirical verification and limitations}
 
-The selected development route's numerical audit compared the floating-point predicates with exact
-dyadic-rational arithmetic on \(249\) KKT systems: ordinary generated systems,
+The audits below concern separate development implementations of the general
+and product algorithms. A four-test comparison, described below, checks their
+outputs against the production implementation on fixed fixtures.
+
+An audit of the general development implementation compared the floating-point
+predicates with exact dyadic-rational arithmetic on \(249\) KKT systems: ordinary generated systems,
 scales from \(10^{-2}\) through \(10^3\), and systems approaching singularity
 down to binary64 coincidence.  It found no incorrect determinate decision and
 no violation of a \(\beta\)- or \(Q\)-radius.  Fifteen cases were
@@ -159,8 +163,8 @@ indeterminate and were resolved exactly.  The largest observed ratios of
 actual error to certified radius were \(0.00149\) for \(\beta\) and
 \(0.00081\) for \(Q\).
 
-Complete selected-development-route comparisons used \(88\) words from three generated general
-polytopes and \(1271\) words from three product controls.  Exact aggregation
+Complete comparisons for that implementation used \(88\) words from three
+generated general polytopes and \(1271\) words from three product controls. Exact aggregation
 found no missed capacity and no missed minimizer class; every exact capacity
 lay in the returned interval.  On the general cases, the largest difference
 between the printed central value and exact capacity was \(2.31\cdot10^{-14}\).
@@ -168,7 +172,8 @@ These finite comparisons test the implementation and exercise fallback, but
 the soundness claim rests on the preceding error bounds and complete-candidate
 arguments.
 
-The selected product-development-route audit used \(88\) ordinary and adversarial products.  Across
+An audit of the product development implementation used \(88\) ordinary and
+adversarial products. Across
 \(1835\) closure weights and \(173\,496\) objective intervals it found no
 interval violation, no incorrect determinate sign, and no disagreement between
 the hybrid and complete exact closure-vertex computations.  Raw comparison
@@ -180,7 +185,7 @@ implementation and stress-tests
 Theorem~\ref{thm:quadratic-program-product-six-facet}; it is not its proof and
 does not exclude longer tied minimizers.
 
-A four-test correspondence check compares the selected development routes
+The four-test correspondence check compares the development implementations
 with the production implementation on fixed fixtures: general capacity bounds,
 an exact action window, derivatives of the retained words, and product capacities
 with their sparse winning words. All four tests pass; this is finite regression
