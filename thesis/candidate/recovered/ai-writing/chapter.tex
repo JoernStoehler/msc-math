@@ -1,24 +1,23 @@
+\clearpage
 \section{AI in the research process}
 \label{sec:use-of-ai}
 
-The use of AI in this project changed as the available models became more
-capable. My experience was that they supplied increasingly useful research
-ideas and could carry out longer tasks with fewer interruptions. This changed
-what I could delegate. A request could describe a mathematical or experimental
-outcome and leave the agent to choose intermediate steps, write code, inspect
-the results and revise its approach. The separate disclosure records AI use;
-here I discuss what this experience suggests about organizing mathematical
-work with agents.
+As the agents became more capable, my work shifted from directing individual
+steps toward specifying what the finished work had to accomplish. They could
+develop a substantial mathematical argument from an incomplete suggestion,
+yet sometimes needed repeated intervention to pursue a much more ordinary
+objective. My main difficulty increasingly concerned what they treated as
+success. This section gives my interpretation of that experience; the separate
+disclosure records the extent and provenance of AI use in the thesis.
 
-\subsection{Delegating an incomplete proof strategy}
+\subsection{A mathematical objective with room for discovery}
 
-The local maximality proof is the clearest example of how much of a research
-task could be delegated. I asked a GPT-5-series model for a proof that the
-HKO body is a local maximum. I suggested looking for several upper bounds
-and somehow showing that together they control a neighborhood after
-quotienting out the symmetries. This was only the overall shape of a
-strategy. I had not specified a finite certificate or worked out how the
-upper bounds should be constructed.
+The local maximality proof illustrates how much could be delegated without
+specifying a procedure. I asked a GPT-5-series model to develop a local
+maximality argument for HKO in facet coordinates. I suggested looking for several upper bounds and
+somehow showing that together they control a neighborhood after quotienting
+out the symmetries. I had neither specified a finite certificate nor worked
+out how to construct the upper bounds.
 
 The model developed essentially the entire argument from that starting
 point. It identified a sufficient configuration of twenty-six upper bounds
@@ -31,76 +30,148 @@ This supplied upper bounds even where the initial approach failed. It also
 completed proof steps involving the volume and wrote the SageMath code for
 the exact computations.
 
-The assignment was therefore a conjecture and an incomplete proof idea;
-the result was a developed proof together with computational verification
-code. The derivative conditions and the form of the finite certificate
-were part of the model's contribution, not conditions I supplied in the
-request. The useful specification was the mathematical outcome---a proof
-of local maximality---while the model had substantial freedom to discover
-what would establish it.
+The desired result was clear enough to guide this work even though the route
+to it was unknown. A proof had to establish the local inequality, including
+directions that did not preserve the product structure. The model was free
+to discover what finite statement would suffice. In particular, the
+twenty-six derivative conditions were part of its solution, not a test suite
+that I supplied in advance. The resulting ten-facet theorem in this thesis
+shows the value of giving an agent a mathematical objective while leaving
+substantial freedom over the argument.
 
-\subsection{Matching the check to the claim}
+\subsection{An inferred criterion of success}
 
-The different parts of this thesis require different evidence. In the HKO
-argument, arithmetic checks establish a finite statement about explicitly
-defined matrices and weights. The written proof still has to identify those
-matrices with derivatives of upper bounds for the geometric quantity. It
-also has to pass from labelled normals to a neighborhood of convex bodies.
-Omitting either connection would leave a mathematical gap even if every
-computed identity were correct.
+Other tasks produced a more puzzling contrast. An agent could reason
+competently about a problem and still stop after a first step, answer a
+related question, or keep preparing work that it had been asked to finish.
+These failures sometimes looked oddly motivational: the next useful action
+seemed to be within the agent's capabilities, but its behavior was directed
+toward a different stopping point. I found it useful to think about the
+criterion of success that the agent appeared to infer from the conversation.
 
-For the search experiments, a high observed value answers a different
-question from a proof of a local maximum. The comparison of prescribed
-rotations with fresh sampling makes the distinction concrete: rotations
-improved several starting bodies, but fresh sampling reached the larger
-maximum in each of the four comparisons. An instruction merely to find an
-improvement could have returned a successful example while leaving the
-allocation question unanswered. Here the control determines what we learn
-from the computation.
+My hypothesis is that training with verifiable rewards encourages models to
+learn a concept of a \emph{Grader}: a representation of what will judge the
+task completed successfully. Reinforcement learning with verifiable rewards
+uses outcomes that can be checked, such as a mathematical answer or a
+program's performance on test cases. For example, DeepSeek-R1-Zero was
+trained with rule-based accuracy and format rewards; its reasoning strategies
+were not supplied as complete human demonstrations~\cite{aiGuo2025}.
+I suspect that such training can teach a model to infer a criterion and
+organize its work around satisfying it. The training result motivates this
+interpretation, but does not establish that it explains the behavior of the
+agents I used.
 
-The same issue occurs in more routine work. A retained code-repair example
-included a regression test that passed even when the original sign defect
-was restored. Testing the test against that defect revealed what an ordinary
-successful run did not establish. Such checks are useful because they target
-a particular possible mistake, rather than adding another undifferentiated
-approval of the result.
+This interpretation concerns more than reward hacking or literal obedience
+to an instruction. An agent need not exploit a loophole in a stated test, or
+misread a particular word, to pursue the wrong objective. A plan for improving
+a chapter can be a good answer to a conversational turn while leaving the
+requested chapter unwritten. Likewise, a useful preliminary calculation can
+become the apparent endpoint of a task that required a theorem. Each answer
+may be sensible on its own. The failure is that the criterion organizing the
+work covers only part of the intended result.
 
-\subsection{What still requires a reader}
+A clear objective makes the inferred criterion more likely to coincide with
+what I actually want. Here clarity means enough specificity to evaluate
+completion: what result is needed, why it is needed, which constraints matter,
+and what would leave the task unfinished. It does not require prescribing
+every intermediate action. The HKO example was effective precisely because
+the mathematical objective constrained the result while allowing the agent
+to invent the method. A prompt does not update the model's parameters; it
+supplies the context in which these learned capabilities are used.
 
-Mathematical exposition introduces a further difficulty. An agent can recover
-the meaning of a dense paragraph and judge it correct while a human reader
-has to stop repeatedly to decipher it. The intended reader of this thesis
-knows smooth symplectic geometry, but still needs an introduction to the
-nonsmooth variational problem and its finite reduction. A later definition
-does not remove the effort spent reading an earlier sentence that needed it.
+\subsection{Keeping the whole task in view}
 
-This makes reading feedback valuable even when individual calculations have
-been checked. The useful feedback identifies where an explanation ceases to
-work: a missing implication, an unfamiliar object used before its definition,
-or a paragraph whose contribution remains unclear. Whether an agent can
-predict that feedback is itself an empirical question. Its ability to
-summarize a chapter does not establish that the chapter is comfortable to
-read. Nor does an automated check decide whether a mathematically correct
-side result deserves the space it occupies. These judgments concern the
-reader and the purpose of the thesis.
+Long conversations made the distinction between a useful answer and a
+completed task increasingly important. Some of my threads extended beyond
+a hundred turns. Habits inherited from short, fast exchanges became a poor
+fit: each new message could receive a plausible response while earlier
+constraints, unresolved work, and the reason for the project receded from
+view. Missing context or a confused description of the goal could leave an
+otherwise capable agent passive, or busy with work that no longer served
+the main objective.
 
-\subsection{A connection with training on verifiable outcomes}
+The checkpoint I want in such a task asks whether the current reasoning,
+evidence, and actions are advancing the right whole goal within the available
+budget. It should expose a change of destination: delivering only a first
+step, solving an easier related problem, or replacing completion by repeated
+planning. The same question belongs at the end. A successful evaluation of
+several components does not answer whether the requested result has been
+delivered.
 
-There is a suggestive connection to reinforcement learning with verifiable
-rewards. Guo and collaborators trained DeepSeek-R1-Zero using rule-based
-accuracy and format rewards; mathematical answers and code test outcomes
-supplied checkable feedback. Their later DeepSeek-R1 combined reinforcement
-learning with supervised fine-tuning and also used model-based rewards for
-general tasks~\cite{aiGuo2025}. This is evidence that outcome feedback can
-shape learned problem-solving behavior, not that every useful judgment has
-a reliable automatic reward.
+The budget is part of that judgment. An investigation can produce useful
+information and still be a poor choice if it consumes the time needed to
+finish the work. When the task is to deliver a readable chapter, identifying
+another possible improvement has to be weighed against writing and revising
+the actual chapter. When the task is a mathematical search, the value of
+another computation depends on the question it can resolve and the resources
+left for following up. Progress has to be assessed against the intended
+outcome and its constraints, rather than the amount of activity generated.
 
-An outcome supplied in an agent's task context is not a training reward:
-the task does not thereby update the model's parameters. The practical
-connection is that both require a criterion aligned with the intended
-achievement. In the HKO example, the finite conditions that could be checked
-were themselves discovered during the research task. They were not a test
-suite supplied in advance. My experience motivates using agents for work
-with clear outcomes and checking whether the returned evidence actually
-supports them. It does not isolate the contribution of a particular training
-method or measure the time this project would have taken without AI.
+This does not call for inspecting every step. An autonomous agent should
+choose and revise many of its own intermediate steps. The important human
+intervention is often to restore the purpose that those steps serve. More
+detailed instructions can help when a constraint was missing, but can also
+obscure the goal beneath local requirements. I increasingly needed to explain
+the result I wanted and the context that made it useful, then judge whether
+the work still addressed that result.
+
+\subsection{Why exposition remained difficult}
+
+For the mathematics required by this MSc project, I often found the agents'
+capabilities sufficient to make substantial progress with little detailed
+direction. Producing passable mathematical exposition was much harder to
+delegate. This was surprising to me given the amount of written material
+used in language-model training. The later work on the thesis became a
+prolonged struggle with writing and task-management quirks, even when the
+models could partly recognize those quirks in discussion.
+
+One recurring problem was prose that presented itself as polished before it
+communicated its content clearly. Inflated claims of significance, colorful
+phrasing, and abstract summaries could make a passage sound complete while
+leaving its mathematical point difficult to recover. This is what I mean by
+\emph{AI slop} in the present context. Scientific exposition instead needs
+to show what is being claimed, what makes it true, and why that claim belongs
+at this point in the argument. An agent's ability to decipher a dense
+paragraph did not show that a reader could comfortably follow it.
+
+I suspect that preference training contributes to this tendency. In
+reinforcement learning from human feedback, rankings of model outputs can
+be used to train the model toward preferred responses, as in
+InstructGPT~\cite{aiOuyang2022}. If an impressive presentation is easier to
+recognize in a brief comparison than a clear explanation is to assess
+through sustained reading, that preference signal may favor the appearance
+of quality. This is my hypothesis about a possible source of the prose I
+encountered, not a demonstrated causal account of those models' training.
+
+The practical difficulty persisted even after it had been named. A model
+could acknowledge that a passage needed a concrete argument and then return
+another description of the argument's intended role. It could recognize
+that the goal was a readable chapter while spending its effort on further
+diagnosis. I had to devise corrections tailored to recurring behaviors;
+there was no single instruction whose recognition reliably produced the
+desired writing. Understanding a criticism in one exchange and carrying it
+through a sustained piece of work proved to be different capabilities.
+
+This experience also limits the lesson I draw from the mathematical success.
+The proof work in this project was tractable enough for the available models
+that their quirks often mattered less there. The difficulty of exposition
+was not captured by the formal sophistication of its subject. Choosing the
+right explanation, maintaining its purpose across a chapter, and removing
+language that obscured the mathematics remained demanding tasks.
+
+\subsection{The changing human contribution}
+
+The human work therefore shifted toward translating the needs of the research
+project into objectives an agent could pursue and evaluate. I knew
+why I wanted a theorem, an experiment, or a thesis chapter; that purpose did
+not automatically accompany a request for one. Supplying it meant explaining
+the intended result, the reader or use it had to serve, and the time and
+resources available. It also meant compensating for behaviors that remained
+unreliable despite the models' growing autonomy.
+
+This left less need to manage every mathematical or programming step and
+more need to keep the intended outcome clear. Choosing worthwhile questions
+and judging what the answers meant remained part of the shared work. In this
+project, substantial autonomous problem solving and substantial human
+intervention coexisted. The challenge was increasingly to make the task the
+agent pursued coincide with the task I needed completed.
