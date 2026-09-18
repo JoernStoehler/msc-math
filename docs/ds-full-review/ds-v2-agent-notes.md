@@ -1,5 +1,10 @@
 # DS chapter v2: independent agent marks and repair status
 
+**Human status, 18 September:** Jörn desk-rejected this PDF at its opening and
+stopped reading. The local repairs below did not establish acceptable chapter
+writing. The author and reviewers are revising that failed opening and reviewing
+why the agent process missed it.
+
 **Artifact:** `ds-v2.pdf`, source `8a2f2121`, 23 pages including supporting appendix.
 **Main reading:** printed pages 2–11, stopping before Appendix A on page 11.
 **Reviews:** independent editorial review by `/root/ds_editorial_review`;
