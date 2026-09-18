@@ -1,0 +1,46 @@
+# Selected product-rotation section
+
+`section.tex` is a proposed self-contained reader-facing section. Its standalone
+build is two pages including the bibliography:
+
+```sh
+cd thesis/candidate/product-rotation-draft
+latexmk -pdf -interaction=nonstopmode -halt-on-error standalone.tex
+```
+
+Jörn selected the following content in the root conversation on 2026-09-18:
+
+1. Every full-dimensional planar product admits a rigid rotation improving its
+   symplectic-product capacity and systolic ratio, via the initial-regime formula.
+2. An explicit example where its Lagrangian endpoint is worse.
+3. Their combined implication is a short remark, not a separate major result.
+
+The main example uses a single feasible six-facet configuration to prove
+`ell <= 18/5 < 9/2`; the exact equality and six-case proof are retained in
+[`formal/product-rotation`](../../../formal/product-rotation/README.md).
+No full profile catalogue, lifted-orbit counterexample or global optimality
+claim is included. No assertion of novelty is made.
+
+## Wiring in this integration candidate
+
+This review-only assembly now includes `\input{product-rotation-draft/section.tex}` after
+the existing pentagon rotation/affine section and before visualization. This
+separates rotation of the full four-dimensional product from in-plane rotation
+of a pentagon factor. The section uses only ordinary theorem/example/remark
+and AMS environments, plus existing bibliography key `HK2017`; there are no
+external figures or new macros. It does not modify the pentagon proof, CAS
+history, affine proof or local F=10 result.
+
+For a smoother final chapter arrangement, it may become a subsection of a
+broader product-results chapter; keep the two geometrically different rotations
+explicit. Final placement and prose quality remain assembly/review decisions.
+The standalone wrapper is for review, not a second thesis build entry.
+
+## Verification
+
+- Independent mathematical check of the mass split, rotation conjugation and
+  triangle constants by subagent `verify_rotation`.
+- `python3 formal/product-rotation/verify.py` passes (rational checks).
+- Standalone LaTeX compilation succeeds with resolved citation and references;
+  both rendered pages inspected, no clipping or equation overflow observed.
+- No human PASS judgment has been requested or received for this text.

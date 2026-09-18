@@ -1,6 +1,6 @@
 # Proposed candidate assembly — 18 September 2026
 
-**An 81-page integration draft is built and reviewable. It is not a prose PASS,
+**An 83-page integration draft is built and reviewable. It is not a prose PASS,
 a release, or an authoritative coordination/ownership map.** No main merge,
 publication, or alteration of the original interrupted checkout occurred.
 
@@ -122,3 +122,23 @@ The HKO listing names its source and states that assertions require Python
 optimization disabled; this records prior execution, not a fresh certificate run.
 The source-check reports and exact proposal are retained locally under
 `docs/algorithm-prior-art-closure/` and `docs/availability-claim-closure/`.
+
+## User-selected product-position addition
+
+Adopted `5a47eb2c` after reading the complete two-page proof and supporting
+convention record and rerunning `formal/product-rotation/verify.py`. The new
+section follows affine pentagons and precedes visualization. It states the
+universal capacity increase away from symplectic-product position, proves it
+by mass splitting, and gives one triangle product with a smaller Lagrangian
+endpoint. The combined interior-maximum implication remains a short remark.
+No profile catalogue, lifted-orbit counterexample or novelty claim is added.
+Introduction/conclusion and section routing mention this selected result.
+
+The rational check passes: six prefix cases, 120 cyclic orders, feasible
+witness and rotation-generator identities. It supplements the reviewed argument;
+the code does not prove the arbitrary-convex-body approximation step.
+
+Latest product-position build: **83 pages**, no warnings, undefined references
+or overfull boxes. The new section is on pages 66–67; those and adjacent pages,
+contents, introduction, availability and conclusion were rendered/inspected.
+Earlier 81-page checks above remain dated integration-stage evidence.

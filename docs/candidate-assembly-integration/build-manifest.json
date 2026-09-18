@@ -4,8 +4,8 @@
   "snapshot_commit": "8aff3321",
   "candidate_inputs": {
     "thesis/candidate/main.tex": {
-      "sha256": "15761808d8757e590d9c4ae85e81a2b0c2757910aa25da38acc8750ed0a6e70e",
-      "bytes": 2391
+      "sha256": "17eb7d56d9b0ae9e7a70eb2f861357fb035a6bbb7c7fab6d3eb71807ddf1771c",
+      "bytes": 2434
     },
     "thesis/candidate/legacy/preamble.tex": {
       "sha256": "3dd932fb29bd8a7c44f5f7a8fef28453caca276755925e43129e097ff97fc566",
@@ -20,8 +20,8 @@
       "bytes": 2508
     },
     "thesis/candidate/recovered/thesis-candidate/01-introduction.tex": {
-      "sha256": "e5d20a888d3f8f2d52fa1a2501f1dd7f2b7ee8053c3e2d250a677913766f8a79",
-      "bytes": 10100
+      "sha256": "c8fc8dca21196d655d7fa652ae837c62fe2f4b4c9b6f926e3034866bc5f99f50",
+      "bytes": 10584
     },
     "thesis/candidate/recovered/thesis-candidate/02-preliminaries.tex": {
       "sha256": "fb69b125f7bc4a5a4398603bf22371b3187c0d0b30e51656084b03f064839866",
@@ -127,6 +127,10 @@
       "sha256": "9323eeedf1717bf66ce2015d8e4e04326fbf77078c0fde1c9cc5b76ba34841a2",
       "bytes": 9935
     },
+    "thesis/candidate/product-rotation-draft/section.tex": {
+      "sha256": "6b4a0ed9dd7a494e38e1f2cd78fbbc2aa58626548ab00e61fd3719b96c88ff38",
+      "bytes": 5487
+    },
     "thesis/candidate/legacy/10-visualization-3d.tex": {
       "sha256": "007d86dfdedc34bc3a94f551fb4420b7a0d699710221480e77ddfd9900a8c750",
       "bytes": 2874
@@ -152,8 +156,8 @@
       "bytes": 6141
     },
     "thesis/candidate/recovered/thesis-candidate/14-conclusion.tex": {
-      "sha256": "f5d866475dc922a1b6778b88e98acc9f16288553ef5ebba95e10cab1029b11bd",
-      "bytes": 3412
+      "sha256": "c3b6055a35ac32aa8f39dcd77e754a3073c9fd94f946c4d869e042e08b9679cb",
+      "bytes": 3737
     },
     "thesis/candidate/recovered/thesis-candidate/a-datascience-results.tex": {
       "sha256": "b4f44657adfb1357627aa5c927bdd6098503246f5571e4b7015712c28cbb697e",
@@ -178,17 +182,18 @@
   },
   "pdf": {
     "path": "/workspaces/msc-math/.worktrees/candidate-assembly-integration/thesis/candidate/build/main.pdf",
-    "sha256": "e771fe090ccdf38185729aa72e10167632f7fc230513c4a746d1b3a10144023b",
-    "bytes": 1488386,
-    "pages": 81
+    "sha256": "c36f0ad48baca67585b251230c4d2c17fd5b766dea195c96e8c346be4b80d35d",
+    "bytes": 1497809,
+    "pages": 83
   },
   "checks": {
-    "source_inputs": 43,
+    "source_inputs": 44,
     "latex_warnings": [],
     "rendered_pages": 81,
     "visual_check": "All81 pages inspected at contact-sheet scale; affine/QP/variation/source-attribution areas further inspected. No clipping or overlap noticed. Sparse page40 and48 persist; final layout/prose acceptance is not asserted.",
     "ridge_followup": "Identity added in Section8.4, equation35, page53; full rebuild81pages with no warnings; pages52\u201354 rendered/inspected, no clipping.",
-    "prior_art_availability": "Full rebuild81pages, no warnings; pages26,35,70,80 rendered/inspected; public commit uses short linked hash to avoid overflow."
+    "prior_art_availability": "Full rebuild81pages, no warnings; pages26,35,70,80 rendered/inspected; public commit uses short linked hash to avoid overflow.",
+    "product_position": "83page full rebuild, no warnings. New section pages66\u201367 and adjacent65/68 rendered/inspected; contents4,introduction7,availability71,conclusion75 inspected. Initial81page full contact-sheet pass remains preceding-version evidence."
   },
   "baseline_pdf": {
     "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/build/main.pdf",
