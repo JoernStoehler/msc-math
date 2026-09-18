@@ -14,7 +14,7 @@ queue. The pentagon-partner owner remains in place.
 
 **Background research activated:** five scientific owners now operate under
 [the scoped ownership charter](research-owners.md), with the coordinator
-maintaining [the live graph](../../task-graph/25-empirical-research.svg).
+maintaining [the live graph](../../history/task-graph/25-empirical-research.svg).
 The first dispatched window is 45–60 minutes per owner; interpreted findings
 and changed premises return incrementally, without a global preparation barrier.
 

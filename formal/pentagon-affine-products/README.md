@@ -36,7 +36,7 @@ replaces the other.
 1. **Keep the short rotation proof first.** The accepted analytic argument is
    [the endpoint-interpolation proof](../../docs/pro-handoffs/pentagon-generalization/math/rotated-pentagon-proof.tex).
    Its reader-facing version is
-   [the replacement chapter](../../docs/pentagon-chapter-v2/chapter.tex).
+   [the replacement chapter](../../docs/history/pentagon-chapter-v2/chapter.tex).
    The argument imports the independently known HKO endpoint capacity; its
    acceptance does not imply acceptance of every subsequent prose version.
 2. **Extend to independent linear factors.** Sections 2–5 of
@@ -63,7 +63,7 @@ agent-reviewed mathematical proofs; no human proof acceptance, prose PASS or
 novelty determination is asserted for the extension. The symmetric-product
 interpretation is optional and not an input to the affine proof.
 
-The [provisional thesis extension](../../thesis/candidate/pentagon-affine-draft/README.md)
+The [provisional thesis extension](../../thesis/chapters/10-affine-pentagons.tex)
 is a separate reader-facing representation. It was initially delivered unwired;
 this proposed integration checkout now includes it after the unchanged rotation
 proof. This does not establish prose acceptance or select the final assembly.

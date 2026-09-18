@@ -2,7 +2,7 @@
 
 Status: named development candidate, not promoted library code and not thesis
 evidence by itself. This describes the algorithm, not an assignment to develop
-or promote it. [Current work and ownership](../../memories/todos.md) records
+or promote it. [Current work and ownership](../../docs/WORK_REMAINING.md) records
 the live scope. For perturbation-scale behavior, see
 [branch-cartography/](branch-cartography/README.md).
 

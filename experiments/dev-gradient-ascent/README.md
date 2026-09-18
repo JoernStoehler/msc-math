@@ -5,7 +5,7 @@ branch behavior that an optimizer must handle. The Cargo package name
 `exp-dev-gradient-ascent` predates the broader branch-behavior scope.
 
 Package availability is not an active development assignment. See
-[current work and ownership](../../memories/todos.md). The retained
+[current work and ownership](../../docs/WORK_REMAINING.md). The retained
 promotion notes preserve research context; they do not assign further
 runs, method promotion or thesis integration.
 

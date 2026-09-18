@@ -6,7 +6,7 @@
 
 Data science can be a method for discovering mathematical structure in a computationally accessible class of geometric objects. The scientific object is not necessarily one fixed table, one target, or one fixed repertoire of features. We can generate new objects, measure old objects differently, examine local families, and switch between statistical discovery and mathematical reasoning.
 
-Jörn's [actual reading feedback](../../docs/review-evidence/human-feedback/ds-reading-2026-09-14.md) calls for broad geometric measurements, temporarily setting their semantics aside to discover patterns, then reconstructing mathematical interpretations and conjectures. His current instruction explicitly extends this to adaptive acquisition of polytopes and features. Those are confirmed aims. The campaigns below are proposals, not his selected priorities.
+Jörn's [actual reading feedback](../history/review-evidence/human-feedback/ds-reading-2026-09-14.md) calls for broad geometric measurements, temporarily setting their semantics aside to discover patterns, then reconstructing mathematical interpretations and conjectures. His current instruction explicitly extends this to adaptive acquisition of polytopes and features. Those are confirmed aims. The campaigns below are proposals, not his selected priorities.
 
 Two existing restrictions must not silently define this larger programme:
 
@@ -38,7 +38,7 @@ The normalized ratio is also not the only sensible response. Capacity and volume
 
 ## Existing evidence changes the starting point
 
-The [recovered account](../../../ds-evidence-closure/docs/ds-evidence-closure/README.md) reproduces the historical 14,336-row association and records prospective selection, orbit, orientation, tangentialization and optimizer evidence. The historical table is not newly certified by that replay. The current schema differs from its historical schema.
+The [recovered account](../ds-evidence-closure/README.md) reproduces the historical 14,336-row association and records prospective selection, orbit, orientation, tangentialization and optimizer evidence. The historical table is not newly certified by that replay. The current schema differs from its historical schema.
 
 The negative ridge association is real within its named dataset, and the rotated-pentagon identity supplies one exact family explanation. Designed product paths already refute unrestricted inverse monotonicity. Existing feature-controlled and orbit packets are therefore starting observations, not blank research territory. We should not spend the next experiment rediscovering that a population correlation is not a universal law.
 

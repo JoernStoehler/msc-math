@@ -2,7 +2,7 @@
 
 This records a July exploration assessment, not a current completion gate or
 assignment. Jörn's 2026-09-05 assessment is that data science is moderately
-incomplete. [Current work and ownership](../../../memories/todos.md) distinguishes
+incomplete. [Current work and ownership](../../../docs/WORK_REMAINING.md) distinguishes
 the live migration assignment from research proposals.
 
 Status: exploration/research slice satisfied after the corrected broad-first

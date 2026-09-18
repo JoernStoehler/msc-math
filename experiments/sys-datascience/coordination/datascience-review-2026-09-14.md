@@ -87,10 +87,10 @@ Primary references:
   and [target evaluator account](../methods/generic-ridge-tail-stage1-target/README.md).
 - [Alternative-source account](../methods/alternative-source-transfer/POST-TARGET-ACCOUNT.md)
   and `artifacts/transfer-v1/{analysis.json,result-manifest.json,target-evaluations.jsonl}`.
-- [Main chapter](../../../thesis/08-black-box-datascience.tex),
-  [optimizer subsection](../../../thesis/08-black-box-datascience-finite-budget-optimization.tex),
-  [local screen](../../../thesis/08-black-box-datascience-local-maxima-check.tex),
-  and [appendix](../../../thesis/a-datascience-results.tex).
+- [Main chapter](../../../thesis/chapters/08-data-science.tex),
+  [optimizer subsection](../../../thesis/chapters/08-data-science.tex),
+  [local screen](../../../thesis/chapters/08-data-science.tex),
+  and [appendix](../../../thesis/appendices/data-science.tex).
 
 ## Valuable existing work
 
