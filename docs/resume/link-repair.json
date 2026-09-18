@@ -6,5 +6,10 @@
   "historical_excluded": "docs/history/**",
   "changed_files": 15,
   "repaired_links": 21,
-  "notes": "Targets follow docs/resume/layout-migration.json: active ownership, thesis chapters, retained DS packets, and explicitly historical records."
+  "notes": "Full source/line/old/new manifest is recorded in the independent exact audit message; preserved originals are under docs/history/source-snapshots and branch inventory retained_path entries.",
+  "scan": {
+    "scope": "maintained Markdown excluding docs/history, docs/resume, writing-quality provenance/runs",
+    "checked_links": 372,
+    "remaining_failures": 0
+  }
 }

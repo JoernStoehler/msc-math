@@ -1,7 +1,7 @@
 # Rotating a planar product: proof and convention record
 
 The reader-facing theorem, proof, triangle example and short consequence are in
-the [product-position chapter](../../thesis/chapters/11-product-position.tex).
+[`section.tex`](../../thesis/candidate/product-rotation-draft/section.tex).
 This supporting record retains the exact endpoint calculation omitted from that
 section because an upper bound already proves the required endpoint comparison.
 

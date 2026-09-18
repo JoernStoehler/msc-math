@@ -140,8 +140,8 @@ with known-capacity examples and nontrivial volume questions; suitable toric
 domains offer higher-capacity controls beyond polytope representations. Neither
 means all self-polar bodies have the same capacity or arbitrary polytopes are
 toric. These are candidates for coverage, not automatic new campaigns. The
-[literature map](../../open-thesis-literature/README.md)
-is maintained in this checkout.
+[literature map](/workspaces/msc-math/.worktrees/open-thesis-literature/docs/open-thesis-literature/README.md)
+is in a sibling worktree.
 
 ## Independent brainstorm: populations organized by operations
 
