@@ -224,13 +224,35 @@ ninety, without a larger mean ratio. This decomposition does not isolate a
 cause. It explains why the next question cannot simply be which component
 to drive lower without considering the rest of the shape.
 
-These observations return us to a sharper mathematical task: identify a
-restricted family or controlled change for which the edge-and-width
-quantity has a predictable relation to capacity. The current evidence does
-not supply that relation. Fresh selection tests establish practical use of
-the signal, while the later experiments vary support heights and symplectic alignment.
-Those pilots measure changes in ratio; they do not establish which ridge-area
-component explains a capacity change.
+For rotated regular pentagons, the descriptor does have an exact relation
+to capacity. Let $K_\theta=P_5\times R(\theta)P_5$, with circumradius one,
+and let $d(\theta)=\min_{k\in\mathbb Z}|\theta-k\pi/5|$.
+Each edge has length $2\sin(\pi/5)$ and each factor has area
+$5\sin(\pi/5)\cos(\pi/5)$. The mixed-edge formula therefore gives
+\[
+ S(K_\theta)=4\tan(\pi/5)
+       \sum_{k=0}^4|\cos(\theta+2\pi k/5)|
+     =16\sin(\pi/5)\cos d(\theta).
+\]
+For the second equality, the absolute-cosine sum is even and has period
+$\pi/5$. On $[-\pi/10,\pi/10]$, the terms indexed by $0,1,4$ are
+nonnegative and those indexed by $2,3$ are nonpositive. Pairing opposite
+indices reduces the sum to
+$[1+2\cos(2\pi/5)-2\cos(4\pi/5)]\cos\theta
+=4\cos(\pi/5)\cos\theta$.
+Combining this with the capacity profile proved in
+Theorem~\ref{thm:rotated-pentagon-product-formula} yields
+\begin{equation}\label{eq:ds-pentagon-ridge-capacity}
+ \operatorname{sys}(K_\theta)S(K_\theta)^2=16(3+\sqrt5).
+\end{equation}
+Thus smaller normalized total unsigned ridge area means larger systolic
+ratio within this rotation family. This explains the direction of the
+association on a family with fixed volume and combinatorics, not throughout
+the sampled population. It does not overturn the square--HKO comparison
+above or imply a law for arbitrary polygon products. The subsequent selection
+tests ask whether the descriptor is useful on fresh bodies; they are not
+tests of this identity. The later support-height and alignment experiments
+likewise do not establish which ridge-area component explains a capacity change.
 
 \subsection{Testing whether a pattern can guide fresh selection}
 
@@ -571,8 +593,9 @@ turn the nominal target misses into a proof.
 
 The exploratory approach found a strong ridge-area pattern, then gave it
 more concrete meaning through edge widths and the area--alignment
-decomposition. That interpretation ruled out a universal monotonicity claim
-and left a more restricted capacity relation to be formulated. The search
+decomposition. The square--HKO comparison rules out universal monotonicity,
+while equation~\ref{eq:ds-pentagon-ridge-capacity} gives an exact inverse-square
+relation on the rotated-pentagon family. The search
 approach found geometric information useful before capacity evaluation. Low ridge area and balanced vertex covariance selected larger
 recorded ratios in fresh pools, and some of that usefulness survived changes
 in the generating law. More severe ridge filtering did not automatically

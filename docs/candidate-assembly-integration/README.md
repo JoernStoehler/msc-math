@@ -51,11 +51,11 @@ proof and removal of the old pentagon appendix already selected in interrupted
 ## Deferred work and decisions
 
 - **DS:** complete recovered chapter and appendix remain selected. The reviewed
-  subsection revision is not a whole-chapter replacement. In particular the
-  closing statement that a restricted relation remains to be formulated is
-  stale relative to the known pentagon identity. Introduction/conclusion's DS
-  interpretation also awaits selected contemporary content. Do not call this
-  whole-document scientific coherence closed.
+  subsection revision is not a whole-chapter replacement. A bounded follow-up
+  adds the established rotated-pentagon ridge identity and elementary cosine-sum
+  derivation in Section 8.4, using the chapter's existing descriptor S. It removes
+  the contradictory absence claims in Section 8.11, introduction and conclusion;
+  full DS revision and selected contemporary content remain pending.
 - **Preliminaries:** existing recovered version remains selected. New top-level
   alternative is preserved but is not assumed superior or activated.
 - **New empirical deductions:** not imported automatically. Scientific selection
@@ -84,7 +84,8 @@ proof and removal of the old pentagon appendix already selected in interrupted
 4. Independent fresh source reviewer compared main selection and patch contents:
    no accidental source omission; exact QP/flow match; affine source-manifest
    hashes verified; rotation/affine conventions align. Reviewer detected stale
-   integration notes (repaired) and the deferred DS interpretation (recorded).
+   integration notes (repaired) and stale DS interpretation (subsequently repaired
+   by the bounded ridge-identity addition).
 5. Build manifest records actual local TeX/figure/bibliography inputs. No other
    checkout is required to render this candidate.
 
@@ -94,3 +95,15 @@ Root/Jörn review this candidate and the separate coordination map before
 choosing a permanent integration surface. A subsequent integrator can apply
 the scoped commits rather than reconstructing the interrupted session. This
 active worktree retains unique reviewable work and is not disposable scratch.
+
+## Bounded DS consistency follow-up
+
+Source: `docs/ds-evidence-closure/ridge-mathematics.md` from `0e0ccb9c`.
+The new equation `eq:ds-pentagon-ridge-capacity` states
+`sys(K_theta) S(K_theta)^2 = 16(3+sqrt(5))` for regular rotated pentagon
+products, with the same normalized total unsigned ridge sum already defined
+in the DS chapter. Its derivation counts mixed-edge pairings, evaluates the
+absolute-cosine sum, and invokes the existing rotation-profile theorem.
+No general product law, empirical causality or discovery chronology is asserted.
+Section 8.11 and introduction/conclusion now point to the restricted result;
+the AI disclosure again points to its actual included equation.

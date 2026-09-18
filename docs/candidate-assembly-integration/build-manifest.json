@@ -16,12 +16,12 @@
       "bytes": 1475
     },
     "thesis/candidate/ai-use-disclosure.tex": {
-      "sha256": "8bf8797754f754a8be6a207a0c70627944d2a59dc67b248b8f16883b8324222e",
-      "bytes": 2495
+      "sha256": "0b5d6aefa450fadfcabec1232eb55bdbe674a60d034a9dacd65653610bcbfd31",
+      "bytes": 2508
     },
     "thesis/candidate/recovered/thesis-candidate/01-introduction.tex": {
-      "sha256": "5561acee661845aad17aedfc6ac1056cafd71b570ae2284df0894dc1a792adac",
-      "bytes": 9922
+      "sha256": "e5d20a888d3f8f2d52fa1a2501f1dd7f2b7ee8053c3e2d250a677913766f8a79",
+      "bytes": 10100
     },
     "thesis/candidate/recovered/thesis-candidate/02-preliminaries.tex": {
       "sha256": "fb69b125f7bc4a5a4398603bf22371b3187c0d0b30e51656084b03f064839866",
@@ -112,8 +112,8 @@
       "bytes": 1736
     },
     "thesis/candidate/recovered/ds-first-wave/writing/chapter-opening-v2.tex": {
-      "sha256": "230a3e304be2860d489a3b8529f19eb6885adef72eeec140c7414ea2557ff2e7",
-      "bytes": 35707
+      "sha256": "71848c3c5d01e6008fbbe6862ca093c7280682b4392dc2c71d42c1e81d9e9b9e",
+      "bytes": 36854
     },
     "thesis/candidate/09-rotated-regular-polygons.tex": {
       "sha256": "0941c800cb2e33aeb585ad1ffc65d1b590c84972efad4d458f4aba8e8a571ab8",
@@ -152,8 +152,8 @@
       "bytes": 6141
     },
     "thesis/candidate/recovered/thesis-candidate/14-conclusion.tex": {
-      "sha256": "9945c1e3587c959a1b659a9f1d1c00323779e26ced346c85d0c35b23fc585519",
-      "bytes": 3305
+      "sha256": "f5d866475dc922a1b6778b88e98acc9f16288553ef5ebba95e10cab1029b11bd",
+      "bytes": 3412
     },
     "thesis/candidate/recovered/thesis-candidate/a-datascience-results.tex": {
       "sha256": "b4f44657adfb1357627aa5c927bdd6098503246f5571e4b7015712c28cbb697e",
@@ -178,15 +178,16 @@
   },
   "pdf": {
     "path": "/workspaces/msc-math/.worktrees/candidate-assembly-integration/thesis/candidate/build/main.pdf",
-    "sha256": "0242a87fd4f6a9ea5e5a06ead3697d63a399ee721a871849d452dd5c3b6854ad",
-    "bytes": 1483588,
+    "sha256": "79db3ef9dbfb097c5c5a42777ff5f8bd2452d0dbd0da514e2b0bc82e3c8a3ac2",
+    "bytes": 1485871,
     "pages": 81
   },
   "checks": {
     "source_inputs": 43,
     "latex_warnings": [],
     "rendered_pages": 81,
-    "visual_check": "All81 pages inspected at contact-sheet scale; affine/QP/variation/source-attribution areas further inspected. No clipping or overlap noticed. Sparse page40 and48 persist; final layout/prose acceptance is not asserted."
+    "visual_check": "All81 pages inspected at contact-sheet scale; affine/QP/variation/source-attribution areas further inspected. No clipping or overlap noticed. Sparse page40 and48 persist; final layout/prose acceptance is not asserted.",
+    "ridge_followup": "Identity added in Section8.4, equation35, page53; full rebuild81pages with no warnings; pages52\u201354 rendered/inspected, no clipping."
   },
   "baseline_pdf": {
     "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/build/main.pdf",
