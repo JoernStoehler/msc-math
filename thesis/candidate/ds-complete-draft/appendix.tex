@@ -444,6 +444,17 @@ coordinate direct search
 \end{longtable}
 \endgroup
 
+The beta allowance applies when retaining candidate words at a discovery
+anchor: a raw KKT solution is kept only if
+\[
+ \frac{\min_i\beta_i}{\max_i|\beta_i|}\geq-0.3
+\]
+as well as satisfying the action-window cutoff. This retains some words
+whose weights are negative at that anchor, in case they become feasible
+nearby. It does not relax orbit feasibility: each local model and target
+evaluation again checks the word's transitions and the usual nonnegative
+weight condition at the point being evaluated.
+
 The two history methods accept any usable outer evaluation, including a
 decrease; their reported best-so-far value therefore differs from their
 current iterate. The safeguarded gradient and finite-gap method accept only
@@ -460,6 +471,17 @@ tested axes.  These observations diagnose insufficient finite budgets; they
 do not estimate the distance to a local maximum.
 
 \paragraph{Detailed HKO calibration.}
+Distances here use the Euclidean norm of the forty ordered dual-row
+coordinates $a$, with no further minimization over symmetries. Thus distance
+to HKO is $\|a-a_{\mathrm{HKO}}\|_2$, and the fraction removed is
+$1-\|a_{\mathrm{after}}-a_{\mathrm{HKO}}\|_2/
+\|a_{\mathrm{before}}-a_{\mathrm{HKO}}\|_2$.
+The four unit directions lie in the transverse space at HKO: two random
+directions, its first chosen basis vector (the slice-basis sentinel), and
+the projected, normalized tangent from rotating the pentagon's second
+factor (the pentagon-tangent sentinel). The source distances in the figure
+are absolute Euclidean distances along these rays.
+
 On \(16\) known perturbations along four development directions from HKO, the
 multi-branch continuation accepted no move at HKO and improved every
 perturbation.  One step recovered \(93.4\%\)--\(100\%\) of the known evaluator
@@ -478,6 +500,11 @@ residual evaluator gap.}
 \end{figure}
 
 \paragraph{Selected finite-step failure audit.}
+For the following probes and audits, a relative or normalized radius $r$
+instead scales a unit direction $u$ by the current state norm:
+$\delta a=r\|a\|_2u$. The normalized length of a continuation path is
+$\sum_k\|a_{k+1}-a_k\|_2/\|a_k\|_2$.
+
 At the eight highest four-anchor tuning endpoints, five admitted one validated
 improvement, by \(1.57\cdot10^{-6}\) to \(4.61\cdot10^{-5}\).  Across the
 \(80\) multi-branch proposals, \(52\) decreased the recomputed evaluator value

@@ -27,3 +27,11 @@ No clipped formulas, overlapping text, broken tables, or unreadable plot labels 
 ## Limits
 
 No producers, analyses, CAS programs, or builds were rerun. Repository path availability, numerical values, mathematical correctness, and full executable provenance retain their earlier specialist audits. Page 92 was read only to finish Appendix B's exposition; the bibliography and the remainder of the thesis are outside this review. The findings concern the frozen whole-v1 PDF, not later source edits.
+
+## Bounded repair after the review
+
+Both definition gaps have now been repaired in `thesis/candidate/ds-complete-draft/appendix.tex`, without changing the reported outcomes or rerunning an experiment. The candidate integrator owns the ensuing combined build and affected-page visual check; the frozen whole-v1 PDF above is unchanged.
+
+The distance formulas come from `experiments/dev-gradient-ascent/optimizer-runs/src/quotient.rs` (`l2_norm`, `displacement_l2`), `ascent-continuation/main.rs` (reference-distance contraction and cumulative normalized path), `ascent-continuation/make_hko_calibration.py` (absolute source radius versus normalized proposal radius), `endpoint-model-audit/main.rs` (absolute radius equals normalized radius times base norm), and `quotient-endpoint-diagnostic/analyze.py` (the independently checked endpoint-probe denominator). These abbreviated paths share the `experiments/dev-gradient-ascent/` prefix. The four direction meanings are fixed by `experiments/hko-local-maximum/empirical/neighborhood-sampling/samplers/m10_quotient_ray.rs`: two normalized random coefficient vectors in the transverse basis, its first basis vector, and the projected normalized second-factor rotation tangent.
+
+The candidate-retention formula is documented and implemented in `experiments/dev-gradient-ascent/optimizer-runs/src/algorithms/nonlinear_candidate_cma.rs`, `CandidateUniverse::pool_with_beta_allowance`: retain raw KKT weights when `min(beta)/max(abs(beta)) >= -0.3`, in addition to the action window. The edited text distinguishes this word-retention rule from the subsequent transition and weight feasibility checks in `BranchModel::build_from_named_candidates` and `evaluate_surrogate`; negative-weight branches are not thereby accepted as feasible orbits. Only these two definition repairs and this resolution note were edited.
