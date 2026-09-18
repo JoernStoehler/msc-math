@@ -1,13 +1,17 @@
 digraph now {
-  graph [rankdir=BT, label="Prepared handoff: no new sprint started", labelloc=t];
-  node [shape=box];
-  recovery [label="DONE: frozen source recovery\n86-page isolated rebuild matches\nthesis/candidate/main.tex"];
-  preparation [label="DONE: preparation packet\nreview evidence and source routing\ndocs/sprint-two/KICKOFF.md"];
-  literature [label="READY: literature replacement\nnot integrated or human-approved\ndocs/literature-rewrite/"];
-  pentagon [label="READY: pentagon replacement\nnot integrated or prose-approved\ndocs/pentagon-chapter-v2/"];
-  integrate [label="READY: assembled-candidate work\nfuture coordinator owns integration\nno new execution clock established"];
-  recovery -> preparation;
-  preparation -> integrate;
-  literature -> integrate;
-  pentagon -> integrate;
+ graph [rankdir=TB,label="Parallel work now → first whole review — 15:58 UTC",labelloc=t,bgcolor="transparent"];
+ node [shape=box,style="rounded,filled",fillcolor="#edf4fa",fontname="Helvetica",fontsize=11]; edge [fontname="Helvetica",fontsize=10];
+ human [label="Jörn: AI v2 (5–7m), DS v2 (~20m)\nBoth ready; one serial human lane\nReliable availability to ~16:20"];
+ synthesis [label="hko_context + submission_surface\nSummaries / consistency\nRunning to final delta ~10m after fixed PDF"];
+ build [label="candidate_integrator\nWhole PDF, guide, checks\nPDF frozen; checks → ~16:10"];
+ publish [label="pm_review\nDirect artifact handoff → index\nWithin 2 min; no root packaging"];
+ read [shape=diamond,label="Whole-PDF judgment from ~16:20\nReview time uncertain; allow 90–150m active",fillcolor="#fff0d2"];
+ authors [label="thesis_reader / ds_reader / specialist\nRepair concrete findings as they arrive\nIndependent check of substantive fixes"];
+ root [label="Root: dialogue, priorities, decisions\nNo build / packaging / PM writing\nIdle not measured; only ~161s explicit waits"];
+ end [label="20:30 checkpoint\nMinor final repairs → delivery by 22:00\nMajor unresolved failure → deadline risk",fillcolor="#fff0d2"];
+ {rank=same;human;synthesis;build;root;}
+ synthesis -> build [label="summary delta"]; build -> publish; publish -> read;
+ human -> authors [label="findings"]; human -> read [style=dashed,label="earlier judgments inform"];
+ authors -> build [label="revised snapshot"]; read -> authors [label="defects"]; read -> end [label="verdict / remaining scope"];
+ root -> authors [style=dashed,label="consequential prioritization"];
 }

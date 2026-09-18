@@ -1,16 +1,20 @@
 digraph tasks {
-  graph [rankdir=BT, label="Thesis outcomes: prepared baseline, pending integration", labelloc=t];
-  node [shape=box];
-  pass [label="OUTCOME: whole-thesis PASS\nrequires Jorn's explicit judgment"];
-  draft [label="DONE: recovered frozen baseline\nsource and review evidence preserved\nprior whole-thesis judgment: FAIL"];
-  conditional [label="READY: literature + pentagon drafts\nseparate candidates, not integrated"];
-  route [label="READY: integration and remaining repairs\nsee 00-now and kickoff packet\nno new sprint or deadline started"];
-  human [label="CRUX: whole-thesis reading\nfixed assembled PDF required", shape=diamond];
-  history [label="HISTORY: prior portfolio components\nhistory/2026-09-14/\nstale assignments are not live work"];
-  draft -> route;
-  conditional -> route;
-  history -> route [style=dashed, label="retained context"];
-  route -> human [label="assembled candidate"];
-  human -> pass [label="PASS"];
-  human -> route [label="remaining objections"];
+ graph [rankdir=LR,label="Remaining thesis outcomes — 18 September, 15:58 UTC; deadline 22:00 UTC",labelloc=t,bgcolor="transparent"];
+ node [shape=box,style="rounded,filled",fillcolor="#edf4fa",fontname="Helvetica",fontsize=11]; edge [fontname="Helvetica",fontsize=10];
+ science [label="DONE: science required for current claims\nIndependent checks complete",fillcolor="#e7f4e7"];
+ chapters [label="DONE: fixed AI v2 + DS v2 packets\nHuman review outstanding",fillcolor="#e7f4e7"];
+ joins [label="RUNNING: summaries + chapter consistency\nhko_context / submission_surface\nfinal delta ~10m after fixed PDF"];
+ assembly [label="RUNNING: fixed whole PDF + guide\ncandidate_integrator\nPDF frozen; checks → ~16:10
+No chapter-PASS dependency"];
+ publish [label="Delivery owner: pm_review\nPublish within 2 min of freeze"];
+ chapter_read [shape=diamond,label="Jörn: chapter argument / intent\nacceptable, local defects, structural failure?",fillcolor="#fff0d2"];
+ whole [shape=diamond,label="Jörn: whole PDF submission ready?\nFirst assessment from about 16:20",fillcolor="#fff0d2"];
+ repair [label="Named author + independent reviewer\nLocal 15–45m / structural 1–2h\nRoot prioritizes concrete findings"];
+ no_reply [label="No reply: preserve packet\nContinue independent work\nDo not infer acceptance"];
+ risk [label="Major defect unresolved at 20:30\nDeadline at risk; standard unchanged",fillcolor="#fff0e9"];
+ deliver [label="OUTCOME: accepted exact PDF delivered\nIntegrator + pm_review\nFinal reserve 20:30–22:00",fillcolor="#e7f4e7"];
+ science -> chapters; chapters -> joins; chapters -> chapter_read; chapters -> assembly; joins -> assembly; assembly -> publish; publish -> whole;
+ chapter_read -> repair [label="defects"]; chapter_read -> whole [style=dashed,label="informs assessment"]; chapter_read -> no_reply [label="interruption"];
+ repair -> assembly [label="new fixed snapshot"]; no_reply -> assembly [style=dashed,label="independent work continues"];
+ whole -> deliver [label="PASS + agreed final corrections checked"]; whole -> repair [label="defects"]; repair -> risk [label="major failure persists to reserve"];
 }
