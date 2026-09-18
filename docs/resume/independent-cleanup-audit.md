@@ -62,6 +62,17 @@ acceptance or a proof that no undiscovered project defect exists.
    protects recoverability; it is not an exhaustive semantic review of every
    sentence retired or retained.
 
+## Current navigation coverage
+
+After the final retirement, independently scanned **416 tracked Markdown files**
+for local Markdown links outside fenced code: **398 links, zero unresolved**.
+The scope includes current scientific packet READMEs, not only entry points.
+Excluded immutable `docs/history/`, source-copy/run/packet directories, and the
+writing-quality local provenance copies; these preserve historical bytes.
+An initial wider scan exposed only three links in that frozen provenance copy
+and a syntax-highlighting regex inside INSTALL.md, not current navigation.
+This checks Markdown link destinations, not every bare path or semantic claim.
+
 ## Additional preservation evidence and remaining boundary
 
 The earlier independent audit recomputed changed-path sets for all 38 branch
