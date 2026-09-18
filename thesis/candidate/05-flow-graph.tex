@@ -90,6 +90,10 @@ primitive tubes for
 \[
   (s_1,\ldots,s_k,s_1,s_2).
 \]
+Each primitive consumes three consecutive labels: the first passage is
+\((s_1,s_2,s_3)\), from \(H_{s_1}\cap H_{s_2}\) to
+\(H_{s_2}\cap H_{s_3}\).  The appended labels make the last passage
+\((s_k,s_1,s_2)\), returning to the initial section.
 Write the resulting data as \((P_w,\Phi_w,A_w)\).  A point
 \(u\in P_w\) is a closed search candidate precisely when
 \(\Phi_w(u)=u\).  It represents the displayed word as a strict generalized
@@ -114,8 +118,9 @@ composes their endpoint maps and adds their elapsed times.  Induction over the
 word proves the assertion for the closed tube.  Its starting and ending
 sections have the same coordinates, so closure is equivalent to
 \(\Phi_w(u)=u\).  Finally, the closed tube was defined with nonnegative times,
-whereas the active word records exactly the positive-duration pieces.  This
-gives the strict-time condition.  Since
+whereas the active word omits zero-time passages and records only the
+positive-duration pieces.  Thus the entire displayed word is active exactly
+when every passage time is positive.  Since
 \(\lambda_0(R_i)=1\) on \(F_i\), the sum of the elapsed times is the Reeb
 action.
 \end{proof}
@@ -137,7 +142,10 @@ rounded here to four decimal places, are
 \end{pmatrix}.
 \]
 The exact dyadic rows and all rational calculations for this example are
-provided with the flow-graph data described in Section~\ref{sec:published-code-data}.
+stored in
+\path{experiments/dev-flow-graph/visualize-tube/flow-graph-f6-tube.json}
+(the six-facet instance with seed 20260605 and attempt 3); see also
+Section~\ref{sec:published-code-data}.
 The rounded numbers below illustrate the calculation; the exact values decide
 membership and closure.
 
@@ -260,9 +268,10 @@ and order operations performed exactly over \(\mathbb R\), returns
 \begin{proof}
 There are finitely many simple cyclic words.  By
 Lemma~\ref{lem:flow-graph-tube-semantics}, every recorded point is a strict
-closed generalized Reeb orbit with the recorded action.  The two arguments
-preceding the theorem show that the transition and short-word pruning cannot
-remove such an orbit. Empty tubes contain no orbit and are discarded before
+closed generalized Reeb orbit with the recorded action.  The strict
+transition-sign argument and the short-word linear-independence argument above
+show that neither pruning rule can remove such an orbit.  Empty tubes contain
+no orbit and are discarded before
 solving a fixed-point equation. Finite-orbit regularity makes every remaining
 fixed-point equation nonsingular, so no long word reaches the rejection
 branch and each word has at most one fixed point.
@@ -332,46 +341,95 @@ in it satisfies Corollary~\ref{cor:rational-flow-graph-correctness}.
 
 \begin{proof}
 The first two families are finite collections of nonzero polynomial
-conditions.  For a fixed word \(w=(s_1,\ldots,s_k)\), each primitive linear
-map is
+conditions.  Fix a simple word \(w=(s_1,\ldots,s_k)\), and write
+\(b_r=a_{s_r}\), with cyclic indices.  For its nonvanishing argument the
+\(k\) rows vary independently in the affine space
+\(X_k=(\mathbb R^4)^k\).  Let \(D_k\subset X_k\) be the set where all
+cyclic pairings \(\langle b_{r+2},2J_0b_{r+1}\rangle\) are nonzero.
+They imply that every adjacent pair is linearly independent, so
+\(V_{pi}=\ker b_p\cap\ker b_i\) is a two-dimensional section direction.
+The primitive linear map is
 \[
-  \xi\longmapsto
-  \xi-
-  \frac{\langle a_{s_{r+2}},\xi\rangle}
-       {\langle a_{s_{r+2}},2J_0a_{s_{r+1}}\rangle}
-  2J_0a_{s_{r+1}}.
+  D_{pin}:V_{pi}\longrightarrow V_{in},\qquad
+  D_{pin}\xi=\xi-
+  \frac{\langle b_n,\xi\rangle}{\langle b_n,2J_0b_i\rangle}
+  2J_0b_i.
 \]
-On the domain where the denominators are nonzero, coordinate bases for the
-facet-pair planes and hence \(\det(I-M_w)\) depend rationally on the rows.
+Choosing a nonzero coordinate minor for each adjacent pair gives bases for
+these planes that depend rationally on the rows.  Thus the return-map
+determinant is rational on each such chart; its values agree on overlaps
+because the determinant is independent of the starting basis.
 
-To see that this rational function is nonzero for every \(k\geq5\), use
+We first record an identity that permits witnesses of arbitrary length.
+Here \(x,A,B,y\) denote row labels, and \(R_A=2J_0b_A\).
+Whenever the displayed primitive denominators are nonzero,
+\[
+  D_{BAy}D_{ABA}D_{xAB}=D_{xAy}
+  \quad\hbox{on }V_{xA}.
+\]
+Indeed, for \(\xi\in V_{xA}\), put
+\(t=\langle b_B,\xi\rangle/\langle b_B,R_A\rangle\) and
+\(\eta=\xi-tR_A\).  Then \(\eta\in V_{AB}\), so
+\(D_{ABA}\eta=\eta\), since \(\langle b_A,\eta\rangle=0\).
+The last passage gives
+\[
+ D_{BAy}\eta
+ =\xi-tR_A-
+ \frac{\langle b_y,\xi\rangle-t\langle b_y,R_A\rangle}
+      {\langle b_y,R_A\rangle}R_A
+ =D_{xAy}\xi.
+\]
+Both sides have domain \(V_{xA}\) and target \(V_{Ay}\).  Thus replacing
+\((x,A,B,A,y)\) by \((x,A,y)\) preserves the entire return map when the
+cyclic cut is taken at this unchanged incoming section.
+
+Now specialize the row variables to
 \[
 \begin{aligned}
  A&=(2,3,-4,-3),& B&=(0,1,2,-1),& C&=(-4,-3,0,-1),\\
  D&=(4,-1,1,1),& E&=(-4,2,-4,-4).
 \end{aligned}
 \]
-All pairings needed below are nonzero.  Direct substitution gives
+The required pairings are all nonzero, as the following complete table
+shows (reversing a pair reverses its sign):
 \[
-  \det(I-M_{ABCDE})=-\frac{10643}{600},
-  \qquad
-  \det(I-M_{ACDE})=\frac1{168}.
+\begin{array}{c|rrrrrrrrrr}
+ pq&AB&AC&AD&AE&BC&BD&BE&CD&CE&DE\\ \hline
+ \langle q,2J_0p\rangle&8&-56&36&-60&8&-16&12&-16&60&-20
+\end{array}
 \]
-At the linear-map level, replacing a cyclic subword
-\(x,A,B,A,y\) by \(x,A,y\) leaves the surrounding return map unchanged: the
-middle transition is the identity on \(\ker a_A\), and the two flows in the
-\(A\)-direction combine algebraically.  Hence the specializations
-\((A,B)^m,C,D,E\) cover every odd length at least five, while
-\((A,B)^m,A,C,D,E\) reduce every even length at least six to the second
-displayed value.  Thus no long-word determinant is identically zero.
+Direct substitution into the primitive formula gives
+\[
+  \det(I-M_{ABCDE}^{\mathrm{alg}})=-\frac{10643}{600},
+  \qquad
+  \det(I-M_{ACDE}^{\mathrm{alg}})=\frac1{168}.
+\]
+For odd length \(k=2m+3\), \(m\geq1\), specialize to
+\((A,B)^m,C,D,E\).  Repeatedly contracting \((E,A,B,A,B)\) reduces this
+tuple to \((A,B,C,D,E)\).  For even length \(k=2m+4\), \(m\geq1\), use
+\((A,B)^m,A,C,D,E\).  The same contractions reduce it to
+\((A,B,A,C,D,E)\), and contracting \((E,A,B,A,C)\) leaves
+\((A,C,D,E)\).  Taking the cyclic cut at \(V_{EA}\) makes each contraction
+preserve the return map.  Changing the cut does not change its determinant:
+each primitive is invertible, with inverse obtained by projecting back along
+the same \(R_i\), so cyclic return maps are conjugate.
 
-The common denominator domain is a nonempty Zariski-open subset of an
-irreducible affine parameter space.  Thus a nonzero rational function remains
-nonzero on every nonempty coordinate-minor chart.  The complement of each
-nonvanishing condition is therefore a proper algebraic set.  There are only
-finitely many sublists and simple words for fixed \(F\), so their common
-nonzero locus is open dense.  Intersecting it with the Euclidean-open chamber
-\(\mathcal C\) preserves density.  The all-pairs condition is stronger than
+These are algebraic specializations of independent row variables; the
+repeated vectors do not describe simple searched words or irredundant
+presentations.  They are legitimate evaluations of the rational function
+on \(D_k\), and suffice to show that it is not identically zero for any
+\(k\geq5\).  They also show that \(D_k\) is nonempty.  As a nonempty
+Zariski-open subset of the irreducible affine space \(X_k\), it meets every
+nonempty coordinate-minor chart in a dense set.  A nonzero rational function
+cannot vanish identically on such a chart.  Its nonzero locus is therefore
+open dense in \(D_k\), and hence in \(X_k\), since the excluded denominators
+are nonzero polynomials.
+
+For fixed \(F\), selecting the rows of a simple word pulls this open dense
+condition back to \((\mathbb R^4)^F\): the remaining rows are free variables.
+There are only finitely many simple words and sublists.  Intersecting their
+open dense nonvanishing loci, and then the Euclidean-open chamber
+\(\mathcal C\), preserves density.  The all-pairs condition is stronger than
 the nonempty-pair condition in
 Definition~\ref{def:flow-graph-regular-presentation}, and the remaining
 conditions imply finite-orbit regularity.
