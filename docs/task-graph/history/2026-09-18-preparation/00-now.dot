@@ -1,0 +1,13 @@
+digraph now {
+  graph [rankdir=BT, label="Prepared handoff: no new sprint started", labelloc=t];
+  node [shape=box];
+  recovery [label="DONE: frozen source recovery\n86-page isolated rebuild matches\nthesis/candidate/main.tex"];
+  preparation [label="DONE: preparation packet\nreview evidence and source routing\ndocs/sprint-two/KICKOFF.md"];
+  literature [label="READY: literature replacement\nnot integrated or human-approved\ndocs/literature-rewrite/"];
+  pentagon [label="READY: pentagon replacement\nnot integrated or prose-approved\ndocs/pentagon-chapter-v2/"];
+  integrate [label="READY: assembled-candidate work\nfuture coordinator owns integration\nno new execution clock established"];
+  recovery -> preparation;
+  preparation -> integrate;
+  literature -> integrate;
+  pentagon -> integrate;
+}
