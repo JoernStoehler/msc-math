@@ -107,3 +107,18 @@ absolute-cosine sum, and invokes the existing rotation-profile theorem.
 No general product law, empirical causality or discovery chronology is asserted.
 Section 8.11 and introduction/conclusion now point to the restricted result;
 the AI disclosure again points to its actual included equation.
+
+## Prior-art and availability closure
+
+Adopted the source-checked proposals `f4b36cee` and `94d5974f` after reading
+their reports. Section 4.4 now compares closure-vertex enumeration with
+Krupp–Rudolf's polygonal Minkowski billiard algorithms; Section 6 compares
+facet-row variation with Leipold's simplex/linear-image optimization. Neither
+passage claims novelty or a speed advantage. Both bibliography entries are added.
+
+Availability now pins the checked public commit and distinguishes public packets
+from local candidate/research additions. Stale snapshot/link counts were removed.
+The HKO listing names its source and states that assertions require Python
+optimization disabled; this records prior execution, not a fresh certificate run.
+The source-check reports and exact proposal are retained locally under
+`docs/algorithm-prior-art-closure/` and `docs/availability-claim-closure/`.

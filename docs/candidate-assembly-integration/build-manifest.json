@@ -64,8 +64,8 @@
       "bytes": 20826
     },
     "thesis/candidate/04-quadratic-program.tex": {
-      "sha256": "28ea35b9d9d877225dfac7e1d72ca6e28b910b513cbcabaabeddcda7f37df6ee",
-      "bytes": 27987
+      "sha256": "141f4375fc8efca8bf6b659dbe22979149f4c048bddd3944985925df81ce29e0",
+      "bytes": 28455
     },
     "thesis/candidate/05-flow-graph.tex": {
       "sha256": "75326a33e53123aefa94e1890f2f717405be12b022f37092a434d0088dbc5192",
@@ -80,8 +80,8 @@
       "bytes": 1819
     },
     "thesis/candidate/recovered/thesis-candidate/06-variation.tex": {
-      "sha256": "f277d4bfdf865ee4edb340dda96a841810ef474525798fd46e5f7d7303534511",
-      "bytes": 16543
+      "sha256": "dee93e67fae922588cb2ce9e3104d06ba7a2044a4b15614873dc52bf4a0cca65",
+      "bytes": 17052
     },
     "thesis/candidate/recovered/thesis-candidate/07-hko.tex": {
       "sha256": "2f41a94f9274fb1d4df5820289b798a328f7616bc79063888389c5d5d985996a",
@@ -144,8 +144,8 @@
       "bytes": 9669
     },
     "thesis/candidate/legacy/12-published-code-data.tex": {
-      "sha256": "41d48e9e2138419cccc0977fef1ba74e95ac19cc0b4ab324eeb4d35545e06814",
-      "bytes": 4379
+      "sha256": "d734b8e24ec6c21935604370d5c0a6886132424d2a7cf5179390526670c6661b",
+      "bytes": 4529
     },
     "thesis/candidate/recovered/ai-writing/chapter.tex": {
       "sha256": "e15fb5243e721bc85c1f946fc50a95d9abd252b69bfa48c1c984621e35e369db",
@@ -168,8 +168,8 @@
       "bytes": 21375
     },
     "thesis/candidate/recovered/hko-cas-appendix/hko-cas-appendix.tex": {
-      "sha256": "1824fef3f0885029e9a7f73f5535bc281bf4ffc56068f5e82a8e72c020f05c38",
-      "bytes": 3727
+      "sha256": "2452af3842562c00079e34cb5081644996c112a5accc94bf9650c4b04cf39211",
+      "bytes": 3878
     },
     "thesis/candidate/recovered/hko-cas-appendix/hko_core.py": {
       "sha256": "475196efdf33d1f281a724b90069ec08a2335552ddc4362332e2b975866f10f5",
@@ -178,8 +178,8 @@
   },
   "pdf": {
     "path": "/workspaces/msc-math/.worktrees/candidate-assembly-integration/thesis/candidate/build/main.pdf",
-    "sha256": "79db3ef9dbfb097c5c5a42777ff5f8bd2452d0dbd0da514e2b0bc82e3c8a3ac2",
-    "bytes": 1485871,
+    "sha256": "e771fe090ccdf38185729aa72e10167632f7fc230513c4a746d1b3a10144023b",
+    "bytes": 1488386,
     "pages": 81
   },
   "checks": {
@@ -187,7 +187,8 @@
     "latex_warnings": [],
     "rendered_pages": 81,
     "visual_check": "All81 pages inspected at contact-sheet scale; affine/QP/variation/source-attribution areas further inspected. No clipping or overlap noticed. Sparse page40 and48 persist; final layout/prose acceptance is not asserted.",
-    "ridge_followup": "Identity added in Section8.4, equation35, page53; full rebuild81pages with no warnings; pages52\u201354 rendered/inspected, no clipping."
+    "ridge_followup": "Identity added in Section8.4, equation35, page53; full rebuild81pages with no warnings; pages52\u201354 rendered/inspected, no clipping.",
+    "prior_art_availability": "Full rebuild81pages, no warnings; pages26,35,70,80 rendered/inspected; public commit uses short linked hash to avoid overflow."
   },
   "baseline_pdf": {
     "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/build/main.pdf",

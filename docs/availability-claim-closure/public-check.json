@@ -1,0 +1,41 @@
+{
+  "date": "2026-09-18",
+  "method": "Unauthenticated GitHub API and raw.githubusercontent.com GET requests; no credentials",
+  "public_main_commit": "1bec30637070effe7ab8b0a022ae62e83f6bbcab",
+  "repository_private": false,
+  "public_push_time": "2026-08-31T12:13:54Z",
+  "public_tree_complete": true,
+  "candidate_main_present": false,
+  "verified_files": [
+    {
+      "path": "experiments/hko-local-maximum/theorem/verify.sage.py",
+      "public_sha256": "58396d326094f2625d0d9e74fd21662fbcc33e08b71bfcae602f397af2a4aa81",
+      "local_sha256": "58396d326094f2625d0d9e74fd21662fbcc33e08b71bfcae602f397af2a4aa81"
+    },
+    {
+      "path": "experiments/hko-local-maximum/theorem/witness.json",
+      "public_sha256": "98362e00408d1bc6b3085b2ed6cc23174c3270c6b0ad6219a00e3a7732f5472c",
+      "local_sha256": "98362e00408d1bc6b3085b2ed6cc23174c3270c6b0ad6219a00e3a7732f5472c"
+    },
+    {
+      "path": "experiments/hko-local-maximum/theorem/verification-summary.json",
+      "public_sha256": "8b407b20033d7acc774795a2326cf4c14e021d7e7793de7a560b8b5223cd15c0",
+      "local_sha256": "8b407b20033d7acc774795a2326cf4c14e021d7e7793de7a560b8b5223cd15c0"
+    },
+    {
+      "path": "experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py",
+      "public_sha256": "5cb004f3df24a27cb5bf6a6bd4b2f281e17edf834bbbb25895f88c31f239aed4",
+      "local_sha256": "5cb004f3df24a27cb5bf6a6bd4b2f281e17edf834bbbb25895f88c31f239aed4"
+    },
+    {
+      "path": "experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.full.stdout.txt",
+      "public_sha256": "c5fdd3f49b7e263ca26ea95ee3a1546e944ea55d2b20b78b2b0015c23e6be6f2",
+      "local_sha256": "c5fdd3f49b7e263ca26ea95ee3a1546e944ea55d2b20b78b2b0015c23e6be6f2"
+    },
+    {
+      "path": "artifacts/registry.json",
+      "public_sha256": "c29296502713f37a19ad5410cbfd41b834815560ddcaae8f6621e8ecf6d17a7d",
+      "local_sha256": "c29296502713f37a19ad5410cbfd41b834815560ddcaae8f6621e8ecf6d17a7d"
+    }
+  ]
+}

@@ -14,6 +14,14 @@ it will supply the upper bounds in the HKO proof even at singular
 stationarity systems. For local search, the second construction gives
 branch gradients that can be compared before proposing a step.
 
+Leipold studies a related optimization problem for volume-preserving linear
+images of a simplex~\cite[Sections~9.2, 11.3, and~12.3]{Leipold2026}.
+There the balance weights are fixed, capacity evaluation reduces to a
+linear-ordering integer program, and active permutation branches provide
+first-order information for numerical search. Here the facets move
+independently, so both the feasibility constraints and the optimizing weights
+can change. We derive the corresponding derivatives in facet coordinates.
+
 \subsection{Row coordinates and the volume variation}
 \label{subsec:first-order-row-chart}
 
