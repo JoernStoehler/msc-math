@@ -1,0 +1,23 @@
+{
+  "frozen_utc": "2026-09-18T15:21:49.346365+00:00",
+  "head": "729e349d1607683d9510f1b86bc7ed950e5a92bd",
+  "source_sha256": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+  "script_sha256": "9f0988103516d6aeeb03ca46d73831df4ef2b82a795835cc0285f1856ea7a67b",
+  "input_sha256": "fc063edaa6ae301679dd45151aa9ec385b8a2b00bd5aa7f007cd4825523817f6",
+  "pilot_input_sha256": "866e258af3738cb4cd9230b4c8e50933102c1e2839008aa408023ff8fdd03f37",
+  "remaining_input_sha256": "3c6f76d57d7cc1a46449c7e77c1864bf9abb85c289a8d773e8cd06b8b4a98f08",
+  "geometry_sha256": "81feeed2b2359a4706cd49dfa0d7db7311c88a8aab29f554d5ccc4739ab81e77",
+  "selection_salt": "covariance-balance-v1|",
+  "per_group": 32,
+  "pairs": 320,
+  "requests": 640,
+  "construction_wall_seconds": 1.80139922600938,
+  "primary_question": "Does removing vertex-covariance anisotropy of both planar factors weaken the within-group R/sys correlation and change paired sys?",
+  "intervention": "For each factor with centered uniform-vertex covariance A, apply the SPD determinant-one map det(A)^(1/4) A^(-1/2). Reconstruct actual rounded binary64 dual geometry exactly.",
+  "primary_statistics": [
+    "within-group rank correlation before/after balancing",
+    "paired sys and R effects with sign counts, means and ranges"
+  ],
+  "limits": "This operation changes shapes and capacity; it is not generally symplectic. It tests a specified intervention, not universal mediation, local optimality or all alternative geometric mechanisms.",
+  "evaluation_contract": "Current scalar product evaluator, one serial worker, 5 seconds per input, 300-second total cap; pilot 20 requests then remaining620 if runtime fits. Retain all errors/timeouts. No replacements."
+}

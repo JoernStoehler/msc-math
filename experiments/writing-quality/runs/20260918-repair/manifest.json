@@ -1,0 +1,36 @@
+{
+  "started_utc": "2026-09-18T07:28:32.836809+00:00",
+  "inputs": {
+    "hko-baseline.txt": "4d8098caf6eced087eedac0f957892a1f10727d95625b56b9c4940fc393dcc7e",
+    "ds-baseline.txt": "15768d8b50f9b97940a190bc8bad4f0553c79cd8e54fcb3f09762d4fbea544bd",
+    "criteria.md": "f7b91ecb26d47f967e882383f137bd37e1a211b18ff2d3b6e916c565590737b1"
+  },
+  "source_pdf_sha256": {
+    "hko": "c5b4508fb226971d2c5d68d8bd8f8b32cdd727272dfc3b562a1e3f993c176202",
+    "ds": "01d63be3d72999230e98c0b5fb6f89dcba33d532188d83894f4ad01a9f62c58c"
+  },
+  "author_outputs_written_utc": {
+    "narrow.md": "2026-09-18T07:30:04.974300+00:00",
+    "reconstruct.md": "2026-09-18T07:30:28.577333+00:00"
+  },
+  "author_agents": [
+    "/root/repair_capability_probe/narrow_repair",
+    "/root/repair_capability_probe/reconstruct_repair"
+  ],
+  "evaluator_agent": "/root/repair_capability_probe/blind_repair_review",
+  "cost_status": "Root aggregating observed subtree session usage; not yet available in this artifact.",
+  "completed_utc": "2026-09-18T07:33:02.214688+00:00",
+  "elapsed_seconds_from_input_freeze": 269.377879,
+  "artifact_sha256": {
+    "candidate-key.json": "bfc30e15162c9fea7f87c4502ba45d2617960573e497d8a5fec1e2c5a0022baf",
+    "reconstruct.md": "e8df74ca06c6893824942a20bcf2ed381a687977dc5b798e3dff3975503b5426",
+    "blind-review.md": "3b2b3124462203319ac9cb138d831e737f9a8d6fc4b5f07fec7fe96b4f45239e",
+    "protocol.md": "101ba2a144d743f4b21fba2a746061f9a1aefa3f7c753e6f2543bb61f20c20ce",
+    "narrow.md": "48656bbd2e1e50f877a4bf44eaa2abec36685cf8902095cf3141e92332db0963",
+    "verification.json": "955a732af6f86a7b19cde40cd5656f830ed6d52b37fa21a10deaca920adaf9d7",
+    "hko-baseline.txt": "4d8098caf6eced087eedac0f957892a1f10727d95625b56b9c4940fc393dcc7e",
+    "ds-baseline.txt": "15768d8b50f9b97940a190bc8bad4f0553c79cd8e54fcb3f09762d4fbea544bd",
+    "criteria.md": "f7b91ecb26d47f967e882383f137bd37e1a211b18ff2d3b6e916c565590737b1",
+    "blind-packet.md": "f625052d2fc37c0ce278fd1dbea8c448646c82bb1635b0b9f907a4fabe775059"
+  }
+}

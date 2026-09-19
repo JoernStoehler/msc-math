@@ -1,0 +1,43 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Thesis takeover execution audit</title>
+<style>
+body{font:14px system-ui,sans-serif;margin:24px;color:#17202a} h1{font-size:22px} h2{font-size:16px;margin-top:28px}.note{color:#46515c}.wrap{overflow:auto}svg{min-width:1100px;border:1px solid #ccd3da;background:#fff}.axis{stroke:#adb7c2}.lane{stroke:#e7ebef}.task{fill:#4779a8}.root{fill:#b55a43}.luna{fill:#7b6aa8}.complete{stroke:#1e3d56;stroke-width:1}.unknown{stroke-dasharray:3 2}.wait{fill:#d99b35}.grid{stroke:#eef1f4}.tick{font-size:11px;fill:#46515c}.label{font-size:11px;fill:#17202a}.sw{display:inline-block;width:12px;height:12px;margin-right:4px;vertical-align:-1px}.table{border-collapse:collapse;font-size:12px}.table th,.table td{border:1px solid #d8dee4;padding:4px 6px;text-align:right}.table th:first-child,.table td:first-child{text-align:left}
+</style>
+<h1>Execution audit: root <code>01a0b4e9…</code></h1>
+<p class="note">Read-only local session metadata and token counters. Snapshot: 2026-09-18 16:14:51 UTC. Bars show observed session lifetime, not continuous computation. A missing completion marker means “unknown,” not failure.</p>
+<p><span class="sw" style="background:#b55a43"></span>root <span class="sw" style="background:#4779a8"></span>Astra worker <span class="sw" style="background:#7b6aa8"></span>Luna worker <span class="sw" style="background:#d99b35"></span>explicit root sleep/wait</p>
+<div class="wrap"><svg id="g" width="1120" height="650" aria-label="parallel session Gantt"></svg></div>
+<h2>Measured budget accounting</h2>
+<table class="table" id="t"><thead><tr><th>thread</th><th>model/effort</th><th>elapsed wall*</th><th>completion</th><th>uncached in</th><th>cached in</th><th>output</th><th>shadow USD</th></tr></thead><tbody></tbody></table>
+<p class="note">*Elapsed wall is session start to last observed event (overlaps across threads; never summed). Shadow USD uses the repository helper’s fixed API-equivalent card, not subscription billing. Reasoning is included in output by that helper. No semantic task quality or causal explanation is inferred.</p>
+<h2>Explicit waiting and limits</h2>
+<p>Root metadata records four completed <code>sleep</code> calls totaling about 143 seconds and one completed <code>wait_agent</code> call lasting about 18 seconds. User-input calls returned in under 0.2 seconds. These are measurable explicit waits only. Time gaps also contain model reasoning, message preparation, uninstrumented transport or waiting, and in-flight calls; the logs cannot separate those. “Unknown delay” therefore does not mean idle.</p>
+<p>Account-wide rate-limit telemetry was 75% used at 14:18:14Z and 90% at 16:09Z, on a 10080-minute window resetting 2026-09-23 06:19:02Z. This is shared account telemetry; it cannot attribute the 15 percentage-point change to this root.</p>
+<h2>Observed late activity and unknown causes</h2>
+<p>At the snapshot the root had no completion marker. Late or still-active lanes include <code>ds_reader</code>, <code>ds_claims</code>, <code>ds_editorial_review</code>, <code>pm_review</code>, <code>candidate_integrator</code>, and this scout; their last activity extends to 16:14:51Z. Metadata records timestamps and counters, but no task semantics or reason for lateness. Determining causes needs task prompts/results, tool-result provenance, and coordinator message history.</p>
+<script>
+const D=[
+['ROOT','14:26:51','16:14:51','unknown','gpt-6-astra/xhigh',466429,24677760,104879,34.59],
+['ds_reader','14:34:10','16:14:48','16:06:40','gpt-6-astra/xhigh',572725,17260288,80003,26.99],
+['ds_claims','14:34:22','16:12:58','16:12:58','gpt-6-astra/xhigh',439813,15293824,46675,22.03],
+['thesis_reader','14:34:33','16:04:23','16:04:23','gpt-6-astra/xhigh',385813,12449920,52861,18.95],
+['hko_context','14:35:31','16:03:39','16:03:39','gpt-6-astra/xhigh',309485,8105344,32813,12.84],
+['submission_surface','14:48:25','16:05:34','16:05:34','gpt-6-astra/xhigh',628691,9655680,37314,17.81],
+['statistical_interpretation','14:59:52','15:27:28','15:27:28','gpt-6-astra/xhigh',92612,3425536,16527,5.18],
+['ds_experiments','15:13:33','15:30:48','15:30:48','gpt-6-astra/xhigh',124179,4892160,24052,7.34],
+['controlled_mechanism','15:14:12','15:29:33','15:29:33','gpt-6-astra/xhigh',71851,2321664,18804,3.98],
+['ds_editorial_review','15:36:34','16:14:48','16:14:48','gpt-6-astra/xhigh',151579,2813056,11432,4.90],
+['pm_review','15:39:41','16:13:30','16:13:30','gpt-6-astra/xhigh',134948,6749312,34366,9.82],
+['cost_model_scout','15:41:02','16:14:51','16:12:21','gpt-5.6-luna/medium',153798,3550720,17235,.12],
+['candidate_integrator','15:51:14','16:14:49','16:02:59','gpt-6-astra/xhigh',139916,5615616,21104,8.07],
+['chapter_opening_review','15:58:09','16:09:18','16:09:18','gpt-6-astra/xhigh',57848,3510272,9968,4.59],
+['core_reader_a','16:02:20','16:07:53','16:07:53','gpt-6-astra/xhigh',65845,1381504,7738,2.43],
+['core_reader_b','16:02:31','16:09:27','16:09:27','gpt-6-astra/xhigh',92183,2233344,8219,3.57]];
+const base=14*60+26+51/60, end=16*60+14+51/60, W=1040, left=70, top=28, row=37, scale=W/(end-base);
+const svg=document.querySelector('#g'); const ns='http://www.w3.org/2000/svg'; const el=(n,a)=>{let x=document.createElementNS(ns,n);for(let k in a)x.setAttribute(k,a[k]);svg.appendChild(x);return x};
+function mins(s){let [h,m,z]=s.split(':').map(Number);return h*60+m+z/60} function txt(x,y,s,c='label'){let q=el('text',{x,y,class:c});q.textContent=s}
+for(let m=Math.ceil(base/15)*15;m<=end;m+=15){let x=left+(m-base)*scale;el('line',{x1:x,y1:top-10,x2:x,y2:top+D.length*row,class:'grid'});txt(x-20,18,`${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`,'tick')}
+D.forEach((d,i)=>{let y=top+i*row;el('line',{x1:left,y1:y+15,x2:left+W,y2:y+15,class:'lane'});txt(4,y+13,d[0]);let x=left+(mins(d[1])-base)*scale, w=(mins(d[2])-mins(d[1]))*scale;let cls=i===0?'root':d[4].startsWith('gpt-5.6-luna')?'luna':'task';el('rect',{x,y:y+2,width:Math.max(2,w),height:22,rx:3,class:cls});if(d[3]!=='unknown'){let q=left+(mins(d[3])-base)*scale;el('line',{x1:q,y1:y,x2:q,y2:y+26,class:'complete'})}else txt(left+W-50,y+15,'active','tick')});
+const tb=document.querySelector('#t tbody');D.forEach(d=>{let tr=document.createElement('tr');let elapsed=Math.round((mins(d[2])-mins(d[1]))*10)/10;tr.innerHTML=`<td>${d[0]}</td><td>${d[4]}</td><td>${elapsed} min</td><td>${d[3]}</td><td>${d[5].toLocaleString()}</td><td>${d[6].toLocaleString()}</td><td>${d[7].toLocaleString()}</td><td>$${d[8].toFixed(2)}</td>`;tb.appendChild(tr)});
+</script>

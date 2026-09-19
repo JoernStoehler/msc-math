@@ -1,0 +1,73 @@
+{
+  "started_utc": "2026-09-18T07:28:08.756187+00:00",
+  "screen_not_validation": true,
+  "coordinator_prior_label_exposure": true,
+  "inputs": {
+    "c001": {
+      "text_sha256": "8c567e61de83e9152492e4de420afae3cdd4ad1f4ba4a0fba9ab087956398774",
+      "pdf_sha256": "c5b4508fb226971d2c5d68d8bd8f8b32cdd727272dfc3b562a1e3f993c176202",
+      "export_path": "/tmp/recognition-20260918-inputs/c001.txt",
+      "source_case": "c001",
+      "canonical_text": "experiments/writing-quality/local/inputs/c001.txt"
+    },
+    "c002": {
+      "text_sha256": "15768d8b50f9b97940a190bc8bad4f0553c79cd8e54fcb3f09762d4fbea544bd",
+      "pdf_sha256": "01d63be3d72999230e98c0b5fb6f89dcba33d532188d83894f4ad01a9f62c58c",
+      "export_path": "/tmp/recognition-20260918-inputs/c002.txt",
+      "source_case": "c002",
+      "canonical_text": "experiments/writing-quality/local/inputs/c002.txt"
+    }
+  },
+  "jobs": [
+    {
+      "id": "c001-open",
+      "prompt": "experiments/writing-quality/runs/20260918-recognition/prompts/c001-open.txt",
+      "prompt_sha256": "1a456ab6f2237bb713ae28cad4423035fa1a9d60afc7474410c7569d5a8febc6",
+      "report_sha256": "f4e7ae467d71e4a51b8ec56de2f9ac08acd8ff5b85eafeb7f357fa5c80327716",
+      "report": "experiments/writing-quality/runs/20260918-recognition/raw/c001-open.md"
+    },
+    {
+      "id": "c001-class",
+      "prompt": "experiments/writing-quality/runs/20260918-recognition/prompts/c001-class.txt",
+      "prompt_sha256": "f99f63e02357a91a8183c2be5518b4d1055796d680673e8a27e2628ad07c0a0d",
+      "report_sha256": "d9172abf6ca5343ad730d9e947a8d74f288a900f528257a77c305d2a8b30f02c",
+      "report": "experiments/writing-quality/runs/20260918-recognition/raw/c001-class.md"
+    },
+    {
+      "id": "c001-locus",
+      "prompt": "experiments/writing-quality/runs/20260918-recognition/prompts/c001-locus.txt",
+      "prompt_sha256": "3bdc27025a7f94e5a367037d5acbbce0bd87d5f23bfed84cda9e95d285784d4e",
+      "report_sha256": "8054c3967516f1d76eece62456d6ee4ee2de459850d80f5c56dfc83bd7081808",
+      "report": "experiments/writing-quality/runs/20260918-recognition/raw/c001-locus.md"
+    },
+    {
+      "id": "c002-open",
+      "prompt": "experiments/writing-quality/runs/20260918-recognition/prompts/c002-open.txt",
+      "prompt_sha256": "30d7f2251a60c71848b1626a20c5a1347e88515974ba97132758a19331e06ea0",
+      "report_sha256": "cb6d37c78eecd52990bbba72a3373f97f5a501512080fbd90ad6b4006e2fcd3c",
+      "report": "experiments/writing-quality/runs/20260918-recognition/raw/c002-open.md"
+    },
+    {
+      "id": "c002-class",
+      "prompt": "experiments/writing-quality/runs/20260918-recognition/prompts/c002-class.txt",
+      "prompt_sha256": "a4b8a3b6464b84e27ad249ebe176dc8a54cf4b791f894c5096ab605a852d330f",
+      "report_sha256": "ad4d708c59773fedb797eb10d867bd60bbe4c2e249863ce10aa396d490978835",
+      "report": "experiments/writing-quality/runs/20260918-recognition/raw/c002-class.md"
+    },
+    {
+      "id": "c002-locus",
+      "prompt": "experiments/writing-quality/runs/20260918-recognition/prompts/c002-locus.txt",
+      "prompt_sha256": "0d5d67b74725fbe2cf1d49b9aea923cbdb75920ae9117a365c421e86c72377aa",
+      "report_sha256": "ad868b5b4dba3701e52e1a2a98c20a63f250370c95eb79b42197241fe6660f2e",
+      "report": "experiments/writing-quality/runs/20260918-recognition/raw/c002-locus.md"
+    }
+  ],
+  "frozen_predictions": {
+    "c001": "Recorded chapter acceptance can coexist with local findings; expect locus cue to recover more target details than open, uncertain whether reviewers preserve acceptance.",
+    "c002": "Expect comfortable-sentence judgment; uncertain if open review rejects structure. A locus cue may elicit narrative concern without discovering the intended research narrative."
+  },
+  "finished_utc": "2026-09-18T07:29:56.281402+00:00",
+  "elapsed_seconds": 107.525215,
+  "reproduction": "python3 experiments/writing-quality/dataset.py export --cases c001,c002 --output /tmp/recognition-20260918-inputs; then fresh nohistory agents receive corresponding frozen prompt file. Disposable export removed after completion.",
+  "coordinator_thread": "01a0b363-f46e-7460-9cda-d4775c326d7e"
+}

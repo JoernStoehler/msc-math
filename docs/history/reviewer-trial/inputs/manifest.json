@@ -1,0 +1,57 @@
+[
+  {
+    "file": "development-source.md",
+    "source": "/workspaces/msc-math/.worktrees/easy-writing-routes/experiments/writing-quality/runs/20260918-easy-routes/route-reader/final.md",
+    "sha256": "dc2f268875887cf8bfad3f513a68d3294f5652d5d689be7406a301d9ed335a36"
+  },
+  {
+    "file": "development-labels.md",
+    "source": "/workspaces/msc-math/.worktrees/prose-review-desk/experiments/writing-quality/human-review/responses/20260918-root-contemporary-ds-reader.md",
+    "sha256": "d32cf8857fd1161813991be566b9b56aa31b9fa85bf647d172c8c9891a057eaf"
+  },
+  {
+    "file": "transfer-source.md",
+    "source": "/workspaces/msc-math/.worktrees/ds-human-feedback-revision/experiments/writing-quality/runs/20260918-human-feedback-revision/revised.md",
+    "sha256": "7b597b3a4292031e502ef4285bed0b98c9dafc16e6cbd243c33ce7ebde5f324b"
+  },
+  {
+    "file": "topic-transfer.txt",
+    "source": "/workspaces/msc-math/.worktrees/writing-detector-data/experiments/writing-quality/local/inputs/c001.txt",
+    "sha256": "8c567e61de83e9152492e4de420afae3cdd4ad1f4ba4a0fba9ab087956398774",
+    "note": "Extracted PDF text; formula layout may be imperfect. Local historical labels withheld from evaluators. Parent knows chapter had overall PASS with local objections. Shared project lineage."
+  },
+  {
+    "file": "pentagon-transfer.txt",
+    "source": "/workspaces/msc-math/.worktrees/writing-detector-data/experiments/writing-quality/local/inputs/c007.txt",
+    "sha256": "41ede8c55b748dd1b5a39433e970a7fc18e5505f7b59614046a9d076bc9ed5c3",
+    "note": "Extracted PDF text of pentagon revision, no prior human writing verdict established. Shared project and feedback lineage; fresh evaluator sees only source."
+  },
+  {
+    "file": "narrative-transfer.txt",
+    "source": "/workspaces/msc-math/.worktrees/writing-detector-data/experiments/writing-quality/local/inputs/c002.txt",
+    "sha256": "15768d8b50f9b97940a190bc8bad4f0553c79cd8e54fcb3f09762d4fbea544bd",
+    "note": "Historical DS excerpt; parent knows global prose/organization summary but has not read detailed c002 labels. Fresh evaluators receive only neutral source. Shared DS lineage."
+  },
+  {
+    "file": "preliminaries-transfer.txt",
+    "source": "/workspaces/msc-math/.worktrees/writing-detector-data/experiments/writing-quality/local/inputs/c004.txt",
+    "sha256": "4433ce4470e6a6ed577f999c258f3371a1ac4a5a5a804654e1035e54f5114104",
+    "source_start_char": 21189,
+    "source_end_char": 43596,
+    "note": "Exact section 2 text extraction, ending before section 3. Parent knows section historically rejected but detailed labels withheld until predictions. Shared project lineage."
+  },
+  {
+    "file": "alternate-ds-transfer.md",
+    "source": "/workspaces/msc-math/.worktrees/easy-writing-routes/experiments/writing-quality/runs/20260918-easy-routes/route-dialogue/final.md",
+    "sha256": "4dbedb00a687f179886d9ae4d1e2853818ac7b4b692fedcd00ca895dd0336158",
+    "note": "Unreviewed alternate DS authoring route. Selected as a different route before parent reads its contents. Same scientific source/lineage as original DS; no claim of independent-topic generalization."
+  },
+  {
+    "file": "quadratic-transfer.txt",
+    "source": "/workspaces/msc-math/.worktrees/writing-detector-data/experiments/writing-quality/local/inputs/c004.txt",
+    "sha256": "6ddc51c41442ccc90ce69ef1d309e03be893daa8889a55673873d0801617b548",
+    "source_start_char": 68323,
+    "source_end_char": 96376,
+    "note": "Exact section 4. Parent knows historical borderline PASS summary but has not read section-specific label content. Selected to test narrow qualifications on proof-dominant prose, beyond DS."
+  }
+]

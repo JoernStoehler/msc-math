@@ -1,0 +1,46 @@
+{
+  "title": "Beyond rotation: affine pentagon products and the four-block obstruction",
+  "date": "2026-09-18",
+  "entrypoint": "README.md",
+  "main_mathematical_deliverable": "math/research.tex",
+  "input": {
+    "filename": "pentagon-generalization-pro.zip",
+    "sha256": "92c62f3c40b66502522e94c1c92d106bb78b74453c7c303053b9526d23492619"
+  },
+  "status": {
+    "mathematical_results": "Proofs supplied for independent project-agent and mathematical review; not previously accepted project material.",
+    "exact_checks": "Passed; see verification/results.json.",
+    "numerical_checks": "Passed; ordinary floating-point diagnostics, not proof certificates.",
+    "latex_source": "Environment nesting and cross-references checked. No PDF compilation performed.",
+    "novelty": "Limited primary-source comparison only; no exhaustive priority claim."
+  },
+  "hash_algorithm": "SHA-256",
+  "hash_scope": "All payload files except this self-describing MANIFEST.json.",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 8566,
+      "sha256": "410b6280c5506b049658197efc1000a0f687c907de6c7e42f44ac6f812974490"
+    },
+    {
+      "path": "math/research.tex",
+      "bytes": 37418,
+      "sha256": "dd416f21f6cea0a211fbafd3d14908fc6333b175c0851050713104686b4e8c25"
+    },
+    {
+      "path": "verification/README.md",
+      "bytes": 2405,
+      "sha256": "96ec7b86834d4a9b894b0539f7989b2230b90be5c7b750618f102c9648cf2d30"
+    },
+    {
+      "path": "verification/check.py",
+      "bytes": 13339,
+      "sha256": "d9e8871d5929f786a53ac9020a79615d405722fa8ab317cf175a9e35d0aca851"
+    },
+    {
+      "path": "verification/results.json",
+      "bytes": 16180,
+      "sha256": "fab4f35e6178417af500b5e2594e02a809948ce7faa3bb3e2168f5346d5194a6"
+    }
+  ]
+}

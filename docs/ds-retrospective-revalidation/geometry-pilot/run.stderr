@@ -1,0 +1,12 @@
+Loading producer caches
+Mode: random/product (max random rows: None, max random-product rows: None)
+Loaded producer caches in 0.0s
+Loaded 36 polytopes and 36 provenance rows
+Capacity sources: {"random_product_sample": 20, "random_sample": 16}
+Building invariant polytope table
+Built invariant polytope table in 2.7s
+Building provenance/run table
+Built provenance/run table in 0.0s
+Writing tables to /workspaces/msc-math/.worktrees/ds-retrospective-revalidation/docs/ds-retrospective-revalidation/geometry-pilot/output
+Wrote prepared tables in 0.0s
+Total table build time 2.7s

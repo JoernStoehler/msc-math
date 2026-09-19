@@ -1,0 +1,288 @@
+{
+  "schema_version": 1,
+  "files": [
+    {
+      "path": "anchors.jsonl",
+      "sha256": "c806b6d92b48ae8bb7cf30a7fa8bee10de0028823def63aaff614e533dcbfa8e",
+      "bytes": 15383
+    },
+    {
+      "path": "cases.jsonl",
+      "sha256": "097e672e4c656887d5c22e9b761ea2687084ad03fb4bc0178e7b17ad0dbb9ed3",
+      "bytes": 11740
+    },
+    {
+      "path": "evidence/docs/pentagon-chapter/user-reading-feedback.md",
+      "sha256": "26152e59c9942a266a528a5010477e320c6d66767673ee7b59f88018e93192da",
+      "bytes": 1451
+    },
+    {
+      "path": "evidence/docs/pentagon-chapter-v2/review.md",
+      "sha256": "845e2c146094a54f4a12d67ad12af0bf678f2636927f940723ae7adb706a7a0c",
+      "bytes": 5688
+    },
+    {
+      "path": "evidence/docs/review-evidence/blind-self-review-2026-09-15/FREEZE.txt",
+      "sha256": "56c7e44faef0937ac6e7094303867d6a2cd7b91ffd917956b12e478928645462",
+      "bytes": 367
+    },
+    {
+      "path": "evidence/docs/review-evidence/blind-self-review-2026-09-15/REPORT.md",
+      "sha256": "43f10622d56229600db3a54895b65d6bac093653f9a3af4b8bd18fd25b23395c",
+      "bytes": 15888
+    },
+    {
+      "path": "evidence/docs/review-evidence/calibration/1800-checkpoint-retrospective.md",
+      "sha256": "2abf1df4a7c7a1b956a2ffa3a1a0f9f4b85bbb957425e93f8dc77909ceb6dbce",
+      "bytes": 4084
+    },
+    {
+      "path": "evidence/docs/review-evidence/calibration/ds-sample-comparison.md",
+      "sha256": "11209e4c2927044a0360dd8dbc7e7ffc1616739868da0b47c131226b39be0e00",
+      "bytes": 2510
+    },
+    {
+      "path": "evidence/docs/review-evidence/calibration/ds-sample-layout-luna.md",
+      "sha256": "02e100092b3d927c54b594106960c92bc873e254add18b644527703ff379ae3b",
+      "bytes": 2116
+    },
+    {
+      "path": "evidence/docs/review-evidence/calibration/ds-sample-reading-astra.md",
+      "sha256": "dbcafe6c5d6d14f1a96f8eaac527249021f499dcaf07d95d4bcbe842a30c9155",
+      "bytes": 3684
+    },
+    {
+      "path": "evidence/docs/review-evidence/calibration/hko-reading-feedback.md",
+      "sha256": "eb710c5622b7a329b3f35f7aad49269bf1a67e34c01753812a4b2db44df2ac67",
+      "bytes": 4912
+    },
+    {
+      "path": "evidence/docs/review-evidence/calibration/hko-reading-prediction.md",
+      "sha256": "bb55884a107566aeac46224a4341df6f3a136c4935a3b414162d785fbaaf4410",
+      "bytes": 2219
+    },
+    {
+      "path": "evidence/docs/review-evidence/calibration/pro-comparison-2026-09-15.md",
+      "sha256": "e4a449ecd64d3c8feb24cdbb3607e8b700ba615407d8a304dcfc28d0528357aa",
+      "bytes": 12469
+    },
+    {
+      "path": "evidence/docs/review-evidence/calibration/qp-prose-preflight-1736.md",
+      "sha256": "be6212e141e724e0e445647017179c1d22d2e3d38d3c7c32049a57b2fc40f2ab",
+      "bytes": 1480
+    },
+    {
+      "path": "evidence/docs/review-evidence/calibration/self-review-2026-09-15-pre-pro.md",
+      "sha256": "be117c2469a5155deab61a587dd127c912a5436947cc720f8cc6df074d676bc0",
+      "bytes": 15663
+    },
+    {
+      "path": "evidence/docs/review-evidence/calibration/whole-thesis-reading-1700.md",
+      "sha256": "1a1222bb60e8dac6d4012c5c7b25ae3ace95986f73c46075a9f77f91c209f520",
+      "bytes": 8496
+    },
+    {
+      "path": "evidence/docs/review-evidence/human-feedback/ds-reading-2026-09-14.md",
+      "sha256": "6f28048821850b06724085ac6edd6004cd7aa632e72f382214accbcab0ac600f",
+      "bytes": 3596
+    },
+    {
+      "path": "evidence/docs/review-evidence/pro-review-2026-09-15/thesis_review/annotation_index.json",
+      "sha256": "46936cf5e97a9de44bb27bfa0f2352f1834593e8e21057677ee1db6fb398f4ac",
+      "bytes": 2506
+    },
+    {
+      "path": "evidence/docs/review-evidence/pro-review-2026-09-15/thesis_review/complete_review.md",
+      "sha256": "de52074fcdb70cd0bbd1fd5e13a83cc85e9e89322e5903de02d275ba0c4d5ea0",
+      "bytes": 92746
+    },
+    {
+      "path": "evidence/docs/review-evidence/pro-review-2026-09-15/thesis_review/findings.json",
+      "sha256": "d4b6962be24d8180eb24feae48de666e55b3a43a66c7780282eb904919542024",
+      "bytes": 51255
+    },
+    {
+      "path": "inputs/c001.jsonl",
+      "sha256": "4e38a8b3f4575e8e2f2ba84fb05078196a9a4804ff5872772666f0301dc5956c",
+      "bytes": 26902
+    },
+    {
+      "path": "inputs/c001.pdf",
+      "sha256": "c5b4508fb226971d2c5d68d8bd8f8b32cdd727272dfc3b562a1e3f993c176202",
+      "bytes": 260509
+    },
+    {
+      "path": "inputs/c001.txt",
+      "sha256": "8c567e61de83e9152492e4de420afae3cdd4ad1f4ba4a0fba9ab087956398774",
+      "bytes": 25906
+    },
+    {
+      "path": "inputs/c002.jsonl",
+      "sha256": "6d84e65c76b44025301ef002121d9a663e6234c2dae82014b7b1d29da6eb554f",
+      "bytes": 6557
+    },
+    {
+      "path": "inputs/c002.pdf",
+      "sha256": "01d63be3d72999230e98c0b5fb6f89dcba33d532188d83894f4ad01a9f62c58c",
+      "bytes": 120776
+    },
+    {
+      "path": "inputs/c002.txt",
+      "sha256": "15768d8b50f9b97940a190bc8bad4f0553c79cd8e54fcb3f09762d4fbea544bd",
+      "bytes": 6306
+    },
+    {
+      "path": "inputs/c003.jsonl",
+      "sha256": "293f97c8290e98265baea3dc88b2974f8dd4f3edab77d4c3d4e498b1075c1907",
+      "bytes": 272755
+    },
+    {
+      "path": "inputs/c003.pdf",
+      "sha256": "8b1b8d2d54203af83f2e01f2b684c040ba52e845d0f23256ca9117c2f511e5d6",
+      "bytes": 1328194
+    },
+    {
+      "path": "inputs/c003.txt",
+      "sha256": "30795be499e2c747c162df38bc9b6071ff3ef9b69695ef9c366767bfc9c506eb",
+      "bytes": 261125
+    },
+    {
+      "path": "inputs/c004.jsonl",
+      "sha256": "1ca4941ff917f163ee4defdebba69cbb6827b92176933f5f1f89ef11d394e993",
+      "bytes": 290063
+    },
+    {
+      "path": "inputs/c004.pdf",
+      "sha256": "356a0721f38f90b1f7cc34785fc3ef26a0f25e1a804cf487992078e4f70b415b",
+      "bytes": 1609754
+    },
+    {
+      "path": "inputs/c004.txt",
+      "sha256": "7ad9c91d0577bdc080aa44370f68c758c172106dce29744df45bfce853d183a6",
+      "bytes": 277716
+    },
+    {
+      "path": "inputs/c005.jsonl",
+      "sha256": "757a6028c16b261ff5d112d6b3f870f5ebd4d0c992146cb679dc14fd639d90fd",
+      "bytes": 290287
+    },
+    {
+      "path": "inputs/c005.pdf",
+      "sha256": "d7dae9a78dffc87fe89f3005bed9b6b51d28728fa90e1a5c811bc09b236e1695",
+      "bytes": 1609659
+    },
+    {
+      "path": "inputs/c005.txt",
+      "sha256": "b75528b8737e1e4cc57a76672dbb3fdec84bdc0a39722f34ecf991e3bc17dc26",
+      "bytes": 277964
+    },
+    {
+      "path": "inputs/c006.txt",
+      "sha256": "aec8562da8988e8fc0070de0daf16e7fb637e56a5b8326f05ab6c188c442779c",
+      "bytes": 164
+    },
+    {
+      "path": "inputs/c007.jsonl",
+      "sha256": "39917b6e776ec47a8a583fd0b511df64f40d713d6764d707653823db00d70241",
+      "bytes": 12716
+    },
+    {
+      "path": "inputs/c007.pdf",
+      "sha256": "12ac151b8391d4644ebdb6935fe22c1e05a7dd081b38e1906613b055d971367d",
+      "bytes": 263154
+    },
+    {
+      "path": "inputs/c007.txt",
+      "sha256": "41ede8c55b748dd1b5a39433e970a7fc18e5505f7b59614046a9d076bc9ed5c3",
+      "bytes": 12105
+    },
+    {
+      "path": "label-notes.md",
+      "sha256": "0f11fd1ddab437b51cddd71f5a0be8c82f528a23b51d73feceae48f9fef3b282",
+      "bytes": 4149
+    },
+    {
+      "path": "labels.jsonl",
+      "sha256": "9d871e2214f95acd0cda7d6100fb90bda0fdb92558f7f0fe32d884636da19ab4",
+      "bytes": 21577
+    },
+    {
+      "path": "provenance/docs/pentagon-chapter-v2/README.md",
+      "sha256": "fc8ac3cc117acc322053fd03aa9222cf00184ad85f9dfee1a213992c7960f949",
+      "bytes": 6947
+    },
+    {
+      "path": "provenance/docs/pentagon-chapter-v2/chapter.tex",
+      "sha256": "051a7fd64f1823b379a8ea5dd2ad456bda009ae8af3799f97a7998d6d3a897ba",
+      "bytes": 10197
+    },
+    {
+      "path": "provenance/docs/source-recovery/README.md",
+      "sha256": "0c7e80d02130e5de52cb0bba7702ffdcd323bad22f6fc4703edbd22d48fc7d79",
+      "bytes": 3890
+    },
+    {
+      "path": "provenance/docs/source-recovery/dependency-manifest.json",
+      "sha256": "ab0386d47ae69b60835006aef54adda21608df3a9bccfbb1f5cdd02aaf09b8d7",
+      "bytes": 39738
+    },
+    {
+      "path": "provenance/docs/source-recovery/verification.json",
+      "sha256": "a5c4998de715f46d38e3403a4136a66fcee71120365c0655d8d2b144710868eb",
+      "bytes": 26936
+    },
+    {
+      "path": "provenance/hidden-codex/ds-first-wave/writing/sample.tex",
+      "sha256": "bac385b07f7b1af4e381d802e766f31201a5a32b202f5e08a662b42e4cf71c08",
+      "bytes": 6148
+    },
+    {
+      "path": "provenance/hidden-codex/ds-first-wave/writing/source-map.md",
+      "sha256": "47e5a5112000cbff487e6ff763782746578bbcd9129afbd81dcb75af8640efab",
+      "bytes": 1544
+    },
+    {
+      "path": "provenance/hidden-codex/hko-writing/README.md",
+      "sha256": "0276a0a89466ba52bebb0468c4f21c21ff51d0bc21922a2de87b32a703ea2efd",
+      "bytes": 2721
+    },
+    {
+      "path": "provenance/hidden-codex/hko-writing/chapter-preview.tex",
+      "sha256": "dba9592dd938dca6ae5892c5796f5d2025e95d6799ff0fa1262fd6655f1463f1",
+      "bytes": 1942
+    },
+    {
+      "path": "provenance/hidden-codex/hko-writing/proof-opening.tex",
+      "sha256": "8bd94d0aa512080931381120641bfc8e194acc08f9e78826996bce06d256565c",
+      "bytes": 5688
+    },
+    {
+      "path": "provenance/hidden-codex/thesis-review-1730/README.md",
+      "sha256": "0d8f6840830db0b6c87618344bf3be8f242f7964a65e27d0e5f08363a9ea07ad",
+      "bytes": 1513
+    },
+    {
+      "path": "reviews.jsonl",
+      "sha256": "cbdc253e102e99817ffb4dee81b9a3b198410e6d21cfde12d52986c175fbd67a",
+      "bytes": 9158
+    },
+    {
+      "path": "source-file-map.json",
+      "sha256": "043857dc3ddba20322c1e3d0ff4a2fd0dc966aec17574697c30be6e88968ccf7",
+      "bytes": 7310
+    }
+  ],
+  "extraction": {
+    "tool": "pdftotext version 24.02.0",
+    "argv": [
+      "pdftotext",
+      "-layout",
+      "-enc",
+      "UTF-8",
+      "INPUT.pdf",
+      "-"
+    ],
+    "offset_unit": "Unicode code points, zero-based half-open; page numbers physical PDF 1-based",
+    "caveat": "PDF is authoritative for mathematics and layout; extraction loses glyph positioning and formulas."
+  }
+}

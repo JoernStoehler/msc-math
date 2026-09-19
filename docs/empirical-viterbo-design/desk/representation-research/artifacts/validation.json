@@ -1,0 +1,254 @@
+{
+  "exact_formula_absolute_errors": {
+    "cell24_kurtosis": 6.661338147750939e-15,
+    "cube_dual": 2.7755575615628914e-16,
+    "cube_kurtosis": 3.1086244689504383e-15,
+    "cube_ridge": 7.105427357601002e-15,
+    "simplex_kurtosis": 7.105427357601002e-15
+  },
+  "metamorphic_checks": [
+    {
+      "body_name": "simplex",
+      "relative_errors": {
+        "dual_reciprocal_over_volume_sqrt": 4.597809996542471e-16,
+        "primal_pairing_max_over_volume_sqrt": 3.7465752423790644e-16,
+        "ridge_area_max_share": 2.906601613561371e-16,
+        "ridge_area_sum_over_volume_sqrt": 6.399914562436695e-16,
+        "vertex_covariance_nu1_over_volume_sqrt": 3.3888091420840863e-16,
+        "vertex_covariance_nu2_over_volume_sqrt": 3.388809142084085e-16,
+        "vertex_covariance_rho": 2.2204460492503116e-16,
+        "vertex_pairing_kurtosis": 0.0,
+        "volume_pairing_kurtosis": 1.6571932316998911e-15
+      }
+    },
+    {
+      "body_name": "cube",
+      "relative_errors": {
+        "dual_reciprocal_over_volume_sqrt": 2.2204460492503136e-16,
+        "primal_pairing_max_over_volume_sqrt": 6.661338147750942e-16,
+        "ridge_area_max_share": 1.1102230246251568e-16,
+        "ridge_area_sum_over_volume_sqrt": 7.771561172376099e-16,
+        "vertex_covariance_nu1_over_volume_sqrt": 1.2212453270876732e-15,
+        "vertex_covariance_nu2_over_volume_sqrt": 8.881784197001252e-16,
+        "vertex_covariance_rho": 2.2204460492503116e-16,
+        "vertex_pairing_kurtosis": 1.776356839400251e-16,
+        "volume_pairing_kurtosis": 0.0
+      }
+    },
+    {
+      "body_name": "crosspolytope",
+      "relative_errors": {
+        "dual_reciprocal_over_volume_sqrt": 1.812986607347358e-16,
+        "primal_pairing_max_over_volume_sqrt": 5.438959822042074e-16,
+        "ridge_area_max_share": 4.440892098500626e-16,
+        "ridge_area_sum_over_volume_sqrt": 1.812986607347358e-16,
+        "vertex_covariance_nu1_over_volume_sqrt": 1.812986607347358e-16,
+        "vertex_covariance_nu2_over_volume_sqrt": 0.0,
+        "vertex_covariance_rho": 2.220446049250313e-16,
+        "vertex_pairing_kurtosis": 1.1102230246251568e-16,
+        "volume_pairing_kurtosis": 9.628292676176366e-16
+      }
+    },
+    {
+      "body_name": "24cell",
+      "relative_errors": {
+        "dual_reciprocal_over_volume_sqrt": 1.570092458683776e-16,
+        "primal_pairing_max_over_volume_sqrt": 1.5700924586837747e-16,
+        "ridge_area_max_share": 3.3306690738754676e-16,
+        "ridge_area_sum_over_volume_sqrt": 0.0,
+        "vertex_covariance_nu1_over_volume_sqrt": 6.280369834735105e-16,
+        "vertex_covariance_nu2_over_volume_sqrt": 3.140184917367549e-16,
+        "vertex_covariance_rho": 8.881784197001242e-16,
+        "vertex_pairing_kurtosis": 1.1102230246251565e-16,
+        "volume_pairing_kurtosis": 1.7050698606415722e-15
+      }
+    },
+    {
+      "body_name": "gaussian_hull_8_0",
+      "relative_errors": {
+        "dual_reciprocal_over_volume_sqrt": 4.3163628575556154e-16,
+        "primal_pairing_max_over_volume_sqrt": 1.250584991596604e-16,
+        "ridge_area_max_share": 3.100466569223697e-16,
+        "ridge_area_sum_over_volume_sqrt": 1.8990522470150495e-16,
+        "vertex_covariance_nu1_over_volume_sqrt": 0.0,
+        "vertex_covariance_nu2_over_volume_sqrt": 1.4852856236805363e-16,
+        "vertex_covariance_rho": 2.0920784931258944e-16,
+        "vertex_pairing_kurtosis": 2.7091046845537836e-16,
+        "volume_pairing_kurtosis": 6.197730616390057e-16
+      }
+    },
+    {
+      "body_name": "gaussian_hull_8_1",
+      "relative_errors": {
+        "dual_reciprocal_over_volume_sqrt": 2.140601880316202e-16,
+        "primal_pairing_max_over_volume_sqrt": 1.5444642251274854e-16,
+        "ridge_area_max_share": 3.389805937667665e-16,
+        "ridge_area_sum_over_volume_sqrt": 0.0,
+        "vertex_covariance_nu1_over_volume_sqrt": 0.0,
+        "vertex_covariance_nu2_over_volume_sqrt": 2.9691937634426105e-16,
+        "vertex_covariance_rho": 2.008907413701748e-16,
+        "vertex_pairing_kurtosis": 7.662194367343631e-16,
+        "volume_pairing_kurtosis": 1.902861493363061e-15
+      }
+    },
+    {
+      "body_name": "gaussian_hull_12_0",
+      "relative_errors": {
+        "dual_reciprocal_over_volume_sqrt": 4.2803520130004585e-16,
+        "primal_pairing_max_over_volume_sqrt": 2.925137978340826e-16,
+        "ridge_area_max_share": 0.0,
+        "ridge_area_sum_over_volume_sqrt": 0.0,
+        "vertex_covariance_nu1_over_volume_sqrt": 0.0,
+        "vertex_covariance_nu2_over_volume_sqrt": 7.56883847450535e-16,
+        "vertex_covariance_rho": 6.15413396292305e-16,
+        "vertex_pairing_kurtosis": 5.074031214407965e-16,
+        "volume_pairing_kurtosis": 3.854678688538683e-16
+      }
+    },
+    {
+      "body_name": "gaussian_hull_12_1",
+      "relative_errors": {
+        "dual_reciprocal_over_volume_sqrt": 2.1043214097456488e-16,
+        "primal_pairing_max_over_volume_sqrt": 0.0,
+        "ridge_area_max_share": 1.7108352914260667e-16,
+        "ridge_area_sum_over_volume_sqrt": 0.0,
+        "vertex_covariance_nu1_over_volume_sqrt": 6.175314789419848e-16,
+        "vertex_covariance_nu2_over_volume_sqrt": 7.0809595587065e-16,
+        "vertex_covariance_rho": 0.0,
+        "vertex_pairing_kurtosis": 1.6055861194971017e-16,
+        "volume_pairing_kurtosis": 2.2707747288389174e-15
+      }
+    },
+    {
+      "body_name": "gaussian_hull_18_0",
+      "relative_errors": {
+        "dual_reciprocal_over_volume_sqrt": 4.3673469511046113e-16,
+        "primal_pairing_max_over_volume_sqrt": 3.34936088855592e-16,
+        "ridge_area_max_share": 1.363909878144138e-16,
+        "ridge_area_sum_over_volume_sqrt": 2.33037876485081e-16,
+        "vertex_covariance_nu1_over_volume_sqrt": 1.34587354957673e-16,
+        "vertex_covariance_nu2_over_volume_sqrt": 1.5082919812779369e-15,
+        "vertex_covariance_rho": 1.531327297311693e-15,
+        "vertex_pairing_kurtosis": 7.192618710393152e-16,
+        "volume_pairing_kurtosis": 1.0054143242050056e-15
+      }
+    },
+    {
+      "body_name": "gaussian_hull_18_1",
+      "relative_errors": {
+        "dual_reciprocal_over_volume_sqrt": 1.0888641257762819e-15,
+        "primal_pairing_max_over_volume_sqrt": 1.365964650030627e-16,
+        "ridge_area_max_share": 0.0,
+        "ridge_area_sum_over_volume_sqrt": 3.5540039863875015e-16,
+        "vertex_covariance_nu1_over_volume_sqrt": 1.0965574494591539e-15,
+        "vertex_covariance_nu2_over_volume_sqrt": 5.624520276817031e-16,
+        "vertex_covariance_rho": 4.1001224150624586e-16,
+        "vertex_pairing_kurtosis": 3.421782568004399e-16,
+        "volume_pairing_kurtosis": 1.865810515607563e-15
+      }
+    },
+    {
+      "body_name": "symmetric_hull_16",
+      "relative_errors": {
+        "dual_reciprocal_over_volume_sqrt": 1.8153218981703512e-16,
+        "primal_pairing_max_over_volume_sqrt": 3.8458543091778916e-16,
+        "ridge_area_max_share": 1.2517866131709426e-16,
+        "ridge_area_sum_over_volume_sqrt": 1.339861135457827e-16,
+        "vertex_covariance_nu1_over_volume_sqrt": 1.508668695022812e-15,
+        "vertex_covariance_nu2_over_volume_sqrt": 1.0626783165982965e-15,
+        "vertex_covariance_rho": 2.2522192073043143e-15,
+        "vertex_pairing_kurtosis": 0.0,
+        "volume_pairing_kurtosis": 1.1790609070368624e-15
+      }
+    },
+    {
+      "body_name": "symmetric_hull_24",
+      "relative_errors": {
+        "dual_reciprocal_over_volume_sqrt": 3.3682891407038426e-16,
+        "primal_pairing_max_over_volume_sqrt": 2.542765385687968e-16,
+        "ridge_area_max_share": 0.0,
+        "ridge_area_sum_over_volume_sqrt": 2.2031577279986666e-16,
+        "vertex_covariance_nu1_over_volume_sqrt": 6.116947643244194e-16,
+        "vertex_covariance_nu2_over_volume_sqrt": 1.2270339487759142e-16,
+        "vertex_covariance_rho": 5.344945569768819e-16,
+        "vertex_pairing_kurtosis": 1.9788068083109028e-16,
+        "volume_pairing_kurtosis": 1.9248602577412047e-15
+      }
+    },
+    {
+      "body_name": "facet_intersection_12",
+      "relative_errors": {
+        "dual_reciprocal_over_volume_sqrt": 8.097287746673669e-16,
+        "primal_pairing_max_over_volume_sqrt": 2.254802042838858e-16,
+        "ridge_area_max_share": 0.0,
+        "ridge_area_sum_over_volume_sqrt": 0.0,
+        "vertex_covariance_nu1_over_volume_sqrt": 1.0817173879326908e-15,
+        "vertex_covariance_nu2_over_volume_sqrt": 9.772426440375345e-16,
+        "vertex_covariance_rho": 2.005990282044995e-15,
+        "vertex_pairing_kurtosis": 1.9466113907042774e-16,
+        "volume_pairing_kurtosis": 3.778275423046299e-15
+      }
+    },
+    {
+      "body_name": "facet_intersection_16",
+      "relative_errors": {
+        "dual_reciprocal_over_volume_sqrt": 1.1762869941048817e-15,
+        "primal_pairing_max_over_volume_sqrt": 1.1839982682922506e-16,
+        "ridge_area_max_share": 1.3812111337877642e-16,
+        "ridge_area_sum_over_volume_sqrt": 0.0,
+        "vertex_covariance_nu1_over_volume_sqrt": 8.752625258618559e-16,
+        "vertex_covariance_nu2_over_volume_sqrt": 1.3715676410119894e-15,
+        "vertex_covariance_rho": 2.087710961987639e-15,
+        "vertex_pairing_kurtosis": 7.320653555826545e-16,
+        "volume_pairing_kurtosis": 3.3420669684850365e-15
+      }
+    },
+    {
+      "body_name": "asymmetrically_cut_cube",
+      "relative_errors": {
+        "dual_reciprocal_over_volume_sqrt": 2.384182695891133e-16,
+        "primal_pairing_max_over_volume_sqrt": 0.0,
+        "ridge_area_max_share": 5.475014034710368e-16,
+        "ridge_area_sum_over_volume_sqrt": 1.696937815683673e-16,
+        "vertex_covariance_nu1_over_volume_sqrt": 2.685757243099672e-16,
+        "vertex_covariance_nu2_over_volume_sqrt": 2.2919098973868145e-16,
+        "vertex_covariance_rho": 3.789666612621237e-16,
+        "vertex_pairing_kurtosis": 3.552671222083458e-16,
+        "volume_pairing_kurtosis": 1.912252251118154e-15
+      }
+    }
+  ],
+  "scale": 1.7,
+  "symplectic_map": [
+    [
+      1.2045854247794419,
+      -0.3718258903192276,
+      0.7821962289075517,
+      0.24982346681900175
+    ],
+    [
+      -0.366924452598717,
+      0.9845522004730177,
+      -0.020934009364295923,
+      0.04256259980773142
+    ],
+    [
+      0.07291271503419663,
+      -0.05147587747779521,
+      0.9781949342846471,
+      0.36077958892828177
+    ],
+    [
+      -0.11976874883807057,
+      0.22626545621072824,
+      0.32371805351819044,
+      1.1486620569360202
+    ]
+  ],
+  "translation": [
+    0.17,
+    -0.11,
+    0.23,
+    0.08
+  ]
+}

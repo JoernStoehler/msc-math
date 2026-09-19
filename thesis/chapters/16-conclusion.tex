@@ -1,0 +1,83 @@
+\clearpage
+\section{Conclusion}\label{sec:conclusion}
+
+The HKO body is a local maximum of the systolic ratio among ten-facet
+polytopes. Every sufficiently nearby body in this space has ratio at most
+$(3+\sqrt5)/5$, and equality occurs precisely under translations, positive
+dilations and linear symplectic maps. This answers the local-improvement
+question within the fixed-facet space. Deformations that introduce new
+facets require a different local model.
+
+A global result gives the same sharp bound for products of independently
+linearly deformed regular pentagons. Its equality cases are positive dilates
+of linear symplectic images of HKO. Together, the two theorems rule out
+improvement by sufficiently small ten-facet perturbations and by arbitrary
+deformations within this family of affinely regular products. The latter
+can be large, while the former can destroy the product structure.
+
+The placement of the factor planes matters even when the Euclidean product
+shape is fixed. Every symplectic product of full-dimensional planar convex
+bodies admits a capacity-increasing rigid rotation. The Lagrangian endpoint
+can nevertheless have smaller capacity; in the triangle example the maximum
+along the path lies strictly between the endpoints. Thus the familiar
+symplectic and Lagrangian arrangements need not contain the best position
+of a given product.
+
+At HKO, the local proof continues feasible choices through a singular
+optimization problem and uses their values as upper bounds, without
+continuing stationary optimizers. Finitely many such bounds suffice: their
+derivatives force a strict decrease in every nonzero direction transverse to the symmetries. The algebraic
+calculation establishes the finite conditions, while the geometric proof
+identifies the upper bounds and relates their coordinates to nearby bodies.
+
+The finite methods also support computation beyond these proofs. The
+Haim--Kislev formula gives a finite capacity problem for convex polytopes,
+and the product reduction shows that some maximizing word uses at most three
+facet directions from each planar factor. Its implementation supplies the
+capacity evaluations used to investigate broader populations. Our flow-graph
+construction uses the local passage geometry of Chaidez and Hutchings and
+provides a second capacity algorithm under explicit regularity assumptions.
+
+In those populations, symplectic ridge area gives a strong coarse predictive
+signal for computed systolic ratios. Geometric selection raised mean
+computed ratios in fresh samples. The pooled inverse rank association
+weakens substantially when the original data are restricted within each sampling group to low ridge scores
+or high computed ratios, with ranks recomputed in the retained groups.
+Thus a strong ordering across the broad population becomes much weaker
+among selected candidates. Restricting the range can itself attenuate
+correlation, so this observation alone does not identify a geometric cause.
+
+The balancing experiment goes further by changing the shapes. Applying
+determinant-one maps that make each factor's vertex covariance isotropic
+raises the mean numerical ratio from $0.342$ to $0.654$ in 320 paired
+products, with 314 increases and six decreases. The pooled within-group
+rank correlation weakens from $-0.929$ to $-0.249$. Affine changes in factor
+shape therefore contribute materially to the broad association in this
+sample. The intervention changes several geometric features together, so
+it does not identify covariance imbalance as the sole cause or give a
+universal improvement rule.
+
+The residual relationship depends on the family. Relative rotations of
+regular pentagon factors satisfy the inverse-square law
+\eqref{eq:ds-pentagon-ridge-capacity}, whereas relative rotations of
+equilateral-triangle factors give the same strict ordering by ridge sum and
+systolic ratio, as proved in~\eqref{eq:ds-triangle-profile}. Ideal covariance
+balancing makes triangles equilateral, which explains the opposite ordering
+in that balanced family. These exact laws show that even the direction of
+the relationship depends on geometric restrictions.
+
+The local-search comparison supplies another practical conclusion. On the
+same 64 starts under common evaluation limits, the four-anchor history
+implementation attained median best ratio $0.985$, compared with $0.881$
+for literal gradient ascent. Retaining previously active branches was useful
+in this finite comparison. Endpoint tests nevertheless found ascent
+directions missed by simpler probes, so high terminal values did not certify
+local maxima. None of the exploratory searches produced a new numerical
+ratio above one.
+
+Two open questions follow directly. Does HKO remain locally maximal
+when the facet count changes? Which geometric features explain the residual
+ridge association after factor balancing, and how does that relation depend
+on the sampling distribution? The
+first asks how far the proved local extremality extends. The second asks
+which capacity laws extend beyond the solved rotation families.

@@ -1,0 +1,16 @@
+{
+  "routes": {
+    "product": 72,
+    "general": 52
+  },
+  "overall_max_sys": 0.7735357994885708,
+  "zero_failure_rows": true,
+  "orientation_improvement_from_identity": {
+    "3x3-b0": 0.2090411683659789,
+    "3x3-b1": 0.4042468864911966,
+    "4x4-b0": 0.20159119073543302,
+    "4x4-b1": 0.0
+  },
+  "maximum_u2_delta": 3.885780586188048e-16,
+  "maximum_rotated_volume_relative_change": 8.881784197001252e-16
+}

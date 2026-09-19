@@ -1,0 +1,1378 @@
+{
+  "entries": [
+    {
+      "path": "docs/history/JOERN.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "fd569d7eb69bccd9a29318b68580e7334354a42d",
+      "reason": "promoted optional human habit card, not obsolete"
+    },
+    {
+      "path": "docs/history/PROJECT-STATUS-BRIEF.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "459373b96fcb30f4311f7e1d8fc160f030044834",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/fresh-start.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "fd32a75589cb850b5a918ac702173e6e58e5789b",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/session-briefs.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "eb1a2bb5e599cf610f31b9f8a566b32868817fdf",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/memories/INDEX.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "bb7cac7fc4dfa702b3382cf02c0fb41e5314ba96",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/memories/todos.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "3ffaa4bbe8e9053ca933c2ee9a43e5c20017408d",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/memories/team-plan.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "32d4ee1fe7255c09d1b93de764cc6c7c9c9489a0",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/memories/hko-author-context.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "7c1b3139dccf8c757af4b227e3c1b9b3a6186824",
+      "reason": "promoted source interpretation"
+    },
+    {
+      "path": "docs/history/memories/optimizer-review-route.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "25281e5edeeec0541dce0b605350d792c5037a94",
+      "reason": "promoted source interpretation"
+    },
+    {
+      "path": "docs/history/sprint-two/KICKOFF.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "34859c90cee75d323b904d19490609875c942532",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/sprint-two/integration.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "3afac39cdd36d0ce533a9f893fdead79a5b40d71",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/00-now.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "733097da162205c179dfbdcb154a46ab93031df2",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/00-now.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "b5d5d6203c398684f09eebd3c7314e32f228faae",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/25-empirical-research.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "33e1efd0c6bedbfedd023072e49711d5a7866b30",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/25-empirical-research.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "47f1c381380408cc003dedf82476255e476adb47",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/README.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "9407af65ab28926ac4bdc519fb9bca7f91495bd2",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/00-now.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "5f85de7fd4df981f59642f34a0a76c728c04a1fc",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/00-now.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "a4f13c4c2732fce729dab81a539ce78e1c55bcbb",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/01-fan-in.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "23315f4627c00cf1aafc7d45a719d07024df1145",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/01-fan-in.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "47b77af18e23521770edd367643e32dc1aa4b779",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/02-common-risks.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "c9f61c4a5335ddb3a7d48a5004a91a4502c49f1a",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/02-common-risks.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "8561903e5e82d8737ddace72c5606378afffd201",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/10-thesis.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "44905ef87b14c26d3debda1c7be5ed2521943548",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/10-thesis.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "acc6afad307277ae762ada453476593a04202a99",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/11-content.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "1b356cef0eceec35e7f92ef89cd6c594d8f287b3",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/11-content.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "292917b0d14f68273b3ac3732788daa4a41e928c",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/12-review.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "35e7aac2148f17c077145cedc8ee9ae057bdb062",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/12-review.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "bf47c18353bd241a6870832a8762dcd9521350a6",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/20-research.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "a4b1271d3cefe13641a6a11f6b59aca956930bc8",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/20-research.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "7ba5a1f574443e9b07468d7aa5d4193704d57c69",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/21-claims.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "ea5570b907c333e0a142dd10c489ead24c1f68fd",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/21-claims.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "08dfeee397f1e32309b9185a4bac24f98e85893a",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/22-datascience.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "f4e40f204a9e40b618e84180afdf082d7e4d755b",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/22-datascience.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "df2e8bbba1b7cfcf15722abd2fe2599633db18b7",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/22-next-actions.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "ec7bba666e58ec3e53e911d1c5b40638c5a0c235",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/23-datascience-starts.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "de398089c353eb37665656d7486961d6845b18b5",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/23-datascience-starts.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "fffd06da7a71d95c18052943064fb39a009c47aa",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/30-software.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "43cbca399e5849f47814bc6925dd4f634939ea94",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/30-software.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "1c0e063b5ef20e5039e16ad5432bd142340c5ec5",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/31-branches.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "830b2d72fdc46347117ed0e963e97cecc0cf07e3",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/31-branches.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "818bb0a11432a93787cfcf3365b305f78b2dacbc",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/32-trust.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "7dd6760e9c7b109f93d19e11f85c0dfb23162363",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/32-trust.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "fa089cc437c2f8e54929ea6338800c73d7df5b35",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/35-reproducibility.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "85ab96e0909ddcf0fb7ba456387c7091aae5ebd8",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/35-reproducibility.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "72c765124f782e40098f3b7b2f0a5c63cc69eefe",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/40-delivery.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "e013eb0861fc783d586f14ac66c1ce490aa77c87",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/40-delivery.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "ff697dddac90ab8a6725ad5c33871b3e8f47d206",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/41-assessment.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "a911581f6ef3cf3a8219f8bdb38eb550892dbadc",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/41-assessment.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "ac747c7c0882b8dab7c44fa9245300bab0f47038",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/42-archive.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "ef5716c733fb6e6914e7d0e017929c109e657da4",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/42-archive.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "3d11299800fef9ec2c772692c4cce547b909d692",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/tasks.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "40d24894b67fe32682959f34d83cab9c20850918",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-14/tasks.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "00f7fe1b5ed3eae4ad8b060a402b14fce639adf8",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-18-preparation/00-now.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "1dc3de077caf140c1f66fddd5f205a2f5c5cea3d",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-18-preparation/00-now.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "6a34732ee82c85b7a3ffeed0aca3121d9b41a2d9",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-18-preparation/tasks.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "5763b34d6ada3a85295b87ebc3f32b2d71d8053f",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/history/2026-09-18-preparation/tasks.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "03651a6705ec924258a47b5b5f0ba668c50b356b",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/tasks.dot",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "3979400d7ab96d5335fde0fac10853b4ef94c193",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/task-graph/tasks.svg",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "7634443cfdad484f3902f8ce2d1316ef6ce42e02",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination-map-review/project-overview.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "24c6e5277169e0204195384fdf4fb43134aa17a6",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination-map-review/root-checkpoint.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "c2667cd9d071bd312991a4b28995d243dfd5b17c",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination/current-status.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "c357c436e88cd9afd41cf2369a970329d3905c17",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination/restart-state.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "ef964adccfedfc3d06610ff66d8c7f69111c91b2",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination/status-1547.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "c357c436e88cd9afd41cf2369a970329d3905c17",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination/status-1547.html",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "ce9ac7f279452c3d5a157f5da6b9c96487028035",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination/execution-plan-v3.html",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "537c261bbf773be0edb517c0cee5287d245b06e3",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination/roadmap-v2.html",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "ea4d3499973631b71bbb0e8d3cd05029491e855a",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination/roadmap-v3.html",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "278716b11c4b921fa271d01707ec17852120ee03",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination/completion-case.html",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "53b67385622e123e6f55081364d0b56327555122",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/coordination/completion-case-v2.html",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "1b8b6957bce940337a0eb4b51b7088892ca3e0d7",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/process-audit/2026-09-15-assignment.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "10cfd9d219c0f41e06d7a9b3923f0ea213f186dd",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/process-audit/independent-assignment.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "313ee119ad36569e86e99b35de25e739a60844c7",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/process-audit/sprint-two-preparation-draft.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "24ecabf1ae7266f505a04ef2c0f097a3ee36a4f5",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/reviewer-trial/BRIEF.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "6df85fe7477d066e0ee092697c6a4112eef098c8",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/reviewer-trial/RUN.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "651dd2c0239abbaa7013f5b985642748ae93a440",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/literature-rewrite/luna-assignment.md",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "f9e3aae64795ba533c784eb66731d40f3bab82ec",
+      "reason": "superseded assignment/status/coordination surface"
+    },
+    {
+      "path": "docs/history/source-recovery/recover.py",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "d3e3de19a533c5eeca6be2377d4958b782ee93d3",
+      "reason": "one-time recovery/replay program; use original immutable checkout layout"
+    },
+    {
+      "path": "docs/history/source-recovery/verify.py",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "4fbf5f704548a7c129be9e3a9c08a78566be08bc",
+      "reason": "one-time recovery/replay program; use original immutable checkout layout"
+    },
+    {
+      "path": "docs/history/source-recovery/preserve_review_evidence.py",
+      "commit": "ee282e065004adc1ccd64e51140edccd075845de",
+      "blob": "56826c7c1862aea06cf049412dad148508630de2",
+      "reason": "one-time recovery/replay program; use original immutable checkout layout"
+    },
+    {
+      "path": "docs/history/technical-closure-plan/README.md",
+      "commit": "6ab9d8303d33d0a8b89cf0bd3639a714430e92a0",
+      "blob": "49c5bb1f8166546bf9c08b540566ab1307db0f3e",
+      "reason": "superseded diagnostic assignment; supported findings routed in retired-findings.md"
+    },
+    {
+      "path": "docs/history/literature-closure-plan/README.md",
+      "commit": "6ab9d8303d33d0a8b89cf0bd3639a714430e92a0",
+      "blob": "2c2e6036e45bae947f3628779a841ea3af31d2ad",
+      "reason": "superseded diagnostic assignment; supported findings routed in retired-findings.md"
+    },
+    {
+      "path": "docs/history/remaining-chapter-obligations/README.md",
+      "commit": "6ab9d8303d33d0a8b89cf0bd3639a714430e92a0",
+      "blob": "8c40c0b8974dbaf65d41046e51812c561330598d",
+      "reason": "superseded diagnostic assignment; supported findings routed in retired-findings.md"
+    },
+    {
+      "path": "docs/history/remaining-chapter-obligations/build-routing-proposal.patch",
+      "commit": "6ab9d8303d33d0a8b89cf0bd3639a714430e92a0",
+      "blob": "34e7c72b77aece99e6b55c9a8dfabd03a0653346",
+      "reason": "superseded diagnostic assignment; supported findings routed in retired-findings.md"
+    },
+    {
+      "path": "docs/history/source-snapshots/0941c800cb2e33aeb585ad1ffc65d1b590c84972efad4d458f4aba8e8a571ab8.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "40a7ab03aff0ef2c0f257f8a3b5b4fee2957111f",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/077297903d97ca356165cee6537c9fc17430690b38c08a8b85faf179b08cf149.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "3ffdab902bd4a0675115184f6a28d5c11175a5d9",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/c98ae0d18c67d51f7f32969487f7086c79af75a79a99cd44a6dbd50fc93a88f3.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "1924ade88c9824238398e1b0ab0957e24e69db85",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/6b1062bdb690d6215280ba1a109b959698da03e6e1f64b2dd4c0c00ad46a858b.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "edac21732607d23427ad215a24187de4ed87435a",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/fbbe2c12b98d5c93764a6dbf949a6f30402190c01c31dab552063bd00f85b572.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "dc1a9763d597b25cc9d4bbae7c10a028495060e9",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/81cd3d3f15a65047a093ea30ee3abd37744b7ab282f1099a7f62934393aa82d5.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "43c2c43b158a853094387aa060673d756f06a014",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/03286b73ec50560b83fb6c9f78855cce20ade98e35ff9104c29fba4da18ea3b4.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "86fe29bd70dffb97026a4f67e9e607373c301847",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/bc2f214df40fae919520051505d21fe5e6d520a6fbb12e7be70bbaca50b0f5cb.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "e8b7128878095b063cb450fe62ad3bcdab453619",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/d107c9ff564e9e0e5493b165f816634a56e98f8686d3d27047fb28c5080f2a6d.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "9ff3f2a1ee1f3b66c71f5c6f4e6b72d0e7a91711",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/feace52828cfe2274caf2454bdb390b1462dc50ba00a181f917cf37f891adf5d.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "0d42f8d1fd87cb066c35fc3508e993cda58424ac",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/5a84c39666e9c5bb02115e2968af5ee1a45dda871edc221f4e1e0f9090337123.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "0daa1165402cfa0c27f91b4987264bc7e907951c",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/dd9e6b8eb06545f4b2e5d5cc552f2bede021ea4a9ddcecb673fe25cd34152e99.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "1a908095da5d0f11540cec5e327e4c17a1a907dd",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/85898c620583f52a1d28b056dfc60faffb81e73a9a8a86ba7d517c3d586154f4.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "b612f4cded441748dd671a8366eb766209b9ac61",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/1548172cfccb70cc66909b9e1f0f463258a4965bb2664f4b59b51efdcb589c72.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "3c866cd73af493cbb041785a08b5922ce40f813c",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/020c2606e8ed484089c2083e0be438b9d0736bee1558a6b76af0d58bd23f69cf.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "84c048a73cc2e5dd24f807669eb99b0ce3123195",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/5e34bb8153986657a76525d78d8f9f142da4b8f06702bed143661773698c67da.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "a3ef85f4b9ecd0f92beb77ca7289840cbae2fd9e",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/7c0f880a45a07b8972dc52d37de4265a077e7b1893c8e4df8d74cb2d8e85fa95.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "ba145d9d4c8f9aa095cac24e1639b4ed138c2d19",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/86b8204c9ddd2b6a4817c694675bffcdf726860d77420846e6d09f07e2132477.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "1bc8b4daf1177910c8c9afa8cab134f2f56768de",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/cb611a4cfe06d9134d4e5ae6b029c17c1785a18a5b40cd85f60f3ff1d161f7bd.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "7022d9e2ee642d09c8f0351a556d63cec7927c4e",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/d2dbe8117abb/docs/ds-family-theorem-mapping/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "1ec680c82d621a252f8fccec313990add14d2917",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/9093c6e39340/formal/product-rotation/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "01e124a58ab646d6c6544ad1121d8b4f764d3313",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/72e0c0c528de/docs/open-thesis-literature/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "d038a52eec3aa4a273b5f1183ecd49cafc13d668",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/f429ef62e380/docs/empirical-viterbo-design/desk/research-agenda.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "e66968ef4a6a191a160bbac72cf21ae01146f44a",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/67f61d303990/docs/empirical-viterbo-design/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "adcee884bffe8f7edc7d4dc67155d31661e44bee",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/source-snapshots/140eeb11b0c4/docs/empirical-viterbo-design/desk/discovery-toolbox.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "5025adbd1800311038496e154026bdf5c2106bfb",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/PROJECT-STATUS-BRIEF.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "bb9959fc25925590c3f5962095edb7112acde1f4",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/AGENTS.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "5b2bee4858c7b126db3b02d11fb05dbac243dbb8",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/.gitignore.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "f495ab1ec4b710983f222c87d37363ff5d0b20f5",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/memories/authoring-workflow.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "dcad52a287f756b101f77de9f1714ec91976b15b",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/memories/planning-context.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "0bcfba5fbd9b637ad03a77ecab283f3ccefa873a",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/memories/todos.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "787b1cde7e11944cb9a18e85ea2740e84bd09cbe",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/project-facts.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "55c593984cbe07bfc6460055e4e5f970531d27e4",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/resumption-goal-and-constraints.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "33d4066307f7d91c42f888ae5ed25093a090f44a",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/scripts/test_subtree_usage.py.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "dddd30abaeb4d3b0a7609d0a8789f38c17335c31",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/scripts/subtree-usage.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "e43d4db865abd91cebf2baccd191e10e2101caec",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/scripts/subtree-usage.py.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "748027803d61306ed15eca69a499f83e65e95bea",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/memories/archive/sprint-one-todos-2026-09-16.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "a691eaead70662a2922367431525aed07a650065",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/experiments/sys-datascience/coordination/exploration-wave-2026-09-14.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "058bf8854fc3d5807f41ea5e93678b49593272c4",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/experiments/sys-datascience/methods/conditional-tail-atlas/analyze.py.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "3908ccccbc9ebe17de485bbdfc409d94e557ad56",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/experiments/sys-datascience/methods/conditional-tail-atlas/artifacts/analysis.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "feacf4f494f60ac0102e8e32b78536a95aa208e8",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/review-evidence/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "da8592517ae46d8abe5df4425cc89059cf344807",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/task-graph/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "957b9d7eb292bfc7c3bbfea6c4af8ab95cf76362",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/pentagon-proof/fresh-proof.tex.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "d87aa143cb6f645fd0a57e7c69e7f8520403c839",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/pentagon-proof/analytic-proof.tex.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "7f8735b507aa95be0528422d0dc25f6b9867367e",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/sprint-two/KICKOFF.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "a7327b7ed5e5c57395e2edc9458cfe11a999e7c2",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/sprint-two/readiness.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "0c543c58c6d00d9c5569d7a05b40c1a8dcda7bcf",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/process-audit/extract.py.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "ddc6690b973d412e41a445049b1339c87e788fb9",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/process-audit/corpus.json.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "518b8b01d5a6ccffad88e9a136d5bba646c63497",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/source-recovery/recover.py.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "b7e263b494f1e93bc722afbd3438339f75f1cc7b",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/source-recovery/preserve_review_evidence.py.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "a608275f294e9cc351fc99d0cd56fab8ef58fcdc",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/source-recovery/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "47489ed844fa594fdcb2e119cab872ea7dd165b7",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter/chapter.tex.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "8225e1b5091e5854de9d47bf5293b820ec649ecd",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter/user-reading-feedback.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "f2d341b0d859a7faeabe722bd7254b127ca3fddc",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter/references.bib.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "c18a599c12e53cfe7d5efed19f8e9722d564deaa",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "bc0a30bf3f76bdcd92be878e36af421ae19b4ab2",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter/standalone.tex.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "ec2d03637d21bfb10efe179381137b003d57bbff",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter-v2/review.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "41e7e16b7f5490513e88bad4c2845c746c789ffd",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter-v2/chapter.tex.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "7fa5ccc6b7324f870b374bb6f28f43b04ceb6dae",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter-v2/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "47ca7546c56b8cd593d5f788e60ccad689243041",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/hko-obstruction-candidate.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "7a714341acad34ee63b90efc7dd1592024237ef5",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/hko-questions-candidate.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "a8f2f4b5e867916ce21c7675c01aac24d2a377c2",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "658b68f622b4bfe67abbb0b5a1e0d1fb74d3c9ac",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/hko-mechanism-candidate.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "162e9b8351f6f481beca1be4a450998f18555337",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/revised-preview/hko-revised-preview-provenance.json.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "3ebf899ce03db83bd4fb967cac69aca1ce385f72",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/revised-preview/hko-revised-preview.pdf.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "f9aa281776cf5706ee93aeaec4c2665ed350390d",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/revised-preview/hko-revised-preview.tex.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "6667b598568f98c346de68d5a6958649191b103a",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/repaired-preview/hko-repaired-preview.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "f3fed5f3d8857af13549dc5a1e048fcb257ce126",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/repaired-preview/hko-repaired-preview.tex.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "bcd808161da8f5cc2d61ee90ba0b78e78b828f34",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/repaired-preview/hko-repaired-preview.pdf.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "98863605a1166e9d95efd5d4859020dcfddba2bb",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter/assets/rotation-profile.png.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "1a908095da5d0f11540cec5e327e4c17a1a907dd",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/interrupted-review/docs/task-graph/17-review-delivery.svg.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "32c95f4ae0357336be22c1d9be3bfed9d850d7ba",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/interrupted-review/docs/task-graph/17-review-delivery.dot.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "1562620908860c9eebe9fe12c535436f99a1c53d",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/interrupted-review/thesis/candidate/ai-use-disclosure.tex.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "7b98fe1daa75dd027d46becdaa70f3e61a18dee6",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/interrupted-review/thesis/candidate/main.tex.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "e28ba9847345380278c546279051a3d048df9ebe",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/interrupted-review/thesis/candidate/11-numerics.tex.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "7445782d2a763acf66612967d334e5ef43de7e94",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/interrupted-review/thesis/candidate/04-quadratic-program.tex.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "bf6e821923b762f15d3c1affb27b9564f3394f8c",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/interrupted-review/thesis/candidate/05-flow-graph.tex.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "aea4dd95df5da48f905766096e4e6360bf9547c1",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/dirty-snapshots/interrupted-review/thesis/candidate/03-generalized-reeb-orbits-polytopes.tex.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "af0cad8d61fda59f3c9f3dfd231e8deddc17249e",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/b0eec29b428b/ARCHITECTURE.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "b0eec29b428b78dd5fc3982113559c773a172c57",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/e592d496b340/QUARANTINE.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "e592d496b340114c3beed5673b6d6a4ceafba0b3",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/d3d4b92cf4f1/PROJECT-STATUS-BRIEF.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "d3d4b92cf4f1c20a50491d411f2bd3cd12cb4873",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/ae839c5e5d47/quarantine-manifest.json.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "ae839c5e5d4784dcf0564971c06ae38bf4f1a94c",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/e2ef16b4d730/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "e2ef16b4d730da79d79d130f1d4ded62a1ea3c66",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/08793e052c32/JOERN.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "08793e052c324edd5738d637682aaa6e0bc8dde0",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/b6ed391cb428/INSTALL.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "b6ed391cb4284ed472bb82f7efa7ec7473e8a212",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/eea45169f02b/thesis/candidate/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "eea45169f02bfbaa1ee58fdaf09aab6dcfac6d2e",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/a4d1a0223934/docs/sprint-two/readiness.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "a4d1a02239340f343bae6318c560a792e5c95834",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/93f5e4c05ead/thesis/candidate/integration.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "93f5e4c05ead46ba6fb3d305da05d3b560b3988f",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/f982005629c6/formal/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "f982005629c6255a934a9e78f1fbac61b8298d0f",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/e9c3c30cf6d2/docs/session-briefs.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "e9c3c30cf6d27d31104efc196953ed7c3d32375d",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/3a374226a311/memories/INDEX.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "3a374226a31152c26b7733864fcb1b345d670eb1",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/ca02ef4601f4/thesis/candidate/pentagon-affine-draft/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "ca02ef4601f41830eb2af9048a0ba89533c477f1",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/52def79bbe42/crates/algebraic-numbers/DEVELOPMENT.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "52def79bbe4208c17c614f4c8c24684d647c017c",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/f2c5deaf0f69/thesis/candidate/ds-complete-draft/chapter.tex.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "f2c5deaf0f699789760fa6d2c34252b6ee55cc58",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/312c903ee282/memories/todos.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "312c903ee282b735b725deb7106efbdff5788992",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/e01d41717f74/crates/symplectic/src/algorithms/hk2017/tests_capacity_derivative.rs.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "e01d41717f747170c7fad6e0b56456b70359bc24",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/9f260c7c3c8a/docs/complete-ds-chapter/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "9f260c7c3c8af6c8dbbe23e047823ffe0c2333b6",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/c9350671d422/docs/resumption-goal-and-constraints.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "c9350671d4225adac9d10640f4c7252bc5d9cfe4",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/b27d2d2e1de7/formal/pentagon-affine-products/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "b27d2d2e1de7b299eba2c7f60b6300bec0078232",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/47ce56da56a6/experiments/dev-quadratic-program/docs/production-migration-plan.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "47ce56da56a67b48804d65ec186afd0ada1a7260",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/8b0ffb9bbf5c/experiments/sys-datascience/coordination/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "8b0ffb9bbf5c4fa03ee4d0ff37c4bcb6822fe0c5",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/73873f7487a8/docs/task-graph/tasks.svg.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "73873f7487a804137877066be917ee5aeeb73872",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/084d03f7e7c7/memories/outcome-coverage.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "084d03f7e7c700c53790fe5ae0c408656d317cc0",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/773493e1985e/thesis/candidate/ds-complete-draft/appendix.tex.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "773493e1985eb6677aa3f6bdc5ac1e2c3ed811b1",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/e2b4c6e60052/docs/process-audit/sprint-two-preparation-draft.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "e2b4c6e6005258783dac0d8083f564d1734d24b0",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/b2d9b58fd847/scripts/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "b2d9b58fd847e0226d1f6d9d0eb171b65fcd96d2",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/38b55c46b8b1/experiments/dev-quadratic-program/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "38b55c46b8b11980920dd662b251853f1b70550b",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/30c3da48b72f/crates/symplectic/src/algorithms/flow_graph/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "30c3da48b72f8d47349f23bc034f3f94e4907c51",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/adc0efdbe1e6/docs/task-graph/tasks.dot.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "adc0efdbe1e6d79780a1b0aafc0ead9ed9e641d7",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/344d5d7c3873/.agents/skills/live-task-graph/SKILL.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "344d5d7c3873ed263074fd7359bb2223c75c7ade",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/a254fd757d24/docs/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "a254fd757d24ffa87ee588a5323c27c44fa48602",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/289759da6b76/crates/euclidean-polytopes/DEVELOPMENT.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "289759da6b764a6ff9a1e40b943a39ca45a22fea",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/63e73997dbc5/docs/source-recovery/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "63e73997dbc57948315633a5b25ee96a89da8ef3",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/c588d1f7bb16/thesis/candidate/pentagon-affine-draft/build.sh.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "c588d1f7bb1608dc102ed5c6d83c5491c55617c1",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/cb1445918a72/thesis/candidate/pentagon-affine-draft/section.tex.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "cb1445918a725f0ac921094f022afd0e7606c23a",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/75b7e158818e/docs/migration-review.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "75b7e158818e56e580f114fc1ebacd705b32678b",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/312025ac9b70/docs/task-graph/00-now.dot.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "312025ac9b70da3cf61fdfe4665a43bbed5c3cfa",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/65afc98e2517/docs/reproducibility.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "65afc98e2517c4bf012791bd1c59719c5b100b08",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/913b1360e6d7/thesis/candidate/ds-complete-draft/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "913b1360e6d7d9ce67efb8b9efb4a7de895dbd15",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/77652ae0e02d/experiments/dev-quadratic-program/docs/route-consumer-matrix.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "77652ae0e02d246ffc566d38bc402bffa32ff5fc",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/7220ab2b7f8d/crates/algebraic-numbers/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "7220ab2b7f8d9d7b66396b9ca58125683b7b609e",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/733fe7c07379/thesis/candidate/product-rotation-draft/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "733fe7c073799ec4b899f9bf831fc3ec34b9d5b8",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/2c5f1c58b965/experiments/sys-datascience/coordination/current-question-map.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "2c5f1c58b965a7eb92be0d205998413498b0570e",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/db048e3a09d3/thesis/candidate/ds-complete-draft/preview.tex.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "db048e3a09d352a18f908c0a4801e2b6ef99a91d",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/e55c595f0559/memories/team-plan.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "e55c595f0559960ea7d3e53a1b8cd1d3a1855fe1",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/378b1827869c/docs/pentagon-chapter-v2/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "378b1827869c7c6782a180d2499ae4fd8b14ea13",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/e8d317bd1529/crates/symplectic/src/derivatives.rs.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "e8d317bd152939e2b8533363396773fbfcd75441",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/8de6d3f10352/thesis/candidate/recovered/thesis-candidate/01-introduction.tex.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "8de6d3f10352c8eda065aacf1c21f36cb7b272ce",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/1fdcd970139d/thesis/candidate/ds-complete-draft/references.bib.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "1fdcd970139df889d488478fa6de9d6671155a5d",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/8cb9da136094/docs/task-graph/00-now.svg.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "8cb9da136094e3d2e6db4957ffff93f0764862ec",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/5a630627243b/docs/sprint-two/KICKOFF.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "5a630627243b91e893b9e5cafbc6a0047a9d97f4",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/89efbddd68a5/thesis/candidate/recovered/thesis-candidate/additional.bib.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "89efbddd68a511ba927e03a6c2cc1cec19c0daca",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/eae18c0c6c11/submit/archive-closure-checklist.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "eae18c0c6c11b0e353188255573935b4ea71bf45",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/7d5e038bf82b/docs/review-workflow-design/repair-results.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "7d5e038bf82b1fb0443b0b35ca480728404fe81d",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/30fadf098597/docs/task-graph/tasks.dot.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "30fadf09859718508d6d9e47c610a60798e90dbe",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/9766594ae400/docs/task-graph/tasks.svg.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "9766594ae400f0e59b5eb8a281acdd50e7b716ec",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/1dada1594227/docs/current-thesis-assessment-2026-09-14.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "1dada1594227a16f87b4bf69ca681f784dfe332a",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/cf70e72b7517/docs/pentagon-chapter/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "cf70e72b7517bcfe93c123ab351c604fd8c8cd77",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/ac29d95f19e3/docs/project-facts.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "ac29d95f19e3891e1d8ebf81c6639966611d3c36",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/19ccc09cd3c0/thesis/candidate/product-rotation-draft/section.tex.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "19ccc09cd3c0224309990dfcb4c0d997d7f23779",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/0e123bf137db/experiments/sys-datascience/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "0e123bf137dbdd77bfa55a6eb97464f953352a19",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/3ab36bc13c9d/docs/task-graph/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "3ab36bc13c9de94bf63aee30df06af84022595c3",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/650827349b82/docs/thesis-assessment-2026-09-14.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "650827349b821cc583697232382d5fe3ed44fa8b",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/1746bd424e90/experiments/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "1746bd424e90979c1ac72b878984027009523937",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/f2c757d42ee2/experiments/dev-quadratic-program/docs/capacity-architecture.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "f2c757d42ee2a2b0425707b2d4418697e357e2b6",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/history/historical-variants/435bd7b248b4/thesis/README.md.snapshot",
+      "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+      "blob": "435bd7b248b43aa1de226fd88fbccc392a367da1",
+      "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    }
+  ]
+}

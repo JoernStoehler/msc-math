@@ -1,0 +1,20 @@
+{
+  "source_root": "/tmp/msc-math-thesis-review-20260917/thesis/candidate",
+  "inputs": {
+    "main.tex": "c0436abe3e50916e52adbdf5a7d882e91975535492536c5ab919976499f5ffcf",
+    "04-quadratic-program.tex": "7a3306308b8a63cdff8ceb964af27906339a9e08c66f0ef0614f2ec22158f3c1",
+    "05-flow-graph.tex": "173a5bb26254e6ded5f99fb6b4da4cac34b802a896b96bdc243d84eddcd97e92",
+    "03-generalized-reeb-orbits-polytopes.tex": "87c179d993c92c12764ee4b5660a345c741703f913ddd9c7167c09b13b97a0d7",
+    "recovered/thesis-candidate/02-preliminaries.tex": "fb69b125f7bc4a5a4398603bf22371b3187c0d0b30e51656084b03f064839866",
+    "recovered/thesis-candidate/02-preliminaries-convex-symplectic-notation.tex": "79e3e0915f8c80638797b4fc3768f1b44f3487a01ba589b5c87b7933b717fcd1",
+    "recovered/thesis-candidate/02-duality.tex": "a6e9a2e9a9d512a60d62a405aca19fa1f2858c0a13d74f08f092e80581d81f15",
+    "legacy/05-flow-graph-ch2021-background-comparison.tex": "d9f2931d32aa2011eb119be13efc30d0608f591317ea29e78e47a4eef4e0cbaf",
+    "legacy/figures/flow-graph/flow-graph-f6-tube-sequence.pdf": "6cc41de40e349accf46342d873422041656b19c0f091266c0747430d3a2851d4",
+    "build.sh": "111f3446f2eeeb4d326618c0ed1bcb1dc1b49f3ca1651064add95b97422ce613"
+  },
+  "proposed": {
+    "04-quadratic-program.tex": "28ea35b9d9d877225dfac7e1d72ca6e28b910b513cbcabaabeddcda7f37df6ee",
+    "main.tex": "073a819a3f1a1ed204e8e333f4b4ac5eb4d067d5845b0bac03e99e1fe706d08b",
+    "05-flow-graph.tex": "75326a33e53123aefa94e1890f2f717405be12b022f37092a434d0088dbc5192"
+  }
+}

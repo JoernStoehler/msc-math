@@ -1,0 +1,13 @@
+{
+  "schema": "orientation-allocation-freeze-v1",
+  "utc": "2026-09-14T12:55:06.989645+00:00",
+  "input_sha256": "823ac528d47459c5fee79b55a2d163d3207ecad2f5349876116f810037701aa2",
+  "source_sha256": "ca0cc5429a0775a97ccb2ddc1a6a6c1b834b7edb17914e1d4541f0750300f9b9",
+  "lock_sha256": "a8a8561f7558d75e5437672eea1f460e282c3f550fd07022595cea5bdffc37a6",
+  "analyzer_sha256": "9089db4e3d21f3ebb1735a460498c364321101b455bbeceeff301aaf57a439ee",
+  "seed": 202609140201,
+  "expected_unique": 124,
+  "charged_memberships": 128,
+  "per_request_timeout_seconds": 5,
+  "overall_evaluator_cap_seconds": 300
+}

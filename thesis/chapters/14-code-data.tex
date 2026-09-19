@@ -1,0 +1,76 @@
+\section{Availability of Code and Data}\label{sec:published-code-data}
+
+At the time of writing, the public development repository for this thesis is
+\begin{center}
+  \url{https://github.com/JoernStoehler/msc-math}.
+\end{center}
+The public repository was checked on 18 September 2026 at commit
+\href{https://github.com/JoernStoehler/msc-math/tree/1bec30637070effe7ab8b0a022ae62e83f6bbcab}{\texttt{1bec30637070}}. The two certificate
+packets described below are present there. This review candidate and subsequent
+research additions are held in the working repository; they are not all included
+in that public commit. The repository URL follows ongoing development.
+
+The HKO local-maximality proof and the original rotation computation have
+proof-facing packets in the public tree.  The HKO packet in
+\path{experiments/hko-local-maximum/theorem/} contains the finite witness, the
+exact SageMath verifier, its recorded verification summary, and the Rust
+programs used to select the witness.  Rust supplies finite choices; it is not
+trusted for theorem correctness.  SageMath reconstructs the algebraic objects
+and checks the exact predicates stated in
+Section~\ref{subsec:hko-local-maximum-computation-with-sagemath}.  Those
+predicates imply the theorem only together with the mathematical
+upper-function and slice argument given there.
+
+The rotated-pentagon packet is stored under
+\begin{center}
+  \small\path{experiments/regular-products/}\\[-0.2em]
+  \path{pentagon-rotation-formula-proof/}.
+\end{center}
+It contains the exact SageMath classifier and the recorded full-run transcript
+for all \(3340\) finite words left after the mathematical reduction.  This is the original computational proof route; the analytic rotation and
+independent-linear-deformation proofs presented here do not use it. In the
+computational route, the enumeration theorem, the
+translation from checked signs to action comparisons, and the continuity
+argument remain mathematical inputs.  The repository exposes the finite
+computation and its output for inspection, with SageMath's exact arithmetic
+and root isolation inside the software trust boundary. The maintained
+affine-pentagon argument and its source-convention check are in
+\path{formal/pentagon-affine-products/}.
+
+Selected non-proof evidence is also tracked as ordinary repository files.  In
+particular, the product-capacity implementation audit retains its \(88\)-row
+numerical packet, and the historical first-order experiment retains its
+\(12\)-run finite-step panel.  The bounded generated-candidate experiment
+retains \(1675\) rows selected before the systolic ratio was computed, the
+corresponding \(1675\) evaluated rows, its frozen configuration, and compact
+reports.  These records support only the finite experiments described in the
+corresponding chapters.  They neither prove a population statement nor supply
+evidence for local maximality.
+
+The repository is not a self-contained copy of every dataset used during the
+project.  Its artifact registry identifies external snapshots and their intended
+local paths; a plain checkout does not materialize those files.  For example, the
+\(14336\)-row random/product provenance table is tracked, while the source
+random/product datasets and the method-facing invariant table are not tracked
+at those paths. The original source geometries have been recovered locally
+from the registered snapshot and matched against all \(14336\) table rows.
+They can be materialized through the \texttt{polytope-datasets} artifact;
+this recovery does not supply missing historical execution receipts.
+Separate current computations restored the feature schema for all bodies and
+returned capacity intervals for 14,335 of the 14,336 original geometries;
+one body remains outside the input-size policy. These new intervals do not
+certify the historical numerical ratios, whose volumes are floating-point
+values. Recovery and reevaluation receipts are in
+\path{docs/ds-retrospective-revalidation/}.
+Consequently, cloning the repository alone does not provide every input needed
+to repeat all empirical analyses, regenerate every figure, or reproduce every
+reported run.  Packet-local instructions describe available producers and
+checks, but compatible software, dependencies, compute resources, and
+untracked inputs may still be required; timing and other
+environment-dependent fields need not reproduce byte for byte.
+
+No frozen release, public Zenodo record, or DOI for this thesis is claimed
+here.  Any archival deposit created later would be a separate, immutable
+object whose own public record, inventory, and hashes would have to establish
+its contents.  The public commit identified above fixes which material was accessible
+at the time of this check; later local additions require a separate handoff.

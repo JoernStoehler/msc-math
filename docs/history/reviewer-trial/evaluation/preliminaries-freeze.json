@@ -1,0 +1,17 @@
+{
+  "frozen_utc": "2026-09-18T12:31:45.189984+00:00",
+  "files": [
+    {
+      "path": "development/prerequisite-prompt.md",
+      "sha256": "580e3f6f80da27e0f0d68815d1c32d6aa6ee638f688d3a3b99413d7f4c512bc0"
+    },
+    {
+      "path": "evaluation/prerequisite-transfer.md",
+      "sha256": "11df2888488849af836bf24910918cb4d61532fda6e47463cf669d3d8d9cd7bc"
+    },
+    {
+      "path": "evaluation/baseline-preliminaries.md",
+      "sha256": "914b2e144611fbcbefc70a714497e00b33da4ca71daf263748f9193a50557cfc"
+    }
+  ]
+}

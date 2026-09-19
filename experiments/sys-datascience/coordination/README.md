@@ -3,7 +3,7 @@
 This directory contains research question maps and historical coordination
 records. It is not a current assignment queue or a second source for metrics.
 Jörn describes data science as moderately incomplete as of 2026-09-05.
-See [current work and ownership](../../../memories/todos.md) for assignments.
+See [current work and ownership](../../../docs/WORK_REMAINING.md) for assignments.
 
 Start with [`current-question-map.md`](current-question-map.md) for the current
 source-linked view of bounded answers, open questions, parked lines, and

@@ -1,0 +1,40 @@
+{
+  "schema": "diagonal-cem-pilot-v1",
+  "seeds": [
+    202609140301,
+    202609140302,
+    202609140303
+  ],
+  "population": 64,
+  "elites": 16,
+  "generations_including_initial": 4,
+  "smoothing": 0.5,
+  "variance_floor_fraction": 0.05,
+  "construction_cap_per_generation": 640,
+  "shared_initialization": 64,
+  "charged_per_arm": 256,
+  "charged_total_cap": 1536,
+  "unique_evaluation_cap": 1344,
+  "per_input_seconds": 5,
+  "outer_wall_seconds": 180,
+  "no_update_on_incomplete_generation": true,
+  "sha256": {
+    "experiments/sys-datascience/methods/diagonal-cem-pilot/Cargo.toml": "879d3f5bc99bba69e73cd74467081e9dc6b48e978a98c473ae1a589d6d79e81c",
+    "experiments/sys-datascience/methods/diagonal-cem-pilot/Cargo.lock": "ba81e2098bafd2ed3b2aa3825fda14b9a833dde2739df2656c48ff0b500eec4e",
+    "experiments/sys-datascience/methods/diagonal-cem-pilot/src/main.rs": "ae508c3b126b87c7a2f07912a4acb0ef52d30908071a25daad25303c1d2fe463",
+    "experiments/sys-datascience/methods/diagonal-cem-pilot/run.py": "ce1ce6c0b3f24c5cd4d6fde022f7554691593b49bb18e359ca64fcf2f5679c5a",
+    "experiments/sys-datascience/methods/diagonal-cem-pilot/analyze.py": "c76c7a372485d452f89a656b40faad79dc9878ae69a220bb5b630c8f2a9700e4",
+    "experiments/sys-datascience/methods/equal-budget-product-search/src/evaluator.rs": "ea960b327151a93ced4df0343f16bc6b63f9afdb50b7061d4dffa4f2618cca8f",
+    "experiments/sys-datascience/methods/equal-budget-product-search/src/local.rs": "d4017685436eb9d758bf10ca3bea65f4bb974cc7b262e74f12e9ba80a613371b",
+    "experiments/sys-datascience/methods/equal-budget-product-search/src/ams.rs": "ca4ab3dc3620b79312010efe954464dd8b206c3a5162bcca1cffd6c4d6cd3033",
+    "experiments/sys-datascience/methods/equal-budget-product-search/src/main.rs": "7375523219b7a547e71c3c76f2013bedd822f55c4882409441b8d37eb34e260b",
+    "experiments/sys-datascience/methods/equal-budget-product-search/src/cem.rs": "aa9a03e01f428553d7fbea96fd791a7bdc1479e9ed6eec825a01afb69949c6f8",
+    "experiments/sys-datascience/methods/equal-budget-product-search/src/lib.rs": "e1f21cd7f36248361eca23ac4fe5944f58086df6157bca442e1e86c95608edd1",
+    "experiments/sys-datascience/methods/equal-budget-product-search/src/chart.rs": "1d39770f1895777f390dfd0fdf3964a2ec3b1fb6a6df3daeace61e4a95b304e3",
+    "experiments/sys-datascience/methods/equal-budget-product-search/src/model.rs": "fdd766d9f0c243ac925d511de3192f532b692c91336abf01615bb33775872f21",
+    "experiments/sys-datascience/methods/equal-budget-product-search/Cargo.toml": "8e599772e07a439532cc131b4a99d2af87258cb2ee01436c728597516069010b",
+    "crates/symplectic/src/geom/polygon.rs": "b6b1b4363ecfff291fe7572bc15f94705c267e54ac567a7938d8970764901eb6",
+    ".git/codex/ds-first-wave/readiness/target/release/diagonal-cem-pilot": "03b53d24c7c1a5ea8f5a7dd7c968db5c3b52fd57092ef70e5bd5a313a2fe28bb"
+  },
+  "head": "610165e0a6bff8cab69dac5a5a5c8b184df967e5"
+}

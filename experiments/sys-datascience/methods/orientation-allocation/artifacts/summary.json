@@ -1,0 +1,124 @@
+{
+  "schema": "orientation-allocation-result-v1",
+  "complete": true,
+  "expected_unique": 124,
+  "evaluated_rows": 124,
+  "valid_rows": 124,
+  "charged_memberships": 128,
+  "blocks": [
+    {
+      "block": "3x3-b0",
+      "arms": {
+        "iid": {
+          "valid": 16,
+          "complete": true,
+          "best_sys": 0.5077606175106407,
+          "charged_ms": 248.62747999973027,
+          "failures": []
+        },
+        "orientation": {
+          "valid": 16,
+          "complete": true,
+          "best_sys": 0.47754513584661545,
+          "charged_ms": 1202.420787999451,
+          "failures": []
+        }
+      },
+      "complete": true,
+      "orientation_minus_iid_best": -0.030215481664025268
+    },
+    {
+      "block": "3x3-b1",
+      "arms": {
+        "iid": {
+          "valid": 16,
+          "complete": true,
+          "best_sys": 0.6102676815188885,
+          "charged_ms": 242.91845699932983,
+          "failures": []
+        },
+        "orientation": {
+          "valid": 16,
+          "complete": true,
+          "best_sys": 0.5637527293333957,
+          "charged_ms": 1099.1968589987064,
+          "failures": []
+        }
+      },
+      "complete": true,
+      "orientation_minus_iid_best": -0.04651495218549284
+    },
+    {
+      "block": "4x4-b0",
+      "arms": {
+        "iid": {
+          "valid": 16,
+          "complete": true,
+          "best_sys": 0.7735357994885708,
+          "charged_ms": 295.99614500122823,
+          "failures": []
+        },
+        "orientation": {
+          "valid": 16,
+          "complete": true,
+          "best_sys": 0.5292849219880137,
+          "charged_ms": 4737.814417999434,
+          "failures": []
+        }
+      },
+      "complete": true,
+      "orientation_minus_iid_best": -0.24425087750055707
+    },
+    {
+      "block": "4x4-b1",
+      "arms": {
+        "iid": {
+          "valid": 16,
+          "complete": true,
+          "best_sys": 0.636202218743244,
+          "charged_ms": 310.11809400067034,
+          "failures": []
+        },
+        "orientation": {
+          "valid": 16,
+          "complete": true,
+          "best_sys": 0.37747033982855455,
+          "charged_ms": 5408.660709999772,
+          "failures": []
+        }
+      },
+      "complete": true,
+      "orientation_minus_iid_best": -0.25873187891468946
+    }
+  ],
+  "u2_controls": [
+    {
+      "block": "3x3-b0",
+      "pass": true,
+      "delta_sys": -5.551115123125783e-17,
+      "relative_volume_change": 0.0
+    },
+    {
+      "block": "3x3-b1",
+      "pass": true,
+      "delta_sys": 1.3877787807814457e-16,
+      "relative_volume_change": 0.0
+    },
+    {
+      "block": "4x4-b0",
+      "pass": true,
+      "delta_sys": -3.885780586188048e-16,
+      "relative_volume_change": 0.0
+    },
+    {
+      "block": "4x4-b1",
+      "pass": true,
+      "delta_sys": -1.6653345369377348e-16,
+      "relative_volume_change": 0.0
+    }
+  ],
+  "unique_evaluator_wall_ms": 12925.451874997634,
+  "unique_proposal_ms": 548.434829,
+  "equal_bucket_mean_best_difference": -0.14492829756619116,
+  "boundary": "Finite four-block comparison; capacity bounds do not certify f64 volume or ratio. Full-grid scientific verdict requires all successes and controls. Shared-start cost charged to both arms. Proposal timings include generation/rejection or transformation plus exact geometry validation; compilation, panel serialization and analysis excluded."
+}

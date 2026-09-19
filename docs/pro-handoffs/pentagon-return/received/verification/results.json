@@ -1,0 +1,778 @@
+{
+  "description": "Optional checks accompanying the mathematical research handoff.",
+  "environment": {
+    "python": "3.13.5",
+    "numpy": "2.3.5",
+    "sympy": "1.14.0"
+  },
+  "exact": {
+    "status": "all exact checks passed",
+    "symbolic_checks": {
+      "closure": true,
+      "normal_relation_1": true,
+      "normal_relation_2": true,
+      "normal_relation_3": true,
+      "tensor_identity_1": true,
+      "tensor_identity_2": true,
+      "identity_1_mass": true,
+      "identity_2_mass_below_one": true,
+      "six_order_table_1": true,
+      "six_order_table_2": true,
+      "six_order_table_3": true,
+      "six_order_table_4": true,
+      "six_order_table_5": true,
+      "six_order_table_6": true,
+      "left_reflection_order_1": true,
+      "left_reflection_order_2": true,
+      "left_reflection_order_3": true,
+      "left_reflection_order_4": true,
+      "left_reflection_order_5": true,
+      "left_reflection_order_6": true,
+      "all_12_isosceles_norms": true,
+      "isosceles_dominance_factorization": true,
+      "pentagon_switch_edge_contact": true,
+      "systolic_prefactor": true,
+      "sharp_systolic_constant": true
+    },
+    "isosceles_squared_norm_type_multiplicities": [
+      4,
+      4,
+      2,
+      2
+    ],
+    "rational_bounds": [
+      {
+        "value": "1145864801/1600000000",
+        "strict_threshold": "361/400",
+        "positive_gap": "298135199/1600000000"
+      },
+      {
+        "value": "476971178161/538462440000",
+        "strict_threshold": "361/400",
+        "positive_gap": "8991173939/538462440000"
+      },
+      {
+        "value": "116304862857201778241/146783035890944010000",
+        "strict_threshold": "361/400",
+        "positive_gap": "1010426689648449424/9173939743184000625"
+      },
+      {
+        "value": "1276254929/1600000000",
+        "strict_threshold": "9801/10000",
+        "positive_gap": "291905071/1600000000"
+      },
+      {
+        "value": "58326597081/59829160000",
+        "strict_threshold": "9801/10000",
+        "positive_gap": "62392527/11965832000"
+      }
+    ],
+    "scope": "Exact finite algebra and inequalities only; full geometric proofs are in research.tex."
+  },
+  "floating_point": {
+    "status": "all floating-point diagnostics passed",
+    "warning": "These diagnostics are not proofs, interval certificates, or an exhaustive parameter search.",
+    "arithmetic": "NumPy float64",
+    "regular_pairs": [
+      {
+        "pair": [
+          3,
+          3
+        ],
+        "closure_counts": [
+          1,
+          1
+        ],
+        "cyclic_words_per_pair": 120,
+        "total_candidates": 120,
+        "angles_checked": 125,
+        "max_absolute_Q_error": 2.7755575615628914e-16,
+        "max_predicted_hull_halfspace_violation": -1.1102230246251565e-16,
+        "max_six_block_coefficient_radius": 0.3849001794597503,
+        "predicted_hull_circumradius": 0.3849001794597505,
+        "predicted_hull_inradius": 0.33333333333333337
+      },
+      {
+        "pair": [
+          5,
+          5
+        ],
+        "closure_counts": [
+          5,
+          5
+        ],
+        "cyclic_words_per_pair": 120,
+        "total_candidates": 3000,
+        "angles_checked": 133,
+        "max_absolute_Q_error": 8.326672684688674e-17,
+        "max_predicted_hull_halfspace_violation": 8.326672684688674e-17,
+        "max_six_block_coefficient_radius": 0.1457353306532857,
+        "predicted_hull_circumradius": 0.15278640450004205,
+        "predicted_hull_inradius": 0.14530850560107217
+      },
+      {
+        "pair": [
+          7,
+          7
+        ],
+        "closure_counts": [
+          14,
+          14
+        ],
+        "cyclic_words_per_pair": 120,
+        "total_candidates": 23520,
+        "angles_checked": 141,
+        "max_absolute_Q_error": 5.551115123125783e-17,
+        "max_predicted_hull_halfspace_violation": 5.551115123125783e-17,
+        "max_six_block_coefficient_radius": 0.12919973854867492,
+        "predicted_hull_circumradius": 0.1383630081173551,
+        "predicted_hull_inradius": 0.13489395862704973
+      },
+      {
+        "pair": [
+          5,
+          7
+        ],
+        "closure_counts": [
+          5,
+          14
+        ],
+        "cyclic_words_per_pair": 120,
+        "total_candidates": 8400,
+        "angles_checked": 253,
+        "max_absolute_Q_error": 5.551115123125783e-17,
+        "max_predicted_hull_halfspace_violation": 2.7755575615628914e-17,
+        "max_six_block_coefficient_radius": 0.14260622347505644,
+        "predicted_hull_circumradius": 0.14539596461408694,
+        "predicted_hull_inradius": 0.1452495605525592
+      }
+    ],
+    "affine_pentagon_cases": [
+      {
+        "G": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "H": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "theta": -0.37,
+        "absolute_Q_error": 2.7755575615628914e-17,
+        "capacity": 3.3848487732304675,
+        "systolic_ratio": 1.0133416106772177
+      },
+      {
+        "G": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "H": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "theta": 0.0,
+        "absolute_Q_error": 2.7755575615628914e-17,
+        "capacity": 3.2725424859373677,
+        "systolic_ratio": 0.9472135954999577
+      },
+      {
+        "G": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "H": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "theta": 0.3141592653589793,
+        "absolute_Q_error": 2.7755575615628914e-17,
+        "capacity": 3.4409548011779325,
+        "systolic_ratio": 1.0472135954999575
+      },
+      {
+        "G": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "H": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "theta": 1.27,
+        "absolute_Q_error": 0.0,
+        "capacity": 3.272834693569798,
+        "systolic_ratio": 0.9473827577952758
+      },
+      {
+        "G": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "H": [
+          [
+            0.9510565162951535,
+            -0.3090169943749474
+          ],
+          [
+            0.3090169943749474,
+            0.9510565162951535
+          ]
+        ],
+        "theta": -0.37,
+        "absolute_Q_error": 2.7755575615628914e-17,
+        "capacity": 3.2776513241361993,
+        "systolic_ratio": 0.9501733359955492
+      },
+      {
+        "G": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "H": [
+          [
+            0.9510565162951535,
+            -0.3090169943749474
+          ],
+          [
+            0.3090169943749474,
+            0.9510565162951535
+          ]
+        ],
+        "theta": 0.0,
+        "absolute_Q_error": 2.7755575615628914e-17,
+        "capacity": 3.4409548011779325,
+        "systolic_ratio": 1.0472135954999575
+      },
+      {
+        "G": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "H": [
+          [
+            0.9510565162951535,
+            -0.3090169943749474
+          ],
+          [
+            0.3090169943749474,
+            0.9510565162951535
+          ]
+        ],
+        "theta": 0.3141592653589793,
+        "absolute_Q_error": 2.7755575615628914e-17,
+        "capacity": 3.272542485937368,
+        "systolic_ratio": 0.9472135954999581
+      },
+      {
+        "G": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "H": [
+          [
+            0.9510565162951535,
+            -0.3090169943749474
+          ],
+          [
+            0.3090169943749474,
+            0.9510565162951535
+          ]
+        ],
+        "theta": 1.27,
+        "absolute_Q_error": 0.0,
+        "capacity": 3.4263842051884543,
+        "systolic_ratio": 1.0383635981813533
+      },
+      {
+        "G": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.5
+          ]
+        ],
+        "H": [
+          [
+            1.0,
+            -0.3
+          ],
+          [
+            0.2,
+            1.7
+          ]
+        ],
+        "theta": -0.37,
+        "absolute_Q_error": 2.7755575615628914e-17,
+        "capacity": 2.4031321814853244,
+        "systolic_ratio": 0.29021508766401577
+      },
+      {
+        "G": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.5
+          ]
+        ],
+        "H": [
+          [
+            1.0,
+            -0.3
+          ],
+          [
+            0.2,
+            1.7
+          ]
+        ],
+        "theta": 0.0,
+        "absolute_Q_error": 0.0,
+        "capacity": 2.552918175924744,
+        "systolic_ratio": 0.3275204777578322
+      },
+      {
+        "G": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.5
+          ]
+        ],
+        "H": [
+          [
+            1.0,
+            -0.3
+          ],
+          [
+            0.2,
+            1.7
+          ]
+        ],
+        "theta": 0.3141592653589793,
+        "absolute_Q_error": 0.0,
+        "capacity": 2.340684323493835,
+        "systolic_ratio": 0.2753279879869399
+      },
+      {
+        "G": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.5
+          ]
+        ],
+        "H": [
+          [
+            1.0,
+            -0.3
+          ],
+          [
+            0.2,
+            1.7
+          ]
+        ],
+        "theta": 1.27,
+        "absolute_Q_error": 0.0,
+        "capacity": 1.5346314364545859,
+        "systolic_ratio": 0.11835124988160163
+      },
+      {
+        "G": [
+          [
+            -1.0,
+            0.4
+          ],
+          [
+            0.7,
+            2.0
+          ]
+        ],
+        "H": [
+          [
+            0.5,
+            2.0
+          ],
+          [
+            -1.0,
+            1.0
+          ]
+        ],
+        "theta": -0.37,
+        "absolute_Q_error": 1.3877787807814457e-17,
+        "capacity": 7.232696513109835,
+        "systolic_ratio": 0.8117138660568879
+      },
+      {
+        "G": [
+          [
+            -1.0,
+            0.4
+          ],
+          [
+            0.7,
+            2.0
+          ]
+        ],
+        "H": [
+          [
+            0.5,
+            2.0
+          ],
+          [
+            -1.0,
+            1.0
+          ]
+        ],
+        "theta": 0.0,
+        "absolute_Q_error": 0.0,
+        "capacity": 5.61300841385509,
+        "systolic_ratio": 0.4888705397729231
+      },
+      {
+        "G": [
+          [
+            -1.0,
+            0.4
+          ],
+          [
+            0.7,
+            2.0
+          ]
+        ],
+        "H": [
+          [
+            0.5,
+            2.0
+          ],
+          [
+            -1.0,
+            1.0
+          ]
+        ],
+        "theta": 0.3141592653589793,
+        "absolute_Q_error": 1.3877787807814457e-17,
+        "capacity": 4.900664206639998,
+        "systolic_ratio": 0.37265964988189954
+      },
+      {
+        "G": [
+          [
+            -1.0,
+            0.4
+          ],
+          [
+            0.7,
+            2.0
+          ]
+        ],
+        "H": [
+          [
+            0.5,
+            2.0
+          ],
+          [
+            -1.0,
+            1.0
+          ]
+        ],
+        "theta": 1.27,
+        "absolute_Q_error": 1.3877787807814457e-17,
+        "capacity": 4.078339891411054,
+        "systolic_ratio": 0.25808889302428173
+      },
+      {
+        "G": [
+          [
+            3.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.25
+          ]
+        ],
+        "H": [
+          [
+            1.0,
+            1.1
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "theta": -0.37,
+        "absolute_Q_error": 2.220446049250313e-16,
+        "capacity": 0.5132042429459177,
+        "systolic_ratio": 0.03105964939519818
+      },
+      {
+        "G": [
+          [
+            3.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.25
+          ]
+        ],
+        "H": [
+          [
+            1.0,
+            1.1
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "theta": 0.0,
+        "absolute_Q_error": 2.220446049250313e-16,
+        "capacity": 0.5736418397141787,
+        "systolic_ratio": 0.03880589573012725
+      },
+      {
+        "G": [
+          [
+            3.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.25
+          ]
+        ],
+        "H": [
+          [
+            1.0,
+            1.1
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "theta": 0.3141592653589793,
+        "absolute_Q_error": 1.1102230246251565e-16,
+        "capacity": 0.7237548493766052,
+        "systolic_ratio": 0.06177305013716796
+      },
+      {
+        "G": [
+          [
+            3.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.25
+          ]
+        ],
+        "H": [
+          [
+            1.0,
+            1.1
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "theta": 1.27,
+        "absolute_Q_error": 2.220446049250313e-16,
+        "capacity": 1.2333523508946433,
+        "systolic_ratio": 0.17938676764966457
+      },
+      {
+        "G": [
+          [
+            0.9687267230483316,
+            -0.5334957080029583
+          ],
+          [
+            0.8669305255048073,
+            0.5961395218758964
+          ]
+        ],
+        "H": [
+          [
+            1.0,
+            -0.7
+          ],
+          [
+            -0.1,
+            -1.2
+          ]
+        ],
+        "theta": -0.37,
+        "absolute_Q_error": 5.551115123125783e-17,
+        "capacity": 2.3957576961331264,
+        "systolic_ratio": 0.3843492691180084
+      },
+      {
+        "G": [
+          [
+            0.9687267230483316,
+            -0.5334957080029583
+          ],
+          [
+            0.8669305255048073,
+            0.5961395218758964
+          ]
+        ],
+        "H": [
+          [
+            1.0,
+            -0.7
+          ],
+          [
+            -0.1,
+            -1.2
+          ]
+        ],
+        "theta": 0.0,
+        "absolute_Q_error": 5.551115123125783e-17,
+        "capacity": 2.3522946573251704,
+        "systolic_ratio": 0.3705302931280308
+      },
+      {
+        "G": [
+          [
+            0.9687267230483316,
+            -0.5334957080029583
+          ],
+          [
+            0.8669305255048073,
+            0.5961395218758964
+          ]
+        ],
+        "H": [
+          [
+            1.0,
+            -0.7
+          ],
+          [
+            -0.1,
+            -1.2
+          ]
+        ],
+        "theta": 0.3141592653589793,
+        "absolute_Q_error": 2.7755575615628914e-17,
+        "capacity": 2.334139751075362,
+        "systolic_ratio": 0.3648328915800068
+      },
+      {
+        "G": [
+          [
+            0.9687267230483316,
+            -0.5334957080029583
+          ],
+          [
+            0.8669305255048073,
+            0.5961395218758964
+          ]
+        ],
+        "H": [
+          [
+            1.0,
+            -0.7
+          ],
+          [
+            -0.1,
+            -1.2
+          ]
+        ],
+        "theta": 1.27,
+        "absolute_Q_error": 0.0,
+        "capacity": 3.3548216652438225,
+        "systolic_ratio": 0.7536663994658593
+      }
+    ],
+    "largest_affine_Q_error": 2.220446049250313e-16
+  }
+}

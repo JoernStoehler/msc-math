@@ -1,0 +1,13 @@
+{
+  "frozen_utc": "2026-09-18T12:45:18.964395+00:00",
+  "files": [
+    {
+      "path": "evaluation/qualifications-quadratic.md",
+      "sha256": "0fbf1b48f253197aea755ca208b05efeb33d7c3415adc4e6b544f22941a763a2"
+    },
+    {
+      "path": "evaluation/baseline-quadratic.md",
+      "sha256": "d5b541e107b9d3407ece0ed83664a07e7d54fb3c558577361de117f30a713deb"
+    }
+  ]
+}

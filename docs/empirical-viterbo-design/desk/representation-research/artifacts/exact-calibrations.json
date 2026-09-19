@@ -1,0 +1,30 @@
+{
+  "cell24_covariance_diagonal": "13/60",
+  "cell24_fourth_diagonal": "3/28",
+  "cell24_fourth_mixed": "1/28",
+  "cell24_isotropic_fourth_tensor_coefficient": "900/1183",
+  "cell24_pairing_kurtosis": "3645000/1399489",
+  "cell24_volume": "8",
+  "cube_equal_kurtosis_contrast": {
+    "common_kurtosis": "72/25",
+    "normalized_dual_reciprocals": [
+      "sqrt(2)/4",
+      "sqrt(3/2)/4"
+    ],
+    "orientations": [
+      "(1/sqrt(2),1/sqrt(2),0)",
+      "(sqrt(2/3),1/sqrt(6),1/sqrt(6))"
+    ]
+  },
+  "cube_normalized_dual_reciprocal": "1/(4 max(|a|,|b|,|c|))",
+  "cube_normalized_ridge_sum": "8*(|a|+|b|+|c|)",
+  "cube_pairing_kurtosis_on_unit_sphere": "27/10 + (9/25)*(a^4+b^4+c^4)",
+  "cube_pairing_kurtosis_range": [
+    "141/50",
+    "153/50"
+  ],
+  "simplex_pairing_fourth": "6723/98",
+  "simplex_pairing_kurtosis": "6723/1568",
+  "simplex_vertex_pairing_fourth_sum": "1166400*(a**2 + b**2 + c**2)**2",
+  "status": "exact symbolic/rational identities; not capacity statements"
+}

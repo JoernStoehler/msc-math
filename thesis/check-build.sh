@@ -11,7 +11,7 @@
 set -euo pipefail
 
 cd "$(dirname "$0")"
-latexmk -g
+sh ./build.sh -g
 
 LOG="build/main.log"
 PDF="build/main.pdf"

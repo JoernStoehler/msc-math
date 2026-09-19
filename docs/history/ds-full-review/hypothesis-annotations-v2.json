@@ -1,0 +1,79 @@
+{
+  "fetched_at": "2026-09-18T15:56:58.475947+00:00",
+  "query": {
+    "uri": "http://100.70.188.20:56741/files/cd9812c61797/ds-v2.pdf",
+    "user": "acct:JoernStoehler@hypothes.is"
+  },
+  "pages": [
+    {
+      "total": 1
+    }
+  ],
+  "annotations": [
+    {
+      "id": "fF4UgrN5EfGhaBNVN0BYqw",
+      "created": "2026-09-18T15:56:18.375466+00:00",
+      "updated": "2026-09-18T15:56:18.375466+00:00",
+      "user": "acct:JoernStoehler@hypothes.is",
+      "uri": "http://100.70.188.20:56741/files/cd9812c61797/ds-v2.pdf",
+      "text": "This is an immediate FAIL bc you do not start a chapter like that. I don't get how this passed your review / why you bother asking me to review the entire document if it is of this low quality? i desk reject the netire pdf and will not read further.",
+      "tags": [],
+      "group": "__world__",
+      "moderation_status": null,
+      "permissions": {
+        "read": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "admin": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "update": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "delete": [
+          "acct:JoernStoehler@hypothes.is"
+        ]
+      },
+      "target": [
+        {
+          "source": "http://100.70.188.20:56741/files/cd9812c61797/ds-v2.pdf",
+          "selector": [
+            {
+              "end": 2313,
+              "type": "TextPositionSelector",
+              "start": 2217
+            },
+            {
+              "type": "TextQuoteSelector",
+              "exact": "The normalized sum of symplectic ridge areas is a useful coarse indicator of systolic ratio, but",
+              "prefix": "tical patterns with data science",
+              "suffix": "does not reliably order the bodi"
+            },
+            {
+              "type": "PageSelector",
+              "index": 1,
+              "label": "2"
+            }
+          ]
+        }
+      ],
+      "document": {
+        "title": [
+          "ds-v2.pdf"
+        ]
+      },
+      "links": {
+        "html": "https://hypothes.is/a/fF4UgrN5EfGhaBNVN0BYqw",
+        "incontext": "https://hyp.is/fF4UgrN5EfGhaBNVN0BYqw/100.70.188.20:56741/files/cd9812c61797/ds-v2.pdf",
+        "json": "https://hypothes.is/api/annotations/fF4UgrN5EfGhaBNVN0BYqw"
+      },
+      "actions": [],
+      "mentions": [],
+      "user_info": {
+        "display_name": null
+      },
+      "flagged": false,
+      "hidden": false
+    }
+  ]
+}

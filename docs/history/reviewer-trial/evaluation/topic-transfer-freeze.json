@@ -1,0 +1,13 @@
+{
+  "frozen_utc": "2026-09-18T12:24:02.736414+00:00",
+  "files": [
+    {
+      "path": "docs/reviewer-trial/evaluation/baseline-topic-transfer.md",
+      "sha256": "4a49ad53e731e577a3923a4315445e8fae89f1bc8216d3c36a8331d602db115f"
+    },
+    {
+      "path": "docs/reviewer-trial/evaluation/relevance-topic-transfer.md",
+      "sha256": "2c5661e52c6460d8f8d382a6196878751642fcd0b84b65bd8bfd9f6b133fe96b"
+    }
+  ]
+}

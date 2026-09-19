@@ -1,0 +1,66 @@
+[
+  {
+    "path": "/workspaces/msc-math/.worktrees/candidate-assembly-integration/thesis/candidate/recovered/ds-first-wave/writing/chapter-opening-v2.tex",
+    "sha256": "71848c3c5d01e6008fbbe6862ca093c7280682b4392dc2c71d42c1e81d9e9b9e"
+  },
+  {
+    "path": "/workspaces/msc-math/.worktrees/candidate-assembly-integration/thesis/candidate/recovered/thesis-candidate/a-datascience-results.tex",
+    "sha256": "b4f44657adfb1357627aa5c927bdd6098503246f5571e4b7015712c28cbb697e"
+  },
+  {
+    "path": "/workspaces/msc-math/.worktrees/ds-revision-reconciliation/docs/ds-revision-reconciliation/revised.md",
+    "sha256": "a4583cbbb5470ce26b39bff4166d260a24e915941dfb127518218a51909cf67c"
+  },
+  {
+    "path": "/workspaces/msc-math/.worktrees/ds-revision-reconciliation/docs/ds-revision-reconciliation/README.md",
+    "sha256": "876f5a20d747db26bdf83401091aa9ee17198b4c820d542525258d3c57e8e391"
+  },
+  {
+    "path": "/workspaces/msc-math/.worktrees/ds-revision-reconciliation/docs/ds-revision-reconciliation/methods-notes.md",
+    "sha256": "28abdafad1f7daa00ee20b3d74d7d1c80dc8c47724cdd1e31ed49ad39c20a091"
+  },
+  {
+    "path": "/workspaces/msc-math/.worktrees/ds-evidence-closure/docs/ds-evidence-closure/README.md",
+    "sha256": "e4c8fd41262f8d87f1f8237e1411297845f1abdd0fae7221af6d0c2079328ed3"
+  },
+  {
+    "path": "/workspaces/msc-math/.worktrees/ds-evidence-closure/docs/ds-evidence-closure/ridge-mathematics.md",
+    "sha256": "b908929295ca9b7e0e5b43eebac68e9171d9b80b002978aac79ddda2937040b2"
+  },
+  {
+    "path": "/workspaces/msc-math/.worktrees/ds-evidence-closure/docs/ds-evidence-closure/search-account.md",
+    "sha256": "5a8b0ec861a91135005c1812105160d0b826dba14361b06edb37ac08701a6805"
+  },
+  {
+    "path": "/workspaces/msc-math/.worktrees/ds-evidence-closure/docs/ds-evidence-closure/current-panels.md",
+    "sha256": "225cf042f794e40f83840e51849df8d0a19ec9cdee10664684ab1906ab1cbc88"
+  },
+  {
+    "path": "/workspaces/msc-math/.worktrees/ds-retrospective-revalidation/docs/ds-retrospective-revalidation/README.md",
+    "sha256": "5fff2cbc866fd397a7739149590d5a037a4e64124446a880d5888ca01013b069"
+  },
+  {
+    "path": "/workspaces/msc-math/.worktrees/ds-retrospective-revalidation/docs/ds-retrospective-revalidation/target-full/README.md",
+    "sha256": "dcfa1db0c8074f19e8d0b563ca97c29d37fa13e7b1779ff99efe6167beec24f0"
+  },
+  {
+    "path": "/workspaces/msc-math/.worktrees/ds-retrospective-revalidation/docs/ds-retrospective-revalidation/geometry-full/README.md",
+    "sha256": "52d57f7cda8e51773c344d41aa4c89a9a410beb07fada2bfeda1006acd4602c6"
+  },
+  {
+    "path": "/workspaces/msc-math/.worktrees/ds-family-theorem-mapping/docs/ds-family-theorem-mapping/README.md",
+    "sha256": "d2dbe8117abb91662de763068d536a9c84a4d2cc6e67857e884022b12f70960b"
+  },
+  {
+    "path": "/workspaces/msc-math/.worktrees/ds-retrospective-revalidation/docs/ds-retrospective-revalidation/repair/README.md",
+    "sha256": "8102bc5a05fc8982f89fa2ee93f3402108824278ec0781ca312fad8f9d2cf939"
+  },
+  {
+    "path": "/workspaces/msc-math/.worktrees/ds-human-feedback-revision/experiments/writing-quality/runs/20260918-human-feedback-revision/figures/plot_association.py",
+    "sha256": "652d8c0755f1b6a2903a331156ac79df42c1f5097ea893a823c5f7200e7b3e5d"
+  },
+  {
+    "path": "/workspaces/msc-math/.worktrees/prose-review-desk/experiments/writing-quality/human-review/responses/20260918-root-contemporary-ds-reader.md",
+    "sha256": "d32cf8857fd1161813991be566b9b56aa31b9fa85bf647d172c8c9891a057eaf"
+  }
+]

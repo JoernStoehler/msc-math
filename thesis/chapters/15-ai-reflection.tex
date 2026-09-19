@@ -1,0 +1,149 @@
+\clearpage
+\section{AI in the research process}
+\label{sec:use-of-ai}
+
+As the agents became more capable, my work shifted from directing individual
+steps toward specifying what the finished work had to accomplish. They could
+develop a substantial mathematical argument from an incomplete suggestion,
+yet sometimes needed repeated intervention to pursue a much more ordinary
+objective. My main difficulty increasingly concerned what they treated as
+success. This section gives my interpretation of that experience; the separate
+disclosure records the extent and provenance of AI use in the thesis.
+
+\subsection{A mathematical objective with room for discovery}
+
+The local maximality proof illustrates how much could be delegated without
+specifying a procedure. I asked a GPT-5-series model to develop a local
+maximality argument for HKO in facet coordinates. I suggested looking for
+several upper bounds and somehow showing that together they control a
+neighborhood after quotienting out the symmetries. I had neither specified a
+finite certificate nor worked out how to construct the upper bounds.
+
+The model developed essentially the entire argument from that starting
+point. It identified a sufficient configuration of twenty-six upper bounds
+in the twenty-five transverse dimensions. An initial derivative-based
+approach had provided only twenty-five nonsingular branches, too few for the
+certificate. The model then used the weights $\beta$ in the quadratic
+objective to construct feasible sections: an invertible $5\times5$ closure
+minor lets five weights depend smoothly on the facet parameters while the
+remaining weights stay fixed. This also supplied upper bounds from singular
+optimizer sets that the initial approach could not treat. The model completed
+proof steps involving the volume and wrote the SageMath code for the exact
+computations.
+
+\subsection{A pursued criterion of success}
+
+Other tasks produced a more puzzling contrast. An agent could reason
+competently about a problem and still stop after a first step, answer a
+related question, or keep preparing work that it had been asked to finish.
+These failures sometimes looked oddly motivational: the next useful action
+seemed to be within the agent's capabilities, but its behavior was directed
+toward a different stopping point. An agent could correctly describe my goal
+and still pursue something else. I found it useful to distinguish understanding
+a goal from choosing the criterion of success that directs the work.
+
+My hypothesis is that training with verifiable rewards encourages models to
+learn a concept of a \emph{Grader}: a representation of what will judge the
+task completed successfully. Reinforcement learning with verifiable rewards
+uses outcomes that can be checked, such as a mathematical answer or a
+program's performance on test cases. For example, DeepSeek-R1-Zero was
+trained with rule-based accuracy and format rewards; its reasoning strategies
+were not supplied as complete human demonstrations~\cite{aiGuo2025}.
+I suspect that such training can teach a model to adopt a criterion and
+organize its work around satisfying it. The training result motivates this
+interpretation, but does not establish that it explains the behavior of the
+agents I used.
+
+This interpretation concerns more than reward hacking or literal obedience
+to an instruction. An agent need not exploit a loophole in a stated test, or
+misread a particular word, to pursue the wrong objective. A plan for improving
+a chapter can be a good answer to a conversational turn while leaving the
+requested chapter unwritten. Likewise, a useful preliminary calculation can
+become the apparent endpoint of a task that required a theorem. Each answer
+may be sensible on its own. The failure is that the criterion organizing the
+work covers only part of the intended result.
+
+The practical requirement is sufficient overlap: satisfying the criterion an
+agent pursues must also produce a useful end result for me. The goals need
+not coincide. A clear objective makes completion evaluable: what result is
+needed, why it is needed, which constraints matter, and what would leave the
+task unfinished. It does not require prescribing
+every intermediate action. This way of specifying the HKO task was effective
+because the mathematical objective constrained the result while allowing the
+agent to invent the method. I found it useful to think of prompts as both cueing
+learned behavior through their wording and supplying context for deliberate
+reasoning.
+
+\subsection{Keeping the whole task in view}
+
+Long conversations made the distinction between a useful answer and a
+completed task increasingly important. At checkpoints during such a task, I
+want to ask whether the current reasoning, evidence, and actions are advancing
+the intended goal as a whole within the available budget. This question should
+expose a change of destination: delivering only a first step, solving an easier
+related problem, or replacing completion by repeated planning. The same
+question belongs at the end. A successful evaluation of several components
+does not answer whether the requested result has been delivered.
+
+The budget is part of that judgment. An investigation can produce useful
+information and still be a poor choice if it consumes the time needed to
+finish the work. When the task is to deliver a readable chapter, identifying
+another possible improvement has to be weighed against writing and revising
+the actual chapter. When the task is a mathematical search, the value of
+another computation depends on the question it can resolve and the resources
+left for following up. Progress has to be assessed against the intended
+outcome and its constraints, rather than the amount of activity generated.
+
+This does not call for inspecting every step. An autonomous agent should
+choose and revise many of its own intermediate steps. The important human
+intervention is often to restore the purpose that those steps serve. More
+detailed instructions can help when a constraint was missing, but can also
+obscure the goal beneath local requirements. I increasingly needed to explain
+the result I wanted and the context that made it useful, then judge whether
+the work still addressed that result.
+
+\subsection{Why exposition remained difficult}
+
+For the mathematics required by this MSc project, I often found the agents'
+capabilities sufficient to make substantial progress with little detailed
+direction. Producing passable mathematical exposition was much harder to
+delegate. This was surprising to me given the amount of written material
+used in language-model training. The later work on the thesis became a
+prolonged struggle with writing and task-management quirks, even when the
+models could partly recognize those quirks in discussion.
+
+One recurring problem was prose that presented itself as polished before it
+communicated its content clearly. Inflated claims of significance, colorful
+phrasing, and abstract summaries could make a passage sound complete while
+leaving its mathematical point difficult to recover. This is what I mean by
+\emph{AI slop} in the present context. An agent's ability to decipher a dense
+paragraph did not show that a reader could comfortably follow it. The same
+problem arose with forward and backward references across several pages.
+An agent with those pages in context could follow the references, while a
+human reader had to remember deferred points or interrupt the argument to
+recover an earlier definition.
+
+I suspect that preference training contributes to this tendency. In
+reinforcement learning from human feedback, rankings of model outputs can
+be used to train the model toward preferred responses, as in
+InstructGPT~\cite{aiOuyang2022}. If an impressive presentation is easier to
+recognize in a brief comparison than a clear explanation is to assess
+through sustained reading, that preference signal may favor the appearance
+of quality. This is my hypothesis about a possible source of the prose I
+encountered, not a demonstrated causal account of those models' training.
+
+The practical difficulty persisted even after it had been named. A model
+could acknowledge that a passage needed a concrete argument and then return
+another description of the argument's intended role. It could recognize
+that the goal was a readable chapter while spending its effort on further
+diagnosis. I had to devise corrections tailored to recurring behaviors;
+there was no single instruction whose recognition reliably produced the
+desired writing. Understanding a criticism in one exchange and carrying it
+through a sustained piece of work proved to be different capabilities.
+
+This experience also limits the lesson I draw from the mathematical success.
+The proof work in this project was tractable enough for the available models
+that their quirks often mattered less there. The difficulty of exposition
+was not captured by the formal sophistication of its subject. Choosing the
+right explanation, maintaining its purpose across a chapter, and removing
+language that obscured the mathematics remained demanding tasks.

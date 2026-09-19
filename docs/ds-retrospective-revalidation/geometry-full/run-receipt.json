@@ -1,0 +1,33 @@
+{
+  "started_utc": "2026-09-18T13:03:19.751904+00:00",
+  "git_head": "6bfffc57fed115e70f6828bf728b741dbb2605d1",
+  "binary_sha256": "bddbc0d105c6bce8d074a998cea1ee03760fec2f2fa1828659cd20ccafb00c54",
+  "input_hashes": {
+    "/home/agent/.cache/msc-math/artifacts/polytope-datasets/f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96/files/random.jsonl": "a21ac62ba5c9496ef631d3cce74e8b663764516b76e9d4725f1e517d8dd55f9f",
+    "/home/agent/.cache/msc-math/artifacts/polytope-datasets/f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96/files/random-product.jsonl": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736"
+  },
+  "pilot_source_identity_verified": true,
+  "command": [
+    "/workspaces/msc-math/.worktrees/ds-retrospective-revalidation/target/release/sys-dataset",
+    "--random-only",
+    "--random",
+    "/home/agent/.cache/msc-math/artifacts/polytope-datasets/f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96/files/random.jsonl",
+    "--random-product",
+    "/home/agent/.cache/msc-math/artifacts/polytope-datasets/f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96/files/random-product.jsonl",
+    "--out-dir",
+    "/workspaces/msc-math/.worktrees/ds-retrospective-revalidation/docs/ds-retrospective-revalidation/geometry-full/output"
+  ],
+  "execution_cap_seconds": 1500,
+  "rayon_threads": 4,
+  "capacity_recomputed": false,
+  "volume_recomputed": false,
+  "status": "completed",
+  "resume": "Producer writes outputs after entire build; timeout requires full restart into a fresh directory.",
+  "exit_code": 0,
+  "elapsed_seconds": 586.3335814399998,
+  "finished_utc": "2026-09-18T13:13:06.092931+00:00",
+  "output_hashes": {
+    "output/polytope-provenance-table.jsonl": "6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2",
+    "output/polytope-table.jsonl": "49825d7636246f71f4ebd419cf0ccbc86e39e6b7f43d4b03e889bb85e4887aea"
+  }
+}

@@ -4,7 +4,7 @@ Current scope status (Jörn, 2026-09-05): data science is moderately incomplete.
 Which gaps to finish and which to report as unfinished remains unresolved;
 repository cleanup precedes that decision. Closed individual packets or method
 tables below do not imply that this overall scope question is settled.
-Actual assignments are recorded in [current work and ownership](../../memories/todos.md).
+Actual assignments are recorded in [current work and ownership](../../docs/WORK_REMAINING.md).
 
 This folder supports the thesis data-science/search slice, currently restricted
 to random polytopes and random Lagrangian-product polytopes.

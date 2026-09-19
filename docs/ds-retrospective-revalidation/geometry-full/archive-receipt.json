@@ -1,0 +1,14 @@
+{
+  "polytope-provenance-table.jsonl": {
+    "raw_bytes": 7732016,
+    "raw_sha256": "6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2",
+    "gzip_bytes": 717417,
+    "gzip_sha256": "f155f12de27639cc8268842d46192a1c5be4f7b0098e28cb33183aa2a72c64c1"
+  },
+  "polytope-table.jsonl": {
+    "raw_bytes": 29410917,
+    "raw_sha256": "49825d7636246f71f4ebd419cf0ccbc86e39e6b7f43d4b03e889bb85e4887aea",
+    "gzip_bytes": 3973808,
+    "gzip_sha256": "466068ace1248c0d2ab3bb55bfa8269bf8597ad475ede6bbd3739d87500ddd45"
+  }
+}

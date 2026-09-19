@@ -1,0 +1,93 @@
+[
+  {
+    "block": "3x3-b0",
+    "seconds": 0.01,
+    "iid": null,
+    "orientation": null,
+    "orientation_minus_iid": null
+  },
+  {
+    "block": "3x3-b0",
+    "seconds": 0.03,
+    "iid": 0.26850396748063654,
+    "orientation": 0.26850396748063654,
+    "orientation_minus_iid": 0.0
+  },
+  {
+    "block": "3x3-b0",
+    "seconds": 0.1,
+    "iid": 0.41209422810354873,
+    "orientation": 0.36158660802296955,
+    "orientation_minus_iid": -0.050507620080579185
+  },
+  {
+    "block": "3x3-b1",
+    "seconds": 0.01,
+    "iid": null,
+    "orientation": null,
+    "orientation_minus_iid": null
+  },
+  {
+    "block": "3x3-b1",
+    "seconds": 0.03,
+    "iid": 0.18099183551631298,
+    "orientation": 0.1595058428421991,
+    "orientation_minus_iid": -0.021485992674113885
+  },
+  {
+    "block": "3x3-b1",
+    "seconds": 0.1,
+    "iid": 0.6102676815188885,
+    "orientation": 0.457795901350674,
+    "orientation_minus_iid": -0.15247178016821455
+  },
+  {
+    "block": "4x4-b0",
+    "seconds": 0.01,
+    "iid": null,
+    "orientation": null,
+    "orientation_minus_iid": null
+  },
+  {
+    "block": "4x4-b0",
+    "seconds": 0.03,
+    "iid": 0.32769373125258067,
+    "orientation": 0.32769373125258067,
+    "orientation_minus_iid": 0.0
+  },
+  {
+    "block": "4x4-b0",
+    "seconds": 0.1,
+    "iid": 0.7735357994885708,
+    "orientation": 0.32769373125258067,
+    "orientation_minus_iid": -0.4458420682359901
+  },
+  {
+    "block": "4x4-b1",
+    "seconds": 0.01,
+    "iid": null,
+    "orientation": null,
+    "orientation_minus_iid": null
+  },
+  {
+    "block": "4x4-b1",
+    "seconds": 0.03,
+    "iid": 0.37747033982855455,
+    "orientation": 0.37747033982855455,
+    "orientation_minus_iid": 0.0
+  },
+  {
+    "block": "4x4-b1",
+    "seconds": 0.1,
+    "iid": 0.636202218743244,
+    "orientation": 0.37747033982855455,
+    "orientation_minus_iid": -0.25873187891468946
+  },
+  {
+    "block": "4x4-b1",
+    "seconds": 0.3,
+    "iid": 0.636202218743244,
+    "orientation": 0.37747033982855455,
+    "orientation_minus_iid": -0.25873187891468946
+  }
+]

@@ -1,49 +1,26 @@
-# Thesis
+# Selected manuscript
 
-[`candidate/main.tex`](candidate/main.tex) is the recovered working candidate
-entry. See [`candidate/README.md`](candidate/README.md) for its independent
-build and frozen-baseline scope. It has not incorporated the pending literature
-corrections or pentagon rewrite and is not an approved thesis.
+`main.tex` is the sole thesis entry point. It selects:
 
-The original `main.tex` and its sources are preserved as the earlier thesis
-version. Files under `legacy/` are historical source material; the candidate's
-separate `candidate/legacy/` contains only its recorded build inputs.
+- `chapters/`: the abstract, main chapters and their mathematical fragments;
+- `appendices/`: DS details and the printed HKO verification program;
+- `figures/`: the figures actually used by this manuscript;
+- `references/`: the four bibliography sources;
+- `ai-use-disclosure.tex`: the short disclosure, distinct from the reflection chapter.
 
-## Active structure
-
-The candidate's `main.tex` determines its actual input files. Former
-writing companions and cross-cutting plans are quarantined under
-`legacy/non-current-planning-companions/`; use them only as fallible recovery
-material, not as current thesis state or instructions.
-
-In publication prose, use “exact” only when it distinguishes arithmetic or
-representation from numerical approximation, or when it is part of a standard
-term such as “exact form.” Mathematics is otherwise understood literally:
-do not use “exact” as a synonym for proved, rigorous, complete, or fully
-specified.
-
-## Supporting files
-
-- `DEVELOPMENT.md`: minimal maintainer orientation.
-- `preamble.tex`: thesis-local LaTeX setup and definitions.
-- `bibliography.bib`: active bibliography.
-- `figures/`: thesis-owned final assets and their producers.
-- `working/`: thesis-owned candidate assets. Some are active TeX inputs; check
-  the active TeX references rather than inferring use from the directory name.
-
-## Build
-
-```bash
-cd thesis
-sh candidate/build.sh
+```sh
+sh thesis/build.sh
 ```
 
-The older `./check-build.sh` still builds the original `main.tex`; it is not
-the candidate build command. The candidate's isolated reproduction check is
-documented in `docs/source-recovery/README.md`. Neither build establishes proof
-correctness, source adequacy, or Jörn/Kai acceptance.
+Run that command from the repository root. It produces `thesis/build/main.pdf`
+using only these tracked source files and installed TeX tools. There is no
+`legacy/` search fallback and no alternative draft selected by the build.
 
-## Legacy
+Current unfinished work and the limits of past reviews are in
+[../docs/WORK_REMAINING.md](../docs/WORK_REMAINING.md). The frozen resumption PDF
+at `docs/resume/thesis-resume.pdf` is diagnostic, not an accepted or submitted thesis.
 
-`legacy/README.md` explains the retained historical source. Search `legacy/`
-only when an active companion or concrete missing argument points there.
+The layout migration is recorded in `docs/resume/layout-migration.json`. It
+maps former selected paths to these paths. Other old thesis variants can be read
+from commit `35f29db4:thesis/`; they are not current sources. Figure-producing
+experiments remain under `experiments/`, with their original evidence contracts.

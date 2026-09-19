@@ -1,0 +1,214 @@
+{
+  "removed_worktrees": [
+    "/tmp/msc-math-thesis-review-20260917",
+    "/workspaces/msc-math/.worktrees/algorithm-prior-art-closure",
+    "/workspaces/msc-math/.worktrees/assembly-source-map",
+    "/workspaces/msc-math/.worktrees/availability-claim-closure",
+    "/workspaces/msc-math/.worktrees/candidate-narrow-flaggers",
+    "/workspaces/msc-math/.worktrees/complete-ds-chapter",
+    "/workspaces/msc-math/.worktrees/coordination-map-review",
+    "/workspaces/msc-math/.worktrees/ds-evidence-closure",
+    "/workspaces/msc-math/.worktrees/ds-family-theorem-mapping",
+    "/workspaces/msc-math/.worktrees/ds-human-feedback-revision",
+    "/workspaces/msc-math/.worktrees/ds-retrospective-revalidation",
+    "/workspaces/msc-math/.worktrees/ds-revision-reconciliation",
+    "/workspaces/msc-math/.worktrees/easy-routes-followup",
+    "/workspaces/msc-math/.worktrees/easy-writing-routes",
+    "/workspaces/msc-math/.worktrees/empirical-campaign-first-steps",
+    "/workspaces/msc-math/.worktrees/empirical-research-desk",
+    "/workspaces/msc-math/.worktrees/empirical-viterbo-design",
+    "/workspaces/msc-math/.worktrees/flow-runtime-closure",
+    "/workspaces/msc-math/.worktrees/imported-theorem-contracts",
+    "/workspaces/msc-math/.worktrees/literature-closure-plan",
+    "/workspaces/msc-math/.worktrees/numerics-correspondence-check",
+    "/workspaces/msc-math/.worktrees/open-thesis-literature",
+    "/workspaces/msc-math/.worktrees/pentagon-affine-integration",
+    "/workspaces/msc-math/.worktrees/pentagon-pro-packet",
+    "/workspaces/msc-math/.worktrees/pro-result-audit",
+    "/workspaces/msc-math/.worktrees/product-rotation-writeup",
+    "/workspaces/msc-math/.worktrees/prose-review-desk",
+    "/workspaces/msc-math/.worktrees/qp-derivation-review",
+    "/workspaces/msc-math/.worktrees/qp-flow-integration-patch",
+    "/workspaces/msc-math/.worktrees/quarantine-consolidation",
+    "/workspaces/msc-math/.worktrees/remaining-chapter-obligations",
+    "/workspaces/msc-math/.worktrees/review-workflow-design",
+    "/workspaces/msc-math/.worktrees/reviewer-trial",
+    "/workspaces/msc-math/.worktrees/scientific-writing-solutions",
+    "/workspaces/msc-math/.worktrees/technical-closure-plan",
+    "/workspaces/msc-math/.worktrees/variation-interface-check",
+    "/workspaces/msc-math/.worktrees/whole-manuscript-known-defects",
+    "/workspaces/msc-math/.worktrees/writing-detector-data",
+    "/workspaces/msc-math/.worktrees/writing-evaluation-sanity"
+  ],
+  "retired_branches": [
+    {
+      "branch": "quarantine/consolidation-20260917",
+      "head": "536e90536f6b39e5359f0c2a617de2818b278289"
+    },
+    {
+      "branch": "research/algorithm-prior-art-closure",
+      "head": "f4b36cee216f09c004bca85055f5b0c5da8cfe43"
+    },
+    {
+      "branch": "research/assembly-source-map",
+      "head": "90f50f81250c13d90c9f57074f1ab818dfd74796"
+    },
+    {
+      "branch": "research/authoring-recovery",
+      "head": "5c5dedff7a51d8e131184c0c79192f98f6aed8fd"
+    },
+    {
+      "branch": "research/availability-claim-closure",
+      "head": "94d5974f763b874e4189e45dd6609717cbb793a4"
+    },
+    {
+      "branch": "research/candidate-assembly-integration",
+      "head": "4b3a8af19aab6304169472af471525cf4dafcd1e"
+    },
+    {
+      "branch": "research/candidate-narrow-flaggers",
+      "head": "c7f742b748a9fd5e2db7044146906c0384627a25"
+    },
+    {
+      "branch": "research/complete-ds-chapter",
+      "head": "b2ba06386ae0c10198162083cf633032e211dabb"
+    },
+    {
+      "branch": "research/coordination-map-review",
+      "head": "4a5f95ccb4019f15e1ba19bd65b7038944fa2f52"
+    },
+    {
+      "branch": "research/ds-evidence-closure",
+      "head": "0e0ccb9cfc4db1a71807646eb29c4a4a2693bc62"
+    },
+    {
+      "branch": "research/ds-family-theorem-mapping",
+      "head": "76aa9cc9dd7705f8f350d5c929550b847cb72f31"
+    },
+    {
+      "branch": "research/ds-human-feedback-revision",
+      "head": "556bae99c229c07610e84bd754fc6651cf203158"
+    },
+    {
+      "branch": "research/ds-retrospective-revalidation",
+      "head": "6656ff7a95a84e7d6147ff552767a6bf1a33b01a"
+    },
+    {
+      "branch": "research/ds-revision-reconciliation",
+      "head": "217e9cb59bd920b0086e31ca3f2d9c5eb9c61040"
+    },
+    {
+      "branch": "research/easy-routes-followup",
+      "head": "60f837d8b38bbaeb074a728b7b4fbb05dcfdcbe7"
+    },
+    {
+      "branch": "research/easy-writing-routes",
+      "head": "801ebda2179093595192b2987d142200fd3418f1"
+    },
+    {
+      "branch": "research/empirical-campaign-first-steps",
+      "head": "30a41093f88b5222842e418384e503c6dd6369a3"
+    },
+    {
+      "branch": "research/empirical-research-desk",
+      "head": "4a0448e352353fe50f871f9ae91f65e1cb75bc24"
+    },
+    {
+      "branch": "research/empirical-viterbo-design",
+      "head": "b6c636650e94ccdf5839fc3d8f69d855aea5f28a"
+    },
+    {
+      "branch": "research/flow-runtime-closure",
+      "head": "66b0f28190ed9cded86575aba2ca0ff77cd0f3c9"
+    },
+    {
+      "branch": "research/imported-theorem-contracts",
+      "head": "20e3f77bdb1b2da52db2f92b87d27f86df871f4c"
+    },
+    {
+      "branch": "research/literature-closure-plan",
+      "head": "f54cd3d98ff4fefddaf8de099bf118e5500a0e44"
+    },
+    {
+      "branch": "research/numerics-correspondence-check",
+      "head": "2b0ee8071c2c7109b253ef68142c73d555ff3e97"
+    },
+    {
+      "branch": "research/open-thesis-literature",
+      "head": "89d6313656bb0db52cd7a69022ec594ed5dbb2ef"
+    },
+    {
+      "branch": "research/pentagon-affine-integration",
+      "head": "9171a94fb4f8c5d351db7e7470fb6881340278b3"
+    },
+    {
+      "branch": "research/pentagon-pro-packet",
+      "head": "3b8d94b6041b3ea134f053b63d5c1bea8e08b5fd"
+    },
+    {
+      "branch": "research/pro-result-audit",
+      "head": "909bf5edc170b28fe89427ea591292d6b6414612"
+    },
+    {
+      "branch": "research/product-rotation-writeup",
+      "head": "5a47eb2c1a657ffa7ab6cca3e92e231ef31edfb0"
+    },
+    {
+      "branch": "research/prose-review-desk",
+      "head": "74afeaaf24cd208a1d61abcaf5948a6507ee00f0"
+    },
+    {
+      "branch": "research/qp-derivation-review",
+      "head": "cd1673d2f6f870da28c43fe0b51d0a1b71d25fb3"
+    },
+    {
+      "branch": "research/qp-flow-integration-patch",
+      "head": "c69a4ee832faa591bf5b01742033305169ca304d"
+    },
+    {
+      "branch": "research/remaining-chapter-obligations",
+      "head": "2c57169ae5e08ef0760669a652702bd3a60d9b98"
+    },
+    {
+      "branch": "research/review-workflow-design",
+      "head": "e33c3f0f348985c375a35496b64d4c13f4ed7975"
+    },
+    {
+      "branch": "research/reviewer-trial",
+      "head": "aced1f943ead0f9d9b6aeff0a5cdb000650f7262"
+    },
+    {
+      "branch": "research/scientific-writing-solutions",
+      "head": "15f114d757ad8aea46d8749be630402581184a42"
+    },
+    {
+      "branch": "research/technical-closure-plan",
+      "head": "60f4fb0b386f43de57592886b674d47d40cf0760"
+    },
+    {
+      "branch": "research/variation-interface-check",
+      "head": "a30c35241a71ad730466a1080b34d79f1ab82412"
+    },
+    {
+      "branch": "research/whole-manuscript-known-defects",
+      "head": "ea283d24139b7eec55e349d46592502b0137b30d"
+    },
+    {
+      "branch": "research/writing-detector-data",
+      "head": "33316d9a6f2eeb875e5fead8b85a1d35dbbbf2fe"
+    },
+    {
+      "branch": "research/writing-evaluation-sanity",
+      "head": "aa78c705d2dcb55a7574a72d6e01f9e103913434"
+    },
+    {
+      "branch": "thesis/review-20260917",
+      "head": "d720953a5a44f8fa99e441dee53d710ebcc81958"
+    }
+  ],
+  "archive": "/workspaces/archived/workspaces-root/msc-math-session-20260918",
+  "bundle_sha256": "8b948452f1fc34cf48460bffdd277283f00ad99147e326b40f0659af44287b98",
+  "payload_sha256": "317cee7b212220f8c764d641802033bf00edfe313e9202031d0241f2a33ae816",
+  "standalone_restore_test": "43 exact branch heads; no prerequisites",
+  "main_modified": false
+}

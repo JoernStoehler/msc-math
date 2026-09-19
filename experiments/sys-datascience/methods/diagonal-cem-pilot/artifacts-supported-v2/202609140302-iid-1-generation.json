@@ -1,0 +1,7938 @@
+{
+  "complete": true,
+  "construction": [
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=000|attempt=0",
+      "index": 0,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=000|attempt=1",
+      "index": 0,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=000|attempt=2",
+      "index": 0,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=000|attempt=3",
+      "index": 0,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=000|attempt=4",
+      "index": 0,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=000|attempt=5",
+      "index": 0,
+      "proposed_coordinates": null,
+      "retry": 5,
+      "status": "accepted"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=001|attempt=6",
+      "index": 1,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=002|attempt=7",
+      "index": 2,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=002|attempt=8",
+      "index": 2,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=002|attempt=9",
+      "index": 2,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=003|attempt=10",
+      "index": 3,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=003|attempt=11",
+      "index": 3,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=003|attempt=12",
+      "index": 3,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=003|attempt=13",
+      "index": 3,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=003|attempt=14",
+      "index": 3,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=003|attempt=15",
+      "index": 3,
+      "proposed_coordinates": null,
+      "retry": 5,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=003|attempt=16",
+      "index": 3,
+      "proposed_coordinates": null,
+      "retry": 6,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=003|attempt=17",
+      "index": 3,
+      "proposed_coordinates": null,
+      "retry": 7,
+      "status": "accepted"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=004|attempt=18",
+      "index": 4,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=005|attempt=19",
+      "index": 5,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=005|attempt=20",
+      "index": 5,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=005|attempt=21",
+      "index": 5,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=005|attempt=22",
+      "index": 5,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=005|attempt=23",
+      "index": 5,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=006|attempt=24",
+      "index": 6,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=006|attempt=25",
+      "index": 6,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=006|attempt=26",
+      "index": 6,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=006|attempt=27",
+      "index": 6,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=006|attempt=28",
+      "index": 6,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=006|attempt=29",
+      "index": 6,
+      "proposed_coordinates": null,
+      "retry": 5,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=006|attempt=30",
+      "index": 6,
+      "proposed_coordinates": null,
+      "retry": 6,
+      "status": "accepted"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=007|attempt=31",
+      "index": 7,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=008|attempt=32",
+      "index": 8,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=008|attempt=33",
+      "index": 8,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=008|attempt=34",
+      "index": 8,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=008|attempt=35",
+      "index": 8,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=008|attempt=36",
+      "index": 8,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=008|attempt=37",
+      "index": 8,
+      "proposed_coordinates": null,
+      "retry": 5,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=009|attempt=38",
+      "index": 9,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=009|attempt=39",
+      "index": 9,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=009|attempt=40",
+      "index": 9,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=009|attempt=41",
+      "index": 9,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=009|attempt=42",
+      "index": 9,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=009|attempt=43",
+      "index": 9,
+      "proposed_coordinates": null,
+      "retry": 5,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=009|attempt=44",
+      "index": 9,
+      "proposed_coordinates": null,
+      "retry": 6,
+      "status": "accepted"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=010|attempt=45",
+      "index": 10,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=011|attempt=46",
+      "index": 11,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=011|attempt=47",
+      "index": 11,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=011|attempt=48",
+      "index": 11,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=011|attempt=49",
+      "index": 11,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=012|attempt=50",
+      "index": 12,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=012|attempt=51",
+      "index": 12,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=012|attempt=52",
+      "index": 12,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=012|attempt=53",
+      "index": 12,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=012|attempt=54",
+      "index": 12,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=012|attempt=55",
+      "index": 12,
+      "proposed_coordinates": null,
+      "retry": 5,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=012|attempt=56",
+      "index": 12,
+      "proposed_coordinates": null,
+      "retry": 6,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=013|attempt=57",
+      "index": 13,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=013|attempt=58",
+      "index": 13,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=013|attempt=59",
+      "index": 13,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=013|attempt=60",
+      "index": 13,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=013|attempt=61",
+      "index": 13,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=013|attempt=62",
+      "index": 13,
+      "proposed_coordinates": null,
+      "retry": 5,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=014|attempt=63",
+      "index": 14,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=014|attempt=64",
+      "index": 14,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=014|attempt=65",
+      "index": 14,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=014|attempt=66",
+      "index": 14,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=014|attempt=67",
+      "index": 14,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=014|attempt=68",
+      "index": 14,
+      "proposed_coordinates": null,
+      "retry": 5,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=015|attempt=69",
+      "index": 15,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=015|attempt=70",
+      "index": 15,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=015|attempt=71",
+      "index": 15,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=016|attempt=72",
+      "index": 16,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=016|attempt=73",
+      "index": 16,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=016|attempt=74",
+      "index": 16,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "accepted"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=017|attempt=75",
+      "index": 17,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=018|attempt=76",
+      "index": 18,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=018|attempt=77",
+      "index": 18,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=018|attempt=78",
+      "index": 18,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=018|attempt=79",
+      "index": 18,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "accepted"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=019|attempt=80",
+      "index": 19,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=020|attempt=81",
+      "index": 20,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=020|attempt=82",
+      "index": 20,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=020|attempt=83",
+      "index": 20,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=021|attempt=84",
+      "index": 21,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=021|attempt=85",
+      "index": 21,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "accepted"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=022|attempt=86",
+      "index": 22,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=023|attempt=87",
+      "index": 23,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=023|attempt=88",
+      "index": 23,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=023|attempt=89",
+      "index": 23,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=023|attempt=90",
+      "index": 23,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=023|attempt=91",
+      "index": 23,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=023|attempt=92",
+      "index": 23,
+      "proposed_coordinates": null,
+      "retry": 5,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=023|attempt=93",
+      "index": 23,
+      "proposed_coordinates": null,
+      "retry": 6,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=023|attempt=94",
+      "index": 23,
+      "proposed_coordinates": null,
+      "retry": 7,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=023|attempt=95",
+      "index": 23,
+      "proposed_coordinates": null,
+      "retry": 8,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=023|attempt=96",
+      "index": 23,
+      "proposed_coordinates": null,
+      "retry": 9,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=023|attempt=97",
+      "index": 23,
+      "proposed_coordinates": null,
+      "retry": 10,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=023|attempt=98",
+      "index": 23,
+      "proposed_coordinates": null,
+      "retry": 11,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=023|attempt=99",
+      "index": 23,
+      "proposed_coordinates": null,
+      "retry": 12,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=023|attempt=100",
+      "index": 23,
+      "proposed_coordinates": null,
+      "retry": 13,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=023|attempt=101",
+      "index": 23,
+      "proposed_coordinates": null,
+      "retry": 14,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=024|attempt=102",
+      "index": 24,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=024|attempt=103",
+      "index": 24,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=025|attempt=104",
+      "index": 25,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=025|attempt=105",
+      "index": 25,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=025|attempt=106",
+      "index": 25,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=025|attempt=107",
+      "index": 25,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=025|attempt=108",
+      "index": 25,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=025|attempt=109",
+      "index": 25,
+      "proposed_coordinates": null,
+      "retry": 5,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=025|attempt=110",
+      "index": 25,
+      "proposed_coordinates": null,
+      "retry": 6,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=026|attempt=111",
+      "index": 26,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=026|attempt=112",
+      "index": 26,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=026|attempt=113",
+      "index": 26,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=026|attempt=114",
+      "index": 26,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=026|attempt=115",
+      "index": 26,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=116",
+      "index": 27,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=117",
+      "index": 27,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=118",
+      "index": 27,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=119",
+      "index": 27,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=120",
+      "index": 27,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=121",
+      "index": 27,
+      "proposed_coordinates": null,
+      "retry": 5,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=122",
+      "index": 27,
+      "proposed_coordinates": null,
+      "retry": 6,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=123",
+      "index": 27,
+      "proposed_coordinates": null,
+      "retry": 7,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=124",
+      "index": 27,
+      "proposed_coordinates": null,
+      "retry": 8,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=125",
+      "index": 27,
+      "proposed_coordinates": null,
+      "retry": 9,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=126",
+      "index": 27,
+      "proposed_coordinates": null,
+      "retry": 10,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=127",
+      "index": 27,
+      "proposed_coordinates": null,
+      "retry": 11,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=128",
+      "index": 27,
+      "proposed_coordinates": null,
+      "retry": 12,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=129",
+      "index": 27,
+      "proposed_coordinates": null,
+      "retry": 13,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=130",
+      "index": 27,
+      "proposed_coordinates": null,
+      "retry": 14,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=131",
+      "index": 27,
+      "proposed_coordinates": null,
+      "retry": 15,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=132",
+      "index": 27,
+      "proposed_coordinates": null,
+      "retry": 16,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=133",
+      "index": 27,
+      "proposed_coordinates": null,
+      "retry": 17,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=134",
+      "index": 27,
+      "proposed_coordinates": null,
+      "retry": 18,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=135",
+      "index": 27,
+      "proposed_coordinates": null,
+      "retry": 19,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=028|attempt=136",
+      "index": 28,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=028|attempt=137",
+      "index": 28,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=028|attempt=138",
+      "index": 28,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=029|attempt=139",
+      "index": 29,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=029|attempt=140",
+      "index": 29,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=029|attempt=141",
+      "index": 29,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=029|attempt=142",
+      "index": 29,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=029|attempt=143",
+      "index": 29,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=030|attempt=144",
+      "index": 30,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=030|attempt=145",
+      "index": 30,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=030|attempt=146",
+      "index": 30,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=031|attempt=147",
+      "index": 31,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=031|attempt=148",
+      "index": 31,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=031|attempt=149",
+      "index": 31,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=031|attempt=150",
+      "index": 31,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=031|attempt=151",
+      "index": 31,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=031|attempt=152",
+      "index": 31,
+      "proposed_coordinates": null,
+      "retry": 5,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=031|attempt=153",
+      "index": 31,
+      "proposed_coordinates": null,
+      "retry": 6,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=031|attempt=154",
+      "index": 31,
+      "proposed_coordinates": null,
+      "retry": 7,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=031|attempt=155",
+      "index": 31,
+      "proposed_coordinates": null,
+      "retry": 8,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=031|attempt=156",
+      "index": 31,
+      "proposed_coordinates": null,
+      "retry": 9,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=031|attempt=157",
+      "index": 31,
+      "proposed_coordinates": null,
+      "retry": 10,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=032|attempt=158",
+      "index": 32,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=032|attempt=159",
+      "index": 32,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=032|attempt=160",
+      "index": 32,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=033|attempt=161",
+      "index": 33,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=033|attempt=162",
+      "index": 33,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=033|attempt=163",
+      "index": 33,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=033|attempt=164",
+      "index": 33,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=033|attempt=165",
+      "index": 33,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=033|attempt=166",
+      "index": 33,
+      "proposed_coordinates": null,
+      "retry": 5,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=033|attempt=167",
+      "index": 33,
+      "proposed_coordinates": null,
+      "retry": 6,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=033|attempt=168",
+      "index": 33,
+      "proposed_coordinates": null,
+      "retry": 7,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=034|attempt=169",
+      "index": 34,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=034|attempt=170",
+      "index": 34,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=034|attempt=171",
+      "index": 34,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=034|attempt=172",
+      "index": 34,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=035|attempt=173",
+      "index": 35,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=035|attempt=174",
+      "index": 35,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=036|attempt=175",
+      "index": 36,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=036|attempt=176",
+      "index": 36,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=036|attempt=177",
+      "index": 36,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=036|attempt=178",
+      "index": 36,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=037|attempt=179",
+      "index": 37,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=037|attempt=180",
+      "index": 37,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=038|attempt=181",
+      "index": 38,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=038|attempt=182",
+      "index": 38,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=039|attempt=183",
+      "index": 39,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=039|attempt=184",
+      "index": 39,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=040|attempt=185",
+      "index": 40,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=040|attempt=186",
+      "index": 40,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=040|attempt=187",
+      "index": 40,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=040|attempt=188",
+      "index": 40,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=040|attempt=189",
+      "index": 40,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=040|attempt=190",
+      "index": 40,
+      "proposed_coordinates": null,
+      "retry": 5,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=040|attempt=191",
+      "index": 40,
+      "proposed_coordinates": null,
+      "retry": 6,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=040|attempt=192",
+      "index": 40,
+      "proposed_coordinates": null,
+      "retry": 7,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=040|attempt=193",
+      "index": 40,
+      "proposed_coordinates": null,
+      "retry": 8,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=040|attempt=194",
+      "index": 40,
+      "proposed_coordinates": null,
+      "retry": 9,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=040|attempt=195",
+      "index": 40,
+      "proposed_coordinates": null,
+      "retry": 10,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=041|attempt=196",
+      "index": 41,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=041|attempt=197",
+      "index": 41,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=041|attempt=198",
+      "index": 41,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=041|attempt=199",
+      "index": 41,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=041|attempt=200",
+      "index": 41,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=041|attempt=201",
+      "index": 41,
+      "proposed_coordinates": null,
+      "retry": 5,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=041|attempt=202",
+      "index": 41,
+      "proposed_coordinates": null,
+      "retry": 6,
+      "status": "accepted"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=042|attempt=203",
+      "index": 42,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=043|attempt=204",
+      "index": 43,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=044|attempt=205",
+      "index": 44,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=044|attempt=206",
+      "index": 44,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=044|attempt=207",
+      "index": 44,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=044|attempt=208",
+      "index": 44,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=044|attempt=209",
+      "index": 44,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=044|attempt=210",
+      "index": 44,
+      "proposed_coordinates": null,
+      "retry": 5,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=045|attempt=211",
+      "index": 45,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=045|attempt=212",
+      "index": 45,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=046|attempt=213",
+      "index": 46,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=046|attempt=214",
+      "index": 46,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=046|attempt=215",
+      "index": 46,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=047|attempt=216",
+      "index": 47,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=047|attempt=217",
+      "index": 47,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=047|attempt=218",
+      "index": 47,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=047|attempt=219",
+      "index": 47,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=048|attempt=220",
+      "index": 48,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=048|attempt=221",
+      "index": 48,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=048|attempt=222",
+      "index": 48,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=048|attempt=223",
+      "index": 48,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=048|attempt=224",
+      "index": 48,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=049|attempt=225",
+      "index": 49,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=049|attempt=226",
+      "index": 49,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=049|attempt=227",
+      "index": 49,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=049|attempt=228",
+      "index": 49,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=050|attempt=229",
+      "index": 50,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=050|attempt=230",
+      "index": 50,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "accepted"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=051|attempt=231",
+      "index": 51,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=052|attempt=232",
+      "index": 52,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=053|attempt=233",
+      "index": 53,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=053|attempt=234",
+      "index": 53,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=053|attempt=235",
+      "index": 53,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=053|attempt=236",
+      "index": 53,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=053|attempt=237",
+      "index": 53,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=053|attempt=238",
+      "index": 53,
+      "proposed_coordinates": null,
+      "retry": 5,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=054|attempt=239",
+      "index": 54,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=054|attempt=240",
+      "index": 54,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=054|attempt=241",
+      "index": 54,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=054|attempt=242",
+      "index": 54,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=054|attempt=243",
+      "index": 54,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=055|attempt=244",
+      "index": 55,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=055|attempt=245",
+      "index": 55,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=055|attempt=246",
+      "index": 55,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=055|attempt=247",
+      "index": 55,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=056|attempt=248",
+      "index": 56,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=056|attempt=249",
+      "index": 56,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=056|attempt=250",
+      "index": 56,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=056|attempt=251",
+      "index": 56,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=056|attempt=252",
+      "index": 56,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=056|attempt=253",
+      "index": 56,
+      "proposed_coordinates": null,
+      "retry": 5,
+      "status": "accepted"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=057|attempt=254",
+      "index": 57,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=058|attempt=255",
+      "index": 58,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=059|attempt=256",
+      "index": 59,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=059|attempt=257",
+      "index": 59,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=059|attempt=258",
+      "index": 59,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=059|attempt=259",
+      "index": 59,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=060|attempt=260",
+      "index": 60,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=060|attempt=261",
+      "index": 60,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=061|attempt=262",
+      "index": 61,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=061|attempt=263",
+      "index": 61,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=062|attempt=264",
+      "index": 62,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=062|attempt=265",
+      "index": 62,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "accepted"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=063|attempt=266",
+      "index": 63,
+      "proposed_coordinates": null,
+      "retry": 0,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=063|attempt=267",
+      "index": 63,
+      "proposed_coordinates": null,
+      "retry": 1,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=063|attempt=268",
+      "index": 63,
+      "proposed_coordinates": null,
+      "retry": 2,
+      "status": "rejected"
+    },
+    {
+      "error": "polytope_constructor_rejected",
+      "id": "seed=202609140302|arm=iid|gen=1|index=063|attempt=269",
+      "index": 63,
+      "proposed_coordinates": null,
+      "retry": 3,
+      "status": "rejected"
+    },
+    {
+      "id": "seed=202609140302|arm=iid|gen=1|index=063|attempt=270",
+      "index": 63,
+      "proposed_coordinates": null,
+      "retry": 4,
+      "status": "accepted"
+    }
+  ],
+  "generation_ms": 9581.841145,
+  "rows": [
+    {
+      "arm": "iid",
+      "construction_attempt": 5,
+      "coordinates": [
+        -1.5802772231375068,
+        0.6391706832681174,
+        -1.450135757195843,
+        -0.5330184127385703,
+        -0.0006929316107313899,
+        0.0060537399020517,
+        0.07833802739071054,
+        -0.035266014981270355,
+        -1.1260343678818079,
+        -0.7805999903114101,
+        1.2023228203624756,
+        1.100057916098048,
+        0.09387624457377015,
+        -0.000568859639138608,
+        -0.08284946934464799,
+        0.045349668116867754,
+        3.6330328220996626
+      ],
+      "dual_vertices": [
+        [
+          0.9981273524514038,
+          0.13279980111350337,
+          0.0,
+          0.0
+        ],
+        [
+          0.7852941341578169,
+          0.4371935590143486,
+          0.0,
+          0.0
+        ],
+        [
+          0.10858962614090042,
+          0.8803624711728182,
+          0.0,
+          0.0
+        ],
+        [
+          -0.9265104908833196,
+          0.08507572274895396,
+          0.0,
+          0.0
+        ],
+        [
+          -0.9102349539342619,
+          -0.22111467511882285,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0245162286872804,
+          0.43300531399229514
+        ],
+        [
+          0.0,
+          0.0,
+          0.8050462286326234,
+          0.6132618815703441
+        ],
+        [
+          0.0,
+          0.0,
+          0.4991095596930689,
+          0.7871941655547576
+        ],
+        [
+          0.0,
+          0.0,
+          -0.9582514806750431,
+          -0.452168726907141
+        ],
+        [
+          0.0,
+          0.0,
+          0.8912868278941276,
+          -0.3502482095874781
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=000|attempt=5",
+      "index": 0,
+      "near_tie": false,
+      "retry": 5,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 6,
+      "coordinates": [
+        -1.6053219246617196,
+        0.30464210450964,
+        0.9427656280408332,
+        -0.3220367281346576,
+        0.04205108531252447,
+        0.07555785110160845,
+        -0.05130997968051565,
+        -0.11360261192351535,
+        -1.1845324837565272,
+        -0.10021567275068916,
+        0.05291883960212896,
+        0.6171175344819504,
+        -0.10515872328897,
+        -0.10426892286477593,
+        -0.004292854187430844,
+        0.06658681626387314,
+        5.432062148658298
+      ],
+      "dual_vertices": [
+        [
+          0.8821320121861571,
+          0.2347521705226522,
+          0.0,
+          0.0
+        ],
+        [
+          0.5440630175303562,
+          0.9238994736299739,
+          0.0,
+          0.0
+        ],
+        [
+          -0.5502711280118575,
+          0.9136646255265474,
+          0.0,
+          0.0
+        ],
+        [
+          -0.7580861869435056,
+          0.8010820182443855,
+          0.0,
+          0.0
+        ],
+        [
+          -0.776962862436077,
+          -0.5832243730669269,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.1838245455556045,
+          0.040506427971542684
+        ],
+        [
+          0.0,
+          0.0,
+          0.2799293965144865,
+          0.8767887852536446
+        ],
+        [
+          0.0,
+          0.0,
+          -0.06117706541679628,
+          0.9191764159348229
+        ],
+        [
+          0.0,
+          0.0,
+          -0.9401293547388875,
+          0.390670789196962
+        ],
+        [
+          0.0,
+          0.0,
+          -0.6789608851376548,
+          -0.8563481583273976
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=001|attempt=6",
+      "index": 1,
+      "near_tie": false,
+      "retry": 0,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 9,
+      "coordinates": [
+        -1.7517548492718906,
+        0.7274279744677487,
+        0.411753148147123,
+        -0.7624734433925134,
+        0.08293499094917771,
+        0.039324491410870646,
+        -0.07794033679420037,
+        -0.074869393447718,
+        -2.3449197420281616,
+        0.16242006404723533,
+        -0.5221279705465633,
+        -1.633988126639065,
+        0.14973569858711633,
+        0.1666173579155389,
+        -0.21879576046656943,
+        0.0887532853564022,
+        5.215564688095986
+      ],
+      "dual_vertices": [
+        [
+          0.11590813752313825,
+          1.0150835359580044,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0158129239722586,
+          -0.13558832699387216,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8751319467221964,
+          -0.7286390106536162,
+          0.0,
+          0.0
+        ],
+        [
+          0.38586911398314544,
+          -1.1362702401892586,
+          0.0,
+          0.0
+        ],
+        [
+          0.5868941920920385,
+          -0.98756424940865,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.8113067422612158,
+          0.2515839580400874
+        ],
+        [
+          0.0,
+          0.0,
+          0.060273815236380576,
+          1.1537111780309006
+        ],
+        [
+          0.0,
+          0.0,
+          -0.29958662523987917,
+          0.8247389078170864
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8282019096356982,
+          -0.9065823150632936
+        ],
+        [
+          0.0,
+          0.0,
+          -0.6457786597379762,
+          -1.0689048896145583
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=002|attempt=9",
+      "index": 2,
+      "near_tie": false,
+      "retry": 2,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 17,
+      "coordinates": [
+        -0.3933592855520793,
+        0.25084015640970275,
+        0.07662604299477349,
+        1.0252360807632928,
+        0.1568202145005765,
+        0.10884788452598482,
+        -0.20681683642367762,
+        0.059370724574159324,
+        -2.535006645999742,
+        -0.9187274795763062,
+        -1.327574688228577,
+        0.022018707485589605,
+        -0.1267566459859681,
+        -0.14872965555776144,
+        0.1698815891993519,
+        0.21317033205292485,
+        6.057788801366838
+      ],
+      "dual_vertices": [
+        [
+          0.9537655352656811,
+          0.5407849850276815,
+          0.0,
+          0.0
+        ],
+        [
+          -0.9163433860933542,
+          0.05523680570199089,
+          0.0,
+          0.0
+        ],
+        [
+          -0.7884683565475381,
+          -0.9160328527715991,
+          0.0,
+          0.0
+        ],
+        [
+          -0.10318435808322891,
+          -1.1473924073184416,
+          0.0,
+          0.0
+        ],
+        [
+          0.7460840832067179,
+          -0.386331544075241,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.05785022280758162,
+          0.8706060041382776
+        ],
+        [
+          0.0,
+          0.0,
+          -0.6892449665392816,
+          -0.5075196426771429
+        ],
+        [
+          0.0,
+          0.0,
+          -0.5744430837406386,
+          -0.6092214480537002
+        ],
+        [
+          0.0,
+          0.0,
+          0.1726543192566364,
+          -1.1385045876598838
+        ],
+        [
+          0.0,
+          0.0,
+          0.8221195653617999,
+          -0.8775191037397789
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=003|attempt=17",
+      "index": 3,
+      "near_tie": false,
+      "retry": 7,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 18,
+      "coordinates": [
+        -1.0828893733852505,
+        1.1015834237352204,
+        0.5950256601126753,
+        1.77951171143819,
+        -0.030027312746820432,
+        -0.09623045314437768,
+        -0.03305456267535329,
+        0.19282410942882328,
+        -1.5058644337335156,
+        -0.7581700638498816,
+        0.19183604884097522,
+        0.022281183587969614,
+        0.023878917457589202,
+        0.2165927438308874,
+        -0.04791109433650624,
+        -0.16161716192414072,
+        1.1374536824568557
+      ],
+      "dual_vertices": [
+        [
+          0.9717634154801597,
+          0.07594374224937907,
+          0.0,
+          0.0
+        ],
+        [
+          0.8830141019566595,
+          0.22924244958876847,
+          0.0,
+          0.0
+        ],
+        [
+          -0.23784603906776555,
+          0.9422239110841184,
+          0.0,
+          0.0
+        ],
+        [
+          -1.1306712025054888,
+          0.4530272054386468,
+          0.0,
+          0.0
+        ],
+        [
+          0.8780662238541298,
+          -0.41532298768434706,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.3585371772700196,
+          0.9661363905181248
+        ],
+        [
+          0.0,
+          0.0,
+          0.00023903394920593942,
+          1.2495405290844286
+        ],
+        [
+          0.0,
+          0.0,
+          -0.6537453442886246,
+          0.7018181729721791
+        ],
+        [
+          0.0,
+          0.0,
+          -0.3738783418660777,
+          -0.7700815636169701
+        ],
+        [
+          0.0,
+          0.0,
+          0.9039013094194819,
+          -0.3669443030622996
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=004|attempt=18",
+      "index": 4,
+      "near_tie": false,
+      "retry": 0,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 23,
+      "coordinates": [
+        -1.5845390467547504,
+        -1.0392086474952484,
+        0.2106705842371915,
+        -0.23648420103091441,
+        0.09504868811165233,
+        0.05461314772687947,
+        -0.1179898414644832,
+        -0.07276425467771448,
+        -1.1531289200555217,
+        -0.3584651829127104,
+        -0.11098025772404134,
+        -0.22629392837093573,
+        0.0023476973265801754,
+        0.006119958176728356,
+        -0.11588836792222525,
+        0.052532916463308335,
+        3.4926929287580255
+      ],
+      "dual_vertices": [
+        [
+          1.0434394791084631,
+          0.1285645415820327,
+          0.0,
+          0.0
+        ],
+        [
+          0.8945459066876462,
+          0.4682039264475646,
+          0.0,
+          0.0
+        ],
+        [
+          0.3834396325479973,
+          0.758158631984323,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8818652357365225,
+          -0.11170701374596814,
+          0.0,
+          0.0
+        ],
+        [
+          -0.06010417999940712,
+          -0.9942922381454213,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.832362329352613,
+          0.5317635741896998
+        ],
+        [
+          0.0,
+          0.0,
+          -0.3389887782170801,
+          0.9302106376674064
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8359425752384835,
+          -0.42852308938803035
+        ],
+        [
+          0.0,
+          0.0,
+          -0.5025238897103563,
+          -0.7978624394539274
+        ],
+        [
+          0.0,
+          0.0,
+          0.4865250291209749,
+          -0.6781535180330462
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=005|attempt=23",
+      "index": 5,
+      "near_tie": false,
+      "retry": 4,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 30,
+      "coordinates": [
+        -1.523799621766966,
+        0.23253361323538096,
+        -1.2586163633605458,
+        0.096710133091693,
+        0.04643264194299461,
+        0.09769659249413302,
+        -0.11816143510785627,
+        -0.09504479372434099,
+        -0.5388710011319486,
+        0.5784579575738908,
+        0.08098722634087185,
+        0.8715434936846636,
+        0.14056511353814136,
+        -0.09369557658809766,
+        0.014548832422392886,
+        -0.0932391814394808,
+        1.1388720451296854
+      ],
+      "dual_vertices": [
+        [
+          1.0269770385980541,
+          0.33423208435489726,
+          0.0,
+          0.0
+        ],
+        [
+          0.891884895637281,
+          0.7048883734068685,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8358531785770568,
+          0.3749374177867815,
+          0.0,
+          0.0
+        ],
+        [
+          -0.936765363990393,
+          -0.03755617102581512,
+          0.0,
+          0.0
+        ],
+        [
+          0.2838827767608873,
+          -1.0676339995378155,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.9057043695325893,
+          0.5369399426479488
+        ],
+        [
+          0.0,
+          0.0,
+          0.137358502949272,
+          1.1657935115105218
+        ],
+        [
+          0.0,
+          0.0,
+          -0.37741768886199806,
+          0.8485558534343788
+        ],
+        [
+          0.0,
+          0.0,
+          -0.9153203431535148,
+          -0.48285801594956645
+        ],
+        [
+          0.0,
+          0.0,
+          -0.08306865994693881,
+          -0.9254071422714774
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=006|attempt=30",
+      "index": 6,
+      "near_tie": false,
+      "retry": 6,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 31,
+      "coordinates": [
+        -0.5075790223067129,
+        0.04603905094655468,
+        0.15995007227920482,
+        1.1993093906966705,
+        0.14750991122288615,
+        0.05894798412453682,
+        -0.18823051063784818,
+        0.1040238808632561,
+        -2.7836137182578122,
+        -2.6098666268510278,
+        -0.20539102381787366,
+        -2.416615802062288,
+        -0.06393152566204342,
+        0.027994206495167644,
+        -0.07807851363188106,
+        0.21433098278853174,
+        5.4303727945864395
+      ],
+      "dual_vertices": [
+        [
+          1.005702489884121,
+          0.38597134800198374,
+          0.0,
+          0.0
+        ],
+        [
+          0.23487212705494317,
+          0.8078632824423927,
+          0.0,
+          0.0
+        ],
+        [
+          -0.7678468843410201,
+          0.8248007019653357,
+          0.0,
+          0.0
+        ],
+        [
+          0.45245692348208827,
+          -0.7764887651987158,
+          0.0,
+          0.0
+        ],
+        [
+          1.1613297185404632,
+          -0.19127976851991935,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.4016386879962039,
+          1.136343468344992
+        ],
+        [
+          0.0,
+          0.0,
+          -0.5074350924854297,
+          0.7188149521837977
+        ],
+        [
+          0.0,
+          0.0,
+          0.48062540388536856,
+          -0.7756417875509393
+        ],
+        [
+          0.0,
+          0.0,
+          0.6783715105672312,
+          -0.7351782212404907
+        ],
+        [
+          0.0,
+          0.0,
+          0.7430684256514929,
+          -0.5071905703379403
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=007|attempt=31",
+      "index": 7,
+      "near_tie": false,
+      "retry": 0,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 37,
+      "coordinates": [
+        -1.2858368319281768,
+        -0.2731969561479082,
+        0.9862921688869847,
+        -0.25725575051520877,
+        0.017204607647959475,
+        0.0694048571878989,
+        0.07460249474693242,
+        0.0010954820427173662,
+        -1.8258032744906747,
+        -0.5432620378544437,
+        -1.690747152000952,
+        -0.11913174263434614,
+        0.14976027330949215,
+        0.02020956131170008,
+        -0.15478975093177894,
+        0.0796323187562748,
+        3.8574611740953366
+      ],
+      "dual_vertices": [
+        [
+          0.24191188234575003,
+          1.1340608846968547,
+          0.0,
+          0.0
+        ],
+        [
+          -0.6149336749164903,
+          0.769171750160685,
+          0.0,
+          0.0
+        ],
+        [
+          -1.1424327307185813,
+          -0.28894546982485114,
+          0.0,
+          0.0
+        ],
+        [
+          -1.049280893353336,
+          -0.6636751173443801,
+          0.0,
+          0.0
+        ],
+        [
+          -0.16948358271473601,
+          -1.2364618047516833,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.6546433167857283,
+          0.9422559181826244
+        ],
+        [
+          0.0,
+          0.0,
+          0.2469441946525812,
+          0.9772136421687457
+        ],
+        [
+          0.0,
+          0.0,
+          -0.7336947669357232,
+          0.42143242808024556
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0632135062130428,
+          0.11709373633506091
+        ],
+        [
+          0.0,
+          0.0,
+          0.26684696812924635,
+          -0.8578730225461744
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=008|attempt=37",
+      "index": 8,
+      "near_tie": false,
+      "retry": 5,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 44,
+      "coordinates": [
+        -0.8771428156500422,
+        0.8220932514251919,
+        0.44599661096506343,
+        -0.695727465098571,
+        -0.049758066289619735,
+        0.1152886716667534,
+        0.037017755614911975,
+        -0.031580131652080956,
+        -1.524634002851164,
+        -1.0144667876811364,
+        0.10782789807047964,
+        -0.23980350698654168,
+        -0.111704196072105,
+        -0.07775927334127619,
+        0.11346754441773621,
+        -0.11373986156356057,
+        0.33924132337875434
+      ],
+      "dual_vertices": [
+        [
+          -0.2509801897684866,
+          0.922650148944373,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8219257411556223,
+          -0.34857141343039055,
+          0.0,
+          0.0
+        ],
+        [
+          -0.5021404187105498,
+          -0.6960881917779304,
+          0.0,
+          0.0
+        ],
+        [
+          0.39503068757802384,
+          -0.7826603289550309,
+          0.0,
+          0.0
+        ],
+        [
+          0.8238028189713361,
+          -0.6249447254050244,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0709257757713624,
+          0.31180171923718897
+        ],
+        [
+          0.0,
+          0.0,
+          -0.5880370633001133,
+          0.6663277284412202
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0118892656337195,
+          -0.6520673225163692
+        ],
+        [
+          0.0,
+          0.0,
+          0.6429308794505849,
+          -0.6161510569313741
+        ],
+        [
+          0.0,
+          0.0,
+          0.858517715717157,
+          -0.3341495556599358
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=009|attempt=44",
+      "index": 9,
+      "near_tie": false,
+      "retry": 6,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 45,
+      "coordinates": [
+        -1.952494680258509,
+        -0.3959140006289888,
+        -0.6139201766959071,
+        -0.37496660986565594,
+        0.03891761270507345,
+        0.019078860921446075,
+        -0.08043892043816654,
+        -0.047912703874000026,
+        -3.9907218877459503,
+        -0.9930564537869521,
+        -0.5334853292536509,
+        -0.7660023963275165,
+        -0.09949435789102402,
+        0.05351796475820722,
+        -0.03607269917310601,
+        0.08584545181357434,
+        4.908052967348761
+      ],
+      "dual_vertices": [
+        [
+          0.6435246267136627,
+          0.6337040271114963,
+          0.0,
+          0.0
+        ],
+        [
+          -0.5954673765996833,
+          0.8238910307117199,
+          0.0,
+          0.0
+        ],
+        [
+          -0.429646609631817,
+          -0.8864583333207281,
+          0.0,
+          0.0
+        ],
+        [
+          -0.15226722322610436,
+          -0.9536613130634695,
+          0.0,
+          0.0
+        ],
+        [
+          0.8243231628517632,
+          -0.29124150923352665,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.9844647188498906,
+          0.3166968556346388
+        ],
+        [
+          0.0,
+          0.0,
+          -0.9092288523041608,
+          0.23764510257721566
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0715365507998367,
+          0.22621082306598436
+        ],
+        [
+          0.0,
+          0.0,
+          -0.7355542606994641,
+          -0.6793906720437368
+        ],
+        [
+          0.0,
+          0.0,
+          0.7157613251799143,
+          -0.8758733309372404
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=010|attempt=45",
+      "index": 10,
+      "near_tie": false,
+      "retry": 0,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 49,
+      "coordinates": [
+        -0.8484523444212525,
+        1.0663017891079356,
+        -0.786447569692773,
+        1.143548968028203,
+        -0.017669882351552747,
+        0.11194358204852899,
+        -0.18498983873172295,
+        0.10053101943334551,
+        -0.48011830669548106,
+        1.7437975396720231,
+        1.8235760796881944,
+        1.4639169982781444,
+        0.21204342357825237,
+        -0.035341911460610956,
+        0.06372182245676616,
+        -0.116452061745842,
+        2.559362904412268
+      ],
+      "dual_vertices": [
+        [
+          0.19208410094378753,
+          0.9817086826611559,
+          0.0,
+          0.0
+        ],
+        [
+          -0.5600006128045458,
+          0.8194206510446554,
+          0.0,
+          0.0
+        ],
+        [
+          -0.9116525125902643,
+          0.6674163488116217,
+          0.0,
+          0.0
+        ],
+        [
+          0.08367579238114876,
+          -0.8354020345434571,
+          0.0,
+          0.0
+        ],
+        [
+          0.49678695965230363,
+          -1.00047493527186,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.825291353307214,
+          0.6630046504122146
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8483965824187123,
+          0.248644258859432
+        ],
+        [
+          0.0,
+          0.0,
+          -0.28817822778163604,
+          -0.8287870266719124
+        ],
+        [
+          0.0,
+          0.0,
+          0.02121093694476156,
+          -1.2276977126674
+        ],
+        [
+          0.0,
+          0.0,
+          0.22324959513851989,
+          -0.9324244364994277
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=011|attempt=49",
+      "index": 11,
+      "near_tie": false,
+      "retry": 3,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 56,
+      "coordinates": [
+        -4.466914994377137,
+        -1.3847138419594514,
+        -0.5134384873032706,
+        -1.727843688596591,
+        -0.04065672973143305,
+        0.12610686143079097,
+        0.11424249316504641,
+        -0.21053734820623543,
+        -0.09503000178230159,
+        0.7358901999738523,
+        0.9001105439594131,
+        0.0465007990643441,
+        -0.11795175176253322,
+        -0.1085947177133122,
+        0.025710353546406634,
+        -0.0368530994383588,
+        5.886721809200898
+      ],
+      "dual_vertices": [
+        [
+          -0.7956666656928829,
+          0.6587027711481852,
+          0.0,
+          0.0
+        ],
+        [
+          -0.9670164493691634,
+          0.7444804478170712,
+          0.0,
+          0.0
+        ],
+        [
+          -1.197916221846174,
+          -0.13944089105327562,
+          0.0,
+          0.0
+        ],
+        [
+          0.33142735762880154,
+          -0.8060882338939469,
+          0.0,
+          0.0
+        ],
+        [
+          0.8768625483000533,
+          -0.6433101040114478,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.8610586542893859,
+          0.30380018195519765
+        ],
+        [
+          0.0,
+          0.0,
+          0.41704053818608183,
+          1.1268526009321362
+        ],
+        [
+          0.0,
+          0.0,
+          -0.39091021865890285,
+          0.7457051918504347
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8049509801595591,
+          0.27263899542486136
+        ],
+        [
+          0.0,
+          0.0,
+          -0.14492718087908718,
+          -0.9611662902672141
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=012|attempt=56",
+      "index": 12,
+      "near_tie": false,
+      "retry": 6,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 62,
+      "coordinates": [
+        -0.4972500432354375,
+        -0.05938932420308696,
+        0.30273808963291643,
+        0.714253983863308,
+        0.07585179766357462,
+        0.02596167606113738,
+        -0.04826518818340379,
+        -0.07816639646093262,
+        -0.22573446894627913,
+        0.9613863701997803,
+        -0.05704742112449649,
+        0.06555528730709885,
+        -0.13520894772646155,
+        -0.12444026715943096,
+        0.1354199839285263,
+        0.06601162588112255,
+        1.6078334813583517
+      ],
+      "dual_vertices": [
+        [
+          0.8244999263694429,
+          0.5098099641747288,
+          0.0,
+          0.0
+        ],
+        [
+          -0.3777160208128164,
+          0.861677186972305,
+          0.0,
+          0.0
+        ],
+        [
+          -0.5628790308841506,
+          -0.8776890110901461,
+          0.0,
+          0.0
+        ],
+        [
+          0.5129423774256794,
+          -0.9702411585495533,
+          0.0,
+          0.0
+        ],
+        [
+          0.9437993489042144,
+          -0.44647384107363347,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.8069818030304665,
+          0.465655188995831
+        ],
+        [
+          0.0,
+          0.0,
+          0.24864634980889685,
+          0.9083654325713945
+        ],
+        [
+          0.0,
+          0.0,
+          -0.9186342882749814,
+          -0.80471933164138
+        ],
+        [
+          0.0,
+          0.0,
+          0.08221200444548847,
+          -1.1363939757347894
+        ],
+        [
+          0.0,
+          0.0,
+          1.0157571430950378,
+          -0.49629506448386784
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=013|attempt=62",
+      "index": 13,
+      "near_tie": false,
+      "retry": 5,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 68,
+      "coordinates": [
+        -1.0510094715548357,
+        0.5043328110821091,
+        1.1987711214893662,
+        0.11800504539777608,
+        0.2234086544206434,
+        -0.018250863395390376,
+        -0.12315448658048496,
+        -0.031555256309009794,
+        -2.1521548939768413,
+        -0.38545534626757916,
+        -1.7635860641582526,
+        -0.43755854504358044,
+        -0.123757719811012,
+        0.10420562084504677,
+        -0.11077256808207017,
+        -0.005059018379773031,
+        3.7124963028254063
+      ],
+      "dual_vertices": [
+        [
+          1.0547165819071178,
+          0.666148563814462,
+          0.0,
+          0.0
+        ],
+        [
+          0.6404435506336472,
+          0.7413368135606896,
+          0.0,
+          0.0
+        ],
+        [
+          -0.5578340262369205,
+          0.6833212633323645,
+          0.0,
+          0.0
+        ],
+        [
+          0.3232496397077683,
+          -0.9110745956861002,
+          0.0,
+          0.0
+        ],
+        [
+          0.9115721586637505,
+          -0.26254496901969643,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.008369907002247,
+          0.3335293372659169
+        ],
+        [
+          0.0,
+          0.0,
+          -0.3621532955129047,
+          1.1673585212681699
+        ],
+        [
+          0.0,
+          0.0,
+          -0.3988250353570587,
+          -0.8547560576966811
+        ],
+        [
+          0.0,
+          0.0,
+          -0.18537831233122942,
+          -1.170131640798704
+        ],
+        [
+          0.0,
+          0.0,
+          0.9514463682199724,
+          -0.08846894182706051
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=014|attempt=68",
+      "index": 14,
+      "near_tie": false,
+      "retry": 5,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 71,
+      "coordinates": [
+        -2.837839707092885,
+        0.12057637148438424,
+        -1.9755143665065737,
+        -0.7949873721526838,
+        0.08816769998629037,
+        -0.09774284920706204,
+        -0.1441945848401057,
+        -0.04215783628065597,
+        -1.310422748255415,
+        0.879914570921972,
+        1.2784249907975862,
+        0.449232286038921,
+        0.016259666483522568,
+        -0.17874964464366963,
+        -0.06782943594660086,
+        0.08221151979451802,
+        5.939589367660785
+      ],
+      "dual_vertices": [
+        [
+          -0.37793339703733625,
+          0.7736179740791599,
+          0.0,
+          0.0
+        ],
+        [
+          -0.6625437945462467,
+          0.6856966894074524,
+          0.0,
+          0.0
+        ],
+        [
+          -1.1808592371830626,
+          -0.26306068620134854,
+          0.0,
+          0.0
+        ],
+        [
+          0.8582342479596824,
+          -0.6658065840533846,
+          0.0,
+          0.0
+        ],
+        [
+          0.7794159871166336,
+          -0.4538731015595987,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.5947477052901268,
+          0.7526706282179118
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0603378006326702,
+          -0.3434774330102631
+        ],
+        [
+          0.0,
+          0.0,
+          -0.17023974190147625,
+          -1.1782680251660178
+        ],
+        [
+          0.0,
+          0.0,
+          0.5607895447957063,
+          -0.8799387511969678
+        ],
+        [
+          0.0,
+          0.0,
+          0.5909489109516618,
+          -0.6228400200771715
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=015|attempt=71",
+      "index": 15,
+      "near_tie": false,
+      "retry": 2,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 74,
+      "coordinates": [
+        -1.0193667519898728,
+        0.6272210495729125,
+        0.27916357788883356,
+        -0.6288746988688639,
+        0.05135410929089869,
+        -0.1337007817910298,
+        -0.04708563537853777,
+        -0.001654690059322183,
+        -1.385635365525863,
+        -1.0567010559960572,
+        -0.7624713972568637,
+        -0.420783413258188,
+        0.1334923823561635,
+        0.0498119654260317,
+        -0.05521537060389939,
+        -0.2265964991083202,
+        5.401338884384285
+      ],
+      "dual_vertices": [
+        [
+          -0.032693156008878135,
+          0.9250124319483496,
+          0.0,
+          0.0
+        ],
+        [
+          -0.9640605263893386,
+          -0.09377164022050491,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8052861812324613,
+          -0.7582822359799033,
+          0.0,
+          0.0
+        ],
+        [
+          0.4158515465983995,
+          -0.9328470416727391,
+          0.0,
+          0.0
+        ],
+        [
+          0.6459515982114904,
+          -0.5506335985371988,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.7639596826324955,
+          0.3452455890999842
+        ],
+        [
+          0.0,
+          0.0,
+          -0.4193930233811406,
+          1.0819829421870957
+        ],
+        [
+          0.0,
+          0.0,
+          -0.5362004550220439,
+          -1.0754816737981103
+        ],
+        [
+          0.0,
+          0.0,
+          0.12705222500469654,
+          -1.0979409969486282
+        ],
+        [
+          0.0,
+          0.0,
+          0.7904273277541864,
+          -0.6044780853287851
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=016|attempt=74",
+      "index": 16,
+      "near_tie": false,
+      "retry": 2,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 75,
+      "coordinates": [
+        -1.4587598782338855,
+        -1.2387570420335041,
+        0.49536669478817075,
+        -0.11470462925389897,
+        -0.09691673027309844,
+        0.0952097352505564,
+        -0.09094599854419397,
+        0.07824667413739006,
+        -2.4737667832724153,
+        -0.5396921374160817,
+        0.14890443373023515,
+        -0.2862117031640471,
+        0.03563545490956822,
+        -0.013764805083024084,
+        0.07082665560884716,
+        -0.008087493464279429,
+        3.4803973438426103
+      ],
+      "dual_vertices": [
+        [
+          0.9166453952091885,
+          0.5782764216113,
+          0.0,
+          0.0
+        ],
+        [
+          -0.49976723166441855,
+          0.8309116759364381,
+          0.0,
+          0.0
+        ],
+        [
+          -0.9217332554359345,
+          0.7287524674100231,
+          0.0,
+          0.0
+        ],
+        [
+          -0.9519157916320292,
+          0.21291376093572828,
+          0.0,
+          0.0
+        ],
+        [
+          0.7891795009633312,
+          -0.8436900282369426,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.9535201085015279,
+          0.4974550346893195
+        ],
+        [
+          0.0,
+          0.0,
+          -0.807037268539618,
+          0.5800656227087228
+        ],
+        [
+          0.0,
+          0.0,
+          -0.7068424834373774,
+          -0.5899014960601532
+        ],
+        [
+          0.0,
+          0.0,
+          0.8004533638161709,
+          -0.6613068023549594
+        ],
+        [
+          0.0,
+          0.0,
+          0.846329464241445,
+          -0.5102540776249972
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=017|attempt=75",
+      "index": 17,
+      "near_tie": false,
+      "retry": 0,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 79,
+      "coordinates": [
+        -1.2555871239150063,
+        -0.3352931550101673,
+        0.1236864430009742,
+        -0.04122516518456979,
+        0.05046601013298309,
+        0.09125963395272707,
+        -0.1737539686980535,
+        0.025113567218262724,
+        -0.9071656851158696,
+        0.6454257265708113,
+        1.3368591790600892,
+        -0.1199355943412983,
+        -0.06324329587963168,
+        -0.10069810911572147,
+        0.21616376004438953,
+        -0.08861468492247657,
+        1.8423666028139394
+      ],
+      "dual_vertices": [
+        [
+          0.5399669439852952,
+          0.854477988832787,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8721969689304626,
+          0.5949390685764557,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0855078947334857,
+          0.17637812714762743,
+          0.0,
+          0.0
+        ],
+        [
+          -0.49953877703690236,
+          -0.6799426861356362,
+          0.0,
+          0.0
+        ],
+        [
+          0.9193730639863398,
+          -0.46294977159331463,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8256128469378103,
+          0.1998102487920371
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8630180724629158,
+          -0.4262805351002401
+        ],
+        [
+          0.0,
+          0.0,
+          -0.27989896566562816,
+          -0.8250915914118349
+        ],
+        [
+          0.0,
+          0.0,
+          -0.008552672624808298,
+          -0.8392012475144732
+        ],
+        [
+          0.0,
+          0.0,
+          1.148041080980469,
+          -0.09693476286047661
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=018|attempt=79",
+      "index": 18,
+      "near_tie": false,
+      "retry": 3,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 80,
+      "coordinates": [
+        -1.8797938257760396,
+        -0.031513559254258486,
+        -1.8026524754610873,
+        -1.7266158808752505,
+        0.008815151733097394,
+        -0.03870040228737074,
+        -0.13342571698591565,
+        0.1067356960033137,
+        -1.2727364080942225,
+        -0.9231480058682039,
+        -1.1988063155454347,
+        0.1431042638598859,
+        -0.061985196261451506,
+        -0.12353970268176534,
+        0.13149795530687516,
+        0.10503487136102195,
+        4.320788488894311
+      ],
+      "dual_vertices": [
+        [
+          -0.4242844565309238,
+          0.8949063196659479,
+          0.0,
+          0.0
+        ],
+        [
+          -0.698105592453104,
+          0.6360830660488699,
+          0.0,
+          0.0
+        ],
+        [
+          0.13754520204151818,
+          -0.8479949292796097,
+          0.0,
+          0.0
+        ],
+        [
+          0.5996316373408821,
+          -0.9129691446395565,
+          0.0,
+          0.0
+        ],
+        [
+          0.8930890617622775,
+          -0.5306417635889182,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.9491647251434208,
+          0.04856534197152466
+        ],
+        [
+          0.0,
+          0.0,
+          0.731039973089187,
+          0.5140275619788761
+        ],
+        [
+          0.0,
+          0.0,
+          0.18508643413104342,
+          1.1383398584263276
+        ],
+        [
+          0.0,
+          0.0,
+          -0.4820881740976254,
+          1.014445816629923
+        ],
+        [
+          0.0,
+          0.0,
+          -0.3597484109027444,
+          -0.8910126623674873
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=019|attempt=80",
+      "index": 19,
+      "near_tie": false,
+      "retry": 0,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 83,
+      "coordinates": [
+        -2.508001115333131,
+        -0.516787370308788,
+        0.33148608258016143,
+        -0.24458738528299226,
+        -0.04816091688243438,
+        -0.09579137869716232,
+        0.05740055460043454,
+        0.1058326505880725,
+        -0.08896041442840594,
+        0.6747217199929049,
+        0.5400092603620019,
+        -0.030217310806414734,
+        -0.08866302721676428,
+        -0.02191898702888763,
+        -0.08576143085749027,
+        0.04192365162167086,
+        0.44186161187540196
+      ],
+      "dual_vertices": [
+        [
+          0.492131942564731,
+          0.9190601147580696,
+          0.0,
+          0.0
+        ],
+        [
+          0.3491147823888346,
+          0.9307131357527093,
+          0.0,
+          0.0
+        ],
+        [
+          -0.6670640565407107,
+          0.9472982674532769,
+          0.0,
+          0.0
+        ],
+        [
+          -0.30905579731208627,
+          -1.176165054658366,
+          0.0,
+          0.0
+        ],
+        [
+          0.9141731554872997,
+          -0.5619417854699125,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.962121603159312,
+          0.6084531120786525
+        ],
+        [
+          0.0,
+          0.0,
+          0.04440350520859056,
+          0.891614615488928
+        ],
+        [
+          0.0,
+          0.0,
+          -0.7015875630268382,
+          0.6469416462387413
+        ],
+        [
+          0.0,
+          0.0,
+          -0.3784200134276752,
+          -0.8114091922265659
+        ],
+        [
+          0.0,
+          0.0,
+          0.9503363700529088,
+          -0.3628504948954899
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=020|attempt=83",
+      "index": 20,
+      "near_tie": false,
+      "retry": 2,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 85,
+      "coordinates": [
+        -0.935657904612601,
+        0.8349945670577458,
+        0.3143440499978269,
+        0.9694495204482028,
+        0.07718717457206734,
+        -0.20229204496903533,
+        -0.002051948804128144,
+        0.08613136426603449,
+        -1.5099144468924728,
+        -0.7729229909615779,
+        -0.21466496965129386,
+        -0.09525859322905536,
+        -0.01964595595079252,
+        -0.06256015132925252,
+        0.09734397123844755,
+        -0.06112118853844564,
+        2.384644742458459
+      ],
+      "dual_vertices": [
+        [
+          0.7903139620823513,
+          0.8358810824548816,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0823060638942896,
+          0.19431029572310968,
+          0.0,
+          0.0
+        ],
+        [
+          -0.9158029197424543,
+          -0.6790708709050277,
+          0.0,
+          0.0
+        ],
+        [
+          -0.4958148871446032,
+          -0.7052781642100888,
+          0.0,
+          0.0
+        ],
+        [
+          1.0050942062866008,
+          -0.3148276459324188,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.8067595402545225,
+          0.24034684838039064
+        ],
+        [
+          0.0,
+          0.0,
+          0.4097383207243327,
+          0.8987758844878112
+        ],
+        [
+          0.0,
+          0.0,
+          -0.7370032739083768,
+          0.4092628157603681
+        ],
+        [
+          0.0,
+          0.0,
+          -0.36271643780246327,
+          -0.8653742611242627
+        ],
+        [
+          0.0,
+          0.0,
+          0.8725070466700262,
+          -0.10423885876198492
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=021|attempt=85",
+      "index": 21,
+      "near_tie": false,
+      "retry": 1,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 86,
+      "coordinates": [
+        -0.9773155166784387,
+        0.18866732244298756,
+        1.1924801896329253,
+        1.386044735670901,
+        -0.01911573505642264,
+        -0.06907314981597948,
+        -0.16025564475851115,
+        0.15176703692651639,
+        -1.6840351676764183,
+        -1.5067721484049061,
+        -0.5849194606966268,
+        -0.4208131312319864,
+        -0.15286639085877468,
+        0.20946491017278007,
+        0.12007153118853808,
+        -0.028798303558600098,
+        4.331085454607454
+      ],
+      "dual_vertices": [
+        [
+          0.2852886941763141,
+          1.1152335292059463,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8173308230569174,
+          -0.7203189090997661,
+          0.0,
+          0.0
+        ],
+        [
+          -0.2044938911104693,
+          -0.948530741329481,
+          0.0,
+          0.0
+        ],
+        [
+          0.024941175964846934,
+          -0.9227028519886586,
+          0.0,
+          0.0
+        ],
+        [
+          0.6015953629098455,
+          -0.5899613223292374,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.8571671568278706,
+          0.13009206512169294
+        ],
+        [
+          0.0,
+          0.0,
+          -0.7150686383688344,
+          0.4825610402955407
+        ],
+        [
+          0.0,
+          0.0,
+          -1.2257003304062282,
+          0.18354595531763665
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0514099817221632,
+          -0.4231962154299526
+        ],
+        [
+          0.0,
+          0.0,
+          0.14356742409564344,
+          -0.9660050590301635
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=022|attempt=86",
+      "index": 22,
+      "near_tie": false,
+      "retry": 0,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 101,
+      "coordinates": [
+        -2.3361340865761013,
+        -0.9082311532969392,
+        -0.35827144752759976,
+        -0.3364004428220906,
+        -0.005680336539941877,
+        0.07802935701629127,
+        -0.11071434260587329,
+        0.11098912218612819,
+        -1.1627970396910097,
+        0.29191816986132546,
+        0.694424854941157,
+        0.4718879954081602,
+        0.023341393700879183,
+        0.13116189038095202,
+        -0.09536441462187997,
+        -0.18419420300276543,
+        1.5089542350908896
+      ],
+      "dual_vertices": [
+        [
+          1.1584907646959104,
+          0.15937332877838953,
+          0.0,
+          0.0
+        ],
+        [
+          -0.10356933803136446,
+          0.9677174839195406,
+          0.0,
+          0.0
+        ],
+        [
+          -0.800819675894585,
+          -0.6645233958856447,
+          0.0,
+          0.0
+        ],
+        [
+          -0.7022627370818731,
+          -0.8871807525281357,
+          0.0,
+          0.0
+        ],
+        [
+          0.1862518762503793,
+          -0.918169404404558,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.6879147276359824,
+          0.6015027008492296
+        ],
+        [
+          0.0,
+          0.0,
+          -0.7660860194730983,
+          0.3349985277278983
+        ],
+        [
+          0.0,
+          0.0,
+          -0.41548402597328316,
+          -1.060670740383838
+        ],
+        [
+          0.0,
+          0.0,
+          0.6068883266297721,
+          -0.8309490921977346
+        ],
+        [
+          0.0,
+          0.0,
+          0.9287398063004105,
+          -0.6715930919077248
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=023|attempt=101",
+      "index": 23,
+      "near_tie": false,
+      "retry": 14,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 103,
+      "coordinates": [
+        -1.7487088650006624,
+        -0.3006146399165189,
+        0.24140350059201082,
+        0.13591045215167066,
+        0.1548633937421416,
+        0.11026837118776806,
+        -0.0439249971356247,
+        -0.05636135328083723,
+        -3.42297658657172,
+        -0.2748805204125741,
+        -1.2022570730904116,
+        -0.9073522482964843,
+        -0.07502821022107262,
+        -0.0885878521675533,
+        -0.009409135481066862,
+        0.194317721262799,
+        2.8961688063299422
+      ],
+      "dual_vertices": [
+        [
+          0.24380157628741966,
+          0.816315303951634,
+          0.0,
+          0.0
+        ],
+        [
+          -1.07524730015692,
+          0.46853644697974833,
+          0.0,
+          0.0
+        ],
+        [
+          -1.1076559026619048,
+          0.17719168554298345,
+          0.0,
+          0.0
+        ],
+        [
+          -0.5863104768243396,
+          -0.7619877285495812,
+          0.0,
+          0.0
+        ],
+        [
+          0.8816105650264467,
+          -0.3527601120901979,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.2317618032712511,
+          0.9763461014309062
+        ],
+        [
+          0.0,
+          0.0,
+          -0.6148025827182714,
+          1.065585436479575
+        ],
+        [
+          0.0,
+          0.0,
+          -0.9911247666803752,
+          0.03141305739569071
+        ],
+        [
+          0.0,
+          0.0,
+          0.7444808245321525,
+          -0.5734681965480625
+        ],
+        [
+          0.0,
+          0.0,
+          0.7783704665804111,
+          -0.5036161285117478
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=024|attempt=103",
+      "index": 24,
+      "near_tie": false,
+      "retry": 1,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 110,
+      "coordinates": [
+        -1.821042028472298,
+        -0.5740793422181187,
+        -0.5652193038819412,
+        -0.5505896646426628,
+        0.10887440648628467,
+        -0.1384288803442217,
+        0.01430068547347801,
+        0.19891425839805302,
+        -5.402447989489154,
+        -1.250773850486946,
+        -0.8791214487169534,
+        -1.1863271282276826,
+        -0.1262936323293052,
+        -0.11404788662927873,
+        -0.091526960635573,
+        0.17148120967395677,
+        1.2801123569291764
+      ],
+      "dual_vertices": [
+        [
+          -0.09242978142021895,
+          1.1342924663817984,
+          0.0,
+          0.0
+        ],
+        [
+          -0.3750462870954525,
+          0.8056949988879706,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0303930076082595,
+          -0.1012440778727065,
+          0.0,
+          0.0
+        ],
+        [
+          -0.28244429837709795,
+          -1.2128231694845284,
+          0.0,
+          0.0
+        ],
+        [
+          0.7297565078925824,
+          -0.43468128918711296,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8444026041405888,
+          0.17942804623404057
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8572783617844582,
+          0.16958961513634052
+        ],
+        [
+          0.0,
+          0.0,
+          -0.6841648523698163,
+          -0.5751431003381802
+        ],
+        [
+          0.0,
+          0.0,
+          0.4795637711067323,
+          -1.0591744830370606
+        ],
+        [
+          0.0,
+          0.0,
+          1.1287786126691877,
+          -0.21915031726596576
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=025|attempt=110",
+      "index": 25,
+      "near_tie": false,
+      "retry": 6,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 115,
+      "coordinates": [
+        -1.423079621044298,
+        -0.12216976206365333,
+        0.7003239601915889,
+        -0.2626407391227176,
+        -0.11545572081187756,
+        0.14384515210469967,
+        0.03218411611106649,
+        0.018116463146643683,
+        -0.5179832226930863,
+        -0.34695103132889826,
+        -0.0930005375876252,
+        0.14770091590764767,
+        0.17325585875679564,
+        0.10978598196381298,
+        -0.1288098744938379,
+        0.044663491313099296,
+        5.992998295695176
+      ],
+      "dual_vertices": [
+        [
+          0.5905663106670739,
+          0.9193318779550504,
+          0.0,
+          0.0
+        ],
+        [
+          -0.9764837542852254,
+          -0.45529709709357014,
+          0.0,
+          0.0
+        ],
+        [
+          -0.14643057025428796,
+          -0.9669764603608808,
+          0.0,
+          0.0
+        ],
+        [
+          0.852401370400314,
+          -0.4026029388773453,
+          0.0,
+          0.0
+        ],
+        [
+          1.2109909610888085,
+          -0.1618392133720306,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.1527535942942955,
+          0.14427804109462739
+        ],
+        [
+          0.0,
+          0.0,
+          0.38205409017197495,
+          0.8315820067610604
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8379583334629527,
+          0.6947396489743499
+        ],
+        [
+          0.0,
+          0.0,
+          -0.4799841240814659,
+          -0.7053884752905716
+        ],
+        [
+          0.0,
+          0.0,
+          0.9212393663265976,
+          -0.8268308401775761
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=026|attempt=115",
+      "index": 26,
+      "near_tie": false,
+      "retry": 4,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 135,
+      "coordinates": [
+        -1.8773103209335031,
+        0.282859143300689,
+        -0.6332823916817434,
+        -1.544359219374326,
+        0.026993328314798122,
+        0.019599396090495158,
+        0.047339251425727216,
+        0.001287012320511486,
+        -1.4247069327543922,
+        0.7688719348873875,
+        -1.2061372446362284,
+        0.40715615029734964,
+        0.1161290576408705,
+        0.059711401893159745,
+        -0.12423190792340555,
+        -0.10093191890526723,
+        6.1593946497999985
+      ],
+      "dual_vertices": [
+        [
+          0.8724389519814739,
+          0.31372569607711814,
+          0.0,
+          0.0
+        ],
+        [
+          -0.6932849631243597,
+          0.7854512967881775,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8868507181683345,
+          0.5431042001885094,
+          0.0,
+          0.0
+        ],
+        [
+          0.4799733685473982,
+          -0.9553988499581706,
+          0.0,
+          0.0
+        ],
+        [
+          1.018510215346551,
+          -0.07219007002034403,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.588792402429047,
+          0.844245999017523
+        ],
+        [
+          0.0,
+          0.0,
+          -0.620749212117605,
+          0.9085933609931981
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8082223048566248,
+          0.6545574774944053
+        ],
+        [
+          0.0,
+          0.0,
+          0.3009980014197767,
+          -0.8112500480658834
+        ],
+        [
+          0.0,
+          0.0,
+          0.5820134387956761,
+          -0.6676100341537162
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=027|attempt=135",
+      "index": 27,
+      "near_tie": false,
+      "retry": 19,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 138,
+      "coordinates": [
+        -0.6499753923285997,
+        1.146122352437684,
+        0.15853199079934652,
+        -0.07700448297149207,
+        -0.004744230988041838,
+        0.047958276878404475,
+        0.146620832821025,
+        -0.1496772503595329,
+        -1.2420012066972277,
+        0.37562413348389456,
+        0.8153096216507099,
+        -0.0354371229384613,
+        -0.20236716122665377,
+        -0.07585070991690793,
+        0.09954343551611815,
+        0.08227605296945058,
+        5.146993895007946
+      ],
+      "dual_vertices": [
+        [
+          1.0250395220389354,
+          0.5335147432267265,
+          0.0,
+          0.0
+        ],
+        [
+          0.002301271469015964,
+          0.8592398290592771,
+          0.0,
+          0.0
+        ],
+        [
+          -0.7247686339863579,
+          0.627537576523914,
+          0.0,
+          0.0
+        ],
+        [
+          -0.9703712731252073,
+          -0.21196620706433025,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8008687441125718,
+          -0.6744069925221894,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.1209290849387707,
+          0.1718238610750543
+        ],
+        [
+          0.0,
+          0.0,
+          0.4508925787353095,
+          1.0580840927084454
+        ],
+        [
+          0.0,
+          0.0,
+          -0.5160599942001552,
+          0.679315849777291
+        ],
+        [
+          0.0,
+          0.0,
+          -0.7895586406580769,
+          0.5602980564530613
+        ],
+        [
+          0.0,
+          0.0,
+          -0.7034012515637871,
+          -0.9145598996983721
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=028|attempt=138",
+      "index": 28,
+      "near_tie": false,
+      "retry": 2,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 143,
+      "coordinates": [
+        -1.326113675223103,
+        1.454532924018621,
+        -0.6927373017175802,
+        0.9771844645819551,
+        0.107770920995141,
+        -0.17738991753067396,
+        0.06959282412433442,
+        0.088690568766407,
+        -3.533819430992086,
+        -0.39184855432975774,
+        -1.563023657600356,
+        -0.19942032261822826,
+        -0.14804469919661475,
+        -0.013365400118428218,
+        0.042175525036377795,
+        0.12306371297260972,
+        0.9506421171228605
+      ],
+      "dual_vertices": [
+        [
+          0.02877111493638673,
+          0.9535043383295411,
+          0.0,
+          0.0
+        ],
+        [
+          -0.7404603407265296,
+          0.8942216255105695,
+          0.0,
+          0.0
+        ],
+        [
+          -0.6746169069526304,
+          0.5540094055690836,
+          0.0,
+          0.0
+        ],
+        [
+          0.8266431827585381,
+          -0.7519870546375577,
+          0.0,
+          0.0
+        ],
+        [
+          1.059018441550674,
+          -0.4194347475085981,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.626770272434634,
+          0.8140223172622244
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8871189429283658,
+          -0.06349986698794494
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0078593561462585,
+          -0.14054551679583963
+        ],
+        [
+          0.0,
+          0.0,
+          0.12989028827416005,
+          -1.0678591253236707
+        ],
+        [
+          0.0,
+          0.0,
+          0.6610410143910157,
+          -0.9609472649612619
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=029|attempt=143",
+      "index": 29,
+      "near_tie": false,
+      "retry": 4,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 146,
+      "coordinates": [
+        -2.457824356049808,
+        -1.0145094585910486,
+        -0.9822090637197856,
+        -0.5826329418168664,
+        -0.13099479858885563,
+        -0.10384342618457554,
+        0.021625691607670416,
+        0.09283311652779516,
+        -0.5810919896633148,
+        -0.1756050506562499,
+        0.08606607917086055,
+        1.052772158468444,
+        -0.1219373887944766,
+        -0.13723215692966062,
+        0.20947818244292943,
+        -0.1383181631150978,
+        3.380327001313216
+      ],
+      "dual_vertices": [
+        [
+          -0.7432420710112464,
+          0.48435168018208863,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8557785040817415,
+          0.31395330113711906,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8498932084942666,
+          -0.5878860059608768,
+          0.0,
+          0.0
+        ],
+        [
+          0.024988746476543065,
+          -1.109394274264626,
+          0.0,
+          0.0
+        ],
+        [
+          1.137485175834572,
+          -0.08515300404645222,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.8558787885141428,
+          0.1862423097366562
+        ],
+        [
+          0.0,
+          0.0,
+          0.6229776338817684,
+          1.070863196613544
+        ],
+        [
+          0.0,
+          0.0,
+          -0.4579915115108539,
+          0.7455158499609918
+        ],
+        [
+          0.0,
+          0.0,
+          0.29185591803313343,
+          -1.1769289465366537
+        ],
+        [
+          0.0,
+          0.0,
+          0.8388435935528836,
+          -0.2956137735676045
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=030|attempt=146",
+      "index": 30,
+      "near_tie": false,
+      "retry": 2,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 157,
+      "coordinates": [
+        -1.0484165592469035,
+        -0.36351946409154895,
+        0.8213024287972587,
+        -0.03785959170230668,
+        0.04634094956499376,
+        0.031806820803176594,
+        -0.14913393595383984,
+        -0.0645094638171236,
+        -0.7523539049301634,
+        1.433419160672167,
+        0.7055874794280301,
+        0.8117149122480058,
+        -0.0005375628668155691,
+        -0.12286436447029991,
+        0.23026642953924537,
+        -0.030899130707286386,
+        5.314253927936401
+      ],
+      "dual_vertices": [
+        [
+          1.0833066831873857,
+          0.2833922963675734,
+          0.0,
+          0.0
+        ],
+        [
+          0.1280941009795534,
+          1.016208518019788,
+          0.0,
+          0.0
+        ],
+        [
+          -0.29014525470026997,
+          0.9668750607832437,
+          0.0,
+          0.0
+        ],
+        [
+          -0.7576952071611098,
+          0.368124733945201,
+          0.0,
+          0.0
+        ],
+        [
+          0.5774001545763444,
+          -0.7121032592581238,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.8495506626531987,
+          0.43848619178347437
+        ],
+        [
+          0.0,
+          0.0,
+          0.6047669868860313,
+          0.591524941858123
+        ],
+        [
+          0.0,
+          0.0,
+          -1.1563670666663528,
+          -0.3361533523605583
+        ],
+        [
+          0.0,
+          0.0,
+          -0.00740571485842975,
+          -0.9274167327894883
+        ],
+        [
+          0.0,
+          0.0,
+          0.8758710155207394,
+          -0.13736739946561705
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=031|attempt=157",
+      "index": 31,
+      "near_tie": false,
+      "retry": 10,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 160,
+      "coordinates": [
+        -2.454767574164126,
+        -1.5109457560578736,
+        -1.0343225879629612,
+        -0.4263930085556568,
+        -0.12257095067778792,
+        -0.1163683272392349,
+        0.13740655326931198,
+        -0.03934450428022055,
+        -1.1311899333042221,
+        -0.8970316172286489,
+        0.708318840332669,
+        0.8066789353937525,
+        -0.05903880524168098,
+        0.052601643073549996,
+        -0.06506809711958245,
+        0.1605984233002454,
+        5.1128464970159575
+      ],
+      "dual_vertices": [
+        [
+          0.3886581588340421,
+          0.7439849250483959,
+          0.0,
+          0.0
+        ],
+        [
+          0.207568821042406,
+          0.8187055054789552,
+          0.0,
+          0.0
+        ],
+        [
+          -0.3740262560728243,
+          1.022328289187403,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8826786655674038,
+          0.23032600207306891,
+          0.0,
+          0.0
+        ],
+        [
+          -0.05900108799387324,
+          -1.0907905903028232,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.9318123930908465,
+          0.24473765126360447
+        ],
+        [
+          0.0,
+          0.0,
+          0.6639322334824534,
+          0.5410450504410849
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0147031552693433,
+          0.34975011578468307
+        ],
+        [
+          0.0,
+          0.0,
+          0.35833807997628536,
+          -0.7554577977438409
+        ],
+        [
+          0.0,
+          0.0,
+          0.8588249389727257,
+          -0.06967374223540794
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=032|attempt=160",
+      "index": 32,
+      "near_tie": false,
+      "retry": 2,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 168,
+      "coordinates": [
+        -2.6244628122152647,
+        -0.4803392514116719,
+        -0.211488220368105,
+        -0.4466605564607037,
+        0.03288660805897084,
+        0.10661413246477186,
+        -0.17209783706485288,
+        -0.13331832260788873,
+        -1.676828886148645,
+        -0.39359496590746423,
+        -0.9279684154960609,
+        -0.45511606641113106,
+        -0.09909904527836183,
+        0.0988203618627084,
+        0.03795817325742094,
+        -0.06811414879533205,
+        4.714883129168949
+      ],
+      "dual_vertices": [
+        [
+          0.7194823658374181,
+          0.9632831731082113,
+          0.0,
+          0.0
+        ],
+        [
+          -1.029120503937338,
+          0.22088018652428432,
+          0.0,
+          0.0
+        ],
+        [
+          -1.1305951834621926,
+          0.07518262561282105,
+          0.0,
+          0.0
+        ],
+        [
+          -0.33352054099295,
+          -0.7899555784316479,
+          0.0,
+          0.0
+        ],
+        [
+          0.8370907132261766,
+          -0.30633504975301595,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.1881000623360162,
+          0.8871707170593585
+        ],
+        [
+          0.0,
+          0.0,
+          -0.21675539168981775,
+          1.0839181612204518
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0356511285699002,
+          -0.09619548084455276
+        ],
+        [
+          0.0,
+          0.0,
+          -0.5427747235956557,
+          -0.761858738058804
+        ],
+        [
+          0.0,
+          0.0,
+          0.7108436120311664,
+          -0.7485798344263309
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=033|attempt=168",
+      "index": 33,
+      "near_tie": false,
+      "retry": 7,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 172,
+      "coordinates": [
+        -4.245429981267426,
+        0.35140930146525845,
+        -0.9710128939091287,
+        -1.7501209785143685,
+        -0.10917931430257251,
+        -0.05864806693388326,
+        0.20638355001466294,
+        -0.006304501909046051,
+        -2.726154026979195,
+        1.5665152532347886,
+        -1.3234794396607692,
+        1.5169843078588447,
+        -0.0019969256894739797,
+        -0.07538500710600338,
+        -0.12496424157909035,
+        0.15705412975025024,
+        5.956636222973412
+      ],
+      "dual_vertices": [
+        [
+          1.177465465289027,
+          0.2554993548921286,
+          0.0,
+          0.0
+        ],
+        [
+          0.518004676382533,
+          0.8248606138361823,
+          0.0,
+          0.0
+        ],
+        [
+          0.18423437014956387,
+          0.9310230055451092,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8294430170325438,
+          -0.2903799106197679,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8628343631914391,
+          -0.33157731518263556,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8848640818209205,
+          0.5773396855917963
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0077007567318406,
+          -0.010285083094871068
+        ],
+        [
+          0.0,
+          0.0,
+          -0.9353334500792503,
+          -0.045608466503510886
+        ],
+        [
+          0.0,
+          0.0,
+          0.8576861056353161,
+          -0.2419102071508247
+        ],
+        [
+          0.0,
+          0.0,
+          1.1732304801837403,
+          -0.13943957497485107
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=034|attempt=172",
+      "index": 34,
+      "near_tie": false,
+      "retry": 3,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 174,
+      "coordinates": [
+        -3.4628479958084744,
+        0.04875106847736436,
+        -1.8872135783626456,
+        -0.8363372466384272,
+        0.03208142261134655,
+        0.17552210671837173,
+        -0.018288184399139117,
+        -0.08611079301282604,
+        -2.5173120744810755,
+        -1.0672876469806554,
+        -0.720350814656087,
+        0.3006558157741578,
+        -0.04505582050645885,
+        0.0831841075673668,
+        -0.10687506927867574,
+        0.16855168429697664,
+        3.3755477989287943
+      ],
+      "dual_vertices": [
+        [
+          0.8371357985666107,
+          0.400178203868709,
+          0.0,
+          0.0
+        ],
+        [
+          0.6022271676281868,
+          0.623741375338545,
+          0.0,
+          0.0
+        ],
+        [
+          -0.21359139910076638,
+          0.8251327828114503,
+          0.0,
+          0.0
+        ],
+        [
+          -0.49463735664049147,
+          -0.841143373681641,
+          0.0,
+          0.0
+        ],
+        [
+          -0.49772873388141803,
+          -1.0103634687452883,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.26533524729684893,
+          0.8650009111588313
+        ],
+        [
+          0.0,
+          0.0,
+          0.14580676491904498,
+          1.0181918593966277
+        ],
+        [
+          0.0,
+          0.0,
+          -0.42281405790325843,
+          0.7380043539601243
+        ],
+        [
+          0.0,
+          0.0,
+          -1.113063978612671,
+          0.12662092291276103
+        ],
+        [
+          0.0,
+          0.0,
+          0.6803241827875924,
+          -0.5204644631480969
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=035|attempt=174",
+      "index": 35,
+      "near_tie": false,
+      "retry": 1,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 178,
+      "coordinates": [
+        -1.8451394755107435,
+        -0.8220962610747921,
+        -0.20133485425932926,
+        -0.8954604501743642,
+        0.03011820197728471,
+        0.012334415831056064,
+        0.11467426609836416,
+        -0.1103202919504094,
+        -1.6589065051796357,
+        -0.658573073353723,
+        -0.19663356143768815,
+        0.10081572975229311,
+        -0.14566537464809756,
+        0.19404342168398178,
+        -0.10328161117247808,
+        -0.04604547506672314,
+        1.5866284082259496
+      ],
+      "dual_vertices": [
+        [
+          0.8698506051432596,
+          0.4088737905676807,
+          0.0,
+          0.0
+        ],
+        [
+          -0.9221769691796916,
+          0.476500437645341,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0117145412064166,
+          0.12746563167223768,
+          0.0,
+          0.0
+        ],
+        [
+          -0.7432256640488798,
+          -0.8506493701298501,
+          0.0,
+          0.0
+        ],
+        [
+          0.8044295178375538,
+          -0.4080543431672329,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.7848834982341504,
+          0.5502032301236421
+        ],
+        [
+          0.0,
+          0.0,
+          -0.9045626998118981,
+          0.6438461186909302
+        ],
+        [
+          0.0,
+          0.0,
+          -0.3860376283220095,
+          -0.7770255724115558
+        ],
+        [
+          0.0,
+          0.0,
+          -0.16053966550447152,
+          -1.2080085909104488
+        ],
+        [
+          0.0,
+          0.0,
+          0.6251987622906061,
+          -0.654610912863925
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=036|attempt=178",
+      "index": 36,
+      "near_tie": false,
+      "retry": 3,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 180,
+      "coordinates": [
+        -1.3567270243423826,
+        -0.9666293761991441,
+        -0.21090058106233517,
+        0.6585692637985872,
+        0.018449264573499727,
+        -0.05827587821604491,
+        0.029428213425849295,
+        -0.038566515204567935,
+        -1.6610760558249322,
+        -0.789848806475147,
+        -1.5324004087375878,
+        -1.0109604534222953,
+        0.003900948866063264,
+        0.25015553698974075,
+        -0.12436478895182684,
+        -0.11737944361687111,
+        0.4244683406816496
+      ],
+      "dual_vertices": [
+        [
+          0.7444617871987259,
+          0.838062442800471,
+          0.0,
+          0.0
+        ],
+        [
+          -0.7073056483679937,
+          0.825768651121848,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8870138631820652,
+          0.4766648103808214,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0977633670245492,
+          -0.057757304369993996,
+          0.0,
+          0.0
+        ],
+        [
+          -0.3583433286605258,
+          -0.9624769861488597,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8706385044371437,
+          0.4078055257805059
+        ],
+        [
+          0.0,
+          0.0,
+          -1.2238897402770992,
+          -0.12108539261456938
+        ],
+        [
+          0.0,
+          0.0,
+          -0.15941889805584963,
+          -0.830516590869487
+        ],
+        [
+          0.0,
+          0.0,
+          0.3478053404108028,
+          -0.7773449731714913
+        ],
+        [
+          0.0,
+          0.0,
+          0.9389247732471253,
+          -0.11508905243610426
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=037|attempt=180",
+      "index": 37,
+      "near_tie": false,
+      "retry": 1,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 182,
+      "coordinates": [
+        -1.809232515939664,
+        0.008718998724917711,
+        -0.7175082523260377,
+        -1.6850346692103872,
+        -0.026455521840461863,
+        0.13162500784666503,
+        0.012994639441489764,
+        -0.0858783212100789,
+        -3.0910966430321944,
+        -0.5897128315055759,
+        0.14086769137612623,
+        -0.17644730657681232,
+        -0.007016066240975637,
+        0.007699899098442952,
+        -0.054229874608104384,
+        -0.1132019652527273,
+        2.124615799475197
+      ],
+      "dual_vertices": [
+        [
+          0.8901381542111593,
+          0.0859216608900028,
+          0.0,
+          0.0
+        ],
+        [
+          -0.6019954764730504,
+          0.6683635075896877,
+          0.0,
+          0.0
+        ],
+        [
+          -0.9364327518578519,
+          0.4827731632350717,
+          0.0,
+          0.0
+        ],
+        [
+          0.16779552728794825,
+          -0.9205313246407655,
+          0.0,
+          0.0
+        ],
+        [
+          0.8063825559827398,
+          -0.26113364821159807,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.3154446069524061,
+          0.8381834629499969
+        ],
+        [
+          0.0,
+          0.0,
+          -1.059922976618995,
+          0.5296806709221676
+        ],
+        [
+          0.0,
+          0.0,
+          -0.27883529115843686,
+          -0.9560755257465599
+        ],
+        [
+          0.0,
+          0.0,
+          -0.20496035157573397,
+          -0.9896696766774988
+        ],
+        [
+          0.0,
+          0.0,
+          0.6588486474089219,
+          -0.6843813230150294
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=038|attempt=182",
+      "index": 38,
+      "near_tie": false,
+      "retry": 1,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 184,
+      "coordinates": [
+        -2.16451531742685,
+        -1.282430663842354,
+        -0.8481228236514595,
+        -1.0782349197919983,
+        -0.08803047168563939,
+        0.017444404297695764,
+        -0.1499886604499321,
+        0.09451106539398797,
+        -1.6268313657628914,
+        -1.0165919796869805,
+        -1.0947923237280137,
+        -1.6163236102236198,
+        -0.09241118695057361,
+        0.04915970272307579,
+        0.0533125892080297,
+        0.010359954479685948,
+        4.039356450633303
+      ],
+      "dual_vertices": [
+        [
+          -0.40126032353237673,
+          0.81190168582082,
+          0.0,
+          0.0
+        ],
+        [
+          -0.716928977578789,
+          0.7062789054787143,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8508864032517144,
+          -0.024411811932123443,
+          0.0,
+          0.0
+        ],
+        [
+          -0.31792419456056625,
+          -1.0394823662046244,
+          0.0,
+          0.0
+        ],
+        [
+          0.7162730532412847,
+          -0.8634352068144882,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.9294243571946179,
+          0.3673721498503825
+        ],
+        [
+          0.0,
+          0.0,
+          0.10762892555019965,
+          0.9977666222583718
+        ],
+        [
+          0.0,
+          0.0,
+          -0.7516889305996001,
+          0.5993169750001784
+        ],
+        [
+          0.0,
+          0.0,
+          -0.9295008789240543,
+          0.07116507726678192
+        ],
+        [
+          0.0,
+          0.0,
+          0.8476783684823168,
+          -0.18423944089472868
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=039|attempt=184",
+      "index": 39,
+      "near_tie": false,
+      "retry": 1,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 195,
+      "coordinates": [
+        -0.0115546140678197,
+        0.5663335475772658,
+        0.6770246215679476,
+        1.5028852953449938,
+        0.09682554560430022,
+        -0.13750652692569487,
+        -0.09864673162324622,
+        0.1303033702192586,
+        -1.1868526082149524,
+        -0.8223209915188019,
+        -0.8719092635261517,
+        0.4286160328859278,
+        -0.170020792765885,
+        0.10395118953952408,
+        0.1341988814537523,
+        -0.030373479813484185,
+        5.564971457493636
+      ],
+      "dual_vertices": [
+        [
+          0.9534706124988428,
+          0.6063632765078734,
+          0.0,
+          0.0
+        ],
+        [
+          -0.9828769575673401,
+          -0.18904965150788877,
+          0.0,
+          0.0
+        ],
+        [
+          -0.757205998693621,
+          -0.7878661205733202,
+          0.0,
+          0.0
+        ],
+        [
+          -0.13551310940509553,
+          -0.8537829076977203,
+          0.0,
+          0.0
+        ],
+        [
+          0.71853928869805,
+          -0.5398217522624399,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.03947190680571087,
+          0.9549081635463916
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8341491832978792,
+          -0.07277608309824533
+        ],
+        [
+          0.0,
+          0.0,
+          -0.9054016624382625,
+          -0.6268474565152506
+        ],
+        [
+          0.0,
+          0.0,
+          -0.24616063169292543,
+          -1.1080259276307587
+        ],
+        [
+          0.0,
+          0.0,
+          0.454722455466346,
+          -0.8486585318952747
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=040|attempt=195",
+      "index": 40,
+      "near_tie": false,
+      "retry": 10,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 202,
+      "coordinates": [
+        -2.094725372425039,
+        -1.6856935943555602,
+        0.22141526444446627,
+        -1.282973121483108,
+        0.07299732655853836,
+        -0.021549723673217586,
+        -0.07793985626515978,
+        -0.09330665353196449,
+        -3.2392155301569754,
+        -0.9170696397434716,
+        -1.2290158636229387,
+        -0.6555531106818653,
+        -0.03409520406542088,
+        -0.05223674477295416,
+        0.03999958921368646,
+        0.1387742616404286,
+        3.211803823530346
+      ],
+      "dual_vertices": [
+        [
+          0.36822352556458987,
+          0.909320938954558,
+          0.0,
+          0.0
+        ],
+        [
+          -0.27672251972180933,
+          1.1821031191064206,
+          0.0,
+          0.0
+        ],
+        [
+          -0.7411660236390712,
+          -0.8904552221114795,
+          0.0,
+          0.0
+        ],
+        [
+          -0.43092117289501203,
+          -0.9619192009301292,
+          0.0,
+          0.0
+        ],
+        [
+          -0.010199490485538186,
+          -0.9961867227530716,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.5281841831214535,
+          0.733712088134041
+        ],
+        [
+          0.0,
+          0.0,
+          0.43690277861929694,
+          0.7728550041072159
+        ],
+        [
+          0.0,
+          0.0,
+          -0.5507805336838018,
+          0.8028102181254525
+        ],
+        [
+          0.0,
+          0.0,
+          -1.062158015513536,
+          0.16343092423728545
+        ],
+        [
+          0.0,
+          0.0,
+          -0.2308487961936081,
+          -0.8209752780228151
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=041|attempt=202",
+      "index": 41,
+      "near_tie": false,
+      "retry": 6,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 203,
+      "coordinates": [
+        -1.7201303826924135,
+        -0.8356943746666008,
+        -0.1944246115058225,
+        -0.9665469640443765,
+        -0.004746760064393264,
+        -0.08843162522693385,
+        -0.07181794061844918,
+        0.2535703498186651,
+        -1.2191219968144205,
+        -0.19524197893637557,
+        -0.9077001749464587,
+        0.23301635517454658,
+        -0.10878601796944676,
+        0.20898755688717385,
+        -0.14744429423024047,
+        0.005068589929337723,
+        0.16168740456405395
+      ],
+      "dual_vertices": [
+        [
+          0.7406238257916277,
+          0.48339229517473237,
+          0.0,
+          0.0
+        ],
+        [
+          -0.9153119970751367,
+          0.8134422067435163,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8632433285035908,
+          -0.10594403284401928,
+          0.0,
+          0.0
+        ],
+        [
+          0.6666936987946761,
+          -0.670819861608567,
+          0.0,
+          0.0
+        ],
+        [
+          0.8048437351167946,
+          -0.3299321134777281,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.28109078672742166,
+          0.7921673147945614
+        ],
+        [
+          0.0,
+          0.0,
+          -0.31627245957644806,
+          0.9265569234726346
+        ],
+        [
+          0.0,
+          0.0,
+          -0.667273247156969,
+          -0.7662391709366947
+        ],
+        [
+          0.0,
+          0.0,
+          0.7076119628841798,
+          -0.512465616500237
+        ],
+        [
+          0.0,
+          0.0,
+          1.1893994533163847,
+          -0.16293756906672038
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=042|attempt=203",
+      "index": 42,
+      "near_tie": false,
+      "retry": 0,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 204,
+      "coordinates": [
+        -2.2960600116082306,
+        -0.8613591247789383,
+        -0.3734797845924994,
+        -1.486249283562366,
+        -0.07244269369012055,
+        -0.1009306540561081,
+        0.0038747025679835567,
+        0.14754820352143488,
+        -1.3821377307505587,
+        -0.5144616925504767,
+        -0.2397048641763468,
+        0.8643323584305479,
+        -0.10097524592252892,
+        0.06746946847662598,
+        0.08659623045948625,
+        -0.08862531374214459,
+        4.730543002366712
+      ],
+      "dual_vertices": [
+        [
+          0.779674870022502,
+          0.5184081798429997,
+          0.0,
+          0.0
+        ],
+        [
+          -0.7679362064118556,
+          0.7607467769817499,
+          0.0,
+          0.0
+        ],
+        [
+          -0.9348097781762863,
+          0.18719581072674593,
+          0.0,
+          0.0
+        ],
+        [
+          0.6276989619724218,
+          -0.5987817543976403,
+          0.0,
+          0.0
+        ],
+        [
+          0.7389444272271714,
+          -0.40599056477919204,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.9076222804841501,
+          0.41320217481095955
+        ],
+        [
+          0.0,
+          0.0,
+          -0.5889860046120371,
+          -0.6403107081478342
+        ],
+        [
+          0.0,
+          0.0,
+          -0.4280732667863974,
+          -0.9364073349480964
+        ],
+        [
+          0.0,
+          0.0,
+          0.3312273051387081,
+          -0.9958575640466105
+        ],
+        [
+          0.0,
+          0.0,
+          0.8505917471094384,
+          -0.22874479313449622
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=043|attempt=204",
+      "index": 43,
+      "near_tie": false,
+      "retry": 0,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 210,
+      "coordinates": [
+        -3.0769471105151154,
+        -0.9667449441731161,
+        -0.47775265366869424,
+        -0.0829151879232506,
+        -0.13939437086645035,
+        -0.06183737525096305,
+        0.031102137235781143,
+        0.2325304824160543,
+        -0.22435790094937746,
+        0.9372226761224882,
+        0.0202315945012612,
+        0.2573944776021479,
+        0.14153069581273978,
+        -0.07733655492442366,
+        -0.1402191957046775,
+        -0.05715408070715709,
+        4.571947813324719
+      ],
+      "dual_vertices": [
+        [
+          1.2213329784355287,
+          0.09949024450587396,
+          0.0,
+          0.0
+        ],
+        [
+          -0.4047722406745428,
+          0.8176950914354139,
+          0.0,
+          0.0
+        ],
+        [
+          -0.4517874230441684,
+          -0.7138256577534662,
+          0.0,
+          0.0
+        ],
+        [
+          -0.41070970257644474,
+          -0.8153049028336249,
+          0.0,
+          0.0
+        ],
+        [
+          0.3329125568717217,
+          -0.9448908882751856,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.9799631114358416,
+          0.2765077374556228
+        ],
+        [
+          0.0,
+          0.0,
+          0.0941304126639539,
+          1.2280976194652424
+        ],
+        [
+          0.0,
+          0.0,
+          -0.9461786475996511,
+          0.8046012170091618
+        ],
+        [
+          0.0,
+          0.0,
+          -0.9967109442886816,
+          -0.04832350210248695
+        ],
+        [
+          0.0,
+          0.0,
+          0.7245896084384889,
+          -0.5941882822871061
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=044|attempt=210",
+      "index": 44,
+      "near_tie": false,
+      "retry": 5,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 212,
+      "coordinates": [
+        -0.5104370962373989,
+        -0.08746318678577351,
+        0.06685150940054213,
+        0.6830112994862997,
+        -0.011170573437476683,
+        0.02223583215797434,
+        -0.10400024358362746,
+        0.0698676699460226,
+        -0.48792468024084495,
+        1.1757240631249315,
+        0.7957784247165672,
+        0.5100094527325324,
+        -0.022426949797333857,
+        0.09461778928466485,
+        -0.11575719931061422,
+        -0.12029198374019563,
+        5.09719627733582
+      ],
+      "dual_vertices": [
+        [
+          -0.11356577614572537,
+          0.9498988764532953,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8767032933690584,
+          0.2932993995699068,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8963340531732966,
+          -0.33206872246548924,
+          0.0,
+          0.0
+        ],
+        [
+          -0.15214751400799947,
+          -0.8286569142924053,
+          0.0,
+          0.0
+        ],
+        [
+          0.857074527761369,
+          -0.5200281955759073,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.7108749608857166,
+          0.9211201421082551
+        ],
+        [
+          0.0,
+          0.0,
+          -0.0598048043951503,
+          0.9639204424364992
+        ],
+        [
+          0.0,
+          0.0,
+          -0.5238456852739044,
+          0.9509556702474558
+        ],
+        [
+          0.0,
+          0.0,
+          -0.26618315770218565,
+          -0.8384791878575285
+        ],
+        [
+          0.0,
+          0.0,
+          0.8405979593950644,
+          -0.24557825470294375
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=045|attempt=212",
+      "index": 45,
+      "near_tie": false,
+      "retry": 1,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 215,
+      "coordinates": [
+        -0.4031205298598747,
+        1.5969866239052892,
+        1.468925373626547,
+        0.7902018826425159,
+        0.10460358676858232,
+        -0.014783165173760309,
+        0.038499437377562826,
+        -0.03568949551680191,
+        -1.2026900039236295,
+        -0.37505097290014994,
+        0.3975238703908361,
+        -0.938720973929605,
+        -0.17297127333097145,
+        0.09742454559604893,
+        0.05989210305002565,
+        -0.046733425375643046,
+        6.09230279326838
+      ],
+      "dual_vertices": [
+        [
+          0.4995489694399916,
+          0.8010993841773303,
+          0.0,
+          0.0
+        ],
+        [
+          -0.4236945310352683,
+          0.7847642338217072,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8977085748581767,
+          0.6116607113761059,
+          0.0,
+          0.0
+        ],
+        [
+          -0.9267767514716767,
+          0.2654286678205477,
+          0.0,
+          0.0
+        ],
+        [
+          0.49539791744526485,
+          -0.8879505815354476,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.027664352660721,
+          0.09503462244441671
+        ],
+        [
+          0.0,
+          0.0,
+          0.8594575220832007,
+          0.7656572580862581
+        ],
+        [
+          0.0,
+          0.0,
+          -0.6409096009557538,
+          0.6455264787698781
+        ],
+        [
+          0.0,
+          0.0,
+          -1.1385244101776797,
+          0.35331306497616294
+        ],
+        [
+          0.0,
+          0.0,
+          -0.7868341434318115,
+          -0.8361776296024072
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=046|attempt=215",
+      "index": 46,
+      "near_tie": false,
+      "retry": 2,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 219,
+      "coordinates": [
+        -0.9886680919637076,
+        1.6102784859231924,
+        1.1079298065148342,
+        0.6950149898389073,
+        -0.067716190303569,
+        -0.177380816186397,
+        0.09907429258652231,
+        0.038805162663934245,
+        -1.0246880022545615,
+        0.23216927288922437,
+        0.18596455716797605,
+        0.76977879696122,
+        0.13638450745423963,
+        0.06799462135613617,
+        -0.19138349684239217,
+        -0.14218714137675612,
+        4.470160901898762
+      ],
+      "dual_vertices": [
+        [
+          1.0383794463724636,
+          0.23929836111168828,
+          0.0,
+          0.0
+        ],
+        [
+          0.27201367366209317,
+          1.1081510262218255,
+          0.0,
+          0.0
+        ],
+        [
+          -0.29227615757258457,
+          0.9122462283317296,
+          0.0,
+          0.0
+        ],
+        [
+          -0.4227931456608981,
+          0.7470918197827016,
+          0.0,
+          0.0
+        ],
+        [
+          0.1461942481050714,
+          -1.1223120046373902,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.2398279200209514,
+          0.08422696329422545
+        ],
+        [
+          0.0,
+          0.0,
+          1.0476706874494766,
+          0.49923737047520395
+        ],
+        [
+          0.0,
+          0.0,
+          -0.17640305810942503,
+          0.8778437126123182
+        ],
+        [
+          0.0,
+          0.0,
+          -0.9350770300294455,
+          0.1012620978790535
+        ],
+        [
+          0.0,
+          0.0,
+          0.6850040807789697,
+          -1.0261481721662689
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=047|attempt=219",
+      "index": 47,
+      "near_tie": false,
+      "retry": 3,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 224,
+      "coordinates": [
+        -0.0977383864941214,
+        0.9497367239192142,
+        1.1391904557955685,
+        0.055495662723489325,
+        -0.10468842723817545,
+        -0.04335295148540594,
+        -0.041104502839717755,
+        0.22012667811034797,
+        -0.7212509037122035,
+        1.8702641897576469,
+        1.2023635570447007,
+        1.8997507707225207,
+        0.055907354186732164,
+        -0.09496496748709635,
+        0.023784696052337295,
+        0.023235099955896454,
+        0.7517995901114354
+      ],
+      "dual_vertices": [
+        [
+          -0.3569835965570357,
+          1.112248007794959,
+          0.0,
+          0.0
+        ],
+        [
+          -0.7998956005728142,
+          0.431238852178846,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8219366768101037,
+          -0.1924375602081075,
+          0.0,
+          0.0
+        ],
+        [
+          -0.5670503948754678,
+          -0.6957518655286357,
+          0.0,
+          0.0
+        ],
+        [
+          0.83476057398535,
+          -0.33529468640181725,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0492106021400633,
+          0.2981923018838016
+        ],
+        [
+          0.0,
+          0.0,
+          0.14289767299201295,
+          1.0807565560720023
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8522703239832503,
+          -0.6246620487691749
+        ],
+        [
+          0.0,
+          0.0,
+          -0.625742981827096,
+          -0.9365642783181717
+        ],
+        [
+          0.0,
+          0.0,
+          -0.3942665873305474,
+          -0.8847580111007295
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=048|attempt=224",
+      "index": 48,
+      "near_tie": false,
+      "retry": 4,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 228,
+      "coordinates": [
+        -2.764698368623129,
+        -0.2203229986965744,
+        -1.135071947871603,
+        -1.9328586240237369,
+        0.08691357821118996,
+        -0.05448582938063874,
+        -0.04970277868024496,
+        -0.015667223905340436,
+        -0.5671906001402073,
+        1.1121946588358822,
+        -0.4632238966437975,
+        0.0697491178691829,
+        -0.06747999993175358,
+        0.15138242544738698,
+        -0.008393797881379228,
+        -0.0972526832563737,
+        4.71585008598946
+      ],
+      "dual_vertices": [
+        [
+          0.8892681443378042,
+          0.11990640363945534,
+          0.0,
+          0.0
+        ],
+        [
+          -0.5981343715708883,
+          0.6746480561751829,
+          0.0,
+          0.0
+        ],
+        [
+          -0.9326324373212859,
+          -0.019347718771929708,
+          0.0,
+          0.0
+        ],
+        [
+          -0.897819473644254,
+          -0.39108102198080186,
+          0.0,
+          0.0
+        ],
+        [
+          1.0329438338213852,
+          -0.03693889291766075,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.3720231908349959,
+          0.8349895515309482
+        ],
+        [
+          0.0,
+          0.0,
+          -0.7237338550872539,
+          0.4192411866975567
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8067223263723764,
+          -0.48654261853848074
+        ],
+        [
+          0.0,
+          0.0,
+          -0.027813698104739694,
+          -0.8612204297988467
+        ],
+        [
+          0.0,
+          0.0,
+          0.5444471950454439,
+          -0.9240143050295131
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=049|attempt=228",
+      "index": 49,
+      "near_tie": false,
+      "retry": 3,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 230,
+      "coordinates": [
+        -0.13356054833826697,
+        0.58949696110196,
+        0.9063173702250145,
+        0.5519672564783092,
+        0.00511649442118047,
+        -0.10643175165967497,
+        0.009208019344069696,
+        -0.059453402087325774,
+        -1.1442353701961827,
+        1.104715618064458,
+        2.0433194830185557,
+        1.2754713481824105,
+        -0.07398258182337256,
+        -0.11693965405049751,
+        0.06748092716154774,
+        0.06119924640149606,
+        4.374899484626546
+      ],
+      "dual_vertices": [
+        [
+          0.5548174634121383,
+          0.8603657566279835,
+          0.0,
+          0.0
+        ],
+        [
+          -0.9416393338216965,
+          0.1639823558494918,
+          0.0,
+          0.0
+        ],
+        [
+          -0.4160388939559269,
+          -1.1046086173544283,
+          0.0,
+          0.0
+        ],
+        [
+          0.4307176403924422,
+          -0.9241172559159505,
+          0.0,
+          0.0
+        ],
+        [
+          0.8259170556127277,
+          -0.3866632432655631,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.1785901370473192,
+          1.0314990797505628
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0001218724690404,
+          0.31293613741645243
+        ],
+        [
+          0.0,
+          0.0,
+          -0.9100318852253166,
+          -0.09007648244368428
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8536217879603775,
+          -0.19686013241541941
+        ],
+        [
+          0.0,
+          0.0,
+          -0.1376450544927972,
+          -1.0444105868002052
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=050|attempt=230",
+      "index": 50,
+      "near_tie": false,
+      "retry": 1,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 231,
+      "coordinates": [
+        -1.5748340132215939,
+        0.6014878357728755,
+        0.9829655682174018,
+        0.6603507536274518,
+        0.0521079601854328,
+        -0.07227143338466005,
+        0.05157591107075438,
+        -0.012577594799865498,
+        -1.1246947540084913,
+        1.0095939545073231,
+        1.5732057640492076,
+        1.7879352461803686,
+        -0.059510311635553266,
+        -0.09712803282854957,
+        0.08024109780805155,
+        0.024068664704625813,
+        4.542318704940689
+      ],
+      "dual_vertices": [
+        [
+          0.6562408907568374,
+          0.9206767945065264,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0603305683008493,
+          -0.008278636940859525,
+          0.0,
+          0.0
+        ],
+        [
+          0.030359067785510976,
+          -1.0533112258026711,
+          0.0,
+          0.0
+        ],
+        [
+          0.8507973177168535,
+          -0.7455217966463239,
+          0.0,
+          0.0
+        ],
+        [
+          0.851985240867555,
+          -0.5214961210468136,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.6350884496656722,
+          0.7594647680277528
+        ],
+        [
+          0.0,
+          0.0,
+          -0.9845275701888364,
+          -0.26042542351364256
+        ],
+        [
+          0.0,
+          0.0,
+          -0.7074051746034987,
+          -0.5734348575411378
+        ],
+        [
+          0.0,
+          0.0,
+          -0.599330457184116,
+          -0.6402755827935441
+        ],
+        [
+          0.0,
+          0.0,
+          0.41493322349214407,
+          -0.9615039969073519
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=051|attempt=231",
+      "index": 51,
+      "near_tie": false,
+      "retry": 0,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 232,
+      "coordinates": [
+        -1.5992303872549551,
+        -0.47737553783344155,
+        -0.3762946974820215,
+        0.7934570265034292,
+        0.0471563506117496,
+        -0.09367046121440087,
+        -0.03395816184125969,
+        -0.01789765156566046,
+        -2.9305174002404635,
+        1.5237254355616945,
+        0.5250751493130502,
+        0.7720736085078829,
+        0.05362804670740726,
+        0.01302135386422732,
+        -0.15331602996381033,
+        -0.07678457143419051,
+        1.070112092395459
+      ],
+      "dual_vertices": [
+        [
+          0.9783098664610467,
+          0.47620682391046243,
+          0.0,
+          0.0
+        ],
+        [
+          0.7093182033470201,
+          0.6246069541094003,
+          0.0,
+          0.0
+        ],
+        [
+          0.022993137771262738,
+          1.0030188173815606,
+          0.0,
+          0.0
+        ],
+        [
+          -0.7927743317668199,
+          0.6410471108650483,
+          0.0,
+          0.0
+        ],
+        [
+          0.7312619259478957,
+          -0.8813663074907206,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.7501269582449479,
+          0.8740564584176711
+        ],
+        [
+          0.0,
+          0.0,
+          0.04918847086459689,
+          1.030839873848544
+        ],
+        [
+          0.0,
+          0.0,
+          0.012261176332553345,
+          0.9908697276194575
+        ],
+        [
+          0.0,
+          0.0,
+          -0.09867039135075531,
+          -0.8332719805200507
+        ],
+        [
+          0.0,
+          0.0,
+          0.7625069595540886,
+          -0.4889933406042418
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=052|attempt=232",
+      "index": 52,
+      "near_tie": false,
+      "retry": 0,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 238,
+      "coordinates": [
+        -0.22997609093868945,
+        0.9924677568149134,
+        1.3339719981730949,
+        1.749887648323513,
+        0.1741646154268262,
+        0.00431681346834133,
+        -0.15134304975651783,
+        0.1355237724650743,
+        -1.5400644868227618,
+        0.17028104230657043,
+        0.9868973413335914,
+        0.9003972224154511,
+        0.04767219746489809,
+        0.0999035541218397,
+        -0.055421127792072436,
+        0.08815555713903145,
+        5.293798795564574
+      ],
+      "dual_vertices": [
+        [
+          0.9860779504804158,
+          0.17546964135651313,
+          0.0,
+          0.0
+        ],
+        [
+          0.15982422729408916,
+          0.8421611183648101,
+          0.0,
+          0.0
+        ],
+        [
+          -1.1399495986502008,
+          0.06826991775493796,
+          0.0,
+          0.0
+        ],
+        [
+          0.6864073784832622,
+          -0.49716881846083055,
+          0.0,
+          0.0
+        ],
+        [
+          1.167930767150145,
+          -0.21181821262898856,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.6787488344494651,
+          0.8724430535389461
+        ],
+        [
+          0.0,
+          0.0,
+          -0.3530197117155949,
+          -0.7678543390192549
+        ],
+        [
+          0.0,
+          0.0,
+          0.41532827355390467,
+          -0.9768974439506756
+        ],
+        [
+          0.0,
+          0.0,
+          0.6134463665856063,
+          -0.9351946781337035
+        ],
+        [
+          0.0,
+          0.0,
+          0.9575336141277074,
+          -0.0025790565101178084
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=053|attempt=238",
+      "index": 53,
+      "near_tie": false,
+      "retry": 5,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 243,
+      "coordinates": [
+        -3.1881019920476654,
+        0.6171551928896715,
+        -0.5266821876343704,
+        0.6180884762003928,
+        -0.028789063289110413,
+        -0.033314805546733495,
+        0.013388511304862499,
+        -0.1216040507890966,
+        -1.0884485853343728,
+        -0.846959442408655,
+        0.09735734139086803,
+        0.5273952399706432,
+        0.04697982554174798,
+        0.16966982813435177,
+        0.025322070827346055,
+        -0.12175230926069122,
+        0.060768058468578134
+      ],
+      "dual_vertices": [
+        [
+          0.7398106464031703,
+          0.6644538706150641,
+          0.0,
+          0.0
+        ],
+        [
+          0.7035163486188803,
+          0.6964004545813043,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0203682132805,
+          0.1862754939428104,
+          0.0,
+          0.0
+        ],
+        [
+          -0.7890654006065289,
+          -0.4457238221211213,
+          0.0,
+          0.0
+        ],
+        [
+          1.095473450952267,
+          -0.5219714664784314,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.7012326992578141,
+          0.7113422092657831
+        ],
+        [
+          0.0,
+          0.0,
+          0.3493009814307207,
+          1.0738719048128296
+        ],
+        [
+          0.0,
+          0.0,
+          -0.26632980414440993,
+          0.9404832235870546
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8228455391205519,
+          -0.18677918238763358
+        ],
+        [
+          0.0,
+          0.0,
+          0.7047030572779286,
+          -0.4664128180651254
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=054|attempt=243",
+      "index": 54,
+      "near_tie": false,
+      "retry": 4,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 247,
+      "coordinates": [
+        -1.2549456348218693,
+        0.6945486222327929,
+        -0.15153317517273887,
+        -0.7718372841854637,
+        0.10630570563862958,
+        0.037505794742116114,
+        -0.04028625887433147,
+        -0.11763369266620187,
+        -0.1436053688687781,
+        0.34144575015521955,
+        1.1280451352816738,
+        0.7110974675108878,
+        0.05001554722026355,
+        -0.13304623390612216,
+        0.04870141709795646,
+        0.07673311112084,
+        0.6005438990128402
+      ],
+      "dual_vertices": [
+        [
+          -0.7002927356000747,
+          0.7046935039638883,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8529416576601397,
+          -0.3435588924956575,
+          0.0,
+          0.0
+        ],
+        [
+          -0.5553604416356727,
+          -0.889950247855595,
+          0.0,
+          0.0
+        ],
+        [
+          0.8293578012217246,
+          -0.7971385427719329,
+          0.0,
+          0.0
+        ],
+        [
+          0.9984450683555299,
+          -0.3953005825249355,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.7810235858040765,
+          0.4095562485175358
+        ],
+        [
+          0.0,
+          0.0,
+          0.03732140480764734,
+          1.0570049985739043
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8282905918399789,
+          -0.7050488889315419
+        ],
+        [
+          0.0,
+          0.0,
+          0.5902210058679479,
+          -0.7641682149498186
+        ],
+        [
+          0.0,
+          0.0,
+          1.0446624703292007,
+          -0.1740021672272615
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=055|attempt=247",
+      "index": 55,
+      "near_tie": false,
+      "retry": 3,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 253,
+      "coordinates": [
+        -1.3217581005092418,
+        -0.6240565347357369,
+        -1.237422711782917,
+        -0.1676439313024889,
+        -0.12761718463695232,
+        0.15966455894177223,
+        -0.026848944380504752,
+        -0.1723104002410279,
+        -0.4066288709248145,
+        1.0071283670733793,
+        0.5361277161155183,
+        -0.017761056555530393,
+        0.18113739206587848,
+        -0.017755903273526722,
+        -0.0599033932841502,
+        0.031721389275328526,
+        3.6236957502759584
+      ],
+      "dual_vertices": [
+        [
+          -0.28827126285552546,
+          0.8439068436074721,
+          0.0,
+          0.0
+        ],
+        [
+          -0.9306039737546281,
+          0.7393741827329596,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8774452452951633,
+          -0.4504880932952846,
+          0.0,
+          0.0
+        ],
+        [
+          -0.39081924711922095,
+          -0.7579820361211017,
+          0.0,
+          0.0
+        ],
+        [
+          1.1635663348548178,
+          -0.28286162052368224,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.5853775294096696,
+          0.7184551284762547
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8227180905684343,
+          -0.5955714513047453
+        ],
+        [
+          0.0,
+          0.0,
+          -0.06377224916424253,
+          -0.8571522021392308
+        ],
+        [
+          0.0,
+          0.0,
+          0.855212577270664,
+          -0.812071670837639
+        ],
+        [
+          0.0,
+          0.0,
+          0.952721577922624,
+          -0.1634056473263809
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=056|attempt=253",
+      "index": 56,
+      "near_tie": false,
+      "retry": 5,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 254,
+      "coordinates": [
+        -2.5079826498598674,
+        -0.46562894541146177,
+        -1.9155798219460938,
+        -1.5186699511386257,
+        -0.12464775677937548,
+        0.16881876970129459,
+        -0.1627525154721897,
+        0.13157191774285673,
+        -1.1812934237637507,
+        -0.05609635278456579,
+        -0.26276017528317136,
+        -0.07677634099379621,
+        -0.07192811701137136,
+        -0.10151796601633833,
+        0.15358214028717693,
+        -0.14505956878335358,
+        6.157881449285352
+      ],
+      "dual_vertices": [
+        [
+          -0.13331557828512924,
+          0.8677613046234499,
+          0.0,
+          0.0
+        ],
+        [
+          -0.6636622522869772,
+          0.9737340818710557,
+          0.0,
+          0.0
+        ],
+        [
+          -0.971314867380418,
+          0.31064505792295033,
+          0.0,
+          0.0
+        ],
+        [
+          0.8313857287658956,
+          -0.3749903276207969,
+          0.0,
+          0.0
+        ],
+        [
+          1.2039594612651898,
+          -0.21559226513469323,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.15165965111611202,
+          1.1931615147306933
+        ],
+        [
+          0.0,
+          0.0,
+          -0.7941579815215163,
+          0.4066976240850547
+        ],
+        [
+          0.0,
+          0.0,
+          -0.656425659396054,
+          -1.0241723661650879
+        ],
+        [
+          0.0,
+          0.0,
+          0.818856862423003,
+          -0.500946917171946
+        ],
+        [
+          0.0,
+          0.0,
+          0.9302386803421192,
+          -0.05639186475021891
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=057|attempt=254",
+      "index": 57,
+      "near_tie": false,
+      "retry": 0,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 255,
+      "coordinates": [
+        -1.3395922532904183,
+        -0.13541657469900478,
+        0.7093991406697032,
+        0.12178773709945961,
+        -0.18583323242805871,
+        -0.12175238336466808,
+        0.18313604864329258,
+        0.18413293363366603,
+        -2.691391240070746,
+        0.7043025844049955,
+        0.32526134795043066,
+        1.0050446932821595,
+        0.08669962463992156,
+        0.13795276174315677,
+        0.1470268674879415,
+        -0.19364406175604226,
+        2.541946542552984
+      ],
+      "dual_vertices": [
+        [
+          0.7297485878680945,
+          0.4169187731246714,
+          0.0,
+          0.0
+        ],
+        [
+          0.604899723827132,
+          0.6610863847087911,
+          0.0,
+          0.0
+        ],
+        [
+          -0.3531486622824253,
+          1.1630607259853487,
+          0.0,
+          0.0
+        ],
+        [
+          -0.5136628139469145,
+          -1.102961162538856,
+          0.0,
+          0.0
+        ],
+        [
+          0.7491167029749325,
+          -0.5898213275089903,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.4937671713269275,
+          0.6940529902958036
+        ],
+        [
+          0.0,
+          0.0,
+          -1.1063298656338336,
+          0.08934493878571417
+        ],
+        [
+          0.0,
+          0.0,
+          -1.1680326204446723,
+          0.02509632569832532
+        ],
+        [
+          0.0,
+          0.0,
+          0.20062197471962656,
+          -1.1617564422178308
+        ],
+        [
+          0.0,
+          0.0,
+          0.8230428246086305,
+          -0.16067669423163106
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=058|attempt=255",
+      "index": 58,
+      "near_tie": false,
+      "retry": 0,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 259,
+      "coordinates": [
+        -1.9280425027932888,
+        -0.5438999659566184,
+        -1.2260723689764048,
+        -0.780523728843342,
+        -0.020461304245898045,
+        -0.15559072492906578,
+        0.09564016429709933,
+        0.03248664789114313,
+        -0.3624292356089369,
+        0.9838275943660754,
+        -0.3519786922949366,
+        1.5098873843470126,
+        0.11363989421164429,
+        -0.0009010398418624332,
+        -0.11454552763855828,
+        -0.08427448965598607,
+        4.392162091938252
+      ],
+      "dual_vertices": [
+        [
+          0.7622665054154889,
+          0.6827057473193239,
+          0.0,
+          0.0
+        ],
+        [
+          -0.32842326413452416,
+          0.985957643121763,
+          0.0,
+          0.0
+        ],
+        [
+          -0.27191496987418634,
+          -0.9316552193556414,
+          0.0,
+          0.0
+        ],
+        [
+          0.07185743268460457,
+          -0.8448030641635415,
+          0.0,
+          0.0
+        ],
+        [
+          1.0899026145799984,
+          -0.015042039914736032,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.362745617869862,
+          1.1242560049098322
+        ],
+        [
+          0.0,
+          0.0,
+          -0.9993458533209152,
+          0.6898706221756304
+        ],
+        [
+          0.0,
+          0.0,
+          -1.070966847825302,
+          0.16042530825211934
+        ],
+        [
+          0.0,
+          0.0,
+          0.030010357942739523,
+          -0.9661176694178439
+        ],
+        [
+          0.0,
+          0.0,
+          0.47006648460662703,
+          -0.8784260259852463
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=059|attempt=259",
+      "index": 59,
+      "near_tie": false,
+      "retry": 3,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 261,
+      "coordinates": [
+        -1.4110589918909793,
+        0.07701889812222187,
+        -1.1267722900659114,
+        -0.9363527166410401,
+        0.09395110694952746,
+        -0.07934435329511091,
+        -0.04411166148328519,
+        -0.07001744255751935,
+        -4.0353952299639495,
+        -1.9835499910641734,
+        0.019145147828865148,
+        -0.4952901943314199,
+        -0.04048265646478755,
+        -0.015992461362893826,
+        0.16428710755782178,
+        -0.023652478746141,
+        4.684310579816953
+      ],
+      "dual_vertices": [
+        [
+          0.6715198738866633,
+          0.8020072740892716,
+          0.0,
+          0.0
+        ],
+        [
+          0.16872278017925632,
+          0.8632516197186257,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8129751648357049,
+          -0.4113706664046123,
+          0.0,
+          0.0
+        ],
+        [
+          -0.3721718563412344,
+          -0.8060559575497301,
+          0.0,
+          0.0
+        ],
+        [
+          0.387944502140637,
+          -0.9777082646221689,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.3127443431784169,
+          0.8436834232061405
+        ],
+        [
+          0.0,
+          0.0,
+          -0.836199658172184,
+          -0.13454610679172824
+        ],
+        [
+          0.0,
+          0.0,
+          0.6621580475970346,
+          -0.5868212902489875
+        ],
+        [
+          0.0,
+          0.0,
+          0.7020223582912924,
+          -0.5738241126318535
+        ],
+        [
+          0.0,
+          0.0,
+          1.0104671318394645,
+          -0.3974530860648276
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=060|attempt=261",
+      "index": 60,
+      "near_tie": false,
+      "retry": 1,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 263,
+      "coordinates": [
+        -3.1079256097710695,
+        0.19350545352864307,
+        -0.6991806300718264,
+        -2.4161235640899092,
+        -0.11381979871672447,
+        -0.1273076529215846,
+        0.0946297078490556,
+        0.17875098164736838,
+        -0.08444411413022869,
+        1.6876728629111768,
+        1.9216863919227705,
+        1.0278736345062156,
+        -0.014615743843798941,
+        0.07586531192978964,
+        -0.08458529953870711,
+        0.02737563518736319,
+        5.4465356999068995
+      ],
+      "dual_vertices": [
+        [
+          0.9608003213921313,
+          0.7083972230303549,
+          0.0,
+          0.0
+        ],
+        [
+          0.6505701740986205,
+          0.7149460723212198,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8864579240322762,
+          0.08908260364030099,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8789858975550892,
+          0.0012583490836071839,
+          0.0,
+          0.0
+        ],
+        [
+          0.9821160641006497,
+          -0.4896474062905215,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.7529166837255632,
+          0.7725489475623752
+        ],
+        [
+          0.0,
+          0.0,
+          -0.27216064042397436,
+          1.0093444233290252
+        ],
+        [
+          0.0,
+          0.0,
+          -0.6127391287209297,
+          0.8333819824418648
+        ],
+        [
+          0.0,
+          0.0,
+          -0.9369922089957231,
+          0.6358231058116385
+        ],
+        [
+          0.0,
+          0.0,
+          -0.1566496867257221,
+          -0.9516873920142257
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=061|attempt=263",
+      "index": 61,
+      "near_tie": false,
+      "retry": 1,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 265,
+      "coordinates": [
+        -0.8602482552087056,
+        -0.6504319097335693,
+        -0.3107725719479533,
+        -0.14978662042354432,
+        -0.02918384033114571,
+        0.026930521373937616,
+        -0.06936866757200252,
+        0.13537215632347877,
+        -1.4821229917872945,
+        -1.236947347906155,
+        -0.02264653274410831,
+        0.08175950229877933,
+        -0.08138397124534787,
+        -0.005675170486031229,
+        -0.08856945634608833,
+        -0.03796048230070198,
+        5.369815757008505
+      ],
+      "dual_vertices": [
+        [
+          0.11802204564229923,
+          0.8597039222005802,
+          0.0,
+          0.0
+        ],
+        [
+          -0.5293728815985626,
+          0.749813053540069,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8332245539027836,
+          0.024597551861040137,
+          0.0,
+          0.0
+        ],
+        [
+          -0.301349265730451,
+          -0.9775918281859012,
+          0.0,
+          0.0
+        ],
+        [
+          0.7899543031089321,
+          -0.2805221237927969,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.7612790880593389,
+          0.43688812214065736
+        ],
+        [
+          0.0,
+          0.0,
+          0.5738359613018407,
+          0.7530464967219573
+        ],
+        [
+          0.0,
+          0.0,
+          0.12310290379811958,
+          0.8627110122894557
+        ],
+        [
+          0.0,
+          0.0,
+          -0.9166834572466033,
+          -0.0028771821535380306
+        ],
+        [
+          0.0,
+          0.0,
+          0.38960941494474416,
+          -1.11263340247917
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=062|attempt=265",
+      "index": 62,
+      "near_tie": false,
+      "retry": 1,
+      "seed": 202609140302
+    },
+    {
+      "arm": "iid",
+      "construction_attempt": 270,
+      "coordinates": [
+        -1.5344093251365958,
+        -0.6390044324845349,
+        0.1594260443400134,
+        0.7912203960174032,
+        0.06452999149003676,
+        0.11381614780209941,
+        -0.09985300544726326,
+        0.014103529984197713,
+        -0.4379075576211324,
+        0.8335317185319072,
+        1.2539650612260993,
+        0.9273934124804727,
+        0.06150774412029046,
+        0.09032151996763849,
+        0.16774526893902114,
+        -0.17635572781552755,
+        2.7159430131777214
+      ],
+      "dual_vertices": [
+        [
+          1.0045119132371523,
+          0.09978517477730821,
+          0.0,
+          0.0
+        ],
+        [
+          0.9911805132805322,
+          0.37699480271870106,
+          0.0,
+          0.0
+        ],
+        [
+          0.45486247138979463,
+          0.7256644522609597,
+          0.0,
+          0.0
+        ],
+        [
+          -0.738987063312509,
+          0.612488781999865,
+          0.0,
+          0.0
+        ],
+        [
+          0.36992896596524055,
+          -0.7793355075872977,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.7296222756985128,
+          0.4923623805379517
+        ],
+        [
+          0.0,
+          0.0,
+          -0.5245938311946438,
+          0.7434092654060172
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0575405941003553,
+          0.35826531804299183
+        ],
+        [
+          0.0,
+          0.0,
+          -1.1455682757681571,
+          -0.09152555479817553
+        ],
+        [
+          0.0,
+          0.0,
+          -0.05211974494145001,
+          -1.2406363072272988
+        ]
+      ],
+      "generation": 1,
+      "id": "seed=202609140302|arm=iid|gen=1|index=063|attempt=270",
+      "index": 63,
+      "near_tie": false,
+      "retry": 4,
+      "seed": 202609140302
+    }
+  ],
+  "schema": "diagonal-cem-generation-v1",
+  "process_wall_ms": 9590.482497999972
+}

@@ -185,13 +185,13 @@ fn main() {
     let crossing = evaluated_state(
         "pentagon_equality_crossing",
         "exact_nonmaximum_control",
-        "thesis/09-rotated-regular-polygons-pentagon-profile-theorem.tex",
+        "thesis/chapters/09-rotated-regular-polygons.tex",
         pentagon_product(crossing_theta),
     );
     let improving_side = evaluated_state(
         "pentagon_improving_side",
         "exact_increasing_family_control",
-        "thesis/09-rotated-regular-polygons-pentagon-profile-theorem.tex",
+        "thesis/chapters/09-rotated-regular-polygons.tex",
         pentagon_product(crossing_theta + IMPROVING_SIDE_OFFSET),
     );
     let (random_attempt, random_duals) = first_random_state();
@@ -268,7 +268,7 @@ fn main() {
         probe_count: rows.len(),
         cases,
         exact_control_source:
-            "thesis/09-rotated-regular-polygons-pentagon-profile-theorem.tex",
+            "thesis/chapters/09-rotated-regular-polygons.tex",
         overall_claim_boundary: "Finite recomputed probes can find improving points or record a declared miss. Only the cited exact pentagon profile proves a non-local-maximum germ; finite misses and f64 HKO behavior are not local-maximality certificates.",
     };
     let provenance = Provenance {
@@ -300,7 +300,7 @@ fn main() {
             "experiments/local-maxima-check/src/bin/control_calibration.rs",
             "experiments/local-maxima-check/src/directions.rs",
             "experiments/hko-local-maximum/theorem/README.md",
-            "thesis/09-rotated-regular-polygons-pentagon-profile-theorem.tex",
+            "thesis/chapters/09-rotated-regular-polygons.tex",
             "experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/artifacts/DISCUSSION.md",
         ],
     };

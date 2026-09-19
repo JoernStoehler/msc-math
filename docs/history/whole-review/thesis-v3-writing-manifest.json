@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "artifact_version": "whole-v3-writing",
+  "frozen_utc": "2026-09-18T16:50:11.279717+00:00",
+  "source_revision": "0468759781874bab99a0abdf266cf41ed76a406e",
+  "source_identity_note": "04687597 includes all writing changes used in the already-built PDF; subsequent commits before freezing concern documentation only. No rebuild during packaging.",
+  "included_writing_commits": [
+    "6c67743b",
+    "30660839",
+    "04687597"
+  ],
+  "baseline": "docs/whole-review/thesis-v2-manifest.json",
+  "changed_source_files": {
+    "thesis/candidate/ds-complete-draft/chapter.tex": {
+      "sha256": "8ee39b7ee0876827c0871c1347a51894a540519ecc1cd622dcab1a7295d2569e",
+      "git_blob": "6ca325dd79c47beb9d328a8156fe374f7650152f"
+    },
+    "thesis/candidate/recovered/ai-writing/chapter.tex": {
+      "sha256": "6c3d357577137d9b364420e157fb600096251aa1c8735ba833a231c00bc795c4",
+      "git_blob": "31c0bad20428daa62c6c6e81b3797bd64f35ff32"
+    }
+  },
+  "pdf": {
+    "path": "docs/whole-review/thesis-v3-writing.pdf",
+    "sha256": "249f597a4094add726f077b83538301ce7394cd42d62420e3970aee4fd683fda",
+    "bytes": 1714913,
+    "pages": 93
+  },
+  "checks_already_completed": {
+    "build": "bash thesis/candidate/build.sh succeeded; no warnings, undefined references or overfull boxes in final log",
+    "visual_pages": [
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      74,
+      75,
+      76
+    ],
+    "accepted_rank_paragraph": "byte-identical to e45d4bd5",
+    "independent_reader": "Full revised DS chapter and changed AI passages reviewed; no known necessary textual correction left after local followups"
+  },
+  "human_acceptance": "unknown; no human PASS claimed",
+  "layout_caveat": "DS starts beneath the HKO exact-choices table on page49; unchanged during packaging"
+}

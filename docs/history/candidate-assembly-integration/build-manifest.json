@@ -1,0 +1,213 @@
+{
+  "status": "proposed integration draft; not accepted or selected release",
+  "base_commit": "d720953a",
+  "snapshot_commit": "8aff3321",
+  "candidate_inputs": {
+    "thesis/candidate/main.tex": {
+      "sha256": "38760d271a6964d7f5bbda201a22d8f3a3e50690baedc0602b94fdd188b41ade",
+      "bytes": 2466
+    },
+    "thesis/candidate/legacy/preamble.tex": {
+      "sha256": "3dd932fb29bd8a7c44f5f7a8fef28453caca276755925e43129e097ff97fc566",
+      "bytes": 1114
+    },
+    "thesis/candidate/recovered/thesis-candidate/00-abstract.tex": {
+      "sha256": "494c1f18d8b5e67aeab8b5ec54083dd3962a431dc7ecb2e2e768114016f4dc46",
+      "bytes": 1475
+    },
+    "thesis/candidate/ai-use-disclosure.tex": {
+      "sha256": "0b5d6aefa450fadfcabec1232eb55bdbe674a60d034a9dacd65653610bcbfd31",
+      "bytes": 2508
+    },
+    "thesis/candidate/recovered/thesis-candidate/01-introduction.tex": {
+      "sha256": "fbf0cd9d793c061fef5ebc8ca0d670be7df1bfe4d72d906a4c5d1aaf559f0aeb",
+      "bytes": 10561
+    },
+    "thesis/candidate/recovered/thesis-candidate/02-preliminaries.tex": {
+      "sha256": "fb69b125f7bc4a5a4398603bf22371b3187c0d0b30e51656084b03f064839866",
+      "bytes": 928
+    },
+    "thesis/candidate/recovered/thesis-candidate/02-preliminaries-convex-symplectic-notation.tex": {
+      "sha256": "79e3e0915f8c80638797b4fc3768f1b44f3487a01ba589b5c87b7933b717fcd1",
+      "bytes": 2394
+    },
+    "thesis/candidate/legacy/02-preliminaries-convex-hamiltonian-language.tex": {
+      "sha256": "57e102e544ca8525dafea8d4d0e0986cac653e9000b9765c7b3ca22253b44823",
+      "bytes": 2951
+    },
+    "thesis/candidate/legacy/figures/foundations/characteristic-normalization.pdf": {
+      "sha256": "7dbfab3a3851060baa55b55d54bfaa6d57861a8ef3defe02ad4e5ecdab668cee",
+      "bytes": 25460
+    },
+    "thesis/candidate/recovered/thesis-candidate/02-preliminaries-ehz-capacity.tex": {
+      "sha256": "8d1299c5929932ebab0e7e695bcb663d0703195171408885922699453c653ceb",
+      "bytes": 4525
+    },
+    "thesis/candidate/legacy/02-preliminaries-polytope-input-language.tex": {
+      "sha256": "10660d042d029b2a14a8a7edb9aa04c2eb1e74071c1799298876e3521ccddb49",
+      "bytes": 1885
+    },
+    "thesis/candidate/legacy/figures/foundations/facet-polarity.pdf": {
+      "sha256": "676ca38e254b1ca5e4841fa285bd097baeccd3462d5789f1639642c73e1bc9a6",
+      "bytes": 45000
+    },
+    "thesis/candidate/legacy/02-preliminaries-lagrangian-products.tex": {
+      "sha256": "5c3a5d5c8e5fa672f7fcf28d32a2710593369b1ef816013c631205757b2b9ad4",
+      "bytes": 1539
+    },
+    "thesis/candidate/recovered/thesis-candidate/02-duality.tex": {
+      "sha256": "a6e9a2e9a9d512a60d62a405aca19fa1f2858c0a13d74f08f092e80581d81f15",
+      "bytes": 7694
+    },
+    "thesis/candidate/03-generalized-reeb-orbits-polytopes.tex": {
+      "sha256": "87c179d993c92c12764ee4b5660a345c741703f913ddd9c7167c09b13b97a0d7",
+      "bytes": 20826
+    },
+    "thesis/candidate/04-quadratic-program.tex": {
+      "sha256": "141f4375fc8efca8bf6b659dbe22979149f4c048bddd3944985925df81ce29e0",
+      "bytes": 28455
+    },
+    "thesis/candidate/05-flow-graph.tex": {
+      "sha256": "d348fbd0eb3e271a684b81dbd89f59b0c69de8a12d095520251c93062494ff46",
+      "bytes": 19022
+    },
+    "thesis/candidate/legacy/figures/flow-graph/flow-graph-f6-tube-sequence.pdf": {
+      "sha256": "6cc41de40e349accf46342d873422041656b19c0f091266c0747430d3a2851d4",
+      "bytes": 22292
+    },
+    "thesis/candidate/legacy/05-flow-graph-ch2021-background-comparison.tex": {
+      "sha256": "d9f2931d32aa2011eb119be13efc30d0608f591317ea29e78e47a4eef4e0cbaf",
+      "bytes": 1819
+    },
+    "thesis/candidate/recovered/thesis-candidate/06-variation.tex": {
+      "sha256": "05d0bc747ee57d92f27cdd8bdd03a15a4d92241764ff5a15996f521508fa2cac",
+      "bytes": 17157
+    },
+    "thesis/candidate/recovered/thesis-candidate/07-hko.tex": {
+      "sha256": "2f41a94f9274fb1d4df5820289b798a328f7616bc79063888389c5d5d985996a",
+      "bytes": 1833
+    },
+    "thesis/candidate/recovered/thesis-candidate/hko-lemma-geometry.tex": {
+      "sha256": "ff101a2e12ca0c38a3484f7b170ec35f7ddd71e3af7f9db1903db482e7c2a10b",
+      "bytes": 6577
+    },
+    "thesis/candidate/recovered/thesis-candidate/hko-lemma-bounds.tex": {
+      "sha256": "245dbcf45eaacf8b7a04163011765feac42652c4b0c9caddb12f6a1287648c4b",
+      "bytes": 7572
+    },
+    "thesis/candidate/recovered/thesis-candidate/hko-lemma-conclusion.tex": {
+      "sha256": "6b2a3c659bf9d129f0b6ff183ab37e39dcb45a09a37d1faef8afdf3a9980c423",
+      "bytes": 5154
+    },
+    "thesis/candidate/recovered/hko-figures/upper-bound-mechanisms.pdf": {
+      "sha256": "faca0c4193580223e5c0d468583d550002c49f20b4ba2d3b5137514edf86fb66",
+      "bytes": 45956
+    },
+    "thesis/candidate/recovered/hko-figures/symmetry-extension.pdf": {
+      "sha256": "65e8d54ab27eafbc6793ead32ad536ffe65e4af79952649fb8445b3ad87e09f6",
+      "bytes": 147020
+    },
+    "thesis/candidate/recovered/hko-writing/sections-readable.tex": {
+      "sha256": "d35f3b2e19cea1743d9c675b7e62c79269faaf0638b3e08c51b8442dfe159e69",
+      "bytes": 1736
+    },
+    "thesis/candidate/ds-complete-draft/chapter.tex": {
+      "sha256": "3d91efc760129bbe32daaaef4d54183f648428a8ba3ecc4b0e5c449db13f4eb0",
+      "bytes": 32996
+    },
+    "thesis/candidate/ds-complete-draft/figures/association-generic.pdf": {
+      "sha256": "85898c620583f52a1d28b056dfc60faffb81e73a9a8a86ba7d517c3d586154f4",
+      "bytes": 74233
+    },
+    "thesis/candidate/ds-complete-draft/figures/association-products.pdf": {
+      "sha256": "fbbe2c12b98d5c93764a6dbf949a6f30402190c01c31dab552063bd00f85b572",
+      "bytes": 82057
+    },
+    "thesis/candidate/09-rotated-regular-polygons.tex": {
+      "sha256": "0941c800cb2e33aeb585ad1ffc65d1b590c84972efad4d458f4aba8e8a571ab8",
+      "bytes": 10164
+    },
+    "thesis/candidate/figures/rotation-profile.png": {
+      "sha256": "dd9e6b8eb06545f4b2e5d5cc552f2bede021ea4a9ddcecb673fe25cd34152e99",
+      "bytes": 53137
+    },
+    "thesis/candidate/pentagon-affine-draft/section.tex": {
+      "sha256": "9323eeedf1717bf66ce2015d8e4e04326fbf77078c0fde1c9cc5b76ba34841a2",
+      "bytes": 9935
+    },
+    "thesis/candidate/product-rotation-draft/section.tex": {
+      "sha256": "58f31464589c17a8f8fd45ab03468b32db02c2acb828c12f9727a3f5e49e0090",
+      "bytes": 5712
+    },
+    "thesis/candidate/legacy/10-visualization-3d.tex": {
+      "sha256": "007d86dfdedc34bc3a94f551fb4420b7a0d699710221480e77ddfd9900a8c750",
+      "bytes": 2874
+    },
+    "thesis/candidate/legacy/figures/visualization/viz-hypercube-ridges.png": {
+      "sha256": "b3d9b189c0796274b074bac92e4c55d012fa208240d90327241471fceb429c03",
+      "bytes": 285012
+    },
+    "thesis/candidate/legacy/figures/visualization/viz-hko-pentagon-min-orbit.png": {
+      "sha256": "6f6ec2b8173e454c45827ec0e340b470cbf3150355517284e3156889b2e5473f",
+      "bytes": 22832
+    },
+    "thesis/candidate/11-numerics.tex": {
+      "sha256": "e42955ec58c6a615f1ad323d24c2b8092ce2d0cd09e5b046dfc7ad34a7e2e41a",
+      "bytes": 9679
+    },
+    "thesis/candidate/legacy/12-published-code-data.tex": {
+      "sha256": "3d3809be0047a12b6661ea5a13d70b67d853d7e2bfa9dca0877b70fb56b85068",
+      "bytes": 4781
+    },
+    "thesis/candidate/recovered/ai-writing/chapter.tex": {
+      "sha256": "e15fb5243e721bc85c1f946fc50a95d9abd252b69bfa48c1c984621e35e369db",
+      "bytes": 6141
+    },
+    "thesis/candidate/recovered/thesis-candidate/14-conclusion.tex": {
+      "sha256": "814a08b22d05baf06815f3c53fa3259b58f1e8dddcf06997778b388278e8f893",
+      "bytes": 3788
+    },
+    "thesis/candidate/ds-complete-draft/appendix.tex": {
+      "sha256": "f21c63fcf3ea8acaa3ef1db1f5214f368684d86761e3e73d108d868de5152b2e",
+      "bytes": 17505
+    },
+    "thesis/candidate/ds-complete-draft/figures/hko-recovery-by-source-distance.pdf": {
+      "sha256": "86b8204c9ddd2b6a4817c694675bffcdf726860d77420846e6d09f07e2132477",
+      "bytes": 23260
+    },
+    "thesis/candidate/ds-complete-draft/figures/derivative-and-kkt-scale.pdf": {
+      "sha256": "5e34bb8153986657a76525d78d8f9f142da4b8f06702bed143661773698c67da",
+      "bytes": 21375
+    },
+    "thesis/candidate/recovered/hko-cas-appendix/hko-cas-appendix.tex": {
+      "sha256": "2452af3842562c00079e34cb5081644996c112a5accc94bf9650c4b04cf39211",
+      "bytes": 3878
+    },
+    "thesis/candidate/recovered/hko-cas-appendix/hko_core.py": {
+      "sha256": "475196efdf33d1f281a724b90069ec08a2335552ddc4362332e2b975866f10f5",
+      "bytes": 5269
+    }
+  },
+  "pdf": {
+    "path": "/workspaces/msc-math/.worktrees/candidate-assembly-integration/thesis/candidate/build/main.pdf",
+    "sha256": "4770e071acc4b835899bd4445396244febf162235760c568d8687d54efe20446",
+    "bytes": 1659545,
+    "pages": 87
+  },
+  "checks": {
+    "source_inputs": 46,
+    "latex_warnings": [],
+    "rendered_pages": 87,
+    "visual_check": "Complete DS predecessor88page render inspected; finalTOC-only change removes near-empty page and finalTOC/productfigure inspected. No clipping/overlap found. Prose acceptance unestablished; sparse inherited pages remain.",
+    "ridge_followup": "Identity added in Section8.4, equation35, page53; full rebuild81pages with no warnings; pages52\u201354 rendered/inspected, no clipping.",
+    "prior_art_availability": "Full rebuild81pages, no warnings; pages26,35,70,80 rendered/inspected; public commit uses short linked hash to avoid overflow.",
+    "product_position": "83page full rebuild, no warnings. New section pages66\u201367 and adjacent65/68 rendered/inspected; contents4,introduction7,availability71,conclusion75 inspected. Initial81page full contact-sheet pass remains preceding-version evidence.",
+    "complete_DS": "Final87page full rebuild, no warnings. All88pages before TOC-only compaction rendered/inspected in contact sheets; final2pageTOC and productfigure at readable resolution inspected. All evidence-index paths resolve; DS final hashes independently reviewed.",
+    "known_defect_repair": "No warnings/undefined references/overfull boxes; changed pages6,7,35,38,39,66,67,68,72,76 rendered and inspected. Original87page checkpoint separately frozen; no authoring PASS inference."
+  },
+  "baseline_pdf": {
+    "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/build/main.pdf",
+    "pages": 86,
+    "sha256": "2e81a6c3e3428203e7508b079a7ac23ba15596e00da0b1924ef1ec0de4cadf30"
+  }
+}

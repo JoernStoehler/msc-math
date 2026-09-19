@@ -1,0 +1,17 @@
+{
+  "frozen_utc": "2026-09-18T12:26:22.734883+00:00",
+  "files": [
+    {
+      "path": "development/classification-prompt.md",
+      "sha256": "7f2c5c089206d02fb706031f43586006e4ffb85c96370b69f5e01d5a8cbd96e9"
+    },
+    {
+      "path": "inputs/classification-candidates.md",
+      "sha256": "24f53b81922dcd89336e1786f04b88e022d6a7bec48fd85ffe2ea321218347e5"
+    },
+    {
+      "path": "evaluation/classification-transfer.md",
+      "sha256": "6b1daaf188d3c5b90d3b0a8425f770448e3f5eafc17f665d8491e1e791c39199"
+    }
+  ]
+}

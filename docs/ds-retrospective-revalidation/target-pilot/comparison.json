@@ -1,0 +1,586 @@
+{
+  "rows": 36,
+  "unique_ids": 36,
+  "successful": 36,
+  "total_wall_seconds": 0.4984082780138124,
+  "strata": {
+    "generic-10": {
+      "rows": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "total_wall_ms": 27.832495979964733,
+      "max_abs_capacity_relative_delta": 4.752378245417219e-16,
+      "max_abs_volume_relative_delta": 5.079331697807978e-16,
+      "max_abs_sys_relative_delta": 5.002279408513389e-16
+    },
+    "generic-11": {
+      "rows": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "total_wall_ms": 39.11059701931663,
+      "max_abs_capacity_relative_delta": 4.776002950027837e-16,
+      "max_abs_volume_relative_delta": 7.447899023606312e-16,
+      "max_abs_sys_relative_delta": 1.3599856930558221e-15
+    },
+    "generic-12": {
+      "rows": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "total_wall_ms": 101.95918299723417,
+      "max_abs_capacity_relative_delta": 4.45746993067674e-16,
+      "max_abs_volume_relative_delta": 6.98466375189681e-16,
+      "max_abs_sys_relative_delta": 7.370907861876586e-16
+    },
+    "generic-5": {
+      "rows": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "total_wall_ms": 6.3682550098747015,
+      "max_abs_capacity_relative_delta": 8.574087312988639e-16,
+      "max_abs_volume_relative_delta": 2.1030007321766458e-16,
+      "max_abs_sys_relative_delta": 1.942065505783341e-15
+    },
+    "generic-6": {
+      "rows": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "total_wall_ms": 10.793510999064893,
+      "max_abs_capacity_relative_delta": 3.545272815901971e-16,
+      "max_abs_volume_relative_delta": 8.899238005966973e-16,
+      "max_abs_sys_relative_delta": 1.1291164861265213e-15
+    },
+    "generic-7": {
+      "rows": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "total_wall_ms": 13.804643007460982,
+      "max_abs_capacity_relative_delta": 9.361623017161002e-16,
+      "max_abs_volume_relative_delta": 5.971169716067105e-16,
+      "max_abs_sys_relative_delta": 2.1037879254740527e-15
+    },
+    "generic-8": {
+      "rows": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "total_wall_ms": 21.73036098247394,
+      "max_abs_capacity_relative_delta": 3.822020294023505e-16,
+      "max_abs_volume_relative_delta": 2.250871618742077e-16,
+      "max_abs_sys_relative_delta": 7.837870970583322e-16
+    },
+    "generic-9": {
+      "rows": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "total_wall_ms": 24.673295993125066,
+      "max_abs_capacity_relative_delta": 6.186954158292092e-16,
+      "max_abs_volume_relative_delta": 1.7981440407799523e-16,
+      "max_abs_sys_relative_delta": 1.2290343414128264e-15
+    },
+    "product-3x3": {
+      "rows": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "total_wall_ms": 10.658598999725655,
+      "max_abs_capacity_relative_delta": 3.6253213299065655e-16,
+      "max_abs_volume_relative_delta": 6.235740512445533e-16,
+      "max_abs_sys_relative_delta": 1.0493904448761376e-15
+    },
+    "product-3x4": {
+      "rows": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "total_wall_ms": 17.13946199743077,
+      "max_abs_capacity_relative_delta": 2.0672631388332347e-16,
+      "max_abs_volume_relative_delta": 4.935184739215281e-16,
+      "max_abs_sys_relative_delta": 2.504775839705151e-16
+    },
+    "product-3x5": {
+      "rows": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "total_wall_ms": 20.6555129843764,
+      "max_abs_capacity_relative_delta": 2.339574793951295e-16,
+      "max_abs_volume_relative_delta": 1.1201978302684994e-15,
+      "max_abs_sys_relative_delta": 1.0261110678064323e-15
+    },
+    "product-3x6": {
+      "rows": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "total_wall_ms": 23.3092550188303,
+      "max_abs_capacity_relative_delta": 3.214808540196703e-16,
+      "max_abs_volume_relative_delta": 8.182496693171385e-16,
+      "max_abs_sys_relative_delta": 1.8945917739410667e-16
+    },
+    "product-4x4": {
+      "rows": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "total_wall_ms": 19.121474004350603,
+      "max_abs_capacity_relative_delta": 6.372417836469663e-16,
+      "max_abs_volume_relative_delta": 0.0,
+      "max_abs_sys_relative_delta": 1.4011577454350634e-15
+    },
+    "product-4x5": {
+      "rows": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "total_wall_ms": 25.60619602445513,
+      "max_abs_capacity_relative_delta": 1.8742469830838693e-16,
+      "max_abs_volume_relative_delta": 4.94031367698716e-16,
+      "max_abs_sys_relative_delta": 1.5103931458632093e-16
+    },
+    "product-4x6": {
+      "rows": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "total_wall_ms": 32.56701200734824,
+      "max_abs_capacity_relative_delta": 2.0345095423506523e-16,
+      "max_abs_volume_relative_delta": 4.215742076004568e-16,
+      "max_abs_sys_relative_delta": 4.3729681229733094e-16
+    },
+    "product-5x5": {
+      "rows": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "total_wall_ms": 35.3381349996198,
+      "max_abs_capacity_relative_delta": 1.9982561917189653e-16,
+      "max_abs_volume_relative_delta": 4.181932999208678e-16,
+      "max_abs_sys_relative_delta": 4.310226900731082e-16
+    },
+    "product-5x6": {
+      "rows": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "total_wall_ms": 27.997416007565334,
+      "max_abs_capacity_relative_delta": 4.349855183849614e-16,
+      "max_abs_volume_relative_delta": 0.0,
+      "max_abs_sys_relative_delta": 8.376405177452394e-16
+    },
+    "product-6x6": {
+      "rows": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "total_wall_ms": 39.74287398159504,
+      "max_abs_capacity_relative_delta": 5.251981053676477e-16,
+      "max_abs_volume_relative_delta": 5.772636728952437e-16,
+      "max_abs_sys_relative_delta": 9.115190278013887e-16
+    }
+  },
+  "details": [
+    {
+      "id": "00ab627174cee7eb2864b3331779c66a0d54247c25252430201c3d5cd9dc631f",
+      "bucket": "generic-10",
+      "status": "ok",
+      "wall_ms": 13.381088996538892,
+      "capacity_relative_delta": 4.752378245417219e-16,
+      "volume_relative_delta": 5.079331697807978e-16,
+      "sys_relative_delta": 5.002279408513389e-16,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "general"
+    },
+    {
+      "id": "00c55ec5a124792b262e833f9c6324549caeae62a89c7678ac4a8e6d54237f09",
+      "bucket": "generic-10",
+      "status": "ok",
+      "wall_ms": 14.45140698342584,
+      "capacity_relative_delta": -1.887366605662907e-16,
+      "volume_relative_delta": -4.3445880157941636e-16,
+      "sys_relative_delta": 1.6398115039777295e-16,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "general"
+    },
+    {
+      "id": "0044f43ab5d9a71446d842a29b76473a08c1487364be211aff29be31ffeedb96",
+      "bucket": "generic-11",
+      "status": "ok",
+      "wall_ms": 20.19263501279056,
+      "capacity_relative_delta": 0.0,
+      "volume_relative_delta": -7.447899023606312e-16,
+      "sys_relative_delta": 7.408233679722383e-16,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "general"
+    },
+    {
+      "id": "00798dc07e2bdf3cc5e7898ee142c37790e8cc8e18c06c969cc73d1ff306e754",
+      "bucket": "generic-11",
+      "status": "ok",
+      "wall_ms": 18.917962006526068,
+      "capacity_relative_delta": 4.776002950027837e-16,
+      "volume_relative_delta": -3.354477079449443e-16,
+      "sys_relative_delta": 1.3599856930558221e-15,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "general"
+    },
+    {
+      "id": "00491b0b3d2c8e4dbbb2f98420ea3af034cb582fe1226a7b02536eac12e026f6",
+      "bucket": "generic-12",
+      "status": "ok",
+      "wall_ms": 68.62362698302604,
+      "capacity_relative_delta": 0.0,
+      "volume_relative_delta": -6.98466375189681e-16,
+      "sys_relative_delta": 7.370907861876586e-16,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "general"
+    },
+    {
+      "id": "007356922757f6aca3faff1029ec71450208fef958806ee19502288c38408977",
+      "bucket": "generic-12",
+      "status": "ok",
+      "wall_ms": 33.33555601420812,
+      "capacity_relative_delta": -4.45746993067674e-16,
+      "volume_relative_delta": -4.359050723644045e-16,
+      "sys_relative_delta": -4.558111259204926e-16,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "general"
+    },
+    {
+      "id": "00e72dc05062e966e1b631448f8e41200b7b46c9f576d8e6040bf8fbda578166",
+      "bucket": "generic-5",
+      "status": "ok",
+      "wall_ms": 3.2893750176299363,
+      "capacity_relative_delta": -3.5413651401484946e-16,
+      "volume_relative_delta": 0.0,
+      "sys_relative_delta": -7.676479303024583e-16,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "general"
+    },
+    {
+      "id": "011353d59181c830136ac7c4afa2525335200378af0b5851b4abdd1388e4d1f7",
+      "bucket": "generic-5",
+      "status": "ok",
+      "wall_ms": 3.078879992244765,
+      "capacity_relative_delta": 8.574087312988639e-16,
+      "volume_relative_delta": -2.1030007321766458e-16,
+      "sys_relative_delta": 1.942065505783341e-15,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "general"
+    },
+    {
+      "id": "0092a5be1f2096baf3509fdf8945a31d51662675da38d7552e461e490a227a0d",
+      "bucket": "generic-6",
+      "status": "ok",
+      "wall_ms": 4.098593984963372,
+      "capacity_relative_delta": -1.3318934464271454e-16,
+      "volume_relative_delta": -8.899238005966973e-16,
+      "sys_relative_delta": 3.986723698020314e-16,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "general"
+    },
+    {
+      "id": "01136e12725fd60c6fd1d847bdc7d5ceab02d2a25999dba3f726615f38f7436c",
+      "bucket": "generic-6",
+      "status": "ok",
+      "wall_ms": 6.69491701410152,
+      "capacity_relative_delta": 3.545272815901971e-16,
+      "volume_relative_delta": -2.226335279594013e-16,
+      "sys_relative_delta": 1.1291164861265213e-15,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "general"
+    },
+    {
+      "id": "0007caf9129b604db0c3079d36e435c2dfe5618c5eba34040c19b69c399be6c3",
+      "bucket": "generic-7",
+      "status": "ok",
+      "wall_ms": 8.258582995040342,
+      "capacity_relative_delta": 9.361623017161002e-16,
+      "volume_relative_delta": -1.999592855250913e-16,
+      "sys_relative_delta": 2.1037879254740527e-15,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "general"
+    },
+    {
+      "id": "007f4bf45f073df9e61416208a4a9856388f482d05e3d920b76376df1ef4f046",
+      "bucket": "generic-7",
+      "status": "ok",
+      "wall_ms": 5.546060012420639,
+      "capacity_relative_delta": -2.1727409625183117e-16,
+      "volume_relative_delta": -5.971169716067105e-16,
+      "sys_relative_delta": 1.9764985399352979e-16,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "general"
+    },
+    {
+      "id": "007eda2dc324a4a676ba685b6135bd0925e32e4a8d56447793f02cca4babf87b",
+      "bucket": "generic-8",
+      "status": "ok",
+      "wall_ms": 14.120996987912804,
+      "capacity_relative_delta": -3.822020294023505e-16,
+      "volume_relative_delta": 0.0,
+      "sys_relative_delta": -7.837870970583322e-16,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "general"
+    },
+    {
+      "id": "008b5c1b6b602568ac5a669fe7604add6fcf1fa864c8544a771c4c9d1b385428",
+      "bucket": "generic-8",
+      "status": "ok",
+      "wall_ms": 7.609363994561136,
+      "capacity_relative_delta": 0.0,
+      "volume_relative_delta": 2.250871618742077e-16,
+      "sys_relative_delta": -1.4732787705895606e-16,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "general"
+    },
+    {
+      "id": "008d5112fec42c70089a26c65bbbfbf155cdefb2f5c331e66d00f28aabb86711",
+      "bucket": "generic-9",
+      "status": "ok",
+      "wall_ms": 14.262643991969526,
+      "capacity_relative_delta": 0.0,
+      "volume_relative_delta": 1.7981440407799523e-16,
+      "sys_relative_delta": -1.8015613012901222e-16,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "general"
+    },
+    {
+      "id": "00c17790e965d212604ce014198ced8ac5317cd6614006c41d9bc5fce2549589",
+      "bucket": "generic-9",
+      "status": "ok",
+      "wall_ms": 10.41065200115554,
+      "capacity_relative_delta": -6.186954158292092e-16,
+      "volume_relative_delta": 0.0,
+      "sys_relative_delta": -1.2290343414128264e-15,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "general"
+    },
+    {
+      "id": "004a917243cd3739098ff2fc7c992397e3db82b4eea5c879f8ddd584065af35c",
+      "bucket": "product-3x3",
+      "status": "ok",
+      "wall_ms": 6.309093994786963,
+      "capacity_relative_delta": 3.6253213299065655e-16,
+      "volume_relative_delta": 2.0065241406595006e-16,
+      "sys_relative_delta": 5.8223204014018465e-16,
+      "legacy_capacity_in_current_bounds": false,
+      "capacity_route": "product"
+    },
+    {
+      "id": "006c304ece979eab4be8df8e993bf4afc2a080856d4d9a369c2ffce5b1c11403",
+      "bucket": "product-3x3",
+      "status": "ok",
+      "wall_ms": 4.349505004938692,
+      "capacity_relative_delta": -1.8088292498861482e-16,
+      "volume_relative_delta": 6.235740512445533e-16,
+      "sys_relative_delta": -1.0493904448761376e-15,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "product"
+    },
+    {
+      "id": "004136c52ed601c1be39942ccefc2d9ef4716333fc04fc9fd994ae46ba8273ec",
+      "bucket": "product-3x4",
+      "status": "ok",
+      "wall_ms": 7.276919001014903,
+      "capacity_relative_delta": 1.601387302957238e-16,
+      "volume_relative_delta": 4.935184739215281e-16,
+      "sys_relative_delta": -1.5588725222556203e-16,
+      "legacy_capacity_in_current_bounds": false,
+      "capacity_route": "product"
+    },
+    {
+      "id": "00fde19699270a21c4ea3d4474947ae0e24b057720004a94415e6ac787638d5f",
+      "bucket": "product-3x4",
+      "status": "ok",
+      "wall_ms": 9.862542996415868,
+      "capacity_relative_delta": 2.0672631388332347e-16,
+      "volume_relative_delta": 1.7061713936372449e-16,
+      "sys_relative_delta": 2.504775839705151e-16,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "product"
+    },
+    {
+      "id": "0024b144cae55f6836a37240eb8e9d7ae56b0aa9515068aaa473c9f69ede329b",
+      "bucket": "product-3x5",
+      "status": "ok",
+      "wall_ms": 9.312910988228396,
+      "capacity_relative_delta": 0.0,
+      "volume_relative_delta": -1.1201978302684994e-15,
+      "sys_relative_delta": 1.0261110678064323e-15,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "product"
+    },
+    {
+      "id": "013bf397ac11e4c85744d495a138f1a39f4c6a0a8e45a448b534f45cc7287268",
+      "bucket": "product-3x5",
+      "status": "ok",
+      "wall_ms": 11.342601996148005,
+      "capacity_relative_delta": 2.339574793951295e-16,
+      "volume_relative_delta": 1.84443370793296e-16,
+      "sys_relative_delta": 2.9676372715105436e-16,
+      "legacy_capacity_in_current_bounds": false,
+      "capacity_route": "product"
+    },
+    {
+      "id": "004d43743f5e8d9c9ed50109b0e62dd18b04e59b153a555b4602e37204053302",
+      "bucket": "product-3x6",
+      "status": "ok",
+      "wall_ms": 11.559239006601274,
+      "capacity_relative_delta": 0.0,
+      "volume_relative_delta": 0.0,
+      "sys_relative_delta": 0.0,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "product"
+    },
+    {
+      "id": "0071b899a7f974b94f229b113ef293589d4c9a743e98ddff859d3c33999a6bef",
+      "bucket": "product-3x6",
+      "status": "ok",
+      "wall_ms": 11.750016012229025,
+      "capacity_relative_delta": -3.214808540196703e-16,
+      "volume_relative_delta": -8.182496693171385e-16,
+      "sys_relative_delta": 1.8945917739410667e-16,
+      "legacy_capacity_in_current_bounds": false,
+      "capacity_route": "product"
+    },
+    {
+      "id": "001afa441736bef0e7e74213097f80d494ead85b79f1a9c9bcfc297c52731d5c",
+      "bucket": "product-4x4",
+      "status": "ok",
+      "wall_ms": 9.599849989172071,
+      "capacity_relative_delta": 3.249607433434027e-16,
+      "volume_relative_delta": 0.0,
+      "sys_relative_delta": 5.992543377807105e-16,
+      "legacy_capacity_in_current_bounds": false,
+      "capacity_route": "product"
+    },
+    {
+      "id": "00754c0aec6a53ef2d57b5589947359854d41f196e916dac0700f4aef9dc7987",
+      "bucket": "product-4x4",
+      "status": "ok",
+      "wall_ms": 9.521624015178531,
+      "capacity_relative_delta": 6.372417836469663e-16,
+      "volume_relative_delta": 0.0,
+      "sys_relative_delta": 1.4011577454350634e-15,
+      "legacy_capacity_in_current_bounds": false,
+      "capacity_route": "product"
+    },
+    {
+      "id": "005168c94585b68249713713e9c5da8211f4f770d029e3f2c3943a50d5eb91dc",
+      "bucket": "product-4x5",
+      "status": "ok",
+      "wall_ms": 11.481803026981652,
+      "capacity_relative_delta": 1.8742469830838693e-16,
+      "volume_relative_delta": 4.94031367698716e-16,
+      "sys_relative_delta": 0.0,
+      "legacy_capacity_in_current_bounds": false,
+      "capacity_route": "product"
+    },
+    {
+      "id": "018babfe583fc60a5861e3dfacba1e21cdea212ef22c106fb48b871c928825e1",
+      "bucket": "product-4x5",
+      "status": "ok",
+      "wall_ms": 14.124392997473478,
+      "capacity_relative_delta": 1.8235713367197884e-16,
+      "volume_relative_delta": 2.2016866464297147e-16,
+      "sys_relative_delta": 1.5103931458632093e-16,
+      "legacy_capacity_in_current_bounds": false,
+      "capacity_route": "product"
+    },
+    {
+      "id": "0056aff858cb2c475771d994ace8eeb04c56feea4b559569369a6f683d4e9b58",
+      "bucket": "product-4x6",
+      "status": "ok",
+      "wall_ms": 16.06951400754042,
+      "capacity_relative_delta": -2.0345095423506523e-16,
+      "volume_relative_delta": 1.8930982168246304e-16,
+      "sys_relative_delta": -4.3729681229733094e-16,
+      "legacy_capacity_in_current_bounds": false,
+      "capacity_route": "product"
+    },
+    {
+      "id": "007488768f4b7be0e6628ffec569ca46cbb4851ed89b8004bb52ac185945d344",
+      "bucket": "product-4x6",
+      "status": "ok",
+      "wall_ms": 16.49749799980782,
+      "capacity_relative_delta": 1.9530329948078648e-16,
+      "volume_relative_delta": 4.215742076004568e-16,
+      "sys_relative_delta": 0.0,
+      "legacy_capacity_in_current_bounds": false,
+      "capacity_route": "product"
+    },
+    {
+      "id": "008ff34fd0b578b154a5bac57f72cf733f8db3bbcec6c1af8a0f12d54a8048f5",
+      "bucket": "product-5x5",
+      "status": "ok",
+      "wall_ms": 18.600084993522614,
+      "capacity_relative_delta": 1.9982561917189653e-16,
+      "volume_relative_delta": -1.8528155940309788e-16,
+      "sys_relative_delta": 4.310226900731082e-16,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "product"
+    },
+    {
+      "id": "009d8b6091d4b11126ac72b0d6d0ca06710c578db2bc3606a65878b96953860d",
+      "bucket": "product-5x5",
+      "status": "ok",
+      "wall_ms": 16.738050006097183,
+      "capacity_relative_delta": 0.0,
+      "volume_relative_delta": 4.181932999208678e-16,
+      "sys_relative_delta": -4.1080628231929346e-16,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "product"
+    },
+    {
+      "id": "0046fe4eefdf284f6468f204304ce74049df9fd76515ca8b4dfa1bcab3ad8950",
+      "bucket": "product-5x6",
+      "status": "ok",
+      "wall_ms": 13.23259001947008,
+      "capacity_relative_delta": -1.5242844831082068e-16,
+      "volume_relative_delta": 0.0,
+      "sys_relative_delta": -3.2124403941486147e-16,
+      "legacy_capacity_in_current_bounds": false,
+      "capacity_route": "product"
+    },
+    {
+      "id": "01905973787450df4692280137f3e21c1925739534f0f6afb43d321c307e606f",
+      "bucket": "product-5x6",
+      "status": "ok",
+      "wall_ms": 14.764825988095254,
+      "capacity_relative_delta": 4.349855183849614e-16,
+      "volume_relative_delta": 0.0,
+      "sys_relative_delta": 8.376405177452394e-16,
+      "legacy_capacity_in_current_bounds": false,
+      "capacity_route": "product"
+    },
+    {
+      "id": "0023d608bb1962ec74c9987a4cdad5ffd4310e008fac5202f92853682d397f56",
+      "bucket": "product-6x6",
+      "status": "ok",
+      "wall_ms": 16.13847498083487,
+      "capacity_relative_delta": -1.8848234049641053e-16,
+      "volume_relative_delta": -5.772636728952437e-16,
+      "sys_relative_delta": 3.692481721653566e-16,
+      "legacy_capacity_in_current_bounds": true,
+      "capacity_route": "product"
+    },
+    {
+      "id": "0042f6205129e8957dff713de58038c60b6f007aee1c9603d2f42826823254cc",
+      "bucket": "product-6x6",
+      "status": "ok",
+      "wall_ms": 23.604399000760168,
+      "capacity_relative_delta": 5.251981053676477e-16,
+      "volume_relative_delta": 1.176809315172371e-16,
+      "sys_relative_delta": 9.115190278013887e-16,
+      "legacy_capacity_in_current_bounds": false,
+      "capacity_route": "product"
+    }
+  ]
+}

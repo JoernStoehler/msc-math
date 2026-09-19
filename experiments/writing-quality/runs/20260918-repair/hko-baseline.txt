@@ -1,0 +1,30 @@
+A worked coordinate outside product-preserving perturbations
+                                        ̸ 2: vary the first momentum coordinate of the second
+Take h2 = (0, 0, 1, 0) and hi = 0 for i =
+q-facet. This is flat coordinate 6 in the verifier’s zero-based storage. Put w = c + kr = β0,1 .
+Differentiated closure gives
+                                                                   t3 /20 − t/4
+                                                                                           
+                                                                 t3 /20 − t/4 
+                                                                               
+                                           −1              T
+           DβJ [h] = 0,       DβI [h] = −wM (0, 0, 1, 0, 0) = w  t3 /40 − 3t/8  .
+                                                                               
+                                                                −3t3 /20 + 5t/4
+                                                                               
+
+                                                                  t3 /40 − 3t/8
+Inserting these values into the product rule for Q gives the exact scalar
+                                                            !
+                                  3 − t2         3t2 1     t2 + 5 2
+                          DQ[h] =        +          −   r−       r =: qh .
+                                    80           20   4       4
+Since a2 has zero momentum coordinates, DV0 [h] = 0, while
+                                         25                     125
+                             DA[h] = − 2 qh ,       DU [h] = − 3 qh .
+                                         2t                    4t V0
+This is an actual coefficient of the upper-branch row, approximately −0.1801707325. It illustrates
+why the forty-coordinate calculation is stronger than differentiating only within products.
+
+                                                       4
+

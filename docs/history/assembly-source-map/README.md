@@ -1,0 +1,67 @@
+# Assembly versus available research — 18 September 2026
+
+**The available complete thesis PDF strongly mismatches prepared research. The interrupted, unbuilt source assembly partially incorporates that research but remains strongly inconsistent across chapters.** This is an integration finding, not a judgment of mathematical truth or prose acceptance.
+
+Here “strong” means at least one central proof has a prepared replacement absent from the built PDF, and adopting it requires changes in several reader-facing accounts of what was proved and how. “Moderate” would mean the scientific/proof accounts agree and only local exposition, references or peripheral results lag; “none” would require source and evidence correspondence throughout the inspected scope. The actual differences meet the stronger definition: analytic pentagon proof versus exhaustive-classification account, an absent explanatory ridge identity, and revised foundational/numerical material outside the built artifact. It does **not** mean most mathematics is wrong or every chapter needs replacement.
+
+A short routing message other agents can reuse:
+
+> The complete PDF is the frozen 86-page baseline, not the interrupted revision. Current production source mixes new orbit/QP/pentagon/numerics/disclosure files with frozen preliminaries, flow, DS and summaries. Consult `docs/assembly-source-map/README.md` and its SHA256 manifest before choosing an input; use the DS evidence-closure packet for contemporary scientific content.
+
+## Three different objects
+
+1. **Main checkout PDF:** `/workspaces/msc-math/thesis/candidate/build/main.pdf`, 86 pages, PDF creation timestamp 2026-09-16 11:06:18 CEST, SHA256 `b05b30a1ec82f027364add3da367067d10de9fc5992c21ed155f8116da26f404`.
+2. **Interrupted production PDF:** `/tmp/msc-math-thesis-review-20260917/thesis/candidate/build/main.pdf`, 86 pages, PDF creation timestamp 2026-09-17 23:51:25 CEST, SHA256 `2e81a6c3e3428203e7508b079a7ac23ba15596e00da0b1924ef1ec0de4cadf30`. Its adjacent `.fdb_latexmk` records 55 local source/assets/bibliography inputs. Fifty-four still match their recorded MD5. The sole changed file is `main.tex`; its recorded MD5 matches the committed file at production HEAD `d720953a5a44f8fa99e441dee53d710ebcc81958`. Thus the recorded build consumed the frozen entry and its recorded frozen inputs, not the later overlays. MD5 here identifies compatibility with latexmk's receipt; the audit manifest supplies current SHA256 as well. This checks surviving build provenance, not visual identity with another PDF or an independently reconstructed build.
+3. **Current interrupted source:** that production checkout has uncommitted `main.tex` changes and untracked replacement chapters/assets. No PDF from this changed assembly was found at its normal output. This audit did not compile it or overwrite the old build evidence. The research worktrees' clean `thesis/candidate/` trees are not this revised assembly.
+
+`docs/source-recovery/README.md` separately records an earlier isolated recovery build with identical extracted text and rendered pages to the original frozen PDF. That historical check applies to the recovered baseline; it does not validate the interrupted changes.
+
+[manifest.json](manifest.json) records absolute paths, timestamps, PDF/build-record SHA256s, all 55 recorded baseline inputs, 40 current static source/assets/bibliography files, 42 include edges and the two unwired replacement hashes. It is a point-in-time inventory: worktree paths are mutable; compare hashes before reuse. Do not cherry-pick the report and assume it brings those uncommitted production sources with it.
+
+## Resolution rule: implicit shadowing matters
+
+`thesis/candidate/build.sh` sets `TEXINPUTS=.:legacy:` and `BIBINPUTS=.:legacy:`. A bare input first finds a file beside `main.tex`, then falls back to `legacy/`. Therefore adding `03-generalized-reeb-orbits-polytopes.tex`, `11-numerics.tex` or `ai-use-disclosure.tex` changes the assembly **without changing those lines of main.tex**. Conversely, explicit `recovered/...` inputs ignore top-level replacements. A diff of main.tex alone is insufficient.
+
+All paths in the next table are relative to the **production** `thesis/candidate/`, unless explicitly prefixed by a repository or worktree. Prepared replacements are not asserted to be accepted prose.
+
+| Actual current input | Available material / evidence | Mismatch and dependent action | Suggested owner/order |
+|---|---|---|---|
+| `recovered/thesis-candidate/00-abstract.tex` | Analytic pentagon chapter below; DS closure packet | Lines 14 onward still describe exhaustive exact computation. Rewrite result/proof summary after scientific choices stabilize. | Integrator, late prose pass |
+| `ai-use-disclosure.tex` (shadows `legacy/`) | Production overlay already attributes analytic proof and ridge identity | Disclosure refers to the ridge identity in DS although that identity is not yet in active DS prose. Preserve provenance and synchronize actual contributions. | Integrator + disclosure owner |
+| `recovered/thesis-candidate/01-introduction.tex` | New foundation/QP proof work; analytic pentagon; DS packet | Retains self-contained presentation promise and frozen result story. Its literature-status claims need separate source check. Do not infer that revised foundations satisfy the promise while they are unwired. | Integrator after technical/literature owners |
+| `recovered/thesis-candidate/02-preliminaries.tex` | Untracked top-level `02-preliminaries.tex` | New replacement is **not included**. Current wrapper reads six nested units listed below. Selecting replacement changes prerequisite definitions for orbit/QP exposition; it needs an interface check. | Foundations owner, early |
+| `03-generalized-reeb-orbits-polytopes.tex` (shadows `legacy/`) | Current overlay, 515+ lines; preceding rewritten preliminaries are available | New orbit chapter is already selected while old preliminaries remain. Check normalization/duality/simple-minimizer dependencies rather than assume coherent matched versions. | Foundations/QP owner, early |
+| `04-quadratic-program.tex` | Current overlay plus `formal/product-qp-six-facet-reduction.tex`; separate technical planning | Updated product reduction and pentagon overview selected. Headline formula proof still translates/cites HK; whether the complete self-contained derivation is provided is an explicit technical-placement obligation, not established here as a proof gap. | QP owner, early |
+| `recovered/thesis-candidate/05-flow-graph.tex` | Untracked top-level `05-flow-graph.tex`; current algorithm README | Replacement is **not included**. Both use CH comparison and flow figure. Select deliberately, checking genericity theorem versus implemented runtime guarantees. | Flow owner, parallel |
+| `recovered/thesis-candidate/06-variation.tex` | Existing variation sources and contracts | Still frozen; this audit found no new top-level candidate replacement. No content-readiness claim follows. | Variation/technical owner |
+| `recovered/thesis-candidate/07-hko.tex` | Accepted proof support; retained annotated core and prior replay evidence | Existing lemma/readable-section composition remains selected. No need to replace the accepted proof wholesale; check any foundations/QP interface changes and preserve appendix coverage. | HKO/technical owner, scoped |
+| `recovered/ds-first-wave/writing/chapter-opening-v2.tex` | `/workspaces/msc-math/.worktrees/ds-evidence-closure/docs/ds-evidence-closure/README.md`, commit `0e0ccb9c`, with ridge/search/panel reports | Full frozen DS chapter, despite “opening” filename. Mixed-ridge formula exists, but restricted pentagon identity is absent. CH2021 example is named near lines 557–558 without its concrete construction. Historical/new-schema evidence distinctions and newer panels must be incorporated as selected; do not claim new certified replication from historical replay. | DS author + evidence owner |
+| `09-rotated-regular-polygons.tex` | `docs/pentagon-chapter-v2/chapter.tex`, mathematical contribution/prose status in its README/review | Analytic replacement is already selected in unbuilt source; figure now `figures/rotation-profile.png`. Old classifier/source appendix removed from main. Companion chapters still describe the old proof. Ridge interpretation belongs in DS, not silently appended here. | Integrator, early coherence repair |
+| `legacy/10-visualization-3d.tex` | Two selected visualization PNGs; existing producers | Still legacy text/assets. No targeted new readiness audit here; source presence is not explanatory quality. | Visualization owner |
+| `11-numerics.tex` (shadows `legacy/`) | New overlay; current algorithm and ablation/closure-route reports | New numerical account selected, but lines 5–6 and 187 still describe pentagon proof/family certificates as separate SageMath proof material. Correct analytic-proof status; technical owner checks numerical contracts and legacy DS applicability. | Numerics owner, parallel |
+| `legacy/12-published-code-data.tex` | DS recovered snapshot and historical replay; current artifact registry; analytic pentagon | Lines 23–33 present old classifier as proof packet. Recast it as historical evidence, preserving HKO's distinct verification role. New local cache availability does not imply public release. Recheck retained commands against actual schema/toolchain. | Reproduction/integration owner |
+| `recovered/ai-writing/chapter.tex` | Separate reflection requirement and review/provenance evidence | Remains separate from disclosure, as required. New workflow experiments are not automatically thesis claims or human-approved conclusions. Final content/design still undecided. | Reflection owner |
+| `recovered/thesis-candidate/14-conclusion.tex` | Analytic proof + DS interpretation | Lines 36 onward still claim exhaustive exact calculation proves the profile. Synthesis must reflect chosen contemporary results, without claiming broader general-product conclusions. | Integrator, late prose pass |
+| `recovered/thesis-candidate/a-datascience-results.tex` | DS evidence/search packet and optional selected new panels | Frozen DS appendix remains. Synchronize terminology, numbers and scientific scope with rewritten DS; do not assume new core text suffices. | DS author |
+| `recovered/hko-cas-appendix/hko-cas-appendix.tex` | Same directory `hko_core.py`, listed in four excerpts | Still selected; printed program and underlying executed core must remain aligned. Old pentagon appendix removal does not remove this HKO appendix. | HKO/reproduction owner |
+
+## Nested input closure
+
+The manifest records exact parent edges and line numbers. In particular:
+
+- Frozen preliminaries select `recovered/thesis-candidate/02-preliminaries-convex-symplectic-notation.tex`, `legacy/02-preliminaries-convex-hamiltonian-language.tex`, `recovered/thesis-candidate/02-preliminaries-ehz-capacity.tex`, `legacy/02-preliminaries-polytope-input-language.tex`, `legacy/02-preliminaries-lagrangian-products.tex` and `recovered/thesis-candidate/02-duality.tex`.
+- Frozen flow includes `legacy/05-flow-graph-ch2021-background-comparison.tex` and `legacy/figures/flow-graph/flow-graph-f6-tube-sequence.pdf`.
+- HKO includes recovered `hko-lemma-geometry.tex`, `hko-lemma-bounds.tex`, `hko-lemma-conclusion.tex`, `recovered/hko-writing/sections-readable.tex` and two recovered HKO figures.
+- Visualization resolves to its two `legacy/figures/visualization/` PNGs.
+- Preamble and main bibliography resolve to `legacy/preamble.tex` and `legacy/bibliography.bib`; additional bibliography is `recovered/thesis-candidate/additional.bib`.
+- Pentagon's macro-expanded figure path resolves to the new top-level figure. No static nested include in the current assembly was unresolved. A literal `ref`/`eqref`/`pageref`/`autoref` scan found no missing labels. Neither check substitutes for compilation, citation checks or visual inspection.
+
+## Recommended order and boundaries
+
+1. Name one production assembly owner and preserve/version the interrupted overlays before integration. Choose whether to promote them; their existence is not approval. Keep immutable source packets/hashes for concurrently authored sections.
+2. Run foundation/QP, flow/variation, numerical-contract and literature planning/checks independently. Give each the actual resolved inputs, not bare chapter filenames.
+3. Use DS closure **now** for scientific content. Historical association support was recovered; new primary sampling is not an automatic prerequisite. The June table/current-analyzer schema mismatch is a reproduction obligation, not evidence that the recovered association failed.
+4. Integrate selected DS/pentagon/foundational changes with their companion claims in disclosure, numerics, availability and appendix. Fix easy stale proof descriptions while doing so; reserve intro/abstract/conclusion rewriting until result dispositions settle.
+5. Build in a fresh disposable copy/output directory or preserve the baseline receipt before rebuilding in place. Record actual inputs and source hashes, then inspect the assembled PDF. This audit intentionally did not perform that production step.
+
+No theorem reproof, human prose review, current literature search, expensive experiment, or publication was performed. No source outside this report directory was edited. Main and interrupted user/agent work were preserved. This worktree is retained as an active integration reference.

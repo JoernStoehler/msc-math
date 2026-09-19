@@ -1,0 +1,39 @@
+{
+  "captured": "2026-09-18",
+  "paths_relative_to": "repository root",
+  "note": "Input provenance, not a certification of every input claim. Returned bytes are immutable; canonical development lives beside this manifest.",
+  "inputs": [
+    {
+      "path": "docs/pro-handoffs/pentagon-return/received/math/research.tex",
+      "sha256": "dd416f21f6cea0a211fbafd3d14908fc6333b175c0851050713104686b4e8c25"
+    },
+    {
+      "path": "docs/pro-handoffs/pentagon-return/audit-affine.md",
+      "sha256": "57bff6d1963c32df91f6b18c3ba606c317a91ba2cf6d21a1ee24aa1fc3ab422c"
+    },
+    {
+      "path": "docs/pro-handoffs/pentagon-return/audit-extensions.md",
+      "sha256": "f38800cf11f0f0c2c3f1a7a010fdb093bf586c7fd78bb493100979716fe60a44"
+    },
+    {
+      "path": "docs/pro-handoffs/pentagon-generalization/math/rotated-pentagon-proof.tex",
+      "sha256": "e41574584039911ceb25cc7cd508544df6e8028c2dad6eee32c39532e2efba15"
+    },
+    {
+      "path": "docs/pro-handoffs/pentagon-generalization/math/product-six-facet-reduction.tex",
+      "sha256": "f74325caef85829b5a6595f414d17e0e0b4ab60a5b17fae8ca78ae6eacbccf82"
+    },
+    {
+      "path": "docs/pentagon-chapter-v2/chapter.tex",
+      "sha256": "051a7fd64f1823b379a8ea5dd2ad456bda009ae8af3799f97a7998d6d3a897ba"
+    },
+    {
+      "path": "experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py",
+      "sha256": "5cb004f3df24a27cb5bf6a6bd4b2f281e17edf834bbbb25895f88c31f239aed4"
+    },
+    {
+      "path": "experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.full.stdout.txt",
+      "sha256": "c5fdd3f49b7e263ca26ea95ee3a1546e944ea55d2b20b78b2b0015c23e6be6f2"
+    }
+  ]
+}

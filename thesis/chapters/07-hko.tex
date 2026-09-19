@@ -1,0 +1,37 @@
+\clearpage
+\section[HKO Local Maximality]{Local maximality of the HKO pentagon product}
+\label{sec:hko-local-maximum}
+Let $P$ be the regular pentagon of circumradius one, centred at the origin
+and with vertex $(1,0)$. In coordinates $(q_1,q_2,p_1,p_2)$ put
+$K_0=P\times R(-\pi/2)P$, with symplectic form
+$\omega_0=\sum_j dq_j\wedge dp_j$.
+The Haim--Kislev--Ostrover capacity formula~\cite{HaimKislevOstrover2024} for this body gives
+\[
+ c_{\rm EHZ}(K_0)=2\cos(\pi/10)(1+\cos(\pi/5)),\qquad
+ \operatorname{sys}(K_0)=\frac{3+\sqrt5}{5}>1.
+\]
+Here $\operatorname{sys}(K)=c_{\rm EHZ}(K)^2/(2\operatorname{vol}_4 K)$.
+The counterexample itself is due to Haim--Kislev and Ostrover; the result
+proved here concerns its local maximality when the number of facets stays ten.
+\begin{theorem}\label{thm:hko-ten-facet-local-maximum}
+There is a Hausdorff neighborhood $\mathcal U$ of $K_0$ among convex
+four-dimensional polytopes with exactly ten facets such that
+$\operatorname{sys}(K)\leq\operatorname{sys}(K_0)$ for $K\in\mathcal U$.
+Equality holds precisely for those bodies in $\mathcal U$ obtained from
+$K_0$ by translation, positive dilation and a linear symplectic map.
+\end{theorem}
+\input{chapters/hko-lemma-geometry.tex}
+\input{chapters/hko-lemma-bounds.tex}
+\input{chapters/hko-lemma-conclusion.tex}
+\clearpage
+\subsection*{The twenty-six exact choices}
+\label{page:hko-exact-choices}
+The constants $c=(t^2+5)/40$ and $z=(5-t^2)/20$ are as above.
+Facet labels and positions start at one; entry numbers start at zero to
+identify the rows in the accompanying computational witness.
+Every finite decimal in the table denotes its exact rational value.
+\begingroup
+\small\renewcommand{\arraystretch}{1.25}
+\renewcommand{\baselinestretch}{1.2}\selectfont
+\input{chapters/hko-sections.tex}
+\endgroup

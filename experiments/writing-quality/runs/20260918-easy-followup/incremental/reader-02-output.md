@@ -1,0 +1,21 @@
+# Reader reconstruction after prefix 02
+
+The revised opening resolves my questions about the product construction and k,m: the two polygons occupy the complementary coordinate Lagrangian planes, and the bucket indices count their sides. The original observation remains a pooled negative rank association between R and historical numerical targets, with the same sampling and certification limits.
+
+The new material explains what R measures for those products. Two-dimensional faces come either from an entire factor at a vertex of the other factor or from a pair of edges. The former contribute zero because the factor planes are Lagrangian. On a mixed face, the standard symplectic form pairs the q-edge and p-edge by their ordinary dot product. Thus R is a normalized sum of absolute edge pairings. Rotating one polygon changes those pairings without changing product volume or combinatorics.
+
+For two unit-circumradius regular pentagons, this sum can be evaluated explicitly. The relevant angle is the distance d from a multiple of pi/5, with d between zero and pi/10. The descriptor is 16 sin(pi/5) cos d. The separate pentagon capacity result states that the true systolic ratio is a fixed coefficient times sec squared d. Multiplying eliminates the angle: sys times R squared is constant on this family. Here, therefore, a smaller descriptor means a larger true ratio exactly, not merely statistically. The values range from about 0.947 at alignment to about 1.047 at the endpoint. These bodies and exact calculations are not the initial table, so the table's lower maximum does not contradict them. This is a later explanation on a special family rather than a claim about how the original sampling was planned.
+
+The final paragraph changes the question from explanation to use. Two other selected paths have both R and the numerical target decreasing at every retained step. They show that following decreasing R need not improve the observed target. The initial population association could still help choose a starting candidate even though it does not supply a reliable local optimization direction. I now expect the search part to test that distinction.
+
+# Immediate interpretation questions
+
+- “The capacity profile proved in the pentagon analysis” supplies the entire capacity side of the exact identity. I can follow the deduction conditional on that result, but I cannot yet locate the result or tell whether I should already have encountered its hypotheses. A section or theorem reference would let me connect the argument to the earlier thesis. I do not need its proof repeated here.
+- The exact endpoint ratio above one is consequential in a thesis about Viterbo's conjecture: for the displayed normalization and these convex products, I understand it as an analytic violation of the unit bound. The text explains why it does not contradict the table, but does not say whether that mathematical significance was already established in the pentagon analysis. I can continue reading, but I want to know whether this is intended as recall of a central earlier result or its first announcement.
+- The two adverse paths are described using “numerical systolic ratio,” while the opening carefully distinguishes the stored target from true sys. Are these the same kind of historical evaluator observations, or do these paths have different computational guarantees? This affects whether I read “not a universal ascent objective” as a demonstrated statement about true ratios or an empirical warning about the proposed search heuristic.
+
+# Reasonable expectations for later text
+
+- I do not need the detailed adverse paths immediately to understand the starting-point versus direction distinction. Before relying on them as reproducible examples, I would expect their construction or a reference, and clarification of whether 3/4 and 1/2 are exact endpoint results or concise descriptions of numerical values.
+- I expect the next search unit to explain how candidates are selected using R and what comparison measures the benefit. The exact pentagon identity alone cannot establish that benefit for new generic polytopes.
+- The population-generation and evaluator details from the first response remain reasonable methodological references rather than obstacles to the new product calculation.

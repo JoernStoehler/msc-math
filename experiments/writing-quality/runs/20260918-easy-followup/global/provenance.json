@@ -1,0 +1,32 @@
+{
+  "baseline": "experiments/writing-quality/runs/20260918-easy-routes/route-reader/final.md",
+  "baseline_sha256": "dc2f268875887cf8bfad3f513a68d3294f5652d5d689be7406a301d9ed335a36",
+  "inputs": [
+    {
+      "path": "experiments/writing-quality/runs/20260918-easy-routes/route-reader/final.md",
+      "sha256": "dc2f268875887cf8bfad3f513a68d3294f5652d5d689be7406a301d9ed335a36"
+    },
+    {
+      "path": "experiments/writing-quality/runs/20260918-easy-routes/brief.md",
+      "sha256": "1fd8b8c5a116ab7557e31eff636d87991d5ae330bd1a0176af6ee4742803d432"
+    },
+    {
+      "path": "experiments/writing-quality/runs/20260918-easy-routes/inputs/search-account.md",
+      "sha256": "5a8b0ec861a91135005c1812105160d0b826dba14361b06edb37ac08701a6805"
+    },
+    {
+      "path": "experiments/writing-quality/runs/20260918-easy-routes/inputs/ridge-mathematics.md",
+      "sha256": "b908929295ca9b7e0e5b43eebac68e9171d9b80b002978aac79ddda2937040b2"
+    },
+    {
+      "path": "experiments/writing-quality/runs/20260918-easy-routes/inputs/current-panels.md",
+      "sha256": "225cf042f794e40f83840e51849df8d0a19ec9cdee10664684ab1906ab1cbc88"
+    },
+    {
+      "path": "experiments/writing-quality/runs/20260918-easy-routes/route-reader/supplemental-source/concentration-README.md",
+      "sha256": "54320b681e96828d881bd742acafb4e17f86b9cd8b2ee0836cee6cbce29a7341"
+    }
+  ],
+  "final_sha256": "0b88358f2819adf40f0008cc527714a5631cbee569d6742c80dd85086d345681",
+  "human_judgment": null
+}

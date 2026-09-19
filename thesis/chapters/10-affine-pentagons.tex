@@ -1,0 +1,235 @@
+% Provisional exposition; derived from the returned Pro proof and independently audited.
+% Review/provenance status and exact integration instructions are in README.md.
+\section{Independent linear deformations of the pentagon factors}
+\label{sec:pentagon-affine}
+
+The rotation formula leaves open what happens when the two pentagons are
+stretched or sheared independently. Such changes generally alter both capacity
+and volume. We show that they cannot increase the systolic ratio beyond the
+Haim--Kislev--Ostrover value. Translations do not affect either quantity, so
+linear maps suffice to describe the extension to affinely regular pentagons.
+
+We use a regular pentagon with circumradius one and outward facet normals
+\[
+ n_i=(\cos(2\pi i/5),\sin(2\pi i/5)),\qquad
+ P=\{q:n_i\cdot q\le h,\ 0\le i<5\},\qquad h=\cos(\pi/5).
+\]
+This normal convention differs by a common rotation from the preceding
+rotation proof; applying that rotation to both coordinate planes is
+symplectic. Its area is $S=\frac52\sin(2\pi/5)$. Throughout this section the product is
+Lagrangian, with form
+$\omega_0((q,p),(q',p'))=q\cdot p'-p\cdot q'$.
+
+\begin{theorem}\label{thm:pentagon-affine-capacity}
+Let $G,H\in GL(2,\mathbb R)$, and set
+\[
+ M=G^{-1}H^{-T},\qquad m(M)=\max_{0\le i,j<5}|n_i^TMn_j|.
+\]
+Then
+\[
+ c_{\mathrm{EHZ}}(GP\times HP)=\frac{(1+h)^2}{m(M)}.
+\]
+Moreover,
+\[
+ \operatorname{sys}(GP\times HP)
+ :=\frac{c_{\mathrm{EHZ}}(GP\times HP)^2}
+ {2\operatorname{area}(GP)\operatorname{area}(HP)}
+ \le\frac{3+\sqrt5}{5}.
+\]
+Write $D=\operatorname{conv}\{\pm n_i:0\le i<5\}$ and $\alpha=\pi/10$.
+Equality holds precisely when $M=tR_\alpha U$, where $t>0$ and $U$ is an
+orthogonal symmetry of the regular decagon $D$.
+\end{theorem}
+
+The formula requires only twenty-five absolute pairings, even though the
+capacity formula initially ranges over all facet orders and feasible weights.
+The reason is a containment between convex sets of matrices. Unlike the
+endpoint comparison for rotations, this containment is preserved by independent
+linear changes in the two factors.
+
+\subsection{Reducing the possible facet orders}
+Write a polygon as $\{q:u_i\cdot q\le1\}$. Its normalized closure polytope is
+\[
+ C=\{\gamma\ge0:\ \textstyle\sum_i\gamma_i=1,\
+                         \sum_i\gamma_i u_i=0\}.
+\]
+For the pentagon, $u_i=n_i/h$. The Haim--Kislev formula
+\cite[Theorem 1.1]{HK2017}, with earlier word entries as the first argument of
+$\omega_0$, reads
+\[
+ c_{\mathrm{EHZ}}=\frac1{2Q_{\max}},\qquad
+ Q=\sum_{j<k}\beta_j\beta_k\omega_0(a_{\sigma_j},a_{\sigma_k}),
+\]
+where the product covectors $a_i$ are support-normalized, the weights have
+sum one, and their weighted covector sum vanishes.
+
+For a product, same-factor pairings vanish. If the total weight in the first
+factor is $t$, the objective therefore has the form
+$t(1-t)B(\gamma,\eta)$, where $B$ is bilinear in the normalized closure
+weights of the factors. At a positive global maximum, maximizing successively
+in $\gamma$ and $\eta$ allows both to be chosen at vertices of their closure
+polytopes. The global value cannot increase, so these replacements preserve it.
+A vertex has at most three positive entries: more than three columns of the
+three closure equations admit a two-sided feasible perturbation. The remaining
+factor $t(1-t)$ is maximal at $t=1/2$.
+
+Thus some maximizer uses at most three facets of each factor. This is an
+existence statement; it does not assert that all maximizing words are sparse.
+Moving the first weighted covector cyclically to the end preserves $Q$, since
+the change is its pairing with minus twice the sum of all the other weighted
+covectors, and closure makes that pairing zero. We may consequently group
+adjacent entries from the same factor cyclically. There are two, four, or six
+alternating groups; the two-group value is zero.
+
+Put $x_i=\gamma_i u_i$ and $y_j=\eta_j v_j$. These are factor steps with
+sum zero; their actual product weights carry an additional factor $1/2$.
+A four-group order $x,y,-x,-y$ has value $x\cdot y/2$. A six-group order
+$x_1,y_1,x_2,y_2,x_3,y_3$ has value
+\[
+ Q=\frac12(x_1\cdot y_1-x_3\cdot y_2).
+\]
+The latter identity follows by pairing each $p$-step with its preceding
+$q$-prefix: those prefixes are $x_1,-x_3,0$.
+Represent these expressions by matrices
+\[
+ \frac12xy^T,\qquad \frac12(x_1y_1^T-x_3y_2^T),
+\]
+whose Frobenius pairing with the identity matrix is the objective. Under
+independent changes $G,H$, both types transform by the same linear map
+$T\mapsto G^{-T}TH^{-1}$. It remains to show that every six-group matrix for
+regular pentagons lies in the convex hull of the four-group matrices.
+
+\subsection{Two identities cover all six-group competitors}
+Set
+\[
+ \lambda=\frac{\sqrt5-1}{2}=\frac1{2h},\qquad
+ s=\frac1{1+h},\qquad \rho=\frac{s^2}{2},\qquad
+ \mathcal D=\operatorname{conv}\{\pm n_i n_j^T:0\le i,j<5\}.
+\]
+A positive closure triple has all cyclic angular gaps less than $\pi$.
+Its three positive integer index gaps therefore sum to five and are at most
+two, so they are cyclic permutations of $(1,2,2)$. There are exactly five
+triples, all rotations of $\{n_0,n_2,n_3\}$, and no opposite pairs.
+The normalized steps for this representative triple are
+\[
+ se,sa,sb,\qquad e=n_0,\quad a=\lambda n_2,\quad
+ b=\lambda n_3,\qquad e+a+b=0.
+\]
+Indeed the closure weights are $h/(1+h),1/[2(1+h)],1/[2(1+h)]$.
+Every proper grouped sum of a triple is one step or its negative. The convex
+hull of all such sums, over the five triples, is $sD$: all $\pm sn_i$ occur,
+and the remaining steps are their contractions by $\lambda<1$.
+It follows, by expanding independent convex combinations in each factor,
+that the convex hull of the four-group matrices is exactly $\rho\mathcal D$.
+Every generator is feasible: choose a triple with the specified singled-out
+step, and group its other two steps together.
+
+\begin{lemma}\label{lem:pentagon-affine-identities}
+The two matrices $T_1=ee^T-aa^T$ and $T_2=eb^T-ae^T$ belong to $\mathcal D$.
+\end{lemma}
+\begin{proof}
+They have the identities
+\begin{align*}
+ T_1&=\lambda^2ee^T-\lambda^2en_3^T-\lambda^3n_1n_2^T,\\
+ T_2&=\lambda^2n_1n_3^T-\lambda^2n_2n_4^T.
+\end{align*}
+To verify them, substitute
+$n_2+n_3=-\lambda^{-1}e$,
+$\lambda n_1=e+n_2$, and $\lambda n_4=e+n_3$.
+The first right-hand side becomes
+$(\lambda^2+\lambda)ee^T-\lambda^2n_2n_2^T=T_1$;
+the second becomes $\lambda(en_3^T-n_2e^T)=T_2$.
+The unsigned coefficients in the first identity sum to
+$2\lambda^2+\lambda^3=1$. Those in the second sum to
+$2\lambda^2<1$, with the remaining mass assigned to $0\in\mathcal D$.
+The signs are part of the defining generators, so these are convex
+combinations, not signed combinations with negative weights.
+\end{proof}
+
+\begin{lemma}\label{lem:pentagon-affine-containment}
+Every six-group matrix belongs to the four-group convex hull $\rho\mathcal D$.
+\end{lemma}
+\begin{proof}
+Rotate each triple to the representative above and cut the word at the
+$q$-step $se$. After division by $\rho$, the matrix is
+$ev^T-wz^T$, where $w\in\{a,b\}$ and $v,z$ are distinct members of
+$\{e,a,b\}$. Reflection $F=\operatorname{diag}(1,-1)$ on the left exchanges
+$a,b$ and fixes $e$, so it suffices to take $w=a$. Its six possibilities are
+\[
+\begin{array}{c|cccccc}
+(v,z)&(e,a)&(e,b)&(a,e)&(b,e)&(a,b)&(b,a)\\\hline
+ ev^T-az^T&T_1&T_1F&T_2F&T_2&-FT_1F&-FT_1
+\end{array}
+\]
+The last two equalities also follow from $e+a+b=0$. The set $\mathcal D$ is
+invariant under sign, independent left and right reflections, and independent
+pentagon rotations. Lemma~\ref{lem:pentagon-affine-identities} therefore
+covers all twelve cyclic orders for every pair of closure triples.
+\end{proof}
+
+\subsection{Capacity and the sharp ratio}
+\begin{proof}[Proof of Theorem~\ref{thm:pentagon-affine-capacity}]
+The matrix containment survives the map $T\mapsto G^{-T}TH^{-1}$.
+Thus the maximum is attained among transformed four-group matrices, giving
+\[
+ Q_{\max}=\rho\max_{i,j}|n_i^TG^{-1}H^{-T}n_j|.
+\]
+Taking $1/(2Q_{\max})$ proves the capacity formula. Six-group words may tie
+this value; the argument only excludes a strictly larger value.
+
+Since areas multiply by absolute determinants, the systolic ratio becomes
+\[
+ \frac{(1+h)^4}{2S^2}\frac{|\det M|}{m(M)^2}.
+\]
+Put $L=M/m(M)$. The inequalities defining $m(M)$ say exactly that
+$LD\subseteq D^\circ$. The polar regular decagon is
+$D^\circ=\sec\alpha\,R_\alpha D$, hence comparison of areas yields
+\[
+ |\det L|\le\sec^2\alpha.
+\]
+Now
+\[
+ \frac{(1+h)^4}{2S^2}=\frac{5+2\sqrt5}{10},\qquad
+ \frac{5+2\sqrt5}{10}\sec^2(\pi/10)=\frac{3+\sqrt5}{5},
+\]
+which proves the bound. Equality of areas under convex-body containment
+holds precisely when $LD=D^\circ$. Then
+$\cos\alpha R_{-\alpha}L$ is a linear automorphism of $D$.
+Such an automorphism permutes vertices and preserves or reverses cyclic
+adjacency. Its action on two adjacent vertices determines it and agrees with
+an orthogonal dihedral symmetry. This proves the stated equality
+classification; conversely each listed matrix attains equality.
+\end{proof}
+
+Every equality body in this family is a positive dilation of a linear
+symplectic image of the HKO body. Indeed, when $M=tR_\alpha U$, the symplectic
+map $\operatorname{diag}(G^{-1},G^T)$ sends the product to
+\[
+ P\times M^{-T}P=P\times t^{-1}R_\alpha UP.
+\]
+The symplectic rescaling $(q,p)\mapsto(t^{-1/2}q,t^{1/2}p)$ then gives
+$t^{-1/2}(P\times R_\alpha UP)$. Every orthogonal symmetry $U$ of the
+decagon sends $P$ to $P$ or $-P$, so the remaining regular product has
+relative angle $\alpha$ or $\alpha+\pi$. Modulo the pentagon period
+$2\pi/5$, both $\alpha+\pi$ and the HKO angle $-\pi/2$ equal $-\alpha$;
+simultaneous reflection in both planes exchanges $\alpha$ and $-\alpha$
+symplectically. Conversely, dilation and
+linear symplectic maps preserve the systolic ratio, so every such HKO image
+in this family attains equality.
+
+For $G=I$ and $H=R_\theta$, the formula reduces to the rotation profile:
+$m(R_\theta)=\cos d_5(\theta)$, where
+$d_5(\theta)=\min_{k\in\mathbb Z}|\theta-k\pi/5|$.
+The shorter endpoint proof remains useful because it establishes that profile
+without the matrix classification. The original exhaustive SageMath argument
+is retained as computational provenance in the repository's
+\texttt{experiments/regular-products/} directory, under
+\texttt{pentagon-rotation-formula-proof/}; it is not an input to either
+analytic argument presented here.
+
+The affine theorem concerns all independent linear images of regular
+pentagons, including arbitrarily large deformations. The separate local
+maximality theorem concerns nearby ten-facet polytopes and includes changes
+that destroy the product structure. The two results control different sets of
+perturbations. Neither is a bound for all ten-facet polytopes or for products
+of arbitrary pentagons.

@@ -1,0 +1,11 @@
+# Findings from retired planning documents
+
+The exact source documents remain recoverable using [retired-paths.json](retired-paths.json). This index retains their factual questions and destinations; it does not renew their assignments or claim every later source is accepted.
+
+| Retired packet | Factual content retained or superseded by stronger evidence |
+|---|---|
+| technical-closure-plan | QP two-inequality route: `docs/qp-derivation-review/`, `docs/qp-flow-integration/`; flow singular/empty/cutoff and theorem/runtime distinction: `docs/flow-runtime-closure/`; generic derivatives versus feasible HKO upper bounds: `docs/variation-interface-check/`; selected versus production numerics, KKT scope, 249-system audits and printed-central-value correction: `docs/numerics-correspondence-check/`. Historical DS receipts versus current recomputation: `docs/ds-retrospective-revalidation/`. |
+| literature-closure-plan | False R4 EHZ/cylindrical open claim, current source and related work: `docs/open-thesis-literature/`; triangle/quadrilateral generator exclusions: `docs/ds-family-theorem-mapping/`; nonsmooth Rudolf and AAO conventions: `docs/imported-theorem-contracts/`; algorithm prior art: `docs/algorithm-prior-art-closure/`. No exhaustive novelty certification resulted. |
+| remaining-chapter-obligations | Visualization, code/data, AI disclosure/reflection and abstract/conclusion dispositions: `docs/WORK_REMAINING.md`; reproduction route: `thesis/README.md`; availability support: `docs/availability-claim-closure/`. Historical visualization audit established only byte agreement, not reader acceptance: HKO PNG SHA256 `6f6ec2b8173e454c45827ec0e340b470cbf3150355517284e3156889b2e5473f`, cube `b3d9b189c0796274b074bac92e4c55d012fa208240d90327241471fceb429c03`; producer `experiments/visualization/viewer/screenshot-figures.mjs`. Old build-routing patch was an unapplied proposal, superseded by current isolated build. |
+
+The literature plan also raised Guo et al. training-result versus thesis-process causal-inference scope. It is not a demonstrated explanation of the observed agent behavior; consult current AI reflection evidence before attributing causes. Source-only support does not establish an accepted narrative. Optional empirical discoveries and unresolved claims remain selected or unselected in the current work list.

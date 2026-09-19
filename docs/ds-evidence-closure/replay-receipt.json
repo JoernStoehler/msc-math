@@ -1,0 +1,202 @@
+{
+  "date": "2026-09-18",
+  "table_sha256": "607c8731fa03d190d497edc3e8f1b4cca88f7d238260cce527680f568bc33d59",
+  "provenance_sha256": "6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2",
+  "analyzer_and_helper_git_commit": "ea8e2657",
+  "current_analyzer_result": "aborts: six later ridge columns absent; not bypassed",
+  "historical_analyzer_result": "exit0; 14336 rows,39 eligible29 nonconstant features,200 permutations",
+  "replay_summary_sha256": "4572360a84d59bf2c712a1ffb6333d4ea857ff56f3a6c22250f41605162d7018",
+  "retained_summary_sha256": "7b131d8ef5502bcb2feec0205def8f4fa5790094c99e4bcc1ad30218d028c83e",
+  "all_nonnumeric_leaves_equal": true,
+  "numeric_differences": [
+    {
+      "path": "/source_factor_tests/capacity_source/anova_f",
+      "replay": 173.48063572985617,
+      "retained": 173.48063572985615,
+      "absolute_difference": 2.842170943040401e-14
+    },
+    {
+      "path": "/source_factor_tests/capacity_source/anova_p",
+      "replay": 2.1764428735314087e-39,
+      "retained": 2.1764428735314093e-39,
+      "absolute_difference": 6.525304467998525e-55
+    },
+    {
+      "path": "/source_factor_tests/dataset_label/anova_f",
+      "replay": 173.48063572985617,
+      "retained": 173.48063572985615,
+      "absolute_difference": 2.842170943040401e-14
+    },
+    {
+      "path": "/source_factor_tests/dataset_label/anova_p",
+      "replay": 2.1764428735314087e-39,
+      "retained": 2.1764428735314093e-39,
+      "absolute_difference": 6.525304467998525e-55
+    },
+    {
+      "path": "/source_factor_tests/dataset_label_by_facet_count/anova_f",
+      "replay": 226.7387330811356,
+      "retained": 226.73873308113545,
+      "absolute_difference": 1.4210854715202004e-13
+    },
+    {
+      "path": "/source_factor_tests/facet_count/anova_f",
+      "replay": 435.3556484137366,
+      "retained": 435.35564841373645,
+      "absolute_difference": 1.7053025658242404e-13
+    },
+    {
+      "path": "/source_factor_tests/product_bounces/anova_f",
+      "replay": 1711.6139809354406,
+      "retained": 1711.61398093544,
+      "absolute_difference": 6.821210263296962e-13
+    },
+    {
+      "path": "/source_factor_tests/product_bucket/anova_f",
+      "replay": 217.99190164887025,
+      "retained": 217.99190164887028,
+      "absolute_difference": 2.842170943040401e-14
+    },
+    {
+      "path": "/top_associations/0/pearson_p",
+      "replay": 6.671463067760467e-136,
+      "retained": 6.671463067765021e-136,
+      "absolute_difference": 4.554146383887036e-148
+    },
+    {
+      "path": "/top_associations/0/pearson_r",
+      "replay": -0.20503931541510637,
+      "retained": -0.2050393154151063,
+      "absolute_difference": 5.551115123125783e-17
+    },
+    {
+      "path": "/top_associations/1/pearson_r",
+      "replay": -0.17792917878486011,
+      "retained": -0.17792917878486003,
+      "absolute_difference": 8.326672684688674e-17
+    },
+    {
+      "path": "/top_associations/2/pearson_r",
+      "replay": -0.1887663124308366,
+      "retained": -0.18876631243083664,
+      "absolute_difference": 2.7755575615628914e-17
+    },
+    {
+      "path": "/top_associations/4/pearson_p",
+      "replay": 7.045475918495952e-159,
+      "retained": 7.045475918501186e-159,
+      "absolute_difference": 5.233889535172116e-171
+    },
+    {
+      "path": "/top_associations/4/pearson_r",
+      "replay": -0.22153160675140052,
+      "retained": -0.2215316067514005,
+      "absolute_difference": 2.7755575615628914e-17
+    },
+    {
+      "path": "/top_associations/7/pearson_r",
+      "replay": -0.6586964811771672,
+      "retained": -0.6586964811771674,
+      "absolute_difference": 2.220446049250313e-16
+    },
+    {
+      "path": "/top_associations/8/pearson_r",
+      "replay": -0.3186724178557775,
+      "retained": -0.31867241785577727,
+      "absolute_difference": 2.220446049250313e-16
+    },
+    {
+      "path": "/top_associations/9/pearson_r",
+      "replay": 0.4173405666590523,
+      "retained": 0.41734056665905217,
+      "absolute_difference": 1.1102230246251565e-16
+    },
+    {
+      "path": "/top_associations/10/pearson_r",
+      "replay": 0.4155571534537327,
+      "retained": 0.4155571534537329,
+      "absolute_difference": 2.220446049250313e-16
+    },
+    {
+      "path": "/top_associations/11/pearson_r",
+      "replay": 0.4141272871950851,
+      "retained": 0.41412728719508524,
+      "absolute_difference": 1.1102230246251565e-16
+    },
+    {
+      "path": "/top_associations/12/pearson_r",
+      "replay": 0.4141272871950851,
+      "retained": 0.41412728719508524,
+      "absolute_difference": 1.1102230246251565e-16
+    },
+    {
+      "path": "/top_associations/14/pearson_r",
+      "replay": 0.3989361540471734,
+      "retained": 0.39893615404717336,
+      "absolute_difference": 5.551115123125783e-17
+    },
+    {
+      "path": "/top_associations/15/pearson_r",
+      "replay": 0.41087339549316515,
+      "retained": 0.41087339549316526,
+      "absolute_difference": 1.1102230246251565e-16
+    },
+    {
+      "path": "/top_associations/16/pearson_r",
+      "replay": 0.4108733954931651,
+      "retained": 0.4108733954931652,
+      "absolute_difference": 1.1102230246251565e-16
+    },
+    {
+      "path": "/top_associations/17/pearson_r",
+      "replay": 0.38169698896302695,
+      "retained": 0.38169698896302684,
+      "absolute_difference": 1.1102230246251565e-16
+    },
+    {
+      "path": "/top_associations/18/pearson_r",
+      "replay": 0.38169698896302695,
+      "retained": 0.38169698896302684,
+      "absolute_difference": 1.1102230246251565e-16
+    },
+    {
+      "path": "/top_associations/19/pearson_r",
+      "replay": 0.3266786525665154,
+      "retained": 0.3266786525665153,
+      "absolute_difference": 1.1102230246251565e-16
+    },
+    {
+      "path": "/top_associations/20/pearson_r",
+      "replay": 0.3266786525665154,
+      "retained": 0.3266786525665153,
+      "absolute_difference": 1.1102230246251565e-16
+    },
+    {
+      "path": "/top_associations/21/pearson_p",
+      "replay": 1.79403964336917e-308,
+      "retained": 1.7940396433672414e-308,
+      "absolute_difference": 1.929e-320
+    },
+    {
+      "path": "/top_associations/21/pearson_r",
+      "replay": 0.30603422141436465,
+      "retained": 0.30603422141436476,
+      "absolute_difference": 1.1102230246251565e-16
+    },
+    {
+      "path": "/top_associations/23/pearson_r",
+      "replay": -0.18166935870903222,
+      "retained": -0.1816693587090322,
+      "absolute_difference": 2.7755575615628914e-17
+    },
+    {
+      "path": "/top_associations/24/pearson_r",
+      "replay": 0.18526863617389194,
+      "retained": 0.18526863617389197,
+      "absolute_difference": 2.7755575615628914e-17
+    }
+  ],
+  "maximum_absolute_difference": 6.821210263296962e-13,
+  "recomputed_capacity": false,
+  "notes": "No timing instrumentation on original replay; no walltime claim. Reported headline values and all Spearman coefficients exactly match. Small Pearson/ANOVA differences compatible with numerical-library rounding."
+}

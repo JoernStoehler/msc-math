@@ -1,0 +1,92 @@
+--- a/thesis/candidate/04-quadratic-program.tex
++++ b/thesis/candidate/04-quadratic-program.tex
+@@ -92,27 +92,47 @@
+ \end{theorem}
+ 
+ \begin{proof}
+-This is Haim--Kislev's finite capacity formula
+-\cite[Theorem~1.1]{HK2017}, rewritten from unit normals and heights to the
+-dual vertices \(a_i=n_i/h_i\). The variable change above sends
+-\[
+-  \sum_i\beta_i^{\mathrm{HK}}h_i=1,\qquad
+-  \sum_i\beta_i^{\mathrm{HK}}n_i=0
+-\]
+-to the constraints defining \(M_\sigma\). Their displayed objective uses the
+-opposite word orientation from \eqref{eq:quadratic-program-algorithm-hk2019-q};
+-replacing each ordered word by its reverse sends it to \(Q_\sigma\). Since
+-reversal is a bijection on the words in the maximum, their formula reads
+-\[
+-  c_{\mathrm{EHZ}}(K)
+-  =
+-  \frac{1}{2}
+-  \left[\max_\sigma\max_{\beta\in M_\sigma}Q_\sigma(\beta)\right]^{-1}.
+-\]
++Write \(c=c_{\mathrm{EHZ}}(K)\). We derive the formula from the dual
++principle and the simple-minimizer theorem proved above.
++
++First let \(\beta\in M_\sigma\) have \(q=Q_\sigma(\beta)>0\), and set
++\(T=1/(2q)\). Traverse the velocities \(R_{\sigma_k}=2J_0a_{\sigma_k}\)
++for times \(T\beta_k\). The resulting curve \(z\) is closed because
++\(\sum_k\beta_k a_{\sigma_k}=0\). By
++Lemma~\ref{lem:preliminaries-shoelace},
++\[
++  2A(z)=4T^2Q_\sigma(\beta)=2T.
++\]
++Moreover, \(h_K(a_i)=1\) for each facet row, so
++\(H_K^*(-J_0R_i)=h_K(2a_i)^2/4=1\). Hence \(I_K(z)=T=A(z)\):
++this curve is feasible for the dual problem
++\eqref{eq:preliminaries-dual-problem}. The dual action principle,
++Theorem~\ref{thm:preliminaries-clarke-dual-action}, gives
++\[
++  c\leq I_K(z)=\frac1{2q},\qquad q\leq\frac1{2c}.
++\]
++Nonpositive feasible values also satisfy this last inequality, since \(c>0\).
++Thus \(Q_{\max}\leq1/(2c)\).
++
++For the reverse inequality, choose the simple minimum-action orbit supplied
++by Theorem~\ref{thm:generalized-reeb-simple-minimizer}. Its period is \(c\).
++If its distinct facet word is \(\sigma\) and its dwell times are
++\(\tau_k>0\), put \(\beta_k=\tau_k/c\). Closure and the period identity
++show that \(\beta\in M_\sigma\). The same shoelace formula now gives
++\[
++  2c=4c^2Q_\sigma(\beta),\qquad
++  Q_\sigma(\beta)=\frac1{2c}>0.
++\]
++Consequently \(Q_{\max}\geq1/(2c)\), proving both the formula and positivity.
++The maximum exists: there are finitely many words, each \(M_\sigma\) is
++compact, and the simple minimizer supplies a nonempty feasible set.
+ \end{proof}
+ 
+-The following construction explains what the finite variables represent and
+-where global optimality enters.
++This is Haim--Kislev's formula~\cite[Theorem~1.1]{HK2017}, with the
++change of weights and word convention described above. The derivation uses
++the dual action principle and Haim--Kislev's simple-minimizer theorem as its
++foundations. The next proposition identifies when the dual curve constructed
++in the proof can be placed on the boundary.
+ 
+ \Needspace{15\baselineskip}
+ \begin{proposition}[From finite weights to a dual curve]
+--- a/thesis/candidate/05-flow-graph.tex
++++ b/thesis/candidate/05-flow-graph.tex
+@@ -158,7 +158,8 @@
+ \begin{pmatrix}-1.601002&1.364891\\4.482887&-4.446374\end{pmatrix}
+ \binom uv+
+ \binom{1.626615}{-1.821973},
+-\qquad
++\]
++\[
+ A_w(u,v)\simeq36.063319+6.721729u-6.397030v.
+ \]
+ The fixed point is \((u,v)\simeq(0.791856,0.317243)\).  It belongs to the
+--- a/thesis/candidate/main.tex
++++ b/thesis/candidate/main.tex
+@@ -56,7 +56,7 @@
+ \input{recovered/thesis-candidate/02-preliminaries.tex}
+ \input{03-generalized-reeb-orbits-polytopes}
+ \input{04-quadratic-program}
+-\input{recovered/thesis-candidate/05-flow-graph.tex}
++\input{05-flow-graph}
+ \input{recovered/thesis-candidate/06-variation.tex}
+ \input{recovered/thesis-candidate/07-hko.tex}
+ \input{recovered/ds-first-wave/writing/chapter-opening-v2.tex}

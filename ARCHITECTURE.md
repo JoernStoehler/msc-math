@@ -8,14 +8,14 @@ detailed file inventories and does not prescribe local file placement.
 
 | Domain | Contains | Excludes |
 | --- | --- | --- |
-| `thesis/` | Reader-facing LaTeX, bibliography, thesis-native assets, and writing companions | exploratory proof development or producer artifacts |
+| `thesis/` | Selected reader-facing LaTeX, bibliography and thesis-native assets | exploratory proof development or producer artifacts |
 | `formal/` | Mathematical statements, derivations, proof routes, audits, and unresolved obligations | final publication wording |
 | `crates/` | Reusable Rust implementations, public contracts, unit tests, and crate maintenance notes | thesis-specific empirical claims |
 | `experiments/` | Empirical questions, data producers, consuming analyses, retained outputs, interpretation, and reproduction commands | one exhaustive subject/method/status taxonomy or ordinary reusable library APIs |
 | `papers/` | Source papers, extracted passages, and paper-specific notes | project conclusions not established by the source |
 | `submit/` | Official forms, submission requirements, and administrative source notes | thesis mathematical content |
-| `docs/` | Project-wide facts, reproduction and artifact policy, and execution-environment contracts | topic-local evidence or proofs |
-| `memories/` | Recoverable decisions, investigation findings, reasoning, and the provisional task/assignment map | a substitute for mathematical evidence or an authoritative execution plan |
+| `docs/` | Project contracts, scientific support/audit packets, reusable interpretation, and reproduction policy; see `docs/README.md` | sole authority for a theorem merely because an audit mentions it |
+| `docs/history/` | Exact reviews and matched inputs, experiment/recovery evidence, and a pinned Git index for retired plans | superseded task queues as maintained fulltexts, current task ownership, or alternative active manuscript |
 | `scripts/` | Repository-wide maintenance and reporting utilities | scientific results |
 
 Use conventional layouts and decide local placement from the actual files and
@@ -31,11 +31,11 @@ reading sequences:
 
 | Question | Start | Confirm with |
 | --- | --- | --- |
-| What is printed in the thesis? | `thesis/main.tex`, then `thesis/README.md` | active `thesis/*.tex` and cited sources |
+| What is printed in the thesis? | `thesis/main.tex`, then `thesis/README.md` | selected `thesis/chapters/*.tex` and cited sources |
 | Is a mathematical result established? | `formal/README.md` and the relevant thesis/experiment entry point | exact statement, proof source, certificate, and active thesis wording |
 | Has an experiment already tested this? | `experiments/README.md`, then topic READMEs | producer, retained output, and interpretation |
 | Can the implementation do this? | `crates/README.md`, then crate README/source/tests | public API, tests, and relevant verification experiments |
-| Why was a route rejected or superseded? | local decision/status notes, `memories/`, or Git history for the relevant path/symbol | source and rationale at the relevant revision; current documentation may omit the history |
+| Why was a route rejected or superseded? | local decision/status notes, `docs/history/`, or Git history for the relevant path/symbol | source and rationale at the relevant revision; current documentation may omit the history |
 
 ## Authority across domains
 

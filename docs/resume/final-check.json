@@ -1,0 +1,62 @@
+{
+  "checked_at_utc": "2026-09-18T17:44:00Z",
+  "resume_verifier": {
+    "status": "pass",
+    "summary": "3370 branch records, dirty snapshots, PDF and 51 selected build inputs"
+  },
+  "markdown_local_links": {
+    "status": "pass",
+    "files": [
+      "README.md",
+      "RESUME.md",
+      "docs/README.md",
+      "docs/WORK_REMAINING.md",
+      "thesis/README.md"
+    ],
+    "links_checked": 42,
+    "broken": []
+  },
+  "repository_topology": {
+    "status": "pass",
+    "branches": [
+      "main",
+      "thesis/resume-20260918"
+    ],
+    "worktrees": [
+      "/workspaces/msc-math",
+      "/workspaces/msc-math/.worktrees/candidate-assembly-integration"
+    ]
+  },
+  "archive": {
+    "status": "pass",
+    "path": "/workspaces/archived/workspaces-root/msc-math-session-20260918",
+    "bundle_sha256": "8b948452f1fc34cf48460bffdd277283f00ad99147e326b40f0659af44287b98",
+    "payload_sha256": "317cee7b212220f8c764d641802033bf00edfe313e9202031d0241f2a33ae816",
+    "matches_cleanup_result": true,
+    "restore_check_repeated": false
+  },
+  "local_review_service": {
+    "url": "http://127.0.0.1:56741/docs/whole-review/",
+    "status": "stale",
+    "observed_http_status": "000",
+    "detail": "connection refused; service was not relaunched"
+  },
+  "dirty_main_source_comparison": {
+    "status": "pass",
+    "inventory_entries": 263,
+    "sha_entries_checked": 262,
+    "excluded": [
+      ".codex/config.toml"
+    ],
+    "changed_or_missing_count": 0,
+    "changed_or_missing": [],
+    "source_overwritten": false
+  },
+  "removed_review_worktree_source_comparison": {
+    "status": "expected_absence",
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "inventory_entries": 25,
+    "missing_count": 25,
+    "retained_snapshots_verified_by_resume_verifier": true
+  }
+}

@@ -1,0 +1,2304 @@
+[
+  {
+    "origin": "/workspaces/msc-math",
+    "path": ".codex/config.toml",
+    "status": " M",
+    "disposition": "machine-local-config-not-imported"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": ".gitignore",
+    "status": " M",
+    "sha256": "da78b5a2af89daea4c9d6cef43780b562ad779454d22aae9ace72997914e223f",
+    "retained_path": "docs/history/dirty-snapshots/main/.gitignore.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "PROJECT-STATUS-BRIEF.md",
+    "status": " M",
+    "sha256": "276810fe8a27c53f05f69ad773bfd2b6b0c633bf1a0dd6d449c8eb9e55667e38",
+    "retained_path": "docs/history/dirty-snapshots/main/PROJECT-STATUS-BRIEF.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/pentagon-chapter-v2/README.md",
+    "status": " M",
+    "sha256": "d3991a6dba95f0414c55f7eded08b0cd0f7ab5c1e267e628f64e35ebfd7eb866",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter-v2/README.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/pentagon-chapter-v2/chapter.tex",
+    "status": " M",
+    "sha256": "7e57b85d7e62a0b38982ba7075dd9250f01a7a8b09a5b2a4e6eac6965b911bcf",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter-v2/chapter.tex.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/pentagon-chapter-v2/review.md",
+    "status": " M",
+    "sha256": "a95d5effa1a4d53f70923ebdc79e429737a995e1bbd9b24e2db0c3506f37efb0",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter-v2/review.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/pentagon-chapter/user-reading-feedback.md",
+    "status": " M",
+    "sha256": "c554e4e8e94b1366d3c9e333129cdda7dde1b39fd93afdfb81aef7ea36703550",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter/user-reading-feedback.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/process-audit/corpus.json",
+    "status": " M",
+    "sha256": "ffca78b8ec7495d7ec4099c9a9cd688f203aef28525b6411d271f5bc30c82232",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/process-audit/corpus.json.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/process-audit/extract.py",
+    "status": " M",
+    "sha256": "2e5b9fadac92593190fee8ff09b60c26fed83884e29cfc17d2464ce4047f54d6",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/process-audit/extract.py.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/project-facts.md",
+    "status": " M",
+    "sha256": "d28b05cc7e889aa91b3068e24936ba97fc505831b49c5f45c7ebeab028be9d30",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/project-facts.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/review-evidence/README.md",
+    "status": " M",
+    "sha256": "1004edeb61ff15935c7cbde6cc8a031a13c39a91a06b68fb358ef875ceaeb24a",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/README.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/source-recovery/README.md",
+    "status": " M",
+    "sha256": "fe5faa7ba748f60d12a7e7bcdf3a3914f6f4fffaf4ba440dfe1ddeb5c824d472",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/source-recovery/README.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/source-recovery/preserve_review_evidence.py",
+    "status": " M",
+    "sha256": "83d25fb646675125ddf0e2db5fec2d079316442cfb463ca0c6bd867c99c11145",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/source-recovery/preserve_review_evidence.py.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/source-recovery/recover.py",
+    "status": " M",
+    "sha256": "b36e8d79cd67ab9bfc8d9906293fe572d2ff2d98140de0f6ad7059f20424176c",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/source-recovery/recover.py.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/sprint-two/KICKOFF.md",
+    "status": " M",
+    "sha256": "b5bc77b4177c42d5501defdb2d56002d2cfcc4909211ee25739d04e0727b45ca",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/sprint-two/KICKOFF.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/task-graph/README.md",
+    "status": " M",
+    "sha256": "512e02bebb55536b9e47a44ba1fd9e1911c08f7c51891358c7433c01f3f95b37",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/task-graph/README.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/conditional-tail-atlas/analyze.py",
+    "status": " M",
+    "sha256": "2fbf7442e2946c54e95050bb614a1757047b09c713128a866d6ae84304e87729",
+    "retained_path": "docs/history/dirty-snapshots/main/experiments/sys-datascience/methods/conditional-tail-atlas/analyze.py.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/conditional-tail-atlas/artifacts/analysis.md",
+    "status": " M",
+    "sha256": "f1bcb0246bd436e59d4059292462a913e7bc62f030801619b9a7596c4da50def",
+    "retained_path": "docs/history/dirty-snapshots/main/experiments/sys-datascience/methods/conditional-tail-atlas/artifacts/analysis.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "memories/archive/sprint-one-todos-2026-09-16.md",
+    "status": " M",
+    "sha256": "2fafcb023823c43d5515b266f05d8d1eb8d59916a1ad652c3291ef9650f23fce",
+    "retained_path": "docs/history/dirty-snapshots/main/memories/archive/sprint-one-todos-2026-09-16.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "memories/authoring-workflow.md",
+    "status": " M",
+    "sha256": "8fff2d9365f978e24c8da76c73e249fa010b6451fb4a2d1cf003e87f45fe8712",
+    "retained_path": "docs/history/dirty-snapshots/main/memories/authoring-workflow.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "memories/planning-context.md",
+    "status": " M",
+    "sha256": "d82994546e3cb76881514a94ddc7f041ba0ea59ce62ad44186276fab617ca35f",
+    "retained_path": "docs/history/dirty-snapshots/main/memories/planning-context.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "memories/todos.md",
+    "status": " M",
+    "sha256": "422c1e77c00e9a1777730fe3c44edb454c5b8c31b727b56c2ae6089ad4ddd3de",
+    "retained_path": "docs/history/dirty-snapshots/main/memories/todos.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "AGENTS.md",
+    "status": "??",
+    "sha256": "0b4fb89fdb17c2a917cd19de2babd2b09c7a3096cb783df2dc8456d8ce08e8fb",
+    "retained_path": "docs/history/dirty-snapshots/main/AGENTS.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/pentagon-chapter/README.md",
+    "status": "??",
+    "sha256": "7b960c1e620f7a8bce945501330d4301f1d57995626c1273b7ae4d0786996119",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter/README.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/pentagon-chapter/assets/rotation-profile.png",
+    "status": "??",
+    "sha256": "dd9e6b8eb06545f4b2e5d5cc552f2bede021ea4a9ddcecb673fe25cd34152e99",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter/assets/rotation-profile.png.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/pentagon-chapter/chapter.tex",
+    "status": "??",
+    "sha256": "aa2efcfe501559a30e535465915b2a8f9e8149d9e7620bb6407a7cd83be7f672",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter/chapter.tex.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/pentagon-chapter/references.bib",
+    "status": "??",
+    "sha256": "d3ce463213baee957f9972e2a63852575e96fe9bb6204452d5c9798dc7862c4b",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter/references.bib.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/pentagon-chapter/standalone.tex",
+    "status": "??",
+    "sha256": "1bd87e6ed7fc336eec7be5c5a7880a53f9b3770fa264638c42fdc3531c650912",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-chapter/standalone.tex.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/pentagon-proof/analytic-proof.tex",
+    "status": "??",
+    "sha256": "625595f6d9548b0b269ef4bf05e0106ebcbc420b44ee0ebd494c63b8f8ea3af2",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-proof/analytic-proof.tex.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/pentagon-proof/fresh-proof.tex",
+    "status": "??",
+    "sha256": "e41574584039911ceb25cc7cd508544df6e8028c2dad6eee32c39532e2efba15",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/pentagon-proof/fresh-proof.tex.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/resumption-goal-and-constraints.md",
+    "status": "??",
+    "sha256": "25dbd0055f0959f2e2bb690dcc83fcf6e63a683e1181e46adacd3cc187c310ed",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/resumption-goal-and-constraints.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/README.md",
+    "status": "??",
+    "sha256": "e745ccf0ad6549f6b69df517dcd62ad4a9ec93a227b25764197f8044539db324",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/README.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/hko-mechanism-candidate.md",
+    "status": "??",
+    "sha256": "801062444375df46f7679eb8ab417a58a1759c897a9cca8c516356d6093cce7f",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/hko-mechanism-candidate.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/hko-obstruction-candidate.md",
+    "status": "??",
+    "sha256": "03061d19aa2f4d4eaf96226de9c9c075ee348471194330ee6043709c4bfbf456",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/hko-obstruction-candidate.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/hko-questions-candidate.md",
+    "status": "??",
+    "sha256": "a4e5f0ff0fa86b9f7f93abb43b8f88e6a56c6c8db4170363caa04328cf91924d",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/hko-questions-candidate.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/repaired-preview/hko-repaired-preview.md",
+    "status": "??",
+    "sha256": "c011c794182b211500cd00e94cd15e7826ff2367cbecfa76785b04f83c2d7009",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/repaired-preview/hko-repaired-preview.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/repaired-preview/hko-repaired-preview.pdf",
+    "status": "??",
+    "sha256": "a62f84dd8de88b0e12e6d9ce2c23fa1ccf49910b4b5ab822d0ef6ebab689ce45",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/repaired-preview/hko-repaired-preview.pdf.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/repaired-preview/hko-repaired-preview.tex",
+    "status": "??",
+    "sha256": "58d0e41f279724e99c355f82e5eb3ec78b0964ba04a051b2700a668964e44788",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/repaired-preview/hko-repaired-preview.tex.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/revised-preview/hko-revised-preview-provenance.json",
+    "status": "??",
+    "sha256": "422d7045d0717c4109c4a80cffa1dc0726dd5e3ad3ff661cfc6fa140567e5dd5",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/revised-preview/hko-revised-preview-provenance.json.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/revised-preview/hko-revised-preview.pdf",
+    "status": "??",
+    "sha256": "759d8f6357e5694edf1401434c5ee6bedcc28cf12e13326a4da89fb7ad0cf536",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/revised-preview/hko-revised-preview.pdf.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/revised-preview/hko-revised-preview.tex",
+    "status": "??",
+    "sha256": "c9766ad108f1e11b64b590fddfe0f8e5d1b253aec4903035a33153e589c2ebc1",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/review-evidence/calibration/hko-authoring-trial-2026-09-07/revised-preview/hko-revised-preview.tex.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "docs/sprint-two/readiness.md",
+    "status": "??",
+    "sha256": "9e2a50e304296364c202b5cb40bcfef06983daa742bb4cf80d463782ce0cf77d",
+    "retained_path": "docs/history/dirty-snapshots/main/docs/sprint-two/readiness.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/coordination/exploration-wave-2026-09-14.md",
+    "status": "??",
+    "sha256": "cd21f4a9eb70187d6f5806e0e282fc3abb116f8e3746ffc74a2ad16b427f0088",
+    "retained_path": "docs/history/dirty-snapshots/main/experiments/sys-datascience/coordination/exploration-wave-2026-09-14.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/Cargo.lock",
+    "status": "??",
+    "sha256": "8a73a2ecef5dc8925982a1f4ea76d29a725833df8954cff5e32293383459460b",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/Cargo.lock",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/Cargo.toml",
+    "status": "??",
+    "sha256": "a86601cdb7926f79acd916f26b64ec1a6d2fc8118a897fbcb6ada1a59335b6d3",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/Cargo.toml",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/README.md",
+    "status": "??",
+    "sha256": "1ad2aedcc655af1ffe671d7da5303c54ddcecd810c5310368f4a7cc74682549d",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/README.md",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/build.py",
+    "status": "??",
+    "sha256": "8fbf2014d31a5a163df47310eccb65ca4510737b5fe436a88b5898dc1acbd974",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/build.py",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/controls/build-receipt.json",
+    "status": "??",
+    "sha256": "c1d7875aeb43f689a3dc8d33771f5aa75e9569fd76a886077a11568679f58c5e",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/controls/build-receipt.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/controls/check.py",
+    "status": "??",
+    "sha256": "28e7ed8abcfbfd2b974ca6f49a8d3d8158f8698961ddf79010812edfa0d3b870",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/controls/check.py",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/controls/failure-inputs.jsonl",
+    "status": "??",
+    "sha256": "a8033063c062313ad905ed41715764859da6544a0e34e72a16256bb4bdde556b",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/controls/failure-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/controls/failure-results.jsonl",
+    "status": "??",
+    "sha256": "9ccb0585cb6fcc0309127782f5115e3f9bd7889f6d2e9c397cabe4ca69f3ef12",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/controls/failure-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/controls/inputs.jsonl",
+    "status": "??",
+    "sha256": "a2f3658dd4de583ca36722adc7674253d55f84e7af9fc682a067a3c2c394be1c",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/controls/inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/controls/make_panel.py",
+    "status": "??",
+    "sha256": "87b6c29e7eb688529ad8b46b8e74aabf6ee3a6608a4fb11d7487e70a9b721b6b",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/controls/make_panel.py",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/controls/results.jsonl",
+    "status": "??",
+    "sha256": "1466b06bdad859fdb851cae33dba10850b1bbeac5c561278a467bbe27a9eb679",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/controls/results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/controls/run.time",
+    "status": "??",
+    "sha256": "d549200e84d350e83c9dc11b10a1e42b302b5e5cd321eef24fbdd2876a3f086f",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/controls/run.time",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/evaluate.py",
+    "status": "??",
+    "sha256": "f87d94db5d8e997f394b6a152dec74e8d19a94ab44fdc249e59f8e5bad4abaf9",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/evaluate.py",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/src/main.rs",
+    "status": "??",
+    "sha256": "677a46029537e464864c7eb4a2683dcd7137294999c6b5a0b1e81eb90477e26c",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/src/main.rs",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/Cargo.lock",
+    "status": "??",
+    "sha256": "6440a813f0fc27e630715ce29f8899ba4ebf7e2d3b4b007696da2189dca6345f",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/Cargo.lock",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/Cargo.toml",
+    "status": "??",
+    "sha256": "644e636607a15cf6fa26703a6ecf107881ca8dd65f936533708921bde2a20aa7",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/Cargo.toml",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/analyze.py",
+    "status": "??",
+    "sha256": "0d94f2461409d071afdbf3c15eda2417a4141aca95a6dee20da785eb52969894",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/analyze.py",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-1-cost.json",
+    "status": "??",
+    "sha256": "34e898559f827eb0c62bccec97153c5ac67a1ede4cf1604920e1c20e4b7dd51c",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-1-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-1-generation.json",
+    "status": "??",
+    "sha256": "d343484f7de946005713ab1c0fb97dd70a9d91bb81e4d077828e97500a9446de",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-1-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-1-inputs.jsonl",
+    "status": "??",
+    "sha256": "8b3bbc7c75a8cb83892c7a2cc79a9e58daa76d4fe214d0113e81bd62fb52d4e4",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-1-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-1-request.json",
+    "status": "??",
+    "sha256": "a20df4da821e96f2ca6dd8320889b15e394e9deb42672b811733b41bf69068c1",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-1-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-1-results.jsonl",
+    "status": "??",
+    "sha256": "8a513e36f516bfbf64aa986d5905c84bca66bcde59fba75554b8080ebe982e91",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-1-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-2-cost.json",
+    "status": "??",
+    "sha256": "880b87f1f74317503b01e100d13682d9a922b84b37223478e55efd63ddc46042",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-2-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-2-generation.json",
+    "status": "??",
+    "sha256": "94632d176b049c430ef8ed1e4af70e2e1d79cfa4c5b46145ab63f5891ee03fea",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-2-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-2-inputs.jsonl",
+    "status": "??",
+    "sha256": "dcb886c256e6d0242a8bb55c63b42f27384669ac610b628656cc37d783a1a0c7",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-2-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-2-request.json",
+    "status": "??",
+    "sha256": "fb9c696bf977a0ce9364bd8fd975d27d3b82d2871a71657de057956cc969e31c",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-2-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-2-results.jsonl",
+    "status": "??",
+    "sha256": "cb468f567c69519721291f75243995d1334f83505b02a5e0a74d4c889052232d",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-2-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-3-cost.json",
+    "status": "??",
+    "sha256": "943bbc391c0d3ed9341d098710e7f725cee40e001901358140a65931a0c2f413",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-3-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-3-generation.json",
+    "status": "??",
+    "sha256": "54a0ecd026be34a753368b4f1ee00cd63a319a97d2dc09a6ad7e437c5470170d",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-3-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-3-inputs.jsonl",
+    "status": "??",
+    "sha256": "131a81a1aa424039b8d24551f0af654b90c4ba05101c0b3d5d078ddad8d9da58",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-3-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-3-request.json",
+    "status": "??",
+    "sha256": "051ad46e6999a8170c443c4ab71cb027139988517364693770f1bea5345add02",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-3-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-3-results.jsonl",
+    "status": "??",
+    "sha256": "ae861a02c0cfa9930d31dab79d1d52ba556f07dc7c776e63bd16951e2de4358f",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-cem-3-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-1-cost.json",
+    "status": "??",
+    "sha256": "33d35e46390185bcd881c198d38ebd54eeb2b639661cdcf9cd9bc5284c702f98",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-1-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-1-generation.json",
+    "status": "??",
+    "sha256": "1ee4da345a7e8fcc02c4ace3f9daa176e19f953c94274781892388bb87e8007f",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-1-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-1-inputs.jsonl",
+    "status": "??",
+    "sha256": "3856c20d7b484eb51a75db8d644dace028e15a1605373fe13025803d04b32efa",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-1-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-1-request.json",
+    "status": "??",
+    "sha256": "1f228b2d064def28bdd4c5a36d82a2996babb915a1bf91d8bfe3e5c3a11dbb32",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-1-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-1-results.jsonl",
+    "status": "??",
+    "sha256": "baed30bbd2eb2248a1e30a1bd3b2586db0dcdcae5ebd3479f7ee726cebf00fd3",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-1-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-2-cost.json",
+    "status": "??",
+    "sha256": "1a0c186c6d469fcea1460de2e381f6126039cf97a035ebed19d955d8393e422d",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-2-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-2-generation.json",
+    "status": "??",
+    "sha256": "db9e1e5047e11516b3af5c72dbff33cc64b4c55091a5f2d2652df65ea5400639",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-2-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-2-inputs.jsonl",
+    "status": "??",
+    "sha256": "cb5e37968564b59499f672345dc35f17c72e793d73c010b902042e898045ab84",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-2-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-2-request.json",
+    "status": "??",
+    "sha256": "fc8f327feb19361ff41906ef1b32689cc3f945d3951807a7177a3a9015452f98",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-2-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-2-results.jsonl",
+    "status": "??",
+    "sha256": "59c4aa44864b9153ecabb265d5cd040aa66abfa5167687fb042a69527d98dd8f",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-2-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-3-cost.json",
+    "status": "??",
+    "sha256": "ebb967fd1037baa13e870259452665cce2668ebe87a84c525e574f3ef5c14397",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-3-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-3-generation.json",
+    "status": "??",
+    "sha256": "859ad7eeb6ebf53b9825905d99b970f90f4e353553eeaa95f4b9d44c62391bd2",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-3-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-3-inputs.jsonl",
+    "status": "??",
+    "sha256": "30ef2c12855b7a3012c33bc406a2423335a40e65a88c055a89e00c31932a0788",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-3-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-3-request.json",
+    "status": "??",
+    "sha256": "534a2b1c3c2d0b22c55fa77a733a18ef58f99499be4a2f6dfe01884a9bfa93e9",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-3-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-3-results.jsonl",
+    "status": "??",
+    "sha256": "3f9e4a7fe22ba6fa18bc9cdffbf11594def5c6434e9c8086711f90c6c9bf9356",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-iid-3-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-shared-0-cost.json",
+    "status": "??",
+    "sha256": "898d30e561b8504c7400fe2bb2883195cd48f490121a86d90e2a5c9b04e48d17",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-shared-0-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-shared-0-generation.json",
+    "status": "??",
+    "sha256": "5b503c6c304ad5202512ece23781b47554c4fe50ca3f1c4fa9bb821b19586971",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-shared-0-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-shared-0-inputs.jsonl",
+    "status": "??",
+    "sha256": "f14afcabd69fbd98042490f65e2e9df3fda1f969fb2cb74443d57942e40981a2",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-shared-0-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-shared-0-request.json",
+    "status": "??",
+    "sha256": "b9a1fa99f06afd8ae315ba01a918be737177d96d4709c053512e2254eea2fed6",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-shared-0-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-shared-0-results.jsonl",
+    "status": "??",
+    "sha256": "793fe1acc8a3a9509139fd447850e980d4040da5ad09e993607214fdbb3792b8",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-shared-0-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-update-0.json",
+    "status": "??",
+    "sha256": "24f3ed37744fcd0b2b814a67de412f1c0ba546432d5dae6a87977e928bd07c83",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-update-0.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-update-1.json",
+    "status": "??",
+    "sha256": "5c6c34c83497eccc3b249c273df745dc8546254469cf028273fe8f05229b5732",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-update-1.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-update-2.json",
+    "status": "??",
+    "sha256": "88c1dd9752afcd594a00eff6ebf5a3174a1ae487f721f763de9b0e66b631f156",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140301-update-2.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-1-cost.json",
+    "status": "??",
+    "sha256": "b3fddc1e91ab934c35da2f761b1042786995f7db18f81abb0f45ff927325600d",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-1-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-1-generation.json",
+    "status": "??",
+    "sha256": "f5e2a2ab1f059843cc524f7cdb827eeffc6742d8a1bb0ef34b15c828cc4bfd8e",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-1-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-1-inputs.jsonl",
+    "status": "??",
+    "sha256": "6e45520b3f1e11602c95015b34db83289de17753ff6052c869fb8bb561e0fe18",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-1-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-1-request.json",
+    "status": "??",
+    "sha256": "4375adfbe4b9fd170f4bec01f2ccfb66c65f7eab2d542fa81e108bcc0dcf1303",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-1-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-1-results.jsonl",
+    "status": "??",
+    "sha256": "5e9c5628a7aea6a05343784522f93277ed4bb51dff11e31c66f842d61f9d5c88",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-1-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-2-cost.json",
+    "status": "??",
+    "sha256": "46414170c5b9e3e107540b1f46a110d7bdeda99e09766751146b5c2f89b21e0e",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-2-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-2-generation.json",
+    "status": "??",
+    "sha256": "e47665fe5e2a7906a1c8257787ea394390404d4da304665a61f32a0081c79b9d",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-2-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-2-inputs.jsonl",
+    "status": "??",
+    "sha256": "d8933bd3c8b73e9e024d8bd30c49c5a07140856d3a947a8f3d1e424f2a698156",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-2-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-2-request.json",
+    "status": "??",
+    "sha256": "c28f0c1e51e70c857815503cae3acd7480d79a6e520ee5e435344356258b69f0",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-2-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-2-results.jsonl",
+    "status": "??",
+    "sha256": "54fec7438e60750909ae7a8e720b2b3a155a81172500ae1716575a45f8f40200",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-2-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-3-cost.json",
+    "status": "??",
+    "sha256": "7371a32499e22413373d051c18c5cb5fb9b79f71aac8c950d11f9f8fdddc4021",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-3-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-3-generation.json",
+    "status": "??",
+    "sha256": "6ffb5bc050b9143b6757aa5aabfe136838be186becace0c02758f281b99604bd",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-3-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-3-inputs.jsonl",
+    "status": "??",
+    "sha256": "5bc51f443ddf0fd3f7b61c263f13cab89696d0525c5846ef3117248a9aa32eaa",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-3-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-3-request.json",
+    "status": "??",
+    "sha256": "c0a7a8b875c24a26c6900228f4f73a395fcc78373a0982ec22b7db81c6e3a130",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-3-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-3-results.jsonl",
+    "status": "??",
+    "sha256": "a29ab82b20e79b37afb0c278a2bb2c0570a5b9e33717a341301b169ae12aeabf",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-cem-3-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-1-cost.json",
+    "status": "??",
+    "sha256": "3b3184645c37714cbb94d920d738ba1ce8c89ba7976e22aff222eb4f55bb1e02",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-1-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-1-generation.json",
+    "status": "??",
+    "sha256": "57beafaf6ed94f057fd43c29ed4657613cb279f6a19ec6b379ef367503b10504",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-1-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-1-inputs.jsonl",
+    "status": "??",
+    "sha256": "9db102cd146bd27af594f4baaa45c6793c88887027d8242bb22a86ba5c6f62a7",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-1-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-1-request.json",
+    "status": "??",
+    "sha256": "887b66cd8c19fd978259621243cc209d72612e2d28d83dc83b94b7145d9a3670",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-1-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-1-results.jsonl",
+    "status": "??",
+    "sha256": "952342f6f3ce7b4725a37b691035aa7defa2ba3df8d10650223d7fc9adc9bedb",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-1-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-2-cost.json",
+    "status": "??",
+    "sha256": "c4efba5e8c3c9753105debab622d91f728cec913d55c5822da4262f96da99650",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-2-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-2-generation.json",
+    "status": "??",
+    "sha256": "836d9c629e071a7080b53848349fc99119e09de4791c5be57f831c85f17d2a31",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-2-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-2-inputs.jsonl",
+    "status": "??",
+    "sha256": "bfd2307001eeec2135f2e177b1c6d76f8d9800849d277f98d624853af10c1a7c",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-2-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-2-request.json",
+    "status": "??",
+    "sha256": "676e910a64826f28a07a906e86023dd40046635709273962ed1b37f57efec331",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-2-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-2-results.jsonl",
+    "status": "??",
+    "sha256": "f92e1516056d1c3e0cf995cc360d949f5bd4d4802236f40b8ff9f8199380c623",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-2-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-3-cost.json",
+    "status": "??",
+    "sha256": "2fdf4fb745da481ebff91a7ebbb5634302384ddb9855d278810f9499222dcc3f",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-3-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-3-generation.json",
+    "status": "??",
+    "sha256": "477ee3ff7175efb566c1ab0fd3c47147342ab77707a4aef27d134ca20a2aab9a",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-3-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-3-inputs.jsonl",
+    "status": "??",
+    "sha256": "36112f53bb6e9a9a76b29e134ce0bc871dfefe78cc6cd56d81cf731134a1e753",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-3-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-3-request.json",
+    "status": "??",
+    "sha256": "0c54cb65c4268b2ae015a7a8ba6a8a4456eb7313cc13a96ceddfd82c551a49bf",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-3-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-3-results.jsonl",
+    "status": "??",
+    "sha256": "e56639c1a5526c25ce762b64a24072b12e1ae78ae4f6c6124a48f030f99d7b82",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-iid-3-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-shared-0-cost.json",
+    "status": "??",
+    "sha256": "8cecbfb2d472cd680535abf652bb94eb4dc513031db51d83f30a8cd072d25b47",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-shared-0-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-shared-0-generation.json",
+    "status": "??",
+    "sha256": "b814dc18266852cb18dbb2da711cf7d2ee2b18f8920c25f5f227e9b23a5d45f8",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-shared-0-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-shared-0-inputs.jsonl",
+    "status": "??",
+    "sha256": "9fd1deec33823f8199a3ad7aee461003a3c9e4384d73aae261c2072a5e2add1b",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-shared-0-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-shared-0-request.json",
+    "status": "??",
+    "sha256": "ddbc36e6173962974b28ec7ab88222a40de03c74871ba0aadc55cd5cd025730c",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-shared-0-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-shared-0-results.jsonl",
+    "status": "??",
+    "sha256": "e20f3528db1957b9f69feb3aba4b1ded56205d2c3954099a57bcbfed6341aaf6",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-shared-0-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-update-0.json",
+    "status": "??",
+    "sha256": "e48949b915bce974c8aa2342fc9d46350bbf97a79b877e1df879cd8d6b6be4cf",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-update-0.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-update-1.json",
+    "status": "??",
+    "sha256": "74b2252ce5d1a3078f976687740ec924cf9575fa845ca42003f5db350f54e9dc",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-update-1.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-update-2.json",
+    "status": "??",
+    "sha256": "bc31197d473dad5c0341027e3575d0d1fd413f8ce13ec883e6dd73e0d4514fb2",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140302-update-2.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-1-cost.json",
+    "status": "??",
+    "sha256": "bdc2d7cd48b05a5a9348315652ced82b612b1dd066a5f239f78ad3db9954a76a",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-1-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-1-generation.json",
+    "status": "??",
+    "sha256": "0581e8a0a1b954199a4b4871c870d19a9595ba104d814fac4fa8b96e913835b7",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-1-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-1-inputs.jsonl",
+    "status": "??",
+    "sha256": "7ceb732012e4ef5b41a44f144be0a0577051e145aaaa6632e3b0eacf39952296",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-1-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-1-request.json",
+    "status": "??",
+    "sha256": "e5e8549a54e51e920af590c3aac1fb2594142fac34cd4cf5c66dff2430be7978",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-1-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-1-results.jsonl",
+    "status": "??",
+    "sha256": "91d1d62f6c21ba36d1ad6d9e1525cb93f74d29030e0d390cf7f95dd9f98b6cc0",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-1-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-2-cost.json",
+    "status": "??",
+    "sha256": "e5c2f3a0f5ba849da6e08e640abee62ff4bbc9e50f2773d4b1133c07c538c1df",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-2-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-2-generation.json",
+    "status": "??",
+    "sha256": "70fef8f63bb48adedb06bfa8d80d724345e040f80886a32a5229214fc8b96de9",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-2-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-2-inputs.jsonl",
+    "status": "??",
+    "sha256": "553a479f2823b9959ca17527efd2516cc0056710e741c34ea423ec7ca464d718",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-2-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-2-request.json",
+    "status": "??",
+    "sha256": "a43e7d248d40d87c3791ed581d1407d8d6ffd88ef59032265c9302b9fab36692",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-2-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-2-results.jsonl",
+    "status": "??",
+    "sha256": "72b80f25b4af906c86547d5a90b7e3369be1c5bc58fbb13aec3cc586b3648fd6",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-2-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-3-cost.json",
+    "status": "??",
+    "sha256": "7bb024d4ae19c60977f8c0835b4d5ca5ebbafbe15c4cdc37b2362b0a05a5adcf",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-3-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-3-generation.json",
+    "status": "??",
+    "sha256": "f9de3d03e66e408d83beb84eb3e95f19045b66841e6277eefc15e1e0c1a3dcd8",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-3-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-3-inputs.jsonl",
+    "status": "??",
+    "sha256": "efe831af99cbfbba56c91b498bf00506bb497f5f6c98b185f7cfae7c35b18193",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-3-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-3-request.json",
+    "status": "??",
+    "sha256": "6d47d142e74093e73a633b1c0c80673ccadb1835a517dbec2ea7b7c7b34dbddf",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-3-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-3-results.jsonl",
+    "status": "??",
+    "sha256": "8667e9e37c66a88d8e0c1d3e4e2bf99fb2aaaaecaa47586fd3eeccb8acaa78b2",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-cem-3-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-1-cost.json",
+    "status": "??",
+    "sha256": "a2ae01331b8d44f24943d1e75d87cd1600a05088c6e63f1fc1fcdf8e96bcad5f",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-1-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-1-generation.json",
+    "status": "??",
+    "sha256": "16b68252c59fb823e576b316efb5ab026dd60f7c8e054bb58b0f455b30a3e490",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-1-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-1-inputs.jsonl",
+    "status": "??",
+    "sha256": "ec1fb36021d84ab2bab7ae3fe8da3acf41530542e01324073a0801cb716c0847",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-1-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-1-request.json",
+    "status": "??",
+    "sha256": "f23f6ac475c9b47a724265fd147d09109ee21c611df47cfd56b055ad34f0f92f",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-1-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-1-results.jsonl",
+    "status": "??",
+    "sha256": "bb16f2c95bc20f999d841f93851c7bc78c857bb7f61803a21d79cbf862a5cb84",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-1-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-2-cost.json",
+    "status": "??",
+    "sha256": "bf73fd3509ea643dbca4030056a480f5ae71e807dee81841134b6128219c8c4c",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-2-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-2-generation.json",
+    "status": "??",
+    "sha256": "15734ebf5b1702484e8b39723535f84cefe698f297dcfe54f1d121c880e36b90",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-2-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-2-inputs.jsonl",
+    "status": "??",
+    "sha256": "4f62cc53a22b3d19977da861b2e3ae5839830f5fdac158430bea985b18f05a9e",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-2-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-2-request.json",
+    "status": "??",
+    "sha256": "f5789ba620a5bbb7bfc1ddcecf9508417bed98f2379ef44abc84f8cfbd3d5ce6",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-2-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-2-results.jsonl",
+    "status": "??",
+    "sha256": "12a05e7c0fd39ce720c42682a8d127cafccc10e85b57fcd8db0d55176e0654fc",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-2-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-3-cost.json",
+    "status": "??",
+    "sha256": "fca32dcae6607b6530d6f4abdc4022a5bcf6c89f5ec32b2da7d0430524c5e911",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-3-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-3-generation.json",
+    "status": "??",
+    "sha256": "43650438f93850e8ba8cd8efc0d7c610c9b0836ab5ae1b5a04e8b0b6d7fcd85c",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-3-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-3-inputs.jsonl",
+    "status": "??",
+    "sha256": "291f3c30c47c9046d3da1c2cd1f29df23906158932372f8b4110e9e41cc88a75",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-3-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-3-request.json",
+    "status": "??",
+    "sha256": "f9d97aa31760c612226e30482e6b2bc850e0fc740bd07ac6175c70636aa1720c",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-3-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-3-results.jsonl",
+    "status": "??",
+    "sha256": "e2360eba6ff0324c0f459cd4ff7b1492b2f58992347553e2fa4cd82b620b9d51",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-iid-3-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-shared-0-cost.json",
+    "status": "??",
+    "sha256": "537490776d82ffa724eb1d1a213a918d56ea36cc48c5a03345f6f2d3c832210c",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-shared-0-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-shared-0-generation.json",
+    "status": "??",
+    "sha256": "644a57fdf1ccfa73bc742fe799e9876a0639d5ebf18ea636f57e829efd099b45",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-shared-0-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-shared-0-inputs.jsonl",
+    "status": "??",
+    "sha256": "df4b94c84ea18561224f15fb9a2b6430de74de34316f19a978ab64286a1c807d",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-shared-0-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-shared-0-request.json",
+    "status": "??",
+    "sha256": "4881ea67f0354b61e31f8524a2ac898973233c7684cbcd1bddd8cf3158454365",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-shared-0-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-shared-0-results.jsonl",
+    "status": "??",
+    "sha256": "3f6452d24b43b0486cfb0529cd7a9c75f1f5864ade784c60f6f8abca8525cd98",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-shared-0-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-update-0.json",
+    "status": "??",
+    "sha256": "033527d93f60167ca3e790daf00447c39290df268460fd4d803346db2bddd326",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-update-0.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-update-1.json",
+    "status": "??",
+    "sha256": "d071e624a66da8c08a0fcb78bfdbd30b1f7d5201ca198427836b478eed2ef83c",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-update-1.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-update-2.json",
+    "status": "??",
+    "sha256": "2b46ef29faee04fcacfb77df16dfa55f8af57dac65074f60a410d03a6a9c65f3",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/202609140303-update-2.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/analysis.json",
+    "status": "??",
+    "sha256": "0571ab40aa23c2edb9cc10032eef3271c842fe3c4665d1e02dd1cb05c39d94d7",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/analysis.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/best-so-far.jsonl",
+    "status": "??",
+    "sha256": "743c07b8175ef6f6b2b6349505988ff6d5b4f65d2be681e78b57de1c21721a3e",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/best-so-far.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/frozen-config.json",
+    "status": "??",
+    "sha256": "8c229c71a4adad1d06a0512941c8836850f932c27e237cda9d2e68c8f0b084e1",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/frozen-config.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/run-status.json",
+    "status": "??",
+    "sha256": "38b7a11152c9c4a83f474234881da1ca2d38da0cadd6e45b553c1ea01c20d6b7",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/run-status.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/run.time",
+    "status": "??",
+    "sha256": "144b484b27cfce225cdafb7aa9e97c649c0e12b560daaf755670ae2a45435095",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts-supported-v2/run.time",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-cem-1-cost.json",
+    "status": "??",
+    "sha256": "ea4673e7bd24d8c285373901345e44d3cbd610a66d395dd2fd152a547e48f59c",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-cem-1-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-cem-1-generation.json",
+    "status": "??",
+    "sha256": "fb4d3b7517b8ab2cff538b21760cbeec010bcb1ac870e78a595e125db62e4ef7",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-cem-1-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-cem-1-inputs.jsonl",
+    "status": "??",
+    "sha256": "8b3bbc7c75a8cb83892c7a2cc79a9e58daa76d4fe214d0113e81bd62fb52d4e4",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-cem-1-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-cem-1-request.json",
+    "status": "??",
+    "sha256": "a20df4da821e96f2ca6dd8320889b15e394e9deb42672b811733b41bf69068c1",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-cem-1-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-cem-1-results.jsonl",
+    "status": "??",
+    "sha256": "b4f3d120ea64421342299dd4381324a7a78675d3b3c2ced1dcd353a85cb17c14",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-cem-1-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-iid-1-cost.json",
+    "status": "??",
+    "sha256": "345ed2af527542e06fe5a599d750bd1200f0e5977ab1b2f9eb0ba5930f51b229",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-iid-1-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-iid-1-generation.json",
+    "status": "??",
+    "sha256": "c9a7ae0704a589bbe85d6b7442aea566afebf87e966b853504064498bf74db2f",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-iid-1-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-iid-1-inputs.jsonl",
+    "status": "??",
+    "sha256": "3856c20d7b484eb51a75db8d644dace028e15a1605373fe13025803d04b32efa",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-iid-1-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-iid-1-request.json",
+    "status": "??",
+    "sha256": "1f228b2d064def28bdd4c5a36d82a2996babb915a1bf91d8bfe3e5c3a11dbb32",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-iid-1-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-iid-1-results.jsonl",
+    "status": "??",
+    "sha256": "9d4d467e34b874df008286851a02fc13ca921aa60cf19436776ccffb1048bb44",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-iid-1-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-iid-2-cost.json",
+    "status": "??",
+    "sha256": "3f3fa1105205b74d727f40a71cec8faf7fc9fa41bc1bb34f49737d196b8a0996",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-iid-2-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-iid-2-generation.json",
+    "status": "??",
+    "sha256": "970eaac71f3469bf7bdb095a8cb04b41baf8d052b4778a9826d6456538e6e5fd",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-iid-2-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-iid-2-inputs.jsonl",
+    "status": "??",
+    "sha256": "83a863c80b726825887c7271acd6991757d6836daef861c75f06a1aed8dede13",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-iid-2-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-iid-2-request.json",
+    "status": "??",
+    "sha256": "fc8f327feb19361ff41906ef1b32689cc3f945d3951807a7177a3a9015452f98",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-iid-2-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-iid-2-results.jsonl",
+    "status": "??",
+    "sha256": "e0ca5636b01cb20ab111f90a10ec61a0ddf567419ec02f15b27decfb87a5958c",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-iid-2-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-shared-0-cost.json",
+    "status": "??",
+    "sha256": "3ebe1d9cdb026f78f1f84b154dfaf793a589e304cfa4523be052c763b6db385c",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-shared-0-cost.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-shared-0-generation.json",
+    "status": "??",
+    "sha256": "727d03d36e3a71836a13d74e9374bc95db8f683f99e7f1efabf1e004445eb2b2",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-shared-0-generation.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-shared-0-inputs.jsonl",
+    "status": "??",
+    "sha256": "f14afcabd69fbd98042490f65e2e9df3fda1f969fb2cb74443d57942e40981a2",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-shared-0-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-shared-0-request.json",
+    "status": "??",
+    "sha256": "b9a1fa99f06afd8ae315ba01a918be737177d96d4709c053512e2254eea2fed6",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-shared-0-request.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-shared-0-results.jsonl",
+    "status": "??",
+    "sha256": "ff2d3444afa1762717bddb6bc167f245e9217824a95741ec184d4bdd5e5956be",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-shared-0-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-update-0.json",
+    "status": "??",
+    "sha256": "98348d388834f0e7398164dfe87ad6cbe574d5a06515d28f631e05157be4cd3e",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-update-0.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-update-1.json",
+    "status": "??",
+    "sha256": "97c1c1f132d96850adfa0cd2a363ce7f464405507d2f460815197bdeab14286c",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/202609140301-update-1.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/analysis.json",
+    "status": "??",
+    "sha256": "7ec3ab5c77e36db7bbd14aaa6f1f103c01d7e1d6a1eba376e0ca0f2d4d05a9a2",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/analysis.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/cost-account.json",
+    "status": "??",
+    "sha256": "7a9498adde5fe84eae670450c21219e4cde59e24c2e50c61381eadcbf5966dc8",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/cost-account.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/frozen-config.json",
+    "status": "??",
+    "sha256": "e6838a216862404752613d4041b2e0b69bfd0d4eb4008f9bda5f36de244696c3",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/frozen-config.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/partial-best-so-far.jsonl",
+    "status": "??",
+    "sha256": "49d688990e13c6e44c11d923058c037c55c60ac56844ba231f78de49914f46e8",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/partial-best-so-far.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/partial-coverage.json",
+    "status": "??",
+    "sha256": "9812bbdcd258a5774774ac28dbf0601492c42e560760d3cf8584611b499c372b",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/partial-coverage.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/run-status.json",
+    "status": "??",
+    "sha256": "94dd4efd995da6c33aa5453268f61208e69ed76a3f8142f06e3631390b8ae383",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/run-status.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/run.time",
+    "status": "??",
+    "sha256": "7990ddcaad3b573fbff2988c513a53cf179309def32c03db77cb3af070e2ed0d",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/artifacts/run.time",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/commands-supported-v2.sh",
+    "status": "??",
+    "sha256": "7cc4e16c582377b1acf896b14f83fb906a688634535ec35931ea14c98f05da54",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/commands-supported-v2.sh",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/commands.sh",
+    "status": "??",
+    "sha256": "a7152c9a63aa3b754c69ffed4ad2aa6869cdddd8e958765e56bd3c69424a9332",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/commands.sh",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/costs.py",
+    "status": "??",
+    "sha256": "e70434131fd1a6fcf9007df1fece9ea611ef8c7698e8154a9fa8cd6eba0d71da",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/costs.py",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/partial_curves.py",
+    "status": "??",
+    "sha256": "4a551a6f2b5c08e9ba29d7fd3f6327c91e85b04545eac770cf7d13a45dbd82df",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/partial_curves.py",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/run.py",
+    "status": "??",
+    "sha256": "cef9c271def036c3e0d5caecb60abbed5099b9b802c38d5776bc50e47b42898c",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/run.py",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/crates/symplectic/src/geom/polygon.rs",
+    "status": "??",
+    "sha256": "b6b1b4363ecfff291fe7572bc15f94705c267e54ac567a7938d8970764901eb6",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/crates/symplectic/src/geom/polygon.rs",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/diagonal-cem-pilot/Cargo.lock",
+    "status": "??",
+    "sha256": "ba81e2098bafd2ed3b2aa3825fda14b9a833dde2739df2656c48ff0b500eec4e",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/diagonal-cem-pilot/Cargo.lock",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/diagonal-cem-pilot/Cargo.toml",
+    "status": "??",
+    "sha256": "879d3f5bc99bba69e73cd74467081e9dc6b48e978a98c473ae1a589d6d79e81c",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/diagonal-cem-pilot/Cargo.toml",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/diagonal-cem-pilot/analyze.py",
+    "status": "??",
+    "sha256": "c76c7a372485d452f89a656b40faad79dc9878ae69a220bb5b630c8f2a9700e4",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/diagonal-cem-pilot/analyze.py",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/diagonal-cem-pilot/run.py",
+    "status": "??",
+    "sha256": "ce1ce6c0b3f24c5cd4d6fde022f7554691593b49bb18e359ca64fcf2f5679c5a",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/diagonal-cem-pilot/run.py",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/diagonal-cem-pilot/src/main.rs",
+    "status": "??",
+    "sha256": "ae508c3b126b87c7a2f07912a4acb0ef52d30908071a25daad25303c1d2fe463",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/diagonal-cem-pilot/src/main.rs",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/equal-budget-product-search/Cargo.toml",
+    "status": "??",
+    "sha256": "8e599772e07a439532cc131b4a99d2af87258cb2ee01436c728597516069010b",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/equal-budget-product-search/Cargo.toml",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/equal-budget-product-search/src/ams.rs",
+    "status": "??",
+    "sha256": "ca4ab3dc3620b79312010efe954464dd8b206c3a5162bcca1cffd6c4d6cd3033",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/equal-budget-product-search/src/ams.rs",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/equal-budget-product-search/src/cem.rs",
+    "status": "??",
+    "sha256": "aa9a03e01f428553d7fbea96fd791a7bdc1479e9ed6eec825a01afb69949c6f8",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/equal-budget-product-search/src/cem.rs",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/equal-budget-product-search/src/chart.rs",
+    "status": "??",
+    "sha256": "1d39770f1895777f390dfd0fdf3964a2ec3b1fb6a6df3daeace61e4a95b304e3",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/equal-budget-product-search/src/chart.rs",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/equal-budget-product-search/src/evaluator.rs",
+    "status": "??",
+    "sha256": "ea960b327151a93ced4df0343f16bc6b63f9afdb50b7061d4dffa4f2618cca8f",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/equal-budget-product-search/src/evaluator.rs",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/equal-budget-product-search/src/lib.rs",
+    "status": "??",
+    "sha256": "e1f21cd7f36248361eca23ac4fe5944f58086df6157bca442e1e86c95608edd1",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/equal-budget-product-search/src/lib.rs",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/equal-budget-product-search/src/local.rs",
+    "status": "??",
+    "sha256": "d4017685436eb9d758bf10ca3bea65f4bb974cc7b262e74f12e9ba80a613371b",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/equal-budget-product-search/src/local.rs",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/equal-budget-product-search/src/main.rs",
+    "status": "??",
+    "sha256": "7375523219b7a547e71c3c76f2013bedd822f55c4882409441b8d37eb34e260b",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/equal-budget-product-search/src/main.rs",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/equal-budget-product-search/src/model.rs",
+    "status": "??",
+    "sha256": "fdd766d9f0c243ac925d511de3192f532b692c91336abf01615bb33775872f21",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/experiments/sys-datascience/methods/equal-budget-product-search/src/model.rs",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/frozen-config.json",
+    "status": "??",
+    "sha256": "e6838a216862404752613d4041b2e0b69bfd0d4eb4008f9bda5f36de244696c3",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/source-v1/frozen-config.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/src/main.rs",
+    "status": "??",
+    "sha256": "ee442a0cbe39a5fe514baad48371a7fc2652902c916047488fac13ad35443b8c",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/src/main.rs",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/supported-v2-report.md",
+    "status": "??",
+    "sha256": "7224223176d11489e2433d0794e8849240b63294874d2a119573659a41438f80",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/supported-v2-report.md",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/diagonal-cem-pilot/v1-record.md",
+    "status": "??",
+    "sha256": "1ba38244b7e9b92571adb171388d221a72061502f0c6472491c40cad82f569bc",
+    "retained_path": "experiments/sys-datascience/methods/diagonal-cem-pilot/v1-record.md",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/orientation-allocation/Cargo.lock",
+    "status": "??",
+    "sha256": "a8a8561f7558d75e5437672eea1f460e282c3f550fd07022595cea5bdffc37a6",
+    "retained_path": "experiments/sys-datascience/methods/orientation-allocation/Cargo.lock",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/orientation-allocation/Cargo.toml",
+    "status": "??",
+    "sha256": "b1809e8b57372eb8fa0d50b502a83e81d43983bc2960c754ffea2d4f1190025a",
+    "retained_path": "experiments/sys-datascience/methods/orientation-allocation/Cargo.toml",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/orientation-allocation/README.md",
+    "status": "??",
+    "sha256": "a9646689271b7bc9f5ff41814ab55dc1620e5bcd8ad8f047964b0e807c0e288d",
+    "retained_path": "experiments/sys-datascience/methods/orientation-allocation/README.md",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/orientation-allocation/analyze.py",
+    "status": "??",
+    "sha256": "9089db4e3d21f3ebb1735a460498c364321101b455bbeceeff301aaf57a439ee",
+    "retained_path": "experiments/sys-datascience/methods/orientation-allocation/analyze.py",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/orientation-allocation/artifacts/curves.jsonl",
+    "status": "??",
+    "sha256": "436eab0938259967ab27959faf13f305b354bdb107ee7e41e80bd394596ad2b1",
+    "retained_path": "experiments/sys-datascience/methods/orientation-allocation/artifacts/curves.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/orientation-allocation/artifacts/details.json",
+    "status": "??",
+    "sha256": "e2a7183fe9f24516fb4589cc033d8181e51c0b22699c763327ffdf9150bea198",
+    "retained_path": "experiments/sys-datascience/methods/orientation-allocation/artifacts/details.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/orientation-allocation/artifacts/evaluation.time",
+    "status": "??",
+    "sha256": "c5c45ad6c773cae52ad2297dae5c2cbcd9e6e4886fd4b4a17dd7f0cb58c23b2d",
+    "retained_path": "experiments/sys-datascience/methods/orientation-allocation/artifacts/evaluation.time",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/orientation-allocation/artifacts/freeze.json",
+    "status": "??",
+    "sha256": "339fc0bdd0a6d899ae1b2aaf0b9ffa023ace0d1831ecfee5e803735b6b1009a8",
+    "retained_path": "experiments/sys-datascience/methods/orientation-allocation/artifacts/freeze.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/orientation-allocation/artifacts/generation.time",
+    "status": "??",
+    "sha256": "3496d4a18a69bd0776ab8d05a18d9f31e359c8a692178b87b71597cefa993c55",
+    "retained_path": "experiments/sys-datascience/methods/orientation-allocation/artifacts/generation.time",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/orientation-allocation/artifacts/inputs.jsonl",
+    "status": "??",
+    "sha256": "823ac528d47459c5fee79b55a2d163d3207ecad2f5349876116f810037701aa2",
+    "retained_path": "experiments/sys-datascience/methods/orientation-allocation/artifacts/inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/orientation-allocation/artifacts/results.jsonl",
+    "status": "??",
+    "sha256": "29a7dd5f31c6d4d763111391dbb2400f6ef2c4929aba4d7c1bbffad4dc6cdf38",
+    "retained_path": "experiments/sys-datascience/methods/orientation-allocation/artifacts/results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/orientation-allocation/artifacts/summary.json",
+    "status": "??",
+    "sha256": "cfeb343688ac1301e5458feab7099a51859a080f0a798c3915c0f2c0b5e20381",
+    "retained_path": "experiments/sys-datascience/methods/orientation-allocation/artifacts/summary.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/orientation-allocation/artifacts/time-checkpoints.json",
+    "status": "??",
+    "sha256": "4dd084c726f4aeb6d94967e2751cd563f599da1cd2bf6ded9f4074737cf8f51f",
+    "retained_path": "experiments/sys-datascience/methods/orientation-allocation/artifacts/time-checkpoints.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/orientation-allocation/report.py",
+    "status": "??",
+    "sha256": "5740adb06c254af24dcdb8c5533840adb7f1bbffaafb3d8263955ff76a8be8ac",
+    "retained_path": "experiments/sys-datascience/methods/orientation-allocation/report.py",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/orientation-allocation/src/main.rs",
+    "status": "??",
+    "sha256": "ca0cc5429a0775a97ccb2ddc1a6a6c1b834b7edb17914e1d4541f0750300f9b9",
+    "retained_path": "experiments/sys-datascience/methods/orientation-allocation/src/main.rs",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/paired-tangentialization/Cargo.lock",
+    "status": "??",
+    "sha256": "4a926549e60f3597a92a6da33a19a1d1bd208ffb3f30dfa2fe12460ab7843414",
+    "retained_path": "experiments/sys-datascience/methods/paired-tangentialization/Cargo.lock",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/paired-tangentialization/Cargo.toml",
+    "status": "??",
+    "sha256": "0b80f3b15d11550c6040cbfc93dd47ff6a69db29a8283b69e8eb62a8472bac8a",
+    "retained_path": "experiments/sys-datascience/methods/paired-tangentialization/Cargo.toml",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/paired-tangentialization/README.md",
+    "status": "??",
+    "sha256": "6bd6dceba5935fa7a9483c08a6279c007ae89c90733a0dd127548fc856d1d48d",
+    "retained_path": "experiments/sys-datascience/methods/paired-tangentialization/README.md",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/paired-tangentialization/analyze.py",
+    "status": "??",
+    "sha256": "c2c84c0c428d789c41f969793703a297d38013d0537215bfd986f8c364ee68a3",
+    "retained_path": "experiments/sys-datascience/methods/paired-tangentialization/analyze.py",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/paired-tangentialization/artifacts/analysis.json",
+    "status": "??",
+    "sha256": "3b8d157b09ca210a079e9364cad8b51e94a9c3b0e655fb0b4f38072b699afd34",
+    "retained_path": "experiments/sys-datascience/methods/paired-tangentialization/artifacts/analysis.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/paired-tangentialization/artifacts/construction.jsonl",
+    "status": "??",
+    "sha256": "3487a995424dfc8bc37e9fa074db3911c46c5c66783c167dcc6d1e2d48c619e7",
+    "retained_path": "experiments/sys-datascience/methods/paired-tangentialization/artifacts/construction.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/paired-tangentialization/artifacts/evaluate.time",
+    "status": "??",
+    "sha256": "d7dd10c46e3eb6a56c16aa8c85dc7c62b2c17c9275072a1db7ceaaf2a229fc45",
+    "retained_path": "experiments/sys-datascience/methods/paired-tangentialization/artifacts/evaluate.time",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/paired-tangentialization/artifacts/freeze.json",
+    "status": "??",
+    "sha256": "b5a0bedca34a8911e2cbe035e3fab31c1aaefcf2ee01dccce7e96118937edfe6",
+    "retained_path": "experiments/sys-datascience/methods/paired-tangentialization/artifacts/freeze.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/paired-tangentialization/artifacts/generate.time",
+    "status": "??",
+    "sha256": "50576ac818414342d3253b4a1b3aa865b7c3e54a3485cbe998ffdae3c616b7c7",
+    "retained_path": "experiments/sys-datascience/methods/paired-tangentialization/artifacts/generate.time",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/paired-tangentialization/artifacts/inputs.jsonl",
+    "status": "??",
+    "sha256": "9cd70daadc64e47baee0bedb91b219182d14626bfcfdbf6eb0d16aeb46982fa5",
+    "retained_path": "experiments/sys-datascience/methods/paired-tangentialization/artifacts/inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/paired-tangentialization/artifacts/results.jsonl",
+    "status": "??",
+    "sha256": "990dbcca921081f53ae2443c56e6071b57a41440bf008b7833aefe509247b9fe",
+    "retained_path": "experiments/sys-datascience/methods/paired-tangentialization/artifacts/results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/paired-tangentialization/commands.sh",
+    "status": "??",
+    "sha256": "cee45ce4e42443864740dc91dfed5a4a0685b78f47e41e1bb8046959eb147317",
+    "retained_path": "experiments/sys-datascience/methods/paired-tangentialization/commands.sh",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "experiments/sys-datascience/methods/paired-tangentialization/src/main.rs",
+    "status": "??",
+    "sha256": "06ef0a438bbdcda273d5e2991011d55e30e7f0e5ec5cc87d6a8a0c35e56ff7a2",
+    "retained_path": "experiments/sys-datascience/methods/paired-tangentialization/src/main.rs",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "scripts/subtree-usage.md",
+    "status": "??",
+    "sha256": "9d4f9e709b6bc65c224ec1433f194d036ec37370c0faae9e4bba4d440cf1ab78",
+    "retained_path": "docs/history/dirty-snapshots/main/scripts/subtree-usage.md.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "scripts/subtree-usage.py",
+    "status": "??",
+    "sha256": "12f00811ee34d999b47c3056d465d834a577cca6b1efe95f8be2d769aa2144bb",
+    "retained_path": "docs/history/dirty-snapshots/main/scripts/subtree-usage.py.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/workspaces/msc-math",
+    "path": "scripts/test_subtree_usage.py",
+    "status": "??",
+    "sha256": "e7121b406dcb46e0c19caec21673e6e88f414a56e629291a6bdfdf5fd9f6eded",
+    "retained_path": "docs/history/dirty-snapshots/main/scripts/test_subtree_usage.py.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "thesis/candidate/main.tex",
+    "status": " M",
+    "sha256": "c0436abe3e50916e52adbdf5a7d882e91975535492536c5ab919976499f5ffcf",
+    "retained_path": "docs/history/dirty-snapshots/interrupted-review/thesis/candidate/main.tex.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "docs/task-graph/17-review-delivery.dot",
+    "status": "??",
+    "sha256": "6425c64b51fcc0f4b8ca477da9f18321d5717d54a02070701829809d776af3bc",
+    "retained_path": "docs/history/dirty-snapshots/interrupted-review/docs/task-graph/17-review-delivery.dot.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "docs/task-graph/17-review-delivery.svg",
+    "status": "??",
+    "sha256": "88d53a10563d35ca8c67d1a9cb3b8dd13a4b3c8a7f311320f15b326cd3b34b45",
+    "retained_path": "docs/history/dirty-snapshots/interrupted-review/docs/task-graph/17-review-delivery.svg.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/Cargo.lock",
+    "status": "??",
+    "sha256": "8a73a2ecef5dc8925982a1f4ea76d29a725833df8954cff5e32293383459460b",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/Cargo.lock",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/Cargo.toml",
+    "status": "??",
+    "sha256": "a86601cdb7926f79acd916f26b64ec1a6d2fc8118a897fbcb6ada1a59335b6d3",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/Cargo.toml",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/README.md",
+    "status": "??",
+    "sha256": "1ad2aedcc655af1ffe671d7da5303c54ddcecd810c5310368f4a7cc74682549d",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/README.md",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/build.py",
+    "status": "??",
+    "sha256": "8fbf2014d31a5a163df47310eccb65ca4510737b5fe436a88b5898dc1acbd974",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/build.py",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/controls/build-receipt.json",
+    "status": "??",
+    "sha256": "c1d7875aeb43f689a3dc8d33771f5aa75e9569fd76a886077a11568679f58c5e",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/controls/build-receipt.json",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/controls/check.py",
+    "status": "??",
+    "sha256": "28e7ed8abcfbfd2b974ca6f49a8d3d8158f8698961ddf79010812edfa0d3b870",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/controls/check.py",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/controls/failure-inputs.jsonl",
+    "status": "??",
+    "sha256": "a8033063c062313ad905ed41715764859da6544a0e34e72a16256bb4bdde556b",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/controls/failure-inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/controls/failure-results.jsonl",
+    "status": "??",
+    "sha256": "9ccb0585cb6fcc0309127782f5115e3f9bd7889f6d2e9c397cabe4ca69f3ef12",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/controls/failure-results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/controls/inputs.jsonl",
+    "status": "??",
+    "sha256": "a2f3658dd4de583ca36722adc7674253d55f84e7af9fc682a067a3c2c394be1c",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/controls/inputs.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/controls/make_panel.py",
+    "status": "??",
+    "sha256": "87b6c29e7eb688529ad8b46b8e74aabf6ee3a6608a4fb11d7487e70a9b721b6b",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/controls/make_panel.py",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/controls/results.jsonl",
+    "status": "??",
+    "sha256": "1466b06bdad859fdb851cae33dba10850b1bbeac5c561278a467bbe27a9eb679",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/controls/results.jsonl",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/controls/run.time",
+    "status": "??",
+    "sha256": "d549200e84d350e83c9dc11b10a1e42b302b5e5cd321eef24fbdd2876a3f086f",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/controls/run.time",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/evaluate.py",
+    "status": "??",
+    "sha256": "f87d94db5d8e997f394b6a152dec74e8d19a94ab44fdc249e59f8e5bad4abaf9",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/evaluate.py",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "experiments/sys-datascience/methods/current-body-evaluator/src/main.rs",
+    "status": "??",
+    "sha256": "677a46029537e464864c7eb4a2683dcd7137294999c6b5a0b1e81eb90477e26c",
+    "retained_path": "experiments/sys-datascience/methods/current-body-evaluator/src/main.rs",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "thesis/candidate/02-preliminaries.tex",
+    "status": "??",
+    "sha256": "077297903d97ca356165cee6537c9fc17430690b38c08a8b85faf179b08cf149",
+    "retained_path": "docs/history/source-snapshots/077297903d97ca356165cee6537c9fc17430690b38c08a8b85faf179b08cf149.snapshot",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "thesis/candidate/03-generalized-reeb-orbits-polytopes.tex",
+    "status": "??",
+    "sha256": "87c179d993c92c12764ee4b5660a345c741703f913ddd9c7167c09b13b97a0d7",
+    "retained_path": "docs/history/dirty-snapshots/interrupted-review/thesis/candidate/03-generalized-reeb-orbits-polytopes.tex.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "thesis/candidate/04-quadratic-program.tex",
+    "status": "??",
+    "sha256": "7a3306308b8a63cdff8ceb964af27906339a9e08c66f0ef0614f2ec22158f3c1",
+    "retained_path": "docs/history/dirty-snapshots/interrupted-review/thesis/candidate/04-quadratic-program.tex.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "thesis/candidate/05-flow-graph.tex",
+    "status": "??",
+    "sha256": "173a5bb26254e6ded5f99fb6b4da4cac34b802a896b96bdc243d84eddcd97e92",
+    "retained_path": "docs/history/dirty-snapshots/interrupted-review/thesis/candidate/05-flow-graph.tex.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "thesis/candidate/09-rotated-regular-polygons.tex",
+    "status": "??",
+    "sha256": "0941c800cb2e33aeb585ad1ffc65d1b590c84972efad4d458f4aba8e8a571ab8",
+    "retained_path": "docs/history/source-snapshots/0941c800cb2e33aeb585ad1ffc65d1b590c84972efad4d458f4aba8e8a571ab8.snapshot",
+    "disposition": "canonical-bytes"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "thesis/candidate/11-numerics.tex",
+    "status": "??",
+    "sha256": "9c9d8aba825672cfd768524d4de0e286496a5986d9eb34c040fe682062a86713",
+    "retained_path": "docs/history/dirty-snapshots/interrupted-review/thesis/candidate/11-numerics.tex.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "thesis/candidate/ai-use-disclosure.tex",
+    "status": "??",
+    "sha256": "734524831d33dd380d9870ca2692d2d99c8681c934c317ec2b25ce774fc663bd",
+    "retained_path": "docs/history/dirty-snapshots/interrupted-review/thesis/candidate/ai-use-disclosure.tex.snapshot",
+    "disposition": "preserved-unselected"
+  },
+  {
+    "origin": "/tmp/msc-math-thesis-review-20260917",
+    "path": "thesis/candidate/figures/rotation-profile.png",
+    "status": "??",
+    "sha256": "dd9e6b8eb06545f4b2e5d5cc552f2bede021ea4a9ddcecb673fe25cd34152e99",
+    "retained_path": "docs/history/source-snapshots/dd9e6b8eb06545f4b2e5d5cc552f2bede021ea4a9ddcecb673fe25cd34152e99.snapshot",
+    "disposition": "canonical-bytes"
+  }
+]

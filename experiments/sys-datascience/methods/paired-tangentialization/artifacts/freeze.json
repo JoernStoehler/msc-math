@@ -1,0 +1,14 @@
+{
+  "frozen_utc": "2026-09-14T12:54:10.202338+00:00",
+  "head": "610165e0a6bff8cab69dac5a5a5c8b184df967e5",
+  "sha256": {
+    "experiments/sys-datascience/methods/paired-tangentialization/src/main.rs": "06ef0a438bbdcda273d5e2991011d55e30e7f0e5ec5cc87d6a8a0c35e56ff7a2",
+    "experiments/sys-datascience/methods/paired-tangentialization/Cargo.toml": "0b80f3b15d11550c6040cbfc93dd47ff6a69db29a8283b69e8eb62a8472bac8a",
+    "experiments/sys-datascience/methods/paired-tangentialization/Cargo.lock": "4a926549e60f3597a92a6da33a19a1d1bd208ffb3f30dfa2fe12460ab7843414",
+    "experiments/sys-datascience/methods/paired-tangentialization/analyze.py": "c2c84c0c428d789c41f969793703a297d38013d0537215bfd986f8c364ee68a3",
+    "experiments/sys-datascience/methods/paired-tangentialization/artifacts/inputs.jsonl": "9cd70daadc64e47baee0bedb91b219182d14626bfcfdbf6eb0d16aeb46982fa5",
+    "experiments/sys-datascience/methods/paired-tangentialization/artifacts/construction.jsonl": "3487a995424dfc8bc37e9fa074db3911c46c5c66783c167dcc6d1e2d48c619e7",
+    "crates/symplectic/src/geom/polygon.rs": "b6b1b4363ecfff291fe7572bc15f94705c267e54ac567a7938d8970764901eb6",
+    ".git/codex/ds-first-wave/readiness/target/release/paired-tangentialization": "96068d07d00d9b3fbd12291e67dc47ef65382d2d82e6892a0306bcc196b13500"
+  }
+}

@@ -6,13 +6,19 @@ open_browser=true
 local_only=false
 sandbox_mode=false
 files=()
+display_name=
 
 usage() {
-    printf 'usage: review-open [--print-only] [--local] [--sandbox] FILE...\n' >&2
+    printf 'usage: review-open [--print-only] [--local] [--sandbox] [--name NAME] FILE...\n' >&2
 }
 
 while (($#)); do
     case $1 in
+        --name)
+            shift
+            if (($# == 0)); then usage; exit 2; fi
+            display_name=$1
+            ;;
         --print-only)
             open_browser=false
             ;;
@@ -43,6 +49,15 @@ while (($#)); do
     esac
     shift
 done
+
+if [[ -n $display_name ]] && ((${#files[@]} != 1)); then
+    printf 'review-open: --name requires exactly one file\n' >&2
+    exit 2
+fi
+if [[ -n $display_name && $sandbox_mode == true ]]; then
+    printf 'review-open: --name is supported by the host index only\n' >&2
+    exit 2
+fi
 
 if ((${#files[@]} == 0)); then
     usage
@@ -165,38 +180,13 @@ if [[ $local_only == false ]] && command -v tailscale >/dev/null; then
     fi
 fi
 
-port=$(python3 -c 'import socket, sys; s=socket.socket(); s.bind((sys.argv[1], 0)); print(s.getsockname()[1]); s.close()' "$bind_address")
-token=$(python3 -c 'import secrets; print(secrets.token_urlsafe(18))')
-unit="review-open-$(date +%s)-$$"
-
-systemd-run \
-    --user \
-    --quiet \
-    --collect \
-    --unit="$unit" \
-    --property=Type=exec \
-    --property=RuntimeMaxSec=8h \
-    --description='Ephemeral artifact review server' \
-    -- \
-    "$server" "$bind_address" "$port" "$token" "${files[@]}"
-
-base_url="http://$bind_address:$port/$token"
-for attempt in {1..100}; do
-    if curl --noproxy '*' --fail --silent --output /dev/null "$base_url/health"; then
-        break
-    fi
-    if ((attempt == 100)); then
-        printf 'review-open: server did not become ready (unit %s)\n' "$unit" >&2
-        exit 1
-    fi
-    sleep 0.05
-done
-
-urls=()
-for index in "${!files[@]}"; do
-    urls+=("$base_url/$index")
-    printf '%s\t%s\n' "${urls[$index]}" "${files[$index]}"
-done
+share_args=(--bind "$bind_address")
+if [[ -n $display_name ]]; then
+    share_args+=(--name "$display_name")
+fi
+index_url=$("$script_dir/review-share" "${share_args[@]}" -- "${files[@]}")
+printf '%s\tReview index\n' "$index_url"
+urls=("$index_url")
 
 if [[ $open_browser == true ]]; then
     chrome=/usr/bin/google-chrome

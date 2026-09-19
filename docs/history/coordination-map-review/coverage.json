@@ -1,0 +1,282 @@
+{
+  "checked_utc": "2026-09-18T12:01:35.452017+00:00",
+  "scope": "Snapshot coverage only; no build, mathematical audit, or prose judgment",
+  "assembly_manifest": "/workspaces/msc-math/.worktrees/assembly-source-map/docs/assembly-source-map/manifest.json",
+  "assembly_manifest_sha256": "99c7b4ada66d54152879ac046095a22d4d166d0cfa040f5ca435857213ba9684",
+  "current_source_hash_checks": [
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/main.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/legacy/bibliography.bib",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/additional.bib",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/legacy/preamble.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/00-abstract.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/ai-use-disclosure.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/01-introduction.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/02-preliminaries.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/02-preliminaries-convex-symplectic-notation.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/legacy/02-preliminaries-convex-hamiltonian-language.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/02-preliminaries-ehz-capacity.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/legacy/02-preliminaries-polytope-input-language.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/legacy/02-preliminaries-lagrangian-products.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/02-duality.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/03-generalized-reeb-orbits-polytopes.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/04-quadratic-program.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/05-flow-graph.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/legacy/figures/flow-graph/flow-graph-f6-tube-sequence.pdf",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/legacy/05-flow-graph-ch2021-background-comparison.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/06-variation.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/07-hko.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/hko-lemma-geometry.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/hko-lemma-bounds.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/hko-lemma-conclusion.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/hko-figures/upper-bound-mechanisms.pdf",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/hko-figures/symmetry-extension.pdf",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/hko-writing/sections-readable.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/ds-first-wave/writing/chapter-opening-v2.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/09-rotated-regular-polygons.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/figures/rotation-profile.png",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/legacy/10-visualization-3d.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/legacy/figures/visualization/viz-hypercube-ridges.png",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/legacy/figures/visualization/viz-hko-pentagon-min-orbit.png",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/11-numerics.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/legacy/12-published-code-data.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/ai-writing/chapter.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/14-conclusion.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/a-datascience-results.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/hko-cas-appendix/hko-cas-appendix.tex",
+      "matches_manifest": true
+    },
+    {
+      "path": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/hko-cas-appendix/hko_core.py",
+      "matches_manifest": true
+    }
+  ],
+  "main_input_rows": [
+    {
+      "row_id": "B",
+      "argument": "bibliography.bib",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/legacy/bibliography.bib"
+    },
+    {
+      "row_id": "B",
+      "argument": "recovered/thesis-candidate/additional.bib",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/additional.bib"
+    },
+    {
+      "row_id": "M",
+      "argument": "preamble",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/legacy/preamble.tex"
+    },
+    {
+      "row_id": "A",
+      "argument": "recovered/thesis-candidate/00-abstract.tex",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/00-abstract.tex"
+    },
+    {
+      "row_id": "D",
+      "argument": "ai-use-disclosure",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/ai-use-disclosure.tex"
+    },
+    {
+      "row_id": "I",
+      "argument": "recovered/thesis-candidate/01-introduction.tex",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/01-introduction.tex"
+    },
+    {
+      "row_id": "P",
+      "argument": "recovered/thesis-candidate/02-preliminaries.tex",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/02-preliminaries.tex"
+    },
+    {
+      "row_id": "O",
+      "argument": "03-generalized-reeb-orbits-polytopes",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/03-generalized-reeb-orbits-polytopes.tex"
+    },
+    {
+      "row_id": "Q",
+      "argument": "04-quadratic-program",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/04-quadratic-program.tex"
+    },
+    {
+      "row_id": "F",
+      "argument": "recovered/thesis-candidate/05-flow-graph.tex",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/05-flow-graph.tex"
+    },
+    {
+      "row_id": "V",
+      "argument": "recovered/thesis-candidate/06-variation.tex",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/06-variation.tex"
+    },
+    {
+      "row_id": "H",
+      "argument": "recovered/thesis-candidate/07-hko.tex",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/07-hko.tex"
+    },
+    {
+      "row_id": "S",
+      "argument": "recovered/ds-first-wave/writing/chapter-opening-v2.tex",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/ds-first-wave/writing/chapter-opening-v2.tex"
+    },
+    {
+      "row_id": "R",
+      "argument": "09-rotated-regular-polygons",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/09-rotated-regular-polygons.tex"
+    },
+    {
+      "row_id": "Z",
+      "argument": "10-visualization-3d",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/legacy/10-visualization-3d.tex"
+    },
+    {
+      "row_id": "N",
+      "argument": "11-numerics",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/11-numerics.tex"
+    },
+    {
+      "row_id": "C",
+      "argument": "12-published-code-data",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/legacy/12-published-code-data.tex"
+    },
+    {
+      "row_id": "W",
+      "argument": "recovered/ai-writing/chapter.tex",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/ai-writing/chapter.tex"
+    },
+    {
+      "row_id": "E",
+      "argument": "recovered/thesis-candidate/14-conclusion.tex",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/14-conclusion.tex"
+    },
+    {
+      "row_id": "AS",
+      "argument": "recovered/thesis-candidate/a-datascience-results.tex",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/thesis-candidate/a-datascience-results.tex"
+    },
+    {
+      "row_id": "AH",
+      "argument": "recovered/hko-cas-appendix/hko-cas-appendix.tex",
+      "resolved": "/tmp/msc-math-thesis-review-20260917/thesis/candidate/recovered/hko-cas-appendix/hko-cas-appendix.tex"
+    }
+  ],
+  "absolute_readme_links_checked": 3,
+  "missing_absolute_links": [],
+  "known_limits": [
+    "Nested source closure inherited from existing assembly manifest, not re-parsed",
+    "Ownership supplied by root; no assertion completed authors are active",
+    "Prepared packet coverage selective to known integration-relevant work, not every filesystem asset"
+  ]
+}

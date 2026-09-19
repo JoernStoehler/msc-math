@@ -1,0 +1,34 @@
+{
+  "started_utc": "2026-09-18T12:59:50.301224+00:00",
+  "git_head": "e6ac0f158dd60065a1c50462c826d654a82bd603",
+  "hashes": {
+    "experiments/polytope-invariant-table/load_caches.rs": "30706e814dd9233232f9ef2baeb0623bad3d0464042cd09c1122593d26de28f5",
+    "experiments/polytope-invariant-table/features_face_symplectic.rs": "1a0cb7e24a01702f9c2b37dd4161afd21aef04efff088873180703d23d7cd1fc",
+    "experiments/polytope-invariant-table/write_database.rs": "d9a52942dfb848842843e18b46424e91e7313c741fbdb205dd5775427e212cb5",
+    "experiments/polytope-invariant-table/rows.rs": "1ad24bc4afa32da6dc962ffdf263c6e633b453300ebd19198b860f16b24ec39e",
+    "experiments/polytope-invariant-table/invariant_features.rs": "7f2fb3ab929fa41e277f6b304ad734e07e4b5c04402dae4252880cb80b522024",
+    "experiments/polytope-invariant-table/feature_cost.rs": "b93abbdf59d45feaa301195003f35ff63c72920ccafc3a4b52ce0a9574b55537",
+    "experiments/polytope-invariant-table/features_trace.rs": "ce9c3bcd4e9301ec140b300be8c67c9f54e6a2d4ab4f0bc4f82904aeefb64de0",
+    "experiments/polytope-invariant-table/main.rs": "c4526186887d04f7a719b969e885d71db7435119f7b50be91134f4999a0410a1",
+    "experiments/polytope-invariant-table/features_helpers.rs": "ef56d649915d7be88025704be4d69d6e4309ec6e9b65dd9dfe823d86472bd052",
+    "experiments/polytope-invariant-table/features_dual_vertices.rs": "ab84b8b1a1a03ecaa54b9b802d4a0afbeefedae58b3d5acace2de68404f202c8",
+    "experiments/polytope-invariant-table/invariant_feature_check.rs": "bfb26cc74dccd6253c9a5323abdcae427aa57e88fdc39c224d4ca145a10c5dd4",
+    "experiments/polytope-invariant-table/prepare.rs": "5dab28ab70271a23d51106f5309792b171fa1ad2febc48e9c43b40b918df8aab",
+    "experiments/polytope-invariant-table/features_skeleton.rs": "c665588d708365080d3ff3d3412b31f651483a2daf7d8b8bc5c8fccdb51adf29",
+    "experiments/polytope-invariant-table/Cargo.toml": "90d7fe58189fef6fa1c7d2296abfa5bed56024dd78c4611e8f2084cc17e152cc",
+    "Cargo.lock": "81c058aa9399b8bc3d8ba6274c42fe3a4fd7ea5626d9e02c92e04ef64922ed08",
+    "docs/ds-retrospective-revalidation/pilot-inputs.jsonl": "dd0b05a8503af7327a70a2994f046398f8c404177feff350de5f457c006e1e58",
+    "docs/ds-retrospective-revalidation/pilot-source/random.jsonl": "50723f3b3e56e454e64c87ba30613d5e55028d1a6be30c96cb7fa70dd39b36c9",
+    "docs/ds-retrospective-revalidation/pilot-source/random-product.jsonl": "12d3619f3ea8601e083880215ee1d777e03374ed5b7ac7828997b914d9cbba05"
+  },
+  "capacity_recomputed": false,
+  "volume_recomputed": false,
+  "rayon_threads": 4,
+  "command": "cd /workspaces/msc-math/.worktrees/ds-retrospective-revalidation && sha256sum target/release/sys-dataset && RAYON_NUM_THREADS=4 timeout 240 target/release/sys-dataset --random-only --random /workspaces/msc-math/.worktrees/ds-retrospective-revalidation/docs/ds-retrospective-revalidation/pilot-source/random.jsonl --random-product /workspaces/msc-math/.worktrees/ds-retrospective-revalidation/docs/ds-retrospective-revalidation/pilot-source/random-product.jsonl --out-dir /workspaces/msc-math/.worktrees/ds-retrospective-revalidation/docs/ds-retrospective-revalidation/geometry-pilot/output",
+  "elapsed_seconds": 4.785617715999251,
+  "exit_code": 0,
+  "output_hashes": {
+    "output/polytope-provenance-table.jsonl": "1bc5b56c1bc71acd63a22be99a7420300fde34753214a6174fe2106c925be126",
+    "output/polytope-table.jsonl": "66a952ff887eca063b4841b9a06c0c419ecf018cc9c7897aa5b5d22f0856051d"
+  }
+}

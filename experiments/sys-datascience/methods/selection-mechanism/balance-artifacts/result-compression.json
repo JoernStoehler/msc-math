@@ -1,0 +1,14 @@
+{
+  "pilot-results.jsonl": {
+    "uncompressed_sha256": "643e1948666c12540bd6a8ce3716147758b5728758884eb219fcf94a9332771b",
+    "uncompressed_bytes": 327476,
+    "compressed_sha256": "645f791e8f0f127c2b04242e223bd52d04ffbaaf10c1c9c75305ce855309de58",
+    "compressed_bytes": 19924
+  },
+  "remaining-results.jsonl": {
+    "uncompressed_sha256": "3c538d41d2dbc0800628050b1fcbef56f088e595d023b89b4063c6f2b271f401",
+    "uncompressed_bytes": 10151086,
+    "compressed_sha256": "9eb5b7494cba28829e419d8021e5b625a8c4877ccc6f87066f40216e482ec55b",
+    "compressed_bytes": 420585
+  }
+}

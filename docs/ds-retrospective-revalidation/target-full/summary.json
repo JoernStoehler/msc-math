@@ -1,0 +1,952 @@
+{
+  "error_classes": {
+    "PrimalNormOutOfRange": 54,
+    "BoundsTooWide": 37
+  },
+  "expected": 14336,
+  "returned": 14336,
+  "missing_ids": [],
+  "errors": [
+    {
+      "id": "023b737b247879d5fd3b6720026ae5775fec9c658db12bb1d96d30abe26c0a24",
+      "bucket": "product-3x5",
+      "status": "error",
+      "wall_ms": 7.215755002107471,
+      "error_type": "PrimalNormOutOfRange { vertex: 1 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "026147ff70ae550e63b50868519ec60e7746d1238b5be0a82985e9f544978c0e",
+      "bucket": "generic-7",
+      "status": "error",
+      "wall_ms": 5.318382987752557,
+      "error_type": "BoundsTooWide { certified_relative_error: 8.557358189549897e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "02f23d62b31587cb1b7d8df1eef2fab9a70dd9fa95f0165750e93bcd1d955321",
+      "bucket": "generic-5",
+      "status": "error",
+      "wall_ms": 3.866056998958811,
+      "error_type": "PrimalNormOutOfRange { vertex: 1 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "03058ad8a709f4d6ae3e54db232543b7a694ea8f4c241e5ef7997f3027f9c0f9",
+      "bucket": "generic-11",
+      "status": "error",
+      "wall_ms": 23.917707992950454,
+      "error_type": "BoundsTooWide { certified_relative_error: 4.969393127169545e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "0843236526288af51410578bd6e46ea15eb088774dcef5028cb8e8597bc1de4f",
+      "bucket": "product-5x6",
+      "status": "error",
+      "wall_ms": 12.99889202346094,
+      "error_type": "PrimalNormOutOfRange { vertex: 24 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "0d324329ec52a5d76630c4ac43f484d0798ab16a82fc1fb30e96ca1611463c39",
+      "bucket": "product-3x5",
+      "status": "error",
+      "wall_ms": 4.919033992337063,
+      "error_type": "PrimalNormOutOfRange { vertex: 0 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "0da0e6d3d69acf09567150bfb4bb447b96af4b7a4945ae343db9af2460148776",
+      "bucket": "generic-5",
+      "status": "error",
+      "wall_ms": 2.9247099882923067,
+      "error_type": "PrimalNormOutOfRange { vertex: 1 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "10b184b2ca5ad164a5fc294249bcdf12e9e8a8de6b58a5d84c71f5cb9aca6a6c",
+      "bucket": "generic-6",
+      "status": "error",
+      "wall_ms": 3.905711986590177,
+      "error_type": "BoundsTooWide { certified_relative_error: 1.1712835273101054e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "170ff5ba86bf132739ab592f0a6acdf118b48e0c5db20bac1f9067a54dc4b506",
+      "bucket": "product-3x4",
+      "status": "error",
+      "wall_ms": 3.7292210035957396,
+      "error_type": "PrimalNormOutOfRange { vertex: 4 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "1b9e61a5afced221eda16326b1d189a04ed4102e704c57539b84ed3b4831340e",
+      "bucket": "product-3x6",
+      "status": "error",
+      "wall_ms": 7.6968889916315675,
+      "error_type": "PrimalNormOutOfRange { vertex: 6 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "1c6ec52ab5baf930e3c0cd29a6f68dbba84f3110840f0c3812987d6f0028fadf",
+      "bucket": "generic-7",
+      "status": "error",
+      "wall_ms": 3.4242779947817326,
+      "error_type": "PrimalNormOutOfRange { vertex: 4 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "1dc8cf838a794679f22d4418ab9a378b6753a1b4adfe4c101c0b5c466dbdc37c",
+      "bucket": "generic-7",
+      "status": "error",
+      "wall_ms": 5.644466000376269,
+      "error_type": "BoundsTooWide { certified_relative_error: 3.1715400249095683e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "1feec99fcf2658d46a5d635681fa230b18c246d0492abe360f21de349fec4af1",
+      "bucket": "generic-7",
+      "status": "error",
+      "wall_ms": 4.8538720002397895,
+      "error_type": "BoundsTooWide { certified_relative_error: 1.097414100855453e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "282c5f3f4fe907c5a863ec594f35b1410459b5c58268323dba9a97ee0cb3cf36",
+      "bucket": "product-4x4",
+      "status": "error",
+      "wall_ms": 7.412445003865287,
+      "error_type": "PrimalNormOutOfRange { vertex: 1 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "291097e6a640fda1e3204c7d18503bec7a6240a8c2c7a11fd1c7fb553865c49e",
+      "bucket": "generic-7",
+      "status": "error",
+      "wall_ms": 5.998519976856187,
+      "error_type": "BoundsTooWide { certified_relative_error: 3.0168686860478823e-9, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "2b12133dd66ef2bf0dd8f46337738eb0e77c4564ed4f5120c7deb580c21f1cd7",
+      "bucket": "generic-7",
+      "status": "error",
+      "wall_ms": 3.9694820006843656,
+      "error_type": "PrimalNormOutOfRange { vertex: 1 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "32ee274648c5a9fa142e27119d75d8681775dc68298c216eabb1ff7bcd6dd29e",
+      "bucket": "product-3x3",
+      "status": "error",
+      "wall_ms": 3.054553992114961,
+      "error_type": "PrimalNormOutOfRange { vertex: 6 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "38346ccdcbcdb702944cd570a35017d9904208c91afa92df3cc3511892ba0987",
+      "bucket": "product-3x3",
+      "status": "error",
+      "wall_ms": 3.091072983806953,
+      "error_type": "PrimalNormOutOfRange { vertex: 6 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "3cb30206d6c395bd6bf294941c88cd0494ea83241d1895bed8c8d4b73c39d930",
+      "bucket": "product-3x6",
+      "status": "error",
+      "wall_ms": 5.41961399721913,
+      "error_type": "PrimalNormOutOfRange { vertex: 12 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "42b89da4c6a733a23231b2654b460b00d6d8401d30a6974edcb7aded2acb492b",
+      "bucket": "generic-6",
+      "status": "error",
+      "wall_ms": 3.871979017276317,
+      "error_type": "BoundsTooWide { certified_relative_error: 1.0485263007150633e-9, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "43a6ddc8e5608ed4f25d5a5780b4f589abf99c4c8cec3150c47a42c9694ed25e",
+      "bucket": "product-4x4",
+      "status": "error",
+      "wall_ms": 7.310984015930444,
+      "error_type": "PrimalNormOutOfRange { vertex: 3 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "46ab3d89ea069f8028ee81b8faec07c2f2a9b63e8c0ce025309943401f0b32c9",
+      "bucket": "generic-9",
+      "status": "error",
+      "wall_ms": 9.612013003788888,
+      "error_type": "BoundsTooWide { certified_relative_error: 1.0693258920062278e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "47ee4da65b45cda5dcf2a1b448f351eab36420659011b417c5d3da2a1c82e632",
+      "bucket": "generic-8",
+      "status": "error",
+      "wall_ms": 6.125178013462573,
+      "error_type": "BoundsTooWide { certified_relative_error: 1.9815252671937528e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "480c2c14938dc547e8f20ab78b3dd44c81bca181db12e4237917d7175aecad67",
+      "bucket": "product-4x5",
+      "status": "error",
+      "wall_ms": 5.648013000609353,
+      "error_type": "PrimalNormOutOfRange { vertex: 1 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "483224b2ca4a6c412d286633297d65987d8716fa82ccbc2698098d976625bb0e",
+      "bucket": "product-3x6",
+      "status": "error",
+      "wall_ms": 5.389737023506314,
+      "error_type": "PrimalNormOutOfRange { vertex: 6 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "49be35733f3b6b7b046b224bd074ebd51f692d1af009fb6ade97593e6ac88d24",
+      "bucket": "generic-5",
+      "status": "error",
+      "wall_ms": 2.8819500003010035,
+      "error_type": "BoundsTooWide { certified_relative_error: 1.7393316713886836e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "4ab390657ba9bde151d076a3a1ad6e1a1e454a84c430b819e417040646526fd7",
+      "bucket": "generic-8",
+      "status": "error",
+      "wall_ms": 4.856106010265648,
+      "error_type": "PrimalNormOutOfRange { vertex: 2 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "4b34f78ea0cb7e46eea00407d70771c6cdea44023a7dfbba7e8637812b6587b6",
+      "bucket": "generic-5",
+      "status": "error",
+      "wall_ms": 2.449488005368039,
+      "error_type": "PrimalNormOutOfRange { vertex: 0 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "4b7718366ff21b29258ddded7a10197e3530fe5787aaadc6dc9d09135dea0011",
+      "bucket": "generic-7",
+      "status": "error",
+      "wall_ms": 5.4748480033595115,
+      "error_type": "BoundsTooWide { certified_relative_error: 3.8026620652702506e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "52e096af08b8b5af534e2c935a94ce3136685dc8253dfea983ae988f38b56730",
+      "bucket": "generic-5",
+      "status": "error",
+      "wall_ms": 2.5241779803764075,
+      "error_type": "PrimalNormOutOfRange { vertex: 2 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "575998f0ecf9cc0aa942e0481510807e08717b046dc40209e8345ea2a8fbb02d",
+      "bucket": "generic-11",
+      "status": "error",
+      "wall_ms": 34.43170399987139,
+      "error_type": "BoundsTooWide { certified_relative_error: 2.923496827162928e-9, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "580fcc0db5ed328f4db3b96739502cf2710ad4882c45040192391b82adf3820b",
+      "bucket": "generic-8",
+      "status": "error",
+      "wall_ms": 11.618490010732785,
+      "error_type": "BoundsTooWide { certified_relative_error: 2.4933730328344614e-9, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "59c1a5c67503efb09484e3d83981e9e603cc63ad16e83dc28836fa90b6e2f95d",
+      "bucket": "generic-10",
+      "status": "error",
+      "wall_ms": 19.906167988665402,
+      "error_type": "BoundsTooWide { certified_relative_error: 7.239343233244799e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "5f40507d40e8a5a28f2c5d8a93e5acb59b6f6c69fa4cce0c22b5c007a9b6796a",
+      "bucket": "generic-11",
+      "status": "error",
+      "wall_ms": 14.459603000432253,
+      "error_type": "BoundsTooWide { certified_relative_error: 5.933614660169579e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "623848369548ca5551bae6a3173de1fd3385267939e96c41025a64846404bdf4",
+      "bucket": "product-3x4",
+      "status": "error",
+      "wall_ms": 5.9512210136745125,
+      "error_type": "PrimalNormOutOfRange { vertex: 0 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "723731c07c4ddae3ccb0b2610d69efad7801e79a2cf4502fdc21b9712ad5cf9d",
+      "bucket": "generic-5",
+      "status": "error",
+      "wall_ms": 3.9042989956215024,
+      "error_type": "PrimalNormOutOfRange { vertex: 2 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "73d2d31b84d2543fed1eac792b7749ffde307c5e7185deb2c6154da5a53016cf",
+      "bucket": "generic-6",
+      "status": "error",
+      "wall_ms": 3.2881330116651952,
+      "error_type": "PrimalNormOutOfRange { vertex: 2 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "778c6410cdb04634a7706168e29af5212cd1c79bb902665ca4d1ab6898fade89",
+      "bucket": "product-5x6",
+      "status": "error",
+      "wall_ms": 13.175542000681162,
+      "error_type": "PrimalNormOutOfRange { vertex: 2 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "86a7f0a971fb6447b836df670799c387d6a0757143ca2999fed9e5c0a3d032af",
+      "bucket": "generic-9",
+      "status": "error",
+      "wall_ms": 5.796631012344733,
+      "error_type": "PrimalNormOutOfRange { vertex: 18 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "87510740943581687d5e4378c59b5c877a51f52578df7cd02c21bcf5f48cc0b9",
+      "bucket": "product-3x3",
+      "status": "error",
+      "wall_ms": 3.1744790030643344,
+      "error_type": "PrimalNormOutOfRange { vertex: 0 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "87b546888adf6967b615f687230e24c8104c9f3023abe6c00d829ab413ab7be7",
+      "bucket": "generic-5",
+      "status": "error",
+      "wall_ms": 2.957101009087637,
+      "error_type": "BoundsTooWide { certified_relative_error: 2.694706426697189e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "897109ae97f506f11fba26d6277022b6f29c201fb246c49581dec7b4d615ce73",
+      "bucket": "generic-6",
+      "status": "error",
+      "wall_ms": 5.361955001717433,
+      "error_type": "PrimalNormOutOfRange { vertex: 4 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "8a23c23b93b965d4f71c69fbd57f3f2c41cad88b422d3a7e42436bb867bcdded",
+      "bucket": "generic-8",
+      "status": "error",
+      "wall_ms": 4.631474002962932,
+      "error_type": "PrimalNormOutOfRange { vertex: 10 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "8d76371773f8bc79d27d10053c8da5265ca981c3a165bb8dc30bbc735554e8eb",
+      "bucket": "generic-8",
+      "status": "error",
+      "wall_ms": 8.751198009122163,
+      "error_type": "BoundsTooWide { certified_relative_error: 2.53629799430389e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "8d9c8475c452facbcf16afa99a0f6b8675442ba8adf9fae7ac8ffbb71c20e93a",
+      "bucket": "product-3x4",
+      "status": "error",
+      "wall_ms": 3.9748609997332096,
+      "error_type": "PrimalNormOutOfRange { vertex: 4 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "8fbd1f5fd566a0aa5f087e18ecd7c1c5d3f676409709c7ab4cb994d58fa6db7c",
+      "bucket": "generic-5",
+      "status": "error",
+      "wall_ms": 2.62370498967357,
+      "error_type": "PrimalNormOutOfRange { vertex: 0 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "93400e2745462dec8b4a3c3452ac6142a90f0af5d609671b83c238fd55767ee9",
+      "bucket": "generic-12",
+      "status": "error",
+      "wall_ms": 26.516887010075152,
+      "error_type": "BoundsTooWide { certified_relative_error: 1.1022271853431288e-9, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "9347bac50434e8018c0ffa5df9cdd776963615925a7967281d4cdf00f1f2c9b0",
+      "bucket": "generic-7",
+      "status": "error",
+      "wall_ms": 3.657094988739118,
+      "error_type": "PrimalNormOutOfRange { vertex: 11 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "94e79c0b227b36bcdd27e3e4cbeca52c9b6ca8b216263f4eccc6d23bb16229d3",
+      "bucket": "generic-12",
+      "status": "error",
+      "wall_ms": 8.669594972161576,
+      "error_type": "PrimalNormOutOfRange { vertex: 13 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "97a4e79751a63bf70eab34d7b828d482996fbbfaafbef76cbfc06bd896601052",
+      "bucket": "generic-5",
+      "status": "error",
+      "wall_ms": 4.914885998005047,
+      "error_type": "BoundsTooWide { certified_relative_error: 2.681947728350443e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "98c1ff3e29fe26817cefdb7d9dadb30add435ed50d226e27e38757a1f3b30528",
+      "bucket": "generic-9",
+      "status": "error",
+      "wall_ms": 13.796659011859447,
+      "error_type": "BoundsTooWide { certified_relative_error: 1.0640512685908757e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "9a5398bc4341022ddd84b7332dacc85fc91c518edf15fe53e09611bc20eff628",
+      "bucket": "generic-7",
+      "status": "error",
+      "wall_ms": 5.151580000529066,
+      "error_type": "BoundsTooWide { certified_relative_error: 1.2986364279713095e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "9fa4ede54117956dd2e438335d35c2ebfd72edb00ce7cfd37613db44a5231b33",
+      "bucket": "product-3x5",
+      "status": "error",
+      "wall_ms": 7.165401009842753,
+      "error_type": "PrimalNormOutOfRange { vertex: 10 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "aa6bdd730fac21c0e17fb5573657fce1722b3523a3e3293231c71657ab22e698",
+      "bucket": "generic-5",
+      "status": "error",
+      "wall_ms": 3.0874960066284984,
+      "error_type": "PrimalNormOutOfRange { vertex: 4 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "aba5e81ef055b8d19d1ff967ac55db13ad090778937c0548ea38db989f7ae3ab",
+      "bucket": "generic-10",
+      "status": "error",
+      "wall_ms": 6.724724022205919,
+      "error_type": "PrimalNormOutOfRange { vertex: 22 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "b099e6c3755371b6cd99a58558026fd6b25eccec63e15148258353a59c2ab7eb",
+      "bucket": "generic-11",
+      "status": "error",
+      "wall_ms": 30.64609901048243,
+      "error_type": "BoundsTooWide { certified_relative_error: 1.0570004290154669e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "b52782ae34bfe9f4149c473850cbea0f3be822b1cafe3200b49c0d60fdcdf52c",
+      "bucket": "generic-5",
+      "status": "error",
+      "wall_ms": 4.1397409804631025,
+      "error_type": "BoundsTooWide { certified_relative_error: 1.1154255486916803e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "b6c7e68c6a2611628cce3e921d8b8117c9b8c66b268585cab41c6287356cd3a3",
+      "bucket": "generic-11",
+      "status": "error",
+      "wall_ms": 35.601440991740674,
+      "error_type": "BoundsTooWide { certified_relative_error: 3.6396136656468235e-9, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "b6fe3584ec0c18d40d146e0e82712d39543d26cdeee206d1bae3b0ac5a13d8ed",
+      "bucket": "generic-5",
+      "status": "error",
+      "wall_ms": 3.132580022793263,
+      "error_type": "PrimalNormOutOfRange { vertex: 4 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "b84c2664136937e08ea0820b6f8180afbf04495a5ee7c9c91b27bad6475478f6",
+      "bucket": "product-3x6",
+      "status": "error",
+      "wall_ms": 9.286172018619254,
+      "error_type": "PrimalNormOutOfRange { vertex: 6 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "bb2b1910cb9033ca8d7d132b381b177593523978c1148e0b523bd7ca0cc558d5",
+      "bucket": "product-4x4",
+      "status": "error",
+      "wall_ms": 7.6175290159881115,
+      "error_type": "PrimalNormOutOfRange { vertex: 0 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "bec4924a5fa1ed1daa47c6bc6dabb8cbdea0b9adc6620b4682f99553e9111700",
+      "bucket": "generic-6",
+      "status": "error",
+      "wall_ms": 3.05815099272877,
+      "error_type": "PrimalNormOutOfRange { vertex: 7 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "bfec4c0240a16af5e42ef19d441502d0073b707878e1a5f11b59ef3723b2b9b4",
+      "bucket": "generic-7",
+      "status": "error",
+      "wall_ms": 7.901842996943742,
+      "error_type": "BoundsTooWide { certified_relative_error: 3.6171088546989685e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "c1391496989df4f6a5b7e1faa96c2cbb459495f6aca7228b9732c8cc2e4c56d2",
+      "bucket": "generic-5",
+      "status": "error",
+      "wall_ms": 4.24029998248443,
+      "error_type": "BoundsTooWide { certified_relative_error: 1.9991406539533453e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "c4d495e064668cf62a49e9a466c0562f1d08fe6cb579b2af4cdf772d31214106",
+      "bucket": "product-3x3",
+      "status": "error",
+      "wall_ms": 3.89264797559008,
+      "error_type": "PrimalNormOutOfRange { vertex: 6 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "c73e61f7e0dfde41a35010d19927f0ce660daecf0c6762ad8bfa2ad050eb1745",
+      "bucket": "product-3x5",
+      "status": "error",
+      "wall_ms": 4.463077988475561,
+      "error_type": "PrimalNormOutOfRange { vertex: 5 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "c7840aec9f48f0cad6c5797513d70b8e35ee6465148f9ca64b7f4310193b9302",
+      "bucket": "generic-6",
+      "status": "error",
+      "wall_ms": 6.034737976733595,
+      "error_type": "BoundsTooWide { certified_relative_error: 1.2823442926439941e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "c95d5e6754dc11e01a7ac63caf4c1c8587084790c9aa44ac88135af8e4d4d617",
+      "bucket": "product-3x3",
+      "status": "error",
+      "wall_ms": 3.457601007539779,
+      "error_type": "PrimalNormOutOfRange { vertex: 1 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "cbd3a0b6deea7f8b63f613eafc257619085ccbf6d7679684e35c52d202ec6f98",
+      "bucket": "generic-8",
+      "status": "error",
+      "wall_ms": 11.051074980059639,
+      "error_type": "BoundsTooWide { certified_relative_error: 1.263255646785429e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "ce1fb2b8915782aae7eb37e27c724f72202e9d0f0de87835953c155358b5b4ef",
+      "bucket": "generic-7",
+      "status": "error",
+      "wall_ms": 6.051901000319049,
+      "error_type": "PrimalNormOutOfRange { vertex: 2 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "ce6c2acc745d9fd5aa1e6a0215be744a67df86503366d5013a031aba5579db4f",
+      "bucket": "product-4x6",
+      "status": "error",
+      "wall_ms": 8.512428990798071,
+      "error_type": "PrimalNormOutOfRange { vertex: 6 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "d048a36ee879e68d192cd09a38fdd66a343961b3ec2533b235a5315de93d70b2",
+      "bucket": "generic-9",
+      "status": "error",
+      "wall_ms": 16.15098799811676,
+      "error_type": "BoundsTooWide { certified_relative_error: 2.950695533605058e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "d0b85d9ac32f5399142325c1eb20f4674ccdab90e72ecdee427bb25595c74ef4",
+      "bucket": "generic-7",
+      "status": "error",
+      "wall_ms": 5.41067699668929,
+      "error_type": "PrimalNormOutOfRange { vertex: 5 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "d22ef6e1c9edaff7d4ebf7dba30a0ea1fbf3e0ed07f59b3220ed5ab00f14bff7",
+      "bucket": "generic-5",
+      "status": "error",
+      "wall_ms": 3.1519070034846663,
+      "error_type": "BoundsTooWide { certified_relative_error: 4.893447564592813e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "db6c438bdefa1c0f352c58564c1f7da4841e5e8fb0d8ae9e9bda32c30bc3ce6a",
+      "bucket": "generic-9",
+      "status": "error",
+      "wall_ms": 5.46935701277107,
+      "error_type": "PrimalNormOutOfRange { vertex: 11 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "dc43bb4d98c1da5d8cf611a62c1c2826a8a6b3052dff2d586f5039b2be36018c",
+      "bucket": "product-3x5",
+      "status": "error",
+      "wall_ms": 4.585648013744503,
+      "error_type": "PrimalNormOutOfRange { vertex: 5 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "ddf68e8a9749ae01a8269452d314a040e5a7894bae6b6c3e0b871847e939946f",
+      "bucket": "product-3x4",
+      "status": "error",
+      "wall_ms": 4.0750989865045995,
+      "error_type": "PrimalNormOutOfRange { vertex: 4 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "dfd762bee7298d3d2fecd8c71c969f2ddf6fbcf4c80429c35b49973a962ee5bd",
+      "bucket": "generic-6",
+      "status": "error",
+      "wall_ms": 4.236872977344319,
+      "error_type": "BoundsTooWide { certified_relative_error: 1.1650155458756698e-9, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "e3587371e7c144a1ed48da5176516f73a9d61d502b90aaf7f8cc0ecd895b5e8d",
+      "bucket": "generic-5",
+      "status": "error",
+      "wall_ms": 2.597195009002462,
+      "error_type": "PrimalNormOutOfRange { vertex: 4 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "e385b02b035a90dcfd1cd3bde40ae67afde62d17fb80c72d4aff5b088e795a00",
+      "bucket": "generic-8",
+      "status": "error",
+      "wall_ms": 6.7073809914290905,
+      "error_type": "BoundsTooWide { certified_relative_error: 1.4299271307771907e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "e6b88a8c3f34900639b0f8bd2c36ce36031dc99506fdb0f35cce59cd7b14f9f4",
+      "bucket": "generic-8",
+      "status": "error",
+      "wall_ms": 9.757025982253253,
+      "error_type": "BoundsTooWide { certified_relative_error: 6.50101328713922e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "eac80891766e996daebafc074d5d28d7adb448007fd38d478c6a2fbf2de1747f",
+      "bucket": "generic-5",
+      "status": "error",
+      "wall_ms": 2.4463729932904243,
+      "error_type": "PrimalNormOutOfRange { vertex: 4 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "ec0ecc9bd57e9e6b6e63729547942600d9c52f02467e6086b3a05d8c0d66f0b0",
+      "bucket": "generic-5",
+      "status": "error",
+      "wall_ms": 2.8931410051882267,
+      "error_type": "BoundsTooWide { certified_relative_error: 1.6862660338472026e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "ed26208666be6d9d35f45dad5e514410ce1f9f9590a958e8618595d034add6dd",
+      "bucket": "product-5x6",
+      "status": "error",
+      "wall_ms": 13.61311401706189,
+      "error_type": "PrimalNormOutOfRange { vertex: 1 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "ee20fcacc34d2235b05bc5d1afb0ad50f2eac172fed72893a856f610e632c2f1",
+      "bucket": "generic-9",
+      "status": "error",
+      "wall_ms": 10.316946980310604,
+      "error_type": "BoundsTooWide { certified_relative_error: 1.2382226450034615e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "ee403b527d4396f5fdd8f1efbc46b65e253ecd1aa9bf444eb0574c9c4c546548",
+      "bucket": "generic-12",
+      "status": "error",
+      "wall_ms": 8.741740020923316,
+      "error_type": "PrimalNormOutOfRange { vertex: 10 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "eed78e497e2a2a3e8680ec92b5cc93a91f19a2cc3eb594028d74cf9793377c91",
+      "bucket": "product-3x3",
+      "status": "error",
+      "wall_ms": 3.376868990017101,
+      "error_type": "PrimalNormOutOfRange { vertex: 6 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "f4db042a547be9a8b4a501fdff981d827f138726898af7f743be956380667784",
+      "bucket": "product-4x6",
+      "status": "error",
+      "wall_ms": 6.639533996349201,
+      "error_type": "PrimalNormOutOfRange { vertex: 5 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "f719b2e4c97d22a5109a1840312baa062c91c840f05a02dc31af82b86a424244",
+      "bucket": "generic-6",
+      "status": "error",
+      "wall_ms": 4.957705998094752,
+      "error_type": "PrimalNormOutOfRange { vertex: 4 }",
+      "error_stage": "input_bounds"
+    },
+    {
+      "id": "f7b9d65ea98d8544883d37b67083ead9f55c0da7171aa01ad94b8dc0bfffb8ed",
+      "bucket": "generic-8",
+      "status": "error",
+      "wall_ms": 7.501982006942853,
+      "error_type": "BoundsTooWide { certified_relative_error: 2.2792105243133135e-10, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    },
+    {
+      "id": "fa12790c951dfb86963fa9f2f9bee99d097a03fd306319702947fd8f3a1ff343",
+      "bucket": "generic-6",
+      "status": "error",
+      "wall_ms": 4.833754006540403,
+      "error_type": "BoundsTooWide { certified_relative_error: 1.5474601910247e-9, maximum_relative_error: 1e-10 }",
+      "error_stage": "capacity_value"
+    }
+  ],
+  "strata": {
+    "generic-10": {
+      "rows": 512,
+      "successful": 510,
+      "wall_seconds": 8.509541493025608,
+      "max_wall_ms": 30.62768399831839,
+      "legacy_capacity_outside_bounds": 0,
+      "max_abs_capacity_relative_delta": 8.673777728537183e-15,
+      "max_abs_volume_relative_delta": 2.8138553869697115e-15,
+      "max_abs_sys_relative_delta": 1.8635754341837296e-14,
+      "max_new_sys": 0.8595596058028333
+    },
+    "generic-11": {
+      "rows": 512,
+      "successful": 507,
+      "wall_seconds": 11.919876528176246,
+      "max_wall_ms": 38.670031004585326,
+      "legacy_capacity_outside_bounds": 0,
+      "max_abs_capacity_relative_delta": 6.87359840042033e-15,
+      "max_abs_volume_relative_delta": 1.8779218698483683e-15,
+      "max_abs_sys_relative_delta": 1.552502049576364e-14,
+      "max_new_sys": 0.7835927061265432
+    },
+    "generic-12": {
+      "rows": 512,
+      "successful": 509,
+      "wall_seconds": 18.746358467062237,
+      "max_wall_ms": 86.97303498047404,
+      "legacy_capacity_outside_bounds": 0,
+      "max_abs_capacity_relative_delta": 3.681978228830888e-15,
+      "max_abs_volume_relative_delta": 1.341120347087149e-15,
+      "max_abs_sys_relative_delta": 7.222745880238382e-15,
+      "max_new_sys": 0.8247662746241671
+    },
+    "generic-5": {
+      "rows": 512,
+      "successful": 495,
+      "wall_seconds": 1.9267790907179005,
+      "max_wall_ms": 8.812423009658232,
+      "legacy_capacity_outside_bounds": 0,
+      "max_abs_capacity_relative_delta": 7.640644764369526e-15,
+      "max_abs_volume_relative_delta": 6.942267751330474e-15,
+      "max_abs_sys_relative_delta": 1.5618605519534802e-14,
+      "max_new_sys": 0.7144103638987279
+    },
+    "generic-6": {
+      "rows": 512,
+      "successful": 503,
+      "wall_seconds": 2.5581153089297004,
+      "max_wall_ms": 9.60010100970976,
+      "legacy_capacity_outside_bounds": 0,
+      "max_abs_capacity_relative_delta": 1.0578568660080322e-14,
+      "max_abs_volume_relative_delta": 4.738295911204672e-15,
+      "max_abs_sys_relative_delta": 2.0891355590290847e-14,
+      "max_new_sys": 0.6908550887350915
+    },
+    "generic-7": {
+      "rows": 512,
+      "successful": 500,
+      "wall_seconds": 3.3934178661438636,
+      "max_wall_ms": 11.446938005974516,
+      "legacy_capacity_outside_bounds": 0,
+      "max_abs_capacity_relative_delta": 4.786386516397668e-15,
+      "max_abs_volume_relative_delta": 5.12223630912624e-15,
+      "max_abs_sys_relative_delta": 9.870075077133873e-15,
+      "max_new_sys": 0.7458522392903426
+    },
+    "generic-8": {
+      "rows": 512,
+      "successful": 503,
+      "wall_seconds": 4.504879254498519,
+      "max_wall_ms": 14.953540987335145,
+      "legacy_capacity_outside_bounds": 0,
+      "max_abs_capacity_relative_delta": 5.846538277662043e-15,
+      "max_abs_volume_relative_delta": 2.7954970173996635e-15,
+      "max_abs_sys_relative_delta": 1.1516412256563839e-14,
+      "max_new_sys": 0.7448532509168575
+    },
+    "generic-9": {
+      "rows": 512,
+      "successful": 506,
+      "wall_seconds": 6.12440033868188,
+      "max_wall_ms": 20.14790099929087,
+      "legacy_capacity_outside_bounds": 0,
+      "max_abs_capacity_relative_delta": 2.4731763516013126e-15,
+      "max_abs_volume_relative_delta": 1.8326930405908936e-15,
+      "max_abs_sys_relative_delta": 4.903271116073585e-15,
+      "max_new_sys": 0.7811353314855468
+    },
+    "product-3x3": {
+      "rows": 1024,
+      "successful": 1018,
+      "wall_seconds": 5.682671267888509,
+      "max_wall_ms": 10.2806490031071,
+      "legacy_capacity_outside_bounds": 564,
+      "max_abs_capacity_relative_delta": 1.0434135879369803e-15,
+      "max_abs_volume_relative_delta": 1.812588552456178e-14,
+      "max_abs_sys_relative_delta": 1.8235511288185325e-14,
+      "max_new_sys": 0.6464199674959318
+    },
+    "product-3x4": {
+      "rows": 1024,
+      "successful": 1020,
+      "wall_seconds": 6.806014340283582,
+      "max_wall_ms": 12.226040998939425,
+      "legacy_capacity_outside_bounds": 585,
+      "max_abs_capacity_relative_delta": 9.625856209118995e-16,
+      "max_abs_volume_relative_delta": 1.1480405197661777e-14,
+      "max_abs_sys_relative_delta": 1.064540395131645e-14,
+      "max_new_sys": 0.7119073397957831
+    },
+    "product-3x5": {
+      "rows": 1024,
+      "successful": 1019,
+      "wall_seconds": 8.262728790810797,
+      "max_wall_ms": 13.702001015190035,
+      "legacy_capacity_outside_bounds": 560,
+      "max_abs_capacity_relative_delta": 1.0538971973537292e-15,
+      "max_abs_volume_relative_delta": 1.9602780823079133e-14,
+      "max_abs_sys_relative_delta": 1.9934519457385046e-14,
+      "max_new_sys": 0.7650778325167275
+    },
+    "product-3x6": {
+      "rows": 1024,
+      "successful": 1020,
+      "wall_seconds": 10.171720386308152,
+      "max_wall_ms": 33.78823699313216,
+      "legacy_capacity_outside_bounds": 540,
+      "max_abs_capacity_relative_delta": 7.80175835892552e-16,
+      "max_abs_volume_relative_delta": 1.1916634737489391e-14,
+      "max_abs_sys_relative_delta": 1.1940668598364018e-14,
+      "max_new_sys": 0.8073487367323778
+    },
+    "product-4x4": {
+      "rows": 1024,
+      "successful": 1021,
+      "wall_seconds": 8.335561414220138,
+      "max_wall_ms": 15.2128680201713,
+      "legacy_capacity_outside_bounds": 548,
+      "max_abs_capacity_relative_delta": 9.232119520487245e-16,
+      "max_abs_volume_relative_delta": 1.0719583922404776e-14,
+      "max_abs_sys_relative_delta": 1.1327979275375033e-14,
+      "max_new_sys": 0.8141002333029526
+    },
+    "product-4x5": {
+      "rows": 1024,
+      "successful": 1023,
+      "wall_seconds": 10.448540286772186,
+      "max_wall_ms": 21.966686006635427,
+      "legacy_capacity_outside_bounds": 550,
+      "max_abs_capacity_relative_delta": 1.9739945043037257e-15,
+      "max_abs_volume_relative_delta": 1.213875261310289e-14,
+      "max_abs_sys_relative_delta": 1.2529979952616286e-14,
+      "max_new_sys": 0.8381244889295796
+    },
+    "product-4x6": {
+      "rows": 1024,
+      "successful": 1022,
+      "wall_seconds": 13.045647184771951,
+      "max_wall_ms": 20.916995010338724,
+      "legacy_capacity_outside_bounds": 561,
+      "max_abs_capacity_relative_delta": 9.534021355031762e-16,
+      "max_abs_volume_relative_delta": 1.1751767723523518e-14,
+      "max_abs_sys_relative_delta": 1.1779101847057101e-14,
+      "max_new_sys": 0.8292665551981732
+    },
+    "product-5x5": {
+      "rows": 1024,
+      "successful": 1024,
+      "wall_seconds": 13.208864534331951,
+      "max_wall_ms": 21.538962988415733,
+      "legacy_capacity_outside_bounds": 554,
+      "max_abs_capacity_relative_delta": 9.344758555732594e-16,
+      "max_abs_volume_relative_delta": 1.674387452609225e-14,
+      "max_abs_sys_relative_delta": 1.6030274601814913e-14,
+      "max_new_sys": 0.8437955079134134
+    },
+    "product-5x6": {
+      "rows": 1024,
+      "successful": 1021,
+      "wall_seconds": 16.603326256241417,
+      "max_wall_ms": 26.99445400503464,
+      "legacy_capacity_outside_bounds": 550,
+      "max_abs_capacity_relative_delta": 8.195834182690107e-16,
+      "max_abs_volume_relative_delta": 3.141425623002187e-14,
+      "max_abs_sys_relative_delta": 3.2309230966705687e-14,
+      "max_new_sys": 0.8625858958494405
+    },
+    "product-6x6": {
+      "rows": 1024,
+      "successful": 1024,
+      "wall_seconds": 21.69021141572739,
+      "max_wall_ms": 36.46870897500776,
+      "legacy_capacity_outside_bounds": 571,
+      "max_abs_capacity_relative_delta": 1.4485689651104727e-15,
+      "max_abs_volume_relative_delta": 1.3609999056671722e-14,
+      "max_abs_sys_relative_delta": 1.0659910509431606e-14,
+      "max_new_sys": 0.8536118881702474
+    }
+  },
+  "source_input_sha256": "cb88c02fc26d98cb2aaff4f5e291ac6fa8e6b98154bbc35f0ee77a42486cf081",
+  "result_sha256": "e8798450e3ab2fc40959c2ad9b20f7a1442075c2e5fe92787b66d37d4b190bcc",
+  "all": {
+    "rows": 14336,
+    "successful": 14245,
+    "wall_seconds": 171.93865422459203,
+    "max_wall_ms": 86.97303498047404,
+    "legacy_capacity_outside_bounds": 5583,
+    "max_abs_capacity_relative_delta": 1.0578568660080322e-14,
+    "max_abs_volume_relative_delta": 3.141425623002187e-14,
+    "max_abs_sys_relative_delta": 3.2309230966705687e-14,
+    "max_new_sys": 0.8625858958494405
+  }
+}

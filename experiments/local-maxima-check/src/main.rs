@@ -263,7 +263,7 @@ fn main() {
         total_wall_seconds: started.elapsed().as_secs_f64(),
         source_paths: vec![
             "experiments/local-maxima-check/README.md",
-            "thesis/09-rotated-regular-polygons-pentagon-profile-theorem.tex",
+            "thesis/chapters/09-rotated-regular-polygons.tex",
             "experiments/regular-products/rotated-regular-products/lagrangian-products-3x6-6deg.jsonl",
             "experiments/regular-products/rotated-regular-products/lagrangian-products-4x4-6deg.jsonl",
             "papers/ch2021/s1_introduction_and_main_results.tex",

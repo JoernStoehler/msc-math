@@ -1,0 +1,252 @@
+{
+  "schema": "ridge-circulation-check-v1",
+  "historical_sha256": "607c8731fa03d190d497edc3e8f1b4cca88f7d238260cce527680f568bc33d59",
+  "historical_path": "/home/joern/.cache/msc-math/artifacts/polytope-invariant-table/c3042846723dbb89db17f2f39d88004d937e1e790949ff6880188fa89fc1900a/files/polytope-table.jsonl",
+  "method": "N2 = sum(area)^2 / [ridge_count*(mean(area)^2+population_std(area)^2)]",
+  "claim_status": "theorem argument separately independently audited; numerical data are checks",
+  "source_target_values_used": false,
+  "summaries": {
+    "generic": {
+      "rows": 4096,
+      "universal_infimum": 3,
+      "minimum_inverse_simpson_witness": {
+        "poly_id": "c3e675f38a39d9aa3ee74b391a30fd5ba425d5b813c55fde90fccf9a92bd763e",
+        "inverse_simpson_count": 3.2118763117376083,
+        "max_share": 0.3269521378565022
+      },
+      "maximum_share_witness": {
+        "poly_id": "4ab390657ba9bde151d076a3a1ad6e1a1e454a84c430b819e417040646526fd7",
+        "inverse_simpson_count": 3.369185364802373,
+        "max_share": 0.33220038512742306
+      },
+      "inverse_simpson_violations": 0,
+      "max_share_violations": 0
+    },
+    "product": {
+      "rows": 10240,
+      "universal_infimum": 4,
+      "minimum_inverse_simpson_witness": {
+        "poly_id": "71fa561451b6fea28c40ee923aba93d9b27bff4630ddd0763a0cfb00582924e8",
+        "inverse_simpson_count": 4.0596706589901705,
+        "max_share": 0.24991176571993118
+      },
+      "maximum_share_witness": {
+        "poly_id": "bf952349b835e69d7cdddafeeb9a75beea943955831a3e93cdb1790cd9547242",
+        "inverse_simpson_count": 5.64826962962048,
+        "max_share": 0.2500000000000001
+      },
+      "inverse_simpson_violations": 0,
+      "max_share_violations": 0
+    }
+  },
+  "exact_sharpness_controls": [
+    {
+      "family": "simplex",
+      "epsilon": "1",
+      "areas": [
+        "1/2",
+        "0",
+        "0",
+        "0",
+        "0",
+        "1/2",
+        "1/2",
+        "1/2",
+        "1/2",
+        "1/2"
+      ],
+      "inverse_simpson_count_exact": "6",
+      "inverse_simpson_count": 6.0,
+      "max_share_exact": "1/6"
+    },
+    {
+      "family": "rectangle_product",
+      "epsilon": "1",
+      "areas": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "0",
+        "1",
+        "0",
+        "1",
+        "1",
+        "0",
+        "1",
+        "0",
+        "0",
+        "1",
+        "0",
+        "1",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "inverse_simpson_count_exact": "8",
+      "inverse_simpson_count": 8.0,
+      "max_share_exact": "1/8"
+    },
+    {
+      "family": "simplex",
+      "epsilon": "1/2",
+      "areas": [
+        "1/2",
+        "0",
+        "0",
+        "0",
+        "0",
+        "1/8",
+        "1/2",
+        "1/2",
+        "1/8",
+        "1/8"
+      ],
+      "inverse_simpson_count_exact": "75/17",
+      "inverse_simpson_count": 4.411764705882353,
+      "max_share_exact": "4/15"
+    },
+    {
+      "family": "rectangle_product",
+      "epsilon": "1/2",
+      "areas": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "0",
+        "1/4",
+        "0",
+        "1/4",
+        "1",
+        "0",
+        "1",
+        "0",
+        "0",
+        "1/4",
+        "0",
+        "1/4",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "inverse_simpson_count_exact": "100/17",
+      "inverse_simpson_count": 5.882352941176471,
+      "max_share_exact": "1/5"
+    },
+    {
+      "family": "simplex",
+      "epsilon": "1/10",
+      "areas": [
+        "1/2",
+        "0",
+        "0",
+        "0",
+        "0",
+        "1/200",
+        "1/2",
+        "1/2",
+        "1/200",
+        "1/200"
+      ],
+      "inverse_simpson_count_exact": "30603/10001",
+      "inverse_simpson_count": 3.05999400059994,
+      "max_share_exact": "100/303"
+    },
+    {
+      "family": "rectangle_product",
+      "epsilon": "1/10",
+      "areas": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "0",
+        "1/100",
+        "0",
+        "1/100",
+        "1",
+        "0",
+        "1",
+        "0",
+        "0",
+        "1/100",
+        "0",
+        "1/100",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "inverse_simpson_count_exact": "40804/10001",
+      "inverse_simpson_count": 4.07999200079992,
+      "max_share_exact": "25/101"
+    },
+    {
+      "family": "simplex",
+      "epsilon": "1/100",
+      "areas": [
+        "1/2",
+        "0",
+        "0",
+        "0",
+        "0",
+        "1/20000",
+        "1/2",
+        "1/2",
+        "1/20000",
+        "1/20000"
+      ],
+      "inverse_simpson_count_exact": "300060003/100000001",
+      "inverse_simpson_count": 3.000599999994,
+      "max_share_exact": "10000/30003"
+    },
+    {
+      "family": "rectangle_product",
+      "epsilon": "1/100",
+      "areas": [
+        "1",
+        "0",
+        "1",
+        "0",
+        "0",
+        "1/10000",
+        "0",
+        "1/10000",
+        "1",
+        "0",
+        "1",
+        "0",
+        "0",
+        "1/10000",
+        "0",
+        "1/10000",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "inverse_simpson_count_exact": "400080004/100000001",
+      "inverse_simpson_count": 4.000799999992,
+      "max_share_exact": "2500/10001"
+    }
+  ]
+}

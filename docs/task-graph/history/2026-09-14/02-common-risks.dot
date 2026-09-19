@@ -1,9 +1,0 @@
-digraph risks {
-  graph [rankdir=BT, label="2 / shared causes and capacity risks", labelloc=t];
-  node [shape=box];
-  outcome [label="OUTCOME: adjusted portfolio"];
-  crux [label="CRUX: shared cause", shape=diamond];
-  causes [label="SHARED CAUSES:\nsources/assumptions; manuscript;\nreview criteria; root capacity"];
-  causes -> crux;
-  crux -> outcome;
-}

@@ -30,7 +30,7 @@ pub(crate) fn known_equality_seeds() -> Vec<Seed> {
         product_seed(
             "pentagon_threshold_control",
             "expected_positive_control",
-            "thesis/09-rotated-regular-polygons-pentagon-profile-theorem.tex",
+            "thesis/chapters/09-rotated-regular-polygons.tex",
             5,
             5,
             pentagon_threshold,

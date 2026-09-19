@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "checkpoint_commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
+  "checkpoint_role": "Immutable ancestor containing the complete retained-path preservation tree before history retirement",
+  "branch_inventory": "docs/resume/branch-inventory.json",
+  "dirty_source_inventory": "docs/resume/dirty-source-inventory.json",
+  "retained_path_rule": "Resolve every historical retained_path at checkpoint_commit; never require its original path or a current-tree copy"
+}

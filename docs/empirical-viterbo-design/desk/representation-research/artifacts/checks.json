@@ -1,0 +1,170 @@
+{
+  "checks": [
+    {
+      "body": "simplex",
+      "centroid_error": 1.942890293094024e-16,
+      "covariance_identity_error": 1.5543122344752192e-15,
+      "facet_count": 5,
+      "relative_volume_transform_error": 1.694743315283474e-16,
+      "ridge_count": 10,
+      "second_moment_error": 6.661338147750939e-15,
+      "triangulation_volume_error": 2.842170943040401e-14,
+      "vertex_count": 5
+    },
+    {
+      "body": "cube",
+      "centroid_error": 1.734723475976807e-17,
+      "covariance_identity_error": 1.4432899320127035e-15,
+      "facet_count": 8,
+      "relative_volume_transform_error": 7.894919286223326e-16,
+      "ridge_count": 24,
+      "second_moment_error": 1.7763568394002505e-15,
+      "triangulation_volume_error": 5.684341886080802e-14,
+      "vertex_count": 16
+    },
+    {
+      "body": "crosspolytope",
+      "centroid_error": 4.163336342344337e-17,
+      "covariance_identity_error": 2.220446049250313e-16,
+      "facet_count": 16,
+      "relative_volume_transform_error": 1.8947806286935986e-16,
+      "ridge_count": 32,
+      "second_moment_error": 3.552713678800501e-15,
+      "triangulation_volume_error": 5.684341886080802e-14,
+      "vertex_count": 8
+    },
+    {
+      "body": "24cell",
+      "centroid_error": 1.214306433183765e-16,
+      "covariance_identity_error": 8.881784197001252e-16,
+      "facet_count": 24,
+      "relative_volume_transform_error": 3.335603398429357e-16,
+      "ridge_count": 96,
+      "second_moment_error": 4.884981308350689e-15,
+      "triangulation_volume_error": 1.7053025658242404e-13,
+      "vertex_count": 24
+    },
+    {
+      "body": "gaussian_hull_8_0",
+      "centroid_error": 3.226585665316861e-16,
+      "covariance_identity_error": 3.1086244689504383e-15,
+      "facet_count": 16,
+      "relative_volume_transform_error": 2.366034071266939e-16,
+      "ridge_count": 32,
+      "second_moment_error": 1.0658141036401503e-14,
+      "triangulation_volume_error": 1.4210854715202004e-14,
+      "vertex_count": 8
+    },
+    {
+      "body": "gaussian_hull_8_1",
+      "centroid_error": 6.418476861114186e-16,
+      "covariance_identity_error": 1.6089560239684886e-15,
+      "facet_count": 17,
+      "relative_volume_transform_error": 3.371178461079195e-16,
+      "ridge_count": 34,
+      "second_moment_error": 5.773159728050814e-15,
+      "triangulation_volume_error": 0.0,
+      "vertex_count": 8
+    },
+    {
+      "body": "gaussian_hull_12_0",
+      "centroid_error": 2.5153490401663703e-16,
+      "covariance_identity_error": 6.661338147750939e-16,
+      "facet_count": 20,
+      "relative_volume_transform_error": 1.1922282430981544e-16,
+      "ridge_count": 40,
+      "second_moment_error": 3.552713678800501e-15,
+      "triangulation_volume_error": 0.0,
+      "vertex_count": 9
+    },
+    {
+      "body": "gaussian_hull_12_1",
+      "centroid_error": 2.194425197110661e-16,
+      "covariance_identity_error": 1.6653345369377348e-15,
+      "facet_count": 35,
+      "relative_volume_transform_error": 1.1331653308300673e-16,
+      "ridge_count": 70,
+      "second_moment_error": 7.993605777301127e-15,
+      "triangulation_volume_error": 2.842170943040401e-14,
+      "vertex_count": 12
+    },
+    {
+      "body": "gaussian_hull_18_0",
+      "centroid_error": 4.0635897424756706e-16,
+      "covariance_identity_error": 1.5543122344752192e-15,
+      "facet_count": 52,
+      "relative_volume_transform_error": 4.122889789761218e-16,
+      "ridge_count": 104,
+      "second_moment_error": 1.7763568394002505e-15,
+      "triangulation_volume_error": 0.0,
+      "vertex_count": 16
+    },
+    {
+      "body": "gaussian_hull_18_1",
+      "centroid_error": 2.96637714392034e-16,
+      "covariance_identity_error": 2.220446049250313e-15,
+      "facet_count": 47,
+      "relative_volume_transform_error": 2.1857006688740105e-16,
+      "ridge_count": 94,
+      "second_moment_error": 1.1102230246251565e-14,
+      "triangulation_volume_error": 2.842170943040401e-14,
+      "vertex_count": 15
+    },
+    {
+      "body": "symmetric_hull_16",
+      "centroid_error": 4.85722573273506e-17,
+      "covariance_identity_error": 1.3322676295501878e-15,
+      "facet_count": 32,
+      "relative_volume_transform_error": 0.0,
+      "ridge_count": 64,
+      "second_moment_error": 2.6645352591003757e-15,
+      "triangulation_volume_error": 2.842170943040401e-14,
+      "vertex_count": 12
+    },
+    {
+      "body": "symmetric_hull_24",
+      "centroid_error": 2.0816681711721685e-16,
+      "covariance_identity_error": 1.5976803213746393e-15,
+      "facet_count": 64,
+      "relative_volume_transform_error": 1.8014563680981125e-16,
+      "ridge_count": 128,
+      "second_moment_error": 3.552713678800501e-15,
+      "triangulation_volume_error": 2.842170943040401e-14,
+      "vertex_count": 18
+    },
+    {
+      "body": "facet_intersection_12",
+      "centroid_error": 1.3660947373317356e-16,
+      "covariance_identity_error": 1.1102230246251565e-15,
+      "facet_count": 12,
+      "relative_volume_transform_error": 0.0,
+      "ridge_count": 48,
+      "second_moment_error": 7.993605777301127e-15,
+      "triangulation_volume_error": 2.842170943040401e-14,
+      "vertex_count": 36
+    },
+    {
+      "body": "facet_intersection_16",
+      "centroid_error": 1.1701421353139257e-16,
+      "covariance_identity_error": 1.1102230246251565e-15,
+      "facet_count": 16,
+      "relative_volume_transform_error": 1.9196903389643464e-16,
+      "ridge_count": 70,
+      "second_moment_error": 3.1086244689504383e-15,
+      "triangulation_volume_error": 5.684341886080802e-14,
+      "vertex_count": 54
+    },
+    {
+      "body": "asymmetrically_cut_cube",
+      "centroid_error": 2.5847379792054426e-16,
+      "covariance_identity_error": 1.887379141862766e-15,
+      "facet_count": 10,
+      "relative_volume_transform_error": 0.0,
+      "ridge_count": 37,
+      "second_moment_error": 8.43769498715119e-15,
+      "triangulation_volume_error": 5.684341886080802e-14,
+      "vertex_count": 27
+    }
+  ],
+  "elapsed_seconds": 1.2116496562957764
+}

@@ -1,0 +1,238 @@
+\section{Introduction}\label{sec:introduction}
+
+How large can a convex body's symplectic capacity be if its volume is fixed?
+Viterbo's conjecture proposed that a ball gives the largest value
+\cite{Viterbo2000}. For the Ekeland--Hofer--Zehnder capacity in dimension
+four, the proposed inequality was
+\[
+ \operatorname{sys}(K):=\frac{c_{\rm EHZ}(K)^2}{2\operatorname{vol}_4(K)}\leq1.
+\]
+The quantity on the left is called the systolic ratio. Capacity scales by
+the square of a dilation and four-dimensional volume by its fourth power,
+so this ratio compares shape independently of overall size. Translations
+and linear symplectic maps also preserve it.
+
+The inequality is false. Haim--Kislev and Ostrover found a counterexample
+formed from two regular pentagons in complementary Lagrangian planes
+\cite{HaimKislevOstrover2024}. Writing the coordinates as $(q,p)\in
+\mathbb R^2\oplus\mathbb R^2$, one representative is
+\[
+ K_{\rm HKO}=P_5\times R(-\pi/2)P_5,\qquad
+ \operatorname{sys}(K_{\rm HKO})=\frac{3+\sqrt5}{5}>1.
+\]
+Here $P_5$ is a centred regular pentagon with a vertex on the positive
+horizontal axis, and $R(\theta)$ is planar rotation. A product placed in
+the $q$- and $p$-planes is called a Lagrangian product. The relative
+position of its factors affects capacity even though it does not affect
+volume.
+
+The counterexample leaves several geometric questions. Is the HKO body a
+local maximum of the systolic ratio among convex bodies? Are there other
+families with large ratios? Can the
+computations reveal geometric relationships involving capacity? This thesis
+investigates these questions through local analysis, finite algorithms and
+data science. This is the sense in which we continue to probe Viterbo's
+conjecture: although its proposed bound is false, the geometric relationship
+between symplectic capacity and volume remains to be understood.
+
+The mathematical results identify two ways of changing the counterexample
+that cannot improve its ratio: sufficiently small ten-facet perturbations
+and arbitrary independent linear deformations of its regular-pentagon
+factors. These are different restrictions, one local in the full ten-facet
+space and one global within a product family. Finite capacity formulas make
+both questions accessible to proof. The empirical investigation asks whether
+geometric measurements can explain capacity in broader populations and guide
+the search for further examples.
+
+\subsection{Capacities, dynamics and convex geometry}
+
+Symplectic capacities measure constraints on embeddings that volume alone
+cannot detect. Two basic examples are the Gromov width $c_G$, defined by
+the largest symplectic ball that embeds into a domain, and the cylindrical
+capacity $c_Z$, defined by the smallest symplectic cylinder into which the
+domain embeds. With the usual normalization, every symplectic capacity lies
+between these two~\cite{Edtmair2024}. The EHZ capacity has a different
+description: on convex bodies it is the least action of a closed
+characteristic. Thus comparing capacities connects an embedding question
+to a question about Hamiltonian trajectories.
+
+The conjecture that all normalized capacities agree on convex domains was
+stronger than Viterbo's volume bound. Indeed, the Gromov width satisfies
+that bound directly by volume preservation. The HKO example therefore
+also separates the EHZ capacity from the Gromov width
+\cite{HaimKislevOstrover2024}. Abbondandolo, Edtmair and Kang prove that EHZ and cylindrical capacity
+coincide on every convex body in four dimensions
+\cite[Corollary~1]{AbbondandoloEdtmairKang2024}. Thus the capacity computed
+in this thesis also determines cylindrical capacity. Their proof builds on
+Edtmair's earlier work, which characterizes
+cylindrical capacity on smooth star-shaped domains in $\mathbb R^4$ with
+dynamically convex boundary by the
+least area of a disk-like global surface of section, and proves coincidence
+of all normalized capacities for convex domains sufficiently $C^3$-close
+to the ball~\cite{Edtmair2024}. A global surface of section is a surface
+whose interior is transverse to the flow and is met in both forward and
+backward time by every trajectory outside its boundary. These results illustrate how information about the
+flow can determine an embedding obstruction.
+
+There is also a direct connection to a central problem in convex geometry.
+For a centrally symmetric convex body $L\subset\mathbb R^n$ and its polar
+$L^\circ$, Artstein--Avidan, Karasev and Ostrover prove
+$c_{\rm EHZ}(L\times L^\circ)=4$~\cite{AKO2014}. Viterbo's proposed
+inequality on these particular products is consequently equivalent to the
+lower bound $\operatorname{vol}(L)\operatorname{vol}(L^\circ)\geq4^n/n!$
+in the symmetric Mahler conjecture. The general counterexample does not
+invalidate this equivalence for the restricted family. Capacity--volume
+questions therefore retain significance beyond the original universal bound.
+
+Local maximality has a dynamical precedent as well. Abbondandolo and
+Benedetti prove that Zoll contact forms, whose Reeb orbits are all closed
+with the same minimal period, locally maximize the contact systolic ratio
+\cite{AB2023}. Their results include the volume--capacity inequality near
+the ball. The HKO body presents a different setting: it has corners and a
+ratio larger than the ball's. Our local theorem studies how such a
+nonsmooth example behaves under perturbations of its supporting facets.
+
+Haim--Kislev studies the HKO body through hyperplane cuts. A convex body is
+a \emph{cuts extremizer} if every cut into two pieces with nonempty interior
+strictly decreases the EHZ capacity on each piece. Numerical experiments
+suggest this property for HKO, while also suggesting that its capacity is
+not always the sum of the capacities of the pieces
+\cite[Definitions~1.1--1.2 and Example~1.12]{HaimKislev2025Zoll}.
+For sufficiently shallow cuts in certain directions, including all normals
+supported in one pentagon factor, Haim--Kislev proves this additivity identity
+\cite[Proposition~1.13]{HaimKislev2025Zoll}.
+
+These cuts give a complementary way to perturb the counterexample. Cutting
+off a small cap typically adds a facet, whereas our theorem varies the ten
+existing facets. The systolic ratio also compares capacity with volume: for
+a retained piece $K'$, the inequality
+$\operatorname{sys}(K')\leq\operatorname{sys}(K_{\rm HKO})$ is equivalent to
+\[
+ \frac{c_{\rm EHZ}(K')}{c_{\rm EHZ}(K_{\rm HKO})}
+ \leq
+ \left(\frac{\operatorname{vol}_4 K'}
+ {\operatorname{vol}_4 K_{\rm HKO}}\right)^{1/2}.
+\]
+Thus the capacity decrease must be large enough to compensate for the lost
+volume. Theorem~\ref{thm:hko-ten-facet-local-maximum} establishes this
+balance throughout a neighborhood in the space of ten-facet polytopes.
+
+\subsection{A local theorem around the counterexample}
+
+Our main result partially answers the first question: every sufficiently
+Hausdorff-close ten-facet polytope has ratio at most
+that of $K_{\rm HKO}$. In a smaller neighborhood, equality occurs precisely
+for translations, positive dilations and linear symplectic images of
+$K_{\rm HKO}$; see Theorem~\ref{thm:hko-ten-facet-local-maximum}. Thus a
+small change of shape that is not one of these symmetries lowers the ratio.
+Allowing facets to appear or disappear is a different local problem, which
+the theorem leaves open.
+
+The proof uses upper bounds that agree with the systolic ratio at HKO.
+For every nonzero direction transverse to the symmetries, at least one of
+these bounds has negative derivative. A uniform estimate then gives strict
+decrease away from HKO on a sufficiently small transverse slice.
+The finite task is to construct enough
+such bounds and check their derivatives. Feasible weights in Haim--Kislev's
+capacity formula provide the bounds. An algebraic computation establishes the derivative
+conditions; the proof explains why those conditions imply the geometric
+local maximum.
+
+\subsection{From boundary dynamics to finite calculations}
+
+For a smooth convex body, the EHZ capacity is the least action of a closed
+characteristic on its boundary. Polytopes have corners, so the relevant
+curves are generalized characteristics. Their velocities are governed by
+the normals of the facets they meet. Haim--Kislev's theorem makes the
+capacity computable by a finite optimization over facet orders and
+nonnegative weights~\cite{HK2017}.
+
+We derive the finite formula from the dual action principle, expanding
+Haim--Kislev's argument for a master's-level reader. We state the imported
+variational results and explain the existence of a minimizing curve with a
+finite list of distinct facet directions.
+
+For Lagrangian products, we derive a further reduction from the bilinear
+structure of the objective: some maximizing word uses at most three facets
+from each factor. This gives a smaller finite search for the capacity,
+without classifying every minimizing orbit.
+
+Using the local passage geometry of Chaidez and Hutchings~\cite{CH2021},
+we develop a flow-graph algorithm with a finite search justified by the
+simple-minimizer theorem. Its implementation provides an independent
+cross-check of the quadratic-program method on selected rational inputs
+satisfying the flow algorithm's regularity hypotheses.
+
+For regular pentagon products, the finite formula also gives the complete
+relative-rotation profile. The systolic ratio of
+$P_5\times R(\theta)P_5$ is
+\[
+ \frac{5+2\sqrt5}{10}\sec^2 d(\theta),
+\]
+where $d(\theta)$ is the distance to the nearest multiple of $\pi/5$.
+A short analytic comparison proves the formula, whose maximum is the HKO
+value. A separate matrix-containment argument extends the capacity formula
+and sharp systolic bound to independent linear deformations of both regular
+pentagons; see Section~\ref{sec:pentagon-affine}. This family is larger
+than the rotation family but does not include arbitrary pentagons.
+
+We also vary the placement of the factor planes themselves. For any two
+full-dimensional planar convex bodies, a small rigid rotation away from the
+symplectic-product arrangement increases capacity. The Lagrangian endpoint
+need not be better: an explicit triangle product has smaller capacity there;
+see Section~\ref{sec:product-rotation}.
+
+\subsection{Looking for mathematical structure in data}
+
+Symplectic ridge area gives a strong inverse association with the computed
+systolic ratio in the sampled populations. Selection based on geometric
+measurements also raises mean computed ratios in fresh samples. Yet the
+overall rank association is substantially weaker in subsets selected within each sampling group for
+either low ridge scores or high computed ratios. Its success as a coarse
+predictor leaves open how to improve a body already selected for a promising
+score.
+
+Area-preserving linear maps that make each factor's vertex covariance
+isotropic raise the computed ratio in 314 of 320 tested products and
+substantially weaken the ridge--ratio correlation. These paired changes
+support a contribution from affine factor shape to the broad association
+in this sample. Their effects cannot
+be attributed to covariance imbalance alone: the maps change several
+geometric features together.
+
+Exact family laws further constrain the explanation. An edge--width formula
+describes the ridge measurement on Lagrangian products. Under relative
+rotation of regular pentagon factors, it has an inverse-square relation to
+the systolic ratio; under relative rotation of equilateral-triangle factors,
+the two quantities have the same strict ordering; see
+\eqref{eq:ds-pentagon-ridge-capacity} and~\eqref{eq:ds-triangle-profile}.
+A general explanation must therefore account
+for the shapes and relative positions of the factors.
+
+In a comparison of fixed local-search implementations from the same
+64 starting bodies, retaining previously active capacity branches attains larger median best ratios than literal
+gradient ascent under the same evaluation limits. This connects the
+first-order branch model to practical improvement; the finite searches still
+do not establish local maximality. None of the exploratory searches produced
+a new numerical ratio above one.
+
+\subsection{How to read the thesis}
+
+The foundations in Sections~\ref{sec:preliminaries}--\ref{sec:quadratic-program-algorithm-hk2019}
+explain how nonsmooth boundary dynamics become a finite quadratic program.
+Section~\ref{sec:flow-graph-algorithm-ch2021} presents the alternative flow-graph
+method, and Section~\ref{sec:first-order-perturbations} develops first-order variation.
+
+A reader primarily interested in the HKO theorem can start with its statement
+and proof strategy in Section~\ref{sec:hko-local-maximum}, returning to the
+foundations for the capacity formula and to
+Section~\ref{sec:first-order-perturbations} for variation. The flow-graph and
+data-science chapters are not prerequisites for that proof.
+Section~\ref{sec:black-box-datascience} describes the empirical investigation.
+Sections~\ref{sec:rotated-regular-polygons} and~\ref{sec:pentagon-affine} give
+the rotation profile and its extension to independently deformed pentagons.
+Section~\ref{sec:product-rotation} then rotates the full product out of
+symplectic position, rather than rotating one factor within its plane.
+The later sections document visualizations, numerical methods, code and data,
+and reflect on the use of AI. The appendices contain computational detail
+for checking or reproducing the results.

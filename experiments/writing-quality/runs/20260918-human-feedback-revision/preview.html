@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Ridge area and systolic ratio</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="preview.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Ridge area and systolic ratio</h1>
+</header>
+<h1 id="ridge-area-and-systolic-ratio">Ridge area and systolic
+ratio</h1>
+<h2 id="an-empirical-association">An empirical association</h2>
+<p>In the sampled polytopes, a smaller total symplectic area of the
+two-dimensional faces usually accompanied a larger systolic ratio. The
+association suggests a geometric question: what makes these face areas
+informative about the systolic ratio?</p>
+<p>For a four-dimensional polytope
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>,
+write [ R(K)= {}, (K)=. ] Here
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ω</mi><mn>0</mn></msub><annotation encoding="application/x-tex">\omega_0</annotation></semantics></math>
+is the standard symplectic form. The absolute value is taken separately
+on each face:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+records symplectic area without cancellation between faces, rather than
+their Euclidean areas. In the empirical plots,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mo>sys</mo><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\widehat{\operatorname{sys}}</annotation></semantics></math>
+denotes the recorded numerical approximation to the systolic ratio.</p>
+<figure>
+<img src="figures/association-stratified.svg"
+alt="Ridge area and numerical systolic ratio in the historical random sample." />
+<figcaption aria-hidden="true">Ridge area and numerical systolic ratio
+in the historical random sample.</figcaption>
+</figure>
+<p><em>Figure 1. Each point represents one retained polytope. Generic
+polytopes and Lagrangian products are displayed separately; the panels
+further distinguish facet counts or polygon sizes. The horizontal scale
+is logarithmic. These are observations from the specified random
+generators, not values sampled uniformly from convex bodies. The
+numerical evaluations have the provenance limitation described below;
+generation procedures are specified in the accompanying source
+notes.</em></p>
+<p>The pooled rank correlation between
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+and the numerical systolic ratio is about
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>0.94</mn></mrow><annotation encoding="application/x-tex">-0.94</annotation></semantics></math>.
+Rank correlation compares the orderings of the bodies by the two
+quantities; a value of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">-1</annotation></semantics></math>
+would mean exactly reversed orderings. The ordinary linear correlation
+is much weaker, about
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>0.21</mn></mrow><annotation encoding="application/x-tex">-0.21</annotation></semantics></math>.
+Thus the principal observation concerns which bodies have larger
+systolic ratio, rather than how much the systolic ratio changes per unit
+of ridge area. The inverse association also occurs within every sampled
+facet-count or polygon-size group: the rank correlations range from
+about
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>0.84</mn></mrow><annotation encoding="application/x-tex">-0.84</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>1.00</mn></mrow><annotation encoding="application/x-tex">-1.00</annotation></semantics></math>.
+Thus it is not solely a consequence of pooling these groups. Figure 1
+shows the separate populations.</p>
+<p>The sample contains 4,096 generic polytopes with five to twelve
+facets and 10,240 products of polygons with three to six edges. Each
+facet count or polygon-size pair contributes the same number of bodies
+within its class. Support heights were drawn in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0.8</mn><mo>,</mo><mn>1.2</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0.8,1.2]</annotation></semantics></math>,
+with seed 42, and geometries failing the generation conditions were
+discarded. These choices restrict the population to which the empirical
+observation applies. Moreover, the retained capacity evaluations predate
+the current certified implementation: their original execution records
+do not establish its guarantees. The plots and correlations are
+therefore evidence about the recorded numerical systolic ratios. They do
+not provide certified bounds or a statistical law for arbitrary convex
+bodies.</p>
+<h2 id="an-exact-relation-for-pentagon-products">An exact relation for
+pentagon products</h2>
+<p>For products, ridge area has a direct expression in terms of the
+polygon edges. Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>a</mi><mi>i</mi></msub><annotation encoding="application/x-tex">a_i</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>b</mi><mi>j</mi></msub><annotation encoding="application/x-tex">b_j</annotation></semantics></math>
+be the cyclic edge vectors of polygons
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math>,
+with respective areas
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>P</mi></msub><annotation encoding="application/x-tex">A_P</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>Q</mi></msub><annotation encoding="application/x-tex">A_Q</annotation></semantics></math>.
+In
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><msub><mo>×</mo><mi>L</mi></msub><mi>Q</mi></mrow><annotation encoding="application/x-tex">P\times_L Q</annotation></semantics></math>,
+the factor faces lie in Lagrangian planes and contribute zero symplectic
+area. Each remaining two-face is the product of two edges and has
+absolute symplectic area
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>a</mi><mi>i</mi></msub><mo>⋅</mo><msub><mi>b</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">|</mo></mrow><annotation encoding="application/x-tex">|a_i\cdot b_j|</annotation></semantics></math>.
+Hence [ R(P_L Q)=. ] Relative rotation changes these pairings without
+changing the volume or combinatorial type of the product.</p>
+<p>For rotated regular pentagons, the systolic ratio is exactly
+proportional to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>R</mi><mrow><mo>−</mo><mn>2</mn></mrow></msup><annotation encoding="application/x-tex">R^{-2}</annotation></semantics></math>.
+To see this, let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mn>5</mn></msub><annotation encoding="application/x-tex">P_5</annotation></semantics></math>
+have circumradius one and put [ K_=P_5<em>L()P_5, d()=</em>{kZ}|-k/5|. ]
+Writing
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mo>=</mo><mo>sin</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>π</mi><mi>/</mi><mn>5</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">s=\sin(\pi/5)</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo>=</mo><mo>cos</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>π</mi><mi>/</mi><mn>5</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">h=\cos(\pi/5)</annotation></semantics></math>,
+each edge has length
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mi>s</mi></mrow><annotation encoding="application/x-tex">2s</annotation></semantics></math>
+and each polygon has area
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>5</mn><mi>s</mi><mi>h</mi></mrow><annotation encoding="application/x-tex">5sh</annotation></semantics></math>.
+The edge formula gives [ R(K_)=<em>{j=0}^4|(+2j/5)| =16sd(). ] For the
+last equality, reduce
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mo>−</mo><mi>π</mi><mi>/</mi><mn>10</mn><mo>,</mo><mi>π</mi><mi>/</mi><mn>10</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[-\pi/10,\pi/10]</annotation></semantics></math>,
+where the signs of the five cosine terms are fixed. Pairing opposite
+indices gives a sum of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mi>h</mi><mo>cos</mo><mi>θ</mi></mrow><annotation encoding="application/x-tex">4h\cos\theta</annotation></semantics></math>;
+evenness and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>π</mi><mi>/</mi><mn>5</mn></mrow><annotation encoding="application/x-tex">\pi/5</annotation></semantics></math>
+periodicity then give the stated formula. Combining it with the capacity
+profile proved in the pentagon chapter, [ (K</em>)=^2d(), ] yields [ ]
+Thus decreasing
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+increases the systolic ratio throughout this family: from about
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.947</mn><annotation encoding="application/x-tex">0.947</annotation></semantics></math>
+at alignment to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>3</mn><mo>+</mo><msqrt><mn>5</mn></msqrt><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mn>5</mn><mo>≈</mo><mn>1.047</mn></mrow><annotation encoding="application/x-tex">(3+\sqrt5)/5\approx1.047</annotation></semantics></math>
+at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>=</mo><mi>π</mi><mi>/</mi><mn>10</mn></mrow><annotation encoding="application/x-tex">d=\pi/10</annotation></semantics></math>.
+This calculation supplies an exact instance of the inverse association
+observed in the data.</p>
+<p>Decreasing
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+does not, however, provide a generally reliable way to increase the
+systolic ratio. Two designed product paths, of types
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3</mn><mo>×</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">3\times6</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>×</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">4\times4</annotation></semantics></math>,
+exhibit the opposite behavior numerically: both
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+and the numerical systolic ratio decrease at every retained step. The
+pentagon identity therefore explains one family, while these paths warn
+against extrapolating its direction of improvement to other
+products.</p>
+<h2 id="selecting-new-products-from-the-observed-pattern">Selecting new
+products from the observed pattern</h2>
+<p>Can the observed association still help select promising bodies, even
+when it does not prescribe a direction of deformation? This question
+requires new candidates chosen without knowing their capacities. The
+following experiments separate two tests: refining selection among
+low-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+bodies, and comparing a fixed selection rule against controls from a
+different polygon generator.</p>
+<p>A fresh pool of 100,000 products tested a more specific prediction:
+among bodies with small
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>,
+distributing the symplectic area more evenly among the ridges might
+favor larger systolic ratios. Within each polygon-size pair, the
+experiment retained the lowest one percent by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>.
+It then split this group into equal halves according to the fraction of
+total ridge area contributed by the largest ridge. The half with the
+smaller largest-ridge fraction had a larger mean numerical systolic
+ratio by about
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.034</mn><annotation encoding="application/x-tex">0.034</annotation></semantics></math>
+overall; the difference was positive in eight of the ten polygon-size
+pairs. The sign criterion—positive overall and in at least seven
+pairs—was specified before evaluating capacities. It required no minimum
+effect size and was not a significance test.</p>
+<p>When applied to a different polygon generator, the same two-stage
+rule selected bodies with larger mean numerical systolic ratio than
+controls from that generator. This test replaced the randomly varying
+support heights by a common height before separately normalizing each
+factor’s area to one; the resulting polygons are circumscribed about
+circles. Normal directions were retained only when both the original and
+modified polygons passed the generation conditions. In each of the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>×</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">4\times6</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>6</mn><mo>×</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">6\times6</annotation></semantics></math>
+groups, the rule selected 16 of 3,200 eligible products: first the
+lowest one percent by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>,
+then the half with the smaller largest-ridge fraction. Sixteen controls
+were chosen by a fixed hash ordering from bodies outside both geometric
+selection sets in this experiment, before capacity evaluation.<a
+href="#fn1" class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a></p>
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 36%" />
+<col style="width: 36%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Polygon sizes</th>
+<th style="text-align: right;">Mean numerical systolic ratio,
+selected</th>
+<th style="text-align: right;">Mean numerical systolic ratio,
+controls</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>×</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">4\times6</annotation></semantics></math></td>
+<td
+style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.637</mn><annotation encoding="application/x-tex">0.637</annotation></semantics></math></td>
+<td
+style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.371</mn><annotation encoding="application/x-tex">0.371</annotation></semantics></math></td>
+</tr>
+<tr class="even">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>6</mn><mo>×</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">6\times6</annotation></semantics></math></td>
+<td
+style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.708</mn><annotation encoding="application/x-tex">0.708</annotation></semantics></math></td>
+<td
+style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.523</mn><annotation encoding="application/x-tex">0.523</annotation></semantics></math></td>
+</tr>
+</tbody>
+</table>
+<p>These comparisons establish enrichment in the two finite pools; the
+preceding half-versus-half comparison shows an additional association
+with less concentrated ridge area within the
+low-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+group. They do not establish how often enrichment would recur under
+other generators. The pentagon identity supplies an exact example of the
+inverse association, while the opposing deformation paths show why
+successful selection from a population need not give a rule for
+improving each individual body.</p>
+<aside id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p>The experiment also tested a covariance-based selector,
+not discussed here. Its selected bodies were excluded from the shared
+controls as well.<a href="#fnref1" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+</ol>
+</aside>
+</body>
+</html>

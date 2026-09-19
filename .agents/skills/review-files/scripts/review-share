@@ -1,0 +1,93 @@
+#!/usr/bin/env python3
+"""Add named artifacts to this checkout's existing, expiring review index."""
+
+import argparse
+import fcntl
+import hashlib
+import json
+import os
+from pathlib import Path
+import socket
+import subprocess
+import tempfile
+import time
+import urllib.request
+import uuid
+
+
+def save(path, state):
+    descriptor, temporary = tempfile.mkstemp(dir=path.parent, prefix="manifest-")
+    try:
+        with os.fdopen(descriptor, "w") as stream:
+            json.dump(state, stream)
+        os.replace(temporary, path)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--bind", required=True)
+    parser.add_argument("--name")
+    parser.add_argument("files", nargs="+")
+    args = parser.parse_args()
+    if args.name and len(args.files) != 1:
+        parser.error("--name requires exactly one file")
+    paths = [Path(name).resolve(strict=True) for name in args.files]
+    if not all(path.is_file() for path in paths):
+        parser.error("only regular files can be shared")
+    scripts = Path(__file__).resolve().parent
+    key = hashlib.sha256(f"{scripts}:{args.bind}".encode()).hexdigest()[:16]
+    directory = Path(os.environ.get("XDG_RUNTIME_DIR", "/tmp")) / f"review-index-{os.getuid()}-{key}"
+    directory.mkdir(mode=0o700, exist_ok=True)
+    manifest = directory / "manifest.json"
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+
+    with (directory / "lock").open("w") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        try:
+            state = json.loads(manifest.read_text())
+            url = f"http://{args.bind}:{state['port']}"
+            with opener.open(url + "/health", timeout=1) as response:
+                live = response.read().decode() == state["session"] and time.time() < state["expires_at"]
+        except (OSError, ValueError, KeyError):
+            live = False
+        now = time.time()
+        if not live:
+            with socket.socket() as probe:
+                probe.bind((args.bind, 0))
+                port = probe.getsockname()[1]
+            state = {"session": uuid.uuid4().hex, "port": port,
+                     "expires_at": now + 8 * 3600, "files": []}
+            url = f"http://{args.bind}:{port}"
+        for path in paths:
+            entry = next((item for item in state["files"] if item["path"] == str(path)), None)
+            if entry is None:
+                entry = {"id": uuid.uuid4().hex[:12], "path": str(path)}
+                state["files"].append(entry)
+            entry.update(name=args.name or path.name, shared_at=now)
+        save(manifest, state)
+        if not live:
+            subprocess.run([
+                "systemd-run", "--user", "--quiet", "--collect",
+                f"--unit=review-index-{state['session']}", "--property=Type=exec",
+                "--property=RuntimeMaxSec=8h", "--description=Expiring artifact review index",
+                "--", str(scripts / "review-server"), "--manifest", str(manifest),
+                args.bind, str(state["port"]),
+            ], check=True)
+            for attempt in range(100):
+                try:
+                    with opener.open(url + "/health", timeout=1) as response:
+                        if response.read().decode() == state["session"]:
+                            break
+                except OSError:
+                    pass
+                time.sleep(.05)
+            else:
+                raise SystemExit("review-share: review index did not become ready")
+        print(url)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,54 @@
+{
+  "purpose": "read-only availability/join check, not new scientific inference",
+  "inputs": {
+    "historical": {
+      "path": "/home/joern/.cache/msc-math/artifacts/polytope-invariant-table/c3042846723dbb89db17f2f39d88004d937e1e790949ff6880188fa89fc1900a/files/polytope-table.jsonl",
+      "sha256": "607c8731fa03d190d497edc3e8f1b4cca88f7d238260cce527680f568bc33d59",
+      "rows": 14336,
+      "unique_ids": 14336
+    },
+    "covariance": {
+      "path": "/workspaces/msc-math/.worktrees/empirical-campaign-first-steps/experiments/sys-datascience/methods/canonical-vertex-covariance/artifacts/current/per_polytope.jsonl",
+      "sha256": "88cba83c48996309d6f4f050adb44413d449acb873d3222c515040087a7c8301",
+      "rows": 14334,
+      "unique_ids": 14334
+    }
+  },
+  "joined_rows": 14334,
+  "historical_without_covariance": [
+    "4ab390657ba9bde151d076a3a1ad6e1a1e454a84c430b819e417040646526fd7",
+    "94e79c0b227b36bcdd27e3e4cbeca52c9b6ca8b216263f4eccc6d23bb16229d3"
+  ],
+  "sys_mismatches": 0,
+  "covariance_buckets": {
+    "random:F10": 512,
+    "random:F11": 512,
+    "random:F12": 511,
+    "random:F5": 512,
+    "random:F6": 512,
+    "random:F7": 512,
+    "random:F8": 511,
+    "random:F9": 512,
+    "random_product:3x3": 1024,
+    "random_product:3x4": 1024,
+    "random_product:3x5": 1024,
+    "random_product:3x6": 1024,
+    "random_product:4x4": 1024,
+    "random_product:4x5": 1024,
+    "random_product:4x6": 1024,
+    "random_product:5x5": 1024,
+    "random_product:5x6": 1024,
+    "random_product:6x6": 1024
+  },
+  "nonfinite_covariance_fields": {
+    "rho": 0,
+    "nu1": 0,
+    "nu2": 0,
+    "covariance_condition": 0,
+    "symplectic_pair_error": 0
+  },
+  "missing_host_cache_families": [
+    "polytope-datasets",
+    "product-bounce-distribution"
+  ]
+}

@@ -3,7 +3,7 @@
 Assignment status, 2026-09-05: no row below is an active assignment merely
 because this file calls it "next". The July recommendations are preserved as
 decision history. Current data-science scope remains unresolved; see
-[current work and ownership](../../../memories/todos.md).
+[current work and ownership](../../../docs/WORK_REMAINING.md).
 
 Use: compact routing board, not a backlog. Evidence and reasoning live in
 packet-local sources and `final-research-account-2026-07-12.md`.
