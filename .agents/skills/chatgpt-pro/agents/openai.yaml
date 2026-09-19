@@ -1,4 +1,0 @@
-interface:
-  display_name: "ChatGPT Pro handoff"
-  short_description: "Exchange focused research ZIPs with ChatGPT Pro via Jörn"
-  default_prompt: "Use $chatgpt-pro to prepare a focused research ZIP for Jörn to run in ChatGPT Pro and return for independent checking."
