@@ -1,10 +1,14 @@
 # Environment setup and reproduction
 
-Start here for host or Docker Sandbox setup. Run project commands from the
-repository root. The current sandbox is reached with `ssh codex-msc-math.sbx`;
-its project mount is `/workspaces/msc-math`. Host-side sandbox lifecycle and
+Start here for host setup and reproduction. Run project commands from the
+repository root. As of 2026-09-19, ordinary work resumes from this host
+checkout. The retained `codex-msc-math` sandbox is stopped while its private
+state is wound down; its Codex rollouts have been imported into the host
+session store. Do not start or recreate it merely to resume project work.
+The sandbox-specific material below is retained as a historical recovery
+reference, not as the current setup path. Host-side sandbox lifecycle and
 credentials belong to the host's `~/.dotfiles/memories/host-estate.md`
-(`/home/joern/.dotfiles/memories/host-estate.md`), not an in-sandbox path.
+(`/home/joern/.dotfiles/memories/host-estate.md`).
 
 ## Current state
 
