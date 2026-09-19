@@ -1,6 +1,9 @@
 # Shared sandbox skills are intentionally disabled. This repository discovers
 # only the skills it owns below .agents/skills.
 
+[agents]
+max_concurrent_threads_per_session = 99
+
 [[skills.config]]
 path = "/home/agent/.agents/skills/codex-session-log-parsing/SKILL.md"
 enabled = false

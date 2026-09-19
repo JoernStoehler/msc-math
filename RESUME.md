@@ -43,7 +43,8 @@ window. The current handoff is not a final grading submission.
 ## Sessions and recovery
 
 [docs/resume/sessions.json](docs/resume/sessions.json) records exact UUIDs, local
-session-log paths and last observed panes. Main coordinator:
+session-log paths and last observed panes for recovery provenance. Ordinary
+resumption must not inspect raw rollouts or restart old panes or agents. Main coordinator:
 `01a0b153-5091-7333-935c-f08856210097`; replacement:
 `01a0b4e9-b856-7de2-b42a-39d3526743b9` (last observed idle at w26:p8).
 Empirical, reviewer and human-review desk UUIDs are included. Inspect current
@@ -55,8 +56,8 @@ The selected manuscript's old-to-new path map is
 are Git-only, indexed by `docs/history/retired-paths.json`. Reusable mathematical
 and interaction knowledge is surfaced by `docs/knowledge/README.md`.
 
-Only main and the resume branch/worktree remain. Full original branch history
-and 108 untracked/generated files are preserved at
+`main` is the active branch; there is no separate resume worktree. Full original
+branch history and 108 untracked/generated files are preserved at
 `/workspaces/archived/workspaces-root/msc-math-session-20260918/`.
 Its standalone bundle restore recovered all 43 exact original heads. Eleven
 obsolete review servers were stopped; old URLs should not be reused.
