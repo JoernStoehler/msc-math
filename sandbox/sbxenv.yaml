@@ -39,5 +39,5 @@ sandboxOptions:
 
 # No secrets, bindings, MCP servers, ports, or host lifecycle commands yet.
 # Add each credential only after its scope, minting path, rotation, and failure
-# behavior are documented. Session export is an explicit wrapper action so
-# `rm` cannot silently discard the only copy of a rollout.
+# behavior are documented. Session import is an explicit pre-removal step so
+# removing the VM cannot silently discard the only copy of a rollout.

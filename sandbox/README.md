@@ -18,7 +18,7 @@ paths are direct read-write host mounts:
 | --- | --- | --- |
 | `/workspaces/msc-math` | `/workspaces/msc-math` | Main checkout and normal active work |
 | `/worktrees/msc-math` | `/worktrees/msc-math` | Long-lived sibling worktrees |
-| `/data/msc-math` | `/data/msc-math` | Durable local data and exported session logs |
+| `/data/msc-math` | `/data/msc-math` | Durable local project data |
 | `/tmp/msc-math` | `/tmp/msc-math` | Disposable scratch and host/VM-shared caches |
 
 This phase accepts that host-side execution and VM-side execution can both
@@ -40,13 +40,15 @@ The profile puts the VM's Cargo home and target directory under
 `/tmp/msc-math/cache/host/` tree. This keeps cache reuse possible without
 making the VM depend on the old 9.4 GB environment tree.
 
-Before a sandbox is removed, run the existing importer and the archive helper
-explicitly. They import canonical rollout files into the host Codex session
-store and archive the raw JSONL/JSONL.zst files under
-`/data/msc-math/sessions/raw/<sandbox-name>/`. The archive is data for later
-analysis, not an image layer and not a Git artifact. No session export is
-declared as an sbx host lifecycle hook, so the host-side action remains visible
-and reviewable rather than being hidden in a file an agent can edit.
+While the sandbox is running, its canonical rollout files are under
+`/home/agent/.codex/sessions`. Before stopping it for removal or recreation,
+run the existing importer explicitly. It validates and merges those rollout
+files into the host's `~/.codex/sessions` store, so the normal host session
+list and analysis tools see host and VM sessions together. There is no separate
+raw archive or host/VM distinction in the normal session store. No session
+export is declared as an sbx host lifecycle hook, so the host-side action
+remains visible and reviewable rather than being hidden in a file an agent can
+edit.
 
 ## Deliberately unresolved review points
 
@@ -79,7 +81,6 @@ sbx env run /workspaces/msc-math/sandbox/sbxenv.yaml
 sbx env exec /workspaces/msc-math/sandbox/sbxenv.yaml -- cargo check --workspace
 sbx stop codex-msc-math
 ~/.dotfiles/scripts/import-sbx-codex-sessions.sh codex-msc-math
-~/.dotfiles/scripts/archive-sbx-codex-sessions.sh codex-msc-math
 sbx env rm /workspaces/msc-math/sandbox/sbxenv.yaml
 ```
 
