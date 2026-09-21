@@ -7,11 +7,6 @@ schemaVersion: "1"
 name: codex-msc-math
 agent: codex
 
-# The mixin updates the agent during sandbox creation/recreation. It is not
-# baked into the project tool image because Codex releases frequently.
-kits:
-  - ./kits/codex-latest
-
 # Direct RW mounts are intentional in phase 1. We sometimes build or inspect
 # the same project on the host, and low-friction exchange currently matters
 # more than isolating Git hooks from host-side execution.

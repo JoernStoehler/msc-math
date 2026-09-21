@@ -60,10 +60,10 @@ edit.
   Docker-style deny-all policy that would make package installation and normal
   research work unnecessarily difficult.
 - `Dockerfile` is a candidate tool image. Its base template provides the sbx
-  Codex capability. The local `codex-latest` mixin updates Codex during
-  sandbox creation/recreation using the official installer; the image's baked
-  Codex version is therefore only the bootstrap version. Choosing the Sage
-  installation mechanism remains a review point before a build.
+  Codex capability. The image's baked Codex version is only the bootstrap
+  version; update Codex explicitly after each fresh creation using the command
+  below. Choosing the Sage installation mechanism remains a review point before
+  a build.
 
 ## Intended lifecycle
 
@@ -78,6 +78,8 @@ From the host:
 ```bash
 sbx env plan /workspaces/msc-math/sandbox/sbxenv.yaml
 sbx env create /workspaces/msc-math/sandbox/sbxenv.yaml
+sbx env exec /workspaces/msc-math/sandbox/sbxenv.yaml -- sh -lc \
+  'curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh'
 sbx env run /workspaces/msc-math/sandbox/sbxenv.yaml
 sbx env exec /workspaces/msc-math/sandbox/sbxenv.yaml -- cargo check --workspace
 sbx stop codex-msc-math

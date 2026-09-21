@@ -39,5 +39,5 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
 
 # Deliberately not copied from .local-environments/: Sage/Miniforge needs an
 # explicit version and installation/cache policy. Codex itself is updated by
-# the repository-local creation-time mixin, because its release cadence makes
+# an explicit guest command after creation, because its release cadence makes
 # baking a separately selected version into this image poor value.
