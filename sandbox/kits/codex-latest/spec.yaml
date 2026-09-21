@@ -1,0 +1,16 @@
+schemaVersion: "2"
+kind: mixin
+name: codex-latest
+version: "1"
+description: Update the built-in Codex CLI when a sandbox is created.
+
+requires:
+  agent: codex
+
+setup:
+  install:
+    - command: >-
+        curl -fsSL https://chatgpt.com/codex/install.sh |
+        CODEX_NON_INTERACTIVE=1 sh
+      user: "1000"
+      description: Update Codex CLI from the official installer

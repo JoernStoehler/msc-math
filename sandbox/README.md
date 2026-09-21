@@ -60,9 +60,10 @@ edit.
   Docker-style deny-all policy that would make package installation and normal
   research work unnecessarily difficult.
 - `Dockerfile` is a candidate tool image. Its base template provides the sbx
-  Codex capability, but the Codex CLI version supplied by that template is not
-  treated as a project contract. Pinning/updating it, and choosing the Sage
-  installation mechanism, should happen during review before a build.
+  Codex capability. The local `codex-latest` mixin updates Codex during
+  sandbox creation/recreation using the official installer; the image's baked
+  Codex version is therefore only the bootstrap version. Choosing the Sage
+  installation mechanism remains a review point before a build.
 
 ## Intended lifecycle
 

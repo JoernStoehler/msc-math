@@ -2,7 +2,7 @@
 # reviewed. The build must not COPY source, credentials, host paths, or session
 # data into the image.
 
-FROM docker.io/docker/sandbox-templates:codex-docker
+FROM docker.io/docker/sandbox-templates:codex
 
 USER root
 
@@ -38,6 +38,6 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
     && curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Deliberately not copied from .local-environments/: Sage/Miniforge needs an
-# explicit version and installation/cache policy. Deliberately not updating the
-# Codex CLI here yet: the template's version is not an accepted contract, and
-# the update/pinning choice should be made before spending time on a build.
+# explicit version and installation/cache policy. Codex itself is updated by
+# the repository-local creation-time mixin, because its release cadence makes
+# baking a separately selected version into this image poor value.
