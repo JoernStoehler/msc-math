@@ -4,11 +4,10 @@ This directory contains the reviewable, repository-owned part of the MSc Math
 sandbox. It is a candidate only: no image has been built, pulled, created, or
 started from it.
 
-The host-specific environment file lives in
-`~/.dotfiles/sandboxes/msc-math.sbxenv.yaml`. Keeping that file out of this
-repository avoids putting host paths, host resource sizing, and future secret
-references into a checkout that agents can modify. The wrapper at
-`~/.dotfiles/scripts/msc-math-sbx` is the intended entry point.
+The environment file is [sbxenv.yaml](sbxenv.yaml) beside this document, so a
+fresh checkout carries the inspectable environment definition with it. It
+contains host paths and must be reviewed when used on another host. The sbx
+commands below are intentionally direct rather than hidden behind a wrapper.
 
 ## Phase 1 contract
 
@@ -41,9 +40,9 @@ The profile puts the VM's Cargo home and target directory under
 `/tmp/msc-math/cache/host/` tree. This keeps cache reuse possible without
 making the VM depend on the old 9.4 GB environment tree.
 
-The wrapper's `export-sessions` action is intentionally explicit. Before a
-sandbox is removed, it imports canonical rollout files into the host Codex
-session store and archives the raw JSONL/JSONL.zst files under
+Before a sandbox is removed, run the existing importer and the archive helper
+explicitly. They import canonical rollout files into the host Codex session
+store and archive the raw JSONL/JSONL.zst files under
 `/data/msc-math/sessions/raw/<sandbox-name>/`. The archive is data for later
 analysis, not an image layer and not a Git artifact. No session export is
 declared as an sbx host lifecycle hook, so the host-side action remains visible
@@ -68,7 +67,20 @@ and reviewable rather than being hidden in a file an agent can edit.
 The intended sequence is:
 
 ```text
-review files -> sbx plan -> create -> run/exec -> export-sessions -> remove
+review files -> plan -> create -> run/exec -> export sessions -> remove
+```
+
+From the host:
+
+```bash
+sbx env plan /workspaces/msc-math/sandbox/sbxenv.yaml
+sbx env create /workspaces/msc-math/sandbox/sbxenv.yaml
+sbx env run /workspaces/msc-math/sandbox/sbxenv.yaml
+sbx env exec /workspaces/msc-math/sandbox/sbxenv.yaml -- cargo check --workspace
+sbx stop codex-msc-math
+~/.dotfiles/scripts/import-sbx-codex-sessions.sh codex-msc-math
+~/.dotfiles/scripts/archive-sbx-codex-sessions.sh codex-msc-math
+sbx env rm /workspaces/msc-math/sandbox/sbxenv.yaml
 ```
 
 `create` and `run` are separate from image construction. Recreating the

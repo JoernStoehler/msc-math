@@ -1,0 +1,43 @@
+# Phase-1 candidate for /workspaces/msc-math.
+#
+# This file is intentionally repository-owned so the environment is inspectable
+# and cloneable with the project. The absolute paths are the paths on this host;
+# if the repository moves to another host, review them before applying.
+schemaVersion: "1"
+name: codex-msc-math
+agent: codex
+
+# Direct RW mounts are intentional in phase 1. We sometimes build or inspect
+# the same project on the host, and low-friction exchange currently matters
+# more than isolating Git hooks from host-side execution.
+workspace: /workspaces/msc-math
+additionalWorkspaces:
+  - path: /worktrees/msc-math
+  - path: /data/msc-math
+  - path: /tmp/msc-math
+
+env:
+  MSC_MATH_ROOT: /workspaces/msc-math
+  MSC_MATH_WORKTREES: /worktrees/msc-math
+  MSC_MATH_DATA: /data/msc-math
+  MSC_MATH_SCRATCH: /tmp/msc-math
+  # Keep VM-side Cargo state separate from any host-side build cache while
+  # retaining it across sandbox recreation during phase 1.
+  CARGO_HOME: /tmp/msc-math/cache/vm/cargo-home
+  CARGO_TARGET_DIR: /tmp/msc-math/cache/vm/cargo-target
+
+sandboxOptions:
+  # Review-only default while the custom Dockerfile is being reviewed. The
+  # Dockerfile is not built or selected by this candidate yet.
+  template: docker.io/docker/sandbox-templates:codex-docker
+  pullPolicy: missing
+  cpus: 8
+  memory: 8g
+  # Do not expose the shared host skill checkout to the sandbox. Repository
+  # local guidance remains available through the project mount.
+  skills: off
+
+# No secrets, bindings, MCP servers, ports, or host lifecycle commands yet.
+# Add each credential only after its scope, minting path, rotation, and failure
+# behavior are documented. Session export is an explicit wrapper action so
+# `rm` cannot silently discard the only copy of a rollout.
