@@ -102,7 +102,7 @@ RUN --mount=type=cache,id=msc-math-rustup-downloads,target=/home/agent/.rustup/d
 
 # Keep uv in its own final tool layer: changing this installer should not
 # invalidate Rust or Sage.
-RUN curl --proto '=https' --tlsv1.2 --fail --silent --show-error https://astral.sh/uv/install.sh \
+RUN curl --proto '=https' --tlsv1.2 --fail --silent --show-error https://releases.astral.sh/installers/uv/latest/uv-installer.sh \
         | sh
 
 # Expose the actual Sage launcher for `.sage` files and version checks. Python

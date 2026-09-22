@@ -1,8 +1,9 @@
 # Candidate sbx environment
 
 This directory contains the reviewable, repository-owned part of the MSc Math
-sandbox. It is a candidate only: no image has been built, pulled, created, or
-started from it.
+sandbox. The image and `codex-msc-math` sandbox have been smoke-tested on the
+current host; recreate them from these files rather than relying on hidden
+manual setup.
 
 The environment file is [sbxenv.yaml](sbxenv.yaml) beside this document, so a
 fresh checkout carries the inspectable environment definition with it. It
@@ -50,6 +51,17 @@ solve is the expensive layer being changed anyway. BuildKit cache mounts retain
 the Miniforge package downloads and Rustup downloads across such layer rebuilds
 without putting those caches into the final image.
 
+The local Docker daemon and `sandboxd` keep separate image stores. After
+building the image, import it into `sandboxd` before `sbx env create`:
+
+```bash
+docker build --tag msc-math-sbx:local --file sandbox/Dockerfile sandbox
+docker save msc-math-sbx:local --output /tmp/msc-math-sbx-local.tar
+sbx template load /tmp/msc-math-sbx-local.tar
+```
+
+The tar is only a transfer artifact and should be removed after the import.
+
 ## Caches and sessions
 
 The profile puts the VM's Cargo home and target directory under
@@ -88,12 +100,15 @@ edit.
 The intended sequence is:
 
 ```text
-review files -> plan -> create -> run/exec -> export sessions -> remove
+review files -> build/import image -> plan -> create -> run/exec -> export sessions -> remove
 ```
 
 From the host:
 
 ```bash
+docker build --tag msc-math-sbx:local --file /workspaces/msc-math/sandbox/Dockerfile /workspaces/msc-math/sandbox
+docker save msc-math-sbx:local --output /tmp/msc-math-sbx-local.tar
+sbx template load /tmp/msc-math-sbx-local.tar
 sbx env plan /workspaces/msc-math/sandbox/sbxenv.yaml
 sbx env create /workspaces/msc-math/sandbox/sbxenv.yaml
 sbx env exec /workspaces/msc-math/sandbox/sbxenv.yaml -- sh -lc \

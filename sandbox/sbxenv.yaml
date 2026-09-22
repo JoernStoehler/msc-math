@@ -27,9 +27,9 @@ env:
   CARGO_TARGET_DIR: /tmp/msc-math/cache/vm/cargo-target
 
 sandboxOptions:
-  # Review-only default while the custom Dockerfile is being reviewed. The
-  # Dockerfile is not built or selected by this candidate yet.
-  template: docker.io/docker/sandbox-templates:codex
+  # Built locally from sandbox/Dockerfile. Rebuild this tag after changing the
+  # Dockerfile, then recreate the sandbox to apply the new image.
+  template: msc-math-sbx:local
   pullPolicy: missing
   cpus: 8
   memory: 8g
