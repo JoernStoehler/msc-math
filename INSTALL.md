@@ -238,13 +238,11 @@ color-link statusline "#ffffff,#4078f2"
 color-link tabbar "#383a42,#e9edf3"
 EOF
 
-# The Sage wrapper is installed in the SageMath section below.
+# Sage setup is documented in the SageMath section below.
 ```
 
 The system file is sourced by the shell rather than executed, so mode `0644`
-is sufficient. The Sage wrapper is executable and must be installed with mode
-`0755`; its contents and installation command are kept with the Sage setup
-because the wrapper points into the project-local Sage prefix.
+is sufficient.
 
 The R2 configuration is deliberately absent from the file blocks above. The
 private `~/.config/rclone/rclone.conf` must be created with mode `0600` using
@@ -335,34 +333,17 @@ the network allow rule, the proxy returned HTTP 403, surfaced by mamba as a
 ZSTD decompression error. An SSH-only installation also exited 137 without a
 diagnostic; the attached `sbx exec` installation succeeded in 184 seconds.
 
-The installed Sage 10.9 launcher does not accept the legacy `-python` option
-used by project commands; directly passing the HKO `.py` file also returned
-silently without running its main entry point. Dispatch both forms to the
-environment's Python. Create executable `/home/agent/.local/bin/sage`
-with this content (inspect any existing file before replacing it):
+The conda Sage 10.9 launcher is the standard Sage command-line interpreter for
+`.sage` files, but it does not provide the historical `sage -python` option.
+Python files that import `sage.all` should therefore be run with the Python
+binary inside the Sage environment. This avoids replacing the meaning of the
+`sage` command with a project-specific wrapper. In a fresh SSH shell, check:
 
 ```bash
-# Target: /home/agent/.local/bin/sage
-install -D -m 0755 /dev/stdin "$HOME/.local/bin/sage" <<'EOF'
-#!/bin/sh
-sage_env=/workspaces/msc-math/.local-environments/miniforge/envs/sage
-if [ "${1-}" = -python ]; then
-    shift
-    exec "$sage_env/bin/python" "$@"
-fi
-case "${1-}" in
-    *.py) exec "$sage_env/bin/python" "$@" ;;
-esac
-exec "$sage_env/bin/sage" "$@"
-EOF
-```
-
-Ensure `~/.local/bin` is on PATH. This wrapper is already installed in the
-current sandbox. In a fresh SSH shell, check:
-
-```bash
-sage --version
-sage -python -c \
+sage_prefix=/workspaces/msc-math/.local-environments/miniforge
+export PATH="$sage_prefix/bin:$PATH"
+"$sage_prefix/envs/sage/bin/sage" --version
+"$sage_prefix/envs/sage/bin/python" -c \
   'from sage.all import QQ, matrix; assert matrix(QQ, [[1,2],[3,4]]).det() == -2; print("Sage arithmetic OK")'
 ```
 
@@ -385,8 +366,8 @@ HKO packet, and an explicit package export are retained in
 This is disposable environment data, not research source or a Git backup.
 It survives sandbox removal because it is on the host mount, but contains
 absolute prefixes and sandbox Linux binaries: do not assume it is relocatable
-or usable on the host. The wrapper and network policy are sandbox state and
-must be restored separately after recreation. Reinstall at a new path rather
+or usable on the host. The Sage environment and network policy are sandbox
+state and must be restored separately after recreation. Reinstall at a new path rather
 than moving the prefix. Deleting this directory removes the local Sage setup,
 caches and logs; it does not remove tracked research results.
 

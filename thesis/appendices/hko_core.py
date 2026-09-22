@@ -1,4 +1,3 @@
-#!/usr/bin/env sage -python
 from sage.all import *
 R = PolynomialRing(QQ, "x")
 x = R.gen()

@@ -10,7 +10,7 @@ Run:
 
 ```bash
 cargo run -p exp-hko-local-maximum --release --bin hko-row-bank-validation
-sage -python experiments/hko-local-maximum/row-bank-validation/analyze.py
+conda run --name sage python experiments/hko-local-maximum/row-bank-validation/analyze.py
 ```
 
 Use `--canonical` on both commands only when refreshing the tracked canonical
@@ -18,7 +18,7 @@ input/report:
 
 ```bash
 cargo run -p exp-hko-local-maximum --release --bin hko-row-bank-validation -- --canonical
-sage -python experiments/hko-local-maximum/row-bank-validation/analyze.py --canonical
+conda run --name sage python experiments/hko-local-maximum/row-bank-validation/analyze.py --canonical
 ```
 
 Tracked canonical artifacts:

@@ -54,7 +54,9 @@ ARG MINIFORGE_SHA256=281b0ac7d550802efc81af633225a5e6116d29ae72f3ab4eae7168c3931
 # Keep user-installed toolchains in the image, while leaving build caches to
 # the mounted /tmp/msc-math/cache/vm tree configured by sbxenv.yaml.
 ENV PATH=/home/agent/.local/bin:/home/agent/.cargo/bin:/home/agent/.local/share/miniforge/bin:$PATH \
-    UV_CACHE_DIR=/tmp/msc-math/cache/vm/uv
+    UV_CACHE_DIR=/tmp/msc-math/cache/vm/uv \
+    SAGE_PREFIX=/home/agent/.local/share/miniforge/envs/sage \
+    SAGE_PYTHON=/home/agent/.local/share/miniforge/envs/sage/bin/python
 
 # Sage is a separately managed conda environment in the project. Install a
 # checksummed Miniforge release and pin the Sage version verified by the repo's
@@ -103,22 +105,8 @@ RUN --mount=type=cache,id=msc-math-rustup-downloads,target=/home/agent/.rustup/d
 RUN curl --proto '=https' --tlsv1.2 --fail --silent --show-error https://astral.sh/uv/install.sh \
         | sh
 
-# The project historically invokes both `sage -python script.py` and `sage
-# script.py`. Make those forms use the pinned environment's Python, while
-# forwarding ordinary Sage commands to the real Sage executable. Keep this
-# compatibility shim last so editing it does not rebuild toolchains.
-RUN install -d -m 0755 /home/agent/.local/bin \
-    && printf '%s\n' \
-        '#!/bin/sh' \
-        'set -eu' \
-        'sage_env=/home/agent/.local/share/miniforge/envs/sage' \
-        'if [ "${1-}" = "-python" ]; then' \
-        '    shift' \
-        '    exec "$sage_env/bin/python" "$@"' \
-        'fi' \
-        'case "${1-}" in' \
-        '    *.py) exec "$sage_env/bin/python" "$@" ;;' \
-        'esac' \
-        'exec "$sage_env/bin/sage" "$@"' \
-        > /home/agent/.local/bin/sage \
-    && chmod 0755 /home/agent/.local/bin/sage
+# Expose the actual Sage launcher for `.sage` files and version checks. Python
+# files that import Sage use the explicit $SAGE_PYTHON interpreter instead of
+# redefining the meaning of the `sage` command.
+RUN ln -s /home/agent/.local/share/miniforge/envs/sage/bin/sage \
+    /home/agent/.local/bin/sage

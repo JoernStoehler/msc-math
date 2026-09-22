@@ -38,13 +38,13 @@ or copied into the image.
 The Dockerfile is ordered by expected change frequency and build cost:
 
 ```text
-base/apt -> Miniforge -> Sage environment -> rustup -> Rust toolchain -> uv -> Sage wrapper
+base/apt -> Miniforge -> Sage environment -> rustup -> Rust toolchain -> uv -> Sage launcher link
 ```
 
 The repository is never copied into the image, so ordinary source edits do not
 invalidate the image build. The large Sage layer remains cached when the Rust
-toolchain or `uv` layer changes. Changing only the Sage wrapper rebuilds only
-the final shim layer. Changing Sage itself redoes the later toolchain layers;
+toolchain or `uv` layer changes. Changing only the Sage launcher link rebuilds only
+the final launcher-link layer. Changing Sage itself redoes the later toolchain layers;
 that is accepted because Sage changes are expected to be rare and the Sage
 solve is the expensive layer being changed anyway. BuildKit cache mounts retain
 the Miniforge package downloads and Rustup downloads across such layer rebuilds

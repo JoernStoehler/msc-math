@@ -43,13 +43,13 @@ are not proof inputs.
 Prefix check:
 
 ```bash
-PYTHONOPTIMIZE=0 sage -python experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py --limit 50 --progress-every 0
+PYTHONOPTIMIZE=0 conda run --name sage python experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py --limit 50 --progress-every 0
 ```
 
 Full certificate:
 
 ```bash
-PYTHONOPTIMIZE=0 sage -python experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py --progress-every 500
+PYTHONOPTIMIZE=0 conda run --name sage python experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py --progress-every 500
 ```
 
 Regenerate `executable_proof.full.stdout.txt` after every source change. A
