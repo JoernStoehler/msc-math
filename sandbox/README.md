@@ -33,6 +33,23 @@ The project guidance remains authoritative: long-lived worktrees belong below
 `/data` rather than in Git. The old `.local-environments/` tree is not mounted
 or copied into the image.
 
+## Image rebuild cache
+
+The Dockerfile is ordered by expected change frequency and build cost:
+
+```text
+base/apt -> Miniforge -> Sage environment -> rustup -> Rust toolchain -> uv -> Sage wrapper
+```
+
+The repository is never copied into the image, so ordinary source edits do not
+invalidate the image build. The large Sage layer remains cached when the Rust
+toolchain or `uv` layer changes. Changing only the Sage wrapper rebuilds only
+the final shim layer. Changing Sage itself redoes the later toolchain layers;
+that is accepted because Sage changes are expected to be rare and the Sage
+solve is the expensive layer being changed anyway. BuildKit cache mounts retain
+the Miniforge package downloads and Rustup downloads across such layer rebuilds
+without putting those caches into the final image.
+
 ## Caches and sessions
 
 The profile puts the VM's Cargo home and target directory under
