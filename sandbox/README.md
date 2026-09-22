@@ -62,8 +62,9 @@ edit.
 - `Dockerfile` is a candidate tool image. Its base template provides the sbx
   Codex capability. The image's baked Codex version is only the bootstrap
   version; update Codex explicitly after each fresh creation using the command
-  below. Choosing the Sage installation mechanism remains a review point before
-  a build.
+  below. It also bakes the repository's pinned Rust toolchain and Sage 10.9;
+  this is intentionally a substantial first build, after which recreation can
+  reuse the image without carrying the old `.local-environments/` tree.
 
 ## Intended lifecycle
 

@@ -1,16 +1,26 @@
-# Candidate only. Do not build until this file and the host profile have been
-# reviewed. The build must not COPY source, credentials, host paths, or session
-# data into the image.
+# Candidate image for the msc-math sbx profile.
+#
+# This intentionally contains project tooling, not the repository itself. The
+# repository and its host-side state are supplied by the sbx mounts. Codex is
+# updated explicitly after sandbox creation because its release cadence is much
+# faster than this image should be rebuilt.
 
 FROM docker.io/docker/sandbox-templates:codex
 
+# Make failures in the installer pipelines fail the image build.
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 USER root
 
-ENV DEBIAN_FRONTEND=noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
 
-# Project-facing build and document tooling. Keep the package list here in sync
-# with INSTALL.md and the relevant local READMEs; do not treat this as a full
-# reproduction environment until Sage's separate environment is specified.
+# Project-facing system tools:
+# - build-essential/pkg-config: native dependencies for Rust crates
+# - latexmk/biber/texlive-*: thesis and formal-document builds
+# - libgraph-easy-perl: provides the `graph-easy` command used by view-graph.sh
+# - python3: fallback interpreter; ordinary scripts still use uv metadata
+# - jq/rg/graphviz/zip/unzip/rsync: repository and agent workflow utilities
+# - openssh-client: useful for documented sandbox/remote workflows
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         biber \
@@ -18,26 +28,81 @@ RUN apt-get update \
         ca-certificates \
         curl \
         git \
+        graphviz \
+        jq \
         latexmk \
+        less \
+        libgraph-easy-perl \
+        openssh-client \
         pkg-config \
+        python3 \
+        ripgrep \
+        rsync \
         texlive-bibtex-extra \
         texlive-latex-extra \
+        unzip \
+        zip \
     && rm -rf /var/lib/apt/lists/*
 
 USER agent
 
-ENV PATH=/home/agent/.cargo/bin:/home/agent/.local/bin:$PATH
+ARG RUST_TOOLCHAIN=1.94.0
+ARG MINIFORGE_VERSION=26.7.2-0
+ARG MINIFORGE_SHA256=281b0ac7d550802efc81af633225a5e6116d29ae72f3ab4eae7168c3931a4c05
+ARG SAGE_VERSION=10.9
 
-# Rust is pinned to the repository's rust-toolchain.toml version rather than
-# inheriting an arbitrary compiler from the base image. The exact installer
-# source and cache strategy remain review points before the first build.
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+# Keep user-installed toolchains in the image, while leaving build caches to
+# the mounted /tmp/msc-math/cache/vm tree configured by sbxenv.yaml.
+ENV PATH=/home/agent/.local/bin:/home/agent/.cargo/bin:/home/agent/.local/share/miniforge/bin:$PATH \
+    UV_CACHE_DIR=/tmp/msc-math/cache/vm/uv
+
+# Install the repository's pinned Rust toolchain and the project-standard uv.
+# Rustup itself is deliberately not pinned; the toolchain consumed by this
+# repository is pinned by rust-toolchain.toml and the argument above.
+RUN curl --proto '=https' --tlsv1.2 --fail --silent --show-error https://sh.rustup.rs \
         | sh -s -- -y --default-toolchain none --profile minimal \
-    && rustup toolchain install 1.94.0 --profile minimal \
-    && rustup component add clippy rustfmt rust-analyzer --toolchain 1.94.0 \
-    && curl -LsSf https://astral.sh/uv/install.sh | sh
+    && rustup toolchain install "${RUST_TOOLCHAIN}" --profile minimal \
+    && rustup component add clippy rustfmt rust-analyzer --toolchain "${RUST_TOOLCHAIN}" \
+    && rustup default "${RUST_TOOLCHAIN}" \
+    && curl --proto '=https' --tlsv1.2 --fail --silent --show-error https://astral.sh/uv/install.sh \
+        | sh
 
-# Deliberately not copied from .local-environments/: Sage/Miniforge needs an
-# explicit version and installation/cache policy. Codex itself is updated by
-# an explicit guest command after creation, because its release cadence makes
-# baking a separately selected version into this image poor value.
+# Sage is a separately managed conda environment in the project. Install a
+# checksummed Miniforge release and pin the Sage version verified by the repo's
+# installation notes. Keeping it in the image removes the old 9.4-GB host
+# environment from the runtime contract without pretending it is disposable
+# scratch state.
+RUN miniforge_installer="/tmp/Miniforge3-${MINIFORGE_VERSION}-Linux-x86_64.sh" \
+    && curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location \
+        "https://github.com/conda-forge/miniforge/releases/download/${MINIFORGE_VERSION}/Miniforge3-${MINIFORGE_VERSION}-Linux-x86_64.sh" \
+        --output "${miniforge_installer}" \
+    && echo "${MINIFORGE_SHA256}  ${miniforge_installer}" | sha256sum --check --status \
+    && bash "${miniforge_installer}" -b -p /home/agent/.local/share/miniforge \
+    && /home/agent/.local/share/miniforge/bin/mamba create \
+        --yes \
+        --channel conda-forge \
+        --strict-channel-priority \
+        --ssl-verify /etc/ssl/certs/ca-certificates.crt \
+        --name sage \
+        "sage=${SAGE_VERSION}" \
+    && /home/agent/.local/share/miniforge/bin/mamba clean --all --yes \
+    && rm -f "${miniforge_installer}"
+
+# The project historically invokes both `sage -python script.py` and `sage
+# script.py`. Make those forms use the pinned environment's Python, while
+# forwarding ordinary Sage commands to the real Sage executable.
+RUN install -d -m 0755 /home/agent/.local/bin \
+    && printf '%s\n' \
+        '#!/bin/sh' \
+        'set -eu' \
+        'sage_env=/home/agent/.local/share/miniforge/envs/sage' \
+        'if [ "${1-}" = "-python" ]; then' \
+        '    shift' \
+        '    exec "$sage_env/bin/python" "$@"' \
+        'fi' \
+        'case "${1-}" in' \
+        '    *.py) exec "$sage_env/bin/python" "$@" ;;' \
+        'esac' \
+        'exec "$sage_env/bin/sage" "$@"' \
+        > /home/agent/.local/bin/sage \
+    && chmod 0755 /home/agent/.local/bin/sage
