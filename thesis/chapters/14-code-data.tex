@@ -21,6 +21,15 @@ Section~\ref{subsec:hko-local-maximum-computation-with-sagemath}.  Those
 predicates imply the theorem only together with the mathematical
 upper-function and slice argument given there.
 
+The second ten-facet local maximum is maintained in
+\path{experiments/hko-local-maximum/non-hko/}. Its rational witness and
+Python/SymPy verifier check the complete product calculation, the 24 feasible
+upper sections, the rank and positivity predicates, and the exceptional
+quadratic direction. An independent checker in the same packet recomputes the
+geometry and derivatives by a different triangulation and direct section
+solve. These exact checks do not replace the analytic neighborhood argument
+or constitute a proof-assistant formalization.
+
 The rotated-pentagon packet is stored under
 \begin{center}
   \small\path{experiments/regular-products/}\\[-0.2em]

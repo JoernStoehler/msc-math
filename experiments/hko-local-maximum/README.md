@@ -31,6 +31,7 @@ The verifier's owner-local explainability and trust-boundary contract is in
 | Strand | Path | Role |
 | --- | --- | --- |
 | Theorem certificate | `theorem/` | Active feasible-section certificate: generate witness, verify exact predicate. |
+| Non-HKO local maximum | `non-hko/` | Exact rational hexagon--quadrilateral local-maximality packet with independent audit. |
 | Smooth-only rank defect | `smooth-only-rank-defect/` | f64 diagnostic summary: nonsingular positive-beta branches have rank `23` in the `25`-dimensional quotient. |
 | Empirical sampling | `empirical/` | Numerical and sampling evidence that supports or illustrates the local-maximum picture but is not the final proof. |
 | Assets | `assets/` | Explanatory figure scripts and images. These are not theorem evidence. |
@@ -51,6 +52,10 @@ experiments/hko-local-maximum/
 |   |-- verify.sage.py
 |   |-- witness.json
 |   `-- verification-summary.json
+|-- non-hko/
+|   |-- certificate/
+|   |-- code/
+|   `-- verification/
 |-- smooth-only-rank-defect/
 |-- row-bank-validation/
 |-- assets/

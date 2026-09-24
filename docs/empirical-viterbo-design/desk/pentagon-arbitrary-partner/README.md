@@ -14,6 +14,14 @@ Follow-up: [source/novelty boundary](source-check.md) and
 The latter resolves a representation ambiguity using seven controlled bodies,
 including the cross-line moment counterexample as a separate radial control.
 
+The September 2026 consolidation adds three scoped research notes:
+[local arbitrary-partner rigidity](local-cover-rigidity.md),
+[coupled one-cut lifting](local-cut-lifting.md), and
+[generic-cell contact reduction](smooth-cell-reduction.md). The first has an
+exact finite certificate in [local-cover/](local-cover/), but its continuum
+signed-polygon estimate has not been independently formalized; none of these
+notes is a global fixed-partner theorem or an active thesis proof.
+
 ## What is worth investigating first
 
 **Build a diverse collection of partners and examine how directional shape,

@@ -35,3 +35,112 @@ Every finite decimal in the table denotes its exact rational value.
 \renewcommand{\baselinestretch}{1.2}\selectfont
 \input{chapters/hko-sections.tex}
 \endgroup
+
+\subsection{A second ten-facet local maximum}
+\label{subsec:non-hko-local-maximum}
+
+The HKO body is not the only local maximum in the ten-facet space. Consider
+the row-normal presentation
+\[
+A_* =
+\begin{pmatrix}
+0&2&0&0\\
+12/7&4/7&0&0\\
+12/7&-4/7&0&0\\
+0&-2&0&0\\
+-12/7&-4/7&0&0\\
+-12/7&4/7&0&0\\
+0&0&4/3&2\\
+0&0&-4&2\\
+0&0&-4&-2\\
+0&0&4/3&-2
+\end{pmatrix},
+\qquad
+P_*:=\{x\in\mathbb R^4:A_*x\leq\mathbf1\}.
+\]
+The first six rows define a hexagon and the last four a quadrilateral in
+complementary Lagrangian planes. The exact certificate proves the following.
+
+\begin{theorem}[A non-HKO ten-facet local maximum]
+\label{thm:non-hko-ten-facet-local-maximum}
+The polytope $P_*$ is simple, has ten genuine facets and 24 vertices, and
+\[
+ \operatorname{vol}_4(P_*)=\frac12,
+ \qquad c_{\rm EHZ}(P_*)=1,
+ \qquad \operatorname{sys}(P_*)=1.
+\]
+There is a Hausdorff neighborhood $\mathcal V$ of $P_*$ among convex
+four-dimensional polytopes with exactly ten genuine facets such that
+\[
+ \operatorname{sys}(P)\leq1\qquad(P\in\mathcal V).
+\]
+The maximum is non-strict. Locally, after quotienting by translations,
+positive dilations and linear symplectic maps, equality is the saturation of
+the two-parameter product family described below.
+\end{theorem}
+
+For completeness, write
+\[
+ u=1-v+v^2,\quad a=\frac12-s,\quad b=\frac12+s,\quad t=v-\frac12,
+\]
+and let $E(v,s)=H(v,s)\times T(v)$, where
+\[
+\begin{split}
+H(v,s)&=\operatorname{conv}\{(-a,\tfrac12),(a,\tfrac12),(b,t),
+ (a,-\tfrac12),(-a,-\tfrac12),(-b,-t)\},\\
+T(v)&=\operatorname{conv}\{(u,0),(0,v),(u-1,0),(0,v-1)\}.
+\end{split}
+\]
+At $(v,s)=(1/2,1/12)$ this is $P_*$. The areas are identically $1$ and
+$1/2$, and exact continuation of all product closure cases gives
+\(c_{\rm EHZ}(E(v,s))=1\) and $\operatorname{sys}(E(v,s))=1$ for parameters
+sufficiently close to the base point.
+
+\begin{proof}[Proof sketch and trust boundary]
+For a word with positive feasible HK weights and objective $Q>0$, the
+Haim--Kislev formula gives the upper bound
+\[
+ \operatorname{sys}(P(A))\leq
+ U(A):=\frac{1}{8\,\operatorname{vol}_4(P(A))\,Q(A)^2}.
+\]
+Thus the selected feasible sections are upper bounds for the actual ratio;
+they are not lower bounds and need not remain optimizing away from the base.
+On the product family, the Lagrangian splitting reduces the complete capacity
+calculation to the vertices of two planar closure polytopes. Enumerating all
+624 cyclic orders gives $Q_{\max}=1/2$, 12 tight cases, and a strict gap
+of $1/14$ for every other case. Exact rational-function continuation of the
+closure supports and the tight cases proves the capacity and equality claims
+on $E(v,s)$.
+
+For arbitrary ten-facet perturbations, 24 positive feasible sections are
+continued through the full normal chart. Their gradient bank has rank 22 and
+has a positive normalized relation whose smallest coefficient is
+$3/36617$. The symmetry tangent space has rank 15; the two parameters of
+$E(v,s)$ add two directions, and one remaining transverse direction $W$
+is checked by an exact rational-function identity. Along it,
+\[
+ \operatorname{vol}_4(P(A_*+zW))=\frac12+\frac{13}{1728}z^2,
+ \qquad Q_j(z)=\frac12,
+ \qquad U_j''(0)=-\frac{13}{432}
+\]
+for every selected section. The last displayed number is the curvature of
+the feasible upper sections, not an asserted second derivative of the actual
+capacity.
+
+The positive relation forces a uniform linear decrease in the 22 sharp
+coordinates. The negative quadratic term controls $W$, and a uniform Taylor
+estimate absorbs the mixed terms. The inverse function theorem, using the
+full rank-40 symmetry-and-slice chart, then gives a genuine neighborhood in
+the Hausdorff space of ten-facet polytopes. This proves the theorem. The exact
+verifier and an independent direct differentiation check are retained at
+\path{experiments/hko-local-maximum/non-hko/}; exact arithmetic checks the
+finite predicates, while the displayed analytic argument supplies their
+geometric implication.
+\end{proof}
+
+This result is deliberately narrower than a global theorem. It does not
+prove local maximality when facets are added, uniqueness among all ten-facet
+polytopes, or any new violation of Viterbo's inequality. Since HKO has 25
+vertices and ratio $(3+\sqrt5)/5$, while $P_*$ has 24 vertices and ratio one,
+the two bodies are not related by any invertible affine map, in particular not
+by a symplectic or anti-symplectic symmetry.

@@ -1,0 +1,37 @@
+{
+  "created_date": "2026-09-22",
+  "task": "one non-HKO local maximum with exactly ten genuine facets",
+  "original_upload_name": "non_hko_f10_localmax_handoff(1).zip",
+  "original_upload_sha256": "5a61d25f1a49bd292c2d9a83758fcd3dcb82607898424b73be8d8a6eb6dee70c",
+  "original_upload_size_bytes": 40968,
+  "repository": {
+    "name": "JoernStoehler/msc-math",
+    "commit": "3929a8c7f0f766640ea78372848a5752a0ae7e08",
+    "commit_author_date": "2026-09-19T08:04:13Z",
+    "tree": "b6742251d1c34d6e103e1ebfb7c9e1898fb5f86e",
+    "confirmation_method": "connected GitHub commit API read",
+    "compiled_or_modified": false,
+    "files_read": [
+      "docs/capacity-calculation-map.md",
+      "experiments/local-maxima-check/control-calibration/PILOT-REPORT.md",
+      "crates/symplectic/src/algorithms/capacity_4d/general.rs lines 1-250",
+      "crates/symplectic/src/algorithms/capacity_4d/geometry.rs lines 1-260"
+    ]
+  },
+  "proof_dependencies": [
+    "HK Theorem 1.1",
+    "elementary convex polytope geometry",
+    "inverse function theorem",
+    "uniform local Taylor argument",
+    "exact rational algebra"
+  ],
+  "discovery_seeds": {
+    "weight_family_expansion": 2026092201,
+    "certificate_subset_proposer": 2026092202
+  },
+  "core_acceptance": "No floating mathematical predicate; no retained report trusted.",
+  "known_numerical_failure": "Full scalar poll aborted after two probes on indeterminate HiGHS status; not used for proof.",
+  "code_authorship_scope": "New candidate-specific exact proof/check code; supplied offline bridge reused for diagnostics.",
+  "novelty_scope": "No claim of priority for the planar product equality construction; this packet certifies the full ten-facet local claim.",
+  "run_provenance": "evidence/exact/RUN.json"
+}

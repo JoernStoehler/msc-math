@@ -16,6 +16,7 @@ independent task queues.
 | Historical DS data and current interval recomputation | [restoration](ds-retrospective-revalidation/README.md), [analysis](ds-evidence-closure/README.md), [family theorem mapping](ds-family-theorem-mapping/README.md) |
 | Additional empirical mathematics | [root scientific review](empirical-viterbo-design/desk/root-review/README.md); selection status is in the current work list |
 | Pro pentagon handoff | [retained package](pro-handoffs/); maintained proofs are under `formal/pentagon-affine-products/` |
+| September 2026 mathematics consolidation | [claim disposition and verification](consolidation/2026-09-24/README.md) |
 | Code/data availability | [source check](availability-claim-closure/README.md), [reproduction contract](reproducibility.md) |
 
 These records retain original inputs, dates, source revisions and limitations.
