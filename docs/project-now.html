@@ -6,120 +6,213 @@
   <meta name="color-scheme" content="light">
   <title>Project now · Probing Viterbo's conjecture</title>
   <style>
-    :root { font: 18px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #182b32; background: #f4f6f5; }
+    :root { font: 18px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #1c3038; background: #f5f7f6; }
     * { box-sizing: border-box; }
     body { margin: 0; }
-    .wrap { max-width: 1120px; margin: auto; padding: 32px 28px 80px; }
-    .eyebrow { color: #315969; font-size: .89rem; font-weight: 750; letter-spacing: .055em; text-transform: uppercase; }
-    h1, h2, h3, p { margin-top: 0; }
-    h1 { max-width: 850px; margin: 14px 0 12px; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.14; letter-spacing: -.035em; }
-    h2 { font-size: 1.36rem; line-height: 1.25; margin-bottom: 12px; }
-    h3 { font-size: 1.08rem; line-height: 1.3; margin-bottom: 7px; }
-    p { margin-bottom: 12px; }
-    a { color: #075a75; text-underline-offset: 3px; }
-    a:focus-visible, summary:focus-visible { outline: 3px solid #bf6f15; outline-offset: 3px; }
-    .lead { max-width: 870px; font-size: 1.22rem; line-height: 1.42; }
-    .meta { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 16px 0 26px; color: #35505b; font-size: .94rem; }
-    .pill { display: inline-block; padding: 2px 10px; border-radius: 100px; background: #fff1ce; color: #674600; font-weight: 700; }
-    .grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(290px, .85fr); gap: 16px; align-items: start; }
-    .card, .banner { background: #fff; border: 1px solid #cad7d6; border-radius: 12px; padding: 22px 24px; box-shadow: 0 2px 8px #163d4510; }
-    .card + .card { margin-top: 16px; }
-    .grid .card + .card { margin-top: 0; }
-    .banner { margin-bottom: 16px; border-left: 6px solid #b6781e; background: #fffbf3; }
-    .banner p:last-child, .card p:last-child { margin-bottom: 0; }
-    .status { font-weight: 700; color: #69480a; }
-    ol { margin: 8px 0 0; padding-left: 1.4em; }
-    li { padding-left: .25em; margin: 0 0 13px; }
-    li:last-child { margin-bottom: 0; }
-    .sequence strong { display: block; }
-    .quiet { color: #4f646e; }
-    .small { font-size: .92rem; }
-    .section { margin-top: 16px; }
-    .change { border-top: 1px solid #d5dfdf; padding-top: 13px; margin-top: 13px; }
-    details { border-top: 1px solid #d5dfdf; margin-top: 16px; padding-top: 12px; }
-    summary { cursor: pointer; font-weight: 700; color: #075a75; }
-    details p, details ul { margin: 10px 0 0; }
-    ul { padding-left: 1.35em; }
-    code { font: .88em/1.4 ui-monospace, SFMono-Regular, Consolas, monospace; overflow-wrap: anywhere; }
+    a { color: #075d78; text-underline-offset: 3px; }
+    a:focus-visible, summary:focus-visible { outline: 3px solid #c07517; outline-offset: 3px; }
+    [hidden] { display: none !important; }
+    .shell { display: grid; grid-template-columns: 250px minmax(0, 1fr); min-height: 100vh; }
+    .sidebar { position: sticky; top: 0; height: 100vh; overflow: auto; padding: 27px 17px; background: #17323d; color: #f6faf9; }
+    .brand { padding: 0 12px 20px; border-bottom: 1px solid #49636c; }
+    .brand strong { display: block; font-size: 1.15rem; }
+    .brand span { display: block; color: #c8d8db; font-size: .88rem; margin-top: 3px; }
+    .nav-title { margin: 22px 12px 9px; color: #bbd1d5; font-size: .78rem; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+    .nav-link { display: block; margin: 3px 0; padding: 10px 12px; border-radius: 8px; color: #eff7f6; text-decoration: none; }
+    .nav-link:hover, .nav-link[aria-current="page"] { background: #315360; }
+    .nav-link[aria-current="page"] { box-shadow: inset 4px 0 #8de0c2; }
+    .nav-link span { display: block; font-weight: 720; }
+    .nav-link small { display: block; color: #c4d6d8; font-size: .76rem; line-height: 1.25; }
+    .sidebar-note { margin: 25px 12px 0; padding-top: 15px; border-top: 1px solid #49636c; color: #c8d8db; font-size: .83rem; }
+    .content { width: 100%; min-width: 0; }
+    .view { max-width: 850px; padding: 37px 48px 80px; }
+    .eyebrow { color: #42616b; font-size: .82rem; font-weight: 750; letter-spacing: .07em; text-transform: uppercase; }
+    h1 { margin: 9px 0 12px; font-size: clamp(2rem, 3vw, 2.7rem); letter-spacing: -.03em; line-height: 1.13; }
+    h2 { margin: 29px 0 10px; font-size: 1.32rem; line-height: 1.25; }
+    h3 { margin: 0 0 5px; font-size: 1.09rem; line-height: 1.3; }
+    p { margin: 0 0 12px; }
+    .lead { font-size: 1.13rem; line-height: 1.45; max-width: 730px; }
+    .tags { display: flex; gap: 7px; flex-wrap: wrap; margin: 16px 0 22px; }
+    .tag { padding: 4px 9px; border-radius: 100px; border: 1px solid #cbd9d8; background: #fff; color: #36535d; font-size: .79rem; font-weight: 650; }
+    .note, .item { background: #fff; border: 1px solid #cbd9d8; border-radius: 10px; padding: 17px 19px; margin: 11px 0; }
+    .note { border-left: 5px solid #b67a26; background: #fffbf3; }
+    .item p:last-child, .note p:last-child { margin-bottom: 0; }
+    .item-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 7px 11px; margin-bottom: 6px; }
+    .state { display: inline-block; padding: 2px 8px; border-radius: 100px; font-size: .76rem; font-weight: 760; white-space: nowrap; }
+    .unknown { background: #fff0ce; color: #674500; }
+    .partial { background: #e0effa; color: #174d70; }
+    .ready { background: #def2e8; color: #205a39; }
+    .held { background: #fbe8d9; color: #7b421c; }
+    .done { background: #e4ece9; color: #36544a; }
+    .mini { color: #526a72; font-size: .91rem; }
+    .label { color: #36545f; font-size: .78rem; font-weight: 780; letter-spacing: .05em; text-transform: uppercase; }
+    .stack { display: grid; gap: 10px; }
+    .line { border-top: 1px solid #d8e2e0; padding-top: 12px; margin-top: 12px; }
+    .list { margin: 8px 0 0; padding-left: 1.3em; }
+    .list li { margin: 0 0 10px; }
+    .list li:last-child { margin-bottom: 0; }
+    details { border-top: 1px solid #d9e3e1; margin-top: 13px; padding-top: 10px; }
+    summary { cursor: pointer; color: #075d78; font-weight: 680; }
+    details p, details ul { margin-top: 9px; }
+    code { font: .84em/1.4 ui-monospace, SFMono-Regular, Consolas, monospace; overflow-wrap: anywhere; }
+    .source-list { padding-left: 1.2em; font-size: .91rem; }
     .source-list li { margin-bottom: 8px; }
-    .source-list code { display: block; }
-    .footer { margin-top: 24px; color: #4f646e; font-size: .91rem; }
-    @media (max-width: 780px) {
+    .closing { color: #526a72; font-size: .88rem; margin-top: 28px; }
+    @media (max-width: 850px) {
+      .shell { display: block; }
+      .sidebar { position: static; height: auto; overflow: visible; padding: 13px 14px 10px; }
+      .brand { padding: 0 5px 10px; }
+      .brand span, .nav-title, .sidebar-note, .nav-link small { display: none; }
+      nav { display: flex; flex-wrap: wrap; gap: 5px; padding-top: 9px; }
+      .nav-link { flex: 0 0 auto; padding: 8px 11px; margin: 0; white-space: nowrap; }
+      .nav-link[aria-current="page"] { box-shadow: inset 0 -4px #8de0c2; }
+      .view { padding: 25px 22px 55px; }
+    }
+    @media (max-width: 520px) {
       :root { font-size: 17px; }
-      .wrap { padding: 22px 16px 56px; }
-      .grid { display: block; }
-      .grid .card + .card { margin-top: 16px; }
-      .card, .banner { padding: 18px; }
+      .view { padding: 23px 16px 50px; }
+      .item, .note { padding: 15px; }
     }
   </style>
 </head>
 <body>
-<main class="wrap">
-  <div class="eyebrow">Project now · 25 Sep 2026</div>
-  <h1>Path to a submittable thesis</h1>
-  <p class="lead">Target: a thesis Jörn can defend and Kai could return with about two hours of minor fixes. The current PDF has no PASS verdict. PASS is a readiness threshold, separate from grading.</p>
-  <div class="meta"><span class="pill">Readiness unknown</span><span>Manuscript: <code>thesis/main.tex</code></span><span>Last PDF: 24 Sep · 96 pages</span><span>Source checked: <code>93ca3247</code></span></div>
+<div class="shell">
+  <aside class="sidebar" aria-label="Project views">
+    <div class="brand"><strong>Probing Viterbo's conjecture</strong><span>MSc thesis · project state</span></div>
+    <div class="nav-title">Choose a view</div>
+    <nav aria-label="Project views">
+      <a class="nav-link" data-nav href="#overview"><span>Overview</span><small>state · next judgment</small></a>
+      <a class="nav-link" data-nav href="#success"><span>Success contract</span><small>the proposed AND predicates</small></a>
+      <a class="nav-link" data-nav href="#capabilities"><span>Capabilities</span><small>which work methods are reliable?</small></a>
+      <a class="nav-link" data-nav href="#work"><span>Work map</span><small>ready · blocked · parked</small></a>
+      <a class="nav-link" data-nav href="#roadmap"><span>Roadmap</span><small>sequence · planning unknowns</small></a>
+      <a class="nav-link" data-nav href="#changes"><span>Changes &amp; sources</span><small>what moved · where to check</small></a>
+    </nav>
+    <p class="sidebar-note">Manually reconciled 25 Sep 2026 against source commit <code>93ca3247</code>. A later relevant source change can make this view stale.</p>
+  </aside>
 
-  <div class="banner">
-    <h2>Current state</h2>
-    <p>The selected manuscript contains substantial results, including a second ten-facet local maximum added on 24 Sep. Completion work is paused. No authoring/review method or completion date is established. <a href="#sources">Sources</a></p>
-  </div>
-
-  <div class="grid">
-    <section class="card" aria-labelledby="route-title">
-      <h2 id="route-title">Proposed route</h2>
-      <ol class="sequence">
-        <li><strong>Align scope.</strong> Add the 24 Sep theorem to the work list. Omit optional results unless selected; leave F=11 and global claims open.</li>
-        <li><strong>Test one writing/review loop.</strong> Try it on a representative passage. If it misses reader-level flaws, change the method before broad repairs.</li>
-        <li><strong>Repair and integrate.</strong> Fix verified exposition, data-science and source-reference gaps. Build and inspect one candidate PDF.</li>
-        <li><strong>Get human review.</strong> Jörn reads the whole PDF; Kai gives feedback; revise and hand in.</li>
-      </ol>
-    </section>
-
-    <div>
-      <section class="card" aria-labelledby="uncertainty-title">
-        <h2 id="uncertainty-title">Main risk</h2>
-        <p>Can a short trial catch reader-level failures before Jörn spends a full read? A miss means the review method needs to change.</p>
-        <p>One fixed-pentagon/symmetric-partner result remains optional.</p>
-      </section>
-
-      <section class="card section" aria-labelledby="feedback-title">
-        <h2 id="feedback-title">Your decision</h2>
-        <p>Is this sequence right: scope check → review trial → repairs → Jörn/Kai review? Name any earlier obstacle.</p>
-      </section>
-    </div>
-  </div>
-
-  <div class="grid section">
-    <section class="card" aria-labelledby="change-title">
-      <h2 id="change-title">What changed</h2>
-      <p><strong>24 Sep:</strong> a non-HKO ten-facet maximum was selected. F=11 and arbitrary-partner claims remain open or restricted. The work list still dates to 18 Sep.</p>
-      <p class="change"><strong>Now:</strong> awaiting Jörn's feedback on this brief. Thesis completion remains paused.</p>
+  <main class="content">
+    <section class="view" id="overview" data-view aria-labelledby="overview-title">
+      <div class="eyebrow">Overview · 25 Sep 2026</div>
+      <h1 id="overview-title">A thesis candidate exists; readiness is unknown</h1>
+      <p class="lead">The selected 96-page PDF includes substantial results. No review establishes the working PASS threshold: Kai returning only minor issues Jörn could fix in about two hours. The completion run is paused.</p>
+      <div class="tags"><span class="tag">No PASS verdict</span><span class="tag">No completion forecast</span><span class="tag">Source: thesis/main.tex</span></div>
+      <div class="note">
+        <div class="label">What most affects the route</div>
+        <p>The team has no reliable, demonstrated way to write and review a page that Jörn would accept on content, explanation and presentation. That process uncertainty makes a whole-thesis schedule unreliable.</p>
+      </div>
+      <h2>Proposed route</h2>
+      <p>Reconcile the new theorem with the work list → test a one-page authoring/review method → repair verified manuscript and evidence gaps → freeze one PDF → Jörn and Kai review it.</p>
+      <h2>Useful feedback now</h2>
+      <p>Does the <a href="#success">success contract</a> describe what must hold? Is the <a href="#capabilities">writing capability</a> the right first substantive uncertainty to test? A different answer changes the next work.</p>
       <details>
-        <summary>Selected thesis contents</summary>
-        <p>HKO and another ten-facet maximum; polygon-product results; a conditional flow-graph algorithm; and a scoped empirical search with a negative result. Each has different support.</p>
+        <summary>What changed most recently?</summary>
+        <p>On 24 Sep, a non-HKO ten-facet local maximum became a selected theorem. The 18 Sep work list has not been updated to reflect it. F=11 and global claims remain open or restricted.</p>
       </details>
+      <p class="closing">This is a review prototype, not a live agent monitor. The <a href="#work">work map</a> distinguishes tasks that are technically ready from the paused completion run.</p>
     </section>
 
-    <section class="card" aria-labelledby="limits-title">
-      <h2 id="limits-title">Evidence limits</h2>
-      <p>Most remaining reader repairs are <em>agent-suggested</em>; verify them against the selected text. Human acceptance of the data-science chapter is unknown.</p>
-      <p>Builds and exact checks do not certify whole-PDF readability or Kai's acceptance.</p>
-      <details id="sources">
-        <summary>Sources and freshness</summary>
-        <ul class="source-list">
-          <li><code>RESUME.md</code> — PASS threshold and stopped run.</li>
-          <li><code>docs/consolidation/2026-09-24/README.md</code> and <code>claim-disposition.md</code> — PDF and new theorem.</li>
-          <li><code>docs/WORK_REMAINING.md</code> — scoped repairs; dated 18 Sep.</li>
-          <li><code>docs/history/memories/planning-context.md</code> — review uncertainty.</li>
-          <li><code>docs/project-facts.md</code> — final review flow and scope.</li>
-        </ul>
-        <p class="small quiet"><code>RESUME.md</code> opens with stale worktree directions. The current branch is <code>main</code>.</p>
-      </details>
+    <section class="view" id="success" data-view aria-labelledby="success-title">
+      <div class="eyebrow">Success contract</div>
+      <h1 id="success-title">What must all be true?</h1>
+      <p class="lead">These are proposed AND predicates for a submittable thesis. They are a planning model for Jörn to correct, not an accepted grading rubric.</p>
+      <div class="tags"><span class="tag">claims</span><span class="tag">reader</span><span class="tag">artifacts</span><span class="tag">responsibility</span><span class="tag">delivery</span></div>
+      <article class="item"><div class="item-head"><h3>1. Claims match their support</h3><span class="state partial">Partly checked</span></div><p>Every printed theorem and empirical claim has its actual scope, proof or experiment, and caveat. The 24 Sep packet selects a new theorem; a full candidate-wide claim audit is still unrecorded.</p></article>
+      <article class="item"><div class="item-head"><h3>2. The whole PDF works for its reader</h3><span class="state unknown">Unknown</span></div><p>Jörn can defend its content and presentation; Kai could leave only about two hours of minor fixes. No current whole-PDF review or trusted proxy establishes this.</p></article>
+      <article class="item"><div class="item-head"><h3>3. Evidence and references resolve</h3><span class="state partial">Open repairs</span></div><p>Code, data, figure and certificate references lead to the right owners; reproduction promises describe what can actually be repeated. The work list names specific example and artifact-mapping repairs.</p></article>
+      <article class="item"><div class="item-head"><h3>4. Authorship and submission requirements hold</h3><span class="state unknown">Unverified</span></div><p>Jörn can take responsibility for the final text, and the final form meets current institutional rules. Historical forms and a prior PDF assessment are not a current official check.</p></article>
+      <article class="item"><div class="item-head"><h3>5. One fixed candidate passes human review</h3><span class="state held">Not reached</span></div><p>Build and inspect an exact PDF; Jörn reviews it, then Kai gives feedback, revisions are integrated, and Jörn hands it in. PASS here is a readiness threshold, separate from final grading.</p></article>
+      <details><summary>Why these five?</summary><p>The project guidance requires supportable claims, resolvable evidence and truthful reproduction. <code>RESUME.md</code> defines PASS and the stopped run; <code>docs/project-facts.md</code> records the Jörn → Kai → revise → hand-in flow. The separate authorship/rules predicate is a proposed safeguard based on the prior PDF assessment and project facts, not a newly discovered current defect.</p></details>
     </section>
-  </div>
 
-  <p class="footer">Manual snapshot; an update rule is still needed.</p>
-</main>
+    <section class="view" id="capabilities" data-view aria-labelledby="capabilities-title">
+      <div class="eyebrow">Process knowledge</div>
+      <h1 id="capabilities-title">Which kinds of labor can the team reliably turn into results?</h1>
+      <p class="lead">A completed local task is evidence about a method; it does not show that the method scales to a whole thesis. The first row dominates the current cost and success uncertainty.</p>
+      <div class="tags"><span class="tag">writing</span><span class="tag">review</span><span class="tag">source repair</span><span class="tag">verification</span></div>
+      <article class="item">
+        <div class="item-head"><h3>Write one reader-acceptable page</h3><span class="state unknown">Unproven · critical</span></div>
+        <p><strong>Question:</strong> can a repeatable authoring and review loop catch content, proof-navigation, narrative and layout failures before Jörn reads the whole PDF?</p>
+        <p><strong>Next informative test:</strong> choose one current, high-risk passage; produce a revision; test it against known failure types and its mathematical sources. Only a discriminating trial should consume Jörn's attention.</p>
+        <details><summary>Why this is a crux</summary><p>Prior scoped agent reviews missed reader-quality problems. Jörn's full-PDF review is costly, and <code>docs/history/memories/planning-context.md</code> records no trusted automated PASS gate. Passing one page would justify a broader trial, not certify the thesis.</p></details>
+      </article>
+      <article class="item"><div class="item-head"><h3>Repair a named source defect</h3><span class="state partial">Locally demonstrated</span></div><p>Previous specific repairs were completed. The repeatable step is to check each proposed defect against the current source, patch only surviving issues, then inspect the affected PDF pages. Reader acceptance remains a separate test.</p></article>
+      <article class="item"><div class="item-head"><h3>Build and verify named exact packets</h3><span class="state ready">Known local procedures</span></div><p>The selected PDF and specific exact checks have recorded producers and outcomes. This supports those named results; it does not validate every thesis sentence or optimized implementation.</p></article>
+      <article class="item"><div class="item-head"><h3>Integrate a whole manuscript</h3><span class="state unknown">Unproven</span></div><p>Cross-chapter selection, explanation and evidence have produced past failures despite correct local work. A fixed candidate needs an end-to-end reader and claim check before human PASS is plausible.</p></article>
+    </section>
+
+    <section class="view" id="work" data-view aria-labelledby="work-title">
+      <div class="eyebrow">Work map</div>
+      <h1 id="work-title">What is ready, idle, or waiting?</h1>
+      <p class="lead">“Ready” means no known technical prerequisite. It does not grant permission to restart the stopped completion run. Every ready but idle item needs either an owner or an explicit reason to defer it. The items below are a near-term sample, not a complete task inventory.</p>
+      <div class="tags"><span class="tag">ready ≠ active</span><span class="tag">dependency ≠ priority</span><span class="tag">paused run</span></div>
+      <h2>Ready, currently idle</h2>
+      <article class="item"><div class="item-head"><h3>Chore: update the selected-result work list</h3><span class="state ready">0 known technical blockers</span></div><p><strong>Output:</strong> update <code>docs/WORK_REMAINING.md</code> with the 24 Sep non-HKO theorem, link its exact packet, and check whether the new Chapter 7 material changes any listed repair. <strong>Owner:</strong> none assigned. <strong>Why idle:</strong> thesis completion work is paused.</p></article>
+      <article class="item"><div class="item-head"><h3>Check the Chapter 2/4 reader repairs</h3><span class="state ready">0 known technical blockers</span></div><p><strong>Output:</strong> verify the named exposition suggestions against the selected source; mark each as surviving, already solved or withdrawn before editing. <strong>Owner:</strong> none assigned. <strong>Why idle:</strong> the completion route and authoring method have not been settled.</p></article>
+      <h2>Blocked or held</h2>
+      <article class="item"><div class="item-head"><h3>Broad manuscript revision</h3><span class="state held">Strategy hold</span></div><p><strong>Waits for:</strong> a one-page authoring/review trial that shows whether the method catches reader failures. Without that result, a broad rewrite risks repeating costly work.</p></article>
+      <article class="item"><div class="item-head"><h3>Final human PASS judgment</h3><span class="state held">Needs frozen candidate</span></div><p><strong>Waits for:</strong> one inspected PDF and Jörn's willingness to read it; the recorded flow then seeks Kai's feedback. No fast-review arrangement with Kai is recorded.</p></article>
+      <h2>Parked outside the submission route</h2>
+      <p>F=11 and global HKO questions remain open. The fixed-pentagon/symmetric-partner result and other research leads are optional; their existence creates no thesis-integration obligation.</p>
+      <details><summary>What the team is doing now</summary><p>This dashboard redesign is in review. The current handoff records no active thesis author or research producer. A later project run should update this section with owner, next artifact, and last substantive change for each active item.</p></details>
+    </section>
+
+    <section class="view" id="roadmap" data-view aria-labelledby="roadmap-title">
+      <div class="eyebrow">Roadmap</div>
+      <h1 id="roadmap-title">A near-term route with explicit forks</h1>
+      <p class="lead">Only the near horizon is detailed. The route remains proposed because the success contract and writing method have not been validated.</p>
+      <div class="tags"><span class="tag">proposed sequence</span><span class="tag">decision rules</span><span class="tag">unplanned work</span></div>
+      <article class="item"><div class="item-head"><h3>1. Confirm the success predicates and selected scope</h3><span class="state ready">Can decide now</span></div><p>Jörn corrects the success view. The team records the 24 Sep theorem in the work list; optional results stay omitted unless explicitly selected.</p></article>
+      <article class="item"><div class="item-head"><h3>2. Design and run one authoring trial</h3><span class="state unknown">Method unknown</span></div><p>Specify a current passage, intended reader failure types, review method and stop rule. If the trial misses material defects, change the method before broad revision; if informative, expand cautiously.</p></article>
+      <article class="item"><div class="item-head"><h3>3. Repair, integrate, and freeze</h3><span class="state held">Depends on what trial finds</span></div><p>Check the scoped work list against current sources, resolve supported issues, verify claim/evidence links, build and inspect one exact PDF.</p></article>
+      <article class="item"><div class="item-head"><h3>4. Human review and delivery</h3><span class="state held">Later gate</span></div><p>Jörn reads the complete candidate; Kai responds; integrate feedback; confirm current administrative rules; hand in. A build or agent review is not this gate.</p></article>
+      <h2>Still unplanned</h2>
+      <ul class="list">
+        <li><strong>Trial design:</strong> which current passage and failure test best predicts whole-PDF trouble without spending Jörn's full-read effort?</li>
+        <li><strong>Repair scope:</strong> which 18 Sep agent-suggested issues still apply after the 24 Sep integration?</li>
+        <li><strong>External review:</strong> when and in what form can Kai review a frozen candidate? No quick arrangement is recorded.</li>
+        <li><strong>Formal delivery:</strong> current official submission and AI-disclosure requirements need a source check before reliance.</li>
+      </ul>
+    </section>
+
+    <section class="view" id="changes" data-view aria-labelledby="changes-title">
+      <div class="eyebrow">Changes and sources</div>
+      <h1 id="changes-title">What changed, and what supports this view?</h1>
+      <p class="lead">This page is an editorial snapshot. It separates confirmed source state from the proposed success decomposition and route.</p>
+      <article class="item"><div class="item-head"><h3>24 Sep · theorem selection changed</h3><span class="state done">Recorded</span></div><p>A rational hexagon–quadrilateral product was promoted as a non-HKO ten-facet local maximum. Arbitrary-partner and F=11 claims stayed restricted or open. The selected PDF was 96 pages.</p></article>
+      <article class="item"><div class="item-head"><h3>18 Sep · work list reconciled</h3><span class="state partial">Now predates theorem</span></div><p><code>docs/WORK_REMAINING.md</code> records specific repairs, optional results and integration checks. It is not a current PASS judgment.</p></article>
+      <article class="item"><div class="item-head"><h3>25 Sep · dashboard view proposed</h3><span class="state unknown">Awaiting feedback</span></div><p>The sidebar's success predicates, capabilities, work states and roadmap are an agent synthesis for Jörn to test. No completion run was restarted by making this page.</p></article>
+      <h2>Source entry points</h2>
+      <ul class="source-list">
+        <li><code>RESUME.md</code> — PASS definition, stopped run and review limits. Its opening worktree directions are stale; the current checkout is <code>main</code>.</li>
+        <li><code>docs/project-facts.md</code> — Jörn-confirmed scope and final Jörn → Kai → revise → hand-in flow.</li>
+        <li><code>docs/WORK_REMAINING.md</code> — 18 Sep source repairs and optional-result disposition.</li>
+        <li><code>docs/consolidation/2026-09-24/claim-disposition.md</code> — precise new theorem and research-note boundaries.</li>
+        <li><code>docs/history/memories/planning-context.md</code> — authoring/review process uncertainty.</li>
+        <li><code>thesis/main.tex</code> — the selected reader-facing source.</li>
+      </ul>
+      <p class="closing">Source state checked 25 Sep 2026 through <code>93ca3247</code>. This page needs an editorial refresh after a material source change; its date alone does not make it current.</p>
+    </section>
+  </main>
+</div>
+<script>
+  (function () {
+    const panels = Array.from(document.querySelectorAll('[data-view]'));
+    const links = Array.from(document.querySelectorAll('[data-nav]'));
+    const valid = new Set(panels.map(panel => panel.id));
+    function show() {
+      const requested = location.hash.slice(1);
+      const id = valid.has(requested) ? requested : 'overview';
+      panels.forEach(panel => { panel.hidden = panel.id !== id; });
+      links.forEach(link => {
+        if (link.hash === '#' + id) link.setAttribute('aria-current', 'page');
+        else link.removeAttribute('aria-current');
+      });
+      window.scrollTo(0, 0);
+    }
+    window.addEventListener('hashchange', show);
+    show();
+  }());
+</script>
 </body>
 </html>
