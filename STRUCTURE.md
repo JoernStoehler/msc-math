@@ -44,3 +44,9 @@ Human view is generated on demand; Jörn is not expected to read this file.
   C9 rewrite-per-chapter beats repair lists ? .45 | C10 retire process-doc machinery ✓ .6
   C11 GitHub main sufficient; uncommitted work irrelevant ? .4 | C12 one COORDINATION file naming live sessions ✓ .7
   C13 async-queue/Taildrop protocol still applies ✗ .6
+- 2026-09-26 20:49 B1 marks: C1 ✓(pred ✓ .45 hit) | C7 ✗-ish: "most work in Codex; GPT-6 weak at user communication; fresh threads cheap" | C9 ? "cheap to try" | C11 ✗ "uncommitted work" label wrong; work on own branch/PRs | C13 ✓ | C3 ✓ (+ small low-hanging additions OK) | C5 ? missing context | C10 ✓ but question was wasted (don't ask him to estimate chores) | C4 ? one of many hypotheses | C8 ? | C2 ✓ "nothing to scale up yet" | C12 ✗ unclear question | C6 ✗ "massively incomplete operationalization"
+  Hit rate on confident predictions ok; misses were on framing: 4 claims unclear/irrelevant to him. Lesson: don't present info-only facts as claims; define terms.
+- Q3 (Jörn): agents wasted time instead of trying different workflows; collapsed idea space; explored workflows with low VOI; stopped asking for text review; scaled bad workflows to hit a fake deadline (~60% resources wasted).
+- Q4: minimize time-to-PASS; scaling a PASSing workflow is expected cheap/fast. Budget not binding for now.
+- Q2: "just give me a page" -> probe P0: send PDF p.5 (Intro start), ask for first-attention reactions.
+- Reframe G0: bottleneck = discovering a writing workflow whose output Jörn PASSes on sampled pages. Cheapest probe = page-level reactions, then contrastive rewrites of the same page by different workflows.
