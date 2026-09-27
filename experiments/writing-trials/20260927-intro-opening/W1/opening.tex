@@ -1,0 +1,75 @@
+\section{Introduction}\label{sec:introduction}
+
+Viterbo's conjecture~\cite{Viterbo2000} states that among convex bodies of a
+given volume in $\mathbb R^{2n}$ the Euclidean ball has the largest symplectic
+capacity. We use the Ekeland--Hofer--Zehnder (EHZ) capacity. For a convex body
+$K$ with smooth boundary, $c_{\rm EHZ}(K)$ is the least action
+$\int_\gamma\lambda$ among closed characteristics $\gamma$ on $\partial K$,
+that is, closed curves tangent to the line field $\ker(\omega_0|_{T\partial K})$;
+here $\omega_0=\sum_j dq_j\wedge dp_j$ and $d\lambda=\omega_0$. For nonsmooth
+convex bodies, polytopes in particular, the capacity is the limit over smooth
+approximations. In dimension four the conjecture reads
+$\operatorname{sys}(K)\le 1$ for the \emph{systolic ratio}
+\[
+ \operatorname{sys}(K)=\frac{c_{\rm EHZ}(K)^2}{2\operatorname{vol}_4(K)},
+\]
+which equals one on balls and is invariant under translations, rescalings and
+linear symplectic maps.
+
+Haim--Kislev and Ostrover disproved the conjecture with a Lagrangian
+product~\cite{HaimKislevOstrover2024}. Write
+$\mathbb R^4=\mathbb R^2_q\oplus\mathbb R^2_p$. For planar convex bodies
+$K_q,K_p$, the Lagrangian product $K_q\times_L K_p$ is the set of
+$(q,p)$ with $q\in K_q$ and $p\in K_p$; each factor lies in a Lagrangian plane.
+Let $P_5$ be the regular pentagon of circumradius one centered at the origin with
+a vertex at $(1,0)$, and $R(\theta)$ the rotation by $\theta$. The body
+\[
+ K_{\rm HKO}=P_5\times_L R(-\pi/2)P_5
+ \qquad\text{has}\qquad
+ \operatorname{sys}(K_{\rm HKO})=\frac{3+\sqrt5}{5}\approx1.047.
+\]
+
+This thesis starts from the counterexample and asks how much progress a fixed
+toolbox makes on the questions around it. The toolbox consists of high-performance
+implementations of capacity algorithms, proofs by exact computation,
+standard data-science methods, computing time on the LICCA cluster of the
+University of Augsburg, and AI agents. The questions came out of the work. For
+example, random perturbations of $K_{\rm HKO}$ did not increase its systolic
+ratio. This suggested that $K_{\rm HKO}$ is a local maximum, and for
+perturbations that keep ten facets this is now the main theorem of the thesis.
+The results therefore answer different questions and are presented side by
+side rather than as one argument.
+
+One of the earliest questions was whether standard data science finds new,
+interesting bodies with systolic ratio above one. It did not. Bodies above one
+arise near $K_{\rm HKO}$, since the systolic ratio is continuous, but random
+sampling, adaptive sampling and local search started from random bodies all
+stayed below one. The data did show a pattern: bodies whose two-dimensional
+faces have small total symplectic area, relative to volume, tend to have large
+systolic ratio. Looking for patterns in data has helped pure mathematics
+before; in knot theory, relations noticed in tables of computed invariants
+were later proved. Here the approach goes one step further: AI agents ran the
+data science and also did large parts of the theory work. For instance, from
+the suggestion to control a neighborhood of $K_{\rm HKO}$ by several upper
+bounds on the systolic ratio, a GPT-5-series model found a configuration of
+twenty-six such bounds that suffices, and wrote the exact SageMath
+verification. AI agents are therefore part of the method, and the thesis
+reports what they contributed.
+
+The main results are the following. Every ten-facet polytope sufficiently close
+to $K_{\rm HKO}$ has systolic ratio at most $(3+\sqrt5)/5$, with equality only
+for images of $K_{\rm HKO}$ under translations, rescalings and linear
+symplectic maps. The ten-facet space has another local maximum: a rational
+product of a hexagon and a quadrilateral with systolic ratio one, which is
+therefore not a new counterexample. No product of two independently linearly
+deformed regular pentagons exceeds the systolic ratio of $K_{\rm HKO}$.
+Symplectic ridge area has a strong inverse rank association with the systolic
+ratio in sampled populations, but exact formulas for rotated pentagon and
+triangle products order the two quantities in opposite ways. Behind these
+results stand Haim--Kislev's finite capacity formula~\cite{HK2017}, its
+first-order variation, and a second capacity algorithm built on the local
+passage geometry of Chaidez and Hutchings~\cite{CH2021}.
+
+The rest of this introduction first places $K_{\rm HKO}$ among capacities,
+dynamics and convex geometry, then describes the results in more detail and
+ends with a guide to the chapters.

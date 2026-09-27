@@ -1,0 +1,69 @@
+\section{Introduction}\label{sec:introduction}
+
+Viterbo's conjecture states that among convex bodies of fixed volume, the
+ball has the largest symplectic capacity \cite{Viterbo2000}. We work in
+$\mathbb R^4$ with the Ekeland--Hofer--Zehnder capacity $c_{\rm EHZ}$: for
+a convex body $K$, $c_{\rm EHZ}(K)$ is the least action of a closed
+characteristic on $\partial K$, and on polytopes the minimum runs over
+generalized characteristics, which follow the facet normals. In dimension
+four the conjecture reads
+\[
+ \operatorname{sys}(K):=\frac{c_{\rm EHZ}(K)^2}{2\operatorname{vol}_4(K)}\leq1,
+\]
+with equality for the ball. We call $\operatorname{sys}(K)$ the systolic
+ratio. It is unchanged by translations, rescaling and linear symplectic
+maps.
+
+Write $\mathbb R^4=\mathbb R^2_q\oplus\mathbb R^2_p$ with coordinates
+$(q_1,q_2,p_1,p_2)$. For planar convex bodies $K_q,K_p$, the Lagrangian
+product $K_q\times_L K_p$ is the set of points with $(q_1,q_2)\in K_q$ and
+$(p_1,p_2)\in K_p$. The relative position of the two factors affects
+capacity even though it does not affect volume. Haim--Kislev and Ostrover
+disproved the conjecture with a product of two regular pentagons
+\cite{HaimKislevOstrover2024}:
+\[
+ K_{\rm HKO}=P_5\times_L R(-\pi/2)P_5,\qquad
+ \operatorname{sys}(K_{\rm HKO})=\frac{3+\sqrt5}{5}>1.
+\]
+Here $P_5$ is the regular pentagon of circumradius one centred at the origin
+with a vertex at $(1,0)$, and $R(\theta)$ is planar rotation by $\theta$.
+
+This thesis picks a toolbox and asks how much progress it makes on questions
+around Viterbo's conjecture after this counterexample. The toolbox consists
+of high-performance computation on the LICCA cluster, proof by exact
+computation, standard data-science methods and AI agents. The agents are
+part of the method: they ran the data science and did large parts of the
+theory work. Pure mathematics has used data before: in knot theory,
+patterns spotted in computed invariants have suggested results that were
+then proved. Here AI both throws data science at the problem and develops
+much of the theory. The questions came out of the work, and the results
+answer different ones.
+
+One of the earliest questions was whether standard data science finds new
+interesting bodies with systolic ratio above one. It did not. Bodies with
+systolic ratio above one appeared as small perturbations of $K_{\rm HKO}$,
+none with a larger ratio; random samples and local searches from generic
+starting bodies all stayed below one. The data did show a pattern: in
+sampled populations, symplectic ridge area, the total symplectic area of the
+two-dimensional faces normalized by volume, is strongly inversely associated
+with the systolic ratio, although the association weakens among bodies
+selected for low ridge area or high systolic ratio.
+
+Because random perturbations did not improve $K_{\rm HKO}$, we conjectured
+that it is a local maximum, and we prove this among polytopes with ten
+facets: every sufficiently close ten-facet polytope has systolic ratio at
+most $\operatorname{sys}(K_{\rm HKO})$, with equality only for translations,
+rescalings and linear symplectic images. The same ten-facet space contains a
+second, non-strict local maximum at systolic ratio one, a Lagrangian product
+of a hexagon and a quadrilateral. Within Lagrangian products of two
+independently linearly deformed regular pentagons, we prove an explicit
+capacity formula and the sharp bound $(3+\sqrt5)/5$.
+These proofs rest on Haim--Kislev's finite formula for the capacity of a
+polytope \cite{HK2017}, its first-order variation in the facet data, and
+exact arithmetic.
+
+Section~1.1 places the EHZ capacity and the counterexample among related
+results on capacities, dynamics and convex geometry. Sections~1.2--1.4
+describe the local theorem, the finite capacity computations and the
+data-science investigation in more detail, and Section~1.5 explains how to
+read the thesis.

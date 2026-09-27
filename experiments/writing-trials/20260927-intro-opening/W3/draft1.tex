@@ -1,0 +1,54 @@
+\section{Introduction}\label{sec:introduction}
+
+Viterbo's conjecture is an isoperimetric inequality in symplectic geometry
+\cite{Viterbo2000}. In dimension four it states that every convex body
+$K\subset\mathbb R^4$ satisfies
+\[
+ \operatorname{sys}(K)\coloneqq\frac{c_{\rm EHZ}(K)^2}{2\operatorname{vol}_4(K)}\leq1,
+\]
+with equality for the ball. Here $c_{\rm EHZ}(K)$, the
+Ekeland--Hofer--Zehnder capacity, is the least action of a closed
+characteristic on $\partial K$; for polytopes, generalized characteristics
+replace closed characteristics. We call $\operatorname{sys}(K)$ the systolic
+ratio. Haim-Kislev and Ostrover disproved the conjecture
+\cite{HaimKislevOstrover2024}. Their counterexample is a Lagrangian product:
+for planar convex bodies $K_q,K_p$, write $K_q\times_L K_p$ for the body with
+$K_q$ in the $(q_1,q_2)$-plane and $K_p$ in the $(p_1,p_2)$-plane. With $P$ a
+regular pentagon, the HKO body $K_{\rm HKO}=P\times_L R(-\pi/2)P$ has
+systolic ratio $(3+\sqrt5)/5\approx1.047$.
+
+This thesis picks a toolbox and tests how much progress it makes on
+questions around Viterbo's conjecture after this counterexample. The toolbox
+consists of high-performance computation on the LICCA cluster,
+proof by computation in exact arithmetic, standard data-science methods,
+and AI agents. The agents ran the data-science experiments and did large
+parts of the theory work, including most of the local-maximality proof in
+Section~\ref{sec:hko-local-maximum}. The questions were therefore not fixed
+in advance; they came out of the work.
+
+Data science has already contributed to pure mathematics. In knot theory,
+patterns spotted in large tables of invariants led to results that then
+inspired theory. We go one step further: AI agents apply the data-science
+methods, and AI agents also do much of the resulting theory.
+
+One of the earliest questions was whether standard data science finds new
+interesting bodies with systolic ratio above one. It does not. Random samples
+of generic polytopes and of Lagrangian products of polygons, and local
+searches started from generic polytopes, stay below one. Bodies above one do
+occur near $K_{\rm HKO}$, but none of them is new or interesting.
+What the data did produce is a strong inverse association between systolic
+ratio and a symplectic area of the two-dimensional faces, which the thesis
+then examines with exact formulas and deformations.
+
+Other questions arose the same way. Randomly sampled perturbations of
+$K_{\rm HKO}$ never increased its systolic ratio. This suggested that
+$K_{\rm HKO}$ is a local maximum, and the first question became whether this
+holds. We prove it among polytopes with ten facets, and we find a second,
+unrelated ten-facet local maximum with systolic ratio one. Rotating the
+pentagon factors against each other led to an exact profile and to a sharp
+bound for independently linearly deformed regular pentagons. The capacity
+computations behind these results use Haim-Kislev's finite formula
+\cite{HK2017}, a reduction for Lagrangian products, and a second algorithm
+based on the local geometry of Chaidez and Hutchings \cite{CH2021}. The
+results therefore answer different questions and do not form a single
+narrative; Sections~1.1--1.5 introduce them in turn.

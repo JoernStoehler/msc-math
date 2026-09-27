@@ -1,0 +1,15 @@
+[0] Config.pm:307> INFO - This is Biber 2.19
+[0] Config.pm:310> INFO - Logfile is 'W2/build/opening.blg'
+[56] biber:340> INFO - === Sun Sep 27, 2026, 10:24:29
+[68] Biber.pm:419> INFO - Reading 'W2/build/opening.bcf'
+[111] Biber.pm:979> INFO - Found 3 citekeys in bib section 0
+[120] Biber.pm:4419> INFO - Processing section 0
+[128] Biber.pm:4610> INFO - Looking for bibtex file '../../../thesis/references/main.bib' for section 0
+[129] bibtex.pm:1713> INFO - LaTeX decoding ...
+[140] bibtex.pm:1519> INFO - Found BibTeX data source '../../../thesis/references/main.bib'
+[197] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[197] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[197] Biber.pm:4239> INFO - Sorting list 'anyt/global//global/global' of type 'entry' with template 'anyt' and locale 'en-US'
+[197] Biber.pm:4245> INFO - No sort tailoring available for locale 'en-US'
+[201] bbl.pm:660> INFO - Writing 'W2/build/opening.bbl' with encoding 'UTF-8'
+[203] bbl.pm:763> INFO - Output to W2/build/opening.bbl

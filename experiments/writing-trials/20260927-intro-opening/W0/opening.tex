@@ -1,0 +1,49 @@
+\section{Introduction}\label{sec:introduction}
+
+How large can a convex body's symplectic capacity be if its volume is fixed?
+Viterbo's conjecture proposed that a ball gives the largest value
+\cite{Viterbo2000}. For the Ekeland--Hofer--Zehnder capacity in dimension
+four, the proposed inequality was
+\[
+ \operatorname{sys}(K):=\frac{c_{\rm EHZ}(K)^2}{2\operatorname{vol}_4(K)}\leq1.
+\]
+The quantity on the left is called the systolic ratio. Capacity scales by
+the square of a dilation and four-dimensional volume by its fourth power,
+so this ratio compares shape independently of overall size. Translations
+and linear symplectic maps also preserve it.
+
+The inequality is false. Haim--Kislev and Ostrover found a counterexample
+formed from two regular pentagons in complementary Lagrangian planes
+\cite{HaimKislevOstrover2024}. Writing the coordinates as $(q,p)\in
+\mathbb R^2\oplus\mathbb R^2$, one representative is
+\[
+ K_{\rm HKO}=P_5\times R(-\pi/2)P_5,\qquad
+ \operatorname{sys}(K_{\rm HKO})=\frac{3+\sqrt5}{5}>1.
+\]
+Here $P_5$ is a centred regular pentagon with a vertex on the positive
+horizontal axis, and $R(\theta)$ is planar rotation. A product placed in
+the $q$- and $p$-planes is called a Lagrangian product. The relative
+position of its factors affects capacity even though it does not affect
+volume.
+
+The counterexample leaves several geometric questions. Is the HKO body a
+local maximum of the systolic ratio among convex bodies? Are there other
+families with large ratios? Can the
+computations reveal geometric relationships involving capacity? This thesis
+investigates these questions through local analysis, finite algorithms and
+data science. This is the sense in which we continue to probe Viterbo's
+conjecture: although its proposed bound is false, the geometric relationship
+between symplectic capacity and volume remains to be understood.
+
+The mathematical results identify two ways of changing the counterexample
+that cannot improve its ratio: sufficiently small ten-facet perturbations
+and arbitrary independent linear deformations of its regular-pentagon
+factors. They also exhibit a distinct non-HKO local maximum in the same
+ten-facet space, at ratio one. These are different restrictions and examples:
+the first is local in the full ten-facet space, the second is global within a
+product family, and the third is a separate product body with a non-strict
+local maximum. Finite capacity formulas make these questions accessible to
+proof. The empirical investigation asks whether geometric measurements can
+explain capacity in broader populations and guide the search for further
+examples.
+

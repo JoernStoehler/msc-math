@@ -1,0 +1,93 @@
+ 1 Introduction
+sub 1.1 Capacities, dynamics and convex geometry
+sub 1.2 A local theorem around the counterexample
+sub 1.3 From boundary dynamics to finite calculations
+sub 1.4 Looking for mathematical structure in data
+sub 1.5 How to read the thesis
+ 2 Preliminaries
+sub 2.1 Convex and symplectic notation
+sub 2.2 Convex Hamiltonians
+sub 2.3 EHZ capacity
+sub 2.4 Polytope input language
+sub 2.5 Lagrangian products
+sub 2.6 Clarke's dual action principle
+ 3 Generalized Reeb orbits on polytopes
+sub 3.1 Facet velocities
+sub 3.2 Words, dwell times, and closure
+sub 3.3 Existence of simple minimizers
+ 4 The Haim--Kislev Quadratic Program
+sub 4.1 The finite quadratic program
+sub 4.2 Solving one word and comparing the results
+sub 4.3 Finite enumeration for Lagrangian products
+sub 4.4 A six-facet reduction for the product capacity
+sub 4.5 Use in later certificates
+ 5 Computing closed trajectories with a flow graph
+sub 5.1 Affine tubes
+sub 5.2 Exhaustive search and correctness
+sub 5.3 Why the regular class is generic
+sub 5.4 Relation to CH2021
+sub 5.5 Scope and rational implementation
+ 6 First-Order Variation in Facet Coordinates
+sub 6.1 Row coordinates and the volume variation
+sub 6.2 Feasible sections and smooth maxima
+sub 6.3 From branches to the systolic ratio
+sub 6.4 What the first-order model contributes to search
+sub 6.5 The non-generic boundary
+sub 6.6 Application at HKO
+sub 6.7 Implementation and validation status
+ 7 HKO Local Maximality
+sub 7.1 The proof strategy
+sub 7.2 Local coordinates and volume
+sub 7.3 The touching upper bounds
+sub 7.4 Computing the twenty-six derivatives
+sub 7.5 The transverse slope estimate
+sub 7.6 From slopes to a neighborhood
+sub 7.7 A second ten-facet local maximum
+ 8 Finding mathematical patterns with data science
+sub 8.1 Symplectic ridge area
+sub 8.2 A strong inverse association weakens under selection
+sub 8.3 Coarse selection succeeds; stronger selection need not
+sub 8.4 Exact geometry: two families with opposite ordering
+sub 8.5 Covariance balance gives a second geometric signal
+sub 8.6 Balancing the factors improves most tested products
+sub 8.7 Opposite changes under a support-height deformation
+sub 8.8 What could explain the bulk association?
+sub 8.9 Using evaluated ratios to guide search
+sub 8.10 Competing branches in local search
+sub 8.11 A failed probe does not establish a local maximum
+ 9 The rotated-pentagon profile
+sub 9.1 Symmetries and the Haim--Kislev--Ostrover position
+sub 9.2 Feasible weights under rotation
+sub 9.3 Bounding all choices by their endpoint values
+ 10 Independent linear deformations of the pentagon factors
+sub 10.1 Reducing the possible facet orders
+sub 10.2 Two identities cover all six-group competitors
+sub 10.3 Capacity and the sharp ratio
+ 11 Rotating a product out of symplectic position
+ 12 Three-Dimensional Visualization
+ 13 Numerics
+sub 13.1 Input and output contracts
+sub 13.2 Certified fixed-word decisions
+sub 13.3 Complete general and product routes
+sub 13.4 Empirical verification and limitations
+ 14 Availability of Code and Data
+ 15 AI in the research process
+sub 15.1 A mathematical objective with room for discovery
+sub 15.2 A pursued criterion of success
+sub 15.3 Keeping the whole task in view
+sub 15.4 Why exposition remained difficult
+ 16 Conclusion
+ A Data-science methods and additional results
+sub A.1 Exact profile of equilateral-triangle products
+sub A.2 Sampling and retained data
+sub A.3 Numerical evaluation and retrospective checks
+sub A.4 Prediction models and feature families
+sub A.5 Selection and comparison rules
+sub A.6 Paired height changes and ambient rotations
+sub A.7 Factor covariance balancing
+sub A.8 Finite-budget local optimizer comparison
+sub A.9 Endpoint probes and continuation
+sub A.10 Adaptive product sampling
+sub A.11 Evidence and reproduction index
+ B HKO computation: an annotated exact program
+sub B.1 Executable exact verification of the HKO bounds

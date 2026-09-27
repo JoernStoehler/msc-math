@@ -1,0 +1,58 @@
+\section{Introduction}\label{sec:introduction}
+
+Viterbo's conjecture asserts that among convex bodies of fixed volume the
+ball has the largest symplectic capacity~\cite{Viterbo2000}. We work in
+$\mathbb R^4$ with the Ekeland--Hofer--Zehnder capacity $c_{\rm EHZ}$: for a
+convex body $K$ it is the least action of a closed characteristic on
+$\partial K$, where for polytopes the closed characteristics are replaced by
+generalized characteristics. The \emph{systolic ratio}
+\[
+ \operatorname{sys}(K)=\frac{c_{\rm EHZ}(K)^2}{2\operatorname{vol}_4(K)}
+\]
+equals one for the ball, and the conjecture asserts
+$\operatorname{sys}(K)\leq1$ for every convex body $K\subset\mathbb R^4$.
+Haim-Kislev and Ostrover disproved it with a Lagrangian
+product~\cite{HaimKislevOstrover2024}. For planar convex bodies $K_q$ and
+$K_p$, the Lagrangian product $K_q\times_L K_p$ places $K_q$ in the
+$(q_1,q_2)$-plane and $K_p$ in the $(p_1,p_2)$-plane. With $P$ a regular
+pentagon and $R(\theta)$ the rotation by $\theta$, the HKO body
+$K_{\rm HKO}=P\times_L R(-\pi/2)P$ has systolic ratio
+$(3+\sqrt5)/5\approx1.047$.
+
+This thesis fixes a toolbox and tests how far it gets on questions around
+Viterbo's conjecture after this counterexample. The toolbox consists of
+high-performance computation on Augsburg's LICCA cluster, proof by
+computation in exact arithmetic, standard data-science methods, and AI
+agents. The agents ran the data-science experiments and did large parts of
+the theory work; Section~\ref{sec:use-of-ai} describes how. The questions
+were not chosen first: they came out of the work.
+
+Standard data science found no new body with systolic ratio above one.
+In random samples of generic polytopes and of Lagrangian products of
+polygons, and in local searches started from generic ten-facet polytopes,
+every computed systolic ratio is below one. Perturbations of $K_{\rm HKO}$
+have systolic ratio above one, but they are small variations of the known
+counterexample. The data did show a strong inverse association between
+systolic ratio and symplectic ridge area, the total symplectic area of the
+two-dimensional faces normalized by volume. In knot theory, patterns found
+in computed data have suggested results that then inspired theory; here AI
+agents both look for the patterns and do much of the theory.
+
+Randomly sampled perturbations of $K_{\rm HKO}$ never increased its
+systolic ratio. This raised the first question that the thesis answers by
+a theorem: is $K_{\rm HKO}$ a local maximum of the systolic ratio? We prove
+that it is among polytopes with exactly ten facets, and that the same space
+contains a second local maximum, a hexagon--quadrilateral product with
+systolic ratio one. Other results answer questions that arose the same way:
+an explicit formula for the systolic ratio of $P\times_L R(\theta)P$ as a
+function of $\theta$, the sharp bound $(3+\sqrt5)/5$ for products of
+independently linearly deformed regular pentagons, and a capacity-increasing rotation of any product of
+planar convex bodies out of symplectic position. The capacity computations
+rest on Haim-Kislev's finite formula~\cite{HK2017}, a reduction for
+Lagrangian products, and a second algorithm built on the local geometry of
+Chaidez and Hutchings~\cite{CH2021}.
+
+The subsections below first recall how capacities connect embeddings,
+dynamics and convex geometry, then introduce the local theorem, the finite
+capacity calculations and the data-science results, and end with suggested
+reading orders.

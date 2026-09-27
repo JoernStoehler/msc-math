@@ -332,6 +332,54 @@ and does not settle the other data-science gaps.
       certification support. Broad solver formalization is not a default thesis
       requirement unless retained thesis wording depends on it.
 
+## Thesis Idea And Framing (confirmed 2026-09-27)
+
+Confirmed by Jörn in the Claude coordination session
+https://claude.ai/code/session_015Yt4FvgviGuyBHMGS7ketm on 2026-09-27. These
+override any agent-written framing of the introduction, abstract and
+conclusion.
+
+90. The thesis idea: we pick a toolbox (high-performance computation,
+    proof-by-computation, standard data-science methods, the LICCA cluster, AI
+    agents) and see how much progress it makes on questions around Viterbo's
+    conjecture after HKO2024. It is not "we pick questions, then invent
+    methods for them".
+
+91. The questions came out of the work. Example: randomly sampled
+    perturbations did not improve HKO2024, hence the local-maximum conjecture,
+    which then became a theorem.
+
+92. The introduction explains the thesis' motivation and themes; the results
+    are heterogeneous (see item 9).
+
+93. AI agents are part of the method and belong in the introduction's framing,
+    not only in the AI chapter. AI ran the data science and did large parts of
+    the theory work.
+
+94. "Does throwing standard data science at the problem find new interesting
+    bodies with sys > 1?" is one of the earliest questions. The introduction
+    may answer it early, before the theorems. Never write the raw-false
+    version "no bodies with sys > 1 were found": infinitely many were found
+    (e.g. near HKO2024); none were new or interesting.
+
+95. Motivation includes data science for pure mathematics: in knot theory,
+    looking at data and spotting patterns produced (in Jörn's view minor)
+    results that inspired theory. This thesis goes further: AI throws data
+    science at the problem, and AI also does much of the theory work.
+
+96. Kai knows and agrees with this framing.
+
+97. Jörn's notes on the 18 Sep introduction page (p. 5), as writing
+    preferences: conjectures do not "propose"; avoid odd phrasings like "the
+    inequality was", unexplained "dilation"; do not spend words proving
+    trivial facts (scaling invariance of sys) for the imagined MSc-student
+    audience, but do define what they need (EHZ capacity); introduce the
+    Lagrangian product (and the x_L notation for the splitting) early;
+    never imply a short finite list of open questions ("several geometric
+    questions"); a rhetorical opening question is acceptable but not his
+    style (he prefers assuming the reader's interest). A framing error makes
+    him stop reading because it invalidates most other feedback.
+
 ## Thesis Writing And Prose
 
 40. All models Jörn tried write very badly by default for thesis prose:
