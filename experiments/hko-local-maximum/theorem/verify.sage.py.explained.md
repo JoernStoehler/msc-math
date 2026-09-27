@@ -21,7 +21,7 @@ a failed check raises an exception and no successful verification is claimed.
 Run:
 
 ```bash
-sage -python experiments/hko-local-maximum/theorem/verify.sage.py
+conda run --name sage python experiments/hko-local-maximum/theorem/verify.sage.py
 ```
 
 ## Proof Obligation Map
@@ -45,7 +45,6 @@ all paths relative to the script, and defines `check`. All mathematical
 predicate failures go through `check` or explicit exceptions.
 
 ```python
-#!/usr/bin/env sage -python
 """
 Verifier for the HKO feasible-section certificate.
 

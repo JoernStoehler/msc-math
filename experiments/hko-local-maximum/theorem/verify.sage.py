@@ -1,4 +1,3 @@
-#!/usr/bin/env sage -python
 """
 Verifier for the HKO feasible-section certificate.
 

@@ -14,7 +14,7 @@ from pathlib import Path
 try:
     from sage.all import QQ, RR, Matrix, NumberField, PolynomialRing, vector, tan, pi
 except ModuleNotFoundError as exc:
-    raise SystemExit("run this script with `sage -python analyze.py`") from exc
+    raise SystemExit("run this script with `conda run --name sage python analyze.py`") from exc
 
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent

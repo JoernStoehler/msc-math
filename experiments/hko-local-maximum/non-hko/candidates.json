@@ -1,0 +1,174 @@
+{
+  "schema": "non-hko-f10-localmax-candidate-v1",
+  "coordinates": [
+    "q1",
+    "q2",
+    "p1",
+    "p2"
+  ],
+  "symplectic_matrix": [
+    [
+      0,
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      -1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      -1,
+      0,
+      0
+    ]
+  ],
+  "inequality_convention": "A x <= 1; rows are dual vertices; facet labels are zero-based",
+  "candidates": [
+    {
+      "id": "hexagon_quadrilateral_v1_2_s1_12",
+      "status": "computer-assisted proof of full-neighborhood non-strict local maximality",
+      "dual_vertices": [
+        [
+          "0",
+          "2",
+          "0",
+          "0"
+        ],
+        [
+          "12/7",
+          "4/7",
+          "0",
+          "0"
+        ],
+        [
+          "12/7",
+          "-4/7",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "-2",
+          "0",
+          "0"
+        ],
+        [
+          "-12/7",
+          "-4/7",
+          "0",
+          "0"
+        ],
+        [
+          "-12/7",
+          "4/7",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "4/3",
+          "2"
+        ],
+        [
+          "0",
+          "0",
+          "-4",
+          "2"
+        ],
+        [
+          "0",
+          "0",
+          "-4",
+          "-2"
+        ],
+        [
+          "0",
+          "0",
+          "4/3",
+          "-2"
+        ]
+      ],
+      "parameter_base": {
+        "v": "1/2",
+        "s": "1/12"
+      },
+      "q_factor_vertices": [
+        [
+          "-5/12",
+          "1/2"
+        ],
+        [
+          "5/12",
+          "1/2"
+        ],
+        [
+          "7/12",
+          "0"
+        ],
+        [
+          "5/12",
+          "-1/2"
+        ],
+        [
+          "-5/12",
+          "-1/2"
+        ],
+        [
+          "-7/12",
+          "0"
+        ]
+      ],
+      "p_factor_vertices": [
+        [
+          "3/4",
+          "0"
+        ],
+        [
+          "0",
+          "1/2"
+        ],
+        [
+          "-1/4",
+          "0"
+        ],
+        [
+          "0",
+          "-1/2"
+        ]
+      ],
+      "genuine_facets": 10,
+      "vertices": 24,
+      "simple": true,
+      "volume": "1/2",
+      "EHZ_capacity": "1",
+      "systolic_ratio": "1",
+      "quantifier": "There exists a Hausdorff neighborhood U of this body such that every convex four-polytope in U with exactly ten genuine facets has systolic ratio <= 1.",
+      "equality_family": "PROOF.md Section 4",
+      "equality_parameters_mod_symmetries": 2,
+      "non_HKO_certificate": "24 vertices versus 25; ratio 1 versus (3+sqrt(5))/5",
+      "excluded_equivalences": [
+        "translation",
+        "positive scaling",
+        "linear symplectic",
+        "linear anti-symplectic",
+        "facet relabeling"
+      ],
+      "certificate_file": "certificate/certificate_base.json",
+      "proof_file": "PROOF.md",
+      "verifier": "verify.py",
+      "quantitative_radius": null,
+      "proof_assistant_formalized": false
+    }
+  ]
+}

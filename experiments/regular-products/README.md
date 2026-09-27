@@ -173,11 +173,11 @@ uv run --script experiments/regular-products/pentagon-rotation-empirics/build_in
 Pentagon exact proof prefix:
 
 ```bash
-sage -python experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py --limit 50
+conda run --name sage python experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py --limit 50
 ```
 
 Pentagon exact full proof:
 
 ```bash
-sage -python experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py --progress-every 500
+conda run --name sage python experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py --progress-every 500
 ```

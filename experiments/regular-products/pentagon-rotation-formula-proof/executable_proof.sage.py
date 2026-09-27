@@ -1,4 +1,3 @@
-#!/usr/bin/env sage -python
 """
 Executable proof for the pentagon rotation formula.
 

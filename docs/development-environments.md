@@ -149,12 +149,13 @@ other VMs.
 
 Sage 10.9 is installed with Miniforge/conda-forge in the ignored shared path
 `/workspaces/msc-math/.local-environments/miniforge/envs/sage`. Its separate
-Python is 3.13.15; ordinary Python remains 3.12.13. The VM-local
-`/home/agent/.local/bin/sage` wrapper supports the project's legacy `-python`
-commands without activating Conda. Fresh SSH exact arithmetic, the full HKO
-verifier in a temporary packet (4.40 seconds), and the pentagon 50-case prefix
-(16.52 seconds) passed on 2026-09-05. The prefix is compatibility evidence,
-not a full pentagon certificate rerun. Canonical outputs were preserved.
+Python is 3.13.15; ordinary Python remains 3.12.13. Python files importing
+`sage.all` run with the Sage environment's Python through
+`conda run --name sage python`; the `sage` command itself remains the actual
+Sage launcher for Sage files and version checks. Fresh SSH exact arithmetic,
+the full HKO verifier in a temporary packet (4.40 seconds), and the pentagon
+50-case prefix (16.52 seconds) passed on 2026-09-05. The prefix is compatibility
+evidence, not a full pentagon certificate rerun. Canonical outputs were preserved.
 The setup occupies about 9.4 GB on the shared mount, with about 154 GB free;
 VM-private free space remains about 2.2 GB. See [`INSTALL.md`](../INSTALL.md#sagemath)
 for the tested commands, CA/network prerequisites and lifecycle constraints.

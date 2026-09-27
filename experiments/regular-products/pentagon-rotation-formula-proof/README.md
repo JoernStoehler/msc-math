@@ -67,14 +67,14 @@ the current lower-bound proof source is the executable Sage certificate.
 Exact proof prefix:
 
 ```bash
-PYTHONOPTIMIZE=0 sage -python experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py --limit 50
+PYTHONOPTIMIZE=0 conda run --name sage python experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py --limit 50
 ```
 
 Exact full proof:
 
 ```bash
 set -o pipefail
-PYTHONOPTIMIZE=0 sage -python experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py --progress-every 500 \
+PYTHONOPTIMIZE=0 conda run --name sage python experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py --progress-every 500 \
   | tee experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.full.stdout.txt
 ```
 
