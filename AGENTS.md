@@ -30,6 +30,19 @@ Search claims, symbols, artifact paths and likely synonyms with `rg` before conc
 work is absent. Follow summaries to their sources. Legacy and generated trees are poor
 broad orientation surfaces unless a task specifically needs them.
 
+When thesis-source or planning work materially changes selected claims, scope decisions,
+active/ready/blocked work, owners, uncertainty or route, update `docs/project-now.html` for
+external feedback. Check the synthesis against its authoritative sources; if a discrepancy
+cannot be reconciled promptly, mark the affected dashboard claim visibly stale. Hand off its
+status. The agent making the material change owns reconciliation; when several agents
+contribute, the integrating agent owns the synthesis and handoff. Keep it concise: do not
+accumulate an activity log or update it for unrelated changes.
+
+Before calling that view current, cross-check Jörn's required thesis areas and PASS threshold,
+the selected manuscript's promoted claims, current work and evidence owners. A promoted claim
+needs a thesis location, caveat and PDF/evidence check; show any unresolved coverage gap.
+Refresh the dashboard server's source digests only after that source reconciliation.
+
 ## Respect evidence boundaries
 
 ```text

@@ -1,7 +1,9 @@
 # Current thesis work remaining
 
-Reconciled 18 September 2026 after the manuscript/layout consolidation. This is
-the current work list for the selected manuscript in `thesis/main.tex`. It
+Existing issue statuses reconciled 18 September 2026 after the
+manuscript/layout consolidation; the Chapter 7 claim check was added on 25
+September 2026 after the claim disposition. This is the current work list for
+the selected manuscript in `thesis/main.tex`. It
 supersedes task lists in `docs/history/`; those files remain evidence, not active
 assignments. There is no active author or research producer. A clean build or an
 agent review is not a submission-readiness verdict, and no PASS or completion
@@ -212,6 +214,31 @@ whole is unknown.
 selected source still matches that map after other integration edits. Earlier
 optional v2 suggestions about inherited detail or repeated examples are not
 current requirements.
+
+### 7. Selected ten-facet local-maximum claims
+
+**Status:** L10-N and L10-N+ are promoted in the 24 September claim
+disposition. The selected reader-facing statement is the subsection “A second
+ten-facet local maximum” in `thesis/chapters/07-hko.tex`, included in the
+selected manuscript identified by `thesis/README.md`.
+
+**Exact evidence owner:** `experiments/hko-local-maximum/non-hko/`. Its
+`README.md` identifies the rational witness and verifier and separates exact
+finite checks from the analytic neighborhood argument in `PROOF.md`. For
+L10-N+, preserve the explicit caveat that `-13/432` is curvature of the
+selected feasible upper sections, not a Hessian assertion about the actual
+capacity.
+
+**Remaining check:** compare the selected PDF's rendered theorem and proof
+wording against `docs/consolidation/2026-09-24/claim-disposition.md` and the
+packet's stated trust boundary.
+
+**Done means:** record the PDF page/section and, claim by claim, whether its
+rendered wording matches the disposition and whether each exact statement
+points to the rational packet while the analytic implication remains attributed
+to the proof. Confirm that the two-parameter equality family and upper-section
+curvature caveat are present; record any mismatch for correction. Rerunning
+the computation is not part of this check.
 
 ## Scientific scope disposition
 

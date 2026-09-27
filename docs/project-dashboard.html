@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Dashboard project · current state</title>
+  <style>
+    :root { font: 18px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #203138; background: #f6f8f6; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    a { color: #075d78; text-underline-offset: 3px; }
+    a:focus-visible { outline: 3px solid #ae6b18; outline-offset: 3px; }
+    [hidden] { display: none !important; }
+    .shell { display: grid; grid-template-columns: 252px minmax(0, 1fr); min-height: 100vh; }
+    aside { position: sticky; top: 0; height: 100vh; overflow: auto; padding: 27px 17px; background: #243d46; color: #f5f9f8; }
+    .brand { padding: 0 12px 19px; border-bottom: 1px solid #60747a; }
+    .brand strong, .brand span { display: block; }
+    .brand strong { font-size: 1.15rem; }
+    .brand span { color: #d1dfe0; font-size: .89rem; margin-top: 3px; }
+    nav { margin-top: 18px; }
+    nav a { display: block; margin: 3px 0; padding: 10px 12px; border-radius: 8px; color: #f5f9f8; text-decoration: none; }
+    nav a:hover, nav a[aria-current="page"] { background: #3c5861; }
+    nav a[aria-current="page"] { box-shadow: inset 4px 0 #a7e1c9; }
+    nav strong, nav small { display: block; }
+    nav small { color: #d1dfe0; font-size: .76rem; line-height: 1.3; }
+    .side-note { margin: 24px 12px 0; padding-top: 14px; border-top: 1px solid #60747a; color: #d1dfe0; font-size: .83rem; }
+    .view { max-width: 840px; padding: 38px 48px 70px; }
+    .eyebrow { color: #4b6269; font-size: .82rem; font-weight: 740; letter-spacing: .06em; text-transform: uppercase; }
+    h1 { margin: 9px 0 13px; font-size: clamp(2rem, 3vw, 2.65rem); line-height: 1.15; letter-spacing: -.03em; }
+    h2 { margin: 27px 0 10px; font-size: 1.31rem; line-height: 1.3; }
+    h3 { margin: 0 0 5px; font-size: 1.08rem; }
+    p { margin: 0 0 12px; }
+    .lead { font-size: 1.12rem; line-height: 1.45; }
+    .purpose { border-left: 4px solid #607d8b; padding-left: 13px; color: #405760; }
+    .item { margin: 11px 0; padding: 16px 19px; background: white; border: 1px solid #cddbd8; border-radius: 9px; }
+    .item h2 { margin: 0 0 8px; }
+    .item p:last-child { margin-bottom: 0; }
+    .status { color: #526870; font-size: .9rem; }
+    .warn { border-left: 5px solid #b77c28; background: #fffbf3; }
+    code { font: .85em/1.4 ui-monospace, SFMono-Regular, Consolas, monospace; overflow-wrap: anywhere; }
+    @media (max-width: 850px) {
+      .shell { display: block; }
+      aside { position: static; height: auto; overflow: visible; padding: 12px 14px 10px; }
+      .brand { padding: 0 5px 9px; }
+      .brand span, .side-note, nav small { display: none; }
+      nav { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+      nav a { margin: 0; padding: 8px 10px; white-space: nowrap; }
+      nav a[aria-current="page"] { box-shadow: inset 0 -4px #a7e1c9; }
+      .view { padding: 24px 20px 55px; }
+    }
+    @media (max-width: 520px) { :root { font-size: 17px; } .view { padding: 22px 16px 48px; } }
+  </style>
+</head>
+<body>
+<div class="shell">
+  <aside aria-label="Dashboard project views">
+    <div class="brand"><strong>Dashboard project</strong><span>Supports the MSc thesis · does not define PASS</span></div>
+    <nav aria-label="Dashboard project views">
+      <a data-nav href="#state"><strong>State now</strong><small>Can anyone use it yet?</small></a>
+      <a data-nav href="#success"><strong>Success test</strong><small>What would make feedback useful?</small></a>
+      <a data-nav href="#work"><strong>Work &amp; blockers</strong><small>What can start, and who owns it?</small></a>
+      <a data-nav href="#updates"><strong>Keeping it current</strong><small>Why would this view stay trustworthy?</small></a>
+    </nav>
+    <p class="side-note">Manual project status · 25 Sep 2026. A later change can make this page stale.</p>
+  </aside>
+  <main>
+    <section class="view" id="state" data-view aria-labelledby="state-title">
+      <div class="eyebrow">State now · 25 Sep 2026</div>
+      <h1 id="state-title">A reviewable draft exists; useful steering is unproven</h1>
+      <p class="purpose">Use this view to decide whether the dashboard is usable today and which claim still needs testing.</p>
+      <p class="lead">Keep someone outside the daily thesis work accurately oriented at low reading cost, so their feedback can change the course while it still matters. Thesis PASS remains the parent goal.</p>
+      <div class="item">
+        <h2>What can be opened now</h2>
+        <p><a id="thesis-link" href="project-now.html">The seven-view thesis dashboard</a> is a manual snapshot checked against source commit <code>93ca3247</code> and the local 25 Sep Chapter 7 work-list update. The viewer service is active.</p>
+      </div>
+      <div class="item warn">
+        <h2>What has actually been tested</h2>
+        <p>Independent audits caught a false writing-trial dependency and an absent work-list check for the 24 Sep L10-N/L10-N+ claims. Both planning errors are corrected. A source inventory found all seven Jörn-required areas selected and no abstract/conclusion scope mismatch; the rendered-PDF and full coverage checks remain open.</p>
+      </div>
+      <h2>Current gate</h2>
+      <p>The gate is demonstrable crux and coverage reliability: map Jörn's scope and PASS conditions to the selected thesis, reconcile work and evidence owners, crosswalk promoted claims, then search for omissions. Structural inclusion passed; adequacy, complete coverage and Jörn's use of the page remain unproven.</p>
+      <p><strong>Next discriminating test:</strong> inspect the rendered Chapter 7 claims against their exact packet and disposition, then repeat the omission check. A missed claim or unsupported disposition fails the gate.</p>
+    </section>
+
+    <section class="view" id="success" data-view aria-labelledby="success-title">
+      <div class="eyebrow">Success test</div>
+      <h1 id="success-title">What must this tool enable?</h1>
+      <p class="purpose">Use this view to challenge the proposed conditions for a useful dashboard. A polished page is insufficient if it cannot support timely, informed feedback.</p>
+      <div class="item"><h3>1. Reconstruct the present situation cheaply</h3><p>The reader can find the thesis target, material uncertainty, current work, idle ready work and next decision without a long search.</p></div>
+      <div class="item"><h3>2. Trust and correct the picture</h3><p>Material claims show scope, evidence and age. Work coverage is explicit, so absence does not masquerade as completion or blockage.</p></div>
+      <div class="item"><h3>3. Remain current during real work</h3><p>Changes in goals, evidence, owners, blockers or decisions reach one editor and either appear on the page or visibly mark it stale.</p></div>
+      <div class="item"><h3>4. Be easy to reach and answer</h3><p>Jörn has a stable URL and can point to a specific claim when giving feedback.</p></div>
+      <p class="status">These are proposed dashboard criteria, not thesis-PASS requirements or an agreed service level. Coverage and end-to-end use remain unproven.</p>
+    </section>
+
+    <section class="view" id="work" data-view aria-labelledby="work-title">
+      <div class="eyebrow">Work and blockers</div>
+      <h1 id="work-title">What work can move now?</h1>
+      <p class="purpose">Use this view to spot available labor that has not started, who owns active work, and the artifact each task should produce.</p>
+      <h2>Completed this pass</h2>
+      <div class="item"><h3>Revise and serve both status views</h3><p><strong>Owner:</strong> current Codex thread. <strong>Output:</strong> both corrected pages, source links, and a fixed URL that rereads the files. The current thesis view received an independent source audit and desktop/mobile browser check.</p></div>
+      <h2>Ready, no implementation owner</h2>
+      <div class="item"><h3>Specify work-map coverage</h3><p><strong>Output:</strong> an inclusion rule for active, ready, blocked and parked work. <strong>Why idle:</strong> none assigned; the current map is explicitly a sample. No technical prerequisite is known.</p></div>
+      <div class="item"><h3>Install a refresh loop</h3><p><strong>Output:</strong> one named editor, worker update format, source-change triggers and a stale marker. A proposed protocol exists; nobody owns operation yet. No technical prerequisite is known.</p></div>
+      <h2>Waiting for human judgment</h2>
+      <p>Only Jörn can establish whether the revised view lets him judge a real thesis decision at acceptable reading cost. The agent checks are complete; no Jörn use test has occurred.</p>
+    </section>
+
+    <section class="view" id="updates" data-view aria-labelledby="updates-title">
+      <div class="eyebrow">Keeping it current</div>
+      <h1 id="updates-title">How would this stay trustworthy?</h1>
+      <p class="purpose">Use this view to distinguish the present manual snapshot from the proposed maintenance process. It is not operating yet.</p>
+      <div class="item warn"><h3>Today</h3><p>The thesis dashboard names its manual source baseline. A freshness endpoint checks nine cited source files, not every supporting claim. Project guidance assigns reconciliation to the agent making a material change or the integrating agent. No continuing editor or tested handoff loop exists yet.</p></div>
+      <div class="item"><h3>Proposed update contract</h3><p>When a worker changes a claim, selected result, owner, blocker or next decision, they report the changed fact, source path and revision, evidence strength, and next action. One editor checks those deltas against the source and replaces superseded status text. If reconciliation is pending, the affected view says so visibly.</p></div>
+      <div class="item"><h3>Before calling the update process live</h3><p>Name a continuing editor and successor, test a real change through the update loop, and extend freshness checks beyond the nine cited files. Those update conditions are untested.</p></div>
+    </section>
+  </main>
+</div>
+<script>
+  (() => {
+    if (location.pathname.startsWith('/files/')) {
+      document.getElementById('thesis-link').href = '/files/4cc31261033e/project-now.html';
+    }
+    const views = [...document.querySelectorAll('[data-view]')];
+    const links = [...document.querySelectorAll('[data-nav]')];
+    const ids = new Set(views.map(view => view.id));
+    function show() {
+      const requested = location.hash.slice(1);
+      const id = ids.has(requested) ? requested : 'state';
+      views.forEach(view => { view.hidden = view.id !== id; });
+      links.forEach(link => {
+        if (link.hash === '#' + id) link.setAttribute('aria-current', 'page');
+        else link.removeAttribute('aria-current');
+      });
+      scrollTo(0, 0);
+    }
+    addEventListener('hashchange', show);
+    show();
+  })();
+</script>
+</body>
+</html>
