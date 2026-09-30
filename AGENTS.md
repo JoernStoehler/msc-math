@@ -73,12 +73,14 @@ are not yet agreed: do not invent a dollar/token allowance or a gate for every
 small task. Splitting work across agents, sessions or stages does not enlarge
 the approved scope or budget.
 
-Use an async question when useful independent authorized work remains. For a
-required approval, keep the dependent package waiting even if its owner changes
-or the question disappears from the UI. Record the pending decision in
-coordination; silence, automatic action approval and elapsed time are not
-Jörn's plan approval. An optional clarification does not create a new approval
-gate; preserve any stated fallback.
+The async question tool is disabled by project instruction pending verified
+delivery: on 30 September it reported accepted submissions that Jörn says he
+never received. Put questions directly in chat. A submission acknowledgment is
+not evidence of user receipt; do not silently wait behind an undelivered
+question. For a required approval, keep the dependent package waiting through
+ownership changes and record the decision in coordination. Silence, automatic
+action approval and elapsed time are not Jörn's plan approval. An optional
+clarification does not create a new approval gate; preserve its stated fallback.
 
 Read [the collaboration commentary](AGENTS.md.commentary.md) when choosing an
 experiment/research programme, preparing a spending proposal, or designing
