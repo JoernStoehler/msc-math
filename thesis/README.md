@@ -17,7 +17,7 @@ using only these tracked source files and installed TeX tools. There is no
 `legacy/` search fallback and no alternative draft selected by the build.
 
 Current unfinished work and the limits of past reviews are in
-[../docs/WORK_REMAINING.md](../docs/WORK_REMAINING.md). The frozen resumption PDF
+[../docs/coordination/thesis-work.md](../docs/coordination/thesis-work.md). The frozen resumption PDF
 at `docs/resume/thesis-resume.pdf` is diagnostic, not an accepted or submitted thesis.
 
 The layout migration is recorded in `docs/resume/layout-migration.json`. It

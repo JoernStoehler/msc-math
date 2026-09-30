@@ -6,14 +6,14 @@ usage() {
 Usage: scripts/view-graph.sh [FILE]
        scripts/view-graph.sh --list
 
-FILE defaults to tasks.dot. A basename or docs/task-graph/FILE resolves in
+FILE defaults to tasks.dot. A basename or docs/coordination/graphs/FILE resolves in
 the live graph directory; an existing path is used directly.
-The old codex/task-graph/FILE spelling is accepted as a compatibility alias.
+The old docs/task-graph/FILE and codex/task-graph/FILE spellings are compatibility aliases.
 EOF
 }
 
 repo_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
-graph_dir="$repo_root/docs/task-graph"
+graph_dir="$repo_root/docs/coordination/graphs"
 
 case "${1:-}" in
   -h|--help)
@@ -21,6 +21,10 @@ case "${1:-}" in
     exit 0
     ;;
   --list)
+    if [[ ! -d "$graph_dir" ]]; then
+      printf 'No dependency graphs are currently maintained.\n'
+      exit 0
+    fi
     find "$graph_dir" -maxdepth 1 -type f -name '*.dot' -printf '%f\n' | sort
     exit 0
     ;;
@@ -34,6 +38,8 @@ fi
 requested=${1:-tasks.dot}
 if [[ -f "$requested" ]]; then
   source_file=$requested
+elif [[ "$requested" == docs/coordination/graphs/* ]]; then
+  source_file="$graph_dir/${requested#docs/coordination/graphs/}"
 elif [[ "$requested" == docs/task-graph/* ]]; then
   source_file="$graph_dir/${requested#docs/task-graph/}"
 elif [[ "$requested" == codex/task-graph/* ]]; then

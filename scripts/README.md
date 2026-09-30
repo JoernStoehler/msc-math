@@ -11,6 +11,8 @@ Small repo helper commands.
 | `bootstrap-cloud.sh` | install and verify the normal Codex Cloud development environment |
 | `maintain-cloud.sh` | refresh repository-dependent caches when a cloud environment resumes |
 | `repo-status-summary.sh` | read-only applicability summary for dated build/test evidence |
+| `test_project_dashboard.py` | HTTP checks for state reload, invalid inputs, source freshness and bounded read-only serving |
+| `serve-project-dashboard.py` | local browser view of shared coordination state, cited sources and scientific freshness |
 | `view-graph.sh` | render one live task-graph component in a non-wrapping terminal pager |
 | `repo-status/` | dated command/result records consumed by the status helper |
 
@@ -57,6 +59,15 @@ scripts/repo-status-summary.sh scripts/repo-status/repo-status-smoke-and-core-20
 This is a read-only summary. It does not run tests, refresh datasets, or prove
 that tracked generated artifacts are fresh.
 
+## `serve-project-dashboard.py`
+
+Run `python3 scripts/serve-project-dashboard.py` and open
+<http://127.0.0.1:8765/>. The browser rereads coordination every 15 seconds.
+Run with `--check` to validate state, source paths and dependencies without a
+listener. See `docs/coordination/README.md` for ownership and freshness semantics.
+The server serves a fixed list of project files; old dashboard URLs redirect.
+Check HTTP behavior with `python3 scripts/test_project_dashboard.py`.
+
 ## `view-graph.sh`
 
 View the project overview or one component in the current checkout:
@@ -67,10 +78,11 @@ scripts/view-graph.sh 00-now.dot
 scripts/view-graph.sh --list
 ```
 
-The live source is `docs/task-graph/`; the old spelling
-`codex/task-graph/00-now.dot` remains a compatibility alias to that ordinary
-directory. Earlier portfolio components are preserved under its dated
-`history/` directory. The helper uses `less -S` in an interactive terminal so
+When a dependency graph is useful, sources live in `docs/coordination/graphs/`.
+Graphs are optional; `--list` reports when none is maintained. The older `docs/task-graph/` and
+`codex/task-graph/` spellings remain compatibility aliases. Graphs project the
+canonical assignments in `docs/coordination/current.json`; they are not another
+backlog. The helper uses `less -S` in an interactive terminal so
 box-art lines do not wrap.
 
 ## `artifacts.py`

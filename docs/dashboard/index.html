@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Project work · Probing Viterbo's conjecture</title>
+<style>
+:root { font: 17px/1.5 system-ui,sans-serif; color:#21343c; background:#f4f7f6; }
+* { box-sizing:border-box; } body { margin:0; } a { color:#065a76; text-underline-offset:3px; }
+header { background:#17343e; color:#fff; padding:24px max(22px,calc((100vw - 1120px)/2)); }
+header p { color:#cbdcde; margin:6px 0; } h1 { margin:0; font-size:1.65rem; } h2 { font-size:1.2rem; margin:0 0 12px; } h3 { margin:0 0 8px; font-size:1.05rem; }
+main { max-width:1164px; margin:auto; padding:22px; } .grid { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:22px; }
+section { margin:0 0 24px; } .card { background:white; border:1px solid #cfdbd8; border-radius:9px; padding:17px; margin-bottom:12px; overflow-wrap:anywhere; }
+.card p { margin:7px 0; } .muted { color:#536b73; font-size:.88rem; } .warning { padding:12px 16px; background:#fff3d6; border-left:4px solid #b97a21; margin-bottom:20px; }
+.state { display:inline-block; font-size:.78rem; background:#e6efec; color:#305347; border-radius:14px; padding:2px 9px; margin-bottom:9px; }
+.running { background:#dcedf9; color:#17506c; } .blocked { background:#ffdfd3; color:#792f1f; } .parked { background:#fff0cb; color:#745514; }
+ul { padding-left:22px; } li { margin:7px 0; } code { font-size:.85em; overflow-wrap:anywhere; }
+button { font:inherit; padding:6px 12px; background:#fff; color:#17343e; border:1px solid #a9c4c9; border-radius:6px; cursor:pointer; }
+a:focus-visible,button:focus-visible { outline:3px solid #b77920; outline-offset:3px; }
+@media(max-width:760px) { .grid { grid-template-columns:1fr; gap:0; } main { padding:16px; } header { padding:20px 16px; } }
+</style>
+</head>
+<body>
+<header><h1>Probing Viterbo's conjecture</h1><p>Work, decisions and resources</p></header>
+<main>
+<div id="connection" class="warning" role="status" aria-live="polite">Loading reported state…</div>
+<section><h2 id="summary">Current work</h2><p id="scope" class="muted"></p><p class="muted" id="observation"></p><button id="refresh" type="button">Refresh now</button></section>
+<div class="grid">
+<div><section aria-labelledby="work-title"><h2 id="work-title">Selected work</h2><div id="tasks"></div></section>
+<section aria-labelledby="decisions-title"><h2 id="decisions-title">Decisions and waiting work</h2><div id="decisions"></div></section></div>
+<div><section aria-labelledby="resources-title"><h2 id="resources-title">Resources</h2><div id="resources"></div></section>
+<section aria-labelledby="links-title"><h2 id="links-title">Where to look</h2><ul id="links"></ul></section>
+<section aria-labelledby="changes-title"><h2 id="changes-title">Recent changes</h2><ul id="changes"></ul><p class="muted">A shared recent-change list; this page does not track individual viewing history.</p></section>
+<section><h2>Scientific brief</h2><p><a href="thesis.html">Read the thesis overview</a></p><p id="scientific-status" class="muted">The scientific snapshot dates from 25 Sep. Source/PDF reconciliation is still open.</p></section></div>
+</div>
+<noscript><p>This view needs JavaScript to read the shared state. Open <a href="../coordination/current.json">the state file</a> or <a href="../coordination/README.md">coordination guide</a>.</p></noscript>
+</main>
+<script>
+(() => {
+  const get = id => document.getElementById(id);
+  let pending = false;
+  function node(tag, text, cls) {
+    const element = document.createElement(tag);
+    if (text !== undefined) element.textContent = text;
+    if (cls) element.className = cls;
+    return element;
+  }
+  function link(path, label) {
+    const anchor = node('a', label || path);
+    // Only repository-relative source paths from the checked state are links.
+    if (!path.startsWith('/') && !path.includes('..') && !path.includes(':')) anchor.href = '/' + path;
+    return anchor;
+  }
+  function sources(paths) {
+    const p = node('p', undefined, 'muted');
+    paths.forEach((path, index) => { if (index) p.append(' · '); p.append(link(path)); });
+    return p;
+  }
+  function card(title, status) {
+    const element = node('article', undefined, 'card');
+    if (status) element.append(node('span', status, 'state ' + status));
+    element.append(node('h3', title));
+    return element;
+  }
+  function render(state) {
+    get('summary').textContent = state.summary;
+    get('scope').textContent = state.scope;
+    const minutes = Math.max(0, Math.floor((Date.now() - Date.parse(state.updated_at)) / 60000));
+    get('observation').textContent = 'Reported ' + state.updated_at + ' · ' + minutes + ' min ago. Page checks every 15 seconds; reports are written by agents.';
+    get('connection').hidden = minutes < 30;
+    get('connection').textContent = 'Reports are older than 30 minutes. Owners and resources may have changed; this view does not monitor process liveness.';
+    const tasks = state.tasks.map(task => {
+      const c = card(task.title, task.status);
+      c.append(node('p', task.outcome));
+      c.append(node('p', 'Owner: ' + (task.owner || 'unassigned'), 'muted'));
+      if (task.blocker) c.append(node('p', 'Waiting for: ' + task.blocker));
+      if (task.depends_on.length) c.append(node('p', 'Depends on: ' + task.depends_on.join(', '), 'muted'));
+      c.append(node('p', 'Observed: ' + task.updated_at, 'muted'), sources(task.sources));
+      return c;
+    });
+    get('tasks').replaceChildren(...(tasks.length ? tasks : [node('p', 'No selected assignments are reported. The detailed thesis backlog remains available.')]));
+    get('decisions').replaceChildren(...state.decisions.map(d => {
+      const c = card(d.question, d.status);
+      c.append(node('p', d.recommendation), node('p', d.consequence, 'muted'), sources(d.sources));
+      return c;
+    }));
+    get('resources').replaceChildren(...state.resources.map(r => {
+      const c = card(r.label);
+      c.append(node('p', r.value === null ? 'Unknown' : r.value), node('p', r.basis, 'muted'));
+      if (r.observed_at) c.append(node('p', 'Observed: ' + r.observed_at, 'muted'));
+      return c;
+    }));
+    get('links').replaceChildren(...state.links.map(l => { const li = node('li'); li.append(link(l.path,l.label)); return li; }));
+    get('changes').replaceChildren(...state.changes.map(c => node('li', c.text + ' (' + c.at + ')')));
+  }
+  async function refresh() {
+    if (pending) return;
+    pending = true;
+    try {
+      if (location.protocol === 'file:') throw new Error('Serve this page with python3 scripts/serve-project-dashboard.py, then open http://127.0.0.1:8765/.');
+      const response = await fetch('../coordination/current.json', {cache:'no-store'});
+      if (!response.ok) throw new Error('Shared state is unavailable or invalid.');
+      render(await response.json());
+    } catch (error) {
+      get('connection').hidden = false;
+      get('connection').textContent = 'State refresh failed. Any displayed values are the last successful report. ' + error.message;
+    }
+    try {
+      const response = await fetch('/_dashboard/source-status', {cache:'no-store'});
+      if (!response.ok) throw new Error();
+      const status = await response.json();
+      get('scientific-status').textContent = !status.known ? 'Scientific source freshness is unknown.' :
+        status.note + (status.changed.length ? ' Changed cited sources: ' + status.changed.join(', ') + '.' : ' No cited source hash changed; this does not establish scientific adequacy.');
+    } catch {
+      get('scientific-status').textContent = 'Scientific source freshness is unknown; the retained brief remains a dated snapshot.';
+    }
+    pending = false;
+  }
+  get('refresh').addEventListener('click', refresh);
+  refresh();
+  setInterval(refresh, 15000);
+})();
+</script>
+</body>
+</html>

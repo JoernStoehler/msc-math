@@ -1,11 +1,11 @@
 # Retained review and recovery evidence
 
-Current assignments belong only to [WORK_REMAINING](../WORK_REMAINING.md). This directory retains exact reviewed texts, feedback, result packets and recovery evidence needed to interpret current obligations. Old proposed next steps inside evidence are statements from that experiment, not renewed assignments.
+Current assignments belong only to [WORK_REMAINING](../coordination/thesis-work.md). This directory retains exact reviewed texts, feedback, result packets and recovery evidence needed to interpret current obligations. Old proposed next steps inside evidence are statements from that experiment, not renewed assignments.
 
 ## Read by question
 
 - Human writing judgments: `review-evidence/human-feedback/`, `reviewer-trial/human/`, `ds-result-trial/human-feedback.md`, `ds-full-review/`, `ai-reflection-review/`, and `pentagon-chapter/user-reading-feedback.md`; matched reviewed inputs/PDFs remain alongside them. Also see `experiments/writing-quality/human-review/responses/`.
-- Corrected whole-thesis assessment: `coordination/whole-exposition-assessment.md`; exact frozen PDFs and scoped agent findings: `whole-review/`. Current dispositions are in WORK_REMAINING.
+- Corrected whole-thesis assessment: `coordination/whole-exposition-assessment.md`; exact frozen PDFs and scoped agent findings: `whole-review/`. Current dispositions are in `docs/coordination/thesis-work.md`.
 - Reusable interpretation and observed interaction methods: [knowledge index](../knowledge/README.md). These are not discarded as obsolete plans.
 - Review/authoring experiments: `reviewer-trial/`, `review-workflow-design/`, `scientific-writing-solutions/`, `writing-quality-research/`. They retain failed approaches and evidential limitations; none establishes a PASS gate.
 - Source adoption evidence: `assembly-source-map/`, `candidate-assembly-integration/`; baseline replay boundaries: [source-recovery](source-recovery/README.md).

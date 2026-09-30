@@ -1,9 +1,9 @@
 # Documentation and evidence
 
-**Current work:** [WORK_REMAINING.md](WORK_REMAINING.md).
-**Handoff and constraints:** [../RESUME.md](../RESUME.md).
-These are the current continuation surfaces; evidence packets below are not
-independent task queues.
+**Coordination:** [coordination/README.md](coordination/README.md) routes selected
+assignments, resource observations, the detailed thesis backlog and handoff.
+**Jörn's view:** [dashboard/README.md](dashboard/README.md) explains the browser page.
+Evidence packets below are not independent project task queues.
 
 ## Mathematical and computational support
 
@@ -20,7 +20,7 @@ independent task queues.
 | Code/data availability | [source check](availability-claim-closure/README.md), [reproduction contract](reproducibility.md) |
 
 These records retain original inputs, dates, source revisions and limitations.
-Their old proposed next steps are historical unless adopted in WORK_REMAINING.md.
+Their old proposed next steps are historical unless adopted in coordination.
 The current manuscript paths are in `resume/layout-migration.json`; a recorded
 check of an earlier source hash is not automatically a check of the current text.
 
@@ -37,5 +37,5 @@ and [environments](development-environments.md) describe maintained interfaces.
 review interpretation. [history/README.md](history/README.md) routes exact human
 feedback and reviewer experiments, plus pinned Git recovery of superseded plans. Exact feedback remains evidence about the exact
 text reviewed; it is not erased by later repairs. It is also not a current work
-list. `resume/` owns consolidation manifests, session identities, the frozen
-current PDF, and integrity checks.
+list. `resume/` owns preservation manifests, historical session identities, the
+frozen diagnostic PDF and integrity checks, not current handoff instructions.

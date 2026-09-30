@@ -1,0 +1,16 @@
+{
+  "checked_on": "2026-09-25",
+  "reconciled": false,
+  "note": "Scientific snapshot retained from 25 September; migration repairs paths only. Complete source/PDF reconciliation remains open.",
+  "sha256": {
+    "docs/project-facts.md": "ac9f2b73f9183ca1fef29a1d7672c524700e49e68e74896ed87e12eba5334033",
+    "docs/consolidation/2026-09-24/claim-disposition.md": "3e048444faff47fed46cab8b266676eb4100cfed2be95c90e755cc7334b765a9",
+    "docs/history/memories/planning-context.md": "306fff369f7e2eea4008ce888ed2c3a8484d8f94362105c994915717361cbcef",
+    "thesis/main.tex": "fede5525da8703d64ad391c3862b40e8a95ebb4781a8d53d9321639d93525225",
+    "thesis/chapters/07-hko.tex": "5deb679f1f5410e04169dc302ce1870789daf80b075d9460bd02b8679cd6d08d",
+    "experiments/hko-local-maximum/non-hko/README.md": "3bde2732bb108117b3580b8b913506a651dc6c24aa38a7ea0617f99f968b5aae",
+    "experiments/hko-local-maximum/non-hko/PROOF.md": "51a8dab531e4dbc87149c979ee2d1c7a1b6b1448cbda9a49fbe46dc02713a8b3",
+    "docs/history/coordination-surface-migration/resume-20260930.md": "6f35ab53c2c6c437bf1c89754d6b2a7953115665ca4b8100409cc0b52c2ea231",
+    "docs/coordination/thesis-work.md": "e6bcc2f9cab88b2381c276c9249df70d1be6916d7998260507af71fc1a1deff8"
+  }
+}

@@ -14,7 +14,7 @@ queue. The pentagon-partner owner remains in place.
 
 **Historical activation record:** five scientific owners operated under
 [the scoped ownership charter](research-owners.md), with the coordinator
-maintaining the then-current graph (`git show ee282e065004adc1ccd64e51140edccd075845de:docs/history/task-graph/25-empirical-research.svg`); current assignments belong to `docs/WORK_REMAINING.md`.
+maintaining the then-current graph (`git show ee282e065004adc1ccd64e51140edccd075845de:docs/history/task-graph/25-empirical-research.svg`); current assignments belong to `docs/coordination/thesis-work.md`.
 The first dispatched window was 45–60 minutes per owner. This records the earlier campaign, not running workers.
 
 **Current checkpoint:** first windows, root review and four selected follow-ups

@@ -9,7 +9,7 @@ reviewers, not an independent validation of the experiment. Inspected
 the working-tree source text was read, so HEAD is a recovery baseline, not a
 claim that every inspected byte was committed. Current sources override this
 entry. The task boundary and Jörn's exclusion of additional optimizer
-comparisons are owned by [current work](../WORK_REMAINING.md).
+comparisons are owned by [current work](../coordination/thesis-work.md).
 
 ## Claim and shortest useful route
 

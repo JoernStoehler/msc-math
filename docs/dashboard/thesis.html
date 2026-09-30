@@ -92,11 +92,12 @@
   </aside>
 
   <main class="content">
+    <div class="freshness" role="status">Scientific snapshot · 25 Sep 2026. Paths migrated 30 Sep; scientific coverage and rendered-PDF reconciliation remain open. <a href="index.html">Current work and resources</a>.</div>
     <div class="freshness" id="source-freshness" role="status" aria-live="polite" hidden></div>
     <section class="view" id="overview" data-view aria-labelledby="overview-title">
       <div class="eyebrow">Overview · 25 Sep 2026</div>
       <h1 id="overview-title">A thesis candidate exists; readiness is unknown</h1>
-      <p class="lead">The selected 96-page PDF includes substantial results. No review establishes the working PASS threshold: Kai returning only minor issues Jörn could fix in about two hours. The completion run is paused.</p>
+      <p class="lead">The 25 Sep snapshot described a 96-page candidate with substantial results. No review establishes the working PASS threshold: Kai returning only minor issues Jörn could fix in about two hours. The completion run was stopped; this cleanup does not restart it.</p>
       <h2>Latest change</h2>
       <p>The work list now records the 24 Sep theorem and adds the PDF/packet claim check. F=11 and global claims remain open or restricted. <a href="#changes">See the precise change.</a></p>
       <div class="note">
@@ -113,7 +114,7 @@
       <div class="eyebrow">Cruxes · current evidence</div>
       <h1 id="cruxes-title">What could change the readiness judgment?</h1>
       <p class="lead">These are the current high-leverage questions, with the evidence and next check for each. Coverage is still being tested.</p>
-      <article class="item"><div class="item-head"><h3>Claim, proof and experiment support</h3><span class="state partial">Chapter 7 check open</span></div><p><strong>Risk:</strong> a claim exceeds its proof or packet. The 24 Sep disposition promotes L10-N and L10-N+ with an upper-section curvature caveat. <strong>Next:</strong> compare the rendered <a href="../thesis/chapters/07-hko.tex">Chapter 7</a> theorem, equality family and caveat with the <a href="../experiments/hko-local-maximum/non-hko/README.md">rational packet</a> and its <a href="../experiments/hko-local-maximum/non-hko/PROOF.md">analytic trust boundary</a>; then audit the other selected claims.</p></article>
+      <article class="item"><div class="item-head"><h3>Claim, proof and experiment support</h3><span class="state partial">Chapter 7 check open</span></div><p><strong>Risk:</strong> a claim exceeds its proof or packet. The 24 Sep disposition promotes L10-N and L10-N+ with an upper-section curvature caveat. <strong>Next:</strong> compare the rendered <a href="../../thesis/chapters/07-hko.tex">Chapter 7</a> theorem, equality family and caveat with the <a href="../../experiments/hko-local-maximum/non-hko/README.md">rational packet</a> and its <a href="../../experiments/hko-local-maximum/non-hko/PROOF.md">analytic trust boundary</a>; then audit the other selected claims.</p></article>
       <article class="item"><div class="item-head"><h3>Reader quality and data-science scope</h3><span class="state unknown">Human judgment unknown</span></div><p>The selected chapter has no human acceptance verdict; older negative verdicts apply to other drafts. The named method table is closed, but its fit to Jörn's roughly-100-method expectation is unresolved. <strong>Next:</strong> disposition retained reader concerns against the selected chapter, clarify scope with Jörn, then review one frozen PDF with Jörn and Kai.</p></article>
       <article class="item"><div class="item-head"><h3>Reproduction completeness</h3><span class="state unknown">Completeness unverified</span></div><p>The two-year-later target covers producer → output → figure → PDF, environment and tool versions, original LICCA route, timings and machine, and byte-identical versus accepted comparisons. No defect is confirmed yet. <strong>Next:</strong> compare the playbook and thesis promises with that full target, tracing each claimed output to its producer and PDF use.</p></article>
       <article class="item"><div class="item-head"><h3>Official status and delivery</h3><span class="state unknown">Current check absent</span></div><p>The older <code>RESUME.md</code> said the thesis was unsubmitted then; current submission status and rules are unknown. <strong>Next:</strong> verify status and submission/AI-disclosure requirements from current MNTF sources before planning delivery.</p></article>
@@ -183,17 +184,17 @@
       <h1 id="changes-title">What changed, and what supports this view?</h1>
       <p class="lead">The original work list was reconciled on 18 Sep; its 25 Sep update registers the selected theorem and adds the rendered-PDF claim check.</p>
       <article class="item"><div class="item-head"><h3>24 Sep · theorem selection changed</h3><span class="state done">Recorded</span></div><p>A rational hexagon–quadrilateral product was promoted as a non-HKO ten-facet local maximum. Arbitrary-partner and F=11 claims stayed restricted or open.</p></article>
-      <article class="item"><div class="item-head"><h3>18 Sep · source repairs reconciled</h3><span class="state done">Earlier repair inventory</span></div><p><code>docs/WORK_REMAINING.md</code> retains those scoped repairs and optional-result dispositions; it is not a current PASS judgment.</p></article>
+      <article class="item"><div class="item-head"><h3>18 Sep · source repairs reconciled</h3><span class="state done">Earlier repair inventory</span></div><p><code>docs/coordination/thesis-work.md</code> retains those scoped repairs and optional-result dispositions; it is not a current PASS judgment.</p></article>
       <article class="item"><div class="item-head"><h3>25 Sep · Chapter 7 claim check added</h3><span class="state partial">PDF/packet comparison open</span></div><p>The L10-N/L10-N+ theorem and exact packet are registered. Remaining work is to record whether the selected PDF's rendered theorem, proof and caveat match their stated support.</p></article>
       <h2>Source entry points</h2>
-      <p class="mini" id="source-access-note">On this review server, these links open shared source copies until 18:35 Berlin time today.</p>
+      <p class="mini" id="source-access-note">Source links open files from this checkout when served by the dashboard command.</p>
       <ul class="source-list">
-        <li><a href="../RESUME.md" data-review-href="/files/21477cd99258/RESUME.md"><code>RESUME.md</code></a> — PASS definition, stopped run and review limits. Its opening worktree directions are stale; the current checkout is <code>main</code>.</li>
-        <li><a href="project-facts.md" data-review-href="/files/c49a213f0281/project-facts.md"><code>docs/project-facts.md</code></a> — Jörn-confirmed scope and planned final review flow; current submission status is unknown.</li>
-        <li><a href="WORK_REMAINING.md" data-review-href="/files/da1dd40f5e1c/WORK_REMAINING.md"><code>docs/WORK_REMAINING.md</code></a> — scoped source repairs and the 25 Sep Chapter 7 PDF/packet check.</li>
-        <li><a href="consolidation/2026-09-24/claim-disposition.md" data-review-href="/files/e555cafc2999/claim-disposition.md"><code>docs/consolidation/2026-09-24/claim-disposition.md</code></a> — precise new theorem and research-note boundaries.</li>
-        <li><a href="history/memories/planning-context.md" data-review-href="/files/cdffec08e414/planning-context.md"><code>docs/history/memories/planning-context.md</code></a> — authoring/review process uncertainty.</li>
-        <li><a href="../thesis/main.tex" data-review-href="/files/1fc244bd974c/main.tex"><code>thesis/main.tex</code></a> — the selected reader-facing source.</li>
+        <li><a href="../coordination/handoff.md"><code>docs/coordination/handoff.md</code></a> — PASS definition, stopped run and review limits. Current directions are in the coordination handoff; the original stopped-run record is archived.</li>
+        <li><a href="../project-facts.md"><code>docs/project-facts.md</code></a> — Jörn-confirmed scope and planned final review flow; current submission status is unknown.</li>
+        <li><a href="../coordination/thesis-work.md"><code>docs/coordination/thesis-work.md</code></a> — scoped source repairs and the 25 Sep Chapter 7 PDF/packet check.</li>
+        <li><a href="../consolidation/2026-09-24/claim-disposition.md"><code>docs/consolidation/2026-09-24/claim-disposition.md</code></a> — precise new theorem and research-note boundaries.</li>
+        <li><a href="../history/memories/planning-context.md"><code>docs/history/memories/planning-context.md</code></a> — authoring/review process uncertainty.</li>
+        <li><a href="../../thesis/main.tex"><code>thesis/main.tex</code></a> — the selected reader-facing source.</li>
       </ul>
       <p class="closing">Source state checked 25 Sep 2026 through <code>93ca3247</code>, plus the local Chapter 7 check added to the work list that day. This page needs an editorial refresh after a material source change; its date alone does not make it current.</p>
     </section>
@@ -201,15 +202,7 @@
 </div>
 <script>
   (function () {
-    if (location.pathname.startsWith('/files/')) {
-      document.querySelectorAll('[data-review-href]').forEach(link => {
-        link.href = link.getAttribute('data-review-href');
-      });
-    } else {
-      document.getElementById('source-access-note').textContent = 'These links open the source files served from this checkout.';
-    }
-    if (location.origin === 'http://100.70.188.20:8765' &&
-        location.pathname === '/docs/project-now.html') {
+    if (location.protocol !== 'file:') {
       const indicator = document.getElementById('source-freshness');
       fetch('/_dashboard/source-status', { cache: 'no-store' })
         .then(response => { if (!response.ok) throw new Error('status unavailable'); return response.json(); })

@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-09-30T08:59:22Z",
+  "scope": "Selected work reported in this checkout. Other sessions and host processes have not been surveyed.",
+  "summary": "Central coordination cleanup is complete. Thesis completion remains stopped; the detailed backlog is available for a future selected execution window.",
+  "tasks": [
+    {
+      "id": "coordination-cleanup",
+      "title": "Separate coordination, browser views and reusable knowledge",
+      "status": "done",
+      "owner": null,
+      "outcome": "Canonical coordination store, shared-state browser view, reusable knowledge guidance, migrated callers and five passing HTTP regression checks. Chrome visual inspection was unavailable.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/README.md",
+        "docs/coordination/thesis-work.md",
+        "docs/coordination/handoff.md"
+      ],
+      "updated_at": "2026-09-30T08:58:26Z"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "cleanup-scope",
+      "question": "Should a later cleanup also review topic-specific coordination packets inside experiments?",
+      "status": "resolved",
+      "recommendation": "Jörn selected central surfaces first on 30 September 2026. Topic-specific research packets stay with their evidence owners.",
+      "consequence": "The central migration is complete; no broader topic-packet review is assigned.",
+      "sources": [
+        "docs/coordination/README.md"
+      ]
+    },
+    {
+      "id": "thesis-restart",
+      "question": "Select a thesis execution window before assigning backlog work.",
+      "status": "parked",
+      "recommendation": "Keep the previous completion run stopped during this cleanup.",
+      "consequence": "The backlog is available; its existence does not authorize a new autonomous run.",
+      "sources": [
+        "docs/coordination/handoff.md"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "label": "Agent work",
+      "value": "No selected assignment remains running at handoff. This cleanup used one coordinating thread and no subagents.",
+      "observed_at": "2026-09-30T08:58:26Z",
+      "basis": "Current task execution; other sessions not surveyed."
+    },
+    {
+      "label": "Quota and API spend",
+      "value": null,
+      "observed_at": null,
+      "basis": "No current quota or cost observation is available. Historical balances and ceilings are not current authority."
+    },
+    {
+      "label": "Scientific compute",
+      "value": "No scientific producers were rerun.",
+      "observed_at": "2026-09-30T08:58:26Z",
+      "basis": "This task changes documentation and dashboard tooling."
+    }
+  ],
+  "links": [
+    {
+      "label": "Detailed thesis backlog",
+      "path": "docs/coordination/thesis-work.md"
+    },
+    {
+      "label": "Continuation constraints",
+      "path": "docs/coordination/handoff.md"
+    },
+    {
+      "label": "Reusable knowledge",
+      "path": "docs/knowledge/README.md"
+    },
+    {
+      "label": "Confirmed scope and decisions",
+      "path": "docs/project-facts.md"
+    },
+    {
+      "label": "Evidence index",
+      "path": "docs/README.md"
+    },
+    {
+      "label": "Scientific brief · 25 Sep snapshot",
+      "path": "docs/dashboard/thesis.html"
+    },
+    {
+      "label": "Frozen diagnostic PDF · older inputs, not accepted",
+      "path": "docs/resume/thesis-resume.pdf"
+    }
+  ],
+  "changes": [
+    {
+      "at": "2026-09-30T08:59:22Z",
+      "text": "Jörn confirmed central surfaces first; topic-specific coordination/evidence remains with its local owners."
+    },
+    {
+      "at": "2026-09-30T08:58:26Z",
+      "text": "Agent coordination, browser presentation and reusable knowledge now have separate owners; the browser reads shared assignments/resources."
+    },
+    {
+      "at": "2026-09-30T08:58:26Z",
+      "text": "Contradictory former handoff and dashboard-development/copy-edit views moved to history; maintained callers and graph workflow route to coordination."
+    },
+    {
+      "at": "2026-09-30T08:58:26Z",
+      "text": "Five HTTP regression checks pass. Chrome had no connected browser, so rendered-layout review remains unperformed."
+    },
+    {
+      "at": "2026-09-30T08:58:26Z",
+      "text": "Frozen PDF verification has seven input mismatches already present in committed HEAD. Its record was preserved; the scientific brief remains visibly unreconciled."
+    }
+  ]
+}

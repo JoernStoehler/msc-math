@@ -12,11 +12,14 @@ editing the graph concurrently.
 
 ## Storage
 
-Keep graph sources and their rendered views in ordinary project storage.
+Keep graph sources and their rendered views with project coordination.
+`docs/coordination/current.json` owns selected assignments and resource observations;
+the graph projects dependencies and decision branches without creating a second
+assignment authority. The coordinating agent reconciles both when using a graph.
 Resolve the location from the current checkout with:
 
 ```bash
-graph_dir="$(git rev-parse --show-toplevel)/docs/task-graph"
+graph_dir="$(git rev-parse --show-toplevel)/docs/coordination/graphs"
 mkdir -p "$graph_dir"
 ```
 
