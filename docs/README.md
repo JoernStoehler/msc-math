@@ -24,6 +24,11 @@ Their old proposed next steps are historical unless adopted in WORK_REMAINING.md
 The current manuscript paths are in `resume/layout-migration.json`; a recorded
 check of an earlier source hash is not automatically a check of the current text.
 
+## Collaboration workflow
+
+[friction/README.md](friction/README.md) owns detailed collaboration friction and
+trial evidence. Its linked Pages overview is the concise human-facing view.
+
 ## Project contracts
 
 [Project facts](project-facts.md) are attributed decisions, with dated scope.
