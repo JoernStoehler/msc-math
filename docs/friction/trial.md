@@ -76,3 +76,7 @@ Next user step: in the new session, request a reply to the hub comment headed Pa
 ## Chosen surface split
 
 30 September 2026: Jörn chose Pages for persistent views intended for him and tightly integrated with ChatGPT, and GitHub repository files for durable workspace content maintained collaboratively by agents. Detailed friction tracking moves to this directory; the Page becomes the concise human overview. Evaluate any additional tools against the next best working alternative and total user/agent effort, including setup and maintenance.
+
+## Migration result
+
+30 September 2026: the repository records were committed to main and read back exactly. Literal Page patches published the compact human overview; pre-migration sections are frozen and collapsed by default because structural rewrites were rejected. Root repository guidance, the hub's tracking instruction and prompt, and the friction Page's Agent Instructions now route tracking to the repository and assign overview reconciliation to the agent changing material facts. No monitoring, external session, thesis run or automation was started. Rendered presentation and independent-session upkeep remain untested.

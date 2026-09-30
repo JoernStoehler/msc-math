@@ -24,6 +24,7 @@ Each ID has one canonical file. Read only relevant records; preserve IDs and his
 - [F13 Prompt launch ergonomics](F13.md)
 - [F14 Concurrent updates to the friction table](F14.md)
 - [F15 Duplicated session reports and unassigned follow-up](F15.md)
+- [F16 Human navigation and mixed audiences](F16.md)
 
 [Trial evidence and open capability questions](trial.md) retains the trial results, procedures and decision criteria imported from the Page.
 
@@ -52,3 +53,5 @@ If a session cannot write the Page, keep the canonical record accurate and repor
 Imported 30 September 2026 from the existing Page's fifteen records, including concurrent session observations. Private session/comment identifiers were omitted from public files; the existing Page and hub retain their access controls. Existing trial evidence is a dated snapshot, with its uncertainties preserved. Public repository content is limited to operational observations and project coordination.
 
 Jörn chose Pages for persistent human-facing views and GitHub for durable agent workspace content. No custom plugin, thesis work or automation is launched by this migration.
+
+Migration verification: all imported files were fetched from published main and compared to the prepared contents. The Page's compact overview and collapsed legacy sections were read back. Structural removal was rejected; the retained Page detail is an explicitly frozen snapshot, not a maintained source. See F09 and F16 for remaining limits.
