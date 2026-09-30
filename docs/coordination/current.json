@@ -1,15 +1,40 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-30T16:39:44Z",
-  "scope": "Selected project-local agent-agnostic workflow readiness, its material planning gaps and parked candidate routes. This is not thesis completion or a host-wide process inventory.",
-  "summary": "Workflow migration incomplete. Scope and acceptance selection pending; implementation has not started. OTel complete. Legacy message delivery unverified; thesis stopped.",
+  "updated_at": "2026-09-30T17:33:14Z",
+  "scope": "Whole msc-math completion outcomes and evidence-backed selectable opportunities, plus selected workflow/setup work. This map authorizes no autonomous thesis run or external delivery.",
+  "summary": "Whole msc-math portfolio visible; workflow migration is one branch. Semantic dashboard verified. Reviewed load checker integrated; bounded four-minute watch active. Migration scope selection pending; host config drift ownership unknown. Thesis execution stopped.",
   "tasks": [
     {
-      "id": "workflow-done",
-      "title": "PROJECT DONE \u00b7 workflow migration",
+      "id": "msc-math-done",
+      "title": "msc-math PROJECT DONE",
       "kind": "milestone",
       "selection": "selected",
-      "graph_label": "PROJECT DONE\nWorkflow migration",
+      "project": "msc-math",
+      "graph_label": "PROJECT DONE\nmsc-math",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "Project completion requires supported and readable selected thesis claims, truthful code/data/reproduction and availability promises, a frozen candidate meeting the recorded human PASS threshold, required delivery/archive dispositions, and released assignments. This map does not assert any present whole-project readiness.",
+      "depends_on": [
+        "project-close"
+      ],
+      "blocker": "Workflow implementation/acceptance, thesis source/support/human PASS, code/evidence and reproduction checks, actual delivery/archive dispositions and final session release remain unfinished.",
+      "plan_gap": "Source-backed completion model needs Jörn’s selection of bounded execution windows. Current administrative status is unknown; the scientific synthesis remains a dated unreconciled 25 September snapshot.",
+      "next_step": "Use the project branches to select useful bounded work in separate worktrees; do not restart the stopped thesis run automatically.",
+      "authorization": "Outcome map selected; thesis execution and external delivery are not authorized.",
+      "sources": [
+        "docs/coordination/thesis-work.md",
+        "docs/coordination/handoff.md",
+        "docs/project-facts.md",
+        "ARCHITECTURE.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z"
+    },
+    {
+      "id": "workflow-done",
+      "title": "Project-local workflows ready",
+      "kind": "milestone",
+      "selection": "selected",
+      "graph_label": "Workflows ready",
       "status": "blocked",
       "owner": null,
       "outcome": "Selected project-local skills and workflow deliverables integrated and working against the agreed support contract, with evidence and caveats retained; all assignments closed and their sessions released. Plans alone do not establish readiness. Thesis execution remains STOPPED.",
@@ -22,7 +47,10 @@
         "docs/development-environments.md",
         "docs/coordination/handoff.md"
       ],
-      "updated_at": "2026-09-30T16:21:46Z"
+      "updated_at": "2026-09-30T16:21:46Z",
+      "project": "workflows",
+      "next_step": "Select the reviewed local migration and acceptance package; workflow readiness is one subproject, not whole-project completion.",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
     },
     {
       "id": "coordination-cleanup",
@@ -40,7 +68,9 @@
       "updated_at": "2026-09-30T16:21:46Z",
       "kind": "task",
       "selection": "selected",
-      "graph_label": "Shared coordination"
+      "graph_label": "Shared coordination",
+      "project": "workflows",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
     },
     {
       "id": "agent-workflow-guidance",
@@ -58,7 +88,9 @@
       "updated_at": "2026-09-30T16:21:46Z",
       "kind": "task",
       "selection": "selected",
-      "graph_label": "Local guidance"
+      "graph_label": "Local guidance",
+      "project": "workflows",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
     },
     {
       "id": "workstation-otel-plan",
@@ -75,7 +107,9 @@
       "updated_at": "2026-09-30T16:21:46Z",
       "kind": "task",
       "selection": "selected",
-      "graph_label": "Workstation OTel"
+      "graph_label": "Workstation OTel",
+      "project": "workflows",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
     },
     {
       "id": "skill-migration-plan",
@@ -91,7 +125,9 @@
       "updated_at": "2026-09-30T16:21:46Z",
       "kind": "task",
       "selection": "selected",
-      "graph_label": "Skill proposal"
+      "graph_label": "Skill proposal",
+      "project": "workflows",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
     },
     {
       "id": "knowledge-evaluation-plan",
@@ -107,7 +143,9 @@
       "updated_at": "2026-09-30T16:21:46Z",
       "kind": "task",
       "selection": "selected",
-      "graph_label": "Knowledge proposal"
+      "graph_label": "Knowledge proposal",
+      "project": "workflows",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
     },
     {
       "id": "agent-transport-investigation",
@@ -124,14 +162,16 @@
       "kind": "task",
       "selection": "parked",
       "graph_label": "Communication diagnosis",
-      "plan_gap": "Capture failing URL, socket owner/PID and endpoint-binding lifecycle events on the next natural failure. Do not launch repeated investigation or restart the shared daemon."
+      "plan_gap": "Capture failing URL, socket owner/PID and endpoint-binding lifecycle events on the next natural failure. Do not launch repeated investigation or restart the shared daemon.",
+      "project": "workflows",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
     },
     {
       "id": "workflow-proposal-integration",
       "title": "Review and consolidate returned skill and knowledge proposals",
       "status": "done",
       "owner": null,
-      "outcome": "Reviewed migration and knowledge proposals against returned environment/accounting findings. Recommend nine project-local skills with Claude adapters, conditional host capabilities and retained-packet handoffs; defer controlled behavioral pilot and new messaging infrastructure. Concrete package selection remains J\u00f6rn\u2019s decision; no skill activation or execution approval is inferred.",
+      "outcome": "Reviewed migration and knowledge proposals against returned environment/accounting findings. Recommend nine project-local skills with Claude adapters, conditional host capabilities and retained-packet handoffs; defer controlled behavioral pilot and new messaging infrastructure. Concrete package selection remains Jörn’s decision; no skill activation or execution approval is inferred.",
       "depends_on": [
         "skill-migration-plan",
         "knowledge-evaluation-plan"
@@ -144,17 +184,19 @@
       "updated_at": "2026-09-30T16:39:44Z",
       "kind": "task",
       "selection": "selected",
-      "graph_label": "Proposal integration"
+      "graph_label": "Proposal integration",
+      "project": "workflows",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
     },
     {
       "id": "workflow-dashboard-map",
-      "title": "Remaining workflow dependencies visible in the dashboard",
+      "title": "Semantic msc-math project map dashboard",
       "kind": "task",
       "selection": "selected",
-      "graph_label": "Goal and dependency view",
+      "graph_label": "Semantic project map",
       "status": "done",
       "owner": null,
-      "outcome": "Dashboard exposes goal, unfinished dependencies, planning gaps and parked routes; native-width graph has a goal-centered viewport. Local desktop and 390px mobile reviews passed; phone graph requires panning. Source/path/HTTP checks passed. Coordinator owns integration.",
+      "outcome": "Semantic DOM portfolio view completed in dedicated design session: whole msc-math goal, completion branches, interactive outcome/status/owner/blocker/scope/evidence/next-step nodes and shared prerequisite links. Live desktop/390px and320px fixture checked; no horizontal overflow.15second refresh preserves open state/focus. Root integrated source/dependency checks and8 HTTP tests.",
       "depends_on": [
         "coordination-cleanup",
         "workflow-completion-map"
@@ -163,7 +205,12 @@
       "sources": [
         "docs/coordination/README.md"
       ],
-      "updated_at": "2026-09-30T16:33:15Z"
+      "updated_at": "2026-09-30T17:18:54Z",
+      "project": "workflows",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected.",
+      "related_threads": [
+        "01a0f33e-8cf0-77b0-9d80-7ee6fad1d6fc"
+      ]
     },
     {
       "id": "workflow-route-definition",
@@ -181,7 +228,9 @@
         "docs/coordination/skill-migration-plan.md"
       ],
       "updated_at": "2026-09-30T16:31:50Z",
-      "plan_gap": "Claude fresh-clone setup/discovery, cloud-to-host handoff, remote-device review access and reconnect/session continuity have no agreed acceptance route. Required support versus explicitly deferred capabilities is unresolved."
+      "plan_gap": "Claude fresh-clone setup/discovery, cloud-to-host handoff, remote-device review access and reconnect/session continuity have no agreed acceptance route. Required support versus explicitly deferred capabilities is unresolved.",
+      "project": "workflows",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
     },
     {
       "id": "workflow-accounting-definition",
@@ -199,7 +248,9 @@
         "docs/development-environments.md"
       ],
       "updated_at": "2026-09-30T16:31:50Z",
-      "plan_gap": "Comparable cloud/Pro usage, semantic task/message journaling and budget-enforcement mechanics are undefined. Numeric thresholds are not agreed; the selected delivery may explicitly defer automation."
+      "plan_gap": "Comparable cloud/Pro usage, semantic task/message journaling and budget-enforcement mechanics are undefined. Numeric thresholds are not agreed; the selected delivery may explicitly defer automation.",
+      "project": "workflows",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
     },
     {
       "id": "workflow-selection",
@@ -209,20 +260,22 @@
       "graph_label": "Select completion package",
       "status": "blocked",
       "owner": null,
-      "outcome": "Coordinator presents consolidated alternatives, expected outcomes, resource estimates, limitations and precise activation/acceptance scope. J\u00f6rn selects migration/knowledge scope and substantial expenditure; retain/defer is a valid explicit disposition.",
+      "outcome": "Coordinator presents consolidated alternatives, expected outcomes, resource estimates, limitations and precise activation/acceptance scope. Jörn selects migration/knowledge scope and substantial expenditure; retain/defer is a valid explicit disposition.",
       "depends_on": [
         "workflow-proposal-integration",
         "workflow-route-definition",
         "workflow-accounting-definition"
       ],
-      "blocker": "Returned proposals and completed route/accounting recommendations need coordinator integration into one reviewable package; J\u00f6rn has not selected its scope, substantial expenditure or acceptance criteria.",
+      "blocker": "Consolidated proposal and route/accounting recommendations returned; Jörn has not selected implementation/activation scope, substantial expenditure or acceptance criteria.",
       "sources": [
         "docs/coordination/skill-migration-plan.md",
         "docs/coordination/knowledge-evaluation-plan.md",
         "AGENTS.md.commentary.md"
       ],
       "updated_at": "2026-09-30T16:21:46Z",
-      "plan_gap": "No complete selected implementation/acceptance package exists. Proposal estimates are not authorization; readiness must not silently mean every proposed feature or pilot."
+      "plan_gap": "Reviewed recommendation exists; approved package and assigned implementation/acceptance ownership are absent.",
+      "project": "workflows",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
     },
     {
       "id": "workflow-delivery",
@@ -244,7 +297,9 @@
         "docs/coordination/knowledge-evaluation-plan.md"
       ],
       "updated_at": "2026-09-30T16:21:46Z",
-      "plan_gap": "Implementation owners, concrete change list and receiving/review responsibilities must follow selection. This placeholder does not authorize migration, evaluations or host/cloud setup."
+      "plan_gap": "Implementation owners, concrete change list and receiving/review responsibilities must follow selection. This placeholder does not authorize migration, evaluations or host/cloud setup.",
+      "project": "workflows",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
     },
     {
       "id": "workflow-acceptance",
@@ -266,7 +321,9 @@
         "docs/development-environments.md"
       ],
       "updated_at": "2026-09-30T16:21:46Z",
-      "plan_gap": "Fresh Codex/Claude discovery and selected remote handoff/review checks are unperformed. A behavioral pilot is optional until selected; structural checks alone do not establish reliable behavior."
+      "plan_gap": "Fresh Codex/Claude discovery and selected remote handoff/review checks are unperformed. A behavioral pilot is optional until selected; structural checks alone do not establish reliable behavior.",
+      "project": "workflows",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
     },
     {
       "id": "workflow-session-release",
@@ -278,13 +335,17 @@
       "owner": null,
       "outcome": "Coordinator integrates outcomes, records any pending decisions with a receiving owner, closes completed assignments and releases their sessions. Do not confuse an idle planner with an active owner.",
       "depends_on": [
-        "workflow-acceptance"
+        "workflow-acceptance",
+        "host-codex-config-drift",
+        "coordination-load-watch"
       ],
       "blocker": "Coordinator integration and selected workflow delivery/acceptance remain unfinished; bounded worker assignments have ended.",
       "sources": [
         "docs/coordination/README.md"
       ],
-      "updated_at": "2026-09-30T16:21:46Z"
+      "updated_at": "2026-09-30T16:21:46Z",
+      "project": "workflows",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
     },
     {
       "id": "workflow-migration-candidate",
@@ -303,7 +364,9 @@
         "docs/coordination/skill-migration-plan.md"
       ],
       "updated_at": "2026-09-30T16:21:46Z",
-      "plan_gap": "Initial instruction was inspect/plan/discuss first; migration and activation selection absent."
+      "plan_gap": "Initial instruction was inspect/plan/discuss first; migration and activation selection absent.",
+      "project": "workflows",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
     },
     {
       "id": "workflow-knowledge-pilot",
@@ -322,7 +385,9 @@
         "docs/coordination/knowledge-evaluation-plan.md"
       ],
       "updated_at": "2026-09-30T16:21:46Z",
-      "plan_gap": "Scope, owner and resources have not been selected; broader cases and post-compaction validation remain unperformed."
+      "plan_gap": "Scope, owner and resources have not been selected; broader cases and post-compaction validation remain unperformed.",
+      "project": "workflows",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
     },
     {
       "id": "workflow-cloud-automation",
@@ -339,11 +404,13 @@
         "docs/development-environments.md"
       ],
       "updated_at": "2026-09-30T16:21:46Z",
-      "plan_gap": "No agreed need, design, acceptance contract or authorization for cloud automation."
+      "plan_gap": "No agreed need, design, acceptance contract or authorization for cloud automation.",
+      "project": "workflows",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
     },
     {
       "id": "thesis-execution-stopped",
-      "title": "Thesis execution \u2014 STOPPED",
+      "title": "Thesis execution — STOPPED",
       "kind": "task",
       "selection": "parked",
       "graph_label": "Thesis execution\nSTOPPED",
@@ -355,23 +422,27 @@
       "sources": [
         "docs/coordination/handoff.md"
       ],
-      "updated_at": "2026-09-30T16:21:46Z"
+      "updated_at": "2026-09-30T16:21:46Z",
+      "project": "thesis",
+      "authorization": "STOPPED; no autonomous thesis execution window."
     },
     {
       "id": "workflow-completion-map",
-      "title": "Completion map and graph projection retained",
+      "title": "Whole-project completion map and dependency projection",
       "kind": "task",
       "selection": "selected",
-      "graph_label": "Completion map",
+      "graph_label": "Project completion map",
       "status": "done",
       "owner": null,
-      "outcome": "Goal/dependency map retained in canonical JSON with explicit planning gaps and parked routes; DOT/SVG project shared state with a source-hash drift check. Syntax, missing-dependency/cycle rejection, stale DOT/SVG detection and state/path checks passed. Coordinator owns integration and subsequent refresh.",
+      "outcome": "Whole msc-math outcome/dependency map retained: workflow subproject, thesis support/prose and human PASS, code/evidence, reproduction, actual delivery/archive and closure. Twelve independent read-only candidates plus optional research/writing routes are visible without execution authorization. Semantic dashboard is primary; DOT/SVG source-hash projection checks pass.",
       "depends_on": [],
       "blocker": null,
       "sources": [
         "docs/coordination/README.md"
       ],
-      "updated_at": "2026-09-30T16:32:41Z"
+      "updated_at": "2026-09-30T17:09:45Z",
+      "project": "workflows",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
     },
     {
       "id": "workflow-communication-acceptance",
@@ -381,7 +452,7 @@
       "graph_label": "Communication acceptance",
       "status": "blocked",
       "owner": null,
-      "outcome": "Verify bounded message/return delivery for the selected workflow paths, or retain a specifically accepted limitation. Native bounded worker send/return delivery succeeded in this window; legacy independent-session send receipt remains unverified.",
+      "outcome": "Native worker delivery worked; an actual active-window independent dashboard-session send/return exchange now verified. Historical failure cause remains unproven, reconnect lifetime and external/cloud delivery remain unverified. Acceptance scope still awaits selection.",
       "depends_on": [
         "workflow-selection"
       ],
@@ -390,7 +461,635 @@
       "sources": [
         "docs/development-environments.md"
       ],
-      "updated_at": "2026-09-30T16:39:44Z"
+      "updated_at": "2026-09-30T17:18:54Z",
+      "project": "workflows",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
+    },
+    {
+      "id": "host-codex-config-drift",
+      "title": "Attribute and triage remaining host Codex configuration drift",
+      "status": "blocked",
+      "owner": "01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a",
+      "outcome": "Read-only triage complete:35additions/3deletions are live via ~/.codex/config.toml Stow symlink. All delta literals observed in OTel session09:47:59UTC before its telemetry edits. Git baseline authors do not attribute dirty edits. Categories: internal model-tooltip state; browser backend/version/path; browser origin policies; plugin/hook enablement/trust; undocumented analytics flag. Preserved unchanged; OTel remains complete.",
+      "depends_on": [],
+      "blocker": "All dirty-delta authorship remains unknown; successful writer evidence absent in bounded local search. Live configuration disposition still needs intent/implementation review; no revert or commit authorized.",
+      "sources": [
+        "docs/coordination/current.json",
+        "docs/development-environments.md"
+      ],
+      "updated_at": "2026-09-30T17:18:54Z",
+      "selection": "selected",
+      "graph_label": "Host config drift\nOwnership unknown",
+      "kind": "task",
+      "project": "workflows",
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected.",
+      "next_step": "Coordinator retains ownership. Review intended live settings and separate runtime trust/tooltip state before proposing a focused dotfiles disposition; preserve originals until then."
+    },
+    {
+      "id": "thesis-ready",
+      "title": "Selected thesis meets the recorded PASS threshold",
+      "kind": "milestone",
+      "selection": "selected",
+      "project": "thesis",
+      "graph_label": "Thesis ready",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "One exact selected PDF has supported claims, traceable exposition/evidence, adequate required content, and Jörn’s readiness judgment at the recorded PASS threshold: only minor issues Kai could leave Jörn to fix in about two hours; borderline is FAIL. No present whole-PDF verdict establishes this.",
+      "depends_on": [
+        "thesis-human-pass"
+      ],
+      "blocker": "Thesis execution stopped; selected-source repairs, claim/evidence checks, frozen candidate and whole-PDF human judgment remain unfinished.",
+      "sources": [
+        "docs/coordination/handoff.md",
+        "docs/coordination/thesis-work.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized."
+    },
+    {
+      "id": "code-evidence-ready",
+      "title": "Retained implementation and artifact claims match their support",
+      "kind": "milestone",
+      "selection": "selected",
+      "project": "evidence",
+      "graph_label": "Code and evidence",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "Thesis algorithm/numerical promises match public API contracts and bounded correspondence evidence; every displayed example/count/figure/certificate resolves to its actual producer and public or working-repository availability. Tests are evidence layers, not unrestricted theorem proofs.",
+      "depends_on": [
+        "opportunity-code-contract",
+        "opportunity-artifact-map"
+      ],
+      "blocker": "Current claim-to-implementation and artifact-availability completeness has not been established; scoped checks remain unselected.",
+      "sources": [
+        "crates/README.md",
+        "docs/coordination/thesis-work.md",
+        "docs/project-facts.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized.",
+      "plan_gap": "No need for blanket code cleanup or a universal solver formalization; inspect exactly what retained claims require."
+    },
+    {
+      "id": "reproduction-ready",
+      "title": "Claimed reproduction routes are complete and truthful",
+      "kind": "milestone",
+      "selection": "selected",
+      "project": "reproduction",
+      "graph_label": "Reproduction ready",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "Document and check the agreed code → experiment output → figure-copy → PDF flows; name environments, tool versions, original LICCA route/timings/specs and byte-identical versus accepted comparisons. Retain explicitly accepted historical limitations; smoke success is not full evidence.",
+      "depends_on": [
+        "opportunity-reproduction-map",
+        "reproduction-acceptance"
+      ],
+      "blocker": "Playbook completeness versus thesis promises is unverified; no scoped clean-environment verification package is selected.",
+      "sources": [
+        "docs/reproducibility.md",
+        "docs/project-facts.md",
+        "submit/archive-closure-checklist.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized.",
+      "plan_gap": "Missing completeness evidence is an open question, not a confirmed broken producer or automatic permission for costly reruns."
+    },
+    {
+      "id": "thesis-scope-disposition",
+      "title": "Dispose of unresolved thesis scope questions",
+      "kind": "crux",
+      "selection": "selected",
+      "project": "thesis",
+      "graph_label": "Scope disposition",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "Clarify whether the closed named DS method table meets Jörn’s intended scope; explicitly select, omit or defer remaining optional results. Preserve required result areas and support-strength caveats; do not count ledger rows against the historical approximate repertoire size.",
+      "depends_on": [],
+      "blocker": "Overall DS scope classification remains uncertain pending Jörn; stopped execution supplies no new selection.",
+      "sources": [
+        "docs/coordination/thesis-work.md",
+        "docs/project-facts.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized.",
+      "plan_gap": "Fixed-pentagon/symmetric-partner selection is unresolved; optional research validity does not create a thesis obligation.",
+      "next_step": "Present exact current-source scope choices separately from reader concerns and optional research."
+    },
+    {
+      "id": "thesis-source-repairs",
+      "title": "Close surviving source repairs and reader-comment dispositions",
+      "kind": "task",
+      "selection": "selected",
+      "project": "thesis",
+      "graph_label": "Source repairs",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "Verify suggested issues against the current selected source before patching; apply supported bridge/orientation/provenance repairs and disposition DS/AI annotations without transferring verdicts from older drafts. No broad rewrite or missing-proof claim follows from the backlog.",
+      "depends_on": [
+        "opportunity-foundations-review",
+        "opportunity-certificate-review",
+        "opportunity-product-proofs",
+        "opportunity-ds-disposition",
+        "opportunity-visual-numerics",
+        "opportunity-ai-reflection",
+        "thesis-scope-disposition"
+      ],
+      "blocker": "No thesis execution window selected; source-aware repair packets and DS scope disposition remain unselected.",
+      "sources": [
+        "docs/coordination/thesis-work.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized."
+    },
+    {
+      "id": "thesis-claims-supported",
+      "title": "Audit selected theorem and empirical wording against evidence",
+      "kind": "task",
+      "selection": "selected",
+      "project": "thesis",
+      "graph_label": "Claims supported",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "Check relevant paper → formal proof → implementation/experiment → thesis arrows. In particular preserve L10-N/L10-N+ equality-family and upper-section-curvature caveats, and the conditional/generic flow theorem versus bounded production correspondence.",
+      "depends_on": [
+        "opportunity-chapter7-claims",
+        "thesis-source-repairs",
+        "code-evidence-ready"
+      ],
+      "blocker": "Current rendered claim audit and post-repair candidate-wide support check are unperformed; the 25 September scientific view is dated.",
+      "sources": [
+        "docs/coordination/thesis-work.md",
+        "docs/project-facts.md",
+        "docs/consolidation/2026-09-24/claim-disposition.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized."
+    },
+    {
+      "id": "thesis-frozen-candidate",
+      "title": "Assemble and inspect one exact reader-facing candidate",
+      "kind": "task",
+      "selection": "selected",
+      "project": "thesis",
+      "graph_label": "Frozen candidate",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "Build only thesis/main.tex after selected edits; inspect changed pages plus adjacent floats/references/appendix continuations; record source revision and PDF hash and intentionally reconcile retained build verification. The existing frozen PDF has seven known input mismatches.",
+      "depends_on": [
+        "thesis-source-repairs",
+        "thesis-claims-supported",
+        "reproduction-ready"
+      ],
+      "blocker": "Stopped thesis run; source/support/reproduction work unfinished and no current accepted frozen candidate.",
+      "sources": [
+        "thesis/README.md",
+        "docs/coordination/thesis-work.md",
+        "docs/coordination/handoff.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized."
+    },
+    {
+      "id": "thesis-human-pass",
+      "title": "Obtain the required whole-candidate human judgments",
+      "kind": "crux",
+      "selection": "selected",
+      "project": "thesis",
+      "graph_label": "Human PASS",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "Jörn judges one inspected frozen candidate and takes responsibility for it; when satisfied, the recorded flow sends it to Kai, incorporates feedback and then hands in without another full Kai review. Final grading is one-time and distinct from diagnostic reviews.",
+      "depends_on": [
+        "thesis-frozen-candidate"
+      ],
+      "blocker": "Frozen inspected candidate and Jörn’s readiness to review it are absent; no fast Kai-review arrangement is established.",
+      "sources": [
+        "docs/coordination/handoff.md",
+        "docs/project-facts.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized.",
+      "plan_gap": "Local annotation repairs and agent reviews do not establish whole-chapter or whole-PDF human acceptance."
+    },
+    {
+      "id": "reproduction-acceptance",
+      "title": "Select and check the required reproduction comparison package",
+      "kind": "crux",
+      "selection": "selected",
+      "project": "reproduction",
+      "graph_label": "Reproduction checks",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "After the claim/output map, define which clean-environment producer/comparison checks are necessary, estimate substantial costs, select them and retain evidence or an explicitly accepted limitation. Do not rerun --full workflows or replace retained outputs merely to tidy status.",
+      "depends_on": [
+        "opportunity-reproduction-map"
+      ],
+      "blocker": "Concrete claimed-artifact comparison scope, environment, cost and execution selection are absent.",
+      "sources": [
+        "docs/reproducibility.md",
+        "docs/project-facts.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized."
+    },
+    {
+      "id": "project-delivery-disposition",
+      "title": "Record actual thesis delivery and archive closure dispositions",
+      "kind": "milestone",
+      "selection": "selected",
+      "project": "release",
+      "graph_label": "Delivery and archive",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "Establish current administrative status and requirements first; do not infer an outstanding hand-in from old deadline/unsubmitted notes. Prepare the accepted continuation/archive payload with rights/data dispositions, exact reviewed commit, checked PDF, inventory/hashes and metadata. External submission/publication remains a separate Jörn-authorized action.",
+      "depends_on": [
+        "opportunity-official-status",
+        "opportunity-archive-inventory",
+        "thesis-ready",
+        "reproduction-ready"
+      ],
+      "blocker": "Current submission status/rules and closure-time payload/rights/data review are unverified; no release candidate or external action is selected.",
+      "sources": [
+        "docs/project-facts.md",
+        "submit/archive-closure-checklist.md",
+        "docs/reproducibility.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized.",
+      "plan_gap": "Accepted Zenodo direction is not a created/published record or DOI. Current closure can record an already-completed administrative action once verified."
+    },
+    {
+      "id": "project-close",
+      "title": "Integrate project outcomes, preserve handoff and release sessions",
+      "kind": "task",
+      "selection": "selected",
+      "project": "msc-math",
+      "graph_label": "Project close",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "Coordinator reconciles selected outcomes and caveats, current scientific synthesis when its sources/route change, retained completion evidence and continuation constraints; release all project-owned assignments/sessions. Optional research remains explicitly disposed rather than silently included.",
+      "depends_on": [
+        "workflow-done",
+        "thesis-ready",
+        "code-evidence-ready",
+        "reproduction-ready",
+        "project-delivery-disposition",
+        "workflow-dashboard-map"
+      ],
+      "blocker": "Required branch outcomes and human/delivery dispositions unfinished; selected worker integration and final release remain pending.",
+      "sources": [
+        "docs/coordination/README.md",
+        "docs/coordination/handoff.md",
+        "docs/project-facts.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized."
+    },
+    {
+      "id": "opportunity-foundations-review",
+      "title": "Check current foundations and QP exposition",
+      "kind": "task",
+      "selection": "unselected",
+      "project": "thesis",
+      "graph_label": "Foundations / QP",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Read Chapters 2 and 4 against backlog items 1: terminology, Rudolf input/output, cyclic-word operation and dependence/vertex-replacement bridges. Return surviving/solved/withdrawn findings with exact source locations; no edits or theorem strengthening.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/thesis-work.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
+      "plan_gap": "Technically independent bounded candidate, currently unassigned and unselected; stopped thesis scope still applies.",
+      "next_step": "Select a bounded read-only Chapter 2/4 packet in its own worktree.",
+      "parallel_ready": true
+    },
+    {
+      "id": "opportunity-certificate-review",
+      "title": "Check variation and HKO certificate navigation",
+      "kind": "task",
+      "selection": "unselected",
+      "project": "thesis",
+      "graph_label": "Variation / certificate",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Read Chapters 6/7 and HKO appendix against backlog item 2; separate finite predicates and geometric implication. The certificate and slope-to-neighborhood proof are reported present. No certificate recomputation.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/thesis-work.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
+      "plan_gap": "Technically independent bounded candidate, currently unassigned and unselected; stopped thesis scope still applies.",
+      "next_step": "Select a bounded source-navigation review; coordinate Chapter 7 edits with the claim packet.",
+      "parallel_ready": true
+    },
+    {
+      "id": "opportunity-product-proofs",
+      "title": "Check product-family finite and limiting proof bridges",
+      "kind": "task",
+      "selection": "unselected",
+      "project": "thesis",
+      "graph_label": "Product proof bridges",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Read Chapters 9–11 against backlog item 3: ordered pairings, finite vertex/alternation calculations, equality classification, product-position squeeze and Hausdorff/capacity-continuity bridge. Preserve exact/numerical distinctions.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/thesis-work.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
+      "plan_gap": "Technically independent bounded candidate, currently unassigned and unselected; stopped thesis scope still applies.",
+      "next_step": "Select an independent product-proof source packet; report exact surviving bridges before edits.",
+      "parallel_ready": true
+    },
+    {
+      "id": "opportunity-ds-disposition",
+      "title": "Dispose of reader concerns against the selected DS chapter",
+      "kind": "task",
+      "selection": "unselected",
+      "project": "thesis",
+      "graph_label": "DS reader disposition",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Map retained human comments to current Chapter 8/appendix: applied, absent, context-accepted or older-draft-only. Preserve accepted correlation/area text, retrospective bounds and explicitly unresolved random_F8_s3_45. Human acceptance and overall DS scope remain separate.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/thesis-work.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
+      "plan_gap": "Technically independent bounded candidate, currently unassigned and unselected; stopped thesis scope still applies.",
+      "next_step": "Select a source-aware DS disposition packet; do not import old rejection as a current verdict.",
+      "parallel_ready": true
+    },
+    {
+      "id": "opportunity-visual-numerics",
+      "title": "Check visualization purposes and certified numerical example",
+      "kind": "task",
+      "selection": "unselected",
+      "project": "thesis",
+      "graph_label": "Figures / numerical example",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Inspect Chapters 12–14 for panel purpose/inference limits and the requested concrete certified numerical example; return a scoped proposal using existing code/evidence without launching producers.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/thesis-work.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
+      "plan_gap": "Technically independent bounded candidate, currently unassigned and unselected; stopped thesis scope still applies.",
+      "next_step": "Select a read-only example/provenance design packet before implementing or running it.",
+      "parallel_ready": true
+    },
+    {
+      "id": "opportunity-ai-reflection",
+      "title": "Verify AI annotation repairs against the selected source",
+      "kind": "task",
+      "selection": "unselected",
+      "project": "thesis",
+      "graph_label": "AI reflection map",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Check selected Chapter 15 against the mapped v3 repairs; no confirmed annotation defect remains. Preserve factual disclosure separately from reflection and record source drift or unknown whole-chapter acceptance.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/thesis-work.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
+      "plan_gap": "Technically independent bounded candidate, currently unassigned and unselected; stopped thesis scope still applies.",
+      "next_step": "Select a bounded source-map check; do not rewrite unflagged AI prose.",
+      "parallel_ready": true
+    },
+    {
+      "id": "opportunity-chapter7-claims",
+      "title": "Check rendered Chapter 7 claims and PDF/source identity",
+      "kind": "task",
+      "selection": "unselected",
+      "project": "evidence",
+      "graph_label": "Chapter 7 claim check",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Identify source revision/PDF identity, then compare L10-N/L10-N+ rendered statement, equality family and upper-section-curvature caveat against 24 September disposition and non-HKO rational/analytic packet. If no matching PDF is available, report that prerequisite; do not treat the older frozen PDF as current.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/thesis-work.md",
+        "docs/consolidation/2026-09-24/claim-disposition.md",
+        "experiments/hko-local-maximum/non-hko/README.md",
+        "experiments/hko-local-maximum/non-hko/PROOF.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
+      "plan_gap": "Technically independent bounded candidate, currently unassigned and unselected; stopped thesis scope still applies.",
+      "next_step": "Select the bounded rendered-PDF claim audit; no expensive verifier rerun.",
+      "parallel_ready": true
+    },
+    {
+      "id": "opportunity-code-contract",
+      "title": "Check retained algorithm and numerical contract boundaries",
+      "kind": "task",
+      "selection": "unselected",
+      "project": "evidence",
+      "graph_label": "Code correspondence",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Trace retained capacity/numerics/flow promises to crate APIs and focused evidence owners; distinguish theorem assumptions, bounded tests and optimized production correspondence. Return exact claim/contract gaps and recommended focused checks; no blanket implementation rewrite.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "crates/README.md",
+        "docs/project-facts.md",
+        "ARCHITECTURE.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
+      "plan_gap": "Technically independent bounded candidate, currently unassigned and unselected; stopped thesis scope still applies.",
+      "next_step": "Select read-only claim/API/evidence mapping in a separate worktree; test execution requires its chosen packet.",
+      "parallel_ready": true
+    },
+    {
+      "id": "opportunity-artifact-map",
+      "title": "Resolve displayed examples, counts and public artifact references",
+      "kind": "task",
+      "selection": "unselected",
+      "project": "evidence",
+      "graph_label": "Artifact traceability",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Map named KKT/comparison/product counts, figures and annotated HKO listing to canonical packets and actual tracked/registered/public availability. Existing local files do not establish a public commit or remote download promise.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/thesis-work.md",
+        "docs/project-facts.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
+      "plan_gap": "Technically independent bounded candidate, currently unassigned and unselected; stopped thesis scope still applies.",
+      "next_step": "Select a bounded current-claim-to-artifact inventory; preserve producer-owned outputs.",
+      "parallel_ready": true
+    },
+    {
+      "id": "opportunity-reproduction-map",
+      "title": "Compare the reproduction playbook with retained thesis promises",
+      "kind": "task",
+      "selection": "unselected",
+      "project": "reproduction",
+      "graph_label": "Reproduction inventory",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Inspect source-to-output-to-figure-to-PDF instructions, versions, LICCA timing/specs and comparison policies against the two-year target. Return complete/unknown/missing routes and cost estimates; no full producers or deletion experiment.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/reproducibility.md",
+        "docs/project-facts.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
+      "plan_gap": "Technically independent bounded candidate, currently unassigned and unselected; stopped thesis scope still applies.",
+      "next_step": "Select a read-only playbook/output inventory; stage specific verification proposals afterward.",
+      "parallel_ready": true
+    },
+    {
+      "id": "opportunity-official-status",
+      "title": "Establish current submission status and official requirements",
+      "kind": "task",
+      "selection": "unselected",
+      "project": "release",
+      "graph_label": "Official status check",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Prepare a bounded check of current submission status, official rules and AI-disclosure requirements. Ask Jörn/current official sources when selected; never infer remaining hand-in or missed deadlines from historical notes.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/project-facts.md",
+        "docs/coordination/handoff.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
+      "plan_gap": "Unassigned and unselected; current administration/closure facts need inspection.",
+      "next_step": "Select current status/rules inquiry; no external submission or message is authorized.",
+      "parallel_ready": true
+    },
+    {
+      "id": "opportunity-archive-inventory",
+      "title": "Inventory closure-time rights, data and archive gaps",
+      "kind": "task",
+      "selection": "unselected",
+      "project": "release",
+      "graph_label": "Archive preparation",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Compare current payload/registry to accepted continuation/Zenodo checklist: rights notices, private/disposable material, useful artifacts, clean-cache materialization, exact reviewed commit/PDF, metadata and exterior publication. Return dispositions/questions without deleting, packing or publishing.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "submit/archive-closure-checklist.md",
+        "docs/project-facts.md"
+      ],
+      "updated_at": "2026-09-30T17:03:16Z",
+      "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
+      "plan_gap": "Unassigned and unselected; current administration/closure facts need inspection.",
+      "next_step": "Select a bounded read-only closure inventory in its own worktree.",
+      "parallel_ready": true
+    },
+    {
+      "id": "opportunity-optional-results",
+      "title": "Review optional research/result selection",
+      "kind": "crux",
+      "selection": "unselected",
+      "project": "research",
+      "graph_label": "Optional result routes",
+      "status": "parked",
+      "owner": null,
+      "outcome": "Reviewed but unselected results include the fixed-pentagon/symmetric-partner bound, harmonic blind directions, ridge circulation, moment counterexample and joint-representation separations. Research validity/interest is not thesis selection or novelty acceptance.",
+      "depends_on": [],
+      "blocker": null,
+      "plan_gap": "No exact optional result is selected for integration; the general zonotope bound remains conjectural/paused.",
+      "next_step": "Select a bounded statement/evidence/value comparison before any research execution or thesis addition.",
+      "authorization": "Unselected optional work; not a thesis-completion prerequisite or execution authorization.",
+      "sources": [
+        "docs/coordination/thesis-work.md",
+        "docs/project-facts.md"
+      ],
+      "updated_at": "2026-09-30T17:06:12Z"
+    },
+    {
+      "id": "opportunity-open-research",
+      "title": "Structure a bounded future mathematical research packet",
+      "kind": "crux",
+      "selection": "unselected",
+      "project": "research",
+      "graph_label": "Open research packages",
+      "status": "parked",
+      "owner": null,
+      "outcome": "The dated scientific view records F=11/global HKO questions as outside the submission route; project facts distinguish non-generic arbitrary-polytope support from generic smooth-branch results. These are possible future questions, not current theorem obligations or assigned experiments.",
+      "depends_on": [],
+      "blocker": null,
+      "plan_gap": "Exact question, owner evidence baseline, useful alternatives and resources have not been selected; recheck source owners before promoting historical open questions.",
+      "next_step": "Select a bounded problem-structuring packet; no large proof search, producer or Pro handoff follows automatically.",
+      "authorization": "Unselected optional work; not a thesis-completion prerequisite or execution authorization.",
+      "sources": [
+        "docs/coordination/thesis-work.md",
+        "docs/project-facts.md",
+        "docs/dashboard/thesis.html"
+      ],
+      "updated_at": "2026-09-30T17:06:12Z"
+    },
+    {
+      "id": "opportunity-writing-method",
+      "title": "Consider a discriminating authoring-workflow trial",
+      "kind": "crux",
+      "selection": "unselected",
+      "project": "thesis",
+      "graph_label": "Writing method trial",
+      "status": "parked",
+      "owner": null,
+      "outcome": "A current-source passage trial may inform authoring value, but local trials cannot certify whole-thesis readiness. Source repairs have independent value and do not depend on this optional mechanism.",
+      "depends_on": [],
+      "blocker": null,
+      "plan_gap": "No trial candidate, success criterion, cost or human-review package selected; retrospective writing outcomes are not a general reliable method.",
+      "next_step": "Select a concrete trial only if it could change the authoring route enough to justify its cost.",
+      "authorization": "Unselected optional work; not a thesis-completion prerequisite or execution authorization.",
+      "sources": [
+        "docs/coordination/thesis-work.md",
+        "docs/project-facts.md"
+      ],
+      "updated_at": "2026-09-30T17:06:12Z"
+    },
+    {
+      "id": "coordination-load-watch",
+      "title": "Coordinator load and idle-session supervision",
+      "kind": "task",
+      "selection": "selected",
+      "project": "workflows",
+      "graph_label": "Load supervision",
+      "status": "running",
+      "owner": "/root/coordination_load_observer",
+      "outcome": "Read-only OTel/local-metadata checker integrated; independent review resolved four misleading cases and all 13 focused tests pass. A fresh-context observer checks now and every four minutes for three further checks, reports changed warnings to root and then stops. No current alerts at 17:30:52Z; semantic backlog and billed spend remain unknown. Observer role lacks native collaboration send tools; its available TUI send transport delivered reports to root. Absolute-time scheduling avoids shortened waits when input interrupts sleep.",
+      "depends_on": [],
+      "blocker": null,
+      "authorization": "Selected bounded implementation and supervision; four observations over about twelve minutes, no permanent service or thesis execution.",
+      "sources": [
+        "scripts/coordination-load.py",
+        "scripts/test_coordination_load.py",
+        "docs/coordination/README.md"
+      ],
+      "updated_at": "2026-09-30T17:33:14Z",
+      "next_step": "Receive the remaining timed observations, act on material alerts, then release observer ownership and retain the outcome."
     }
   ],
   "decisions": [
@@ -398,7 +1097,7 @@
       "id": "cleanup-scope",
       "question": "Should a later cleanup also review topic-specific coordination packets inside experiments?",
       "status": "resolved",
-      "recommendation": "J\u00f6rn selected central surfaces first on 30 September 2026. Topic-specific research packets stay with their evidence owners.",
+      "recommendation": "Jörn selected central surfaces first on 30 September 2026. Topic-specific research packets stay with their evidence owners.",
       "consequence": "The central migration is complete; no broader topic-packet review is assigned.",
       "sources": [
         "docs/coordination/README.md"
@@ -418,7 +1117,7 @@
       "id": "working-environments",
       "question": "Which environments and access routes should the project workflow support?",
       "status": "resolved",
-      "recommendation": "J\u00f6rn selected Ubuntu workstation + Codex TUI (local kitty and Tailscale SSH from Chromebook/Android), claude.ai cloud microVM clones, and ChatGPT Chat Astra 6 Pro research. Companion Chrome web views use Tailscale.",
+      "recommendation": "Jörn selected Ubuntu workstation + Codex TUI (local kitty and Tailscale SSH from Chromebook/Android), claude.ai cloud microVM clones, and ChatGPT Chat Astra 6 Pro research. Companion Chrome web views use Tailscale.",
       "consequence": "These are support targets, not verified live capabilities. Cloud communication, logging, setup adaptation and budget accounting remain design work; no autonomous thesis run is authorized.",
       "sources": [
         "docs/development-environments.md"
@@ -428,7 +1127,7 @@
       "id": "workstation-telemetry",
       "question": "Which telemetry backend and coverage should the project use?",
       "status": "resolved",
-      "recommendation": "J\u00f6rn authorized workstation-only OTel setup through ~/.dotfiles, trusting the independent session\u2019s OpenObserve judgment. Sandbox/cloud automation is excluded.",
+      "recommendation": "Jörn authorized workstation-only OTel setup through ~/.dotfiles, trusting the independent session’s OpenObserve judgment. Sandbox/cloud automation is excluded.",
       "consequence": "Live workstation export of logs, traces and metrics is active and API-verified per owner report following the shared-daemon restart at 2026-09-30T10:32:33Z. Implementation is complete; maintenance belongs to ~/.dotfiles/INSTALL.md. Interactive browser login remains unverified. External surfaces remain outside telemetry coverage.",
       "sources": [
         "docs/development-environments.md",
@@ -437,9 +1136,9 @@
     },
     {
       "id": "planning-before-large-spend",
-      "question": "Where should J\u00f6rn review agent work before substantial resources are committed?",
+      "question": "Where should Jörn review agent work before substantial resources are committed?",
       "status": "resolved",
-      "recommendation": "J\u00f6rn wants agents to perform PM and bounded preliminary exploration/planning, then obtain his explicit approval for large execution expenditure after comparing approaches.",
+      "recommendation": "Jörn wants agents to perform PM and bounded preliminary exploration/planning, then obtain his explicit approval for large execution expenditure after comparing approaches.",
       "consequence": "The gate concerns scientific selection and spending, not every small authorized action. Independent sessions and ownership changes preserve the approved scope and pending gate.",
       "sources": [
         "AGENTS.md",
@@ -450,7 +1149,7 @@
       "id": "budget-gate-threshold",
       "question": "How should large expenditure and preliminary planning allowances be defined?",
       "status": "open",
-      "recommendation": "Agent proposal: agree planning and execution allowances per packet; J\u00f6rn has not selected this, a project-wide ceiling, or budget units. An async question was submitted; no answer is recorded.",
+      "recommendation": "Agent proposal: agree planning and execution allowances per packet; Jörn has not selected this, a project-wide ceiling, or budget units. An async question was submitted; no answer is recorded.",
       "consequence": "No numeric allowance is authorized. A vanished UI question does not resolve the decision. Bounded work within selected assignments can continue.",
       "sources": [
         "AGENTS.md.commentary.md"
@@ -461,10 +1160,44 @@
       "question": "Which local skill, knowledge and environment support package should be selected, and what evidence closes workflow readiness?",
       "status": "open",
       "recommendation": "Coordinator recommendation: retain four local workflows and port the five additional upstream skills (nine total), use .agents/skills as canonical source with relative Claude links/import, preserve host-only boundaries and use native workers plus retained packets initially. Make the two proposed knowledge-index refinements; defer the four-run behavioral pilot, cloud telemetry/automation and a new messaging service. Stage candidates outside active discovery paths before activation review. Treat a semantic event helper to existing OTel as a separately selected small package.",
-      "consequence": "Choose the scope and acceptance evidence before migration implementation/activation. Candidates and pilots remain unselected; no substantial spend is authorized by this recommendation. Legacy send receipt and Claude fresh-clone discovery are not established. Numeric budget thresholds remain unresolved and do not gate every cheap task.",
+      "consequence": "Choose migration scope and acceptance evidence before implementation/activation. Candidates and pilots remain unselected; no substantial spend is authorized. Current independent TUI send/return was verified; historical failure cause, reconnect and Claude fresh-clone discovery remain unverified. Numeric budget thresholds remain unresolved and do not gate every cheap task.",
       "sources": [
         "docs/coordination/skill-migration-plan.md",
         "docs/coordination/knowledge-evaluation-plan.md",
+        "docs/development-environments.md"
+      ]
+    },
+    {
+      "id": "project-work-selection",
+      "question": "Which bounded thesis/evidence/reproduction/release-preparation packets should run next or in parallel, and what execution window is selected?",
+      "status": "open",
+      "recommendation": "Select independent source-inspection packets from the map with exact output/ownership and limits; preserve stopped autonomous thesis execution and choose substantial execution only after concrete review.",
+      "consequence": "Visible READY candidates are technically available, not assigned or authorized. Worktree separation does not enlarge approved scope or budget.",
+      "sources": [
+        "docs/coordination/thesis-work.md",
+        "docs/coordination/handoff.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "ds-scope-disposition",
+      "question": "Does the closed named DS method table meet Jörn’s intended thesis scope, and what remaining concern must be finished or honestly caveated?",
+      "status": "open",
+      "recommendation": "Use the named closed table and its dispositions, current selected prose and retained human comments. Do not infer satisfaction/shortfall from comparison with a historical approximate method count.",
+      "consequence": "Overall scope classification remains uncertain. Optional branch-aware optimizer comparison must not delay submission; an explicitly unresolved single body does not require solving while accurately disclosed.",
+      "sources": [
+        "docs/project-facts.md",
+        "docs/coordination/thesis-work.md"
+      ]
+    },
+    {
+      "id": "host-config-disposition",
+      "question": "Which observed live Codex configuration deltas should be retained as intended portable configuration, runtime state, or reverted after review?",
+      "status": "open",
+      "recommendation": "Ownership of all dirty changes remains unknown. Preserve them; review browser integration/policy, plugin/hook trust and undocumented analytics behavior separately. Internal model availability entry is tooltip state, not evidence of model access. Coordinator owns further disposition; no assumption that Jörn or another agent authored them.",
+      "consequence": "No unknown edits are staged/reverted. Attribution search has stopped at bounded evidence limit; remaining disposition is distinct from completed OTel.",
+      "sources": [
+        "docs/coordination/current.json",
         "docs/development-environments.md"
       ]
     }
@@ -472,13 +1205,13 @@
   "resources": [
     {
       "label": "Agent work",
-      "value": "Bounded fresh-context dashboard, completion-map, transport, supported-route and accounting packets returned; owned outputs integrated. No selected worker is active. Migration delivery waits for scope/acceptance selection.",
-      "observed_at": "2026-09-30T16:39:44Z",
-      "basis": "Native worker handoffs, served-state equality, live desktop/phone render review and seven HTTP regression checks. Historical independent-thread delivery remains unverified."
+      "value": "Coordinator integrates reviewed workflow tooling; one bounded observer watches project threads every four minutes until its fourth observation. Returned workers have released assignments. Migration execution awaits scope selection; no autonomous thesis work.",
+      "observed_at": "2026-09-30T17:33:14Z",
+      "basis": "Native worker completion/review and selected observer assignment; semantic queue size is not measured."
     },
     {
       "label": "Quota and API spend",
-      "value": "J\u00f6rn reports approximately 50k input tokens spent recovering an idle session after cache expiry. Total spend/quota unknown.",
+      "value": "Jörn reports approximately 50k input tokens spent recovering an idle session after cache expiry. Total spend/quota unknown.",
       "observed_at": "2026-09-30T16:11:05Z",
       "basis": "User-reported session lifecycle cost; no independent token or billing measurement."
     },
@@ -487,6 +1220,12 @@
       "value": "No scientific producers were rerun.",
       "observed_at": "2026-09-30T08:58:26Z",
       "basis": "This task changes documentation and dashboard tooling."
+    },
+    {
+      "label": "Observed coordination load",
+      "value": "17:30:52Z, preceding 15 minutes: root 12 responses, 44,549 uncached input / 13,665 output tokens; other tracked threads 23 responses, 93,831 uncached input / 13,532 output. Root latest input 46,838 tokens. No unsuccessful events or advisory signals. Current operational work is integration plus bounded supervision; overload and semantic queue size remain unknown.",
+      "observed_at": "2026-09-30T17:30:52Z",
+      "basis": "coordination-load.py --brief, root UUID 01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a; 13 local/recorded threads discovered. Native usage observations, not billing; completeness/deduplication unverified; external sessions excluded."
     }
   ],
   "links": [
@@ -511,15 +1250,35 @@
       "path": "docs/README.md"
     },
     {
-      "label": "Scientific brief \u00b7 25 Sep snapshot",
+      "label": "Scientific brief · 25 Sep snapshot",
       "path": "docs/dashboard/thesis.html"
     },
     {
-      "label": "Frozen diagnostic PDF \u00b7 older inputs, not accepted",
+      "label": "Frozen diagnostic PDF · older inputs, not accepted",
       "path": "docs/resume/thesis-resume.pdf"
     }
   ],
   "changes": [
+    {
+      "at": "2026-09-30T17:33:14Z",
+      "text": "Integrated independently rechecked load helper (13 tests); started bounded four-minute lightweight supervision (TUI return verified; role lacks native send tools) and published scoped usage, keeping billing and semantic backlog unknown. Coordinator owns workload judgment."
+    },
+    {
+      "at": "2026-09-30T17:18:54Z",
+      "text": "Integrated whole-project root and semantic dashboard QA; workflow migration remains a subproject and12 parallel candidates require selection. Preserved unknown live host drift with coordinator ownership. Actual independent-session send/return worked; OTel load supervision underway."
+    },
+    {
+      "at": "2026-09-30T17:09:45Z",
+      "text": "Whole-project map packet completed; semantic dashboard integration remains active. ROOT/DAG, premature-DONE, source/path and DOT/SVG drift checks pass. No thesis run, scientific producer, evaluation, submission or publication launched."
+    },
+    {
+      "at": "2026-09-30T17:03:16Z",
+      "text": "Expanded root to whole msc-math PROJECT DONE. Mapped thesis support/prose, code/evidence, reproduction, human PASS and delivery/archive closure; exposed twelve independent read-only candidates without restarting thesis execution. Workflow migration is a subgoal."
+    },
+    {
+      "at": "2026-09-30T16:51:51Z",
+      "text": "Accepted ownership of pre-existing non-OTel host Codex config drift triage. Attribution unknown; preserving changes and delegating one bounded read-only packet."
+    },
     {
       "at": "2026-09-30T16:39:44Z",
       "text": "Integrated graph-first dashboard and true completion dependencies; completed owners released. Seven HTTP checks pass, live desktop/phone rendering reviewed and served JSON matches this worktree. Consolidated migration recommendation; no skill activation, behavioral pilot or thesis work."
@@ -554,7 +1313,7 @@
     },
     {
       "at": "2026-09-30T09:49:36Z",
-      "text": "Verified J\u00f6rn\u2019s workstation-only OTel setup authorization in the independent thread; owner is implementing through dotfiles. Updated its task from waiting for approval to running."
+      "text": "Verified Jörn’s workstation-only OTel setup authorization in the independent thread; owner is implementing through dotfiles. Updated its task from waiting for approval to running."
     },
     {
       "at": "2026-09-30T09:45:54Z",
@@ -570,11 +1329,11 @@
     },
     {
       "at": "2026-09-30T09:22:26Z",
-      "text": "Recorded J\u00f6rn\u2019s working topology, agent surfaces and preferred workstation-only OTel direction in development-environments.md; linked it from the knowledge index. Earlier Docker/Codex Cloud records are marked historical."
+      "text": "Recorded Jörn’s working topology, agent surfaces and preferred workstation-only OTel direction in development-environments.md; linked it from the knowledge index. Earlier Docker/Codex Cloud records are marked historical."
     },
     {
       "at": "2026-09-30T08:59:22Z",
-      "text": "J\u00f6rn confirmed central surfaces first; topic-specific coordination/evidence remains with its local owners."
+      "text": "Jörn confirmed central surfaces first; topic-specific coordination/evidence remains with its local owners."
     },
     {
       "at": "2026-09-30T08:58:26Z",

@@ -58,6 +58,13 @@ authorization requirements. A delegation names its owned output, scope,
 resource allowance, stopping/review point and receiving owner. Review ownership
 does not imply implementing fixes; agree who integrates, commits and cleans up.
 
+The coordinator owns workload supervision: check pending messages/reviews,
+ownership and dependencies alongside available usage telemetry. During ongoing
+multi-agent work, delegate a bounded periodic watch when useful; do not leave
+Jörn to discover overload or abandoned work. The coordination README documents
+the local checker. Missing telemetry and quiet threads do not establish idle
+capacity; token counters alone do not measure coordination burden.
+
 Obtain Jörn's explicit approval before large budget expenditure. Fund useful
 preliminary exploration and comparison of approaches within the authorized
 scope; present a concrete plan, alternatives, expected outcomes, uncertainty and

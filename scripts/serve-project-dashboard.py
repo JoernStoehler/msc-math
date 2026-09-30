@@ -20,12 +20,18 @@ BASELINE = "docs/dashboard/thesis-sources.json"
 # Explicitly named files only: no directory handler, path expansion or write API.
 FILES = {
     "AGENTS.md", "AGENTS.md.commentary.md",
+    "submit/archive-closure-checklist.md",
+    "docs/reproducibility.md",
+    "crates/README.md",
+    "thesis/README.md",
+    "ARCHITECTURE.md",
     STATE, BASELINE,
     "docs/dashboard/index.html", "docs/dashboard/thesis.html",
     "docs/dashboard/README.md", "docs/coordination/README.md",
     "docs/coordination/otel-design.md",
     "docs/coordination/skill-migration-plan.md",
     "docs/coordination/knowledge-evaluation-plan.md",
+    "scripts/coordination-load.py", "scripts/test_coordination_load.py",
     "docs/coordination/graphs/tasks.dot",
     "docs/coordination/graphs/tasks.svg",
     "docs/coordination/handoff.md", "docs/coordination/thesis-work.md",
@@ -211,8 +217,8 @@ def main():
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--check", action="store_true", help="validate without starting a listener")
     args = parser.parse_args()
-    read_state()
     if args.check:
+        read_state()
         status = source_status()
         if not status["known"]:
             parser.error("Scientific source baseline is unreadable")

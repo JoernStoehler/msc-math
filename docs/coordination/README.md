@@ -38,12 +38,28 @@ State does not authorize thesis completion, external publication, or spending.
 Optional task fields distinguish the outcome map from an assignment list:
 `kind` is `task` (default), `milestone`, or `crux`; `selection` is `selected`
 (default), `unselected`, or `parked`; `plan_gap` names material work whose route
-is not yet defined; `graph_label` supplies a compact readable label. A crux is
+is not yet defined; `graph_label` supplies a compact readable label. `project`
+groups related branches; `authorization` records their actual execution scope;
+`next_step` gives the next useful step or selection; `parallel_ready` means an
+independent bounded candidate could run **if selected**, never permission to
+start it. A READY unselected packet is technically available but unassigned.
+A crux is
 an unresolved choice or evidence question, not a special status. A ready task
 without an owner is available planning work, not a running session. Unselected
 and parked candidates are visible without implying execution authorization.
 
-The `workflow-done` milestone means the selected project-local skills and
+`msc-math-done` is the whole-project completion outcome. Its source-backed
+model includes supported/readable selected thesis claims, code/evidence and
+reproduction promises, one exact candidate reaching the recorded human PASS
+threshold, actual administrative/archive dispositions, working selected
+workflows and released assignments. Current administrative status is unknown:
+historical unsubmitted/deadline notes do not establish a remaining hand-in.
+This model is a planning projection; it does not establish readiness or
+authorize execution. The detailed thesis backlog and exact domain sources
+retain their authority. Optional research and writing-method trials are
+visible alternatives, not automatic prerequisites of project completion.
+
+The `workflow-done` subgoal means the selected project-local skills and
 workflow deliverables are integrated, relevant acceptance is complete, and
 their assignments and sessions are released. Returned plans alone cannot
 close it. Explicitly deferring a capability preserves that gap without making
@@ -75,10 +91,12 @@ python3 scripts/render-workflow-graph.py --check
 
 [graphs/tasks.dot](graphs/tasks.dot) and [graphs/tasks.svg](graphs/tasks.svg)
 are projections, not another canonical store. Prerequisite arrows point toward
-the dependent, with PROJECT DONE at the top. Solid arrows describe selected
+the dependent, with msc-math PROJECT DONE at the top. Solid arrows describe selected
 dependencies; dashed arrows connect proposals to unselected candidate routes.
-Completed assignments and parked routes use compact summary nodes; individual
-outcomes and gaps remain in the registry and dashboard task rows.
+Completed assignments, parked routes and independent candidates use compact
+summary nodes. Their full outcomes, exact dependencies and execution boundaries
+remain in the registry and the semantic dashboard, which is the primary view;
+DOT/SVG is an optional export rather than the browser interaction model.
 The SVG embeds the SHA256 of the exact state bytes; `--check` compares that
 marker and the generated DOT without rerendering. Regenerate after updating
 state, even if only an observation changed. This checks projection freshness,
@@ -91,6 +109,40 @@ it does not validate the mathematical claims or prove that an owner is alive.
 Run the server with `python3 scripts/serve-project-dashboard.py`, then open
 <http://127.0.0.1:8765/>. It rereads files and the browser refreshes reported
 state every 15 seconds. The listener remains local unless explicitly configured.
+
+## Workload supervision
+
+The coordinator owns supervision, including its own pending messages, reviews,
+integration work and delegatable context. The read-only workstation checker uses
+existing OpenObserve export and local usage metadata:
+
+```bash
+. "$HOME/.config/openobserve/codex-env.sh"
+python3 scripts/coordination-load.py ROOT_THREAD_UUID --minutes 15 --brief
+```
+
+Replace `ROOT_THREAD_UUID` with the actual conversation UUID. It includes local
+descendants and UUID owners/related threads recorded in the registry; repeat
+`--thread UUID` for an additional independent project session. Cloud and Pro
+are outside coverage. It projects counters and event metadata, excluding
+prompts, reasoning, tool content and credentials. Native observations and local
+fallback remain separate; unknown counters and billed spend remain unknown.
+Exit 2 means incomplete observation, not an overload diagnosis.
+
+For selected ongoing work, a bounded observer can run it every four minutes and
+send new, materially changed or resolved warnings to its receiving coordinator.
+Name the watch's stop/review point; no permanent service or paid model loop is
+required. Use `collaboration.send_message` when available; tool availability
+depends on the agent role. On 30 September the lightweight observer lacked
+native send tools and successfully returned reports through its TUI thread
+transport. Confirm the receiving route rather than assuming every child has
+the coordinator's tools. Suppress repeated warnings
+by signal type, subject and stable evidence, excluding observation timestamps
+and silence durations. Relative context growth, cache misses and repeated error
+events trigger review, not automatic spending gates or proof of overload.
+Nested tool events can describe the same failure twice. Quiet telemetry can
+mean waiting, in-flight work or missing export. Review actual pending work and
+act on bottlenecks; never turn absent queue measurements into a zero backlog.
 
 ## Knowledge and human views
 

@@ -3,6 +3,8 @@
 import importlib.util
 import json
 import shutil
+import subprocess
+import sys
 import tempfile
 import threading
 import unittest
@@ -62,6 +64,36 @@ class DashboardHTTPTests(unittest.TestCase):
         state["summary"] = "Second reported outcome"
         (dashboard.REPO / dashboard.STATE).write_text(json.dumps(state))
         self.assertEqual(self.state()["summary"], "Second reported outcome")
+
+    def test_listener_starts_to_explain_an_invalid_initial_state(self):
+        (dashboard.REPO / dashboard.STATE).write_text("{")
+        code = """import importlib.util, sys
+from pathlib import Path
+spec = importlib.util.spec_from_file_location('dashboard', sys.argv[1])
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+module.REPO = Path(sys.argv[2])
+sys.argv = ['dashboard', '--host', '127.0.0.1', '--port', '0']
+module.main()
+"""
+        process = subprocess.Popen(
+            [sys.executable, "-u", "-c", code, str(Path(dashboard.__file__)), str(dashboard.REPO)],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+        )
+        try:
+            import select
+            self.assertTrue(select.select([process.stdout], [], [], 3)[0], "No listener startup report")
+            line = process.stdout.readline().strip()
+            self.assertTrue(line.startswith("Dashboard: http://127.0.0.1:"), line)
+            base = line.removeprefix("Dashboard: ")
+            with urlopen(base + "/docs/dashboard/index.html", timeout=3) as response:
+                self.assertEqual(response.status, 200)
+            with self.assertRaises(HTTPError) as error:
+                urlopen(base + "/" + dashboard.STATE, timeout=3)
+            self.assertEqual(error.exception.code, 503)
+        finally:
+            process.terminate()
+            process.communicate(timeout=3)
 
     def test_invalid_state_fails_instead_of_serving_success(self):
         (dashboard.REPO / dashboard.STATE).write_text("{")

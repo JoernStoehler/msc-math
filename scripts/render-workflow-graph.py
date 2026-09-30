@@ -30,8 +30,8 @@ def projection(state, digest):
     by_id = {task["id"]: task for task in tasks}
     if len(by_id) != len(tasks):
         raise ValueError("Duplicate task IDs")
-    if "workflow-done" not in by_id:
-        raise ValueError("Missing workflow-done milestone")
+    if "msc-math-done" not in by_id:
+        raise ValueError("Missing msc-math-done milestone")
     visited = set()
 
     def visit(task_id, active):
@@ -57,30 +57,38 @@ def projection(state, digest):
             raise ValueError(f"Missing blocker: {task['id']}")
         if task["status"] == "done" and task.get("owner"):
             raise ValueError(f"Completed assignment still owned: {task['id']}")
+        if task["status"] == "done" and any(by_id[dep]["status"] != "done" for dep in task["depends_on"]):
+            raise ValueError(f"Completed task has an unfinished prerequisite: {task['id']}")
 
     lines = [
         "// Generated from docs/coordination/current.json; do not edit.",
         f"// coordination-sha256: {digest}",
-        "digraph workflows {",
+        "digraph project {",
         '  graph [rankdir=BT, newrank=true, bgcolor="white", fontname="sans-serif",',
         '    fontsize=11, nodesep=0.18, ranksep=0.34, pad=0.15,',
-        '    label="Workflow migration · prerequisites → dependent\\nBlocked ≠ running · parked routes are unselected · thesis STOPPED", labelloc=b];',
+        '    label="msc-math · prerequisites → dependent\\nREADY candidates need selection · thesis STOPPED · semantic dashboard owns the detailed view", labelloc=b];',
         '  node [shape=box, style="rounded,filled", fontname="sans-serif",',
         '    fontsize=12, margin="0.08,0.06", width=1.4];',
         '  edge [color="#78818a", arrowsize=0.6, penwidth=1.0];',
     ]
     def details(task):
         result = task["outcome"]
-        for field in ("blocker", "plan_gap", "owner"):
+        for field in ("blocker", "plan_gap", "owner", "project", "authorization", "next_step"):
             if task.get(field):
                 result += f"\n{field}: {task[field]}"
         return result + "\nSources: " + ", ".join(task["sources"])
 
     aliases = {}
     completed, parked = [], []
+    candidates = {}
     for task in tasks:
         task_id = task["id"]
         if task.get("selection", "selected") != "selected":
+            if task.get("parallel_ready"):
+                project = task.get("project", "other")
+                candidates.setdefault(project, []).append(task)
+                aliases[task_id] = "__candidates_" + project
+                continue
             parked.append(task)
             aliases[task_id] = "__parked"
             continue
@@ -99,10 +107,12 @@ def projection(state, digest):
             attrs += ", penwidth=2, fontsize=14"
         lines.append(f"  {quote(task_id)} [{attrs}];")
 
-    for node_id, heading, items, fill in [
+    summaries = [
         ("__completed", "DONE · owners released", completed, "#e7f1e8"),
         ("__parked", "UNSELECTED / PARKED · no execution", parked, "#f1f0ed"),
-    ]:
+    ]
+    summaries.extend(("__candidates_" + project, project.upper() + " · READY IF SELECTED", items, "#fff7dc") for project, items in candidates.items())
+    for node_id, heading, items, fill in summaries:
         if not items:
             continue
         labels = [heading]
@@ -131,7 +141,7 @@ def projection(state, digest):
         # a separate invisible edge places the parked shelf below foundations.
         lines = [line.replace('"__completed" -> "__parked" [style=dashed,', '"__completed" -> "__parked" [constraint=false, style=dashed,') for line in lines]
         lines.append('  "__parked" -> "__completed" [style=invis];')
-    lines.extend(['  { rank=max; "workflow-done"; }', "}"])
+    lines.extend(['  { rank=max; "msc-math-done"; }', "}"])
     return "\n".join(lines) + "\n"
 
 
@@ -155,7 +165,7 @@ def main():
                 raise ValueError("SVG source hash is stale; rerun scripts/render-workflow-graph.py")
             if ET.fromstring(svg).tag != "{http://www.w3.org/2000/svg}svg":
                 raise ValueError("Rendered file is not SVG")
-            print("Workflow DOT projection and SVG source hash match current.json")
+            print("Project DOT projection and SVG source hash match current.json")
             return
         svg = subprocess.run(["dot", "-Tsvg"], input=dot, text=True, capture_output=True, check=True).stdout
         svg = svg.replace("?>", "?>\n" + marker, 1)
@@ -165,7 +175,7 @@ def main():
         svg_path.write_text(svg)
         print(f"Projected {len(json.loads(raw)['tasks'])} task records from current.json")
     except (OSError, ValueError, KeyError, subprocess.CalledProcessError, ET.ParseError) as error:
-        parser.exit(1, f"Workflow graph: {error}\n")
+        parser.exit(1, f"Project graph: {error}\n")
 
 
 if __name__ == "__main__":

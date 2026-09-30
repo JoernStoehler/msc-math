@@ -80,7 +80,8 @@ visibility; optional clarifications retain their stated fallback.
   the handoff reports that Jörn found the verification/documentation effort
   excessive for this low-maintenance setup. This is scoped feedback, not
   permission to skip necessary checks. Verification should resolve remaining
-  consequential uncertainty; daemon cutover remains a real completion boundary.
+  consequential uncertainty. Completion required the actual daemon cutover,
+  which Jörn performed; live export was subsequently API-verified.
 
 These observations motivate candidate interventions. They do not establish a
 general model defect, a psychological cause or that new wording will work.
