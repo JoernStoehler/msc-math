@@ -11,8 +11,9 @@ rather than maintaining another assignment list.
 | [handoff.md](handoff.md) | Current continuation constraints and recovery pointers | The next session would otherwise receive wrong directions |
 | [../project-facts.md](../project-facts.md) | Attributed Jörn-confirmed scope and decisions | A confirmed fact changes; preserve attribution and date |
 
-The registry covers work selected in reported sessions, not every possible task
-or every running process on the host. The thesis backlog is a separate detailed
+The registry covers work selected in reported sessions, its material planning
+gaps and explicitly unselected or parked candidate routes. It is not every
+possible task or every running process on the host. The thesis backlog is a separate detailed
 owner, not a list of automatically authorized assignments. Research packets may
 contain local obligations; their old next steps become project assignments only
 when selected here. Use stable IDs and link the exact packet instead of copying
@@ -34,12 +35,55 @@ by ID. A blocked task names the concrete reason. An owner names a current thread
 or agreed person, not an old terminal pane. Record uncertainty as uncertainty.
 State does not authorize thesis completion, external publication, or spending.
 
+Optional task fields distinguish the outcome map from an assignment list:
+`kind` is `task` (default), `milestone`, or `crux`; `selection` is `selected`
+(default), `unselected`, or `parked`; `plan_gap` names material work whose route
+is not yet defined; `graph_label` supplies a compact readable label. A crux is
+an unresolved choice or evidence question, not a special status. A ready task
+without an owner is available planning work, not a running session. Unselected
+and parked candidates are visible without implying execution authorization.
+
+The `workflow-done` milestone means the selected project-local skills and
+workflow deliverables are integrated, relevant acceptance is complete, and
+their assignments and sessions are released. Returned plans alone cannot
+close it. Explicitly deferring a capability preserves that gap without making
+every proposed pilot mandatory. Thesis execution remains separately stopped.
+Unavailable historical transport-cause evidence is separate from acceptance
+of the selected communication route; successful reads alone do not verify send
+delivery. Unknown usage and numeric spending thresholds do not create a gate
+for every small authorized task.
+
+Before planning or delegating substantial work, use the collaboration boundary
+in [AGENTS.md](../../AGENTS.md) and its
+[commentary](../../AGENTS.md.commentary.md). Record an unanswered spending/plan
+decision here even when its async UI entry disappears. Ownership transfer must
+name the receiving owner and preserve the approval boundary.
+
 Timestamp meaningful observations in UTC. Resource observations name their
 scope and evidence; unknown quota/spending stays null. Historical resource
 ceilings are not current permission or balance. The page warns after 30 minutes
 without an update; this is an age signal, not a liveness monitor. Mark work done
 and release its owner when handing off. Keep recent consequential changes short;
 use Git or `docs/history/` for the older record.
+
+The compact dependency graph is generated solely from `current.json`:
+
+```bash
+python3 scripts/render-workflow-graph.py
+python3 scripts/render-workflow-graph.py --check
+```
+
+[graphs/tasks.dot](graphs/tasks.dot) and [graphs/tasks.svg](graphs/tasks.svg)
+are projections, not another canonical store. Prerequisite arrows point toward
+the dependent, with PROJECT DONE at the top. Solid arrows describe selected
+dependencies; dashed arrows connect proposals to unselected candidate routes.
+Completed assignments and parked routes use compact summary nodes; individual
+outcomes and gaps remain in the registry and dashboard task rows.
+The SVG embeds the SHA256 of the exact state bytes; `--check` compares that
+marker and the generated DOT without rerendering. Regenerate after updating
+state, even if only an observation changed. This checks projection freshness,
+not workflow reliability, session liveness or mathematical correctness. It
+requires installed Graphviz to render and creates no listener.
 
 Run `python3 scripts/serve-project-dashboard.py --check` before handoff. This
 checks state structure, paths, dependencies and the browser's source contract;

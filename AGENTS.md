@@ -50,6 +50,35 @@ the selected manuscript's promoted claims, current work and evidence owners. A p
 needs a thesis location, caveat and PDF/evidence check; show any unresolved coverage gap.
 Refresh `docs/dashboard/thesis-sources.json` only after that source reconciliation.
 
+## Collaboration and planning
+
+Within selected work, use bounded subagent assignments and independent sessions
+when they help discovery, planning or execution. Respect the actual tool's
+authorization requirements. A delegation names its owned output, scope,
+resource allowance, stopping/review point and receiving owner. Review ownership
+does not imply implementing fixes; agree who integrates, commits and cleans up.
+
+Obtain Jörn's explicit approval before large budget expenditure. Fund useful
+preliminary exploration and comparison of approaches within the authorized
+scope; present a concrete plan, alternatives, expected outcomes, uncertainty and
+resource expectations before committing to substantial execution. Thresholds
+are not yet agreed: do not invent a dollar/token allowance or a gate for every
+small task. Splitting work across agents, sessions or stages does not enlarge
+the approved scope or budget.
+
+Use an async question when useful independent authorized work remains. For a
+required approval, keep the dependent package waiting even if its owner changes
+or the question disappears from the UI. Record the pending decision in
+coordination; silence, automatic action approval and elapsed time are not
+Jörn's plan approval. An optional clarification does not create a new approval
+gate; preserve any stated fallback.
+
+Read [the collaboration commentary](AGENTS.md.commentary.md) when choosing an
+experiment/research programme, preparing a spending proposal, or designing
+delegation and human review. It owns curated rationale and open choices, not a
+second task list. [The knowledge index](docs/knowledge/README.md) routes further
+process and domain knowledge by the decision being made.
+
 ## Respect evidence boundaries
 
 ```text

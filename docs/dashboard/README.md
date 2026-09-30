@@ -1,5 +1,14 @@
 # Jörn's browser views
 
+The selected workflow work currently has a private Tailscale view at
+<http://joern-pc.tailc5e761.ts.net:8766/> (observed 2026-09-30). It serves this
+worktree, `/home/joern/.codex/worktrees/60b9/msc-math`, through the transient user
+service `msc-math-workflow-dashboard.service`. The existing port-8765 service
+serves `/workspaces/msc-math`; it is a different checkout and does not display
+this worktree's edits. A worktree update is not a browser publication until the
+served state has been checked against the edited checkout.
+
+
 Run `python3 scripts/serve-project-dashboard.py` from the repository root and
 open <http://127.0.0.1:8765/> in Chrome beside the Codex terminal.
 

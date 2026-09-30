@@ -1,15 +1,35 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-30T08:59:22Z",
-  "scope": "Selected work reported in this checkout. Other sessions and host processes have not been surveyed.",
-  "summary": "Central coordination cleanup is complete. Thesis completion remains stopped; the detailed backlog is available for a future selected execution window.",
+  "updated_at": "2026-09-30T16:39:44Z",
+  "scope": "Selected project-local agent-agnostic workflow readiness, its material planning gaps and parked candidate routes. This is not thesis completion or a host-wide process inventory.",
+  "summary": "Workflow migration incomplete. Scope and acceptance selection pending; implementation has not started. OTel complete. Legacy message delivery unverified; thesis stopped.",
   "tasks": [
+    {
+      "id": "workflow-done",
+      "title": "PROJECT DONE \u00b7 workflow migration",
+      "kind": "milestone",
+      "selection": "selected",
+      "graph_label": "PROJECT DONE\nWorkflow migration",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "Selected project-local skills and workflow deliverables integrated and working against the agreed support contract, with evidence and caveats retained; all assignments closed and their sessions released. Plans alone do not establish readiness. Thesis execution remains STOPPED.",
+      "depends_on": [
+        "workflow-acceptance",
+        "workflow-session-release"
+      ],
+      "blocker": "Selected completion package and acceptance criteria are not agreed; delivery, acceptance and session release remain unfinished.",
+      "sources": [
+        "docs/development-environments.md",
+        "docs/coordination/handoff.md"
+      ],
+      "updated_at": "2026-09-30T16:21:46Z"
+    },
     {
       "id": "coordination-cleanup",
       "title": "Separate coordination, browser views and reusable knowledge",
       "status": "done",
       "owner": null,
-      "outcome": "Canonical coordination store, shared-state browser view, reusable knowledge guidance, migrated callers and five passing HTTP regression checks. Chrome visual inspection was unavailable.",
+      "outcome": "Canonical coordination and browser source contract complete; five HTTP checks passed. Prior Chrome inspection unavailable.",
       "depends_on": [],
       "blocker": null,
       "sources": [
@@ -17,7 +37,360 @@
         "docs/coordination/thesis-work.md",
         "docs/coordination/handoff.md"
       ],
-      "updated_at": "2026-09-30T08:58:26Z"
+      "updated_at": "2026-09-30T16:21:46Z",
+      "kind": "task",
+      "selection": "selected",
+      "graph_label": "Shared coordination"
+    },
+    {
+      "id": "agent-workflow-guidance",
+      "title": "Route process knowledge into project collaboration guidance",
+      "status": "done",
+      "owner": null,
+      "outcome": "Local collaboration rules and knowledge routing complete; link/state checks passed. Behavioral and post-compaction performance untested.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "AGENTS.md",
+        "AGENTS.md.commentary.md",
+        "docs/knowledge/README.md"
+      ],
+      "updated_at": "2026-09-30T16:21:46Z",
+      "kind": "task",
+      "selection": "selected",
+      "graph_label": "Local guidance"
+    },
+    {
+      "id": "workstation-otel-plan",
+      "title": "Set up authorized workstation-only OpenObserve telemetry",
+      "status": "done",
+      "owner": null,
+      "outcome": "Live workstation logs/traces/metrics API-verified after daemon restart. Host implementation complete; maintenance belongs to ~/.dotfiles/INSTALL.md. Browser login unverified.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/development-environments.md",
+        "docs/coordination/otel-design.md"
+      ],
+      "updated_at": "2026-09-30T16:21:46Z",
+      "kind": "task",
+      "selection": "selected",
+      "graph_label": "Workstation OTel"
+    },
+    {
+      "id": "skill-migration-plan",
+      "title": "Prepare repository-owned skill migration",
+      "status": "done",
+      "owner": null,
+      "outcome": "Reviewable local skill/discovery migration proposal returned; planner assignment ended. Candidate, activation and fresh-client acceptance remain unselected.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/skill-migration-plan.md"
+      ],
+      "updated_at": "2026-09-30T16:21:46Z",
+      "kind": "task",
+      "selection": "selected",
+      "graph_label": "Skill proposal"
+    },
+    {
+      "id": "knowledge-evaluation-plan",
+      "title": "Plan process-knowledge cleanup and behavioural evaluation",
+      "status": "done",
+      "owner": null,
+      "outcome": "Reviewable two-link cleanup and bounded forward-pilot proposal returned; planner assignment ended. Cleanup and pilot remain unselected.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/knowledge-evaluation-plan.md"
+      ],
+      "updated_at": "2026-09-30T16:21:46Z",
+      "kind": "task",
+      "selection": "selected",
+      "graph_label": "Knowledge proposal"
+    },
+    {
+      "id": "agent-transport-investigation",
+      "title": "Determine why agent communication tools failed",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "Bounded local diagnosis finished. Same daemon persisted through failures; multiple TUI MCP server processes turned over. Stale endpoint binding is plausible, but old-port ownership, shutdown/rebind evidence and original cause are unavailable. Current list verifies reads only.",
+      "depends_on": [],
+      "blocker": "Historical endpoint ownership/binding evidence is unavailable; current successful reads do not establish original cause or legacy send recovery.",
+      "sources": [
+        "docs/coordination/current.json"
+      ],
+      "updated_at": "2026-09-30T16:25:13Z",
+      "kind": "task",
+      "selection": "parked",
+      "graph_label": "Communication diagnosis",
+      "plan_gap": "Capture failing URL, socket owner/PID and endpoint-binding lifecycle events on the next natural failure. Do not launch repeated investigation or restart the shared daemon."
+    },
+    {
+      "id": "workflow-proposal-integration",
+      "title": "Review and consolidate returned skill and knowledge proposals",
+      "status": "done",
+      "owner": null,
+      "outcome": "Reviewed migration and knowledge proposals against returned environment/accounting findings. Recommend nine project-local skills with Claude adapters, conditional host capabilities and retained-packet handoffs; defer controlled behavioral pilot and new messaging infrastructure. Concrete package selection remains J\u00f6rn\u2019s decision; no skill activation or execution approval is inferred.",
+      "depends_on": [
+        "skill-migration-plan",
+        "knowledge-evaluation-plan"
+      ],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/skill-migration-plan.md",
+        "docs/coordination/knowledge-evaluation-plan.md"
+      ],
+      "updated_at": "2026-09-30T16:39:44Z",
+      "kind": "task",
+      "selection": "selected",
+      "graph_label": "Proposal integration"
+    },
+    {
+      "id": "workflow-dashboard-map",
+      "title": "Remaining workflow dependencies visible in the dashboard",
+      "kind": "task",
+      "selection": "selected",
+      "graph_label": "Goal and dependency view",
+      "status": "done",
+      "owner": null,
+      "outcome": "Dashboard exposes goal, unfinished dependencies, planning gaps and parked routes; native-width graph has a goal-centered viewport. Local desktop and 390px mobile reviews passed; phone graph requires panning. Source/path/HTTP checks passed. Coordinator owns integration.",
+      "depends_on": [
+        "coordination-cleanup",
+        "workflow-completion-map"
+      ],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/README.md"
+      ],
+      "updated_at": "2026-09-30T16:33:15Z"
+    },
+    {
+      "id": "workflow-route-definition",
+      "title": "Define support and handoff routes across selected environments",
+      "kind": "crux",
+      "selection": "selected",
+      "graph_label": "Support-route proposal",
+      "status": "done",
+      "owner": null,
+      "outcome": "Read-only supported-route matrix returned: local .agents source plus proposed Claude links/import; retained packets and manual host handoff initially. Independent-thread live delivery and SSH persistence remain unverified; Codex Cloud privileged-image/R2 bootstrap assumptions are not validated for Claude.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/development-environments.md",
+        "docs/coordination/skill-migration-plan.md"
+      ],
+      "updated_at": "2026-09-30T16:31:50Z",
+      "plan_gap": "Claude fresh-clone setup/discovery, cloud-to-host handoff, remote-device review access and reconnect/session continuity have no agreed acceptance route. Required support versus explicitly deferred capabilities is unresolved."
+    },
+    {
+      "id": "workflow-accounting-definition",
+      "title": "Define truthful usage and spending observations",
+      "kind": "crux",
+      "selection": "selected",
+      "graph_label": "Accounting proposal",
+      "status": "done",
+      "owner": null,
+      "outcome": "Read-only recommendation returned: current.json and retained outcomes own durable PM state; OpenObserve is diagnostic. Optional explicit packet-event JSONL-to-OTel helper only if selected; no broker/database. Token/time observations are not billing; quota/USD unknown and independent-root/cloud usage is not covered.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "AGENTS.md.commentary.md",
+        "docs/development-environments.md"
+      ],
+      "updated_at": "2026-09-30T16:31:50Z",
+      "plan_gap": "Comparable cloud/Pro usage, semantic task/message journaling and budget-enforcement mechanics are undefined. Numeric thresholds are not agreed; the selected delivery may explicitly defer automation."
+    },
+    {
+      "id": "workflow-selection",
+      "title": "Select the concrete workflow package and completion criteria",
+      "kind": "crux",
+      "selection": "selected",
+      "graph_label": "Select completion package",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "Coordinator presents consolidated alternatives, expected outcomes, resource estimates, limitations and precise activation/acceptance scope. J\u00f6rn selects migration/knowledge scope and substantial expenditure; retain/defer is a valid explicit disposition.",
+      "depends_on": [
+        "workflow-proposal-integration",
+        "workflow-route-definition",
+        "workflow-accounting-definition"
+      ],
+      "blocker": "Returned proposals and completed route/accounting recommendations need coordinator integration into one reviewable package; J\u00f6rn has not selected its scope, substantial expenditure or acceptance criteria.",
+      "sources": [
+        "docs/coordination/skill-migration-plan.md",
+        "docs/coordination/knowledge-evaluation-plan.md",
+        "AGENTS.md.commentary.md"
+      ],
+      "updated_at": "2026-09-30T16:21:46Z",
+      "plan_gap": "No complete selected implementation/acceptance package exists. Proposal estimates are not authorization; readiness must not silently mean every proposed feature or pilot."
+    },
+    {
+      "id": "workflow-delivery",
+      "title": "Complete the selected workflow package",
+      "kind": "task",
+      "selection": "selected",
+      "graph_label": "Selected package delivered",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "Integrate the selected project-local skills, discovery adapters and other concrete workflow deliverables; retain explicitly accepted deferrals for additional capabilities. Assign owned implementation steps and checks after selection. Plans alone cannot close delivery.",
+      "depends_on": [
+        "workflow-selection",
+        "workflow-communication-acceptance",
+        "workflow-dashboard-map"
+      ],
+      "blocker": "No implementation/activation package selected; selected communication acceptance is unfinished. Dashboard/map delivery is complete; historical transport cause can remain unknown.",
+      "sources": [
+        "docs/coordination/skill-migration-plan.md",
+        "docs/coordination/knowledge-evaluation-plan.md"
+      ],
+      "updated_at": "2026-09-30T16:21:46Z",
+      "plan_gap": "Implementation owners, concrete change list and receiving/review responsibilities must follow selection. This placeholder does not authorize migration, evaluations or host/cloud setup."
+    },
+    {
+      "id": "workflow-acceptance",
+      "title": "Review readiness against the selected support contract",
+      "kind": "task",
+      "selection": "selected",
+      "graph_label": "Readiness evidence",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "Check selected artifacts and relevant client/environment routes, retain unavailable checks and behavioral limits, and obtain review of the resulting bounded readiness claim. No full thesis checks are implied.",
+      "depends_on": [
+        "workflow-delivery",
+        "agent-workflow-guidance"
+      ],
+      "blocker": "Selected acceptance criteria and delivered candidate are absent.",
+      "sources": [
+        "docs/coordination/skill-migration-plan.md",
+        "docs/coordination/knowledge-evaluation-plan.md",
+        "docs/development-environments.md"
+      ],
+      "updated_at": "2026-09-30T16:21:46Z",
+      "plan_gap": "Fresh Codex/Claude discovery and selected remote handoff/review checks are unperformed. A behavioral pilot is optional until selected; structural checks alone do not establish reliable behavior."
+    },
+    {
+      "id": "workflow-session-release",
+      "title": "Close assignments and release workflow sessions",
+      "kind": "task",
+      "selection": "selected",
+      "graph_label": "Sessions released",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "Coordinator integrates outcomes, records any pending decisions with a receiving owner, closes completed assignments and releases their sessions. Do not confuse an idle planner with an active owner.",
+      "depends_on": [
+        "workflow-acceptance"
+      ],
+      "blocker": "Coordinator integration and selected workflow delivery/acceptance remain unfinished; bounded worker assignments have ended.",
+      "sources": [
+        "docs/coordination/README.md"
+      ],
+      "updated_at": "2026-09-30T16:21:46Z"
+    },
+    {
+      "id": "workflow-migration-candidate",
+      "title": "Optional local skill candidate, activation and fresh-client tests",
+      "kind": "task",
+      "selection": "unselected",
+      "graph_label": "Skill migration candidate",
+      "status": "parked",
+      "owner": null,
+      "outcome": "Proposed nine-skill local package, Claude discovery adapters and focused acceptance route. Keep outside loaded paths until selected. This is a candidate route, not an assignment.",
+      "depends_on": [
+        "skill-migration-plan"
+      ],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/skill-migration-plan.md"
+      ],
+      "updated_at": "2026-09-30T16:21:46Z",
+      "plan_gap": "Initial instruction was inspect/plan/discuss first; migration and activation selection absent."
+    },
+    {
+      "id": "workflow-knowledge-pilot",
+      "title": "Optional knowledge cleanup and forward pilot",
+      "kind": "task",
+      "selection": "unselected",
+      "graph_label": "Knowledge cleanup / pilot",
+      "status": "parked",
+      "owner": null,
+      "outcome": "Choose retain-and-observe, two-link cleanup only, or cleanup plus bounded A/E pilot. No model calls or cleanup are launched by this plan.",
+      "depends_on": [
+        "knowledge-evaluation-plan"
+      ],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/knowledge-evaluation-plan.md"
+      ],
+      "updated_at": "2026-09-30T16:21:46Z",
+      "plan_gap": "Scope, owner and resources have not been selected; broader cases and post-compaction validation remain unperformed."
+    },
+    {
+      "id": "workflow-cloud-automation",
+      "title": "Possible cloud communication, setup and accounting automation",
+      "kind": "task",
+      "selection": "parked",
+      "graph_label": "Cloud automation",
+      "status": "parked",
+      "owner": null,
+      "outcome": "External surfaces remain outside workstation telemetry. Live cloud messaging, detailed returned event logs and enforcement are possible mechanisms; required support and value are undecided.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/development-environments.md"
+      ],
+      "updated_at": "2026-09-30T16:21:46Z",
+      "plan_gap": "No agreed need, design, acceptance contract or authorization for cloud automation."
+    },
+    {
+      "id": "thesis-execution-stopped",
+      "title": "Thesis execution \u2014 STOPPED",
+      "kind": "task",
+      "selection": "parked",
+      "graph_label": "Thesis execution\nSTOPPED",
+      "status": "parked",
+      "owner": null,
+      "outcome": "Previous thesis completion run remains stopped. Backlog availability does not authorize a new execution window.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/handoff.md"
+      ],
+      "updated_at": "2026-09-30T16:21:46Z"
+    },
+    {
+      "id": "workflow-completion-map",
+      "title": "Completion map and graph projection retained",
+      "kind": "task",
+      "selection": "selected",
+      "graph_label": "Completion map",
+      "status": "done",
+      "owner": null,
+      "outcome": "Goal/dependency map retained in canonical JSON with explicit planning gaps and parked routes; DOT/SVG project shared state with a source-hash drift check. Syntax, missing-dependency/cycle rejection, stale DOT/SVG detection and state/path checks passed. Coordinator owns integration and subsequent refresh.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/README.md"
+      ],
+      "updated_at": "2026-09-30T16:32:41Z"
+    },
+    {
+      "id": "workflow-communication-acceptance",
+      "title": "Establish acceptance of selected communication routes",
+      "kind": "crux",
+      "selection": "selected",
+      "graph_label": "Communication acceptance",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "Verify bounded message/return delivery for the selected workflow paths, or retain a specifically accepted limitation. Native bounded worker send/return delivery succeeded in this window; legacy independent-session send receipt remains unverified.",
+      "depends_on": [
+        "workflow-selection"
+      ],
+      "blocker": "Required communication paths and their acceptance contract have not been selected; native packet delivery does not establish legacy MCP send recovery.",
+      "plan_gap": "Native subagent send/return worked. Original independent-thread endpoint failure cause lacks evidence; current read connectivity does not prove sends or receipt. Select whether retained-file/manual receipt suffices or a bounded live send/ack test is required.",
+      "sources": [
+        "docs/development-environments.md"
+      ],
+      "updated_at": "2026-09-30T16:39:44Z"
     }
   ],
   "decisions": [
@@ -25,7 +398,7 @@
       "id": "cleanup-scope",
       "question": "Should a later cleanup also review topic-specific coordination packets inside experiments?",
       "status": "resolved",
-      "recommendation": "Jörn selected central surfaces first on 30 September 2026. Topic-specific research packets stay with their evidence owners.",
+      "recommendation": "J\u00f6rn selected central surfaces first on 30 September 2026. Topic-specific research packets stay with their evidence owners.",
       "consequence": "The central migration is complete; no broader topic-packet review is assigned.",
       "sources": [
         "docs/coordination/README.md"
@@ -40,20 +413,74 @@
       "sources": [
         "docs/coordination/handoff.md"
       ]
+    },
+    {
+      "id": "working-environments",
+      "question": "Which environments and access routes should the project workflow support?",
+      "status": "resolved",
+      "recommendation": "J\u00f6rn selected Ubuntu workstation + Codex TUI (local kitty and Tailscale SSH from Chromebook/Android), claude.ai cloud microVM clones, and ChatGPT Chat Astra 6 Pro research. Companion Chrome web views use Tailscale.",
+      "consequence": "These are support targets, not verified live capabilities. Cloud communication, logging, setup adaptation and budget accounting remain design work; no autonomous thesis run is authorized.",
+      "sources": [
+        "docs/development-environments.md"
+      ]
+    },
+    {
+      "id": "workstation-telemetry",
+      "question": "Which telemetry backend and coverage should the project use?",
+      "status": "resolved",
+      "recommendation": "J\u00f6rn authorized workstation-only OTel setup through ~/.dotfiles, trusting the independent session\u2019s OpenObserve judgment. Sandbox/cloud automation is excluded.",
+      "consequence": "Live workstation export of logs, traces and metrics is active and API-verified per owner report following the shared-daemon restart at 2026-09-30T10:32:33Z. Implementation is complete; maintenance belongs to ~/.dotfiles/INSTALL.md. Interactive browser login remains unverified. External surfaces remain outside telemetry coverage.",
+      "sources": [
+        "docs/development-environments.md",
+        "docs/coordination/otel-design.md"
+      ]
+    },
+    {
+      "id": "planning-before-large-spend",
+      "question": "Where should J\u00f6rn review agent work before substantial resources are committed?",
+      "status": "resolved",
+      "recommendation": "J\u00f6rn wants agents to perform PM and bounded preliminary exploration/planning, then obtain his explicit approval for large execution expenditure after comparing approaches.",
+      "consequence": "The gate concerns scientific selection and spending, not every small authorized action. Independent sessions and ownership changes preserve the approved scope and pending gate.",
+      "sources": [
+        "AGENTS.md",
+        "AGENTS.md.commentary.md"
+      ]
+    },
+    {
+      "id": "budget-gate-threshold",
+      "question": "How should large expenditure and preliminary planning allowances be defined?",
+      "status": "open",
+      "recommendation": "Agent proposal: agree planning and execution allowances per packet; J\u00f6rn has not selected this, a project-wide ceiling, or budget units. An async question was submitted; no answer is recorded.",
+      "consequence": "No numeric allowance is authorized. A vanished UI question does not resolve the decision. Bounded work within selected assignments can continue.",
+      "sources": [
+        "AGENTS.md.commentary.md"
+      ]
+    },
+    {
+      "id": "workflow-package-selection",
+      "question": "Which local skill, knowledge and environment support package should be selected, and what evidence closes workflow readiness?",
+      "status": "open",
+      "recommendation": "Coordinator recommendation: retain four local workflows and port the five additional upstream skills (nine total), use .agents/skills as canonical source with relative Claude links/import, preserve host-only boundaries and use native workers plus retained packets initially. Make the two proposed knowledge-index refinements; defer the four-run behavioral pilot, cloud telemetry/automation and a new messaging service. Stage candidates outside active discovery paths before activation review. Treat a semantic event helper to existing OTel as a separately selected small package.",
+      "consequence": "Choose the scope and acceptance evidence before migration implementation/activation. Candidates and pilots remain unselected; no substantial spend is authorized by this recommendation. Legacy send receipt and Claude fresh-clone discovery are not established. Numeric budget thresholds remain unresolved and do not gate every cheap task.",
+      "sources": [
+        "docs/coordination/skill-migration-plan.md",
+        "docs/coordination/knowledge-evaluation-plan.md",
+        "docs/development-environments.md"
+      ]
     }
   ],
   "resources": [
     {
       "label": "Agent work",
-      "value": "No selected assignment remains running at handoff. This cleanup used one coordinating thread and no subagents.",
-      "observed_at": "2026-09-30T08:58:26Z",
-      "basis": "Current task execution; other sessions not surveyed."
+      "value": "Bounded fresh-context dashboard, completion-map, transport, supported-route and accounting packets returned; owned outputs integrated. No selected worker is active. Migration delivery waits for scope/acceptance selection.",
+      "observed_at": "2026-09-30T16:39:44Z",
+      "basis": "Native worker handoffs, served-state equality, live desktop/phone render review and seven HTTP regression checks. Historical independent-thread delivery remains unverified."
     },
     {
       "label": "Quota and API spend",
-      "value": null,
-      "observed_at": null,
-      "basis": "No current quota or cost observation is available. Historical balances and ceilings are not current authority."
+      "value": "J\u00f6rn reports approximately 50k input tokens spent recovering an idle session after cache expiry. Total spend/quota unknown.",
+      "observed_at": "2026-09-30T16:11:05Z",
+      "basis": "User-reported session lifecycle cost; no independent token or billing measurement."
     },
     {
       "label": "Scientific compute",
@@ -84,18 +511,70 @@
       "path": "docs/README.md"
     },
     {
-      "label": "Scientific brief · 25 Sep snapshot",
+      "label": "Scientific brief \u00b7 25 Sep snapshot",
       "path": "docs/dashboard/thesis.html"
     },
     {
-      "label": "Frozen diagnostic PDF · older inputs, not accepted",
+      "label": "Frozen diagnostic PDF \u00b7 older inputs, not accepted",
       "path": "docs/resume/thesis-resume.pdf"
     }
   ],
   "changes": [
     {
+      "at": "2026-09-30T16:39:44Z",
+      "text": "Integrated graph-first dashboard and true completion dependencies; completed owners released. Seven HTTP checks pass, live desktop/phone rendering reviewed and served JSON matches this worktree. Consolidated migration recommendation; no skill activation, behavioral pilot or thesis work."
+    },
+    {
+      "at": "2026-09-30T16:32:41Z",
+      "text": "Completion map and DOT/SVG projection retained with passing freshness/structure checks. Integrated returned bounded support/accounting recommendations; selections remain pending. Historical transport diagnosis stopped with unavailable-evidence blocker, separate from selected communication acceptance."
+    },
+    {
+      "at": "2026-09-30T16:21:46Z",
+      "text": "Added PROJECT DONE and remaining support/accounting, selection, delivery, acceptance and session-release dependencies. Exposed planning gaps and parked execution routes; cleared completed planner owners. No thesis work, skill activation or evaluation launched."
+    },
+    {
+      "at": "2026-09-30T16:11:05Z",
+      "text": "Made coordinator ownership and unresolved transport investigation visible. Proposal integration is paused for diagnosis. Existing dashboard service points at a different checkout; exposing this worktree separately."
+    },
+    {
+      "at": "2026-09-30T16:05:03Z",
+      "text": "Integrated completed workstation OTel handoff: shared daemon restarted at 10:32:33 UTC, live logs/traces/metrics API-verified per owner, implementation committed. Cleared task owner/blocker and reconciled environment summary; maintenance belongs to dotfiles."
+    },
+    {
+      "at": "2026-09-30T10:30:45Z",
+      "text": "TUI MCP list/status calls recovered without intervention; earlier transport failure no longer reproduces, cause unknown. Both independent owners report planning complete; integration/review remains pending."
+    },
+    {
+      "at": "2026-09-30T10:20:25Z",
+      "text": "Integrated OTel installed outcome and pending shared-daemon cutover. Retained scoped feedback about excessive setup verification/documentation; no extra ingestion tests run. TUI MCP status lookup failed with a loopback HTTP transport error."
+    },
+    {
+      "at": "2026-09-30T10:18:13Z",
+      "text": "Opened two independent bounded planning sessions for repository-owned skills and process-knowledge cleanup/evaluation. Each owns a separate proposal; activation and costly tests await review."
+    },
+    {
+      "at": "2026-09-30T09:49:36Z",
+      "text": "Verified J\u00f6rn\u2019s workstation-only OTel setup authorization in the independent thread; owner is implementing through dotfiles. Updated its task from waiting for approval to running."
+    },
+    {
+      "at": "2026-09-30T09:45:54Z",
+      "text": "OTel owner updated its proposal with Grafana/LGTM comparison and metrics/traces pilot scope; installation approval remains pending."
+    },
+    {
+      "at": "2026-09-30T09:41:35Z",
+      "text": "Local guidance/link/state checks and five HTTP tests pass. Independent prose review corrected mandatory waiting for optional clarifications. OTel design remains under discussion; no behavioural validation or global promotion."
+    },
+    {
+      "at": "2026-09-30T09:38:15Z",
+      "text": "Opened independent OTel planning session; added project-local collaboration commentary and decision-triggered process-knowledge routing. Async request lifecycle reviewed; no reproduction, patch or upstream fix timetable established."
+    },
+    {
+      "at": "2026-09-30T09:22:26Z",
+      "text": "Recorded J\u00f6rn\u2019s working topology, agent surfaces and preferred workstation-only OTel direction in development-environments.md; linked it from the knowledge index. Earlier Docker/Codex Cloud records are marked historical."
+    },
+    {
       "at": "2026-09-30T08:59:22Z",
-      "text": "Jörn confirmed central surfaces first; topic-specific coordination/evidence remains with its local owners."
+      "text": "J\u00f6rn confirmed central surfaces first; topic-specific coordination/evidence remains with its local owners."
     },
     {
       "at": "2026-09-30T08:58:26Z",

@@ -5,40 +5,73 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Project work · Probing Viterbo's conjecture</title>
 <style>
-:root { font: 17px/1.5 system-ui,sans-serif; color:#21343c; background:#f4f7f6; }
+:root { font:15px/1.4 system-ui,sans-serif; color:#21343c; background:#f4f7f6; }
 * { box-sizing:border-box; } body { margin:0; } a { color:#065a76; text-underline-offset:3px; }
-header { background:#17343e; color:#fff; padding:24px max(22px,calc((100vw - 1120px)/2)); }
-header p { color:#cbdcde; margin:6px 0; } h1 { margin:0; font-size:1.65rem; } h2 { font-size:1.2rem; margin:0 0 12px; } h3 { margin:0 0 8px; font-size:1.05rem; }
-main { max-width:1164px; margin:auto; padding:22px; } .grid { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:22px; }
-section { margin:0 0 24px; } .card { background:white; border:1px solid #cfdbd8; border-radius:9px; padding:17px; margin-bottom:12px; overflow-wrap:anywhere; }
-.card p { margin:7px 0; } .muted { color:#536b73; font-size:.88rem; } .warning { padding:12px 16px; background:#fff3d6; border-left:4px solid #b97a21; margin-bottom:20px; }
-.state { display:inline-block; font-size:.78rem; background:#e6efec; color:#305347; border-radius:14px; padding:2px 9px; margin-bottom:9px; }
-.running { background:#dcedf9; color:#17506c; } .blocked { background:#ffdfd3; color:#792f1f; } .parked { background:#fff0cb; color:#745514; }
-ul { padding-left:22px; } li { margin:7px 0; } code { font-size:.85em; overflow-wrap:anywhere; }
-button { font:inherit; padding:6px 12px; background:#fff; color:#17343e; border:1px solid #a9c4c9; border-radius:6px; cursor:pointer; }
-a:focus-visible,button:focus-visible { outline:3px solid #b77920; outline-offset:3px; }
-@media(max-width:760px) { .grid { grid-template-columns:1fr; gap:0; } main { padding:16px; } header { padding:20px 16px; } }
+header { background:#17343e; color:#fff; padding:12px max(16px,calc((100vw - 1160px)/2)); display:flex; align-items:center; justify-content:space-between; gap:12px; }
+h1 { margin:0; font-size:1.15rem; } header a { color:#d6edf1; font-size:.88rem; }
+h2 { font-size:1.05rem; margin:0; } h3 { margin:0; font-size:1rem; } p { margin:5px 0; }
+main { max-width:1192px; margin:auto; padding:14px 16px; } section { margin-bottom:16px; }
+.toolbar,.section-heading,.task-heading { display:flex; align-items:baseline; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+.toolbar { margin-bottom:8px; } .summary { margin:8px 0; } .muted { color:#536b73; font-size:.85rem; }
+.warning { padding:8px 12px; background:#fff3d6; border-left:4px solid #b97a21; margin-bottom:10px; }
+.graph { background:#fff; border:1px solid #cfdbd8; border-radius:6px; margin:7px 0 0; }
+.graph-viewport { overflow:auto; max-height:390px; } .graph img { display:block; width:auto; height:auto; min-width:100%; }
+.graph figcaption { padding:5px 10px; border-top:1px solid #e1e9e7; display:flex; gap:12px; flex-wrap:wrap; }
+#graph-fallback { padding:8px 12px; max-height:240px; overflow:auto; } #graph-fallback ul { margin:6px 0; }
+.grid { display:grid; grid-template-columns:minmax(0,1.65fr) minmax(0,1fr); gap:18px; }
+.task,.decision,.resource { padding:9px 0; border-bottom:1px solid #d5dfdd; overflow-wrap:anywhere; }
+.task-heading h3 { flex:1; min-width:180px; } .task-heading { justify-content:flex-start; }
+.owner { font-size:.8rem; color:#536b73; cursor:help; } .kind { font-size:.73rem; text-transform:uppercase; color:#536b73; }
+.state { display:inline-block; font-size:.76rem; background:#e6efec; color:#305347; border-radius:12px; padding:1px 7px; white-space:nowrap; }
+.running { background:#dcedf9; color:#17506c; } .blocked,.open { background:#ffdfd3; color:#792f1f; } .parked { background:#fff0cb; color:#745514; }
+.blocker,.gap { margin-top:5px; padding-left:8px; border-left:3px solid #b97a21; }
+details { margin-top:5px; } summary { cursor:pointer; color:#315662; } details > summary { font-size:.85rem; }
+.archive { border:1px solid #cfdbd8; border-radius:6px; padding:8px 10px; margin:10px 0; }
+.archive > summary { font-size:.93rem; font-weight:600; } .task details p,.decision details p { margin:5px 0; }
+ul { padding-left:20px; margin:6px 0; } li { margin:4px 0; } .links { display:flex; gap:5px 14px; flex-wrap:wrap; list-style:none; padding:0; }
+button { font:inherit; font-size:.85rem; padding:4px 9px; background:#fff; color:#17343e; border:1px solid #a9c4c9; border-radius:5px; cursor:pointer; }
+a:focus-visible,button:focus-visible,summary:focus-visible { outline:3px solid #b77920; outline-offset:3px; }
+[hidden] { display:none !important; }
+@media(max-width:760px) { .grid { grid-template-columns:1fr; gap:0; } header { align-items:flex-start; } h1 { font-size:1rem; } main { padding:12px; } .owner { width:100%; } .graph-viewport { max-height:280px; } }
 </style>
 </head>
 <body>
-<header><h1>Probing Viterbo's conjecture</h1><p>Work, decisions and resources</p></header>
+<header><h1>Probing Viterbo's conjecture · Project work</h1><a href="thesis.html">Thesis brief</a></header>
 <main>
 <div id="connection" class="warning" role="status" aria-live="polite">Loading reported state…</div>
-<section><h2 id="summary">Current work</h2><p id="scope" class="muted"></p><p class="muted" id="observation"></p><button id="refresh" type="button">Refresh now</button></section>
+<section aria-labelledby="goal-title">
+<div class="toolbar"><h2 id="goal-title">Goal and dependencies</h2><button id="refresh" type="button">Refresh now</button></div>
+<p id="summary" class="summary"></p>
+<p id="observation" class="muted"></p>
+<figure class="graph">
+<div class="graph-viewport"><img id="task-graph" alt="Selected project goal and task dependencies; a text route is available below." hidden></div>
+<div id="graph-fallback" hidden><p class="muted">Graph unavailable; dependencies from the reported state:</p><ul id="dependency-route"></ul></div>
+<figcaption class="muted"><a id="graph-link" href="/docs/coordination/graphs/tasks.svg">Open full graph</a><span>Scroll to inspect dependencies.</span><details><summary>Text route</summary><ul id="text-route"></ul></details></figcaption>
+</figure>
+</section>
 <div class="grid">
-<div><section aria-labelledby="work-title"><h2 id="work-title">Selected work</h2><div id="tasks"></div></section>
-<section aria-labelledby="decisions-title"><h2 id="decisions-title">Decisions and waiting work</h2><div id="decisions"></div></section></div>
-<div><section aria-labelledby="resources-title"><h2 id="resources-title">Resources</h2><div id="resources"></div></section>
-<section aria-labelledby="links-title"><h2 id="links-title">Where to look</h2><ul id="links"></ul></section>
-<section aria-labelledby="changes-title"><h2 id="changes-title">Recent changes</h2><ul id="changes"></ul><p class="muted">A shared recent-change list; this page does not track individual viewing history.</p></section>
-<section><h2>Scientific brief</h2><p><a href="thesis.html">Read the thesis overview</a></p><p id="scientific-status" class="muted">The scientific snapshot dates from 25 Sep. Source/PDF reconciliation is still open.</p></section></div>
+<div>
+<section aria-labelledby="work-title"><div class="section-heading"><h2 id="work-title">Unfinished work</h2><span id="work-count" class="muted"></span></div><div id="tasks"></div></section>
+<section id="candidates-section" aria-labelledby="candidates-title"><h2 id="candidates-title">Parked and unselected routes</h2><div id="candidates"></div></section>
+<section aria-labelledby="decisions-title"><h2 id="decisions-title">Unresolved decisions</h2><div id="decisions"></div></section>
 </div>
-<noscript><p>This view needs JavaScript to read the shared state. Open <a href="../coordination/current.json">the state file</a> or <a href="../coordination/README.md">coordination guide</a>.</p></noscript>
+<div>
+<section aria-labelledby="resources-title"><h2 id="resources-title">Resources</h2><div id="resources"></div></section>
+<section aria-labelledby="links-title"><h2 id="links-title">Sources</h2><ul id="links" class="links"></ul><details><summary>Scope and scientific freshness</summary><p id="scope" class="muted"></p><p id="scientific-status" class="muted">Scientific freshness is unknown.</p></details></section>
+</div>
+</div>
+<details id="completed-section" class="archive"><summary id="completed-title">Completed work</summary><div id="completed"></div></details>
+<details id="resolved-section" class="archive"><summary id="resolved-title">Resolved decisions</summary><div id="resolved"></div></details>
+<details class="archive"><summary>Recent history</summary><ul id="changes"></ul></details>
+<noscript><p>Open <a href="../coordination/graphs/tasks.svg">the goal graph</a>, <a href="../coordination/current.json">the state file</a> or <a href="../coordination/README.md">coordination guide</a>.</p></noscript>
 </main>
 <script>
 (() => {
   const get = id => document.getElementById(id);
+  const finished = status => ['done', 'completed', 'resolved', 'cancelled', 'canceled'].includes(status);
   let pending = false;
+  let graphVersion = null;
+  let graphPositioned = false;
   function node(tag, text, cls) {
     const element = document.createElement(tag);
     if (text !== undefined) element.textContent = text;
@@ -48,74 +81,147 @@ a:focus-visible,button:focus-visible { outline:3px solid #b77920; outline-offset
   function link(path, label) {
     const anchor = node('a', label || path);
     // Only repository-relative source paths from the checked state are links.
-    if (!path.startsWith('/') && !path.includes('..') && !path.includes(':')) anchor.href = '/' + path;
+    if (typeof path === 'string' && path && !path.startsWith('/') && !path.includes('..') && !path.includes(':') && !path.includes('\\')) anchor.href = '/' + path;
     return anchor;
   }
   function sources(paths) {
     const p = node('p', undefined, 'muted');
-    paths.forEach((path, index) => { if (index) p.append(' · '); p.append(link(path)); });
+    (paths || []).forEach((path, index) => { if (index) p.append(' · '); p.append(link(path)); });
     return p;
   }
-  function card(title, status) {
-    const element = node('article', undefined, 'card');
-    if (status) element.append(node('span', status, 'state ' + status));
-    element.append(node('h3', title));
+  function detail(label, ...children) {
+    const element = node('details');
+    element.append(node('summary', label), ...children);
     return element;
   }
+  function taskRow(task, titles) {
+    const row = node('article', undefined, 'task');
+    const heading = node('div', undefined, 'task-heading');
+    const status = node('span', task.status, 'state');
+    if (['running', 'blocked', 'parked', 'open'].includes(task.status)) status.classList.add(task.status);
+    heading.append(status, node('h3', task.title));
+    if (task.kind && task.kind !== 'task') heading.append(node('span', task.kind, 'kind'));
+    if (task.selection && task.selection !== 'selected') heading.append(node('span', task.selection, 'kind'));
+    const ownerLabel = task.owner && /^[a-f0-9-]{36}$/i.test(task.owner) ? task.owner.slice(0, 8) + '…' : task.owner;
+    const owner = node('span', task.owner ? 'Owner: ' + ownerLabel : 'Owner: ' + (task.selection && task.selection !== 'selected' ? 'not assigned' : 'unassigned'), 'owner');
+    if (task.owner) owner.title = task.owner;
+    heading.append(owner);
+    row.append(heading);
+    if (task.blocker) row.append(node('p', 'Blocked: ' + task.blocker, 'blocker'));
+    if (task.plan_gap) row.append(node('p', 'Route gap: ' + task.plan_gap, 'gap'));
+    const metadata = [node('p', task.outcome)];
+    if (task.owner && ownerLabel !== task.owner) metadata.push(node('p', 'Owner: ' + task.owner, 'muted'));
+    if ((task.depends_on || []).length) metadata.push(node('p', 'Depends on: ' + task.depends_on.map(id => titles.get(id) || id).join(' · '), 'muted'));
+    metadata.push(node('p', 'Observed: ' + task.updated_at, 'muted'), sources(task.sources));
+    row.append(detail('Outcome and evidence', ...metadata));
+    return row;
+  }
+  function decisionRow(decision) {
+    const row = node('article', undefined, 'decision');
+    const heading = node('div', undefined, 'task-heading');
+    const status = node('span', decision.status, 'state');
+    if (['open', 'blocked', 'parked'].includes(decision.status)) status.classList.add(decision.status);
+    heading.append(status, node('h3', decision.question));
+    row.append(heading);
+    if (!finished(decision.status)) row.append(node('p', decision.consequence, 'muted'));
+    row.append(detail('Recommendation and sources', node('p', decision.recommendation), ...(finished(decision.status) ? [node('p', decision.consequence, 'muted')] : []), sources(decision.sources)));
+    return row;
+  }
+  function route(tasks, titles) {
+    return tasks.map(task => node('li', (task.graph_label || task.title) + ' [' + task.status + ']' + ((task.depends_on || []).length ? ' ← ' + task.depends_on.map(id => titles.get(id) || id).join(' · ') : ' · no prerequisites')));
+  }
   function render(state) {
+    const tasks = state.tasks || [];
+    const titles = new Map(tasks.map(task => [task.id, task.title]));
+    const goal = tasks.find(task => task.id === 'workflow-done');
+    get('goal-title').textContent = goal ? goal.title : 'Goal and dependencies';
     get('summary').textContent = state.summary;
     get('scope').textContent = state.scope;
-    const minutes = Math.max(0, Math.floor((Date.now() - Date.parse(state.updated_at)) / 60000));
-    get('observation').textContent = 'Reported ' + state.updated_at + ' · ' + minutes + ' min ago. Page checks every 15 seconds; reports are written by agents.';
-    get('connection').hidden = minutes < 30;
-    get('connection').textContent = 'Reports are older than 30 minutes. Owners and resources may have changed; this view does not monitor process liveness.';
-    const tasks = state.tasks.map(task => {
-      const c = card(task.title, task.status);
-      c.append(node('p', task.outcome));
-      c.append(node('p', 'Owner: ' + (task.owner || 'unassigned'), 'muted'));
-      if (task.blocker) c.append(node('p', 'Waiting for: ' + task.blocker));
-      if (task.depends_on.length) c.append(node('p', 'Depends on: ' + task.depends_on.join(', '), 'muted'));
-      c.append(node('p', 'Observed: ' + task.updated_at, 'muted'), sources(task.sources));
-      return c;
-    });
-    get('tasks').replaceChildren(...(tasks.length ? tasks : [node('p', 'No selected assignments are reported. The detailed thesis backlog remains available.')]));
-    get('decisions').replaceChildren(...state.decisions.map(d => {
-      const c = card(d.question, d.status);
-      c.append(node('p', d.recommendation), node('p', d.consequence, 'muted'), sources(d.sources));
-      return c;
+    const timestamp = Date.parse(state.updated_at);
+    const minutes = Math.max(0, Math.floor((Date.now() - timestamp) / 60000));
+    get('observation').textContent = 'Reported ' + state.updated_at + (Number.isFinite(minutes) ? ' · ' + minutes + ' min ago' : '') + ' · refresh 15s · owner reports, not process liveness';
+    get('connection').hidden = Number.isFinite(minutes) && minutes < 30;
+    get('connection').textContent = Number.isFinite(minutes) ? 'Reports are older than 30 minutes. Owners and resources may have changed.' : 'Report timestamp is invalid; freshness is unknown.';
+    const unfinished = tasks.filter(task => !finished(task.status) && (!task.selection || task.selection === 'selected'));
+    const candidates = tasks.filter(task => !finished(task.status) && task.selection && task.selection !== 'selected');
+    const completed = tasks.filter(task => finished(task.status));
+    get('work-count').textContent = unfinished.length + ' selected unfinished · ' + completed.length + ' completed';
+    get('tasks').replaceChildren(...(unfinished.length ? unfinished.map(task => taskRow(task, titles)) : [node('p', 'No unfinished assignments reported.', 'muted')]));
+    get('candidates').replaceChildren(...candidates.map(task => taskRow(task, titles)));
+    get('candidates-section').hidden = !candidates.length;
+    get('completed').replaceChildren(...completed.map(task => taskRow(task, titles)));
+    get('completed-title').textContent = 'Completed work (' + completed.length + ')';
+    get('completed-section').hidden = !completed.length;
+    const decisions = state.decisions || [];
+    const unresolved = decisions.filter(decision => !finished(decision.status));
+    const resolved = decisions.filter(decision => finished(decision.status));
+    get('decisions').replaceChildren(...(unresolved.length ? unresolved.map(decisionRow) : [node('p', 'No unresolved decisions reported.', 'muted')]));
+    get('resolved').replaceChildren(...resolved.map(decisionRow));
+    get('resolved-title').textContent = 'Resolved decisions (' + resolved.length + ')';
+    get('resolved-section').hidden = !resolved.length;
+    get('resources').replaceChildren(...(state.resources || []).map(resource => {
+      const row = node('article', undefined, 'resource');
+      row.append(node('h3', resource.label), node('p', resource.value === null ? 'Unknown' : resource.value, 'muted'));
+      row.append(detail('Basis and observation', node('p', resource.basis, 'muted'), node('p', resource.observed_at ? 'Observed: ' + resource.observed_at : 'Observation time unknown.', 'muted')));
+      return row;
     }));
-    get('resources').replaceChildren(...state.resources.map(r => {
-      const c = card(r.label);
-      c.append(node('p', r.value === null ? 'Unknown' : r.value), node('p', r.basis, 'muted'));
-      if (r.observed_at) c.append(node('p', 'Observed: ' + r.observed_at, 'muted'));
-      return c;
-    }));
-    get('links').replaceChildren(...state.links.map(l => { const li = node('li'); li.append(link(l.path,l.label)); return li; }));
-    get('changes').replaceChildren(...state.changes.map(c => node('li', c.text + ' (' + c.at + ')')));
+    get('links').replaceChildren(...(state.links || []).map(item => { const li = node('li'); li.append(link(item.path, item.label)); return li; }));
+    get('changes').replaceChildren(...(state.changes || []).map(change => node('li', change.text + ' (' + change.at + ')')));
+    // The fallback names completed prerequisites; the expanded text route includes every task.
+    get('dependency-route').replaceChildren(...route([...unfinished, ...candidates], new Map(tasks.map(task => [task.id, task.graph_label || task.title]))));
+    get('text-route').replaceChildren(...route(tasks, titles));
+    if (graphVersion !== state.updated_at) {
+      graphVersion = state.updated_at;
+      get('task-graph').hidden = false;
+      get('graph-fallback').hidden = true;
+      get('task-graph').src = '/docs/coordination/graphs/tasks.svg?v=' + encodeURIComponent(graphVersion);
+    }
   }
   async function refresh() {
     if (pending) return;
     pending = true;
     try {
-      if (location.protocol === 'file:') throw new Error('Serve this page with python3 scripts/serve-project-dashboard.py, then open http://127.0.0.1:8765/.');
-      const response = await fetch('../coordination/current.json', {cache:'no-store'});
+      if (location.protocol === 'file:') throw new Error('Serve with python3 scripts/serve-project-dashboard.py and open http://127.0.0.1:8765/.');
+      const response = await fetch('/docs/coordination/current.json', {cache:'no-store'});
       if (!response.ok) throw new Error('Shared state is unavailable or invalid.');
       render(await response.json());
     } catch (error) {
       get('connection').hidden = false;
-      get('connection').textContent = 'State refresh failed. Any displayed values are the last successful report. ' + error.message;
+      get('connection').textContent = 'Refresh failed; displayed values are the last successful report. ' + error.message;
     }
     try {
       const response = await fetch('/_dashboard/source-status', {cache:'no-store'});
       if (!response.ok) throw new Error();
       const status = await response.json();
-      get('scientific-status').textContent = !status.known ? 'Scientific source freshness is unknown.' :
-        status.note + (status.changed.length ? ' Changed cited sources: ' + status.changed.join(', ') + '.' : ' No cited source hash changed; this does not establish scientific adequacy.');
+      get('scientific-status').textContent = !status.known ? 'Scientific source freshness is unknown.' : status.note + (status.changed.length ? ' Changed cited sources: ' + status.changed.join(', ') + '.' : ' No cited source hash changed; this does not establish scientific adequacy.');
     } catch {
-      get('scientific-status').textContent = 'Scientific source freshness is unknown; the retained brief remains a dated snapshot.';
+      get('scientific-status').textContent = 'Scientific source freshness is unknown; the brief remains a dated snapshot.';
     }
     pending = false;
   }
+  get('task-graph').addEventListener('error', () => { get('task-graph').hidden = true; get('graph-fallback').hidden = false; graphVersion = null; });
+  get('task-graph').addEventListener('load', async () => {
+    const graph = get('task-graph');
+    graph.hidden = false;
+    get('graph-fallback').hidden = true;
+    if (graphPositioned) return;
+    graphPositioned = true;
+    // Keep labels at SVG size and centre the goal in the first narrow viewport.
+    // Parse coordinates only; never insert fetched markup into this document.
+    try {
+      const response = await fetch(graph.src, {cache:'no-store'});
+      if (!response.ok) return;
+      const svg = new DOMParser().parseFromString(await response.text(), 'image/svg+xml');
+      const goal = Array.from(svg.querySelectorAll('g.node')).find(group => group.querySelector('title')?.textContent === 'workflow-done');
+      const goalX = Number(goal?.querySelector('text')?.getAttribute('x'));
+      const viewBox = svg.documentElement.getAttribute('viewBox')?.trim().split(/\s+/).map(Number);
+      const translation = svg.querySelector('g.graph')?.getAttribute('transform')?.match(/translate\(\s*([\d.-]+)/);
+      if (!goal || !viewBox || !Number.isFinite(goalX) || !(viewBox[2] > 0)) return;
+      const center = goalX + Number(translation?.[1] || 0);
+      const viewport = graph.parentElement;
+      viewport.scrollLeft = (center - viewBox[0]) * graph.clientWidth / viewBox[2] - viewport.clientWidth / 2;
+    } catch { /* The image and text route remain available if centring fails. */ }
+  });
   get('refresh').addEventListener('click', refresh);
   refresh();
   setInterval(refresh, 15000);

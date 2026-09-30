@@ -1,13 +1,27 @@
-# Reusable interpretation and review knowledge
+# Reusable project knowledge
 
-These entries preserve reasoning useful for writing and checking the thesis. They are not task queues, proof certificates, or replacements for current user instructions.
+This index routes reusable project knowledge, including reasoning useful for
+writing and checking the thesis. Entries are not task queues, proof
+certificates, or replacements for current user instructions.
 
-- [Optional human working card](optional-working-card.md): general process suggestions; neither agent authority nor an empirically validated workflow.
+## Process and collaboration: read by decision
+
+| When deciding | Read | What to recover |
+| --- | --- | --- |
+| Whether to commit substantial resources or split/delegate work | [AGENTS.md](../../AGENTS.md), then its [commentary](../../AGENTS.md.commentary.md) | Current spending boundary, planning rationale, ownership and unresolved defaults |
+| Which environment or access route can do the work | [Working environments and access paths](../development-environments.md) | Jörn's workstation/SSH/browser setup, Claude cloud and Astra Pro targets; capability checks still needed |
+| Which approach deserves an experiment/research budget | [Process audit](../history/process-audit/REPORT.md), findings 1 and 5 | Compare scientific alternatives before polishing the incumbent; avoid invented small-task gates; observational evidence only |
+| How to ask Jörn for a useful judgment | [Interaction trial](../history/reviewer-trial/interaction-handoff.md) | Exact object, adequate context and actionable choice; dated relayed instructions are not permanent authority |
+| Whether a deferral closes the parent objective | [Planning lessons](../history/memories/planning-context.md) | Observed scope loss, attributed decisions and synthesis; old task priorities are not current assignments |
+| Whether local review establishes deliverable readiness | [Process audit](../history/process-audit/REPORT.md), findings 3–4; [writing trial evidence](../history/reviewer-trial/README.md) | Interface/whole-artifact gaps, matched inputs, corrected findings and limits of acceptance evidence |
+
+[Optional human working card](optional-working-card.md) is a habit aid for Jörn,
+not agent instructions or an empirically validated workflow.
+
+## Mathematical and authoring interpretation
+
 - [HKO author context](hko-author-context.md): feasible upper functions versus optimizing branches, certificate and hand-proof boundaries; dated source-reading pilot, not a fresh proof audit.
 - [Optimizer review route](optimizer-review-route.md): meaning of the historical seven-policy comparison, allocation semantics, evaluator limitations and exact supporting summaries; current manuscript wording may differ.
-- [Interaction trial handoff](../history/reviewer-trial/interaction-handoff.md): observed successful and unsuccessful question forms, exact examples and limitations. Its relayed instructions were current at that handoff, not permanent authority.
-- [Planning lessons](../history/memories/planning-context.md): attributed 2026-09-05–07 discussion and the authoring/navigation omission; retain the distinction between observations and agent synthesis. Its former task priorities are not current assignments.
-- [Writing trial evidence](../history/reviewer-trial/README.md): exact source copies, human judgments and corrected false-alarm accounting. No validated automatic PASS gate resulted.
 
 Current work and continuation constraints are owned by
 [coordination](../coordination/README.md) and current user instructions.

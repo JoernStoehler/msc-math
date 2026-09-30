@@ -90,7 +90,10 @@ class DashboardHTTPTests(unittest.TestCase):
             self.assertEqual(response.status, 200)
             self.assertGreater(int(response.headers["Content-Length"]), 0)
             self.assertEqual(response.read(), b"")
-        for path in ("/AGENTS.md", "/../AGENTS.md", "/%2e%2e/AGENTS.md", "/docs/", "/.git/config"):
+        for path in ("/AGENTS.md", "/AGENTS.md.commentary.md", "/docs/coordination/otel-design.md", "/docs/coordination/graphs/tasks.svg", "/docs/coordination/skill-migration-plan.md"):
+            with self.request(path) as response:
+                self.assertEqual(response.status, 200)
+        for path in ("/INSTALL.md", "/../AGENTS.md", "/%2e%2e/AGENTS.md", "/docs/", "/.git/config"):
             with self.request(path) as response:
                 self.assertEqual(response.status, 404)
         with self.request("/" + dashboard.STATE, "POST") as response:
@@ -101,6 +104,23 @@ class DashboardHTTPTests(unittest.TestCase):
         path.symlink_to(self.original_root / "README.md")
         with self.request("/docs/README.md") as response:
             self.assertEqual(response.status, 404)
+
+    def test_completion_cannot_hide_an_unfinished_prerequisite(self):
+        state = self.state()
+        goal = next(task for task in state["tasks"] if task["id"] == "workflow-done")
+        goal["status"] = "done"
+        goal["owner"] = None
+        (dashboard.REPO / dashboard.STATE).write_text(json.dumps(state))
+        with self.request("/" + dashboard.STATE) as response:
+            self.assertEqual(response.status, 503)
+
+    def test_completed_assignment_releases_owner(self):
+        state = self.state()
+        task = next(task for task in state["tasks"] if task["status"] == "done")
+        task["owner"] = "leftover-owner"
+        (dashboard.REPO / dashboard.STATE).write_text(json.dumps(state))
+        with self.request("/" + dashboard.STATE) as response:
+            self.assertEqual(response.status, 503)
 
     def test_dependency_cycle_is_rejected(self):
         state = self.state()

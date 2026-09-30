@@ -19,16 +19,24 @@ STATE = "docs/coordination/current.json"
 BASELINE = "docs/dashboard/thesis-sources.json"
 # Explicitly named files only: no directory handler, path expansion or write API.
 FILES = {
+    "AGENTS.md", "AGENTS.md.commentary.md",
     STATE, BASELINE,
     "docs/dashboard/index.html", "docs/dashboard/thesis.html",
     "docs/dashboard/README.md", "docs/coordination/README.md",
+    "docs/coordination/otel-design.md",
+    "docs/coordination/skill-migration-plan.md",
+    "docs/coordination/knowledge-evaluation-plan.md",
+    "docs/coordination/graphs/tasks.dot",
+    "docs/coordination/graphs/tasks.svg",
     "docs/coordination/handoff.md", "docs/coordination/thesis-work.md",
     "docs/project-facts.md", "docs/README.md", "docs/knowledge/README.md",
+    "docs/development-environments.md",
     "docs/knowledge/hko-author-context.md", "docs/knowledge/optimizer-review-route.md",
     "docs/knowledge/optional-working-card.md", "docs/resume/thesis-resume.pdf",
     "docs/history/coordination-surface-migration/resume-20260930.md",
     "docs/consolidation/2026-09-24/claim-disposition.md",
     "docs/history/memories/planning-context.md", "thesis/main.tex",
+    "docs/history/process-audit/REPORT.md",
     "thesis/chapters/07-hko.tex",
     "experiments/hko-local-maximum/non-hko/README.md",
     "experiments/hko-local-maximum/non-hko/PROOF.md",
@@ -76,6 +84,12 @@ def read_state():
             raise ValueError(f"Running task has no owner: {task['id']}")
         if task["status"] == "blocked" and not task["blocker"]:
             raise ValueError(f"Blocked task has no reason: {task['id']}")
+        if task["status"] == "done" and task["owner"]:
+            raise ValueError(f"Completed task still has an owner: {task['id']}")
+        if task.get("kind", "task") not in {"task", "milestone", "crux"}:
+            raise ValueError(f"Unknown task kind: {task['id']}")
+        if task.get("selection", "selected") not in {"selected", "unselected", "parked"}:
+            raise ValueError(f"Unknown task selection: {task['id']}")
         for key in ("title", "outcome"):
             if not isinstance(task[key], str) or not task[key]:
                 raise ValueError(f"Missing {key}: {task['id']}")
@@ -83,6 +97,10 @@ def read_state():
         dependencies[task["id"]] = task["depends_on"]
         if any(dep not in ids for dep in task["depends_on"]):
             raise ValueError(f"Unknown dependency: {task['id']}")
+    by_id = {task["id"]: task for task in tasks}
+    for task in tasks:
+        if task["status"] == "done" and any(by_id[dep]["status"] != "done" for dep in task["depends_on"]):
+            raise ValueError(f"Completed task has an unfinished prerequisite: {task['id']}")
     def visit(node, active, visited):
         if node in active:
             raise ValueError(f"Dependency cycle: {node}")
