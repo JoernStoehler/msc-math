@@ -1,7 +1,9 @@
 # Reusable interpretation and review knowledge
 
-These entries preserve reasoning useful for writing and checking the thesis. They are not task queues, proof certificates, or replacements for current user instructions.
+These entries preserve reasoning useful for writing and checking the thesis and using its project tools. They are not task queues, proof certificates, or replacements for current user instructions.
 
+- [Codex collaboration context](codex-collaboration.md): current guidance ownership and confirmed expectations for continuation and process work; project-scoped, not a validated intervention.
+- [Codex feature flags](codex-features.md): source-linked tool and UX explanations, dated resolved settings, and incremental maintenance notes.
 - [Optional human working card](optional-working-card.md): general process suggestions; neither agent authority nor an empirically validated workflow.
 - [HKO author context](hko-author-context.md): feasible upper functions versus optimizing branches, certificate and hand-proof boundaries; dated source-reading pilot, not a fresh proof audit.
 - [Optimizer review route](optimizer-review-route.md): meaning of the historical seven-policy comparison, allocation semantics, evaluator limitations and exact supporting summaries; current manuscript wording may differ.

@@ -1,0 +1,1388 @@
+[
+  {
+    "name": "agent_message_board",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "AgentMessageBoard",
+    "default": false,
+    "comment": "Enable shared discussion tools for an agent tree.",
+    "line": 215
+  },
+  {
+    "name": "analytics_plan_history",
+    "stage": "experimental",
+    "enabled": true,
+    "enum": "AnalyticsPlanHistory",
+    "default": false,
+    "comment": "Preview consumer five-hour and weekly allowance history.",
+    "line": 95
+  },
+  {
+    "name": "api_key_model_discovery",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "ApiKeyModelDiscovery",
+    "default": false,
+    "comment": "Discover model catalogs for OpenAI API-key authentication.",
+    "line": 97
+  },
+  {
+    "name": "apply_patch_freeform",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "ApplyPatchFreeform",
+    "default": false,
+    "comment": "Removed compatibility flag for the deleted apply_patch fallback feature.",
+    "line": 418
+  },
+  {
+    "name": "apply_patch_preserve_line_endings",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "ApplyPatchPreserveLineEndings",
+    "default": false,
+    "comment": "Preserve existing line endings when apply_patch updates files.",
+    "line": 151
+  },
+  {
+    "name": "apply_patch_streaming_events",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "ApplyPatchStreamingEvents",
+    "default": false,
+    "comment": "Stream structured progress while apply_patch input is being generated.",
+    "line": 149
+  },
+  {
+    "name": "apps",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "Apps",
+    "default": true,
+    "comment": "Enable apps.",
+    "line": 221
+  },
+  {
+    "name": "apps_mcp_path_override",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "AppsMcpPathOverride",
+    "default": false,
+    "comment": "Removed compatibility flag for the legacy Apps MCP path override.",
+    "line": 235
+  },
+  {
+    "name": "artifact",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "Artifact",
+    "default": false,
+    "comment": "Enable native artifact tools.",
+    "line": 368
+  },
+  {
+    "name": "auth_elicitation",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "AuthElicitation",
+    "default": true,
+    "comment": "Prompt Codex Apps connector auth failures through MCP URL elicitations.",
+    "line": 362
+  },
+  {
+    "name": "background_paginated_rollout_migration",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "BackgroundPaginatedRolloutMigration",
+    "default": false,
+    "comment": "Migrate legacy local rollout files to paginated history in the background.",
+    "line": 190
+  },
+  {
+    "name": "bedrock_setup_wizard",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "BedrockSetupWizard",
+    "default": false,
+    "comment": "Offer Amazon Bedrock setup during TUI sign-in onboarding.",
+    "line": 364
+  },
+  {
+    "name": "browser_use",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "BrowserUse",
+    "default": true,
+    "comment": "Allow Browser Use agent integration in desktop apps.  Requirements-only gate: this should be set from requirements, not user config.",
+    "line": 279
+  },
+  {
+    "name": "browser_use_external",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "BrowserUseExternal",
+    "default": true,
+    "comment": "Allow Browser Use integration with external browsers.  Requirements-only gate: this should be set from requirements, not user config.",
+    "line": 287
+  },
+  {
+    "name": "browser_use_full_cdp_access",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "BrowserUseFullCdpAccess",
+    "default": true,
+    "comment": "Allow Browser Use integration to access the full Chrome DevTools Protocol surface.  Requirements-only gate: this should be set from requirements, not user config.",
+    "line": 283
+  },
+  {
+    "name": "chronicle",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "Chronicle",
+    "default": false,
+    "comment": "Enable the Chronicle sidecar for passive screen-context memories.",
+    "line": 192
+  },
+  {
+    "name": "code_mode",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "CodeMode",
+    "default": false,
+    "comment": "Enable JavaScript code mode backed by the standalone host process.",
+    "line": 121
+  },
+  {
+    "name": "code_mode_buffered_exec",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "CodeModeBufferedExec",
+    "default": false,
+    "comment": "Removed compatibility flag for the configurable code-mode exec yield timeout.",
+    "line": 123
+  },
+  {
+    "name": "code_mode_host",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "CodeModeHost",
+    "default": true,
+    "comment": "Run JavaScript code mode in the standalone host process.",
+    "line": 125
+  },
+  {
+    "name": "code_mode_interrupt",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "CodeModeInterrupt",
+    "default": false,
+    "comment": "Terminate active code mode cells when their turn is interrupted.",
+    "line": 129
+  },
+  {
+    "name": "code_mode_only",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "CodeModeOnly",
+    "default": false,
+    "comment": "Restrict model-visible tools to code mode entrypoints (`exec`, `wait`).",
+    "line": 131
+  },
+  {
+    "name": "code_mode_prewarm",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "CodeModePrewarm",
+    "default": false,
+    "comment": "Establish the code-mode host connection during session startup.",
+    "line": 127
+  },
+  {
+    "name": "codex_apps_mcp_2026_07_28",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "CodexAppsMcp20260728",
+    "default": false,
+    "comment": "Enable MCP protocol version 2026-07-28 for the host-owned Codex Apps server.",
+    "line": 229
+  },
+  {
+    "name": "codex_git_commit",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "CodexGitCommit",
+    "default": false,
+    "comment": "Removed legacy git commit attribution guidance flag.",
+    "line": 414
+  },
+  {
+    "name": "collaboration_modes",
+    "stage": "removed",
+    "enabled": true,
+    "enum": "CollaborationModes",
+    "default": true,
+    "comment": "Enable collaboration modes (Plan, Default). Kept for config backward compatibility; behavior is always collaboration-modes-enabled.",
+    "line": 426
+  },
+  {
+    "name": "compaction_image_budget",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "CompactionImageBudget",
+    "default": true,
+    "comment": "Include retained images in the remote compaction context budget.",
+    "line": 380
+  },
+  {
+    "name": "computer_use",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "ComputerUse",
+    "default": true,
+    "comment": "Allow Codex Computer Use.  Requirements-only gate: this should be set from requirements, not user config.",
+    "line": 291
+  },
+  {
+    "name": "concurrent_reasoning_summaries",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "ConcurrentReasoningSummaries",
+    "default": false,
+    "comment": "Request sequential cutoff reasoning summary delivery.",
+    "line": 311
+  },
+  {
+    "name": "content_item_kinds",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "ContentItemKinds",
+    "default": true,
+    "comment": "Send per-content-entry classifications in internal Responses metadata.",
+    "line": 117
+  },
+  {
+    "name": "context_management",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "ContextManagement",
+    "default": false,
+    "comment": "Enables experimental context management.",
+    "line": 350
+  },
+  {
+    "name": "current_time_reminder",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "CurrentTimeReminder",
+    "default": false,
+    "comment": "Add current-time reminders to model-visible context.",
+    "line": 356
+  },
+  {
+    "name": "cwd_relative_turn_diffs",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "CwdRelativeTurnDiffs",
+    "default": false,
+    "comment": "Use the current working directory for turn diff display paths.",
+    "line": 177
+  },
+  {
+    "name": "daemon_auto_start",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "DaemonAutoStart",
+    "default": true,
+    "comment": "Automatically start the shared local daemon for eligible interactive launches.",
+    "line": 113
+  },
+  {
+    "name": "default_mode_request_user_input",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "DefaultModeRequestUserInput",
+    "default": false,
+    "comment": "Allow request_user_input in Default collaboration mode.",
+    "line": 321
+  },
+  {
+    "name": "defer_mailbox_preemption",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "DeferMailboxPreemption",
+    "default": false,
+    "comment": "Keep sampling through reasoning and commentary boundaries when agent mail arrives. Pending mail is delivered at the next normal input boundary instead.",
+    "line": 211
+  },
+  {
+    "name": "deferred_executor",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "DeferredExecutor",
+    "default": false,
+    "comment": "Allow turns to start while selected executors are still starting.",
+    "line": 175
+  },
+  {
+    "name": "deferred_tool_world_state",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "DeferredToolWorldState",
+    "default": false,
+    "comment": "Describe deferred tool namespaces in the model-visible world state.",
+    "line": 241
+  },
+  {
+    "name": "elevated_windows_sandbox",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "WindowsSandboxElevated",
+    "default": false,
+    "comment": "Use the elevated Windows sandbox pipeline (setup + runner).",
+    "line": 406
+  },
+  {
+    "name": "enable_fanout",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "SpawnCsv",
+    "default": false,
+    "comment": "Removed compatibility flag for the deleted agent-job tools.",
+    "line": 219
+  },
+  {
+    "name": "enable_mcp_apps",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "EnableMcpApps",
+    "default": false,
+    "comment": "Enable MCP apps.",
+    "line": 225
+  },
+  {
+    "name": "enable_request_compression",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "EnableRequestCompression",
+    "default": true,
+    "comment": "Compress request bodies (zstd) when sending streaming requests to codex-backend.",
+    "line": 194
+  },
+  {
+    "name": "exec_permission_approvals",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "ExecPermissionApprovals",
+    "default": false,
+    "comment": "Allow exec tools to request additional permissions while staying sandboxed.",
+    "line": 153
+  },
+  {
+    "name": "executed_tool_call_metadata",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "ExecutedToolCallMetadata",
+    "default": false,
+    "comment": "Record model-attempted tool calls in internal Responses metadata.",
+    "line": 119
+  },
+  {
+    "name": "executor_capability_discovery",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "ExecutorCapabilityDiscovery",
+    "default": false,
+    "comment": "Discover selected-root plugin and skill manifests through one high-level exec-server RPC.",
+    "line": 251
+  },
+  {
+    "name": "experimental_windows_sandbox",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "WindowsSandbox",
+    "default": false,
+    "comment": "Enable Windows sandbox (restricted token) on Windows.",
+    "line": 404
+  },
+  {
+    "name": "external_agent_memory_import",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "ExternalAgentMemoryImport",
+    "default": false,
+    "comment": "Enable importing project-scoped memory from external agents.",
+    "line": 183
+  },
+  {
+    "name": "external_migration",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "ExternalMigration",
+    "default": false,
+    "comment": "Removed compatibility flag retained as a no-op.",
+    "line": 297
+  },
+  {
+    "name": "fast_mode",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "FastMode",
+    "default": true,
+    "comment": "Enable Fast mode selection in the TUI and request layer.",
+    "line": 370
+  },
+  {
+    "name": "goals",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "Goals",
+    "default": true,
+    "comment": "Enable persisted thread goals and automatic goal continuation.",
+    "line": 346
+  },
+  {
+    "name": "guardian_approval",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "GuardianApproval",
+    "default": true,
+    "comment": "Enable automatic review for approval prompts.",
+    "line": 327
+  },
+  {
+    "name": "guardian_conversation_history_tools",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "GuardianConversationHistoryTools",
+    "default": false,
+    "comment": "Give Guardian access to the root conversation's message history tools.",
+    "line": 340
+  },
+  {
+    "name": "guardian_enhanced_node_repl_transcripts",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "GuardianEnhancedNodeReplTranscripts",
+    "default": false,
+    "comment": "Include completed node_repl or cua_repl Code Mode responses in Guardian reviews.",
+    "line": 336
+  },
+  {
+    "name": "guardian_ext",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "GuardianExt",
+    "default": false,
+    "comment": "Removed compatibility flag for the unused Guardian extension prototype.",
+    "line": 344
+  },
+  {
+    "name": "guardian_node_repl_transcript_images",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "GuardianNodeReplTranscriptImages",
+    "default": false,
+    "comment": "Include completed node_repl or cua_repl Code Mode response images in Guardian reviews.",
+    "line": 338
+  },
+  {
+    "name": "guardian_reuse_parent_compaction",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "GuardianReuseParentCompaction",
+    "default": true,
+    "comment": "Reuse encrypted parent compaction when restarting Guardian review sessions. When disabled, retain an independent review transcript across parent compaction.",
+    "line": 332
+  },
+  {
+    "name": "guardian_root_handoff_context",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "GuardianRootHandoffContext",
+    "default": false,
+    "comment": "Limit worker Guardian root evidence to preceding root communication windows.",
+    "line": 334
+  },
+  {
+    "name": "guardianv2",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "GuardianV2",
+    "default": false,
+    "comment": "Enable Guardian V2 automatic approval reviews.",
+    "line": 342
+  },
+  {
+    "name": "guardianv2.thread_context",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "GuardianThreadContext",
+    "default": false,
+    "comment": "Removed compatibility flag for always-on thread-owned Guardian context.",
+    "line": 329
+  },
+  {
+    "name": "hooks",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "CodexHooks",
+    "default": true,
+    "comment": "Enable Claude-style lifecycle hooks loaded from hooks.json files.",
+    "line": 108
+  },
+  {
+    "name": "image_detail_original",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "ImageDetailOriginal",
+    "default": false,
+    "comment": "Removed compatibility flag retained as a no-op so old wrappers can still pass `--enable image_detail_original`.",
+    "line": 431
+  },
+  {
+    "name": "image_generation",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "ImageGeneration",
+    "default": true,
+    "comment": "Enable extension-backed image generation.",
+    "line": 299
+  },
+  {
+    "name": "image_resize_notice",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "ImageResizeNotice",
+    "default": false,
+    "comment": "Tell the model when a prompt image was resized and include its dimensions.",
+    "line": 303
+  },
+  {
+    "name": "in_app_browser",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "InAppBrowser",
+    "default": true,
+    "comment": "Allow the in-app browser pane in desktop apps.  Requirements-only gate: this should be set from requirements, not user config.",
+    "line": 259
+  },
+  {
+    "name": "in_app_chat",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "InAppChat",
+    "default": true,
+    "comment": "Allow the in-app chat pane in desktop apps.  Requirements-only gate: this should be set from requirements, not user config.",
+    "line": 263
+  },
+  {
+    "name": "in_app_dictation",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "InAppDictation",
+    "default": true,
+    "comment": "Allow in-app dictation in desktop apps.  Requirements-only gate: this should be set from requirements, not user config.",
+    "line": 267
+  },
+  {
+    "name": "in_app_local_automation",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "InAppLocalAutomation",
+    "default": true,
+    "comment": "Allow desktop apps to run local automations.  Requirements-only gate: this should be set from requirements, not user config.",
+    "line": 271
+  },
+  {
+    "name": "in_app_updates",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "InAppUpdates",
+    "default": true,
+    "comment": "Allow desktop apps to perform in-app updates.  Requirements-only gate: this should be set from requirements, not user config.",
+    "line": 275
+  },
+  {
+    "name": "instant_interrupt",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "InstantInterrupt",
+    "default": false,
+    "comment": "Preempt responses and yield foreground code-mode observations on new user input.",
+    "line": 213
+  },
+  {
+    "name": "item_ids",
+    "stage": "removed",
+    "enabled": true,
+    "enum": "ItemIds",
+    "default": true,
+    "comment": "Removed compatibility flag for always-on response item IDs.",
+    "line": 309
+  },
+  {
+    "name": "js_repl",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "JsRepl",
+    "default": false,
+    "comment": "Removed compatibility flag for the deleted JavaScript REPL feature.",
+    "line": 393
+  },
+  {
+    "name": "js_repl_tools_only",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "JsReplToolsOnly",
+    "default": false,
+    "comment": "Removed compatibility flag for the deleted JavaScript REPL tool-only mode.",
+    "line": 395
+  },
+  {
+    "name": "local_thread_store_compression",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "LocalThreadStoreCompression",
+    "default": false,
+    "comment": "Compress cold local thread-store rollout files, including shared histories. Requires every reader of the Codex home to support compressed shared histories.",
+    "line": 186
+  },
+  {
+    "name": "local_thread_store_shared_compression",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "LocalThreadStoreSharedCompression",
+    "default": false,
+    "comment": "Removed compatibility flag; local_thread_store_compression controls all rollout files.",
+    "line": 188
+  },
+  {
+    "name": "mcp_2026_07_28",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "Mcp20260728",
+    "default": false,
+    "comment": "Enable MCP protocol version 2026-07-28 support.",
+    "line": 227
+  },
+  {
+    "name": "mcp_oauth_refresh_coordination",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "McpOAuthRefreshCoordination",
+    "default": false,
+    "comment": "Let RMCP coordinate OAuth refresh through the configured credential store.",
+    "line": 231
+  },
+  {
+    "name": "memories",
+    "stage": "stable",
+    "enabled": false,
+    "enum": "MemoryTool",
+    "default": false,
+    "comment": "Enable startup memory extraction and file-backed memory consolidation.",
+    "line": 181
+  },
+  {
+    "name": "mentions_v2",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "MentionsV2",
+    "default": true,
+    "comment": "Enable the unified mention popup used by default in the TUI.",
+    "line": 319
+  },
+  {
+    "name": "multi_agent",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "Collab",
+    "default": true,
+    "comment": "Enable collab tools.",
+    "line": 206
+  },
+  {
+    "name": "multi_agent_mode",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "MultiAgentMode",
+    "default": false,
+    "comment": "Removed compatibility flag retained as a no-op.",
+    "line": 217
+  },
+  {
+    "name": "multi_agent_v2",
+    "stage": "stable",
+    "enabled": false,
+    "enum": "MultiAgentV2",
+    "default": false,
+    "comment": "Enable task-path-based multi-agent routing.",
+    "line": 208
+  },
+  {
+    "name": "network_proxy",
+    "stage": "experimental",
+    "enabled": false,
+    "enum": "NetworkProxy",
+    "default": false,
+    "comment": "Start the managed network proxy for sandboxed sessions.",
+    "line": 198
+  },
+  {
+    "name": "non_prefixed_mcp_tool_names",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "NonPrefixedMcpToolNames",
+    "default": false,
+    "comment": "Expose MCP model-visible namespaces without the legacy `mcp__` prefix.",
+    "line": 243
+  },
+  {
+    "name": "nonfatal_clock_read_errors",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "NonfatalClockReadErrors",
+    "default": false,
+    "comment": "Report failed clock reads to the model without failing the turn.",
+    "line": 358
+  },
+  {
+    "name": "omit_app_server_notification_media",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "OmitAppServerNotificationMedia",
+    "default": false,
+    "comment": "Omit inline image and audio content from app-server item notifications.",
+    "line": 301
+  },
+  {
+    "name": "personality",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "Personality",
+    "default": false,
+    "comment": "Removed compatibility flag retained as a no-op.",
+    "line": 366
+  },
+  {
+    "name": "plugin_hooks",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "PluginHooks",
+    "default": false,
+    "comment": "Removed compatibility flag for plugin-bundled lifecycle hooks.",
+    "line": 255
+  },
+  {
+    "name": "plugin_sharing",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "PluginSharing",
+    "default": true,
+    "comment": "Enable remote plugin sharing flows.",
+    "line": 295
+  },
+  {
+    "name": "plugins",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "Plugins",
+    "default": true,
+    "comment": "Enable plugins.",
+    "line": 249
+  },
+  {
+    "name": "powershell_shell_version",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "PowerShellShellVersion",
+    "default": false,
+    "comment": "Expose the selected PowerShell execution host's bounded major/minor version.",
+    "line": 171
+  },
+  {
+    "name": "prefer_mxc",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "PreferMxc",
+    "default": false,
+    "comment": "Prefer the local native Windows sandbox when available, retaining legacy fallback.",
+    "line": 410
+  },
+  {
+    "name": "prevent_idle_sleep",
+    "stage": "experimental",
+    "enabled": false,
+    "enum": "PreventIdleSleep",
+    "default": false,
+    "comment": "Prevent idle system sleep while a turn is actively running.",
+    "line": 376
+  },
+  {
+    "name": "psp",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "Psp",
+    "default": false,
+    "comment": "Route first-party ChatGPT requests through PSP.",
+    "line": 223
+  },
+  {
+    "name": "realtime_conversation",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "RealtimeConversation",
+    "default": true,
+    "comment": "Enable voice conversations in the TUI.",
+    "line": 374
+  },
+  {
+    "name": "reasoning_effort_override",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "ReasoningEffortOverride",
+    "default": false,
+    "comment": "Append trusted response configuration items when the selected reasoning effort changes.",
+    "line": 354
+  },
+  {
+    "name": "recommended_plugins",
+    "stage": "stable",
+    "enabled": false,
+    "enum": "RecommendedPlugins",
+    "default": false,
+    "comment": "Include recommended plugins in model-visible context.",
+    "line": 247
+  },
+  {
+    "name": "remote_compaction_v2",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "RemoteCompactionV2",
+    "default": false,
+    "comment": "Removed compatibility key, still advertised to the Responses API.",
+    "line": 378
+  },
+  {
+    "name": "remote_control",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "RemoteControl",
+    "default": false,
+    "comment": "Removed compatibility flag for the deleted remote control feature.",
+    "line": 428
+  },
+  {
+    "name": "remote_models",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "RemoteModels",
+    "default": false,
+    "comment": "Legacy remote models flag kept for backward compatibility.",
+    "line": 412
+  },
+  {
+    "name": "remote_plugin",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "RemotePlugin",
+    "default": true,
+    "comment": "Enable the PS-backed remote plugin catalog.",
+    "line": 293
+  },
+  {
+    "name": "request_permissions_tool",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "RequestPermissionsTool",
+    "default": false,
+    "comment": "Expose the built-in request_permissions tool.",
+    "line": 157
+  },
+  {
+    "name": "request_rule",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "RequestRule",
+    "default": false,
+    "comment": "Allow the model to request approval and propose exec rules.",
+    "line": 402
+  },
+  {
+    "name": "resize_all_images",
+    "stage": "removed",
+    "enabled": true,
+    "enum": "ResizeAllImages",
+    "default": true,
+    "comment": "Removed compatibility flag for always-on centralized image preparation.",
+    "line": 307
+  },
+  {
+    "name": "respect_system_proxy",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "RespectSystemProxy",
+    "default": false,
+    "comment": "Respect host system proxy settings for Codex-owned network clients.",
+    "line": 202
+  },
+  {
+    "name": "responses_websockets",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "ResponsesWebsockets",
+    "default": false,
+    "comment": "Legacy rollout flag for Responses API WebSocket transport experiments.",
+    "line": 438
+  },
+  {
+    "name": "responses_websockets_v2",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "ResponsesWebsocketsV2",
+    "default": false,
+    "comment": "Legacy rollout flag for Responses API WebSocket transport v2 experiments.",
+    "line": 440
+  },
+  {
+    "name": "retain_client_developer_messages",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "RetainClientDeveloperMessages",
+    "default": false,
+    "comment": "Retain client-authored developer messages across compacted context windows.",
+    "line": 382
+  },
+  {
+    "name": "rollout_budget",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "RolloutBudget",
+    "default": false,
+    "comment": "Track and report a shared token budget across a session's agent threads.",
+    "line": 352
+  },
+  {
+    "name": "runtime_metrics",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "RuntimeMetrics",
+    "default": false,
+    "comment": "Enable runtime metrics snapshots via a manual reader.",
+    "line": 179
+  },
+  {
+    "name": "search_tool",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "SearchTool",
+    "default": false,
+    "comment": "Legacy search-tool feature flag kept for backward compatibility.",
+    "line": 397
+  },
+  {
+    "name": "secret_auth_storage",
+    "stage": "stable",
+    "enabled": false,
+    "enum": "SecretAuthStorage",
+    "default": false,
+    "comment": "Store CLI auth in the encrypted local secrets backend when keyring storage is selected.",
+    "line": 110
+  },
+  {
+    "name": "send_async_message",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "SendAsyncMessage",
+    "default": false,
+    "comment": "Removed compatibility flag for model-enabled async user messaging.",
+    "line": 323
+  },
+  {
+    "name": "send_message_to_user_async",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "SendMessageToUserAsync",
+    "default": false,
+    "comment": "Allow root agents to send async user messages without model catalog support.",
+    "line": 325
+  },
+  {
+    "name": "shell_snapshot",
+    "stage": "stable",
+    "enabled": false,
+    "enum": "ShellSnapshot",
+    "default": true,
+    "comment": "Experimental shell snapshotting.",
+    "line": 169
+  },
+  {
+    "name": "shell_snapshot_v2",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "ShellSnapshotV2",
+    "default": false,
+    "comment": "Keep policy-filtered shell snapshots entirely in executor memory.",
+    "line": 173
+  },
+  {
+    "name": "shell_tool",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "ShellTool",
+    "default": true,
+    "comment": "Enable the default shell tool.",
+    "line": 102
+  },
+  {
+    "name": "shell_zsh_fork",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "ShellZshFork",
+    "default": false,
+    "comment": "Route shell tool execution through the zsh exec bridge.",
+    "line": 137
+  },
+  {
+    "name": "skill_env_var_dependency_prompt",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "SkillEnvVarDependencyPrompt",
+    "default": false,
+    "comment": "Removed compatibility flag for deleted skill env var dependency prompting.",
+    "line": 317
+  },
+  {
+    "name": "skill_mcp_dependency_install",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "SkillMcpDependencyInstall",
+    "default": true,
+    "comment": "Allow prompting and installing missing MCP dependencies.",
+    "line": 313
+  },
+  {
+    "name": "skill_search",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "SkillSearch",
+    "default": true,
+    "comment": "Run cheap skill-search methods in shadow mode and emit experiment metrics.",
+    "line": 315
+  },
+  {
+    "name": "skip_host_skill_discovery",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "SkipHostSkillDiscovery",
+    "default": false,
+    "comment": "Skip host skill snapshots when no registered contributor requires them.",
+    "line": 253
+  },
+  {
+    "name": "sleep_tool",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "SleepTool",
+    "default": true,
+    "comment": "Allow registration of the built-in sleep tool.",
+    "line": 106
+  },
+  {
+    "name": "sqlite",
+    "stage": "removed",
+    "enabled": true,
+    "enum": "Sqlite",
+    "default": true,
+    "comment": "Persist rollout metadata to a local SQLite database.",
+    "line": 416
+  },
+  {
+    "name": "standalone_web_search",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "StandaloneWebSearch",
+    "default": false,
+    "comment": "Expose the extension-backed standalone web search tool.",
+    "line": 164
+  },
+  {
+    "name": "steer",
+    "stage": "removed",
+    "enabled": true,
+    "enum": "Steer",
+    "default": true,
+    "comment": "Steer feature flag - when enabled, Enter submits immediately instead of queuing. Kept for config backward compatibility; behavior is always steer-enabled.",
+    "line": 423
+  },
+  {
+    "name": "step_model_switching",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "StepModelSwitching",
+    "default": false,
+    "comment": "Enable explicitly requested model changes for later step captures.",
+    "line": 372
+  },
+  {
+    "name": "system_proxy_fallback",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "SystemProxyFallback",
+    "default": true,
+    "comment": "Retry eligible bootstrap requests through the system proxy after normal routing fails.",
+    "line": 204
+  },
+  {
+    "name": "terminal_resize_reflow",
+    "stage": "removed",
+    "enabled": true,
+    "enum": "TerminalResizeReflow",
+    "default": true,
+    "comment": "Removed compatibility flag. Transcript scrollback reflow on terminal resize is always on.",
+    "line": 145
+  },
+  {
+    "name": "terminal_visualization_instructions",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "TerminalVisualizationInstructions",
+    "default": false,
+    "comment": "Add terminal-specific visualization guidance to TUI developer instructions.",
+    "line": 147
+  },
+  {
+    "name": "token_budget",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "TokenBudget",
+    "default": false,
+    "comment": "Add current context-window metadata to model-visible context.",
+    "line": 348
+  },
+  {
+    "name": "tool_call_mcp_elicitation",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "ToolCallMcpElicitation",
+    "default": true,
+    "comment": "Route MCP tool approval prompts through the MCP elicitation request path.",
+    "line": 360
+  },
+  {
+    "name": "tool_search",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "ToolSearch",
+    "default": false,
+    "comment": "Removed compatibility flag retained as a no-op now that tool_search is always enabled.",
+    "line": 237
+  },
+  {
+    "name": "tool_search_always_defer_mcp_tools",
+    "stage": "removed",
+    "enabled": true,
+    "enum": "ToolSearchAlwaysDeferMcpTools",
+    "default": true,
+    "comment": "Removed compatibility flag. MCP tools are always deferred when tool_search is available.",
+    "line": 239
+  },
+  {
+    "name": "tool_suggest",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "ToolSuggest",
+    "default": true,
+    "comment": "Enable discoverable tool suggestions for apps.",
+    "line": 245
+  },
+  {
+    "name": "transcript_v2",
+    "stage": "deprecated",
+    "enabled": false,
+    "enum": "TranscriptV2",
+    "default": false,
+    "comment": "Deprecated no-op; use `tui.fullscreen_transcript` instead.",
+    "line": 99
+  },
+  {
+    "name": "tui_app_server",
+    "stage": "removed",
+    "enabled": true,
+    "enum": "TuiAppServer",
+    "default": true,
+    "comment": "Removed compatibility flag. The TUI now always uses the app-server implementation.",
+    "line": 433
+  },
+  {
+    "name": "unavailable_dummy_tools",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "UnavailableDummyTools",
+    "default": false,
+    "comment": "Removed compatibility flag for the deleted unavailable-tool placeholder backfill.",
+    "line": 420
+  },
+  {
+    "name": "unbounded_connection_retries",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "UnboundedConnectionRetries",
+    "default": true,
+    "comment": "Keep active sampling turns alive until a failed network connection recovers.",
+    "line": 196
+  },
+  {
+    "name": "undo",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "GhostCommit",
+    "default": false,
+    "comment": "Removed compatibility flag retained as a no-op so old configs can still parse `undo`.",
+    "line": 391
+  },
+  {
+    "name": "unified_exec",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "UnifiedExec",
+    "default": true,
+    "comment": "Use the single unified PTY-backed exec tool.",
+    "line": 133
+  },
+  {
+    "name": "unified_exec_tty",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "UnifiedExecTty",
+    "default": true,
+    "comment": "Allow unified exec commands to allocate an interactive terminal.",
+    "line": 135
+  },
+  {
+    "name": "unified_exec_zsh_fork",
+    "stage": "removed",
+    "enabled": true,
+    "enum": "UnifiedExecZshFork",
+    "default": true,
+    "comment": "Allow unified exec to compose with the zsh exec bridge.  This flag is only a composition gate. Enabling it by itself must not turn on either `unified_exec` or `shell_zsh_fork` because those features have separate rollout and enterprise controls.",
+    "line": 143
+  },
+  {
+    "name": "unified_image_budget",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "UnifiedImageBudget",
+    "default": false,
+    "comment": "Apply one shared pixel and token budget to every image, regardless of legacy detail hints.",
+    "line": 305
+  },
+  {
+    "name": "use_agent_identity",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "UseAgentIdentity",
+    "default": false,
+    "comment": "Use Agent Identity for ChatGPT-authenticated sessions.",
+    "line": 384
+  },
+  {
+    "name": "use_legacy_landlock",
+    "stage": "deprecated",
+    "enabled": false,
+    "enum": "UseLegacyLandlock",
+    "default": false,
+    "comment": "Use the legacy Landlock Linux sandbox fallback instead of the default bubblewrap pipeline.",
+    "line": 167
+  },
+  {
+    "name": "use_linux_sandbox_bwrap",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "UseLinuxSandboxBwrap",
+    "default": false,
+    "comment": "Removed legacy Linux bubblewrap opt-in flag retained as a no-op so old wrappers and config can still parse it.",
+    "line": 400
+  },
+  {
+    "name": "use_xaa",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "UseXaa",
+    "default": false,
+    "comment": "Enable enterprise refresh-token authorization for configured MCP resources.",
+    "line": 233
+  },
+  {
+    "name": "view_image",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "ViewImage",
+    "default": true,
+    "comment": "Enable the built-in local image viewer.",
+    "line": 104
+  },
+  {
+    "name": "web_search_cached",
+    "stage": "deprecated",
+    "enabled": false,
+    "enum": "WebSearchCached",
+    "default": false,
+    "comment": "Allow the model to request web searches that fetch cached content. Takes precedence over `WebSearchRequest`.",
+    "line": 162
+  },
+  {
+    "name": "web_search_request",
+    "stage": "deprecated",
+    "enabled": false,
+    "enum": "WebSearchRequest",
+    "default": false,
+    "comment": "Allow the model to request web searches that fetch live content.",
+    "line": 159
+  },
+  {
+    "name": "windows_sandbox_service",
+    "stage": "under development",
+    "enabled": false,
+    "enum": "WindowsSandboxService",
+    "default": false,
+    "comment": "Attempt elevated Windows sandbox provisioning through the installed service.",
+    "line": 408
+  },
+  {
+    "name": "workspace_dependencies",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "WorkspaceDependencies",
+    "default": true,
+    "comment": "Enable workspace dependency support.",
+    "line": 386
+  },
+  {
+    "name": "workspace_owner_usage_nudge",
+    "stage": "removed",
+    "enabled": false,
+    "enum": "WorkspaceOwnerUsageNudge",
+    "default": false,
+    "comment": "Removed compatibility flag retained as a no-op now that workspace owner usage nudges are always enabled.",
+    "line": 436
+  },
+  {
+    "name": "worktrees",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "Worktrees",
+    "default": true,
+    "comment": "Enable managed worktree creation and repository-aware sessions.",
+    "line": 200
+  },
+  {
+    "name": "write_stdin_approval",
+    "stage": "stable",
+    "enabled": true,
+    "enum": "WriteStdinApproval",
+    "default": true,
+    "comment": "Require approval before writing input to escalated unified-exec terminals.",
+    "line": 155
+  }
+]

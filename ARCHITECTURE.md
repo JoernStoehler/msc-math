@@ -17,7 +17,7 @@ detailed file inventories and does not prescribe local file placement.
 | `docs/` | Project contracts, scientific support/audit packets, reusable interpretation, and reproduction policy; see `docs/README.md` | sole authority for a theorem merely because an audit mentions it |
 | `docs/coordination/` | Agent-facing assignments, resource observations, detailed thesis backlog and continuation constraints | scientific evidence, reusable knowledge or independently maintained browser assignments |
 | `docs/dashboard/` | Human-facing browser presentation and dated scientific synthesis | authority for assignments or proof acceptance |
-| `docs/knowledge/` | Sourced reusable mathematical and review interpretation | task queues, raw review evidence or instructions overriding the user |
+| `docs/knowledge/` | Sourced reusable mathematical and review interpretation and project tooling knowledge | task queues, raw review evidence or instructions overriding the user |
 | `docs/history/` | Exact reviews and matched inputs, experiment/recovery evidence, and a pinned Git index for retired plans | superseded task queues as maintained fulltexts, current task ownership, or alternative active manuscript |
 | `scripts/` | Repository-wide maintenance and reporting utilities | scientific results |
 
