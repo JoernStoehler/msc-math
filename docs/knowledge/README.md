@@ -10,6 +10,7 @@ certificates, or replacements for current user instructions.
 | --- | --- | --- |
 | Whether to commit substantial resources or split/delegate work | [AGENTS.md](../../AGENTS.md), then its [commentary](../../AGENTS.md.commentary.md) | Current spending boundary, planning rationale, ownership and unresolved defaults |
 | Which environment or access route can do the work | [Working environments and access paths](../development-environments.md) | Jörn's workstation/SSH/browser setup, Claude cloud and Astra Pro targets; capability checks still needed |
+| Which Codex feature/config setting controls behavior | [Codex implementation reference](../codex.md) | Refresh source at the installed release, trace implementation consumers, preserve host model/effort ownership and explain project overrides |
 | Which approach deserves an experiment/research budget | [Process audit](../history/process-audit/REPORT.md), findings 1 and 5 | Compare scientific alternatives before polishing the incumbent; avoid invented small-task gates; observational evidence only |
 | How to ask Jörn for a useful judgment | [Interaction trial](../history/reviewer-trial/interaction-handoff.md) | Exact object, adequate context and actionable choice; dated relayed instructions are not permanent authority |
 | Whether a deferral closes the parent objective | [Planning lessons](../history/memories/planning-context.md) | Observed scope loss, attributed decisions and synthesis; old task priorities are not current assignments |

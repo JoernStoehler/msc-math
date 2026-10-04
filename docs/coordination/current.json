@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-30T17:42:30Z",
-  "scope": "Whole msc-math completion outcomes and evidence-backed selectable opportunities, plus selected workflow/setup work. This map authorizes no autonomous thesis run or external delivery.",
-  "summary": "Reviewed dashboard and load checker integrated. Async question use disabled by project instruction after reported nondelivery. Watcher stopped; no migration approval recorded. Await direct discussion of the prepared plan. Whole-project opportunities remain unselected; thesis execution stopped.",
+  "updated_at": "2026-10-03T22:47:59Z",
+  "scope": "Whole msc-math completion outcomes, selected workflow/setup work, and 3 October project-repair intake/triage. New resolution packets remain unselected; no autonomous thesis run, host mutation or substantial execution is authorized by this map.",
+  "summary": "Bounded repair comparisons and one fresh retrieval probe returned. The provisional goal map is browser-checked and available for discussion. No general remedy, acceptable overhead or repair completion established. Candidate evaluation/topology gaps remain unselected; no worker remains active in this repair intake.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -77,7 +77,7 @@
       "title": "Route process knowledge into project collaboration guidance",
       "status": "done",
       "owner": null,
-      "outcome": "Local collaboration rules and knowledge routing complete; link/state checks passed. Behavioral and post-compaction performance untested.",
+      "outcome": "Local collaboration rules and knowledge routing complete; link/state checks passed. Behavioral and post-compaction performance untested. On 3 October, added Jörn-requested continuity guidance: brief acknowledgments do not stop unfinished authorized work; completion, explicit stopping and visible required-input boundaries remain. Rationale retained in commentary; behavioral effect untested.",
       "depends_on": [],
       "blocker": null,
       "sources": [
@@ -85,12 +85,12 @@
         "AGENTS.md.commentary.md",
         "docs/knowledge/README.md"
       ],
-      "updated_at": "2026-09-30T16:21:46Z",
+      "updated_at": "2026-10-03T18:45:38Z",
       "kind": "task",
       "selection": "selected",
       "graph_label": "Local guidance",
       "project": "workflows",
-      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected. Jörn subsequently requested the narrow acknowledgment/continuation correction in the Codex walkthrough on 3 October."
     },
     {
       "id": "workstation-otel-plan",
@@ -169,24 +169,26 @@
     {
       "id": "workflow-proposal-integration",
       "title": "Review and consolidate returned skill and knowledge proposals",
-      "status": "done",
-      "owner": null,
-      "outcome": "Reviewed migration and knowledge proposals against returned environment/accounting findings. Recommend nine project-local skills with Claude adapters, conditional host capabilities and retained-packet handoffs; defer controlled behavioral pilot and new messaging infrastructure. Concrete package selection remains Jörn’s decision; no skill activation or execution approval is inferred.",
+      "status": "running",
+      "owner": "01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a",
+      "outcome": "Consolidated proposal drafted and independently reviewed; root integrated corrections, a local Codex 0.159.2 feature snapshot and source estimates. Browser-readable artifact available. Direct user presentation remains pending; this row stays RUNNING until that deliverable is actually provided.",
       "depends_on": [
         "skill-migration-plan",
         "knowledge-evaluation-plan"
       ],
       "blocker": null,
       "sources": [
+        "docs/coordination/workflow-proposal.md",
         "docs/coordination/skill-migration-plan.md",
         "docs/coordination/knowledge-evaluation-plan.md"
       ],
-      "updated_at": "2026-09-30T16:39:44Z",
+      "updated_at": "2026-09-30T17:50:02Z",
       "kind": "task",
       "selection": "selected",
       "graph_label": "Proposal integration",
       "project": "workflows",
-      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected.",
+      "next_step": "Present the concise recommendation and capability gaps directly in chat; then mark proposal delivery done and retain any actual unanswered choice without claiming receipt/approval."
     },
     {
       "id": "workflow-dashboard-map",
@@ -259,23 +261,24 @@
       "selection": "selected",
       "graph_label": "Select completion package",
       "status": "blocked",
-      "owner": null,
+      "owner": "01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a",
       "outcome": "Coordinator presents consolidated alternatives, expected outcomes, resource estimates, limitations and precise activation/acceptance scope. Jörn selects migration/knowledge scope and substantial expenditure; retain/defer is a valid explicit disposition.",
       "depends_on": [
         "workflow-proposal-integration",
         "workflow-route-definition",
         "workflow-accounting-definition"
       ],
-      "blocker": "Consolidated proposal and route/accounting recommendations returned; Jörn has not selected implementation/activation scope, substantial expenditure or acceptance criteria.",
+      "blocker": "Coordinator has not delivered the consolidated discussion requested by Jörn. Present it before treating user selection as the operative blocker.",
       "sources": [
         "docs/coordination/skill-migration-plan.md",
         "docs/coordination/knowledge-evaluation-plan.md",
         "AGENTS.md.commentary.md"
       ],
-      "updated_at": "2026-09-30T16:21:46Z",
-      "plan_gap": "Reviewed recommendation exists; approved package and assigned implementation/acceptance ownership are absent.",
+      "updated_at": "2026-09-30T17:46:17Z",
+      "plan_gap": "Prepared source proposals need a concise concrete recommendation and discussion of meaningful choices. No effective approval is recorded; numeric budget thresholds are a separate unresolved subject.",
       "project": "workflows",
-      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected.",
+      "next_step": "Receiving coordinator completes proposal presentation; preserve discuss-first scope without inventing gates for small already-authorized work."
     },
     {
       "id": "workflow-delivery",
@@ -333,10 +336,9 @@
       "graph_label": "Sessions released",
       "status": "blocked",
       "owner": null,
-      "outcome": "Coordinator integrates outcomes, records any pending decisions with a receiving owner, closes completed assignments and releases their sessions. Do not confuse an idle planner with an active owner.",
+      "outcome": "Coordinator integrates outcomes, records any pending decisions with a receiving owner, closes completed assignments and releases their sessions. Do not confuse an idle planner with an active owner. Unknown host configuration drift is separately retained with root ownership; it is not a prerequisite of releasing skill-migration workers.",
       "depends_on": [
         "workflow-acceptance",
-        "host-codex-config-drift",
         "coordination-load-watch"
       ],
       "blocker": "Coordinator integration and selected workflow delivery/acceptance remain unfinished; bounded worker assignments have ended.",
@@ -451,19 +453,20 @@
       "selection": "selected",
       "graph_label": "Communication acceptance",
       "status": "blocked",
-      "owner": null,
+      "owner": "01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a",
       "outcome": "Native worker delivery worked; an actual active-window independent dashboard-session send/return exchange now verified. Historical failure cause remains unproven, reconnect lifetime and external/cloud delivery remain unverified. Acceptance scope still awaits selection.",
       "depends_on": [
         "workflow-selection"
       ],
-      "blocker": "Required communication paths and their acceptance contract have not been selected; native packet delivery does not establish legacy MCP send recovery.",
-      "plan_gap": "Native subagent send/return worked. Original independent-thread endpoint failure cause lacks evidence; current read connectivity does not prove sends or receipt. Select whether retained-file/manual receipt suffices or a bounded live send/ack test is required.",
+      "blocker": "Async submissions were accepted but Jörn reports nondelivery. Async tool use disabled by instruction; direct chat fallback is required. Remaining chosen transport scope must be described in the consolidated proposal.",
+      "plan_gap": "Native worker delivery and current active-window TUI send/return were demonstrated; neither establishes historical failure cause or reconnect/cloud behavior. State confirmed coverage and deferred coverage separately.",
       "sources": [
         "docs/development-environments.md"
       ],
-      "updated_at": "2026-09-30T17:18:54Z",
+      "updated_at": "2026-09-30T17:46:17Z",
       "project": "workflows",
-      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected."
+      "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected.",
+      "next_step": "Use direct chat for user questions, available verified worker transports for handoffs, and report historical cause as unknown. No new messaging service is required by this failure."
     },
     {
       "id": "host-codex-config-drift",
@@ -1072,14 +1075,14 @@
     },
     {
       "id": "coordination-load-watch",
-      "title": "Coordinator load and idle-session supervision",
+      "title": "Load checker and bounded watch outcome",
       "kind": "task",
       "selection": "selected",
       "project": "workflows",
       "graph_label": "Load supervision",
-      "status": "parked",
+      "status": "done",
       "owner": null,
-      "outcome": "Read-only checker integrated and independently reviewed; 13 focused tests pass. Bounded observer interrupted after Jörn ended the discussion; full planned watch not established. Last retained 17:30:52Z snapshot had no errors/advisory signals; overload and semantic queue unknown. Observer role lacked native send tools; TUI report transport worked. Early second observation revealed interrupted-sleep cadence error, corrected to absolute targets.",
+      "outcome": "Read-only checker integrated and independently reviewed; 13 focused tests pass. Bounded observer interrupted after Jörn ended the discussion; full planned watch not established. Last retained 17:30:52Z snapshot had no errors/advisory signals; overload and semantic queue unknown. Observer role lacked native send tools; TUI report transport worked. Early second observation revealed interrupted-sleep cadence error, corrected to absolute targets. This closes the implementation/interrupted-watch packet only; ongoing coordination burden supervision remains the coordinator’s responsibility, with no validated semantic queue measurement.",
       "depends_on": [],
       "blocker": null,
       "authorization": "Selected bounded implementation and supervision; four observations over about twelve minutes, no permanent service or thesis execution.",
@@ -1088,8 +1091,428 @@
         "scripts/test_coordination_load.py",
         "docs/coordination/README.md"
       ],
-      "updated_at": "2026-09-30T17:42:30Z",
-      "next_step": "Start another bounded watch only during selected ongoing work; retain current unknowns and use verified available return transport."
+      "updated_at": "2026-09-30T17:46:17Z",
+      "next_step": "Use the checker during selected ongoing work; workload assessment must include undelivered obligations, messages and review/integration burden. Quiet telemetry and a low worker count do not establish low load."
+    },
+    {
+      "id": "repair-intake-triage",
+      "title": "Withdrawn 3 October intake attempt",
+      "kind": "task",
+      "selection": "selected",
+      "project": "project-repair",
+      "graph_label": "Repair intake",
+      "status": "dropped",
+      "owner": null,
+      "outcome": "Root withdrew the useful-progress assessment. This failed attempt does not establish completed useful intake, a justified decomposition or worker readiness. Original repair objective remains unresolved.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/history/coordination/20261003-withdrawn-repair-intake.md",
+        "docs/coordination/handoff.md",
+        "docs/history/coordination/20261003-project-repair-user-report.md"
+      ],
+      "updated_at": "2026-10-03T09:02:08Z",
+      "authorization": "3 October user request: intake/triage here; prepare follow-up resolution sessions. No large execution, host mutation or thesis restart.",
+      "next_step": "No launch basis from this attempt. Do not treat a dropped approach as cancellation of Jörn’s parent objective."
+    },
+    {
+      "id": "intake-approach-comparison",
+      "title": "Compare intake approaches before selecting one",
+      "kind": "task",
+      "selection": "selected",
+      "project": "project-repair",
+      "graph_label": "Intake approach comparison",
+      "status": "done",
+      "owner": null,
+      "outcome": "Fresh-context agent returned candidates starting from concern coverage, an incident trace, or a fresh-consumer handoff test. Includes useful outputs, uncertainties, failure/switch signs and relative unmeasured costs. This closes only the assigned comparison return; value, novelty and approach selection remain unestablished.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/history/coordination/20261003-project-repair-user-report.md",
+        "AGENTS.md.commentary.md",
+        "docs/coordination/intake-approach-options.md"
+      ],
+      "updated_at": "2026-10-03T09:26:40Z",
+      "authorization": "Bounded preliminary brainstorming following Jörn’s request to discuss approaches before choosing promising ones. No implementation, configuration change, paid trial, scientific producer or further delegation.",
+      "next_step": "Discuss the candidates and assumptions in the parent conversation before selecting any probe. Prior attempts should inform novelty/value claims."
+    },
+    {
+      "id": "intake-source-map",
+      "title": "Map prior problem knowledge and compare evidence-maintenance approaches",
+      "kind": "task",
+      "selection": "selected",
+      "project": "project-repair",
+      "graph_label": "Problem-knowledge sources",
+      "status": "done",
+      "owner": null,
+      "outcome": "Bounded source-map, evidence-recovery/evaluation and coordination-topology comparisons returned. No topology is established necessary or superior; recommendations remain hypotheses. Completion covers the assigned returns only.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/history/coordination/20261003-project-repair-user-report.md",
+        "docs/knowledge/README.md",
+        "AGENTS.md.commentary.md",
+        "docs/coordination/intake-approach-options.md",
+        "docs/coordination/problem-knowledge-source-map.md"
+      ],
+      "updated_at": "2026-10-03T10:21:53Z",
+      "authorization": "Preliminary source mapping and discussion within the repair intake. No raw-rollout crawl, active incident migration, evaluations, substantial execution, configuration changes or further delegation.",
+      "next_step": "Retain source-qualified return and compare concrete paths with Jörn; do not infer a selected incident architecture or evaluated remedy."
+    },
+    {
+      "id": "repair-goal-model",
+      "title": "Model repair goals and compare paths",
+      "kind": "task",
+      "selection": "selected",
+      "project": "project-repair",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Provisional model distinguishes requirements under the existing project definition from possible means of repair. Session scope, stopping/success distinction and acceptable friction remain unresolved.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/goal-map.json",
+        "docs/history/coordination/20261003-project-repair-user-report.md"
+      ],
+      "updated_at": "2026-10-03T10:21:53Z",
+      "authorization": "3 October authorized bounded brainstorming, source retrieval and information-producing probes. No substantial execution, host configuration change or thesis restart.",
+      "next_step": "Discuss provisional model and candidate paths in the parent conversation; selected preliminary continuation remains authorized, but no substantial execution package selected."
+    },
+    {
+      "id": "repair-map-delivery",
+      "title": "Check readable browser delivery of the goal map",
+      "kind": "task",
+      "selection": "selected",
+      "project": "project-repair",
+      "status": "done",
+      "owner": null,
+      "outcome": "Luna corrected default SVG scaling after observing tiny labels. Isolated headless Chrome verified the served page, node selection and necessity filter. Wide graph requires horizontal scrolling. This establishes presentation behavior, not the model or intervention efficacy.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "scripts/render-goal-map.py",
+        "docs/coordination/graphs/goal-map.html"
+      ],
+      "updated_at": "2026-10-03T10:21:53Z",
+      "authorization": "3 October authorized bounded brainstorming, source retrieval and information-producing probes. No substantial execution, host configuration change or thesis restart.",
+      "next_step": "Review and revise the provisional conceptual map as discussion changes its claims."
+    },
+    {
+      "id": "problem-knowledge-mechanisms",
+      "title": "Compare mechanisms for making problem knowledge usable",
+      "kind": "task",
+      "selection": "selected",
+      "project": "project-repair",
+      "status": "done",
+      "owner": null,
+      "outcome": "Candidate report compares decision-triggered retrieval, task-entry context delivery and change-driven reconciliation. Each includes probes and failure signs; no activation or efficacy established.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/problem-knowledge-interventions.md"
+      ],
+      "updated_at": "2026-10-03T10:20:23Z",
+      "authorization": "3 October authorized bounded brainstorming, source retrieval and information-producing probes. No substantial execution, host configuration change or thesis restart.",
+      "next_step": "Use the comparison to choose a concrete information-producing probe, checking past attempts and application failures."
+    },
+    {
+      "id": "problem-knowledge-retrieval-probe",
+      "title": "Try existing knowledge routes for a communication problem",
+      "kind": "task",
+      "selection": "selected",
+      "project": "project-repair",
+      "status": "done",
+      "owner": null,
+      "outcome": "Fresh consumer recovered scoped cases and local positive interaction evidence, but no general effective remedy. Message-review skill records a negative live trial with an unlinked host-only antecedent. This is one observed retrieval pass, not a general inventory or causal diagnosis.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/problem-knowledge-probe.md"
+      ],
+      "updated_at": "2026-10-03T10:20:23Z",
+      "authorization": "3 October authorized bounded brainstorming, source retrieval and information-producing probes. No substantial execution, host configuration change or thesis restart.",
+      "next_step": "Candidate next investigation: recover an exact disputed-answer/intervention case; do not repeat the failed skill as an established fix."
+    },
+    {
+      "id": "repair-friction-criterion",
+      "title": "Define consequential friction and the stopping judgment",
+      "kind": "crux",
+      "selection": "unselected",
+      "project": "project-repair",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Open judgment about what costs matter for actual MSc project work, what constitutes repair success, and when further investment is worthwhile. No numeric target inferred from examples.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/goal-map.json",
+        "AGENTS.md.commentary.md"
+      ],
+      "updated_at": "2026-10-03T10:20:23Z",
+      "authorization": "3 October authorized bounded brainstorming, source retrieval and information-producing probes. No substantial execution, host configuration change or thesis restart.",
+      "next_step": "Discuss concrete project consequences and alternative stopping interpretations; this does not block unrelated bounded intake.",
+      "plan_gap": "No grounded baseline or agreed distinction between successful repair and justified stopping with unmet goals."
+    },
+    {
+      "id": "problem-knowledge-matched-probe",
+      "title": "Specify a comparison that can reject a candidate mechanism",
+      "kind": "task",
+      "selection": "unselected",
+      "project": "project-repair",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Candidate bounded comparison on one source-grounded decision and later correction; fixture, receiving surface, observable outputs and integration owner not selected.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/problem-knowledge-interventions.md",
+        "docs/coordination/problem-knowledge-probe.md"
+      ],
+      "updated_at": "2026-10-03T10:20:23Z",
+      "authorization": "3 October authorized bounded brainstorming, source retrieval and information-producing probes. No substantial execution, host configuration change or thesis restart.",
+      "next_step": "Choose a concrete case and a discriminating result before investing in implementation; include prior negative evidence and opportunity costs.",
+      "plan_gap": "Existing returns do not establish which discovery/application mechanism is worth deploying or whether an exact case is adequately reconstructable."
+    },
+    {
+      "id": "repair-topology-comparison",
+      "title": "Compare coordination at one integration boundary",
+      "kind": "task",
+      "selection": "unselected",
+      "project": "project-repair",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Candidate interface rehearsal comparing central, peer and bounded-integrator arrangements. No clean retrospective topology comparison or superiority claim available.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/README.md",
+        "docs/history/process-audit/REPORT.md",
+        "docs/coordination/goal-map.json"
+      ],
+      "updated_at": "2026-10-03T10:20:23Z",
+      "authorization": "3 October authorized bounded brainstorming, source retrieval and information-producing probes. No substantial execution, host configuration change or thesis restart.",
+      "next_step": "If selected, compare handling of concurrent outputs, an unresolved integration obligation and a late correction; avoid three full project lifecycles.",
+      "plan_gap": "How coordination changes parent-context demands, unresolved obligations and human rescue is not measured."
+    },
+    {
+      "id": "codex-config-source-reference",
+      "title": "Document Codex implementation and make project overrides explicit",
+      "kind": "task",
+      "selection": "selected",
+      "project": "workflows",
+      "graph_label": "Codex config / source",
+      "status": "done",
+      "owner": null,
+      "outcome": "Release-matched Codex reference and source-only refresh helper complete at CLI/daemon 0.160.0. Project agent limits and selected flags are explicit; model/effort remain host-owned. Maintenance and explicit config-edit approval rules are documented. All 154 flags have generated registry descriptions, candidate consumer links, fresh values, project overrides, provenance and first-pass screening; historical runtime versions remain unknown. Two bounded source reviewers returned time/budget/cache and encryption findings, integrated by this coordinator with no worker obligation remaining. Source inspection establishes the legacy timeout no-op, model-selected V2 semantics and lack of a supported encryption-disable toggle; production plaintext-forcing patch efficacy is unverified. Jörn approved the automatic time-reminder setting as a provisional trial: 60-second system-clock reminders after user/tool output, with interruptible sleep available. Applied config comments record that he considers this cadence fast; usefulness and cache/cost effects are unmeasured. Jörn also explicitly approved the provisional context trial B: context metadata/tools and a 20,000-token pre-compaction warning, with the history/notes extension off. Developer-message retention, mailbox deferral and deferred-tool world state were not selected because no concrete solved problem was identified. Rollout budget remains off; its injected messages count remaining weighted tokens and it has no uncapped count-up-only mode or dedicated flag-registered query tool. Existing get_goal reports cumulative goal token/time usage with optional cap and automatic continuation; no goal or new meter was selected. Schema and fresh loader checks passed; inventory regenerated. Existing-thread adoption and runtime benefit remain unverified. No host config edit, build, restart or paid cache pilot. Runtime observation at22:14UTC: this running root received repeated timestamp developer messages and context-window metadata; get_context_remaining returned120014. Worker reconciled only docs/codex.md and docs/codex-config-proposals.md; root reviewed. Delivery in this root is observed; exact config provenance/cadence, threshold warning, other agents, continuity and benefit remain unverified.",
+      "depends_on": [],
+      "blocker": null,
+      "authorization": "Jörn requested a repository documentation/source-navigation reference and explicit repo config overrides on 3 October; then explicitly excluded model/effort from repo overrides. Source checkout is for inspection only. No host config edit, CLI build/install, daemon restart or paid trial. Jörn subsequently explicitly approved enabling the proposed automatic time reminders, marked provisional/in test, in this thread; context-budget proposal B remains unapproved. Jörn explicitly approved enabling and provisionally marking token_budget; other considered flags were not selected. His cumulative expenditure preference authorizes source investigation/documentation, not creation of a goal, limit or meter.",
+      "sources": [
+        "docs/codex.md",
+        ".codex/config.toml",
+        "scripts/update-codex-source.sh",
+        "docs/codex-features.md",
+        "docs/codex-features.json",
+        "docs/codex-config-proposals.md",
+        "scripts/codex-feature-inventory.py"
+      ],
+      "next_step": "Recheck source after CLI/model-catalog changes; select any orchestration trial separately. Host legacy timeout comment and historical rationale gaps remain documented, without silently editing another owner’s host config.",
+      "updated_at": "2026-10-03T22:16:30Z"
+    },
+    {
+      "id": "recurring-data-view-design",
+      "title": "Review recurring data requests and design faster preparation/views",
+      "kind": "task",
+      "selection": "selected",
+      "project": "workflows",
+      "status": "parked",
+      "owner": "01a102d8-49d5-7993-a2bf-2ffc48a55e62",
+      "outcome": "Original joint design remains open; unilateral bounded-pass completion claim withdrawn and Fix session informed. Following Fix's intervention, the EXISTING evidence worker produced concrete-view-alternatives-20261004.md, now integrated and rendered through the existing server: exact CV/OTel request-result/intervention specimens, six joined recurring needs, retrospective versus incremental preparation plus separate interpretation, upkeep/invalidation/freshness, measured latency and useful combinations. Original CVs and disputed timing-chain report are absent. Historical telemetry remains explicitly a retained corrected response; original raw scratch report is no longer present. Packet does not establish a complete census, adequate-context reviewer quality or accepted final design. Existing capabilities can be reused; implementation and unapproved programmes remain stopped.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/codex.md",
+        "docs/coordination/README.md"
+      ],
+      "updated_at": "2026-10-03T23:22:26.852800Z",
+      "authorization": "Jörn requested log review and joint brainstorming/design. Bounded source inspection and isolated probe only; approval precedes deployment. No source build, new permanent service, config activation or daemon restart. Jörn approved applying the messaging rules to project guidance; Stop-hook activation remains unapproved. Jörn selected skill placement conditional on clarity to fresh agents; bounded fresh-context checks completed.",
+      "next_step": "Resource stop relayed by Fix orchestration: current analysis/planning stopped and the running evidence child interrupted. Existing artifacts and unfinished joint-design obligation preserved. Resume only on renewed instruction; no completion, new programme or spending approval implied. Separately authorized reset timers are untouched."
+    },
+    {
+      "id": "prompt-composition-view-candidate",
+      "title": "Select a version-aware per-thread prompt-composition view",
+      "kind": "crux",
+      "selection": "unselected",
+      "project": "workflows",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Accepted handoff from 01a102da-b805-7f72-ae02-ba9842fa80a8; receipt saved at /tmp/msc-math/prompt-view-handoff-receipt.txt; sender receipt is not established. Bounded inspection found native CODEX_ROLLOUT_TRACE_ROOT request bundles in pinned source. Installed activation, complete deferred inventory, provenance and partial/delta reconstruction remain unverified. Design at ~/.codex/artifacts/recurring-data-2026-10-03/prompt-view-design.txt.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/codex.md"
+      ],
+      "updated_at": "2026-10-03T19:23:19Z",
+      "authorization": "Receiving inspection/design only. Implementation, environment/config activation, paid capture, build and restart remain unselected; config implications stay with sender.",
+      "next_step": "Locate one existing native bundle or propose a narrowly approved future capture; verify schema and gaps before choosing a renderer.",
+      "plan_gap": "Full runtime capture and freshness/coverage contracts not yet exercised."
+    },
+    {
+      "id": "project-file-viewer",
+      "title": "Absolute-path workstation file viewer",
+      "kind": "task",
+      "selection": "selected",
+      "status": "done",
+      "owner": null,
+      "outcome": "Project viewer implemented and running behind Tailscale HTTPS /files. Absolute paths identify files across main/worktrees, artifacts and scratch directories. Markdown and config views work; dashboard links use their own checkout and retain dated source checks. Eight viewer and eight dedicated-dashboard tests pass; HTTPS bytes/data checks pass. Browser device/layout access unverified. Transient service requires starting again after machine reboot. Jörn accepted the explicit /absolute/path → HTTPS /files/absolute/path mapping as unambiguous; that exact line is now in AGENTS.md.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/file-viewer.md",
+        "scripts/serve-files.py",
+        "scripts/test_serve_files.py",
+        "docs/dashboard/README.md"
+      ],
+      "updated_at": "2026-10-03T21:05:07Z",
+      "project": "workflows",
+      "authorization": "Jörn explicitly selected creating the prototype as a proper project tool, with a one-line AGENTS.md path-to-URL rule; earlier session scope allowed repairing file serving. No broader workflow migration or thesis execution authorized."
+    },
+    {
+      "id": "codex-passive-usage-attribution",
+      "title": "Complete passive accounting and ongoing-work resource awareness",
+      "kind": "task",
+      "selection": "selected",
+      "project": "workflows",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Technical assessment/repairs and bounded delivery checks returned; Jörn graded this attempt FAIL. Earlier root/supervisor completion claims do not establish human acceptance of the workflow. Retained evidence: owned-response/fork/counter repairs,20 focused native-reader tests, selected-root projection compatibility, fresh-agent command/interpretation discovery, three root/worker usage-note receipts, and actual time/context-tool delivery. C hook remains withdrawn and inactive. Repeated objective drift, rejected overbuilding, scope takeover and premature endings remain session failures; useful component checks do not cancel that verdict. At closure Jörn questioned giving up and explicitly requested notifying Fix Codex thread orchestration. Root’s earlier ending was its own choice, not an explicit user cancellation. The requested notification was accepted through native tool-output transport by existing orchestration thread01a103dc-762f-7ef1-a094-4b0247b290ff; receipt not yet verified.",
+      "authorization": "Jörn requested checking available scripts and applicable other-session ownership for passive resource attribution. Bounded read-only observation and correction of an attribution grouping defect; no quota experiment, new service or budget enforcement selected. Follow-up bounded readiness review covers discoverability, automation, session-log attribution, trust and fork behavior; it does not activate a new service, hook, skill, goal or quota experiment. Jörn explicitly instructed fixing the reproduced defects at 21:13 UTC on 3 October. Reporting at task start/handoff was rejected; no automatic delivery mechanism was approved. Jörn explicitly objected to stopping with incomplete work at 21:25 UTC and directed continued workflow completion, allowing a specific question/blocker when necessary. Bounded implementation and delivery investigation continue; config approval boundary remains. Completion is scoped to the original local script-readiness/fork/discoverability/interpretation questions and subsequent supervised ongoing-work observation; no broader service, scientific run or spending selected.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "scripts/subtree-usage.py",
+        "scripts/subtree-usage.md",
+        "scripts/test_subtree_usage.py",
+        "scripts/coordination-load.py",
+        "scripts/test_coordination_load.py",
+        "docs/coordination/README.md",
+        "docs/codex.md",
+        "scripts/usage-awareness.py",
+        "scripts/test_usage_awareness.py",
+        "docs/codex-config-proposals.md"
+      ],
+      "updated_at": "2026-10-03T22:47:59Z",
+      "plan_gap": "Workflow acceptance failed for this attempt. No further root execution or invented approval question selected at closure. Permanent/all-agent coverage, native export deduplication, active-work/task joins and quota/billing conversion remain unestablished. Technical artifacts are retained without a PASS/readiness claim.",
+      "next_step": "Existing Fix orchestration owner receives the failed-attempt result and Jörn’s objection to giving up; no assignment transfer, extra spending or cancellation inferred from sending this report.",
+      "related_threads": [
+        "01a102da-b805-7f72-ae02-ba9842fa80a8"
+      ],
+      "acceptance": {
+        "status": "FAIL",
+        "by": "Jörn",
+        "observed_at": "2026-10-03T22:44:31Z",
+        "scope": "This Codex config/resource-workflow attempt; not a thesis grade.",
+        "source": "Direct user message: ... then you end the session here? wigh a failing grade obv?"
+      }
+    },
+    {
+      "id": "workstation-scoping-observations",
+      "title": "Workstation deconfusion and portability scoping",
+      "kind": "task",
+      "selection": "selected",
+      "status": "running",
+      "owner": "01a102d0-7c57-7e73-9eee-a661cbf730eb",
+      "outcome": "Jörn rejected the remaining-window recommendation as slop. Generic context/supervision/review bundle and speculative timings withdrawn; corrected comparison sent to orchestration 01a103dc-762f-7ef1-a094-4b0247b290ff. Concrete findings support correcting absent Herdr/share-files directions and stale sandbox scope. Six-file draft also adds setup/distribution guidance and is not purely factual. Copy probe establishes one offline/link defect, without an identified needing consumer. Missing local ports do not explain failure to apply already available rationale. No justified intervention for repeated unfinished-parent stopping or workflow-effectiveness claim established. Only approved INSTALL local-ownership wording applied; broader repair remains unresolved.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/handoff.md",
+        "docs/coordination/skill-migration-plan.md",
+        "docs/file-viewer.md"
+      ],
+      "updated_at": "2026-10-03T22:46:48Z",
+      "project": "workflows",
+      "authorization": "Original user-selected deconfusion/project-scoping session, primarily scratch notes and presentation artifacts; 15-minute final timebox renewed at 21:15 UTC and exceeded. New bounded comparison for the remaining orchestration window completed; it does not expand implementation/activation authority. File-viewer implementation and accepted guidance were separately selected in chat.",
+      "next_step": "Receiving orchestration owner must use the corrected comparison, not the withdrawn generic package. Optional draft maintenance requires content review; migration/offline work needs an actual selected consumer. No diagnosis information is pending on Jörn; the unresolved continuation/application remedy is an analysis gap. Original broader repair remains open and no activation authority is enlarged."
+    },
+    {
+      "id": "codex-root-scope-supervision",
+      "title": "Bounded root scope supervision",
+      "kind": "task",
+      "selection": "selected",
+      "project": "workflows",
+      "status": "done",
+      "owner": null,
+      "outcome": "User-requested bounded scope supervision completed: initial checkpoint review caught two stale hook decisions and premature parent closure; renewed supervisor independently read actual native visible actions and sent three count-up observations during useful audit/repair to root+worker. Receipt via root confirmed; older worker direct sibling acknowledgment failed. Final narrow assessment found original local passive-attribution/discovery/delivery obligations complete, with no user-only decision. Review points respected; no permanent/sustained-effectiveness or universal route guarantee.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/current.json",
+        "docs/coordination/handoff.md"
+      ],
+      "updated_at": "2026-10-03T22:38:42Z",
+      "authorization": "Bounded work under Jörn’s request for supervision and correction of root derailment; no permanent mechanism, config activation, scientific run or paid API.",
+      "next_step": "Assignment reviewed and released. Reuse supervision when useful in later selected work; observation responsibility does not end at conversation boundaries."
+    },
+    {
+      "id": "codex-usage-withdrawal-reconciliation",
+      "title": "Reconcile withdrawn usage-hook references",
+      "kind": "task",
+      "selection": "selected",
+      "project": "workflows",
+      "status": "done",
+      "owner": null,
+      "outcome": "Worker corrected only four stale C references in docs/codex.md, docs/coordination/README.md, scripts/README.md and scripts/subtree-usage.md. Root reviewed the withdrawal disposition. Historical candidate retained; no activation approval pending; counters/on-demand command remain and parent outcome is open. No code/config/guidance change.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/codex.md",
+        "docs/coordination/README.md",
+        "scripts/subtree-usage.md"
+      ],
+      "updated_at": "2026-10-03T22:05:57Z",
+      "authorization": "Bounded work under Jörn’s request for supervision and correction of root derailment; no permanent mechanism, config activation, scientific run or paid API.",
+      "next_step": "Assignment reviewed and released."
+    },
+    {
+      "id": "codex-native-usage-audit",
+      "title": "Audit native telemetry completion accounting",
+      "kind": "task",
+      "selection": "selected",
+      "project": "workflows",
+      "status": "done",
+      "owner": null,
+      "outcome": "Reproduced and fixed raw SSE polling rows being treated as invalid usage completions and erasing known cache-write0. Raw observations now separate; malformed/partial/unmarked missing usage still diagnosed, raw-only tokens unknown.20 focused tests pass. Recent-root-only whitelist query observed omitted absent fields and29 valid parsed completions with no projection/regression errors. Raw-SSE branch source/fixture verified, not live exercised; native export dedup remains unverified and no live duplicate charging established.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "scripts/coordination-load.py",
+        "scripts/test_coordination_load.py",
+        "scripts/subtree-usage.md"
+      ],
+      "updated_at": "2026-10-03T22:38:42Z",
+      "authorization": "Bounded diagnosis and same-worker repair continuing the selected local resource-attribution outcome; no config/service, native dedup guess, paid call or other project expansion.",
+      "next_step": "Reviewed result retained in usage contract and tests; worker released. Recheck native dedup only if separately selected or new evidence warrants it."
+    },
+    {
+      "id": "codex-resource-discovery-check",
+      "title": "Verify fresh-agent resource-measurement discovery",
+      "kind": "task",
+      "selection": "selected",
+      "project": "workflows",
+      "status": "done",
+      "owner": null,
+      "outcome": "One isolated read-only consumer found README->coordination guide->usage contract, gave correct commands and interpretations of count-up units, fork ownership, walltime including idle, manual/supervised delivery, quota/billing and coverage limits. It found stale --help prototype status; assigned worker corrected only docstring/help, reviewed with --help and diffcheck. No new skill, service or behavioral feature.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/coordination/README.md",
+        "scripts/subtree-usage.md",
+        "scripts/usage-awareness.py"
+      ],
+      "updated_at": "2026-10-03T22:38:42Z",
+      "authorization": "Bounded verification of Jörn’s original discoverability/interpretation question within selected local resource work.",
+      "next_step": "Fresh-consumer findings integrated; assignment released."
     }
   ],
   "decisions": [
@@ -1159,12 +1582,12 @@
       "id": "workflow-package-selection",
       "question": "Which local skill, knowledge and environment support package should be selected, and what evidence closes workflow readiness?",
       "status": "open",
-      "recommendation": "Concrete selection request reissued to Jörn at 2026-09-30T17:39:17Z: retain the four local skills, port the five additional upstream skills into .agents/skills, adapt project ownership/runtime assumptions, add Claude discovery links/imports and document host prerequisites. Focused checks and reviewed local commit; defer behavioral pilots, cloud telemetry and new messaging infrastructure. Awaiting answer; an earlier unanswered async question did not establish that the decision was visible to Jörn.",
-      "consequence": "No implementation/activation approval recorded. Async tool returned accepted but Jörn reports receiving no async question. Do not infer receipt or approval. Present the plan and remaining choices directly in chat when Jörn resumes; defer pilots, cloud telemetry and new messaging infrastructure.",
+      "recommendation": "Recommended discussion package is consolidated in workflow-proposal.md: nine local skills/Claude adapters, narrow ownership/runtime adaptations, two knowledge-index refinements, artifact returns initially, optional pilots and new services deferred. Earlier selection questions are historical submissions, not evidence of effective delivery. Coordinator owns presenting the plan; do not label current work as waiting on Jörn before presentation.",
+      "consequence": "No migration implementation/activation approval recorded. Jörn reports no async questions received; route disabled by project instruction. Direct consolidated discussion is still owed. Small already-authorized work has no invented budget gate; original discuss-first boundary remains.",
       "sources": [
+        "docs/coordination/workflow-proposal.md",
         "docs/coordination/skill-migration-plan.md",
-        "docs/coordination/knowledge-evaluation-plan.md",
-        "docs/development-environments.md"
+        "docs/coordination/knowledge-evaluation-plan.md"
       ]
     },
     {
@@ -1200,14 +1623,52 @@
         "docs/coordination/current.json",
         "docs/development-environments.md"
       ]
+    },
+    {
+      "id": "codex-time-context-proposals",
+      "question": "Which time/context awareness settings were selected?",
+      "status": "resolved",
+      "recommendation": "Jörn explicitly approved A and B, marked provisional: 60-second system-clock reminders after user/tool output with interruptible sleep available; remaining-context metadata/tools and a 20,000-token pre-compaction warning, without optional history/notes.",
+      "consequence": "Both applied in project config. The time cadence and context warning threshold are speculative trial parameters; usefulness, continuity, cache/cost effects and existing-thread adoption remain unverified. Other considered flags and rollout hard limits remain off; no host model/effort change, build, restart or paid pilot selected.",
+      "sources": [
+        ".codex/config.toml",
+        "docs/codex.md",
+        "docs/codex-config-proposals.md"
+      ]
+    },
+    {
+      "id": "codex-cumulative-usage",
+      "question": "How should passive attributed usage be delivered and related to subscription quota?",
+      "status": "resolved",
+      "recommendation": "Retain existing on-demand owned-response readers and use normal bounded agent supervision for selected ongoing work. Three actual notes/receipts and fresh-consumer discovery were verified. C remains withdrawn. No permanent service or all-agent rollout selected.",
+      "consequence": "Selected local assessment/repair and observed ongoing-work delivery are complete without goal/cap/hook. Token proxy remains noncached input plus output; walltime includes idle, and quota/billing conversion/global adoption/native-export dedup remain unestablished. Future monitoring remains an operational responsibility for authorized work, not a completed universal guarantee.",
+      "sources": [
+        "docs/codex.md",
+        "docs/codex-config-proposals.md",
+        "scripts/subtree-usage.md"
+      ]
+    },
+    {
+      "id": "ongoing-usage-hook-activation",
+      "question": "Approve the provisional five-minute PostToolUse reminder and its matching user-layer trust entry for this checkout?",
+      "status": "resolved",
+      "owner": null,
+      "recommendation": "Withdrawn after Jörn rejected the candidate’s complexity. Do not enable it or request its approval again. Exact candidate retained only as historical provenance.",
+      "consequence": "No config/trust additions or runtime activation selected. Repaired accounting and on-demand command remain; parent ongoing-resource-awareness outcome is not closed by rejecting this mechanism.",
+      "sources": [
+        "docs/codex-config-proposals.md",
+        ".codex/config.toml",
+        "scripts/usage-awareness.py",
+        "scripts/test_usage_awareness.py"
+      ]
     }
   ],
   "resources": [
     {
       "label": "Agent work",
-      "value": "Integration finished; bounded observer interrupted. No selected implementation running in this coordination thread. Migration plan awaits direct discussion; no autonomous thesis work.",
-      "observed_at": "2026-09-30T17:42:30Z",
-      "basis": "Coordinator interrupted watcher; returned implementation and review packets released. Separate dashboard session may remain available for direct user feedback; no new assignment."
+      "value": "Bounded performance investigation and OpenObserve dashboard delivery; drafting/review and backend-coverage agents returned. Migration remains unimplemented. Current model/serving-path diagnosis is supported but unconfirmed; low worker count remains insufficient for workload assessment.",
+      "observed_at": "2026-09-30T18:23:54Z",
+      "basis": "Current selected deliverables and Jörn’s explicit report of missing communication; no measurement of semantic queue or utilization fraction."
     },
     {
       "label": "Quota and API spend",
@@ -1223,12 +1684,64 @@
     },
     {
       "label": "Observed coordination load",
-      "value": "17:30:52Z, preceding 15 minutes: root 12 responses, 44,549 uncached input / 13,665 output tokens; other tracked threads 23 responses, 93,831 uncached input / 13,532 output. Root latest input 46,838 tokens. No unsuccessful events or advisory signals. Current operational work is integration plus bounded supervision; overload and semantic queue size remain unknown.",
+      "value": "17:30:52Z, preceding 15 minutes: root 12 responses, 44,549 uncached input / 13,665 output tokens; other tracked threads 23 responses, 93,831 uncached input / 13,532 output. Root latest input 46,838 tokens. No unsuccessful events or advisory signals. These counters do not establish light workload or idle utilization. Coordinator has undelivered obligations and reported communication failures; semantic queue and utilization fraction remain unmeasured.",
       "observed_at": "2026-09-30T17:30:52Z",
       "basis": "coordination-load.py --brief, root UUID 01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a; 13 local/recorded threads discovered. Native usage observations, not billing; completeness/deduplication unverified; external sessions excluded."
+    },
+    {
+      "label": "Performance diagnosis",
+      "value": "Root median17.27TPS (18 responses); drafting15.56 (6), review16.70 (4), accounting18.17 (4). Latest-preceding-request pairing estimate includes latency; no decode-rate/response-ID verification. Backend timing available in aggregate; prefill/cache lookup/first reasoning not exposed. Source inference cause remains unproven.",
+      "observed_at": "2026-09-30T18:23:54Z",
+      "basis": "Metadata-only OTel interval17:43–17:59UTC,30Sep2026; codex-performance.md documents source semantics/dashboard limits. No standard-speed baseline established."
+    },
+    {
+      "label": "October intake and local configuration observation",
+      "value": "CLI 0.160.0; multi_agent/hooks/goals enabled; runtime_metrics/agent_message_board/token_budget/rollout_budget disabled. One bounded internal reviewer assigned; no scientific producer, model pilot, configuration change or daemon restart. Quota, billed spend and earlier owners’ liveness unknown.",
+      "observed_at": "2026-10-03T08:47:35Z",
+      "basis": "Read-only local version/features and sanitized selected config fields; scoped retained-source intake. Current registry update does not refresh historical resource observations."
+    },
+    {
+      "label": "October intake review and verification",
+      "value": "One bounded internal reviewer returned three integrated corrections; no live workers remain from this intake. Eight dashboard tests and state/source-link checks passed. No behavioral trial performed; total tokens/quota/billed spend unknown.",
+      "observed_at": "2026-10-03T08:50:24Z",
+      "basis": "Native reviewer return plus local structural checks and existing dashboard regression tests. These observations cover this intake only."
+    },
+    {
+      "label": "Codex source/config reference",
+      "value": "CLI 0.160.0 and source commit a956835d020762cb2b570053af06f643a11c0ecc; source-only cache at ~/.cache/codex-source. Current flag choices preserved as explicit project overrides; model/effort stay on host. No workers or paid trial; quota and billed spending unknown.",
+      "observed_at": "2026-10-03T17:54:32Z",
+      "basis": "Release schema, source consumers, CLI features and refresh/link checks documented in docs/codex.md."
     }
   ],
   "links": [
+    {
+      "label": "Codex TUI/config and implementation reference",
+      "path": "docs/codex.md"
+    },
+    {
+      "label": "Bounded fresh-consumer retrieval result",
+      "path": "docs/coordination/problem-knowledge-probe.md"
+    },
+    {
+      "label": "Candidate problem-knowledge mechanisms; no established remedy",
+      "path": "docs/coordination/problem-knowledge-interventions.md"
+    },
+    {
+      "label": "Provisional goal map: requirements and candidate paths",
+      "path": "docs/coordination/graphs/goal-map.html"
+    },
+    {
+      "label": "Original user repair report: unresolved, not a causal diagnosis",
+      "path": "docs/history/coordination/20261003-project-repair-user-report.md"
+    },
+    {
+      "label": "Codex performance dashboard and measurement boundaries",
+      "path": "docs/dashboard/codex-performance.md"
+    },
+    {
+      "label": "Consolidated workflow proposal",
+      "path": "docs/coordination/workflow-proposal.md"
+    },
     {
       "label": "Detailed thesis backlog",
       "path": "docs/coordination/thesis-work.md"
@@ -1259,6 +1772,198 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-03T22:47:59Z",
+      "text": "Jörn questioned giving up and requested notifying Fix Codex thread orchestration. Located actual named session and sent FAIL/components/premature-closure objection through verified native route. Root closure was not a user cancellation; no new scope or acceptance inferred."
+    },
+    {
+      "at": "2026-10-03T22:46:48Z",
+      "text": "Jörn rejected deconfusion comparison as slop. Withdrew generic workflow bundle/speculative timings and corrected both artifact and receiving orchestration. Limited stale-direction defects are supported; repeated parent-task loss still lacks a justified remedy."
+    },
+    {
+      "at": "2026-10-03T22:44:31Z",
+      "text": "Jörn graded this root attempt FAIL at closure. Withdrawn blanket workflow-completion/acceptance claim; technical checks retained separately. Root attempt ends, workers released, no thesis grade or other-session stop inferred."
+    },
+    {
+      "at": "2026-10-03T22:43:53Z",
+      "text": "Deconfusion owner returned the bounded remaining-window repair comparison through native transport. Current capabilities plus focused context/existing supervision/selective review recommended; optional six-file patch remains unapproved. Broader repair completion and receipt are not established."
+    },
+    {
+      "at": "2026-10-03T22:38:42Z",
+      "text": "Original local resource-readiness questions checked against Jörn-authorized source excerpt. Repairs,20 native-reader tests, selected-root projection, fresh-consumer discovery and three actual ongoing root/worker deliveries reviewed; scope supervisor found no missing selected obligation/user-only decision. Completed local assignments released; global/permanent/quota/dedup caveats retained and other owners/workflow milestones preserved."
+    },
+    {
+      "at": "2026-10-03T22:21:22Z",
+      "text": "Continued after Jörn rejected premature closure: bounded native-usage audit active, independent supervisor sending count-up notes during useful work. Root and worker receipt observed; old worker direct sibling acknowledgment failed, so root relayed receipt without inventing transport infrastructure."
+    },
+    {
+      "at": "2026-10-03T22:16:30Z",
+      "text": "Verified actual timestamp/context-tool delivery in the running root; worker reconciled two prior unverified-adoption claims. Renewed supervisor independently checked native visible actions and delivered an actual count-up note during ongoing work using the existing reader/transport; no hook/config activation or sustained-effectiveness claim."
+    },
+    {
+      "at": "2026-10-03T22:07:20Z",
+      "text": "Independent scoped checks completed; prepared direct diagnosis review and exact source-to-draft guidance comparisons. Review concerns correctness/coverage, not terminal preferences or blanket patch activation. Interactive parent assignment remains open."
+    },
+    {
+      "at": "2026-10-03T22:06:48Z",
+      "text": "Supervisor caught two stale hook-approval decision records after the documentation reconciliation; root resolved the withdrawn activation decision and kept the parent resource-awareness gap open. Existing passive usage reader invoked during work without config activation."
+    },
+    {
+      "at": "2026-10-03T22:04:54Z",
+      "text": "Jörn requested root supervision after repeated objective drift and root implementation. Started one bounded read-only supervisor; reused source-review worker for four stale withdrawn-hook references. Root retains coordination/review; parent resource-awareness outcome stays open."
+    },
+    {
+      "at": "2026-10-03T22:00:35Z",
+      "text": "Restored original scratch/review-only disposition for unapproved drafts; retained exact patches, source hashes and portability evidence before removing only this session’s four new coordination draft files. Handoff links review artifacts; approved INSTALL wording preserved."
+    },
+    {
+      "at": "2026-10-03T21:57:26Z",
+      "text": "Continued independent authorized work: tested current source plus one verified cached snapshot through disposable bundle rename and unchanged consumer fingerprint; documented online/helper-link limits. Expanded draft with local rationale and narrow host-relay/setup-pointer corrections. No skill activation, live relocation or scientific rerun."
+    },
+    {
+      "at": "2026-10-03T21:53:16Z",
+      "text": "Jörn rejected the usage automation complexity. Root withdrew the hook proposal and its approval question; no live config activation. Root checking all local loaded threads and latest visible work at Jörn’s request."
+    },
+    {
+      "at": "2026-10-03T21:40:25Z",
+      "text": "Continued resource-awareness work beyond repaired counters: on-demand report and throttled after-tool candidate implemented; 11 tests and temporary declaration/trust loading pass. Exact project+user trust activation now requires the existing explicit config decision, presented in chat."
+    },
+    {
+      "at": "2026-10-03T21:37:34Z",
+      "text": "Jörn approved the INSTALL local skill ownership wording; applied that paragraph only. Refreshed the remaining candidate patch; no skill port, other guidance adaptation or package activation approval inferred."
+    },
+    {
+      "at": "2026-10-03T21:31:16Z",
+      "text": "Resumed after premature scoping-only stop and prepared concrete support repair patch outside loaded paths. Applying it remains the earlier draft-first scope decision, now presented directly rather than left as a hidden next step."
+    },
+    {
+      "at": "2026-10-03T21:24:15Z",
+      "text": "Retained workstation scoping observations and a bounded support-repair proposal, with local cached-data hash checks and an independent committed Git-copy probe. Broader repair remains open; no skill port, relocation, remote fetch or scientific execution selected."
+    },
+    {
+      "at": "2026-10-03T21:23:24Z",
+      "text": "Jörn’s requested accounting fixes integrated and verified: 35 focused tests; live sum matches 189 owned response records. Ordinary forks separate from workers. Task-start/handoff reporting recommendation withdrawn; ongoing-work delivery remains unresolved."
+    },
+    {
+      "at": "2026-10-03T21:10:14Z",
+      "text": "Passive resource-accounting assessment corrected: manual helpers have reproduced copied-fork/missing-counter defects; command checks do not close workflow readiness. Review and repair route retained in scripts/subtree-usage.md."
+    },
+    {
+      "at": "2026-10-03T21:05:07Z",
+      "text": "Jörn accepted the explicit file-link mapping as unambiguous. Replaced the earlier concatenation rule in AGENTS.md with his reviewed wording; guidance wording review complete."
+    },
+    {
+      "at": "2026-10-03T21:02:36Z",
+      "text": "Removed invented dependency on a courtesy-check versus general-reviewer selection. Original recurring-view design remains active: prepare evidence/intervention preview using already collected sources, without further model experiments or live deployment."
+    },
+    {
+      "at": "2026-10-03T20:57:49Z",
+      "text": "Verified existing passive count-up attribution live, corrected independent scoped roots being labeled as workers, and retained fourteen-test/real-query evidence. Native account quota snapshot available but no per-session conversion established; no stopping limit, goal or new service selected."
+    },
+    {
+      "at": "2026-10-03T20:57:32Z",
+      "text": "Separated the completed file-viewer implementation from unresolved human review of the AGENTS.md URL wording. No replacement guidance applied; draft remains outside loaded instructions."
+    },
+    {
+      "at": "2026-10-03T20:42:34Z",
+      "text": "Resumed original recurring-view design after incorrectly treating completed messaging detour as closure. Offline Stop validation found shell-read failure, duplicate-work reaction with selected evidence and missed scope failure with full visible exchange. Added direct bounded extraction and selected-thread guard in inactive draft; 12 contract tests pass. No live hook/config activation recommended."
+    },
+    {
+      "at": "2026-10-03T19:53:18Z",
+      "text": "Applied Jörn-approved provisional remaining-context trial (20,000-token warning, no history/notes extension). Recorded nonselection of retention/mailbox/deferred-tool flags and count-up expenditure preference; traced rollout messages/no query tool versus goal cumulative counters, without selecting a goal or spending cap."
+    },
+    {
+      "at": "2026-10-03T19:45:55Z",
+      "text": "Added the user-selected absolute-path file viewer and one-line agent URL rule. Shared Tailscale HTTPS route verified for active dashboard, main/worktree state, artifacts and scratch Markdown; 16 relevant tests passed. Existing services, dated scientific baseline and other assignments preserved."
+    },
+    {
+      "at": "2026-10-03T19:37:44Z",
+      "text": "Moved messaging guidance to project cross-session-messaging skill; removed broad AGENTS rule and full README duplicate. Fresh-context synthetic trigger and receipt checks completed, including one corrected failure. No runtime/config changes or wider rollout."
+    },
+    {
+      "at": "2026-10-03T19:37:43Z",
+      "text": "At Jörn’s explicit request, enabled automatic time reminders in repo config and marked the 60-second cadence provisional/speculative, with a frequency/usefulness recheck trigger. Schema and fresh loader checked; context proposal B remains off and pending. Preserved other sessions’ work and refreshed the flag inventory."
+    },
+    {
+      "at": "2026-10-03T19:23:19Z",
+      "text": "Jörn approved the messaging protocol. Added core routing/delivery rules to project AGENTS.md and fuller protocol to coordination README; corrected saved-receipt versus sender-receipt evidence. No hook/config activation or cross-checkout rollout."
+    },
+    {
+      "at": "2026-10-03T19:22:26Z",
+      "text": "Integrated release-matched all-flag inventory, source provenance limits, two bounded read-only reviews, time/context candidate diffs and encryption capability limits. Config candidates remain unapplied; recurring prompt-view ownership/accepted handoff and other sessions’ work preserved."
+    },
+    {
+      "at": "2026-10-03T19:09:38Z",
+      "text": "Integrated recurring-view design ownership and accepted prompt-composition handoff. Native rollout-trace capture found in pinned source; activation and view implementation remain unselected. Existing tasks/decisions preserved."
+    },
+    {
+      "at": "2026-10-03T18:49:14Z",
+      "text": "Recorded user steering toward problem-solving config changes and mapped instruction-changing settings. Broader communication work remains for other owners; their identities/receipt are not established here. No config edit or behavioral repair inferred."
+    },
+    {
+      "at": "2026-10-03T18:45:38Z",
+      "text": "Added narrow loaded guidance preserving unfinished authorized work across brief acknowledgments, following Jörn’s Codex+user workflow correction. Courtesy-only endings should not require user reactivation. No new scope or empirical efficacy claim."
+    },
+    {
+      "at": "2026-10-03T18:19:31Z",
+      "text": "At Jörn’s request, added a narrow project config rule: approve proposed edits and consequences before application/retention; already-authorized changes need no repeated approval. This is agent guidance, not TOML enforcement or a validated general approval policy. Setting values unchanged."
+    },
+    {
+      "at": "2026-10-03T17:54:32Z",
+      "text": "Completed user-requested Codex source/reference and explicit repo overrides. Model/effort remain host-owned; no host config or daemon changes. Source corrected no-op runtime and model-selected V2 assumptions; no efficacy trial inferred."
+    },
+    {
+      "at": "2026-10-03T10:21:53Z",
+      "text": "Retained source/evaluation/topology synthesis. Goal map delivered with browser-tested readable native scale, node details and necessity filter; presentation owner released. Model and unselected repair paths remain provisional."
+    },
+    {
+      "at": "2026-10-03T10:20:23Z",
+      "text": "Integrated returned comparison and retrieval assignments; recorded provisional goal-model/presentation ownership and unselected friction/evaluation/topology gaps. No intervention activated or repair completion inferred."
+    },
+    {
+      "at": "2026-10-03T09:54:56Z",
+      "text": "Assigned fresh worker a bounded source-map/comparison against Jörn’s evidence-recovery/incident-maintenance proposal. Historical replay, prospective live tests and abstract models remain distinct candidate evaluation methods; no migration or experiment selected."
+    },
+    {
+      "at": "2026-10-03T09:26:40Z",
+      "text": "Fresh brainstorming comparison returned and retained explicitly as unselected hypotheses/options. No candidate method selected, no pilot launched, no efficacy or novelty inferred from return."
+    },
+    {
+      "at": "2026-10-03T09:22:48Z",
+      "text": "Assigned one fresh-context, read-only comparison of intake approaches. Parent supplies bounded primary request and observed failures; alternative selection and any trials remain for discussion. No approach readiness claimed."
+    },
+    {
+      "at": "2026-10-03T09:09:00Z",
+      "text": "Retained the exact original user repair report separately from the withdrawn agent draft and verified the quotation against the source user-message event. Capture does not verify incidents, causal hypotheses or interventions."
+    },
+    {
+      "at": "2026-10-03T09:02:08Z",
+      "text": "Withdrew failed repair-intake draft from active discovery, removed four candidate assignments/readiness and agent-invented selection question. Retained draft only as explicitly withdrawn historical evidence. Original request remains unresolved; no approval-blocked recovery claim."
+    },
+    {
+      "at": "2026-10-03T08:59:10Z",
+      "text": "Reconciled withdrawn intake assessment after user discussion: reopened intake with root owner, parked four unassessed candidate drafts and withdrew parallel readiness. Original report did not claim all project problems solved; correction concerns intake value/justification."
+    },
+    {
+      "at": "2026-10-03T08:50:24Z",
+      "text": "Withdrawn assessment made at this time: root called repair intake complete and four briefs prepared. That value/completion/readiness assessment was subsequently retracted; structural checks and reviewer return did not establish useful intake."
+    },
+    {
+      "at": "2026-10-03T08:47:35Z",
+      "text": "Opened 3 October repair intake: preserve reported problems and hypotheses, compare existing mechanisms, prepare four unselected diagnostic packets. Prior proposal/config/telemetry records retained; old owner liveness remains unknown."
+    },
+    {
+      "at": "2026-09-30T18:23:54Z",
+      "text": "Delivered actual performance graphs/query-backed OpenObserve dashboard. Root and workers share slow estimated throughput; first-output-item semantics source-checked. No isolated prefill or first-reasoning measurement; no silent model/tier changes."
+    },
+    {
+      "at": "2026-09-30T17:50:02Z",
+      "text": "Published reviewed consolidated migration/capability proposal; reconciled stale awaiting-answer claim. Local CLI feature snapshot distinguishes stable enabled tools from disabled budget/message-board experiments. Direct discussion still owed; no implementation approval inferred."
+    },
+    {
+      "at": "2026-09-30T17:46:17Z",
+      "text": "Retracted light-workload assessment: counted workers while missing undelivered obligations. Reopened proposal integration; blocker is coordinator delivery before user selection. Separated host drift from workflow worker release; bounded watch ended without completing its planned sample."
+    },
     {
       "at": "2026-09-30T17:42:30Z",
       "text": "Disabled async question use by project instruction after reported nondelivery; stopped watcher and preserved unresolved migration selection without inferring approval. No global tool/config mutation."

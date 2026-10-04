@@ -24,10 +24,12 @@ import urllib.request
 ROOT = Path(__file__).resolve().parent.parent
 FIELDS = ("_timestamp", "conversation_id", "event_name", "event_kind", "model",
           "input_token_count", "cached_token_count", "output_token_count",
-          "cache_write_token_count", "tool_name", "success", "http_response_status_code")
+          "cache_write_token_count", "reasoning_token_count", "tool_token_count",
+          "duration_ms", "tool_name", "success", "http_response_status_code")
+USAGE_COUNTER_FIELDS = ("input_token_count", "cached_token_count", "output_token_count",
+                        "cache_write_token_count", "reasoning_token_count", "tool_token_count")
 LIMIT = 10000
 UUID = re.compile(r"[0-9a-fA-F-]{36}")
-TOKEN_LINE = re.compile(r'"type"\s*:\s*"event_msg"\s*,\s*"payload"\s*:\s*\{\s*"type"\s*:\s*"token_count"')
 
 
 def date(value):
@@ -46,13 +48,19 @@ def auth_header(env):
     raise ValueError("Authorization missing from standard OTLP environment; source codex-env.sh")
 
 
-def inventory(home):
-    # Existing helper reads only first-line session metadata, not transcripts.
+def usage_module():
     spec = importlib.util.spec_from_file_location("subtree_usage", ROOT / "scripts/subtree-usage.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    sessions = {ident: (path, {"id": ident, "timestamp": meta.get("timestamp"),
-                              "parent_thread_id": module.parent(meta)})
+    return module
+
+
+def inventory(home):
+    # Existing helper reads only first-line session metadata, not transcripts.
+    module = usage_module()
+    sessions = {ident: (path, {k: meta[k] for k in
+                ("id", "timestamp", "source", "parent_thread_id", "forked_from_id",
+                 "history_base", "subagent_history_start_ordinal") if k in meta})
                 for ident, (path, meta) in module.inventory(home).items()}
     return sessions, module.descendants
 
@@ -84,6 +92,13 @@ def query(base, auth, ids, start, end):
 def token_totals(rows):
     completed = [r for r in rows if r.get("event_name") == "codex.sse_event"
                  and r.get("event_kind") == "response.completed"]
+    # CLI 0.160.0 logs raw SSE polls with duration_ms, then logs parsed usage
+    # separately. Only an entirely counterless marked row is transport evidence;
+    # partial/malformed usage and unmarked missing counters remain diagnostics.
+    raw = [r for r in completed if "duration_ms" in r
+           and not any(key in r for key in USAGE_COUNTER_FIELDS)]
+    completed = [r for r in completed if "duration_ms" not in r
+                 or any(key in r for key in USAGE_COUNTER_FIELDS)]
     names = ("input_token_count", "cached_token_count", "output_token_count", "cache_write_token_count")
     totals = {key: None for key in names}
     valid = 0
@@ -103,6 +118,7 @@ def token_totals(rows):
     if completed and all(isinstance(v, int) and v >= 0 for v in writes):
         totals[names[3]] = sum(writes)
     return {"source": "native_otel_completed_response_logs", "observed_completions": len(completed),
+            "raw_transport_completion_events": len(raw),
             "valid_token_records": valid, "invalid_or_missing_token_records": invalid, **totals}
 
 
@@ -121,46 +137,15 @@ def response_sizes(rows):
 
 
 def local_tokens(path, meta, start, end):
-    """Fallback: parse only token_count envelopes, never conversation records."""
-    rows = []
-    warnings = []
-    previous = None
-    keys = ("input_tokens", "cached_input_tokens", "output_tokens", "cache_write_input_tokens")
-    try:
-        with path.open() as handle:
-            for line in handle:
-                if not TOKEN_LINE.search(line):
-                    continue
-                try:
-                    record = json.loads(line)
-                    info = record["payload"].get("info") or {}
-                    total, last = info.get("total_token_usage"), info.get("last_token_usage")
-                    if not isinstance(total, dict) or not isinstance(last, dict):
-                        continue
-                    current = tuple(int(total[k]) for k in keys[:3]) + (
-                        int(total[keys[3]]) if total.get(keys[3]) is not None else None,)
-                    values = tuple(int(last[k]) for k in keys[:3]) + (
-                        int(last[keys[3]]) if last.get(keys[3]) is not None else None,)
-                    for counts in (current, values):
-                        if min(counts[:3]) < 0 or counts[1] > counts[0] or (
-                                counts[3] is not None and (counts[3] < 0 or counts[1] + counts[3] > counts[0])):
-                            raise ValueError("invalid counters")
-                    if current == previous:
-                        continue
-                    previous = current
-                    when = date(record["timestamp"])
-                    if not max(start, date(meta["timestamp"])) <= when <= end:
-                        continue
-                    rows.append(values)
-                except (ValueError, KeyError, TypeError):
-                    warnings.append("malformed local token record omitted")
-    except OSError:
-        warnings.append("local token log unreadable")
+    """Shared ownership/response accounting; fallback remains separate from OTel."""
+    warnings = set()
+    events = usage_module().usage_events(path, meta, end, warnings)
+    rows = [counts for when, _, counts in events if start <= when <= end]
     result = {"source": "local_token_count_fallback", "observed_completions": len(rows),
               "valid_token_records": len(rows), "invalid_or_missing_token_records": len(warnings)}
     result.update({name: sum(r[i] for r in rows) if rows and all(r[i] is not None for r in rows) else None
                    for i, name in enumerate(("input_token_count", "cached_token_count", "output_token_count", "cache_write_token_count"))})
-    return result, sorted(set(warnings))
+    return result, sorted(warnings)
 
 
 def unsuccessful(row):
@@ -229,7 +214,7 @@ def review_signals(root, threads, rows, state, end):
     root_completion_recent = bool(root_sizes and root_sizes[-1][2] is not None
                                   and recent <= root_sizes[-1][2] <= end.timestamp()*1e6)
     worker_sizes = [t["latest_completed_input_tokens"] for t in threads
-                    if t["thread_id"] != root and t["latest_completed_input_tokens"] is not None
+                    if t.get("scope_role") == "root_descendant" and t["latest_completed_input_tokens"] is not None
                     and t["latest_completed_at"] is not None
                     and recent <= date(t["latest_completed_at"]).timestamp()*1e6 <= end.timestamp()*1e6]
     if root_completion_recent and len(worker_sizes) >= 2 and root_sizes[-1][0] > 2*median(worker_sizes):
@@ -256,7 +241,9 @@ def brief(result):
                  if any(t["tokens"][key] is not None for t in threads) else None for key in fields}
         value.update({"threads_with_native_events": sum(bool(t["event_counts"]) for t in threads),
                       "completed_responses": sum(t["tokens"]["observed_completions"] for t in threads),
+                      "raw_transport_completion_events": sum(t["tokens"]["raw_transport_completion_events"] for t in threads),
                       "valid_token_records": sum(t["tokens"]["valid_token_records"] for t in threads),
+                      "invalid_or_missing_token_records": sum(t["tokens"]["invalid_or_missing_token_records"] for t in threads),
                       "websocket_requests": sum(t["request_events"]["codex.websocket_request"] for t in threads),
                       "api_requests": sum(t["request_events"]["codex.api_request"] for t in threads),
                       "tool_result_events": sum(sum(t["tools"].values()) for t in threads),
@@ -274,11 +261,15 @@ def brief(result):
                    all(t[key] is not None for t in observed if t["valid_token_records"]) else None
                    for key in fields}}
     root = [t for t in result["threads"] if t["thread_id"] == result["root"]]
-    workers = [t for t in result["threads"] if t["thread_id"] != result["root"]]
+    workers = [t for t in result["threads"] if t.get("scope_role") == "root_descendant"]
+    others = [t for t in result["threads"] if t["thread_id"] != result["root"]
+              and t.get("scope_role") != "root_descendant"]
     return {key: result[key] for key in ("observed_at", "window_start", "root", "scope", "native_status",
                                        "errors", "advisory_signals", "actual_billing_usd", "overload")} | {
         "root_native": counters(root), "workers_native": counters(workers),
         "root_fallback": fallback(root), "workers_fallback": fallback(workers),
+        "other_scoped_threads_native": counters(others),
+        "other_scoped_threads_fallback": fallback(others),
         "root_latest_completed_input_tokens": root[0]["latest_completed_input_tokens"],
         "root_native_event_silence_seconds": root[0]["native_event_silence_seconds"],
         "discovered_threads": len(result["threads"]),
@@ -317,11 +308,13 @@ def main():
     try:
         sessions, descendants = inventory(args.codex_home)
         ids = descendants(sessions, args.root)
+        root_tree_ids = set(ids)
         root_descendants = len(ids)
         for ident in project_ids | set(args.thread):
             ids.update(descendants(sessions, ident))
     except OSError:
         sessions, ids = {}, {args.root}
+        root_tree_ids = {args.root}
         root_descendants = 1
         ids.update(project_ids | set(args.thread))
         errors.append("local lineage inventory unreadable; only named threads queried")
@@ -345,6 +338,9 @@ def main():
     for ident in sorted(ids):
         selected = [r for r in rows if r.get("conversation_id") == ident]
         thread = thread_snapshot(ident, selected, end)
+        thread["scope_role"] = ("root" if ident == args.root else
+                                "root_descendant" if ident in root_tree_ids else
+                                "other_scoped_thread")
         if not thread["tokens"]["valid_token_records"] and ident in sessions:
             thread["fallback_tokens"], warnings = local_tokens(*sessions[ident], start, end)
             errors.extend(f"{ident}: {w}" for w in warnings)
@@ -355,12 +351,14 @@ def main():
     result = {"observed_at": end.isoformat(), "window_start": start.isoformat(), "root": args.root,
               "scope": "root descendants plus recorded/explicit project threads and their local descendants; not the whole workstation",
               "scope_sources": {"root_locally_discovered_threads": root_descendants,
+                                "root_locally_discovered_thread_ids": sorted(root_tree_ids),
                                 "canonical_project_uuid_threads": sorted(project_ids),
                                 "explicit_threads": sorted(set(args.thread))},
               "native_status": native_status, "native_rows": len(rows), "threads": threads,
               "coordination": state, "advisory_signals": signals, "errors": sorted(set(errors)),
               "actual_billing_usd": None, "subscription_quota_remaining": None, "overload": "unknown",
               "limitations": ["Request events are transport attempts, not unique billed model calls.",
+                              "Counterless completion polls marked by duration_ms are transport observations, not usage records.",
                               "Completed-response counters are observed usage, not verified billing.",
                               "Export deduplication/completeness are unverified; no response ID is exported in this projection.",
                               "No native events/completions can mean idle, in-flight work or incomplete export.",

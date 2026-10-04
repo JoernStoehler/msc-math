@@ -1,0 +1,222 @@
+{
+  "title": "msc-math: goals, necessity claims and candidate paths",
+  "status": "Provisional model for discussion. No repair approach or stopping threshold selected.",
+  "author": "Root coordinator, 3 October 2026; incorporates Jörn's proposed endpoint and edge distinction.",
+  "scope": "Goals and possible means, not assignments or demonstrated causal effects. current.json retains assignment authority.",
+  "friction": "Actual overhead, its baseline and acceptable residual cost are unknown. The numerical examples in discussion are not measurements or agreed targets.",
+  "nodes": [
+    {
+      "id": "project",
+      "label": "msc-math\nPROJECT SUCCESS",
+      "kind": "target",
+      "status": "Existing completion model; attainment not established",
+      "detail": "The existing coordination model requires a supported/readable selected thesis, truthful evidence and reproduction promises, the recorded human PASS threshold, required delivery/archive dispositions and released assignments. Reconcile that definition with Jörn's current goal. The broader meta-problem being solved is not automatically a logical prerequisite: a project could progress despite expensive workarounds.",
+      "sources": [
+        "docs/coordination/README.md",
+        "docs/coordination/current.json: msc-math-done",
+        "docs/project-facts.md"
+      ]
+    },
+    {
+      "id": "science",
+      "label": "Supported, readable thesis\nmeets the required judgment",
+      "kind": "requirement",
+      "status": "Requirement in existing model; not a readiness verdict",
+      "detail": "A necessary condition under the existing completion definition. Scientific validity, reader understanding and the exact accepted candidate need their own evidence; compilation cannot establish them.",
+      "sources": [
+        "docs/coordination/thesis-work.md",
+        "docs/coordination/handoff.md"
+      ]
+    },
+    {
+      "id": "evidence",
+      "label": "Code, evidence and\nreproduction match the claims",
+      "kind": "requirement",
+      "status": "Requirement in existing model; attainment not checked here",
+      "detail": "Necessary under the stated definition of project success. The actual promises determine what must work; not every historical producer or optional experiment is therefore mandatory.",
+      "sources": [
+        "README.md",
+        "ARCHITECTURE.md",
+        "docs/coordination/current.json: code-evidence-ready, reproduction-ready"
+      ]
+    },
+    {
+      "id": "delivery",
+      "label": "Required delivery / archive\nobligations discharged",
+      "kind": "requirement",
+      "status": "Conditional on actual obligations; current administrative state unknown",
+      "detail": "Required obligations are necessary by definition; their present content and status remain to be checked. Historical deadlines, an old unsubmitted status or a graph do not establish a current obligation or authorize delivery.",
+      "sources": [
+        "docs/coordination/handoff.md",
+        "docs/coordination/current.json: project-delivery-disposition, project-close"
+      ]
+    },
+    {
+      "id": "meta",
+      "label": "Proposed endpoint for this effort:\nproblem-fixing is workable",
+      "kind": "target",
+      "status": "Jörn's proposed endpoint; success and session scope unresolved",
+      "detail": "The meta-problem concerns finding, understanding, fixing and reconsidering problems economically. The initial session division was intake/triage here, resolution later; the latest endpoint proposal may concern a larger repair effort. Do not silently settle whether this thread must execute the whole effort. Do not equate no identified promising idea with no worthwhile improvement available.",
+      "sources": [
+        "docs/history/coordination/20261003-project-repair-user-report.md",
+        "Jörn's current conversation: proposed session endpoint"
+      ]
+    },
+    {
+      "id": "criterion",
+      "label": "OPEN: what counts as success\nand what justifies stopping?",
+      "kind": "question",
+      "status": "Unresolved consequential choice",
+      "detail": "Do acceptable residual friction and no worthwhile further investment each qualify as success, or can the latter justify stopping with the goal unmet? No numeric threshold is agreed. Assess friction through effects on actual project outcomes, human attention, useful work, context, latency and maintenance. Raw tokens and issue counts are incomplete proxies.",
+      "sources": [
+        "Jörn's current conversation: overhead examples and stopping uncertainty",
+        "AGENTS.md.commentary.md"
+      ]
+    },
+    {
+      "id": "acceptable",
+      "label": "Remaining friction\nis acceptable",
+      "kind": "criterion",
+      "status": "Candidate success condition; tolerance and evidence unknown",
+      "detail": "Would need a grounded judgment about the remaining costs and their consequences for project work. Neither 0.1x nor 10x overhead is selected here. Improvements to one symptom cannot establish the total remaining friction.",
+      "sources": [
+        "Jörn's current conversation: live-with-friction proposal"
+      ]
+    },
+    {
+      "id": "marginal",
+      "label": "Further improvement\nis not worth its cost",
+      "kind": "criterion",
+      "status": "Candidate stopping condition; not established",
+      "detail": "Compare credible remaining improvement opportunities with investigation, implementation, maintenance and foregone domain work. A failed brainstorm or unavailable measurement is not evidence that worthwhile routes are exhausted. Stopping and successful repair need not mean the same thing.",
+      "sources": [
+        "Jörn's current conversation: marginal resource investment proposal"
+      ]
+    },
+    {
+      "id": "knowledge",
+      "label": "Problem knowledge\nstays usable and revisable",
+      "kind": "candidate",
+      "status": "Candidate enabling capability; implementation unsettled",
+      "detail": "Candidate recovery paths: maintained records/Git with targeted log recovery; trajectory/index with source-linked projections; artifact/change evidence followed to decisions. Candidate delivery mechanisms: retrieve at the decision, supply context at task entry, or recheck affected consumers when evidence changes. The fresh-consumer probe recovered cases but found no general communication remedy; one directly relevant failed skill trial lacked its exact transcript anchor. This supports distinguishing discovery failure from application failure, not assuming either explains the whole project. A chosen incident surface must support retrieval, correction and reconsideration; file format alone cannot establish those behaviors.",
+      "sources": [
+        "docs/knowledge/README.md",
+        "docs/coordination/problem-knowledge-interventions.md",
+        "docs/coordination/problem-knowledge-probe.md",
+        "docs/coordination/problem-knowledge-source-map.md"
+      ]
+    },
+    {
+      "id": "interventions",
+      "label": "Promising changes\nare compared and applied",
+      "kind": "candidate",
+      "status": "Possible means; no intervention selected",
+      "detail": "Candidate interventions may concern allocation, communication, retained knowledge, tooling or coordination. Evaluate their intended effect and costs. Historical shadow asks what they recommend at a recorded decision; branched replay observes a new continuation; prospective use observes deployed behavior; an abstract model predicts behavior under assumptions. These support different conclusions and none guarantees efficacy.",
+      "sources": [
+        "docs/coordination/intake-approach-options.md",
+        "docs/coordination/problem-knowledge-interventions.md",
+        "docs/coordination/problem-knowledge-probe.md",
+        "docs/coordination/problem-knowledge-source-map.md"
+      ]
+    },
+    {
+      "id": "revision",
+      "label": "Bad approaches, corrections\nand changed relevance are noticed",
+      "kind": "candidate",
+      "status": "Desired capability; reliable operation not established",
+      "detail": "Test whether the selected approach preserves disputed evidence, withdraws false findings, responds to changed inputs and revises failed methods. A confident summary or a structural check cannot alone establish these capabilities. Evaluation results must be able to revise both the method and this map.",
+      "sources": [
+        "docs/history/coordination/20261003-project-repair-user-report.md",
+        "docs/history/coordination/20261003-withdrawn-repair-intake.md",
+        "docs/coordination/problem-knowledge-source-map.md"
+      ]
+    },
+    {
+      "id": "topology",
+      "label": "OPEN: how is the work\ncoordinated over its lifecycle?",
+      "kind": "question",
+      "status": "Bounded comparison returned; alternatives remain unselected",
+      "detail": "Compare a central end-goal/lifecycle owner, peer-coordinated sessions with shared state, and a hybrid with bounded integration ownership. A central thread can accumulate context and become a bottleneck; distributed peers can lose decisions or ownership; a hybrid can obscure who integrates. Prior sessions may supply evidence, but their outcome alone does not identify the topology's causal effect.",
+      "sources": [
+        "docs/coordination/README.md",
+        "docs/history/process-audit/REPORT.md",
+        "docs/history/coordination/stopped-run-handoff.md",
+        "docs/coordination/problem-knowledge-source-map.md"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "science",
+      "to": "project",
+      "kind": "necessary",
+      "label": "required under\nthis definition"
+    },
+    {
+      "from": "evidence",
+      "to": "project",
+      "kind": "necessary",
+      "label": "required under\nthis definition"
+    },
+    {
+      "from": "delivery",
+      "to": "project",
+      "kind": "necessary",
+      "label": "actual obligations\nrequired"
+    },
+    {
+      "from": "meta",
+      "to": "project",
+      "kind": "candidate",
+      "label": "may enable progress;\nnecessity unestablished"
+    },
+    {
+      "from": "acceptable",
+      "to": "meta",
+      "kind": "candidate",
+      "label": "might qualify\nas success"
+    },
+    {
+      "from": "marginal",
+      "to": "meta",
+      "kind": "candidate",
+      "label": "might justify\nending the effort"
+    },
+    {
+      "from": "criterion",
+      "to": "meta",
+      "kind": "definition",
+      "label": "sets the meaning\nof this endpoint"
+    },
+    {
+      "from": "knowledge",
+      "to": "interventions",
+      "kind": "candidate",
+      "label": "may improve\nselection"
+    },
+    {
+      "from": "interventions",
+      "to": "meta",
+      "kind": "candidate",
+      "label": "may reduce\nfriction"
+    },
+    {
+      "from": "revision",
+      "to": "knowledge",
+      "kind": "candidate",
+      "label": "can revise\nwhat is retained"
+    },
+    {
+      "from": "revision",
+      "to": "interventions",
+      "kind": "candidate",
+      "label": "can change\nthe approach"
+    },
+    {
+      "from": "topology",
+      "to": "meta",
+      "kind": "candidate",
+      "label": "possible ways to\nsustain the work"
+    }
+  ]
+}

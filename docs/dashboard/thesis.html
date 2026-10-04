@@ -200,12 +200,12 @@
     </section>
   </main>
 </div>
+<script src="source-status.js"></script>
 <script>
   (function () {
     if (location.protocol !== 'file:') {
       const indicator = document.getElementById('source-freshness');
-      fetch('/_dashboard/source-status', { cache: 'no-store' })
-        .then(response => { if (!response.ok) throw new Error('status unavailable'); return response.json(); })
+      dashboardSourceStatus()
         .then(status => {
           if (!status.known) throw new Error('status unknown');
           if (status.changed.length) {

@@ -1,0 +1,3 @@
+interface:
+  display_name: "Cross-session messaging"
+  short_description: "Send and receive messages between agent sessions"

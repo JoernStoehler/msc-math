@@ -11,6 +11,33 @@ A finished thesis needs claims and caveats that match their mathematical and com
 support, resolvable code/data/figure/certificate references, and truthful reproduction
 promises. Compilation and tests cover only parts of that outcome.
 
+## Workstation locations
+
+Work directly on the workstation for now. Use the checkout assigned to the task;
+`git rev-parse --show-toplevel` and `git worktree list` identify its root and sibling
+checkouts. These are workstation locations, not required paths on another machine.
+
+| Location | Use |
+| --- | --- |
+| `/workspaces/msc-math/` | Main checkout. Other worktrees have separate files and changes. |
+| `~/.codex/worktrees/` | Codex-created worktrees; locate this project's checkout through Git. |
+| `/tmp/msc-math/<task>/` | Disposable notes, drafts and exploratory outputs. |
+| `~/.codex/artifacts/` | Files prepared for Jörn to view, review or download; use a project/task subdirectory. |
+| `.agents/skills/` in the checkout | Project-owned skills and their helpers. Installed plugin skills are separate. |
+| `~/.cache/msc-math/artifacts/` | Downloaded research snapshots; [docs/artifacts.md](docs/artifacts.md) owns cache overrides and data links. |
+| `/data/msc-math/` | Candidate future home for a project bundle to copy or mount; no relocation is selected yet. |
+
+Keep lasting project results with their source/evidence owner. Scratch notes and
+review files are not their only retained copy. See [environment docs](docs/development-environments.md)
+for host/sandbox setup and [docs/codex.md](docs/codex.md) for Codex state and recovery.
+
+File links for Jörn: `/absolute/path` → `https://joern-pc.tailc5e761.ts.net/files/absolute/path` (expand `~`; URL-encode each path segment).
+
+For dashboard links, resolve `docs/dashboard/index.html` (coordination) or
+`docs/dashboard/thesis.html` (thesis) against the intended checkout's absolute
+root, then apply that URL rule. The page's data and source
+links must resolve within the same checkout.
+
 ## Find the relevant source
 
 Start from the task, then retrieve only the context it needs:
@@ -27,6 +54,8 @@ Start from the task, then retrieve only the context it needs:
   interpretation. `docs/history/` owns historical evidence, not current assignments.
 - `INSTALL.md` owns tool setup. Topic READMEs own reproduction commands and local caveats;
   `papers/` owns source literature and `submit/` release/admin.
+- `docs/codex.md` routes Codex configuration, daemon restart/thread recovery,
+  subagent persistence and official documentation or release-matched source lookup.
 
 Search claims, symbols, artifact paths and likely synonyms with `rg` before concluding that
 work is absent. Follow summaries to their sources. Legacy and generated trees are poor
@@ -51,6 +80,13 @@ needs a thesis location, caveat and PDF/evidence check; show any unresolved cove
 Refresh `docs/dashboard/thesis-sources.json` only after that source reconciliation.
 
 ## Collaboration and planning
+
+Keep the Codex+user workflow moving: during unfinished authorized work, treat
+brief acknowledgments such as "thx" as acknowledgment, not a stop, pause or scope
+change. Continue the work rather than ending with a courtesy-only reply and
+requiring Jörn to restart it. Finish when the requested work is complete, Jörn
+explicitly stops it, or a required decision/input is clearly presented as pending;
+do not invent additional work after completion.
 
 Within selected work, use bounded subagent assignments and independent sessions
 when they help discovery, planning or execution. Respect the actual tool's

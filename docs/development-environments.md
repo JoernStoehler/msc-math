@@ -2,6 +2,9 @@
 
 ## Current intended setup
 
+For Codex TUI features, project/host configuration ownership and release-matched
+implementation links, see [the Codex reference](codex.md).
+
 Jörn specified these project support targets on 2026-09-30 in Codex thread
 `01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a`. This is user-confirmed working context,
 not an end-to-end capability check or an implemented migration plan.
@@ -35,7 +38,8 @@ execution environment, not three separate agent environments.
 
 Companion Chrome sessions on these devices access project web surfaces over
 Tailscale. Jörn wants those surfaces to show what is being worked on and what
-is being neglected. The existing
+is being neglected. [The workstation file viewer](file-viewer.md) maps absolute
+paths to browser URLs for worktrees, scratch files and artifacts. The existing
 [project dashboard](dashboard/README.md) is a starting surface; this statement
 does not establish that it is currently reachable from each device or that it
 provides complete activity/coverage reporting. A workstation-local file path

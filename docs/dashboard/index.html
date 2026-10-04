@@ -57,7 +57,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible { outline:3px solid #
 <p id="observation" class="muted"></p>
 <p class="muted">Expand a node for its prerequisites and evidence. Shared prerequisites link to the same node. Status and ownership come from reported state.</p>
 <div id="portfolio" class="portfolio"></div>
-<p class="muted"><a href="/docs/coordination/graphs/tasks.svg">Exported dependency graph</a> · <a href="/docs/coordination/current.json">Canonical state</a></p>
+<p class="muted"><a href="../coordination/graphs/tasks.svg">Exported dependency graph</a> · <a href="../coordination/current.json">Canonical state</a></p>
 </section>
 <details id="other-work" class="archive"><summary id="other-title">Other reported work</summary><div id="other-tasks"></div></details>
 <details id="parallel-section" class="archive"><summary id="parallel-title">Independent work opportunities</summary><p class="muted">These are candidate packages for separate worktrees if selected. Independence does not authorize execution.</p><ul id="parallel-routes"></ul></details>
@@ -75,6 +75,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible { outline:3px solid #
 <details class="archive"><summary>Recent history</summary><ul id="changes"></ul></details>
 <noscript><p>Open <a href="../coordination/graphs/tasks.svg">the goal graph</a>, <a href="../coordination/current.json">the state file</a> or <a href="../coordination/README.md">coordination guide</a>.</p></noscript>
 </main>
+<script src="source-status.js"></script>
 <script>
 (() => {
   const get = id => document.getElementById(id);
@@ -92,7 +93,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible { outline:3px solid #
   function link(path, label) {
     const anchor = node('a', label || path);
     // Only repository-relative source paths from the checked state are links.
-    if (typeof path === 'string' && path && !path.startsWith('/') && !path.includes('..') && !path.includes(':') && !path.includes('\\')) anchor.href = '/' + path;
+    if (typeof path === 'string' && path && !path.startsWith('/') && !path.includes('..') && !path.includes(':') && !path.includes('\\')) anchor.href = '../../' + path;
     return anchor;
   }
   function sources(paths) {
@@ -253,8 +254,8 @@ a:focus-visible,button:focus-visible,summary:focus-visible { outline:3px solid #
     if (pending) return;
     pending = true;
     try {
-      if (location.protocol === 'file:') throw new Error('Serve with python3 scripts/serve-project-dashboard.py and open http://127.0.0.1:8765/.');
-      const response = await fetch('/docs/coordination/current.json', {cache:'no-store'});
+      if (location.protocol === 'file:') throw new Error('Open this dashboard through the project file viewer; see docs/dashboard/README.md.');
+      const response = await fetch('../coordination/current.json', {cache:'no-store'});
       if (!response.ok) throw new Error('Shared state is unavailable or invalid.');
       render(await response.json());
     } catch (error) {
@@ -262,9 +263,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible { outline:3px solid #
       get('connection').textContent = 'Refresh failed; displayed values are the last successful report. ' + error.message;
     }
     try {
-      const response = await fetch('/_dashboard/source-status', {cache:'no-store'});
-      if (!response.ok) throw new Error();
-      const status = await response.json();
+      const status = await dashboardSourceStatus();
       get('scientific-status').textContent = !status.known ? 'Scientific source freshness is unknown.' : status.note + (status.changed.length ? ' Changed cited sources: ' + status.changed.join(', ') + '.' : ' No cited source hash changed; this does not establish scientific adequacy.');
     } catch {
       get('scientific-status').textContent = 'Scientific source freshness is unknown; the brief remains a dated snapshot.';

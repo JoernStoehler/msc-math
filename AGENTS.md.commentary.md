@@ -118,6 +118,13 @@ question-item presence before choosing a patch. No fix timetable is known.
 [Changelog](https://learn.chatgpt.com/docs/changelog),
 [app-server request lifecycle](https://learn.chatgpt.com/docs/app-server#toolrequestuserinput).
 
+**Current disposition, 30 September:** Jörn reports receiving none of the async
+questions, despite accepted tool submissions. The project now prohibits using
+that route until delivery is verified. This establishes a local delivery failure,
+not its cause or a global product defect. Direct chat supplies the fallback;
+do not make Jörn discover a hidden unanswered decision. The restriction changes
+agent usage instructions and does not remove the runtime tool.
+
 ## Other settled interaction preferences and unresolved defaults
 
 **Context:** Jörn multitasks. Omit narration without decision value, including
@@ -125,6 +132,14 @@ routine acknowledgements, apologies and self-commentary. Correct errors directly
 report consequences and uncertainty that affect his work. Limited attention
 does not justify skipped review, reduced scope, premature delivery or hidden
 uncertainty.
+
+**Continuation:** In the 3 October 2026 Codex configuration walkthrough, a brief
+"thx" received a courtesy-only end-of-turn while the broader discussion remained
+unfinished. Jörn identified this as a recurring mistake and clarified that the
+concern is the Codex+user workflow, not merely his personal communication style.
+The rule in AGENTS.md preserves authorized work across acknowledgments so Jörn
+does not have to reactivate it. It does not authorize new scope or bypass a
+required decision. The wording's effect on recurrence has not been tested.
 
 **Structure:** Distinguish context, rule, boundary and useful reason/example
 where this aids interpretation; these are labels, not a mandatory four-paragraph

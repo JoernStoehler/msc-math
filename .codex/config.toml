@@ -1,9 +1,80 @@
-# Shared sandbox skills are intentionally disabled. This repository discovers
-# only the skills it owns below .agents/skills.
+# Project Codex overrides; see docs/codex.md for scope, source navigation and
+# the dated configuration assessment. Values may intentionally equal the host:
+# project behavior should survive a later change to host defaults.
+# Approval rule (Jörn, 2026-10-03): obtain his explicit approval before applying
+# edits to this file or retaining an unapproved edit. Present the proposed diff
+# and expected consequences first; prepare candidates outside the loaded config.
+# Existing explicit authorization covers its stated scope; do not ask again for
+# changes already authorized. Silence and tool auto-approval are not approval.
+# Model and reasoning effort stay host-owned for frontend compatibility, per
+# Jörn's 2026-10-03 instruction. UI, auth, browser plumbing and telemetry are also
+# host-owned; this file does not configure them.
+# When editing an intentional override, maintain its purpose, scope and reason
+# here or through a resolvable file/session reference. Mark unknown rationale
+# and trial/recheck conditions explicitly; do not invent explanations.
 
+# Preserve the current permissive delegation ceilings. They do not authorize
+# workload or spending: AGENTS.md owns bounded assignments and Jörn's budget gate.
 [agents]
+enabled = true
+# V1 nesting only; V2 ignores this setting (docs/codex.md).
+max_depth = 99
 max_concurrent_threads_per_session = 99
+# Do not copy job_max_runtime_seconds: it is a legacy no-op in CLI 0.160.0.
 
+[features]
+# Existing orchestration and workflow capabilities; no new experiment selected.
+multi_agent = true
+goals = true
+hooks = true
+apps = true
+plugins = true
+worktrees = true
+# Preserve the current flag value; false does NOT prohibit model-selected V2.
+multi_agent_v2 = false
+# Preserve current off states pending a selected, bounded evaluation. Source
+# availability/stage alone does not establish usefulness for this project.
+memories = false
+agent_message_board = false
+runtime_metrics = false
+rollout_budget = false
+context_management = false
+# Match the existing host choice; its original rationale is unknown. Recheck
+# shell initialization behavior before changing this override (docs/codex.md).
+shell_snapshot = false
+
+# Capability limit checked at CLI 0.160.0: no supported config switch to disable
+# V2 message encryption. Production support for a plaintext-forcing client patch
+# is unverified; do not claim client patches are proved ineffective (docs/codex.md).
+
+# PROVISIONAL TRIAL: approved by Jörn on 2026-10-03, assessed at CLI 0.160.0.
+# Codex injects UTC timestamps automatically for elapsed-time awareness. The 60s
+# cadence is speculative: Jörn considers it fast; usefulness and cache/cost
+# effects are unmeasured. Recheck after observing actual reminders; lengthen the
+# interval or disable if too frequent or unhelpful. This is not a deadline.
+[features.current_time_reminder]
+enabled = true
+reminder_interval_seconds = 60
+clock_source = "system"
+delivery_mode = "after_user_or_tool_output"
+# Preserve availability of the input-interruptible clock.sleep described in A;
+# this explicit setting can also expose it for other selected models.
+sleep_tool = true
+
+# PROVISIONAL TRIAL: approved by Jörn on 2026-10-03, assessed at CLI 0.160.0.
+# Expose remaining context capacity and context-window tools. Warn once per
+# window below 20,000 tokens before auto-compaction; this starting threshold is
+# speculative, not a measured optimum or a spending allowance. Recheck useful
+# warnings, model compatibility and continuity across compaction; revise/disable
+# if unhelpful. See docs/codex.md and docs/codex-config-proposals.md.
+[features.token_budget]
+enabled = true
+reminder_threshold_tokens = 20000
+# The optional history/notes extension is outside this trial.
+use_history_notes_extension = false
+
+# Disable the listed legacy shared sandbox skills. Host/plugin skills and other
+# repository skills still participate in normal discovery; this is not an allowlist.
 [[skills.config]]
 path = "/home/agent/.agents/skills/codex-session-log-parsing/SKILL.md"
 enabled = false

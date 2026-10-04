@@ -30,6 +30,11 @@ check of an earlier source hash is not automatically a check of the current text
 [Architecture](../ARCHITECTURE.md), [algorithm testing](algorithm-testing.md),
 [capacity contracts](capacity-calculation-map.md), [artifact storage](artifacts.md)
 and [environments](development-environments.md) describe maintained interfaces.
+[Codex TUI and configuration](codex.md) maps project/host settings to the
+installed release's implementation and owns the source-refresh command.
+[Generated feature inventory](codex-features.md) covers every registered flag;
+[config decisions and proposals](codex-config-proposals.md) record the approved
+provisional time-reminder and remaining-context trials.
 
 ## Interpretation, review evidence and recovery
 

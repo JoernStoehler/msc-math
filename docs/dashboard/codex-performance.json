@@ -1,0 +1,584 @@
+{
+  "version": 8,
+  "dashboardId": "7511125879225843712",
+  "title": "msc-math Codex throughput",
+  "description": "Metadata-only root + descendants graphs. Response-average TPS estimates, native TTFT, reasoning/nonreasoning share, cache/uncached input correlation. See measurement boundaries.",
+  "role": "",
+  "created": "2026-09-30T18:12:39.575213223Z",
+  "tabs": [
+    {
+      "tabId": "throughput",
+      "name": "Throughput and latency",
+      "panels": [
+        {
+          "id": "measurement_boundaries",
+          "type": "markdown",
+          "title": "Read the measurement boundaries",
+          "description": "Scope and unavailable measurements",
+          "config": {
+            "show_legends": false,
+            "legends_position": null,
+            "base_map": null,
+            "map_view": null
+          },
+          "queryType": "sql",
+          "queries": [],
+          "layout": {
+            "x": 0,
+            "y": 0,
+            "w": 192,
+            "h": 6,
+            "i": 0
+          },
+          "markdownContent": "## Measurement boundaries\nThis dashboard covers the selected root and its 15 observed descendants; newly created descendants require a scope refresh.\n\nResponse-average TPS is an estimate: completion token counts / elapsed seconds since the latest preceding websocket request **in the same conversation**. It includes first-token latency and cannot verify request matching without response IDs. It is not steady-state decode TPS.\n\nReasoning and nonreasoning rates share that denominator. Nonreasoning tokens include tool calls/formatting, not only visible prose. Completed-output activity attributes a response entirely to its completion minute.\n\nFirst-reasoning-token latency, isolated prefill duration and prefill TPS are unavailable in native telemetry. Native ttft_ms measures time from wrapping the available response stream to the first OutputItemAdded event. It is not first reasoning-token latency and omits earlier request setup. [Pinned Codex source](https://github.com/openai/codex/blob/rust-v0.159.2/codex-rs/core/src/client.rs#L2392). Cache/TTFT scatter shows correlation, not cause. Queries project token/timing metadata only."
+        },
+        {
+          "id": "throughput_1",
+          "type": "line",
+          "title": "Estimated response-average TPS: reasoning / nonreasoning",
+          "description": "Token counts divided by elapsed seconds from latest preceding websocket request in the same conversation. Includes first-token latency. Request matching lacks response IDs; retries/concurrency can bias this estimate. Nonreasoning includes tool/formatting tokens, not only visible prose.",
+          "config": {
+            "show_legends": true,
+            "legends_position": "bottom",
+            "decimals": 2.0,
+            "base_map": null,
+            "map_view": null,
+            "connect_nulls": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT _timestamp AS ts,reasoning_token_count/((_timestamp-request_ts)/1000000.0) AS reasoning_tps,(CAST(output_token_count AS DOUBLE)-reasoning_token_count)/((_timestamp-request_ts)/1000000.0) AS nonreasoning_tps FROM (SELECT _timestamp,conversation_id,event_name,event_kind,output_token_count,reasoning_token_count,ttft_ms,input_token_count,cached_token_count, MAX(CASE WHEN event_name='codex.websocket_request' THEN _timestamp END) OVER (PARTITION BY conversation_id ORDER BY _timestamp ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING) AS request_ts FROM codex WHERE conversation_id IN ('01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a','01a0f1a6-c829-7251-a2c2-7a78d634634e','01a0f1a7-0b0f-7e51-b5d0-236b6ece68f3','01a0f31a-61cb-7ac2-b295-a19e5a6e4cfa','01a0f31b-36f0-72e3-bd41-95ed5c9c6230','01a0f31c-db99-7fc3-a086-fe1ba73f8b8a','01a0f324-e618-7a82-9e2a-779e0ed1905b','01a0f325-8c07-7bd1-abf0-c4b6a712eac1','01a0f33a-59b0-7883-b949-2def9acdef50','01a0f347-de2a-7572-9e20-163b4dad00e0','01a0f356-c41e-7de1-99e4-c88adb4e73c9','01a0f35d-956a-7b93-a539-b6c46da84c4d','01a0f36a-c576-76b2-bbe9-2448f249e32b','01a0f36d-1d2a-7172-9dc0-a29d09df1166','01a0f377-5de6-77e2-9395-efde315fc106','01a0f380-199f-7963-8de5-2fdb51381763') AND (event_name='codex.websocket_request' OR (event_name='codex.sse_event' AND event_kind='response.completed'))) WHERE event_name='codex.sse_event' AND event_kind='response.completed' AND request_ts IS NOT NULL AND _timestamp>request_ts ORDER BY ts",
+              "vrlFunctionQuery": null,
+              "customQuery": true,
+              "fields": {
+                "stream": "codex",
+                "stream_type": "logs",
+                "x": [
+                  {
+                    "label": "ts",
+                    "alias": "ts",
+                    "column": "ts",
+                    "color": null
+                  }
+                ],
+                "y": [
+                  {
+                    "label": "reasoning tps",
+                    "alias": "reasoning_tps",
+                    "column": "reasoning_tps",
+                    "color": null
+                  },
+                  {
+                    "label": "nonreasoning tps",
+                    "alias": "nonreasoning_tps",
+                    "column": "nonreasoning_tps",
+                    "color": null
+                  }
+                ],
+                "z": [],
+                "filter": {
+                  "type": "list",
+                  "values": [],
+                  "column": null,
+                  "operator": null,
+                  "value": null,
+                  "logicalOperator": "AND",
+                  "filterType": "list"
+                }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1.0
+              }
+            }
+          ],
+          "layout": {
+            "x": 0,
+            "y": 6,
+            "w": 96,
+            "h": 12,
+            "i": 1
+          }
+        },
+        {
+          "id": "throughput_2",
+          "type": "line",
+          "title": "Estimated response-average TPS: root vs workers",
+          "description": "Mean per-response total TPS estimates in each minute. Root and worker means are not summed; each response uses its own preceding request.",
+          "config": {
+            "show_legends": true,
+            "legends_position": "bottom",
+            "decimals": 2.0,
+            "base_map": null,
+            "map_view": null,
+            "connect_nulls": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT histogram(_timestamp,'1 minute') AS ts,AVG(CASE WHEN conversation_id='01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a' THEN CAST(output_token_count AS DOUBLE)/((_timestamp-request_ts)/1000000.0) END) AS root_tps,AVG(CASE WHEN conversation_id<>'01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a' THEN CAST(output_token_count AS DOUBLE)/((_timestamp-request_ts)/1000000.0) END) AS worker_tps FROM (SELECT _timestamp,conversation_id,event_name,event_kind,output_token_count,reasoning_token_count,ttft_ms,input_token_count,cached_token_count, MAX(CASE WHEN event_name='codex.websocket_request' THEN _timestamp END) OVER (PARTITION BY conversation_id ORDER BY _timestamp ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING) AS request_ts FROM codex WHERE conversation_id IN ('01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a','01a0f1a6-c829-7251-a2c2-7a78d634634e','01a0f1a7-0b0f-7e51-b5d0-236b6ece68f3','01a0f31a-61cb-7ac2-b295-a19e5a6e4cfa','01a0f31b-36f0-72e3-bd41-95ed5c9c6230','01a0f31c-db99-7fc3-a086-fe1ba73f8b8a','01a0f324-e618-7a82-9e2a-779e0ed1905b','01a0f325-8c07-7bd1-abf0-c4b6a712eac1','01a0f33a-59b0-7883-b949-2def9acdef50','01a0f347-de2a-7572-9e20-163b4dad00e0','01a0f356-c41e-7de1-99e4-c88adb4e73c9','01a0f35d-956a-7b93-a539-b6c46da84c4d','01a0f36a-c576-76b2-bbe9-2448f249e32b','01a0f36d-1d2a-7172-9dc0-a29d09df1166','01a0f377-5de6-77e2-9395-efde315fc106','01a0f380-199f-7963-8de5-2fdb51381763') AND (event_name='codex.websocket_request' OR (event_name='codex.sse_event' AND event_kind='response.completed'))) WHERE event_name='codex.sse_event' AND event_kind='response.completed' AND request_ts IS NOT NULL AND _timestamp>request_ts GROUP BY ts ORDER BY ts",
+              "vrlFunctionQuery": null,
+              "customQuery": true,
+              "fields": {
+                "stream": "codex",
+                "stream_type": "logs",
+                "x": [
+                  {
+                    "label": "ts",
+                    "alias": "ts",
+                    "column": "ts",
+                    "color": null
+                  }
+                ],
+                "y": [
+                  {
+                    "label": "root tps",
+                    "alias": "root_tps",
+                    "column": "root_tps",
+                    "color": null
+                  },
+                  {
+                    "label": "worker tps",
+                    "alias": "worker_tps",
+                    "column": "worker_tps",
+                    "color": null
+                  }
+                ],
+                "z": [],
+                "filter": {
+                  "type": "list",
+                  "values": [],
+                  "column": null,
+                  "operator": null,
+                  "value": null,
+                  "logicalOperator": "AND",
+                  "filterType": "list"
+                }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1.0
+              }
+            }
+          ],
+          "layout": {
+            "x": 96,
+            "y": 6,
+            "w": 96,
+            "h": 12,
+            "i": 2
+          }
+        },
+        {
+          "id": "throughput_3",
+          "type": "line",
+          "title": "Completed output per wall-clock second (60-second bins)",
+          "description": "Completion counts attributed wholly to completion minute. Activity rate across root and workers; not decode speed or concurrent generation throughput. Missing minutes mean no observed completion.",
+          "config": {
+            "show_legends": true,
+            "legends_position": "bottom",
+            "decimals": 2.0,
+            "base_map": null,
+            "map_view": null,
+            "connect_nulls": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT histogram(_timestamp,'1 minute') AS ts,SUM(CAST(output_token_count AS DOUBLE))/60.0 AS total_tps,SUM(reasoning_token_count)/60.0 AS reasoning_tps,SUM(CAST(output_token_count AS DOUBLE)-reasoning_token_count)/60.0 AS nonreasoning_tps FROM codex WHERE conversation_id IN ('01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a','01a0f1a6-c829-7251-a2c2-7a78d634634e','01a0f1a7-0b0f-7e51-b5d0-236b6ece68f3','01a0f31a-61cb-7ac2-b295-a19e5a6e4cfa','01a0f31b-36f0-72e3-bd41-95ed5c9c6230','01a0f31c-db99-7fc3-a086-fe1ba73f8b8a','01a0f324-e618-7a82-9e2a-779e0ed1905b','01a0f325-8c07-7bd1-abf0-c4b6a712eac1','01a0f33a-59b0-7883-b949-2def9acdef50','01a0f347-de2a-7572-9e20-163b4dad00e0','01a0f356-c41e-7de1-99e4-c88adb4e73c9','01a0f35d-956a-7b93-a539-b6c46da84c4d','01a0f36a-c576-76b2-bbe9-2448f249e32b','01a0f36d-1d2a-7172-9dc0-a29d09df1166','01a0f377-5de6-77e2-9395-efde315fc106','01a0f380-199f-7963-8de5-2fdb51381763') AND event_name='codex.sse_event' AND event_kind='response.completed' GROUP BY ts ORDER BY ts",
+              "vrlFunctionQuery": null,
+              "customQuery": true,
+              "fields": {
+                "stream": "codex",
+                "stream_type": "logs",
+                "x": [
+                  {
+                    "label": "ts",
+                    "alias": "ts",
+                    "column": "ts",
+                    "color": null
+                  }
+                ],
+                "y": [
+                  {
+                    "label": "total tps",
+                    "alias": "total_tps",
+                    "column": "total_tps",
+                    "color": null
+                  },
+                  {
+                    "label": "reasoning tps",
+                    "alias": "reasoning_tps",
+                    "column": "reasoning_tps",
+                    "color": null
+                  },
+                  {
+                    "label": "nonreasoning tps",
+                    "alias": "nonreasoning_tps",
+                    "column": "nonreasoning_tps",
+                    "color": null
+                  }
+                ],
+                "z": [],
+                "filter": {
+                  "type": "list",
+                  "values": [],
+                  "column": null,
+                  "operator": null,
+                  "value": null,
+                  "logicalOperator": "AND",
+                  "filterType": "list"
+                }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1.0
+              }
+            }
+          ],
+          "layout": {
+            "x": 0,
+            "y": 18,
+            "w": 96,
+            "h": 12,
+            "i": 3
+          }
+        },
+        {
+          "id": "throughput_4",
+          "type": "line",
+          "title": "Time to first output item (native ttft_ms)",
+          "description": "Codex v0.159.2: time from wrapping available API response stream to first OutputItemAdded. Not first reasoning token/text delta; does not isolate prefill, queue or network. Source: https://github.com/openai/codex/blob/rust-v0.159.2/codex-rs/core/src/client.rs#L2392",
+          "config": {
+            "show_legends": true,
+            "legends_position": "bottom",
+            "decimals": 2.0,
+            "base_map": null,
+            "map_view": null,
+            "connect_nulls": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT _timestamp AS ts,ttft_ms AS ttft_ms FROM codex WHERE conversation_id IN ('01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a','01a0f1a6-c829-7251-a2c2-7a78d634634e','01a0f1a7-0b0f-7e51-b5d0-236b6ece68f3','01a0f31a-61cb-7ac2-b295-a19e5a6e4cfa','01a0f31b-36f0-72e3-bd41-95ed5c9c6230','01a0f31c-db99-7fc3-a086-fe1ba73f8b8a','01a0f324-e618-7a82-9e2a-779e0ed1905b','01a0f325-8c07-7bd1-abf0-c4b6a712eac1','01a0f33a-59b0-7883-b949-2def9acdef50','01a0f347-de2a-7572-9e20-163b4dad00e0','01a0f356-c41e-7de1-99e4-c88adb4e73c9','01a0f35d-956a-7b93-a539-b6c46da84c4d','01a0f36a-c576-76b2-bbe9-2448f249e32b','01a0f36d-1d2a-7172-9dc0-a29d09df1166','01a0f377-5de6-77e2-9395-efde315fc106','01a0f380-199f-7963-8de5-2fdb51381763') AND event_name='codex.sse_event' AND event_kind='response.completed' AND ttft_ms IS NOT NULL ORDER BY ts",
+              "vrlFunctionQuery": null,
+              "customQuery": true,
+              "fields": {
+                "stream": "codex",
+                "stream_type": "logs",
+                "x": [
+                  {
+                    "label": "ts",
+                    "alias": "ts",
+                    "column": "ts",
+                    "color": null
+                  }
+                ],
+                "y": [
+                  {
+                    "label": "ttft ms",
+                    "alias": "ttft_ms",
+                    "column": "ttft_ms",
+                    "color": null
+                  }
+                ],
+                "z": [],
+                "filter": {
+                  "type": "list",
+                  "values": [],
+                  "column": null,
+                  "operator": null,
+                  "value": null,
+                  "logicalOperator": "AND",
+                  "filterType": "list"
+                }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1.0
+              }
+            }
+          ],
+          "layout": {
+            "x": 96,
+            "y": 18,
+            "w": 96,
+            "h": 12,
+            "i": 4
+          }
+        },
+        {
+          "id": "throughput_5",
+          "type": "line",
+          "title": "Reasoning share of completed output (%)",
+          "description": "Token-weighted reasoning share. Nonreasoning remainder includes tool calls and formatting as well as prose.",
+          "config": {
+            "show_legends": true,
+            "legends_position": "bottom",
+            "decimals": 2.0,
+            "base_map": null,
+            "map_view": null,
+            "connect_nulls": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT histogram(_timestamp,'1 minute') AS ts,100.0*SUM(reasoning_token_count)/NULLIF(SUM(CAST(output_token_count AS DOUBLE)),0) AS reasoning_percent FROM codex WHERE conversation_id IN ('01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a','01a0f1a6-c829-7251-a2c2-7a78d634634e','01a0f1a7-0b0f-7e51-b5d0-236b6ece68f3','01a0f31a-61cb-7ac2-b295-a19e5a6e4cfa','01a0f31b-36f0-72e3-bd41-95ed5c9c6230','01a0f31c-db99-7fc3-a086-fe1ba73f8b8a','01a0f324-e618-7a82-9e2a-779e0ed1905b','01a0f325-8c07-7bd1-abf0-c4b6a712eac1','01a0f33a-59b0-7883-b949-2def9acdef50','01a0f347-de2a-7572-9e20-163b4dad00e0','01a0f356-c41e-7de1-99e4-c88adb4e73c9','01a0f35d-956a-7b93-a539-b6c46da84c4d','01a0f36a-c576-76b2-bbe9-2448f249e32b','01a0f36d-1d2a-7172-9dc0-a29d09df1166','01a0f377-5de6-77e2-9395-efde315fc106','01a0f380-199f-7963-8de5-2fdb51381763') AND event_name='codex.sse_event' AND event_kind='response.completed' GROUP BY ts ORDER BY ts",
+              "vrlFunctionQuery": null,
+              "customQuery": true,
+              "fields": {
+                "stream": "codex",
+                "stream_type": "logs",
+                "x": [
+                  {
+                    "label": "ts",
+                    "alias": "ts",
+                    "column": "ts",
+                    "color": null
+                  }
+                ],
+                "y": [
+                  {
+                    "label": "reasoning percent",
+                    "alias": "reasoning_percent",
+                    "column": "reasoning_percent",
+                    "color": null
+                  }
+                ],
+                "z": [],
+                "filter": {
+                  "type": "list",
+                  "values": [],
+                  "column": null,
+                  "operator": null,
+                  "value": null,
+                  "logicalOperator": "AND",
+                  "filterType": "list"
+                }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1.0
+              }
+            }
+          ],
+          "layout": {
+            "x": 0,
+            "y": 30,
+            "w": 96,
+            "h": 12,
+            "i": 5
+          }
+        },
+        {
+          "id": "throughput_6",
+          "type": "line",
+          "title": "Input tokens: cached vs uncached",
+          "description": "Per-request input counters summed by completion minute. Repeated context can be counted again; counts do not measure prefill duration or speed.",
+          "config": {
+            "show_legends": true,
+            "legends_position": "bottom",
+            "decimals": 2.0,
+            "base_map": null,
+            "map_view": null,
+            "connect_nulls": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT histogram(_timestamp,'1 minute') AS ts,SUM(cached_token_count) AS cached_input,SUM(CAST(input_token_count AS DOUBLE)-cached_token_count) AS uncached_input FROM codex WHERE conversation_id IN ('01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a','01a0f1a6-c829-7251-a2c2-7a78d634634e','01a0f1a7-0b0f-7e51-b5d0-236b6ece68f3','01a0f31a-61cb-7ac2-b295-a19e5a6e4cfa','01a0f31b-36f0-72e3-bd41-95ed5c9c6230','01a0f31c-db99-7fc3-a086-fe1ba73f8b8a','01a0f324-e618-7a82-9e2a-779e0ed1905b','01a0f325-8c07-7bd1-abf0-c4b6a712eac1','01a0f33a-59b0-7883-b949-2def9acdef50','01a0f347-de2a-7572-9e20-163b4dad00e0','01a0f356-c41e-7de1-99e4-c88adb4e73c9','01a0f35d-956a-7b93-a539-b6c46da84c4d','01a0f36a-c576-76b2-bbe9-2448f249e32b','01a0f36d-1d2a-7172-9dc0-a29d09df1166','01a0f377-5de6-77e2-9395-efde315fc106','01a0f380-199f-7963-8de5-2fdb51381763') AND event_name='codex.sse_event' AND event_kind='response.completed' GROUP BY ts ORDER BY ts",
+              "vrlFunctionQuery": null,
+              "customQuery": true,
+              "fields": {
+                "stream": "codex",
+                "stream_type": "logs",
+                "x": [
+                  {
+                    "label": "ts",
+                    "alias": "ts",
+                    "column": "ts",
+                    "color": null
+                  }
+                ],
+                "y": [
+                  {
+                    "label": "cached input",
+                    "alias": "cached_input",
+                    "column": "cached_input",
+                    "color": null
+                  },
+                  {
+                    "label": "uncached input",
+                    "alias": "uncached_input",
+                    "column": "uncached_input",
+                    "color": null
+                  }
+                ],
+                "z": [],
+                "filter": {
+                  "type": "list",
+                  "values": [],
+                  "column": null,
+                  "operator": null,
+                  "value": null,
+                  "logicalOperator": "AND",
+                  "filterType": "list"
+                }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1.0
+              }
+            }
+          ],
+          "layout": {
+            "x": 96,
+            "y": 30,
+            "w": 96,
+            "h": 12,
+            "i": 6
+          }
+        },
+        {
+          "id": "throughput_7",
+          "type": "scatter",
+          "title": "Uncached input vs time to first output item",
+          "description": "Each point is a completed response. Correlation is not cause. Native ttft_ms ends at first OutputItemAdded and omits earlier request setup; input/ttft_ms is not prefill TPS.",
+          "config": {
+            "show_legends": true,
+            "legends_position": "bottom",
+            "decimals": 2.0,
+            "base_map": null,
+            "map_view": null,
+            "connect_nulls": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT CAST(input_token_count AS DOUBLE)-cached_token_count AS uncached_input,ttft_ms AS ttft_ms FROM codex WHERE conversation_id IN ('01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a','01a0f1a6-c829-7251-a2c2-7a78d634634e','01a0f1a7-0b0f-7e51-b5d0-236b6ece68f3','01a0f31a-61cb-7ac2-b295-a19e5a6e4cfa','01a0f31b-36f0-72e3-bd41-95ed5c9c6230','01a0f31c-db99-7fc3-a086-fe1ba73f8b8a','01a0f324-e618-7a82-9e2a-779e0ed1905b','01a0f325-8c07-7bd1-abf0-c4b6a712eac1','01a0f33a-59b0-7883-b949-2def9acdef50','01a0f347-de2a-7572-9e20-163b4dad00e0','01a0f356-c41e-7de1-99e4-c88adb4e73c9','01a0f35d-956a-7b93-a539-b6c46da84c4d','01a0f36a-c576-76b2-bbe9-2448f249e32b','01a0f36d-1d2a-7172-9dc0-a29d09df1166','01a0f377-5de6-77e2-9395-efde315fc106','01a0f380-199f-7963-8de5-2fdb51381763') AND event_name='codex.sse_event' AND event_kind='response.completed' AND ttft_ms IS NOT NULL ORDER BY _timestamp",
+              "vrlFunctionQuery": null,
+              "customQuery": true,
+              "fields": {
+                "stream": "codex",
+                "stream_type": "logs",
+                "x": [
+                  {
+                    "label": "uncached input",
+                    "alias": "uncached_input",
+                    "column": "uncached_input",
+                    "color": null
+                  }
+                ],
+                "y": [
+                  {
+                    "label": "ttft ms",
+                    "alias": "ttft_ms",
+                    "column": "ttft_ms",
+                    "color": null
+                  }
+                ],
+                "z": [],
+                "filter": {
+                  "type": "list",
+                  "values": [],
+                  "column": null,
+                  "operator": null,
+                  "value": null,
+                  "logicalOperator": "AND",
+                  "filterType": "list"
+                }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1.0
+              }
+            }
+          ],
+          "layout": {
+            "x": 0,
+            "y": 42,
+            "w": 96,
+            "h": 12,
+            "i": 7
+          }
+        },
+        {
+          "id": "throughput_8",
+          "type": "scatter",
+          "title": "Cache hit share vs time to first output item",
+          "description": "Each point is a completed response. Cache fraction does not isolate prefill duration. Native ttft_ms ends at first OutputItemAdded and is not first-reasoning-token latency.",
+          "config": {
+            "show_legends": true,
+            "legends_position": "bottom",
+            "decimals": 2.0,
+            "base_map": null,
+            "map_view": null,
+            "connect_nulls": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT 100.0*cached_token_count/NULLIF(CAST(input_token_count AS DOUBLE),0) AS cache_percent,ttft_ms AS ttft_ms FROM codex WHERE conversation_id IN ('01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a','01a0f1a6-c829-7251-a2c2-7a78d634634e','01a0f1a7-0b0f-7e51-b5d0-236b6ece68f3','01a0f31a-61cb-7ac2-b295-a19e5a6e4cfa','01a0f31b-36f0-72e3-bd41-95ed5c9c6230','01a0f31c-db99-7fc3-a086-fe1ba73f8b8a','01a0f324-e618-7a82-9e2a-779e0ed1905b','01a0f325-8c07-7bd1-abf0-c4b6a712eac1','01a0f33a-59b0-7883-b949-2def9acdef50','01a0f347-de2a-7572-9e20-163b4dad00e0','01a0f356-c41e-7de1-99e4-c88adb4e73c9','01a0f35d-956a-7b93-a539-b6c46da84c4d','01a0f36a-c576-76b2-bbe9-2448f249e32b','01a0f36d-1d2a-7172-9dc0-a29d09df1166','01a0f377-5de6-77e2-9395-efde315fc106','01a0f380-199f-7963-8de5-2fdb51381763') AND event_name='codex.sse_event' AND event_kind='response.completed' AND ttft_ms IS NOT NULL ORDER BY _timestamp",
+              "vrlFunctionQuery": null,
+              "customQuery": true,
+              "fields": {
+                "stream": "codex",
+                "stream_type": "logs",
+                "x": [
+                  {
+                    "label": "cache percent",
+                    "alias": "cache_percent",
+                    "column": "cache_percent",
+                    "color": null
+                  }
+                ],
+                "y": [
+                  {
+                    "label": "ttft ms",
+                    "alias": "ttft_ms",
+                    "column": "ttft_ms",
+                    "color": null
+                  }
+                ],
+                "z": [],
+                "filter": {
+                  "type": "list",
+                  "values": [],
+                  "column": null,
+                  "operator": null,
+                  "value": null,
+                  "logicalOperator": "AND",
+                  "filterType": "list"
+                }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1.0
+              }
+            }
+          ],
+          "layout": {
+            "x": 96,
+            "y": 42,
+            "w": 96,
+            "h": 12,
+            "i": 8
+          }
+        }
+      ]
+    }
+  ],
+  "defaultDatetimeDuration": {
+    "type": "relative",
+    "relativeTimePeriod": "2h"
+  }
+}

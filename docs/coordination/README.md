@@ -1,5 +1,9 @@
 # Project coordination
 
+**Closure verdict:** Jörn graded this Codex config/resource-workflow attempt FAIL.
+The component repairs and scoped checks described here remain evidence; they
+are not human acceptance of the workflow. See [current handoff](handoff.md).
+
 This is the agent-facing home for project management. Jörn's browser view is
 [../dashboard/index.html](../dashboard/index.html); it renders the shared state
 rather than maintaining another assignment list.
@@ -110,6 +114,13 @@ Run the server with `python3 scripts/serve-project-dashboard.py`, then open
 <http://127.0.0.1:8765/>. It rereads files and the browser refreshes reported
 state every 15 seconds. The listener remains local unless explicitly configured.
 
+## Messaging protocol
+
+The [cross-session-messaging skill](../../.agents/skills/cross-session-messaging/SKILL.md)
+owns guidance for sending or receiving cross-session agent messages and handoffs,
+including messages relayed by Jörn. Its catalog description supplies the trigger;
+the protocol is not duplicated in AGENTS.md or here.
+
 ## Workload supervision
 
 The coordinator owns supervision, including its own pending messages, reviews,
@@ -128,6 +139,51 @@ are outside coverage. It projects counters and event metadata, excluding
 prompts, reasoning, tool content and credentials. Native observations and local
 fallback remain separate; unknown counters and billed spend remain unknown.
 Exit 2 means incomplete observation, not an overload diagnosis.
+
+The compact report separates `root_native`, `workers_native` (locally discovered
+descendants of this root) and `other_scoped_threads_native` (other recorded or
+explicit sessions and their descendants). Fallback counters have the same three
+separate groups and are never added to native totals. Root/worker context-size
+comparisons use descendants only; unrelated roots are not workers. The full
+report retains per-thread counters and `scope_role` for attribution. These are
+passive measurements, with no goal or configured budget limit required.
+
+The 3 October native-reader correction counts counterless `duration_ms`-marked
+raw SSE completions separately as `raw_transport_completion_events`, without
+inflating usage or hiding real counter errors. Twenty focused tests passed.
+The selected-root-only 22:10:46–22:25:46 UTC safe-projection query returned 134
+metadata rows and 29 valid parsed completions, with no explicit nulls; 105 rows
+omitted counter keys. No raw-SSE pair was live observed in this websocket root.
+Native export deduplication remains unverified; no live-tree duplicate was
+established. [The retained contract](../../scripts/subtree-usage.md#native-completion-contract-and-bounded-check)
+records source anchors, regression command and unknown-data boundaries.
+
+For a cumulative local-log report by root/workers/model, use
+`python3 scripts/subtree-usage.py ROOT_THREAD_UUID`; see its
+[accounting contract](../../scripts/subtree-usage.md). Its dated shadow-price
+table is not subscription quota. Account-wide native quota snapshots, where
+available, do not establish which thread consumed which quota percentage.
+The [3 October workflow/trust review](../../scripts/subtree-usage.md#workflow-and-trust-review-3-october-2026)
+reproduced copied-fork double counting and silent zero defaults; Jörn instructed
+fixing them. Both local readers now share response ownership/deduplication and
+strict required counters, and ordinary forks stay separate from workers.
+Thirty-five focused tests and a live owned-response sum check passed. The
+proposed watch is not active automation; task-start/handoff delivery was rejected.
+The on-demand `scripts/usage-awareness.py` command remains usable. Jörn rejected
+the throttled after-tool candidate's complexity on 3 October; it is withdrawn,
+with no activation approval pending. [Proposal C](../codex-config-proposals.md#c-prepared-ongoing-work-count-up-reminder-activation-awaits-approval)
+retains the exact rejected additions and checks as historical provenance.
+The withdrawn hook's automatic model-visible delivery was not verified. During
+useful audit/repair on 3 October, the supervisor independently inspected root
+actions and delivered three count-up notes at 22:19:38, 22:22:11 and 22:25:20 UTC;
+root and the active worker confirmed receipt. Direct worker-to-newer-supervisor
+sibling acknowledgment was rejected; worker → root → supervisor successfully
+relayed receipt. This establishes bounded supervised delivery through the existing
+reader and agent transport. The selected local attribution/discovery assessment,
+accounting repairs and bounded ongoing delivery are complete; future monitoring
+remains an operational responsibility. Permanent or all-agent adoption, quota
+conversion and native-export deduplication remain unestablished and outside this
+completion claim. Broader workflow and project milestones remain open.
 
 For selected ongoing work, a bounded observer can run it every four minutes and
 send new, materially changed or resolved warnings to its receiving coordinator.

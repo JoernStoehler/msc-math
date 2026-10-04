@@ -34,7 +34,9 @@ class LoadTests(unittest.TestCase):
 
             def read(self):
                 return json.dumps({"hits": [{"conversation_id": "root", "prompt": "private",
-                                             "arguments": "private", "_timestamp": 1}]}).encode()
+                                             "arguments": "private", "_timestamp": 1,
+                                             "duration_ms": "15", "reasoning_token_count": 2,
+                                             "tool_token_count": "110"}]}).encode()
 
         with patch.object(load.urllib.request, "urlopen", return_value=Response()) as opened:
             rows, errors = load.query("http://127.0.0.1:5080", "private-auth", {"root"},
@@ -43,7 +45,11 @@ class LoadTests(unittest.TestCase):
         sql = json.loads(request.data)["query"]["sql"]
         for forbidden in ("prompt", "arguments", "content", "output,", "body"):
             self.assertNotIn(forbidden, sql)
-        self.assertEqual(rows, [{"conversation_id": "root", "_timestamp": 1}])
+        for field in ("duration_ms", "reasoning_token_count", "tool_token_count"):
+            self.assertIn(field, sql)
+        self.assertEqual(rows, [{"conversation_id": "root", "_timestamp": 1,
+                                "duration_ms": "15", "reasoning_token_count": 2,
+                                "tool_token_count": "110"}])
         self.assertEqual(errors, [])
 
     def test_completed_only_counters_and_missing_not_zero(self):
@@ -58,11 +64,61 @@ class LoadTests(unittest.TestCase):
         self.assertEqual(load.token_totals([{**row, "cached_token_count": 101}])[
             "invalid_or_missing_token_records"], 1)
 
+    def test_raw_poll_and_parsed_usage_count_once_without_false_error(self):
+        raw = {"event_name": "codex.sse_event", "event_kind": "response.completed",
+               "duration_ms": "15"}
+        usage = {"event_name": "codex.sse_event", "event_kind": "response.completed",
+                 "input_token_count": "100", "cached_token_count": 90,
+                 "output_token_count": "10", "cache_write_token_count": 0}
+        totals = load.token_totals([raw, usage])
+        self.assertEqual(totals["observed_completions"], 1)
+        self.assertEqual(totals["raw_transport_completion_events"], 1)
+        self.assertEqual(totals["valid_token_records"], 1)
+        self.assertEqual(totals["invalid_or_missing_token_records"], 0)
+        self.assertEqual(totals["input_token_count"], 100)
+        self.assertEqual(totals["cache_write_token_count"], 0)
+
+    def test_raw_only_completion_keeps_usage_unknown(self):
+        raw = {"event_name": "codex.sse_event", "event_kind": "response.completed",
+               "duration_ms": "15", "_timestamp": int(self.now.timestamp()*1e6)}
+        thread = load.thread_snapshot("root", [raw], self.now)
+        totals = thread["tokens"]
+        self.assertEqual(totals["observed_completions"], 0)
+        self.assertEqual(totals["raw_transport_completion_events"], 1)
+        self.assertEqual(totals["valid_token_records"], 0)
+        self.assertEqual(totals["invalid_or_missing_token_records"], 0)
+        for field in ("input_token_count", "cached_token_count", "output_token_count",
+                      "cache_write_token_count"):
+            self.assertIsNone(totals[field])
+        self.assertIsNone(thread["latest_completed_at"])
+
+    def test_duration_does_not_hide_partial_or_malformed_usage(self):
+        base = {"event_name": "codex.sse_event", "event_kind": "response.completed",
+                "duration_ms": "15"}
+        for field in load.USAGE_COUNTER_FIELDS:
+            for value in (None, "bad", 2):
+                with self.subTest(field=field, value=value):
+                    totals = load.token_totals([{**base, field: value}])
+                    self.assertEqual(totals["raw_transport_completion_events"], 0)
+                    self.assertEqual(totals["observed_completions"], 1)
+                    self.assertEqual(totals["invalid_or_missing_token_records"], 1)
+        malformed = {**base, "input_token_count": "bad", "cached_token_count": 90,
+                     "output_token_count": 10}
+        self.assertEqual(load.token_totals([malformed])["invalid_or_missing_token_records"], 1)
+
+    def test_unmarked_counterless_completion_remains_invalid(self):
+        totals = load.token_totals([{"event_name": "codex.sse_event",
+                                     "event_kind": "response.completed"}])
+        self.assertEqual(totals["raw_transport_completion_events"], 0)
+        self.assertEqual(totals["observed_completions"], 1)
+        self.assertEqual(totals["invalid_or_missing_token_records"], 1)
+        self.assertIsNone(totals["input_token_count"])
+
     def test_fallback_excludes_inheritance_and_deduplicates(self):
         def count(when, total):
             return {"timestamp": when, "type": "event_msg", "payload": {"type": "token_count", "info": {
-                "total_token_usage": {"input_tokens": total, "cached_input_tokens": total-10,
-                                      "output_tokens": 10},
+                "total_token_usage": {"input_tokens": total, "cached_input_tokens": total*9//10,
+                                      "output_tokens": total//10},
                 "last_token_usage": {"input_tokens": 100, "cached_input_tokens": 90,
                                      "output_tokens": 10}}}}
         with tempfile.TemporaryDirectory() as temp:
@@ -113,10 +169,16 @@ class LoadTests(unittest.TestCase):
         rows += [response("root", 1000, 900, 10), response("a", 100, 90, 20), response("b", 200, 190, 20)]
         threads = [load.thread_snapshot(i, [r for r in rows if r["conversation_id"] == i], self.now)
                    for i in ("root", "a", "b")]
+        for thread in threads:
+            thread["scope_role"] = "root" if thread["thread_id"] == "root" else "root_descendant"
         signals = load.review_signals("root", threads, rows, {"running_assignments": []}, self.now)
         self.assertEqual({s["signal"] for s in signals}, {
             "coordinator_context_larger_than_recent_workers", "coordinator_non_cached_input_spike"})
         self.assertTrue(all("evidence" in s and "limitation" in s for s in signals))
+        for thread in threads[1:]:
+            thread["scope_role"] = "other_scoped_thread"
+        independent_signals = load.review_signals("root", threads, rows, {}, self.now)
+        self.assertEqual({s["signal"] for s in independent_signals}, {"coordinator_non_cached_input_spike"})
         no_root = load.review_signals("absent", threads, rows, {"status": "unknown"}, self.now)
         self.assertEqual(no_root, [])
 
@@ -137,6 +199,8 @@ class LoadTests(unittest.TestCase):
         def signals(rows):
             threads = [load.thread_snapshot(i, [r for r in rows if r["conversation_id"] == i], self.now)
                        for i in ("root", "a", "b")]
+            for thread in threads:
+                thread["scope_role"] = "root" if thread["thread_id"] == "root" else "root_descendant"
             return load.review_signals("root", threads, rows, {}, self.now)
         fresh = [response("root", 1000, 10), response("a", 100, 10), response("b", 100, 10)]
         self.assertEqual(len(signals(fresh)), 1)
@@ -191,6 +255,38 @@ class LoadTests(unittest.TestCase):
         self.assertEqual(report["workers_fallback"]["threads_checked"], 0)
         self.assertNotIn("private diagnostic", out.getvalue())
 
+    def test_brief_keeps_independent_session_tree_out_of_workers(self):
+        root, worker, other, other_worker = [f"00000000-0000-0000-0000-{i:012d}" for i in range(1, 5)]
+        sessions = {ident: (Path("unused"), {}) for ident in (root, worker, other, other_worker)}
+        trees = {root: {root, worker}, other: {other, other_worker}}
+        rows = [{"conversation_id": ident, "_timestamp": int(self.now.timestamp()*1e6),
+                 "event_name": "codex.sse_event", "event_kind": "response.completed",
+                 "input_token_count": amount, "cached_token_count": 0, "output_token_count": 1}
+                for ident, amount in zip((root, worker, other, other_worker), (100, 200, 300, 400))]
+        rows.append({"conversation_id": root, "_timestamp": int(self.now.timestamp()*1e6),
+                     "event_name": "codex.sse_event", "event_kind": "response.completed",
+                     "duration_ms": "15"})
+        with tempfile.TemporaryDirectory() as temp:
+            state = Path(temp)/"state.json"
+            state.write_text(json.dumps({"tasks": [{"id": "other", "status": "running", "owner": other}]}))
+            out = io.StringIO()
+            with patch.object(load, "inventory", return_value=(sessions, lambda s, r: set(trees.get(r, {r})))), \
+                    patch.object(load, "auth_header", return_value="dummy"), \
+                    patch.object(load, "query", return_value=(rows, [])), \
+                    patch.object(load.sys, "argv", ["load", root, "--state", str(state), "--brief",
+                                                   "--now", self.now.isoformat()]), contextlib.redirect_stdout(out):
+                status = load.main()
+            report = json.loads(out.getvalue())
+        self.assertEqual(status, 0)
+        self.assertEqual(report["root_native"]["input_token_count"], 100)
+        self.assertEqual(report["root_native"]["completed_responses"], 1)
+        self.assertEqual(report["root_native"]["raw_transport_completion_events"], 1)
+        self.assertEqual(report["workers_native"]["raw_transport_completion_events"], 0)
+        self.assertEqual(report["errors"], [])
+        self.assertEqual(report["workers_native"]["input_token_count"], 200)
+        self.assertEqual(report["other_scoped_threads_native"]["input_token_count"], 700)
+        self.assertEqual(report["scope_sources"]["root_locally_discovered_thread_ids"], sorted([root, worker]))
+
     def test_row_limit_and_partial_results_are_explicit(self):
         class Response:
             def __enter__(self):
@@ -206,6 +302,40 @@ class LoadTests(unittest.TestCase):
             rows, errors = load.query("http://127.0.0.1:5080", "dummy", {"root"}, self.now, self.now)
         self.assertEqual(len(rows), 2)
         self.assertEqual(len(errors), 2)
+
+    def test_fallback_uses_owned_response_ids_across_copied_fork(self):
+        counts = {"input_tokens": 100, "cached_input_tokens": 90,
+                  "output_tokens": 10, "cache_write_input_tokens": 0}
+        def native(owner, response):
+            return {"type": "token_usage_record", "timestamp": "2026-09-30T16:59:00Z",
+                    "payload": {"thread_id": owner, "response_id": response, "usage": counts}}
+        own = native("child", "new")
+        inherited_mirror = {"type": "event_msg", "timestamp": "2026-09-30T16:58:00Z",
+                            "payload": {"type": "token_count", "info": {
+                                "total_token_usage": counts, "last_token_usage": counts}}}
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp)/"fork.jsonl"
+            path.write_text("\n".join(json.dumps(r) for r in [
+                native("parent", "old"), inherited_mirror, own, own]))
+            result, errors = load.local_tokens(path, {"id": "child", "forked_from_id": "parent",
+                "timestamp": "2026-09-30T16:50:00Z"}, self.now-timedelta(minutes=15), self.now)
+        self.assertEqual(result["observed_completions"], 1)
+        self.assertEqual(result["input_token_count"], 100)
+        self.assertFalse(errors)
+
+    def test_inventory_preserves_fork_ownership_metadata_without_worker_edge(self):
+        with tempfile.TemporaryDirectory() as temp:
+            home = Path(temp)
+            folder = home/"sessions"
+            folder.mkdir()
+            for ident, extra in (("root", {}), ("fork", {"forked_from_id": "root",
+                    "history_base": {"thread_id": "root", "ordinal": 5}})):
+                (folder/f"rollout-{ident}.jsonl").write_text(json.dumps({"type": "session_meta",
+                    "payload": {"id": ident, "timestamp": "2026-09-30T16:50:00Z", **extra}}))
+            sessions, descendants = load.inventory(home)
+        self.assertEqual(descendants(sessions, "root"), {"root"})
+        self.assertEqual(sessions["fork"][1]["forked_from_id"], "root")
+        self.assertIn("history_base", sessions["fork"][1])
 
 
 if __name__ == "__main__":
