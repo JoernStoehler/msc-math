@@ -1,0 +1,142 @@
+{
+  "frozen_at_utc": "2026-10-04T00:11:35.481665+00:00",
+  "random_seed": 104026,
+  "case_order": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F"
+  ],
+  "assignments": [
+    {
+      "answer_id": "R3970",
+      "case_id": "D",
+      "condition": "baseline",
+      "input": "packet-3970.txt",
+      "input_words": 1302,
+      "input_bytes": 9449,
+      "input_sha256": "875e880d2bf3243b524d5f24af6c71e721fed6ff44a21ab6c6e5d88f89a924e1"
+    },
+    {
+      "answer_id": "R8846",
+      "case_id": "D",
+      "condition": "knowledge",
+      "input": "packet-8846.txt",
+      "input_words": 3439,
+      "input_bytes": 25523,
+      "input_sha256": "7aebaaf426b11249e04b2d16afe93bf00007041402b1080ebcc30b8dbc14bb21"
+    },
+    {
+      "answer_id": "R9674",
+      "case_id": "A",
+      "condition": "knowledge",
+      "input": "packet-9674.txt",
+      "input_words": 3414,
+      "input_bytes": 25306,
+      "input_sha256": "991ee10d5c1595f0e40f27a50478bce1d6ee9bc2a21eae7139ebd3cf41dcc828"
+    },
+    {
+      "answer_id": "R9267",
+      "case_id": "A",
+      "condition": "baseline",
+      "input": "packet-9267.txt",
+      "input_words": 1277,
+      "input_bytes": 9232,
+      "input_sha256": "834d432ebfc7d726ecf7c587f00b927e53ecfec7c69004aee20b6991951d32a7"
+    },
+    {
+      "answer_id": "R7512",
+      "case_id": "E",
+      "condition": "knowledge",
+      "input": "packet-7512.txt",
+      "input_words": 3538,
+      "input_bytes": 26095,
+      "input_sha256": "2c28c53a617225bb3b8e502b97ef017449cab833ccddfccad86cd47767821132"
+    },
+    {
+      "answer_id": "R8719",
+      "case_id": "B",
+      "condition": "baseline",
+      "input": "packet-8719.txt",
+      "input_words": 1318,
+      "input_bytes": 9573,
+      "input_sha256": "5cc549ca5cad8083f405c8acf394d3a00d9af8f93c04c4e9785644a3a060beb1"
+    },
+    {
+      "answer_id": "R2652",
+      "case_id": "B",
+      "condition": "knowledge",
+      "input": "packet-2652.txt",
+      "input_words": 3455,
+      "input_bytes": 25647,
+      "input_sha256": "59e7a6e645392b1929ac13502fac17f4cc9fb71624018a476000e2098237258a"
+    },
+    {
+      "answer_id": "R8457",
+      "case_id": "F",
+      "condition": "baseline",
+      "input": "packet-8457.txt",
+      "input_words": 1349,
+      "input_bytes": 9804,
+      "input_sha256": "f38c5f0d35a74247a5059a01c66cd1109bceceea147ba8c7c4ca20a0a31780dd"
+    },
+    {
+      "answer_id": "R7632",
+      "case_id": "E",
+      "condition": "baseline",
+      "input": "packet-7632.txt",
+      "input_words": 1401,
+      "input_bytes": 10021,
+      "input_sha256": "de38f3af783c2023c7cb4055c52b1f8020c918f96d4107f93c0b60615055abd8"
+    },
+    {
+      "answer_id": "R1408",
+      "case_id": "F",
+      "condition": "knowledge",
+      "input": "packet-1408.txt",
+      "input_words": 3486,
+      "input_bytes": 25878,
+      "input_sha256": "da24e72b5fb83071a850fd5378cdec68b84d7bf75c672cfb3bc2f52143a49fbe"
+    },
+    {
+      "answer_id": "R4688",
+      "case_id": "C",
+      "condition": "knowledge",
+      "input": "packet-4688.txt",
+      "input_words": 3468,
+      "input_bytes": 25737,
+      "input_sha256": "6f1d7a2435295020dc4d02a4ec610e4b1568f86bf8d097b9ba26dc8c1617f71a"
+    },
+    {
+      "answer_id": "R5033",
+      "case_id": "C",
+      "condition": "baseline",
+      "input": "packet-5033.txt",
+      "input_words": 1331,
+      "input_bytes": 9663,
+      "input_sha256": "91bc4fc735dabbef7f54a23e08da125aa349aed41b1fce193710c1aa9569395e"
+    }
+  ],
+  "files": {
+    "build_inputs.py": "195e4f2e63ad17af35c14f9f0ab17aa86616cb9ba1194db231889c1523ef21ac",
+    "cases.json": "2ca4d44dd6ef6ab64b1eedc0b2945a59062acfffefbcbcbfd665b45460c76493",
+    "criteria.json": "64e4d8e3fc733547510b3edd2b7a3b830f34284ca9deee534e15635aa8ab7d3a",
+    "guidance.txt": "b783a526974b080522c7610d5310e350f15bb233a88dbcf7f898e2c8d036862c",
+    "knowledge.txt": "b8105a5fc1e1778ad255b14b1213ae36da1ff54010ead6f4513900b06aa053e4",
+    "packet-1408.txt": "da24e72b5fb83071a850fd5378cdec68b84d7bf75c672cfb3bc2f52143a49fbe",
+    "packet-2652.txt": "59e7a6e645392b1929ac13502fac17f4cc9fb71624018a476000e2098237258a",
+    "packet-3970.txt": "875e880d2bf3243b524d5f24af6c71e721fed6ff44a21ab6c6e5d88f89a924e1",
+    "packet-4688.txt": "6f1d7a2435295020dc4d02a4ec610e4b1568f86bf8d097b9ba26dc8c1617f71a",
+    "packet-5033.txt": "91bc4fc735dabbef7f54a23e08da125aa349aed41b1fce193710c1aa9569395e",
+    "packet-7512.txt": "2c28c53a617225bb3b8e502b97ef017449cab833ccddfccad86cd47767821132",
+    "packet-7632.txt": "de38f3af783c2023c7cb4055c52b1f8020c918f96d4107f93c0b60615055abd8",
+    "packet-8457.txt": "f38c5f0d35a74247a5059a01c66cd1109bceceea147ba8c7c4ca20a0a31780dd",
+    "packet-8719.txt": "5cc549ca5cad8083f405c8acf394d3a00d9af8f93c04c4e9785644a3a060beb1",
+    "packet-8846.txt": "7aebaaf426b11249e04b2d16afe93bf00007041402b1080ebcc30b8dbc14bb21",
+    "packet-9267.txt": "834d432ebfc7d726ecf7c587f00b927e53ecfec7c69004aee20b6991951d32a7",
+    "packet-9674.txt": "991ee10d5c1595f0e40f27a50478bce1d6ee9bc2a21eae7139ebd3cf41dcc828",
+    "scoring-instructions.txt": "8552fc7879e0ae6cc815197584c61b4bd4eb93200139f32dd09baca7b1106e9a"
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "observed_start": "2026-10-04T00:53:48Z",
+  "observed_end": "2026-10-04T00:54:52Z",
+  "method": "Read-only app-server thread/read with includeTurns:true; selected only the historical supervisor spawn/renewal call IDs. Full replies and unrelated history were not retained.",
+  "request": {
+    "method": "thread/read",
+    "params": {
+      "threadId": "01a102da-b805-7f72-ae02-ba9842fa80a8",
+      "includeTurns": true
+    }
+  },
+  "selected_receipts": [
+    {
+      "turn_id": "01a103ca-575f-7cb1-8e22-f2e4de38396d",
+      "item": {
+        "type": "subAgentActivity",
+        "id": "call_kPLn2g8B2jlnjrPYRop6SHCW",
+        "kind": "started",
+        "agentThreadId": "01a103cb-1d52-7a20-8131-6b70889cc9de",
+        "agentPath": "/root/root_scope_supervisor"
+      },
+      "frozen_correspondence": {
+        "source_key": "C",
+        "line": 2154,
+        "timestamp": "2026-10-03T22:03:25.365Z",
+        "source_line_sha256": "2e4cc793382babba0cc0868edce7ffe9e4fb678a475d9e922585c93775de4224"
+      }
+    },
+    {
+      "turn_id": "01a103d4-17d1-7dd2-b881-b2a4aa3602dd",
+      "item": {
+        "type": "subAgentActivity",
+        "id": "call_NcqfMco5emrJsHHZrSY8BO3Y",
+        "kind": "interacted",
+        "agentThreadId": "01a103cb-1d52-7a20-8131-6b70889cc9de",
+        "agentPath": "/root/root_scope_supervisor"
+      },
+      "frozen_correspondence": {
+        "source_key": "C",
+        "line": 2400,
+        "timestamp": "2026-10-03T22:14:16.895Z",
+        "source_line_sha256": "a65dba86a9e8c2aaaca8845ff543bd8bfc1df251ce81a475a3b3484d305ad312"
+      }
+    }
+  ],
+  "release": "rust-v0.160.0",
+  "source_commit": "a956835d020762cb2b570053af06f643a11c0ecc",
+  "source_files": [
+    {
+      "path": "codex-rs/app-server-protocol/src/protocol/v2/thread.rs",
+      "lines": [
+        1671,
+        1678
+      ],
+      "label": "The request includes turns and items.",
+      "file_sha256": "d5e626a8f3bade6865a6274642a607124bea49cf3ebdbc202f70e8d2a976dafb",
+      "excerpt_sha256": "b5efca616d06bf6d8847ae4c0f7a2c874085cf6e26236b430a56e46419cc4a46"
+    },
+    {
+      "path": "codex-rs/app-server-protocol/src/protocol/v2/item.rs",
+      "lines": [
+        374,
+        387
+      ],
+      "label": "A different collaboration variant has an optional prompt.",
+      "file_sha256": "cf58812aafce8d213090d430b62585477351738b5a90354ed07be338cf9ad06d",
+      "excerpt_sha256": "f9aee437e635864516f20f5e3be54ef474c57924ff22e3446a2bc947921b3eb3"
+    },
+    {
+      "path": "codex-rs/app-server-protocol/src/protocol/v2/item.rs",
+      "lines": [
+        397,
+        402
+      ],
+      "label": "The observed variant has no prompt field.",
+      "file_sha256": "cf58812aafce8d213090d430b62585477351738b5a90354ed07be338cf9ad06d",
+      "excerpt_sha256": "78b4153a00806747cadec9fde67f229ee81685f935b0b904df2d0147dd5cbe5f"
+    },
+    {
+      "path": "codex-rs/app-server-protocol/src/protocol/v2/item.rs",
+      "lines": [
+        961,
+        984
+      ],
+      "label": "Conversion preserves each variant’s corresponding fields.",
+      "file_sha256": "cf58812aafce8d213090d430b62585477351738b5a90354ed07be338cf9ad06d",
+      "excerpt_sha256": "6a6e73023cc44d40545eb3344ce778113f51a9ef4acafeb4fa9d3b040b23b2aa"
+    }
+  ],
+  "private_audit_note_sha256": "28b8d806369a0bd860bb3f8a0bd4aa6b94432b4ed2866238b9ae80ecf72674f7",
+  "boundary": "Raw historical assignment text inspected elsewhere was encrypted; these native projections omit prompt text. Neither establishes the exact supervisor remit, and this bounded check does not rule out plaintext on every other surface."
+}

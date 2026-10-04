@@ -1,0 +1,575 @@
+{
+  "analyzed_at": "2026-10-04T00:43:08.870364+00:00",
+  "all_frozen_hashes_unchanged": true,
+  "failed_hashes": [],
+  "pairs": [
+    {
+      "task": "1",
+      "archive_answer": "A839",
+      "packet_answer": "A391",
+      "source_words_archive": 24979,
+      "source_words_packet": 21428,
+      "source_words_delta_packet_minus_archive": -3551,
+      "wall_seconds_archive": 103.761,
+      "wall_seconds_packet": 106.191,
+      "wall_seconds_delta": 2.430000000000007,
+      "calls_archive": 19,
+      "calls_packet": 19,
+      "ratings": {
+        "51": {
+          "archive": {
+            "answer_id": "A839",
+            "task_id": "1",
+            "fact_scores": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              0.5,
+              1,
+              1
+            ],
+            "decision": 3,
+            "source_fidelity": 2,
+            "uncertainty": 2,
+            "usefulness": 2,
+            "total": 16.5,
+            "adequate": true,
+            "critical_errors": [],
+            "unsupported_or_contradicted_claims": [],
+            "avoidable_user_questions": [],
+            "missing_essential_fact": [
+              "Does not clearly recover the final independent scoped-completion finding at CS L464; its supervisor discussion emphasizes earlier limitations instead."
+            ],
+            "rationale": "Existing numerical judgments retained. Restored sources support the retained accounting/messaging results, inactive-hook disposition, bounded design readiness and resource-stop distinction. The strongest independent completion evidence remains underrepresented. The selected exhibits do not independently verify the 154-flag inventory, 35-test/189-response figures, exact initial 22:05 stop or all later C events. Those are unavailable citation checks rather than established falsehoods.",
+            "confidence": "Moderate."
+          },
+          "packet": {
+            "answer_id": "A391",
+            "task_id": "1",
+            "fact_scores": [
+              1,
+              1,
+              1,
+              1,
+              0.5,
+              1,
+              1,
+              1
+            ],
+            "decision": 3,
+            "source_fidelity": 2,
+            "uncertainty": 2,
+            "usefulness": 2,
+            "total": 16.5,
+            "adequate": true,
+            "critical_errors": [],
+            "unsupported_or_contradicted_claims": [],
+            "avoidable_user_questions": [],
+            "missing_essential_fact": [
+              "Does not clearly recover the initial concrete double-counting or missing-value defects despite passing tests."
+            ],
+            "rationale": "Existing numerical judgments retained. CS L464 directly supports independent scoped accounting completion; R L2304 and the F supplement distinguish a coordinating-owner resource stop from the user's complaint. I withdraw my earlier suggested objection about calling R's 22:44 ending premature: the answer does not explicitly call that ending premature, and R L1965 supports its distinction between a ready bounded pass and unfinished parent work. Detailed C 22:45/23:11 chronology, some artifact provenance and configuration claims still lack their exact cited passages in these selected exhibits.",
+            "confidence": "Moderate to high for the core disposition; moderate for supplementary chronology."
+          }
+        },
+        "52": {
+          "archive": {
+            "answer_id": "A839",
+            "task_id": "1",
+            "fact_scores": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              0.5,
+              1,
+              1
+            ],
+            "decision": 3,
+            "source_fidelity": 2,
+            "uncertainty": 2,
+            "usefulness": 2,
+            "total": 16.5,
+            "adequate": true,
+            "critical_errors": [],
+            "unsupported_or_contradicted_claims": [],
+            "avoidable_user_questions": [],
+            "missing_essential_fact": "Does not clearly recover CS L464's final independent scoped-completion judgment; its supervisor discussion emphasizes earlier limitations.",
+            "rationale": "Preserves useful outputs, unfinished parent work and the distinct resource stop. Newly readable F-stop-and-restart evidence confirms that the terminal directive came from the coordinator following a user complaint/question. The independent completion omission remains consequential.",
+            "confidence": "Moderate-high for core findings; supplementary configuration inventory and additional test-count citations remain unavailable.",
+            "revision": "No numerical changes. All four repaired source reads completed without runtime truncation."
+          },
+          "packet": {
+            "answer_id": "A391",
+            "task_id": "1",
+            "fact_scores": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            "decision": 3,
+            "source_fidelity": 2,
+            "uncertainty": 2,
+            "usefulness": 2,
+            "total": 17,
+            "adequate": true,
+            "critical_errors": [],
+            "unsupported_or_contradicted_claims": [],
+            "avoidable_user_questions": [],
+            "missing_essential_fact": null,
+            "rationale": "Recovers the independent scoped completion, earlier premature endings, coordinator resource stop, accepted messaging repair and retained outputs with limits. The restored stop/restart evidence supports the core chronology and preserves unresolved obligations.",
+            "confidence": "Moderate-high. Some supplementary artifact citations and details of C's later FAIL ending are outside the selected original exhibits.",
+            "revision": "No numerical changes; restored source context reinforces the core findings."
+          }
+        }
+      }
+    },
+    {
+      "task": "2",
+      "archive_answer": "A238",
+      "packet_answer": "A388",
+      "source_words_archive": 7653,
+      "source_words_packet": 12149,
+      "source_words_delta_packet_minus_archive": 4496,
+      "wall_seconds_archive": 57.632,
+      "wall_seconds_packet": 80.99,
+      "wall_seconds_delta": 23.357999999999997,
+      "calls_archive": 7,
+      "calls_packet": 13,
+      "ratings": {
+        "51": {
+          "archive": {
+            "answer_id": "A238",
+            "task_id": "2",
+            "fact_scores": [
+              1,
+              1,
+              1,
+              1,
+              0.5,
+              1,
+              1,
+              1
+            ],
+            "decision": 3,
+            "source_fidelity": 3,
+            "uncertainty": 2,
+            "usefulness": 2,
+            "total": 17.5,
+            "adequate": true,
+            "critical_errors": [],
+            "unsupported_or_contradicted_claims": [],
+            "avoidable_user_questions": [],
+            "missing_essential_fact": [
+              "The additional Claude authentication/model/dispatch dependencies are less explicitly recovered than the shared-path limitations."
+            ],
+            "rationale": "Existing numerical judgments retained. The restored fallback code confirms the particularly useful observations that missing/malformed receipts can select fallback without establishing a local failure, and that claude_completed is distinct from redemption_outcome. Q L390 and the readiness receipts support the eligibility and verification distinctions. The maintenance recommendation preserves authorization and useful controls. Exact early cancellation, user-authorization and CLI-navigation passages cited by the answer remain outside the selected exhibits.",
+            "confidence": "High for implementation analysis; moderate for supplementary chronology."
+          },
+          "packet": {
+            "answer_id": "A388",
+            "task_id": "2",
+            "fact_scores": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            "decision": 3,
+            "source_fidelity": 3,
+            "uncertainty": 2,
+            "usefulness": 2,
+            "total": 18,
+            "adequate": true,
+            "critical_errors": [],
+            "unsupported_or_contradicted_claims": [],
+            "avoidable_user_questions": [],
+            "missing_essential_fact": [],
+            "rationale": "Existing numerical judgments retained. Restored Q L197/L535/L721/L945/L1029 substantiate counterevidence to the confession; Q L1294 and the complete fallback patch establish shared execution dependencies and bounded behavior; Q L1470 establishes authentication and armed timers, not redemption or model execution. The non-consuming comparison addresses incremental reliability appropriately. Exact early authorization/cancellation exchanges and several supplementary citations are not included in the selected canonical exhibits, so their detailed chronology remains independently unverified.",
+            "confidence": "High for core findings; moderate for supplementary chronology."
+          }
+        },
+        "52": {
+          "archive": {
+            "answer_id": "A238",
+            "task_id": "2",
+            "fact_scores": [
+              1,
+              1,
+              1,
+              1,
+              0.5,
+              1,
+              1,
+              1
+            ],
+            "decision": 3,
+            "source_fidelity": 3,
+            "uncertainty": 2,
+            "usefulness": 2,
+            "total": 17.5,
+            "adequate": true,
+            "critical_errors": [],
+            "unsupported_or_contradicted_claims": [],
+            "avoidable_user_questions": [],
+            "missing_essential_fact": "Does not explicitly identify the added Claude authentication and model-execution dependencies as fallback costs.",
+            "rationale": "Q L197/L535/L721/L945/L1029 substantiate the challenge to the confession; Q L390 supports the eligibility correction. The exact fallback patch and Q L1470 receipt support the shared command, bounded guards and readiness-versus-redemption distinction. The answer carefully notes that missing receipts do not positively identify a local failure and proposes a useful non-consuming comparison.",
+            "confidence": "High for core conclusions. Detailed initial-cancellation and direct-user-authorization quotations are not included in the selected exhibits; later authorization is reported at Q L945.",
+            "revision": "Filled source_fidelity, total and adequate after reading the restored Q evidence. Other numerical judgments unchanged."
+          },
+          "packet": {
+            "answer_id": "A388",
+            "task_id": "2",
+            "fact_scores": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            "decision": 3,
+            "source_fidelity": 3,
+            "uncertainty": 2,
+            "usefulness": 2,
+            "total": 18,
+            "adequate": true,
+            "critical_errors": [],
+            "unsupported_or_contradicted_claims": [],
+            "avoidable_user_questions": [],
+            "missing_essential_fact": null,
+            "rationale": "The restored conversation, exact fallback implementation and startup receipt support all core distinctions. Particularly strong on additional dependencies, meaningful retry coverage, shared defects, semantic-refusal stops, untested model dispatch and the need for comparative evidence before claiming reliability gains.",
+            "confidence": "High for core findings. Some ancillary conversation citations, including the original cancellation and direct authorization wording, remain outside the selected exhibits.",
+            "revision": "Filled source_fidelity, total and adequate. No other score changes."
+          }
+        }
+      }
+    },
+    {
+      "task": "3",
+      "archive_answer": "A971",
+      "packet_answer": "A630",
+      "source_words_archive": 19673,
+      "source_words_packet": 19138,
+      "source_words_delta_packet_minus_archive": -535,
+      "wall_seconds_archive": 127.425,
+      "wall_seconds_packet": 140.733,
+      "wall_seconds_delta": 13.308000000000007,
+      "calls_archive": 23,
+      "calls_packet": 29,
+      "ratings": {
+        "51": {
+          "archive": {
+            "answer_id": "A971",
+            "task_id": "3",
+            "fact_scores": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            "decision": 2,
+            "source_fidelity": 2,
+            "uncertainty": 1,
+            "usefulness": 2,
+            "total": 15,
+            "adequate": true,
+            "critical_errors": [],
+            "unsupported_or_contradicted_claims": [
+              "The unqualified statement 'No forked model call was run' conflicts with FS L95, which records that an actual fresh/fork comparison had already returned unfinished-parent judgments."
+            ],
+            "avoidable_user_questions": [],
+            "missing_essential_fact": [
+              "The proposed comparison lacks an explicit genuine stop or approval-boundary control and explicit assessment of the resulting next action."
+            ],
+            "rationale": "Fact, decision and usefulness scores retained. Uncertainty decreases from 2 to 1: newly visible FS L95 converts the previously unverified universal no-fork assertion into a source-supported contradiction. R L1978 only establishes that R's tested wrapper used fresh exec; that local fact cannot describe every later experiment. The core wrapper reconstruction remains strongly supported by the restored code and receipts. The separate fresh/fork comparison does not establish that an otherwise-matched enriched-context experiment occurred. Exact inline-input counts and early messaging-probe details remain unavailable.",
+            "confidence": "High for the core replay findings and the identified scope error."
+          },
+          "packet": {
+            "answer_id": "A630",
+            "task_id": "3",
+            "fact_scores": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            "decision": 2,
+            "source_fidelity": 3,
+            "uncertainty": 2,
+            "usefulness": 2,
+            "total": 17,
+            "adequate": true,
+            "critical_errors": [],
+            "unsupported_or_contradicted_claims": [],
+            "avoidable_user_questions": [],
+            "missing_essential_fact": [
+              "The proposed comparison does not explicitly include a genuine stop or approval-boundary control and assessment of the resulting next action."
+            ],
+            "rationale": "Existing numerical judgments retained. The restored wrapper and exact verdict/result artifacts substantiate execution configuration, projection exclusions, timings and mechanical-versus-semantic distinctions. FS L95 independently confirms a later fresh/fork comparison with unfinished-parent judgments and contamination/authority uncertainty. This supports retaining that separate work without treating it as an otherwise-matched enriched-context experiment. Its exact 14.03/38.337 timings, the 25-message inline input and detailed early messaging probes remain unverified because their cited artifacts are not among the selected exhibits.",
+            "confidence": "High for core replay reconstruction; moderate for supplementary probe details."
+          }
+        },
+        "52": {
+          "archive": {
+            "answer_id": "A971",
+            "task_id": "3",
+            "fact_scores": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            "decision": 3,
+            "source_fidelity": 2,
+            "uncertainty": 1.5,
+            "usefulness": 2,
+            "total": 16.5,
+            "adequate": true,
+            "critical_errors": [],
+            "unsupported_or_contradicted_claims": [
+              "The unqualified assertion 'No forked model call was run' exceeds R L1978's narrower account of its reviewer. FS L95 explicitly reports a separate completed fresh/fork comparison, so a global absence claim is inconsistent with the frozen source record."
+            ],
+            "avoidable_user_questions": [],
+            "missing_essential_fact": null,
+            "rationale": "The restored wrapper and result files confirm the accurate core reconstruction: runtime failure, two distinct semantic outcomes, visible-message-only input, timing, inactive status and unverified effective context. Its proposed matched comparison is appropriately bounded. The global no-fork wording remains an overstatement.",
+            "confidence": "High for replay mechanics and results; moderate for the separate-probe issue because FS L95 is a report rather than a raw execution receipt.",
+            "revision": "Numerical judgments unchanged. The previously unresolved separate-probe issue now has original-source report support at FS L95; no raw-receipt verification is inferred.",
+            "remaining_source_limitations": "The selected exhibits do not include the detailed 25-message inline input, all early messaging probes or separate fork execution receipts."
+          },
+          "packet": {
+            "answer_id": "A630",
+            "task_id": "3",
+            "fact_scores": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            "decision": 3,
+            "source_fidelity": 2,
+            "uncertainty": 2,
+            "usefulness": 2,
+            "total": 17,
+            "adequate": true,
+            "critical_errors": [],
+            "unsupported_or_contradicted_claims": [],
+            "avoidable_user_questions": [],
+            "missing_essential_fact": null,
+            "rationale": "The restored wrapper and receipts verify the central reconstruction and careful separation of supplied context, effective context and causal explanation. FS L95 also supports the distinction between the original wrapper trials and a later reported fresh/fork comparison. Acceptance of the messaging repair is properly separated from general reliability and deployment authority.",
+            "confidence": "High for the core replay and acceptance findings; limited for the exact separate-probe details.",
+            "revision": "No numerical changes. The existence and broad result of the separate comparison now have original-source report support at FS L95.",
+            "remaining_source_limitations": "The exact 14.03/38.337-second timings, call count and incremental-usage claims cited to OUTPUTS.md remain unavailable. FS L95 reports the comparison but does not independently verify those details."
+          }
+        }
+      }
+    },
+    {
+      "task": "4",
+      "archive_answer": "A758",
+      "packet_answer": "A544",
+      "source_words_archive": 18481,
+      "source_words_packet": 23225,
+      "source_words_delta_packet_minus_archive": 4744,
+      "wall_seconds_archive": 99.544,
+      "wall_seconds_packet": 115.073,
+      "wall_seconds_delta": 15.528999999999996,
+      "calls_archive": 14,
+      "calls_packet": 22,
+      "ratings": {
+        "51": {
+          "archive": {
+            "answer_id": "A758",
+            "task_id": "4",
+            "fact_scores": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              0.5,
+              1,
+              1
+            ],
+            "decision": 3,
+            "source_fidelity": 2,
+            "uncertainty": 2,
+            "usefulness": 2,
+            "total": 16.5,
+            "adequate": true,
+            "critical_errors": [],
+            "unsupported_or_contradicted_claims": [],
+            "avoidable_user_questions": [],
+            "missing_essential_fact": [
+              "The original scope and scheduling reasons for the four-worker/root-integration proposal are less clearly recovered than the later alternatives."
+            ],
+            "rationale": "Existing numerical judgments retained. TA L74/L90 now substantiate the changed allocation, milestones and bounded acceptance; T L717 supports the finite-predicate/continuum distinction; T L1787 and FS L95/L129 substantiate smaller-team and later delegated-role comparisons. P L192/L358 preserve human acceptance and spending distinctions. Some detailed product-mathematics claims, the eight-worker preliminary proposal and candidate-discoverer review history cite passages absent from these selected exhibits, limiting complete source verification.",
+            "confidence": "Moderate to high for allocation and authorization; moderate for supplementary history."
+          },
+          "packet": {
+            "answer_id": "A544",
+            "task_id": "4",
+            "fact_scores": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            "decision": 3,
+            "source_fidelity": 2,
+            "uncertainty": 2,
+            "usefulness": 2,
+            "total": 17,
+            "adequate": true,
+            "critical_errors": [],
+            "unsupported_or_contradicted_claims": [],
+            "avoidable_user_questions": [],
+            "missing_essential_fact": [],
+            "rationale": "Existing numerical judgments retained. T L410/L455/L717 show the evolving four-worker assignments; T L450 supports the cap-versus-target correction; TA L74/L90, T L1787 and FS L129 support allocation changes, alternatives and unmeasured staffing claims. The proposed next step clearly assigns comparison, integration and independent review before approval. Exact original-review independence history, candidate-arrival timing and several detailed scientific/provenance claims remain outside the selected exhibits, so full citation verification is incomplete.",
+            "confidence": "Moderate to high for the principal findings; moderate for supplementary details."
+          }
+        },
+        "52": {
+          "archive": {
+            "answer_id": "A758",
+            "task_id": "4",
+            "fact_scores": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              0.5,
+              1,
+              1
+            ],
+            "decision": 3,
+            "source_fidelity": 2,
+            "uncertainty": 2,
+            "usefulness": 2,
+            "total": 16.5,
+            "adequate": true,
+            "critical_errors": [],
+            "unsupported_or_contradicted_claims": [],
+            "avoidable_user_questions": [],
+            "missing_essential_fact": "Does not clearly recover the original scope/schedule reasons for four workers and root integration, although it recovers the alternatives and their ordering.",
+            "rationale": "The restored sources support the qualified candidate value, consequential allocation challenge, later alternatives and absent execution authority. F L1033 explicitly identifies integration pressure and the shorter window as the stated four-worker rationale; the answer does not clearly recover those reasons. Its agent-owned comparison recommendation is usable and avoids transferring already-recorded analysis back to J\u00f6rn.",
+            "confidence": "Moderate-high for core findings. Some earlier staffing, discoverer-review and mathematical-detail citations remain outside the selected exhibits.",
+            "revision": "Filled source_fidelity, total and adequate. The initial partial score for fact six is retained and now has a direct source basis."
+          },
+          "packet": {
+            "answer_id": "A544",
+            "task_id": "4",
+            "fact_scores": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            "decision": 3,
+            "source_fidelity": 2,
+            "uncertainty": 2,
+            "usefulness": 2,
+            "total": 17,
+            "adequate": true,
+            "critical_errors": [],
+            "unsupported_or_contradicted_claims": [],
+            "avoidable_user_questions": [],
+            "missing_essential_fact": null,
+            "rationale": "The restored P/T fields establish the human-time objective, cap-versus-target correction and qualified proof-reconstruction alternative. TA L74/L90 support the substantive allocation and milestone changes without delivery acceptance. T L1787, FS L95/L129 and F L1033 support the chronology of smaller-team and expanded-role alternatives, stated rationale and unmeasured capacity. The proposed next obligation preserves agent ownership of comparison and actual approval boundaries.",
+            "confidence": "Moderate-high. Core conclusions are supported, but the original discoverer-review passages, some mathematical details and several retained-artifact citations are outside the selected exhibits.",
+            "revision": "Filled source_fidelity, total and adequate. Existing fact and decision judgments unchanged."
+          }
+        }
+      }
+    }
+  ],
+  "bycondition": {
+    "archive": {
+      "source_words": 70786,
+      "reader_calls": 63,
+      "summed_individual_seconds": 388.36199999999997,
+      "usage": {
+        "input_tokens": 3354706,
+        "cached_input_tokens": 3182592,
+        "output_tokens": 13533,
+        "reasoning_output_tokens": 3435,
+        "total_tokens": 3368239,
+        "uncached_input_tokens": 172114
+      }
+    },
+    "packet": {
+      "source_words": 75940,
+      "reader_calls": 83,
+      "summed_individual_seconds": 442.98699999999997,
+      "usage": {
+        "input_tokens": 3886376,
+        "cached_input_tokens": 3692544,
+        "output_tokens": 15199,
+        "reasoning_output_tokens": 3481,
+        "total_tokens": 3901575,
+        "uncached_input_tokens": 193832
+      }
+    }
+  },
+  "consumer_usage": {
+    "input_tokens": 7241082,
+    "cached_input_tokens": 6875136,
+    "output_tokens": 28732,
+    "reasoning_output_tokens": 6916,
+    "total_tokens": 7269814,
+    "uncached_input_tokens": 365946
+  },
+  "scorer_usage": {
+    "input_tokens": 825222,
+    "cached_input_tokens": 725248,
+    "output_tokens": 20367,
+    "reasoning_output_tokens": 10219,
+    "total_tokens": 845589,
+    "uncached_input_tokens": 99974
+  },
+  "all_consumer_serialized_responses_complete": true,
+  "consumer_native_commands": 153,
+  "consumer_reader_calls": 146,
+  "failed_commands": 7,
+  "consumer_source_words": 146726,
+  "scorer_source_packet_words": 35730
+}

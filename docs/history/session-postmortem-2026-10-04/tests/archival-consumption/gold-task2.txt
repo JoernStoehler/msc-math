@@ -1,0 +1,239 @@
+CANONICAL ORIGINAL-SOURCE EXHIBITS: selected before responses; not a narrative synthesis. Missing line selections are reported in freeze metadata.
+
+FILE Q-visible.txt
+L197 2026-10-03T20:19:32.570Z assistant final_answer
+Scheduled for **tomorrow, 4 October, at 04:00 Berlin time**, targeting the reset expiring at 04:36.
+
+Keep the workstation awake and online. It’s a redemption **attempt**: the API currently reports no eligible window, so it may decline. The outcome will be saved locally.
+
+Cancel with:
+```bash
+systemctl --user disable --now codex-reset-20261004.timer
+```
+
+FILE Q-visible.txt
+L390 2026-10-03T21:01:08.297Z assistant final_answer
+**I overinterpreted an API field.** It reported four available resets and `applicable_available_count: 0`. I hadn’t verified what the second number meant, yet told you none could be used.
+
+The Codex client enables “Redeem reset” based on the **available** count. The server decides whether to accept the request.
+
+So I have **not established that redemption is blocked**, nor verified that it would succeed at 04:00. My earlier definite claim was unsupported.
+
+FILE Q-visible.txt
+L535 2026-10-03T21:12:12.507Z assistant final_answer
+**Yes: a timer can launch a script at 04:00 Berlin time that submits a redemption request for the reset expiring at 04:36.**
+
+I prepared a [draft script](/home/joern/.codex/artifacts/msc-math/reset-0400-proposal/redeem.py) and [instructions](/home/joern/.codex/artifacts/msc-math/reset-0400-proposal/README.md). The script uses your installed Codex client and existing login to call the [supported redemption API](https://learn.chatgpt.com/docs/app-server#8-earned-rate-limit-resets-chatgpt).
+
+This is the scheduling command, **which I have not run**:
+
+```bash
+systemd-run --user --unit=codex-reset-0400 \
+  --on-calendar='2026-10-04 04:00:00 Europe/Berlin' \
+  --timer-property=AccuracySec=1s \
+  --property=TimeoutStartSec=120 \
+  /usr/bin/python3 \
+  /home/joern/.codex/artifacts/msc-math/reset-0400-proposal/redeem.py --redeem
+```
+
+The script targets only that reset, checks the account and expiry, and saves the server’s response. The workstation must be awake and online.
+
+**Whether OpenAI will accept redemption remains unresolved.** Four resets are verified available. I found no documented eligibility rule explaining `applicable_available_count: 0`, so my earlier assertion that none could be redeemed was unsupported.
+
+The live read-only check and seven mocked checks passed. No redemption was tested, and nothing is scheduled.
+
+FILE Q-visible.txt
+L721 2026-10-03T21:36:13.329Z assistant final_answer
+**Scheduled and verified for tomorrow, 4 October, at 04:00 Berlin time.**
+
+It will make one attempt using the reset expiring at 04:36. If refused, it records the failure and stops—no other reset or purchase.
+
+Keep the workstation awake and online. No redemption has run yet.
+
+FILE Q-visible.txt
+L945 2026-10-03T21:57:43.868Z assistant final_answer
+**I don’t know whether redemption will succeed.** My checks verified startup, authentication and finding the reset—not actual redemption.
+
+Testing redemption now could consume it early. You authorized an attempt at 04:00 with possible failure, so that is what’s scheduled.
+
+FILE Q-visible.txt
+L1029 2026-10-03T22:04:39.199Z assistant final_answer
+**The reset attempt is scheduled and active for today, 4 October, at 04:00 Berlin.** It targets the reset expiring **04:36:07**, retries transport failures using the same request key, and saves the server’s actual response. Setup verification consumed no resets.
+
+Your observed weekly quota usage:
+
+| Date | Used |
+|---|---:|
+| 27 September | 1% |
+| 28 September | 2% |
+| 29 September | 3% |
+| 30 September | 6% |
+| 1 October | No observation |
+| 2 October | 7% |
+| 3 October | New window: 0% → 3% |
+| **4 October, 00:04** | **4%** |
+
+These are quota snapshots; the window change interrupts the curve. Its cause wasn’t established.
+
+You have **four available banked full resets**, expiring at these Berlin times:
+
+| Expiry date | Time |
+|---|---:|
+| **4 October — scheduled target** | **04:36:07** |
+| 5 October | 06:20:15 |
+| 22 October | 22:52:51 |
+| 29 October | 20:04:36 |
+
+The currently reported automatic weekly reset is **10 October at 10:15:05**, subject to change after redemption.
+
+My earlier claim that “zero eligible” established impossibility was unsupported. The account lists four resets, and the actual CLI offers redemption. **The scheduled request is verified; successful redemption will be established by its response at 04:00.** The workstation must be awake and online.
+
+FILE Q-visible.txt
+L1041 2026-10-03T22:06:24.844Z assistant commentary
+I keep treating the scheduled attempt as a finished reset. That’s wrong. I’ll keep the task open until 04:00 and check the actual result.
+
+FILE Q-recorded-fields.txt
+Q source L1294 2026-10-03T22:21:54.973Z tool-input-excerpt
++COMMAND = f'/usr/bin/python3 {ROOT}/redeem.py --redeem'
++SUCCESS = {'reset', 'alreadyRedeemed'}
++REFUSAL = {'nothingToReset', 'noCredit'}
+
+Q source L1294 2026-10-03T22:21:54.973Z tool-input-excerpt
++    return [CLAUDE, '--print', '--safe-mode', '--effort', 'low',
++            '--permission-mode', 'dontAsk', '--tools', 'Bash',
++            '--allowedTools', f'Bash({COMMAND})', '--no-session-persistence',
++            '--system-prompt',
++            'Perform only the single exact command requested. Do not edit files, '
++            'run other commands, purchase anything, log in, or start other agents. '
++            'Return the actual command output and outcome. Do not claim success '
++            'unless the output reports reset or alreadyRedeemed.']
+
+Q source L1470 2026-10-03T22:38:49.486Z tool-output-excerpt
+{"mode": "read_only", "claude_logged_in": true, "same_pinned_redemption_command": "/usr/bin/python3 /home/joern/.local/state/codex/reset-20261004/redeem.py --redeem", "time_guard": "before_scheduled_time"}
+
+Q source L1470 2026-10-03T22:38:49.486Z tool-output-excerpt
+NextElapseUSecRealtime=Sun 2026-10-04 04:00:00 CEST
+Id=codex-reset-0400.timer
+ActiveState=active
+
+NextElapseUSecRealtime=Sun 2026-10-04 04:00:00 CEST
+Id=codex-reset-0400-claude.timer
+ActiveState=active
+
+
+
+FILE Q-fallback-patch.txt
+Q source L1294 2026-10-03T22:21:54.973Z; exact selected file-addition patch. Surrounding tool body omitted.
+
+*** Add File: /home/joern/.local/state/codex/reset-20261004/claude-fallback.py
++#!/usr/bin/python3
++"""One bounded Claude fallback; --check never launches a model or redeems."""
++import argparse
++import datetime as dt
++import json
++import pathlib
++import subprocess
++import time
++
++ROOT = pathlib.Path(__file__).resolve().parent
++CLAUDE = '/home/joern/.local/bin/claude'
++COMMAND = f'/usr/bin/python3 {ROOT}/redeem.py --redeem'
++SUCCESS = {'reset', 'alreadyRedeemed'}
++REFUSAL = {'nothingToReset', 'noCredit'}
++
++
++def read_primary():
++    try:
++        return json.loads((ROOT / 'result.json').read_text())
++    except (OSError, json.JSONDecodeError):
++        return {}
++
++
++def decision(config, primary, now):
++    scheduled = dt.datetime.fromisoformat(config['scheduled_at']).timestamp()
++    if now < scheduled:
++        return 'before_scheduled_time'
++    if now >= config['expires_at']:
++        return 'expired'
++    outcome = primary.get('outcome')
++    if outcome in SUCCESS:
++        return 'primary_succeeded'
++    if outcome in REFUSAL:
++        return 'server_refused'
++    return 'fallback'
++
++
++def claude_arguments():
++    return [CLAUDE, '--print', '--safe-mode', '--effort', 'low',
++            '--permission-mode', 'dontAsk', '--tools', 'Bash',
++            '--allowedTools', f'Bash({COMMAND})', '--no-session-persistence',
++            '--system-prompt',
++            'Perform only the single exact command requested. Do not edit files, '
++            'run other commands, purchase anything, log in, or start other agents. '
++            'Return the actual command output and outcome. Do not claim success '
++            'unless the output reports reset or alreadyRedeemed.']
++
++
++def save(result):
++    result['observed_at'] = dt.datetime.now(dt.timezone.utc).isoformat()
++    temporary = ROOT / 'claude-result.json.tmp'
++    temporary.write_text(json.dumps(result, indent=2) + '\n')
++    temporary.replace(ROOT / 'claude-result.json')
++    print(json.dumps(result))
++
++
++def main():
++    parser = argparse.ArgumentParser()
++    parser.add_argument('--check', action='store_true')
++    args = parser.parse_args()
++    config = json.loads((ROOT / 'request.json').read_text())
++    if args.check:
++        status = subprocess.run([CLAUDE, 'auth', 'status'], capture_output=True,
++                                text=True, timeout=15)
++        auth = json.loads(status.stdout)
++        print(json.dumps({'mode': 'read_only', 'claude_logged_in': auth.get('loggedIn'),
++                          'same_pinned_redemption_command': COMMAND,
++                          'time_guard': decision(config, {}, time.time())}))
++        return 0
++    try:
++        scheduled = dt.datetime.fromisoformat(config['scheduled_at']).timestamp()
++        primary = read_primary()
++        action = decision(config, primary, time.time())
++        if action == 'fallback':
++            # Let the primary finish; its service is bounded to 300 seconds.
++            wait_until = min(scheduled + 305, config['expires_at'])
++            while time.time() < wait_until:
++                primary = read_primary()
++                if primary.get('outcome') not in (None, 'request_pending'):
++                    break
++                time.sleep(1)
++            action = decision(config, primary, time.time())
++        if action != 'fallback':
++            save({'outcome': 'skipped', 'reason': action,
++                  'primary_outcome': primary.get('outcome')})
++            return 0
++        prompt = ('This is the authorized scheduled Codex reset fallback. '
++                  'Execute exactly this command once: ' + COMMAND + '\n'
++                  'The existing script pins the same reset and idempotency key '
++                  'as the primary attempt and enforces the date and expiry. '
++                  'Do not substitute another credit, retry a semantic refusal, '
++                  'or run a Codex model turn. Return its actual result.')
++        completed = subprocess.run(claude_arguments(), input=prompt, text=True,
++                                   capture_output=True, cwd=ROOT, timeout=120)
++        primary_after = read_primary()
++        save({'outcome': 'claude_completed' if completed.returncode == 0 else 'claude_failed',
++              'claude_exit_code': completed.returncode,
++              'claude_output': completed.stdout[-12000:],
++              'claude_error': completed.stderr[-4000:],
++              'redemption_outcome': primary_after.get('outcome')})
++        return completed.returncode
++    except subprocess.TimeoutExpired:
++        save({'outcome': 'claude_timeout', 'redemption_outcome': read_primary().get('outcome')})
++        return 1
++    except Exception as exc:
++        save({'outcome': 'fallback_failed', 'error_type': type(exc).__name__})
++        return 1
++
++
++if __name__ == '__main__':
++    raise SystemExit(main())

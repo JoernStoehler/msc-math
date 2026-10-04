@@ -1,0 +1,11 @@
+Proceed with the authorized one-case recovery while the owner is absent; backend replacement is explicitly excluded (F1, F4–F5).
+
+1. Correct the coordination entry: the current batch fails at a schema-version check before Sage starts. Preserve the unfinished recovery assignment and label the previous corruption explanation unsupported (F1–F2).
+2. Read the producer’s schema diff, then build a temporary adapter if the mapping preserves the case’s meaning. Replay one previously successful, hash-matched certificate with its recorded input, keeping all outputs in a temporary directory. This is approximately eleven minutes of bounded recovery work (F2, F4).
+3. Deliver a reproducible recovery package: case and input identifiers/hashes, adapter patch, environment versions, exact command, replay log and verification result. Explain the observed changes and compare the result with the earlier receipt. If replay fails, retain the package and identify the first newly exposed failure; continue small, supported diagnosis within the original scope (F1, F4–F5).
+
+The retained hashes and earlier receipts contradict the claim that every certificate was corrupted. The current trace establishes a loader incompatibility, not a Sage failure. The separate legacy conversion error reproduces under both Sage versions, so it does not support blaming the upgrade. The copied coordination explanation adds no independent evidence (F1–F3).
+
+Whether schema adaptation suffices remains unknown; the controlled replay will resolve that for the selected case. Whether the legacy case requires rational or integer arithmetic also remains unknown; its domain specification would change that diagnosis. Do not silently alter arithmetic semantics (F3–F5).
+
+Stop after delivering one verified reproducible case and the evidence-based explanation. Wait only if recovery requires an unresolved semantic decision or work beyond the authorized scope; hand over the precise blocker and needed decision. Owner absence alone is not a blocker (F1, F5).

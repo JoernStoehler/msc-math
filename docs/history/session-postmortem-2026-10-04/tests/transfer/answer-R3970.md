@@ -1,0 +1,11 @@
+1. Correct the copied coordination explanation: eight retained files match their recorded hashes; the current batch fails at the manifest loader before Sage starts. Withdraw the claim that the Sage upgrade corrupted every certificate, and record the legacy conversion failure separately [F1–F3].
+
+2. Read the producer’s schema diff, then implement the smallest temporary adapter consistent with that diff. Replay one hash-matched case with an earlier successful receipt, entirely in a temporary directory. Preserve the original files and record the schema mapping, adapter, exact command, versions, input/certificate hashes, and replay output [F2, F4]. This is roughly eleven minutes of authorized recovery work; the owner’s absence does not require waiting [F1, F4, F5].
+
+3. Deliver either a reproducible successful replay with its receipt, or a precise failure handoff identifying the earliest remaining blocker. Explain exactly what the adapter changed and distinguish that observation from any unresolved cause of the schema change. Update coordination with the result and outstanding uncertainty [F1, F5].
+
+The consequential choice is to attempt the bounded adapter recovery. There is direct evidence of a producer/loader schema mismatch, while backend replacement is explicitly excluded, would take hours, and would change certificate semantics [F1, F2, F4].
+
+Successful adaptation is uncertain: hashes establish retained-byte integrity, and earlier receipts establish historical success, but neither guarantees current replay. The controlled replay will determine whether schema adaptation suffices [F2, F5]. The legacy case’s intended arithmetic domain also remains unknown; checking its specification would distinguish a domain mismatch from another conversion defect. Its identical failure under both Sage versions does not support blaming the upgrade [F3].
+
+Stop after one reproducible recovery and explanation. If further recovery requires semantic changes, backend replacement, or substantial investigation, preserve the failed attempt and hand off a concrete blocker and proposal; wait for the owner before expanding scope [F1, F4, F5].

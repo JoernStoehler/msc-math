@@ -1,0 +1,37 @@
+{
+  "frozen_at": "2026-10-04T00:38:37.344365+00:00",
+  "assessments": [
+    {
+      "scorer": 51,
+      "part": "a",
+      "file": "assessment-51a.txt",
+      "words": 7858,
+      "bytes": 68861,
+      "sha256": "5a4c4a4671762f3409d28cb59fce693cd2bc3192a6d898d685e396e82e247bed"
+    },
+    {
+      "scorer": 51,
+      "part": "b",
+      "file": "assessment-51b.txt",
+      "words": 10007,
+      "bytes": 84585,
+      "sha256": "47fa8bc004eb6ad2745f873e949fead16fa542f482f5c2f69effc45e202583e6"
+    },
+    {
+      "scorer": 52,
+      "part": "a",
+      "file": "assessment-52a.txt",
+      "words": 7858,
+      "bytes": 68861,
+      "sha256": "fa9eb5e7d1a0620523895b8d56a8ed27e930013686b4c7b725459b81818f3105"
+    },
+    {
+      "scorer": 52,
+      "part": "b",
+      "file": "assessment-52b.txt",
+      "words": 10007,
+      "bytes": 84585,
+      "sha256": "fe849467ff115a922bb4f523a322de97955dee3796df91b1dbb917b43fb3d653"
+    }
+  ]
+}

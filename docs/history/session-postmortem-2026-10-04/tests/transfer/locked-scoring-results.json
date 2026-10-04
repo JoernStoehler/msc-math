@@ -1,0 +1,435 @@
+{
+  "locked_at_utc": "2026-10-04T00:18:27.667691+00:00",
+  "source_hashes": [
+    {
+      "file": "assessor41-initial.json",
+      "sha256": "d07ff774d82b46e98b2ce88290b74296784185fb8759968011386c1419c25af8"
+    },
+    {
+      "file": "assessor41-correction-1.json",
+      "sha256": "00864351947320ca6c50d535adc803b06677e8a953744df19aca4fe191840b2c"
+    },
+    {
+      "file": "assessor42-initial.json",
+      "sha256": "b8109cc01e0721c650d0e97c45f7d4d6d8f36742185dba586976d657d5c27eaf"
+    },
+    {
+      "file": "assessor42-correction-1.json",
+      "sha256": "6e707aa099a16d4f3111d233671c60bcc5beb126d1d0d3bea88a61b875d7e76a"
+    }
+  ],
+  "results": {
+    "assessor41": {
+      "R8457": {
+        "answer_id": "R8457",
+        "case_id": "F",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 1,
+          "total": 10
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "The complete answer confirms delegated integration, direct handoffs, the correct minute-20 schedule versus minute-24 root integration, and an explicit zero-slack warning. The recovered ending preserves every excerpt and required reading while requiring an explicit deadline decision if unfinished; the score is unchanged, and confidence increases now that the previously truncated sentence is available.",
+        "missing_or_bad_action": "None.",
+        "confidence": "high"
+      },
+      "R9674": {
+        "answer_id": "R9674",
+        "case_id": "A",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 1,
+          "total": 10
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It closes the verified audit, corrects the stale record with the checked table, and hands ownership back. It distinguishes the completed link repair and audit coverage from the chapter backlog, preserves Lemma 3.5's separate ownership, and introduces no further approval or review gate.",
+        "missing_or_bad_action": "None.",
+        "confidence": "high"
+      },
+      "R8846": {
+        "answer_id": "R8846",
+        "case_id": "D",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 1,
+          "total": 10
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It proceeds with schema inspection, temporary adaptation and one previously successful case while preserving retained evidence and excluding backend replacement. It correctly separates the pre-Sage loader failure from the cross-version legacy conversion failure, leaves arithmetic-domain intent unresolved, and supplies a reproducible result package without guaranteeing recovery.",
+        "missing_or_bad_action": "None.",
+        "confidence": "high"
+      },
+      "R2652": {
+        "answer_id": "R2652",
+        "case_id": "B",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 1,
+          "total": 10
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It prioritizes actual vertex classification, chooses diagnostic toys within the aggregate allowance, and prepares a proposal covering applicability, timings, review effort and the uncertainty enumeration would resolve. It explicitly protects retained evidence, rejects branch or quota availability as approval, and maintains accountable custody of the pending decision.",
+        "missing_or_bad_action": "None.",
+        "confidence": "high"
+      },
+      "R7632": {
+        "answer_id": "R7632",
+        "case_id": "E",
+        "scores": {
+          "decision": 2.5,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 0.5,
+          "total": 9
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It prepares B's sample and A's limitations in parallel, recommends a bounded B repair while the owner remains available, and preserves explicit launch approval. It correctly identifies B's unvalidated explanatory step and unspecified later review burden, but omits C's concrete two-minute review cost and describes the forthcoming review object instead of supplying a concise draft question or object.",
+        "missing_or_bad_action": "Include C's two-minute later review cost in the comparison and provide the exact brief question accompanying B's sample.",
+        "confidence": "high"
+      },
+      "R5033": {
+        "answer_id": "R5033",
+        "case_id": "C",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 1,
+          "total": 10
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It prioritizes the original theorem and extension argument while independently checking the sign within the available window. It recognizes the reviewers' shared incomplete source, permits promotion only after applicability is verified, and prepares an exact remaining question and conditional packet without claiming chapter-wide readiness.",
+        "missing_or_bad_action": "None.",
+        "confidence": "high"
+      },
+      "R9267": {
+        "answer_id": "R9267",
+        "case_id": "A",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 1,
+          "total": 10
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It updates the stale running state, cites the verified table and independent coverage check, and ends the selected assignment after handoff. It keeps the unresolved proof gap with its existing owner and correctly treats the broad backlog and cheap idea as insufficient to expand scope.",
+        "missing_or_bad_action": "None.",
+        "confidence": "high"
+      },
+      "R7512": {
+        "answer_id": "R7512",
+        "case_id": "E",
+        "scores": {
+          "decision": 2.5,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 0.5,
+          "total": 9
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It uses both helpers for bounded parallel preparation, recommends B using the known gap and audience, and makes execution contingent on explicit approval and scientific feedback. Its human-cost comparison gives A's 45 minutes but leaves C qualitative and B unspecified, while the review object and feedback request remain descriptions of what will be presented.",
+        "missing_or_bad_action": "State C's two-minute later review cost, identify B's later review burden as unknown, and supply the exact short feedback question for the prepared sample.",
+        "confidence": "high"
+      },
+      "R3970": {
+        "answer_id": "R3970",
+        "case_id": "D",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 1,
+          "total": 10
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It selects the authorized temporary schema recovery and records the commands, mappings, hashes and replay result needed for reproduction. It distinguishes retained-byte integrity and historical success from current replay, rejects upgrade-specific blame for the cross-version conversion failure, and reserves expansion for a concrete scope or semantic blocker.",
+        "missing_or_bad_action": "None.",
+        "confidence": "high"
+      },
+      "R4688": {
+        "answer_id": "R4688",
+        "case_id": "C",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 1,
+          "total": 10
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It assigns source and sign checks independently, supplies conditional wording, and integrates their distinct findings before the deadline. It preserves the limited value of the existing derivation reviews without treating their shared extraction as evidence for omitted scope, and makes broader promotion conditional on a verified applicable extension.",
+        "missing_or_bad_action": "None.",
+        "confidence": "high"
+      },
+      "R8719": {
+        "answer_id": "R8719",
+        "case_id": "B",
+        "scores": {
+          "decision": 2.5,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 1,
+          "total": 9.5
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It prioritizes vertex classification, uses two diagnostic toys within the aggregate allowance, and prepares a comparison covering scope, review effort, timings and enumeration's remaining value. It preserves explicit launch approval and retained evidence, but its fallback permits ending with receiving ownership unfilled rather than retaining accountable custody until transfer.",
+        "missing_or_bad_action": "Retain coordinating ownership of the pending proposal until an available receiving owner accepts it, while recording the unavailable approver and approval dependency.",
+        "confidence": "high"
+      },
+      "R1408": {
+        "answer_id": "R1408",
+        "case_id": "F",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 1,
+          "total": 10
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It assigns three reconcilers, an authorized integrator and an independent reader with direct handoffs, removing optional production from the required schedule. It correctly calculates nominal completion at minute 20 rather than minute 24, warns immediately of zero slack, and preserves all required content and reading while reporting unfinished work as not review-ready.",
+        "missing_or_bad_action": "None.",
+        "confidence": "high"
+      }
+    },
+    "assessor42": {
+      "R7632": {
+        "answer_id": "R7632",
+        "case_id": "E",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 0.5,
+          "total": 9.5
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "The complete answer confirms parallel bounded preparation, a recommendation grounded in relevance and human review costs, and explicit approval before substantial execution. It identifies B's unresolved explanatory step and unknown later review burden, but describes the future review question rather than drafting it; the recovered ending confirms the original score and raises confidence.",
+        "missing_or_bad_action": "Provide the short reader-facing question directly alongside the recommendation.",
+        "confidence": "high"
+      },
+      "R7512": {
+        "answer_id": "R7512",
+        "case_id": "E",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 0.5,
+          "total": 9.5
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It prepares B's sample and A's limitations concurrently, compares the candidates using relevance and later review cost, and recommends a bounded repair while preserving approval. It recognizes that scientific feedback could overturn the recommendation, but describes the review question instead of providing a concrete draft.",
+        "missing_or_bad_action": "State the brief consequential question directly for presentation with B's sample.",
+        "confidence": "high"
+      },
+      "R3970": {
+        "answer_id": "R3970",
+        "case_id": "D",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 1,
+          "total": 10
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It proceeds with the schema diff, temporary adapter, and one previously successful hash-matched replay, preserving retained evidence and excluding backend replacement. It correctly separates loader failure from Sage, historical success from present replay, and the unresolved legacy domain question from upgrade-specific blame.",
+        "missing_or_bad_action": null,
+        "confidence": "high"
+      },
+      "R8457": {
+        "answer_id": "R8457",
+        "case_id": "F",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 1,
+          "total": 10
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It delegates integration with direct handoffs and correctly calculates the minute-20 schedule and root-only minute-24 alternative. It preserves all excerpts and independent reading, warns of zero slack before the briefing, and requires truthful provisional status if the estimates fail.",
+        "missing_or_bad_action": null,
+        "confidence": "high"
+      },
+      "R5033": {
+        "answer_id": "R5033",
+        "case_id": "C",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 1,
+          "total": 10
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It assigns the original-source and sign checks independently within the available window, explicitly separating their evidential roles. It preserves conditional scope unless the extension is verified and supplies a precise remaining question and supporting materials without declaring chapter approval.",
+        "missing_or_bad_action": null,
+        "confidence": "high"
+      },
+      "R9267": {
+        "answer_id": "R9267",
+        "case_id": "A",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 1,
+          "total": 10
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It closes the verified audit by correcting the stale record and handing back the checked table, including the independent coverage check and completed link repair. It preserves the separate ownership and unresolved status of Lemma 3.5 without treating the chapter backlog or new idea as authorization.",
+        "missing_or_bad_action": null,
+        "confidence": "high"
+      },
+      "R1408": {
+        "answer_id": "R1408",
+        "case_id": "F",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 1,
+          "total": 10
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It establishes executable ownership and handoffs for reconciliation, sequential integration, build, and independent reading, with correct minute-20 versus minute-24 arithmetic. It explicitly preserves required coverage and reading, warns of zero slack, and distinguishes an unfinished packet from review readiness.",
+        "missing_or_bad_action": null,
+        "confidence": "high"
+      },
+      "R4688": {
+        "answer_id": "R4688",
+        "case_id": "C",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 1,
+          "total": 10
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It prioritizes original-source inspection and independently resolves the sign, supplying exact outputs and an integration schedule. It recognizes the reviewers' shared incomplete evidence without dismissing their derivation checks, and permits broader wording only after verifying the extension and matching hypotheses.",
+        "missing_or_bad_action": null,
+        "confidence": "high"
+      },
+      "R9674": {
+        "answer_id": "R9674",
+        "case_id": "A",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 1,
+          "total": 10
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It updates completion status, links the verified audit evidence, hands the result back, and ends the selected assignment. It correctly treats the unresolved separately owned lemma as outside the completed audit and introduces neither speculative proof work nor another approval or review gate.",
+        "missing_or_bad_action": null,
+        "confidence": "high"
+      },
+      "R8719": {
+        "answer_id": "R8719",
+        "case_id": "B",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 1,
+          "total": 10
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It prioritizes actual vertex classification, chooses diagnostic toy runs within the aggregate allowance, and develops a comparison covering scope, timings, review burden, and full-run yield. It preserves retained evidence and pending explicit approval across ownership changes, while arranging a receiving owner or documenting that ownership remains unfilled.",
+        "missing_or_bad_action": null,
+        "confidence": "high"
+      },
+      "R2652": {
+        "answer_id": "R2652",
+        "case_id": "B",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 1,
+          "total": 10
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It prioritizes vertex classification, chooses diagnostic toy runs within the aggregate cap, and prepares a comparison covering applicability, correctness, timings, thesis value, and review effort. It preserves retained evidence and explicit enumeration approval, with accountable custody until a receiving owner accepts the completed proposal.",
+        "missing_or_bad_action": null,
+        "confidence": "high"
+      },
+      "R8846": {
+        "answer_id": "R8846",
+        "case_id": "D",
+        "scores": {
+          "decision": 3,
+          "evidence": 2,
+          "boundary": 2,
+          "uncertainty": 2,
+          "usability": 1,
+          "total": 10
+        },
+        "critical_flags": [],
+        "spurious_gates": [],
+        "rationale": "It proceeds with the schema diff, a meaning-preserving temporary adapter, and replay of one previously successful hash-matched case, with a reproducible recovery package and continued bounded diagnosis if needed. It corrects the unsupported corruption explanation, distinguishes the pre-Sage loader failure from the legacy conversion issue, and preserves uncertainty about adapter success and the intended arithmetic domain.",
+        "missing_or_bad_action": null,
+        "confidence": "high"
+      }
+    }
+  }
+}

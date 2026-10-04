@@ -1,0 +1,526 @@
+{
+  "prepared_at": "2026-10-04T00:30:30.300794+00:00",
+  "purpose": "Identical neutral source access for paired archival-consumption tasks; private, not published raw logs.",
+  "files": {
+    "C-visible.txt": {
+      "sha256": "a3e736c90ba90aefb9b590ebd301c2b7a89cdb4fbaee2ed697a8a83318d3192d",
+      "words": 9569,
+      "provenance": {
+        "projection_sha256": "443ab6a573e5f6c60ac7242915be3c2bc93e5becffdb23219afa96aeb16f8443",
+        "native_source_sha256": "c1378abec922643ab5bb107615026438b8ef60fd5d22b65fa0a7f866bee59082",
+        "native_thread": "01a102da-b805-7f72-ae02-ba9842fa80a8"
+      }
+    },
+    "R-visible.txt": {
+      "sha256": "9ccb323786d41d3cdf8018dd9bbff98447975d1f421dbdc181af71c2b781ab6a",
+      "words": 10314,
+      "provenance": {
+        "projection_sha256": "65f9110972f0270e262b9aac8ed08f9672972085bf67aed3e4be9cd87cf7dcf0",
+        "native_source_sha256": "77647fcc6cea258eca65ebd8c9ae8a7a710168d3328f6887bb815757ec31eb9a",
+        "native_thread": "01a102d8-49d5-7993-a2bf-2ffc48a55e62"
+      }
+    },
+    "Q-visible.txt": {
+      "sha256": "8cbfbb6cc9c735d27dbfc04725fc0c5d16b779b68bc47bc07e079ac62473a619",
+      "words": 5231,
+      "provenance": {
+        "projection_sha256": "d894c28868f3d2f6442ad7b6dae20460c1624734ec2efe379ff4c65133b7cbc8",
+        "native_source_sha256": "9624daecb61d0856e513910a1dbe2e2de17f94ba58480dbe92316e8f3b55accb",
+        "native_thread": "01a1034b-c604-7f02-b777-c1f050222c93"
+      }
+    },
+    "CS-visible.txt": {
+      "sha256": "18723b4d0d94f686c89286cac36efad8605d74075053885d1db40bfc4f206634",
+      "words": 953,
+      "provenance": {
+        "projection_sha256": "2a473d113fecb411cc35e67c5843442fac5bc190116321ae27fcd689d7e0eabc",
+        "native_source_sha256": "3d0f75b3e55c29d09d9d4eea857363818bde93aa342951f354c32f5d78764d96",
+        "native_thread": "01a103cb-1d52-7a20-8131-6b70889cc9de"
+      }
+    },
+    "C-recorded-fields.txt": {
+      "sha256": "ea8edf855efa28030ef9d4ff8e4ecce5bc974e0d74fea5bb4c1fd2e7e960912e",
+      "words": 247,
+      "provenance": [
+        {
+          "id": "c-l1",
+          "source_line_sha256": "841ded9f21238ea92b2add26787436fcfe30f6eea459498e2cc991c12392520f"
+        },
+        {
+          "id": "c-l1394",
+          "source_line_sha256": "7b81540f9e548835171114d2fe1952613eb4db8e45945f31397e9bb967bd899f"
+        },
+        {
+          "id": "c-l1394-tests",
+          "source_line_sha256": "7b81540f9e548835171114d2fe1952613eb4db8e45945f31397e9bb967bd899f"
+        },
+        {
+          "id": "c-l1609-component",
+          "source_line_sha256": "0cde56d3bbfde1685a020c2b7ef9b76afdbef2457885c7c82ab8fca0409e5dce"
+        },
+        {
+          "id": "c-l1609-gap",
+          "source_line_sha256": "0cde56d3bbfde1685a020c2b7ef9b76afdbef2457885c7c82ab8fca0409e5dce"
+        },
+        {
+          "id": "c-l1609-next",
+          "source_line_sha256": "0cde56d3bbfde1685a020c2b7ef9b76afdbef2457885c7c82ab8fca0409e5dce"
+        },
+        {
+          "id": "c-l2477",
+          "source_line_sha256": "e9e72284053c4fa692e94cf7111a47424ef1a4b002898528f3f2044edb97092b"
+        },
+        {
+          "id": "c-l2478",
+          "source_line_sha256": "fd3b337e2dadce1e23be1b2e2b4b4b9cd9d10cb362199400055a9334312aff56"
+        },
+        {
+          "id": "c-l2480",
+          "source_line_sha256": "d988eda85a522be672b0a3a1adb43f737e692289435dcc4933c5189f9dfbaf65"
+        },
+        {
+          "id": "c-l2494",
+          "source_line_sha256": "34679aa58683b3160e4c79e74ec997f562a190780333731839946402e5b7e84a"
+        },
+        {
+          "id": "c-l2497",
+          "source_line_sha256": "da2b5dc100d371d29aecc43f190b0cbd2068e9e8257af556dd6694dfc1d97781"
+        }
+      ]
+    },
+    "Q-recorded-fields.txt": {
+      "sha256": "da4c2de0d7512043910ec26396034bf9366275acb4c7108a9df2e5b103ab3e64",
+      "words": 120,
+      "provenance": [
+        {
+          "id": "q-l1294-command",
+          "source_line_sha256": "c64879de8689f8da121443d2fcddae74a45e0c9a01c456e6a833641ec536a7bb"
+        },
+        {
+          "id": "q-l1294-invoker",
+          "source_line_sha256": "c64879de8689f8da121443d2fcddae74a45e0c9a01c456e6a833641ec536a7bb"
+        },
+        {
+          "id": "q-l1470",
+          "source_line_sha256": "b41b6e9a451f04b037e66d4329ee126b961e8a4afd48e893850648ed377d1189"
+        },
+        {
+          "id": "q-l1470-timers",
+          "source_line_sha256": "b41b6e9a451f04b037e66d4329ee126b961e8a4afd48e893850648ed377d1189"
+        }
+      ]
+    },
+    "Q-fallback-patch.txt": {
+      "sha256": "ed16c954bfd40e3effcb14fb912c8be43169321d541aaf6298f9f564a52828c9",
+      "words": 500,
+      "provenance": {
+        "source_line_sha256": "c64879de8689f8da121443d2fcddae74a45e0c9a01c456e6a833641ec536a7bb",
+        "source_thread": "01a1034b-c604-7f02-b777-c1f050222c93"
+      }
+    },
+    "runtime-source.txt": {
+      "sha256": "cb5923b65461b424eee3e8cc9f180dc1a4189d16c2318040d3b09223b77ec806",
+      "words": 375,
+      "provenance": [
+        {
+          "path": "codex-rs/core/src/agent/control/completion.rs",
+          "commit": "a956835d020762cb2b570053af06f643a11c0ecc",
+          "file_sha256": "74685e1f488efaf0e03d3a8b93b9283841f60c0c85eafe7c8e88b4ade796495a",
+          "start_line": 92,
+          "end_line": 107
+        },
+        {
+          "path": "codex-rs/core/src/agent/control/api.rs",
+          "commit": "a956835d020762cb2b570053af06f643a11c0ecc",
+          "file_sha256": "f6efa3b339cdf7765c2dfd4939b45213bddeacae9ce6d724b9af155a9bd05e8f",
+          "start_line": 119,
+          "end_line": 139
+        },
+        {
+          "path": "codex-rs/core/src/tools/handlers/multi_agents_spec.rs",
+          "commit": "a956835d020762cb2b570053af06f643a11c0ecc",
+          "file_sha256": "2562812621dfdef6e3b0efe2dcd69d90a31cba017dfdfc8b29adc16c94f622bd",
+          "start_line": 196,
+          "end_line": 207
+        },
+        {
+          "path": "codex-rs/core/src/tools/handlers/multi_agents_spec.rs",
+          "commit": "a956835d020762cb2b570053af06f643a11c0ecc",
+          "file_sha256": "2562812621dfdef6e3b0efe2dcd69d90a31cba017dfdfc8b29adc16c94f622bd",
+          "start_line": 229,
+          "end_line": 242
+        },
+        {
+          "path": "codex-rs/core/src/tools/handlers/request_user_input_async.rs",
+          "commit": "a956835d020762cb2b570053af06f643a11c0ecc",
+          "file_sha256": "16be7e521e3f91aaede5bd233a52671e0cd5454ef4d8a4a67eeb71908ab06096",
+          "start_line": 126,
+          "end_line": 148
+        }
+      ]
+    },
+    "R-replay-input.txt": {
+      "sha256": "bb74f81be726a22acde4ea597823cf3a5c22143800f78f622c8fb2cb7ba30451",
+      "words": 6446,
+      "provenance": {
+        "historical_artifact": "/tmp/msc-math/recurring-data-20261003/stop-hook-replay/native-replay/reviewer-input.txt",
+        "sha256": "bb74f81be726a22acde4ea597823cf3a5c22143800f78f622c8fb2cb7ba30451",
+        "mtime_ns": 1791059654863155207
+      }
+    },
+    "R-replay-wrapper.py": {
+      "sha256": "1139d8cc322b129a2a8cee169a3d7699a31de1e490d64c0bac1957df650e3bef",
+      "words": 929,
+      "provenance": {
+        "historical_artifact": "/tmp/msc-math/recurring-data-20261003/stop-hook-replay/native-replay/wrapper-under-test.py",
+        "sha256": "1139d8cc322b129a2a8cee169a3d7699a31de1e490d64c0bac1957df650e3bef",
+        "mtime_ns": 1791059465661714179
+      }
+    },
+    "R-native-verdict.json": {
+      "sha256": "287dcd334dc977dd8d785db2a7cdcb480519c3120593aa69a3d5cd63c3cccc19",
+      "words": 49,
+      "provenance": {
+        "historical_artifact": "/tmp/msc-math/recurring-data-20261003/stop-hook-replay/native-replay/verdict.json",
+        "sha256": "287dcd334dc977dd8d785db2a7cdcb480519c3120593aa69a3d5cd63c3cccc19",
+        "mtime_ns": 1791059700836262593
+      }
+    },
+    "R-inline-verdict.json": {
+      "sha256": "8afd1700dac35f896158050b7d2e1d6dede1dee90f596518d28b821b7d4941e5",
+      "words": 71,
+      "provenance": {
+        "historical_artifact": "/tmp/msc-math/recurring-data-20261003/stop-hook-replay/inline-replay/verdict.json",
+        "sha256": "8afd1700dac35f896158050b7d2e1d6dede1dee90f596518d28b821b7d4941e5",
+        "mtime_ns": 1791059504613804838
+      }
+    },
+    "R-projection-check.json": {
+      "sha256": "5e27446cb6de8abe1a1d99d89d6cea5db863a233e2c023560d8c9411dcd025f6",
+      "words": 18,
+      "provenance": {
+        "historical_artifact": "/tmp/msc-math/recurring-data-20261003/stop-hook-replay/native-projection-check.json",
+        "sha256": "5e27446cb6de8abe1a1d99d89d6cea5db863a233e2c023560d8c9411dcd025f6",
+        "mtime_ns": 1791059540429888266
+      }
+    },
+    "R-native-result.json": {
+      "sha256": "3302a0d2222cb65f0473fdd28d4d98368ac44975b7d5f8e9d834ef6b554adf64",
+      "words": 16,
+      "provenance": {
+        "historical_artifact": "/tmp/msc-math/recurring-data-20261003/stop-hook-replay/native-replay/result.json",
+        "sha256": "3302a0d2222cb65f0473fdd28d4d98368ac44975b7d5f8e9d834ef6b554adf64",
+        "mtime_ns": 1791059701048263088
+      }
+    },
+    "R-inline-result.json": {
+      "sha256": "664580183686c4f7b5b4d4505942ce82162934b8ac8e13dccea846485ac25785",
+      "words": 103,
+      "provenance": {
+        "historical_artifact": "/tmp/msc-math/recurring-data-20261003/stop-hook-replay/inline-replay/result.json",
+        "sha256": "664580183686c4f7b5b4d4505942ce82162934b8ac8e13dccea846485ac25785",
+        "mtime_ns": 1791059504826805334
+      }
+    },
+    "P-visible.txt": {
+      "sha256": "3f7ab60b26852699ea18c28dcd70e003a2ecdc1461ca24969584fece25497a65",
+      "words": 7070,
+      "provenance": {
+        "projection_sha256": "e4b932be3168b99eb7ea4b0d62c320ea519fe08075e9c410a859b575cca31bef",
+        "native_source_sha256": "746d0a73064a66e2e2ea97c8fd359c56703d344177eaab4e2aa204701fb3bc5a",
+        "native_thread": "01a1035b-61da-7d52-9102-0edba2e34e66"
+      }
+    },
+    "T-visible.txt": {
+      "sha256": "052ef0aa0e932c8345f3e34bf4ae616657673dfb653083721a14dae66896b9c7",
+      "words": 5299,
+      "provenance": {
+        "projection_sha256": "ae73f6c1414c56248e8efcd6858cd0cb9228e8c26aee37acd6ddfa5971e4083e",
+        "native_source_sha256": "9ab7a11efd6681b91b3f4f431191c4cffc627d58a4e32748d3b3f5a8c051c853",
+        "native_thread": "01a10360-b3b0-7761-bcde-941acac385f8"
+      }
+    },
+    "TA-visible.txt": {
+      "sha256": "462cfd6d2ce9c49f26748b2ea704d73d4eef00a407f84a6146ea1840cbb44b0f",
+      "words": 1049,
+      "provenance": {
+        "projection_sha256": "60b8fb5d405e31d170de397b7e39d889082d5769a3f456e3fe23ee9998a6af86",
+        "native_source_sha256": "dee4e4a0fcf6507c72b6798bf7dff9df2dce1a3e34b01afbbcce2f993b6d0729",
+        "native_thread": "01a103db-d22e-71a1-ab57-581029e0e9c1"
+      }
+    },
+    "FS-visible.txt": {
+      "sha256": "da1aa37ad91cb86705e4fedddf00928e2e70f4a5da72891abc841735b9d65f4d",
+      "words": 698,
+      "provenance": {
+        "projection_sha256": "b823765784df7ae2bdd07b8ff4874dc70565688c6981b9ed527bf61873bc7a85",
+        "native_source_sha256": "f9402e6d7593ed4cc4484ea555cd45f773284e446cc502a010c96fa4e9a1f223",
+        "native_thread": "01a103ef-e8a2-7101-8eba-db4b06759a04"
+      }
+    },
+    "R-recorded-fields.txt": {
+      "sha256": "20d4930bf703048fa846ce78877c791e7dc0806613a7f1f2969fcee422a3a791",
+      "words": 782,
+      "provenance": [
+        {
+          "id": "r-l29-attention",
+          "source_line_sha256": "d5be62dd62ff56c034696fb0d22172d018258a6f1a89832c900040a430e2bf1e"
+        },
+        {
+          "id": "r-l29-rationale",
+          "source_line_sha256": "d5be62dd62ff56c034696fb0d22172d018258a6f1a89832c900040a430e2bf1e"
+        },
+        {
+          "id": "r-l906",
+          "source_line_sha256": "69cd7dc295690c7cb07d5cc90fcd3f252289d774d8ba5a4b50e43c6d3655cdef"
+        },
+        {
+          "id": "r-l936",
+          "source_line_sha256": "9bf3a123e77e2a3ceee154291974164b5aa9d19cd3134fe2c1b228c20f586b8d"
+        },
+        {
+          "id": "r-l1029",
+          "source_line_sha256": "a4a71b7600c44cb255ad02b43e0519dd3a221f47496624ee9446729a27e2a3a4"
+        },
+        {
+          "id": "r-l1035",
+          "source_line_sha256": "d8d7a7987d03382e86842e55241357783a2b3daf31ad2a06fcfc6316b7a02c79"
+        },
+        {
+          "id": "r-l1060",
+          "source_line_sha256": "a592f0237acb1ef491ad8e59887b5e899c44477ec297ccb78579a4f0052b06a0"
+        },
+        {
+          "id": "r-l1067",
+          "source_line_sha256": "ff70dd3cca0406d0c538dc98599f61614d564069fb1e7f352444b2af5804b971"
+        },
+        {
+          "id": "r-l1813",
+          "source_line_sha256": "074042869f7d531b380ee7192caa4f123ed0da29cd686405cde3c60ebd886be0"
+        },
+        {
+          "id": "r-l1817-wake",
+          "source_line_sha256": "57104399d044e43cdcb310df265eba9b6eea9734f783fc72c767322cf8f475b6"
+        },
+        {
+          "id": "r-l1963-next",
+          "source_line_sha256": "086b949101ea2d7e827d53e474fa5519810e7989db65db4b64919502871b75b2"
+        },
+        {
+          "id": "r-l1963-status",
+          "source_line_sha256": "086b949101ea2d7e827d53e474fa5519810e7989db65db4b64919502871b75b2"
+        },
+        {
+          "id": "r-l1965-boundary",
+          "source_line_sha256": "9f89d26a06b554ec7ce4abc108260bc57d89a300be1410a539cc0d26fbbf494f"
+        },
+        {
+          "id": "r-l1965-gap",
+          "source_line_sha256": "9f89d26a06b554ec7ce4abc108260bc57d89a300be1410a539cc0d26fbbf494f"
+        },
+        {
+          "id": "r-l1965-state",
+          "source_line_sha256": "9f89d26a06b554ec7ce4abc108260bc57d89a300be1410a539cc0d26fbbf494f"
+        },
+        {
+          "id": "r-l1981",
+          "source_line_sha256": "e5298a4f783b7a72f489ad23ab10b19eec8727eab1bff8003d0aadbf210a90dc"
+        },
+        {
+          "id": "r-l2304",
+          "source_line_sha256": "3fb4725a9f45f7bc2d47b6288cb30a5f81213b3a4fe1defc332c980dfee96d53"
+        }
+      ]
+    },
+    "F-stop-and-restart.txt": {
+      "sha256": "d30c02ecffa3e80fb1864a4cbababff620d18c37790641c680d6c528780475b3",
+      "words": 218,
+      "provenance": [
+        {
+          "id": "f-l183-wake",
+          "source_line_sha256": "77356109840a0b57de55e5780604df3f0a7de008d8f55180e235d002dd90eeb0"
+        },
+        {
+          "id": "f-l1107",
+          "source_line_sha256": "299b8259137325f68feb4f67d3d9d8418058f6aa11ad89ef40c54967ec3c26ff"
+        },
+        {
+          "id": "f-l1115",
+          "source_line_sha256": "f230184c4a5fb0851316e2034da024ad39039d201fb6093addcf4ce0ed997618"
+        },
+        {
+          "id": "f-l1118",
+          "source_line_sha256": "593366ca0e797aeabd14aa13570d364a9f5a7e1bafc84ec5b723fedb4456bcfb"
+        },
+        {
+          "id": "f-l1249",
+          "source_line_sha256": "479169f3fb466e20d35dac637e0a0b6e71602997e4f6a323d17bc06b36d0a339"
+        }
+      ]
+    },
+    "planning-recorded-fields.txt": {
+      "sha256": "c884101afb64b1c3225d780205885be3241d4e7d5ee12d6cb99425c7c558bfdd",
+      "words": 1168,
+      "provenance": [
+        {
+          "id": "p-l13",
+          "source_line_sha256": "7d4f50531f265803529136cb76fd58cbcd11766b2b90591de5f09d41cbdd208a"
+        },
+        {
+          "id": "p-l133",
+          "source_line_sha256": "8c98ae48abe3d2ebb66c57594ebe6305ce237929ea4bffcb9d59101f78562226"
+        },
+        {
+          "id": "p-l192-human-dependencies",
+          "source_line_sha256": "7ddc220ad1bf78ae6110bf0a53116f81b9f84987e60a4d31ec212eec95b1ece3"
+        },
+        {
+          "id": "p-l358-caveat",
+          "source_line_sha256": "58f8c7450f276de37a0cf44c4ed2fc41678560bbf460b8bdb161ada49a542dac"
+        },
+        {
+          "id": "p-l358-selection",
+          "source_line_sha256": "58f8c7450f276de37a0cf44c4ed2fc41678560bbf460b8bdb161ada49a542dac"
+        },
+        {
+          "id": "t-l60-attention",
+          "source_line_sha256": "9aa56d2a466bc0271b27ef787f7149d4d0c3511a854755871f9b952f96b105c0"
+        },
+        {
+          "id": "t-l60-rationale",
+          "source_line_sha256": "9aa56d2a466bc0271b27ef787f7149d4d0c3511a854755871f9b952f96b105c0"
+        },
+        {
+          "id": "t-l331",
+          "source_line_sha256": "4de000f759950ca02a64579af09e8a8704da96ded8877d696667c2bd06f2d7ea"
+        },
+        {
+          "id": "t-l410-allocation",
+          "source_line_sha256": "2612a3da76b91571db9adcfd4fb64aa8fbcdcc874f6bd7aec32dc9dc94b27057"
+        },
+        {
+          "id": "t-l410-comparison",
+          "source_line_sha256": "2612a3da76b91571db9adcfd4fb64aa8fbcdcc874f6bd7aec32dc9dc94b27057"
+        },
+        {
+          "id": "t-l450-comparison",
+          "source_line_sha256": "dd0fc131666a17e838b372954c81d108c06b135fba77bda968652faed22e047a"
+        },
+        {
+          "id": "t-l450-recommendation",
+          "source_line_sha256": "dd0fc131666a17e838b372954c81d108c06b135fba77bda968652faed22e047a"
+        },
+        {
+          "id": "t-l455-allocation",
+          "source_line_sha256": "5070d678794e4701025720e68aa6885788c5ebd55d14a4523420a73a9e739923"
+        },
+        {
+          "id": "t-l455-comparison",
+          "source_line_sha256": "5070d678794e4701025720e68aa6885788c5ebd55d14a4523420a73a9e739923"
+        },
+        {
+          "id": "t-l717-allocation",
+          "source_line_sha256": "ce408e73239ed23d82e7e4590f48fd829ea9c0ad43a27ba1f592389601e84745"
+        },
+        {
+          "id": "t-l1114-allocation",
+          "source_line_sha256": "9b245c50816cac63bf052fec4c94b64046fc399122c114f511ac4ee446c9978e"
+        },
+        {
+          "id": "t-l1603",
+          "source_line_sha256": "da0b86208779f582fe0f1936649c7d36092eeddc122431f57f7079f4bd4d04b7"
+        },
+        {
+          "id": "t-l1614",
+          "source_line_sha256": "d54686f142e017be4a7c64edd9818013149fd08386036d9853c4ea00ace64608"
+        },
+        {
+          "id": "t-l1645",
+          "source_line_sha256": "d2425e2333e07cf5fa5e43b1142cea8d9ebfc83efbb0d5c62c27635795bd69e5"
+        },
+        {
+          "id": "t-l1787-comparison",
+          "source_line_sha256": "86d3b0b71847ca19b29d56b394193561a48369f6478ff4e2fdebfeba2d1824d3"
+        },
+        {
+          "id": "t-l1787-owner",
+          "source_line_sha256": "86d3b0b71847ca19b29d56b394193561a48369f6478ff4e2fdebfeba2d1824d3"
+        }
+      ]
+    },
+    "F-proposal-exchanges.txt": {
+      "sha256": "e4652707baab5dd87237fa6918fa1a90632285296d04201c6fbfd8f86522de91",
+      "words": 248,
+      "provenance": [
+        {
+          "id": "f-l972",
+          "source_line_sha256": "7004b22dd0de5856a453528923756b58be3cb8f59921fedef3ae0f4778d25e70"
+        },
+        {
+          "id": "f-l1033",
+          "source_line_sha256": "12e63550ce4e9565211304b2e72a7bcfb95c1635d018feb0ab8df1ebcfd3ecff"
+        },
+        {
+          "id": "f-l1107",
+          "source_line_sha256": "299b8259137325f68feb4f67d3d9d8418058f6aa11ad89ef40c54967ec3c26ff"
+        }
+      ]
+    },
+    "R-inline-replay-input.txt": {
+      "sha256": "18038471bcb0fa8ee00d31efb6a33e1f0c668ebaa9967d8387a4db5f16689b4b",
+      "words": 1802,
+      "provenance": {
+        "historical_artifact": "/tmp/msc-math/recurring-data-20261003/stop-hook-replay/inline-replay/reviewer-input.txt",
+        "sha256": "18038471bcb0fa8ee00d31efb6a33e1f0c668ebaa9967d8387a4db5f16689b4b",
+        "mtime_ns": 1791059465751714388
+      }
+    }
+  },
+  "tasks": {
+    "1": [
+      "C-visible.txt",
+      "R-visible.txt",
+      "CS-visible.txt",
+      "C-recorded-fields.txt",
+      "runtime-source.txt",
+      "R-recorded-fields.txt",
+      "F-stop-and-restart.txt"
+    ],
+    "2": [
+      "Q-visible.txt",
+      "Q-recorded-fields.txt",
+      "Q-fallback-patch.txt"
+    ],
+    "3": [
+      "R-visible.txt",
+      "CS-visible.txt",
+      "C-recorded-fields.txt",
+      "runtime-source.txt",
+      "R-replay-input.txt",
+      "R-replay-wrapper.py",
+      "R-native-verdict.json",
+      "R-inline-verdict.json",
+      "R-projection-check.json",
+      "R-native-result.json",
+      "R-inline-result.json",
+      "R-recorded-fields.txt",
+      "F-stop-and-restart.txt",
+      "R-inline-replay-input.txt"
+    ],
+    "4": [
+      "P-visible.txt",
+      "T-visible.txt",
+      "TA-visible.txt",
+      "FS-visible.txt",
+      "planning-recorded-fields.txt",
+      "F-proposal-exchanges.txt"
+    ]
+  },
+  "available_words": {
+    "1": 22458,
+    "2": 5851,
+    "3": 22323,
+    "4": 15532
+  },
+  "access_note": "Per-consumer delivered-word budget remains25000. Overlapping replay projections are alternatives for targeted inspection, not mandatory whole-bundle reading."
+}

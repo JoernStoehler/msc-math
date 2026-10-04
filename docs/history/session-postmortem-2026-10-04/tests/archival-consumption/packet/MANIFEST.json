@@ -1,0 +1,44 @@
+{
+  "frozen_at": "2026-10-04T00:34:00.866334+00:00",
+  "status": "Consistent candidate v2 snapshot for archival-consumption study; not final acceptance. No further changes to these bytes during the study.",
+  "historical_window_unchanged": true,
+  "evidence_counts": {
+    "historical_roots": 8,
+    "supporting_children": 6,
+    "separate_current_root": 1,
+    "entries": 244,
+    "runtime_excerpts": 8
+  },
+  "files": {
+    "REPORT.md": {
+      "sha256": "863c1d95c4ca5024f9b5af6780ec560437bd703436af85d01a8a0692c9815d3c",
+      "bytes": 45899,
+      "words": 6127,
+      "production_relative_path": "docs/history/session-postmortem-2026-10-04/REPORT.md"
+    },
+    "knowledge.md": {
+      "sha256": "3e88d99ab89f3a3ba9e1f1647e9c3e0912424510e2da786a0d2bd0a863096191",
+      "bytes": 18308,
+      "words": 2367,
+      "production_relative_path": "docs/knowledge/session-failures-2026-10-03.md"
+    },
+    "evidence.json": {
+      "sha256": "f14c4cb829739d76f538b0eaade8e2631118ed0041d6a4148fdaf66b31401550",
+      "bytes": 257146,
+      "words": 22934,
+      "production_relative_path": "docs/history/session-postmortem-2026-10-04/evidence.json"
+    },
+    "OUTPUTS.md": {
+      "sha256": "3119ab1cb9e184c59400d82f9bcf5609e654bac84f09306e0adbce7468f801f1",
+      "bytes": 16584,
+      "words": 1204,
+      "production_relative_path": "docs/history/session-postmortem-2026-10-04/OUTPUTS.md"
+    },
+    "report.html": {
+      "sha256": "565e6bb6bde47c3122db9391dbb7041980a3e2aa58098f17128b4df5251257d1",
+      "bytes": 231613,
+      "words": 23703,
+      "production_relative_path": "docs/history/session-postmortem-2026-10-04/report.html"
+    }
+  }
+}

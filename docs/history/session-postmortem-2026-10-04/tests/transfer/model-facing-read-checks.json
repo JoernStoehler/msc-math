@@ -1,0 +1,86 @@
+[
+  {
+    "answer_id": "R3970",
+    "complete_expected_text_in_model_facing_output": true,
+    "truncation_marker": false,
+    "output_sha256": "30e6c217c032ab7cbf7d607ebc70b09d7491f3296e81fc5216530c53a0db9825",
+    "output_chars": 9476
+  },
+  {
+    "answer_id": "R8846",
+    "complete_expected_text_in_model_facing_output": true,
+    "truncation_marker": false,
+    "output_sha256": "4d56e66c1d13f4fcaea0fb91d55b7a604862f90884c5e09a798e430a3b3dd423",
+    "output_chars": 25498
+  },
+  {
+    "answer_id": "R9674",
+    "complete_expected_text_in_model_facing_output": true,
+    "truncation_marker": false,
+    "output_sha256": "62f9953fab9d777ff0beb87ef9830696e7b3779b27650f0f9debf1b8fd45762d",
+    "output_chars": 25611
+  },
+  {
+    "answer_id": "R9267",
+    "complete_expected_text_in_model_facing_output": true,
+    "truncation_marker": false,
+    "output_sha256": "0e78a363777ad1ee944550b9f0f8c570302320048e32b635827ef3f7c8b99d8d",
+    "output_chars": 9257
+  },
+  {
+    "answer_id": "R7512",
+    "complete_expected_text_in_model_facing_output": true,
+    "truncation_marker": false,
+    "output_sha256": "9ba0d2854c0c3b7412727f0db9090dbe398f13251c27b84f862da9c50eae7eff",
+    "output_chars": 26414
+  },
+  {
+    "answer_id": "R8719",
+    "complete_expected_text_in_model_facing_output": true,
+    "truncation_marker": false,
+    "output_sha256": "acfeca7d519f248e9c774fb2c18bc8f10a02ae9303e0d71855f2e1914b416f3b",
+    "output_chars": 9608
+  },
+  {
+    "answer_id": "R2652",
+    "complete_expected_text_in_model_facing_output": true,
+    "truncation_marker": false,
+    "output_sha256": "70a078e5f316da15678ab7ca611d0631eb73de1fee98cae73b5aa648e1d13e0b",
+    "output_chars": 25630
+  },
+  {
+    "answer_id": "R8457",
+    "complete_expected_text_in_model_facing_output": true,
+    "truncation_marker": false,
+    "output_sha256": "49d466c5ea130762bb716b3410165138eb2b76bb799b76bc0aeda427708525fa",
+    "output_chars": 10087
+  },
+  {
+    "answer_id": "R7632",
+    "complete_expected_text_in_model_facing_output": true,
+    "truncation_marker": false,
+    "output_sha256": "9e5ed0a9656564de44819463dea4ee143b424b487818319e897dcfd737f4fb39",
+    "output_chars": 10304
+  },
+  {
+    "answer_id": "R1408",
+    "complete_expected_text_in_model_facing_output": true,
+    "truncation_marker": false,
+    "output_sha256": "78f930c12d4b3ca5787efa62c46a4c37ff55606d087e8a210da9039ae022b3fd",
+    "output_chars": 25865
+  },
+  {
+    "answer_id": "R4688",
+    "complete_expected_text_in_model_facing_output": true,
+    "truncation_marker": false,
+    "output_sha256": "68fcefbf81982611fd4be66001ec0218f0605ba4fc8824a350f47572ee46629f",
+    "output_chars": 26055
+  },
+  {
+    "answer_id": "R5033",
+    "complete_expected_text_in_model_facing_output": true,
+    "truncation_marker": false,
+    "output_sha256": "d8b3a57b507654d20bf573bf93d9a6a564ea697313264fa102e233eea57f1405",
+    "output_chars": 9946
+  }
+]
