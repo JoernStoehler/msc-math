@@ -2,6 +2,7 @@
 
 These entries preserve reasoning useful for writing and checking the thesis and using its project tools. They are not task queues, proof certificates, or replacements for current user instructions.
 
+- [October session failures](session-failures-2026-10-03.md): causal reconstruction of eight MSc/Codex roots, useful retained outputs, failed repairs and evaluation limits; [postmortem and evidence](../history/session-postmortem-2026-10-04/report.html). Historical explanation, not activated guidance.
 - [Codex collaboration context](codex-collaboration.md): current guidance ownership and confirmed expectations for continuation and process work; project-scoped, not a validated intervention.
 - [Codex feature flags](codex-features.md): source-linked tool and UX explanations, dated resolved settings, and incremental maintenance notes.
 - [Optional human working card](optional-working-card.md): general process suggestions; neither agent authority nor an empirically validated workflow.

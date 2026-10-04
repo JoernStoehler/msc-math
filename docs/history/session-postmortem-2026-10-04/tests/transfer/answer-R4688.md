@@ -1,0 +1,11 @@
+1. Start the seven-minute source check immediately, alongside the independent two-minute sign check. Give the source checker responsibility for returning original article locations, relevant definitions and hypotheses, and the extension argument’s applicability to every polytope covered by the sentence. The calculation checker should return the correct sign with its derivation (F1, F4).
+
+2. Meanwhile, prepare the review packet with the broader sentence plainly conditional: “If the smooth-body formula extends to the polytopes considered here through a justified limiting argument, then [formula].” Identify the missing justification explicitly. Incorporate the sign correction once checked; its resolution does not discharge the extension question (F3–F5).
+
+3. At minute seven, integrate the source findings. Remove the conditional wording only if the original material establishes the required extension and its hypotheses match the candidate sentence. Otherwise retain the condition or narrow the sentence to the supported domain. Hand the scientific reviewer the original passages, precise references, both check results, and this remaining question: “Does this extension justify the stated formula for every intended polytope, including the passage to the limit on both sides?” Deliver before minute nine (F1, F3–F5).
+
+The consequential choice is to inspect the original source rather than commission another review of the same extraction. Different models share the same incomplete evidence here; their agreement supports the supplied derivation but cannot supply omitted hypotheses or the missing extension. A third packet review leaves that gap intact (F2–F4).
+
+The extension’s existence and scope remain unknown. A complete, applicable original argument would change the decision; an absent, incomplete or narrower argument would preserve the qualification (F3).
+
+Stop after delivering the bounded packet and explicit unresolved questions. Any unsupported broader assertion waits for mathematical resolution; neither these checks nor reviewer agreement establishes that the whole chapter has passed (F1, F5).

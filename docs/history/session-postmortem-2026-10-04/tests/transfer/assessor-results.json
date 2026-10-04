@@ -1,0 +1,98 @@
+[
+  {
+    "assessor": "assessor42",
+    "native_thread_id": "01a10443-5f7c-7831-a6d4-8e605e223879",
+    "source_sha256": "7d435d50d532b3f208a490677c8b4917c3eb5384eccda4f0bdb8c18d437f1b42",
+    "finals": [
+      {
+        "file": "assessor42-initial.md",
+        "timestamp": "2026-10-04T00:15:50.569Z",
+        "words": 895,
+        "sha256": "b8109cc01e0721c650d0e97c45f7d4d6d8f36742185dba586976d657d5c27eaf",
+        "parsed": true
+      },
+      {
+        "file": "assessor42-correction-1.md",
+        "timestamp": "2026-10-04T00:17:41.351Z",
+        "words": 253,
+        "sha256": "6e707aa099a16d4f3111d233671c60bcc5beb126d1d0d3bea88a61b875d7e76a",
+        "parsed": true
+      }
+    ],
+    "model_facing_reads": [
+      {
+        "timestamp": "2026-10-04T00:14:51.679Z",
+        "sha256": "39fca4f04fccb6df558cf24cc22408b7308150c94ec00dfd9c46823376d04fd0",
+        "chars": 40135,
+        "complete_expected_text": false,
+        "truncation_marker": true
+      },
+      {
+        "timestamp": "2026-10-04T00:17:29.688Z",
+        "sha256": "e3d30fb011a290266ce1eb9edd19e51ec381583a839b78e64a597bb758e08583",
+        "chars": 42707,
+        "complete_expected_text": true,
+        "truncation_marker": false
+      }
+    ],
+    "model": "gpt-6-astra",
+    "effort": "xhigh",
+    "cumulative_token_usage": {
+      "input_tokens": 137203,
+      "cached_input_tokens": 115328,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 4278,
+      "reasoning_output_tokens": 1638,
+      "total_tokens": 141481
+    },
+    "tool_call_count": 2
+  },
+  {
+    "assessor": "assessor41",
+    "native_thread_id": "01a10443-4f71-7e13-9a52-5a055981c373",
+    "source_sha256": "757c52858e950c132e4a6102fa280d4397cde727ce052b502758e9d593b64ce5",
+    "finals": [
+      {
+        "file": "assessor41-initial.md",
+        "timestamp": "2026-10-04T00:16:03.678Z",
+        "words": 1019,
+        "sha256": "d07ff774d82b46e98b2ce88290b74296784185fb8759968011386c1419c25af8",
+        "parsed": true
+      },
+      {
+        "file": "assessor41-correction-1.md",
+        "timestamp": "2026-10-04T00:17:38.903Z",
+        "words": 267,
+        "sha256": "00864351947320ca6c50d535adc803b06677e8a953744df19aca4fe191840b2c",
+        "parsed": true
+      }
+    ],
+    "model_facing_reads": [
+      {
+        "timestamp": "2026-10-04T00:14:46.766Z",
+        "sha256": "cad6cc9b4d26a551d5069929da462d37e2e7b31529d9ddeddb9a720c9f412128",
+        "chars": 40135,
+        "complete_expected_text": false,
+        "truncation_marker": true
+      },
+      {
+        "timestamp": "2026-10-04T00:17:24.336Z",
+        "sha256": "701cd8945e12a1f66c3159ececc748351b1d86fa6f91b4444ae4c390b1cc9726",
+        "chars": 42707,
+        "complete_expected_text": true,
+        "truncation_marker": false
+      }
+    ],
+    "model": "gpt-6-astra",
+    "effort": "xhigh",
+    "cumulative_token_usage": {
+      "input_tokens": 138947,
+      "cached_input_tokens": 116224,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 5388,
+      "reasoning_output_tokens": 2568,
+      "total_tokens": 144335
+    },
+    "tool_call_count": 2
+  }
+]

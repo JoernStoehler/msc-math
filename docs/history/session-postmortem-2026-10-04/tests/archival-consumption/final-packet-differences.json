@@ -1,0 +1,56 @@
+{
+  "recorded_at": "2026-10-04T00:49:21.328508+00:00",
+  "tested_candidate_frozen_at": "2026-10-04T00:34:00.866334+00:00",
+  "interpretation": "The final production changes were made after the archived trial inputs froze. They are not evaluated improvements. The study packet remains byte-identical.",
+  "records": [
+    {
+      "tested_packet_file": "packet/REPORT.md",
+      "tested_sha256": "863c1d95c4ca5024f9b5af6780ec560437bd703436af85d01a8a0692c9815d3c",
+      "final_path_from_repository_root": "docs/history/session-postmortem-2026-10-04/REPORT.md",
+      "final_sha256": "6dd1f406ecac1abbac5c91d7637c6f7f9d5f3c43314bac111d6f60524f2e6500",
+      "difference": "Study results, runtime delivery qualification, exact evidence routing. Final bounded supervisor-remit check distinguishes raw encryption from native prompt omission; causal conclusion unchanged."
+    },
+    {
+      "tested_packet_file": "packet/knowledge.md",
+      "tested_sha256": "3e88d99ab89f3a3ba9e1f1647e9c3e0912424510e2da786a0d2bd0a863096191",
+      "final_path_from_repository_root": "docs/knowledge/session-failures-2026-10-03.md",
+      "final_sha256": "0032dbd485d351c59546541ceb853bc92e28867868dc45abc4bcf5cdfc11ffa5",
+      "difference": "Shortened factual retrieval route, study limits and valid setup owner; not tested after revision."
+    },
+    {
+      "tested_packet_file": "packet/evidence.json",
+      "tested_sha256": "f14c4cb829739d76f538b0eaade8e2631118ed0041d6a4148fdaf66b31401550",
+      "final_path_from_repository_root": "docs/history/session-postmortem-2026-10-04/evidence.json",
+      "final_sha256": "bc0b281925dd67caca6a88ea21cd891a89d610d68ed9f06922727dae43e3f436",
+      "difference": "Added Fix-probe provenance, matching source for history truncation and bounded historical receipt audit; trimmed two dangling excerpt tails."
+    },
+    {
+      "tested_packet_file": "packet/OUTPUTS.md",
+      "tested_sha256": "3119ab1cb9e184c59400d82f9bcf5609e654bac84f09306e0adbce7468f801f1",
+      "final_path_from_repository_root": "docs/history/session-postmortem-2026-10-04/OUTPUTS.md",
+      "final_sha256": "0bafe3e6be710a2e8326234b007f70acfa4ddf856e712dfb9c25d121be5ecb67",
+      "difference": "Added direct frozen Fix-probe receipt link; changed historical b0b2 artifact routes to explicit captured-worktree absolute paths with viewer companions. Historical artifacts were not copied or promoted."
+    }
+  ],
+  "presentation_changes": "Mobile native-details navigation; immediate citation jumps; exact quoted trailing whitespace represented as HTML entities. Frozen original HTML is stored compressed with original decompressed hash preserved.",
+  "canonical_integration": {
+    "observed_at": "2026-10-04T00:52:19.854125+00:00",
+    "destination": "/workspaces/msc-math",
+    "scope": "Completed packet, lean knowledge note and one knowledge-index route only; historical external artifacts stay at their captured locations. Core package links remain relative. Exact frozen study bytes unchanged.",
+    "committed": false
+  },
+  "subsequent_source_addition": {
+    "observed_at": "2026-10-04T00:54:52Z",
+    "files": [
+      {
+        "path": "SUPERVISOR-REMIT.md",
+        "sha256": "eacb7b149d189ad1d1a4530eea5f3ddf8ac91db25bb588d912135b9733c4df01"
+      },
+      {
+        "path": "SUPERVISOR-REMIT.json",
+        "sha256": "151b91e763a5cdd8bbbfb46c32a880ca06df9a651dcf7015ab158b8d4b0c5db0"
+      }
+    ],
+    "scope": "Selected read-only receipts and protocol provenance; not part of the tested candidate."
+  }
+}

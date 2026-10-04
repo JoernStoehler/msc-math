@@ -1,0 +1,275 @@
+{
+  "paired_results": [
+    {
+      "case": "A",
+      "baseline": {
+        "answer_id": "R9267",
+        "scores": {
+          "assessor41": 10,
+          "assessor42": 10
+        },
+        "mean": 10,
+        "critical_flags": {
+          "assessor41": [],
+          "assessor42": []
+        },
+        "spurious_gates": {
+          "assessor41": [],
+          "assessor42": []
+        }
+      },
+      "knowledge": {
+        "answer_id": "R9674",
+        "scores": {
+          "assessor41": 10,
+          "assessor42": 10
+        },
+        "mean": 10,
+        "critical_flags": {
+          "assessor41": [],
+          "assessor42": []
+        },
+        "spurious_gates": {
+          "assessor41": [],
+          "assessor42": []
+        }
+      },
+      "mean_difference": 0
+    },
+    {
+      "case": "B",
+      "baseline": {
+        "answer_id": "R8719",
+        "scores": {
+          "assessor41": 9.5,
+          "assessor42": 10
+        },
+        "mean": 9.75,
+        "critical_flags": {
+          "assessor41": [],
+          "assessor42": []
+        },
+        "spurious_gates": {
+          "assessor41": [],
+          "assessor42": []
+        }
+      },
+      "knowledge": {
+        "answer_id": "R2652",
+        "scores": {
+          "assessor41": 10,
+          "assessor42": 10
+        },
+        "mean": 10,
+        "critical_flags": {
+          "assessor41": [],
+          "assessor42": []
+        },
+        "spurious_gates": {
+          "assessor41": [],
+          "assessor42": []
+        }
+      },
+      "mean_difference": 0.25
+    },
+    {
+      "case": "C",
+      "baseline": {
+        "answer_id": "R5033",
+        "scores": {
+          "assessor41": 10,
+          "assessor42": 10
+        },
+        "mean": 10,
+        "critical_flags": {
+          "assessor41": [],
+          "assessor42": []
+        },
+        "spurious_gates": {
+          "assessor41": [],
+          "assessor42": []
+        }
+      },
+      "knowledge": {
+        "answer_id": "R4688",
+        "scores": {
+          "assessor41": 10,
+          "assessor42": 10
+        },
+        "mean": 10,
+        "critical_flags": {
+          "assessor41": [],
+          "assessor42": []
+        },
+        "spurious_gates": {
+          "assessor41": [],
+          "assessor42": []
+        }
+      },
+      "mean_difference": 0
+    },
+    {
+      "case": "D",
+      "baseline": {
+        "answer_id": "R3970",
+        "scores": {
+          "assessor41": 10,
+          "assessor42": 10
+        },
+        "mean": 10,
+        "critical_flags": {
+          "assessor41": [],
+          "assessor42": []
+        },
+        "spurious_gates": {
+          "assessor41": [],
+          "assessor42": []
+        }
+      },
+      "knowledge": {
+        "answer_id": "R8846",
+        "scores": {
+          "assessor41": 10,
+          "assessor42": 10
+        },
+        "mean": 10,
+        "critical_flags": {
+          "assessor41": [],
+          "assessor42": []
+        },
+        "spurious_gates": {
+          "assessor41": [],
+          "assessor42": []
+        }
+      },
+      "mean_difference": 0
+    },
+    {
+      "case": "E",
+      "baseline": {
+        "answer_id": "R7632",
+        "scores": {
+          "assessor41": 9,
+          "assessor42": 9.5
+        },
+        "mean": 9.25,
+        "critical_flags": {
+          "assessor41": [],
+          "assessor42": []
+        },
+        "spurious_gates": {
+          "assessor41": [],
+          "assessor42": []
+        }
+      },
+      "knowledge": {
+        "answer_id": "R7512",
+        "scores": {
+          "assessor41": 9,
+          "assessor42": 9.5
+        },
+        "mean": 9.25,
+        "critical_flags": {
+          "assessor41": [],
+          "assessor42": []
+        },
+        "spurious_gates": {
+          "assessor41": [],
+          "assessor42": []
+        }
+      },
+      "mean_difference": 0.0
+    },
+    {
+      "case": "F",
+      "baseline": {
+        "answer_id": "R8457",
+        "scores": {
+          "assessor41": 10,
+          "assessor42": 10
+        },
+        "mean": 10,
+        "critical_flags": {
+          "assessor41": [],
+          "assessor42": []
+        },
+        "spurious_gates": {
+          "assessor41": [],
+          "assessor42": []
+        }
+      },
+      "knowledge": {
+        "answer_id": "R1408",
+        "scores": {
+          "assessor41": 10,
+          "assessor42": 10
+        },
+        "mean": 10,
+        "critical_flags": {
+          "assessor41": [],
+          "assessor42": []
+        },
+        "spurious_gates": {
+          "assessor41": [],
+          "assessor42": []
+        }
+      },
+      "mean_difference": 0
+    }
+  ],
+  "overall_mean": {
+    "baseline": 9.833333333333334,
+    "knowledge": 9.875
+  },
+  "participant_costs": {
+    "baseline": {
+      "count": 6,
+      "input_packet_words": 7978,
+      "response_words": 1647,
+      "mean_response_words": 274.5,
+      "median_seconds_to_final": 21.509999999999998,
+      "min_seconds_to_final": 18.377,
+      "max_seconds_to_final": 25.486,
+      "tokens": {
+        "input_tokens": 298549,
+        "cached_input_tokens": 283392,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 4552,
+        "reasoning_output_tokens": 1879,
+        "total_tokens": 303101,
+        "uncached_input_tokens": 15157
+      }
+    },
+    "knowledge": {
+      "count": 6,
+      "input_packet_words": 20800,
+      "response_words": 1669,
+      "mean_response_words": 278.1666666666667,
+      "median_seconds_to_final": 19.78,
+      "min_seconds_to_final": 16.915,
+      "max_seconds_to_final": 22.562,
+      "tokens": {
+        "input_tokens": 316104,
+        "cached_input_tokens": 283392,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 4353,
+        "reasoning_output_tokens": 1586,
+        "total_tokens": 320457,
+        "uncached_input_tokens": 32712
+      }
+    }
+  },
+  "scorer_tokens": {
+    "input_tokens": 276150,
+    "cached_input_tokens": 231552,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 9666,
+    "reasoning_output_tokens": 4206,
+    "total_tokens": 285816,
+    "uncached_input_tokens": 44598
+  },
+  "all_frozen_inputs_unchanged": true,
+  "last_scorer_final_at": "2026-10-04T00:17:41.351Z",
+  "first_participant_at": "2026-10-04T00:12:26.440Z",
+  "last_participant_final_at": "2026-10-04T00:13:35.567Z"
+}

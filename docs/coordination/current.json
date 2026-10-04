@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-30T08:59:22Z",
+  "updated_at": "2026-10-04T00:59:01Z",
   "scope": "Selected work reported in this checkout. Other sessions and host processes have not been surveyed.",
   "summary": "Central coordination cleanup is complete. Thesis completion remains stopped; the detailed backlog is available for a future selected execution window.",
   "tasks": [
@@ -18,6 +18,23 @@
         "docs/coordination/handoff.md"
       ],
       "updated_at": "2026-09-30T08:58:26Z"
+    },
+    {
+      "id": "recent-root-session-postmortem-20261004",
+      "title": "Postmortem of recent root-session failures",
+      "status": "done",
+      "selection": "selected",
+      "project": "workflows",
+      "owner": null,
+      "outcome": "Completed and indexed in canonical main: eight-root causal postmortem, retained evidence and runtime-source checks, lean reusable knowledge, two bounded evaluations with null/adverse results and limits preserved. Original early submission was withdrawn and materially extended. Historical outputs remain with their recorded owners; no live remedy or thesis programme was launched.",
+      "depends_on": [],
+      "sources": [
+        "docs/history/session-postmortem-2026-10-04/REPORT.md",
+        "docs/knowledge/session-failures-2026-10-03.md",
+        "docs/history/session-postmortem-2026-10-04/OUTPUTS.md"
+      ],
+      "authorization": "User authorized all available included Codex quota, including parallel subagents, until 2026-10-04 01:54:26 UTC (03:54 Berlin), and no additional paid usage. Scope explicitly MSc/Codex workflow root sessions only; no live remediation/thesis execution.",
+      "updated_at": "2026-10-04T00:59:01Z"
     }
   ],
   "decisions": [
@@ -60,6 +77,12 @@
       "value": "No scientific producers were rerun.",
       "observed_at": "2026-09-30T08:58:26Z",
       "basis": "This task changes documentation and dashboard tooling."
+    },
+    {
+      "label": "Postmortem resource observation",
+      "value": "At 2026-10-04 00:56:46 UTC, approximately 26% included weekly quota remained (74% used), account-wide and not attributable to this task alone. Read-only watch ended. All available included quota was authorized until 01:54:26 UTC; no additional paid usage was authorized or invoked by this investigation. Native snapshot through 00:57:14 UTC: 34 threads, 1,438 completed responses, 148,467,849 input tokens including 144,334,208 cached, and 695,199 output tokens. These repeated-context counters are not monetary charges; in-flight responses, later integration and standalone probes are excluded. Numeric remaining token capacity and monetary spending are unknown.",
+      "observed_at": "2026-10-04T00:56:46Z",
+      "basis": "Read-only account/rateLimits/read and deduplicated owned native response records. Prior observations and methodology retained in /home/joern/.codex/artifacts/session-postmortem-20261004/notes/postmortem-resource-observations.json and .md. Availability, attribution, counters and authorization are separate."
     }
   ],
   "links": [
@@ -93,6 +116,10 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-04T00:59:01Z",
+      "text": "Completed the reopened 3–4 October MSc/Codex root-session postmortem and retained it in canonical history and knowledge discovery. Both evaluations and source-delivery limits are preserved; no reliable behavioral improvement or reconstruction-cost saving is claimed."
+    },
     {
       "at": "2026-09-30T08:59:22Z",
       "text": "Jörn confirmed central surfaces first; topic-specific coordination/evidence remains with its local owners."

@@ -1,0 +1,386 @@
+[
+  {
+    "answer_id": "R3970",
+    "case_id": "D",
+    "native_thread_id": "01a10441-3b55-77d2-bd95-21f1484a95ef",
+    "source_sha256": "4be9925f843693564d7b350137ae48458a1c92ba74acd0688513be203cd1bb90",
+    "started_at": "2026-10-04T00:12:26.440Z",
+    "final_at": "2026-10-04T00:12:46.278Z",
+    "seconds_to_final": 19.838,
+    "response_file": "answer-R3970.md",
+    "response_words": 300,
+    "response_sha256": "955cc2dce2b308c863c4fbb27249971b65dedf84a5f42010d8aa70e98bfcc349",
+    "commands": [
+      {
+        "status": "completed",
+        "exit_code": 0,
+        "stdout_words": 1302,
+        "stdout_sha256": "875e880d2bf3243b524d5f24af6c71e721fed6ff44a21ab6c6e5d88f89a924e1",
+        "matches_expected_input": true
+      }
+    ],
+    "model": "gpt-6-astra",
+    "effort": "xhigh",
+    "token_usage": {
+      "input_tokens": 49668,
+      "cached_input_tokens": 47232,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 762,
+      "reasoning_output_tokens": 275,
+      "total_tokens": 50430
+    },
+    "tool_call_count": 1
+  },
+  {
+    "answer_id": "R8846",
+    "case_id": "D",
+    "native_thread_id": "01a10441-4d47-7c21-979c-d069cf31ce8b",
+    "source_sha256": "6af25f9126391a99340d92a5a9fa512adede65a2de6bda31d3661067d5fa7216",
+    "started_at": "2026-10-04T00:12:31.020Z",
+    "final_at": "2026-10-04T00:12:53.582Z",
+    "seconds_to_final": 22.562,
+    "response_file": "answer-R8846.md",
+    "response_words": 286,
+    "response_sha256": "e3d6fe00116e1ba7b193bc77e9f25a59062701a909ab3457396ac59b875e3f84",
+    "commands": [
+      {
+        "status": "completed",
+        "exit_code": 0,
+        "stdout_words": 3439,
+        "stdout_sha256": "7aebaaf426b11249e04b2d16afe93bf00007041402b1080ebcc30b8dbc14bb21",
+        "matches_expected_input": true
+      }
+    ],
+    "model": "gpt-6-astra",
+    "effort": "xhigh",
+    "token_usage": {
+      "input_tokens": 52550,
+      "cached_input_tokens": 47232,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 790,
+      "reasoning_output_tokens": 322,
+      "total_tokens": 53340
+    },
+    "tool_call_count": 1
+  },
+  {
+    "answer_id": "R9674",
+    "case_id": "A",
+    "native_thread_id": "01a10441-5f8c-78b3-b33c-30950c01c75a",
+    "source_sha256": "a0a092adb5358c022d64209c6b3715635541d4fbf5dc44213ebaa5fdd02ef351",
+    "started_at": "2026-10-04T00:12:35.708Z",
+    "final_at": "2026-10-04T00:12:52.623Z",
+    "seconds_to_final": 16.915,
+    "response_file": "answer-R9674.md",
+    "response_words": 229,
+    "response_sha256": "e2db83d0528cfd9e74b4c5bd6f2b89e7a70a0c1811b2bce0d7fbd6b87b9f9586",
+    "commands": [
+      {
+        "status": "completed",
+        "exit_code": 0,
+        "stdout_words": 3414,
+        "stdout_sha256": "991ee10d5c1595f0e40f27a50478bce1d6ee9bc2a21eae7139ebd3cf41dcc828",
+        "matches_expected_input": true
+      }
+    ],
+    "model": "gpt-6-astra",
+    "effort": "xhigh",
+    "token_usage": {
+      "input_tokens": 52738,
+      "cached_input_tokens": 47232,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 615,
+      "reasoning_output_tokens": 204,
+      "total_tokens": 53353
+    },
+    "tool_call_count": 1
+  },
+  {
+    "answer_id": "R9267",
+    "case_id": "A",
+    "native_thread_id": "01a10441-73ae-7622-b3b3-64759dce4eb6",
+    "source_sha256": "45ace9fb56ac5b21aba5a7226b81b17e40dec57b1901b2a081838b1390088266",
+    "started_at": "2026-10-04T00:12:40.857Z",
+    "final_at": "2026-10-04T00:13:01.326Z",
+    "seconds_to_final": 20.469,
+    "response_file": "answer-R9267.md",
+    "response_words": 218,
+    "response_sha256": "dcfc57dc380a1c36e5da2e759c084fa37b27381276fa46ee9a60db03bc115132",
+    "commands": [
+      {
+        "status": "completed",
+        "exit_code": 0,
+        "stdout_words": 1277,
+        "stdout_sha256": "834d432ebfc7d726ecf7c587f00b927e53ecfec7c69004aee20b6991951d32a7",
+        "matches_expected_input": true
+      }
+    ],
+    "model": "gpt-6-astra",
+    "effort": "xhigh",
+    "token_usage": {
+      "input_tokens": 49630,
+      "cached_input_tokens": 47232,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 618,
+      "reasoning_output_tokens": 240,
+      "total_tokens": 50248
+    },
+    "tool_call_count": 1
+  },
+  {
+    "answer_id": "R7512",
+    "case_id": "E",
+    "native_thread_id": "01a10441-873a-7803-b1bc-a1285657b9c7",
+    "source_sha256": "c13165c6cd943ee65212e39ea1cd6c6fc70c08c99ca2b8b71aae56f0c3fa3bbb",
+    "started_at": "2026-10-04T00:12:45.860Z",
+    "final_at": "2026-10-04T00:13:03.283Z",
+    "seconds_to_final": 17.423,
+    "response_file": "answer-R7512.md",
+    "response_words": 270,
+    "response_sha256": "de44bb21fcfeffee2eac59feabc651c1cb27640dbc398758e044f03a26ec29b3",
+    "commands": [
+      {
+        "status": "completed",
+        "exit_code": 0,
+        "stdout_words": 3538,
+        "stdout_sha256": "2c28c53a617225bb3b8e502b97ef017449cab833ccddfccad86cd47767821132",
+        "matches_expected_input": true
+      }
+    ],
+    "model": "gpt-6-astra",
+    "effort": "xhigh",
+    "token_usage": {
+      "input_tokens": 52864,
+      "cached_input_tokens": 47232,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 678,
+      "reasoning_output_tokens": 225,
+      "total_tokens": 53542
+    },
+    "tool_call_count": 1
+  },
+  {
+    "answer_id": "R8719",
+    "case_id": "B",
+    "native_thread_id": "01a10441-975f-7563-b31c-f4a434d6abbb",
+    "source_sha256": "75fac5e7c62cdbf9667f7d4bff4a4fe6e954fda65a17b9295e58426d5b22dff8",
+    "started_at": "2026-10-04T00:12:49.988Z",
+    "final_at": "2026-10-04T00:13:12.539Z",
+    "seconds_to_final": 22.551,
+    "response_file": "answer-R8719.md",
+    "response_words": 291,
+    "response_sha256": "f3f5afc8cca0334dfdd613fe8e31c2397ddaf53cc7dcba24785123fe68fcaac0",
+    "commands": [
+      {
+        "status": "completed",
+        "exit_code": 0,
+        "stdout_words": 1318,
+        "stdout_sha256": "5cc549ca5cad8083f405c8acf394d3a00d9af8f93c04c4e9785644a3a060beb1",
+        "matches_expected_input": true
+      }
+    ],
+    "model": "gpt-6-astra",
+    "effort": "xhigh",
+    "token_usage": {
+      "input_tokens": 49676,
+      "cached_input_tokens": 47232,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 806,
+      "reasoning_output_tokens": 339,
+      "total_tokens": 50482
+    },
+    "tool_call_count": 1
+  },
+  {
+    "answer_id": "R2652",
+    "case_id": "B",
+    "native_thread_id": "01a10441-a93e-7833-9e4a-68cf55019bcd",
+    "source_sha256": "359f19a3709f0bb7e2a85e1f05ffcc6af55e071c139f44c3179c5c1c3c4408ed",
+    "started_at": "2026-10-04T00:12:54.572Z",
+    "final_at": "2026-10-04T00:13:13.701Z",
+    "seconds_to_final": 19.129,
+    "response_file": "answer-R2652.md",
+    "response_words": 301,
+    "response_sha256": "7490ea5deebff340a046115fa3fbfb7ad905db332b9f67560155ccf5de9c24ea",
+    "commands": [
+      {
+        "status": "completed",
+        "exit_code": 0,
+        "stdout_words": 3455,
+        "stdout_sha256": "59e7a6e645392b1929ac13502fac17f4cc9fb71624018a476000e2098237258a",
+        "matches_expected_input": true
+      }
+    ],
+    "model": "gpt-6-astra",
+    "effort": "xhigh",
+    "token_usage": {
+      "input_tokens": 52560,
+      "cached_input_tokens": 47232,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 713,
+      "reasoning_output_tokens": 230,
+      "total_tokens": 53273
+    },
+    "tool_call_count": 1
+  },
+  {
+    "answer_id": "R8457",
+    "case_id": "F",
+    "native_thread_id": "01a10441-b92e-71d2-8935-36d615e08cc0",
+    "source_sha256": "b07d04cfe250bb8ce014124b79c50d9111a380f84379bb13d18496a8d2f8d9b3",
+    "started_at": "2026-10-04T00:12:58.656Z",
+    "final_at": "2026-10-04T00:13:22.509Z",
+    "seconds_to_final": 23.853,
+    "response_file": "answer-R8457.md",
+    "response_words": 281,
+    "response_sha256": "0757531ff127c04a93dbe5a1abe012133c52c410072790ee4a79ec25cd8ebd67",
+    "commands": [
+      {
+        "status": "completed",
+        "exit_code": 0,
+        "stdout_words": 1349,
+        "stdout_sha256": "f38c5f0d35a74247a5059a01c66cd1109bceceea147ba8c7c4ca20a0a31780dd",
+        "matches_expected_input": true
+      }
+    ],
+    "model": "gpt-6-astra",
+    "effort": "xhigh",
+    "token_usage": {
+      "input_tokens": 49880,
+      "cached_input_tokens": 47232,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 868,
+      "reasoning_output_tokens": 388,
+      "total_tokens": 50748
+    },
+    "tool_call_count": 1
+  },
+  {
+    "answer_id": "R7632",
+    "case_id": "E",
+    "native_thread_id": "01a10441-cabe-7410-9b58-a17fee61808e",
+    "source_sha256": "75cd7aa45784dafb549f7d19d24a3b0c012343d8afc0f30993d7d8027aeab4f4",
+    "started_at": "2026-10-04T00:13:03.150Z",
+    "final_at": "2026-10-04T00:13:28.636Z",
+    "seconds_to_final": 25.486,
+    "response_file": "answer-R7632.md",
+    "response_words": 289,
+    "response_sha256": "a8f91248bc56c9db7ed89c3c6fbd2d6c6f76fd3bf892769304bb316d7a7c57b0",
+    "commands": [
+      {
+        "status": "completed",
+        "exit_code": 0,
+        "stdout_words": 1401,
+        "stdout_sha256": "de38f3af783c2023c7cb4055c52b1f8020c918f96d4107f93c0b60615055abd8",
+        "matches_expected_input": true
+      }
+    ],
+    "model": "gpt-6-astra",
+    "effort": "xhigh",
+    "token_usage": {
+      "input_tokens": 49900,
+      "cached_input_tokens": 47232,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 892,
+      "reasoning_output_tokens": 439,
+      "total_tokens": 50792
+    },
+    "tool_call_count": 1
+  },
+  {
+    "answer_id": "R1408",
+    "case_id": "F",
+    "native_thread_id": "01a10441-dd11-7723-a31d-85dd04f43ae8",
+    "source_sha256": "5a9372b32808193214f9b00ba3b745f305129021b470f4ddeb215ba84ec2e3e9",
+    "started_at": "2026-10-04T00:13:07.842Z",
+    "final_at": "2026-10-04T00:13:30.235Z",
+    "seconds_to_final": 22.393,
+    "response_file": "answer-R1408.md",
+    "response_words": 290,
+    "response_sha256": "8d46668cf6cf2aabe06a96d9af82051d42100f2156080ef21957d4a05e91266b",
+    "commands": [
+      {
+        "status": "completed",
+        "exit_code": 0,
+        "stdout_words": 3486,
+        "stdout_sha256": "da24e72b5fb83071a850fd5378cdec68b84d7bf75c672cfb3bc2f52143a49fbe",
+        "matches_expected_input": true
+      }
+    ],
+    "model": "gpt-6-astra",
+    "effort": "xhigh",
+    "token_usage": {
+      "input_tokens": 52611,
+      "cached_input_tokens": 47232,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 807,
+      "reasoning_output_tokens": 317,
+      "total_tokens": 53418
+    },
+    "tool_call_count": 1
+  },
+  {
+    "answer_id": "R4688",
+    "case_id": "C",
+    "native_thread_id": "01a10441-ed4c-7e12-b9d5-35e2a3b84861",
+    "source_sha256": "93c42dd51046822c6b3289d90c92b199a008e2a2cbce11fdb24642f3dfb2ae35",
+    "started_at": "2026-10-04T00:13:11.997Z",
+    "final_at": "2026-10-04T00:13:32.428Z",
+    "seconds_to_final": 20.431,
+    "response_file": "answer-R4688.md",
+    "response_words": 293,
+    "response_sha256": "e71f300c2433775a695e9c8916102771e44762c65b9a6fe188d48165f203a4e5",
+    "commands": [
+      {
+        "status": "completed",
+        "exit_code": 0,
+        "stdout_words": 3468,
+        "stdout_sha256": "6f1d7a2435295020dc4d02a4ec610e4b1568f86bf8d097b9ba26dc8c1617f71a",
+        "matches_expected_input": true
+      }
+    ],
+    "model": "gpt-6-astra",
+    "effort": "xhigh",
+    "token_usage": {
+      "input_tokens": 52781,
+      "cached_input_tokens": 47232,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 750,
+      "reasoning_output_tokens": 288,
+      "total_tokens": 53531
+    },
+    "tool_call_count": 1
+  },
+  {
+    "answer_id": "R5033",
+    "case_id": "C",
+    "native_thread_id": "01a10442-0194-7233-8546-673aa97bb80b",
+    "source_sha256": "a6481c5aab33f482a1cd759ccb8f4aadfce1390ebb94c5c1a21c8e6a22850573",
+    "started_at": "2026-10-04T00:13:17.190Z",
+    "final_at": "2026-10-04T00:13:35.567Z",
+    "seconds_to_final": 18.377,
+    "response_file": "answer-R5033.md",
+    "response_words": 268,
+    "response_sha256": "1ecf6af21a70307108f7fb280aa6301b0d5d8626e87b66dec6c945da95f652e9",
+    "commands": [
+      {
+        "status": "completed",
+        "exit_code": 0,
+        "stdout_words": 1331,
+        "stdout_sha256": "91bc4fc735dabbef7f54a23e08da125aa349aed41b1fce193710c1aa9569395e",
+        "matches_expected_input": true
+      }
+    ],
+    "model": "gpt-6-astra",
+    "effort": "xhigh",
+    "token_usage": {
+      "input_tokens": 49795,
+      "cached_input_tokens": 47232,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 606,
+      "reasoning_output_tokens": 198,
+      "total_tokens": 50401
+    },
+    "tool_call_count": 1
+  }
+]

@@ -1,0 +1,7 @@
+1. Correct the shared task record from “running” to “complete,” citing the checked implication table as the completion evidence. Record that all four lemmas and the separately approved link repair are verified (F2, F3, F5).
+2. Hand the table back to the assigning owner with a concise completion note: every implication, source location and scope limitation is documented; independent review found no coverage omission; no audit issue remains. Identify Lemma 3.5 as an outstanding item owned by the other session (F1, F2, F4).
+3. Stop this assignment after that handoff. Do not edit the chapter, investigate the new proof idea or take over Lemma 3.5 (F1, F4).
+
+The consequential choice is to close the completed audit rather than interpret “Go on if anything necessary is left” as selecting additional research. The remaining necessary work is accurate status and handoff. The broad chapter backlog and a cheap, potentially useful idea do not expand the explicit four-lemma assignment or transfer another session’s ownership (F1, F3–F5).
+
+Lemma 3.5’s proof gap remains unresolved, and the idea’s usefulness is untested (F4). A newly discovered omission affecting Lemmas 3.1–3.4 would justify reopening the audit. Explicit selection of a bounded follow-up, with ownership coordinated, would justify further proof work. Neither observation has occurred, so no active waiting or speculative continuation is needed (F2, F4, F5).
