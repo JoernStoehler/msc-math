@@ -15,6 +15,7 @@ certificates, or replacements for current user instructions.
 | Why retrieved guidance, successful subtasks or multiple agents still leave the user managing unfinished work | [October session failures](session-failures-2026-10-03.md), with [postmortem evidence](../history/session-postmortem-2026-10-04/report.html) | Repeated loss of the parent outcome, insufficient decision evidence, timing of human review, shared integration assumptions and failed repairs; dated causal synthesis with counterevidence, not validated new guidance |
 | Whether a deferral closes the parent objective | [Planning lessons](../history/memories/planning-context.md) | Observed scope loss, attributed decisions and synthesis; old task priorities are not current assignments |
 | Whether local review establishes deliverable readiness | [Process audit](../history/process-audit/REPORT.md), findings 3–4; [writing trial evidence](../history/reviewer-trial/README.md) | Interface/whole-artifact gaps, matched inputs, corrected findings and limits of acceptance evidence |
+| Which retained inputs and human judgments can support a writing-method comparison | [Writing-quality evidence datasets](../../experiments/writing-quality/README.md) | Matched inputs and feedback, provenance, shared-lineage limits and bounded historical trials; these judgments do not transfer automatically to the selected manuscript |
 
 [Optional human working card](optional-working-card.md) is a habit aid for Jörn,
 not agent instructions or an empirically validated workflow.

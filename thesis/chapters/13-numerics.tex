@@ -89,7 +89,8 @@ The Banach lemma applied to
 \end{proof}
 
 Thus \(\widehat\beta_i-\rho>0\) for every \(i\) certifies positive weights,
-while \(\widehat\beta_i+\rho\leq0\) for some \(i\) certifies failure.  If
+while \(\widehat\beta_i+\rho\leq0\) for some \(i\) certifies failure of
+strict positivity on this support. If
 \(\xi\) is the multiplier for normalization, stationarity gives
 \[
   2Q(\beta^\ast)+\xi^\ast=0.
@@ -122,13 +123,17 @@ therefore requires the floating-point certificate tests to be repeated.
 
 The general search constructs the exact transition graph, pruned by facet
 incidence and symplectic signs, then enumerates its simple cyclic words. Candidate
-correctness is not obtained merely by solving every displayed KKT system.  A
-fixed-word maximum must have nonpositive curvature in every tangent direction.
+correctness is not obtained merely by solving every displayed KKT system. At a
+fixed-word maximum with strictly positive weights, both signs of every
+sufficiently small tangent perturbation remain feasible. The quadratic form
+must therefore have nonpositive curvature in every tangent direction.
 Conversely, a certified vector \(z\in\ker C_\tau\) with
-\(z^{\mathsf T}H_\tau z>0\) rules out \(\tau\).  If \(\tau\) injects into a
+\(z^{\mathsf T}H_\tau z>0\) rules out \(\tau\) as the positive support
+of a maximizer. If \(\tau\) injects into a
 longer word \(\sigma\) while preserving cyclic order, zero-extending \(z\)
 preserves both its tangent constraints and positive curvature.  Hence
-\(\sigma\) is ruled out as well.  Processing words by length allows these
+\(\sigma\) is ruled out as a positive support as well. Boundary maxima
+are represented on their smaller positive supports. Processing words by length allows these
 proved obstructions to skip many later factorizations.
 
 For every word not excluded in this way, the route uses the verified
@@ -148,11 +153,53 @@ Because the final comparison is rational, this route returns the exact
 capacity and every tied sparse winner in the closure-vertex candidate family.
 It intentionally does not enumerate all minimizing geometric branches.
 
+\subsection{A certified calculation for the cube}
+
+Consider the exactly representable input
+\[
+ K=[-1,1]^4,\qquad
+ (a_0,\ldots,a_7)=(e_1,e_2,-e_1,-e_2,e_3,e_4,-e_3,-e_4).
+\]
+Each planar closure polytope has two vertices: the opposite pairs along
+the two coordinate axes, with normalized weights $(1/2,1/2)$. Pairing the
+factor supports gives four choices, each with six cyclic orders. The
+product route therefore compares only 24 objective values.
+
+For the word $(0,4,2,6)$, the four QP weights are all $1/4$, so closure
+and normalization hold exactly. The nonzero ordered symplectic pairings
+are $1,-1,1,1$, giving
+\[
+ Q_{(0,4,2,6)}=\frac{1-1+1+1}{16}=\frac18,
+ \qquad \mathcal A=\frac1{2Q}=4.
+\]
+The complete closure-vertex comparison has two orders with $Q=1/8$,
+two with $Q=-1/8$, and twenty with $Q=0$. Thus the winning action is
+exactly four, with two tied sparse words. The retained numerical audit
+reports $Q_{\max}=1/8$ and the exact rational capacity $4$ for this input.
+The product API's outward conversion consequently returns
+\[
+ [c_{\mathrm L},c_{\mathrm U}]=[4,4],
+ \qquad c_{\mathrm{EHZ}}([-1,1]^4)=4.
+\]
+An action cutoff below four therefore excludes these winners, whereas
+a closed cutoff at four includes both. In this case input, optimizer
+weights and capacity are all exactly representable; the zero-width output
+does not describe the usual general-polytope interval.\footnote{The input is
+\texttt{square\_product\_case} in
+\path{experiments/dev-quadratic-program/tools/product_closure_route/main.rs};
+the tracked \path{sample5.jsonl} in that directory contains the row
+\texttt{adversarial:square\_product\_exact\_zeros}.
+The outward rational conversion is implemented in
+\path{crates/symplectic/src/algorithms/capacity_4d/mod.rs}.}
+
 \subsection{Empirical verification and limitations}
 
 The audits below concern separate development implementations of the general
-and product algorithms. A four-test comparison, described below, checks their
-outputs against the production implementation on fixed fixtures.
+and product algorithms. Their retained reports and producers are tracked in
+\path{experiments/dev-quadratic-program/tools/}, in the
+\texttt{general\_algorithm\_ablation} and \texttt{product\_closure\_route}
+packets. A four-test comparison, described below, checks their outputs
+against the production implementation on fixed fixtures.
 
 An audit of the general development implementation compared the floating-point
 predicates with exact dyadic-rational arithmetic on \(249\) KKT systems: ordinary generated systems,
@@ -170,7 +217,10 @@ lay in the returned interval.  On the general cases, the largest difference
 between the printed central value and exact capacity was \(2.31\cdot10^{-14}\).
 These finite comparisons test the implementation and exercise fallback, but
 the soundness claim rests on the preceding error bounds and complete-candidate
-arguments.
+arguments. The \(249\)-system and \(88/1271\)-word counts are recorded in
+the general packet's \path{RESULTS.md}. That retained summary and its
+producer are available; the original per-system audit output is not
+included in the repository.
 
 An audit of the product development implementation used \(88\) ordinary and
 adversarial products. Across
@@ -179,11 +229,17 @@ interval violation, no incorrect determinate sign, and no disagreement between
 the hybrid and complete exact closure-vertex computations.  Raw comparison
 with zero disagreed with the exact objective sign \(23\,559\) times, mostly at
 exact zero or tiny values; the certified predicate returned indeterminate
-instead.  A separate retained population of \(10\,240\) random products had a
+instead. These \(88\) per-body records are tracked in the product packet's
+\path{sample5.jsonl}. A separate retained population of \(10\,240\) random products had a
 literal capacity winner of length six in every case.  This supports the
 implementation and stress-tests
 Theorem~\ref{thm:quadratic-program-product-six-facet}; it is not its proof and
 does not exclude longer tied minimizers.
+The product packet's \path{RESULTS.md} records the join between source
+geometries and cached winning words. Its two source datasets belong to the
+registered external \texttt{polytope-datasets} artifact, rather than to the
+ordinary tracked files; Section~\ref{sec:published-code-data} describes their
+availability.
 
 The four-test correspondence check compares the development implementations
 with the production implementation on fixed fixtures: general capacity bounds,

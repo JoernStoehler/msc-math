@@ -1,5 +1,5 @@
 % Chapter organized by the strength and limits of the geometric evidence.
-\section{Finding mathematical patterns with data science}
+\section{Geometric signals for large systolic ratios}
 \label{sec:fresh-data-search}
 \label{sec:black-box-datascience}
 
@@ -45,6 +45,8 @@ normalize the sum over all ridges by
 \[
  R(K)=\frac{\sum_F A_\omega(F)}{\sqrt{\operatorname{vol}_4(K)}}.
 \]
+The absolute value is taken separately on each face: $R$ records symplectic
+area without cancellation between faces, rather than their Euclidean areas.
 The square root makes $R$ unchanged by common dilation: both numerator
 and denominator scale as length squared. It is also unchanged by
 translation and linear symplectic maps, as is the systolic ratio.
@@ -58,8 +60,12 @@ Thus any relation between $R$ and the ratio respects these symmetries.
 For numerical evaluations we write
 $\widehat{\operatorname{sys}}=c_{\mathrm{num}}^2/(2V_{\mathrm{num}})$.
 Its normalization agrees with $\operatorname{sys}$; its volume is computed
-in floating-point arithmetic. The empirical results below concern this
-numerical ratio.
+in floating-point arithmetic. The statistical analysis retains the original
+numerical ratios. A separate reevaluation now supplies certified capacity
+intervals for 14,335 of the 14,336 original bodies, with one input still
+outside the numerical-size policy. These capacity bounds do not certify
+the floating-point volume or the numerical ratio
+(Appendix~\ref{app:ds-evaluation}).
 
 The exploratory sample consists of 4,096 generic four-dimensional polytopes
 with facet counts $F=5,\ldots,12$ and 10,240 Lagrangian products $P\times Q$
@@ -146,8 +152,9 @@ ratio, but further restriction within that selection need not raise it
 again. In a fresh pool of 100,000 Lagrangian products, selecting the ten
 lowest-$R$ bodies per side-count group gave mean ratio $0.626$, compared
 with $0.316$ for the same number of comparison bodies. Selection used only geometry, before capacity was evaluated.
-Each factor-side-count group contributed equally, and the comparison
-bodies were chosen by a fixed hash order excluding the selected bodies.
+Each factor-side-count group contributed equally. The comparison bodies
+came from the same pool, excluded the selected bodies, and were chosen
+without evaluating their capacities.
 
 The distribution of area among the ridges supplies a second comparison.
 When the total symplectic ridge area is positive, define
@@ -174,8 +181,8 @@ For generic ten-facet bodies, the related score $R/N_2$, where $N_2$ is
 the number of ridges, measures normalized area per ridge. Unlike products
 at fixed side counts, these bodies can have different ridge counts.
 Selecting the lowest one percent by $R/N_2$ from a fresh pool of 10,000
-bodies gave mean ratio $0.626$, against $0.339$ for 100 disjoint,
-deterministically selected comparison bodies. Within that selected panel, however,
+bodies gave mean ratio $0.626$, against $0.339$ for 100 other bodies
+chosen from the same pool without using their capacities. Within that selected panel, however,
 the ten most extreme scores had a mean ratio $0.032$ below the remaining
 ninety. This is a failure to obtain further gain in that sample, not an
 established deterioration under every stronger filter. The comparison
@@ -358,8 +365,8 @@ the eigenvalues of $AB$.
 
 Selecting the lowest $0.5\%$ by $\rho$ within each side-count group
 gave larger mean ratios than comparison bodies in every group in each
-of two fresh pools of 50,000 products. Each group supplied 25 comparison bodies, chosen by
-fixed hash order after excluding both geometric selections. The twenty
+of two fresh pools of 50,000 products. Each group supplied 25 comparison bodies
+from the same pool, chosen without using their capacities. The twenty
 gains over comparison bodies ranged from $0.260$ to $0.440$, with mean
 $0.333$. Against selection of the lowest $1\%$ by $R$ followed by its
 lower half by $C$, its mean advantage was only $0.014$, and the differences
@@ -569,7 +576,7 @@ Appendix~\ref{app:ds-probes}.
 The chapter therefore supports a strong coarse association, opposite
 exact laws on two rotation families, and improvements under fixed search budgets. It does
 not supply a universal capacity law or a general route to local optimality.
-None of the random samples or search comparisons produced a numerical
+None of the random samples or search comparisons reported here produced a numerical
 ratio above one. For products with a triangle or quadrilateral factor,
 the Viterbo inequality is already known~\cite[Theorem~1.2 and Section~4]{dsBMP2026};
 such products can illuminate the pattern but cannot yield counterexamples

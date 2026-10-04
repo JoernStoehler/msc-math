@@ -10,23 +10,36 @@ reference, not as the current setup path. Host-side sandbox lifecycle and
 credentials belong to the host's `~/.dotfiles/memories/host-estate.md`
 (`/home/joern/.dotfiles/memories/host-estate.md`).
 
-## Current state
+## Minimal workflow
 
-Checked on 2026-09-05:
+A checkout contains the complete selected thesis source and its figure inputs.
+It does not need Sage or external datasets to build the PDF:
 
-- The sandbox has working Astra and native search, Rust, Python/uv, Herdr,
-  Micro commenting, LaTeX/Biber and authenticated R2 access.
-- Host and sandbox thesis builds passed. The sandbox passed 27 geometry-crate
-  tests and downloaded/hash-verified one registered R2 snapshot.
-- Sage 10.9 passed exact arithmetic in a fresh SSH shell, the full HKO
-  verifier and a 50-case pentagon prefix (not the full pentagon certificate).
+```bash
+sh thesis/build.sh
+bash thesis/check-build.sh
+```
 
-[Environment details](docs/development-environments.md) records versions,
-configuration locations and diagnostic findings. Project skills live under
-`.agents/skills`; the host estate coordinates deliberate copies between
-repositories. Global memories remain separately maintained VM-local clones.
-See the environment details for locations and update semantics; do not install
-a competing shared skill store from this project.
+The PDF is `thesis/build/main.pdf`. The second command forces a rebuild and
+checks the PDF signature, overfull boxes and undefined references; it does not
+validate the mathematics or writing. See the LaTeX dependencies below.
+
+For reusable Rust code, use the pinned toolchain and lockfile:
+
+```bash
+cargo fmt --all -- --check
+cargo check --workspace --locked
+```
+
+These commands cover the root workspace. Focused runtime checks and their
+scientific scope are mapped in [docs/algorithm-testing.md](docs/algorithm-testing.md).
+Standalone experiment method crates have their own manifests and commands.
+
+[Environment details](docs/development-environments.md) records current
+workstation/cloud roles and dated setup observations. Host credentials,
+editors, browser transport and agent sessions are not prerequisites for the
+PDF or Rust build. The old sandbox shell/editor configuration remains in Git
+history; do not apply it to a workstation installation.
 
 ## Ordinary language tools
 
@@ -38,238 +51,17 @@ Use Python 3.12 and uv for ordinary scripts. Run scripts with PEP 723 inline
 dependency metadata as `uv run path/to/script.py`; dependencies belong to the
 script. Keep Sage's Python separate from this ordinary environment.
 
-## VM-local shell and editor files
-
-The following commands restore the small set of VM-local files that make the
-documented sandbox interface work. They are the canonical hand-rebuild source
-for the former `.local-environments/sandbox-bootstrap/` bundle. That directory
-is still present as a migration copy for now; inspect existing files before
-replacing them on a nonempty VM. The commands below are appropriate for a
-fresh Linux sandbox and create the parent directories as needed.
-
-The shell files make Cargo available to noninteractive SSH commands, source
-the persistent Rust PATH, and enter `/workspaces/msc-math` for an interactive
-login that starts in the default home directory. The Git configuration is
-project-specific and should be adjusted if the target user or mount path is
-different. The `/home/agent` and `/workspaces/msc-math` values below are exact
-for the current sandbox.
-
-```bash
-# Target: /home/agent/.bashrc
-install -D -m 0644 /dev/stdin "$HOME/.bashrc" <<'EOF'
-# Source the sandbox persistent environment file
-if [ -f /etc/sandbox-persistent.sh ]; then
-    . /etc/sandbox-persistent.sh
-fi
-
-# Export BASH_ENV for child non-interactive shells
-export BASH_ENV=/etc/sandbox-persistent.sh
-
-# Enable colorized ls output by default
-alias ls='ls --color=auto'
-
-# Project tools must also resolve in noninteractive SSH commands.
-case ":$PATH:" in
-    *":$HOME/.cargo/bin:"*) ;;
-    *) export PATH="$HOME/.cargo/bin:$PATH" ;;
-esac
-
-# An interactive login starts in this sandbox's mounted project.
-case "$-" in
-    *i*) if [ "$PWD" = /home/agent/workspace ] || [ "$PWD" = "$HOME" ]; then
-             cd /workspaces/msc-math
-         fi ;;
-esac
-EOF
-
-# Target: /home/agent/.profile
-install -D -m 0644 /dev/stdin "$HOME/.profile" <<'EOF'
-
-# >>> Codex installer >>>
-export PATH="/home/agent/.local/bin:$PATH"
-# <<< Codex installer <<<
-
-if [ -n "${BASH_VERSION:-}" ] && [ -f "$HOME/.bashrc" ]; then
-    . "$HOME/.bashrc"
-fi
-EOF
-
-# Target: /home/agent/.gitconfig
-install -D -m 0644 /dev/stdin "$HOME/.gitconfig" <<'EOF'
-[safe]
-	directory = /workspaces/msc-math
-[core]
-	checkStat = minimal
-	excludesFile = /home/agent/.gitignore_global
-[user]
-	name = Jörn Stöhler
-	email = joern@stoehler.eu
-EOF
-
-# Target: /home/agent/.gitignore_global
-install -D -m 0644 /dev/stdin "$HOME/.gitignore_global" <<'EOF'
-.sbx
-EOF
-
-# Target: /etc/sandbox-persistent.sh
-sudo install -D -m 0644 /dev/stdin /etc/sandbox-persistent.sh <<'EOF'
-# Rust toolchain for SSH commands and child noninteractive shells.
-case ":$PATH:" in
-    *":$HOME/.cargo/bin:"*) ;;
-    *) export PATH="$HOME/.cargo/bin:$PATH" ;;
-esac
-EOF
-
-# Target: /home/agent/.config/micro/init.lua
-install -D -m 0644 /dev/stdin "$HOME/.config/micro/init.lua" <<'EOF'
-local buffer = import("micro/buffer")
-
-function criticComment(bp)
-    local cursor = bp.Buf:GetActiveCursor()
-    local location = buffer.Loc(cursor.Loc.X, cursor.Loc.Y)
-    bp.Buf:Insert(location, "{>><<}")
-    for _ = 1, 3 do
-        cursor:Left()
-    end
-    bp:Relocate()
-    return true
-end
-EOF
-
-# Target: /home/agent/.config/micro/bindings.json
-install -D -m 0644 /dev/stdin "$HOME/.config/micro/bindings.json" <<'EOF'
-{
-    "Alt-/": "None",
-    "CtrlUnderscore": "None",
-    "Ctrl-k": "lua:initlua.criticComment",
-    "Ctrl-o": "None",
-    "Ctrl-w": "Quit"
-}
-EOF
-
-# Target: /home/agent/.config/micro/settings.json
-install -D -m 0644 /dev/stdin "$HOME/.config/micro/settings.json" <<'EOF'
-{
-    "clipboard": "terminal",
-    "colorscheme": "herdr-one-light",
-    "softwrap": true,
-    "useprimary": false,
-    "wordwrap": true
-}
-EOF
-
-# Target: /home/agent/.config/micro/syntax/markdown.yaml
-install -D -m 0644 /dev/stdin "$HOME/.config/micro/syntax/markdown.yaml" <<'EOF'
-filetype: markdown
-
-detect:
-    filename: "\\.(livemd|md|mkd|mkdn|markdown)$"
-
-rules:
-    # Tables (GitHub extension)
-    - type: ".*[ :]\\|[ :].*"
-
-    # Quotes
-    - statement: "^>.*"
-
-    # Emphasis
-    - type: "(^|[[:space:]])(_[^ ][^_]*_|\\*[^ ][^*]*\\*)"
-    - type: "(^|[[:space:]])(__[^ ][^_]*__|\\*\\*[^ ][^*]*\\*\\*)"
-    - type: "(^|[[:space:]])~~[^ ][^~]*~~"
-
-    # Structure
-    - special: "^(---+|===+|___+|\\*\\*\\*+)\\s*$"
-    - special: "^#{1,6}.*"
-    - identifier: "^[[:space:]]*[\\*+-] |^[[:space:]]*[0-9]+\\. "
-    - preproc: "(\\(([CcRr]|[Tt][Mm])\\)|\\.{3}|(^|[[:space:]])\\-\\-($|[[:space:]]))"
-
-    # Links and code
-    - constant: "\\[[^]]+\\]"
-    - constant: "\\[([^][]|\\[[^]]*\\])*\\]\\([^)]+\\)"
-    - underlined: "!\\[[^][]*\\](\\([^)]+\\)|\\[[^]]+\\])"
-    - underlined: "https?://[^ )>]+"
-    - special: "^```$"
-    - special:
-        start: "`"
-        end: "`"
-        rules: []
-
-    # CriticUp annotations. This intentionally applies only to Markdown.
-    - todo: "\\{>>[^\\n]*<<\\}"
-EOF
-
-# Target: /home/agent/.config/micro/colorschemes/herdr-one-light.micro
-install -D -m 0644 /dev/stdin "$HOME/.config/micro/colorschemes/herdr-one-light.micro" <<'EOF'
-# High-contrast true-color companion to Herdr's One Light UI theme.
-color-link default "#383a42,#ffffff"
-color-link comment "#696f7b,#ffffff"
-color-link constant "#986801,#ffffff"
-color-link constant.bool "#986801,#ffffff"
-color-link constant.string "#50a14f,#ffffff"
-color-link constant.string.char "#50a14f,#ffffff"
-color-link constant.string.url "#0184bc,#ffffff"
-color-link identifier "#383a42,#ffffff"
-color-link identifier.class "bold #4078f2,#ffffff"
-color-link statement "bold #a626a4,#ffffff"
-color-link preproc "bold #a626a4,#ffffff"
-color-link type "bold #4078f2,#ffffff"
-color-link type.keyword "bold #a626a4,#ffffff"
-color-link type.extended "#383a42,#ffffff"
-color-link special "bold #0184bc,#ffffff"
-color-link symbol "#383a42,#ffffff"
-color-link symbol.brackets "#383a42,#ffffff"
-color-link symbol.tag "bold #a626a4,#ffffff"
-color-link underlined "#0184bc,#ffffff"
-color-link todo "bold #c18401,#ffffff"
-color-link error "bold #e45649,#ffffff"
-color-link gutter-error "#e45649,#f0f1f3"
-color-link gutter-warning "#c18401,#f0f1f3"
-color-link diff-added "#50a14f,#ffffff"
-color-link diff-modified "#c18401,#ffffff"
-color-link diff-deleted "#e45649,#ffffff"
-color-link color-column "#f0f1f3"
-color-link cursor-line "#f0f1f3"
-color-link line-number "#7a8494,#f0f1f3"
-color-link current-line-number "bold #4078f2,#f0f1f3"
-color-link indent-char "#c5cad3,#ffffff"
-color-link hlsearch "bold #c18401,#ffffff"
-color-link divider "#ffffff,#4078f2"
-color-link statusline "#ffffff,#4078f2"
-color-link tabbar "#383a42,#e9edf3"
-EOF
-
-# Sage setup is documented in the SageMath section below.
-```
-
-The system file is sourced by the shell rather than executed, so mode `0644`
-is sufficient.
-
-The R2 configuration is deliberately absent from the file blocks above. The
-private `~/.config/rclone/rclone.conf` must be created with mode `0600` using
-`rclone config` or the private variables in the [R2 data](#r2-data) section.
-Do not copy its credential-bearing contents into this document or Git. Codex
-configuration, authentication/session databases, Copilot state, Humanlayer
-state, package inventories and runtime sockets are also VM-local state rather
-than project dotfiles. The Herdr message helper remains the repository-owned
-`.agents/skills/herdr/scripts/herdr-message`.
-
-The other files formerly described by the bootstrap README have separate
-owners: global agent memories remain under
-`.local-environments/agent-memories/`, the materialized registered data artifact
-remains at its producer-owned path under `experiments/`, and process-audit
-source rollouts remain under `docs/process-audit/source-rollouts/`. They are
-not recreated by the VM-local configuration commands above.
-
 ## LaTeX and Biber
 
-The following Ubuntu package set is used by `scripts/bootstrap-cloud.sh` and
-supports the tested thesis build:
+On Ubuntu, the thesis build needs the following package set. It is also used
+by `scripts/bootstrap-cloud.sh`; that cloud bootstrap additionally requires
+its private R2 credentials and is not a prerequisite for a local PDF build:
 
 ```bash
 sudo apt-get update
 sudo apt-get install --no-install-recommends \
-  biber latexmk texlive-bibtex-extra texlive-latex-extra
-./thesis/check-build.sh
+  biber latexmk lmodern texlive-bibtex-extra texlive-latex-extra
+bash thesis/check-build.sh
 ```
 
 The output is `thesis/build/main.pdf`. The command builds before checking
@@ -283,7 +75,7 @@ that leaves the current PDF untouched:
 
 ```bash
 thesis_check_dir=$(mktemp -d)
-(cd thesis && latexmk -g -outdir="$thesis_check_dir" -auxdir="$thesis_check_dir")
+sh thesis/build.sh -g -outdir="$thesis_check_dir" -auxdir="$thesis_check_dir"
 ```
 
 This last command checks compilation only; inspect the generated log when
@@ -291,96 +83,42 @@ the selected layout/reference checks are also required.
 
 ## SageMath
 
-**Verified in `codex-msc-math` on 2026-09-05:** Miniforge/conda-forge installed
-Sage 10.9 with its own Python 3.13.15, following the
-[official Sage route](https://doc.sagemath.org/html/en/installation/conda.html).
-Ordinary Python remains 3.12.13. No Conda activation or compiler/Python PATH
-changes are needed.
+Sage is needed for the original HKO and pentagon certificate verifiers, not
+for building the thesis or running the Rust crates. Install a separate Sage
+Python environment using the [Sage installation instructions](https://doc.sagemath.org/html/en/installation/).
+The project previously verified Sage 10.9; record the version actually used.
+Do not replace ordinary Python or put Sage's libraries into the ordinary uv
+environment.
 
-The VM-private disk has only about 2.2 GB free. The tested installation uses
-the ignored shared directory `.local-environments/`, consuming about 9.4 GB
-including Miniforge, Sage, package caches and setup logs. About 154 GB remained
-free on the shared mount after verification. Check current space first.
-
-For a fresh Linux x86-64 installation, allow the package host from the host:
+For a Conda environment named `sage`, a basic arithmetic check is:
 
 ```bash
-sbx policy allow network --sandbox codex-msc-math conda.anaconda.org:443
-```
-
-Run installation commands inside the sandbox. Use an attached `sbx exec`
-for long commands so the sandbox remains running. The current installation
-already exists; do not rerun the installer over it.
-
-```bash
-df -h / /workspaces/msc-math
-sage_setup_dir=/workspaces/msc-math/.local-environments/sage-setup
-sage_prefix=/workspaces/msc-math/.local-environments/miniforge
-mkdir -p "$sage_setup_dir/tmp"
-export TMPDIR="$sage_setup_dir/tmp"
-curl -fsSL \
-  https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh \
-  -o "$sage_setup_dir/miniforge.sh"
-bash "$sage_setup_dir/miniforge.sh" -b -p "$sage_prefix"
-"$sage_prefix/bin/mamba" create -y -n sage --channel conda-forge \
-  --strict-channel-priority --ssl-verify /etc/ssl/certs/ca-certificates.crt sage
-"$sage_prefix/envs/sage/bin/sage" --version
-```
-
-Miniforge's bundled CA trust initially rejected the sandbox proxy certificate.
-The explicit system CA bundle fixes this with TLS verification enabled. Without
-the network allow rule, the proxy returned HTTP 403, surfaced by mamba as a
-ZSTD decompression error. An SSH-only installation also exited 137 without a
-diagnostic; the attached `sbx exec` installation succeeded in 184 seconds.
-
-The conda Sage 10.9 launcher is the standard Sage command-line interpreter for
-`.sage` files, but it does not provide the historical `sage -python` option.
-Python files that import `sage.all` should therefore be run with the Python
-binary inside the Sage environment. This avoids replacing the meaning of the
-`sage` command with a project-specific wrapper. In a fresh SSH shell, check:
-
-```bash
-sage_prefix=/workspaces/msc-math/.local-environments/miniforge
-export PATH="$sage_prefix/bin:$PATH"
-"$sage_prefix/envs/sage/bin/sage" --version
-"$sage_prefix/envs/sage/bin/python" -c \
+conda run --name sage python -c \
   'from sage.all import QQ, matrix; assert matrix(QQ, [[1,2],[3,4]]).det() == -2; print("Sage arithmetic OK")'
 ```
 
-Verification at source commit `33f5fe148ae2de5eb2fd5ba70a2a53c06753d6e8` passed:
-exact rational and number-field arithmetic; the complete HKO verifier in a
-temporary copy of `verify.sage.py` and `witness.json` (4.40 seconds, ranks 25
-and 15); and the README's pentagon `--limit 50` command (16.52 seconds wall
-time, `LIMITED PREFIX PASSED`). The prefix checks installation compatibility;
-it is not a new full pentagon certificate. Canonical packet outputs were not
-overwritten. Python, Rust, Micro, Codex and Herdr still resolved at their
-previous paths and versions.
+The packet READMEs use `conda run --name sage python`. If Sage is installed
+elsewhere, substitute the Python executable from that environment. The
+previously tested Conda launcher did not support `sage -python`; calling its
+Python directly avoids relying on that option. A basic arithmetic check is
+only an installation check. The theorem packets own their complete checks,
+input/output paths, and trust boundaries.
 
-Record the installed Sage version with each verification run. The arithmetic
-check establishes basic operation; run the relevant certificate to check
-project compatibility. The successful solve was unpinned; future solves can
-select other versions. Local installation and verification logs, the temporary
-HKO packet, and an explicit package export are retained in
-`.local-environments/sage-setup/`.
-
-This is disposable environment data, not research source or a Git backup.
-It survives sandbox removal because it is on the host mount, but contains
-absolute prefixes and sandbox Linux binaries: do not assume it is relocatable
-or usable on the host. The Sage environment and network policy are sandbox
-state and must be restored separately after recreation. Reinstall at a new path rather
-than moving the prefix. Deleting this directory removes the local Sage setup,
-caches and logs; it does not remove tracked research results.
-
-**Does not work here:** the sandbox's apt index offered no `sagemath` candidate
-on 2026-09-05. **Not evaluated:** source builds and other distributions; they
-have not been ruled out.
+The former sandbox used an absolute-prefix installation under
+`/workspaces/msc-math/.local-environments/miniforge/envs/sage/`.
+Its existence is not a portable installation promise. Historical provisioning
+and troubleshooting commands are preserved in local Git history at commit
+`52b1526c8ff5613a400f2f4028b4290f35841b21`
+(`git show 52b1526c:INSTALL.md`). Do not start a retired sandbox
+or overwrite an existing environment merely to run a verifier.
 
 ## R2 data
 
 Install `rclone` (on Ubuntu: `sudo apt-get install rclone`). Configure its
 `mscmath` S3 remote for Cloudflare R2, bucket `msc-math-artifacts`, using
 private credentials. Reading snapshots needs object-read access; publishing
-also needs write access. The current sandbox already has this configuration.
+also needs write access. These credentials are not distributed with the
+repository, so an unauthenticated clone cannot download the registered data.
 
 Use `rclone config`, or supply these variables privately to the process:
 
@@ -400,56 +138,29 @@ python3 scripts/artifacts.py list
 python3 scripts/artifacts.py materialize combinatorial-cell-widths --no-link
 ```
 
-The second command is known to work in the sandbox: it downloaded 11 MB and
-verified the registered file hashes. Omit `--no-link` when the producer needs
-the repository links. Links can point into an environment-specific cache;
-host-created links need not resolve inside the sandbox.
+The second command downloads and verifies one registered snapshot. It contacts
+R2 even when a local cache exists. Omit `--no-link` when the producer needs
+the repository links. Links point into an environment-specific cache and may
+not resolve in a different execution environment.
 
 [Artifact contracts](docs/artifacts.md) explain cache placement, link handling
 and publication. For Codex Cloud use the configured setup/maintenance scripts
 described in [environment details](docs/development-environments.md), not the
 ephemeral-variable recipe after Cloud setup has finished.
 
-## Micro comments
-
-Micro is installed, but Ctrl+K comments are custom configuration. The known
-working host configuration is `~/.config/micro/`: `init.lua`, `bindings.json`,
-`settings.json`, `syntax/markdown.yaml` and
-`colorschemes/herdr-one-light.micro`. Copy those files, preserving their
-relative paths, into the target user's Micro configuration when provisioning
-the same interface; compare existing customizations before replacing them.
-
-The current sandbox has exact copies of all five files. Its settings therefore
-also use the host's terminal clipboard backend and disable primary-selection
-clipboard replacement. Verify commenting in a disposable Markdown file:
-Ctrl+K, type a comment, Ctrl+S, then read the saved file. Expected text is
-`{>>comment<<}`. This exact interaction previously passed over SSH; the
-2026-09-14 repair rechecked file hashes and Micro 2.0.15, not the interactive
-keystrokes or clipboard path.
-
-## Browser review from the sandbox
-
-The repository-owned `review-files` skill can present an explicitly named
-artifact through the host's Tailscale-only port mapping:
-
-```bash
-.agents/skills/review-files/scripts/review-open --sandbox FILE...
-```
-
-Host setup for the mapping and repository-local URL belongs to dotfiles
-`INSTALL.md`. It does not require sandbox recreation or give the VM Tailscale
-credentials. A new invocation replaces the previous sandbox review session.
-
 ## Reproduce a result
 
 Setup checks establish tools, not scientific results. Use the producer or
 verifier that owns the requested result:
 
-- [HKO certificate](experiments/hko-local-maximum/theorem/README.md).
+- [HKO certificate](experiments/hko-local-maximum/theorem/README.md) (Sage).
+- [Second ten-facet local maximum](experiments/hko-local-maximum/non-hko/README.md)
+  (ordinary Python/SymPy; includes an independent checker).
 - [Pentagon certificate](experiments/regular-products/pentagon-rotation-formula-proof/README.md);
   run without Python optimization, because its checks use assertions.
 - [Data science](experiments/sys-datascience/README.md) and the named method's
-  producer; overall data-science scope remains incomplete.
+  producer. Historical ratios, current capacity reevaluation and the one
+  unresolved geometry have distinct evidence contracts.
 - [Thesis reproduction and archive](docs/reproducibility.md) for the result
   inventory, final PDF and release bundle.
 

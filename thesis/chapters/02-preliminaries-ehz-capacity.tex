@@ -104,9 +104,22 @@ finite, and continuous, then the systolic ratio of the family is continuous.
 \end{proposition}
 
 \begin{proof}
-The EHZ capacity is \(C^0\)-continuous on convex bodies with respect to the
-Hausdorff metric \cite{CH2021}. The assertion for \(\operatorname{sys}\) is
-then ordinary continuity of the quotient in
+For the capacity assertion it suffices to consider \(K_n\to K\). Translate
+all bodies by the same vector so that \(rB^4(1)\subset K\) for some
+\(r>0\). If \(\delta_n=d_H(K_n,K)\), their support functions satisfy
+\(\lvert h_{K_n}(u)-h_K(u)\rvert\leq\delta_n\) for every unit vector
+\(u\). Since \(h_K(u)\geq r\), for \(\delta_n<r\) this implies
+\[
+ (1-\delta_n/r)K\subset K_n\subset(1+\delta_n/r)K.
+\]
+Monotonicity and conformality give
+\[
+ (1-\delta_n/r)^2c_{\mathrm{EHZ}}(K)
+ \leq c_{\mathrm{EHZ}}(K_n)
+ \leq(1+\delta_n/r)^2c_{\mathrm{EHZ}}(K),
+\]
+so capacity converges. The assertion for \(\operatorname{sys}\) is
+ordinary continuity of the quotient in
 \eqref{eq:preliminaries-systolic-ratio}. In the applications below the volume
 hypothesis is usually automatic, since four-volume is continuous under
 Hausdorff convergence of convex bodies; for the rotated-polygon family it is

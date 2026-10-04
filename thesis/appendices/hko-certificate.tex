@@ -9,6 +9,17 @@ SageMath program. Facet labels and positions in each word are
 displayed one-based; the executable converts them to zero-based indices at
 the section boundary.
 
+The public packet identified in Section~\ref{sec:published-code-data} uses
+\path{experiments/hko-local-maximum/theorem/verify.sage.py} and its
+\path{witness.json}. The printed program,
+\path{thesis/appendices/hko_core.py}, is a compact exposition of that
+calculation in the selected manuscript. It writes the exact fixed values
+directly in \texttt{rows}, whereas the packet verifier reconstructs them
+from its finite witness. The twenty-six words, solved and fixed positions,
+resulting exact weights, and derivative rows agree. The printed program
+is part of this manuscript's working tree; its inclusion in the historical
+public commit is not claimed.
+
 The geometric lemmas in the main text establish that these ten labelled dual
 vertices form the relevant chart, that volume is smooth there, and that each
 positive feasible section supplies a touching upper bound.  The finite CAS
@@ -19,7 +30,7 @@ and check the quotient certificate.
 The first source block defines the ordered number field, the ten dual
 vertices, the symplectic form, the closure matrix, and the quadratic form.
 
-\lstinputlisting[language=Python,firstline=1,lastline=11,basicstyle=\ttfamily\footnotesize,breaklines=true,columns=fullflexible]{appendices/hko_core.py}
+\lstinputlisting[language=Python,firstline=1,lastline=11,firstnumber=1,numbers=left,numberstyle=\tiny,basicstyle=\ttfamily\footnotesize,breaklines=true,columns=fullflexible]{appendices/hko_core.py}
 
 \paragraph{All 26 exact assignments.}
 The following is the complete \texttt{rows} object, including every word, solved
@@ -27,7 +38,7 @@ coordinate set, fixed coordinate set, and exact fixed value.  Values written
 with the caret character are strings parsed by Sage's exact evaluator; they are data, not
 Python exponentiation.
 
-\lstinputlisting[language=Python,firstline=12,lastline=39,basicstyle=\ttfamily\footnotesize,breaklines=true,columns=fullflexible]{appendices/hko_core.py}
+\lstinputlisting[language=Python,firstline=12,lastline=39,firstnumber=12,numbers=left,numberstyle=\tiny,basicstyle=\ttfamily\footnotesize,breaklines=true,columns=fullflexible]{appendices/hko_core.py}
 
 \paragraph{Feasible sections and derivative rows.}
 The next block is the actual section solver.  It explicitly converts the
@@ -39,7 +50,7 @@ Lemma~\ref{lem:hko-smooth-volume}. The derivative block computes $D\beta$,
 then differentiates $Q$ and forms $r_j=DU_j(a_0)$ by the product rule for
 $U_j=A_j^2/(2V)$.
 
-\lstinputlisting[language=Python,firstline=40,lastline=68,basicstyle=\ttfamily\footnotesize,breaklines=true,columns=fullflexible]{appendices/hko_core.py}
+\lstinputlisting[language=Python,firstline=40,lastline=68,firstnumber=40,numbers=left,numberstyle=\tiny,basicstyle=\ttfamily\footnotesize,breaklines=true,columns=fullflexible]{appendices/hko_core.py}
 
 \paragraph{Symmetry and finite conclusion.}
 The final source block constructs the four translations, dilation, and ten
@@ -52,7 +63,18 @@ Thus the explicitly assigned \texttt{rows}, together with the computed
 Lemma~\ref{lem:hko-exact-bounds}. The rank and positive relation supply the
 hypotheses of Lemma~\ref{lem:hko-negative-slopes}.
 
-\lstinputlisting[language=Python,firstline=69,basicstyle=\ttfamily\footnotesize,breaklines=true,columns=fullflexible]{appendices/hko_core.py}
+\lstinputlisting[language=Python,firstline=69,firstnumber=69,numbers=left,numberstyle=\tiny,basicstyle=\ttfamily\footnotesize,breaklines=true,columns=fullflexible]{appendices/hko_core.py}
+
+The four groups of predicates in the main text can be located directly:
+\texttt{section} and line~84 check the positive feasible contacts;
+line~85 checks the two ranks; lines~86--87 check symmetry annihilation;
+and lines~88--91 compute and check the positive relation.
+The program's \texttt{M} is the derivative matrix called $R$ in the proof,
+and \texttt{T} stores the symmetry columns. It checks the finite linear
+algebra, including the one-dimensional left kernel. Smooth continuation
+follows from the displayed inverse-minor construction, and the strict
+neighborhood and equality statements follow from the geometric lemmas;
+they are not additional predicates checked by this program.
 
 The listed file is \path{thesis/appendices/hko_core.py}.
 Run it with \texttt{conda run --name sage python}, with Python optimization disabled so that

@@ -1,7 +1,9 @@
 # Regular Products Slice
 
-This is the single entry point for the thesis slice about Lagrangian products
-of rotated regular polygons.
+This is the experiment entry point for Lagrangian products of rotated regular
+polygons. The selected mathematical proofs are in
+`thesis/chapters/09-rotated-regular-polygons.tex` and
+`thesis/chapters/10-affine-pentagons.tex`.
 
 The main theorem-strength result is the exact formula for
 
@@ -9,12 +11,14 @@ The main theorem-strength result is the exact formula for
 sys(P_5 x_L R(theta)P_5)
 ```
 
-on the pentagon rotation fundamental domain. Broad regular-product sweeps and
-pentagon figures are supporting context, not proof input.
+on the full rotation domain. The selected chapter uses endpoint interpolation
+from the published HKO capacity. The earlier exhaustive Sage proof is retained
+here as a separate route. Broad regular-product sweeps and pentagon figures
+are supporting context, not proof input.
 
 This package is separate from `experiments/sys-landscape/` because it has a
-different thesis role. `experiments/regular-products/` owns the structured
-regular-product side result; `experiments/sys-datascience/` owns current
+different thesis role. `experiments/regular-products/` owns the regular-product
+experiments and retained certificate; `experiments/sys-datascience/` owns current
 random/product data-science consumer work, and `experiments/sys-landscape/`
 contains retained search implementations and historical context.
 
@@ -25,43 +29,50 @@ relative; other paths below are relative to this directory.
 
 | Task | Relevant sources |
 | --- | --- |
-| Read or update the thesis section | `thesis/09-rotated-regular-polygons.tex` and its included TeX files |
+| Read or update the selected rotation proof | `thesis/chapters/09-rotated-regular-polygons.tex` |
+| Read the independent linear-deformation extension | `thesis/chapters/10-affine-pentagons.tex`, with maintained development at `formal/pentagon-affine-products/README.md` |
 | Inspect the recorded certificate run | `pentagon-rotation-formula-proof/README.md` and `pentagon-rotation-formula-proof/executable_proof.full.stdout.txt` |
-| Review the executable certificate | `pentagon-rotation-formula-proof/executable_proof.sage.py`, with the packet README and mathematical implication in the thesis |
-| Choose figures | `thesis/09-rotated-regular-polygons-empirical-curves.tex`, `rotated-regular-products/README.md`, `pentagon-rotation-empirics/README.md` |
+| Review the earlier executable certificate | `pentagon-rotation-formula-proof/executable_proof.sage.py`, with the packet README and the endpoint/symmetry boundary below |
+| Choose figures | `thesis/chapters/09-rotated-regular-polygons.tex`, `rotated-regular-products/README.md`, `pentagon-rotation-empirics/README.md` |
 | Understand broad regular-product context | `rotated-regular-products/README.md` |
 | Recover old calculation details | `formal/legacy/pentagon-rotation-capacity.tex` and relevant Git history; see its limitations below |
 
-These routes overlap: revising a proof claim can require reading the Sage
-source, while a figure-only change may not. A successful recorded run is not
-by itself a review of what the program proves.
+Follow the dependencies of the claim being checked. The selected analytic
+proof does not use the Sage classification; a claim about that classification
+requires its code and output. A successful recorded run is not by itself a
+review of what the program proves.
 
 ## Who Says What
 
 | File or folder | Role | Current value | Maintenance risk |
 | --- | --- | --- | --- |
-| `thesis/09-rotated-regular-polygons.tex` | Active thesis section | Contains the current theorem/proof draft for the pentagon formula and selected empirical figures | Needs final Jörn/Kai mathematical and presentation review |
-| `thesis/legacy/non-current-planning-companions/rotated-regular-polygons-content.md` | Historical writing companion | Fallible recovery material for earlier choices and calculations | Not current state or drafting instructions; compare recovered details against active sources |
+| `thesis/chapters/09-rotated-regular-polygons.tex` | Selected thesis section | Analytic endpoint-interpolation proof and selected empirical figure | Inclusion does not establish final human mathematical or presentation acceptance |
+| `formal/pentagon-affine-products/README.md` | Proof-route map | Maintained independent linear-deformation proof, source contract and links to the selected chapters | Agent-reviewed extension; human acceptance and novelty are separate questions |
 | `pentagon-rotation-formula-proof/executable_proof.sage.py` | Exact proof source | Source truth for the open half-domain executable certificate | If edited, rerun the full proof and refresh stdout |
 | `pentagon-rotation-formula-proof/executable_proof.full.stdout.txt` | Full proof run output | Source truth for exact run output, status counts, and runtime | Do not hand-edit |
-| `pentagon-rotation-formula-proof/README.md` | Proof packet runbook | Best entry point for proof reproduction | Keep short and routing-focused |
+| `pentagon-rotation-formula-proof/README.md` | Earlier proof packet runbook | Entry point for reproducing the exhaustive certificate | Distinguish it from the selected analytic proof |
 | `pentagon-rotation-empirics/` | Sampled pentagon artifacts | Figures, sampled sweep, and orbit viewer for exposition | Not proof input; avoid overclaiming |
 | `rotated-regular-products/` | Broad regular-pair sweeps | Context for tested regular polygon products | Empirical only; not a classification theorem |
 | `src/` | Shared Rust helpers | Product cache, capacity wrapper, volume helper, package paths | Ordinary code source; keep comments near code |
 | `formal/lagrangian-product-rotation-symmetry.tex` | Formal symmetry source | Current rotation/reflection and factor-swap lemmas | Developer-facing proof text, not thesis prose |
-| `formal/combinatorial-boundary-regularity.tex` | Formal continuity source | Current preferred endpoint route via EHZ Hausdorff continuity | Broader than this slice |
+| `formal/combinatorial-boundary-regularity.tex` | Formal continuity source | Supports the endpoint-continuity step of the earlier exhaustive route | The selected interpolation proof includes its endpoints directly |
 | `formal/legacy/pentagon-rotation-capacity.tex` | Old formal proof draft | Useful for notation and active-branch derivation | Stale body text includes old paths and deleted `cas_witnesses.py` references; no longer input by `formal/main.tex` |
 | `experiments/sys-datascience/README.md` and `experiments/sys-datascience/methods/README.md` | Search/data-science context | Explain regular products as structured contrast in the hostile-search story | Do not use it as a proof source for the formula |
 
 ## Current Proof Status
 
-The exact executable proof is complete for the open half-domain
+The selected rotation chapter proves the formula at every angle using the
+HKO endpoint values, positive trigonometric interpolation, an attaining
+feasible word and symmetry. The independent affine extension gives a second
+analytic route without importing the HKO endpoint value.
+
+The earlier exact executable proof covers the open half-domain
 
 ```text
 0 < theta < pi/10.
 ```
 
-The endpoint and mirror steps are mathematical writeup steps:
+Its endpoint and mirror steps are mathematical arguments outside the run:
 
 1. **Endpoints:** use EHZ Hausdorff continuity and constant volume.
 2. **Mirror:** use the equal odd-pentagon factor-swap symmetry.
@@ -72,7 +83,8 @@ The full proof run is recorded in
 pentagon-rotation-formula-proof/executable_proof.full.stdout.txt
 ```
 
-Use that stdout file for exact status counts and runtime.
+Use that stdout file for exact status counts and runtime. Neither selected
+analytic proof requires rerunning this certificate.
 
 ## Folder Layout
 
@@ -112,34 +124,39 @@ Small Rust helpers shared by the regular-product producers:
 
 Use this split while writing:
 
-1. `thesis/09-rotated-regular-polygons.tex` owns the regular-product side result:
-   formula, proof architecture, selected empirical figures, and
-   endpoint/symmetry close.
-2. `thesis/08-black-box-datascience.tex` may mention product samples and broad
+1. `thesis/chapters/09-rotated-regular-polygons.tex` owns the rotation formula,
+   its analytic proof and selected empirical figure.
+   `thesis/chapters/10-affine-pentagons.tex` owns the independent linear-factor
+   extension; its development source is `formal/pentagon-affine-products/`.
+2. `thesis/chapters/08-data-science.tex` may mention product samples and broad
    regular-product sweeps as hostile-search context. It should not own the
    pentagon formula theorem.
-3. `thesis/12-published-code-data.tex` should point to durable reproduction
-   artifacts such as the proof script and stdout.
-4. No standalone SageMath appendix is active. Verifier explanations stay with
-   the theorem sections, and Section 12 owns the compact reproduction pointers;
-   reopen an appendix only for a concrete reader need not met there.
+3. `thesis/chapters/14-code-data.tex` owns the compact code/data and reproduction
+   pointers. The retained Sage script and stdout reproduce the earlier route,
+   not a computational dependency of the selected rotation proof.
+4. The selected manuscript has no pentagon Sage appendix. Its HKO certificate
+   appendix concerns a different theorem.
 
 ## Knowledge-Base Notes
 
 1. **Current entry point:** this README for inventory, then
-   `thesis/09-rotated-regular-polygons.tex` and its included files for thesis wording.
-2. **Most stale current file:** `formal/legacy/pentagon-rotation-capacity.tex`.
+   `thesis/chapters/09-rotated-regular-polygons.tex` for thesis wording.
+2. **Historical formal draft:** `formal/legacy/pentagon-rotation-capacity.tex`.
    Its header marks it stale, but the body still contains historical labels,
    old `experiments/sys-landscape/...` paths, and deleted
    `cas_witnesses.py` references. Use it only to recover specific historical
    calculations, checking them against current sources.
 3. **Avoid hidden source truth:** if a claim is about code behavior, check the
    producer script or exact proof script. If a claim is about final thesis
-   wording, check `thesis/09-rotated-regular-polygons.tex` and its included files.
+   wording, check `thesis/chapters/09-rotated-regular-polygons.tex`.
 4. **Generated artifacts:** do not patch-edit JSONL, HTML, or PNG outputs.
    Regenerate them with the commands below when source behavior changes.
 
 ## Commands
+
+These are reproduction/producer commands, not a thesis-build checklist. The
+Rust sweeps and viewer command write generated artifacts; inspect their local
+READMEs before replacing retained evidence. The full Sage run can be expensive.
 
 Broad regular-product sweeps:
 

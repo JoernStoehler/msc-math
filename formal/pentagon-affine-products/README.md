@@ -25,18 +25,22 @@ Equality in the systolic bound holds exactly when
 `conv{±n_i}`. This is a global bound inside this family, **not** a bound for
 arbitrary pentagons or arbitrary ten-facet polytopes.
 
-The independent local-maximality theorem in
+The independent local-maximality theorem in the
+[selected HKO chapter](../../thesis/chapters/07-hko.tex) uses feasible upper
+sections, exact finite predicates and a symmetry quotient. It covers nearby
+ten-facet perturbations that can break the product structure; neither maximality
+statement replaces the other. The older
 [`hko-local-maximality-conditions.tex`](../hko-local-maximality-conditions.tex)
-retains its own feasible-section/symmetry hypotheses. It covers nearby
-perturbations that can break the product structure; neither maximality statement
-replaces the other.
+contains an unresolved smooth-envelope proof sketch, not that theorem's proof.
 
 ## Reading routes and status
 
 1. **Keep the short rotation proof first.** The accepted analytic argument is
    [the endpoint-interpolation proof](../../docs/pro-handoffs/pentagon-generalization/math/rotated-pentagon-proof.tex).
-   Its reader-facing version is
-   [the replacement chapter](../../docs/history/pentagon-chapter-v2/chapter.tex).
+   Its selected reader-facing version is
+   [the rotation chapter](../../thesis/chapters/09-rotated-regular-polygons.tex);
+   [the earlier replacement](../../docs/history/pentagon-chapter-v2/chapter.tex)
+   remains review history.
    The argument imports the independently known HKO endpoint capacity; its
    acceptance does not imply acceptance of every subsequent prose version.
 2. **Extend to independent linear factors.** Sections 2–5 of
@@ -46,10 +50,11 @@ replaces the other.
    The existing six-facet reduction is recalled, not claimed as new.
 3. **Keep the original CAS route as history.** The retained
    [executable proof and full run](../../experiments/regular-products/pentagon-rotation-formula-proof/README.md)
-   classify all 3,340 open-domain orderings and cover exceptional parameters.
-   This was the earlier exhaustive proof route; neither present analytic proof
-   depends on rerunning it. Preserve code and output rather than appending the
-   old classification to the new chapter.
+   classify all 3,340 orderings on the open half-domain. The earlier route
+   closes the endpoints by continuity and extends by symmetry; those are
+   mathematical steps outside the finite run. Neither present analytic proof
+   depends on rerunning it. Preserve code and output rather than appending
+   the old classification to the new chapter.
 4. **Optional further mathematics.** The canonical note also preserves complete
    7×7 and 5×7 rotation profiles, strict-containment stability, interpolation
    sharpness and the triangle obstruction. Those results are not automatically
@@ -63,11 +68,12 @@ agent-reviewed mathematical proofs; no human proof acceptance, prose PASS or
 novelty determination is asserted for the extension. The symmetric-product
 interpretation is optional and not an input to the affine proof.
 
-The [provisional thesis extension](../../thesis/chapters/10-affine-pentagons.tex)
-is a separate reader-facing representation. It was initially delivered unwired;
-this proposed integration checkout now includes it after the unchanged rotation
-proof. This does not establish prose acceptance or select the final assembly.
-The integration ledger records its adopted status and remaining obligations.
+The [selected thesis extension](../../thesis/chapters/10-affine-pentagons.tex)
+is included by [the sole thesis entry point](../../thesis/main.tex), immediately
+after the rotation proof. Inclusion does not establish human proof acceptance,
+prose PASS or submission readiness. Current remaining obligations belong to
+[the thesis work list](../../docs/coordination/thesis-work.md); earlier
+integration records are historical evidence.
 
 ## Source identity, attribution, and maintenance
 

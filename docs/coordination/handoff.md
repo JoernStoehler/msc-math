@@ -1,29 +1,16 @@
 # Current handoff
 
-Work in the checked-out repository. On 30 September 2026, `main` at
-`/workspaces/msc-math` is the only registered worktree. Confirm the current
-branch/tree before continuing; old session pane and worktree directions are
-recovery provenance, not instructions to restart them.
+**4 October 2026: thesis execution is stopped by Jörn.** A preservation
+checkpoint and concrete continuation packet are in
+[restart-2026-10-04.md](restart-2026-10-04.md). Read that first. It records the
+actual worktree/branch, original deadline and scope, unintegrated edits,
+reported checks, known defects and an explicitly untested orchestration proposal.
+The packet is not itself restart authorization or evidence of thesis acceptance.
 
-Start with [current.json](current.json) for selected work and
-[thesis-work.md](thesis-work.md) for the detailed thesis backlog.
-[../dashboard/index.html](../dashboard/index.html) is Jörn's work/resource view;
-[../knowledge/README.md](../knowledge/README.md) routes reusable interpretation.
-
-## Acceptance and authorization
-
-The prior completion attempt was stopped. The current request authorizes
-repository cleanup and coordination setup, not a new autonomous thesis run.
-PASS means submission-ready with only minor issues Kai could leave Jörn to fix
-in about two hours; borderline is FAIL. Final grading is one-time; diagnostic
-feedback is separate. No current whole-PDF verdict establishes readiness.
-No university submission or public release is authorized.
-
-The retained handoff describes the thesis as unfinished and unsubmitted at that
-time. Current administrative status has not been checked. Historical quota,
-deadlines, availability cutoffs and the $3,000 shadow-API ceiling are not current
-resource observations or renewed spending authority. Necessary questions must
-stand alone with the artifact, exact judgment, consequence and expectation.
+The earlier September cleanup-only authorization and sole-worktree description
+are superseded. Current selected manuscript: `thesis/main.tex`. Historical
+human PASS and university submission status remain unknown; the current user
+asked for PDF/repository quality, then stopped execution for this handoff.
 
 ## Evidence and recovery
 

@@ -33,7 +33,9 @@ CHECK_PATHS=(
   '**/Cargo.toml'
   'Cargo.toml'
   'Cargo.lock'
+  '**/Cargo.lock'
   'rust-toolchain.toml'
+  'artifacts/registry.json'
   'experiments/**/*.jsonl'
   'experiments/**/*.json'
   'experiments/**/*.png'
@@ -65,6 +67,7 @@ ORIENTATION_PATHS=(
   'AGENTS.md'
   'ARCHITECTURE.md'
   'README.md'
+  'INSTALL.md'
   '.gitignore'
   '.agents/skills/**'
   '.codex/agents/**'
@@ -89,7 +92,7 @@ ORIENTATION_PATHS=(
 
 if [[ -z "$STATUS_FILE" ]]; then
   STATUS_FILE="$(
-    find scripts/repo-status -maxdepth 1 -type f -name 'repo-status-*.md' -print |
+    rg --files scripts/repo-status -g 'repo-status-*.md' |
       sort |
       tail -n 1
   )"

@@ -34,7 +34,17 @@ and satisfy
 \]
 \end{lemma}
 The construction and computer-algebra verification of this lemma occupy
-the following calculations. Holding selected weights fixed and solving
+the following calculations. The number twenty-six reflects the
+twenty-five-dimensional space transverse to symmetry: covectors spanning
+that space and admitting a strictly positive relation need at least
+twenty-six members. Indeed, with at most twenty-five members a nonzero
+linear relation would prevent full rank. Here the twenty-six restricted
+rows form the vertices of a simplex whose interior contains zero; the
+positive coefficients in the lemma are its barycentric coordinates.
+This is the finite geometry that makes one upper bound decrease in every
+nonzero transverse direction.
+
+Holding selected weights fixed and solving
 the five closure and normalization equations for the others produces the
 smooth sections: an invertible five-column minor gives smoothness, and
 strict positivity at the base point persists nearby.
@@ -93,7 +103,14 @@ $(\beta_6,\beta_7)=(u,v)$ gives the particularly simple identity
 \[
  Q_\sigma=-4tv^2+(2t-2t^3/5)v.
 \]
-It is independent of $u$ and has its maximum at $v=z$; its value is $Q_0=t/5$.
+Indeed,
+\[
+ \frac{\partial Q_\sigma}{\partial u}=0,\qquad
+ \frac{\partial Q_\sigma}{\partial v}
+ =-8tv+2t-\frac{2t^3}{5}=-8t(v-z).
+\]
+Since $t>0$, the maximum occurs at $v=z$, and substitution gives
+$Q_0=t/5$ using $t^4-10t^2+5=0$.
 Thus its Hessian on the two-dimensional closure affine space is singular
 (in the $(u,v)$ coordinates it is $\operatorname{diag}(0,-8t)$).
 The five-by-five closure minor is nevertheless invertible, so the displayed
@@ -140,7 +157,7 @@ bound outside that product family.
 
 \subsection{Computing the twenty-six derivatives}
 \label{subsec:hko-local-maximum-computation-with-sagemath}
-The table on page~\pageref{page:hko-exact-choices} gives the exact fixed values for every section,
+Table~\ref{tab:hko-exact-choices} gives the exact fixed values for every section,
 including the worked entry. Except at entry 22, the minor positions are $I=(1,2,3,4,5)$ and
 $J=(6,\ldots,m)$. Entry 22 instead has $I=(1,2,3,4,6)$ and $J=(5,7)$.
 The table is ordered by the witness's zero-based certificate
@@ -162,20 +179,33 @@ For each of the forty coordinate directions, compute
 Together with the explicit table these formulas specify the entire
 $26\times40$ matrix $R$ exactly.
 
-The finite predicates are: every word has distinct valid labels;
-$\det C_I\ne0$; $C\beta=e$; all $\beta_i>0$; $Q=t/5$;
-the differentiated closure equations hold; the rows annihilate the fifteen
-symmetry columns; $\operatorname{rank}R=25$; and the one-dimensional kernel
-of $R^T$ has a vector whose entries have one strict sign. Normalize that
-vector to sum to one, producing $\lambda>0$, $\lambda^TR=0$.
-The symmetry columns are explicitly $h_i=-a_{i,j}a_i$ for $j=1,\ldots,4$,
+The weight derivatives are checked against the differentiated closure
+equations. The remaining finite predicates have four roles in
+Lemma~\ref{lem:hko-exact-bounds}:
+\begin{enumerate}
+\item \emph{Touching upper bounds.} Every word has distinct valid labels;
+  $\det C_I\ne0$, $C\beta=e$, all $\beta_i>0$, and $Q=t/5$.
+  These checks give local positive feasible sections, whose base values
+  touch the known HKO capacity.
+\item \emph{Independence and rank.} The fifteen symmetry columns have
+  rank fifteen, and $\operatorname{rank}R=25$.
+\item \emph{Symmetry annihilation.} Every row of $R$ vanishes on every
+  symmetry column. Together with the ranks, this identifies the common
+  kernel of the rows as exactly $T$.
+\item \emph{Positive relation.} The one-dimensional kernel of $R^T$ has
+  a vector with all entries of one strict sign. Change its sign if needed
+  and normalize its sum to obtain $\lambda>0$ and $\lambda^TR=0$.
+\end{enumerate}
+The symmetry columns used in these checks are explicitly
+$h_i=-a_{i,j}a_i$ for $j=1,\ldots,4$,
 $h_i=-a_i$, and $h_i=-X^Ta_i$ for the ten generators
 \[
  X=\begin{pmatrix}A&B\\C&-A^T\end{pmatrix},\qquad B=B^T,\ C=C^T,
 \]
 using the four matrix units for $A$ and the three symmetric matrix units
 for each of $B,C$. Their column rank is required to be fifteen.
-These exact arithmetic checks establish the asserted independence, rank and
+Appendix~\ref{app:hko-cas} maps these four groups to the executable checks.
+The arithmetic establishes the asserted independence, rank, annihilation and
 positive relation. The constructions above give smooth feasible sections
 on a common neighborhood, and the HKO capacity formula gives the touching
 identities. This proves Lemma~\ref{lem:hko-exact-bounds}.

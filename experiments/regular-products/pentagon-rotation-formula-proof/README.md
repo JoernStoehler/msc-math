@@ -1,10 +1,15 @@
 # Pentagon Rotation Formula Proof
 
-This folder owns the exact executable proof for the formula for
+This folder retains the earlier exact executable proof for the formula for
 
 ```text
 sys(P_5 x_L R(theta)P_5).
 ```
+
+The selected [rotation chapter](../../../thesis/chapters/09-rotated-regular-polygons.tex)
+uses an analytic endpoint-interpolation proof. It does not depend on this
+enumeration. The run below covers the open half-domain; continuity closes its
+endpoints and factor-swap/reflection symmetries extend the result to all angles.
 
 The sibling folder `../rotated-regular-products/` owns the sampled sweep and
 profile figure used by the chapter.  `../pentagon-rotation-empirics/` owns
@@ -44,7 +49,9 @@ stdout file before using it as evidence.
    `executable_proof.full.stdout.txt`.
 2. To inspect the proof code, read `executable_proof.sage.py`.
 3. For current thesis prose, start at
-   `thesis/09-rotated-regular-polygons.tex` and follow its included TeX files.
+   `thesis/chapters/09-rotated-regular-polygons.tex`. For the independent
+   linear-factor extension and proof-route comparison, use
+   `formal/pentagon-affine-products/README.md`.
 4. Do not open empirical JSONL/PNG/HTML artifacts for proof verification.
 
 ## Proof Surface Routing
@@ -55,12 +62,15 @@ Use these files for different questions:
 | --- | --- |
 | What is the executable proof? | `executable_proof.sage.py` |
 | What did the full proof run print? | `executable_proof.full.stdout.txt` |
-| Where does the thesis explain the proof architecture? | `thesis/09-rotated-regular-polygons-pentagon-profile-theorem.tex`, `thesis/09-rotated-regular-polygons-exact-certificate.tex` |
+| Where is the selected analytic proof? | `thesis/chapters/09-rotated-regular-polygons.tex` |
+| Where are the current and earlier proof routes distinguished? | `formal/pentagon-affine-products/README.md`, `experiments/regular-products/README.md` |
 | Where is older formal source material? | `formal/legacy/pentagon-rotation-capacity.tex`, treated as stale source material |
 | Where are empirical figures and viewer artifacts? | `../rotated-regular-products/` for the profile sweep; `../pentagon-rotation-empirics/` for orbit and branch diagnostics |
 
-The formal file is useful for earlier notation and active-branch material, but
-the current lower-bound proof source is the executable Sage certificate.
+The formal file is useful for earlier notation and active-branch material.
+The executable Sage certificate supplies the exhaustive open-domain check for
+that earlier route. The selected thesis establishes its lower bound by
+endpoint interpolation instead.
 
 ## Commands
 

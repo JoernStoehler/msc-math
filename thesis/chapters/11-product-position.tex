@@ -60,14 +60,25 @@ For a product, the last equation holds separately in each factor. Let $t$
 be the total weight on facets from $A$. Dividing those weights by $t$ gives
 a feasible planar configuration, so their contribution to reciprocal
 capacity is at most $t^2/a$. The corresponding bound for $B$ is
-$(1-t)^2/b$. Reversing a planar order accommodates the opposite sign in
-the second diagonal block of $\mathcal J_0$.
+$(1-t)^2/b$. More explicitly, if the $B$-facets occur in the order
+$j_1,\ldots,j_r$, their pairing sum for $-J_2$ equals the sum for $J_2$
+in the reversed order $j_r,\ldots,j_1$, with each weight attached to its
+facet. Thus the opposite sign in the second diagonal block does not change
+the planar maximum $1/b$. At zero mass the corresponding contribution
+vanishes, so no division is needed.
 
 For the mixed contribution, divide the $A$ weights by $2t$ and the $B$
 weights by $2(1-t)$. The resulting weights have total mass one, satisfy
-closure, and are feasible for the Lagrangian endpoint. Its reciprocal
+closure, and are feasible in the same facet order for the Lagrangian
+endpoint. Each mixed product of weights has been divided by
+$(2t)(2(1-t))=4t(1-t)$. Since the endpoint has no same-factor terms, its
+entire pairing sum bounds this rescaled mixed contribution. Its reciprocal
 capacity is $1/\ell$, so the original mixed contribution is at most
-$4t(1-t)/\ell$. The cases $t=0,1$ have no mixed contribution. Linearity in
+$4t(1-t)/\ell$. The cases $t=0,1$ have no mixed contribution.
+The first two bounds correspond to the diagonal blocks
+$\cos\theta J_2$ and $-\cos\theta J_2$, and the third to the two
+off-diagonal blocks $\pm\sin\theta I_2$. The coefficients $\cos\theta$
+and $\sin\theta$ are nonnegative on the stated interval. Linearity in
 the symplectic form therefore gives
 \begin{equation}\label{eq:product-mass-bound}
  \frac1{c_\theta}\le
@@ -75,7 +86,8 @@ the symplectic form therefore gives
   \cos\theta\left(\frac{t^2}{a}+\frac{(1-t)^2}{b}\right)
   +\frac{4\sin\theta}{\ell}t(1-t)\right].
 \end{equation}
-Putting all weight in $A$ also gives $1/c_\theta\ge\cos\theta/a$.
+Putting all weight in an optimizing planar configuration of $A$ also gives
+$1/c_\theta\ge\cos\theta/a$.
 
 Set $U=\cos\theta/a$, $V=\cos\theta/b$ and
 $W=4\sin\theta/\ell$. Then $V\le U$, and the expression in brackets minus
@@ -85,9 +97,47 @@ $U$ is
 \]
 The inner bracket is affine in $t$; its endpoint values are $V-U$ and
 $W-2U$. Both are nonpositive when
-$\tan\theta\le\ell/(2a)$. The two reciprocal-capacity bounds then agree.
-Polygonal approximation and continuity of capacity extend the bounds,
-and hence the formula, to arbitrary planar convex bodies.
+$\tan\theta\le\ell/(2a)$. Since the bracketed expression equals $U$
+at $t=1$, its maximum is then $U$. We obtain the explicit squeeze
+\[
+ \frac{\cos\theta}{a}\le\frac1{c_\theta}
+ \le\frac{\cos\theta}{a},
+\]
+and hence the stated capacity formula for polygons.
+
+For general convex bodies, translate each factor so that the origin is in
+its interior; translations preserve all the capacities under consideration.
+Choose polygons $A_m\to A$ and $B_m\to B$ in the Hausdorff metric.
+For a sequence $\varepsilon_m\downarrow0$, these approximations satisfy
+\[
+ \begin{aligned}
+ (1-\varepsilon_m)A&\subseteq A_m\subseteq(1+\varepsilon_m)A,\\
+ (1-\varepsilon_m)B&\subseteq B_m\subseteq(1+\varepsilon_m)B
+ \end{aligned}
+\]
+for all sufficiently large $m$. This follows from uniform convergence of
+support functions and the positive inradii of $A$ and $B$. In particular,
+$a_m=\operatorname{area}(A_m)\to a$ and
+$b_m=\operatorname{area}(B_m)\to b$. The same inclusions hold for the
+products. Writing $c_{\theta,m}$ for the capacity of $A_m\times B_m$
+with respect to $\Omega_\theta$, monotonicity and quadratic homogeneity give
+\[
+ (1-\varepsilon_m)^2c_\theta
+ \le c_{\theta,m}
+ \le(1+\varepsilon_m)^2c_\theta.
+\]
+This proves the required capacity continuity directly, as in
+Proposition~\ref{prop:preliminaries-sys-hausdorff-continuity}; at
+$\theta=\pi/2$ it also gives $\ell_m:=c_{\pi/2,m}\to\ell>0$.
+
+Pass to the limit in the two reciprocal bounds before imposing the
+condition on $\theta$. The polynomial in $t$ on the right of
+\eqref{eq:product-mass-bound}, with $a_m,b_m,\ell_m$ in place of
+$a,b,\ell$, converges uniformly on $[0,1]$, so its maximum converges as
+well. Thus both bounds remain valid for $A,B$. The same algebra then
+gives the squeeze whenever $\tan\theta\le\ell/(2a)$, including equality
+at this threshold. This passage does not require the approximating
+polygons to satisfy that threshold themselves.
 
 Finally, $\ell>0$, so the interval contains positive angles. For each such
 angle, $a/\cos\theta>a$. The underlying rigid rotation preserves the
