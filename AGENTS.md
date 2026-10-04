@@ -50,6 +50,15 @@ the selected manuscript's promoted claims, current work and evidence owners. A p
 needs a thesis location, caveat and PDF/evidence check; show any unresolved coverage gap.
 Refresh `docs/dashboard/thesis-sources.json` only after that source reconciliation.
 
+## Collaboration friction
+
+Detailed workflow friction is owned by `docs/friction/README.md` and its individual
+records; the linked Pages overview is the concise human view. When relevant authorized
+work changes material friction or its disposition, update the record and reconcile that
+Page without waiting for Jörn to request it. Keep diagnostics and handoffs in the repository.
+If a surface cannot be updated, report its stale or unsaved state in the handoff. This does
+not restart paused thesis work or establish ongoing monitoring.
+
 ## Respect evidence boundaries
 
 ```text
