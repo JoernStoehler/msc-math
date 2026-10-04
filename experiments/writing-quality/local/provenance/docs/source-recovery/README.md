@@ -1,6 +1,8 @@
 # Frozen thesis source recovery
 
-The recovered entry point is [`thesis/candidate/main.tex`](../../thesis/candidate/main.tex).
+This is retained provenance from the original recovery layout. The recovered
+entry point was `thesis/candidate/main.tex`; its source and replay route are
+retained in the [recovery packet](../../../../../../docs/history/source-recovery/README.md).
 It builds the frozen 86-page review baseline without `.git/codex/` or any
 original thesis source directory. No scientific content was revised, and no
 new prose, proof, literature correction, or pentagon rewrite was integrated.
@@ -74,8 +76,8 @@ The original sources and frozen artifacts under `.git/` remain untouched.
 old inputs; ordinary builds and the isolated verifier do not. It refuses to
 overwrite a recovered input whose bytes have since been edited.
 
-[Research dependency boundaries](research-dependencies.md) distinguish the
+[Research dependency boundaries](../../../../../../docs/history/source-recovery/research-dependencies.md) distinguish the
 complete PDF input closure from unexecuted generators, evidence, and absent
 datasets. This recovery is not a complete archive of the research project.
-The bounded [review-evidence recovery](../review-evidence/README.md) separately
+The bounded [review-evidence recovery](../../../../../../docs/history/review-evidence/README.md) separately
 preserves the Pro package, self-reviews, comparison, and human reading records.

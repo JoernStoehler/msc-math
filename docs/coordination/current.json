@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-04T09:28:11.204695+00:00",
+  "updated_at": "2026-10-04T20:43:50.270690+00:00",
   "scope": "Consolidated registered msc-math worktrees and their retained session results on main. Historical assignments are released; unrelated host processes and account balances are not fully surveyed.",
   "summary": "Worktrees consolidated and retired; main is the only registered checkout. Original manuscript/PDF and newest postmortem preserved, stale owners released, temporary outputs archived. Selected symmetric-partner inclusion, human PASS and full reproduction remain unresolved.",
   "tasks": [
@@ -18,8 +18,8 @@
         "project-close"
       ],
       "blocker": "Workflow implementation/acceptance, thesis source/support/human PASS, code/evidence and reproduction checks, actual delivery/archive dispositions and final session release remain unfinished.",
-      "plan_gap": "The 4 October bounded run is selected. Human acceptance, university submission status and optional workflow activation remain unknown or outside this run.",
-      "next_step": "Continuation active after premature closure; original deadline and no-question constraint remain.",
+      "plan_gap": "The 4 October bounded thesis run is closed. Human acceptance, university submission status and optional workflow activation remain unknown or unresolved.",
+      "next_step": "Select a new authorized continuation from the retained obligations; the original thesis run and its deadline are closed.",
       "authorization": "J\u00f6rn explicitly restarted from fe3475b3 on 4 October 2026: best supported thesis PDF/repository using remaining weekly quota (numeric balance unknown), no human questions, absolute stop 2026-10-04T02:00:00Z. No public release or university submission.",
       "sources": [
         "docs/coordination/thesis-work.md",
@@ -27,7 +27,7 @@
         "docs/project-facts.md",
         "ARCHITECTURE.md"
       ],
-      "updated_at": "2026-10-04T01:31:06Z"
+      "updated_at": "2026-10-04T20:43:50.270690+00:00"
     },
     {
       "id": "workflow-done",
@@ -2288,6 +2288,20 @@
         "docs/history/symmetric-partner-candidate-2026-10-03/README.md"
       ],
       "updated_at": "2026-10-04T09:28:11.204695+00:00"
+    },
+    {
+      "id": "post-consolidation-health-repair-20261004",
+      "title": "Repair post-consolidation access, inputs and stale references",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "File viewer restored; verified polytope dataset and invariant-table consumer links restored; stale top-level continuation text and four missing Markdown targets corrected. Combinatorial-cell cache recovered with matching snapshot identity; ten other snapshots need authenticated retrieval. Persistent viewer service enabled; rclone installed locally. Thesis gap excluded by user.",
+      "blocker": "Ten snapshots need private R2 read credentials; host and current sandbox are unconfigured. Existing facet-scale file differs from registered snapshot and is preserved.",
+      "authorization": "J\u00f6rn requested fixing all reported health-check problems except the thesis gap on 4 October 2026.",
+      "sources": [
+        "docs/history/post-consolidation-health-2026-10-04/README.md"
+      ],
+      "updated_at": "2026-10-04T20:43:50.270690+00:00",
+      "depends_on": []
     }
   ],
   "decisions": [
@@ -2649,6 +2663,12 @@
       "value": "msc-math-files.service absent/inactive; Tailscale /files route exists but has no observed running backend. Dedicated main dashboard process is running. Historical live-viewer observations are not current.",
       "observed_at": "2026-10-04T09:23:53.562093Z",
       "basis": "systemctl --user show/cat, process inspection and tailscale serve status; no service activation performed."
+    },
+    {
+      "label": "Post-consolidation viewer repair",
+      "value": "msc-math-files persistent enabled service restored from main; HTTPS /files README returns HTTP 200. Dedicated dashboard returns HTTP 200 at configured Tailscale address after redirect.",
+      "observed_at": "2026-10-04T20:43:50.270690+00:00",
+      "basis": "Enabled persistent user unit and live curl checks during user-authorized repair."
     }
   ],
   "links": [

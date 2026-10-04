@@ -54,25 +54,19 @@ appropriate roots and replace the workstation hostname in the URL convention.
 
 ## Workstation service and HTTPS
 
-**4 October consolidation observation:** the transient service was absent/inactive,
-while Tailscale still configured `/files`. The historical setup below is not a
-current availability claim. The consolidated tool owner is `/workspaces/msc-math`;
-start it there when a file-viewing task needs the service.
+**4 October evening repair:** the viewer now runs from main as an enabled
+persistent systemd user service. Live HTTPS file checks returned HTTP 200.
+The consolidation-time outage remains a historical observation.
 
-
-The selected arrangement uses a transient systemd user service, `msc-math-files`,
-and Tailscale Serve's `/files` route on the existing HTTPS port 443. The service
-survives Codex exit/restart; a machine reboot requires starting it again. It runs
-the script from this worktree, so deleting this worktree requires moving/restarting
-the service first. There is no service per checkout and no per-file registration.
-
-Start from the checkout chosen to own the running tool:
+The workstation unit is `~/.config/systemd/user/msc-math-files.service`, with
+`WorkingDirectory=/workspaces/msc-math`,
+`ExecStart=/usr/bin/python3 /workspaces/msc-math/scripts/serve-files.py`,
+`Restart=on-failure` and `WantedBy=default.target`. It starts with the user
+manager after reboot. The existing Tailscale Serve `/files` route is unchanged.
 
 ```bash
-systemd-run --user --unit=msc-math-files --collect \
-  --property=Restart=on-failure \
-  python3 "$PWD/scripts/serve-files.py"
-tailscale serve --bg --set-path=/files http://127.0.0.1:8770/files
+systemctl --user enable --now msc-math-files
+systemctl --user restart msc-math-files
 ```
 
 Tailscale removes the mount prefix before proxying; the backend URL's `/files`

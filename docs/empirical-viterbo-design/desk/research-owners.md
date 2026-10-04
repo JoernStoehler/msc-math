@@ -114,9 +114,9 @@ and research judgment being delegated as mechanical feature computation. The
 intervention is a short shared evidence packet plus explicit scientific ownership
 and evidence returns, activated through each owner's task message. It changes no
 AGENTS.md or global agent configuration. The design follows the repository's
-[harness skill](../../../.agents/skills/harness-engineering-v2/SKILL.md) in spirit;
-the canonical file is `.agents/skills/harness-engineering-v2/SKILL.md` at checkout
-root. [Anthropic's orchestrator/worker discussion](https://www.anthropic.com/engineering/building-effective-agents)
+[historical harness skill](https://github.com/JoernStoehler/msc-math/blob/5c5dedff7a51d8e131184c0c79192f98f6aed8fd/.agents/skills/harness-engineering-v2/SKILL.md) in spirit.
+That pinned source preserves the guidance used for this charter; the skill is
+now supplied by the agent-skills plugin. [Anthropic's orchestrator/worker discussion](https://www.anthropic.com/engineering/building-effective-agents)
 is supporting design evidence, not a guarantee of Codex behavior. Whether this
 works will be judged from the owners' actual choices and first evidence packets,
 not from the existence of this charter or a valid graph.

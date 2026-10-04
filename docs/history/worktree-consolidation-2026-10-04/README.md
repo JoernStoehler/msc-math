@@ -54,11 +54,15 @@ acceptance bindings and explicitly recorded changed documentation. Original
 acceptance manifests are not rewritten.
 
 ```bash
-python3 docs/history/worktree-consolidation-2026-10-04/verify.py
+python3 docs/history/worktree-consolidation-2026-10-04/verify.py --allow-documentation-changes
 python3 scripts/serve-project-dashboard.py --check
 ```
 
-`verification.json` retains checks and retirement outcome. Passing identity,
+`verification.json` retains the original checks, documentation hashes and retirement
+outcome. Omit `--allow-documentation-changes` to require that exact historical
+documentation baseline. The maintenance flag allows later edits only to its
+explicitly recorded documentation paths; manuscript, PDF and acceptance bindings
+still require exact identity. It does not validate the updated documentation. Passing identity,
 compilation and finite tests does not establish mathematics, human PASS, full
 reproduction or useful behavior from retained guidance.
 
