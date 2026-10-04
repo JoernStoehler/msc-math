@@ -1,0 +1,9 @@
+{
+  "original_path": "experiments/dev-sys-prediction/facet-scale-baseline-error/runs/production/sysext-cache.jsonl",
+  "preserved_path": "experiments/dev-sys-prediction/facet-scale-baseline-error/runs/production/pre-restoration-20261004/sysext-cache.jsonl",
+  "sha256": "d99f2a3c9111d794631137e67198590f1dcd6dea9f50767adcdc28acafcb57b4",
+  "bytes": 12061374,
+  "replacement_snapshot": "c28d83e1e51e9d53133ce24ee4eac39eb3acd541b252caca71bdc4ebab2813cb",
+  "replacement_sha256": "8ee0983e66c7883622369de0e82d8e7b1b1c91fbcb5182ad0ee75e1fd8071bd7",
+  "reason": "Registered snapshot matches retained summary input binding; divergent local 520-row input preserved before replacement."
+}

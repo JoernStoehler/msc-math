@@ -134,3 +134,6 @@ math.pdf
 math.toc
 .Trash-*/
 **/checkpoint.json
+
+# Preserved local input superseded by its registered, hash-bound snapshot.
+/experiments/dev-sys-prediction/facet-scale-baseline-error/runs/production/pre-restoration-20261004/

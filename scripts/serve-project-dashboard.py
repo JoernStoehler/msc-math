@@ -20,6 +20,8 @@ BASELINE = "docs/dashboard/thesis-sources.json"
 # Explicitly named files only: no directory handler, path expansion or write API.
 FILES = {
     "docs/history/post-consolidation-health-2026-10-04/README.md",
+    "docs/history/post-consolidation-health-2026-10-04/artifact-restoration.json",
+    "docs/history/post-consolidation-health-2026-10-04/facet-cache-preservation.json",
     "docs/history/worktree-consolidation-2026-10-04/README.md",
     "docs/history/worktree-consolidation-2026-10-04/verification.json",
     "docs/history/worktree-consolidation-2026-10-04/verify.py",

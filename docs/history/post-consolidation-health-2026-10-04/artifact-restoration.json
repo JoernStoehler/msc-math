@@ -1,0 +1,187 @@
+{
+  "verified_at": "2026-10-04T21:04:35.829504+00:00",
+  "snapshots": [
+    {
+      "artifact": "alternative-source-transfer-v1",
+      "snapshot": "8c1802d647e612cf6f58513db517a90972f68fb5ca5c9ce4c1bc02ea88d2a1d1",
+      "directory": "/home/joern/.cache/msc-math/artifacts/alternative-source-transfer-v1/8c1802d647e612cf6f58513db517a90972f68fb5ca5c9ce4c1bc02ea88d2a1d1",
+      "files": 1,
+      "bytes": 80051327,
+      "status": "verified-local-cache",
+      "remote_checked": false,
+      "consumer_paths_verified": [
+        "experiments/sys-datascience/methods/alternative-source-transfer/artifacts/transfer-v1/source.jsonl"
+      ]
+    },
+    {
+      "artifact": "combinatorial-cell-widths",
+      "snapshot": "a524396d6ad0522d7a33f16f0038b9f63bcf895e045019b3363ea1683ce11bd4",
+      "directory": "/home/joern/.cache/msc-math/artifacts/combinatorial-cell-widths/a524396d6ad0522d7a33f16f0038b9f63bcf895e045019b3363ea1683ce11bd4",
+      "files": 1,
+      "bytes": 11012601,
+      "status": "verified-local-cache",
+      "remote_checked": false,
+      "consumer_paths_verified": [
+        "experiments/combinatorial-cells/cell-widths/combinatorial-boundaries-profiling.jsonl"
+      ]
+    },
+    {
+      "artifact": "covariance-rho-frozen-packet",
+      "snapshot": "72566e80cc331ab235c5fbdbe4ef0a4924e7f669c613b36987f82c42ad3aab61",
+      "directory": "/home/joern/.cache/msc-math/artifacts/covariance-rho-frozen-packet/72566e80cc331ab235c5fbdbe4ef0a4924e7f669c613b36987f82c42ad3aab61",
+      "files": 18,
+      "bytes": 726467720,
+      "status": "verified-local-cache",
+      "remote_checked": false,
+      "consumer_paths_verified": [
+        "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/assembly-output.json",
+        "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/frozen-manifest-summary.json",
+        "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/frozen-selected-candidates-before-sys.jsonl",
+        "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201-refresh-output.txt",
+        "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201/candidate-feature-table.jsonl",
+        "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201/candidate-geometry-cache.jsonl",
+        "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201/resolved-run-config.json",
+        "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201/selected-candidates-before-sys.jsonl",
+        "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201/selection-plan.json",
+        "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202-command-output.txt",
+        "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202-refresh-output.txt",
+        "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202-resource.txt",
+        "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202/candidate-feature-table.jsonl",
+        "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202/candidate-geometry-cache.jsonl",
+        "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202/resolved-run-config.json",
+        "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202/selected-candidates-before-sys.jsonl",
+        "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202/selection-plan.json",
+        "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/target-field-audit.txt"
+      ]
+    },
+    {
+      "artifact": "facet-scale-production-cache",
+      "snapshot": "c28d83e1e51e9d53133ce24ee4eac39eb3acd541b252caca71bdc4ebab2813cb",
+      "directory": "/home/joern/.cache/msc-math/artifacts/facet-scale-production-cache/c28d83e1e51e9d53133ce24ee4eac39eb3acd541b252caca71bdc4ebab2813cb",
+      "files": 1,
+      "bytes": 12010922,
+      "status": "verified-local-cache",
+      "remote_checked": false,
+      "consumer_paths_verified": [
+        "experiments/dev-sys-prediction/facet-scale-baseline-error/runs/production/sysext-cache.jsonl"
+      ]
+    },
+    {
+      "artifact": "optimizer-candidate-history-f10-128",
+      "snapshot": "9da8fc4af42ac234a2584b159ddec0fed06c3f05940fa1bc0fae6221207158bc",
+      "directory": "/home/joern/.cache/msc-math/artifacts/optimizer-candidate-history-f10-128/9da8fc4af42ac234a2584b159ddec0fed06c3f05940fa1bc0fae6221207158bc",
+      "files": 3,
+      "bytes": 77189318,
+      "status": "verified-local-cache",
+      "remote_checked": false,
+      "consumer_paths_verified": [
+        "experiments/dev-gradient-ascent/optimizer-runs/artifacts/candidate-history-f10-128-0a71a6042/evaluations.jsonl",
+        "experiments/dev-gradient-ascent/optimizer-runs/artifacts/candidate-history-f10-128-0a71a6042/proposals.jsonl",
+        "experiments/dev-gradient-ascent/optimizer-runs/artifacts/candidate-history-f10-128-0a71a6042/rounds.jsonl"
+      ]
+    },
+    {
+      "artifact": "optimizer-heldout-f10-64-finalists",
+      "snapshot": "0620d37457aa0f756ff3aa663416dc083e5b6b9aef0f29027cc2e9a65a353990",
+      "directory": "/home/joern/.cache/msc-math/artifacts/optimizer-heldout-f10-64-finalists/0620d37457aa0f756ff3aa663416dc083e5b6b9aef0f29027cc2e9a65a353990",
+      "files": 3,
+      "bytes": 107830221,
+      "status": "verified-local-cache",
+      "remote_checked": false,
+      "consumer_paths_verified": [
+        "experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd/evaluations.jsonl",
+        "experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd/proposals.jsonl",
+        "experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd/rounds.jsonl"
+      ]
+    },
+    {
+      "artifact": "pentagon-kkt-branch-landscape",
+      "snapshot": "d2e8d96ca3a99979d01545f7f1effd8123bbd27a2781ab452594ff3717a42dae",
+      "directory": "/home/joern/.cache/msc-math/artifacts/pentagon-kkt-branch-landscape/d2e8d96ca3a99979d01545f7f1effd8123bbd27a2781ab452594ff3717a42dae",
+      "files": 1,
+      "bytes": 22341369,
+      "status": "verified-local-cache",
+      "remote_checked": false,
+      "consumer_paths_verified": [
+        "experiments/regular-products/pentagon-rotation-empirics/kkt-branch-landscape.jsonl"
+      ]
+    },
+    {
+      "artifact": "polytope-datasets",
+      "snapshot": "f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96",
+      "directory": "/home/joern/.cache/msc-math/artifacts/polytope-datasets/f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96",
+      "files": 3,
+      "bytes": 252398018,
+      "status": "verified-local-cache",
+      "remote_checked": false,
+      "consumer_paths_verified": [
+        "experiments/polytope-datasets/random-product.jsonl",
+        "experiments/polytope-datasets/random.jsonl",
+        "experiments/polytope-datasets/shared-cache.jsonl"
+      ]
+    },
+    {
+      "artifact": "polytope-invariant-table",
+      "snapshot": "c3042846723dbb89db17f2f39d88004d937e1e790949ff6880188fa89fc1900a",
+      "directory": "/home/joern/.cache/msc-math/artifacts/polytope-invariant-table/c3042846723dbb89db17f2f39d88004d937e1e790949ff6880188fa89fc1900a",
+      "files": 1,
+      "bytes": 24250539,
+      "status": "verified-local-cache",
+      "remote_checked": false,
+      "consumer_paths_verified": [
+        "experiments/polytope-invariant-table/polytope-table.jsonl"
+      ]
+    },
+    {
+      "artifact": "product-bounce-class-degeneration",
+      "snapshot": "174a90d4445c719c286f138a7e421407e3a34616bc5fd0f4448c51e1a0d0f048",
+      "directory": "/home/joern/.cache/msc-math/artifacts/product-bounce-class-degeneration/174a90d4445c719c286f138a7e421407e3a34616bc5fd0f4448c51e1a0d0f048",
+      "files": 2,
+      "bytes": 40423996,
+      "status": "verified-local-cache",
+      "remote_checked": false,
+      "consumer_paths_verified": [
+        "experiments/sys-datascience/methods/product-bounce-class-degeneration/artifacts/degeneration-pairs.jsonl",
+        "experiments/sys-datascience/methods/product-bounce-class-degeneration/artifacts/degeneration-rows.jsonl"
+      ]
+    },
+    {
+      "artifact": "product-bounce-distribution",
+      "snapshot": "a336e8301eae3986a04cb717f29e447a576776d240997851478a795d48c215c4",
+      "directory": "/home/joern/.cache/msc-math/artifacts/product-bounce-distribution/a336e8301eae3986a04cb717f29e447a576776d240997851478a795d48c215c4",
+      "files": 1,
+      "bytes": 12075189,
+      "status": "verified-local-cache",
+      "remote_checked": false,
+      "consumer_paths_verified": [
+        "experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl"
+      ]
+    },
+    {
+      "artifact": "qp-error-bounds-broad",
+      "snapshot": "7bbca91151b65cc3bb5ed58abfb27d80fb6581e1a0933c7ecfc22062e8c603e9",
+      "directory": "/home/joern/.cache/msc-math/artifacts/qp-error-bounds-broad/7bbca91151b65cc3bb5ed58abfb27d80fb6581e1a0933c7ecfc22062e8c603e9",
+      "files": 2,
+      "bytes": 72319165,
+      "status": "verified-local-cache",
+      "remote_checked": false,
+      "consumer_paths_verified": [
+        "experiments/qp-error-bounds/artifacts/broad/formula_evaluations.jsonl",
+        "experiments/qp-error-bounds/artifacts/broad/raw_rows.jsonl"
+      ]
+    },
+    {
+      "artifact": "qp-error-bounds-soundness-v2",
+      "snapshot": "b83f8b086f62fe4dad4d9aef7922a4294a6bfffa89d8942edd46de2405a72201",
+      "directory": "/home/joern/.cache/msc-math/artifacts/qp-error-bounds-soundness-v2/b83f8b086f62fe4dad4d9aef7922a4294a6bfffa89d8942edd46de2405a72201",
+      "files": 2,
+      "bytes": 37079703,
+      "status": "verified-local-cache",
+      "remote_checked": false,
+      "consumer_paths_verified": [
+        "experiments/qp-error-bounds/artifacts/soundness-v2/formula_evaluations.jsonl",
+        "experiments/qp-error-bounds/artifacts/soundness-v2/raw_rows.jsonl"
+      ]
+    }
+  ]
+}

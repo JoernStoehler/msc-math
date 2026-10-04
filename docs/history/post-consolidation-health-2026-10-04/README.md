@@ -28,24 +28,33 @@ The fresh build had no flagged overfull boxes or undefined references.
   documentation paths, retaining the original historical hashes. Manuscript,
   retained PDF and acceptance checks remain exact.
 
-## Remaining input dependency
+## Authenticated input restoration
 
-Ten registered snapshots lack local cache manifests. The host and current
-`codex-msc-math` sandbox have neither an R2 remote nor read credentials. The
-sandbox was inspected and stopped afterward; its state was preserved. No
-credentials were printed or copied and no remote publication occurred.
+The initial blocker was resolved at 21:02 UTC: credentials were discovered in
+ignored `.local-environments/sandbox-bootstrap/home/agent/.config/rclone/rclone.conf`.
+The earlier host/sandbox checks missed this preserved bootstrap location. A
+live R2 listing succeeded. The configuration was installed privately in the
+host's standard rclone location with mode 0600; no new token was minted and no
+credentials were printed, committed or sent through chat.
 
-Remaining snapshots: `alternative-source-transfer-v1`,
-`covariance-rho-frozen-packet`, `facet-scale-production-cache`,
-`optimizer-candidate-history-f10-128`, `optimizer-heldout-f10-64-finalists`,
-`pentagon-kkt-branch-landscape`, `product-bounce-class-degeneration`,
-`product-bounce-distribution`, `qp-error-bounds-broad` and
-`qp-error-bounds-soundness-v2`.
+All thirteen registered caches now pass exact inventory/size/SHA-256 checks,
+and every registered consumer path matches its cached source. Remote manifests
+and missing payloads were retrieved through authenticated R2; scientific
+producers were not rerun. [The receipt](artifact-restoration.json) records the
+verified caches and consumer paths. The recovered combinatorial manifest was
+aligned with remote formatting after checking identical snapshot identity.
 
-The existing facet-scale consumer file differs from the registered snapshot;
-it was preserved. After authenticated retrieval, compare its provenance before
-replacing it. Other existing consumer paths are preserved by materialization's
-refusal to overwrite files. See [artifact setup](../../artifacts.md).
+The previous facet-scale consumer differs semantically from the registered
+snapshot. Both have 520 rows; capacity/volume methods and numerical results
+include differences. The registered input's hash matches the retained summary
+manifest, so that reproducible input was restored. The divergent file was
+preserved under its producer's `runs/production/pre-restoration-20261004/`;
+[its receipt](facet-cache-preservation.json) binds both hashes. No retained
+summary or manuscript was regenerated or altered.
+
+The new Cloudflare `cf` CLI was checked and is not installed on this host.
+Existing S3 credentials and rclone completed the restoration without new tokens
+or Cloudflare administrative changes. See [artifact operations](../../artifacts.md).
 
 The thesis gap is deliberately unchanged. Passing these checks does not
 establish mathematical correctness, human PASS or complete reproduction.

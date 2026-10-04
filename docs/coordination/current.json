@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-04T20:43:50.270690+00:00",
+  "updated_at": "2026-10-04T21:05:03.251388+00:00",
   "scope": "Consolidated registered msc-math worktrees and their retained session results on main. Historical assignments are released; unrelated host processes and account balances are not fully surveyed.",
   "summary": "Worktrees consolidated and retired; main is the only registered checkout. Original manuscript/PDF and newest postmortem preserved, stale owners released, temporary outputs archived. Selected symmetric-partner inclusion, human PASS and full reproduction remain unresolved.",
   "tasks": [
@@ -2292,15 +2292,14 @@
     {
       "id": "post-consolidation-health-repair-20261004",
       "title": "Repair post-consolidation access, inputs and stale references",
-      "status": "blocked",
+      "status": "done",
       "owner": null,
-      "outcome": "File viewer restored; verified polytope dataset and invariant-table consumer links restored; stale top-level continuation text and four missing Markdown targets corrected. Combinatorial-cell cache recovered with matching snapshot identity; ten other snapshots need authenticated retrieval. Persistent viewer service enabled; rclone installed locally. Thesis gap excluded by user.",
-      "blocker": "Ten snapshots need private R2 read credentials; host and current sandbox are unconfigured. Existing facet-scale file differs from registered snapshot and is preserved.",
+      "outcome": "Viewer restored as persistent enabled service; all 13 registered caches and all consumer paths verified/restored using recovered private bootstrap credentials. Divergent facet cache preserved before restoring the input matching retained summary hashes. Stale continuation text and four links corrected; main pushed. Thesis gap excluded by user.",
       "authorization": "J\u00f6rn requested fixing all reported health-check problems except the thesis gap on 4 October 2026.",
       "sources": [
         "docs/history/post-consolidation-health-2026-10-04/README.md"
       ],
-      "updated_at": "2026-10-04T20:43:50.270690+00:00",
+      "updated_at": "2026-10-04T21:05:03.251388+00:00",
       "depends_on": []
     }
   ],
