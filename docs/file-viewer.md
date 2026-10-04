@@ -54,6 +54,12 @@ appropriate roots and replace the workstation hostname in the URL convention.
 
 ## Workstation service and HTTPS
 
+**4 October consolidation observation:** the transient service was absent/inactive,
+while Tailscale still configured `/files`. The historical setup below is not a
+current availability claim. The consolidated tool owner is `/workspaces/msc-math`;
+start it there when a file-viewing task needs the service.
+
+
 The selected arrangement uses a transient systemd user service, `msc-math-files`,
 and Tailscale Serve's `/files` route on the existing HTTPS port 443. The service
 survives Codex exit/restart; a machine reboot requires starting it again. It runs

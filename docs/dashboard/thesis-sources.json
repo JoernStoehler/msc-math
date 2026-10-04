@@ -1,13 +1,13 @@
 {
   "checked_on": "2026-10-04",
-  "checked_at": "2026-10-04T01:50:18.104072+00:00",
+  "checked_at": "2026-10-04T09:26:38.210659+00:00",
   "reconciled": true,
-  "note": "All eleven required areas, PASS boundary, promoted claims, caveats and the current 101-page candidate reconciled against final independent acceptance. All 13 selected figures were regenerated and integrated on the host; a second existing TeX environment built after one documented dependency repair, with rendering differences retained. Human PASS, raw-data/model reruns, authenticated R2 retrieval and full fresh-machine setup remain unestablished. The prior acceptance bundle is preserved.",
+  "note": "Consolidation reconciled required scope/PASS boundary, unchanged 101-page candidate, bounded promoted-claim reviews and merged facts. Item 13.2 selects symmetric-partner inclusion, still absent from the candidate and visibly recorded as a gap. INSTALL adds the approved local skill-ownership paragraph; thesis-work records that inclusion; project-facts adds attributed scope/experience statements. Existing claim locations/caveats/PDF reviews remain retained. Human PASS, overall DS scope and full reproduction remain unresolved.",
   "candidate_pdf_sha256": "d27e2f5330c61b25df23939a3da8118da98dd95aa6f336ac9d09d52302724a81",
   "candidate_source_tree_sha256": "00d03cebeefa4d83774983d6744fc7be85745dc1265bba958521487a50cf6e6e",
   "sha256": {
     "Cargo.lock": "81c058aa9399b8bc3d8ba6274c42fe3a4fd7ea5626d9e02c92e04ef64922ed08",
-    "INSTALL.md": "c956719ec769b7f0f62fe1c96784410cd6b4600b6ddd74aa9c8cf080a3b1fe46",
+    "INSTALL.md": "473cfbbdd1f38c37be4e3dfa98be18c75cfad948e5d38933308f1510dbe90ae6",
     "artifacts/registry.json": "c29296502713f37a19ad5410cbfd41b834815560ddcaae8f6621e8ecf6d17a7d",
     "crates/symplectic/DEVELOPMENT.md": "530cd39d2100566d7a4d9a672a7ce7013a71bd41b40ba1ed195c1347d08d410a",
     "crates/symplectic/README.md": "738b0bb54a3329defc8b826f362b4062437363aee6d505fd8632c086cf75ec53",
@@ -17,7 +17,7 @@
     "docs/algorithm-testing.md": "b75e0d44143fe49137937e9c448b34aec536445a03a594a454b2491603588406",
     "docs/artifacts.md": "5d79dc2e2e85d0e61afdb47601a753eb66b01fe88589b654922aa489b9412fc3",
     "docs/consolidation/2026-09-24/claim-disposition.md": "3e048444faff47fed46cab8b266676eb4100cfed2be95c90e755cc7334b765a9",
-    "docs/coordination/thesis-work.md": "360e0d89e6c9e5f4bf86ee26b49977d813fbfe8640112613f775865adaf03937",
+    "docs/coordination/thesis-work.md": "4b55ebf5b32a04542e294f88163b3811eaed58d5e30bfb6b84a9c470e6277028",
     "docs/ds-evidence-closure/search-account.md": "8adf80e3400948beebfd593b8e738b657d6d908331fdbab53918d2f36a91f5e2",
     "docs/ds-retrospective-revalidation/README.md": "300ca9b9b052ea7bbf66558bdb1dfd836bce4272905c79273be2e0c56255926d",
     "docs/ds-retrospective-revalidation/repair/comparison.json": "0331adf82569f72524e756afe0454d977b153c1c66d1136086ac09efff549bcb",
@@ -54,7 +54,7 @@
     "docs/history/thesis-restart-2026-10-04/integration.md": "97df4a9131b91d36c298e040c2c879926a5ac5ea428116e33c8e6015cd9367fe",
     "docs/history/thesis-restart-2026-10-04/source-only-rebuild.json": "431ef15e996dfe351d004e3630a89082eaaa24e9028d00ce4d9f080086a8d05b",
     "docs/history/thesis-restart-2026-10-04/verification-manifest.json": "4a0109b5ebd5a941a2e906a4b07dfae94e350b6419649fa6b6f86f8e76cf9cc6",
-    "docs/project-facts.md": "ac9f2b73f9183ca1fef29a1d7672c524700e49e68e74896ed87e12eba5334033",
+    "docs/project-facts.md": "fb9a860243408f7ebb371e320369b80df00c6ed2302f7dcf2a2d6d4f13c19549",
     "docs/reproducibility.md": "541e5ad69c0cfdda20076d66dd8e983463907d17d4cb232d7d7b456547343352",
     "experiments/dev-flow-graph/visualize-tube/main.rs": "12bd9f1c067e45b595924af22ded2a0fab0f48996bf7cf66d91df1fbf168bb85",
     "experiments/dev-flow-graph/visualize-tube/render.py": "832bdbfb34e73e98cf12ebbf4bc3c33be8261849ccdc43ae106e3b33ad37ba66",
@@ -164,6 +164,8 @@
     "thesis/references/ai.bib": "229ebfb782a8afca9198cf3f81c31b561b4bf5b041315f76aceb7a79b96e5342",
     "thesis/references/data-science.bib": "a4aec4018ff328c4f8348c982785709a491d346b60ad43db5670bcc212219c77",
     "thesis/references/main.bib": "c98ae0d18c67d51f7f32969487f7086c79af75a79a99cd44a6dbd50fc93a88f3",
-    "thesis/tests/lookup.sh": "e7701b33831d032901e0cf400d7d98bd2fbc24d83041ce2d7cc792f0af00146d"
+    "thesis/tests/lookup.sh": "e7701b33831d032901e0cf400d7d98bd2fbc24d83041ce2d7cc792f0af00146d",
+    "docs/history/symmetric-partner-candidate-2026-10-03/README.md": "68f3400ee67d65b9fb69f55464f1a6e36ff9e2edd947ad47f6a89c887caad950",
+    "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/symmetric-partner-lemma.md": "ec5f4cdb73fd870582aea8b1e12248dd3dbacf76b962deb9b00b8d9addb3a944"
   }
 }

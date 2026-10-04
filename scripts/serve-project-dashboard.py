@@ -19,6 +19,12 @@ STATE = "docs/coordination/current.json"
 BASELINE = "docs/dashboard/thesis-sources.json"
 # Explicitly named files only: no directory handler, path expansion or write API.
 FILES = {
+    "docs/history/worktree-consolidation-2026-10-04/README.md",
+    "docs/history/worktree-consolidation-2026-10-04/verification.json",
+    "docs/history/worktree-consolidation-2026-10-04/verify.py",
+    "docs/history/symmetric-partner-candidate-2026-10-03/main.tex",
+    "docs/history/symmetric-partner-candidate-2026-10-03/section.tex",
+    "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/symmetric-partner-lemma.md",
     "AGENTS.md", "AGENTS.md.commentary.md",
     "submit/archive-closure-checklist.md",
     "docs/reproducibility.md",
@@ -55,7 +61,7 @@ FILES = {
     "docs/coordination/oct03-ready-decisions.md",
     "docs/empirical-viterbo-design/desk/research-agenda.md",
     "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/symmetric-partner-lemma.md",
-    "thesis/candidates/symmetric-partner/README.md",
+    "docs/history/symmetric-partner-candidate-2026-10-03/README.md",
     "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/calibration-extension-preliminary.md",
     "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/heptagon-symmetric-partner.md",
     "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/odd-regular-symmetric-partner.md",

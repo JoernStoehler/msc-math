@@ -1,0 +1,31 @@
+{
+  "observed_at": "2026-10-04T09:28:11.494898+00:00",
+  "changed_repository_documentation_sha256": {
+    "INSTALL.md": "473cfbbdd1f38c37be4e3dfa98be18c75cfad948e5d38933308f1510dbe90ae6",
+    "docs/coordination/current.json": "08fc0cf5f4c3bdd7476a885cc404ae4bbb74344074ea986af3390a5a5fc68235",
+    "docs/coordination/graphs/tasks.dot": "e1a63ec7cbfdca7f31728ccd51deadb2fd433c8bb6b00ef4dc83221f827a1a09",
+    "docs/coordination/graphs/tasks.svg": "0a567fd20fc0849085ffed8c0b7d2426639acfd9b37e89c20eb3f7962a09b974",
+    "docs/coordination/handoff.md": "dfd6bcd5763ab833baa112d97a78fb4e4ed2da0eb1e362babaea229a1003ebc6",
+    "docs/coordination/thesis-work.md": "4b55ebf5b32a04542e294f88163b3811eaed58d5e30bfb6b84a9c470e6277028",
+    "docs/dashboard/thesis-sources.json": "c9447e68be20bef13a7868424614f8f7c88d9717e25e5db35fa4cb844b7cd98d",
+    "docs/dashboard/thesis.html": "a9b3c0e5f5c0bd4a0da02cd5d6e23e8d3c5896bbdd0b32aad376b22a0699a585",
+    "docs/project-facts.md": "fb9a860243408f7ebb371e320369b80df00c6ed2302f7dcf2a2d6d4f13c19549",
+    "scripts/serve-project-dashboard.py": "9196ab52248b577ca90cb1544140569f9e3ae3b821c3ab18b1dbf402b53f2bde"
+  },
+  "checks": {
+    "python_tests": 75,
+    "capacity_tests": 19,
+    "cargo_fmt": "pass",
+    "cargo_check_workspace_locked": "pass",
+    "original_candidate_verifier_clean_f171": "pass",
+    "postmortem_archival_consumption": "pass",
+    "postmortem_transfer": "pass",
+    "cross_session_messaging_skill_structure": "pass",
+    "final_dashboard_tests": 8,
+    "final_dashboard_source_reconciliation": "pass; no changed sources",
+    "live_dashboard_state_and_moved_candidate_routes": "HTTP 200 after service restart",
+    "workflow_graph": "pass"
+  },
+  "worktree_retirement": "complete; only /workspaces/msc-math registered",
+  "recovery_archive": "/workspaces/archived/msc-math-consolidation-20261004/"
+}

@@ -3,6 +3,9 @@
 Prepared on 3 October 2026 for the result Jörn selected for inclusion.
 This is a bounded reader-facing candidate, outside `thesis/main.tex`.
 It has not received human proof or prose acceptance.
+The standalone source moved here during 4 October worktree consolidation;
+it remains outside the selected manuscript. Frozen historical evaluation
+packets retain their original path references.
 
 ## Intended placement and scientific purpose
 
@@ -58,7 +61,7 @@ From the repository root:
 
 ```bash
 mkdir -p tmp/pdfs/symmetric-partner
-cd thesis/candidates/symmetric-partner
+cd docs/history/symmetric-partner-candidate-2026-10-03
 pdflatex -interaction=nonstopmode -halt-on-error -output-directory=../../../tmp/pdfs/symmetric-partner main.tex
 pdflatex -interaction=nonstopmode -halt-on-error -output-directory=../../../tmp/pdfs/symmetric-partner main.tex
 ```

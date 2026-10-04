@@ -5,7 +5,7 @@ Retained candidate lane for portfolio comparison; not approved or launched. Jör
 the symmetric-partner summary in this conversation on 3 October; that is local
 prose feedback, not proof acceptance or permission for substantial execution.
 The separate coordinator records symmetric-partner inclusion as selected and
-has already produced `thesis/candidates/symmetric-partner/`. Preserve that work.
+has already produced `docs/history/symmetric-partner-candidate-2026-10-03/`. Preserve that work.
 
 ## Value and remaining uncertainty
 

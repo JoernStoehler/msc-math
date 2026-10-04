@@ -126,7 +126,7 @@ sections under `thesis/candidates/five-hour-portfolio/`. Each readable unit must
 have a precise proposed insertion or replacement in the active thesis, with
 only necessary surrounding context. Keep extended derivations in support notes.
 Coordinator owns the combined candidate PDF and concrete integration patch. Product owner reuses
-`thesis/candidates/symmetric-partner/` after checking its owner. New optional
+`docs/history/symmetric-partner-candidate-2026-10-03/` after checking its owner. New optional
 theorems remain visibly candidates until selected; existing theorem scopes are
 preserved. Do not silently promote proof/prose acceptance.
 

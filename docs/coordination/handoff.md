@@ -1,65 +1,47 @@
-# Thesis continuation — 4 October 2026
+# Current handoff after worktree consolidation
 
-The bounded thesis/repository continuation is closed within the original
-**02:00 UTC / 04:00 Europe/Berlin hard stop**, with no human questions.
-The commit containing this handoff retains the delivery; broader project
-completion and human PASS remain unasserted. Worktree:
-`/home/joern/.codex/worktrees/f171/msc-math`; branch
-`thesis/2026-10-04-candidate`. `current.json` owns assignments.
+Continue in `/workspaces/msc-math` on `main`. The 4 October consolidation merged
+the workflow checkout, postmortem/calibration checkout, reviewed thesis branch
+and remote main divergence. [current.json](current.json) owns current work;
+[the consolidation record](../history/worktree-consolidation-2026-10-04/README.md)
+owns preservation, verification and recovery details.
 
-The current candidate is the **101-page PDF** in
-[the continuation packet](../history/thesis-continuation-2026-10-04/README.md),
-SHA-256 `d27e2f5330c61b25df23939a3da8118da98dd95aa6f336ac9d09d52302724a81`.
-The selected source is still `thesis/main.tex`; build with `sh thesis/build.sh`.
-Its 61-file source identity is
-`00d03cebeefa4d83774983d6744fc7be85745dc1265bba958521487a50cf6e6e`.
-Independent acceptance froze at 01:49:46 UTC, manifest
-`81f5d804509f3a0b6068775a5e9a1bb74699ed3d589fe163860b7dde4156efba`.
-A build or finite test alone does not establish mathematical or human acceptance.
+The selected manuscript remains `thesis/main.tex`. The retained 101-page PDF and
+bounded independent review are in
+[the continuation packet](../history/thesis-continuation-2026-10-04/README.md).
+Its manuscript inputs and PDF are unchanged by consolidation. Historical
+verification also binds repository documentation that changed during integration;
+use the consolidation verifier to distinguish these changes from lost evidence.
 
-This continuation added the promised prediction features and split to Appendix
-A, corrected exact-rational versus dyadic-input wording, repaired a screenshot
-producer that silently saved a blank canvas, and added safe figure-output and
-offline artifact-cache verification routes. All thirteen selected figures were
-regenerated; a fresh source copy using those outputs reproduced the candidate's
-text and all 101 page rasters at 96 dpi. Four production capacity tests on 14
-fixed geometric bodies passed. The printed HKO appendix command and full
-26-row Sage verifier passed with unchanged canonical inputs/outputs. A second installed TeX environment also built the same 101-page source after
-installing its missing declared font dependency in a disposable, resource-capped
-container; the different PDF is supporting evidence, not the selected candidate.
-The
-[figure runbook](../figure-reproduction.md) records commands and their limits.
+The merged facts establish a coverage gap: Jörn selected the fixed-pentagon /
+arbitrary centrally symmetric partner result for inclusion, but it is absent
+from the selected PDF. The standalone source is retained in
+[its candidate packet](../history/symmetric-partner-candidate-2026-10-03/README.md).
+The broader odd-regular extension is retained research, without thesis selection
+or human acceptance. [thesis-work.md](thesis-work.md) owns detailed obligations.
 
-The earlier `2704f054` commit, its checked 100-page PDF and
-[acceptance bundle](../history/thesis-restart-2026-10-04/README.md) remain
-unchanged historical evidence, along with checkpoint `fe3475b3` and
-`docs/resume/`. The earlier bundle's identity checker targets its own source
-revision, not the changed continuation checkout. Use the new identity checker:
+Human/Kai PASS, overall data-science scope and complete reproduction remain
+unestablished. PASS means only minor issues Kai could leave Jörn to fix in about
+two hours; borderline is FAIL. The original thesis run is closed. Consolidation
+does not restart it, publish a release, or authorize university submission.
+Historical deadlines, quota observations and spending allowances are not live.
 
-```sh
-python3 docs/history/thesis-continuation-2026-10-04/verify-candidate.py
-```
+The newer root-session postmortem and its negative evaluations are retained in
+[history](../history/session-postmortem-2026-10-04/README.md), with reusable
+interpretation routed through [knowledge](../knowledge/README.md). Workflow
+proposals and rejected prototypes remain at their owners; retaining them does
+not activate them. Historical owners are released, with unfinished work parked
+or blocked rather than represented as running.
 
-Root stopped the earlier run prematurely at 00:55 UTC despite the broader
-unfinished objective; Jörn challenged that decision and work resumed at 01:27.
-A persistent goal was not set. Its absence did not revoke task authorization.
-The continuation's concrete findings demonstrate that useful work remained.
-The [supervision record](../history/thesis-continuation-2026-10-04/supervision.md)
-evaluates the observed repair/review cycles and failed stopping criterion;
-sustained orchestration effectiveness or resource savings remain unestablished.
+The dedicated dashboard process uses main. At consolidation the transient file
+viewer service was absent, although its Tailscale route persisted; historical
+live observations must not be reused. See [viewer operations](../file-viewer.md).
+Host-local artifacts and scratch remain in place. Old session/worktree paths in
+frozen evidence are provenance, not instructions to resume those sessions.
 
-Operational integration `/root/integration`, independent acceptance
-`/root/acceptance` and supervision `/root/supervision` are released, along with
-their selected children. Root owns final custody and the commit.
-An old mathematical child has ambiguous native `pending_init` metadata despite
-explicit release/interrupt; it has no assigned work. Numeric quota and actual
-spend are unknown. The expiring read-only review server remains for artifact
-access; no producer or container remains running. No work continues after
-the hard stop without new authorization.
-
-Remaining limits include human/Kai PASS, overall DS scope, fresh-machine setup,
-authenticated R2 retrieval, the one unresolved retained body, uncertified
-historical volume ratios, and broader production-flow correspondence. The
-current 45-feature P2 table was not rebuilt; its documented CPU/resource
-restriction remains in force. Actual submission/archive status is unknown;
-no university submission or public release is part of this run.
+The older frozen `docs/resume/` diagnostic PDF remains separate from the current
+candidate. Its historical preservation limitations, including excluded cache
+files without individual pre-deletion inventories, remain unresolved. Earlier
+September recovery is in `/workspaces/archived/workspaces-root/msc-math-session-20260918/`;
+this consolidation's recovery is in
+`/workspaces/archived/msc-math-consolidation-20261004/`.

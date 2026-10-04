@@ -1,0 +1,34 @@
+    Blocking waiting for file lock on artifact directory
+   Compiling symplectic v0.1.0 (/workspaces/msc-math/crates/symplectic)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.72s
+     Running tests/production_capacity_anchors.rs (target/debug/deps/production_capacity_anchors-46b26ee2bd975800)
+
+running 4 tests
+test dyadic_input_can_have_a_non_dyadic_exact_capacity ... ok
+test axis_aligned_boxes_match_independent_planar_area_values ... ok
+test conformal_scaling_changes_capacity_quadratically ... ok
+test symplectic_shears_preserve_anchors_across_dispatch_routes ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 35.48s
+
+     Running tests/public_capacity_api.rs (target/debug/deps/public_capacity_api-064e6917644fa13b)
+
+running 15 tests
+test pruned_hk2017_candidates_reject_mismatched_transition_matrix - should panic ... ok
+test explicit_product_route_rejects_a_valid_non_product ... ok
+test exact_sigma_validation_is_soft ... ok
+test automatic_dispatch_returns_bounds_for_a_general_polytope ... ok
+test pruned_hk2017_candidates_use_explicit_transition_matrix ... ok
+test single_sigma_saddle_point_solver_is_concrete ... ok
+test unpruned_hk2017_candidates_aggregate_from_flat_dual_vertices ... ok
+test general_minimizers_are_exact_and_support_on_demand_kkt_payloads ... ok
+test scalar_value_requires_the_requested_relative_accuracy ... ok
+test automatic_dispatch_returns_exact_sparse_product_certificate ... ok
+test automatic_product_dispatch_bypasses_the_forced_general_candidate_cap ... ok
+test validation_soft_errors_outside_the_coordinate_contract ... ok
+test degenerate_product_minimizers_have_consistent_exact_payloads ... ok
+test general_window_matches_complete_exact_enumeration ... ok
+test general_hypercube_window_keeps_positive_nonmaximizing_kkt_words ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 20.82s
+

@@ -9,7 +9,7 @@ not a replacement allocation or execution authorization.
 
 - The selected pentagon/symmetric-partner result has a complete two-page
   candidate, figure, independent mathematical check and rendered-PDF check:
-  `thesis/candidates/symmetric-partner/` and
+  `docs/history/symmetric-partner-candidate-2026-10-03/` and
   `output/pdf/symmetric-partner-candidate.pdf`. Human proof/prose acceptance and
   active-manuscript integration remain open. Do not request PDF reading now.
 - The same capacity formula and sharp equality characterization now hold for

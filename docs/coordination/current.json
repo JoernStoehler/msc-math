@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-04T01:53:06.473276+00:00",
-  "scope": "4 October thesis/repository run closed within original02:00UTC hard stop; selected deliverable improved and checked. Broader project completion remains blocked by explicitly named limits.",
-  "summary": "101-page accepted candidate retained with13regenerated figures, repaired methods/contracts, fresh HKO/API checks and a second-environment build.159-source scientific view reconciled; all assignments released. Prior checkpoint/evidence preserved; human PASS and full reproduction unasserted.",
+  "updated_at": "2026-10-04T09:28:11.204695+00:00",
+  "scope": "Consolidated registered msc-math worktrees and their retained session results on main. Historical assignments are released; unrelated host processes and account balances are not fully surveyed.",
+  "summary": "Worktrees consolidated and retired; main is the only registered checkout. Original manuscript/PDF and newest postmortem preserved, stale owners released, temporary outputs archived. Selected symmetric-partner inclusion, human PASS and full reproduction remain unresolved.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -169,9 +169,9 @@
     {
       "id": "workflow-proposal-integration",
       "title": "Review and consolidate returned skill and knowledge proposals",
-      "status": "running",
-      "owner": "01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a",
-      "outcome": "Consolidated proposal drafted and independently reviewed; root integrated corrections, a local Codex 0.159.2 feature snapshot and source estimates. Browser-readable artifact available. Direct user presentation remains pending; this row stays RUNNING until that deliverable is actually provided.",
+      "status": "parked",
+      "owner": null,
+      "outcome": "Consolidated proposal drafted and independently reviewed; root integrated corrections, a local Codex 0.159.2 feature snapshot and source estimates. Browser-readable artifact available. Direct user presentation remains pending; this row stays RUNNING until that deliverable is actually provided. Consolidation: originating window ended; retained work is not a live assignment. Remaining outcome is unresolved.",
       "depends_on": [
         "skill-migration-plan",
         "knowledge-evaluation-plan"
@@ -182,7 +182,7 @@
         "docs/coordination/skill-migration-plan.md",
         "docs/coordination/knowledge-evaluation-plan.md"
       ],
-      "updated_at": "2026-09-30T17:50:02Z",
+      "updated_at": "2026-10-04T09:23:53.562093Z",
       "kind": "task",
       "selection": "selected",
       "graph_label": "Proposal integration",
@@ -261,7 +261,7 @@
       "selection": "selected",
       "graph_label": "Select completion package",
       "status": "blocked",
-      "owner": "01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a",
+      "owner": null,
       "outcome": "Coordinator presents consolidated alternatives, expected outcomes, resource estimates, limitations and precise activation/acceptance scope. J\u00f6rn selects migration/knowledge scope and substantial expenditure; retain/defer is a valid explicit disposition.",
       "depends_on": [
         "workflow-proposal-integration",
@@ -274,7 +274,7 @@
         "docs/coordination/knowledge-evaluation-plan.md",
         "AGENTS.md.commentary.md"
       ],
-      "updated_at": "2026-09-30T17:46:17Z",
+      "updated_at": "2026-10-04T09:23:53.562093Z",
       "plan_gap": "Prepared source proposals need a concise concrete recommendation and discussion of meaningful choices. No effective approval is recorded; numeric budget thresholds are a separate unresolved subject.",
       "project": "workflows",
       "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected.",
@@ -454,7 +454,7 @@
       "selection": "selected",
       "graph_label": "Communication acceptance",
       "status": "blocked",
-      "owner": "01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a",
+      "owner": null,
       "outcome": "Native worker delivery worked; an actual active-window independent dashboard-session send/return exchange now verified. Historical failure cause remains unproven, reconnect lifetime and external/cloud delivery remain unverified. Acceptance scope still awaits selection.",
       "depends_on": [
         "workflow-selection"
@@ -464,7 +464,7 @@
       "sources": [
         "docs/development-environments.md"
       ],
-      "updated_at": "2026-09-30T17:46:17Z",
+      "updated_at": "2026-10-04T09:23:53.562093Z",
       "project": "workflows",
       "authorization": "Only the recorded selected assignment is authorized; future activation/execution remains separately selected.",
       "next_step": "Use direct chat for user questions, available verified worker transports for handoffs, and report historical cause as unknown. No new messaging service is required by this failure."
@@ -473,7 +473,7 @@
       "id": "host-codex-config-drift",
       "title": "Attribute and triage remaining host Codex configuration drift",
       "status": "blocked",
-      "owner": "01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a",
+      "owner": null,
       "outcome": "Read-only triage complete:35additions/3deletions are live via ~/.codex/config.toml Stow symlink. All delta literals observed in OTel session09:47:59UTC before its telemetry edits. Git baseline authors do not attribute dirty edits. Categories: internal model-tooltip state; browser backend/version/path; browser origin policies; plugin/hook enablement/trust; undocumented analytics flag. Preserved unchanged; OTel remains complete.",
       "depends_on": [],
       "blocker": "All dirty-delta authorship remains unknown; successful writer evidence absent in bounded local search. Live configuration disposition still needs intent/implementation review; no revert or commit authorized.",
@@ -481,7 +481,7 @@
         "docs/coordination/current.json",
         "docs/development-environments.md"
       ],
-      "updated_at": "2026-09-30T17:18:54Z",
+      "updated_at": "2026-10-04T09:23:53.562093Z",
       "selection": "selected",
       "graph_label": "Host config drift\nOwnership unknown",
       "kind": "task",
@@ -500,7 +500,8 @@
       "owner": null,
       "outcome": "One exact selected PDF has supported claims, traceable exposition/evidence, adequate required content, and J\u00f6rn\u2019s readiness judgment at the recorded PASS threshold: only minor issues Kai could leave J\u00f6rn to fix in about two hours; borderline is FAIL. No present whole-PDF verdict establishes this.",
       "depends_on": [
-        "thesis-human-pass"
+        "thesis-human-pass",
+        "selected-symmetric-partner-inclusion"
       ],
       "blocker": "Agent-checked exact candidate is available. Human/Kai PASS and overall DS scope judgment remain unknown; neither is inferred from this delivery.",
       "sources": [
@@ -1322,7 +1323,7 @@
       "selection": "selected",
       "project": "workflows",
       "status": "parked",
-      "owner": "01a102d8-49d5-7993-a2bf-2ffc48a55e62",
+      "owner": null,
       "outcome": "Original joint design remains open; unilateral bounded-pass completion claim withdrawn and Fix session informed. Following Fix's intervention, the EXISTING evidence worker produced concrete-view-alternatives-20261004.md, now integrated and rendered through the existing server: exact CV/OTel request-result/intervention specimens, six joined recurring needs, retrospective versus incremental preparation plus separate interpretation, upkeep/invalidation/freshness, measured latency and useful combinations. Original CVs and disputed timing-chain report are absent. Historical telemetry remains explicitly a retained corrected response; original raw scratch report is no longer present. Packet does not establish a complete census, adequate-context reviewer quality or accepted final design. Existing capabilities can be reused; implementation and unapproved programmes remain stopped.",
       "depends_on": [],
       "blocker": null,
@@ -1330,7 +1331,7 @@
         "docs/codex.md",
         "docs/coordination/README.md"
       ],
-      "updated_at": "2026-10-03T23:22:26.852800Z",
+      "updated_at": "2026-10-04T09:23:53.562093Z",
       "authorization": "J\u00f6rn requested log review and joint brainstorming/design. Bounded source inspection and isolated probe only; approval precedes deployment. No source build, new permanent service, config activation or daemon restart. J\u00f6rn approved applying the messaging rules to project guidance; Stop-hook activation remains unapproved. J\u00f6rn selected skill placement conditional on clarity to fresh agents; bounded fresh-context checks completed.",
       "next_step": "Resource stop relayed by Fix orchestration: current analysis/planning stopped and the running evidence child interrupted. Existing artifacts and unfinished joint-design obligation preserved. Resume only on renewed instruction; no completion, new programme or spending approval implied. Separately authorized reset timers are untouched."
     },
@@ -1416,9 +1417,9 @@
       "title": "Workstation deconfusion and portability scoping",
       "kind": "task",
       "selection": "selected",
-      "status": "running",
-      "owner": "01a102d0-7c57-7e73-9eee-a661cbf730eb",
-      "outcome": "J\u00f6rn rejected the remaining-window recommendation as slop. Generic context/supervision/review bundle and speculative timings withdrawn; corrected comparison sent to orchestration 01a103dc-762f-7ef1-a094-4b0247b290ff. Concrete findings support correcting absent Herdr/share-files directions and stale sandbox scope. Six-file draft also adds setup/distribution guidance and is not purely factual. Copy probe establishes one offline/link defect, without an identified needing consumer. Missing local ports do not explain failure to apply already available rationale. No justified intervention for repeated unfinished-parent stopping or workflow-effectiveness claim established. Only approved INSTALL local-ownership wording applied; broader repair remains unresolved.",
+      "status": "parked",
+      "owner": null,
+      "outcome": "J\u00f6rn rejected the remaining-window recommendation as slop. Generic context/supervision/review bundle and speculative timings withdrawn; corrected comparison sent to orchestration 01a103dc-762f-7ef1-a094-4b0247b290ff. Concrete findings support correcting absent Herdr/share-files directions and stale sandbox scope. Six-file draft also adds setup/distribution guidance and is not purely factual. Copy probe establishes one offline/link defect, without an identified needing consumer. Missing local ports do not explain failure to apply already available rationale. No justified intervention for repeated unfinished-parent stopping or workflow-effectiveness claim established. Only approved INSTALL local-ownership wording applied; broader repair remains unresolved. Consolidation: originating window ended; retained work is not a live assignment. Remaining outcome is unresolved.",
       "depends_on": [],
       "blocker": null,
       "sources": [
@@ -1426,7 +1427,7 @@
         "docs/coordination/skill-migration-plan.md",
         "docs/file-viewer.md"
       ],
-      "updated_at": "2026-10-03T22:46:48Z",
+      "updated_at": "2026-10-04T09:23:53.562093Z",
       "project": "workflows",
       "authorization": "Original user-selected deconfusion/project-scoping session, primarily scratch notes and presentation artifacts; 15-minute final timebox renewed at 21:15 UTC and exceeded. New bounded comparison for the remaining orchestration window completed; it does not expand implementation/activation authority. File-viewer implementation and accepted guidance were separately selected in chat.",
       "next_step": "Receiving orchestration owner must use the corrected comparison, not the withdrawn generic package. Optional draft maintenance requires content review; migration/offline work needs an actual selected consumer. No diagnosis information is pending on J\u00f6rn; the unresolved continuation/application remedy is an analysis gap. Original broader repair remains open and no activation authority is enlarged."
@@ -1596,16 +1597,16 @@
       "kind": "task",
       "selection": "selected",
       "project": "workflows",
-      "status": "running",
-      "owner": "host systemd user timers codex-reset-0400.timer and codex-reset-0400-claude.timer",
-      "outcome": "Explicitly authorized conditional attempt scheduled and active for 4 October 2026 04:00 Berlin (02:00 UTC), targeting only the reset expiring at 04:36. Fresh read-only check passed at 21:34:18 UTC (four available resets, weekly usage 3%). Installed reviewed script/config in private host state; validated units and next-elapse. Service has not started and no real redemption request has been sent. Server acceptance remains unknown and user accepted possible failure. Actual systemd execution environment was additionally checked in read-only mode at 21:53:55 UTC; service exited successfully without consumption. Final reliability update: at most three transport attempts with identical credit/key, atomic result checkpoints before/after the consumption response, and a 300-second service timeout. Ten mock checks pass, including ambiguous-response retry and preservation of confirmed success if refresh fails. Installed code passed a fresh read-only systemd launch. Timer remains active for 04:00 Berlin; real redemption is pending. Claude Code fallback timer codex-reset-0400-claude.timer is installed and active for the same 4 October 04:00 Berlin trigger. It waits for the primary (up to 305 seconds), skips confirmed success or semantic refusal, and otherwise launches one bounded 120-second Claude session restricted to the existing pinned script command. A fresh process reuses exactly the primary credit/idempotency key. Six guard/command checks and an actual-systemd read-only launcher check passed. Claude auth status remains loggedIn=false: the fallback currently has an authentication blocker and is expected to fail at startup unless a valid login is available at execution. No login, model call or redemption was made during setup. Normal Claude subscription login (claude auth login --claudeai) has now been started; it is waiting for user sign-in/code completion. No successful authentication or model call has been established. The browser inspection call did not return and was terminated. The primary reset timer is independent of this pending login. Claude subscription login completed successfully after the user supplied the normal one-time authorization code. An actual-systemd read-only fallback check now reports claude_logged_in=true and exit 0. This resolves the earlier login blocker; both timers are still active for 4 October 04:00 Berlin. No Claude model call or reset consumption was made during authentication verification.",
+      "status": "done",
+      "owner": null,
+      "outcome": "Read-only consolidation check of host result.json records primary outcome=reset; claude-result.json records fallback outcome=skipped. This supersedes the pending timer observation. No redemption or new account request was made during consolidation. Historical one-date authorization is not standing authority.",
       "depends_on": [],
       "authorization": "User authorized the conditional 04:00 attempt and requested considering a scheduled Claude Code session as an additional route. Primary and bounded Claude fallback use one logical pinned earned-reset redemption with the identical credit/key. Claude fallback may launch one session for at most 120 seconds after local failure; only the exact existing script command is allowed. No other credit, purchase, login, semantic-refusal retry, repository edits or other agents/model turns are authorized for this job.",
       "next_step": "Both timers trigger at 04:00 Berlin. Primary writes private result.json; the now-authenticated Claude fallback skips success or server refusal and otherwise attempts the same pinned command after local failure, recording claude-result.json. Host must be awake/online. Actual server acceptance is established only by the primary command response.",
       "sources": [
         "docs/coordination/README.md"
       ],
-      "updated_at": "2026-10-03T22:39:17.035172Z"
+      "updated_at": "2026-10-04T09:23:53.562093Z"
     },
     {
       "id": "oct03-symmetric-partner-candidate",
@@ -1620,7 +1621,7 @@
       "blocker": null,
       "authorization": "Bounded preliminary candidate preparation within selected inclusion and comparison work. No substantial autonomous programme or paid spending approved.",
       "sources": [
-        "thesis/candidates/symmetric-partner/README.md"
+        "docs/history/symmetric-partner-candidate-2026-10-03/README.md"
       ],
       "updated_at": "2026-10-03T21:42:11Z",
       "next_step": "Retain for later human review; J\u00f6rn says the PDF-reading window is exhausted. Do not request reading now or infer acceptance. Candidate preparation is complete; substantial autonomous programme approval remains absent."
@@ -1687,9 +1688,9 @@
       "kind": "task",
       "selection": "selected",
       "project": "workflows",
-      "status": "running",
-      "owner": "01a103dc-762f-7ef1-a094-4b0247b290ff",
-      "outcome": "Bounded lifecycle replays, actual fresh/fork reviewer comparison and existing-dashboard root TPS retrieval completed; no live orchestration fix or substantial programme launched. User rejected the four-production-worker combined sprint proposal as unsupported; scale-out alternatives are under bounded comparison. Original objective remains unfinished.",
+      "status": "dropped",
+      "owner": null,
+      "outcome": "Bounded lifecycle replays, actual fresh/fork reviewer comparison and existing-dashboard root TPS retrieval completed; no live orchestration fix or substantial programme launched. User rejected the four-production-worker combined sprint proposal as unsupported; scale-out alternatives are under bounded comparison. Original objective remains unfinished. Consolidation recovered the final root-session disposition: J\u00f6rn withdrew the postmortem assignment and the originating root stopped. No active recovery owner is retained; original workflow objective remains unfinished.",
       "depends_on": [],
       "sources": [
         "docs/coordination/README.md",
@@ -1703,7 +1704,7 @@
         "01a102da-b805-7f72-ae02-ba9842fa80a8",
         "01a10360-b3b0-7761-bcde-941acac385f8"
       ],
-      "updated_at": "2026-10-03T23:12:46.113982Z"
+      "updated_at": "2026-10-04T09:23:53.562093Z"
     },
     {
       "id": "oct03-pentagon-proof-route-repair",
@@ -2257,6 +2258,36 @@
       ],
       "updated_at": "2026-10-04T01:49:25.252549+00:00",
       "next_step": "Final acceptance and identity binding before deadline."
+    },
+    {
+      "id": "worktree-consolidation-20261004",
+      "title": "Consolidate worktrees onto main",
+      "status": "done",
+      "owner": null,
+      "outcome": "Merged remote divergence and all three worktree results, verified recovery/evidence, archived temporary outputs, reconciled merged scope and retired extra worktrees. Main is the only registered checkout; source branches and recovery archives retained. Nothing pushed.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/history/worktree-consolidation-2026-10-04/README.md"
+      ],
+      "updated_at": "2026-10-04T09:28:11.204695+00:00"
+    },
+    {
+      "id": "selected-symmetric-partner-inclusion",
+      "title": "Integrate selected symmetric-partner result",
+      "status": "ready",
+      "selection": "selected",
+      "project": "msc-math",
+      "owner": null,
+      "outcome": "J\u00f6rn selected inclusion on 3 October (project-facts 13.2); standalone candidate retained but result absent from the selected 101-page manuscript. Proof/prose acceptance and final placement remain open. Consolidation performs no new thesis authoring.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/project-facts.md",
+        "docs/coordination/thesis-work.md",
+        "docs/history/symmetric-partner-candidate-2026-10-03/README.md"
+      ],
+      "updated_at": "2026-10-04T09:28:11.204695+00:00"
     }
   ],
   "decisions": [
@@ -2513,9 +2544,9 @@
   "resources": [
     {
       "label": "Agent work",
-      "value": "Bounded performance investigation and OpenObserve dashboard delivery; drafting/review and backend-coverage agents returned. Migration remains unimplemented. Current model/serving-path diagnosis is supported but unconfirmed; low worker count remains insufficient for workload assessment.",
-      "observed_at": "2026-09-30T18:23:54Z",
-      "basis": "Current selected deliverables and J\u00f6rn\u2019s explicit report of missing communication; no measurement of semantic queue or utilization fraction."
+      "value": "Consolidation validation agents completed and released; no historical execution owner remains running.",
+      "observed_at": "2026-10-04T09:28:11.204695+00:00",
+      "basis": "Two bounded preservation/test reports and current coordination closure."
     },
     {
       "label": "Quota and API spend",
@@ -2612,6 +2643,12 @@
       "value": "Persistent goal API returned null. This does not suspend existing task authorization or justify early closure.",
       "observed_at": "2026-10-04T01:31:06Z",
       "basis": "get_goal result after user asked whether a goal was set."
+    },
+    {
+      "label": "File viewer availability at consolidation",
+      "value": "msc-math-files.service absent/inactive; Tailscale /files route exists but has no observed running backend. Dedicated main dashboard process is running. Historical live-viewer observations are not current.",
+      "observed_at": "2026-10-04T09:23:53.562093Z",
+      "basis": "systemctl --user show/cat, process inspection and tailscale serve status; no service activation performed."
     }
   ],
   "links": [
@@ -2689,6 +2726,10 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-04T09:23:53.562093Z",
+      "text": "Merged workflow, calibration/planning and thesis continuation onto main; preserved newest postmortem and remote friction records. Released stale owners; selected symmetric-partner inclusion remains a manuscript coverage gap."
+    },
     {
       "at": "2026-10-04T01:53:06.473276+00:00",
       "text": "Continuation closed after independent acceptance:101pages,13figure reproduction routes, missing-method/exactness/screenshot repairs, fresh HKO/API checks and second existing-TeX-environment build. Earlier premature stopping failed the broader objective; no overall completion or efficiency claim."
